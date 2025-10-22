@@ -33,7 +33,7 @@ public partial class JoinElectionUser
     [InverseProperty("JoinElectionUsers")]
     public virtual Election Election { get; set; } = null!;
 
-    [ForeignKey("UserId")]
-    [InverseProperty("JoinElectionUsers")]
-    public virtual User User { get; set; } = null!;
+    // [ForeignKey("UserId")]
+    // [InverseProperty("JoinElectionUsers")]
+    // public virtual User User { get; set; } = null!;
 }

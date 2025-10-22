@@ -38,8 +38,6 @@ public partial class MainDbContext : DbContext
 
     public virtual DbSet<ResultTie> ResultTies { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
-
     public virtual DbSet<SmsLog> SmsLogs { get; set; }
 
     public virtual DbSet<Teller> Tellers { get; set; }
@@ -89,9 +87,9 @@ public partial class MainDbContext : DbContext
                 .HasForeignKey(d => d.ElectionGuid)
                 .HasConstraintName("FK_JoinElectionUser_Election");
 
-            entity.HasOne(d => d.User).WithMany(p => p.JoinElectionUsers)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_JoinElectionUser_Users");
+            // entity.HasOne(d => d.User).WithMany(p => p.JoinElectionUsers)
+            //     .OnDelete(DeleteBehavior.ClientSetNull)
+            //     .HasConstraintName("FK_JoinElectionUser_Users");
         });
 
         modelBuilder.Entity<Location>(entity =>
@@ -183,17 +181,6 @@ public partial class MainDbContext : DbContext
                 .HasPrincipalKey(p => p.ElectionGuid)
                 .HasForeignKey(d => d.ElectionGuid)
                 .HasConstraintName("FK_ResultTie_Election");
-        });
-
-        modelBuilder.Entity<Role>(entity =>
-        {
-            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1A76844CB5");
-
-            entity.Property(e => e.RoleId).ValueGeneratedNever();
-
-            entity.HasOne(d => d.Application).WithMany(p => p.Roles)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("RoleApplication");
         });
 
         modelBuilder.Entity<Teller>(entity =>
