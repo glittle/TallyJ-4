@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TallyJ4.EF.Identity;
 using TallyJ4.EF.Models;
 
 namespace TallyJ4.EF.Context;
 
-public partial class MainDbContext : DbContext
+public partial class MainDbContext : IdentityDbContext<AppUser>
 {
     public MainDbContext(DbContextOptions<MainDbContext> options)
         : base(options)
