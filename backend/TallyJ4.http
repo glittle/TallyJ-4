@@ -1,0 +1,6 @@
+@TallyJ4_HostAddress = http://localhost:5016
+
+GET {{TallyJ4_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
