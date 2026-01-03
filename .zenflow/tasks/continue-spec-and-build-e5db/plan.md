@@ -187,6 +187,7 @@ Save to `{@artifacts_path}/plan.md`.
 ---
 
 ### [ ] Task 9: Create Migration Architecture Document
+<!-- chat-id: 89de7ea0-a623-4210-b80a-976af0fd43cc -->
 
 #### [ ] Task 9.1: Create Migration Directory
 - Create `.zenflow/tasks/reverse-engineer-and-design-new-cd6a/migration/` directory
