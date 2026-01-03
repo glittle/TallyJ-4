@@ -1,0 +1,382 @@
+erDiagram
+    %% ============================================================
+    %% TallyJ Database Entity-Relationship Diagram
+    %% ============================================================
+    %% 16 Core Entities + ASP.NET Identity Tables
+    %% Generated from: entities.md documentation
+    %% ============================================================
+
+    %% ============================================================
+    %% ELECTION MANAGEMENT
+    %% ============================================================
+    
+    Election {
+        int C_RowId PK
+        Guid ElectionGuid UK "Business key"
+        string Name "Election display name"
+        string Convenor "Organizing assembly"
+        DateTime DateOfElection
+        string ElectionType "LSA, Con, Unit"
+        string ElectionMode "N=Normal, T=Tie-break"
+        int NumberToElect "Ballot size"
+        int NumberExtra "Near-winners to report"
+        int LastEnvNum "Last envelope number"
+        string TallyStatus "Workflow state"
+        bool ShowFullReport
+        string OwnerLoginId "Election owner"
+        string ElectionPasscode "Access code"
+        DateTime ListedForPublicAsOf
+        bool ListForPublic
+        bool ShowAsTest
+        bool UseCallInButton
+        bool HidePreBallotPages
+        bool MaskVotingMethod
+        DateTime OnlineWhenOpen
+        DateTime OnlineWhenClose
+        bool OnlineCloseIsEstimate
+        string OnlineSelectionProcess
+        DateTime OnlineAnnounced
+        string EmailFromAddress
+        string EmailFromName
+        string EmailText
+        string SmsText
+        string EmailSubject
+        string CustomMethods "CSV"
+        string VotingMethods "CSV flags"
+        string Flags "JSON"
+        byte-array C_RowVersion "Concurrency token"
+    }
+
+    Location {
+        int C_RowId PK
+        Guid ElectionGuid FK
+        Guid LocationGuid UK "Business key"
+        string Name "Location name"
+        string ContactInfo "Head teller contact"
+        string Long "Longitude"
+        string Lat "Latitude"
+        string TallyStatus "Counting status"
+        int SortOrder
+        int BallotsCollected
+    }
+
+    Teller {
+        int C_RowId PK
+        Guid ElectionGuid FK
+        string Name "Teller name"
+        string UsingComputerCode
+        bool IsHeadTeller
+        byte-array C_RowVersion
+    }
+
+    %% ============================================================
+    %% PEOPLE & VOTING
+    %% ============================================================
+
+    Person {
+        int C_RowId PK
+        Guid ElectionGuid FK
+        Guid PersonGuid UK "Business key"
+        string LastName
+        string FirstName
+        string OtherLastNames
+        string OtherNames
+        string OtherInfo
+        string Area "Sector/geographic"
+        string BahaiId "Baha-i ID number"
+        string CombinedInfo "Searchable text"
+        string CombinedSoundCodes "Soundex"
+        string CombinedInfoAtStart
+        string AgeGroup
+        bool CanVote "Eligible to vote"
+        bool CanReceiveVotes "Eligible candidate"
+        Guid IneligibleReasonGuid
+        DateTime RegistrationTime
+        Guid VotingLocationGuid FK
+        string VotingMethod "InPerson, Online, MailedIn"
+        int EnvNum "Envelope number"
+        byte-array C_RowVersion
+        string C_FullName "LastName, FirstName"
+        long C_RowVersionInt
+        string C_FullNameFL "FirstName LastName"
+        string Teller1
+        string Teller2
+        string Email
+        string Phone
+        bool HasOnlineBallot
+        string Flags "JSON"
+        string UnitName
+        string KioskCode
+    }
+
+    OnlineVoter {
+        int C_RowId PK
+        string VoterId UK "Email or phone"
+        string VoterIdType UK "email or sms"
+        DateTime WhenRegistered
+        DateTime WhenLastLogin
+        string EmailCodes "Historical codes"
+        string Country "Country code"
+        string OtherInfo
+        string VerifyCode "Current 6-digit code"
+        DateTime VerifyCodeDate
+        int VerifyAttempts
+        DateTime VerifyAttemptsStart
+    }
+
+    OnlineVotingInfo {
+        int C_RowId PK
+        Guid ElectionGuid FK
+        Guid PersonGuid FK
+        string VoterId "Email or phone"
+        string VoterIdType "email or sms"
+        DateTime WhenSubmitted "Null = draft"
+        string Choices "JSON array"
+        string Status "Draft, Submitted, Processed"
+        Guid ProcessedBallotGuid
+        DateTime WhenProcessed
+    }
+
+    %% ============================================================
+    %% BALLOTS & VOTES
+    %% ============================================================
+
+    Ballot {
+        int C_RowId PK
+        Guid LocationGuid FK
+        Guid BallotGuid UK "Business key"
+        string StatusCode "OK, Review, Spoiled"
+        string ComputerCode
+        int BallotNumAtComputer
+        string C_BallotCode "Computed: Code+Num"
+        string Teller1
+        string Teller2
+        byte-array C_RowVersion
+    }
+
+    Vote {
+        int C_RowId PK
+        Guid BallotGuid FK
+        int PositionOnBallot "1-9 for LSA"
+        Guid PersonGuid FK "Candidate voted for"
+        string StatusCode "Valid, Invalid, Extra"
+        Guid InvalidReasonGuid
+        int SingleNameElectionCount
+        byte-array C_RowVersion
+        string PersonCombinedInfo "Name snapshot"
+        string OnlineVoteRaw "Original text"
+    }
+
+    %% ============================================================
+    %% RESULTS
+    %% ============================================================
+
+    Result {
+        int C_RowId PK
+        Guid ElectionGuid FK
+        Guid PersonGuid FK
+        int VoteCount
+        int Rank "1 = highest"
+        string Section "Elected, Extra, Other"
+        bool CloseToPrev
+        bool CloseToNext
+        bool IsTied
+        int TieBreakGroup
+        bool TieBreakRequired
+        int TieBreakCount
+        bool IsTieResolved
+        int RankInExtra
+        bool ForceShowInOther
+    }
+
+    ResultSummary {
+        int C_RowId PK
+        Guid ElectionGuid FK "1:1 with Election"
+        int NumBallotsWithManual
+        int NumBallotsWithOnline
+        int NumBallots
+        int NumVoters
+        int NumVotersInPerson
+        int NumVotersOnline
+        int SpoiledBallots
+        int InvalidVotes
+        int TotalVotes
+        bool UsedManualEntry
+        bool UsedOnlineVoting
+        string ElectionDateText
+        string GuidSelectionsWithCodes "JSON"
+    }
+
+    ResultTie {
+        int C_RowId PK
+        Guid ElectionGuid FK
+        int TieBreakGroup
+        int NumInTie
+        int NumToElect
+        bool TieBreakRequired
+        bool IsResolved
+    }
+
+    %% ============================================================
+    %% LOGS & MESSAGES
+    %% ============================================================
+
+    C_Log {
+        int C_RowId PK
+        DateTime AsOf
+        Guid ElectionGuid FK "Optional"
+        Guid LocationGuid FK "Optional"
+        string VoterId
+        string ComputerCode
+        string Details "Full-text indexed"
+        string HostAndVersion
+    }
+
+    SmsLog {
+        int C_RowId PK
+        string PhoneNumber
+        string Message
+        DateTime WhenSent
+        string Status "Delivered, Failed, Pending"
+        string Provider "Twilio"
+        string MessageId
+        decimal Cost
+        string ErrorInfo
+    }
+
+    Message {
+        int C_RowId PK
+        Guid ElectionGuid FK "Optional"
+        string MessageType "Email, SMS, System"
+        string MessageTo "Recipient"
+        string MessageText
+        DateTime WhenSent
+        string Status "Sent, Failed, Pending"
+        string ErrorInfo
+    }
+
+    %% ============================================================
+    %% DATA MANAGEMENT
+    %% ============================================================
+
+    ImportFile {
+        int C_RowId PK
+        Guid ElectionGuid FK
+        string ImportType "Voters, Ballots"
+        string OriginalFileName
+        int FirstDataRow
+        bool HasHeaders
+        string CodePage "Encoding"
+        long FileSize
+        string ColumnMappings "JSON"
+        int NumProcessed
+        DateTime WhenUploaded
+        DateTime WhenProcessed
+        string ProcessedBy
+    }
+
+    JoinElectionUser {
+        int C_RowId PK
+        Guid ElectionGuid FK
+        Guid UserId FK
+        string Role "Admin, Teller"
+        string InviteEmail
+        DateTime InviteWhen
+    }
+
+    %% ============================================================
+    %% IDENTITY (ASP.NET Identity)
+    %% ============================================================
+
+    AspNetUsers {
+        Guid Id PK "UserId"
+        string UserName
+        string Email
+        bool EmailConfirmed
+        string PasswordHash
+        Guid SecurityStamp
+        string PhoneNumber
+        bool PhoneNumberConfirmed
+        bool TwoFactorEnabled
+        DateTime LockoutEndDateUtc
+        bool LockoutEnabled
+        int AccessFailedCount
+    }
+
+    AspNetRoles {
+        Guid Id PK
+        string Name
+    }
+
+    AspNetUserClaims {
+        int Id PK
+        Guid UserId FK
+        string ClaimType
+        string ClaimValue
+    }
+
+    AspNetUserLogins {
+        string LoginProvider PK "google-oauth2, facebook"
+        string ProviderKey PK "External user ID"
+        Guid UserId FK
+    }
+
+    AspNetUserRoles {
+        Guid UserId PK-FK
+        Guid RoleId PK-FK
+    }
+
+    %% ============================================================
+    %% RELATIONSHIPS
+    %% ============================================================
+
+    %% Election Management
+    Election ||--o{ Location : "has many"
+    Election ||--o{ Teller : "has many"
+    Election ||--o{ Person : "has many"
+    Election ||--o{ Result : "has many"
+    Election ||--|| ResultSummary : "has one"
+    Election ||--o{ ResultTie : "has many"
+    Election ||--o{ ImportFile : "has many"
+    Election ||--o{ OnlineVotingInfo : "has many"
+    Election ||--o{ JoinElectionUser : "has many"
+    Election ||--o{ C_Log : "has many (optional)"
+    Election ||--o{ Message : "has many (optional)"
+
+    %% Location Relationships
+    Location ||--o{ Ballot : "has many"
+    Location ||--o{ Person : "registered at"
+    Location ||--o{ C_Log : "has many (optional)"
+
+    %% People & Voting
+    Person ||--o{ Vote : "receives votes as candidate"
+    Person ||--o{ Result : "has results"
+    Person ||--o{ OnlineVotingInfo : "has online ballot"
+
+    %% Ballots & Votes
+    Ballot ||--o{ Vote : "contains many"
+
+    %% Online Voting (No direct FK - matched via VoterId)
+    OnlineVoter }o--o{ Person : "matched by email/phone"
+    OnlineVoter }o--o{ OnlineVotingInfo : "matched by VoterId"
+
+    %% Identity & Users
+    AspNetUsers ||--o{ JoinElectionUser : "joins elections"
+    AspNetUsers ||--o{ AspNetUserLogins : "has OAuth logins"
+    AspNetUsers ||--o{ AspNetUserClaims : "has claims"
+    AspNetUsers ||--o{ AspNetUserRoles : "has roles"
+    AspNetRoles ||--o{ AspNetUserRoles : "assigned to users"
+
+    %% ============================================================
+    %% NOTES
+    %% ============================================================
+    %% 1. All core entities use Guid-based foreign keys (not integers)
+    %% 2. C_RowId is integer PK for Entity Framework
+    %% 3. {Entity}Guid is the business key used for relationships
+    %% 4. C_RowVersion is used for optimistic concurrency
+    %% 5. Multi-tenancy: Almost all tables scoped by ElectionGuid
+    %% 6. OnlineVoter has no direct FK - matches Person via email/phone
+    %% 7. Three authentication systems:
+    %%    - System 1: AspNetUsers (admin/teller with accounts)
+    %%    - System 2: Guest tellers (access code, no account)
+    %%    - System 3: OnlineVoter (one-time code, no password)
