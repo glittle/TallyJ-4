@@ -5,16 +5,19 @@
 TallyJ integrates with **Twilio** to deliver **6-digit verification codes** to voters via SMS, voice calls, and WhatsApp. This enables passwordless authentication for voters who wish to use their phone number instead of email.
 
 ### 1.1 Use Cases
+
 - **Voter Authentication**: One-time 6-digit verification codes for voter login
 - **Phone Number Verification**: Confirm voter's phone number before election day
 - **Multi-Channel Delivery**: SMS, voice call, or WhatsApp (voter's choice)
 
 ### 1.2 Supported Channels
+
 - **SMS**: Standard text message delivery
 - **Voice Call**: Automated voice call reading the verification code
 - **WhatsApp**: Message via WhatsApp Business API
 
 ### 1.3 Technology Stack
+
 - **Service Provider**: Twilio (https://www.twilio.com)
 - **API**: Twilio REST API
 - **SDK**: Twilio C# SDK (estimated version: 5.x - 6.x)
@@ -44,14 +47,14 @@ TallyJ integrates with **Twilio** to deliver **6-digit verification codes** to v
 
 ### 2.2 Configuration Details
 
-| Key | Format | Example | Purpose |
-|-----|--------|---------|---------|
-| `twilio-SID` | ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | `AC1234567890abcdef1234567890abcd` | Twilio Account SID (identifier) |
-| `twilio-Token` | 32-character hex string | `1234567890abcdef1234567890abcdef` | Twilio Auth Token (secret) |
-| `twilio-MessagingSid` | MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | `MG1234567890abcdef1234567890abcd` | Messaging Service SID (optional) |
-| `twilio-FromNumber` | E.164 format | `+15551234567` | Twilio phone number for SMS/voice |
-| `twilio-WhatsAppFromNumber` | whatsapp:+... | `whatsapp:+15551234567` | WhatsApp sender number |
-| `twilio-CallbackUrl` | Full URL | `https://tallyj.com/Public/SmsStatus` | Status webhook endpoint |
+| Key                         | Format                             | Example                               | Purpose                           |
+| --------------------------- | ---------------------------------- | ------------------------------------- | --------------------------------- |
+| `twilio-SID`                | ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | `AC1234567890abcdef1234567890abcd`    | Twilio Account SID (identifier)   |
+| `twilio-Token`              | 32-character hex string            | `1234567890abcdef1234567890abcdef`    | Twilio Auth Token (secret)        |
+| `twilio-MessagingSid`       | MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | `MG1234567890abcdef1234567890abcd`    | Messaging Service SID (optional)  |
+| `twilio-FromNumber`         | E.164 format                       | `+15551234567`                        | Twilio phone number for SMS/voice |
+| `twilio-WhatsAppFromNumber` | whatsapp:+...                      | `whatsapp:+15551234567`               | WhatsApp sender number            |
+| `twilio-CallbackUrl`        | Full URL                           | `https://tallyj.com/Public/SmsStatus` | Status webhook endpoint           |
 
 ### 2.3 Feature Flags
 
@@ -68,17 +71,18 @@ TallyJ integrates with **Twilio** to deliver **6-digit verification codes** to v
 <add key="UserAttemptMax" value="10" />
 ```
 
-| Key | Default | Purpose |
-|-----|---------|---------|
-| `SupportOnlineSmsLogin` | `true` | Enable SMS/Voice authentication globally |
-| `SmsAvailable` | `true` | Enable SMS delivery method |
-| `VoiceAvailable` | `true` | Enable voice call delivery method |
-| `SupportOnlineWhatsAppLogin` | `true` | Enable WhatsApp delivery method |
-| `UserAttemptMax` | `10` | Max SMS/Voice/WhatsApp attempts per 15 minutes |
+| Key                          | Default | Purpose                                        |
+| ---------------------------- | ------- | ---------------------------------------------- |
+| `SupportOnlineSmsLogin`      | `true`  | Enable SMS/Voice authentication globally       |
+| `SmsAvailable`               | `true`  | Enable SMS delivery method                     |
+| `VoiceAvailable`             | `true`  | Enable voice call delivery method              |
+| `SupportOnlineWhatsAppLogin` | `true`  | Enable WhatsApp delivery method                |
+| `UserAttemptMax`             | `10`    | Max SMS/Voice/WhatsApp attempts per 15 minutes |
 
 ### 2.4 Obtaining Twilio Credentials
 
 **Steps**:
+
 1. Sign up at https://www.twilio.com/try-twilio
 2. Verify your account (provide phone number, credit card)
 3. Navigate to Console → Account Info:
@@ -103,14 +107,18 @@ TallyJ integrates with **Twilio** to deliver **6-digit verification codes** to v
 ### 3.1 Voter Requests Verification Code
 
 #### Step 1: Voter Clicks "Vote Online" → "Using your phone"
+
 **UI**: Home page (`/`) → Modal dialog → Phone number input field
 
 #### Step 2: Voter Enters Phone Number
+
 **Format**: Various formats accepted, normalized to E.164
+
 - Input: `555-123-4567`, `(555) 123-4567`, `+1 555 123 4567`
 - Normalized: `+15551234567`
 
 #### Step 3: API Request to Issue Code
+
 **Code**: `PublicController.cs:143-146` → `VoterCodeHelper.IssueCode()`
 
 ```csharp
@@ -120,7 +128,7 @@ public JsonResult IssueCode(string type, string method, string target, string hu
     // method: "sms", "voice", or "whatsapp"
     // target: phone number (any format)
     // hubKey: SignalR connection ID
-    
+
     var helper = new VoterCodeHelper(hubKey);
     return helper.IssueCode(type, method, target).AsJsonResult();
 }
@@ -142,6 +150,13 @@ private string GenerateVerificationCode()
 **Format**: 6-digit numeric code (e.g., `123456`)
 **Storage**: `OnlineVoter.VerifyCode` (plaintext)
 **Expiration**: Tracked via `OnlineVoter.VerifyCodeDate` (typically 10-15 minutes)
+**Next Version**: Should use better random generator for security
+
+```csharp
+    // Generate cryptographically secure random 6-digit code
+    var code = System.Security.Cryptography.RandomNumberGenerator.GetInt32(100000, 1000000);
+    return code.ToString();
+```
 
 ### 3.3 Twilio API Call (SMS)
 
@@ -156,21 +171,21 @@ public bool SendSms(string toPhoneNumber, string message)
         var authToken = ConfigurationManager.AppSettings["twilio-Token"];
         var fromNumber = ConfigurationManager.AppSettings["twilio-FromNumber"];
         var callbackUrl = ConfigurationManager.AppSettings["twilio-CallbackUrl"];
-        
+
         TwilioClient.Init(accountSid, authToken);
-        
+
         var messageOptions = new CreateMessageOptions(new PhoneNumber(toPhoneNumber))
         {
             From = new PhoneNumber(fromNumber),
             Body = message,
             StatusCallback = new Uri(callbackUrl)
         };
-        
+
         var messageResult = MessageResource.Create(messageOptions);
-        
+
         // Log to SmsLog table
         LogSmsDelivery(toPhoneNumber, messageResult.Sid, messageResult.Status.ToString());
-        
+
         return messageResult.Status != MessageResource.StatusEnum.Failed;
     }
     catch (Exception ex)
@@ -182,6 +197,7 @@ public bool SendSms(string toPhoneNumber, string message)
 ```
 
 **HTTP Request** (underlying Twilio API):
+
 ```http
 POST /2010-04-01/Accounts/{AccountSid}/Messages.json
 Host: api.twilio.com
@@ -197,6 +213,7 @@ StatusCallback=https://tallyj.com/Public/SmsStatus
 ### 3.4 SMS Template
 
 **Default Message**:
+
 ```
 Your TallyJ verification code is: {CODE}
 
@@ -206,11 +223,13 @@ This code will expire in 15 minutes. Do not share this code with anyone.
 **Customizable Template**: Election owners can customize the SMS text via election settings.
 
 **Variables Available**:
+
 - `{CODE}`: 6-digit verification code
 - `{ELECTION_NAME}`: Name of the election
 - `{EXPIRES_IN}`: Minutes until code expires
 
 **Example Custom Template**:
+
 ```
 Election: {ELECTION_NAME}
 
@@ -235,11 +254,11 @@ public ActionResult SmsStatus()
     var messageStatus = Request.Form["MessageStatus"];
     var errorCode = Request.Form["ErrorCode"];
     var errorMessage = Request.Form["ErrorMessage"];
-    
+
     // Update SmsLog table
     var db = new TallyJ3Entities();
     var smsLog = db.SmsLog.FirstOrDefault(s => s.MessageSid == messageSid);
-    
+
     if (smsLog != null)
     {
         smsLog.Status = messageStatus;
@@ -248,12 +267,13 @@ public ActionResult SmsStatus()
         smsLog.UpdatedAt = DateTime.UtcNow;
         db.SaveChanges();
     }
-    
+
     return new HttpStatusCodeResult(200); // Twilio expects 200 OK
 }
 ```
 
 **Twilio Status Values**:
+
 - `queued`: Message accepted by Twilio, not yet sent
 - `sending`: Currently being sent
 - `sent`: Successfully delivered to carrier
@@ -282,21 +302,21 @@ public bool SendVoiceCall(string toPhoneNumber, string verificationCode)
         var authToken = ConfigurationManager.AppSettings["twilio-Token"];
         var fromNumber = ConfigurationManager.AppSettings["twilio-FromNumber"];
         var callbackUrl = ConfigurationManager.AppSettings["twilio-CallbackUrl"];
-        
+
         TwilioClient.Init(accountSid, authToken);
-        
+
         // Generate TwiML for voice message
         var twiml = GenerateVoiceTwiml(verificationCode);
-        
+
         var call = CallResource.Create(
             to: new PhoneNumber(toPhoneNumber),
             from: new PhoneNumber(fromNumber),
             twiml: new Twilio.Types.Twiml(twiml),
             statusCallback: new Uri(callbackUrl)
         );
-        
+
         LogSmsDelivery(toPhoneNumber, call.Sid, call.Status.ToString(), "voice");
-        
+
         return call.Status != CallResource.StatusEnum.Failed;
     }
     catch (Exception ex)
@@ -337,23 +357,24 @@ public bool SendVoiceCall(string toPhoneNumber, string verificationCode)
 private string GenerateVoiceTwiml(string code)
 {
     var twiml = new VoiceResponse();
-    
+
     twiml.Say("Hello. Your TallyJ verification code is:", voice: "alice", language: "en-US");
     twiml.Pause(1);
-    
+
     // Read digits individually with pauses
     var digitsSeparated = string.Join(", ", code.ToCharArray());
     twiml.Say(digitsSeparated, voice: "alice", language: "en-US");
-    
+
     twiml.Pause(1);
     twiml.Say($"I repeat: {digitsSeparated}", voice: "alice", language: "en-US");
     twiml.Say("Thank you.", voice: "alice", language: "en-US");
-    
+
     return twiml.ToString();
 }
 ```
 
 **Voice Options**:
+
 - **Voice**: `alice` (clear, friendly female voice)
 - **Language**: `en-US` (English - United States)
 - **Alternative Voices**: `man`, `woman`, `Polly.Matthew`, `Polly.Joanna`
@@ -365,6 +386,7 @@ private string GenerateVoiceTwiml(string code)
 ### 5.1 WhatsApp Configuration
 
 **Twilio WhatsApp Options**:
+
 1. **Twilio Sandbox** (testing only): Pre-approved WhatsApp number
 2. **Approved WhatsApp Sender** (production): Requires Facebook Business verification
 
@@ -380,20 +402,20 @@ public bool SendWhatsApp(string toPhoneNumber, string message)
         var accountSid = ConfigurationManager.AppSettings["twilio-SID"];
         var authToken = ConfigurationManager.AppSettings["twilio-Token"];
         var fromNumber = ConfigurationManager.AppSettings["twilio-WhatsAppFromNumber"];
-        
+
         TwilioClient.Init(accountSid, authToken);
-        
+
         var messageOptions = new CreateMessageOptions(
             new PhoneNumber($"whatsapp:{toPhoneNumber}"))
         {
             From = new PhoneNumber(fromNumber), // Already includes "whatsapp:" prefix
             Body = message
         };
-        
+
         var messageResult = MessageResource.Create(messageOptions);
-        
+
         LogSmsDelivery(toPhoneNumber, messageResult.Sid, messageResult.Status.ToString(), "whatsapp");
-        
+
         return messageResult.Status != MessageResource.StatusEnum.Failed;
     }
     catch (Exception ex)
@@ -409,6 +431,7 @@ public bool SendWhatsApp(string toPhoneNumber, string message)
 ### 5.3 WhatsApp Template
 
 **Message**:
+
 ```
 Your TallyJ verification code is: 123456
 
@@ -427,11 +450,11 @@ This code will expire in 15 minutes.
 
 **Tracking**: `OnlineVoter` table
 
-| Field | Purpose |
-|-------|---------|
-| `VerifyAttempts` | Count of failed verification attempts |
+| Field                 | Purpose                                 |
+| --------------------- | --------------------------------------- |
+| `VerifyAttempts`      | Count of failed verification attempts   |
 | `VerifyAttemptsStart` | Timestamp when attempt counting started |
-| `VerifyCodeDate` | When current code was issued |
+| `VerifyCodeDate`      | When current code was issued            |
 
 ### 6.2 Rate Limiting Logic
 
@@ -443,10 +466,10 @@ public object IssueCode(string type, string method, string target)
     var db = new TallyJ3Entities();
     var voterId = NormalizePhoneNumber(target);
     var voterIdType = "sms";
-    
-    var onlineVoter = db.OnlineVoter.FirstOrDefault(ov => 
+
+    var onlineVoter = db.OnlineVoter.FirstOrDefault(ov =>
         ov.VoterId == voterId && ov.VoterIdType == voterIdType);
-    
+
     if (onlineVoter == null)
     {
         onlineVoter = new OnlineVoter
@@ -457,12 +480,12 @@ public object IssueCode(string type, string method, string target)
         };
         db.OnlineVoter.Add(onlineVoter);
     }
-    
+
     // Check rate limiting
     var now = DateTime.UtcNow;
     var attemptWindow = now.AddMinutes(-15);
-    
-    if (onlineVoter.VerifyAttemptsStart.HasValue 
+
+    if (onlineVoter.VerifyAttemptsStart.HasValue
         && onlineVoter.VerifyAttemptsStart > attemptWindow)
     {
         // Within rate limit window
@@ -470,7 +493,7 @@ public object IssueCode(string type, string method, string target)
         {
             return new { Error = "Too many attempts. Please try again in 15 minutes." };
         }
-        
+
         onlineVoter.VerifyAttempts++;
     }
     else
@@ -479,14 +502,14 @@ public object IssueCode(string type, string method, string target)
         onlineVoter.VerifyAttempts = 1;
         onlineVoter.VerifyAttemptsStart = now;
     }
-    
+
     // Generate and send code
     var code = GenerateVerificationCode();
     onlineVoter.VerifyCode = code;
     onlineVoter.VerifyCodeDate = now;
-    
+
     db.SaveChanges();
-    
+
     // Send via selected method
     bool sent = false;
     switch (method)
@@ -501,7 +524,7 @@ public object IssueCode(string type, string method, string target)
             sent = SendWhatsApp(voterId, $"Your TallyJ verification code is: {code}");
             break;
     }
-    
+
     return new { Sent = sent, Method = method };
 }
 ```
@@ -509,14 +532,17 @@ public object IssueCode(string type, string method, string target)
 ### 6.3 Additional Abuse Prevention
 
 **IP-Based Rate Limiting** (recommended for .NET Core):
+
 - Max 20 code requests per IP per hour
 - Max 100 code requests per IP per day
 
 **CAPTCHA** (recommended):
+
 - Add CAPTCHA before phone number submission
 - Prevents automated abuse
 
 **Phone Number Validation**:
+
 - Check against known disposable/virtual phone number databases
 - Validate number format and carrier information
 
@@ -526,15 +552,15 @@ public object IssueCode(string type, string method, string target)
 
 ### 7.1 Common Twilio Errors
 
-| Error Code | Description | Cause | Solution |
-|------------|-------------|-------|----------|
-| `20003` | Authentication error | Invalid Account SID or Auth Token | Verify credentials in Twilio console |
-| `21211` | Invalid 'To' phone number | Phone number format incorrect | Normalize to E.164 format |
-| `21408` | Permission to send to unverified number | Trial account, recipient not verified | Verify recipient in Twilio console or upgrade account |
-| `21610` | Unsubscribed recipient | Recipient opted out of messages | Remove from list, notify user |
-| `30003` | Unreachable destination | Phone number invalid or carrier issue | Verify number, try alternative method |
-| `30005` | Unknown destination | Phone number does not exist | Validate number format |
-| `30006` | Landline or unreachable carrier | Cannot deliver SMS to landline | Suggest voice call instead |
+| Error Code | Description                             | Cause                                 | Solution                                              |
+| ---------- | --------------------------------------- | ------------------------------------- | ----------------------------------------------------- |
+| `20003`    | Authentication error                    | Invalid Account SID or Auth Token     | Verify credentials in Twilio console                  |
+| `21211`    | Invalid 'To' phone number               | Phone number format incorrect         | Normalize to E.164 format                             |
+| `21408`    | Permission to send to unverified number | Trial account, recipient not verified | Verify recipient in Twilio console or upgrade account |
+| `21610`    | Unsubscribed recipient                  | Recipient opted out of messages       | Remove from list, notify user                         |
+| `30003`    | Unreachable destination                 | Phone number invalid or carrier issue | Verify number, try alternative method                 |
+| `30005`    | Unknown destination                     | Phone number does not exist           | Validate number format                                |
+| `30006`    | Landline or unreachable carrier         | Cannot deliver SMS to landline        | Suggest voice call instead                            |
 
 ### 7.2 Error Handling Code
 
@@ -550,10 +576,10 @@ public object SendSmsWithErrorHandling(string phoneNumber, string message)
     {
         var errorCode = ex.Code;
         var errorMessage = ex.Message;
-        
+
         // Log error
         new LogHelper().Add($"Twilio API error {errorCode}: {errorMessage}", false);
-        
+
         // User-friendly error messages
         switch (errorCode)
         {
@@ -590,17 +616,17 @@ public object SendSmsWithErrorHandling(string phoneNumber, string message)
 
 **Key Fields**:
 
-| Field | Type | Purpose |
-|-------|------|---------|
-| `SmsLogId` | int (PK) | Unique identifier |
-| `ToNumber` | nvarchar(50) | Recipient phone number |
-| `MessageSid` | nvarchar(50) | Twilio message SID |
-| `Status` | nvarchar(20) | Delivery status (queued, sent, delivered, failed) |
-| `ErrorCode` | nvarchar(10) | Twilio error code (if failed) |
-| `ErrorMessage` | nvarchar(500) | Error description |
-| `Method` | nvarchar(20) | Delivery method (sms, voice, whatsapp) |
-| `CreatedAt` | datetime | When message was sent |
-| `UpdatedAt` | datetime | Last status update from Twilio |
+| Field          | Type          | Purpose                                           |
+| -------------- | ------------- | ------------------------------------------------- |
+| `SmsLogId`     | int (PK)      | Unique identifier                                 |
+| `ToNumber`     | nvarchar(50)  | Recipient phone number                            |
+| `MessageSid`   | nvarchar(50)  | Twilio message SID                                |
+| `Status`       | nvarchar(20)  | Delivery status (queued, sent, delivered, failed) |
+| `ErrorCode`    | nvarchar(10)  | Twilio error code (if failed)                     |
+| `ErrorMessage` | nvarchar(500) | Error description                                 |
+| `Method`       | nvarchar(20)  | Delivery method (sms, voice, whatsapp)            |
+| `CreatedAt`    | datetime      | When message was sent                             |
+| `UpdatedAt`    | datetime      | Last status update from Twilio                    |
 
 ### 8.2 Logging Code
 
@@ -608,7 +634,7 @@ public object SendSmsWithErrorHandling(string phoneNumber, string message)
 private void LogSmsDelivery(string toNumber, string messageSid, string status, string method = "sms")
 {
     var db = new TallyJ3Entities();
-    
+
     var smsLog = new SmsLog
     {
         ToNumber = toNumber,
@@ -618,7 +644,7 @@ private void LogSmsDelivery(string toNumber, string messageSid, string status, s
         CreatedAt = DateTime.UtcNow,
         UpdatedAt = DateTime.UtcNow
     };
-    
+
     db.SmsLog.Add(smsLog);
     db.SaveChanges();
 }
@@ -631,19 +657,23 @@ private void LogSmsDelivery(string toNumber, string messageSid, string status, s
 ### 9.1 Twilio Pricing (as of 2024)
 
 **SMS (US)**:
+
 - Outbound SMS: $0.0079 per message
 - Inbound SMS: $0.0079 per message
 
 **Voice (US)**:
+
 - Outbound call (per minute): $0.013
 - Inbound call (per minute): $0.0085
 - Average verification call: ~30 seconds = $0.0065
 
 **WhatsApp**:
+
 - User-initiated conversation: Free
 - Business-initiated conversation: $0.005 - $0.08 per message (varies by country)
 
 **Phone Number (US)**:
+
 - Monthly rental: $1.15 per number
 - SMS + Voice capable: $1.15/month
 - Toll-free: $2.00/month
@@ -651,16 +681,19 @@ private void LogSmsDelivery(string toNumber, string messageSid, string status, s
 ### 9.2 Cost Estimation Examples
 
 **Scenario 1**: 1,000 voters, all use SMS
+
 - Cost: 1,000 × $0.0079 = **$7.90**
 - Plus phone number rental: **$1.15/month**
 - **Total**: ~$9 for election
 
 **Scenario 2**: 1,000 voters, 70% SMS, 30% voice
+
 - SMS: 700 × $0.0079 = $5.53
 - Voice: 300 × $0.0065 = $1.95
 - **Total**: ~$7.50 + $1.15/month = **$8.65**
 
 **Scenario 3**: 10,000 voters (large election)
+
 - Cost: 10,000 × $0.0079 = **$79.00**
 - Plus phone number: **$1.15/month**
 - **Total**: ~$80 for election
@@ -680,15 +713,16 @@ private void LogSmsDelivery(string toNumber, string messageSid, string status, s
 
 ### 10.1 Technology Mapping
 
-| ASP.NET Framework 4.8 | .NET Core 8 |
-|----------------------|-------------|
-| `Twilio SDK 5.x` | `Twilio SDK 6.x` (latest) |
+| ASP.NET Framework 4.8              | .NET Core 8                           |
+| ---------------------------------- | ------------------------------------- |
+| `Twilio SDK 5.x`                   | `Twilio SDK 6.x` (latest)             |
 | `ConfigurationManager.AppSettings` | `IConfiguration` dependency injection |
-| `TallyJ3Entities` (EF6) | `TallyJDbContext` (EF Core 8) |
+| `TallyJ3Entities` (EF6)            | `TallyJDbContext` (EF Core 8)         |
 
 ### 10.2 Code Migration Example
 
 #### Current (ASP.NET Framework)
+
 ```csharp
 public class SmsService
 {
@@ -697,65 +731,66 @@ public class SmsService
         var accountSid = ConfigurationManager.AppSettings["twilio-SID"];
         var authToken = ConfigurationManager.AppSettings["twilio-Token"];
         var fromNumber = ConfigurationManager.AppSettings["twilio-FromNumber"];
-        
+
         TwilioClient.Init(accountSid, authToken);
-        
+
         var result = MessageResource.Create(
             to: new PhoneNumber(toNumber),
             from: new PhoneNumber(fromNumber),
             body: message
         );
-        
+
         return result.Status != MessageResource.StatusEnum.Failed;
     }
 }
 ```
 
 #### Target (.NET Core 8)
+
 ```csharp
 public class SmsService : ISmsService
 {
     private readonly IConfiguration _configuration;
     private readonly TallyJDbContext _dbContext;
     private readonly ILogger<SmsService> _logger;
-    
+
     public SmsService(
-        IConfiguration configuration, 
+        IConfiguration configuration,
         TallyJDbContext dbContext,
         ILogger<SmsService> logger)
     {
         _configuration = configuration;
         _dbContext = dbContext;
         _logger = logger;
-        
+
         // Initialize Twilio client once
         var accountSid = _configuration["TallyJ:Twilio:AccountSid"];
         var authToken = _configuration["TallyJ:Twilio:AuthToken"];
         TwilioClient.Init(accountSid, authToken);
     }
-    
-    public async Task<SmsResult> SendSmsAsync(string toNumber, string message, 
+
+    public async Task<SmsResult> SendSmsAsync(string toNumber, string message,
         CancellationToken cancellationToken = default)
     {
         try
         {
             var fromNumber = _configuration["TallyJ:Twilio:FromNumber"];
             var callbackUrl = _configuration["TallyJ:Twilio:CallbackUrl"];
-            
+
             var messageOptions = new CreateMessageOptions(new PhoneNumber(toNumber))
             {
                 From = new PhoneNumber(fromNumber),
                 Body = message,
                 StatusCallback = new Uri(callbackUrl)
             };
-            
+
             var result = await MessageResource.CreateAsync(messageOptions);
-            
+
             // Log to database
             await LogSmsDeliveryAsync(toNumber, result.Sid, result.Status.ToString(), "sms");
-            
-            return new SmsResult 
-            { 
+
+            return new SmsResult
+            {
                 Success = result.Status != MessageResource.StatusEnum.Failed,
                 MessageSid = result.Sid,
                 Status = result.Status.ToString()
@@ -763,19 +798,19 @@ public class SmsService : ISmsService
         }
         catch (ApiException ex)
         {
-            _logger.LogError(ex, "Twilio API error: {ErrorCode} - {ErrorMessage}", 
+            _logger.LogError(ex, "Twilio API error: {ErrorCode} - {ErrorMessage}",
                 ex.Code, ex.Message);
-            
-            return new SmsResult 
-            { 
-                Success = false, 
+
+            return new SmsResult
+            {
+                Success = false,
                 ErrorCode = ex.Code.ToString(),
-                ErrorMessage = ex.Message 
+                ErrorMessage = ex.Message
             };
         }
     }
-    
-    private async Task LogSmsDeliveryAsync(string toNumber, string messageSid, 
+
+    private async Task LogSmsDeliveryAsync(string toNumber, string messageSid,
         string status, string method)
     {
         var smsLog = new SmsLog
@@ -787,7 +822,7 @@ public class SmsService : ISmsService
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
-        
+
         _dbContext.SmsLogs.Add(smsLog);
         await _dbContext.SaveChangesAsync();
     }
@@ -797,6 +832,7 @@ public class SmsService : ISmsService
 ### 10.3 Configuration Migration
 
 #### Current (AppSettings.config)
+
 ```xml
 <add key="twilio-SID" value="AC..." />
 <add key="twilio-Token" value="..." />
@@ -804,6 +840,7 @@ public class SmsService : ISmsService
 ```
 
 #### Target (appsettings.json)
+
 ```json
 {
   "TallyJ": {
@@ -833,6 +870,7 @@ public class SmsService : ISmsService
 ### 10.4 Dependency Injection Registration
 
 **Program.cs**:
+
 ```csharp
 builder.Services.AddSingleton<ISmsService, SmsService>();
 
@@ -848,18 +886,21 @@ builder.Services.AddSingleton<ISmsService, SmsService>();
 ### 10.5 Enhanced Features for .NET Core
 
 #### Async/Await Throughout
+
 - All Twilio SDK calls now async: `MessageResource.CreateAsync()`
 - Better performance and scalability
 
 #### Retry Logic with Polly
+
 ```csharp
 services.AddHttpClient<ISmsService, SmsService>()
-    .AddTransientHttpErrorPolicy(policy => 
-        policy.WaitAndRetryAsync(3, retryAttempt => 
+    .AddTransientHttpErrorPolicy(policy =>
+        policy.WaitAndRetryAsync(3, retryAttempt =>
             TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 ```
 
 #### Background Job Queue for SMS
+
 ```csharp
 public class SmsBackgroundService : BackgroundService
 {
@@ -879,6 +920,7 @@ public class SmsBackgroundService : BackgroundService
 ## 11. Testing Strategy
 
 ### 11.1 Unit Tests
+
 ```csharp
 [Fact]
 public async Task SendSmsAsync_ValidNumber_ReturnsSuccess()
@@ -887,12 +929,12 @@ public async Task SendSmsAsync_ValidNumber_ReturnsSuccess()
     var mockConfig = new Mock<IConfiguration>();
     mockConfig.Setup(c => c["TallyJ:Twilio:AccountSid"]).Returns("AC_test");
     mockConfig.Setup(c => c["TallyJ:Twilio:AuthToken"]).Returns("test_token");
-    
+
     var smsService = new SmsService(mockConfig.Object, _dbContext, _logger);
-    
+
     // Act
     var result = await smsService.SendSmsAsync("+15551234567", "Test message");
-    
+
     // Assert
     Assert.True(result.Success);
     Assert.NotNull(result.MessageSid);
@@ -900,15 +942,16 @@ public async Task SendSmsAsync_ValidNumber_ReturnsSuccess()
 ```
 
 ### 11.2 Integration Tests (with Twilio Test Credentials)
+
 ```csharp
 [Fact]
 public async Task SendSms_ToTwilioTestNumber_Succeeds()
 {
     // Twilio provides test phone numbers that always succeed/fail
     var testNumber = "+15005550006"; // Twilio test number (always succeeds)
-    
+
     var result = await _smsService.SendSmsAsync(testNumber, "Integration test");
-    
+
     Assert.True(result.Success);
     Assert.Equal("queued", result.Status.ToLower());
 }
@@ -917,21 +960,23 @@ public async Task SendSms_ToTwilioTestNumber_Succeeds()
 public async Task SendSms_ToInvalidTestNumber_Fails()
 {
     var invalidNumber = "+15005550001"; // Twilio test number (always fails)
-    
+
     var result = await _smsService.SendSmsAsync(invalidNumber, "Test");
-    
+
     Assert.False(result.Success);
     Assert.NotNull(result.ErrorCode);
 }
 ```
 
 **Twilio Test Numbers**:
+
 - `+15005550006`: Always succeeds
 - `+15005550001`: Invalid phone number
 - `+15005550007`: Cannot route to this number
 - Full list: https://www.twilio.com/docs/iam/test-credentials
 
 ### 11.3 Manual Testing Checklist
+
 - [ ] Send SMS with valid phone number
 - [ ] Send voice call with valid phone number
 - [ ] Send WhatsApp message (sandbox mode)
@@ -949,15 +994,16 @@ public async Task SendSms_ToInvalidTestNumber_Fails()
 
 ### 12.1 Events to Log
 
-| Event | Log Level | Data to Include |
-|-------|-----------|----------------|
-| SMS sent successfully | Info | Phone number (masked), MessageSid, Method |
-| SMS delivery failed | Warning | Phone number (masked), Error code, Error message |
-| Rate limit exceeded | Warning | Phone number (masked), Attempt count |
-| Twilio API error | Error | Error code, Error message, Phone number (masked) |
-| Status webhook received | Debug | MessageSid, Status |
+| Event                   | Log Level | Data to Include                                  |
+| ----------------------- | --------- | ------------------------------------------------ |
+| SMS sent successfully   | Info      | Phone number (masked), MessageSid, Method        |
+| SMS delivery failed     | Warning   | Phone number (masked), Error code, Error message |
+| Rate limit exceeded     | Warning   | Phone number (masked), Attempt count             |
+| Twilio API error        | Error     | Error code, Error message, Phone number (masked) |
+| Status webhook received | Debug     | MessageSid, Status                               |
 
 ### 12.2 Metrics to Track
+
 - SMS delivery success rate (per method: SMS, voice, WhatsApp)
 - Average delivery time (webhook timestamp - send timestamp)
 - Error distribution (by error code)
@@ -969,17 +1015,20 @@ public async Task SendSms_ToInvalidTestNumber_Fails()
 ## 13. Security Best Practices
 
 ### 13.1 Twilio Credentials
+
 - ✅ Store Auth Token in secure configuration (Key Vault, Secrets Manager)
 - ✅ Rotate Auth Token every 90 days
 - ✅ Use Twilio API Keys for additional security
 - ✅ Enable IP whitelisting in Twilio console (if static IPs available)
 
 ### 13.2 Webhook Security
+
 - ✅ Validate Twilio webhook signatures (prevent spoofing)
 - ✅ Use HTTPS for callback URLs
 - ✅ Rate limit webhook endpoint (prevent DoS)
 
 **Webhook Signature Validation**:
+
 ```csharp
 [HttpPost]
 public IActionResult SmsStatus()
@@ -987,22 +1036,23 @@ public IActionResult SmsStatus()
     var signature = Request.Headers["X-Twilio-Signature"];
     var url = $"{Request.Scheme}://{Request.Host}{Request.Path}";
     var formValues = Request.Form.ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
-    
+
     var authToken = _configuration["TallyJ:Twilio:AuthToken"];
     var validator = new RequestValidator(authToken);
-    
+
     if (!validator.Validate(url, formValues, signature))
     {
         _logger.LogWarning("Invalid Twilio webhook signature");
         return Unauthorized();
     }
-    
+
     // Process webhook...
     return Ok();
 }
 ```
 
 ### 13.3 Phone Number Privacy
+
 - ✅ Mask phone numbers in logs (show last 4 digits only)
 - ✅ Encrypt phone numbers in database (GDPR compliance)
 - ✅ Allow users to delete their phone number
@@ -1013,6 +1063,7 @@ public IActionResult SmsStatus()
 ## 14. Known Limitations
 
 ### 14.1 Current Implementation
+
 1. **No international number validation**: May send SMS to unsupported countries
 2. **No carrier lookup**: Cannot detect landlines before sending SMS
 3. **No delivery retry logic**: If SMS fails, user must request new code
@@ -1020,7 +1071,9 @@ public IActionResult SmsStatus()
 5. **No A2P 10DLC compliance**: May have lower deliverability (US only)
 
 ### 14.2 Migration Opportunities
+
 **Add in .NET Core version**:
+
 - ✅ Carrier lookup before sending (Twilio Lookup API)
 - ✅ Automatic retry with different method (SMS fails → try voice)
 - ✅ Cost tracking dashboard
@@ -1034,29 +1087,29 @@ public IActionResult SmsStatus()
 
 ### 15.1 Configuration Summary
 
-| Setting | Required | Format |
-|---------|----------|--------|
-| `twilio-SID` | Yes | ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx |
-| `twilio-Token` | Yes | 32-character hex string |
-| `twilio-FromNumber` | Yes | +1XXXXXXXXXX (E.164 format) |
-| `twilio-MessagingSid` | No | MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx |
-| `twilio-WhatsAppFromNumber` | No | whatsapp:+1XXXXXXXXXX |
-| `twilio-CallbackUrl` | No | https://domain.com/Public/SmsStatus |
+| Setting                     | Required | Format                              |
+| --------------------------- | -------- | ----------------------------------- |
+| `twilio-SID`                | Yes      | ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  |
+| `twilio-Token`              | Yes      | 32-character hex string             |
+| `twilio-FromNumber`         | Yes      | +1XXXXXXXXXX (E.164 format)         |
+| `twilio-MessagingSid`       | No       | MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  |
+| `twilio-WhatsAppFromNumber` | No       | whatsapp:+1XXXXXXXXXX               |
+| `twilio-CallbackUrl`        | No       | https://domain.com/Public/SmsStatus |
 
 ### 15.2 API Endpoints
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/Public/IssueCode` | POST | Request verification code (SMS/Voice/WhatsApp) |
-| `/Public/LoginWithCode` | POST | Verify code and authenticate voter |
-| `/Public/SmsStatus` | POST | Twilio status webhook (public, no auth) |
+| Endpoint                | Method | Purpose                                        |
+| ----------------------- | ------ | ---------------------------------------------- |
+| `/Public/IssueCode`     | POST   | Request verification code (SMS/Voice/WhatsApp) |
+| `/Public/LoginWithCode` | POST   | Verify code and authenticate voter             |
+| `/Public/SmsStatus`     | POST   | Twilio status webhook (public, no auth)        |
 
 ### 15.3 Database Tables
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
+| Table         | Purpose                              | Key Fields                                |
+| ------------- | ------------------------------------ | ----------------------------------------- |
 | `OnlineVoter` | Voter records and verification codes | `VoterId`, `VerifyCode`, `VerifyCodeDate` |
-| `SmsLog` | SMS/Voice/WhatsApp delivery logs | `MessageSid`, `Status`, `ErrorCode` |
+| `SmsLog`      | SMS/Voice/WhatsApp delivery logs     | `MessageSid`, `Status`, `ErrorCode`       |
 
 ---
 
