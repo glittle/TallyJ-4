@@ -44,7 +44,7 @@ erDiagram
         string CustomMethods "CSV"
         string VotingMethods "CSV flags"
         string Flags "JSON"
-        byte-array C_RowVersion "Concurrency token"
+        byteArray C_RowVersion "Concurrency token"
     }
 
     Location {
@@ -66,7 +66,7 @@ erDiagram
         string Name "Teller name"
         string UsingComputerCode
         bool IsHeadTeller
-        byte-array C_RowVersion
+        byteArray C_RowVersion
     }
 
     %% ============================================================
@@ -83,7 +83,7 @@ erDiagram
         string OtherNames
         string OtherInfo
         string Area "Sector/geographic"
-        string BahaiId "Baha-i ID number"
+        string BahaiId "Bahai ID number"
         string CombinedInfo "Searchable text"
         string CombinedSoundCodes "Soundex"
         string CombinedInfoAtStart
@@ -95,7 +95,7 @@ erDiagram
         Guid VotingLocationGuid FK
         string VotingMethod "InPerson, Online, MailedIn"
         int EnvNum "Envelope number"
-        byte-array C_RowVersion
+        byteArray C_RowVersion
         string C_FullName "LastName, FirstName"
         long C_RowVersionInt
         string C_FullNameFL "FirstName LastName"
@@ -151,7 +151,7 @@ erDiagram
         string C_BallotCode "Computed: Code+Num"
         string Teller1
         string Teller2
-        byte-array C_RowVersion
+        byteArray C_RowVersion
     }
 
     Vote {
@@ -162,7 +162,7 @@ erDiagram
         string StatusCode "Valid, Invalid, Extra"
         Guid InvalidReasonGuid
         int SingleNameElectionCount
-        byte-array C_RowVersion
+        byteArray C_RowVersion
         string PersonCombinedInfo "Name snapshot"
         string OnlineVoteRaw "Original text"
     }
@@ -322,8 +322,8 @@ erDiagram
     }
 
     AspNetUserRoles {
-        Guid UserId PK-FK
-        Guid RoleId PK-FK
+        Guid UserId "PK, FK"
+        Guid RoleId "PK, FK"
     }
 
     %% ============================================================

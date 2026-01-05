@@ -271,6 +271,7 @@ Save to `{@artifacts_path}/plan.md`.
 ---
 
 ### [ ] Task 10: Update Final Summary and Handoff Document
+<!-- chat-id: d7f1ad81-a5c3-492f-bf63-33a2e352aed3 -->
 
 #### [ ] Task 10.1: Read Current Summary Document
 - Read `.zenflow/tasks/reverse-engineer-and-design-new-cd6a/REVERSE-ENGINEERING-SUMMARY.md`
