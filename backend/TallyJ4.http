@@ -1,6 +1,207 @@
-@TallyJ4_HostAddress = http://localhost:5016
+@TallyJ4_HostAddress = http://localhost:5000
+@bearerToken = PASTE_YOUR_TOKEN_HERE
 
-GET {{TallyJ4_HostAddress}}/weatherforecast/
-Accept: application/json
+### Test Protected Endpoint
+GET {{TallyJ4_HostAddress}}/protected
+Authorization: Bearer {{bearerToken}}
+
+### ===== AUTHENTICATION =====
+
+### Login (Admin)
+POST {{TallyJ4_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@tallyj.test",
+  "password": "Admin@123"
+}
+
+### Login (Teller)
+POST {{TallyJ4_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "teller@tallyj.test",
+  "password": "Teller@123"
+}
+
+### Login (Voter)
+POST {{TallyJ4_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "voter@tallyj.test",
+  "password": "Voter@123"
+}
+
+### ===== ELECTIONS =====
+
+### Get All Elections
+GET {{TallyJ4_HostAddress}}/api/elections
+Authorization: Bearer {{bearerToken}}
+
+### Get Single Election (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/elections/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+
+### Create Election
+POST {{TallyJ4_HostAddress}}/api/elections
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "name": "Test Election",
+  "electionType": "LSA",
+  "electionMode": "I",
+  "numberToElect": 9,
+  "dateOfElection": "2024-06-15",
+  "tallyStatus": "Setup",
+  "ownerLoginId": "admin@tallyj.test",
+  "listForPublic": false,
+  "showAsTest": true
+}
+
+### Update Election (replace GUID)
+PUT {{TallyJ4_HostAddress}}/api/elections/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "electionGuid": "00000000-0000-0000-0000-000000000000",
+  "name": "Updated Election Name",
+  "electionType": "LSA",
+  "electionMode": "I",
+  "numberToElect": 9,
+  "dateOfElection": "2024-06-15",
+  "tallyStatus": "Setup",
+  "ownerLoginId": "admin@tallyj.test",
+  "listForPublic": false,
+  "showAsTest": true
+}
+
+### Delete Election (replace GUID)
+DELETE {{TallyJ4_HostAddress}}/api/elections/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+
+### ===== PEOPLE =====
+
+### Get People by Election (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/people/election/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+
+### Get Single Person (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/people/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+
+### Create Person (replace election GUID)
+POST {{TallyJ4_HostAddress}}/api/people
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "electionGuid": "00000000-0000-0000-0000-000000000000",
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "canReceiveVotes": true
+}
+
+### Update Person (replace GUIDs)
+PUT {{TallyJ4_HostAddress}}/api/people/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "personGuid": "00000000-0000-0000-0000-000000000000",
+  "electionGuid": "00000000-0000-0000-0000-000000000000",
+  "firstName": "Jane",
+  "lastName": "Smith-Updated",
+  "canReceiveVotes": true
+}
+
+### Delete Person (replace GUID)
+DELETE {{TallyJ4_HostAddress}}/api/people/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+
+### ===== BALLOTS =====
+
+### Get Ballots by Election (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/ballots/election/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+
+### Get Single Ballot (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/ballots/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+
+### Create Ballot (replace location GUID)
+POST {{TallyJ4_HostAddress}}/api/ballots
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "locationGuid": "00000000-0000-0000-0000-000000000000",
+  "statusCode": "Ok",
+  "computerCode": "A1",
+  "ballotNumAtComputer": 1
+}
+
+### Update Ballot (replace GUIDs)
+PUT {{TallyJ4_HostAddress}}/api/ballots/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "ballotGuid": "00000000-0000-0000-0000-000000000000",
+  "locationGuid": "00000000-0000-0000-0000-000000000000",
+  "statusCode": "Ok",
+  "computerCode": "A1",
+  "ballotNumAtComputer": 1
+}
+
+### Delete Ballot (replace GUID)
+DELETE {{TallyJ4_HostAddress}}/api/ballots/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+
+### ===== VOTES =====
+
+### Get Votes by Ballot (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/votes/ballot/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+
+### Get Votes by Election (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/votes/election/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{bearerToken}}
+
+### Get Single Vote (replace RowId)
+GET {{TallyJ4_HostAddress}}/api/votes/1
+Authorization: Bearer {{bearerToken}}
+
+### Create Vote (replace GUIDs)
+POST {{TallyJ4_HostAddress}}/api/votes
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "ballotGuid": "00000000-0000-0000-0000-000000000000",
+  "positionOnBallot": 1,
+  "personGuid": "00000000-0000-0000-0000-000000000000",
+  "statusCode": "Ok"
+}
+
+### Update Vote (replace RowId and GUIDs)
+PUT {{TallyJ4_HostAddress}}/api/votes/1
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "rowId": 1,
+  "ballotGuid": "00000000-0000-0000-0000-000000000000",
+  "positionOnBallot": 1,
+  "personGuid": "00000000-0000-0000-0000-000000000000",
+  "statusCode": "Ok"
+}
+
+### Delete Vote (replace RowId)
+DELETE {{TallyJ4_HostAddress}}/api/votes/1
+Authorization: Bearer {{bearerToken}}
 
 ###

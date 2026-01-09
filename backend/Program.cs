@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TallyJ4.EF.Context;
 using TallyJ4.EF.Identity;
+using TallyJ4.EF.Data;
 using Serilog;
 using TallyJ4.Backend.Helpers;
 
@@ -18,7 +19,7 @@ var builderConfiguration = builder.Configuration;
 var services = builder.Services;
 
 // Connect to DB
-var connectionStringName = "Compliance";
+var connectionStringName = "TallyJ4";
 var connectionString = builderConfiguration.GetConnectionString(connectionStringName);
 
 var regex = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
@@ -53,6 +54,9 @@ services.Configure<IdentityOptions>(options =>
 // Add authorization (for [Authorize] attributes)
 services.AddAuthorization();
 
+// Add controllers
+services.AddControllers();
+
 // Optional: If you need full JWT customization (the built-in bearer is similar but not pure JWT)
 services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
@@ -70,6 +74,22 @@ services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, opt
 
 var app = builder.Build();
 
+// Seed database in development
+if (app.Environment.IsDevelopment())
+{
+    var seedOnStartup = builder.Configuration.GetValue<bool>("Database:SeedOnStartup", true);
+    if (seedOnStartup)
+    {
+        using var scope = app.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+        await context.Database.MigrateAsync();
+        await DbSeeder.SeedAsync(context, userManager, logger);
+    }
+}
+
 // Middleware pipeline (order matters)
 if (app.Environment.IsDevelopment())
 {
@@ -83,8 +103,11 @@ app.UseAuthorization();
 // Map the Identity API endpoints (e.g., under /auth prefix)
 app.MapGroup("/auth").MapIdentityApi<AppUser>();  // Adds /auth/register, /auth/login, etc.
 
-// Your other API routes (e.g., app.MapControllers() if using controllers)
-app.MapGet("/protected", () => "This is protected!").RequireAuthorization();  // Test endpoint
+// Map API controllers
+app.MapControllers();
+
+// Test endpoint
+app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
 
 // Start listening
 await app.RunAsync();
