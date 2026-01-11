@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.EF.Identity;
-using TallyJ4.EF.Models;
+using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.EF.Context;
 

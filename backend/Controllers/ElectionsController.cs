@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.EF.Context;
-using TallyJ4.EF.Models;
+using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Backend.Controllers;
 

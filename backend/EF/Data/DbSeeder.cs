@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.EF.Context;
 using TallyJ4.EF.Identity;
-using TallyJ4.EF.Models;
+using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.EF.Data;
 
