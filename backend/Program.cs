@@ -54,6 +54,16 @@ services.Configure<IdentityOptions>(options =>
 // Add authorization (for [Authorize] attributes)
 services.AddAuthorization();
 
+// Add localization
+services.AddLocalization(options => options.ResourcesPath = "Resources");
+services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { "en", "fr" };
+    options.SetDefaultCulture("en")
+        .AddSupportedCultures(supportedCultures)
+        .AddSupportedUICultures(supportedCultures);
+});
+
 // Add controllers
 services.AddControllers();
 
@@ -97,6 +107,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Use localization middleware
+app.UseRequestLocalization();
+
 app.UseAuthentication();  // Enables Identity
 app.UseAuthorization();
 

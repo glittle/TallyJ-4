@@ -1,0 +1,25 @@
+{
+  "common": {
+    "language": "Langue",
+    "english": "English",
+    "french": "Français",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "logout": "Déconnexion",
+    "email": "Courriel",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié?",
+    "googleLogin": "Se connecter avec Google",
+    "enable2FA": "Activer l'authentification à deux facteurs",
+    "verify2FA": "Vérifier le code",
+    "errors": {
+      "invalidCredentials": "Courriel ou mot de passe invalide",
+      "emailRequired": "Le courriel est requis",
+      "passwordRequired": "Le mot de passe est requis"
+    }
+  }
+}
