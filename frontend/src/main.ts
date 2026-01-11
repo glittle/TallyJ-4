@@ -5,7 +5,7 @@ import ElementPlus from "element-plus";
 import "./style.css";
 
 import App from "./App.vue";
-import router from "./router/router";
+import { router } from "./router/router";
 
 const pinia = createPinia();
 
