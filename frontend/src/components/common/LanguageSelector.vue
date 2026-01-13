@@ -1,44 +1,40 @@
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import { ElSelect, ElOption } from 'element-plus'
+
+const { locale, t } = useI18n()
+
+const languages = [
+  { value: 'en', label: t('common.english') },
+  { value: 'fr', label: t('common.french') }
+]
+
+const changeLanguage = (lang: string) => {
+  locale.value = lang
+  localStorage.setItem('preferred-language', lang)
+}
+</script>
+
 <template>
-  <el-select
-    v-model="currentLocale"
-    @change="changeLocale"
-    style="width: 120px"
-    size="small"
-  >
-    <el-option
-      v-for="lang in availableLanguages"
-      :key="lang.code"
-      :label="lang.name"
-      :value="lang.code"
+  <div class="language-selector">
+    <ElSelect
+      :model-value="locale"
+      @update:model-value="changeLanguage"
+      size="small"
+      style="width: 120px"
     >
-      {{ lang.name }}
-    </el-option>
-  </el-select>
+      <ElOption
+        v-for="lang in languages"
+        :key="lang.value"
+        :label="lang.label"
+        :value="lang.value"
+      />
+    </ElSelect>
+  </div>
 </template>
 
-<script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { setLocale } from '../../locales';
-
-type Locale = 'en' | 'fr';
-
-const { locale } = useI18n();
-const currentLocale = ref(locale.value);
-
-const availableLanguages = [
-  { code: 'en' as Locale, name: 'English' },
-  { code: 'fr' as Locale, name: 'Français' }
-];
-
-const changeLocale = (newLocale: string) => {
-  if (newLocale === 'en' || newLocale === 'fr') {
-    setLocale(newLocale);
-    currentLocale.value = newLocale;
-  }
-};
-
-watch(locale, (newLocale) => {
-  currentLocale.value = newLocale;
-});
-</script>
+<style lang="less">
+.language-selector {
+  display: inline-block;
+}
+</style>

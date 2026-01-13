@@ -3,7 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.EF.Context;
-using TallyJ4.EF.Identity;
+using TallyJ4.Domain.Identity;
 using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.EF.Data;
@@ -36,36 +36,30 @@ public static class DbSeeder
     {
         logger.LogInformation("Seeding users...");
 
-        var users = new[]
+        var adminEmail = "admin@tallyj.local";
+        var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
+        
+        if (existingAdmin == null)
         {
-            new { Email = "admin@tallyj.test", Password = "Admin@123" },
-            new { Email = "teller@tallyj.test", Password = "Teller@123" },
-            new { Email = "voter@tallyj.test", Password = "Voter@123" }
-        };
-
-        foreach (var userData in users)
-        {
-            var existingUser = await userManager.FindByEmailAsync(userData.Email);
-            if (existingUser == null)
+            var admin = new AppUser
             {
-                var user = new AppUser
-                {
-                    UserName = userData.Email,
-                    Email = userData.Email,
-                    EmailConfirmed = true
-                };
+                UserName = adminEmail,
+                Email = adminEmail,
+                EmailConfirmed = true,
+                AuthMethod = "Local",
+                TwoFactorEnabled = false
+            };
 
-                var result = await userManager.CreateAsync(user, userData.Password);
-                if (result.Succeeded)
-                {
-                    logger.LogInformation("Created user: {Email}", userData.Email);
-                }
-                else
-                {
-                    logger.LogError("Failed to create user {Email}: {Errors}",
-                        userData.Email,
-                        string.Join(", ", result.Errors.Select(e => e.Description)));
-                }
+            var result = await userManager.CreateAsync(admin, "Admin123!");
+            if (result.Succeeded)
+            {
+                logger.LogInformation("Created admin user: {Email}", adminEmail);
+            }
+            else
+            {
+                logger.LogError("Failed to create admin user {Email}: {Errors}",
+                    adminEmail,
+                    string.Join(", ", result.Errors.Select(e => e.Description)));
             }
         }
     }
@@ -75,7 +69,7 @@ public static class DbSeeder
         logger.LogInformation("Seeding Election 1: Springfield LSA...");
 
         var electionGuid = CreateGuid("SpringfieldLSA2024");
-        var adminEmail = "admin@tallyj.test";
+        var adminEmail = "admin@tallyj.local";
 
         var election = new Election
         {
@@ -292,7 +286,7 @@ public static class DbSeeder
             TallyStatus = "Finalized",
             ShowFullReport = true,
             VotingMethods = "IP",
-            OwnerLoginId = "admin@tallyj.test",
+            OwnerLoginId = "admin@tallyj.local",
             ListForPublic = false,
             ShowAsTest = true
         };

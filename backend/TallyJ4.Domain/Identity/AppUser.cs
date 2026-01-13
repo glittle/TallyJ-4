@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using TallyJ4.Domain.Entities;
 
-namespace TallyJ4.EF.Identity;
+namespace TallyJ4.Domain.Identity;
 
 public class AppUser : IdentityUser
 {

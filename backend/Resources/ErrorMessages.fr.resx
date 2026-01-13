@@ -31,7 +31,7 @@
               <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute ref="xml:space" msdata:Ordinal="5" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -68,10 +68,10 @@
     <value>Le mot de passe est requis</value>
   </data>
   <data name="UserNotFound" xml:space="preserve">
-    <value>Utilisateur introuvable</value>
+    <value>Utilisateur non trouvé</value>
   </data>
   <data name="EmailAlreadyExists" xml:space="preserve">
-    <value>Ce courriel existe déjà</value>
+    <value>Le courriel existe déjà</value>
   </data>
   <data name="InvalidToken" xml:space="preserve">
     <value>Jeton invalide ou expiré</value>
@@ -79,7 +79,7 @@
   <data name="TwoFactorRequired" xml:space="preserve">
     <value>Code d'authentification à deux facteurs requis</value>
   </data>
-  <data name="InvalidTwoFactorCode" xml:space="preserve">
+  <data name="Invalid2FACode" xml:space="preserve">
     <value>Code d'authentification à deux facteurs invalide</value>
   </data>
 </root>

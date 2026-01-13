@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.EF.Identity;
+using TallyJ4.Domain.Identity;
 using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.EF.Context;
@@ -43,6 +43,8 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
     public virtual DbSet<SmsLog> SmsLogs { get; set; }
 
     public virtual DbSet<Teller> Tellers { get; set; }
+
+    public virtual DbSet<TwoFactorToken> TwoFactorTokens { get; set; }
 
     public virtual DbSet<Vote> Votes { get; set; }
 
@@ -199,6 +201,18 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
                 .HasConstraintName("FK_Teller_Election");
         });
 
+        modelBuilder.Entity<TwoFactorToken>(entity =>
+        {
+            entity.Property(e => e.TokenGuid).HasDefaultValueSql("(CONVERT([uniqueidentifier],CONVERT([binary](10),newid(),(0))+CONVERT([binary](6),getdate(),(0)),(0)))");
+            entity.Property(e => e.RowVersion)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+
+            entity.HasOne<AppUser>()
+                .WithOne(u => u.TwoFactorToken)
+                .HasForeignKey<TwoFactorToken>(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         modelBuilder.Entity<Vote>(entity =>
         {

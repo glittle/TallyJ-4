@@ -31,7 +31,7 @@
               <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute ref="xml:space" msdata:Ordinal="5" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -79,7 +79,7 @@
   <data name="TwoFactorRequired" xml:space="preserve">
     <value>Two-factor authentication code required</value>
   </data>
-  <data name="InvalidTwoFactorCode" xml:space="preserve">
+  <data name="Invalid2FACode" xml:space="preserve">
     <value>Invalid two-factor authentication code</value>
   </data>
 </root>

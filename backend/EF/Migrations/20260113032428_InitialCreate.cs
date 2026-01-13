@@ -12,25 +12,6 @@ namespace TallyJ4.EF.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "_Log",
-                columns: table => new
-                {
-                    _RowId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AsOf = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "(getdate())"),
-                    ElectionGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LocationGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    VoterId = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
-                    ComputerCode = table.Column<string>(type: "varchar(2)", unicode: false, maxLength: 2, nullable: true),
-                    Details = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true),
-                    HostAndVersion = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__Log", x => x._RowId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -49,6 +30,10 @@ namespace TallyJ4.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GoogleId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AuthMethod = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    PasswordResetToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PasswordResetExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -70,7 +55,7 @@ namespace TallyJ4.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Election",
+                name: "Elections",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -115,12 +100,31 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Election", x => x._RowId);
-                    table.UniqueConstraint("AK_Election_ElectionGuid", x => x.ElectionGuid);
+                    table.PrimaryKey("PK_Elections", x => x._RowId);
+                    table.UniqueConstraint("AK_Elections_ElectionGuid", x => x.ElectionGuid);
                 });
 
             migrationBuilder.CreateTable(
-                name: "OnlineVoter",
+                name: "Logs",
+                columns: table => new
+                {
+                    _RowId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AsOf = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "(getdate())"),
+                    ElectionGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LocationGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    VoterId = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    ComputerCode = table.Column<string>(type: "varchar(2)", unicode: false, maxLength: 2, nullable: true),
+                    Details = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true),
+                    HostAndVersion = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logs", x => x._RowId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OnlineVoters",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -139,11 +143,11 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OnlineVoter", x => x._RowId);
+                    table.PrimaryKey("PK_OnlineVoters", x => x._RowId);
                 });
 
             migrationBuilder.CreateTable(
-                name: "OnlineVotingInfo",
+                name: "OnlineVotingInfos",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -160,11 +164,11 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OnlineVotingInfo", x => x._RowId);
+                    table.PrimaryKey("PK_OnlineVotingInfos", x => x._RowId);
                 });
 
             migrationBuilder.CreateTable(
-                name: "SmsLog",
+                name: "SmsLogs",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -180,7 +184,7 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SmsLog", x => x._RowId);
+                    table.PrimaryKey("PK_SmsLogs", x => x._RowId);
                 });
 
             migrationBuilder.CreateTable(
@@ -290,7 +294,32 @@ namespace TallyJ4.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ImportFile",
+                name: "TwoFactorToken",
+                columns: table => new
+                {
+                    _RowId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TokenGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(CONVERT([uniqueidentifier],CONVERT([binary](10),newid(),(0))+CONVERT([binary](6),getdate(),(0)),(0)))"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Secret = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    VerifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    _RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TwoFactorToken", x => x._RowId);
+                    table.ForeignKey(
+                        name: "FK_TwoFactorToken_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ImportFiles",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -311,17 +340,17 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ImportFile", x => x._RowId);
+                    table.PrimaryKey("PK_ImportFiles", x => x._RowId);
                     table.ForeignKey(
                         name: "FK_ImportFile_Election",
                         column: x => x.ElectionGuid,
-                        principalTable: "Election",
+                        principalTable: "Elections",
                         principalColumn: "ElectionGuid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "JoinElectionUser",
+                name: "JoinElectionUsers",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -334,17 +363,17 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_JoinElectionUser", x => x._RowId);
+                    table.PrimaryKey("PK_JoinElectionUsers", x => x._RowId);
                     table.ForeignKey(
                         name: "FK_JoinElectionUser_Election",
                         column: x => x.ElectionGuid,
-                        principalTable: "Election",
+                        principalTable: "Elections",
                         principalColumn: "ElectionGuid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Location",
+                name: "Locations",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -362,17 +391,17 @@ namespace TallyJ4.EF.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_VotingLocation", x => x._RowId);
-                    table.UniqueConstraint("AK_Location_LocationGuid", x => x.LocationGuid);
+                    table.UniqueConstraint("AK_Locations_LocationGuid", x => x.LocationGuid);
                     table.ForeignKey(
                         name: "FK_Location_Election",
                         column: x => x.ElectionGuid,
-                        principalTable: "Election",
+                        principalTable: "Elections",
                         principalColumn: "ElectionGuid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Message",
+                name: "Messages",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -385,17 +414,17 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Message", x => x._RowId);
+                    table.PrimaryKey("PK_Messages", x => x._RowId);
                     table.ForeignKey(
                         name: "FK_Message_Election",
                         column: x => x.ElectionGuid,
-                        principalTable: "Election",
+                        principalTable: "Elections",
                         principalColumn: "ElectionGuid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Person",
+                name: "People",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -435,18 +464,18 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Person", x => x._RowId);
-                    table.UniqueConstraint("AK_Person_PersonGuid", x => x.PersonGuid);
+                    table.PrimaryKey("PK_People", x => x._RowId);
+                    table.UniqueConstraint("AK_People_PersonGuid", x => x.PersonGuid);
                     table.ForeignKey(
                         name: "FK_Person_Election",
                         column: x => x.ElectionGuid,
-                        principalTable: "Election",
+                        principalTable: "Elections",
                         principalColumn: "ElectionGuid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ResultSummary",
+                name: "ResultSummaries",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -474,17 +503,17 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ResultSummary", x => x._RowId);
+                    table.PrimaryKey("PK_ResultSummaries", x => x._RowId);
                     table.ForeignKey(
                         name: "FK_ResultSummary_Election1",
                         column: x => x.ElectionGuid,
-                        principalTable: "Election",
+                        principalTable: "Elections",
                         principalColumn: "ElectionGuid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ResultTie",
+                name: "ResultTies",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -498,17 +527,17 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ResultTie", x => x._RowId);
+                    table.PrimaryKey("PK_ResultTies", x => x._RowId);
                     table.ForeignKey(
                         name: "FK_ResultTie_Election",
                         column: x => x.ElectionGuid,
-                        principalTable: "Election",
+                        principalTable: "Elections",
                         principalColumn: "ElectionGuid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Teller",
+                name: "Tellers",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -521,16 +550,16 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Teller", x => x._RowId);
+                    table.PrimaryKey("PK_Tellers", x => x._RowId);
                     table.ForeignKey(
                         name: "FK_Teller_Election",
                         column: x => x.ElectionGuid,
-                        principalTable: "Election",
+                        principalTable: "Elections",
                         principalColumn: "ElectionGuid");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ballot",
+                name: "Ballots",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -547,18 +576,18 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Ballot", x => x._RowId);
-                    table.UniqueConstraint("AK_Ballot_BallotGuid", x => x.BallotGuid);
+                    table.PrimaryKey("PK_Ballots", x => x._RowId);
+                    table.UniqueConstraint("AK_Ballots_BallotGuid", x => x.BallotGuid);
                     table.ForeignKey(
                         name: "FK_Ballot_Location1",
                         column: x => x.LocationGuid,
-                        principalTable: "Location",
+                        principalTable: "Locations",
                         principalColumn: "LocationGuid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Result",
+                name: "Results",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -580,22 +609,22 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Result", x => x._RowId);
+                    table.PrimaryKey("PK_Results", x => x._RowId);
                     table.ForeignKey(
                         name: "FK_Result_Election",
                         column: x => x.ElectionGuid,
-                        principalTable: "Election",
+                        principalTable: "Elections",
                         principalColumn: "ElectionGuid");
                     table.ForeignKey(
                         name: "FK_Result_Person",
                         column: x => x.PersonGuid,
-                        principalTable: "Person",
+                        principalTable: "People",
                         principalColumn: "PersonGuid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Vote",
+                name: "Votes",
                 columns: table => new
                 {
                     _RowId = table.Column<int>(type: "int", nullable: false)
@@ -612,29 +641,19 @@ namespace TallyJ4.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vote", x => x._RowId);
+                    table.PrimaryKey("PK_Votes", x => x._RowId);
                     table.ForeignKey(
                         name: "FK_Vote_Ballot",
                         column: x => x.BallotGuid,
-                        principalTable: "Ballot",
+                        principalTable: "Ballots",
                         principalColumn: "BallotGuid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Vote_Person1",
                         column: x => x.PersonGuid,
-                        principalTable: "Person",
+                        principalTable: "People",
                         principalColumn: "PersonGuid");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX__Log",
-                table: "_Log",
-                column: "AsOf");
-
-            migrationBuilder.CreateIndex(
-                name: "nci_msft_1__Log_154BF30FBBDD3CC74014282844F74DFE",
-                table: "_Log",
-                columns: new[] { "ElectionGuid", "LocationGuid" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -677,168 +696,181 @@ namespace TallyJ4.EF.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ballot",
-                table: "Ballot",
+                table: "Ballots",
                 column: "BallotGuid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ballot_Code",
-                table: "Ballot",
+                table: "Ballots",
                 column: "ComputerCode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ballot_Location",
-                table: "Ballot",
+                table: "Ballots",
                 column: "LocationGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Election",
-                table: "Election",
+                table: "Elections",
                 column: "ElectionGuid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ImportFile_ElectionGuid",
-                table: "ImportFile",
+                name: "IX_ImportFiles_ElectionGuid",
+                table: "ImportFiles",
                 column: "ElectionGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JoinElectionUser_ElectionGuid",
-                table: "JoinElectionUser",
+                table: "JoinElectionUsers",
                 column: "ElectionGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JoinElectionUser_UserId",
-                table: "JoinElectionUser",
+                table: "JoinElectionUsers",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Location",
-                table: "Location",
+                table: "Locations",
                 column: "LocationGuid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Location_Election",
-                table: "Location",
+                table: "Locations",
                 column: "ElectionGuid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_ElectionGuid",
-                table: "Message",
+                name: "IX__Log",
+                table: "Logs",
+                column: "AsOf");
+
+            migrationBuilder.CreateIndex(
+                name: "nci_msft_1__Log_154BF30FBBDD3CC74014282844F74DFE",
+                table: "Logs",
+                columns: new[] { "ElectionGuid", "LocationGuid" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_ElectionGuid",
+                table: "Messages",
                 column: "ElectionGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OnlineVoter_Id",
-                table: "OnlineVoter",
+                table: "OnlineVoters",
                 column: "VoterId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OnlineVotingInfo_ElectionPerson",
-                table: "OnlineVotingInfo",
+                table: "OnlineVotingInfos",
                 columns: new[] { "ElectionGuid", "PersonGuid" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_OnlineVotingInfo_Person",
-                table: "OnlineVotingInfo",
+                table: "OnlineVotingInfos",
                 column: "PersonGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Person",
-                table: "Person",
+                table: "People",
                 column: "ElectionGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Person_1",
-                table: "Person",
+                table: "People",
                 column: "PersonGuid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Person_CanVote",
-                table: "Person",
+                table: "People",
                 columns: new[] { "CanVote", "IneligibleReasonGuid" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersonElection",
-                table: "Person",
+                table: "People",
                 columns: new[] { "ElectionGuid", "_FullName" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersonEmail",
-                table: "Person",
+                table: "People",
                 columns: new[] { "ElectionGuid", "Email" },
                 unique: true,
                 filter: "([Email] IS NOT NULL AND [Email]<>'')");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersonPhone",
-                table: "Person",
+                table: "People",
                 columns: new[] { "ElectionGuid", "Phone" },
                 unique: true,
                 filter: "([Phone] IS NOT NULL AND [Phone]<>'')");
 
             migrationBuilder.CreateIndex(
                 name: "nci_msft_Person_22A77D9DC21D83B4582C43E94A27236D",
-                table: "Person",
+                table: "People",
                 column: "ElectionGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Result_Election",
-                table: "Result",
+                table: "Results",
                 column: "ElectionGuid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Result_PersonGuid",
-                table: "Result",
+                name: "IX_Results_PersonGuid",
+                table: "Results",
                 column: "PersonGuid");
 
             migrationBuilder.CreateIndex(
                 name: "Ix_ResultSummary_Election",
-                table: "ResultSummary",
+                table: "ResultSummaries",
                 column: "ElectionGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ResultTie",
-                table: "ResultTie",
+                table: "ResultTies",
                 columns: new[] { "ElectionGuid", "TieBreakGroup" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SmsLog",
-                table: "SmsLog",
+                table: "SmsLogs",
                 column: "SmsSid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SmsLog_Election_Date",
-                table: "SmsLog",
+                table: "SmsLogs",
                 columns: new[] { "ElectionGuid", "LastDate" },
                 descending: new[] { false, true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Teller",
-                table: "Teller",
+                table: "Tellers",
                 columns: new[] { "ElectionGuid", "Name" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_TwoFactorToken_UserId",
+                table: "TwoFactorToken",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_VoteBallot",
-                table: "Vote",
+                table: "Votes",
                 columns: new[] { "BallotGuid", "PositionOnBallot" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_VotePerson",
-                table: "Vote",
+                table: "Votes",
                 column: "PersonGuid");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "_Log");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -855,37 +887,43 @@ namespace TallyJ4.EF.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "ImportFile");
+                name: "ImportFiles");
 
             migrationBuilder.DropTable(
-                name: "JoinElectionUser");
+                name: "JoinElectionUsers");
 
             migrationBuilder.DropTable(
-                name: "Message");
+                name: "Logs");
 
             migrationBuilder.DropTable(
-                name: "OnlineVoter");
+                name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "OnlineVotingInfo");
+                name: "OnlineVoters");
 
             migrationBuilder.DropTable(
-                name: "Result");
+                name: "OnlineVotingInfos");
 
             migrationBuilder.DropTable(
-                name: "ResultSummary");
+                name: "Results");
 
             migrationBuilder.DropTable(
-                name: "ResultTie");
+                name: "ResultSummaries");
 
             migrationBuilder.DropTable(
-                name: "SmsLog");
+                name: "ResultTies");
 
             migrationBuilder.DropTable(
-                name: "Teller");
+                name: "SmsLogs");
 
             migrationBuilder.DropTable(
-                name: "Vote");
+                name: "Tellers");
+
+            migrationBuilder.DropTable(
+                name: "TwoFactorToken");
+
+            migrationBuilder.DropTable(
+                name: "Votes");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -894,16 +932,16 @@ namespace TallyJ4.EF.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Ballot");
+                name: "Ballots");
 
             migrationBuilder.DropTable(
-                name: "Person");
+                name: "People");
 
             migrationBuilder.DropTable(
-                name: "Location");
+                name: "Locations");
 
             migrationBuilder.DropTable(
-                name: "Election");
+                name: "Elections");
         }
     }
 }

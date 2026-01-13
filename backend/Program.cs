@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TallyJ4.EF.Context;
-using TallyJ4.EF.Identity;
+using TallyJ4.Domain.Identity;
 using TallyJ4.EF.Data;
 using Serilog;
 using TallyJ4.Backend.Helpers;
@@ -66,6 +66,14 @@ services.Configure<RequestLocalizationOptions>(options =>
 
 // Add controllers
 services.AddControllers();
+
+// Register authentication services
+services.AddScoped<DbContext>(provider => provider.GetRequiredService<MainDbContext>());
+services.AddScoped<TallyJ4.Application.Services.Auth.JwtTokenService>();
+services.AddScoped<TallyJ4.Application.Services.Auth.LocalAuthService>();
+services.AddScoped<TallyJ4.Application.Services.Auth.PasswordResetService>();
+services.AddScoped<TallyJ4.Application.Services.Auth.TwoFactorService>();
+services.AddScoped<TallyJ4.Application.Services.Auth.EmailService>();
 
 // Optional: If you need full JWT customization (the built-in bearer is similar but not pure JWT)
 services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>

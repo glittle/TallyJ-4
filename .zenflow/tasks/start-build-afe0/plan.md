@@ -189,7 +189,7 @@ Technical specification created in `spec.md` covering:
 
 ### Task 1.3: Database Schema Finalization
 
-#### [ ] Task 1.3.1: Create TwoFactorToken Entity and Update AppUser
+#### [x] Task 1.3.1: Create TwoFactorToken Entity and Update AppUser
 
 **Objective**: Add 2FA support to data model
 
@@ -216,7 +216,7 @@ Technical specification created in `spec.md` covering:
 
 ---
 
-#### [ ] Task 1.3.2: Regenerate Migrations and Seed Data
+#### [x] Task 1.3.2: Regenerate Migrations and Seed Data
 
 **Objective**: Create fresh database with updated schema
 
@@ -247,7 +247,7 @@ Technical specification created in `spec.md` covering:
 
 ### Task 1.4: Admin Authentication
 
-#### [ ] Task 1.4.1: Install Packages and Configure appsettings
+#### [x] Task 1.4.1: Install Packages and Configure appsettings
 
 **Objective**: Set up authentication infrastructure
 
