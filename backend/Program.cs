@@ -39,6 +39,18 @@ if (connectionString == null)
 
 services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
 
+// Add CORS
+services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost:8095")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 // Add Identity API endpoints (this sets up core Identity + bearer auth)
 services.AddIdentityApiEndpoints<AppUser>()
     .AddEntityFrameworkStores<MainDbContext>();
@@ -115,6 +127,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Use CORS
+app.UseCors("AllowFrontend");
 
 // Use localization middleware
 app.UseRequestLocalization();
