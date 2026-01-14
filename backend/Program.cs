@@ -66,6 +66,9 @@ services.AddValidatorsFromAssemblyContaining<Program>();
 // Add AutoMapper
 services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+// Add application services
+services.AddScoped<TallyJ4.Services.IElectionService, TallyJ4.Services.ElectionService>();
+
 // Add exception handler
 services.AddExceptionHandler<GlobalExceptionHandler>();
 services.AddProblemDetails();
