@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.EF.Context;
-using TallyJ4.EF.Models;
+using TallyJ4.DTOs.Votes;
+using TallyJ4.Models;
+using TallyJ4.Services;
 
 namespace TallyJ4.Backend.Controllers;
 
@@ -11,105 +11,86 @@ namespace TallyJ4.Backend.Controllers;
 [Authorize]
 public class VotesController : ControllerBase
 {
-    private readonly MainDbContext _context;
+    private readonly IVoteService _voteService;
     private readonly ILogger<VotesController> _logger;
 
-    public VotesController(MainDbContext context, ILogger<VotesController> logger)
+    public VotesController(IVoteService voteService, ILogger<VotesController> logger)
     {
-        _context = context;
+        _voteService = voteService;
         _logger = logger;
     }
 
     [HttpGet("ballot/{ballotGuid}")]
-    public async Task<ActionResult<IEnumerable<Vote>>> GetVotesByBallot(Guid ballotGuid)
+    public async Task<ActionResult<ApiResponse<List<VoteDto>>>> GetVotesByBallot(Guid ballotGuid)
     {
-        return await _context.Votes
-            .Where(v => v.BallotGuid == ballotGuid)
-            .Include(v => v.Person)
-            .OrderBy(v => v.PositionOnBallot)
-            .ToListAsync();
+        var votes = await _voteService.GetVotesByBallotAsync(ballotGuid);
+        return Ok(ApiResponse<List<VoteDto>>.SuccessResponse(votes));
     }
 
     [HttpGet("election/{electionGuid}")]
-    public async Task<ActionResult<IEnumerable<Vote>>> GetVotesByElection(Guid electionGuid)
+    public async Task<ActionResult<ApiResponse<List<VoteDto>>>> GetVotesByElection(Guid electionGuid)
     {
-        return await _context.Votes
-            .Where(v => v.Ballot.Location.ElectionGuid == electionGuid)
-            .Include(v => v.Person)
-            .Include(v => v.Ballot)
-            .OrderBy(v => v.Ballot.BallotNumAtComputer)
-            .ThenBy(v => v.PositionOnBallot)
-            .ToListAsync();
+        var votes = await _voteService.GetVotesByElectionAsync(electionGuid);
+        return Ok(ApiResponse<List<VoteDto>>.SuccessResponse(votes));
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Vote>> GetVote(int id)
+    public async Task<ActionResult<ApiResponse<VoteDto>>> GetVote(int id)
     {
-        var vote = await _context.Votes
-            .Include(v => v.Person)
-            .Include(v => v.Ballot)
-            .FirstOrDefaultAsync(v => v.RowId == id);
+        var vote = await _voteService.GetVoteByIdAsync(id);
 
         if (vote == null)
         {
-            return NotFound();
+            return NotFound(ApiResponse<VoteDto>.ErrorResponse($"Vote with ID '{id}' not found"));
         }
 
-        return vote;
+        return Ok(ApiResponse<VoteDto>.SuccessResponse(vote));
     }
 
     [HttpPost]
-    public async Task<ActionResult<Vote>> CreateVote(Vote vote)
+    public async Task<ActionResult<ApiResponse<VoteDto>>> CreateVote(CreateVoteDto createDto)
     {
-        _context.Votes.Add(vote);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetVote), new { id = vote.RowId }, vote);
+        try
+        {
+            var vote = await _voteService.CreateVoteAsync(createDto);
+            return CreatedAtAction(nameof(GetVote), new { id = vote.BallotGuid }, ApiResponse<VoteDto>.SuccessResponse(vote));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<VoteDto>.ErrorResponse(ex.Message));
+        }
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateVote(int id, Vote vote)
+    public async Task<ActionResult<ApiResponse<VoteDto>>> UpdateVote(int id, CreateVoteDto updateDto)
     {
-        if (id != vote.RowId)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(vote).State = EntityState.Modified;
-
         try
         {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await VoteExists(id))
+            var vote = await _voteService.UpdateVoteAsync(id, updateDto);
+            
+            if (vote == null)
             {
-                return NotFound();
+                return NotFound(ApiResponse<VoteDto>.ErrorResponse($"Vote with ID '{id}' not found"));
             }
-            throw;
-        }
 
-        return NoContent();
+            return Ok(ApiResponse<VoteDto>.SuccessResponse(vote));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<VoteDto>.ErrorResponse(ex.Message));
+        }
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteVote(int id)
+    public async Task<ActionResult<ApiResponse<object>>> DeleteVote(int id)
     {
-        var vote = await _context.Votes.FirstOrDefaultAsync(v => v.RowId == id);
-        if (vote == null)
+        var success = await _voteService.DeleteVoteAsync(id);
+        
+        if (!success)
         {
-            return NotFound();
+            return NotFound(ApiResponse<object>.ErrorResponse($"Vote with ID '{id}' not found"));
         }
 
-        _context.Votes.Remove(vote);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    private async Task<bool> VoteExists(int id)
-    {
-        return await _context.Votes.AnyAsync(v => v.RowId == id);
+        return Ok(ApiResponse<object>.SuccessResponse(null, "Vote deleted successfully"));
     }
 }

@@ -69,6 +69,8 @@ services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Add application services
 services.AddScoped<TallyJ4.Services.IElectionService, TallyJ4.Services.ElectionService>();
 services.AddScoped<TallyJ4.Services.IPeopleService, TallyJ4.Services.PeopleService>();
+services.AddScoped<TallyJ4.Services.IBallotService, TallyJ4.Services.BallotService>();
+services.AddScoped<TallyJ4.Services.IVoteService, TallyJ4.Services.VoteService>();
 
 // Add exception handler
 services.AddExceptionHandler<GlobalExceptionHandler>();

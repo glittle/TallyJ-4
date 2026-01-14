@@ -113,7 +113,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Phase 2.4: Ballots API Enhancement
+### [x] Phase 2.4: Ballots API Enhancement
+<!-- chat-id: c039e89e-a6b6-423b-a899-6afc935a4c5e -->
 
 **Objective**: Refactor BallotsController with DTOs, validation, and service layer
 
@@ -131,7 +132,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Phase 2.5: Votes API Enhancement
+### [x] Phase 2.5: Votes API Enhancement
+<!-- chat-id: b4a2aaf8-d40e-4c3e-9045-206527ee1b90 -->
 
 **Objective**: Refactor VotesController with DTOs, validation, and service layer
 
