@@ -53,7 +53,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ## Implementation Tasks
 
-### [ ] Phase 2.1: API Infrastructure Setup
+### [x] Phase 2.1: API Infrastructure Setup
+<!-- chat-id: a6a179c2-8709-4b99-ae70-4bf9aadd906a -->
 
 **Objective**: Set up architectural foundation (DTOs, validation, error handling, Swagger)
 
