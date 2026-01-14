@@ -68,6 +68,7 @@ services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add application services
 services.AddScoped<TallyJ4.Services.IElectionService, TallyJ4.Services.ElectionService>();
+services.AddScoped<TallyJ4.Services.IPeopleService, TallyJ4.Services.PeopleService>();
 
 // Add exception handler
 services.AddExceptionHandler<GlobalExceptionHandler>();

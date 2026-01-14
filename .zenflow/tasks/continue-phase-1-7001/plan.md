@@ -93,7 +93,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Phase 2.3: People API Enhancement
+### [x] Phase 2.3: People API Enhancement
+<!-- chat-id: 6bb8f036-e4a9-42f1-a7b6-da10eda6e997 -->
 
 **Objective**: Refactor PeopleController with DTOs, validation, and service layer
 
