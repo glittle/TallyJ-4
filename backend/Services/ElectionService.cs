@@ -46,7 +46,7 @@ public class ElectionService : IElectionService
             Name = e.Name,
             DateOfElection = e.DateOfElection,
             TallyStatus = e.TallyStatus,
-            VoterCount = e.People.Count(p => p.CanVote == "Y"),
+            VoterCount = e.People.Count(p => p.CanVote == true),
             BallotCount = e.Locations.SelectMany(l => l.Ballots).Count()
         }).ToList();
 
@@ -67,7 +67,7 @@ public class ElectionService : IElectionService
         }
 
         var dto = _mapper.Map<ElectionDto>(election);
-        dto.VoterCount = election.People.Count(p => p.CanVote == "Y");
+        dto.VoterCount = election.People.Count(p => p.CanVote == true);
         dto.BallotCount = election.Locations.SelectMany(l => l.Ballots).Count();
         dto.LocationCount = election.Locations.Count;
 
