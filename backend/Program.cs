@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TallyJ4.EF.Context;
-using TallyJ4.EF.Identity;
+using TallyJ4.Domain.Identity;
+using TallyJ4.EF.Data;
 using Serilog;
 using TallyJ4.Backend.Helpers;
 
@@ -18,7 +19,7 @@ var builderConfiguration = builder.Configuration;
 var services = builder.Services;
 
 // Connect to DB
-var connectionStringName = "Compliance";
+var connectionStringName = "TallyJ4";
 var connectionString = builderConfiguration.GetConnectionString(connectionStringName);
 
 var regex = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
@@ -38,6 +39,18 @@ if (connectionString == null)
 
 services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
 
+// Add CORS
+services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost:8095")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 // Add Identity API endpoints (this sets up core Identity + bearer auth)
 services.AddIdentityApiEndpoints<AppUser>()
     .AddEntityFrameworkStores<MainDbContext>();
@@ -52,6 +65,27 @@ services.Configure<IdentityOptions>(options =>
 
 // Add authorization (for [Authorize] attributes)
 services.AddAuthorization();
+
+// Add localization
+services.AddLocalization(options => options.ResourcesPath = "Resources");
+services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { "en", "fr" };
+    options.SetDefaultCulture("en")
+        .AddSupportedCultures(supportedCultures)
+        .AddSupportedUICultures(supportedCultures);
+});
+
+// Add controllers
+services.AddControllers();
+
+// Register authentication services
+services.AddScoped<DbContext>(provider => provider.GetRequiredService<MainDbContext>());
+services.AddScoped<TallyJ4.Application.Services.Auth.JwtTokenService>();
+services.AddScoped<TallyJ4.Application.Services.Auth.LocalAuthService>();
+services.AddScoped<TallyJ4.Application.Services.Auth.PasswordResetService>();
+services.AddScoped<TallyJ4.Application.Services.Auth.TwoFactorService>();
+services.AddScoped<TallyJ4.Application.Services.Auth.EmailService>();
 
 // Optional: If you need full JWT customization (the built-in bearer is similar but not pure JWT)
 services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
@@ -70,6 +104,22 @@ services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, opt
 
 var app = builder.Build();
 
+// Seed database in development
+if (app.Environment.IsDevelopment())
+{
+    var seedOnStartup = builder.Configuration.GetValue<bool>("Database:SeedOnStartup", true);
+    if (seedOnStartup)
+    {
+        using var scope = app.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+        await context.Database.MigrateAsync();
+        await DbSeeder.SeedAsync(context, userManager, logger);
+    }
+}
+
 // Middleware pipeline (order matters)
 if (app.Environment.IsDevelopment())
 {
@@ -77,14 +127,24 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Use CORS
+app.UseCors("AllowFrontend");
+
+// Use localization middleware
+app.UseRequestLocalization();
+
 app.UseAuthentication();  // Enables Identity
 app.UseAuthorization();
 
 // Map the Identity API endpoints (e.g., under /auth prefix)
 app.MapGroup("/auth").MapIdentityApi<AppUser>();  // Adds /auth/register, /auth/login, etc.
 
-// Your other API routes (e.g., app.MapControllers() if using controllers)
-app.MapGet("/protected", () => "This is protected!").RequireAuthorization();  // Test endpoint
+// Map API controllers
+app.MapControllers();
+
+// Test endpoint
+app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
 
 // Start listening
 await app.RunAsync();

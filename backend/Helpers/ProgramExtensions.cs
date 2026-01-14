@@ -67,7 +67,7 @@ public static class ProgramExtensions
             //);
             sqlServerDbContextOptionsBuilder
               .MigrationsHistoryTable("__EFMigrations_" + connectionStringName)
-              .MigrationsAssembly("Compliance");
+              .MigrationsAssembly("TallyJ4");
           }
         );
 
