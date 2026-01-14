@@ -18,7 +18,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
 <!-- chat-id: bf90caae-6677-4e5d-98f9-39a244e2dac2 -->
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
@@ -51,15 +51,189 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+## Implementation Tasks
 
-Implement the task according to the technical specification and general engineering best practices.
+### [ ] Phase 2.1: API Infrastructure Setup
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Objective**: Set up architectural foundation (DTOs, validation, error handling, Swagger)
+
+**Tasks**:
+1. Install NuGet packages (FluentValidation, AutoMapper)
+2. Create directory structure (`DTOs/`, `Services/`, `Validators/`, `Mappings/`, `Middleware/`, `Models/`)
+3. Create `ApiResponse<T>` and `PaginatedResponse<T>` models
+4. Implement global exception handler middleware
+5. Configure Swagger with JWT authentication support
+6. Register services in `Program.cs`
+
+**Verification**:
+- Build succeeds
+- Swagger UI accessible at `/swagger`
+- Global exception handler catches errors and returns Problem Details
+
+---
+
+### [ ] Phase 2.2: Elections API Enhancement
+
+**Objective**: Refactor ElectionsController with DTOs, validation, and service layer
+
+**Tasks**:
+1. Create DTOs: `ElectionDto`, `CreateElectionDto`, `UpdateElectionDto`, `ElectionSummaryDto`
+2. Create `IElectionService` and `ElectionService`
+3. Create AutoMapper profile: `ElectionProfile.cs`
+4. Create validators: `CreateElectionDtoValidator`, `UpdateElectionDtoValidator`
+5. Refactor `ElectionsController` to use service and DTOs
+6. Add pagination to `GET /api/elections`
+
+**Verification**:
+- All endpoints return DTOs (not entities)
+- Validation errors return 400 with details
+- Pagination works correctly
+
+---
+
+### [ ] Phase 2.3: People API Enhancement
+
+**Objective**: Refactor PeopleController with DTOs, validation, and service layer
+
+**Tasks**:
+1. Create DTOs: `PersonDto`, `CreatePersonDto`, `UpdatePersonDto`
+2. Create `IPeopleService` and `PeopleService`
+3. Create AutoMapper profile: `PersonProfile.cs`
+4. Create validators: `CreatePersonDtoValidator`, `UpdatePersonDtoValidator`
+5. Refactor `PeopleController` to use service and DTOs
+6. Add search/filtering and pagination
+
+**Verification**:
+- DTOs returned instead of entities
+- Validation works for email/phone uniqueness
+- Search and pagination work
+
+---
+
+### [ ] Phase 2.4: Ballots API Enhancement
+
+**Objective**: Refactor BallotsController with DTOs, validation, and service layer
+
+**Tasks**:
+1. Create DTOs: `BallotDto`, `CreateBallotDto`, `UpdateBallotDto`
+2. Create `IBallotService` and `BallotService`
+3. Create AutoMapper profile: `BallotProfile.cs`
+4. Create validators
+5. Refactor `BallotsController`
+
+**Verification**:
+- BallotCode computed correctly
+- Votes included in response
+- StatusCode validation works
+
+---
+
+### [ ] Phase 2.5: Votes API Enhancement
+
+**Objective**: Refactor VotesController with DTOs, validation, and service layer
+
+**Tasks**:
+1. Create DTOs: `VoteDto`, `CreateVoteDto`
+2. Create `IVoteService` and `VoteService`
+3. Create AutoMapper profile: `VoteProfile.cs`
+4. Create validators (ballot exists, person eligible, no duplicates)
+5. Refactor `VotesController`
+
+**Verification**:
+- Validation prevents invalid votes
+- PersonFullName populated correctly
+
+---
+
+### [ ] Phase 2.6: Dashboard Controller (New)
+
+**Objective**: Implement dashboard/summary endpoints
+
+**Tasks**:
+1. Create `DashboardController`
+2. Create DTOs: `DashboardSummaryDto`, `ElectionCardDto`
+3. Create `IDashboardService` and `DashboardService`
+4. Implement summary calculations
+
+**Verification**:
+- Counts accurate
+- Recent elections sorted correctly
+- Percent complete calculated
+
+---
+
+### [ ] Phase 2.7: Setup Controller (New - Partial)
+
+**Objective**: Implement election creation wizard endpoints (no CSV import yet)
+
+**Tasks**:
+1. Create `SetupController`
+2. Create DTOs: `ElectionStep1Dto`, `ElectionStep2Dto`
+3. Create `ISetupService` and `SetupService`
+4. Implement multi-step election workflow
+
+**Verification**:
+- Multi-step workflow creates valid election
+- Progress tracked correctly
+
+---
+
+### [ ] Phase 2.8: Account Controller (New - Partial)
+
+**Objective**: Extend Identity with custom admin endpoints
+
+**Tasks**:
+1. Create `AccountController`
+2. Create DTOs: `LoginResponseDto`, `UserProfileDto`
+3. Implement profile management endpoints
+
+**Verification**:
+- Profile endpoints require authentication
+- Change password works
+
+---
+
+### [ ] Phase 2.9: Public Controller (New - Partial)
+
+**Objective**: Implement public endpoints (no auth)
+
+**Tasks**:
+1. Create `PublicController`
+2. Create DTOs: `PublicHomeDto`, `ElectionStatusDto`
+3. Implement public endpoints
+
+**Verification**:
+- Endpoints accessible without authentication
+- No sensitive data exposed
+
+---
+
+### [ ] Phase 2.10: Testing Infrastructure Setup
+
+**Objective**: Create test project and basic tests
+
+**Tasks**:
+1. Create `TallyJ4.Tests` project (xUnit)
+2. Set up `WebApplicationFactory<Program>`
+3. Create test fixtures
+4. Write integration tests for Elections API
+5. Write unit tests for ElectionService
+
+**Verification**:
+- Tests run successfully (`dotnet test`)
+- Test coverage > 60%
+
+---
+
+## Final Phase 2 Deliverables
+
+- [ ] 8 controllers with full DTO/service/validation support
+- [ ] 30+ DTOs created
+- [ ] 8+ service interfaces and implementations
+- [ ] 15+ validators
+- [ ] Global error handling working
+- [ ] Swagger documentation complete
+- [ ] Test project with >10 passing tests
+- [ ] Build succeeds with 0 errors
+- [ ] Updated README.md with API usage examples
+- [ ] Report written to `report.md`
