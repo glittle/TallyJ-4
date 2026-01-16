@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "huWSrv72gJc=",
+  "dgSpecHash": "pgozUAaU1NA=",
   "success": true,
   "projectFilePath": "C:\\Users\\glenl\\.zenflow\\worktrees\\continue-phase-1-7001\\TallyJ4.Tests\\TallyJ4.Tests.csproj",
   "expectedPackageFiles": [
@@ -95,6 +95,7 @@
     "C:\\Users\\glenl\\.nuget\\packages\\microsoft.entityframeworkcore\\9.0.10\\microsoft.entityframeworkcore.9.0.10.nupkg.sha512",
     "C:\\Users\\glenl\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\9.0.10\\microsoft.entityframeworkcore.abstractions.9.0.10.nupkg.sha512",
     "C:\\Users\\glenl\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\9.0.10\\microsoft.entityframeworkcore.analyzers.9.0.10.nupkg.sha512",
+    "C:\\Users\\glenl\\.nuget\\packages\\microsoft.entityframeworkcore.inmemory\\9.0.0\\microsoft.entityframeworkcore.inmemory.9.0.0.nupkg.sha512",
     "C:\\Users\\glenl\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\9.0.10\\microsoft.entityframeworkcore.relational.9.0.10.nupkg.sha512",
     "C:\\Users\\glenl\\.nuget\\packages\\microsoft.entityframeworkcore.sqlite\\9.0.10\\microsoft.entityframeworkcore.sqlite.9.0.10.nupkg.sha512",
     "C:\\Users\\glenl\\.nuget\\packages\\microsoft.entityframeworkcore.sqlite.core\\9.0.10\\microsoft.entityframeworkcore.sqlite.core.9.0.10.nupkg.sha512",
