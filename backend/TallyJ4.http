@@ -271,4 +271,18 @@ Content-Type: application/json
   "confirmPassword": "NewPassword@123"
 }
 
+### ===== PUBLIC ENDPOINTS (No Authentication Required) =====
+
+### Health Check
+GET {{TallyJ4_HostAddress}}/api/public/health
+
+### Get Public Home Data
+GET {{TallyJ4_HostAddress}}/api/public/home
+
+### Get Available Elections
+GET {{TallyJ4_HostAddress}}/api/public/elections
+
+### Get Election Status (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/public/elections/00000000-0000-0000-0000-000000000000/status
+
 ###

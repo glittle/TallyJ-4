@@ -201,18 +201,20 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Phase 2.9: Public Controller (New - Partial)
+### [x] Phase 2.9: Public Controller (New - Partial)
+<!-- chat-id: 465b918a-5ee7-4601-9899-ea8393fb4715 -->
 
 **Objective**: Implement public endpoints (no auth)
 
 **Tasks**:
 1. Create `PublicController`
-2. Create DTOs: `PublicHomeDto`, `ElectionStatusDto`
+2. Create DTOs: `PublicHomeDto`, `ElectionStatusDto`, `AvailableElectionDto`
 3. Implement public endpoints
 
 **Verification**:
 - Endpoints accessible without authentication
 - No sensitive data exposed
+- Build succeeds with 0 errors
 
 ---
 
