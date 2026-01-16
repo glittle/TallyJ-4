@@ -204,4 +204,43 @@ Content-Type: application/json
 DELETE {{TallyJ4_HostAddress}}/api/votes/1
 Authorization: Bearer {{bearerToken}}
 
+### ===== SETUP (Election Wizard) =====
+
+### Create Election - Step 1
+POST {{TallyJ4_HostAddress}}/api/setup/election/step1
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "name": "New Election",
+  "dateOfElection": "2024-12-15",
+  "reason": "Annual election for board members"
+}
+
+### Configure Election - Step 2 (replace GUID with returned ElectionGuid from Step 1)
+PUT {{TallyJ4_HostAddress}}/api/setup/election/00000000-0000-0000-0000-000000000000/step2
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "electionGuid": "00000000-0000-0000-0000-000000000000",
+  "numberToElect": 9,
+  "electionType": "STV",
+  "electionMode": "N"
+}
+
+### Get Setup Status (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/setup/election/00000000-0000-0000-0000-000000000000/status
+Authorization: Bearer {{bearerToken}}
+
+### ===== DASHBOARD =====
+
+### Get Dashboard Summary
+GET {{TallyJ4_HostAddress}}/api/dashboard/summary
+Authorization: Bearer {{bearerToken}}
+
+### Get Dashboard Elections
+GET {{TallyJ4_HostAddress}}/api/dashboard/elections
+Authorization: Bearer {{bearerToken}}
+
 ###
