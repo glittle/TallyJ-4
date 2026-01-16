@@ -73,6 +73,7 @@ services.AddScoped<TallyJ4.Services.IBallotService, TallyJ4.Services.BallotServi
 services.AddScoped<TallyJ4.Services.IVoteService, TallyJ4.Services.VoteService>();
 services.AddScoped<TallyJ4.Services.IDashboardService, TallyJ4.Services.DashboardService>();
 services.AddScoped<TallyJ4.Services.ISetupService, TallyJ4.Services.SetupService>();
+services.AddScoped<TallyJ4.Services.IAccountService, TallyJ4.Services.AccountService>();
 
 // Add exception handler
 services.AddExceptionHandler<GlobalExceptionHandler>();

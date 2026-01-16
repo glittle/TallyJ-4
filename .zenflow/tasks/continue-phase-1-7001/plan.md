@@ -185,7 +185,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Phase 2.8: Account Controller (New - Partial)
+### [x] Phase 2.8: Account Controller (New - Partial)
+<!-- chat-id: 6d465967-93db-4d05-ac64-5487112afb1e -->
 
 **Objective**: Extend Identity with custom admin endpoints
 

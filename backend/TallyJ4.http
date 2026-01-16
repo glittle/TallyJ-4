@@ -243,4 +243,32 @@ Authorization: Bearer {{bearerToken}}
 GET {{TallyJ4_HostAddress}}/api/dashboard/elections
 Authorization: Bearer {{bearerToken}}
 
+### ===== ACCOUNT =====
+
+### Get User Profile
+GET {{TallyJ4_HostAddress}}/api/account/profile
+Authorization: Bearer {{bearerToken}}
+
+### Update User Profile
+PUT {{TallyJ4_HostAddress}}/api/account/profile
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "userName": "updateduser",
+  "email": "newemail@example.com",
+  "phoneNumber": "+1-555-0123"
+}
+
+### Change Password
+POST {{TallyJ4_HostAddress}}/api/account/change-password
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "Admin@123",
+  "newPassword": "NewPassword@123",
+  "confirmPassword": "NewPassword@123"
+}
+
 ###
