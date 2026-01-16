@@ -178,3 +178,5 @@ app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
 
 // Start listening
 await app.RunAsync();
+
+public partial class Program { }

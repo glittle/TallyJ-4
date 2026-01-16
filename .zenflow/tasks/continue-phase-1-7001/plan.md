@@ -219,6 +219,7 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 ---
 
 ### [ ] Phase 2.10: Testing Infrastructure Setup
+<!-- chat-id: c2a93771-be02-4178-a005-d84f72a91d72 -->
 
 **Objective**: Create test project and basic tests
 
