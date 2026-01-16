@@ -150,7 +150,7 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Phase 2.6: Dashboard Controller (New)
+### [x] Phase 2.6: Dashboard Controller (New)
 <!-- chat-id: 4e44e7df-60ad-4a56-8166-cecf2de1de41 -->
 
 **Objective**: Implement dashboard/summary endpoints
