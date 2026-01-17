@@ -38,9 +38,9 @@ public static class DbSeeder
 
         var users = new[]
         {
-            new { Email = "admin@tallyj.test", Password = "Admin@123" },
-            new { Email = "teller@tallyj.test", Password = "Teller@123" },
-            new { Email = "voter@tallyj.test", Password = "Voter@123" }
+            new { Email = "admin@tallyj.test", Password = "TestPass123!" },
+            new { Email = "teller@tallyj.test", Password = "TestPass123!" },
+            new { Email = "voter@tallyj.test", Password = "TestPass123!" }
         };
 
         foreach (var userData in users)

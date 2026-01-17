@@ -13,7 +13,7 @@ Content-Type: application/json
 
 {
   "email": "admin@tallyj.test",
-  "password": "Admin@123"
+  "password": "TestPass123!"
 }
 
 ### Login (Teller)
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 {
   "email": "teller@tallyj.test",
-  "password": "Teller@123"
+  "password": "TestPass123!"
 }
 
 ### Login (Voter)
@@ -31,7 +31,7 @@ Content-Type: application/json
 
 {
   "email": "voter@tallyj.test",
-  "password": "Voter@123"
+  "password": "TestPass123!"
 }
 
 ### ===== ELECTIONS =====
@@ -266,9 +266,9 @@ Authorization: Bearer {{bearerToken}}
 Content-Type: application/json
 
 {
-  "currentPassword": "Admin@123",
-  "newPassword": "NewPassword@123",
-  "confirmPassword": "NewPassword@123"
+  "currentPassword": "TestPass123!",
+  "newPassword": "NewTestPass456!",
+  "confirmPassword": "NewTestPass456!"
 }
 
 ### ===== PUBLIC ENDPOINTS (No Authentication Required) =====

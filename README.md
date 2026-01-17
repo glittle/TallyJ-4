@@ -37,7 +37,7 @@ TallyJ-4/
    ```bash
    curl -X POST http://localhost:5000/auth/login \
      -H "Content-Type: application/json" \
-     -d '{"email":"admin@tallyj.test","password":"Admin@123"}'
+     -d '{"email":"admin@tallyj.test","password":"TestPass123!"}'
    ```
 
 See **[backend/SETUP.md](backend/SETUP.md)** for detailed setup instructions.
@@ -46,9 +46,9 @@ See **[backend/SETUP.md](backend/SETUP.md)** for detailed setup instructions.
 
 | Email | Password | Role |
 |-------|----------|------|
-| admin@tallyj.test | Admin@123 | Administrator |
-| teller@tallyj.test | Teller@123 | Election Teller |
-| voter@tallyj.test | Voter@123 | Voter |
+| admin@tallyj.test | TestPass123! | Administrator |
+| teller@tallyj.test | TestPass123! | Election Teller |
+| voter@tallyj.test | TestPass123! | Voter |
 
 ## Development
 
@@ -92,7 +92,7 @@ npm run dev
 ```bash
 curl -X POST http://localhost:5000/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@tallyj.test","password":"Admin@123"}'
+  -d '{"email":"admin@tallyj.test","password":"TestPass123!"}'
 ```
 
 Response includes `accessToken` and `refreshToken`. Use the access token in subsequent requests:

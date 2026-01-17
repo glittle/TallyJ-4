@@ -1,0 +1,21 @@
+# GitGuardian configuration
+# Exclude test credentials and documentation files with dummy values
+
+version: 2
+
+paths-ignore:
+  - "**/*.http"           # HTTP test files with example credentials
+  - "**/DbSeeder.cs"       # Database seeder with test data
+  - "**/*.md"              # Documentation files
+  - ".zenflow/**"          # Task and documentation directories
+
+# Define patterns for known test credentials
+matches-ignore:
+  - name: Test credentials in development seed data
+    match: TestPass123!
+  - name: Test email addresses
+    match: "@tallyj.test"
+  - name: SMTP placeholders in documentation
+    match: YOUR_APP_PASSWORD
+  - name: Generic placeholders
+    match: "your-email@yourdomain.com|smtp.gmail.com"

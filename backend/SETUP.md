@@ -109,7 +109,7 @@ You should see logs like:
 # Test login
 curl -X POST http://localhost:5000/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@tallyj.test","password":"Admin@123"}'
+  -d '{"email":"admin@tallyj.test","password":"TestPass123!"}'
 ```
 
 Expected response includes `accessToken` and `refreshToken`.
@@ -179,9 +179,9 @@ The seeder creates these users:
 
 | Email | Password | Purpose |
 |-------|----------|---------|
-| `admin@tallyj.test` | `Admin@123` | System administrator |
-| `teller@tallyj.test` | `Teller@123` | Election teller/coordinator |
-| `voter@tallyj.test` | `Voter@123` | Regular voter |
+| `admin@tallyj.test` | `TestPass123!` | System administrator |
+| `teller@tallyj.test` | `TestPass123!` | Election teller/coordinator |
+| `voter@tallyj.test` | `TestPass123!` | Regular voter |
 
 ## Seeded Elections
 
