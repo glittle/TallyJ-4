@@ -36,7 +36,8 @@ Save to `{@artifacts_path}/spec.md` with:
 - Delivery phases (incremental, testable milestones)
 - Verification approach using project lint/test commands
 
-### [ ] Step: Planning
+### [x] Step: Planning
+<!-- chat-id: d11220ac-8114-4769-992a-55d696e1ad33 -->
 
 Create a detailed implementation plan based on `{@artifacts_path}/spec.md`.
 
@@ -50,8 +51,244 @@ If the feature is trivial and doesn't warrant full specification, update this wo
 
 Save to `{@artifacts_path}/plan.md`.
 
-### [ ] Step: Implementation
+---
 
-This step should be replaced with detailed implementation tasks from the Planning step.
+## Implementation Tasks
 
-If Planning didn't replace this step, execute the tasks in `{@artifacts_path}/plan.md`, updating checkboxes as you go. Run planned tests/lint and record results in plan.md.
+### Phase 1: Code Verification and Enhancement
+
+### [ ] Step: Verify and Enhance ResultTie Record Creation
+**Goal**: Ensure ResultTie records are created for ties requiring resolution (FR-10)
+
+**Tasks**:
+1. Review ElectionAnalyzerBase.FinalizeResultsAndTies() to check if ResultTie records are created
+2. If missing, add logic to create ResultTie records for ties with TieBreakRequired = true
+3. Populate fields: ElectionGuid, TieBreakGroup, TieBreakRequired, NumInTie, NumToElect
+
+**Files**:
+- `backend/Services/Analyzers/ElectionAnalyzerBase.cs`
+
+**Verification**:
+- Add unit test to verify ResultTie records are created
+- Verify records in database after tally calculation
+
+### [ ] Step: Add Result Clearing on Recalculation
+**Goal**: Ensure previous Result records are cleared before recalculation (FR-18)
+
+**Tasks**:
+1. In ElectionAnalyzerBase.PrepareForAnalysisAsync(), add logic to delete existing Results for the election
+2. Also delete existing ResultTie records for the election
+3. Ensure deletion happens within the same transaction as the new calculation
+
+**Files**:
+- `backend/Services/Analyzers/ElectionAnalyzerBase.cs`
+
+**Verification**:
+- Add unit test for recalculation idempotency
+- Verify that calling CalculateNormalElectionAsync() twice produces same results
+- Verify old records are removed from database
+
+### [ ] Step: Add Transaction Safety
+**Goal**: Wrap tally calculation in a database transaction (NFR-5)
+
+**Tasks**:
+1. In ElectionAnalyzerBase.AnalyzeAsync(), wrap the entire process in a transaction
+2. Use Context.Database.BeginTransactionAsync()
+3. Commit transaction on success, rollback on error
+4. Add error logging for transaction failures
+
+**Files**:
+- `backend/Services/Analyzers/ElectionAnalyzerBase.cs`
+
+**Verification**:
+- Add unit test that verifies transaction rollback on error
+- Manually test error scenarios
+
+---
+
+### Phase 2: Unit Testing
+
+### [ ] Step: Add Edge Case Unit Tests (Part 1)
+**Goal**: Test edge cases (FR-14 to FR-17)
+
+**Test Cases**:
+1. **Zero Ballots Test** (FR-14): Election with no ballots should return empty results, statistics show 0
+2. **All Candidates Tied Test** (FR-15): All candidates with same vote count should be marked as tied
+
+**Files**:
+- `TallyJ4.Tests/UnitTests/TallyServiceTests.cs`
+
+**Verification**:
+- Run `dotnet test` - all tests should pass
+- Verify test output shows 2 new tests passing
+
+### [ ] Step: Add Edge Case Unit Tests (Part 2)
+**Goal**: Test additional edge cases
+
+**Test Cases**:
+1. **Single Candidate Test** (FR-16): Election with only one candidate should complete successfully
+2. **Ballot with Zero Valid Votes Test** (FR-17): Ballot with all invalid votes should be counted in statistics but contribute 0 votes
+
+**Files**:
+- `TallyJ4.Tests/UnitTests/TallyServiceTests.cs`
+
+**Verification**:
+- Run `dotnet test` - all tests should pass
+
+### [ ] Step: Add Recalculation Idempotency Test
+**Goal**: Verify recalculation produces same results (NFR-4)
+
+**Test Case**:
+- Calculate results twice for same election
+- Verify vote counts, ranks, sections are identical
+- Verify no duplicate Result records exist
+
+**Files**:
+- `TallyJ4.Tests/UnitTests/TallyServiceTests.cs`
+
+**Verification**:
+- Run `dotnet test` - test should pass
+
+### [ ] Step: Add Tie-Break Requirement Tests
+**Goal**: Verify ties spanning section boundaries are detected (FR-9)
+
+**Test Cases**:
+1. Tie spanning Elected/Extra boundary (rank 9-10 in 9-member election) - should require tie-break
+2. Tie spanning Extra/Other boundary - should require tie-break
+3. Tie within Elected section - should NOT require tie-break
+4. Tie within Extra section - should NOT require tie-break
+
+**Files**:
+- `TallyJ4.Tests/UnitTests/TallyServiceTests.cs`
+
+**Verification**:
+- Run `dotnet test` - all 4 tests should pass
+- Verify TieBreakRequired flag is set correctly
+
+### [ ] Step: Add Performance Test
+**Goal**: Verify tally completes in < 1 second for 100 ballots (NFR-1)
+
+**Test Case**:
+- Create election with 100 ballots, 30 candidates
+- Calculate tally and measure time
+- Assert elapsed time < 1000ms
+
+**Files**:
+- `TallyJ4.Tests/UnitTests/TallyServiceTests.cs`
+
+**Verification**:
+- Run `dotnet test` - test should pass
+- Review test output to confirm actual performance
+
+---
+
+### Phase 3: Integration Testing
+
+### [ ] Step: Create ResultsController Integration Tests (Part 1)
+**Goal**: Test calculate and get endpoints (NFR-10)
+
+**Test Cases**:
+1. POST /calculate with valid election - returns 200 OK with results
+2. POST /calculate with invalid election GUID - returns 404 Not Found
+3. GET /results with existing results - returns 200 OK
+
+**Files**:
+- `TallyJ4.Tests/IntegrationTests/ResultsControllerTests.cs` (new file)
+
+**Verification**:
+- Run `dotnet test` - integration tests should pass
+- Verify HTTP status codes and response structure
+
+### [ ] Step: Create ResultsController Integration Tests (Part 2)
+**Goal**: Test summary, final, and auth endpoints
+
+**Test Cases**:
+1. GET /summary with calculated results - returns 200 OK with statistics
+2. GET /final returns only Elected (E) and Extra (X) section results
+3. POST /calculate without authentication - returns 401 Unauthorized
+
+**Files**:
+- `TallyJ4.Tests/IntegrationTests/ResultsControllerTests.cs`
+
+**Verification**:
+- Run `dotnet test` - all integration tests should pass
+- Verify authentication is enforced
+
+---
+
+### Phase 4: Validation and Finalization
+
+### [ ] Step: Build and Test Verification
+**Goal**: Ensure all tests pass and build succeeds
+
+**Tasks**:
+1. Run `dotnet build` from backend directory
+2. Run `dotnet test` from solution root
+3. Verify 0 errors, 0 warnings
+4. Verify 15+ unit tests passing
+5. Verify 6+ integration tests passing
+
+**Verification**:
+- Build output shows success
+- Test output shows all tests passing
+- No compilation warnings
+
+### [ ] Step: Manual Testing via Swagger
+**Goal**: Verify endpoints work correctly via API
+
+**Tasks**:
+1. Start application: `dotnet run`
+2. Open Swagger UI: http://localhost:5000/swagger
+3. Login as admin@tallyj.test
+4. Find existing election GUID from database or create new test election
+5. POST /api/results/election/{guid}/calculate
+6. GET /api/results/election/{guid}
+7. GET /api/results/election/{guid}/summary
+8. GET /api/results/election/{guid}/final
+9. Verify response structure matches TallyResultDto
+10. Verify tie detection works correctly
+
+**Verification**:
+- All endpoints return expected responses
+- Vote counts are accurate
+- Ties are detected correctly
+- Statistics match ballot/vote data
+
+### [ ] Step: Final Verification and Documentation
+**Goal**: Ensure all requirements are met
+
+**Tasks**:
+1. Review acceptance criteria table in spec.md
+2. Verify all FR-1 to FR-18 are implemented
+3. Verify all NFR requirements are met
+4. Update this plan.md with final status
+5. Record test results and performance metrics
+
+**Verification**:
+- All functional requirements verified
+- All non-functional requirements verified
+- Plan.md shows all tasks completed
+
+---
+
+## Test Count Summary
+
+**Target**: 15+ unit tests, 6+ integration tests
+
+**Unit Tests** (Expected: 18 total):
+- Existing: 7 tests
+- New edge cases: 4 tests (zero ballots, all tied, single candidate, zero votes)
+- Recalculation idempotency: 1 test
+- Tie-break requirements: 4 tests
+- Performance test: 1 test
+- ResultTie creation test: 1 test
+
+**Integration Tests** (Expected: 6 total):
+- Calculate valid election: 1 test
+- Calculate invalid election: 1 test
+- Get results: 1 test
+- Get summary: 1 test
+- Get final: 1 test
+- Unauthorized access: 1 test
+
+**Total**: 24+ tests
