@@ -13,7 +13,7 @@ Content-Type: application/json
 
 {
   "email": "admin@tallyj.test",
-  "password": "Admin@123"
+  "password": "TestPass123!"
 }
 
 ### Login (Teller)
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 {
   "email": "teller@tallyj.test",
-  "password": "Teller@123"
+  "password": "TestPass123!"
 }
 
 ### Login (Voter)
@@ -31,7 +31,7 @@ Content-Type: application/json
 
 {
   "email": "voter@tallyj.test",
-  "password": "Voter@123"
+  "password": "TestPass123!"
 }
 
 ### ===== ELECTIONS =====
@@ -203,5 +203,86 @@ Content-Type: application/json
 ### Delete Vote (replace RowId)
 DELETE {{TallyJ4_HostAddress}}/api/votes/1
 Authorization: Bearer {{bearerToken}}
+
+### ===== SETUP (Election Wizard) =====
+
+### Create Election - Step 1
+POST {{TallyJ4_HostAddress}}/api/setup/election/step1
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "name": "New Election",
+  "dateOfElection": "2024-12-15",
+  "reason": "Annual election for board members"
+}
+
+### Configure Election - Step 2 (replace GUID with returned ElectionGuid from Step 1)
+PUT {{TallyJ4_HostAddress}}/api/setup/election/00000000-0000-0000-0000-000000000000/step2
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "electionGuid": "00000000-0000-0000-0000-000000000000",
+  "numberToElect": 9,
+  "electionType": "STV",
+  "electionMode": "N"
+}
+
+### Get Setup Status (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/setup/election/00000000-0000-0000-0000-000000000000/status
+Authorization: Bearer {{bearerToken}}
+
+### ===== DASHBOARD =====
+
+### Get Dashboard Summary
+GET {{TallyJ4_HostAddress}}/api/dashboard/summary
+Authorization: Bearer {{bearerToken}}
+
+### Get Dashboard Elections
+GET {{TallyJ4_HostAddress}}/api/dashboard/elections
+Authorization: Bearer {{bearerToken}}
+
+### ===== ACCOUNT =====
+
+### Get User Profile
+GET {{TallyJ4_HostAddress}}/api/account/profile
+Authorization: Bearer {{bearerToken}}
+
+### Update User Profile
+PUT {{TallyJ4_HostAddress}}/api/account/profile
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "userName": "updateduser",
+  "email": "newemail@example.com",
+  "phoneNumber": "+1-555-0123"
+}
+
+### Change Password
+POST {{TallyJ4_HostAddress}}/api/account/change-password
+Authorization: Bearer {{bearerToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "TestPass123!",
+  "newPassword": "NewTestPass456!",
+  "confirmPassword": "NewTestPass456!"
+}
+
+### ===== PUBLIC ENDPOINTS (No Authentication Required) =====
+
+### Health Check
+GET {{TallyJ4_HostAddress}}/api/public/health
+
+### Get Public Home Data
+GET {{TallyJ4_HostAddress}}/api/public/home
+
+### Get Available Elections
+GET {{TallyJ4_HostAddress}}/api/public/elections
+
+### Get Election Status (replace GUID)
+GET {{TallyJ4_HostAddress}}/api/public/elections/00000000-0000-0000-0000-000000000000/status
 
 ###

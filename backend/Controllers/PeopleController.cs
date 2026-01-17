@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.EF.Context;
-using TallyJ4.Domain.Entities;
+using TallyJ4.DTOs.People;
+using TallyJ4.Models;
+using TallyJ4.Services;
 
 namespace TallyJ4.Backend.Controllers;
 
@@ -11,96 +11,108 @@ namespace TallyJ4.Backend.Controllers;
 [Authorize]
 public class PeopleController : ControllerBase
 {
-    private readonly MainDbContext _context;
+    private readonly IPeopleService _peopleService;
     private readonly ILogger<PeopleController> _logger;
 
-    public PeopleController(MainDbContext context, ILogger<PeopleController> logger)
+    public PeopleController(IPeopleService peopleService, ILogger<PeopleController> logger)
     {
-        _context = context;
+        _peopleService = peopleService;
         _logger = logger;
     }
 
     [HttpGet("election/{electionGuid}")]
-    public async Task<ActionResult<IEnumerable<Person>>> GetPeopleByElection(Guid electionGuid)
+    public async Task<ActionResult<PaginatedResponse<PersonDto>>> GetPeopleByElection(
+        Guid electionGuid,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 50,
+        [FromQuery] string? search = null,
+        [FromQuery] bool? canVote = null,
+        [FromQuery] bool? canReceiveVotes = null)
     {
-        return await _context.People
-            .Where(p => p.ElectionGuid == electionGuid)
-            .OrderBy(p => p.LastName)
-            .ThenBy(p => p.FirstName)
-            .ToListAsync();
+        if (pageNumber < 1 || pageSize < 1 || pageSize > 200)
+        {
+            return BadRequest(new { message = "Invalid pagination parameters. PageNumber must be >= 1, PageSize must be between 1 and 200." });
+        }
+
+        var result = await _peopleService.GetPeopleByElectionAsync(electionGuid, pageNumber, pageSize, search, canVote, canReceiveVotes);
+        return Ok(result);
+    }
+
+    [HttpGet("election/{electionGuid}/search")]
+    public async Task<ActionResult<ApiResponse<List<PersonDto>>>> SearchPeople(
+        Guid electionGuid,
+        [FromQuery] string q)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+        {
+            return BadRequest(ApiResponse<List<PersonDto>>.ErrorResponse("Search query is required"));
+        }
+
+        var results = await _peopleService.SearchPeopleAsync(electionGuid, q);
+        return Ok(ApiResponse<List<PersonDto>>.SuccessResponse(results));
     }
 
     [HttpGet("{guid}")]
-    public async Task<ActionResult<Person>> GetPerson(Guid guid)
+    public async Task<ActionResult<ApiResponse<PersonDto>>> GetPerson(Guid guid)
     {
-        var person = await _context.People
-            .FirstOrDefaultAsync(p => p.PersonGuid == guid);
+        var person = await _peopleService.GetPersonByGuidAsync(guid);
 
         if (person == null)
         {
-            return NotFound();
+            return NotFound(ApiResponse<PersonDto>.ErrorResponse("Person not found"));
         }
 
-        return person;
+        return Ok(ApiResponse<PersonDto>.SuccessResponse(person));
     }
 
     [HttpPost]
-    public async Task<ActionResult<Person>> CreatePerson(Person person)
+    public async Task<ActionResult<ApiResponse<PersonDto>>> CreatePerson(CreatePersonDto createDto)
     {
-        if (person.PersonGuid == Guid.Empty)
+        try
         {
-            person.PersonGuid = Guid.NewGuid();
+            var person = await _peopleService.CreatePersonAsync(createDto);
+
+            return CreatedAtAction(
+                nameof(GetPerson),
+                new { guid = person.PersonGuid },
+                ApiResponse<PersonDto>.SuccessResponse(person, "Person created successfully"));
         }
-
-        _context.People.Add(person);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetPerson), new { guid = person.PersonGuid }, person);
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<PersonDto>.ErrorResponse(ex.Message));
+        }
     }
 
     [HttpPut("{guid}")]
-    public async Task<IActionResult> UpdatePerson(Guid guid, Person person)
+    public async Task<ActionResult<ApiResponse<PersonDto>>> UpdatePerson(Guid guid, UpdatePersonDto updateDto)
     {
-        if (guid != person.PersonGuid)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(person).State = EntityState.Modified;
-
         try
         {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await PersonExists(guid))
-            {
-                return NotFound();
-            }
-            throw;
-        }
+            var person = await _peopleService.UpdatePersonAsync(guid, updateDto);
 
-        return NoContent();
+            if (person == null)
+            {
+                return NotFound(ApiResponse<PersonDto>.ErrorResponse("Person not found"));
+            }
+
+            return Ok(ApiResponse<PersonDto>.SuccessResponse(person, "Person updated successfully"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<PersonDto>.ErrorResponse(ex.Message));
+        }
     }
 
     [HttpDelete("{guid}")]
     public async Task<IActionResult> DeletePerson(Guid guid)
     {
-        var person = await _context.People.FirstOrDefaultAsync(p => p.PersonGuid == guid);
-        if (person == null)
+        var success = await _peopleService.DeletePersonAsync(guid);
+
+        if (!success)
         {
-            return NotFound();
+            return NotFound(ApiResponse<object>.ErrorResponse("Person not found"));
         }
 
-        _context.People.Remove(person);
-        await _context.SaveChangesAsync();
-
         return NoContent();
-    }
-
-    private async Task<bool> PersonExists(Guid guid)
-    {
-        return await _context.People.AnyAsync(p => p.PersonGuid == guid);
     }
 }

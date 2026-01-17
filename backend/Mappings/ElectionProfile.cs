@@ -1,0 +1,95 @@
+using AutoMapper;
+using TallyJ4.DTOs.Elections;
+using TallyJ4.Domain.Entities;
+
+namespace TallyJ4.Mappings;
+
+public class ElectionProfile : Profile
+{
+    public ElectionProfile()
+    {
+        CreateMap<Election, ElectionDto>()
+            .ForMember(dest => dest.VoterCount, opt => opt.Ignore())
+            .ForMember(dest => dest.BallotCount, opt => opt.Ignore())
+            .ForMember(dest => dest.LocationCount, opt => opt.Ignore());
+
+        CreateMap<Election, ElectionSummaryDto>()
+            .ForMember(dest => dest.VoterCount, opt => opt.Ignore())
+            .ForMember(dest => dest.BallotCount, opt => opt.Ignore());
+
+        CreateMap<CreateElectionDto, Election>()
+            .ForMember(dest => dest.ElectionGuid, opt => opt.Ignore())
+            .ForMember(dest => dest.RowId, opt => opt.Ignore())
+            .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
+            .ForMember(dest => dest.TallyStatus, opt => opt.Ignore())
+            .ForMember(dest => dest.CanVote, opt => opt.Ignore())
+            .ForMember(dest => dest.CanReceive, opt => opt.Ignore())
+            .ForMember(dest => dest.LastEnvNum, opt => opt.Ignore())
+            .ForMember(dest => dest.LinkedElectionGuid, opt => opt.Ignore())
+            .ForMember(dest => dest.LinkedElectionKind, opt => opt.Ignore())
+            .ForMember(dest => dest.OwnerLoginId, opt => opt.Ignore())
+            .ForMember(dest => dest.ElectionPasscode, opt => opt.Ignore())
+            .ForMember(dest => dest.ListedForPublicAsOf, opt => opt.Ignore())
+            .ForMember(dest => dest.UseCallInButton, opt => opt.Ignore())
+            .ForMember(dest => dest.HidePreBallotPages, opt => opt.Ignore())
+            .ForMember(dest => dest.MaskVotingMethod, opt => opt.Ignore())
+            .ForMember(dest => dest.OnlineCloseIsEstimate, opt => opt.Ignore())
+            .ForMember(dest => dest.OnlineSelectionProcess, opt => opt.Ignore())
+            .ForMember(dest => dest.OnlineAnnounced, opt => opt.Ignore())
+            .ForMember(dest => dest.EmailFromAddress, opt => opt.Ignore())
+            .ForMember(dest => dest.EmailFromName, opt => opt.Ignore())
+            .ForMember(dest => dest.EmailText, opt => opt.Ignore())
+            .ForMember(dest => dest.SmsText, opt => opt.Ignore())
+            .ForMember(dest => dest.EmailSubject, opt => opt.Ignore())
+            .ForMember(dest => dest.CustomMethods, opt => opt.Ignore())
+            .ForMember(dest => dest.VotingMethods, opt => opt.Ignore())
+            .ForMember(dest => dest.Flags, opt => opt.Ignore())
+            .ForMember(dest => dest.ImportFiles, opt => opt.Ignore())
+            .ForMember(dest => dest.JoinElectionUsers, opt => opt.Ignore())
+            .ForMember(dest => dest.Locations, opt => opt.Ignore())
+            .ForMember(dest => dest.Messages, opt => opt.Ignore())
+            .ForMember(dest => dest.People, opt => opt.Ignore())
+            .ForMember(dest => dest.ResultSummaries, opt => opt.Ignore())
+            .ForMember(dest => dest.ResultTies, opt => opt.Ignore())
+            .ForMember(dest => dest.Results, opt => opt.Ignore())
+            .ForMember(dest => dest.Tellers, opt => opt.Ignore());
+
+        CreateMap<UpdateElectionDto, Election>()
+            .ForMember(dest => dest.ElectionGuid, opt => opt.Ignore())
+            .ForMember(dest => dest.RowId, opt => opt.Ignore())
+            .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
+            .ForMember(dest => dest.ElectionType, opt => opt.Ignore())
+            .ForMember(dest => dest.ElectionMode, opt => opt.Ignore())
+            .ForMember(dest => dest.CanVote, opt => opt.Ignore())
+            .ForMember(dest => dest.CanReceive, opt => opt.Ignore())
+            .ForMember(dest => dest.LastEnvNum, opt => opt.Ignore())
+            .ForMember(dest => dest.LinkedElectionGuid, opt => opt.Ignore())
+            .ForMember(dest => dest.LinkedElectionKind, opt => opt.Ignore())
+            .ForMember(dest => dest.OwnerLoginId, opt => opt.Ignore())
+            .ForMember(dest => dest.ElectionPasscode, opt => opt.Ignore())
+            .ForMember(dest => dest.ListedForPublicAsOf, opt => opt.Ignore())
+            .ForMember(dest => dest.UseCallInButton, opt => opt.Ignore())
+            .ForMember(dest => dest.HidePreBallotPages, opt => opt.Ignore())
+            .ForMember(dest => dest.MaskVotingMethod, opt => opt.Ignore())
+            .ForMember(dest => dest.OnlineCloseIsEstimate, opt => opt.Ignore())
+            .ForMember(dest => dest.OnlineSelectionProcess, opt => opt.Ignore())
+            .ForMember(dest => dest.OnlineAnnounced, opt => opt.Ignore())
+            .ForMember(dest => dest.EmailFromAddress, opt => opt.Ignore())
+            .ForMember(dest => dest.EmailFromName, opt => opt.Ignore())
+            .ForMember(dest => dest.EmailText, opt => opt.Ignore())
+            .ForMember(dest => dest.SmsText, opt => opt.Ignore())
+            .ForMember(dest => dest.EmailSubject, opt => opt.Ignore())
+            .ForMember(dest => dest.CustomMethods, opt => opt.Ignore())
+            .ForMember(dest => dest.VotingMethods, opt => opt.Ignore())
+            .ForMember(dest => dest.Flags, opt => opt.Ignore())
+            .ForMember(dest => dest.ImportFiles, opt => opt.Ignore())
+            .ForMember(dest => dest.JoinElectionUsers, opt => opt.Ignore())
+            .ForMember(dest => dest.Locations, opt => opt.Ignore())
+            .ForMember(dest => dest.Messages, opt => opt.Ignore())
+            .ForMember(dest => dest.People, opt => opt.Ignore())
+            .ForMember(dest => dest.ResultSummaries, opt => opt.Ignore())
+            .ForMember(dest => dest.ResultTies, opt => opt.Ignore())
+            .ForMember(dest => dest.Results, opt => opt.Ignore())
+            .ForMember(dest => dest.Tellers, opt => opt.Ignore());
+    }
+}

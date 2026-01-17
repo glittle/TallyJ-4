@@ -36,30 +36,36 @@ public static class DbSeeder
     {
         logger.LogInformation("Seeding users...");
 
-        var adminEmail = "admin@tallyj.local";
-        var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
-        
-        if (existingAdmin == null)
+        var users = new[]
         {
-            var admin = new AppUser
-            {
-                UserName = adminEmail,
-                Email = adminEmail,
-                EmailConfirmed = true,
-                AuthMethod = "Local",
-                TwoFactorEnabled = false
-            };
+            new { Email = "admin@tallyj.test", Password = "TestPass123!" },
+            new { Email = "teller@tallyj.test", Password = "TestPass123!" },
+            new { Email = "voter@tallyj.test", Password = "TestPass123!" }
+        };
 
-            var result = await userManager.CreateAsync(admin, "Admin123!");
-            if (result.Succeeded)
+        foreach (var userData in users)
+        {
+            var existingUser = await userManager.FindByEmailAsync(userData.Email);
+            if (existingUser == null)
             {
-                logger.LogInformation("Created admin user: {Email}", adminEmail);
-            }
-            else
-            {
-                logger.LogError("Failed to create admin user {Email}: {Errors}",
-                    adminEmail,
-                    string.Join(", ", result.Errors.Select(e => e.Description)));
+                var user = new AppUser
+                {
+                    UserName = userData.Email,
+                    Email = userData.Email,
+                    EmailConfirmed = true
+                };
+
+                var result = await userManager.CreateAsync(user, userData.Password);
+                if (result.Succeeded)
+                {
+                    logger.LogInformation("Created user: {Email}", userData.Email);
+                }
+                else
+                {
+                    logger.LogError("Failed to create user {Email}: {Errors}",
+                        userData.Email,
+                        string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
             }
         }
     }
@@ -337,10 +343,21 @@ public static class DbSeeder
 
         var voteDistribution = new Dictionary<int, int>
         {
-            [0] = 15, [1] = 14, [2] = 14, [3] = 13, [4] = 13,
-            [5] = 12, [6] = 12, [7] = 12, [8] = 12,
-            [9] = 5, [10] = 5,
-            [11] = 4, [12] = 3, [13] = 2, [14] = 1
+            [0] = 15,
+            [1] = 14,
+            [2] = 14,
+            [3] = 13,
+            [4] = 13,
+            [5] = 12,
+            [6] = 12,
+            [7] = 12,
+            [8] = 12,
+            [9] = 5,
+            [10] = 5,
+            [11] = 4,
+            [12] = 3,
+            [13] = 2,
+            [14] = 1
         };
 
         var ballots = new List<Ballot>();

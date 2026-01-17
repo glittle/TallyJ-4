@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.EF.Context;
-using TallyJ4.Domain.Entities;
+using TallyJ4.DTOs.Ballots;
+using TallyJ4.Models;
+using TallyJ4.Services;
 
 namespace TallyJ4.Backend.Controllers;
 
@@ -11,99 +11,91 @@ namespace TallyJ4.Backend.Controllers;
 [Authorize]
 public class BallotsController : ControllerBase
 {
-    private readonly MainDbContext _context;
+    private readonly IBallotService _ballotService;
     private readonly ILogger<BallotsController> _logger;
 
-    public BallotsController(MainDbContext context, ILogger<BallotsController> logger)
+    public BallotsController(IBallotService ballotService, ILogger<BallotsController> logger)
     {
-        _context = context;
+        _ballotService = ballotService;
         _logger = logger;
     }
 
     [HttpGet("election/{electionGuid}")]
-    public async Task<ActionResult<IEnumerable<Ballot>>> GetBallotsByElection(Guid electionGuid)
+    public async Task<ActionResult<PaginatedResponse<BallotDto>>> GetBallotsByElection(
+        Guid electionGuid,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 50)
     {
-        return await _context.Ballots
-            .Where(b => b.Location.ElectionGuid == electionGuid)
-            .Include(b => b.Location)
-            .Include(b => b.Votes)
-            .OrderBy(b => b.BallotNumAtComputer)
-            .ToListAsync();
+        if (pageNumber < 1 || pageSize < 1 || pageSize > 200)
+        {
+            return BadRequest(new { message = "Invalid pagination parameters. PageNumber must be >= 1, PageSize must be between 1 and 200." });
+        }
+
+        var result = await _ballotService.GetBallotsByElectionAsync(electionGuid, pageNumber, pageSize);
+        return Ok(result);
     }
 
     [HttpGet("{guid}")]
-    public async Task<ActionResult<Ballot>> GetBallot(Guid guid)
+    public async Task<ActionResult<ApiResponse<BallotDto>>> GetBallot(Guid guid)
     {
-        var ballot = await _context.Ballots
-            .Include(b => b.Location)
-            .Include(b => b.Votes)
-            .FirstOrDefaultAsync(b => b.BallotGuid == guid);
+        var ballot = await _ballotService.GetBallotByGuidAsync(guid);
 
         if (ballot == null)
         {
-            return NotFound();
+            return NotFound(ApiResponse<BallotDto>.ErrorResponse("Ballot not found"));
         }
 
-        return ballot;
+        return Ok(ApiResponse<BallotDto>.SuccessResponse(ballot));
     }
 
     [HttpPost]
-    public async Task<ActionResult<Ballot>> CreateBallot(Ballot ballot)
+    public async Task<ActionResult<ApiResponse<BallotDto>>> CreateBallot(CreateBallotDto createDto)
     {
-        if (ballot.BallotGuid == Guid.Empty)
+        try
         {
-            ballot.BallotGuid = Guid.NewGuid();
+            var ballot = await _ballotService.CreateBallotAsync(createDto);
+
+            return CreatedAtAction(
+                nameof(GetBallot),
+                new { guid = ballot.BallotGuid },
+                ApiResponse<BallotDto>.SuccessResponse(ballot, "Ballot created successfully"));
         }
-
-        _context.Ballots.Add(ballot);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetBallot), new { guid = ballot.BallotGuid }, ballot);
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<BallotDto>.ErrorResponse(ex.Message));
+        }
     }
 
     [HttpPut("{guid}")]
-    public async Task<IActionResult> UpdateBallot(Guid guid, Ballot ballot)
+    public async Task<ActionResult<ApiResponse<BallotDto>>> UpdateBallot(Guid guid, UpdateBallotDto updateDto)
     {
-        if (guid != ballot.BallotGuid)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(ballot).State = EntityState.Modified;
-
         try
         {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await BallotExists(guid))
-            {
-                return NotFound();
-            }
-            throw;
-        }
+            var ballot = await _ballotService.UpdateBallotAsync(guid, updateDto);
 
-        return NoContent();
+            if (ballot == null)
+            {
+                return NotFound(ApiResponse<BallotDto>.ErrorResponse("Ballot not found"));
+            }
+
+            return Ok(ApiResponse<BallotDto>.SuccessResponse(ballot, "Ballot updated successfully"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<BallotDto>.ErrorResponse(ex.Message));
+        }
     }
 
     [HttpDelete("{guid}")]
     public async Task<IActionResult> DeleteBallot(Guid guid)
     {
-        var ballot = await _context.Ballots.FirstOrDefaultAsync(b => b.BallotGuid == guid);
-        if (ballot == null)
+        var success = await _ballotService.DeleteBallotAsync(guid);
+
+        if (!success)
         {
-            return NotFound();
+            return NotFound(ApiResponse<object>.ErrorResponse("Ballot not found"));
         }
 
-        _context.Ballots.Remove(ballot);
-        await _context.SaveChangesAsync();
-
         return NoContent();
-    }
-
-    private async Task<bool> BallotExists(Guid guid)
-    {
-        return await _context.Ballots.AnyAsync(b => b.BallotGuid == guid);
     }
 }

@@ -7,7 +7,7 @@ First, get an access token:
 ```bash
 curl -X POST http://localhost:5000/auth/login \
   -H "Content-Type: application/json" \
-  -d "{\"email\":\"admin@tallyj.test\",\"password\":\"Admin@123\"}"
+  -d "{\"email\":\"admin@tallyj.test\",\"password\":\"TestPass123!\"}"
 ```
 
 Save the `accessToken` from the response.

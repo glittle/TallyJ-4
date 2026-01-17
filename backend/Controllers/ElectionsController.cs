@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.EF.Context;
-using TallyJ4.Domain.Entities;
+using TallyJ4.DTOs.Elections;
+using TallyJ4.Models;
+using TallyJ4.Services;
 
 namespace TallyJ4.Backend.Controllers;
 
@@ -11,94 +11,90 @@ namespace TallyJ4.Backend.Controllers;
 [Authorize]
 public class ElectionsController : ControllerBase
 {
-    private readonly MainDbContext _context;
+    private readonly IElectionService _electionService;
     private readonly ILogger<ElectionsController> _logger;
 
-    public ElectionsController(MainDbContext context, ILogger<ElectionsController> logger)
+    public ElectionsController(IElectionService electionService, ILogger<ElectionsController> logger)
     {
-        _context = context;
+        _electionService = electionService;
         _logger = logger;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Election>>> GetElections()
+    public async Task<ActionResult<PaginatedResponse<ElectionSummaryDto>>> GetElections(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? status = null)
     {
-        return await _context.Elections
-            .OrderByDescending(e => e.DateOfElection)
-            .ToListAsync();
+        if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest(new { message = "Invalid pagination parameters. PageNumber must be >= 1, PageSize must be between 1 and 100." });
+        }
+
+        var result = await _electionService.GetElectionsAsync(pageNumber, pageSize, status);
+        return Ok(result);
     }
 
     [HttpGet("{guid}")]
-    public async Task<ActionResult<Election>> GetElection(Guid guid)
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> GetElection(Guid guid)
     {
-        var election = await _context.Elections
-            .FirstOrDefaultAsync(e => e.ElectionGuid == guid);
+        var election = await _electionService.GetElectionByGuidAsync(guid);
 
         if (election == null)
         {
-            return NotFound();
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
         }
 
-        return election;
+        return Ok(ApiResponse<ElectionDto>.SuccessResponse(election));
+    }
+
+    [HttpGet("{guid}/summary")]
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> GetElectionSummary(Guid guid)
+    {
+        var election = await _electionService.GetElectionSummaryAsync(guid);
+
+        if (election == null)
+        {
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
+        }
+
+        return Ok(ApiResponse<ElectionDto>.SuccessResponse(election));
     }
 
     [HttpPost]
-    public async Task<ActionResult<Election>> CreateElection(Election election)
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> CreateElection(CreateElectionDto createDto)
     {
-        if (election.ElectionGuid == Guid.Empty)
-        {
-            election.ElectionGuid = Guid.NewGuid();
-        }
+        var election = await _electionService.CreateElectionAsync(createDto);
 
-        _context.Elections.Add(election);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetElection), new { guid = election.ElectionGuid }, election);
+        return CreatedAtAction(
+            nameof(GetElection),
+            new { guid = election.ElectionGuid },
+            ApiResponse<ElectionDto>.SuccessResponse(election, "Election created successfully"));
     }
 
     [HttpPut("{guid}")]
-    public async Task<IActionResult> UpdateElection(Guid guid, Election election)
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> UpdateElection(Guid guid, UpdateElectionDto updateDto)
     {
-        if (guid != election.ElectionGuid)
+        var election = await _electionService.UpdateElectionAsync(guid, updateDto);
+
+        if (election == null)
         {
-            return BadRequest();
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
         }
 
-        _context.Entry(election).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await ElectionExists(guid))
-            {
-                return NotFound();
-            }
-            throw;
-        }
-
-        return NoContent();
+        return Ok(ApiResponse<ElectionDto>.SuccessResponse(election, "Election updated successfully"));
     }
 
     [HttpDelete("{guid}")]
     public async Task<IActionResult> DeleteElection(Guid guid)
     {
-        var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == guid);
-        if (election == null)
+        var success = await _electionService.DeleteElectionAsync(guid);
+
+        if (!success)
         {
-            return NotFound();
+            return NotFound(ApiResponse<object>.ErrorResponse("Election not found"));
         }
 
-        _context.Elections.Remove(election);
-        await _context.SaveChangesAsync();
-
         return NoContent();
-    }
-
-    private async Task<bool> ElectionExists(Guid guid)
-    {
-        return await _context.Elections.AnyAsync(e => e.ElectionGuid == guid);
     }
 }
