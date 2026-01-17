@@ -274,7 +274,7 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 ---
 
 ### [ ] Phase 3.2: Normal Election Tally Algorithm
-<!-- chat-id: TBD -->
+<!-- chat-id: 2fe9ef98-9869-478f-883a-2ddceca727e7 -->
 
 **Objective**: Implement standard LSA election tally
 
