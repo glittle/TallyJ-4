@@ -1,6 +1,6 @@
 using AutoMapper;
 using TallyJ4.DTOs.Elections;
-using TallyJ4.EF.Models;
+using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Mappings;
 

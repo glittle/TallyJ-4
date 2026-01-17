@@ -2,7 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.DTOs.Votes;
 using TallyJ4.EF.Context;
-using TallyJ4.EF.Models;
+using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Services;
 
