@@ -75,6 +75,7 @@ services.AddScoped<TallyJ4.Services.IDashboardService, TallyJ4.Services.Dashboar
 services.AddScoped<TallyJ4.Services.ISetupService, TallyJ4.Services.SetupService>();
 services.AddScoped<TallyJ4.Services.IAccountService, TallyJ4.Services.AccountService>();
 services.AddScoped<TallyJ4.Services.IPublicService, TallyJ4.Services.PublicService>();
+services.AddScoped<TallyJ4.Services.ITallyService, TallyJ4.Services.TallyService>();
 
 // Add exception handler
 services.AddExceptionHandler<GlobalExceptionHandler>();

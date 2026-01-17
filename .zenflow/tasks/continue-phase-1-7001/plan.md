@@ -240,13 +240,156 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ## Final Phase 2 Deliverables
 
-- [ ] 8 controllers with full DTO/service/validation support
-- [ ] 30+ DTOs created
-- [ ] 8+ service interfaces and implementations
-- [ ] 15+ validators
-- [ ] Global error handling working
-- [ ] Swagger documentation complete
-- [ ] Test project with >10 passing tests
+- [x] 8 controllers with full DTO/service/validation support
+- [x] 30+ DTOs created
+- [x] 8+ service interfaces and implementations
+- [x] 15+ validators
+- [x] Global error handling working
+- [x] Swagger documentation complete
+- [x] Test project with >10 passing tests
+- [x] Build succeeds with 0 errors
+- [x] Updated README.md with API usage examples
+- [x] Report written to `report.md`
+
+---
+
+## Phase 3: Tally Algorithm Implementation
+
+### [ ] Phase 3.1: Tally Service Foundation
+<!-- chat-id: TBD -->
+
+**Objective**: Create service layer and base analyzer class
+
+**Tasks**:
+1. Create `ITallyService` interface
+2. Create `TallyService` implementation
+3. Create `ElectionAnalyzerBase` abstract class
+4. Create DTOs: `TallyResultDto`, `TallyStatisticsDto`, `TieInfoDto`
+5. Register service in `Program.cs`
+
+**Verification**:
+- Build succeeds
+- Service can be injected into controllers
+
+---
+
+### [ ] Phase 3.2: Normal Election Tally Algorithm
+<!-- chat-id: TBD -->
+
+**Objective**: Implement standard LSA election tally
+
+**Tasks**:
+1. Create `ElectionAnalyzerNormal` class
+2. Implement `PrepareForAnalysis()` method
+3. Implement `CalculateBallotStatistics()` method
+4. Implement `CountVotes()` method
+5. Implement vote status determination logic
+
+**Verification**:
+- Service counts votes correctly
+- Only valid ballots/votes are counted
+- Result records created/updated properly
+
+---
+
+### [ ] Phase 3.3: Tie Detection and Ranking
+<!-- chat-id: TBD -->
+
+**Objective**: Implement tie detection and result categorization
+
+**Tasks**:
+1. Implement `FinalizeResultsAndTies()` method
+2. Implement ranking logic (sort by vote count)
+3. Implement tie detection (group by vote count)
+4. Implement section assignment (Elected/Extra/Other)
+5. Implement tie-break requirement detection
+
+**Verification**:
+- Ties detected correctly
+- Sections assigned properly
+- Tie-break requirements identified correctly
+
+---
+
+### [ ] Phase 3.4: Result Summary Generation
+<!-- chat-id: TBD -->
+
+**Objective**: Generate election statistics
+
+**Tasks**:
+1. Implement `FinalizeSummaries()` method
+2. Calculate ballot statistics
+3. Calculate vote statistics
+4. Create/update ResultSummary entity
+5. Implement `SaveResults()` method
+
+**Verification**:
+- ResultSummary created with accurate counts
+- Database changes persisted
+
+---
+
+### [ ] Phase 3.5: Single-Name Election Support
+<!-- chat-id: TBD -->
+
+**Objective**: Implement single-position election tally
+
+**Tasks**:
+1. Create `ElectionAnalyzerSingleName` class
+2. Implement `CountVotes()` override using `SingleNameElectionCount`
+3. Handle multiple votes for same candidate on ballot
+
+**Verification**:
+- Single-name elections tally correctly
+- Vote counts sum properly
+
+---
+
+### [ ] Phase 3.6: Results API Enhancement
+<!-- chat-id: TBD -->
+
+**Objective**: Add tally calculation endpoints
+
+**Tasks**:
+1. Add `POST /api/results/election/{guid}/calculate` endpoint
+2. Add `GET /api/results/election/{guid}/summary` endpoint
+3. Update existing endpoints to include calculated data
+4. Add proper validation and error handling
+
+**Verification**:
+- Endpoints return correct data
+- Validation prevents invalid requests
+- Errors handled gracefully
+
+---
+
+### [ ] Phase 3.7: Comprehensive Testing
+<!-- chat-id: TBD -->
+
+**Objective**: Ensure tally accuracy through extensive tests
+
+**Tasks**:
+1. Create `TallyServiceTests` - Unit tests for service methods
+2. Create `ElectionAnalyzerNormalTests` - Algorithm correctness
+3. Create `TieDetectionTests` - All tie scenarios
+4. Create test data with known results
+5. Test edge cases (0 votes, all tied, etc.)
+
+**Verification**:
+- All tests pass (15+ new tests)
+- Edge cases handled correctly
+- Results match expected outcomes
+
+---
+
+## Final Phase 3 Deliverables
+
+- [ ] Tally service with normal election algorithm
+- [ ] Single-name election support
+- [ ] Complete tie detection logic
+- [ ] Result ranking and categorization
+- [ ] ResultSummary statistics generation
+- [ ] Enhanced Results API with calculation endpoints
+- [ ] 15+ passing tally algorithm tests
 - [ ] Build succeeds with 0 errors
-- [ ] Updated README.md with API usage examples
-- [ ] Report written to `report.md`
+- [ ] All tally scenarios tested and verified
