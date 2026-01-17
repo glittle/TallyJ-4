@@ -67,7 +67,7 @@ public class VotesController : ControllerBase
         try
         {
             var vote = await _voteService.UpdateVoteAsync(id, updateDto);
-            
+
             if (vote == null)
             {
                 return NotFound(ApiResponse<VoteDto>.ErrorResponse($"Vote with ID '{id}' not found"));
@@ -85,7 +85,7 @@ public class VotesController : ControllerBase
     public async Task<ActionResult<ApiResponse<object>>> DeleteVote(int id)
     {
         var success = await _voteService.DeleteVoteAsync(id);
-        
+
         if (!success)
         {
             return NotFound(ApiResponse<object>.ErrorResponse($"Vote with ID '{id}' not found"));

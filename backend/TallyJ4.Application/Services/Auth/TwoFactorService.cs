@@ -1,0 +1,201 @@
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
+using OtpNet;
+using QRCoder;
+using TallyJ4.Application.DTOs.Auth;
+using TallyJ4.Domain.Entities;
+using TallyJ4.Domain.Identity;
+
+namespace TallyJ4.Application.Services.Auth;
+
+public class TwoFactorService
+{
+    private readonly UserManager<AppUser> _userManager;
+    private readonly IStringLocalizer<TwoFactorService> _localizer;
+    private readonly DbContext _dbContext;
+    private readonly EmailService _emailService;
+
+    public TwoFactorService(
+        UserManager<AppUser> userManager,
+        IStringLocalizer<TwoFactorService> localizer,
+        DbContext dbContext,
+        EmailService emailService)
+    {
+        _userManager = userManager;
+        _localizer = localizer;
+        _dbContext = dbContext;
+        _emailService = emailService;
+    }
+
+    public async Task<(bool Success, string? Error, TwoFactorSetupResponse? Response)> SetupAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return (false, _localizer["UserNotFound"], null);
+        }
+
+        if (user.TwoFactorEnabled)
+        {
+            return (false, _localizer["TwoFactorAlreadyEnabled"], null);
+        }
+
+        var secret = GenerateSecret();
+        var encryptedSecret = EncryptSecret(secret);
+
+        var twoFactorToken = new TwoFactorToken
+        {
+            TokenGuid = Guid.NewGuid(),
+            UserId = user.Id,
+            Secret = encryptedSecret,
+            IsEnabled = false,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _dbContext.Set<TwoFactorToken>().Add(twoFactorToken);
+        await _dbContext.SaveChangesAsync();
+
+        var qrCodeDataUrl = GenerateQrCode(user.Email!, secret);
+
+        return (true, null, new TwoFactorSetupResponse
+        {
+            Secret = secret,
+            QrCodeDataUrl = qrCodeDataUrl
+        });
+    }
+
+    public async Task<(bool Success, string? Error)> EnableAsync(string userId, Enable2FARequest request)
+    {
+        var user = await _userManager.Users
+            .Include(u => u.TwoFactorToken)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+        {
+            return (false, _localizer["UserNotFound"]);
+        }
+
+        if (user.TwoFactorToken == null)
+        {
+            return (false, _localizer["TwoFactorNotSetup"]);
+        }
+
+        var secret = DecryptSecret(user.TwoFactorToken.Secret);
+        var isValid = VerifyCode(secret, request.Code);
+
+        if (!isValid)
+        {
+            return (false, _localizer["InvalidTwoFactorCode"]);
+        }
+
+        user.TwoFactorToken.IsEnabled = true;
+        user.TwoFactorToken.VerifiedAt = DateTime.UtcNow;
+        user.TwoFactorEnabled = true;
+
+        await _dbContext.SaveChangesAsync();
+
+        var qrCodeDataUrl = GenerateQrCode(user.Email!, secret);
+        await _emailService.Send2FASetupEmailAsync(user.Email!, qrCodeDataUrl);
+
+        return (true, null);
+    }
+
+    public async Task<(bool Success, string? Error)> VerifyAsync(string userId, string code)
+    {
+        var user = await _userManager.Users
+            .Include(u => u.TwoFactorToken)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null || user.TwoFactorToken == null)
+        {
+            return (false, _localizer["InvalidTwoFactorCode"]);
+        }
+
+        var secret = DecryptSecret(user.TwoFactorToken.Secret);
+        var isValid = VerifyCode(secret, code);
+
+        if (!isValid)
+        {
+            return (false, _localizer["InvalidTwoFactorCode"]);
+        }
+
+        return (true, null);
+    }
+
+    public async Task<(bool Success, string? Error)> DisableAsync(string userId, Disable2FARequest request)
+    {
+        var user = await _userManager.Users
+            .Include(u => u.TwoFactorToken)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+        {
+            return (false, _localizer["UserNotFound"]);
+        }
+
+        var isValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
+        if (!isValidPassword)
+        {
+            return (false, _localizer["InvalidPassword"]);
+        }
+
+        if (user.TwoFactorToken == null)
+        {
+            return (false, _localizer["TwoFactorNotSetup"]);
+        }
+
+        var secret = DecryptSecret(user.TwoFactorToken.Secret);
+        var isValidCode = VerifyCode(secret, request.Code);
+
+        if (!isValidCode)
+        {
+            return (false, _localizer["InvalidTwoFactorCode"]);
+        }
+
+        _dbContext.Set<TwoFactorToken>().Remove(user.TwoFactorToken);
+        user.TwoFactorEnabled = false;
+
+        await _dbContext.SaveChangesAsync();
+
+        return (true, null);
+    }
+
+    private static string GenerateSecret()
+    {
+        var bytes = new byte[20];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(bytes);
+        return Base32Encoding.ToString(bytes);
+    }
+
+    private static string EncryptSecret(string secret)
+    {
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(secret));
+    }
+
+    private static string DecryptSecret(string encryptedSecret)
+    {
+        return Encoding.UTF8.GetString(Convert.FromBase64String(encryptedSecret));
+    }
+
+    private static bool VerifyCode(string secret, string code)
+    {
+        var totp = new Totp(Base32Encoding.ToBytes(secret));
+        return totp.VerifyTotp(code, out _, new VerificationWindow(2, 2));
+    }
+
+    private static string GenerateQrCode(string email, string secret)
+    {
+        var totpUri = $"otpauth://totp/TallyJ4:{email}?secret={secret}&issuer=TallyJ4";
+        
+        using var qrGenerator = new QRCodeGenerator();
+        using var qrCodeData = qrGenerator.CreateQrCode(totpUri, QRCodeGenerator.ECCLevel.Q);
+        using var qrCode = new PngByteQRCode(qrCodeData);
+        var qrCodeBytes = qrCode.GetGraphic(20);
+        
+        return $"data:image/png;base64,{Convert.ToBase64String(qrCodeBytes)}";
+    }
+}

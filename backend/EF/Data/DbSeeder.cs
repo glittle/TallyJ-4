@@ -3,8 +3,8 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.EF.Context;
-using TallyJ4.EF.Identity;
-using TallyJ4.EF.Models;
+using TallyJ4.Domain.Identity;
+using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.EF.Data;
 
@@ -75,7 +75,7 @@ public static class DbSeeder
         logger.LogInformation("Seeding Election 1: Springfield LSA...");
 
         var electionGuid = CreateGuid("SpringfieldLSA2024");
-        var adminEmail = "admin@tallyj.test";
+        var adminEmail = "admin@tallyj.local";
 
         var election = new Election
         {
@@ -292,7 +292,7 @@ public static class DbSeeder
             TallyStatus = "Finalized",
             ShowFullReport = true,
             VotingMethods = "IP",
-            OwnerLoginId = "admin@tallyj.test",
+            OwnerLoginId = "admin@tallyj.local",
             ListForPublic = false,
             ShowAsTest = true
         };
@@ -343,10 +343,21 @@ public static class DbSeeder
 
         var voteDistribution = new Dictionary<int, int>
         {
-            [0] = 15, [1] = 14, [2] = 14, [3] = 13, [4] = 13,
-            [5] = 12, [6] = 12, [7] = 12, [8] = 12,
-            [9] = 5, [10] = 5,
-            [11] = 4, [12] = 3, [13] = 2, [14] = 1
+            [0] = 15,
+            [1] = 14,
+            [2] = 14,
+            [3] = 13,
+            [4] = 13,
+            [5] = 12,
+            [6] = 12,
+            [7] = 12,
+            [8] = 12,
+            [9] = 5,
+            [10] = 5,
+            [11] = 4,
+            [12] = 3,
+            [13] = 2,
+            [14] = 1
         };
 
         var ballots = new List<Ballot>();

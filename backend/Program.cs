@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using TallyJ4.EF.Context;
-using TallyJ4.EF.Identity;
+using TallyJ4.Domain.Identity;
 using TallyJ4.EF.Data;
 using TallyJ4.Middleware;
 using Serilog;
@@ -42,6 +42,18 @@ if (connectionString == null)
 }
 
 services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
+
+// Add CORS
+services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost:8095")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 // Add Identity API endpoints (this sets up core Identity + bearer auth)
 services.AddIdentityApiEndpoints<AppUser>()
@@ -165,6 +177,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Use CORS
+app.UseCors("AllowFrontend");
+
+// Use localization middleware
+app.UseRequestLocalization();
+
 app.UseAuthentication();  // Enables Identity
 app.UseAuthorization();
 
