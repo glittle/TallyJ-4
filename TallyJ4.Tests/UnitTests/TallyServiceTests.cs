@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
-using TallyJ4.EF.Models;
+using TallyJ4.Domain.Entities;
 using TallyJ4.Services;
 
 namespace TallyJ4.Tests.UnitTests;

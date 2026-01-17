@@ -4,7 +4,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using TallyJ4.EF.Context;
-using TallyJ4.EF.Identity;
+using TallyJ4.Domain.Identity;
 
 namespace TallyJ4.Tests.IntegrationTests;
 
