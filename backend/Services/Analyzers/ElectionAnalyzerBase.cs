@@ -14,6 +14,7 @@ public abstract class ElectionAnalyzerBase
     protected List<Vote> Votes = new();
     protected List<Person> People = new();
     protected List<Result> Results = new();
+    protected List<ResultTie> ResultTies = new();
     protected ResultSummary ResultSummaryCalc = new();
 
     protected ElectionAnalyzerBase(MainDbContext context, ILogger logger, Election election)
@@ -153,10 +154,22 @@ public abstract class ElectionAnalyzerBase
 
             if (sections.Count > 1)
             {
+                var tieBreakGroup = 0;
                 foreach (var result in group)
                 {
                     result.TieBreakRequired = true;
+                    tieBreakGroup = result.TieBreakGroup ?? 0;
                 }
+
+                var resultTie = new ResultTie
+                {
+                    ElectionGuid = TargetElection.ElectionGuid,
+                    TieBreakGroup = tieBreakGroup,
+                    TieBreakRequired = true,
+                    NumInTie = group.Count(),
+                    NumToElect = numberToElect
+                };
+                ResultTies.Add(resultTie);
             }
         }
 
@@ -212,6 +225,13 @@ public abstract class ElectionAnalyzerBase
     protected virtual async Task SaveResultsAsync()
     {
         Logger.LogInformation("Saving results to database");
+        
+        if (ResultTies.Any())
+        {
+            Context.ResultTies.AddRange(ResultTies);
+            Logger.LogInformation("Added {ResultTieCount} ResultTie records", ResultTies.Count);
+        }
+        
         await Context.SaveChangesAsync();
         Logger.LogInformation("Results saved successfully");
     }

@@ -133,6 +133,41 @@ public class TallyServiceTests : ServiceTestBase
         Assert.True(statistics.NumEligibleCandidates > 0);
     }
 
+    [Fact]
+    public async Task CalculateNormalElectionAsync_CreateResultTieRecords_ForTiesSpanningSections()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 9, numberExtra: 2);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 12);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 4);
+        
+        await CreateVotesWithTieSpanningSectionsAsync(ballots, people);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var results = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .OrderBy(r => r.Rank)
+            .ToList();
+        
+        var resultTies = Context.ResultTies
+            .Where(rt => rt.ElectionGuid == election.ElectionGuid)
+            .ToList();
+
+        var tiesRequiringBreak = results.Where(r => r.TieBreakRequired == true).ToList();
+        Assert.NotEmpty(tiesRequiringBreak);
+
+        Assert.NotEmpty(resultTies);
+        Assert.All(resultTies, rt =>
+        {
+            Assert.Equal(election.ElectionGuid, rt.ElectionGuid);
+            Assert.True(rt.TieBreakRequired);
+            Assert.True(rt.TieBreakGroup > 0);
+            Assert.True(rt.NumInTie > 1);
+            Assert.Equal(9, rt.NumToElect);
+        });
+    }
+
     private async Task<Election> CreateTestElectionAsync(
         string? electionType = "LSA",
         int numberToElect = 9,
@@ -294,6 +329,105 @@ public class TallyServiceTests : ServiceTestBase
                 Context.Votes.Add(vote);
             }
         }
+
+        await Context.SaveChangesAsync();
+    }
+
+    private async Task CreateVotesWithTieSpanningSectionsAsync(List<Ballot> ballots, List<Person> people)
+    {
+        if (ballots.Count < 4) return;
+        
+        for (int i = 0; i < 8; i++)
+        {
+            var vote = new Vote
+            {
+                BallotGuid = ballots[0].BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[i].CombinedInfo,
+                RowVersion = new byte[8]
+            };
+            Context.Votes.Add(vote);
+        }
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballots[0].BallotGuid,
+            PersonGuid = people[8].PersonGuid,
+            PositionOnBallot = 9,
+            StatusCode = "Ok",
+            PersonCombinedInfo = people[8].CombinedInfo,
+            RowVersion = new byte[8]
+        });
+        
+        for (int i = 0; i < 8; i++)
+        {
+            var vote = new Vote
+            {
+                BallotGuid = ballots[1].BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[i].CombinedInfo,
+                RowVersion = new byte[8]
+            };
+            Context.Votes.Add(vote);
+        }
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballots[1].BallotGuid,
+            PersonGuid = people[9].PersonGuid,
+            PositionOnBallot = 9,
+            StatusCode = "Ok",
+            PersonCombinedInfo = people[9].CombinedInfo,
+            RowVersion = new byte[8]
+        });
+        
+        for (int i = 0; i < 8; i++)
+        {
+            var vote = new Vote
+            {
+                BallotGuid = ballots[2].BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[i].CombinedInfo,
+                RowVersion = new byte[8]
+            };
+            Context.Votes.Add(vote);
+        }
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballots[2].BallotGuid,
+            PersonGuid = people[8].PersonGuid,
+            PositionOnBallot = 9,
+            StatusCode = "Ok",
+            PersonCombinedInfo = people[8].CombinedInfo,
+            RowVersion = new byte[8]
+        });
+        
+        for (int i = 0; i < 8; i++)
+        {
+            var vote = new Vote
+            {
+                BallotGuid = ballots[3].BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[i].CombinedInfo,
+                RowVersion = new byte[8]
+            };
+            Context.Votes.Add(vote);
+        }
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballots[3].BallotGuid,
+            PersonGuid = people[9].PersonGuid,
+            PositionOnBallot = 9,
+            StatusCode = "Ok",
+            PersonCombinedInfo = people[9].CombinedInfo,
+            RowVersion = new byte[8]
+        });
 
         await Context.SaveChangesAsync();
     }

@@ -58,6 +58,7 @@ Save to `{@artifacts_path}/plan.md`.
 ### Phase 1: Code Verification and Enhancement
 
 ### [ ] Step: Verify and Enhance ResultTie Record Creation
+<!-- chat-id: 0e562602-84cd-4ae1-aa7d-1be2416bd036 -->
 **Goal**: Ensure ResultTie records are created for ties requiring resolution (FR-10)
 
 **Tasks**:
