@@ -73,7 +73,8 @@ Save to `{@artifacts_path}/plan.md`.
 - Add unit test to verify ResultTie records are created
 - Verify records in database after tally calculation
 
-### [ ] Step: Add Result Clearing on Recalculation
+### [x] Step: Add Result Clearing on Recalculation
+<!-- chat-id: 5c35c9be-ef94-4027-b2ce-54bdee500d47 -->
 **Goal**: Ensure previous Result records are cleared before recalculation (FR-18)
 
 **Tasks**:

@@ -38,6 +38,28 @@ public abstract class ElectionAnalyzerBase
     {
         Logger.LogInformation("Preparing for analysis of election {ElectionGuid}", TargetElection.ElectionGuid);
 
+        var existingResults = await Context.Results
+            .Where(r => r.ElectionGuid == TargetElection.ElectionGuid)
+            .ToListAsync();
+        
+        if (existingResults.Any())
+        {
+            Context.Results.RemoveRange(existingResults);
+            Logger.LogInformation("Cleared {ResultCount} existing Result records", existingResults.Count);
+        }
+
+        var existingResultTies = await Context.ResultTies
+            .Where(rt => rt.ElectionGuid == TargetElection.ElectionGuid)
+            .ToListAsync();
+        
+        if (existingResultTies.Any())
+        {
+            Context.ResultTies.RemoveRange(existingResultTies);
+            Logger.LogInformation("Cleared {ResultTieCount} existing ResultTie records", existingResultTies.Count);
+        }
+
+        await Context.SaveChangesAsync();
+
         var locationGuids = await Context.Locations
             .Where(l => l.ElectionGuid == TargetElection.ElectionGuid)
             .Select(l => l.LocationGuid)
@@ -57,9 +79,7 @@ public abstract class ElectionAnalyzerBase
             .Where(p => p.ElectionGuid == TargetElection.ElectionGuid)
             .ToListAsync();
 
-        Results = await Context.Results
-            .Where(r => r.ElectionGuid == TargetElection.ElectionGuid)
-            .ToListAsync();
+        Results = new List<Result>();
 
         ResultSummaryCalc = await Context.ResultSummaries
             .FirstOrDefaultAsync(rs => rs.ElectionGuid == TargetElection.ElectionGuid)
