@@ -111,6 +111,7 @@ public abstract class ElectionAnalyzerBase
             .ToList();
 
         var rank = 1;
+        var ordinal = 1;
         var tieGroupNumber = 1;
         var numberToElect = TargetElection.NumberToElect ?? 9;
         var numberExtra = TargetElection.NumberExtra ?? 0;
@@ -130,11 +131,11 @@ public abstract class ElectionAnalyzerBase
                     result.TieBreakGroup = tieGroupNumber;
                 }
 
-                if (rank <= numberToElect)
+                if (ordinal <= numberToElect)
                 {
                     result.Section = "E";
                 }
-                else if (rank <= numberToElect + numberExtra)
+                else if (ordinal <= numberToElect + numberExtra)
                 {
                     result.Section = "X";
                 }
@@ -142,6 +143,8 @@ public abstract class ElectionAnalyzerBase
                 {
                     result.Section = "O";
                 }
+                
+                ordinal++;
             }
 
             rank += candidatesInGroup.Count;
