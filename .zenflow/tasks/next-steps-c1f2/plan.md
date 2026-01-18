@@ -126,7 +126,8 @@ Save to `{@artifacts_path}/plan.md`.
 - Run `dotnet test` - all tests should pass
 - Verify test output shows 2 new tests passing
 
-### [ ] Step: Add Edge Case Unit Tests (Part 2)
+### [x] Step: Add Edge Case Unit Tests (Part 2)
+<!-- chat-id: fc8dd6d7-c1cd-4aaf-809a-aad0c36b744d -->
 **Goal**: Test additional edge cases
 
 **Test Cases**:

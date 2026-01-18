@@ -205,6 +205,109 @@ public class TallyServiceTests : ServiceTestBase
         Assert.NotEmpty(result.Ties);
     }
 
+    [Fact]
+    public async Task CalculateNormalElectionAsync_WithSingleCandidate_CompletesSuccessfully()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 1);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 5);
+        
+        foreach (var ballot in ballots)
+        {
+            var vote = new Vote
+            {
+                BallotGuid = ballot.BallotGuid,
+                PersonGuid = people[0].PersonGuid,
+                PositionOnBallot = 1,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[0].CombinedInfo,
+                RowVersion = new byte[8]
+            };
+            Context.Votes.Add(vote);
+        }
+        await Context.SaveChangesAsync();
+
+        var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        Assert.NotNull(result);
+        Assert.Single(result.Results);
+        Assert.Equal(5, result.Results[0].VoteCount);
+        Assert.Equal("E", result.Results[0].Section);
+        Assert.Equal(1, result.Results[0].Rank);
+    }
+
+    [Fact]
+    public async Task CalculateNormalElectionAsync_WithBallotsHavingZeroValidVotes_CountsBallotsButNotVotes()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 9);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 5);
+        
+        var ballot1 = new Ballot
+        {
+            LocationGuid = location.LocationGuid,
+            BallotGuid = Guid.NewGuid(),
+            StatusCode = "Spoiled",
+            ComputerCode = "A",
+            BallotNumAtComputer = 1,
+            RowVersion = new byte[8]
+        };
+        Context.Ballots.Add(ballot1);
+
+        var ballot2 = new Ballot
+        {
+            LocationGuid = location.LocationGuid,
+            BallotGuid = Guid.NewGuid(),
+            StatusCode = "Ok",
+            ComputerCode = "A",
+            BallotNumAtComputer = 2,
+            RowVersion = new byte[8]
+        };
+        Context.Ballots.Add(ballot2);
+        await Context.SaveChangesAsync();
+
+        for (int i = 0; i < 3; i++)
+        {
+            var vote = new Vote
+            {
+                BallotGuid = ballot1.BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[i].CombinedInfo,
+                RowVersion = new byte[8]
+            };
+            Context.Votes.Add(vote);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            var vote = new Vote
+            {
+                BallotGuid = ballot2.BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[i].CombinedInfo,
+                RowVersion = new byte[8]
+            };
+            Context.Votes.Add(vote);
+        }
+        await Context.SaveChangesAsync();
+
+        var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        Assert.NotNull(result);
+        Assert.Equal(1, result.Statistics.BallotsReceived);
+        Assert.Equal(1, result.Statistics.SpoiledBallots);
+        Assert.Equal(2, result.Statistics.TotalBallots);
+        
+        var candidatesWithVotes = result.Results.Where(r => r.VoteCount > 0).ToList();
+        Assert.Equal(3, candidatesWithVotes.Count);
+        Assert.All(candidatesWithVotes, c => Assert.Equal(1, c.VoteCount));
+    }
+
     private async Task<Election> CreateTestElectionAsync(
         string? electionType = "LSA",
         int numberToElect = 9,
