@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using TallyJ4.EF.Context;
 using TallyJ4.Mappings;
 
@@ -14,6 +15,7 @@ public abstract class ServiceTestBase : IDisposable
     {
         var options = new DbContextOptionsBuilder<MainDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
         Context = new MainDbContext(options);

@@ -26,12 +26,27 @@ public abstract class ElectionAnalyzerBase
 
     public async Task AnalyzeAsync()
     {
-        await PrepareForAnalysisAsync();
-        CalculateBallotStatistics();
-        await CountVotesAsync();
-        FinalizeResultsAndTies();
-        await FinalizeSummariesAsync();
-        await SaveResultsAsync();
+        using var transaction = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            Logger.LogInformation("Starting tally calculation transaction for election {ElectionGuid}", TargetElection.ElectionGuid);
+            
+            await PrepareForAnalysisAsync();
+            CalculateBallotStatistics();
+            await CountVotesAsync();
+            FinalizeResultsAndTies();
+            await FinalizeSummariesAsync();
+            await SaveResultsAsync();
+            
+            await transaction.CommitAsync();
+            Logger.LogInformation("Tally calculation transaction committed successfully for election {ElectionGuid}", TargetElection.ElectionGuid);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error during tally calculation for election {ElectionGuid}. Transaction will be rolled back.", TargetElection.ElectionGuid);
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     protected virtual async Task PrepareForAnalysisAsync()

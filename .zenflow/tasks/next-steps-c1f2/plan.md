@@ -90,7 +90,8 @@ Save to `{@artifacts_path}/plan.md`.
 - Verify that calling CalculateNormalElectionAsync() twice produces same results
 - Verify old records are removed from database
 
-### [ ] Step: Add Transaction Safety
+### [x] Step: Add Transaction Safety
+<!-- chat-id: 1ee1ea46-774e-4ee8-9b33-9c06bf4b7e5c -->
 **Goal**: Wrap tally calculation in a database transaction (NFR-5)
 
 **Tasks**:
