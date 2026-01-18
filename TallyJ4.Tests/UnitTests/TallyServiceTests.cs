@@ -308,6 +308,49 @@ public class TallyServiceTests : ServiceTestBase
         Assert.All(candidatesWithVotes, c => Assert.Equal(1, c.VoteCount));
     }
 
+    [Fact]
+    public async Task CalculateNormalElectionAsync_Recalculation_ProducesIdenticalResults()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 9, numberExtra: 3);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 15);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 20);
+        await CreateTestVotesAsync(ballots, people);
+
+        var result1 = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var result2 = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        Assert.NotNull(result1);
+        Assert.NotNull(result2);
+        Assert.Equal(result1.Results.Count, result2.Results.Count);
+
+        var sortedResults1 = result1.Results.OrderBy(r => r.PersonGuid).ToList();
+        var sortedResults2 = result2.Results.OrderBy(r => r.PersonGuid).ToList();
+
+        for (int i = 0; i < sortedResults1.Count; i++)
+        {
+            var r1 = sortedResults1[i];
+            var r2 = sortedResults2[i];
+
+            Assert.Equal(r1.PersonGuid, r2.PersonGuid);
+            Assert.Equal(r1.VoteCount, r2.VoteCount);
+            Assert.Equal(r1.Rank, r2.Rank);
+            Assert.Equal(r1.Section, r2.Section);
+            Assert.Equal(r1.IsTied, r2.IsTied);
+            Assert.Equal(r1.TieBreakGroup, r2.TieBreakGroup);
+        }
+
+        Assert.Equal(result1.Statistics.BallotsReceived, result2.Statistics.BallotsReceived);
+        Assert.Equal(result1.Statistics.TotalBallots, result2.Statistics.TotalBallots);
+        Assert.Equal(result1.Statistics.TotalVotes, result2.Statistics.TotalVotes);
+
+        var resultRecordsInDb = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .ToList();
+        Assert.Equal(15, resultRecordsInDb.Count);
+    }
+
     private async Task<Election> CreateTestElectionAsync(
         string? electionType = "LSA",
         int numberToElect = 9,

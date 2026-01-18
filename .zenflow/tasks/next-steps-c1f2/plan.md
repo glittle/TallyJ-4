@@ -140,7 +140,8 @@ Save to `{@artifacts_path}/plan.md`.
 **Verification**:
 - Run `dotnet test` - all tests should pass
 
-### [ ] Step: Add Recalculation Idempotency Test
+### [x] Step: Add Recalculation Idempotency Test
+<!-- chat-id: 01fc5b80-5462-43ee-88c7-ef3476354eea -->
 **Goal**: Verify recalculation produces same results (NFR-4)
 
 **Test Case**:
