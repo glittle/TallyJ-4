@@ -169,6 +169,42 @@ public class TallyServiceTests : ServiceTestBase
         });
     }
 
+    [Fact]
+    public async Task CalculateNormalElectionAsync_WithZeroBallots_ReturnsEmptyResults()
+    {
+        var election = await CreateTestElectionAsync();
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 15);
+
+        var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        Assert.NotNull(result);
+        Assert.Equal(election.ElectionGuid, result.ElectionGuid);
+        Assert.Empty(result.Results);
+        Assert.Equal(0, result.Statistics.BallotsReceived);
+        Assert.Equal(0, result.Statistics.TotalBallots);
+        Assert.Equal(0, result.Statistics.TotalVotes);
+    }
+
+    [Fact]
+    public async Task CalculateNormalElectionAsync_WithAllCandidatesTied_MarksAllAsTied()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 9);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 10);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 2);
+
+        await CreateAllCandidatesTiedVotesAsync(ballots, people);
+
+        var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        Assert.NotNull(result);
+        Assert.Equal(10, result.Results.Count);
+        Assert.All(result.Results, r => Assert.True(r.IsTied));
+        Assert.All(result.Results, r => Assert.Equal(2, r.VoteCount));
+        Assert.NotEmpty(result.Ties);
+    }
+
     private async Task<Election> CreateTestElectionAsync(
         string? electionType = "LSA",
         int numberToElect = 9,
@@ -371,6 +407,29 @@ public class TallyServiceTests : ServiceTestBase
                     PersonCombinedInfo = people[personIndex].CombinedInfo,
                     RowVersion = new byte[8]
                 });
+            }
+        }
+
+        await Context.SaveChangesAsync();
+    }
+
+    private async Task CreateAllCandidatesTiedVotesAsync(List<Ballot> ballots, List<Person> people)
+    {
+        foreach (var ballot in ballots)
+        {
+            for (int i = 0; i < people.Count; i++)
+            {
+                var vote = new Vote
+                {
+                    BallotGuid = ballot.BallotGuid,
+                    PersonGuid = people[i].PersonGuid,
+                    PositionOnBallot = i + 1,
+                    StatusCode = "Ok",
+                    PersonCombinedInfo = people[i].CombinedInfo,
+                    RowVersion = new byte[8]
+                };
+
+                Context.Votes.Add(vote);
             }
         }
 

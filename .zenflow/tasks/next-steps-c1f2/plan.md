@@ -111,7 +111,8 @@ Save to `{@artifacts_path}/plan.md`.
 
 ### Phase 2: Unit Testing
 
-### [ ] Step: Add Edge Case Unit Tests (Part 1)
+### [x] Step: Add Edge Case Unit Tests (Part 1)
+<!-- chat-id: 12d3beb0-e8c1-474a-b77d-9cbb2f39000c -->
 **Goal**: Test edge cases (FR-14 to FR-17)
 
 **Test Cases**:
