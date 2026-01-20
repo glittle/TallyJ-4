@@ -253,6 +253,7 @@ Integration test failures are due to infrastructure limitation: both SQL Server 
 - Integration test infrastructure needs refactoring (using real SQL Server for integration tests would resolve this)
 
 ### [ ] Step: Manual Testing via Swagger
+<!-- chat-id: 3e5621be-75a2-4dec-8914-e454d5f3bce3 -->
 **Goal**: Verify endpoints work correctly via API
 
 **Tasks**:
