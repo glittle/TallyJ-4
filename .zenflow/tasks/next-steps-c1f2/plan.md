@@ -192,7 +192,8 @@ Save to `{@artifacts_path}/plan.md`.
 
 ### Phase 3: Integration Testing
 
-### [ ] Step: Create ResultsController Integration Tests (Part 1)
+### [x] Step: Create ResultsController Integration Tests (Part 1)
+<!-- chat-id: 313319af-1685-4e37-8850-2665980dcc91 -->
 **Goal**: Test calculate and get endpoints (NFR-10)
 
 **Test Cases**:
