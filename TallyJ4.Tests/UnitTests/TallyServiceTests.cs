@@ -425,6 +425,25 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Empty(resultTies);
     }
 
+    [Fact]
+    public async Task CalculateNormalElectionAsync_PerformanceTest_CompletesWithin1Second()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 9, numberExtra: 3);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 30);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 100);
+        await CreateTestVotesAsync(ballots, people);
+
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+        stopwatch.Stop();
+
+        Assert.NotNull(result);
+        Assert.Equal(100, result.Statistics.BallotsReceived);
+        Assert.True(stopwatch.ElapsedMilliseconds < 1000, 
+            $"Tally calculation took {stopwatch.ElapsedMilliseconds}ms, expected < 1000ms");
+    }
+
     private async Task<Election> CreateTestElectionAsync(
         string? electionType = "LSA",
         int numberToElect = 9,

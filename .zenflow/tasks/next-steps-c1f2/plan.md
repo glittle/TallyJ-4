@@ -172,7 +172,8 @@ Save to `{@artifacts_path}/plan.md`.
 - Run `dotnet test` - all 4 tests should pass
 - Verify TieBreakRequired flag is set correctly
 
-### [ ] Step: Add Performance Test
+### [x] Step: Add Performance Test
+<!-- chat-id: 36a6193b-3e7f-4428-9119-2eeef123e897 -->
 **Goal**: Verify tally completes in < 1 second for 100 ballots (NFR-1)
 
 **Test Case**:
