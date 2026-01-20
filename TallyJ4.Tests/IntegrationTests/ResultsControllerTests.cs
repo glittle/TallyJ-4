@@ -67,6 +67,61 @@ public class ResultsControllerTests : IntegrationTestBase
         Assert.NotNull(result.Results);
     }
 
+    [Fact]
+    public async Task GetSummary_WithCalculatedResults_ReturnsOkWithStatistics()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var electionGuid = await CreateTestElectionWithBallotsAsync();
+
+        await Client.PostAsync($"/api/results/election/{electionGuid}/calculate", null);
+
+        var response = await Client.GetAsync($"/api/results/election/{electionGuid}/summary");
+        
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var result = await DeserializeResponseAsync<TallyResultDto>(response);
+        Assert.NotNull(result);
+        Assert.Equal(electionGuid, result.ElectionGuid);
+        Assert.NotNull(result.Statistics);
+        Assert.True(result.Statistics.BallotsReceived > 0);
+        Assert.True(result.Statistics.TotalVotes > 0);
+    }
+
+    [Fact]
+    public async Task GetFinal_ReturnsOnlyElectedAndExtraSections()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var electionGuid = await CreateTestElectionWithBallotsAsync();
+
+        await Client.PostAsync($"/api/results/election/{electionGuid}/calculate", null);
+
+        var response = await Client.GetAsync($"/api/results/election/{electionGuid}/final");
+        
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var result = await DeserializeResponseAsync<TallyResultDto>(response);
+        Assert.NotNull(result);
+        Assert.NotNull(result.Results);
+        
+        var sections = result.Results.Select(r => r.Section).Distinct().ToList();
+        Assert.All(sections, section => Assert.True(section == "E" || section == "X"));
+        Assert.DoesNotContain("O", sections);
+    }
+
+    [Fact]
+    public async Task CalculateTally_WithoutAuthentication_ReturnsUnauthorized()
+    {
+        var electionGuid = Guid.NewGuid();
+
+        var response = await Client.PostAsync($"/api/results/election/{electionGuid}/calculate", null);
+        
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
     private async Task<Guid> CreateTestElectionWithBallotsAsync()
     {
         var createDto = new CreateElectionDto

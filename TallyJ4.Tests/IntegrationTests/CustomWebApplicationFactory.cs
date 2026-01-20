@@ -25,20 +25,11 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // Remove all EF Core and DbContext-related service descriptors
-            var descriptorsToRemove = services.Where(d =>
-                d.ServiceType.IsGenericType && (
-                    d.ServiceType.GetGenericTypeDefinition() == typeof(DbContextOptions<>) ||
-                    d.ServiceType.GetGenericTypeDefinition() == typeof(IDbContextFactory<>)
-                ) ||
-                d.ServiceType == typeof(DbContextOptions) ||
-                d.ServiceType == typeof(MainDbContext)
-            ).ToList();
-
-            foreach (var descriptor in descriptorsToRemove)
-            {
-                services.Remove(descriptor);
-            }
+            // Remove all DbContext and DbContextOptions registrations
+            services.RemoveAll(typeof(DbContextOptions<MainDbContext>));
+            services.RemoveAll(typeof(IDbContextFactory<MainDbContext>));
+            services.RemoveAll<DbContextOptions>();
+            services.RemoveAll<MainDbContext>();
 
             // Add InMemory database for testing
             services.AddDbContext<MainDbContext>(options =>
