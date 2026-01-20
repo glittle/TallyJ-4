@@ -351,6 +351,80 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Equal(15, resultRecordsInDb.Count);
     }
 
+    [Fact]
+    public async Task CalculateNormalElectionAsync_TieSpanningElectedExtraBoundary_RequiresTieBreak()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 9, numberExtra: 2);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 12);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 10);
+
+        await CreateVotesWithTieAtElectedExtraBoundaryAsync(ballots, people);
+
+        var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var results = result.Results.OrderBy(r => r.Rank).ToList();
+        var tiedAtBoundary = results.Where(r => r.Rank == 9 || r.Rank == 10).ToList();
+
+        Assert.True(tiedAtBoundary.All(r => r.TieBreakRequired));
+        Assert.True(tiedAtBoundary.All(r => r.IsTied));
+        Assert.True(tiedAtBoundary.All(r => r.TieBreakGroup > 0));
+        
+        var resultTies = Context.ResultTies
+            .Where(rt => rt.ElectionGuid == election.ElectionGuid && rt.TieBreakRequired == true)
+            .ToList();
+        Assert.NotEmpty(resultTies);
+    }
+
+    [Fact]
+    public async Task CalculateNormalElectionAsync_TieSpanningExtraOtherBoundary_RequiresTieBreak()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 9, numberExtra: 2);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 13);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 10);
+
+        await CreateVotesWithTieAtExtraOtherBoundaryAsync(ballots, people);
+
+        var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var results = result.Results.OrderBy(r => r.Rank).ToList();
+        var tiedAtBoundary = results.Where(r => r.Rank == 11 || r.Rank == 12).ToList();
+
+        Assert.True(tiedAtBoundary.All(r => r.TieBreakRequired));
+        Assert.True(tiedAtBoundary.All(r => r.IsTied));
+        Assert.True(tiedAtBoundary.All(r => r.TieBreakGroup > 0));
+        
+        var resultTies = Context.ResultTies
+            .Where(rt => rt.ElectionGuid == election.ElectionGuid && rt.TieBreakRequired == true)
+            .ToList();
+        Assert.NotEmpty(resultTies);
+    }
+
+    [Fact]
+    public async Task CalculateNormalElectionAsync_TieWithinSection_DoesNotRequireTieBreak()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 9, numberExtra: 2);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 12);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 10);
+
+        await CreateVotesWithTieWithinElectedSectionAsync(ballots, people);
+
+        var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var results = result.Results.OrderBy(r => r.Rank).ToList();
+        var tiedWithinElected = results.Where(r => r.Rank >= 7 && r.Rank <= 8 && r.Section == "E").ToList();
+
+        Assert.True(tiedWithinElected.All(r => !r.TieBreakRequired));
+        Assert.True(tiedWithinElected.All(r => r.IsTied));
+        
+        var resultTies = Context.ResultTies
+            .Where(rt => rt.ElectionGuid == election.ElectionGuid && rt.TieBreakRequired == true)
+            .ToList();
+        Assert.Empty(resultTies);
+    }
+
     private async Task<Election> CreateTestElectionAsync(
         string? electionType = "LSA",
         int numberToElect = 9,
@@ -577,6 +651,237 @@ public class TallyServiceTests : ServiceTestBase
 
                 Context.Votes.Add(vote);
             }
+        }
+
+        await Context.SaveChangesAsync();
+    }
+
+    private async Task CreateVotesWithTieAtElectedExtraBoundaryAsync(List<Ballot> ballots, List<Person> people)
+    {
+        foreach (var ballot in ballots)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                Context.Votes.Add(new Vote
+                {
+                    BallotGuid = ballot.BallotGuid,
+                    PersonGuid = people[i].PersonGuid,
+                    PositionOnBallot = i + 1,
+                    StatusCode = "Ok",
+                    PersonCombinedInfo = people[i].CombinedInfo,
+                    RowVersion = new byte[8]
+                });
+            }
+        }
+
+        var halfBallots = ballots.Count / 2;
+        for (int ballotIndex = 0; ballotIndex < halfBallots; ballotIndex++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[8].PersonGuid,
+                PositionOnBallot = 9,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[8].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        for (int ballotIndex = halfBallots; ballotIndex < ballots.Count; ballotIndex++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[9].PersonGuid,
+                PositionOnBallot = 9,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[9].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        await Context.SaveChangesAsync();
+    }
+
+    private async Task CreateVotesWithTieAtExtraOtherBoundaryAsync(List<Ballot> ballots, List<Person> people)
+    {
+        foreach (var ballot in ballots)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Context.Votes.Add(new Vote
+                {
+                    BallotGuid = ballot.BallotGuid,
+                    PersonGuid = people[i].PersonGuid,
+                    PositionOnBallot = i + 1,
+                    StatusCode = "Ok",
+                    PersonCombinedInfo = people[i].CombinedInfo,
+                    RowVersion = new byte[8]
+                });
+            }
+        }
+
+        var halfBallots = ballots.Count / 2;
+        for (int ballotIndex = 0; ballotIndex < halfBallots; ballotIndex++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[10].PersonGuid,
+                PositionOnBallot = 11,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[10].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        for (int ballotIndex = halfBallots; ballotIndex < ballots.Count; ballotIndex++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[11].PersonGuid,
+                PositionOnBallot = 11,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[11].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        await Context.SaveChangesAsync();
+    }
+
+    private async Task CreateVotesWithTieWithinElectedSectionAsync(List<Ballot> ballots, List<Person> people)
+    {
+        foreach (var ballot in ballots)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                Context.Votes.Add(new Vote
+                {
+                    BallotGuid = ballot.BallotGuid,
+                    PersonGuid = people[i].PersonGuid,
+                    PositionOnBallot = i + 1,
+                    StatusCode = "Ok",
+                    PersonCombinedInfo = people[i].CombinedInfo,
+                    RowVersion = new byte[8]
+                });
+            }
+        }
+
+        var halfBallots = ballots.Count / 2;
+        for (int ballotIndex = 0; ballotIndex < halfBallots; ballotIndex++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[6].PersonGuid,
+                PositionOnBallot = 7,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[6].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        for (int ballotIndex = halfBallots; ballotIndex < ballots.Count; ballotIndex++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[7].PersonGuid,
+                PositionOnBallot = 7,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[7].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        foreach (var ballot in ballots)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballot.BallotGuid,
+                PersonGuid = people[8].PersonGuid,
+                PositionOnBallot = 8,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[8].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        await Context.SaveChangesAsync();
+    }
+
+    private async Task CreateVotesWithTieWithinExtraSectionAsync(List<Ballot> ballots, List<Person> people)
+    {
+        foreach (var ballot in ballots)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                Context.Votes.Add(new Vote
+                {
+                    BallotGuid = ballot.BallotGuid,
+                    PersonGuid = people[i].PersonGuid,
+                    PositionOnBallot = i + 1,
+                    StatusCode = "Ok",
+                    PersonCombinedInfo = people[i].CombinedInfo,
+                    RowVersion = new byte[8]
+                });
+            }
+        }
+
+        foreach (var ballot in ballots)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballot.BallotGuid,
+                PersonGuid = people[9].PersonGuid,
+                PositionOnBallot = 10,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[9].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        var halfBallots = ballots.Count / 2;
+        for (int ballotIndex = 0; ballotIndex < halfBallots; ballotIndex++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[10].PersonGuid,
+                PositionOnBallot = 11,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[10].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        for (int ballotIndex = halfBallots; ballotIndex < ballots.Count; ballotIndex++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[11].PersonGuid,
+                PositionOnBallot = 11,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[11].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        for (int ballotIndex = 0; ballotIndex < ballots.Count - 2; ballotIndex++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[12].PersonGuid,
+                PositionOnBallot = 12,
+                StatusCode = "Ok",
+                PersonCombinedInfo = people[12].CombinedInfo,
+                RowVersion = new byte[8]
+            });
         }
 
         await Context.SaveChangesAsync();

@@ -155,7 +155,8 @@ Save to `{@artifacts_path}/plan.md`.
 **Verification**:
 - Run `dotnet test` - test should pass
 
-### [ ] Step: Add Tie-Break Requirement Tests
+### [x] Step: Add Tie-Break Requirement Tests
+<!-- chat-id: 4694d191-60ff-4be7-9d70-26b62e94fb60 -->
 **Goal**: Verify ties spanning section boundaries are detected (FR-9)
 
 **Test Cases**:
