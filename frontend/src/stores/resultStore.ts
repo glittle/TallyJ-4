@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { resultService } from '../services/resultService';
+import { signalrService } from '../services/signalrService';
 import type { TallyResultDto, TallyStatisticsDto } from '../types';
+import type { TallyProgressEvent } from '../types/SignalREvents';
 
 export const useResultStore = defineStore('result', () => {
   const results = ref<TallyResultDto | null>(null);
@@ -9,6 +11,8 @@ export const useResultStore = defineStore('result', () => {
   const loading = ref(false);
   const calculating = ref(false);
   const error = ref<string | null>(null);
+  const signalrInitialized = ref(false);
+  const tallyProgress = ref<TallyProgressEvent | null>(null);
 
   async function calculateTally(electionGuid: string, electionType: 'Normal' | 'SingleName') {
     calculating.value = true;
@@ -74,16 +78,68 @@ export const useResultStore = defineStore('result', () => {
     error.value = null;
   }
 
+  async function initializeSignalR() {
+    if (signalrInitialized.value) return;
+
+    try {
+      const connection = await signalrService.connectToAnalyzeHub();
+      
+      connection.on('TallyProgress', (data: TallyProgressEvent) => {
+        handleTallyProgress(data);
+      });
+
+      connection.on('TallyComplete', (data: TallyProgressEvent) => {
+        handleTallyComplete(data);
+      });
+
+      signalrInitialized.value = true;
+    } catch (e) {
+      console.error('Failed to initialize SignalR for result store:', e);
+    }
+  }
+
+  function handleTallyProgress(data: TallyProgressEvent) {
+    tallyProgress.value = data;
+  }
+
+  function handleTallyComplete(data: TallyProgressEvent) {
+    tallyProgress.value = data;
+    calculating.value = false;
+    if (data.electionGuid) {
+      fetchResults(data.electionGuid).catch(console.error);
+    }
+  }
+
+  async function joinTallySession(electionGuid: string) {
+    try {
+      await signalrService.joinTallySession(electionGuid);
+    } catch (e) {
+      console.error('Failed to join tally session:', e);
+    }
+  }
+
+  async function leaveTallySession(electionGuid: string) {
+    try {
+      await signalrService.leaveTallySession(electionGuid);
+    } catch (e) {
+      console.error('Failed to leave tally session:', e);
+    }
+  }
+
   return {
     results,
     statistics,
     loading,
     calculating,
     error,
+    tallyProgress,
     calculateTally,
     fetchResults,
     fetchStatistics,
     clearResults,
-    clearError
+    clearError,
+    initializeSignalR,
+    joinTallySession,
+    leaveTallySession
   };
 });

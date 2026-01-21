@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.DTOs.People;
+using TallyJ4.DTOs.SignalR;
 using TallyJ4.EF.Context;
 using TallyJ4.Domain.Entities;
 using TallyJ4.Models;
@@ -12,12 +13,14 @@ public class PeopleService : IPeopleService
     private readonly MainDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<PeopleService> _logger;
+    private readonly ISignalRNotificationService _signalRNotificationService;
 
-    public PeopleService(MainDbContext context, IMapper mapper, ILogger<PeopleService> logger)
+    public PeopleService(MainDbContext context, IMapper mapper, ILogger<PeopleService> logger, ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
         _mapper = mapper;
         _logger = logger;
+        _signalRNotificationService = signalRNotificationService;
     }
 
     public async Task<PaginatedResponse<PersonDto>> GetPeopleByElectionAsync(
@@ -126,6 +129,16 @@ public class PeopleService : IPeopleService
 
         _logger.LogInformation("Created person {PersonGuid} - {FullName}", person.PersonGuid, person.FullName);
 
+        await _signalRNotificationService.SendPersonUpdateAsync(new PersonUpdateDto
+        {
+            ElectionGuid = person.ElectionGuid,
+            PersonGuid = person.PersonGuid,
+            Action = "added",
+            FirstName = person.FirstName,
+            LastName = person.LastName,
+            UpdatedAt = DateTime.UtcNow
+        });
+
         return await GetPersonByGuidAsync(person.PersonGuid) ?? _mapper.Map<PersonDto>(person);
     }
 
@@ -178,6 +191,16 @@ public class PeopleService : IPeopleService
 
         _logger.LogInformation("Updated person {PersonGuid}", personGuid);
 
+        await _signalRNotificationService.SendPersonUpdateAsync(new PersonUpdateDto
+        {
+            ElectionGuid = person.ElectionGuid,
+            PersonGuid = person.PersonGuid,
+            Action = "updated",
+            FirstName = person.FirstName,
+            LastName = person.LastName,
+            UpdatedAt = DateTime.UtcNow
+        });
+
         return await GetPersonByGuidAsync(personGuid);
     }
 
@@ -190,10 +213,24 @@ public class PeopleService : IPeopleService
             return false;
         }
 
+        var electionGuid = person.ElectionGuid;
+        var firstName = person.FirstName;
+        var lastName = person.LastName;
+
         _context.People.Remove(person);
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Deleted person {PersonGuid}", personGuid);
+
+        await _signalRNotificationService.SendPersonUpdateAsync(new PersonUpdateDto
+        {
+            ElectionGuid = electionGuid,
+            PersonGuid = personGuid,
+            Action = "deleted",
+            FirstName = firstName,
+            LastName = lastName,
+            UpdatedAt = DateTime.UtcNow
+        });
 
         return true;
     }

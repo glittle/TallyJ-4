@@ -89,6 +89,10 @@ services.AddScoped<TallyJ4.Services.IAccountService, TallyJ4.Services.AccountSer
 services.AddScoped<TallyJ4.Services.IPublicService, TallyJ4.Services.PublicService>();
 services.AddScoped<TallyJ4.Services.ITallyService, TallyJ4.Services.TallyService>();
 
+// Add SignalR
+services.AddSignalR();
+services.AddSingleton<TallyJ4.Services.ISignalRNotificationService, TallyJ4.Services.SignalRNotificationService>();
+
 // Add exception handler
 services.AddExceptionHandler<GlobalExceptionHandler>();
 services.AddProblemDetails();
@@ -193,6 +197,13 @@ app.MapGroup("/auth").MapIdentityApi<AppUser>();  // Adds /auth/register, /auth/
 
 // Map API controllers
 app.MapControllers();
+
+// Map SignalR hubs
+app.MapHub<TallyJ4.Hubs.MainHub>("/hubs/main");
+app.MapHub<TallyJ4.Hubs.AnalyzeHub>("/hubs/analyze");
+app.MapHub<TallyJ4.Hubs.BallotImportHub>("/hubs/ballot-import");
+app.MapHub<TallyJ4.Hubs.FrontDeskHub>("/hubs/front-desk");
+app.MapHub<TallyJ4.Hubs.PublicHub>("/hubs/public");
 
 // Test endpoint
 app.MapGet("/protected", () => "This is protected!").RequireAuthorization();

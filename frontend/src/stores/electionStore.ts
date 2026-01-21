@@ -1,13 +1,16 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { electionService } from '../services/electionService';
+import { signalrService } from '../services/signalrService';
 import type { ElectionDto, CreateElectionDto, UpdateElectionDto } from '../types';
+import type { ElectionUpdateEvent } from '../types/SignalREvents';
 
 export const useElectionStore = defineStore('election', () => {
   const elections = ref<ElectionDto[]>([]);
   const currentElection = ref<ElectionDto | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const signalrInitialized = ref(false);
 
   const activeElections = computed(() => 
     elections.value.filter(e => e.tallyStatus !== 'Finalized' && e.tallyStatus !== 'Archived')
@@ -120,6 +123,63 @@ export const useElectionStore = defineStore('election', () => {
     error.value = null;
   }
 
+  async function initializeSignalR() {
+    if (signalrInitialized.value) return;
+
+    try {
+      const connection = await signalrService.connectToMainHub();
+      
+      connection.on('ElectionUpdated', (data: ElectionUpdateEvent) => {
+        handleElectionUpdate(data);
+      });
+
+      connection.on('ElectionStatusChanged', (data: ElectionUpdateEvent) => {
+        handleElectionUpdate(data);
+      });
+
+      signalrInitialized.value = true;
+    } catch (e) {
+      console.error('Failed to initialize SignalR for election store:', e);
+    }
+  }
+
+  function handleElectionUpdate(data: ElectionUpdateEvent) {
+    const index = elections.value.findIndex(e => e.electionGuid === data.electionGuid);
+    if (index !== -1) {
+      elections.value[index] = {
+        ...elections.value[index],
+        name: data.name ?? elections.value[index].name,
+        tallyStatus: data.tallyStatus ?? elections.value[index].tallyStatus,
+        electionStatus: data.electionStatus ?? elections.value[index].electionStatus,
+      };
+    }
+
+    if (currentElection.value?.electionGuid === data.electionGuid) {
+      currentElection.value = {
+        ...currentElection.value,
+        name: data.name ?? currentElection.value.name,
+        tallyStatus: data.tallyStatus ?? currentElection.value.tallyStatus,
+        electionStatus: data.electionStatus ?? currentElection.value.electionStatus,
+      };
+    }
+  }
+
+  async function joinElection(electionGuid: string) {
+    try {
+      await signalrService.joinElection(electionGuid);
+    } catch (e) {
+      console.error('Failed to join election group:', e);
+    }
+  }
+
+  async function leaveElection(electionGuid: string) {
+    try {
+      await signalrService.leaveElection(electionGuid);
+    } catch (e) {
+      console.error('Failed to leave election group:', e);
+    }
+  }
+
   return {
     elections,
     currentElection,
@@ -133,6 +193,9 @@ export const useElectionStore = defineStore('election', () => {
     updateElection,
     deleteElection,
     setCurrentElection,
-    clearError
+    clearError,
+    initializeSignalR,
+    joinElection,
+    leaveElection
   };
 });

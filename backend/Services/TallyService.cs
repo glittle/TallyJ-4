@@ -1,4 +1,5 @@
 using TallyJ4.DTOs.Results;
+using TallyJ4.DTOs.SignalR;
 using TallyJ4.EF.Context;
 using TallyJ4.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +10,13 @@ public class TallyService : ITallyService
 {
     private readonly MainDbContext _context;
     private readonly ILogger<TallyService> _logger;
+    private readonly ISignalRNotificationService _signalRNotificationService;
 
-    public TallyService(MainDbContext context, ILogger<TallyService> logger)
+    public TallyService(MainDbContext context, ILogger<TallyService> logger, ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
         _logger = logger;
+        _signalRNotificationService = signalRNotificationService;
     }
 
     public async Task<TallyResultDto> CalculateNormalElectionAsync(Guid electionGuid)
@@ -28,8 +31,38 @@ public class TallyService : ITallyService
             throw new ArgumentException($"Election {electionGuid} not found");
         }
 
+        var totalBallots = await _context.Ballots
+            .Where(b => b.Location.ElectionGuid == electionGuid)
+            .CountAsync();
+
+        await _signalRNotificationService.SendTallyProgressAsync(new TallyProgressDto
+        {
+            ElectionGuid = electionGuid,
+            TotalBallots = totalBallots,
+            ProcessedBallots = 0,
+            TotalVotes = 0,
+            Message = "Starting tally calculation...",
+            PercentComplete = 0,
+            IsComplete = false
+        });
+
         var analyzer = new ElectionAnalyzerNormal(_context, _logger, election);
         await analyzer.AnalyzeAsync();
+
+        var totalVotes = await _context.Results
+            .Where(r => r.ElectionGuid == electionGuid)
+            .SumAsync(r => r.VoteCount ?? 0);
+
+        await _signalRNotificationService.SendTallyProgressAsync(new TallyProgressDto
+        {
+            ElectionGuid = electionGuid,
+            TotalBallots = totalBallots,
+            ProcessedBallots = totalBallots,
+            TotalVotes = totalVotes,
+            Message = "Tally calculation complete!",
+            PercentComplete = 100,
+            IsComplete = true
+        });
 
         var result = await GetTallyResultsAsync(electionGuid);
         _logger.LogInformation("Completed tally calculation for election {ElectionGuid}", electionGuid);
@@ -49,8 +82,38 @@ public class TallyService : ITallyService
             throw new ArgumentException($"Election {electionGuid} not found");
         }
 
+        var totalBallots = await _context.Ballots
+            .Where(b => b.Location.ElectionGuid == electionGuid)
+            .CountAsync();
+
+        await _signalRNotificationService.SendTallyProgressAsync(new TallyProgressDto
+        {
+            ElectionGuid = electionGuid,
+            TotalBallots = totalBallots,
+            ProcessedBallots = 0,
+            TotalVotes = 0,
+            Message = "Starting single-name tally calculation...",
+            PercentComplete = 0,
+            IsComplete = false
+        });
+
         var analyzer = new ElectionAnalyzerSingleName(_context, _logger, election);
         await analyzer.AnalyzeAsync();
+
+        var totalVotes = await _context.Results
+            .Where(r => r.ElectionGuid == electionGuid)
+            .SumAsync(r => r.VoteCount ?? 0);
+
+        await _signalRNotificationService.SendTallyProgressAsync(new TallyProgressDto
+        {
+            ElectionGuid = electionGuid,
+            TotalBallots = totalBallots,
+            ProcessedBallots = totalBallots,
+            TotalVotes = totalVotes,
+            Message = "Single-name tally calculation complete!",
+            PercentComplete = 100,
+            IsComplete = true
+        });
 
         var result = await GetTallyResultsAsync(electionGuid);
         _logger.LogInformation("Completed single-name tally calculation for election {ElectionGuid}", electionGuid);
