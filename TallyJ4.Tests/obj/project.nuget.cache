@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RejBdWBpPwA=",
+  "dgSpecHash": "WSeOLnszg9Q=",
   "success": true,
-  "projectFilePath": "C:\\Users\\glenl\\.zenflow\\worktrees\\next-steps-c1f2\\TallyJ4.Tests\\TallyJ4.Tests.csproj",
+  "projectFilePath": "C:\\Users\\glenl\\.zenflow\\worktrees\\jan-20-6eb4\\TallyJ4.Tests\\TallyJ4.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\glenl\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\glenl\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

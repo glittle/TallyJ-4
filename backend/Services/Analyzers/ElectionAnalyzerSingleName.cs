@@ -49,6 +49,9 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
 
                 if (result == null)
                 {
+                    if (!vote.PersonGuid.HasValue)
+                        continue;
+
                     result = new Result
                     {
                         ElectionGuid = TargetElection.ElectionGuid,

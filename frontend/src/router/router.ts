@@ -1,30 +1,93 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HelloWorld from "../pages/HelloWorld.vue";
-import LoginPage from "../pages/LoginPage.vue";
-import RegisterPage from "../pages/RegisterPage.vue";
 import type { RouteLocationNormalized } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 
+import MainLayout from "../layouts/MainLayout.vue";
+import PublicLayout from "../layouts/PublicLayout.vue";
+
+import LoginPage from "../pages/LoginPage.vue";
+import RegisterPage from "../pages/RegisterPage.vue";
+import DashboardPage from "../pages/DashboardPage.vue";
+import ElectionListPage from "../pages/elections/ElectionListPage.vue";
+import CreateElectionPage from "../pages/elections/CreateElectionPage.vue";
+import ElectionDetailPage from "../pages/elections/ElectionDetailPage.vue";
+import PeopleManagementPage from "../pages/people/PeopleManagementPage.vue";
+import BallotManagementPage from "../pages/ballots/BallotManagementPage.vue";
+import ResultsPage from "../pages/results/ResultsPage.vue";
+import TallyCalculationPage from "../pages/results/TallyCalculationPage.vue";
+import ProfilePage from "../pages/ProfilePage.vue";
+
 const routes = [
-  { 
-    path: "/", 
-    component: HelloWorld,
-    meta: { requiresAuth: true }
-  },
-  { 
-    path: "/about", 
-    component: HelloWorld,
-    meta: { requiresAuth: true }
+  {
+    path: "/",
+    redirect: "/dashboard"
   },
   {
-    path: "/login",
-    component: LoginPage,
-    meta: { requiresAuth: false }
+    path: "/",
+    component: PublicLayout,
+    meta: { requiresAuth: false },
+    children: [
+      {
+        path: "login",
+        component: LoginPage
+      },
+      {
+        path: "register",
+        component: RegisterPage
+      }
+    ]
   },
   {
-    path: "/register",
-    component: RegisterPage,
-    meta: { requiresAuth: false }
+    path: "/",
+    component: MainLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: "dashboard",
+        component: DashboardPage,
+        meta: { title: "Dashboard" }
+      },
+      {
+        path: "elections",
+        component: ElectionListPage,
+        meta: { title: "Elections" }
+      },
+      {
+        path: "elections/create",
+        component: CreateElectionPage,
+        meta: { title: "Create Election" }
+      },
+      {
+        path: "elections/:id",
+        component: ElectionDetailPage,
+        meta: { title: "Election Details" }
+      },
+      {
+        path: "elections/:id/people",
+        component: PeopleManagementPage,
+        meta: { title: "People Management" }
+      },
+      {
+        path: "elections/:id/ballots",
+        component: BallotManagementPage,
+        meta: { title: "Ballot Management" }
+      },
+      {
+        path: "elections/:id/results",
+        component: ResultsPage,
+        meta: { title: "Results" }
+      },
+      {
+        path: "elections/:id/tally",
+        component: TallyCalculationPage,
+        meta: { title: "Calculate Tally" }
+      },
+      {
+        path: "profile",
+        component: ProfilePage,
+        meta: { title: "Profile" }
+      }
+    ]
   }
 ];
 
