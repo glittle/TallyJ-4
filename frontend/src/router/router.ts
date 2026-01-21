@@ -11,6 +11,10 @@ import DashboardPage from "../pages/DashboardPage.vue";
 import ElectionListPage from "../pages/elections/ElectionListPage.vue";
 import CreateElectionPage from "../pages/elections/CreateElectionPage.vue";
 import ElectionDetailPage from "../pages/elections/ElectionDetailPage.vue";
+import PeopleManagementPage from "../pages/people/PeopleManagementPage.vue";
+import BallotManagementPage from "../pages/ballots/BallotManagementPage.vue";
+import ResultsPage from "../pages/results/ResultsPage.vue";
+import TallyCalculationPage from "../pages/results/TallyCalculationPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 
 const routes = [
@@ -57,6 +61,26 @@ const routes = [
         path: "elections/:id",
         component: ElectionDetailPage,
         meta: { title: "Election Details" }
+      },
+      {
+        path: "elections/:id/people",
+        component: PeopleManagementPage,
+        meta: { title: "People Management" }
+      },
+      {
+        path: "elections/:id/ballots",
+        component: BallotManagementPage,
+        meta: { title: "Ballot Management" }
+      },
+      {
+        path: "elections/:id/results",
+        component: ResultsPage,
+        meta: { title: "Results" }
+      },
+      {
+        path: "elections/:id/tally",
+        component: TallyCalculationPage,
+        meta: { title: "Calculate Tally" }
       },
       {
         path: "profile",
