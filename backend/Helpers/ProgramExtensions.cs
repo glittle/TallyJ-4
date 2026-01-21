@@ -99,10 +99,14 @@ public static class ProgramExtensions
     );
 
     // add a factory too, for the rare time that we need a second context
-    services.AddDbContextFactory<TContext>(
-      options => options.UseSqlServer(connectionString),
-      ServiceLifetime.Scoped
-    );
+    // Skip factory registration in Testing environment to avoid conflicts with test database providers
+    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Testing")
+    {
+      services.AddDbContextFactory<TContext>(
+        options => options.UseSqlServer(connectionString),
+        ServiceLifetime.Scoped
+      );
+    }
 
     return services;
   }

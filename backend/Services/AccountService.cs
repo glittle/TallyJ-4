@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using TallyJ4.DTOs.Account;
-using TallyJ4.EF.Identity;
+using TallyJ4.Domain.Identity;
 
 namespace TallyJ4.Services;
 

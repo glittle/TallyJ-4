@@ -14,6 +14,7 @@ public abstract class ElectionAnalyzerBase
     protected List<Vote> Votes = new();
     protected List<Person> People = new();
     protected List<Result> Results = new();
+    protected List<ResultTie> ResultTies = new();
     protected ResultSummary ResultSummaryCalc = new();
 
     protected ElectionAnalyzerBase(MainDbContext context, ILogger logger, Election election)
@@ -25,17 +26,54 @@ public abstract class ElectionAnalyzerBase
 
     public async Task AnalyzeAsync()
     {
-        await PrepareForAnalysisAsync();
-        CalculateBallotStatistics();
-        await CountVotesAsync();
-        FinalizeResultsAndTies();
-        await FinalizeSummariesAsync();
-        await SaveResultsAsync();
+        using var transaction = await Context.Database.BeginTransactionAsync();
+        try
+        {
+            Logger.LogInformation("Starting tally calculation transaction for election {ElectionGuid}", TargetElection.ElectionGuid);
+            
+            await PrepareForAnalysisAsync();
+            CalculateBallotStatistics();
+            await CountVotesAsync();
+            FinalizeResultsAndTies();
+            await FinalizeSummariesAsync();
+            await SaveResultsAsync();
+            
+            await transaction.CommitAsync();
+            Logger.LogInformation("Tally calculation transaction committed successfully for election {ElectionGuid}", TargetElection.ElectionGuid);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error during tally calculation for election {ElectionGuid}. Transaction will be rolled back.", TargetElection.ElectionGuid);
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     protected virtual async Task PrepareForAnalysisAsync()
     {
         Logger.LogInformation("Preparing for analysis of election {ElectionGuid}", TargetElection.ElectionGuid);
+
+        var existingResults = await Context.Results
+            .Where(r => r.ElectionGuid == TargetElection.ElectionGuid)
+            .ToListAsync();
+        
+        if (existingResults.Any())
+        {
+            Context.Results.RemoveRange(existingResults);
+            Logger.LogInformation("Cleared {ResultCount} existing Result records", existingResults.Count);
+        }
+
+        var existingResultTies = await Context.ResultTies
+            .Where(rt => rt.ElectionGuid == TargetElection.ElectionGuid)
+            .ToListAsync();
+        
+        if (existingResultTies.Any())
+        {
+            Context.ResultTies.RemoveRange(existingResultTies);
+            Logger.LogInformation("Cleared {ResultTieCount} existing ResultTie records", existingResultTies.Count);
+        }
+
+        await Context.SaveChangesAsync();
 
         var locationGuids = await Context.Locations
             .Where(l => l.ElectionGuid == TargetElection.ElectionGuid)
@@ -56,9 +94,7 @@ public abstract class ElectionAnalyzerBase
             .Where(p => p.ElectionGuid == TargetElection.ElectionGuid)
             .ToListAsync();
 
-        Results = await Context.Results
-            .Where(r => r.ElectionGuid == TargetElection.ElectionGuid)
-            .ToListAsync();
+        Results = new List<Result>();
 
         ResultSummaryCalc = await Context.ResultSummaries
             .FirstOrDefaultAsync(rs => rs.ElectionGuid == TargetElection.ElectionGuid)
@@ -110,6 +146,7 @@ public abstract class ElectionAnalyzerBase
             .ToList();
 
         var rank = 1;
+        var ordinal = 1;
         var tieGroupNumber = 1;
         var numberToElect = TargetElection.NumberToElect ?? 9;
         var numberExtra = TargetElection.NumberExtra ?? 0;
@@ -129,11 +166,11 @@ public abstract class ElectionAnalyzerBase
                     result.TieBreakGroup = tieGroupNumber;
                 }
 
-                if (rank <= numberToElect)
+                if (ordinal <= numberToElect)
                 {
                     result.Section = "E";
                 }
-                else if (rank <= numberToElect + numberExtra)
+                else if (ordinal <= numberToElect + numberExtra)
                 {
                     result.Section = "X";
                 }
@@ -141,6 +178,8 @@ public abstract class ElectionAnalyzerBase
                 {
                     result.Section = "O";
                 }
+                
+                ordinal++;
             }
 
             rank += candidatesInGroup.Count;
@@ -153,10 +192,22 @@ public abstract class ElectionAnalyzerBase
 
             if (sections.Count > 1)
             {
+                var tieBreakGroup = 0;
                 foreach (var result in group)
                 {
                     result.TieBreakRequired = true;
+                    tieBreakGroup = result.TieBreakGroup ?? 0;
                 }
+
+                var resultTie = new ResultTie
+                {
+                    ElectionGuid = TargetElection.ElectionGuid,
+                    TieBreakGroup = tieBreakGroup,
+                    TieBreakRequired = true,
+                    NumInTie = group.Count(),
+                    NumToElect = numberToElect
+                };
+                ResultTies.Add(resultTie);
             }
         }
 
@@ -212,6 +263,13 @@ public abstract class ElectionAnalyzerBase
     protected virtual async Task SaveResultsAsync()
     {
         Logger.LogInformation("Saving results to database");
+        
+        if (ResultTies.Any())
+        {
+            Context.ResultTies.AddRange(ResultTies);
+            Logger.LogInformation("Added {ResultTieCount} ResultTie records", ResultTies.Count);
+        }
+        
         await Context.SaveChangesAsync();
         Logger.LogInformation("Results saved successfully");
     }
