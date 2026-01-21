@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TallyJ4.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+19b77e5132991de52d55bfd509573e261dae214f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+813765a63b59623504ca8dec3d1a5633965a23d0")]
 [assembly: System.Reflection.AssemblyProductAttribute("TallyJ4.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TallyJ4.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
