@@ -1,4 +1,4 @@
-"# TallyJ 4
+# TallyJ 4
 
 Election management and ballot tallying system for Bahá'í communities.
 
@@ -334,4 +334,4 @@ This is a rebuild of the TallyJ election system. Comprehensive reverse engineeri
 
 ## License
 
-TBD" 
+TBD
