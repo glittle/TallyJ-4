@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.DTOs.Elections;
+using TallyJ4.DTOs.SignalR;
 using TallyJ4.EF.Context;
 using TallyJ4.Domain.Entities;
 using TallyJ4.Models;
@@ -12,12 +13,14 @@ public class ElectionService : IElectionService
     private readonly MainDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<ElectionService> _logger;
+    private readonly ISignalRNotificationService _signalRNotificationService;
 
-    public ElectionService(MainDbContext context, IMapper mapper, ILogger<ElectionService> logger)
+    public ElectionService(MainDbContext context, IMapper mapper, ILogger<ElectionService> logger, ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
         _mapper = mapper;
         _logger = logger;
+        _signalRNotificationService = signalRNotificationService;
     }
 
     public async Task<PaginatedResponse<ElectionSummaryDto>> GetElectionsAsync(int pageNumber = 1, int pageSize = 10, string? status = null)
@@ -102,6 +105,15 @@ public class ElectionService : IElectionService
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Updated election {ElectionGuid}", electionGuid);
+
+        await _signalRNotificationService.SendElectionUpdateAsync(new ElectionUpdateDto
+        {
+            ElectionGuid = election.ElectionGuid,
+            Name = election.Name,
+            TallyStatus = election.TallyStatus,
+            ElectionStatus = null,
+            UpdatedAt = DateTime.UtcNow
+        });
 
         return await GetElectionByGuidAsync(electionGuid);
     }

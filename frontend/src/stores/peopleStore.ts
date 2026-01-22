@@ -1,12 +1,15 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { peopleService } from '../services/peopleService';
+import { signalrService } from '../services/signalrService';
 import type { PersonDto, CreatePersonDto, UpdatePersonDto } from '../types';
+import type { PersonUpdateEvent } from '../types/SignalREvents';
 
 export const usePeopleStore = defineStore('people', () => {
   const people = ref<PersonDto[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const signalrInitialized = ref(false);
 
   const voters = computed(() => 
     people.value.filter(p => p.canVote === true)
@@ -117,6 +120,45 @@ export const usePeopleStore = defineStore('people', () => {
     error.value = null;
   }
 
+  async function initializeSignalR() {
+    if (signalrInitialized.value) return;
+
+    try {
+      const connection = await signalrService.connectToFrontDeskHub();
+      
+      connection.on('PersonAdded', (data: PersonUpdateEvent) => {
+        handlePersonAdded(data);
+      });
+
+      connection.on('PersonUpdated', (data: PersonUpdateEvent) => {
+        handlePersonUpdated(data);
+      });
+
+      connection.on('PersonDeleted', (data: PersonUpdateEvent) => {
+        handlePersonDeleted(data);
+      });
+
+      signalrInitialized.value = true;
+    } catch (e) {
+      console.error('Failed to initialize SignalR for people store:', e);
+    }
+  }
+
+  function handlePersonAdded(data: PersonUpdateEvent) {
+    const exists = people.value.some(p => p.personGuid === data.personGuid);
+    if (!exists) {
+      fetchPersonById(data.personGuid).catch(console.error);
+    }
+  }
+
+  function handlePersonUpdated(data: PersonUpdateEvent) {
+    fetchPersonById(data.personGuid).catch(console.error);
+  }
+
+  function handlePersonDeleted(data: PersonUpdateEvent) {
+    people.value = people.value.filter(p => p.personGuid !== data.personGuid);
+  }
+
   return {
     people,
     loading,
@@ -129,6 +171,7 @@ export const usePeopleStore = defineStore('people', () => {
     updatePerson,
     deletePerson,
     searchPeople,
-    clearError
+    clearError,
+    initializeSignalR
   };
 });
