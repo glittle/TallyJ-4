@@ -81,12 +81,10 @@ public class ResultsControllerTests : IntegrationTestBase
         
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var result = await DeserializeResponseAsync<TallyResultDto>(response);
+        var result = await DeserializeResponseAsync<TallyStatisticsDto>(response);
         Assert.NotNull(result);
-        Assert.Equal(electionGuid, result.ElectionGuid);
-        Assert.NotNull(result.Statistics);
-        Assert.True(result.Statistics.BallotsReceived > 0);
-        Assert.True(result.Statistics.TotalVotes > 0);
+        Assert.True(result.BallotsReceived > 0);
+        Assert.True(result.TotalVotes > 0);
     }
 
     [Fact]
@@ -128,7 +126,7 @@ public class ResultsControllerTests : IntegrationTestBase
         {
             Name = "Test Election for Results",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "Normal",
+            ElectionType = "STV",
             NumberToElect = 3
         };
 
@@ -157,11 +155,11 @@ public class ResultsControllerTests : IntegrationTestBase
 
         var people = new List<Person>
         {
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Alice", LastName = "Anderson", ElectionGuid = electionGuid },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Bob", LastName = "Brown", ElectionGuid = electionGuid },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Carol", LastName = "Clark", ElectionGuid = electionGuid },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "David", LastName = "Davis", ElectionGuid = electionGuid },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Eve", LastName = "Evans", ElectionGuid = electionGuid }
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Alice", LastName = "Anderson", ElectionGuid = electionGuid, CanReceiveVotes = true, RowVersion = new byte[] { 1 } },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Bob", LastName = "Brown", ElectionGuid = electionGuid, CanReceiveVotes = true, RowVersion = new byte[] { 1 } },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Carol", LastName = "Clark", ElectionGuid = electionGuid, CanReceiveVotes = true, RowVersion = new byte[] { 1 } },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "David", LastName = "Davis", ElectionGuid = electionGuid, CanReceiveVotes = true, RowVersion = new byte[] { 1 } },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Eve", LastName = "Evans", ElectionGuid = electionGuid, CanReceiveVotes = true, RowVersion = new byte[] { 1 } }
         };
 
         context.People.AddRange(people);
@@ -176,7 +174,8 @@ public class ResultsControllerTests : IntegrationTestBase
                 StatusCode = "Ok",
                 BallotNumAtComputer = i + 1,
                 ComputerCode = "C1",
-                LocationGuid = location.LocationGuid
+                LocationGuid = location.LocationGuid,
+                RowVersion = new byte[] { 1 }
             };
             ballots.Add(ballot);
 
@@ -189,7 +188,8 @@ public class ResultsControllerTests : IntegrationTestBase
                     PersonGuid = people[v % people.Count].PersonGuid,
                     PositionOnBallot = v + 1,
                     StatusCode = "Ok",
-                    InvalidReasonGuid = null
+                    InvalidReasonGuid = null,
+                    RowVersion = new byte[] { 1 }
                 });
             }
             context.Votes.AddRange(votes);
