@@ -1,0 +1,54 @@
+###############################
+# General
+###############################
+packages
+.dotnet/
+
+###############################
+# Build and Output Folders
+###############################
+bin/
+obj/
+bld/
+artifacts/
+wwwroot/
+
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Ll]og/
+[Ll]ogs/
+
+###############################
+# IDE and User Files
+###############################
+.vs/
+*.suo
+*.user
+*.rsuser
+*.userosscache
+*.sln.docstates
+*.wsl.json
+*.DotSettings.user
+_ReSharper.*
+
+###############################
+# Database Files
+###############################
+*.db
+*.db-shm
+*.db-wal
+
+###############################
+# Frontend Specific
+###############################
+Frontend/build_rollup_stats.html
+Frontend/tests/artifacts/
+Frontend/tests/reports/
+Frontend/tests/screenshots/
