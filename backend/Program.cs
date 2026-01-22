@@ -22,26 +22,29 @@ var builder = WebApplication.CreateBuilder(args);
 var builderConfiguration = builder.Configuration;
 var services = builder.Services;
 
-// Connect to DB
-var connectionStringName = "TallyJ4";
-var connectionString = builderConfiguration.GetConnectionString(connectionStringName);
-
-var regex = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
-Log.Information(
-  "Connection string {Name}: {ConnectionString}",
-  connectionStringName,
-  regex.Replace(connectionString ?? "(Empty)", "Password=******;")
-);
-if (connectionString == null)
+// Connect to DB (skip in Testing environment - tests configure their own database)
+if (!builder.Environment.IsEnvironment("Testing"))
 {
-    Log.Fatal(
-      "Connection string {Name} is not set. Check your appsettings.json configuration.",
-      connectionStringName
-    );
-    Environment.Exit(1);
-}
+    var connectionStringName = "TallyJ4";
+    var connectionString = builderConfiguration.GetConnectionString(connectionStringName);
 
-services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
+    var regex = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
+    Log.Information(
+      "Connection string {Name}: {ConnectionString}",
+      connectionStringName,
+      regex.Replace(connectionString ?? "(Empty)", "Password=******;")
+    );
+    if (connectionString == null)
+    {
+        Log.Fatal(
+          "Connection string {Name} is not set. Check your appsettings.json configuration.",
+          connectionStringName
+        );
+        Environment.Exit(1);
+    }
+
+    services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
+}
 
 // Add CORS
 services.AddCors(options =>

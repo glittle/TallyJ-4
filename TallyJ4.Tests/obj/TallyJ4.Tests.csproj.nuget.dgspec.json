@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Dev\\TallyJ\\v4\\repo\\TallyJ4.Tests\\TallyJ4.Tests.csproj": {}
+    "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\TallyJ4.Tests\\TallyJ4.Tests.csproj": {}
   },
   "projects": {
-    "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Application\\TallyJ4.Application.csproj": {
+    "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Application\\TallyJ4.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Application\\TallyJ4.Application.csproj",
+        "projectUniqueName": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Application\\TallyJ4.Application.csproj",
         "projectName": "TallyJ4.Application",
-        "projectPath": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Application\\TallyJ4.Application.csproj",
+        "projectPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Application\\TallyJ4.Application.csproj",
         "packagesPath": "C:\\Users\\glenl\\.nuget\\packages\\",
-        "outputPath": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Application\\obj\\",
+        "outputPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,8 +33,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj": {
-                "projectPath": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj"
+              "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj": {
+                "projectPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj"
               }
             }
           }
@@ -374,14 +374,14 @@
         }
       }
     },
-    "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.csproj": {
+    "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.csproj",
+        "projectUniqueName": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.csproj",
         "projectName": "TallyJ4",
-        "projectPath": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.csproj",
+        "projectPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.csproj",
         "packagesPath": "C:\\Users\\glenl\\.nuget\\packages\\",
-        "outputPath": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\obj\\",
+        "outputPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -403,11 +403,11 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Application\\TallyJ4.Application.csproj": {
-                "projectPath": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Application\\TallyJ4.Application.csproj"
+              "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Application\\TallyJ4.Application.csproj": {
+                "projectPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Application\\TallyJ4.Application.csproj"
               },
-              "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj": {
-                "projectPath": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj"
+              "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj": {
+                "projectPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj"
               }
             }
           }
@@ -962,14 +962,14 @@
         }
       }
     },
-    "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj": {
+    "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj",
         "projectName": "TallyJ4.Domain",
-        "projectPath": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj",
+        "projectPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Domain\\TallyJ4.Domain.csproj",
         "packagesPath": "C:\\Users\\glenl\\.nuget\\packages\\",
-        "outputPath": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.Domain\\obj\\",
+        "outputPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1316,14 +1316,14 @@
         }
       }
     },
-    "C:\\Dev\\TallyJ\\v4\\repo\\TallyJ4.Tests\\TallyJ4.Tests.csproj": {
+    "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\TallyJ4.Tests\\TallyJ4.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Dev\\TallyJ\\v4\\repo\\TallyJ4.Tests\\TallyJ4.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\TallyJ4.Tests\\TallyJ4.Tests.csproj",
         "projectName": "TallyJ4.Tests",
-        "projectPath": "C:\\Dev\\TallyJ\\v4\\repo\\TallyJ4.Tests\\TallyJ4.Tests.csproj",
+        "projectPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\TallyJ4.Tests\\TallyJ4.Tests.csproj",
         "packagesPath": "C:\\Users\\glenl\\.nuget\\packages\\",
-        "outputPath": "C:\\Dev\\TallyJ\\v4\\repo\\TallyJ4.Tests\\obj\\",
+        "outputPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\TallyJ4.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1345,8 +1345,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.csproj": {
-                "projectPath": "C:\\Dev\\TallyJ\\v4\\repo\\backend\\TallyJ4.csproj"
+              "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.csproj": {
+                "projectPath": "C:\\Users\\glenl\\.zenflow\\worktrees\\contineu-b1db\\backend\\TallyJ4.csproj"
               }
             }
           }
