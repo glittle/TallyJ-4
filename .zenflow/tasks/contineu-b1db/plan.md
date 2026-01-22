@@ -18,7 +18,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
 <!-- chat-id: 21aaaa3f-7765-49aa-95ae-956bc0cf6db9 -->
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
@@ -51,15 +51,76 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Fix Integration Test Path Issue
 
-Implement the task according to the technical specification and general engineering best practices.
+**Priority**: HIGH  
+**Estimated Time**: 30 minutes
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
+Fix the hardcoded path in integration tests that references the old worktree `jan-20-6eb4`.
+
+**Tasks**:
+1. Locate path reference in `IntegrationTestBase.cs` or `CustomWebApplicationFactory`
+2. Change to use relative path or `Directory.GetCurrentDirectory()`
+3. Run `dotnet test` to verify all 41 tests pass
+
+**Verification**: All tests pass without path errors
+
+---
+
+### [ ] Step: End-to-End Integration Testing
+
+**Priority**: HIGH  
+**Estimated Time**: 4-5 hours
+
+Test the complete application stack with backend and frontend running together.
+
+**Sub-tasks**:
+1. Start backend API server (`cd backend && dotnet run`)
+2. Start frontend dev server (`cd frontend && npm run dev`)
+3. Test authentication workflows (register, login, logout, token refresh)
+4. Test election management (create, list, view, edit, delete)
+5. Test people management (add, search, edit, delete)
+6. Test ballot & vote entry workflows
+7. Test tally calculation end-to-end
+8. Test results display (sections, ties, statistics)
+
+**Verification**: All critical workflows complete successfully without errors
+
+---
+
+### [ ] Step: Bug Fixes and Polish
+
+**Priority**: MEDIUM  
+**Estimated Time**: 2-3 hours
+
+Address any issues discovered during integration testing and improve UX.
+
+**Tasks**:
+1. Fix runtime errors and bugs
+2. Improve error handling and user feedback
+3. Add missing loading indicators
+4. Ensure consistent styling
+5. Test responsive design
+6. Validate all forms properly
+
+**Verification**: Application runs smoothly with no critical bugs
+
+---
+
+### [ ] Step: Documentation and Final Report
+
+**Priority**: LOW  
+**Estimated Time**: 1 hour
+
+Update documentation and create completion report.
+
+**Tasks**:
+1. Update README with frontend setup instructions
+2. Document environment variables
+3. Write completion report to `{@artifacts_path}/report.md` describing:
    - What was implemented
    - How the solution was tested
-   - The biggest issues or challenges encountered
+   - Issues encountered and resolved
+   - Current system status
+
+**Verification**: Documentation is clear and complete
