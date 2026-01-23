@@ -83,6 +83,7 @@ Fix the hardcoded path in integration tests that references the old worktree `ja
 ---
 
 ### [ ] Step: End-to-End Integration Testing
+<!-- chat-id: bfc8a8ef-46bb-4204-b8a0-64d3b80bbf2e -->
 
 **Priority**: HIGH  
 **Estimated Time**: 4-5 hours
