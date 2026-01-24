@@ -69,7 +69,8 @@ try {
 # Test 4: Get Elections List
 Write-Host "[4/8] Testing Get Elections..." -ForegroundColor Yellow
 try {
-    $electionsResponse = Invoke-RestMethod -Uri "$baseUrl/elections?pageNumber=1&pageSize=10" -Method Get -Headers $headers
+    $electionsUrl = "$baseUrl/elections?pageNumber=1&pageSize=10"
+    $electionsResponse = Invoke-RestMethod -Uri $electionsUrl -Method Get -Headers $headers
     $electionCount = $electionsResponse.items.Count
     Write-Host "✓ Retrieved $electionCount election(s)" -ForegroundColor Green
 } catch {
@@ -101,7 +102,7 @@ try {
 }
 
 # Test 6: Create Ballots with Votes
-Write-Host "[6/8] Testing Create Ballots & Votes..." -ForegroundColor Yellow
+Write-Host "[6/8] Testing Create Ballots and Votes..." -ForegroundColor Yellow
 try {
     for ($b = 1; $b -le 3; $b++) {
         $ballotBody = @{
