@@ -16,9 +16,14 @@ using TallyJ4.Application.Services.Auth;
 
 Console.WriteLine("Starting up..."); // for server log files
 
-Log.Logger = new LoggerConfiguration().ConfigureStartupConsole().CreateLogger();
-
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ConfigureWithColorfulConsole(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var builderConfiguration = builder.Configuration;
 var services = builder.Services;
