@@ -8,6 +8,7 @@ using QRCoder;
 using TallyJ4.Application.DTOs.Auth;
 using TallyJ4.Domain.Entities;
 using TallyJ4.Domain.Identity;
+using TallyJ4.Domain.Context;
 
 namespace TallyJ4.Application.Services.Auth;
 
@@ -15,13 +16,13 @@ public class TwoFactorService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IStringLocalizer<TwoFactorService> _localizer;
-    private readonly DbContext _dbContext;
+    private readonly MainDbContext _dbContext;
     private readonly EmailService _emailService;
 
     public TwoFactorService(
         UserManager<AppUser> userManager,
         IStringLocalizer<TwoFactorService> localizer,
-        DbContext dbContext,
+        MainDbContext dbContext,
         EmailService emailService)
     {
         _userManager = userManager;

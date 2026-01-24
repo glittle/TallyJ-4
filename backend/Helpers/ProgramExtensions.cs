@@ -93,6 +93,7 @@ public static class ProgramExtensions
             w.Default(WarningBehavior.Throw);
 
             w.Ignore(CoreEventId.SensitiveDataLoggingEnabledWarning);
+            w.Ignore(RelationalEventId.MultipleCollectionIncludeWarning);
           });
         }
       }

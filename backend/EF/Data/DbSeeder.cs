@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.EF.Context;
+using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
 using TallyJ4.Domain.Entities;
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using TallyJ4.EF.Context;
+using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
 using TallyJ4.EF.Data;
 using TallyJ4.Middleware;
@@ -12,6 +12,7 @@ using Serilog;
 using TallyJ4.Backend.Helpers;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using TallyJ4.Application.Services.Auth;
 
 Console.WriteLine("Starting up..."); // for server log files
 
@@ -58,9 +59,18 @@ services.AddCors(options =>
     });
 });
 
-// Add Identity API endpoints (this sets up core Identity + bearer auth)
-services.AddIdentityApiEndpoints<AppUser>()
-    .AddEntityFrameworkStores<MainDbContext>();
+// Add Identity (without the built-in API endpoints that conflict with JWT)
+services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<MainDbContext>()
+    .AddDefaultTokenProviders();
+
+// Add JWT Bearer authentication
+services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer();
 
 // Optional: Customize Identity options (e.g., password requirements)
 services.Configure<IdentityOptions>(options =>
@@ -72,6 +82,9 @@ services.Configure<IdentityOptions>(options =>
 
 // Add authorization (for [Authorize] attributes)
 services.AddAuthorization();
+
+// Add localization
+services.AddLocalization();
 
 // Add controllers with FluentValidation
 services.AddControllers();
@@ -91,6 +104,13 @@ services.AddScoped<TallyJ4.Services.ISetupService, TallyJ4.Services.SetupService
 services.AddScoped<TallyJ4.Services.IAccountService, TallyJ4.Services.AccountService>();
 services.AddScoped<TallyJ4.Services.IPublicService, TallyJ4.Services.PublicService>();
 services.AddScoped<TallyJ4.Services.ITallyService, TallyJ4.Services.TallyService>();
+
+// Add Auth services
+services.AddScoped<JwtTokenService>();
+services.AddScoped<EmailService>();
+services.AddScoped<LocalAuthService>();
+services.AddScoped<PasswordResetService>();
+services.AddScoped<TwoFactorService>();
 
 // Add exception handler
 services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -191,8 +211,7 @@ app.UseRequestLocalization();
 app.UseAuthentication();  // Enables Identity
 app.UseAuthorization();
 
-// Map the Identity API endpoints (e.g., under /auth prefix)
-app.MapGroup("/auth").MapIdentityApi<AppUser>();  // Adds /auth/register, /auth/login, etc.
+// Custom AuthController handles authentication endpoints
 
 // Map API controllers
 app.MapControllers();
