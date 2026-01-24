@@ -30,6 +30,18 @@ import AppSidebar from '../components/AppSidebar.vue';
   overflow-x: hidden;
 }
 
+@media (max-width: 768px) {
+  .sidebar {
+    width: 180px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    display: none;
+  }
+}
+
 :deep(.el-header) {
   background-color: #fff;
   border-bottom: 1px solid #dcdfe6;
@@ -43,5 +55,11 @@ import AppSidebar from '../components/AppSidebar.vue';
   background-color: #f0f2f5;
   padding: 20px;
   overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  :deep(.el-main) {
+    padding: 10px;
+  }
 }
 </style>
