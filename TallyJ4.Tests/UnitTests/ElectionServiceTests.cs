@@ -10,11 +10,13 @@ public class ElectionServiceTests : ServiceTestBase
 {
     private readonly ElectionService _service;
     private readonly Mock<ILogger<ElectionService>> _loggerMock;
+    private readonly Mock<ISignalRNotificationService> _signalRMock;
 
     public ElectionServiceTests()
     {
         _loggerMock = new Mock<ILogger<ElectionService>>();
-        _service = new ElectionService(Context, Mapper, _loggerMock.Object);
+        _signalRMock = new Mock<ISignalRNotificationService>();
+        _service = new ElectionService(Context, Mapper, _loggerMock.Object, _signalRMock.Object);
     }
 
     [Fact]

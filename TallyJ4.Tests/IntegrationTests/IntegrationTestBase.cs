@@ -37,12 +37,12 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             Encoding.UTF8,
             "application/json");
 
-        var response = await Client.PostAsync("/auth/login", content);
+        var response = await Client.PostAsync("/api/auth/login", content);
         
         if (!response.IsSuccessStatusCode)
         {
             await CreateTestUserAsync(email, password);
-            response = await Client.PostAsync("/auth/login", content);
+            response = await Client.PostAsync("/api/auth/login", content);
         }
 
         response.EnsureSuccessStatusCode();

@@ -19,8 +19,8 @@
       <el-form label-width="150px" label-position="left">
         <el-form-item :label="$t('elections.form.type')">
           <el-radio-group v-model="electionType">
-            <el-radio value="Normal">{{ $t('tally.normalElection') }}</el-radio>
-            <el-radio value="SingleName">{{ $t('tally.singleNameElection') }}</el-radio>
+            <el-radio value="normal">{{ $t('tally.normalElection') }}</el-radio>
+            <el-radio value="singlename">{{ $t('tally.singleNameElection') }}</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -92,7 +92,7 @@ const { t } = useI18n();
 const resultStore = useResultStore();
 
 const electionGuid = route.params.id as string;
-const electionType = ref<'Normal' | 'SingleName'>('Normal');
+const electionType = ref<'normal' | 'singlename'>('normal');
 
 const calculating = computed(() => resultStore.calculating);
 const results = computed(() => resultStore.results);
