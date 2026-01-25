@@ -29,8 +29,9 @@
 
         <el-form-item :label="$t('elections.form.type')" prop="electionType">
           <el-select v-model="form.electionType" :placeholder="$t('elections.form.typePlaceholder')">
-            <el-option label="Normal" value="Normal" />
-            <el-option label="Single Name" value="SingleName" />
+            <el-option label="STV - Single Transferable Vote" value="STV" />
+            <el-option label="Condorcet" value="Cond" />
+            <el-option label="Multi-Winner" value="Multi" />
           </el-select>
         </el-form-item>
 
@@ -48,9 +49,8 @@
 
         <el-form-item :label="$t('elections.form.electionMode')" prop="electionMode">
           <el-select v-model="form.electionMode" :placeholder="$t('elections.form.modePlaceholder')">
-            <el-option label="In Person" value="InPerson" />
-            <el-option label="Online" value="Online" />
-            <el-option label="Mixed" value="Mixed" />
+            <el-option label="Normal" value="N" />
+            <el-option label="International" value="I" />
           </el-select>
         </el-form-item>
 
@@ -97,10 +97,10 @@ const submitting = ref(false);
 const form = reactive<CreateElectionDto>({
   name: '',
   dateOfElection: undefined,
-  electionType: 'Normal',
+  electionType: 'STV',
   numberToElect: 9,
   convenor: '',
-  electionMode: 'InPerson',
+  electionMode: 'N',
   numberExtra: 0,
   showFullReport: true,
   listForPublic: false,

@@ -2,7 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.DTOs.People;
 using TallyJ4.DTOs.SignalR;
-using TallyJ4.EF.Context;
+using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Entities;
 using TallyJ4.Models;
 
@@ -24,11 +24,11 @@ public class PeopleService : IPeopleService
     }
 
     public async Task<PaginatedResponse<PersonDto>> GetPeopleByElectionAsync(
-        Guid electionGuid, 
-        int pageNumber = 1, 
-        int pageSize = 50, 
-        string? search = null, 
-        bool? canVote = null, 
+        Guid electionGuid,
+        int pageNumber = 1,
+        int pageSize = 50,
+        string? search = null,
+        bool? canVote = null,
         bool? canReceiveVotes = null)
     {
         var query = _context.People
@@ -38,7 +38,7 @@ public class PeopleService : IPeopleService
         if (!string.IsNullOrWhiteSpace(search))
         {
             var searchLower = search.ToLower();
-            query = query.Where(p => 
+            query = query.Where(p =>
                 (p.FirstName != null && p.FirstName.ToLower().Contains(searchLower)) ||
                 p.LastName.ToLower().Contains(searchLower) ||
                 (p.FullName != null && p.FullName.ToLower().Contains(searchLower)) ||
@@ -66,7 +66,7 @@ public class PeopleService : IPeopleService
             .Include(p => p.Results)
             .ToListAsync();
 
-        var peopleDtos = people.Select(p => 
+        var peopleDtos = people.Select(p =>
         {
             var dto = _mapper.Map<PersonDto>(p);
             dto.VoteCount = p.Results.FirstOrDefault()?.VoteCount ?? 0;
@@ -96,7 +96,7 @@ public class PeopleService : IPeopleService
     public async Task<PersonDto> CreatePersonAsync(CreatePersonDto createDto)
     {
         var existingPerson = await _context.People
-            .FirstOrDefaultAsync(p => p.ElectionGuid == createDto.ElectionGuid && 
+            .FirstOrDefaultAsync(p => p.ElectionGuid == createDto.ElectionGuid &&
                                      ((p.Email != null && createDto.Email != null && p.Email == createDto.Email) ||
                                       (p.Phone != null && createDto.Phone != null && p.Phone == createDto.Phone)));
 
@@ -115,13 +115,13 @@ public class PeopleService : IPeopleService
         var person = _mapper.Map<Person>(createDto);
         person.PersonGuid = Guid.NewGuid();
         person.RowVersion = new byte[8];
-        
-        person.FullName = string.IsNullOrWhiteSpace(person.FirstName) 
-            ? person.LastName 
+
+        person.FullName = string.IsNullOrWhiteSpace(person.FirstName)
+            ? person.LastName
             : $"{person.LastName}, {person.FirstName}";
-        
-        person.FullNameFl = string.IsNullOrWhiteSpace(person.FirstName) 
-            ? person.LastName 
+
+        person.FullNameFl = string.IsNullOrWhiteSpace(person.FirstName)
+            ? person.LastName
             : $"{person.FirstName} {person.LastName}";
 
         _context.People.Add(person);
@@ -154,8 +154,8 @@ public class PeopleService : IPeopleService
         if (!string.IsNullOrWhiteSpace(updateDto.Email) && updateDto.Email != person.Email)
         {
             var emailExists = await _context.People
-                .AnyAsync(p => p.ElectionGuid == person.ElectionGuid && 
-                              p.PersonGuid != personGuid && 
+                .AnyAsync(p => p.ElectionGuid == person.ElectionGuid &&
+                              p.PersonGuid != personGuid &&
                               p.Email == updateDto.Email);
 
             if (emailExists)
@@ -167,8 +167,8 @@ public class PeopleService : IPeopleService
         if (!string.IsNullOrWhiteSpace(updateDto.Phone) && updateDto.Phone != person.Phone)
         {
             var phoneExists = await _context.People
-                .AnyAsync(p => p.ElectionGuid == person.ElectionGuid && 
-                              p.PersonGuid != personGuid && 
+                .AnyAsync(p => p.ElectionGuid == person.ElectionGuid &&
+                              p.PersonGuid != personGuid &&
                               p.Phone == updateDto.Phone);
 
             if (phoneExists)
@@ -178,13 +178,13 @@ public class PeopleService : IPeopleService
         }
 
         _mapper.Map(updateDto, person);
-        
-        person.FullName = string.IsNullOrWhiteSpace(person.FirstName) 
-            ? person.LastName 
+
+        person.FullName = string.IsNullOrWhiteSpace(person.FirstName)
+            ? person.LastName
             : $"{person.LastName}, {person.FirstName}";
-        
-        person.FullNameFl = string.IsNullOrWhiteSpace(person.FirstName) 
-            ? person.LastName 
+
+        person.FullNameFl = string.IsNullOrWhiteSpace(person.FirstName)
+            ? person.LastName
             : $"{person.FirstName} {person.LastName}";
 
         await _context.SaveChangesAsync();
@@ -238,7 +238,7 @@ public class PeopleService : IPeopleService
     public async Task<List<PersonDto>> SearchPeopleAsync(Guid electionGuid, string query)
     {
         var searchLower = query.ToLower();
-        
+
         var people = await _context.People
             .Where(p => p.ElectionGuid == electionGuid &&
                        ((p.FirstName != null && p.FirstName.ToLower().Contains(searchLower)) ||
@@ -252,7 +252,7 @@ public class PeopleService : IPeopleService
             .Include(p => p.Results)
             .ToListAsync();
 
-        return people.Select(p => 
+        return people.Select(p =>
         {
             var dto = _mapper.Map<PersonDto>(p);
             dto.VoteCount = p.Results.FirstOrDefault()?.VoteCount ?? 0;

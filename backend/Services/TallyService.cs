@@ -1,6 +1,6 @@
 using TallyJ4.DTOs.Results;
 using TallyJ4.DTOs.SignalR;
-using TallyJ4.EF.Context;
+using TallyJ4.Domain.Context;
 using TallyJ4.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
 

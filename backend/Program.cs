@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using TallyJ4.EF.Context;
+using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
 using TallyJ4.EF.Data;
 using TallyJ4.Middleware;
@@ -12,36 +12,45 @@ using Serilog;
 using TallyJ4.Backend.Helpers;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using TallyJ4.Application.Services.Auth;
 
 Console.WriteLine("Starting up..."); // for server log files
 
-Log.Logger = new LoggerConfiguration().ConfigureStartupConsole().CreateLogger();
-
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ConfigureWithColorfulConsole(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var builderConfiguration = builder.Configuration;
 var services = builder.Services;
 
-// Connect to DB
-var connectionStringName = "TallyJ4";
-var connectionString = builderConfiguration.GetConnectionString(connectionStringName);
-
-var regex = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
-Log.Information(
-  "Connection string {Name}: {ConnectionString}",
-  connectionStringName,
-  regex.Replace(connectionString ?? "(Empty)", "Password=******;")
-);
-if (connectionString == null)
+// Connect to DB (skip in Testing environment - tests configure their own database)
+if (!builder.Environment.IsEnvironment("Testing"))
 {
-    Log.Fatal(
-      "Connection string {Name} is not set. Check your appsettings.json configuration.",
-      connectionStringName
-    );
-    Environment.Exit(1);
-}
+    var connectionStringName = "TallyJ4";
+    var connectionString = builderConfiguration.GetConnectionString(connectionStringName);
 
-services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
+    var regex = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
+    Log.Information(
+      "Connection string {Name}: {ConnectionString}",
+      connectionStringName,
+      regex.Replace(connectionString ?? "(Empty)", "Password=******;")
+    );
+    if (connectionString == null)
+    {
+        Log.Fatal(
+          "Connection string {Name} is not set. Check your appsettings.json configuration.",
+          connectionStringName
+        );
+        Environment.Exit(1);
+    }
+
+    services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
+}
 
 // Add CORS
 services.AddCors(options =>
@@ -55,9 +64,18 @@ services.AddCors(options =>
     });
 });
 
-// Add Identity API endpoints (this sets up core Identity + bearer auth)
-services.AddIdentityApiEndpoints<AppUser>()
-    .AddEntityFrameworkStores<MainDbContext>();
+// Add Identity (without the built-in API endpoints that conflict with JWT)
+services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<MainDbContext>()
+    .AddDefaultTokenProviders();
+
+// Add JWT Bearer authentication
+services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer();
 
 // Optional: Customize Identity options (e.g., password requirements)
 services.Configure<IdentityOptions>(options =>
@@ -69,6 +87,9 @@ services.Configure<IdentityOptions>(options =>
 
 // Add authorization (for [Authorize] attributes)
 services.AddAuthorization();
+
+// Add localization
+services.AddLocalization();
 
 // Add controllers with FluentValidation
 services.AddControllers();
@@ -88,6 +109,13 @@ services.AddScoped<TallyJ4.Services.ISetupService, TallyJ4.Services.SetupService
 services.AddScoped<TallyJ4.Services.IAccountService, TallyJ4.Services.AccountService>();
 services.AddScoped<TallyJ4.Services.IPublicService, TallyJ4.Services.PublicService>();
 services.AddScoped<TallyJ4.Services.ITallyService, TallyJ4.Services.TallyService>();
+
+// Add Auth services
+services.AddScoped<JwtTokenService>();
+services.AddScoped<EmailService>();
+services.AddScoped<LocalAuthService>();
+services.AddScoped<PasswordResetService>();
+services.AddScoped<TwoFactorService>();
 
 // Add SignalR
 services.AddSignalR();
@@ -192,8 +220,7 @@ app.UseRequestLocalization();
 app.UseAuthentication();  // Enables Identity
 app.UseAuthorization();
 
-// Map the Identity API endpoints (e.g., under /auth prefix)
-app.MapGroup("/auth").MapIdentityApi<AppUser>();  // Adds /auth/register, /auth/login, etc.
+// Custom AuthController handles authentication endpoints
 
 // Map API controllers
 app.MapControllers();

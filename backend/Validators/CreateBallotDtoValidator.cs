@@ -7,9 +7,9 @@ public class CreateBallotDtoValidator : AbstractValidator<CreateBallotDto>
 {
     public CreateBallotDtoValidator()
     {
-        RuleFor(x => x.LocationGuid)
+        RuleFor(x => x.ElectionGuid)
             .NotEmpty()
-            .WithMessage("Location GUID is required");
+            .WithMessage("Election GUID is required");
 
         RuleFor(x => x.ComputerCode)
             .NotEmpty()

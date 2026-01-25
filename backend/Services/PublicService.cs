@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.DTOs.Public;
-using TallyJ4.EF.Context;
+using TallyJ4.Domain.Context;
 
 namespace TallyJ4.Services;
 

@@ -39,13 +39,11 @@ public class ElectionsControllerTests : IntegrationTestBase
         var response = await Client.GetAsync("/api/elections?pageNumber=1&pageSize=10");
         response.EnsureSuccessStatusCode();
 
-        var result = await DeserializeResponseAsync<ApiResponse<PaginatedResponse<ElectionSummaryDto>>>(response);
+        var result = await DeserializeResponseAsync<PaginatedResponse<ElectionSummaryDto>>(response);
 
         Assert.NotNull(result);
-        Assert.True(result.Success);
-        Assert.NotNull(result.Data);
-        Assert.True(result.Data.PageNumber >= 1);
-        Assert.True(result.Data.PageSize > 0);
+        Assert.True(result.PageNumber >= 1);
+        Assert.True(result.PageSize > 0);
     }
 
     [Fact]
@@ -58,7 +56,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Test Election",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "Standard",
+            ElectionType = "STV",
             NumberToElect = 5
         };
 
@@ -101,7 +99,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Test Election for Get",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "Standard",
+            ElectionType = "STV",
             NumberToElect = 3
         };
 
@@ -141,7 +139,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Original Name",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "Standard",
+            ElectionType = "STV",
             NumberToElect = 3
         };
 
@@ -154,7 +152,7 @@ public class ElectionsControllerTests : IntegrationTestBase
             Name = "Updated Name",
             NumberToElect = 7,
             DateOfElection = DateTime.UtcNow.AddDays(60),
-            TallyStatus = "InProgress"
+            TallyStatus = "Processing"
         };
 
         var response = await PutJsonAsync($"/api/elections/{electionGuid}", updateDto);
@@ -178,7 +176,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Election to Delete",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "Standard",
+            ElectionType = "STV",
             NumberToElect = 3
         };
 

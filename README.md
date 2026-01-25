@@ -76,13 +76,55 @@ API available at: `http://localhost:5000`
 - Import: `/api/import`
 - Logs: `/api/logs`
 
-### Frontend (coming soon)
+### Frontend (Vue 3 + Vite)
 
+**Install dependencies:**
 ```bash
 cd frontend
 npm install
+```
+
+**Start development server:**
+```bash
 npm run dev
 ```
+
+**Build for production:**
+```bash
+npm run build
+```
+
+**Preview production build:**
+```bash
+npm run preview
+```
+
+Frontend available at: `http://localhost:8095`
+
+**Environment Configuration:**
+
+The frontend uses environment variables for API configuration. Create a `.env.development` file in the `frontend/` directory:
+
+```env
+VITE_API_URL=http://localhost:5016/api
+```
+
+For production, create `.env.production`:
+
+```env
+VITE_API_URL=https://your-production-api.com/api
+```
+
+**Features:**
+- 🔐 JWT authentication with automatic token refresh
+- 📊 Dashboard with election statistics
+- 🗳️ Complete election management (CRUD)
+- 👥 People management with search and filtering
+- 🎫 Ballot entry and vote tracking
+- 🧮 Tally calculation (STV, Condorcet, Multi-seat)
+- 📈 Results display with sections (Elected/Extra/Other)
+- 🌍 Internationalization (English/French)
+- 📱 Responsive design
 
 ## API Usage Examples
 
@@ -301,12 +343,15 @@ The database is automatically seeded with:
 - ASP.NET Core Identity (JWT Bearer authentication)
 - Serilog (logging)
 
-### Frontend (planned)
-- Vue 3 (Composition API)
-- TypeScript
-- Vite
-- Pinia (state management)
-- Element Plus (UI library)
+### Frontend
+- Vue 3.5.22 (Composition API)
+- TypeScript 5.9.3
+- Vite 7.1.14
+- Pinia 3.0.3 (state management)
+- Vue Router 4.6.3
+- Element Plus 2.11.5 (UI library)
+- Axios 1.13.2
+- Vue I18n 10.0.8
 
 ## Documentation
 
@@ -322,10 +367,24 @@ The database is automatically seeded with:
   - DTOs, services, and FluentValidation for all endpoints
   - AutoMapper profiles for entity-DTO mapping
   - Global error handling and Swagger documentation
-  - Comprehensive unit and integration tests (10+ tests passing)
+  - Comprehensive unit and integration tests (41 tests passing)
   
-🚧 **Phase 3: Advanced Features** - Planned  
-🚧 **Phase 4: Frontend Application** - Planned  
+✅ **Phase 3: Tally Algorithms** - Complete
+  - STV (Single Transferable Vote) algorithm implemented
+  - Condorcet voting method implemented
+  - Multi-seat election support
+  - Tie detection and resolution
+  - Result sectioning (Elected/Extra/Other)
+  
+✅ **Phase 4: Frontend Application** - Complete
+  - Vue 3 SPA with TypeScript
+  - 11 pages: Dashboard, Elections, People, Ballots, Tally, Results, Profile
+  - 14+ reusable components
+  - JWT authentication with auto-refresh
+  - Internationalization (EN/FR)
+  - Responsive design
+  - All 41 backend tests passing
+  
 🚧 **Phase 5: Real-time Features (SignalR)** - Planned  
 
 ## Contributing
