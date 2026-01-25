@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using TallyJ4.EF.Context;
+using TallyJ4.Domain.Context;
 
 namespace TallyJ4.Tests.IntegrationTests;
 

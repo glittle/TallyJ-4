@@ -4,7 +4,7 @@ using TallyJ4.DTOs.Elections;
 using TallyJ4.DTOs.Results;
 using TallyJ4.Models;
 using TallyJ4.Domain.Entities;
-using TallyJ4.EF.Context;
+using TallyJ4.Domain.Context;
 
 namespace TallyJ4.Tests.IntegrationTests;
 
