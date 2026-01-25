@@ -11,11 +11,16 @@ namespace TallyJ4.Controllers;
 public class ResultsController : ControllerBase
 {
     private readonly ITallyService _tallyService;
+    private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly ILogger<ResultsController> _logger;
 
-    public ResultsController(ITallyService tallyService, ILogger<ResultsController> logger)
+    public ResultsController(
+        ITallyService tallyService,
+        ISignalRNotificationService signalRNotificationService,
+        ILogger<ResultsController> logger)
     {
         _tallyService = tallyService;
+        _signalRNotificationService = signalRNotificationService;
         _logger = logger;
     }
 
@@ -101,7 +106,7 @@ public class ResultsController : ControllerBase
         try
         {
             var result = await _tallyService.GetTallyResultsAsync(electionGuid);
-            
+
             var finalResults = new TallyResultDto
             {
                 ElectionGuid = result.ElectionGuid,
@@ -126,6 +131,158 @@ public class ResultsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving final results for election {ElectionGuid}", electionGuid);
+            throw;
+        }
+    }
+
+    [HttpPost("election/{electionGuid:guid}/monitor/refresh")]
+    public async Task<ActionResult<MonitorInfoDto>> RefreshMonitor(Guid electionGuid, [FromQuery] string computerCode = "Unknown")
+    {
+        try
+        {
+            // Refresh the computer's last contact time
+            await _tallyService.RefreshComputerContactAsync(electionGuid, computerCode);
+
+            // Get updated monitoring information
+            var monitorInfo = await _tallyService.GetMonitorInfoAsync(electionGuid);
+
+            // Send real-time update via SignalR
+            await _signalRNotificationService.SendMonitorUpdateAsync(monitorInfo);
+
+            return Ok(monitorInfo);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error refreshing monitor for election {ElectionGuid}", electionGuid);
+            throw;
+        }
+    }
+
+    [HttpGet("election/{electionGuid:guid}/monitor")]
+    public async Task<ActionResult<MonitorInfoDto>> GetMonitorInfo(Guid electionGuid)
+    {
+        try
+        {
+            var monitorInfo = await _tallyService.GetMonitorInfoAsync(electionGuid);
+            return Ok(monitorInfo);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving monitor info for election {ElectionGuid}", electionGuid);
+            throw;
+        }
+    }
+
+    [HttpGet("election/{electionGuid:guid}/ties/{tieBreakGroup:int}")]
+    public async Task<ActionResult<TieDetailsDto>> GetTies(Guid electionGuid, int tieBreakGroup)
+    {
+        try
+        {
+            var tieDetails = await _tallyService.GetTiesAsync(electionGuid, tieBreakGroup);
+            return Ok(tieDetails);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Tie break group {TieBreakGroup} not found in election {ElectionGuid}: {Message}",
+                tieBreakGroup, electionGuid, ex.Message);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving ties for election {ElectionGuid}, group {TieBreakGroup}",
+                electionGuid, tieBreakGroup);
+            throw;
+        }
+    }
+
+    [HttpPost("election/{electionGuid:guid}/ties")]
+    public async Task<ActionResult<SaveTieCountsResponseDto>> SaveTieCounts(Guid electionGuid, [FromBody] SaveTieCountsRequestDto request)
+    {
+        try
+        {
+            var result = await _tallyService.SaveTieCountsAsync(electionGuid, request);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving tie counts for election {ElectionGuid}", electionGuid);
+            throw;
+        }
+    }
+
+    [HttpGet("election/{electionGuid:guid}/report")]
+    public async Task<ActionResult<ElectionReportDto>> GetElectionReport(Guid electionGuid)
+    {
+        try
+        {
+            var report = await _tallyService.GetElectionReportAsync(electionGuid);
+            return Ok(report);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving election report for {ElectionGuid}", electionGuid);
+            throw;
+        }
+    }
+
+    [HttpGet("election/{electionGuid:guid}/report/{reportCode}")]
+    public async Task<ActionResult<ReportDataResponseDto>> GetReportData(Guid electionGuid, string reportCode)
+    {
+        try
+        {
+            var reportData = await _tallyService.GetReportDataAsync(electionGuid, reportCode);
+            return Ok(reportData);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Report {ReportCode} not found for election {ElectionGuid}: {Message}",
+                reportCode, electionGuid, ex.Message);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving report data for election {ElectionGuid}, code {ReportCode}",
+                electionGuid, reportCode);
+            throw;
+        }
+    }
+
+    [HttpGet("election/{electionGuid:guid}/presentation")]
+    public async Task<ActionResult<PresentationDto>> GetPresentationData(Guid electionGuid)
+    {
+        try
+        {
+            var presentationData = await _tallyService.GetPresentationDataAsync(electionGuid);
+            return Ok(presentationData);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving presentation data for election {ElectionGuid}", electionGuid);
             throw;
         }
     }
