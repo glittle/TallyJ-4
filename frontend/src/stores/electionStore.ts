@@ -146,48 +146,20 @@ export const useElectionStore = defineStore('election', () => {
   function handleElectionUpdate(data: ElectionUpdateEvent) {
     const index = elections.value.findIndex(e => e.electionGuid === data.electionGuid);
     if (index !== -1) {
-      const existing = elections.value[index]!;
       elections.value[index] = {
-        electionGuid: existing.electionGuid,
-        name: data.name ?? existing.name,
-        dateOfElection: existing.dateOfElection,
-        electionType: existing.electionType,
-        numberToElect: existing.numberToElect,
-        tallyStatus: data.tallyStatus ?? existing.tallyStatus,
-        convenor: existing.convenor,
-        electionMode: existing.electionMode,
-        numberExtra: existing.numberExtra,
-        showFullReport: existing.showFullReport,
-        listForPublic: existing.listForPublic,
-        showAsTest: existing.showAsTest,
-        onlineWhenOpen: existing.onlineWhenOpen,
-        onlineWhenClose: existing.onlineWhenClose,
-        voterCount: existing.voterCount,
-        ballotCount: existing.ballotCount,
-        locationCount: existing.locationCount,
+        ...elections.value[index],
+        name: data.name ?? elections.value[index].name,
+        tallyStatus: data.tallyStatus ?? elections.value[index].tallyStatus,
+        electionStatus: data.electionStatus ?? elections.value[index].electionStatus,
       };
     }
 
     if (currentElection.value?.electionGuid === data.electionGuid) {
-      const existing = currentElection.value!;
       currentElection.value = {
-        electionGuid: existing.electionGuid,
-        name: data.name ?? existing.name,
-        dateOfElection: existing.dateOfElection,
-        electionType: existing.electionType,
-        numberToElect: existing.numberToElect,
-        tallyStatus: data.tallyStatus ?? existing.tallyStatus,
-        convenor: existing.convenor,
-        electionMode: existing.electionMode,
-        numberExtra: existing.numberExtra,
-        showFullReport: existing.showFullReport,
-        listForPublic: existing.listForPublic,
-        showAsTest: existing.showAsTest,
-        onlineWhenOpen: existing.onlineWhenOpen,
-        onlineWhenClose: existing.onlineWhenClose,
-        voterCount: existing.voterCount,
-        ballotCount: existing.ballotCount,
-        locationCount: existing.locationCount,
+        ...currentElection.value,
+        name: data.name ?? currentElection.value.name,
+        tallyStatus: data.tallyStatus ?? currentElection.value.tallyStatus,
+        electionStatus: data.electionStatus ?? currentElection.value.electionStatus,
       };
     }
   }
