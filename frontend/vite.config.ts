@@ -14,4 +14,9 @@ export default defineConfig({
       include: [fileURLToPath(new URL("./src/locales/**/*.json", import.meta.url))],
     }),
   ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
 });
