@@ -186,6 +186,12 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         using var scope = Factory.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
+        var existingUser = await userManager.FindByEmailAsync(email);
+        if (existingUser != null)
+        {
+            await userManager.DeleteAsync(existingUser);
+        }
+
         var user = new AppUser
         {
             UserName = email,
