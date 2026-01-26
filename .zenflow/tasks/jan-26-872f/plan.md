@@ -18,7 +18,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: c4bb534c-48ce-49f7-b24f-beb5e0bde697 -->
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
@@ -50,15 +51,59 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Initialize SignalR in Election Pages
 
-Implement the task according to the technical specification and general engineering best practices.
+Add SignalR initialization to election detail pages to enable real-time election updates.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+- Modify ElectionDetailPage.vue to call electionStore.initializeSignalR() on mount
+- Add joinElection(electionGuid) when entering election
+- Add leaveElection when leaving/unmounting
+- Verify election status changes are reflected in real-time
+
+### [ ] Step: Add Real-time Tally Progress
+
+Integrate real-time progress display in tally calculation page.
+
+- Modify TallyCalculationPage.vue to initialize resultStore SignalR
+- Add joinTallySession before starting calculation
+- Display progress bar using tallyProgress from store
+- Show percentage and status messages during calculation
+- Test with actual tally calculation
+
+### [ ] Step: Enable Real-time People Updates
+
+Add live updates for people management.
+
+- Modify PeopleManagementPage.vue to initialize peopleStore SignalR
+- Join election group for people updates
+- Verify people list updates when persons are added/edited/deleted in other sessions
+- Handle real-time search results if applicable
+
+### [ ] Step: Add Ballot Status Updates
+
+Enable real-time ballot entry status updates.
+
+- Modify BallotEntryPage.vue to initialize ballotStore SignalR
+- Join election group for ballot updates
+- Display live ballot counts and status changes
+- Test ballot creation/updates across multiple clients
+
+### [ ] Step: Test Real-time Features
+
+Perform comprehensive testing of all real-time features.
+
+- Test tally progress across multiple browser tabs
+- Test people updates in real-time
+- Test election status synchronization
+- Test SignalR reconnection after network issues
+- Document any issues found
+
+### [ ] Step: Run Tests and Linting
+
+Ensure code quality and run all tests.
+
+- Run frontend linting: npm run lint
+- Run frontend type checking: npm run typecheck
+- Run backend tests: dotnet test
+- Fix any issues found
+- Write implementation report to report.md
