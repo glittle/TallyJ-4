@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using TallyJ4.Domain.Context;
+using TallyJ4.Domain.Entities;
+using TallyJ4.Domain.Identity;
 
 namespace TallyJ4.Tests.IntegrationTests;
 
@@ -29,14 +33,30 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // Add InMemory database for testing
+            // Add SQL Server LocalDB for testing
             // Note: Program.cs skips DbContext registration in Testing environment
+            var uniqueDbName = $"TallyJ4TestDb_{Guid.NewGuid()}";
+            var connectionString = $"Server=(localdb)\\MSSQLLocalDB;Database={uniqueDbName};Trusted_Connection=True;";
+
             services.AddDbContext<MainDbContext>(options =>
             {
-                options.UseInMemoryDatabase("TallyJ4TestDb");
+                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("TallyJ4"));
                 options.EnableSensitiveDataLogging();
-                options.ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
             });
         });
     }
+
+    protected override IHost CreateHost(IHostBuilder builder)
+    {
+        var host = base.CreateHost(builder);
+
+        // Ensure database is created and migrations are applied
+        using var scope = host.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        dbContext.Database.Migrate();
+
+        return host;
+    }
+
+
 }

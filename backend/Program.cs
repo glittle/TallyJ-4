@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -102,15 +103,12 @@ services.Configure<IdentityOptions>(options =>
 // Add authorization (for [Authorize] attributes)
 services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("Teller", policy => policy.RequireRole("Admin", "Teller"));
-    options.AddPolicy("Guest", policy => policy.RequireRole("Admin", "Teller", "Guest"));
-    options.AddPolicy("ElectionAccess", policy => policy.Requirements.Add(new TallyJ4.Services.Auth.ElectionAccessRequirement()));
-    options.AddPolicy("ElectionTeller", policy => policy.Requirements.Add(new TallyJ4.Services.Auth.ElectionAccessRequirement("T")));
-    options.AddPolicy("ElectionGuest", policy => policy.Requirements.Add(new TallyJ4.Services.Auth.ElectionAccessRequirement("G")));
+    options.AddPolicy("ElectionAccess", policy =>
+        policy.Requirements.Add(new TallyJ4.Authorization.ElectionAccessRequirement()));
 });
 
-services.AddSingleton<IAuthorizationHandler, TallyJ4.Services.Auth.ElectionAccessHandler>();
+// Register custom authorization handlers
+services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.ElectionAccessHandler>();
 
 // Add localization
 services.AddLocalization();

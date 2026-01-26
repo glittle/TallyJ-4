@@ -36,6 +36,7 @@ public class ElectionsController : ControllerBase
     }
 
     [HttpGet("{guid}")]
+    [Authorize(Policy = "ElectionAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> GetElection(Guid guid)
     {
         var election = await _electionService.GetElectionByGuidAsync(guid);
@@ -49,6 +50,7 @@ public class ElectionsController : ControllerBase
     }
 
     [HttpGet("{guid}/summary")]
+    [Authorize(Policy = "ElectionAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> GetElectionSummary(Guid guid)
     {
         var election = await _electionService.GetElectionSummaryAsync(guid);
@@ -73,6 +75,7 @@ public class ElectionsController : ControllerBase
     }
 
     [HttpPut("{guid}")]
+    [Authorize(Policy = "ElectionAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> UpdateElection(Guid guid, UpdateElectionDto updateDto)
     {
         var election = await _electionService.UpdateElectionAsync(guid, updateDto);
@@ -86,6 +89,7 @@ public class ElectionsController : ControllerBase
     }
 
     [HttpDelete("{guid}")]
+    [Authorize(Policy = "ElectionAccess")]
     public async Task<IActionResult> DeleteElection(Guid guid)
     {
         var success = await _electionService.DeleteElectionAsync(guid);
