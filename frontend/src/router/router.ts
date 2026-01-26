@@ -15,6 +15,10 @@ import PeopleManagementPage from "../pages/people/PeopleManagementPage.vue";
 import BallotManagementPage from "../pages/ballots/BallotManagementPage.vue";
 import ResultsPage from "../pages/results/ResultsPage.vue";
 import TallyCalculationPage from "../pages/results/TallyCalculationPage.vue";
+import MonitoringDashboardPage from "../pages/results/MonitoringDashboardPage.vue";
+import TieManagementPage from "../pages/results/TieManagementPage.vue";
+import PresentationViewPage from "../pages/results/PresentationViewPage.vue";
+import ReportingPage from "../pages/results/ReportingPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 
 const routes = [
@@ -81,6 +85,26 @@ const routes = [
         path: "elections/:id/tally",
         component: TallyCalculationPage,
         meta: { title: "Calculate Tally" }
+      },
+      {
+        path: "elections/:id/monitor",
+        component: MonitoringDashboardPage,
+        meta: { title: "Election Monitor" }
+      },
+      {
+        path: "elections/:id/tie-management",
+        component: TieManagementPage,
+        meta: { title: "Tie Management" }
+      },
+      {
+        path: "elections/:id/presentation",
+        component: PresentationViewPage,
+        meta: { title: "Presentation View" }
+      },
+      {
+        path: "elections/:id/reporting",
+        component: ReportingPage,
+        meta: { title: "Reports" }
       },
       {
         path: "profile",
