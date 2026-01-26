@@ -83,6 +83,7 @@ Add live updates for people management.
 - Handle real-time search results if applicable
 
 ### [ ] Step: Add Ballot Status Updates
+<!-- chat-id: dcfd8e0f-60ce-410e-bd95-6704bdbd5044 -->
 
 Enable real-time ballot entry status updates.
 
