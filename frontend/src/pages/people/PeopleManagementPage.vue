@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -127,9 +127,19 @@ const filteredCandidates = computed(() => {
 
 onMounted(async () => {
   try {
+    await peopleStore.initializeSignalR();
+    await peopleStore.joinElection(electionGuid);
     await peopleStore.fetchPeople(electionGuid);
   } catch (error) {
     ElMessage.error(t('people.loadError'));
+  }
+});
+
+onUnmounted(async () => {
+  try {
+    await peopleStore.leaveElection(electionGuid);
+  } catch (error) {
+    console.error('Failed to leave election group:', error);
   }
 });
 

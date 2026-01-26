@@ -159,6 +159,22 @@ export const usePeopleStore = defineStore('people', () => {
     people.value = people.value.filter(p => p.personGuid !== data.personGuid);
   }
 
+  async function joinElection(electionGuid: string) {
+    try {
+      await signalrService.joinElection(electionGuid);
+    } catch (e) {
+      console.error('Failed to join election group for people updates:', e);
+    }
+  }
+
+  async function leaveElection(electionGuid: string) {
+    try {
+      await signalrService.leaveElection(electionGuid);
+    } catch (e) {
+      console.error('Failed to leave election group for people updates:', e);
+    }
+  }
+
   return {
     people,
     loading,
@@ -172,6 +188,8 @@ export const usePeopleStore = defineStore('people', () => {
     deletePerson,
     searchPeople,
     clearError,
-    initializeSignalR
+    initializeSignalR,
+    joinElection,
+    leaveElection
   };
 });

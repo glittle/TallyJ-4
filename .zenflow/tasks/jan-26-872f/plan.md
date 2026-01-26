@@ -72,7 +72,8 @@ Integrate real-time progress display in tally calculation page.
 - Show percentage and status messages during calculation
 - Test with actual tally calculation
 
-### [ ] Step: Enable Real-time People Updates
+### [x] Step: Enable Real-time People Updates
+<!-- chat-id: 62de9818-74b4-4768-b40e-4379169ca0aa -->
 
 Add live updates for people management.
 
