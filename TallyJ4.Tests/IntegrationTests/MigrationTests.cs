@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Entities;
@@ -7,20 +8,17 @@ using Xunit;
 
 namespace TallyJ4.Tests.IntegrationTests;
 
-public class MigrationTests : IClassFixture<CustomWebApplicationFactory>
+public class MigrationTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
-    public MigrationTests(CustomWebApplicationFactory factory)
+    public MigrationTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task Database_CanBeCreated_AndMigrated()
     {
         // Arrange & Act
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
         // Assert
@@ -32,7 +30,7 @@ public class MigrationTests : IClassFixture<CustomWebApplicationFactory>
     public async Task AllMigrations_AreApplied()
     {
         // Arrange
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
         // Act
@@ -48,22 +46,22 @@ public class MigrationTests : IClassFixture<CustomWebApplicationFactory>
     public async Task DatabaseSchema_IsCorrect_AfterMigrations()
     {
         // Arrange
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
-        // Act & Assert - Test that all expected tables exist
-        Assert.True(await dbContext.Database.ExecuteSqlRawAsync("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Elections'") > 0);
-        Assert.True(await dbContext.Database.ExecuteSqlRawAsync("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'People'") > 0);
-        Assert.True(await dbContext.Database.ExecuteSqlRawAsync("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Locations'") > 0);
-        Assert.True(await dbContext.Database.ExecuteSqlRawAsync("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'AspNetUsers'") > 0);
-        Assert.True(await dbContext.Database.ExecuteSqlRawAsync("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'AspNetRoles'") > 0);
+        // Act & Assert - Test that all expected tables exist by trying to query them
+        await dbContext.Elections.AnyAsync();
+        await dbContext.People.AnyAsync();
+        await dbContext.Locations.AnyAsync();
+        await dbContext.Users.AnyAsync();
+        await dbContext.Roles.AnyAsync();
     }
 
     [Fact]
     public async Task SeededData_IsPresent_AfterMigrations()
     {
         // Arrange
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
@@ -82,7 +80,7 @@ public class MigrationTests : IClassFixture<CustomWebApplicationFactory>
     public async Task SeededElections_ArePresent_AfterMigrations()
     {
         // Arrange
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
         // Act
@@ -98,7 +96,7 @@ public class MigrationTests : IClassFixture<CustomWebApplicationFactory>
     public async Task UserElectionRelationships_AreCorrect_AfterMigrations()
     {
         // Arrange
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
@@ -127,7 +125,7 @@ public class MigrationTests : IClassFixture<CustomWebApplicationFactory>
     public async Task DatabaseConstraints_AreEnforced()
     {
         // Arrange
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
         // Act & Assert - Test foreign key constraints
@@ -147,7 +145,7 @@ public class MigrationTests : IClassFixture<CustomWebApplicationFactory>
         await dbContext.SaveChangesAsync();
 
         // Verify the person was added
-        var addedPerson = await dbContext.People.FindAsync(person.PersonGuid);
+        var addedPerson = await dbContext.People.FindAsync(person.RowId);
         Assert.NotNull(addedPerson);
         Assert.Equal(election.ElectionGuid, addedPerson.ElectionGuid);
     }
@@ -156,15 +154,30 @@ public class MigrationTests : IClassFixture<CustomWebApplicationFactory>
     public async Task ComputedColumns_WorkCorrectly()
     {
         // Arrange
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
+        var election = await dbContext.Elections.FirstAsync();
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = election.ElectionGuid,
+            FirstName = "John",
+            LastName = "Doe",
+            CanVote = true,
+            CanReceiveVotes = true,
+            AgeGroup = "A"
+        };
+
+        dbContext.People.Add(person);
+        await dbContext.SaveChangesAsync();
+
         // Act
-        var person = await dbContext.People.FirstAsync();
+        var savedPerson = await dbContext.People.FindAsync(person.RowId);
 
         // Assert - Test computed columns
-        Assert.NotNull(person.FullName);
-        Assert.Contains(person.FirstName, person.FullName);
-        Assert.Contains(person.LastName, person.FullName);
+        Assert.NotNull(savedPerson.FullName);
+        Assert.Contains(savedPerson.FirstName, savedPerson.FullName);
+        Assert.Contains(savedPerson.LastName, savedPerson.FullName);
     }
 }

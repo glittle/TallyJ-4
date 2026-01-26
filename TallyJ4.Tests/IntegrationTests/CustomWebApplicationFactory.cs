@@ -36,11 +36,11 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             // Add SQL Server LocalDB for testing
             // Note: Program.cs skips DbContext registration in Testing environment
             var uniqueDbName = $"TallyJ4TestDb_{Guid.NewGuid()}";
-            var connectionString = $"(localdb)\\MSSQLLocalDB;Database={uniqueDbName};Trusted_Connection=True;";
+            var connectionString = $"Server=(localdb)\\MSSQLLocalDB;Database={uniqueDbName};Trusted_Connection=True;";
 
             services.AddDbContext<MainDbContext>(options =>
             {
-                options.UseSqlServer(connectionString);
+                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("TallyJ4"));
                 options.EnableSensitiveDataLogging();
             });
         });
