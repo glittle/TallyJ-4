@@ -17,7 +17,7 @@ public class FrontDeskHub : Hub
     {
         var groupName = GetGroupName(electionGuid);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("Client {ConnectionId} joined front desk for election {ElectionGuid}", 
+        _logger.LogInformation("Client {ConnectionId} joined front desk for election {ElectionGuid}",
             Context.ConnectionId, electionGuid);
     }
 
@@ -25,8 +25,33 @@ public class FrontDeskHub : Hub
     {
         var groupName = GetGroupName(electionGuid);
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("Client {ConnectionId} left front desk for election {ElectionGuid}", 
+        _logger.LogInformation("Client {ConnectionId} left front desk for election {ElectionGuid}",
             Context.ConnectionId, electionGuid);
+    }
+
+    // Server-to-client methods for voter registration updates
+    public async Task UpdatePeople(Guid electionGuid, object message)
+    {
+        var groupName = GetGroupName(electionGuid);
+        await Clients.Group(groupName).SendAsync("updatePeople", message);
+
+        _logger.LogInformation("People update broadcast for election {ElectionGuid}", electionGuid);
+    }
+
+    public async Task ReloadPage(Guid electionGuid)
+    {
+        var groupName = GetGroupName(electionGuid);
+        await Clients.Group(groupName).SendAsync("reloadPage");
+
+        _logger.LogInformation("Page reload broadcast for election {ElectionGuid}", electionGuid);
+    }
+
+    public async Task UpdateOnlineElection(Guid electionGuid, object message)
+    {
+        var groupName = GetGroupName(electionGuid);
+        await Clients.Group(groupName).SendAsync("updateOnlineElection", message);
+
+        _logger.LogInformation("Online election update broadcast for election {ElectionGuid}", electionGuid);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -35,5 +60,5 @@ public class FrontDeskHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
-    private static string GetGroupName(Guid electionGuid) => $"FrontDesk_{electionGuid}";
+    private static string GetGroupName(Guid electionGuid) => $"FrontDesk{electionGuid}";
 }

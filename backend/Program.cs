@@ -75,7 +75,20 @@ services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddJwtBearer();
+.AddJwtBearer(options =>
+{
+    var jwtKey = builderConfiguration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured");
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builderConfiguration["Jwt:Issuer"],  // From appsettings.json
+        ValidAudience = builderConfiguration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))  // Secure key (min 256 bits)
+    };
+});
 
 // Optional: Customize Identity options (e.g., password requirements)
 services.Configure<IdentityOptions>(options =>
@@ -162,21 +175,7 @@ services.AddSwaggerGen(options =>
     });
 });
 
-// Optional: If you need full JWT customization (the built-in bearer is similar but not pure JWT)
-services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
-{
-    var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured");
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],  // From appsettings.json
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))  // Secure key (min 256 bits)
-    };
-});
+
 
 var app = builder.Build();
 

@@ -23,6 +23,19 @@ public class PublicHub : Hub
         _logger.LogInformation("Client {ConnectionId} left public group", Context.ConnectionId);
     }
 
+    // Server-to-client methods for public election updates
+    public async Task ElectionsListUpdated(string html)
+    {
+        await Clients.Group("Public").SendAsync("ElectionsListUpdated", html);
+        _logger.LogInformation("Public elections list updated broadcast");
+    }
+
+    public async Task ElectionStatusChanged(Guid electionGuid, object electionInfo)
+    {
+        await Clients.Group("Public").SendAsync("ElectionStatusChanged", electionGuid, electionInfo);
+        _logger.LogInformation("Election status changed broadcast for election {ElectionGuid}", electionGuid);
+    }
+
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         _logger.LogInformation("Client {ConnectionId} disconnected from PublicHub", Context.ConnectionId);
