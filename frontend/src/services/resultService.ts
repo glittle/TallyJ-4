@@ -8,7 +8,8 @@ import type {
   SaveTieCountsRequestDto,
   SaveTieCountsResponseDto,
   PresentationDto,
-  MonitorInfoDto
+  MonitorInfoDto,
+  DetailedStatisticsDto
 } from '../types';
 
 export const resultService = {
@@ -71,6 +72,12 @@ export const resultService = {
   // Presentation
   async getPresentationData(electionGuid: string): Promise<PresentationDto> {
     const response = await api.get<PresentationDto>(`/results/election/${electionGuid}/presentation`);
+    return response.data;
+  },
+
+  // Detailed Statistics
+  async getDetailedStatistics(electionGuid: string): Promise<DetailedStatisticsDto> {
+    const response = await api.get<DetailedStatisticsDto>(`/results/election/${electionGuid}/detailed-statistics`);
     return response.data;
   }
 };

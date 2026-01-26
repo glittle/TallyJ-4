@@ -196,3 +196,93 @@ export interface OnlineVotingInfoDto {
   onlineBallotsEntered: number;
   status: string;
 }
+
+// Detailed Statistics DTOs
+export interface DetailedStatisticsDto {
+  overview: ElectionOverviewDto;
+  voteDistribution: VoteDistributionDto;
+  candidatePerformance: CandidatePerformanceDto[];
+  turnoutAnalysis: TurnoutAnalysisDto;
+  locationStatistics: LocationStatisticsDto[];
+}
+
+export interface ElectionOverviewDto {
+  electionName: string;
+  electionDate?: string;
+  totalRegisteredVoters: number;
+  totalBallotsCast: number;
+  validBallots: number;
+  spoiledBallots: number;
+  totalVotes: number;
+  positionsToElect: number;
+  overallTurnoutPercentage: number;
+  electionDuration?: string;
+}
+
+export interface VoteDistributionDto {
+  votesPerPosition: number[];
+  voteCountDistribution: Record<string, number>;
+  averageVotesPerBallot: number;
+  maxVotesOnSingleBallot: number;
+  minVotesOnSingleBallot: number;
+  ballotLengthDistribution: Record<number, number>;
+}
+
+export interface CandidatePerformanceDto {
+  personGuid: string;
+  fullName: string;
+  totalVotes: number;
+  votePercentage: number;
+  rank: number;
+  isElected: boolean;
+  isEliminated: boolean;
+  votesByPosition: Record<number, number>;
+  firstChoicePercentage: number;
+  lastChoicePercentage: number;
+}
+
+export interface TurnoutAnalysisDto {
+  overallTurnout: number;
+  turnoutByLocation: Record<string, number>;
+  turnoutTrends: Record<string, number>;
+  earlyVotingCount: number;
+  electionDayVotingCount: number;
+  earlyVotingPercentage: number;
+  demographicBreakdown: DemographicTurnoutDto[];
+  timeBasedTurnout: TimeBasedTurnoutDto[];
+  participationRates: ParticipationRateDto;
+}
+
+export interface DemographicTurnoutDto {
+  demographicCategory: string;
+  demographicValue: string;
+  totalVoters: number;
+  voted: number;
+  turnoutPercentage: number;
+}
+
+export interface TimeBasedTurnoutDto {
+  timePeriod: string;
+  periodType: string;
+  ballotsCast: number;
+  cumulativeTurnout: number;
+}
+
+export interface ParticipationRateDto {
+  firstTimeVoters: number;
+  returningVoters: number;
+  onlineVoters: number;
+  inPersonVoters: number;
+  participationByMethod: Record<string, number>;
+}
+
+export interface LocationStatisticsDto {
+  locationName: string;
+  registeredVoters: number;
+  ballotsCast: number;
+  validBallots: number;
+  spoiledBallots: number;
+  turnoutPercentage: number;
+  totalVotes: number;
+  topCandidates: Record<string, number>;
+}

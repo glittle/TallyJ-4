@@ -286,4 +286,24 @@ public class ResultsController : ControllerBase
             throw;
         }
     }
+
+    [HttpGet("election/{electionGuid:guid}/detailed-statistics")]
+    public async Task<ActionResult<DetailedStatisticsDto>> GetDetailedStatistics(Guid electionGuid)
+    {
+        try
+        {
+            var statistics = await _tallyService.GetDetailedStatisticsAsync(electionGuid);
+            return Ok(statistics);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving detailed statistics for election {ElectionGuid}", electionGuid);
+            throw;
+        }
+    }
 }

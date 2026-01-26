@@ -9,7 +9,8 @@ import type {
   ReportDataResponseDto,
   TieDetailsDto,
   PresentationDto,
-  MonitorInfoDto
+  MonitorInfoDto,
+  DetailedStatisticsDto
 } from '../types';
 import type { TallyProgressEvent } from '../types/SignalREvents';
 
@@ -21,6 +22,7 @@ export const useResultStore = defineStore('result', () => {
   const tieDetails = ref<TieDetailsDto[]>([]);
   const presentationData = ref<PresentationDto | null>(null);
   const monitorInfo = ref<MonitorInfoDto | null>(null);
+  const detailedStatistics = ref<DetailedStatisticsDto | null>(null);
   const loading = ref(false);
   const calculating = ref(false);
   const error = ref<string | null>(null);
@@ -85,6 +87,7 @@ export const useResultStore = defineStore('result', () => {
     tieDetails.value = [];
     presentationData.value = null;
     monitorInfo.value = null;
+    detailedStatistics.value = null;
   }
 
   function clearError() {
@@ -185,6 +188,21 @@ export const useResultStore = defineStore('result', () => {
     }
   }
 
+  async function fetchDetailedStatistics(electionGuid: string) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const data = await resultService.getDetailedStatistics(electionGuid);
+      detailedStatistics.value = data;
+      return data;
+    } catch (e: any) {
+      error.value = e.message || 'Failed to fetch detailed statistics';
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function initializeSignalR() {
     if (signalrInitialized.value) return;
 
@@ -242,6 +260,7 @@ export const useResultStore = defineStore('result', () => {
     tieDetails,
     presentationData,
     monitorInfo,
+    detailedStatistics,
     loading,
     calculating,
     error,
@@ -257,6 +276,7 @@ export const useResultStore = defineStore('result', () => {
     fetchTieDetails,
     saveTieCounts,
     fetchPresentationData,
+    fetchDetailedStatistics,
     clearResults,
     clearError,
     initializeSignalR,

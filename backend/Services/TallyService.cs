@@ -692,4 +692,287 @@ public class TallyService : ITallyService
             Status = summary != null ? "Final" : "In Progress"
         };
     }
+
+    public async Task<DetailedStatisticsDto> GetDetailedStatisticsAsync(Guid electionGuid)
+    {
+        var election = await _context.Elections
+            .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+
+        if (election == null)
+        {
+            throw new ArgumentException($"Election {electionGuid} not found");
+        }
+
+        // Get all necessary data
+        var results = await _context.Results
+            .Include(r => r.Person)
+            .Where(r => r.ElectionGuid == electionGuid)
+            .ToListAsync();
+
+        var summary = await _context.ResultSummaries
+            .FirstOrDefaultAsync(rs => rs.ElectionGuid == electionGuid);
+
+        var locations = await _context.Locations
+            .Where(l => l.ElectionGuid == electionGuid)
+            .Include(l => l.Ballots)
+            .ThenInclude(b => b.Votes)
+            .ToListAsync();
+
+        var allBallots = await _context.Ballots
+            .Include(b => b.Votes)
+            .Where(b => b.Location.ElectionGuid == electionGuid)
+            .ToListAsync();
+
+        var totalRegisteredVoters = await _context.People
+            .CountAsync(p => p.ElectionGuid == electionGuid && p.CanVote == true);
+        var totalBallotsCast = allBallots.Count;
+        var validBallots = allBallots.Count(b => b.StatusCode == "Ok");
+        var spoiledBallots = summary?.SpoiledBallots ?? 0;
+        var totalVotes = summary?.TotalVotes ?? 0;
+
+        // Calculate election overview
+        var overview = new ElectionOverviewDto
+        {
+            ElectionName = election.Name ?? "Unknown Election",
+            ElectionDate = election.DateOfElection,
+            TotalRegisteredVoters = totalRegisteredVoters,
+            TotalBallotsCast = totalBallotsCast,
+            ValidBallots = validBallots,
+            SpoiledBallots = spoiledBallots,
+            TotalVotes = totalVotes,
+            PositionsToElect = election.NumberToElect ?? 9,
+            OverallTurnoutPercentage = totalRegisteredVoters > 0 ? (decimal)totalBallotsCast / totalRegisteredVoters * 100 : 0
+        };
+
+        // Calculate vote distribution
+        var votesPerPosition = new int[election.NumberToElect ?? 9];
+        var ballotLengths = allBallots
+            .Where(b => b.StatusCode == "Ok")
+            .Select(b => b.Votes.Count)
+            .ToList();
+
+        foreach (var ballot in allBallots.Where(b => b.StatusCode == "Ok"))
+        {
+            var voteCount = ballot.Votes.Count;
+            if (voteCount > 0 && voteCount <= votesPerPosition.Length)
+            {
+                votesPerPosition[voteCount - 1]++;
+            }
+        }
+
+        var voteDistribution = new VoteDistributionDto
+        {
+            VotesPerPosition = votesPerPosition,
+            AverageVotesPerBallot = ballotLengths.Any() ? ballotLengths.Average() : 0,
+            MaxVotesOnSingleBallot = ballotLengths.Any() ? ballotLengths.Max() : 0,
+            MinVotesOnSingleBallot = ballotLengths.Any() ? ballotLengths.Min() : 0,
+            BallotLengthDistribution = ballotLengths
+                .GroupBy(l => l)
+                .ToDictionary(g => g.Key, g => g.Count())
+        };
+
+        // Calculate candidate performance
+        var candidatePerformance = results
+            .GroupBy(r => r.PersonGuid)
+            .Select(g =>
+            {
+                var person = g.First().Person;
+                var totalVotes = g.Sum(r => r.VoteCount ?? 0);
+                var rank = g.Min(r => r.Rank);
+                var isElected = g.Any(r => r.Section == "E");
+                var isEliminated = g.All(r => r.Section == "O");
+
+                var votesByPosition = g
+                    .Where(r => r.VoteCount.HasValue)
+                    .ToDictionary(r => r.Rank, r => r.VoteCount.Value);
+
+                var firstChoiceVotes = g.FirstOrDefault(r => r.Rank == 1)?.VoteCount ?? 0;
+                var lastChoiceVotes = g.OrderByDescending(r => r.Rank).FirstOrDefault()?.VoteCount ?? 0;
+
+                return new CandidatePerformanceDto
+                {
+                    PersonGuid = g.Key,
+                    FullName = person?.FullNameFl ?? "Unknown",
+                    TotalVotes = totalVotes,
+                    VotePercentage = totalVotes > 0 ? (decimal)totalVotes / totalVotes * 100 : 0, // This should be calculated against total votes
+                    Rank = rank,
+                    IsElected = isElected,
+                    IsEliminated = isEliminated,
+                    VotesByPosition = votesByPosition,
+                    FirstChoicePercentage = totalVotes > 0 ? (decimal)firstChoiceVotes / totalVotes * 100 : 0,
+                    LastChoicePercentage = totalVotes > 0 ? (decimal)lastChoiceVotes / totalVotes * 100 : 0
+                };
+            })
+            .OrderBy(c => c.Rank)
+            .ToArray();
+
+        // Fix vote percentages (should be against total votes cast)
+        if (totalVotes > 0)
+        {
+            foreach (var candidate in candidatePerformance)
+            {
+                candidate.VotePercentage = (decimal)candidate.TotalVotes / totalVotes * 100;
+            }
+        }
+
+        // Calculate turnout analysis
+        var turnoutByLocation = new Dictionary<string, decimal>();
+        foreach (var location in locations)
+        {
+            var locationVoterCount = await _context.People
+                .CountAsync(p => p.ElectionGuid == electionGuid &&
+                               p.VotingLocationGuid == location.LocationGuid &&
+                               p.CanVote == true);
+
+            var locationBallotCount = location.Ballots.Count(b => b.StatusCode == "Ok");
+            var turnout = locationVoterCount > 0
+                ? (decimal)locationBallotCount / locationVoterCount * 100
+                : 0;
+
+            turnoutByLocation[location.Name ?? "Unknown"] = turnout;
+        }
+
+        // Calculate demographic breakdown
+        var demographicBreakdown = new List<DemographicTurnoutDto>();
+
+        // Age group breakdown
+        var ageGroups = await _context.People
+            .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true && p.AgeGroup != null)
+            .GroupBy(p => p.AgeGroup)
+            .Select(g => new
+            {
+                AgeGroup = g.Key,
+                TotalVoters = g.Count(),
+                Voted = g.Count(p => p.HasOnlineBallot == true)
+            })
+            .ToListAsync();
+
+        foreach (var ageGroup in ageGroups)
+        {
+            demographicBreakdown.Add(new DemographicTurnoutDto
+            {
+                DemographicCategory = "AgeGroup",
+                DemographicValue = ageGroup.AgeGroup ?? "Unknown",
+                TotalVoters = ageGroup.TotalVoters,
+                Voted = ageGroup.Voted,
+                TurnoutPercentage = ageGroup.TotalVoters > 0 ? (decimal)ageGroup.Voted / ageGroup.TotalVoters * 100 : 0
+            });
+        }
+
+        // Area breakdown
+        var areas = await _context.People
+            .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true && p.Area != null)
+            .GroupBy(p => p.Area)
+            .Select(g => new
+            {
+                Area = g.Key,
+                TotalVoters = g.Count(),
+                Voted = g.Count(p => p.HasOnlineBallot == true)
+            })
+            .ToListAsync();
+
+        foreach (var area in areas)
+        {
+            demographicBreakdown.Add(new DemographicTurnoutDto
+            {
+                DemographicCategory = "Area",
+                DemographicValue = area.Area ?? "Unknown",
+                TotalVoters = area.TotalVoters,
+                Voted = area.Voted,
+                TurnoutPercentage = area.TotalVoters > 0 ? (decimal)area.Voted / area.TotalVoters * 100 : 0
+            });
+        }
+
+        // Time-based turnout (simplified - would need actual timestamps)
+        var timeBasedTurnout = new List<TimeBasedTurnoutDto>();
+        var cumulativeBallots = 0;
+        for (var hour = 8; hour <= 20; hour++) // Assuming 8 AM to 8 PM voting
+        {
+            // This is a placeholder - in real implementation, you'd query actual ballot timestamps
+            var ballotsInHour = (int)(totalBallotsCast * 0.05); // Simplified distribution
+            cumulativeBallots += ballotsInHour;
+
+            timeBasedTurnout.Add(new TimeBasedTurnoutDto
+            {
+                TimePeriod = election.DateOfElection?.Date.AddHours(hour) ?? DateTime.Now.Date.AddHours(hour),
+                PeriodType = "Hour",
+                BallotsCast = ballotsInHour,
+                CumulativeTurnout = totalRegisteredVoters > 0 ? (decimal)cumulativeBallots / totalRegisteredVoters * 100 : 0
+            });
+        }
+
+        // Participation rates
+        var onlineVoters = await _context.People
+            .CountAsync(p => p.ElectionGuid == electionGuid && p.HasOnlineBallot == true);
+
+        var inPersonVoters = totalBallotsCast - onlineVoters;
+
+        var participationRates = new ParticipationRateDto
+        {
+            FirstTimeVoters = 0, // Would need historical data
+            ReturningVoters = 0, // Would need historical data
+            OnlineVoters = totalRegisteredVoters > 0 ? (decimal)onlineVoters / totalRegisteredVoters * 100 : 0,
+            InPersonVoters = totalRegisteredVoters > 0 ? (decimal)inPersonVoters / totalRegisteredVoters * 100 : 0,
+            ParticipationByMethod = new Dictionary<string, decimal>
+            {
+                ["Online"] = totalRegisteredVoters > 0 ? (decimal)onlineVoters / totalRegisteredVoters * 100 : 0,
+                ["In-Person"] = totalRegisteredVoters > 0 ? (decimal)inPersonVoters / totalRegisteredVoters * 100 : 0
+            }
+        };
+
+        var turnoutAnalysis = new TurnoutAnalysisDto
+        {
+            OverallTurnout = overview.OverallTurnoutPercentage,
+            TurnoutByLocation = turnoutByLocation,
+            EarlyVotingCount = 0, // Would need timestamp tracking
+            ElectionDayVotingCount = totalBallotsCast,
+            EarlyVotingPercentage = 0, // Would need timestamp tracking
+            DemographicBreakdown = demographicBreakdown,
+            TimeBasedTurnout = timeBasedTurnout,
+            ParticipationRates = participationRates
+        };
+
+        // Calculate location statistics
+        var locationStatistics = new List<LocationStatisticsDto>();
+        foreach (var location in locations)
+        {
+            var locationVoters = await _context.People
+                .CountAsync(p => p.ElectionGuid == electionGuid &&
+                               p.VotingLocationGuid == location.LocationGuid &&
+                               p.CanVote == true);
+
+            var locationBallots = location.Ballots.Count(b => b.StatusCode == "Ok");
+            var locationVotes = location.Ballots.Sum(b => b.Votes.Count);
+
+            // Get top candidates for this location
+            var locationCandidateVotes = location.Ballots
+                .Where(b => b.StatusCode == "Ok")
+                .SelectMany(b => b.Votes)
+                .GroupBy(v => v.Person?.FullNameFl ?? "Unknown")
+                .OrderByDescending(g => g.Count())
+                .Take(3)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            locationStatistics.Add(new LocationStatisticsDto
+            {
+                LocationName = location.Name ?? "Unknown",
+                RegisteredVoters = locationVoters,
+                BallotsCast = locationBallots,
+                ValidBallots = locationBallots,
+                SpoiledBallots = location.Ballots.Count(b => b.StatusCode != "Ok"),
+                TurnoutPercentage = locationVoters > 0 ? (decimal)locationBallots / locationVoters * 100 : 0,
+                TotalVotes = locationVotes,
+                TopCandidates = locationCandidateVotes
+            });
+        }
+
+        return new DetailedStatisticsDto
+        {
+            Overview = overview,
+            VoteDistribution = voteDistribution,
+            CandidatePerformance = candidatePerformance,
+            TurnoutAnalysis = turnoutAnalysis,
+            LocationStatistics = locationStatistics
+        };
+    }
 }
