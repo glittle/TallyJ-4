@@ -37,6 +37,25 @@
         </el-form-item>
       </el-form>
 
+      <div v-if="calculating && tallyProgress" class="progress-section" style="margin: 20px 0;">
+        <h4>{{ $t('tally.calculatingProgress') }}</h4>
+        <el-progress
+          :percentage="tallyProgress.percentComplete"
+          :status="tallyProgress.isComplete ? 'success' : undefined"
+          :stroke-width="12"
+          style="margin: 10px 0;"
+        />
+        <div class="progress-details">
+          <p>{{ tallyProgress.message }}</p>
+          <p class="progress-stats">
+            {{ $t('tally.processedBallots') }}: {{ tallyProgress.processedBallots }} / {{ tallyProgress.totalBallots }}
+          </p>
+          <p class="progress-stats">
+            {{ $t('tally.totalVotes') }}: {{ tallyProgress.totalVotes }}
+          </p>
+        </div>
+      </div>
+
       <el-divider />
 
       <div v-if="results" class="results-preview">
@@ -79,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
@@ -96,10 +115,28 @@ const electionType = ref<'normal' | 'singlename'>('normal');
 
 const calculating = computed(() => resultStore.calculating);
 const results = computed(() => resultStore.results);
+const tallyProgress = computed(() => resultStore.tallyProgress);
 
-const topResults = computed(() => 
+const topResults = computed(() =>
   results.value?.results.slice(0, 10) || []
 );
+
+onMounted(async () => {
+  try {
+    await resultStore.initializeSignalR();
+    await resultStore.joinTallySession(electionGuid);
+  } catch (error) {
+    console.error('Failed to initialize SignalR for tally calculation:', error);
+  }
+});
+
+onUnmounted(async () => {
+  try {
+    await resultStore.leaveTallySession(electionGuid);
+  } catch (error) {
+    console.error('Failed to leave tally session:', error);
+  }
+});
 
 async function handleCalculate() {
   try {
@@ -152,5 +189,20 @@ function getSectionLabel(section: string) {
 .results-preview h3 {
   margin-bottom: 20px;
   color: #303133;
+}
+
+.progress-section h4 {
+  margin-bottom: 10px;
+  color: #303133;
+}
+
+.progress-details p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.progress-stats {
+  color: #909399;
+  font-size: 13px;
 }
 </style>

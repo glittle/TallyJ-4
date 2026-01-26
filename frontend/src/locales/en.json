@@ -149,6 +149,8 @@
     "calculate": "Calculate Tally",
     "calculateSuccess": "Tally calculated successfully",
     "calculateError": "Failed to calculate tally",
+    "calculatingProgress": "Calculating Progress",
+    "processedBallots": "Processed Ballots",
     "resultsPreview": "Results Preview (Top 10)",
     "viewFullResults": "View Full Results"
   },

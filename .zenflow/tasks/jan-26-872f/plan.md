@@ -61,7 +61,8 @@ Add SignalR initialization to election detail pages to enable real-time election
 - Add leaveElection when leaving/unmounting
 - Verify election status changes are reflected in real-time
 
-### [ ] Step: Add Real-time Tally Progress
+### [x] Step: Add Real-time Tally Progress
+<!-- chat-id: f63f56f1-b138-4135-b064-45fe5bbed849 -->
 
 Integrate real-time progress display in tally calculation page.
 
