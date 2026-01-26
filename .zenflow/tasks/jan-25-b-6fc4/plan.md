@@ -57,7 +57,8 @@ Create the ElectionAccessHandler authorization handler and ElectionAccessRequire
 - Create ElectionAccessRequirement class
 - Register handler as scoped service in Program.cs
 
-### [ ] Step: Update Controllers for Authorization
+### [x] Step: Update Controllers for Authorization
+<!-- chat-id: 66dcccb1-f3bd-4246-8603-2fb2fe72022f -->
 Modify ElectionsController to use the new authorization requirement.
 - Add [Authorize(Policy = "ElectionAccess")] to relevant endpoints
 - Ensure election GUID is available in route parameters
