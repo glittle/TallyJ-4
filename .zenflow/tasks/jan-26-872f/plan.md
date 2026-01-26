@@ -93,6 +93,7 @@ Enable real-time ballot entry status updates.
 - Test ballot creation/updates across multiple clients
 
 ### [ ] Step: Test Real-time Features
+<!-- chat-id: 3443dfd6-214b-4571-a267-ae211bd98c38 -->
 
 Perform comprehensive testing of all real-time features.
 
