@@ -51,7 +51,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Initialize SignalR in Election Pages
+### [x] Step: Initialize SignalR in Election Pages
+<!-- chat-id: 627985fc-8521-4ae7-a459-45371f9c9648 -->
 
 Add SignalR initialization to election detail pages to enable real-time election updates.
 

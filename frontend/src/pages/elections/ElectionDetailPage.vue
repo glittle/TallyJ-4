@@ -114,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -132,9 +132,19 @@ const election = computed(() => electionStore.currentElection);
 
 onMounted(async () => {
   try {
+    await electionStore.initializeSignalR();
     await electionStore.fetchElectionById(electionGuid);
+    await electionStore.joinElection(electionGuid);
   } catch (error) {
     ElMessage.error(t('elections.loadError'));
+  }
+});
+
+onUnmounted(async () => {
+  try {
+    await electionStore.leaveElection(electionGuid);
+  } catch (error) {
+    console.error('Failed to leave election:', error);
   }
 });
 
