@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using TallyJ4.DTOs.SignalR;
+using TallyJ4.DTOs.Results;
 using TallyJ4.Hubs;
 
 namespace TallyJ4.Services;
@@ -104,6 +105,20 @@ public class SignalRNotificationService : ISignalRNotificationService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error sending PublicElectionListUpdate notification");
+        }
+    }
+
+    public async Task SendMonitorUpdateAsync(MonitorInfoDto monitorInfo)
+    {
+        try
+        {
+            var groupName = $"Election_{monitorInfo.ElectionGuid}";
+            await _mainHubContext.Clients.Group(groupName).SendAsync("MonitorUpdated", monitorInfo);
+            _logger.LogInformation("Sent MonitorUpdated notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending MonitorUpdated notification for election {ElectionGuid}", monitorInfo.ElectionGuid);
         }
     }
 }

@@ -11,4 +11,5 @@ public interface IElectionService
     Task<ElectionDto?> UpdateElectionAsync(Guid electionGuid, UpdateElectionDto updateDto);
     Task<bool> DeleteElectionAsync(Guid electionGuid);
     Task<ElectionDto?> GetElectionSummaryAsync(Guid electionGuid);
+    Task<bool> UpdateElectionListingAsync(Guid electionGuid, bool isListed);
 }

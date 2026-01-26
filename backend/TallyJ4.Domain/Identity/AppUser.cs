@@ -17,4 +17,6 @@ public class AppUser : IdentityUser
     public DateTime? PasswordResetExpiry { get; set; }
     
     public virtual TwoFactorToken? TwoFactorToken { get; set; }
+
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

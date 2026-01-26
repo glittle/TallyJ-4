@@ -19,7 +19,11 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Database:SeedOnStartup"] = "false"
+                ["Database:SeedOnStartup"] = "false",
+                ["Jwt:Key"] = "ThisIsATestKeyThatIsAtLeast32CharactersLongForJWT",
+                ["Jwt:Issuer"] = "TallyJ4TestAPI",
+                ["Jwt:Audience"] = "TallyJ4TestClient",
+                ["Jwt:ExpiryMinutes"] = "60"
             });
         });
 

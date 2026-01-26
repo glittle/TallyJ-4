@@ -9,11 +9,13 @@ public class TallyServiceTests : ServiceTestBase
 {
     private readonly TallyService _service;
     private readonly Mock<ILogger<TallyService>> _loggerMock;
+    private readonly Mock<ISignalRNotificationService> _signalRMock;
 
     public TallyServiceTests()
     {
         _loggerMock = new Mock<ILogger<TallyService>>();
-        _service = new TallyService(Context, _loggerMock.Object);
+        _signalRMock = new Mock<ISignalRNotificationService>();
+        _service = new TallyService(Context, _loggerMock.Object, _signalRMock.Object);
     }
 
     [Fact]

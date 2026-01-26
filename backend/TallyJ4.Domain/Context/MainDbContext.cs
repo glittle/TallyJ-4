@@ -46,6 +46,8 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<TwoFactorToken> TwoFactorTokens { get; set; }
 
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+
     public virtual DbSet<Vote> Votes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -211,6 +213,19 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
             entity.HasOne<AppUser>()
                 .WithOne(u => u.TwoFactorToken)
                 .HasForeignKey<TwoFactorToken>(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.RowVersion)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+
+            entity.HasOne<AppUser>()
+                .WithMany(u => u.RefreshTokens)
+                .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

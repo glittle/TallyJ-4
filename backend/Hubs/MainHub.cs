@@ -17,7 +17,7 @@ public class MainHub : Hub
     {
         var groupName = GetGroupName(electionGuid);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("Client {ConnectionId} joined election {ElectionGuid}", 
+        _logger.LogInformation("Client {ConnectionId} joined election {ElectionGuid}",
             Context.ConnectionId, electionGuid);
     }
 
@@ -25,8 +25,36 @@ public class MainHub : Hub
     {
         var groupName = GetGroupName(electionGuid);
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("Client {ConnectionId} left election {ElectionGuid}", 
+        _logger.LogInformation("Client {ConnectionId} left election {ElectionGuid}",
             Context.ConnectionId, electionGuid);
+    }
+
+    // Server-to-client methods (called by business logic)
+    public async Task StatusChanged(Guid electionGuid, object infoForKnown, object infoForGuest)
+    {
+        var knownGroup = GetGroupName(electionGuid) + "Known";
+        var guestGroup = GetGroupName(electionGuid) + "Guest";
+
+        await Clients.Group(knownGroup).SendAsync("statusChanged", infoForKnown);
+        await Clients.Group(guestGroup).SendAsync("statusChanged", infoForGuest);
+
+        _logger.LogInformation("Status changed broadcast for election {ElectionGuid}", electionGuid);
+    }
+
+    public async Task ElectionClosed(Guid electionGuid)
+    {
+        var groupName = GetGroupName(electionGuid);
+        await Clients.Group(groupName).SendAsync("electionClosed");
+
+        _logger.LogInformation("Election closed broadcast for election {ElectionGuid}", electionGuid);
+    }
+
+    public async Task CloseOutGuestTellers(Guid electionGuid)
+    {
+        var guestGroup = GetGroupName(electionGuid) + "Guest";
+        await Clients.Group(guestGroup).SendAsync("electionClosed");
+
+        _logger.LogInformation("Guest tellers closed out for election {ElectionGuid}", electionGuid);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -35,5 +63,5 @@ public class MainHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
-    private static string GetGroupName(Guid electionGuid) => $"Election_{electionGuid}";
+    private static string GetGroupName(Guid electionGuid) => $"Main{electionGuid}";
 }

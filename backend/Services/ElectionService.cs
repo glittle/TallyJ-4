@@ -139,4 +139,21 @@ public class ElectionService : IElectionService
     {
         return await GetElectionByGuidAsync(electionGuid);
     }
+
+    public async Task<bool> UpdateElectionListingAsync(Guid electionGuid, bool isListed)
+    {
+        var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+
+        if (election == null)
+        {
+            return false;
+        }
+
+        election.ListForPublic = isListed;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Updated election {ElectionGuid} listing to {IsListed}", electionGuid, isListed);
+
+        return true;
+    }
 }

@@ -24,8 +24,11 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         };
     }
 
-    protected async Task<string> GetAuthTokenAsync(string email = "admin@tallyj.com", string password = "Admin123!")
+    protected async Task<string> GetAuthTokenAsync(string email = "admin@tallyj.com", string password = "Test1234!")
     {
+        // Ensure test user exists first
+        await CreateTestUserAsync(email, "Test1234!");
+
         var loginRequest = new
         {
             email,
@@ -37,16 +40,14 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             Encoding.UTF8,
             "application/json");
 
-        var response = await Client.PostAsync("/auth/login", content);
-        
+        var response = await Client.PostAsync("/api/auth/login", content);
+
         if (!response.IsSuccessStatusCode)
         {
-            await CreateTestUserAsync(email, password);
-            response = await Client.PostAsync("/auth/login", content);
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Login failed with status {response.StatusCode}: {errorContent}");
         }
 
-        response.EnsureSuccessStatusCode();
-        
         var loginResponse = await JsonSerializer.DeserializeAsync<LoginResponse>(
             await response.Content.ReadAsStreamAsync(),
             JsonOptions);
@@ -89,7 +90,13 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
     {
         using var scope = Factory.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-        
+
+        var existingUser = await userManager.FindByEmailAsync(email);
+        if (existingUser != null)
+        {
+            return; // User already exists
+        }
+
         var user = new AppUser
         {
             UserName = email,
@@ -97,7 +104,12 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             EmailConfirmed = true
         };
 
-        await userManager.CreateAsync(user, password);
+        var result = await userManager.CreateAsync(user, password);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new Exception($"Failed to create test user: {errors}");
+        }
     }
 
     private class LoginResponse
