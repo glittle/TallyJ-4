@@ -18,7 +18,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
@@ -50,15 +50,37 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Create ElectionAccessHandler
+Create the ElectionAccessHandler authorization handler and ElectionAccessRequirement.
+- Implement IAuthorizationHandler to check user access to elections
+- Create ElectionAccessRequirement class
+- Register handler as scoped service in Program.cs
 
-Implement the task according to the technical specification and general engineering best practices.
+### [ ] Step: Update Controllers for Authorization
+Modify ElectionsController to use the new authorization requirement.
+- Add [Authorize(Policy = "ElectionAccess")] to relevant endpoints
+- Ensure election GUID is available in route parameters
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+### [ ] Step: Implement Test Database Seeding
+Create proper database seeding for integration tests.
+- Modify CustomWebApplicationFactory to seed test data
+- Ensure users and elections are created with proper relationships
+
+### [ ] Step: Switch to SQL Server LocalDB
+Replace InMemory database with SQL Server LocalDB for integration tests.
+- Update CustomWebApplicationFactory to use LocalDB
+- Add Microsoft.EntityFrameworkCore.SqlServer package to tests
+- Configure unique database names
+
+### [ ] Step: Add Migration Testing
+Create tests to verify database migrations work correctly.
+- Add MigrationTests.cs with tests for migration application
+- Verify seeded data is present after migrations
+
+### [ ] Step: Run Tests and Verification
+Execute all tests and verification steps.
+- Run unit tests for ElectionAccessHandler
+- Run integration tests with LocalDB
+- Run migration tests
+- Run lint and typecheck commands
+- Write implementation report to report.md
