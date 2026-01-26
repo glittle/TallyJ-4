@@ -27,8 +27,8 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
             return;
         }
 
-        var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId))
+        var userIdString = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
         {
             context.Fail();
             return;

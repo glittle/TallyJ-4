@@ -1,9 +1,12 @@
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TallyJ4.Domain.Context;
+using TallyJ4.Domain.Entities;
 using TallyJ4.Domain.Identity;
 
 namespace TallyJ4.Tests.IntegrationTests;
@@ -14,6 +17,8 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
     protected readonly HttpClient Client;
     protected readonly JsonSerializerOptions JsonOptions;
 
+    private static bool _databaseSeeded = false;
+
     protected IntegrationTestBase(CustomWebApplicationFactory factory)
     {
         Factory = factory;
@@ -22,6 +27,13 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         {
             PropertyNameCaseInsensitive = true
         };
+
+        // Seed database once per test session
+        if (!_databaseSeeded)
+        {
+            SeedDatabaseAsync().GetAwaiter().GetResult();
+            _databaseSeeded = true;
+        }
     }
 
     protected async Task<string> GetAuthTokenAsync(string email = "admin@tallyj.com", string password = "Test1234!")
@@ -86,16 +98,93 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         return await JsonSerializer.DeserializeAsync<TResponse>(stream, JsonOptions);
     }
 
+    private async Task SeedDatabaseAsync()
+    {
+        using var scope = Factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+
+        // Only seed if database doesn't have our test data
+        if (await dbContext.Users.AnyAsync(u => u.Email == "admin@tallyj.com"))
+        {
+            return;
+        }
+
+        // Create test users
+        var adminUser = new AppUser
+        {
+            UserName = "admin@tallyj.com",
+            Email = "admin@tallyj.com",
+            EmailConfirmed = true
+        };
+        await userManager.CreateAsync(adminUser, "Admin123!");
+
+        var testUser = new AppUser
+        {
+            UserName = "test@tallyj.com",
+            Email = "test@tallyj.com",
+            EmailConfirmed = true
+        };
+        await userManager.CreateAsync(testUser, "Test123!");
+
+        // Create test elections
+        var election1 = new Election
+        {
+            ElectionGuid = Guid.NewGuid(),
+            Name = "Test Election 1",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = "STV",
+            NumberToElect = 3,
+            TallyStatus = "NotStarted",
+            ShowAsTest = true,
+            RowVersion = new byte[8] // Initialize RowVersion for concurrency
+        };
+
+        var election2 = new Election
+        {
+            ElectionGuid = Guid.NewGuid(),
+            Name = "Test Election 2",
+            DateOfElection = DateTime.UtcNow.AddDays(60),
+            ElectionType = "FPTP",
+            NumberToElect = 1,
+            TallyStatus = "NotStarted",
+            ShowAsTest = true,
+            RowVersion = new byte[8] // Initialize RowVersion for concurrency
+        };
+
+        dbContext.Elections.AddRange(election1, election2);
+        await dbContext.SaveChangesAsync();
+
+        // Create user-election relationships
+        var join1 = new JoinElectionUser
+        {
+            ElectionGuid = election1.ElectionGuid,
+            UserId = Guid.Parse(adminUser.Id),
+            Role = "Admin"
+        };
+
+        var join2 = new JoinElectionUser
+        {
+            ElectionGuid = election2.ElectionGuid,
+            UserId = Guid.Parse(adminUser.Id),
+            Role = "Admin"
+        };
+
+        var join3 = new JoinElectionUser
+        {
+            ElectionGuid = election1.ElectionGuid,
+            UserId = Guid.Parse(testUser.Id),
+            Role = "Teller"
+        };
+
+        dbContext.JoinElectionUsers.AddRange(join1, join2, join3);
+        await dbContext.SaveChangesAsync();
+    }
+
     private async Task CreateTestUserAsync(string email, string password)
     {
         using var scope = Factory.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-
-        var existingUser = await userManager.FindByEmailAsync(email);
-        if (existingUser != null)
-        {
-            return; // User already exists
-        }
 
         var user = new AppUser
         {
