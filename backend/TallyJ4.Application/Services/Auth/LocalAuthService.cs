@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using TallyJ4.Application.DTOs.Auth;
+using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
 
 namespace TallyJ4.Application.Services.Auth;
@@ -9,15 +10,18 @@ public class LocalAuthService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly JwtTokenService _jwtTokenService;
+    private readonly MainDbContext _context;
     private readonly IStringLocalizer<LocalAuthService> _localizer;
 
     public LocalAuthService(
         UserManager<AppUser> userManager,
         JwtTokenService jwtTokenService,
+        MainDbContext context,
         IStringLocalizer<LocalAuthService> localizer)
     {
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
+        _context = context;
         _localizer = localizer;
     }
 
@@ -45,9 +49,16 @@ public class LocalAuthService
         }
 
         var token = _jwtTokenService.GenerateToken(user);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken();
+        var refreshTokenEntity = _jwtTokenService.CreateRefreshToken(user.Id, refreshToken);
+
+        _context.RefreshTokens.Add(refreshTokenEntity);
+        await _context.SaveChangesAsync();
+
         return (true, null, new AuthResponse
         {
             Token = token,
+            RefreshToken = refreshToken,
             Email = user.Email!,
             Requires2FA = false
         });
@@ -74,6 +85,7 @@ public class LocalAuthService
                 return (true, null, new AuthResponse
                 {
                     Token = "",
+                    RefreshToken = "",
                     Email = user.Email!,
                     Requires2FA = true
                 });
@@ -81,9 +93,16 @@ public class LocalAuthService
         }
 
         var token = _jwtTokenService.GenerateToken(user);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken();
+        var refreshTokenEntity = _jwtTokenService.CreateRefreshToken(user.Id, refreshToken);
+
+        _context.RefreshTokens.Add(refreshTokenEntity);
+        await _context.SaveChangesAsync();
+
         return (true, null, new AuthResponse
         {
             Token = token,
+            RefreshToken = refreshToken,
             Email = user.Email!,
             Requires2FA = false
         });

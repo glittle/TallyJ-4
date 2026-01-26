@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
@@ -99,7 +100,17 @@ services.Configure<IdentityOptions>(options =>
 });
 
 // Add authorization (for [Authorize] attributes)
-services.AddAuthorization();
+services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("Teller", policy => policy.RequireRole("Admin", "Teller"));
+    options.AddPolicy("Guest", policy => policy.RequireRole("Admin", "Teller", "Guest"));
+    options.AddPolicy("ElectionAccess", policy => policy.Requirements.Add(new TallyJ4.Services.Auth.ElectionAccessRequirement()));
+    options.AddPolicy("ElectionTeller", policy => policy.Requirements.Add(new TallyJ4.Services.Auth.ElectionAccessRequirement("T")));
+    options.AddPolicy("ElectionGuest", policy => policy.Requirements.Add(new TallyJ4.Services.Auth.ElectionAccessRequirement("G")));
+});
+
+services.AddSingleton<IAuthorizationHandler, TallyJ4.Services.Auth.ElectionAccessHandler>();
 
 // Add localization
 services.AddLocalization();
@@ -122,6 +133,7 @@ services.AddScoped<TallyJ4.Services.ISetupService, TallyJ4.Services.SetupService
 services.AddScoped<TallyJ4.Services.IAccountService, TallyJ4.Services.AccountService>();
 services.AddScoped<TallyJ4.Services.IPublicService, TallyJ4.Services.PublicService>();
 services.AddScoped<TallyJ4.Services.ITallyService, TallyJ4.Services.TallyService>();
+services.AddScoped<TallyJ4.Application.Services.ImportService>();
 
 // Add Auth services
 services.AddScoped<JwtTokenService>();
@@ -188,10 +200,11 @@ if (app.Environment.IsDevelopment())
         using var scope = app.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
         await context.Database.MigrateAsync();
-        await DbSeeder.SeedAsync(context, userManager, logger);
+        await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
     }
 }
 
@@ -217,6 +230,7 @@ app.UseCors("AllowFrontend");
 app.UseRequestLocalization();
 
 app.UseAuthentication();  // Enables Identity
+app.UseMiddleware<TallyJ4.Middleware.ElectionContextMiddleware>();
 app.UseAuthorization();
 
 // Custom AuthController handles authentication endpoints

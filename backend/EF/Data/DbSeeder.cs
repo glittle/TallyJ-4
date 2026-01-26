@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
 using TallyJ4.Domain.Entities;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TallyJ4.EF.Data;
 
@@ -13,6 +14,7 @@ public static class DbSeeder
     public static async Task SeedAsync(
         MainDbContext context,
         UserManager<AppUser> userManager,
+        RoleManager<IdentityRole> roleManager,
         ILogger logger)
     {
         if (await context.Elections.AnyAsync())
@@ -23,6 +25,7 @@ public static class DbSeeder
 
         logger.LogInformation("Starting database seeding...");
 
+        await SeedRolesAsync(roleManager, logger);
         await SeedUsersAsync(userManager, logger);
         await SeedElection1Async(context, logger);
         await SeedElection2Async(context, logger);
@@ -32,15 +35,39 @@ public static class DbSeeder
         logger.LogInformation("Database seeding complete");
     }
 
+    private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager, ILogger logger)
+    {
+        logger.LogInformation("Seeding roles...");
+
+        var roles = new[] { "Admin", "Teller", "Guest" };
+
+        foreach (var roleName in roles)
+        {
+            if (!await roleManager.RoleExistsAsync(roleName))
+            {
+                var result = await roleManager.CreateAsync(new IdentityRole(roleName));
+                if (result.Succeeded)
+                {
+                    logger.LogInformation("Created role: {Role}", roleName);
+                }
+                else
+                {
+                    logger.LogError("Failed to create role {Role}: {Errors}",
+                        roleName, string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+            }
+        }
+    }
+
     private static async Task SeedUsersAsync(UserManager<AppUser> userManager, ILogger logger)
     {
         logger.LogInformation("Seeding users...");
 
         var users = new[]
         {
-            new { Email = "admin@tallyj.test", Password = "TestPass123!" },
-            new { Email = "teller@tallyj.test", Password = "TestPass123!" },
-            new { Email = "voter@tallyj.test", Password = "TestPass123!" }
+            new { Email = "admin@tallyj.test", Password = "TestPass123!", Role = "Admin" },
+            new { Email = "teller@tallyj.test", Password = "TestPass123!", Role = "Teller" },
+            new { Email = "voter@tallyj.test", Password = "TestPass123!", Role = "Guest" }
         };
 
         foreach (var userData in users)
@@ -58,7 +85,8 @@ public static class DbSeeder
                 var result = await userManager.CreateAsync(user, userData.Password);
                 if (result.Succeeded)
                 {
-                    logger.LogInformation("Created user: {Email}", userData.Email);
+                    await userManager.AddToRoleAsync(user, userData.Role);
+                    logger.LogInformation("Created user: {Email} with role {Role}", userData.Email, userData.Role);
                 }
                 else
                 {
