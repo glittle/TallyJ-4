@@ -199,11 +199,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
-import { Document, Download, Printer } from '@element-plus/icons-vue';
+
 import { useResultStore } from '../../stores/resultStore';
 import type { ElectionReportDto, ReportDataResponseDto } from '../../types';
 
@@ -214,7 +214,7 @@ const resultStore = useResultStore();
 
 const electionGuid = route.params.id as string;
 const selectedReportType = ref<string>('');
-const currentReport = ref<{ title: string; code: string } | null>(null);
+const currentReport = ref<{ title: string; code: string; name?: string } | null>(null);
 const electionReport = ref<ElectionReportDto | null>(null);
 const reportData = ref<ReportDataResponseDto | null>(null);
 const loading = ref(false);
@@ -228,7 +228,15 @@ const availableReports = [
 
 function onReportTypeChange() {
   const report = availableReports.find(r => r.code === selectedReportType.value);
-  currentReport.value = report || null;
+  if (report) {
+    currentReport.value = {
+      title: report.name,
+      code: report.code,
+      name: report.name
+    };
+  } else {
+    currentReport.value = null;
+  }
 }
 
 async function generateReport() {

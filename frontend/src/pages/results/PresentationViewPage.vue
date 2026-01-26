@@ -120,7 +120,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
-import { Loading, Check, Warning, Clock, CheckCircle, AlertTriangle } from '@element-plus/icons-vue';
+import { Loading, Check, Warning, Clock } from '@element-plus/icons-vue';
 import { useResultStore } from '../../stores/resultStore';
 import type { PresentationDto } from '../../types';
 
@@ -170,10 +170,10 @@ function getStatusClass(status: string) {
 
 function getStatusIcon(status: string) {
   const iconMap: Record<string, any> = {
-    'Complete': CheckCircle,
+    'Complete': Check,
     'InProgress': Clock,
     'Paused': Warning,
-    'Error': AlertTriangle
+    'Error': Warning
   };
   return iconMap[status] || Clock;
 }

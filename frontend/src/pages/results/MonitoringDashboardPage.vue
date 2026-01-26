@@ -181,9 +181,9 @@ const resultStore = useResultStore();
 const electionGuid = route.params.id as string;
 const monitorInfo = ref<MonitorInfoDto | null>(null);
 const loading = ref(false);
-const refreshInterval = ref<NodeJS.Timeout | null>(null);
+const refreshInterval = ref<number | null>(null);
 
-const loadingComputed = computed(() => resultStore.loading || loading.value);
+
 
 onMounted(async () => {
   await loadData();
