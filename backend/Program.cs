@@ -112,6 +112,9 @@ services.AddAuthorization(options =>
 
 services.AddSingleton<IAuthorizationHandler, TallyJ4.Services.Auth.ElectionAccessHandler>();
 
+// Register custom authorization handlers
+services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.ElectionAccessHandler>();
+
 // Add localization
 services.AddLocalization();
 
