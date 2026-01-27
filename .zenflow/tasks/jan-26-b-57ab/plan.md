@@ -65,7 +65,8 @@ Resolve the OpenAPI spec download and type generation issue to ensure type safet
 
 ---
 
-### [ ] Step: Implement Real-time Features
+### [x] Step: Implement Real-time Features
+<!-- chat-id: d25df4e1-4d3f-4235-b41b-eb09d7b8355a -->
 Connect SignalR hubs to provide live updates for election results, ballot status, and collaborative features.
 
 **Tasks**:

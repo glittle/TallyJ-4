@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { electionService } from '../services/electionService';
 import { signalrService } from '../services/signalrService';
+import { ElMessage } from 'element-plus';
 import type { ElectionDto, CreateElectionDto, UpdateElectionDto } from '../types';
 import type { ElectionUpdateEvent } from '../types/SignalREvents';
 
@@ -147,22 +148,56 @@ export const useElectionStore = defineStore('election', () => {
     const index = elections.value.findIndex(e => e.electionGuid === data.electionGuid);
     if (index !== -1) {
       const existingElection = elections.value[index]!;
+      const oldTallyStatus = existingElection.tallyStatus;
+      const oldElectionStatus = existingElection.electionStatus;
+
       elections.value[index] = {
         ...existingElection,
         name: data.name ?? existingElection.name,
         tallyStatus: data.tallyStatus ?? existingElection.tallyStatus,
         electionStatus: data.electionStatus ?? existingElection.electionStatus,
       } as ElectionDto;
+
+      // Show notifications for status changes
+      if (data.tallyStatus && data.tallyStatus !== oldTallyStatus) {
+        showElectionStatusNotification(data.name || 'Election', 'tally', data.tallyStatus);
+      }
+      if (data.electionStatus && data.electionStatus !== oldElectionStatus) {
+        showElectionStatusNotification(data.name || 'Election', 'election', data.electionStatus);
+      }
     }
 
     if (currentElection.value?.electionGuid === data.electionGuid) {
       const existingCurrentElection = currentElection.value!;
+      const oldTallyStatus = existingCurrentElection.tallyStatus;
+      const oldElectionStatus = existingCurrentElection.electionStatus;
+
       currentElection.value = {
         ...existingCurrentElection,
         name: data.name ?? existingCurrentElection.name,
         tallyStatus: data.tallyStatus ?? existingCurrentElection.tallyStatus,
         electionStatus: data.electionStatus ?? existingCurrentElection.electionStatus,
       } as ElectionDto;
+
+      // Show notifications for status changes
+      if (data.tallyStatus && data.tallyStatus !== oldTallyStatus) {
+        showElectionStatusNotification(data.name || 'Election', 'tally', data.tallyStatus);
+      }
+      if (data.electionStatus && data.electionStatus !== oldElectionStatus) {
+        showElectionStatusNotification(data.name || 'Election', 'election', data.electionStatus);
+      }
+    }
+  }
+
+  function showElectionStatusNotification(electionName: string, statusType: 'tally' | 'election', newStatus: string) {
+    const message = `${electionName} ${statusType} status changed to: ${newStatus}`;
+
+    if (newStatus === 'Finalized' || newStatus === 'Closed') {
+      ElMessage.success(message);
+    } else if (newStatus === 'Tallying' || newStatus === 'Voting') {
+      ElMessage.info(message);
+    } else {
+      ElMessage.info(message);
     }
   }
 

@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -87,8 +87,18 @@ const ballots = computed(() => ballotStore.ballots);
 onMounted(async () => {
   try {
     await ballotStore.fetchBallots(electionGuid);
+    await ballotStore.initializeSignalR();
+    await ballotStore.joinElection(electionGuid);
   } catch (error) {
     ElMessage.error(t('ballots.loadError'));
+  }
+});
+
+onBeforeUnmount(async () => {
+  try {
+    await ballotStore.leaveElection(electionGuid);
+  } catch (error) {
+    console.error('Failed to leave election group for ballot updates:', error);
   }
 });
 

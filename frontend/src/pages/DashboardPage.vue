@@ -125,6 +125,7 @@ onMounted(async () => {
 async function loadDashboardData() {
   try {
     await electionStore.fetchElections();
+    await electionStore.initializeSignalR();
   } catch (error) {
     console.error('Failed to load dashboard data:', error);
   }

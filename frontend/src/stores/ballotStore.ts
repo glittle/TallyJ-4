@@ -2,13 +2,17 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { ballotService } from '../services/ballotService';
 import { voteService } from '../services/voteService';
+import { signalrService } from '../services/signalrService';
+import { ElMessage } from 'element-plus';
 import type { BallotDto, CreateBallotDto, UpdateBallotDto, CreateVoteDto } from '../types';
+import type { BallotUpdateEvent } from '../types/SignalREvents';
 
 export const useBallotStore = defineStore('ballot', () => {
   const ballots = ref<BallotDto[]>([]);
   const currentBallot = ref<BallotDto | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const signalrInitialized = ref(false);
 
   async function fetchBallots(electionGuid: string) {
     loading.value = true;
@@ -153,6 +157,71 @@ export const useBallotStore = defineStore('ballot', () => {
     error.value = null;
   }
 
+  async function initializeSignalR() {
+    if (signalrInitialized.value) return;
+
+    try {
+      const connection = await signalrService.connectToFrontDeskHub();
+
+      connection.on('BallotAdded', (data: BallotUpdateEvent) => {
+        handleBallotAdded(data);
+      });
+
+      connection.on('BallotUpdated', (data: BallotUpdateEvent) => {
+        handleBallotUpdated(data);
+      });
+
+      connection.on('BallotDeleted', (data: BallotUpdateEvent) => {
+        handleBallotDeleted(data);
+      });
+
+      signalrInitialized.value = true;
+    } catch (e) {
+      console.error('Failed to initialize SignalR for ballot store:', e);
+    }
+  }
+
+  function handleBallotAdded(data: BallotUpdateEvent) {
+    const exists = ballots.value.some(b => b.ballotGuid === data.ballotGuid);
+    if (!exists) {
+      // Fetch the new ballot to get full details
+      fetchBallotById(data.ballotGuid).catch(console.error);
+      ElMessage.info(`Ballot ${data.ballotCode || data.ballotGuid} was added`);
+    }
+  }
+
+  function handleBallotUpdated(data: BallotUpdateEvent) {
+    // Refresh the ballot data
+    fetchBallotById(data.ballotGuid).catch(console.error);
+    ElMessage.info(`Ballot ${data.ballotCode || data.ballotGuid} was updated`);
+  }
+
+  function handleBallotDeleted(data: BallotUpdateEvent) {
+    ballots.value = ballots.value.filter(b => b.ballotGuid !== data.ballotGuid);
+
+    if (currentBallot.value?.ballotGuid === data.ballotGuid) {
+      currentBallot.value = null;
+    }
+
+    ElMessage.warning(`Ballot ${data.ballotCode || data.ballotGuid} was deleted`);
+  }
+
+  async function joinElection(electionGuid: string) {
+    try {
+      await signalrService.joinElection(electionGuid);
+    } catch (e) {
+      console.error('Failed to join election group for ballot updates:', e);
+    }
+  }
+
+  async function leaveElection(electionGuid: string) {
+    try {
+      await signalrService.leaveElection(electionGuid);
+    } catch (e) {
+      console.error('Failed to leave election group for ballot updates:', e);
+    }
+  }
+
   return {
     ballots,
     currentBallot,
@@ -166,7 +235,10 @@ export const useBallotStore = defineStore('ballot', () => {
     createVote,
     deleteVote,
     setCurrentBallot,
-    clearError
+    clearError,
+    initializeSignalR,
+    joinElection,
+    leaveElection
   };
 });
 

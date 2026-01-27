@@ -20,6 +20,28 @@
           style="margin-bottom: 20px;"
         />
 
+        <el-alert
+          v-if="calculating || tallyProgress"
+          :title="calculating ? $t('results.calculating') : $t('results.tallyProgress')"
+          type="warning"
+          :closable="false"
+          style="margin-bottom: 20px;"
+        >
+          <div v-if="tallyProgress" style="margin-top: 10px;">
+            <el-progress
+              :percentage="tallyProgress.percentComplete"
+              :text-inside="true"
+              :stroke-width="20"
+              status="warning"
+            />
+            <div style="margin-top: 10px; font-size: 14px;">
+              {{ tallyProgress.message }}
+              <br>
+              {{ $t('results.processedBallots', { processed: tallyProgress.processedBallots, total: tallyProgress.totalBallots }) }}
+            </div>
+          </div>
+        </el-alert>
+
         <el-descriptions :column="2" border style="margin-bottom: 20px;">
           <el-descriptions-item :label="$t('results.totalBallots')">
             {{ results.statistics.totalBallots }}
@@ -63,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
@@ -81,6 +103,8 @@ const activeTab = ref('all');
 
 const loading = computed(() => resultStore.loading);
 const results = computed(() => resultStore.results);
+const calculating = computed(() => resultStore.calculating);
+const tallyProgress = computed(() => resultStore.tallyProgress);
 
 const electedCandidates = computed(() => 
   results.value?.results.filter(r => r.section === 'E') || []
@@ -93,8 +117,18 @@ const extraCandidates = computed(() =>
 onMounted(async () => {
   try {
     await resultStore.fetchResults(electionGuid);
+    await resultStore.initializeSignalR();
+    await resultStore.joinTallySession(electionGuid);
   } catch (error) {
     ElMessage.error(t('results.loadError'));
+  }
+});
+
+onBeforeUnmount(async () => {
+  try {
+    await resultStore.leaveTallySession(electionGuid);
+  } catch (error) {
+    console.error('Failed to leave tally session:', error);
   }
 });
 
