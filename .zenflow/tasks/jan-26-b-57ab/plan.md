@@ -51,7 +51,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Fix OpenAPI Generation
+### [x] Step: Fix OpenAPI Generation
+<!-- chat-id: 6eee7fe1-6e5c-4edc-a40c-2527d6e22957 -->
 Resolve the OpenAPI spec download and type generation issue to ensure type safety across the frontend.
 
 **Tasks**:

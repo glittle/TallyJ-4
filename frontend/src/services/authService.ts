@@ -1,16 +1,7 @@
-import api from './api';
+import { postApiAuthRegister, postApiAuthLogin, postApiAuthPasswordForgot, postApiAuthPasswordReset, postApiAuth2FaSetup, postApiAuth2FaEnable, postApiAuth2FaDisable } from '../api/gen/configService/sdk.gen';
+import type { RegisterRequest, LoginRequest } from '../api/gen/configService/types.gen';
 
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-  twoFactorCode?: string;
-}
+export type { RegisterRequest, LoginRequest };
 
 export interface AuthResponse {
   token: string;
@@ -25,38 +16,58 @@ export interface TwoFactorSetupResponse {
 
 export const authService = {
   async register(data: RegisterRequest): Promise<AuthResponse> {
-    const response = await api.post('/auth/register', data);
-    return response.data;
+    const response = await postApiAuthRegister({
+      body: data,
+      throwOnError: true
+    });
+    return response.data as AuthResponse;
   },
 
   async login(data: LoginRequest): Promise<AuthResponse> {
-    const response = await api.post('/auth/login', data);
-    return response.data;
+    const response = await postApiAuthLogin({
+      body: data,
+      throwOnError: true
+    });
+    return response.data as AuthResponse;
   },
 
   async forgotPassword(email: string): Promise<void> {
-    await api.post('/auth/password/forgot', { email });
+    await postApiAuthPasswordForgot({
+      body: { email },
+      throwOnError: true
+    });
   },
 
   async resetPassword(email: string, token: string, newPassword: string, confirmPassword: string): Promise<void> {
-    await api.post('/auth/password/reset', {
-      email,
-      token,
-      newPassword,
-      confirmPassword
+    await postApiAuthPasswordReset({
+      body: {
+        email,
+        token,
+        newPassword,
+        confirmPassword
+      },
+      throwOnError: true
     });
   },
 
   async setup2FA(): Promise<TwoFactorSetupResponse> {
-    const response = await api.post('/auth/2fa/setup');
-    return response.data;
+    const response = await postApiAuth2FaSetup({
+      throwOnError: true
+    });
+    return response.data as TwoFactorSetupResponse;
   },
 
   async enable2FA(code: string): Promise<void> {
-    await api.post('/auth/2fa/enable', { code });
+    await postApiAuth2FaEnable({
+      body: { code },
+      throwOnError: true
+    });
   },
 
   async disable2FA(password: string, code: string): Promise<void> {
-    await api.post('/auth/2fa/disable', { password, code });
+    await postApiAuth2FaDisable({
+      body: { password, code },
+      throwOnError: true
+    });
   }
 };
