@@ -788,7 +788,31 @@ public class TallyService : ITallyService
 
     private async Task<TurnoutAnalysisDto> CalculateTurnoutAnalysisAsync(Guid electionGuid, List<Location> locations, int totalRegisteredVoters, int totalBallotsCast, Election election)
     {
-        // Calculate turnout by location
+        var turnoutByLocation = await CalculateTurnoutByLocationAsync(electionGuid, locations);
+
+        var demographicBreakdown = new List<DemographicTurnoutDto>();
+        await CalculateDemographicAgeBreakdownAsync(electionGuid, demographicBreakdown);
+        await CalculateDemographicAreaBreakdownAsync(electionGuid, demographicBreakdown);
+
+        var timeBasedTurnout = CalculateTimeBasedTurnout(totalBallotsCast, totalRegisteredVoters, election);
+
+        var participationRates = await CalculateParticipationRatesAsync(electionGuid, totalBallotsCast, totalRegisteredVoters);
+
+        return new TurnoutAnalysisDto
+        {
+            OverallTurnout = totalRegisteredVoters > 0 ? (decimal)totalBallotsCast / totalRegisteredVoters * 100 : 0,
+            TurnoutByLocation = turnoutByLocation,
+            EarlyVotingCount = 0, // Would need timestamp tracking
+            ElectionDayVotingCount = totalBallotsCast,
+            EarlyVotingPercentage = 0, // Would need timestamp tracking
+            DemographicBreakdown = demographicBreakdown,
+            TimeBasedTurnout = timeBasedTurnout,
+            ParticipationRates = participationRates
+        };
+    }
+
+    private async Task<Dictionary<string, decimal>> CalculateTurnoutByLocationAsync(Guid electionGuid, List<Location> locations)
+    {
         var turnoutByLocation = new Dictionary<string, decimal>();
         foreach (var location in locations)
         {
@@ -804,11 +828,11 @@ public class TallyService : ITallyService
 
             turnoutByLocation[location.Name ?? UnknownFallbackValue] = turnout;
         }
+        return turnoutByLocation;
+    }
 
-        // Calculate demographic breakdown
-        var demographicBreakdown = new List<DemographicTurnoutDto>();
-
-        // Age group breakdown
+    private async Task CalculateDemographicAgeBreakdownAsync(Guid electionGuid, List<DemographicTurnoutDto> demographicBreakdown)
+    {
         var ageGroups = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true && p.AgeGroup != null)
             .GroupBy(p => p.AgeGroup)
@@ -831,8 +855,10 @@ public class TallyService : ITallyService
                 TurnoutPercentage = ageGroup.TotalVoters > 0 ? (decimal)ageGroup.Voted / ageGroup.TotalVoters * 100 : 0
             });
         }
+    }
 
-        // Area breakdown
+    private async Task CalculateDemographicAreaBreakdownAsync(Guid electionGuid, List<DemographicTurnoutDto> demographicBreakdown)
+    {
         var areas = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true && p.Area != null)
             .GroupBy(p => p.Area)
@@ -855,8 +881,10 @@ public class TallyService : ITallyService
                 TurnoutPercentage = area.TotalVoters > 0 ? (decimal)area.Voted / area.TotalVoters * 100 : 0
             });
         }
+    }
 
-        // Time-based turnout (simplified - would need actual timestamps)
+    private List<TimeBasedTurnoutDto> CalculateTimeBasedTurnout(int totalBallotsCast, int totalRegisteredVoters, Election election)
+    {
         var timeBasedTurnout = new List<TimeBasedTurnoutDto>();
         var cumulativeBallots = 0;
         for (var hour = 8; hour <= 20; hour++) // Assuming 8 AM to 8 PM voting
@@ -873,14 +901,17 @@ public class TallyService : ITallyService
                 CumulativeTurnout = totalRegisteredVoters > 0 ? (decimal)cumulativeBallots / totalRegisteredVoters * 100 : 0
             });
         }
+        return timeBasedTurnout;
+    }
 
-        // Participation rates
+    private async Task<ParticipationRateDto> CalculateParticipationRatesAsync(Guid electionGuid, int totalBallotsCast, int totalRegisteredVoters)
+    {
         var onlineVoters = await _context.People
             .CountAsync(p => p.ElectionGuid == electionGuid && p.HasOnlineBallot == true);
 
         var inPersonVoters = totalBallotsCast - onlineVoters;
 
-        var participationRates = new ParticipationRateDto
+        return new ParticipationRateDto
         {
             FirstTimeVoters = 0, // Would need historical data
             ReturningVoters = 0, // Would need historical data
@@ -891,18 +922,6 @@ public class TallyService : ITallyService
                 ["Online"] = totalRegisteredVoters > 0 ? (decimal)onlineVoters / totalRegisteredVoters * 100 : 0,
                 ["In-Person"] = totalRegisteredVoters > 0 ? (decimal)inPersonVoters / totalRegisteredVoters * 100 : 0
             }
-        };
-
-        return new TurnoutAnalysisDto
-        {
-            OverallTurnout = totalRegisteredVoters > 0 ? (decimal)totalBallotsCast / totalRegisteredVoters * 100 : 0,
-            TurnoutByLocation = turnoutByLocation,
-            EarlyVotingCount = 0, // Would need timestamp tracking
-            ElectionDayVotingCount = totalBallotsCast,
-            EarlyVotingPercentage = 0, // Would need timestamp tracking
-            DemographicBreakdown = demographicBreakdown,
-            TimeBasedTurnout = timeBasedTurnout,
-            ParticipationRates = participationRates
         };
     }
 
