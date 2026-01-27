@@ -4,9 +4,6 @@ const API_CACHE_NAME = 'tallyj-api-v1';
 
 // Files to cache immediately
 const STATIC_FILES = [
-  '/',
-  '/index.html',
-  '/favicon.ico',
   '/vite.svg'
 ];
 
@@ -18,6 +15,10 @@ self.addEventListener('install', (event) => {
         return cache.addAll(STATIC_FILES);
       })
       .then(() => {
+        return self.skipWaiting();
+      })
+      .catch((error) => {
+        console.warn('Service worker: Failed to cache some static files:', error);
         return self.skipWaiting();
       })
   );

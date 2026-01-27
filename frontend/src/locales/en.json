@@ -29,6 +29,7 @@
   "dashboard": {
     "welcome": "Welcome to TallyJ 4",
     "subtitle": "Modern election management and ballot tallying system",
+    "statistics": "Statistics",
     "totalElections": "Total Elections",
     "activeElections": "Active Elections",
     "totalVoters": "Total Voters",

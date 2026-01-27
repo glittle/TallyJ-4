@@ -1,5 +1,5 @@
 import { ElMessage, ElNotification } from 'element-plus';
-import { useI18n } from 'vue-i18n';
+import { i18n } from '../locales';
 
 export type NotificationType = 'success' | 'warning' | 'info' | 'error';
 
@@ -12,7 +12,7 @@ export interface NotificationOptions {
 }
 
 export function useNotifications() {
-  const { t } = useI18n();
+  const { t } = i18n.global;
 
   const showMessage = (options: NotificationOptions) => {
     const { type = 'info', message, duration = 3000, showClose = true } = options;

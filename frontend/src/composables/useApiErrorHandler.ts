@@ -1,5 +1,5 @@
 import { useNotifications } from './useNotifications';
-import { useI18n } from 'vue-i18n';
+import { i18n } from '../locales';
 
 export interface ApiError {
   response?: {
@@ -15,7 +15,7 @@ export interface ApiError {
 
 export function useApiErrorHandler() {
   const { errorMessage } = useNotifications();
-  const { t } = useI18n();
+  const { t } = i18n.global;
 
   const handleApiError = (error: ApiError, customMessage?: string) => {
     let message = customMessage || t('error.somethingWentWrong');

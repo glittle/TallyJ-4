@@ -784,7 +784,7 @@ public class TallyService : ITallyService
 
                 var votesByPosition = g
                     .Where(r => r.VoteCount.HasValue)
-                    .ToDictionary(r => r.Rank, r => r.VoteCount.Value);
+                    .ToDictionary(r => r.Rank, r => r.VoteCount!.Value);
 
                 var firstChoiceVotes = g.FirstOrDefault(r => r.Rank == 1)?.VoteCount ?? 0;
                 var lastChoiceVotes = g.OrderByDescending(r => r.Rank).FirstOrDefault()?.VoteCount ?? 0;
