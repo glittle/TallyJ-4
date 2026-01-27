@@ -146,21 +146,23 @@ export const useElectionStore = defineStore('election', () => {
   function handleElectionUpdate(data: ElectionUpdateEvent) {
     const index = elections.value.findIndex(e => e.electionGuid === data.electionGuid);
     if (index !== -1) {
+      const existingElection = elections.value[index]!;
       elections.value[index] = {
-        ...elections.value[index],
-        name: data.name ?? elections.value[index].name,
-        tallyStatus: data.tallyStatus ?? elections.value[index].tallyStatus,
-        electionStatus: data.electionStatus ?? elections.value[index].electionStatus,
-      };
+        ...existingElection,
+        name: data.name ?? existingElection.name,
+        tallyStatus: data.tallyStatus ?? existingElection.tallyStatus,
+        electionStatus: data.electionStatus ?? existingElection.electionStatus,
+      } as ElectionDto;
     }
 
     if (currentElection.value?.electionGuid === data.electionGuid) {
+      const existingCurrentElection = currentElection.value!;
       currentElection.value = {
-        ...currentElection.value,
-        name: data.name ?? currentElection.value.name,
-        tallyStatus: data.tallyStatus ?? currentElection.value.tallyStatus,
-        electionStatus: data.electionStatus ?? currentElection.value.electionStatus,
-      };
+        ...existingCurrentElection,
+        name: data.name ?? existingCurrentElection.name,
+        tallyStatus: data.tallyStatus ?? existingCurrentElection.tallyStatus,
+        electionStatus: data.electionStatus ?? existingCurrentElection.electionStatus,
+      } as ElectionDto;
     }
   }
 

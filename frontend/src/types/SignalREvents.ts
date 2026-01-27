@@ -36,3 +36,12 @@ export interface PersonUpdateEvent {
   lastName?: string;
   updatedAt: string;
 }
+export interface BallotUpdateEvent {
+  electionGuid: string;
+  ballotGuid: string;
+  action: 'added' | 'updated' | 'deleted';
+  ballotCode?: string;
+  statusCode?: string;
+  voteCount?: number;
+  updatedAt: string;
+} 

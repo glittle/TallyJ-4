@@ -5,6 +5,7 @@ export interface ElectionDto {
   electionType?: string;
   numberToElect?: number;
   tallyStatus?: string;
+  electionStatus?: string;
   convenor?: string;
   electionMode?: string;
   numberExtra?: number;

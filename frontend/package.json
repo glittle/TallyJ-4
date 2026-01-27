@@ -29,7 +29,7 @@
     "@hey-api/openapi-ts": "^0.86.1",
     "@types/node": "^24.6.0",
     "@types/vue-router": "^2.0.0",
-    "@vitejs/plugin-vue": "^6.0.1",
+    "@vitejs/plugin-vue": "^6.0.3",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.8.1",
     "jsdom": "^27.4.0",
