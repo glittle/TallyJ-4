@@ -18,31 +18,35 @@ app.use(i18n);
 
 // Global error handler for unhandled errors
 app.config.errorHandler = (error, instance, info) => {
-  console.error('Global error handler:', error, instance, info);
+  console.error("Global error handler:", error, instance, info);
   // Could send to error reporting service here
 };
 
 // Handle unhandled promise rejections
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('Unhandled promise rejection:', event.reason);
+globalThis.addEventListener("unhandledrejection", (event) => {
+  console.error("Unhandled promise rejection:", event.reason);
   // Prevent the default browser behavior (logging to console)
   event.preventDefault();
 });
 
 // Handle uncaught errors
-window.addEventListener('error', (event) => {
-  console.error('Uncaught error:', event.error);
+globalThis.addEventListener("error", (event) => {
+  console.error("Uncaught error:", event.error);
 });
 
 // Register service worker for offline support
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
       .then((registration) => {
-        console.log('Service Worker registered successfully:', registration.scope);
+        console.log(
+          "Service Worker registered successfully:",
+          registration.scope,
+        );
       })
       .catch((error) => {
-        console.log('Service Worker registration failed:', error);
+        console.log("Service Worker registration failed:", error);
       });
   });
 }

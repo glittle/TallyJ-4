@@ -349,7 +349,7 @@ public class TallyService : ITallyService
             throw new ArgumentException($"Tie break group {tieBreakGroup} not found in election {electionGuid}");
         }
 
-        var section = tieResults.First().Section ?? SectionOther;
+        var section = tieResults[0].Section ?? SectionOther;
 
         var candidates = tieResults.Select(r => new TieCandidateDto
         {
@@ -702,45 +702,9 @@ public class TallyService : ITallyService
         };
     }
 
-    public async Task<DetailedStatisticsDto> GetDetailedStatisticsAsync(Guid electionGuid)
+    private ElectionOverviewDto CalculateElectionOverview(Election election, int totalRegisteredVoters, int totalBallotsCast, int validBallots, int spoiledBallots, int totalVotes)
     {
-        var election = await _context.Elections
-            .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
-
-        if (election == null)
-        {
-            throw new ArgumentException($"Election {electionGuid} not found");
-        }
-
-        // Get all necessary data
-        var results = await _context.Results
-            .Include(r => r.Person)
-            .Where(r => r.ElectionGuid == electionGuid)
-            .ToListAsync();
-
-        var summary = await _context.ResultSummaries
-            .FirstOrDefaultAsync(rs => rs.ElectionGuid == electionGuid);
-
-        var locations = await _context.Locations
-            .Where(l => l.ElectionGuid == electionGuid)
-            .Include(l => l.Ballots)
-            .ThenInclude(b => b.Votes)
-            .ToListAsync();
-
-        var allBallots = await _context.Ballots
-            .Include(b => b.Votes)
-            .Where(b => b.Location.ElectionGuid == electionGuid)
-            .ToListAsync();
-
-        var totalRegisteredVoters = await _context.People
-            .CountAsync(p => p.ElectionGuid == electionGuid && p.CanVote == true);
-        var totalBallotsCast = allBallots.Count;
-        var validBallots = allBallots.Count(b => b.StatusCode == "Ok");
-        var spoiledBallots = summary?.SpoiledBallots ?? 0;
-        var totalVotes = summary?.TotalVotes ?? 0;
-
-        // Calculate election overview
-        var overview = new ElectionOverviewDto
+        return new ElectionOverviewDto
         {
             ElectionName = election.Name ?? UnknownElectionName,
             ElectionDate = election.DateOfElection,
@@ -752,8 +716,10 @@ public class TallyService : ITallyService
             PositionsToElect = election.NumberToElect ?? 9,
             OverallTurnoutPercentage = totalRegisteredVoters > 0 ? (decimal)totalBallotsCast / totalRegisteredVoters * 100 : 0
         };
+    }
 
-        // Calculate vote distribution
+    private VoteDistributionDto CalculateVoteDistribution(Election election, List<Ballot> allBallots)
+    {
         var votesPerPosition = new int[election.NumberToElect ?? 9];
         var ballotLengths = allBallots
             .Where(b => b.StatusCode == "Ok")
@@ -769,7 +735,7 @@ public class TallyService : ITallyService
             }
         }
 
-        var voteDistribution = new VoteDistributionDto
+        return new VoteDistributionDto
         {
             VotesPerPosition = votesPerPosition,
             AverageVotesPerBallot = ballotLengths.Any() ? ballotLengths.Average() : 0,
@@ -779,14 +745,16 @@ public class TallyService : ITallyService
                 .GroupBy(l => l)
                 .ToDictionary(g => g.Key, g => g.Count())
         };
+    }
 
-        // Calculate candidate performance
+    private CandidatePerformanceDto[] CalculateCandidatePerformance(List<Result> results, int totalVotes)
+    {
         var candidatePerformance = results
             .GroupBy(r => r.PersonGuid)
             .Select(g =>
             {
                 var person = g.First().Person;
-                var totalVotes = g.Sum(r => r.VoteCount ?? 0);
+                var totalVotesForCandidate = g.Sum(r => r.VoteCount ?? 0);
                 var rank = g.Min(r => r.Rank);
                 var isElected = g.Any(r => r.Section == "E");
                 var isEliminated = g.All(r => r.Section == "O");
@@ -802,29 +770,25 @@ public class TallyService : ITallyService
                 {
                     PersonGuid = g.Key,
                     FullName = person?.FullNameFl ?? UnknownFallbackValue,
-                    TotalVotes = totalVotes,
-                    VotePercentage = totalVotes > 0 ? (decimal)totalVotes / totalVotes * 100 : 0, // This should be calculated against total votes
+                    TotalVotes = totalVotesForCandidate,
+                    VotePercentage = totalVotes > 0 ? (decimal)totalVotesForCandidate / totalVotes * 100 : 0,
                     Rank = rank,
                     IsElected = isElected,
                     IsEliminated = isEliminated,
                     VotesByPosition = votesByPosition,
-                    FirstChoicePercentage = totalVotes > 0 ? (decimal)firstChoiceVotes / totalVotes * 100 : 0,
-                    LastChoicePercentage = totalVotes > 0 ? (decimal)lastChoiceVotes / totalVotes * 100 : 0
+                    FirstChoicePercentage = totalVotesForCandidate > 0 ? (decimal)firstChoiceVotes / totalVotesForCandidate * 100 : 0,
+                    LastChoicePercentage = totalVotesForCandidate > 0 ? (decimal)lastChoiceVotes / totalVotesForCandidate * 100 : 0
                 };
             })
             .OrderBy(c => c.Rank)
             .ToArray();
 
-        // Fix vote percentages (should be against total votes cast)
-        if (totalVotes > 0)
-        {
-            foreach (var candidate in candidatePerformance)
-            {
-                candidate.VotePercentage = (decimal)candidate.TotalVotes / totalVotes * 100;
-            }
-        }
+        return candidatePerformance;
+    }
 
-        // Calculate turnout analysis
+    private async Task<TurnoutAnalysisDto> CalculateTurnoutAnalysisAsync(Guid electionGuid, List<Location> locations, int totalRegisteredVoters, int totalBallotsCast, Election election)
+    {
+        // Calculate turnout by location
         var turnoutByLocation = new Dictionary<string, decimal>();
         foreach (var location in locations)
         {
@@ -929,9 +893,9 @@ public class TallyService : ITallyService
             }
         };
 
-        var turnoutAnalysis = new TurnoutAnalysisDto
+        return new TurnoutAnalysisDto
         {
-            OverallTurnout = overview.OverallTurnoutPercentage,
+            OverallTurnout = totalRegisteredVoters > 0 ? (decimal)totalBallotsCast / totalRegisteredVoters * 100 : 0,
             TurnoutByLocation = turnoutByLocation,
             EarlyVotingCount = 0, // Would need timestamp tracking
             ElectionDayVotingCount = totalBallotsCast,
@@ -940,8 +904,10 @@ public class TallyService : ITallyService
             TimeBasedTurnout = timeBasedTurnout,
             ParticipationRates = participationRates
         };
+    }
 
-        // Calculate location statistics
+    private async Task<List<LocationStatisticsDto>> CalculateLocationStatisticsAsync(Guid electionGuid, List<Location> locations)
+    {
         var locationStatistics = new List<LocationStatisticsDto>();
         foreach (var location in locations)
         {
@@ -974,6 +940,61 @@ public class TallyService : ITallyService
                 TopCandidates = locationCandidateVotes
             });
         }
+
+        return locationStatistics;
+    }
+
+    public async Task<DetailedStatisticsDto> GetDetailedStatisticsAsync(Guid electionGuid)
+    {
+        var election = await _context.Elections
+            .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+
+        if (election == null)
+        {
+            throw new ArgumentException($"Election {electionGuid} not found");
+        }
+
+        // Get all necessary data
+        var results = await _context.Results
+            .Include(r => r.Person)
+            .Where(r => r.ElectionGuid == electionGuid)
+            .ToListAsync();
+
+        var summary = await _context.ResultSummaries
+            .FirstOrDefaultAsync(rs => rs.ElectionGuid == electionGuid);
+
+        var locations = await _context.Locations
+            .Where(l => l.ElectionGuid == electionGuid)
+            .Include(l => l.Ballots)
+            .ThenInclude(b => b.Votes)
+            .ToListAsync();
+
+        var allBallots = await _context.Ballots
+            .Include(b => b.Votes)
+            .Where(b => b.Location.ElectionGuid == electionGuid)
+            .ToListAsync();
+
+        var totalRegisteredVoters = await _context.People
+            .CountAsync(p => p.ElectionGuid == electionGuid && p.CanVote == true);
+        var totalBallotsCast = allBallots.Count;
+        var validBallots = allBallots.Count(b => b.StatusCode == "Ok");
+        var spoiledBallots = summary?.SpoiledBallots ?? 0;
+        var totalVotes = summary?.TotalVotes ?? 0;
+
+        // Calculate election overview
+        var overview = CalculateElectionOverview(election, totalRegisteredVoters, totalBallotsCast, validBallots, spoiledBallots, totalVotes);
+
+        // Calculate vote distribution
+        var voteDistribution = CalculateVoteDistribution(election, allBallots);
+
+        // Calculate candidate performance
+        var candidatePerformance = CalculateCandidatePerformance(results, totalVotes);
+
+        // Calculate turnout analysis
+        var turnoutAnalysis = await CalculateTurnoutAnalysisAsync(electionGuid, locations, totalRegisteredVoters, totalBallotsCast, election);
+
+        // Calculate location statistics
+        var locationStatistics = await CalculateLocationStatisticsAsync(electionGuid, locations);
 
         return new DetailedStatisticsDto
         {
