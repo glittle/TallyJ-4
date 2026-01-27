@@ -31,6 +31,9 @@ import LanguageSelector from '../components/common/LanguageSelector.vue';
   padding: 20px 40px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+  /* Fallback for browsers that don't support backdrop-filter */
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
 }
 
 .logo h2 {

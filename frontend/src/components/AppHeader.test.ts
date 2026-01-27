@@ -1,16 +1,34 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { createApp } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import { createTestingPinia } from '@pinia/testing'
 import AppHeader from './AppHeader.vue'
-import { pinia, router, i18n } from '../test/setup'
+import { pinia, i18n } from '../test/setup'
+
+// Mock the auth store
+const mockLogout = vi.fn()
+vi.mock('../stores/authStore', () => ({
+  useAuthStore: () => ({
+    email: 'test@example.com',
+    logout: mockLogout
+  })
+}))
 
 describe('AppHeader', () => {
-  it('renders properly', () => {
-    const app = createApp(AppHeader)
-    app.use(pinia)
-    app.use(router)
-    app.use(i18n)
+  let router: any
 
+  beforeEach(() => {
+    router = createRouter({
+      history: createWebHistory(),
+      routes: [
+        { path: '/dashboard', name: 'Dashboard' },
+        { path: '/elections', name: 'Elections' },
+        { path: '/profile', name: 'Profile' }
+      ]
+    })
+  })
+
+  it('renders properly', () => {
     const wrapper = mount(AppHeader, {
       global: {
         plugins: [pinia, router, i18n]
@@ -19,18 +37,83 @@ describe('AppHeader', () => {
     expect(wrapper.exists()).toBe(true)
   })
 
-  it('contains expected elements', () => {
-    const app = createApp(AppHeader)
-    app.use(pinia)
-    app.use(router)
-    app.use(i18n)
+  it('displays the application title', () => {
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n]
+      }
+    })
+    expect(wrapper.text()).toContain('TallyJ 4')
+  })
+
+  it('displays user email in dropdown', () => {
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n]
+      }
+    })
+    expect(wrapper.text()).toContain('test@example.com')
+  })
+
+  it('shows correct page title for dashboard route', async () => {
+    await router.push('/dashboard')
+    await router.isReady()
 
     const wrapper = mount(AppHeader, {
       global: {
         plugins: [pinia, router, i18n]
       }
     })
-    // Add more specific assertions based on the component structure
-    expect(wrapper.html()).toContain('TallyJ 4')
+
+    expect(wrapper.text()).toContain('Dashboard')
+  })
+
+  it('shows correct page title for elections route', async () => {
+    await router.push('/elections')
+    await router.isReady()
+
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n]
+      }
+    })
+
+    expect(wrapper.text()).toContain('Elections')
+  })
+
+  it('handles logout command correctly', async () => {
+    const mockRouterPush = vi.fn()
+    router.push = mockRouterPush
+
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n],
+        mocks: {
+          $message: { success: vi.fn() }
+        }
+      }
+    })
+
+    // Access the component instance and call handleCommand directly
+    await wrapper.vm.handleCommand('logout')
+
+    expect(mockLogout).toHaveBeenCalled()
+    expect(mockRouterPush).toHaveBeenCalledWith('/login')
+  })
+
+  it('handles profile command correctly', async () => {
+    const mockRouterPush = vi.fn()
+    router.push = mockRouterPush
+
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n]
+      }
+    })
+
+    // Access the component instance and call handleCommand directly
+    await wrapper.vm.handleCommand('profile')
+
+    expect(mockRouterPush).toHaveBeenCalledWith('/profile')
   })
 })

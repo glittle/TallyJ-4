@@ -337,6 +337,7 @@ function getSectionLabel(section: string) {
   align-items: center;
   gap: 15px;
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
   transition: transform 0.3s ease;
 }
 
@@ -402,6 +403,7 @@ function getSectionLabel(section: string) {
   border-radius: 10px;
   padding: 20px;
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
 }
 
 .tie-break-required {

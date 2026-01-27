@@ -2,7 +2,7 @@ import { defineConfig } from "@hey-api/openapi-ts";
 
 export default defineConfig({
   input: {
-    path: "../openApi/tallyj.json",
+    path: "C:/Users/glenl/.zenflow/worktrees/jan-26-b-57ab/frontend/openApi/tallyj.json",
   },
   output: {
     path: "src/api/gen/configService",

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "npm run gen && vite",
+    "start": "vite",
     "gen": "npx openapi-ts --file openApi/config.backend.ts",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.86.1",
+    "@pinia/testing": "^1.0.3",
     "@types/node": "^24.6.0",
     "@types/vue-router": "^2.0.0",
     "@vitejs/plugin-vue": "^6.0.3",

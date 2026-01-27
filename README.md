@@ -7,10 +7,13 @@ Election management and ballot tallying system for Bahá'í communities.
 ```
 TallyJ-4/
 ├── backend/          # .NET 9.0 ASP.NET Core Web API
-│   ├── EF/          # Entity Framework models and migrations  
+│   ├── EF/          # Entity Framework models and migrations
 │   ├── Helpers/     # Utility classes and extensions
 │   └── scripts/     # Database management scripts
-├── frontend/        # Vue 3 + Vite SPA (coming soon)
+├── frontend/        # Vue 3 + Vite SPA
+│   ├── src/         # Source code
+│   ├── public/      # Static assets
+│   └── dist/        # Production build output
 └── .zenflow/        # Reverse engineering documentation
 ```
 
@@ -115,16 +118,124 @@ For production, create `.env.production`:
 VITE_API_URL=https://your-production-api.com/api
 ```
 
-**Features:**
-- 🔐 JWT authentication with automatic token refresh
-- 📊 Dashboard with election statistics
-- 🗳️ Complete election management (CRUD)
-- 👥 People management with search and filtering
-- 🎫 Ballot entry and vote tracking
-- 🧮 Tally calculation (STV, Condorcet, Multi-seat)
-- 📈 Results display with sections (Elected/Extra/Other)
-- 🌍 Internationalization (English/French)
-- 📱 Responsive design
+## Production Deployment
+
+### Backend Deployment
+
+1. **Build the application:**
+   ```bash
+   cd backend
+   dotnet publish -c Release -o ./publish
+   ```
+
+2. **Deploy to server:**
+   - Copy the `publish` folder to your production server
+   - Configure IIS or reverse proxy (nginx/Apache)
+   - Set environment variables for production database connection
+   - Ensure SQL Server is accessible from the production environment
+
+3. **Database migration:**
+   ```bash
+   dotnet ef database update --connection "your-production-connection-string"
+   ```
+
+### Frontend Deployment
+
+1. **Build for production:**
+   ```bash
+   cd frontend
+   npm run build
+   ```
+
+2. **Deploy static files:**
+   - Copy the `dist` folder contents to your web server
+   - Configure your web server to serve the static files
+   - Set up proper routing for SPA (handle 404s by serving index.html)
+
+3. **Web Server Configuration (nginx example):**
+   ```nginx
+   server {
+       listen 80;
+       server_name your-domain.com;
+       root /path/to/dist;
+       index index.html;
+
+       location / {
+           try_files $uri $uri/ /index.html;
+       }
+
+       location /api {
+           proxy_pass http://localhost:5000;
+           proxy_set_header Host $host;
+           proxy_set_header X-Real-IP $remote_addr;
+       }
+   }
+   ```
+
+### Docker Deployment (Optional)
+
+**Backend Dockerfile:**
+```dockerfile
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY ["backend/TallyJ.csproj", "."]
+RUN dotnet restore
+COPY backend/ ./
+RUN dotnet publish -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "TallyJ.dll"]
+```
+
+**Frontend Dockerfile:**
+```dockerfile
+FROM node:18-alpine AS build
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY frontend/nginx.conf /etc/nginx/nginx.conf
+```
+
+### Environment Variables
+
+**Backend (.env or appsettings.Production.json):**
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=your-server;Database=tallyj;User Id=your-user;Password=your-password;"
+  },
+  "Jwt": {
+    "Key": "your-256-bit-secret-key",
+    "Issuer": "your-domain.com",
+    "Audience": "your-domain.com"
+  }
+}
+```
+
+**Frontend (.env.production):**
+```env
+VITE_API_URL=https://your-api-domain.com/api
+```
+
+### Security Considerations
+
+- Use HTTPS in production
+- Store secrets securely (Azure Key Vault, AWS Secrets Manager, etc.)
+- Configure CORS properly for your domain
+- Set up proper logging and monitoring
+- Regular security updates for dependencies
+- Database backups and recovery procedures
 
 ## API Usage Examples
 
@@ -361,31 +472,41 @@ The database is automatically seeded with:
 
 ## Project Status
 
-✅ **Phase 1: Database Foundation** - Complete  
+✅ **Phase 1: Database Foundation** - Complete
 ✅ **Phase 2: API Layer** - Complete
   - 8 REST API controllers with full CRUD operations
   - DTOs, services, and FluentValidation for all endpoints
   - AutoMapper profiles for entity-DTO mapping
   - Global error handling and Swagger documentation
-  - Comprehensive unit and integration tests (41 tests passing)
-  
+  - Comprehensive unit and integration tests
+
 ✅ **Phase 3: Tally Algorithms** - Complete
   - STV (Single Transferable Vote) algorithm implemented
   - Condorcet voting method implemented
   - Multi-seat election support
   - Tie detection and resolution
   - Result sectioning (Elected/Extra/Other)
-  
+
 ✅ **Phase 4: Frontend Application** - Complete
-  - Vue 3 SPA with TypeScript
+  - Vue 3 SPA with TypeScript and modern tooling
   - 11 pages: Dashboard, Elections, People, Ballots, Tally, Results, Profile
-  - 14+ reusable components
-  - JWT authentication with auto-refresh
-  - Internationalization (EN/FR)
-  - Responsive design
-  - All 41 backend tests passing
-  
-🚧 **Phase 5: Real-time Features (SignalR)** - Planned  
+  - 14+ reusable components with Element Plus UI library
+  - JWT authentication with automatic token refresh
+  - Internationalization (English/French)
+  - WCAG 2.1 AA accessibility compliance
+  - Comprehensive testing infrastructure (46 tests passing)
+  - Cross-browser compatibility (Chrome, Firefox, Safari, Edge)
+  - Fully responsive design with mobile navigation
+  - Optimized production builds with code splitting
+
+✅ **Phase 5: Production Readiness** - Complete
+  - Accessibility audit and WCAG compliance
+  - Cross-browser testing and compatibility
+  - Mobile responsiveness improvements
+  - Production deployment documentation
+  - Security hardening and best practices
+
+🚧 **Phase 6: Real-time Features (SignalR)** - Planned  
 
 ## Contributing
 

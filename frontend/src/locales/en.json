@@ -6,6 +6,7 @@
     "loading": "Loading...",
     "error": "An error occurred",
     "cancel": "Cancel",
+    "confirm": "Confirm",
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
@@ -15,7 +16,10 @@
     "profile": "Profile",
     "settings": "Settings",
     "warning": "Warning",
-    "dangerZone": "Danger Zone"
+    "dangerZone": "Danger Zone",
+    "confirmDelete": "Are you sure you want to delete {item}?",
+    "confirmAction": "Are you sure you want to {action}?",
+    "confirmActionWithItem": "Are you sure you want to {action} {item}?"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -310,5 +314,24 @@
       "emailRequired": "Email is required",
       "passwordRequired": "Password is required"
     }
+  },
+  "notification": {
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Information"
+  },
+  "error": {
+    "somethingWentWrong": "Something went wrong",
+    "pageError": "An error occurred while loading this page. Please try again.",
+    "tryAgain": "Try Again",
+    "goHome": "Go Home",
+    "errorDetails": "Error Details",
+    "networkError": "Network error. Please check your connection and try again.",
+    "serverError": "Server error. Please try again later.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "forbidden": "Access denied.",
+    "notFound": "The requested resource was not found.",
+    "validationError": "Please check your input and try again."
   }
 }

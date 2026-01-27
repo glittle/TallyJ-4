@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { authService, type LoginRequest, type RegisterRequest } from '../services/authService';
+import { useApiErrorHandler } from '../composables/useApiErrorHandler';
 
 export const useAuthStore = defineStore('auth', () => {
+  const { handleApiError } = useApiErrorHandler();
+
   const token = ref<string | null>(localStorage.getItem('auth_token'));
   const email = ref<string | null>(localStorage.getItem('user_email'));
   const requires2FA = ref(false);
@@ -11,37 +14,47 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value);
 
   async function register(data: RegisterRequest) {
-    const response = await authService.register(data);
-    
-    if (response.requires2FA) {
-      requires2FA.value = true;
-      pending2FAEmail.value = response.email;
-    } else {
-      token.value = response.token;
-      email.value = response.email;
-      localStorage.setItem('auth_token', response.token);
-      localStorage.setItem('user_email', response.email);
+    try {
+      const response = await authService.register(data);
+
+      if (response.requires2FA) {
+        requires2FA.value = true;
+        pending2FAEmail.value = response.email;
+      } else {
+        token.value = response.token;
+        email.value = response.email;
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user_email', response.email);
+      }
+
+      return response;
+    } catch (error) {
+      handleApiError(error as any);
+      throw error;
     }
-    
-    return response;
   }
 
   async function login(data: LoginRequest) {
-    const response = await authService.login(data);
-    
-    if (response.requires2FA) {
-      requires2FA.value = true;
-      pending2FAEmail.value = data.email;
-    } else {
-      token.value = response.token;
-      email.value = response.email;
-      localStorage.setItem('auth_token', response.token);
-      localStorage.setItem('user_email', response.email);
-      requires2FA.value = false;
-      pending2FAEmail.value = null;
+    try {
+      const response = await authService.login(data);
+
+      if (response.requires2FA) {
+        requires2FA.value = true;
+        pending2FAEmail.value = data.email;
+      } else {
+        token.value = response.token;
+        email.value = response.email;
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user_email', response.email);
+        requires2FA.value = false;
+        pending2FAEmail.value = null;
+      }
+
+      return response;
+    } catch (error) {
+      handleApiError(error as any);
+      throw error;
     }
-    
-    return response;
   }
 
   function logout() {

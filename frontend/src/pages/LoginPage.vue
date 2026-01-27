@@ -1,14 +1,15 @@
 <template>
-  <div class="login-page">
+  <main class="login-page">
     <div class="login-container">
-      <h1>{{ $t('auth.login') }}</h1>
-      
-      <el-form
+      <h1 id="login-heading">{{ $t('auth.login') }}</h1>
+
+      <form
         v-if="!requires2FA"
         :model="loginForm"
         :rules="rules"
         ref="formRef"
-        label-position="top"
+        role="form"
+        aria-labelledby="login-heading"
         @submit.prevent="handleLogin"
       >
         <el-form-item :label="$t('auth.email')" prop="email">
@@ -16,6 +17,8 @@
             v-model="loginForm.email"
             type="email"
             :placeholder="$t('auth.emailPlaceholder')"
+            aria-describedby="email-help"
+            autocomplete="email"
           />
         </el-form-item>
 
@@ -25,6 +28,8 @@
             type="password"
             :placeholder="$t('auth.passwordPlaceholder')"
             show-password
+            aria-describedby="password-help"
+            autocomplete="current-password"
           />
         </el-form-item>
 
@@ -34,22 +39,24 @@
             native-type="submit"
             :loading="loading"
             style="width: 100%"
+            :aria-label="loading ? 'Logging in...' : 'Login to your account'"
           >
             {{ $t('auth.loginButton') }}
           </el-button>
         </el-form-item>
 
-        <div class="links">
+        <nav class="links" aria-label="Account links">
           <router-link to="/register">{{ $t('auth.noAccount') }}</router-link>
           <router-link to="/forgot-password">{{ $t('auth.forgotPassword') }}</router-link>
-        </div>
-      </el-form>
+        </nav>
+      </form>
 
-      <el-form
+      <form
         v-else
         :model="twoFactorForm"
         ref="twoFactorFormRef"
-        label-position="top"
+        role="form"
+        aria-labelledby="twofa-heading"
         @submit.prevent="handleVerify2FA"
       >
         <el-alert
@@ -57,6 +64,7 @@
           type="info"
           :closable="false"
           style="margin-bottom: 20px"
+          role="alert"
         />
 
         <el-form-item :label="$t('auth.twoFactorCode')" prop="code">
@@ -64,6 +72,9 @@
             v-model="twoFactorForm.code"
             maxlength="6"
             :placeholder="$t('auth.twoFactorCodePlaceholder')"
+            aria-describedby="twofa-help"
+            autocomplete="one-time-code"
+            inputmode="numeric"
           />
         </el-form-item>
 
@@ -73,27 +84,30 @@
             native-type="submit"
             :loading="loading"
             style="width: 100%"
+            :aria-label="loading ? 'Verifying code...' : 'Verify two-factor authentication code'"
           >
             {{ $t('auth.verify') }}
           </el-button>
         </el-form-item>
 
-        <el-button @click="cancel2FA" text>{{ $t('common.cancel') }}</el-button>
-      </el-form>
+        <el-button @click="cancel2FA" text aria-label="Cancel two-factor authentication">{{ $t('common.cancel') }}</el-button>
+      </form>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
+import { type FormInstance, type FormRules } from 'element-plus';
 import { useAuthStore } from '../stores/authStore';
 import { useI18n } from 'vue-i18n';
+import { useNotifications } from '../composables/useNotifications';
 
 const { t } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
+const { successMessage } = useNotifications();
 
 const formRef = ref<FormInstance>();
 const twoFactorFormRef = ref<FormInstance>();
@@ -132,11 +146,11 @@ async function handleLogin() {
       if (response.requires2FA) {
         requires2FA.value = true;
       } else {
-        ElMessage.success(t('auth.loginSuccess'));
+        successMessage(t('auth.loginSuccess'));
         router.push('/');
       }
     } catch (error: any) {
-      ElMessage.error(error.response?.data?.error || t('auth.loginFailed'));
+      // Error is handled by the store
     } finally {
       loading.value = false;
     }
@@ -151,11 +165,11 @@ async function handleVerify2FA() {
       password: loginForm.password,
       twoFactorCode: twoFactorForm.code
     });
-    
-    ElMessage.success(t('auth.loginSuccess'));
+
+    successMessage(t('auth.loginSuccess'));
     router.push('/');
   } catch (error: any) {
-    ElMessage.error(error.response?.data?.error || t('auth.twoFactorInvalid'));
+    // Error is handled by the store
   } finally {
     loading.value = false;
   }
@@ -204,5 +218,44 @@ function cancel2FA() {
 
 .links a:hover {
   text-decoration: underline;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .login-page {
+    padding: 20px;
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px 20px;
+  }
+
+  .login-container h1 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: 10px;
+  }
+
+  .login-container {
+    padding: 25px 15px;
+  }
+
+  .login-container h1 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+
+  .links {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
 }
 </style>

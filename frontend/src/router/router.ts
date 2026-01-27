@@ -2,24 +2,9 @@ import { createRouter, createWebHistory } from "vue-router";
 import type { RouteLocationNormalized } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 
+// Layouts - keep these static as they're used frequently
 import MainLayout from "../layouts/MainLayout.vue";
 import PublicLayout from "../layouts/PublicLayout.vue";
-
-import LoginPage from "../pages/LoginPage.vue";
-import RegisterPage from "../pages/RegisterPage.vue";
-import DashboardPage from "../pages/DashboardPage.vue";
-import ElectionListPage from "../pages/elections/ElectionListPage.vue";
-import CreateElectionPage from "../pages/elections/CreateElectionPage.vue";
-import ElectionDetailPage from "../pages/elections/ElectionDetailPage.vue";
-import PeopleManagementPage from "../pages/people/PeopleManagementPage.vue";
-import BallotManagementPage from "../pages/ballots/BallotManagementPage.vue";
-import ResultsPage from "../pages/results/ResultsPage.vue";
-import TallyCalculationPage from "../pages/results/TallyCalculationPage.vue";
-import MonitoringDashboardPage from "../pages/results/MonitoringDashboardPage.vue";
-import TieManagementPage from "../pages/results/TieManagementPage.vue";
-import PresentationViewPage from "../pages/results/PresentationViewPage.vue";
-import ReportingPage from "../pages/results/ReportingPage.vue";
-import ProfilePage from "../pages/ProfilePage.vue";
 
 const routes = [
   {
@@ -33,11 +18,11 @@ const routes = [
     children: [
       {
         path: "login",
-        component: LoginPage
+        component: () => import("../pages/LoginPage.vue")
       },
       {
         path: "register",
-        component: RegisterPage
+        component: () => import("../pages/RegisterPage.vue")
       }
     ]
   },
@@ -48,67 +33,67 @@ const routes = [
     children: [
       {
         path: "dashboard",
-        component: DashboardPage,
+        component: () => import("../pages/DashboardPage.vue"),
         meta: { title: "Dashboard" }
       },
       {
         path: "elections",
-        component: ElectionListPage,
+        component: () => import("../pages/elections/ElectionListPage.vue"),
         meta: { title: "Elections" }
       },
       {
         path: "elections/create",
-        component: CreateElectionPage,
+        component: () => import("../pages/elections/CreateElectionPage.vue"),
         meta: { title: "Create Election" }
       },
       {
         path: "elections/:id",
-        component: ElectionDetailPage,
+        component: () => import("../pages/elections/ElectionDetailPage.vue"),
         meta: { title: "Election Details" }
       },
       {
         path: "elections/:id/people",
-        component: PeopleManagementPage,
+        component: () => import("../pages/people/PeopleManagementPage.vue"),
         meta: { title: "People Management" }
       },
       {
         path: "elections/:id/ballots",
-        component: BallotManagementPage,
+        component: () => import("../pages/ballots/BallotManagementPage.vue"),
         meta: { title: "Ballot Management" }
       },
       {
         path: "elections/:id/results",
-        component: ResultsPage,
+        component: () => import("../pages/results/ResultsPage.vue"),
         meta: { title: "Results" }
       },
       {
         path: "elections/:id/tally",
-        component: TallyCalculationPage,
+        component: () => import("../pages/results/TallyCalculationPage.vue"),
         meta: { title: "Calculate Tally" }
       },
       {
         path: "elections/:id/monitor",
-        component: MonitoringDashboardPage,
+        component: () => import("../pages/results/MonitoringDashboardPage.vue"),
         meta: { title: "Election Monitor" }
       },
       {
         path: "elections/:id/tie-management",
-        component: TieManagementPage,
+        component: () => import("../pages/results/TieManagementPage.vue"),
         meta: { title: "Tie Management" }
       },
       {
         path: "elections/:id/presentation",
-        component: PresentationViewPage,
+        component: () => import("../pages/results/PresentationViewPage.vue"),
         meta: { title: "Presentation View" }
       },
       {
         path: "elections/:id/reporting",
-        component: ReportingPage,
+        component: () => import("../pages/results/ReportingPage.vue"),
         meta: { title: "Reports" }
       },
       {
         path: "profile",
-        component: ProfilePage,
+        component: () => import("../pages/ProfilePage.vue"),
         meta: { title: "Profile" }
       }
     ]

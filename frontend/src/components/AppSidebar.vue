@@ -1,5 +1,5 @@
 <template>
-  <div class="app-sidebar">
+  <nav class="app-sidebar" role="navigation" aria-label="Main navigation">
     <div class="logo">
       <h2>TallyJ 4</h2>
     </div>
@@ -9,29 +9,35 @@
       background-color="#304156"
       text-color="#bfcbd9"
       active-text-color="#409eff"
+      aria-label="Main menu"
+      @select="handleMenuSelect"
     >
-      <el-menu-item index="/dashboard">
-        <el-icon><HomeFilled /></el-icon>
+      <el-menu-item index="/dashboard" role="menuitem">
+        <el-icon aria-hidden="true"><HomeFilled /></el-icon>
         <span>{{ $t('nav.dashboard') }}</span>
       </el-menu-item>
-      
-      <el-menu-item index="/elections">
-        <el-icon><Document /></el-icon>
+
+      <el-menu-item index="/elections" role="menuitem">
+        <el-icon aria-hidden="true"><Document /></el-icon>
         <span>{{ $t('nav.elections') }}</span>
       </el-menu-item>
-      
-      <el-menu-item index="/profile">
-        <el-icon><User /></el-icon>
+
+      <el-menu-item index="/profile" role="menuitem">
+        <el-icon aria-hidden="true"><User /></el-icon>
         <span>{{ $t('nav.profile') }}</span>
       </el-menu-item>
     </el-menu>
-  </div>
+  </nav>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { HomeFilled, Document, User } from '@element-plus/icons-vue';
+
+const emit = defineEmits<{
+  'close-mobile-sidebar': [];
+}>();
 
 const route = useRoute();
 
@@ -41,6 +47,11 @@ const activeRoute = computed(() => {
   if (path.startsWith('/profile')) return '/profile';
   return '/dashboard';
 });
+
+function handleMenuSelect() {
+  // Emit event to close mobile sidebar when menu item is selected
+  emit('close-mobile-sidebar');
+}
 </script>
 
 <style scoped>
