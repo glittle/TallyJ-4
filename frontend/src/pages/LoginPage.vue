@@ -87,13 +87,15 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
+import { type FormInstance, type FormRules } from 'element-plus';
 import { useAuthStore } from '../stores/authStore';
 import { useI18n } from 'vue-i18n';
+import { useNotifications } from '../composables/useNotifications';
 
 const { t } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
+const { successMessage } = useNotifications();
 
 const formRef = ref<FormInstance>();
 const twoFactorFormRef = ref<FormInstance>();
@@ -132,11 +134,11 @@ async function handleLogin() {
       if (response.requires2FA) {
         requires2FA.value = true;
       } else {
-        ElMessage.success(t('auth.loginSuccess'));
+        successMessage(t('auth.loginSuccess'));
         router.push('/');
       }
     } catch (error: any) {
-      ElMessage.error(error.response?.data?.error || t('auth.loginFailed'));
+      // Error is handled by the store
     } finally {
       loading.value = false;
     }
@@ -151,11 +153,11 @@ async function handleVerify2FA() {
       password: loginForm.password,
       twoFactorCode: twoFactorForm.code
     });
-    
-    ElMessage.success(t('auth.loginSuccess'));
+
+    successMessage(t('auth.loginSuccess'));
     router.push('/');
   } catch (error: any) {
-    ElMessage.error(error.response?.data?.error || t('auth.twoFactorInvalid'));
+    // Error is handled by the store
   } finally {
     loading.value = false;
   }
