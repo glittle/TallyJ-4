@@ -5,7 +5,6 @@ import fr from './fr.json'
 const savedLocale = localStorage.getItem('preferred-language') || 'en'
 
 export const i18n = createI18n({
-  legacy: false,
   locale: savedLocale,
   fallbackLocale: 'en',
   messages: {
@@ -15,6 +14,6 @@ export const i18n = createI18n({
 })
 
 export function setLocale(locale: string) {
-  i18n.global.locale.value = locale as any
+  i18n.global.locale = locale
   localStorage.setItem('preferred-language', locale)
 }

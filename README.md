@@ -21,7 +21,7 @@ TallyJ-4/
 
 ### Prerequisites
 
-- .NET SDK 9.0 or later
+- .NET SDK 10.0 or later
 - SQL Server Express (or Docker SQL Server)
 - Optional: SQL Server Management Studio or Azure Data Studio
 
@@ -176,11 +176,11 @@ VITE_API_URL=https://your-production-api.com/api
 
 **Backend Dockerfile:**
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY ["backend/TallyJ.csproj", "."]
 RUN dotnet restore
