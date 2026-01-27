@@ -2,7 +2,7 @@ import { defineConfig } from "@hey-api/openapi-ts";
 
 export default defineConfig({
   input: {
-    path: "../openApi/tallyj.json",
+    path: "http://localhost:5016/swagger/v1/swagger.json",
   },
   output: {
     path: "src/api/gen/configService",

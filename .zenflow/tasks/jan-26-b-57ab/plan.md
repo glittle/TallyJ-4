@@ -18,7 +18,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
 <!-- chat-id: e9aaa9d3-cda5-477f-9912-47a8a4080166 -->
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
@@ -51,15 +51,83 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Fix OpenAPI Generation
+Resolve the OpenAPI spec download and type generation issue to ensure type safety across the frontend.
 
-Implement the task according to the technical specification and general engineering best practices.
+**Tasks**:
+- Fix the OpenAPI spec download (currently truncated at 100KB)
+- Generate complete API client types
+- Update service layer to use generated types
+- Verify type compatibility with existing code
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+**Verification**: `npm run gen` succeeds and generates complete type definitions
+
+---
+
+### [ ] Step: Implement Real-time Features
+Connect SignalR hubs to provide live updates for election results, ballot status, and collaborative features.
+
+**Tasks**:
+- Integrate SignalR events into Pinia stores
+- Add real-time result updates in ResultsPage
+- Implement live ballot status changes
+- Add real-time notifications for election events
+- Connect monitoring dashboard to live data
+
+**Verification**: Real-time updates work when backend sends SignalR events
+
+---
+
+### [ ] Step: Enhance Error Handling and UX
+Add comprehensive error handling, loading states, and user feedback throughout the application.
+
+**Tasks**:
+- Add error boundaries and global error handling
+- Implement loading skeletons and states
+- Add toast notifications for actions
+- Improve form validation messages
+- Add confirmation dialogs for destructive actions
+
+**Verification**: All user actions provide appropriate feedback and error messages
+
+---
+
+### [ ] Step: Performance Optimization
+Optimize the application for production use with code splitting, lazy loading, and bundle size reduction.
+
+**Tasks**:
+- Implement route-based code splitting
+- Add lazy loading for heavy components
+- Optimize bundle size (currently 1.2MB)
+- Implement caching strategies
+- Add service worker for offline support
+
+**Verification**: Bundle size under 1MB, Lighthouse score >90
+
+---
+
+### [ ] Step: Add Testing Infrastructure
+Implement comprehensive testing to ensure code quality and prevent regressions.
+
+**Tasks**:
+- Add unit tests for components using Vitest
+- Implement integration tests for stores
+- Add E2E test scripts for critical flows
+- Configure test coverage reporting
+- Add CI/CD test pipeline
+
+**Verification**: `npm run test` passes with >80% coverage
+
+---
+
+### [ ] Step: Final Polish and Deployment
+Complete UI/UX polish, accessibility improvements, and prepare for production deployment.
+
+**Tasks**:
+- Accessibility audit and fixes
+- Cross-browser testing
+- Mobile responsiveness improvements
+- Documentation updates
+- Production build optimization
+
+**Verification**: Application works flawlessly in production environment
