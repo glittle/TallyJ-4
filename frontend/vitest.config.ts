@@ -15,4 +15,8 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
     },
   },
+  // Configure Vitest to handle Element Plus components
+  define: {
+    global: "globalThis",
+  },
 });

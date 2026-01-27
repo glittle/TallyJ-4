@@ -17,11 +17,14 @@ const changeLanguage = (lang: string) => {
 
 <template>
   <div class="language-selector">
+    <label for="language-select" class="sr-only">{{ $t('common.language') }}</label>
     <ElSelect
+      id="language-select"
       :model-value="locale"
       @update:model-value="changeLanguage"
       size="small"
       style="width: 120px"
+      aria-label="Select language"
     >
       <ElOption
         v-for="lang in languages"
@@ -34,6 +37,18 @@ const changeLanguage = (lang: string) => {
 </template>
 
 <style lang="less">
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .language-selector {
   display: inline-block;
 }

@@ -1,6 +1,14 @@
 <template>
-  <div class="loading-skeleton" :style="{ width, height }">
-    <div class="skeleton-shimmer"></div>
+  <div
+    class="loading-skeleton"
+    :style="{ width, height }"
+    role="progressbar"
+    aria-label="Loading content"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="50"
+  >
+    <div class="skeleton-shimmer" aria-hidden="true"></div>
   </div>
 </template>
 

@@ -1,27 +1,27 @@
 <template>
   <div>
     <slot v-if="!hasError" />
-    <div v-else class="error-boundary">
+    <section v-else class="error-boundary" role="alert" aria-live="assertive" aria-labelledby="error-heading">
       <div class="error-content">
-        <el-icon size="48" class="error-icon">
+        <el-icon size="48" class="error-icon" aria-hidden="true">
           <Warning />
         </el-icon>
-        <h2>{{ $t('error.somethingWentWrong') }}</h2>
+        <h2 id="error-heading">{{ $t('error.somethingWentWrong') }}</h2>
         <p>{{ $t('error.pageError') }}</p>
         <div class="error-actions">
-          <el-button @click="retry" type="primary">
+          <el-button @click="retry" type="primary" aria-label="Retry loading the page">
             {{ $t('error.tryAgain') }}
           </el-button>
-          <el-button @click="goHome" type="default">
+          <el-button @click="goHome" type="default" aria-label="Go to home page">
             {{ $t('error.goHome') }}
           </el-button>
         </div>
         <details v-if="showDetails" class="error-details">
-          <summary>{{ $t('error.errorDetails') }}</summary>
-          <pre>{{ errorMessage }}</pre>
+          <summary aria-expanded="false">{{ $t('error.errorDetails') }}</summary>
+          <pre role="log" aria-label="Error details">{{ errorMessage }}</pre>
         </details>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 

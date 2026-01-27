@@ -1,16 +1,26 @@
 <template>
-  <div class="app-header">
+  <header class="app-header" role="banner">
     <div class="header-left">
-      <h3>TallyJ 4 - {{ currentPageTitle }}</h3>
+      <button
+        v-if="isMobile"
+        class="mobile-menu-btn"
+        @click="toggleMobileMenu"
+        aria-label="Toggle navigation menu"
+        :aria-expanded="mobileMenuOpen"
+      >
+        <el-icon><Menu /></el-icon>
+      </button>
+      <h1 class="sr-only">TallyJ 4 - Election Management System</h1>
+      <h3 aria-live="polite">TallyJ 4 - {{ currentPageTitle }}</h3>
     </div>
-    <div class="header-right">
+    <nav class="header-right" role="navigation" aria-label="User menu">
       <LanguageSelector />
       <el-dropdown trigger="click" @command="handleCommand">
-        <span class="user-dropdown">
-          <el-avatar :size="32" icon="UserFilled" />
+        <button class="user-dropdown" aria-haspopup="menu" :aria-expanded="false" aria-label="User account menu">
+          <el-avatar :size="32" icon="UserFilled" aria-hidden="true" />
           <span class="username">{{ currentUser?.email || 'User' }}</span>
-          <el-icon><ArrowDown /></el-icon>
-        </span>
+          <el-icon aria-hidden="true"><ArrowDown /></el-icon>
+        </button>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="profile">
@@ -28,23 +38,34 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-    </div>
-  </div>
+    </nav>
+  </header>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/authStore';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
-import { ArrowDown, User, Setting, SwitchButton } from '@element-plus/icons-vue';
+import { ArrowDown, User, Setting, SwitchButton, Menu } from '@element-plus/icons-vue';
 import LanguageSelector from './common/LanguageSelector.vue';
 
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 const { t } = useI18n();
+
+const mobileMenuOpen = ref(false);
+const isMobile = ref(false);
+
+// Check if we're on mobile
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768;
+};
+
+checkMobile();
+window.addEventListener('resize', checkMobile);
 
 const currentUser = computed(() => ({ email: authStore.email }));
 
@@ -69,6 +90,12 @@ function handleCommand(command: string) {
     ElMessage.info('Settings page coming soon');
   }
 }
+
+function toggleMobileMenu() {
+  mobileMenuOpen.value = !mobileMenuOpen.value;
+  // Emit event to parent component to toggle sidebar
+  // This will be handled by MainLayout
+}
 </script>
 
 <style scoped>
@@ -92,6 +119,18 @@ function handleCommand(command: string) {
   gap: 20px;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .user-dropdown {
   display: flex;
   align-items: center;
@@ -99,16 +138,73 @@ function handleCommand(command: string) {
   cursor: pointer;
   padding: 5px 10px;
   border-radius: 4px;
+  border: none;
+  background: transparent;
   transition: background-color 0.3s;
+  font-size: inherit;
 }
 
-.user-dropdown:hover {
+.user-dropdown:hover,
+.user-dropdown:focus {
   background-color: #f5f7fa;
+  outline: 2px solid #409eff;
+  outline-offset: 2px;
 }
 
 .username {
   font-size: 14px;
   color: #606266;
+}
+
+.mobile-menu-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  margin-right: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.mobile-menu-btn:hover,
+.mobile-menu-btn:focus {
+  background-color: #f5f7fa;
+  outline: 2px solid #409eff;
+  outline-offset: 2px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 15px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-left h3 {
+    font-size: 16px;
+  }
+
+  .header-right {
+    gap: 15px;
+  }
+
+  .username {
+    display: none; /* Hide username on mobile to save space */
+  }
+}
+
+@media (max-width: 480px) {
+  .header-left h3 {
+    font-size: 14px;
+  }
+
+  .user-dropdown {
+    padding: 8px;
+  }
 }
 
 :deep(.el-dropdown-menu__item) {

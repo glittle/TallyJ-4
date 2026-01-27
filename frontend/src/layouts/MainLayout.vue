@@ -1,13 +1,25 @@
 <template>
   <el-container class="main-layout">
-    <el-aside width="200px" class="sidebar">
-      <AppSidebar />
+    <!-- Skip link for keyboard navigation -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Mobile sidebar overlay -->
+    <div v-if="mobileSidebarOpen" class="mobile-sidebar-overlay" @click="closeMobileSidebar"></div>
+
+    <el-aside
+      width="200px"
+      class="sidebar"
+      role="complementary"
+      aria-label="Main navigation"
+      :class="{ 'mobile-sidebar-open': mobileSidebarOpen }"
+    >
+      <AppSidebar @close-mobile-sidebar="closeMobileSidebar" />
     </el-aside>
     <el-container>
-      <el-header height="60px">
-        <AppHeader />
+      <el-header height="60px" role="banner">
+        <AppHeader @toggle-mobile-menu="toggleMobileSidebar" />
       </el-header>
-      <el-main>
+      <el-main id="main-content" role="main" tabindex="-1">
         <router-view />
       </el-main>
     </el-container>
@@ -15,11 +27,39 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import AppHeader from '../components/AppHeader.vue';
 import AppSidebar from '../components/AppSidebar.vue';
+
+const mobileSidebarOpen = ref(false);
+
+function toggleMobileSidebar() {
+  mobileSidebarOpen.value = !mobileSidebarOpen.value;
+}
+
+function closeMobileSidebar() {
+  mobileSidebarOpen.value = false;
+}
 </script>
 
 <style scoped>
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #409eff;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  font-weight: 500;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
 .main-layout {
   height: 100vh;
 }
@@ -36,9 +76,41 @@ import AppSidebar from '../components/AppSidebar.vue';
   }
 }
 
+/* Mobile sidebar overlay */
+.mobile-sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.sidebar.mobile-sidebar-open {
+  transform: translateX(0);
+  z-index: 1001;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    height: calc(100vh - 60px);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1001;
+  }
+
+  .sidebar.mobile-sidebar-open {
+    transform: translateX(0);
+  }
+}
+
 @media (max-width: 480px) {
   .sidebar {
-    display: none;
+    width: 250px !important;
   }
 }
 
