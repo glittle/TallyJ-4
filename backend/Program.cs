@@ -14,6 +14,7 @@ using TallyJ4.Backend.Helpers;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using TallyJ4.Application.Services.Auth;
+using System.Reflection;
 
 Console.WriteLine("Starting up..."); // for server log files
 
@@ -151,6 +152,8 @@ services.AddProblemDetails();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(options =>
 {
+    options.UseAllOfForInheritance();
+
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "TallyJ4 API",
@@ -182,15 +185,25 @@ services.AddSwaggerGen(options =>
             Array.Empty<string>()
         }
     });
+
+    options.IncludeXmlComments(
+    Path.Combine(
+      AppContext.BaseDirectory,
+      $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"
+    )
+  );
 });
 
 
 
 var app = builder.Build();
 
-// Seed database in development
 if (app.Environment.IsDevelopment())
 {
+    // Generate OpenAPI file
+    app.WriteOpenApiSpecToFile("..\\frontend\\openapi\\tallyj.json");
+
+    // Seed database in development
     var seedOnStartup = builder.Configuration.GetValue<bool>("Database:SeedOnStartup", true);
     if (seedOnStartup)
     {

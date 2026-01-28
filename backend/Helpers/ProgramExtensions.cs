@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Writers;
+using Newtonsoft.Json.Linq;
 using Serilog;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace TallyJ4.Backend.Helpers;
 
@@ -134,5 +137,61 @@ public static class ProgramExtensions
       });
     });
     return services;
+  }
+
+  public static IApplicationBuilder WriteOpenApiSpecToFile(
+    this IApplicationBuilder app,
+    string path
+  )
+  {
+    var scope = app.ApplicationServices.CreateScope();
+    var swaggerProvider = scope.ServiceProvider.GetRequiredService<ISwaggerProvider>();
+    var swaggerDocument = swaggerProvider.GetSwagger("v1");
+
+    // Generate new content in memory
+    string newContent;
+    using (var memoryStream = new MemoryStream())
+    using (var streamWriter = new StreamWriter(memoryStream))
+    {
+      var writer = new OpenApiJsonWriter(streamWriter);
+      swaggerDocument.SerializeAsV3(writer);
+      streamWriter.Flush();
+      newContent = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
+    }
+
+    // Normalize line endings to LF for consistency across platforms
+    newContent = newContent.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\\r\\n", "\\n");
+
+    // Check if file exists and compare content
+    bool shouldWrite = true;
+    if (File.Exists(path))
+    {
+      var existingContent = File.ReadAllText(path);
+      try
+      {
+        var existingJson = JToken.Parse(existingContent);
+        var newJson = JToken.Parse(newContent);
+        shouldWrite = !JToken.DeepEquals(existingJson, newJson);
+      }
+      catch (JsonException)
+      {
+        // If parsing fails, fall back to string comparison or assume different
+        shouldWrite = true;
+      }
+    }
+
+    if (shouldWrite)
+    {
+      File.WriteAllText(path, newContent);
+      // use Information and visually highlight to make it stand out more in the logs
+      Log.Information("{Highlight} OpenAPI file generated at {OpenAPIFilePath}.", ">>>>>>", path);
+      Log.Information("{Lines} Restart Frontend", "------------------------"); // to catch the developer's eye... can now start the front end!
+    }
+    else
+    {
+      Log.Information("OpenAPI file is not changed");
+    }
+
+    return app;
   }
 }
