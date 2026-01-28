@@ -3,8 +3,15 @@ using TallyJ4.DTOs.Elections;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for CreateElectionDto that enforces election creation requirements.
+/// Validates election name, date, type, and related parameters.
+/// </summary>
 public class CreateElectionDtoValidator : AbstractValidator<CreateElectionDto>
 {
+    /// <summary>
+    /// Initializes a new instance of the CreateElectionDtoValidator with validation rules.
+    /// </summary>
     public CreateElectionDtoValidator()
     {
         RuleFor(x => x.Name)

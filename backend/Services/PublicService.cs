@@ -4,17 +4,30 @@ using TallyJ4.Domain.Context;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service for managing public-facing operations including election discovery and status information.
+/// Provides functionality for public users to access election information without authentication.
+/// </summary>
 public class PublicService : IPublicService
 {
     private readonly MainDbContext _context;
     private readonly ILogger<PublicService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the PublicService.
+    /// </summary>
+    /// <param name="context">The main database context for accessing election data.</param>
+    /// <param name="logger">Logger for recording public service operations.</param>
     public PublicService(MainDbContext context, ILogger<PublicService> logger)
     {
         _context = context;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Retrieves general information for the public home page.
+    /// </summary>
+    /// <returns>A PublicHomeDto containing application information and available elections count.</returns>
     public async Task<PublicHomeDto> GetPublicHomeDataAsync()
     {
         var availableElectionsCount = await _context.Elections
@@ -33,6 +46,10 @@ public class PublicService : IPublicService
         };
     }
 
+    /// <summary>
+    /// Retrieves a list of elections that are available for public access.
+    /// </summary>
+    /// <returns>A list of AvailableElectionDto objects representing elections with passcodes.</returns>
     public async Task<List<AvailableElectionDto>> GetAvailableElectionsAsync()
     {
         var elections = await _context.Elections
@@ -52,6 +69,11 @@ public class PublicService : IPublicService
         return elections;
     }
 
+    /// <summary>
+    /// Retrieves the current status of a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>An ElectionStatusDto containing election status information, or null if the election is not found.</returns>
     public async Task<ElectionStatusDto?> GetElectionStatusAsync(Guid electionGuid)
     {
         var election = await _context.Elections

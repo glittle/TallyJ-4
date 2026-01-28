@@ -3,10 +3,17 @@ using TallyJ4.DTOs.Ballots;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for UpdateBallotDto that enforces ballot update requirements.
+/// Validates status code, and teller name lengths.
+/// </summary>
 public class UpdateBallotDtoValidator : AbstractValidator<UpdateBallotDto>
 {
     private static readonly string[] ValidStatusCodes = { "New", "Review", "OK", "Dup", "Spoil", "EmptyQ" };
 
+    /// <summary>
+    /// Initializes a new instance of the UpdateBallotDtoValidator with validation rules.
+    /// </summary>
     public UpdateBallotDtoValidator()
     {
         RuleFor(x => x.StatusCode)

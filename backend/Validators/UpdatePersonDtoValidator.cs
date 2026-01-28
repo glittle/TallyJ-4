@@ -3,8 +3,15 @@ using TallyJ4.DTOs.People;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for UpdatePersonDto that enforces person update requirements.
+/// Validates names, contact information, and other person details.
+/// </summary>
 public class UpdatePersonDtoValidator : AbstractValidator<UpdatePersonDto>
 {
+    /// <summary>
+    /// Initializes a new instance of the UpdatePersonDtoValidator with validation rules.
+    /// </summary>
     public UpdatePersonDtoValidator()
     {
         RuleFor(x => x.LastName)

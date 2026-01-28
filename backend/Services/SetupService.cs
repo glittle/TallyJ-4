@@ -7,12 +7,22 @@ using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service for managing election setup operations including multi-step election configuration.
+/// Provides functionality to create and configure elections through a step-by-step process.
+/// </summary>
 public class SetupService : ISetupService
 {
     private readonly MainDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<SetupService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the SetupService.
+    /// </summary>
+    /// <param name="context">The main database context for accessing election data.</param>
+    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="logger">Logger for recording setup service operations.</param>
     public SetupService(MainDbContext context, IMapper mapper, ILogger<SetupService> logger)
     {
         _context = context;
@@ -20,6 +30,11 @@ public class SetupService : ISetupService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Creates a new election with basic information (Step 1 of setup process).
+    /// </summary>
+    /// <param name="step1Dto">The data transfer object containing basic election information.</param>
+    /// <returns>An ElectionDto representing the newly created election.</returns>
     public async Task<ElectionDto> CreateElectionStep1Async(ElectionStep1Dto step1Dto)
     {
         var election = new Election
@@ -47,6 +62,12 @@ public class SetupService : ISetupService
         return electionDto;
     }
 
+    /// <summary>
+    /// Configures election parameters (Step 2 of setup process).
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election to configure.</param>
+    /// <param name="step2Dto">The data transfer object containing election configuration parameters.</param>
+    /// <returns>An ElectionDto representing the configured election, or null if the election was not found.</returns>
     public async Task<ElectionDto?> ConfigureElectionStep2Async(Guid electionGuid, ElectionStep2Dto step2Dto)
     {
         var election = await _context.Elections
@@ -73,6 +94,11 @@ public class SetupService : ISetupService
         return electionDto;
     }
 
+    /// <summary>
+    /// Retrieves the current setup status and progress for an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>An ElectionSetupStatusDto containing setup progress information, or null if the election was not found.</returns>
     public async Task<ElectionSetupStatusDto?> GetSetupStatusAsync(Guid electionGuid)
     {
         var election = await _context.Elections

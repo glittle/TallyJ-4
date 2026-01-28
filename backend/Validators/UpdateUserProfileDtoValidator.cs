@@ -3,8 +3,15 @@ using TallyJ4.DTOs.Account;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for UpdateUserProfileDto that enforces user profile update requirements.
+/// Validates username, email, and phone number formats and lengths.
+/// </summary>
 public class UpdateUserProfileDtoValidator : AbstractValidator<UpdateUserProfileDto>
 {
+    /// <summary>
+    /// Initializes a new instance of the UpdateUserProfileDtoValidator with validation rules.
+    /// </summary>
     public UpdateUserProfileDtoValidator()
     {
         RuleFor(x => x.UserName)

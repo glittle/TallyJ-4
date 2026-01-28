@@ -8,6 +8,10 @@ using TallyJ4.Models;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service for managing election operations including creation, retrieval, updates, and deletion.
+/// Provides functionality to handle elections and their associated data.
+/// </summary>
 public class ElectionService : IElectionService
 {
     private readonly MainDbContext _context;
@@ -15,6 +19,13 @@ public class ElectionService : IElectionService
     private readonly ILogger<ElectionService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
 
+    /// <summary>
+    /// Initializes a new instance of the ElectionService.
+    /// </summary>
+    /// <param name="context">The main database context for accessing election data.</param>
+    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="logger">Logger for recording election service operations.</param>
+    /// <param name="signalRNotificationService">Service for sending real-time notifications about election updates.</param>
     public ElectionService(MainDbContext context, IMapper mapper, ILogger<ElectionService> logger, ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
@@ -23,6 +34,13 @@ public class ElectionService : IElectionService
         _signalRNotificationService = signalRNotificationService;
     }
 
+    /// <summary>
+    /// Retrieves a paginated list of elections with optional status filtering.
+    /// </summary>
+    /// <param name="pageNumber">The page number to retrieve (1-based). Default is 1.</param>
+    /// <param name="pageSize">The number of elections per page. Default is 10.</param>
+    /// <param name="status">Optional status filter to apply to elections.</param>
+    /// <returns>A paginated response containing election summary DTOs.</returns>
     public async Task<PaginatedResponse<ElectionSummaryDto>> GetElectionsAsync(int pageNumber = 1, int pageSize = 10, string? status = null)
     {
         var query = _context.Elections.AsQueryable();
@@ -56,6 +74,11 @@ public class ElectionService : IElectionService
         return PaginatedResponse<ElectionSummaryDto>.Create(electionDtos, pageNumber, pageSize, totalCount);
     }
 
+    /// <summary>
+    /// Retrieves a specific election by its unique identifier.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>An ElectionDto containing the election information, or null if not found.</returns>
     public async Task<ElectionDto?> GetElectionByGuidAsync(Guid electionGuid)
     {
         var election = await _context.Elections
@@ -77,6 +100,11 @@ public class ElectionService : IElectionService
         return dto;
     }
 
+    /// <summary>
+    /// Creates a new election.
+    /// </summary>
+    /// <param name="createDto">The data transfer object containing election creation information.</param>
+    /// <returns>An ElectionDto representing the created election.</returns>
     public async Task<ElectionDto> CreateElectionAsync(CreateElectionDto createDto)
     {
         var election = _mapper.Map<Election>(createDto);
@@ -92,6 +120,12 @@ public class ElectionService : IElectionService
         return await GetElectionByGuidAsync(election.ElectionGuid) ?? _mapper.Map<ElectionDto>(election);
     }
 
+    /// <summary>
+    /// Updates an existing election with new information.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election to update.</param>
+    /// <param name="updateDto">The data transfer object containing updated election information.</param>
+    /// <returns>An ElectionDto representing the updated election, or null if the election was not found.</returns>
     public async Task<ElectionDto?> UpdateElectionAsync(Guid electionGuid, UpdateElectionDto updateDto)
     {
         var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
@@ -118,6 +152,11 @@ public class ElectionService : IElectionService
         return await GetElectionByGuidAsync(electionGuid);
     }
 
+    /// <summary>
+    /// Deletes an election by its unique identifier.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election to delete.</param>
+    /// <returns>True if the election was successfully deleted, false if the election was not found.</returns>
     public async Task<bool> DeleteElectionAsync(Guid electionGuid)
     {
         var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
@@ -135,11 +174,22 @@ public class ElectionService : IElectionService
         return true;
     }
 
+    /// <summary>
+    /// Retrieves a summary of a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>An ElectionDto containing the election summary information, or null if not found.</returns>
     public async Task<ElectionDto?> GetElectionSummaryAsync(Guid electionGuid)
     {
         return await GetElectionByGuidAsync(electionGuid);
     }
 
+    /// <summary>
+    /// Updates the public listing status of an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="isListed">Whether the election should be listed for public access.</param>
+    /// <returns>True if the listing status was updated successfully, false if the election was not found.</returns>
     public async Task<bool> UpdateElectionListingAsync(Guid electionGuid, bool isListed)
     {
         var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);

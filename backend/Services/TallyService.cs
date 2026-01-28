@@ -7,6 +7,10 @@ using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service for managing election tally calculations, results, and reporting.
+/// Provides functionality to calculate election results, generate reports, and manage tie-breaking processes.
+/// </summary>
 public class TallyService : ITallyService
 {
     private readonly MainDbContext _context;
@@ -22,6 +26,12 @@ public class TallyService : ITallyService
     private const string SectionExtra = "Extra";
     private const string SectionOther = "Other";
 
+    /// <summary>
+    /// Initializes a new instance of the TallyService.
+    /// </summary>
+    /// <param name="context">The main database context for accessing election and tally data.</param>
+    /// <param name="logger">Logger for recording tally service operations.</param>
+    /// <param name="signalRNotificationService">Service for sending real-time notifications about tally progress.</param>
     public TallyService(MainDbContext context, ILogger<TallyService> logger, ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
@@ -29,6 +39,12 @@ public class TallyService : ITallyService
         _signalRNotificationService = signalRNotificationService;
     }
 
+    /// <summary>
+    /// Calculates the results for a normal election using the configured tally method.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election to calculate.</param>
+    /// <returns>A TallyResultDto containing the calculated election results.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<TallyResultDto> CalculateNormalElectionAsync(Guid electionGuid)
     {
         _logger.LogInformation("Starting normal election tally calculation for election {ElectionGuid}", electionGuid);
@@ -80,6 +96,12 @@ public class TallyService : ITallyService
         return result;
     }
 
+    /// <summary>
+    /// Calculates the results for a single-name election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election to calculate.</param>
+    /// <returns>A TallyResultDto containing the calculated election results.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<TallyResultDto> CalculateSingleNameElectionAsync(Guid electionGuid)
     {
         _logger.LogInformation("Starting single-name election tally calculation for election {ElectionGuid}", electionGuid);
@@ -131,6 +153,12 @@ public class TallyService : ITallyService
         return result;
     }
 
+    /// <summary>
+    /// Retrieves the current tally results for an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A TallyResultDto containing the current election results.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<TallyResultDto> GetTallyResultsAsync(Guid electionGuid)
     {
         var election = await _context.Elections
@@ -185,6 +213,12 @@ public class TallyService : ITallyService
         };
     }
 
+    /// <summary>
+    /// Retrieves statistical information about an election's tally.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A TallyStatisticsDto containing statistical information about the election.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<TallyStatisticsDto> GetTallyStatisticsAsync(Guid electionGuid)
     {
         var election = await _context.Elections
@@ -233,6 +267,12 @@ public class TallyService : ITallyService
         };
     }
 
+    /// <summary>
+    /// Retrieves monitoring information for an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A MonitorInfoDto containing monitoring information for the election.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<MonitorInfoDto> GetMonitorInfoAsync(Guid electionGuid)
     {
         var election = await _context.Elections
@@ -309,6 +349,11 @@ public class TallyService : ITallyService
         };
     }
 
+    /// <summary>
+    /// Refreshes the contact information for a computer in an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="computerCode">The code identifying the computer.</param>
     public async Task RefreshComputerContactAsync(Guid electionGuid, string computerCode)
     {
         // In the current model, computers don't have a separate entity with last contact tracking
@@ -329,6 +374,13 @@ public class TallyService : ITallyService
         return timeSinceContact.TotalMinutes < 5 ? "Active" : "Inactive";
     }
 
+    /// <summary>
+    /// Retrieves tie-breaking information for a specific tie group in an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="tieBreakGroup">The tie break group number.</param>
+    /// <returns>A TieDetailsDto containing information about the tie situation.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<TieDetailsDto> GetTiesAsync(Guid electionGuid, int tieBreakGroup)
     {
         var election = await _context.Elections
@@ -367,6 +419,13 @@ public class TallyService : ITallyService
         };
     }
 
+    /// <summary>
+    /// Saves tie-breaking vote counts for an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="request">The request containing tie count information.</param>
+    /// <returns>A SaveTieCountsResponseDto containing the result of the save operation.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<SaveTieCountsResponseDto> SaveTieCountsAsync(Guid electionGuid, SaveTieCountsRequestDto request)
     {
         var election = await _context.Elections
@@ -424,6 +483,12 @@ public class TallyService : ITallyService
         };
     }
 
+    /// <summary>
+    /// Generates a comprehensive report for an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>An ElectionReportDto containing comprehensive election report data.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<ElectionReportDto> GetElectionReportAsync(Guid electionGuid)
     {
         var election = await _context.Elections
@@ -502,6 +567,13 @@ public class TallyService : ITallyService
         };
     }
 
+    /// <summary>
+    /// Retrieves specific report data for an election based on a report code.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="reportCode">The code identifying the type of report to generate.</param>
+    /// <returns>A ReportDataResponseDto containing the requested report data.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found or report code is invalid.</exception>
     public async Task<ReportDataResponseDto> GetReportDataAsync(Guid electionGuid, string reportCode)
     {
         var election = await _context.Elections
@@ -632,6 +704,12 @@ public class TallyService : ITallyService
             .ToList();
     }
 
+    /// <summary>
+    /// Retrieves presentation-ready data for displaying election results.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A PresentationDto containing formatted data for presentation purposes.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<PresentationDto> GetPresentationDataAsync(Guid electionGuid)
     {
         var election = await _context.Elections
@@ -963,6 +1041,12 @@ public class TallyService : ITallyService
         return locationStatistics;
     }
 
+    /// <summary>
+    /// Retrieves detailed statistical information about an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A DetailedStatisticsDto containing comprehensive statistical data.</returns>
+    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<DetailedStatisticsDto> GetDetailedStatisticsAsync(Guid electionGuid)
     {
         var election = await _context.Elections

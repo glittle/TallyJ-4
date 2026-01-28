@@ -6,12 +6,22 @@ using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service for managing vote operations including creation, retrieval, updates, and deletion.
+/// Provides functionality to handle votes within ballots and elections.
+/// </summary>
 public class VoteService : IVoteService
 {
     private readonly MainDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<VoteService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the VoteService.
+    /// </summary>
+    /// <param name="context">The main database context for accessing vote data.</param>
+    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="logger">Logger for recording vote service operations.</param>
     public VoteService(MainDbContext context, IMapper mapper, ILogger<VoteService> logger)
     {
         _context = context;
@@ -19,6 +29,11 @@ public class VoteService : IVoteService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Retrieves all votes associated with a specific ballot.
+    /// </summary>
+    /// <param name="ballotGuid">The unique identifier of the ballot.</param>
+    /// <returns>A list of VoteDto objects representing the votes on the ballot, ordered by position.</returns>
     public async Task<List<VoteDto>> GetVotesByBallotAsync(Guid ballotGuid)
     {
         var votes = await _context.Votes
@@ -30,6 +45,11 @@ public class VoteService : IVoteService
         return votes.Select(MapToVoteDto).ToList();
     }
 
+    /// <summary>
+    /// Retrieves all votes associated with a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A list of VoteDto objects representing all votes in the election, ordered by ballot number and position.</returns>
     public async Task<List<VoteDto>> GetVotesByElectionAsync(Guid electionGuid)
     {
         var votes = await _context.Votes
@@ -43,6 +63,11 @@ public class VoteService : IVoteService
         return votes.Select(MapToVoteDto).ToList();
     }
 
+    /// <summary>
+    /// Retrieves a specific vote by its database identifier.
+    /// </summary>
+    /// <param name="id">The database row identifier of the vote.</param>
+    /// <returns>A VoteDto object if found, null otherwise.</returns>
     public async Task<VoteDto?> GetVoteByIdAsync(int id)
     {
         var vote = await _context.Votes
@@ -58,6 +83,12 @@ public class VoteService : IVoteService
         return MapToVoteDto(vote);
     }
 
+    /// <summary>
+    /// Creates a new vote for a ballot.
+    /// </summary>
+    /// <param name="createDto">The data transfer object containing vote creation information.</param>
+    /// <returns>A VoteDto representing the created vote.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the ballot or person is not found, or when validation fails.</exception>
     public async Task<VoteDto> CreateVoteAsync(CreateVoteDto createDto)
     {
         var ballot = await _context.Ballots.FirstOrDefaultAsync(b => b.BallotGuid == createDto.BallotGuid);
@@ -106,6 +137,13 @@ public class VoteService : IVoteService
         return await GetVoteByIdAsync(vote.RowId) ?? _mapper.Map<VoteDto>(vote);
     }
 
+    /// <summary>
+    /// Updates an existing vote with new information.
+    /// </summary>
+    /// <param name="id">The database row identifier of the vote to update.</param>
+    /// <param name="updateDto">The data transfer object containing updated vote information.</param>
+    /// <returns>A VoteDto representing the updated vote, or null if the vote was not found.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the ballot or person is not found, or when validation fails.</exception>
     public async Task<VoteDto?> UpdateVoteAsync(int id, CreateVoteDto updateDto)
     {
         var vote = await _context.Votes.FirstOrDefaultAsync(v => v.RowId == id);
@@ -154,6 +192,11 @@ public class VoteService : IVoteService
         return await GetVoteByIdAsync(id);
     }
 
+    /// <summary>
+    /// Deletes a vote by its database identifier.
+    /// </summary>
+    /// <param name="id">The database row identifier of the vote to delete.</param>
+    /// <returns>True if the vote was successfully deleted, false if the vote was not found.</returns>
     public async Task<bool> DeleteVoteAsync(int id)
     {
         var vote = await _context.Votes.FirstOrDefaultAsync(v => v.RowId == id);

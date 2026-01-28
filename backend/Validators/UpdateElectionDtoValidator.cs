@@ -3,8 +3,15 @@ using TallyJ4.DTOs.Elections;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for UpdateElectionDto that enforces election update requirements.
+/// Validates election name, date, numbers, tally status, and convenor information.
+/// </summary>
 public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
 {
+    /// <summary>
+    /// Initializes a new instance of the UpdateElectionDtoValidator with validation rules.
+    /// </summary>
     public UpdateElectionDtoValidator()
     {
         RuleFor(x => x.Name)

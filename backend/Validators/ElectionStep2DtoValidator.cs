@@ -3,8 +3,15 @@ using TallyJ4.DTOs.Setup;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for ElectionStep2Dto that enforces second step election setup requirements.
+/// Validates election GUID, number to elect, election type, and election mode.
+/// </summary>
 public class ElectionStep2DtoValidator : AbstractValidator<ElectionStep2Dto>
 {
+    /// <summary>
+    /// Initializes a new instance of the ElectionStep2DtoValidator with validation rules.
+    /// </summary>
     public ElectionStep2DtoValidator()
     {
         RuleFor(x => x.ElectionGuid)

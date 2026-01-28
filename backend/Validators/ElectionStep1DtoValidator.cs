@@ -3,8 +3,15 @@ using TallyJ4.DTOs.Setup;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for ElectionStep1Dto that enforces first step election setup requirements.
+/// Validates election name, reason, and date constraints.
+/// </summary>
 public class ElectionStep1DtoValidator : AbstractValidator<ElectionStep1Dto>
 {
+    /// <summary>
+    /// Initializes a new instance of the ElectionStep1DtoValidator with validation rules.
+    /// </summary>
     public ElectionStep1DtoValidator()
     {
         RuleFor(x => x.Name)

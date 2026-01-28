@@ -5,6 +5,10 @@ using TallyJ4.Hubs;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service for managing real-time notifications through SignalR hubs.
+/// Provides functionality to send updates to connected clients about election changes, tally progress, and other events.
+/// </summary>
 public class SignalRNotificationService : ISignalRNotificationService
 {
     private readonly IHubContext<MainHub> _mainHubContext;
@@ -14,6 +18,15 @@ public class SignalRNotificationService : ISignalRNotificationService
     private readonly IHubContext<PublicHub> _publicHubContext;
     private readonly ILogger<SignalRNotificationService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the SignalRNotificationService.
+    /// </summary>
+    /// <param name="mainHubContext">Hub context for the main SignalR hub.</param>
+    /// <param name="analyzeHubContext">Hub context for the analysis SignalR hub.</param>
+    /// <param name="ballotImportHubContext">Hub context for the ballot import SignalR hub.</param>
+    /// <param name="frontDeskHubContext">Hub context for the front desk SignalR hub.</param>
+    /// <param name="publicHubContext">Hub context for the public SignalR hub.</param>
+    /// <param name="logger">Logger for recording notification service operations.</param>
     public SignalRNotificationService(
         IHubContext<MainHub> mainHubContext,
         IHubContext<AnalyzeHub> analyzeHubContext,
@@ -30,6 +43,10 @@ public class SignalRNotificationService : ISignalRNotificationService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Sends an election update notification to connected clients.
+    /// </summary>
+    /// <param name="update">The election update data to send.</param>
     public async Task SendElectionUpdateAsync(ElectionUpdateDto update)
     {
         try
@@ -44,6 +61,10 @@ public class SignalRNotificationService : ISignalRNotificationService
         }
     }
 
+    /// <summary>
+    /// Sends tally progress notifications to connected clients.
+    /// </summary>
+    /// <param name="progress">The tally progress data to send.</param>
     public async Task SendTallyProgressAsync(TallyProgressDto progress)
     {
         try
@@ -59,6 +80,10 @@ public class SignalRNotificationService : ISignalRNotificationService
         }
     }
 
+    /// <summary>
+    /// Sends import progress notifications to connected clients.
+    /// </summary>
+    /// <param name="progress">The import progress data to send.</param>
     public async Task SendImportProgressAsync(ImportProgressDto progress)
     {
         try
@@ -74,6 +99,10 @@ public class SignalRNotificationService : ISignalRNotificationService
         }
     }
 
+    /// <summary>
+    /// Sends person update notifications to connected clients.
+    /// </summary>
+    /// <param name="update">The person update data to send.</param>
     public async Task SendPersonUpdateAsync(PersonUpdateDto update)
     {
         try
@@ -95,6 +124,9 @@ public class SignalRNotificationService : ISignalRNotificationService
         }
     }
 
+    /// <summary>
+    /// Sends a notification that the public election list has been updated.
+    /// </summary>
     public async Task SendPublicElectionListUpdateAsync()
     {
         try
@@ -108,6 +140,10 @@ public class SignalRNotificationService : ISignalRNotificationService
         }
     }
 
+    /// <summary>
+    /// Sends monitor update notifications to connected clients.
+    /// </summary>
+    /// <param name="monitorInfo">The monitor information data to send.</param>
     public async Task SendMonitorUpdateAsync(MonitorInfoDto monitorInfo)
     {
         try

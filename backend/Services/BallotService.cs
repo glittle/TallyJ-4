@@ -8,12 +8,22 @@ using TallyJ4.Models;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service for managing ballot operations including creation, retrieval, updates, and deletion.
+/// Provides functionality to handle ballots within elections and locations.
+/// </summary>
 public class BallotService : IBallotService
 {
     private readonly MainDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<BallotService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the BallotService.
+    /// </summary>
+    /// <param name="context">The main database context for accessing ballot data.</param>
+    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="logger">Logger for recording ballot service operations.</param>
     public BallotService(MainDbContext context, IMapper mapper, ILogger<BallotService> logger)
     {
         _context = context;
@@ -21,6 +31,13 @@ public class BallotService : IBallotService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Retrieves a paginated list of ballots for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="pageNumber">The page number to retrieve (1-based). Default is 1.</param>
+    /// <param name="pageSize">The number of ballots per page. Default is 50.</param>
+    /// <returns>A paginated response containing ballot DTOs with their associated votes and location information.</returns>
     public async Task<PaginatedResponse<BallotDto>> GetBallotsByElectionAsync(Guid electionGuid, int pageNumber = 1, int pageSize = 50)
     {
         var query = _context.Ballots
@@ -44,6 +61,11 @@ public class BallotService : IBallotService
         return PaginatedResponse<BallotDto>.Create(ballotDtos, pageNumber, pageSize, totalCount);
     }
 
+    /// <summary>
+    /// Retrieves a specific ballot by its unique identifier.
+    /// </summary>
+    /// <param name="ballotGuid">The unique identifier of the ballot.</param>
+    /// <returns>A BallotDto containing the ballot information with votes and location details, or null if not found.</returns>
     public async Task<BallotDto?> GetBallotByGuidAsync(Guid ballotGuid)
     {
         var ballot = await _context.Ballots
@@ -60,6 +82,12 @@ public class BallotService : IBallotService
         return MapToBallotDto(ballot);
     }
 
+    /// <summary>
+    /// Creates a new ballot for an election.
+    /// </summary>
+    /// <param name="createDto">The data transfer object containing ballot creation information.</param>
+    /// <returns>A BallotDto representing the created ballot.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the election is not found.</exception>
     public async Task<BallotDto> CreateBallotAsync(CreateBallotDto createDto)
     {
         // Find or create a default location for the election
@@ -115,6 +143,12 @@ public class BallotService : IBallotService
         return await GetBallotByGuidAsync(ballot.BallotGuid) ?? _mapper.Map<BallotDto>(ballot);
     }
 
+    /// <summary>
+    /// Updates an existing ballot with new information.
+    /// </summary>
+    /// <param name="ballotGuid">The unique identifier of the ballot to update.</param>
+    /// <param name="updateDto">The data transfer object containing updated ballot information.</param>
+    /// <returns>A BallotDto representing the updated ballot, or null if the ballot was not found.</returns>
     public async Task<BallotDto?> UpdateBallotAsync(Guid ballotGuid, UpdateBallotDto updateDto)
     {
         var ballot = await _context.Ballots.FirstOrDefaultAsync(b => b.BallotGuid == ballotGuid);
@@ -135,6 +169,11 @@ public class BallotService : IBallotService
         return await GetBallotByGuidAsync(ballotGuid);
     }
 
+    /// <summary>
+    /// Deletes a ballot by its unique identifier.
+    /// </summary>
+    /// <param name="ballotGuid">The unique identifier of the ballot to delete.</param>
+    /// <returns>True if the ballot was successfully deleted, false if the ballot was not found.</returns>
     public async Task<bool> DeleteBallotAsync(Guid ballotGuid)
     {
         var ballot = await _context.Ballots.FirstOrDefaultAsync(b => b.BallotGuid == ballotGuid);

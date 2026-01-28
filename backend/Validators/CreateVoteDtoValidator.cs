@@ -3,8 +3,15 @@ using TallyJ4.DTOs.Votes;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for CreateVoteDto that enforces vote creation requirements.
+/// Validates ballot GUID, position, and status code.
+/// </summary>
 public class CreateVoteDtoValidator : AbstractValidator<CreateVoteDto>
 {
+    /// <summary>
+    /// Initializes a new instance of the CreateVoteDtoValidator with validation rules.
+    /// </summary>
     public CreateVoteDtoValidator()
     {
         RuleFor(x => x.BallotGuid)

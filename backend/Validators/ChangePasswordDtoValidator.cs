@@ -3,8 +3,15 @@ using TallyJ4.DTOs.Account;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for ChangePasswordDto that enforces password change requirements.
+/// Validates current password presence, new password strength, and confirmation matching.
+/// </summary>
 public class ChangePasswordDtoValidator : AbstractValidator<ChangePasswordDto>
 {
+    /// <summary>
+    /// Initializes a new instance of the ChangePasswordDtoValidator with validation rules.
+    /// </summary>
     public ChangePasswordDtoValidator()
     {
         RuleFor(x => x.CurrentPassword)

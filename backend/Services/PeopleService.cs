@@ -8,6 +8,10 @@ using TallyJ4.Models;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service for managing people operations including creation, retrieval, updates, and deletion.
+/// Provides functionality to handle people within elections and their voting capabilities.
+/// </summary>
 public class PeopleService : IPeopleService
 {
     private readonly MainDbContext _context;
@@ -15,6 +19,13 @@ public class PeopleService : IPeopleService
     private readonly ILogger<PeopleService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
 
+    /// <summary>
+    /// Initializes a new instance of the PeopleService.
+    /// </summary>
+    /// <param name="context">The main database context for accessing people data.</param>
+    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="logger">Logger for recording people service operations.</param>
+    /// <param name="signalRNotificationService">Service for sending real-time notifications about people updates.</param>
     public PeopleService(MainDbContext context, IMapper mapper, ILogger<PeopleService> logger, ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
@@ -23,6 +34,16 @@ public class PeopleService : IPeopleService
         _signalRNotificationService = signalRNotificationService;
     }
 
+    /// <summary>
+    /// Retrieves a paginated list of people for a specific election with optional filtering.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="pageNumber">The page number to retrieve (1-based). Default is 1.</param>
+    /// <param name="pageSize">The number of people per page. Default is 50.</param>
+    /// <param name="search">Optional search string to filter people by name, email, or Bahai ID.</param>
+    /// <param name="canVote">Optional filter for people who can vote.</param>
+    /// <param name="canReceiveVotes">Optional filter for people who can receive votes.</param>
+    /// <returns>A paginated response containing person DTOs with their vote counts.</returns>
     public async Task<PaginatedResponse<PersonDto>> GetPeopleByElectionAsync(
         Guid electionGuid,
         int pageNumber = 1,
@@ -76,6 +97,11 @@ public class PeopleService : IPeopleService
         return PaginatedResponse<PersonDto>.Create(peopleDtos, pageNumber, pageSize, totalCount);
     }
 
+    /// <summary>
+    /// Retrieves a specific person by their unique identifier.
+    /// </summary>
+    /// <param name="personGuid">The unique identifier of the person.</param>
+    /// <returns>A PersonDto containing the person information with vote count, or null if not found.</returns>
     public async Task<PersonDto?> GetPersonByGuidAsync(Guid personGuid)
     {
         var person = await _context.People
@@ -93,6 +119,12 @@ public class PeopleService : IPeopleService
         return dto;
     }
 
+    /// <summary>
+    /// Creates a new person for an election.
+    /// </summary>
+    /// <param name="createDto">The data transfer object containing person creation information.</param>
+    /// <returns>A PersonDto representing the created person.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when a person with the same email or phone already exists.</exception>
     public async Task<PersonDto> CreatePersonAsync(CreatePersonDto createDto)
     {
         var existingPerson = await _context.People
@@ -142,6 +174,13 @@ public class PeopleService : IPeopleService
         return await GetPersonByGuidAsync(person.PersonGuid) ?? _mapper.Map<PersonDto>(person);
     }
 
+    /// <summary>
+    /// Updates an existing person with new information.
+    /// </summary>
+    /// <param name="personGuid">The unique identifier of the person to update.</param>
+    /// <param name="updateDto">The data transfer object containing updated person information.</param>
+    /// <returns>A PersonDto representing the updated person, or null if the person was not found.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when a person with the same email or phone already exists.</exception>
     public async Task<PersonDto?> UpdatePersonAsync(Guid personGuid, UpdatePersonDto updateDto)
     {
         var person = await _context.People.FirstOrDefaultAsync(p => p.PersonGuid == personGuid);
@@ -204,6 +243,11 @@ public class PeopleService : IPeopleService
         return await GetPersonByGuidAsync(personGuid);
     }
 
+    /// <summary>
+    /// Deletes a person by their unique identifier.
+    /// </summary>
+    /// <param name="personGuid">The unique identifier of the person to delete.</param>
+    /// <returns>True if the person was successfully deleted, false if the person was not found.</returns>
     public async Task<bool> DeletePersonAsync(Guid personGuid)
     {
         var person = await _context.People.FirstOrDefaultAsync(p => p.PersonGuid == personGuid);
@@ -235,6 +279,12 @@ public class PeopleService : IPeopleService
         return true;
     }
 
+    /// <summary>
+    /// Searches for people within an election by name, email, or Bahai ID.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election to search within.</param>
+    /// <param name="query">The search query string.</param>
+    /// <returns>A list of up to 20 PersonDto objects matching the search criteria.</returns>
     public async Task<List<PersonDto>> SearchPeopleAsync(Guid electionGuid, string query)
     {
         var searchLower = query.ToLower();

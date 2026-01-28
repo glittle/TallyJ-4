@@ -3,8 +3,15 @@ using TallyJ4.DTOs.People;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for CreatePersonDto that enforces person creation requirements.
+/// Validates election GUID, names, and contact information.
+/// </summary>
 public class CreatePersonDtoValidator : AbstractValidator<CreatePersonDto>
 {
+    /// <summary>
+    /// Initializes a new instance of the CreatePersonDtoValidator with validation rules.
+    /// </summary>
     public CreatePersonDtoValidator()
     {
         RuleFor(x => x.ElectionGuid)

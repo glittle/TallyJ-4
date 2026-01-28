@@ -4,17 +4,30 @@ using TallyJ4.Domain.Identity;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service for managing user account operations including profile management and password changes.
+/// </summary>
 public class AccountService : IAccountService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<AccountService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the AccountService.
+    /// </summary>
+    /// <param name="userManager">ASP.NET Core Identity user manager for user operations.</param>
+    /// <param name="logger">Logger for recording account service operations.</param>
     public AccountService(UserManager<AppUser> userManager, ILogger<AccountService> logger)
     {
         _userManager = userManager;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Retrieves the profile information for a specific user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <returns>A UserProfileDto containing the user's profile information, or null if the user is not found.</returns>
     public async Task<UserProfileDto?> GetUserProfileAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -35,6 +48,13 @@ public class AccountService : IAccountService
         };
     }
 
+    /// <summary>
+    /// Updates the profile information for a specific user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user to update.</param>
+    /// <param name="updateDto">The data transfer object containing the updated profile information.</param>
+    /// <returns>A UserProfileDto containing the updated user profile, or null if the user is not found.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the username or email is already taken.</exception>
     public async Task<UserProfileDto?> UpdateUserProfileAsync(string userId, UpdateUserProfileDto updateDto)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -97,6 +117,13 @@ public class AccountService : IAccountService
         return await GetUserProfileAsync(userId);
     }
 
+    /// <summary>
+    /// Changes the password for a specific user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user whose password to change.</param>
+    /// <param name="changePasswordDto">The data transfer object containing the password change information.</param>
+    /// <returns>True if the password was changed successfully, false if the user was not found.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when passwords don't match or the password change fails.</exception>
     public async Task<bool> ChangePasswordAsync(string userId, ChangePasswordDto changePasswordDto)
     {
         var user = await _userManager.FindByIdAsync(userId);

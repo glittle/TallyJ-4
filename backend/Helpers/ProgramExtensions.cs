@@ -11,8 +11,18 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace TallyJ4.Backend.Helpers;
 
+/// <summary>
+/// Extension methods for configuring ASP.NET Core services and middleware.
+/// Provides utility methods for setting up JSON serialization, database contexts, CORS, and OpenAPI specifications.
+/// </summary>
 public static class ProgramExtensions
 {
+  /// <summary>
+  /// Configures JSON serializer options for MVC builders.
+  /// Sets up reference handling, trailing commas, and enum conversion.
+  /// </summary>
+  /// <param name="builder">The MVC builder to configure.</param>
+  /// <returns>The configured MVC builder.</returns>
   public static IMvcBuilder AddJsonSerializerOptions(this IMvcBuilder builder)
   {
     builder.AddJsonOptions(
@@ -29,6 +39,11 @@ public static class ProgramExtensions
     return builder;
   }
 
+  /// <summary>
+  /// Registers a singleton JsonSerializerOptions instance with configured settings.
+  /// </summary>
+  /// <param name="services">The service collection to add the singleton to.</param>
+  /// <returns>The service collection with the singleton registered.</returns>
   public static IServiceCollection AddJsonSerializerOptionsSingleton(
     this IServiceCollection services
   )
@@ -48,6 +63,14 @@ public static class ProgramExtensions
     return services;
   }
 
+  /// <summary>
+  /// Registers a DbContext with SQL Server configuration and connection string.
+  /// </summary>
+  /// <typeparam name="TContext">The type of DbContext to register.</typeparam>
+  /// <param name="services">The service collection to add the DbContext to.</param>
+  /// <param name="connectionStringName">The name of the connection string configuration.</param>
+  /// <param name="connectionString">The connection string to use for the database.</param>
+  /// <returns>The service collection with the DbContext registered.</returns>
   public static IServiceCollection AddDbContext<TContext>(
     this IServiceCollection services,
     string connectionStringName,
@@ -115,6 +138,12 @@ public static class ProgramExtensions
     return services;
   }
 
+  /// <summary>
+  /// Configures CORS policy for local development with allowed origins from configuration.
+  /// </summary>
+  /// <param name="services">The service collection to add CORS to.</param>
+  /// <param name="config">The configuration manager containing CORS settings.</param>
+  /// <returns>The service collection with CORS configured.</returns>
   public static IServiceCollection AddLocalCors(
     this IServiceCollection services,
     ConfigurationManager config
@@ -139,6 +168,12 @@ public static class ProgramExtensions
     return services;
   }
 
+  /// <summary>
+  /// Writes the OpenAPI specification to a file for documentation purposes.
+  /// </summary>
+  /// <param name="app">The application builder.</param>
+  /// <param name="path">The file path where the OpenAPI spec should be written.</param>
+  /// <returns>The application builder.</returns>
   public static IApplicationBuilder WriteOpenApiSpecToFile(
     this IApplicationBuilder app,
     string path
