@@ -1,0 +1,5 @@
+{
+  "setup_script": "dotnet restore && cd frontend && npm install",
+  "dev_script": "cd frontend && npm run dev",
+  "verification_script": "dotnet build && cd frontend && npm run test"
+}
