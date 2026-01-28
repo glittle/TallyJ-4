@@ -6,6 +6,9 @@ using TallyJ4.Services;
 
 namespace TallyJ4.Backend.Controllers;
 
+/// <summary>
+/// Controller for managing vote operations including creation, retrieval, updates, and deletion.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -14,12 +17,22 @@ public class VotesController : ControllerBase
     private readonly IVoteService _voteService;
     private readonly ILogger<VotesController> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the VotesController.
+    /// </summary>
+    /// <param name="voteService">The vote service for vote operations.</param>
+    /// <param name="logger">The logger for recording operations.</param>
     public VotesController(IVoteService voteService, ILogger<VotesController> logger)
     {
         _voteService = voteService;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Gets all votes for a specific ballot.
+    /// </summary>
+    /// <param name="ballotGuid">The GUID of the ballot.</param>
+    /// <returns>A list of votes for the specified ballot.</returns>
     [HttpGet("ballot/{ballotGuid}")]
     public async Task<ActionResult<ApiResponse<List<VoteDto>>>> GetVotesByBallot(Guid ballotGuid)
     {
@@ -27,6 +40,11 @@ public class VotesController : ControllerBase
         return Ok(ApiResponse<List<VoteDto>>.SuccessResponse(votes));
     }
 
+    /// <summary>
+    /// Gets all votes for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <returns>A list of votes for the specified election.</returns>
     [HttpGet("election/{electionGuid}")]
     public async Task<ActionResult<ApiResponse<List<VoteDto>>>> GetVotesByElection(Guid electionGuid)
     {
@@ -34,6 +52,11 @@ public class VotesController : ControllerBase
         return Ok(ApiResponse<List<VoteDto>>.SuccessResponse(votes));
     }
 
+    /// <summary>
+    /// Gets a specific vote by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the vote.</param>
+    /// <returns>The vote information.</returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiResponse<VoteDto>>> GetVote(int id)
     {
@@ -47,6 +70,11 @@ public class VotesController : ControllerBase
         return Ok(ApiResponse<VoteDto>.SuccessResponse(vote));
     }
 
+    /// <summary>
+    /// Creates a new vote.
+    /// </summary>
+    /// <param name="createDto">The vote creation data.</param>
+    /// <returns>The created vote information.</returns>
     [HttpPost]
     public async Task<ActionResult<ApiResponse<VoteDto>>> CreateVote(CreateVoteDto createDto)
     {
@@ -61,6 +89,12 @@ public class VotesController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Updates an existing vote.
+    /// </summary>
+    /// <param name="id">The ID of the vote to update.</param>
+    /// <param name="updateDto">The updated vote data.</param>
+    /// <returns>The updated vote information.</returns>
     [HttpPut("{id}")]
     public async Task<ActionResult<ApiResponse<VoteDto>>> UpdateVote(int id, CreateVoteDto updateDto)
     {
@@ -81,6 +115,11 @@ public class VotesController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Deletes a vote by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the vote to delete.</param>
+    /// <returns>A success response if the vote was deleted, or not found if the vote doesn't exist.</returns>
     [HttpDelete("{id}")]
     public async Task<ActionResult<ApiResponse<object?>>> DeleteVote(int id)
     {

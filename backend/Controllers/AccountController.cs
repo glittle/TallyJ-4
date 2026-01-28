@@ -7,6 +7,9 @@ using TallyJ4.Services;
 
 namespace TallyJ4.Backend.Controllers;
 
+/// <summary>
+/// Controller for managing user account operations including profile management and password changes.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -15,12 +18,21 @@ public class AccountController : ControllerBase
     private readonly IAccountService _accountService;
     private readonly ILogger<AccountController> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the AccountController.
+    /// </summary>
+    /// <param name="accountService">The account service for user operations.</param>
+    /// <param name="logger">The logger for recording operations.</param>
     public AccountController(IAccountService accountService, ILogger<AccountController> logger)
     {
         _accountService = accountService;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Gets the profile information for the authenticated user.
+    /// </summary>
+    /// <returns>The user's profile information.</returns>
     [HttpGet("profile")]
     public async Task<ActionResult<ApiResponse<UserProfileDto>>> GetProfile()
     {
@@ -39,6 +51,11 @@ public class AccountController : ControllerBase
         return Ok(ApiResponse<UserProfileDto>.SuccessResponse(profile));
     }
 
+    /// <summary>
+    /// Updates the profile information for the authenticated user.
+    /// </summary>
+    /// <param name="updateDto">The updated profile information.</param>
+    /// <returns>The updated user profile.</returns>
     [HttpPut("profile")]
     public async Task<ActionResult<ApiResponse<UserProfileDto>>> UpdateProfile(UpdateUserProfileDto updateDto)
     {
@@ -65,6 +82,11 @@ public class AccountController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Changes the password for the authenticated user.
+    /// </summary>
+    /// <param name="changePasswordDto">The password change information including current and new passwords.</param>
+    /// <returns>A success response if the password was changed successfully.</returns>
     [HttpPost("change-password")]
     public async Task<ActionResult<ApiResponse<object>>> ChangePassword(ChangePasswordDto changePasswordDto)
     {

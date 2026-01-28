@@ -6,15 +6,29 @@ using TallyJ4.Domain.Context;
 
 namespace TallyJ4.Authorization;
 
+/// <summary>
+/// Authorization handler that validates user access to elections based on the ElectionAccessRequirement.
+/// Checks if the authenticated user is associated with the election specified in the route parameter.
+/// </summary>
 public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirement>
 {
     private readonly MainDbContext _context;
 
+    /// <summary>
+    /// Initializes a new instance of the ElectionAccessHandler.
+    /// </summary>
+    /// <param name="context">The main database context for accessing election user relationships.</param>
     public ElectionAccessHandler(MainDbContext context)
     {
         _context = context;
     }
 
+    /// <summary>
+    /// Handles the authorization requirement by checking if the user has access to the specified election.
+    /// </summary>
+    /// <param name="context">The authorization handler context containing user and resource information.</param>
+    /// <param name="requirement">The ElectionAccessRequirement being evaluated.</param>
+    /// <returns>A task representing the asynchronous authorization check.</returns>
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         ElectionAccessRequirement requirement)

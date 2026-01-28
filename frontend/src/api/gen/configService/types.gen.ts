@@ -748,6 +748,9 @@ export type GetApiAccountProfileResponses = {
 export type GetApiAccountProfileResponse = GetApiAccountProfileResponses[keyof GetApiAccountProfileResponses];
 
 export type PutApiAccountProfileData = {
+    /**
+     * The updated profile information.
+     */
     body?: UpdateUserProfileDto;
     path?: never;
     query?: never;
@@ -764,6 +767,9 @@ export type PutApiAccountProfileResponses = {
 export type PutApiAccountProfileResponse = PutApiAccountProfileResponses[keyof PutApiAccountProfileResponses];
 
 export type PostApiAccountChangePasswordData = {
+    /**
+     * The password change information including current and new passwords.
+     */
     body?: ChangePasswordDto;
     path?: never;
     query?: never;
@@ -969,10 +975,19 @@ export type GetApiAuthRolesAllResponses = {
 export type GetApiBallotsElectionByElectionGuidData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the election.
+         */
         electionGuid: string;
     };
     query?: {
+        /**
+         * The page number (starting from 1).
+         */
         pageNumber?: number;
+        /**
+         * The number of items per page (1-200).
+         */
         pageSize?: number;
     };
     url: '/api/Ballots/election/{electionGuid}';
@@ -990,6 +1005,9 @@ export type GetApiBallotsElectionByElectionGuidResponse = GetApiBallotsElectionB
 export type DeleteApiBallotsByGuidData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the ballot to delete.
+         */
         guid: string;
     };
     query?: never;
@@ -1006,6 +1024,9 @@ export type DeleteApiBallotsByGuidResponses = {
 export type GetApiBallotsByGuidData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the ballot.
+         */
         guid: string;
     };
     query?: never;
@@ -1022,8 +1043,14 @@ export type GetApiBallotsByGuidResponses = {
 export type GetApiBallotsByGuidResponse = GetApiBallotsByGuidResponses[keyof GetApiBallotsByGuidResponses];
 
 export type PutApiBallotsByGuidData = {
+    /**
+     * The updated ballot data.
+     */
     body?: UpdateBallotDto;
     path: {
+        /**
+         * The GUID of the ballot to update.
+         */
         guid: string;
     };
     query?: never;
@@ -1040,6 +1067,9 @@ export type PutApiBallotsByGuidResponses = {
 export type PutApiBallotsByGuidResponse = PutApiBallotsByGuidResponses[keyof PutApiBallotsByGuidResponses];
 
 export type PostApiBallotsData = {
+    /**
+     * The ballot creation data.
+     */
     body?: CreateBallotDto;
     path?: never;
     query?: never;
@@ -1824,22 +1854,6 @@ export type GetApiSetupElectionByGuidStatusResponses = {
 };
 
 export type GetApiSetupElectionByGuidStatusResponse = GetApiSetupElectionByGuidStatusResponses[keyof GetApiSetupElectionByGuidStatusResponses];
-
-export type GetProtectedData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/protected';
-};
-
-export type GetProtectedResponses = {
-    /**
-     * OK
-     */
-    200: string;
-};
-
-export type GetProtectedResponse = GetProtectedResponses[keyof GetProtectedResponses];
 
 export type GetApiVotesBallotByBallotGuidData = {
     body?: never;

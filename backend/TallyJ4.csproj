@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DefaultItemExcludes>$(DefaultItemExcludes);TallyJ4.Domain/**;TallyJ4.Application/**</DefaultItemExcludes>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

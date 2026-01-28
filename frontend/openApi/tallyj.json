@@ -11,6 +11,7 @@
         "tags": [
           "Account"
         ],
+        "summary": "Gets the profile information for the authenticated user.",
         "responses": {
           "200": {
             "description": "OK",
@@ -38,7 +39,9 @@
         "tags": [
           "Account"
         ],
+        "summary": "Updates the profile information for the authenticated user.",
         "requestBody": {
+          "description": "The updated profile information.",
           "content": {
             "application/json": {
               "schema": {
@@ -86,7 +89,9 @@
         "tags": [
           "Account"
         ],
+        "summary": "Changes the password for the authenticated user.",
         "requestBody": {
+          "description": "The password change information including current and new passwords.",
           "content": {
             "application/json": {
               "schema": {
@@ -489,10 +494,12 @@
         "tags": [
           "Ballots"
         ],
+        "summary": "Gets a paginated list of ballots for the specified election.",
         "parameters": [
           {
             "name": "electionGuid",
             "in": "path",
+            "description": "The GUID of the election.",
             "required": true,
             "schema": {
               "type": "string",
@@ -502,6 +509,7 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "The page number (starting from 1).",
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -511,6 +519,7 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "The number of items per page (1-200).",
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -547,10 +556,12 @@
         "tags": [
           "Ballots"
         ],
+        "summary": "Gets a specific ballot by its GUID.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the ballot.",
             "required": true,
             "schema": {
               "type": "string",
@@ -585,10 +596,12 @@
         "tags": [
           "Ballots"
         ],
+        "summary": "Updates an existing ballot.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the ballot to update.",
             "required": true,
             "schema": {
               "type": "string",
@@ -597,6 +610,7 @@
           }
         ],
         "requestBody": {
+          "description": "The updated ballot data.",
           "content": {
             "application/json": {
               "schema": {
@@ -642,10 +656,12 @@
         "tags": [
           "Ballots"
         ],
+        "summary": "Deletes a ballot by its GUID.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the ballot to delete.",
             "required": true,
             "schema": {
               "type": "string",
@@ -665,7 +681,9 @@
         "tags": [
           "Ballots"
         ],
+        "summary": "Creates a new ballot.",
         "requestBody": {
+          "description": "The ballot creation data.",
           "content": {
             "application/json": {
               "schema": {
@@ -2610,25 +2628,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ElectionSetupStatusDtoApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/protected": {
-      "get": {
-        "tags": [
-          "TallyJ4"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
                 }
               }
             }

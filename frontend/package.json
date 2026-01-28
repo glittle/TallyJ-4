@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "vite",
-    "gen": "npx openapi-ts --file openApi/config.backend.ts",
+    "start": "npm run gen && vite",
+    "gen": "npx openapi-ts --file ../openApi/config.backend.ts",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest",

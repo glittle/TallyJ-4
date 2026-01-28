@@ -2,11 +2,6 @@
 
 import type { GetApiDashboardElectionListResponse, GetApiDashboardElectionsResponse, GetApiDashboardIndexResponse, GetApiDashboardSummaryResponse, GetApiElectionsByGuidResponse, GetApiElectionsByGuidSummaryResponse, GetApiElectionsResponse, GetApiPublicElectionsByElectionGuidStatusResponse, GetApiPublicElectionsResponse, GetApiPublicHomeResponse, GetApiResultsElectionByElectionGuidDetailedStatisticsResponse, GetApiResultsElectionByElectionGuidFinalResponse, GetApiResultsElectionByElectionGuidMonitorResponse, GetApiResultsElectionByElectionGuidPresentationResponse, GetApiResultsElectionByElectionGuidReportResponse, GetApiResultsElectionByElectionGuidResponse, PostApiDashboardReloadElectionsResponse, PostApiElectionsResponse, PostApiResultsElectionByElectionGuidCalculateResponse, PostApiResultsElectionByElectionGuidMonitorRefreshResponse, PostApiSetupElectionStep1Response, PutApiElectionsByGuidResponse, PutApiSetupElectionByGuidStep2Response } from './types.gen';
 
-export const getApiDashboardSummaryResponseTransformer = async (data: any): Promise<GetApiDashboardSummaryResponse> => {
-    data = dashboardSummaryDtoApiResponseSchemaResponseTransformer(data);
-    return data;
-};
-
 const dashboardSummaryDtoApiResponseSchemaResponseTransformer = (data: any) => {
     if (data.data) {
         data.data = dashboardSummaryDtoSchemaResponseTransformer(data.data);
@@ -30,8 +25,8 @@ const electionCardDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiDashboardElectionsResponseTransformer = async (data: any): Promise<GetApiDashboardElectionsResponse> => {
-    data = electionCardDtoListApiResponseSchemaResponseTransformer(data);
+export const getApiDashboardSummaryResponseTransformer = async (data: any): Promise<GetApiDashboardSummaryResponse> => {
+    data = dashboardSummaryDtoApiResponseSchemaResponseTransformer(data);
     return data;
 };
 
@@ -41,6 +36,11 @@ const electionCardDtoListApiResponseSchemaResponseTransformer = (data: any) => {
             return electionCardDtoSchemaResponseTransformer(item);
         });
     }
+    return data;
+};
+
+export const getApiDashboardElectionsResponseTransformer = async (data: any): Promise<GetApiDashboardElectionsResponse> => {
+    data = electionCardDtoListApiResponseSchemaResponseTransformer(data);
     return data;
 };
 
@@ -56,11 +56,6 @@ export const getApiDashboardElectionListResponseTransformer = async (data: any):
 
 export const postApiDashboardReloadElectionsResponseTransformer = async (data: any): Promise<PostApiDashboardReloadElectionsResponse> => {
     data = electionCardDtoListApiResponseSchemaResponseTransformer(data);
-    return data;
-};
-
-export const getApiElectionsResponseTransformer = async (data: any): Promise<GetApiElectionsResponse> => {
-    data = electionSummaryDtoPaginatedResponseSchemaResponseTransformer(data);
     return data;
 };
 
@@ -80,8 +75,8 @@ const electionSummaryDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const postApiElectionsResponseTransformer = async (data: any): Promise<PostApiElectionsResponse> => {
-    data = electionDtoApiResponseSchemaResponseTransformer(data);
+export const getApiElectionsResponseTransformer = async (data: any): Promise<GetApiElectionsResponse> => {
+    data = electionSummaryDtoPaginatedResponseSchemaResponseTransformer(data);
     return data;
 };
 
@@ -105,6 +100,11 @@ const electionDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
+export const postApiElectionsResponseTransformer = async (data: any): Promise<PostApiElectionsResponse> => {
+    data = electionDtoApiResponseSchemaResponseTransformer(data);
+    return data;
+};
+
 export const getApiElectionsByGuidResponseTransformer = async (data: any): Promise<GetApiElectionsByGuidResponse> => {
     data = electionDtoApiResponseSchemaResponseTransformer(data);
     return data;
@@ -117,11 +117,6 @@ export const putApiElectionsByGuidResponseTransformer = async (data: any): Promi
 
 export const getApiElectionsByGuidSummaryResponseTransformer = async (data: any): Promise<GetApiElectionsByGuidSummaryResponse> => {
     data = electionDtoApiResponseSchemaResponseTransformer(data);
-    return data;
-};
-
-export const getApiPublicHomeResponseTransformer = async (data: any): Promise<GetApiPublicHomeResponse> => {
-    data = publicHomeDtoApiResponseSchemaResponseTransformer(data);
     return data;
 };
 
@@ -139,8 +134,8 @@ const publicHomeDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiPublicElectionsResponseTransformer = async (data: any): Promise<GetApiPublicElectionsResponse> => {
-    data = availableElectionDtoListApiResponseSchemaResponseTransformer(data);
+export const getApiPublicHomeResponseTransformer = async (data: any): Promise<GetApiPublicHomeResponse> => {
+    data = publicHomeDtoApiResponseSchemaResponseTransformer(data);
     return data;
 };
 
@@ -160,8 +155,8 @@ const availableElectionDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiPublicElectionsByElectionGuidStatusResponseTransformer = async (data: any): Promise<GetApiPublicElectionsByElectionGuidStatusResponse> => {
-    data = electionStatusDtoApiResponseSchemaResponseTransformer(data);
+export const getApiPublicElectionsResponseTransformer = async (data: any): Promise<GetApiPublicElectionsResponse> => {
+    data = availableElectionDtoListApiResponseSchemaResponseTransformer(data);
     return data;
 };
 
@@ -179,8 +174,8 @@ const electionStatusDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const postApiResultsElectionByElectionGuidCalculateResponseTransformer = async (data: any): Promise<PostApiResultsElectionByElectionGuidCalculateResponse> => {
-    data = tallyResultDtoSchemaResponseTransformer(data);
+export const getApiPublicElectionsByElectionGuidStatusResponseTransformer = async (data: any): Promise<GetApiPublicElectionsByElectionGuidStatusResponse> => {
+    data = electionStatusDtoApiResponseSchemaResponseTransformer(data);
     return data;
 };
 
@@ -191,6 +186,11 @@ const tallyResultDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
+export const postApiResultsElectionByElectionGuidCalculateResponseTransformer = async (data: any): Promise<PostApiResultsElectionByElectionGuidCalculateResponse> => {
+    data = tallyResultDtoSchemaResponseTransformer(data);
+    return data;
+};
+
 export const getApiResultsElectionByElectionGuidResponseTransformer = async (data: any): Promise<GetApiResultsElectionByElectionGuidResponse> => {
     data = tallyResultDtoSchemaResponseTransformer(data);
     return data;
@@ -198,11 +198,6 @@ export const getApiResultsElectionByElectionGuidResponseTransformer = async (dat
 
 export const getApiResultsElectionByElectionGuidFinalResponseTransformer = async (data: any): Promise<GetApiResultsElectionByElectionGuidFinalResponse> => {
     data = tallyResultDtoSchemaResponseTransformer(data);
-    return data;
-};
-
-export const postApiResultsElectionByElectionGuidMonitorRefreshResponseTransformer = async (data: any): Promise<PostApiResultsElectionByElectionGuidMonitorRefreshResponse> => {
-    data = monitorInfoDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -238,13 +233,13 @@ const onlineVotingInfoDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiResultsElectionByElectionGuidMonitorResponseTransformer = async (data: any): Promise<GetApiResultsElectionByElectionGuidMonitorResponse> => {
+export const postApiResultsElectionByElectionGuidMonitorRefreshResponseTransformer = async (data: any): Promise<PostApiResultsElectionByElectionGuidMonitorRefreshResponse> => {
     data = monitorInfoDtoSchemaResponseTransformer(data);
     return data;
 };
 
-export const getApiResultsElectionByElectionGuidReportResponseTransformer = async (data: any): Promise<GetApiResultsElectionByElectionGuidReportResponse> => {
-    data = electionReportDtoSchemaResponseTransformer(data);
+export const getApiResultsElectionByElectionGuidMonitorResponseTransformer = async (data: any): Promise<GetApiResultsElectionByElectionGuidMonitorResponse> => {
+    data = monitorInfoDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -255,8 +250,8 @@ const electionReportDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiResultsElectionByElectionGuidPresentationResponseTransformer = async (data: any): Promise<GetApiResultsElectionByElectionGuidPresentationResponse> => {
-    data = presentationDtoSchemaResponseTransformer(data);
+export const getApiResultsElectionByElectionGuidReportResponseTransformer = async (data: any): Promise<GetApiResultsElectionByElectionGuidReportResponse> => {
+    data = electionReportDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -267,8 +262,8 @@ const presentationDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiResultsElectionByElectionGuidDetailedStatisticsResponseTransformer = async (data: any): Promise<GetApiResultsElectionByElectionGuidDetailedStatisticsResponse> => {
-    data = detailedStatisticsDtoSchemaResponseTransformer(data);
+export const getApiResultsElectionByElectionGuidPresentationResponseTransformer = async (data: any): Promise<GetApiResultsElectionByElectionGuidPresentationResponse> => {
+    data = presentationDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -302,6 +297,11 @@ const timeBasedTurnoutDtoSchemaResponseTransformer = (data: any) => {
     if (data.timePeriod) {
         data.timePeriod = new Date(data.timePeriod);
     }
+    return data;
+};
+
+export const getApiResultsElectionByElectionGuidDetailedStatisticsResponseTransformer = async (data: any): Promise<GetApiResultsElectionByElectionGuidDetailedStatisticsResponse> => {
+    data = detailedStatisticsDtoSchemaResponseTransformer(data);
     return data;
 };
 
