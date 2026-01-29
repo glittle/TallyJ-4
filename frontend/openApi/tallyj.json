@@ -139,7 +139,9 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Registers a new user account.",
         "requestBody": {
+          "description": "The registration request containing user details.",
           "content": {
             "application/json": {
               "schema": {
@@ -170,7 +172,9 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Authenticates a user and returns access tokens.",
         "requestBody": {
+          "description": "The login request containing email and password.",
           "content": {
             "application/json": {
               "schema": {
@@ -201,7 +205,9 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Initiates a password reset by sending a reset email to the user.",
         "requestBody": {
+          "description": "The forgot password request containing the user's email.",
           "content": {
             "application/json": {
               "schema": {
@@ -232,7 +238,9 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Resets a user's password using a reset token.",
         "requestBody": {
+          "description": "The reset password request containing the token and new password.",
           "content": {
             "application/json": {
               "schema": {
@@ -263,6 +271,7 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Sets up two-factor authentication for the authenticated user.",
         "responses": {
           "200": {
             "description": "OK"
@@ -275,7 +284,9 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Enables two-factor authentication for the authenticated user.",
         "requestBody": {
+          "description": "The enable 2FA request containing the verification code.",
           "content": {
             "application/json": {
               "schema": {
@@ -306,7 +317,9 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Disables two-factor authentication for the authenticated user.",
         "requestBody": {
+          "description": "The disable 2FA request containing the verification code.",
           "content": {
             "application/json": {
               "schema": {
@@ -337,7 +350,9 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Verifies a two-factor authentication code for login.",
         "requestBody": {
+          "description": "The verify 2FA request containing email and verification code.",
           "content": {
             "application/json": {
               "schema": {
@@ -368,7 +383,9 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Refreshes an access token using a valid refresh token.",
         "requestBody": {
+          "description": "The refresh token request containing the refresh token.",
           "content": {
             "application/json": {
               "schema": {
@@ -399,6 +416,7 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Gets the roles assigned to the authenticated user.",
         "responses": {
           "200": {
             "description": "OK"
@@ -411,10 +429,12 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Assigns a role to a user. Requires admin privileges.",
         "parameters": [
           {
             "name": "userId",
             "in": "path",
+            "description": "The ID of the user to assign the role to.",
             "required": true,
             "schema": {
               "type": "string"
@@ -422,6 +442,7 @@
           }
         ],
         "requestBody": {
+          "description": "The assign role request containing the role name.",
           "content": {
             "application/json": {
               "schema": {
@@ -452,10 +473,12 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Removes a role from a user. Requires admin privileges.",
         "parameters": [
           {
             "name": "userId",
             "in": "path",
+            "description": "The ID of the user to remove the role from.",
             "required": true,
             "schema": {
               "type": "string"
@@ -464,6 +487,7 @@
           {
             "name": "roleName",
             "in": "path",
+            "description": "The name of the role to remove.",
             "required": true,
             "schema": {
               "type": "string"
@@ -482,6 +506,7 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Gets all available roles in the system. Requires admin privileges.",
         "responses": {
           "200": {
             "description": "OK"
@@ -1240,10 +1265,12 @@
         "tags": [
           "Elections"
         ],
+        "summary": "Gets a paginated list of elections with optional status filtering.",
         "parameters": [
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "The page number (starting from 1).",
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -1253,6 +1280,7 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "The number of items per page (1-100).",
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -1262,6 +1290,7 @@
           {
             "name": "status",
             "in": "query",
+            "description": "Optional status filter for elections.",
             "schema": {
               "type": "string"
             }
@@ -1294,7 +1323,9 @@
         "tags": [
           "Elections"
         ],
+        "summary": "Creates a new election.",
         "requestBody": {
+          "description": "The election creation data.",
           "content": {
             "application/json": {
               "schema": {
@@ -1342,10 +1373,12 @@
         "tags": [
           "Elections"
         ],
+        "summary": "Gets a specific election by its GUID.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the election.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1380,10 +1413,12 @@
         "tags": [
           "Elections"
         ],
+        "summary": "Updates an existing election.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the election to update.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1392,6 +1427,7 @@
           }
         ],
         "requestBody": {
+          "description": "The updated election data.",
           "content": {
             "application/json": {
               "schema": {
@@ -1437,10 +1473,12 @@
         "tags": [
           "Elections"
         ],
+        "summary": "Deletes an election by its GUID.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the election to delete.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1460,10 +1498,12 @@
         "tags": [
           "Elections"
         ],
+        "summary": "Gets a summary of a specific election by its GUID.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the election.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1500,10 +1540,12 @@
         "tags": [
           "Import"
         ],
+        "summary": "Imports ballot data from CSV content for a specific election.",
         "parameters": [
           {
             "name": "electionGuid",
             "in": "path",
+            "description": "The GUID of the election to import data into.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1512,6 +1554,7 @@
           }
         ],
         "requestBody": {
+          "description": "The import request containing CSV data.",
           "content": {
             "application/json": {
               "schema": {
@@ -1542,10 +1585,12 @@
         "tags": [
           "People"
         ],
+        "summary": "Gets a paginated list of people for the specified election with optional filtering.",
         "parameters": [
           {
             "name": "electionGuid",
             "in": "path",
+            "description": "The GUID of the election.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1555,6 +1600,7 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "The page number (starting from 1).",
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -1564,6 +1610,7 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "The number of items per page (1-200).",
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -1573,6 +1620,7 @@
           {
             "name": "search",
             "in": "query",
+            "description": "Optional search term to filter people by name.",
             "schema": {
               "type": "string"
             }
@@ -1580,6 +1628,7 @@
           {
             "name": "canVote",
             "in": "query",
+            "description": "Optional filter for people who can vote.",
             "schema": {
               "type": "boolean"
             }
@@ -1587,6 +1636,7 @@
           {
             "name": "canReceiveVotes",
             "in": "query",
+            "description": "Optional filter for people who can receive votes.",
             "schema": {
               "type": "boolean"
             }
@@ -1621,10 +1671,12 @@
         "tags": [
           "People"
         ],
+        "summary": "Searches for people within an election by name.",
         "parameters": [
           {
             "name": "electionGuid",
             "in": "path",
+            "description": "The GUID of the election to search in.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1634,6 +1686,7 @@
           {
             "name": "q",
             "in": "query",
+            "description": "The search query string.",
             "schema": {
               "type": "string"
             }
@@ -1668,10 +1721,12 @@
         "tags": [
           "People"
         ],
+        "summary": "Gets a specific person by their GUID.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the person.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1706,10 +1761,12 @@
         "tags": [
           "People"
         ],
+        "summary": "Updates an existing person.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the person to update.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1718,6 +1775,7 @@
           }
         ],
         "requestBody": {
+          "description": "The updated person data.",
           "content": {
             "application/json": {
               "schema": {
@@ -1763,10 +1821,12 @@
         "tags": [
           "People"
         ],
+        "summary": "Deletes a person by their GUID.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the person to delete.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1786,7 +1846,9 @@
         "tags": [
           "People"
         ],
+        "summary": "Creates a new person.",
         "requestBody": {
+          "description": "The person creation data.",
           "content": {
             "application/json": {
               "schema": {
@@ -1834,6 +1896,7 @@
         "tags": [
           "Public"
         ],
+        "summary": "Gets public home page data including system information.",
         "responses": {
           "200": {
             "description": "OK",
@@ -1863,6 +1926,7 @@
         "tags": [
           "Public"
         ],
+        "summary": "Gets a list of all available elections that are open for public access.",
         "responses": {
           "200": {
             "description": "OK",
@@ -1892,10 +1956,12 @@
         "tags": [
           "Public"
         ],
+        "summary": "Gets the current status of a specific election.",
         "parameters": [
           {
             "name": "electionGuid",
             "in": "path",
+            "description": "The GUID of the election to check.",
             "required": true,
             "schema": {
               "type": "string",
@@ -1932,6 +1998,7 @@
         "tags": [
           "Public"
         ],
+        "summary": "Performs a health check to verify the service is running properly.",
         "responses": {
           "200": {
             "description": "OK",
@@ -1952,6 +2019,48 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/Reports/export/{electionId}": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "parameters": [
+          {
+            "name": "electionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -2493,7 +2602,9 @@
         "tags": [
           "Setup"
         ],
+        "summary": "Creates a new election with basic information (Step 1 of setup).",
         "requestBody": {
+          "description": "The basic election setup information.",
           "content": {
             "application/json": {
               "schema": {
@@ -2541,10 +2652,12 @@
         "tags": [
           "Setup"
         ],
+        "summary": "Configures additional election settings (Step 2 of setup).",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the election to configure.",
             "required": true,
             "schema": {
               "type": "string",
@@ -2553,6 +2666,7 @@
           }
         ],
         "requestBody": {
+          "description": "The additional election configuration information.",
           "content": {
             "application/json": {
               "schema": {
@@ -2600,10 +2714,12 @@
         "tags": [
           "Setup"
         ],
+        "summary": "Gets the current setup status of an election.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The GUID of the election to check.",
             "required": true,
             "schema": {
               "type": "string",
@@ -2640,10 +2756,12 @@
         "tags": [
           "Votes"
         ],
+        "summary": "Gets all votes for a specific ballot.",
         "parameters": [
           {
             "name": "ballotGuid",
             "in": "path",
+            "description": "The GUID of the ballot.",
             "required": true,
             "schema": {
               "type": "string",
@@ -2680,10 +2798,12 @@
         "tags": [
           "Votes"
         ],
+        "summary": "Gets all votes for a specific election.",
         "parameters": [
           {
             "name": "electionGuid",
             "in": "path",
+            "description": "The GUID of the election.",
             "required": true,
             "schema": {
               "type": "string",
@@ -2720,10 +2840,12 @@
         "tags": [
           "Votes"
         ],
+        "summary": "Gets a specific vote by its ID.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "The ID of the vote.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2758,10 +2880,12 @@
         "tags": [
           "Votes"
         ],
+        "summary": "Updates an existing vote.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "The ID of the vote to update.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2770,6 +2894,7 @@
           }
         ],
         "requestBody": {
+          "description": "The updated vote data.",
           "content": {
             "application/json": {
               "schema": {
@@ -2815,10 +2940,12 @@
         "tags": [
           "Votes"
         ],
+        "summary": "Deletes a vote by its ID.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "The ID of the vote to delete.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2855,7 +2982,9 @@
         "tags": [
           "Votes"
         ],
+        "summary": "Creates a new vote.",
         "requestBody": {
+          "description": "The vote creation data.",
           "content": {
             "application/json": {
               "schema": {
@@ -2941,17 +3070,20 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AvailableElectionDto"
             },
+            "description": "The data returned by the API operation, if successful.",
             "nullable": true
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -2959,10 +3091,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "BallotDto": {
         "type": "object",
@@ -3021,13 +3155,15 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "$ref": "#/components/schemas/BallotDto"
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -3035,10 +3171,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "BallotDtoPaginatedResponse": {
         "type": "object",
@@ -3048,47 +3186,58 @@
             "items": {
               "$ref": "#/components/schemas/BallotDto"
             },
+            "description": "The items on the current page.",
             "nullable": true
           },
           "pageNumber": {
             "type": "integer",
+            "description": "The current page number (1-based).",
             "format": "int32"
           },
           "pageSize": {
             "type": "integer",
+            "description": "The number of items per page.",
             "format": "int32"
           },
           "totalCount": {
             "type": "integer",
+            "description": "The total number of items across all pages.",
             "format": "int32"
           },
           "totalPages": {
             "type": "integer",
+            "description": "The total number of pages available.",
             "format": "int32",
             "readOnly": true
           },
           "hasPreviousPage": {
             "type": "boolean",
+            "description": "Indicates whether there is a previous page available.",
             "readOnly": true
           },
           "hasNextPage": {
             "type": "boolean",
+            "description": "Indicates whether there is a next page available.",
             "readOnly": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
       },
       "BooleanApiResponse": {
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "The data returned by the API operation, if successful."
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -3096,10 +3245,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "CandidatePerformanceDto": {
         "type": "object",
@@ -3460,13 +3611,15 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "$ref": "#/components/schemas/DashboardSummaryDto"
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -3474,10 +3627,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "DeleteTellerRequest": {
         "type": "object",
@@ -3610,17 +3765,20 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ElectionCardDto"
             },
+            "description": "The data returned by the API operation, if successful.",
             "nullable": true
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -3628,10 +3786,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ElectionDto": {
         "type": "object",
@@ -3716,13 +3876,15 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "$ref": "#/components/schemas/ElectionDto"
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -3730,10 +3892,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ElectionOverviewDto": {
         "type": "object",
@@ -3874,13 +4038,15 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "$ref": "#/components/schemas/ElectionSetupStatusDto"
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -3888,10 +4054,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ElectionStatusDto": {
         "type": "object",
@@ -3935,13 +4103,15 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "$ref": "#/components/schemas/ElectionStatusDto"
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -3949,10 +4119,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ElectionStep1Dto": {
         "type": "object",
@@ -4034,35 +4206,43 @@
             "items": {
               "$ref": "#/components/schemas/ElectionSummaryDto"
             },
+            "description": "The items on the current page.",
             "nullable": true
           },
           "pageNumber": {
             "type": "integer",
+            "description": "The current page number (1-based).",
             "format": "int32"
           },
           "pageSize": {
             "type": "integer",
+            "description": "The number of items per page.",
             "format": "int32"
           },
           "totalCount": {
             "type": "integer",
+            "description": "The total number of items across all pages.",
             "format": "int32"
           },
           "totalPages": {
             "type": "integer",
+            "description": "The total number of pages available.",
             "format": "int32",
             "readOnly": true
           },
           "hasPreviousPage": {
             "type": "boolean",
+            "description": "Indicates whether there is a previous page available.",
             "readOnly": true
           },
           "hasNextPage": {
             "type": "boolean",
+            "description": "Indicates whether there is a next page available.",
             "readOnly": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
       },
       "Enable2FARequest": {
         "required": [
@@ -4077,6 +4257,31 @@
           }
         },
         "additionalProperties": false
+      },
+      "ExportRequest": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string",
+            "description": "The format of the exported report (PDF or Excel).",
+            "nullable": true
+          },
+          "electionId": {
+            "type": "string",
+            "description": "The unique identifier of the election to export.",
+            "format": "uuid"
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Optional filters to apply to the export (e.g., date ranges, locations).",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request DTO for exporting election reports in different formats."
       },
       "ForgotPasswordRequest": {
         "required": [
@@ -4097,10 +4302,12 @@
         "properties": {
           "csvContent": {
             "type": "string",
+            "description": "The CSV content containing ballot data to import.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Request model for importing ballot data."
       },
       "LocationInfoDto": {
         "type": "object",
@@ -4240,13 +4447,16 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
+            "description": "The data returned by the API operation, if successful.",
             "nullable": true
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -4254,10 +4464,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "OnlineVotingInfoDto": {
         "type": "object",
@@ -4395,13 +4607,15 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "$ref": "#/components/schemas/PersonDto"
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -4409,26 +4623,31 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "PersonDtoListApiResponse": {
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PersonDto"
             },
+            "description": "The data returned by the API operation, if successful.",
             "nullable": true
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -4436,10 +4655,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "PersonDtoPaginatedResponse": {
         "type": "object",
@@ -4449,35 +4670,43 @@
             "items": {
               "$ref": "#/components/schemas/PersonDto"
             },
+            "description": "The items on the current page.",
             "nullable": true
           },
           "pageNumber": {
             "type": "integer",
+            "description": "The current page number (1-based).",
             "format": "int32"
           },
           "pageSize": {
             "type": "integer",
+            "description": "The number of items per page.",
             "format": "int32"
           },
           "totalCount": {
             "type": "integer",
+            "description": "The total number of items across all pages.",
             "format": "int32"
           },
           "totalPages": {
             "type": "integer",
+            "description": "The total number of pages available.",
             "format": "int32",
             "readOnly": true
           },
           "hasPreviousPage": {
             "type": "boolean",
+            "description": "Indicates whether there is a previous page available.",
             "readOnly": true
           },
           "hasNextPage": {
             "type": "boolean",
+            "description": "Indicates whether there is a next page available.",
             "readOnly": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
       },
       "PresentationCandidateDto": {
         "type": "object",
@@ -4612,13 +4841,15 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "$ref": "#/components/schemas/PublicHomeDto"
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -4626,10 +4857,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "RefreshTokenRequest": {
         "required": [
@@ -5194,13 +5427,15 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "$ref": "#/components/schemas/UserProfileDto"
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -5208,10 +5443,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "Verify2FARequest": {
         "required": [
@@ -5314,13 +5551,15 @@
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "$ref": "#/components/schemas/VoteDto"
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -5328,26 +5567,31 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "VoteDtoListApiResponse": {
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
           },
           "data": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/VoteDto"
             },
+            "description": "The data returned by the API operation, if successful.",
             "nullable": true
           },
           "message": {
             "type": "string",
+            "description": "An optional message providing additional information about the response.",
             "nullable": true
           },
           "errors": {
@@ -5355,10 +5599,12 @@
             "items": {
               "type": "string"
             },
+            "description": "A list of error messages, if the operation failed.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       }
     },
     "securitySchemes": {

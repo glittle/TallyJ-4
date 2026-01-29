@@ -547,6 +547,7 @@ import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 
 import { useResultStore } from '../../stores/resultStore';
+import { reportsApi } from '../../api/reports';
 import type { ElectionReportDto, ReportDataResponseDto, DetailedStatisticsDto } from '../../types';
 
 const router = useRouter();
@@ -606,10 +607,28 @@ async function generateReport() {
   }
 }
 
-function exportReport(format: 'pdf' | 'excel') {
-  // This would typically call an API endpoint to generate and download the file
-  ElMessage.info(`${t('reporting.exportStarted')} ${format.toUpperCase()}`);
-  // TODO: Implement actual export functionality
+async function exportReport(format: 'pdf' | 'excel') {
+  try {
+    ElMessage.info(`${t('reporting.exportStarted')} ${format.toUpperCase()}`);
+
+    const blob = await reportsApi.exportReport(electionGuid, { format });
+
+    // Create a download link
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `election-report-${electionGuid}.${format}`;
+    document.body.appendChild(link);
+    link.click();
+
+    // Clean up
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    ElMessage.success(`${t('reporting.exportCompleted')} ${format.toUpperCase()}`);
+  } catch (error) {
+    ElMessage.error(t('reporting.exportError'));
+  }
 }
 
 function printReport() {
