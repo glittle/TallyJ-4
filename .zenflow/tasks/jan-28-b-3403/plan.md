@@ -76,7 +76,8 @@ Add POST /api/reports/export/{electionId} endpoint to Controllers/ReportsControl
 
 Add export function to src/api/reports.ts to call the new backend endpoint.
 
-### [ ] Step: Update ReportingPage export function
+### [x] Step: Update ReportingPage export function
+<!-- chat-id: 2be652ee-0a13-49aa-8e33-0fbeaf7af56b -->
 
 Modify exportReport function in src/pages/results/ReportingPage.vue to call the API and handle file download.
 
