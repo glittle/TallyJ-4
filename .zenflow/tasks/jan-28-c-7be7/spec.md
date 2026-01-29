@@ -1,25 +1,41 @@
-# Spec and build
+# Technical Specification: TallyJ 4 Real-time Features Implementation
 
-## Configuration
-- **Artifacts Path**: {@artifacts_path} → `.zenflow/tasks/{task_id}`
+## Technical Context
+- **Backend**: ASP.NET Core Web API (.NET 10.0) with SignalR hubs for real-time communication
+- **Frontend**: Vue 3 + TypeScript with Microsoft SignalR client
+- **Database**: SQL Server with Entity Framework Core
+- **Current Status**: Backend SignalR infrastructure exists but frontend integration is incomplete
 
----
+## Implementation Approach
+Based on the review of previous tasks, focus on fixing critical SignalR integration issues and implementing missing real-time features. Follow established patterns from the codebase:
+- Use existing Pinia stores for state management
+- Leverage signalrService.ts for connection management
+- Implement event-driven updates in stores
+- Maintain consistent error handling and logging
 
-## Agent Instructions
+## Source Code Structure Changes
+### Frontend Changes
+- **src/stores/resultStore.ts**: Fix event name casing for tally progress updates
+- **src/stores/ballotStore.ts**: Add SignalR integration for ballot status updates
+- **src/pages/results/TallyCalculationPage.vue**: Ensure proper SignalR initialization
+- **src/pages/ballots/BallotEntryPage.vue**: Create new page with real-time ballot updates
 
-Ask the user questions when anything is unclear or needs their input. This includes:
-- Ambiguous or incomplete requirements
-- Technical decisions that affect architecture or user experience
-- Trade-offs that require business context
+### Backend Changes
+- **Services/SignalRNotificationService.cs**: Update group naming to match frontend expectations
+- **Hubs/AnalyzeHub.cs**: Ensure consistent event name casing
 
-Do not make assumptions on important decisions — get clarification first.
+## Data Model / API / Interface Changes
+- **SignalR Events**: Standardize event names between backend and frontend (lowercase)
+- **Group Names**: Align group naming conventions (e.g., "Analyze{electionGuid}")
+- **No database schema changes required**
 
----
-
-## Workflow Steps
-
-### [x] Step: Technical Specification
-<!-- chat-id: fbe834ba-2d37-40fb-a095-43159d892226 -->
+## Verification Approach
+- Unit tests for SignalR event handling
+- Manual testing with multiple browser sessions
+- Run `dotnet test` for backend tests
+- Run `npm run test` for frontend tests
+- Verify real-time updates work across clients</content>
+</xai:function_call">### Step: Technical Specification
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
