@@ -129,13 +129,30 @@ export const useElectionStore = defineStore('election', () => {
 
     try {
       const connection = await signalrService.connectToMainHub();
-      
-      connection.on('ElectionUpdated', (data: ElectionUpdateEvent) => {
-        handleElectionUpdate(data);
+
+      connection.on('statusChanged', (data: any) => {
+        // MainHub sends statusChanged with infoForKnown and infoForGuest
+        // For now, we'll handle the known user info
+        if (data && typeof data === 'object') {
+          const updateEvent: ElectionUpdateEvent = {
+            electionGuid: data.electionGuid || '',
+            name: data.name,
+            tallyStatus: data.tallyStatus,
+            electionStatus: data.electionStatus,
+            updatedAt: data.updatedAt || new Date().toISOString()
+          };
+          handleElectionUpdate(updateEvent);
+        }
       });
 
-      connection.on('ElectionStatusChanged', (data: ElectionUpdateEvent) => {
-        handleElectionUpdate(data);
+      connection.on('electionClosed', (electionGuid: string) => {
+        // Handle election closed event
+        const updateEvent: ElectionUpdateEvent = {
+          electionGuid,
+          electionStatus: 'Closed',
+          updatedAt: new Date().toISOString()
+        };
+        handleElectionUpdate(updateEvent);
       });
 
       signalrInitialized.value = true;

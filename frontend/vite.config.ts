@@ -2,6 +2,8 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import { fileURLToPath, URL } from "node:url";
+import { visualizer } from 'rollup-plugin-visualizer';
+import viteCompression from 'vite-plugin-compression';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -19,6 +21,22 @@ export default defineConfig({
       include: [
         fileURLToPath(new URL("./src/locales/**/*.json", import.meta.url)),
       ],
+    }),
+    // Bundle analyzer - generates stats.html
+    visualizer({
+      filename: 'dist/stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+    // Compression for assets
+    viteCompression({
+      algorithm: 'gzip',
+      ext: '.gz',
+    }),
+    viteCompression({
+      algorithm: 'brotliCompress',
+      ext: '.br',
     }),
   ],
   build: {
@@ -64,8 +82,18 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
-    minify: 'esbuild',
+    minify: 'terser', // Use terser for better compression
     sourcemap: false, // Disable sourcemaps in production
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console.log in production
+        drop_debugger: true, // Remove debugger statements
+      },
+    },
+    // Optimize assets
+    assetsInlineLimit: 4096, // Inline assets smaller than 4kb
+    cssCodeSplit: true, // Split CSS into separate chunks
+    reportCompressedSize: true, // Report compressed sizes
   },
   publicDir: 'public', // Ensure service worker is copied
 });

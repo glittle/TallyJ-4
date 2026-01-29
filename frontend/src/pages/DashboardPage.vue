@@ -165,47 +165,80 @@ function getStatusType(status: string) {
 </script>
 
 <style scoped>
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
 .dashboard-page {
   max-width: 1400px;
   margin: 0 auto;
+  padding: var(--spacing-6) var(--spacing-4);
+}
+
+.welcome-section {
+  margin-bottom: var(--spacing-8);
 }
 
 .welcome-card {
-  margin-bottom: 20px;
   text-align: center;
+  transition: var(--transition-normal);
+}
+
+.welcome-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .welcome-card h1 {
-  margin: 0 0 10px 0;
-  color: #303133;
+  margin: 0 0 var(--spacing-3) 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
 }
 
 .welcome-card p {
   margin: 0;
-  color: #606266;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+}
+
+.stats-section {
+  margin-bottom: var(--spacing-8);
 }
 
 .stats-row {
-  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-6);
 }
 
 .stat-card {
   display: flex;
   align-items: center;
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: var(--spacing-6);
+  transition: var(--transition-normal);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  opacity: 0;
+  transition: var(--transition-normal);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.stat-card:hover::before {
+  opacity: 1;
 }
 
 :deep(.stat-card .el-card__body) {
@@ -213,156 +246,277 @@ function getStatusType(status: string) {
   align-items: center;
   width: 100%;
   padding: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .stat-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 15px;
+  margin-right: var(--spacing-4);
+  flex-shrink: 0;
+  transition: var(--transition-normal);
 }
 
 .stat-icon.elections {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .stat-icon.active {
   background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.3);
 }
 
 .stat-icon.voters {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
 }
 
 .stat-icon.ballots {
   background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3);
 }
 
 .stat-icon :deep(.el-icon) {
-  font-size: 28px;
+  font-size: 1.75rem;
   color: white;
+  transition: var(--transition-normal);
+}
+
+.stat-card:hover .stat-icon {
+  transform: scale(1.1);
 }
 
 .stat-content {
   flex: 1;
+  min-width: 0;
 }
 
 .stat-value {
-  font-size: 28px;
-  font-weight: 600;
-  color: #303133;
-  line-height: 1;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--spacing-1);
+  display: block;
 }
 
 .stat-label {
-  font-size: 14px;
-  color: #909399;
-  margin-top: 5px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.recent-elections-section {
+  margin-bottom: var(--spacing-8);
 }
 
 .recent-elections-card {
-  margin-bottom: 20px;
+  transition: var(--transition-normal);
+}
+
+.recent-elections-card:hover {
+  box-shadow: var(--shadow-lg);
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: var(--spacing-4);
+}
+
+.card-header h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
 }
 
 .loading-container {
-  padding: 20px;
+  padding: var(--spacing-8);
+  text-align: center;
 }
 
 .empty-state {
-  padding: 40px 20px;
+  padding: var(--spacing-12) var(--spacing-6);
+  text-align: center;
+}
+
+.empty-state :deep(.el-empty__description p) {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .dashboard-page {
-    padding: 0 10px;
+    padding: var(--spacing-4) var(--spacing-3);
   }
 
-  .welcome-card {
-    margin-bottom: 15px;
-    text-align: center;
+  .welcome-section {
+    margin-bottom: var(--spacing-6);
   }
 
   .welcome-card h1 {
-    font-size: 1.5rem;
+    font-size: var(--font-size-3xl);
+  }
+
+  .stats-section {
+    margin-bottom: var(--spacing-6);
   }
 
   .stats-row {
-    margin-bottom: 15px;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
   }
 
   .stat-card {
-    margin-bottom: 15px;
-    padding: 15px;
+    padding: var(--spacing-5);
   }
 
   .stat-icon {
-    width: 50px;
-    height: 50px;
-    margin-right: 12px;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-right: var(--spacing-3);
   }
 
   .stat-icon :deep(.el-icon) {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 
   .stat-value {
-    font-size: 24px;
+    font-size: var(--font-size-2xl);
   }
 
   .stat-label {
-    font-size: 13px;
+    font-size: var(--font-size-xs);
   }
 
-  .recent-elections-card {
-    margin-bottom: 15px;
+  .recent-elections-section {
+    margin-bottom: var(--spacing-6);
   }
 
   .card-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: var(--spacing-3);
   }
 
   .card-header h2 {
-    font-size: 1.1rem;
+    font-size: var(--font-size-xl);
+  }
+
+  .loading-container {
+    padding: var(--spacing-6);
+  }
+
+  .empty-state {
+    padding: var(--spacing-8) var(--spacing-4);
   }
 }
 
 @media (max-width: 480px) {
   .dashboard-page {
-    padding: 0 5px;
+    padding: var(--spacing-3) var(--spacing-2);
   }
 
   .welcome-card h1 {
-    font-size: 1.3rem;
+    font-size: var(--font-size-2xl);
   }
 
   .stat-card {
-    padding: 12px;
+    padding: var(--spacing-4);
   }
 
   .stat-icon {
-    width: 45px;
-    height: 45px;
-    margin-right: 10px;
+    width: 3rem;
+    height: 3rem;
+    margin-right: var(--spacing-3);
   }
 
   .stat-icon :deep(.el-icon) {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
 
   .stat-value {
-    font-size: 20px;
+    font-size: var(--font-size-xl);
   }
+
+  .welcome-section {
+    margin-bottom: var(--spacing-5);
+  }
+
+  .stats-section {
+    margin-bottom: var(--spacing-5);
+  }
+
+  .recent-elections-section {
+    margin-bottom: var(--spacing-5);
+  }
+}
+
+/* Enhanced table styling */
+:deep(.el-table) {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+:deep(.el-table th) {
+  background: var(--color-gray-50);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  border-bottom: 2px solid var(--color-gray-200);
+}
+
+:deep(.el-table td) {
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+:deep(.el-table tbody tr:hover > td) {
+  background-color: var(--color-gray-50);
+}
+
+:deep(.el-button--primary) {
+  background-color: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  transition: var(--transition-normal);
+}
+
+:deep(.el-button--primary:hover) {
+  background-color: var(--color-primary-600);
+  border-color: var(--color-primary-600);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+:deep(.el-tag) {
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+:deep(.el-tag--success) {
+  background-color: var(--color-success-50);
+  border-color: var(--color-success-200);
+  color: var(--color-success-700);
+}
+
+:deep(.el-tag--warning) {
+  background-color: var(--color-warning-50);
+  border-color: var(--color-warning-200);
+  color: var(--color-warning-700);
+}
+
+:deep(.el-tag--info) {
+  background-color: var(--color-primary-50);
+  border-color: var(--color-primary-200);
+  color: var(--color-primary-700);
 }
 </style>

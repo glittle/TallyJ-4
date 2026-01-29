@@ -79,33 +79,112 @@
             <!-- Election Summary Report -->
             <div v-if="selectedReportType === 'summary'" class="report-section">
               <h3>{{ $t('reporting.electionSummary') }}</h3>
-              <el-descriptions :column="2" border>
-                <el-descriptions-item :label="$t('reporting.electionName')">
-                  {{ electionReport?.electionName }}
-                </el-descriptions-item>
-                <el-descriptions-item :label="$t('reporting.electionDate')" v-if="electionReport?.electionDate">
-                  {{ formatDate(electionReport.electionDate) }}
-                </el-descriptions-item>
-                <el-descriptions-item :label="$t('reporting.positionsToElect')">
-                  {{ electionReport?.numToElect }}
-                </el-descriptions-item>
-                <el-descriptions-item :label="$t('reporting.totalBallots')">
-                  {{ electionReport?.totalBallots }}
-                </el-descriptions-item>
-                <el-descriptions-item :label="$t('reporting.spoiledBallots')">
-                  {{ electionReport?.spoiledBallots }}
-                </el-descriptions-item>
-                <el-descriptions-item :label="$t('reporting.totalVotes')">
-                  {{ electionReport?.totalVotes }}
-                </el-descriptions-item>
-              </el-descriptions>
 
-              <h4>{{ $t('reporting.electedCandidates') }}</h4>
-              <el-table :data="electionReport?.elected || []" stripe style="width: 100%; margin-bottom: 20px;">
-                <el-table-column prop="rank" :label="$t('reporting.rank')" width="80" align="center" />
-                <el-table-column prop="fullName" :label="$t('reporting.candidate')" width="300" />
-                <el-table-column prop="voteCount" :label="$t('reporting.votes')" width="120" align="center" />
-              </el-table>
+              <!-- Key Statistics Cards -->
+              <el-row :gutter="20" class="stats-row">
+                <el-col :span="6">
+                  <el-card class="stat-card">
+                    <div class="stat-value">{{ electionReport?.totalBallots || 0 }}</div>
+                    <div class="stat-label">{{ $t('reporting.totalBallots') }}</div>
+                    <el-progress
+                      :percentage="100"
+                      :show-text="false"
+                      color="#409eff"
+                      class="stat-progress"
+                    />
+                  </el-card>
+                </el-col>
+                <el-col :span="6">
+                  <el-card class="stat-card">
+                    <div class="stat-value">{{ electionReport?.totalVotes || 0 }}</div>
+                    <div class="stat-label">{{ $t('reporting.totalVotes') }}</div>
+                    <el-progress
+                      :percentage="electionReport?.totalBallots ? (electionReport.totalVotes / electionReport.totalBallots) * 100 : 0"
+                      :show-text="false"
+                      color="#67c23a"
+                      class="stat-progress"
+                    />
+                  </el-card>
+                </el-col>
+                <el-col :span="6">
+                  <el-card class="stat-card">
+                    <div class="stat-value">{{ electionReport?.spoiledBallots || 0 }}</div>
+                    <div class="stat-label">{{ $t('reporting.spoiledBallots') }}</div>
+                    <el-progress
+                      :percentage="electionReport?.totalBallots ? (electionReport.spoiledBallots / electionReport.totalBallots) * 100 : 0"
+                      :show-text="false"
+                      color="#f56c6c"
+                      class="stat-progress"
+                    />
+                  </el-card>
+                </el-col>
+                <el-col :span="6">
+                  <el-card class="stat-card">
+                    <div class="stat-value">{{ electionReport?.numToElect || 0 }}</div>
+                    <div class="stat-label">{{ $t('reporting.positionsToElect') }}</div>
+                    <el-progress
+                      :percentage="100"
+                      :show-text="false"
+                      color="#e6a23c"
+                      class="stat-progress"
+                    />
+                  </el-card>
+                </el-col>
+              </el-row>
+
+              <!-- Election Details -->
+              <el-card class="details-card" style="margin-top: 20px;">
+                <template #header>
+                  <span>{{ $t('reporting.electionDetails') }}</span>
+                </template>
+                <el-descriptions :column="2" border>
+                  <el-descriptions-item :label="$t('reporting.electionName')">
+                    {{ electionReport?.electionName }}
+                  </el-descriptions-item>
+                  <el-descriptions-item :label="$t('reporting.electionDate')" v-if="electionReport?.electionDate">
+                    {{ formatDate(electionReport.electionDate) }}
+                  </el-descriptions-item>
+                  <el-descriptions-item :label="$t('reporting.electionType')">
+                    {{ electionReport?.electionType }}
+                  </el-descriptions-item>
+                  <el-descriptions-item :label="$t('reporting.voterTurnout')">
+                    {{ calculateElectionTurnout() }}%
+                  </el-descriptions-item>
+                </el-descriptions>
+              </el-card>
+
+              <!-- Elected Candidates -->
+              <el-card class="candidates-card" style="margin-top: 20px;">
+                <template #header>
+                  <span>{{ $t('reporting.electedCandidates') }}</span>
+                </template>
+                <div class="candidates-list">
+                  <div
+                    v-for="(candidate, index) in electionReport?.elected || []"
+                    :key="candidate.personGuid"
+                    class="candidate-item"
+                    :class="{ 'winner': index < (electionReport?.numToElect || 0) }"
+                  >
+                    <div class="candidate-rank">
+                      <el-tag :type="index < (electionReport?.numToElect || 0) ? 'success' : 'info'" size="small">
+                        #{{ candidate.rank }}
+                      </el-tag>
+                    </div>
+                    <div class="candidate-info">
+                      <div class="candidate-name">{{ candidate.fullName }}</div>
+                      <div class="candidate-votes">
+                        <el-progress
+                          :percentage="getVotePercentage(candidate.voteCount)"
+                          :show-text="false"
+                          :stroke-width="8"
+                          color="#409eff"
+                        />
+                        <span class="vote-count">{{ candidate.voteCount }} {{ $t('reporting.votes') }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </el-card>
 
               <h4 v-if="electionReport?.extra?.length">{{ $t('reporting.extraCandidates') }}</h4>
               <el-table v-if="electionReport?.extra?.length" :data="electionReport.extra" stripe style="width: 100%; margin-bottom: 20px;">
@@ -613,6 +692,22 @@ function formatTimePeriod(timePeriod: string, periodType: string) {
   return timePeriod;
 }
 
+function calculateElectionTurnout() {
+  // Calculate voter turnout based on available data
+  // This is a simplified calculation - in a real scenario you'd have registered voter count
+  const totalBallots = electionReport.value?.totalBallots || 0;
+  const spoiledBallots = electionReport.value?.spoiledBallots || 0;
+  const validBallots = totalBallots - spoiledBallots;
+
+  if (totalBallots === 0) return 0;
+  return Math.round((validBallots / totalBallots) * 100);
+}
+
+function getVotePercentage(voteCount: number) {
+  if (!electionReport.value?.totalVotes || electionReport.value.totalVotes === 0) return 0;
+  return Math.round((voteCount / electionReport.value.totalVotes) * 100);
+}
+
 function goBack() {
   router.push(`/elections/${electionGuid}/results`);
 }
@@ -662,6 +757,113 @@ function goBack() {
 
 .report-section {
   margin-bottom: 30px;
+}
+
+.stats-row {
+  margin-bottom: var(--spacing-4);
+}
+
+.stat-card {
+  text-align: center;
+  padding: var(--spacing-4);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-2);
+}
+
+.stat-progress {
+  margin: 0 auto;
+  width: 80%;
+}
+
+.details-card {
+  margin-top: var(--spacing-6);
+}
+
+.candidates-card {
+  margin-top: var(--spacing-6);
+}
+
+.candidates-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.candidate-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-primary);
+  transition: all 0.2s ease;
+}
+
+.candidate-item:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.candidate-item.winner {
+  border-color: #67c23a;
+  background-color: #f0f9ff;
+}
+
+.candidate-rank {
+  margin-right: var(--spacing-4);
+}
+
+.candidate-info {
+  flex: 1;
+}
+
+.candidate-name {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.candidate-votes {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.vote-count {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  min-width: 80px;
+}
+
+.ties-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-4);
+}
+
+.tie-card {
+  border-left: 4px solid #e6a23c;
+}
+
+.tie-card ul {
+  margin: 0;
+  padding-left: var(--spacing-4);
+}
+
+.tie-card li {
+  margin-bottom: var(--spacing-1);
+  color: var(--color-text-secondary);
 }
 
 .report-section h3 {

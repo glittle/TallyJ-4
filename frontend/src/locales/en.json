@@ -19,7 +19,11 @@
     "dangerZone": "Danger Zone",
     "confirmDelete": "Are you sure you want to delete {item}?",
     "confirmAction": "Are you sure you want to {action}?",
-    "confirmActionWithItem": "Are you sure you want to {action} {item}?"
+    "confirmActionWithItem": "Are you sure you want to {action} {item}?",
+    "to": "to",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "actionIrreversible": "This action cannot be undone."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -82,7 +86,17 @@
       "showFullReport": "Show Full Report",
       "listForPublic": "List for Public",
       "showAsTest": "Show as Test"
-    }
+    },
+    "searchPlaceholder": "Search elections by name or convenor...",
+    "filterByStatus": "Filter by Status",
+    "filterByType": "Filter by Type",
+    "clearFilters": "Clear Filters",
+    "deleteSelected": "Delete Selected ({count})",
+    "confirmBulkDelete": "Confirm Bulk Delete",
+    "bulkDeleteMessage": "Are you sure you want to delete {count} selected elections?",
+    "bulkDeleteSuccess": "{count} elections deleted successfully",
+    "bulkDeleteError": "Failed to delete some elections",
+    "voters": "Voters"
   },
   "people": {
     "management": "People Management",
@@ -111,7 +125,38 @@
     "deleteError": "Failed to delete person",
     "deleteConfirm": "Are you sure you want to delete {name}?",
     "saveError": "Failed to save person",
-    "searchError": "Failed to search people"
+    "searchError": "Failed to search people",
+    "bulkActions": "Bulk Actions",
+    "importPeople": "Import People",
+    "exportPeople": "Export People",
+    "deleteSelected": "Delete Selected ({count})",
+    "confirmBulkDelete": "Confirm Bulk Delete",
+    "bulkDeleteMessage": "Are you sure you want to delete {count} selected people?",
+    "bulkDeleteSuccess": "{count} people deleted successfully",
+    "bulkDeleteError": "Failed to delete some people",
+    "importInstructions": "Import Instructions",
+    "importFormat": "Upload a CSV or Excel file with the following columns:",
+    "importRequiredFields": "Required: First Name, Last Name",
+    "importOptionalFields": "Optional: Email, Phone, Area, Baha'i ID, Can Vote, Can Receive Votes",
+    "importWarning": "Existing people with matching names will be updated. New people will be created.",
+    "dropFileHere": "Drop file here or click to upload",
+    "supportedFormats": "Supported formats: CSV, XLS, XLSX (max 10MB)",
+    "invalidFileType": "Invalid file type. Please upload a CSV or Excel file.",
+    "fileTooLarge": "File too large. Please upload a file smaller than 10MB.",
+    "importStarted": "Import started. Please wait for completion.",
+    "importError": "Failed to start import",
+    "exportSuccess": "People exported successfully",
+    "exportError": "Failed to export people"
+  },
+  "import": {
+    "progressTitle": "Import Progress",
+    "processingRows": "Processing rows {processed} of {total}",
+    "successCount": "Successful: {count}",
+    "errorCount": "Errors: {count}",
+    "currentStatus": "Status: {status}",
+    "errors": "Import Errors",
+    "moreErrors": "and {count} more errors...",
+    "completed": "Import completed successfully"
   },
   "ballots": {
     "management": "Ballot Management",
@@ -254,6 +299,9 @@
     "electionDayVoting": "Election Day Voting",
     "earlyVoting": "Early Voting",
     "earlyVotingPercentage": "Early Voting %",
+    "electionDetails": "Election Details",
+    "electionType": "Election Type",
+    "voterTurnout": "Voter Turnout",
     "turnoutByLocation": "Turnout by Location",
     "performance": "Performance",
     "demographicBreakdown": "Demographic Breakdown",

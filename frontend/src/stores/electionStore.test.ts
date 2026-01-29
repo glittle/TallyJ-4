@@ -253,8 +253,8 @@ describe('Election Store', () => {
       await electionStore.initializeSignalR()
 
       expect(signalrService.connectToMainHub).toHaveBeenCalled()
-      expect(mockConnection.on).toHaveBeenCalledWith('ElectionUpdated', expect.any(Function))
-      expect(mockConnection.on).toHaveBeenCalledWith('ElectionStatusChanged', expect.any(Function))
+      expect(mockConnection.on).toHaveBeenCalledWith('statusChanged', expect.any(Function))
+      expect(mockConnection.on).toHaveBeenCalledWith('electionClosed', expect.any(Function))
     })
 
     it('should handle SignalR initialization errors gracefully', async () => {
