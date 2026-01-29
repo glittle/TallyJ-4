@@ -131,7 +131,14 @@ public class AdvancedReportingService : IAdvancedReportingService
             FilteredRecords = filteredCandidates.Count(),
             Summary = report,
             Candidates = filteredCandidates.ToList(),
-            Locations = filteredLocations.ToList()
+            Locations = filteredLocations.Select(l => new LocationReportDto
+            {
+                LocationName = l.LocationName,
+                TotalVoters = l.RegisteredVoters,
+                Voted = l.BallotsCast,
+                BallotsEntered = l.ValidBallots,
+                TotalVotes = l.TotalVotes
+            }).ToList()
         };
     }
 
@@ -170,7 +177,7 @@ public class AdvancedReportingService : IAdvancedReportingService
             VotingPatterns = new VotingPatternAnalysisDto
             {
                 AverageVotesPerBallot = detailedStats.Overview.TotalVotes / (decimal)detailedStats.Overview.TotalBallotsCast,
-                VoteDistribution = detailedStats.VoteDistribution.VoteCountDistribution,
+                VoteDistribution = detailedStats.VoteDistribution.BallotLengthDistribution,
                 BallotCompletenessRate = detailedStats.Overview.ValidBallots / (decimal)detailedStats.Overview.TotalBallotsCast * 100
             },
             CandidateAnalysis = GenerateCandidateAnalysis(detailedStats),

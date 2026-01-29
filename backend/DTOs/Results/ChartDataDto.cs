@@ -55,5 +55,5 @@ public class ChartScalesDto
 public class ChartAxisDto
 {
     public bool Display { get; set; } = true;
-    public string Title { get; set; } = new();
+    public string Title { get; set; } = string.Empty;
 }
