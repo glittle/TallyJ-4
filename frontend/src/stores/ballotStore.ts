@@ -163,16 +163,39 @@ export const useBallotStore = defineStore('ballot', () => {
     try {
       const connection = await signalrService.connectToFrontDeskHub();
 
-      connection.on('BallotAdded', (data: BallotUpdateEvent) => {
-        handleBallotAdded(data);
+      // Note: FrontDeskHub primarily sends updatePeople events
+      // Ballot updates might be included in updatePeople or not implemented yet
+      connection.on('updatePeople', (data: any) => {
+        // Check if this is a ballot update (if the backend sends ballot data through this event)
+        if (data && typeof data === 'object' && data.ballotGuid) {
+          const updateEvent: BallotUpdateEvent = {
+            electionGuid: data.electionGuid || '',
+            ballotGuid: data.ballotGuid,
+            action: data.action || 'updated',
+            ballotCode: data.ballotCode,
+            statusCode: data.statusCode,
+            voteCount: data.voteCount,
+            updatedAt: data.updatedAt || new Date().toISOString()
+          };
+
+          switch (updateEvent.action) {
+            case 'added':
+              handleBallotAdded(updateEvent);
+              break;
+            case 'updated':
+              handleBallotUpdated(updateEvent);
+              break;
+            case 'deleted':
+              handleBallotDeleted(updateEvent);
+              break;
+          }
+        }
       });
 
-      connection.on('BallotUpdated', (data: BallotUpdateEvent) => {
-        handleBallotUpdated(data);
-      });
-
-      connection.on('BallotDeleted', (data: BallotUpdateEvent) => {
-        handleBallotDeleted(data);
+      connection.on('reloadPage', () => {
+        // Handle page reload command from server
+        console.log('Server requested page reload for ballots');
+        // Could trigger a data reload instead of full page refresh
       });
 
       signalrInitialized.value = true;

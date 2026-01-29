@@ -28,6 +28,7 @@ export const useResultStore = defineStore('result', () => {
   const error = ref<string | null>(null);
   const signalrInitialized = ref(false);
   const tallyProgress = ref<TallyProgressEvent | null>(null);
+  const currentElectionGuid = ref<string>('');
 
   async function calculateTally(electionGuid: string, electionType: 'normal' | 'singlename' = 'normal') {
     calculating.value = true;
@@ -208,13 +209,43 @@ export const useResultStore = defineStore('result', () => {
 
     try {
       const connection = await signalrService.connectToAnalyzeHub();
-      
-      connection.on('TallyProgress', (data: TallyProgressEvent) => {
-        handleTallyProgress(data);
+
+      connection.on('tallyProgress', (data: any) => {
+        // AnalyzeHub sends tallyProgress with processedBallots, totalBallots, processedVotes, totalVotes, percentage
+        const progressEvent: TallyProgressEvent = {
+          electionGuid: currentElectionGuid.value,
+          totalBallots: data.totalBallots || 0,
+          processedBallots: data.processedBallots || 0,
+          totalVotes: data.totalVotes || 0,
+          message: `Processing ballots: ${data.processedBallots}/${data.totalBallots}`,
+          percentComplete: data.percentage || 0,
+          isComplete: data.processedBallots >= data.totalBallots
+        };
+        handleTallyProgress(progressEvent);
       });
 
-      connection.on('TallyComplete', (data: TallyProgressEvent) => {
-        handleTallyComplete(data);
+      connection.on('tallyComplete', (data: any) => {
+        // AnalyzeHub sends tallyComplete with results
+        const completeEvent: TallyProgressEvent = {
+          electionGuid: currentElectionGuid.value,
+          totalBallots: 0,
+          processedBallots: 0,
+          totalVotes: 0,
+          message: 'Tally calculation completed',
+          percentComplete: 100,
+          isComplete: true
+        };
+        handleTallyComplete(completeEvent);
+        // Optionally update results if data contains them
+        if (data && results.value) {
+          // The results might be updated via the fetchResults call in handleTallyComplete
+        }
+      });
+
+      connection.on('statusUpdate', (message: string, showProgress: boolean) => {
+        // Handle status update messages
+        console.log('Tally status update:', message);
+        // Could update a status message in the UI
       });
 
       signalrInitialized.value = true;
@@ -237,6 +268,7 @@ export const useResultStore = defineStore('result', () => {
 
   async function joinTallySession(electionGuid: string) {
     try {
+      currentElectionGuid.value = electionGuid;
       await signalrService.joinTallySession(electionGuid);
     } catch (e) {
       console.error('Failed to join tally session:', e);
@@ -246,6 +278,10 @@ export const useResultStore = defineStore('result', () => {
   async function leaveTallySession(electionGuid: string) {
     try {
       await signalrService.leaveTallySession(electionGuid);
+      if (currentElectionGuid.value === electionGuid) {
+        currentElectionGuid.value = '';
+        tallyProgress.value = null;
+      }
     } catch (e) {
       console.error('Failed to leave tally session:', e);
     }

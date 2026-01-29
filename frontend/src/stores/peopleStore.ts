@@ -125,17 +125,39 @@ export const usePeopleStore = defineStore('people', () => {
 
     try {
       const connection = await signalrService.connectToFrontDeskHub();
-      
-      connection.on('PersonAdded', (data: PersonUpdateEvent) => {
-        handlePersonAdded(data);
+
+      connection.on('updatePeople', (data: any) => {
+        // FrontDeskHub sends updatePeople with person update information
+        // The data structure should contain action, personGuid, and other person details
+        if (data && typeof data === 'object') {
+          const updateEvent: PersonUpdateEvent = {
+            electionGuid: data.electionGuid || '',
+            personGuid: data.personGuid || '',
+            action: data.action || 'updated',
+            firstName: data.firstName,
+            lastName: data.lastName,
+            updatedAt: data.updatedAt || new Date().toISOString()
+          };
+
+          switch (updateEvent.action) {
+            case 'added':
+              handlePersonAdded(updateEvent);
+              break;
+            case 'updated':
+              handlePersonUpdated(updateEvent);
+              break;
+            case 'deleted':
+              handlePersonDeleted(updateEvent);
+              break;
+          }
+        }
       });
 
-      connection.on('PersonUpdated', (data: PersonUpdateEvent) => {
-        handlePersonUpdated(data);
-      });
-
-      connection.on('PersonDeleted', (data: PersonUpdateEvent) => {
-        handlePersonDeleted(data);
+      connection.on('reloadPage', () => {
+        // Handle page reload command from server
+        console.log('Server requested page reload');
+        // Could trigger a page refresh or data reload
+        window.location.reload();
       });
 
       signalrInitialized.value = true;
