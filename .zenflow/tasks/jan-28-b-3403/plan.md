@@ -81,7 +81,8 @@ Add export function to src/api/reports.ts to call the new backend endpoint.
 
 Modify exportReport function in src/pages/results/ReportingPage.vue to call the API and handle file download.
 
-### [ ] Step: Add unit tests
+### [x] Step: Add unit tests
+<!-- chat-id: 2b148eff-def8-4e26-b2bd-50ecbcf9c025 -->
 
 Create unit tests for ReportExportService in TallyJ4.Tests.
 
