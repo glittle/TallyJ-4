@@ -51,7 +51,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Add export libraries to backend
+### [x] Step: Add export libraries to backend
+<!-- chat-id: e01e1a12-c216-4cd8-a46a-7e5fe94c203e -->
 
 Add ClosedXML and iTextSharp NuGet packages to TallyJ4.csproj for Excel and PDF generation.
 
