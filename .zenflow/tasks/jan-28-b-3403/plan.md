@@ -66,7 +66,8 @@ Create Models/ExportRequest.cs with properties for format, electionId, and optio
 
 Create Services/ReportExportService.cs with methods to generate PDF and Excel reports using election data.
 
-### [ ] Step: Add export API endpoint
+### [x] Step: Add export API endpoint
+<!-- chat-id: 20c560c5-38a2-451b-906b-e8e5a45e1610 -->
 
 Add POST /api/reports/export/{electionId} endpoint to Controllers/ReportsController.cs that uses ReportExportService.
 
