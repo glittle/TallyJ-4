@@ -4,8 +4,16 @@ using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Mappings;
 
+/// <summary>
+/// AutoMapper profile for person-related mappings.
+/// Defines mappings between person entities and DTOs.
+/// </summary>
 public class PersonProfile : Profile
 {
+    /// <summary>
+    /// Initializes a new instance of the PersonProfile.
+    /// Configures mappings between Person entities and various DTOs.
+    /// </summary>
     public PersonProfile()
     {
         CreateMap<Person, PersonDto>()

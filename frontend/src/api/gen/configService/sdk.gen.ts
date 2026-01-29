@@ -3,7 +3,7 @@
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
 import { getApiDashboardElectionListResponseTransformer, getApiDashboardElectionsResponseTransformer, getApiDashboardIndexResponseTransformer, getApiDashboardSummaryResponseTransformer, getApiElectionsByGuidResponseTransformer, getApiElectionsByGuidSummaryResponseTransformer, getApiElectionsResponseTransformer, getApiPublicElectionsByElectionGuidStatusResponseTransformer, getApiPublicElectionsResponseTransformer, getApiPublicHomeResponseTransformer, getApiResultsElectionByElectionGuidDetailedStatisticsResponseTransformer, getApiResultsElectionByElectionGuidFinalResponseTransformer, getApiResultsElectionByElectionGuidMonitorResponseTransformer, getApiResultsElectionByElectionGuidPresentationResponseTransformer, getApiResultsElectionByElectionGuidReportResponseTransformer, getApiResultsElectionByElectionGuidResponseTransformer, postApiDashboardReloadElectionsResponseTransformer, postApiElectionsResponseTransformer, postApiResultsElectionByElectionGuidCalculateResponseTransformer, postApiResultsElectionByElectionGuidMonitorRefreshResponseTransformer, postApiSetupElectionStep1ResponseTransformer, putApiElectionsByGuidResponseTransformer, putApiSetupElectionByGuidStep2ResponseTransformer } from './transformers.gen';
-import type { DeleteApiAuthUsersByUserIdRolesByRoleNameData, DeleteApiAuthUsersByUserIdRolesByRoleNameResponses, DeleteApiBallotsByGuidData, DeleteApiBallotsByGuidResponses, DeleteApiElectionsByGuidData, DeleteApiElectionsByGuidResponses, DeleteApiPeopleByGuidData, DeleteApiPeopleByGuidResponses, DeleteApiVotesByIdData, DeleteApiVotesByIdResponses, GetApiAccountProfileData, GetApiAccountProfileResponses, GetApiAuthRolesAllData, GetApiAuthRolesAllResponses, GetApiAuthRolesData, GetApiAuthRolesResponses, GetApiBallotsByGuidData, GetApiBallotsByGuidResponses, GetApiBallotsElectionByElectionGuidData, GetApiBallotsElectionByElectionGuidResponses, GetApiDashboardElectionListData, GetApiDashboardElectionListResponses, GetApiDashboardElectionsData, GetApiDashboardElectionsResponses, GetApiDashboardIndexData, GetApiDashboardIndexResponses, GetApiDashboardSummaryData, GetApiDashboardSummaryResponses, GetApiElectionsByGuidData, GetApiElectionsByGuidResponses, GetApiElectionsByGuidSummaryData, GetApiElectionsByGuidSummaryResponses, GetApiElectionsData, GetApiElectionsResponses, GetApiPeopleByGuidData, GetApiPeopleByGuidResponses, GetApiPeopleElectionByElectionGuidData, GetApiPeopleElectionByElectionGuidResponses, GetApiPeopleElectionByElectionGuidSearchData, GetApiPeopleElectionByElectionGuidSearchResponses, GetApiPublicElectionsByElectionGuidStatusData, GetApiPublicElectionsByElectionGuidStatusResponses, GetApiPublicElectionsData, GetApiPublicElectionsResponses, GetApiPublicHealthData, GetApiPublicHealthResponses, GetApiPublicHomeData, GetApiPublicHomeResponses, GetApiResultsElectionByElectionGuidData, GetApiResultsElectionByElectionGuidDetailedStatisticsData, GetApiResultsElectionByElectionGuidDetailedStatisticsResponses, GetApiResultsElectionByElectionGuidFinalData, GetApiResultsElectionByElectionGuidFinalResponses, GetApiResultsElectionByElectionGuidMonitorData, GetApiResultsElectionByElectionGuidMonitorResponses, GetApiResultsElectionByElectionGuidPresentationData, GetApiResultsElectionByElectionGuidPresentationResponses, GetApiResultsElectionByElectionGuidReportByReportCodeData, GetApiResultsElectionByElectionGuidReportByReportCodeResponses, GetApiResultsElectionByElectionGuidReportData, GetApiResultsElectionByElectionGuidReportResponses, GetApiResultsElectionByElectionGuidResponses, GetApiResultsElectionByElectionGuidSummaryData, GetApiResultsElectionByElectionGuidSummaryResponses, GetApiResultsElectionByElectionGuidTiesByTieBreakGroupData, GetApiResultsElectionByElectionGuidTiesByTieBreakGroupResponses, GetApiSetupElectionByGuidStatusData, GetApiSetupElectionByGuidStatusResponses, GetApiVotesBallotByBallotGuidData, GetApiVotesBallotByBallotGuidResponses, GetApiVotesByIdData, GetApiVotesByIdResponses, GetApiVotesElectionByElectionGuidData, GetApiVotesElectionByElectionGuidResponses, PostApiAccountChangePasswordData, PostApiAccountChangePasswordResponses, PostApiAuth2FaDisableData, PostApiAuth2FaDisableResponses, PostApiAuth2FaEnableData, PostApiAuth2FaEnableResponses, PostApiAuth2FaSetupData, PostApiAuth2FaSetupResponses, PostApiAuth2FaVerifyData, PostApiAuth2FaVerifyResponses, PostApiAuthLoginData, PostApiAuthLoginResponses, PostApiAuthPasswordForgotData, PostApiAuthPasswordForgotResponses, PostApiAuthPasswordResetData, PostApiAuthPasswordResetResponses, PostApiAuthRefreshData, PostApiAuthRefreshResponses, PostApiAuthRegisterData, PostApiAuthRegisterResponses, PostApiAuthUsersByUserIdRolesData, PostApiAuthUsersByUserIdRolesResponses, PostApiBallotsData, PostApiBallotsResponses, PostApiDashboardChooseLocationData, PostApiDashboardChooseLocationResponses, PostApiDashboardChooseTellerData, PostApiDashboardChooseTellerResponses, PostApiDashboardDeleteTellerData, PostApiDashboardDeleteTellerResponses, PostApiDashboardLoadV2ElectionData, PostApiDashboardLoadV2ElectionResponses, PostApiDashboardMoreInfoLiveData, PostApiDashboardMoreInfoLiveResponses, PostApiDashboardMoreInfoStaticData, PostApiDashboardMoreInfoStaticResponses, PostApiDashboardReloadElectionsData, PostApiDashboardReloadElectionsResponses, PostApiDashboardUpdateListingByElectionGuidData, PostApiDashboardUpdateListingByElectionGuidResponses, PostApiElectionsData, PostApiElectionsResponses, PostApiImportBallotsByElectionGuidData, PostApiImportBallotsByElectionGuidResponses, PostApiPeopleData, PostApiPeopleResponses, PostApiResultsElectionByElectionGuidCalculateData, PostApiResultsElectionByElectionGuidCalculateResponses, PostApiResultsElectionByElectionGuidMonitorRefreshData, PostApiResultsElectionByElectionGuidMonitorRefreshResponses, PostApiResultsElectionByElectionGuidTiesData, PostApiResultsElectionByElectionGuidTiesResponses, PostApiSetupElectionStep1Data, PostApiSetupElectionStep1Responses, PostApiVotesData, PostApiVotesResponses, PutApiAccountProfileData, PutApiAccountProfileResponses, PutApiBallotsByGuidData, PutApiBallotsByGuidResponses, PutApiElectionsByGuidData, PutApiElectionsByGuidResponses, PutApiPeopleByGuidData, PutApiPeopleByGuidResponses, PutApiSetupElectionByGuidStep2Data, PutApiSetupElectionByGuidStep2Responses, PutApiVotesByIdData, PutApiVotesByIdResponses } from './types.gen';
+import type { DeleteApiAuthUsersByUserIdRolesByRoleNameData, DeleteApiAuthUsersByUserIdRolesByRoleNameResponses, DeleteApiBallotsByGuidData, DeleteApiBallotsByGuidResponses, DeleteApiElectionsByGuidData, DeleteApiElectionsByGuidResponses, DeleteApiPeopleByGuidData, DeleteApiPeopleByGuidResponses, DeleteApiVotesByIdData, DeleteApiVotesByIdResponses, GetApiAccountProfileData, GetApiAccountProfileResponses, GetApiAuthRolesAllData, GetApiAuthRolesAllResponses, GetApiAuthRolesData, GetApiAuthRolesResponses, GetApiBallotsByGuidData, GetApiBallotsByGuidResponses, GetApiBallotsElectionByElectionGuidData, GetApiBallotsElectionByElectionGuidResponses, GetApiDashboardElectionListData, GetApiDashboardElectionListResponses, GetApiDashboardElectionsData, GetApiDashboardElectionsResponses, GetApiDashboardIndexData, GetApiDashboardIndexResponses, GetApiDashboardSummaryData, GetApiDashboardSummaryResponses, GetApiElectionsByGuidData, GetApiElectionsByGuidResponses, GetApiElectionsByGuidSummaryData, GetApiElectionsByGuidSummaryResponses, GetApiElectionsData, GetApiElectionsResponses, GetApiPeopleByGuidData, GetApiPeopleByGuidResponses, GetApiPeopleElectionByElectionGuidData, GetApiPeopleElectionByElectionGuidResponses, GetApiPeopleElectionByElectionGuidSearchData, GetApiPeopleElectionByElectionGuidSearchResponses, GetApiPublicElectionsByElectionGuidStatusData, GetApiPublicElectionsByElectionGuidStatusResponses, GetApiPublicElectionsData, GetApiPublicElectionsResponses, GetApiPublicHealthData, GetApiPublicHealthResponses, GetApiPublicHomeData, GetApiPublicHomeResponses, GetApiResultsElectionByElectionGuidData, GetApiResultsElectionByElectionGuidDetailedStatisticsData, GetApiResultsElectionByElectionGuidDetailedStatisticsResponses, GetApiResultsElectionByElectionGuidFinalData, GetApiResultsElectionByElectionGuidFinalResponses, GetApiResultsElectionByElectionGuidMonitorData, GetApiResultsElectionByElectionGuidMonitorResponses, GetApiResultsElectionByElectionGuidPresentationData, GetApiResultsElectionByElectionGuidPresentationResponses, GetApiResultsElectionByElectionGuidReportByReportCodeData, GetApiResultsElectionByElectionGuidReportByReportCodeResponses, GetApiResultsElectionByElectionGuidReportData, GetApiResultsElectionByElectionGuidReportResponses, GetApiResultsElectionByElectionGuidResponses, GetApiResultsElectionByElectionGuidSummaryData, GetApiResultsElectionByElectionGuidSummaryResponses, GetApiResultsElectionByElectionGuidTiesByTieBreakGroupData, GetApiResultsElectionByElectionGuidTiesByTieBreakGroupResponses, GetApiSetupElectionByGuidStatusData, GetApiSetupElectionByGuidStatusResponses, GetApiVotesBallotByBallotGuidData, GetApiVotesBallotByBallotGuidResponses, GetApiVotesByIdData, GetApiVotesByIdResponses, GetApiVotesElectionByElectionGuidData, GetApiVotesElectionByElectionGuidResponses, PostApiAccountChangePasswordData, PostApiAccountChangePasswordResponses, PostApiAuth2FaDisableData, PostApiAuth2FaDisableResponses, PostApiAuth2FaEnableData, PostApiAuth2FaEnableResponses, PostApiAuth2FaSetupData, PostApiAuth2FaSetupResponses, PostApiAuth2FaVerifyData, PostApiAuth2FaVerifyResponses, PostApiAuthLoginData, PostApiAuthLoginResponses, PostApiAuthPasswordForgotData, PostApiAuthPasswordForgotResponses, PostApiAuthPasswordResetData, PostApiAuthPasswordResetResponses, PostApiAuthRefreshData, PostApiAuthRefreshResponses, PostApiAuthRegisterData, PostApiAuthRegisterResponses, PostApiAuthUsersByUserIdRolesData, PostApiAuthUsersByUserIdRolesResponses, PostApiBallotsData, PostApiBallotsResponses, PostApiDashboardChooseLocationData, PostApiDashboardChooseLocationResponses, PostApiDashboardChooseTellerData, PostApiDashboardChooseTellerResponses, PostApiDashboardDeleteTellerData, PostApiDashboardDeleteTellerResponses, PostApiDashboardLoadV2ElectionData, PostApiDashboardLoadV2ElectionResponses, PostApiDashboardMoreInfoLiveData, PostApiDashboardMoreInfoLiveResponses, PostApiDashboardMoreInfoStaticData, PostApiDashboardMoreInfoStaticResponses, PostApiDashboardReloadElectionsData, PostApiDashboardReloadElectionsResponses, PostApiDashboardUpdateListingByElectionGuidData, PostApiDashboardUpdateListingByElectionGuidResponses, PostApiElectionsData, PostApiElectionsResponses, PostApiImportBallotsByElectionGuidData, PostApiImportBallotsByElectionGuidResponses, PostApiPeopleData, PostApiPeopleResponses, PostApiReportsExportByElectionIdData, PostApiReportsExportByElectionIdResponses, PostApiResultsElectionByElectionGuidCalculateData, PostApiResultsElectionByElectionGuidCalculateResponses, PostApiResultsElectionByElectionGuidMonitorRefreshData, PostApiResultsElectionByElectionGuidMonitorRefreshResponses, PostApiResultsElectionByElectionGuidTiesData, PostApiResultsElectionByElectionGuidTiesResponses, PostApiSetupElectionStep1Data, PostApiSetupElectionStep1Responses, PostApiVotesData, PostApiVotesResponses, PutApiAccountProfileData, PutApiAccountProfileResponses, PutApiBallotsByGuidData, PutApiBallotsByGuidResponses, PutApiElectionsByGuidData, PutApiElectionsByGuidResponses, PutApiPeopleByGuidData, PutApiPeopleByGuidResponses, PutApiSetupElectionByGuidStep2Data, PutApiSetupElectionByGuidStep2Responses, PutApiVotesByIdData, PutApiVotesByIdResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -75,6 +75,9 @@ export const postApiAccountChangePassword = <ThrowOnError extends boolean = fals
     });
 };
 
+/**
+ * Registers a new user account.
+ */
 export const postApiAuthRegister = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthRegisterData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiAuthRegisterResponses, unknown, ThrowOnError>({
         security: [
@@ -92,6 +95,9 @@ export const postApiAuthRegister = <ThrowOnError extends boolean = false>(option
     });
 };
 
+/**
+ * Authenticates a user and returns access tokens.
+ */
 export const postApiAuthLogin = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthLoginData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiAuthLoginResponses, unknown, ThrowOnError>({
         security: [
@@ -109,6 +115,9 @@ export const postApiAuthLogin = <ThrowOnError extends boolean = false>(options?:
     });
 };
 
+/**
+ * Initiates a password reset by sending a reset email to the user.
+ */
 export const postApiAuthPasswordForgot = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthPasswordForgotData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiAuthPasswordForgotResponses, unknown, ThrowOnError>({
         security: [
@@ -126,6 +135,9 @@ export const postApiAuthPasswordForgot = <ThrowOnError extends boolean = false>(
     });
 };
 
+/**
+ * Resets a user's password using a reset token.
+ */
 export const postApiAuthPasswordReset = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthPasswordResetData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiAuthPasswordResetResponses, unknown, ThrowOnError>({
         security: [
@@ -143,6 +155,9 @@ export const postApiAuthPasswordReset = <ThrowOnError extends boolean = false>(o
     });
 };
 
+/**
+ * Sets up two-factor authentication for the authenticated user.
+ */
 export const postApiAuth2FaSetup = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuth2FaSetupData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiAuth2FaSetupResponses, unknown, ThrowOnError>({
         security: [
@@ -156,6 +171,9 @@ export const postApiAuth2FaSetup = <ThrowOnError extends boolean = false>(option
     });
 };
 
+/**
+ * Enables two-factor authentication for the authenticated user.
+ */
 export const postApiAuth2FaEnable = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuth2FaEnableData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiAuth2FaEnableResponses, unknown, ThrowOnError>({
         security: [
@@ -173,6 +191,9 @@ export const postApiAuth2FaEnable = <ThrowOnError extends boolean = false>(optio
     });
 };
 
+/**
+ * Disables two-factor authentication for the authenticated user.
+ */
 export const postApiAuth2FaDisable = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuth2FaDisableData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiAuth2FaDisableResponses, unknown, ThrowOnError>({
         security: [
@@ -190,6 +211,9 @@ export const postApiAuth2FaDisable = <ThrowOnError extends boolean = false>(opti
     });
 };
 
+/**
+ * Verifies a two-factor authentication code for login.
+ */
 export const postApiAuth2FaVerify = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuth2FaVerifyData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiAuth2FaVerifyResponses, unknown, ThrowOnError>({
         security: [
@@ -207,6 +231,9 @@ export const postApiAuth2FaVerify = <ThrowOnError extends boolean = false>(optio
     });
 };
 
+/**
+ * Refreshes an access token using a valid refresh token.
+ */
 export const postApiAuthRefresh = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthRefreshData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiAuthRefreshResponses, unknown, ThrowOnError>({
         security: [
@@ -224,6 +251,9 @@ export const postApiAuthRefresh = <ThrowOnError extends boolean = false>(options
     });
 };
 
+/**
+ * Gets the roles assigned to the authenticated user.
+ */
 export const getApiAuthRoles = <ThrowOnError extends boolean = false>(options?: Options<GetApiAuthRolesData, ThrowOnError>) => {
     return (options?.client ?? client).get<GetApiAuthRolesResponses, unknown, ThrowOnError>({
         security: [
@@ -237,6 +267,9 @@ export const getApiAuthRoles = <ThrowOnError extends boolean = false>(options?: 
     });
 };
 
+/**
+ * Assigns a role to a user. Requires admin privileges.
+ */
 export const postApiAuthUsersByUserIdRoles = <ThrowOnError extends boolean = false>(options: Options<PostApiAuthUsersByUserIdRolesData, ThrowOnError>) => {
     return (options.client ?? client).post<PostApiAuthUsersByUserIdRolesResponses, unknown, ThrowOnError>({
         security: [
@@ -254,6 +287,9 @@ export const postApiAuthUsersByUserIdRoles = <ThrowOnError extends boolean = fal
     });
 };
 
+/**
+ * Removes a role from a user. Requires admin privileges.
+ */
 export const deleteApiAuthUsersByUserIdRolesByRoleName = <ThrowOnError extends boolean = false>(options: Options<DeleteApiAuthUsersByUserIdRolesByRoleNameData, ThrowOnError>) => {
     return (options.client ?? client).delete<DeleteApiAuthUsersByUserIdRolesByRoleNameResponses, unknown, ThrowOnError>({
         security: [
@@ -267,6 +303,9 @@ export const deleteApiAuthUsersByUserIdRolesByRoleName = <ThrowOnError extends b
     });
 };
 
+/**
+ * Gets all available roles in the system. Requires admin privileges.
+ */
 export const getApiAuthRolesAll = <ThrowOnError extends boolean = false>(options?: Options<GetApiAuthRolesAllData, ThrowOnError>) => {
     return (options?.client ?? client).get<GetApiAuthRolesAllResponses, unknown, ThrowOnError>({
         security: [
@@ -557,6 +596,9 @@ export const postApiDashboardDeleteTeller = <ThrowOnError extends boolean = fals
     });
 };
 
+/**
+ * Gets a paginated list of elections with optional status filtering.
+ */
 export const getApiElections = <ThrowOnError extends boolean = false>(options?: Options<GetApiElectionsData, ThrowOnError>) => {
     return (options?.client ?? client).get<GetApiElectionsResponses, unknown, ThrowOnError>({
         responseTransformer: getApiElectionsResponseTransformer,
@@ -571,6 +613,9 @@ export const getApiElections = <ThrowOnError extends boolean = false>(options?: 
     });
 };
 
+/**
+ * Creates a new election.
+ */
 export const postApiElections = <ThrowOnError extends boolean = false>(options?: Options<PostApiElectionsData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiElectionsResponses, unknown, ThrowOnError>({
         responseTransformer: postApiElectionsResponseTransformer,
@@ -589,6 +634,9 @@ export const postApiElections = <ThrowOnError extends boolean = false>(options?:
     });
 };
 
+/**
+ * Deletes an election by its GUID.
+ */
 export const deleteApiElectionsByGuid = <ThrowOnError extends boolean = false>(options: Options<DeleteApiElectionsByGuidData, ThrowOnError>) => {
     return (options.client ?? client).delete<DeleteApiElectionsByGuidResponses, unknown, ThrowOnError>({
         security: [
@@ -602,6 +650,9 @@ export const deleteApiElectionsByGuid = <ThrowOnError extends boolean = false>(o
     });
 };
 
+/**
+ * Gets a specific election by its GUID.
+ */
 export const getApiElectionsByGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByGuidData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiElectionsByGuidResponses, unknown, ThrowOnError>({
         responseTransformer: getApiElectionsByGuidResponseTransformer,
@@ -616,6 +667,9 @@ export const getApiElectionsByGuid = <ThrowOnError extends boolean = false>(opti
     });
 };
 
+/**
+ * Updates an existing election.
+ */
 export const putApiElectionsByGuid = <ThrowOnError extends boolean = false>(options: Options<PutApiElectionsByGuidData, ThrowOnError>) => {
     return (options.client ?? client).put<PutApiElectionsByGuidResponses, unknown, ThrowOnError>({
         responseTransformer: putApiElectionsByGuidResponseTransformer,
@@ -634,6 +688,9 @@ export const putApiElectionsByGuid = <ThrowOnError extends boolean = false>(opti
     });
 };
 
+/**
+ * Gets a summary of a specific election by its GUID.
+ */
 export const getApiElectionsByGuidSummary = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByGuidSummaryData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiElectionsByGuidSummaryResponses, unknown, ThrowOnError>({
         responseTransformer: getApiElectionsByGuidSummaryResponseTransformer,
@@ -648,6 +705,9 @@ export const getApiElectionsByGuidSummary = <ThrowOnError extends boolean = fals
     });
 };
 
+/**
+ * Imports ballot data from CSV content for a specific election.
+ */
 export const postApiImportBallotsByElectionGuid = <ThrowOnError extends boolean = false>(options: Options<PostApiImportBallotsByElectionGuidData, ThrowOnError>) => {
     return (options.client ?? client).post<PostApiImportBallotsByElectionGuidResponses, unknown, ThrowOnError>({
         security: [
@@ -665,6 +725,9 @@ export const postApiImportBallotsByElectionGuid = <ThrowOnError extends boolean 
     });
 };
 
+/**
+ * Gets a paginated list of people for the specified election with optional filtering.
+ */
 export const getApiPeopleElectionByElectionGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleElectionByElectionGuidData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiPeopleElectionByElectionGuidResponses, unknown, ThrowOnError>({
         security: [
@@ -678,6 +741,9 @@ export const getApiPeopleElectionByElectionGuid = <ThrowOnError extends boolean 
     });
 };
 
+/**
+ * Searches for people within an election by name.
+ */
 export const getApiPeopleElectionByElectionGuidSearch = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleElectionByElectionGuidSearchData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiPeopleElectionByElectionGuidSearchResponses, unknown, ThrowOnError>({
         security: [
@@ -691,6 +757,9 @@ export const getApiPeopleElectionByElectionGuidSearch = <ThrowOnError extends bo
     });
 };
 
+/**
+ * Deletes a person by their GUID.
+ */
 export const deleteApiPeopleByGuid = <ThrowOnError extends boolean = false>(options: Options<DeleteApiPeopleByGuidData, ThrowOnError>) => {
     return (options.client ?? client).delete<DeleteApiPeopleByGuidResponses, unknown, ThrowOnError>({
         security: [
@@ -704,6 +773,9 @@ export const deleteApiPeopleByGuid = <ThrowOnError extends boolean = false>(opti
     });
 };
 
+/**
+ * Gets a specific person by their GUID.
+ */
 export const getApiPeopleByGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleByGuidData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiPeopleByGuidResponses, unknown, ThrowOnError>({
         security: [
@@ -717,6 +789,9 @@ export const getApiPeopleByGuid = <ThrowOnError extends boolean = false>(options
     });
 };
 
+/**
+ * Updates an existing person.
+ */
 export const putApiPeopleByGuid = <ThrowOnError extends boolean = false>(options: Options<PutApiPeopleByGuidData, ThrowOnError>) => {
     return (options.client ?? client).put<PutApiPeopleByGuidResponses, unknown, ThrowOnError>({
         security: [
@@ -734,6 +809,9 @@ export const putApiPeopleByGuid = <ThrowOnError extends boolean = false>(options
     });
 };
 
+/**
+ * Creates a new person.
+ */
 export const postApiPeople = <ThrowOnError extends boolean = false>(options?: Options<PostApiPeopleData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiPeopleResponses, unknown, ThrowOnError>({
         security: [
@@ -751,6 +829,9 @@ export const postApiPeople = <ThrowOnError extends boolean = false>(options?: Op
     });
 };
 
+/**
+ * Gets public home page data including system information.
+ */
 export const getApiPublicHome = <ThrowOnError extends boolean = false>(options?: Options<GetApiPublicHomeData, ThrowOnError>) => {
     return (options?.client ?? client).get<GetApiPublicHomeResponses, unknown, ThrowOnError>({
         responseTransformer: getApiPublicHomeResponseTransformer,
@@ -765,6 +846,9 @@ export const getApiPublicHome = <ThrowOnError extends boolean = false>(options?:
     });
 };
 
+/**
+ * Gets a list of all available elections that are open for public access.
+ */
 export const getApiPublicElections = <ThrowOnError extends boolean = false>(options?: Options<GetApiPublicElectionsData, ThrowOnError>) => {
     return (options?.client ?? client).get<GetApiPublicElectionsResponses, unknown, ThrowOnError>({
         responseTransformer: getApiPublicElectionsResponseTransformer,
@@ -779,6 +863,9 @@ export const getApiPublicElections = <ThrowOnError extends boolean = false>(opti
     });
 };
 
+/**
+ * Gets the current status of a specific election.
+ */
 export const getApiPublicElectionsByElectionGuidStatus = <ThrowOnError extends boolean = false>(options: Options<GetApiPublicElectionsByElectionGuidStatusData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiPublicElectionsByElectionGuidStatusResponses, unknown, ThrowOnError>({
         responseTransformer: getApiPublicElectionsByElectionGuidStatusResponseTransformer,
@@ -793,6 +880,9 @@ export const getApiPublicElectionsByElectionGuidStatus = <ThrowOnError extends b
     });
 };
 
+/**
+ * Performs a health check to verify the service is running properly.
+ */
 export const getApiPublicHealth = <ThrowOnError extends boolean = false>(options?: Options<GetApiPublicHealthData, ThrowOnError>) => {
     return (options?.client ?? client).get<GetApiPublicHealthResponses, unknown, ThrowOnError>({
         security: [
@@ -803,6 +893,23 @@ export const getApiPublicHealth = <ThrowOnError extends boolean = false>(options
         ],
         url: '/api/Public/health',
         ...options
+    });
+};
+
+export const postApiReportsExportByElectionId = <ThrowOnError extends boolean = false>(options: Options<PostApiReportsExportByElectionIdData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiReportsExportByElectionIdResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/Reports/export/{electionId}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -974,6 +1081,9 @@ export const getApiResultsElectionByElectionGuidDetailedStatistics = <ThrowOnErr
     });
 };
 
+/**
+ * Creates a new election with basic information (Step 1 of setup).
+ */
 export const postApiSetupElectionStep1 = <ThrowOnError extends boolean = false>(options?: Options<PostApiSetupElectionStep1Data, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiSetupElectionStep1Responses, unknown, ThrowOnError>({
         responseTransformer: postApiSetupElectionStep1ResponseTransformer,
@@ -992,6 +1102,9 @@ export const postApiSetupElectionStep1 = <ThrowOnError extends boolean = false>(
     });
 };
 
+/**
+ * Configures additional election settings (Step 2 of setup).
+ */
 export const putApiSetupElectionByGuidStep2 = <ThrowOnError extends boolean = false>(options: Options<PutApiSetupElectionByGuidStep2Data, ThrowOnError>) => {
     return (options.client ?? client).put<PutApiSetupElectionByGuidStep2Responses, unknown, ThrowOnError>({
         responseTransformer: putApiSetupElectionByGuidStep2ResponseTransformer,
@@ -1010,6 +1123,9 @@ export const putApiSetupElectionByGuidStep2 = <ThrowOnError extends boolean = fa
     });
 };
 
+/**
+ * Gets the current setup status of an election.
+ */
 export const getApiSetupElectionByGuidStatus = <ThrowOnError extends boolean = false>(options: Options<GetApiSetupElectionByGuidStatusData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiSetupElectionByGuidStatusResponses, unknown, ThrowOnError>({
         security: [
@@ -1023,6 +1139,9 @@ export const getApiSetupElectionByGuidStatus = <ThrowOnError extends boolean = f
     });
 };
 
+/**
+ * Gets all votes for a specific ballot.
+ */
 export const getApiVotesBallotByBallotGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiVotesBallotByBallotGuidData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiVotesBallotByBallotGuidResponses, unknown, ThrowOnError>({
         security: [
@@ -1036,6 +1155,9 @@ export const getApiVotesBallotByBallotGuid = <ThrowOnError extends boolean = fal
     });
 };
 
+/**
+ * Gets all votes for a specific election.
+ */
 export const getApiVotesElectionByElectionGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiVotesElectionByElectionGuidData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiVotesElectionByElectionGuidResponses, unknown, ThrowOnError>({
         security: [
@@ -1049,6 +1171,9 @@ export const getApiVotesElectionByElectionGuid = <ThrowOnError extends boolean =
     });
 };
 
+/**
+ * Deletes a vote by its ID.
+ */
 export const deleteApiVotesById = <ThrowOnError extends boolean = false>(options: Options<DeleteApiVotesByIdData, ThrowOnError>) => {
     return (options.client ?? client).delete<DeleteApiVotesByIdResponses, unknown, ThrowOnError>({
         security: [
@@ -1062,6 +1187,9 @@ export const deleteApiVotesById = <ThrowOnError extends boolean = false>(options
     });
 };
 
+/**
+ * Gets a specific vote by its ID.
+ */
 export const getApiVotesById = <ThrowOnError extends boolean = false>(options: Options<GetApiVotesByIdData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiVotesByIdResponses, unknown, ThrowOnError>({
         security: [
@@ -1075,6 +1203,9 @@ export const getApiVotesById = <ThrowOnError extends boolean = false>(options: O
     });
 };
 
+/**
+ * Updates an existing vote.
+ */
 export const putApiVotesById = <ThrowOnError extends boolean = false>(options: Options<PutApiVotesByIdData, ThrowOnError>) => {
     return (options.client ?? client).put<PutApiVotesByIdResponses, unknown, ThrowOnError>({
         security: [
@@ -1092,6 +1223,9 @@ export const putApiVotesById = <ThrowOnError extends boolean = false>(options: O
     });
 };
 
+/**
+ * Creates a new vote.
+ */
 export const postApiVotes = <ThrowOnError extends boolean = false>(options?: Options<PostApiVotesData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiVotesResponses, unknown, ThrowOnError>({
         security: [

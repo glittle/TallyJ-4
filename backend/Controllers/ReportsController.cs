@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using TallyJ4.DTOs.Results;
 using TallyJ4.Services;
 
+/// <summary>
+/// Controller for managing election reports and advanced reporting features.
+/// Provides endpoints for exporting reports, generating charts, comparing elections, and statistical analysis.
+/// </summary>
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -12,6 +16,12 @@ public class ReportsController : ControllerBase
     private readonly IAdvancedReportingService _advancedReportingService;
     private readonly ILogger<ReportsController> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the ReportsController.
+    /// </summary>
+    /// <param name="reportExportService">The report export service for generating file exports.</param>
+    /// <param name="advancedReportingService">The advanced reporting service for complex reports and analysis.</param>
+    /// <param name="logger">The logger for recording operations.</param>
     public ReportsController(
         IReportExportService reportExportService,
         IAdvancedReportingService advancedReportingService,
@@ -22,6 +32,12 @@ public class ReportsController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Exports an election report in the specified format (PDF, Excel, or CSV).
+    /// </summary>
+    /// <param name="electionId">The GUID of the election to export.</param>
+    /// <param name="request">The export request containing format and filter options.</param>
+    /// <returns>A file download response with the exported report.</returns>
     [HttpPost("export/{electionId:guid}")]
     public async Task<IActionResult> ExportReport(Guid electionId, [FromBody] ExportRequest request)
     {
@@ -71,6 +87,12 @@ public class ReportsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Generates chart data for visualizing election results.
+    /// </summary>
+    /// <param name="electionId">The GUID of the election to generate chart data for.</param>
+    /// <param name="chartType">The type of chart to generate.</param>
+    /// <returns>The chart data for the specified election and chart type.</returns>
     [HttpGet("chart/{electionId:guid}/{chartType}")]
     public async Task<ActionResult<ChartDataDto>> GetChartData(Guid electionId, string chartType)
     {
@@ -93,6 +115,11 @@ public class ReportsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Compares multiple elections based on specified metrics.
+    /// </summary>
+    /// <param name="request">The comparison request containing election IDs and metrics to compare.</param>
+    /// <returns>The comparison results for the specified elections.</returns>
     [HttpPost("compare")]
     public async Task<ActionResult<ElectionComparisonDto>> CompareElections([FromBody] ElectionComparisonRequestDto request)
     {
@@ -115,6 +142,12 @@ public class ReportsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Generates a filtered report for an election based on advanced filter criteria.
+    /// </summary>
+    /// <param name="electionId">The GUID of the election to generate the report for.</param>
+    /// <param name="filters">The advanced filter criteria to apply.</param>
+    /// <returns>The filtered report data.</returns>
     [HttpPost("advanced-filter/{electionId:guid}")]
     public async Task<ActionResult<FilteredReportDto>> GetFilteredReport(Guid electionId, [FromBody] AdvancedFilterDto filters)
     {
@@ -137,6 +170,11 @@ public class ReportsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Generates a custom report based on the provided configuration.
+    /// </summary>
+    /// <param name="config">The configuration for the custom report.</param>
+    /// <returns>The generated custom report.</returns>
     [HttpPost("custom")]
     public async Task<ActionResult<CustomReportDto>> GenerateCustomReport([FromBody] CustomReportConfigDto config)
     {
@@ -159,6 +197,11 @@ public class ReportsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Generates statistical analysis for an election.
+    /// </summary>
+    /// <param name="electionId">The GUID of the election to analyze.</param>
+    /// <returns>The statistical analysis results.</returns>
     [HttpGet("statistics/{electionId:guid}")]
     public async Task<ActionResult<StatisticalAnalysisDto>> GetStatisticalAnalysis(Guid electionId)
     {

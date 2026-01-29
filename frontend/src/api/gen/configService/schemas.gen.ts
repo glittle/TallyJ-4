@@ -40,17 +40,20 @@ export const AvailableElectionDtoListApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             type: 'array',
             items: {
                 '$ref': '#/components/schemas/AvailableElectionDto'
             },
+            description: 'The data returned by the API operation, if successful.',
             nullable: true
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -58,10 +61,13 @@ export const AvailableElectionDtoListApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const BallotDtoSchema = {
@@ -122,13 +128,15 @@ export const BallotDtoApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             '$ref': '#/components/schemas/BallotDto'
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -136,10 +144,13 @@ export const BallotDtoApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const BallotDtoPaginatedResponseSchema = {
@@ -150,48 +161,60 @@ export const BallotDtoPaginatedResponseSchema = {
             items: {
                 '$ref': '#/components/schemas/BallotDto'
             },
+            description: 'The items on the current page.',
             nullable: true
         },
         pageNumber: {
             type: 'integer',
+            description: 'The current page number (1-based).',
             format: 'int32'
         },
         pageSize: {
             type: 'integer',
+            description: 'The number of items per page.',
             format: 'int32'
         },
         totalCount: {
             type: 'integer',
+            description: 'The total number of items across all pages.',
             format: 'int32'
         },
         totalPages: {
             type: 'integer',
+            description: 'The total number of pages available.',
             format: 'int32',
             readOnly: true
         },
         hasPreviousPage: {
             type: 'boolean',
+            description: 'Indicates whether there is a previous page available.',
             readOnly: true
         },
         hasNextPage: {
             type: 'boolean',
+            description: 'Indicates whether there is a next page available.',
             readOnly: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic paginated response wrapper for collections that require pagination.
+Provides metadata about the current page, total items, and navigation information.`
 } as const;
 
 export const BooleanApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'The data returned by the API operation, if successful.'
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -199,10 +222,13 @@ export const BooleanApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const CandidatePerformanceDtoSchema = {
@@ -576,13 +602,15 @@ export const DashboardSummaryDtoApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             '$ref': '#/components/schemas/DashboardSummaryDto'
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -590,10 +618,13 @@ export const DashboardSummaryDtoApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const DeleteTellerRequestSchema = {
@@ -729,17 +760,20 @@ export const ElectionCardDtoListApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             type: 'array',
             items: {
                 '$ref': '#/components/schemas/ElectionCardDto'
             },
+            description: 'The data returned by the API operation, if successful.',
             nullable: true
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -747,10 +781,13 @@ export const ElectionCardDtoListApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const ElectionDtoSchema = {
@@ -837,13 +874,15 @@ export const ElectionDtoApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             '$ref': '#/components/schemas/ElectionDto'
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -851,10 +890,13 @@ export const ElectionDtoApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const ElectionOverviewDtoSchema = {
@@ -999,13 +1041,15 @@ export const ElectionSetupStatusDtoApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             '$ref': '#/components/schemas/ElectionSetupStatusDto'
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -1013,10 +1057,13 @@ export const ElectionSetupStatusDtoApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const ElectionStatusDtoSchema = {
@@ -1062,13 +1109,15 @@ export const ElectionStatusDtoApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             '$ref': '#/components/schemas/ElectionStatusDto'
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -1076,10 +1125,13 @@ export const ElectionStatusDtoApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const ElectionStep1DtoSchema = {
@@ -1165,35 +1217,44 @@ export const ElectionSummaryDtoPaginatedResponseSchema = {
             items: {
                 '$ref': '#/components/schemas/ElectionSummaryDto'
             },
+            description: 'The items on the current page.',
             nullable: true
         },
         pageNumber: {
             type: 'integer',
+            description: 'The current page number (1-based).',
             format: 'int32'
         },
         pageSize: {
             type: 'integer',
+            description: 'The number of items per page.',
             format: 'int32'
         },
         totalCount: {
             type: 'integer',
+            description: 'The total number of items across all pages.',
             format: 'int32'
         },
         totalPages: {
             type: 'integer',
+            description: 'The total number of pages available.',
             format: 'int32',
             readOnly: true
         },
         hasPreviousPage: {
             type: 'boolean',
+            description: 'Indicates whether there is a previous page available.',
             readOnly: true
         },
         hasNextPage: {
             type: 'boolean',
+            description: 'Indicates whether there is a next page available.',
             readOnly: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic paginated response wrapper for collections that require pagination.
+Provides metadata about the current page, total items, and navigation information.`
 } as const;
 
 export const Enable2FARequestSchema = {
@@ -1207,6 +1268,32 @@ export const Enable2FARequestSchema = {
         }
     },
     additionalProperties: false
+} as const;
+
+export const ExportRequestSchema = {
+    type: 'object',
+    properties: {
+        format: {
+            type: 'string',
+            description: 'The format of the exported report (PDF or Excel).',
+            nullable: true
+        },
+        electionId: {
+            type: 'string',
+            description: 'The unique identifier of the election to export.',
+            format: 'uuid'
+        },
+        filters: {
+            type: 'object',
+            additionalProperties: {
+                type: 'string'
+            },
+            description: 'Optional filters to apply to the export (e.g., date ranges, locations).',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Request DTO for exporting election reports in different formats.'
 } as const;
 
 export const ForgotPasswordRequestSchema = {
@@ -1227,10 +1314,12 @@ export const ImportBallotsRequestSchema = {
     properties: {
         csvContent: {
             type: 'string',
+            description: 'The CSV content containing ballot data to import.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: 'Request model for importing ballot data.'
 } as const;
 
 export const LocationInfoDtoSchema = {
@@ -1372,13 +1461,16 @@ export const ObjectApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
+            description: 'The data returned by the API operation, if successful.',
             nullable: true
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -1386,10 +1478,13 @@ export const ObjectApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const OnlineVotingInfoDtoSchema = {
@@ -1531,13 +1626,15 @@ export const PersonDtoApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             '$ref': '#/components/schemas/PersonDto'
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -1545,27 +1642,33 @@ export const PersonDtoApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const PersonDtoListApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             type: 'array',
             items: {
                 '$ref': '#/components/schemas/PersonDto'
             },
+            description: 'The data returned by the API operation, if successful.',
             nullable: true
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -1573,10 +1676,13 @@ export const PersonDtoListApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const PersonDtoPaginatedResponseSchema = {
@@ -1587,35 +1693,44 @@ export const PersonDtoPaginatedResponseSchema = {
             items: {
                 '$ref': '#/components/schemas/PersonDto'
             },
+            description: 'The items on the current page.',
             nullable: true
         },
         pageNumber: {
             type: 'integer',
+            description: 'The current page number (1-based).',
             format: 'int32'
         },
         pageSize: {
             type: 'integer',
+            description: 'The number of items per page.',
             format: 'int32'
         },
         totalCount: {
             type: 'integer',
+            description: 'The total number of items across all pages.',
             format: 'int32'
         },
         totalPages: {
             type: 'integer',
+            description: 'The total number of pages available.',
             format: 'int32',
             readOnly: true
         },
         hasPreviousPage: {
             type: 'boolean',
+            description: 'Indicates whether there is a previous page available.',
             readOnly: true
         },
         hasNextPage: {
             type: 'boolean',
+            description: 'Indicates whether there is a next page available.',
             readOnly: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic paginated response wrapper for collections that require pagination.
+Provides metadata about the current page, total items, and navigation information.`
 } as const;
 
 export const PresentationCandidateDtoSchema = {
@@ -1755,13 +1870,15 @@ export const PublicHomeDtoApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             '$ref': '#/components/schemas/PublicHomeDto'
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -1769,10 +1886,13 @@ export const PublicHomeDtoApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const RefreshTokenRequestSchema = {
@@ -2347,13 +2467,15 @@ export const UserProfileDtoApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             '$ref': '#/components/schemas/UserProfileDto'
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -2361,10 +2483,13 @@ export const UserProfileDtoApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const Verify2FARequestSchema = {
@@ -2468,13 +2593,15 @@ export const VoteDtoApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             '$ref': '#/components/schemas/VoteDto'
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -2482,27 +2609,33 @@ export const VoteDtoApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const VoteDtoListApiResponseSchema = {
     type: 'object',
     properties: {
         success: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
         },
         data: {
             type: 'array',
             items: {
                 '$ref': '#/components/schemas/VoteDto'
             },
+            description: 'The data returned by the API operation, if successful.',
             nullable: true
         },
         message: {
             type: 'string',
+            description: 'An optional message providing additional information about the response.',
             nullable: true
         },
         errors: {
@@ -2510,10 +2643,13 @@ export const VoteDtoListApiResponseSchema = {
             items: {
                 type: 'string'
             },
+            description: 'A list of error messages, if the operation failed.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
 export const BallotDtoPaginatedResponseWritableSchema = {
@@ -2524,22 +2660,28 @@ export const BallotDtoPaginatedResponseWritableSchema = {
             items: {
                 '$ref': '#/components/schemas/BallotDto'
             },
+            description: 'The items on the current page.',
             nullable: true
         },
         pageNumber: {
             type: 'integer',
+            description: 'The current page number (1-based).',
             format: 'int32'
         },
         pageSize: {
             type: 'integer',
+            description: 'The number of items per page.',
             format: 'int32'
         },
         totalCount: {
             type: 'integer',
+            description: 'The total number of items across all pages.',
             format: 'int32'
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic paginated response wrapper for collections that require pagination.
+Provides metadata about the current page, total items, and navigation information.`
 } as const;
 
 export const ElectionSummaryDtoPaginatedResponseWritableSchema = {
@@ -2550,22 +2692,28 @@ export const ElectionSummaryDtoPaginatedResponseWritableSchema = {
             items: {
                 '$ref': '#/components/schemas/ElectionSummaryDto'
             },
+            description: 'The items on the current page.',
             nullable: true
         },
         pageNumber: {
             type: 'integer',
+            description: 'The current page number (1-based).',
             format: 'int32'
         },
         pageSize: {
             type: 'integer',
+            description: 'The number of items per page.',
             format: 'int32'
         },
         totalCount: {
             type: 'integer',
+            description: 'The total number of items across all pages.',
             format: 'int32'
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic paginated response wrapper for collections that require pagination.
+Provides metadata about the current page, total items, and navigation information.`
 } as const;
 
 export const PersonDtoPaginatedResponseWritableSchema = {
@@ -2576,20 +2724,26 @@ export const PersonDtoPaginatedResponseWritableSchema = {
             items: {
                 '$ref': '#/components/schemas/PersonDto'
             },
+            description: 'The items on the current page.',
             nullable: true
         },
         pageNumber: {
             type: 'integer',
+            description: 'The current page number (1-based).',
             format: 'int32'
         },
         pageSize: {
             type: 'integer',
+            description: 'The number of items per page.',
             format: 'int32'
         },
         totalCount: {
             type: 'integer',
+            description: 'The total number of items across all pages.',
             format: 'int32'
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: `Generic paginated response wrapper for collections that require pagination.
+Provides metadata about the current page, total items, and navigation information.`
 } as const;

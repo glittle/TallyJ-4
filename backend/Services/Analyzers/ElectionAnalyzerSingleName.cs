@@ -4,13 +4,28 @@ using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Services.Analyzers;
 
+/// <summary>
+/// Election analyzer for single-name elections where votes can have weighted counts.
+/// Implements vote counting logic for elections where candidates can receive multiple vote counts per ballot.
+/// </summary>
 public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
 {
+    /// <summary>
+    /// Initializes a new instance of the ElectionAnalyzerSingleName.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="logger">The logger instance.</param>
+    /// <param name="election">The election to analyze.</param>
     public ElectionAnalyzerSingleName(MainDbContext context, ILogger logger, Election election)
         : base(context, logger, election)
     {
     }
 
+    /// <summary>
+    /// Counts votes for a single-name election where votes can have weighted counts.
+    /// Processes ballots and aggregates weighted vote counts for each candidate.
+    /// </summary>
+    /// <returns>A task representing the asynchronous vote counting operation.</returns>
     protected override async Task CountVotesAsync()
     {
         Logger.LogInformation("Starting vote count for single-name election");

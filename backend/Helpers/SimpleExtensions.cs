@@ -31,16 +31,33 @@ public static partial class ExtensionsSimple
         return input.HasContent() ? input + separator + additionalString : additionalString;
     }
 
+    /// <summary>
+    /// Converts an XAttribute to a boolean value.
+    /// </summary>
+    /// <param name="input">The XAttribute to convert.</param>
+    /// <returns>The boolean value of the attribute.</returns>
     public static bool AsBoolean(this XAttribute input)
     {
         return input.AsString().AsBoolean();
     }
 
+    /// <summary>
+    /// Converts a nullable boolean to a boolean value.
+    /// </summary>
+    /// <param name="input">The nullable boolean to convert.</param>
+    /// <returns>True if the input has a value and is true, otherwise false.</returns>
     public static bool AsBoolean(this bool? input)
     {
         return input.HasValue && input.Value;
     }
 
+    /// <summary>
+    /// Converts an object to a boolean value with flexible parsing.
+    /// Supports boolean values, strings ("yes", "no", "1", "0"), and standard boolean parsing.
+    /// </summary>
+    /// <param name="input">The object to convert.</param>
+    /// <param name="defaultValue">The default value to return if conversion fails.</param>
+    /// <returns>The boolean representation of the input, or the default value if conversion fails.</returns>
     public static bool AsBoolean(this object? input, bool defaultValue = false)
     {
         if (input == null)
@@ -82,6 +99,11 @@ public static partial class ExtensionsSimple
         return bool.TryParse(s, out var result) && result;
     }
 
+    /// <summary>
+    /// Converts an object to a byte value, clamping the result to the valid byte range (0-255).
+    /// </summary>
+    /// <param name="input">The object to convert.</param>
+    /// <returns>The byte representation of the input, clamped to 0-255 range.</returns>
     public static byte AsByte(this object input)
     {
         var value = input.AsInt();
@@ -122,7 +144,12 @@ public static partial class ExtensionsSimple
         return input.AsDouble().AsCurrencyStr(format, formatForHtml);
     }
 
-    /// <summary>Attempt to convert this input to a date</summary>
+    /// <summary>
+    /// Attempts to convert a string to a DateTime.
+    /// Supports standard date formats and YYYYMMDD format.
+    /// </summary>
+    /// <param name="input">The string to convert to a date.</param>
+    /// <returns>The parsed DateTime, or DateTime.MinValue if parsing fails.</returns>
     public static DateTime AsDate(this string? input)
     {
         input = input.NullIfEmptyString();
@@ -155,6 +182,12 @@ public static partial class ExtensionsSimple
         return DateTime.MinValue;
     }
 
+    /// <summary>
+    /// Converts an object to a DateTime.
+    /// Supports Unix timestamp (milliseconds since 1970-01-01) or standard date formats.
+    /// </summary>
+    /// <param name="input">The object to convert to a date.</param>
+    /// <returns>The parsed DateTime.</returns>
     public static DateTime AsDate(this object input)
     {
         if (long.TryParse(input.NullIfEmptyString(), out var date))
@@ -167,6 +200,13 @@ public static partial class ExtensionsSimple
         return Convert.ToDateTime(input.NullIfEmptyString());
     }
 
+    /// <summary>
+    /// Converts an object to a DateTime using the specified format provider.
+    /// Supports Unix timestamp (milliseconds since 1970-01-01) or standard date formats.
+    /// </summary>
+    /// <param name="input">The object to convert to a date.</param>
+    /// <param name="formatProvider">The format provider to use for parsing.</param>
+    /// <returns>The parsed DateTime.</returns>
     public static DateTime AsDate(this object input, IFormatProvider formatProvider)
     {
         if (long.TryParse(input.NullIfEmptyString(), NumberStyles.Any, formatProvider, out var date))
@@ -179,18 +219,33 @@ public static partial class ExtensionsSimple
         return Convert.ToDateTime(input.NullIfEmptyString());
     }
 
-    /// <summary>Get the date from this Nullable date. If it is null, return default value.</summary>
+    /// <summary>
+    /// Gets the DateTime value from a nullable DateTime, or returns the specified default value if null.
+    /// </summary>
+    /// <param name="input">The nullable DateTime to convert.</param>
+    /// <param name="defaultValue">The default value to return if the input is null.</param>
+    /// <returns>The DateTime value or the default value.</returns>
     public static DateTime AsDate(this DateTime? input, DateTime defaultValue)
     {
         return input ?? defaultValue;
     }
 
-    /// <summary>Get the date from this Nullable date. If it is null, return DateTime.MinValue.</summary>
+    /// <summary>
+    /// Gets the DateTime value from a nullable DateTime, or returns DateTime.MinValue if null.
+    /// </summary>
+    /// <param name="input">The nullable DateTime to convert.</param>
+    /// <returns>The DateTime value or DateTime.MinValue.</returns>
     public static DateTime AsDate(this DateTime? input)
     {
         return input ?? DateTime.MinValue;
     }
 
+    /// <summary>
+    /// Converts an object to a formatted date string, or returns an empty string if conversion fails.
+    /// </summary>
+    /// <param name="input">The object to convert to a date string.</param>
+    /// <param name="format">The date format string to use.</param>
+    /// <returns>The formatted date string, or empty string if parsing fails.</returns>
     public static string AsDateStringOrBlank(this object input, string format)
     {
         if (DateTime.TryParse(input.NullIfEmptyString(), out var date))
@@ -204,13 +259,22 @@ public static partial class ExtensionsSimple
         return string.Empty;
     }
 
-    /// <summary>Attempt to convert this input to a date</summary>
+    /// <summary>
+    /// Attempts to convert an object to a DateTime.
+    /// </summary>
+    /// <param name="input">The object to convert to a DateTime.</param>
+    /// <returns>The parsed DateTime.</returns>
     public static DateTime AsDateTime(this object input)
     {
         return input.AsDate();
     }
 
-    //[Obsolete("Use AsDouble for most cases")]
+    /// <summary>
+    /// Converts an object to a decimal value.
+    /// Handles culture-specific parsing, with special handling for French-Canadian culture.
+    /// </summary>
+    /// <param name="input">The object to convert to a decimal.</param>
+    /// <returns>The decimal representation of the input, or 0 if conversion fails.</returns>
     public static decimal AsDecimal(this object input)
     {
         decimal result;
@@ -246,6 +310,12 @@ public static partial class ExtensionsSimple
         }
     }
 
+    /// <summary>
+    /// Converts an object to a double value.
+    /// Handles culture-specific parsing, with special handling for French-Canadian culture.
+    /// </summary>
+    /// <param name="input">The object to convert to a double.</param>
+    /// <returns>The double representation of the input, or 0 if conversion fails.</returns>
     public static double AsDouble(this object input)
     {
         double result;
@@ -281,16 +351,36 @@ public static partial class ExtensionsSimple
         }
     }
 
+    /// <summary>
+    /// Converts an object to a double value using the specified format provider.
+    /// </summary>
+    /// <param name="input">The object to convert to a double.</param>
+    /// <param name="formatProvider">The format provider to use for parsing.</param>
+    /// <returns>The double representation of the input.</returns>
     public static double AsDouble(this object input, IFormatProvider formatProvider)
     {
         return Convert.ToDouble(input.NullIfEmptyString(), formatProvider);
     }
 
+    /// <summary>
+    /// Converts a byte value to an enum value.
+    /// </summary>
+    /// <typeparam name="T">The enum type to convert to.</typeparam>
+    /// <param name="input">The byte value to convert.</param>
+    /// <param name="defaultValue">The default value to return if conversion fails.</param>
+    /// <returns>The enum value, or the default value if conversion fails.</returns>
     public static T AsEnum<T>(this byte input, T defaultValue)
     {
         return ((int)input).AsEnum(defaultValue);
     }
 
+    /// <summary>
+    /// Converts an integer value to an enum value.
+    /// </summary>
+    /// <typeparam name="T">The enum type to convert to.</typeparam>
+    /// <param name="input">The integer value to convert.</param>
+    /// <param name="defaultValue">The default value to return if conversion fails.</param>
+    /// <returns>The enum value, or the default value if conversion fails.</returns>
     public static T AsEnum<T>(this int input, T defaultValue)
     {
         var enumType = typeof(T);
@@ -303,6 +393,15 @@ public static partial class ExtensionsSimple
         return defaultValue;
     }
 
+    /// <summary>
+    /// Converts a string value to an enum value with flexible parsing.
+    /// Supports case-sensitive matching, case-insensitive matching, integer parsing, and partial matching.
+    /// </summary>
+    /// <typeparam name="T">The enum type to convert to.</typeparam>
+    /// <param name="input">The string value to convert.</param>
+    /// <param name="defaultValue">The default value to return if conversion fails.</param>
+    /// <returns>The enum value, or the default value if conversion fails.</returns>
+    /// <exception cref="ArgumentException">Thrown when T is not an enumeration type.</exception>
     public static T AsEnum<T>(this string input, T defaultValue)
     {
         var enumType = typeof(T);
@@ -396,11 +495,22 @@ public static partial class ExtensionsSimple
         return "id" + input.ToString().Substring(0, 5).Replace("-", "");
     }
 
+    /// <summary>
+    /// Converts an object to an integer value, returning 0 if conversion fails.
+    /// </summary>
+    /// <param name="input">The object to convert to an integer.</param>
+    /// <returns>The integer representation of the input, or 0 if conversion fails.</returns>
     public static int AsInt(this object input)
     {
         return AsInt(input, 0);
     }
 
+    /// <summary>
+    /// Converts an object to an integer value, returning the specified default value if conversion fails.
+    /// </summary>
+    /// <param name="input">The object to convert to an integer.</param>
+    /// <param name="defaultValue">The default value to return if conversion fails.</param>
+    /// <returns>The integer representation of the input, or the default value if conversion fails.</returns>
     public static int AsInt(this object? input, int defaultValue)
     {
         if (input == null)
@@ -423,6 +533,13 @@ public static partial class ExtensionsSimple
         }
     }
 
+    /// <summary>
+    /// Converts an object to an integer value using the specified format provider, returning the specified default value if conversion fails.
+    /// </summary>
+    /// <param name="input">The object to convert to an integer.</param>
+    /// <param name="defaultValue">The default value to return if conversion fails.</param>
+    /// <param name="formatProvider">The format provider to use for parsing.</param>
+    /// <returns>The integer representation of the input, or the default value if conversion fails.</returns>
     public static int AsInt(this object? input, int defaultValue, IFormatProvider formatProvider)
     {
         if (input == null)
@@ -446,11 +563,22 @@ public static partial class ExtensionsSimple
         //return Util.Strings.Coalesce(input, 0);
     }
 
+    /// <summary>
+    /// Converts an object to a 32-bit integer value, returning 0 if conversion fails.
+    /// </summary>
+    /// <param name="input">The object to convert to an integer.</param>
+    /// <returns>The 32-bit integer representation of the input, or 0 if conversion fails.</returns>
     public static int AsInt32(this object input)
     {
         return AsInt(input, 0);
     }
 
+    /// <summary>
+    /// Converts an object to a 64-bit integer value, returning the specified default value if conversion fails.
+    /// </summary>
+    /// <param name="input">The object to convert to a long integer.</param>
+    /// <param name="defaultValue">The default value to return if conversion fails.</param>
+    /// <returns>The 64-bit integer representation of the input, or the default value if conversion fails.</returns>
     public static long AsInt64(this object? input, long defaultValue = 0)
     {
         if (input == null)
@@ -473,6 +601,11 @@ public static partial class ExtensionsSimple
         }
     }
 
+    /// <summary>
+    /// Converts an object to a long integer value.
+    /// </summary>
+    /// <param name="input">The object to convert to a long integer.</param>
+    /// <returns>The long integer representation of the input.</returns>
     public static long AsLong(this object input)
     {
         return Convert.ToInt64(input.NullIfEmptyString());
@@ -512,6 +645,13 @@ public static partial class ExtensionsSimple
         return input == 0 ? string.Empty : input.ToString();
     }
 
+    /// <summary>
+    /// Converts a boolean value to a string, returning one of two specified strings based on the boolean value.
+    /// </summary>
+    /// <param name="input">The boolean value to convert.</param>
+    /// <param name="ifTrue">The string to return if the input is true.</param>
+    /// <param name="ifFalse">The string to return if the input is false.</param>
+    /// <returns>The specified string based on the boolean value.</returns>
     public static string AsString(this bool input, string ifTrue, string ifFalse)
     {
         return input ? ifTrue : ifFalse;
@@ -587,6 +727,15 @@ public static partial class ExtensionsSimple
         return input == Guid.Empty.ToString() ? string.Empty : input;
     }
 
+    /// <summary>
+    /// Truncates a string to a specified maximum length, optionally adding ellipsis and handling line breaks.
+    /// </summary>
+    /// <param name="input">The string to truncate.</param>
+    /// <param name="maxLength">The maximum length of the resulting string.</param>
+    /// <param name="addEllipsis">Whether to add ellipsis ("...") when truncating.</param>
+    /// <param name="afterLineBreak">Whether to truncate after the first line break.</param>
+    /// <param name="returnNullIfEmpty">Whether to return null instead of empty string when input is null or empty.</param>
+    /// <returns>The truncated string, or null/empty string based on parameters.</returns>
     public static string? ChopAfter(
       this string? input,
       int maxLength,
@@ -654,6 +803,12 @@ public static partial class ExtensionsSimple
         return input.HasNoContent() ? defaultValue : input;
     }
 
+    /// <summary>
+    /// Returns the input string if it has content, otherwise returns the specified default value (which can be null).
+    /// </summary>
+    /// <param name="input">The input string to check.</param>
+    /// <param name="defaultValue">The default value to return if the input has no content.</param>
+    /// <returns>The input string or the default value.</returns>
     public static string? DefaultToNullable(this string? input, string? defaultValue)
     {
         return input.HasNoContent() ? defaultValue : input;
@@ -723,6 +878,13 @@ public static partial class ExtensionsSimple
         return input.ToString("e").Split('e')[1].Substring(1, 3).AsInt() + 1;
     }
 
+    /// <summary>
+    /// Compares two double values for equality within a specified tolerance.
+    /// </summary>
+    /// <param name="input">The first double value to compare.</param>
+    /// <param name="input2">The second double value to compare.</param>
+    /// <param name="tolerance">The tolerance for the comparison (default is 0.01).</param>
+    /// <returns>True if the absolute difference between the values is less than the tolerance, otherwise false.</returns>
     public static bool EqualsWithTolerance(this double input, double input2, double tolerance = 0.01)
     {
         return Math.Abs(input - input2) < tolerance;
@@ -741,6 +903,12 @@ public static partial class ExtensionsSimple
         return string.Format(input, values);
     }
 
+    /// <summary>
+    /// Fills a template string with values from a dictionary using string keys.
+    /// </summary>
+    /// <param name="input">The template string containing placeholders.</param>
+    /// <param name="value">The dictionary containing the replacement values.</param>
+    /// <returns>The template string with placeholders replaced by dictionary values.</returns>
     public static string FilledWithDict(this string input, IDictionary<string, string> value)
     {
         if (input.HasNoContent())
@@ -751,6 +919,12 @@ public static partial class ExtensionsSimple
         return new TemplateHelper(input).FillByName(value);
     }
 
+    /// <summary>
+    /// Fills a template string with values from a dictionary using string keys and object values.
+    /// </summary>
+    /// <param name="input">The template string containing placeholders.</param>
+    /// <param name="value">The dictionary containing the replacement values.</param>
+    /// <returns>The template string with placeholders replaced by dictionary values.</returns>
     public static string FilledWithDict(this string input, IDictionary<string, object> value)
     {
         if (input.HasNoContent())
@@ -761,6 +935,12 @@ public static partial class ExtensionsSimple
         return new TemplateHelper(input).FillByName(value);
     }
 
+    /// <summary>
+    /// Performs the specified action on each element of the sequence.
+    /// </summary>
+    /// <typeparam name="TItem">The type of elements in the sequence.</typeparam>
+    /// <param name="sequence">The sequence to iterate over.</param>
+    /// <param name="action">The action to perform on each element.</param>
     public static void ForEach<TItem>(this IEnumerable<TItem>? sequence, Action<TItem> action)
     {
         if (sequence == null)
@@ -802,11 +982,22 @@ public static partial class ExtensionsSimple
         return JsonConvert.DeserializeObject<T>(input);
     }
 
+    /// <summary>
+    /// Gets all exception messages from the exception chain and joins them with a separator.
+    /// </summary>
+    /// <param name="input">The exception to get messages from.</param>
+    /// <param name="separator">The separator to use between messages.</param>
+    /// <returns>A string containing all exception messages joined by the separator.</returns>
     public static string GetAllMessages(this Exception input, string separator)
     {
         return input.GetAllMessages().JoinedAsString(separator);
     }
 
+    /// <summary>
+    /// Gets all exception messages from the exception chain as an enumerable collection.
+    /// </summary>
+    /// <param name="input">The exception to get messages from.</param>
+    /// <returns>An enumerable collection of all exception messages in the chain.</returns>
     public static IEnumerable<string> GetAllMessages(this Exception? input)
     {
         while (input != null)
@@ -816,6 +1007,12 @@ public static partial class ExtensionsSimple
         }
     }
 
+    /// <summary>
+    /// Attempts to extract the browser name from a user agent string.
+    /// </summary>
+    /// <param name="input">The user agent string to parse.</param>
+    /// <param name="defaultValue">The default value to return if browser cannot be identified.</param>
+    /// <returns>The browser name if identified, otherwise the default value.</returns>
     public static string GetBrowserName(this string input, string defaultValue)
     {
         if (input.HasNoContent())
@@ -854,6 +1051,11 @@ public static partial class ExtensionsSimple
         return node.InnerText;
     }
 
+    /// <summary>
+    /// Extracts all top-level keys from a JSON string.
+    /// </summary>
+    /// <param name="json">The JSON string to parse.</param>
+    /// <returns>A list of all top-level keys in the JSON object, or an empty list if parsing fails or input is null/empty.</returns>
     public static List<string> GetKeysFromJsonString(this string json)
     {
         if (json.IsNullOrEmpty())
@@ -906,11 +1108,29 @@ public static partial class ExtensionsSimple
         return dict!.GetValueOrDefault(key, default(TV));
     }
 
+    /// <summary>
+    /// Gets the value associated with the specified key from the dictionary, or returns the specified default value if the key is not found.
+    /// </summary>
+    /// <typeparam name="TK">The type of the keys in the dictionary.</typeparam>
+    /// <typeparam name="TV">The type of the values in the dictionary.</typeparam>
+    /// <param name="dict">The dictionary to search.</param>
+    /// <param name="key">The key to locate.</param>
+    /// <param name="defVal">The default value to return if the key is not found.</param>
+    /// <returns>The value associated with the key, or the default value if the key is not found.</returns>
     public static TV? GetValueOrDefault<TK, TV>(this IDictionary<TK, TV?> dict, TK key, TV defVal)
     {
         return dict.GetValueOrDefault(key, () => defVal);
     }
 
+    /// <summary>
+    /// Gets the value associated with the specified key from the dictionary, or returns the value produced by the default value selector function if the key is not found.
+    /// </summary>
+    /// <typeparam name="TK">The type of the keys in the dictionary.</typeparam>
+    /// <typeparam name="TV">The type of the values in the dictionary.</typeparam>
+    /// <param name="dict">The dictionary to search.</param>
+    /// <param name="key">The key to locate.</param>
+    /// <param name="defValSelector">A function that produces the default value if the key is not found.</param>
+    /// <returns>The value associated with the key, or the value produced by the default value selector if the key is not found.</returns>
     public static TV? GetValueOrDefault<TK, TV>(
       this IDictionary<TK, TV?> dict,
       TK key,
@@ -945,6 +1165,11 @@ public static partial class ExtensionsSimple
         return input.HasValue && input.Value != 0;
     }
 
+    /// <summary>
+    /// Determines whether the specified object is not null.
+    /// </summary>
+    /// <param name="input">The object to test.</param>
+    /// <returns>True if the object is not null, otherwise false.</returns>
     public static bool HasContent([NotNullWhen(true)] this object? input)
     {
         return input != null;
@@ -974,6 +1199,11 @@ public static partial class ExtensionsSimple
         return input != null && input.Count() != 0;
     }
 
+    /// <summary>
+    /// Determines whether the specified nullable DateTime has a value and is not equal to DateTime.MinValue.
+    /// </summary>
+    /// <param name="input">The nullable DateTime to test.</param>
+    /// <returns>True if the DateTime has a value and is not MinValue, otherwise false.</returns>
     public static bool HasContent([NotNullWhen(true)] this DateTime? input)
     {
         if (input == null)
@@ -1002,6 +1232,11 @@ public static partial class ExtensionsSimple
         return string.IsNullOrEmpty(input);
     }
 
+    /// <summary>
+    /// Determines whether the specified object is null.
+    /// </summary>
+    /// <param name="input">The object to test.</param>
+    /// <returns>True if the object is null, otherwise false.</returns>
     public static bool HasNoContent([NotNullWhen(false)] this object? input)
     {
         return input == null;
@@ -1015,11 +1250,21 @@ public static partial class ExtensionsSimple
         return !input.HasContent();
     }
 
+    /// <summary>
+    /// Converts an integer representing hours into a TimeSpan.
+    /// </summary>
+    /// <param name="input">The number of hours.</param>
+    /// <returns>A TimeSpan representing the specified number of hours.</returns>
     public static TimeSpan Hour(this int input)
     {
         return input.Hours();
     }
 
+    /// <summary>
+    /// Converts an integer representing hours into a TimeSpan.
+    /// </summary>
+    /// <param name="input">The number of hours.</param>
+    /// <returns>A TimeSpan representing the specified number of hours.</returns>
     public static TimeSpan Hours(this int input)
     {
         return new TimeSpan(input, 0, 0);
@@ -1075,6 +1320,13 @@ public static partial class ExtensionsSimple
           .JoinedAsString(separator, string.Empty, string.Empty);
     }
 
+    /// <summary>
+    /// Joins an enumerable of strings with a separator, optionally skipping blank strings.
+    /// </summary>
+    /// <param name="array">The enumerable of strings to join.</param>
+    /// <param name="separator">The separator to use between strings.</param>
+    /// <param name="skipBlanks">Whether to skip blank strings in the join operation.</param>
+    /// <returns>The joined string.</returns>
     public static string JoinedAsString(
       this IEnumerable<string> array,
       string separator,
@@ -1131,6 +1383,11 @@ public static partial class ExtensionsSimple
           : "";
     }
 
+    /// <summary>
+    /// Returns the last character of a string, or an empty string if the input is null or empty.
+    /// </summary>
+    /// <param name="value">The string to get the last character from.</param>
+    /// <returns>The last character as a string, or empty string if input is null/empty.</returns>
     public static string LastCharacter(this string value)
     {
         if (string.IsNullOrEmpty(value))
@@ -1159,16 +1416,31 @@ public static partial class ExtensionsSimple
         return input.Length <= length ? input : input.Substring(0, length);
     }
 
+    /// <summary>
+    /// Converts an integer representing minutes into a TimeSpan.
+    /// </summary>
+    /// <param name="input">The number of minutes.</param>
+    /// <returns>A TimeSpan representing the specified number of minutes.</returns>
     public static TimeSpan Minute(this int input)
     {
         return input.Minutes();
     }
 
+    /// <summary>
+    /// Converts an integer representing minutes into a TimeSpan.
+    /// </summary>
+    /// <param name="input">The number of minutes.</param>
+    /// <returns>A TimeSpan representing the specified number of minutes.</returns>
     public static TimeSpan Minutes(this int input)
     {
         return new TimeSpan(0, input, 0);
     }
 
+    /// <summary>
+    /// Returns null if the DateTimeOffset is null or equals DateTimeOffset.MinValue, otherwise returns the input.
+    /// </summary>
+    /// <param name="input">The DateTimeOffset to check.</param>
+    /// <returns>The input DateTimeOffset or null if it is MinValue.</returns>
     public static DateTimeOffset? NullIfEmpty(this DateTimeOffset? input)
     {
         if (input == null)
@@ -1177,11 +1449,21 @@ public static partial class ExtensionsSimple
         return input == DateTimeOffset.MinValue ? null : input;
     }
 
+    /// <summary>
+    /// Returns null if the string is null, empty, or consists only of white-space characters, otherwise returns the input.
+    /// </summary>
+    /// <param name="input">The string to check.</param>
+    /// <returns>The input string or null if it is null or whitespace.</returns>
     public static string? NullIfEmpty(this string? input)
     {
         return string.IsNullOrWhiteSpace(input) ? null : input;
     }
 
+    /// <summary>
+    /// Returns null if the object is null or represents an empty string, otherwise returns the string representation of the object.
+    /// </summary>
+    /// <param name="input">The object to convert to string.</param>
+    /// <returns>The string representation of the object or null if it represents an empty string.</returns>
     public static string? NullIfEmptyString(this object? input)
     {
         switch (input)
@@ -1194,6 +1476,13 @@ public static partial class ExtensionsSimple
         }
     }
 
+    /// <summary>
+    /// Returns the ordinal suffix (st, nd, rd, th) for a number, optionally including the number and formatting as HTML superscript.
+    /// </summary>
+    /// <param name="input">The number to get the ordinal suffix for.</param>
+    /// <param name="includeNumber">Whether to include the number in the result.</param>
+    /// <param name="htmlSuperscript">Whether to format the suffix as HTML superscript.</param>
+    /// <returns>The ordinal suffix, optionally with the number and HTML formatting.</returns>
     public static string Ordinal(
       this int input,
       bool includeNumber = false,
@@ -1327,16 +1616,32 @@ public static partial class ExtensionsSimple
         return find.Aggregate(input, (current, s) => current.Replace(s, replace));
     }
 
+    /// <summary>
+    /// Rounds a double value to the specified number of decimal places.
+    /// </summary>
+    /// <param name="input">The double value to round.</param>
+    /// <param name="decimals">The number of decimal places to round to.</param>
+    /// <returns>The rounded double value.</returns>
     public static double Rounded(this double input, int decimals)
     {
         return Math.Round(input, decimals);
     }
 
+    /// <summary>
+    /// Converts an integer representing seconds into a TimeSpan.
+    /// </summary>
+    /// <param name="input">The number of seconds.</param>
+    /// <returns>A TimeSpan representing the specified number of seconds.</returns>
     public static TimeSpan Second(this int input)
     {
         return input.Seconds();
     }
 
+    /// <summary>
+    /// Converts an integer representing seconds into a TimeSpan.
+    /// </summary>
+    /// <param name="input">The number of seconds.</param>
+    /// <returns>A TimeSpan representing the specified number of seconds.</returns>
     public static TimeSpan Seconds(this int input)
     {
         return new TimeSpan(0, 0, input);
@@ -1345,6 +1650,11 @@ public static partial class ExtensionsSimple
     private static readonly Regex s_mustachesRegex =
       new(@"{{.*?}}", RegexOptions.Singleline | RegexOptions.Compiled);
 
+    /// <summary>
+    /// Removes mustache-style template placeholders ({{...}}) from a string.
+    /// </summary>
+    /// <param name="input">The string to process.</param>
+    /// <returns>The string with all mustache placeholders removed.</returns>
     public static string StripMustaches(this string input)
     {
         // remove {{ and }} and any content between them
@@ -1420,11 +1730,24 @@ public static partial class ExtensionsSimple
         return left + input + (right ?? left);
     }
 
+    /// <summary>
+    /// Surrounds a string with the same string on both sides.
+    /// </summary>
+    /// <param name="input">The string to surround.</param>
+    /// <param name="bothSides">The string to place on both sides of the input.</param>
+    /// <returns>The input string surrounded by the specified string.</returns>
     public static string SurroundWith(this string input, string bothSides)
     {
         return SurroundWith(input, bothSides, bothSides);
     }
 
+    /// <summary>
+    /// Surrounds a string with different strings on the left and right sides.
+    /// </summary>
+    /// <param name="input">The string to surround.</param>
+    /// <param name="left">The string to place on the left side.</param>
+    /// <param name="right">The string to place on the right side.</param>
+    /// <returns>The input string surrounded by the specified left and right strings.</returns>
     public static string SurroundWith(this string input, string left, string right)
     {
         return left + input + right;
@@ -1460,6 +1783,11 @@ public static partial class ExtensionsSimple
         return $@"{t:%d} {{day}}{(t.Hours < 2 ? "" : "s")}";
     }
 
+    /// <summary>
+    /// Converts a zero-based column index to an Excel-style column name (A, B, C, ..., Z, AA, AB, etc.).
+    /// </summary>
+    /// <param name="input">The zero-based column index.</param>
+    /// <returns>The Excel column name corresponding to the index.</returns>
     public static string ToColumnNameForExcel(this int input)
     {
         var dividend = input;
@@ -1474,6 +1802,12 @@ public static partial class ExtensionsSimple
         return columnName;
     }
 
+    /// <summary>
+    /// Converts an object's properties to a dictionary with property names as keys and string representations of property values as values.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to convert.</typeparam>
+    /// <param name="obj">The object to convert to a dictionary.</param>
+    /// <returns>A dictionary containing the object's properties, or an empty dictionary if the object is null.</returns>
     public static Dictionary<string, string> ToDictionary<T>(this T obj)
     {
         if (obj == null)
@@ -1513,6 +1847,11 @@ public static partial class ExtensionsSimple
         return s;
     }
 
+    /// <summary>
+    /// Returns the MIME type for an image file extension, suitable for use in base64 data URIs.
+    /// </summary>
+    /// <param name="extension">The file extension (with or without leading dot).</param>
+    /// <returns>The MIME type string for the image format, or "image/*" if unrecognized.</returns>
     public static string TypeForBase64Image(this string extension)
     {
         switch (extension.ToLower().Replace(".", ""))
@@ -1588,16 +1927,33 @@ public static partial class ExtensionsSimple
         return Uri.UnescapeDataString(input);
     }
 
+    /// <summary>
+    /// Decodes HTML-encoded characters in a string.
+    /// </summary>
+    /// <param name="input">The string containing HTML-encoded characters.</param>
+    /// <returns>The string with HTML entities decoded.</returns>
     public static string HtmlDecoded(this string input)
     {
         return HttpUtility.HtmlDecode(input);
     }
 
+    /// <summary>
+    /// Encodes special characters in a string to HTML entities.
+    /// </summary>
+    /// <param name="input">The string to HTML-encode.</param>
+    /// <returns>The string with special characters encoded as HTML entities.</returns>
     public static string HtmlEncoded(this string input)
     {
         return HttpUtility.HtmlEncode(input);
     }
 
+    /// <summary>
+    /// Formats a DateTime as a human-readable relative time string (e.g., "2 hours ago", "yesterday").
+    /// </summary>
+    /// <param name="recentTime">The DateTime to format.</param>
+    /// <param name="now">The current DateTime for comparison.</param>
+    /// <param name="shortText">Whether to use abbreviated text formats.</param>
+    /// <returns>A human-readable string describing how long ago the time occurred.</returns>
     public static string AsRecentTimeString(
       this DateTime recentTime,
       DateTime now,

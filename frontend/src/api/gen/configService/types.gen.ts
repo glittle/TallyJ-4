@@ -15,10 +15,26 @@ export type AvailableElectionDto = {
     electionType?: string | null;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type AvailableElectionDtoListApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
     data?: Array<AvailableElectionDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
@@ -36,27 +52,81 @@ export type BallotDto = {
     votes?: Array<VoteDto> | null;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type BallotDtoApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
     data?: BallotDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
 export type BallotDtoPaginatedResponse = {
+    /**
+     * The items on the current page.
+     */
     items?: Array<BallotDto> | null;
+    /**
+     * The current page number (1-based).
+     */
     pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
     pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
     totalCount?: number;
+    /**
+     * The total number of pages available.
+     */
     readonly totalPages?: number;
+    /**
+     * Indicates whether there is a previous page available.
+     */
     readonly hasPreviousPage?: boolean;
+    /**
+     * Indicates whether there is a next page available.
+     */
     readonly hasNextPage?: boolean;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type BooleanApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
     data?: boolean;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
@@ -167,10 +237,23 @@ export type DashboardSummaryDto = {
     recentElections?: Array<ElectionCardDto> | null;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type DashboardSummaryDtoApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
     data?: DashboardSummaryDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
@@ -211,10 +294,26 @@ export type ElectionCardDto = {
     percentComplete?: number;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type ElectionCardDtoListApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
     data?: Array<ElectionCardDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
@@ -238,10 +337,23 @@ export type ElectionDto = {
     locationCount?: number;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type ElectionDtoApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
     data?: ElectionDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
@@ -280,10 +392,23 @@ export type ElectionSetupStatusDto = {
     progressPercent?: number;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type ElectionSetupStatusDtoApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
     data?: ElectionSetupStatusDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
@@ -298,10 +423,23 @@ export type ElectionStatusDto = {
     ballotsSubmitted?: number;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type ElectionStatusDtoApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
     data?: ElectionStatusDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
@@ -327,13 +465,38 @@ export type ElectionSummaryDto = {
     ballotCount?: number;
 };
 
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
 export type ElectionSummaryDtoPaginatedResponse = {
+    /**
+     * The items on the current page.
+     */
     items?: Array<ElectionSummaryDto> | null;
+    /**
+     * The current page number (1-based).
+     */
     pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
     pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
     totalCount?: number;
+    /**
+     * The total number of pages available.
+     */
     readonly totalPages?: number;
+    /**
+     * Indicates whether there is a previous page available.
+     */
     readonly hasPreviousPage?: boolean;
+    /**
+     * Indicates whether there is a next page available.
+     */
     readonly hasNextPage?: boolean;
 };
 
@@ -341,11 +504,37 @@ export type Enable2FaRequest = {
     code: string;
 };
 
+/**
+ * Request DTO for exporting election reports in different formats.
+ */
+export type ExportRequest = {
+    /**
+     * The format of the exported report (PDF or Excel).
+     */
+    format?: string | null;
+    /**
+     * The unique identifier of the election to export.
+     */
+    electionId?: string;
+    /**
+     * Optional filters to apply to the export (e.g., date ranges, locations).
+     */
+    filters?: {
+        [key: string]: string;
+    } | null;
+};
+
 export type ForgotPasswordRequest = {
     email: string;
 };
 
+/**
+ * Request model for importing ballot data.
+ */
 export type ImportBallotsRequest = {
+    /**
+     * The CSV content containing ballot data to import.
+     */
     csvContent?: string | null;
 };
 
@@ -387,10 +576,26 @@ export type MonitorInfoDto = {
     lastUpdated?: Date;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type ObjectApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
     data?: unknown;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
@@ -432,27 +637,81 @@ export type PersonDto = {
     voteCount?: number;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type PersonDtoApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
     data?: PersonDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type PersonDtoListApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
     data?: Array<PersonDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
 export type PersonDtoPaginatedResponse = {
+    /**
+     * The items on the current page.
+     */
     items?: Array<PersonDto> | null;
+    /**
+     * The current page number (1-based).
+     */
     pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
     pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
     totalCount?: number;
+    /**
+     * The total number of pages available.
+     */
     readonly totalPages?: number;
+    /**
+     * Indicates whether there is a previous page available.
+     */
     readonly hasPreviousPage?: boolean;
+    /**
+     * Indicates whether there is a next page available.
+     */
     readonly hasNextPage?: boolean;
 };
 
@@ -492,10 +751,23 @@ export type PublicHomeDto = {
     serverTime?: Date;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type PublicHomeDtoApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
     data?: PublicHomeDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
@@ -661,10 +933,23 @@ export type UserProfileDto = {
     phoneNumberConfirmed?: boolean;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type UserProfileDtoApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
     data?: UserProfileDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
@@ -696,38 +981,115 @@ export type VoteDto = {
     onlineVoteRaw?: string | null;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type VoteDtoApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
     data?: VoteDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type VoteDtoListApiResponse = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
     success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
     data?: Array<VoteDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
     message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
     errors?: Array<string> | null;
 };
 
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
 export type BallotDtoPaginatedResponseWritable = {
+    /**
+     * The items on the current page.
+     */
     items?: Array<BallotDto> | null;
+    /**
+     * The current page number (1-based).
+     */
     pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
     pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
     totalCount?: number;
 };
 
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
 export type ElectionSummaryDtoPaginatedResponseWritable = {
+    /**
+     * The items on the current page.
+     */
     items?: Array<ElectionSummaryDto> | null;
+    /**
+     * The current page number (1-based).
+     */
     pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
     pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
     totalCount?: number;
 };
 
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
 export type PersonDtoPaginatedResponseWritable = {
+    /**
+     * The items on the current page.
+     */
     items?: Array<PersonDto> | null;
+    /**
+     * The current page number (1-based).
+     */
     pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
     pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
     totalCount?: number;
 };
 
@@ -786,6 +1148,9 @@ export type PostApiAccountChangePasswordResponses = {
 export type PostApiAccountChangePasswordResponse = PostApiAccountChangePasswordResponses[keyof PostApiAccountChangePasswordResponses];
 
 export type PostApiAuthRegisterData = {
+    /**
+     * The registration request containing user details.
+     */
     body?: RegisterRequest;
     path?: never;
     query?: never;
@@ -800,6 +1165,9 @@ export type PostApiAuthRegisterResponses = {
 };
 
 export type PostApiAuthLoginData = {
+    /**
+     * The login request containing email and password.
+     */
     body?: LoginRequest;
     path?: never;
     query?: never;
@@ -814,6 +1182,9 @@ export type PostApiAuthLoginResponses = {
 };
 
 export type PostApiAuthPasswordForgotData = {
+    /**
+     * The forgot password request containing the user's email.
+     */
     body?: ForgotPasswordRequest;
     path?: never;
     query?: never;
@@ -828,6 +1199,9 @@ export type PostApiAuthPasswordForgotResponses = {
 };
 
 export type PostApiAuthPasswordResetData = {
+    /**
+     * The reset password request containing the token and new password.
+     */
     body?: ResetPasswordRequest;
     path?: never;
     query?: never;
@@ -856,6 +1230,9 @@ export type PostApiAuth2FaSetupResponses = {
 };
 
 export type PostApiAuth2FaEnableData = {
+    /**
+     * The enable 2FA request containing the verification code.
+     */
     body?: Enable2FaRequest;
     path?: never;
     query?: never;
@@ -870,6 +1247,9 @@ export type PostApiAuth2FaEnableResponses = {
 };
 
 export type PostApiAuth2FaDisableData = {
+    /**
+     * The disable 2FA request containing the verification code.
+     */
     body?: Disable2FaRequest;
     path?: never;
     query?: never;
@@ -884,6 +1264,9 @@ export type PostApiAuth2FaDisableResponses = {
 };
 
 export type PostApiAuth2FaVerifyData = {
+    /**
+     * The verify 2FA request containing email and verification code.
+     */
     body?: Verify2FaRequest;
     path?: never;
     query?: never;
@@ -898,6 +1281,9 @@ export type PostApiAuth2FaVerifyResponses = {
 };
 
 export type PostApiAuthRefreshData = {
+    /**
+     * The refresh token request containing the refresh token.
+     */
     body?: RefreshTokenRequest;
     path?: never;
     query?: never;
@@ -926,8 +1312,14 @@ export type GetApiAuthRolesResponses = {
 };
 
 export type PostApiAuthUsersByUserIdRolesData = {
+    /**
+     * The assign role request containing the role name.
+     */
     body?: AssignRoleRequest;
     path: {
+        /**
+         * The ID of the user to assign the role to.
+         */
         userId: string;
     };
     query?: never;
@@ -944,7 +1336,13 @@ export type PostApiAuthUsersByUserIdRolesResponses = {
 export type DeleteApiAuthUsersByUserIdRolesByRoleNameData = {
     body?: never;
     path: {
+        /**
+         * The ID of the user to remove the role from.
+         */
         userId: string;
+        /**
+         * The name of the role to remove.
+         */
         roleName: string;
     };
     query?: never;
@@ -1285,8 +1683,17 @@ export type GetApiElectionsData = {
     body?: never;
     path?: never;
     query?: {
+        /**
+         * The page number (starting from 1).
+         */
         pageNumber?: number;
+        /**
+         * The number of items per page (1-100).
+         */
         pageSize?: number;
+        /**
+         * Optional status filter for elections.
+         */
         status?: string;
     };
     url: '/api/Elections';
@@ -1302,6 +1709,9 @@ export type GetApiElectionsResponses = {
 export type GetApiElectionsResponse = GetApiElectionsResponses[keyof GetApiElectionsResponses];
 
 export type PostApiElectionsData = {
+    /**
+     * The election creation data.
+     */
     body?: CreateElectionDto;
     path?: never;
     query?: never;
@@ -1320,6 +1730,9 @@ export type PostApiElectionsResponse = PostApiElectionsResponses[keyof PostApiEl
 export type DeleteApiElectionsByGuidData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the election to delete.
+         */
         guid: string;
     };
     query?: never;
@@ -1336,6 +1749,9 @@ export type DeleteApiElectionsByGuidResponses = {
 export type GetApiElectionsByGuidData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the election.
+         */
         guid: string;
     };
     query?: never;
@@ -1352,8 +1768,14 @@ export type GetApiElectionsByGuidResponses = {
 export type GetApiElectionsByGuidResponse = GetApiElectionsByGuidResponses[keyof GetApiElectionsByGuidResponses];
 
 export type PutApiElectionsByGuidData = {
+    /**
+     * The updated election data.
+     */
     body?: UpdateElectionDto;
     path: {
+        /**
+         * The GUID of the election to update.
+         */
         guid: string;
     };
     query?: never;
@@ -1372,6 +1794,9 @@ export type PutApiElectionsByGuidResponse = PutApiElectionsByGuidResponses[keyof
 export type GetApiElectionsByGuidSummaryData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the election.
+         */
         guid: string;
     };
     query?: never;
@@ -1388,8 +1813,14 @@ export type GetApiElectionsByGuidSummaryResponses = {
 export type GetApiElectionsByGuidSummaryResponse = GetApiElectionsByGuidSummaryResponses[keyof GetApiElectionsByGuidSummaryResponses];
 
 export type PostApiImportBallotsByElectionGuidData = {
+    /**
+     * The import request containing CSV data.
+     */
     body?: ImportBallotsRequest;
     path: {
+        /**
+         * The GUID of the election to import data into.
+         */
         electionGuid: string;
     };
     query?: never;
@@ -1406,13 +1837,31 @@ export type PostApiImportBallotsByElectionGuidResponses = {
 export type GetApiPeopleElectionByElectionGuidData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the election.
+         */
         electionGuid: string;
     };
     query?: {
+        /**
+         * The page number (starting from 1).
+         */
         pageNumber?: number;
+        /**
+         * The number of items per page (1-200).
+         */
         pageSize?: number;
+        /**
+         * Optional search term to filter people by name.
+         */
         search?: string;
+        /**
+         * Optional filter for people who can vote.
+         */
         canVote?: boolean;
+        /**
+         * Optional filter for people who can receive votes.
+         */
         canReceiveVotes?: boolean;
     };
     url: '/api/People/election/{electionGuid}';
@@ -1430,9 +1879,15 @@ export type GetApiPeopleElectionByElectionGuidResponse = GetApiPeopleElectionByE
 export type GetApiPeopleElectionByElectionGuidSearchData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the election to search in.
+         */
         electionGuid: string;
     };
     query?: {
+        /**
+         * The search query string.
+         */
         q?: string;
     };
     url: '/api/People/election/{electionGuid}/search';
@@ -1450,6 +1905,9 @@ export type GetApiPeopleElectionByElectionGuidSearchResponse = GetApiPeopleElect
 export type DeleteApiPeopleByGuidData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the person to delete.
+         */
         guid: string;
     };
     query?: never;
@@ -1466,6 +1924,9 @@ export type DeleteApiPeopleByGuidResponses = {
 export type GetApiPeopleByGuidData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the person.
+         */
         guid: string;
     };
     query?: never;
@@ -1482,8 +1943,14 @@ export type GetApiPeopleByGuidResponses = {
 export type GetApiPeopleByGuidResponse = GetApiPeopleByGuidResponses[keyof GetApiPeopleByGuidResponses];
 
 export type PutApiPeopleByGuidData = {
+    /**
+     * The updated person data.
+     */
     body?: UpdatePersonDto;
     path: {
+        /**
+         * The GUID of the person to update.
+         */
         guid: string;
     };
     query?: never;
@@ -1500,6 +1967,9 @@ export type PutApiPeopleByGuidResponses = {
 export type PutApiPeopleByGuidResponse = PutApiPeopleByGuidResponses[keyof PutApiPeopleByGuidResponses];
 
 export type PostApiPeopleData = {
+    /**
+     * The person creation data.
+     */
     body?: CreatePersonDto;
     path?: never;
     query?: never;
@@ -1550,6 +2020,9 @@ export type GetApiPublicElectionsResponse = GetApiPublicElectionsResponses[keyof
 export type GetApiPublicElectionsByElectionGuidStatusData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the election to check.
+         */
         electionGuid: string;
     };
     query?: never;
@@ -1580,6 +2053,22 @@ export type GetApiPublicHealthResponses = {
 };
 
 export type GetApiPublicHealthResponse = GetApiPublicHealthResponses[keyof GetApiPublicHealthResponses];
+
+export type PostApiReportsExportByElectionIdData = {
+    body?: ExportRequest;
+    path: {
+        electionId: string;
+    };
+    query?: never;
+    url: '/api/Reports/export/{electionId}';
+};
+
+export type PostApiReportsExportByElectionIdResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
 
 export type PostApiResultsElectionByElectionGuidCalculateData = {
     body?: never;
@@ -1804,6 +2293,9 @@ export type GetApiResultsElectionByElectionGuidDetailedStatisticsResponses = {
 export type GetApiResultsElectionByElectionGuidDetailedStatisticsResponse = GetApiResultsElectionByElectionGuidDetailedStatisticsResponses[keyof GetApiResultsElectionByElectionGuidDetailedStatisticsResponses];
 
 export type PostApiSetupElectionStep1Data = {
+    /**
+     * The basic election setup information.
+     */
     body?: ElectionStep1Dto;
     path?: never;
     query?: never;
@@ -1820,8 +2312,14 @@ export type PostApiSetupElectionStep1Responses = {
 export type PostApiSetupElectionStep1Response = PostApiSetupElectionStep1Responses[keyof PostApiSetupElectionStep1Responses];
 
 export type PutApiSetupElectionByGuidStep2Data = {
+    /**
+     * The additional election configuration information.
+     */
     body?: ElectionStep2Dto;
     path: {
+        /**
+         * The GUID of the election to configure.
+         */
         guid: string;
     };
     query?: never;
@@ -1840,6 +2338,9 @@ export type PutApiSetupElectionByGuidStep2Response = PutApiSetupElectionByGuidSt
 export type GetApiSetupElectionByGuidStatusData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the election to check.
+         */
         guid: string;
     };
     query?: never;
@@ -1858,6 +2359,9 @@ export type GetApiSetupElectionByGuidStatusResponse = GetApiSetupElectionByGuidS
 export type GetApiVotesBallotByBallotGuidData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the ballot.
+         */
         ballotGuid: string;
     };
     query?: never;
@@ -1876,6 +2380,9 @@ export type GetApiVotesBallotByBallotGuidResponse = GetApiVotesBallotByBallotGui
 export type GetApiVotesElectionByElectionGuidData = {
     body?: never;
     path: {
+        /**
+         * The GUID of the election.
+         */
         electionGuid: string;
     };
     query?: never;
@@ -1894,6 +2401,9 @@ export type GetApiVotesElectionByElectionGuidResponse = GetApiVotesElectionByEle
 export type DeleteApiVotesByIdData = {
     body?: never;
     path: {
+        /**
+         * The ID of the vote to delete.
+         */
         id: number;
     };
     query?: never;
@@ -1912,6 +2422,9 @@ export type DeleteApiVotesByIdResponse = DeleteApiVotesByIdResponses[keyof Delet
 export type GetApiVotesByIdData = {
     body?: never;
     path: {
+        /**
+         * The ID of the vote.
+         */
         id: number;
     };
     query?: never;
@@ -1928,8 +2441,14 @@ export type GetApiVotesByIdResponses = {
 export type GetApiVotesByIdResponse = GetApiVotesByIdResponses[keyof GetApiVotesByIdResponses];
 
 export type PutApiVotesByIdData = {
+    /**
+     * The updated vote data.
+     */
     body?: CreateVoteDto;
     path: {
+        /**
+         * The ID of the vote to update.
+         */
         id: number;
     };
     query?: never;
@@ -1946,6 +2465,9 @@ export type PutApiVotesByIdResponses = {
 export type PutApiVotesByIdResponse = PutApiVotesByIdResponses[keyof PutApiVotesByIdResponses];
 
 export type PostApiVotesData = {
+    /**
+     * The vote creation data.
+     */
     body?: CreateVoteDto;
     path?: never;
     query?: never;

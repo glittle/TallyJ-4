@@ -4,8 +4,16 @@ using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Mappings;
 
+/// <summary>
+/// AutoMapper profile for ballot-related mappings.
+/// Defines mappings between ballot entities and DTOs.
+/// </summary>
 public class BallotProfile : Profile
 {
+    /// <summary>
+    /// Initializes a new instance of the BallotProfile.
+    /// Configures mappings between Ballot entities and various DTOs.
+    /// </summary>
     public BallotProfile()
     {
         CreateMap<Ballot, BallotDto>()

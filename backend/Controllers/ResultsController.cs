@@ -5,6 +5,10 @@ using TallyJ4.Services;
 
 namespace TallyJ4.Controllers;
 
+/// <summary>
+/// Controller for managing election results and tally operations.
+/// Provides endpoints for calculating tallies, retrieving results, monitoring elections, and managing tie-breaking.
+/// </summary>
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -14,6 +18,12 @@ public class ResultsController : ControllerBase
     private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly ILogger<ResultsController> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the ResultsController.
+    /// </summary>
+    /// <param name="tallyService">The tally service for election result calculations.</param>
+    /// <param name="signalRNotificationService">The SignalR service for real-time notifications.</param>
+    /// <param name="logger">The logger for recording operations.</param>
     public ResultsController(
         ITallyService tallyService,
         ISignalRNotificationService signalRNotificationService,
@@ -24,6 +34,12 @@ public class ResultsController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Calculates the tally results for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to calculate results for.</param>
+    /// <param name="electionType">The type of election calculation ("normal" or "singlename").</param>
+    /// <returns>The calculated tally results.</returns>
     [HttpPost("election/{electionGuid:guid}/calculate")]
     public async Task<ActionResult<TallyResultDto>> CalculateTally(
         Guid electionGuid,
@@ -60,6 +76,11 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves the tally results for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to get results for.</param>
+    /// <returns>The tally results for the specified election.</returns>
     [HttpGet("election/{electionGuid:guid}")]
     public async Task<ActionResult<TallyResultDto>> GetResults(Guid electionGuid)
     {
@@ -80,6 +101,11 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves summary statistics for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to get statistics for.</param>
+    /// <returns>The summary statistics for the specified election.</returns>
     [HttpGet("election/{electionGuid:guid}/summary")]
     public async Task<ActionResult<TallyStatisticsDto>> GetSummary(Guid electionGuid)
     {
@@ -100,6 +126,11 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves the final election results (only elected and extra positions).
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to get final results for.</param>
+    /// <returns>The final election results.</returns>
     [HttpGet("election/{electionGuid:guid}/final")]
     public async Task<ActionResult<TallyResultDto>> GetFinalResults(Guid electionGuid)
     {
@@ -135,6 +166,12 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Refreshes the monitor information and updates computer contact time.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election being monitored.</param>
+    /// <param name="computerCode">The computer code identifier (defaults to "Unknown").</param>
+    /// <returns>The updated monitor information.</returns>
     [HttpPost("election/{electionGuid:guid}/monitor/refresh")]
     public async Task<ActionResult<MonitorInfoDto>> RefreshMonitor(Guid electionGuid, [FromQuery] string computerCode = "Unknown")
     {
@@ -163,6 +200,11 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves monitoring information for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to get monitor info for.</param>
+    /// <returns>The monitoring information for the specified election.</returns>
     [HttpGet("election/{electionGuid:guid}/monitor")]
     public async Task<ActionResult<MonitorInfoDto>> GetMonitorInfo(Guid electionGuid)
     {
@@ -183,6 +225,12 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves tie-breaking details for a specific tie break group in an election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="tieBreakGroup">The tie break group number.</param>
+    /// <returns>The tie details for the specified group.</returns>
     [HttpGet("election/{electionGuid:guid}/ties/{tieBreakGroup:int}")]
     public async Task<ActionResult<TieDetailsDto>> GetTies(Guid electionGuid, int tieBreakGroup)
     {
@@ -205,6 +253,12 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Saves tie-breaking vote counts for an election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="request">The tie counts request data.</param>
+    /// <returns>The response indicating the result of saving tie counts.</returns>
     [HttpPost("election/{electionGuid:guid}/ties")]
     public async Task<ActionResult<SaveTieCountsResponseDto>> SaveTieCounts(Guid electionGuid, [FromBody] SaveTieCountsRequestDto request)
     {
@@ -225,6 +279,11 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves the complete election report for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to get the report for.</param>
+    /// <returns>The complete election report.</returns>
     [HttpGet("election/{electionGuid:guid}/report")]
     public async Task<ActionResult<ElectionReportDto>> GetElectionReport(Guid electionGuid)
     {
@@ -245,6 +304,12 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves specific report data for an election by report code.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="reportCode">The code identifying the specific report.</param>
+    /// <returns>The report data for the specified report code.</returns>
     [HttpGet("election/{electionGuid:guid}/report/{reportCode}")]
     public async Task<ActionResult<ReportDataResponseDto>> GetReportData(Guid electionGuid, string reportCode)
     {
@@ -267,6 +332,11 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves presentation data for displaying election results.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to get presentation data for.</param>
+    /// <returns>The presentation data for the specified election.</returns>
     [HttpGet("election/{electionGuid:guid}/presentation")]
     public async Task<ActionResult<PresentationDto>> GetPresentationData(Guid electionGuid)
     {
@@ -287,6 +357,11 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves detailed statistics for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to get detailed statistics for.</param>
+    /// <returns>The detailed statistics for the specified election.</returns>
     [HttpGet("election/{electionGuid:guid}/detailed-statistics")]
     public async Task<ActionResult<DetailedStatisticsDto>> GetDetailedStatistics(Guid electionGuid)
     {

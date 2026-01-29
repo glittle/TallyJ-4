@@ -4,19 +4,63 @@ using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Services.Analyzers;
 
+/// <summary>
+/// Base class for election result analyzers.
+/// Provides common functionality for calculating election tallies, processing votes, and determining winners.
+/// </summary>
 public abstract class ElectionAnalyzerBase
 {
+    /// <summary>
+    /// The database context for accessing election data.
+    /// </summary>
     protected readonly MainDbContext Context;
+
+    /// <summary>
+    /// The logger for recording analysis operations.
+    /// </summary>
     protected readonly ILogger Logger;
+
+    /// <summary>
+    /// The election being analyzed.
+    /// </summary>
     protected readonly Election TargetElection;
 
+    /// <summary>
+    /// Collection of ballots for the election.
+    /// </summary>
     protected List<Ballot> Ballots = new();
+
+    /// <summary>
+    /// Collection of votes from all ballots.
+    /// </summary>
     protected List<Vote> Votes = new();
+
+    /// <summary>
+    /// Collection of people (candidates) in the election.
+    /// </summary>
     protected List<Person> People = new();
+
+    /// <summary>
+    /// Collection of calculated results.
+    /// </summary>
     protected List<Result> Results = new();
+
+    /// <summary>
+    /// Collection of tie records.
+    /// </summary>
     protected List<ResultTie> ResultTies = new();
+
+    /// <summary>
+    /// The result summary being calculated.
+    /// </summary>
     protected ResultSummary ResultSummaryCalc = new();
 
+    /// <summary>
+    /// Initializes a new instance of the ElectionAnalyzerBase.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="logger">The logger instance.</param>
+    /// <param name="election">The election to analyze.</param>
     protected ElectionAnalyzerBase(MainDbContext context, ILogger logger, Election election)
     {
         Context = context;
@@ -24,6 +68,11 @@ public abstract class ElectionAnalyzerBase
         TargetElection = election;
     }
 
+    /// <summary>
+    /// Performs the complete election analysis process.
+    /// Includes data preparation, vote counting, result calculation, and persistence.
+    /// </summary>
+    /// <returns>A task representing the asynchronous analysis operation.</returns>
     public async Task AnalyzeAsync()
     {
         using var transaction = await Context.Database.BeginTransactionAsync();
@@ -49,6 +98,10 @@ public abstract class ElectionAnalyzerBase
         }
     }
 
+    /// <summary>
+    /// Prepares the analyzer for analysis by loading required data and clearing previous results.
+    /// </summary>
+    /// <returns>A task representing the asynchronous preparation operation.</returns>
     protected virtual async Task PrepareForAnalysisAsync()
     {
         Logger.LogInformation("Preparing for analysis of election {ElectionGuid}", TargetElection.ElectionGuid);
@@ -104,6 +157,10 @@ public abstract class ElectionAnalyzerBase
             Ballots.Count, Votes.Count, People.Count);
     }
 
+    /// <summary>
+    /// Calculates statistics about ballots and votes for the election.
+    /// Determines counts of valid, spoiled, and review-needed ballots.
+    /// </summary>
     protected virtual void CalculateBallotStatistics()
     {
         Logger.LogInformation("Calculating ballot statistics");
@@ -134,8 +191,15 @@ public abstract class ElectionAnalyzerBase
             totalBallots, spoiledBallots, ResultSummaryCalc.TotalVotes, ResultSummaryCalc.SpoiledVotes);
     }
 
+    /// <summary>
+    /// Counts the votes for the election according to the specific election type rules.
+    /// </summary>
+    /// <returns>A task representing the asynchronous vote counting operation.</returns>
     protected abstract Task CountVotesAsync();
 
+    /// <summary>
+    /// Finalizes the election results by assigning ranks and detecting ties.
+    /// </summary>
     protected virtual void FinalizeResultsAndTies()
     {
         Logger.LogInformation("Finalizing results and detecting ties");
@@ -235,6 +299,10 @@ public abstract class ElectionAnalyzerBase
             Results.Count, groupedByVotes.Count(g => g.Count() > 1));
     }
 
+    /// <summary>
+    /// Finalizes the result summary and saves it to the database.
+    /// </summary>
+    /// <returns>A task representing the asynchronous summary finalization operation.</returns>
     protected virtual async Task FinalizeSummariesAsync()
     {
         Logger.LogInformation("Finalizing summaries");
@@ -260,6 +328,10 @@ public abstract class ElectionAnalyzerBase
         }
     }
 
+    /// <summary>
+    /// Saves the calculated results and tie records to the database.
+    /// </summary>
+    /// <returns>A task representing the asynchronous save operation.</returns>
     protected virtual async Task SaveResultsAsync()
     {
         Logger.LogInformation("Saving results to database");
@@ -274,6 +346,11 @@ public abstract class ElectionAnalyzerBase
         Logger.LogInformation("Results saved successfully");
     }
 
+    /// <summary>
+    /// Determines if a ballot needs review based on its status and vote validity.
+    /// </summary>
+    /// <param name="ballot">The ballot to check.</param>
+    /// <returns>True if the ballot needs review, false otherwise.</returns>
     protected virtual bool BallotNeedsReview(Ballot ballot)
     {
         if (ballot.StatusCode != "Ok")
@@ -291,6 +368,11 @@ public abstract class ElectionAnalyzerBase
         return false;
     }
 
+    /// <summary>
+    /// Determines the status of a vote based on candidate eligibility and data consistency.
+    /// </summary>
+    /// <param name="vote">The vote to evaluate.</param>
+    /// <returns>The vote status: "Ok", "Spoiled", or "Changed".</returns>
     protected virtual string DetermineVoteStatus(Vote vote)
     {
         var person = People.FirstOrDefault(p => p.PersonGuid == vote.PersonGuid);

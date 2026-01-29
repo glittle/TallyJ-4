@@ -1,7 +1,13 @@
 using ClosedXML.Excel;
 using CsvHelper;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
+using iText.Kernel.Pdf;
+using iText.Kernel.Font;
+using iText.Kernel.Colors;
+using iText.Kernel.Geom;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
+using iText.IO.Font.Constants;
 using System.Globalization;
 using TallyJ4.DTOs.Results;
 using TallyJ4.Services;
@@ -43,36 +49,42 @@ public class ReportExportService : IReportExportService
             var detailedStats = await _tallyService.GetDetailedStatisticsAsync(electionId);
 
             using var memoryStream = new MemoryStream();
-            var document = new Document(PageSize.A4, 50, 50, 50, 50);
-            var writer = PdfWriter.GetInstance(document, memoryStream);
+            var writer = new PdfWriter(memoryStream);
+            var pdf = new PdfDocument(writer);
+            var document = new Document(pdf, PageSize.A4);
+            document.SetMargins(50, 50, 50, 50);
 
-            document.Open();
+            // Fonts
+            var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+            var normalFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
+            var headerFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
             // Title
-            var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18);
-            var title = new Paragraph($"Election Report - {electionReport.ElectionName}", titleFont);
-            title.Alignment = Element.ALIGN_CENTER;
-            title.SpacingAfter = 20;
+            var title = new Paragraph($"Election Report - {electionReport.ElectionName}")
+                .SetFont(boldFont)
+                .SetFontSize(18)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetMarginBottom(20);
             document.Add(title);
 
             // Election Overview
-            var overviewFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14);
-            var overviewTitle = new Paragraph("Election Overview", overviewFont);
-            overviewTitle.SpacingAfter = 10;
+            var overviewTitle = new Paragraph("Election Overview")
+                .SetFont(boldFont)
+                .SetFontSize(14)
+                .SetMarginBottom(10);
             document.Add(overviewTitle);
 
-            var overviewTable = new PdfPTable(2);
-            overviewTable.WidthPercentage = 100;
-            overviewTable.SetWidths(new float[] { 1, 2 });
+            var overviewTable = new Table(new float[] { 1, 2 });
+            overviewTable.SetWidth(UnitValue.CreatePercentValue(100));
 
-            AddTableRow(overviewTable, "Election Date", detailedStats.Overview.ElectionDate?.ToString("yyyy-MM-dd") ?? "Not specified");
-            AddTableRow(overviewTable, "Total Registered Voters", detailedStats.Overview.TotalRegisteredVoters.ToString());
-            AddTableRow(overviewTable, "Total Ballots Cast", detailedStats.Overview.TotalBallotsCast.ToString());
-            AddTableRow(overviewTable, "Valid Ballots", detailedStats.Overview.ValidBallots.ToString());
-            AddTableRow(overviewTable, "Spoiled Ballots", detailedStats.Overview.SpoiledBallots.ToString());
-            AddTableRow(overviewTable, "Total Votes", detailedStats.Overview.TotalVotes.ToString());
-            AddTableRow(overviewTable, "Positions to Elect", detailedStats.Overview.PositionsToElect.ToString());
-            AddTableRow(overviewTable, "Overall Turnout", $"{detailedStats.Overview.OverallTurnoutPercentage:F2}%");
+            AddTableRow(overviewTable, "Election Date", detailedStats.Overview.ElectionDate?.ToString("yyyy-MM-dd") ?? "Not specified", boldFont, normalFont);
+            AddTableRow(overviewTable, "Total Registered Voters", detailedStats.Overview.TotalRegisteredVoters.ToString(), boldFont, normalFont);
+            AddTableRow(overviewTable, "Total Ballots Cast", detailedStats.Overview.TotalBallotsCast.ToString(), boldFont, normalFont);
+            AddTableRow(overviewTable, "Valid Ballots", detailedStats.Overview.ValidBallots.ToString(), boldFont, normalFont);
+            AddTableRow(overviewTable, "Spoiled Ballots", detailedStats.Overview.SpoiledBallots.ToString(), boldFont, normalFont);
+            AddTableRow(overviewTable, "Total Votes", detailedStats.Overview.TotalVotes.ToString(), boldFont, normalFont);
+            AddTableRow(overviewTable, "Positions to Elect", detailedStats.Overview.PositionsToElect.ToString(), boldFont, normalFont);
+            AddTableRow(overviewTable, "Overall Turnout", $"{detailedStats.Overview.OverallTurnoutPercentage:F2}%", boldFont, normalFont);
 
             document.Add(overviewTable);
             document.Add(new Paragraph("\n"));
@@ -80,25 +92,25 @@ public class ReportExportService : IReportExportService
             // Elected Candidates
             if (electionReport.Elected.Any())
             {
-                var electedFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14);
-                var electedTitle = new Paragraph("Elected Candidates", electedFont);
-                electedTitle.SpacingAfter = 10;
+                var electedTitle = new Paragraph("Elected Candidates")
+                    .SetFont(boldFont)
+                    .SetFontSize(14)
+                    .SetMarginBottom(10);
                 document.Add(electedTitle);
 
-                var electedTable = new PdfPTable(3);
-                electedTable.WidthPercentage = 100;
-                electedTable.SetWidths(new float[] { 1, 3, 1 });
+                var electedTable = new Table(new float[] { 1, 3, 1 });
+                electedTable.SetWidth(UnitValue.CreatePercentValue(100));
 
                 // Header
-                electedTable.AddCell(new PdfPCell(new Phrase("Rank", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12))) { BackgroundColor = BaseColor.LIGHT_GRAY });
-                electedTable.AddCell(new PdfPCell(new Phrase("Name", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12))) { BackgroundColor = BaseColor.LIGHT_GRAY });
-                electedTable.AddCell(new PdfPCell(new Phrase("Votes", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12))) { BackgroundColor = BaseColor.LIGHT_GRAY });
+                electedTable.AddHeaderCell(new Cell().Add(new Paragraph("Rank").SetFont(headerFont).SetFontSize(12)).SetBackgroundColor(ColorConstants.LIGHT_GRAY));
+                electedTable.AddHeaderCell(new Cell().Add(new Paragraph("Name").SetFont(headerFont).SetFontSize(12)).SetBackgroundColor(ColorConstants.LIGHT_GRAY));
+                electedTable.AddHeaderCell(new Cell().Add(new Paragraph("Votes").SetFont(headerFont).SetFontSize(12)).SetBackgroundColor(ColorConstants.LIGHT_GRAY));
 
                 foreach (var candidate in electionReport.Elected.OrderBy(c => c.Rank))
                 {
-                    electedTable.AddCell(candidate.Rank.ToString());
-                    electedTable.AddCell(candidate.FullName);
-                    electedTable.AddCell(candidate.VoteCount.ToString());
+                    electedTable.AddCell(new Cell().Add(new Paragraph(candidate.Rank.ToString()).SetFont(normalFont).SetFontSize(10)));
+                    electedTable.AddCell(new Cell().Add(new Paragraph(candidate.FullName).SetFont(normalFont).SetFontSize(10)));
+                    electedTable.AddCell(new Cell().Add(new Paragraph(candidate.VoteCount.ToString()).SetFont(normalFont).SetFontSize(10)));
                 }
 
                 document.Add(electedTable);
@@ -108,34 +120,33 @@ public class ReportExportService : IReportExportService
             // Location Statistics
             if (detailedStats.LocationStatistics.Any())
             {
-                var locationFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14);
-                var locationTitle = new Paragraph("Location Statistics", locationFont);
-                locationTitle.SpacingAfter = 10;
+                var locationTitle = new Paragraph("Location Statistics")
+                    .SetFont(boldFont)
+                    .SetFontSize(14)
+                    .SetMarginBottom(10);
                 document.Add(locationTitle);
 
-                var locationTable = new PdfPTable(4);
-                locationTable.WidthPercentage = 100;
-                locationTable.SetWidths(new float[] { 2, 1, 1, 1 });
+                var locationTable = new Table(new float[] { 2, 1, 1, 1 });
+                locationTable.SetWidth(UnitValue.CreatePercentValue(100));
 
                 // Header
-                locationTable.AddCell(new PdfPCell(new Phrase("Location", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12))) { BackgroundColor = BaseColor.LIGHT_GRAY });
-                locationTable.AddCell(new PdfPCell(new Phrase("Registered", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12))) { BackgroundColor = BaseColor.LIGHT_GRAY });
-                locationTable.AddCell(new PdfPCell(new Phrase("Voted", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12))) { BackgroundColor = BaseColor.LIGHT_GRAY });
-                locationTable.AddCell(new PdfPCell(new Phrase("Turnout %", FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12))) { BackgroundColor = BaseColor.LIGHT_GRAY });
+                locationTable.AddHeaderCell(new Cell().Add(new Paragraph("Location").SetFont(headerFont).SetFontSize(12)).SetBackgroundColor(ColorConstants.LIGHT_GRAY));
+                locationTable.AddHeaderCell(new Cell().Add(new Paragraph("Registered").SetFont(headerFont).SetFontSize(12)).SetBackgroundColor(ColorConstants.LIGHT_GRAY));
+                locationTable.AddHeaderCell(new Cell().Add(new Paragraph("Voted").SetFont(headerFont).SetFontSize(12)).SetBackgroundColor(ColorConstants.LIGHT_GRAY));
+                locationTable.AddHeaderCell(new Cell().Add(new Paragraph("Turnout %").SetFont(headerFont).SetFontSize(12)).SetBackgroundColor(ColorConstants.LIGHT_GRAY));
 
                 foreach (var location in detailedStats.LocationStatistics.OrderBy(l => l.LocationName))
                 {
-                    locationTable.AddCell(location.LocationName);
-                    locationTable.AddCell(location.RegisteredVoters.ToString());
-                    locationTable.AddCell(location.BallotsCast.ToString());
-                    locationTable.AddCell($"{location.TurnoutPercentage:F2}%");
+                    locationTable.AddCell(new Cell().Add(new Paragraph(location.LocationName).SetFont(normalFont).SetFontSize(10)));
+                    locationTable.AddCell(new Cell().Add(new Paragraph(location.RegisteredVoters.ToString()).SetFont(normalFont).SetFontSize(10)));
+                    locationTable.AddCell(new Cell().Add(new Paragraph(location.BallotsCast.ToString()).SetFont(normalFont).SetFontSize(10)));
+                    locationTable.AddCell(new Cell().Add(new Paragraph($"{location.TurnoutPercentage:F2}%").SetFont(normalFont).SetFontSize(10)));
                 }
 
                 document.Add(locationTable);
             }
 
             document.Close();
-            writer.Close();
 
             _logger.LogInformation("PDF report generated successfully for election {ElectionId}", electionId);
             return memoryStream.ToArray();
@@ -424,9 +435,11 @@ public class ReportExportService : IReportExportService
         }
     }
 
-    private static void AddTableRow(PdfPTable table, string label, string value)
+    private static void AddTableRow(Table table, string label, string value, PdfFont boldFont, PdfFont normalFont)
     {
-        table.AddCell(new PdfPCell(new Phrase(label, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 10))));
-        table.AddCell(new PdfPCell(new Phrase(value, FontFactory.GetFont(FontFactory.HELVETICA, 10))));
+        var labelCell = new Cell().Add(new Paragraph(label).SetFont(boldFont).SetFontSize(10));
+        var valueCell = new Cell().Add(new Paragraph(value).SetFont(normalFont).SetFontSize(10));
+        table.AddCell(labelCell);
+        table.AddCell(valueCell);
     }
 }

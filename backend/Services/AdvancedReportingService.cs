@@ -11,12 +11,23 @@ public class AdvancedReportingService : IAdvancedReportingService
     private readonly ITallyService _tallyService;
     private readonly ILogger<AdvancedReportingService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the AdvancedReportingService.
+    /// </summary>
+    /// <param name="tallyService">The tally service for retrieving election data.</param>
+    /// <param name="logger">The logger for recording operations.</param>
     public AdvancedReportingService(ITallyService tallyService, ILogger<AdvancedReportingService> logger)
     {
         _tallyService = tallyService;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Generates chart data for various election statistics visualizations.
+    /// </summary>
+    /// <param name="electionId">The unique identifier of the election.</param>
+    /// <param name="chartType">The type of chart to generate (e.g., "turnout-by-location", "candidate-votes").</param>
+    /// <returns>The chart data for the specified election and chart type.</returns>
     public async Task<ChartDataDto> GenerateChartDataAsync(Guid electionId, string chartType)
     {
         _logger.LogInformation("Generating chart data for election {ElectionId}, type {ChartType}", electionId, chartType);
@@ -33,6 +44,12 @@ public class AdvancedReportingService : IAdvancedReportingService
         };
     }
 
+    /// <summary>
+    /// Compares multiple elections across specified metrics.
+    /// </summary>
+    /// <param name="electionIds">The list of election IDs to compare.</param>
+    /// <param name="metrics">The list of metrics to compare (e.g., turnout, vote distribution).</param>
+    /// <returns>Comparison data for the specified elections and metrics.</returns>
     public async Task<ElectionComparisonDto> CompareElectionsAsync(List<Guid> electionIds, List<string> metrics)
     {
         _logger.LogInformation("Comparing {Count} elections with metrics: {Metrics}", electionIds.Count, string.Join(", ", metrics));

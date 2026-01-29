@@ -8,17 +8,33 @@ using TallyJ4.Domain.Identity;
 
 namespace TallyJ4.Services.Auth;
 
+/// <summary>
+/// Authorization handler for election-specific access control.
+/// Checks if a user has permission to access election resources based on their role and election membership.
+/// </summary>
 public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirement>
 {
     private readonly MainDbContext _context;
     private readonly UserManager<AppUser> _userManager;
 
+    /// <summary>
+    /// Initializes a new instance of the ElectionAccessHandler.
+    /// </summary>
+    /// <param name="context">The main database context.</param>
+    /// <param name="userManager">The user manager for identity operations.</param>
     public ElectionAccessHandler(MainDbContext context, UserManager<AppUser> userManager)
     {
         _context = context;
         _userManager = userManager;
     }
 
+    /// <summary>
+    /// Handles the authorization requirement by checking user permissions for election access.
+    /// Grants access if user is admin or has appropriate election-specific permissions.
+    /// </summary>
+    /// <param name="context">The authorization handler context.</param>
+    /// <param name="requirement">The election access requirement.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         ElectionAccessRequirement requirement)
