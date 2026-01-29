@@ -148,7 +148,7 @@
                     {{ electionReport?.electionType }}
                   </el-descriptions-item>
                   <el-descriptions-item :label="$t('reporting.voterTurnout')">
-                    {{ calculateTurnout() }}%
+                    {{ calculateElectionTurnout() }}%
                   </el-descriptions-item>
                 </el-descriptions>
               </el-card>
@@ -692,7 +692,7 @@ function formatTimePeriod(timePeriod: string, periodType: string) {
   return timePeriod;
 }
 
-function calculateTurnout() {
+function calculateElectionTurnout() {
   // Calculate voter turnout based on available data
   // This is a simplified calculation - in a real scenario you'd have registered voter count
   const totalBallots = electionReport.value?.totalBallots || 0;

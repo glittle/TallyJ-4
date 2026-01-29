@@ -9,9 +9,29 @@ import App from "./App.vue";
 import { router } from "./router/router";
 import { i18n } from "./locales";
 
+// Sentry error tracking and performance monitoring
+import * as Sentry from "@sentry/vue";
+
 const pinia = createPinia();
 
 const app = createApp(App);
+
+// Initialize Sentry for error tracking and performance monitoring
+Sentry.init({
+  app,
+  dsn: import.meta.env.VITE_SENTRY_DSN || "https://placeholder@example.ingest.sentry.io/placeholder",
+  environment: import.meta.env.MODE || "development",
+  integrations: [
+    Sentry.browserTracingIntegration({ router }),
+    Sentry.replayIntegration(),
+  ],
+  // Performance Monitoring
+  tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0, // 10% in production, 100% in development
+  // Session Replay
+  replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
+  replaysOnErrorSampleRate: 1.0,
+});
+
 app.use(ElementPlus);
 app.use(pinia);
 app.use(router);
