@@ -46,6 +46,8 @@
 
     <PackageReference Include="iTextSharp" Version="5.5.13.4" />
 
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
+
   </ItemGroup>
 
   <ItemGroup>

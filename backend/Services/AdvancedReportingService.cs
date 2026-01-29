@@ -1,0 +1,360 @@
+using TallyJ4.DTOs.Results;
+using TallyJ4.Services;
+
+namespace TallyJ4.Services;
+
+/// <summary>
+/// Service for advanced reporting features including charts, comparisons, and analytics
+/// </summary>
+public class AdvancedReportingService : IAdvancedReportingService
+{
+    private readonly ITallyService _tallyService;
+    private readonly ILogger<AdvancedReportingService> _logger;
+
+    public AdvancedReportingService(ITallyService tallyService, ILogger<AdvancedReportingService> logger)
+    {
+        _tallyService = tallyService;
+        _logger = logger;
+    }
+
+    public async Task<ChartDataDto> GenerateChartDataAsync(Guid electionId, string chartType)
+    {
+        _logger.LogInformation("Generating chart data for election {ElectionId}, type {ChartType}", electionId, chartType);
+
+        var detailedStats = await _tallyService.GetDetailedStatisticsAsync(electionId);
+
+        return chartType.ToLower() switch
+        {
+            "turnout-by-location" => GenerateTurnoutByLocationChart(detailedStats),
+            "candidate-votes" => await GenerateCandidateVotesChartAsync(electionId),
+            "vote-distribution" => GenerateVoteDistributionChart(detailedStats),
+            "turnout-over-time" => GenerateTurnoutOverTimeChart(detailedStats),
+            _ => throw new ArgumentException($"Unsupported chart type: {chartType}")
+        };
+    }
+
+    public async Task<ElectionComparisonDto> CompareElectionsAsync(List<Guid> electionIds, List<string> metrics)
+    {
+        _logger.LogInformation("Comparing {Count} elections with metrics: {Metrics}", electionIds.Count, string.Join(", ", metrics));
+
+        var elections = new List<ElectionSummaryDto>();
+        var trends = new List<TrendDataDto>();
+
+        foreach (var electionId in electionIds)
+        {
+            var report = await _tallyService.GetElectionReportAsync(electionId);
+            var stats = await _tallyService.GetDetailedStatisticsAsync(electionId);
+
+            elections.Add(new ElectionSummaryDto
+            {
+                ElectionGuid = electionId,
+                ElectionName = report.ElectionName,
+                ElectionDate = report.ElectionDate,
+                TotalRegisteredVoters = stats.Overview.TotalRegisteredVoters,
+                TotalBallotsCast = stats.Overview.TotalBallotsCast,
+                TurnoutPercentage = stats.Overview.OverallTurnoutPercentage,
+                TotalVotes = stats.Overview.TotalVotes,
+                PositionsToElect = stats.Overview.PositionsToElect,
+                ElectedCount = report.Elected.Count
+            });
+        }
+
+        // Generate trend data for requested metrics
+        foreach (var metric in metrics)
+        {
+            var trend = new TrendDataDto { Metric = metric };
+            foreach (var election in elections.OrderBy(e => e.ElectionDate))
+            {
+                decimal value = metric switch
+                {
+                    "turnout" => election.TurnoutPercentage,
+                    "votes" => election.TotalVotes,
+                    "voters" => election.TotalRegisteredVoters,
+                    _ => 0
+                };
+
+                trend.Points.Add(new TrendPointDto
+                {
+                    Date = election.ElectionDate ?? DateTime.Now,
+                    Value = value,
+                    ElectionName = election.ElectionName
+                });
+            }
+            trends.Add(trend);
+        }
+
+        var comparison = new ElectionComparisonDto
+        {
+            Elections = elections,
+            Trends = trends,
+            Metrics = new ComparisonMetricsDto
+            {
+                AverageTurnout = elections.Average(e => e.TurnoutPercentage),
+                TotalElections = elections.Count,
+                MetricAverages = metrics.ToDictionary(m => m, m =>
+                    elections.Average(e => m switch
+                    {
+                        "turnout" => e.TurnoutPercentage,
+                        "votes" => e.TotalVotes,
+                        "voters" => e.TotalRegisteredVoters,
+                        _ => 0
+                    }))
+            }
+        };
+
+        // Calculate turnout change
+        if (elections.Count >= 2)
+        {
+            var sorted = elections.OrderBy(e => e.ElectionDate).ToList();
+            comparison.Metrics.TurnoutChange = sorted.Last().TurnoutPercentage - sorted.First().TurnoutPercentage;
+        }
+
+        return comparison;
+    }
+
+    public async Task<FilteredReportDto> GenerateFilteredReportAsync(Guid electionId, AdvancedFilterDto filters)
+    {
+        _logger.LogInformation("Generating filtered report for election {ElectionId}", electionId);
+
+        // Get base data
+        var report = await _tallyService.GetElectionReportAsync(electionId);
+        var detailedStats = await _tallyService.GetDetailedStatisticsAsync(electionId);
+
+        // Apply filters (simplified implementation)
+        var filteredCandidates = ApplyCandidateFilters(report.Elected.Concat(report.Other).Concat(report.Extra), filters);
+        var filteredLocations = ApplyLocationFilters(detailedStats.LocationStatistics, filters);
+
+        return new FilteredReportDto
+        {
+            AppliedFilters = filters,
+            TotalRecords = report.Elected.Count + report.Other.Count + report.Extra.Count,
+            FilteredRecords = filteredCandidates.Count(),
+            Summary = report,
+            Candidates = filteredCandidates.ToList(),
+            Locations = filteredLocations.ToList()
+        };
+    }
+
+    public async Task<CustomReportDto> GenerateCustomReportAsync(CustomReportConfigDto config)
+    {
+        _logger.LogInformation("Generating custom report: {ReportName}", config.ReportName);
+
+        // This is a placeholder implementation
+        // In a real implementation, this would parse the config and generate the report accordingly
+        var report = new CustomReportDto
+        {
+            ReportGuid = Guid.NewGuid(),
+            Config = config,
+            GeneratedData = new Dictionary<string, object>
+            {
+                ["title"] = config.ReportName,
+                ["description"] = config.Description,
+                ["sections"] = config.Sections.Count,
+                ["generatedAt"] = DateTime.UtcNow
+            },
+            GeneratedAt = DateTime.UtcNow
+        };
+
+        return report;
+    }
+
+    public async Task<StatisticalAnalysisDto> GenerateStatisticalAnalysisAsync(Guid electionId)
+    {
+        _logger.LogInformation("Generating statistical analysis for election {ElectionId}", electionId);
+
+        var detailedStats = await _tallyService.GetDetailedStatisticsAsync(electionId);
+
+        return new StatisticalAnalysisDto
+        {
+            Overview = detailedStats.Overview,
+            VotingPatterns = new VotingPatternAnalysisDto
+            {
+                AverageVotesPerBallot = detailedStats.Overview.TotalVotes / (decimal)detailedStats.Overview.TotalBallotsCast,
+                VoteDistribution = detailedStats.VoteDistribution.VoteCountDistribution,
+                BallotCompletenessRate = detailedStats.Overview.ValidBallots / (decimal)detailedStats.Overview.TotalBallotsCast * 100
+            },
+            CandidateAnalysis = GenerateCandidateAnalysis(detailedStats),
+            LocationAnalysis = GenerateLocationAnalysis(detailedStats),
+            TimeBasedAnalysis = new TimeBasedAnalysisDto
+            {
+                VotingRateAcceleration = 0, // Placeholder
+                Segments = new List<TimeSegmentDto>() // Placeholder
+            },
+            PredictiveMetrics = new PredictiveMetricsDto
+            {
+                ProjectedTurnout = detailedStats.Overview.OverallTurnoutPercentage,
+                Predictions = new List<PredictionDto>() // Placeholder
+            }
+        };
+    }
+
+    private ChartDataDto GenerateTurnoutByLocationChart(DetailedStatisticsDto stats)
+    {
+        return new ChartDataDto
+        {
+            ChartType = "bar",
+            Title = "Turnout by Location",
+            Labels = stats.LocationStatistics.Select(l => l.LocationName).ToList(),
+            Datasets = new List<ChartDatasetDto>
+            {
+                new ChartDatasetDto
+                {
+                    Label = "Turnout %",
+                    Data = stats.LocationStatistics.Select(l => l.TurnoutPercentage).ToList(),
+                    BackgroundColors = GenerateColors(stats.LocationStatistics.Count)
+                }
+            }
+        };
+    }
+
+    private async Task<ChartDataDto> GenerateCandidateVotesChartAsync(Guid electionId)
+    {
+        var report = await _tallyService.GetElectionReportAsync(electionId);
+        var candidates = report.Elected.Concat(report.Other).Concat(report.Extra)
+            .OrderByDescending(c => c.VoteCount)
+            .Take(10); // Top 10
+
+        return new ChartDataDto
+        {
+            ChartType = "horizontalBar",
+            Title = "Candidate Votes",
+            Labels = candidates.Select(c => c.FullName).ToList(),
+            Datasets = new List<ChartDatasetDto>
+            {
+                new ChartDatasetDto
+                {
+                    Label = "Votes",
+                    Data = candidates.Select(c => c.VoteCount).Cast<decimal>().ToList(),
+                    BackgroundColors = GenerateColors(candidates.Count())
+                }
+            }
+        };
+    }
+
+    private ChartDataDto GenerateVoteDistributionChart(DetailedStatisticsDto stats)
+    {
+        return new ChartDataDto
+        {
+            ChartType = "pie",
+            Title = "Vote Distribution",
+            Labels = stats.VoteDistribution.VoteCountDistribution.Keys.Select(k => k.ToString()).ToList(),
+            Datasets = new List<ChartDatasetDto>
+            {
+                new ChartDatasetDto
+                {
+                    Label = "Votes",
+                    Data = stats.VoteDistribution.VoteCountDistribution.Values.Cast<decimal>().ToList(),
+                    BackgroundColors = GenerateColors(stats.VoteDistribution.VoteCountDistribution.Count)
+                }
+            }
+        };
+    }
+
+    private ChartDataDto GenerateTurnoutOverTimeChart(DetailedStatisticsDto stats)
+    {
+        // Placeholder - would need time-based data
+        return new ChartDataDto
+        {
+            ChartType = "line",
+            Title = "Turnout Over Time",
+            Labels = new List<string> { "Start", "Mid", "End" },
+            Datasets = new List<ChartDatasetDto>
+            {
+                new ChartDatasetDto
+                {
+                    Label = "Turnout %",
+                    Data = new List<decimal> { 0, stats.Overview.OverallTurnoutPercentage / 2, stats.Overview.OverallTurnoutPercentage },
+                    BorderColors = new List<string> { "#409eff" }
+                }
+            }
+        };
+    }
+
+    private IEnumerable<CandidateReportDto> ApplyCandidateFilters(IEnumerable<CandidateReportDto> candidates, AdvancedFilterDto filters)
+    {
+        var query = candidates.AsQueryable();
+
+        if (filters.CandidateNames?.Any() == true)
+            query = query.Where(c => filters.CandidateNames.Contains(c.FullName));
+
+        if (filters.VoteCountRange != null)
+        {
+            if (filters.VoteCountRange.Min.HasValue)
+                query = query.Where(c => c.VoteCount >= filters.VoteCountRange.Min.Value);
+            if (filters.VoteCountRange.Max.HasValue)
+                query = query.Where(c => c.VoteCount <= filters.VoteCountRange.Max.Value);
+        }
+
+        if (filters.OnlyElected == true)
+            query = query.Where(c => c.Section == "E");
+
+        // Apply sorting
+        if (!string.IsNullOrEmpty(filters.SortBy))
+        {
+            query = filters.SortBy.ToLower() switch
+            {
+                "name" => filters.SortOrder == "desc" ? query.OrderByDescending(c => c.FullName) : query.OrderBy(c => c.FullName),
+                "votes" => filters.SortOrder == "desc" ? query.OrderByDescending(c => c.VoteCount) : query.OrderBy(c => c.VoteCount),
+                _ => query
+            };
+        }
+
+        return query;
+    }
+
+    private IEnumerable<LocationStatisticsDto> ApplyLocationFilters(IEnumerable<LocationStatisticsDto> locations, AdvancedFilterDto filters)
+    {
+        var query = locations.AsQueryable();
+
+        if (filters.Locations?.Any() == true)
+            query = query.Where(l => filters.Locations.Contains(l.LocationName));
+
+        if (filters.TurnoutRange != null)
+        {
+            if (filters.TurnoutRange.Min.HasValue)
+                query = query.Where(l => l.TurnoutPercentage >= filters.TurnoutRange.Min.Value);
+            if (filters.TurnoutRange.Max.HasValue)
+                query = query.Where(l => l.TurnoutPercentage <= filters.TurnoutRange.Max.Value);
+        }
+
+        return query;
+    }
+
+    private CandidateAnalysisDto GenerateCandidateAnalysis(DetailedStatisticsDto stats)
+    {
+        var performances = stats.CandidatePerformance;
+        return new CandidateAnalysisDto
+        {
+            AverageVotePercentage = performances.Average(p => p.VotePercentage),
+            VotePercentageVariance = CalculateVariance(performances.Select(p => p.VotePercentage)),
+            Clusters = new List<CandidateClusterDto>() // Placeholder
+        };
+    }
+
+    private LocationAnalysisDto GenerateLocationAnalysis(DetailedStatisticsDto stats)
+    {
+        var locations = stats.LocationStatistics;
+        return new LocationAnalysisDto
+        {
+            TurnoutVariance = CalculateVariance(locations.Select(l => l.TurnoutPercentage)),
+            Clusters = new List<LocationClusterDto>() // Placeholder
+        };
+    }
+
+    private decimal CalculateVariance(IEnumerable<decimal> values)
+    {
+        var avg = values.Average();
+        return values.Sum(v => (v - avg) * (v - avg)) / values.Count();
+    }
+
+    private List<string> GenerateColors(int count)
+    {
+        var colors = new[] { "#409eff", "#67c23a", "#e6a23c", "#f56c6c", "#909399", "#c71585", "#daa520", "#32cd32", "#ff6347", "#4682b4" };
+        var result = new List<string>();
+        for (int i = 0; i < count; i++)
+        {
+            result.Add(colors[i % colors.Length]);
+        }
+        return result;
+    }
+}

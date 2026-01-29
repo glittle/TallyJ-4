@@ -6,7 +6,7 @@ namespace TallyJ4.DTOs.Results;
 public class ExportRequest
 {
     /// <summary>
-    /// The format of the exported report (PDF or Excel).
+    /// The format of the exported report (PDF, Excel, or CSV).
     /// </summary>
     public string Format { get; set; } = string.Empty;
 
