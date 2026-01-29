@@ -155,6 +155,7 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(options =>
 {
     options.UseAllOfForInheritance();
+    options.CustomSchemaIds(type => type.FullName);
 
     options.SwaggerDoc("v1", new OpenApiInfo
     {

@@ -129,6 +129,12 @@ public class AdvancedReportingService : IAdvancedReportingService
         return comparison;
     }
 
+    /// <summary>
+    /// Generates a filtered report for the specified election based on the provided filter criteria.
+    /// </summary>
+    /// <param name="electionId">The GUID of the election to generate the report for.</param>
+    /// <param name="filters">The filter criteria to apply to the report data.</param>
+    /// <returns>A filtered report containing election results that match the specified criteria.</returns>
     public async Task<FilteredReportDto> GenerateFilteredReportAsync(Guid electionId, AdvancedFilterDto filters)
     {
         _logger.LogInformation("Generating filtered report for election {ElectionId}", electionId);
@@ -159,6 +165,11 @@ public class AdvancedReportingService : IAdvancedReportingService
         };
     }
 
+    /// <summary>
+    /// Generates a custom report based on the provided configuration.
+    /// </summary>
+    /// <param name="config">The configuration specifying the type and parameters of the custom report.</param>
+    /// <returns>A custom report generated according to the specified configuration.</returns>
     public async Task<CustomReportDto> GenerateCustomReportAsync(CustomReportConfigDto config)
     {
         _logger.LogInformation("Generating custom report: {ReportName}", config.ReportName);
@@ -182,6 +193,11 @@ public class AdvancedReportingService : IAdvancedReportingService
         return report;
     }
 
+    /// <summary>
+    /// Generates a statistical analysis report for the specified election.
+    /// </summary>
+    /// <param name="electionId">The GUID of the election to generate statistical analysis for.</param>
+    /// <returns>A statistical analysis containing various metrics and insights about the election.</returns>
     public async Task<StatisticalAnalysisDto> GenerateStatisticalAnalysisAsync(Guid electionId)
     {
         _logger.LogInformation("Generating statistical analysis for election {ElectionId}", electionId);
@@ -248,7 +264,7 @@ public class AdvancedReportingService : IAdvancedReportingService
                 new ChartDatasetDto
                 {
                     Label = "Votes",
-                    Data = candidates.Select(c => c.VoteCount).Cast<decimal>().ToList(),
+                    Data = candidates.Select(c => (decimal)c.VoteCount).ToList(),
                     BackgroundColors = GenerateColors(candidates.Count())
                 }
             }
@@ -267,7 +283,7 @@ public class AdvancedReportingService : IAdvancedReportingService
                 new ChartDatasetDto
                 {
                     Label = "Votes",
-                    Data = stats.VoteDistribution.VoteCountDistribution.Values.Cast<decimal>().ToList(),
+                    Data = stats.VoteDistribution.VoteCountDistribution.Values.Select(v => (decimal)v).ToList(),
                     BackgroundColors = GenerateColors(stats.VoteDistribution.VoteCountDistribution.Count)
                 }
             }

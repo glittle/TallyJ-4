@@ -2,16 +2,30 @@ using System.Text.RegularExpressions;
 
 namespace TallyJ4.Backend.Helpers
 {
+    /// <summary>
+    /// A helper class for template string processing with token replacement functionality.
+    /// Supports replacing tokens in the format {{key}} with values from dictionaries or arrays.
+    /// </summary>
     public class TemplateHelper
     {
         private const string TokenPattern = "{{([^{}]+)}}";
         readonly string _template;
 
+        /// <summary>
+        /// Initializes a new instance of the TemplateHelper class with the specified template string.
+        /// </summary>
+        /// <param name="template">The template string containing tokens to be replaced.</param>
         public TemplateHelper(string template)
         {
             _template = template;
         }
 
+        /// <summary>
+        /// Replaces tokens in the template with values from a string dictionary.
+        /// Supports case-insensitive matching and recursive replacement.
+        /// </summary>
+        /// <param name="dict">A dictionary containing key-value pairs for token replacement.</param>
+        /// <returns>The template string with tokens replaced by dictionary values.</returns>
         public string FillByName(IDictionary<string, string> dict)
         {
             var result = Replace(dict, _template, TokenPattern);
@@ -26,6 +40,13 @@ namespace TallyJ4.Backend.Helpers
             return result;
         }
 
+        /// <summary>
+        /// Replaces tokens in the template with values from an object dictionary.
+        /// Supports case-insensitive matching and recursive replacement.
+        /// Object values are converted to strings.
+        /// </summary>
+        /// <param name="dict">A dictionary containing key-value pairs for token replacement.</param>
+        /// <returns>The template string with tokens replaced by dictionary values.</returns>
         public string FillByName(IDictionary<string, object> dict)
         {
             var result = Replace(dict, _template, TokenPattern);
@@ -125,6 +146,13 @@ namespace TallyJ4.Backend.Helpers
             );
         }
 
+        /// <summary>
+        /// Replaces tokens in the template with values from an array using numeric indices.
+        /// Tokens should contain numeric values corresponding to array indices (e.g., {{0}}, {{1}}).
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <param name="values">An enumerable collection of values for token replacement.</param>
+        /// <returns>The template string with tokens replaced by array values.</returns>
         public string FillByArray<T>(IEnumerable<T> values)
         {
             var array = values.ToArray();

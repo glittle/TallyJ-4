@@ -1270,6 +1270,11 @@ public static partial class ExtensionsSimple
         return new TimeSpan(input, 0, 0);
     }
 
+    /// <summary>
+    /// Determines whether the specified string can be parsed as a valid DateTime.
+    /// </summary>
+    /// <param name="value">The string to test for DateTime validity.</param>
+    /// <returns>True if the string can be parsed as a DateTime, otherwise false.</returns>
     public static bool IsDate(this string value)
     {
         return DateTime.TryParse(value, out _);
@@ -2050,17 +2055,33 @@ public static partial class ExtensionsSimple
           : recentTime.ToString("d MMM yyyy") + " at " + time;
     }
 
+    /// <summary>
+    /// Returns the first day of the month for the given DateTime.
+    /// </summary>
+    /// <param name="input">The DateTime to get the first day of the month for.</param>
+    /// <returns>A DateTime representing the first day of the month at midnight.</returns>
     public static DateTime FirstDayOfMonth(this DateTime input)
     {
         return new DateTime(input.Year, input.Month, 1, 0, 0, 0);
     }
 
+    /// <summary>
+    /// Returns the last moment of the month for the given DateTime.
+    /// </summary>
+    /// <param name="input">The DateTime to get the end of the month for.</param>
+    /// <returns>A DateTime representing the last moment of the month (23:59:59).</returns>
     public static DateTime GetEndOfMonth(this DateTime input)
     {
         input = new DateTime(input.Year, input.Month, input.Day, 23, 59, 59);
         return input.AddDays(1 - input.Day).AddMonths(1).AddDays(-1);
     }
 
+    /// <summary>
+    /// Calculates the number of pages needed to display a total number of items with a given page size.
+    /// </summary>
+    /// <param name="total">The total number of items.</param>
+    /// <param name="pageSize">The number of items per page.</param>
+    /// <returns>The number of pages required to display all items.</returns>
     public static int DeterminePagesCount(this int total, int pageSize)
     {
         if (total == 0)
@@ -2086,6 +2107,11 @@ public static partial class ExtensionsSimple
         }
     }
 
+    /// <summary>
+    /// Converts the string "0" to a dash "-", otherwise returns the input unchanged.
+    /// </summary>
+    /// <param name="input">The string to check and potentially convert.</param>
+    /// <returns>A dash if the input is "0", otherwise the original input.</returns>
     public static string? ZeroToDash(this string? input)
     {
         return input == "0" ? "-" : input;
@@ -2112,11 +2138,22 @@ public static partial class ExtensionsSimple
         return !input.HasContent();
     }
 
+    /// <summary>
+    /// Converts an IHtmlString to its string representation.
+    /// </summary>
+    /// <param name="input">The IHtmlString to convert.</param>
+    /// <returns>The string representation of the IHtmlString, or null if the input is null.</returns>
     public static string? AsString(this IHtmlString? input)
     {
         return input?.ToString();
     }
 
+    /// <summary>
+    /// Calculates the specified percentage of an integer value.
+    /// </summary>
+    /// <param name="input">The base value.</param>
+    /// <param name="percentage">The percentage to calculate (0-100).</param>
+    /// <returns>The calculated percentage of the input value.</returns>
     public static int TakingPercent(this int input, int percentage)
     {
         if (percentage == 0)
@@ -2127,6 +2164,11 @@ public static partial class ExtensionsSimple
         return input * percentage / 100;
     }
 
+    /// <summary>
+    /// Parses a comma-separated string of hexadecimal values into an array of integers.
+    /// </summary>
+    /// <param name="input">The comma-separated string of hexadecimal values (with or without # prefix).</param>
+    /// <returns>An array of integers parsed from the hexadecimal values.</returns>
     public static int[] FromHexListAsIntArray(this string input)
     {
         return input

@@ -6,6 +6,10 @@ using TallyJ4.Services;
 
 namespace TallyJ4.Controllers;
 
+/// <summary>
+/// Controller for handling dashboard-related operations including election management,
+/// teller assignment, and system status information.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -15,6 +19,12 @@ public class DashboardController : ControllerBase
     private readonly IElectionService _electionService;
     private readonly ILogger<DashboardController> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the DashboardController.
+    /// </summary>
+    /// <param name="dashboardService">Service for dashboard operations.</param>
+    /// <param name="electionService">Service for election management operations.</param>
+    /// <param name="logger">Logger for recording controller activities.</param>
     public DashboardController(
         IDashboardService dashboardService,
         IElectionService electionService,
