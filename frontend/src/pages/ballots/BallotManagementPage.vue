@@ -30,9 +30,12 @@
           <el-table-column prop="teller1" :label="$t('ballots.teller1')" width="120" />
           <el-table-column prop="teller2" :label="$t('ballots.teller2')" width="120" />
           <el-table-column prop="voteCount" :label="$t('ballots.voteCount')" width="100" align="center" />
-          <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+          <el-table-column :label="$t('common.actions')" width="250" fixed="right">
             <template #default="scope">
               <el-button-group>
+                <el-button size="small" type="primary" @click="handleEnterVotes(scope.row)">
+                  {{ $t('ballots.enterVotes') }}
+                </el-button>
                 <el-button size="small" @click="handleViewVotes(scope.row)">
                   {{ $t('ballots.viewVotes') }}
                 </el-button>
@@ -104,6 +107,10 @@ onBeforeUnmount(async () => {
 
 function goBack() {
   router.push(`/elections/${electionGuid}`);
+}
+
+function handleEnterVotes(ballot: BallotDto) {
+  router.push(`/elections/${electionGuid}/ballots/${ballot.ballotGuid}/entry`);
 }
 
 function handleViewVotes(ballot: BallotDto) {
