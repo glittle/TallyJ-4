@@ -1,5 +1,11 @@
 <template>
-  <el-table :data="people" v-loading="loading" style="width: 100%">
+  <el-table
+    :data="people"
+    v-loading="loading"
+    style="width: 100%"
+    @selection-change="handleSelectionChange"
+  >
+    <el-table-column v-if="showSelection" type="selection" width="55" />
     <el-table-column prop="fullName" :label="$t('people.fullName')" min-width="200" sortable />
     <el-table-column prop="email" :label="$t('people.email')" min-width="200" />
     <el-table-column prop="phone" :label="$t('people.phone')" width="130" />
@@ -43,13 +49,20 @@
 import { CircleCheck, CircleClose } from '@element-plus/icons-vue';
 import type { PersonDto } from '../../types';
 
-defineProps<{
+const props = defineProps<{
   people: PersonDto[];
   loading: boolean;
+  showSelection?: boolean;
+  selected?: PersonDto[];
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   edit: [person: PersonDto];
   delete: [person: PersonDto];
+  selectionChange?: [selection: PersonDto[]];
 }>();
+
+function handleSelectionChange(selection: PersonDto[]) {
+  emit('selectionChange', selection);
+}
 </script>
