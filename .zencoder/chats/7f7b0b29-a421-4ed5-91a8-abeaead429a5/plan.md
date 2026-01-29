@@ -1,4 +1,4 @@
-# Fix backend build compilation errors
+# Fix frontend npm ci lock file sync issue
 
 ## Workflow Steps
 
