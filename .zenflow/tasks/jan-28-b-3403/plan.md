@@ -56,7 +56,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 Add ClosedXML and iTextSharp NuGet packages to TallyJ4.csproj for Excel and PDF generation.
 
-### [ ] Step: Create ExportRequest DTO
+### [x] Step: Create ExportRequest DTO
+<!-- chat-id: 9944d2fb-a05f-4c52-ac84-137bdfd2f6e5 -->
 
 Create Models/ExportRequest.cs with properties for format, electionId, and optional filters.
 
