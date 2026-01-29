@@ -86,6 +86,7 @@ Modify exportReport function in src/pages/results/ReportingPage.vue to call the 
 
 Create unit tests for ReportExportService in TallyJ4.Tests.
 
-### [ ] Step: Test and verify
+### [x] Step: Test and verify
+<!-- chat-id: f43cd5eb-1543-49b7-8c69-836a7f12fdbe -->
 
 Run tests, perform manual testing of export functionality, and write implementation report to report.md.
