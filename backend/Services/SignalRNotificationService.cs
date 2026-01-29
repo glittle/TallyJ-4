@@ -69,8 +69,8 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"TallyProgress_{progress.ElectionGuid}";
-            var eventName = progress.IsComplete ? "TallyComplete" : "TallyProgress";
+            var groupName = $"Analyze{progress.ElectionGuid}";
+            var eventName = progress.IsComplete ? "tallyComplete" : "tallyProgress";
             await _analyzeHubContext.Clients.Group(groupName).SendAsync(eventName, progress);
             _logger.LogInformation("Sent {EventName} notification to group {GroupName}", eventName, groupName);
         }
@@ -155,6 +155,24 @@ public class SignalRNotificationService : ISignalRNotificationService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error sending MonitorUpdated notification for election {ElectionGuid}", monitorInfo.ElectionGuid);
+        }
+    }
+
+    /// <summary>
+    /// Sends ballot update notifications to connected clients.
+    /// </summary>
+    /// <param name="update">The ballot update data to send.</param>
+    public async Task SendBallotUpdateAsync(BallotUpdateDto update)
+    {
+        try
+        {
+            var groupName = $"FrontDesk{update.ElectionGuid}";
+            await _frontDeskHubContext.Clients.Group(groupName).SendAsync("updateBallots", update);
+            _logger.LogInformation("Sent ballot update notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending BallotUpdate notification for election {ElectionGuid}", update.ElectionGuid);
         }
     }
 }

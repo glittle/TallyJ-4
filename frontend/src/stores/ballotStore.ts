@@ -163,10 +163,7 @@ export const useBallotStore = defineStore('ballot', () => {
     try {
       const connection = await signalrService.connectToFrontDeskHub();
 
-      // Note: FrontDeskHub primarily sends updatePeople events
-      // Ballot updates might be included in updatePeople or not implemented yet
-      connection.on('updatePeople', (data: any) => {
-        // Check if this is a ballot update (if the backend sends ballot data through this event)
+      connection.on('updateBallots', (data: any) => {
         if (data && typeof data === 'object' && data.ballotGuid) {
           const updateEvent: BallotUpdateEvent = {
             electionGuid: data.electionGuid || '',

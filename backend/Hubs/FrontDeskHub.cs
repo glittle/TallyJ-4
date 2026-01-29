@@ -90,6 +90,20 @@ public class FrontDeskHub : Hub
     }
 
     /// <summary>
+    /// Broadcasts updates about ballot status changes to all front desk clients.
+    /// Used to notify clients when ballot information has been added, updated, or changed.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election where ballots were updated.</param>
+    /// <param name="message">The update message containing information about the ballot changes.</param>
+    public async Task UpdateBallots(Guid electionGuid, object message)
+    {
+        var groupName = GetGroupName(electionGuid);
+        await Clients.Group(groupName).SendAsync("updateBallots", message);
+
+        _logger.LogInformation("Ballot update broadcast for election {ElectionGuid}", electionGuid);
+    }
+
+    /// <summary>
     /// Called when a client disconnects from the FrontDeskHub.
     /// Logs the disconnection event for monitoring purposes.
     /// </summary>
