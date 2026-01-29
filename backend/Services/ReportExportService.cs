@@ -1,6 +1,8 @@
 using ClosedXML.Excel;
+using CsvHelper;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using System.Globalization;
 using TallyJ4.DTOs.Results;
 using TallyJ4.Services;
 
@@ -295,6 +297,129 @@ public class ReportExportService : IReportExportService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error generating Excel report for election {ElectionId}", electionId);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Generates a CSV report for the specified election.
+    /// </summary>
+    /// <param name="electionId">The unique identifier of the election.</param>
+    /// <param name="filters">Optional filters to apply to the report.</param>
+    /// <returns>A byte array containing the CSV report data.</returns>
+    public async Task<byte[]> GenerateCsvReportAsync(Guid electionId, Dictionary<string, string>? filters = null)
+    {
+        _logger.LogInformation("Generating CSV report for election {ElectionId}", electionId);
+
+        try
+        {
+            var electionReport = await _tallyService.GetElectionReportAsync(electionId);
+            var detailedStats = await _tallyService.GetDetailedStatisticsAsync(electionId);
+
+            using var memoryStream = new MemoryStream();
+            using var writer = new StreamWriter(memoryStream);
+            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
+            // Write election overview
+            csv.WriteField("Election Report");
+            csv.NextRecord();
+            csv.WriteField(electionReport.ElectionName);
+            csv.NextRecord();
+            csv.NextRecord();
+
+            // Overview section
+            csv.WriteField("Election Overview");
+            csv.NextRecord();
+            csv.WriteField("Metric");
+            csv.WriteField("Value");
+            csv.NextRecord();
+
+            csv.WriteField("Election Date");
+            csv.WriteField(detailedStats.Overview.ElectionDate?.ToString("yyyy-MM-dd") ?? "Not specified");
+            csv.NextRecord();
+
+            csv.WriteField("Total Registered Voters");
+            csv.WriteField(detailedStats.Overview.TotalRegisteredVoters.ToString());
+            csv.NextRecord();
+
+            csv.WriteField("Total Ballots Cast");
+            csv.WriteField(detailedStats.Overview.TotalBallotsCast.ToString());
+            csv.NextRecord();
+
+            csv.WriteField("Valid Ballots");
+            csv.WriteField(detailedStats.Overview.ValidBallots.ToString());
+            csv.NextRecord();
+
+            csv.WriteField("Spoiled Ballots");
+            csv.WriteField(detailedStats.Overview.SpoiledBallots.ToString());
+            csv.NextRecord();
+
+            csv.WriteField("Total Votes");
+            csv.WriteField(detailedStats.Overview.TotalVotes.ToString());
+            csv.NextRecord();
+
+            csv.WriteField("Overall Turnout");
+            csv.WriteField($"{detailedStats.Overview.OverallTurnoutPercentage:F2}%");
+            csv.NextRecord();
+
+            csv.NextRecord();
+
+            // Elected candidates
+            if (electionReport.Elected.Any())
+            {
+                csv.WriteField("Elected Candidates");
+                csv.NextRecord();
+                csv.WriteField("Rank");
+                csv.WriteField("Name");
+                csv.WriteField("Votes");
+                csv.WriteField("Section");
+                csv.NextRecord();
+
+                foreach (var candidate in electionReport.Elected.OrderBy(c => c.Rank))
+                {
+                    csv.WriteField(candidate.Rank.ToString());
+                    csv.WriteField(candidate.FullName);
+                    csv.WriteField(candidate.VoteCount.ToString());
+                    csv.WriteField(candidate.Section);
+                    csv.NextRecord();
+                }
+
+                csv.NextRecord();
+            }
+
+            // Location statistics
+            if (detailedStats.LocationStatistics.Any())
+            {
+                csv.WriteField("Location Statistics");
+                csv.NextRecord();
+                csv.WriteField("Location");
+                csv.WriteField("Registered Voters");
+                csv.WriteField("Ballots Cast");
+                csv.WriteField("Valid Ballots");
+                csv.WriteField("Spoiled Ballots");
+                csv.WriteField("Turnout %");
+                csv.WriteField("Total Votes");
+                csv.NextRecord();
+
+                foreach (var location in detailedStats.LocationStatistics.OrderBy(l => l.LocationName))
+                {
+                    csv.WriteField(location.LocationName);
+                    csv.WriteField(location.RegisteredVoters.ToString());
+                    csv.WriteField(location.BallotsCast.ToString());
+                    csv.WriteField(location.ValidBallots.ToString());
+                    csv.WriteField(location.SpoiledBallots.ToString());
+                    csv.WriteField($"{location.TurnoutPercentage:F2}%");
+                    csv.WriteField(location.TotalVotes.ToString());
+                    csv.NextRecord();
+                }
+            }
+
+            writer.Flush();
+            return memoryStream.ToArray();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating CSV report for election {ElectionId}", electionId);
             throw;
         }
     }

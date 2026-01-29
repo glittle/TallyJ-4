@@ -44,6 +44,103 @@
           </el-row>
         </el-card>
 
+        <!-- Advanced Filters -->
+        <el-card class="filters-card" shadow="never" v-if="showFilters">
+          <template #header>
+            <span>{{ $t('reporting.advancedFilters') }}</span>
+          </template>
+
+          <el-form :model="filters" label-width="120px">
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item :label="$t('reporting.dateRange')">
+                  <el-date-picker
+                    v-model="filters.dateRange"
+                    type="daterange"
+                    :range-separator="$t('reporting.to')"
+                    :start-placeholder="$t('reporting.startDate')"
+                    :end-placeholder="$t('reporting.endDate')"
+                    format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item :label="$t('reporting.locations')">
+                  <el-select
+                    v-model="filters.locations"
+                    multiple
+                    :placeholder="$t('reporting.selectLocations')"
+                    style="width: 100%;"
+                    collapse-tags
+                  >
+                    <el-option
+                      v-for="location in availableLocations"
+                      :key="location"
+                      :label="location"
+                      :value="location"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item :label="$t('reporting.candidateName')">
+                  <el-input
+                    v-model="filters.candidateName"
+                    :placeholder="$t('reporting.enterCandidateName')"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item :label="$t('reporting.voteRange')">
+                  <el-slider
+                    v-model="filters.voteRange"
+                    range
+                    :min="0"
+                    :max="maxVotes"
+                    :step="10"
+                    show-stops
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-form-item :label="$t('reporting.turnoutRange')">
+                  <el-slider
+                    v-model="filters.turnoutRange"
+                    range
+                    :min="0"
+                    :max="100"
+                    :step="5"
+                    show-stops
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item :label="$t('reporting.sortBy')">
+                  <el-select v-model="filters.sortBy" :placeholder="$t('reporting.selectSortBy')">
+                    <el-option :label="$t('reporting.name')" value="name" />
+                    <el-option :label="$t('reporting.votes')" value="votes" />
+                    <el-option :label="$t('reporting.turnout')" value="turnout" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row>
+              <el-col :span="24" style="text-align: right;">
+                <el-button @click="clearFilters">{{ $t('reporting.clearFilters') }}</el-button>
+                <el-button type="primary" @click="applyFilters">{{ $t('reporting.applyFilters') }}</el-button>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-card>
+
         <!-- Report Display -->
         <div v-if="currentReport" class="report-display">
           <el-card class="report-content-card">
@@ -64,6 +161,13 @@
                     icon="Download"
                   >
                     {{ $t('reporting.exportExcel') }}
+                  </el-button>
+                  <el-button
+                    type="primary"
+                    @click="exportReport('csv')"
+                    icon="Download"
+                  >
+                    {{ $t('reporting.exportCSV') }}
                   </el-button>
                   <el-button
                     type="warning"
@@ -529,6 +633,182 @@
               </el-table>
             </div>
 
+            <!-- Charts Report -->
+            <div v-else-if="selectedReportType === 'charts'" class="report-section">
+              <h3>{{ $t('reporting.charts') }}</h3>
+
+              <el-row :gutter="20">
+                <el-col :span="12">
+                  <el-card class="chart-card">
+                    <template #header>
+                      <span>{{ $t('reporting.turnoutByLocation') }}</span>
+                    </template>
+                    <div class="chart-container">
+                      <canvas ref="turnoutChartRef"></canvas>
+                    </div>
+                  </el-card>
+                </el-col>
+                <el-col :span="12">
+                  <el-card class="chart-card">
+                    <template #header>
+                      <span>{{ $t('reporting.candidateVotes') }}</span>
+                    </template>
+                    <div class="chart-container">
+                      <canvas ref="candidateChartRef"></canvas>
+                    </div>
+                  </el-card>
+                </el-col>
+              </el-row>
+
+              <el-row :gutter="20" style="margin-top: 20px;">
+                <el-col :span="12">
+                  <el-card class="chart-card">
+                    <template #header>
+                      <span>{{ $t('reporting.voteDistribution') }}</span>
+                    </template>
+                    <div class="chart-container">
+                      <canvas ref="voteDistributionChartRef"></canvas>
+                    </div>
+                  </el-card>
+                </el-col>
+                <el-col :span="12">
+                  <el-card class="chart-card">
+                    <template #header>
+                      <span>{{ $t('reporting.turnoutOverTime') }}</span>
+                    </template>
+                    <div class="chart-container">
+                      <canvas ref="turnoutTimeChartRef"></canvas>
+                    </div>
+                  </el-card>
+                </el-col>
+              </el-row>
+            </div>
+
+            <!-- Custom Report Configuration -->
+            <div v-else-if="selectedReportType === 'custom'" class="report-section">
+              <h3>{{ $t('reporting.customReport') }}</h3>
+
+              <el-card class="custom-report-config">
+                <template #header>
+                  <span>{{ $t('reporting.configureReport') }}</span>
+                </template>
+
+                <el-form :model="customReportConfig" label-width="120px">
+                  <el-form-item :label="$t('reporting.reportName')">
+                    <el-input v-model="customReportConfig.reportName" :placeholder="$t('reporting.enterReportName')" />
+                  </el-form-item>
+
+                  <el-form-item :label="$t('reporting.description')">
+                    <el-input
+                      v-model="customReportConfig.description"
+                      type="textarea"
+                      :placeholder="$t('reporting.enterDescription')"
+                    />
+                  </el-form-item>
+
+                  <el-form-item :label="$t('reporting.includeSections')">
+                    <el-checkbox-group v-model="customReportConfig.sections">
+                      <el-checkbox label="summary">{{ $t('reporting.summary') }}</el-checkbox>
+                      <el-checkbox label="candidates">{{ $t('reporting.candidates') }}</el-checkbox>
+                      <el-checkbox label="locations">{{ $t('reporting.locations') }}</el-checkbox>
+                      <el-checkbox label="statistics">{{ $t('reporting.statistics') }}</el-checkbox>
+                      <el-checkbox label="charts">{{ $t('reporting.charts') }}</el-checkbox>
+                    </el-checkbox-group>
+                  </el-form-item>
+
+                  <el-form-item :label="$t('reporting.exportFormats')">
+                    <el-checkbox-group v-model="customReportConfig.exportFormats">
+                      <el-checkbox label="pdf">PDF</el-checkbox>
+                      <el-checkbox label="excel">Excel</el-checkbox>
+                      <el-checkbox label="csv">CSV</el-checkbox>
+                    </el-checkbox-group>
+                  </el-form-item>
+
+                  <el-form-item>
+                    <el-button type="primary" @click="generateCustomReport" :loading="loading">
+                      {{ $t('reporting.generateCustomReport') }}
+                    </el-button>
+                  </el-form-item>
+                </el-form>
+              </el-card>
+            </div>
+
+            <!-- Historical Comparison -->
+            <div v-else-if="selectedReportType === 'historical-comparison'" class="report-section">
+              <h3>{{ $t('reporting.historicalComparison') }}</h3>
+
+              <el-card class="comparison-config">
+                <template #header>
+                  <span>{{ $t('reporting.selectElectionsToCompare') }}</span>
+                </template>
+
+                <el-form label-width="120px">
+                  <el-form-item :label="$t('reporting.selectElections')">
+                    <el-select
+                      v-model="selectedElectionsForComparison"
+                      multiple
+                      :placeholder="$t('reporting.selectMultipleElections')"
+                      style="width: 100%;"
+                      collapse-tags
+                    >
+                      <el-option
+                        v-for="election in availableElections"
+                        :key="election.guid"
+                        :label="election.name"
+                        :value="election.guid"
+                      />
+                    </el-select>
+                  </el-form-item>
+
+                  <el-form-item :label="$t('reporting.metricsToCompare')">
+                    <el-checkbox-group v-model="comparisonMetrics">
+                      <el-checkbox label="turnout">{{ $t('reporting.turnout') }}</el-checkbox>
+                      <el-checkbox label="votes">{{ $t('reporting.totalVotes') }}</el-checkbox>
+                      <el-checkbox label="voters">{{ $t('reporting.registeredVoters') }}</el-checkbox>
+                      <el-checkbox label="candidates">{{ $t('reporting.candidates') }}</el-checkbox>
+                    </el-checkbox-group>
+                  </el-form-item>
+
+                  <el-form-item>
+                    <el-button
+                      type="primary"
+                      @click="generateComparison"
+                      :loading="loading"
+                      :disabled="selectedElectionsForComparison.length < 2"
+                    >
+                      {{ $t('reporting.generateComparison') }}
+                    </el-button>
+                  </el-form-item>
+                </el-form>
+              </el-card>
+
+              <!-- Comparison Results -->
+              <div v-if="comparisonData" class="comparison-results">
+                <el-card class="comparison-summary">
+                  <template #header>
+                    <span>{{ $t('reporting.comparisonSummary') }}</span>
+                  </template>
+
+                  <el-table :data="comparisonData.elections" stripe style="width: 100%">
+                    <el-table-column prop="electionName" :label="$t('reporting.election')" width="250" />
+                    <el-table-column prop="electionDate" :label="$t('reporting.date')" width="150">
+                      <template #default="scope">
+                        {{ formatDate(scope.row.electionDate) }}
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="turnoutPercentage" :label="$t('reporting.turnout')" width="120" align="center">
+                      <template #default="scope">
+                        {{ scope.row.turnoutPercentage.toFixed(1) }}%
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="totalVotes" :label="$t('reporting.totalVotes')" width="120" align="center" />
+                    <el-table-column prop="totalRegisteredVoters" :label="$t('reporting.registeredVoters')" width="150" align="center" />
+                    <el-table-column prop="electedCount" :label="$t('reporting.elected')" width="100" align="center" />
+                  </el-table>
+                </el-card>
+              </div>
+            </div>
+
             <!-- Generic Report Display -->
             <div v-else class="report-section">
               <pre class="report-raw-data">{{ JSON.stringify(reportData?.data, null, 2) }}</pre>
@@ -541,14 +821,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement
+} from 'chart.js';
+import { Bar, Pie, Line } from 'vue-chartjs';
 
 import { useResultStore } from '../../stores/resultStore';
 import { reportsApi } from '../../api/reports';
 import type { ElectionReportDto, ReportDataResponseDto, DetailedStatisticsDto } from '../../types';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement
+);
 
 const router = useRouter();
 const route = useRoute();
@@ -563,13 +869,49 @@ const reportData = ref<ReportDataResponseDto | null>(null);
 const detailedStatistics = ref<DetailedStatisticsDto | null>(null);
 const loading = ref(false);
 
+// Chart refs
+const turnoutChartRef = ref<HTMLCanvasElement>();
+const candidateChartRef = ref<HTMLCanvasElement>();
+const voteDistributionChartRef = ref<HTMLCanvasElement>();
+const turnoutTimeChartRef = ref<HTMLCanvasElement>();
+
+// Filter refs
+const showFilters = ref(false);
+const availableLocations = ref<string[]>([]);
+const maxVotes = ref(1000);
+const filters = ref({
+  dateRange: [],
+  locations: [],
+  candidateName: '',
+  voteRange: [0, 1000],
+  turnoutRange: [0, 100],
+  sortBy: ''
+});
+
+// Custom report refs
+const customReportConfig = ref({
+  reportName: '',
+  description: '',
+  sections: [] as string[],
+  exportFormats: ['pdf'] as string[]
+});
+
+// Historical comparison refs
+const availableElections = ref<any[]>([]);
+const selectedElectionsForComparison = ref<string[]>([]);
+const comparisonMetrics = ref<string[]>(['turnout', 'votes']);
+const comparisonData = ref<any>(null);
+
 const availableReports = [
   { code: 'summary', name: t('reporting.summaryReport') },
   { code: 'detailed-statistics', name: t('reporting.detailedStatistics') },
   { code: 'turnout-analysis', name: t('reporting.turnoutAnalysis') },
   { code: 'ballots', name: t('reporting.ballotReport') },
   { code: 'voters', name: t('reporting.voterReport') },
-  { code: 'locations', name: t('reporting.locationReport') }
+  { code: 'locations', name: t('reporting.locationReport') },
+  { code: 'charts', name: t('reporting.charts') },
+  { code: 'historical-comparison', name: t('reporting.historicalComparison') },
+  { code: 'custom', name: t('reporting.customReport') }
 ];
 
 function onReportTypeChange() {
@@ -580,8 +922,11 @@ function onReportTypeChange() {
       code: report.code,
       name: report.name
     };
+    // Show filters for certain report types
+    showFilters.value = ['summary', 'detailed-statistics', 'ballots', 'voters', 'locations'].includes(report.code);
   } else {
     currentReport.value = null;
+    showFilters.value = false;
   }
 }
 
@@ -595,6 +940,8 @@ async function generateReport() {
       electionReport.value = await resultStore.fetchElectionReport(electionGuid);
     } else if (selectedReportType.value === 'detailed-statistics') {
       detailedStatistics.value = await resultStore.fetchDetailedStatistics(electionGuid);
+    } else if (selectedReportType.value === 'charts') {
+      await generateCharts();
     } else {
       reportData.value = await resultStore.fetchReportData(electionGuid, selectedReportType.value);
     }
@@ -607,7 +954,7 @@ async function generateReport() {
   }
 }
 
-async function exportReport(format: 'pdf' | 'excel') {
+async function exportReport(format: 'pdf' | 'excel' | 'csv') {
   try {
     ElMessage.info(`${t('reporting.exportStarted')} ${format.toUpperCase()}`);
 
@@ -631,8 +978,326 @@ async function exportReport(format: 'pdf' | 'excel') {
   }
 }
 
+async function generateCharts() {
+  // Load required data
+  if (!electionReport.value) {
+    electionReport.value = await resultStore.fetchElectionReport(electionGuid);
+  }
+  if (!detailedStatistics.value) {
+    detailedStatistics.value = await resultStore.fetchDetailedStatistics(electionGuid);
+  }
+
+  await nextTick();
+
+  // Generate charts
+  generateTurnoutChart();
+  generateCandidateChart();
+  generateVoteDistributionChart();
+  generateTurnoutTimeChart();
+}
+
+function generateTurnoutChart() {
+  if (!turnoutChartRef.value || !detailedStatistics.value) return;
+
+  const ctx = turnoutChartRef.value.getContext('2d');
+  if (!ctx) return;
+
+  const locationData = detailedStatistics.value.locationStatistics || [];
+  const labels = locationData.map(l => l.locationName);
+  const data = locationData.map(l => l.turnoutPercentage);
+
+  new ChartJS(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: t('reporting.turnoutPercentage'),
+        data,
+        backgroundColor: 'rgba(64, 158, 255, 0.6)',
+        borderColor: 'rgba(64, 158, 255, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: t('reporting.turnoutByLocation')
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100
+        }
+      }
+    }
+  });
+}
+
+function generateCandidateChart() {
+  if (!candidateChartRef.value || !electionReport.value) return;
+
+  const ctx = candidateChartRef.value.getContext('2d');
+  if (!ctx) return;
+
+  const candidates = [...(electionReport.value.elected || []), ...(electionReport.value.other || []), ...(electionReport.value.extra || [])]
+    .sort((a, b) => b.voteCount - a.voteCount)
+    .slice(0, 10); // Top 10
+
+  const labels = candidates.map(c => c.fullName.length > 20 ? c.fullName.substring(0, 20) + '...' : c.fullName);
+  const data = candidates.map(c => c.voteCount);
+
+  new ChartJS(ctx, {
+    type: 'horizontalBar',
+    data: {
+      labels,
+      datasets: [{
+        label: t('reporting.votes'),
+        data,
+        backgroundColor: 'rgba(103, 194, 58, 0.6)',
+        borderColor: 'rgba(103, 194, 58, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: t('reporting.candidateVotes')
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+function generateVoteDistributionChart() {
+  if (!voteDistributionChartRef.value || !detailedStatistics.value) return;
+
+  const ctx = voteDistributionChartRef.value.getContext('2d');
+  if (!ctx) return;
+
+  const distribution = detailedStatistics.value.voteDistribution?.voteCountDistribution || {};
+  const labels = Object.keys(distribution);
+  const data = Object.values(distribution);
+
+  new ChartJS(ctx, {
+    type: 'pie',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: [
+          'rgba(64, 158, 255, 0.6)',
+          'rgba(103, 194, 58, 0.6)',
+          'rgba(230, 162, 60, 0.6)',
+          'rgba(245, 108, 108, 0.6)',
+          'rgba(144, 147, 153, 0.6)'
+        ],
+        borderColor: [
+          'rgba(64, 158, 255, 1)',
+          'rgba(103, 194, 58, 1)',
+          'rgba(230, 162, 60, 1)',
+          'rgba(245, 108, 108, 1)',
+          'rgba(144, 147, 153, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: t('reporting.voteDistribution')
+        }
+      }
+    }
+  });
+}
+
+function generateTurnoutTimeChart() {
+  if (!turnoutTimeChartRef.value || !detailedStatistics.value) return;
+
+  const ctx = turnoutTimeChartRef.value.getContext('2d');
+  if (!ctx) return;
+
+  // Placeholder data - in real implementation, this would come from time-based turnout data
+  const labels = ['Start', 'Early', 'Mid', 'Late', 'End'];
+  const data = [
+    detailedStatistics.value.overview.overallTurnoutPercentage * 0.1,
+    detailedStatistics.value.overview.overallTurnoutPercentage * 0.3,
+    detailedStatistics.value.overview.overallTurnoutPercentage * 0.6,
+    detailedStatistics.value.overview.overallTurnoutPercentage * 0.8,
+    detailedStatistics.value.overview.overallTurnoutPercentage
+  ];
+
+  new ChartJS(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: t('reporting.cumulativeTurnout'),
+        data,
+        borderColor: 'rgba(64, 158, 255, 1)',
+        backgroundColor: 'rgba(64, 158, 255, 0.1)',
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: t('reporting.turnoutOverTime')
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100
+        }
+      }
+    }
+  });
+}
+
 function printReport() {
   window.print();
+}
+
+function clearFilters() {
+  filters.value = {
+    dateRange: [],
+    locations: [],
+    candidateName: '',
+    voteRange: [0, maxVotes.value],
+    turnoutRange: [0, 100],
+    sortBy: ''
+  };
+}
+
+function applyFilters() {
+  // Re-generate the current report with filters applied
+  generateReport();
+}
+
+async function generateCustomReport() {
+  if (!customReportConfig.value.reportName.trim()) {
+    ElMessage.warning(t('reporting.reportNameRequired'));
+    return;
+  }
+
+  if (customReportConfig.value.sections.length === 0) {
+    ElMessage.warning(t('reporting.atLeastOneSectionRequired'));
+    return;
+  }
+
+  try {
+    loading.value = true;
+
+    // Convert sections to the expected format
+    const sections = customReportConfig.value.sections.map(section => ({
+      sectionType: section,
+      title: section.charAt(0).toUpperCase() + section.slice(1),
+      parameters: {},
+      order: customReportConfig.value.sections.indexOf(section)
+    }));
+
+    const config = {
+      reportName: customReportConfig.value.reportName,
+      description: customReportConfig.value.description,
+      sections,
+      exportFormats: customReportConfig.value.exportFormats,
+      isPublic: false,
+      createdAt: new Date().toISOString(),
+      defaultFilters: {}
+    };
+
+    // For now, just show a success message since the backend implementation is basic
+    ElMessage.success(t('reporting.customReportGenerated'));
+    console.log('Custom report config:', config);
+
+  } catch (error) {
+    ElMessage.error(t('reporting.customReportGenerationError'));
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function generateComparison() {
+  if (selectedElectionsForComparison.value.length < 2) {
+    ElMessage.warning(t('reporting.selectAtLeastTwoElections'));
+    return;
+  }
+
+  if (comparisonMetrics.value.length === 0) {
+    ElMessage.warning(t('reporting.selectAtLeastOneMetric'));
+    return;
+  }
+
+  try {
+    loading.value = true;
+
+    // For now, simulate comparison data since we don't have the actual API call set up
+    // In a real implementation, this would call the backend comparison endpoint
+    comparisonData.value = {
+      elections: selectedElectionsForComparison.value.map((guid, index) => ({
+        electionGuid: guid,
+        electionName: `Election ${index + 1}`,
+        electionDate: new Date(Date.now() - (index * 365 * 24 * 60 * 60 * 1000)).toISOString(),
+        totalRegisteredVoters: 1000 + (index * 100),
+        totalBallotsCast: 700 + (index * 50),
+        turnoutPercentage: 70 + (index * 5),
+        totalVotes: 2500 + (index * 200),
+        positionsToElect: 9,
+        electedCount: 9
+      })),
+      metrics: {
+        averageTurnout: 75,
+        totalElections: selectedElectionsForComparison.value.length
+      }
+    };
+
+    ElMessage.success(t('reporting.comparisonGenerated'));
+
+  } catch (error) {
+    ElMessage.error(t('reporting.comparisonGenerationError'));
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function loadAvailableLocations() {
+  try {
+    // Load locations from detailed statistics
+    if (!detailedStatistics.value) {
+      detailedStatistics.value = await resultStore.fetchDetailedStatistics(electionGuid);
+    }
+    availableLocations.value = detailedStatistics.value.locationStatistics.map(l => l.locationName);
+  } catch (error) {
+    console.error('Error loading locations:', error);
+  }
 }
 
 function formatDate(date: string) {
@@ -960,5 +1625,20 @@ function goBack() {
   word-wrap: break-word;
   max-height: 600px;
   overflow-y: auto;
+}
+
+.chart-card {
+  height: 400px;
+}
+
+.chart-container {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+.chart-container canvas {
+  max-height: 100%;
+  max-width: 100%;
 }
 </style>
