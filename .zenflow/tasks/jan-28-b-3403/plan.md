@@ -71,7 +71,8 @@ Create Services/ReportExportService.cs with methods to generate PDF and Excel re
 
 Add POST /api/reports/export/{electionId} endpoint to Controllers/ReportsController.cs that uses ReportExportService.
 
-### [ ] Step: Update frontend API
+### [x] Step: Update frontend API
+<!-- chat-id: 0d606a5b-82ef-46be-b2b6-ec700d9dd27b -->
 
 Add export function to src/api/reports.ts to call the new backend endpoint.
 
