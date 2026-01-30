@@ -5,7 +5,7 @@
     width="800px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <div v-if="ballot">
+    <div v-if="ballot" class="ballot-votes-dialog">
       <div class="ballot-info">
         <el-descriptions :column="2" border size="small">
           <el-descriptions-item :label="$t('ballots.location')">
@@ -146,24 +146,26 @@ function getVoteStatusType(status: string) {
 </script>
 
 <style lang="less">
-.ballot-info {
-  margin-bottom: 20px;
-}
+.ballot-votes-dialog {
+  .ballot-info {
+    margin-bottom: 20px;
+  }
 
-.votes-section {
-  margin-top: 20px;
-}
+  .votes-section {
+    margin-top: 20px;
+  }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
 
-.section-header h4 {
-  margin: 0;
-  font-size: 16px;
-  color: #303133;
+  .section-header h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #303133;
+  }
 }
 </style>

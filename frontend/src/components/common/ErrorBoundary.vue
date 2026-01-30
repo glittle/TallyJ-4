@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="error-boundary-wrapper">
     <slot v-if="!hasError" />
     <section v-else class="error-boundary" role="alert" aria-live="assertive" aria-labelledby="error-heading">
       <div class="error-content">
@@ -53,59 +53,61 @@ onErrorCaptured((error, instance, info) => {
 </script>
 
 <style lang="less">
-.error-boundary {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  padding: 20px;
-}
+.error-boundary-wrapper {
+  .error-boundary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    padding: 20px;
+  }
 
-.error-content {
-  text-align: center;
-  max-width: 500px;
-}
+  .error-content {
+    text-align: center;
+    max-width: 500px;
+  }
 
-.error-icon {
-  color: #f56c6c;
-  margin-bottom: 16px;
-}
+  .error-icon {
+    color: #f56c6c;
+    margin-bottom: 16px;
+  }
 
-.error-content h2 {
-  color: #303133;
-  margin-bottom: 8px;
-}
+  .error-content h2 {
+    color: #303133;
+    margin-bottom: 8px;
+  }
 
-.error-content p {
-  color: #606266;
-  margin-bottom: 24px;
-}
+  .error-content p {
+    color: #606266;
+    margin-bottom: 24px;
+  }
 
-.error-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 16px;
-}
+  .error-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
 
-.error-details {
-  text-align: left;
-  margin-top: 20px;
-}
+  .error-details {
+    text-align: left;
+    margin-top: 20px;
+  }
 
-.error-details summary {
-  cursor: pointer;
-  color: #909399;
-  margin-bottom: 8px;
-}
+  .error-details summary {
+    cursor: pointer;
+    color: #909399;
+    margin-bottom: 8px;
+  }
 
-.error-details pre {
-  background: #f5f7fa;
-  padding: 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  color: #606266;
-  overflow-x: auto;
-  white-space: pre-wrap;
+  .error-details pre {
+    background: #f5f7fa;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #606266;
+    overflow-x: auto;
+    white-space: pre-wrap;
+  }
 }
 </style>

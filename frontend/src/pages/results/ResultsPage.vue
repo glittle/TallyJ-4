@@ -146,15 +146,15 @@ function formatDateTime(date: string) {
 .results-page {
   max-width: 1400px;
   margin: 0 auto;
-}
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.loading-container {
-  padding: 40px;
+  .loading-container {
+    padding: 40px;
+  }
 }
 </style>

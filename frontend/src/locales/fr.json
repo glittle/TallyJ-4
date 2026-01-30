@@ -1,8 +1,6 @@
 {
   "common": {
     "language": "Langue",
-    "english": "English",
-    "french": "Français",
     "theme": "Thème",
     "light": "Clair",
     "dark": "Sombre",

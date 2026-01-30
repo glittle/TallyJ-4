@@ -177,36 +177,36 @@ function getVoteStatusType(status: string) {
 .ballot-entry-page {
   max-width: 1200px;
   margin: 0 auto;
-}
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.ballot-info {
-  margin-bottom: 30px;
-}
+  .ballot-info {
+    margin-bottom: 30px;
+  }
 
-.votes-section {
-  margin-top: 20px;
-}
+  .votes-section {
+    margin-top: 20px;
+  }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
 
-.section-header h3 {
-  margin: 0;
-  font-size: 18px;
-  color: #303133;
-}
+  .section-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #303133;
+  }
 
-.loading-container {
-  padding: 40px;
+  .loading-container {
+    padding: 40px;
+  }
 }
 </style>

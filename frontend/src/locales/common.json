@@ -1,0 +1,31 @@
+{
+  "english": "English",
+  "french": "Français",
+  "constants": {
+    "appName": "TallyJ 4",
+    "version": "4.0.0",
+    "maxFileSize": "10MB",
+    "supportedFormats": [
+      "CSV",
+      "XLS",
+      "XLSX"
+    ]
+  },
+  "api": {
+    "baseUrl": "/api",
+    "timeout": 30000
+  },
+  "validation": {
+    "emailRegex": "^[a-zA-Z0-9._%+-]+{'@'}[a-zA-Z0-9.-]+\\.[a-zA-Z]{'{'}2,{'}'}$",
+    "phoneRegex": "^[+]?[0-9\\s\\-\\(\\)]+$"
+  },
+  "features": {
+    "signalR": true,
+    "realTimeUpdates": true,
+    "exportFormats": [
+      "PDF",
+      "Excel",
+      "CSV"
+    ]
+  }
+}

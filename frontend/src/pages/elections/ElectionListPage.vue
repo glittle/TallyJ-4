@@ -404,43 +404,43 @@ function getStatusType(status: string) {
 .election-list-page {
   max-width: 1400px;
   margin: 0 auto;
-}
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.card-header h2 {
-  margin: 0;
-  color: var(--color-text-primary);
-}
+  .card-header h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+  }
 
-.filters-section {
-  margin-bottom: var(--spacing-6);
-  padding: var(--spacing-4);
-  background-color: var(--color-bg-secondary);
-  border-radius: var(--radius-lg);
-}
+  .filters-section {
+    margin-bottom: var(--spacing-6);
+    padding: var(--spacing-4);
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+  }
 
-.text-right {
-  text-align: right;
-}
+  .text-right {
+    text-align: right;
+  }
 
-.table-container {
-  margin-top: var(--spacing-4);
-}
+  .table-container {
+    margin-top: var(--spacing-4);
+  }
 
-.pagination-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: var(--spacing-6);
-}
+  .pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--spacing-6);
+  }
 
-.warning-text {
-  color: var(--color-error-600);
-  font-weight: var(--font-weight-medium);
-  margin: var(--spacing-2) 0 0 0;
+  .warning-text {
+    color: var(--color-error-600);
+    font-weight: var(--font-weight-medium);
+    margin: var(--spacing-2) 0 0 0;
+  }
 }
 </style>

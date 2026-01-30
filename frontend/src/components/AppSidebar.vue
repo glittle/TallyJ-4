@@ -69,22 +69,22 @@ function handleMenuSelect() {
     font-weight: 600;
   }
 
-  :deep(.el-menu) {
+  .el-menu {
     border-right: none;
     background-color: var(--color-sidebar-bg) !important;
     color: var(--color-sidebar-text) !important;
   }
 
-  :deep(.el-menu-item) {
+  .el-menu-item {
     height: 50px;
     line-height: 50px;
   }
 
-  :deep(.el-menu-item:hover) {
+  .el-menu-item:hover {
     background-color: var(--color-sidebar-hover) !important;
   }
 
-  :deep(.el-menu-item.is-active) {
+  .el-menu-item.is-active {
     background-color: var(--color-sidebar-active) !important;
     color: var(--color-sidebar-text-active) !important;
   }

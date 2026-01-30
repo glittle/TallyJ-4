@@ -154,11 +154,11 @@ function cancel() {
 .create-election-page {
   max-width: 800px;
   margin: 0 auto;
-}
 
-.card-header h2 {
-  margin: 0;
-  font-size: 20px;
-  color: #303133;
+  .card-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #303133;
+  }
 }
 </style>

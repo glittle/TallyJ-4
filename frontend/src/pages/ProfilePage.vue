@@ -88,15 +88,15 @@ function handleChangePassword() {
 .profile-page {
   max-width: 800px;
   margin: 0 auto;
-}
 
-.profile-content {
-  padding: 20px 0;
-}
+  .profile-content {
+    padding: 20px 0;
+  }
 
-.actions {
-  margin-top: 30px;
-  display: flex;
-  gap: 10px;
+  .actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+  }
 }
 </style>

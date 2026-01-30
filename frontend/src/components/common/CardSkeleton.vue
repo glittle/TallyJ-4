@@ -26,23 +26,23 @@ import LoadingSkeleton from './LoadingSkeleton.vue';
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
 
-.card-header {
-  margin-bottom: 16px;
-}
+  .card-header {
+    margin-bottom: 16px;
+  }
 
-.card-header > * + * {
-  margin-top: 8px;
-}
+  .card-header > * + * {
+    margin-top: 8px;
+  }
 
-.card-content > * + * {
-  margin-top: 8px;
-}
+  .card-content > * + * {
+    margin-top: 8px;
+  }
 
-.card-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
+  .card-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
 }
 </style>

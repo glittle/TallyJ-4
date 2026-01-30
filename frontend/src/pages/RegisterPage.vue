@@ -136,43 +136,43 @@ const handleRegister = async () => {
   justify-content: center;
   align-items: center;
   padding-top: 40px;
-}
 
-.register-card {
-  width: 100%;
-  max-width: 400px;
-  border-radius: 12px;
-}
+  .register-card {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+  }
 
-.register-header {
-  text-align: center;
-}
+  .register-header {
+    text-align: center;
+  }
 
-.register-header h2 {
-  margin: 0;
-  color: #303133;
-}
+  .register-header h2 {
+    margin: 0;
+    color: #303133;
+  }
 
-.register-actions {
-  margin-top: 30px;
-}
+  .register-actions {
+    margin-top: 30px;
+  }
 
-.submit-btn {
-  width: 100%;
-}
+  .submit-btn {
+    width: 100%;
+  }
 
-.auth-links {
-  margin-top: 20px;
-  text-align: center;
-}
+  .auth-links {
+    margin-top: 20px;
+    text-align: center;
+  }
 
-.auth-links a {
-  color: #409eff;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
+  .auth-links a {
+    color: #409eff;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
 
-.auth-links a:hover {
-  text-decoration: underline;
+  .auth-links a:hover {
+    text-decoration: underline;
+  }
 }
 </style>
