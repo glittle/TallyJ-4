@@ -1,51 +1,3 @@
-<template>
-  <el-dialog
-    :model-value="modelValue"
-    :title="$t('ballots.addBallot')"
-    width="500px"
-    @update:model-value="$emit('update:modelValue', $event)"
-    @close="handleClose"
-  >
-    <el-form
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-width="120px"
-      label-position="left"
-    >
-      <el-form-item :label="$t('ballots.location')" prop="locationGuid">
-        <el-select v-model="form.locationGuid" style="width: 100%">
-          <el-option
-            v-for="location in locations"
-            :key="location.value"
-            :label="location.label"
-            :value="location.value"
-          />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item :label="$t('ballots.computer')" prop="computerCode">
-        <el-input v-model="form.computerCode" />
-      </el-form-item>
-
-      <el-form-item :label="$t('ballots.teller1')" prop="teller1">
-        <el-input v-model="form.teller1" />
-      </el-form-item>
-
-      <el-form-item :label="$t('ballots.teller2')" prop="teller2">
-        <el-input v-model="form.teller2" />
-      </el-form-item>
-    </el-form>
-
-    <template #footer>
-      <el-button @click="handleClose">{{ $t('common.cancel') }}</el-button>
-      <el-button type="primary" @click="handleSubmit" :loading="submitting">
-        {{ $t('common.create') }}
-      </el-button>
-    </template>
-  </el-dialog>
-</template>
-
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -122,3 +74,51 @@ function handleClose() {
   emit('update:modelValue', false);
 }
 </script>
+
+<template>
+  <el-dialog
+    :model-value="modelValue"
+    :title="$t('ballots.addBallot')"
+    width="500px"
+    @update:model-value="$emit('update:modelValue', $event)"
+    @close="handleClose"
+  >
+    <el-form
+      ref="formRef"
+      :model="form"
+      :rules="rules"
+      label-width="120px"
+      label-position="left"
+    >
+      <el-form-item :label="$t('ballots.location')" prop="locationGuid">
+        <el-select v-model="form.locationGuid" style="width: 100%">
+          <el-option
+            v-for="location in locations"
+            :key="location.value"
+            :label="location.label"
+            :value="location.value"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item :label="$t('ballots.computer')" prop="computerCode">
+        <el-input v-model="form.computerCode" />
+      </el-form-item>
+
+      <el-form-item :label="$t('ballots.teller1')" prop="teller1">
+        <el-input v-model="form.teller1" />
+      </el-form-item>
+
+      <el-form-item :label="$t('ballots.teller2')" prop="teller2">
+        <el-input v-model="form.teller2" />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <el-button @click="handleClose">{{ $t('common.cancel') }}</el-button>
+      <el-button type="primary" @click="handleSubmit" :loading="submitting">
+        {{ $t('common.create') }}
+      </el-button>
+    </template>
+  </el-dialog>
+</template>

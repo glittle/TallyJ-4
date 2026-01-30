@@ -6,6 +6,7 @@
     :close-on-press-escape="false"
     :show-close="false"
     width="500px"
+    class="import-progress-dialog"
   >
     <div v-if="importProgress" class="import-progress">
       <el-progress
@@ -16,60 +17,55 @@
       />
 
       <div class="progress-details">
-        <p>{{ $t('import.processingRows', { processed: importProgress.processedRows, total: importProgress.totalRows }) }}</p>
-        <p>{{ $t('import.successCount', { count: importProgress.successCount }) }}</p>
+        <p>
+          {{
+            $t("import.processingRows", {
+              processed: importProgress.processedRows,
+              total: importProgress.totalRows,
+            })
+          }}
+        </p>
+        <p>{{ $t("import.successCount", { count: importProgress.successCount }) }}</p>
         <p v-if="importProgress.errorCount > 0" class="error-count">
-          {{ $t('import.errorCount', { count: importProgress.errorCount }) }}
+          {{ $t("import.errorCount", { count: importProgress.errorCount }) }}
         </p>
         <p class="status">{{ importProgress.currentStatus }}</p>
       </div>
     </div>
 
     <div v-if="importErrors.length > 0" class="import-errors">
-      <h4>{{ $t('import.errors') }}</h4>
+      <h4>{{ $t("import.errors") }}</h4>
       <el-alert
         v-for="(error, index) in importErrors.slice(0, 5)"
         :key="index"
         :title="error"
         type="error"
         :closable="false"
-        style="margin-bottom: 10px;"
+        style="margin-bottom: 10px"
       />
       <p v-if="importErrors.length > 5">
-        {{ $t('import.moreErrors', { count: importErrors.length - 5 }) }}
+        {{ $t("import.moreErrors", { count: importErrors.length - 5 }) }}
       </p>
     </div>
 
     <div v-if="importComplete" class="import-complete">
-      <el-alert
-        :title="$t('import.completed')"
-        type="success"
-        :closable="false"
-      />
+      <el-alert :title="$t('import.completed')" type="success" :closable="false" />
     </div>
 
     <template #footer>
-      <el-button
-        v-if="importComplete"
-        type="primary"
-        @click="handleClose"
-      >
-        {{ $t('common.close') }}
+      <el-button v-if="importComplete" type="primary" @click="handleClose">
+        {{ $t("common.close") }}
       </el-button>
-      <el-button
-        v-else
-        @click="handleCancel"
-        :disabled="true"
-      >
-        {{ $t('common.cancel') }}
+      <el-button v-else @click="handleCancel" :disabled="true">
+        {{ $t("common.cancel") }}
       </el-button>
     </template>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useImportStore } from '../../stores/importStore';
+import { computed } from "vue";
+import { useImportStore } from "../../stores/importStore";
 
 const importStore = useImportStore();
 
@@ -77,16 +73,14 @@ interface Props {
   modelValue: boolean;
 }
 
-interface Emits {
-  (e: 'update:modelValue', value: boolean): void;
-}
+type Emits = (e: "update:modelValue", value: boolean) => void;
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const visible = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+  set: (value) => emit("update:modelValue", value),
 });
 
 const importProgress = computed(() => importStore.importProgress);
@@ -105,40 +99,41 @@ function handleCancel() {
 }
 </script>
 
-<style scoped>
-.import-progress {
-  text-align: center;
-  margin-bottom: 20px;
-}
+<style lang="less">
+.import-progress-dialog {
+  .import-progress {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .progress-details {
+    margin-top: 20px;
+  }
 
-.progress-details {
-  margin-top: 20px;
-}
+  .progress-details p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
 
-.progress-details p {
-  margin: 5px 0;
-  font-size: 14px;
-}
+  .error-count {
+    color: #f56c6c;
+  }
 
-.error-count {
-  color: #f56c6c;
-}
+  .status {
+    font-weight: bold;
+    color: #409eff;
+  }
 
-.status {
-  font-weight: bold;
-  color: #409eff;
-}
+  .import-errors {
+    margin-top: 20px;
+  }
 
-.import-errors {
-  margin-top: 20px;
-}
+  .import-errors h4 {
+    margin-bottom: 10px;
+    color: #f56c6c;
+  }
 
-.import-errors h4 {
-  margin-bottom: 10px;
-  color: #f56c6c;
-}
-
-.import-complete {
-  margin-top: 20px;
+  .import-complete {
+    margin-top: 20px;
+  }
 }
 </style>

@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import LanguageSelector from "../components/common/LanguageSelector.vue";
+import ThemeSelector from "../components/common/ThemeSelector.vue";
+</script>
+
 <template>
   <div class="public-layout">
     <div class="public-header">
@@ -5,6 +10,7 @@
         <h2>TallyJ 4</h2>
       </div>
       <div class="header-right">
+        <ThemeSelector />
         <LanguageSelector />
       </div>
     </div>
@@ -14,42 +20,37 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import LanguageSelector from '../components/common/LanguageSelector.vue';
-</script>
-
-<style scoped>
+<style lang="less">
 .public-layout {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+  background: var(--color-public-bg-gradient);
 
-.public-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  /* Fallback for browsers that don't support backdrop-filter */
-  background: rgba(255, 255, 255, 0.1);
-  -webkit-backdrop-filter: blur(10px); /* Safari support */
-}
+  .public-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    backdrop-filter: blur(10px);
+    /* Fallback for browsers that don't support backdrop-filter */
+    background: var(--color-public-header-bg);
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+  }
 
-.logo h2 {
-  color: white;
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
-}
+  .logo h2 {
+    color: var(--color-public-text);
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
 
-.public-content {
-  padding: 20px;
+  .public-content {
+    padding: 20px;
+  }
 }
 </style>

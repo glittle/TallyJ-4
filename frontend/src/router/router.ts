@@ -9,13 +9,14 @@ import PublicLayout from "../layouts/PublicLayout.vue";
 const routes = [
   {
     path: "/",
-    redirect: "/dashboard"
-  },
-  {
-    path: "/",
     component: PublicLayout,
     meta: { requiresAuth: false },
     children: [
+      {
+        path: "",
+        name: "landing",
+        component: () => import("../pages/LandingPage.vue")
+      },
       {
         path: "login",
         component: () => import("../pages/LoginPage.vue")
@@ -124,8 +125,8 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
     return { path: '/login', query: { redirect: to.fullPath } };
   }
   
-  if ((to.path === '/login' || to.path === '/register') && authStore.isAuthenticated) {
-    return '/';
+  if ((to.path === '/' || to.path === '/login' || to.path === '/register') && authStore.isAuthenticated) {
+    return '/dashboard';
   }
 
   return true;

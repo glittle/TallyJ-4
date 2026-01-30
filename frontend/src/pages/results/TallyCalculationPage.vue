@@ -174,7 +174,7 @@ function getSectionLabel(section: string) {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .tally-calculation-page {
   max-width: 1000px;
   margin: 0 auto;

@@ -20,7 +20,7 @@
 import LoadingSkeleton from './LoadingSkeleton.vue';
 </script>
 
-<style scoped>
+<style lang="less">
 .card-skeleton {
   background: white;
   border-radius: 8px;

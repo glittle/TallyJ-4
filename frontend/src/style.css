@@ -67,6 +67,19 @@
   --color-bg-tertiary: #f1f5f9;
   --color-bg-overlay: rgba(0, 0, 0, 0.5);
 
+  /* Colors - Sidebar */
+  --color-sidebar-bg: #f8fafc;
+  --color-sidebar-text: #374151;
+  --color-sidebar-text-active: #2563eb;
+  --color-sidebar-border: #e5e7eb;
+  --color-sidebar-hover: #f1f5f9;
+  --color-sidebar-active: #dbeafe;
+
+  /* Colors - Public Layout */
+  --color-public-bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --color-public-header-bg: rgba(255, 255, 255, 0.1);
+  --color-public-text: #ffffff;
+
   /* Colors - Text */
   --color-text-primary: var(--color-gray-900);
   --color-text-secondary: var(--color-gray-600);
@@ -130,6 +143,69 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Dark theme */
+.dark {
+  color-scheme: dark;
+
+  /* Override colors for dark theme */
+  --color-bg-primary: var(--color-gray-900);
+  --color-bg-secondary: var(--color-gray-800);
+  --color-bg-tertiary: var(--color-gray-700);
+
+  --color-text-primary: var(--color-gray-50);
+  --color-text-secondary: var(--color-gray-300);
+  --color-text-tertiary: var(--color-gray-400);
+
+  /* Sidebar dark theme */
+  --color-sidebar-bg: #304156;
+  --color-sidebar-text: #bfcbd9;
+  --color-sidebar-text-active: #409eff;
+  --color-sidebar-border: #263445;
+  --color-sidebar-hover: #263445;
+  --color-sidebar-active: #001528;
+
+  /* Public layout dark theme */
+  --color-public-bg-gradient: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --color-public-header-bg: rgba(0, 0, 0, 0.2);
+  --color-public-text: #f1f5f9;
+
+  /* Element Plus dark theme variables */
+  --el-color-primary: var(--color-primary-500);
+  --el-color-primary-dark-2: var(--color-primary-600);
+  --el-color-primary-light-3: var(--color-primary-400);
+  --el-color-primary-light-5: var(--color-primary-300);
+  --el-color-primary-light-7: var(--color-primary-200);
+  --el-color-primary-light-8: var(--color-primary-100);
+  --el-color-primary-light-9: var(--color-primary-50);
+
+  --el-bg-color: var(--color-gray-900);
+  --el-bg-color-page: var(--color-gray-900);
+  --el-bg-color-overlay: rgba(0, 0, 0, 0.8);
+
+  --el-text-color-primary: var(--color-gray-50);
+  --el-text-color-regular: var(--color-gray-300);
+  --el-text-color-secondary: var(--color-gray-400);
+  --el-text-color-placeholder: var(--color-gray-500);
+  --el-text-color-disabled: var(--color-gray-600);
+
+  --el-border-color: var(--color-gray-700);
+  --el-border-color-light: var(--color-gray-600);
+  --el-border-color-lighter: var(--color-gray-500);
+  --el-border-color-extra-light: var(--color-gray-400);
+
+  --el-fill-color-blank: var(--color-gray-900);
+  --el-fill-color-light: var(--color-gray-800);
+  --el-fill-color-lighter: var(--color-gray-700);
+  --el-fill-color-extra-light: var(--color-gray-600);
+  --el-fill-color-dark: var(--color-gray-800);
+  --el-fill-color-darker: var(--color-gray-900);
+
+  --el-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  --el-box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+  --el-box-shadow-lighter: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  --el-box-shadow-dark: 0 2px 12px 0 rgba(0, 0, 0, 0.3);
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -176,10 +252,33 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  padding: 1rem;
   text-align: center;
+}
+
+/* Desktop: Use full width */
+@media (min-width: 1024px) {
+  #app {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Tablet and smaller: constrained width */
+@media (max-width: 1023px) {
+  #app {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+/* Mobile: smaller padding */
+@media (max-width: 768px) {
+  #app {
+    padding: 0.5rem;
+  }
 }
 
 /* Accessibility improvements */

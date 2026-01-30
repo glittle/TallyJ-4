@@ -1,3 +1,32 @@
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+import type { CandidateResultDto } from '../../types';
+
+defineProps<{
+  results: CandidateResultDto[];
+}>();
+
+const { t } = useI18n();
+
+function getSectionType(section: string) {
+  const typeMap: Record<string, any> = {
+    'E': 'success',
+    'X': 'warning',
+    'O': 'info'
+  };
+  return typeMap[section] || '';
+}
+
+function getSectionLabel(section: string) {
+  const labelMap: Record<string, string> = {
+    'E': t('results.elected'),
+    'X': t('results.extra'),
+    'O': t('results.other')
+  };
+  return labelMap[section] || section;
+}
+</script>
+
 <template>
   <el-table :data="results" style="width: 100%">
     <el-table-column prop="rank" :label="$t('results.rank')" width="80" sortable />
@@ -27,32 +56,3 @@
     </el-table-column>
   </el-table>
 </template>
-
-<script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import type { CandidateResultDto } from '../../types';
-
-defineProps<{
-  results: CandidateResultDto[];
-}>();
-
-const { t } = useI18n();
-
-function getSectionType(section: string) {
-  const typeMap: Record<string, any> = {
-    'E': 'success',
-    'X': 'warning',
-    'O': 'info'
-  };
-  return typeMap[section] || '';
-}
-
-function getSectionLabel(section: string) {
-  const labelMap: Record<string, string> = {
-    'E': t('results.elected'),
-    'X': t('results.extra'),
-    'O': t('results.other')
-  };
-  return labelMap[section] || section;
-}
-</script>

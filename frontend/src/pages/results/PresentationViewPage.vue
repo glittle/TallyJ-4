@@ -198,7 +198,7 @@ function getSectionLabel(section: string) {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .presentation-view {
   min-height: 100vh;
   background: #000;

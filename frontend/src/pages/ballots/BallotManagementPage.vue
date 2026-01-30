@@ -153,7 +153,7 @@ function getStatusType(status: string) {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .ballot-management-page {
   max-width: 1400px;
   margin: 0 auto;

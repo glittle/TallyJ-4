@@ -1,67 +1,3 @@
-<template>
-  <el-dialog
-    :model-value="modelValue"
-    :title="isEdit ? $t('people.editPerson') : $t('people.addPerson')"
-    width="600px"
-    @update:model-value="$emit('update:modelValue', $event)"
-    @close="handleClose"
-  >
-    <el-form
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-width="150px"
-      label-position="left"
-    >
-      <el-form-item :label="$t('people.firstName')" prop="firstName">
-        <el-input v-model="form.firstName" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.lastName')" prop="lastName">
-        <el-input v-model="form.lastName" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.email')" prop="email">
-        <el-input v-model="form.email" type="email" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.phone')" prop="phone">
-        <el-input v-model="form.phone" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.area')" prop="area">
-        <el-input v-model="form.area" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.bahaiId')" prop="bahaiId">
-        <el-input v-model="form.bahaiId" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.ageGroup')" prop="ageGroup">
-        <el-select v-model="form.ageGroup" style="width: 100%">
-          <el-option label="Adult" value="Adult" />
-          <el-option label="Youth" value="Youth" />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item :label="$t('people.canVote')">
-        <el-switch v-model="form.canVote" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.canReceiveVotes')">
-        <el-switch v-model="form.canReceiveVotes" />
-      </el-form-item>
-    </el-form>
-
-    <template #footer>
-      <el-button @click="handleClose">{{ $t('common.cancel') }}</el-button>
-      <el-button type="primary" @click="handleSubmit" :loading="submitting">
-        {{ isEdit ? $t('common.save') : $t('common.create') }}
-      </el-button>
-    </template>
-  </el-dialog>
-</template>
-
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -174,3 +110,67 @@ function handleClose() {
   emit('update:modelValue', false);
 }
 </script>
+
+<template>
+  <el-dialog
+    :model-value="modelValue"
+    :title="isEdit ? $t('people.editPerson') : $t('people.addPerson')"
+    width="600px"
+    @update:model-value="$emit('update:modelValue', $event)"
+    @close="handleClose"
+  >
+    <el-form
+      ref="formRef"
+      :model="form"
+      :rules="rules"
+      label-width="150px"
+      label-position="left"
+    >
+      <el-form-item :label="$t('people.firstName')" prop="firstName">
+        <el-input v-model="form.firstName" />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.lastName')" prop="lastName">
+        <el-input v-model="form.lastName" />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.email')" prop="email">
+        <el-input v-model="form.email" type="email" />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.phone')" prop="phone">
+        <el-input v-model="form.phone" />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.area')" prop="area">
+        <el-input v-model="form.area" />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.bahaiId')" prop="bahaiId">
+        <el-input v-model="form.bahaiId" />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.ageGroup')" prop="ageGroup">
+        <el-select v-model="form.ageGroup" style="width: 100%">
+          <el-option label="Adult" value="Adult" />
+          <el-option label="Youth" value="Youth" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item :label="$t('people.canVote')">
+        <el-switch v-model="form.canVote" />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.canReceiveVotes')">
+        <el-switch v-model="form.canReceiveVotes" />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <el-button @click="handleClose">{{ $t('common.cancel') }}</el-button>
+      <el-button type="primary" @click="handleSubmit" :loading="submitting">
+        {{ isEdit ? $t('common.save') : $t('common.create') }}
+      </el-button>
+    </template>
+  </el-dialog>
+</template>

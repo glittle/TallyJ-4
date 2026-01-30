@@ -250,7 +250,7 @@ function calculateTurnout(registered: number, ballots: number) {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .monitoring-dashboard {
   max-width: 1400px;
   margin: 0 auto;

@@ -1,3 +1,17 @@
+<script setup lang="ts">
+import LoadingSkeleton from './LoadingSkeleton.vue';
+
+interface Props {
+  columns?: number;
+  rows?: number;
+}
+
+withDefaults(defineProps<Props>(), {
+  columns: 4,
+  rows: 5
+});
+</script>
+
 <template>
   <div class="table-skeleton">
     <div class="table-header">
@@ -13,21 +27,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import LoadingSkeleton from './LoadingSkeleton.vue';
-
-interface Props {
-  columns?: number;
-  rows?: number;
-}
-
-withDefaults(defineProps<Props>(), {
-  columns: 4,
-  rows: 5
-});
-</script>
-
-<style scoped>
+<style lang="less">
 .table-skeleton {
   background: white;
   border-radius: 8px;

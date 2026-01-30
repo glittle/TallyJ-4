@@ -3,6 +3,9 @@
     "language": "Language",
     "english": "English",
     "french": "Français",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
     "loading": "Loading...",
     "error": "An error occurred",
     "cancel": "Cancel",
@@ -21,8 +24,10 @@
     "confirmAction": "Are you sure you want to {action}?",
     "confirmActionWithItem": "Are you sure you want to {action} {item}?",
     "to": "to",
+    "or": "or",
     "startDate": "Start Date",
     "endDate": "End Date",
+    "userMenu": "User account menu",
     "actionIrreversible": "This action cannot be undone."
   },
   "nav": {
@@ -362,6 +367,41 @@
       "invalidCredentials": "Invalid email or password",
       "emailRequired": "Email is required",
       "passwordRequired": "Password is required"
+    },
+    "landing": {
+      "title": "Welcome to TallyJ",
+      "description": "TallyJ is a modern election management system specifically designed for Bahá'í communities. It provides a comprehensive platform for managing elections, people, ballots, and real-time results tallying.",
+      "optionOfficer": "Election Officer",
+      "optionOfficerDesc": "Manage elections, people, and process ballots.",
+      "optionVoter": "Voter",
+      "optionVoterDesc": "Cast your vote securely using your voter code.",
+      "optionTeller": "Assistant Teller",
+      "optionTellerDesc": "Process paper ballots at a designated station.",
+      "optionFullTeller": "Head Teller",
+      "optionFullTellerDesc": "Login as the head teller with your account.",
+      "optionExternal": "Officer Election",
+      "optionExternalDesc": "Access the specialized system for officer elections.",
+      "loginOfficer": "Login as Officer",
+      "loginVoter": "Login to Vote",
+      "loginTeller": "Login as Assistant Teller",
+      "loginFullTeller": "Login as Teller",
+      "gotoExternal": "Go to Site"
+    },
+    "voterLogin": {
+      "title": "Voter",
+      "codeLabel": "Voter Code",
+      "codePlaceholder": "Enter your 6-digit code",
+      "requestButton": "Request Code",
+      "loginButton": "Login to Vote",
+      "emailSent": "Verification code sent to your email",
+      "codeRequired": "Verification code is required"
+    },
+    "tellerLogin": {
+      "title": "Assistant Teller",
+      "passcodeLabel": "Election Passcode",
+      "passcodePlaceholder": "Enter the election passcode",
+      "loginButton": "Login to Station",
+      "passcodeRequired": "Passcode is required"
     }
   },
   "notification": {

@@ -1,12 +1,327 @@
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter, useRoute } from "vue-router";
+import { useAuthStore } from "../stores/authStore";
+import { ElMessage } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
+
+const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
+
+const loginFormRef = ref<FormInstance>();
+const loading = ref(false);
+const codeSent = ref(false);
+
+// Mode determines which UI to show
+const mode = ref(route.query.mode as string || "officer");
+
+// Watch for query changes to update mode
+watch(() => route.query.mode, (newMode) => {
+  if (newMode) mode.value = newMode as string;
+});
+
+const isStandardLogin = computed(() => mode.value === 'officer' || mode.value === 'full-teller');
+const isVoterLogin = computed(() => mode.value === 'voter');
+const isTellerLogin = computed(() => mode.value === 'teller');
+
+const loginForm = reactive({
+  email: "",
+  password: "",
+  code: "", // Voter OTC
+  passcode: "", // Teller Passcode
+});
+
+const rules = computed<FormRules>(() => {
+  const baseRules: FormRules = {};
+  
+  if (isStandardLogin.value || isVoterLogin.value) {
+    baseRules.email = [
+      { required: true, message: t("auth.emailRequired"), trigger: "blur" },
+      { type: "email", message: t("auth.emailInvalid"), trigger: "blur" },
+    ];
+  }
+
+  if (isStandardLogin.value) {
+    baseRules.password = [
+      { required: true, message: t("auth.passwordRequired"), trigger: "blur" },
+    ];
+  }
+
+  if (isVoterLogin.value && codeSent.value) {
+    baseRules.code = [
+      { required: true, message: t("auth.voterLogin.codeRequired"), trigger: "blur" },
+    ];
+  }
+
+  if (isTellerLogin.value) {
+    baseRules.passcode = [
+      { required: true, message: t("auth.tellerLogin.passcodeRequired"), trigger: "blur" },
+    ];
+  }
+
+  return baseRules;
+});
+
+const requestCode = async () => {
+  if (!loginForm.email) {
+    ElMessage.warning(t("auth.emailRequired"));
+    return;
+  }
+  loading.value = true;
+  try {
+    // API Call for System 3 OTC request would go here
+    // await authService.requestVoterCode(loginForm.email);
+    ElMessage.success(t("auth.voterLogin.emailSent"));
+    codeSent.value = true;
+  } catch (error) {
+    ElMessage.error(t("error.somethingWentWrong"));
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleLogin = async () => {
+  if (!loginFormRef.value) return;
+
+  await loginFormRef.value.validate(async (valid) => {
+    if (!valid) return;
+    
+    loading.value = true;
+    try {
+      if (isStandardLogin.value) {
+        await authStore.login({
+          email: loginForm.email,
+          password: loginForm.password
+        });
+      } else if (isVoterLogin.value) {
+        // Handle System 3 login (OTC)
+        // await authStore.loginVoter(loginForm.email, loginForm.code);
+        ElMessage.warning("Voter OTC login not fully implemented in backend yet.");
+        return;
+      } else if (isTellerLogin.value) {
+        // Handle System 2 login (Passcode)
+        // await authStore.loginTeller(loginForm.passcode);
+        ElMessage.warning("Guest Teller passcode login not fully implemented in backend yet.");
+        return;
+      }
+      
+      ElMessage.success(t("auth.loginSuccess"));
+      const redirectPath = (route.query.redirect as string) || "/dashboard";
+      router.push(redirectPath);
+    } catch (error) {
+      console.error("Login failed:", error);
+      ElMessage.error(t("auth.loginFailed"));
+    } finally {
+      loading.value = false;
+    }
+  });
+};
+
+onMounted(() => {
+  if (authStore.isAuthenticated && isStandardLogin.value) {
+    router.push("/dashboard");
+  }
+});
+</script>
+
 <template>
-  <div>
-    <h1>Login</h1>
+  <div class="login-page">
+    <el-card class="login-card">
+      <template #header>
+        <div class="login-header">
+          <h2 v-if="isStandardLogin">{{ t(`auth.landing.login${mode.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()).replace(' ', '')}`) }}</h2>
+          <h2 v-else-if="isVoterLogin">{{ t("auth.voterLogin.title") }}</h2>
+          <h2 v-else-if="isTellerLogin">{{ t("auth.tellerLogin.title") }}</h2>
+          
+          <p class="mode-hint">
+            {{ isStandardLogin ? t("auth.landing.optionOfficerDesc") : 
+               isVoterLogin ? t("auth.landing.optionVoterDesc") : 
+               t("auth.landing.optionTellerDesc") }}
+          </p>
+        </div>
+      </template>
+
+      <el-form
+        ref="loginFormRef"
+        :model="loginForm"
+        :rules="rules"
+        label-position="top"
+        @keyup.enter="handleLogin"
+      >
+        <!-- System 1 & 3: Email Field -->
+        <el-form-item v-if="!isTellerLogin" :label="t('auth.email')" prop="email">
+          <el-input
+            v-model="loginForm.email"
+            :placeholder="t('auth.emailPlaceholder')"
+            :disabled="isVoterLogin && codeSent"
+            autofocus
+          />
+        </el-form-item>
+
+        <!-- System 1: Password Field -->
+        <el-form-item v-if="isStandardLogin" :label="t('auth.password')" prop="password">
+          <el-input
+            v-model="loginForm.password"
+            type="password"
+            :placeholder="t('auth.passwordPlaceholder')"
+            show-password
+          />
+        </el-form-item>
+
+        <!-- System 3: One-Time Code Field -->
+        <el-form-item v-if="isVoterLogin && codeSent" :label="t('auth.voterLogin.codeLabel')" prop="code">
+          <el-input
+            v-model="loginForm.code"
+            :placeholder="t('auth.voterLogin.codePlaceholder')"
+            maxlength="6"
+          />
+        </el-form-item>
+
+        <!-- System 2: Election Passcode Field -->
+        <el-form-item v-if="isTellerLogin" :label="t('auth.tellerLogin.passcodeLabel')" prop="passcode">
+          <el-input
+            v-model="loginForm.passcode"
+            :placeholder="t('auth.tellerLogin.passcodePlaceholder')"
+          />
+        </el-form-item>
+
+        <div class="login-actions">
+          <!-- System 3: Request Code Button -->
+          <el-button
+            v-if="isVoterLogin && !codeSent"
+            type="primary"
+            :loading="loading"
+            class="submit-btn"
+            @click="requestCode"
+          >
+            {{ t("auth.voterLogin.requestButton") }}
+          </el-button>
+          
+          <!-- General Login Button -->
+          <el-button
+            v-else
+            type="primary"
+            :loading="loading"
+            class="submit-btn"
+            @click="handleLogin"
+          >
+            {{ isVoterLogin ? t("auth.voterLogin.loginButton") : 
+               isTellerLogin ? t("auth.tellerLogin.loginButton") : 
+               t("auth.loginButton") }}
+          </el-button>
+          
+          <el-button 
+            v-if="isVoterLogin && codeSent" 
+            link 
+            class="retry-link" 
+            @click="codeSent = false"
+          >
+            {{ t("common.tryAgain") }}
+          </el-button>
+        </div>
+
+        <div class="auth-links">
+          <router-link to="/register" v-if="mode === 'officer'">
+            {{ t("auth.noAccount") }}
+          </router-link>
+          <router-link to="/">
+            {{ t("common.cancel") }}
+          </router-link>
+        </div>
+      </el-form>
+
+      <!-- Social login only for Officers -->
+      <div class="social-login" v-if="mode === 'officer'">
+        <el-divider>{{ t("common.or") }}</el-divider>
+        <el-button class="google-btn">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+          {{ t("auth.googleLogin") }}
+        </el-button>
+      </div>
+    </el-card>
   </div>
 </template>
 
-<script setup lang="ts">
-// Simple login page for now
-</script>
+<style lang="less">
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 40px;
+}
 
-<style scoped>
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 12px;
+}
+
+.login-header {
+  text-align: center;
+}
+
+.login-header h2 {
+  margin: 0;
+  color: #303133;
+}
+
+.mode-hint {
+  margin-top: 10px;
+  color: #909399;
+  font-size: 0.9rem;
+}
+
+.login-actions {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.submit-btn {
+  width: 100%;
+}
+
+.retry-link {
+  font-size: 0.85rem;
+}
+
+.auth-links {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-links a {
+  color: #409eff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+}
+
+.social-login {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.google-btn img {
+  width: 18px;
+  height: 18px;
+}
 </style>

@@ -218,7 +218,7 @@ function goBack() {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .tie-management {
   max-width: 1200px;
   margin: 0 auto;

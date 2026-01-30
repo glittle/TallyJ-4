@@ -437,7 +437,7 @@ function handleImportError(error: any) {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .people-management-page {
   max-width: 1400px;
   margin: 0 auto;

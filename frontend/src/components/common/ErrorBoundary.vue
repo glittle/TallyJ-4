@@ -52,7 +52,7 @@ onErrorCaptured((error, instance, info) => {
 });
 </script>
 
-<style scoped>
+<style lang="less">
 .error-boundary {
   display: flex;
   justify-content: center;

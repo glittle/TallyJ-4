@@ -142,7 +142,7 @@ function formatDateTime(date: string) {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .results-page {
   max-width: 1400px;
   margin: 0 auto;

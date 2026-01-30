@@ -150,7 +150,7 @@ function cancel() {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .create-election-page {
   max-width: 800px;
   margin: 0 auto;

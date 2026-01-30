@@ -1,3 +1,25 @@
+<script setup lang="ts">
+import { CircleCheck, CircleClose } from '@element-plus/icons-vue';
+import type { PersonDto } from '../../types';
+
+const props = defineProps<{
+  people: PersonDto[];
+  loading: boolean;
+  showSelection?: boolean;
+  selected?: PersonDto[];
+}>();
+
+const emit = defineEmits<{
+  edit: [person: PersonDto];
+  delete: [person: PersonDto];
+  selectionChange?: [selection: PersonDto[]];
+}>();
+
+function handleSelectionChange(selection: PersonDto[]) {
+  emit('selectionChange', selection);
+}
+</script>
+
 <template>
   <el-table
     :data="people"
@@ -44,25 +66,3 @@
     </el-table-column>
   </el-table>
 </template>
-
-<script setup lang="ts">
-import { CircleCheck, CircleClose } from '@element-plus/icons-vue';
-import type { PersonDto } from '../../types';
-
-const props = defineProps<{
-  people: PersonDto[];
-  loading: boolean;
-  showSelection?: boolean;
-  selected?: PersonDto[];
-}>();
-
-const emit = defineEmits<{
-  edit: [person: PersonDto];
-  delete: [person: PersonDto];
-  selectionChange?: [selection: PersonDto[]];
-}>();
-
-function handleSelectionChange(selection: PersonDto[]) {
-  emit('selectionChange', selection);
-}
-</script>

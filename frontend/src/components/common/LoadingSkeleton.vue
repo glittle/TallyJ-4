@@ -24,7 +24,7 @@ withDefaults(defineProps<Props>(), {
 });
 </script>
 
-<style scoped>
+<style lang="less">
 .loading-skeleton {
   background: #f5f7fa;
   border-radius: 4px;

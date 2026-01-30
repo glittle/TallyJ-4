@@ -145,7 +145,7 @@ function getVoteStatusType(status: string) {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .ballot-info {
   margin-bottom: 20px;
 }

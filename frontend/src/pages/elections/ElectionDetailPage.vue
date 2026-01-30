@@ -211,7 +211,7 @@ function getStatusType(status?: string) {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .election-detail-page {
   max-width: 1400px;
   margin: 0 auto;

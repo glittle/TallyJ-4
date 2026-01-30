@@ -1,10 +1,30 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import AppHeader from "../components/AppHeader.vue";
+import AppSidebar from "../components/AppSidebar.vue";
+
+const mobileSidebarOpen = ref(false);
+
+function toggleMobileSidebar() {
+  mobileSidebarOpen.value = !mobileSidebarOpen.value;
+}
+
+function closeMobileSidebar() {
+  mobileSidebarOpen.value = false;
+}
+</script>
+
 <template>
   <el-container class="main-layout">
     <!-- Skip link for keyboard navigation -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- Mobile sidebar overlay -->
-    <div v-if="mobileSidebarOpen" class="mobile-sidebar-overlay" @click="closeMobileSidebar"></div>
+    <div
+      v-if="mobileSidebarOpen"
+      class="mobile-sidebar-overlay"
+      @click="closeMobileSidebar"
+    ></div>
 
     <el-aside
       width="200px"
@@ -26,29 +46,11 @@
   </el-container>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue';
-import AppHeader from '../components/AppHeader.vue';
-import AppSidebar from '../components/AppSidebar.vue';
-
-const mobileSidebarOpen = ref(false);
-
-function toggleMobileSidebar() {
-  mobileSidebarOpen.value = !mobileSidebarOpen.value;
-}
-
-function closeMobileSidebar() {
-  mobileSidebarOpen.value = false;
-}
-</script>
-
-<style scoped>
+<style lang="less">
 .skip-link {
   position: absolute;
   top: -40px;
   left: 6px;
-  background: #409eff;
-  color: white;
   padding: 8px;
   text-decoration: none;
   border-radius: 4px;
@@ -65,7 +67,7 @@ function closeMobileSidebar() {
 }
 
 .sidebar {
-  background-color: #304156;
+  background-color: var(--color-sidebar-bg);
   box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
   overflow-x: hidden;
 }
@@ -115,8 +117,8 @@ function closeMobileSidebar() {
 }
 
 :deep(.el-header) {
-  background-color: #fff;
-  border-bottom: 1px solid #dcdfe6;
+  background-color: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-gray-200);
   display: flex;
   align-items: center;
   padding: 0 20px;
@@ -124,9 +126,18 @@ function closeMobileSidebar() {
 }
 
 :deep(.el-main) {
-  background-color: #f0f2f5;
+  background-color: var(--color-bg-secondary);
   padding: 20px;
   overflow-y: auto;
+  max-width: none;
+}
+
+/* On very wide screens, constrain main content for readability */
+@media (min-width: 1400px) {
+  :deep(.el-main) {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 768px) {

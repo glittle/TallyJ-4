@@ -1397,7 +1397,7 @@ function goBack() {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .reporting-page {
   max-width: 1400px;
   margin: 0 auto;

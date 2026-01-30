@@ -173,7 +173,7 @@ function getVoteStatusType(status: string) {
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .ballot-entry-page {
   max-width: 1200px;
   margin: 0 auto;
