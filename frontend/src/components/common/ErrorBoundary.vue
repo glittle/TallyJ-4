@@ -3,9 +3,7 @@
     <slot v-if="!hasError" />
     <section v-else class="error-boundary" role="alert" aria-live="assertive" aria-labelledby="error-heading">
       <div class="error-content">
-        <el-icon size="48" class="error-icon" aria-hidden="true">
-          <Warning />
-        </el-icon>
+        <div class="error-icon" role="img" aria-label="Warning">⚠️</div>
         <h2 id="error-heading">{{ $t('error.somethingWentWrong') }}</h2>
         <p>{{ $t('error.pageError') }}</p>
         <div class="error-actions">
@@ -27,10 +25,6 @@
 
 <script setup lang="ts">
 import { ref, onErrorCaptured } from 'vue';
-import { useRouter } from 'vue-router';
-import { Warning } from '@element-plus/icons-vue';
-
-const router = useRouter();
 
 const hasError = ref(false);
 const errorMessage = ref('');
@@ -43,7 +37,7 @@ function retry() {
 }
 
 function goHome() {
-  router.push('/');
+  window.location.href = '/';
 }
 
 onErrorCaptured((error, instance, info) => {

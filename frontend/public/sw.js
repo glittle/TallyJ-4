@@ -46,6 +46,11 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Skip caching for non-HTTP/HTTPS requests (e.g., chrome-extension)
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
+
   // Handle API requests
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(

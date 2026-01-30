@@ -16,10 +16,17 @@ const pinia = createPinia();
 
 const app = createApp(App);
 
+app.use(ElementPlus);
+app.use(pinia);
+app.use(router);
+app.use(i18n);
+
 // Initialize Sentry for error tracking and performance monitoring
 Sentry.init({
   app,
-  dsn: import.meta.env.VITE_SENTRY_DSN || "https://placeholder@example.ingest.sentry.io/placeholder",
+  dsn:
+    import.meta.env.VITE_SENTRY_DSN ||
+    "https://placeholder@example.ingest.sentry.io/placeholder",
   environment: import.meta.env.MODE || "development",
   integrations: [
     Sentry.browserTracingIntegration({ router }),
@@ -31,11 +38,6 @@ Sentry.init({
   replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
   replaysOnErrorSampleRate: 1.0,
 });
-
-app.use(ElementPlus);
-app.use(pinia);
-app.use(router);
-app.use(i18n);
 
 // Global error handler for unhandled errors
 app.config.errorHandler = (error, instance, info) => {
@@ -72,4 +74,4 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-app.mount("#app");
+router.isReady().then(() => app.mount("#app"));

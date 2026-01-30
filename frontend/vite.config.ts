@@ -14,6 +14,9 @@ export default defineConfig({
   },
   server: {
     port: 8095,
+    hmr: {
+      port: 8095,
+    },
   },
   plugins: [
     vue(),
