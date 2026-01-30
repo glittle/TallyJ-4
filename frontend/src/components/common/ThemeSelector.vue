@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { ElSelect, ElOption } from "element-plus";
+import { ElButton, ElIcon } from "element-plus";
+import { Sunny, Moon } from "@element-plus/icons-vue";
 import { useThemeStore } from "../../stores/themeStore";
 import { useDark } from "@vueuse/core";
 import { watch } from "vue";
@@ -37,39 +38,50 @@ watch(
   }
 );
 
-const themes = [
-  { value: "light", label: t("common.light") },
-  { value: "dark", label: t("common.dark") },
-];
-
-const changeTheme = (theme: string) => {
-  themeStore.setTheme(theme as "light" | "dark");
+const toggleTheme = () => {
+  themeStore.setTheme(themeStore.theme === "dark" ? "light" : "dark");
 };
 </script>
 
 <template>
   <div class="theme-selector">
-    <label for="theme-select" class="sr-only">{{ $t("common.theme") }}</label>
-    <ElSelect
-      id="theme-select"
-      :model-value="themeStore.theme"
-      @update:model-value="changeTheme"
+    <ElButton
+      @click="toggleTheme"
+      :aria-label="$t('common.toggleTheme')"
       size="small"
-      style="width: 100px"
-      aria-label="Select theme"
+      type="text"
+      class="theme-toggle-btn"
     >
-      <ElOption
-        v-for="theme in themes"
-        :key="theme.value"
-        :label="theme.label"
-        :value="theme.value"
-      />
-    </ElSelect>
+      <ElIcon>
+        <Sunny v-if="themeStore.theme === 'light'" />
+        <Moon v-else />
+      </ElIcon>
+    </ElButton>
   </div>
 </template>
 
 <style lang="less">
 .theme-selector {
   display: inline-block;
+}
+
+.theme-toggle-btn {
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--el-color-info-light-9);
+  }
+
+  &:focus {
+    outline: 2px solid var(--el-color-primary);
+    outline-offset: 2px;
+  }
+
+  .el-icon {
+    color: var(--el-text-color-primary);
+    font-size: 18px;
+  }
 }
 </style>

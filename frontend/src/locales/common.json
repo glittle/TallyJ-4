@@ -1,16 +1,12 @@
 {
+  "title": "TallyJ 4",
   "english": "English",
   "french": "Français",
-  "constants": {
-    "appName": "TallyJ 4",
-    "version": "4.0.0",
-    "maxFileSize": "10MB",
-    "supportedFormats": [
-      "CSV",
-      "XLS",
-      "XLSX"
-    ]
-  },
+  "supportedUploadPeopleFormats": [
+    "CSV",
+    "XLS",
+    "XLSX"
+  ],
   "api": {
     "baseUrl": "/api",
     "timeout": 30000

@@ -265,12 +265,12 @@ onMounted(() => {
 
 .login-header h2 {
   margin: 0;
-  color: #303133;
+  color: var(--color-text-primary);
 }
 
 .mode-hint {
   margin-top: 10px;
-  color: #909399;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
 
@@ -298,7 +298,7 @@ onMounted(() => {
 }
 
 .auth-links a {
-  color: #409eff;
+  color: var(--color-primary-500);
   text-decoration: none;
   font-size: 0.9rem;
 }

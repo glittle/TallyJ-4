@@ -144,7 +144,7 @@
           {{ $t('people.dropFileHere') }}
         </div>
         <template #tip>
-          <div class="el-upload__tip">{{ $t('people.supportedFormats') }}</div>
+          <div class="el-upload__tip">{{ $t('supportedUploadPeopleFormats') }}</div>
         </template>
       </el-upload>
 
@@ -437,7 +437,7 @@ function handleImportError(error: any) {
 }
 </script>
 
-<style lang="less">
+<style scoped>
 .people-management-page {
   max-width: 1400px;
   margin: 0 auto;

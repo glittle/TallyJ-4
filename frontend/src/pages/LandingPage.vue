@@ -36,7 +36,9 @@ const options = [
     buttonText: "auth.landing.loginFullTeller",
     action: () => navigateToLogin("full-teller"),
   },
+];
 
+const options2 = [
   {
     type: "external",
     icon: Connection,
@@ -63,6 +65,30 @@ const navigateToLogin = (type: string) => {
     <div class="options-grid">
       <el-card
         v-for="opt in options"
+        :key="opt.type"
+        class="option-card"
+        shadow="hover"
+        @click="opt.action"
+      >
+        <template #header>
+          <div class="card-header">
+            <el-icon :size="40" :color="opt.color">
+              <component :is="opt.icon" />
+            </el-icon>
+            <h3>{{ t(opt.title) }}</h3>
+          </div>
+        </template>
+        <p>{{ t(opt.description) }}</p>
+        <div class="card-footer">
+          <el-button :type="opt.type === 'external' ? 'danger' : 'primary'" plain>
+            {{ t(opt.buttonText) }}
+          </el-button>
+        </div>
+      </el-card>
+    </div>
+    <div class="options-grid2">
+      <el-card
+        v-for="opt in options2"
         :key="opt.type"
         class="option-card"
         shadow="hover"
@@ -117,17 +143,33 @@ const navigateToLogin = (type: string) => {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
+
+    .option-card {
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      text-align: center;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+    }
   }
 
-  .option-card {
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    text-align: center;
-    border-radius: 12px;
-    border: none;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    flex-direction: column;
+  .options-grid2 {
+    margin: 1.5em auto 0;
+    width: fit-content;
+
+    .option-card {
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      text-align: center;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   .option-card:hover {
