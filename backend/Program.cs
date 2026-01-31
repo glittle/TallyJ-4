@@ -90,6 +90,38 @@ services.AddAuthentication(options =>
         ValidAudience = builderConfiguration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))  // Secure key (min 256 bits)
     };
+    
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Log.Warning("JWT Authentication failed: {Exception}", context.Exception.Message);
+            Log.Warning("JWT Failure details: {FailureMessage}", context.Exception.ToString());
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            var userId = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value 
+                        ?? context.Principal?.FindFirst("sub")?.Value;
+            Log.Information("JWT Token validated successfully for user: {UserId}", userId);
+            return Task.CompletedTask;
+        },
+        OnMessageReceived = context =>
+        {
+            var authHeader = context.Request.Headers["Authorization"].ToString();
+            var hasBearer = authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
+            var tokenLength = hasBearer ? authHeader.Substring(7).Length : 0;
+            Log.Information("JWT Message received - Header: {HasHeader}, HasBearer: {HasBearer}, TokenLength: {TokenLength}, ActualHeader: '{AuthHeader}'", 
+                !string.IsNullOrEmpty(authHeader), hasBearer, tokenLength, authHeader.Length > 100 ? authHeader.Substring(0, 100) + "..." : authHeader);
+            return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            Log.Warning("JWT Challenge initiated - Error: {Error}, ErrorDescription: {ErrorDescription}, AuthFailure: {AuthFailure}", 
+                context.Error, context.ErrorDescription, context.AuthenticateFailure?.Message);
+            return Task.CompletedTask;
+        }
+    };
 });
 
 // Optional: Customize Identity options (e.g., password requirements)

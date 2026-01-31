@@ -66,13 +66,17 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             await response.Content.ReadAsStreamAsync(),
             JsonOptions);
 
-        return loginResponse?.AccessToken ?? throw new Exception("Failed to get access token");
+        var token = loginResponse?.Token ?? throw new Exception("Failed to get access token");
+        Console.WriteLine($"[TEST] Got auth token: {token.Substring(0, Math.Min(50, token.Length))}...");
+        return token;
     }
 
     protected void SetAuthToken(string token)
     {
         _currentAuthToken = token;
+        Console.WriteLine($"[TEST] SetAuthToken called with token length: {token?.Length ?? 0}, starts with 'eyJ': {token?.StartsWith("eyJ")}");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        Console.WriteLine($"[TEST] Client.DefaultRequestHeaders.Authorization set to: {Client.DefaultRequestHeaders.Authorization?.ToString() ?? "NULL"}");
     }
 
     protected async Task<HttpResponseMessage> PostJsonAsync<T>(string url, T data)
@@ -88,6 +92,11 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         if (!string.IsNullOrEmpty(_currentAuthToken))
         {
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _currentAuthToken);
+            Console.WriteLine($"[TEST] POST {url} with auth header: Bearer {_currentAuthToken.Substring(0, Math.Min(30, _currentAuthToken.Length))}...");
+        }
+        else
+        {
+            Console.WriteLine($"[TEST] POST {url} WITHOUT auth header");
         }
 
         return await Client.SendAsync(request);
@@ -271,7 +280,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
 
     private class LoginResponse
     {
-        public string AccessToken { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
         public string RefreshToken { get; set; } = string.Empty;
     }
 }

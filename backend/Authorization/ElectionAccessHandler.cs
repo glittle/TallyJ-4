@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using TallyJ4.Domain.Context;
 
 namespace TallyJ4.Authorization;
@@ -13,14 +14,17 @@ namespace TallyJ4.Authorization;
 public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirement>
 {
     private readonly MainDbContext _context;
+    private readonly ILogger<ElectionAccessHandler> _logger;
 
     /// <summary>
     /// Initializes a new instance of the ElectionAccessHandler.
     /// </summary>
     /// <param name="context">The main database context for accessing election user relationships.</param>
-    public ElectionAccessHandler(MainDbContext context)
+    /// <param name="logger">The logger for diagnostic output.</param>
+    public ElectionAccessHandler(MainDbContext context, ILogger<ElectionAccessHandler> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     /// <summary>
@@ -33,10 +37,13 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
         AuthorizationHandlerContext context,
         ElectionAccessRequirement requirement)
     {
+        _logger.LogWarning("***** ElectionAccessHandler.HandleRequirementAsync called *****");
+        
         // Get the current user
         var user = context.User;
         if (user == null || !user.Identity?.IsAuthenticated == true)
         {
+            _logger.LogWarning("ElectionAccess: User not authenticated");
             context.Fail();
             return;
         }
@@ -45,13 +52,19 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
                          ?? user.FindFirst("sub")?.Value;
         if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
         {
+            _logger.LogWarning("ElectionAccess: Could not parse user ID from claims");
             context.Fail();
             return;
         }
+        
+        _logger.LogInformation("ElectionAccess: Checking access for user {UserId}", userId);
 
         // Extract election GUID from route parameters
         var routeData = context.Resource as RouteData;
         var actionDescriptor = context.Resource as ControllerActionDescriptor;
+        
+        _logger.LogWarning("***** Resource type: {ResourceType}, RouteData: {HasRouteData}, ActionDescriptor: {HasActionDescriptor}", 
+            context.Resource?.GetType().Name ?? "null", routeData != null, actionDescriptor != null);
 
         Guid electionGuid;
         if (routeData != null)
@@ -60,9 +73,23 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
             if (routeData.Values.TryGetValue("guid", out var guidValue) &&
                 Guid.TryParse(guidValue?.ToString(), out electionGuid))
             {
+                // Check if the election exists
+                var electionExists = await _context.Elections
+                    .AnyAsync(e => e.ElectionGuid == electionGuid);
+
+                // If election doesn't exist, allow request to proceed so controller can return 404
+                if (!electionExists)
+                {
+                    _logger.LogInformation("ElectionAccess: Election {ElectionGuid} does not exist, allowing request", electionGuid);
+                    context.Succeed(requirement);
+                    return;
+                }
+
                 // Check if user has access to this election
                 var hasAccess = await _context.JoinElectionUsers
                     .AnyAsync(jeu => jeu.ElectionGuid == electionGuid && jeu.UserId == userId);
+
+                _logger.LogInformation("ElectionAccess: User {UserId} access to election {ElectionGuid}: {HasAccess}", userId, electionGuid, hasAccess);
 
                 if (hasAccess)
                 {
@@ -77,9 +104,23 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
             if (actionDescriptor.RouteValues.TryGetValue("guid", out var guidValue) &&
                 Guid.TryParse(guidValue, out electionGuid))
             {
+                // Check if the election exists
+                var electionExists = await _context.Elections
+                    .AnyAsync(e => e.ElectionGuid == electionGuid);
+
+                // If election doesn't exist, allow request to proceed so controller can return 404
+                if (!electionExists)
+                {
+                    _logger.LogInformation("ElectionAccess: Election {ElectionGuid} does not exist (action descriptor), allowing request", electionGuid);
+                    context.Succeed(requirement);
+                    return;
+                }
+
                 // Check if user has access to this election
                 var hasAccess = await _context.JoinElectionUsers
                     .AnyAsync(jeu => jeu.ElectionGuid == electionGuid && jeu.UserId == userId);
+
+                _logger.LogInformation("ElectionAccess: User {UserId} access to election {ElectionGuid}: {HasAccess} (action descriptor)", userId, electionGuid, hasAccess);
 
                 if (hasAccess)
                 {
@@ -89,6 +130,7 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
             }
         }
 
+        _logger.LogWarning("ElectionAccess: Authorization failed for user");
         context.Fail();
     }
 }
