@@ -38,8 +38,8 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
 
     protected async Task<string> GetAuthTokenAsync(string email = "admin@tallyj.com", string password = "Test1234!")
     {
-        // Ensure test user exists first
-        await CreateTestUserAsync(email, "Test1234!");
+        // Ensure test user exists first with the correct password
+        await CreateTestUserAsync(email, password);
 
         var loginRequest = new
         {
@@ -74,28 +74,57 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
 
     protected async Task<HttpResponseMessage> PostJsonAsync<T>(string url, T data)
     {
-        var content = new StringContent(
-            JsonSerializer.Serialize(data),
-            Encoding.UTF8,
-            "application/json");
+        var request = new HttpRequestMessage(HttpMethod.Post, url)
+        {
+            Content = new StringContent(
+                JsonSerializer.Serialize(data),
+                Encoding.UTF8,
+                "application/json")
+        };
 
-        return await Client.PostAsync(url, content);
+        if (Client.DefaultRequestHeaders.Authorization != null)
+        {
+            request.Headers.Authorization = Client.DefaultRequestHeaders.Authorization;
+        }
+
+        return await Client.SendAsync(request);
     }
 
     protected async Task<HttpResponseMessage> PutJsonAsync<T>(string url, T data)
     {
-        var content = new StringContent(
-            JsonSerializer.Serialize(data),
-            Encoding.UTF8,
-            "application/json");
+        var request = new HttpRequestMessage(HttpMethod.Put, url)
+        {
+            Content = new StringContent(
+                JsonSerializer.Serialize(data),
+                Encoding.UTF8,
+                "application/json")
+        };
 
-        return await Client.PutAsync(url, content);
+        if (Client.DefaultRequestHeaders.Authorization != null)
+        {
+            request.Headers.Authorization = Client.DefaultRequestHeaders.Authorization;
+        }
+
+        return await Client.SendAsync(request);
     }
 
     protected async Task<TResponse?> DeserializeResponseAsync<TResponse>(HttpResponseMessage response)
     {
-        var stream = await response.Content.ReadAsStreamAsync();
-        return await JsonSerializer.DeserializeAsync<TResponse>(stream, JsonOptions);
+        var content = await response.Content.ReadAsStringAsync();
+        
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            throw new Exception($"Response has empty body. Status: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}");
+        }
+        
+        try
+        {
+            return JsonSerializer.Deserialize<TResponse>(content, JsonOptions);
+        }
+        catch (JsonException ex)
+        {
+            throw new Exception($"Failed to deserialize response. Status: {response.StatusCode}, Content: {content}", ex);
+        }
     }
 
     private async Task SeedDatabaseAsync()
@@ -189,6 +218,12 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser != null)
         {
+            var passwordValid = await userManager.CheckPasswordAsync(existingUser, password);
+            if (passwordValid)
+            {
+                return;
+            }
+            
             await userManager.DeleteAsync(existingUser);
         }
 

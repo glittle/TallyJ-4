@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Security.Claims;
 using TallyJ4.DTOs.Elections;
 using TallyJ4.Domain.Entities;
 using TallyJ4.Services;
@@ -11,12 +13,27 @@ public class ElectionServiceTests : ServiceTestBase
     private readonly ElectionService _service;
     private readonly Mock<ILogger<ElectionService>> _loggerMock;
     private readonly Mock<ISignalRNotificationService> _signalRMock;
+    private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
 
     public ElectionServiceTests()
     {
         _loggerMock = new Mock<ILogger<ElectionService>>();
         _signalRMock = new Mock<ISignalRNotificationService>();
-        _service = new ElectionService(Context, Mapper, _loggerMock.Object, _signalRMock.Object);
+        _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+        
+        var userId = Guid.NewGuid().ToString();
+        var claims = new List<Claim>
+        {
+            new Claim("sub", userId),
+            new Claim(ClaimTypes.NameIdentifier, userId)
+        };
+        var identity = new ClaimsIdentity(claims, "TestAuth");
+        var claimsPrincipal = new ClaimsPrincipal(identity);
+        
+        var httpContext = new DefaultHttpContext { User = claimsPrincipal };
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+        
+        _service = new ElectionService(Context, Mapper, _loggerMock.Object, _signalRMock.Object, _httpContextAccessorMock.Object);
     }
 
     [Fact]

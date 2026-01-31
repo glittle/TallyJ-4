@@ -113,6 +113,9 @@ services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.ElectionAccessHa
 // Add localization
 services.AddLocalization();
 
+// Add HTTP context accessor
+services.AddHttpContextAccessor();
+
 // Add controllers with FluentValidation
 services.AddControllers();
 services.AddFluentValidationAutoValidation();

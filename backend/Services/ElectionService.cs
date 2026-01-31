@@ -5,6 +5,7 @@ using TallyJ4.DTOs.SignalR;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Entities;
 using TallyJ4.Models;
+using System.Security.Claims;
 
 namespace TallyJ4.Services;
 
@@ -18,6 +19,7 @@ public class ElectionService : IElectionService
     private readonly IMapper _mapper;
     private readonly ILogger<ElectionService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     /// <summary>
     /// Initializes a new instance of the ElectionService.
@@ -26,12 +28,14 @@ public class ElectionService : IElectionService
     /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
     /// <param name="logger">Logger for recording election service operations.</param>
     /// <param name="signalRNotificationService">Service for sending real-time notifications about election updates.</param>
-    public ElectionService(MainDbContext context, IMapper mapper, ILogger<ElectionService> logger, ISignalRNotificationService signalRNotificationService)
+    /// <param name="httpContextAccessor">HTTP context accessor for retrieving current user information.</param>
+    public ElectionService(MainDbContext context, IMapper mapper, ILogger<ElectionService> logger, ISignalRNotificationService signalRNotificationService, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
         _mapper = mapper;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
@@ -114,6 +118,20 @@ public class ElectionService : IElectionService
 
         _context.Elections.Add(election);
         await _context.SaveChangesAsync();
+
+        var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? _httpContextAccessor.HttpContext?.User?.FindFirst("sub")?.Value;
+        if (!string.IsNullOrEmpty(userIdString) && Guid.TryParse(userIdString, out var userId))
+        {
+            var joinEntry = new JoinElectionUser
+            {
+                ElectionGuid = election.ElectionGuid,
+                UserId = userId,
+                Role = "Admin"
+            };
+            _context.JoinElectionUsers.Add(joinEntry);
+            await _context.SaveChangesAsync();
+        }
 
         _logger.LogInformation("Created election {ElectionGuid} - {Name}", election.ElectionGuid, election.Name);
 
