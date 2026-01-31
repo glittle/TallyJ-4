@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TallyJ4.Domain.Context;
@@ -16,6 +17,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
     protected readonly CustomWebApplicationFactory Factory;
     protected readonly HttpClient Client;
     protected readonly JsonSerializerOptions JsonOptions;
+    private string? _currentAuthToken;
 
     private static bool _databaseSeeded = false;
 
@@ -69,6 +71,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
 
     protected void SetAuthToken(string token)
     {
+        _currentAuthToken = token;
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
@@ -82,9 +85,9 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
                 "application/json")
         };
 
-        if (Client.DefaultRequestHeaders.Authorization != null)
+        if (!string.IsNullOrEmpty(_currentAuthToken))
         {
-            request.Headers.Authorization = Client.DefaultRequestHeaders.Authorization;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _currentAuthToken);
         }
 
         return await Client.SendAsync(request);
@@ -100,9 +103,33 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
                 "application/json")
         };
 
-        if (Client.DefaultRequestHeaders.Authorization != null)
+        if (!string.IsNullOrEmpty(_currentAuthToken))
         {
-            request.Headers.Authorization = Client.DefaultRequestHeaders.Authorization;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _currentAuthToken);
+        }
+
+        return await Client.SendAsync(request);
+    }
+
+    protected async Task<HttpResponseMessage> GetAsync(string url)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+
+        if (!string.IsNullOrEmpty(_currentAuthToken))
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _currentAuthToken);
+        }
+
+        return await Client.SendAsync(request);
+    }
+
+    protected async Task<HttpResponseMessage> DeleteAsync(string url)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Delete, url);
+
+        if (!string.IsNullOrEmpty(_currentAuthToken))
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _currentAuthToken);
         }
 
         return await Client.SendAsync(request);
