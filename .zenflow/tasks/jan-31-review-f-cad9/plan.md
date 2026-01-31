@@ -90,6 +90,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase B: Fix Critical Issues (1 week)
+<!-- chat-id: 4e1ed714-c7fd-4e21-9edb-98c96ad8a66a -->
 
 **Goal**: Resolve blocking technical issues before adding new features
 
