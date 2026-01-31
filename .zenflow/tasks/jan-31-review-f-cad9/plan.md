@@ -68,6 +68,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ## Implementation Phases
 
 ### [ ] Phase A: Complete Documentation Review (1-2 weeks)
+<!-- chat-id: 0d81e13d-cd61-43a1-a590-2a7a8623e858 -->
 
 **Goal**: Systematically document all v3 features to ensure nothing is missed in v4
 
