@@ -214,6 +214,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C5: Online Voting Portal (4-5 days)
+<!-- chat-id: 0d06afe0-2390-4278-b49e-2e6c94e952f6 -->
 
 **Goal**: Voter-facing online ballot submission
 

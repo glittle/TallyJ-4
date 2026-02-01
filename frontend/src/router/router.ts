@@ -24,6 +24,24 @@ const routes = [
       {
         path: "register",
         component: () => import("../pages/RegisterPage.vue")
+      },
+      {
+        path: "voter-auth",
+        name: "voter-auth",
+        component: () => import("../pages/voting/VoterAuthPage.vue"),
+        meta: { title: "Voter Authentication" }
+      },
+      {
+        path: "vote/:electionId",
+        name: "voter-ballot",
+        component: () => import("../pages/voting/VoterBallotPage.vue"),
+        meta: { title: "Cast Your Ballot" }
+      },
+      {
+        path: "vote-confirmation",
+        name: "voter-confirmation",
+        component: () => import("../pages/voting/VoterConfirmationPage.vue"),
+        meta: { title: "Vote Confirmed" }
       }
     ]
   },

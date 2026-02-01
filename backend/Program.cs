@@ -180,6 +180,7 @@ services.AddScoped<TallyJ4.Services.ITallyService, TallyJ4.Services.TallyService
 services.AddScoped<TallyJ4.Services.IReportExportService, TallyJ4.Services.ReportExportService>();
 services.AddScoped<TallyJ4.Services.IAdvancedReportingService, TallyJ4.Services.AdvancedReportingService>();
 services.AddScoped<TallyJ4.Services.IFrontDeskService, TallyJ4.Services.FrontDeskService>();
+services.AddScoped<TallyJ4.Services.IOnlineVotingService, TallyJ4.Services.OnlineVotingService>();
 services.AddScoped<TallyJ4.Application.Services.ImportService>();
 
 // Add Auth services
@@ -313,6 +314,7 @@ app.MapHub<TallyJ4.Hubs.AnalyzeHub>("/hubs/analyze");
 app.MapHub<TallyJ4.Hubs.BallotImportHub>("/hubs/ballot-import");
 app.MapHub<TallyJ4.Hubs.FrontDeskHub>("/hubs/front-desk");
 app.MapHub<TallyJ4.Hubs.PublicHub>("/hubs/public");
+app.MapHub<TallyJ4.Hubs.OnlineVotingHub>("/hubs/online-voting");
 
 // Test endpoint
 app.MapGet("/protected", () => "This is protected!").RequireAuthorization();

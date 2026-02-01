@@ -6,3 +6,4 @@ export * from './Ballot';
 export * from './Vote';
 export * from './Result';
 export * from './ApiResponse';
+export * from './OnlineVoting';
