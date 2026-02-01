@@ -226,6 +226,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C6: Ballot Import Functionality (2-3 days)
+<!-- chat-id: a72db780-c498-449c-b882-9cd4493cce18 -->
 
 **Goal**: Bulk import ballots from CSV/Excel
 

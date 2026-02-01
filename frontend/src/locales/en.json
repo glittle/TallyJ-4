@@ -26,7 +26,12 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "userMenu": "User account menu",
-    "actionIrreversible": "This action cannot be undone."
+    "actionIrreversible": "This action cannot be undone.",
+    "next": "Next",
+    "previous": "Previous",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -172,6 +177,7 @@
     "teller2": "Teller 2",
     "voteCount": "Votes",
     "viewVotes": "View Votes",
+    "enterVotes": "Enter Votes",
     "votes": "Votes - {code}",
     "votesList": "Votes List",
     "addVote": "Add Vote",
@@ -191,7 +197,35 @@
     "deleteVoteError": "Failed to delete vote",
     "voteCreateSuccess": "Vote added successfully",
     "saveError": "Failed to save ballot",
-    "voteSaveError": "Failed to save vote"
+    "voteSaveError": "Failed to save vote",
+    "import": {
+      "button": "Import Ballots",
+      "title": "Import Ballots",
+      "step1": "Upload File",
+      "step2": "Map Fields",
+      "step3": "Review & Import",
+      "uploadFile": "Upload CSV File",
+      "dropFile": "Drop CSV file here",
+      "clickToUpload": "click to upload",
+      "csvOnly": "Only CSV files are supported",
+      "delimiter": "Delimiter",
+      "hasHeaderRow": "Has Header Row",
+      "firstDataRow": "First Data Row",
+      "skipInvalidRows": "Skip Invalid Rows",
+      "mapFields": "Map Fields",
+      "mapFieldsDesc": "Map the CSV columns to the required ballot fields",
+      "selectColumn": "Select column",
+      "dataPreview": "Data Preview",
+      "reviewImport": "Review Import",
+      "totalRows": "Total Rows",
+      "fieldMappings": "Field Mappings",
+      "targetField": "Target Field",
+      "sourceColumn": "Source Column",
+      "startImport": "Start Import",
+      "success": "Import completed successfully",
+      "failed": "Import failed",
+      "parseError": "Failed to parse CSV file"
+    }
   },
   "tally": {
     "title": "Calculate Tally",

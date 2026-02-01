@@ -101,6 +101,11 @@ const routes = [
         meta: { title: "Ballot Management" }
       },
       {
+        path: "elections/:id/ballots/import",
+        component: () => import("../pages/ballots/BallotImportPage.vue"),
+        meta: { title: "Import Ballots" }
+      },
+      {
         path: "elections/:id/ballots/:ballotId/entry",
         component: () => import("../pages/ballots/BallotEntryPage.vue"),
         meta: { title: "Ballot Entry" }
