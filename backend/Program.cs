@@ -179,6 +179,7 @@ services.AddScoped<TallyJ4.Services.IPublicService, TallyJ4.Services.PublicServi
 services.AddScoped<TallyJ4.Services.ITallyService, TallyJ4.Services.TallyService>();
 services.AddScoped<TallyJ4.Services.IReportExportService, TallyJ4.Services.ReportExportService>();
 services.AddScoped<TallyJ4.Services.IAdvancedReportingService, TallyJ4.Services.AdvancedReportingService>();
+services.AddScoped<TallyJ4.Services.IFrontDeskService, TallyJ4.Services.FrontDeskService>();
 services.AddScoped<TallyJ4.Application.Services.ImportService>();
 
 // Add Auth services

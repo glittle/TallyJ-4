@@ -202,6 +202,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C4: Front Desk Registration Workflow (3-4 days)
+<!-- chat-id: c22458c0-5680-42b9-8155-32f3096a7fb9 -->
 
 **Goal**: Implement real-time voter check-in and roll call
 

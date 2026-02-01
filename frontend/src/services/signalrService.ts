@@ -157,6 +157,20 @@ class SignalRService {
       await importConnection.invoke('LeaveImportSession', electionGuid);
     }
   }
+
+  async joinFrontDeskElection(electionGuid: string): Promise<void> {
+    const frontDeskConnection = this.getConnection('/hubs/front-desk');
+    if (frontDeskConnection) {
+      await frontDeskConnection.invoke('JoinElection', electionGuid);
+    }
+  }
+
+  async leaveFrontDeskElection(electionGuid: string): Promise<void> {
+    const frontDeskConnection = this.getConnection('/hubs/front-desk');
+    if (frontDeskConnection) {
+      await frontDeskConnection.invoke('LeaveElection', electionGuid);
+    }
+  }
 }
 
 export const signalrService = new SignalRService();
