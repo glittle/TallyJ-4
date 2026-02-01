@@ -59,6 +59,10 @@
                 <el-icon><UserFilled /></el-icon>
                 {{ $t('elections.managePeople') }}
               </el-button>
+              <el-button @click="manageLocations">
+                <el-icon><LocationFilled /></el-icon>
+                {{ $t('elections.manageLocations') }}
+              </el-button>
               <el-button @click="manageBallots">
                 <el-icon><Tickets /></el-icon>
                 {{ $t('elections.manageBallots') }}
@@ -118,7 +122,7 @@ import { computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Edit, UserFilled, Tickets, DataAnalysis, Operation, Delete } from '@element-plus/icons-vue';
+import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete } from '@element-plus/icons-vue';
 import { useElectionStore } from '../../stores/electionStore';
 
 const router = useRouter();
@@ -158,6 +162,10 @@ function editElection() {
 
 function managePeople() {
   router.push(`/elections/${electionGuid}/people`);
+}
+
+function manageLocations() {
+  router.push(`/elections/${electionGuid}/locations`);
 }
 
 function manageBallots() {
