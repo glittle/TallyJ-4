@@ -140,6 +140,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C1: Location Management (3-4 days)
+<!-- chat-id: 04b241b3-603f-421f-b825-936a42834d6d -->
 
 **Goal**: Implement voting location management and computer registration
 
