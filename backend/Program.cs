@@ -190,7 +190,16 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(options =>
 {
     options.UseAllOfForInheritance();
-    options.CustomSchemaIds(type => type.FullName);
+    options.CustomSchemaIds(type =>
+    {
+        if (type.IsGenericType)
+        {
+            var genericTypeName = type.GetGenericTypeDefinition().Name.Replace("`1", "").Replace("`2", "");
+            var genericArgs = string.Join("", type.GetGenericArguments().Select(t => t.Name));
+            return $"{genericTypeName}{genericArgs}";
+        }
+        return type.Name;
+    });
 
     options.SwaggerDoc("v1", new OpenApiInfo
     {

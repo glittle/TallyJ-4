@@ -51,7 +51,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"Election_{update.ElectionGuid}";
+            var groupName = $"Main{update.ElectionGuid}";
             await _mainHubContext.Clients.Group(groupName).SendAsync("ElectionUpdated", update);
             _logger.LogInformation("Sent ElectionUpdated notification to group {GroupName}", groupName);
         }
@@ -88,7 +88,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"Import_{progress.ElectionGuid}";
+            var groupName = $"BallotImport{progress.ElectionGuid}";
             var eventName = progress.IsComplete ? "ImportComplete" : "ImportProgress";
             await _ballotImportHubContext.Clients.Group(groupName).SendAsync(eventName, progress);
             _logger.LogInformation("Sent {EventName} notification to group {GroupName}", eventName, groupName);
@@ -107,7 +107,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"FrontDesk_{update.ElectionGuid}";
+            var groupName = $"FrontDesk{update.ElectionGuid}";
             var eventName = update.Action switch
             {
                 "added" => "PersonAdded",
@@ -148,7 +148,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"Election_{monitorInfo.ElectionGuid}";
+            var groupName = $"Main{monitorInfo.ElectionGuid}";
             await _mainHubContext.Clients.Group(groupName).SendAsync("MonitorUpdated", monitorInfo);
             _logger.LogInformation("Sent MonitorUpdated notification to group {GroupName}", groupName);
         }

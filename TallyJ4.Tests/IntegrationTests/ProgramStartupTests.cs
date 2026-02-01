@@ -13,11 +13,11 @@ public class ProgramStartupTests : IntegrationTestBase
     public void Application_StartsSuccessfully()
     {
         // Arrange & Act: Factory creates the app successfully
-        var host = Factory.Server.Host;
+        var services = Factory.Services;
 
-        // Assert: Host is not null and services are available
-        Assert.NotNull(host);
-        Assert.NotNull(host.Services);
+        // Assert: Services are available (application started successfully)
+        Assert.NotNull(services);
+        Assert.NotNull(Factory.Server);
     }
 
     [Fact]
