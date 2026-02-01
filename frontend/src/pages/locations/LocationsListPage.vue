@@ -50,9 +50,13 @@
               <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column label="Actions" width="180" fixed="right">
+          <el-table-column label="Actions" width="280" fixed="right">
             <template #default="scope">
               <el-button-group>
+                <el-button size="small" @click="viewComputers(scope.row)">
+                  <el-icon><Monitor /></el-icon>
+                  Computers
+                </el-button>
                 <el-button size="small" @click="editLocation(scope.row)">
                   <el-icon><Edit /></el-icon>
                   Edit
@@ -97,17 +101,86 @@
       :is-edit="true"
       @success="handleFormSuccess"
     />
+
+    <el-drawer
+      v-model="showComputersDrawer"
+      :title="`Computers - ${selectedLocation?.name}`"
+      size="50%"
+      direction="rtl"
+    >
+      <div class="computers-drawer">
+        <div class="drawer-header">
+          <el-button type="primary" @click="openRegisterComputerDialog">
+            <el-icon><Plus /></el-icon>
+            Register Computer
+          </el-button>
+        </div>
+
+        <el-table
+          :data="computers"
+          v-loading="computersLoading"
+          style="width: 100%"
+          class="computers-table"
+        >
+          <el-table-column prop="computerCode" label="Code" width="80" />
+          <el-table-column prop="browserInfo" label="Browser" min-width="200">
+            <template #default="scope">
+              <span class="browser-info">{{ scope.row.browserInfo || '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ipAddress" label="IP Address" width="150">
+            <template #default="scope">
+              {{ scope.row.ipAddress || '-' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="lastActivity" label="Last Activity" width="180">
+            <template #default="scope">
+              {{ formatDateTime(scope.row.lastActivity) }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Status" width="100">
+            <template #default="scope">
+              <el-tag :type="scope.row.isActive ? 'success' : 'info'">
+                {{ scope.row.isActive ? 'Active' : 'Inactive' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="Actions" width="100" fixed="right">
+            <template #default="scope">
+              <el-button
+                size="small"
+                type="danger"
+                @click="deleteComputer(scope.row)"
+              >
+                <el-icon><Delete /></el-icon>
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <el-empty v-if="!computersLoading && computers.length === 0" description="No computers registered" />
+      </div>
+    </el-drawer>
+
+    <ComputerRegistrationDialog
+      v-if="selectedLocation"
+      v-model="showComputerRegisterDialog"
+      :election-guid="electionGuid"
+      :location-guid="selectedLocation.locationGuid"
+      @success="handleComputerRegistered"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { Plus, Edit, Delete } from '@element-plus/icons-vue';
+import { Plus, Edit, Delete, Monitor } from '@element-plus/icons-vue';
 import { useLocationStore } from '../../stores/locationStore';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import type { LocationDto } from '../../types';
+import type { LocationDto, ComputerDto } from '../../types';
 import LocationFormDialog from '../../components/locations/LocationFormDialog.vue';
+import ComputerRegistrationDialog from '../../components/locations/ComputerRegistrationDialog.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -117,10 +190,15 @@ const electionGuid = route.params.id as string;
 const showCreateDialog = ref(false);
 const showEditDialog = ref(false);
 const editingLocation = ref<LocationDto | null>(null);
+const showComputersDrawer = ref(false);
+const showComputerRegisterDialog = ref(false);
+const selectedLocation = ref<LocationDto | null>(null);
 
 const loading = computed(() => locationStore.loading);
 const sortedLocations = computed(() => locationStore.sortedLocations);
 const pagination = computed(() => locationStore.pagination);
+const computers = computed(() => locationStore.computers);
+const computersLoading = computed(() => locationStore.computersLoading);
 
 const sort = ref({
   prop: 'sortOrder',
@@ -204,6 +282,56 @@ function getStatusType(status: string) {
   };
   return typeMap[status] || '';
 }
+
+async function viewComputers(location: LocationDto) {
+  selectedLocation.value = location;
+  showComputersDrawer.value = true;
+  try {
+    await locationStore.fetchComputers(electionGuid, location.locationGuid);
+  } catch (error: any) {
+    ElMessage.error('Failed to load computers');
+  }
+}
+
+function openRegisterComputerDialog() {
+  showComputerRegisterDialog.value = true;
+}
+
+function handleComputerRegistered() {
+  showComputerRegisterDialog.value = false;
+  if (selectedLocation.value) {
+    locationStore.fetchComputers(electionGuid, selectedLocation.value.locationGuid);
+  }
+}
+
+async function deleteComputer(computer: ComputerDto) {
+  if (!selectedLocation.value) return;
+  
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to delete computer "${computer.computerCode}"?`,
+      'Warning',
+      {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    );
+
+    await locationStore.deleteComputer(electionGuid, selectedLocation.value.locationGuid, computer.computerGuid);
+    ElMessage.success('Computer deleted successfully');
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || 'Failed to delete computer');
+    }
+  }
+}
+
+function formatDateTime(dateStr?: string): string {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  return date.toLocaleString();
+}
 </script>
 
 <style scoped>
@@ -239,5 +367,22 @@ function getStatusType(status: string) {
 .coordinates {
   font-family: monospace;
   font-size: 0.9em;
+}
+
+.computers-drawer {
+  padding: 0;
+}
+
+.drawer-header {
+  margin-bottom: 20px;
+}
+
+.computers-table {
+  margin-top: 20px;
+}
+
+.browser-info {
+  font-size: 0.85em;
+  word-break: break-word;
 }
 </style>
