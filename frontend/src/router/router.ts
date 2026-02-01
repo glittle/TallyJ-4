@@ -63,6 +63,11 @@ const routes = [
         meta: { title: "Voting Locations" }
       },
       {
+        path: "elections/:id/tellers",
+        component: () => import("../pages/tellers/TellersListPage.vue"),
+        meta: { title: "Tellers" }
+      },
+      {
         path: "elections/:id/ballots",
         component: () => import("../pages/ballots/BallotManagementPage.vue"),
         meta: { title: "Ballot Management" }

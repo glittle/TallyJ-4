@@ -137,10 +137,18 @@ services.AddAuthorization(options =>
 {
     options.AddPolicy("ElectionAccess", policy =>
         policy.Requirements.Add(new TallyJ4.Authorization.ElectionAccessRequirement()));
+    
+    options.AddPolicy("TellerAccess", policy =>
+        policy.Requirements.Add(new TallyJ4.Authorization.TellerAccessRequirement()));
+    
+    options.AddPolicy("HeadTellerAccess", policy =>
+        policy.Requirements.Add(new TallyJ4.Authorization.HeadTellerAccessRequirement()));
 });
 
 // Register custom authorization handlers
 services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.ElectionAccessHandler>();
+services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.TellerAccessHandler>();
+services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.HeadTellerAccessHandler>();
 
 // Add localization
 services.AddLocalization();
@@ -160,6 +168,7 @@ services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 services.AddScoped<TallyJ4.Services.IElectionService, TallyJ4.Services.ElectionService>();
 services.AddScoped<TallyJ4.Services.ILocationService, TallyJ4.Services.LocationService>();
 services.AddScoped<TallyJ4.Services.IComputerService, TallyJ4.Services.ComputerService>();
+services.AddScoped<TallyJ4.Services.ITellerService, TallyJ4.Services.TellerService>();
 services.AddScoped<TallyJ4.Services.IPeopleService, TallyJ4.Services.PeopleService>();
 services.AddScoped<TallyJ4.Services.IBallotService, TallyJ4.Services.BallotService>();
 services.AddScoped<TallyJ4.Services.IVoteService, TallyJ4.Services.VoteService>();
