@@ -11,62 +11,12 @@
         ref="formRef"
         :model="form"
         :rules="rules"
-        label-width="180px"
+        label-width="200px"
         label-position="left"
       >
-        <el-form-item :label="$t('elections.form.name')" prop="name">
-          <el-input v-model="form.name" :placeholder="$t('elections.form.namePlaceholder')" />
-        </el-form-item>
+        <ElectionFormTabs v-model="form" :available-elections="availableElections" />
 
-        <el-form-item :label="$t('elections.form.date')" prop="dateOfElection">
-          <el-date-picker
-            v-model="form.dateOfElection"
-            type="date"
-            :placeholder="$t('elections.form.datePlaceholder')"
-            style="width: 100%"
-          />
-        </el-form-item>
-
-        <el-form-item :label="$t('elections.form.type')" prop="electionType">
-          <el-select v-model="form.electionType" :placeholder="$t('elections.form.typePlaceholder')">
-            <el-option label="STV - Single Transferable Vote" value="STV" />
-            <el-option label="Condorcet" value="Cond" />
-            <el-option label="Multi-Winner" value="Multi" />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item :label="$t('elections.form.numberToElect')" prop="numberToElect">
-          <el-input-number v-model="form.numberToElect" :min="1" :max="50" />
-        </el-form-item>
-
-        <el-form-item :label="$t('elections.form.numberExtra')" prop="numberExtra">
-          <el-input-number v-model="form.numberExtra" :min="0" :max="20" />
-        </el-form-item>
-
-        <el-form-item :label="$t('elections.form.convenor')" prop="convenor">
-          <el-input v-model="form.convenor" :placeholder="$t('elections.form.convenorPlaceholder')" />
-        </el-form-item>
-
-        <el-form-item :label="$t('elections.form.electionMode')" prop="electionMode">
-          <el-select v-model="form.electionMode" :placeholder="$t('elections.form.modePlaceholder')">
-            <el-option label="Normal" value="N" />
-            <el-option label="International" value="I" />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item :label="$t('elections.form.showFullReport')">
-          <el-switch v-model="form.showFullReport" />
-        </el-form-item>
-
-        <el-form-item :label="$t('elections.form.listForPublic')">
-          <el-switch v-model="form.listForPublic" />
-        </el-form-item>
-
-        <el-form-item :label="$t('elections.form.showAsTest')">
-          <el-switch v-model="form.showAsTest" />
-        </el-form-item>
-
-        <el-form-item>
+        <el-form-item style="margin-top: 20px;">
           <el-button type="primary" @click="submitForm" :loading="submitting">
             {{ $t('common.create') }}
           </el-button>
@@ -80,12 +30,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { useElectionStore } from '../../stores/electionStore';
-import type { CreateElectionDto } from '../../types';
+import type { CreateElectionDto, ElectionSummaryDto } from '../../types';
+import ElectionFormTabs from '../../components/elections/ElectionFormTabs.vue';
 
 const router = useRouter();
 const { t } = useI18n();
@@ -93,6 +44,7 @@ const electionStore = useElectionStore();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
+const availableElections = ref<ElectionSummaryDto[]>([]);
 
 const form = reactive<CreateElectionDto>({
   name: '',
@@ -104,7 +56,9 @@ const form = reactive<CreateElectionDto>({
   numberExtra: 0,
   showFullReport: true,
   listForPublic: false,
-  showAsTest: false
+  showAsTest: false,
+  canVote: 'Y',
+  canReceive: 'Y'
 });
 
 const rules = reactive<FormRules>({
@@ -116,7 +70,19 @@ const rules = reactive<FormRules>({
   ],
   numberToElect: [
     { required: true, message: t('elections.form.numberToElectRequired'), trigger: 'blur' }
+  ],
+  emailFromAddress: [
+    { type: 'email', message: t('elections.form.emailInvalid'), trigger: 'blur' }
   ]
+});
+
+onMounted(async () => {
+  try {
+    await electionStore.fetchElections();
+    availableElections.value = electionStore.elections || [];
+  } catch (error) {
+    console.error('Failed to fetch elections for linked election dropdown', error);
+  }
 });
 
 async function submitForm() {

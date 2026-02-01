@@ -190,6 +190,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C3: Advanced Election Configuration UI (2-3 days)
+<!-- chat-id: 18e8130c-8279-42c0-8163-86f3a1918d77 -->
 
 **Goal**: Expose all v3 election fields in UI
 

@@ -53,6 +53,11 @@ const routes = [
         meta: { title: "Election Details" }
       },
       {
+        path: "elections/:id/edit",
+        component: () => import("../pages/elections/EditElectionPage.vue"),
+        meta: { title: "Edit Election" }
+      },
+      {
         path: "elections/:id/people",
         component: () => import("../pages/people/PeopleManagementPage.vue"),
         meta: { title: "People Management" }

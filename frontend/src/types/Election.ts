@@ -17,6 +17,25 @@ export interface ElectionDto {
   voterCount: number;
   ballotCount: number;
   locationCount: number;
+  canVote?: string;
+  canReceive?: string;
+  electionPasscode?: string;
+  linkedElectionGuid?: string;
+  linkedElectionKind?: string;
+  useCallInButton?: boolean;
+  hidePreBallotPages?: boolean;
+  maskVotingMethod?: boolean;
+  onlineCloseIsEstimate?: boolean;
+  onlineSelectionProcess?: string;
+  onlineAnnounced?: string;
+  emailFromAddress?: string;
+  emailFromName?: string;
+  emailText?: string;
+  emailSubject?: string;
+  smsText?: string;
+  customMethods?: string;
+  votingMethods?: string;
+  flags?: string;
 }
 
 export interface CreateElectionDto {
@@ -30,6 +49,27 @@ export interface CreateElectionDto {
   showFullReport?: boolean;
   listForPublic?: boolean;
   showAsTest?: boolean;
+  canVote?: string;
+  canReceive?: string;
+  electionPasscode?: string;
+  linkedElectionGuid?: string;
+  linkedElectionKind?: string;
+  useCallInButton?: boolean;
+  hidePreBallotPages?: boolean;
+  maskVotingMethod?: boolean;
+  onlineWhenOpen?: string;
+  onlineWhenClose?: string;
+  onlineCloseIsEstimate?: boolean;
+  onlineSelectionProcess?: string;
+  onlineAnnounced?: string;
+  emailFromAddress?: string;
+  emailFromName?: string;
+  emailText?: string;
+  emailSubject?: string;
+  smsText?: string;
+  customMethods?: string;
+  votingMethods?: string;
+  flags?: string;
 }
 
 export interface UpdateElectionDto {
@@ -44,6 +84,27 @@ export interface UpdateElectionDto {
   listForPublic?: boolean;
   showAsTest?: boolean;
   tallyStatus?: string;
+  onlineWhenOpen?: string;
+  onlineWhenClose?: string;
+  canVote?: string;
+  canReceive?: string;
+  electionPasscode?: string;
+  linkedElectionGuid?: string;
+  linkedElectionKind?: string;
+  useCallInButton?: boolean;
+  hidePreBallotPages?: boolean;
+  maskVotingMethod?: boolean;
+  onlineCloseIsEstimate?: boolean;
+  onlineSelectionProcess?: string;
+  onlineAnnounced?: string;
+  emailFromAddress?: string;
+  emailFromName?: string;
+  emailText?: string;
+  emailSubject?: string;
+  smsText?: string;
+  customMethods?: string;
+  votingMethods?: string;
+  flags?: string;
 }
 
 export interface ElectionSummaryDto {
