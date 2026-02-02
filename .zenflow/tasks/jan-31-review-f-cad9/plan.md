@@ -1,6 +1,7 @@
 # Full SDD workflow
 
 ## Configuration
+
 - **Artifacts Path**: .zenflow/tasks/jan-31-review-f-cad9
 
 ---
@@ -8,6 +9,7 @@
 ## Workflow Steps
 
 ### [x] Step: Requirements
+
 <!-- chat-id: 24988af7-275e-4a18-b809-7b1797d9cddb -->
 
 Create a Product Requirements Document (PRD) based on the feature description.
@@ -21,6 +23,7 @@ Create a Product Requirements Document (PRD) based on the feature description.
 Save the PRD to `.zenflow/tasks/jan-31-review-f-cad9/requirements.md`.
 
 ### [x] Step: Technical Specification
+
 <!-- chat-id: ff8d1903-5658-4b90-a059-c37f76683c9c -->
 
 Create a technical specification based on the PRD in `.zenflow/tasks/jan-31-review-f-cad9/requirements.md`.
@@ -29,6 +32,7 @@ Create a technical specification based on the PRD in `.zenflow/tasks/jan-31-revi
 2. Define the implementation approach
 
 Save to `.zenflow/tasks/jan-31-review-f-cad9/spec.md` with:
+
 - Technical context (language, dependencies)
 - Implementation approach referencing existing code patterns
 - Source code structure changes
@@ -51,6 +55,7 @@ If the feature is trivial and doesn't warrant full specification, update this wo
 Save to `.zenflow/tasks/jan-31-review-f-cad9/plan.md`.
 
 **COMPLETED**: Created comprehensive implementation plan with 7 phases:
+
 - Phase A: Complete Documentation Review (1-2 weeks) - Systematic v3 site walkthrough
 - Phase B: Fix Critical Issues (1 week) - Fix tests, SignalR, OpenAPI
 - Phase C: Core Missing Features (3-4 weeks) - 8 sub-phases for missing features
@@ -68,6 +73,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ## Implementation Phases
 
 ### [x] Phase A: Complete Documentation Review (1-2 weeks)
+
 <!-- chat-id: 0d81e13d-cd61-43a1-a590-2a7a8623e858 -->
 
 **Goal**: Systematically document all v3 features to ensure nothing is missed in v4
@@ -77,6 +83,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 **Decision Made**: Additional v3 walkthrough NOT required - database schema provides complete specifications
 
 **Completed Tasks**:
+
 - [x] Analyzed v4 codebase (controllers, pages, entities)
 - [x] Mapped all 18 database entities to features
 - [x] Created comprehensive v3 vs v4 feature comparison matrix (134 features across 15 categories)
@@ -87,12 +94,14 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 - [x] Updated requirements.md with complete findings
 
 **Deliverables**:
+
 - ✅ v3_vs_v4_feature_matrix.md (15 categories, 134 features)
 - ✅ missing_features_detailed.md (8 high-priority features, detailed specs)
 - ✅ PHASE_A_SUMMARY.md (complete phase documentation)
 - ✅ requirements.md updated (sections 14-16 added)
 
 **Key Findings**:
+
 - v4 is 58% feature-complete (59/134 implemented, 18 partial, 57 missing)
 - Backend infrastructure: 90% complete
 - Frontend infrastructure: 90% complete
@@ -104,6 +113,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase B: Fix Critical Issues (1 week)
+
 <!-- chat-id: 4e1ed714-c7fd-4e21-9edb-98c96ad8a66a -->
 
 **Goal**: Resolve blocking technical issues before adding new features
@@ -111,6 +121,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 **Priority**: HIGH - Can start in parallel with Phase A decision
 
 **1. Fix Failing Integration Tests**
+
 - [ ] Run tests and analyze failures: `dotnet test`
 - [ ] Fix authentication issues in test setup
 - [ ] Fix JSON serialization issues
@@ -118,6 +129,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 - [ ] Verify all 49 tests pass
 
 **2. Fix SignalR Group Name Mismatch**
+
 - [ ] Review AnalyzeHub.cs group naming
 - [ ] Review frontend SignalR listener
 - [ ] Standardize group names to: `election-{electionGuid}`
@@ -125,12 +137,14 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 - [ ] Test real-time tally progress events
 
 **3. Fix OpenAPI Type Generation**
+
 - [ ] Investigate OpenAPI spec size issue
 - [ ] Configure @hey-api/openapi-ts
 - [ ] Generate type-safe API client
 - [ ] Update frontend services to use generated types
 
 **4. Database Verification**
+
 - [ ] Verify migrations apply cleanly
 - [ ] Check seed data is comprehensive
 - [ ] Test all entity relationships
@@ -140,6 +154,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [x] Phase C1: Location Management (3-4 days)
+
 <!-- chat-id: 04b241b3-603f-421f-b825-936a42834d6d -->
 
 **Goal**: Implement voting location management and computer registration
@@ -150,6 +165,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 **Frontend**: locationStore, LocationsListPage, LocationDetailPage, components
 
 **Completed**:
+
 - Location CRUD operations (already existed)
 - Computer entity and database migration
 - ComputerService with registration, auto-code generation (AA-ZZ)
@@ -163,6 +179,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [x] Phase C2: Teller Assignment & Permissions (3-4 days)
+
 <!-- chat-id: 08ac9fb6-c43d-457f-87f5-8aa2d66b3cb4 -->
 
 **Goal**: Implement teller management and role-based permissions
@@ -173,6 +190,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 **Frontend**: tellerStore, TellersListPage, TellerFormDialog component
 
 **Completed**:
+
 - Teller CRUD operations (TellerService, ITellerService)
 - TellerDto, CreateTellerDto, UpdateTellerDto with validation
 - TellersController with pagination, create, update, delete endpoints
@@ -190,6 +208,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C3: Advanced Election Configuration UI (2-3 days)
+
 <!-- chat-id: 18e8130c-8279-42c0-8163-86f3a1918d77 -->
 
 **Goal**: Expose all v3 election fields in UI
@@ -202,6 +221,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C4: Front Desk Registration Workflow (3-4 days)
+
 <!-- chat-id: c22458c0-5680-42b9-8155-32f3096a7fb9 -->
 
 **Goal**: Implement real-time voter check-in and roll call
@@ -214,6 +234,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C5: Online Voting Portal (4-5 days)
+
 <!-- chat-id: 0d06afe0-2390-4278-b49e-2e6c94e952f6 -->
 
 **Goal**: Voter-facing online ballot submission
@@ -226,9 +247,10 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C6: Ballot Import Functionality (2-3 days)
+
 <!-- chat-id: a72db780-c498-449c-b882-9cd4493cce18 -->
 
-**Goal**: Bulk import ballots from CSV/Excel
+**Goal**: Bulk import ballots from CSV/Excel/XML
 
 **Backend**: Enhance ImportController, ImportService for ballots
 **Frontend**: BallotImportPage, import wizard, real-time progress
@@ -238,6 +260,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C7: Audit Logs UI (2-3 days)
+
 <!-- chat-id: b8d49499-76ba-4029-be91-94591e330719 -->
 
 **Goal**: Display user activity audit trail
@@ -251,12 +274,12 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 
 ### [ ] Phase C8: Public Display Mode (2-3 days)
 
-**Goal**: Public-facing live results display
+**Goal**: Public-facing live results display, on teller's computer
 
 **Backend**: Enhance PublicController, PublicService, PublicHub
 **Frontend**: PublicDisplayPage, full-screen results, real-time updates
 
-**Verification**: Public results display without login, auto-refresh
+**Verification**: Public results display by a teller
 
 ---
 
@@ -265,21 +288,26 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 **Goal**: Transform rudimentary UI into professional application
 
 **D1: Create Design System (3-4 days)**
+
 - Design tokens (colors, typography, spacing, shadows, borders)
 - Base components (DSButton, DSCard, DSTable, DSForm, DSInput)
 - Composables (useDesignTokens, useResponsive, useTheme)
 
 **D2: Enhance Core Pages (5-7 days)**
+
 - Redesign Dashboard, Election, People, Ballot, Results pages
 - Better layouts, visualizations, loading states, empty states
 
 **D3: Add Missing UI Patterns (3-4 days)**
+
 - Loading states, empty states, error handling, confirmations, toasts
 
 **D4: Responsive Design (2-3 days)**
+
 - Mobile, tablet, desktop optimization
 
 **D5: Visual Enhancements (2-3 days)**
+
 - Micro-interactions, visual hierarchy, data visualization
 
 **Verification**: Consistent design, responsive, professional polish
@@ -333,6 +361,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 **Total Estimated Time**: 10-15 weeks
 
 **Current Status**: ~60-70% complete
+
 - Backend infrastructure: 90% complete
 - Frontend infrastructure: 90% complete
 - Frontend features: 60% complete
@@ -340,11 +369,13 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 - Test coverage: 40% complete
 
 **Key Decisions**:
+
 1. Phase A approval: Comprehensive v3 review? (RECOMMENDED: YES)
 2. Design approach: AI-led design system (RECOMMENDED)
 3. Feature prioritization: Full parity with v3 (RECOMMENDED)
 
 **Next Steps**:
+
 1. Get user approval for Phase A
 2. Start Phase B (critical fixes)
 3. Begin systematic implementation

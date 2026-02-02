@@ -16,10 +16,12 @@
 #### Pages Required
 
 ##### 1.1 LocationsListPage.vue
+
 **Route:** `/elections/:electionId/locations`  
 **Purpose:** Manage voting locations for an election
 
 **Components:**
+
 - Header with "Add Location" button
 - Table with columns:
   - Name
@@ -31,13 +33,16 @@
 - Sort by name, ballots collected
 
 **API Calls:**
+
 - `GET /api/elections/{electionId}/locations` - List all locations
 - `DELETE /api/elections/{electionId}/locations/{locationId}` - Delete location
 
 ##### 1.2 LocationDetailPage.vue / LocationFormDialog.vue
+
 **Purpose:** Create/edit location
 
 **Form Fields:**
+
 - Name (required, max 50 chars)
 - Contact Info (optional, max 250 chars)
 - Longitude (optional, GPS coordinate)
@@ -45,31 +50,37 @@
 - Sort Order (optional, number)
 
 **API Calls:**
+
 - `POST /api/elections/{electionId}/locations` - Create
 - `PUT /api/elections/{electionId}/locations/{locationId}` - Update
 - `GET /api/elections/{electionId}/locations/{locationId}` - Get details
 
 **Validation:**
+
 - Name required
 - Unique name per election
 - Valid GPS coordinates if provided
 
 ##### 1.3 Computer Registration (Part of Location)
+
 **Purpose:** Register computers for ballot entry at a location
 
 **Fields:**
+
 - Computer Internal Code (auto-generated or manual)
 - Browser Info (auto-detected)
 - IP Address (auto-detected)
 - Last Activity (timestamp)
 
 **API Calls:**
+
 - `POST /api/elections/{electionId}/locations/{locationId}/computers` - Register computer
 - `GET /api/elections/{electionId}/locations/{locationId}/computers` - List computers
 
 #### Backend Requirements
 
 ##### LocationsController.cs
+
 ```csharp
 [Route("api/elections/{electionId}/locations")]
 public class LocationsController : ControllerBase
@@ -85,6 +96,7 @@ public class LocationsController : ControllerBase
 ```
 
 ##### DTOs Required
+
 - `LocationDto`
 - `CreateLocationDto`
 - `UpdateLocationDto`
@@ -92,6 +104,7 @@ public class LocationsController : ControllerBase
 - `RegisterComputerDto`
 
 ##### Services
+
 - `LocationService` / `ILocationService`
   - CRUD operations
   - Computer registration
@@ -108,10 +121,12 @@ public class LocationsController : ControllerBase
 #### Pages Required
 
 ##### 2.1 TellersListPage.vue
+
 **Route:** `/elections/:electionId/tellers`  
 **Purpose:** Manage tellers assigned to election
 
 **Components:**
+
 - Header with "Add Teller" button
 - Table with columns:
   - Name
@@ -121,30 +136,37 @@ public class LocationsController : ControllerBase
 - Filter by role
 
 **API Calls:**
+
 - `GET /api/elections/{electionId}/tellers` - List tellers
 - `DELETE /api/elections/{electionId}/tellers/{tellerId}` - Remove teller
 
 ##### 2.2 TellerFormDialog.vue
+
 **Purpose:** Add/edit teller assignment
 
 **Form Fields:**
+
 - Name (required, max 50 chars)
 - Is Head Teller (checkbox)
 - Computer Code (optional, 2 chars)
 
 **API Calls:**
+
 - `POST /api/elections/{electionId}/tellers` - Add teller
 - `PUT /api/elections/{electionId}/tellers/{tellerId}` - Update teller
 
 **Validation:**
+
 - Name required
 - Unique name per election
 - Computer code format (2 uppercase letters)
 
 ##### 2.3 Teller Access Code Login (Enhancement to LoginPage.vue)
+
 **Purpose:** Allow tellers to join election using access code
 
 **New Login Flow:**
+
 1. Select "Join as Teller" option
 2. Enter election access code (Election.ElectionPasscode)
 3. System verifies code and loads election
@@ -153,6 +175,7 @@ public class LocationsController : ControllerBase
 6. Session established with teller permissions
 
 **API Calls:**
+
 - `POST /api/auth/teller-login` - New endpoint
   - Input: `{ electionPasscode: string, tellerName: string }`
   - Output: JWT token + election info + teller info
@@ -160,6 +183,7 @@ public class LocationsController : ControllerBase
 #### Backend Requirements
 
 ##### TellersController.cs
+
 ```csharp
 [Route("api/elections/{electionId}/tellers")]
 public class TellersController : ControllerBase
@@ -172,6 +196,7 @@ public class TellersController : ControllerBase
 ```
 
 ##### AuthController Enhancement
+
 ```csharp
 POST /api/auth/teller-login
 {
@@ -181,6 +206,7 @@ POST /api/auth/teller-login
 ```
 
 ##### DTOs Required
+
 - `TellerDto`
 - `AddTellerDto`
 - `UpdateTellerDto`
@@ -188,6 +214,7 @@ POST /api/auth/teller-login
 - `TellerLoginResponse`
 
 ##### Services
+
 - `TellerService` / `ITellerService`
   - CRUD operations
   - Access code verification
@@ -204,6 +231,7 @@ POST /api/auth/teller-login
 #### Enhancement Required: ElectionFormPage.vue (Expanded)
 
 **Current Fields (10):**
+
 - Name
 - Date
 - Type
@@ -218,12 +246,14 @@ POST /api/auth/teller-login
 **MISSING Fields (30+):**
 
 ##### Basic Settings Section
+
 - Election Passcode (required for teller access)
 - Linked Election (for tie-breaks)
 - Can Vote (default eligibility)
 - Can Receive Votes (default candidacy)
 
 ##### Online Voting Section
+
 - Enable Online Voting (checkbox)
 - When Opens (datetime)
 - When Closes (datetime)
@@ -232,6 +262,7 @@ POST /api/auth/teller-login
 - Announced Date (datetime)
 
 ##### Communication Section
+
 - Email From Address
 - Email From Name
 - Email Subject
@@ -239,6 +270,7 @@ POST /api/auth/teller-login
 - SMS Text (template)
 
 ##### Voting Methods Section
+
 - Use Call-In Button (checkbox)
 - Custom Methods (comma-separated)
 - Voting Methods (multi-select checkboxes)
@@ -250,6 +282,7 @@ POST /api/auth/teller-login
   - (Custom methods)
 
 ##### Display Options Section
+
 - Hide Pre-Ballot Pages (checkbox)
 - Mask Voting Method (checkbox)
 - Show Full Report (existing)
@@ -257,11 +290,13 @@ POST /api/auth/teller-login
 - Show as Test (existing)
 
 ##### Advanced Section
+
 - Flags (JSON, advanced users only)
 
 #### Form Organization
 
 **Proposed Tab Structure:**
+
 1. **Basic Information** - Name, Date, Type, Mode, Convenor
 2. **Election Rules** - Number to Elect, Number Extra, Can Vote, Can Receive
 3. **Voting Methods** - In-person, Online, Custom methods
@@ -271,6 +306,7 @@ POST /api/auth/teller-login
 7. **Advanced** - Passcode, Linked elections, Flags
 
 **Validation:**
+
 - If online voting enabled: Require open/close times, email template
 - If custom methods: Validate format
 - Passcode: Strong password requirements
@@ -286,10 +322,12 @@ POST /api/auth/teller-login
 #### Pages Required
 
 ##### 4.1 FrontDeskPage.vue
+
 **Route:** `/elections/:electionId/frontdesk`  
 **Purpose:** Real-time voter check-in and registration
 
 **Layout:**
+
 ```
 +------------------+--------------------+
 | Voter Search     | Voter Details      |
@@ -307,6 +345,7 @@ POST /api/auth/teller-login
 ```
 
 **Features:**
+
 1. **Search Voters**
    - Search by name, Bahai ID
    - Display eligible voters
@@ -332,6 +371,7 @@ POST /api/auth/teller-login
    - Export to PDF/Excel
 
 **API Calls:**
+
 - `GET /api/elections/{electionId}/frontdesk/eligible-voters` - List eligible voters
 - `POST /api/elections/{electionId}/frontdesk/checkin` - Check in voter
   ```json
@@ -346,12 +386,14 @@ POST /api/auth/teller-login
 - `GET /api/elections/{electionId}/frontdesk/stats` - Get statistics
 
 **SignalR Events (FrontDeskHub):**
+
 - `PersonCheckedIn` - Broadcast when voter checks in
 - `VoterCountUpdated` - Update statistics
 
 #### Backend Requirements
 
 ##### FrontDeskController.cs (New)
+
 ```csharp
 [Route("api/elections/{electionId}/frontdesk")]
 public class FrontDeskController : ControllerBase
@@ -364,12 +406,14 @@ public class FrontDeskController : ControllerBase
 ```
 
 ##### DTOs Required
+
 - `FrontDeskVoterDto`
 - `CheckInVoterDto`
 - `RollCallDto`
 - `FrontDeskStatsDto`
 
 ##### FrontDeskHub Enhancement
+
 - Add `JoinFrontDeskSession(electionGuid)`
 - Add `LeaveFrontDeskSession(electionGuid)`
 - Broadcast `PersonCheckedIn` event
@@ -386,10 +430,12 @@ public class FrontDeskController : ControllerBase
 #### Pages Required
 
 ##### 5.1 Online Voter Landing Page (Public)
+
 **Route:** `/vote` (public route, no auth)  
 **Purpose:** Voter authentication entry point
 
 **Layout:**
+
 ```
 +----------------------------------------+
 | TallyJ Online Voting                   |
@@ -408,7 +454,6 @@ public class FrontDeskController : ControllerBase
    - Enter email address
    - System sends verification code via email
    - Enter code to authenticate
-   
 2. **Phone Login:**
    - Enter phone number
    - Choose SMS or Voice
@@ -420,6 +465,7 @@ public class FrontDeskController : ControllerBase
    - Authenticate immediately
 
 **API Calls:**
+
 - `POST /api/online-voting/request-code`
   ```json
   {
@@ -437,10 +483,12 @@ public class FrontDeskController : ControllerBase
   ```
 
 ##### 5.2 Online Ballot Submission Page
+
 **Route:** `/vote/ballot/:electionId` (authenticated voters only)  
 **Purpose:** Submit online ballot
 
 **Layout:**
+
 ```
 +----------------------------------------+
 | [Election Name]                        |
@@ -462,6 +510,7 @@ public class FrontDeskController : ControllerBase
 ```
 
 **Features:**
+
 1. Display election information
 2. Autocomplete from eligible candidates
 3. Validate ballot (no duplicates, correct count)
@@ -470,6 +519,7 @@ public class FrontDeskController : ControllerBase
 6. Thank you / confirmation page
 
 **API Calls:**
+
 - `GET /api/online-voting/elections/{electionId}` - Get election details
 - `GET /api/online-voting/elections/{electionId}/candidates` - List eligible candidates
 - `POST /api/online-voting/elections/{electionId}/submit-ballot`
@@ -484,9 +534,11 @@ public class FrontDeskController : ControllerBase
 - `GET /api/online-voting/my-votes/{electionId}` - Check if already voted
 
 **SignalR Events (PublicHub):**
+
 - `OnlineVoteSubmitted` - Update live voter count
 
 ##### 5.3 Online Voting Admin Configuration (Enhancement to ElectionFormPage)
+
 **Purpose:** Configure online voting settings
 
 See "Advanced Election Configuration" section above.
@@ -494,6 +546,7 @@ See "Advanced Election Configuration" section above.
 #### Backend Requirements
 
 ##### OnlineVotingController.cs (New)
+
 ```csharp
 [Route("api/online-voting")]
 public class OnlineVotingController : ControllerBase
@@ -508,6 +561,7 @@ public class OnlineVotingController : ControllerBase
 ```
 
 ##### DTOs Required
+
 - `OnlineVoterLoginDto`
 - `RequestCodeDto`
 - `VerifyCodeDto`
@@ -517,6 +571,7 @@ public class OnlineVotingController : ControllerBase
 - `OnlineVoteStatusDto`
 
 ##### Services
+
 - `OnlineVotingService` / `IOnlineVotingService`
   - Code generation and validation
   - Email/SMS delivery (integration with external service)
@@ -524,6 +579,7 @@ public class OnlineVotingController : ControllerBase
   - Duplicate vote prevention
 
 ##### External Services Integration
+
 - **Email Service:** SendGrid, Amazon SES, or SMTP
 - **SMS Service:** Twilio for SMS and Voice calls
 
@@ -538,10 +594,12 @@ public class OnlineVotingController : ControllerBase
 #### Pages Required
 
 ##### 6.1 BallotImportPage.vue
+
 **Route:** `/elections/:electionId/import/ballots`  
 **Purpose:** Bulk import ballots from CSV/Excel
 
 **Layout:**
+
 ```
 +----------------------------------------+
 | Import Ballots                         |
@@ -571,6 +629,7 @@ public class OnlineVotingController : ControllerBase
 ```
 
 **Features:**
+
 1. CSV/Excel file upload
 2. Field mapping interface
 3. Preview data
@@ -579,6 +638,7 @@ public class OnlineVotingController : ControllerBase
 6. Rollback on critical errors
 
 **CSV Format:**
+
 ```csv
 BallotNum,Status,Computer,Teller,Vote1,Vote2,Vote3,...Vote9
 1,OK,A,John Doe,Alice Smith,Bob Jones,...
@@ -586,12 +646,14 @@ BallotNum,Status,Computer,Teller,Vote1,Vote2,Vote3,...Vote9
 ```
 
 **API Calls:**
+
 - `POST /api/elections/{electionId}/import/ballots/upload` - Upload file
 - `POST /api/elections/{electionId}/import/ballots/preview` - Preview import
 - `POST /api/elections/{electionId}/import/ballots/execute` - Execute import
 - `GET /api/elections/{electionId}/import/ballots/{importId}/status` - Get status
 
 **SignalR Events (BallotImportHub):**
+
 - `ImportProgress` - Update progress bar
 - `ImportComplete` - Notify completion
 - `ImportError` - Report errors
@@ -599,6 +661,7 @@ BallotNum,Status,Computer,Teller,Vote1,Vote2,Vote3,...Vote9
 #### Backend Requirements
 
 ##### Enhancement to ImportController.cs
+
 ```csharp
 [Route("api/elections/{electionId}/import/ballots")]
 public partial class ImportController
@@ -611,6 +674,7 @@ public partial class ImportController
 ```
 
 ##### DTOs Required
+
 - `BallotImportFileDto`
 - `BallotImportPreviewDto`
 - `BallotImportExecuteDto`
@@ -618,6 +682,7 @@ public partial class ImportController
 - `BallotImportErrorDto`
 
 ##### Services
+
 - Enhancement to `ImportService`
   - Parse ballot CSV
   - Map fields
@@ -636,10 +701,12 @@ public partial class ImportController
 #### Pages Required
 
 ##### 7.1 AuditLogsPage.vue
+
 **Route:** `/elections/:electionId/audit-logs` or `/admin/audit-logs`  
 **Purpose:** View system activity and audit trail
 
 **Layout:**
+
 ```
 +----------------------------------------+
 | Audit Logs                             |
@@ -661,12 +728,14 @@ public partial class ImportController
 ```
 
 **Features:**
+
 1. Filter by user, action type, entity type, date range
 2. View detailed changes (JSON diff)
 3. Export to CSV
 4. Pagination for large datasets
 
 **API Calls:**
+
 - `GET /api/elections/{electionId}/audit-logs` - List logs
   - Query params: `userId`, `action`, `entityType`, `startDate`, `endDate`, `page`, `pageSize`
 - `GET /api/audit-logs/{logId}` - Get log details
@@ -675,6 +744,7 @@ public partial class ImportController
 #### Backend Requirements
 
 ##### AuditLogsController.cs (New)
+
 ```csharp
 [Route("api")]
 public class AuditLogsController : ControllerBase
@@ -687,17 +757,20 @@ public class AuditLogsController : ControllerBase
 ```
 
 ##### DTOs Required
+
 - `AuditLogDto`
 - `AuditLogFilterDto`
 - `AuditLogDetailsDto`
 
 ##### Services
+
 - `AuditLogService` / `IAuditLogService`
   - Query logs with filters
   - Format change details
   - Export functionality
 
 ##### Middleware
+
 - **AuditLoggingMiddleware** - Automatically log all API requests
   - Log user, action, entity, timestamp, IP address
   - Capture request/response for sensitive operations
@@ -705,19 +778,20 @@ public class AuditLogsController : ControllerBase
 
 ---
 
-### 8. Public Display Mode
+### 8. Election Results Display Mode
 
-**Database Support:** ✅ Election.ListForPublic field  
-**Backend API:** 🟨 PublicController exists, limited  
-**Frontend:** 🟨 Basic public pages, no full-screen mode
+**Database Support:** ✅ Election status is "Finished"  
+**Backend API:** 🟨 PublicController exists, limited
 
 #### Pages Required
 
 ##### 8.1 PublicDisplayPage.vue
+
 **Route:** `/public/display/:electionId` (full-screen mode)  
-**Purpose:** Large display for public viewing of live results
+**Purpose:** Large display for viewing of live results by any teller
 
 **Layout (Full Screen):**
+
 ```
 +----------------------------------------+
 | [Election Name]                        |
@@ -745,6 +819,7 @@ public class AuditLogsController : ControllerBase
 ```
 
 **Features:**
+
 1. Full-screen mode (F11 or dedicated button)
 2. Large, readable text
 3. Auto-refresh every 30 seconds (configurable)
@@ -754,6 +829,7 @@ public class AuditLogsController : ControllerBase
 7. Optional QR code for mobile access
 
 **Display Options:**
+
 - Show/hide additional names
 - Show/hide vote counts
 - Show/hide ballot statistics
@@ -761,6 +837,7 @@ public class AuditLogsController : ControllerBase
 - Refresh interval: 10s/30s/60s/Manual
 
 **API Calls:**
+
 - `GET /api/public/elections/{electionId}/display` - Get display data
   ```json
   {
@@ -773,12 +850,14 @@ public class AuditLogsController : ControllerBase
   ```
 
 **SignalR Events (PublicHub):**
+
 - `ElectionResultsUpdated` - Refresh display when results change
 - Join group: `public-display-{electionGuid}`
 
 #### Backend Requirements
 
 ##### PublicController Enhancement
+
 ```csharp
 [Route("api/public")]
 public class PublicController : ControllerBase
@@ -791,11 +870,13 @@ public class PublicController : ControllerBase
 ```
 
 ##### DTOs Required
+
 - `PublicElectionDisplayDto`
 - `PublicElectionListDto`
 - `PublicResultDto`
 
 ##### PublicHub Enhancement
+
 - Add `JoinPublicDisplay(electionGuid)`
 - Add `LeavePublicDisplay(electionGuid)`
 - Broadcast `ElectionResultsUpdated` when tally completes
@@ -812,9 +893,11 @@ public class PublicController : ControllerBase
 #### Pages Required
 
 ##### 9.1 ForgotPasswordPage.vue
+
 **Route:** `/forgot-password`
 
 **Layout:**
+
 ```
 +----------------------------------------+
 | Reset Your Password                    |
@@ -826,9 +909,11 @@ public class PublicController : ControllerBase
 ```
 
 ##### 9.2 ResetPasswordPage.vue
+
 **Route:** `/reset-password/:token`
 
 **Layout:**
+
 ```
 +----------------------------------------+
 | Create New Password                    |
@@ -842,6 +927,7 @@ public class PublicController : ControllerBase
 #### Backend Requirements
 
 ##### AccountController Enhancement
+
 ```csharp
 POST /api/account/forgot-password
 POST /api/account/reset-password
@@ -859,18 +945,22 @@ GET  /api/account/validate-reset-token
 #### Pages Required
 
 ##### 10.1 Enable2FAPage.vue (in Profile Settings)
+
 **Purpose:** Enable/disable 2FA
 
 **Options:**
+
 1. Authenticator App (TOTP)
 2. SMS-based 2FA
 
 ##### 10.2 Verify2FAPage.vue
+
 **Purpose:** Enter 2FA code during login
 
 #### Backend Requirements
 
 ##### AuthController Enhancement
+
 ```csharp
 POST /api/auth/enable-2fa
 POST /api/auth/verify-2fa
@@ -909,6 +999,7 @@ GET  /api/auth/2fa-status
 #### Backend Requirements
 
 ##### NotificationsController.cs (New)
+
 ```csharp
 [Route("api/elections/{electionId}/notifications")]
 public class NotificationsController : ControllerBase
@@ -922,6 +1013,7 @@ public class NotificationsController : ControllerBase
 ```
 
 ##### Services
+
 - `EmailService` / `IEmailService`
 - `SmsService` / `ISmsService`
 - Integration with SendGrid, Twilio
@@ -964,29 +1056,34 @@ Allow administrators to create custom report templates with drag-and-drop fields
 ## Implementation Priority Order
 
 ### PHASE C1: Location Management (3-4 days)
+
 - LocationsController
 - LocationsListPage
 - LocationFormDialog
 - Computer registration
 
 ### PHASE C2: Teller Management (3-4 days)
+
 - TellersController
 - TellersListPage
 - TellerFormDialog
 - Teller access code login
 
 ### PHASE C3: Advanced Election Configuration (2-3 days)
+
 - Expand ElectionFormPage
 - Add tabs for all field groups
 - Enhanced validation
 
 ### PHASE C4: Front Desk Registration (3-4 days)
+
 - FrontDeskController
 - FrontDeskPage
 - Real-time SignalR integration
 - Roll call display
 
 ### PHASE C5: Online Voting Portal (4-5 days)
+
 - OnlineVotingController
 - Voter landing page
 - Authentication workflows
@@ -994,16 +1091,19 @@ Allow administrators to create custom report templates with drag-and-drop fields
 - Email/SMS integration
 
 ### PHASE C6: Ballot Import (2-3 days)
+
 - ImportController enhancement
 - BallotImportPage
 - Real-time progress
 
 ### PHASE C7: Audit Log UI (2-3 days)
+
 - AuditLogsController
 - AuditLogsPage
 - Audit middleware
 
 ### PHASE C8: Public Display Mode (2-3 days)
+
 - PublicDisplayPage
 - Full-screen mode
 - Auto-refresh
