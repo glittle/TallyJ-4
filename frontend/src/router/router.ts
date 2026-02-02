@@ -144,6 +144,11 @@ const routes = [
         path: "profile",
         component: () => import("../pages/ProfilePage.vue"),
         meta: { title: "Profile" }
+      },
+      {
+        path: "audit-logs",
+        component: () => import("../pages/AuditLogsPage.vue"),
+        meta: { title: "Audit Logs" }
       }
     ]
   }

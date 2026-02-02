@@ -181,6 +181,7 @@ services.AddScoped<TallyJ4.Services.IReportExportService, TallyJ4.Services.Repor
 services.AddScoped<TallyJ4.Services.IAdvancedReportingService, TallyJ4.Services.AdvancedReportingService>();
 services.AddScoped<TallyJ4.Services.IFrontDeskService, TallyJ4.Services.FrontDeskService>();
 services.AddScoped<TallyJ4.Services.IOnlineVotingService, TallyJ4.Services.OnlineVotingService>();
+services.AddScoped<TallyJ4.Services.IAuditLogService, TallyJ4.Services.AuditLogService>();
 services.AddScoped<TallyJ4.Backend.Services.ImportService>();
 
 // Add Auth services
@@ -302,6 +303,7 @@ app.UseRequestLocalization();
 app.UseAuthentication();  // Enables Identity
 app.UseMiddleware<TallyJ4.Middleware.ElectionContextMiddleware>();
 app.UseAuthorization();
+app.UseMiddleware<TallyJ4.Middleware.AuditMiddleware>();
 
 // Custom AuthController handles authentication endpoints
 
