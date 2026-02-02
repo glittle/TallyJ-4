@@ -42,6 +42,12 @@ const routes = [
         name: "voter-confirmation",
         component: () => import("../pages/voting/VoterConfirmationPage.vue"),
         meta: { title: "Vote Confirmed" }
+      },
+      {
+        path: "public/display/:electionGuid",
+        name: "public-display",
+        component: () => import("../pages/PublicDisplayPage.vue"),
+        meta: { title: "Election Results Display" }
       }
     ]
   },

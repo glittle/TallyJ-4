@@ -110,4 +110,108 @@ public class PublicService : IPublicService
             BallotsSubmitted = ballotCount
         };
     }
+
+    /// <summary>
+    /// Retrieves election results formatted for public display.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>The public display data with results, or null if the election is not found or not public.</returns>
+    public async Task<PublicDisplayDto?> GetPublicDisplayDataAsync(Guid electionGuid)
+    {
+        var election = await _context.Elections
+            .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+
+        if (election == null)
+        {
+            _logger.LogWarning("Election {ElectionGuid} not found for public display", electionGuid);
+            return null;
+        }
+
+        if (election.ListForPublic != true)
+        {
+            _logger.LogWarning("Election {ElectionGuid} is not listed for public display", electionGuid);
+            return null;
+        }
+
+        var results = await _context.Results
+            .Include(r => r.Person)
+            .Where(r => r.ElectionGuid == electionGuid)
+            .OrderBy(r => r.Rank)
+            .ToListAsync();
+
+        var resultSummary = await _context.ResultSummaries
+            .FirstOrDefaultAsync(rs => rs.ElectionGuid == electionGuid);
+
+        var numberToElect = election.NumberToElect ?? 0;
+        var numberExtra = election.NumberExtra ?? 0;
+
+        var electedCandidates = results
+            .Where(r => r.Section == "E" && r.Rank > 0 && r.Rank <= numberToElect)
+            .Select(r => new PublicCandidateDto
+            {
+                Rank = r.Rank,
+                FullName = r.Person != null 
+                    ? $"{r.Person.LastName ?? string.Empty}, {r.Person.FirstName ?? string.Empty}".Trim().Trim(',')
+                    : "Unknown",
+                VoteCount = r.VoteCount ?? 0,
+                IsTied = r.IsTied ?? false,
+                TieBreakRequired = r.TieBreakRequired ?? false
+            })
+            .OrderBy(c => c.Rank)
+            .ToList();
+
+        var additionalCandidates = results
+            .Where(r => (r.Section == "X" || (r.Section == "E" && r.Rank > numberToElect)) 
+                        && r.Rank > 0 && r.Rank <= numberToElect + numberExtra)
+            .Select(r => new PublicCandidateDto
+            {
+                Rank = r.Rank,
+                FullName = r.Person != null 
+                    ? $"{r.Person.LastName ?? string.Empty}, {r.Person.FirstName ?? string.Empty}".Trim().Trim(',')
+                    : "Unknown",
+                VoteCount = r.VoteCount ?? 0,
+                IsTied = r.IsTied ?? false,
+                TieBreakRequired = r.TieBreakRequired ?? false
+            })
+            .OrderBy(c => c.Rank)
+            .ToList();
+
+        var totalBallots = resultSummary?.BallotsReceived ?? 0;
+        var spoiledBallots = resultSummary?.SpoiledBallots ?? 0;
+        var validBallots = totalBallots - spoiledBallots;
+        var totalVotes = resultSummary?.TotalVotes ?? 0;
+        var registeredVoters = resultSummary?.NumEligibleToVote ?? 0;
+        var turnoutPercentage = registeredVoters > 0 ? (decimal)totalBallots / registeredVoters * 100 : 0;
+
+        var isFinalized = election.TallyStatus == "Finalized" || 
+                         election.TallyStatus == "Complete" ||
+                         election.TallyStatus == "Archived";
+
+        _logger.LogInformation("Retrieved public display data for election {ElectionGuid}", electionGuid);
+
+        return new PublicDisplayDto
+        {
+            ElectionGuid = election.ElectionGuid,
+            ElectionName = election.Name ?? "Unknown Election",
+            DateOfElection = election.DateOfElection,
+            Convenor = election.Convenor ?? string.Empty,
+            ElectionType = election.ElectionType ?? "Unknown",
+            TallyStatus = election.TallyStatus ?? "Unknown",
+            NumberToElect = numberToElect,
+            NumberExtra = numberExtra,
+            ElectedCandidates = electedCandidates,
+            AdditionalCandidates = additionalCandidates,
+            Statistics = new PublicDisplayStatsDto
+            {
+                TotalBallots = totalBallots,
+                ValidBallots = validBallots,
+                SpoiledBallots = spoiledBallots,
+                TotalVotes = totalVotes,
+                RegisteredVoters = registeredVoters,
+                TurnoutPercentage = Math.Round(turnoutPercentage, 2)
+            },
+            LastUpdated = DateTime.UtcNow,
+            IsFinalized = isFinalized
+        };
+    }
 }

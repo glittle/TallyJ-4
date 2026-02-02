@@ -292,6 +292,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C8: Public Display Mode (2-3 days)
+<!-- chat-id: 70b43800-7a06-4d52-a908-a427303d25f3 -->
 
 **Goal**: Public-facing live results display, on teller's computer
 

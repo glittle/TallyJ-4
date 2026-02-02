@@ -98,6 +98,10 @@ class SignalRService {
     return this.connect('/hubs/ballot-import', accessToken);
   }
 
+  async connectToPublicHub(): Promise<signalR.HubConnection> {
+    return this.connect('/hubs/public');
+  }
+
   async connectToFrontDeskHub(accessToken?: string): Promise<signalR.HubConnection> {
     return this.connect('/hubs/front-desk', accessToken);
   }
@@ -169,6 +173,20 @@ class SignalRService {
     const frontDeskConnection = this.getConnection('/hubs/front-desk');
     if (frontDeskConnection) {
       await frontDeskConnection.invoke('LeaveElection', electionGuid);
+    }
+  }
+
+  async joinPublicDisplay(electionGuid: string): Promise<void> {
+    const publicConnection = this.getConnection('/hubs/public');
+    if (publicConnection) {
+      await publicConnection.invoke('JoinPublicDisplay', electionGuid);
+    }
+  }
+
+  async leavePublicDisplay(electionGuid: string): Promise<void> {
+    const publicConnection = this.getConnection('/hubs/public');
+    if (publicConnection) {
+      await publicConnection.invoke('LeavePublicDisplay', electionGuid);
     }
   }
 }

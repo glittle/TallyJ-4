@@ -26,4 +26,11 @@ public interface IPublicService
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <returns>The election status data, or null if the election is not found or not public.</returns>
     Task<ElectionStatusDto?> GetElectionStatusAsync(Guid electionGuid);
+
+    /// <summary>
+    /// Retrieves election results formatted for public display.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>The public display data with results, or null if the election is not found or not public.</returns>
+    Task<PublicDisplayDto?> GetPublicDisplayDataAsync(Guid electionGuid);
 }

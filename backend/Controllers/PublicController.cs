@@ -74,6 +74,26 @@ public class PublicController : ControllerBase
     }
 
     /// <summary>
+    /// Gets public display data for a specific election, including results formatted for full-screen presentation.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to display.</param>
+    /// <returns>The public display data with election results.</returns>
+    [HttpGet("elections/{electionGuid}/display")]
+    public async Task<ActionResult<ApiResponse<PublicDisplayDto>>> GetPublicDisplay(Guid electionGuid)
+    {
+        var displayData = await _publicService.GetPublicDisplayDataAsync(electionGuid);
+        
+        if (displayData == null)
+        {
+            return NotFound(ApiResponse<PublicDisplayDto>.ErrorResponse(
+                "Election not found or not available for public display",
+                new List<string> { $"No public display available for election: {electionGuid}" }));
+        }
+
+        return Ok(ApiResponse<PublicDisplayDto>.SuccessResponse(displayData));
+    }
+
+    /// <summary>
     /// Performs a health check to verify the service is running properly.
     /// </summary>
     /// <returns>Health status information including timestamp and service details.</returns>
