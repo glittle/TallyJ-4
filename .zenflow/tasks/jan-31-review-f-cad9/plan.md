@@ -238,6 +238,7 @@ Detailed implementation plan saved to: `.zenflow/tasks/jan-31-review-f-cad9/IMPL
 ---
 
 ### [ ] Phase C7: Audit Logs UI (2-3 days)
+<!-- chat-id: b8d49499-76ba-4029-be91-94591e330719 -->
 
 **Goal**: Display user activity audit trail
 
