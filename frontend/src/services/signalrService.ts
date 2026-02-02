@@ -106,10 +106,6 @@ class SignalRService {
     return this.connect('/hubs/front-desk', accessToken);
   }
 
-  async connectToPublicHub(): Promise<signalR.HubConnection> {
-    return this.connect('/hubs/public');
-  }
-
   async joinElection(electionGuid: string): Promise<void> {
     const mainConnection = this.getConnection('/hubs/main');
     if (mainConnection) {

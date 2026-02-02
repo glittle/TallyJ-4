@@ -32,7 +32,13 @@ const testI18n = createI18n({
       },
       auth: {
         logout: 'Logout',
-        logoutSuccess: 'Logged out successfully'
+        logoutSuccess: 'Logged out successfully',
+        register: 'Register',
+        email: 'Email',
+        password: 'Password',
+        confirmPassword: 'Confirm Password',
+        registerButton: 'Register',
+        hasAccount: 'Already have an account?'
       }
     },
     fr: {
