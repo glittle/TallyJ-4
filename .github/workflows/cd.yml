@@ -1,0 +1,192 @@
+name: CD
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  # Build and Deploy Backend
+  deploy-backend:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./backend
+    
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+      working-directory: ./backend
+    
+    - name: Publish
+      run: dotnet publish -c Release -o ./publish
+      working-directory: ./backend
+    
+    # Option 1: Deploy to Azure App Service
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v3
+      if: ${{ secrets.AZURE_WEBAPP_NAME }}
+      with:
+        app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./backend/publish
+    
+    # Option 2: Deploy via SSH/SCP
+    - name: Deploy via SSH
+      uses: appleboy/scp-action@v0.1.7
+      if: ${{ secrets.SSH_HOST }}
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: ./backend/publish/*
+        target: ${{ secrets.DEPLOY_PATH }}/backend
+        strip_components: 2
+    
+    # Option 3: Deploy Docker Image
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      if: ${{ secrets.DOCKER_REGISTRY }}
+    
+    - name: Login to Container Registry
+      uses: docker/login-action@v3
+      if: ${{ secrets.DOCKER_REGISTRY }}
+      with:
+        registry: ${{ secrets.DOCKER_REGISTRY }}
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: Build and push backend image
+      uses: docker/build-push-action@v5
+      if: ${{ secrets.DOCKER_REGISTRY }}
+      with:
+        context: ./backend
+        file: ./backend/Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_REGISTRY }}/tallyj4-backend:latest
+          ${{ secrets.DOCKER_REGISTRY }}/tallyj4-backend:${{ github.sha }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  # Build and Deploy Frontend
+  deploy-frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: ./frontend/package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+      working-directory: ./frontend
+    
+    - name: Build
+      run: npm run build
+      working-directory: ./frontend
+      env:
+        VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        VITE_SIGNALR_HUB_URL: ${{ secrets.VITE_SIGNALR_HUB_URL }}
+    
+    # Option 1: Deploy to Azure Static Web Apps
+    - name: Deploy to Azure Static Web Apps
+      uses: Azure/static-web-apps-deploy@v1
+      if: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+      with:
+        azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        action: "upload"
+        app_location: "./frontend/dist"
+        skip_app_build: true
+    
+    # Option 2: Deploy to AWS S3 + CloudFront
+    - name: Deploy to AWS S3
+      uses: jakejarvis/s3-sync-action@master
+      if: ${{ secrets.AWS_S3_BUCKET }}
+      with:
+        args: --delete --cache-control max-age=31536000
+      env:
+        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        SOURCE_DIR: './frontend/dist'
+    
+    - name: Invalidate CloudFront Cache
+      uses: chetan/invalidate-cloudfront-action@v2
+      if: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+      env:
+        DISTRIBUTION: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+        PATHS: '/*'
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    
+    # Option 3: Deploy via SSH/SCP
+    - name: Deploy via SSH
+      uses: appleboy/scp-action@v0.1.7
+      if: ${{ secrets.SSH_HOST }}
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: ./frontend/dist/*
+        target: ${{ secrets.DEPLOY_PATH }}/frontend
+        strip_components: 2
+    
+    # Option 4: Deploy Docker Image
+    - name: Build and push frontend image
+      uses: docker/build-push-action@v5
+      if: ${{ secrets.DOCKER_REGISTRY }}
+      with:
+        context: ./frontend
+        file: ./frontend/Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_REGISTRY }}/tallyj4-frontend:latest
+          ${{ secrets.DOCKER_REGISTRY }}/tallyj4-frontend:${{ github.sha }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  # Database Migration
+  deploy-database:
+    name: Deploy Database Migrations
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [deploy-backend]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Install EF Core tools
+      run: dotnet tool install --global dotnet-ef
+    
+    - name: Apply migrations
+      run: |
+        dotnet ef database update --connection "${{ secrets.DB_CONNECTION_STRING }}"
+      working-directory: ./backend

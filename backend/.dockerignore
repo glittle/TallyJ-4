@@ -1,0 +1,13 @@
+**/.dockerignore
+**/.git
+**/.gitignore
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/logs
+**/*.md
+**/appsettings.Development.json
+**/appsettings.*.json
+!appsettings.json
+!appsettings.Production.json
