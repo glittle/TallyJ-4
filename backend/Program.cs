@@ -206,13 +206,17 @@ services.AddSwaggerGen(options =>
     options.UseAllOfForInheritance();
     options.CustomSchemaIds(type =>
     {
-        if (type.IsGenericType)
+        static string GetSchemaId(Type t)
         {
-            var genericTypeName = type.GetGenericTypeDefinition().Name.Replace("`1", "").Replace("`2", "");
-            var genericArgs = string.Join("", type.GetGenericArguments().Select(t => t.Name));
-            return $"{genericTypeName}{genericArgs}";
+            if (!t.IsGenericType)
+                return t.Name;
+            
+            var typeName = t.Name.Substring(0, t.Name.IndexOf('`'));
+            var genericArgs = string.Join("", t.GetGenericArguments().Select(GetSchemaId));
+            return $"{typeName}{genericArgs}";
         }
-        return type.Name;
+        
+        return GetSchemaId(type);
     });
 
     options.SwaggerDoc("v1", new OpenApiInfo

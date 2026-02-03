@@ -6,7 +6,7 @@ import { useThemeStore } from "../../stores/themeStore";
 import { useDark } from "@vueuse/core";
 import { watch } from "vue";
 
-const { t } = useI18n();
+useI18n();
 const themeStore = useThemeStore();
 
 // Integrate useDark with the theme store
@@ -29,14 +29,11 @@ watch(
 );
 
 // Sync useDark with theme store
-watch(
-  isDark,
-  (newIsDark) => {
-    if (themeStore.theme !== (newIsDark ? "dark" : "light")) {
-      themeStore.setTheme(newIsDark ? "dark" : "light");
-    }
+watch(isDark, (newIsDark) => {
+  if (themeStore.theme !== (newIsDark ? "dark" : "light")) {
+    themeStore.setTheme(newIsDark ? "dark" : "light");
   }
-);
+});
 
 const toggleTheme = () => {
   themeStore.setTheme(themeStore.theme === "dark" ? "light" : "dark");
@@ -47,7 +44,7 @@ const toggleTheme = () => {
   <div class="theme-selector">
     <ElButton
       @click="toggleTheme"
-      :aria-label="$t('common.toggleTheme')"
+      :aria-label="$t('common.toggleTheme', 'Toggle Theme')"
       size="small"
       type="text"
       class="theme-toggle-btn"

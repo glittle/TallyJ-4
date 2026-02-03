@@ -49,7 +49,7 @@ public class PublicController : ControllerBase
     {
         var elections = await _publicService.GetAvailableElectionsAsync();
         return Ok(ApiResponse<List<AvailableElectionDto>>.SuccessResponse(
-            elections, 
+            elections,
             $"Found {elections.Count} available election(s)"));
     }
 
@@ -62,7 +62,7 @@ public class PublicController : ControllerBase
     public async Task<ActionResult<ApiResponse<ElectionStatusDto>>> GetElectionStatus(Guid electionGuid)
     {
         var status = await _publicService.GetElectionStatusAsync(electionGuid);
-        
+
         if (status == null)
         {
             return NotFound(ApiResponse<ElectionStatusDto>.ErrorResponse(
@@ -82,7 +82,7 @@ public class PublicController : ControllerBase
     public async Task<ActionResult<ApiResponse<PublicDisplayDto>>> GetPublicDisplay(Guid electionGuid)
     {
         var displayData = await _publicService.GetPublicDisplayDataAsync(electionGuid);
-        
+
         if (displayData == null)
         {
             return NotFound(ApiResponse<PublicDisplayDto>.ErrorResponse(
@@ -101,8 +101,9 @@ public class PublicController : ControllerBase
     public ActionResult<ApiResponse<object>> HealthCheck()
     {
         return Ok(ApiResponse<object>.SuccessResponse(
-            new { 
-                status = "healthy", 
+            new
+            {
+                status = "healthy",
                 timestamp = DateTime.UtcNow,
                 service = "TallyJ 4 API"
             },

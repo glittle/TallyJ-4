@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import { fileURLToPath, URL } from "node:url";
+import { resolve, dirname } from "node:path";
 import { visualizer } from "rollup-plugin-visualizer";
 import viteCompression from "vite-plugin-compression";
 import path from "path";
@@ -24,7 +25,11 @@ export default defineConfig({
     vue(),
     VueI18nPlugin({
       include: [
-        fileURLToPath(new URL("./src/locales/**/*.json", import.meta.url)),
+        // fileURLToPath(new URL("./src/locales/**/*.json", import.meta.url)),
+        resolve(
+          dirname(fileURLToPath(import.meta.url)),
+          "./src/locales/**/*.json",
+        ),
       ],
     }),
     // Bundle analyzer - generates stats.html
