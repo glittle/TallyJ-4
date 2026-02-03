@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: tallyj4-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DB_SA_PASSWORD:-YourStrong@Passw0rd}
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - tallyj4-network
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$${MSSQL_SA_PASSWORD}" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tallyj4-backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__TallyJ4=Server=sqlserver;Database=TallyJ4;User Id=sa;Password=${DB_SA_PASSWORD:-YourStrong@Passw0rd};TrustServerCertificate=True;MultipleActiveResultSets=true
+      - Jwt__Key=${JWT_SECRET_KEY}
+      - Jwt__Issuer=${JWT_ISSUER:-https://api.tallyj.com}
+      - Jwt__Audience=${JWT_AUDIENCE:-https://tallyj.com}
+      - Jwt__ExpiryMinutes=${JWT_EXPIRY_MINUTES:-60}
+    ports:
+      - "5016:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - tallyj4-network
+    healthcheck:
+      test: curl --fail http://localhost:8080/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tallyj4-frontend
+    environment:
+      - VITE_API_URL=${API_URL:-http://localhost:5016/api}
+      - VITE_SIGNALR_HUB_URL=${SIGNALR_URL:-http://localhost:5016}
+    ports:
+      - "8095:80"
+    depends_on:
+      - backend
+    networks:
+      - tallyj4-network
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+networks:
+  tallyj4-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
+    driver: local

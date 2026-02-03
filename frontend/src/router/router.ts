@@ -24,6 +24,30 @@ const routes = [
       {
         path: "register",
         component: () => import("../pages/RegisterPage.vue")
+      },
+      {
+        path: "voter-auth",
+        name: "voter-auth",
+        component: () => import("../pages/voting/VoterAuthPage.vue"),
+        meta: { title: "Voter Authentication" }
+      },
+      {
+        path: "vote/:electionId",
+        name: "voter-ballot",
+        component: () => import("../pages/voting/VoterBallotPage.vue"),
+        meta: { title: "Cast Your Ballot" }
+      },
+      {
+        path: "vote-confirmation",
+        name: "voter-confirmation",
+        component: () => import("../pages/voting/VoterConfirmationPage.vue"),
+        meta: { title: "Vote Confirmed" }
+      },
+      {
+        path: "public/display/:electionGuid",
+        name: "public-display",
+        component: () => import("../pages/PublicDisplayPage.vue"),
+        meta: { title: "Election Results Display" }
       }
     ]
   },
@@ -53,14 +77,39 @@ const routes = [
         meta: { title: "Election Details" }
       },
       {
+        path: "elections/:id/edit",
+        component: () => import("../pages/elections/EditElectionPage.vue"),
+        meta: { title: "Edit Election" }
+      },
+      {
         path: "elections/:id/people",
         component: () => import("../pages/people/PeopleManagementPage.vue"),
         meta: { title: "People Management" }
       },
       {
+        path: "elections/:id/locations",
+        component: () => import("../pages/locations/LocationsListPage.vue"),
+        meta: { title: "Voting Locations" }
+      },
+      {
+        path: "elections/:id/tellers",
+        component: () => import("../pages/tellers/TellersListPage.vue"),
+        meta: { title: "Tellers" }
+      },
+      {
+        path: "elections/:id/frontdesk",
+        component: () => import("../pages/frontdesk/FrontDeskPage.vue"),
+        meta: { title: "Front Desk" }
+      },
+      {
         path: "elections/:id/ballots",
         component: () => import("../pages/ballots/BallotManagementPage.vue"),
         meta: { title: "Ballot Management" }
+      },
+      {
+        path: "elections/:id/ballots/import",
+        component: () => import("../pages/ballots/BallotImportPage.vue"),
+        meta: { title: "Import Ballots" }
       },
       {
         path: "elections/:id/ballots/:ballotId/entry",
@@ -101,6 +150,11 @@ const routes = [
         path: "profile",
         component: () => import("../pages/ProfilePage.vue"),
         meta: { title: "Profile" }
+      },
+      {
+        path: "audit-logs",
+        component: () => import("../pages/AuditLogsPage.vue"),
+        meta: { title: "Audit Logs" }
       }
     ]
   }

@@ -1,5 +1,6 @@
 using TallyJ4.DTOs.SignalR;
 using TallyJ4.DTOs.Results;
+using TallyJ4.DTOs.FrontDesk;
 
 namespace TallyJ4.Services;
 
@@ -43,4 +44,18 @@ public interface ISignalRNotificationService
     /// </summary>
     /// <param name="monitorInfo">The monitor information to broadcast.</param>
     Task SendMonitorUpdateAsync(MonitorInfoDto monitorInfo);
+
+    /// <summary>
+    /// Sends person checked-in notification to front desk clients.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="voter">The checked-in voter data.</param>
+    Task NotifyPersonCheckedInAsync(Guid electionGuid, FrontDeskVoterDto voter);
+
+    /// <summary>
+    /// Sends voter count update notification to front desk clients.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="stats">The updated statistics.</param>
+    Task NotifyVoterCountUpdatedAsync(Guid electionGuid, FrontDeskStatsDto stats);
 }

@@ -49,7 +49,7 @@ public class PublicController : ControllerBase
     {
         var elections = await _publicService.GetAvailableElectionsAsync();
         return Ok(ApiResponse<List<AvailableElectionDto>>.SuccessResponse(
-            elections, 
+            elections,
             $"Found {elections.Count} available election(s)"));
     }
 
@@ -62,7 +62,7 @@ public class PublicController : ControllerBase
     public async Task<ActionResult<ApiResponse<ElectionStatusDto>>> GetElectionStatus(Guid electionGuid)
     {
         var status = await _publicService.GetElectionStatusAsync(electionGuid);
-        
+
         if (status == null)
         {
             return NotFound(ApiResponse<ElectionStatusDto>.ErrorResponse(
@@ -74,6 +74,26 @@ public class PublicController : ControllerBase
     }
 
     /// <summary>
+    /// Gets public display data for a specific election, including results formatted for full-screen presentation.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to display.</param>
+    /// <returns>The public display data with election results.</returns>
+    [HttpGet("elections/{electionGuid}/display")]
+    public async Task<ActionResult<ApiResponse<PublicDisplayDto>>> GetPublicDisplay(Guid electionGuid)
+    {
+        var displayData = await _publicService.GetPublicDisplayDataAsync(electionGuid);
+
+        if (displayData == null)
+        {
+            return NotFound(ApiResponse<PublicDisplayDto>.ErrorResponse(
+                "Election not found or not available for public display",
+                new List<string> { $"No public display available for election: {electionGuid}" }));
+        }
+
+        return Ok(ApiResponse<PublicDisplayDto>.SuccessResponse(displayData));
+    }
+
+    /// <summary>
     /// Performs a health check to verify the service is running properly.
     /// </summary>
     /// <returns>Health status information including timestamp and service details.</returns>
@@ -81,8 +101,9 @@ public class PublicController : ControllerBase
     public ActionResult<ApiResponse<object>> HealthCheck()
     {
         return Ok(ApiResponse<object>.SuccessResponse(
-            new { 
-                status = "healthy", 
+            new
+            {
+                status = "healthy",
                 timestamp = DateTime.UtcNow,
                 service = "TallyJ 4 API"
             },

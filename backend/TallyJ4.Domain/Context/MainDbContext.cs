@@ -16,6 +16,8 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<Ballot> Ballots { get; set; }
 
+    public virtual DbSet<Computer> Computers { get; set; }
+
     public virtual DbSet<Election> Elections { get; set; }
 
     public virtual DbSet<ImportFile> ImportFiles { get; set; }
@@ -65,6 +67,25 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
                 .HasPrincipalKey(p => p.LocationGuid)
                 .HasForeignKey(d => d.LocationGuid)
                 .HasConstraintName("FK_Ballot_Location1");
+        });
+
+        modelBuilder.Entity<Computer>(entity =>
+        {
+            entity.Property(e => e.RegisteredAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.LastActivity).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+
+            entity.HasOne(d => d.Election).WithMany()
+                .HasPrincipalKey(p => p.ElectionGuid)
+                .HasForeignKey(d => d.ElectionGuid)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Computer_Election");
+
+            entity.HasOne(d => d.Location).WithMany()
+                .HasPrincipalKey(p => p.LocationGuid)
+                .HasForeignKey(d => d.LocationGuid)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Computer_Location");
         });
 
         modelBuilder.Entity<Election>(entity =>

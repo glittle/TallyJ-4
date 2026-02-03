@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # SQL Server Database (Development)
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: tallyj4-db-dev
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=DevPassword123!
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-dev-data:/var/opt/mssql
+    networks:
+      - tallyj4-dev-network
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "DevPassword123!" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API (Development - with hot reload)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: tallyj4-backend-dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__TallyJ4=Server=sqlserver;Database=TallyJ4Dev;User Id=sa;Password=DevPassword123!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - Jwt__Key=dev-secret-key-minimum-32-characters-for-jwt-signing-do-not-use-in-production
+      - Jwt__Issuer=TallyJ4API
+      - Jwt__Audience=TallyJ4Client
+      - Database__SeedOnStartup=true
+    ports:
+      - "5016:8080"
+    volumes:
+      - ./backend:/app
+      - /app/bin
+      - /app/obj
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - tallyj4-dev-network
+    restart: unless-stopped
+
+  # Frontend (Development - with hot reload)
+  frontend:
+    image: node:20-alpine
+    container_name: tallyj4-frontend-dev
+    working_dir: /app
+    command: npm run dev -- --host
+    environment:
+      - VITE_API_URL=http://localhost:5016/api
+      - VITE_SIGNALR_HUB_URL=http://localhost:5016
+    ports:
+      - "8095:8095"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - tallyj4-dev-network
+    restart: unless-stopped
+
+networks:
+  tallyj4-dev-network:
+    driver: bridge
+
+volumes:
+  sqlserver-dev-data:
+    driver: local

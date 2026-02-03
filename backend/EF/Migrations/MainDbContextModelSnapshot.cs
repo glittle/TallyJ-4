@@ -220,6 +220,66 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("Ballots");
                 });
 
+            modelBuilder.Entity("TallyJ4.Domain.Entities.Computer", b =>
+                {
+                    b.Property<int>("RowId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("_RowId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowId"));
+
+                    b.Property<string>("BrowserInfo")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("ComputerCode")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(2)");
+
+                    b.Property<Guid>("ComputerGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ElectionGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool?>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime?>("LastActivity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<Guid>("LocationGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RegisteredAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.HasKey("RowId");
+
+                    b.HasIndex(new[] { "ComputerGuid" }, "IX_Computer")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "ElectionGuid", "ComputerCode" }, "IX_Computer_Code")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "LocationGuid" }, "IX_Computer_Location");
+
+                    b.ToTable("Computers");
+                });
+
             modelBuilder.Entity("TallyJ4.Domain.Entities.Election", b =>
                 {
                     b.Property<int>("RowId")
@@ -1478,6 +1538,29 @@ namespace TallyJ4.EF.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Ballot_Location1");
+
+                    b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("TallyJ4.Domain.Entities.Computer", b =>
+                {
+                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                        .WithMany()
+                        .HasForeignKey("ElectionGuid")
+                        .HasPrincipalKey("ElectionGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Computer_Election");
+
+                    b.HasOne("TallyJ4.Domain.Entities.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationGuid")
+                        .HasPrincipalKey("LocationGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Computer_Location");
+
+                    b.Navigation("Election");
 
                     b.Navigation("Location");
                 });

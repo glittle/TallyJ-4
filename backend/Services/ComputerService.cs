@@ -1,0 +1,188 @@
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using TallyJ4.DTOs.Computers;
+using TallyJ4.Domain.Context;
+using TallyJ4.Domain.Entities;
+
+namespace TallyJ4.Services;
+
+public class ComputerService : IComputerService
+{
+    private readonly MainDbContext _context;
+    private readonly IMapper _mapper;
+    private readonly ILogger<ComputerService> _logger;
+
+    public ComputerService(MainDbContext context, IMapper mapper, ILogger<ComputerService> logger)
+    {
+        _context = context;
+        _mapper = mapper;
+        _logger = logger;
+    }
+
+    public async Task<List<ComputerDto>> GetComputersByLocationAsync(Guid locationGuid)
+    {
+        var computers = await _context.Computers
+            .Where(c => c.LocationGuid == locationGuid)
+            .OrderBy(c => c.ComputerCode)
+            .ToListAsync();
+
+        return _mapper.Map<List<ComputerDto>>(computers);
+    }
+
+    public async Task<List<ComputerDto>> GetComputersByElectionAsync(Guid electionGuid)
+    {
+        var computers = await _context.Computers
+            .Where(c => c.ElectionGuid == electionGuid)
+            .OrderBy(c => c.ComputerCode)
+            .ToListAsync();
+
+        return _mapper.Map<List<ComputerDto>>(computers);
+    }
+
+    public async Task<ComputerDto?> GetComputerByGuidAsync(Guid computerGuid)
+    {
+        var computer = await _context.Computers
+            .Where(c => c.ComputerGuid == computerGuid)
+            .FirstOrDefaultAsync();
+
+        if (computer == null)
+        {
+            _logger.LogWarning("Computer with GUID {ComputerGuid} not found", computerGuid);
+            return null;
+        }
+
+        return _mapper.Map<ComputerDto>(computer);
+    }
+
+    public async Task<ComputerDto?> GetComputerByCodeAsync(Guid electionGuid, string computerCode)
+    {
+        var computer = await _context.Computers
+            .Where(c => c.ElectionGuid == electionGuid && c.ComputerCode == computerCode)
+            .FirstOrDefaultAsync();
+
+        if (computer == null)
+        {
+            return null;
+        }
+
+        return _mapper.Map<ComputerDto>(computer);
+    }
+
+    public async Task<ComputerDto> RegisterComputerAsync(RegisterComputerDto dto)
+    {
+        _logger.LogInformation("Registering computer for location {LocationGuid}", dto.LocationGuid);
+
+        var computerCode = dto.ComputerCode;
+        if (string.IsNullOrWhiteSpace(computerCode))
+        {
+            computerCode = await GenerateComputerCodeAsync(dto.ElectionGuid);
+        }
+
+        var existingComputer = await GetComputerByCodeAsync(dto.ElectionGuid, computerCode);
+        if (existingComputer != null)
+        {
+            throw new InvalidOperationException($"Computer code '{computerCode}' is already in use for this election");
+        }
+
+        var computer = _mapper.Map<Computer>(dto);
+        computer.ComputerGuid = Guid.NewGuid();
+        computer.ComputerCode = computerCode;
+        computer.IsActive = true;
+
+        _context.Computers.Add(computer);
+        await _context.SaveChangesAsync();
+
+        var computerDto = _mapper.Map<ComputerDto>(computer);
+
+        _logger.LogInformation("Successfully registered computer {ComputerCode} ({ComputerGuid})", computerCode, computer.ComputerGuid);
+
+        return computerDto;
+    }
+
+    public async Task<ComputerDto?> UpdateComputerAsync(Guid computerGuid, UpdateComputerDto dto)
+    {
+        _logger.LogInformation("Updating computer {ComputerGuid}", computerGuid);
+
+        var computer = await _context.Computers
+            .Where(c => c.ComputerGuid == computerGuid)
+            .FirstOrDefaultAsync();
+
+        if (computer == null)
+        {
+            _logger.LogWarning("Computer with GUID {ComputerGuid} not found for update", computerGuid);
+            return null;
+        }
+
+        _mapper.Map(dto, computer);
+        await _context.SaveChangesAsync();
+
+        var computerDto = _mapper.Map<ComputerDto>(computer);
+
+        _logger.LogInformation("Successfully updated computer {ComputerGuid}", computerGuid);
+
+        return computerDto;
+    }
+
+    public async Task<bool> DeleteComputerAsync(Guid computerGuid)
+    {
+        _logger.LogInformation("Deleting computer {ComputerGuid}", computerGuid);
+
+        var computer = await _context.Computers
+            .Where(c => c.ComputerGuid == computerGuid)
+            .FirstOrDefaultAsync();
+
+        if (computer == null)
+        {
+            _logger.LogWarning("Computer with GUID {ComputerGuid} not found for deletion", computerGuid);
+            return false;
+        }
+
+        _context.Computers.Remove(computer);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Successfully deleted computer {ComputerCode} ({ComputerGuid})", computer.ComputerCode, computerGuid);
+
+        return true;
+    }
+
+    public async Task<ComputerDto?> UpdateActivityAsync(Guid computerGuid)
+    {
+        var computer = await _context.Computers
+            .Where(c => c.ComputerGuid == computerGuid)
+            .FirstOrDefaultAsync();
+
+        if (computer == null)
+        {
+            return null;
+        }
+
+        computer.LastActivity = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        return _mapper.Map<ComputerDto>(computer);
+    }
+
+    public async Task<string> GenerateComputerCodeAsync(Guid electionGuid)
+    {
+        var existingCodes = await _context.Computers
+            .Where(c => c.ElectionGuid == electionGuid)
+            .Select(c => c.ComputerCode)
+            .ToListAsync();
+
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+        for (int i = 0; i < chars.Length; i++)
+        {
+            for (int j = 0; j < chars.Length; j++)
+            {
+                var code = $"{chars[i]}{chars[j]}";
+                if (!existingCodes.Contains(code))
+                {
+                    return code;
+                }
+            }
+        }
+
+        throw new InvalidOperationException("No available computer codes remaining for this election");
+    }
+}

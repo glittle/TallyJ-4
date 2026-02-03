@@ -4,10 +4,16 @@
       <template #header>
         <div class="card-header">
           <el-page-header @back="goBack" :content="$t('ballots.management')" />
-          <el-button type="primary" @click="showAddDialog = true">
-            <el-icon><Plus /></el-icon>
-            {{ $t('ballots.addBallot') }}
-          </el-button>
+          <div class="header-actions">
+            <el-button @click="handleImport">
+              <el-icon><Upload /></el-icon>
+              {{ $t('ballots.import.button') }}
+            </el-button>
+            <el-button type="primary" @click="showAddDialog = true">
+              <el-icon><Plus /></el-icon>
+              {{ $t('ballots.addBallot') }}
+            </el-button>
+          </div>
         </div>
       </template>
 
@@ -68,7 +74,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus } from '@element-plus/icons-vue';
+import { Plus, Upload } from '@element-plus/icons-vue';
 import { useBallotStore } from '../../stores/ballotStore';
 import type { BallotDto } from '../../types';
 import BallotFormDialog from '../../components/ballots/BallotFormDialog.vue';
@@ -107,6 +113,10 @@ onBeforeUnmount(async () => {
 
 function goBack() {
   router.push(`/elections/${electionGuid}`);
+}
+
+function handleImport() {
+  router.push(`/elections/${electionGuid}/ballots/import`);
 }
 
 function handleEnterVotes(ballot: BallotDto) {
@@ -162,6 +172,11 @@ function getStatusType(status: string) {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
   }
 
   .loading-container {

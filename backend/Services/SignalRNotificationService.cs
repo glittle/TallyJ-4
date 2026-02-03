@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using TallyJ4.DTOs.SignalR;
 using TallyJ4.DTOs.Results;
+using TallyJ4.DTOs.FrontDesk;
 using TallyJ4.Hubs;
 
 namespace TallyJ4.Services;
@@ -51,7 +52,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"Election_{update.ElectionGuid}";
+            var groupName = $"Main{update.ElectionGuid}";
             await _mainHubContext.Clients.Group(groupName).SendAsync("ElectionUpdated", update);
             _logger.LogInformation("Sent ElectionUpdated notification to group {GroupName}", groupName);
         }
@@ -88,7 +89,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"Import_{progress.ElectionGuid}";
+            var groupName = $"BallotImport{progress.ElectionGuid}";
             var eventName = progress.IsComplete ? "ImportComplete" : "ImportProgress";
             await _ballotImportHubContext.Clients.Group(groupName).SendAsync(eventName, progress);
             _logger.LogInformation("Sent {EventName} notification to group {GroupName}", eventName, groupName);
@@ -107,7 +108,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"FrontDesk_{update.ElectionGuid}";
+            var groupName = $"FrontDesk{update.ElectionGuid}";
             var eventName = update.Action switch
             {
                 "added" => "PersonAdded",
@@ -148,7 +149,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"Election_{monitorInfo.ElectionGuid}";
+            var groupName = $"Main{monitorInfo.ElectionGuid}";
             await _mainHubContext.Clients.Group(groupName).SendAsync("MonitorUpdated", monitorInfo);
             _logger.LogInformation("Sent MonitorUpdated notification to group {GroupName}", groupName);
         }
@@ -173,6 +174,44 @@ public class SignalRNotificationService : ISignalRNotificationService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error sending BallotUpdate notification for election {ElectionGuid}", update.ElectionGuid);
+        }
+    }
+
+    /// <summary>
+    /// Sends person checked-in notification to front desk clients.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="voter">The checked-in voter data.</param>
+    public async Task NotifyPersonCheckedInAsync(Guid electionGuid, FrontDeskVoterDto voter)
+    {
+        try
+        {
+            var groupName = $"FrontDesk{electionGuid}";
+            await _frontDeskHubContext.Clients.Group(groupName).SendAsync("PersonCheckedIn", voter);
+            _logger.LogInformation("Sent PersonCheckedIn notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending PersonCheckedIn notification for election {ElectionGuid}", electionGuid);
+        }
+    }
+
+    /// <summary>
+    /// Sends voter count update notification to front desk clients.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="stats">The updated statistics.</param>
+    public async Task NotifyVoterCountUpdatedAsync(Guid electionGuid, FrontDeskStatsDto stats)
+    {
+        try
+        {
+            var groupName = $"FrontDesk{electionGuid}";
+            await _frontDeskHubContext.Clients.Group(groupName).SendAsync("VoterCountUpdated", stats);
+            _logger.LogInformation("Sent VoterCountUpdated notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending VoterCountUpdated notification for election {ElectionGuid}", electionGuid);
         }
     }
 }

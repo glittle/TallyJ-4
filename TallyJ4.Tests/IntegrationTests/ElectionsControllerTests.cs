@@ -14,7 +14,7 @@ public class ElectionsControllerTests : IntegrationTestBase
     [Fact]
     public async Task GetElections_WithoutAuth_ReturnsUnauthorized()
     {
-        var response = await Client.GetAsync("/api/elections");
+        var response = await GetAsync("/api/elections");
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -25,7 +25,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         var token = await GetAuthTokenAsync();
         SetAuthToken(token);
 
-        var response = await Client.GetAsync("/api/elections");
+        var response = await GetAsync("/api/elections");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
@@ -36,7 +36,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         var token = await GetAuthTokenAsync();
         SetAuthToken(token);
 
-        var response = await Client.GetAsync("/api/elections?pageNumber=1&pageSize=10");
+        var response = await GetAsync("/api/elections?pageNumber=1&pageSize=10");
         response.EnsureSuccessStatusCode();
 
         var result = await DeserializeResponseAsync<PaginatedResponse<ElectionSummaryDto>>(response);
@@ -104,10 +104,18 @@ public class ElectionsControllerTests : IntegrationTestBase
         };
 
         var createResponse = await PostJsonAsync("/api/elections", createDto);
+        
+        // Add diagnostic info
+        if (!createResponse.IsSuccessStatusCode)
+        {
+            var errorContent = await createResponse.Content.ReadAsStringAsync();
+            throw new Exception($"Create election failed: {createResponse.StatusCode}, Content: {errorContent}");
+        }
+        
         var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
         var electionGuid = createResult!.Data!.ElectionGuid;
 
-        var response = await Client.GetAsync($"/api/elections/{electionGuid}");
+        var response = await GetAsync($"/api/elections/{electionGuid}");
         
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -124,7 +132,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         var token = await GetAuthTokenAsync();
         SetAuthToken(token);
 
-        var response = await Client.GetAsync($"/api/elections/{Guid.NewGuid()}");
+        var response = await GetAsync($"/api/elections/{Guid.NewGuid()}");
         
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -184,11 +192,11 @@ public class ElectionsControllerTests : IntegrationTestBase
         var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
         var electionGuid = createResult!.Data!.ElectionGuid;
 
-        var response = await Client.DeleteAsync($"/api/elections/{electionGuid}");
+        var response = await DeleteAsync($"/api/elections/{electionGuid}");
         
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-        var getResponse = await Client.GetAsync($"/api/elections/{electionGuid}");
+        var getResponse = await GetAsync($"/api/elections/{electionGuid}");
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
 }

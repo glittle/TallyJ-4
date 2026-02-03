@@ -59,4 +59,109 @@ public class UpdateElectionDto
     /// The date and time when online voting closes.
     /// </summary>
     public DateTime? OnlineWhenClose { get; set; }
+
+    /// <summary>
+    /// The type of election (e.g., "STV", "Cond").
+    /// </summary>
+    public string? ElectionType { get; set; }
+
+    /// <summary>
+    /// The mode of the election (e.g., "N" for normal, "I" for international).
+    /// </summary>
+    public string? ElectionMode { get; set; }
+
+    /// <summary>
+    /// Default eligibility to vote (Y/N/?).
+    /// </summary>
+    public string? CanVote { get; set; }
+
+    /// <summary>
+    /// Default eligibility to receive votes (Y/N/?).
+    /// </summary>
+    public string? CanReceive { get; set; }
+
+    /// <summary>
+    /// The passcode required for teller access.
+    /// </summary>
+    public string? ElectionPasscode { get; set; }
+
+    /// <summary>
+    /// Linked election GUID for tie-breaks.
+    /// </summary>
+    public Guid? LinkedElectionGuid { get; set; }
+
+    /// <summary>
+    /// Type of linked election (e.g., "TB" for tie-break).
+    /// </summary>
+    public string? LinkedElectionKind { get; set; }
+
+    /// <summary>
+    /// Whether to use the call-in button feature.
+    /// </summary>
+    public bool? UseCallInButton { get; set; }
+
+    /// <summary>
+    /// Whether to hide pre-ballot pages.
+    /// </summary>
+    public bool? HidePreBallotPages { get; set; }
+
+    /// <summary>
+    /// Whether to mask the voting method in displays.
+    /// </summary>
+    public bool? MaskVotingMethod { get; set; }
+
+    /// <summary>
+    /// Whether the online close time is an estimate.
+    /// </summary>
+    public bool? OnlineCloseIsEstimate { get; set; }
+
+    /// <summary>
+    /// Online voting selection process (e.g., "S" for simultaneous).
+    /// </summary>
+    public string? OnlineSelectionProcess { get; set; }
+
+    /// <summary>
+    /// The date and time when online voting was announced.
+    /// </summary>
+    public DateTime? OnlineAnnounced { get; set; }
+
+    /// <summary>
+    /// Email from address for voter communications.
+    /// </summary>
+    public string? EmailFromAddress { get; set; }
+
+    /// <summary>
+    /// Email from name for voter communications.
+    /// </summary>
+    public string? EmailFromName { get; set; }
+
+    /// <summary>
+    /// Email template text for voter invitations.
+    /// </summary>
+    public string? EmailText { get; set; }
+
+    /// <summary>
+    /// Email subject line for voter communications.
+    /// </summary>
+    public string? EmailSubject { get; set; }
+
+    /// <summary>
+    /// SMS template text for voter invitations.
+    /// </summary>
+    public string? SmsText { get; set; }
+
+    /// <summary>
+    /// Custom voting methods (comma-separated).
+    /// </summary>
+    public string? CustomMethods { get; set; }
+
+    /// <summary>
+    /// Voting methods available (encoded string).
+    /// </summary>
+    public string? VotingMethods { get; set; }
+
+    /// <summary>
+    /// Additional flags and settings (JSON).
+    /// </summary>
+    public string? Flags { get; set; }
 }

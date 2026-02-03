@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TallyJ4.Domain.Context;
@@ -16,6 +17,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
     protected readonly CustomWebApplicationFactory Factory;
     protected readonly HttpClient Client;
     protected readonly JsonSerializerOptions JsonOptions;
+    private string? _currentAuthToken;
 
     private static bool _databaseSeeded = false;
 
@@ -38,8 +40,8 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
 
     protected async Task<string> GetAuthTokenAsync(string email = "admin@tallyj.com", string password = "Test1234!")
     {
-        // Ensure test user exists first
-        await CreateTestUserAsync(email, "Test1234!");
+        // Ensure test user exists first with the correct password
+        await CreateTestUserAsync(email, password);
 
         var loginRequest = new
         {
@@ -64,38 +66,101 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             await response.Content.ReadAsStreamAsync(),
             JsonOptions);
 
-        return loginResponse?.AccessToken ?? throw new Exception("Failed to get access token");
+        var token = loginResponse?.Token ?? throw new Exception("Failed to get access token");
+        Console.WriteLine($"[TEST] Got auth token: {token.Substring(0, Math.Min(50, token.Length))}...");
+        return token;
     }
 
     protected void SetAuthToken(string token)
     {
+        _currentAuthToken = token;
+        Console.WriteLine($"[TEST] SetAuthToken called with token length: {token?.Length ?? 0}, starts with 'eyJ': {token?.StartsWith("eyJ")}");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        Console.WriteLine($"[TEST] Client.DefaultRequestHeaders.Authorization set to: {Client.DefaultRequestHeaders.Authorization?.ToString() ?? "NULL"}");
     }
 
     protected async Task<HttpResponseMessage> PostJsonAsync<T>(string url, T data)
     {
-        var content = new StringContent(
-            JsonSerializer.Serialize(data),
-            Encoding.UTF8,
-            "application/json");
+        var request = new HttpRequestMessage(HttpMethod.Post, url)
+        {
+            Content = new StringContent(
+                JsonSerializer.Serialize(data),
+                Encoding.UTF8,
+                "application/json")
+        };
 
-        return await Client.PostAsync(url, content);
+        if (!string.IsNullOrEmpty(_currentAuthToken))
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _currentAuthToken);
+            Console.WriteLine($"[TEST] POST {url} with auth header: Bearer {_currentAuthToken.Substring(0, Math.Min(30, _currentAuthToken.Length))}...");
+        }
+        else
+        {
+            Console.WriteLine($"[TEST] POST {url} WITHOUT auth header");
+        }
+
+        return await Client.SendAsync(request);
     }
 
     protected async Task<HttpResponseMessage> PutJsonAsync<T>(string url, T data)
     {
-        var content = new StringContent(
-            JsonSerializer.Serialize(data),
-            Encoding.UTF8,
-            "application/json");
+        var request = new HttpRequestMessage(HttpMethod.Put, url)
+        {
+            Content = new StringContent(
+                JsonSerializer.Serialize(data),
+                Encoding.UTF8,
+                "application/json")
+        };
 
-        return await Client.PutAsync(url, content);
+        if (!string.IsNullOrEmpty(_currentAuthToken))
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _currentAuthToken);
+        }
+
+        return await Client.SendAsync(request);
+    }
+
+    protected async Task<HttpResponseMessage> GetAsync(string url)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+
+        if (!string.IsNullOrEmpty(_currentAuthToken))
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _currentAuthToken);
+        }
+
+        return await Client.SendAsync(request);
+    }
+
+    protected async Task<HttpResponseMessage> DeleteAsync(string url)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Delete, url);
+
+        if (!string.IsNullOrEmpty(_currentAuthToken))
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _currentAuthToken);
+        }
+
+        return await Client.SendAsync(request);
     }
 
     protected async Task<TResponse?> DeserializeResponseAsync<TResponse>(HttpResponseMessage response)
     {
-        var stream = await response.Content.ReadAsStreamAsync();
-        return await JsonSerializer.DeserializeAsync<TResponse>(stream, JsonOptions);
+        var content = await response.Content.ReadAsStringAsync();
+        
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            throw new Exception($"Response has empty body. Status: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}");
+        }
+        
+        try
+        {
+            return JsonSerializer.Deserialize<TResponse>(content, JsonOptions);
+        }
+        catch (JsonException ex)
+        {
+            throw new Exception($"Failed to deserialize response. Status: {response.StatusCode}, Content: {content}", ex);
+        }
     }
 
     private async Task SeedDatabaseAsync()
@@ -189,6 +254,12 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser != null)
         {
+            var passwordValid = await userManager.CheckPasswordAsync(existingUser, password);
+            if (passwordValid)
+            {
+                return;
+            }
+            
             await userManager.DeleteAsync(existingUser);
         }
 
@@ -209,7 +280,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
 
     private class LoginResponse
     {
-        public string AccessToken { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
         public string RefreshToken { get; set; } = string.Empty;
     }
 }

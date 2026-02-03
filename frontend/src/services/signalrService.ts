@@ -98,12 +98,12 @@ class SignalRService {
     return this.connect('/hubs/ballot-import', accessToken);
   }
 
-  async connectToFrontDeskHub(accessToken?: string): Promise<signalR.HubConnection> {
-    return this.connect('/hubs/front-desk', accessToken);
-  }
-
   async connectToPublicHub(): Promise<signalR.HubConnection> {
     return this.connect('/hubs/public');
+  }
+
+  async connectToFrontDeskHub(accessToken?: string): Promise<signalR.HubConnection> {
+    return this.connect('/hubs/front-desk', accessToken);
   }
 
   async joinElection(electionGuid: string): Promise<void> {
@@ -155,6 +155,34 @@ class SignalRService {
     const importConnection = this.getConnection('/hubs/ballot-import');
     if (importConnection) {
       await importConnection.invoke('LeaveImportSession', electionGuid);
+    }
+  }
+
+  async joinFrontDeskElection(electionGuid: string): Promise<void> {
+    const frontDeskConnection = this.getConnection('/hubs/front-desk');
+    if (frontDeskConnection) {
+      await frontDeskConnection.invoke('JoinElection', electionGuid);
+    }
+  }
+
+  async leaveFrontDeskElection(electionGuid: string): Promise<void> {
+    const frontDeskConnection = this.getConnection('/hubs/front-desk');
+    if (frontDeskConnection) {
+      await frontDeskConnection.invoke('LeaveElection', electionGuid);
+    }
+  }
+
+  async joinPublicDisplay(electionGuid: string): Promise<void> {
+    const publicConnection = this.getConnection('/hubs/public');
+    if (publicConnection) {
+      await publicConnection.invoke('JoinPublicDisplay', electionGuid);
+    }
+  }
+
+  async leavePublicDisplay(electionGuid: string): Promise<void> {
+    const publicConnection = this.getConnection('/hubs/public');
+    if (publicConnection) {
+      await publicConnection.invoke('LeavePublicDisplay', electionGuid);
     }
   }
 }

@@ -1,6 +1,6 @@
 # TallyJ 4
 
-Election management and ballot tallying system for Bahá'í communities.
+TallyJ-4 is a full-stack, real-time election management and ballot tallying system for Bahá'í communities. It uses a .NET 10 ASP.NET Core Web API backend and a Vue 3 + Vite SPA frontend. The system is designed for multi-user collaboration, secure authentication, and robust election workflows, with a focus on feature parity and modernization from TallyJ v3.
 
 ## Project Structure
 

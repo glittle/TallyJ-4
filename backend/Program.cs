@@ -90,6 +90,38 @@ services.AddAuthentication(options =>
         ValidAudience = builderConfiguration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))  // Secure key (min 256 bits)
     };
+    
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Log.Warning("JWT Authentication failed: {Exception}", context.Exception.Message);
+            Log.Warning("JWT Failure details: {FailureMessage}", context.Exception.ToString());
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            var userId = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value 
+                        ?? context.Principal?.FindFirst("sub")?.Value;
+            Log.Information("JWT Token validated successfully for user: {UserId}", userId);
+            return Task.CompletedTask;
+        },
+        OnMessageReceived = context =>
+        {
+            var authHeader = context.Request.Headers["Authorization"].ToString();
+            var hasBearer = authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
+            var tokenLength = hasBearer ? authHeader.Substring(7).Length : 0;
+            Log.Information("JWT Message received - Header: {HasHeader}, HasBearer: {HasBearer}, TokenLength: {TokenLength}, ActualHeader: '{AuthHeader}'", 
+                !string.IsNullOrEmpty(authHeader), hasBearer, tokenLength, authHeader.Length > 100 ? authHeader.Substring(0, 100) + "..." : authHeader);
+            return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            Log.Warning("JWT Challenge initiated - Error: {Error}, ErrorDescription: {ErrorDescription}, AuthFailure: {AuthFailure}", 
+                context.Error, context.ErrorDescription, context.AuthenticateFailure?.Message);
+            return Task.CompletedTask;
+        }
+    };
 });
 
 // Optional: Customize Identity options (e.g., password requirements)
@@ -105,13 +137,24 @@ services.AddAuthorization(options =>
 {
     options.AddPolicy("ElectionAccess", policy =>
         policy.Requirements.Add(new TallyJ4.Authorization.ElectionAccessRequirement()));
+    
+    options.AddPolicy("TellerAccess", policy =>
+        policy.Requirements.Add(new TallyJ4.Authorization.TellerAccessRequirement()));
+    
+    options.AddPolicy("HeadTellerAccess", policy =>
+        policy.Requirements.Add(new TallyJ4.Authorization.HeadTellerAccessRequirement()));
 });
 
 // Register custom authorization handlers
 services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.ElectionAccessHandler>();
+services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.TellerAccessHandler>();
+services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.HeadTellerAccessHandler>();
 
 // Add localization
 services.AddLocalization();
+
+// Add HTTP context accessor
+services.AddHttpContextAccessor();
 
 // Add controllers with FluentValidation
 services.AddControllers();
@@ -123,6 +166,9 @@ services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add application services
 services.AddScoped<TallyJ4.Services.IElectionService, TallyJ4.Services.ElectionService>();
+services.AddScoped<TallyJ4.Services.ILocationService, TallyJ4.Services.LocationService>();
+services.AddScoped<TallyJ4.Services.IComputerService, TallyJ4.Services.ComputerService>();
+services.AddScoped<TallyJ4.Services.ITellerService, TallyJ4.Services.TellerService>();
 services.AddScoped<TallyJ4.Services.IPeopleService, TallyJ4.Services.PeopleService>();
 services.AddScoped<TallyJ4.Services.IBallotService, TallyJ4.Services.BallotService>();
 services.AddScoped<TallyJ4.Services.IVoteService, TallyJ4.Services.VoteService>();
@@ -133,7 +179,10 @@ services.AddScoped<TallyJ4.Services.IPublicService, TallyJ4.Services.PublicServi
 services.AddScoped<TallyJ4.Services.ITallyService, TallyJ4.Services.TallyService>();
 services.AddScoped<TallyJ4.Services.IReportExportService, TallyJ4.Services.ReportExportService>();
 services.AddScoped<TallyJ4.Services.IAdvancedReportingService, TallyJ4.Services.AdvancedReportingService>();
-services.AddScoped<TallyJ4.Application.Services.ImportService>();
+services.AddScoped<TallyJ4.Services.IFrontDeskService, TallyJ4.Services.FrontDeskService>();
+services.AddScoped<TallyJ4.Services.IOnlineVotingService, TallyJ4.Services.OnlineVotingService>();
+services.AddScoped<TallyJ4.Services.IAuditLogService, TallyJ4.Services.AuditLogService>();
+services.AddScoped<TallyJ4.Backend.Services.ImportService>();
 
 // Add Auth services
 services.AddScoped<JwtTokenService>();
@@ -155,7 +204,20 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(options =>
 {
     options.UseAllOfForInheritance();
-    options.CustomSchemaIds(type => type.FullName);
+    options.CustomSchemaIds(type =>
+    {
+        static string GetSchemaId(Type t)
+        {
+            if (!t.IsGenericType)
+                return t.Name;
+            
+            var typeName = t.Name.Substring(0, t.Name.IndexOf('`'));
+            var genericArgs = string.Join("", t.GetGenericArguments().Select(GetSchemaId));
+            return $"{typeName}{genericArgs}";
+        }
+        
+        return GetSchemaId(type);
+    });
 
     options.SwaggerDoc("v1", new OpenApiInfo
     {
@@ -245,6 +307,7 @@ app.UseRequestLocalization();
 app.UseAuthentication();  // Enables Identity
 app.UseMiddleware<TallyJ4.Middleware.ElectionContextMiddleware>();
 app.UseAuthorization();
+app.UseMiddleware<TallyJ4.Middleware.AuditMiddleware>();
 
 // Custom AuthController handles authentication endpoints
 
@@ -257,6 +320,7 @@ app.MapHub<TallyJ4.Hubs.AnalyzeHub>("/hubs/analyze");
 app.MapHub<TallyJ4.Hubs.BallotImportHub>("/hubs/ballot-import");
 app.MapHub<TallyJ4.Hubs.FrontDeskHub>("/hubs/front-desk");
 app.MapHub<TallyJ4.Hubs.PublicHub>("/hubs/public");
+app.MapHub<TallyJ4.Hubs.OnlineVotingHub>("/hubs/online-voting");
 
 // Test endpoint
 app.MapGet("/protected", () => "This is protected!").RequireAuthorization();

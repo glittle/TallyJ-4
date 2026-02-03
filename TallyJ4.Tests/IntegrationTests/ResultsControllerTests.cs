@@ -57,7 +57,7 @@ public class ResultsControllerTests : IntegrationTestBase
 
         await Client.PostAsync($"/api/results/election/{electionGuid}/calculate", null);
 
-        var response = await Client.GetAsync($"/api/results/election/{electionGuid}");
+        var response = await GetAsync($"/api/results/election/{electionGuid}");
         
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
