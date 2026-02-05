@@ -3,8 +3,14 @@ using TallyJ4.DTOs.Computers;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for <see cref="RegisterComputerDto"/>.
+/// </summary>
 public class RegisterComputerDtoValidator : AbstractValidator<RegisterComputerDto>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RegisterComputerDtoValidator"/> class.
+    /// </summary>
     public RegisterComputerDtoValidator()
     {
         RuleFor(x => x.ElectionGuid)

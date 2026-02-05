@@ -7,7 +7,7 @@ import "./style.css";
 
 import App from "./App.vue";
 import { router } from "./router/router";
-console.log("Router loaded:", router);
+import "./api/config";
 import { i18n } from "./locales";
 
 // Sentry error tracking and performance monitoring
@@ -16,12 +16,6 @@ import * as Sentry from "@sentry/vue";
 const pinia = createPinia();
 
 const app = createApp(App);
-
-//
-//
-//
-//
-//
 
 app.use(ElementPlus);
 app.use(pinia);

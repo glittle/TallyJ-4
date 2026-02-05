@@ -46,7 +46,6 @@ const toggleTheme = () => {
       @click="toggleTheme"
       :aria-label="$t('common.toggleTheme', 'Toggle Theme')"
       size="small"
-      type="text"
       class="theme-toggle-btn"
     >
       <ElIcon>

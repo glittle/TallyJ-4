@@ -2,17 +2,51 @@ using TallyJ4.DTOs.OnlineVoting;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service interface for online voting operations.
+/// </summary>
 public interface IOnlineVotingService
 {
+    /// <summary>
+    /// Requests a verification code for a voter.
+    /// </summary>
+    /// <param name="dto">The request containing voter identification details.</param>
+    /// <returns>A task containing a success flag and optional error message.</returns>
     Task<(bool Success, string? Error)> RequestVerificationCodeAsync(RequestCodeDto dto);
     
+    /// <summary>
+    /// Verifies a voter's verification code.
+    /// </summary>
+    /// <param name="dto">The verification request containing the code.</param>
+    /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
     Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> VerifyCodeAsync(VerifyCodeDto dto);
     
+    /// <summary>
+    /// Retrieves information about an election for online voting.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A task containing the election information, or null if not found.</returns>
     Task<OnlineElectionInfoDto?> GetElectionInfoAsync(Guid electionGuid);
     
+    /// <summary>
+    /// Retrieves the list of candidates for an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A task containing the list of candidates.</returns>
     Task<List<OnlineCandidateDto>> GetCandidatesAsync(Guid electionGuid);
     
+    /// <summary>
+    /// Submits an online ballot for an election.
+    /// </summary>
+    /// <param name="dto">The ballot submission data.</param>
+    /// <returns>A task containing a success flag and optional error message.</returns>
     Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto);
     
+    /// <summary>
+    /// Retrieves the voting status for a specific voter in an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="voterId">The voter's identifier.</param>
+    /// <returns>A task containing the voter's status information.</returns>
     Task<OnlineVoteStatusDto> GetVoteStatusAsync(Guid electionGuid, string voterId);
 }

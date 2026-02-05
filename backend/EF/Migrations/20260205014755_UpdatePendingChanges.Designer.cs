@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TallyJ4.Domain.Context;
 
@@ -11,9 +12,11 @@ using TallyJ4.Domain.Context;
 namespace TallyJ4.EF.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260205014755_UpdatePendingChanges")]
+    partial class UpdatePendingChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,7 +220,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex(new[] { "LocationGuid" }, "IX_Ballot_Location");
 
-                    b.ToTable("Ballots", (string)null);
+                    b.ToTable("Ballots");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.Computer", b =>
@@ -277,7 +280,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex(new[] { "LocationGuid" }, "IX_Computer_Location");
 
-                    b.ToTable("Computers", (string)null);
+                    b.ToTable("Computers");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.Election", b =>
@@ -444,7 +447,7 @@ namespace TallyJ4.EF.Migrations
                     b.HasIndex(new[] { "ElectionGuid" }, "IX_Election")
                         .IsUnique();
 
-                    b.ToTable("Elections", (string)null);
+                    b.ToTable("Elections");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.ImportFile", b =>
@@ -511,7 +514,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex("ElectionGuid");
 
-                    b.ToTable("ImportFiles", (string)null);
+                    b.ToTable("ImportFiles");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.JoinElectionUser", b =>
@@ -548,7 +551,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "IX_JoinElectionUser_UserId");
 
-                    b.ToTable("JoinElectionUsers", (string)null);
+                    b.ToTable("JoinElectionUsers");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.Location", b =>
@@ -604,7 +607,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex(new[] { "ElectionGuid" }, "IX_Location_Election");
 
-                    b.ToTable("Locations", (string)null);
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.Log", b =>
@@ -651,7 +654,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex(new[] { "ElectionGuid", "LocationGuid" }, "nci_msft_1__Log_154BF30FBBDD3CC74014282844F74DFE");
 
-                    b.ToTable("Logs", (string)null);
+                    b.ToTable("Logs");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.Message", b =>
@@ -689,7 +692,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex("ElectionGuid");
 
-                    b.ToTable("Messages", (string)null);
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.OnlineVoter", b =>
@@ -756,7 +759,7 @@ namespace TallyJ4.EF.Migrations
                     b.HasIndex(new[] { "VoterId" }, "IX_OnlineVoter_Id")
                         .IsUnique();
 
-                    b.ToTable("OnlineVoters", (string)null);
+                    b.ToTable("OnlineVoters");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.OnlineVotingInfo", b =>
@@ -807,7 +810,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex(new[] { "PersonGuid" }, "IX_OnlineVotingInfo_Person");
 
-                    b.ToTable("OnlineVotingInfos", (string)null);
+                    b.ToTable("OnlineVotingInfos");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.Person", b =>
@@ -977,7 +980,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex(new[] { "ElectionGuid" }, "nci_msft_Person_22A77D9DC21D83B4582C43E94A27236D");
 
-                    b.ToTable("People", (string)null);
+                    b.ToTable("People");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.RefreshToken", b =>
@@ -1026,7 +1029,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshToken", (string)null);
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.Result", b =>
@@ -1090,7 +1093,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex(new[] { "ElectionGuid" }, "IX_Result_Election");
 
-                    b.ToTable("Results", (string)null);
+                    b.ToTable("Results");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.ResultSummary", b =>
@@ -1170,7 +1173,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex(new[] { "ElectionGuid" }, "Ix_ResultSummary_Election");
 
-                    b.ToTable("ResultSummaries", (string)null);
+                    b.ToTable("ResultSummaries");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.ResultTie", b =>
@@ -1205,7 +1208,7 @@ namespace TallyJ4.EF.Migrations
                     b.HasIndex(new[] { "ElectionGuid", "TieBreakGroup" }, "IX_ResultTie")
                         .IsUnique();
 
-                    b.ToTable("ResultTies", (string)null);
+                    b.ToTable("ResultTies");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.SmsLog", b =>
@@ -1257,7 +1260,7 @@ namespace TallyJ4.EF.Migrations
                     b.HasIndex(new[] { "ElectionGuid", "LastDate" }, "IX_SmsLog_Election_Date")
                         .IsDescending(false, true);
 
-                    b.ToTable("SmsLogs", (string)null);
+                    b.ToTable("SmsLogs");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.Teller", b =>
@@ -1297,7 +1300,7 @@ namespace TallyJ4.EF.Migrations
                     b.HasIndex(new[] { "ElectionGuid", "Name" }, "IX_Teller")
                         .IsUnique();
 
-                    b.ToTable("Tellers", (string)null);
+                    b.ToTable("Tellers");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.TwoFactorToken", b =>
@@ -1344,7 +1347,7 @@ namespace TallyJ4.EF.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("TwoFactorToken", (string)null);
+                    b.ToTable("TwoFactorToken");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Entities.Vote", b =>
@@ -1396,7 +1399,7 @@ namespace TallyJ4.EF.Migrations
 
                     b.HasIndex(new[] { "PersonGuid" }, "IX_VotePerson");
 
-                    b.ToTable("Votes", (string)null);
+                    b.ToTable("Votes");
                 });
 
             modelBuilder.Entity("TallyJ4.Domain.Identity.AppUser", b =>

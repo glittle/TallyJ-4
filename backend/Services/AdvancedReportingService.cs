@@ -54,7 +54,7 @@ public class AdvancedReportingService : IAdvancedReportingService
     {
         _logger.LogInformation("Comparing {Count} elections with metrics: {Metrics}", electionIds.Count, string.Join(", ", metrics));
 
-        var elections = new List<ElectionSummaryDto>();
+        var elections = new List<ResultsElectionSummaryDto>();
         var trends = new List<TrendDataDto>();
 
         foreach (var electionId in electionIds)
@@ -62,7 +62,7 @@ public class AdvancedReportingService : IAdvancedReportingService
             var report = await _tallyService.GetElectionReportAsync(electionId);
             var stats = await _tallyService.GetDetailedStatisticsAsync(electionId);
 
-            elections.Add(new ElectionSummaryDto
+            elections.Add(new ResultsElectionSummaryDto
             {
                 ElectionGuid = electionId,
                 ElectionName = report.ElectionName,

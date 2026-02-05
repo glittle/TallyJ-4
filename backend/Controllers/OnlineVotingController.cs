@@ -5,6 +5,9 @@ using TallyJ4.Services;
 
 namespace TallyJ4.Backend.Controllers;
 
+/// <summary>
+/// Controller for managing online voting operations including voter verification and ballot submission.
+/// </summary>
 [ApiController]
 [Route("api/online-voting")]
 public class OnlineVotingController : ControllerBase
@@ -12,6 +15,11 @@ public class OnlineVotingController : ControllerBase
     private readonly IOnlineVotingService _onlineVotingService;
     private readonly ILogger<OnlineVotingController> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OnlineVotingController"/> class.
+    /// </summary>
+    /// <param name="onlineVotingService">The online voting service.</param>
+    /// <param name="logger">The logger.</param>
     public OnlineVotingController(
         IOnlineVotingService onlineVotingService,
         ILogger<OnlineVotingController> logger)
@@ -20,6 +28,11 @@ public class OnlineVotingController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Requests a verification code for online voting.
+    /// </summary>
+    /// <param name="dto">The request code data.</param>
+    /// <returns>A success message if the code was sent.</returns>
     [HttpPost("request-code")]
     [AllowAnonymous]
     public async Task<IActionResult> RequestCode([FromBody] RequestCodeDto dto)
@@ -34,6 +47,11 @@ public class OnlineVotingController : ControllerBase
         return Ok(new { message = "Verification code sent successfully." });
     }
 
+    /// <summary>
+    /// Verifies a voter's verification code for online voting access.
+    /// </summary>
+    /// <param name="dto">The verification code data.</param>
+    /// <returns>The voter session information if successful.</returns>
     [HttpPost("verify-code")]
     [AllowAnonymous]
     public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeDto dto)
@@ -48,6 +66,11 @@ public class OnlineVotingController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Gets public information about an election for online voting.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <returns>The election information.</returns>
     [HttpGet("elections/{electionGuid}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetElectionInfo(Guid electionGuid)
@@ -62,6 +85,11 @@ public class OnlineVotingController : ControllerBase
         return Ok(electionInfo);
     }
 
+    /// <summary>
+    /// Gets the list of candidates for an election.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <returns>The list of candidates.</returns>
     [HttpGet("elections/{electionGuid}/candidates")]
     [AllowAnonymous]
     public async Task<IActionResult> GetCandidates(Guid electionGuid)
@@ -70,6 +98,12 @@ public class OnlineVotingController : ControllerBase
         return Ok(candidates);
     }
 
+    /// <summary>
+    /// Submits an online ballot for an election.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="dto">The ballot submission data.</param>
+    /// <returns>A success message if the ballot was submitted.</returns>
     [HttpPost("elections/{electionGuid}/submit-ballot")]
     [AllowAnonymous]
     public async Task<IActionResult> SubmitBallot(Guid electionGuid, [FromBody] SubmitOnlineBallotDto dto)
@@ -89,6 +123,12 @@ public class OnlineVotingController : ControllerBase
         return Ok(new { message = "Ballot submitted successfully." });
     }
 
+    /// <summary>
+    /// Gets the voting status for a specific voter in an election.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="voterId">The voter ID.</param>
+    /// <returns>The vote status information.</returns>
     [HttpGet("elections/{electionGuid}/vote-status")]
     [AllowAnonymous]
     public async Task<IActionResult> GetVoteStatus(Guid electionGuid, [FromQuery] string voterId)

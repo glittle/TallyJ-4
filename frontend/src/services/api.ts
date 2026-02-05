@@ -2,7 +2,7 @@ import axios from 'axios';
 import { cacheService } from './cacheService';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5016/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5016',
   headers: {
     'Content-Type': 'application/json'
   }

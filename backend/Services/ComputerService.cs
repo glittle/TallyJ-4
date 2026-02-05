@@ -6,12 +6,21 @@ using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service implementation for managing computers registered for online voting.
+/// </summary>
 public class ComputerService : IComputerService
 {
     private readonly MainDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<ComputerService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ComputerService"/> class.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="mapper">The AutoMapper instance.</param>
+    /// <param name="logger">The logger instance.</param>
     public ComputerService(MainDbContext context, IMapper mapper, ILogger<ComputerService> logger)
     {
         _context = context;
@@ -19,6 +28,7 @@ public class ComputerService : IComputerService
         _logger = logger;
     }
 
+    /// <inheritdoc />
     public async Task<List<ComputerDto>> GetComputersByLocationAsync(Guid locationGuid)
     {
         var computers = await _context.Computers
@@ -29,6 +39,7 @@ public class ComputerService : IComputerService
         return _mapper.Map<List<ComputerDto>>(computers);
     }
 
+    /// <inheritdoc />
     public async Task<List<ComputerDto>> GetComputersByElectionAsync(Guid electionGuid)
     {
         var computers = await _context.Computers
@@ -39,6 +50,7 @@ public class ComputerService : IComputerService
         return _mapper.Map<List<ComputerDto>>(computers);
     }
 
+    /// <inheritdoc />
     public async Task<ComputerDto?> GetComputerByGuidAsync(Guid computerGuid)
     {
         var computer = await _context.Computers
@@ -54,6 +66,7 @@ public class ComputerService : IComputerService
         return _mapper.Map<ComputerDto>(computer);
     }
 
+    /// <inheritdoc />
     public async Task<ComputerDto?> GetComputerByCodeAsync(Guid electionGuid, string computerCode)
     {
         var computer = await _context.Computers
@@ -68,6 +81,7 @@ public class ComputerService : IComputerService
         return _mapper.Map<ComputerDto>(computer);
     }
 
+    /// <inheritdoc />
     public async Task<ComputerDto> RegisterComputerAsync(RegisterComputerDto dto)
     {
         _logger.LogInformation("Registering computer for location {LocationGuid}", dto.LocationGuid);
@@ -99,6 +113,7 @@ public class ComputerService : IComputerService
         return computerDto;
     }
 
+    /// <inheritdoc />
     public async Task<ComputerDto?> UpdateComputerAsync(Guid computerGuid, UpdateComputerDto dto)
     {
         _logger.LogInformation("Updating computer {ComputerGuid}", computerGuid);
@@ -123,6 +138,7 @@ public class ComputerService : IComputerService
         return computerDto;
     }
 
+    /// <inheritdoc />
     public async Task<bool> DeleteComputerAsync(Guid computerGuid)
     {
         _logger.LogInformation("Deleting computer {ComputerGuid}", computerGuid);
@@ -145,6 +161,7 @@ public class ComputerService : IComputerService
         return true;
     }
 
+    /// <inheritdoc />
     public async Task<ComputerDto?> UpdateActivityAsync(Guid computerGuid)
     {
         var computer = await _context.Computers
@@ -162,6 +179,7 @@ public class ComputerService : IComputerService
         return _mapper.Map<ComputerDto>(computer);
     }
 
+    /// <inheritdoc />
     public async Task<string> GenerateComputerCodeAsync(Guid electionGuid)
     {
         var existingCodes = await _context.Computers

@@ -7,6 +7,9 @@ using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service implementation for managing front desk operations including voter check-in and roll call.
+/// </summary>
 public class FrontDeskService : IFrontDeskService
 {
     private readonly MainDbContext _context;
@@ -14,6 +17,13 @@ public class FrontDeskService : IFrontDeskService
     private readonly ILogger<FrontDeskService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FrontDeskService"/> class.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="mapper">The AutoMapper instance.</param>
+    /// <param name="logger">The logger instance.</param>
+    /// <param name="signalRNotificationService">The SignalR notification service.</param>
     public FrontDeskService(
         MainDbContext context,
         IMapper mapper,
@@ -26,6 +36,7 @@ public class FrontDeskService : IFrontDeskService
         _signalRNotificationService = signalRNotificationService;
     }
 
+    /// <inheritdoc />
     public async Task<List<FrontDeskVoterDto>> GetEligibleVotersAsync(Guid electionGuid)
     {
         var voters = await _context.People
@@ -37,6 +48,7 @@ public class FrontDeskService : IFrontDeskService
         return _mapper.Map<List<FrontDeskVoterDto>>(voters);
     }
 
+    /// <inheritdoc />
     public async Task<FrontDeskVoterDto> CheckInVoterAsync(Guid electionGuid, CheckInVoterDto checkInDto)
     {
         var person = await _context.People
@@ -93,6 +105,7 @@ public class FrontDeskService : IFrontDeskService
         return voterDto;
     }
 
+    /// <inheritdoc />
     public async Task<RollCallDto> GetRollCallAsync(Guid electionGuid)
     {
         var voters = await GetEligibleVotersAsync(electionGuid);
@@ -105,6 +118,7 @@ public class FrontDeskService : IFrontDeskService
         };
     }
 
+    /// <inheritdoc />
     public async Task<FrontDeskStatsDto> GetStatsAsync(Guid electionGuid)
     {
         var totalEligible = await _context.People

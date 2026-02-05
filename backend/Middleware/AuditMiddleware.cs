@@ -4,17 +4,31 @@ using TallyJ4.Services;
 
 namespace TallyJ4.Middleware;
 
+/// <summary>
+/// Middleware for logging audit entries for HTTP requests.
+/// </summary>
 public class AuditMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<AuditMiddleware> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuditMiddleware"/> class.
+    /// </summary>
+    /// <param name="next">The next middleware in the pipeline.</param>
+    /// <param name="logger">The logger instance.</param>
     public AuditMiddleware(RequestDelegate next, ILogger<AuditMiddleware> logger)
     {
         _next = next;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Invokes the middleware to process HTTP requests and log audit entries.
+    /// </summary>
+    /// <param name="context">The HTTP context.</param>
+    /// <param name="auditLogService">The audit log service for creating audit entries.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task InvokeAsync(HttpContext context, IAuditLogService auditLogService)
     {
         var shouldLog = ShouldLogRequest(context);
