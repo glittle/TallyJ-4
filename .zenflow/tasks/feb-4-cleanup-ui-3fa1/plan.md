@@ -53,7 +53,8 @@ If the feature is trivial and doesn't warrant full specification, update this wo
 
 Save to `{@artifacts_path}/plan.md`.
 
-### [ ] Step: Add Element Plus Light Mode Overrides
+### [x] Step: Add Element Plus Light Mode Overrides
+<!-- chat-id: 62fda063-e6bf-4a68-9576-98b5de65654f -->
 
 **Objective**: Fix text contrast issues in light mode by adding Element Plus CSS variable overrides.
 
