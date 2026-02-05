@@ -9,6 +9,7 @@
     "gen": "npx openapi-ts --file ../openApi/config.backend.ts",
     "build": "vite build",
     "preview": "vite preview",
+    "type-check": "vue-tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage"

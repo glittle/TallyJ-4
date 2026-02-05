@@ -3,40 +3,12 @@ import { useI18n } from "vue-i18n";
 import { ElButton, ElIcon } from "element-plus";
 import { Sunny, Moon } from "@element-plus/icons-vue";
 import { useThemeStore } from "../../stores/themeStore";
-import { useDark } from "@vueuse/core";
-import { watch } from "vue";
 
 useI18n();
 const themeStore = useThemeStore();
 
-// Integrate useDark with the theme store
-const isDark = useDark({
-  storageKey: "theme",
-  valueDark: "dark",
-  valueLight: "light",
-  selector: "html",
-  attribute: "class",
-  storage: localStorage,
-});
-
-// Sync theme store with useDark
-watch(
-  () => themeStore.theme,
-  (newTheme) => {
-    isDark.value = newTheme === "dark";
-  },
-  { immediate: true }
-);
-
-// Sync useDark with theme store
-watch(isDark, (newIsDark) => {
-  if (themeStore.theme !== (newIsDark ? "dark" : "light")) {
-    themeStore.setTheme(newIsDark ? "dark" : "light");
-  }
-});
-
 const toggleTheme = () => {
-  themeStore.setTheme(themeStore.theme === "dark" ? "light" : "dark");
+  themeStore.toggleTheme();
 };
 </script>
 
