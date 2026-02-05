@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -135,6 +136,28 @@ services.AddAuthentication(options =>
         }
     };
 });
+
+// Add Google authentication (optional - gracefully handles missing credentials)
+var googleClientId = builderConfiguration["Google:ClientId"];
+var googleClientSecret = builderConfiguration["Google:ClientSecret"];
+
+if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret) 
+    && !googleClientId.StartsWith("<") && !googleClientSecret.StartsWith("<"))
+{
+    services.AddAuthentication()
+        .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+        {
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+            options.CallbackPath = "/api/auth/google/callback";
+            options.SaveTokens = true;
+        });
+    Log.Information("Google authentication configured successfully");
+}
+else
+{
+    Log.Warning("Google authentication not configured - ClientId or ClientSecret is missing or using placeholder values. Google login will not be available.");
+}
 
 // Optional: Customize Identity options (e.g., password requirements)
 services.Configure<IdentityOptions>(options =>
