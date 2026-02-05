@@ -2,13 +2,13 @@
   <main class="dashboard-page">
     <section class="welcome-section" aria-labelledby="welcome-heading">
       <el-card class="welcome-card">
-        <h1 id="welcome-heading">{{ $t('dashboard.welcome') }}</h1>
-        <p>{{ $t('dashboard.subtitle') }}</p>
+        <h1 id="welcome-heading">{{ $t("dashboard.welcome") }}</h1>
+        <p>{{ $t("dashboard.subtitle") }}</p>
       </el-card>
     </section>
 
     <section class="stats-section" aria-labelledby="stats-heading">
-      <h2 id="stats-heading" class="sr-only">{{ $t('dashboard.statistics') }}</h2>
+      <h2 id="stats-heading" class="sr-only">{{ $t("dashboard.statistics") }}</h2>
       <el-row :gutter="20" class="stats-row" role="list" aria-label="Election statistics">
         <el-col :xs="24" :sm="12" :md="6" role="listitem">
           <el-card class="stat-card">
@@ -16,8 +16,13 @@
               <el-icon><Document /></el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value" aria-label="{{ statistics.totalElections }} total elections">{{ statistics.totalElections }}</div>
-              <div class="stat-label">{{ $t('dashboard.totalElections') }}</div>
+              <div
+                class="stat-value"
+                aria-label="{{ statistics.totalElections }} total elections"
+              >
+                {{ statistics.totalElections }}
+              </div>
+              <div class="stat-label">{{ $t("dashboard.totalElections") }}</div>
             </div>
           </el-card>
         </el-col>
@@ -27,8 +32,13 @@
               <el-icon><CircleCheck /></el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value" aria-label="{{ statistics.activeElections }} active elections">{{ statistics.activeElections }}</div>
-              <div class="stat-label">{{ $t('dashboard.activeElections') }}</div>
+              <div
+                class="stat-value"
+                aria-label="{{ statistics.activeElections }} active elections"
+              >
+                {{ statistics.activeElections }}
+              </div>
+              <div class="stat-label">{{ $t("dashboard.activeElections") }}</div>
             </div>
           </el-card>
         </el-col>
@@ -38,8 +48,13 @@
               <el-icon><UserFilled /></el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value" aria-label="{{ statistics.totalVoters }} total voters">{{ statistics.totalVoters }}</div>
-              <div class="stat-label">{{ $t('dashboard.totalVoters') }}</div>
+              <div
+                class="stat-value"
+                aria-label="{{ statistics.totalVoters }} total voters"
+              >
+                {{ statistics.totalVoters }}
+              </div>
+              <div class="stat-label">{{ $t("dashboard.totalVoters") }}</div>
             </div>
           </el-card>
         </el-col>
@@ -49,8 +64,13 @@
               <el-icon><Tickets /></el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value" aria-label="{{ statistics.totalBallots }} total ballots">{{ statistics.totalBallots }}</div>
-              <div class="stat-label">{{ $t('dashboard.totalBallots') }}</div>
+              <div
+                class="stat-value"
+                aria-label="{{ statistics.totalBallots }} total ballots"
+              >
+                {{ statistics.totalBallots }}
+              </div>
+              <div class="stat-label">{{ $t("dashboard.totalBallots") }}</div>
             </div>
           </el-card>
         </el-col>
@@ -61,43 +81,82 @@
       <el-card class="recent-elections-card">
         <template #header>
           <div class="card-header">
-            <h2 id="recent-elections-heading">{{ $t('dashboard.recentElections') }}</h2>
-            <el-button type="primary" @click="createElection" aria-label="Create new election">
+            <h2 id="recent-elections-heading">{{ $t("dashboard.recentElections") }}</h2>
+            <el-button
+              type="primary"
+              @click="createElection"
+              aria-label="Create new election"
+            >
               <el-icon aria-hidden="true"><Plus /></el-icon>
-              {{ $t('elections.createNew') }}
+              {{ $t("elections.createNew") }}
             </el-button>
           </div>
         </template>
-        <div v-if="loading" class="loading-container" aria-live="polite" aria-label="Loading recent elections">
+        <div
+          v-if="loading"
+          class="loading-container"
+          aria-live="polite"
+          aria-label="Loading recent elections"
+        >
           <el-skeleton :rows="3" animated />
         </div>
         <div v-else-if="elections.length === 0" class="empty-state">
           <el-empty :description="$t('dashboard.noElections')" aria-live="polite">
-            <el-button type="primary" @click="createElection" aria-label="Create your first election">
-              {{ $t('elections.createFirst') }}
+            <el-button
+              type="primary"
+              @click="createElection"
+              aria-label="Create your first election"
+            >
+              {{ $t("elections.createFirst") }}
             </el-button>
           </el-empty>
         </div>
-        <div v-else role="table" aria-label="Recent elections table" class="elections-table-container">
+        <div
+          v-else
+          role="table"
+          aria-label="Recent elections table"
+          class="elections-table-container"
+        >
           <el-table :data="elections" style="width: 100%">
             <el-table-column prop="name" :label="$t('elections.name')" min-width="200" />
-            <el-table-column prop="electionType" :label="$t('elections.type')" width="120" />
-            <el-table-column prop="dateOfElection" :label="$t('elections.date')" width="140">
+            <el-table-column
+              prop="electionType"
+              :label="$t('elections.type')"
+              width="120"
+            />
+            <el-table-column
+              prop="dateOfElection"
+              :label="$t('elections.date')"
+              width="140"
+            >
               <template #default="scope">
-                <time :datetime="scope.row.dateOfElection">{{ formatDate(scope.row.dateOfElection) }}</time>
+                <time :datetime="scope.row.dateOfElection">{{
+                  formatDate(scope.row.dateOfElection)
+                }}</time>
               </template>
             </el-table-column>
-            <el-table-column prop="tallyStatus" :label="$t('elections.status')" width="120">
+            <el-table-column
+              prop="tallyStatus"
+              :label="$t('elections.status')"
+              width="120"
+            >
               <template #default="scope">
-                <el-tag :type="getStatusType(scope.row.tallyStatus)" aria-label="Status: {{ scope.row.tallyStatus || 'Draft' }}">
-                  {{ scope.row.tallyStatus || 'Draft' }}
+                <el-tag
+                  :type="getStatusType(scope.row.tallyStatus)"
+                  aria-label="Status: {{ scope.row.tallyStatus || 'Draft' }}"
+                >
+                  {{ scope.row.tallyStatus || "Draft" }}
                 </el-tag>
               </template>
             </el-table-column>
             <el-table-column :label="$t('common.actions')" width="150" fixed="right">
               <template #default="scope">
-                <el-button size="small" @click="viewElection(scope.row.electionGuid)" :aria-label="'View election: ' + scope.row.name">
-                  {{ $t('common.view') }}
+                <el-button
+                  size="small"
+                  @click="viewElection(scope.row.electionGuid)"
+                  :aria-label="'View election: ' + scope.row.name"
+                >
+                  {{ $t("common.view") }}
                 </el-button>
               </template>
             </el-table-column>
@@ -109,10 +168,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { Document, CircleCheck, UserFilled, Tickets, Plus } from '@element-plus/icons-vue';
-import { useElectionStore } from '../stores/electionStore';
+import { computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import {
+  Document,
+  CircleCheck,
+  UserFilled,
+  Tickets,
+  Plus,
+} from "@element-plus/icons-vue";
+import { useElectionStore } from "../stores/electionStore";
 
 const router = useRouter();
 const electionStore = useElectionStore();
@@ -124,7 +189,7 @@ const statistics = computed(() => ({
   totalElections: electionStore.elections.length,
   activeElections: electionStore.activeElections.length,
   totalVoters: electionStore.elections.reduce((sum, e) => sum + e.voterCount, 0),
-  totalBallots: electionStore.elections.reduce((sum, e) => sum + e.ballotCount, 0)
+  totalBallots: electionStore.elections.reduce((sum, e) => sum + e.ballotCount, 0),
 }));
 
 onMounted(async () => {
@@ -136,12 +201,12 @@ async function loadDashboardData() {
     await electionStore.fetchElections();
     await electionStore.initializeSignalR();
   } catch (error) {
-    console.error('Failed to load dashboard data:', error);
+    console.error("Failed to load dashboard data:", error);
   }
 }
 
 function createElection() {
-  router.push('/elections/create');
+  router.push("/elections/create");
 }
 
 function viewElection(guid: string) {
@@ -149,24 +214,24 @@ function viewElection(guid: string) {
 }
 
 function formatDate(date: string) {
-  if (!date) return '-';
+  if (!date) return "-";
   return new Date(date).toLocaleDateString();
 }
 
 function getStatusType(status: string) {
   const typeMap: Record<string, any> = {
-    'Draft': '',
-    'Voting': 'success',
-    'Tallying': 'warning',
-    'Finalized': 'info'
+    Draft: "",
+    Voting: "success",
+    Tallying: "warning",
+    Finalized: "info",
   };
-  return typeMap[status] || '';
+  return typeMap[status] || "";
 }
 </script>
 
 <style lang="less">
 .dashboard-page {
-  max-width: 1400px;
+  // max-width: 1400px;
   margin: 0 auto;
   padding: var(--spacing-6) var(--spacing-4);
 }
@@ -200,6 +265,10 @@ function getStatusType(status: string) {
   line-height: var(--line-height-relaxed);
 }
 
+.el-col-md-6 {
+  max-width: none;
+}
+
 .stats-section {
   margin-bottom: var(--spacing-8);
 }
@@ -218,13 +287,17 @@ function getStatusType(status: string) {
 }
 
 .stat-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
   opacity: 0;
   transition: var(--transition-normal);
 }

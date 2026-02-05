@@ -139,8 +139,9 @@ function closeMobileSidebar() {
 @media (min-width: 1400px) {
   .main-layout {
     .el-main {
-      max-width: 1400px;
+      // max-width: 1400px;
       margin: 0 auto;
+      width: 100%;
     }
   }
 }
