@@ -309,4 +309,26 @@ public class PeopleService : IPeopleService
             return dto;
         }).ToList();
     }
+
+    /// <summary>
+    /// Retrieves all candidates (people who can receive votes) for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A list of all candidates ordered by last name and first name, including phonetic sound codes.</returns>
+    public async Task<List<PersonDto>> GetCandidatesAsync(Guid electionGuid)
+    {
+        var candidates = await _context.People
+            .Where(p => p.ElectionGuid == electionGuid && p.CanReceiveVotes == true)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
+            .Include(p => p.Results)
+            .ToListAsync();
+
+        return candidates.Select(p =>
+        {
+            var dto = _mapper.Map<PersonDto>(p);
+            dto.VoteCount = p.Results.FirstOrDefault()?.VoteCount ?? 0;
+            return dto;
+        }).ToList();
+    }
 }

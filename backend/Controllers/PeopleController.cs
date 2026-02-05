@@ -77,6 +77,18 @@ public class PeopleController : ControllerBase
     }
 
     /// <summary>
+    /// Gets all candidates (people who can receive votes) for the specified election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <returns>A list of all candidates with phonetic sound codes.</returns>
+    [HttpGet("election/{electionGuid}/candidates")]
+    public async Task<ActionResult<ApiResponse<List<PersonDto>>>> GetCandidates(Guid electionGuid)
+    {
+        var candidates = await _peopleService.GetCandidatesAsync(electionGuid);
+        return Ok(ApiResponse<List<PersonDto>>.SuccessResponse(candidates));
+    }
+
+    /// <summary>
     /// Gets a specific person by their GUID.
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>

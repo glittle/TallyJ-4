@@ -75,7 +75,8 @@ Add the `CombinedSoundCodes` field to PersonDto so that phonetic search codes ar
 
 ---
 
-### [ ] Step: Backend API - Create GetCandidates Endpoint
+### [x] Step: Backend API - Create GetCandidates Endpoint
+<!-- chat-id: 952c337f-ed81-4077-b2f9-b5dcb2eae84a -->
 
 **Files to create/modify**:
 - `backend/Services/IPeopleService.cs` - Add `GetCandidatesAsync` method signature
