@@ -6,6 +6,9 @@ using TallyJ4.Services;
 
 namespace TallyJ4.Backend.Controllers;
 
+/// <summary>
+/// Controller for managing front desk operations including voter check-in and roll call.
+/// </summary>
 [ApiController]
 [Route("api/elections/{electionGuid}/frontdesk")]
 [Authorize]
@@ -14,12 +17,22 @@ public class FrontDeskController : ControllerBase
     private readonly IFrontDeskService _frontDeskService;
     private readonly ILogger<FrontDeskController> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FrontDeskController"/> class.
+    /// </summary>
+    /// <param name="frontDeskService">The front desk service.</param>
+    /// <param name="logger">The logger.</param>
     public FrontDeskController(IFrontDeskService frontDeskService, ILogger<FrontDeskController> logger)
     {
         _frontDeskService = frontDeskService;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Gets the list of eligible voters for an election.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <returns>A list of eligible voters.</returns>
     [HttpGet("eligible-voters")]
     public async Task<ActionResult<ApiResponse<List<FrontDeskVoterDto>>>> GetEligibleVoters(Guid electionGuid)
     {
@@ -35,6 +48,12 @@ public class FrontDeskController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Checks in a voter for an election.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="checkInDto">The check-in data.</param>
+    /// <returns>The updated voter information.</returns>
     [HttpPost("checkin")]
     public async Task<ActionResult<ApiResponse<FrontDeskVoterDto>>> CheckInVoter(
         Guid electionGuid, 
@@ -57,6 +76,11 @@ public class FrontDeskController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Gets the roll call information for an election.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <returns>The roll call information.</returns>
     [HttpGet("rollcall")]
     public async Task<ActionResult<ApiResponse<RollCallDto>>> GetRollCall(Guid electionGuid)
     {
@@ -72,6 +96,11 @@ public class FrontDeskController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Gets the front desk statistics for an election.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <returns>The front desk statistics.</returns>
     [HttpGet("stats")]
     public async Task<ActionResult<ApiResponse<FrontDeskStatsDto>>> GetStats(Guid electionGuid)
     {

@@ -7,12 +7,21 @@ using TallyJ4.Models;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service implementation for managing audit logs.
+/// </summary>
 public class AuditLogService : IAuditLogService
 {
     private readonly MainDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<AuditLogService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuditLogService"/> class.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="mapper">The AutoMapper instance.</param>
+    /// <param name="logger">The logger instance.</param>
     public AuditLogService(MainDbContext context, IMapper mapper, ILogger<AuditLogService> logger)
     {
         _context = context;
@@ -20,6 +29,7 @@ public class AuditLogService : IAuditLogService
         _logger = logger;
     }
 
+    /// <inheritdoc />
     public async Task<PaginatedResponse<AuditLogDto>> GetAuditLogsAsync(
         AuditLogFilterDto? filter = null,
         int pageNumber = 1,
@@ -89,6 +99,7 @@ public class AuditLogService : IAuditLogService
         return PaginatedResponse<AuditLogDto>.Create(logDtos, pageNumber, pageSize, totalCount);
     }
 
+    /// <inheritdoc />
     public async Task<AuditLogDto?> GetAuditLogByIdAsync(int rowId)
     {
         var log = await _context.Logs
@@ -108,6 +119,7 @@ public class AuditLogService : IAuditLogService
         return logDto;
     }
 
+    /// <inheritdoc />
     public async Task<AuditLogDto> CreateAuditLogAsync(CreateAuditLogDto createDto)
     {
         _logger.LogInformation("Creating new audit log entry");

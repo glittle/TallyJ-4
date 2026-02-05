@@ -7,12 +7,21 @@ using TallyJ4.Models;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service implementation for managing tellers in an election.
+/// </summary>
 public class TellerService : ITellerService
 {
     private readonly MainDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<TellerService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TellerService"/> class.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="mapper">The AutoMapper instance.</param>
+    /// <param name="logger">The logger instance.</param>
     public TellerService(MainDbContext context, IMapper mapper, ILogger<TellerService> logger)
     {
         _context = context;
@@ -20,6 +29,7 @@ public class TellerService : ITellerService
         _logger = logger;
     }
 
+    /// <inheritdoc />
     public async Task<PaginatedResponse<TellerDto>> GetTellersByElectionAsync(
         Guid electionGuid,
         int pageNumber = 1,
@@ -49,6 +59,7 @@ public class TellerService : ITellerService
         return PaginatedResponse<TellerDto>.Create(tellerDtos, pageNumber, pageSize, totalCount);
     }
 
+    /// <inheritdoc />
     public async Task<TellerDto?> GetTellerByIdAsync(int rowId)
     {
         var teller = await _context.Tellers
@@ -68,6 +79,7 @@ public class TellerService : ITellerService
         return tellerDto;
     }
 
+    /// <inheritdoc />
     public async Task<TellerDto> CreateTellerAsync(CreateTellerDto createDto)
     {
         _logger.LogInformation("Creating new teller: {TellerName} for election {ElectionGuid}", createDto.Name, createDto.ElectionGuid);
@@ -89,6 +101,7 @@ public class TellerService : ITellerService
         return tellerDto;
     }
 
+    /// <inheritdoc />
     public async Task<TellerDto?> UpdateTellerAsync(int rowId, UpdateTellerDto updateDto)
     {
         _logger.LogInformation("Updating teller {RowId}", rowId);
@@ -118,6 +131,7 @@ public class TellerService : ITellerService
         return tellerDto;
     }
 
+    /// <inheritdoc />
     public async Task<bool> DeleteTellerAsync(int rowId)
     {
         _logger.LogInformation("Deleting teller {RowId}", rowId);
@@ -140,6 +154,7 @@ public class TellerService : ITellerService
         return true;
     }
 
+    /// <inheritdoc />
     public async Task<bool> IsTellerNameUniqueAsync(Guid electionGuid, string name, int? excludeRowId = null)
     {
         var query = _context.Tellers

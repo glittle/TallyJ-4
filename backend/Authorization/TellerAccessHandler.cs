@@ -4,17 +4,31 @@ using TallyJ4.Domain.Context;
 
 namespace TallyJ4.Authorization;
 
+/// <summary>
+/// Authorization handler that verifies if a user is a teller for an election.
+/// </summary>
 public class TellerAccessHandler : AuthorizationHandler<TellerAccessRequirement>
 {
     private readonly MainDbContext _context;
     private readonly ILogger<TellerAccessHandler> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TellerAccessHandler"/> class.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="logger">The logger.</param>
     public TellerAccessHandler(MainDbContext context, ILogger<TellerAccessHandler> logger)
     {
         _context = context;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Handles the authorization requirement by checking if the user is a teller for the specified election.
+    /// </summary>
+    /// <param name="context">The authorization handler context.</param>
+    /// <param name="requirement">The teller access requirement.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         TellerAccessRequirement requirement)

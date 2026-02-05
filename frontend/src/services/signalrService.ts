@@ -7,8 +7,7 @@ class SignalRService {
   private baseUrl: string;
 
   constructor() {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016/api';
-    this.baseUrl = apiUrl.replace('/api', '');
+    this.baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
   }
 
   async connect(hubPath: string, accessToken?: string): Promise<signalR.HubConnection> {
@@ -21,10 +20,13 @@ class SignalRService {
     
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(hubUrl, {
-        accessTokenFactory: () => accessToken ?? localStorage.getItem('auth_token') ?? ''
+        accessTokenFactory: () => {
+          const token = accessToken ?? localStorage.getItem('auth_token');
+          return token || '';
+        }
       })
       .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
-      .configureLogging(signalR.LogLevel.Information)
+      .configureLogging(signalR.LogLevel.Warning)
       .build();
 
     connection.onclose((error) => {

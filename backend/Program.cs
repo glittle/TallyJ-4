@@ -108,11 +108,23 @@ services.AddAuthentication(options =>
         },
         OnMessageReceived = context =>
         {
-            var authHeader = context.Request.Headers["Authorization"].ToString();
-            var hasBearer = authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
-            var tokenLength = hasBearer ? authHeader.Substring(7).Length : 0;
-            Log.Information("JWT Message received - Header: {HasHeader}, HasBearer: {HasBearer}, TokenLength: {TokenLength}, ActualHeader: '{AuthHeader}'", 
-                !string.IsNullOrEmpty(authHeader), hasBearer, tokenLength, authHeader.Length > 100 ? authHeader.Substring(0, 100) + "..." : authHeader);
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+            {
+                context.Token = accessToken;
+                Log.Information("JWT Token received from query string for SignalR hub: {Path}, TokenLength: {TokenLength}", 
+                    path, accessToken.ToString().Length);
+            }
+            else
+            {
+                var authHeader = context.Request.Headers["Authorization"].ToString();
+                var hasBearer = authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
+                var tokenLength = hasBearer ? authHeader.Substring(7).Length : 0;
+                Log.Information("JWT Message received - Header: {HasHeader}, HasBearer: {HasBearer}, TokenLength: {TokenLength}, ActualHeader: '{AuthHeader}'", 
+                    !string.IsNullOrEmpty(authHeader), hasBearer, tokenLength, authHeader.Length > 100 ? authHeader.Substring(0, 100) + "..." : authHeader);
+            }
             return Task.CompletedTask;
         },
         OnChallenge = context =>

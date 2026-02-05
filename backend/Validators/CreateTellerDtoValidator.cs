@@ -3,8 +3,14 @@ using TallyJ4.DTOs.Tellers;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for <see cref="CreateTellerDto"/>.
+/// </summary>
 public class CreateTellerDtoValidator : AbstractValidator<CreateTellerDto>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CreateTellerDtoValidator"/> class.
+    /// </summary>
     public CreateTellerDtoValidator()
     {
         RuleFor(x => x.ElectionGuid)

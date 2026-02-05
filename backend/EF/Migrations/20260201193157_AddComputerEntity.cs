@@ -41,7 +41,7 @@ namespace TallyJ4.EF.Migrations
                         column: x => x.LocationGuid,
                         principalTable: "Locations",
                         principalColumn: "LocationGuid",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(

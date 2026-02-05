@@ -7,17 +7,31 @@ using TallyJ4.Hubs;
 
 namespace TallyJ4.Backend.Services;
 
+/// <summary>
+/// Service for importing ballot data from CSV files.
+/// </summary>
 public class ImportService
 {
     private readonly MainDbContext _context;
     private readonly IHubContext<BallotImportHub> _hubContext;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ImportService"/> class.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="hubContext">The SignalR hub context for ballot import notifications.</param>
     public ImportService(MainDbContext context, IHubContext<BallotImportHub> hubContext)
     {
         _context = context;
         _hubContext = hubContext;
     }
 
+    /// <summary>
+    /// Parses CSV headers and provides a preview of the data.
+    /// </summary>
+    /// <param name="csvContent">The CSV content to parse.</param>
+    /// <param name="delimiter">The delimiter used in the CSV file (default: comma).</param>
+    /// <returns>A task that represents the asynchronous operation, containing the parsed headers and preview rows.</returns>
     public async Task<ParseCsvHeadersResponseDto> ParseCsvHeadersAsync(string csvContent, string delimiter = ",")
     {
         var response = new ParseCsvHeadersResponseDto();
@@ -44,6 +58,11 @@ public class ImportService
         return response;
     }
 
+    /// <summary>
+    /// Imports ballot data from a CSV file.
+    /// </summary>
+    /// <param name="request">The import request containing CSV content and configuration.</param>
+    /// <returns>A task that represents the asynchronous operation, containing the import result.</returns>
     public async Task<ImportResultDto> ImportBallotDataAsync(ImportBallotRequestDto request)
     {
         var result = new ImportResultDto();

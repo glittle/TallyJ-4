@@ -84,7 +84,7 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
             entity.HasOne(d => d.Location).WithMany()
                 .HasPrincipalKey(p => p.LocationGuid)
                 .HasForeignKey(d => d.LocationGuid)
-                .OnDelete(DeleteBehavior.Cascade)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK_Computer_Location");
         });
 

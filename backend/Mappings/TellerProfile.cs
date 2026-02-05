@@ -4,8 +4,14 @@ using TallyJ4.DTOs.Tellers;
 
 namespace TallyJ4.Mappings;
 
+/// <summary>
+/// AutoMapper profile for teller entity and DTO mappings.
+/// </summary>
 public class TellerProfile : Profile
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TellerProfile"/> class.
+    /// </summary>
     public TellerProfile()
     {
         CreateMap<Teller, TellerDto>()

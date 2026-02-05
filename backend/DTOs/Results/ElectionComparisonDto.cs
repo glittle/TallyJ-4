@@ -8,7 +8,7 @@ public class ElectionComparisonDto
     /// <summary>
     /// List of elections being compared.
     /// </summary>
-    public List<ElectionSummaryDto> Elections { get; set; } = new();
+    public List<ResultsElectionSummaryDto> Elections { get; set; } = new();
 
     /// <summary>
     /// Aggregated metrics across all compared elections.
@@ -24,7 +24,7 @@ public class ElectionComparisonDto
 /// <summary>
 /// Summary information for a single election.
 /// </summary>
-public class ElectionSummaryDto
+public class ResultsElectionSummaryDto
 {
     /// <summary>
     /// The unique identifier of the election.

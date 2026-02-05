@@ -3,8 +3,14 @@ using TallyJ4.DTOs.OnlineVoting;
 
 namespace TallyJ4.Validators;
 
+/// <summary>
+/// Validator for <see cref="VerifyCodeDto"/>.
+/// </summary>
 public class VerifyCodeDtoValidator : AbstractValidator<VerifyCodeDto>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VerifyCodeDtoValidator"/> class.
+    /// </summary>
     public VerifyCodeDtoValidator()
     {
         RuleFor(x => x.VoterId)

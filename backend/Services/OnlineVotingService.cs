@@ -10,12 +10,21 @@ using TallyJ4.DTOs.OnlineVoting;
 
 namespace TallyJ4.Services;
 
+/// <summary>
+/// Service for managing online voting operations.
+/// </summary>
 public class OnlineVotingService : IOnlineVotingService
 {
     private readonly MainDbContext _context;
     private readonly IConfiguration _configuration;
     private readonly ILogger<OnlineVotingService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OnlineVotingService"/> class.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="configuration">The application configuration.</param>
+    /// <param name="logger">The logger instance.</param>
     public OnlineVotingService(
         MainDbContext context, 
         IConfiguration configuration,
@@ -26,6 +35,7 @@ public class OnlineVotingService : IOnlineVotingService
         _logger = logger;
     }
 
+    /// <inheritdoc/>
     public async Task<(bool Success, string? Error)> RequestVerificationCodeAsync(RequestCodeDto dto)
     {
         try
@@ -71,6 +81,7 @@ public class OnlineVotingService : IOnlineVotingService
         }
     }
 
+    /// <inheritdoc/>
     public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> VerifyCodeAsync(VerifyCodeDto dto)
     {
         try
@@ -134,6 +145,7 @@ public class OnlineVotingService : IOnlineVotingService
         }
     }
 
+    /// <inheritdoc/>
     public async Task<OnlineElectionInfoDto?> GetElectionInfoAsync(Guid electionGuid)
     {
         var election = await _context.Elections
@@ -165,6 +177,7 @@ public class OnlineVotingService : IOnlineVotingService
         };
     }
 
+    /// <inheritdoc/>
     public async Task<List<OnlineCandidateDto>> GetCandidatesAsync(Guid electionGuid)
     {
         var candidates = await _context.People
@@ -182,6 +195,7 @@ public class OnlineVotingService : IOnlineVotingService
         return candidates;
     }
 
+    /// <inheritdoc/>
     public async Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
@@ -308,6 +322,7 @@ public class OnlineVotingService : IOnlineVotingService
         }
     }
 
+    /// <inheritdoc/>
     public async Task<OnlineVoteStatusDto> GetVoteStatusAsync(Guid electionGuid, string voterId)
     {
         var person = await _context.People

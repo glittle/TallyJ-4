@@ -4,8 +4,14 @@ using TallyJ4.Domain.Entities;
 
 namespace TallyJ4.Mappings;
 
+/// <summary>
+/// AutoMapper profile for computer entity and DTO mappings.
+/// </summary>
 public class ComputerProfile : Profile
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ComputerProfile"/> class.
+    /// </summary>
     public ComputerProfile()
     {
         CreateMap<Computer, ComputerDto>();

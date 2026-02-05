@@ -6,6 +6,9 @@ using TallyJ4.Services;
 
 namespace TallyJ4.Backend.Controllers;
 
+/// <summary>
+/// Controller for managing teller operations including creation, retrieval, updates, and deletion.
+/// </summary>
 [ApiController]
 [Route("api/elections/{electionGuid}/tellers")]
 [Authorize]
@@ -14,12 +17,24 @@ public class TellersController : ControllerBase
     private readonly ITellerService _tellerService;
     private readonly ILogger<TellersController> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TellersController"/> class.
+    /// </summary>
+    /// <param name="tellerService">The teller service.</param>
+    /// <param name="logger">The logger.</param>
     public TellersController(ITellerService tellerService, ILogger<TellersController> logger)
     {
         _tellerService = tellerService;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Gets a paginated list of tellers for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="pageNumber">The page number (default: 1).</param>
+    /// <param name="pageSize">The page size (default: 50, max: 200).</param>
+    /// <returns>A paginated response containing tellers.</returns>
     [HttpGet]
     public async Task<ActionResult<PaginatedResponse<TellerDto>>> GetTellersByElection(
         Guid electionGuid,
@@ -35,6 +50,12 @@ public class TellersController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Gets a specific teller by ID.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="rowId">The teller row ID.</param>
+    /// <returns>The teller information.</returns>
     [HttpGet("{rowId}")]
     public async Task<ActionResult<ApiResponse<TellerDto>>> GetTeller(Guid electionGuid, int rowId)
     {
@@ -53,6 +74,12 @@ public class TellersController : ControllerBase
         return Ok(ApiResponse<TellerDto>.SuccessResponse(teller));
     }
 
+    /// <summary>
+    /// Creates a new teller for an election.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="createDto">The teller creation data.</param>
+    /// <returns>The created teller information.</returns>
     [HttpPost]
     public async Task<ActionResult<ApiResponse<TellerDto>>> CreateTeller(Guid electionGuid, CreateTellerDto createDto)
     {
@@ -76,6 +103,13 @@ public class TellersController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Updates an existing teller.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="rowId">The teller row ID.</param>
+    /// <param name="updateDto">The updated teller data.</param>
+    /// <returns>The updated teller information.</returns>
     [HttpPut("{rowId}")]
     public async Task<ActionResult<ApiResponse<TellerDto>>> UpdateTeller(
         Guid electionGuid,
@@ -104,6 +138,12 @@ public class TellersController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Deletes a teller by ID.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="rowId">The teller row ID.</param>
+    /// <returns>A success response if the teller was deleted.</returns>
     [HttpDelete("{rowId}")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteTeller(Guid electionGuid, int rowId)
     {

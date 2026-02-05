@@ -7,7 +7,6 @@ import shared from "./shared.json";
 function deepMerge(target: any, source: any): any {
   const result = { ...target };
   for (const key in source) {
-    console.log("Merging key:", key);
     if (
       source[key] &&
       typeof source[key] === "object" &&
@@ -25,7 +24,6 @@ function deepMerge(target: any, source: any): any {
 function flatToNested(flat: any): any {
   const result: any = {};
   for (const key in flat) {
-    console.log("Flattening key:", key);
     const keys = key.split(".");
     let current = result;
     for (let i = 0; i < keys.length - 1; i++) {

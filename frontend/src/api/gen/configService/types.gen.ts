@@ -4,173 +4,639 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
-export type TallyJ4ApplicationDtosAuthAssignRoleRequest = {
+/**
+ * Advanced filtering options for reports
+ */
+export type AdvancedFilterDto = {
+    dateRange?: DateRangeFilterDto;
+    /**
+     * List of location names to filter by.
+     */
+    locations?: Array<string> | null;
+    /**
+     * List of candidate names to filter by.
+     */
+    candidateNames?: Array<string> | null;
+    voteCountRange?: NumericRangeFilterDto;
+    turnoutRange?: NumericRangeFilterDto;
+    /**
+     * List of ballot statuses to filter by.
+     */
+    ballotStatuses?: Array<string> | null;
+    /**
+     * Filter to show only elected candidates.
+     */
+    onlyElected?: boolean | null;
+    /**
+     * Field to sort by (name, votes, turnout, etc.).
+     */
+    sortBy?: string | null;
+    /**
+     * Sort order (asc, desc).
+     */
+    sortOrder?: string | null;
+    /**
+     * Page number for pagination (1-based).
+     */
+    pageNumber?: number | null;
+    /**
+     * Number of items per page.
+     */
+    pageSize?: number | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseAuditLogDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: AuditLogDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseBallotDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: BallotDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseBoolean = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
+    data?: boolean;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseComputerDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: ComputerDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseDashboardSummaryDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: DashboardSummaryDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseElectionDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: ElectionDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseElectionSetupStatusDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: ElectionSetupStatusDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseElectionStatusDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: ElectionStatusDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseFrontDeskStatsDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: FrontDeskStatsDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseFrontDeskVoterDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: FrontDeskVoterDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseListAvailableElectionDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
+    data?: Array<AvailableElectionDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseListComputerDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
+    data?: Array<ComputerDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseListElectionCardDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
+    data?: Array<ElectionCardDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseListFrontDeskVoterDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
+    data?: Array<FrontDeskVoterDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseListPersonDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
+    data?: Array<PersonDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseListVoteDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
+    data?: Array<VoteDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseLocationDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: LocationDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseObject = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
+    data?: unknown;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponsePersonDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: PersonDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponsePublicDisplayDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: PublicDisplayDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponsePublicHomeDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: PublicHomeDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseRollCallDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: RollCallDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseTellerDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: TellerDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseUserProfileDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: UserProfileDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseVoteDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: VoteDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+export type AssignRoleRequest = {
     roleName: string;
 };
 
-export type TallyJ4ApplicationDtosAuthDisable2FaRequest = {
-    password: string;
-    code: string;
-};
-
-export type TallyJ4ApplicationDtosAuthEnable2FaRequest = {
-    code: string;
-};
-
-export type TallyJ4ApplicationDtosAuthForgotPasswordRequest = {
-    email: string;
-};
-
-export type TallyJ4ApplicationDtosAuthLoginRequest = {
-    email: string;
-    password: string;
-    twoFactorCode?: string | null;
-};
-
-export type TallyJ4ApplicationDtosAuthRefreshTokenRequest = {
-    refreshToken: string;
-};
-
-export type TallyJ4ApplicationDtosAuthRegisterRequest = {
-    email: string;
-    password: string;
-    confirmPassword: string;
-};
-
-export type TallyJ4ApplicationDtosAuthResetPasswordRequest = {
-    token: string;
-    email: string;
-    newPassword: string;
-    confirmPassword: string;
-};
-
-export type TallyJ4ApplicationDtosAuthVerify2FaRequest = {
-    email: string;
-    code: string;
-};
-
 /**
- * Request model for importing ballot data.
+ * Data transfer object representing an audit log entry.
  */
-export type TallyJ4BackendControllersImportBallotsRequest = {
+export type AuditLogDto = {
     /**
-     * The CSV content containing ballot data to import.
+     * The unique row identifier for the audit log entry.
      */
-    csvContent?: string | null;
-};
-
-/**
- * Request model for setting a computer's physical location.
- */
-export type TallyJ4ControllersChooseLocationRequest = {
+    rowId?: number;
     /**
-     * The computer code identifier.
+     * The timestamp when the audit log entry was created.
+     */
+    asOf?: Date;
+    /**
+     * The unique identifier of the election associated with this audit log entry.
+     */
+    electionGuid?: string | null;
+    /**
+     * The unique identifier of the location associated with this audit log entry.
+     */
+    locationGuid?: string | null;
+    /**
+     * The voter ID associated with this audit log entry.
+     */
+    voterId?: string | null;
+    /**
+     * The computer code associated with this audit log entry.
      */
     computerCode?: string | null;
     /**
-     * The GUID of the location to assign to the computer.
+     * Details of the audited action.
      */
-    locationGuid?: string;
+    details?: string | null;
+    /**
+     * The host and version information.
+     */
+    hostAndVersion?: string | null;
 };
 
 /**
- * Request model for assigning a guest teller to an election.
+ * Data transfer object representing an election available for public access.
  */
-export type TallyJ4ControllersChooseTellerRequest = {
+export type AvailableElectionDto = {
     /**
-     * The GUID of the election to assign the teller to.
+     * The unique identifier for the election.
      */
     electionGuid?: string;
     /**
-     * The name of the teller to assign.
+     * The name of the election.
      */
-    tellerName?: string | null;
-};
-
-/**
- * Request model for removing a guest teller from an election.
- */
-export type TallyJ4ControllersDeleteTellerRequest = {
+    name?: string | null;
     /**
-     * The GUID of the election to remove the teller from.
+     * The date when the election will be held.
      */
-    electionGuid?: string;
+    dateOfElection?: Date | null;
     /**
-     * The name of the teller to remove.
+     * The type of election (e.g., "normal", "single-name").
      */
-    tellerName?: string | null;
-};
-
-/**
- * Data transfer object for changing a user's password.
- */
-export type TallyJ4DtosAccountChangePasswordDto = {
-    /**
-     * The user's current password.
-     */
-    currentPassword?: string | null;
-    /**
-     * The new password to set.
-     */
-    newPassword?: string | null;
-    /**
-     * Confirmation of the new password.
-     */
-    confirmPassword?: string | null;
-};
-
-/**
- * Data transfer object for updating user profile information.
- */
-export type TallyJ4DtosAccountUpdateUserProfileDto = {
-    /**
-     * The new username for the user.
-     */
-    userName?: string | null;
-    /**
-     * The new email address for the user.
-     */
-    email?: string | null;
-    /**
-     * The new phone number for the user.
-     */
-    phoneNumber?: string | null;
-};
-
-/**
- * Data transfer object representing a user's profile information.
- */
-export type TallyJ4DtosAccountUserProfileDto = {
-    /**
-     * The unique identifier of the user.
-     */
-    id?: string | null;
-    /**
-     * The username of the user.
-     */
-    userName?: string | null;
-    /**
-     * The email address of the user.
-     */
-    email?: string | null;
-    /**
-     * The phone number of the user.
-     */
-    phoneNumber?: string | null;
-    /**
-     * Indicates whether the user's email address has been confirmed.
-     */
-    emailConfirmed?: boolean;
-    /**
-     * Indicates whether the user's phone number has been confirmed.
-     */
-    phoneNumberConfirmed?: boolean;
+    electionType?: string | null;
 };
 
 /**
  * Data transfer object representing a ballot with its associated votes.
  */
-export type TallyJ4DtosBallotsBallotDto = {
+export type BallotDto = {
     /**
      * The unique identifier for the ballot.
      */
@@ -214,13 +680,502 @@ export type TallyJ4DtosBallotsBallotDto = {
     /**
      * The list of votes associated with this ballot.
      */
-    votes?: Array<TallyJ4DtosVotesVoteDto> | null;
+    votes?: Array<VoteDto> | null;
+};
+
+/**
+ * Data transfer object containing information about a ballot in election reports.
+ */
+export type BallotReportDto = {
+    /**
+     * Unique identifier of the ballot.
+     */
+    ballotGuid?: string;
+    /**
+     * Name of the location where this ballot was cast.
+     */
+    locationName?: string | null;
+    /**
+     * Current status of the ballot.
+     */
+    status?: string | null;
+    /**
+     * List of votes recorded on this ballot.
+     */
+    votes?: Array<VoteReportDto> | null;
+};
+
+/**
+ * Analysis of candidate performance and clustering.
+ */
+export type CandidateAnalysisDto = {
+    /**
+     * The average vote percentage across all candidates.
+     */
+    averageVotePercentage?: number;
+    /**
+     * The variance in vote percentages among candidates.
+     */
+    votePercentageVariance?: number;
+    /**
+     * Clusters of candidates with similar performance characteristics.
+     */
+    clusters?: Array<CandidateClusterDto> | null;
+    /**
+     * Various performance metrics for candidates.
+     */
+    performanceMetrics?: {
+        [key: string]: number;
+    } | null;
+};
+
+/**
+ * A cluster of candidates with similar performance characteristics.
+ */
+export type CandidateClusterDto = {
+    /**
+     * The name or identifier of this cluster.
+     */
+    clusterName?: string | null;
+    /**
+     * List of candidate names in this cluster.
+     */
+    candidateNames?: Array<string> | null;
+    /**
+     * The average performance metric for candidates in this cluster.
+     */
+    averagePerformance?: number;
+};
+
+/**
+ * Data transfer object containing performance metrics for a candidate.
+ */
+export type CandidatePerformanceDto = {
+    /**
+     * Unique identifier of the person.
+     */
+    personGuid?: string;
+    /**
+     * Full name of the candidate.
+     */
+    fullName?: string | null;
+    /**
+     * Total number of votes received by this candidate.
+     */
+    totalVotes?: number;
+    /**
+     * Percentage of total votes received by this candidate.
+     */
+    votePercentage?: number;
+    /**
+     * Final ranking position of this candidate.
+     */
+    rank?: number;
+    /**
+     * Indicates whether this candidate has been elected.
+     */
+    isElected?: boolean;
+    /**
+     * Indicates whether this candidate has been eliminated from the race.
+     */
+    isEliminated?: boolean;
+    /**
+     * Breakdown of votes received by position on ballots.
+     */
+    votesByPosition?: {
+        [key: string]: number;
+    } | null;
+    /**
+     * Percentage of ballots where this candidate was the first choice.
+     */
+    firstChoicePercentage?: number;
+    /**
+     * Percentage of ballots where this candidate was the last choice.
+     */
+    lastChoicePercentage?: number;
+};
+
+/**
+ * Data transfer object containing information about a candidate in election reports.
+ */
+export type CandidateReportDto = {
+    /**
+     * The ranking position of this candidate in the election results.
+     */
+    rank?: number;
+    /**
+     * Full name of the candidate.
+     */
+    fullName?: string | null;
+    /**
+     * Number of votes received by this candidate.
+     */
+    voteCount?: number;
+    /**
+     * Section or category this candidate belongs to.
+     */
+    section?: string | null;
+};
+
+/**
+ * Data transfer object representing the result for a single candidate.
+ */
+export type CandidateResultDto = {
+    /**
+     * The unique identifier for the person (candidate).
+     */
+    personGuid?: string;
+    /**
+     * The full name of the candidate.
+     */
+    fullName?: string | null;
+    /**
+     * The number of votes received by this candidate.
+     */
+    voteCount?: number;
+    /**
+     * The rank/position of this candidate in the results.
+     */
+    rank?: number;
+    /**
+     * The section this candidate belongs to (e.g., "E" for elected, "X" for extra).
+     */
+    section?: string | null;
+    /**
+     * Whether this candidate is tied with others.
+     */
+    isTied?: boolean;
+    /**
+     * The tie break group number if this candidate is tied.
+     */
+    tieBreakGroup?: number | null;
+    /**
+     * Whether tie breaking is required for this candidate.
+     */
+    tieBreakRequired?: boolean;
+    /**
+     * Whether this candidate's vote count is close to the next candidate's count.
+     */
+    closeToNext?: boolean;
+    /**
+     * Whether this candidate's vote count is close to the previous candidate's count.
+     */
+    closeToPrev?: boolean;
+};
+
+/**
+ * Data transfer object for changing a user's password.
+ */
+export type ChangePasswordDto = {
+    /**
+     * The user's current password.
+     */
+    currentPassword?: string | null;
+    /**
+     * The new password to set.
+     */
+    newPassword?: string | null;
+    /**
+     * Confirmation of the new password.
+     */
+    confirmPassword?: string | null;
+};
+
+/**
+ * Axis configuration options.
+ */
+export type ChartAxisDto = {
+    /**
+     * Whether to display the axis.
+     */
+    display?: boolean;
+    /**
+     * The title text for the axis.
+     */
+    title?: string | null;
+};
+
+/**
+ * Data structure for chart visualizations
+ */
+export type ChartDataDto = {
+    /**
+     * The type of chart to display (bar, pie, line, doughnut).
+     */
+    chartType?: string | null;
+    /**
+     * The title of the chart.
+     */
+    title?: string | null;
+    /**
+     * Labels for the chart data points.
+     */
+    labels?: Array<string> | null;
+    /**
+     * Datasets containing the chart data.
+     */
+    datasets?: Array<ChartDatasetDto> | null;
+    options?: ChartOptionsDto;
+};
+
+/**
+ * Represents a dataset for chart visualization.
+ */
+export type ChartDatasetDto = {
+    /**
+     * The label for this dataset.
+     */
+    label?: string | null;
+    /**
+     * The data values for this dataset.
+     */
+    data?: Array<number> | null;
+    /**
+     * Background colors for the data points.
+     */
+    backgroundColors?: Array<string> | null;
+    /**
+     * Border colors for the data points.
+     */
+    borderColors?: Array<string> | null;
+    /**
+     * Width of the border around data points.
+     */
+    borderWidth?: number;
+};
+
+/**
+ * Legend configuration options.
+ */
+export type ChartLegendDto = {
+    /**
+     * Position of the legend (top, bottom, left, right).
+     */
+    position?: string | null;
+    /**
+     * Whether to display the legend.
+     */
+    display?: boolean;
+};
+
+/**
+ * Chart configuration options.
+ */
+export type ChartOptionsDto = {
+    /**
+     * Whether the chart should be responsive to container size changes.
+     */
+    responsive?: boolean;
+    plugins?: ChartPluginsDto;
+    scales?: ChartScalesDto;
+};
+
+/**
+ * Plugin configurations for chart elements.
+ */
+export type ChartPluginsDto = {
+    legend?: ChartLegendDto;
+    title?: ChartTitleDto;
+};
+
+/**
+ * Scale configurations for chart axes.
+ */
+export type ChartScalesDto = {
+    x?: ChartAxisDto;
+    y?: ChartAxisDto;
+};
+
+/**
+ * Title configuration options.
+ */
+export type ChartTitleDto = {
+    /**
+     * Whether to display the title.
+     */
+    display?: boolean;
+    /**
+     * The text content of the title.
+     */
+    text?: string | null;
+};
+
+/**
+ * Data transfer object for checking in a voter at the front desk.
+ */
+export type CheckInVoterDto = {
+    /**
+     * The unique identifier of the person being checked in.
+     */
+    personGuid: string;
+    /**
+     * The voting method (e.g., 'P' for paper, 'O' for online).
+     */
+    votingMethod: string;
+    /**
+     * The name of the teller checking in the voter.
+     */
+    tellerName?: string | null;
+    /**
+     * The unique identifier of the voting location.
+     */
+    votingLocationGuid?: string | null;
+};
+
+/**
+ * Request model for setting a computer's physical location.
+ */
+export type ChooseLocationRequest = {
+    /**
+     * The computer code identifier.
+     */
+    computerCode?: string | null;
+    /**
+     * The GUID of the location to assign to the computer.
+     */
+    locationGuid?: string;
+};
+
+/**
+ * Request model for assigning a guest teller to an election.
+ */
+export type ChooseTellerRequest = {
+    /**
+     * The GUID of the election to assign the teller to.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the teller to assign.
+     */
+    tellerName?: string | null;
+};
+
+/**
+ * Aggregated metrics for comparing multiple elections.
+ */
+export type ComparisonMetricsDto = {
+    /**
+     * The average turnout percentage across all elections.
+     */
+    averageTurnout?: number;
+    /**
+     * The percentage change in turnout from the previous period.
+     */
+    turnoutChange?: number;
+    /**
+     * The total number of elections being compared.
+     */
+    totalElections?: number;
+    /**
+     * Average values for various metrics across all elections.
+     */
+    metricAverages?: {
+        [key: string]: number;
+    } | null;
+};
+
+/**
+ * Data transfer object representing a registered computer.
+ */
+export type ComputerDto = {
+    /**
+     * The unique identifier for the computer.
+     */
+    computerGuid?: string;
+    /**
+     * The unique identifier of the election this computer is registered for.
+     */
+    electionGuid?: string;
+    /**
+     * The unique identifier of the location where this computer is located.
+     */
+    locationGuid?: string;
+    /**
+     * The code assigned to this computer.
+     */
+    computerCode?: string | null;
+    /**
+     * Information about the browser being used on this computer.
+     */
+    browserInfo?: string | null;
+    /**
+     * The IP address of this computer.
+     */
+    ipAddress?: string | null;
+    /**
+     * The timestamp of the last activity from this computer.
+     */
+    lastActivity?: Date | null;
+    /**
+     * The timestamp when this computer was registered.
+     */
+    registeredAt?: Date | null;
+    /**
+     * Indicates whether this computer is currently active.
+     */
+    isActive?: boolean | null;
+};
+
+/**
+ * Data transfer object containing information about a computer participating in the election.
+ */
+export type ComputerInfoDto = {
+    /**
+     * Unique code identifying the computer.
+     */
+    computerCode?: string | null;
+    /**
+     * Name of the location where this computer is deployed.
+     */
+    locationName?: string | null;
+    /**
+     * Number of ballots processed by this computer.
+     */
+    ballotCount?: number;
+    /**
+     * Timestamp of the last contact from this computer.
+     */
+    lastContact?: Date;
+    /**
+     * Current status of the computer ("Active", "Inactive", "Offline").
+     */
+    status?: string | null;
+};
+
+/**
+ * Data transfer object for creating a new audit log entry.
+ */
+export type CreateAuditLogDto = {
+    /**
+     * The unique identifier of the election.
+     */
+    electionGuid?: string | null;
+    /**
+     * The unique identifier of the location.
+     */
+    locationGuid?: string | null;
+    /**
+     * The voter ID.
+     */
+    voterId?: string | null;
+    /**
+     * The computer code.
+     */
+    computerCode?: string | null;
+    /**
+     * Details of the action being audited.
+     */
+    details?: string | null;
+    /**
+     * The host and version information.
+     */
+    hostAndVersion?: string | null;
 };
 
 /**
  * Data transfer object for creating a new ballot.
  */
-export type TallyJ4DtosBallotsCreateBallotDto = {
+export type CreateBallotDto = {
     /**
      * The GUID of the election this ballot belongs to.
      */
@@ -232,83 +1187,9 @@ export type TallyJ4DtosBallotsCreateBallotDto = {
 };
 
 /**
- * Data transfer object for updating ballot information.
- */
-export type TallyJ4DtosBallotsUpdateBallotDto = {
-    /**
-     * The status code of the ballot.
-     */
-    statusCode?: string | null;
-    /**
-     * The name of the first teller who processed the ballot.
-     */
-    teller1?: string | null;
-    /**
-     * The name of the second teller who processed the ballot.
-     */
-    teller2?: string | null;
-};
-
-/**
- * Data transfer object representing a dashboard summary with election counts and recent elections.
- */
-export type TallyJ4DtosDashboardDashboardSummaryDto = {
-    /**
-     * The number of currently active elections.
-     */
-    activeElectionCount?: number;
-    /**
-     * The number of completed elections.
-     */
-    completedElectionCount?: number;
-    /**
-     * A list of recent elections for display on the dashboard.
-     */
-    recentElections?: Array<TallyJ4DtosDashboardElectionCardDto> | null;
-};
-
-/**
- * Data transfer object representing an election card for dashboard display.
- */
-export type TallyJ4DtosDashboardElectionCardDto = {
-    /**
-     * The unique identifier for the election.
-     */
-    electionGuid?: string;
-    /**
-     * The name of the election.
-     */
-    name?: string | null;
-    /**
-     * The date when the election will be held.
-     */
-    dateOfElection?: Date | null;
-    /**
-     * The current tally status of the election.
-     */
-    tallyStatus?: string | null;
-    /**
-     * The total number of registered voters.
-     */
-    voterCount?: number;
-    /**
-     * The total number of ballots cast.
-     */
-    ballotCount?: number;
-    /**
-     * The total number of votes counted.
-     */
-    voteCount?: number;
-    /**
-     * The percentage of completion for the election tally.
-     */
-    percentComplete?: number;
-};
-
-/**
  * Data transfer object for creating a new election.
  */
-export type TallyJ4DtosElectionsCreateElectionDto = {
+export type CreateElectionDto = {
     /**
      * The name of the election.
      */
@@ -349,12 +1230,443 @@ export type TallyJ4DtosElectionsCreateElectionDto = {
      * Whether to mark this election as a test election.
      */
     showAsTest?: boolean | null;
+    /**
+     * Default eligibility to vote (Y/N/?).
+     */
+    canVote?: string | null;
+    /**
+     * Default eligibility to receive votes (Y/N/?).
+     */
+    canReceive?: string | null;
+    /**
+     * The passcode required for teller access.
+     */
+    electionPasscode?: string | null;
+    /**
+     * Linked election GUID for tie-breaks.
+     */
+    linkedElectionGuid?: string | null;
+    /**
+     * Type of linked election (e.g., "TB" for tie-break).
+     */
+    linkedElectionKind?: string | null;
+    /**
+     * Whether to use the call-in button feature.
+     */
+    useCallInButton?: boolean | null;
+    /**
+     * Whether to hide pre-ballot pages.
+     */
+    hidePreBallotPages?: boolean | null;
+    /**
+     * Whether to mask the voting method in displays.
+     */
+    maskVotingMethod?: boolean | null;
+    /**
+     * Whether the online close time is an estimate.
+     */
+    onlineCloseIsEstimate?: boolean | null;
+    /**
+     * Online voting selection process (e.g., "S" for simultaneous).
+     */
+    onlineSelectionProcess?: string | null;
+    /**
+     * The date and time when online voting was announced.
+     */
+    onlineAnnounced?: Date | null;
+    /**
+     * Email from address for voter communications.
+     */
+    emailFromAddress?: string | null;
+    /**
+     * Email from name for voter communications.
+     */
+    emailFromName?: string | null;
+    /**
+     * Email template text for voter invitations.
+     */
+    emailText?: string | null;
+    /**
+     * Email subject line for voter communications.
+     */
+    emailSubject?: string | null;
+    /**
+     * SMS template text for voter invitations.
+     */
+    smsText?: string | null;
+    /**
+     * Custom voting methods (comma-separated).
+     */
+    customMethods?: string | null;
+    /**
+     * Voting methods available (encoded string).
+     */
+    votingMethods?: string | null;
+    /**
+     * Additional flags and settings (JSON).
+     */
+    flags?: string | null;
+};
+
+/**
+ * Data transfer object for creating a new location.
+ */
+export type CreateLocationDto = {
+    /**
+     * The unique identifier of the election this location belongs to.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the location.
+     */
+    name?: string | null;
+    /**
+     * Contact information for the location.
+     */
+    contactInfo?: string | null;
+    /**
+     * Longitude coordinate of the location.
+     */
+    longitude?: string | null;
+    /**
+     * Latitude coordinate of the location.
+     */
+    latitude?: string | null;
+    /**
+     * The sort order for displaying locations.
+     */
+    sortOrder?: number | null;
+};
+
+/**
+ * Data transfer object for creating a new person in an election.
+ */
+export type CreatePersonDto = {
+    /**
+     * The GUID of the election this person belongs to.
+     */
+    electionGuid?: string;
+    /**
+     * The person's last name (required).
+     */
+    lastName?: string | null;
+    /**
+     * The person's first name.
+     */
+    firstName?: string | null;
+    /**
+     * Other last names associated with the person.
+     */
+    otherLastNames?: string | null;
+    /**
+     * Other names associated with the person.
+     */
+    otherNames?: string | null;
+    /**
+     * Additional information about the person.
+     */
+    otherInfo?: string | null;
+    /**
+     * The area or region the person belongs to.
+     */
+    area?: string | null;
+    /**
+     * The person's Bahá'í ID.
+     */
+    bahaiId?: string | null;
+    /**
+     * The person's email address.
+     */
+    email?: string | null;
+    /**
+     * The person's phone number.
+     */
+    phone?: string | null;
+    /**
+     * Whether the person can receive votes (be a candidate).
+     */
+    canReceiveVotes?: boolean | null;
+    /**
+     * Whether the person can vote.
+     */
+    canVote?: boolean | null;
+    /**
+     * The person's age group.
+     */
+    ageGroup?: string | null;
+    /**
+     * The GUID of the reason why the person is ineligible (if applicable).
+     */
+    ineligibleReasonGuid?: string | null;
+};
+
+/**
+ * Data transfer object for creating a new teller.
+ */
+export type CreateTellerDto = {
+    /**
+     * The unique identifier of the election to create the teller for.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the teller.
+     */
+    name?: string | null;
+    /**
+     * The code of the computer the teller will be using.
+     */
+    usingComputerCode?: string | null;
+    /**
+     * Indicates whether this teller is the head teller.
+     */
+    isHeadTeller?: boolean;
+};
+
+/**
+ * Data transfer object for creating a new vote.
+ * Contains the essential information needed to record a vote on a ballot.
+ */
+export type CreateVoteDto = {
+    /**
+     * The unique identifier of the ballot this vote belongs to.
+     */
+    ballotGuid?: string;
+    /**
+     * The unique identifier of the person (candidate) being voted for.
+     * Can be null for certain types of votes.
+     */
+    personGuid?: string | null;
+    /**
+     * The position of this vote on the ballot (1-based indexing).
+     */
+    positionOnBallot?: number;
+    /**
+     * The status code of the vote (e.g., "ok", "spoiled").
+     */
+    statusCode?: string | null;
+};
+
+/**
+ * Configuration for custom reports
+ */
+export type CustomReportConfigDto = {
+    /**
+     * The name of the custom report.
+     */
+    reportName?: string | null;
+    /**
+     * A description of the custom report.
+     */
+    description?: string | null;
+    /**
+     * The sections that make up the custom report.
+     */
+    sections?: Array<ReportSectionDto> | null;
+    defaultFilters?: AdvancedFilterDto;
+    /**
+     * Supported export formats for the report.
+     */
+    exportFormats?: Array<string> | null;
+    /**
+     * Whether the report is publicly accessible.
+     */
+    isPublic?: boolean;
+    /**
+     * The date and time when the report configuration was created.
+     */
+    createdAt?: Date;
+    /**
+     * The date and time when the report configuration was last modified.
+     */
+    modifiedAt?: Date | null;
+};
+
+/**
+ * Represents a generated custom report.
+ */
+export type CustomReportDto = {
+    /**
+     * The unique identifier for this report instance.
+     */
+    reportGuid?: string;
+    config?: CustomReportConfigDto;
+    /**
+     * The generated report data organized by section or data type.
+     */
+    generatedData?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * The date and time when this report was generated.
+     */
+    generatedAt?: Date;
+};
+
+/**
+ * Data transfer object representing a dashboard summary with election counts and recent elections.
+ */
+export type DashboardSummaryDto = {
+    /**
+     * The number of currently active elections.
+     */
+    activeElectionCount?: number;
+    /**
+     * The number of completed elections.
+     */
+    completedElectionCount?: number;
+    /**
+     * A list of recent elections for display on the dashboard.
+     */
+    recentElections?: Array<ElectionCardDto> | null;
+};
+
+/**
+ * Date range filter for filtering by date ranges.
+ */
+export type DateRangeFilterDto = {
+    /**
+     * The start date of the range (inclusive).
+     */
+    startDate?: Date | null;
+    /**
+     * The end date of the range (inclusive).
+     */
+    endDate?: Date | null;
+};
+
+/**
+ * Request model for removing a guest teller from an election.
+ */
+export type DeleteTellerRequest = {
+    /**
+     * The GUID of the election to remove the teller from.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the teller to remove.
+     */
+    tellerName?: string | null;
+};
+
+/**
+ * Data transfer object containing turnout statistics for a demographic group.
+ */
+export type DemographicTurnoutDto = {
+    /**
+     * Category of demographic data (AgeGroup, Area, etc.).
+     */
+    demographicCategory?: string | null;
+    /**
+     * Specific value within the demographic category.
+     */
+    demographicValue?: string | null;
+    /**
+     * Total number of voters in this demographic group.
+     */
+    totalVoters?: number;
+    /**
+     * Number of voters in this group who cast ballots.
+     */
+    voted?: number;
+    /**
+     * Turnout percentage for this demographic group.
+     */
+    turnoutPercentage?: number;
+};
+
+/**
+ * Data transfer object containing detailed statistical analysis of election data.
+ */
+export type DetailedStatisticsDto = {
+    overview?: ElectionOverviewDto;
+    voteDistribution?: VoteDistributionDto;
+    /**
+     * Performance metrics for each candidate.
+     */
+    candidatePerformance?: Array<CandidatePerformanceDto> | null;
+    turnoutAnalysis?: TurnoutAnalysisDto;
+    /**
+     * Statistics broken down by voting location.
+     */
+    locationStatistics?: Array<LocationStatisticsDto> | null;
+};
+
+export type Disable2FaRequest = {
+    password: string;
+    code: string;
+};
+
+/**
+ * Data transfer object representing an election card for dashboard display.
+ */
+export type ElectionCardDto = {
+    /**
+     * The unique identifier for the election.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the election.
+     */
+    name?: string | null;
+    /**
+     * The date when the election will be held.
+     */
+    dateOfElection?: Date | null;
+    /**
+     * The current tally status of the election.
+     */
+    tallyStatus?: string | null;
+    /**
+     * The total number of registered voters.
+     */
+    voterCount?: number;
+    /**
+     * The total number of ballots cast.
+     */
+    ballotCount?: number;
+    /**
+     * The total number of votes counted.
+     */
+    voteCount?: number;
+    /**
+     * The percentage of completion for the election tally.
+     */
+    percentComplete?: number;
+};
+
+/**
+ * Data structure for comparing multiple elections
+ */
+export type ElectionComparisonDto = {
+    /**
+     * List of elections being compared.
+     */
+    elections?: Array<ResultsElectionSummaryDto> | null;
+    metrics?: ComparisonMetricsDto;
+    /**
+     * Trend data showing changes over time across elections.
+     */
+    trends?: Array<TrendDataDto> | null;
+};
+
+/**
+ * Request DTO for comparing multiple elections
+ */
+export type ElectionComparisonRequestDto = {
+    /**
+     * List of election GUIDs to compare.
+     */
+    electionIds?: Array<string> | null;
+    /**
+     * List of metrics to include in the comparison.
+     */
+    metrics?: Array<string> | null;
 };
 
 /**
  * Data transfer object representing an election with its configuration and statistics.
  */
-export type TallyJ4DtosElectionsElectionDto = {
+export type ElectionDto = {
     /**
      * The unique identifier for the election.
      */
@@ -423,12 +1735,291 @@ export type TallyJ4DtosElectionsElectionDto = {
      * The number of voting locations.
      */
     locationCount?: number;
+    /**
+     * Default eligibility to vote (Y/N/?).
+     */
+    canVote?: string | null;
+    /**
+     * Default eligibility to receive votes (Y/N/?).
+     */
+    canReceive?: string | null;
+    /**
+     * The passcode required for teller access.
+     */
+    electionPasscode?: string | null;
+    /**
+     * Linked election GUID for tie-breaks.
+     */
+    linkedElectionGuid?: string | null;
+    /**
+     * Type of linked election (e.g., "TB" for tie-break).
+     */
+    linkedElectionKind?: string | null;
+    /**
+     * Whether to use the call-in button feature.
+     */
+    useCallInButton?: boolean | null;
+    /**
+     * Whether to hide pre-ballot pages.
+     */
+    hidePreBallotPages?: boolean | null;
+    /**
+     * Whether to mask the voting method in displays.
+     */
+    maskVotingMethod?: boolean | null;
+    /**
+     * Whether the online close time is an estimate.
+     */
+    onlineCloseIsEstimate?: boolean | null;
+    /**
+     * Online voting selection process (e.g., "S" for simultaneous).
+     */
+    onlineSelectionProcess?: string | null;
+    /**
+     * The date and time when online voting was announced.
+     */
+    onlineAnnounced?: Date | null;
+    /**
+     * Email from address for voter communications.
+     */
+    emailFromAddress?: string | null;
+    /**
+     * Email from name for voter communications.
+     */
+    emailFromName?: string | null;
+    /**
+     * Email template text for voter invitations.
+     */
+    emailText?: string | null;
+    /**
+     * Email subject line for voter communications.
+     */
+    emailSubject?: string | null;
+    /**
+     * SMS template text for voter invitations.
+     */
+    smsText?: string | null;
+    /**
+     * Custom voting methods (comma-separated).
+     */
+    customMethods?: string | null;
+    /**
+     * Voting methods available (encoded string).
+     */
+    votingMethods?: string | null;
+    /**
+     * Additional flags and settings (JSON).
+     */
+    flags?: string | null;
+};
+
+/**
+ * Data transfer object containing overview statistics for an election.
+ */
+export type ElectionOverviewDto = {
+    /**
+     * Name of the election.
+     */
+    electionName?: string | null;
+    /**
+     * Date when the election was held.
+     */
+    electionDate?: Date | null;
+    /**
+     * Total number of registered voters.
+     */
+    totalRegisteredVoters?: number;
+    /**
+     * Total number of ballots cast.
+     */
+    totalBallotsCast?: number;
+    /**
+     * Number of valid ballots.
+     */
+    validBallots?: number;
+    /**
+     * Number of spoiled or invalid ballots.
+     */
+    spoiledBallots?: number;
+    /**
+     * Total number of votes recorded.
+     */
+    totalVotes?: number;
+    /**
+     * Number of positions to be elected.
+     */
+    positionsToElect?: number;
+    /**
+     * Overall voter turnout percentage.
+     */
+    overallTurnoutPercentage?: number;
+    /**
+     * Duration of the election period.
+     */
+    electionDuration?: string | null;
+};
+
+/**
+ * Data transfer object containing comprehensive election report data.
+ */
+export type ElectionReportDto = {
+    /**
+     * Name of the election.
+     */
+    electionName?: string | null;
+    /**
+     * Date when the election was held.
+     */
+    electionDate?: Date | null;
+    /**
+     * Number of candidates to be elected.
+     */
+    numToElect?: number;
+    /**
+     * Total number of ballots cast in the election.
+     */
+    totalBallots?: number;
+    /**
+     * Number of spoiled or invalid ballots.
+     */
+    spoiledBallots?: number;
+    /**
+     * Total number of votes recorded across all ballots.
+     */
+    totalVotes?: number;
+    /**
+     * List of candidates who have been elected.
+     */
+    elected?: Array<CandidateReportDto> | null;
+    /**
+     * List of additional candidates who received votes but were not elected.
+     */
+    extra?: Array<CandidateReportDto> | null;
+    /**
+     * List of other candidates who participated but received no votes.
+     */
+    other?: Array<CandidateReportDto> | null;
+    /**
+     * List of tie situations in the election results.
+     */
+    ties?: Array<TieReportDto> | null;
+};
+
+/**
+ * Data transfer object representing the current status of election setup.
+ * Tracks completion of setup steps and overall progress.
+ */
+export type ElectionSetupStatusDto = {
+    /**
+     * The unique identifier for the election.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the election.
+     */
+    name?: string | null;
+    /**
+     * The current tally status of the election.
+     */
+    tallyStatus?: string | null;
+    /**
+     * Indicates whether election setup step 1 is complete.
+     */
+    step1Complete?: boolean;
+    /**
+     * Indicates whether election setup step 2 is complete.
+     */
+    step2Complete?: boolean;
+    /**
+     * The overall progress percentage of election setup (0-100).
+     */
+    progressPercent?: number;
+};
+
+/**
+ * Data transfer object representing the status of an election for public viewing.
+ */
+export type ElectionStatusDto = {
+    /**
+     * The unique identifier for the election.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the election.
+     */
+    name?: string | null;
+    /**
+     * The date when the election will be held.
+     */
+    dateOfElection?: Date | null;
+    /**
+     * The type of election (e.g., "normal", "single-name").
+     */
+    electionType?: string | null;
+    /**
+     * The current tally status of the election.
+     */
+    tallyStatus?: string | null;
+    /**
+     * Whether the election is currently active.
+     */
+    isActive?: boolean;
+    /**
+     * The number of registered voters.
+     */
+    registeredVoters?: number;
+    /**
+     * The number of ballots that have been submitted.
+     */
+    ballotsSubmitted?: number;
+};
+
+/**
+ * Data transfer object for election setup step 1.
+ * Contains basic election information including name, date, and reason.
+ */
+export type ElectionStep1Dto = {
+    /**
+     * The name of the election.
+     */
+    name?: string | null;
+    /**
+     * The date when the election will be held.
+     */
+    dateOfElection?: Date | null;
+    /**
+     * The reason or purpose for holding this election.
+     */
+    reason?: string | null;
+};
+
+/**
+ * Data transfer object for election setup step 2.
+ * Contains configuration details for election type, mode, and number of positions to elect.
+ */
+export type ElectionStep2Dto = {
+    /**
+     * The unique identifier for the election.
+     */
+    electionGuid?: string;
+    /**
+     * The number of positions to be elected in this election.
+     */
+    numberToElect?: number;
+    /**
+     * The type of election (e.g., "normal", "single-name").
+     */
+    electionType?: string | null;
+    /**
+     * The mode of the election (e.g., "online", "offline").
+     */
+    electionMode?: string | null;
 };
 
 /**
  * Data transfer object representing a summary of election information.
  */
-export type TallyJ4DtosElectionsElectionSummaryDto = {
+export type ElectionSummaryDto = {
     /**
      * The unique identifier for the election.
      */
@@ -455,122 +2046,732 @@ export type TallyJ4DtosElectionsElectionSummaryDto = {
     ballotCount?: number;
 };
 
-/**
- * Data transfer object for updating an existing election.
- */
-export type TallyJ4DtosElectionsUpdateElectionDto = {
-    /**
-     * The name of the election.
-     */
-    name?: string | null;
-    /**
-     * The date when the election will be held.
-     */
-    dateOfElection?: Date | null;
-    /**
-     * The number of positions to be elected.
-     */
-    numberToElect?: number | null;
-    /**
-     * The current tally status of the election.
-     */
-    tallyStatus?: string | null;
-    /**
-     * The name of the election convenor.
-     */
-    convenor?: string | null;
-    /**
-     * The number of extra positions beyond the required number.
-     */
-    numberExtra?: number | null;
-    /**
-     * Whether to show the full election report.
-     */
-    showFullReport?: boolean | null;
-    /**
-     * Whether to list this election for public access.
-     */
-    listForPublic?: boolean | null;
-    /**
-     * Whether to mark this election as a test election.
-     */
-    showAsTest?: boolean | null;
-    /**
-     * The date and time when online voting opens.
-     */
-    onlineWhenOpen?: Date | null;
-    /**
-     * The date and time when online voting closes.
-     */
-    onlineWhenClose?: Date | null;
+export type Enable2FaRequest = {
+    code: string;
 };
 
 /**
- * Data transfer object for creating a new person in an election.
+ * Request DTO for exporting election reports in different formats.
  */
-export type TallyJ4DtosPeopleCreatePersonDto = {
+export type ExportRequest = {
     /**
-     * The GUID of the election this person belongs to.
+     * The format of the exported report (PDF, Excel, or CSV).
      */
-    electionGuid?: string;
+    format?: string | null;
     /**
-     * The person's last name (required).
+     * The unique identifier of the election to export.
      */
-    lastName?: string | null;
+    electionId?: string;
     /**
-     * The person's first name.
+     * Optional filters to apply to the export (e.g., date ranges, locations).
      */
-    firstName?: string | null;
+    filters?: {
+        [key: string]: string;
+    } | null;
+};
+
+/**
+ * Data transfer object for mapping a source column to a target field during import.
+ */
+export type FieldMappingDto = {
     /**
-     * Other last names associated with the person.
+     * The name of the source column in the CSV file.
      */
-    otherLastNames?: string | null;
+    sourceColumn?: string | null;
     /**
-     * Other names associated with the person.
+     * The name of the target field in the database.
      */
-    otherNames?: string | null;
+    targetField?: string | null;
+};
+
+/**
+ * Filtered report data with applied filters
+ */
+export type FilteredReportDto = {
+    appliedFilters?: AdvancedFilterDto;
     /**
-     * Additional information about the person.
+     * The total number of records before filtering.
      */
-    otherInfo?: string | null;
+    totalRecords?: number;
     /**
-     * The area or region the person belongs to.
+     * The number of records after filtering has been applied.
      */
-    area?: string | null;
+    filteredRecords?: number;
+    summary?: ElectionReportDto;
     /**
-     * The person's Bahá'í ID.
+     * Filtered list of candidate results.
+     */
+    candidates?: Array<CandidateReportDto> | null;
+    /**
+     * Filtered list of location results.
+     */
+    locations?: Array<LocationReportDto> | null;
+    /**
+     * Filtered list of ballot results.
+     */
+    ballots?: Array<BallotReportDto> | null;
+    /**
+     * Filtered list of voter information.
+     */
+    voters?: Array<VoterReportDto> | null;
+};
+
+export type ForgotPasswordRequest = {
+    email: string;
+};
+
+/**
+ * Data transfer object containing statistics for the front desk.
+ */
+export type FrontDeskStatsDto = {
+    /**
+     * Total number of eligible voters.
+     */
+    totalEligible?: number;
+    /**
+     * Number of voters who have checked in.
+     */
+    checkedIn?: number;
+    /**
+     * Number of voters who have not yet checked in.
+     */
+    notYetCheckedIn?: number;
+    /**
+     * Percentage of eligible voters who have checked in.
+     */
+    readonly checkInPercentage?: number;
+};
+
+/**
+ * Data transfer object representing a voter at the front desk.
+ */
+export type FrontDeskVoterDto = {
+    /**
+     * The unique identifier of the person.
+     */
+    personGuid?: string;
+    /**
+     * The full name of the voter.
+     */
+    fullName?: string | null;
+    /**
+     * The Bahá'í ID of the voter.
      */
     bahaiId?: string | null;
     /**
-     * The person's email address.
+     * The area where the voter is registered.
      */
-    email?: string | null;
+    area?: string | null;
     /**
-     * The person's phone number.
-     */
-    phone?: string | null;
-    /**
-     * Whether the person can receive votes (be a candidate).
-     */
-    canReceiveVotes?: boolean | null;
-    /**
-     * Whether the person can vote.
+     * Indicates whether the voter is eligible to vote.
      */
     canVote?: boolean | null;
     /**
-     * The person's age group.
+     * The voting method (e.g., 'P' for paper, 'O' for online).
      */
-    ageGroup?: string | null;
+    votingMethod?: string | null;
     /**
-     * The GUID of the reason why the person is ineligible (if applicable).
+     * The envelope number assigned to the voter.
      */
-    ineligibleReasonGuid?: string | null;
+    envNum?: number | null;
+    /**
+     * The timestamp when the voter was registered.
+     */
+    registrationTime?: Date | null;
+    /**
+     * The unique identifier of the voting location.
+     */
+    votingLocationGuid?: string | null;
+    /**
+     * The name of the first teller.
+     */
+    teller1?: string | null;
+    /**
+     * The name of the second teller.
+     */
+    teller2?: string | null;
+    /**
+     * Indicates whether the voter has checked in.
+     */
+    readonly isCheckedIn?: boolean;
+};
+
+/**
+ * Data transfer object for requesting a ballot import operation.
+ */
+export type ImportBallotRequestDto = {
+    /**
+     * The CSV content to import.
+     */
+    csvContent?: string | null;
+    /**
+     * The unique identifier of the election.
+     */
+    electionGuid?: string;
+    /**
+     * The unique identifier of the location (optional).
+     */
+    locationGuid?: string | null;
+    configuration?: ImportConfigurationDto;
+};
+
+/**
+ * Data transfer object for configuring an import operation.
+ */
+export type ImportConfigurationDto = {
+    /**
+     * The row number where data starts (1-based index).
+     */
+    firstDataRow?: number;
+    /**
+     * Indicates whether the CSV file has a header row.
+     */
+    hasHeaderRow?: boolean;
+    /**
+     * The delimiter character used in the CSV file.
+     */
+    delimiter?: string | null;
+    /**
+     * List of field mappings from source columns to target fields.
+     */
+    fieldMappings?: Array<FieldMappingDto> | null;
+    /**
+     * Indicates whether invalid rows should be skipped during import.
+     */
+    skipInvalidRows?: boolean;
+};
+
+/**
+ * Analysis of voting patterns by geographic location.
+ */
+export type LocationAnalysisDto = {
+    /**
+     * The variance in turnout rates across different locations.
+     */
+    turnoutVariance?: number;
+    /**
+     * Correlations between location characteristics and voting behavior.
+     */
+    locationCorrelations?: {
+        [key: string]: number;
+    } | null;
+    /**
+     * Clusters of locations with similar voting characteristics.
+     */
+    clusters?: Array<LocationClusterDto> | null;
+};
+
+/**
+ * A cluster of locations with similar voting characteristics.
+ */
+export type LocationClusterDto = {
+    /**
+     * The name or identifier of this location cluster.
+     */
+    clusterName?: string | null;
+    /**
+     * List of location names in this cluster.
+     */
+    locationNames?: Array<string> | null;
+    /**
+     * The average turnout rate for locations in this cluster.
+     */
+    averageTurnout?: number;
+};
+
+/**
+ * Data transfer object representing a voting location.
+ */
+export type LocationDto = {
+    /**
+     * The unique identifier for the location.
+     */
+    locationGuid?: string;
+    /**
+     * The unique identifier of the election this location belongs to.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the location.
+     */
+    name?: string | null;
+    /**
+     * Contact information for the location.
+     */
+    contactInfo?: string | null;
+    /**
+     * Longitude coordinate of the location.
+     */
+    longitude?: string | null;
+    /**
+     * Latitude coordinate of the location.
+     */
+    latitude?: string | null;
+    /**
+     * The current tally status at this location.
+     */
+    tallyStatus?: string | null;
+    /**
+     * The sort order for displaying locations.
+     */
+    sortOrder?: number | null;
+    /**
+     * The number of ballots collected at this location.
+     */
+    ballotsCollected?: number | null;
+};
+
+/**
+ * Data transfer object containing information about a voting location.
+ */
+export type LocationInfoDto = {
+    /**
+     * Unique identifier of the voting location.
+     */
+    locationGuid?: string;
+    /**
+     * Name of the voting location.
+     */
+    locationName?: string | null;
+    /**
+     * Number of ballots cast at this location.
+     */
+    ballotCount?: number;
+    /**
+     * Total number of votes recorded at this location.
+     */
+    voteCount?: number;
+    /**
+     * Number of registered voters at this location.
+     */
+    voterCount?: number;
+    /**
+     * Current status of the location.
+     */
+    status?: string | null;
+};
+
+/**
+ * Data transfer object containing statistics for a specific voting location.
+ */
+export type LocationReportDto = {
+    /**
+     * Name of the voting location.
+     */
+    locationName?: string | null;
+    /**
+     * Total number of registered voters at this location.
+     */
+    totalVoters?: number;
+    /**
+     * Number of voters who have cast their ballots.
+     */
+    voted?: number;
+    /**
+     * Number of ballots that have been entered into the system.
+     */
+    ballotsEntered?: number;
+    /**
+     * Total number of votes recorded at this location.
+     */
+    totalVotes?: number;
+};
+
+/**
+ * Data transfer object containing statistics for a specific voting location.
+ */
+export type LocationStatisticsDto = {
+    /**
+     * Name of the voting location.
+     */
+    locationName?: string | null;
+    /**
+     * Number of registered voters at this location.
+     */
+    registeredVoters?: number;
+    /**
+     * Number of ballots cast at this location.
+     */
+    ballotsCast?: number;
+    /**
+     * Number of valid ballots at this location.
+     */
+    validBallots?: number;
+    /**
+     * Number of spoiled ballots at this location.
+     */
+    spoiledBallots?: number;
+    /**
+     * Turnout percentage at this location.
+     */
+    turnoutPercentage?: number;
+    /**
+     * Total number of votes recorded at this location.
+     */
+    totalVotes?: number;
+    /**
+     * Top candidates and their vote counts at this location.
+     */
+    topCandidates?: {
+        [key: string]: number;
+    } | null;
+};
+
+export type LoginRequest = {
+    email: string;
+    password: string;
+    twoFactorCode?: string | null;
+};
+
+/**
+ * Data transfer object containing real-time monitoring information for an election.
+ */
+export type MonitorInfoDto = {
+    /**
+     * The unique identifier of the election being monitored.
+     */
+    electionGuid?: string;
+    /**
+     * List of computers participating in the election with their status information.
+     */
+    computers?: Array<ComputerInfoDto> | null;
+    /**
+     * List of voting locations with their current statistics.
+     */
+    locations?: Array<LocationInfoDto> | null;
+    onlineVotingInfo?: OnlineVotingInfoDto;
+    /**
+     * Total number of ballots cast across all locations and online voting.
+     */
+    totalBallots?: number;
+    /**
+     * Total number of votes recorded across all ballots.
+     */
+    totalVotes?: number;
+    /**
+     * Timestamp of the last update to this monitoring information.
+     */
+    lastUpdated?: Date;
+};
+
+/**
+ * Numeric range filter for filtering by minimum and maximum values.
+ */
+export type NumericRangeFilterDto = {
+    /**
+     * The minimum value of the range (inclusive).
+     */
+    min?: number | null;
+    /**
+     * The maximum value of the range (inclusive).
+     */
+    max?: number | null;
+};
+
+/**
+ * Data transfer object representing a single vote in an online ballot.
+ */
+export type OnlineVoteDto = {
+    /**
+     * The unique identifier of the person being voted for.
+     */
+    personGuid?: string | null;
+    /**
+     * The name of the person being voted for (if not a predefined candidate).
+     */
+    voteName?: string | null;
+    /**
+     * The position of this vote on the ballot.
+     */
+    positionOnBallot?: number;
+};
+
+/**
+ * Data transfer object containing information about online voting status and statistics.
+ */
+export type OnlineVotingInfoDto = {
+    /**
+     * Total number of online ballots submitted.
+     */
+    totalOnlineBallots?: number;
+    /**
+     * Number of online ballots that have been processed.
+     */
+    processedOnlineBallots?: number;
+    /**
+     * Number of online ballots that are still pending processing.
+     */
+    pendingOnlineBallots?: number;
+    /**
+     * Indicates whether online voting is currently enabled.
+     */
+    onlineVotingEnabled?: boolean;
+    /**
+     * Start date and time for online voting period.
+     */
+    onlineVotingStart?: Date | null;
+    /**
+     * End date and time for online voting period.
+     */
+    onlineVotingEnd?: Date | null;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
+export type PaginatedResponseAuditLogDto = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<AuditLogDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+    /**
+     * The total number of pages available.
+     */
+    readonly totalPages?: number;
+    /**
+     * Indicates whether there is a previous page available.
+     */
+    readonly hasPreviousPage?: boolean;
+    /**
+     * Indicates whether there is a next page available.
+     */
+    readonly hasNextPage?: boolean;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
+export type PaginatedResponseBallotDto = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<BallotDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+    /**
+     * The total number of pages available.
+     */
+    readonly totalPages?: number;
+    /**
+     * Indicates whether there is a previous page available.
+     */
+    readonly hasPreviousPage?: boolean;
+    /**
+     * Indicates whether there is a next page available.
+     */
+    readonly hasNextPage?: boolean;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
+export type PaginatedResponseElectionSummaryDto = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<ElectionSummaryDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+    /**
+     * The total number of pages available.
+     */
+    readonly totalPages?: number;
+    /**
+     * Indicates whether there is a previous page available.
+     */
+    readonly hasPreviousPage?: boolean;
+    /**
+     * Indicates whether there is a next page available.
+     */
+    readonly hasNextPage?: boolean;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
+export type PaginatedResponseLocationDto = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<LocationDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+    /**
+     * The total number of pages available.
+     */
+    readonly totalPages?: number;
+    /**
+     * Indicates whether there is a previous page available.
+     */
+    readonly hasPreviousPage?: boolean;
+    /**
+     * Indicates whether there is a next page available.
+     */
+    readonly hasNextPage?: boolean;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
+export type PaginatedResponsePersonDto = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<PersonDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+    /**
+     * The total number of pages available.
+     */
+    readonly totalPages?: number;
+    /**
+     * Indicates whether there is a previous page available.
+     */
+    readonly hasPreviousPage?: boolean;
+    /**
+     * Indicates whether there is a next page available.
+     */
+    readonly hasNextPage?: boolean;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
+export type PaginatedResponseTellerDto = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<TellerDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+    /**
+     * The total number of pages available.
+     */
+    readonly totalPages?: number;
+    /**
+     * Indicates whether there is a previous page available.
+     */
+    readonly hasPreviousPage?: boolean;
+    /**
+     * Indicates whether there is a next page available.
+     */
+    readonly hasNextPage?: boolean;
+};
+
+/**
+ * Request model for parsing CSV headers.
+ */
+export type ParseCsvHeadersRequest = {
+    /**
+     * Gets or sets the CSV content to parse.
+     */
+    csvContent?: string | null;
+    /**
+     * Gets or sets the delimiter character (default: comma).
+     */
+    delimiter?: string | null;
+};
+
+/**
+ * Data transfer object containing participation rates by different voting methods.
+ */
+export type ParticipationRateDto = {
+    /**
+     * Percentage of first-time voters.
+     */
+    firstTimeVoters?: number;
+    /**
+     * Percentage of returning voters.
+     */
+    returningVoters?: number;
+    /**
+     * Percentage of voters who voted online.
+     */
+    onlineVoters?: number;
+    /**
+     * Percentage of voters who voted in person.
+     */
+    inPersonVoters?: number;
+    /**
+     * Participation rates broken down by voting method.
+     */
+    participationByMethod?: {
+        [key: string]: number;
+    } | null;
 };
 
 /**
  * Data transfer object representing a person in an election.
  */
-export type TallyJ4DtosPeoplePersonDto = {
+export type PersonDto = {
     /**
      * The unique identifier for the person.
      */
@@ -638,9 +2839,1007 @@ export type TallyJ4DtosPeoplePersonDto = {
 };
 
 /**
+ * A prediction for a specific election metric.
+ */
+export type PredictionDto = {
+    /**
+     * The metric being predicted.
+     */
+    metric?: string | null;
+    /**
+     * The predicted value for the metric.
+     */
+    predictedValue?: number;
+    /**
+     * The confidence level of the prediction (0-1).
+     */
+    confidenceLevel?: number;
+};
+
+/**
+ * Predictive metrics and forecasting data for the election.
+ */
+export type PredictiveMetricsDto = {
+    /**
+     * The projected turnout rate based on current trends.
+     */
+    projectedTurnout?: number;
+    /**
+     * List of predictions for various election metrics.
+     */
+    predictions?: Array<PredictionDto> | null;
+    /**
+     * Confidence intervals for the predictions.
+     */
+    confidenceIntervals?: {
+        [key: string]: number;
+    } | null;
+};
+
+/**
+ * Data transfer object containing information about a candidate for presentation purposes.
+ */
+export type PresentationCandidateDto = {
+    /**
+     * The ranking position of this candidate in the election results.
+     */
+    rank?: number;
+    /**
+     * Full name of the candidate.
+     */
+    fullName?: string | null;
+    /**
+     * Number of votes received by this candidate.
+     */
+    voteCount?: number;
+    /**
+     * Indicates whether this candidate is tied with others.
+     */
+    isTied?: boolean;
+    /**
+     * Indicates whether this candidate has been elected.
+     */
+    isWinner?: boolean;
+};
+
+/**
+ * Data transfer object containing election results formatted for presentation.
+ */
+export type PresentationDto = {
+    /**
+     * Name of the election.
+     */
+    electionName?: string | null;
+    /**
+     * Date when the election was held.
+     */
+    electionDate?: Date | null;
+    /**
+     * Number of candidates to be elected.
+     */
+    numToElect?: number;
+    /**
+     * Total number of ballots cast in the election.
+     */
+    totalBallots?: number;
+    /**
+     * Total number of votes recorded across all ballots.
+     */
+    totalVotes?: number;
+    /**
+     * List of candidates who have been elected.
+     */
+    electedCandidates?: Array<PresentationCandidateDto> | null;
+    /**
+     * List of additional candidates who received votes but were not elected.
+     */
+    extraCandidates?: Array<PresentationCandidateDto> | null;
+    /**
+     * Indicates whether there are any ties in the election results.
+     */
+    hasTies?: boolean;
+    /**
+     * List of tie situations that need to be resolved.
+     */
+    ties?: Array<PresentationTieDto> | null;
+    /**
+     * Current status of the election results ("Preliminary", "Final", "In Progress").
+     */
+    status?: string | null;
+};
+
+/**
+ * Data transfer object containing information about a tie situation in election results.
+ */
+export type PresentationTieDto = {
+    /**
+     * Group identifier for this tie situation.
+     */
+    tieBreakGroup?: number;
+    /**
+     * Section or category where the tie occurred.
+     */
+    section?: string | null;
+    /**
+     * List of candidate names involved in this tie.
+     */
+    candidateNames?: Array<string> | null;
+    /**
+     * Indicates whether manual tie-breaking is required.
+     */
+    tieBreakRequired?: boolean;
+};
+
+/**
+ * Data transfer object for a candidate in the public display.
+ */
+export type PublicCandidateDto = {
+    /**
+     * The rank/position of this candidate.
+     */
+    rank?: number;
+    /**
+     * The full name of the candidate.
+     */
+    fullName?: string | null;
+    /**
+     * The number of votes received.
+     */
+    voteCount?: number;
+    /**
+     * Whether this candidate is tied with others.
+     */
+    isTied?: boolean;
+    /**
+     * Whether tie breaking is required for this candidate.
+     */
+    tieBreakRequired?: boolean;
+};
+
+/**
+ * Data transfer object for public display of election results.
+ * Optimized for full-screen presentation on teller computers or public displays.
+ */
+export type PublicDisplayDto = {
+    /**
+     * The unique identifier of the election.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the election.
+     */
+    electionName?: string | null;
+    /**
+     * The date of the election.
+     */
+    dateOfElection?: Date | null;
+    /**
+     * The name of the convenor/organizer.
+     */
+    convenor?: string | null;
+    /**
+     * The type of election (e.g., "LSA Election", "Unit Convention").
+     */
+    electionType?: string | null;
+    /**
+     * Current status of the tally (e.g., "In Progress", "Finalized").
+     */
+    tallyStatus?: string | null;
+    /**
+     * Number of positions to elect.
+     */
+    numberToElect?: number;
+    /**
+     * Number of additional names to report.
+     */
+    numberExtra?: number;
+    /**
+     * List of elected candidates.
+     */
+    electedCandidates?: Array<PublicCandidateDto> | null;
+    /**
+     * List of additional candidates (next highest).
+     */
+    additionalCandidates?: Array<PublicCandidateDto> | null;
+    statistics?: PublicDisplayStatsDto;
+    /**
+     * Timestamp of when results were last updated.
+     */
+    lastUpdated?: Date;
+    /**
+     * Whether the election results are finalized.
+     */
+    isFinalized?: boolean;
+};
+
+/**
+ * Data transfer object for election statistics in the public display.
+ */
+export type PublicDisplayStatsDto = {
+    /**
+     * Total number of ballots submitted.
+     */
+    totalBallots?: number;
+    /**
+     * Number of valid ballots.
+     */
+    validBallots?: number;
+    /**
+     * Number of spoiled ballots.
+     */
+    spoiledBallots?: number;
+    /**
+     * Total number of votes counted.
+     */
+    totalVotes?: number;
+    /**
+     * Total number of registered voters.
+     */
+    registeredVoters?: number;
+    /**
+     * Voter turnout percentage.
+     */
+    turnoutPercentage?: number;
+};
+
+/**
+ * Data transfer object representing information for the public home page.
+ */
+export type PublicHomeDto = {
+    /**
+     * The name of the application.
+     */
+    applicationName?: string | null;
+    /**
+     * The version of the application.
+     */
+    version?: string | null;
+    /**
+     * A description of the application.
+     */
+    description?: string | null;
+    /**
+     * The number of elections available for public access.
+     */
+    availableElectionsCount?: number;
+    /**
+     * The current server time.
+     */
+    serverTime?: Date;
+};
+
+export type RefreshTokenRequest = {
+    refreshToken: string;
+};
+
+/**
+ * Data transfer object for registering a new computer.
+ */
+export type RegisterComputerDto = {
+    /**
+     * The unique identifier of the election to register the computer for.
+     */
+    electionGuid?: string;
+    /**
+     * The unique identifier of the location where the computer is located.
+     */
+    locationGuid?: string;
+    /**
+     * The code to assign to this computer.
+     */
+    computerCode?: string | null;
+    /**
+     * Information about the browser being used on this computer.
+     */
+    browserInfo?: string | null;
+    /**
+     * The IP address of this computer.
+     */
+    ipAddress?: string | null;
+};
+
+export type RegisterRequest = {
+    email: string;
+    password: string;
+    confirmPassword: string;
+};
+
+/**
+ * Data transfer object containing report data response.
+ */
+export type ReportDataResponseDto = {
+    /**
+     * Type of report being returned.
+     */
+    reportType?: string | null;
+    /**
+     * The actual report data.
+     */
+    data?: unknown;
+};
+
+/**
+ * Represents a section within a custom report.
+ */
+export type ReportSectionDto = {
+    /**
+     * The type of section (summary, candidates, locations, chart, statistics).
+     */
+    sectionType?: string | null;
+    /**
+     * The title of the report section.
+     */
+    title?: string | null;
+    /**
+     * Parameters specific to this section type.
+     */
+    parameters?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * The order of this section within the report.
+     */
+    order?: number;
+};
+
+/**
+ * Data transfer object for requesting a verification code for online voting.
+ */
+export type RequestCodeDto = {
+    /**
+     * The voter's unique identifier (email, phone, or custom code).
+     */
+    voterId?: string | null;
+    /**
+     * The type of voter ID: 'E' (email), 'P' (phone), or 'C' (code).
+     */
+    voterIdType?: string | null;
+    /**
+     * The delivery method for the verification code: 'email', 'sms', or 'voice'.
+     */
+    deliveryMethod?: string | null;
+};
+
+export type ResetPasswordRequest = {
+    token: string;
+    email: string;
+    newPassword: string;
+    confirmPassword: string;
+};
+
+/**
+ * Summary information for a single election.
+ */
+export type ResultsElectionSummaryDto = {
+    /**
+     * The unique identifier of the election.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the election.
+     */
+    electionName?: string | null;
+    /**
+     * The date when the election was held.
+     */
+    electionDate?: Date | null;
+    /**
+     * The total number of registered voters.
+     */
+    totalRegisteredVoters?: number;
+    /**
+     * The total number of ballots cast.
+     */
+    totalBallotsCast?: number;
+    /**
+     * The turnout percentage (ballots cast / registered voters).
+     */
+    turnoutPercentage?: number;
+    /**
+     * The total number of votes cast across all positions.
+     */
+    totalVotes?: number;
+    /**
+     * The number of positions to be elected.
+     */
+    positionsToElect?: number;
+    /**
+     * The number of candidates who were elected.
+     */
+    electedCount?: number;
+};
+
+/**
+ * Data transfer object containing roll call information for front desk operations.
+ */
+export type RollCallDto = {
+    /**
+     * List of voters at the front desk.
+     */
+    voters?: Array<FrontDeskVoterDto> | null;
+    stats?: FrontDeskStatsDto;
+};
+
+/**
+ * Request to save tie-break vote counts.
+ */
+export type SaveTieCountsRequestDto = {
+    /**
+     * List of tie-break counts for candidates.
+     */
+    counts?: Array<TieCountDto> | null;
+};
+
+/**
+ * Response from saving tie-break vote counts.
+ */
+export type SaveTieCountsResponseDto = {
+    /**
+     * Whether the save operation was successful.
+     */
+    success?: boolean;
+    /**
+     * A message describing the result of the operation.
+     */
+    message?: string | null;
+    /**
+     * Whether a re-analysis of the election results was triggered.
+     */
+    reAnalysisTriggered?: boolean;
+};
+
+/**
+ * Comprehensive statistical analysis of election data
+ */
+export type StatisticalAnalysisDto = {
+    overview?: ElectionOverviewDto;
+    votingPatterns?: VotingPatternAnalysisDto;
+    candidateAnalysis?: CandidateAnalysisDto;
+    locationAnalysis?: LocationAnalysisDto;
+    timeBasedAnalysis?: TimeBasedAnalysisDto;
+    predictiveMetrics?: PredictiveMetricsDto;
+};
+
+/**
+ * Data transfer object for submitting an online ballot.
+ */
+export type SubmitOnlineBallotDto = {
+    /**
+     * The unique identifier of the election.
+     */
+    electionGuid?: string;
+    /**
+     * The voter's unique identifier.
+     */
+    voterId?: string | null;
+    /**
+     * The list of votes on the ballot.
+     */
+    votes?: Array<OnlineVoteDto> | null;
+};
+
+/**
+ * Data transfer object representing the complete results of an election tally.
+ */
+export type TallyResultDto = {
+    /**
+     * The unique identifier for the election.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the election.
+     */
+    electionName?: string | null;
+    /**
+     * The date and time when the tally was calculated.
+     */
+    calculatedAt?: Date;
+    statistics?: TallyStatisticsDto;
+    /**
+     * The list of candidate results.
+     */
+    results?: Array<CandidateResultDto> | null;
+    /**
+     * Information about any ties in the election.
+     */
+    ties?: Array<TieInfoDto> | null;
+};
+
+/**
+ * Data transfer object representing statistical information about an election tally.
+ */
+export type TallyStatisticsDto = {
+    /**
+     * The total number of ballots in the election.
+     */
+    totalBallots?: number;
+    /**
+     * The number of ballots that have been received.
+     */
+    ballotsReceived?: number;
+    /**
+     * The number of spoiled/invalid ballots.
+     */
+    spoiledBallots?: number;
+    /**
+     * The number of ballots that need manual review.
+     */
+    ballotsNeedingReview?: number;
+    /**
+     * The total number of votes cast.
+     */
+    totalVotes?: number;
+    /**
+     * The number of valid votes.
+     */
+    validVotes?: number;
+    /**
+     * The number of invalid votes.
+     */
+    invalidVotes?: number;
+    /**
+     * The number of registered voters.
+     */
+    numVoters?: number;
+    /**
+     * The number of eligible candidates.
+     */
+    numEligibleCandidates?: number;
+    /**
+     * The number of positions to be elected.
+     */
+    numberToElect?: number;
+    /**
+     * The number of extra positions beyond the required number.
+     */
+    numberExtra?: number;
+};
+
+/**
+ * Data transfer object representing a teller in an election.
+ */
+export type TellerDto = {
+    /**
+     * The unique row identifier for the teller.
+     */
+    rowId?: number;
+    /**
+     * The unique identifier of the election this teller belongs to.
+     */
+    electionGuid?: string;
+    /**
+     * The name of the teller.
+     */
+    name?: string | null;
+    /**
+     * The code of the computer the teller is using.
+     */
+    usingComputerCode?: string | null;
+    /**
+     * Indicates whether this teller is the head teller.
+     */
+    isHeadTeller?: boolean;
+};
+
+/**
+ * Information about a candidate involved in a tie.
+ */
+export type TieCandidateDto = {
+    /**
+     * The unique identifier of the person.
+     */
+    personGuid?: string;
+    /**
+     * The full name of the candidate.
+     */
+    fullName?: string | null;
+    /**
+     * The number of votes the candidate received.
+     */
+    voteCount?: number;
+    /**
+     * The tie-break vote count for this candidate.
+     */
+    tieBreakCount?: number | null;
+};
+
+/**
+ * Tie-break count for a specific candidate.
+ */
+export type TieCountDto = {
+    /**
+     * The unique identifier of the person.
+     */
+    personGuid?: string;
+    /**
+     * The tie-break vote count for this candidate.
+     */
+    tieBreakCount?: number;
+};
+
+/**
+ * Details about a tie situation that requires manual resolution.
+ */
+export type TieDetailsDto = {
+    /**
+     * The tie-break group number for this tie.
+     */
+    tieBreakGroup?: number;
+    /**
+     * The election section or position where the tie occurred.
+     */
+    section?: string | null;
+    /**
+     * List of candidates involved in the tie.
+     */
+    candidates?: Array<TieCandidateDto> | null;
+    /**
+     * Instructions for resolving the tie.
+     */
+    instructions?: string | null;
+};
+
+/**
+ * Information about a tie situation in election results.
+ */
+export type TieInfoDto = {
+    /**
+     * The tie-break group number for this tie.
+     */
+    tieBreakGroup?: number;
+    /**
+     * The vote count that all tied candidates received.
+     */
+    voteCount?: number;
+    /**
+     * Whether a tie-break procedure is required to resolve this tie.
+     */
+    tieBreakRequired?: boolean;
+    /**
+     * The election section or position where the tie occurred.
+     */
+    section?: string | null;
+    /**
+     * List of candidate names involved in the tie.
+     */
+    candidateNames?: Array<string> | null;
+};
+
+/**
+ * Data transfer object containing information about a tie situation in election reports.
+ */
+export type TieReportDto = {
+    /**
+     * Group identifier for this tie situation.
+     */
+    tieBreakGroup?: number;
+    /**
+     * Section or category where the tie occurred.
+     */
+    section?: string | null;
+    /**
+     * List of candidate names involved in this tie.
+     */
+    candidateNames?: Array<string> | null;
+};
+
+/**
+ * Time-based analysis of voting patterns and rates.
+ */
+export type TimeBasedAnalysisDto = {
+    /**
+     * The acceleration rate of voting over time.
+     */
+    votingRateAcceleration?: number;
+    /**
+     * Voting data segmented by time periods.
+     */
+    segments?: Array<TimeSegmentDto> | null;
+    /**
+     * Peak voting hours with their voting rates.
+     */
+    peakVotingHours?: {
+        [key: string]: number;
+    } | null;
+};
+
+/**
+ * Data transfer object containing time-based turnout statistics.
+ */
+export type TimeBasedTurnoutDto = {
+    /**
+     * The time period for this turnout data.
+     */
+    timePeriod?: Date;
+    /**
+     * Type of time period (Hour, Day, etc.).
+     */
+    periodType?: string | null;
+    /**
+     * Number of ballots cast during this time period.
+     */
+    ballotsCast?: number;
+    /**
+     * Cumulative turnout percentage up to this time period.
+     */
+    cumulativeTurnout?: number;
+};
+
+/**
+ * A time segment with voting statistics.
+ */
+export type TimeSegmentDto = {
+    /**
+     * The time range represented by this segment.
+     */
+    timeRange?: string | null;
+    /**
+     * The number of ballots cast during this time segment.
+     */
+    ballotsCast?: number;
+    /**
+     * The voting rate during this time segment.
+     */
+    votingRate?: number;
+};
+
+/**
+ * Trend data for a specific metric across multiple elections.
+ */
+export type TrendDataDto = {
+    /**
+     * The metric being tracked (turnout, votes, etc.).
+     */
+    metric?: string | null;
+    /**
+     * Data points for this metric over time.
+     */
+    points?: Array<TrendPointDto> | null;
+};
+
+/**
+ * A single data point in a trend series.
+ */
+export type TrendPointDto = {
+    /**
+     * The date of this data point.
+     */
+    date?: Date;
+    /**
+     * The value of the metric at this point in time.
+     */
+    value?: number;
+    /**
+     * The name of the election this point represents.
+     */
+    electionName?: string | null;
+};
+
+/**
+ * Data transfer object containing analysis of voter turnout patterns.
+ */
+export type TurnoutAnalysisDto = {
+    /**
+     * Overall voter turnout percentage for the election.
+     */
+    overallTurnout?: number;
+    /**
+     * Turnout percentages broken down by voting location.
+     */
+    turnoutByLocation?: {
+        [key: string]: number;
+    } | null;
+    /**
+     * Time-based turnout trends and patterns.
+     */
+    turnoutTrends?: {
+        [key: string]: number;
+    } | null;
+    /**
+     * Number of ballots cast during early voting period.
+     */
+    earlyVotingCount?: number;
+    /**
+     * Number of ballots cast on election day.
+     */
+    electionDayVotingCount?: number;
+    /**
+     * Percentage of total votes that were cast during early voting.
+     */
+    earlyVotingPercentage?: number;
+    /**
+     * Turnout breakdown by demographic categories.
+     */
+    demographicBreakdown?: Array<DemographicTurnoutDto> | null;
+    /**
+     * Time-based turnout analysis.
+     */
+    timeBasedTurnout?: Array<TimeBasedTurnoutDto> | null;
+    participationRates?: ParticipationRateDto;
+};
+
+/**
+ * Data transfer object for updating ballot information.
+ */
+export type UpdateBallotDto = {
+    /**
+     * The status code of the ballot.
+     */
+    statusCode?: string | null;
+    /**
+     * The name of the first teller who processed the ballot.
+     */
+    teller1?: string | null;
+    /**
+     * The name of the second teller who processed the ballot.
+     */
+    teller2?: string | null;
+};
+
+/**
+ * Data transfer object for updating an existing election.
+ */
+export type UpdateElectionDto = {
+    /**
+     * The name of the election.
+     */
+    name?: string | null;
+    /**
+     * The date when the election will be held.
+     */
+    dateOfElection?: Date | null;
+    /**
+     * The number of positions to be elected.
+     */
+    numberToElect?: number | null;
+    /**
+     * The current tally status of the election.
+     */
+    tallyStatus?: string | null;
+    /**
+     * The name of the election convenor.
+     */
+    convenor?: string | null;
+    /**
+     * The number of extra positions beyond the required number.
+     */
+    numberExtra?: number | null;
+    /**
+     * Whether to show the full election report.
+     */
+    showFullReport?: boolean | null;
+    /**
+     * Whether to list this election for public access.
+     */
+    listForPublic?: boolean | null;
+    /**
+     * Whether to mark this election as a test election.
+     */
+    showAsTest?: boolean | null;
+    /**
+     * The date and time when online voting opens.
+     */
+    onlineWhenOpen?: Date | null;
+    /**
+     * The date and time when online voting closes.
+     */
+    onlineWhenClose?: Date | null;
+    /**
+     * The type of election (e.g., "STV", "Cond").
+     */
+    electionType?: string | null;
+    /**
+     * The mode of the election (e.g., "N" for normal, "I" for international).
+     */
+    electionMode?: string | null;
+    /**
+     * Default eligibility to vote (Y/N/?).
+     */
+    canVote?: string | null;
+    /**
+     * Default eligibility to receive votes (Y/N/?).
+     */
+    canReceive?: string | null;
+    /**
+     * The passcode required for teller access.
+     */
+    electionPasscode?: string | null;
+    /**
+     * Linked election GUID for tie-breaks.
+     */
+    linkedElectionGuid?: string | null;
+    /**
+     * Type of linked election (e.g., "TB" for tie-break).
+     */
+    linkedElectionKind?: string | null;
+    /**
+     * Whether to use the call-in button feature.
+     */
+    useCallInButton?: boolean | null;
+    /**
+     * Whether to hide pre-ballot pages.
+     */
+    hidePreBallotPages?: boolean | null;
+    /**
+     * Whether to mask the voting method in displays.
+     */
+    maskVotingMethod?: boolean | null;
+    /**
+     * Whether the online close time is an estimate.
+     */
+    onlineCloseIsEstimate?: boolean | null;
+    /**
+     * Online voting selection process (e.g., "S" for simultaneous).
+     */
+    onlineSelectionProcess?: string | null;
+    /**
+     * The date and time when online voting was announced.
+     */
+    onlineAnnounced?: Date | null;
+    /**
+     * Email from address for voter communications.
+     */
+    emailFromAddress?: string | null;
+    /**
+     * Email from name for voter communications.
+     */
+    emailFromName?: string | null;
+    /**
+     * Email template text for voter invitations.
+     */
+    emailText?: string | null;
+    /**
+     * Email subject line for voter communications.
+     */
+    emailSubject?: string | null;
+    /**
+     * SMS template text for voter invitations.
+     */
+    smsText?: string | null;
+    /**
+     * Custom voting methods (comma-separated).
+     */
+    customMethods?: string | null;
+    /**
+     * Voting methods available (encoded string).
+     */
+    votingMethods?: string | null;
+    /**
+     * Additional flags and settings (JSON).
+     */
+    flags?: string | null;
+};
+
+/**
+ * Data transfer object for updating an existing location.
+ */
+export type UpdateLocationDto = {
+    /**
+     * The name of the location.
+     */
+    name?: string | null;
+    /**
+     * Contact information for the location.
+     */
+    contactInfo?: string | null;
+    /**
+     * Longitude coordinate of the location.
+     */
+    longitude?: string | null;
+    /**
+     * Latitude coordinate of the location.
+     */
+    latitude?: string | null;
+    /**
+     * The sort order for displaying locations.
+     */
+    sortOrder?: number | null;
+};
+
+/**
  * Data transfer object for updating an existing person in an election.
  */
-export type TallyJ4DtosPeopleUpdatePersonDto = {
+export type UpdatePersonDto = {
     /**
      * The person's last name (required).
      */
@@ -696,1574 +3895,94 @@ export type TallyJ4DtosPeopleUpdatePersonDto = {
 };
 
 /**
- * Data transfer object representing an election available for public access.
+ * Data transfer object for updating an existing teller.
  */
-export type TallyJ4DtosPublicAvailableElectionDto = {
+export type UpdateTellerDto = {
     /**
-     * The unique identifier for the election.
-     */
-    electionGuid?: string;
-    /**
-     * The name of the election.
+     * The name of the teller.
      */
     name?: string | null;
     /**
-     * The date when the election will be held.
+     * The code of the computer the teller is using.
      */
-    dateOfElection?: Date | null;
+    usingComputerCode?: string | null;
     /**
-     * The type of election (e.g., "normal", "single-name").
+     * Indicates whether this teller is the head teller.
      */
-    electionType?: string | null;
+    isHeadTeller?: boolean;
 };
 
 /**
- * Data transfer object representing the status of an election for public viewing.
+ * Data transfer object for updating user profile information.
  */
-export type TallyJ4DtosPublicElectionStatusDto = {
+export type UpdateUserProfileDto = {
     /**
-     * The unique identifier for the election.
+     * The new username for the user.
      */
-    electionGuid?: string;
+    userName?: string | null;
     /**
-     * The name of the election.
+     * The new email address for the user.
      */
-    name?: string | null;
+    email?: string | null;
     /**
-     * The date when the election will be held.
+     * The new phone number for the user.
      */
-    dateOfElection?: Date | null;
-    /**
-     * The type of election (e.g., "normal", "single-name").
-     */
-    electionType?: string | null;
-    /**
-     * The current tally status of the election.
-     */
-    tallyStatus?: string | null;
-    /**
-     * Whether the election is currently active.
-     */
-    isActive?: boolean;
-    /**
-     * The number of registered voters.
-     */
-    registeredVoters?: number;
-    /**
-     * The number of ballots that have been submitted.
-     */
-    ballotsSubmitted?: number;
+    phoneNumber?: string | null;
 };
 
 /**
- * Data transfer object representing information for the public home page.
+ * Data transfer object representing a user's profile information.
  */
-export type TallyJ4DtosPublicPublicHomeDto = {
+export type UserProfileDto = {
     /**
-     * The name of the application.
+     * The unique identifier of the user.
      */
-    applicationName?: string | null;
+    id?: string | null;
     /**
-     * The version of the application.
+     * The username of the user.
      */
-    version?: string | null;
+    userName?: string | null;
     /**
-     * A description of the application.
+     * The email address of the user.
      */
-    description?: string | null;
+    email?: string | null;
     /**
-     * The number of elections available for public access.
+     * The phone number of the user.
      */
-    availableElectionsCount?: number;
+    phoneNumber?: string | null;
     /**
-     * The current server time.
+     * Indicates whether the user's email address has been confirmed.
      */
-    serverTime?: Date;
+    emailConfirmed?: boolean;
+    /**
+     * Indicates whether the user's phone number has been confirmed.
+     */
+    phoneNumberConfirmed?: boolean;
+};
+
+export type Verify2FaRequest = {
+    email: string;
+    code: string;
 };
 
 /**
- * Advanced filtering options for reports
+ * Data transfer object for verifying a voter's code for online voting.
  */
-export type TallyJ4DtosResultsAdvancedFilterDto = {
-    dateRange?: TallyJ4DtosResultsDateRangeFilterDto;
+export type VerifyCodeDto = {
     /**
-     * List of location names to filter by.
+     * The voter's unique identifier.
      */
-    locations?: Array<string> | null;
+    voterId?: string | null;
     /**
-     * List of candidate names to filter by.
+     * The verification code to validate.
      */
-    candidateNames?: Array<string> | null;
-    voteCountRange?: TallyJ4DtosResultsNumericRangeFilterDto;
-    turnoutRange?: TallyJ4DtosResultsNumericRangeFilterDto;
-    /**
-     * List of ballot statuses to filter by.
-     */
-    ballotStatuses?: Array<string> | null;
-    /**
-     * Filter to show only elected candidates.
-     */
-    onlyElected?: boolean | null;
-    /**
-     * Field to sort by (name, votes, turnout, etc.).
-     */
-    sortBy?: string | null;
-    /**
-     * Sort order (asc, desc).
-     */
-    sortOrder?: string | null;
-    /**
-     * Page number for pagination (1-based).
-     */
-    pageNumber?: number | null;
-    /**
-     * Number of items per page.
-     */
-    pageSize?: number | null;
-};
-
-/**
- * Data transfer object containing information about a ballot in election reports.
- */
-export type TallyJ4DtosResultsBallotReportDto = {
-    /**
-     * Unique identifier of the ballot.
-     */
-    ballotGuid?: string;
-    /**
-     * Name of the location where this ballot was cast.
-     */
-    locationName?: string | null;
-    /**
-     * Current status of the ballot.
-     */
-    status?: string | null;
-    /**
-     * List of votes recorded on this ballot.
-     */
-    votes?: Array<TallyJ4DtosResultsVoteReportDto> | null;
-};
-
-/**
- * Analysis of candidate performance and clustering.
- */
-export type TallyJ4DtosResultsCandidateAnalysisDto = {
-    /**
-     * The average vote percentage across all candidates.
-     */
-    averageVotePercentage?: number;
-    /**
-     * The variance in vote percentages among candidates.
-     */
-    votePercentageVariance?: number;
-    /**
-     * Clusters of candidates with similar performance characteristics.
-     */
-    clusters?: Array<TallyJ4DtosResultsCandidateClusterDto> | null;
-    /**
-     * Various performance metrics for candidates.
-     */
-    performanceMetrics?: {
-        [key: string]: number;
-    } | null;
-};
-
-/**
- * A cluster of candidates with similar performance characteristics.
- */
-export type TallyJ4DtosResultsCandidateClusterDto = {
-    /**
-     * The name or identifier of this cluster.
-     */
-    clusterName?: string | null;
-    /**
-     * List of candidate names in this cluster.
-     */
-    candidateNames?: Array<string> | null;
-    /**
-     * The average performance metric for candidates in this cluster.
-     */
-    averagePerformance?: number;
-};
-
-/**
- * Data transfer object containing performance metrics for a candidate.
- */
-export type TallyJ4DtosResultsCandidatePerformanceDto = {
-    /**
-     * Unique identifier of the person.
-     */
-    personGuid?: string;
-    /**
-     * Full name of the candidate.
-     */
-    fullName?: string | null;
-    /**
-     * Total number of votes received by this candidate.
-     */
-    totalVotes?: number;
-    /**
-     * Percentage of total votes received by this candidate.
-     */
-    votePercentage?: number;
-    /**
-     * Final ranking position of this candidate.
-     */
-    rank?: number;
-    /**
-     * Indicates whether this candidate has been elected.
-     */
-    isElected?: boolean;
-    /**
-     * Indicates whether this candidate has been eliminated from the race.
-     */
-    isEliminated?: boolean;
-    /**
-     * Breakdown of votes received by position on ballots.
-     */
-    votesByPosition?: {
-        [key: string]: number;
-    } | null;
-    /**
-     * Percentage of ballots where this candidate was the first choice.
-     */
-    firstChoicePercentage?: number;
-    /**
-     * Percentage of ballots where this candidate was the last choice.
-     */
-    lastChoicePercentage?: number;
-};
-
-/**
- * Data transfer object containing information about a candidate in election reports.
- */
-export type TallyJ4DtosResultsCandidateReportDto = {
-    /**
-     * The ranking position of this candidate in the election results.
-     */
-    rank?: number;
-    /**
-     * Full name of the candidate.
-     */
-    fullName?: string | null;
-    /**
-     * Number of votes received by this candidate.
-     */
-    voteCount?: number;
-    /**
-     * Section or category this candidate belongs to.
-     */
-    section?: string | null;
-};
-
-/**
- * Data transfer object representing the result for a single candidate.
- */
-export type TallyJ4DtosResultsCandidateResultDto = {
-    /**
-     * The unique identifier for the person (candidate).
-     */
-    personGuid?: string;
-    /**
-     * The full name of the candidate.
-     */
-    fullName?: string | null;
-    /**
-     * The number of votes received by this candidate.
-     */
-    voteCount?: number;
-    /**
-     * The rank/position of this candidate in the results.
-     */
-    rank?: number;
-    /**
-     * The section this candidate belongs to (e.g., "E" for elected, "X" for extra).
-     */
-    section?: string | null;
-    /**
-     * Whether this candidate is tied with others.
-     */
-    isTied?: boolean;
-    /**
-     * The tie break group number if this candidate is tied.
-     */
-    tieBreakGroup?: number | null;
-    /**
-     * Whether tie breaking is required for this candidate.
-     */
-    tieBreakRequired?: boolean;
-    /**
-     * Whether this candidate's vote count is close to the next candidate's count.
-     */
-    closeToNext?: boolean;
-    /**
-     * Whether this candidate's vote count is close to the previous candidate's count.
-     */
-    closeToPrev?: boolean;
-};
-
-/**
- * Axis configuration options.
- */
-export type TallyJ4DtosResultsChartAxisDto = {
-    /**
-     * Whether to display the axis.
-     */
-    display?: boolean;
-    /**
-     * The title text for the axis.
-     */
-    title?: string | null;
-};
-
-/**
- * Data structure for chart visualizations
- */
-export type TallyJ4DtosResultsChartDataDto = {
-    /**
-     * The type of chart to display (bar, pie, line, doughnut).
-     */
-    chartType?: string | null;
-    /**
-     * The title of the chart.
-     */
-    title?: string | null;
-    /**
-     * Labels for the chart data points.
-     */
-    labels?: Array<string> | null;
-    /**
-     * Datasets containing the chart data.
-     */
-    datasets?: Array<TallyJ4DtosResultsChartDatasetDto> | null;
-    options?: TallyJ4DtosResultsChartOptionsDto;
-};
-
-/**
- * Represents a dataset for chart visualization.
- */
-export type TallyJ4DtosResultsChartDatasetDto = {
-    /**
-     * The label for this dataset.
-     */
-    label?: string | null;
-    /**
-     * The data values for this dataset.
-     */
-    data?: Array<number> | null;
-    /**
-     * Background colors for the data points.
-     */
-    backgroundColors?: Array<string> | null;
-    /**
-     * Border colors for the data points.
-     */
-    borderColors?: Array<string> | null;
-    /**
-     * Width of the border around data points.
-     */
-    borderWidth?: number;
-};
-
-/**
- * Legend configuration options.
- */
-export type TallyJ4DtosResultsChartLegendDto = {
-    /**
-     * Position of the legend (top, bottom, left, right).
-     */
-    position?: string | null;
-    /**
-     * Whether to display the legend.
-     */
-    display?: boolean;
-};
-
-/**
- * Chart configuration options.
- */
-export type TallyJ4DtosResultsChartOptionsDto = {
-    /**
-     * Whether the chart should be responsive to container size changes.
-     */
-    responsive?: boolean;
-    plugins?: TallyJ4DtosResultsChartPluginsDto;
-    scales?: TallyJ4DtosResultsChartScalesDto;
-};
-
-/**
- * Plugin configurations for chart elements.
- */
-export type TallyJ4DtosResultsChartPluginsDto = {
-    legend?: TallyJ4DtosResultsChartLegendDto;
-    title?: TallyJ4DtosResultsChartTitleDto;
-};
-
-/**
- * Scale configurations for chart axes.
- */
-export type TallyJ4DtosResultsChartScalesDto = {
-    x?: TallyJ4DtosResultsChartAxisDto;
-    y?: TallyJ4DtosResultsChartAxisDto;
-};
-
-/**
- * Title configuration options.
- */
-export type TallyJ4DtosResultsChartTitleDto = {
-    /**
-     * Whether to display the title.
-     */
-    display?: boolean;
-    /**
-     * The text content of the title.
-     */
-    text?: string | null;
-};
-
-/**
- * Aggregated metrics for comparing multiple elections.
- */
-export type TallyJ4DtosResultsComparisonMetricsDto = {
-    /**
-     * The average turnout percentage across all elections.
-     */
-    averageTurnout?: number;
-    /**
-     * The percentage change in turnout from the previous period.
-     */
-    turnoutChange?: number;
-    /**
-     * The total number of elections being compared.
-     */
-    totalElections?: number;
-    /**
-     * Average values for various metrics across all elections.
-     */
-    metricAverages?: {
-        [key: string]: number;
-    } | null;
-};
-
-/**
- * Data transfer object containing information about a computer participating in the election.
- */
-export type TallyJ4DtosResultsComputerInfoDto = {
-    /**
-     * Unique code identifying the computer.
-     */
-    computerCode?: string | null;
-    /**
-     * Name of the location where this computer is deployed.
-     */
-    locationName?: string | null;
-    /**
-     * Number of ballots processed by this computer.
-     */
-    ballotCount?: number;
-    /**
-     * Timestamp of the last contact from this computer.
-     */
-    lastContact?: Date;
-    /**
-     * Current status of the computer ("Active", "Inactive", "Offline").
-     */
-    status?: string | null;
-};
-
-/**
- * Configuration for custom reports
- */
-export type TallyJ4DtosResultsCustomReportConfigDto = {
-    /**
-     * The name of the custom report.
-     */
-    reportName?: string | null;
-    /**
-     * A description of the custom report.
-     */
-    description?: string | null;
-    /**
-     * The sections that make up the custom report.
-     */
-    sections?: Array<TallyJ4DtosResultsReportSectionDto> | null;
-    defaultFilters?: TallyJ4DtosResultsAdvancedFilterDto;
-    /**
-     * Supported export formats for the report.
-     */
-    exportFormats?: Array<string> | null;
-    /**
-     * Whether the report is publicly accessible.
-     */
-    isPublic?: boolean;
-    /**
-     * The date and time when the report configuration was created.
-     */
-    createdAt?: Date;
-    /**
-     * The date and time when the report configuration was last modified.
-     */
-    modifiedAt?: Date | null;
-};
-
-/**
- * Represents a generated custom report.
- */
-export type TallyJ4DtosResultsCustomReportDto = {
-    /**
-     * The unique identifier for this report instance.
-     */
-    reportGuid?: string;
-    config?: TallyJ4DtosResultsCustomReportConfigDto;
-    /**
-     * The generated report data organized by section or data type.
-     */
-    generatedData?: {
-        [key: string]: unknown;
-    } | null;
-    /**
-     * The date and time when this report was generated.
-     */
-    generatedAt?: Date;
-};
-
-/**
- * Date range filter for filtering by date ranges.
- */
-export type TallyJ4DtosResultsDateRangeFilterDto = {
-    /**
-     * The start date of the range (inclusive).
-     */
-    startDate?: Date | null;
-    /**
-     * The end date of the range (inclusive).
-     */
-    endDate?: Date | null;
-};
-
-/**
- * Data transfer object containing turnout statistics for a demographic group.
- */
-export type TallyJ4DtosResultsDemographicTurnoutDto = {
-    /**
-     * Category of demographic data (AgeGroup, Area, etc.).
-     */
-    demographicCategory?: string | null;
-    /**
-     * Specific value within the demographic category.
-     */
-    demographicValue?: string | null;
-    /**
-     * Total number of voters in this demographic group.
-     */
-    totalVoters?: number;
-    /**
-     * Number of voters in this group who cast ballots.
-     */
-    voted?: number;
-    /**
-     * Turnout percentage for this demographic group.
-     */
-    turnoutPercentage?: number;
-};
-
-/**
- * Data transfer object containing detailed statistical analysis of election data.
- */
-export type TallyJ4DtosResultsDetailedStatisticsDto = {
-    overview?: TallyJ4DtosResultsElectionOverviewDto;
-    voteDistribution?: TallyJ4DtosResultsVoteDistributionDto;
-    /**
-     * Performance metrics for each candidate.
-     */
-    candidatePerformance?: Array<TallyJ4DtosResultsCandidatePerformanceDto> | null;
-    turnoutAnalysis?: TallyJ4DtosResultsTurnoutAnalysisDto;
-    /**
-     * Statistics broken down by voting location.
-     */
-    locationStatistics?: Array<TallyJ4DtosResultsLocationStatisticsDto> | null;
-};
-
-/**
- * Data structure for comparing multiple elections
- */
-export type TallyJ4DtosResultsElectionComparisonDto = {
-    /**
-     * List of elections being compared.
-     */
-    elections?: Array<TallyJ4DtosResultsElectionSummaryDto> | null;
-    metrics?: TallyJ4DtosResultsComparisonMetricsDto;
-    /**
-     * Trend data showing changes over time across elections.
-     */
-    trends?: Array<TallyJ4DtosResultsTrendDataDto> | null;
-};
-
-/**
- * Request DTO for comparing multiple elections
- */
-export type TallyJ4DtosResultsElectionComparisonRequestDto = {
-    /**
-     * List of election GUIDs to compare.
-     */
-    electionIds?: Array<string> | null;
-    /**
-     * List of metrics to include in the comparison.
-     */
-    metrics?: Array<string> | null;
-};
-
-/**
- * Data transfer object containing overview statistics for an election.
- */
-export type TallyJ4DtosResultsElectionOverviewDto = {
-    /**
-     * Name of the election.
-     */
-    electionName?: string | null;
-    /**
-     * Date when the election was held.
-     */
-    electionDate?: Date | null;
-    /**
-     * Total number of registered voters.
-     */
-    totalRegisteredVoters?: number;
-    /**
-     * Total number of ballots cast.
-     */
-    totalBallotsCast?: number;
-    /**
-     * Number of valid ballots.
-     */
-    validBallots?: number;
-    /**
-     * Number of spoiled or invalid ballots.
-     */
-    spoiledBallots?: number;
-    /**
-     * Total number of votes recorded.
-     */
-    totalVotes?: number;
-    /**
-     * Number of positions to be elected.
-     */
-    positionsToElect?: number;
-    /**
-     * Overall voter turnout percentage.
-     */
-    overallTurnoutPercentage?: number;
-    /**
-     * Duration of the election period.
-     */
-    electionDuration?: string | null;
-};
-
-/**
- * Data transfer object containing comprehensive election report data.
- */
-export type TallyJ4DtosResultsElectionReportDto = {
-    /**
-     * Name of the election.
-     */
-    electionName?: string | null;
-    /**
-     * Date when the election was held.
-     */
-    electionDate?: Date | null;
-    /**
-     * Number of candidates to be elected.
-     */
-    numToElect?: number;
-    /**
-     * Total number of ballots cast in the election.
-     */
-    totalBallots?: number;
-    /**
-     * Number of spoiled or invalid ballots.
-     */
-    spoiledBallots?: number;
-    /**
-     * Total number of votes recorded across all ballots.
-     */
-    totalVotes?: number;
-    /**
-     * List of candidates who have been elected.
-     */
-    elected?: Array<TallyJ4DtosResultsCandidateReportDto> | null;
-    /**
-     * List of additional candidates who received votes but were not elected.
-     */
-    extra?: Array<TallyJ4DtosResultsCandidateReportDto> | null;
-    /**
-     * List of other candidates who participated but received no votes.
-     */
-    other?: Array<TallyJ4DtosResultsCandidateReportDto> | null;
-    /**
-     * List of tie situations in the election results.
-     */
-    ties?: Array<TallyJ4DtosResultsTieReportDto> | null;
-};
-
-/**
- * Summary information for a single election.
- */
-export type TallyJ4DtosResultsElectionSummaryDto = {
-    /**
-     * The unique identifier of the election.
-     */
-    electionGuid?: string;
-    /**
-     * The name of the election.
-     */
-    electionName?: string | null;
-    /**
-     * The date when the election was held.
-     */
-    electionDate?: Date | null;
-    /**
-     * The total number of registered voters.
-     */
-    totalRegisteredVoters?: number;
-    /**
-     * The total number of ballots cast.
-     */
-    totalBallotsCast?: number;
-    /**
-     * The turnout percentage (ballots cast / registered voters).
-     */
-    turnoutPercentage?: number;
-    /**
-     * The total number of votes cast across all positions.
-     */
-    totalVotes?: number;
-    /**
-     * The number of positions to be elected.
-     */
-    positionsToElect?: number;
-    /**
-     * The number of candidates who were elected.
-     */
-    electedCount?: number;
-};
-
-/**
- * Request DTO for exporting election reports in different formats.
- */
-export type TallyJ4DtosResultsExportRequest = {
-    /**
-     * The format of the exported report (PDF, Excel, or CSV).
-     */
-    format?: string | null;
-    /**
-     * The unique identifier of the election to export.
-     */
-    electionId?: string;
-    /**
-     * Optional filters to apply to the export (e.g., date ranges, locations).
-     */
-    filters?: {
-        [key: string]: string;
-    } | null;
-};
-
-/**
- * Filtered report data with applied filters
- */
-export type TallyJ4DtosResultsFilteredReportDto = {
-    appliedFilters?: TallyJ4DtosResultsAdvancedFilterDto;
-    /**
-     * The total number of records before filtering.
-     */
-    totalRecords?: number;
-    /**
-     * The number of records after filtering has been applied.
-     */
-    filteredRecords?: number;
-    summary?: TallyJ4DtosResultsElectionReportDto;
-    /**
-     * Filtered list of candidate results.
-     */
-    candidates?: Array<TallyJ4DtosResultsCandidateReportDto> | null;
-    /**
-     * Filtered list of location results.
-     */
-    locations?: Array<TallyJ4DtosResultsLocationReportDto> | null;
-    /**
-     * Filtered list of ballot results.
-     */
-    ballots?: Array<TallyJ4DtosResultsBallotReportDto> | null;
-    /**
-     * Filtered list of voter information.
-     */
-    voters?: Array<TallyJ4DtosResultsVoterReportDto> | null;
-};
-
-/**
- * Analysis of voting patterns by geographic location.
- */
-export type TallyJ4DtosResultsLocationAnalysisDto = {
-    /**
-     * The variance in turnout rates across different locations.
-     */
-    turnoutVariance?: number;
-    /**
-     * Correlations between location characteristics and voting behavior.
-     */
-    locationCorrelations?: {
-        [key: string]: number;
-    } | null;
-    /**
-     * Clusters of locations with similar voting characteristics.
-     */
-    clusters?: Array<TallyJ4DtosResultsLocationClusterDto> | null;
-};
-
-/**
- * A cluster of locations with similar voting characteristics.
- */
-export type TallyJ4DtosResultsLocationClusterDto = {
-    /**
-     * The name or identifier of this location cluster.
-     */
-    clusterName?: string | null;
-    /**
-     * List of location names in this cluster.
-     */
-    locationNames?: Array<string> | null;
-    /**
-     * The average turnout rate for locations in this cluster.
-     */
-    averageTurnout?: number;
-};
-
-/**
- * Data transfer object containing information about a voting location.
- */
-export type TallyJ4DtosResultsLocationInfoDto = {
-    /**
-     * Unique identifier of the voting location.
-     */
-    locationGuid?: string;
-    /**
-     * Name of the voting location.
-     */
-    locationName?: string | null;
-    /**
-     * Number of ballots cast at this location.
-     */
-    ballotCount?: number;
-    /**
-     * Total number of votes recorded at this location.
-     */
-    voteCount?: number;
-    /**
-     * Number of registered voters at this location.
-     */
-    voterCount?: number;
-    /**
-     * Current status of the location.
-     */
-    status?: string | null;
-};
-
-/**
- * Data transfer object containing statistics for a specific voting location.
- */
-export type TallyJ4DtosResultsLocationReportDto = {
-    /**
-     * Name of the voting location.
-     */
-    locationName?: string | null;
-    /**
-     * Total number of registered voters at this location.
-     */
-    totalVoters?: number;
-    /**
-     * Number of voters who have cast their ballots.
-     */
-    voted?: number;
-    /**
-     * Number of ballots that have been entered into the system.
-     */
-    ballotsEntered?: number;
-    /**
-     * Total number of votes recorded at this location.
-     */
-    totalVotes?: number;
-};
-
-/**
- * Data transfer object containing statistics for a specific voting location.
- */
-export type TallyJ4DtosResultsLocationStatisticsDto = {
-    /**
-     * Name of the voting location.
-     */
-    locationName?: string | null;
-    /**
-     * Number of registered voters at this location.
-     */
-    registeredVoters?: number;
-    /**
-     * Number of ballots cast at this location.
-     */
-    ballotsCast?: number;
-    /**
-     * Number of valid ballots at this location.
-     */
-    validBallots?: number;
-    /**
-     * Number of spoiled ballots at this location.
-     */
-    spoiledBallots?: number;
-    /**
-     * Turnout percentage at this location.
-     */
-    turnoutPercentage?: number;
-    /**
-     * Total number of votes recorded at this location.
-     */
-    totalVotes?: number;
-    /**
-     * Top candidates and their vote counts at this location.
-     */
-    topCandidates?: {
-        [key: string]: number;
-    } | null;
-};
-
-/**
- * Data transfer object containing real-time monitoring information for an election.
- */
-export type TallyJ4DtosResultsMonitorInfoDto = {
-    /**
-     * The unique identifier of the election being monitored.
-     */
-    electionGuid?: string;
-    /**
-     * List of computers participating in the election with their status information.
-     */
-    computers?: Array<TallyJ4DtosResultsComputerInfoDto> | null;
-    /**
-     * List of voting locations with their current statistics.
-     */
-    locations?: Array<TallyJ4DtosResultsLocationInfoDto> | null;
-    onlineVotingInfo?: TallyJ4DtosResultsOnlineVotingInfoDto;
-    /**
-     * Total number of ballots cast across all locations and online voting.
-     */
-    totalBallots?: number;
-    /**
-     * Total number of votes recorded across all ballots.
-     */
-    totalVotes?: number;
-    /**
-     * Timestamp of the last update to this monitoring information.
-     */
-    lastUpdated?: Date;
-};
-
-/**
- * Numeric range filter for filtering by minimum and maximum values.
- */
-export type TallyJ4DtosResultsNumericRangeFilterDto = {
-    /**
-     * The minimum value of the range (inclusive).
-     */
-    min?: number | null;
-    /**
-     * The maximum value of the range (inclusive).
-     */
-    max?: number | null;
-};
-
-/**
- * Data transfer object containing information about online voting status and statistics.
- */
-export type TallyJ4DtosResultsOnlineVotingInfoDto = {
-    /**
-     * Total number of online ballots submitted.
-     */
-    totalOnlineBallots?: number;
-    /**
-     * Number of online ballots that have been processed.
-     */
-    processedOnlineBallots?: number;
-    /**
-     * Number of online ballots that are still pending processing.
-     */
-    pendingOnlineBallots?: number;
-    /**
-     * Indicates whether online voting is currently enabled.
-     */
-    onlineVotingEnabled?: boolean;
-    /**
-     * Start date and time for online voting period.
-     */
-    onlineVotingStart?: Date | null;
-    /**
-     * End date and time for online voting period.
-     */
-    onlineVotingEnd?: Date | null;
-};
-
-/**
- * Data transfer object containing participation rates by different voting methods.
- */
-export type TallyJ4DtosResultsParticipationRateDto = {
-    /**
-     * Percentage of first-time voters.
-     */
-    firstTimeVoters?: number;
-    /**
-     * Percentage of returning voters.
-     */
-    returningVoters?: number;
-    /**
-     * Percentage of voters who voted online.
-     */
-    onlineVoters?: number;
-    /**
-     * Percentage of voters who voted in person.
-     */
-    inPersonVoters?: number;
-    /**
-     * Participation rates broken down by voting method.
-     */
-    participationByMethod?: {
-        [key: string]: number;
-    } | null;
-};
-
-/**
- * A prediction for a specific election metric.
- */
-export type TallyJ4DtosResultsPredictionDto = {
-    /**
-     * The metric being predicted.
-     */
-    metric?: string | null;
-    /**
-     * The predicted value for the metric.
-     */
-    predictedValue?: number;
-    /**
-     * The confidence level of the prediction (0-1).
-     */
-    confidenceLevel?: number;
-};
-
-/**
- * Predictive metrics and forecasting data for the election.
- */
-export type TallyJ4DtosResultsPredictiveMetricsDto = {
-    /**
-     * The projected turnout rate based on current trends.
-     */
-    projectedTurnout?: number;
-    /**
-     * List of predictions for various election metrics.
-     */
-    predictions?: Array<TallyJ4DtosResultsPredictionDto> | null;
-    /**
-     * Confidence intervals for the predictions.
-     */
-    confidenceIntervals?: {
-        [key: string]: number;
-    } | null;
-};
-
-/**
- * Data transfer object containing information about a candidate for presentation purposes.
- */
-export type TallyJ4DtosResultsPresentationCandidateDto = {
-    /**
-     * The ranking position of this candidate in the election results.
-     */
-    rank?: number;
-    /**
-     * Full name of the candidate.
-     */
-    fullName?: string | null;
-    /**
-     * Number of votes received by this candidate.
-     */
-    voteCount?: number;
-    /**
-     * Indicates whether this candidate is tied with others.
-     */
-    isTied?: boolean;
-    /**
-     * Indicates whether this candidate has been elected.
-     */
-    isWinner?: boolean;
-};
-
-/**
- * Data transfer object containing election results formatted for presentation.
- */
-export type TallyJ4DtosResultsPresentationDto = {
-    /**
-     * Name of the election.
-     */
-    electionName?: string | null;
-    /**
-     * Date when the election was held.
-     */
-    electionDate?: Date | null;
-    /**
-     * Number of candidates to be elected.
-     */
-    numToElect?: number;
-    /**
-     * Total number of ballots cast in the election.
-     */
-    totalBallots?: number;
-    /**
-     * Total number of votes recorded across all ballots.
-     */
-    totalVotes?: number;
-    /**
-     * List of candidates who have been elected.
-     */
-    electedCandidates?: Array<TallyJ4DtosResultsPresentationCandidateDto> | null;
-    /**
-     * List of additional candidates who received votes but were not elected.
-     */
-    extraCandidates?: Array<TallyJ4DtosResultsPresentationCandidateDto> | null;
-    /**
-     * Indicates whether there are any ties in the election results.
-     */
-    hasTies?: boolean;
-    /**
-     * List of tie situations that need to be resolved.
-     */
-    ties?: Array<TallyJ4DtosResultsPresentationTieDto> | null;
-    /**
-     * Current status of the election results ("Preliminary", "Final", "In Progress").
-     */
-    status?: string | null;
-};
-
-/**
- * Data transfer object containing information about a tie situation in election results.
- */
-export type TallyJ4DtosResultsPresentationTieDto = {
-    /**
-     * Group identifier for this tie situation.
-     */
-    tieBreakGroup?: number;
-    /**
-     * Section or category where the tie occurred.
-     */
-    section?: string | null;
-    /**
-     * List of candidate names involved in this tie.
-     */
-    candidateNames?: Array<string> | null;
-    /**
-     * Indicates whether manual tie-breaking is required.
-     */
-    tieBreakRequired?: boolean;
-};
-
-/**
- * Data transfer object containing report data response.
- */
-export type TallyJ4DtosResultsReportDataResponseDto = {
-    /**
-     * Type of report being returned.
-     */
-    reportType?: string | null;
-    /**
-     * The actual report data.
-     */
-    data?: unknown;
-};
-
-/**
- * Represents a section within a custom report.
- */
-export type TallyJ4DtosResultsReportSectionDto = {
-    /**
-     * The type of section (summary, candidates, locations, chart, statistics).
-     */
-    sectionType?: string | null;
-    /**
-     * The title of the report section.
-     */
-    title?: string | null;
-    /**
-     * Parameters specific to this section type.
-     */
-    parameters?: {
-        [key: string]: unknown;
-    } | null;
-    /**
-     * The order of this section within the report.
-     */
-    order?: number;
-};
-
-/**
- * Request to save tie-break vote counts.
- */
-export type TallyJ4DtosResultsSaveTieCountsRequestDto = {
-    /**
-     * List of tie-break counts for candidates.
-     */
-    counts?: Array<TallyJ4DtosResultsTieCountDto> | null;
-};
-
-/**
- * Response from saving tie-break vote counts.
- */
-export type TallyJ4DtosResultsSaveTieCountsResponseDto = {
-    /**
-     * Whether the save operation was successful.
-     */
-    success?: boolean;
-    /**
-     * A message describing the result of the operation.
-     */
-    message?: string | null;
-    /**
-     * Whether a re-analysis of the election results was triggered.
-     */
-    reAnalysisTriggered?: boolean;
-};
-
-/**
- * Comprehensive statistical analysis of election data
- */
-export type TallyJ4DtosResultsStatisticalAnalysisDto = {
-    overview?: TallyJ4DtosResultsElectionOverviewDto;
-    votingPatterns?: TallyJ4DtosResultsVotingPatternAnalysisDto;
-    candidateAnalysis?: TallyJ4DtosResultsCandidateAnalysisDto;
-    locationAnalysis?: TallyJ4DtosResultsLocationAnalysisDto;
-    timeBasedAnalysis?: TallyJ4DtosResultsTimeBasedAnalysisDto;
-    predictiveMetrics?: TallyJ4DtosResultsPredictiveMetricsDto;
-};
-
-/**
- * Data transfer object representing the complete results of an election tally.
- */
-export type TallyJ4DtosResultsTallyResultDto = {
-    /**
-     * The unique identifier for the election.
-     */
-    electionGuid?: string;
-    /**
-     * The name of the election.
-     */
-    electionName?: string | null;
-    /**
-     * The date and time when the tally was calculated.
-     */
-    calculatedAt?: Date;
-    statistics?: TallyJ4DtosResultsTallyStatisticsDto;
-    /**
-     * The list of candidate results.
-     */
-    results?: Array<TallyJ4DtosResultsCandidateResultDto> | null;
-    /**
-     * Information about any ties in the election.
-     */
-    ties?: Array<TallyJ4DtosResultsTieInfoDto> | null;
-};
-
-/**
- * Data transfer object representing statistical information about an election tally.
- */
-export type TallyJ4DtosResultsTallyStatisticsDto = {
-    /**
-     * The total number of ballots in the election.
-     */
-    totalBallots?: number;
-    /**
-     * The number of ballots that have been received.
-     */
-    ballotsReceived?: number;
-    /**
-     * The number of spoiled/invalid ballots.
-     */
-    spoiledBallots?: number;
-    /**
-     * The number of ballots that need manual review.
-     */
-    ballotsNeedingReview?: number;
-    /**
-     * The total number of votes cast.
-     */
-    totalVotes?: number;
-    /**
-     * The number of valid votes.
-     */
-    validVotes?: number;
-    /**
-     * The number of invalid votes.
-     */
-    invalidVotes?: number;
-    /**
-     * The number of registered voters.
-     */
-    numVoters?: number;
-    /**
-     * The number of eligible candidates.
-     */
-    numEligibleCandidates?: number;
-    /**
-     * The number of positions to be elected.
-     */
-    numberToElect?: number;
-    /**
-     * The number of extra positions beyond the required number.
-     */
-    numberExtra?: number;
-};
-
-/**
- * Information about a candidate involved in a tie.
- */
-export type TallyJ4DtosResultsTieCandidateDto = {
-    /**
-     * The unique identifier of the person.
-     */
-    personGuid?: string;
-    /**
-     * The full name of the candidate.
-     */
-    fullName?: string | null;
-    /**
-     * The number of votes the candidate received.
-     */
-    voteCount?: number;
-    /**
-     * The tie-break vote count for this candidate.
-     */
-    tieBreakCount?: number | null;
-};
-
-/**
- * Tie-break count for a specific candidate.
- */
-export type TallyJ4DtosResultsTieCountDto = {
-    /**
-     * The unique identifier of the person.
-     */
-    personGuid?: string;
-    /**
-     * The tie-break vote count for this candidate.
-     */
-    tieBreakCount?: number;
-};
-
-/**
- * Details about a tie situation that requires manual resolution.
- */
-export type TallyJ4DtosResultsTieDetailsDto = {
-    /**
-     * The tie-break group number for this tie.
-     */
-    tieBreakGroup?: number;
-    /**
-     * The election section or position where the tie occurred.
-     */
-    section?: string | null;
-    /**
-     * List of candidates involved in the tie.
-     */
-    candidates?: Array<TallyJ4DtosResultsTieCandidateDto> | null;
-    /**
-     * Instructions for resolving the tie.
-     */
-    instructions?: string | null;
-};
-
-/**
- * Information about a tie situation in election results.
- */
-export type TallyJ4DtosResultsTieInfoDto = {
-    /**
-     * The tie-break group number for this tie.
-     */
-    tieBreakGroup?: number;
-    /**
-     * The vote count that all tied candidates received.
-     */
-    voteCount?: number;
-    /**
-     * Whether a tie-break procedure is required to resolve this tie.
-     */
-    tieBreakRequired?: boolean;
-    /**
-     * The election section or position where the tie occurred.
-     */
-    section?: string | null;
-    /**
-     * List of candidate names involved in the tie.
-     */
-    candidateNames?: Array<string> | null;
-};
-
-/**
- * Data transfer object containing information about a tie situation in election reports.
- */
-export type TallyJ4DtosResultsTieReportDto = {
-    /**
-     * Group identifier for this tie situation.
-     */
-    tieBreakGroup?: number;
-    /**
-     * Section or category where the tie occurred.
-     */
-    section?: string | null;
-    /**
-     * List of candidate names involved in this tie.
-     */
-    candidateNames?: Array<string> | null;
-};
-
-/**
- * Time-based analysis of voting patterns and rates.
- */
-export type TallyJ4DtosResultsTimeBasedAnalysisDto = {
-    /**
-     * The acceleration rate of voting over time.
-     */
-    votingRateAcceleration?: number;
-    /**
-     * Voting data segmented by time periods.
-     */
-    segments?: Array<TallyJ4DtosResultsTimeSegmentDto> | null;
-    /**
-     * Peak voting hours with their voting rates.
-     */
-    peakVotingHours?: {
-        [key: string]: number;
-    } | null;
-};
-
-/**
- * Data transfer object containing time-based turnout statistics.
- */
-export type TallyJ4DtosResultsTimeBasedTurnoutDto = {
-    /**
-     * The time period for this turnout data.
-     */
-    timePeriod?: Date;
-    /**
-     * Type of time period (Hour, Day, etc.).
-     */
-    periodType?: string | null;
-    /**
-     * Number of ballots cast during this time period.
-     */
-    ballotsCast?: number;
-    /**
-     * Cumulative turnout percentage up to this time period.
-     */
-    cumulativeTurnout?: number;
-};
-
-/**
- * A time segment with voting statistics.
- */
-export type TallyJ4DtosResultsTimeSegmentDto = {
-    /**
-     * The time range represented by this segment.
-     */
-    timeRange?: string | null;
-    /**
-     * The number of ballots cast during this time segment.
-     */
-    ballotsCast?: number;
-    /**
-     * The voting rate during this time segment.
-     */
-    votingRate?: number;
-};
-
-/**
- * Trend data for a specific metric across multiple elections.
- */
-export type TallyJ4DtosResultsTrendDataDto = {
-    /**
-     * The metric being tracked (turnout, votes, etc.).
-     */
-    metric?: string | null;
-    /**
-     * Data points for this metric over time.
-     */
-    points?: Array<TallyJ4DtosResultsTrendPointDto> | null;
-};
-
-/**
- * A single data point in a trend series.
- */
-export type TallyJ4DtosResultsTrendPointDto = {
-    /**
-     * The date of this data point.
-     */
-    date?: Date;
-    /**
-     * The value of the metric at this point in time.
-     */
-    value?: number;
-    /**
-     * The name of the election this point represents.
-     */
-    electionName?: string | null;
-};
-
-/**
- * Data transfer object containing analysis of voter turnout patterns.
- */
-export type TallyJ4DtosResultsTurnoutAnalysisDto = {
-    /**
-     * Overall voter turnout percentage for the election.
-     */
-    overallTurnout?: number;
-    /**
-     * Turnout percentages broken down by voting location.
-     */
-    turnoutByLocation?: {
-        [key: string]: number;
-    } | null;
-    /**
-     * Time-based turnout trends and patterns.
-     */
-    turnoutTrends?: {
-        [key: string]: number;
-    } | null;
-    /**
-     * Number of ballots cast during early voting period.
-     */
-    earlyVotingCount?: number;
-    /**
-     * Number of ballots cast on election day.
-     */
-    electionDayVotingCount?: number;
-    /**
-     * Percentage of total votes that were cast during early voting.
-     */
-    earlyVotingPercentage?: number;
-    /**
-     * Turnout breakdown by demographic categories.
-     */
-    demographicBreakdown?: Array<TallyJ4DtosResultsDemographicTurnoutDto> | null;
-    /**
-     * Time-based turnout analysis.
-     */
-    timeBasedTurnout?: Array<TallyJ4DtosResultsTimeBasedTurnoutDto> | null;
-    participationRates?: TallyJ4DtosResultsParticipationRateDto;
+    verifyCode?: string | null;
 };
 
 /**
  * Data transfer object containing analysis of vote distribution patterns.
  */
-export type TallyJ4DtosResultsVoteDistributionDto = {
+export type VoteDistributionDto = {
     /**
      * Array showing number of votes cast for each position on ballots.
      */
@@ -2295,193 +4014,10 @@ export type TallyJ4DtosResultsVoteDistributionDto = {
 };
 
 /**
- * Data transfer object containing information about a single vote in election reports.
- */
-export type TallyJ4DtosResultsVoteReportDto = {
-    /**
-     * Full name of the candidate who received this vote.
-     */
-    fullName?: string | null;
-    /**
-     * Position/order of this vote on the ballot.
-     */
-    position?: number;
-};
-
-/**
- * Data transfer object containing information about a voter in election reports.
- */
-export type TallyJ4DtosResultsVoterReportDto = {
-    /**
-     * Unique identifier of the person.
-     */
-    personGuid?: string;
-    /**
-     * Full name of the voter.
-     */
-    fullName?: string | null;
-    /**
-     * Name of the location where this voter is registered.
-     */
-    locationName?: string | null;
-    /**
-     * Indicates whether this voter has cast their ballot.
-     */
-    voted?: boolean;
-    /**
-     * Timestamp when this voter cast their ballot.
-     */
-    voteTime?: Date | null;
-};
-
-/**
- * Analysis of voting patterns and ballot completion.
- */
-export type TallyJ4DtosResultsVotingPatternAnalysisDto = {
-    /**
-     * The average number of votes cast per ballot.
-     */
-    averageVotesPerBallot?: number;
-    /**
-     * Distribution of votes by position (position number -> vote count).
-     */
-    voteDistribution?: {
-        [key: string]: number;
-    } | null;
-    /**
-     * Index measuring the level of strategic/tactical voting.
-     */
-    strategicVotingIndex?: number;
-    /**
-     * The rate at which ballots are fully completed.
-     */
-    ballotCompletenessRate?: number;
-    /**
-     * List of identified voting patterns.
-     */
-    patterns?: Array<TallyJ4DtosResultsVotingPatternDto> | null;
-};
-
-/**
- * Represents a specific voting pattern identified in the analysis.
- */
-export type TallyJ4DtosResultsVotingPatternDto = {
-    /**
-     * The type of voting pattern (bullet, full, truncated).
-     */
-    patternType?: string | null;
-    /**
-     * The number of ballots exhibiting this pattern.
-     */
-    count?: number;
-    /**
-     * The percentage of total ballots exhibiting this pattern.
-     */
-    percentage?: number;
-};
-
-/**
- * Data transfer object representing the current status of election setup.
- * Tracks completion of setup steps and overall progress.
- */
-export type TallyJ4DtosSetupElectionSetupStatusDto = {
-    /**
-     * The unique identifier for the election.
-     */
-    electionGuid?: string;
-    /**
-     * The name of the election.
-     */
-    name?: string | null;
-    /**
-     * The current tally status of the election.
-     */
-    tallyStatus?: string | null;
-    /**
-     * Indicates whether election setup step 1 is complete.
-     */
-    step1Complete?: boolean;
-    /**
-     * Indicates whether election setup step 2 is complete.
-     */
-    step2Complete?: boolean;
-    /**
-     * The overall progress percentage of election setup (0-100).
-     */
-    progressPercent?: number;
-};
-
-/**
- * Data transfer object for election setup step 1.
- * Contains basic election information including name, date, and reason.
- */
-export type TallyJ4DtosSetupElectionStep1Dto = {
-    /**
-     * The name of the election.
-     */
-    name?: string | null;
-    /**
-     * The date when the election will be held.
-     */
-    dateOfElection?: Date | null;
-    /**
-     * The reason or purpose for holding this election.
-     */
-    reason?: string | null;
-};
-
-/**
- * Data transfer object for election setup step 2.
- * Contains configuration details for election type, mode, and number of positions to elect.
- */
-export type TallyJ4DtosSetupElectionStep2Dto = {
-    /**
-     * The unique identifier for the election.
-     */
-    electionGuid?: string;
-    /**
-     * The number of positions to be elected in this election.
-     */
-    numberToElect?: number;
-    /**
-     * The type of election (e.g., "normal", "single-name").
-     */
-    electionType?: string | null;
-    /**
-     * The mode of the election (e.g., "online", "offline").
-     */
-    electionMode?: string | null;
-};
-
-/**
- * Data transfer object for creating a new vote.
- * Contains the essential information needed to record a vote on a ballot.
- */
-export type TallyJ4DtosVotesCreateVoteDto = {
-    /**
-     * The unique identifier of the ballot this vote belongs to.
-     */
-    ballotGuid?: string;
-    /**
-     * The unique identifier of the person (candidate) being voted for.
-     * Can be null for certain types of votes.
-     */
-    personGuid?: string | null;
-    /**
-     * The position of this vote on the ballot (1-based indexing).
-     */
-    positionOnBallot?: number;
-    /**
-     * The status code of the vote (e.g., "ok", "spoiled").
-     */
-    statusCode?: string | null;
-};
-
-/**
  * Data transfer object representing a vote in an election.
  * Contains vote details including candidate information and ballot context.
  */
-export type TallyJ4DtosVotesVoteDto = {
+export type VoteDto = {
     /**
      * The unique identifier of the ballot this vote belongs to.
      */
@@ -2514,10 +4050,136 @@ export type TallyJ4DtosVotesVoteDto = {
 };
 
 /**
+ * Data transfer object containing information about a single vote in election reports.
+ */
+export type VoteReportDto = {
+    /**
+     * Full name of the candidate who received this vote.
+     */
+    fullName?: string | null;
+    /**
+     * Position/order of this vote on the ballot.
+     */
+    position?: number;
+};
+
+/**
+ * Data transfer object containing information about a voter in election reports.
+ */
+export type VoterReportDto = {
+    /**
+     * Unique identifier of the person.
+     */
+    personGuid?: string;
+    /**
+     * Full name of the voter.
+     */
+    fullName?: string | null;
+    /**
+     * Name of the location where this voter is registered.
+     */
+    locationName?: string | null;
+    /**
+     * Indicates whether this voter has cast their ballot.
+     */
+    voted?: boolean;
+    /**
+     * Timestamp when this voter cast their ballot.
+     */
+    voteTime?: Date | null;
+};
+
+/**
+ * Analysis of voting patterns and ballot completion.
+ */
+export type VotingPatternAnalysisDto = {
+    /**
+     * The average number of votes cast per ballot.
+     */
+    averageVotesPerBallot?: number;
+    /**
+     * Distribution of votes by position (position number -> vote count).
+     */
+    voteDistribution?: {
+        [key: string]: number;
+    } | null;
+    /**
+     * Index measuring the level of strategic/tactical voting.
+     */
+    strategicVotingIndex?: number;
+    /**
+     * The rate at which ballots are fully completed.
+     */
+    ballotCompletenessRate?: number;
+    /**
+     * List of identified voting patterns.
+     */
+    patterns?: Array<VotingPatternDto> | null;
+};
+
+/**
+ * Represents a specific voting pattern identified in the analysis.
+ */
+export type VotingPatternDto = {
+    /**
+     * The type of voting pattern (bullet, full, truncated).
+     */
+    patternType?: string | null;
+    /**
+     * The number of ballots exhibiting this pattern.
+     */
+    count?: number;
+    /**
+     * The percentage of total ballots exhibiting this pattern.
+     */
+    percentage?: number;
+};
+
+/**
  * Generic API response wrapper that standardizes the format of all API responses.
  * Provides consistent success/error handling with optional data and error messages.
  */
-export type TallyJ4ModelsApiResponse1SystemBoolean_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E = {
+export type ApiResponseFrontDeskStatsDtoWritable = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: FrontDeskStatsDtoWritable;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseFrontDeskVoterDtoWritable = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: FrontDeskVoterDtoWritable;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseListFrontDeskVoterDtoWritable = {
     /**
      * Indicates whether the API operation was successful.
      */
@@ -2525,7 +4187,7 @@ export type TallyJ4ModelsApiResponse1SystemBoolean_SystemPrivateCoreLib_Version_
     /**
      * The data returned by the API operation, if successful.
      */
-    data?: boolean;
+    data?: Array<FrontDeskVoterDtoWritable> | null;
     /**
      * An optional message providing additional information about the response.
      */
@@ -2540,15 +4202,12 @@ export type TallyJ4ModelsApiResponse1SystemBoolean_SystemPrivateCoreLib_Version_
  * Generic API response wrapper that standardizes the format of all API responses.
  * Provides consistent success/error handling with optional data and error messages.
  */
-export type TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosDashboardElectionCardDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E = {
+export type ApiResponseRollCallDtoWritable = {
     /**
      * Indicates whether the API operation was successful.
      */
     success?: boolean;
-    /**
-     * The data returned by the API operation, if successful.
-     */
-    data?: Array<TallyJ4DtosDashboardElectionCardDto> | null;
+    data?: RollCallDtoWritable;
     /**
      * An optional message providing additional information about the response.
      */
@@ -2560,391 +4219,82 @@ export type TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosDas
 };
 
 /**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
+ * Data transfer object containing statistics for the front desk.
  */
-export type TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosPeoplePersonDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E = {
+export type FrontDeskStatsDtoWritable = {
     /**
-     * Indicates whether the API operation was successful.
+     * Total number of eligible voters.
      */
-    success?: boolean;
+    totalEligible?: number;
     /**
-     * The data returned by the API operation, if successful.
+     * Number of voters who have checked in.
      */
-    data?: Array<TallyJ4DtosPeoplePersonDto> | null;
+    checkedIn?: number;
     /**
-     * An optional message providing additional information about the response.
+     * Number of voters who have not yet checked in.
      */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
+    notYetCheckedIn?: number;
 };
 
 /**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
+ * Data transfer object representing a voter at the front desk.
  */
-export type TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosPublicAvailableElectionDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E = {
+export type FrontDeskVoterDtoWritable = {
     /**
-     * Indicates whether the API operation was successful.
+     * The unique identifier of the person.
      */
-    success?: boolean;
+    personGuid?: string;
     /**
-     * The data returned by the API operation, if successful.
+     * The full name of the voter.
      */
-    data?: Array<TallyJ4DtosPublicAvailableElectionDto> | null;
+    fullName?: string | null;
     /**
-     * An optional message providing additional information about the response.
+     * The Bahá'í ID of the voter.
      */
-    message?: string | null;
+    bahaiId?: string | null;
     /**
-     * A list of error messages, if the operation failed.
+     * The area where the voter is registered.
      */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosVotesVoteDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E = {
+    area?: string | null;
     /**
-     * Indicates whether the API operation was successful.
+     * Indicates whether the voter is eligible to vote.
      */
-    success?: boolean;
+    canVote?: boolean | null;
     /**
-     * The data returned by the API operation, if successful.
+     * The voting method (e.g., 'P' for paper, 'O' for online).
      */
-    data?: Array<TallyJ4DtosVotesVoteDto> | null;
+    votingMethod?: string | null;
     /**
-     * An optional message providing additional information about the response.
+     * The envelope number assigned to the voter.
      */
-    message?: string | null;
+    envNum?: number | null;
     /**
-     * A list of error messages, if the operation failed.
+     * The timestamp when the voter was registered.
      */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1SystemObject_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E = {
+    registrationTime?: Date | null;
     /**
-     * Indicates whether the API operation was successful.
+     * The unique identifier of the voting location.
      */
-    success?: boolean;
+    votingLocationGuid?: string | null;
     /**
-     * The data returned by the API operation, if successful.
+     * The name of the first teller.
      */
-    data?: unknown;
+    teller1?: string | null;
     /**
-     * An optional message providing additional information about the response.
+     * The name of the second teller.
      */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1TallyJ4DtosAccountUserProfileDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: TallyJ4DtosAccountUserProfileDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1TallyJ4DtosBallotsBallotDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: TallyJ4DtosBallotsBallotDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1TallyJ4DtosDashboardDashboardSummaryDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: TallyJ4DtosDashboardDashboardSummaryDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1TallyJ4DtosElectionsElectionDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: TallyJ4DtosElectionsElectionDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1TallyJ4DtosPeoplePersonDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: TallyJ4DtosPeoplePersonDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1TallyJ4DtosPublicElectionStatusDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: TallyJ4DtosPublicElectionStatusDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1TallyJ4DtosPublicPublicHomeDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: TallyJ4DtosPublicPublicHomeDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1TallyJ4DtosSetupElectionSetupStatusDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: TallyJ4DtosSetupElectionSetupStatusDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
-export type TallyJ4ModelsApiResponse1TallyJ4DtosVotesVoteDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: TallyJ4DtosVotesVoteDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
+    teller2?: string | null;
 };
 
 /**
  * Generic paginated response wrapper for collections that require pagination.
  * Provides metadata about the current page, total items, and navigation information.
  */
-export type TallyJ4ModelsPaginatedResponse1TallyJ4DtosBallotsBallotDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
+export type PaginatedResponseAuditLogDtoWritable = {
     /**
      * The items on the current page.
      */
-    items?: Array<TallyJ4DtosBallotsBallotDto> | null;
-    /**
-     * The current page number (1-based).
-     */
-    pageNumber?: number;
-    /**
-     * The number of items per page.
-     */
-    pageSize?: number;
-    /**
-     * The total number of items across all pages.
-     */
-    totalCount?: number;
-    /**
-     * The total number of pages available.
-     */
-    readonly totalPages?: number;
-    /**
-     * Indicates whether there is a previous page available.
-     */
-    readonly hasPreviousPage?: boolean;
-    /**
-     * Indicates whether there is a next page available.
-     */
-    readonly hasNextPage?: boolean;
-};
-
-/**
- * Generic paginated response wrapper for collections that require pagination.
- * Provides metadata about the current page, total items, and navigation information.
- */
-export type TallyJ4ModelsPaginatedResponse1TallyJ4DtosElectionsElectionSummaryDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * The items on the current page.
-     */
-    items?: Array<TallyJ4DtosElectionsElectionSummaryDto> | null;
-    /**
-     * The current page number (1-based).
-     */
-    pageNumber?: number;
-    /**
-     * The number of items per page.
-     */
-    pageSize?: number;
-    /**
-     * The total number of items across all pages.
-     */
-    totalCount?: number;
-    /**
-     * The total number of pages available.
-     */
-    readonly totalPages?: number;
-    /**
-     * Indicates whether there is a previous page available.
-     */
-    readonly hasPreviousPage?: boolean;
-    /**
-     * Indicates whether there is a next page available.
-     */
-    readonly hasNextPage?: boolean;
-};
-
-/**
- * Generic paginated response wrapper for collections that require pagination.
- * Provides metadata about the current page, total items, and navigation information.
- */
-export type TallyJ4ModelsPaginatedResponse1TallyJ4DtosPeoplePersonDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null = {
-    /**
-     * The items on the current page.
-     */
-    items?: Array<TallyJ4DtosPeoplePersonDto> | null;
-    /**
-     * The current page number (1-based).
-     */
-    pageNumber?: number;
-    /**
-     * The number of items per page.
-     */
-    pageSize?: number;
-    /**
-     * The total number of items across all pages.
-     */
-    totalCount?: number;
-    /**
-     * The total number of pages available.
-     */
-    readonly totalPages?: number;
-    /**
-     * Indicates whether there is a previous page available.
-     */
-    readonly hasPreviousPage?: boolean;
-    /**
-     * Indicates whether there is a next page available.
-     */
-    readonly hasNextPage?: boolean;
-};
-
-/**
- * Generic paginated response wrapper for collections that require pagination.
- * Provides metadata about the current page, total items, and navigation information.
- */
-export type TallyJ4ModelsPaginatedResponse1TallyJ4DtosBallotsBallotDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_nullWritable = {
-    /**
-     * The items on the current page.
-     */
-    items?: Array<TallyJ4DtosBallotsBallotDto> | null;
+    items?: Array<AuditLogDto> | null;
     /**
      * The current page number (1-based).
      */
@@ -2963,11 +4313,11 @@ export type TallyJ4ModelsPaginatedResponse1TallyJ4DtosBallotsBallotDto_TallyJ4_V
  * Generic paginated response wrapper for collections that require pagination.
  * Provides metadata about the current page, total items, and navigation information.
  */
-export type TallyJ4ModelsPaginatedResponse1TallyJ4DtosElectionsElectionSummaryDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_nullWritable = {
+export type PaginatedResponseBallotDtoWritable = {
     /**
      * The items on the current page.
      */
-    items?: Array<TallyJ4DtosElectionsElectionSummaryDto> | null;
+    items?: Array<BallotDto> | null;
     /**
      * The current page number (1-based).
      */
@@ -2986,11 +4336,11 @@ export type TallyJ4ModelsPaginatedResponse1TallyJ4DtosElectionsElectionSummaryDt
  * Generic paginated response wrapper for collections that require pagination.
  * Provides metadata about the current page, total items, and navigation information.
  */
-export type TallyJ4ModelsPaginatedResponse1TallyJ4DtosPeoplePersonDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_nullWritable = {
+export type PaginatedResponseElectionSummaryDtoWritable = {
     /**
      * The items on the current page.
      */
-    items?: Array<TallyJ4DtosPeoplePersonDto> | null;
+    items?: Array<ElectionSummaryDto> | null;
     /**
      * The current page number (1-based).
      */
@@ -3003,6 +4353,86 @@ export type TallyJ4ModelsPaginatedResponse1TallyJ4DtosPeoplePersonDto_TallyJ4_Ve
      * The total number of items across all pages.
      */
     totalCount?: number;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
+export type PaginatedResponseLocationDtoWritable = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<LocationDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
+export type PaginatedResponsePersonDtoWritable = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<PersonDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
+export type PaginatedResponseTellerDtoWritable = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<TellerDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+};
+
+/**
+ * Data transfer object containing roll call information for front desk operations.
+ */
+export type RollCallDtoWritable = {
+    /**
+     * List of voters at the front desk.
+     */
+    voters?: Array<FrontDeskVoterDtoWritable> | null;
+    stats?: FrontDeskStatsDtoWritable;
 };
 
 export type GetApiAccountProfileData = {
@@ -3016,7 +4446,7 @@ export type GetApiAccountProfileResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosAccountUserProfileDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseUserProfileDto;
 };
 
 export type GetApiAccountProfileResponse = GetApiAccountProfileResponses[keyof GetApiAccountProfileResponses];
@@ -3025,7 +4455,7 @@ export type PutApiAccountProfileData = {
     /**
      * The updated profile information.
      */
-    body?: TallyJ4DtosAccountUpdateUserProfileDto;
+    body?: UpdateUserProfileDto;
     path?: never;
     query?: never;
     url: '/api/Account/profile';
@@ -3035,7 +4465,7 @@ export type PutApiAccountProfileResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosAccountUserProfileDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseUserProfileDto;
 };
 
 export type PutApiAccountProfileResponse = PutApiAccountProfileResponses[keyof PutApiAccountProfileResponses];
@@ -3044,7 +4474,7 @@ export type PostApiAccountChangePasswordData = {
     /**
      * The password change information including current and new passwords.
      */
-    body?: TallyJ4DtosAccountChangePasswordDto;
+    body?: ChangePasswordDto;
     path?: never;
     query?: never;
     url: '/api/Account/change-password';
@@ -3054,16 +4484,109 @@ export type PostApiAccountChangePasswordResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemObject_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseObject;
 };
 
 export type PostApiAccountChangePasswordResponse = PostApiAccountChangePasswordResponses[keyof PostApiAccountChangePasswordResponses];
+
+export type GetApiAuditLogsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Optional election GUID filter.
+         */
+        electionGuid?: string;
+        /**
+         * Optional location GUID filter.
+         */
+        locationGuid?: string;
+        /**
+         * Optional voter ID filter.
+         */
+        voterId?: string;
+        /**
+         * Optional computer code filter.
+         */
+        computerCode?: string;
+        /**
+         * Optional start date filter.
+         */
+        startDate?: Date;
+        /**
+         * Optional end date filter.
+         */
+        endDate?: Date;
+        /**
+         * Optional search term filter.
+         */
+        searchTerm?: string;
+        /**
+         * The page number (default: 1).
+         */
+        pageNumber?: number;
+        /**
+         * The page size (default: 50, max: 200).
+         */
+        pageSize?: number;
+    };
+    url: '/api/audit-logs';
+};
+
+export type GetApiAuditLogsResponses = {
+    /**
+     * OK
+     */
+    200: PaginatedResponseAuditLogDto;
+};
+
+export type GetApiAuditLogsResponse = GetApiAuditLogsResponses[keyof GetApiAuditLogsResponses];
+
+export type PostApiAuditLogsData = {
+    /**
+     * The audit log creation data.
+     */
+    body?: CreateAuditLogDto;
+    path?: never;
+    query?: never;
+    url: '/api/audit-logs';
+};
+
+export type PostApiAuditLogsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseAuditLogDto;
+};
+
+export type PostApiAuditLogsResponse = PostApiAuditLogsResponses[keyof PostApiAuditLogsResponses];
+
+export type GetApiAuditLogsByRowIdData = {
+    body?: never;
+    path: {
+        /**
+         * The audit log row ID.
+         */
+        rowId: number;
+    };
+    query?: never;
+    url: '/api/audit-logs/{rowId}';
+};
+
+export type GetApiAuditLogsByRowIdResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseAuditLogDto;
+};
+
+export type GetApiAuditLogsByRowIdResponse = GetApiAuditLogsByRowIdResponses[keyof GetApiAuditLogsByRowIdResponses];
 
 export type PostApiAuthRegisterData = {
     /**
      * The registration request containing user details.
      */
-    body?: TallyJ4ApplicationDtosAuthRegisterRequest;
+    body?: RegisterRequest;
     path?: never;
     query?: never;
     url: '/api/Auth/register';
@@ -3080,7 +4603,7 @@ export type PostApiAuthLoginData = {
     /**
      * The login request containing email and password.
      */
-    body?: TallyJ4ApplicationDtosAuthLoginRequest;
+    body?: LoginRequest;
     path?: never;
     query?: never;
     url: '/api/Auth/login';
@@ -3097,7 +4620,7 @@ export type PostApiAuthPasswordForgotData = {
     /**
      * The forgot password request containing the user's email.
      */
-    body?: TallyJ4ApplicationDtosAuthForgotPasswordRequest;
+    body?: ForgotPasswordRequest;
     path?: never;
     query?: never;
     url: '/api/Auth/password/forgot';
@@ -3114,7 +4637,7 @@ export type PostApiAuthPasswordResetData = {
     /**
      * The reset password request containing the token and new password.
      */
-    body?: TallyJ4ApplicationDtosAuthResetPasswordRequest;
+    body?: ResetPasswordRequest;
     path?: never;
     query?: never;
     url: '/api/Auth/password/reset';
@@ -3145,7 +4668,7 @@ export type PostApiAuth2FaEnableData = {
     /**
      * The enable 2FA request containing the verification code.
      */
-    body?: TallyJ4ApplicationDtosAuthEnable2FaRequest;
+    body?: Enable2FaRequest;
     path?: never;
     query?: never;
     url: '/api/Auth/2fa/enable';
@@ -3162,7 +4685,7 @@ export type PostApiAuth2FaDisableData = {
     /**
      * The disable 2FA request containing the verification code.
      */
-    body?: TallyJ4ApplicationDtosAuthDisable2FaRequest;
+    body?: Disable2FaRequest;
     path?: never;
     query?: never;
     url: '/api/Auth/2fa/disable';
@@ -3179,7 +4702,7 @@ export type PostApiAuth2FaVerifyData = {
     /**
      * The verify 2FA request containing email and verification code.
      */
-    body?: TallyJ4ApplicationDtosAuthVerify2FaRequest;
+    body?: Verify2FaRequest;
     path?: never;
     query?: never;
     url: '/api/Auth/2fa/verify';
@@ -3196,7 +4719,7 @@ export type PostApiAuthRefreshData = {
     /**
      * The refresh token request containing the refresh token.
      */
-    body?: TallyJ4ApplicationDtosAuthRefreshTokenRequest;
+    body?: RefreshTokenRequest;
     path?: never;
     query?: never;
     url: '/api/Auth/refresh';
@@ -3227,7 +4750,7 @@ export type PostApiAuthUsersByUserIdRolesData = {
     /**
      * The assign role request containing the role name.
      */
-    body?: TallyJ4ApplicationDtosAuthAssignRoleRequest;
+    body?: AssignRoleRequest;
     path: {
         /**
          * The ID of the user to assign the role to.
@@ -3307,7 +4830,7 @@ export type GetApiBallotsElectionByElectionGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsPaginatedResponse1TallyJ4DtosBallotsBallotDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: PaginatedResponseBallotDto;
 };
 
 export type GetApiBallotsElectionByElectionGuidResponse = GetApiBallotsElectionByElectionGuidResponses[keyof GetApiBallotsElectionByElectionGuidResponses];
@@ -3347,7 +4870,7 @@ export type GetApiBallotsByGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosBallotsBallotDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseBallotDto;
 };
 
 export type GetApiBallotsByGuidResponse = GetApiBallotsByGuidResponses[keyof GetApiBallotsByGuidResponses];
@@ -3356,7 +4879,7 @@ export type PutApiBallotsByGuidData = {
     /**
      * The updated ballot data.
      */
-    body?: TallyJ4DtosBallotsUpdateBallotDto;
+    body?: UpdateBallotDto;
     path: {
         /**
          * The GUID of the ballot to update.
@@ -3371,7 +4894,7 @@ export type PutApiBallotsByGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosBallotsBallotDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseBallotDto;
 };
 
 export type PutApiBallotsByGuidResponse = PutApiBallotsByGuidResponses[keyof PutApiBallotsByGuidResponses];
@@ -3380,7 +4903,7 @@ export type PostApiBallotsData = {
     /**
      * The ballot creation data.
      */
-    body?: TallyJ4DtosBallotsCreateBallotDto;
+    body?: CreateBallotDto;
     path?: never;
     query?: never;
     url: '/api/Ballots';
@@ -3390,7 +4913,7 @@ export type PostApiBallotsResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosBallotsBallotDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseBallotDto;
 };
 
 export type PostApiBallotsResponse = PostApiBallotsResponses[keyof PostApiBallotsResponses];
@@ -3406,7 +4929,7 @@ export type GetApiDashboardSummaryResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosDashboardDashboardSummaryDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseDashboardSummaryDto;
 };
 
 export type GetApiDashboardSummaryResponse = GetApiDashboardSummaryResponses[keyof GetApiDashboardSummaryResponses];
@@ -3427,7 +4950,7 @@ export type GetApiDashboardElectionsResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosDashboardElectionCardDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseListElectionCardDto;
 };
 
 export type GetApiDashboardElectionsResponse = GetApiDashboardElectionsResponses[keyof GetApiDashboardElectionsResponses];
@@ -3443,7 +4966,7 @@ export type GetApiDashboardIndexResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosDashboardDashboardSummaryDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseDashboardSummaryDto;
 };
 
 export type GetApiDashboardIndexResponse = GetApiDashboardIndexResponses[keyof GetApiDashboardIndexResponses];
@@ -3459,7 +4982,7 @@ export type GetApiDashboardElectionListResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosDashboardElectionCardDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseListElectionCardDto;
 };
 
 export type GetApiDashboardElectionListResponse = GetApiDashboardElectionListResponses[keyof GetApiDashboardElectionListResponses];
@@ -3478,7 +5001,7 @@ export type PostApiDashboardMoreInfoStaticResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemObject_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseObject;
 };
 
 export type PostApiDashboardMoreInfoStaticResponse = PostApiDashboardMoreInfoStaticResponses[keyof PostApiDashboardMoreInfoStaticResponses];
@@ -3497,7 +5020,7 @@ export type PostApiDashboardMoreInfoLiveResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemObject_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseObject;
 };
 
 export type PostApiDashboardMoreInfoLiveResponse = PostApiDashboardMoreInfoLiveResponses[keyof PostApiDashboardMoreInfoLiveResponses];
@@ -3513,7 +5036,7 @@ export type PostApiDashboardReloadElectionsResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosDashboardElectionCardDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseListElectionCardDto;
 };
 
 export type PostApiDashboardReloadElectionsResponse = PostApiDashboardReloadElectionsResponses[keyof PostApiDashboardReloadElectionsResponses];
@@ -3537,7 +5060,7 @@ export type PostApiDashboardUpdateListingByElectionGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemBoolean_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseBoolean;
 };
 
 export type PostApiDashboardUpdateListingByElectionGuidResponse = PostApiDashboardUpdateListingByElectionGuidResponses[keyof PostApiDashboardUpdateListingByElectionGuidResponses];
@@ -3556,7 +5079,7 @@ export type PostApiDashboardLoadV2ElectionResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemObject_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseObject;
 };
 
 export type PostApiDashboardLoadV2ElectionResponse = PostApiDashboardLoadV2ElectionResponses[keyof PostApiDashboardLoadV2ElectionResponses];
@@ -3565,7 +5088,7 @@ export type PostApiDashboardChooseLocationData = {
     /**
      * The request containing computer code and location GUID.
      */
-    body?: TallyJ4ControllersChooseLocationRequest;
+    body?: ChooseLocationRequest;
     path?: never;
     query?: never;
     url: '/api/Dashboard/choose-location';
@@ -3575,7 +5098,7 @@ export type PostApiDashboardChooseLocationResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemBoolean_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseBoolean;
 };
 
 export type PostApiDashboardChooseLocationResponse = PostApiDashboardChooseLocationResponses[keyof PostApiDashboardChooseLocationResponses];
@@ -3584,7 +5107,7 @@ export type PostApiDashboardChooseTellerData = {
     /**
      * The request containing election GUID and teller name.
      */
-    body?: TallyJ4ControllersChooseTellerRequest;
+    body?: ChooseTellerRequest;
     path?: never;
     query?: never;
     url: '/api/Dashboard/choose-teller';
@@ -3594,7 +5117,7 @@ export type PostApiDashboardChooseTellerResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemBoolean_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseBoolean;
 };
 
 export type PostApiDashboardChooseTellerResponse = PostApiDashboardChooseTellerResponses[keyof PostApiDashboardChooseTellerResponses];
@@ -3603,7 +5126,7 @@ export type PostApiDashboardDeleteTellerData = {
     /**
      * The request containing election GUID and teller name to remove.
      */
-    body?: TallyJ4ControllersDeleteTellerRequest;
+    body?: DeleteTellerRequest;
     path?: never;
     query?: never;
     url: '/api/Dashboard/delete-teller';
@@ -3613,7 +5136,7 @@ export type PostApiDashboardDeleteTellerResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemBoolean_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseBoolean;
 };
 
 export type PostApiDashboardDeleteTellerResponse = PostApiDashboardDeleteTellerResponses[keyof PostApiDashboardDeleteTellerResponses];
@@ -3642,7 +5165,7 @@ export type GetApiElectionsResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsPaginatedResponse1TallyJ4DtosElectionsElectionSummaryDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: PaginatedResponseElectionSummaryDto;
 };
 
 export type GetApiElectionsResponse = GetApiElectionsResponses[keyof GetApiElectionsResponses];
@@ -3651,7 +5174,7 @@ export type PostApiElectionsData = {
     /**
      * The election creation data.
      */
-    body?: TallyJ4DtosElectionsCreateElectionDto;
+    body?: CreateElectionDto;
     path?: never;
     query?: never;
     url: '/api/Elections';
@@ -3661,7 +5184,7 @@ export type PostApiElectionsResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosElectionsElectionDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseElectionDto;
 };
 
 export type PostApiElectionsResponse = PostApiElectionsResponses[keyof PostApiElectionsResponses];
@@ -3701,7 +5224,7 @@ export type GetApiElectionsByGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosElectionsElectionDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseElectionDto;
 };
 
 export type GetApiElectionsByGuidResponse = GetApiElectionsByGuidResponses[keyof GetApiElectionsByGuidResponses];
@@ -3710,7 +5233,7 @@ export type PutApiElectionsByGuidData = {
     /**
      * The updated election data.
      */
-    body?: TallyJ4DtosElectionsUpdateElectionDto;
+    body?: UpdateElectionDto;
     path: {
         /**
          * The GUID of the election to update.
@@ -3725,7 +5248,7 @@ export type PutApiElectionsByGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosElectionsElectionDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseElectionDto;
 };
 
 export type PutApiElectionsByGuidResponse = PutApiElectionsByGuidResponses[keyof PutApiElectionsByGuidResponses];
@@ -3746,27 +5269,458 @@ export type GetApiElectionsByGuidSummaryResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosElectionsElectionDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseElectionDto;
 };
 
 export type GetApiElectionsByGuidSummaryResponse = GetApiElectionsByGuidSummaryResponses[keyof GetApiElectionsByGuidSummaryResponses];
 
-export type PostApiImportBallotsByElectionGuidData = {
-    /**
-     * The import request containing CSV data.
-     */
-    body?: TallyJ4BackendControllersImportBallotsRequest;
+export type GetApiElectionsByElectionGuidFrontdeskEligibleVotersData = {
+    body?: never;
     path: {
         /**
-         * The GUID of the election to import data into.
+         * The election GUID.
          */
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Import/ballots/{electionGuid}';
+    url: '/api/elections/{electionGuid}/frontdesk/eligible-voters';
 };
 
-export type PostApiImportBallotsByElectionGuidResponses = {
+export type GetApiElectionsByElectionGuidFrontdeskEligibleVotersResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListFrontDeskVoterDto;
+};
+
+export type GetApiElectionsByElectionGuidFrontdeskEligibleVotersResponse = GetApiElectionsByElectionGuidFrontdeskEligibleVotersResponses[keyof GetApiElectionsByElectionGuidFrontdeskEligibleVotersResponses];
+
+export type PostApiElectionsByElectionGuidFrontdeskCheckinData = {
+    /**
+     * The check-in data.
+     */
+    body?: CheckInVoterDto;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/frontdesk/checkin';
+};
+
+export type PostApiElectionsByElectionGuidFrontdeskCheckinResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseFrontDeskVoterDto;
+};
+
+export type PostApiElectionsByElectionGuidFrontdeskCheckinResponse = PostApiElectionsByElectionGuidFrontdeskCheckinResponses[keyof PostApiElectionsByElectionGuidFrontdeskCheckinResponses];
+
+export type GetApiElectionsByElectionGuidFrontdeskRollcallData = {
+    body?: never;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/frontdesk/rollcall';
+};
+
+export type GetApiElectionsByElectionGuidFrontdeskRollcallResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseRollCallDto;
+};
+
+export type GetApiElectionsByElectionGuidFrontdeskRollcallResponse = GetApiElectionsByElectionGuidFrontdeskRollcallResponses[keyof GetApiElectionsByElectionGuidFrontdeskRollcallResponses];
+
+export type GetApiElectionsByElectionGuidFrontdeskStatsData = {
+    body?: never;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/frontdesk/stats';
+};
+
+export type GetApiElectionsByElectionGuidFrontdeskStatsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseFrontDeskStatsDto;
+};
+
+export type GetApiElectionsByElectionGuidFrontdeskStatsResponse = GetApiElectionsByElectionGuidFrontdeskStatsResponses[keyof GetApiElectionsByElectionGuidFrontdeskStatsResponses];
+
+export type PostApiImportParseCsvHeadersData = {
+    /**
+     * The CSV parsing request.
+     */
+    body?: ParseCsvHeadersRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Import/parse-csv-headers';
+};
+
+export type PostApiImportParseCsvHeadersResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiImportBallotsData = {
+    /**
+     * The ballot import request.
+     */
+    body?: ImportBallotRequestDto;
+    path?: never;
+    query?: never;
+    url: '/api/Import/ballots';
+};
+
+export type PostApiImportBallotsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiElectionsByElectionGuidLocationsData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+    };
+    query?: {
+        /**
+         * The page number (starting from 1).
+         */
+        pageNumber?: number;
+        /**
+         * The number of items per page (1-200).
+         */
+        pageSize?: number;
+    };
+    url: '/api/elections/{electionGuid}/locations';
+};
+
+export type GetApiElectionsByElectionGuidLocationsResponses = {
+    /**
+     * OK
+     */
+    200: PaginatedResponseLocationDto;
+};
+
+export type GetApiElectionsByElectionGuidLocationsResponse = GetApiElectionsByElectionGuidLocationsResponses[keyof GetApiElectionsByElectionGuidLocationsResponses];
+
+export type PostApiElectionsByElectionGuidLocationsData = {
+    /**
+     * The location creation data.
+     */
+    body?: CreateLocationDto;
+    path: {
+        /**
+         * The GUID of the election (for route binding).
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/locations';
+};
+
+export type PostApiElectionsByElectionGuidLocationsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseLocationDto;
+};
+
+export type PostApiElectionsByElectionGuidLocationsResponse = PostApiElectionsByElectionGuidLocationsResponses[keyof PostApiElectionsByElectionGuidLocationsResponses];
+
+export type DeleteApiElectionsByElectionGuidLocationsByLocationGuidData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election (for route binding).
+         */
+        electionGuid: string;
+        /**
+         * The GUID of the location to delete.
+         */
+        locationGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/locations/{locationGuid}';
+};
+
+export type DeleteApiElectionsByElectionGuidLocationsByLocationGuidResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseBoolean;
+};
+
+export type DeleteApiElectionsByElectionGuidLocationsByLocationGuidResponse = DeleteApiElectionsByElectionGuidLocationsByLocationGuidResponses[keyof DeleteApiElectionsByElectionGuidLocationsByLocationGuidResponses];
+
+export type GetApiElectionsByElectionGuidLocationsByLocationGuidData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election (for route binding).
+         */
+        electionGuid: string;
+        /**
+         * The GUID of the location.
+         */
+        locationGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/locations/{locationGuid}';
+};
+
+export type GetApiElectionsByElectionGuidLocationsByLocationGuidResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseLocationDto;
+};
+
+export type GetApiElectionsByElectionGuidLocationsByLocationGuidResponse = GetApiElectionsByElectionGuidLocationsByLocationGuidResponses[keyof GetApiElectionsByElectionGuidLocationsByLocationGuidResponses];
+
+export type PutApiElectionsByElectionGuidLocationsByLocationGuidData = {
+    /**
+     * The updated location data.
+     */
+    body?: UpdateLocationDto;
+    path: {
+        /**
+         * The GUID of the election (for route binding).
+         */
+        electionGuid: string;
+        /**
+         * The GUID of the location to update.
+         */
+        locationGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/locations/{locationGuid}';
+};
+
+export type PutApiElectionsByElectionGuidLocationsByLocationGuidResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseLocationDto;
+};
+
+export type PutApiElectionsByElectionGuidLocationsByLocationGuidResponse = PutApiElectionsByElectionGuidLocationsByLocationGuidResponses[keyof PutApiElectionsByElectionGuidLocationsByLocationGuidResponses];
+
+export type GetApiElectionsByElectionGuidLocationsByLocationGuidComputersData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election (for route binding).
+         */
+        electionGuid: string;
+        /**
+         * The GUID of the location.
+         */
+        locationGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/locations/{locationGuid}/computers';
+};
+
+export type GetApiElectionsByElectionGuidLocationsByLocationGuidComputersResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListComputerDto;
+};
+
+export type GetApiElectionsByElectionGuidLocationsByLocationGuidComputersResponse = GetApiElectionsByElectionGuidLocationsByLocationGuidComputersResponses[keyof GetApiElectionsByElectionGuidLocationsByLocationGuidComputersResponses];
+
+export type PostApiElectionsByElectionGuidLocationsByLocationGuidComputersData = {
+    /**
+     * The computer registration data.
+     */
+    body?: RegisterComputerDto;
+    path: {
+        /**
+         * The GUID of the election (for route binding).
+         */
+        electionGuid: string;
+        /**
+         * The GUID of the location.
+         */
+        locationGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/locations/{locationGuid}/computers';
+};
+
+export type PostApiElectionsByElectionGuidLocationsByLocationGuidComputersResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseComputerDto;
+};
+
+export type PostApiElectionsByElectionGuidLocationsByLocationGuidComputersResponse = PostApiElectionsByElectionGuidLocationsByLocationGuidComputersResponses[keyof PostApiElectionsByElectionGuidLocationsByLocationGuidComputersResponses];
+
+export type DeleteApiElectionsByElectionGuidLocationsByLocationGuidComputersByComputerGuidData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election (for route binding).
+         */
+        electionGuid: string;
+        /**
+         * The GUID of the location (for route binding).
+         */
+        locationGuid: string;
+        /**
+         * The GUID of the computer to delete.
+         */
+        computerGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/locations/{locationGuid}/computers/{computerGuid}';
+};
+
+export type DeleteApiElectionsByElectionGuidLocationsByLocationGuidComputersByComputerGuidResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseBoolean;
+};
+
+export type DeleteApiElectionsByElectionGuidLocationsByLocationGuidComputersByComputerGuidResponse = DeleteApiElectionsByElectionGuidLocationsByLocationGuidComputersByComputerGuidResponses[keyof DeleteApiElectionsByElectionGuidLocationsByLocationGuidComputersByComputerGuidResponses];
+
+export type PostApiOnlineVotingRequestCodeData = {
+    /**
+     * The request code data.
+     */
+    body?: RequestCodeDto;
+    path?: never;
+    query?: never;
+    url: '/api/online-voting/request-code';
+};
+
+export type PostApiOnlineVotingRequestCodeResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiOnlineVotingVerifyCodeData = {
+    /**
+     * The verification code data.
+     */
+    body?: VerifyCodeDto;
+    path?: never;
+    query?: never;
+    url: '/api/online-voting/verify-code';
+};
+
+export type PostApiOnlineVotingVerifyCodeResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiOnlineVotingElectionsByElectionGuidData = {
+    body?: never;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/online-voting/elections/{electionGuid}';
+};
+
+export type GetApiOnlineVotingElectionsByElectionGuidResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiOnlineVotingElectionsByElectionGuidCandidatesData = {
+    body?: never;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/online-voting/elections/{electionGuid}/candidates';
+};
+
+export type GetApiOnlineVotingElectionsByElectionGuidCandidatesResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiOnlineVotingElectionsByElectionGuidSubmitBallotData = {
+    /**
+     * The ballot submission data.
+     */
+    body?: SubmitOnlineBallotDto;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/online-voting/elections/{electionGuid}/submit-ballot';
+};
+
+export type PostApiOnlineVotingElectionsByElectionGuidSubmitBallotResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiOnlineVotingElectionsByElectionGuidVoteStatusData = {
+    body?: never;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: {
+        /**
+         * The voter ID.
+         */
+        voterId?: string;
+    };
+    url: '/api/online-voting/elections/{electionGuid}/vote-status';
+};
+
+export type GetApiOnlineVotingElectionsByElectionGuidVoteStatusResponses = {
     /**
      * OK
      */
@@ -3810,7 +5764,7 @@ export type GetApiPeopleElectionByElectionGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsPaginatedResponse1TallyJ4DtosPeoplePersonDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: PaginatedResponsePersonDto;
 };
 
 export type GetApiPeopleElectionByElectionGuidResponse = GetApiPeopleElectionByElectionGuidResponses[keyof GetApiPeopleElectionByElectionGuidResponses];
@@ -3836,7 +5790,7 @@ export type GetApiPeopleElectionByElectionGuidSearchResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosPeoplePersonDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseListPersonDto;
 };
 
 export type GetApiPeopleElectionByElectionGuidSearchResponse = GetApiPeopleElectionByElectionGuidSearchResponses[keyof GetApiPeopleElectionByElectionGuidSearchResponses];
@@ -3876,7 +5830,7 @@ export type GetApiPeopleByGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosPeoplePersonDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponsePersonDto;
 };
 
 export type GetApiPeopleByGuidResponse = GetApiPeopleByGuidResponses[keyof GetApiPeopleByGuidResponses];
@@ -3885,7 +5839,7 @@ export type PutApiPeopleByGuidData = {
     /**
      * The updated person data.
      */
-    body?: TallyJ4DtosPeopleUpdatePersonDto;
+    body?: UpdatePersonDto;
     path: {
         /**
          * The GUID of the person to update.
@@ -3900,7 +5854,7 @@ export type PutApiPeopleByGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosPeoplePersonDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponsePersonDto;
 };
 
 export type PutApiPeopleByGuidResponse = PutApiPeopleByGuidResponses[keyof PutApiPeopleByGuidResponses];
@@ -3909,7 +5863,7 @@ export type PostApiPeopleData = {
     /**
      * The person creation data.
      */
-    body?: TallyJ4DtosPeopleCreatePersonDto;
+    body?: CreatePersonDto;
     path?: never;
     query?: never;
     url: '/api/People';
@@ -3919,7 +5873,7 @@ export type PostApiPeopleResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosPeoplePersonDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponsePersonDto;
 };
 
 export type PostApiPeopleResponse = PostApiPeopleResponses[keyof PostApiPeopleResponses];
@@ -3935,7 +5889,7 @@ export type GetApiPublicHomeResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosPublicPublicHomeDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponsePublicHomeDto;
 };
 
 export type GetApiPublicHomeResponse = GetApiPublicHomeResponses[keyof GetApiPublicHomeResponses];
@@ -3951,7 +5905,7 @@ export type GetApiPublicElectionsResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosPublicAvailableElectionDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseListAvailableElectionDto;
 };
 
 export type GetApiPublicElectionsResponse = GetApiPublicElectionsResponses[keyof GetApiPublicElectionsResponses];
@@ -3972,10 +5926,31 @@ export type GetApiPublicElectionsByElectionGuidStatusResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosPublicElectionStatusDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseElectionStatusDto;
 };
 
 export type GetApiPublicElectionsByElectionGuidStatusResponse = GetApiPublicElectionsByElectionGuidStatusResponses[keyof GetApiPublicElectionsByElectionGuidStatusResponses];
+
+export type GetApiPublicElectionsByElectionGuidDisplayData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election to display.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/Public/elections/{electionGuid}/display';
+};
+
+export type GetApiPublicElectionsByElectionGuidDisplayResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePublicDisplayDto;
+};
+
+export type GetApiPublicElectionsByElectionGuidDisplayResponse = GetApiPublicElectionsByElectionGuidDisplayResponses[keyof GetApiPublicElectionsByElectionGuidDisplayResponses];
 
 export type GetApiPublicHealthData = {
     body?: never;
@@ -3988,7 +5963,7 @@ export type GetApiPublicHealthResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemObject_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseObject;
 };
 
 export type GetApiPublicHealthResponse = GetApiPublicHealthResponses[keyof GetApiPublicHealthResponses];
@@ -3997,7 +5972,7 @@ export type PostApiReportsExportByElectionIdData = {
     /**
      * The export request containing format and filter options.
      */
-    body?: TallyJ4DtosResultsExportRequest;
+    body?: ExportRequest;
     path: {
         /**
          * The GUID of the election to export.
@@ -4035,7 +6010,7 @@ export type GetApiReportsChartByElectionIdByChartTypeResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsChartDataDto;
+    200: ChartDataDto;
 };
 
 export type GetApiReportsChartByElectionIdByChartTypeResponse = GetApiReportsChartByElectionIdByChartTypeResponses[keyof GetApiReportsChartByElectionIdByChartTypeResponses];
@@ -4044,7 +6019,7 @@ export type PostApiReportsCompareData = {
     /**
      * The comparison request containing election IDs and metrics to compare.
      */
-    body?: TallyJ4DtosResultsElectionComparisonRequestDto;
+    body?: ElectionComparisonRequestDto;
     path?: never;
     query?: never;
     url: '/api/Reports/compare';
@@ -4054,7 +6029,7 @@ export type PostApiReportsCompareResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsElectionComparisonDto;
+    200: ElectionComparisonDto;
 };
 
 export type PostApiReportsCompareResponse = PostApiReportsCompareResponses[keyof PostApiReportsCompareResponses];
@@ -4063,7 +6038,7 @@ export type PostApiReportsAdvancedFilterByElectionIdData = {
     /**
      * The advanced filter criteria to apply.
      */
-    body?: TallyJ4DtosResultsAdvancedFilterDto;
+    body?: AdvancedFilterDto;
     path: {
         /**
          * The GUID of the election to generate the report for.
@@ -4078,7 +6053,7 @@ export type PostApiReportsAdvancedFilterByElectionIdResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsFilteredReportDto;
+    200: FilteredReportDto;
 };
 
 export type PostApiReportsAdvancedFilterByElectionIdResponse = PostApiReportsAdvancedFilterByElectionIdResponses[keyof PostApiReportsAdvancedFilterByElectionIdResponses];
@@ -4087,7 +6062,7 @@ export type PostApiReportsCustomData = {
     /**
      * The configuration for the custom report.
      */
-    body?: TallyJ4DtosResultsCustomReportConfigDto;
+    body?: CustomReportConfigDto;
     path?: never;
     query?: never;
     url: '/api/Reports/custom';
@@ -4097,7 +6072,7 @@ export type PostApiReportsCustomResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsCustomReportDto;
+    200: CustomReportDto;
 };
 
 export type PostApiReportsCustomResponse = PostApiReportsCustomResponses[keyof PostApiReportsCustomResponses];
@@ -4118,7 +6093,7 @@ export type GetApiReportsStatisticsByElectionIdResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsStatisticalAnalysisDto;
+    200: StatisticalAnalysisDto;
 };
 
 export type GetApiReportsStatisticsByElectionIdResponse = GetApiReportsStatisticsByElectionIdResponses[keyof GetApiReportsStatisticsByElectionIdResponses];
@@ -4144,7 +6119,7 @@ export type PostApiResultsElectionByElectionGuidCalculateResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsTallyResultDto;
+    200: TallyResultDto;
 };
 
 export type PostApiResultsElectionByElectionGuidCalculateResponse = PostApiResultsElectionByElectionGuidCalculateResponses[keyof PostApiResultsElectionByElectionGuidCalculateResponses];
@@ -4165,7 +6140,7 @@ export type GetApiResultsElectionByElectionGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsTallyResultDto;
+    200: TallyResultDto;
 };
 
 export type GetApiResultsElectionByElectionGuidResponse = GetApiResultsElectionByElectionGuidResponses[keyof GetApiResultsElectionByElectionGuidResponses];
@@ -4186,7 +6161,7 @@ export type GetApiResultsElectionByElectionGuidSummaryResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsTallyStatisticsDto;
+    200: TallyStatisticsDto;
 };
 
 export type GetApiResultsElectionByElectionGuidSummaryResponse = GetApiResultsElectionByElectionGuidSummaryResponses[keyof GetApiResultsElectionByElectionGuidSummaryResponses];
@@ -4207,7 +6182,7 @@ export type GetApiResultsElectionByElectionGuidFinalResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsTallyResultDto;
+    200: TallyResultDto;
 };
 
 export type GetApiResultsElectionByElectionGuidFinalResponse = GetApiResultsElectionByElectionGuidFinalResponses[keyof GetApiResultsElectionByElectionGuidFinalResponses];
@@ -4233,7 +6208,7 @@ export type PostApiResultsElectionByElectionGuidMonitorRefreshResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsMonitorInfoDto;
+    200: MonitorInfoDto;
 };
 
 export type PostApiResultsElectionByElectionGuidMonitorRefreshResponse = PostApiResultsElectionByElectionGuidMonitorRefreshResponses[keyof PostApiResultsElectionByElectionGuidMonitorRefreshResponses];
@@ -4254,7 +6229,7 @@ export type GetApiResultsElectionByElectionGuidMonitorResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsMonitorInfoDto;
+    200: MonitorInfoDto;
 };
 
 export type GetApiResultsElectionByElectionGuidMonitorResponse = GetApiResultsElectionByElectionGuidMonitorResponses[keyof GetApiResultsElectionByElectionGuidMonitorResponses];
@@ -4279,7 +6254,7 @@ export type GetApiResultsElectionByElectionGuidTiesByTieBreakGroupResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsTieDetailsDto;
+    200: TieDetailsDto;
 };
 
 export type GetApiResultsElectionByElectionGuidTiesByTieBreakGroupResponse = GetApiResultsElectionByElectionGuidTiesByTieBreakGroupResponses[keyof GetApiResultsElectionByElectionGuidTiesByTieBreakGroupResponses];
@@ -4288,7 +6263,7 @@ export type PostApiResultsElectionByElectionGuidTiesData = {
     /**
      * The tie counts request data.
      */
-    body?: TallyJ4DtosResultsSaveTieCountsRequestDto;
+    body?: SaveTieCountsRequestDto;
     path: {
         /**
          * The GUID of the election.
@@ -4303,7 +6278,7 @@ export type PostApiResultsElectionByElectionGuidTiesResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsSaveTieCountsResponseDto;
+    200: SaveTieCountsResponseDto;
 };
 
 export type PostApiResultsElectionByElectionGuidTiesResponse = PostApiResultsElectionByElectionGuidTiesResponses[keyof PostApiResultsElectionByElectionGuidTiesResponses];
@@ -4324,7 +6299,7 @@ export type GetApiResultsElectionByElectionGuidReportResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsElectionReportDto;
+    200: ElectionReportDto;
 };
 
 export type GetApiResultsElectionByElectionGuidReportResponse = GetApiResultsElectionByElectionGuidReportResponses[keyof GetApiResultsElectionByElectionGuidReportResponses];
@@ -4349,7 +6324,7 @@ export type GetApiResultsElectionByElectionGuidReportByReportCodeResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsReportDataResponseDto;
+    200: ReportDataResponseDto;
 };
 
 export type GetApiResultsElectionByElectionGuidReportByReportCodeResponse = GetApiResultsElectionByElectionGuidReportByReportCodeResponses[keyof GetApiResultsElectionByElectionGuidReportByReportCodeResponses];
@@ -4370,7 +6345,7 @@ export type GetApiResultsElectionByElectionGuidPresentationResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsPresentationDto;
+    200: PresentationDto;
 };
 
 export type GetApiResultsElectionByElectionGuidPresentationResponse = GetApiResultsElectionByElectionGuidPresentationResponses[keyof GetApiResultsElectionByElectionGuidPresentationResponses];
@@ -4391,7 +6366,7 @@ export type GetApiResultsElectionByElectionGuidDetailedStatisticsResponses = {
     /**
      * OK
      */
-    200: TallyJ4DtosResultsDetailedStatisticsDto;
+    200: DetailedStatisticsDto;
 };
 
 export type GetApiResultsElectionByElectionGuidDetailedStatisticsResponse = GetApiResultsElectionByElectionGuidDetailedStatisticsResponses[keyof GetApiResultsElectionByElectionGuidDetailedStatisticsResponses];
@@ -4400,7 +6375,7 @@ export type PostApiSetupElectionStep1Data = {
     /**
      * The basic election setup information.
      */
-    body?: TallyJ4DtosSetupElectionStep1Dto;
+    body?: ElectionStep1Dto;
     path?: never;
     query?: never;
     url: '/api/Setup/election/step1';
@@ -4410,7 +6385,7 @@ export type PostApiSetupElectionStep1Responses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosElectionsElectionDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseElectionDto;
 };
 
 export type PostApiSetupElectionStep1Response = PostApiSetupElectionStep1Responses[keyof PostApiSetupElectionStep1Responses];
@@ -4419,7 +6394,7 @@ export type PutApiSetupElectionByGuidStep2Data = {
     /**
      * The additional election configuration information.
      */
-    body?: TallyJ4DtosSetupElectionStep2Dto;
+    body?: ElectionStep2Dto;
     path: {
         /**
          * The GUID of the election to configure.
@@ -4434,7 +6409,7 @@ export type PutApiSetupElectionByGuidStep2Responses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosElectionsElectionDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseElectionDto;
 };
 
 export type PutApiSetupElectionByGuidStep2Response = PutApiSetupElectionByGuidStep2Responses[keyof PutApiSetupElectionByGuidStep2Responses];
@@ -4455,10 +6430,142 @@ export type GetApiSetupElectionByGuidStatusResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosSetupElectionSetupStatusDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseElectionSetupStatusDto;
 };
 
 export type GetApiSetupElectionByGuidStatusResponse = GetApiSetupElectionByGuidStatusResponses[keyof GetApiSetupElectionByGuidStatusResponses];
+
+export type GetApiElectionsByElectionGuidTellersData = {
+    body?: never;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: {
+        /**
+         * The page number (default: 1).
+         */
+        pageNumber?: number;
+        /**
+         * The page size (default: 50, max: 200).
+         */
+        pageSize?: number;
+    };
+    url: '/api/elections/{electionGuid}/tellers';
+};
+
+export type GetApiElectionsByElectionGuidTellersResponses = {
+    /**
+     * OK
+     */
+    200: PaginatedResponseTellerDto;
+};
+
+export type GetApiElectionsByElectionGuidTellersResponse = GetApiElectionsByElectionGuidTellersResponses[keyof GetApiElectionsByElectionGuidTellersResponses];
+
+export type PostApiElectionsByElectionGuidTellersData = {
+    /**
+     * The teller creation data.
+     */
+    body?: CreateTellerDto;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/tellers';
+};
+
+export type PostApiElectionsByElectionGuidTellersResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseTellerDto;
+};
+
+export type PostApiElectionsByElectionGuidTellersResponse = PostApiElectionsByElectionGuidTellersResponses[keyof PostApiElectionsByElectionGuidTellersResponses];
+
+export type DeleteApiElectionsByElectionGuidTellersByRowIdData = {
+    body?: never;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+        /**
+         * The teller row ID.
+         */
+        rowId: number;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/tellers/{rowId}';
+};
+
+export type DeleteApiElectionsByElectionGuidTellersByRowIdResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseBoolean;
+};
+
+export type DeleteApiElectionsByElectionGuidTellersByRowIdResponse = DeleteApiElectionsByElectionGuidTellersByRowIdResponses[keyof DeleteApiElectionsByElectionGuidTellersByRowIdResponses];
+
+export type GetApiElectionsByElectionGuidTellersByRowIdData = {
+    body?: never;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+        /**
+         * The teller row ID.
+         */
+        rowId: number;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/tellers/{rowId}';
+};
+
+export type GetApiElectionsByElectionGuidTellersByRowIdResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseTellerDto;
+};
+
+export type GetApiElectionsByElectionGuidTellersByRowIdResponse = GetApiElectionsByElectionGuidTellersByRowIdResponses[keyof GetApiElectionsByElectionGuidTellersByRowIdResponses];
+
+export type PutApiElectionsByElectionGuidTellersByRowIdData = {
+    /**
+     * The updated teller data.
+     */
+    body?: UpdateTellerDto;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+        /**
+         * The teller row ID.
+         */
+        rowId: number;
+    };
+    query?: never;
+    url: '/api/elections/{electionGuid}/tellers/{rowId}';
+};
+
+export type PutApiElectionsByElectionGuidTellersByRowIdResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseTellerDto;
+};
+
+export type PutApiElectionsByElectionGuidTellersByRowIdResponse = PutApiElectionsByElectionGuidTellersByRowIdResponses[keyof PutApiElectionsByElectionGuidTellersByRowIdResponses];
 
 export type GetApiVotesBallotByBallotGuidData = {
     body?: never;
@@ -4476,7 +6583,7 @@ export type GetApiVotesBallotByBallotGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosVotesVoteDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseListVoteDto;
 };
 
 export type GetApiVotesBallotByBallotGuidResponse = GetApiVotesBallotByBallotGuidResponses[keyof GetApiVotesBallotByBallotGuidResponses];
@@ -4497,7 +6604,7 @@ export type GetApiVotesElectionByElectionGuidResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemCollectionsGenericList1TallyJ4DtosVotesVoteDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null___SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseListVoteDto;
 };
 
 export type GetApiVotesElectionByElectionGuidResponse = GetApiVotesElectionByElectionGuidResponses[keyof GetApiVotesElectionByElectionGuidResponses];
@@ -4518,7 +6625,7 @@ export type DeleteApiVotesByIdResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1SystemObject_SystemPrivateCoreLib_Version_10000_Culture_neutral_PublicKeyToken_7Cec85D7Bea7798E;
+    200: ApiResponseObject;
 };
 
 export type DeleteApiVotesByIdResponse = DeleteApiVotesByIdResponses[keyof DeleteApiVotesByIdResponses];
@@ -4539,7 +6646,7 @@ export type GetApiVotesByIdResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosVotesVoteDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseVoteDto;
 };
 
 export type GetApiVotesByIdResponse = GetApiVotesByIdResponses[keyof GetApiVotesByIdResponses];
@@ -4548,7 +6655,7 @@ export type PutApiVotesByIdData = {
     /**
      * The updated vote data.
      */
-    body?: TallyJ4DtosVotesCreateVoteDto;
+    body?: CreateVoteDto;
     path: {
         /**
          * The ID of the vote to update.
@@ -4563,7 +6670,7 @@ export type PutApiVotesByIdResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosVotesVoteDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseVoteDto;
 };
 
 export type PutApiVotesByIdResponse = PutApiVotesByIdResponses[keyof PutApiVotesByIdResponses];
@@ -4572,7 +6679,7 @@ export type PostApiVotesData = {
     /**
      * The vote creation data.
      */
-    body?: TallyJ4DtosVotesCreateVoteDto;
+    body?: CreateVoteDto;
     path?: never;
     query?: never;
     url: '/api/Votes';
@@ -4582,7 +6689,7 @@ export type PostApiVotesResponses = {
     /**
      * OK
      */
-    200: TallyJ4ModelsApiResponse1TallyJ4DtosVotesVoteDto_TallyJ4_Version_1000_Culture_neutral_PublicKeyToken_null;
+    200: ApiResponseVoteDto;
 };
 
 export type PostApiVotesResponse = PostApiVotesResponses[keyof PostApiVotesResponses];
