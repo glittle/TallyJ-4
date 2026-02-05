@@ -98,7 +98,7 @@ describe('AppHeader', () => {
     await wrapper.vm.handleCommand('logout')
 
     expect(mockLogout).toHaveBeenCalled()
-    expect(mockRouterPush).toHaveBeenCalledWith('/login')
+    expect(mockRouterPush).toHaveBeenCalledWith('/login?mode=officer')
   })
 
   it('handles profile command correctly', async () => {

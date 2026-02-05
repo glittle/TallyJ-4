@@ -40,7 +40,7 @@ function handleCommand(command: string) {
   if (command === "logout") {
     authStore.logout();
     ElMessage.success(t("auth.logoutSuccess"));
-    router.push("/login");
+    router.push("/login?mode=officer");
   } else if (command === "profile") {
     router.push("/profile");
   } else if (command === "settings") {

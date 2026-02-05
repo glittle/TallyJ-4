@@ -47,7 +47,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step: Fix Logout Redirect for Admin Users
+### [x] Step: Fix Logout Redirect for Admin Users
+<!-- chat-id: bf11b9a2-45f1-4d82-9423-bb0b63ef6b26 -->
 
 **Objective**: Ensure admin users see Google login option after logout.
 
