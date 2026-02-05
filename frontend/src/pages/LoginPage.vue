@@ -120,6 +120,13 @@ const handleLogin = async () => {
   });
 };
 
+const handleGoogleLogin = () => {
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
+  const returnUrl = encodeURIComponent(window.location.origin + '/auth/google/callback');
+  const redirectPath = route.query.redirect ? `&redirect=${encodeURIComponent(route.query.redirect as string)}` : '';
+  window.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}${redirectPath}`;
+};
+
 onMounted(() => {
   if (authStore.isAuthenticated && isStandardLogin.value) {
     router.push("/dashboard");
@@ -236,7 +243,7 @@ onMounted(() => {
       <!-- Social login only for Officers -->
       <div class="social-login" v-if="mode === 'officer'">
         <el-divider>{{ t("common.or") }}</el-divider>
-        <el-button class="google-btn">
+        <el-button class="google-btn" @click="handleGoogleLogin">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
           {{ t("auth.googleLogin") }}
         </el-button>

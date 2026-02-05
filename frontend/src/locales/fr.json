@@ -310,6 +310,8 @@
   "auth.confirmPassword": "Confirmer le mot de passe",
   "auth.forgotPassword": "Mot de passe oublié?",
   "auth.googleLogin": "Se connecter avec Google",
+  "auth.googleLoginFailed": "La connexion Google a échoué",
+  "auth.processingLogin": "Traitement de la connexion...",
   "auth.enable2FA": "Activer l'authentification à deux facteurs",
   "auth.verify2FA": "Vérifier le code",
   "auth.verify": "Vérifier",

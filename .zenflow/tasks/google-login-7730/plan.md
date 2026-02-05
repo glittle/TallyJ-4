@@ -105,7 +105,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step: Wire Google Button in Frontend
+### [x] Step: Wire Google Button in Frontend
+<!-- chat-id: bb6c48fa-aeb7-44be-b0e7-08e6c10e1261 -->
 
 **Objective**: Connect Google login button to backend OAuth flow.
 
