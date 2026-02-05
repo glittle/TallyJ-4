@@ -124,7 +124,8 @@ Regenerate the frontend API client to include the new `/candidates` endpoint. Up
 
 ---
 
-### [ ] Step: Frontend Utils - Implement Search Strategies
+### [x] Step: Frontend Utils - Implement Search Strategies
+<!-- chat-id: cc3fa807-d970-4eae-9289-689672778a89 -->
 
 **Files to create**:
 - `frontend/src/utils/searchStrategies.ts` - Individual search strategy implementations
