@@ -91,10 +91,10 @@ public static class ProgramExtensions
                 //sqlServerDbContextOptionsBuilder.UseQuerySplittingBehavior(
                 //  QuerySplittingBehavior.SplitQuery
                 //);
-                  sqlServerDbContextOptionsBuilder
-                .MigrationsHistoryTable("__EFMigrations_" + connectionStringName)
-                .MigrationsAssembly("TallyJ4");
-              }
+                sqlServerDbContextOptionsBuilder
+              .MigrationsHistoryTable("__EFMigrations_" + connectionStringName)
+              .MigrationsAssembly("TallyJ4");
+            }
           );
 
               //     optionsBuilder.AddInterceptors(
@@ -105,8 +105,8 @@ public static class ProgramExtensions
               optionsBuilder.ConfigureWarnings(w =>
           {
               // for production, we want to log warnings. See below for development.
-                w.Default(WarningBehavior.Log);
-            });
+              w.Default(WarningBehavior.Log);
+          });
 
               // configure for development
               if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
@@ -153,17 +153,17 @@ public static class ProgramExtensions
         {
             options.AddDefaultPolicy(policyBuilder =>
         {
-              var origins = config.GetSection("LocalSettings:AllowedOrigins").Get<string[]>();
+            var origins = config.GetSection("LocalSettings:AllowedOrigins").Get<string[]>();
 
-              if (origins == null || origins.Length == 0)
-              {
-                  throw new Exception("AllowedOrigins is not configured properly.");
-              }
+            if (origins == null || origins.Length == 0)
+            {
+                throw new Exception("AllowedOrigins is not configured properly.");
+            }
 
-              Log.Information("CORS Allowed Origins: {origins}", string.Join(", ", origins));
+            Log.Information("CORS Allowed Origins: {origins}", string.Join(", ", origins));
 
-              policyBuilder.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-          });
+            policyBuilder.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+        });
         });
         return services;
     }
