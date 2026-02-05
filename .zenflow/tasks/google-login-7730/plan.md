@@ -28,7 +28,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step: Add Officer Login Option to Landing Page
+### [x] Step: Add Officer Login Option to Landing Page
+<!-- chat-id: 0b2d8370-f267-4468-8f5b-af2774cffe99 -->
 
 **Objective**: Add an "Officer" card to the landing page so users can access admin login with Google option.
 
