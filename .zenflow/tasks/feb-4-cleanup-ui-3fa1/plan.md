@@ -83,7 +83,8 @@ Save to `{@artifacts_path}/plan.md`.
 - [ ] Check browser console for CSS warnings/errors
 - [ ] Use browser DevTools to inspect computed color values
 
-### [ ] Step: Fix Stat Card Layout Structure
+### [x] Step: Fix Stat Card Layout Structure
+<!-- chat-id: a346bb55-84fd-4174-bdd0-0aa67e6ccfc5 -->
 
 **Objective**: Make stat card numbers and labels visible by correcting the flex layout structure.
 

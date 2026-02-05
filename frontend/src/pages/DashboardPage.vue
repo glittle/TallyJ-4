@@ -211,9 +211,6 @@ function getStatusType(status: string) {
 }
 
 .stat-card {
-  display: flex;
-  align-items: center;
-  padding: var(--spacing-6);
   transition: var(--transition-normal);
   cursor: pointer;
   position: relative;
@@ -244,10 +241,8 @@ function getStatusType(status: string) {
 .stat-card .el-card__body {
   display: flex;
   align-items: center;
-  width: 100%;
-  padding: 0;
-  position: relative;
-  z-index: 1;
+  gap: var(--spacing-4);
+  padding: var(--spacing-6);
 }
 
 .stat-icon {
@@ -377,7 +372,7 @@ function getStatusType(status: string) {
       gap: var(--spacing-4);
     }
 
-    .stat-card {
+    .stat-card .el-card__body {
       padding: var(--spacing-5);
     }
 
@@ -431,7 +426,7 @@ function getStatusType(status: string) {
       font-size: var(--font-size-2xl);
     }
 
-    .stat-card {
+    .stat-card .el-card__body {
       padding: var(--spacing-4);
     }
 
