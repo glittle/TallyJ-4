@@ -200,6 +200,7 @@ Create a composable that:
 ---
 
 ### [ ] Step: Frontend Store - Add Candidate Cache to PeopleStore
+<!-- chat-id: f6d9dcbf-574e-46ea-baa9-16f9821b0507 -->
 
 **Files to modify**:
 - `frontend/src/stores/peopleStore.ts` - Add candidate cache state and actions
