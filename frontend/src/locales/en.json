@@ -7,6 +7,7 @@
   "common.error": "An error occurred",
   "common.cancel": "Cancel",
   "common.confirm": "Confirm",
+  "common.deleteSelected": "Delete Selected",
   "common.save": "Save",
   "common.delete": "Delete",
   "common.edit": "Edit",
