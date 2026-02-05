@@ -246,8 +246,8 @@ function getStatusType(status: string) {
 }
 
 .stat-icon {
-  width: 4rem;
-  height: 4rem;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
@@ -278,7 +278,7 @@ function getStatusType(status: string) {
 }
 
 .stat-icon .el-icon {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   color: white;
   transition: var(--transition-normal);
 }
