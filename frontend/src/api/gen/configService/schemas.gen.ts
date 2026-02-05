@@ -3912,6 +3912,11 @@ export const PersonDtoSchema = {
             description: 'Additional information about the person.',
             nullable: true
         },
+        combinedSoundCodes: {
+            type: 'string',
+            description: 'Combined phonetic sound codes for search matching (Soundex-based).',
+            nullable: true
+        },
         ageGroup: {
             type: 'string',
             description: "The person's age group.",

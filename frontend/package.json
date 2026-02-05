@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "start": "npm run gen && vite",
-    "gen": "npx openapi-ts --file ../openApi/config.backend.ts",
+    "gen": "npx @hey-api/openapi-ts --file ../openApi/config.backend.ts",
     "build": "vite build",
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit",

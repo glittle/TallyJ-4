@@ -104,7 +104,8 @@ Create a new API endpoint `/api/people/election/{electionGuid}/candidates` that 
 
 ---
 
-### [ ] Step: Frontend API - Regenerate Client & Update Types
+### [x] Step: Frontend API - Regenerate Client & Update Types
+<!-- chat-id: 1685857d-79f8-469a-bf17-c90b8ede0eca -->
 
 **Files to modify**:
 - `frontend/src/types/Person.ts` - Add `combinedSoundCodes` property and `SearchablePersonDto` interface

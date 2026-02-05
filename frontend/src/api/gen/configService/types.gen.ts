@@ -2825,6 +2825,10 @@ export type PersonDto = {
      */
     otherInfo?: string | null;
     /**
+     * Combined phonetic sound codes for search matching (Soundex-based).
+     */
+    combinedSoundCodes?: string | null;
+    /**
      * The person's age group.
      */
     ageGroup?: string | null;
@@ -5794,6 +5798,27 @@ export type GetApiPeopleElectionByElectionGuidSearchResponses = {
 };
 
 export type GetApiPeopleElectionByElectionGuidSearchResponse = GetApiPeopleElectionByElectionGuidSearchResponses[keyof GetApiPeopleElectionByElectionGuidSearchResponses];
+
+export type GetApiPeopleElectionByElectionGuidCandidatesData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/People/election/{electionGuid}/candidates';
+};
+
+export type GetApiPeopleElectionByElectionGuidCandidatesResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListPersonDto;
+};
+
+export type GetApiPeopleElectionByElectionGuidCandidatesResponse = GetApiPeopleElectionByElectionGuidCandidatesResponses[keyof GetApiPeopleElectionByElectionGuidCandidatesResponses];
 
 export type DeleteApiPeopleByGuidData = {
     body?: never;
