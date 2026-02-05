@@ -6,22 +6,29 @@ Fix critical visual issues in the TallyJ 4 dashboard affecting both light and da
 ## Problem Statement
 
 ### Current Issues
-Based on analysis of the dashboard in both light and dark modes, the following critical issues need resolution:
+Based on visual analysis of dashboard screenshots in both light and dark modes, plus code review, the following critical issues need resolution:
 
 #### 1. **Light Mode Text Contrast Issues**
 - **Subtitle text**: "Modern election management and ballot tallying system" appears very faint/washed out on white background
 - **Table content**: Election names, dates, and other table data have insufficient contrast against the white background
 - **Root cause**: Element Plus component library is not properly inheriting custom theme variables in light mode, resulting in default light gray text that doesn't meet WCAG AA contrast requirements
 
-#### 2. **Stat Card Layout Issues**
-- **Icon sizing**: The gradient-colored stat card icons appear disproportionately sized relative to card dimensions
-- **Card proportions**: Overall stat card layout needs refinement for better visual balance
-- **Spacing**: Internal spacing within cards could be optimized for better readability
+#### 2. **Stat Card Layout Issues** (Both Light and Dark Mode)
+- **Missing text content**: Stat values (numbers) and labels are not visible in either theme - only gradient icon backgrounds show
+- **Icon sizing**: The gradient-colored icons appear disproportionately large relative to card dimensions
+- **Card proportions**: Cards appear too narrow/tall, creating awkward vertical layout
+- **Layout breakdown**: The `.stat-content` div containing values and labels appears to be hidden or improperly positioned
 
 #### 3. **Missing Element Plus Theme Integration**
-- **Dark mode**: Has explicit Element Plus variable overrides (working correctly)
+- **Dark mode**: Has explicit Element Plus variable overrides (working correctly for text contrast)
 - **Light mode**: Lacks corresponding Element Plus variable overrides, causing the library to use defaults
 - **Result**: Inconsistent theming between light and dark modes
+
+### What's Working Well
+- **Dark mode text contrast**: Subtitle, headings, table text all have excellent contrast
+- **Dark mode overall**: Visual hierarchy and readability are good
+- **Button styling**: Primary action buttons ("+Create Election", "View") have appropriate contrast in both modes
+- **Status tags**: Color-coded tags ("Tallying", "Finalized") maintain readability
 
 ## Success Criteria
 
@@ -36,10 +43,12 @@ Based on analysis of the dashboard in both light and dark modes, the following c
 - [ ] Secondary content (dates, labels) uses distinguishable but less prominent colors
 - [ ] Tertiary content (helper text, metadata) uses lightest acceptable contrast
 
-### Component Sizing
+### Component Sizing & Layout
+- [ ] Stat card numbers and labels are visible in both light and dark modes
 - [ ] Stat cards have balanced proportions between icon size, value size, and card dimensions
 - [ ] Icons are appropriately scaled and centered within their gradient backgrounds
 - [ ] Text within stat cards is properly sized for hierarchy (large values, smaller labels)
+- [ ] Stat card flex layout properly displays both icon and content side-by-side
 
 ### Cross-Theme Consistency
 - [ ] Both light and dark modes use consistent color semantic mapping
@@ -90,11 +99,12 @@ Element Plus is currently only properly themed for dark mode (lines 178-214 in `
 ## Scope
 
 ### In Scope
-1. Fix text contrast in light mode by adding Element Plus variable overrides
-2. Optimize stat card sizing and proportions
-3. Ensure table text uses appropriate contrast colors
-4. Verify subtitle and heading readability
-5. Test both light and dark modes for consistency
+1. **Fix text contrast in light mode** by adding Element Plus variable overrides
+2. **Debug and fix stat card layout** - investigate why numbers/labels aren't visible
+3. **Optimize stat card sizing and proportions** once layout is working
+4. **Ensure table text uses appropriate contrast colors** in light mode
+5. **Verify subtitle and heading readability** in light mode
+6. **Test both light and dark modes** for consistency and ensure no regressions
 
 ### Out of Scope
 - Complete redesign of dashboard layout
@@ -131,18 +141,27 @@ Focus fixes on these Element Plus components used in dashboard:
 1. **Light Mode Dashboard Load**
    - Verify subtitle is clearly readable
    - Verify all table text meets contrast requirements
-   - Check stat card visual balance
+   - Verify stat cards display numbers and labels clearly
+   - Check stat card visual balance and proportions
 
 2. **Dark Mode Dashboard Load** (regression test)
    - Verify no visual regressions
    - Confirm existing contrast is maintained
+   - Verify stat cards display numbers and labels clearly
 
-3. **Theme Toggle**
+3. **Stat Card Functionality** (both themes)
+   - All 4 stat cards show gradient icon + number + label
+   - Layout is balanced (icon on left, content on right)
+   - Numbers are large and prominent
+   - Labels are smaller but readable
+
+4. **Theme Toggle**
    - Switch from light to dark and back
    - Verify smooth transition without visual breaks
    - Confirm both modes maintain readability
+   - Stat cards remain properly rendered through toggle
 
-4. **Accessibility Check**
+5. **Accessibility Check**
    - Run automated contrast checker (e.g., axe DevTools)
    - Verify WCAG AA compliance for all text
    - Test with browser zoom at 150% and 200%
