@@ -57,7 +57,8 @@ Save to `{@artifacts_path}/plan.md`.
 
 ## Implementation Tasks
 
-### [ ] Step: Backend API - Add CombinedSoundCodes to PersonDto
+### [x] Step: Backend API - Add CombinedSoundCodes to PersonDto
+<!-- chat-id: 6ca9a1a5-ce29-4101-8e23-1abb7a8c9600 -->
 
 **Files to modify**:
 - `backend/DTOs/People/PersonDto.cs` - Add `CombinedSoundCodes` property
