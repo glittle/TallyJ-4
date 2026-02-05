@@ -9,12 +9,12 @@ public class UpdateComputerDto
     /// Information about the browser being used on this computer.
     /// </summary>
     public string? BrowserInfo { get; set; }
-    
+
     /// <summary>
     /// The IP address of this computer.
     /// </summary>
     public string? IpAddress { get; set; }
-    
+
     /// <summary>
     /// Indicates whether this computer is currently active.
     /// </summary>

@@ -72,7 +72,7 @@ public class FrontDeskService : IFrontDeskService
         person.RegistrationTime = DateTime.UtcNow;
         person.VotingMethod = checkInDto.VotingMethod;
         person.VotingLocationGuid = checkInDto.VotingLocationGuid;
-        
+
         if (!string.IsNullOrWhiteSpace(checkInDto.TellerName))
         {
             if (string.IsNullOrWhiteSpace(person.Teller1))
@@ -92,7 +92,7 @@ public class FrontDeskService : IFrontDeskService
 
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("Voter {PersonGuid} checked in for election {ElectionGuid} with envelope {EnvNum}", 
+        _logger.LogInformation("Voter {PersonGuid} checked in for election {ElectionGuid} with envelope {EnvNum}",
             person.PersonGuid, electionGuid, person.EnvNum);
 
         var voterDto = _mapper.Map<FrontDeskVoterDto>(person);

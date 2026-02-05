@@ -110,7 +110,7 @@ public class SetupService : ISetupService
         }
 
         var step1Complete = !string.IsNullOrWhiteSpace(election.Name);
-        var step2Complete = election.NumberToElect.HasValue && 
+        var step2Complete = election.NumberToElect.HasValue &&
                            election.NumberToElect > 0 &&
                            !string.IsNullOrWhiteSpace(election.ElectionType) &&
                            !string.IsNullOrWhiteSpace(election.ElectionMode);

@@ -82,7 +82,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ---
 
-### [ ] Step: Implement Google OAuth Endpoints
+### [x] Step: Implement Google OAuth Endpoints
+<!-- chat-id: 753d899e-feae-4436-b22a-edacdd0805ae -->
 
 **Objective**: Add backend endpoints to initiate and handle Google OAuth flow.
 

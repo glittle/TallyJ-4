@@ -39,7 +39,7 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
         ElectionAccessRequirement requirement)
     {
         _logger.LogWarning("***** ElectionAccessHandler.HandleRequirementAsync called *****");
-        
+
         // Get the current user
         var user = context.User;
         if (user == null || !user.Identity?.IsAuthenticated == true)
@@ -57,15 +57,15 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
             context.Fail();
             return;
         }
-        
+
         _logger.LogInformation("ElectionAccess: Checking access for user {UserId}", userId);
 
         // Extract election GUID from route parameters
         // In ASP.NET Core, the resource can be HttpContext, RouteData, or ControllerActionDescriptor
         var httpContext = context.Resource as HttpContext;
         var routeData = context.Resource as RouteData ?? httpContext?.GetRouteData();
-        
-        _logger.LogWarning("***** Resource type: {ResourceType}, RouteData available: {HasRouteData}", 
+
+        _logger.LogWarning("***** Resource type: {ResourceType}, RouteData available: {HasRouteData}",
             context.Resource?.GetType().Name ?? "null", routeData != null);
 
         if (routeData == null)
@@ -79,7 +79,7 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
         if (!routeData.Values.TryGetValue("guid", out var guidValue) ||
             !Guid.TryParse(guidValue?.ToString(), out var electionGuid))
         {
-            _logger.LogWarning("ElectionAccess: Could not parse election GUID from route. Available route values: {RouteValues}", 
+            _logger.LogWarning("ElectionAccess: Could not parse election GUID from route. Available route values: {RouteValues}",
                 string.Join(", ", routeData.Values.Select(kvp => $"{kvp.Key}={kvp.Value}")));
             context.Fail();
             return;

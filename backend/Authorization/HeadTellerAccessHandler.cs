@@ -73,7 +73,7 @@ public class HeadTellerAccessHandler : AuthorizationHandler<HeadTellerAccessRequ
                 t => t.ElectionGuid,
                 jeu => jeu.ElectionGuid,
                 (t, jeu) => new { Teller = t, JoinElectionUser = jeu })
-            .AnyAsync(x => x.Teller.ElectionGuid == electionGuid && 
+            .AnyAsync(x => x.Teller.ElectionGuid == electionGuid &&
                           x.JoinElectionUser.UserId == userId &&
                           x.Teller.IsHeadTeller == true);
 

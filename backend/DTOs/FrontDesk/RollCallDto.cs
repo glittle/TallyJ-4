@@ -9,7 +9,7 @@ public class RollCallDto
     /// List of voters at the front desk.
     /// </summary>
     public List<FrontDeskVoterDto> Voters { get; set; } = new();
-    
+
     /// <summary>
     /// Statistics for the front desk.
     /// </summary>

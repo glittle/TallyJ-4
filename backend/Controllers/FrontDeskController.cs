@@ -56,7 +56,7 @@ public class FrontDeskController : ControllerBase
     /// <returns>The updated voter information.</returns>
     [HttpPost("checkin")]
     public async Task<ActionResult<ApiResponse<FrontDeskVoterDto>>> CheckInVoter(
-        Guid electionGuid, 
+        Guid electionGuid,
         [FromBody] CheckInVoterDto checkInDto)
     {
         try
@@ -70,7 +70,7 @@ public class FrontDeskController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error checking in voter {PersonGuid} for election {ElectionGuid}", 
+            _logger.LogError(ex, "Error checking in voter {PersonGuid} for election {ElectionGuid}",
                 checkInDto.PersonGuid, electionGuid);
             return StatusCode(500, ApiResponse<FrontDeskVoterDto>.ErrorResponse("Failed to check in voter"));
         }

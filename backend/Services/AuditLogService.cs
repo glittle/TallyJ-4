@@ -72,7 +72,7 @@ public class AuditLogService : IAuditLogService
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var searchTerm = filter.SearchTerm.ToLower();
-                query = query.Where(l => 
+                query = query.Where(l =>
                     (l.Details != null && l.Details.ToLower().Contains(searchTerm)) ||
                     (l.VoterId != null && l.VoterId.ToLower().Contains(searchTerm)) ||
                     (l.ComputerCode != null && l.ComputerCode.ToLower().Contains(searchTerm)) ||

@@ -7,6 +7,8 @@ using TallyJ4.Application.DTOs.Auth;
 using TallyJ4.Application.Services.Auth;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace TallyJ4.Backend.Controllers;
 
@@ -26,6 +28,8 @@ public class AuthController : ControllerBase
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ILogger<AuthController> _logger;
+    private readonly IConfiguration _configuration;
+    private readonly SignInManager<AppUser> _signInManager;
 
     /// <summary>
     /// Initializes a new instance of the AuthController.
@@ -38,6 +42,8 @@ public class AuthController : ControllerBase
     /// <param name="userManager">ASP.NET Core Identity user manager.</param>
     /// <param name="roleManager">ASP.NET Core Identity role manager.</param>
     /// <param name="logger">Logger for recording operations.</param>
+    /// <param name="configuration">Application configuration.</param>
+    /// <param name="signInManager">ASP.NET Core Identity sign-in manager.</param>
     public AuthController(
         LocalAuthService localAuthService,
         PasswordResetService passwordResetService,
@@ -46,7 +52,9 @@ public class AuthController : ControllerBase
         MainDbContext context,
         UserManager<AppUser> userManager,
         RoleManager<IdentityRole> roleManager,
-        ILogger<AuthController> logger)
+        ILogger<AuthController> logger,
+        IConfiguration configuration,
+        SignInManager<AppUser> signInManager)
     {
         _localAuthService = localAuthService;
         _passwordResetService = passwordResetService;
@@ -56,6 +64,8 @@ public class AuthController : ControllerBase
         _userManager = userManager;
         _roleManager = roleManager;
         _logger = logger;
+        _configuration = configuration;
+        _signInManager = signInManager;
     }
 
     /// <summary>
@@ -360,5 +370,135 @@ public class AuthController : ControllerBase
     {
         var roles = _roleManager.Roles.Select(r => r.Name).ToList();
         return Ok(new { roles });
+    }
+
+    /// <summary>
+    /// Initiates Google OAuth login flow.
+    /// </summary>
+    /// <param name="returnUrl">The URL to redirect to after successful authentication (default: frontend origin).</param>
+    /// <returns>A redirect to Google's OAuth consent screen.</returns>
+    [HttpGet("google/login")]
+    public IActionResult GoogleLogin([FromQuery] string? returnUrl = null)
+    {
+        var googleClientId = _configuration["Google:ClientId"];
+        var googleClientSecret = _configuration["Google:ClientSecret"];
+
+        if (string.IsNullOrWhiteSpace(googleClientId) || string.IsNullOrWhiteSpace(googleClientSecret)
+            || googleClientId.StartsWith("<") || googleClientSecret.StartsWith("<"))
+        {
+            _logger.LogWarning("Google OAuth login attempted but credentials are not configured");
+            return BadRequest(new { error = "Google authentication is not configured on this server. Please contact your administrator or use email/password login." });
+        }
+
+        var properties = new AuthenticationProperties
+        {
+            RedirectUri = Url.Action(nameof(GoogleCallback), new { returnUrl }),
+            Items = { { "scheme", GoogleDefaults.AuthenticationScheme } }
+        };
+
+        return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+    }
+
+    /// <summary>
+    /// Handles the OAuth callback from Google.
+    /// </summary>
+    /// <param name="returnUrl">The URL to redirect to after processing the callback.</param>
+    /// <returns>A redirect to the frontend with the JWT token.</returns>
+    [HttpGet("google/callback")]
+    public async Task<IActionResult> GoogleCallback([FromQuery] string? returnUrl = null)
+    {
+        try
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                _logger.LogWarning("Google callback: External login info is null");
+                return Redirect(GetErrorRedirectUrl(returnUrl, "Failed to retrieve login information from Google"));
+            }
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(email))
+            {
+                _logger.LogWarning("Google callback: Email claim is missing from Google response");
+                return Redirect(GetErrorRedirectUrl(returnUrl, "Email not provided by Google"));
+            }
+
+            var googleId = info.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new AppUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    GoogleId = googleId,
+                    AuthMethod = "Google"
+                };
+
+                var createResult = await _userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    _logger.LogError("Google callback: Failed to create user {Email}: {Errors}",
+                        email, string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                    return Redirect(GetErrorRedirectUrl(returnUrl, "Failed to create user account"));
+                }
+
+                var roleResult = await _userManager.AddToRoleAsync(user, "Officer");
+                if (!roleResult.Succeeded)
+                {
+                    _logger.LogWarning("Google callback: Failed to assign Officer role to user {Email}: {Errors}",
+                        email, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                }
+
+                _logger.LogInformation("Google callback: Created new user {Email} with Google authentication", email);
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(user.GoogleId))
+                {
+                    user.GoogleId = googleId;
+                    user.AuthMethod = "Google";
+                    await _userManager.UpdateAsync(user);
+                    _logger.LogInformation("Google callback: Linked Google account to existing user {Email}", email);
+                }
+            }
+
+            var token = _jwtTokenService.GenerateToken(user);
+            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+            var refreshTokenEntity = _jwtTokenService.CreateRefreshToken(user.Id, refreshToken);
+            _context.RefreshTokens.Add(refreshTokenEntity);
+            await _context.SaveChangesAsync();
+
+            var frontendUrl = GetFrontendUrl(returnUrl);
+            var redirectUrl = $"{frontendUrl}?token={Uri.EscapeDataString(token)}&refreshToken={Uri.EscapeDataString(refreshToken)}";
+
+            _logger.LogInformation("Google callback: Successfully authenticated user {Email}, redirecting to {Url}", email, frontendUrl);
+            return Redirect(redirectUrl);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Google callback: Unexpected error during Google authentication");
+            return Redirect(GetErrorRedirectUrl(returnUrl, "An unexpected error occurred during authentication"));
+        }
+    }
+
+    private string GetFrontendUrl(string? returnUrl)
+    {
+        if (!string.IsNullOrEmpty(returnUrl) && Uri.TryCreate(returnUrl, UriKind.Absolute, out var uri))
+        {
+            return returnUrl;
+        }
+
+        var frontendOrigins = new[] { "http://localhost:8095", "http://localhost:5173", "http://localhost:5174" };
+        return frontendOrigins[0] + "/auth/google/callback";
+    }
+
+    private string GetErrorRedirectUrl(string? returnUrl, string errorMessage)
+    {
+        var frontendUrl = GetFrontendUrl(returnUrl);
+        var baseUrl = frontendUrl.Split('?')[0].Replace("/auth/google/callback", "/login");
+        return $"{baseUrl}?error={Uri.EscapeDataString(errorMessage)}&mode=officer";
     }
 }

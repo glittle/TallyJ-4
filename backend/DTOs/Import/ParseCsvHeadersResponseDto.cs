@@ -9,12 +9,12 @@ public class ParseCsvHeadersResponseDto
     /// List of column headers from the CSV file.
     /// </summary>
     public List<string> Headers { get; set; } = new();
-    
+
     /// <summary>
     /// Preview rows from the CSV file.
     /// </summary>
     public List<string[]> PreviewRows { get; set; } = new();
-    
+
     /// <summary>
     /// Total number of data rows in the CSV file.
     /// </summary>

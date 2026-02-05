@@ -91,7 +91,7 @@ services.AddAuthentication(options =>
         ValidAudience = builderConfiguration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))  // Secure key (min 256 bits)
     };
-    
+
     options.Events = new JwtBearerEvents
     {
         OnAuthenticationFailed = context =>
@@ -102,7 +102,7 @@ services.AddAuthentication(options =>
         },
         OnTokenValidated = context =>
         {
-            var userId = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value 
+            var userId = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
                         ?? context.Principal?.FindFirst("sub")?.Value;
             Log.Information("JWT Token validated successfully for user: {UserId}", userId);
             return Task.CompletedTask;
@@ -111,11 +111,11 @@ services.AddAuthentication(options =>
         {
             var accessToken = context.Request.Query["access_token"];
             var path = context.HttpContext.Request.Path;
-            
+
             if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
             {
                 context.Token = accessToken;
-                Log.Information("JWT Token received from query string for SignalR hub: {Path}, TokenLength: {TokenLength}", 
+                Log.Information("JWT Token received from query string for SignalR hub: {Path}, TokenLength: {TokenLength}",
                     path, accessToken.ToString().Length);
             }
             else
@@ -123,14 +123,14 @@ services.AddAuthentication(options =>
                 var authHeader = context.Request.Headers["Authorization"].ToString();
                 var hasBearer = authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
                 var tokenLength = hasBearer ? authHeader.Substring(7).Length : 0;
-                Log.Information("JWT Message received - Header: {HasHeader}, HasBearer: {HasBearer}, TokenLength: {TokenLength}, ActualHeader: '{AuthHeader}'", 
+                Log.Information("JWT Message received - Header: {HasHeader}, HasBearer: {HasBearer}, TokenLength: {TokenLength}, ActualHeader: '{AuthHeader}'",
                     !string.IsNullOrEmpty(authHeader), hasBearer, tokenLength, authHeader.Length > 100 ? authHeader.Substring(0, 100) + "..." : authHeader);
             }
             return Task.CompletedTask;
         },
         OnChallenge = context =>
         {
-            Log.Warning("JWT Challenge initiated - Error: {Error}, ErrorDescription: {ErrorDescription}, AuthFailure: {AuthFailure}", 
+            Log.Warning("JWT Challenge initiated - Error: {Error}, ErrorDescription: {ErrorDescription}, AuthFailure: {AuthFailure}",
                 context.Error, context.ErrorDescription, context.AuthenticateFailure?.Message);
             return Task.CompletedTask;
         }
@@ -141,7 +141,7 @@ services.AddAuthentication(options =>
 var googleClientId = builderConfiguration["Google:ClientId"];
 var googleClientSecret = builderConfiguration["Google:ClientSecret"];
 
-if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret) 
+if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret)
     && !googleClientId.StartsWith("<") && !googleClientSecret.StartsWith("<"))
 {
     services.AddAuthentication()
@@ -172,10 +172,10 @@ services.AddAuthorization(options =>
 {
     options.AddPolicy("ElectionAccess", policy =>
         policy.Requirements.Add(new TallyJ4.Authorization.ElectionAccessRequirement()));
-    
+
     options.AddPolicy("TellerAccess", policy =>
         policy.Requirements.Add(new TallyJ4.Authorization.TellerAccessRequirement()));
-    
+
     options.AddPolicy("HeadTellerAccess", policy =>
         policy.Requirements.Add(new TallyJ4.Authorization.HeadTellerAccessRequirement()));
 });
@@ -245,12 +245,12 @@ services.AddSwaggerGen(options =>
         {
             if (!t.IsGenericType)
                 return t.Name;
-            
+
             var typeName = t.Name.Substring(0, t.Name.IndexOf('`'));
             var genericArgs = string.Join("", t.GetGenericArguments().Select(GetSchemaId));
             return $"{typeName}{genericArgs}";
         }
-        
+
         return GetSchemaId(type);
     });
 
