@@ -11,7 +11,7 @@
         <el-skeleton :rows="5" animated />
       </div>
 
-      <div v-else-if="ballot">
+      <div v-else-if="ballot && election">
         <div class="ballot-info">
           <el-descriptions :column="2" border>
             <el-descriptions-item :label="$t('ballots.location')">
@@ -35,82 +35,62 @@
         </div>
 
         <div class="votes-section">
-          <div class="section-header">
-            <h3>{{ $t('ballots.votesList') }}</h3>
-            <el-button type="primary" @click="showAddVote = true">
-              <el-icon><Plus /></el-icon>
-              {{ $t('ballots.addVote') }}
-            </el-button>
-          </div>
-
-          <el-table :data="ballot.votes" style="width: 100%">
-            <el-table-column prop="positionOnBallot" :label="$t('ballots.position')" width="80" />
-            <el-table-column prop="personFullName" :label="$t('ballots.candidate')" min-width="200" />
-            <el-table-column prop="statusCode" :label="$t('ballots.status')" width="100">
-              <template #default="scope">
-                <el-tag :type="getVoteStatusType(scope.row.statusCode)">
-                  {{ scope.row.statusCode }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column :label="$t('common.actions')" width="120">
-              <template #default="scope">
-                <el-button
-                  size="small"
-                  type="danger"
-                  @click="handleDeleteVote(scope.row)"
-                >
-                  {{ $t('common.delete') }}
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+          <InlineBallotEntry
+            :election-guid="electionGuid"
+            :ballot="ballot"
+            :max-votes="election.numberToElect || 9"
+            @vote-added="handleVoteAdded"
+            @vote-removed="handleVoteRemoved"
+          />
         </div>
       </div>
     </el-card>
-
-    <VoteFormDialog
-      v-model="showAddVote"
-      :ballot-guid="ballotGuid"
-      :election-guid="electionGuid"
-      :next-position="nextPosition"
-      @success="handleVoteSuccess"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 import { useBallotStore } from '../../stores/ballotStore';
-import type { BallotDto, VoteDto } from '../../types';
-import VoteFormDialog from '../../components/ballots/VoteFormDialog.vue';
+import { useElectionStore } from '../../stores/electionStore';
+import { usePeopleStore } from '../../stores/peopleStore';
+import InlineBallotEntry from '../../components/ballots/InlineBallotEntry.vue';
+import type { VoteDto, CreateVoteDto } from '../../types';
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const ballotStore = useBallotStore();
+const electionStore = useElectionStore();
+const peopleStore = usePeopleStore();
 
 const electionGuid = route.params.id as string;
 const ballotGuid = route.params.ballotId as string;
-const showAddVote = ref(false);
 
-const loading = computed(() => ballotStore.loading);
+const loading = computed(() => ballotStore.loading || electionStore.loading);
 const ballot = computed(() => ballotStore.currentBallot);
-
-const nextPosition = computed(() => {
-  if (!ballot.value?.votes.length) return 1;
-  return Math.max(...ballot.value.votes.map(v => v.positionOnBallot)) + 1;
-});
+const election = computed(() => electionStore.currentElection);
 
 onMounted(async () => {
   try {
-    await ballotStore.initializeSignalR();
-    await ballotStore.joinElection(electionGuid);
-    await ballotStore.fetchBallotById(ballotGuid);
+    await Promise.all([
+      ballotStore.initializeSignalR(),
+      peopleStore.initializeSignalR()
+    ]);
+    
+    await Promise.all([
+      ballotStore.joinElection(electionGuid),
+      peopleStore.joinElection(electionGuid)
+    ]);
+    
+    await Promise.all([
+      ballotStore.fetchBallotById(ballotGuid),
+      electionStore.fetchElectionById(electionGuid)
+    ]);
+
+    setupPersonUpdateHandler();
   } catch (error) {
     ElMessage.error(t('ballots.loadError'));
   }
@@ -118,40 +98,55 @@ onMounted(async () => {
 
 onUnmounted(async () => {
   try {
-    await ballotStore.leaveElection(electionGuid);
+    await Promise.all([
+      ballotStore.leaveElection(electionGuid),
+      peopleStore.leaveElection(electionGuid)
+    ]);
   } catch (error) {
     console.error('Failed to leave election group for ballot entry:', error);
   }
 });
 
+function setupPersonUpdateHandler() {
+  const originalHandler = peopleStore.handlePersonUpdated.bind(peopleStore);
+  
+  peopleStore.handlePersonUpdated = async (data) => {
+    await originalHandler(data);
+    
+    if (data.firstName || data.lastName) {
+      const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ');
+      ElMessage.info(t('ballots.personUpdated', { name: fullName }));
+    }
+  };
+}
+
 function goBack() {
   router.push(`/elections/${electionGuid}/ballots`);
 }
 
-async function handleDeleteVote(vote: VoteDto) {
+async function handleVoteAdded(vote: VoteDto) {
   try {
-    await ElMessageBox.confirm(
-      t('ballots.deleteVoteConfirm'),
-      t('common.warning'),
-      {
-        confirmButtonText: t('common.delete'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
-    );
-
-    await ballotStore.deleteVote(vote.ballotGuid, vote.positionOnBallot);
-    ElMessage.success(t('ballots.deleteVoteSuccess'));
+    const createDto: CreateVoteDto = {
+      ballotGuid: vote.ballotGuid,
+      positionOnBallot: vote.positionOnBallot,
+      personGuid: vote.personGuid || undefined,
+      personName: vote.personFullName || undefined
+    };
+    
+    await ballotStore.createVote(createDto);
+    ElMessage.success(t('ballots.voteAddedSuccess'));
   } catch (error: any) {
-    if (error !== 'cancel') {
-      ElMessage.error(error.message || t('ballots.deleteVoteError'));
-    }
+    ElMessage.error(error.message || t('ballots.voteAddedError'));
   }
 }
 
-function handleVoteSuccess() {
-  showAddVote.value = false;
-  ballotStore.fetchBallotById(ballotGuid);
+async function handleVoteRemoved(positionOnBallot: number) {
+  try {
+    await ballotStore.deleteVote(ballotGuid, positionOnBallot);
+    ElMessage.success(t('ballots.voteRemovedSuccess'));
+  } catch (error: any) {
+    ElMessage.error(error.message || t('ballots.voteRemovedError'));
+  }
 }
 
 function getStatusType(status: string) {
@@ -159,15 +154,6 @@ function getStatusType(status: string) {
     'Ok': 'success',
     'Review': 'warning',
     'Spoiled': 'danger'
-  };
-  return typeMap[status] || '';
-}
-
-function getVoteStatusType(status: string) {
-  const typeMap: Record<string, any> = {
-    'Ok': 'success',
-    'Unreadable': 'warning',
-    'Invalid': 'danger'
   };
   return typeMap[status] || '';
 }

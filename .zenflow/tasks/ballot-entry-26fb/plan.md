@@ -310,7 +310,8 @@ Create a container component with:
 
 ---
 
-### [ ] Step: Frontend Page - Integrate InlineBallotEntry into BallotEntryPage
+### [x] Step: Frontend Page - Integrate InlineBallotEntry into BallotEntryPage
+<!-- chat-id: 050f79d2-e77c-4999-b69e-06bec7514fe6 -->
 
 **Files to modify**:
 - `frontend/src/pages/ballots/BallotEntryPage.vue` - Replace VoteFormDialog with InlineBallotEntry
