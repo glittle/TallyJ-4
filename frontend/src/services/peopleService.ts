@@ -1,4 +1,4 @@
-import { getApiPeopleElectionByElectionGuid, getApiPeopleByGuid, postApiPeople, putApiPeopleByGuid, deleteApiPeopleByGuid, getApiPeopleElectionByElectionGuidSearch } from '../api/gen/configService/sdk.gen';
+import { getApiPeopleElectionByElectionGuid, getApiPeopleByGuid, postApiPeople, putApiPeopleByGuid, deleteApiPeopleByGuid, getApiPeopleElectionByElectionGuidSearch, getApiPeopleElectionByElectionGuidCandidates } from '../api/gen/configService/sdk.gen';
 import type { PersonDto, CreatePersonDto, UpdatePersonDto } from '../types';
 
 export const peopleService = {
@@ -40,7 +40,7 @@ export const peopleService = {
   },
 
   async getCandidates(electionGuid: string): Promise<PersonDto[]> {
-    const response = await getApiPeopleElectionByElectionGuid({ path: { electionGuid } });
+    const response = await getApiPeopleElectionByElectionGuidCandidates({ path: { electionGuid } });
     return response.data as PersonDto[];
   }
 };
