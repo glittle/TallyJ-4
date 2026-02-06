@@ -9,7 +9,7 @@ public class VerifyCodeDto
     /// The voter's unique identifier.
     /// </summary>
     public string VoterId { get; set; } = null!;
-    
+
     /// <summary>
     /// The verification code to validate.
     /// </summary>

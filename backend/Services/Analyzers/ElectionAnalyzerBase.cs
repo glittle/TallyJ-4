@@ -79,14 +79,14 @@ public abstract class ElectionAnalyzerBase
         try
         {
             Logger.LogInformation("Starting tally calculation transaction for election {ElectionGuid}", TargetElection.ElectionGuid);
-            
+
             await PrepareForAnalysisAsync();
             CalculateBallotStatistics();
             await CountVotesAsync();
             FinalizeResultsAndTies();
             await FinalizeSummariesAsync();
             await SaveResultsAsync();
-            
+
             await transaction.CommitAsync();
             Logger.LogInformation("Tally calculation transaction committed successfully for election {ElectionGuid}", TargetElection.ElectionGuid);
         }
@@ -109,7 +109,7 @@ public abstract class ElectionAnalyzerBase
         var existingResults = await Context.Results
             .Where(r => r.ElectionGuid == TargetElection.ElectionGuid)
             .ToListAsync();
-        
+
         if (existingResults.Any())
         {
             Context.Results.RemoveRange(existingResults);
@@ -119,7 +119,7 @@ public abstract class ElectionAnalyzerBase
         var existingResultTies = await Context.ResultTies
             .Where(rt => rt.ElectionGuid == TargetElection.ElectionGuid)
             .ToListAsync();
-        
+
         if (existingResultTies.Any())
         {
             Context.ResultTies.RemoveRange(existingResultTies);
@@ -172,7 +172,7 @@ public abstract class ElectionAnalyzerBase
 
         var totalBallots = Ballots.Count;
         var spoiledBallots = invalidBallotGuids.Count;
-        
+
         ResultSummaryCalc.BallotsReceived = totalBallots - spoiledBallots;
         ResultSummaryCalc.SpoiledBallots = spoiledBallots;
         ResultSummaryCalc.BallotsNeedingReview = Ballots.Count(b => BallotNeedsReview(b));
@@ -242,7 +242,7 @@ public abstract class ElectionAnalyzerBase
                 {
                     result.Section = "O";
                 }
-                
+
                 ordinal++;
             }
 
@@ -335,13 +335,13 @@ public abstract class ElectionAnalyzerBase
     protected virtual async Task SaveResultsAsync()
     {
         Logger.LogInformation("Saving results to database");
-        
+
         if (ResultTies.Any())
         {
             Context.ResultTies.AddRange(ResultTies);
             Logger.LogInformation("Added {ResultTieCount} ResultTie records", ResultTies.Count);
         }
-        
+
         await Context.SaveChangesAsync();
         Logger.LogInformation("Results saved successfully");
     }

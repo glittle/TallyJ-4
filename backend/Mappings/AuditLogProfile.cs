@@ -15,7 +15,7 @@ public class AuditLogProfile : Profile
     public AuditLogProfile()
     {
         CreateMap<Log, AuditLogDto>();
-        
+
         CreateMap<CreateAuditLogDto, Log>()
             .ForMember(dest => dest.RowId, opt => opt.Ignore())
             .ForMember(dest => dest.AsOf, opt => opt.Ignore());

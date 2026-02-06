@@ -47,7 +47,7 @@ public class PublicHub : Hub
     {
         var groupName = $"public-display-{electionGuid}";
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("Client {ConnectionId} joined public display group for election {ElectionGuid}", 
+        _logger.LogInformation("Client {ConnectionId} joined public display group for election {ElectionGuid}",
             Context.ConnectionId, electionGuid);
     }
 
@@ -59,7 +59,7 @@ public class PublicHub : Hub
     {
         var groupName = $"public-display-{electionGuid}";
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("Client {ConnectionId} left public display group for election {ElectionGuid}", 
+        _logger.LogInformation("Client {ConnectionId} left public display group for election {ElectionGuid}",
             Context.ConnectionId, electionGuid);
     }
 
@@ -97,7 +97,7 @@ public class PublicHub : Hub
     {
         var groupName = $"public-display-{electionGuid}";
         await Clients.Group(groupName).SendAsync("ResultsUpdated", displayData);
-        _logger.LogInformation("Results updated broadcast for election {ElectionGuid} to group {GroupName}", 
+        _logger.LogInformation("Results updated broadcast for election {ElectionGuid} to group {GroupName}",
             electionGuid, groupName);
     }
 

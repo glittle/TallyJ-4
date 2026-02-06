@@ -35,7 +35,7 @@ public class ImportService
     public async Task<ParseCsvHeadersResponseDto> ParseCsvHeadersAsync(string csvContent, string delimiter = ",")
     {
         var response = new ParseCsvHeadersResponseDto();
-        
+
         var lines = csvContent.Split('\n', StringSplitOptions.RemoveEmptyEntries)
             .Select(l => l.Trim('\r', '\n'))
             .Where(l => !string.IsNullOrWhiteSpace(l))
@@ -132,7 +132,7 @@ public class ImportService
                 int rowNumber = i + 1;
                 var values = ParseCsvLine(lines[i], request.Configuration.Delimiter);
 
-                await ReportProgress(groupName, i - request.Configuration.FirstDataRow + 2, result.TotalRows, 
+                await ReportProgress(groupName, i - request.Configuration.FirstDataRow + 2, result.TotalRows,
                     $"Processing row {rowNumber}");
 
                 if (!ValidateRow(values, ballotCodeIndex, votesIndex, rowNumber, result, request.Configuration.SkipInvalidRows))
@@ -148,7 +148,7 @@ public class ImportService
 
                 if (string.IsNullOrEmpty(ballotCode) || string.IsNullOrEmpty(votesText))
                 {
-                    HandleRowError($"Row {rowNumber}: Missing ballot code or votes", result, 
+                    HandleRowError($"Row {rowNumber}: Missing ballot code or votes", result,
                         request.Configuration.SkipInvalidRows, rowNumber);
                     if (request.Configuration.SkipInvalidRows)
                     {
@@ -227,7 +227,7 @@ public class ImportService
         return result;
     }
 
-    private bool ValidateRow(string[] values, int ballotCodeIndex, int votesIndex, int rowNumber, 
+    private bool ValidateRow(string[] values, int ballotCodeIndex, int votesIndex, int rowNumber,
         ImportResultDto result, bool skipInvalidRows)
     {
         if (values.Length <= Math.Max(ballotCodeIndex, votesIndex))

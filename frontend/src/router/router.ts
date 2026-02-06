@@ -26,6 +26,12 @@ const routes = [
         component: () => import("../pages/RegisterPage.vue"),
       },
       {
+        path: "auth/google/callback",
+        name: "google-callback",
+        component: () => import("../pages/GoogleCallbackPage.vue"),
+        meta: { title: "Completing Sign In" },
+      },
+      {
         path: "voter-auth",
         name: "voter-auth",
         component: () => import("../pages/voting/VoterAuthPage.vue"),

@@ -16,16 +16,21 @@ const loading = ref(false);
 const codeSent = ref(false);
 
 // Mode determines which UI to show
-const mode = ref(route.query.mode as string || "officer");
+const mode = ref((route.query.mode as string) || "officer");
 
 // Watch for query changes to update mode
-watch(() => route.query.mode, (newMode) => {
-  if (newMode) mode.value = newMode as string;
-});
+watch(
+  () => route.query.mode,
+  (newMode) => {
+    if (newMode) mode.value = newMode as string;
+  }
+);
 
-const isStandardLogin = computed(() => mode.value === 'officer' || mode.value === 'full-teller');
-const isVoterLogin = computed(() => mode.value === 'voter');
-const isTellerLogin = computed(() => mode.value === 'teller');
+const isStandardLogin = computed(
+  () => mode.value === "officer" || mode.value === "full-teller"
+);
+const isVoterLogin = computed(() => mode.value === "voter");
+const isTellerLogin = computed(() => mode.value === "teller");
 
 const loginForm = reactive({
   email: "",
@@ -36,7 +41,7 @@ const loginForm = reactive({
 
 const rules = computed<FormRules>(() => {
   const baseRules: FormRules = {};
-  
+
   if (isStandardLogin.value || isVoterLogin.value) {
     baseRules.email = [
       { required: true, message: t("auth.emailRequired"), trigger: "blur" },
@@ -58,7 +63,11 @@ const rules = computed<FormRules>(() => {
 
   if (isTellerLogin.value) {
     baseRules.passcode = [
-      { required: true, message: t("auth.tellerLogin.passcodeRequired"), trigger: "blur" },
+      {
+        required: true,
+        message: t("auth.tellerLogin.passcodeRequired"),
+        trigger: "blur",
+      },
     ];
   }
 
@@ -88,13 +97,13 @@ const handleLogin = async () => {
 
   await loginFormRef.value.validate(async (valid) => {
     if (!valid) return;
-    
+
     loading.value = true;
     try {
       if (isStandardLogin.value) {
         await authStore.login({
           email: loginForm.email,
-          password: loginForm.password
+          password: loginForm.password,
         });
       } else if (isVoterLogin.value) {
         // Handle System 3 login (OTC)
@@ -104,10 +113,12 @@ const handleLogin = async () => {
       } else if (isTellerLogin.value) {
         // Handle System 2 login (Passcode)
         // await authStore.loginTeller(loginForm.passcode);
-        ElMessage.warning("Guest Teller passcode login not fully implemented in backend yet.");
+        ElMessage.warning(
+          "Guest Teller passcode login not fully implemented in backend yet."
+        );
         return;
       }
-      
+
       ElMessage.success(t("auth.loginSuccess"));
       const redirectPath = (route.query.redirect as string) || "/dashboard";
       router.push(redirectPath);
@@ -118,6 +129,17 @@ const handleLogin = async () => {
       loading.value = false;
     }
   });
+};
+
+const handleGoogleLogin = () => {
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
+  const returnUrl = encodeURIComponent(
+    globalThis.location.origin + "/auth/google/callback"
+  );
+  const redirectPath = route.query.redirect
+    ? `&redirect=${encodeURIComponent(route.query.redirect as string)}`
+    : "";
+  globalThis.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}${redirectPath}`;
 };
 
 onMounted(() => {
@@ -132,14 +154,27 @@ onMounted(() => {
     <el-card class="login-card">
       <template #header>
         <div class="login-header">
-          <h2 v-if="isStandardLogin">{{ t(`auth.landing.login${mode.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()).replace(' ', '')}`) }}</h2>
+          <h2 v-if="isStandardLogin">
+            {{
+              t(
+                `auth.landing.login${mode
+                  .replace("-", " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase())
+                  .replace(" ", "")}`
+              )
+            }}
+          </h2>
           <h2 v-else-if="isVoterLogin">{{ t("auth.voterLogin.title") }}</h2>
           <h2 v-else-if="isTellerLogin">{{ t("auth.tellerLogin.title") }}</h2>
-          
+
           <p class="mode-hint">
-            {{ isStandardLogin ? t("auth.landing.optionOfficerDesc") : 
-               isVoterLogin ? t("auth.landing.optionVoterDesc") : 
-               t("auth.landing.optionTellerDesc") }}
+            {{
+              isStandardLogin
+                ? t("auth.landing.optionOfficerDesc")
+                : isVoterLogin
+                ? t("auth.landing.optionVoterDesc")
+                : t("auth.landing.optionTellerDesc")
+            }}
           </p>
         </div>
       </template>
@@ -172,7 +207,11 @@ onMounted(() => {
         </el-form-item>
 
         <!-- System 3: One-Time Code Field -->
-        <el-form-item v-if="isVoterLogin && codeSent" :label="t('auth.voterLogin.codeLabel')" prop="code">
+        <el-form-item
+          v-if="isVoterLogin && codeSent"
+          :label="t('auth.voterLogin.codeLabel')"
+          prop="code"
+        >
           <el-input
             v-model="loginForm.code"
             :placeholder="t('auth.voterLogin.codePlaceholder')"
@@ -181,7 +220,11 @@ onMounted(() => {
         </el-form-item>
 
         <!-- System 2: Election Passcode Field -->
-        <el-form-item v-if="isTellerLogin" :label="t('auth.tellerLogin.passcodeLabel')" prop="passcode">
+        <el-form-item
+          v-if="isTellerLogin"
+          :label="t('auth.tellerLogin.passcodeLabel')"
+          prop="passcode"
+        >
           <el-input
             v-model="loginForm.passcode"
             :placeholder="t('auth.tellerLogin.passcodePlaceholder')"
@@ -199,7 +242,7 @@ onMounted(() => {
           >
             {{ t("auth.voterLogin.requestButton") }}
           </el-button>
-          
+
           <!-- General Login Button -->
           <el-button
             v-else
@@ -208,15 +251,19 @@ onMounted(() => {
             class="submit-btn"
             @click="handleLogin"
           >
-            {{ isVoterLogin ? t("auth.voterLogin.loginButton") : 
-               isTellerLogin ? t("auth.tellerLogin.loginButton") : 
-               t("auth.loginButton") }}
+            {{
+              isVoterLogin
+                ? t("auth.voterLogin.loginButton")
+                : isTellerLogin
+                ? t("auth.tellerLogin.loginButton")
+                : t("auth.loginButton")
+            }}
           </el-button>
-          
-          <el-button 
-            v-if="isVoterLogin && codeSent" 
-            link 
-            class="retry-link" 
+
+          <el-button
+            v-if="isVoterLogin && codeSent"
+            link
+            class="retry-link"
             @click="codeSent = false"
           >
             {{ t("common.tryAgain") }}
@@ -236,9 +283,12 @@ onMounted(() => {
       <!-- Social login only for Officers -->
       <div class="social-login" v-if="mode === 'officer'">
         <el-divider>{{ t("common.or") }}</el-divider>
-        <el-button class="google-btn">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
-          {{ t("auth.googleLogin") }}
+        <el-button class="google-btn" @click="handleGoogleLogin">
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google"
+          />
+          <span>{{ t("auth.googleLogin") }}</span>
         </el-button>
       </div>
     </el-card>

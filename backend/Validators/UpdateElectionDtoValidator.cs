@@ -37,7 +37,7 @@ public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
         RuleFor(x => x.TallyStatus)
             .MaximumLength(15)
             .WithMessage("Tally status cannot exceed 15 characters")
-            .Must(status => string.IsNullOrWhiteSpace(status) || 
+            .Must(status => string.IsNullOrWhiteSpace(status) ||
                            new[] { "Setup", "Ready", "Processing", "Finalized" }.Contains(status))
             .WithMessage("Tally status must be one of: Setup, Ready, Processing, Finalized");
 
@@ -48,7 +48,7 @@ public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
         RuleFor(x => x.ElectionType)
             .MaximumLength(5)
             .WithMessage("Election type cannot exceed 5 characters")
-            .Must(type => string.IsNullOrWhiteSpace(type) || 
+            .Must(type => string.IsNullOrWhiteSpace(type) ||
                          new[] { "STV", "Cond", "Multi" }.Contains(type))
             .WithMessage("Election type must be one of: STV, Cond, Multi");
 

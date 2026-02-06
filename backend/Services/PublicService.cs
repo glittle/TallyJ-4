@@ -92,7 +92,7 @@ public class PublicService : IPublicService
         var ballots = election.Locations.SelectMany(l => l.Ballots).ToList();
         var ballotCount = ballots.Count;
 
-        var isActive = election.TallyStatus != "Complete" && 
+        var isActive = election.TallyStatus != "Complete" &&
                       election.TallyStatus != "Archived" &&
                       election.TallyStatus != "Deleted";
 
@@ -150,7 +150,7 @@ public class PublicService : IPublicService
             .Select(r => new PublicCandidateDto
             {
                 Rank = r.Rank,
-                FullName = r.Person != null 
+                FullName = r.Person != null
                     ? $"{r.Person.LastName ?? string.Empty}, {r.Person.FirstName ?? string.Empty}".Trim().Trim(',')
                     : "Unknown",
                 VoteCount = r.VoteCount ?? 0,
@@ -161,12 +161,12 @@ public class PublicService : IPublicService
             .ToList();
 
         var additionalCandidates = results
-            .Where(r => (r.Section == "X" || (r.Section == "E" && r.Rank > numberToElect)) 
+            .Where(r => (r.Section == "X" || (r.Section == "E" && r.Rank > numberToElect))
                         && r.Rank > 0 && r.Rank <= numberToElect + numberExtra)
             .Select(r => new PublicCandidateDto
             {
                 Rank = r.Rank,
-                FullName = r.Person != null 
+                FullName = r.Person != null
                     ? $"{r.Person.LastName ?? string.Empty}, {r.Person.FirstName ?? string.Empty}".Trim().Trim(',')
                     : "Unknown",
                 VoteCount = r.VoteCount ?? 0,
@@ -183,7 +183,7 @@ public class PublicService : IPublicService
         var registeredVoters = resultSummary?.NumEligibleToVote ?? 0;
         var turnoutPercentage = registeredVoters > 0 ? (decimal)totalBallots / registeredVoters * 100 : 0;
 
-        var isFinalized = election.TallyStatus == "Finalized" || 
+        var isFinalized = election.TallyStatus == "Finalized" ||
                          election.TallyStatus == "Complete" ||
                          election.TallyStatus == "Archived";
 

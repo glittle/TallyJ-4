@@ -71,7 +71,7 @@ API available at: `http://localhost:5000`
 
 **Core endpoints:**
 
-- Authentication: `/auth/register`, `/auth/login`, `/auth/refresh`
+- Authentication: `/auth/register`, `/auth/login`, `/auth/refresh`, `/api/auth/google/login` (OAuth)
 - Elections: `/api/elections`
 - People: `/api/people`
 - Ballots: `/api/ballots`
@@ -80,6 +80,8 @@ API available at: `http://localhost:5000`
 - Results: `/api/results`
 - Import: `/api/import`
 - Logs: `/api/logs`
+
+> **Note**: Google OAuth is available for officer/admin login. See [backend/SETUP.md](backend/SETUP.md#google-oauth-configuration-optional) for configuration instructions.
 
 ### Frontend (Vue 3 + Vite)
 

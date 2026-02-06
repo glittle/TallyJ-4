@@ -9,17 +9,17 @@ public class ImportBallotRequestDto
     /// The CSV content to import.
     /// </summary>
     public string CsvContent { get; set; } = null!;
-    
+
     /// <summary>
     /// The unique identifier of the election.
     /// </summary>
     public Guid ElectionGuid { get; set; }
-    
+
     /// <summary>
     /// The unique identifier of the location (optional).
     /// </summary>
     public Guid? LocationGuid { get; set; }
-    
+
     /// <summary>
     /// Configuration settings for the import operation.
     /// </summary>

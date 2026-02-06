@@ -9,17 +9,17 @@ public class OnlineCandidateDto
     /// The unique identifier of the person/candidate.
     /// </summary>
     public Guid PersonGuid { get; set; }
-    
+
     /// <summary>
     /// The full name of the candidate.
     /// </summary>
     public string FullName { get; set; } = null!;
-    
+
     /// <summary>
     /// The geographical area of the candidate.
     /// </summary>
     public string? Area { get; set; }
-    
+
     /// <summary>
     /// Additional information about the candidate.
     /// </summary>

@@ -7,8 +7,14 @@
       
       <div class="profile-content">
         <el-descriptions :column="1" border>
+          <el-descriptions-item :label="$t('profile.name')">
+            {{ currentUser?.name || '-' }}
+          </el-descriptions-item>
           <el-descriptions-item :label="$t('auth.email')">
             {{ currentUser?.email || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="$t('profile.loginMethod')">
+            {{ currentUser?.authMethod || '-' }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('profile.createdAt')">
             {{ formatDate(currentUser?.createdAt) }}
@@ -60,7 +66,12 @@ import { ElMessage } from 'element-plus';
 const authStore = useAuthStore();
 const { t } = useI18n();
 
-const currentUser = computed(() => ({ email: authStore.email, createdAt: null }));
+const currentUser = computed(() => ({ 
+  name: authStore.name,
+  email: authStore.email,
+  authMethod: authStore.authMethod,
+  createdAt: null 
+}));
 const showChangePassword = ref(false);
 const passwordForm = ref({
   current: '',

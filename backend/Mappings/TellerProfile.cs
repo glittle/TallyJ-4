@@ -16,12 +16,12 @@ public class TellerProfile : Profile
     {
         CreateMap<Teller, TellerDto>()
             .ForMember(dest => dest.IsHeadTeller, opt => opt.MapFrom(src => src.IsHeadTeller ?? false));
-        
+
         CreateMap<CreateTellerDto, Teller>()
             .ForMember(dest => dest.RowId, opt => opt.Ignore())
             .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
             .ForMember(dest => dest.Election, opt => opt.Ignore());
-        
+
         CreateMap<UpdateTellerDto, Teller>()
             .ForMember(dest => dest.RowId, opt => opt.Ignore())
             .ForMember(dest => dest.ElectionGuid, opt => opt.Ignore())

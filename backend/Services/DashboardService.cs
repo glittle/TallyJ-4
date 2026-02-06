@@ -40,7 +40,7 @@ public class DashboardService : IDashboardService
 
         var recentElections = await GetRecentElectionsAsync(5);
 
-        _logger.LogInformation("Dashboard summary: {ActiveCount} active, {CompletedCount} completed elections", 
+        _logger.LogInformation("Dashboard summary: {ActiveCount} active, {CompletedCount} completed elections",
             activeCount, completedCount);
 
         return new DashboardSummaryDto

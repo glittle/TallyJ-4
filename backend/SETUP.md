@@ -289,12 +289,90 @@ dotnet ef migrations script --output schema.sql
 dotnet ef dbcontext info
 ```
 
+## Google OAuth Configuration (Optional)
+
+TallyJ 4 supports Google OAuth for officer/admin login. This is optional - users can still authenticate with email/password.
+
+### Setting Up Google OAuth Credentials
+
+1. **Create Google Cloud Project**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select an existing one
+   - Enable the Google+ API or Google Identity Services
+
+2. **Create OAuth 2.0 Credentials**:
+   - Navigate to **APIs & Services** > **Credentials**
+   - Click **Create Credentials** > **OAuth 2.0 Client ID**
+   - Choose **Web application** as the application type
+   - Add **Authorized redirect URIs**:
+     - Development: `http://localhost:5000/api/auth/google/callback`
+     - Production: `https://your-domain.com/api/auth/google/callback`
+   - Save and copy the **Client ID** and **Client Secret**
+
+3. **Configure Application**:
+
+   **Option 1: User Secrets (Recommended for Development)**
+   ```bash
+   cd backend
+   dotnet user-secrets set "Google:ClientId" "your-client-id-here"
+   dotnet user-secrets set "Google:ClientSecret" "your-client-secret-here"
+   ```
+
+   **Option 2: Environment Variables**
+   ```bash
+   export Google__ClientId="your-client-id-here"
+   export Google__ClientSecret="your-client-secret-here"
+   ```
+
+   **Option 3: Update appsettings.Development.json**
+   ```json
+   {
+     "Google": {
+       "ClientId": "your-client-id-here.apps.googleusercontent.com",
+       "ClientSecret": "your-client-secret-here"
+     }
+   }
+   ```
+
+4. **Verify Configuration**:
+   - Start the backend: `dotnet run`
+   - Check logs for: `Google authentication configured successfully`
+   - Or if not configured: `Google authentication is not configured - Google login will be unavailable`
+
+### Testing Google Login
+
+1. Navigate to the frontend at `http://localhost:8095`
+2. Click **Officer** on the landing page
+3. Click **Sign in with Google** button
+4. Complete Google consent flow
+5. You'll be redirected back and logged in
+
+### Google Login Without Configuration
+
+If Google credentials are not configured:
+- The application will start normally with a warning in logs
+- Users can still use email/password authentication
+- Clicking "Sign in with Google" will show a friendly error message
+
+### Production Configuration
+
+For production, set credentials in:
+- `appsettings.Production.json` (not recommended - avoid committing secrets)
+- Environment variables (recommended)
+- Azure Key Vault, AWS Secrets Manager, or similar (best practice)
+
+Ensure production redirect URIs match your deployment:
+```
+https://your-production-domain.com/api/auth/google/callback
+```
+
 ## Next Steps
 
 1. **Explore the API**: Check `/auth/register`, `/auth/login` endpoints
 2. **Inspect Database**: Use SSMS to view tables and data
 3. **Run Tests**: (when implemented) `dotnet test`
 4. **Build Frontend**: See `../frontend/README.md`
+5. **Optional**: Configure Google OAuth for social login (see above)
 
 ## Additional Resources
 

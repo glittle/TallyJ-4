@@ -63,8 +63,8 @@ public class ImportController : ControllerBase
 
         if (!result.Success)
         {
-            return BadRequest(new 
-            { 
+            return BadRequest(new
+            {
                 errors = result.Errors,
                 warnings = result.Warnings,
                 ballotsCreated = result.BallotsCreated,
@@ -86,7 +86,7 @@ public class ParseCsvHeadersRequest
     /// Gets or sets the CSV content to parse.
     /// </summary>
     public string CsvContent { get; set; } = null!;
-    
+
     /// <summary>
     /// Gets or sets the delimiter character (default: comma).
     /// </summary>

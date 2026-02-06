@@ -27,7 +27,7 @@ public class OnlineVotingHub : Hub
     {
         var groupName = $"online-election-{electionGuid}";
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("Client {ConnectionId} joined online voting group for election {ElectionGuid}", 
+        _logger.LogInformation("Client {ConnectionId} joined online voting group for election {ElectionGuid}",
             Context.ConnectionId, electionGuid);
     }
 
@@ -40,7 +40,7 @@ public class OnlineVotingHub : Hub
     {
         var groupName = $"online-election-{electionGuid}";
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("Client {ConnectionId} left online voting group for election {ElectionGuid}", 
+        _logger.LogInformation("Client {ConnectionId} left online voting group for election {ElectionGuid}",
             Context.ConnectionId, electionGuid);
     }
 
@@ -53,11 +53,11 @@ public class OnlineVotingHub : Hub
     public async Task BallotSubmitted(Guid electionGuid, int totalVotes)
     {
         var groupName = $"online-election-{electionGuid}";
-        await Clients.Group(groupName).SendAsync("OnlineVoteSubmitted", new 
-        { 
-            electionGuid, 
+        await Clients.Group(groupName).SendAsync("OnlineVoteSubmitted", new
+        {
+            electionGuid,
             totalVotes,
-            timestamp = DateTime.UtcNow 
+            timestamp = DateTime.UtcNow
         });
         _logger.LogInformation("Ballot submitted notification broadcast for election {ElectionGuid}", electionGuid);
     }

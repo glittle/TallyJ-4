@@ -18,7 +18,7 @@ public class VoteProfile : Profile
     {
         CreateMap<Vote, VoteDto>()
             .ForMember(dest => dest.PersonFullName, opt => opt.MapFrom(src => src.Person != null ? src.Person.FullName : null));
-        
+
         CreateMap<CreateVoteDto, Vote>();
     }
 }
