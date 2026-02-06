@@ -1,4 +1,4 @@
-import { computed, type Ref } from 'vue';
+import { computed, ref, watch, type Ref } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 import type { SearchablePersonDto } from '@/types/Person';
 import { applyAllStrategies, type SearchResult } from '@/utils/searchStrategies';
@@ -6,20 +6,65 @@ import { applyAllStrategies, type SearchResult } from '@/utils/searchStrategies'
 export interface UsePersonSearchOptions {
   debounceDelay?: number;
   maxResults?: number;
+  enableCache?: boolean;
 }
+
+interface SearchCache {
+  query: string;
+  peopleHash: string;
+  results: SearchablePersonDto[];
+  timestamp: number;
+}
+
+const CACHE_TTL = 60000; // 1 minute
 
 export function usePersonSearch(
   searchQuery: Ref<string>,
   candidates: Ref<SearchablePersonDto[]>,
   options: UsePersonSearchOptions = {}
 ) {
-  const { debounceDelay = 150, maxResults = 20 } = options;
+  const { debounceDelay = 150, maxResults = 20, enableCache = true } = options;
+  
+  const cache = ref<Map<string, SearchCache>>(new Map());
+  
+  const getPeopleHash = (people: SearchablePersonDto[]): string => {
+    return `${people.length}-${people[0]?.personGuid || ''}-${people[people.length - 1]?.personGuid || ''}`;
+  };
+  
+  const getCacheKey = (query: string, peopleHash: string): string => {
+    return `${query.toLowerCase().trim()}-${peopleHash}`;
+  };
+  
+  const cleanExpiredCache = () => {
+    const now = Date.now();
+    const keysToDelete: string[] = [];
+    
+    cache.value.forEach((entry, key) => {
+      if (now - entry.timestamp > CACHE_TTL) {
+        keysToDelete.push(key);
+      }
+    });
+    
+    keysToDelete.forEach(key => cache.value.delete(key));
+  };
 
   const performSearch = (query: string, people: SearchablePersonDto[]): SearchablePersonDto[] => {
     const trimmedQuery = query.trim();
     
     if (!trimmedQuery || people.length === 0) {
       return [];
+    }
+
+    if (enableCache) {
+      const peopleHash = getPeopleHash(people);
+      const cacheKey = getCacheKey(trimmedQuery, peopleHash);
+      const cachedResult = cache.value.get(cacheKey);
+      
+      if (cachedResult && Date.now() - cachedResult.timestamp < CACHE_TTL) {
+        return cachedResult.results;
+      }
+      
+      cleanExpiredCache();
     }
 
     const results: SearchResult[] = [];
@@ -46,7 +91,20 @@ export function usePersonSearch(
       return firstNameA.localeCompare(firstNameB);
     });
 
-    return results.slice(0, maxResults).map(r => r.person);
+    const finalResults = results.slice(0, maxResults).map(r => r.person);
+    
+    if (enableCache) {
+      const peopleHash = getPeopleHash(people);
+      const cacheKey = getCacheKey(trimmedQuery, peopleHash);
+      cache.value.set(cacheKey, {
+        query: trimmedQuery,
+        peopleHash,
+        results: finalResults,
+        timestamp: Date.now()
+      });
+    }
+
+    return finalResults;
   };
 
   const debouncedSearch = useDebounceFn((query: string, people: SearchablePersonDto[]) => {
@@ -56,10 +114,15 @@ export function usePersonSearch(
   const searchResults = computed(() => {
     return performSearch(searchQuery.value, candidates.value);
   });
+  
+  watch(candidates, () => {
+    cache.value.clear();
+  });
 
   return {
     searchResults,
     performSearch,
-    debouncedSearch
+    debouncedSearch,
+    clearCache: () => cache.value.clear()
   };
 }

@@ -4,19 +4,21 @@ import { useI18n } from 'vue-i18n';
 import { usePersonSearch } from '@/composables/usePersonSearch';
 import type { VoteDto } from '@/types/Vote';
 import type { SearchablePersonDto } from '@/types/Person';
-import { Close, WarningFilled } from '@element-plus/icons-vue';
+import { Close, WarningFilled, Plus } from '@element-plus/icons-vue';
 
 const props = defineProps<{
   positionOnBallot: number;
   modelValue?: VoteDto | null;
   candidates: SearchablePersonDto[];
   duplicatePersonGuids: string[];
+  onAddNewPerson?: () => void;
 }>();
 
 const emit = defineEmits<{
   'update:modelValue': [value: VoteDto | null];
   'vote-selected': [vote: VoteDto];
   'vote-cleared': [positionOnBallot: number];
+  'add-new-person': [];
 }>();
 
 const { t } = useI18n();
@@ -24,9 +26,22 @@ const { t } = useI18n();
 const searchQuery = ref('');
 const inputRef = ref();
 const selectedPerson = ref<SearchablePersonDto | null>(null);
+const showDropdown = ref(false);
 
 const candidatesRef = computed(() => props.candidates);
 const { searchResults } = usePersonSearch(searchQuery, candidatesRef, { maxResults: 20 });
+
+const hasSearchQuery = computed(() => {
+  return searchQuery.value.trim().length > 0;
+});
+
+const hasResults = computed(() => {
+  return searchResults.value.length > 0;
+});
+
+const showEmptyState = computed(() => {
+  return hasSearchQuery.value && !hasResults.value && !selectedPerson.value;
+});
 
 const isDuplicate = computed(() => {
   return selectedPerson.value ? props.duplicatePersonGuids.includes(selectedPerson.value.personGuid) : false;
@@ -116,12 +131,29 @@ function querySearch(queryString: string, cb: (results: any[]) => void) {
     person: person
   }));
 
-  cb(results);
+  if (results.length === 0 && props.onAddNewPerson) {
+    cb([{
+      value: '__EMPTY_STATE__',
+      isEmpty: true
+    }]);
+  } else {
+    cb(results);
+  }
 }
 
 function handleAutocompleteSelect(item: any) {
+  if (item && item.isEmpty) {
+    return;
+  }
   if (item && item.person) {
     handleSelect(item.person);
+  }
+}
+
+function handleAddNewPerson() {
+  emit('add-new-person');
+  if (props.onAddNewPerson) {
+    props.onAddNewPerson();
   }
 }
 
@@ -158,7 +190,24 @@ defineExpose({
         class="vote-entry-row__autocomplete"
       >
         <template #default="{ item }">
-          <div class="autocomplete-item">
+          <div v-if="item.isEmpty" class="autocomplete-empty">
+            <div class="autocomplete-empty__message">
+              <span>{{ $t('ballots.noMatchesFound') }}</span>
+              <small>{{ $t('ballots.checkSpelling') }}</small>
+            </div>
+            <el-button
+              v-if="onAddNewPerson"
+              :icon="Plus"
+              size="small"
+              type="primary"
+              plain
+              class="autocomplete-empty__button"
+              @click.stop="handleAddNewPerson"
+            >
+              {{ $t('ballots.addNewPerson') }}
+            </el-button>
+          </div>
+          <div v-else class="autocomplete-item">
             <span class="autocomplete-item__name">{{ item.value }}</span>
           </div>
         </template>
@@ -282,6 +331,45 @@ defineExpose({
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+}
+
+.autocomplete-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3, 12px);
+  padding: var(--spacing-4, 16px);
+  text-align: center;
+
+  &__message {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1, 4px);
+
+    span {
+      font-size: var(--font-size-base, 16px);
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--color-gray-700, #666);
+
+      .dark & {
+        color: var(--color-gray-300, #ccc);
+      }
+    }
+
+    small {
+      font-size: var(--font-size-sm, 14px);
+      color: var(--color-gray-500, #999);
+
+      .dark & {
+        color: var(--color-gray-400, #aaa);
+      }
+    }
+  }
+
+  &__button {
+    width: 100%;
+    max-width: 200px;
   }
 }
 </style>

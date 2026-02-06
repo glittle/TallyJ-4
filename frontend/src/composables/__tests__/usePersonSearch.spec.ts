@@ -381,6 +381,64 @@ describe('usePersonSearch', () => {
     });
   });
 
+  describe('caching', () => {
+    it('should cache search results', () => {
+      const searchQuery = ref('John');
+      const candidates = ref(mockCandidates);
+      const { performSearch } = usePersonSearch(searchQuery, candidates, { enableCache: true });
+
+      const startTime1 = performance.now();
+      const results1 = performSearch('John', candidates.value);
+      const duration1 = performance.now() - startTime1;
+
+      const startTime2 = performance.now();
+      const results2 = performSearch('John', candidates.value);
+      const duration2 = performance.now() - startTime2;
+
+      expect(results1).toEqual(results2);
+      expect(duration2).toBeLessThan(duration1);
+    });
+
+    it('should clear cache when candidates change', () => {
+      const searchQuery = ref('John');
+      const candidates = ref(mockCandidates);
+      const { searchResults } = usePersonSearch(searchQuery, candidates, { enableCache: true });
+
+      const initialResults = searchResults.value;
+      expect(initialResults.length).toBeGreaterThan(0);
+
+      candidates.value = [
+        createMockPerson('Jane', 'Doe', ['J500', 'D000'])
+      ];
+
+      searchQuery.value = 'Jane';
+      const newResults = searchResults.value;
+      expect(newResults.length).toBeGreaterThan(0);
+      expect(newResults[0].firstName).toBe('Jane');
+    });
+
+    it('should allow manual cache clearing', () => {
+      const searchQuery = ref('John');
+      const candidates = ref(mockCandidates);
+      const { performSearch, clearCache } = usePersonSearch(searchQuery, candidates, { enableCache: true });
+
+      performSearch('John', candidates.value);
+      clearCache();
+
+      const results = performSearch('John', candidates.value);
+      expect(results.length).toBeGreaterThan(0);
+    });
+
+    it('should work with cache disabled', () => {
+      const searchQuery = ref('John');
+      const candidates = ref(mockCandidates);
+      const { searchResults } = usePersonSearch(searchQuery, candidates, { enableCache: false });
+
+      expect(searchResults.value.length).toBeGreaterThan(0);
+      expect(searchResults.value[0].firstName).toBe('John');
+    });
+  });
+
   describe('reactive updates', () => {
     it('should update results when search query changes', () => {
       const searchQuery = ref('John');
