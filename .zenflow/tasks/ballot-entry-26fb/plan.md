@@ -231,7 +231,8 @@ Extend peopleStore with:
 
 ---
 
-### [ ] Step: Frontend Component - Create VoteEntryRow
+### [x] Step: Frontend Component - Create VoteEntryRow
+<!-- chat-id: 38803941-4ba1-4b64-b8b7-50250c60c96c -->
 
 **Files to create**:
 - `frontend/src/components/ballots/VoteEntryRow.vue` - Single vote input row

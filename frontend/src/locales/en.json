@@ -185,6 +185,7 @@
   "ballots.voteCreateSuccess": "Vote added successfully",
   "ballots.saveError": "Failed to save ballot",
   "ballots.voteSaveError": "Failed to save vote",
+  "ballots.duplicateWarning": "Duplicate: This person is already selected",
   "ballots.import.button": "Import Ballots",
   "ballots.import.title": "Import Ballots",
   "ballots.import.step1": "Upload File",
