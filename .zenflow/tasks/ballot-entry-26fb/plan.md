@@ -272,7 +272,8 @@ Create a component with:
 
 ---
 
-### [ ] Step: Frontend Component - Create InlineBallotEntry
+### [x] Step: Frontend Component - Create InlineBallotEntry
+<!-- chat-id: fd58f2f0-2978-4af9-ba2c-da4c1d28f046 -->
 
 **Files to create**:
 - `frontend/src/components/ballots/InlineBallotEntry.vue` - Container for vote entry rows
