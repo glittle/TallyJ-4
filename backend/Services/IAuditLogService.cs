@@ -19,14 +19,14 @@ public interface IAuditLogService
         AuditLogFilterDto? filter = null,
         int pageNumber = 1,
         int pageSize = 50);
-    
+
     /// <summary>
     /// Retrieves an audit log entry by its unique row identifier.
     /// </summary>
     /// <param name="rowId">The unique row identifier of the audit log.</param>
     /// <returns>The audit log DTO if found, otherwise null.</returns>
     Task<AuditLogDto?> GetAuditLogByIdAsync(int rowId);
-    
+
     /// <summary>
     /// Creates a new audit log entry.
     /// </summary>

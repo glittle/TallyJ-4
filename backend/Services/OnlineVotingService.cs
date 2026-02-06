@@ -26,7 +26,7 @@ public class OnlineVotingService : IOnlineVotingService
     /// <param name="configuration">The application configuration.</param>
     /// <param name="logger">The logger instance.</param>
     public OnlineVotingService(
-        MainDbContext context, 
+        MainDbContext context,
         IConfiguration configuration,
         ILogger<OnlineVotingService> logger)
     {
@@ -55,7 +55,7 @@ public class OnlineVotingService : IOnlineVotingService
             }
 
             var verifyCode = GenerateVerificationCode();
-            
+
             onlineVoter.VerifyCode = verifyCode;
             onlineVoter.VerifyCodeDate = DateTime.UtcNow;
             onlineVoter.VerifyAttempts = 0;
@@ -64,7 +64,7 @@ public class OnlineVotingService : IOnlineVotingService
             await _context.SaveChangesAsync();
 
             var sent = await SendVerificationCodeAsync(dto.VoterId, dto.DeliveryMethod, verifyCode);
-            
+
             if (!sent)
             {
                 return (false, "Failed to send verification code. Please try again.");
@@ -99,7 +99,7 @@ public class OnlineVotingService : IOnlineVotingService
                 return (false, "No verification code found. Please request a new code.", null);
             }
 
-            if (onlineVoter.VerifyCodeDate == null || 
+            if (onlineVoter.VerifyCodeDate == null ||
                 onlineVoter.VerifyCodeDate.Value.AddMinutes(15) < DateTime.UtcNow)
             {
                 return (false, "Verification code has expired. Please request a new code.", null);
@@ -114,7 +114,7 @@ public class OnlineVotingService : IOnlineVotingService
             {
                 onlineVoter.VerifyAttempts = (onlineVoter.VerifyAttempts ?? 0) + 1;
                 await _context.SaveChangesAsync();
-                
+
                 return (false, $"Invalid verification code. {5 - onlineVoter.VerifyAttempts} attempts remaining.", null);
             }
 
@@ -158,9 +158,9 @@ public class OnlineVotingService : IOnlineVotingService
         }
 
         var now = DateTime.UtcNow;
-        var isOpen = election.OnlineWhenOpen != null && 
+        var isOpen = election.OnlineWhenOpen != null &&
                      election.OnlineWhenClose != null &&
-                     election.OnlineWhenOpen <= now && 
+                     election.OnlineWhenOpen <= now &&
                      election.OnlineWhenClose >= now;
 
         return new OnlineElectionInfoDto
@@ -199,7 +199,7 @@ public class OnlineVotingService : IOnlineVotingService
     public async Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
-        
+
         try
         {
             var election = await _context.Elections
@@ -226,7 +226,7 @@ public class OnlineVotingService : IOnlineVotingService
             }
 
             var person = await _context.People
-                .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && 
+                .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid &&
                                         (p.Email == dto.VoterId || p.Phone == dto.VoterId || p.KioskCode == dto.VoterId));
 
             if (person != null && person.HasOnlineBallot == true)
@@ -280,7 +280,7 @@ public class OnlineVotingService : IOnlineVotingService
                 {
                     var votedPerson = await _context.People
                         .FirstOrDefaultAsync(p => p.PersonGuid == voteDto.PersonGuid.Value);
-                    
+
                     if (votedPerson != null)
                     {
                         vote.PersonCombinedInfo = votedPerson.CombinedInfo;
@@ -309,7 +309,7 @@ public class OnlineVotingService : IOnlineVotingService
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            _logger.LogInformation("Online ballot submitted for voter {VoterId} in election {ElectionGuid}", 
+            _logger.LogInformation("Online ballot submitted for voter {VoterId} in election {ElectionGuid}",
                 dto.VoterId, dto.ElectionGuid);
 
             return (true, null);
@@ -326,7 +326,7 @@ public class OnlineVotingService : IOnlineVotingService
     public async Task<OnlineVoteStatusDto> GetVoteStatusAsync(Guid electionGuid, string voterId)
     {
         var person = await _context.People
-            .FirstOrDefaultAsync(p => p.ElectionGuid == electionGuid && 
+            .FirstOrDefaultAsync(p => p.ElectionGuid == electionGuid &&
                                     (p.Email == voterId || p.Phone == voterId || p.KioskCode == voterId));
 
         if (person == null)
@@ -347,8 +347,8 @@ public class OnlineVotingService : IOnlineVotingService
         {
             HasVoted = person.HasOnlineBallot == true,
             WhenSubmitted = votingInfo?.WhenBallotCreated,
-            Message = person.HasOnlineBallot == true 
-                ? "You have already submitted your ballot for this election." 
+            Message = person.HasOnlineBallot == true
+                ? "You have already submitted your ballot for this election."
                 : "You have not yet submitted a ballot for this election."
         };
     }
@@ -363,7 +363,7 @@ public class OnlineVotingService : IOnlineVotingService
 
     private async Task<bool> SendVerificationCodeAsync(string recipient, string method, string code)
     {
-        _logger.LogInformation("Sending verification code {Code} to {Recipient} via {Method}", 
+        _logger.LogInformation("Sending verification code {Code} to {Recipient} via {Method}",
             code, recipient, method);
 
         await Task.Delay(100);

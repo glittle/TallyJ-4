@@ -137,7 +137,7 @@ public class BallotService : IBallotService
         _context.Ballots.Add(ballot);
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("Created ballot {BallotGuid} - {BallotCode} at location {LocationGuid}", 
+        _logger.LogInformation("Created ballot {BallotGuid} - {BallotCode} at location {LocationGuid}",
             ballot.BallotGuid, ballot.BallotCode, ballot.LocationGuid);
 
         return await GetBallotByGuidAsync(ballot.BallotGuid) ?? _mapper.Map<BallotDto>(ballot);
@@ -197,7 +197,7 @@ public class BallotService : IBallotService
         dto.LocationName = ballot.Location.Name;
         dto.BallotCode = ballot.BallotCode ?? $"{ballot.ComputerCode}{ballot.BallotNumAtComputer}";
         dto.VoteCount = ballot.Votes.Count;
-        dto.Votes = ballot.Votes.Select(v => 
+        dto.Votes = ballot.Votes.Select(v =>
         {
             var voteDto = _mapper.Map<VoteDto>(v);
             voteDto.PersonFullName = v.Person?.FullName;

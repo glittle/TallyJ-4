@@ -6,6 +6,9 @@ namespace TallyJ4.Domain.Identity;
 
 public class AppUser : IdentityUser
 {
+    [StringLength(200)]
+    public string? DisplayName { get; set; }
+    
     public string? GoogleId { get; set; }
     
     [Required]

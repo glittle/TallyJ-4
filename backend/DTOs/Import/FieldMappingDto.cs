@@ -9,7 +9,7 @@ public class FieldMappingDto
     /// The name of the source column in the CSV file.
     /// </summary>
     public string SourceColumn { get; set; } = null!;
-    
+
     /// <summary>
     /// The name of the target field in the database.
     /// </summary>

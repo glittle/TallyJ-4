@@ -9,12 +9,12 @@ public class OnlineVoteStatusDto
     /// Indicates whether the voter has already voted.
     /// </summary>
     public bool HasVoted { get; set; }
-    
+
     /// <summary>
     /// The timestamp when the vote was submitted.
     /// </summary>
     public DateTime? WhenSubmitted { get; set; }
-    
+
     /// <summary>
     /// A message about the voting status.
     /// </summary>

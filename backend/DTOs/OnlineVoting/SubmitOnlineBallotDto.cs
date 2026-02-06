@@ -9,12 +9,12 @@ public class SubmitOnlineBallotDto
     /// The unique identifier of the election.
     /// </summary>
     public Guid ElectionGuid { get; set; }
-    
+
     /// <summary>
     /// The voter's unique identifier.
     /// </summary>
     public string VoterId { get; set; } = null!;
-    
+
     /// <summary>
     /// The list of votes on the ballot.
     /// </summary>
@@ -30,12 +30,12 @@ public class OnlineVoteDto
     /// The unique identifier of the person being voted for.
     /// </summary>
     public Guid? PersonGuid { get; set; }
-    
+
     /// <summary>
     /// The name of the person being voted for (if not a predefined candidate).
     /// </summary>
     public string? VoteName { get; set; }
-    
+
     /// <summary>
     /// The position of this vote on the ballot.
     /// </summary>

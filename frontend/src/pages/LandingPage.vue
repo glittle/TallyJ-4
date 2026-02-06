@@ -1,12 +1,22 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { User, Ticket, Monitor, Suitcase, Connection } from "@element-plus/icons-vue";
+import { User, Ticket, Monitor, Suitcase, Connection, UserFilled } from "@element-plus/icons-vue";
 
 const { t } = useI18n();
 const router = useRouter();
 
 const options = [
+  {
+    type: "officer",
+    icon: UserFilled,
+    color: "#409eff",
+    title: "auth.landing.optionOfficer",
+    description: "auth.landing.optionOfficerDesc",
+    buttonText: "auth.landing.loginOfficer",
+    action: () => navigateToLogin("officer"),
+  },
+
   {
     type: "voter",
     icon: Ticket,

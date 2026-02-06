@@ -73,7 +73,7 @@ public class TellerAccessHandler : AuthorizationHandler<TellerAccessRequirement>
                 t => t.ElectionGuid,
                 jeu => jeu.ElectionGuid,
                 (t, jeu) => new { Teller = t, JoinElectionUser = jeu })
-            .AnyAsync(x => x.Teller.ElectionGuid == electionGuid && 
+            .AnyAsync(x => x.Teller.ElectionGuid == electionGuid &&
                           x.JoinElectionUser.UserId == userId);
 
         if (isTeller)
