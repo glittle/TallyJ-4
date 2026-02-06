@@ -331,6 +331,8 @@
   "reporting.inPersonVoters": "In-Person Voters",
   "reporting.firstTimeVoters": "First-Time Voters",
   "reporting.returningVoters": "Returning Voters",
+  "profile.name": "Name",
+  "profile.loginMethod": "Login Method",
   "profile.changePassword": "Change Password",
   "profile.currentPassword": "Current Password",
   "profile.newPassword": "New Password",

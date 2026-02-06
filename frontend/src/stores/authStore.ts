@@ -8,6 +8,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   const token = ref<string | null>(localStorage.getItem('auth_token'));
   const email = ref<string | null>(localStorage.getItem('user_email'));
+  const name = ref<string | null>(localStorage.getItem('user_name'));
+  const authMethod = ref<string | null>(localStorage.getItem('auth_method'));
   const requires2FA = ref(false);
   const pending2FAEmail = ref<string | null>(null);
 
@@ -23,8 +25,14 @@ export const useAuthStore = defineStore('auth', () => {
       } else {
         token.value = response.token;
         email.value = response.email;
+        name.value = response.name || null;
+        authMethod.value = response.authMethod || 'Local';
         localStorage.setItem('auth_token', response.token);
         localStorage.setItem('user_email', response.email);
+        if (response.name) {
+          localStorage.setItem('user_name', response.name);
+        }
+        localStorage.setItem('auth_method', response.authMethod || 'Local');
       }
 
       return response;
@@ -44,8 +52,14 @@ export const useAuthStore = defineStore('auth', () => {
       } else {
         token.value = response.token;
         email.value = response.email;
+        name.value = response.name || null;
+        authMethod.value = response.authMethod || 'Local';
         localStorage.setItem('auth_token', response.token);
         localStorage.setItem('user_email', response.email);
+        if (response.name) {
+          localStorage.setItem('user_name', response.name);
+        }
+        localStorage.setItem('auth_method', response.authMethod || 'Local');
         requires2FA.value = false;
         pending2FAEmail.value = null;
       }
@@ -60,15 +74,21 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     token.value = null;
     email.value = null;
+    name.value = null;
+    authMethod.value = null;
     requires2FA.value = false;
     pending2FAEmail.value = null;
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_email');
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('auth_method');
   }
 
   return {
     token,
     email,
+    name,
+    authMethod,
     requires2FA,
     pending2FAEmail,
     isAuthenticated,

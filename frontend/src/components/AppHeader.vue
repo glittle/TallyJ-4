@@ -24,7 +24,10 @@ const checkMobile = () => {
 checkMobile();
 window.addEventListener("resize", checkMobile);
 
-const currentUser = computed(() => ({ email: authStore.email }));
+const currentUser = computed(() => ({ 
+  name: authStore.name,
+  email: authStore.email 
+}));
 
 const currentPageTitle = computed(() => {
   const titleMap: Record<string, string> = {
@@ -81,7 +84,7 @@ function toggleMobileMenu() {
           :aria-label="t('common.userMenu')"
         >
           <el-avatar :size="32" icon="UserFilled" aria-hidden="true" />
-          <span class="username">{{ currentUser?.email || "User" }}</span>
+          <span class="username">{{ currentUser?.name || currentUser?.email || "User" }}</span>
           <el-icon aria-hidden="true"><ArrowDown /></el-icon>
         </button>
         <template #dropdown>

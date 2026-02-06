@@ -60,6 +60,8 @@ public class LocalAuthService
             Token = token,
             RefreshToken = refreshToken,
             Email = user.Email!,
+            Name = user.DisplayName,
+            AuthMethod = user.AuthMethod,
             Requires2FA = false
         });
     }
@@ -87,6 +89,8 @@ public class LocalAuthService
                     Token = "",
                     RefreshToken = "",
                     Email = user.Email!,
+                    Name = user.DisplayName,
+                    AuthMethod = user.AuthMethod,
                     Requires2FA = true
                 });
             }
@@ -104,6 +108,8 @@ public class LocalAuthService
             Token = token,
             RefreshToken = refreshToken,
             Email = user.Email!,
+            Name = user.DisplayName,
+            AuthMethod = user.AuthMethod,
             Requires2FA = false
         });
     }

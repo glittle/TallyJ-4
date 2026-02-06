@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -71,6 +72,16 @@ services.AddCors(options =>
 services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<MainDbContext>()
     .AddDefaultTokenProviders();
+
+// Configure external authentication cookie for OAuth flows
+services.ConfigureExternalCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.Path = "/";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+});
 
 // Add JWT Bearer authentication
 services.AddAuthentication(options =>
@@ -149,8 +160,15 @@ if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(goo
         {
             options.ClientId = googleClientId;
             options.ClientSecret = googleClientSecret;
-            options.CallbackPath = "/api/auth/google/callback";
+            options.CallbackPath = "/signin-google";
             options.SaveTokens = true;
+            options.SignInScheme = IdentityConstants.ExternalScheme;
+            options.Events.OnRemoteFailure = context =>
+            {
+                context.Response.Redirect("/login?error=" + context.Failure?.Message);
+                context.HandleResponse();
+                return Task.CompletedTask;
+            };
         });
     Log.Information("Google authentication configured successfully");
 }

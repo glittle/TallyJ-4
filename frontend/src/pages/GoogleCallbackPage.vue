@@ -13,7 +13,9 @@ const error = ref<string | null>(null);
 
 onMounted(async () => {
   try {
+    console.log('Google callback - query params:', route.query);
     const token = route.query.token as string;
+    const refreshToken = route.query.refreshToken as string;
     const errorParam = route.query.error as string;
     
     if (errorParam) {
@@ -36,10 +38,19 @@ onMounted(async () => {
     
     authStore.token = token;
     authStore.email = route.query.email as string || null;
+    authStore.name = route.query.name as string || null;
+    authStore.authMethod = route.query.authMethod as string || 'Google';
     localStorage.setItem('auth_token', token);
+    if (refreshToken) {
+      localStorage.setItem('refresh_token', refreshToken);
+    }
     if (authStore.email) {
       localStorage.setItem('user_email', authStore.email);
     }
+    if (authStore.name) {
+      localStorage.setItem('user_name', authStore.name);
+    }
+    localStorage.setItem('auth_method', authStore.authMethod);
     
     ElMessage.success(t("auth.loginSuccess"));
     

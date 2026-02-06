@@ -296,6 +296,8 @@
   "reporting.inPersonVoters": "Électeurs en personne",
   "reporting.firstTimeVoters": "Nouveaux électeurs",
   "reporting.returningVoters": "Électeurs habituels",
+  "profile.name": "Nom",
+  "profile.loginMethod": "Méthode de connexion",
   "profile.changePassword": "Changer le mot de passe",
   "profile.currentPassword": "Mot de passe actuel",
   "profile.newPassword": "Nouveau mot de passe",

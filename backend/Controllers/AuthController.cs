@@ -277,6 +277,8 @@ public class AuthController : ControllerBase
             Token = newToken,
             RefreshToken = newRefreshToken,
             Email = user.Email!,
+            Name = user.DisplayName,
+            AuthMethod = user.AuthMethod,
             Requires2FA = false
         });
     }
@@ -392,8 +394,11 @@ public class AuthController : ControllerBase
 
         var properties = new AuthenticationProperties
         {
-            RedirectUri = Url.Action(nameof(GoogleCallback), new { returnUrl }),
-            Items = { { "scheme", GoogleDefaults.AuthenticationScheme } }
+            RedirectUri = Url.Action(nameof(GoogleCallback)),
+            Items = 
+            { 
+                { "returnUrl", returnUrl ?? string.Empty }
+            }
         };
 
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
@@ -402,28 +407,41 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Handles the OAuth callback from Google.
     /// </summary>
-    /// <param name="returnUrl">The URL to redirect to after processing the callback.</param>
     /// <returns>A redirect to the frontend with the JWT token.</returns>
     [HttpGet("google/callback")]
-    public async Task<IActionResult> GoogleCallback([FromQuery] string? returnUrl = null)
+    public async Task<IActionResult> GoogleCallback()
     {
+        string? returnUrl = null;
         try
         {
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
+            // Authenticate the external cookie explicitly
+            var authenticateResult = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+            if (!authenticateResult.Succeeded || authenticateResult.Principal == null)
             {
-                _logger.LogWarning("Google callback: External login info is null");
-                return Redirect(GetErrorRedirectUrl(returnUrl, "Failed to retrieve login information from Google"));
+                _logger.LogWarning("Google callback: Failed to authenticate external scheme");
+                return Redirect(GetErrorRedirectUrl(null, "Failed to retrieve login information from Google"));
             }
 
-            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            _logger.LogInformation("Google callback: External auth succeeded, principal: {Principal}", 
+                authenticateResult.Principal?.Identity?.Name ?? "null");
+            
+            // Extract return URL from authentication properties
+            if (authenticateResult.Properties?.Items.TryGetValue("returnUrl", out var returnUrlValue) == true)
+            {
+                returnUrl = returnUrlValue;
+            }
+
+            // Extract claims directly from the authenticated principal
+            var email = authenticateResult.Principal.FindFirstValue(ClaimTypes.Email);
             if (string.IsNullOrEmpty(email))
             {
                 _logger.LogWarning("Google callback: Email claim is missing from Google response");
                 return Redirect(GetErrorRedirectUrl(returnUrl, "Email not provided by Google"));
             }
 
-            var googleId = info.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            var googleId = authenticateResult.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            var displayName = authenticateResult.Principal.FindFirstValue(ClaimTypes.Name) ?? 
+                              authenticateResult.Principal.FindFirstValue(ClaimTypes.GivenName);
 
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -433,6 +451,7 @@ public class AuthController : ControllerBase
                     UserName = email,
                     Email = email,
                     EmailConfirmed = true,
+                    DisplayName = displayName,
                     GoogleId = googleId,
                     AuthMethod = "Google"
                 };
@@ -460,8 +479,17 @@ public class AuthController : ControllerBase
                 {
                     user.GoogleId = googleId;
                     user.AuthMethod = "Google";
+                    if (!string.IsNullOrEmpty(displayName))
+                    {
+                        user.DisplayName = displayName;
+                    }
                     await _userManager.UpdateAsync(user);
                     _logger.LogInformation("Google callback: Linked Google account to existing user {Email}", email);
+                }
+                else if (!string.IsNullOrEmpty(displayName) && string.IsNullOrEmpty(user.DisplayName))
+                {
+                    user.DisplayName = displayName;
+                    await _userManager.UpdateAsync(user);
                 }
             }
 
@@ -471,8 +499,11 @@ public class AuthController : ControllerBase
             _context.RefreshTokens.Add(refreshTokenEntity);
             await _context.SaveChangesAsync();
 
+            // Clean up the external authentication cookie
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
             var frontendUrl = GetFrontendUrl(returnUrl);
-            var redirectUrl = $"{frontendUrl}?token={Uri.EscapeDataString(token)}&refreshToken={Uri.EscapeDataString(refreshToken)}";
+            var redirectUrl = $"{frontendUrl}?token={Uri.EscapeDataString(token)}&refreshToken={Uri.EscapeDataString(refreshToken)}&email={Uri.EscapeDataString(user.Email ?? "")}&name={Uri.EscapeDataString(user.DisplayName ?? "")}&authMethod={Uri.EscapeDataString(user.AuthMethod)}";
 
             _logger.LogInformation("Google callback: Successfully authenticated user {Email}, redirecting to {Url}", email, frontendUrl);
             return Redirect(redirectUrl);

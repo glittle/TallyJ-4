@@ -6,6 +6,8 @@ export type { RegisterRequest, LoginRequest };
 export interface AuthResponse {
   token: string;
   email: string;
+  name?: string;
+  authMethod?: string;
   requires2FA: boolean;
 }
 

@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <DefaultItemExcludes>$(DefaultItemExcludes);TallyJ4.Domain/**;TallyJ4.Application/**</DefaultItemExcludes>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <UserSecretsId>617c8fa8-7fec-4b4b-a655-946cda25beff</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

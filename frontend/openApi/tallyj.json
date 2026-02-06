@@ -716,6 +716,42 @@
         }
       }
     },
+    "/api/Auth/google/login": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Initiates Google OAuth login flow.",
+        "parameters": [
+          {
+            "name": "returnUrl",
+            "in": "query",
+            "description": "The URL to redirect to after successful authentication (default: frontend origin).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/google/callback": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Handles the OAuth callback from Google.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Ballots/election/{electionGuid}": {
       "get": {
         "tags": [

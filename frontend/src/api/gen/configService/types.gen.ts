@@ -4805,6 +4805,39 @@ export type GetApiAuthRolesAllResponses = {
     200: unknown;
 };
 
+export type GetApiAuthGoogleLoginData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The URL to redirect to after successful authentication (default: frontend origin).
+         */
+        returnUrl?: string;
+    };
+    url: '/api/Auth/google/login';
+};
+
+export type GetApiAuthGoogleLoginResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiAuthGoogleCallbackData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/google/callback';
+};
+
+export type GetApiAuthGoogleCallbackResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetApiBallotsElectionByElectionGuidData = {
     body?: never;
     path: {
