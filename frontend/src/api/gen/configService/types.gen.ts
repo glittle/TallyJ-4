@@ -2023,11 +2023,11 @@ export type ElectionSummaryDto = {
     /**
      * The unique identifier for the election.
      */
-    electionGuid?: string;
+    electionGuid: string;
     /**
      * The name of the election.
      */
-    name?: string | null;
+    name: string;
     /**
      * The date when the election will be held.
      */

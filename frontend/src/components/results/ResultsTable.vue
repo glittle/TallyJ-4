@@ -14,7 +14,7 @@ function getSectionType(section: string) {
     'X': 'warning',
     'O': 'info'
   };
-  return typeMap[section] || '';
+  return typeMap[section] || 'info';
 }
 
 function getSectionLabel(section: string) {

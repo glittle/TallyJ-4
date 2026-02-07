@@ -4927,7 +4927,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseBallotDto": {
         "type": "object",
@@ -4954,7 +4954,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseBoolean": {
         "type": "object",
@@ -4982,7 +4982,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseComputerDto": {
         "type": "object",
@@ -5009,7 +5009,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseDashboardSummaryDto": {
         "type": "object",
@@ -5036,7 +5036,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseElectionDto": {
         "type": "object",
@@ -5063,7 +5063,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseElectionSetupStatusDto": {
         "type": "object",
@@ -5090,7 +5090,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseElectionStatusDto": {
         "type": "object",
@@ -5117,7 +5117,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseFrontDeskStatsDto": {
         "type": "object",
@@ -5144,7 +5144,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseFrontDeskVoterDto": {
         "type": "object",
@@ -5171,7 +5171,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseListAvailableElectionDto": {
         "type": "object",
@@ -5203,7 +5203,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseListComputerDto": {
         "type": "object",
@@ -5235,7 +5235,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseListElectionCardDto": {
         "type": "object",
@@ -5267,7 +5267,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseListFrontDeskVoterDto": {
         "type": "object",
@@ -5299,7 +5299,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseListPersonDto": {
         "type": "object",
@@ -5331,7 +5331,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseListVoteDto": {
         "type": "object",
@@ -5363,7 +5363,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseLocationDto": {
         "type": "object",
@@ -5390,7 +5390,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseObject": {
         "type": "object",
@@ -5418,7 +5418,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponsePersonDto": {
         "type": "object",
@@ -5445,7 +5445,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponsePublicDisplayDto": {
         "type": "object",
@@ -5472,7 +5472,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponsePublicHomeDto": {
         "type": "object",
@@ -5499,7 +5499,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseRollCallDto": {
         "type": "object",
@@ -5526,7 +5526,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseTellerDto": {
         "type": "object",
@@ -5553,7 +5553,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseUserProfileDto": {
         "type": "object",
@@ -5580,7 +5580,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "ApiResponseVoteDto": {
         "type": "object",
@@ -5607,7 +5607,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\r\nProvides consistent success/error handling with optional data and error messages."
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
       "AssignRoleRequest": {
         "required": [
@@ -6735,7 +6735,7 @@
           },
           "personGuid": {
             "type": "string",
-            "description": "The unique identifier of the person (candidate) being voted for.\r\nCan be null for certain types of votes.",
+            "description": "The unique identifier of the person (candidate) being voted for.\nCan be null for certain types of votes.",
             "format": "uuid",
             "nullable": true
           },
@@ -6751,7 +6751,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Data transfer object for creating a new vote.\r\nContains the essential information needed to record a vote on a ballot."
+        "description": "Data transfer object for creating a new vote.\nContains the essential information needed to record a vote on a ballot."
       },
       "CustomReportConfigDto": {
         "type": "object",
@@ -7428,7 +7428,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Data transfer object representing the current status of election setup.\r\nTracks completion of setup steps and overall progress."
+        "description": "Data transfer object representing the current status of election setup.\nTracks completion of setup steps and overall progress."
       },
       "ElectionStatusDto": {
         "type": "object",
@@ -7498,7 +7498,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Data transfer object for election setup step 1.\r\nContains basic election information including name, date, and reason."
+        "description": "Data transfer object for election setup step 1.\nContains basic election information including name, date, and reason."
       },
       "ElectionStep2Dto": {
         "type": "object",
@@ -7525,9 +7525,13 @@
           }
         },
         "additionalProperties": false,
-        "description": "Data transfer object for election setup step 2.\r\nContains configuration details for election type, mode, and number of positions to elect."
+        "description": "Data transfer object for election setup step 2.\nContains configuration details for election type, mode, and number of positions to elect."
       },
       "ElectionSummaryDto": {
+        "required": [
+          "electionGuid",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "electionGuid": {
@@ -7536,9 +7540,9 @@
             "format": "uuid"
           },
           "name": {
+            "minLength": 1,
             "type": "string",
-            "description": "The name of the election.",
-            "nullable": true
+            "description": "The name of the election."
           },
           "dateOfElection": {
             "type": "string",
@@ -8268,7 +8272,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic paginated response wrapper for collections that require pagination.\r\nProvides metadata about the current page, total items, and navigation information."
+        "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
       },
       "PaginatedResponseBallotDto": {
         "type": "object",
@@ -8314,7 +8318,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic paginated response wrapper for collections that require pagination.\r\nProvides metadata about the current page, total items, and navigation information."
+        "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
       },
       "PaginatedResponseElectionSummaryDto": {
         "type": "object",
@@ -8360,7 +8364,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic paginated response wrapper for collections that require pagination.\r\nProvides metadata about the current page, total items, and navigation information."
+        "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
       },
       "PaginatedResponseLocationDto": {
         "type": "object",
@@ -8406,7 +8410,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic paginated response wrapper for collections that require pagination.\r\nProvides metadata about the current page, total items, and navigation information."
+        "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
       },
       "PaginatedResponsePersonDto": {
         "type": "object",
@@ -8452,7 +8456,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic paginated response wrapper for collections that require pagination.\r\nProvides metadata about the current page, total items, and navigation information."
+        "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
       },
       "PaginatedResponseTellerDto": {
         "type": "object",
@@ -8498,7 +8502,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Generic paginated response wrapper for collections that require pagination.\r\nProvides metadata about the current page, total items, and navigation information."
+        "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
       },
       "ParseCsvHeadersRequest": {
         "type": "object",
@@ -8926,7 +8930,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Data transfer object for public display of election results.\r\nOptimized for full-screen presentation on teller computers or public displays."
+        "description": "Data transfer object for public display of election results.\nOptimized for full-screen presentation on teller computers or public displays."
       },
       "PublicDisplayStatsDto": {
         "type": "object",
@@ -10250,7 +10254,7 @@
           },
           "personGuid": {
             "type": "string",
-            "description": "The unique identifier of the person (candidate) being voted for.\r\nCan be null for certain types of votes.",
+            "description": "The unique identifier of the person (candidate) being voted for.\nCan be null for certain types of votes.",
             "format": "uuid",
             "nullable": true
           },
@@ -10276,7 +10280,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Data transfer object representing a vote in an election.\r\nContains vote details including candidate information and ballot context."
+        "description": "Data transfer object representing a vote in an election.\nContains vote details including candidate information and ballot context."
       },
       "VoteReportDto": {
         "type": "object",

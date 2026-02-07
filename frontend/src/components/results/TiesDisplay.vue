@@ -19,7 +19,8 @@ function getSectionType(section: string) {
     X: "warning",
     O: "info",
   };
-  return typeMap[section] || "";
+  // tag types must not be empty strings
+  return typeMap[section] || "info";
 }
 
 function getSectionLabel(section: string) {

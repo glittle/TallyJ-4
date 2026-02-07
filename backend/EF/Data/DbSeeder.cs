@@ -40,8 +40,8 @@ public static class DbSeeder
 
         await SeedRolesAsync(roleManager, logger);
         await SeedUsersAsync(userManager, logger);
-        await SeedElection1Async(context, logger);
-        await SeedElection2Async(context, logger);
+        await SeedElection1Async(context, userManager, logger);
+        await SeedElection2Async(context, userManager, logger);
         await SeedLogsAsync(context, logger);
 
         await context.SaveChangesAsync();
@@ -111,12 +111,11 @@ public static class DbSeeder
         }
     }
 
-    private static async Task SeedElection1Async(MainDbContext context, ILogger logger)
+    private static async Task SeedElection1Async(MainDbContext context, UserManager<AppUser> userManager, ILogger logger)
     {
         logger.LogInformation("Seeding Election 1: Springfield LSA...");
 
         var electionGuid = CreateGuid("SpringfieldLSA2024");
-        var adminEmail = "admin@tallyj.local";
 
         var election = new Election
         {
@@ -131,7 +130,7 @@ public static class DbSeeder
             OnlineWhenClose = DateTime.Now.AddDays(3),
             OnlineCloseIsEstimate = true,
             VotingMethods = "IP,OL",
-            OwnerLoginId = adminEmail,
+            OwnerLoginId = "admin@tallyj.test",
             ListForPublic = false,
             ShowAsTest = true
         };
@@ -312,11 +311,45 @@ public static class DbSeeder
             });
         }
 
+        var adminUser = await userManager.FindByEmailAsync("admin@tallyj.test");
+        var tellerUser = await userManager.FindByEmailAsync("teller@tallyj.test");
+        var googleUser = await userManager.FindByEmailAsync("glen.little@gmail.com");
+        
+        if (adminUser != null)
+        {
+            context.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = electionGuid,
+                UserId = Guid.Parse(adminUser.Id),
+                Role = "Owner"
+            });
+        }
+        
+        if (tellerUser != null)
+        {
+            context.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = electionGuid,
+                UserId = Guid.Parse(tellerUser.Id),
+                Role = "Teller"
+            });
+        }
+        
+        if (googleUser != null)
+        {
+            context.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = electionGuid,
+                UserId = Guid.Parse(googleUser.Id),
+                Role = "Owner"
+            });
+        }
+
         logger.LogInformation("Seeded Election 1 with {LocationCount} locations, {PeopleCount} people, {BallotCount} ballots, {VoteCount} votes",
             locations.Length, people.Count, ballots.Count, votes.Count);
     }
 
-    private static async Task SeedElection2Async(MainDbContext context, ILogger logger)
+    private static async Task SeedElection2Async(MainDbContext context, UserManager<AppUser> userManager, ILogger logger)
     {
         logger.LogInformation("Seeding Election 2: National Convention...");
 
@@ -333,7 +366,7 @@ public static class DbSeeder
             TallyStatus = "Finalized",
             ShowFullReport = true,
             VotingMethods = "IP",
-            OwnerLoginId = "admin@tallyj.local",
+            OwnerLoginId = "admin@tallyj.test",
             ListForPublic = false,
             ShowAsTest = true
         };
@@ -508,6 +541,29 @@ public static class DbSeeder
                 NumInTie = tieGroup.Count,
                 NumToElect = 0,
                 TieBreakRequired = true
+            });
+        }
+
+        var adminUser = await userManager.FindByEmailAsync("admin@tallyj.test");
+        var googleUser = await userManager.FindByEmailAsync("glen.little@gmail.com");
+        
+        if (adminUser != null)
+        {
+            context.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = electionGuid,
+                UserId = Guid.Parse(adminUser.Id),
+                Role = "Owner"
+            });
+        }
+        
+        if (googleUser != null)
+        {
+            context.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = electionGuid,
+                UserId = Guid.Parse(googleUser.Id),
+                Role = "Owner"
             });
         }
 

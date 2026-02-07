@@ -159,7 +159,7 @@ function getStatusType(status: string) {
     'Review': 'warning',
     'Spoiled': 'danger'
   };
-  return typeMap[status] || '';
+  return typeMap[status] || 'info';
 }
 </script>
 

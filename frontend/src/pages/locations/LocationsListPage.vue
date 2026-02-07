@@ -280,7 +280,7 @@ function getStatusType(status: string) {
     'Completed': 'success',
     'Verified': 'info'
   };
-  return typeMap[status] || '';
+  return typeMap[status] || 'info';
 }
 
 async function viewComputers(location: LocationDto) {

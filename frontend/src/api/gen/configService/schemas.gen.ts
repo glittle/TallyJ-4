@@ -2791,6 +2791,7 @@ Contains configuration details for election type, mode, and number of positions 
 } as const;
 
 export const ElectionSummaryDtoSchema = {
+    required: ['electionGuid', 'name'],
     type: 'object',
     properties: {
         electionGuid: {
@@ -2799,9 +2800,9 @@ export const ElectionSummaryDtoSchema = {
             format: 'uuid'
         },
         name: {
+            minLength: 1,
             type: 'string',
-            description: 'The name of the election.',
-            nullable: true
+            description: 'The name of the election.'
         },
         dateOfElection: {
             type: 'string',
