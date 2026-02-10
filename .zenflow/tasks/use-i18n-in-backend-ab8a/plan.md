@@ -125,7 +125,8 @@ Update `frontend/src/locales/index.ts` to load from new file structure.
 
 ---
 
-### [ ] Step: Migrate Backend Resources to JSON
+### [x] Step: Migrate Backend Resources to JSON
+<!-- chat-id: 09161336-1daa-4fb4-9830-79049a7359b6 -->
 
 Extract backend .resx translations and add them to frontend JSON locale files.
 
