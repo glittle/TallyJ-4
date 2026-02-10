@@ -51,7 +51,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="limit">The maximum number of elections to return (1-100).</param>
     /// <returns>An API response containing the list of recent elections.</returns>
-    [HttpGet("elections")]
+    [HttpGet("recentElections")]
     public async Task<ActionResult<ApiResponse<List<ElectionCardDto>>>> GetRecentElections(
         [FromQuery] int limit = 10)
     {
@@ -65,21 +65,21 @@ public class DashboardController : ControllerBase
         return Ok(ApiResponse<List<ElectionCardDto>>.SuccessResponse(elections));
     }
 
-    /// <summary>
-    /// Gets dashboard summary information (legacy route for backward compatibility).
-    /// </summary>
-    /// <returns>An API response containing the dashboard summary data.</returns>
-    [HttpGet("index")]
-    public async Task<ActionResult<ApiResponse<DashboardSummaryDto>>> GetDashboardIndex()
-    {
-        return await GetDashboardSummary();
-    }
+    // /// <summary>
+    // /// Gets dashboard summary information (legacy route for backward compatibility).
+    // /// </summary>
+    // /// <returns>An API response containing the dashboard summary data.</returns>
+    // [HttpGet("dashboardIndex")]
+    // public async Task<ActionResult<ApiResponse<DashboardSummaryDto>>> GetDashboardIndex()
+    // {
+    //     return await GetDashboardSummary();
+    // }
 
     /// <summary>
     /// Gets a complete list of all elections accessible to the current user.
     /// </summary>
     /// <returns>An API response containing the list of all accessible elections.</returns>
-    [HttpGet("election-list")]
+    [HttpGet("electionList")]
     public async Task<ActionResult<ApiResponse<List<ElectionCardDto>>>> GetElectionList()
     {
         var elections = await _dashboardService.GetAllAccessibleElectionsAsync();
@@ -91,7 +91,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get information for.</param>
     /// <returns>An API response containing static election information.</returns>
-    [HttpPost("more-info-static")]
+    [HttpPost("moreInfoStatic")]
     public async Task<ActionResult<ApiResponse<object>>> GetElectionStaticInfo([FromBody] Guid electionGuid)
     {
         var info = await _dashboardService.GetElectionStaticInfoAsync(electionGuid);
@@ -103,7 +103,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get live statistics for.</param>
     /// <returns>An API response containing live election statistics.</returns>
-    [HttpPost("more-info-live")]
+    [HttpPost("moreInfoLive")]
     public async Task<ActionResult<ApiResponse<object>>> GetElectionLiveStats([FromBody] Guid electionGuid)
     {
         var stats = await _dashboardService.GetElectionLiveStatsAsync(electionGuid);
@@ -114,7 +114,7 @@ public class DashboardController : ControllerBase
     /// Refreshes and returns the complete list of elections accessible to the current user.
     /// </summary>
     /// <returns>An API response containing the refreshed list of all accessible elections.</returns>
-    [HttpPost("reload-elections")]
+    [HttpPost("reloadElections")]
     public async Task<ActionResult<ApiResponse<List<ElectionCardDto>>>> ReloadElections()
     {
         var elections = await _dashboardService.GetAllAccessibleElectionsAsync();
@@ -127,7 +127,7 @@ public class DashboardController : ControllerBase
     /// <param name="electionGuid">The GUID of the election to update.</param>
     /// <param name="isListed">Whether the election should be publicly listed.</param>
     /// <returns>An API response indicating success or failure of the update.</returns>
-    [HttpPost("update-listing/{electionGuid:guid}")]
+    [HttpPost("{electionGuid:guid}/updateListing")]
     public async Task<ActionResult<ApiResponse<bool>>> UpdateElectionListing(
         Guid electionGuid,
         [FromBody] bool isListed)
@@ -141,7 +141,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="v2ElectionData">The V2 election data to import.</param>
     /// <returns>An API response indicating the result of the import operation.</returns>
-    [HttpPost("load-v2-election")]
+    [HttpPost("loadV2Election")]
     public async Task<ActionResult<ApiResponse<object>>> LoadV2Election([FromBody] string v2ElectionData)
     {
         // This would be a complex migration operation
@@ -154,7 +154,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="request">The request containing computer code and location GUID.</param>
     /// <returns>An API response indicating success or failure of the location assignment.</returns>
-    [HttpPost("choose-location")]
+    [HttpPost("chooseLocation")]
     public async Task<ActionResult<ApiResponse<bool>>> ChooseLocation(
         [FromBody] ChooseLocationRequest request)
     {
@@ -167,7 +167,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="request">The request containing election GUID and teller name.</param>
     /// <returns>An API response indicating success or failure of the teller assignment.</returns>
-    [HttpPost("choose-teller")]
+    [HttpPost("chooseTeller")]
     public async Task<ActionResult<ApiResponse<bool>>> ChooseTeller(
         [FromBody] ChooseTellerRequest request)
     {
@@ -180,7 +180,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="request">The request containing election GUID and teller name to remove.</param>
     /// <returns>An API response indicating success or failure of the teller removal.</returns>
-    [HttpPost("delete-teller")]
+    [HttpPost("deleteTeller")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteTeller(
         [FromBody] DeleteTellerRequest request)
     {

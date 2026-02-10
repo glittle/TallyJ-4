@@ -33,7 +33,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="ballotGuid">The GUID of the ballot.</param>
     /// <returns>A list of votes for the specified ballot.</returns>
-    [HttpGet("ballot/{ballotGuid}")]
+    [HttpGet("{ballotGuid}/getVotesByBallot")]
     public async Task<ActionResult<ApiResponse<List<VoteDto>>>> GetVotesByBallot(Guid ballotGuid)
     {
         var votes = await _voteService.GetVotesByBallotAsync(ballotGuid);
@@ -45,7 +45,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <returns>A list of votes for the specified election.</returns>
-    [HttpGet("election/{electionGuid}")]
+    [HttpGet("{electionGuid}/getVotesByElection")]
     public async Task<ActionResult<ApiResponse<List<VoteDto>>>> GetVotesByElection(Guid electionGuid)
     {
         var votes = await _voteService.GetVotesByElectionAsync(electionGuid);
@@ -57,7 +57,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the vote.</param>
     /// <returns>The vote information.</returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id}/getVote")]
     public async Task<ActionResult<ApiResponse<VoteDto>>> GetVote(int id)
     {
         var vote = await _voteService.GetVoteByIdAsync(id);
@@ -75,7 +75,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="createDto">The vote creation data.</param>
     /// <returns>The created vote information.</returns>
-    [HttpPost]
+    [HttpPost("createVote")]
     public async Task<ActionResult<ApiResponse<VoteDto>>> CreateVote(CreateVoteDto createDto)
     {
         try
@@ -95,7 +95,7 @@ public class VotesController : ControllerBase
     /// <param name="id">The ID of the vote to update.</param>
     /// <param name="updateDto">The updated vote data.</param>
     /// <returns>The updated vote information.</returns>
-    [HttpPut("{id}")]
+    [HttpPut("{id}/updateVote")]
     public async Task<ActionResult<ApiResponse<VoteDto>>> UpdateVote(int id, CreateVoteDto updateDto)
     {
         try
@@ -120,7 +120,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the vote to delete.</param>
     /// <returns>A success response if the vote was deleted, or not found if the vote doesn't exist.</returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id}/deleteVote")]
     public async Task<ActionResult<ApiResponse<object?>>> DeleteVote(int id)
     {
         var success = await _voteService.DeleteVoteAsync(id);

@@ -46,7 +46,7 @@ public class ImportController : ControllerBase
     /// </summary>
     /// <param name="request">The ballot import request.</param>
     /// <returns>The import result including created ballots and votes.</returns>
-    [HttpPost("ballots")]
+    [HttpPost("importBallots")]
     public async Task<IActionResult> ImportBallots([FromBody] ImportBallotRequestDto request)
     {
         if (string.IsNullOrEmpty(request.CsvContent))

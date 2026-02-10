@@ -33,7 +33,7 @@ public class OnlineVotingController : ControllerBase
     /// </summary>
     /// <param name="dto">The request code data.</param>
     /// <returns>A success message if the code was sent.</returns>
-    [HttpPost("request-code")]
+    [HttpPost("requestCode")]
     [AllowAnonymous]
     public async Task<IActionResult> RequestCode([FromBody] RequestCodeDto dto)
     {
@@ -52,7 +52,7 @@ public class OnlineVotingController : ControllerBase
     /// </summary>
     /// <param name="dto">The verification code data.</param>
     /// <returns>The voter session information if successful.</returns>
-    [HttpPost("verify-code")]
+    [HttpPost("verifyCode")]
     [AllowAnonymous]
     public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeDto dto)
     {
@@ -71,7 +71,7 @@ public class OnlineVotingController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The election GUID.</param>
     /// <returns>The election information.</returns>
-    [HttpGet("elections/{electionGuid}")]
+    [HttpGet("{electionGuid}/electionInfo")]
     [AllowAnonymous]
     public async Task<IActionResult> GetElectionInfo(Guid electionGuid)
     {
@@ -90,7 +90,7 @@ public class OnlineVotingController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The election GUID.</param>
     /// <returns>The list of candidates.</returns>
-    [HttpGet("elections/{electionGuid}/candidates")]
+    [HttpGet("{electionGuid}/candidates")]
     [AllowAnonymous]
     public async Task<IActionResult> GetCandidates(Guid electionGuid)
     {
@@ -104,7 +104,7 @@ public class OnlineVotingController : ControllerBase
     /// <param name="electionGuid">The election GUID.</param>
     /// <param name="dto">The ballot submission data.</param>
     /// <returns>A success message if the ballot was submitted.</returns>
-    [HttpPost("elections/{electionGuid}/submit-ballot")]
+    [HttpPost("{electionGuid}/submitBallot")]
     [AllowAnonymous]
     public async Task<IActionResult> SubmitBallot(Guid electionGuid, [FromBody] SubmitOnlineBallotDto dto)
     {
@@ -129,9 +129,9 @@ public class OnlineVotingController : ControllerBase
     /// <param name="electionGuid">The election GUID.</param>
     /// <param name="voterId">The voter ID.</param>
     /// <returns>The vote status information.</returns>
-    [HttpGet("elections/{electionGuid}/vote-status")]
+    [HttpGet("{electionGuid}/{voterId}/voteStatus")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetVoteStatus(Guid electionGuid, [FromQuery] string voterId)
+    public async Task<IActionResult> GetVoteStatus(Guid electionGuid, string voterId)
     {
         if (string.IsNullOrWhiteSpace(voterId))
         {

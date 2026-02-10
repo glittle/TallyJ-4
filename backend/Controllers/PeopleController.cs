@@ -38,7 +38,7 @@ public class PeopleController : ControllerBase
     /// <param name="canVote">Optional filter for people who can vote.</param>
     /// <param name="canReceiveVotes">Optional filter for people who can receive votes.</param>
     /// <returns>A paginated response containing the people.</returns>
-    [HttpGet("election/{electionGuid}")]
+    [HttpGet("{electionGuid}/getPeople")]
     public async Task<ActionResult<PaginatedResponse<PersonDto>>> GetPeopleByElection(
         Guid electionGuid,
         [FromQuery] int pageNumber = 1,
@@ -62,7 +62,7 @@ public class PeopleController : ControllerBase
     /// <param name="electionGuid">The GUID of the election to search in.</param>
     /// <param name="q">The search query string.</param>
     /// <returns>A list of people matching the search criteria.</returns>
-    [HttpGet("election/{electionGuid}/search")]
+    [HttpGet("{electionGuid}/searchPeople")]
     public async Task<ActionResult<ApiResponse<List<PersonDto>>>> SearchPeople(
         Guid electionGuid,
         [FromQuery] string q)
@@ -81,7 +81,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <returns>A list of all candidates with phonetic sound codes.</returns>
-    [HttpGet("election/{electionGuid}/candidates")]
+    [HttpGet("{electionGuid}/getCandidates")]
     public async Task<ActionResult<ApiResponse<List<PersonDto>>>> GetCandidates(Guid electionGuid)
     {
         var candidates = await _peopleService.GetCandidatesAsync(electionGuid);
@@ -93,7 +93,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>
     /// <returns>The person information.</returns>
-    [HttpGet("{guid}")]
+    [HttpGet("{guid}/getPerson")]
     public async Task<ActionResult<ApiResponse<PersonDto>>> GetPerson(Guid guid)
     {
         var person = await _peopleService.GetPersonByGuidAsync(guid);
@@ -111,7 +111,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="createDto">The person creation data.</param>
     /// <returns>The created person information.</returns>
-    [HttpPost]
+    [HttpPost("createPerson")]
     public async Task<ActionResult<ApiResponse<PersonDto>>> CreatePerson(CreatePersonDto createDto)
     {
         try
@@ -135,7 +135,7 @@ public class PeopleController : ControllerBase
     /// <param name="guid">The GUID of the person to update.</param>
     /// <param name="updateDto">The updated person data.</param>
     /// <returns>The updated person information.</returns>
-    [HttpPut("{guid}")]
+    [HttpPut("{guid}/updatePerson")]
     public async Task<ActionResult<ApiResponse<PersonDto>>> UpdatePerson(Guid guid, UpdatePersonDto updateDto)
     {
         try
@@ -160,7 +160,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the person to delete.</param>
     /// <returns>No content if successful, or not found if the person doesn't exist.</returns>
-    [HttpDelete("{guid}")]
+    [HttpDelete("{guid}/deletePerson")]
     public async Task<IActionResult> DeletePerson(Guid guid)
     {
         var success = await _peopleService.DeletePersonAsync(guid);

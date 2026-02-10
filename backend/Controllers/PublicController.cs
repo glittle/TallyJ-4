@@ -58,7 +58,7 @@ public class PublicController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to check.</param>
     /// <returns>The election status information.</returns>
-    [HttpGet("elections/{electionGuid}/status")]
+    [HttpGet("{electionGuid}/electionStatus")]
     public async Task<ActionResult<ApiResponse<ElectionStatusDto>>> GetElectionStatus(Guid electionGuid)
     {
         var status = await _publicService.GetElectionStatusAsync(electionGuid);
@@ -78,7 +78,7 @@ public class PublicController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to display.</param>
     /// <returns>The public display data with election results.</returns>
-    [HttpGet("elections/{electionGuid}/display")]
+    [HttpGet("{electionGuid}/publicDisplay")]
     public async Task<ActionResult<ApiResponse<PublicDisplayDto>>> GetPublicDisplay(Guid electionGuid)
     {
         var displayData = await _publicService.GetPublicDisplayDataAsync(electionGuid);

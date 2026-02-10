@@ -1,11 +1,11 @@
 import {
-  getApiElections,
-  getApiElectionsByGuid,
-  postApiElections,
-  putApiElectionsByGuid,
-  deleteApiElectionsByGuid,
-  getApiElectionsByGuidSummary,
-} from "../api/gen/configService/sdk.gen";
+  deleteApiElectionsByGuidDeleteElection,
+  getApiElectionsByGuidElection,
+  getApiElectionsByGuidElectionSummary,
+  postApiElectionsCreateElection,
+  putApiElectionsByGuidUpdateElection,
+} from "./../api/gen/configService/sdk.gen";
+import { getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
 import { cacheService } from "./cacheService";
 import type {
   ElectionDto,
@@ -14,28 +14,51 @@ import type {
   ElectionSummaryDto,
 } from "../types";
 
+const convertStringToDate = (dateString?: string): Date | null => {
+  return dateString ? new Date(dateString) : null;
+};
+
+const convertDateToString = (date?: Date | null): string | undefined => {
+  return date ? date.toISOString() : undefined;
+};
+
 export const electionService = {
   async getAll(): Promise<ElectionSummaryDto[]> {
-    const response = await getApiElections();
+    const response = await getApiElectionsGetElections();
     console.log("ElectionSummaries:", response.data?.items);
-    // GLEN - why is this not compatible? The data should be transformed.
-    return response.data?.items || [];
+    return (
+      response.data?.items?.map((item) => ({
+        ...item,
+        dateOfElection: convertDateToString(item.dateOfElection),
+        tallyStatus: item.tallyStatus ?? undefined,
+        voterCount: item.voterCount ?? 0,
+        ballotCount: item.ballotCount ?? 0,
+      })) || []
+    );
   },
 
   async getById(electionGuid: string): Promise<ElectionDto> {
-    const response = await getApiElectionsByGuid({
+    const response = await getApiElectionsByGuidElection({
       path: { guid: electionGuid },
     });
     return response.data as ElectionDto;
   },
 
   async getSummaries(): Promise<ElectionSummaryDto[]> {
-    const response = await getApiElectionsByGuidSummary({ path: { guid: "" } });
+    const response = await getApiElectionsByGuidElectionSummary({
+      path: { guid: "" },
+    });
     return response.data as ElectionSummaryDto[];
   },
 
   async create(dto: CreateElectionDto): Promise<ElectionDto> {
-    const response = await postApiElections({ body: dto });
+    const response = await postApiElectionsCreateElection({
+      body: {
+        ...dto,
+        dateOfElection: convertStringToDate(dto.dateOfElection),
+        onlineAnnounced: convertStringToDate(dto.onlineAnnounced),
+      },
+    });
     await cacheService.remove(
       cacheService.generateKey({ url: "/api/elections", method: "GET" }),
     );
@@ -52,9 +75,15 @@ export const electionService = {
     electionGuid: string,
     dto: UpdateElectionDto,
   ): Promise<ElectionDto> {
-    const response = await putApiElectionsByGuid({
+    const response = await putApiElectionsByGuidUpdateElection({
       path: { guid: electionGuid },
-      body: dto,
+      body: {
+        ...dto,
+        dateOfElection: convertStringToDate(dto.dateOfElection),
+        onlineWhenOpen: convertStringToDate(dto.onlineWhenOpen),
+        onlineWhenClose: convertStringToDate(dto.onlineWhenClose),
+        onlineAnnounced: convertStringToDate(dto.onlineAnnounced),
+      },
     });
     await cacheService.remove(
       cacheService.generateKey({
@@ -75,7 +104,9 @@ export const electionService = {
   },
 
   async delete(electionGuid: string): Promise<void> {
-    await deleteApiElectionsByGuid({ path: { guid: electionGuid } });
+    await deleteApiElectionsByGuidDeleteElection({
+      path: { guid: electionGuid },
+    });
     await cacheService.remove(
       cacheService.generateKey({ url: "/api/elections", method: "GET" }),
     );
@@ -87,12 +118,12 @@ export const electionService = {
     );
   },
 
-  async getCurrentElection(): Promise<ElectionDto | null> {
-    try {
-      const response = await getApiElections();
-      return response.data.items?.[0] || null;
-    } catch {
-      return null;
-    }
-  },
+  // async getCurrentElection(): Promise<ElectionDto | null> {
+  //   try {
+  //     const response = await getApiElectionsByGuidElection();
+  //     return response.data.items?.[0] || null;
+  //   } catch {
+  //     return null;
+  //   }
+  // },
 };

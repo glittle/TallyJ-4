@@ -73,7 +73,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="request">The registration request containing user details.</param>
     /// <returns>The authentication response if successful, or an error if registration fails.</returns>
-    [HttpPost("register")]
+    [HttpPost("registerAccount")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         var (success, error, response) = await _localAuthService.RegisterAsync(request);
@@ -109,7 +109,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="request">The forgot password request containing the user's email.</param>
     /// <returns>A success message if the email was sent, or an error if the request fails.</returns>
-    [HttpPost("password/forgot")]
+    [HttpPost("forgotPassword")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
     {
         var (success, error) = await _passwordResetService.GenerateResetTokenAsync(request);
@@ -127,7 +127,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="request">The reset password request containing the token and new password.</param>
     /// <returns>A success message if the password was reset, or an error if the request fails.</returns>
-    [HttpPost("password/reset")]
+    [HttpPost("resetPassword")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {
         var (success, error) = await _passwordResetService.ResetPasswordAsync(request);
@@ -145,7 +145,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <returns>The 2FA setup information including QR code and secret key.</returns>
     [Authorize]
-    [HttpPost("2fa/setup")]
+    [HttpPost("setup2fa")]
     public async Task<IActionResult> Setup2FA()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -170,7 +170,7 @@ public class AuthController : ControllerBase
     /// <param name="request">The enable 2FA request containing the verification code.</param>
     /// <returns>A success message if 2FA was enabled, or an error if the request fails.</returns>
     [Authorize]
-    [HttpPost("2fa/enable")]
+    [HttpPost("enable2fa")]
     public async Task<IActionResult> Enable2FA([FromBody] Enable2FARequest request)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -195,7 +195,7 @@ public class AuthController : ControllerBase
     /// <param name="request">The disable 2FA request containing the verification code.</param>
     /// <returns>A success message if 2FA was disabled, or an error if the request fails.</returns>
     [Authorize]
-    [HttpPost("2fa/disable")]
+    [HttpPost("disable2fa")]
     public async Task<IActionResult> Disable2FA([FromBody] Disable2FARequest request)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -219,7 +219,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="request">The verify 2FA request containing email and verification code.</param>
     /// <returns>The authentication response with tokens if successful, or an error if verification fails.</returns>
-    [HttpPost("2fa/verify")]
+    [HttpPost("verify2fa")]
     public async Task<IActionResult> Verify2FA([FromBody] Verify2FARequest request)
     {
         var (success, error, response) = await _localAuthService.LoginAsync(new LoginRequest
@@ -242,7 +242,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="request">The refresh token request containing the refresh token.</param>
     /// <returns>New access and refresh tokens if successful, or an error if the refresh token is invalid.</returns>
-    [HttpPost("refresh")]
+    [HttpPost("refreshToken")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         var refreshToken = await _context.RefreshTokens
@@ -288,7 +288,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <returns>The user's roles and basic information.</returns>
     [Authorize]
-    [HttpGet("roles")]
+    [HttpGet("getUserRoles")]
     public async Task<IActionResult> GetUserRoles()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -314,7 +314,7 @@ public class AuthController : ControllerBase
     /// <param name="request">The assign role request containing the role name.</param>
     /// <returns>A success message if the role was assigned, or an error if the operation fails.</returns>
     [Authorize(Policy = "AdminOnly")]
-    [HttpPost("users/{userId}/roles")]
+    [HttpPost("{userId}/assignRole")]
     public async Task<IActionResult> AssignRole(string userId, [FromBody] AssignRoleRequest request)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -344,7 +344,7 @@ public class AuthController : ControllerBase
     /// <param name="roleName">The name of the role to remove.</param>
     /// <returns>A success message if the role was removed, or an error if the operation fails.</returns>
     [Authorize(Policy = "AdminOnly")]
-    [HttpDelete("users/{userId}/roles/{roleName}")]
+    [HttpDelete("{userId}/{roleName}/removeRole")]
     public async Task<IActionResult> RemoveRole(string userId, string roleName)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -367,7 +367,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <returns>A list of all available roles.</returns>
     [Authorize(Policy = "AdminOnly")]
-    [HttpGet("roles/all")]
+    [HttpGet("getAllRoles")]
     public IActionResult GetAllRoles()
     {
         var roles = _roleManager.Roles.Select(r => r.Name).ToList();
@@ -379,7 +379,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="returnUrl">The URL to redirect to after successful authentication (default: frontend origin).</param>
     /// <returns>A redirect to Google's OAuth consent screen.</returns>
-    [HttpGet("google/login")]
+    [HttpGet("googleLogin")]
     public IActionResult GoogleLogin([FromQuery] string? returnUrl = null)
     {
         var googleClientId = _configuration["Google:ClientId"];
@@ -395,8 +395,8 @@ public class AuthController : ControllerBase
         var properties = new AuthenticationProperties
         {
             RedirectUri = Url.Action(nameof(GoogleCallback)),
-            Items = 
-            { 
+            Items =
+            {
                 { "returnUrl", returnUrl ?? string.Empty }
             }
         };
@@ -408,7 +408,7 @@ public class AuthController : ControllerBase
     /// Handles the OAuth callback from Google.
     /// </summary>
     /// <returns>A redirect to the frontend with the JWT token.</returns>
-    [HttpGet("google/callback")]
+    [HttpGet("googleCallback")]
     public async Task<IActionResult> GoogleCallback()
     {
         string? returnUrl = null;
@@ -422,9 +422,9 @@ public class AuthController : ControllerBase
                 return Redirect(GetErrorRedirectUrl(null, "Failed to retrieve login information from Google"));
             }
 
-            _logger.LogInformation("Google callback: External auth succeeded, principal: {Principal}", 
+            _logger.LogInformation("Google callback: External auth succeeded, principal: {Principal}",
                 authenticateResult.Principal?.Identity?.Name ?? "null");
-            
+
             // Extract return URL from authentication properties
             if (authenticateResult.Properties?.Items.TryGetValue("returnUrl", out var returnUrlValue) == true)
             {
@@ -440,7 +440,7 @@ public class AuthController : ControllerBase
             }
 
             var googleId = authenticateResult.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            var displayName = authenticateResult.Principal.FindFirstValue(ClaimTypes.Name) ?? 
+            var displayName = authenticateResult.Principal.FindFirstValue(ClaimTypes.Name) ??
                               authenticateResult.Principal.FindFirstValue(ClaimTypes.GivenName);
 
             var user = await _userManager.FindByEmailAsync(email);

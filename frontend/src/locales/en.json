@@ -497,5 +497,6 @@
   "elections.form.flags": "Flags",
   "elections.form.flagsPlaceholder": "Enter any flags",
   "elections.form.flagsHelp": "Flags are used for special election conditions.",
-  "common.clearFilters": "Clear Filters"
+  "common.clearFilters": "Clear Filters",
+  "elections.manageLocations": "Manage Locations"
 }

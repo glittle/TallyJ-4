@@ -2,8 +2,8 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import { getApiAuditLogsByRowIdResponseTransformer, getApiAuditLogsResponseTransformer, getApiDashboardElectionListResponseTransformer, getApiDashboardElectionsResponseTransformer, getApiDashboardIndexResponseTransformer, getApiDashboardSummaryResponseTransformer, getApiElectionsByElectionGuidFrontdeskEligibleVotersResponseTransformer, getApiElectionsByElectionGuidFrontdeskRollcallResponseTransformer, getApiElectionsByElectionGuidLocationsByLocationGuidComputersResponseTransformer, getApiElectionsByGuidResponseTransformer, getApiElectionsByGuidSummaryResponseTransformer, getApiElectionsResponseTransformer, getApiPublicElectionsByElectionGuidDisplayResponseTransformer, getApiPublicElectionsByElectionGuidStatusResponseTransformer, getApiPublicElectionsResponseTransformer, getApiPublicHomeResponseTransformer, getApiReportsStatisticsByElectionIdResponseTransformer, getApiResultsElectionByElectionGuidDetailedStatisticsResponseTransformer, getApiResultsElectionByElectionGuidFinalResponseTransformer, getApiResultsElectionByElectionGuidMonitorResponseTransformer, getApiResultsElectionByElectionGuidPresentationResponseTransformer, getApiResultsElectionByElectionGuidReportResponseTransformer, getApiResultsElectionByElectionGuidResponseTransformer, postApiAuditLogsResponseTransformer, postApiDashboardReloadElectionsResponseTransformer, postApiElectionsByElectionGuidFrontdeskCheckinResponseTransformer, postApiElectionsByElectionGuidLocationsByLocationGuidComputersResponseTransformer, postApiElectionsResponseTransformer, postApiReportsAdvancedFilterByElectionIdResponseTransformer, postApiReportsCompareResponseTransformer, postApiReportsCustomResponseTransformer, postApiResultsElectionByElectionGuidCalculateResponseTransformer, postApiResultsElectionByElectionGuidMonitorRefreshResponseTransformer, postApiSetupElectionStep1ResponseTransformer, putApiElectionsByGuidResponseTransformer, putApiSetupElectionByGuidStep2ResponseTransformer } from './transformers.gen';
-import type { DeleteApiAuthUsersByUserIdRolesByRoleNameData, DeleteApiAuthUsersByUserIdRolesByRoleNameResponses, DeleteApiBallotsByGuidData, DeleteApiBallotsByGuidResponses, DeleteApiElectionsByElectionGuidLocationsByLocationGuidComputersByComputerGuidData, DeleteApiElectionsByElectionGuidLocationsByLocationGuidComputersByComputerGuidResponses, DeleteApiElectionsByElectionGuidLocationsByLocationGuidData, DeleteApiElectionsByElectionGuidLocationsByLocationGuidResponses, DeleteApiElectionsByElectionGuidTellersByRowIdData, DeleteApiElectionsByElectionGuidTellersByRowIdResponses, DeleteApiElectionsByGuidData, DeleteApiElectionsByGuidResponses, DeleteApiPeopleByGuidData, DeleteApiPeopleByGuidResponses, DeleteApiVotesByIdData, DeleteApiVotesByIdResponses, GetApiAccountProfileData, GetApiAccountProfileResponses, GetApiAuditLogsByRowIdData, GetApiAuditLogsByRowIdResponses, GetApiAuditLogsData, GetApiAuditLogsResponses, GetApiAuthGoogleCallbackData, GetApiAuthGoogleCallbackResponses, GetApiAuthGoogleLoginData, GetApiAuthGoogleLoginResponses, GetApiAuthRolesAllData, GetApiAuthRolesAllResponses, GetApiAuthRolesData, GetApiAuthRolesResponses, GetApiBallotsByGuidData, GetApiBallotsByGuidResponses, GetApiBallotsElectionByElectionGuidData, GetApiBallotsElectionByElectionGuidResponses, GetApiDashboardElectionListData, GetApiDashboardElectionListResponses, GetApiDashboardElectionsData, GetApiDashboardElectionsResponses, GetApiDashboardIndexData, GetApiDashboardIndexResponses, GetApiDashboardSummaryData, GetApiDashboardSummaryResponses, GetApiElectionsByElectionGuidFrontdeskEligibleVotersData, GetApiElectionsByElectionGuidFrontdeskEligibleVotersResponses, GetApiElectionsByElectionGuidFrontdeskRollcallData, GetApiElectionsByElectionGuidFrontdeskRollcallResponses, GetApiElectionsByElectionGuidFrontdeskStatsData, GetApiElectionsByElectionGuidFrontdeskStatsResponses, GetApiElectionsByElectionGuidLocationsByLocationGuidComputersData, GetApiElectionsByElectionGuidLocationsByLocationGuidComputersResponses, GetApiElectionsByElectionGuidLocationsByLocationGuidData, GetApiElectionsByElectionGuidLocationsByLocationGuidResponses, GetApiElectionsByElectionGuidLocationsData, GetApiElectionsByElectionGuidLocationsResponses, GetApiElectionsByElectionGuidTellersByRowIdData, GetApiElectionsByElectionGuidTellersByRowIdResponses, GetApiElectionsByElectionGuidTellersData, GetApiElectionsByElectionGuidTellersResponses, GetApiElectionsByGuidData, GetApiElectionsByGuidResponses, GetApiElectionsByGuidSummaryData, GetApiElectionsByGuidSummaryResponses, GetApiElectionsData, GetApiElectionsResponses, GetApiOnlineVotingElectionsByElectionGuidCandidatesData, GetApiOnlineVotingElectionsByElectionGuidCandidatesResponses, GetApiOnlineVotingElectionsByElectionGuidData, GetApiOnlineVotingElectionsByElectionGuidResponses, GetApiOnlineVotingElectionsByElectionGuidVoteStatusData, GetApiOnlineVotingElectionsByElectionGuidVoteStatusResponses, GetApiPeopleByGuidData, GetApiPeopleByGuidResponses, GetApiPeopleElectionByElectionGuidCandidatesData, GetApiPeopleElectionByElectionGuidCandidatesResponses, GetApiPeopleElectionByElectionGuidData, GetApiPeopleElectionByElectionGuidResponses, GetApiPeopleElectionByElectionGuidSearchData, GetApiPeopleElectionByElectionGuidSearchResponses, GetApiPublicElectionsByElectionGuidDisplayData, GetApiPublicElectionsByElectionGuidDisplayResponses, GetApiPublicElectionsByElectionGuidStatusData, GetApiPublicElectionsByElectionGuidStatusResponses, GetApiPublicElectionsData, GetApiPublicElectionsResponses, GetApiPublicHealthData, GetApiPublicHealthResponses, GetApiPublicHomeData, GetApiPublicHomeResponses, GetApiReportsChartByElectionIdByChartTypeData, GetApiReportsChartByElectionIdByChartTypeResponses, GetApiReportsStatisticsByElectionIdData, GetApiReportsStatisticsByElectionIdResponses, GetApiResultsElectionByElectionGuidData, GetApiResultsElectionByElectionGuidDetailedStatisticsData, GetApiResultsElectionByElectionGuidDetailedStatisticsResponses, GetApiResultsElectionByElectionGuidFinalData, GetApiResultsElectionByElectionGuidFinalResponses, GetApiResultsElectionByElectionGuidMonitorData, GetApiResultsElectionByElectionGuidMonitorResponses, GetApiResultsElectionByElectionGuidPresentationData, GetApiResultsElectionByElectionGuidPresentationResponses, GetApiResultsElectionByElectionGuidReportByReportCodeData, GetApiResultsElectionByElectionGuidReportByReportCodeResponses, GetApiResultsElectionByElectionGuidReportData, GetApiResultsElectionByElectionGuidReportResponses, GetApiResultsElectionByElectionGuidResponses, GetApiResultsElectionByElectionGuidSummaryData, GetApiResultsElectionByElectionGuidSummaryResponses, GetApiResultsElectionByElectionGuidTiesByTieBreakGroupData, GetApiResultsElectionByElectionGuidTiesByTieBreakGroupResponses, GetApiSetupElectionByGuidStatusData, GetApiSetupElectionByGuidStatusResponses, GetApiVotesBallotByBallotGuidData, GetApiVotesBallotByBallotGuidResponses, GetApiVotesByIdData, GetApiVotesByIdResponses, GetApiVotesElectionByElectionGuidData, GetApiVotesElectionByElectionGuidResponses, PostApiAccountChangePasswordData, PostApiAccountChangePasswordResponses, PostApiAuditLogsData, PostApiAuditLogsResponses, PostApiAuth2FaDisableData, PostApiAuth2FaDisableResponses, PostApiAuth2FaEnableData, PostApiAuth2FaEnableResponses, PostApiAuth2FaSetupData, PostApiAuth2FaSetupResponses, PostApiAuth2FaVerifyData, PostApiAuth2FaVerifyResponses, PostApiAuthLoginData, PostApiAuthLoginResponses, PostApiAuthPasswordForgotData, PostApiAuthPasswordForgotResponses, PostApiAuthPasswordResetData, PostApiAuthPasswordResetResponses, PostApiAuthRefreshData, PostApiAuthRefreshResponses, PostApiAuthRegisterData, PostApiAuthRegisterResponses, PostApiAuthUsersByUserIdRolesData, PostApiAuthUsersByUserIdRolesResponses, PostApiBallotsData, PostApiBallotsResponses, PostApiDashboardChooseLocationData, PostApiDashboardChooseLocationResponses, PostApiDashboardChooseTellerData, PostApiDashboardChooseTellerResponses, PostApiDashboardDeleteTellerData, PostApiDashboardDeleteTellerResponses, PostApiDashboardLoadV2ElectionData, PostApiDashboardLoadV2ElectionResponses, PostApiDashboardMoreInfoLiveData, PostApiDashboardMoreInfoLiveResponses, PostApiDashboardMoreInfoStaticData, PostApiDashboardMoreInfoStaticResponses, PostApiDashboardReloadElectionsData, PostApiDashboardReloadElectionsResponses, PostApiDashboardUpdateListingByElectionGuidData, PostApiDashboardUpdateListingByElectionGuidResponses, PostApiElectionsByElectionGuidFrontdeskCheckinData, PostApiElectionsByElectionGuidFrontdeskCheckinResponses, PostApiElectionsByElectionGuidLocationsByLocationGuidComputersData, PostApiElectionsByElectionGuidLocationsByLocationGuidComputersResponses, PostApiElectionsByElectionGuidLocationsData, PostApiElectionsByElectionGuidLocationsResponses, PostApiElectionsByElectionGuidTellersData, PostApiElectionsByElectionGuidTellersResponses, PostApiElectionsData, PostApiElectionsResponses, PostApiImportBallotsData, PostApiImportBallotsResponses, PostApiImportParseCsvHeadersData, PostApiImportParseCsvHeadersResponses, PostApiOnlineVotingElectionsByElectionGuidSubmitBallotData, PostApiOnlineVotingElectionsByElectionGuidSubmitBallotResponses, PostApiOnlineVotingRequestCodeData, PostApiOnlineVotingRequestCodeResponses, PostApiOnlineVotingVerifyCodeData, PostApiOnlineVotingVerifyCodeResponses, PostApiPeopleData, PostApiPeopleResponses, PostApiReportsAdvancedFilterByElectionIdData, PostApiReportsAdvancedFilterByElectionIdResponses, PostApiReportsCompareData, PostApiReportsCompareResponses, PostApiReportsCustomData, PostApiReportsCustomResponses, PostApiReportsExportByElectionIdData, PostApiReportsExportByElectionIdResponses, PostApiResultsElectionByElectionGuidCalculateData, PostApiResultsElectionByElectionGuidCalculateResponses, PostApiResultsElectionByElectionGuidMonitorRefreshData, PostApiResultsElectionByElectionGuidMonitorRefreshResponses, PostApiResultsElectionByElectionGuidTiesData, PostApiResultsElectionByElectionGuidTiesResponses, PostApiSetupElectionStep1Data, PostApiSetupElectionStep1Responses, PostApiVotesData, PostApiVotesResponses, PutApiAccountProfileData, PutApiAccountProfileResponses, PutApiBallotsByGuidData, PutApiBallotsByGuidResponses, PutApiElectionsByElectionGuidLocationsByLocationGuidData, PutApiElectionsByElectionGuidLocationsByLocationGuidResponses, PutApiElectionsByElectionGuidTellersByRowIdData, PutApiElectionsByElectionGuidTellersByRowIdResponses, PutApiElectionsByGuidData, PutApiElectionsByGuidResponses, PutApiPeopleByGuidData, PutApiPeopleByGuidResponses, PutApiSetupElectionByGuidStep2Data, PutApiSetupElectionByGuidStep2Responses, PutApiVotesByIdData, PutApiVotesByIdResponses } from './types.gen';
+import { getApiAdvancedReportsStatisticsByElectionIdResponseTransformer, getApiAuditLogsByRowIdGetAuditLogResponseTransformer, getApiAuditLogsGetAuditLogsResponseTransformer, getApiByElectionGuidFrontdeskEligibleVotersResponseTransformer, getApiByElectionGuidFrontdeskRollCallResponseTransformer, getApiByElectionGuidLocationsByLocationGuidGetComputersResponseTransformer, getApiDashboardElectionListResponseTransformer, getApiDashboardRecentElectionsResponseTransformer, getApiDashboardSummaryResponseTransformer, getApiElectionsByGuidElectionResponseTransformer, getApiElectionsByGuidElectionSummaryResponseTransformer, getApiElectionsGetElectionsResponseTransformer, getApiPublicByElectionGuidElectionStatusResponseTransformer, getApiPublicByElectionGuidPublicDisplayResponseTransformer, getApiPublicElectionsResponseTransformer, getApiPublicHomeResponseTransformer, getApiResultsByElectionGuidCompleteReportResponseTransformer, getApiResultsByElectionGuidDetailedStatisticsResponseTransformer, getApiResultsByElectionGuidFinalResponseTransformer, getApiResultsByElectionGuidMonitorResponseTransformer, getApiResultsByElectionGuidPresentationDataResponseTransformer, getApiResultsByElectionGuidResultsResponseTransformer, postApiAdvancedReportsCompareResponseTransformer, postApiAdvancedReportsCustomResponseTransformer, postApiAdvancedReportsFilterByElectionIdResponseTransformer, postApiAuditLogsCreateAuditLogResponseTransformer, postApiByElectionGuidFrontdeskCheckInVoterResponseTransformer, postApiByElectionGuidLocationsByLocationGuidRegisterComputerResponseTransformer, postApiDashboardReloadElectionsResponseTransformer, postApiElectionsCreateElectionResponseTransformer, postApiResultsByElectionGuidRefreshMonitorResponseTransformer, postApiSetupElectionStep1ResponseTransformer, postByElectionGuidCalculateTallyResponseTransformer, putApiElectionsByGuidUpdateElectionResponseTransformer, putApiSetupElectionByGuidStep2ResponseTransformer } from './transformers.gen';
+import type { DeleteApiAuthByUserIdByRoleNameRemoveRoleData, DeleteApiAuthByUserIdByRoleNameRemoveRoleResponses, DeleteApiBallotsByGuidDeleteBallotData, DeleteApiBallotsByGuidDeleteBallotResponses, DeleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputerData, DeleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputerResponses, DeleteApiByElectionGuidLocationsByLocationGuidDeleteLocationData, DeleteApiByElectionGuidLocationsByLocationGuidDeleteLocationResponses, DeleteApiByElectionGuidTellersByRowIdDeleteTellerData, DeleteApiByElectionGuidTellersByRowIdDeleteTellerResponses, DeleteApiElectionsByGuidDeleteElectionData, DeleteApiElectionsByGuidDeleteElectionResponses, DeleteApiPeopleByGuidDeletePersonData, DeleteApiPeopleByGuidDeletePersonResponses, DeleteApiVotesByIdDeleteVoteData, DeleteApiVotesByIdDeleteVoteResponses, GetApiAccountGetMyProfileData, GetApiAccountGetMyProfileResponses, GetApiAdvancedReportsChartByElectionIdByChartTypeData, GetApiAdvancedReportsChartByElectionIdByChartTypeResponses, GetApiAdvancedReportsStatisticsByElectionIdData, GetApiAdvancedReportsStatisticsByElectionIdResponses, GetApiAuditLogsByRowIdGetAuditLogData, GetApiAuditLogsByRowIdGetAuditLogResponses, GetApiAuditLogsGetAuditLogsData, GetApiAuditLogsGetAuditLogsResponses, GetApiAuthGetAllRolesData, GetApiAuthGetAllRolesResponses, GetApiAuthGetUserRolesData, GetApiAuthGetUserRolesResponses, GetApiAuthGoogleCallbackData, GetApiAuthGoogleCallbackResponses, GetApiAuthGoogleLoginData, GetApiAuthGoogleLoginResponses, GetApiBallotsByElectionGuidBallotsData, GetApiBallotsByElectionGuidBallotsResponses, GetApiBallotsByGuidBallotData, GetApiBallotsByGuidBallotResponses, GetApiByElectionGuidFrontdeskEligibleVotersData, GetApiByElectionGuidFrontdeskEligibleVotersResponses, GetApiByElectionGuidFrontdeskRollCallData, GetApiByElectionGuidFrontdeskRollCallResponses, GetApiByElectionGuidFrontdeskStatsData, GetApiByElectionGuidFrontdeskStatsResponses, GetApiByElectionGuidLocationsByLocationGuidGetComputersData, GetApiByElectionGuidLocationsByLocationGuidGetComputersResponses, GetApiByElectionGuidLocationsByLocationGuidGetLocationData, GetApiByElectionGuidLocationsByLocationGuidGetLocationResponses, GetApiByElectionGuidLocationsGetLocationsData, GetApiByElectionGuidLocationsGetLocationsResponses, GetApiByElectionGuidTellersByRowIdGetTellerData, GetApiByElectionGuidTellersByRowIdGetTellerResponses, GetApiByElectionGuidTellersData, GetApiByElectionGuidTellersResponses, GetApiDashboardElectionListData, GetApiDashboardElectionListResponses, GetApiDashboardRecentElectionsData, GetApiDashboardRecentElectionsResponses, GetApiDashboardSummaryData, GetApiDashboardSummaryResponses, GetApiElectionsByGuidElectionData, GetApiElectionsByGuidElectionResponses, GetApiElectionsByGuidElectionSummaryData, GetApiElectionsByGuidElectionSummaryResponses, GetApiElectionsGetElectionsData, GetApiElectionsGetElectionsResponses, GetApiOnlineVotingByElectionGuidByVoterIdVoteStatusData, GetApiOnlineVotingByElectionGuidByVoterIdVoteStatusResponses, GetApiOnlineVotingByElectionGuidCandidatesData, GetApiOnlineVotingByElectionGuidCandidatesResponses, GetApiOnlineVotingByElectionGuidElectionInfoData, GetApiOnlineVotingByElectionGuidElectionInfoResponses, GetApiPeopleByElectionGuidGetCandidatesData, GetApiPeopleByElectionGuidGetCandidatesResponses, GetApiPeopleByElectionGuidGetPeopleData, GetApiPeopleByElectionGuidGetPeopleResponses, GetApiPeopleByElectionGuidSearchPeopleData, GetApiPeopleByElectionGuidSearchPeopleResponses, GetApiPeopleByGuidGetPersonData, GetApiPeopleByGuidGetPersonResponses, GetApiPublicByElectionGuidElectionStatusData, GetApiPublicByElectionGuidElectionStatusResponses, GetApiPublicByElectionGuidPublicDisplayData, GetApiPublicByElectionGuidPublicDisplayResponses, GetApiPublicElectionsData, GetApiPublicElectionsResponses, GetApiPublicHealthData, GetApiPublicHealthResponses, GetApiPublicHomeData, GetApiPublicHomeResponses, GetApiResultsByElectionGuidByReportCodeGetReportDataData, GetApiResultsByElectionGuidByReportCodeGetReportDataResponses, GetApiResultsByElectionGuidByTieBreakGroupTiesData, GetApiResultsByElectionGuidByTieBreakGroupTiesResponses, GetApiResultsByElectionGuidCompleteReportData, GetApiResultsByElectionGuidCompleteReportResponses, GetApiResultsByElectionGuidDetailedStatisticsData, GetApiResultsByElectionGuidDetailedStatisticsResponses, GetApiResultsByElectionGuidFinalData, GetApiResultsByElectionGuidFinalResponses, GetApiResultsByElectionGuidMonitorData, GetApiResultsByElectionGuidMonitorResponses, GetApiResultsByElectionGuidPresentationDataData, GetApiResultsByElectionGuidPresentationDataResponses, GetApiResultsByElectionGuidResultsData, GetApiResultsByElectionGuidResultsResponses, GetApiResultsByElectionGuidSummaryData, GetApiResultsByElectionGuidSummaryResponses, GetApiSetupElectionByGuidStatusData, GetApiSetupElectionByGuidStatusResponses, GetApiVotesByBallotGuidGetVotesByBallotData, GetApiVotesByBallotGuidGetVotesByBallotResponses, GetApiVotesByElectionGuidGetVotesByElectionData, GetApiVotesByElectionGuidGetVotesByElectionResponses, GetApiVotesByIdGetVoteData, GetApiVotesByIdGetVoteResponses, PostApiAccountChangePasswordData, PostApiAccountChangePasswordResponses, PostApiAdvancedReportsCompareData, PostApiAdvancedReportsCompareResponses, PostApiAdvancedReportsCustomData, PostApiAdvancedReportsCustomResponses, PostApiAdvancedReportsFilterByElectionIdData, PostApiAdvancedReportsFilterByElectionIdResponses, PostApiAuditLogsCreateAuditLogData, PostApiAuditLogsCreateAuditLogResponses, PostApiAuthByUserIdAssignRoleData, PostApiAuthByUserIdAssignRoleResponses, PostApiAuthDisable2FaData, PostApiAuthDisable2FaResponses, PostApiAuthEnable2FaData, PostApiAuthEnable2FaResponses, PostApiAuthForgotPasswordData, PostApiAuthForgotPasswordResponses, PostApiAuthLoginData, PostApiAuthLoginResponses, PostApiAuthRefreshTokenData, PostApiAuthRefreshTokenResponses, PostApiAuthRegisterAccountData, PostApiAuthRegisterAccountResponses, PostApiAuthResetPasswordData, PostApiAuthResetPasswordResponses, PostApiAuthSetup2FaData, PostApiAuthSetup2FaResponses, PostApiAuthVerify2FaData, PostApiAuthVerify2FaResponses, PostApiBallotsCreateBallotData, PostApiBallotsCreateBallotResponses, PostApiByElectionGuidFrontdeskCheckInVoterData, PostApiByElectionGuidFrontdeskCheckInVoterResponses, PostApiByElectionGuidLocationsByLocationGuidRegisterComputerData, PostApiByElectionGuidLocationsByLocationGuidRegisterComputerResponses, PostApiByElectionGuidLocationsCreateLocationData, PostApiByElectionGuidLocationsCreateLocationResponses, PostApiByElectionGuidTellersCreateTellerData, PostApiByElectionGuidTellersCreateTellerResponses, PostApiDashboardByElectionGuidUpdateListingData, PostApiDashboardByElectionGuidUpdateListingResponses, PostApiDashboardChooseLocationData, PostApiDashboardChooseLocationResponses, PostApiDashboardChooseTellerData, PostApiDashboardChooseTellerResponses, PostApiDashboardDeleteTellerData, PostApiDashboardDeleteTellerResponses, PostApiDashboardLoadV2ElectionData, PostApiDashboardLoadV2ElectionResponses, PostApiDashboardMoreInfoLiveData, PostApiDashboardMoreInfoLiveResponses, PostApiDashboardMoreInfoStaticData, PostApiDashboardMoreInfoStaticResponses, PostApiDashboardReloadElectionsData, PostApiDashboardReloadElectionsResponses, PostApiElectionsCreateElectionData, PostApiElectionsCreateElectionResponses, PostApiImportImportBallotsData, PostApiImportImportBallotsResponses, PostApiImportParseCsvHeadersData, PostApiImportParseCsvHeadersResponses, PostApiOnlineVotingByElectionGuidSubmitBallotData, PostApiOnlineVotingByElectionGuidSubmitBallotResponses, PostApiOnlineVotingRequestCodeData, PostApiOnlineVotingRequestCodeResponses, PostApiOnlineVotingVerifyCodeData, PostApiOnlineVotingVerifyCodeResponses, PostApiPeopleCreatePersonData, PostApiPeopleCreatePersonResponses, PostApiReportExportsByElectionIdData, PostApiReportExportsByElectionIdResponses, PostApiResultsByElectionGuidRefreshMonitorData, PostApiResultsByElectionGuidRefreshMonitorResponses, PostApiResultsByElectionGuidSaveTiesData, PostApiResultsByElectionGuidSaveTiesResponses, PostApiSetupElectionStep1Data, PostApiSetupElectionStep1Responses, PostApiVotesCreateVoteData, PostApiVotesCreateVoteResponses, PostByElectionGuidCalculateTallyData, PostByElectionGuidCalculateTallyResponses, PutApiAccountUpdateProfileData, PutApiAccountUpdateProfileResponses, PutApiBallotsByGuidUpdateBallotData, PutApiBallotsByGuidUpdateBallotResponses, PutApiByElectionGuidLocationsByLocationGuidUpdateLocationData, PutApiByElectionGuidLocationsByLocationGuidUpdateLocationResponses, PutApiByElectionGuidTellersByRowIdUpdateTellerData, PutApiByElectionGuidTellersByRowIdUpdateTellerResponses, PutApiElectionsByGuidUpdateElectionData, PutApiElectionsByGuidUpdateElectionResponses, PutApiPeopleByGuidUpdatePersonData, PutApiPeopleByGuidUpdatePersonResponses, PutApiSetupElectionByGuidStep2Data, PutApiSetupElectionByGuidStep2Responses, PutApiVotesByIdUpdateVoteData, PutApiVotesByIdUpdateVoteResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -22,15 +22,15 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 /**
  * Gets the profile information for the authenticated user.
  */
-export const getApiAccountProfile = <ThrowOnError extends boolean = false>(options?: Options<GetApiAccountProfileData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetApiAccountProfileResponses, unknown, ThrowOnError>({
+export const getApiAccountGetMyProfile = <ThrowOnError extends boolean = false>(options?: Options<GetApiAccountGetMyProfileData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetApiAccountGetMyProfileResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Account/profile',
+        url: '/api/Account/getMyProfile',
         ...options
     });
 };
@@ -38,15 +38,15 @@ export const getApiAccountProfile = <ThrowOnError extends boolean = false>(optio
 /**
  * Updates the profile information for the authenticated user.
  */
-export const putApiAccountProfile = <ThrowOnError extends boolean = false>(options?: Options<PutApiAccountProfileData, ThrowOnError>) => {
-    return (options?.client ?? client).put<PutApiAccountProfileResponses, unknown, ThrowOnError>({
+export const putApiAccountUpdateProfile = <ThrowOnError extends boolean = false>(options?: Options<PutApiAccountUpdateProfileData, ThrowOnError>) => {
+    return (options?.client ?? client).put<PutApiAccountUpdateProfileResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Account/profile',
+        url: '/api/Account/updateProfile',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ export const postApiAccountChangePassword = <ThrowOnError extends boolean = fals
                 type: 'http'
             }
         ],
-        url: '/api/Account/change-password',
+        url: '/api/Account/changePassword',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -76,18 +76,131 @@ export const postApiAccountChangePassword = <ThrowOnError extends boolean = fals
 };
 
 /**
- * Gets a paginated list of audit logs with optional filtering.
+ * Generates chart data for visualizing election results.
  */
-export const getApiAuditLogs = <ThrowOnError extends boolean = false>(options?: Options<GetApiAuditLogsData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetApiAuditLogsResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiAuditLogsResponseTransformer,
+export const getApiAdvancedReportsChartByElectionIdByChartType = <ThrowOnError extends boolean = false>(options: Options<GetApiAdvancedReportsChartByElectionIdByChartTypeData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiAdvancedReportsChartByElectionIdByChartTypeResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/audit-logs',
+        url: '/api/advanced-reports/chart/{electionId}/{chartType}',
+        ...options
+    });
+};
+
+/**
+ * Compares multiple elections based on specified metrics.
+ */
+export const postApiAdvancedReportsCompare = <ThrowOnError extends boolean = false>(options?: Options<PostApiAdvancedReportsCompareData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAdvancedReportsCompareResponses, unknown, ThrowOnError>({
+        responseTransformer: postApiAdvancedReportsCompareResponseTransformer,
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/advanced-reports/compare',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers
+        }
+    });
+};
+
+/**
+ * Generates a filtered report for an election based on advanced filter criteria.
+ */
+export const postApiAdvancedReportsFilterByElectionId = <ThrowOnError extends boolean = false>(options: Options<PostApiAdvancedReportsFilterByElectionIdData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiAdvancedReportsFilterByElectionIdResponses, unknown, ThrowOnError>({
+        responseTransformer: postApiAdvancedReportsFilterByElectionIdResponseTransformer,
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/advanced-reports/filter/{electionId}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * Generates a custom report based on the provided configuration.
+ */
+export const postApiAdvancedReportsCustom = <ThrowOnError extends boolean = false>(options?: Options<PostApiAdvancedReportsCustomData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAdvancedReportsCustomResponses, unknown, ThrowOnError>({
+        responseTransformer: postApiAdvancedReportsCustomResponseTransformer,
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/advanced-reports/custom',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers
+        }
+    });
+};
+
+/**
+ * Generates statistical analysis for an election.
+ */
+export const getApiAdvancedReportsStatisticsByElectionId = <ThrowOnError extends boolean = false>(options: Options<GetApiAdvancedReportsStatisticsByElectionIdData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiAdvancedReportsStatisticsByElectionIdResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiAdvancedReportsStatisticsByElectionIdResponseTransformer,
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/advanced-reports/statistics/{electionId}',
+        ...options
+    });
+};
+
+/**
+ * Gets a paginated list of audit logs with optional filtering.
+ */
+export const getApiAuditLogsGetAuditLogs = <ThrowOnError extends boolean = false>(options?: Options<GetApiAuditLogsGetAuditLogsData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetApiAuditLogsGetAuditLogsResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiAuditLogsGetAuditLogsResponseTransformer,
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/audit-logs/getAuditLogs',
+        ...options
+    });
+};
+
+/**
+ * Gets a specific audit log by ID.
+ */
+export const getApiAuditLogsByRowIdGetAuditLog = <ThrowOnError extends boolean = false>(options: Options<GetApiAuditLogsByRowIdGetAuditLogData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiAuditLogsByRowIdGetAuditLogResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiAuditLogsByRowIdGetAuditLogResponseTransformer,
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/audit-logs/{rowId}/getAuditLog',
         ...options
     });
 };
@@ -95,16 +208,16 @@ export const getApiAuditLogs = <ThrowOnError extends boolean = false>(options?: 
 /**
  * Creates a new audit log entry.
  */
-export const postApiAuditLogs = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuditLogsData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiAuditLogsResponses, unknown, ThrowOnError>({
-        responseTransformer: postApiAuditLogsResponseTransformer,
+export const postApiAuditLogsCreateAuditLog = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuditLogsCreateAuditLogData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAuditLogsCreateAuditLogResponses, unknown, ThrowOnError>({
+        responseTransformer: postApiAuditLogsCreateAuditLogResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/audit-logs',
+        url: '/api/audit-logs/createAuditLog',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -114,34 +227,17 @@ export const postApiAuditLogs = <ThrowOnError extends boolean = false>(options?:
 };
 
 /**
- * Gets a specific audit log by ID.
- */
-export const getApiAuditLogsByRowId = <ThrowOnError extends boolean = false>(options: Options<GetApiAuditLogsByRowIdData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiAuditLogsByRowIdResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiAuditLogsByRowIdResponseTransformer,
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/audit-logs/{rowId}',
-        ...options
-    });
-};
-
-/**
  * Registers a new user account.
  */
-export const postApiAuthRegister = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthRegisterData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiAuthRegisterResponses, unknown, ThrowOnError>({
+export const postApiAuthRegisterAccount = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthRegisterAccountData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAuthRegisterAccountResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/register',
+        url: '/api/Auth/registerAccount',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -173,15 +269,15 @@ export const postApiAuthLogin = <ThrowOnError extends boolean = false>(options?:
 /**
  * Initiates a password reset by sending a reset email to the user.
  */
-export const postApiAuthPasswordForgot = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthPasswordForgotData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiAuthPasswordForgotResponses, unknown, ThrowOnError>({
+export const postApiAuthForgotPassword = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthForgotPasswordData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAuthForgotPasswordResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/password/forgot',
+        url: '/api/Auth/forgotPassword',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -193,15 +289,15 @@ export const postApiAuthPasswordForgot = <ThrowOnError extends boolean = false>(
 /**
  * Resets a user's password using a reset token.
  */
-export const postApiAuthPasswordReset = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthPasswordResetData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiAuthPasswordResetResponses, unknown, ThrowOnError>({
+export const postApiAuthResetPassword = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthResetPasswordData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAuthResetPasswordResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/password/reset',
+        url: '/api/Auth/resetPassword',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -213,15 +309,15 @@ export const postApiAuthPasswordReset = <ThrowOnError extends boolean = false>(o
 /**
  * Sets up two-factor authentication for the authenticated user.
  */
-export const postApiAuth2FaSetup = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuth2FaSetupData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiAuth2FaSetupResponses, unknown, ThrowOnError>({
+export const postApiAuthSetup2Fa = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthSetup2FaData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAuthSetup2FaResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/2fa/setup',
+        url: '/api/Auth/setup2fa',
         ...options
     });
 };
@@ -229,15 +325,15 @@ export const postApiAuth2FaSetup = <ThrowOnError extends boolean = false>(option
 /**
  * Enables two-factor authentication for the authenticated user.
  */
-export const postApiAuth2FaEnable = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuth2FaEnableData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiAuth2FaEnableResponses, unknown, ThrowOnError>({
+export const postApiAuthEnable2Fa = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthEnable2FaData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAuthEnable2FaResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/2fa/enable',
+        url: '/api/Auth/enable2fa',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -249,15 +345,15 @@ export const postApiAuth2FaEnable = <ThrowOnError extends boolean = false>(optio
 /**
  * Disables two-factor authentication for the authenticated user.
  */
-export const postApiAuth2FaDisable = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuth2FaDisableData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiAuth2FaDisableResponses, unknown, ThrowOnError>({
+export const postApiAuthDisable2Fa = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthDisable2FaData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAuthDisable2FaResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/2fa/disable',
+        url: '/api/Auth/disable2fa',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -269,15 +365,15 @@ export const postApiAuth2FaDisable = <ThrowOnError extends boolean = false>(opti
 /**
  * Verifies a two-factor authentication code for login.
  */
-export const postApiAuth2FaVerify = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuth2FaVerifyData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiAuth2FaVerifyResponses, unknown, ThrowOnError>({
+export const postApiAuthVerify2Fa = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthVerify2FaData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAuthVerify2FaResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/2fa/verify',
+        url: '/api/Auth/verify2fa',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -289,15 +385,15 @@ export const postApiAuth2FaVerify = <ThrowOnError extends boolean = false>(optio
 /**
  * Refreshes an access token using a valid refresh token.
  */
-export const postApiAuthRefresh = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthRefreshData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiAuthRefreshResponses, unknown, ThrowOnError>({
+export const postApiAuthRefreshToken = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthRefreshTokenData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiAuthRefreshTokenResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/refresh',
+        url: '/api/Auth/refreshToken',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -309,15 +405,15 @@ export const postApiAuthRefresh = <ThrowOnError extends boolean = false>(options
 /**
  * Gets the roles assigned to the authenticated user.
  */
-export const getApiAuthRoles = <ThrowOnError extends boolean = false>(options?: Options<GetApiAuthRolesData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetApiAuthRolesResponses, unknown, ThrowOnError>({
+export const getApiAuthGetUserRoles = <ThrowOnError extends boolean = false>(options?: Options<GetApiAuthGetUserRolesData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetApiAuthGetUserRolesResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/roles',
+        url: '/api/Auth/getUserRoles',
         ...options
     });
 };
@@ -325,15 +421,15 @@ export const getApiAuthRoles = <ThrowOnError extends boolean = false>(options?: 
 /**
  * Assigns a role to a user. Requires admin privileges.
  */
-export const postApiAuthUsersByUserIdRoles = <ThrowOnError extends boolean = false>(options: Options<PostApiAuthUsersByUserIdRolesData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiAuthUsersByUserIdRolesResponses, unknown, ThrowOnError>({
+export const postApiAuthByUserIdAssignRole = <ThrowOnError extends boolean = false>(options: Options<PostApiAuthByUserIdAssignRoleData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiAuthByUserIdAssignRoleResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/users/{userId}/roles',
+        url: '/api/Auth/{userId}/assignRole',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -345,15 +441,15 @@ export const postApiAuthUsersByUserIdRoles = <ThrowOnError extends boolean = fal
 /**
  * Removes a role from a user. Requires admin privileges.
  */
-export const deleteApiAuthUsersByUserIdRolesByRoleName = <ThrowOnError extends boolean = false>(options: Options<DeleteApiAuthUsersByUserIdRolesByRoleNameData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteApiAuthUsersByUserIdRolesByRoleNameResponses, unknown, ThrowOnError>({
+export const deleteApiAuthByUserIdByRoleNameRemoveRole = <ThrowOnError extends boolean = false>(options: Options<DeleteApiAuthByUserIdByRoleNameRemoveRoleData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteApiAuthByUserIdByRoleNameRemoveRoleResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/users/{userId}/roles/{roleName}',
+        url: '/api/Auth/{userId}/{roleName}/removeRole',
         ...options
     });
 };
@@ -361,15 +457,15 @@ export const deleteApiAuthUsersByUserIdRolesByRoleName = <ThrowOnError extends b
 /**
  * Gets all available roles in the system. Requires admin privileges.
  */
-export const getApiAuthRolesAll = <ThrowOnError extends boolean = false>(options?: Options<GetApiAuthRolesAllData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetApiAuthRolesAllResponses, unknown, ThrowOnError>({
+export const getApiAuthGetAllRoles = <ThrowOnError extends boolean = false>(options?: Options<GetApiAuthGetAllRolesData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetApiAuthGetAllRolesResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Auth/roles/all',
+        url: '/api/Auth/getAllRoles',
         ...options
     });
 };
@@ -385,7 +481,7 @@ export const getApiAuthGoogleLogin = <ThrowOnError extends boolean = false>(opti
                 type: 'http'
             }
         ],
-        url: '/api/Auth/google/login',
+        url: '/api/Auth/googleLogin',
         ...options
     });
 };
@@ -401,7 +497,7 @@ export const getApiAuthGoogleCallback = <ThrowOnError extends boolean = false>(o
                 type: 'http'
             }
         ],
-        url: '/api/Auth/google/callback',
+        url: '/api/Auth/googleCallback',
         ...options
     });
 };
@@ -409,31 +505,15 @@ export const getApiAuthGoogleCallback = <ThrowOnError extends boolean = false>(o
 /**
  * Gets a paginated list of ballots for the specified election.
  */
-export const getApiBallotsElectionByElectionGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiBallotsElectionByElectionGuidData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiBallotsElectionByElectionGuidResponses, unknown, ThrowOnError>({
+export const getApiBallotsByElectionGuidBallots = <ThrowOnError extends boolean = false>(options: Options<GetApiBallotsByElectionGuidBallotsData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiBallotsByElectionGuidBallotsResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Ballots/election/{electionGuid}',
-        ...options
-    });
-};
-
-/**
- * Deletes a ballot by its GUID.
- */
-export const deleteApiBallotsByGuid = <ThrowOnError extends boolean = false>(options: Options<DeleteApiBallotsByGuidData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteApiBallotsByGuidResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/Ballots/{guid}',
+        url: '/api/Ballots/{electionGuid}/ballots',
         ...options
     });
 };
@@ -441,31 +521,51 @@ export const deleteApiBallotsByGuid = <ThrowOnError extends boolean = false>(opt
 /**
  * Gets a specific ballot by its GUID.
  */
-export const getApiBallotsByGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiBallotsByGuidData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiBallotsByGuidResponses, unknown, ThrowOnError>({
+export const getApiBallotsByGuidBallot = <ThrowOnError extends boolean = false>(options: Options<GetApiBallotsByGuidBallotData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiBallotsByGuidBallotResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Ballots/{guid}',
+        url: '/api/Ballots/{guid}/ballot',
         ...options
+    });
+};
+
+/**
+ * Creates a new ballot.
+ */
+export const postApiBallotsCreateBallot = <ThrowOnError extends boolean = false>(options?: Options<PostApiBallotsCreateBallotData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiBallotsCreateBallotResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/Ballots/createBallot',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers
+        }
     });
 };
 
 /**
  * Updates an existing ballot.
  */
-export const putApiBallotsByGuid = <ThrowOnError extends boolean = false>(options: Options<PutApiBallotsByGuidData, ThrowOnError>) => {
-    return (options.client ?? client).put<PutApiBallotsByGuidResponses, unknown, ThrowOnError>({
+export const putApiBallotsByGuidUpdateBallot = <ThrowOnError extends boolean = false>(options: Options<PutApiBallotsByGuidUpdateBallotData, ThrowOnError>) => {
+    return (options.client ?? client).put<PutApiBallotsByGuidUpdateBallotResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Ballots/{guid}',
+        url: '/api/Ballots/{guid}/updateBallot',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -475,22 +575,18 @@ export const putApiBallotsByGuid = <ThrowOnError extends boolean = false>(option
 };
 
 /**
- * Creates a new ballot.
+ * Deletes a ballot by its GUID.
  */
-export const postApiBallots = <ThrowOnError extends boolean = false>(options?: Options<PostApiBallotsData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiBallotsResponses, unknown, ThrowOnError>({
+export const deleteApiBallotsByGuidDeleteBallot = <ThrowOnError extends boolean = false>(options: Options<DeleteApiBallotsByGuidDeleteBallotData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteApiBallotsByGuidDeleteBallotResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Ballots',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers
-        }
+        url: '/api/Ballots/{guid}/deleteBallot',
+        ...options
     });
 };
 
@@ -514,33 +610,16 @@ export const getApiDashboardSummary = <ThrowOnError extends boolean = false>(opt
 /**
  * Gets a list of recent elections accessible to the current user.
  */
-export const getApiDashboardElections = <ThrowOnError extends boolean = false>(options?: Options<GetApiDashboardElectionsData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetApiDashboardElectionsResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiDashboardElectionsResponseTransformer,
+export const getApiDashboardRecentElections = <ThrowOnError extends boolean = false>(options?: Options<GetApiDashboardRecentElectionsData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetApiDashboardRecentElectionsResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiDashboardRecentElectionsResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Dashboard/elections',
-        ...options
-    });
-};
-
-/**
- * Gets dashboard summary information (legacy route for backward compatibility).
- */
-export const getApiDashboardIndex = <ThrowOnError extends boolean = false>(options?: Options<GetApiDashboardIndexData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetApiDashboardIndexResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiDashboardIndexResponseTransformer,
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/Dashboard/index',
+        url: '/api/Dashboard/recentElections',
         ...options
     });
 };
@@ -557,7 +636,7 @@ export const getApiDashboardElectionList = <ThrowOnError extends boolean = false
                 type: 'http'
             }
         ],
-        url: '/api/Dashboard/election-list',
+        url: '/api/Dashboard/electionList',
         ...options
     });
 };
@@ -573,7 +652,7 @@ export const postApiDashboardMoreInfoStatic = <ThrowOnError extends boolean = fa
                 type: 'http'
             }
         ],
-        url: '/api/Dashboard/more-info-static',
+        url: '/api/Dashboard/moreInfoStatic',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -593,7 +672,7 @@ export const postApiDashboardMoreInfoLive = <ThrowOnError extends boolean = fals
                 type: 'http'
             }
         ],
-        url: '/api/Dashboard/more-info-live',
+        url: '/api/Dashboard/moreInfoLive',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -614,7 +693,7 @@ export const postApiDashboardReloadElections = <ThrowOnError extends boolean = f
                 type: 'http'
             }
         ],
-        url: '/api/Dashboard/reload-elections',
+        url: '/api/Dashboard/reloadElections',
         ...options
     });
 };
@@ -622,15 +701,15 @@ export const postApiDashboardReloadElections = <ThrowOnError extends boolean = f
 /**
  * Updates the public listing status of an election for guest tellers.
  */
-export const postApiDashboardUpdateListingByElectionGuid = <ThrowOnError extends boolean = false>(options: Options<PostApiDashboardUpdateListingByElectionGuidData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiDashboardUpdateListingByElectionGuidResponses, unknown, ThrowOnError>({
+export const postApiDashboardByElectionGuidUpdateListing = <ThrowOnError extends boolean = false>(options: Options<PostApiDashboardByElectionGuidUpdateListingData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiDashboardByElectionGuidUpdateListingResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Dashboard/update-listing/{electionGuid}',
+        url: '/api/Dashboard/{electionGuid}/updateListing',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -650,7 +729,7 @@ export const postApiDashboardLoadV2Election = <ThrowOnError extends boolean = fa
                 type: 'http'
             }
         ],
-        url: '/api/Dashboard/load-v2-election',
+        url: '/api/Dashboard/loadV2Election',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -670,7 +749,7 @@ export const postApiDashboardChooseLocation = <ThrowOnError extends boolean = fa
                 type: 'http'
             }
         ],
-        url: '/api/Dashboard/choose-location',
+        url: '/api/Dashboard/chooseLocation',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -690,7 +769,7 @@ export const postApiDashboardChooseTeller = <ThrowOnError extends boolean = fals
                 type: 'http'
             }
         ],
-        url: '/api/Dashboard/choose-teller',
+        url: '/api/Dashboard/chooseTeller',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -710,7 +789,7 @@ export const postApiDashboardDeleteTeller = <ThrowOnError extends boolean = fals
                 type: 'http'
             }
         ],
-        url: '/api/Dashboard/delete-teller',
+        url: '/api/Dashboard/deleteTeller',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -722,16 +801,50 @@ export const postApiDashboardDeleteTeller = <ThrowOnError extends boolean = fals
 /**
  * Gets a paginated list of elections with optional status filtering.
  */
-export const getApiElections = <ThrowOnError extends boolean = false>(options?: Options<GetApiElectionsData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetApiElectionsResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiElectionsResponseTransformer,
+export const getApiElectionsGetElections = <ThrowOnError extends boolean = false>(options?: Options<GetApiElectionsGetElectionsData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetApiElectionsGetElectionsResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiElectionsGetElectionsResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Elections',
+        url: '/api/Elections/getElections',
+        ...options
+    });
+};
+
+/**
+ * Gets a specific election by its GUID.
+ */
+export const getApiElectionsByGuidElection = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByGuidElectionData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiElectionsByGuidElectionResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiElectionsByGuidElectionResponseTransformer,
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/Elections/{guid}/election',
+        ...options
+    });
+};
+
+/**
+ * Gets a summary of a specific election by its GUID.
+ */
+export const getApiElectionsByGuidElectionSummary = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByGuidElectionSummaryData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiElectionsByGuidElectionSummaryResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiElectionsByGuidElectionSummaryResponseTransformer,
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/Elections/{guid}/electionSummary',
         ...options
     });
 };
@@ -739,16 +852,16 @@ export const getApiElections = <ThrowOnError extends boolean = false>(options?: 
 /**
  * Creates a new election.
  */
-export const postApiElections = <ThrowOnError extends boolean = false>(options?: Options<PostApiElectionsData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiElectionsResponses, unknown, ThrowOnError>({
-        responseTransformer: postApiElectionsResponseTransformer,
+export const postApiElectionsCreateElection = <ThrowOnError extends boolean = false>(options?: Options<PostApiElectionsCreateElectionData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiElectionsCreateElectionResponses, unknown, ThrowOnError>({
+        responseTransformer: postApiElectionsCreateElectionResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Elections',
+        url: '/api/Elections/createElection',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -758,51 +871,18 @@ export const postApiElections = <ThrowOnError extends boolean = false>(options?:
 };
 
 /**
- * Deletes an election by its GUID.
- */
-export const deleteApiElectionsByGuid = <ThrowOnError extends boolean = false>(options: Options<DeleteApiElectionsByGuidData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteApiElectionsByGuidResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/Elections/{guid}',
-        ...options
-    });
-};
-
-/**
- * Gets a specific election by its GUID.
- */
-export const getApiElectionsByGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByGuidData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiElectionsByGuidResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiElectionsByGuidResponseTransformer,
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/Elections/{guid}',
-        ...options
-    });
-};
-
-/**
  * Updates an existing election.
  */
-export const putApiElectionsByGuid = <ThrowOnError extends boolean = false>(options: Options<PutApiElectionsByGuidData, ThrowOnError>) => {
-    return (options.client ?? client).put<PutApiElectionsByGuidResponses, unknown, ThrowOnError>({
-        responseTransformer: putApiElectionsByGuidResponseTransformer,
+export const putApiElectionsByGuidUpdateElection = <ThrowOnError extends boolean = false>(options: Options<PutApiElectionsByGuidUpdateElectionData, ThrowOnError>) => {
+    return (options.client ?? client).put<PutApiElectionsByGuidUpdateElectionResponses, unknown, ThrowOnError>({
+        responseTransformer: putApiElectionsByGuidUpdateElectionResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Elections/{guid}',
+        url: '/api/Elections/{guid}/updateElection',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -812,18 +892,17 @@ export const putApiElectionsByGuid = <ThrowOnError extends boolean = false>(opti
 };
 
 /**
- * Gets a summary of a specific election by its GUID.
+ * Deletes an election by its GUID.
  */
-export const getApiElectionsByGuidSummary = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByGuidSummaryData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiElectionsByGuidSummaryResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiElectionsByGuidSummaryResponseTransformer,
+export const deleteApiElectionsByGuidDeleteElection = <ThrowOnError extends boolean = false>(options: Options<DeleteApiElectionsByGuidDeleteElectionData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteApiElectionsByGuidDeleteElectionResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Elections/{guid}/summary',
+        url: '/api/Elections/{guid}/deleteElection',
         ...options
     });
 };
@@ -831,16 +910,16 @@ export const getApiElectionsByGuidSummary = <ThrowOnError extends boolean = fals
 /**
  * Gets the list of eligible voters for an election.
  */
-export const getApiElectionsByElectionGuidFrontdeskEligibleVoters = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByElectionGuidFrontdeskEligibleVotersData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiElectionsByElectionGuidFrontdeskEligibleVotersResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiElectionsByElectionGuidFrontdeskEligibleVotersResponseTransformer,
+export const getApiByElectionGuidFrontdeskEligibleVoters = <ThrowOnError extends boolean = false>(options: Options<GetApiByElectionGuidFrontdeskEligibleVotersData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiByElectionGuidFrontdeskEligibleVotersResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiByElectionGuidFrontdeskEligibleVotersResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/frontdesk/eligible-voters',
+        url: '/api/{electionGuid}/frontdesk/eligibleVoters',
         ...options
     });
 };
@@ -848,16 +927,16 @@ export const getApiElectionsByElectionGuidFrontdeskEligibleVoters = <ThrowOnErro
 /**
  * Checks in a voter for an election.
  */
-export const postApiElectionsByElectionGuidFrontdeskCheckin = <ThrowOnError extends boolean = false>(options: Options<PostApiElectionsByElectionGuidFrontdeskCheckinData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiElectionsByElectionGuidFrontdeskCheckinResponses, unknown, ThrowOnError>({
-        responseTransformer: postApiElectionsByElectionGuidFrontdeskCheckinResponseTransformer,
+export const postApiByElectionGuidFrontdeskCheckInVoter = <ThrowOnError extends boolean = false>(options: Options<PostApiByElectionGuidFrontdeskCheckInVoterData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiByElectionGuidFrontdeskCheckInVoterResponses, unknown, ThrowOnError>({
+        responseTransformer: postApiByElectionGuidFrontdeskCheckInVoterResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/frontdesk/checkin',
+        url: '/api/{electionGuid}/frontdesk/checkInVoter',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -869,16 +948,16 @@ export const postApiElectionsByElectionGuidFrontdeskCheckin = <ThrowOnError exte
 /**
  * Gets the roll call information for an election.
  */
-export const getApiElectionsByElectionGuidFrontdeskRollcall = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByElectionGuidFrontdeskRollcallData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiElectionsByElectionGuidFrontdeskRollcallResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiElectionsByElectionGuidFrontdeskRollcallResponseTransformer,
+export const getApiByElectionGuidFrontdeskRollCall = <ThrowOnError extends boolean = false>(options: Options<GetApiByElectionGuidFrontdeskRollCallData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiByElectionGuidFrontdeskRollCallResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiByElectionGuidFrontdeskRollCallResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/frontdesk/rollcall',
+        url: '/api/{electionGuid}/frontdesk/rollCall',
         ...options
     });
 };
@@ -886,15 +965,15 @@ export const getApiElectionsByElectionGuidFrontdeskRollcall = <ThrowOnError exte
 /**
  * Gets the front desk statistics for an election.
  */
-export const getApiElectionsByElectionGuidFrontdeskStats = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByElectionGuidFrontdeskStatsData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiElectionsByElectionGuidFrontdeskStatsResponses, unknown, ThrowOnError>({
+export const getApiByElectionGuidFrontdeskStats = <ThrowOnError extends boolean = false>(options: Options<GetApiByElectionGuidFrontdeskStatsData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiByElectionGuidFrontdeskStatsResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/frontdesk/stats',
+        url: '/api/{electionGuid}/frontdesk/stats',
         ...options
     });
 };
@@ -922,15 +1001,15 @@ export const postApiImportParseCsvHeaders = <ThrowOnError extends boolean = fals
 /**
  * Imports ballot data from CSV content.
  */
-export const postApiImportBallots = <ThrowOnError extends boolean = false>(options?: Options<PostApiImportBallotsData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiImportBallotsResponses, unknown, ThrowOnError>({
+export const postApiImportImportBallots = <ThrowOnError extends boolean = false>(options?: Options<PostApiImportImportBallotsData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiImportImportBallotsResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Import/ballots',
+        url: '/api/Import/importBallots',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -942,15 +1021,31 @@ export const postApiImportBallots = <ThrowOnError extends boolean = false>(optio
 /**
  * Gets a paginated list of locations for the specified election.
  */
-export const getApiElectionsByElectionGuidLocations = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByElectionGuidLocationsData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiElectionsByElectionGuidLocationsResponses, unknown, ThrowOnError>({
+export const getApiByElectionGuidLocationsGetLocations = <ThrowOnError extends boolean = false>(options: Options<GetApiByElectionGuidLocationsGetLocationsData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiByElectionGuidLocationsGetLocationsResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/locations',
+        url: '/api/{electionGuid}/locations/getLocations',
+        ...options
+    });
+};
+
+/**
+ * Gets a specific location by its GUID.
+ */
+export const getApiByElectionGuidLocationsByLocationGuidGetLocation = <ThrowOnError extends boolean = false>(options: Options<GetApiByElectionGuidLocationsByLocationGuidGetLocationData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiByElectionGuidLocationsByLocationGuidGetLocationResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/{electionGuid}/locations/{locationGuid}/getLocation',
         ...options
     });
 };
@@ -958,15 +1053,35 @@ export const getApiElectionsByElectionGuidLocations = <ThrowOnError extends bool
 /**
  * Creates a new location.
  */
-export const postApiElectionsByElectionGuidLocations = <ThrowOnError extends boolean = false>(options: Options<PostApiElectionsByElectionGuidLocationsData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiElectionsByElectionGuidLocationsResponses, unknown, ThrowOnError>({
+export const postApiByElectionGuidLocationsCreateLocation = <ThrowOnError extends boolean = false>(options: Options<PostApiByElectionGuidLocationsCreateLocationData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiByElectionGuidLocationsCreateLocationResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/locations',
+        url: '/api/{electionGuid}/locations/createLocation',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * Updates an existing location.
+ */
+export const putApiByElectionGuidLocationsByLocationGuidUpdateLocation = <ThrowOnError extends boolean = false>(options: Options<PutApiByElectionGuidLocationsByLocationGuidUpdateLocationData, ThrowOnError>) => {
+    return (options.client ?? client).put<PutApiByElectionGuidLocationsByLocationGuidUpdateLocationResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/{electionGuid}/locations/{locationGuid}/updateLocation',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -978,47 +1093,32 @@ export const postApiElectionsByElectionGuidLocations = <ThrowOnError extends boo
 /**
  * Deletes a location.
  */
-export const deleteApiElectionsByElectionGuidLocationsByLocationGuid = <ThrowOnError extends boolean = false>(options: Options<DeleteApiElectionsByElectionGuidLocationsByLocationGuidData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteApiElectionsByElectionGuidLocationsByLocationGuidResponses, unknown, ThrowOnError>({
+export const deleteApiByElectionGuidLocationsByLocationGuidDeleteLocation = <ThrowOnError extends boolean = false>(options: Options<DeleteApiByElectionGuidLocationsByLocationGuidDeleteLocationData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteApiByElectionGuidLocationsByLocationGuidDeleteLocationResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/locations/{locationGuid}',
+        url: '/api/{electionGuid}/locations/{locationGuid}/deleteLocation',
         ...options
     });
 };
 
 /**
- * Gets a specific location by its GUID.
+ * Registers a computer at a specific location.
  */
-export const getApiElectionsByElectionGuidLocationsByLocationGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByElectionGuidLocationsByLocationGuidData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiElectionsByElectionGuidLocationsByLocationGuidResponses, unknown, ThrowOnError>({
+export const postApiByElectionGuidLocationsByLocationGuidRegisterComputer = <ThrowOnError extends boolean = false>(options: Options<PostApiByElectionGuidLocationsByLocationGuidRegisterComputerData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiByElectionGuidLocationsByLocationGuidRegisterComputerResponses, unknown, ThrowOnError>({
+        responseTransformer: postApiByElectionGuidLocationsByLocationGuidRegisterComputerResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/locations/{locationGuid}',
-        ...options
-    });
-};
-
-/**
- * Updates an existing location.
- */
-export const putApiElectionsByElectionGuidLocationsByLocationGuid = <ThrowOnError extends boolean = false>(options: Options<PutApiElectionsByElectionGuidLocationsByLocationGuidData, ThrowOnError>) => {
-    return (options.client ?? client).put<PutApiElectionsByElectionGuidLocationsByLocationGuidResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/elections/{electionGuid}/locations/{locationGuid}',
+        url: '/api/{electionGuid}/locations/{locationGuid}/registerComputer',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1030,53 +1130,32 @@ export const putApiElectionsByElectionGuidLocationsByLocationGuid = <ThrowOnErro
 /**
  * Gets all computers registered at a specific location.
  */
-export const getApiElectionsByElectionGuidLocationsByLocationGuidComputers = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByElectionGuidLocationsByLocationGuidComputersData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiElectionsByElectionGuidLocationsByLocationGuidComputersResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiElectionsByElectionGuidLocationsByLocationGuidComputersResponseTransformer,
+export const getApiByElectionGuidLocationsByLocationGuidGetComputers = <ThrowOnError extends boolean = false>(options: Options<GetApiByElectionGuidLocationsByLocationGuidGetComputersData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiByElectionGuidLocationsByLocationGuidGetComputersResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiByElectionGuidLocationsByLocationGuidGetComputersResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/locations/{locationGuid}/computers',
+        url: '/api/{electionGuid}/locations/{locationGuid}/getComputers',
         ...options
-    });
-};
-
-/**
- * Registers a computer at a specific location.
- */
-export const postApiElectionsByElectionGuidLocationsByLocationGuidComputers = <ThrowOnError extends boolean = false>(options: Options<PostApiElectionsByElectionGuidLocationsByLocationGuidComputersData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiElectionsByElectionGuidLocationsByLocationGuidComputersResponses, unknown, ThrowOnError>({
-        responseTransformer: postApiElectionsByElectionGuidLocationsByLocationGuidComputersResponseTransformer,
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/elections/{electionGuid}/locations/{locationGuid}/computers',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
     });
 };
 
 /**
  * Deletes a computer registration.
  */
-export const deleteApiElectionsByElectionGuidLocationsByLocationGuidComputersByComputerGuid = <ThrowOnError extends boolean = false>(options: Options<DeleteApiElectionsByElectionGuidLocationsByLocationGuidComputersByComputerGuidData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteApiElectionsByElectionGuidLocationsByLocationGuidComputersByComputerGuidResponses, unknown, ThrowOnError>({
+export const deleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputer = <ThrowOnError extends boolean = false>(options: Options<DeleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputerData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputerResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/locations/{locationGuid}/computers/{computerGuid}',
+        url: '/api/{electionGuid}/locations/{locationGuid}/{computerGuid}/deleteComputer',
         ...options
     });
 };
@@ -1092,7 +1171,7 @@ export const postApiOnlineVotingRequestCode = <ThrowOnError extends boolean = fa
                 type: 'http'
             }
         ],
-        url: '/api/online-voting/request-code',
+        url: '/api/online-voting/requestCode',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1112,7 +1191,7 @@ export const postApiOnlineVotingVerifyCode = <ThrowOnError extends boolean = fal
                 type: 'http'
             }
         ],
-        url: '/api/online-voting/verify-code',
+        url: '/api/online-voting/verifyCode',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1124,15 +1203,15 @@ export const postApiOnlineVotingVerifyCode = <ThrowOnError extends boolean = fal
 /**
  * Gets public information about an election for online voting.
  */
-export const getApiOnlineVotingElectionsByElectionGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiOnlineVotingElectionsByElectionGuidData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiOnlineVotingElectionsByElectionGuidResponses, unknown, ThrowOnError>({
+export const getApiOnlineVotingByElectionGuidElectionInfo = <ThrowOnError extends boolean = false>(options: Options<GetApiOnlineVotingByElectionGuidElectionInfoData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiOnlineVotingByElectionGuidElectionInfoResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/online-voting/elections/{electionGuid}',
+        url: '/api/online-voting/{electionGuid}/electionInfo',
         ...options
     });
 };
@@ -1140,15 +1219,15 @@ export const getApiOnlineVotingElectionsByElectionGuid = <ThrowOnError extends b
 /**
  * Gets the list of candidates for an election.
  */
-export const getApiOnlineVotingElectionsByElectionGuidCandidates = <ThrowOnError extends boolean = false>(options: Options<GetApiOnlineVotingElectionsByElectionGuidCandidatesData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiOnlineVotingElectionsByElectionGuidCandidatesResponses, unknown, ThrowOnError>({
+export const getApiOnlineVotingByElectionGuidCandidates = <ThrowOnError extends boolean = false>(options: Options<GetApiOnlineVotingByElectionGuidCandidatesData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiOnlineVotingByElectionGuidCandidatesResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/online-voting/elections/{electionGuid}/candidates',
+        url: '/api/online-voting/{electionGuid}/candidates',
         ...options
     });
 };
@@ -1156,15 +1235,15 @@ export const getApiOnlineVotingElectionsByElectionGuidCandidates = <ThrowOnError
 /**
  * Submits an online ballot for an election.
  */
-export const postApiOnlineVotingElectionsByElectionGuidSubmitBallot = <ThrowOnError extends boolean = false>(options: Options<PostApiOnlineVotingElectionsByElectionGuidSubmitBallotData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiOnlineVotingElectionsByElectionGuidSubmitBallotResponses, unknown, ThrowOnError>({
+export const postApiOnlineVotingByElectionGuidSubmitBallot = <ThrowOnError extends boolean = false>(options: Options<PostApiOnlineVotingByElectionGuidSubmitBallotData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiOnlineVotingByElectionGuidSubmitBallotResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/online-voting/elections/{electionGuid}/submit-ballot',
+        url: '/api/online-voting/{electionGuid}/submitBallot',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1176,15 +1255,15 @@ export const postApiOnlineVotingElectionsByElectionGuidSubmitBallot = <ThrowOnEr
 /**
  * Gets the voting status for a specific voter in an election.
  */
-export const getApiOnlineVotingElectionsByElectionGuidVoteStatus = <ThrowOnError extends boolean = false>(options: Options<GetApiOnlineVotingElectionsByElectionGuidVoteStatusData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiOnlineVotingElectionsByElectionGuidVoteStatusResponses, unknown, ThrowOnError>({
+export const getApiOnlineVotingByElectionGuidByVoterIdVoteStatus = <ThrowOnError extends boolean = false>(options: Options<GetApiOnlineVotingByElectionGuidByVoterIdVoteStatusData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiOnlineVotingByElectionGuidByVoterIdVoteStatusResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/online-voting/elections/{electionGuid}/vote-status',
+        url: '/api/online-voting/{electionGuid}/{voterId}/voteStatus',
         ...options
     });
 };
@@ -1192,15 +1271,15 @@ export const getApiOnlineVotingElectionsByElectionGuidVoteStatus = <ThrowOnError
 /**
  * Gets a paginated list of people for the specified election with optional filtering.
  */
-export const getApiPeopleElectionByElectionGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleElectionByElectionGuidData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiPeopleElectionByElectionGuidResponses, unknown, ThrowOnError>({
+export const getApiPeopleByElectionGuidGetPeople = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleByElectionGuidGetPeopleData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiPeopleByElectionGuidGetPeopleResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/People/election/{electionGuid}',
+        url: '/api/People/{electionGuid}/getPeople',
         ...options
     });
 };
@@ -1208,15 +1287,15 @@ export const getApiPeopleElectionByElectionGuid = <ThrowOnError extends boolean 
 /**
  * Searches for people within an election by name.
  */
-export const getApiPeopleElectionByElectionGuidSearch = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleElectionByElectionGuidSearchData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiPeopleElectionByElectionGuidSearchResponses, unknown, ThrowOnError>({
+export const getApiPeopleByElectionGuidSearchPeople = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleByElectionGuidSearchPeopleData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiPeopleByElectionGuidSearchPeopleResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/People/election/{electionGuid}/search',
+        url: '/api/People/{electionGuid}/searchPeople',
         ...options
     });
 };
@@ -1224,31 +1303,15 @@ export const getApiPeopleElectionByElectionGuidSearch = <ThrowOnError extends bo
 /**
  * Gets all candidates (people who can receive votes) for the specified election.
  */
-export const getApiPeopleElectionByElectionGuidCandidates = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleElectionByElectionGuidCandidatesData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiPeopleElectionByElectionGuidCandidatesResponses, unknown, ThrowOnError>({
+export const getApiPeopleByElectionGuidGetCandidates = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleByElectionGuidGetCandidatesData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiPeopleByElectionGuidGetCandidatesResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/People/election/{electionGuid}/candidates',
-        ...options
-    });
-};
-
-/**
- * Deletes a person by their GUID.
- */
-export const deleteApiPeopleByGuid = <ThrowOnError extends boolean = false>(options: Options<DeleteApiPeopleByGuidData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteApiPeopleByGuidResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/People/{guid}',
+        url: '/api/People/{electionGuid}/getCandidates',
         ...options
     });
 };
@@ -1256,31 +1319,51 @@ export const deleteApiPeopleByGuid = <ThrowOnError extends boolean = false>(opti
 /**
  * Gets a specific person by their GUID.
  */
-export const getApiPeopleByGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleByGuidData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiPeopleByGuidResponses, unknown, ThrowOnError>({
+export const getApiPeopleByGuidGetPerson = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleByGuidGetPersonData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiPeopleByGuidGetPersonResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/People/{guid}',
+        url: '/api/People/{guid}/getPerson',
         ...options
+    });
+};
+
+/**
+ * Creates a new person.
+ */
+export const postApiPeopleCreatePerson = <ThrowOnError extends boolean = false>(options?: Options<PostApiPeopleCreatePersonData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiPeopleCreatePersonResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/People/createPerson',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers
+        }
     });
 };
 
 /**
  * Updates an existing person.
  */
-export const putApiPeopleByGuid = <ThrowOnError extends boolean = false>(options: Options<PutApiPeopleByGuidData, ThrowOnError>) => {
-    return (options.client ?? client).put<PutApiPeopleByGuidResponses, unknown, ThrowOnError>({
+export const putApiPeopleByGuidUpdatePerson = <ThrowOnError extends boolean = false>(options: Options<PutApiPeopleByGuidUpdatePersonData, ThrowOnError>) => {
+    return (options.client ?? client).put<PutApiPeopleByGuidUpdatePersonResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/People/{guid}',
+        url: '/api/People/{guid}/updatePerson',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1290,22 +1373,18 @@ export const putApiPeopleByGuid = <ThrowOnError extends boolean = false>(options
 };
 
 /**
- * Creates a new person.
+ * Deletes a person by their GUID.
  */
-export const postApiPeople = <ThrowOnError extends boolean = false>(options?: Options<PostApiPeopleData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiPeopleResponses, unknown, ThrowOnError>({
+export const deleteApiPeopleByGuidDeletePerson = <ThrowOnError extends boolean = false>(options: Options<DeleteApiPeopleByGuidDeletePersonData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteApiPeopleByGuidDeletePersonResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/People',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers
-        }
+        url: '/api/People/{guid}/deletePerson',
+        ...options
     });
 };
 
@@ -1346,16 +1425,16 @@ export const getApiPublicElections = <ThrowOnError extends boolean = false>(opti
 /**
  * Gets the current status of a specific election.
  */
-export const getApiPublicElectionsByElectionGuidStatus = <ThrowOnError extends boolean = false>(options: Options<GetApiPublicElectionsByElectionGuidStatusData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiPublicElectionsByElectionGuidStatusResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiPublicElectionsByElectionGuidStatusResponseTransformer,
+export const getApiPublicByElectionGuidElectionStatus = <ThrowOnError extends boolean = false>(options: Options<GetApiPublicByElectionGuidElectionStatusData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiPublicByElectionGuidElectionStatusResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiPublicByElectionGuidElectionStatusResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Public/elections/{electionGuid}/status',
+        url: '/api/Public/{electionGuid}/electionStatus',
         ...options
     });
 };
@@ -1363,16 +1442,16 @@ export const getApiPublicElectionsByElectionGuidStatus = <ThrowOnError extends b
 /**
  * Gets public display data for a specific election, including results formatted for full-screen presentation.
  */
-export const getApiPublicElectionsByElectionGuidDisplay = <ThrowOnError extends boolean = false>(options: Options<GetApiPublicElectionsByElectionGuidDisplayData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiPublicElectionsByElectionGuidDisplayResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiPublicElectionsByElectionGuidDisplayResponseTransformer,
+export const getApiPublicByElectionGuidPublicDisplay = <ThrowOnError extends boolean = false>(options: Options<GetApiPublicByElectionGuidPublicDisplayData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiPublicByElectionGuidPublicDisplayResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiPublicByElectionGuidPublicDisplayResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Public/elections/{electionGuid}/display',
+        url: '/api/Public/{electionGuid}/publicDisplay',
         ...options
     });
 };
@@ -1396,132 +1475,36 @@ export const getApiPublicHealth = <ThrowOnError extends boolean = false>(options
 /**
  * Exports an election report in the specified format (PDF, Excel, or CSV).
  */
-export const postApiReportsExportByElectionId = <ThrowOnError extends boolean = false>(options: Options<PostApiReportsExportByElectionIdData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiReportsExportByElectionIdResponses, unknown, ThrowOnError>({
+export const postApiReportExportsByElectionId = <ThrowOnError extends boolean = false>(options: Options<PostApiReportExportsByElectionIdData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiReportExportsByElectionIdResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Reports/export/{electionId}',
+        url: '/api/report-exports/{electionId}',
         ...options,
         headers: {
             'Content-Type': 'application/json',
             ...options.headers
         }
-    });
-};
-
-/**
- * Generates chart data for visualizing election results.
- */
-export const getApiReportsChartByElectionIdByChartType = <ThrowOnError extends boolean = false>(options: Options<GetApiReportsChartByElectionIdByChartTypeData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiReportsChartByElectionIdByChartTypeResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/Reports/chart/{electionId}/{chartType}',
-        ...options
-    });
-};
-
-/**
- * Compares multiple elections based on specified metrics.
- */
-export const postApiReportsCompare = <ThrowOnError extends boolean = false>(options?: Options<PostApiReportsCompareData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiReportsCompareResponses, unknown, ThrowOnError>({
-        responseTransformer: postApiReportsCompareResponseTransformer,
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/Reports/compare',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers
-        }
-    });
-};
-
-/**
- * Generates a filtered report for an election based on advanced filter criteria.
- */
-export const postApiReportsAdvancedFilterByElectionId = <ThrowOnError extends boolean = false>(options: Options<PostApiReportsAdvancedFilterByElectionIdData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiReportsAdvancedFilterByElectionIdResponses, unknown, ThrowOnError>({
-        responseTransformer: postApiReportsAdvancedFilterByElectionIdResponseTransformer,
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/Reports/advanced-filter/{electionId}',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
-
-/**
- * Generates a custom report based on the provided configuration.
- */
-export const postApiReportsCustom = <ThrowOnError extends boolean = false>(options?: Options<PostApiReportsCustomData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiReportsCustomResponses, unknown, ThrowOnError>({
-        responseTransformer: postApiReportsCustomResponseTransformer,
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/Reports/custom',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers
-        }
-    });
-};
-
-/**
- * Generates statistical analysis for an election.
- */
-export const getApiReportsStatisticsByElectionId = <ThrowOnError extends boolean = false>(options: Options<GetApiReportsStatisticsByElectionIdData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiReportsStatisticsByElectionIdResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiReportsStatisticsByElectionIdResponseTransformer,
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/Reports/statistics/{electionId}',
-        ...options
     });
 };
 
 /**
  * Calculates the tally results for a specific election.
  */
-export const postApiResultsElectionByElectionGuidCalculate = <ThrowOnError extends boolean = false>(options: Options<PostApiResultsElectionByElectionGuidCalculateData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiResultsElectionByElectionGuidCalculateResponses, unknown, ThrowOnError>({
-        responseTransformer: postApiResultsElectionByElectionGuidCalculateResponseTransformer,
+export const postByElectionGuidCalculateTally = <ThrowOnError extends boolean = false>(options: Options<PostByElectionGuidCalculateTallyData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostByElectionGuidCalculateTallyResponses, unknown, ThrowOnError>({
+        responseTransformer: postByElectionGuidCalculateTallyResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/calculate',
+        url: '/{electionGuid}/calculateTally',
         ...options
     });
 };
@@ -1529,16 +1512,16 @@ export const postApiResultsElectionByElectionGuidCalculate = <ThrowOnError exten
 /**
  * Retrieves the tally results for a specific election.
  */
-export const getApiResultsElectionByElectionGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsElectionByElectionGuidData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiResultsElectionByElectionGuidResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiResultsElectionByElectionGuidResponseTransformer,
+export const getApiResultsByElectionGuidResults = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsByElectionGuidResultsData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiResultsByElectionGuidResultsResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiResultsByElectionGuidResultsResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}',
+        url: '/api/Results/{electionGuid}/results',
         ...options
     });
 };
@@ -1546,15 +1529,15 @@ export const getApiResultsElectionByElectionGuid = <ThrowOnError extends boolean
 /**
  * Retrieves summary statistics for a specific election.
  */
-export const getApiResultsElectionByElectionGuidSummary = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsElectionByElectionGuidSummaryData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiResultsElectionByElectionGuidSummaryResponses, unknown, ThrowOnError>({
+export const getApiResultsByElectionGuidSummary = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsByElectionGuidSummaryData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiResultsByElectionGuidSummaryResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/summary',
+        url: '/api/Results/{electionGuid}/summary',
         ...options
     });
 };
@@ -1562,16 +1545,16 @@ export const getApiResultsElectionByElectionGuidSummary = <ThrowOnError extends 
 /**
  * Retrieves the final election results (only elected and extra positions).
  */
-export const getApiResultsElectionByElectionGuidFinal = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsElectionByElectionGuidFinalData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiResultsElectionByElectionGuidFinalResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiResultsElectionByElectionGuidFinalResponseTransformer,
+export const getApiResultsByElectionGuidFinal = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsByElectionGuidFinalData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiResultsByElectionGuidFinalResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiResultsByElectionGuidFinalResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/final',
+        url: '/api/Results/{electionGuid}/final',
         ...options
     });
 };
@@ -1579,16 +1562,16 @@ export const getApiResultsElectionByElectionGuidFinal = <ThrowOnError extends bo
 /**
  * Refreshes the monitor information and updates computer contact time.
  */
-export const postApiResultsElectionByElectionGuidMonitorRefresh = <ThrowOnError extends boolean = false>(options: Options<PostApiResultsElectionByElectionGuidMonitorRefreshData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiResultsElectionByElectionGuidMonitorRefreshResponses, unknown, ThrowOnError>({
-        responseTransformer: postApiResultsElectionByElectionGuidMonitorRefreshResponseTransformer,
+export const postApiResultsByElectionGuidRefreshMonitor = <ThrowOnError extends boolean = false>(options: Options<PostApiResultsByElectionGuidRefreshMonitorData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiResultsByElectionGuidRefreshMonitorResponses, unknown, ThrowOnError>({
+        responseTransformer: postApiResultsByElectionGuidRefreshMonitorResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/monitor/refresh',
+        url: '/api/Results/{electionGuid}/refreshMonitor',
         ...options
     });
 };
@@ -1596,16 +1579,16 @@ export const postApiResultsElectionByElectionGuidMonitorRefresh = <ThrowOnError 
 /**
  * Retrieves monitoring information for a specific election.
  */
-export const getApiResultsElectionByElectionGuidMonitor = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsElectionByElectionGuidMonitorData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiResultsElectionByElectionGuidMonitorResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiResultsElectionByElectionGuidMonitorResponseTransformer,
+export const getApiResultsByElectionGuidMonitor = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsByElectionGuidMonitorData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiResultsByElectionGuidMonitorResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiResultsByElectionGuidMonitorResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/monitor',
+        url: '/api/Results/{electionGuid}/monitor',
         ...options
     });
 };
@@ -1613,15 +1596,15 @@ export const getApiResultsElectionByElectionGuidMonitor = <ThrowOnError extends 
 /**
  * Retrieves tie-breaking details for a specific tie break group in an election.
  */
-export const getApiResultsElectionByElectionGuidTiesByTieBreakGroup = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsElectionByElectionGuidTiesByTieBreakGroupData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiResultsElectionByElectionGuidTiesByTieBreakGroupResponses, unknown, ThrowOnError>({
+export const getApiResultsByElectionGuidByTieBreakGroupTies = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsByElectionGuidByTieBreakGroupTiesData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiResultsByElectionGuidByTieBreakGroupTiesResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/ties/{tieBreakGroup}',
+        url: '/api/Results/{electionGuid}/{tieBreakGroup}/ties',
         ...options
     });
 };
@@ -1629,15 +1612,15 @@ export const getApiResultsElectionByElectionGuidTiesByTieBreakGroup = <ThrowOnEr
 /**
  * Saves tie-breaking vote counts for an election.
  */
-export const postApiResultsElectionByElectionGuidTies = <ThrowOnError extends boolean = false>(options: Options<PostApiResultsElectionByElectionGuidTiesData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiResultsElectionByElectionGuidTiesResponses, unknown, ThrowOnError>({
+export const postApiResultsByElectionGuidSaveTies = <ThrowOnError extends boolean = false>(options: Options<PostApiResultsByElectionGuidSaveTiesData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiResultsByElectionGuidSaveTiesResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/ties',
+        url: '/api/Results/{electionGuid}/saveTies',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1649,16 +1632,16 @@ export const postApiResultsElectionByElectionGuidTies = <ThrowOnError extends bo
 /**
  * Retrieves the complete election report for a specific election.
  */
-export const getApiResultsElectionByElectionGuidReport = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsElectionByElectionGuidReportData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiResultsElectionByElectionGuidReportResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiResultsElectionByElectionGuidReportResponseTransformer,
+export const getApiResultsByElectionGuidCompleteReport = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsByElectionGuidCompleteReportData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiResultsByElectionGuidCompleteReportResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiResultsByElectionGuidCompleteReportResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/report',
+        url: '/api/Results/{electionGuid}/completeReport',
         ...options
     });
 };
@@ -1666,15 +1649,15 @@ export const getApiResultsElectionByElectionGuidReport = <ThrowOnError extends b
 /**
  * Retrieves specific report data for an election by report code.
  */
-export const getApiResultsElectionByElectionGuidReportByReportCode = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsElectionByElectionGuidReportByReportCodeData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiResultsElectionByElectionGuidReportByReportCodeResponses, unknown, ThrowOnError>({
+export const getApiResultsByElectionGuidByReportCodeGetReportData = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsByElectionGuidByReportCodeGetReportDataData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiResultsByElectionGuidByReportCodeGetReportDataResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/report/{reportCode}',
+        url: '/api/Results/{electionGuid}/{reportCode}/getReportData',
         ...options
     });
 };
@@ -1682,16 +1665,16 @@ export const getApiResultsElectionByElectionGuidReportByReportCode = <ThrowOnErr
 /**
  * Retrieves presentation data for displaying election results.
  */
-export const getApiResultsElectionByElectionGuidPresentation = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsElectionByElectionGuidPresentationData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiResultsElectionByElectionGuidPresentationResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiResultsElectionByElectionGuidPresentationResponseTransformer,
+export const getApiResultsByElectionGuidPresentationData = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsByElectionGuidPresentationDataData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiResultsByElectionGuidPresentationDataResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiResultsByElectionGuidPresentationDataResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/presentation',
+        url: '/api/Results/{electionGuid}/presentationData',
         ...options
     });
 };
@@ -1699,16 +1682,16 @@ export const getApiResultsElectionByElectionGuidPresentation = <ThrowOnError ext
 /**
  * Retrieves detailed statistics for a specific election.
  */
-export const getApiResultsElectionByElectionGuidDetailedStatistics = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsElectionByElectionGuidDetailedStatisticsData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiResultsElectionByElectionGuidDetailedStatisticsResponses, unknown, ThrowOnError>({
-        responseTransformer: getApiResultsElectionByElectionGuidDetailedStatisticsResponseTransformer,
+export const getApiResultsByElectionGuidDetailedStatistics = <ThrowOnError extends boolean = false>(options: Options<GetApiResultsByElectionGuidDetailedStatisticsData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiResultsByElectionGuidDetailedStatisticsResponses, unknown, ThrowOnError>({
+        responseTransformer: getApiResultsByElectionGuidDetailedStatisticsResponseTransformer,
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Results/election/{electionGuid}/detailed-statistics',
+        url: '/api/Results/{electionGuid}/detailedStatistics',
         ...options
     });
 };
@@ -1774,15 +1757,31 @@ export const getApiSetupElectionByGuidStatus = <ThrowOnError extends boolean = f
 /**
  * Gets a paginated list of tellers for a specific election.
  */
-export const getApiElectionsByElectionGuidTellers = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByElectionGuidTellersData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiElectionsByElectionGuidTellersResponses, unknown, ThrowOnError>({
+export const getApiByElectionGuidTellers = <ThrowOnError extends boolean = false>(options: Options<GetApiByElectionGuidTellersData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiByElectionGuidTellersResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/tellers',
+        url: '/api/{electionGuid}/tellers',
+        ...options
+    });
+};
+
+/**
+ * Gets a specific teller by ID.
+ */
+export const getApiByElectionGuidTellersByRowIdGetTeller = <ThrowOnError extends boolean = false>(options: Options<GetApiByElectionGuidTellersByRowIdGetTellerData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiByElectionGuidTellersByRowIdGetTellerResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/{electionGuid}/tellers/{rowId}/getTeller',
         ...options
     });
 };
@@ -1790,15 +1789,35 @@ export const getApiElectionsByElectionGuidTellers = <ThrowOnError extends boolea
 /**
  * Creates a new teller for an election.
  */
-export const postApiElectionsByElectionGuidTellers = <ThrowOnError extends boolean = false>(options: Options<PostApiElectionsByElectionGuidTellersData, ThrowOnError>) => {
-    return (options.client ?? client).post<PostApiElectionsByElectionGuidTellersResponses, unknown, ThrowOnError>({
+export const postApiByElectionGuidTellersCreateTeller = <ThrowOnError extends boolean = false>(options: Options<PostApiByElectionGuidTellersCreateTellerData, ThrowOnError>) => {
+    return (options.client ?? client).post<PostApiByElectionGuidTellersCreateTellerResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/tellers',
+        url: '/api/{electionGuid}/tellers/createTeller',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * Updates an existing teller.
+ */
+export const putApiByElectionGuidTellersByRowIdUpdateTeller = <ThrowOnError extends boolean = false>(options: Options<PutApiByElectionGuidTellersByRowIdUpdateTellerData, ThrowOnError>) => {
+    return (options.client ?? client).put<PutApiByElectionGuidTellersByRowIdUpdateTellerResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/{electionGuid}/tellers/{rowId}/updateTeller',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1810,67 +1829,31 @@ export const postApiElectionsByElectionGuidTellers = <ThrowOnError extends boole
 /**
  * Deletes a teller by ID.
  */
-export const deleteApiElectionsByElectionGuidTellersByRowId = <ThrowOnError extends boolean = false>(options: Options<DeleteApiElectionsByElectionGuidTellersByRowIdData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteApiElectionsByElectionGuidTellersByRowIdResponses, unknown, ThrowOnError>({
+export const deleteApiByElectionGuidTellersByRowIdDeleteTeller = <ThrowOnError extends boolean = false>(options: Options<DeleteApiByElectionGuidTellersByRowIdDeleteTellerData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteApiByElectionGuidTellersByRowIdDeleteTellerResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/elections/{electionGuid}/tellers/{rowId}',
+        url: '/api/{electionGuid}/tellers/{rowId}/deleteTeller',
         ...options
-    });
-};
-
-/**
- * Gets a specific teller by ID.
- */
-export const getApiElectionsByElectionGuidTellersByRowId = <ThrowOnError extends boolean = false>(options: Options<GetApiElectionsByElectionGuidTellersByRowIdData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiElectionsByElectionGuidTellersByRowIdResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/elections/{electionGuid}/tellers/{rowId}',
-        ...options
-    });
-};
-
-/**
- * Updates an existing teller.
- */
-export const putApiElectionsByElectionGuidTellersByRowId = <ThrowOnError extends boolean = false>(options: Options<PutApiElectionsByElectionGuidTellersByRowIdData, ThrowOnError>) => {
-    return (options.client ?? client).put<PutApiElectionsByElectionGuidTellersByRowIdResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/elections/{electionGuid}/tellers/{rowId}',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
     });
 };
 
 /**
  * Gets all votes for a specific ballot.
  */
-export const getApiVotesBallotByBallotGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiVotesBallotByBallotGuidData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiVotesBallotByBallotGuidResponses, unknown, ThrowOnError>({
+export const getApiVotesByBallotGuidGetVotesByBallot = <ThrowOnError extends boolean = false>(options: Options<GetApiVotesByBallotGuidGetVotesByBallotData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiVotesByBallotGuidGetVotesByBallotResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Votes/ballot/{ballotGuid}',
+        url: '/api/Votes/{ballotGuid}/getVotesByBallot',
         ...options
     });
 };
@@ -1878,31 +1861,15 @@ export const getApiVotesBallotByBallotGuid = <ThrowOnError extends boolean = fal
 /**
  * Gets all votes for a specific election.
  */
-export const getApiVotesElectionByElectionGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiVotesElectionByElectionGuidData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiVotesElectionByElectionGuidResponses, unknown, ThrowOnError>({
+export const getApiVotesByElectionGuidGetVotesByElection = <ThrowOnError extends boolean = false>(options: Options<GetApiVotesByElectionGuidGetVotesByElectionData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiVotesByElectionGuidGetVotesByElectionResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Votes/election/{electionGuid}',
-        ...options
-    });
-};
-
-/**
- * Deletes a vote by its ID.
- */
-export const deleteApiVotesById = <ThrowOnError extends boolean = false>(options: Options<DeleteApiVotesByIdData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteApiVotesByIdResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/Votes/{id}',
+        url: '/api/Votes/{electionGuid}/getVotesByElection',
         ...options
     });
 };
@@ -1910,31 +1877,51 @@ export const deleteApiVotesById = <ThrowOnError extends boolean = false>(options
 /**
  * Gets a specific vote by its ID.
  */
-export const getApiVotesById = <ThrowOnError extends boolean = false>(options: Options<GetApiVotesByIdData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetApiVotesByIdResponses, unknown, ThrowOnError>({
+export const getApiVotesByIdGetVote = <ThrowOnError extends boolean = false>(options: Options<GetApiVotesByIdGetVoteData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetApiVotesByIdGetVoteResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Votes/{id}',
+        url: '/api/Votes/{id}/getVote',
         ...options
+    });
+};
+
+/**
+ * Creates a new vote.
+ */
+export const postApiVotesCreateVote = <ThrowOnError extends boolean = false>(options?: Options<PostApiVotesCreateVoteData, ThrowOnError>) => {
+    return (options?.client ?? client).post<PostApiVotesCreateVoteResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/Votes/createVote',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers
+        }
     });
 };
 
 /**
  * Updates an existing vote.
  */
-export const putApiVotesById = <ThrowOnError extends boolean = false>(options: Options<PutApiVotesByIdData, ThrowOnError>) => {
-    return (options.client ?? client).put<PutApiVotesByIdResponses, unknown, ThrowOnError>({
+export const putApiVotesByIdUpdateVote = <ThrowOnError extends boolean = false>(options: Options<PutApiVotesByIdUpdateVoteData, ThrowOnError>) => {
+    return (options.client ?? client).put<PutApiVotesByIdUpdateVoteResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Votes/{id}',
+        url: '/api/Votes/{id}/updateVote',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1944,21 +1931,17 @@ export const putApiVotesById = <ThrowOnError extends boolean = false>(options: O
 };
 
 /**
- * Creates a new vote.
+ * Deletes a vote by its ID.
  */
-export const postApiVotes = <ThrowOnError extends boolean = false>(options?: Options<PostApiVotesData, ThrowOnError>) => {
-    return (options?.client ?? client).post<PostApiVotesResponses, unknown, ThrowOnError>({
+export const deleteApiVotesByIdDeleteVote = <ThrowOnError extends boolean = false>(options: Options<DeleteApiVotesByIdDeleteVoteData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteApiVotesByIdDeleteVoteResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/Votes',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers
-        }
+        url: '/api/Votes/{id}/deleteVote',
+        ...options
     });
 };

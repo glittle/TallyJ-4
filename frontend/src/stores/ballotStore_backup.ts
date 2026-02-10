@@ -129,7 +129,14 @@ export const useBallotStore = defineStore('ballot', () => {
     loading.value = true;
     error.value = null;
     try {
-      await voteService.delete(ballotGuid, positionOnBallot);
+      const vote = currentBallot.value?.votes.find(
+        v => v.ballotGuid === ballotGuid && v.positionOnBallot === positionOnBallot
+      );
+      if (!vote) {
+        throw new Error('Vote not found');
+      }
+
+      await voteService.delete(vote.rowId);
       
       if (currentBallot.value?.ballotGuid === ballotGuid) {
         currentBallot.value.votes = currentBallot.value.votes.filter(
