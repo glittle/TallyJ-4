@@ -1,0 +1,11 @@
+{
+  "dashboard.welcome": "Welcome to TallyJ 4",
+  "dashboard.subtitle": "Modern election management and ballot tallying system",
+  "dashboard.statistics": "Statistics",
+  "dashboard.totalElections": "Total Elections",
+  "dashboard.activeElections": "Active Elections",
+  "dashboard.totalVoters": "Total Voters",
+  "dashboard.totalBallots": "Total Ballots",
+  "dashboard.recentElections": "Recent Elections",
+  "dashboard.noElections": "No elections found"
+}

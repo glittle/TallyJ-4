@@ -1,0 +1,11 @@
+{
+  "dashboard.welcome": "Bienvenue sur TallyJ 4",
+  "dashboard.subtitle": "Système moderne de gestion des élections et de dépouillement des scrutins",
+  "dashboard.statistics": "Statistiques",
+  "dashboard.totalElections": "Total des élections",
+  "dashboard.activeElections": "Élections actives",
+  "dashboard.totalVoters": "Total des électeurs",
+  "dashboard.totalBallots": "Total des bulletins",
+  "dashboard.recentElections": "Élections récentes",
+  "dashboard.noElections": "Aucune élection trouvée"
+}

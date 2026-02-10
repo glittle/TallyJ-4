@@ -1,0 +1,10 @@
+{
+  "profile.name": "Nom",
+  "profile.loginMethod": "Méthode de connexion",
+  "profile.changePassword": "Changer le mot de passe",
+  "profile.currentPassword": "Mot de passe actuel",
+  "profile.newPassword": "Nouveau mot de passe",
+  "profile.confirmPassword": "Confirmer le nouveau mot de passe",
+  "profile.passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+  "profile.createdAt": "Membre depuis"
+}

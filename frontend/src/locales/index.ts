@@ -1,7 +1,5 @@
 import { createI18n } from "vue-i18n";
-import en from "./en.json";
-import fr from "./fr.json";
-import shared from "./shared.json";
+import common from "./common.json";
 
 // Utility function to deep merge objects
 function deepMerge(target: any, source: any): any {
@@ -38,6 +36,20 @@ function flatToNested(flat: any): any {
   return result;
 }
 
+// Load all locale files using Vite's glob import
+const enModules = import.meta.glob("./en/*.json", { eager: true });
+const frModules = import.meta.glob("./fr/*.json", { eager: true });
+
+// Merge all JSON files for a locale
+function mergeLocaleFiles(modules: Record<string, any>): any {
+  let merged = {};
+  for (const path in modules) {
+    const content = modules[path].default || modules[path];
+    merged = deepMerge(merged, content);
+  }
+  return flatToNested(merged);
+}
+
 const savedLocale = localStorage.getItem("preferred-language") || "en";
 
 console.log("Saved locale:", savedLocale);
@@ -46,8 +58,8 @@ export const i18n = createI18n({
   locale: savedLocale,
   fallbackLocale: "en",
   messages: {
-    en: deepMerge(shared, flatToNested(en)),
-    fr: deepMerge(shared, flatToNested(fr)),
+    en: deepMerge(common, mergeLocaleFiles(enModules)),
+    fr: deepMerge(common, mergeLocaleFiles(frModules)),
   },
 });
 

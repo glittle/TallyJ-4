@@ -4,9 +4,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Globalization;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
 using TallyJ4.EF.Data;
@@ -16,6 +19,7 @@ using TallyJ4.Backend.Helpers;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using TallyJ4.Application.Services.Auth;
+using TallyJ4.Localization;
 using System.Reflection;
 
 Console.WriteLine("Starting up..."); // for server log files
@@ -203,8 +207,9 @@ services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.ElectionAccessHa
 services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.TellerAccessHandler>();
 services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.HeadTellerAccessHandler>();
 
-// Add localization
-services.AddLocalization();
+// Add JSON localization
+services.Configure<JsonLocalizationOptions>(builderConfiguration.GetSection(JsonLocalizationOptions.SectionName));
+services.AddJsonLocalization();
 
 // Add HTTP context accessor
 services.AddHttpContextAccessor();
@@ -354,8 +359,18 @@ app.UseHttpsRedirection();
 // Use CORS
 app.UseCors("AllowFrontend");
 
-// Use localization middleware
-app.UseRequestLocalization();
+// Configure request localization
+var localizationOptions = app.Services.GetRequiredService<IOptions<JsonLocalizationOptions>>().Value;
+var supportedCultures = localizationOptions.SupportedCultures
+    .Select(c => new CultureInfo(c))
+    .ToArray();
+
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(localizationOptions.DefaultCulture),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
 
 app.UseAuthentication();  // Enables Identity
 app.UseMiddleware<TallyJ4.Middleware.ElectionContextMiddleware>();

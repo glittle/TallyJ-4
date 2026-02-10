@@ -501,6 +501,146 @@ The database is automatically seeded with:
 - Axios 1.13.2
 - Vue I18n 10.0.8
 
+## Internationalization (i18n)
+
+TallyJ 4 supports multiple languages using a unified JSON-based localization system shared between frontend and backend.
+
+### Supported Languages
+
+- **English** (en) - Default
+- **French** (fr)
+
+### Localization Architecture
+
+Both frontend and backend use the same translation files located in `frontend/src/locales/`:
+
+```
+frontend/src/locales/
+├── en/
+│   ├── common.json       # Common UI strings
+│   ├── auth.json         # Authentication
+│   ├── elections.json    # Elections
+│   ├── people.json       # People management
+│   ├── ballots.json      # Ballots
+│   ├── votes.json        # Votes
+│   ├── results.json      # Results
+│   ├── dashboard.json    # Dashboard
+│   ├── errors.json       # Error messages
+│   ├── nav.json          # Navigation
+│   └── profile.json      # Profile and settings
+├── fr/
+│   └── [same files as en/]
+├── common.json           # Non-translatable config (DO NOT TRANSLATE)
+├── index.ts              # Loader for frontend
+└── validate-translations.js  # Validation script
+```
+
+### Backend Configuration
+
+The backend uses a custom JSON-based `IStringLocalizer` implementation that reads from the same locale files as the frontend.
+
+**appsettings.json:**
+
+```json
+{
+  "Localization": {
+    "ResourcesPath": "../frontend/src/locales",
+    "SupportedCultures": ["en", "fr"],
+    "DefaultCulture": "en"
+  }
+}
+```
+
+For production deployments, update `ResourcesPath` to the absolute path where locale files are deployed.
+
+### Adding New Translations
+
+1. **Choose the appropriate file** based on the feature area (e.g., `auth.json` for authentication strings)
+
+2. **Add the translation key** in **all locale files** with matching structure:
+
+   **en/auth.json:**
+   ```json
+   {
+     "auth": {
+       "login": {
+         "title": "Sign In"
+       }
+     }
+   }
+   ```
+
+   **fr/auth.json:**
+   ```json
+   {
+     "auth": {
+       "login": {
+         "title": "Se connecter"
+       }
+     }
+   }
+   ```
+
+3. **Use the translation:**
+
+   **Frontend (Vue):**
+   ```vue
+   <template>
+     <h1>{{ $t('auth.login.title') }}</h1>
+   </template>
+   ```
+
+   **Backend (C#):**
+   ```csharp
+   public class AuthService
+   {
+       private readonly IStringLocalizer _localizer;
+
+       public AuthService(IStringLocalizer localizer)
+       {
+           _localizer = localizer;
+       }
+
+       public string GetLoginTitle()
+       {
+           return _localizer["auth.login.title"];
+       }
+   }
+   ```
+
+4. **Validate translations:**
+   ```bash
+   cd frontend
+   npm run validate:i18n
+   ```
+
+### Translation Guidelines
+
+- **Keys**: Use dot notation (e.g., `auth.errors.invalidCredentials`)
+- **Structure**: Group related translations in the same file
+- **Consistency**: All locale files must have matching keys
+- **Empty values**: Never leave translation values empty
+- **File splitting**: Keep files focused on a single feature area
+- **Matching structure**: All translations in `en/auth.json` must have corresponding translations in `fr/auth.json`, `de/auth.json`, etc.
+
+### Backend Localization
+
+The backend respects the `Accept-Language` HTTP header:
+
+```bash
+# Request in English
+curl -X GET http://localhost:5000/api/elections \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept-Language: en"
+
+# Request in French
+curl -X GET http://localhost:5000/api/elections \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept-Language: fr"
+```
+
+Error messages and validation messages are automatically localized based on the request language.
+
 ## Documentation
 
 - **Setup Guide**: [backend/SETUP.md](backend/SETUP.md)

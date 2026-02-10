@@ -1,0 +1,14 @@
+{
+  "tally.title": "Calculer le dépouillement",
+  "tally.warning": "Avertissement",
+  "tally.warningMessage": "Le calcul du dépouillement écrasera tous les résultats existants. Cette action est irréversible.",
+  "tally.normalElection": "Élection normale",
+  "tally.singleNameElection": "Élection à nom unique",
+  "tally.calculate": "Calculer le dépouillement",
+  "tally.calculateSuccess": "Dépouillement calculé avec succès",
+  "tally.calculateError": "Échec du calcul du dépouillement",
+  "tally.calculatingProgress": "Calcul en cours",
+  "tally.processedBallots": "Bulletins traités",
+  "tally.resultsPreview": "Aperçu des résultats (Top 10)",
+  "tally.viewFullResults": "Voir tous les résultats"
+}
