@@ -7,6 +7,7 @@
   "common.error": "Une erreur s'est produite",
   "common.cancel": "Annuler",
   "common.confirm": "Confirmer",
+  "common.deleteSelected": "Supprimer la sélection",
   "common.save": "Enregistrer",
   "common.delete": "Supprimer",
   "common.edit": "Modifier",
@@ -14,6 +15,7 @@
   "common.create": "Créer",
   "common.actions": "Actions",
   "common.profile": "Profil",
+  "common.toggleTheme": "Basculer le thème",
   "common.settings": "Paramètres",
   "common.warning": "Avertissement",
   "common.dangerZone": "Zone de danger",
@@ -24,5 +26,11 @@
   "common.or": "ou",
   "common.startDate": "Date de début",
   "common.endDate": "Date de fin",
-  "common.actionIrreversible": "Cette action est irréversible."
+  "common.userMenu": "Menu du compte utilisateur",
+  "common.actionIrreversible": "Cette action est irréversible.",
+  "common.next": "Suivant",
+  "common.previous": "Précédent",
+  "common.yes": "Oui",
+  "common.no": "Non",
+  "common.close": "Fermer"
 }
