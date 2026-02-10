@@ -104,7 +104,8 @@ Split large `en.json` and `fr.json` into smaller categorical files organized by 
 
 ---
 
-### [ ] Step: Update Frontend Loader
+### [x] Step: Update Frontend Loader
+<!-- chat-id: 166bebe4-e64a-40d7-8f6d-218d5d96cf9a -->
 
 Update `frontend/src/locales/index.ts` to load from new file structure.
 
