@@ -1,0 +1,10 @@
+{
+  "import.progressTitle": "Import Progress",
+  "import.processingRows": "Processing rows {processed} of {total}",
+  "import.successCount": "Successful: {count}",
+  "import.errorCount": "Errors: {count}",
+  "import.currentStatus": "Status: {status}",
+  "import.errors": "Import Errors",
+  "import.moreErrors": "and {count} more errors...",
+  "import.completed": "Import completed successfully"
+}

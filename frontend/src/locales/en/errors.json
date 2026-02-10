@@ -1,0 +1,17 @@
+{
+  "notification.success": "Success",
+  "notification.error": "Error",
+  "notification.warning": "Warning",
+  "notification.info": "Information",
+  "error.somethingWentWrong": "Something went wrong",
+  "error.pageError": "An error occurred while loading this page. Please try again.",
+  "error.tryAgain": "Try Again",
+  "error.goHome": "Go Home",
+  "error.errorDetails": "Error Details",
+  "error.networkError": "Network error. Please check your connection and try again.",
+  "error.serverError": "Server error. Please try again later.",
+  "error.unauthorized": "You are not authorized to perform this action.",
+  "error.forbidden": "Access denied.",
+  "error.notFound": "The requested resource was not found.",
+  "error.validationError": "Please check your input and try again."
+}

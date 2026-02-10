@@ -1,0 +1,17 @@
+{
+  "notification.success": "Succès",
+  "notification.error": "Erreur",
+  "notification.warning": "Avertissement",
+  "notification.info": "Information",
+  "error.somethingWentWrong": "Une erreur est survenue",
+  "error.pageError": "Une erreur est survenue lors du chargement de cette page. Veuillez réessayer.",
+  "error.tryAgain": "Réessayer",
+  "error.goHome": "Accueil",
+  "error.errorDetails": "Détails de l'erreur",
+  "error.networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+  "error.serverError": "Erreur serveur. Veuillez réessayer plus tard.",
+  "error.unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+  "error.forbidden": "Accès refusé.",
+  "error.notFound": "La ressource demandée est introuvable.",
+  "error.validationError": "Veuillez vérifier vos informations et réessayer."
+}
