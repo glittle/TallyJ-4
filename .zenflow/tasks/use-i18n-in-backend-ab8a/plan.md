@@ -146,7 +146,8 @@ Extract backend .resx translations and add them to frontend JSON locale files.
 
 ---
 
-### [ ] Step: Add JSON Localization to Backend
+### [x] Step: Add JSON Localization to Backend
+<!-- chat-id: 71baefda-69c3-4f83-8697-ee6b46ccaf44 -->
 
 Integrate JSON-based localization into the ASP.NET Core backend.
 
