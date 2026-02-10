@@ -12,9 +12,15 @@ export interface PersonDto {
   otherLastNames?: string;
   otherNames?: string;
   otherInfo?: string;
+  combinedSoundCodes?: string;
   ageGroup?: string;
   ineligibleReasonGuid?: string;
   voteCount: number;
+}
+
+export interface SearchablePersonDto extends PersonDto {
+  _searchText: string;
+  _soundexCodes: string[];
 }
 
 export interface CreatePersonDto {

@@ -3,10 +3,10 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <h2>{{ $t('elections.list') }}</h2>
+          <h2>{{ $t("elections.list") }}</h2>
           <el-button type="primary" @click="createElection">
             <el-icon><Plus /></el-icon>
-            {{ $t('elections.createNew') }}
+            {{ $t("elections.createNew") }}
           </el-button>
         </div>
       </template>
@@ -64,7 +64,7 @@
           <el-col :span="6" class="text-right">
             <el-space>
               <el-button @click="clearFilters" :disabled="!hasActiveFilters">
-                {{ $t('common.clearFilters') }}
+                {{ $t("common.clearFilters") }}
               </el-button>
               <el-button
                 v-if="selectedElections.length > 0"
@@ -72,7 +72,7 @@
                 @click="showBulkDeleteDialog"
               >
                 <el-icon><Delete /></el-icon>
-                {{ $t('common.deleteSelected', { count: selectedElections.length }) }}
+                {{ $t("common.deleteSelected", { count: selectedElections.length }) }}
               </el-button>
             </el-space>
           </el-col>
@@ -86,26 +86,56 @@
           style="width: 100%"
           @selection-change="handleSelectionChange"
           @sort-change="handleSortChange"
-          :default-sort="{prop: 'dateOfElection', order: 'descending'}"
+          :default-sort="{ prop: 'dateOfElection', order: 'descending' }"
         >
           <el-table-column type="selection" width="55" />
-          <el-table-column prop="name" :label="$t('elections.name')" min-width="250" sortable="custom" />
-          <el-table-column prop="electionType" :label="$t('elections.type')" width="120" sortable="custom">
+          <el-table-column
+            prop="name"
+            :label="$t('elections.name')"
+            min-width="250"
+            sortable="custom"
+          />
+          <el-table-column
+            prop="electionType"
+            :label="$t('elections.type')"
+            width="120"
+            sortable="custom"
+          >
             <template #default="scope">
               <el-tag size="small">{{ scope.row.electionType }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="dateOfElection" :label="$t('elections.date')" width="140" sortable="custom">
+          <el-table-column
+            prop="dateOfElection"
+            :label="$t('elections.date')"
+            width="140"
+            sortable="custom"
+          >
             <template #default="scope">
               {{ formatDate(scope.row.dateOfElection) }}
             </template>
           </el-table-column>
-          <el-table-column prop="numberToElect" :label="$t('elections.toElect')" width="100" sortable="custom" />
-          <el-table-column prop="voterCount" :label="$t('elections.voters')" width="100" sortable="custom" />
-          <el-table-column prop="tallyStatus" :label="$t('elections.status')" width="120" sortable="custom">
+          <el-table-column
+            prop="numberToElect"
+            :label="$t('elections.toElect')"
+            width="100"
+            sortable="custom"
+          />
+          <el-table-column
+            prop="voterCount"
+            :label="$t('elections.voters')"
+            width="100"
+            sortable="custom"
+          />
+          <el-table-column
+            prop="tallyStatus"
+            :label="$t('elections.status')"
+            width="120"
+            sortable="custom"
+          >
             <template #default="scope">
               <el-tag :type="getStatusType(scope.row.tallyStatus)">
-                {{ scope.row.tallyStatus || 'Draft' }}
+                {{ scope.row.tallyStatus || "Draft" }}
               </el-tag>
             </template>
           </el-table-column>
@@ -114,19 +144,15 @@
               <el-button-group>
                 <el-button size="small" @click="viewElection(scope.row.electionGuid)">
                   <el-icon><View /></el-icon>
-                  {{ $t('common.view') }}
+                  {{ $t("common.view") }}
                 </el-button>
                 <el-button size="small" @click="editElection(scope.row.electionGuid)">
                   <el-icon><Edit /></el-icon>
-                  {{ $t('common.edit') }}
+                  {{ $t("common.edit") }}
                 </el-button>
-                <el-button
-                  size="small"
-                  type="danger"
-                  @click="deleteElection(scope.row)"
-                >
+                <el-button size="small" type="danger" @click="deleteElection(scope.row)">
                   <el-icon><Delete /></el-icon>
-                  {{ $t('common.delete') }}
+                  {{ $t("common.delete") }}
                 </el-button>
               </el-button-group>
             </template>
@@ -153,15 +179,15 @@
       :title="$t('elections.confirmBulkDelete')"
       width="500px"
     >
-      <p>{{ $t('elections.bulkDeleteMessage', { count: selectedElections.length }) }}</p>
-      <p class="warning-text">{{ $t('common.actionIrreversible') }}</p>
+      <p>{{ $t("elections.bulkDeleteMessage", { count: selectedElections.length }) }}</p>
+      <p class="warning-text">{{ $t("common.actionIrreversible") }}</p>
 
       <template #footer>
         <el-button @click="showBulkDeleteConfirm = false">
-          {{ $t('common.cancel') }}
+          {{ $t("common.cancel") }}
         </el-button>
         <el-button type="danger" @click="confirmBulkDelete" :loading="bulkDeleting">
-          {{ $t('common.delete') }}
+          {{ $t("common.delete") }}
         </el-button>
       </template>
     </el-dialog>
@@ -169,13 +195,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { Plus, Search, Delete, View, Edit } from '@element-plus/icons-vue';
-import { useElectionStore } from '../../stores/electionStore';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import type { ElectionDto } from '../../types';
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { Plus, Search, Delete, View, Edit } from "@element-plus/icons-vue";
+import { useElectionStore } from "../../stores/electionStore";
+import { ElMessage, ElMessageBox } from "element-plus";
+import type { ElectionDto } from "../../types";
 
 const router = useRouter();
 const { t } = useI18n();
@@ -186,16 +212,16 @@ const allElections = computed(() => electionStore.elections);
 
 // Filters
 const filters = ref({
-  search: '',
-  status: '',
-  type: '',
-  dateRange: [] as Date[]
+  search: "",
+  status: "",
+  type: "",
+  dateRange: [] as Date[],
 });
 
 // Sorting
 const sort = ref({
-  prop: 'dateOfElection',
-  order: 'descending' as 'ascending' | 'descending'
+  prop: "dateOfElection",
+  order: "descending" as "ascending" | "descending",
 });
 
 // Selection for bulk operations
@@ -207,7 +233,7 @@ const bulkDeleting = ref(false);
 const pagination = ref({
   page: 1,
   pageSize: 20,
-  total: 0
+  total: 0,
 });
 
 // Filtered and sorted elections
@@ -217,27 +243,28 @@ const filteredElections = computed(() => {
   // Apply filters
   if (filters.value.search) {
     const search = filters.value.search.toLowerCase();
-    filtered = filtered.filter(election =>
-      election.name.toLowerCase().includes(search) ||
-      election.convenor?.toLowerCase().includes(search)
+    filtered = filtered.filter(
+      (election) =>
+        election.name.toLowerCase().includes(search) ||
+        election.convenor?.toLowerCase().includes(search)
     );
   }
 
   if (filters.value.status) {
-    filtered = filtered.filter(election =>
-      (election.tallyStatus || 'Draft') === filters.value.status
+    filtered = filtered.filter(
+      (election) => (election.tallyStatus || "Draft") === filters.value.status
     );
   }
 
   if (filters.value.type) {
-    filtered = filtered.filter(election =>
-      election.electionType === filters.value.type
+    filtered = filtered.filter(
+      (election) => election.electionType === filters.value.type
     );
   }
 
   if (filters.value.dateRange && filters.value.dateRange.length === 2) {
     const [startDate, endDate] = filters.value.dateRange;
-    filtered = filtered.filter(election => {
+    filtered = filtered.filter((election) => {
       if (!election.dateOfElection) return false;
       const electionDate = new Date(election.dateOfElection);
       return electionDate >= startDate && electionDate <= endDate;
@@ -251,17 +278,17 @@ const filteredElections = computed(() => {
       let bVal = (b as any)[sort.value.prop];
 
       // Handle date sorting
-      if (sort.value.prop === 'dateOfElection') {
+      if (sort.value.prop === "dateOfElection") {
         aVal = aVal ? new Date(aVal).getTime() : 0;
         bVal = bVal ? new Date(bVal).getTime() : 0;
       }
 
       // Handle string sorting
-      if (typeof aVal === 'string') aVal = aVal.toLowerCase();
-      if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+      if (typeof aVal === "string") aVal = aVal.toLowerCase();
+      if (typeof bVal === "string") bVal = bVal.toLowerCase();
 
-      if (aVal < bVal) return sort.value.order === 'ascending' ? -1 : 1;
-      if (aVal > bVal) return sort.value.order === 'ascending' ? 1 : -1;
+      if (aVal < bVal) return sort.value.order === "ascending" ? -1 : 1;
+      if (aVal > bVal) return sort.value.order === "ascending" ? 1 : -1;
       return 0;
     });
   }
@@ -274,10 +301,12 @@ const filteredElections = computed(() => {
 });
 
 const hasActiveFilters = computed(() => {
-  return filters.value.search ||
-         filters.value.status ||
-         filters.value.type ||
-         (filters.value.dateRange && filters.value.dateRange.length > 0);
+  return (
+    filters.value.search ||
+    filters.value.status ||
+    filters.value.type ||
+    (filters.value.dateRange && filters.value.dateRange.length > 0)
+  );
 });
 
 onMounted(async () => {
@@ -288,12 +317,12 @@ async function loadElections() {
   try {
     await electionStore.fetchElections();
   } catch (error) {
-    ElMessage.error(t('elections.loadError'));
+    ElMessage.error(t("elections.loadError"));
   }
 }
 
 function createElection() {
-  router.push('/elections/create');
+  router.push("/elections/create");
 }
 
 function viewElection(guid: string) {
@@ -307,20 +336,20 @@ function editElection(guid: string) {
 async function deleteElection(election: ElectionDto) {
   try {
     await ElMessageBox.confirm(
-      t('elections.deleteConfirm', { name: election.name }),
-      t('common.warning'),
+      t("elections.deleteConfirm", { name: election.name }),
+      t("common.warning"),
       {
-        confirmButtonText: t('common.delete'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
+        confirmButtonText: t("common.delete"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
       }
     );
 
     await electionStore.deleteElection(election.electionGuid);
-    ElMessage.success(t('elections.deleteSuccess'));
+    ElMessage.success(t("elections.deleteSuccess"));
   } catch (error: any) {
-    if (error !== 'cancel') {
-      ElMessage.error(error.message || t('elections.deleteError'));
+    if (error !== "cancel") {
+      ElMessage.error(error.message || t("elections.deleteError"));
     }
   }
 }
@@ -335,10 +364,10 @@ function handleFilterChange() {
 
 function clearFilters() {
   filters.value = {
-    search: '',
-    status: '',
-    type: '',
-    dateRange: []
+    search: "",
+    status: "",
+    type: "",
+    dateRange: [],
   };
   pagination.value.page = 1;
 }
@@ -361,16 +390,18 @@ async function confirmBulkDelete() {
 
   bulkDeleting.value = true;
   try {
-    const deletePromises = selectedElections.value.map(election =>
+    const deletePromises = selectedElections.value.map((election) =>
       electionStore.deleteElection(election.electionGuid)
     );
 
     await Promise.all(deletePromises);
-    ElMessage.success(t('elections.bulkDeleteSuccess', { count: selectedElections.value.length }));
+    ElMessage.success(
+      t("elections.bulkDeleteSuccess", { count: selectedElections.value.length })
+    );
     selectedElections.value = [];
     showBulkDeleteConfirm.value = false;
   } catch (error: any) {
-    ElMessage.error(error.message || t('elections.bulkDeleteError'));
+    ElMessage.error(error.message || t("elections.bulkDeleteError"));
   } finally {
     bulkDeleting.value = false;
   }
@@ -385,18 +416,18 @@ function handlePageChange() {
 }
 
 function formatDate(date: string) {
-  if (!date) return '-';
+  if (!date) return "-";
   return new Date(date).toLocaleDateString();
 }
 
 function getStatusType(status: string) {
   const typeMap: Record<string, any> = {
-    'Draft': '',
-    'Voting': 'success',
-    'Tallying': 'warning',
-    'Finalized': 'info'
+    Draft: "info",
+    Voting: "success",
+    Tallying: "warning",
+    Finalized: "info",
   };
-  return typeMap[status] || '';
+  return typeMap[status] || "info";
 }
 </script>
 

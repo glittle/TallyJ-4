@@ -10,7 +10,7 @@ namespace TallyJ4.Backend.Controllers;
 /// Controller for managing front desk operations including voter check-in and roll call.
 /// </summary>
 [ApiController]
-[Route("api/elections/{electionGuid}/frontdesk")]
+[Route("api/{electionGuid}/frontdesk")]
 [Authorize]
 public class FrontDeskController : ControllerBase
 {
@@ -33,7 +33,7 @@ public class FrontDeskController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The election GUID.</param>
     /// <returns>A list of eligible voters.</returns>
-    [HttpGet("eligible-voters")]
+    [HttpGet("eligibleVoters")]
     public async Task<ActionResult<ApiResponse<List<FrontDeskVoterDto>>>> GetEligibleVoters(Guid electionGuid)
     {
         try
@@ -54,7 +54,7 @@ public class FrontDeskController : ControllerBase
     /// <param name="electionGuid">The election GUID.</param>
     /// <param name="checkInDto">The check-in data.</param>
     /// <returns>The updated voter information.</returns>
-    [HttpPost("checkin")]
+    [HttpPost("checkInVoter")]
     public async Task<ActionResult<ApiResponse<FrontDeskVoterDto>>> CheckInVoter(
         Guid electionGuid,
         [FromBody] CheckInVoterDto checkInDto)
@@ -81,7 +81,7 @@ public class FrontDeskController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The election GUID.</param>
     /// <returns>The roll call information.</returns>
-    [HttpGet("rollcall")]
+    [HttpGet("rollCall")]
     public async Task<ActionResult<ApiResponse<RollCallDto>>> GetRollCall(Guid electionGuid)
     {
         try

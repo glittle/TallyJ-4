@@ -15,6 +15,7 @@ export interface BallotDto {
 }
 
 export interface CreateBallotDto {
+  electionGuid: string;
   locationGuid: string;
   computerCode: string;
   statusCode?: string;

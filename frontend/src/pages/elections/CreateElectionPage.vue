@@ -3,10 +3,10 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <h2>{{ $t('elections.createNew') }}</h2>
+          <h2>{{ $t("elections.createNew") }}</h2>
         </div>
       </template>
-      
+
       <el-form
         ref="formRef"
         :model="form"
@@ -14,14 +14,18 @@
         label-width="200px"
         label-position="left"
       >
-        <ElectionFormTabs v-model="form" :available-elections="availableElections" />
+        <ElectionFormTabs
+          v-model="form"
+          :available-elections="availableElections"
+          :form-ref="formRef"
+        />
 
-        <el-form-item style="margin-top: 20px;">
+        <el-form-item style="margin-top: 20px">
           <el-button type="primary" @click="submitForm" :loading="submitting">
-            {{ $t('common.create') }}
+            {{ $t("common.create") }}
           </el-button>
           <el-button @click="cancel">
-            {{ $t('common.cancel') }}
+            {{ $t("common.cancel") }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -37,6 +41,7 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { useElectionStore } from '../../stores/electionStore';
 import type { CreateElectionDto, ElectionSummaryDto } from '../../types';
 import ElectionFormTabs from '../../components/elections/ElectionFormTabs.vue';
+import { extractApiErrorMessage } from '../../utils/errorHandler';
 
 const router = useRouter();
 const { t } = useI18n();
@@ -86,24 +91,24 @@ onMounted(async () => {
 });
 
 async function submitForm() {
-  if (!formRef.value) return;
-  
+  if (!formRef.value) { return; }
+
   await formRef.value.validate(async (valid) => {
     if (valid) {
       submitting.value = true;
       try {
         const dto: CreateElectionDto = {
           ...form,
-          dateOfElection: form.dateOfElection 
-            ? new Date(form.dateOfElection).toISOString() 
+          dateOfElection: form.dateOfElection
+            ? new Date(form.dateOfElection).toISOString()
             : undefined
         };
-        
+
         const election = await electionStore.createElection(dto);
         ElMessage.success(t('elections.createSuccess'));
         router.push(`/elections/${election.electionGuid}`);
       } catch (error: any) {
-        ElMessage.error(error.message || t('elections.createError'));
+        ElMessage.error(extractApiErrorMessage(error));
       } finally {
         submitting.value = false;
       }

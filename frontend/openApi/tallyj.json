@@ -6,7 +6,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/Account/profile": {
+    "/api/Account/getMyProfile": {
       "get": {
         "tags": [
           "Account"
@@ -34,7 +34,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/Account/updateProfile": {
       "put": {
         "tags": [
           "Account"
@@ -84,7 +86,7 @@
         }
       }
     },
-    "/api/Account/change-password": {
+    "/api/Account/changePassword": {
       "post": {
         "tags": [
           "Account"
@@ -134,7 +136,262 @@
         }
       }
     },
-    "/api/audit-logs": {
+    "/api/advanced-reports/chart/{electionId}/{chartType}": {
+      "get": {
+        "tags": [
+          "AdvancedReports"
+        ],
+        "summary": "Generates chart data for visualizing election results.",
+        "parameters": [
+          {
+            "name": "electionId",
+            "in": "path",
+            "description": "The GUID of the election to generate chart data for.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "chartType",
+            "in": "path",
+            "description": "The type of chart to generate.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChartDataDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChartDataDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChartDataDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/advanced-reports/compare": {
+      "post": {
+        "tags": [
+          "AdvancedReports"
+        ],
+        "summary": "Compares multiple elections based on specified metrics.",
+        "requestBody": {
+          "description": "The comparison request containing election IDs and metrics to compare.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ElectionComparisonRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ElectionComparisonRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ElectionComparisonRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElectionComparisonDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElectionComparisonDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ElectionComparisonDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/advanced-reports/filter/{electionId}": {
+      "post": {
+        "tags": [
+          "AdvancedReports"
+        ],
+        "summary": "Generates a filtered report for an election based on advanced filter criteria.",
+        "parameters": [
+          {
+            "name": "electionId",
+            "in": "path",
+            "description": "The GUID of the election to generate the report for.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The advanced filter criteria to apply.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdvancedFilterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdvancedFilterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdvancedFilterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilteredReportDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilteredReportDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilteredReportDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/advanced-reports/custom": {
+      "post": {
+        "tags": [
+          "AdvancedReports"
+        ],
+        "summary": "Generates a custom report based on the provided configuration.",
+        "requestBody": {
+          "description": "The configuration for the custom report.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomReportConfigDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomReportConfigDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomReportConfigDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomReportDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomReportDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomReportDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/advanced-reports/statistics/{electionId}": {
+      "get": {
+        "tags": [
+          "AdvancedReports"
+        ],
+        "summary": "Generates statistical analysis for an election.",
+        "parameters": [
+          {
+            "name": "electionId",
+            "in": "path",
+            "description": "The GUID of the election to analyze.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticalAnalysisDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticalAnalysisDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticalAnalysisDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/audit-logs/getAuditLogs": {
       "get": {
         "tags": [
           "AuditLogs"
@@ -244,7 +501,51 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/audit-logs/{rowId}/getAuditLog": {
+      "get": {
+        "tags": [
+          "AuditLogs"
+        ],
+        "summary": "Gets a specific audit log by ID.",
+        "parameters": [
+          {
+            "name": "rowId",
+            "in": "path",
+            "description": "The audit log row ID.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseAuditLogDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseAuditLogDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseAuditLogDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/audit-logs/createAuditLog": {
       "post": {
         "tags": [
           "AuditLogs"
@@ -294,49 +595,7 @@
         }
       }
     },
-    "/api/audit-logs/{rowId}": {
-      "get": {
-        "tags": [
-          "AuditLogs"
-        ],
-        "summary": "Gets a specific audit log by ID.",
-        "parameters": [
-          {
-            "name": "rowId",
-            "in": "path",
-            "description": "The audit log row ID.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAuditLogDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAuditLogDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAuditLogDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Auth/register": {
+    "/api/Auth/registerAccount": {
       "post": {
         "tags": [
           "Auth"
@@ -402,7 +661,7 @@
         }
       }
     },
-    "/api/Auth/password/forgot": {
+    "/api/Auth/forgotPassword": {
       "post": {
         "tags": [
           "Auth"
@@ -435,7 +694,7 @@
         }
       }
     },
-    "/api/Auth/password/reset": {
+    "/api/Auth/resetPassword": {
       "post": {
         "tags": [
           "Auth"
@@ -468,7 +727,7 @@
         }
       }
     },
-    "/api/Auth/2fa/setup": {
+    "/api/Auth/setup2fa": {
       "post": {
         "tags": [
           "Auth"
@@ -481,7 +740,7 @@
         }
       }
     },
-    "/api/Auth/2fa/enable": {
+    "/api/Auth/enable2fa": {
       "post": {
         "tags": [
           "Auth"
@@ -514,7 +773,7 @@
         }
       }
     },
-    "/api/Auth/2fa/disable": {
+    "/api/Auth/disable2fa": {
       "post": {
         "tags": [
           "Auth"
@@ -547,7 +806,7 @@
         }
       }
     },
-    "/api/Auth/2fa/verify": {
+    "/api/Auth/verify2fa": {
       "post": {
         "tags": [
           "Auth"
@@ -580,7 +839,7 @@
         }
       }
     },
-    "/api/Auth/refresh": {
+    "/api/Auth/refreshToken": {
       "post": {
         "tags": [
           "Auth"
@@ -613,7 +872,7 @@
         }
       }
     },
-    "/api/Auth/roles": {
+    "/api/Auth/getUserRoles": {
       "get": {
         "tags": [
           "Auth"
@@ -626,7 +885,7 @@
         }
       }
     },
-    "/api/Auth/users/{userId}/roles": {
+    "/api/Auth/{userId}/assignRole": {
       "post": {
         "tags": [
           "Auth"
@@ -670,7 +929,7 @@
         }
       }
     },
-    "/api/Auth/users/{userId}/roles/{roleName}": {
+    "/api/Auth/{userId}/{roleName}/removeRole": {
       "delete": {
         "tags": [
           "Auth"
@@ -703,7 +962,7 @@
         }
       }
     },
-    "/api/Auth/roles/all": {
+    "/api/Auth/getAllRoles": {
       "get": {
         "tags": [
           "Auth"
@@ -752,7 +1011,7 @@
         }
       }
     },
-    "/api/Ballots/election/{electionGuid}": {
+    "/api/Ballots/{electionGuid}/ballots": {
       "get": {
         "tags": [
           "Ballots"
@@ -814,7 +1073,7 @@
         }
       }
     },
-    "/api/Ballots/{guid}": {
+    "/api/Ballots/{guid}/ballot": {
       "get": {
         "tags": [
           "Ballots"
@@ -854,7 +1113,59 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/Ballots/createBallot": {
+      "post": {
+        "tags": [
+          "Ballots"
+        ],
+        "summary": "Creates a new ballot.",
+        "requestBody": {
+          "description": "The ballot creation data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBallotDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBallotDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBallotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBallotDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBallotDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBallotDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Ballots/{guid}/updateBallot": {
       "put": {
         "tags": [
           "Ballots"
@@ -914,7 +1225,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/Ballots/{guid}/deleteBallot": {
       "delete": {
         "tags": [
           "Ballots"
@@ -935,56 +1248,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Ballots": {
-      "post": {
-        "tags": [
-          "Ballots"
-        ],
-        "summary": "Creates a new ballot.",
-        "requestBody": {
-          "description": "The ballot creation data.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateBallotDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateBallotDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateBallotDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseBallotDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseBallotDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseBallotDto"
-                }
-              }
-            }
           }
         }
       }
@@ -1019,7 +1282,7 @@
         }
       }
     },
-    "/api/Dashboard/elections": {
+    "/api/Dashboard/recentElections": {
       "get": {
         "tags": [
           "Dashboard"
@@ -1061,37 +1324,7 @@
         }
       }
     },
-    "/api/Dashboard/index": {
-      "get": {
-        "tags": [
-          "Dashboard"
-        ],
-        "summary": "Gets dashboard summary information (legacy route for backward compatibility).",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseDashboardSummaryDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseDashboardSummaryDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseDashboardSummaryDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Dashboard/election-list": {
+    "/api/Dashboard/electionList": {
       "get": {
         "tags": [
           "Dashboard"
@@ -1121,7 +1354,7 @@
         }
       }
     },
-    "/api/Dashboard/more-info-static": {
+    "/api/Dashboard/moreInfoStatic": {
       "post": {
         "tags": [
           "Dashboard"
@@ -1174,7 +1407,7 @@
         }
       }
     },
-    "/api/Dashboard/more-info-live": {
+    "/api/Dashboard/moreInfoLive": {
       "post": {
         "tags": [
           "Dashboard"
@@ -1227,7 +1460,7 @@
         }
       }
     },
-    "/api/Dashboard/reload-elections": {
+    "/api/Dashboard/reloadElections": {
       "post": {
         "tags": [
           "Dashboard"
@@ -1257,7 +1490,7 @@
         }
       }
     },
-    "/api/Dashboard/update-listing/{electionGuid}": {
+    "/api/Dashboard/{electionGuid}/updateListing": {
       "post": {
         "tags": [
           "Dashboard"
@@ -1319,7 +1552,7 @@
         }
       }
     },
-    "/api/Dashboard/load-v2-election": {
+    "/api/Dashboard/loadV2Election": {
       "post": {
         "tags": [
           "Dashboard"
@@ -1369,7 +1602,7 @@
         }
       }
     },
-    "/api/Dashboard/choose-location": {
+    "/api/Dashboard/chooseLocation": {
       "post": {
         "tags": [
           "Dashboard"
@@ -1419,7 +1652,7 @@
         }
       }
     },
-    "/api/Dashboard/choose-teller": {
+    "/api/Dashboard/chooseTeller": {
       "post": {
         "tags": [
           "Dashboard"
@@ -1469,7 +1702,7 @@
         }
       }
     },
-    "/api/Dashboard/delete-teller": {
+    "/api/Dashboard/deleteTeller": {
       "post": {
         "tags": [
           "Dashboard"
@@ -1519,7 +1752,7 @@
         }
       }
     },
-    "/api/Elections": {
+    "/api/Elections/getElections": {
       "get": {
         "tags": [
           "Elections"
@@ -1577,7 +1810,93 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/Elections/{guid}/election": {
+      "get": {
+        "tags": [
+          "Elections"
+        ],
+        "summary": "Gets a specific election by its GUID.",
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Elections/{guid}/electionSummary": {
+      "get": {
+        "tags": [
+          "Elections"
+        ],
+        "summary": "Gets a summary of a specific election by its GUID.",
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Elections/createElection": {
       "post": {
         "tags": [
           "Elections"
@@ -1627,47 +1946,7 @@
         }
       }
     },
-    "/api/Elections/{guid}": {
-      "get": {
-        "tags": [
-          "Elections"
-        ],
-        "summary": "Gets a specific election by its GUID.",
-        "parameters": [
-          {
-            "name": "guid",
-            "in": "path",
-            "description": "The GUID of the election.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseElectionDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseElectionDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseElectionDto"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/api/Elections/{guid}/updateElection": {
       "put": {
         "tags": [
           "Elections"
@@ -1727,7 +2006,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/Elections/{guid}/deleteElection": {
       "delete": {
         "tags": [
           "Elections"
@@ -1752,49 +2033,7 @@
         }
       }
     },
-    "/api/Elections/{guid}/summary": {
-      "get": {
-        "tags": [
-          "Elections"
-        ],
-        "summary": "Gets a summary of a specific election by its GUID.",
-        "parameters": [
-          {
-            "name": "guid",
-            "in": "path",
-            "description": "The GUID of the election.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseElectionDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseElectionDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseElectionDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/elections/{electionGuid}/frontdesk/eligible-voters": {
+    "/api/{electionGuid}/frontdesk/eligibleVoters": {
       "get": {
         "tags": [
           "FrontDesk"
@@ -1836,7 +2075,7 @@
         }
       }
     },
-    "/api/elections/{electionGuid}/frontdesk/checkin": {
+    "/api/{electionGuid}/frontdesk/checkInVoter": {
       "post": {
         "tags": [
           "FrontDesk"
@@ -1898,7 +2137,7 @@
         }
       }
     },
-    "/api/elections/{electionGuid}/frontdesk/rollcall": {
+    "/api/{electionGuid}/frontdesk/rollCall": {
       "get": {
         "tags": [
           "FrontDesk"
@@ -1940,7 +2179,7 @@
         }
       }
     },
-    "/api/elections/{electionGuid}/frontdesk/stats": {
+    "/api/{electionGuid}/frontdesk/stats": {
       "get": {
         "tags": [
           "FrontDesk"
@@ -2015,7 +2254,7 @@
         }
       }
     },
-    "/api/Import/ballots": {
+    "/api/Import/importBallots": {
       "post": {
         "tags": [
           "Import"
@@ -2048,7 +2287,7 @@
         }
       }
     },
-    "/api/elections/{electionGuid}/locations": {
+    "/api/{electionGuid}/locations/getLocations": {
       "get": {
         "tags": [
           "Locations"
@@ -2108,7 +2347,61 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/{electionGuid}/locations/{locationGuid}/getLocation": {
+      "get": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "Gets a specific location by its GUID.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election (for route binding).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "locationGuid",
+            "in": "path",
+            "description": "The GUID of the location.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseLocationDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseLocationDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseLocationDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/{electionGuid}/locations/createLocation": {
       "post": {
         "tags": [
           "Locations"
@@ -2170,57 +2463,7 @@
         }
       }
     },
-    "/api/elections/{electionGuid}/locations/{locationGuid}": {
-      "get": {
-        "tags": [
-          "Locations"
-        ],
-        "summary": "Gets a specific location by its GUID.",
-        "parameters": [
-          {
-            "name": "electionGuid",
-            "in": "path",
-            "description": "The GUID of the election (for route binding).",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "locationGuid",
-            "in": "path",
-            "description": "The GUID of the location.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseLocationDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseLocationDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseLocationDto"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/api/{electionGuid}/locations/{locationGuid}/updateLocation": {
       "put": {
         "tags": [
           "Locations"
@@ -2290,7 +2533,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/{electionGuid}/locations/{locationGuid}/deleteLocation": {
       "delete": {
         "tags": [
           "Locations"
@@ -2342,7 +2587,7 @@
         }
       }
     },
-    "/api/elections/{electionGuid}/locations/{locationGuid}/computers": {
+    "/api/{electionGuid}/locations/{locationGuid}/registerComputer": {
       "post": {
         "tags": [
           "Locations"
@@ -2412,7 +2657,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/{electionGuid}/locations/{locationGuid}/getComputers": {
       "get": {
         "tags": [
           "Locations"
@@ -2464,7 +2711,7 @@
         }
       }
     },
-    "/api/elections/{electionGuid}/locations/{locationGuid}/computers/{computerGuid}": {
+    "/api/{electionGuid}/locations/{locationGuid}/{computerGuid}/deleteComputer": {
       "delete": {
         "tags": [
           "Locations"
@@ -2526,7 +2773,7 @@
         }
       }
     },
-    "/api/online-voting/request-code": {
+    "/api/online-voting/requestCode": {
       "post": {
         "tags": [
           "OnlineVoting"
@@ -2559,7 +2806,7 @@
         }
       }
     },
-    "/api/online-voting/verify-code": {
+    "/api/online-voting/verifyCode": {
       "post": {
         "tags": [
           "OnlineVoting"
@@ -2592,7 +2839,7 @@
         }
       }
     },
-    "/api/online-voting/elections/{electionGuid}": {
+    "/api/online-voting/{electionGuid}/electionInfo": {
       "get": {
         "tags": [
           "OnlineVoting"
@@ -2617,7 +2864,7 @@
         }
       }
     },
-    "/api/online-voting/elections/{electionGuid}/candidates": {
+    "/api/online-voting/{electionGuid}/candidates": {
       "get": {
         "tags": [
           "OnlineVoting"
@@ -2642,7 +2889,7 @@
         }
       }
     },
-    "/api/online-voting/elections/{electionGuid}/submit-ballot": {
+    "/api/online-voting/{electionGuid}/submitBallot": {
       "post": {
         "tags": [
           "OnlineVoting"
@@ -2687,7 +2934,7 @@
         }
       }
     },
-    "/api/online-voting/elections/{electionGuid}/vote-status": {
+    "/api/online-voting/{electionGuid}/{voterId}/voteStatus": {
       "get": {
         "tags": [
           "OnlineVoting"
@@ -2706,8 +2953,9 @@
           },
           {
             "name": "voterId",
-            "in": "query",
+            "in": "path",
             "description": "The voter ID.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -2720,7 +2968,7 @@
         }
       }
     },
-    "/api/People/election/{electionGuid}": {
+    "/api/People/{electionGuid}/getPeople": {
       "get": {
         "tags": [
           "People"
@@ -2806,7 +3054,7 @@
         }
       }
     },
-    "/api/People/election/{electionGuid}/search": {
+    "/api/People/{electionGuid}/searchPeople": {
       "get": {
         "tags": [
           "People"
@@ -2856,7 +3104,49 @@
         }
       }
     },
-    "/api/People/{guid}": {
+    "/api/People/{electionGuid}/getCandidates": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Gets all candidates (people who can receive votes) for the specified election.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPersonDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPersonDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPersonDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/People/{guid}/getPerson": {
       "get": {
         "tags": [
           "People"
@@ -2896,7 +3186,59 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/People/createPerson": {
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Creates a new person.",
+        "requestBody": {
+          "description": "The person creation data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePersonDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePersonDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePersonDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePersonDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePersonDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePersonDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/People/{guid}/updatePerson": {
       "put": {
         "tags": [
           "People"
@@ -2956,7 +3298,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/People/{guid}/deletePerson": {
       "delete": {
         "tags": [
           "People"
@@ -2977,56 +3321,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/People": {
-      "post": {
-        "tags": [
-          "People"
-        ],
-        "summary": "Creates a new person.",
-        "requestBody": {
-          "description": "The person creation data.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePersonDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePersonDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePersonDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponsePersonDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponsePersonDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponsePersonDto"
-                }
-              }
-            }
           }
         }
       }
@@ -3091,7 +3385,7 @@
         }
       }
     },
-    "/api/Public/elections/{electionGuid}/status": {
+    "/api/Public/{electionGuid}/electionStatus": {
       "get": {
         "tags": [
           "Public"
@@ -3133,7 +3427,7 @@
         }
       }
     },
-    "/api/Public/elections/{electionGuid}/display": {
+    "/api/Public/{electionGuid}/publicDisplay": {
       "get": {
         "tags": [
           "Public"
@@ -3205,10 +3499,10 @@
         }
       }
     },
-    "/api/Reports/export/{electionId}": {
+    "/api/report-exports/{electionId}": {
       "post": {
         "tags": [
-          "Reports"
+          "ReportExports"
         ],
         "summary": "Exports an election report in the specified format (PDF, Excel, or CSV).",
         "parameters": [
@@ -3250,262 +3544,7 @@
         }
       }
     },
-    "/api/Reports/chart/{electionId}/{chartType}": {
-      "get": {
-        "tags": [
-          "Reports"
-        ],
-        "summary": "Generates chart data for visualizing election results.",
-        "parameters": [
-          {
-            "name": "electionId",
-            "in": "path",
-            "description": "The GUID of the election to generate chart data for.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "chartType",
-            "in": "path",
-            "description": "The type of chart to generate.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChartDataDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChartDataDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChartDataDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Reports/compare": {
-      "post": {
-        "tags": [
-          "Reports"
-        ],
-        "summary": "Compares multiple elections based on specified metrics.",
-        "requestBody": {
-          "description": "The comparison request containing election IDs and metrics to compare.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ElectionComparisonRequestDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ElectionComparisonRequestDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ElectionComparisonRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ElectionComparisonDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ElectionComparisonDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ElectionComparisonDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Reports/advanced-filter/{electionId}": {
-      "post": {
-        "tags": [
-          "Reports"
-        ],
-        "summary": "Generates a filtered report for an election based on advanced filter criteria.",
-        "parameters": [
-          {
-            "name": "electionId",
-            "in": "path",
-            "description": "The GUID of the election to generate the report for.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "The advanced filter criteria to apply.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AdvancedFilterDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AdvancedFilterDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AdvancedFilterDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FilteredReportDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FilteredReportDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FilteredReportDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Reports/custom": {
-      "post": {
-        "tags": [
-          "Reports"
-        ],
-        "summary": "Generates a custom report based on the provided configuration.",
-        "requestBody": {
-          "description": "The configuration for the custom report.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomReportConfigDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomReportConfigDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomReportConfigDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/CustomReportDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CustomReportDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CustomReportDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Reports/statistics/{electionId}": {
-      "get": {
-        "tags": [
-          "Reports"
-        ],
-        "summary": "Generates statistical analysis for an election.",
-        "parameters": [
-          {
-            "name": "electionId",
-            "in": "path",
-            "description": "The GUID of the election to analyze.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatisticalAnalysisDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatisticalAnalysisDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StatisticalAnalysisDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Results/election/{electionGuid}/calculate": {
+    "/{electionGuid}/calculateTally": {
       "post": {
         "tags": [
           "Results"
@@ -3556,7 +3595,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}": {
+    "/api/Results/{electionGuid}/results": {
       "get": {
         "tags": [
           "Results"
@@ -3598,7 +3637,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/summary": {
+    "/api/Results/{electionGuid}/summary": {
       "get": {
         "tags": [
           "Results"
@@ -3640,7 +3679,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/final": {
+    "/api/Results/{electionGuid}/final": {
       "get": {
         "tags": [
           "Results"
@@ -3682,7 +3721,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/monitor/refresh": {
+    "/api/Results/{electionGuid}/refreshMonitor": {
       "post": {
         "tags": [
           "Results"
@@ -3733,7 +3772,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/monitor": {
+    "/api/Results/{electionGuid}/monitor": {
       "get": {
         "tags": [
           "Results"
@@ -3775,7 +3814,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/ties/{tieBreakGroup}": {
+    "/api/Results/{electionGuid}/{tieBreakGroup}/ties": {
       "get": {
         "tags": [
           "Results"
@@ -3827,7 +3866,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/ties": {
+    "/api/Results/{electionGuid}/saveTies": {
       "post": {
         "tags": [
           "Results"
@@ -3889,7 +3928,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/report": {
+    "/api/Results/{electionGuid}/completeReport": {
       "get": {
         "tags": [
           "Results"
@@ -3931,7 +3970,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/report/{reportCode}": {
+    "/api/Results/{electionGuid}/{reportCode}/getReportData": {
       "get": {
         "tags": [
           "Results"
@@ -3982,7 +4021,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/presentation": {
+    "/api/Results/{electionGuid}/presentationData": {
       "get": {
         "tags": [
           "Results"
@@ -4024,7 +4063,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/detailed-statistics": {
+    "/api/Results/{electionGuid}/detailedStatistics": {
       "get": {
         "tags": [
           "Results"
@@ -4220,7 +4259,7 @@
         }
       }
     },
-    "/api/elections/{electionGuid}/tellers": {
+    "/api/{electionGuid}/tellers": {
       "get": {
         "tags": [
           "Tellers"
@@ -4280,7 +4319,61 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/{electionGuid}/tellers/{rowId}/getTeller": {
+      "get": {
+        "tags": [
+          "Tellers"
+        ],
+        "summary": "Gets a specific teller by ID.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The election GUID.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "rowId",
+            "in": "path",
+            "description": "The teller row ID.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTellerDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTellerDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTellerDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/{electionGuid}/tellers/createTeller": {
       "post": {
         "tags": [
           "Tellers"
@@ -4342,57 +4435,7 @@
         }
       }
     },
-    "/api/elections/{electionGuid}/tellers/{rowId}": {
-      "get": {
-        "tags": [
-          "Tellers"
-        ],
-        "summary": "Gets a specific teller by ID.",
-        "parameters": [
-          {
-            "name": "electionGuid",
-            "in": "path",
-            "description": "The election GUID.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "rowId",
-            "in": "path",
-            "description": "The teller row ID.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseTellerDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseTellerDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseTellerDto"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/api/{electionGuid}/tellers/{rowId}/updateTeller": {
       "put": {
         "tags": [
           "Tellers"
@@ -4462,7 +4505,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/{electionGuid}/tellers/{rowId}/deleteTeller": {
       "delete": {
         "tags": [
           "Tellers"
@@ -4514,7 +4559,7 @@
         }
       }
     },
-    "/api/Votes/ballot/{ballotGuid}": {
+    "/api/Votes/{ballotGuid}/getVotesByBallot": {
       "get": {
         "tags": [
           "Votes"
@@ -4556,7 +4601,7 @@
         }
       }
     },
-    "/api/Votes/election/{electionGuid}": {
+    "/api/Votes/{electionGuid}/getVotesByElection": {
       "get": {
         "tags": [
           "Votes"
@@ -4598,7 +4643,7 @@
         }
       }
     },
-    "/api/Votes/{id}": {
+    "/api/Votes/{id}/getVote": {
       "get": {
         "tags": [
           "Votes"
@@ -4638,7 +4683,59 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/Votes/createVote": {
+      "post": {
+        "tags": [
+          "Votes"
+        ],
+        "summary": "Creates a new vote.",
+        "requestBody": {
+          "description": "The vote creation data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVoteDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVoteDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoteDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoteDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoteDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Votes/{id}/updateVote": {
       "put": {
         "tags": [
           "Votes"
@@ -4698,7 +4795,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/Votes/{id}/deleteVote": {
       "delete": {
         "tags": [
           "Votes"
@@ -4733,56 +4832,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseObject"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Votes": {
-      "post": {
-        "tags": [
-          "Votes"
-        ],
-        "summary": "Creates a new vote.",
-        "requestBody": {
-          "description": "The vote creation data.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateVoteDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateVoteDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateVoteDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVoteDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVoteDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVoteDto"
                 }
               }
             }
@@ -7486,6 +7535,10 @@
         "description": "Data transfer object for election setup step 2.\nContains configuration details for election type, mode, and number of positions to elect."
       },
       "ElectionSummaryDto": {
+        "required": [
+          "electionGuid",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "electionGuid": {
@@ -7494,9 +7547,9 @@
             "format": "uuid"
           },
           "name": {
+            "minLength": 1,
             "type": "string",
-            "description": "The name of the election.",
-            "nullable": true
+            "description": "The name of the election."
           },
           "dateOfElection": {
             "type": "string",
@@ -8577,6 +8630,11 @@
           "otherInfo": {
             "type": "string",
             "description": "Additional information about the person.",
+            "nullable": true
+          },
+          "combinedSoundCodes": {
+            "type": "string",
+            "description": "Combined phonetic sound codes for search matching (Soundex-based).",
             "nullable": true
           },
           "ageGroup": {
@@ -10191,6 +10249,11 @@
       "VoteDto": {
         "type": "object",
         "properties": {
+          "rowId": {
+            "type": "integer",
+            "description": "The unique row identifier for this vote.",
+            "format": "int32"
+          },
           "ballotGuid": {
             "type": "string",
             "description": "The unique identifier of the ballot this vote belongs to.",

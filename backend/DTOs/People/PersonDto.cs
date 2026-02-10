@@ -71,6 +71,11 @@ public class PersonDto
     public string? OtherInfo { get; set; }
 
     /// <summary>
+    /// Combined phonetic sound codes for search matching (Soundex-based).
+    /// </summary>
+    public string? CombinedSoundCodes { get; set; }
+
+    /// <summary>
     /// The person's age group.
     /// </summary>
     public string? AgeGroup { get; set; }

@@ -54,14 +54,14 @@ export interface ChartAxis {
 
 export const reportsApi = {
   async exportReport(electionId: string, request: ExportRequest): Promise<Blob> {
-    const response = await api.post<Blob>(`/reports/export/${electionId}`, request, {
+    const response = await api.post<Blob>(`/report-exports/${electionId}`, request, {
       responseType: 'blob'
     });
     return response.data;
   },
 
   async getChartData(electionId: string, chartType: string): Promise<ChartData> {
-    const response = await api.get<ChartData>(`/reports/chart/${electionId}/${chartType}`);
+    const response = await api.get<ChartData>(`/advanced-reports/chart/${electionId}/${chartType}`);
     return response.data;
   }
 };

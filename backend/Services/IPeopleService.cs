@@ -57,4 +57,11 @@ public interface IPeopleService
     /// <param name="query">The search query to match against person data.</param>
     /// <returns>A list of people matching the search criteria.</returns>
     Task<List<PersonDto>> SearchPeopleAsync(Guid electionGuid, string query);
+
+    /// <summary>
+    /// Retrieves all candidates (people who can receive votes) for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A list of all candidates ordered by last name and first name.</returns>
+    Task<List<PersonDto>> GetCandidatesAsync(Guid electionGuid);
 }
