@@ -12,7 +12,8 @@
     "type-check": "vue-tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "validate:i18n": "node src/locales/validate-translations.js"
   },
   "dependencies": {
     "@intlify/unplugin-vue-i18n": "^11.0.3",

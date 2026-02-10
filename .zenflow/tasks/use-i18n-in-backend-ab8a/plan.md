@@ -53,7 +53,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Create Translation Validation Script
+### [x] Step: Create Translation Validation Script
+<!-- chat-id: 09161336-1daa-4fb4-9830-79049a7359b6 -->
 
 Create a Node.js script to validate translation file consistency.
 
