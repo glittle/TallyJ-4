@@ -36,7 +36,7 @@ public class PasswordResetService
 
         if (user.AuthMethod != "Local")
         {
-            return (false, _localizer["PasswordResetNotAvailableForOAuth"]);
+            return (false, _localizer["auth.errors.passwordResetNotAvailableForOAuth"]);
         }
 
         var token = GenerateSecureToken();
@@ -46,7 +46,7 @@ public class PasswordResetService
         var result = await _userManager.UpdateAsync(user);
         if (!result.Succeeded)
         {
-            return (false, _localizer["FailedToGenerateResetToken"]);
+            return (false, _localizer["auth.errors.failedToGenerateResetToken"]);
         }
 
         await _emailService.SendPasswordResetEmailAsync(user.Email!, token);
@@ -59,17 +59,17 @@ public class PasswordResetService
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
         {
-            return (false, _localizer["InvalidResetToken"]);
+            return (false, _localizer["auth.errors.invalidResetToken"]);
         }
 
         if (user.PasswordResetToken != request.Token)
         {
-            return (false, _localizer["InvalidResetToken"]);
+            return (false, _localizer["auth.errors.invalidResetToken"]);
         }
 
         if (user.PasswordResetExpiry == null || user.PasswordResetExpiry < DateTime.UtcNow)
         {
-            return (false, _localizer["ResetTokenExpired"]);
+            return (false, _localizer["auth.errors.resetTokenExpired"]);
         }
 
         var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);

@@ -30,7 +30,7 @@ public class LocalAuthService
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser != null)
         {
-            return (false, _localizer["EmailAlreadyExists"], null);
+            return (false, _localizer["auth.errors.emailAlreadyExists"], null);
         }
 
         var user = new AppUser
@@ -71,13 +71,13 @@ public class LocalAuthService
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
         {
-            return (false, _localizer["InvalidCredentials"], null);
+            return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
         var isValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!isValidPassword)
         {
-            return (false, _localizer["InvalidCredentials"], null);
+            return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
         if (user.TwoFactorEnabled)

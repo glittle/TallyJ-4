@@ -36,12 +36,12 @@ public class TwoFactorService
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
-            return (false, _localizer["UserNotFound"], null);
+            return (false, _localizer["auth.errors.userNotFound"], null);
         }
 
         if (user.TwoFactorEnabled)
         {
-            return (false, _localizer["TwoFactorAlreadyEnabled"], null);
+            return (false, _localizer["auth.errors.twoFactorAlreadyEnabled"], null);
         }
 
         var secret = GenerateSecret();
@@ -76,12 +76,12 @@ public class TwoFactorService
 
         if (user == null)
         {
-            return (false, _localizer["UserNotFound"]);
+            return (false, _localizer["auth.errors.userNotFound"]);
         }
 
         if (user.TwoFactorToken == null)
         {
-            return (false, _localizer["TwoFactorNotSetup"]);
+            return (false, _localizer["auth.errors.twoFactorNotSetup"]);
         }
 
         var secret = DecryptSecret(user.TwoFactorToken.Secret);
@@ -89,7 +89,7 @@ public class TwoFactorService
 
         if (!isValid)
         {
-            return (false, _localizer["InvalidTwoFactorCode"]);
+            return (false, _localizer["auth.errors.invalid2FACode"]);
         }
 
         user.TwoFactorToken.IsEnabled = true;
@@ -112,7 +112,7 @@ public class TwoFactorService
 
         if (user == null || user.TwoFactorToken == null)
         {
-            return (false, _localizer["InvalidTwoFactorCode"]);
+            return (false, _localizer["auth.errors.invalid2FACode"]);
         }
 
         var secret = DecryptSecret(user.TwoFactorToken.Secret);
@@ -120,7 +120,7 @@ public class TwoFactorService
 
         if (!isValid)
         {
-            return (false, _localizer["InvalidTwoFactorCode"]);
+            return (false, _localizer["auth.errors.invalid2FACode"]);
         }
 
         return (true, null);
@@ -134,18 +134,18 @@ public class TwoFactorService
 
         if (user == null)
         {
-            return (false, _localizer["UserNotFound"]);
+            return (false, _localizer["auth.errors.userNotFound"]);
         }
 
         var isValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!isValidPassword)
         {
-            return (false, _localizer["InvalidPassword"]);
+            return (false, _localizer["auth.errors.invalidPassword"]);
         }
 
         if (user.TwoFactorToken == null)
         {
-            return (false, _localizer["TwoFactorNotSetup"]);
+            return (false, _localizer["auth.errors.twoFactorNotSetup"]);
         }
 
         var secret = DecryptSecret(user.TwoFactorToken.Secret);
@@ -153,7 +153,7 @@ public class TwoFactorService
 
         if (!isValidCode)
         {
-            return (false, _localizer["InvalidTwoFactorCode"]);
+            return (false, _localizer["auth.errors.invalid2FACode"]);
         }
 
         _dbContext.Set<TwoFactorToken>().Remove(user.TwoFactorToken);

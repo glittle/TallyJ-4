@@ -173,7 +173,8 @@ Integrate JSON-based localization into the ASP.NET Core backend.
 
 ---
 
-### [ ] Step: Configure Backend Localization
+### [x] Step: Configure Backend Localization
+<!-- chat-id: c364c787-1ca8-44ea-9cf4-75251f73a7e0 -->
 
 Update backend configuration to use JSON localization.
 
