@@ -35,10 +35,10 @@ const duplicatePersonGuids = computed(() => {
   const personGuids = votes.value
     .filter((v): v is VoteDto => v !== null && !!v.personGuid)
     .map(v => v.personGuid!);
-  
+
   const duplicates: string[] = [];
   const seen = new Set<string>();
-  
+
   for (const guid of personGuids) {
     if (seen.has(guid)) {
       duplicates.push(guid);
@@ -46,7 +46,7 @@ const duplicatePersonGuids = computed(() => {
       seen.add(guid);
     }
   }
-  
+
   return duplicates;
 });
 
@@ -56,27 +56,27 @@ watch(() => props.ballot.votes, (newVotes) => {
 
 function initializeVotes(ballotVotes: VoteDto[]) {
   const voteArray: (VoteDto | null)[] = [];
-  
+
   for (let i = 1; i <= props.maxVotes; i++) {
     const existingVote = ballotVotes.find(v => v.positionOnBallot === i);
     voteArray.push(existingVote || null);
   }
-  
+
   votes.value = voteArray;
 }
 
 async function handleVoteSelected(vote: VoteDto, index: number) {
   votes.value[index] = vote;
-  
+
   const duplicates = duplicatePersonGuids.value;
   if (duplicates.includes(vote.personGuid!)) {
     ElMessage.warning(t('ballots.duplicateWarning'));
   }
-  
+
   emit('vote-added', vote);
-  
+
   await nextTick();
-  
+
   if (index < props.maxVotes - 1) {
     const nextRow = voteRowRefs.value[index + 1];
     if (nextRow) {
@@ -99,7 +99,7 @@ function handleClearAll() {
     }
     votes.value[i] = null;
   }
-  
+
   nextTick(() => {
     const firstRow = voteRowRefs.value[0];
     if (firstRow) {
@@ -111,7 +111,7 @@ function handleClearAll() {
 onMounted(async () => {
   cacheLoading.value = true;
   cacheError.value = false;
-  
+
   try {
     await peopleStore.initializeCandidateCache(props.electionGuid);
   } catch (e) {
@@ -126,61 +126,36 @@ onMounted(async () => {
 
 <template>
   <div class="inline-ballot-entry">
-    <div 
-      v-if="cacheLoading" 
-      class="inline-ballot-entry__loading"
-      role="status"
-      :aria-label="$t('ballots.cacheLoading')"
-    >
+    <output v-if="cacheLoading" class="inline-ballot-entry__loading"
+      :aria-label="$t('ballots.cacheLoading')">
       <el-skeleton :rows="maxVotes" animated />
+    </output>
+
+    <div v-else-if="cacheError" class="inline-ballot-entry__error" role="alert">
+      <el-alert type="error" :title="$t('ballots.cacheLoadError')" :closable="false" />
     </div>
 
-    <div 
-      v-else-if="cacheError" 
-      class="inline-ballot-entry__error"
-      role="alert"
-    >
-      <el-alert
-        type="error"
-        :title="$t('ballots.cacheLoadError')"
-        :closable="false"
-      />
-    </div>
-
-    <div 
-      v-else 
-      class="inline-ballot-entry__content"
-    >
+    <div v-else class="inline-ballot-entry__content">
       <div class="inline-ballot-entry__header">
         <div class="inline-ballot-entry__status">
           <span class="inline-ballot-entry__status-text">
             {{ $t('ballots.votesEntered', { count: votesEntered, max: maxVotes }) }}
           </span>
         </div>
-        
+
         <div class="inline-ballot-entry__actions">
-          <el-button
-            size="small"
-            @click="handleClearAll"
-            :disabled="votesEntered === 0"
-          >
+          <el-button size="small" @click="handleClearAll" :disabled="votesEntered === 0">
             {{ $t('ballots.clearAll') }}
           </el-button>
         </div>
       </div>
 
       <div class="inline-ballot-entry__rows">
-        <VoteEntryRow
-          v-for="(vote, index) in votes"
-          :key="index"
+        <VoteEntryRow v-for="(vote, index) in votes" :key="index"
           :ref="el => { if (el) voteRowRefs[index] = el as InstanceType<typeof VoteEntryRow> }"
-          :position-on-ballot="index + 1"
-          :model-value="vote"
-          :candidates="peopleStore.candidateCache"
-          :duplicate-person-guids="duplicatePersonGuids"
-          @vote-selected="(v) => handleVoteSelected(v, index)"
-          @vote-cleared="handleVoteCleared"
-        />
+          :position-on-ballot="index + 1" :model-value="vote" :candidates="peopleStore.candidateCache"
+          :duplicate-person-guids="duplicatePersonGuids" @vote-selected="(v) => handleVoteSelected(v, index)"
+          @vote-cleared="handleVoteCleared" />
       </div>
     </div>
   </div>

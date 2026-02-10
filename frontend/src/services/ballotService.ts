@@ -12,19 +12,19 @@ export const ballotService = {
     const response = await getApiBallotsByElectionGuidBallots({
       path: { electionGuid },
     });
-    return response.data as BallotDto[];
+    return (response.data?.data?.items ?? []) as BallotDto[];
   },
 
   async getById(ballotGuid: string): Promise<BallotDto> {
     const response = await getApiBallotsByGuidBallot({
       path: { guid: ballotGuid },
     });
-    return response.data as BallotDto;
+    return response.data?.data as BallotDto;
   },
 
   async create(dto: CreateBallotDto): Promise<BallotDto> {
     const response = await postApiBallotsCreateBallot({ body: dto });
-    return response.data as BallotDto;
+    return response.data?.data as BallotDto;
   },
 
   async update(ballotGuid: string, dto: UpdateBallotDto): Promise<BallotDto> {
@@ -32,7 +32,7 @@ export const ballotService = {
       path: { guid: ballotGuid },
       body: dto,
     });
-    return response.data as BallotDto;
+    return response.data?.data as BallotDto;
   },
 
   async delete(ballotGuid: string): Promise<void> {
@@ -43,6 +43,6 @@ export const ballotService = {
     const response = await getApiBallotsByElectionGuidBallots({
       path: { electionGuid: locationGuid },
     });
-    return response.data as BallotDto[];
+    return (response.data?.data?.items ?? []) as BallotDto[];
   },
 };

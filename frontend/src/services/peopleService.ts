@@ -4,22 +4,22 @@ import type { PersonDto, CreatePersonDto, UpdatePersonDto } from '../types';
 export const peopleService = {
   async getAll(electionGuid: string): Promise<PersonDto[]> {
     const response = await getApiPeopleByElectionGuidGetPeople({ path: { electionGuid } });
-    return response.data as PersonDto[];
+    return (response.data?.data?.items ?? []) as PersonDto[];
   },
 
   async getById(personGuid: string): Promise<PersonDto> {
     const response = await getApiPeopleByGuidGetPerson({ path: { guid: personGuid } });
-    return response.data as PersonDto;
+    return response.data?.data as PersonDto;
   },
 
   async create(dto: CreatePersonDto): Promise<PersonDto> {
     const response = await postApiPeopleCreatePerson({ body: dto });
-    return response.data as PersonDto;
+    return response.data?.data as PersonDto;
   },
 
   async update(personGuid: string, dto: UpdatePersonDto): Promise<PersonDto> {
     const response = await putApiPeopleByGuidUpdatePerson({ path: { guid: personGuid }, body: dto });
-    return response.data as PersonDto;
+    return response.data?.data as PersonDto;
   },
 
   async delete(personGuid: string): Promise<void> {
@@ -31,16 +31,16 @@ export const peopleService = {
       path: { electionGuid }, 
       query: { q: query } 
     });
-    return response.data as PersonDto[];
+    return (response.data?.data?.items ?? []) as PersonDto[];
   },
 
   async getVoters(electionGuid: string): Promise<PersonDto[]> {
     const response = await getApiPeopleByElectionGuidGetPeople({ path: { electionGuid } });
-    return response.data as PersonDto[];
+    return (response.data?.data?.items ?? []) as PersonDto[];
   },
 
   async getCandidates(electionGuid: string): Promise<PersonDto[]> {
     const response = await getApiPeopleByElectionGuidGetCandidates({ path: { electionGuid } });
-    return response.data as PersonDto[];
+    return (response.data?.data?.items ?? []) as PersonDto[];
   }
 };

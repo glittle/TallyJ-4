@@ -5564,6 +5564,11 @@ export const VoteDistributionDtoSchema = {
 export const VoteDtoSchema = {
     type: 'object',
     properties: {
+        rowId: {
+            type: 'integer',
+            description: 'The unique row identifier for this vote.',
+            format: 'int32'
+        },
         ballotGuid: {
             type: 'string',
             description: 'The unique identifier of the ballot this vote belongs to.',

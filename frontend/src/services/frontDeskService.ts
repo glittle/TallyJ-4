@@ -4,7 +4,7 @@ import type { FrontDeskVoterDto, CheckInVoterDto, RollCallDto, FrontDeskStatsDto
 export const frontDeskService = {
   async getEligibleVoters(electionGuid: string): Promise<FrontDeskVoterDto[]> {
     const response = await getApiElectionsByElectionGuidFrontdeskEligibleVoters({ path: { electionGuid } });
-    return (response.data as any).data as FrontDeskVoterDto[];
+    return (response.data?.data?.items ?? []) as FrontDeskVoterDto[];
   },
 
   async checkInVoter(electionGuid: string, checkInDto: CheckInVoterDto): Promise<FrontDeskVoterDto> {
@@ -12,16 +12,16 @@ export const frontDeskService = {
       path: { electionGuid }, 
       body: checkInDto 
     });
-    return (response.data as any).data as FrontDeskVoterDto;
+    return response.data?.data as FrontDeskVoterDto;
   },
 
   async getRollCall(electionGuid: string): Promise<RollCallDto> {
     const response = await getApiElectionsByElectionGuidFrontdeskRollcall({ path: { electionGuid } });
-    return (response.data as any).data as RollCallDto;
+    return response.data?.data as RollCallDto;
   },
 
   async getStats(electionGuid: string): Promise<FrontDeskStatsDto> {
     const response = await getApiElectionsByElectionGuidFrontdeskStats({ path: { electionGuid } });
-    return (response.data as any).data as FrontDeskStatsDto;
+    return response.data?.data as FrontDeskStatsDto;
   }
 };

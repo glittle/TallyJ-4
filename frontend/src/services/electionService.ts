@@ -25,9 +25,9 @@ const convertDateToString = (date?: Date | null): string | undefined => {
 export const electionService = {
   async getAll(): Promise<ElectionSummaryDto[]> {
     const response = await getApiElectionsGetElections();
-    console.log("ElectionSummaries:", response.data?.items);
+    console.log("ElectionSummaries:", response.data?.data?.items);
     return (
-      response.data?.items?.map((item) => ({
+      response.data?.data?.items?.map((item) => ({
         ...item,
         dateOfElection: convertDateToString(item.dateOfElection),
         tallyStatus: item.tallyStatus ?? undefined,
@@ -41,14 +41,14 @@ export const electionService = {
     const response = await getApiElectionsByGuidElection({
       path: { guid: electionGuid },
     });
-    return response.data as ElectionDto;
+    return response.data?.data as ElectionDto;
   },
 
   async getSummaries(): Promise<ElectionSummaryDto[]> {
     const response = await getApiElectionsByGuidElectionSummary({
       path: { guid: "" },
     });
-    return response.data as ElectionSummaryDto[];
+    return (response.data?.data?.items ?? []) as ElectionSummaryDto[];
   },
 
   async create(dto: CreateElectionDto): Promise<ElectionDto> {
@@ -68,7 +68,7 @@ export const electionService = {
         method: "GET",
       }),
     );
-    return response.data as ElectionDto;
+    return response.data?.data as ElectionDto;
   },
 
   async update(
@@ -100,7 +100,7 @@ export const electionService = {
         method: "GET",
       }),
     );
-    return response.data as ElectionDto;
+    return response.data?.data as ElectionDto;
   },
 
   async delete(electionGuid: string): Promise<void> {

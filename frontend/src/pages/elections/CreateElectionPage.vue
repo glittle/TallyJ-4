@@ -41,6 +41,7 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { useElectionStore } from '../../stores/electionStore';
 import type { CreateElectionDto, ElectionSummaryDto } from '../../types';
 import ElectionFormTabs from '../../components/elections/ElectionFormTabs.vue';
+import { extractApiErrorMessage } from '../../utils/errorHandler';
 
 const router = useRouter();
 const { t } = useI18n();
@@ -107,7 +108,7 @@ async function submitForm() {
         ElMessage.success(t('elections.createSuccess'));
         router.push(`/elections/${election.electionGuid}`);
       } catch (error: any) {
-        ElMessage.error(error.message || t('elections.createError'));
+        ElMessage.error(extractApiErrorMessage(error));
       } finally {
         submitting.value = false;
       }

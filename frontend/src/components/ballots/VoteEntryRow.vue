@@ -85,6 +85,7 @@ function handleSelect(item: SearchablePersonDto) {
   searchQuery.value = item.fullName;
 
   const vote: VoteDto = {
+    rowId: props.modelValue?.rowId || 0,
     ballotGuid: props.modelValue?.ballotGuid || '',
     positionOnBallot: props.positionOnBallot,
     personGuid: item.personGuid,

@@ -481,7 +481,7 @@ export const getApiAuthGoogleLogin = <ThrowOnError extends boolean = false>(opti
                 type: 'http'
             }
         ],
-        url: '/api/Auth/googleLogin',
+        url: '/api/Auth/google/login',
         ...options
     });
 };
@@ -497,7 +497,7 @@ export const getApiAuthGoogleCallback = <ThrowOnError extends boolean = false>(o
                 type: 'http'
             }
         ],
-        url: '/api/Auth/googleCallback',
+        url: '/api/Auth/google/callback',
         ...options
     });
 };

@@ -43,6 +43,7 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { useElectionStore } from '../../stores/electionStore';
 import type { UpdateElectionDto, ElectionSummaryDto } from '../../types';
 import ElectionFormTabs from '../../components/elections/ElectionFormTabs.vue';
+import { extractApiErrorMessage } from '../../utils/errorHandler';
 
 const router = useRouter();
 const route = useRoute();
@@ -148,8 +149,8 @@ onMounted(async () => {
         flags: election.value.flags
       });
     }
-  } catch (error) {
-    ElMessage.error(t('elections.loadError'));
+  } catch (error: any) {
+    ElMessage.error(extractApiErrorMessage(error));
   }
 });
 
@@ -164,7 +165,7 @@ async function submitForm() {
         ElMessage.success(t('elections.updateSuccess'));
         router.push(`/elections/${electionGuid}`);
       } catch (error: any) {
-        ElMessage.error(error.message || t('elections.updateError'));
+        ElMessage.error(extractApiErrorMessage(error));
       } finally {
         submitting.value = false;
       }

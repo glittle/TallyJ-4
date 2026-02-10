@@ -1,3 +1,113 @@
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { ElMessage } from 'element-plus';
+import { useBallotStore } from '../../stores/ballotStore';
+import { useElectionStore } from '../../stores/electionStore';
+import { usePeopleStore } from '../../stores/peopleStore';
+import InlineBallotEntry from '../../components/ballots/InlineBallotEntry.vue';
+import type { VoteDto, CreateVoteDto } from '../../types';
+
+const router = useRouter();
+const route = useRoute();
+const { t } = useI18n();
+const ballotStore = useBallotStore();
+const electionStore = useElectionStore();
+const peopleStore = usePeopleStore();
+
+const electionGuid = route.params.id as string;
+const ballotGuid = route.params.ballotId as string;
+
+const loading = computed(() => ballotStore.loading || electionStore.loading);
+const ballot = computed(() => ballotStore.currentBallot);
+const election = computed(() => electionStore.currentElection);
+
+onMounted(async () => {
+  try {
+    await Promise.all([
+      ballotStore.initializeSignalR(),
+      peopleStore.initializeSignalR()
+    ]);
+
+    await Promise.all([
+      ballotStore.joinElection(electionGuid),
+      peopleStore.joinElection(electionGuid)
+    ]);
+
+    await Promise.all([
+      ballotStore.fetchBallotById(ballotGuid),
+      electionStore.fetchElectionById(electionGuid)
+    ]);
+
+    setupPersonUpdateHandler();
+  } catch (error) {
+    ElMessage.error(t('ballots.loadError'));
+  }
+});
+
+onUnmounted(async () => {
+  try {
+    await Promise.all([
+      ballotStore.leaveElection(electionGuid),
+      peopleStore.leaveElection(electionGuid)
+    ]);
+  } catch (error) {
+    console.error('Failed to leave election group for ballot entry:', error);
+  }
+});
+
+function setupPersonUpdateHandler() {
+  const originalHandler = peopleStore.handlePersonUpdated.bind(peopleStore);
+
+  peopleStore.handlePersonUpdated = async (data) => {
+    await originalHandler(data);
+
+    if (data.firstName || data.lastName) {
+      const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ');
+      ElMessage.info(t('ballots.personUpdated', { name: fullName }));
+    }
+  };
+}
+
+function goBack() {
+  router.push(`/elections/${electionGuid}/ballots`);
+}
+
+async function handleVoteAdded(vote: VoteDto) {
+  try {
+    const createDto: CreateVoteDto = {
+      ballotGuid: vote.ballotGuid,
+      positionOnBallot: vote.positionOnBallot,
+      personGuid: vote.personGuid || undefined,
+      statusCode: vote.statusCode
+    };
+
+    await ballotStore.createVote(createDto);
+    ElMessage.success(t('ballots.voteAddedSuccess'));
+  } catch (error: any) {
+    ElMessage.error(error.message || t('ballots.voteAddedError'));
+  }
+}
+
+async function handleVoteRemoved(positionOnBallot: number) {
+  try {
+    await ballotStore.deleteVote(ballotGuid, positionOnBallot);
+    ElMessage.success(t('ballots.voteRemovedSuccess'));
+  } catch (error: any) {
+    ElMessage.error(error.message || t('ballots.voteRemovedError'));
+  }
+}
+
+function getStatusType(status: string) {
+  const typeMap: Record<string, any> = {
+    'Ok': 'success',
+    'Review': 'warning',
+    'Spoiled': 'danger'
+  };
+  return typeMap[status] || 'info';
+}
+</script>
 <template>
   <div class="ballot-entry-page">
     <el-card>
@@ -35,129 +145,13 @@
         </div>
 
         <div class="votes-section">
-          <InlineBallotEntry
-            :election-guid="electionGuid"
-            :ballot="ballot"
-            :max-votes="election.numberToElect || 9"
-            @vote-added="handleVoteAdded"
-            @vote-removed="handleVoteRemoved"
-          />
+          <InlineBallotEntry :election-guid="electionGuid" :ballot="ballot" :max-votes="election.numberToElect || 9"
+            @vote-added="handleVoteAdded" @vote-removed="handleVoteRemoved" />
         </div>
       </div>
     </el-card>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { ElMessage } from 'element-plus';
-import { useBallotStore } from '../../stores/ballotStore';
-import { useElectionStore } from '../../stores/electionStore';
-import { usePeopleStore } from '../../stores/peopleStore';
-import InlineBallotEntry from '../../components/ballots/InlineBallotEntry.vue';
-import type { VoteDto, CreateVoteDto } from '../../types';
-
-const router = useRouter();
-const route = useRoute();
-const { t } = useI18n();
-const ballotStore = useBallotStore();
-const electionStore = useElectionStore();
-const peopleStore = usePeopleStore();
-
-const electionGuid = route.params.id as string;
-const ballotGuid = route.params.ballotId as string;
-
-const loading = computed(() => ballotStore.loading || electionStore.loading);
-const ballot = computed(() => ballotStore.currentBallot);
-const election = computed(() => electionStore.currentElection);
-
-onMounted(async () => {
-  try {
-    await Promise.all([
-      ballotStore.initializeSignalR(),
-      peopleStore.initializeSignalR()
-    ]);
-    
-    await Promise.all([
-      ballotStore.joinElection(electionGuid),
-      peopleStore.joinElection(electionGuid)
-    ]);
-    
-    await Promise.all([
-      ballotStore.fetchBallotById(ballotGuid),
-      electionStore.fetchElectionById(electionGuid)
-    ]);
-
-    setupPersonUpdateHandler();
-  } catch (error) {
-    ElMessage.error(t('ballots.loadError'));
-  }
-});
-
-onUnmounted(async () => {
-  try {
-    await Promise.all([
-      ballotStore.leaveElection(electionGuid),
-      peopleStore.leaveElection(electionGuid)
-    ]);
-  } catch (error) {
-    console.error('Failed to leave election group for ballot entry:', error);
-  }
-});
-
-function setupPersonUpdateHandler() {
-  const originalHandler = peopleStore.handlePersonUpdated.bind(peopleStore);
-  
-  peopleStore.handlePersonUpdated = async (data) => {
-    await originalHandler(data);
-    
-    if (data.firstName || data.lastName) {
-      const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ');
-      ElMessage.info(t('ballots.personUpdated', { name: fullName }));
-    }
-  };
-}
-
-function goBack() {
-  router.push(`/elections/${electionGuid}/ballots`);
-}
-
-async function handleVoteAdded(vote: VoteDto) {
-  try {
-    const createDto: CreateVoteDto = {
-      ballotGuid: vote.ballotGuid,
-      positionOnBallot: vote.positionOnBallot,
-      personGuid: vote.personGuid || undefined,
-      personName: vote.personFullName || undefined
-    };
-    
-    await ballotStore.createVote(createDto);
-    ElMessage.success(t('ballots.voteAddedSuccess'));
-  } catch (error: any) {
-    ElMessage.error(error.message || t('ballots.voteAddedError'));
-  }
-}
-
-async function handleVoteRemoved(positionOnBallot: number) {
-  try {
-    await ballotStore.deleteVote(ballotGuid, positionOnBallot);
-    ElMessage.success(t('ballots.voteRemovedSuccess'));
-  } catch (error: any) {
-    ElMessage.error(error.message || t('ballots.voteRemovedError'));
-  }
-}
-
-function getStatusType(status: string) {
-  const typeMap: Record<string, any> = {
-    'Ok': 'success',
-    'Review': 'warning',
-    'Spoiled': 'danger'
-  };
-  return typeMap[status] || 'info';
-}
-</script>
 
 <style lang="less">
 .ballot-entry-page {

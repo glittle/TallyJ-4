@@ -4023,6 +4023,10 @@ export type VoteDistributionDto = {
  */
 export type VoteDto = {
     /**
+     * The unique row identifier for this vote.
+     */
+    rowId?: number;
+    /**
      * The unique identifier of the ballot this vote belongs to.
      */
     ballotGuid?: string;
@@ -4926,7 +4930,7 @@ export type GetApiAuthGoogleLoginData = {
          */
         returnUrl?: string;
     };
-    url: '/api/Auth/googleLogin';
+    url: '/api/Auth/google/login';
 };
 
 export type GetApiAuthGoogleLoginResponses = {
@@ -4940,7 +4944,7 @@ export type GetApiAuthGoogleCallbackData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/Auth/googleCallback';
+    url: '/api/Auth/google/callback';
 };
 
 export type GetApiAuthGoogleCallbackResponses = {

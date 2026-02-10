@@ -379,7 +379,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="returnUrl">The URL to redirect to after successful authentication (default: frontend origin).</param>
     /// <returns>A redirect to Google's OAuth consent screen.</returns>
-    [HttpGet("googleLogin")]
+    [HttpGet("google/login")]
     public IActionResult GoogleLogin([FromQuery] string? returnUrl = null)
     {
         var googleClientId = _configuration["Google:ClientId"];
@@ -408,7 +408,7 @@ public class AuthController : ControllerBase
     /// Handles the OAuth callback from Google.
     /// </summary>
     /// <returns>A redirect to the frontend with the JWT token.</returns>
-    [HttpGet("googleCallback")]
+    [HttpGet("google/callback")]
     public async Task<IActionResult> GoogleCallback()
     {
         string? returnUrl = null;

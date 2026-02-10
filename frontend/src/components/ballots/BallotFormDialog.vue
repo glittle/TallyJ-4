@@ -5,7 +5,7 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { useBallotStore } from '../../stores/ballotStore';
 import type { CreateBallotDto } from '../../types';
 
-defineProps<{
+const props = defineProps<{
   modelValue: boolean;
   electionGuid: string;
 }>();
@@ -23,7 +23,7 @@ const submitting = ref(false);
 
 const form = reactive({
   locationGuid: '',
-  computerCode: 'COMP1',
+  computerCode: 'A',
   teller1: '',
   teller2: ''
 });
@@ -39,7 +39,8 @@ const rules = reactive<FormRules>({
     { required: true, message: t('ballots.locationRequired'), trigger: 'change' }
   ],
   computerCode: [
-    { required: true, message: t('ballots.computerRequired'), trigger: 'blur' }
+    { required: true, message: t('ballots.computerRequired'), trigger: 'blur' },
+    { pattern: /^[A-Z]{1,2}$/, message: 'Computer code must be 1-2 uppercase letters', trigger: 'blur' }
   ]
 });
 
@@ -51,6 +52,7 @@ async function handleSubmit() {
       submitting.value = true;
       try {
         const dto: CreateBallotDto = {
+          electionGuid: props.electionGuid,
           locationGuid: form.locationGuid,
           computerCode: form.computerCode,
           teller1: form.teller1 || undefined,
