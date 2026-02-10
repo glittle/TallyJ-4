@@ -233,7 +233,8 @@ Perform end-to-end testing of both frontend and backend localization.
 
 ---
 
-### [ ] Step: Cleanup and Documentation
+### [x] Step: Cleanup and Documentation
+<!-- chat-id: 0f324ad9-6ec4-413d-a71d-d8d1b2b15da3 -->
 
 Remove old resource files and update documentation.
 
