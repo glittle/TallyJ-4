@@ -7,10 +7,10 @@
     <el-card v-else-if="election">
       <template #header>
         <div class="card-header">
-          <h2>{{ $t('elections.editElection') }}</h2>
+          <h2>{{ $t("elections.editElection") }}</h2>
         </div>
       </template>
-      
+
       <el-form
         ref="formRef"
         :model="form"
@@ -20,12 +20,12 @@
       >
         <ElectionFormTabs v-model="form" :available-elections="availableElections" />
 
-        <el-form-item style="margin-top: 20px;">
+        <el-form-item style="margin-top: 20px">
           <el-button type="primary" @click="submitForm" :loading="submitting">
-            {{ $t('common.save') }}
+            {{ $t("common.save") }}
           </el-button>
           <el-button @click="cancel">
-            {{ $t('common.cancel') }}
+            {{ $t("common.cancel") }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -43,6 +43,7 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { useElectionStore } from '../../stores/electionStore';
 import type { UpdateElectionDto, ElectionSummaryDto } from '../../types';
 import ElectionFormTabs from '../../components/elections/ElectionFormTabs.vue';
+import { extractApiErrorMessage } from '../../utils/errorHandler';
 
 const router = useRouter();
 const route = useRoute();
@@ -98,6 +99,9 @@ const rules = reactive<FormRules>({
   numberToElect: [
     { required: true, message: t('elections.form.numberToElectRequired'), trigger: 'blur' }
   ],
+  dateOfElection: [
+    { required: true, message: t('elections.form.dateRequired'), trigger: 'change' }
+  ],
   emailFromAddress: [
     { type: 'email', message: t('elections.form.emailInvalid'), trigger: 'blur' }
   ]
@@ -108,7 +112,7 @@ onMounted(async () => {
     await electionStore.fetchElectionById(electionGuid);
     await electionStore.fetchElections();
     availableElections.value = electionStore.elections?.filter(e => e.electionGuid !== electionGuid) || [];
-    
+
     if (election.value) {
       Object.assign(form, {
         name: election.value.name,
@@ -145,14 +149,14 @@ onMounted(async () => {
         flags: election.value.flags
       });
     }
-  } catch (error) {
-    ElMessage.error(t('elections.loadError'));
+  } catch (error: any) {
+    ElMessage.error(extractApiErrorMessage(error));
   }
 });
 
 async function submitForm() {
   if (!formRef.value) return;
-  
+
   await formRef.value.validate(async (valid) => {
     if (valid) {
       submitting.value = true;
@@ -161,7 +165,7 @@ async function submitForm() {
         ElMessage.success(t('elections.updateSuccess'));
         router.push(`/elections/${electionGuid}`);
       } catch (error: any) {
-        ElMessage.error(error.message || t('elections.updateError'));
+        ElMessage.error(extractApiErrorMessage(error));
       } finally {
         submitting.value = false;
       }

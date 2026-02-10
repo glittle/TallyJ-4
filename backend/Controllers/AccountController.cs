@@ -33,7 +33,7 @@ public class AccountController : ControllerBase
     /// Gets the profile information for the authenticated user.
     /// </summary>
     /// <returns>The user's profile information.</returns>
-    [HttpGet("profile")]
+    [HttpGet("getMyProfile")]
     public async Task<ActionResult<ApiResponse<UserProfileDto>>> GetProfile()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -56,7 +56,7 @@ public class AccountController : ControllerBase
     /// </summary>
     /// <param name="updateDto">The updated profile information.</param>
     /// <returns>The updated user profile.</returns>
-    [HttpPut("profile")]
+    [HttpPut("updateProfile")]
     public async Task<ActionResult<ApiResponse<UserProfileDto>>> UpdateProfile(UpdateUserProfileDto updateDto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -87,7 +87,7 @@ public class AccountController : ControllerBase
     /// </summary>
     /// <param name="changePasswordDto">The password change information including current and new passwords.</param>
     /// <returns>A success response if the password was changed successfully.</returns>
-    [HttpPost("change-password")]
+    [HttpPost("changePassword")]
     public async Task<ActionResult<ApiResponse<object>>> ChangePassword(ChangePasswordDto changePasswordDto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

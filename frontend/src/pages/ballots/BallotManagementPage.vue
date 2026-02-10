@@ -6,11 +6,15 @@
           <el-page-header @back="goBack" :content="$t('ballots.management')" />
           <div class="header-actions">
             <el-button @click="handleImport">
-              <el-icon><Upload /></el-icon>
+              <el-icon>
+                <Upload />
+              </el-icon>
               {{ $t('ballots.import.button') }}
             </el-button>
             <el-button type="primary" @click="showAddDialog = true">
-              <el-icon><Plus /></el-icon>
+              <el-icon>
+                <Plus />
+              </el-icon>
               {{ $t('ballots.addBallot') }}
             </el-button>
           </div>
@@ -28,8 +32,8 @@
           <el-table-column prop="computerCode" :label="$t('ballots.computer')" width="120" />
           <el-table-column prop="statusCode" :label="$t('ballots.status')" width="100">
             <template #default="scope">
-              <el-tag :type="getStatusType(scope.row.statusCode)">
-                {{ scope.row.statusCode }}
+              <el-tag :type="getStatusType(scope.row?.statusCode)">
+                {{ scope.row?.statusCode || '-' }}
               </el-tag>
             </template>
           </el-table-column>
@@ -55,17 +59,9 @@
       </div>
     </el-card>
 
-    <BallotFormDialog
-      v-model="showAddDialog"
-      :election-guid="electionGuid"
-      @success="handleFormSuccess"
-    />
+    <BallotFormDialog v-model="showAddDialog" :election-guid="electionGuid" @success="handleFormSuccess" />
 
-    <BallotVotesDialog
-      v-model="showVotesDialog"
-      :ballot="selectedBallot"
-      :election-guid="electionGuid"
-    />
+    <BallotVotesDialog v-model="showVotesDialog" :ballot="selectedBallot" :election-guid="electionGuid" />
   </div>
 </template>
 
@@ -120,15 +116,19 @@ function handleImport() {
 }
 
 function handleEnterVotes(ballot: BallotDto) {
+  console.log('Entering votes for ballot:', ballot);
+  if (!ballot?.ballotGuid) return;
   router.push(`/elections/${electionGuid}/ballots/${ballot.ballotGuid}/entry`);
 }
 
 function handleViewVotes(ballot: BallotDto) {
+  if (!ballot) return;
   selectedBallot.value = ballot;
   showVotesDialog.value = true;
 }
 
 async function handleDelete(ballot: BallotDto) {
+  if (!ballot?.ballotGuid) return;
   try {
     await ElMessageBox.confirm(
       t('ballots.deleteConfirm'),
@@ -139,7 +139,7 @@ async function handleDelete(ballot: BallotDto) {
         type: 'warning'
       }
     );
-    
+
     await ballotStore.deleteBallot(ballot.ballotGuid);
     ElMessage.success(t('ballots.deleteSuccess'));
   } catch (error: any) {
@@ -153,13 +153,14 @@ function handleFormSuccess() {
   showAddDialog.value = false;
 }
 
-function getStatusType(status: string) {
+function getStatusType(status: string | undefined) {
+  if (!status) return 'info';
   const typeMap: Record<string, any> = {
     'Ok': 'success',
     'Review': 'warning',
     'Spoiled': 'danger'
   };
-  return typeMap[status] || '';
+  return typeMap[status] || 'info';
 }
 </script>
 

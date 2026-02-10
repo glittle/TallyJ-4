@@ -33,21 +33,28 @@
       <main class="display-content">
         <section v-if="displayData.electedCandidates.length > 0" class="results-section">
           <h2 class="section-title">
-            ELECTED ({{ displayData.numberToElect }} {{ displayData.numberToElect === 1 ? 'position' : 'positions' }})
+            ELECTED ({{ displayData.numberToElect }}
+            {{ displayData.numberToElect === 1 ? "position" : "positions" }})
           </h2>
           <div class="candidates-list">
             <div
               v-for="candidate in displayData.electedCandidates"
               :key="candidate.rank"
               class="candidate-row"
-              :class="{ 'tied': candidate.isTied }"
+              :class="{ tied: candidate.isTied }"
             >
               <span class="rank">{{ candidate.rank }}.</span>
               <span class="name">{{ candidate.fullName }}</span>
               <span v-if="displayOptions.showVoteCounts" class="votes">
-                {{ candidate.voteCount }} {{ candidate.voteCount === 1 ? 'vote' : 'votes' }}
+                {{ candidate.voteCount }}
+                {{ candidate.voteCount === 1 ? "vote" : "votes" }}
               </span>
-              <el-tag v-if="candidate.tieBreakRequired" type="warning" size="large" class="tie-tag">
+              <el-tag
+                v-if="candidate.tieBreakRequired"
+                type="warning"
+                size="large"
+                class="tie-tag"
+              >
                 TIE BREAK REQUIRED
               </el-tag>
             </div>
@@ -55,23 +62,28 @@
         </section>
 
         <section
-          v-if="displayOptions.showAdditionalNames && displayData.additionalCandidates.length > 0"
+          v-if="
+            displayOptions.showAdditionalNames &&
+            displayData.additionalCandidates.length > 0
+          "
           class="results-section additional"
         >
           <h2 class="section-title">
-            ADDITIONAL NAMES ({{ displayData.numberExtra }} {{ displayData.numberExtra === 1 ? 'position' : 'positions' }})
+            ADDITIONAL NAMES ({{ displayData.numberExtra }}
+            {{ displayData.numberExtra === 1 ? "position" : "positions" }})
           </h2>
           <div class="candidates-list">
             <div
               v-for="candidate in displayData.additionalCandidates"
               :key="candidate.rank"
               class="candidate-row"
-              :class="{ 'tied': candidate.isTied }"
+              :class="{ tied: candidate.isTied }"
             >
               <span class="rank">{{ candidate.rank }}.</span>
               <span class="name">{{ candidate.fullName }}</span>
               <span v-if="displayOptions.showVoteCounts" class="votes">
-                {{ candidate.voteCount }} {{ candidate.voteCount === 1 ? 'vote' : 'votes' }}
+                {{ candidate.voteCount }}
+                {{ candidate.voteCount === 1 ? "vote" : "votes" }}
               </span>
             </div>
           </div>
@@ -97,7 +109,9 @@
             </div>
             <div class="stat-item">
               <div class="stat-label">Turnout</div>
-              <div class="stat-value">{{ displayData.statistics.turnoutPercentage.toFixed(1) }}%</div>
+              <div class="stat-value">
+                {{ displayData.statistics.turnoutPercentage.toFixed(1) }}%
+              </div>
             </div>
           </div>
         </section>
@@ -108,14 +122,14 @@
           <el-icon v-if="displayOptions.autoRefresh" :size="20">
             <Refresh />
           </el-icon>
-          Auto-refresh: {{ displayOptions.autoRefresh ? 'ON' : 'OFF' }}
+          Auto-refresh: {{ displayOptions.autoRefresh ? "ON" : "OFF" }}
         </div>
         <div class="last-updated">
           Last updated: {{ formatTime(displayData.lastUpdated) }}
         </div>
       </footer>
 
-      <div class="controls-overlay" :class="{ 'visible': showControls }">
+      <div class="controls-overlay" :class="{ visible: showControls }">
         <el-button-group>
           <el-button @click="toggleTheme">
             <el-icon><Sunny /></el-icon>
@@ -123,15 +137,15 @@
           </el-button>
           <el-button @click="toggleVoteCounts">
             <el-icon><View /></el-icon>
-            {{ displayOptions.showVoteCounts ? 'Hide' : 'Show' }} Votes
+            {{ displayOptions.showVoteCounts ? "Hide" : "Show" }} Votes
           </el-button>
           <el-button @click="toggleStatistics">
             <el-icon><DataAnalysis /></el-icon>
-            {{ displayOptions.showStatistics ? 'Hide' : 'Show' }} Stats
+            {{ displayOptions.showStatistics ? "Hide" : "Show" }} Stats
           </el-button>
           <el-button @click="toggleAutoRefresh">
             <el-icon><Refresh /></el-icon>
-            {{ displayOptions.autoRefresh ? 'Disable' : 'Enable' }} Auto-refresh
+            {{ displayOptions.autoRefresh ? "Disable" : "Enable" }} Auto-refresh
           </el-button>
           <el-button @click="refreshNow">
             <el-icon><RefreshRight /></el-icon>
@@ -144,158 +158,168 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { usePublicStore } from '../stores/publicStore'
-import { storeToRefs } from 'pinia'
-import { ElMessage } from 'element-plus'
-import { Loading, WarningFilled, Refresh, Sunny, View, DataAnalysis, RefreshRight } from '@element-plus/icons-vue'
-import { signalrService } from '../services/signalrService'
-import type { PublicDisplayDto } from '../types'
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useRoute } from "vue-router";
+import { usePublicStore } from "../stores/publicStore";
+import { storeToRefs } from "pinia";
+import { ElMessage } from "element-plus";
+import {
+  Loading,
+  WarningFilled,
+  Refresh,
+  Sunny,
+  View,
+  DataAnalysis,
+  RefreshRight,
+} from "@element-plus/icons-vue";
+import { signalrService } from "../services/signalrService";
+import type { PublicDisplayDto } from "../types";
 
-const route = useRoute()
-const publicStore = usePublicStore()
-const { displayData, loading, error, displayOptions } = storeToRefs(publicStore)
+const route = useRoute();
+const publicStore = usePublicStore();
+const { displayData, loading, error, displayOptions } = storeToRefs(publicStore);
 
-const showControls = ref(false)
-let refreshTimer: number | null = null
+const showControls = ref(false);
+let refreshTimer: number | null = null;
 
-const electionGuid = computed(() => route.params.electionGuid as string)
+const electionGuid = computed(() => route.params.electionGuid as string);
 
 const statusClass = computed(() => {
-  if (!displayData.value) return ''
-  const status = displayData.value.tallyStatus.toLowerCase()
-  if (status.includes('finalized') || status.includes('complete')) return 'status-finalized'
-  if (status.includes('progress') || status.includes('processing')) return 'status-in-progress'
-  return 'status-pending'
-})
+  if (!displayData.value) return "";
+  const status = displayData.value.tallyStatus.toLowerCase();
+  if (status.includes("finalized") || status.includes("complete"))
+    return "status-finalized";
+  if (status.includes("progress") || status.includes("processing"))
+    return "status-in-progress";
+  return "status-pending";
+});
 
 function formatDate(dateString: string | null): string {
-  if (!dateString) return ''
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  })
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 function formatTime(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
-    minute: '2-digit',
-    second: '2-digit'
-  })
+  const date = new Date(dateString);
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 }
 
 function toggleTheme() {
-  publicStore.toggleTheme()
+  publicStore.toggleTheme();
 }
 
 function toggleVoteCounts() {
-  publicStore.setDisplayOptions({ showVoteCounts: !displayOptions.value.showVoteCounts })
+  publicStore.setDisplayOptions({ showVoteCounts: !displayOptions.value.showVoteCounts });
 }
 
 function toggleStatistics() {
-  publicStore.setDisplayOptions({ showStatistics: !displayOptions.value.showStatistics })
+  publicStore.setDisplayOptions({ showStatistics: !displayOptions.value.showStatistics });
 }
 
 function toggleAutoRefresh() {
-  publicStore.setDisplayOptions({ autoRefresh: !displayOptions.value.autoRefresh })
+  publicStore.setDisplayOptions({ autoRefresh: !displayOptions.value.autoRefresh });
   if (displayOptions.value.autoRefresh) {
-    startAutoRefresh()
+    startAutoRefresh();
   } else {
-    stopAutoRefresh()
+    stopAutoRefresh();
   }
 }
 
 async function refreshNow() {
   try {
-    await publicStore.fetchPublicDisplay(electionGuid.value)
-    ElMessage.success('Display refreshed')
+    await publicStore.fetchPublicDisplay(electionGuid.value);
+    ElMessage.success("Display refreshed");
   } catch (e: any) {
-    ElMessage.error('Failed to refresh display')
+    ElMessage.error("Failed to refresh display");
   }
 }
 
 function startAutoRefresh() {
   if (refreshTimer !== null) {
-    stopAutoRefresh()
+    stopAutoRefresh();
   }
   refreshTimer = window.setInterval(async () => {
     try {
-      await publicStore.fetchPublicDisplay(electionGuid.value)
+      await publicStore.fetchPublicDisplay(electionGuid.value);
     } catch (e) {
-      console.error('Auto-refresh failed:', e)
+      console.error("Auto-refresh failed:", e);
     }
-  }, displayOptions.value.refreshInterval)
+  }, displayOptions.value.refreshInterval);
 }
 
 function stopAutoRefresh() {
   if (refreshTimer !== null) {
-    clearInterval(refreshTimer)
-    refreshTimer = null
+    clearInterval(refreshTimer);
+    refreshTimer = null;
   }
 }
 
 function handleKeyPress(event: KeyboardEvent) {
-  if (event.key === 'c' || event.key === 'C') {
-    showControls.value = !showControls.value
+  if (event.key === "c" || event.key === "C") {
+    showControls.value = !showControls.value;
   }
-  if (event.key === 'f' || event.key === 'F') {
+  if (event.key === "f" || event.key === "F") {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen()
+      document.documentElement.requestFullscreen();
     } else {
-      document.exitFullscreen()
+      document.exitFullscreen();
     }
   }
 }
 
 async function setupSignalR() {
   try {
-    const connection = await signalrService.connectToPublicHub()
-    await signalrService.joinPublicDisplay(electionGuid.value)
+    const connection = await signalrService.connectToPublicHub();
+    await signalrService.joinPublicDisplay(electionGuid.value);
 
-    connection.on('ResultsUpdated', (data: PublicDisplayDto) => {
-      console.log('Results updated via SignalR:', data)
-      publicStore.updateDisplayData(data)
-    })
+    connection.on("ResultsUpdated", (data: PublicDisplayDto) => {
+      console.log("Results updated via SignalR:", data);
+      publicStore.updateDisplayData(data);
+    });
 
-    console.log('SignalR connected to public display')
+    console.log("SignalR connected to public display");
   } catch (e) {
-    console.error('Failed to setup SignalR:', e)
+    console.error("Failed to setup SignalR:", e);
   }
 }
 
 async function cleanupSignalR() {
   try {
-    await signalrService.leavePublicDisplay(electionGuid.value)
-    await signalrService.disconnect('/hubs/public')
+    await signalrService.leavePublicDisplay(electionGuid.value);
+    await signalrService.disconnect("/hubs/public");
   } catch (e) {
-    console.error('Failed to cleanup SignalR:', e)
+    console.error("Failed to cleanup SignalR:", e);
   }
 }
 
 onMounted(async () => {
   try {
-    await publicStore.fetchPublicDisplay(electionGuid.value)
-    await setupSignalR()
+    await publicStore.fetchPublicDisplay(electionGuid.value);
+    await setupSignalR();
     if (displayOptions.value.autoRefresh) {
-      startAutoRefresh()
+      startAutoRefresh();
     }
-    document.addEventListener('keypress', handleKeyPress)
+    document.addEventListener("keypress", handleKeyPress);
   } catch (e: any) {
-    ElMessage.error(e.message || 'Failed to load public display')
+    ElMessage.error(e.message || "Failed to load public display");
   }
-})
+});
 
 onUnmounted(async () => {
-  stopAutoRefresh()
-  await cleanupSignalR()
-  publicStore.reset()
-  document.removeEventListener('keypress', handleKeyPress)
-})
+  stopAutoRefresh();
+  await cleanupSignalR();
+  publicStore.reset();
+  document.removeEventListener("keypress", handleKeyPress);
+});
 </script>
 
 <style scoped>
@@ -333,8 +357,13 @@ onUnmounted(async () => {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .loading-text,

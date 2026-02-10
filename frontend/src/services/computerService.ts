@@ -6,7 +6,7 @@ export const computerService = {
     const response = await getApiElectionsByElectionGuidLocationsByLocationGuidComputers({ 
       path: { electionGuid, locationGuid } 
     });
-    return (response.data as any).data as ComputerDto[];
+    return (response.data?.data?.items ?? []) as ComputerDto[];
   },
 
   async register(electionGuid: string, locationGuid: string, dto: RegisterComputerDto): Promise<ComputerDto> {
@@ -14,7 +14,7 @@ export const computerService = {
       path: { electionGuid, locationGuid }, 
       body: dto 
     });
-    return (response.data as any).data as ComputerDto;
+    return response.data?.data as ComputerDto;
   },
 
   async delete(electionGuid: string, locationGuid: string, computerGuid: string): Promise<void> {

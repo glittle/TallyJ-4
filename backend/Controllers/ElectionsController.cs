@@ -35,7 +35,7 @@ public class ElectionsController : ControllerBase
     /// <param name="pageSize">The number of items per page (1-100).</param>
     /// <param name="status">Optional status filter for elections.</param>
     /// <returns>A paginated response containing the elections.</returns>
-    [HttpGet]
+    [HttpGet("getElections")]
     public async Task<ActionResult<PaginatedResponse<ElectionSummaryDto>>> GetElections(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
@@ -55,7 +55,7 @@ public class ElectionsController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the election.</param>
     /// <returns>The election information.</returns>
-    [HttpGet("{guid}")]
+    [HttpGet("{guid}/election")]
     [Authorize(Policy = "ElectionAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> GetElection(Guid guid)
     {
@@ -74,7 +74,7 @@ public class ElectionsController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the election.</param>
     /// <returns>The election summary information.</returns>
-    [HttpGet("{guid}/summary")]
+    [HttpGet("{guid}/electionSummary")]
     [Authorize(Policy = "ElectionAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> GetElectionSummary(Guid guid)
     {
@@ -93,7 +93,7 @@ public class ElectionsController : ControllerBase
     /// </summary>
     /// <param name="createDto">The election creation data.</param>
     /// <returns>The created election information.</returns>
-    [HttpPost]
+    [HttpPost("createElection")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> CreateElection(CreateElectionDto createDto)
     {
         var election = await _electionService.CreateElectionAsync(createDto);
@@ -110,7 +110,7 @@ public class ElectionsController : ControllerBase
     /// <param name="guid">The GUID of the election to update.</param>
     /// <param name="updateDto">The updated election data.</param>
     /// <returns>The updated election information.</returns>
-    [HttpPut("{guid}")]
+    [HttpPut("{guid}/updateElection")]
     [Authorize(Policy = "ElectionAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> UpdateElection(Guid guid, UpdateElectionDto updateDto)
     {
@@ -129,7 +129,7 @@ public class ElectionsController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the election to delete.</param>
     /// <returns>No content if successful, or not found if the election doesn't exist.</returns>
-    [HttpDelete("{guid}")]
+    [HttpDelete("{guid}/deleteElection")]
     [Authorize(Policy = "ElectionAccess")]
     public async Task<IActionResult> DeleteElection(Guid guid)
     {

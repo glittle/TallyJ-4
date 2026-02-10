@@ -5,6 +5,7 @@ import { signalrService } from '../services/signalrService';
 import { ElMessage } from 'element-plus';
 import type { ElectionDto, CreateElectionDto, UpdateElectionDto } from '../types';
 import type { ElectionUpdateEvent } from '../types/SignalREvents';
+import { extractApiErrorMessage } from '../utils/errorHandler';
 
 export const useElectionStore = defineStore('election', () => {
   const elections = ref<ElectionDto[]>([]);
@@ -27,7 +28,7 @@ export const useElectionStore = defineStore('election', () => {
     try {
       elections.value = await electionService.getAll();
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch elections';
+      error.value = extractApiErrorMessage(e);
       throw e;
     } finally {
       loading.value = false;
@@ -50,7 +51,7 @@ export const useElectionStore = defineStore('election', () => {
       
       return election;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch election';
+      error.value = extractApiErrorMessage(e);
       throw e;
     } finally {
       loading.value = false;
@@ -66,7 +67,7 @@ export const useElectionStore = defineStore('election', () => {
       currentElection.value = election;
       return election;
     } catch (e: any) {
-      error.value = e.message || 'Failed to create election';
+      error.value = extractApiErrorMessage(e);
       throw e;
     } finally {
       loading.value = false;
@@ -90,7 +91,7 @@ export const useElectionStore = defineStore('election', () => {
       
       return election;
     } catch (e: any) {
-      error.value = e.message || 'Failed to update election';
+      error.value = extractApiErrorMessage(e);
       throw e;
     } finally {
       loading.value = false;
@@ -109,7 +110,7 @@ export const useElectionStore = defineStore('election', () => {
         currentElection.value = null;
       }
     } catch (e: any) {
-      error.value = e.message || 'Failed to delete election';
+      error.value = extractApiErrorMessage(e);
       throw e;
     } finally {
       loading.value = false;

@@ -7,6 +7,11 @@ namespace TallyJ4.DTOs.Votes;
 public class VoteDto
 {
     /// <summary>
+    /// The unique row identifier for this vote.
+    /// </summary>
+    public int RowId { get; set; }
+
+    /// <summary>
     /// The unique identifier of the ballot this vote belongs to.
     /// </summary>
     public Guid BallotGuid { get; set; }

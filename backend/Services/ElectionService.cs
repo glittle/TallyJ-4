@@ -39,7 +39,7 @@ public class ElectionService : IElectionService
     }
 
     /// <summary>
-    /// Retrieves a paginated list of elections with optional status filtering.
+    /// Retrieves a paginated list of elections with optional status filtering. Glen reviewed.
     /// </summary>
     /// <param name="pageNumber">The page number to retrieve (1-based). Default is 1.</param>
     /// <param name="pageSize">The number of elections per page. Default is 10.</param>
@@ -47,7 +47,17 @@ public class ElectionService : IElectionService
     /// <returns>A paginated response containing election summary DTOs.</returns>
     public async Task<PaginatedResponse<ElectionSummaryDto>> GetElectionsAsync(int pageNumber = 1, int pageSize = 10, string? status = null)
     {
-        var query = _context.Elections.AsQueryable();
+        var userIdString = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? _httpContextAccessor.HttpContext?.User.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+        {
+            _logger.LogWarning("GetElectionsAsync: Could not parse user ID from claims");
+            return PaginatedResponse<ElectionSummaryDto>.Create(new List<ElectionSummaryDto>(), pageNumber, pageSize, 0);
+        }
+
+        var query = _context.Elections
+            .Where(e => _context.JoinElectionUsers.Any(jeu => jeu.ElectionGuid == e.ElectionGuid && jeu.UserId == userId));
 
         if (!string.IsNullOrWhiteSpace(status))
         {

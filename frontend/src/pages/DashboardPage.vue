@@ -220,12 +220,12 @@ function formatDate(date: string) {
 
 function getStatusType(status: string) {
   const typeMap: Record<string, any> = {
-    Draft: "",
+    Draft: "info",
     Voting: "success",
     Tallying: "warning",
     Finalized: "info",
   };
-  return typeMap[status] || "";
+  return typeMap[status] || "info";
 }
 </script>
 

@@ -2791,6 +2791,7 @@ Contains configuration details for election type, mode, and number of positions 
 } as const;
 
 export const ElectionSummaryDtoSchema = {
+    required: ['electionGuid', 'name'],
     type: 'object',
     properties: {
         electionGuid: {
@@ -2799,9 +2800,9 @@ export const ElectionSummaryDtoSchema = {
             format: 'uuid'
         },
         name: {
+            minLength: 1,
             type: 'string',
-            description: 'The name of the election.',
-            nullable: true
+            description: 'The name of the election.'
         },
         dateOfElection: {
             type: 'string',
@@ -3910,6 +3911,11 @@ export const PersonDtoSchema = {
         otherInfo: {
             type: 'string',
             description: 'Additional information about the person.',
+            nullable: true
+        },
+        combinedSoundCodes: {
+            type: 'string',
+            description: 'Combined phonetic sound codes for search matching (Soundex-based).',
             nullable: true
         },
         ageGroup: {
@@ -5558,6 +5564,11 @@ export const VoteDistributionDtoSchema = {
 export const VoteDtoSchema = {
     type: 'object',
     properties: {
+        rowId: {
+            type: 'integer',
+            description: 'The unique row identifier for this vote.',
+            format: 'int32'
+        },
         ballotGuid: {
             type: 'string',
             description: 'The unique identifier of the ballot this vote belongs to.',

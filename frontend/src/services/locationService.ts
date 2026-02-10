@@ -7,14 +7,14 @@ export const locationService = {
       path: { electionGuid }, 
       query: { pageNumber, pageSize } 
     });
-    return response.data as { data: LocationDto[]; pageNumber: number; pageSize: number; totalCount: number; totalPages: number };
+    return response.data?.data as { data: LocationDto[]; pageNumber: number; pageSize: number; totalCount: number; totalPages: number };
   },
 
   async getById(electionGuid: string, locationGuid: string): Promise<LocationDto> {
     const response = await getApiElectionsByElectionGuidLocationsByLocationGuid({ 
       path: { electionGuid, locationGuid } 
     });
-    return (response.data as any).data as LocationDto;
+    return response.data?.data as LocationDto;
   },
 
   async create(electionGuid: string, dto: CreateLocationDto): Promise<LocationDto> {
@@ -22,7 +22,7 @@ export const locationService = {
       path: { electionGuid }, 
       body: dto 
     });
-    return (response.data as any).data as LocationDto;
+    return response.data?.data as LocationDto;
   },
 
   async update(electionGuid: string, locationGuid: string, dto: UpdateLocationDto): Promise<LocationDto> {
@@ -30,7 +30,7 @@ export const locationService = {
       path: { electionGuid, locationGuid }, 
       body: dto 
     });
-    return (response.data as any).data as LocationDto;
+    return response.data?.data as LocationDto;
   },
 
   async delete(electionGuid: string, locationGuid: string): Promise<void> {

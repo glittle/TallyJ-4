@@ -41,7 +41,7 @@ public class AuditLogsController : ControllerBase
     /// <param name="pageNumber">The page number (default: 1).</param>
     /// <param name="pageSize">The page size (default: 50, max: 200).</param>
     /// <returns>A paginated response containing audit logs.</returns>
-    [HttpGet]
+    [HttpGet("getAuditLogs")]
     public async Task<ActionResult<PaginatedResponse<AuditLogDto>>> GetAuditLogs(
         [FromQuery] Guid? electionGuid = null,
         [FromQuery] Guid? locationGuid = null,
@@ -78,7 +78,7 @@ public class AuditLogsController : ControllerBase
     /// </summary>
     /// <param name="rowId">The audit log row ID.</param>
     /// <returns>The audit log details.</returns>
-    [HttpGet("{rowId}")]
+    [HttpGet("{rowId}/getAuditLog")]
     public async Task<ActionResult<ApiResponse<AuditLogDto>>> GetAuditLog(int rowId)
     {
         var log = await _auditLogService.GetAuditLogByIdAsync(rowId);
@@ -96,7 +96,7 @@ public class AuditLogsController : ControllerBase
     /// </summary>
     /// <param name="createDto">The audit log creation data.</param>
     /// <returns>The created audit log.</returns>
-    [HttpPost]
+    [HttpPost("createAuditLog")]
     public async Task<ActionResult<ApiResponse<AuditLogDto>>> CreateAuditLog(CreateAuditLogDto createDto)
     {
         var log = await _auditLogService.CreateAuditLogAsync(createDto);

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { peopleService } from '../services/peopleService';
 import { signalrService } from '../services/signalrService';
-import type { PersonDto, CreatePersonDto, UpdatePersonDto } from '../types';
+import type { PersonDto, CreatePersonDto, UpdatePersonDto, SearchablePersonDto } from '../types';
 import type { PersonUpdateEvent } from '../types/SignalREvents';
 
 export const usePeopleStore = defineStore('people', () => {
@@ -10,6 +10,8 @@ export const usePeopleStore = defineStore('people', () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
   const signalrInitialized = ref(false);
+  const candidateCache = ref<SearchablePersonDto[]>([]);
+  const isCacheInitialized = ref(false);
 
   const voters = computed(() => 
     people.value.filter(p => p.canVote === true)
@@ -120,6 +122,42 @@ export const usePeopleStore = defineStore('people', () => {
     error.value = null;
   }
 
+  function enrichPersonForSearch(person: PersonDto): SearchablePersonDto {
+    const searchText = [
+      person.firstName || '',
+      person.lastName || '',
+      person.otherNames || '',
+      person.otherLastNames || ''
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase()
+      .trim();
+
+    const soundexCodes = person.combinedSoundCodes
+      ? person.combinedSoundCodes.split(',').map(code => code.trim()).filter(Boolean)
+      : [];
+
+    return {
+      ...person,
+      _searchText: searchText,
+      _soundexCodes: soundexCodes
+    };
+  }
+
+  async function initializeCandidateCache(electionGuid: string) {
+    if (isCacheInitialized.value) return;
+
+    try {
+      const candidates = await peopleService.getCandidates(electionGuid);
+      candidateCache.value = candidates.map(enrichPersonForSearch);
+      isCacheInitialized.value = true;
+    } catch (e) {
+      console.error('Failed to initialize candidate cache:', e);
+      throw e;
+    }
+  }
+
   async function initializeSignalR() {
     if (signalrInitialized.value) return;
 
@@ -166,19 +204,50 @@ export const usePeopleStore = defineStore('people', () => {
     }
   }
 
-  function handlePersonAdded(data: PersonUpdateEvent) {
+  async function handlePersonAdded(data: PersonUpdateEvent) {
     const exists = people.value.some(p => p.personGuid === data.personGuid);
     if (!exists) {
-      fetchPersonById(data.personGuid).catch(console.error);
+      try {
+        const person = await fetchPersonById(data.personGuid);
+        if (isCacheInitialized.value && person?.canReceiveVotes) {
+          const searchablePerson = enrichPersonForSearch(person);
+          candidateCache.value.push(searchablePerson);
+        }
+      } catch (e) {
+        console.error('Failed to handle person added:', e);
+      }
     }
   }
 
-  function handlePersonUpdated(data: PersonUpdateEvent) {
-    fetchPersonById(data.personGuid).catch(console.error);
+  async function handlePersonUpdated(data: PersonUpdateEvent) {
+    try {
+      const person = await fetchPersonById(data.personGuid);
+      
+      if (isCacheInitialized.value) {
+        const index = candidateCache.value.findIndex(p => p.personGuid === data.personGuid);
+        
+        if (person?.canReceiveVotes) {
+          const searchablePerson = enrichPersonForSearch(person);
+          if (index !== -1) {
+            candidateCache.value[index] = searchablePerson;
+          } else {
+            candidateCache.value.push(searchablePerson);
+          }
+        } else if (index !== -1) {
+          candidateCache.value.splice(index, 1);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to handle person updated:', e);
+    }
   }
 
   function handlePersonDeleted(data: PersonUpdateEvent) {
     people.value = people.value.filter(p => p.personGuid !== data.personGuid);
+    
+    if (isCacheInitialized.value) {
+      candidateCache.value = candidateCache.value.filter(p => p.personGuid !== data.personGuid);
+    }
   }
 
   async function joinElection(electionGuid: string) {
@@ -203,6 +272,8 @@ export const usePeopleStore = defineStore('people', () => {
     error,
     voters,
     candidates,
+    candidateCache,
+    isCacheInitialized,
     fetchPeople,
     fetchPersonById,
     createPerson,
@@ -210,8 +281,13 @@ export const usePeopleStore = defineStore('people', () => {
     deletePerson,
     searchPeople,
     clearError,
+    enrichPersonForSearch,
+    initializeCandidateCache,
     initializeSignalR,
     joinElection,
-    leaveElection
+    leaveElection,
+    handlePersonAdded,
+    handlePersonUpdated,
+    handlePersonDeleted
   };
 });

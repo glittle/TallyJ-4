@@ -1,7 +1,17 @@
-import { postApiAuthRegister, postApiAuthLogin, postApiAuthPasswordForgot, postApiAuthPasswordReset, postApiAuth2FaSetup, postApiAuth2FaEnable, postApiAuth2FaDisable } from '../api/gen/configService/sdk.gen';
-import type { RegisterRequest, LoginRequest } from '../api/gen/configService/types.gen';
-
-export type { RegisterRequest, LoginRequest };
+// import { postApiAuthRegister, postApiAuthLogin, postApiAuthPasswordForgot, postApiAuthPasswordReset, postApiAuth2FaSetup, postApiAuth2FaEnable, postApiAuth2FaDisable } from '../api/gen/configService/sdk.gen';
+import {
+  postApiAuthRegisterAccount,
+  postApiAuthLogin,
+  postApiAuthForgotPassword,
+  postApiAuthResetPassword,
+  postApiAuthSetup2Fa,
+  postApiAuthEnable2Fa,
+  postApiAuthDisable2Fa,
+} from "../api/gen/configService/sdk.gen";
+import type {
+  RegisterRequest,
+  LoginRequest,
+} from "../api/gen/configService/types.gen";
 
 export interface AuthResponse {
   token: string;
@@ -18,9 +28,9 @@ export interface TwoFactorSetupResponse {
 
 export const authService = {
   async register(data: RegisterRequest): Promise<AuthResponse> {
-    const response = await postApiAuthRegister({
+    const response = await postApiAuthRegisterAccount({
       body: data,
-      throwOnError: true
+      throwOnError: true,
     });
     return response.data as AuthResponse;
   },
@@ -28,48 +38,58 @@ export const authService = {
   async login(data: LoginRequest): Promise<AuthResponse> {
     const response = await postApiAuthLogin({
       body: data,
-      throwOnError: true
+      throwOnError: true,
     });
     return response.data as AuthResponse;
   },
 
   async forgotPassword(email: string): Promise<void> {
-    await postApiAuthPasswordForgot({
+    await postApiAuthForgotPassword({
       body: { email },
-      throwOnError: true
+      throwOnError: true,
     });
   },
 
-  async resetPassword(email: string, token: string, newPassword: string, confirmPassword: string): Promise<void> {
-    await postApiAuthPasswordReset({
+  async resetPassword(
+    email: string,
+    token: string,
+    newPassword: string,
+    confirmPassword: string,
+  ): Promise<void> {
+    await postApiAuthResetPassword({
       body: {
         email,
         token,
         newPassword,
-        confirmPassword
+        confirmPassword,
       },
-      throwOnError: true
+      throwOnError: true,
     });
   },
 
   async setup2FA(): Promise<TwoFactorSetupResponse> {
-    const response = await postApiAuth2FaSetup({
-      throwOnError: true
+    const response = await postApiAuthSetup2Fa({
+      throwOnError: true,
     });
     return response.data as TwoFactorSetupResponse;
   },
 
   async enable2FA(code: string): Promise<void> {
-    await postApiAuth2FaEnable({
+    await postApiAuthEnable2Fa({
       body: { code },
-      throwOnError: true
+      throwOnError: true,
     });
   },
 
   async disable2FA(password: string, code: string): Promise<void> {
-    await postApiAuth2FaDisable({
+    await postApiAuthDisable2Fa({
       body: { password, code },
-      throwOnError: true
+      throwOnError: true,
     });
-  }
+  },
 };
+
+export {
+  type RegisterRequest,
+  type LoginRequest,
+} from "../api/gen/configService/types.gen";

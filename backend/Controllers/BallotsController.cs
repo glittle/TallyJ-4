@@ -35,7 +35,7 @@ public class BallotsController : ControllerBase
     /// <param name="pageNumber">The page number (starting from 1).</param>
     /// <param name="pageSize">The number of items per page (1-200).</param>
     /// <returns>A paginated response containing the ballots.</returns>
-    [HttpGet("election/{electionGuid}")]
+    [HttpGet("{electionGuid}/ballots")]
     public async Task<ActionResult<PaginatedResponse<BallotDto>>> GetBallotsByElection(
         Guid electionGuid,
         [FromQuery] int pageNumber = 1,
@@ -55,7 +55,7 @@ public class BallotsController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the ballot.</param>
     /// <returns>The ballot information.</returns>
-    [HttpGet("{guid}")]
+    [HttpGet("{guid}/ballot")]
     public async Task<ActionResult<ApiResponse<BallotDto>>> GetBallot(Guid guid)
     {
         var ballot = await _ballotService.GetBallotByGuidAsync(guid);
@@ -73,7 +73,7 @@ public class BallotsController : ControllerBase
     /// </summary>
     /// <param name="createDto">The ballot creation data.</param>
     /// <returns>The created ballot information.</returns>
-    [HttpPost]
+    [HttpPost("createBallot")]
     public async Task<ActionResult<ApiResponse<BallotDto>>> CreateBallot(CreateBallotDto createDto)
     {
         try
@@ -97,7 +97,7 @@ public class BallotsController : ControllerBase
     /// <param name="guid">The GUID of the ballot to update.</param>
     /// <param name="updateDto">The updated ballot data.</param>
     /// <returns>The updated ballot information.</returns>
-    [HttpPut("{guid}")]
+    [HttpPut("{guid}/updateBallot")]
     public async Task<ActionResult<ApiResponse<BallotDto>>> UpdateBallot(Guid guid, UpdateBallotDto updateDto)
     {
         try
@@ -122,7 +122,7 @@ public class BallotsController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the ballot to delete.</param>
     /// <returns>No content if successful, or not found if the ballot doesn't exist.</returns>
-    [HttpDelete("{guid}")]
+    [HttpDelete("{guid}/deleteBallot")]
     public async Task<IActionResult> DeleteBallot(Guid guid)
     {
         var success = await _ballotService.DeleteBallotAsync(guid);

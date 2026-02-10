@@ -32,7 +32,7 @@
           </el-table-column>
           <el-table-column prop="isHeadTeller" label="Head Teller" width="150" align="center">
             <template #default="scope">
-              <el-tag :type="scope.row.isHeadTeller ? 'success' : ''">
+              <el-tag :type="scope.row.isHeadTeller ? 'success' : 'info'">
                 {{ scope.row.isHeadTeller ? 'Yes' : 'No' }}
               </el-tag>
             </template>

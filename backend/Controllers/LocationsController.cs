@@ -11,7 +11,7 @@ namespace TallyJ4.Backend.Controllers;
 /// Controller for managing voting location operations including creation, retrieval, updates, and deletion.
 /// </summary>
 [ApiController]
-[Route("api/elections/{electionGuid}/locations")]
+[Route("api/{electionGuid}/locations")]
 [Authorize]
 public class LocationsController : ControllerBase
 {
@@ -39,7 +39,7 @@ public class LocationsController : ControllerBase
     /// <param name="pageNumber">The page number (starting from 1).</param>
     /// <param name="pageSize">The number of items per page (1-200).</param>
     /// <returns>A paginated response containing the locations.</returns>
-    [HttpGet]
+    [HttpGet("getLocations")]
     public async Task<ActionResult<PaginatedResponse<LocationDto>>> GetLocationsByElection(
         Guid electionGuid,
         [FromQuery] int pageNumber = 1,
@@ -60,7 +60,7 @@ public class LocationsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election (for route binding).</param>
     /// <param name="locationGuid">The GUID of the location.</param>
     /// <returns>The location information.</returns>
-    [HttpGet("{locationGuid}")]
+    [HttpGet("{locationGuid}/getLocation")]
     public async Task<ActionResult<ApiResponse<LocationDto>>> GetLocation(Guid electionGuid, Guid locationGuid)
     {
         var location = await _locationService.GetLocationByGuidAsync(locationGuid);
@@ -84,7 +84,7 @@ public class LocationsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election (for route binding).</param>
     /// <param name="createDto">The location creation data.</param>
     /// <returns>The created location information.</returns>
-    [HttpPost]
+    [HttpPost("createLocation")]
     public async Task<ActionResult<ApiResponse<LocationDto>>> CreateLocation(Guid electionGuid, CreateLocationDto createDto)
     {
         if (createDto.ElectionGuid != electionGuid)
@@ -114,7 +114,7 @@ public class LocationsController : ControllerBase
     /// <param name="locationGuid">The GUID of the location to update.</param>
     /// <param name="updateDto">The updated location data.</param>
     /// <returns>The updated location information.</returns>
-    [HttpPut("{locationGuid}")]
+    [HttpPut("{locationGuid}/updateLocation")]
     public async Task<ActionResult<ApiResponse<LocationDto>>> UpdateLocation(
         Guid electionGuid,
         Guid locationGuid,
@@ -148,7 +148,7 @@ public class LocationsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election (for route binding).</param>
     /// <param name="locationGuid">The GUID of the location to delete.</param>
     /// <returns>A response indicating success or failure.</returns>
-    [HttpDelete("{locationGuid}")]
+    [HttpDelete("{locationGuid}/deleteLocation")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteLocation(Guid electionGuid, Guid locationGuid)
     {
         var location = await _locationService.GetLocationByGuidAsync(locationGuid);
@@ -180,7 +180,7 @@ public class LocationsController : ControllerBase
     /// <param name="locationGuid">The GUID of the location.</param>
     /// <param name="registerDto">The computer registration data.</param>
     /// <returns>The registered computer information.</returns>
-    [HttpPost("{locationGuid}/computers")]
+    [HttpPost("{locationGuid}/registerComputer")]
     public async Task<ActionResult<ApiResponse<ComputerDto>>> RegisterComputer(
         Guid electionGuid,
         Guid locationGuid,
@@ -217,7 +217,7 @@ public class LocationsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election (for route binding).</param>
     /// <param name="locationGuid">The GUID of the location.</param>
     /// <returns>A list of registered computers.</returns>
-    [HttpGet("{locationGuid}/computers")]
+    [HttpGet("{locationGuid}/getComputers")]
     public async Task<ActionResult<ApiResponse<List<ComputerDto>>>> GetComputersByLocation(
         Guid electionGuid,
         Guid locationGuid)
@@ -233,7 +233,7 @@ public class LocationsController : ControllerBase
     /// <param name="locationGuid">The GUID of the location (for route binding).</param>
     /// <param name="computerGuid">The GUID of the computer to delete.</param>
     /// <returns>A response indicating success or failure.</returns>
-    [HttpDelete("{locationGuid}/computers/{computerGuid}")]
+    [HttpDelete("{locationGuid}/{computerGuid}/deleteComputer")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteComputer(
         Guid electionGuid,
         Guid locationGuid,

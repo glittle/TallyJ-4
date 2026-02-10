@@ -1,4 +1,5 @@
 export interface VoteDto {
+  rowId: number;
   ballotGuid: string;
   positionOnBallot: number;
   personGuid?: string;
