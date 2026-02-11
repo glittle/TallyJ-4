@@ -185,6 +185,75 @@ public class AuthControllerTests : IntegrationTestBase
         cookies.Should().NotContainKey(SecureCookieMiddleware.UserEmailCookieName);
     }
 
+    [Fact]
+    public async Task Login_AccountLockout_AfterMultipleFailedAttempts()
+    {
+        // Arrange - Use a test user that won't interfere with seeded data
+        var testEmail = "lockout-test@tallyj.test";
+        var wrongPassword = "WrongPassword123!";
+
+        // First register a test user
+        var registerRequest = new RegisterRequest
+        {
+            Email = testEmail,
+            Password = "TestPass123!",
+            Name = "Lockout Test User"
+        };
+
+        var registerContent = new StringContent(
+            JsonSerializer.Serialize(registerRequest),
+            Encoding.UTF8,
+            "application/json");
+
+        var registerResponse = await Client.PostAsync("/api/auth/registerAccount", registerContent);
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        // Act - Attempt 5 failed logins (the lockout threshold)
+        for (int i = 0; i < 5; i++)
+        {
+            var loginRequest = new LoginRequest
+            {
+                Email = testEmail,
+                Password = wrongPassword
+            };
+
+            var content = new StringContent(
+                JsonSerializer.Serialize(loginRequest),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await Client.PostAsync("/api/auth/login", content);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        // Now try to login with correct password - should be locked out
+        var validLoginRequest = new LoginRequest
+        {
+            Email = testEmail,
+            Password = "TestPass123!"
+        };
+
+        var validContent = new StringContent(
+            JsonSerializer.Serialize(validLoginRequest),
+            Encoding.UTF8,
+            "application/json");
+
+        var validResponse = await Client.PostAsync("/api/auth/login", validContent);
+
+        // Assert - Should get bad request due to lockout
+        validResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var responseContent = await validResponse.Content.ReadAsStringAsync();
+        var errorResponse = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent, JsonOptions);
+        errorResponse.Should().ContainKey("error");
+        errorResponse!["error"].Should().Contain("locked"); // Should contain lockout message
+
+        // Check that no auth cookies are set
+        var cookies = GetCookiesFromResponse(validResponse);
+        cookies.Should().NotContainKey(SecureCookieMiddleware.AccessTokenCookieName);
+        cookies.Should().NotContainKey(SecureCookieMiddleware.RefreshTokenCookieName);
+    }
+
     private Dictionary<string, string> GetCookiesFromResponse(HttpResponseMessage response)
     {
         var cookies = new Dictionary<string, string>();

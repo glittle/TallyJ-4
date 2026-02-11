@@ -181,12 +181,17 @@ else
     Log.Warning("Google authentication not configured - ClientId or ClientSecret is missing or using placeholder values. Google login will not be available.");
 }
 
-// Optional: Customize Identity options (e.g., password requirements)
+// Configure Identity options (password requirements and account lockout)
 services.Configure<IdentityOptions>(options =>
 {
+    // Password requirements
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 8;
-    // Add more as needed...
+
+    // Account lockout settings
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Lockout duration
+    options.Lockout.MaxFailedAccessAttempts = 5; // Number of failed attempts before lockout
+    options.Lockout.AllowedForNewUsers = true; // Enable lockout for new users
 });
 
 // Add authorization (for [Authorize] attributes)

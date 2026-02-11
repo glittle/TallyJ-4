@@ -9,17 +9,20 @@ namespace TallyJ4.Application.Services.Auth;
 public class LocalAuthService
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly SignInManager<AppUser> _signInManager;
     private readonly JwtTokenService _jwtTokenService;
     private readonly MainDbContext _context;
     private readonly IStringLocalizer<LocalAuthService> _localizer;
 
     public LocalAuthService(
         UserManager<AppUser> userManager,
+        SignInManager<AppUser> signInManager,
         JwtTokenService jwtTokenService,
         MainDbContext context,
         IStringLocalizer<LocalAuthService> localizer)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
         _jwtTokenService = jwtTokenService;
         _context = context;
         _localizer = localizer;
@@ -74,12 +77,26 @@ public class LocalAuthService
             return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
-        var isValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
-        if (!isValidPassword)
+        // Check if account is locked out
+        if (await _userManager.IsLockedOutAsync(user))
+        {
+            return (false, _localizer["auth.errors.accountLocked"], null);
+        }
+
+        // Use SignInManager.PasswordSignInAsync to enable lockout tracking
+        var signInResult = await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: false, lockoutOnFailure: true);
+
+        if (signInResult.IsLockedOut)
+        {
+            return (false, _localizer["auth.errors.accountLocked"], null);
+        }
+
+        if (!signInResult.Succeeded)
         {
             return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
+        // Handle 2FA if enabled
         if (user.TwoFactorEnabled)
         {
             if (string.IsNullOrEmpty(request.TwoFactorCode))

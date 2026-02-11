@@ -119,7 +119,8 @@ Implement rate limiting to prevent brute force attacks on authentication endpoin
 - Confirm proper error responses for rate limited requests
 - Run `dotnet test` for rate limiting tests
 
-### [ ] Step: Configure Account Lockout
+### [x] Step: Configure Account Lockout
+<!-- chat-id: 414c1bc0-cc96-4d87-ab15-9372485a31a4 -->
 Enable and configure ASP.NET Core Identity account lockout to prevent brute force.
 
 - Configure Identity options in `Program.cs` to enable lockout with 5 failed attempts
