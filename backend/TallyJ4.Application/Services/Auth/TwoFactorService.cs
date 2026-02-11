@@ -18,17 +18,20 @@ public class TwoFactorService
     private readonly IStringLocalizer<TwoFactorService> _localizer;
     private readonly MainDbContext _dbContext;
     private readonly EmailService _emailService;
+    private readonly EncryptionService _encryptionService;
 
     public TwoFactorService(
         UserManager<AppUser> userManager,
         IStringLocalizer<TwoFactorService> localizer,
         MainDbContext dbContext,
-        EmailService emailService)
+        EmailService emailService,
+        EncryptionService encryptionService)
     {
         _userManager = userManager;
         _localizer = localizer;
         _dbContext = dbContext;
         _emailService = emailService;
+        _encryptionService = encryptionService;
     }
 
     public async Task<(bool Success, string? Error, TwoFactorSetupResponse? Response)> SetupAsync(string userId)
@@ -45,7 +48,7 @@ public class TwoFactorService
         }
 
         var secret = GenerateSecret();
-        var encryptedSecret = EncryptSecret(secret);
+        var encryptedSecret = _encryptionService.Encrypt(secret);
 
         var twoFactorToken = new TwoFactorToken
         {
@@ -84,7 +87,7 @@ public class TwoFactorService
             return (false, _localizer["auth.errors.twoFactorNotSetup"]);
         }
 
-        var secret = DecryptSecret(user.TwoFactorToken.Secret);
+        var secret = _encryptionService.Decrypt(user.TwoFactorToken.Secret);
         var isValid = VerifyCode(secret, request.Code);
 
         if (!isValid)
@@ -115,7 +118,7 @@ public class TwoFactorService
             return (false, _localizer["auth.errors.invalid2FACode"]);
         }
 
-        var secret = DecryptSecret(user.TwoFactorToken.Secret);
+        var secret = _encryptionService.Decrypt(user.TwoFactorToken.Secret);
         var isValid = VerifyCode(secret, code);
 
         if (!isValid)
@@ -148,7 +151,7 @@ public class TwoFactorService
             return (false, _localizer["auth.errors.twoFactorNotSetup"]);
         }
 
-        var secret = DecryptSecret(user.TwoFactorToken.Secret);
+        var secret = _encryptionService.Decrypt(user.TwoFactorToken.Secret);
         var isValidCode = VerifyCode(secret, request.Code);
 
         if (!isValidCode)
@@ -170,16 +173,6 @@ public class TwoFactorService
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(bytes);
         return Base32Encoding.ToString(bytes);
-    }
-
-    private static string EncryptSecret(string secret)
-    {
-        return Convert.ToBase64String(Encoding.UTF8.GetBytes(secret));
-    }
-
-    private static string DecryptSecret(string encryptedSecret)
-    {
-        return Encoding.UTF8.GetString(Convert.FromBase64String(encryptedSecret));
     }
 
     private static bool VerifyCode(string secret, string code)

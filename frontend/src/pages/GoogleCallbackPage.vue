@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
+import { secureTokenService } from "../services/secureTokenService";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 
@@ -14,10 +15,8 @@ const error = ref<string | null>(null);
 onMounted(async () => {
   try {
     console.log('Google callback - query params:', route.query);
-    const token = route.query.token as string;
-    const refreshToken = route.query.refreshToken as string;
     const errorParam = route.query.error as string;
-    
+
     if (errorParam) {
       error.value = errorParam;
       ElMessage.error(t("auth.googleLoginFailed"));
@@ -26,34 +25,30 @@ onMounted(async () => {
       }, 2000);
       return;
     }
-    
-    if (!token) {
-      error.value = "No token received";
+
+    // Tokens are now stored in httpOnly cookies by the backend
+    // Read user info from cookies that were set during the OAuth callback
+    const cookieData = secureTokenService.getAuthData();
+
+    if (!cookieData.email || !cookieData.authMethod) {
+      error.value = "Authentication data not found in cookies";
       ElMessage.error(t("auth.googleLoginFailed"));
       setTimeout(() => {
         router.push("/login?mode=officer");
       }, 2000);
       return;
     }
-    
-    authStore.token = token;
-    authStore.email = route.query.email as string || null;
-    authStore.name = route.query.name as string || null;
-    authStore.authMethod = route.query.authMethod as string || 'Google';
-    localStorage.setItem('auth_token', token);
-    if (refreshToken) {
-      localStorage.setItem('refresh_token', refreshToken);
-    }
-    if (authStore.email) {
-      localStorage.setItem('user_email', authStore.email);
-    }
-    if (authStore.name) {
-      localStorage.setItem('user_name', authStore.name);
-    }
-    localStorage.setItem('auth_method', authStore.authMethod);
-    
+
+    // Update store with cookie data
+    authStore.email = cookieData.email;
+    authStore.name = cookieData.name;
+    authStore.authMethod = cookieData.authMethod;
+
+    // Token is httpOnly and cannot be read, but we know auth succeeded
+    // The store will handle this appropriately
+
     ElMessage.success(t("auth.loginSuccess"));
-    
+
     const redirectPath = (route.query.redirect as string) || "/dashboard";
     router.push(redirectPath);
   } catch (err) {

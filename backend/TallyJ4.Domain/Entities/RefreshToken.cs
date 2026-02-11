@@ -17,6 +17,10 @@ public class RefreshToken
     [StringLength(200)]
     public string Token { get; set; } = null!;
 
+    [Required]
+    [StringLength(64)] // SHA-256 produces 64 character hex string
+    public string TokenHash { get; set; } = null!;
+
     public DateTime ExpiresAt { get; set; }
 
     public DateTime CreatedAt { get; set; }

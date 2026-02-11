@@ -50,6 +50,8 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
+    public virtual DbSet<SecurityAuditLog> SecurityAuditLogs { get; set; }
+
     public virtual DbSet<Vote> Votes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -248,6 +250,11 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
                 .WithMany(u => u.RefreshTokens)
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SecurityAuditLog>(entity =>
+        {
+            entity.Property(e => e.Timestamp).HasDefaultValueSql("(getdate())");
         });
 
         modelBuilder.Entity<Vote>(entity =>

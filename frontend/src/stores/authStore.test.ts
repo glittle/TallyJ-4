@@ -2,11 +2,21 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useAuthStore } from './authStore'
 
+// Mock the secure token service
+vi.mock('../services/secureTokenService', () => ({
+  secureTokenService: {
+    getAuthData: vi.fn(),
+    clearAuthData: vi.fn(),
+    refreshAuthData: vi.fn()
+  }
+}))
+
 // Mock the auth service
 vi.mock('../services/authService', () => ({
   authService: {
     register: vi.fn(),
-    login: vi.fn()
+    login: vi.fn(),
+    logout: vi.fn()
   }
 }))
 
@@ -17,7 +27,7 @@ vi.mock('../composables/useApiErrorHandler', () => ({
   })
 }))
 
-// Mock localStorage
+// Mock localStorage (still needed for some legacy behavior)
 const localStorageMock = {
   getItem: vi.fn(),
   setItem: vi.fn(),
@@ -37,10 +47,13 @@ describe('Auth Store', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
-    // Reset localStorage mock to return null by default
+    // Reset mocks to return null by default
     localStorageMock.getItem.mockReturnValue(null)
     localStorageMock.setItem.mockImplementation(() => {})
     localStorageMock.removeItem.mockImplementation(() => {})
+
+    // Reset secure token service mock - import it fresh each time
+    // This is needed because the mock is hoisted
   })
 
   afterEach(() => {
@@ -48,41 +61,66 @@ describe('Auth Store', () => {
   })
 
   describe('initial state', () => {
-    it('should initialize with null token and email when localStorage is empty', () => {
-      localStorageMock.getItem.mockReturnValue(null)
+    it('should initialize with null values when cookies are empty', async () => {
+      const { secureTokenService } = await import('../services/secureTokenService')
+      secureTokenService.getAuthData.mockReturnValue({
+        token: null,
+        refreshToken: null,
+        email: null,
+        name: null,
+        authMethod: null
+      })
+
       authStore = useAuthStore()
 
       expect(authStore.token).toBeNull()
       expect(authStore.email).toBeNull()
+      expect(authStore.name).toBeNull()
+      expect(authStore.authMethod).toBeNull()
       expect(authStore.requires2FA).toBe(false)
       expect(authStore.pending2FAEmail).toBeNull()
       expect(authStore.isAuthenticated).toBe(false)
     })
 
-    it('should initialize with stored values when localStorage has data', () => {
-      localStorageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'auth_token') return 'stored-token'
-        if (key === 'user_email') return 'stored@example.com'
-        return null
+    it('should initialize with cookie values when cookies exist', async () => {
+      const { secureTokenService } = await import('../services/secureTokenService')
+      secureTokenService.getAuthData.mockReturnValue({
+        token: null, // httpOnly, can't read
+        refreshToken: null, // httpOnly, can't read
+        email: 'stored@example.com',
+        name: 'Stored User',
+        authMethod: 'Local'
       })
 
       const freshStore = useAuthStore()
-      expect(freshStore.token).toBe('stored-token')
+      expect(freshStore.token).toBeNull() // Can't read httpOnly cookie
       expect(freshStore.email).toBe('stored@example.com')
-      expect(freshStore.isAuthenticated).toBe(true)
+      expect(freshStore.name).toBe('Stored User')
+      expect(freshStore.authMethod).toBe('Local')
+      expect(freshStore.isAuthenticated).toBe(false) // No token available
     })
   })
 
   describe('register', () => {
     it('should register user successfully without 2FA', async () => {
       const { authService } = await import('../services/authService')
+      const { secureTokenService } = await import('../services/secureTokenService')
+
       const mockResponse = {
         token: 'new-token',
         email: 'test@example.com',
+        name: 'Test User',
+        authMethod: 'Local',
         requires2FA: false
       }
 
       authService.register.mockResolvedValue(mockResponse)
+      secureTokenService.refreshAuthData.mockReturnValue({
+        email: 'test@example.com',
+        name: 'Test User',
+        authMethod: 'Local'
+      })
+
       authStore = useAuthStore()
 
       const registerData = {
@@ -95,17 +133,29 @@ describe('Auth Store', () => {
       const result = await authStore.register(registerData)
 
       expect(authService.register).toHaveBeenCalledWith(registerData)
-      expect(authStore.token).toBe('new-token')
+      expect(authStore.token).toBe('new-token') // Keep for backward compatibility
       expect(authStore.email).toBe('test@example.com')
+      expect(authStore.name).toBe('Test User')
+      expect(authStore.authMethod).toBe('Local')
       expect(authStore.requires2FA).toBe(false)
       expect(authStore.pending2FAEmail).toBeNull()
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('auth_token', 'new-token')
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('user_email', 'test@example.com')
+      expect(secureTokenService.refreshAuthData).toHaveBeenCalled()
       expect(result).toEqual(mockResponse)
     })
 
     it('should handle 2FA registration', async () => {
       const { authService } = await import('../services/authService')
+      const { secureTokenService } = await import('../services/secureTokenService')
+
+      // Reset to null values for this test
+      secureTokenService.getAuthData.mockReturnValue({
+        token: null,
+        refreshToken: null,
+        email: null,
+        name: null,
+        authMethod: null
+      })
+
       const mockResponse = {
         email: 'test@example.com',
         requires2FA: true
@@ -127,7 +177,6 @@ describe('Auth Store', () => {
       expect(authStore.email).toBeNull()
       expect(authStore.requires2FA).toBe(true)
       expect(authStore.pending2FAEmail).toBe('test@example.com')
-      expect(localStorageMock.setItem).not.toHaveBeenCalled()
       expect(result).toEqual(mockResponse)
     })
 
@@ -151,13 +200,23 @@ describe('Auth Store', () => {
   describe('login', () => {
     it('should login user successfully without 2FA', async () => {
       const { authService } = await import('../services/authService')
+      const { secureTokenService } = await import('../services/secureTokenService')
+
       const mockResponse = {
         token: 'login-token',
         email: 'login@example.com',
+        name: 'Login User',
+        authMethod: 'Local',
         requires2FA: false
       }
 
       authService.login.mockResolvedValue(mockResponse)
+      secureTokenService.refreshAuthData.mockReturnValue({
+        email: 'login@example.com',
+        name: 'Login User',
+        authMethod: 'Local'
+      })
+
       authStore = useAuthStore()
 
       const loginData = {
@@ -168,17 +227,29 @@ describe('Auth Store', () => {
       const result = await authStore.login(loginData)
 
       expect(authService.login).toHaveBeenCalledWith(loginData)
-      expect(authStore.token).toBe('login-token')
+      expect(authStore.token).toBe('login-token') // Keep for backward compatibility
       expect(authStore.email).toBe('login@example.com')
+      expect(authStore.name).toBe('Login User')
+      expect(authStore.authMethod).toBe('Local')
       expect(authStore.requires2FA).toBe(false)
       expect(authStore.pending2FAEmail).toBeNull()
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('auth_token', 'login-token')
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('user_email', 'login@example.com')
+      expect(secureTokenService.refreshAuthData).toHaveBeenCalled()
       expect(result).toEqual(mockResponse)
     })
 
     it('should handle 2FA login', async () => {
       const { authService } = await import('../services/authService')
+      const { secureTokenService } = await import('../services/secureTokenService')
+
+      // Reset to null values for this test
+      secureTokenService.getAuthData.mockReturnValue({
+        token: null,
+        refreshToken: null,
+        email: null,
+        name: null,
+        authMethod: null
+      })
+
       const mockResponse = {
         requires2FA: true
       }
@@ -197,7 +268,6 @@ describe('Auth Store', () => {
       expect(authStore.email).toBeNull()
       expect(authStore.requires2FA).toBe(true)
       expect(authStore.pending2FAEmail).toBe('test@example.com')
-      expect(localStorageMock.setItem).not.toHaveBeenCalled()
       expect(result).toEqual(mockResponse)
     })
 
@@ -217,23 +287,33 @@ describe('Auth Store', () => {
   })
 
   describe('logout', () => {
-    it('should clear all auth data and localStorage', () => {
+    it('should clear all auth data and cookies', async () => {
+      const { authService } = await import('../services/authService')
+      const { secureTokenService } = await import('../services/secureTokenService')
+
+      authService.logout.mockResolvedValue(undefined)
+      secureTokenService.clearAuthData.mockImplementation(() => {})
+
       authStore = useAuthStore()
       // Set up initial state
       authStore.token = 'some-token'
       authStore.email = 'some@example.com'
+      authStore.name = 'Some User'
+      authStore.authMethod = 'Local'
       authStore.requires2FA = true
       authStore.pending2FAEmail = 'pending@example.com'
 
-      authStore.logout()
+      await authStore.logout()
 
+      expect(authService.logout).toHaveBeenCalled()
+      expect(secureTokenService.clearAuthData).toHaveBeenCalled()
       expect(authStore.token).toBeNull()
       expect(authStore.email).toBeNull()
+      expect(authStore.name).toBeNull()
+      expect(authStore.authMethod).toBeNull()
       expect(authStore.requires2FA).toBe(false)
       expect(authStore.pending2FAEmail).toBeNull()
       expect(authStore.isAuthenticated).toBe(false)
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('auth_token')
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('user_email')
     })
   })
 

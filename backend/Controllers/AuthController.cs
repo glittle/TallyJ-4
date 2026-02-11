@@ -3,10 +3,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using TallyJ4.Application.DTOs.Auth;
 using TallyJ4.Application.Services.Auth;
+using TallyJ4.Domain;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
+using TallyJ4.DTOs.Security;
+using TallyJ4.Middleware;
+using TallyJ4.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 
@@ -30,6 +36,8 @@ public class AuthController : ControllerBase
     private readonly ILogger<AuthController> _logger;
     private readonly IConfiguration _configuration;
     private readonly SignInManager<AppUser> _signInManager;
+    private readonly OAuthStateService _oauthStateService;
+    private readonly ISecurityAuditService _securityAuditService;
 
     /// <summary>
     /// Initializes a new instance of the AuthController.
@@ -44,6 +52,8 @@ public class AuthController : ControllerBase
     /// <param name="logger">Logger for recording operations.</param>
     /// <param name="configuration">Application configuration.</param>
     /// <param name="signInManager">ASP.NET Core Identity sign-in manager.</param>
+    /// <param name="oauthStateService">Service for managing OAuth state parameters.</param>
+    /// <param name="securityAuditService">Service for logging security events.</param>
     public AuthController(
         LocalAuthService localAuthService,
         PasswordResetService passwordResetService,
@@ -54,7 +64,9 @@ public class AuthController : ControllerBase
         RoleManager<IdentityRole> roleManager,
         ILogger<AuthController> logger,
         IConfiguration configuration,
-        SignInManager<AppUser> signInManager)
+        SignInManager<AppUser> signInManager,
+        OAuthStateService oauthStateService,
+        ISecurityAuditService securityAuditService)
     {
         _localAuthService = localAuthService;
         _passwordResetService = passwordResetService;
@@ -66,6 +78,8 @@ public class AuthController : ControllerBase
         _logger = logger;
         _configuration = configuration;
         _signInManager = signInManager;
+        _oauthStateService = oauthStateService;
+        _securityAuditService = securityAuditService;
     }
 
     /// <summary>
@@ -76,32 +90,116 @@ public class AuthController : ControllerBase
     [HttpPost("registerAccount")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
         var (success, error, response) = await _localAuthService.RegisterAsync(request);
 
         if (!success)
         {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.AccountCreated,
+                Email = request.Email,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"Registration failed: {error}",
+                IsSuspicious = false,
+                Severity = TallyJ4.Domain.SecurityEventSeverity.Info
+            });
             return BadRequest(new { error });
         }
+
+        // Get the user ID for logging
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        var userId = user?.Id;
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.AccountCreated,
+            UserId = userId,
+            Email = request.Email,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = "User account created successfully",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
 
         return Ok(response);
     }
 
     /// <summary>
-    /// Authenticates a user and returns access tokens.
+    /// Authenticates a user and sets secure cookies with access tokens.
     /// </summary>
     /// <param name="request">The login request containing email and password.</param>
-    /// <returns>The authentication response with tokens if successful, or an error if login fails.</returns>
+    /// <returns>The authentication response with user info if successful, or an error if login fails.</returns>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
         var (success, error, response) = await _localAuthService.LoginAsync(request);
 
         if (!success)
         {
+            // Determine if this is a suspicious login attempt
+            var isSuspicious = error?.Contains("locked") == true || error?.Contains("invalid") == true;
+            var severity = isSuspicious ? SecurityEventSeverity.Warning : SecurityEventSeverity.Info;
+
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.LoginFailure,
+                Email = request.Email,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"Login failed: {error}",
+                IsSuspicious = isSuspicious,
+                Severity = severity
+            });
+
             return BadRequest(new { error });
         }
 
-        return Ok(response);
+        // Get user ID for successful login logging
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        var userId = user?.Id;
+
+        // Successful login
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.LoginSuccess,
+            UserId = userId,
+            Email = request.Email,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = response?.Requires2FA == true ? "Login successful, 2FA required" : "Login successful",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
+
+        // Set secure cookies instead of returning tokens in response
+        SecureCookieMiddleware.SetAuthCookies(
+            HttpContext,
+            response.Token,
+            response.RefreshToken ?? "",
+            response.Email,
+            response.Name,
+            response.AuthMethod ?? "Local",
+            HttpContext.Request.IsHttps
+        );
+
+        // Return response without tokens for backward compatibility with frontend
+        return Ok(new AuthResponse
+        {
+            Token = response.Token, // Keep for backward compatibility
+            RefreshToken = response.RefreshToken,
+            Email = response.Email,
+            Name = response.Name,
+            AuthMethod = response.AuthMethod,
+            Requires2FA = response.Requires2FA
+        });
     }
 
     /// <summary>
@@ -141,6 +239,35 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
+    /// Verifies a user's email address using a verification token.
+    /// </summary>
+    /// <param name="request">The verify email request containing the email and verification token.</param>
+    /// <returns>A success message if the email was verified, or an error if the request fails.</returns>
+    [HttpPost("verifyEmail")]
+    public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user == null)
+        {
+            return BadRequest(new { error = "User not found" });
+        }
+
+        if (user.EmailConfirmed)
+        {
+            return BadRequest(new { error = "Email is already verified" });
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, request.Token);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            return BadRequest(new { error = errors });
+        }
+
+        return Ok(new { message = "Email verified successfully" });
+    }
+
+    /// <summary>
     /// Sets up two-factor authentication for the authenticated user.
     /// </summary>
     /// <returns>The 2FA setup information including QR code and secret key.</returns>
@@ -154,12 +281,36 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
         var (success, error, response) = await _twoFactorService.SetupAsync(userId);
 
         if (!success)
         {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.TwoFactorSetup,
+                UserId = userId,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"2FA setup failed: {error}",
+                IsSuspicious = false,
+                Severity = SecurityEventSeverity.Warning
+            });
             return BadRequest(new { error });
         }
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.TwoFactorSetup,
+            UserId = userId,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = "2FA setup initiated successfully",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
 
         return Ok(response);
     }
@@ -179,12 +330,36 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
         var (success, error) = await _twoFactorService.EnableAsync(userId, request);
 
         if (!success)
         {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.TwoFactorEnabled,
+                UserId = userId,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"2FA enable failed: {error}",
+                IsSuspicious = false,
+                Severity = SecurityEventSeverity.Warning
+            });
             return BadRequest(new { error });
         }
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.TwoFactorEnabled,
+            UserId = userId,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = "2FA enabled successfully",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
 
         return Ok(new { message = "Two-factor authentication enabled" });
     }
@@ -204,12 +379,36 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
         var (success, error) = await _twoFactorService.DisableAsync(userId, request);
 
         if (!success)
         {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.TwoFactorDisabled,
+                UserId = userId,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"2FA disable failed: {error}",
+                IsSuspicious = false,
+                Severity = SecurityEventSeverity.Warning
+            });
             return BadRequest(new { error });
         }
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.TwoFactorDisabled,
+            UserId = userId,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = "2FA disabled successfully",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
 
         return Ok(new { message = "Two-factor authentication disabled" });
     }
@@ -217,36 +416,67 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Verifies a two-factor authentication code for login.
     /// </summary>
-    /// <param name="request">The verify 2FA request containing email and verification code.</param>
+    /// <param name="request">The verify 2FA request containing email, password, and verification code.</param>
     /// <returns>The authentication response with tokens if successful, or an error if verification fails.</returns>
     [HttpPost("verify2fa")]
     public async Task<IActionResult> Verify2FA([FromBody] Verify2FARequest request)
     {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
         var (success, error, response) = await _localAuthService.LoginAsync(new LoginRequest
         {
             Email = request.Email,
-            Password = "",
+            Password = request.Password,
             TwoFactorCode = request.Code
         });
 
         if (!success)
         {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.TwoFactorVerificationFailure,
+                Email = request.Email,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"2FA verification failed: {error}",
+                IsSuspicious = true,
+                Severity = SecurityEventSeverity.Warning
+            });
+
             return BadRequest(new { error });
         }
+
+        // Get user ID for logging
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        var userId = user?.Id;
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.TwoFactorVerificationSuccess,
+            UserId = userId,
+            Email = request.Email,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = "2FA verification successful",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
 
         return Ok(response);
     }
 
     /// <summary>
-    /// Refreshes an access token using a valid refresh token.
+    /// Refreshes an access token using a valid refresh token and sets secure cookies.
     /// </summary>
     /// <param name="request">The refresh token request containing the refresh token.</param>
     /// <returns>New access and refresh tokens if successful, or an error if the refresh token is invalid.</returns>
     [HttpPost("refreshToken")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
+        var tokenHash = _jwtTokenService.HashRefreshToken(request.RefreshToken);
         var refreshToken = await _context.RefreshTokens
-            .FirstOrDefaultAsync(rt => rt.Token == request.RefreshToken && !rt.IsRevoked);
+            .FirstOrDefaultAsync(rt => rt.TokenHash == tokenHash && !rt.IsRevoked);
 
         if (refreshToken == null || refreshToken.ExpiresAt < DateTime.UtcNow)
         {
@@ -271,6 +501,17 @@ public class AuthController : ControllerBase
 
         _context.RefreshTokens.Add(newRefreshTokenEntity);
         await _context.SaveChangesAsync();
+
+        // Set secure cookies with new tokens
+        SecureCookieMiddleware.SetAuthCookies(
+            HttpContext,
+            newToken,
+            newRefreshToken,
+            user.Email!,
+            user.DisplayName,
+            user.AuthMethod ?? "Local",
+            HttpContext.Request.IsHttps
+        );
 
         return Ok(new AuthResponse
         {
@@ -375,13 +616,16 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Initiates Google OAuth login flow.
+    /// Initiates Google OAuth login flow with PKCE (Proof Key for Code Exchange) and state parameter for CSRF protection.
     /// </summary>
     /// <param name="returnUrl">The URL to redirect to after successful authentication (default: frontend origin).</param>
     /// <returns>A redirect to Google's OAuth consent screen.</returns>
     [HttpGet("google/login")]
-    public IActionResult GoogleLogin([FromQuery] string? returnUrl = null)
+    public async Task<IActionResult> GoogleLogin([FromQuery] string? returnUrl = null)
     {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
         var googleClientId = _configuration["Google:ClientId"];
         var googleClientSecret = _configuration["Google:ClientSecret"];
 
@@ -389,23 +633,57 @@ public class AuthController : ControllerBase
             || googleClientId.StartsWith("<") || googleClientSecret.StartsWith("<"))
         {
             _logger.LogWarning("Google OAuth login attempted but credentials are not configured");
+
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.OAuthLoginFailure,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = "Google OAuth login attempted but not configured",
+                IsSuspicious = false,
+                Severity = SecurityEventSeverity.Warning
+            });
+
             return BadRequest(new { error = "Google authentication is not configured on this server. Please contact your administrator or use email/password login." });
         }
+
+        // Generate PKCE code verifier and challenge for enhanced security
+        var codeVerifier = GenerateCodeVerifier();
+        var codeChallenge = GenerateCodeChallenge(codeVerifier);
+
+        // Generate state parameter for CSRF protection
+        var state = _oauthStateService.GenerateState(returnUrl);
 
         var properties = new AuthenticationProperties
         {
             RedirectUri = Url.Action(nameof(GoogleCallback)),
             Items =
             {
-                { "returnUrl", returnUrl ?? string.Empty }
+                { "returnUrl", returnUrl ?? string.Empty },
+                { "code_verifier", codeVerifier }
             }
         };
+
+        // Add PKCE and state parameters to the OAuth request
+        properties.Parameters["code_challenge"] = codeChallenge;
+        properties.Parameters["code_challenge_method"] = "S256";
+        properties.Parameters["state"] = state;
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.OAuthLoginInitiated,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = $"Google OAuth login initiated with return URL: {returnUrl ?? "default"}",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
 
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
 
     /// <summary>
-    /// Handles the OAuth callback from Google.
+    /// Handles the OAuth callback from Google with state parameter validation for CSRF protection.
     /// </summary>
     /// <returns>A redirect to the frontend with the JWT token.</returns>
     [HttpGet("google/callback")]
@@ -414,19 +692,58 @@ public class AuthController : ControllerBase
         string? returnUrl = null;
         try
         {
+            // Validate state parameter for CSRF protection
+            var state = HttpContext.Request.Query["state"].ToString();
+            if (string.IsNullOrEmpty(state))
+            {
+                _logger.LogWarning("Google callback: Missing state parameter");
+
+                await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+                {
+                    EventType = SecurityEventType.OAuthCallbackValidationFailure,
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                    UserAgent = HttpContext.Request.Headers.UserAgent.ToString(),
+                    Details = "Google OAuth callback failed: missing state parameter",
+                    IsSuspicious = true,
+                    Severity = SecurityEventSeverity.Warning
+                });
+
+                return Redirect(GetErrorRedirectUrl(null, "Invalid OAuth request - missing state parameter"));
+            }
+
+            var validatedReturnUrl = _oauthStateService.ValidateState(state);
+            if (validatedReturnUrl == null)
+            {
+                _logger.LogWarning("Google callback: Invalid or expired state parameter: {State}", state);
+
+                await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+                {
+                    EventType = SecurityEventType.OAuthCallbackValidationFailure,
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                    UserAgent = HttpContext.Request.Headers.UserAgent.ToString(),
+                    Details = $"Google OAuth callback failed: invalid/expired state parameter - {state}",
+                    IsSuspicious = true,
+                    Severity = SecurityEventSeverity.Warning
+                });
+
+                return Redirect(GetErrorRedirectUrl(null, "Invalid OAuth request - state parameter validation failed"));
+            }
+
+            returnUrl = validatedReturnUrl;
+
             // Authenticate the external cookie explicitly
             var authenticateResult = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
             if (!authenticateResult.Succeeded || authenticateResult.Principal == null)
             {
                 _logger.LogWarning("Google callback: Failed to authenticate external scheme");
-                return Redirect(GetErrorRedirectUrl(null, "Failed to retrieve login information from Google"));
+                return Redirect(GetErrorRedirectUrl(returnUrl, "Failed to retrieve login information from Google"));
             }
 
             _logger.LogInformation("Google callback: External auth succeeded, principal: {Principal}",
                 authenticateResult.Principal?.Identity?.Name ?? "null");
 
-            // Extract return URL from authentication properties
-            if (authenticateResult.Properties?.Items.TryGetValue("returnUrl", out var returnUrlValue) == true)
+            // Extract return URL from authentication properties (fallback)
+            if (string.IsNullOrEmpty(returnUrl) && authenticateResult.Properties?.Items.TryGetValue("returnUrl", out var returnUrlValue) == true)
             {
                 returnUrl = returnUrlValue;
             }
@@ -499,11 +816,34 @@ public class AuthController : ControllerBase
             _context.RefreshTokens.Add(refreshTokenEntity);
             await _context.SaveChangesAsync();
 
+            // Set secure cookies with authentication data
+            SecureCookieMiddleware.SetAuthCookies(
+                HttpContext,
+                token,
+                refreshToken,
+                user.Email!,
+                user.DisplayName,
+                user.AuthMethod ?? "Google",
+                HttpContext.Request.IsHttps
+            );
+
             // Clean up the external authentication cookie
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             var frontendUrl = GetFrontendUrl(returnUrl);
-            var redirectUrl = $"{frontendUrl}?token={Uri.EscapeDataString(token)}&refreshToken={Uri.EscapeDataString(refreshToken)}&email={Uri.EscapeDataString(user.Email ?? "")}&name={Uri.EscapeDataString(user.DisplayName ?? "")}&authMethod={Uri.EscapeDataString(user.AuthMethod)}";
+            var redirectUrl = $"{frontendUrl}/success";
+
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.OAuthLoginSuccess,
+                UserId = user.Id,
+                Email = email,
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                UserAgent = HttpContext.Request.Headers.UserAgent.ToString(),
+                Details = $"Google OAuth login successful for user {email}",
+                IsSuspicious = false,
+                Severity = SecurityEventSeverity.Info
+            });
 
             _logger.LogInformation("Google callback: Successfully authenticated user {Email}, redirecting to {Url}", email, frontendUrl);
             return Redirect(redirectUrl);
@@ -522,8 +862,40 @@ public class AuthController : ControllerBase
             return returnUrl;
         }
 
-        var frontendOrigins = new[] { "http://localhost:8095", "http://localhost:5173", "http://localhost:5174" };
-        return frontendOrigins[0] + "/auth/google/callback";
+        var frontendBaseUrl = _configuration["Frontend:BaseUrl"];
+        if (!string.IsNullOrEmpty(frontendBaseUrl))
+        {
+            return frontendBaseUrl + "/auth/google/callback";
+        }
+
+        // Fallback to localhost for development if not configured
+        return "http://localhost:8095/auth/google/callback";
+    }
+
+    /// <summary>
+    /// Logs out the current user by clearing authentication cookies.
+    /// </summary>
+    /// <returns>A success message indicating logout was successful.</returns>
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.Logout,
+            UserId = userId,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = "User logged out",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
+
+        SecureCookieMiddleware.ClearAuthCookies(HttpContext);
+        return Ok(new { message = "Logged out successfully" });
     }
 
     private string GetErrorRedirectUrl(string? returnUrl, string errorMessage)
@@ -531,5 +903,41 @@ public class AuthController : ControllerBase
         var frontendUrl = GetFrontendUrl(returnUrl);
         var baseUrl = frontendUrl.Split('?')[0].Replace("/auth/google/callback", "/login");
         return $"{baseUrl}?error={Uri.EscapeDataString(errorMessage)}&mode=officer";
+    }
+
+    /// <summary>
+    /// Generates a cryptographically secure random code verifier for PKCE.
+    /// </summary>
+    /// <returns>A base64url-encoded random string of 43-128 characters.</returns>
+    internal static string GenerateCodeVerifier()
+    {
+        var randomBytes = new byte[32]; // 256 bits
+        RandomNumberGenerator.Fill(randomBytes);
+        return Base64UrlEncode(randomBytes);
+    }
+
+    /// <summary>
+    /// Generates a code challenge from a code verifier using SHA256.
+    /// </summary>
+    /// <param name="codeVerifier">The code verifier string.</param>
+    /// <returns>A base64url-encoded SHA256 hash of the code verifier.</returns>
+    internal static string GenerateCodeChallenge(string codeVerifier)
+    {
+        using var sha256 = SHA256.Create();
+        var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
+        return Base64UrlEncode(hash);
+    }
+
+    /// <summary>
+    /// Encodes a byte array to base64url format (URL-safe base64).
+    /// </summary>
+    /// <param name="bytes">The bytes to encode.</param>
+    /// <returns>A base64url-encoded string.</returns>
+    internal static string Base64UrlEncode(byte[] bytes)
+    {
+        return Convert.ToBase64String(bytes)
+            .Replace('+', '-')
+            .Replace('/', '_')
+            .TrimEnd('=');
     }
 }

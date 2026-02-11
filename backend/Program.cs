@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Globalization;
+using System.Collections.Generic;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
 using TallyJ4.EF.Data;
@@ -20,6 +21,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using TallyJ4.Application.Services.Auth;
 using TallyJ4.Localization;
+using TallyJ4.Services;
 using System.Reflection;
 
 Console.WriteLine("Starting up..."); // for server log files
@@ -63,9 +65,20 @@ if (!builder.Environment.IsEnvironment("Testing"))
 // Add CORS
 services.AddCors(options =>
 {
+    var frontendBaseUrl = builderConfiguration["Frontend:BaseUrl"];
+    var allowedOrigins = new List<string>();
+
+    if (!string.IsNullOrEmpty(frontendBaseUrl))
+    {
+        allowedOrigins.Add(frontendBaseUrl);
+    }
+
+    // Add development localhost origins as fallback
+    allowedOrigins.AddRange(new[] { "http://localhost:5173", "http://localhost:5174", "http://localhost:8095" });
+
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost:8095")
+        policy.WithOrigins(allowedOrigins.Distinct().ToArray())
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -181,12 +194,21 @@ else
     Log.Warning("Google authentication not configured - ClientId or ClientSecret is missing or using placeholder values. Google login will not be available.");
 }
 
-// Optional: Customize Identity options (e.g., password requirements)
+// Configure Identity options (password requirements and account lockout)
 services.Configure<IdentityOptions>(options =>
 {
+    // Password requirements (NIST guidelines - longer passwords with complexity)
     options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 8;
-    // Add more as needed...
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 12;
+    options.Password.RequiredUniqueChars = 1; // Prevent all identical characters
+
+    // Account lockout settings
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Lockout duration
+    options.Lockout.MaxFailedAccessAttempts = 5; // Number of failed attempts before lockout
+    options.Lockout.AllowedForNewUsers = true; // Enable lockout for new users
 });
 
 // Add authorization (for [Authorize] attributes)
@@ -248,6 +270,12 @@ services.AddScoped<EmailService>();
 services.AddScoped<LocalAuthService>();
 services.AddScoped<PasswordResetService>();
 services.AddScoped<TwoFactorService>();
+services.AddScoped<EncryptionService>();
+services.AddSingleton<OAuthStateService>();
+services.AddScoped<ISecurityAuditService, SecurityAuditService>();
+
+// Add background services
+services.AddHostedService<RefreshTokenCleanupService>();
 
 // Add SignalR
 services.AddSignalR();
@@ -358,6 +386,9 @@ app.UseHttpsRedirection();
 
 // Use CORS
 app.UseCors("AllowFrontend");
+
+// Use custom rate limiting
+app.UseMiddleware<RateLimitingMiddleware>();
 
 // Configure request localization
 var localizationOptions = app.Services.GetRequiredService<IOptions<JsonLocalizationOptions>>().Value;

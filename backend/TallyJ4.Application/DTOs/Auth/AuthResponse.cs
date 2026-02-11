@@ -8,4 +8,5 @@ public class AuthResponse
     public string? Name { get; set; }
     public string AuthMethod { get; set; } = "Local";
     public bool Requires2FA { get; set; }
+    public bool RequiresEmailVerification { get; set; }
 }

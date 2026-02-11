@@ -26,6 +26,7 @@ public abstract class ServiceTestBase : IDisposable
             cfg.AddProfile<PersonProfile>();
             cfg.AddProfile<BallotProfile>();
             cfg.AddProfile<VoteProfile>();
+            cfg.AddProfile<SecurityAuditLogProfile>();
         });
 
         Mapper = config.CreateMapper();

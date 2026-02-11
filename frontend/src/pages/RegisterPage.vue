@@ -19,6 +19,41 @@ const registerForm = reactive({
   confirmPassword: "",
 });
 
+const validatePassword = (rule: any, value: any, callback: any) => {
+  if (value === "") {
+    callback(new Error(t("auth.passwordRequired")));
+    return;
+  }
+
+  const errors = [];
+
+  if (value.length < 12) {
+    errors.push(t("auth.passwordMinLength12"));
+  }
+
+  if (!/(?=.*[a-z])/.test(value)) {
+    errors.push(t("auth.passwordRequireLowercase"));
+  }
+
+  if (!/(?=.*[A-Z])/.test(value)) {
+    errors.push(t("auth.passwordRequireUppercase"));
+  }
+
+  if (!/(?=.*\d)/.test(value)) {
+    errors.push(t("auth.passwordRequireDigit"));
+  }
+
+  if (!/(?=.*[^a-zA-Z\d])/.test(value)) {
+    errors.push(t("auth.passwordRequireSpecial"));
+  }
+
+  if (errors.length > 0) {
+    callback(new Error(errors.join(" ")));
+  } else {
+    callback();
+  }
+};
+
 const validatePass2 = (rule: any, value: any, callback: any) => {
   if (value === "") {
     callback(new Error(t("auth.confirmPasswordRequired")));
@@ -35,8 +70,7 @@ const rules = reactive<FormRules>({
     { type: "email", message: t("auth.emailInvalid"), trigger: "blur" },
   ],
   password: [
-    { required: true, message: t("auth.passwordRequired"), trigger: "blur" },
-    { min: 6, message: t("auth.passwordMinLength"), trigger: "blur" },
+    { validator: validatePassword, trigger: "blur" },
   ],
   confirmPassword: [
     { validator: validatePass2, trigger: "blur" },
