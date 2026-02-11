@@ -241,7 +241,8 @@ Require email verification for local account registration.
 - Verify email verification process works
 - Run `dotnet test` for email verification tests
 
-### [ ] Step: Update Password Policy
+### [x] Step: Update Password Policy
+<!-- chat-id: 02d55ba6-95f0-4920-9d70-a97f8f5fa3a6 -->
 Implement stronger password requirements following NIST guidelines.
 
 - Configure Identity password options in `Program.cs` for length, complexity

@@ -196,9 +196,13 @@ else
 // Configure Identity options (password requirements and account lockout)
 services.Configure<IdentityOptions>(options =>
 {
-    // Password requirements
+    // Password requirements (NIST guidelines - longer passwords with complexity)
     options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 8;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 12;
+    options.Password.RequiredUniqueChars = 1; // Prevent all identical characters
 
     // Account lockout settings
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Lockout duration
