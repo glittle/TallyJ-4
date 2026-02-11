@@ -3966,6 +3966,7 @@ export type UserProfileDto = {
 
 export type Verify2FaRequest = {
     email: string;
+    password: string;
     code: string;
 };
 
@@ -3981,6 +3982,11 @@ export type VerifyCodeDto = {
      * The verification code to validate.
      */
     verifyCode?: string | null;
+};
+
+export type VerifyEmailRequest = {
+    email: string;
+    token: string;
 };
 
 /**
@@ -4766,6 +4772,23 @@ export type PostApiAuthResetPasswordResponses = {
     200: unknown;
 };
 
+export type PostApiAuthVerifyEmailData = {
+    /**
+     * The verify email request containing the email and verification token.
+     */
+    body?: VerifyEmailRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/verifyEmail';
+};
+
+export type PostApiAuthVerifyEmailResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type PostApiAuthSetup2FaData = {
     body?: never;
     path?: never;
@@ -4816,7 +4839,7 @@ export type PostApiAuthDisable2FaResponses = {
 
 export type PostApiAuthVerify2FaData = {
     /**
-     * The verify 2FA request containing email and verification code.
+     * The verify 2FA request containing email, password, and verification code.
      */
     body?: Verify2FaRequest;
     path?: never;
@@ -4948,6 +4971,20 @@ export type GetApiAuthGoogleCallbackData = {
 };
 
 export type GetApiAuthGoogleCallbackResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthLogoutData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/logout';
+};
+
+export type PostApiAuthLogoutResponses = {
     /**
      * OK
      */

@@ -5476,13 +5476,17 @@ export const UserProfileDtoSchema = {
 } as const;
 
 export const Verify2FARequestSchema = {
-    required: ['code', 'email'],
+    required: ['code', 'email', 'password'],
     type: 'object',
     properties: {
         email: {
             minLength: 1,
             type: 'string',
             format: 'email'
+        },
+        password: {
+            minLength: 1,
+            type: 'string'
         },
         code: {
             maxLength: 6,
@@ -5509,6 +5513,23 @@ export const VerifyCodeDtoSchema = {
     },
     additionalProperties: false,
     description: "Data transfer object for verifying a voter's code for online voting."
+} as const;
+
+export const VerifyEmailRequestSchema = {
+    required: ['email', 'token'],
+    type: 'object',
+    properties: {
+        email: {
+            minLength: 1,
+            type: 'string',
+            format: 'email'
+        },
+        token: {
+            minLength: 1,
+            type: 'string'
+        }
+    },
+    additionalProperties: false
 } as const;
 
 export const VoteDistributionDtoSchema = {
