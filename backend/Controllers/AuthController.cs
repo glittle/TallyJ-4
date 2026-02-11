@@ -831,7 +831,7 @@ public class AuthController : ControllerBase
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             var frontendUrl = GetFrontendUrl(returnUrl);
-            var redirectUrl = $"{frontendUrl}/auth/google/callback/success";
+            var redirectUrl = $"{frontendUrl}/success";
 
             await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
