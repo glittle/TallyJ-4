@@ -25,9 +25,8 @@ const convertDateToString = (date?: Date | null): string | undefined => {
 export const electionService = {
   async getAll(): Promise<ElectionSummaryDto[]> {
     const response = await getApiElectionsGetElections();
-    console.log("ElectionSummaries:", response.data?.data?.items);
     return (
-      response.data?.data?.items?.map((item) => ({
+      response.data?.items?.map((item) => ({
         ...item,
         dateOfElection: convertDateToString(item.dateOfElection),
         tallyStatus: item.tallyStatus ?? undefined,

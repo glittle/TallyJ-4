@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { HomeFilled, Document, User } from "@element-plus/icons-vue";
+import { HomeFilled, Document } from "@element-plus/icons-vue";
 
 const emit = defineEmits<{
   "close-mobile-sidebar": [];
@@ -12,7 +12,6 @@ const route = useRoute();
 const activeRoute = computed(() => {
   const path = route.path;
   if (path.startsWith("/elections")) return "/elections";
-  if (path.startsWith("/profile")) return "/profile";
   return "/dashboard";
 });
 
@@ -42,10 +41,6 @@ function handleMenuSelect() {
         <span>{{ $t("nav.elections") }}</span>
       </el-menu-item>
 
-      <el-menu-item index="/profile" role="menuitem">
-        <el-icon aria-hidden="true"><User /></el-icon>
-        <span>{{ $t("nav.profile") }}</span>
-      </el-menu-item>
     </el-menu>
   </nav>
 </template>
