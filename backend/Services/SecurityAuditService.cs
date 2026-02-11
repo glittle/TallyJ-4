@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using TallyJ4.Domain;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Entities;
 using TallyJ4.DTOs.Security;

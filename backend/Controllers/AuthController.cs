@@ -7,8 +7,10 @@ using System.Security.Cryptography;
 using System.Text;
 using TallyJ4.Application.DTOs.Auth;
 using TallyJ4.Application.Services.Auth;
+using TallyJ4.Domain;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
+using TallyJ4.DTOs.Security;
 using TallyJ4.Middleware;
 using TallyJ4.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -95,9 +97,9 @@ public class AuthController : ControllerBase
 
         if (!success)
         {
-            await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
-                EventType = TallyJ4.Domain.SecurityEventType.AccountCreated,
+                EventType = SecurityEventType.AccountCreated,
                 Email = request.Email,
                 IpAddress = clientIp,
                 UserAgent = userAgent,
@@ -108,16 +110,20 @@ public class AuthController : ControllerBase
             return BadRequest(new { error });
         }
 
-        await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+        // Get the user ID for logging
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        var userId = user?.Id;
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
-            EventType = TallyJ4.DTOs.Security.SecurityEventType.AccountCreated,
-            UserId = response?.UserId,
+            EventType = SecurityEventType.AccountCreated,
+            UserId = userId,
             Email = request.Email,
             IpAddress = clientIp,
             UserAgent = userAgent,
             Details = "User account created successfully",
             IsSuspicious = false,
-            Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Info
+            Severity = SecurityEventSeverity.Info
         });
 
         return Ok(response);
@@ -140,11 +146,11 @@ public class AuthController : ControllerBase
         {
             // Determine if this is a suspicious login attempt
             var isSuspicious = error?.Contains("locked") == true || error?.Contains("invalid") == true;
-            var severity = isSuspicious ? TallyJ4.DTOs.Security.SecurityEventSeverity.Warning : TallyJ4.DTOs.Security.SecurityEventSeverity.Info;
+            var severity = isSuspicious ? SecurityEventSeverity.Warning : SecurityEventSeverity.Info;
 
-            await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
-                EventType = TallyJ4.DTOs.Security.SecurityEventType.LoginFailure,
+                EventType = SecurityEventType.LoginFailure,
                 Email = request.Email,
                 IpAddress = clientIp,
                 UserAgent = userAgent,
@@ -161,16 +167,16 @@ public class AuthController : ControllerBase
         var userId = user?.Id;
 
         // Successful login
-        await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
-            EventType = TallyJ4.DTOs.Security.SecurityEventType.LoginSuccess,
+            EventType = SecurityEventType.LoginSuccess,
             UserId = userId,
             Email = request.Email,
             IpAddress = clientIp,
             UserAgent = userAgent,
             Details = response?.Requires2FA == true ? "Login successful, 2FA required" : "Login successful",
             IsSuspicious = false,
-            Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Info
+            Severity = SecurityEventSeverity.Info
         });
 
         // Set secure cookies instead of returning tokens in response
@@ -282,28 +288,28 @@ public class AuthController : ControllerBase
 
         if (!success)
         {
-            await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
-                EventType = TallyJ4.DTOs.Security.SecurityEventType.TwoFactorSetup,
+                EventType = SecurityEventType.TwoFactorSetup,
                 UserId = userId,
                 IpAddress = clientIp,
                 UserAgent = userAgent,
                 Details = $"2FA setup failed: {error}",
                 IsSuspicious = false,
-                Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Warning
+                Severity = SecurityEventSeverity.Warning
             });
             return BadRequest(new { error });
         }
 
-        await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
-            EventType = TallyJ4.DTOs.Security.SecurityEventType.TwoFactorSetup,
+            EventType = SecurityEventType.TwoFactorSetup,
             UserId = userId,
             IpAddress = clientIp,
             UserAgent = userAgent,
             Details = "2FA setup initiated successfully",
             IsSuspicious = false,
-            Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Info
+            Severity = SecurityEventSeverity.Info
         });
 
         return Ok(response);
@@ -331,28 +337,28 @@ public class AuthController : ControllerBase
 
         if (!success)
         {
-            await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
-                EventType = TallyJ4.DTOs.Security.SecurityEventType.TwoFactorEnabled,
+                EventType = SecurityEventType.TwoFactorEnabled,
                 UserId = userId,
                 IpAddress = clientIp,
                 UserAgent = userAgent,
                 Details = $"2FA enable failed: {error}",
                 IsSuspicious = false,
-                Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Warning
+                Severity = SecurityEventSeverity.Warning
             });
             return BadRequest(new { error });
         }
 
-        await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
-            EventType = TallyJ4.DTOs.Security.SecurityEventType.TwoFactorEnabled,
+            EventType = SecurityEventType.TwoFactorEnabled,
             UserId = userId,
             IpAddress = clientIp,
             UserAgent = userAgent,
             Details = "2FA enabled successfully",
             IsSuspicious = false,
-            Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Info
+            Severity = SecurityEventSeverity.Info
         });
 
         return Ok(new { message = "Two-factor authentication enabled" });
@@ -380,28 +386,28 @@ public class AuthController : ControllerBase
 
         if (!success)
         {
-            await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
-                EventType = TallyJ4.DTOs.Security.SecurityEventType.TwoFactorDisabled,
+                EventType = SecurityEventType.TwoFactorDisabled,
                 UserId = userId,
                 IpAddress = clientIp,
                 UserAgent = userAgent,
                 Details = $"2FA disable failed: {error}",
                 IsSuspicious = false,
-                Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Warning
+                Severity = SecurityEventSeverity.Warning
             });
             return BadRequest(new { error });
         }
 
-        await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
-            EventType = TallyJ4.DTOs.Security.SecurityEventType.TwoFactorDisabled,
+            EventType = SecurityEventType.TwoFactorDisabled,
             UserId = userId,
             IpAddress = clientIp,
             UserAgent = userAgent,
             Details = "2FA disabled successfully",
             IsSuspicious = false,
-            Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Info
+            Severity = SecurityEventSeverity.Info
         });
 
         return Ok(new { message = "Two-factor authentication disabled" });
@@ -427,15 +433,15 @@ public class AuthController : ControllerBase
 
         if (!success)
         {
-            await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
-                EventType = TallyJ4.DTOs.Security.SecurityEventType.TwoFactorVerificationFailure,
+                EventType = SecurityEventType.TwoFactorVerificationFailure,
                 Email = request.Email,
                 IpAddress = clientIp,
                 UserAgent = userAgent,
                 Details = $"2FA verification failed: {error}",
                 IsSuspicious = true,
-                Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Warning
+                Severity = SecurityEventSeverity.Warning
             });
 
             return BadRequest(new { error });
@@ -445,16 +451,16 @@ public class AuthController : ControllerBase
         var user = await _userManager.FindByEmailAsync(request.Email);
         var userId = user?.Id;
 
-        await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
-            EventType = TallyJ4.DTOs.Security.SecurityEventType.TwoFactorVerificationSuccess,
+            EventType = SecurityEventType.TwoFactorVerificationSuccess,
             UserId = userId,
             Email = request.Email,
             IpAddress = clientIp,
             UserAgent = userAgent,
             Details = "2FA verification successful",
             IsSuspicious = false,
-            Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Info
+            Severity = SecurityEventSeverity.Info
         });
 
         return Ok(response);
@@ -628,14 +634,14 @@ public class AuthController : ControllerBase
         {
             _logger.LogWarning("Google OAuth login attempted but credentials are not configured");
 
-            await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
-                EventType = TallyJ4.DTOs.Security.SecurityEventType.OAuthLoginFailure,
+                EventType = SecurityEventType.OAuthLoginFailure,
                 IpAddress = clientIp,
                 UserAgent = userAgent,
                 Details = "Google OAuth login attempted but not configured",
                 IsSuspicious = false,
-                Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Warning
+                Severity = SecurityEventSeverity.Warning
             });
 
             return BadRequest(new { error = "Google authentication is not configured on this server. Please contact your administrator or use email/password login." });
@@ -663,14 +669,14 @@ public class AuthController : ControllerBase
         properties.Parameters["code_challenge_method"] = "S256";
         properties.Parameters["state"] = state;
 
-        await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
-            EventType = TallyJ4.DTOs.Security.SecurityEventType.OAuthLoginInitiated,
+            EventType = SecurityEventType.OAuthLoginInitiated,
             IpAddress = clientIp,
             UserAgent = userAgent,
             Details = $"Google OAuth login initiated with return URL: {returnUrl ?? "default"}",
             IsSuspicious = false,
-            Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Info
+            Severity = SecurityEventSeverity.Info
         });
 
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
@@ -692,14 +698,14 @@ public class AuthController : ControllerBase
             {
                 _logger.LogWarning("Google callback: Missing state parameter");
 
-                await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+                await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
                 {
-                    EventType = TallyJ4.DTOs.Security.SecurityEventType.OAuthCallbackValidationFailure,
+                    EventType = SecurityEventType.OAuthCallbackValidationFailure,
                     IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
                     UserAgent = HttpContext.Request.Headers.UserAgent.ToString(),
                     Details = "Google OAuth callback failed: missing state parameter",
                     IsSuspicious = true,
-                    Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Warning
+                    Severity = SecurityEventSeverity.Warning
                 });
 
                 return Redirect(GetErrorRedirectUrl(null, "Invalid OAuth request - missing state parameter"));
@@ -710,14 +716,14 @@ public class AuthController : ControllerBase
             {
                 _logger.LogWarning("Google callback: Invalid or expired state parameter: {State}", state);
 
-                await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+                await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
                 {
-                    EventType = TallyJ4.DTOs.Security.SecurityEventType.OAuthCallbackValidationFailure,
+                    EventType = SecurityEventType.OAuthCallbackValidationFailure,
                     IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
                     UserAgent = HttpContext.Request.Headers.UserAgent.ToString(),
                     Details = $"Google OAuth callback failed: invalid/expired state parameter - {state}",
                     IsSuspicious = true,
-                    Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Warning
+                    Severity = SecurityEventSeverity.Warning
                 });
 
                 return Redirect(GetErrorRedirectUrl(null, "Invalid OAuth request - state parameter validation failed"));
@@ -827,16 +833,16 @@ public class AuthController : ControllerBase
             var frontendUrl = GetFrontendUrl(returnUrl);
             var redirectUrl = $"{frontendUrl}/auth/google/callback/success";
 
-            await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
-                EventType = TallyJ4.DTOs.Security.SecurityEventType.OAuthLoginSuccess,
+                EventType = SecurityEventType.OAuthLoginSuccess,
                 UserId = user.Id,
                 Email = email,
                 IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
                 UserAgent = HttpContext.Request.Headers.UserAgent.ToString(),
                 Details = $"Google OAuth login successful for user {email}",
                 IsSuspicious = false,
-                Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Info
+                Severity = SecurityEventSeverity.Info
             });
 
             _logger.LogInformation("Google callback: Successfully authenticated user {Email}, redirecting to {Url}", email, frontendUrl);
@@ -877,15 +883,15 @@ public class AuthController : ControllerBase
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        await _securityAuditService.LogSecurityEventAsync(new TallyJ4.DTOs.Security.CreateSecurityAuditLogDto
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
-            EventType = TallyJ4.DTOs.Security.SecurityEventType.Logout,
+            EventType = SecurityEventType.Logout,
             UserId = userId,
             IpAddress = clientIp,
             UserAgent = userAgent,
             Details = "User logged out",
             IsSuspicious = false,
-            Severity = TallyJ4.DTOs.Security.SecurityEventSeverity.Info
+            Severity = SecurityEventSeverity.Info
         });
 
         SecureCookieMiddleware.ClearAuthCookies(HttpContext);

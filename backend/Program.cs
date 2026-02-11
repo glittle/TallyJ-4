@@ -21,6 +21,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using TallyJ4.Application.Services.Auth;
 using TallyJ4.Localization;
+using TallyJ4.Services;
 using System.Reflection;
 
 Console.WriteLine("Starting up..."); // for server log files

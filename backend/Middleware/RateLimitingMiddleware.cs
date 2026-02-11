@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
+using TallyJ4.Domain;
+using TallyJ4.DTOs.Security;
 using TallyJ4.Services;
 
 namespace TallyJ4.Middleware;
@@ -51,14 +53,14 @@ public class RateLimitingMiddleware
             {
                 _logger.LogWarning("Rate limit exceeded for {Path} by client {ClientKey}", path, clientKey);
 
-                await securityAuditService.LogSecurityEventAsync(new DTOs.Security.CreateSecurityAuditLogDto
+                await securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
                 {
-                    EventType = DTOs.Security.SecurityEventType.RateLimitExceeded,
+                    EventType = SecurityEventType.RateLimitExceeded,
                     IpAddress = clientIp,
                     UserAgent = userAgent,
                     Details = $"Rate limit exceeded for {path} - {requests.Count} requests in {limit.Window.TotalMinutes} minutes",
                     IsSuspicious = true,
-                    Severity = DTOs.Security.SecurityEventSeverity.Warning
+                    Severity = SecurityEventSeverity.Warning
                 });
 
                 context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
