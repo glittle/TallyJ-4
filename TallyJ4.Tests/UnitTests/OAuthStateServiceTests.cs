@@ -112,14 +112,15 @@ public class OAuthStateServiceTests
     public void ValidateState_UsedState_ReturnsNullOnSecondCall()
     {
         // Arrange
-        var state = _service.GenerateState();
+        var returnUrl = "https://example.com/callback";
+        var state = _service.GenerateState(returnUrl);
 
         // Act
         var result1 = _service.ValidateState(state);
         var result2 = _service.ValidateState(state);
 
         // Assert
-        Assert.NotNull(result1); // First call should succeed
+        Assert.Equal(returnUrl, result1); // First call should succeed and return the URL
         Assert.Null(result2); // Second call should fail (state consumed)
     }
 
