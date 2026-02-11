@@ -422,7 +422,7 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
                 {
                     var name = parts[0];
                     var value = parts[1].Split(';')[0];
-                    cookies[name] = cookieHeader;
+                    cookies[name] = value;
                 }
             }
         }
