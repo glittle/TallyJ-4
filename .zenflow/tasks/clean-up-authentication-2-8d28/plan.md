@@ -53,7 +53,8 @@ If the feature is trivial and doesn't warrant full specification, update this wo
 
 Save to `{@artifacts_path}/plan.md`.
 
-### [ ] Step: Implement Secure Token Storage (Cookies)
+### [x] Step: Implement Secure Token Storage (Cookies)
+<!-- chat-id: b6638667-13e4-4011-9614-40e0e1b0a6d3 -->
 Implement cookie-based token storage to replace vulnerable localStorage.
 
 - Create `SecureCookieMiddleware.cs` in `backend/TallyJ4.Backend/Middleware/` for cookie handling

@@ -1,15 +1,18 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { authService, type LoginRequest, type RegisterRequest } from '../services/authService';
+import { secureTokenService } from '../services/secureTokenService';
 import { useApiErrorHandler } from '../composables/useApiErrorHandler';
 
 export const useAuthStore = defineStore('auth', () => {
   const { handleApiError } = useApiErrorHandler();
 
-  const token = ref<string | null>(localStorage.getItem('auth_token'));
-  const email = ref<string | null>(localStorage.getItem('user_email'));
-  const name = ref<string | null>(localStorage.getItem('user_name'));
-  const authMethod = ref<string | null>(localStorage.getItem('auth_method'));
+  // Initialize from cookies instead of localStorage
+  const authData = secureTokenService.getAuthData();
+  const token = ref<string | null>(null); // Token is httpOnly, can't read from JS
+  const email = ref<string | null>(authData.email);
+  const name = ref<string | null>(authData.name);
+  const authMethod = ref<string | null>(authData.authMethod);
   const requires2FA = ref(false);
   const pending2FAEmail = ref<string | null>(null);
 
@@ -23,16 +26,18 @@ export const useAuthStore = defineStore('auth', () => {
         requires2FA.value = true;
         pending2FAEmail.value = response.email;
       } else {
-        token.value = response.token;
+        // Tokens are now stored in httpOnly cookies by the backend
+        // We can only read user info from non-httpOnly cookies
+        token.value = response.token; // Keep for backward compatibility in store
         email.value = response.email;
         name.value = response.name || null;
         authMethod.value = response.authMethod || 'Local';
-        localStorage.setItem('auth_token', response.token);
-        localStorage.setItem('user_email', response.email);
-        if (response.name) {
-          localStorage.setItem('user_name', response.name);
-        }
-        localStorage.setItem('auth_method', response.authMethod || 'Local');
+
+        // Refresh cookie data to ensure sync
+        const cookieData = secureTokenService.refreshAuthData();
+        email.value = cookieData.email || response.email;
+        name.value = cookieData.name || response.name;
+        authMethod.value = cookieData.authMethod || response.authMethod || 'Local';
       }
 
       return response;
@@ -50,16 +55,19 @@ export const useAuthStore = defineStore('auth', () => {
         requires2FA.value = true;
         pending2FAEmail.value = data.email;
       } else {
-        token.value = response.token;
+        // Tokens are now stored in httpOnly cookies by the backend
+        // We can only read user info from non-httpOnly cookies
+        token.value = response.token; // Keep for backward compatibility in store
         email.value = response.email;
         name.value = response.name || null;
         authMethod.value = response.authMethod || 'Local';
-        localStorage.setItem('auth_token', response.token);
-        localStorage.setItem('user_email', response.email);
-        if (response.name) {
-          localStorage.setItem('user_name', response.name);
-        }
-        localStorage.setItem('auth_method', response.authMethod || 'Local');
+
+        // Refresh cookie data to ensure sync
+        const cookieData = secureTokenService.refreshAuthData();
+        email.value = cookieData.email || response.email;
+        name.value = cookieData.name || response.name;
+        authMethod.value = cookieData.authMethod || response.authMethod || 'Local';
+
         requires2FA.value = false;
         pending2FAEmail.value = null;
       }
@@ -71,17 +79,25 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function logout() {
+  async function logout() {
+    try {
+      // Call backend logout endpoint to clear httpOnly cookies
+      await authService.logout();
+    } catch (error) {
+      // Continue with client-side cleanup even if backend call fails
+      console.warn('Backend logout failed, clearing client-side data anyway:', error);
+    }
+
+    // Clear client-side state
     token.value = null;
     email.value = null;
     name.value = null;
     authMethod.value = null;
     requires2FA.value = false;
     pending2FAEmail.value = null;
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_email');
-    localStorage.removeItem('user_name');
-    localStorage.removeItem('auth_method');
+
+    // Clear cookies (readable ones)
+    secureTokenService.clearAuthData();
   }
 
   return {

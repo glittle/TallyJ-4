@@ -2,6 +2,7 @@
 import {
   postApiAuthRegisterAccount,
   postApiAuthLogin,
+  postApiAuthLogout,
   postApiAuthForgotPassword,
   postApiAuthResetPassword,
   postApiAuthSetup2Fa,
@@ -84,6 +85,12 @@ export const authService = {
   async disable2FA(password: string, code: string): Promise<void> {
     await postApiAuthDisable2Fa({
       body: { password, code },
+      throwOnError: true,
+    });
+  },
+
+  async logout(): Promise<void> {
+    await postApiAuthLogout({
       throwOnError: true,
     });
   },

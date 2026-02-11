@@ -87,10 +87,10 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Authenticates a user and returns access tokens.
+    /// Authenticates a user and sets secure cookies with access tokens.
     /// </summary>
     /// <param name="request">The login request containing email and password.</param>
-    /// <returns>The authentication response with tokens if successful, or an error if login fails.</returns>
+    /// <returns>The authentication response with user info if successful, or an error if login fails.</returns>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
@@ -101,7 +101,27 @@ public class AuthController : ControllerBase
             return BadRequest(new { error });
         }
 
-        return Ok(response);
+        // Set secure cookies instead of returning tokens in response
+        SecureCookieMiddleware.SetAuthCookies(
+            HttpContext,
+            response.Token,
+            response.RefreshToken ?? "",
+            response.Email,
+            response.Name,
+            response.AuthMethod ?? "Local",
+            HttpContext.Request.IsHttps
+        );
+
+        // Return response without tokens for backward compatibility with frontend
+        return Ok(new AuthResponse
+        {
+            Token = response.Token, // Keep for backward compatibility
+            RefreshToken = response.RefreshToken,
+            Email = response.Email,
+            Name = response.Name,
+            AuthMethod = response.AuthMethod,
+            Requires2FA = response.Requires2FA
+        });
     }
 
     /// <summary>
@@ -238,7 +258,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Refreshes an access token using a valid refresh token.
+    /// Refreshes an access token using a valid refresh token and sets secure cookies.
     /// </summary>
     /// <param name="request">The refresh token request containing the refresh token.</param>
     /// <returns>New access and refresh tokens if successful, or an error if the refresh token is invalid.</returns>
@@ -271,6 +291,17 @@ public class AuthController : ControllerBase
 
         _context.RefreshTokens.Add(newRefreshTokenEntity);
         await _context.SaveChangesAsync();
+
+        // Set secure cookies with new tokens
+        SecureCookieMiddleware.SetAuthCookies(
+            HttpContext,
+            newToken,
+            newRefreshToken,
+            user.Email!,
+            user.DisplayName,
+            user.AuthMethod ?? "Local",
+            HttpContext.Request.IsHttps
+        );
 
         return Ok(new AuthResponse
         {
@@ -499,11 +530,22 @@ public class AuthController : ControllerBase
             _context.RefreshTokens.Add(refreshTokenEntity);
             await _context.SaveChangesAsync();
 
+            // Set secure cookies with authentication data
+            SecureCookieMiddleware.SetAuthCookies(
+                HttpContext,
+                token,
+                refreshToken,
+                user.Email!,
+                user.DisplayName,
+                user.AuthMethod ?? "Google",
+                HttpContext.Request.IsHttps
+            );
+
             // Clean up the external authentication cookie
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             var frontendUrl = GetFrontendUrl(returnUrl);
-            var redirectUrl = $"{frontendUrl}?token={Uri.EscapeDataString(token)}&refreshToken={Uri.EscapeDataString(refreshToken)}&email={Uri.EscapeDataString(user.Email ?? "")}&name={Uri.EscapeDataString(user.DisplayName ?? "")}&authMethod={Uri.EscapeDataString(user.AuthMethod)}";
+            var redirectUrl = $"{frontendUrl}/auth/google/callback/success";
 
             _logger.LogInformation("Google callback: Successfully authenticated user {Email}, redirecting to {Url}", email, frontendUrl);
             return Redirect(redirectUrl);
@@ -524,6 +566,17 @@ public class AuthController : ControllerBase
 
         var frontendOrigins = new[] { "http://localhost:8095", "http://localhost:5173", "http://localhost:5174" };
         return frontendOrigins[0] + "/auth/google/callback";
+    }
+
+    /// <summary>
+    /// Logs out the current user by clearing authentication cookies.
+    /// </summary>
+    /// <returns>A success message indicating logout was successful.</returns>
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        SecureCookieMiddleware.ClearAuthCookies(HttpContext);
+        return Ok(new { message = "Logged out successfully" });
     }
 
     private string GetErrorRedirectUrl(string? returnUrl, string errorMessage)
