@@ -165,7 +165,8 @@ Store refresh tokens as SHA-256 hashes instead of plain text.
 - Verify database contains only hashed values
 - Run `dotnet test` and EF migration tests
 
-### [ ] Step: Fix 2FA Password Bypass
+### [x] Step: Fix 2FA Password Bypass
+<!-- chat-id: 65b0c13b-e915-4183-be8b-931177bab572 -->
 Ensure 2FA verification requires password validation.
 
 - Modify `AuthController.cs` Verify2FA endpoint to validate password before 2FA check

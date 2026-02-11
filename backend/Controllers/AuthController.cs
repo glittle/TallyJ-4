@@ -240,7 +240,7 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Verifies a two-factor authentication code for login.
     /// </summary>
-    /// <param name="request">The verify 2FA request containing email and verification code.</param>
+    /// <param name="request">The verify 2FA request containing email, password, and verification code.</param>
     /// <returns>The authentication response with tokens if successful, or an error if verification fails.</returns>
     [HttpPost("verify2fa")]
     public async Task<IActionResult> Verify2FA([FromBody] Verify2FARequest request)
@@ -248,7 +248,7 @@ public class AuthController : ControllerBase
         var (success, error, response) = await _localAuthService.LoginAsync(new LoginRequest
         {
             Email = request.Email,
-            Password = "",
+            Password = request.Password,
             TwoFactorCode = request.Code
         });
 
