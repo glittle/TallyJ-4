@@ -78,15 +78,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout() {
-    try {
-      // Call backend logout endpoint to clear httpOnly cookies
-      await authService.logout();
-    } catch (error) {
-      // Continue with client-side cleanup even if backend call fails
-      console.warn('Backend logout failed, clearing client-side data anyway:', error);
-    }
-
-    // Clear client-side state
+    // Clear client-side state first
     email.value = null;
     name.value = null;
     authMethod.value = null;
@@ -95,6 +87,11 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Clear cookies (readable ones)
     secureTokenService.clearAuthData();
+
+    // Navigate to logout endpoint which will clear server-side cookies and redirect to login page
+    // This ensures proper server-side logout and page refresh
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
+    window.location.href = `${apiUrl}/api/auth/logout`;
   }
 
   return {

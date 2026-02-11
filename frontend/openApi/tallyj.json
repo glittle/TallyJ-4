@@ -1045,7 +1045,7 @@
       }
     },
     "/api/Auth/logout": {
-      "post": {
+      "get": {
         "tags": [
           "Auth"
         ],

@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using TallyJ4.Application.DTOs.Auth;
 using TallyJ4.Application.Services.Auth;
 using TallyJ4.Domain;
@@ -36,7 +34,7 @@ public class AuthController : ControllerBase
     private readonly ILogger<AuthController> _logger;
     private readonly IConfiguration _configuration;
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly OAuthStateService _oauthStateService;
+
     private readonly ISecurityAuditService _securityAuditService;
 
     /// <summary>
@@ -52,7 +50,6 @@ public class AuthController : ControllerBase
     /// <param name="logger">Logger for recording operations.</param>
     /// <param name="configuration">Application configuration.</param>
     /// <param name="signInManager">ASP.NET Core Identity sign-in manager.</param>
-    /// <param name="oauthStateService">Service for managing OAuth state parameters.</param>
     /// <param name="securityAuditService">Service for logging security events.</param>
     public AuthController(
         LocalAuthService localAuthService,
@@ -65,7 +62,6 @@ public class AuthController : ControllerBase
         ILogger<AuthController> logger,
         IConfiguration configuration,
         SignInManager<AppUser> signInManager,
-        OAuthStateService oauthStateService,
         ISecurityAuditService securityAuditService)
     {
         _localAuthService = localAuthService;
@@ -78,7 +74,6 @@ public class AuthController : ControllerBase
         _logger = logger;
         _configuration = configuration;
         _signInManager = signInManager;
-        _oauthStateService = oauthStateService;
         _securityAuditService = securityAuditService;
     }
 
@@ -671,12 +666,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { error = "Google authentication is not configured on this server. Please contact your administrator or use email/password login." });
         }
 
-        // Generate PKCE code verifier and challenge for enhanced security
-        var codeVerifier = GenerateCodeVerifier();
-        var codeChallenge = GenerateCodeChallenge(codeVerifier);
-
-        // Generate state parameter for CSRF protection
-        var state = _oauthStateService.GenerateState(returnUrl);
+        var redirect = HttpContext.Request.Query["redirect"].ToString();
 
         var properties = new AuthenticationProperties
         {
@@ -684,14 +674,9 @@ public class AuthController : ControllerBase
             Items =
             {
                 { "returnUrl", returnUrl ?? string.Empty },
-                { "code_verifier", codeVerifier }
+                { "redirect", redirect ?? "/elections" }
             }
         };
-
-        // Add PKCE and state parameters to the OAuth request
-        properties.Parameters["code_challenge"] = codeChallenge;
-        properties.Parameters["code_challenge_method"] = "S256";
-        properties.Parameters["state"] = state;
 
         await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
@@ -716,44 +701,6 @@ public class AuthController : ControllerBase
         string? returnUrl = null;
         try
         {
-            // Validate state parameter for CSRF protection
-            var state = HttpContext.Request.Query["state"].ToString();
-            if (string.IsNullOrEmpty(state))
-            {
-                _logger.LogWarning("Google callback: Missing state parameter");
-
-                await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
-                {
-                    EventType = SecurityEventType.OAuthCallbackValidationFailure,
-                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                    UserAgent = HttpContext.Request.Headers.UserAgent.ToString(),
-                    Details = "Google OAuth callback failed: missing state parameter",
-                    IsSuspicious = true,
-                    Severity = SecurityEventSeverity.Warning
-                });
-
-                return Redirect(GetErrorRedirectUrl(null, "Invalid OAuth request - missing state parameter"));
-            }
-
-            var validatedReturnUrl = _oauthStateService.ValidateState(state);
-            if (validatedReturnUrl == null)
-            {
-                _logger.LogWarning("Google callback: Invalid or expired state parameter: {State}", state);
-
-                await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
-                {
-                    EventType = SecurityEventType.OAuthCallbackValidationFailure,
-                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                    UserAgent = HttpContext.Request.Headers.UserAgent.ToString(),
-                    Details = $"Google OAuth callback failed: invalid/expired state parameter - {state}",
-                    IsSuspicious = true,
-                    Severity = SecurityEventSeverity.Warning
-                });
-
-                return Redirect(GetErrorRedirectUrl(null, "Invalid OAuth request - state parameter validation failed"));
-            }
-
-            returnUrl = validatedReturnUrl;
 
             // Authenticate the external cookie explicitly
             var authenticateResult = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
@@ -766,10 +713,20 @@ public class AuthController : ControllerBase
             _logger.LogInformation("Google callback: External auth succeeded, principal: {Principal}",
                 authenticateResult.Principal?.Identity?.Name ?? "null");
 
-            // Extract return URL from authentication properties (fallback)
-            if (string.IsNullOrEmpty(returnUrl) && authenticateResult.Properties?.Items.TryGetValue("returnUrl", out var returnUrlValue) == true)
+            // Extract return URL and redirect from authentication properties
+            if (authenticateResult.Properties?.Items.TryGetValue("returnUrl", out var returnUrlValue) == true)
             {
                 returnUrl = returnUrlValue;
+            }
+
+            string redirectUrl;
+            if (authenticateResult.Properties?.Items.TryGetValue("redirect", out var redirectValue) == true && !string.IsNullOrEmpty(redirectValue))
+            {
+                redirectUrl = redirectValue.StartsWith("http") ? redirectValue : $"http://localhost:8095{redirectValue}";
+            }
+            else
+            {
+                redirectUrl = "http://localhost:8095/elections";
             }
 
             // Extract claims directly from the authenticated principal
@@ -854,9 +811,6 @@ public class AuthController : ControllerBase
             // Clean up the external authentication cookie
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-            var frontendUrl = GetFrontendUrl(returnUrl);
-            var redirectUrl = $"{frontendUrl}/success";
-
             await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
                 EventType = SecurityEventType.OAuthLoginSuccess,
@@ -869,7 +823,7 @@ public class AuthController : ControllerBase
                 Severity = SecurityEventSeverity.Info
             });
 
-            _logger.LogInformation("Google callback: Successfully authenticated user {Email}, redirecting to {Url}", email, frontendUrl);
+            _logger.LogInformation("Google callback: Successfully authenticated user {Email}, redirecting to {Url}", email, redirectUrl);
             return Redirect(redirectUrl);
         }
         catch (Exception ex)
@@ -899,8 +853,8 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Logs out the current user by clearing authentication cookies.
     /// </summary>
-    /// <returns>A success message indicating logout was successful.</returns>
-    [HttpPost("logout")]
+    /// <returns>A redirect to the login page.</returns>
+    [HttpGet("logout")]
     public async Task<IActionResult> Logout()
     {
         var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -919,7 +873,16 @@ public class AuthController : ControllerBase
         });
 
         SecureCookieMiddleware.ClearAuthCookies(HttpContext);
-        return Ok(new { message = "Logged out successfully" });
+
+        // Redirect to frontend root page
+        var frontendUrl = _configuration["Frontend:BaseUrl"];
+        if (!string.IsNullOrEmpty(frontendUrl))
+        {
+            return Redirect(frontendUrl);
+        }
+
+        // Fallback to localhost for development
+        return Redirect("http://localhost:8095/");
     }
 
     private string GetErrorRedirectUrl(string? returnUrl, string errorMessage)
@@ -929,39 +892,5 @@ public class AuthController : ControllerBase
         return $"{baseUrl}?error={Uri.EscapeDataString(errorMessage)}&mode=officer";
     }
 
-    /// <summary>
-    /// Generates a cryptographically secure random code verifier for PKCE.
-    /// </summary>
-    /// <returns>A base64url-encoded random string of 43-128 characters.</returns>
-    internal static string GenerateCodeVerifier()
-    {
-        var randomBytes = new byte[32]; // 256 bits
-        RandomNumberGenerator.Fill(randomBytes);
-        return Base64UrlEncode(randomBytes);
-    }
 
-    /// <summary>
-    /// Generates a code challenge from a code verifier using SHA256.
-    /// </summary>
-    /// <param name="codeVerifier">The code verifier string.</param>
-    /// <returns>A base64url-encoded SHA256 hash of the code verifier.</returns>
-    internal static string GenerateCodeChallenge(string codeVerifier)
-    {
-        using var sha256 = SHA256.Create();
-        var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
-        return Base64UrlEncode(hash);
-    }
-
-    /// <summary>
-    /// Encodes a byte array to base64url format (URL-safe base64).
-    /// </summary>
-    /// <param name="bytes">The bytes to encode.</param>
-    /// <returns>A base64url-encoded string.</returns>
-    internal static string Base64UrlEncode(byte[] bytes)
-    {
-        return Convert.ToBase64String(bytes)
-            .Replace('+', '-')
-            .Replace('/', '_')
-            .TrimEnd('=');
-    }
 }

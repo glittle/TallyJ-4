@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import type { RouteLocationNormalized } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
+import { secureTokenService } from "../services/secureTokenService";
 
 // Layouts - keep these static as they're used frequently
 import MainLayout from "../layouts/MainLayout.vue";
@@ -179,15 +180,15 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
   //   globalThis.document.location.href
   // );
 
-  const authStore = useAuthStore();
+  const isAuthenticated = secureTokenService.isAuthenticated();
 
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+  if (to.meta.requiresAuth && !isAuthenticated) {
     return { path: "/login", query: { redirect: to.fullPath } };
   }
 
   if (
     (to.path === "/" || to.path === "/login" || to.path === "/register") &&
-    authStore.isAuthenticated
+    isAuthenticated
   ) {
     return "/dashboard";
   }
