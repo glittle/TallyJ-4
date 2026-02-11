@@ -134,7 +134,8 @@ Enable and configure ASP.NET Core Identity account lockout to prevent brute forc
 - Confirm lockout status is communicated to frontend
 - Run `dotnet test` for lockout tests
 
-### [ ] Step: Reduce JWT Token Expiry
+### [x] Step: Reduce JWT Token Expiry
+<!-- chat-id: ad9cf9b7-c3e2-42f7-8bf7-bd5e872f895a -->
 Shorten JWT access token expiry from 24 hours to 15-30 minutes.
 
 - Modify `JwtTokenService.cs` to use configurable shorter expiry (default 15 minutes)
