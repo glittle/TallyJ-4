@@ -179,22 +179,26 @@ public class AuthController : ControllerBase
             Severity = SecurityEventSeverity.Info
         });
 
-        // Set secure cookies instead of returning tokens in response
-        SecureCookieMiddleware.SetAuthCookies(
-            HttpContext,
-            response.Token,
-            response.RefreshToken ?? "",
-            response.Email,
-            response.Name,
-            response.AuthMethod ?? "Local",
-            HttpContext.Request.IsHttps
-        );
+        // Only set cookies if 2FA is not required
+        if (!response.Requires2FA && !string.IsNullOrEmpty(response.Token))
+        {
+            // Set secure cookies instead of returning tokens in response
+            SecureCookieMiddleware.SetAuthCookies(
+                HttpContext,
+                response.Token,
+                response.RefreshToken ?? "",
+                response.Email,
+                response.Name,
+                response.AuthMethod ?? "Local",
+                HttpContext.Request.IsHttps
+            );
+        }
 
         // Return response without tokens (tokens are in httpOnly cookies)
         return Ok(new AuthResponse
         {
-            Token = "", // Tokens are in httpOnly cookies, not returned in response
-            RefreshToken = "",
+            Token = null, // Not returned - stored in httpOnly cookie
+            RefreshToken = null, // Not returned - stored in httpOnly cookie
             Email = response.Email,
             Name = response.Name,
             AuthMethod = response.AuthMethod,
@@ -515,8 +519,8 @@ public class AuthController : ControllerBase
 
         return Ok(new AuthResponse
         {
-            Token = "", // Tokens are in httpOnly cookies, not returned in response
-            RefreshToken = "",
+            Token = null, // Not returned - stored in httpOnly cookie
+            RefreshToken = null, // Not returned - stored in httpOnly cookie
             Email = user.Email!,
             Name = user.DisplayName,
             AuthMethod = user.AuthMethod,
