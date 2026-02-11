@@ -168,6 +168,35 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
+    /// Verifies a user's email address using a verification token.
+    /// </summary>
+    /// <param name="request">The verify email request containing the email and verification token.</param>
+    /// <returns>A success message if the email was verified, or an error if the request fails.</returns>
+    [HttpPost("verifyEmail")]
+    public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user == null)
+        {
+            return BadRequest(new { error = "User not found" });
+        }
+
+        if (user.EmailConfirmed)
+        {
+            return BadRequest(new { error = "Email is already verified" });
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, request.Token);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            return BadRequest(new { error = errors });
+        }
+
+        return Ok(new { message = "Email verified successfully" });
+    }
+
+    /// <summary>
     /// Sets up two-factor authentication for the authenticated user.
     /// </summary>
     /// <returns>The 2FA setup information including QR code and secret key.</returns>

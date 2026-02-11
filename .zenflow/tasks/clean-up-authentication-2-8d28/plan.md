@@ -226,7 +226,8 @@ Add background service to periodically clean up expired refresh tokens.
 - Verify database performance with index
 - Run `dotnet test` for cleanup service tests
 
-### [ ] Step: Enforce Email Verification
+### [x] Step: Enforce Email Verification
+<!-- chat-id: 6c64c982-7614-42b9-a056-d639b3af6e43 -->
 Require email verification for local account registration.
 
 - Modify registration endpoint to send verification emails

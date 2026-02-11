@@ -141,4 +141,71 @@ If you did not enable 2FA, please contact support immediately.
             throw;
         }
     }
+
+    public async Task SendEmailVerificationEmailAsync(string toEmail, string verificationToken)
+    {
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(
+            _configuration["Email:FromName"],
+            _configuration["Email:FromAddress"]
+        ));
+        message.To.Add(new MailboxAddress(toEmail, toEmail));
+        message.Subject = "Verify Your Email Address";
+
+        var bodyBuilder = new BodyBuilder
+        {
+            HtmlBody = $@"
+                <h2>Welcome to TallyJ4</h2>
+                <p>Thank you for registering an account. Please verify your email address to complete your registration.</p>
+                <p>Use the following verification code to confirm your email:</p>
+                <p><strong>{verificationToken}</strong></p>
+                <p>This code will expire in 24 hours.</p>
+                <p>If you did not create this account, please ignore this email.</p>
+            ",
+            TextBody = $@"
+Welcome to TallyJ4
+
+Thank you for registering an account. Please verify your email address to complete your registration.
+
+Use the following verification code to confirm your email:
+
+{verificationToken}
+
+This code will expire in 24 hours.
+
+If you did not create this account, please ignore this email.
+            "
+        };
+
+        message.Body = bodyBuilder.ToMessageBody();
+
+        try
+        {
+            using var client = new SmtpClient();
+            var smtpHost = _configuration["Email:SmtpHost"];
+            var smtpPort = int.Parse(_configuration["Email:SmtpPort"] ?? "587");
+            var useSsl = bool.Parse(_configuration["Email:UseSsl"] ?? "true");
+
+            await client.ConnectAsync(smtpHost, smtpPort,
+                useSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
+
+            var username = _configuration["Email:Username"];
+            var password = _configuration["Email:Password"];
+
+            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+            {
+                await client.AuthenticateAsync(username, password);
+            }
+
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
+
+            _logger.LogInformation("Email verification email sent to {Email}", toEmail);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send email verification email to {Email}", toEmail);
+            throw;
+        }
+    }
 }

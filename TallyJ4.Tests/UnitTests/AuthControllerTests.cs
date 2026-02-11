@@ -300,6 +300,79 @@ public class AuthControllerTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task VerifyEmail_WithValidToken_ReturnsSuccess()
+    {
+        // Arrange
+        var request = new VerifyEmailRequest { Email = "test@example.com", Token = "valid-token" };
+        var user = new AppUser { Email = "test@example.com", EmailConfirmed = false };
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(request.Email)).ReturnsAsync(user);
+        _userManagerMock.Setup(um => um.ConfirmEmailAsync(user, request.Token))
+            .ReturnsAsync(IdentityResult.Success);
+
+        // Act
+        var result = await _controller.VerifyEmail(request);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal("Email verified successfully", ((dynamic)okResult.Value).message);
+    }
+
+    [Fact]
+    public async Task VerifyEmail_WithNonexistentUser_ReturnsBadRequest()
+    {
+        // Arrange
+        var request = new VerifyEmailRequest { Email = "nonexistent@example.com", Token = "token" };
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(request.Email)).ReturnsAsync((AppUser)null);
+
+        // Act
+        var result = await _controller.VerifyEmail(request);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("User not found", ((dynamic)badRequestResult.Value).error);
+    }
+
+    [Fact]
+    public async Task VerifyEmail_WithAlreadyVerifiedEmail_ReturnsBadRequest()
+    {
+        // Arrange
+        var request = new VerifyEmailRequest { Email = "test@example.com", Token = "token" };
+        var user = new AppUser { Email = "test@example.com", EmailConfirmed = true };
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(request.Email)).ReturnsAsync(user);
+
+        // Act
+        var result = await _controller.VerifyEmail(request);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("Email is already verified", ((dynamic)badRequestResult.Value).error);
+    }
+
+    [Fact]
+    public async Task VerifyEmail_WithInvalidToken_ReturnsBadRequest()
+    {
+        // Arrange
+        var request = new VerifyEmailRequest { Email = "test@example.com", Token = "invalid-token" };
+        var user = new AppUser { Email = "test@example.com", EmailConfirmed = false };
+        var identityError = new IdentityError { Description = "Invalid token" };
+        var identityResult = IdentityResult.Failed(identityError);
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(request.Email)).ReturnsAsync(user);
+        _userManagerMock.Setup(um => um.ConfirmEmailAsync(user, request.Token))
+            .ReturnsAsync(identityResult);
+
+        // Act
+        var result = await _controller.VerifyEmail(request);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("Invalid token", ((dynamic)badRequestResult.Value).error);
+    }
+
+    [Fact]
     public void GetFrontendUrl_WithInvalidReturnUrl_ReturnsConfiguredUrl()
     {
         // Arrange
