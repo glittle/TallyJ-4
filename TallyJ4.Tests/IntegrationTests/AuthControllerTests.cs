@@ -197,7 +197,7 @@ public class AuthControllerTests : IntegrationTestBase
         {
             Email = testEmail,
             Password = "TestPass123!",
-            Name = "Lockout Test User"
+            ConfirmPassword = "TestPass123!"
         };
 
         var registerContent = new StringContent(
@@ -266,7 +266,7 @@ public class AuthControllerTests : IntegrationTestBase
         {
             Email = testEmail,
             Password = testPassword,
-            Name = "2FA Test User"
+            ConfirmPassword = testPassword
         };
 
         var registerContent = new StringContent(
@@ -282,7 +282,7 @@ public class AuthControllerTests : IntegrationTestBase
         setupResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var setupContent = await setupResponse.Content.ReadAsStringAsync();
-        var setupResult = JsonSerializer.Deserialize<Setup2FAResponse>(setupContent, JsonOptions);
+        var setupResult = JsonSerializer.Deserialize<TwoFactorSetupResponse>(setupContent, JsonOptions);
         setupResult.Should().NotBeNull();
 
         // Enable 2FA with a valid code (we'll use a known secret for testing)
