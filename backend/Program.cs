@@ -360,6 +360,9 @@ app.UseHttpsRedirection();
 // Use CORS
 app.UseCors("AllowFrontend");
 
+// Use custom rate limiting
+app.UseMiddleware<RateLimitingMiddleware>();
+
 // Configure request localization
 var localizationOptions = app.Services.GetRequiredService<IOptions<JsonLocalizationOptions>>().Value;
 var supportedCultures = localizationOptions.SupportedCultures

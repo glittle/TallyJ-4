@@ -103,7 +103,8 @@ Replace Base64 encoding with AES-GCM encryption for 2FA secrets.
 - Verify encryption keys are securely configured
 - Run `dotnet test` for security component tests
 
-### [ ] Step: Add Rate Limiting Middleware
+### [x] Step: Add Rate Limiting Middleware
+<!-- chat-id: ae29c5ad-2b67-4f44-8dbd-fbc7282ac2db -->
 Implement rate limiting to prevent brute force attacks on authentication endpoints.
 
 - Add `Microsoft.AspNetCore.RateLimiting` package to backend project
