@@ -58,12 +58,9 @@ public class OAuthStateService
     /// <returns>The return URL if state is valid, null otherwise.</returns>
     public string? ValidateState(string state)
     {
-        if (_stateStore.TryRemove(state, out var entry))
+        if (_stateStore.TryRemove(state, out var entry) && entry.ExpiresAt > DateTime.UtcNow)
         {
-            if (entry.ExpiresAt > DateTime.UtcNow)
-            {
-                return entry.ReturnUrl;
-            }
+            return entry.ReturnUrl;
         }
 
         return null;
