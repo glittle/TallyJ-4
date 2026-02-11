@@ -467,7 +467,27 @@ public class AuthController : ControllerBase
             Severity = SecurityEventSeverity.Info
         });
 
-        return Ok(response);
+        // Set secure cookies with authentication data
+        SecureCookieMiddleware.SetAuthCookies(
+            HttpContext,
+            response.Token,
+            response.RefreshToken ?? "",
+            response.Email,
+            response.Name,
+            response.AuthMethod ?? "Local",
+            HttpContext.Request.IsHttps
+        );
+
+        // Return response with tokens for backward compatibility with frontend
+        return Ok(new AuthResponse
+        {
+            Token = response.Token, // Keep for backward compatibility
+            RefreshToken = response.RefreshToken,
+            Email = response.Email,
+            Name = response.Name,
+            AuthMethod = response.AuthMethod,
+            Requires2FA = response.Requires2FA
+        });
     }
 
     /// <summary>
