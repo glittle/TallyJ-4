@@ -248,6 +248,7 @@ services.AddScoped<EmailService>();
 services.AddScoped<LocalAuthService>();
 services.AddScoped<PasswordResetService>();
 services.AddScoped<TwoFactorService>();
+services.AddScoped<EncryptionService>();
 
 // Add SignalR
 services.AddSignalR();

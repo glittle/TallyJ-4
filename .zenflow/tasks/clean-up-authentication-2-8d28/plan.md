@@ -87,7 +87,8 @@ Remove tokens from OAuth callback URLs and implement secure token exchange.
 - Verify PKCE prevents authorization code interception
 - Run `dotnet test` for backend tests
 
-### [ ] Step: Implement Proper 2FA Secret Encryption
+### [x] Step: Implement Proper 2FA Secret Encryption
+<!-- chat-id: 577a39b6-07a0-4ea1-a015-f7bba844b903 -->
 Replace Base64 encoding with AES-GCM encryption for 2FA secrets.
 
 - Create `EncryptionService.cs` in `backend/TallyJ4.Application/Services/Auth/` with AES-GCM implementation
