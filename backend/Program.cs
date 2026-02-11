@@ -148,11 +148,21 @@ services.AddAuthentication(options =>
             }
             else
             {
-                var authHeader = context.Request.Headers["Authorization"].ToString();
-                var hasBearer = authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
-                var tokenLength = hasBearer ? authHeader.Substring(7).Length : 0;
-                Log.Information("JWT Message received - Header: {HasHeader}, HasBearer: {HasBearer}, TokenLength: {TokenLength}, ActualHeader: '{AuthHeader}'",
-                    !string.IsNullOrEmpty(authHeader), hasBearer, tokenLength, authHeader.Length > 100 ? authHeader.Substring(0, 100) + "..." : authHeader);
+                // Try to read token from httpOnly cookie
+                var tokenCookie = context.Request.Cookies["auth_token"];
+                if (!string.IsNullOrEmpty(tokenCookie))
+                {
+                    context.Token = tokenCookie;
+                    Log.Information("JWT Token received from cookie, TokenLength: {TokenLength}", tokenCookie.Length);
+                }
+                else
+                {
+                    var authHeader = context.Request.Headers["Authorization"].ToString();
+                    var hasBearer = authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
+                    var tokenLength = hasBearer ? authHeader.Substring(7).Length : 0;
+                    Log.Information("JWT Message received - Header: {HasHeader}, HasBearer: {HasBearer}, TokenLength: {TokenLength}, ActualHeader: '{AuthHeader}'",
+                        !string.IsNullOrEmpty(authHeader), hasBearer, tokenLength, authHeader.Length > 100 ? authHeader.Substring(0, 100) + "..." : authHeader);
+                }
             }
             return Task.CompletedTask;
         },

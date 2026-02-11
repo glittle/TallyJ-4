@@ -15,7 +15,6 @@ import type {
 } from "../api/gen/configService/types.gen";
 
 export interface AuthResponse {
-  token: string;
   email: string;
   name?: string;
   authMethod?: string;

@@ -20,10 +20,9 @@ class SignalRService {
     
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(hubUrl, {
-        accessTokenFactory: () => {
-          const token = accessToken ?? localStorage.getItem('auth_token');
-          return token || '';
-        }
+        // Cookies are sent automatically by the browser with the initial HTTP request
+        // No need to provide accessTokenFactory when using httpOnly cookies
+        withCredentials: true
       })
       .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
       .configureLogging(signalR.LogLevel.Warning)

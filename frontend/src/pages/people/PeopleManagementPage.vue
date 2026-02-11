@@ -220,8 +220,9 @@ const uploadRef = ref();
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
+// No need for Authorization header - credentials: 'include' sends httpOnly cookies automatically
 const uploadHeaders = computed(() => ({
-  Authorization: `Bearer ${authStore.token}`
+  // Authorization header not needed with httpOnly cookies
 }));
 
 const loading = computed(() => peopleStore.loading);
@@ -349,10 +350,10 @@ async function handleExport() {
     link.setAttribute('download', `people-${electionGuid}.xlsx`);
     link.style.display = 'none';
 
-    // Add authorization header
+    // Use XMLHttpRequest with credentials to send httpOnly cookies
     const xhr = new XMLHttpRequest();
     xhr.open('GET', exportUrl);
-    xhr.setRequestHeader('Authorization', `Bearer ${authStore.token}`);
+    xhr.withCredentials = true; // Send httpOnly cookies automatically
     xhr.responseType = 'blob';
 
     xhr.onload = function() {
