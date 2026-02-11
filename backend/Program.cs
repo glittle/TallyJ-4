@@ -271,6 +271,7 @@ services.AddScoped<PasswordResetService>();
 services.AddScoped<TwoFactorService>();
 services.AddScoped<EncryptionService>();
 services.AddSingleton<OAuthStateService>();
+services.AddScoped<ISecurityAuditService, SecurityAuditService>();
 
 // Add background services
 services.AddHostedService<RefreshTokenCleanupService>();

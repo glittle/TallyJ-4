@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Net;
+using TallyJ4.Services;
 
 namespace TallyJ4.Middleware;
 
@@ -30,12 +31,16 @@ public class RateLimitingMiddleware
         _logger = logger;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    // Note: SecurityAuditService is resolved per-request to avoid circular dependencies
+
+    public async Task InvokeAsync(HttpContext context, ISecurityAuditService securityAuditService)
     {
         var path = context.Request.Path.Value;
         if (path != null && _rateLimits.TryGetValue(path, out var limit))
         {
             var clientKey = GetClientKey(context);
+            var clientIp = context.Connection.RemoteIpAddress?.ToString();
+            var userAgent = context.Request.Headers.UserAgent.ToString();
 
             // Clean up old requests
             CleanupOldRequests(clientKey, limit.Window);
@@ -45,6 +50,17 @@ public class RateLimitingMiddleware
             if (requests.Count >= limit.MaxRequests)
             {
                 _logger.LogWarning("Rate limit exceeded for {Path} by client {ClientKey}", path, clientKey);
+
+                await securityAuditService.LogSecurityEventAsync(new DTOs.Security.CreateSecurityAuditLogDto
+                {
+                    EventType = DTOs.Security.SecurityEventType.RateLimitExceeded,
+                    IpAddress = clientIp,
+                    UserAgent = userAgent,
+                    Details = $"Rate limit exceeded for {path} - {requests.Count} requests in {limit.Window.TotalMinutes} minutes",
+                    IsSuspicious = true,
+                    Severity = DTOs.Security.SecurityEventSeverity.Warning
+                });
+
                 context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync("{\"error\":\"Too many requests. Please try again later.\"}");
