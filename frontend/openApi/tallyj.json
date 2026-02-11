@@ -633,7 +633,7 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Authenticates a user and returns access tokens.",
+        "summary": "Authenticates a user and sets secure cookies with access tokens.",
         "requestBody": {
           "description": "The login request containing email and password.",
           "content": {
@@ -716,6 +716,39 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/verifyEmail": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Verifies a user's email address using a verification token.",
+        "requestBody": {
+          "description": "The verify email request containing the email and verification token.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailRequest"
               }
             }
           }
@@ -813,7 +846,7 @@
         ],
         "summary": "Verifies a two-factor authentication code for login.",
         "requestBody": {
-          "description": "The verify 2FA request containing email and verification code.",
+          "description": "The verify 2FA request containing email, password, and verification code.",
           "content": {
             "application/json": {
               "schema": {
@@ -844,7 +877,7 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Refreshes an access token using a valid refresh token.",
+        "summary": "Refreshes an access token using a valid refresh token and sets secure cookies.",
         "requestBody": {
           "description": "The refresh token request containing the refresh token.",
           "content": {
@@ -980,7 +1013,7 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Initiates Google OAuth login flow.",
+        "summary": "Initiates Google OAuth login flow with PKCE (Proof Key for Code Exchange) and state parameter for CSRF protection.",
         "parameters": [
           {
             "name": "returnUrl",
@@ -1003,7 +1036,20 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Handles the OAuth callback from Google.",
+        "summary": "Handles the OAuth callback from Google with state parameter validation for CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logs out the current user by clearing authentication cookies.",
         "responses": {
           "200": {
             "description": "OK"
@@ -10163,7 +10209,8 @@
       "Verify2FARequest": {
         "required": [
           "code",
-          "email"
+          "email",
+          "password"
         ],
         "type": "object",
         "properties": {
@@ -10171,6 +10218,10 @@
             "minLength": 1,
             "type": "string",
             "format": "email"
+          },
+          "password": {
+            "minLength": 1,
+            "type": "string"
           },
           "code": {
             "maxLength": 6,
@@ -10196,6 +10247,25 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object for verifying a voter's code for online voting."
+      },
+      "VerifyEmailRequest": {
+        "required": [
+          "email",
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "token": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "VoteDistributionDto": {
         "type": "object",
