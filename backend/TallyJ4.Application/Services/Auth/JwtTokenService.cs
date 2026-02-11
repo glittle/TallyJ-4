@@ -55,6 +55,13 @@ public class JwtTokenService
         return Convert.ToBase64String(randomNumber);
     }
 
+    public string HashRefreshToken(string token)
+    {
+        using var sha256 = SHA256.Create();
+        var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
+        return Convert.ToHexString(hashBytes).ToLowerInvariant();
+    }
+
     public RefreshToken CreateRefreshToken(string userId, string token)
     {
         var refreshTokenExpiryDays = int.Parse(_configuration["Jwt:RefreshTokenExpiryDays"] ?? "30");
@@ -63,6 +70,7 @@ public class JwtTokenService
         {
             UserId = userId,
             Token = token,
+            TokenHash = HashRefreshToken(token),
             ExpiresAt = DateTime.UtcNow.AddDays(refreshTokenExpiryDays),
             CreatedAt = DateTime.UtcNow,
             IsRevoked = false

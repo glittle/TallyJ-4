@@ -268,8 +268,9 @@ public class AuthController : ControllerBase
     [HttpPost("refreshToken")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
+        var tokenHash = _jwtTokenService.HashRefreshToken(request.RefreshToken);
         var refreshToken = await _context.RefreshTokens
-            .FirstOrDefaultAsync(rt => rt.Token == request.RefreshToken && !rt.IsRevoked);
+            .FirstOrDefaultAsync(rt => rt.TokenHash == tokenHash && !rt.IsRevoked);
 
         if (refreshToken == null || refreshToken.ExpiresAt < DateTime.UtcNow)
         {

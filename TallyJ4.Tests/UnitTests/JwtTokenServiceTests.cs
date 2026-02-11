@@ -205,4 +205,58 @@ public class JwtTokenServiceTests
 
         Assert.NotEqual(jti1, jti2); // JTI should be unique for each token
     }
+
+    [Fact]
+    public void HashRefreshToken_WithSameInput_ReturnsSameHash()
+    {
+        // Arrange
+        var token = "test-refresh-token";
+
+        // Act
+        var hash1 = _service.HashRefreshToken(token);
+        var hash2 = _service.HashRefreshToken(token);
+
+        // Assert
+        Assert.Equal(hash1, hash2);
+        Assert.Equal(64, hash1.Length); // SHA-256 produces 64 character hex string
+        Assert.Matches("^[a-f0-9]{64}$", hash1); // Should be lowercase hex
+    }
+
+    [Fact]
+    public void HashRefreshToken_WithDifferentInputs_ReturnsDifferentHashes()
+    {
+        // Arrange
+        var token1 = "test-refresh-token-1";
+        var token2 = "test-refresh-token-2";
+
+        // Act
+        var hash1 = _service.HashRefreshToken(token1);
+        var hash2 = _service.HashRefreshToken(token2);
+
+        // Assert
+        Assert.NotEqual(hash1, hash2);
+        Assert.Equal(64, hash1.Length);
+        Assert.Equal(64, hash2.Length);
+    }
+
+    [Fact]
+    public void CreateRefreshToken_IncludesTokenHash()
+    {
+        // Arrange
+        var userId = Guid.NewGuid().ToString();
+        var token = "test-refresh-token";
+
+        // Act
+        var refreshToken = _service.CreateRefreshToken(userId, token);
+
+        // Assert
+        Assert.Equal(userId, refreshToken.UserId);
+        Assert.Equal(token, refreshToken.Token);
+        Assert.NotNull(refreshToken.TokenHash);
+        Assert.Equal(64, refreshToken.TokenHash.Length);
+
+        // Verify hash matches expected value
+        var expectedHash = _service.HashRefreshToken(token);
+        Assert.Equal(expectedHash, refreshToken.TokenHash);
+    }
 }

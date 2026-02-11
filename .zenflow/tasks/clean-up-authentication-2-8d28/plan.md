@@ -149,7 +149,8 @@ Shorten JWT access token expiry from 24 hours to 15-30 minutes.
 - Verify no breaking changes to existing API contracts
 - Run `dotnet test` for token service tests
 
-### [ ] Step: Implement Refresh Token Hashing
+### [x] Step: Implement Refresh Token Hashing
+<!-- chat-id: 792e5f7d-f7fd-44f6-8317-5ce62d3adde8 -->
 Store refresh tokens as SHA-256 hashes instead of plain text.
 
 - Add `TokenHash` field to `RefreshToken` entity
