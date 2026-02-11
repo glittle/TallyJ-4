@@ -30,6 +30,7 @@ public class AuthControllerTests : ServiceTestBase
     private readonly Mock<ILogger<AuthController>> _loggerMock;
     private readonly Mock<IConfiguration> _configurationMock;
     private readonly Mock<SignInManager<AppUser>> _signInManagerMock;
+    private readonly Mock<OAuthStateService> _oauthStateServiceMock;
 
     public AuthControllerTests()
     {
@@ -50,6 +51,7 @@ public class AuthControllerTests : ServiceTestBase
             Mock.Of<IHttpContextAccessor>(),
             Mock.Of<IUserClaimsPrincipalFactory<AppUser>>(),
             null!, null!, null!, null!);
+        _oauthStateServiceMock = new Mock<OAuthStateService>();
 
         _controller = new AuthController(
             _localAuthServiceMock.Object,
@@ -61,7 +63,8 @@ public class AuthControllerTests : ServiceTestBase
             _roleManagerMock.Object,
             _loggerMock.Object,
             _configurationMock.Object,
-            _signInManagerMock.Object);
+            _signInManagerMock.Object,
+            _oauthStateServiceMock.Object);
 
         // Setup HttpContext for cookie middleware
         var httpContext = new DefaultHttpContext();

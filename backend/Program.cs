@@ -266,6 +266,7 @@ services.AddScoped<LocalAuthService>();
 services.AddScoped<PasswordResetService>();
 services.AddScoped<TwoFactorService>();
 services.AddScoped<EncryptionService>();
+services.AddSingleton<OAuthStateService>();
 
 // Add SignalR
 services.AddSignalR();

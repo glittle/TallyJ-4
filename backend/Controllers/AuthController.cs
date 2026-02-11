@@ -33,6 +33,7 @@ public class AuthController : ControllerBase
     private readonly ILogger<AuthController> _logger;
     private readonly IConfiguration _configuration;
     private readonly SignInManager<AppUser> _signInManager;
+    private readonly OAuthStateService _oauthStateService;
 
     /// <summary>
     /// Initializes a new instance of the AuthController.
@@ -47,6 +48,7 @@ public class AuthController : ControllerBase
     /// <param name="logger">Logger for recording operations.</param>
     /// <param name="configuration">Application configuration.</param>
     /// <param name="signInManager">ASP.NET Core Identity sign-in manager.</param>
+    /// <param name="oauthStateService">Service for managing OAuth state parameters.</param>
     public AuthController(
         LocalAuthService localAuthService,
         PasswordResetService passwordResetService,
@@ -57,7 +59,8 @@ public class AuthController : ControllerBase
         RoleManager<IdentityRole> roleManager,
         ILogger<AuthController> logger,
         IConfiguration configuration,
-        SignInManager<AppUser> signInManager)
+        SignInManager<AppUser> signInManager,
+        OAuthStateService oauthStateService)
     {
         _localAuthService = localAuthService;
         _passwordResetService = passwordResetService;
@@ -69,6 +72,7 @@ public class AuthController : ControllerBase
         _logger = logger;
         _configuration = configuration;
         _signInManager = signInManager;
+        _oauthStateService = oauthStateService;
     }
 
     /// <summary>
@@ -410,7 +414,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Initiates Google OAuth login flow with PKCE (Proof Key for Code Exchange) for enhanced security.
+    /// Initiates Google OAuth login flow with PKCE (Proof Key for Code Exchange) and state parameter for CSRF protection.
     /// </summary>
     /// <param name="returnUrl">The URL to redirect to after successful authentication (default: frontend origin).</param>
     /// <returns>A redirect to Google's OAuth consent screen.</returns>
@@ -431,6 +435,9 @@ public class AuthController : ControllerBase
         var codeVerifier = GenerateCodeVerifier();
         var codeChallenge = GenerateCodeChallenge(codeVerifier);
 
+        // Generate state parameter for CSRF protection
+        var state = _oauthStateService.GenerateState(returnUrl);
+
         var properties = new AuthenticationProperties
         {
             RedirectUri = Url.Action(nameof(GoogleCallback)),
@@ -441,15 +448,16 @@ public class AuthController : ControllerBase
             }
         };
 
-        // Add PKCE parameters to the OAuth request
+        // Add PKCE and state parameters to the OAuth request
         properties.Parameters["code_challenge"] = codeChallenge;
         properties.Parameters["code_challenge_method"] = "S256";
+        properties.Parameters["state"] = state;
 
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
 
     /// <summary>
-    /// Handles the OAuth callback from Google.
+    /// Handles the OAuth callback from Google with state parameter validation for CSRF protection.
     /// </summary>
     /// <returns>A redirect to the frontend with the JWT token.</returns>
     [HttpGet("google/callback")]
@@ -458,19 +466,36 @@ public class AuthController : ControllerBase
         string? returnUrl = null;
         try
         {
+            // Validate state parameter for CSRF protection
+            var state = HttpContext.Request.Query["state"].ToString();
+            if (string.IsNullOrEmpty(state))
+            {
+                _logger.LogWarning("Google callback: Missing state parameter");
+                return Redirect(GetErrorRedirectUrl(null, "Invalid OAuth request - missing state parameter"));
+            }
+
+            var validatedReturnUrl = _oauthStateService.ValidateState(state);
+            if (validatedReturnUrl == null)
+            {
+                _logger.LogWarning("Google callback: Invalid or expired state parameter: {State}", state);
+                return Redirect(GetErrorRedirectUrl(null, "Invalid OAuth request - state parameter validation failed"));
+            }
+
+            returnUrl = validatedReturnUrl;
+
             // Authenticate the external cookie explicitly
             var authenticateResult = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
             if (!authenticateResult.Succeeded || authenticateResult.Principal == null)
             {
                 _logger.LogWarning("Google callback: Failed to authenticate external scheme");
-                return Redirect(GetErrorRedirectUrl(null, "Failed to retrieve login information from Google"));
+                return Redirect(GetErrorRedirectUrl(returnUrl, "Failed to retrieve login information from Google"));
             }
 
             _logger.LogInformation("Google callback: External auth succeeded, principal: {Principal}",
                 authenticateResult.Principal?.Identity?.Name ?? "null");
 
-            // Extract return URL from authentication properties
-            if (authenticateResult.Properties?.Items.TryGetValue("returnUrl", out var returnUrlValue) == true)
+            // Extract return URL from authentication properties (fallback)
+            if (string.IsNullOrEmpty(returnUrl) && authenticateResult.Properties?.Items.TryGetValue("returnUrl", out var returnUrlValue) == true)
             {
                 returnUrl = returnUrlValue;
             }

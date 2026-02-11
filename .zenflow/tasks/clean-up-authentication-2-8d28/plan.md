@@ -195,7 +195,8 @@ Make frontend URLs configurable instead of hardcoded localhost.
 - Confirm no hardcoded localhost URLs remain
 - Run `dotnet test` for configuration tests
 
-### [ ] Step: Add CSRF Protection to OAuth
+### [x] Step: Add CSRF Protection to OAuth
+<!-- chat-id: 54013ecc-dde8-4294-90d1-bbca4233031f -->
 Implement state parameter validation for OAuth flows.
 
 - Generate and validate `state` parameter in OAuth authorization requests
