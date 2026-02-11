@@ -11,6 +11,7 @@ using TallyJ4.Backend.Controllers;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
 using TallyJ4.Middleware;
+using TallyJ4.Services;
 using Xunit;
 
 namespace TallyJ4.Tests.UnitTests;
@@ -31,6 +32,7 @@ public class AuthControllerTests : ServiceTestBase
     private readonly Mock<IConfiguration> _configurationMock;
     private readonly Mock<SignInManager<AppUser>> _signInManagerMock;
     private readonly Mock<OAuthStateService> _oauthStateServiceMock;
+    private readonly Mock<ISecurityAuditService> _securityAuditServiceMock;
 
     public AuthControllerTests()
     {
@@ -52,6 +54,7 @@ public class AuthControllerTests : ServiceTestBase
             Mock.Of<IUserClaimsPrincipalFactory<AppUser>>(),
             null!, null!, null!, null!);
         _oauthStateServiceMock = new Mock<OAuthStateService>();
+        _securityAuditServiceMock = new Mock<ISecurityAuditService>();
 
         _controller = new AuthController(
             _localAuthServiceMock.Object,
@@ -64,7 +67,8 @@ public class AuthControllerTests : ServiceTestBase
             _loggerMock.Object,
             _configurationMock.Object,
             _signInManagerMock.Object,
-            _oauthStateServiceMock.Object);
+            _oauthStateServiceMock.Object,
+            _securityAuditServiceMock.Object);
 
         // Setup HttpContext for cookie middleware
         var httpContext = new DefaultHttpContext();
@@ -86,9 +90,9 @@ public class AuthControllerTests : ServiceTestBase
         Assert.True(codeVerifier.Length <= 128); // Maximum length for PKCE
 
         // Should only contain URL-safe characters
-        Assert.DoesNotContain(codeVerifier, '+');
-        Assert.DoesNotContain(codeVerifier, '/');
-        Assert.DoesNotContain(codeVerifier, '=');
+        Assert.DoesNotContain("+", codeVerifier);
+        Assert.DoesNotContain("/", codeVerifier);
+        Assert.DoesNotContain("=", codeVerifier);
     }
 
     [Fact]
@@ -105,9 +109,9 @@ public class AuthControllerTests : ServiceTestBase
         Assert.True(codeChallenge.Length > 0);
 
         // Should only contain URL-safe characters
-        Assert.DoesNotContain(codeChallenge, '+');
-        Assert.DoesNotContain(codeChallenge, '/');
-        Assert.DoesNotContain(codeChallenge, '=');
+        Assert.DoesNotContain("+", codeChallenge);
+        Assert.DoesNotContain("/", codeChallenge);
+        Assert.DoesNotContain("=", codeChallenge);
     }
 
     [Fact]
