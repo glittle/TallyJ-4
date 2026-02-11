@@ -71,7 +71,8 @@ Implement cookie-based token storage to replace vulnerable localStorage.
 - Verify automatic token refresh works with cookies
 - Run `dotnet test` and `npm run test` to ensure tests pass
 
-### [ ] Step: Fix OAuth Callback Security
+### [x] Step: Fix OAuth Callback Security
+<!-- chat-id: 251cd6ec-5957-434c-8f80-e47858b5a880 -->
 Remove tokens from OAuth callback URLs and implement secure token exchange.
 
 - Modify `AuthController.cs` GoogleCallback method to remove tokens from redirect URL

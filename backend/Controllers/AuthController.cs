@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using TallyJ4.Application.DTOs.Auth;
 using TallyJ4.Application.Services.Auth;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
+using TallyJ4.Middleware;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 
@@ -406,7 +409,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Initiates Google OAuth login flow.
+    /// Initiates Google OAuth login flow with PKCE (Proof Key for Code Exchange) for enhanced security.
     /// </summary>
     /// <param name="returnUrl">The URL to redirect to after successful authentication (default: frontend origin).</param>
     /// <returns>A redirect to Google's OAuth consent screen.</returns>
@@ -423,14 +426,23 @@ public class AuthController : ControllerBase
             return BadRequest(new { error = "Google authentication is not configured on this server. Please contact your administrator or use email/password login." });
         }
 
+        // Generate PKCE code verifier and challenge for enhanced security
+        var codeVerifier = GenerateCodeVerifier();
+        var codeChallenge = GenerateCodeChallenge(codeVerifier);
+
         var properties = new AuthenticationProperties
         {
             RedirectUri = Url.Action(nameof(GoogleCallback)),
             Items =
             {
-                { "returnUrl", returnUrl ?? string.Empty }
+                { "returnUrl", returnUrl ?? string.Empty },
+                { "code_verifier", codeVerifier }
             }
         };
+
+        // Add PKCE parameters to the OAuth request
+        properties.Parameters["code_challenge"] = codeChallenge;
+        properties.Parameters["code_challenge_method"] = "S256";
 
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
@@ -584,5 +596,41 @@ public class AuthController : ControllerBase
         var frontendUrl = GetFrontendUrl(returnUrl);
         var baseUrl = frontendUrl.Split('?')[0].Replace("/auth/google/callback", "/login");
         return $"{baseUrl}?error={Uri.EscapeDataString(errorMessage)}&mode=officer";
+    }
+
+    /// <summary>
+    /// Generates a cryptographically secure random code verifier for PKCE.
+    /// </summary>
+    /// <returns>A base64url-encoded random string of 43-128 characters.</returns>
+    internal static string GenerateCodeVerifier()
+    {
+        var randomBytes = new byte[32]; // 256 bits
+        RandomNumberGenerator.Fill(randomBytes);
+        return Base64UrlEncode(randomBytes);
+    }
+
+    /// <summary>
+    /// Generates a code challenge from a code verifier using SHA256.
+    /// </summary>
+    /// <param name="codeVerifier">The code verifier string.</param>
+    /// <returns>A base64url-encoded SHA256 hash of the code verifier.</returns>
+    internal static string GenerateCodeChallenge(string codeVerifier)
+    {
+        using var sha256 = SHA256.Create();
+        var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
+        return Base64UrlEncode(hash);
+    }
+
+    /// <summary>
+    /// Encodes a byte array to base64url format (URL-safe base64).
+    /// </summary>
+    /// <param name="bytes">The bytes to encode.</param>
+    /// <returns>A base64url-encoded string.</returns>
+    internal static string Base64UrlEncode(byte[] bytes)
+    {
+        return Convert.ToBase64String(bytes)
+            .Replace('+', '-')
+            .Replace('/', '_')
+            .TrimEnd('=');
     }
 }
