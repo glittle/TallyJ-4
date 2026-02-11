@@ -268,6 +268,9 @@ services.AddScoped<TwoFactorService>();
 services.AddScoped<EncryptionService>();
 services.AddSingleton<OAuthStateService>();
 
+// Add background services
+services.AddHostedService<RefreshTokenCleanupService>();
+
 // Add SignalR
 services.AddSignalR();
 services.AddSingleton<TallyJ4.Services.ISignalRNotificationService, TallyJ4.Services.SignalRNotificationService>();
