@@ -3,6 +3,7 @@ import { cacheService } from './cacheService';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5016',
+  withCredentials: true, // Send httpOnly cookies automatically
   headers: {
     'Content-Type': 'application/json'
   }
@@ -10,10 +11,7 @@ const api = axios.create({
 
 // Request interceptor for caching
 api.interceptors.request.use(async (config) => {
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  // No need for Authorization header - credentials are sent via httpOnly cookies
 
   // Only cache GET requests
   if (config.method?.toUpperCase() === 'GET') {

@@ -9,14 +9,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Initialize from cookies instead of localStorage
   const authData = secureTokenService.getAuthData();
-  const token = ref<string | null>(null); // Token is httpOnly, can't read from JS
   const email = ref<string | null>(authData.email);
   const name = ref<string | null>(authData.name);
   const authMethod = ref<string | null>(authData.authMethod);
   const requires2FA = ref(false);
   const pending2FAEmail = ref<string | null>(null);
 
-  const isAuthenticated = computed(() => !!token.value);
+  // Check authentication based on cookie presence (not in-memory token)
+  const isAuthenticated = computed(() => secureTokenService.isAuthenticated());
 
   async function register(data: RegisterRequest) {
     try {
@@ -26,9 +26,8 @@ export const useAuthStore = defineStore('auth', () => {
         requires2FA.value = true;
         pending2FAEmail.value = response.email;
       } else {
-        // Tokens are now stored in httpOnly cookies by the backend
-        // We can only read user info from non-httpOnly cookies
-        token.value = response.token; // Keep for backward compatibility in store
+        // Tokens are stored in httpOnly cookies by the backend
+        // We only read and update user info from non-httpOnly cookies
         email.value = response.email;
         name.value = response.name || null;
         authMethod.value = response.authMethod || 'Local';
@@ -55,9 +54,8 @@ export const useAuthStore = defineStore('auth', () => {
         requires2FA.value = true;
         pending2FAEmail.value = data.email;
       } else {
-        // Tokens are now stored in httpOnly cookies by the backend
-        // We can only read user info from non-httpOnly cookies
-        token.value = response.token; // Keep for backward compatibility in store
+        // Tokens are stored in httpOnly cookies by the backend
+        // We only read and update user info from non-httpOnly cookies
         email.value = response.email;
         name.value = response.name || null;
         authMethod.value = response.authMethod || 'Local';
@@ -89,7 +87,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     // Clear client-side state
-    token.value = null;
     email.value = null;
     name.value = null;
     authMethod.value = null;
@@ -101,7 +98,6 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    token,
     email,
     name,
     authMethod,

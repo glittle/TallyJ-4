@@ -190,11 +190,11 @@ public class AuthController : ControllerBase
             HttpContext.Request.IsHttps
         );
 
-        // Return response without tokens for backward compatibility with frontend
+        // Return response without tokens (tokens are in httpOnly cookies)
         return Ok(new AuthResponse
         {
-            Token = response.Token, // Keep for backward compatibility
-            RefreshToken = response.RefreshToken,
+            Token = "", // Tokens are in httpOnly cookies, not returned in response
+            RefreshToken = "",
             Email = response.Email,
             Name = response.Name,
             AuthMethod = response.AuthMethod,
@@ -515,8 +515,8 @@ public class AuthController : ControllerBase
 
         return Ok(new AuthResponse
         {
-            Token = newToken,
-            RefreshToken = newRefreshToken,
+            Token = "", // Tokens are in httpOnly cookies, not returned in response
+            RefreshToken = "",
             Email = user.Email!,
             Name = user.DisplayName,
             AuthMethod = user.AuthMethod,
