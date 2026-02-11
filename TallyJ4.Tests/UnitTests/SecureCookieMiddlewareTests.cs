@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using TallyJ4.Middleware;
 using Xunit;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace TallyJ4.Tests.UnitTests;
 
@@ -245,30 +246,11 @@ public class SecureCookieMiddlewareTests
 }
 
 /// <summary>
-/// Test implementation of IRequestCookieCollection for testing
+/// Simple test cookie collection for testing
 /// </summary>
-public class TestCookieCollection : Dictionary<string, string>, IRequestCookieCollection
+public class TestCookieCollection : Dictionary<string, string>
 {
     public TestCookieCollection(IDictionary<string, string> dictionary) : base(dictionary)
     {
     }
-
-    public string? this[string key] => TryGetValue(key, out var value) ? value : null;
-
-    public int Count => base.Count;
-
-    public ICollection<string> Keys => base.Keys;
-
-    public bool ContainsKey(string key) => base.ContainsKey(key);
-
-    public bool TryGetValue(string key, out string? value)
-    {
-        var result = base.TryGetValue(key, out var stringValue);
-        value = stringValue;
-        return result;
-    }
-
-    public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => base.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

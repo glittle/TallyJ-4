@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Globalization;
+using System.Collections.Generic;
 using TallyJ4.Domain.Context;
 using TallyJ4.Domain.Identity;
 using TallyJ4.EF.Data;
@@ -63,9 +64,20 @@ if (!builder.Environment.IsEnvironment("Testing"))
 // Add CORS
 services.AddCors(options =>
 {
+    var frontendBaseUrl = builderConfiguration["Frontend:BaseUrl"];
+    var allowedOrigins = new List<string>();
+
+    if (!string.IsNullOrEmpty(frontendBaseUrl))
+    {
+        allowedOrigins.Add(frontendBaseUrl);
+    }
+
+    // Add development localhost origins as fallback
+    allowedOrigins.AddRange(new[] { "http://localhost:5173", "http://localhost:5174", "http://localhost:8095" });
+
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:5174", "http://localhost:8095")
+        policy.WithOrigins(allowedOrigins.Distinct().ToArray())
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

@@ -180,7 +180,8 @@ Ensure 2FA verification requires password validation.
 - Verify rate limiting on 2FA endpoint
 - Run `dotnet test` for 2FA tests
 
-### [ ] Step: Add Frontend URL Configuration
+### [x] Step: Add Frontend URL Configuration
+<!-- chat-id: c3fd10b2-040e-41cf-beba-06ccd79cc196 -->
 Make frontend URLs configurable instead of hardcoded localhost.
 
 - Add frontend URL configuration to `appsettings.json` for all environments

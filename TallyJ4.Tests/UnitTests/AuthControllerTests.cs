@@ -228,4 +228,94 @@ public class AuthControllerTests : ServiceTestBase
             r.Password == "" &&
             r.TwoFactorCode == request.Code)), Times.Once);
     }
+
+    [Fact]
+    public void GetFrontendUrl_WithValidReturnUrl_ReturnsReturnUrl()
+    {
+        // Arrange
+        var returnUrl = "https://example.com/auth/callback";
+        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns("http://localhost:8095");
+
+        // Act
+        var result = InvokeGetFrontendUrl(returnUrl);
+
+        // Assert
+        Assert.Equal(returnUrl, result);
+    }
+
+    [Fact]
+    public void GetFrontendUrl_WithConfiguredFrontendUrl_ReturnsConfiguredUrl()
+    {
+        // Arrange
+        var configuredUrl = "https://myapp.com";
+        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns(configuredUrl);
+
+        // Act
+        var result = InvokeGetFrontendUrl(null);
+
+        // Assert
+        Assert.Equal(configuredUrl + "/auth/google/callback", result);
+    }
+
+    [Fact]
+    public void GetFrontendUrl_WithNullConfiguration_ReturnsFallbackUrl()
+    {
+        // Arrange
+        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns((string)null);
+
+        // Act
+        var result = InvokeGetFrontendUrl(null);
+
+        // Assert
+        Assert.Equal("http://localhost:8095/auth/google/callback", result);
+    }
+
+    [Fact]
+    public void GetFrontendUrl_WithEmptyConfiguration_ReturnsFallbackUrl()
+    {
+        // Arrange
+        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns("");
+
+        // Act
+        var result = InvokeGetFrontendUrl(null);
+
+        // Assert
+        Assert.Equal("http://localhost:8095/auth/google/callback", result);
+    }
+
+    [Fact]
+    public void GetFrontendUrl_WithWhitespaceConfiguration_ReturnsFallbackUrl()
+    {
+        // Arrange
+        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns("   ");
+
+        // Act
+        var result = InvokeGetFrontendUrl(null);
+
+        // Assert
+        Assert.Equal("http://localhost:8095/auth/google/callback", result);
+    }
+
+    [Fact]
+    public void GetFrontendUrl_WithInvalidReturnUrl_ReturnsConfiguredUrl()
+    {
+        // Arrange
+        var invalidReturnUrl = "not-a-valid-url";
+        var configuredUrl = "https://myapp.com";
+        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns(configuredUrl);
+
+        // Act
+        var result = InvokeGetFrontendUrl(invalidReturnUrl);
+
+        // Assert
+        Assert.Equal(configuredUrl + "/auth/google/callback", result);
+    }
+
+    private string InvokeGetFrontendUrl(string? returnUrl)
+    {
+        // Use reflection to access the private method
+        var method = typeof(AuthController).GetMethod("GetFrontendUrl",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        return (string)method.Invoke(_controller, new object[] { returnUrl });
+    }
 }

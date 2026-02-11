@@ -577,8 +577,14 @@ public class AuthController : ControllerBase
             return returnUrl;
         }
 
-        var frontendOrigins = new[] { "http://localhost:8095", "http://localhost:5173", "http://localhost:5174" };
-        return frontendOrigins[0] + "/auth/google/callback";
+        var frontendBaseUrl = _configuration["Frontend:BaseUrl"];
+        if (!string.IsNullOrEmpty(frontendBaseUrl))
+        {
+            return frontendBaseUrl + "/auth/google/callback";
+        }
+
+        // Fallback to localhost for development if not configured
+        return "http://localhost:8095/auth/google/callback";
     }
 
     /// <summary>
