@@ -221,6 +221,10 @@ services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true; // Enable lockout for new users
 });
 
+// Configure SuperAdmin settings
+services.Configure<TallyJ4.Authorization.SuperAdminSettings>(
+    builderConfiguration.GetSection(TallyJ4.Authorization.SuperAdminSettings.SectionName));
+
 // Add authorization (for [Authorize] attributes)
 services.AddAuthorization(options =>
 {
@@ -232,12 +236,16 @@ services.AddAuthorization(options =>
 
     options.AddPolicy("HeadTellerAccess", policy =>
         policy.Requirements.Add(new TallyJ4.Authorization.HeadTellerAccessRequirement()));
+
+    options.AddPolicy("SuperAdmin", policy =>
+        policy.Requirements.Add(new TallyJ4.Authorization.SuperAdminRequirement()));
 });
 
 // Register custom authorization handlers
 services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.ElectionAccessHandler>();
 services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.TellerAccessHandler>();
 services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.HeadTellerAccessHandler>();
+services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.SuperAdminHandler>();
 
 // Add JSON localization
 services.Configure<JsonLocalizationOptions>(builderConfiguration.GetSection(JsonLocalizationOptions.SectionName));

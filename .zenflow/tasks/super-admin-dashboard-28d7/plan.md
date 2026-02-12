@@ -30,7 +30,8 @@ Completed. See `spec.md` for full specification. Difficulty: Hard. Key decisions
 
 ---
 
-### [ ] Step: Backend Configuration and Authorization
+### [x] Step: Backend Configuration and Authorization
+<!-- chat-id: 266efb71-aed5-4eee-a631-e541cd79bebc -->
 <!-- Implements: SuperAdmin config, authorization requirement/handler, Program.cs registration -->
 
 - Add `SuperAdmin.Emails` to `appsettings.json` and `appsettings.Development.json`
