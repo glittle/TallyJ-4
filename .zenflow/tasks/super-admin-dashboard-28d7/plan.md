@@ -18,50 +18,58 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: c47ce794-77d5-4526-b677-3d98834d4957 -->
 
-Assess the task's difficulty, as underestimating it leads to poor outcomes.
-- easy: Straightforward implementation, trivial bug fix or feature
-- medium: Moderate complexity, some edge cases or caveats to consider
-- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
-
-Create a technical specification for the task that is appropriate for the complexity level:
-- Review the existing codebase architecture and identify reusable components.
-- Define the implementation approach based on established patterns in the project.
-- Identify all source code files that will be created or modified.
-- Define any necessary data model, API, or interface changes.
-- Describe verification steps using the project's test and lint commands.
-
-Save the output to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach
-- Source code structure changes
-- Data model / API / interface changes
-- Verification approach
-
-If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
-- Break down the work into concrete tasks (incrementable, testable milestones)
-- Each task should reference relevant contracts and include verification steps
-- Replace the Implementation step below with the planned tasks
-
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
-
-Important: unit tests must be part of each implementation task, not separate tasks. Each task should implement the code and its tests together, if relevant.
-
-Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+Completed. See `spec.md` for full specification. Difficulty: Hard. Key decisions:
+- SA determined by email list in `appsettings.json` (`SuperAdmin.Emails`)
+- Custom authorization policy + handler for SA endpoints
+- New `SuperAdminController` with 4 endpoints (check, summary, elections list, election detail)
+- New Vue page at `/super-admin` with conditional sidebar navigation
+- No database changes required
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Backend Configuration and Authorization
+<!-- Implements: SuperAdmin config, authorization requirement/handler, Program.cs registration -->
 
-Implement the task according to the technical specification and general engineering best practices.
+- Add `SuperAdmin.Emails` to `appsettings.json` and `appsettings.Development.json`
+- Create `SuperAdminSettings` options class
+- Create `SuperAdminRequirement.cs` and `SuperAdminHandler.cs` in `backend/Authorization/`
+- Register settings, policy, and handler in `Program.cs`
+- Run `dotnet build` to verify
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase
-3. If relevant, write unit tests alongside each change.
-4. Run relevant tests and linters in the end of each step.
-5. Perform basic manual verification if applicable.
-6. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+---
+
+### [ ] Step: Backend DTOs, Service, and Controller
+
+- Create DTOs in `backend/DTOs/SuperAdmin/`: `SuperAdminCheckDto`, `SuperAdminSummaryDto`, `SuperAdminElectionDto`, `SuperAdminElectionDetailDto`, `SuperAdminElectionFilterDto`
+- Create `ISuperAdminService` and `SuperAdminService` in `backend/Services/`
+- Create `SuperAdminController` in `backend/Controllers/`
+- Register service in `Program.cs`
+- Write unit tests for `SuperAdminHandler` and `SuperAdminService`
+- Run `dotnet build` and `dotnet test`
+
+---
+
+### [ ] Step: Frontend Service, Store, and SA Check Integration
+
+- Create `frontend/src/services/superAdminService.ts`
+- Create `frontend/src/stores/superAdminStore.ts`
+- Integrate SA check on app startup (call check endpoint after auth, store `isSuperAdmin`)
+- Add i18n keys (`superAdmin.json` for en/fr, update `nav.json`)
+- Update `frontend/src/locales/index.ts` to import new locale files
+- Run `npx vue-tsc --noEmit`
+
+---
+
+### [ ] Step: Frontend Super Admin Dashboard Page, Routing, and Navigation
+
+- Create `frontend/src/pages/SuperAdminDashboardPage.vue` with:
+  - Summary stat cards (total, open, upcoming, completed elections)
+  - Filterable/sortable election table
+  - Side drawer for election detail (owner info)
+- Add `/super-admin` route in `router.ts` with SA guard
+- Add conditional "Super Admin" menu item in `AppSidebar.vue`
+- Run `npx vue-tsc --noEmit`
+- Write `{@artifacts_path}/report.md`
