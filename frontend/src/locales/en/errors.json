@@ -10,6 +10,7 @@
   "error.errorDetails": "Error Details",
   "error.networkError": "Network error. Please check your connection and try again.",
   "error.serverError": "Server error. Please try again later.",
+  "error.sessionExpired": "Your session has expired. Please log in again.",
   "error.unauthorized": "You are not authorized to perform this action.",
   "error.forbidden": "Access denied.",
   "error.notFound": "The requested resource was not found.",

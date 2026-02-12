@@ -57,7 +57,7 @@ export function useNotifications() {
   };
 
   const error = (message: string, title?: string) => {
-    showNotification({ message, type: 'error', title });
+    showNotification({ message, type: 'error', title, duration: 0, showClose: true });
   };
 
   const warning = (message: string, title?: string) => {
@@ -74,7 +74,7 @@ export function useNotifications() {
   };
 
   const errorMessage = (message: string) => {
-    showMessage({ message, type: 'error' });
+    showMessage({ message, type: 'error', duration: 0, showClose: true });
   };
 
   const warningMessage = (message: string) => {

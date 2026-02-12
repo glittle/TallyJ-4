@@ -66,14 +66,6 @@
               <el-button @click="clearFilters" :disabled="!hasActiveFilters">
                 {{ $t("common.clearFilters") }}
               </el-button>
-              <el-button
-                v-if="selectedElections.length > 0"
-                type="danger"
-                @click="showBulkDeleteDialog"
-              >
-                <el-icon><Delete /></el-icon>
-                {{ $t("common.deleteSelected", { count: selectedElections.length }) }}
-              </el-button>
             </el-space>
           </el-col>
         </el-row>
@@ -84,11 +76,9 @@
           :data="filteredElections"
           v-loading="loading"
           style="width: 100%"
-          @selection-change="handleSelectionChange"
           @sort-change="handleSortChange"
           :default-sort="{ prop: 'dateOfElection', order: 'descending' }"
         >
-          <el-table-column type="selection" width="55" />
           <el-table-column
             prop="name"
             :label="$t('elections.name')"
@@ -139,22 +129,11 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('common.actions')" width="200" fixed="right">
+          <el-table-column :label="$t('common.actions')" width="120" fixed="right">
             <template #default="scope">
-              <el-button-group>
-                <el-button size="small" @click="viewElection(scope.row.electionGuid)">
-                  <el-icon><View /></el-icon>
-                  {{ $t("common.view") }}
-                </el-button>
-                <el-button size="small" @click="editElection(scope.row.electionGuid)">
-                  <el-icon><Edit /></el-icon>
-                  {{ $t("common.edit") }}
-                </el-button>
-                <el-button size="small" type="danger" @click="deleteElection(scope.row)">
-                  <el-icon><Delete /></el-icon>
-                  {{ $t("common.delete") }}
-                </el-button>
-              </el-button-group>
+              <el-button type="primary" size="small" @click="openElection(scope.row.electionGuid)">
+                {{ $t("common.open") }}
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -173,24 +152,7 @@
       </div>
     </el-card>
 
-    <!-- Bulk Delete Confirmation Dialog -->
-    <el-dialog
-      v-model="showBulkDeleteConfirm"
-      :title="$t('elections.confirmBulkDelete')"
-      width="500px"
-    >
-      <p>{{ $t("elections.bulkDeleteMessage", { count: selectedElections.length }) }}</p>
-      <p class="warning-text">{{ $t("common.actionIrreversible") }}</p>
 
-      <template #footer>
-        <el-button @click="showBulkDeleteConfirm = false">
-          {{ $t("common.cancel") }}
-        </el-button>
-        <el-button type="danger" @click="confirmBulkDelete" :loading="bulkDeleting">
-          {{ $t("common.delete") }}
-        </el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -198,9 +160,9 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { Plus, Search, Delete, View, Edit } from "@element-plus/icons-vue";
+import { Plus, Search } from "@element-plus/icons-vue";
 import { useElectionStore } from "../../stores/electionStore";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage } from "element-plus";
 import type { ElectionDto } from "../../types";
 
 const router = useRouter();
@@ -224,10 +186,7 @@ const sort = ref({
   order: "descending" as "ascending" | "descending",
 });
 
-// Selection for bulk operations
-const selectedElections = ref<ElectionDto[]>([]);
-const showBulkDeleteConfirm = ref(false);
-const bulkDeleting = ref(false);
+
 
 // Pagination
 const pagination = ref({
@@ -317,7 +276,7 @@ async function loadElections() {
   try {
     await electionStore.fetchElections();
   } catch (error) {
-    ElMessage.error(t("elections.loadError"));
+    ElMessage({ message: t("elections.loadError"), type: 'error', duration: 0, showClose: true });
   }
 }
 
@@ -325,33 +284,8 @@ function createElection() {
   router.push("/elections/create");
 }
 
-function viewElection(guid: string) {
+function openElection(guid: string) {
   router.push(`/elections/${guid}`);
-}
-
-function editElection(guid: string) {
-  router.push(`/elections/${guid}/edit`);
-}
-
-async function deleteElection(election: ElectionDto) {
-  try {
-    await ElMessageBox.confirm(
-      t("elections.deleteConfirm", { name: election.name }),
-      t("common.warning"),
-      {
-        confirmButtonText: t("common.delete"),
-        cancelButtonText: t("common.cancel"),
-        type: "warning",
-      }
-    );
-
-    await electionStore.deleteElection(election.electionGuid);
-    ElMessage.success(t("elections.deleteSuccess"));
-  } catch (error: any) {
-    if (error !== "cancel") {
-      ElMessage.error(error.message || t("elections.deleteError"));
-    }
-  }
 }
 
 function handleSearch() {
@@ -377,35 +311,7 @@ function handleSortChange({ prop, order }: any) {
   sort.value.order = order;
 }
 
-function handleSelectionChange(selection: ElectionDto[]) {
-  selectedElections.value = selection;
-}
 
-function showBulkDeleteDialog() {
-  showBulkDeleteConfirm.value = true;
-}
-
-async function confirmBulkDelete() {
-  if (selectedElections.value.length === 0) return;
-
-  bulkDeleting.value = true;
-  try {
-    const deletePromises = selectedElections.value.map((election) =>
-      electionStore.deleteElection(election.electionGuid)
-    );
-
-    await Promise.all(deletePromises);
-    ElMessage.success(
-      t("elections.bulkDeleteSuccess", { count: selectedElections.value.length })
-    );
-    selectedElections.value = [];
-    showBulkDeleteConfirm.value = false;
-  } catch (error: any) {
-    ElMessage.error(error.message || t("elections.bulkDeleteError"));
-  } finally {
-    bulkDeleting.value = false;
-  }
-}
 
 function handleSizeChange() {
   pagination.value.page = 1; // Reset to first page when changing page size
@@ -468,10 +374,6 @@ function getStatusType(status: string) {
     margin-top: var(--spacing-6);
   }
 
-  .warning-text {
-    color: var(--color-error-600);
-    font-weight: var(--font-weight-medium);
-    margin: var(--spacing-2) 0 0 0;
-  }
+
 }
 </style>

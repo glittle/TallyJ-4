@@ -10,6 +10,7 @@
   "error.errorDetails": "Détails de l'erreur",
   "error.networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
   "error.serverError": "Erreur serveur. Veuillez réessayer plus tard.",
+  "error.sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
   "error.unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
   "error.forbidden": "Accès refusé.",
   "error.notFound": "La ressource demandée est introuvable.",

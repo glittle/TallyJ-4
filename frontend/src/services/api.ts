@@ -1,13 +1,19 @@
 import axios from 'axios';
 import { cacheService } from './cacheService';
+import { secureTokenService } from './secureTokenService';
+import { router } from '../router/router';
+import { i18n } from '../locales';
+import { ElMessage } from 'element-plus';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5016',
-  withCredentials: true, // Send httpOnly cookies automatically
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
   }
 });
+
+let redirectingFor401 = false;
 
 // Request interceptor for caching
 api.interceptors.request.use(async (config) => {
@@ -53,7 +59,16 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    // If request fails and we have cached data, return it
+    if (error.response?.status === 401 && !redirectingFor401) {
+      redirectingFor401 = true;
+      secureTokenService.clearAuthData();
+      const { t } = i18n.global;
+      ElMessage({ message: t('error.sessionExpired'), type: 'warning', duration: 0, showClose: true });
+      router.push('/login');
+      setTimeout(() => { redirectingFor401 = false; }, 2000);
+      return Promise.reject(error);
+    }
+
     if (error.config?.method?.toUpperCase() === 'GET') {
       const cacheKey = (error.config as any)._cacheKey;
       if (cacheKey) {

@@ -4977,14 +4977,14 @@ export type GetApiAuthGoogleCallbackResponses = {
     200: unknown;
 };
 
-export type PostApiAuthLogoutData = {
+export type GetApiAuthLogoutData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/api/Auth/logout';
 };
 
-export type PostApiAuthLogoutResponses = {
+export type GetApiAuthLogoutResponses = {
     /**
      * OK
      */

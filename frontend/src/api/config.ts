@@ -1,11 +1,27 @@
 import { client } from './gen/configService/client.gen';
+import { secureTokenService } from '../services/secureTokenService';
+import { router } from '../router/router';
+import { i18n } from '../locales';
+import { ElMessage } from 'element-plus';
 
-// Configure API client with base URL and credentials
-// Credentials: 'include' ensures httpOnly cookies are sent with every request
 client.setConfig({
   baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:5016',
   throwOnError: true,
-  credentials: 'include', // Send cookies with every request
+  credentials: 'include',
+});
+
+let redirectingFor401 = false;
+
+client.interceptors.response.use((response) => {
+  if (response.status === 401 && !redirectingFor401) {
+    redirectingFor401 = true;
+    secureTokenService.clearAuthData();
+    const { t } = i18n.global;
+    ElMessage({ message: t('error.sessionExpired'), type: 'warning', duration: 0, showClose: true });
+    router.push('/login');
+    setTimeout(() => { redirectingFor401 = false; }, 2000);
+  }
+  return response;
 });
 
 export { client };

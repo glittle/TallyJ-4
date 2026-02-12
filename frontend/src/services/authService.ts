@@ -2,7 +2,6 @@
 import {
   postApiAuthRegisterAccount,
   postApiAuthLogin,
-  postApiAuthLogout,
   postApiAuthForgotPassword,
   postApiAuthResetPassword,
   postApiAuthSetup2Fa,
@@ -89,9 +88,14 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    await postApiAuthLogout({
-      throwOnError: true,
+    const response = await fetch('/api/auth/logout', {
+      method: 'GET',
+      credentials: 'include', // Include cookies for authentication
     });
+
+    if (!response.ok) {
+      throw new Error('Logout failed');
+    }
   },
 };
 

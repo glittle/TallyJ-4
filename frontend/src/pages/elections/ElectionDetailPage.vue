@@ -140,7 +140,7 @@ onMounted(async () => {
     await electionStore.fetchElectionById(electionGuid);
     await electionStore.joinElection(electionGuid);
   } catch (error) {
-    ElMessage.error(t('elections.loadError'));
+    ElMessage({ message: t('elections.loadError'), type: 'error', duration: 0, showClose: true });
   }
 });
 
