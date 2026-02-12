@@ -42,7 +42,8 @@ Completed. See `spec.md` for full specification. Difficulty: Hard. Key decisions
 
 ---
 
-### [ ] Step: Backend DTOs, Service, and Controller
+### [x] Step: Backend DTOs, Service, and Controller
+<!-- chat-id: 32608bfa-574d-459d-a597-45eb51e215a4 -->
 
 - Create DTOs in `backend/DTOs/SuperAdmin/`: `SuperAdminCheckDto`, `SuperAdminSummaryDto`, `SuperAdminElectionDto`, `SuperAdminElectionDetailDto`, `SuperAdminElectionFilterDto`
 - Create `ISuperAdminService` and `SuperAdminService` in `backend/Services/`
