@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { HomeFilled, Document, ArrowLeft } from "@element-plus/icons-vue";
+import { HomeFilled, Document, ArrowLeft, Setting } from "@element-plus/icons-vue";
 import { useElectionStore } from "../stores/electionStore";
+import { useSuperAdminStore } from "../stores/superAdminStore";
 
 const emit = defineEmits<{
   "close-mobile-sidebar": [];
@@ -11,6 +12,9 @@ const emit = defineEmits<{
 const route = useRoute();
 const router = useRouter();
 const electionStore = useElectionStore();
+const superAdminStore = useSuperAdminStore();
+
+const isSuperAdmin = computed(() => superAdminStore.isSuperAdmin);
 
 const isInElectionContext = computed(() => {
   return route.path.startsWith("/elections/") && route.params.id;
@@ -22,6 +26,7 @@ const electionName = computed(() => {
 
 const activeRoute = computed(() => {
   const path = route.path;
+  if (path.startsWith("/super-admin")) return "/super-admin";
   if (path.startsWith("/elections")) return "/elections";
   return "/dashboard";
 });
@@ -70,6 +75,11 @@ function goBackToElections() {
       <el-menu-item index="/elections" role="menuitem">
         <el-icon aria-hidden="true"><Document /></el-icon>
         <span>{{ $t("nav.elections") }}</span>
+      </el-menu-item>
+
+      <el-menu-item v-if="isSuperAdmin" index="/super-admin" role="menuitem">
+        <el-icon aria-hidden="true"><Setting /></el-icon>
+        <span>{{ $t("nav.superAdmin") }}</span>
       </el-menu-item>
     </el-menu>
   </nav>

@@ -164,6 +164,12 @@ const routes = [
         component: () => import("../pages/AuditLogsPage.vue"),
         meta: { title: "Audit Logs" },
       },
+      {
+        path: "super-admin",
+        name: "super-admin",
+        component: () => import("../pages/SuperAdminDashboardPage.vue"),
+        meta: { title: "Super Admin", requiresSuperAdmin: true },
+      },
     ],
   },
 ];
@@ -185,6 +191,10 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
     const superAdminStore = useSuperAdminStore();
     if (!superAdminStore.checkedStatus) {
       await superAdminStore.checkSuperAdminStatus();
+    }
+
+    if (to.meta.requiresSuperAdmin && !superAdminStore.isSuperAdmin) {
+      return "/dashboard";
     }
   }
 

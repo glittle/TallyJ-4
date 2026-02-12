@@ -66,7 +66,8 @@ Completed. See `spec.md` for full specification. Difficulty: Hard. Key decisions
 
 ---
 
-### [ ] Step: Frontend Super Admin Dashboard Page, Routing, and Navigation
+### [x] Step: Frontend Super Admin Dashboard Page, Routing, and Navigation
+<!-- chat-id: 783b76e2-ffbc-40fc-94d6-bb133f0f237a -->
 
 - Create `frontend/src/pages/SuperAdminDashboardPage.vue` with:
   - Summary stat cards (total, open, upcoming, completed elections)

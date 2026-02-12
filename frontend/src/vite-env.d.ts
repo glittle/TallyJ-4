@@ -1,5 +1,15 @@
 /// <reference types="vite/client" />
 
+import 'vue-router'
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth?: boolean
+    requiresSuperAdmin?: boolean
+    title?: string
+  }
+}
+
 declare global {
   var pinia: import('pinia').Pinia;
   var router: import('vue-router').Router;
