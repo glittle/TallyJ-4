@@ -54,7 +54,8 @@ Completed. See `spec.md` for full specification. Difficulty: Hard. Key decisions
 
 ---
 
-### [ ] Step: Frontend Service, Store, and SA Check Integration
+### [x] Step: Frontend Service, Store, and SA Check Integration
+<!-- chat-id: 4e07a9cb-2c61-4431-8bd2-ce835cea7790 -->
 
 - Create `frontend/src/services/superAdminService.ts`
 - Create `frontend/src/stores/superAdminStore.ts`

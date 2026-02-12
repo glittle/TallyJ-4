@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import type { RouteLocationNormalized } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
+import { useSuperAdminStore } from "../stores/superAdminStore";
 import { secureTokenService } from "../services/secureTokenService";
 
 // Layouts - keep these static as they're used frequently
@@ -174,16 +175,17 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to: RouteLocationNormalized) => {
-  // console.log(
-  //   "Router guard executing for:",
-  //   to.fullPath,
-  //   globalThis.document.location.href
-  // );
-
   const isAuthenticated = secureTokenService.isAuthenticated();
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return { path: "/login", query: { redirect: to.fullPath } };
+  }
+
+  if (isAuthenticated) {
+    const superAdminStore = useSuperAdminStore();
+    if (!superAdminStore.checkedStatus) {
+      await superAdminStore.checkSuperAdminStatus();
+    }
   }
 
   if (
