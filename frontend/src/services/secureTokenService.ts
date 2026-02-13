@@ -65,7 +65,8 @@ export const secureTokenService = {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) {
-      return parts.pop()?.split(';').shift() || null;
+      const raw = parts.pop()?.split(';').shift() || null;
+      return raw ? decodeURIComponent(raw) : null;
     }
     return null;
   },

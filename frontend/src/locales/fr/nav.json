@@ -1,5 +1,6 @@
 {
   "nav.dashboard": "Tableau de bord",
   "nav.elections": "Élections",
-  "nav.profile": "Profil"
+  "nav.profile": "Profil",
+  "nav.superAdmin": "Super Admin"
 }

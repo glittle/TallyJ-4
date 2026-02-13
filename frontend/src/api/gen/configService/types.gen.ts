@@ -433,6 +433,26 @@ export type ApiResponseObject = {
  * Generic API response wrapper that standardizes the format of all API responses.
  * Provides consistent success/error handling with optional data and error messages.
  */
+export type ApiResponsePaginatedResponseSuperAdminElectionDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: PaginatedResponseSuperAdminElectionDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type ApiResponsePersonDto = {
     /**
      * Indicates whether the API operation was successful.
@@ -499,6 +519,66 @@ export type ApiResponseRollCallDto = {
      */
     success?: boolean;
     data?: RollCallDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseSuperAdminCheckDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: SuperAdminCheckDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseSuperAdminElectionDetailDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: SuperAdminElectionDetailDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseSuperAdminSummaryDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: SuperAdminSummaryDto;
     /**
      * An optional message providing additional information about the response.
      */
@@ -2695,6 +2775,41 @@ export type PaginatedResponsePersonDto = {
  * Generic paginated response wrapper for collections that require pagination.
  * Provides metadata about the current page, total items, and navigation information.
  */
+export type PaginatedResponseSuperAdminElectionDto = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<SuperAdminElectionDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+    /**
+     * The total number of pages available.
+     */
+    readonly totalPages?: number;
+    /**
+     * Indicates whether there is a previous page available.
+     */
+    readonly hasPreviousPage?: boolean;
+    /**
+     * Indicates whether there is a next page available.
+     */
+    readonly hasNextPage?: boolean;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
 export type PaginatedResponseTellerDto = {
     /**
      * The items on the current page.
@@ -3320,6 +3435,54 @@ export type SubmitOnlineBallotDto = {
      * The list of votes on the ballot.
      */
     votes?: Array<OnlineVoteDto> | null;
+};
+
+export type SuperAdminCheckDto = {
+    isSuperAdmin?: boolean;
+};
+
+export type SuperAdminElectionDetailDto = {
+    electionGuid?: string;
+    name?: string | null;
+    convenor?: string | null;
+    dateOfElection?: Date | null;
+    tallyStatus?: string | null;
+    electionType?: string | null;
+    voterCount?: number;
+    ballotCount?: number;
+    locationCount?: number;
+    ownerEmail?: string | null;
+    numberToElect?: number | null;
+    electionMode?: string | null;
+    percentComplete?: number;
+    owners?: Array<SuperAdminElectionOwnerDto> | null;
+};
+
+export type SuperAdminElectionDto = {
+    electionGuid?: string;
+    name?: string | null;
+    convenor?: string | null;
+    dateOfElection?: Date | null;
+    tallyStatus?: string | null;
+    electionType?: string | null;
+    voterCount?: number;
+    ballotCount?: number;
+    locationCount?: number;
+    ownerEmail?: string | null;
+};
+
+export type SuperAdminElectionOwnerDto = {
+    email?: string | null;
+    displayName?: string | null;
+    role?: string | null;
+};
+
+export type SuperAdminSummaryDto = {
+    totalElections?: number;
+    openElections?: number;
+    upcomingElections?: number;
+    completedElections?: number;
+    archivedElections?: number;
 };
 
 /**
@@ -4216,6 +4379,26 @@ export type ApiResponseListFrontDeskVoterDtoWritable = {
  * Generic API response wrapper that standardizes the format of all API responses.
  * Provides consistent success/error handling with optional data and error messages.
  */
+export type ApiResponsePaginatedResponseSuperAdminElectionDtoWritable = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: PaginatedResponseSuperAdminElectionDtoWritable;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type ApiResponseRollCallDtoWritable = {
     /**
      * Indicates whether the API operation was successful.
@@ -4401,6 +4584,29 @@ export type PaginatedResponsePersonDtoWritable = {
      * The items on the current page.
      */
     items?: Array<PersonDto> | null;
+    /**
+     * The current page number (1-based).
+     */
+    pageNumber?: number;
+    /**
+     * The number of items per page.
+     */
+    pageSize?: number;
+    /**
+     * The total number of items across all pages.
+     */
+    totalCount?: number;
+};
+
+/**
+ * Generic paginated response wrapper for collections that require pagination.
+ * Provides metadata about the current page, total items, and navigation information.
+ */
+export type PaginatedResponseSuperAdminElectionDtoWritable = {
+    /**
+     * The items on the current page.
+     */
+    items?: Array<SuperAdminElectionDto> | null;
     /**
      * The current page number (1-based).
      */
@@ -6516,6 +6722,80 @@ export type GetApiSetupElectionByGuidStatusResponses = {
 };
 
 export type GetApiSetupElectionByGuidStatusResponse = GetApiSetupElectionByGuidStatusResponses[keyof GetApiSetupElectionByGuidStatusResponses];
+
+export type GetApiSuperadminCheckData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/superadmin/check';
+};
+
+export type GetApiSuperadminCheckResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSuperAdminCheckDto;
+};
+
+export type GetApiSuperadminCheckResponse = GetApiSuperadminCheckResponses[keyof GetApiSuperadminCheckResponses];
+
+export type GetApiSuperadminDashboardSummaryData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/superadmin/dashboard/summary';
+};
+
+export type GetApiSuperadminDashboardSummaryResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSuperAdminSummaryDto;
+};
+
+export type GetApiSuperadminDashboardSummaryResponse = GetApiSuperadminDashboardSummaryResponses[keyof GetApiSuperadminDashboardSummaryResponses];
+
+export type GetApiSuperadminDashboardElectionsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        Search?: string;
+        Status?: string;
+        ElectionType?: string;
+        SortBy?: string;
+        SortDirection?: string;
+        Page?: number;
+        PageSize?: number;
+    };
+    url: '/api/superadmin/dashboard/elections';
+};
+
+export type GetApiSuperadminDashboardElectionsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePaginatedResponseSuperAdminElectionDto;
+};
+
+export type GetApiSuperadminDashboardElectionsResponse = GetApiSuperadminDashboardElectionsResponses[keyof GetApiSuperadminDashboardElectionsResponses];
+
+export type GetApiSuperadminDashboardElectionsByGuidData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/superadmin/dashboard/elections/{guid}';
+};
+
+export type GetApiSuperadminDashboardElectionsByGuidResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSuperAdminElectionDetailDto;
+};
+
+export type GetApiSuperadminDashboardElectionsByGuidResponse = GetApiSuperadminDashboardElectionsByGuidResponses[keyof GetApiSuperadminDashboardElectionsByGuidResponses];
 
 export type GetApiByElectionGuidTellersData = {
     body?: never;

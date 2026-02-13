@@ -1,22 +1,12 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { User, Ticket, Monitor, Suitcase, Connection, UserFilled } from "@element-plus/icons-vue";
+import { Ticket, Monitor, Connection, UserFilled } from "@element-plus/icons-vue";
 
 const { t } = useI18n();
 const router = useRouter();
 
 const options = [
-  {
-    type: "officer",
-    icon: UserFilled,
-    color: "#409eff",
-    title: "auth.landing.optionOfficer",
-    description: "auth.landing.optionOfficerDesc",
-    buttonText: "auth.landing.loginOfficer",
-    action: () => navigateToLogin("officer"),
-  },
-
   {
     type: "voter",
     icon: Ticket,
@@ -36,15 +26,14 @@ const options = [
     buttonText: "auth.landing.loginTeller",
     action: () => navigateToLogin("teller"),
   },
-
   {
-    type: "full-teller",
-    icon: Suitcase,
-    color: "#909399",
-    title: "auth.landing.optionFullTeller",
-    description: "auth.landing.optionFullTellerDesc",
-    buttonText: "auth.landing.loginFullTeller",
-    action: () => navigateToLogin("full-teller"),
+    type: "officer",
+    icon: UserFilled,
+    color: "#409eff",
+    title: "auth.landing.optionOfficer",
+    description: "auth.landing.optionOfficerDesc",
+    buttonText: "auth.landing.loginOfficer",
+    action: () => navigateToLogin("officer"),
   },
 ];
 
@@ -63,6 +52,22 @@ const options2 = [
 const navigateToLogin = (type: string) => {
   router.push({ path: "/login", query: { mode: type } });
 };
+
+// add keyboard shortcut: if user presses "v", go to voter login; if "t", teller login; if "o", officer login
+// use the first letter of the type as the shortcut
+globalThis.addEventListener("keydown", (event) => {
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+    // Don't trigger shortcuts when typing in input fields
+    return;
+  }
+
+  // find the options that matches the pressed key and navigate to the corresponding login page
+  const matched = options.find(opt => t(opt.title)[0]?.toLocaleLowerCase() === event.key.toLocaleLowerCase());
+  if (matched) {
+    matched.action();
+  }
+});
+
 </script>
 
 <template>
@@ -73,13 +78,7 @@ const navigateToLogin = (type: string) => {
     </div>
 
     <div class="options-grid">
-      <el-card
-        v-for="opt in options"
-        :key="opt.type"
-        class="option-card"
-        shadow="hover"
-        @click="opt.action"
-      >
+      <el-card v-for="opt in options" :key="opt.type" class="option-card" shadow="hover" @click="opt.action">
         <template #header>
           <div class="card-header">
             <el-icon :size="40" :color="opt.color">
@@ -97,13 +96,7 @@ const navigateToLogin = (type: string) => {
       </el-card>
     </div>
     <div class="options-grid2">
-      <el-card
-        v-for="opt in options2"
-        :key="opt.type"
-        class="option-card"
-        shadow="hover"
-        @click="opt.action"
-      >
+      <el-card v-for="opt in options2" :key="opt.type" class="option-card" shadow="hover" @click="opt.action">
         <template #header>
           <div class="card-header">
             <el-icon :size="40" :color="opt.color">
@@ -208,6 +201,10 @@ const navigateToLogin = (type: string) => {
   .card-footer {
     margin-top: auto;
     padding-top: 20px;
+
+    .el-button {
+      --el-button-text-color: white;
+    }
   }
 
   .el-button {

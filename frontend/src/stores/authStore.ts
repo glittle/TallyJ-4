@@ -26,16 +26,9 @@ export const useAuthStore = defineStore('auth', () => {
         requires2FA.value = true;
         pending2FAEmail.value = response.email;
       } else {
-        // Tokens are stored in httpOnly cookies by the backend
-        // We only read and update user info from non-httpOnly cookies
-        email.value = response.email;
-        name.value = response.name || null;
-        authMethod.value = response.authMethod || 'Local';
-
-        // Refresh cookie data to ensure sync
         const cookieData = secureTokenService.refreshAuthData();
         email.value = cookieData.email || response.email;
-        name.value = cookieData.name || response.name;
+        name.value = cookieData.name || response.name || null;
         authMethod.value = cookieData.authMethod || response.authMethod || 'Local';
       }
 
@@ -54,16 +47,9 @@ export const useAuthStore = defineStore('auth', () => {
         requires2FA.value = true;
         pending2FAEmail.value = data.email;
       } else {
-        // Tokens are stored in httpOnly cookies by the backend
-        // We only read and update user info from non-httpOnly cookies
-        email.value = response.email;
-        name.value = response.name || null;
-        authMethod.value = response.authMethod || 'Local';
-
-        // Refresh cookie data to ensure sync
         const cookieData = secureTokenService.refreshAuthData();
         email.value = cookieData.email || response.email;
-        name.value = cookieData.name || response.name;
+        name.value = cookieData.name || response.name || null;
         authMethod.value = cookieData.authMethod || response.authMethod || 'Local';
 
         requires2FA.value = false;
