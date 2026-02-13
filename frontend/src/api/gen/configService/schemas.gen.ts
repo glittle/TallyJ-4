@@ -622,6 +622,35 @@ export const ApiResponseObjectSchema = {
 Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
+export const ApiResponsePaginatedResponseSuperAdminElectionDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
+        },
+        data: {
+            '$ref': '#/components/schemas/PaginatedResponseSuperAdminElectionDto'
+        },
+        message: {
+            type: 'string',
+            description: 'An optional message providing additional information about the response.',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'A list of error messages, if the operation failed.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
+} as const;
+
 export const ApiResponsePersonDtoSchema = {
     type: 'object',
     properties: {
@@ -718,6 +747,93 @@ export const ApiResponseRollCallDtoSchema = {
         },
         data: {
             '$ref': '#/components/schemas/RollCallDto'
+        },
+        message: {
+            type: 'string',
+            description: 'An optional message providing additional information about the response.',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'A list of error messages, if the operation failed.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
+} as const;
+
+export const ApiResponseSuperAdminCheckDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
+        },
+        data: {
+            '$ref': '#/components/schemas/SuperAdminCheckDto'
+        },
+        message: {
+            type: 'string',
+            description: 'An optional message providing additional information about the response.',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'A list of error messages, if the operation failed.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
+} as const;
+
+export const ApiResponseSuperAdminElectionDetailDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
+        },
+        data: {
+            '$ref': '#/components/schemas/SuperAdminElectionDetailDto'
+        },
+        message: {
+            type: 'string',
+            description: 'An optional message providing additional information about the response.',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'A list of error messages, if the operation failed.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
+} as const;
+
+export const ApiResponseSuperAdminSummaryDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
+        },
+        data: {
+            '$ref': '#/components/schemas/SuperAdminSummaryDto'
         },
         message: {
             type: 'string',
@@ -3742,6 +3858,54 @@ export const PaginatedResponsePersonDtoSchema = {
 Provides metadata about the current page, total items, and navigation information.`
 } as const;
 
+export const PaginatedResponseSuperAdminElectionDtoSchema = {
+    type: 'object',
+    properties: {
+        items: {
+            type: 'array',
+            items: {
+                '$ref': '#/components/schemas/SuperAdminElectionDto'
+            },
+            description: 'The items on the current page.',
+            nullable: true
+        },
+        pageNumber: {
+            type: 'integer',
+            description: 'The current page number (1-based).',
+            format: 'int32'
+        },
+        pageSize: {
+            type: 'integer',
+            description: 'The number of items per page.',
+            format: 'int32'
+        },
+        totalCount: {
+            type: 'integer',
+            description: 'The total number of items across all pages.',
+            format: 'int32'
+        },
+        totalPages: {
+            type: 'integer',
+            description: 'The total number of pages available.',
+            format: 'int32',
+            readOnly: true
+        },
+        hasPreviousPage: {
+            type: 'boolean',
+            description: 'Indicates whether there is a previous page available.',
+            readOnly: true
+        },
+        hasNextPage: {
+            type: 'boolean',
+            description: 'Indicates whether there is a next page available.',
+            readOnly: true
+        }
+    },
+    additionalProperties: false,
+    description: `Generic paginated response wrapper for collections that require pagination.
+Provides metadata about the current page, total items, and navigation information.`
+} as const;
+
 export const PaginatedResponseTellerDtoSchema = {
     type: 'object',
     properties: {
@@ -4620,6 +4784,178 @@ export const SubmitOnlineBallotDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object for submitting an online ballot.'
+} as const;
+
+export const SuperAdminCheckDtoSchema = {
+    type: 'object',
+    properties: {
+        isSuperAdmin: {
+            type: 'boolean'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdminElectionDetailDtoSchema = {
+    type: 'object',
+    properties: {
+        electionGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        name: {
+            type: 'string',
+            nullable: true
+        },
+        convenor: {
+            type: 'string',
+            nullable: true
+        },
+        dateOfElection: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        tallyStatus: {
+            type: 'string',
+            nullable: true
+        },
+        electionType: {
+            type: 'string',
+            nullable: true
+        },
+        voterCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        ballotCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        locationCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        ownerEmail: {
+            type: 'string',
+            nullable: true
+        },
+        numberToElect: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        electionMode: {
+            type: 'string',
+            nullable: true
+        },
+        percentComplete: {
+            type: 'number',
+            format: 'double'
+        },
+        owners: {
+            type: 'array',
+            items: {
+                '$ref': '#/components/schemas/SuperAdminElectionOwnerDto'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdminElectionDtoSchema = {
+    type: 'object',
+    properties: {
+        electionGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        name: {
+            type: 'string',
+            nullable: true
+        },
+        convenor: {
+            type: 'string',
+            nullable: true
+        },
+        dateOfElection: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        tallyStatus: {
+            type: 'string',
+            nullable: true
+        },
+        electionType: {
+            type: 'string',
+            nullable: true
+        },
+        voterCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        ballotCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        locationCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        ownerEmail: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdminElectionOwnerDtoSchema = {
+    type: 'object',
+    properties: {
+        email: {
+            type: 'string',
+            nullable: true
+        },
+        displayName: {
+            type: 'string',
+            nullable: true
+        },
+        role: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdminSummaryDtoSchema = {
+    type: 'object',
+    properties: {
+        totalElections: {
+            type: 'integer',
+            format: 'int32'
+        },
+        openElections: {
+            type: 'integer',
+            format: 'int32'
+        },
+        upcomingElections: {
+            type: 'integer',
+            format: 'int32'
+        },
+        completedElections: {
+            type: 'integer',
+            format: 'int32'
+        },
+        archivedElections: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
 } as const;
 
 export const TallyResultDtoSchema = {
@@ -5839,6 +6175,35 @@ export const ApiResponseListFrontDeskVoterDtoWritableSchema = {
 Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
+export const ApiResponsePaginatedResponseSuperAdminElectionDtoWritableSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
+        },
+        data: {
+            '$ref': '#/components/schemas/PaginatedResponseSuperAdminElectionDtoWritable'
+        },
+        message: {
+            type: 'string',
+            description: 'An optional message providing additional information about the response.',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'A list of error messages, if the operation failed.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
+} as const;
+
 export const ApiResponseRollCallDtoWritableSchema = {
     type: 'object',
     properties: {
@@ -6092,6 +6457,38 @@ export const PaginatedResponsePersonDtoWritableSchema = {
             type: 'array',
             items: {
                 '$ref': '#/components/schemas/PersonDto'
+            },
+            description: 'The items on the current page.',
+            nullable: true
+        },
+        pageNumber: {
+            type: 'integer',
+            description: 'The current page number (1-based).',
+            format: 'int32'
+        },
+        pageSize: {
+            type: 'integer',
+            description: 'The number of items per page.',
+            format: 'int32'
+        },
+        totalCount: {
+            type: 'integer',
+            description: 'The total number of items across all pages.',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false,
+    description: `Generic paginated response wrapper for collections that require pagination.
+Provides metadata about the current page, total items, and navigation information.`
+} as const;
+
+export const PaginatedResponseSuperAdminElectionDtoWritableSchema = {
+    type: 'object',
+    properties: {
+        items: {
+            type: 'array',
+            items: {
+                '$ref': '#/components/schemas/SuperAdminElectionDto'
             },
             description: 'The items on the current page.',
             nullable: true

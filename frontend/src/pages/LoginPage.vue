@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from "vue";
+import { ref, reactive, computed, onMounted, watch, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
@@ -22,7 +22,9 @@ const mode = ref((route.query.mode as string) || "officer");
 watch(
   () => route.query.mode,
   (newMode) => {
-    if (newMode) mode.value = newMode as string;
+    if (newMode) {
+      mode.value = newMode as string;
+    }
   }
 );
 
@@ -85,8 +87,6 @@ const requestCode = async () => {
     // await authService.requestVoterCode(loginForm.email);
     ElMessage.success(t("auth.voterLogin.emailSent"));
     codeSent.value = true;
-  } catch (error) {
-    ElMessage.error(t("error.somethingWentWrong"));
   } finally {
     loading.value = false;
   }
@@ -142,10 +142,22 @@ const handleGoogleLogin = () => {
   globalThis.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}${redirectPath}`;
 };
 
+// add handler so if ESC is pressed, we go back to landing page
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === "Escape") {
+    router.push("/");
+  }
+};
+
 onMounted(() => {
   if (authStore.isAuthenticated && isStandardLogin.value) {
     router.push("/dashboard");
   }
+  globalThis.addEventListener("keydown", handleKeydown);
+});
+
+onBeforeUnmount(() => {
+  globalThis.removeEventListener("keydown", handleKeydown);
 });
 </script>
 
@@ -172,106 +184,70 @@ onMounted(() => {
               isStandardLogin
                 ? t("auth.landing.optionOfficerDesc")
                 : isVoterLogin
-                ? t("auth.landing.optionVoterDesc")
-                : t("auth.landing.optionTellerDesc")
+                  ? t("auth.landing.optionVoterDesc")
+                  : t("auth.landing.optionTellerDesc")
             }}
           </p>
         </div>
       </template>
 
-      <el-form
-        ref="loginFormRef"
-        :model="loginForm"
-        :rules="rules"
-        label-position="top"
-        @keyup.enter="handleLogin"
-      >
+      <!-- Social login only for Officers -->
+      <div class="social-login" v-if="mode === 'officer'">
+        <el-button class="google-btn" @click="handleGoogleLogin">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+          <span>{{ t("auth.googleLogin") }}</span>
+        </el-button>
+        <el-divider>{{ t("common.or") }}</el-divider>
+      </div>
+
+      <el-form ref="loginFormRef" :model="loginForm" :rules="rules" label-position="top" @keyup.enter="handleLogin">
         <!-- System 1 & 3: Email Field -->
         <el-form-item v-if="!isTellerLogin" :label="t('auth.email')" prop="email">
-          <el-input
-            v-model="loginForm.email"
-            :placeholder="t('auth.emailPlaceholder')"
-            :disabled="isVoterLogin && codeSent"
-            autofocus
-          />
+          <el-input v-model="loginForm.email" :placeholder="t('auth.emailPlaceholder')"
+            :disabled="isVoterLogin && codeSent" autofocus />
         </el-form-item>
 
         <!-- System 1: Password Field -->
         <el-form-item v-if="isStandardLogin" :label="t('auth.password')" prop="password">
-          <el-input
-            v-model="loginForm.password"
-            type="password"
-            :placeholder="t('auth.passwordPlaceholder')"
-            show-password
-          />
+          <el-input v-model="loginForm.password" type="password" :placeholder="t('auth.passwordPlaceholder')"
+            show-password />
         </el-form-item>
 
         <!-- System 3: One-Time Code Field -->
-        <el-form-item
-          v-if="isVoterLogin && codeSent"
-          :label="t('auth.voterLogin.codeLabel')"
-          prop="code"
-        >
-          <el-input
-            v-model="loginForm.code"
-            :placeholder="t('auth.voterLogin.codePlaceholder')"
-            maxlength="6"
-          />
+        <el-form-item v-if="isVoterLogin && codeSent" :label="t('auth.voterLogin.codeLabel')" prop="code">
+          <el-input v-model="loginForm.code" :placeholder="t('auth.voterLogin.codePlaceholder')" maxlength="6" />
         </el-form-item>
 
         <!-- System 2: Election Passcode Field -->
-        <el-form-item
-          v-if="isTellerLogin"
-          :label="t('auth.tellerLogin.passcodeLabel')"
-          prop="passcode"
-        >
-          <el-input
-            v-model="loginForm.passcode"
-            :placeholder="t('auth.tellerLogin.passcodePlaceholder')"
-          />
+        <el-form-item v-if="isTellerLogin" :label="t('auth.tellerLogin.passcodeLabel')" prop="passcode">
+          <el-input v-model="loginForm.passcode" :placeholder="t('auth.tellerLogin.passcodePlaceholder')" />
         </el-form-item>
 
         <div class="login-actions">
           <!-- System 3: Request Code Button -->
-          <el-button
-            v-if="isVoterLogin && !codeSent"
-            type="primary"
-            :loading="loading"
-            class="submit-btn"
-            @click="requestCode"
-          >
+          <el-button v-if="isVoterLogin && !codeSent" type="primary" :loading="loading" class="submit-btn"
+            @click="requestCode">
             {{ t("auth.voterLogin.requestButton") }}
           </el-button>
 
           <!-- General Login Button -->
-          <el-button
-            v-else
-            type="primary"
-            :loading="loading"
-            class="submit-btn"
-            @click="handleLogin"
-          >
+          <el-button v-else type="primary" :loading="loading" class="submit-btn" @click="handleLogin">
             {{
               isVoterLogin
                 ? t("auth.voterLogin.loginButton")
                 : isTellerLogin
-                ? t("auth.tellerLogin.loginButton")
-                : t("auth.loginButton")
+                  ? t("auth.tellerLogin.loginButton")
+                  : t("auth.loginButton")
             }}
           </el-button>
 
-          <el-button
-            v-if="isVoterLogin && codeSent"
-            link
-            class="retry-link"
-            @click="codeSent = false"
-          >
+          <el-button v-if="isVoterLogin && codeSent" link class="retry-link" @click="codeSent = false">
             {{ t("common.tryAgain") }}
           </el-button>
         </div>
 
         <div class="auth-links">
-          <router-link to="/register" v-if="mode === 'officer'">
+          <router-link to="/register" v-if="mode === 'officer'" class="register">
             {{ t("auth.noAccount") }}
           </router-link>
           <router-link to="/">
@@ -280,17 +256,7 @@ onMounted(() => {
         </div>
       </el-form>
 
-      <!-- Social login only for Officers -->
-      <div class="social-login" v-if="mode === 'officer'">
-        <el-divider>{{ t("common.or") }}</el-divider>
-        <el-button class="google-btn" @click="handleGoogleLogin">
-          <img
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-            alt="Google"
-          />
-          <span>{{ t("auth.googleLogin") }}</span>
-        </el-button>
-      </div>
+
     </el-card>
   </div>
 </template>
@@ -301,77 +267,90 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   padding-top: 40px;
-}
 
-.login-card {
-  width: 100%;
-  max-width: 400px;
-  border-radius: 12px;
-}
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+  }
 
-.login-header {
-  text-align: center;
-}
+  .login-header {
+    text-align: center;
+  }
 
-.login-header h2 {
-  margin: 0;
-  color: var(--color-text-primary);
-}
+  .login-header h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+  }
 
-.mode-hint {
-  margin-top: 10px;
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-}
+  .mode-hint {
+    margin-top: 10px;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+  }
 
-.login-actions {
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+  .login-actions {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
-.submit-btn {
-  width: 100%;
-}
+  .submit-btn {
+    width: 100%;
+  }
 
-.retry-link {
-  font-size: 0.85rem;
-}
+  .retry-link {
+    font-size: 0.85rem;
+  }
 
-.auth-links {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
+  .auth-links {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
 
-.auth-links a {
-  color: var(--color-primary-500);
-  text-decoration: none;
-  font-size: 0.9rem;
-}
 
-.auth-links a:hover {
-  text-decoration: underline;
-}
+  .auth-links a {
+    color: var(--color-primary-500);
+    text-decoration: none;
+    font-size: 0.85rem;
 
-.social-login {
-  margin-top: 20px;
-  text-align: center;
-}
+    &.register {
+      font-size: 1rem;
+    }
+  }
 
-.google-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
+  .auth-links a:hover {
+    text-decoration: underline;
+  }
 
-.google-btn img {
-  width: 18px;
-  height: 18px;
+  .social-login {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .el-divider--horizontal {
+    margin: 2em 0;
+  }
+
+  .google-btn {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .google-btn img {
+    width: 18px;
+    height: 18px;
+  }
 }
 </style>

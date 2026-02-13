@@ -18,7 +18,7 @@
   "superAdmin.elections.filterType": "Filter by type",
   "superAdmin.elections.noResults": "No elections found",
   "superAdmin.detail.title": "Election Details",
-  "superAdmin.detail.owners": "Owners",
+  "superAdmin.detail.owners": "Managers",
   "superAdmin.detail.numberToElect": "Number to Elect",
   "superAdmin.detail.electionMode": "Election Mode",
   "superAdmin.detail.percentComplete": "Percent Complete",

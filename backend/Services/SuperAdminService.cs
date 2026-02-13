@@ -224,6 +224,12 @@ public class SuperAdminService : ISuperAdminService
             "electiontype" or "type" => isDescending
                 ? query.OrderByDescending(e => e.ElectionType)
                 : query.OrderBy(e => e.ElectionType),
+            "votecount" or "voters" => isDescending
+                ? query.OrderByDescending(e => e.People.Count(p => p.CanVote == true))
+                : query.OrderBy(e => e.People.Count(p => p.CanVote == true)),
+            "ballotcount" or "ballots" => isDescending
+                ? query.OrderByDescending(e => e.Locations.Sum(l => l.Ballots.Count))
+                : query.OrderBy(e => e.Locations.Sum(l => l.Ballots.Count)),
             _ => isDescending
                 ? query.OrderByDescending(e => e.DateOfElection ?? DateTime.MinValue)
                 : query.OrderBy(e => e.DateOfElection ?? DateTime.MinValue)

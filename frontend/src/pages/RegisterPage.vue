@@ -111,45 +111,24 @@ const handleRegister = async () => {
         </div>
       </template>
 
-      <el-form
-        ref="registerFormRef"
-        :model="registerForm"
-        :rules="rules"
-        label-position="top"
-        @keyup.enter="handleRegister"
-      >
+      <el-form ref="registerFormRef" :model="registerForm" :rules="rules" label-position="top"
+        @keyup.enter="handleRegister">
         <el-form-item :label="t('auth.email')" prop="email">
-          <el-input
-            v-model="registerForm.email"
-            :placeholder="t('auth.emailPlaceholder')"
-          />
+          <el-input v-model="registerForm.email" :placeholder="t('auth.emailPlaceholder')" />
         </el-form-item>
 
         <el-form-item :label="t('auth.password')" prop="password">
-          <el-input
-            v-model="registerForm.password"
-            type="password"
-            :placeholder="t('auth.passwordPlaceholder')"
-            show-password
-          />
+          <el-input v-model="registerForm.password" type="password" :placeholder="t('auth.passwordPlaceholder')"
+            show-password />
         </el-form-item>
 
         <el-form-item :label="t('auth.confirmPassword')" prop="confirmPassword">
-          <el-input
-            v-model="registerForm.confirmPassword"
-            type="password"
-            :placeholder="t('auth.confirmPasswordPlaceholder')"
-            show-password
-          />
+          <el-input v-model="registerForm.confirmPassword" type="password"
+            :placeholder="t('auth.confirmPasswordPlaceholder')" show-password />
         </el-form-item>
 
         <div class="register-actions">
-          <el-button
-            type="primary"
-            :loading="loading"
-            class="submit-btn"
-            @click="handleRegister"
-          >
+          <el-button type="primary" :loading="loading" class="submit-btn" @click="handleRegister">
             {{ t("auth.registerButton") }}
           </el-button>
         </div>
@@ -183,7 +162,7 @@ const handleRegister = async () => {
 
   .register-header h2 {
     margin: 0;
-    color: #303133;
+    color: #b0caff;
   }
 
   .register-actions {
@@ -200,7 +179,7 @@ const handleRegister = async () => {
   }
 
   .auth-links a {
-    color: #409eff;
+    color: #b0caff;
     text-decoration: none;
     font-size: 0.9rem;
   }

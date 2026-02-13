@@ -4305,6 +4305,186 @@
         }
       }
     },
+    "/api/superadmin/check": {
+      "get": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdminCheckDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdminCheckDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdminCheckDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/dashboard/summary": {
+      "get": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdminSummaryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdminSummaryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdminSummaryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/dashboard/elections": {
+      "get": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ElectionType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePaginatedResponseSuperAdminElectionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePaginatedResponseSuperAdminElectionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePaginatedResponseSuperAdminElectionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/dashboard/elections/{guid}": {
+      "get": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdminElectionDetailDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdminElectionDetailDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdminElectionDetailDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/{electionGuid}/tellers": {
       "get": {
         "tags": [
@@ -5473,6 +5653,33 @@
         "additionalProperties": false,
         "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
+      "ApiResponsePaginatedResponseSuperAdminElectionDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
+          },
+          "data": {
+            "$ref": "#/components/schemas/PaginatedResponseSuperAdminElectionDto"
+          },
+          "message": {
+            "type": "string",
+            "description": "An optional message providing additional information about the response.",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of error messages, if the operation failed.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
+      },
       "ApiResponsePersonDto": {
         "type": "object",
         "properties": {
@@ -5563,6 +5770,87 @@
           },
           "data": {
             "$ref": "#/components/schemas/RollCallDto"
+          },
+          "message": {
+            "type": "string",
+            "description": "An optional message providing additional information about the response.",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of error messages, if the operation failed.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
+      },
+      "ApiResponseSuperAdminCheckDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
+          },
+          "data": {
+            "$ref": "#/components/schemas/SuperAdminCheckDto"
+          },
+          "message": {
+            "type": "string",
+            "description": "An optional message providing additional information about the response.",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of error messages, if the operation failed.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
+      },
+      "ApiResponseSuperAdminElectionDetailDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
+          },
+          "data": {
+            "$ref": "#/components/schemas/SuperAdminElectionDetailDto"
+          },
+          "message": {
+            "type": "string",
+            "description": "An optional message providing additional information about the response.",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of error messages, if the operation failed.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
+      },
+      "ApiResponseSuperAdminSummaryDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
+          },
+          "data": {
+            "$ref": "#/components/schemas/SuperAdminSummaryDto"
           },
           "message": {
             "type": "string",
@@ -8511,6 +8799,52 @@
         "additionalProperties": false,
         "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
       },
+      "PaginatedResponseSuperAdminElectionDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperAdminElectionDto"
+            },
+            "description": "The items on the current page.",
+            "nullable": true
+          },
+          "pageNumber": {
+            "type": "integer",
+            "description": "The current page number (1-based).",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The number of items per page.",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "The total number of items across all pages.",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "The total number of pages available.",
+            "format": "int32",
+            "readOnly": true
+          },
+          "hasPreviousPage": {
+            "type": "boolean",
+            "description": "Indicates whether there is a previous page available.",
+            "readOnly": true
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "description": "Indicates whether there is a next page available.",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information."
+      },
       "PaginatedResponseTellerDto": {
         "type": "object",
         "properties": {
@@ -9373,6 +9707,173 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object for submitting an online ballot."
+      },
+      "SuperAdminCheckDto": {
+        "type": "object",
+        "properties": {
+          "isSuperAdmin": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdminElectionDetailDto": {
+        "type": "object",
+        "properties": {
+          "electionGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "convenor": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfElection": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "tallyStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "electionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "voterCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ballotCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "locationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownerEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "numberToElect": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "electionMode": {
+            "type": "string",
+            "nullable": true
+          },
+          "percentComplete": {
+            "type": "number",
+            "format": "double"
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperAdminElectionOwnerDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdminElectionDto": {
+        "type": "object",
+        "properties": {
+          "electionGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "convenor": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfElection": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "tallyStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "electionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "voterCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ballotCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "locationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownerEmail": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdminElectionOwnerDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdminSummaryDto": {
+        "type": "object",
+        "properties": {
+          "totalElections": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openElections": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "upcomingElections": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completedElections": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "archivedElections": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
       },
       "TallyResultDto": {
         "type": "object",

@@ -13,6 +13,7 @@ import type {
   SuperAdminElectionFilter,
   SuperAdminElection,
 } from "../services/superAdminService";
+import { useDebounceFn } from '@vueuse/core';
 
 const router = useRouter();
 const superAdminStore = useSuperAdminStore();
@@ -73,14 +74,15 @@ async function loadData() {
   }
 }
 
-async function applyFilters() {
+const applyFilters = useDebounceFn(async () => {
+
   superAdminStore.currentPage = 1;
   try {
     await superAdminStore.fetchElections(buildFilter());
   } catch {
     // error stored in store
   }
-}
+}, 150);
 
 async function handlePageChange(page: number) {
   superAdminStore.currentPage = page;
@@ -91,13 +93,14 @@ async function handlePageChange(page: number) {
   }
 }
 
-async function handleSortChange({
+const handleSortChange = useDebounceFn(async ({
   prop,
   order,
 }: {
   prop: string;
   order: string | null;
-}) {
+}) => {
+  console.log("Sorting by", prop, "order", order);
   sortBy.value = prop || "dateOfElection";
   sortDirection.value = order === "ascending" ? "asc" : "desc";
   try {
@@ -105,16 +108,16 @@ async function handleSortChange({
   } catch {
     // error stored in store
   }
-}
+}, 150);
 
-async function showElectionDetail(row: SuperAdminElection) {
+const showElectionDetail = async (row: SuperAdminElection) => {
   drawerVisible.value = true;
   try {
     await superAdminStore.fetchElectionDetail(row.electionGuid);
   } catch {
     // error stored in store
   }
-}
+};
 
 function formatDate(date?: string) {
   if (!date) return "-";
@@ -153,10 +156,12 @@ onMounted(() => {
 
     <section class="sa-stats-section">
       <el-row :gutter="20" class="sa-stats-row">
-        <el-col :xs="24" :sm="12" :md="6">
+        <el-col>
           <el-card class="stat-card">
             <div class="stat-icon elections" aria-hidden="true">
-              <el-icon><Document /></el-icon>
+              <el-icon>
+                <Document />
+              </el-icon>
             </div>
             <div class="stat-content">
               <div class="stat-value">{{ summary?.totalElections ?? 0 }}</div>
@@ -164,10 +169,12 @@ onMounted(() => {
             </div>
           </el-card>
         </el-col>
-        <el-col :xs="24" :sm="12" :md="6">
+        <el-col>
           <el-card class="stat-card">
             <div class="stat-icon active" aria-hidden="true">
-              <el-icon><CircleCheck /></el-icon>
+              <el-icon>
+                <CircleCheck />
+              </el-icon>
             </div>
             <div class="stat-content">
               <div class="stat-value">{{ summary?.openElections ?? 0 }}</div>
@@ -175,10 +182,12 @@ onMounted(() => {
             </div>
           </el-card>
         </el-col>
-        <el-col :xs="24" :sm="12" :md="6">
+        <el-col>
           <el-card class="stat-card">
             <div class="stat-icon voters" aria-hidden="true">
-              <el-icon><Clock /></el-icon>
+              <el-icon>
+                <Clock />
+              </el-icon>
             </div>
             <div class="stat-content">
               <div class="stat-value">{{ summary?.upcomingElections ?? 0 }}</div>
@@ -186,10 +195,12 @@ onMounted(() => {
             </div>
           </el-card>
         </el-col>
-        <el-col :xs="24" :sm="12" :md="6">
+        <el-col>
           <el-card class="stat-card">
             <div class="stat-icon ballots" aria-hidden="true">
-              <el-icon><Finished /></el-icon>
+              <el-icon>
+                <Finished />
+              </el-icon>
             </div>
             <div class="stat-content">
               <div class="stat-value">{{ summary?.completedElections ?? 0 }}</div>
@@ -204,38 +215,15 @@ onMounted(() => {
       <el-card>
         <template #header>
           <div class="sa-filter-bar">
-            <el-input
-              v-model="searchText"
-              :placeholder="$t('superAdmin.elections.search')"
-              :prefix-icon="Search"
-              clearable
-              class="sa-search-input"
-            />
-            <el-select
-              v-model="statusFilter"
-              :placeholder="$t('superAdmin.elections.filterStatus')"
-              clearable
-              class="sa-filter-select"
-            >
-              <el-option
-                v-for="opt in statusOptions"
-                :key="opt.value"
-                :label="opt.label"
-                :value="opt.value"
-              />
+            <el-input v-model="searchText" :placeholder="$t('superAdmin.elections.search')" :prefix-icon="Search"
+              clearable class="sa-search-input" />
+            <el-select v-model="statusFilter" :placeholder="$t('superAdmin.elections.filterStatus')" clearable
+              class="sa-filter-select">
+              <el-option v-for="opt in statusOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
             </el-select>
-            <el-select
-              v-model="typeFilter"
-              :placeholder="$t('superAdmin.elections.filterType')"
-              clearable
-              class="sa-filter-select"
-            >
-              <el-option
-                v-for="opt in typeOptions"
-                :key="opt.value"
-                :label="opt.label"
-                :value="opt.value"
-              />
+            <el-select v-model="typeFilter" :placeholder="$t('superAdmin.elections.filterType')" clearable
+              class="sa-filter-select">
+              <el-option v-for="opt in typeOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
             </el-select>
           </div>
         </template>
@@ -247,92 +235,43 @@ onMounted(() => {
           <el-empty :description="$t('superAdmin.elections.noResults')" />
         </div>
         <template v-else>
-          <el-table
-            :data="elections"
-            style="width: 100%"
-            @sort-change="handleSortChange"
-            @row-click="showElectionDetail"
-            class="sa-elections-table"
-          >
-            <el-table-column
-              prop="name"
-              :label="$t('superAdmin.elections.name')"
-              min-width="200"
-              sortable="custom"
-            />
-            <el-table-column
-              prop="convenor"
-              :label="$t('superAdmin.elections.convenor')"
-              min-width="150"
-              sortable="custom"
-            />
-            <el-table-column
-              prop="dateOfElection"
-              :label="$t('superAdmin.elections.date')"
-              width="140"
-              sortable="custom"
-            >
+          <el-table :data="elections" style="width: 100%" @sort-change="handleSortChange"
+            @row-click="showElectionDetail" class="sa-elections-table">
+            <el-table-column prop="name" :label="$t('superAdmin.elections.name')" min-width="200" sortable="custom" />
+            <el-table-column prop="convenor" :label="$t('superAdmin.elections.convenor')" min-width="150"
+              sortable="custom" />
+            <el-table-column prop="dateOfElection" :label="$t('superAdmin.elections.date')" width="140"
+              sortable="custom">
               <template #default="scope">
                 {{ formatDate(scope.row.dateOfElection) }}
               </template>
             </el-table-column>
-            <el-table-column
-              prop="tallyStatus"
-              :label="$t('superAdmin.elections.status')"
-              width="120"
-              sortable="custom"
-            >
+            <el-table-column prop="tallyStatus" :label="$t('superAdmin.elections.status')" width="120"
+              sortable="custom">
               <template #default="scope">
                 <el-tag :type="getStatusType(scope.row.tallyStatus)">
                   {{ scope.row.tallyStatus || "Draft" }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column
-              prop="electionType"
-              :label="$t('superAdmin.elections.type')"
-              width="120"
-              sortable="custom"
-            />
-            <el-table-column
-              prop="voterCount"
-              :label="$t('superAdmin.elections.voters')"
-              width="100"
-              sortable="custom"
-            />
-            <el-table-column
-              prop="ballotCount"
-              :label="$t('superAdmin.elections.ballots')"
-              width="100"
-              sortable="custom"
-            />
-            <el-table-column
-              prop="ownerEmail"
-              :label="$t('superAdmin.elections.owner')"
-              min-width="180"
-              sortable="custom"
-            />
+            <el-table-column prop="electionType" :label="$t('superAdmin.elections.type')" width="120"
+              sortable="custom" />
+            <el-table-column prop="voterCount" :label="$t('superAdmin.elections.voters')" width="100"
+              sortable="custom" />
+            <el-table-column prop="ballotCount" :label="$t('superAdmin.elections.ballots')" width="100"
+              sortable="custom" />
+            <el-table-column prop="ownerEmail" :label="$t('superAdmin.elections.owner')" min-width="180" />
           </el-table>
 
           <div class="sa-pagination">
-            <el-pagination
-              v-model:current-page="superAdminStore.currentPage"
-              :page-size="pageSize"
-              :total="totalCount"
-              layout="total, prev, pager, next"
-              @current-change="handlePageChange"
-            />
+            <el-pagination v-model:current-page="superAdminStore.currentPage" :page-size="pageSize" :total="totalCount"
+              layout="total, prev, pager, next" @current-change="handlePageChange" />
           </div>
         </template>
       </el-card>
     </section>
 
-    <el-drawer
-      v-model="drawerVisible"
-      :title="$t('superAdmin.detail.title')"
-      direction="rtl"
-      size="400px"
-    >
+    <el-drawer v-model="drawerVisible" :title="$t('superAdmin.detail.title')" direction="rtl" size="500px">
       <div v-if="loading && !selectedElection" class="sa-loading">
         <el-skeleton :rows="6" animated />
       </div>
