@@ -150,16 +150,16 @@ describe('Election Store', () => {
         name: 'New Election',
         numberOfWinners: 1,
         numberOfExtra: 0,
-        electionType: 'Normal',
-        electionMode: 'Normal'
+        electionType: 'LSA',
+        electionMode: 'N'
       }
       const createdElection: ElectionDto = {
         electionGuid: 'new-id',
         name: 'New Election',
         numberOfWinners: 1,
         numberOfExtra: 0,
-        electionType: 'Normal',
-        electionMode: 'Normal',
+        electionType: 'LSA',
+        electionMode: 'N',
         tallyStatus: 'NotStarted',
         electionStatus: 'NotStarted'
       } as ElectionDto

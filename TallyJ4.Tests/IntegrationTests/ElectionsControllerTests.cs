@@ -56,7 +56,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Test Election",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "STV",
+            ElectionType = "LSA",
             NumberToElect = 5
         };
 
@@ -99,7 +99,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Test Election for Get",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "STV",
+            ElectionType = "LSA",
             NumberToElect = 3
         };
 
@@ -147,7 +147,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Original Name",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "STV",
+            ElectionType = "LSA",
             NumberToElect = 3
         };
 
@@ -184,7 +184,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Election to Delete",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "STV",
+            ElectionType = "LSA",
             NumberToElect = 3
         };
 

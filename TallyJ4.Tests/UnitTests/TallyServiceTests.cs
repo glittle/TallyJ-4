@@ -87,7 +87,7 @@ public class TallyServiceTests : ServiceTestBase
     [Fact]
     public async Task CalculateSingleNameElectionAsync_WithValidElection_CalculatesCorrectly()
     {
-        var election = await CreateTestElectionAsync(electionType: "SingleName");
+        var election = await CreateTestElectionAsync(electionType: "Oth");
         var location = await CreateTestLocationAsync(election.ElectionGuid);
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 5);
         var ballots = await CreateTestBallotsAsync(location.LocationGuid, 10);

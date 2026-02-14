@@ -43,7 +43,7 @@ public class ElectionServiceTests : ServiceTestBase
         {
             Name = "Test Election",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "Standard",
+            ElectionType = "LSA",
             NumberToElect = 5
         };
 
@@ -67,7 +67,7 @@ public class ElectionServiceTests : ServiceTestBase
         {
             ElectionGuid = Guid.NewGuid(),
             Name = "Test Election",
-            ElectionType = "Standard",
+            ElectionType = "LSA",
             NumberToElect = 3,
             TallyStatus = "Setup",
             DateOfElection = DateTime.UtcNow.AddDays(10),
@@ -100,7 +100,7 @@ public class ElectionServiceTests : ServiceTestBase
         {
             ElectionGuid = Guid.NewGuid(),
             Name = "Original Name",
-            ElectionType = "Standard",
+            ElectionType = "LSA",
             NumberToElect = 3,
             TallyStatus = "Setup",
             DateOfElection = DateTime.UtcNow.AddDays(10),
@@ -147,7 +147,7 @@ public class ElectionServiceTests : ServiceTestBase
         {
             ElectionGuid = Guid.NewGuid(),
             Name = "Election to Delete",
-            ElectionType = "Standard",
+            ElectionType = "LSA",
             NumberToElect = 3,
             TallyStatus = "Setup",
             DateOfElection = DateTime.UtcNow.AddDays(10),
@@ -182,7 +182,7 @@ public class ElectionServiceTests : ServiceTestBase
             {
                 ElectionGuid = Guid.NewGuid(),
                 Name = $"Election {i}",
-                ElectionType = "Standard",
+                ElectionType = "LSA",
                 NumberToElect = 3,
                 TallyStatus = i % 2 == 0 ? "Setup" : "InProgress",
                 DateOfElection = DateTime.UtcNow.AddDays(i),
@@ -211,7 +211,7 @@ public class ElectionServiceTests : ServiceTestBase
             {
                 ElectionGuid = Guid.NewGuid(),
                 Name = $"Election {i}",
-                ElectionType = "Standard",
+                ElectionType = "LSA",
                 NumberToElect = 3,
                 TallyStatus = i % 2 == 0 ? "Setup" : "InProgress",
                 DateOfElection = DateTime.UtcNow.AddDays(i),

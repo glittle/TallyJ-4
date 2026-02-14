@@ -74,7 +74,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 3. Update `CreateElectionPage.vue` — change default `electionType: 'STV'` → `'LSA'`
 4. Run `npx vue-tsc --noEmit` to verify
 
-### [ ] Step: Fix all tests and verify
+### [x] Step: Fix all tests and verify
+<!-- chat-id: 8284afb4-3933-404e-8f4c-703a9f2e7015 -->
 
 1. Fix `ElectionServiceTests.cs` — change `"Standard"` → `"LSA"` for all ElectionType values
 2. Fix `TallyServiceTests.cs` — change `"SingleName"` → valid type code

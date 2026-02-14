@@ -126,7 +126,7 @@ public class ResultsControllerTests : IntegrationTestBase
         {
             Name = "Test Election for Results",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "STV",
+            ElectionType = "LSA",
             NumberToElect = 3
         };
 
