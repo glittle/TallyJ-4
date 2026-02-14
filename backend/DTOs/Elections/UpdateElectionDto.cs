@@ -61,12 +61,12 @@ public class UpdateElectionDto
     public DateTime? OnlineWhenClose { get; set; }
 
     /// <summary>
-    /// The type of election (e.g., "STV", "Cond").
+    /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
     /// </summary>
     public string? ElectionType { get; set; }
 
     /// <summary>
-    /// The mode of the election (e.g., "N" for normal, "I" for international).
+    /// The mode of the election (N=Normal, T=Tie-Break, B=By-election).
     /// </summary>
     public string? ElectionMode { get; set; }
 

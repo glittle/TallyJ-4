@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using TallyJ4.Domain.Enumerations;
 using TallyJ4.DTOs.Elections;
 using TallyJ4.DTOs.Setup;
 using TallyJ4.Domain.Context;
@@ -45,8 +46,8 @@ public class SetupService : ISetupService
             TallyStatus = "Setup",
             RowVersion = new byte[8],
             NumberToElect = 1,
-            ElectionType = "STV",
-            ElectionMode = "N"
+            ElectionType = ElectionTypeEnum.LSA.Code,
+            ElectionMode = ElectionModeEnum.Normal.Code
         };
 
         _context.Elections.Add(election);

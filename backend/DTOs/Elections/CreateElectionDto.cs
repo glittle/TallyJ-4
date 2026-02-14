@@ -16,7 +16,7 @@ public class CreateElectionDto
     public DateTime? DateOfElection { get; set; }
 
     /// <summary>
-    /// The type of election (e.g., "normal", "single-name").
+    /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
     /// </summary>
     public string? ElectionType { get; set; }
 
@@ -31,7 +31,7 @@ public class CreateElectionDto
     public string? Convenor { get; set; }
 
     /// <summary>
-    /// The mode of the election (e.g., "online", "offline").
+    /// The mode of the election (N=Normal, T=Tie-Break, B=By-election).
     /// </summary>
     public string? ElectionMode { get; set; }
 

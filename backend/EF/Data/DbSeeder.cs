@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.Domain.Context;
+using TallyJ4.Domain.Enumerations;
 using TallyJ4.Domain.Identity;
 using TallyJ4.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
@@ -121,8 +122,8 @@ public static class DbSeeder
         {
             ElectionGuid = electionGuid,
             Name = "Springfield Local Spiritual Assembly Election 2024",
-            ElectionType = "LSA",
-            ElectionMode = "I",
+            ElectionType = ElectionTypeEnum.LSA.Code,
+            ElectionMode = ElectionModeEnum.Normal.Code,
             NumberToElect = 9,
             DateOfElection = DateTime.Now.AddDays(-3),
             TallyStatus = "Tallying",
@@ -359,8 +360,8 @@ public static class DbSeeder
         {
             ElectionGuid = electionGuid,
             Name = "National Convention 2024",
-            ElectionType = "Conv",
-            ElectionMode = "D",
+            ElectionType = ElectionTypeEnum.Con.Code,
+            ElectionMode = ElectionModeEnum.Normal.Code,
             NumberToElect = 9,
             DateOfElection = DateTime.Now.AddDays(-30),
             TallyStatus = "Finalized",

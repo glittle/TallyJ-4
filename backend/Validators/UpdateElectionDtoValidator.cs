@@ -1,4 +1,5 @@
 using FluentValidation;
+using TallyJ4.Domain.Enumerations;
 using TallyJ4.DTOs.Elections;
 
 namespace TallyJ4.Validators;
@@ -49,14 +50,14 @@ public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
             .MaximumLength(5)
             .WithMessage("Election type cannot exceed 5 characters")
             .Must(type => string.IsNullOrWhiteSpace(type) ||
-                         new[] { "STV", "Cond", "Multi" }.Contains(type))
-            .WithMessage("Election type must be one of: STV, Cond, Multi");
+                         ElectionTypeEnum.AllCodes.Contains(type))
+            .WithMessage($"Election type must be one of: {string.Join(", ", ElectionTypeEnum.AllCodes)}");
 
         RuleFor(x => x.ElectionMode)
             .MaximumLength(1)
             .WithMessage("Election mode must be a single character")
-            .Must(mode => string.IsNullOrWhiteSpace(mode) || new[] { "N", "I" }.Contains(mode))
-            .WithMessage("Election mode must be N (Normal) or I (International)");
+            .Must(mode => string.IsNullOrWhiteSpace(mode) || ElectionModeEnum.AllCodes.Contains(mode))
+            .WithMessage($"Election mode must be one of: {string.Join(", ", ElectionModeEnum.All.Select(m => $"{m.Code} ({m.Description})"))}");
 
         RuleFor(x => x.CanVote)
             .MaximumLength(1)

@@ -53,7 +53,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Create enum classes and update backend validators/services
+### [x] Step: Create enum classes and update backend validators/services
+<!-- chat-id: 1e118351-12ea-4e05-9566-87eda87f438d -->
 
 1. Create `backend/TallyJ4.Domain/Enumerations/ElectionTypeEnum.cs` with codes: LSA, LSA1, LSA2, NSA, Con, Reg, Oth
 2. Create `backend/TallyJ4.Domain/Enumerations/ElectionModeEnum.cs` with codes: N, T, B
