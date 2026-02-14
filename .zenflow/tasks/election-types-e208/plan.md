@@ -18,7 +18,8 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: 46757cab-9682-47a8-885e-8d92ebeabd7f -->
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
@@ -52,16 +53,33 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Create enum classes and update backend validators/services
 
-Implement the task according to the technical specification and general engineering best practices.
+1. Create `backend/TallyJ4.Domain/Enumerations/ElectionTypeEnum.cs` with codes: LSA, LSA1, LSA2, NSA, Con, Reg, Oth
+2. Create `backend/TallyJ4.Domain/Enumerations/ElectionModeEnum.cs` with codes: N, T, B
+3. Update `CreateElectionDtoValidator.cs` — replace `{"STV","Cond","Multi"}` with `ElectionTypeEnum.AllCodes` and `{"N","I"}` with `ElectionModeEnum.AllCodes`
+4. Update `UpdateElectionDtoValidator.cs` — same changes
+5. Update `ElectionStep2DtoValidator.cs` — same changes
+6. Update `SetupService.cs` — use enum constants for defaults
+7. Update `DbSeeder.cs` — fix `"Conv"` → `"Con"`, `"I"` → `"N"`, `"D"` → `"N"`
+8. Fix DTO doc comments in ElectionDto, CreateElectionDto, UpdateElectionDto, ElectionStep2Dto
+9. Run `dotnet build` to verify compilation
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase
-3. If relevant, write unit tests alongside each change.
-4. Run relevant tests and linters in the end of each step.
-5. Perform basic manual verification if applicable.
-6. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+### [ ] Step: Update frontend components with correct election types/modes
+
+1. Update `ElectionFormTabs.vue` — replace type options (STV/Cond/Multi → LSA/LSA1/LSA2/NSA/Con/Reg/Oth) and mode options (Normal/International → Normal/Tie-Break/By-election)
+2. Update `ElectionListPage.vue` — replace type filter dropdown options
+3. Update `CreateElectionPage.vue` — change default `electionType: 'STV'` → `'LSA'`
+4. Run `npx vue-tsc --noEmit` to verify
+
+### [ ] Step: Fix all tests and verify
+
+1. Fix `ElectionServiceTests.cs` — change `"Standard"` → `"LSA"` for all ElectionType values
+2. Fix `TallyServiceTests.cs` — change `"SingleName"` → valid type code
+3. Fix `IntegrationTestBase.cs` — change `"STV"` → `"LSA"`, `"FPTP"` → `"NSA"`
+4. Fix `ElectionsControllerTests.cs` — change `"STV"` → `"LSA"`
+5. Fix `ResultsControllerTests.cs` — change `"STV"` → `"LSA"`
+6. Fix `electionStore.test.ts` — change `"Normal"` → valid codes
+7. Run `dotnet test` for backend tests
+8. Run `npm run test` for frontend tests
+9. Write report to `{@artifacts_path}/report.md`
