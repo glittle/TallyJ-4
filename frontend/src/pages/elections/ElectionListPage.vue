@@ -46,9 +46,13 @@
               clearable
               @change="handleFilterChange"
             >
-              <el-option label="STV" value="STV" />
-              <el-option label="Condorcet" value="Cond" />
-              <el-option label="Multi-Winner" value="Multi" />
+              <el-option label="Local Spiritual Assembly" value="LSA" />
+              <el-option label="Local Spiritual Assembly (Two-Stage) Local Unit" value="LSA1" />
+              <el-option label="Local Spiritual Assembly (Two-Stage) Final" value="LSA2" />
+              <el-option label="National Spiritual Assembly" value="NSA" />
+              <el-option label="Unit Convention" value="Con" />
+              <el-option label="Regional Council" value="Reg" />
+              <el-option label="Other" value="Oth" />
             </el-select>
           </el-col>
           <el-col :span="4">

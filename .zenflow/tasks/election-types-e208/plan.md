@@ -66,7 +66,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 8. Fix DTO doc comments in ElectionDto, CreateElectionDto, UpdateElectionDto, ElectionStep2Dto
 9. Run `dotnet build` to verify compilation
 
-### [ ] Step: Update frontend components with correct election types/modes
+### [x] Step: Update frontend components with correct election types/modes
+<!-- chat-id: 639f34c2-23ec-4cfb-94ec-eb19f2d8a5c4 -->
 
 1. Update `ElectionFormTabs.vue` — replace type options (STV/Cond/Multi → LSA/LSA1/LSA2/NSA/Con/Reg/Oth) and mode options (Normal/International → Normal/Tie-Break/By-election)
 2. Update `ElectionListPage.vue` — replace type filter dropdown options
