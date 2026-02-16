@@ -1,8 +1,8 @@
-using AutoMapper;
-using TallyJ4.DTOs.People;
-using TallyJ4.Domain.Entities;
+﻿using AutoMapper;
+using Backend.DTOs.People;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Mappings;
+namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for person-related mappings.
@@ -69,3 +69,6 @@ public class PersonProfile : Profile
             .ForMember(dest => dest.Votes, opt => opt.Ignore());
     }
 }
+
+
+

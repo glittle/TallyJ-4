@@ -1,6 +1,6 @@
-using TallyJ4.DTOs.OnlineVoting;
+﻿using Backend.DTOs.OnlineVoting;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for online voting operations.
@@ -50,3 +50,6 @@ public interface IOnlineVotingService
     /// <returns>A task containing the voter's status information.</returns>
     Task<OnlineVoteStatusDto> GetVoteStatusAsync(Guid electionGuid, string voterId);
 }
+
+
+

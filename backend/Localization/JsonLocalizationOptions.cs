@@ -1,4 +1,4 @@
-namespace TallyJ4.Localization;
+﻿namespace Backend.Localization;
 
 public class JsonLocalizationOptions
 {
@@ -8,3 +8,6 @@ public class JsonLocalizationOptions
     public string[] SupportedCultures { get; set; } = Array.Empty<string>();
     public string DefaultCulture { get; set; } = "en";
 }
+
+
+

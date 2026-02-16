@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.SignalR;
-using TallyJ4.DTOs.SignalR;
-using TallyJ4.DTOs.Results;
-using TallyJ4.DTOs.FrontDesk;
-using TallyJ4.Hubs;
+﻿using Microsoft.AspNetCore.SignalR;
+using Backend.DTOs.SignalR;
+using Backend.DTOs.Results;
+using Backend.DTOs.FrontDesk;
+using Backend.Hubs;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing real-time notifications through SignalR hubs.
@@ -215,3 +215,6 @@ public class SignalRNotificationService : ISignalRNotificationService
         }
     }
 }
+
+
+

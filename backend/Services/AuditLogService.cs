@@ -1,11 +1,11 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.AuditLogs;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
-using TallyJ4.Models;
+using Backend.DTOs.AuditLogs;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service implementation for managing audit logs.
@@ -137,3 +137,6 @@ public class AuditLogService : IAuditLogService
         return logDto;
     }
 }
+
+
+

@@ -1,4 +1,6 @@
-namespace TallyJ4.DTOs.Setup;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Setup;
 
 /// <summary>
 /// Data transfer object for election setup step 2.
@@ -17,12 +19,15 @@ public class ElectionStep2Dto
     public int NumberToElect { get; set; }
 
     /// <summary>
-    /// The type of election (e.g., "normal", "single-name").
+    /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
     /// </summary>
-    public string ElectionType { get; set; } = string.Empty;
+    public ElectionTypeCode ElectionType { get; set; }
 
     /// <summary>
-    /// The mode of the election (e.g., "online", "offline").
+    /// The mode of the election (N=Normal, T=Tie-Break, B=By-election).
     /// </summary>
-    public string ElectionMode { get; set; } = string.Empty;
+    public ElectionModeCode ElectionMode { get; set; }
 }
+
+
+

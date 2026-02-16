@@ -1,8 +1,8 @@
-using AutoMapper;
-using TallyJ4.DTOs.Votes;
-using TallyJ4.Domain.Entities;
+﻿using AutoMapper;
+using Backend.DTOs.Votes;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Mappings;
+namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for vote-related mappings.
@@ -22,3 +22,6 @@ public class VoteProfile : Profile
         CreateMap<CreateVoteDto, Vote>();
     }
 }
+
+
+

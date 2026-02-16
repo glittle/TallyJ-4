@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 
-namespace TallyJ4.Authorization;
+namespace Backend.Authorization;
 
 /// <summary>
 /// Authorization requirement that checks if the authenticated user is a super admin
@@ -9,3 +9,6 @@ namespace TallyJ4.Authorization;
 public class SuperAdminRequirement : IAuthorizationRequirement
 {
 }
+
+
+

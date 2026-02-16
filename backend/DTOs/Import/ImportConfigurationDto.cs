@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Import;
+﻿namespace Backend.DTOs.Import;
 
 /// <summary>
 /// Data transfer object for configuring an import operation.
@@ -30,3 +30,6 @@ public class ImportConfigurationDto
     /// </summary>
     public bool SkipInvalidRows { get; set; } = true;
 }
+
+
+

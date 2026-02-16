@@ -54,7 +54,7 @@ const availableElections = ref<ElectionSummaryDto[]>([]);
 const form = reactive<CreateElectionDto>({
   name: '',
   dateOfElection: undefined,
-  electionType: 'STV',
+  electionType: 'LSA',
   numberToElect: 9,
   convenor: '',
   electionMode: 'N',

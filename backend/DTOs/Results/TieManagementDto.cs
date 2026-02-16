@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Details about a tie situation that requires manual resolution.
@@ -99,3 +99,5 @@ public class SaveTieCountsResponseDto
     /// </summary>
     public bool ReAnalysisTriggered { get; set; }
 }
+
+

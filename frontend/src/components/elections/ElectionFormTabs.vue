@@ -29,9 +29,13 @@
           v-model="modelValue.electionType"
           :placeholder="$t('elections.form.typePlaceholder')"
         >
-          <el-option label="STV - Single Transferable Vote" value="STV" />
-          <el-option label="Condorcet" value="Cond" />
-          <el-option label="Multi-Winner" value="Multi" />
+          <el-option :label="$t('elections.electionTypes.LSA')" value="LSA" />
+          <el-option :label="$t('elections.electionTypes.LSA1')" value="LSA1" />
+          <el-option :label="$t('elections.electionTypes.LSA2')" value="LSA2" />
+          <el-option :label="$t('elections.electionTypes.NSA')" value="NSA" />
+          <el-option :label="$t('elections.electionTypes.Con')" value="Con" />
+          <el-option :label="$t('elections.electionTypes.Reg')" value="Reg" />
+          <el-option :label="$t('elections.electionTypes.Oth')" value="Oth" />
         </el-select>
       </el-form-item>
 
@@ -40,8 +44,9 @@
           v-model="modelValue.electionMode"
           :placeholder="$t('elections.form.modePlaceholder')"
         >
-          <el-option label="Normal" value="N" />
-          <el-option label="International" value="I" />
+          <el-option :label="$t('elections.electionModes.N')" value="N" />
+          <el-option :label="$t('elections.electionModes.T')" value="T" />
+          <el-option :label="$t('elections.electionModes.B')" value="B" />
         </el-select>
       </el-form-item>
     </el-tab-pane>

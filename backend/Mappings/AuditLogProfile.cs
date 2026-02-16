@@ -1,8 +1,8 @@
-using AutoMapper;
-using TallyJ4.Domain.Entities;
-using TallyJ4.DTOs.AuditLogs;
+﻿using AutoMapper;
+using Backend.Domain.Entities;
+using Backend.DTOs.AuditLogs;
 
-namespace TallyJ4.Mappings;
+namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for audit log entity and DTO mappings.
@@ -21,3 +21,6 @@ public class AuditLogProfile : Profile
             .ForMember(dest => dest.AsOf, opt => opt.Ignore());
     }
 }
+
+
+

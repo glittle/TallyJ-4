@@ -1,6 +1,7 @@
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
-namespace TallyJ4.Backend.Helpers
+namespace Backend.Helpers
+
 {
     /// <summary>
     /// A helper class for template string processing with token replacement functionality.
@@ -180,3 +181,5 @@ namespace TallyJ4.Backend.Helpers
         }
     }
 }
+
+

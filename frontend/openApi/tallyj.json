@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.4",
   "info": {
-    "title": "TallyJ4 API",
+    "title": "Backend API",
     "description": "Election management and vote tallying system API",
     "version": "v1"
   },
@@ -4387,7 +4387,7 @@
             "name": "ElectionType",
             "in": "query",
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/ElectionTypeCode"
             }
           },
           {
@@ -6032,9 +6032,7 @@
             "nullable": true
           },
           "electionType": {
-            "type": "string",
-            "description": "The type of election (e.g., \"normal\", \"single-name\").",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionTypeCode"
           }
         },
         "additionalProperties": false,
@@ -6782,9 +6780,7 @@
             "nullable": true
           },
           "electionType": {
-            "type": "string",
-            "description": "The type of election (e.g., \"normal\", \"single-name\").",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionTypeCode"
           },
           "numberToElect": {
             "type": "integer",
@@ -6798,9 +6794,7 @@
             "nullable": true
           },
           "electionMode": {
-            "type": "string",
-            "description": "The mode of the election (e.g., \"online\", \"offline\").",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionModeCode"
           },
           "numberExtra": {
             "type": "integer",
@@ -7002,7 +6996,7 @@
           },
           "bahaiId": {
             "type": "string",
-            "description": "The person's Bahá'í ID.",
+            "description": "The person's BahÃ¡'Ã­ ID.",
             "nullable": true
           },
           "email": {
@@ -7433,9 +7427,7 @@
             "nullable": true
           },
           "electionType": {
-            "type": "string",
-            "description": "The type of election (e.g., \"normal\", \"single-name\").",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionTypeCode"
           },
           "numberToElect": {
             "type": "integer",
@@ -7454,9 +7446,7 @@
             "nullable": true
           },
           "electionMode": {
-            "type": "string",
-            "description": "The mode of the election (e.g., \"online\", \"offline\").",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionModeCode"
           },
           "numberExtra": {
             "type": "integer",
@@ -7606,6 +7596,14 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object representing an election with its configuration and statistics."
+      },
+      "ElectionModeCode": {
+        "enum": [
+          "N",
+          "T",
+          "B"
+        ],
+        "type": "string"
       },
       "ElectionOverviewDto": {
         "type": "object",
@@ -7791,9 +7789,7 @@
             "nullable": true
           },
           "electionType": {
-            "type": "string",
-            "description": "The type of election (e.g., \"normal\", \"single-name\").",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionTypeCode"
           },
           "tallyStatus": {
             "type": "string",
@@ -7855,14 +7851,10 @@
             "format": "int32"
           },
           "electionType": {
-            "type": "string",
-            "description": "The type of election (e.g., \"normal\", \"single-name\").",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionTypeCode"
           },
           "electionMode": {
-            "type": "string",
-            "description": "The mode of the election (e.g., \"online\", \"offline\").",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionModeCode"
           }
         },
         "additionalProperties": false,
@@ -7885,6 +7877,9 @@
             "type": "string",
             "description": "The name of the election."
           },
+          "electionType": {
+            "$ref": "#/components/schemas/ElectionTypeCode"
+          },
           "dateOfElection": {
             "type": "string",
             "description": "The date when the election will be held.",
@@ -7905,10 +7900,25 @@
             "type": "integer",
             "description": "The total number of ballots cast.",
             "format": "int32"
+          },
+          "electionMode": {
+            "$ref": "#/components/schemas/ElectionModeCode"
           }
         },
         "additionalProperties": false,
         "description": "Data transfer object representing a summary of election information."
+      },
+      "ElectionTypeCode": {
+        "enum": [
+          "LSA",
+          "LSA1",
+          "LSA2",
+          "NSA",
+          "Con",
+          "Reg",
+          "Oth"
+        ],
+        "type": "string"
       },
       "Enable2FARequest": {
         "required": [
@@ -8078,7 +8088,7 @@
           },
           "bahaiId": {
             "type": "string",
-            "description": "The Bahá'í ID of the voter.",
+            "description": "The BahÃ¡'Ã­ ID of the voter.",
             "nullable": true
           },
           "area": {
@@ -8994,7 +9004,7 @@
           },
           "bahaiId": {
             "type": "string",
-            "description": "The person's Bahá'í ID.",
+            "description": "The person's BahÃ¡'Ã­ ID.",
             "nullable": true
           },
           "otherLastNames": {
@@ -9268,9 +9278,7 @@
             "nullable": true
           },
           "electionType": {
-            "type": "string",
-            "description": "The type of election (e.g., \"LSA Election\", \"Unit Convention\").",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionTypeCode"
           },
           "tallyStatus": {
             "type": "string",
@@ -9436,6 +9444,7 @@
       "RegisterRequest": {
         "required": [
           "confirmPassword",
+          "displayName",
           "email",
           "password"
         ],
@@ -9445,6 +9454,10 @@
             "minLength": 1,
             "type": "string",
             "format": "email"
+          },
+          "displayName": {
+            "minLength": 1,
+            "type": "string"
           },
           "password": {
             "minLength": 6,
@@ -9742,8 +9755,7 @@
             "nullable": true
           },
           "electionType": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionTypeCode"
           },
           "voterCount": {
             "type": "integer",
@@ -9767,8 +9779,7 @@
             "nullable": true
           },
           "electionMode": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionModeCode"
           },
           "percentComplete": {
             "type": "number",
@@ -9809,8 +9820,7 @@
             "nullable": true
           },
           "electionType": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionTypeCode"
           },
           "voterCount": {
             "type": "integer",
@@ -10413,14 +10423,10 @@
             "nullable": true
           },
           "electionType": {
-            "type": "string",
-            "description": "The type of election (e.g., \"STV\", \"Cond\").",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionTypeCode"
           },
           "electionMode": {
-            "type": "string",
-            "description": "The mode of the election (e.g., \"N\" for normal, \"I\" for international).",
-            "nullable": true
+            "$ref": "#/components/schemas/ElectionModeCode"
           },
           "canVote": {
             "type": "string",
@@ -10591,7 +10597,7 @@
           },
           "bahaiId": {
             "type": "string",
-            "description": "The person's Bahá'í ID.",
+            "description": "The person's BahÃ¡'Ã­ ID.",
             "nullable": true
           },
           "email": {

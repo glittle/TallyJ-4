@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.OnlineVoting;
+﻿namespace Backend.DTOs.OnlineVoting;
 
 /// <summary>
 /// Data transfer object for online voter authentication response.
@@ -25,3 +25,6 @@ public class OnlineVoterAuthResponse
     /// </summary>
     public DateTime ExpiresAt { get; set; }
 }
+
+
+

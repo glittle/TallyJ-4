@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.People;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.People;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing people operations including creation, retrieval, updates, and deletion.
@@ -173,3 +173,6 @@ public class PeopleController : ControllerBase
         return NoContent();
     }
 }
+
+
+

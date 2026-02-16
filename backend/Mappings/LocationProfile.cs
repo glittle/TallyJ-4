@@ -1,8 +1,8 @@
-using AutoMapper;
-using TallyJ4.DTOs.Locations;
-using TallyJ4.Domain.Entities;
+﻿using AutoMapper;
+using Backend.DTOs.Locations;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Mappings;
+namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for location-related mappings.
@@ -42,3 +42,6 @@ public class LocationProfile : Profile
             .ForMember(dest => dest.Ballots, opt => opt.Ignore());
     }
 }
+
+
+

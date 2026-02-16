@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.Locations;
+﻿using FluentValidation;
+using Backend.DTOs.Locations;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for UpdateLocationDto that enforces location update requirements.
@@ -44,3 +44,6 @@ public class UpdateLocationDtoValidator : AbstractValidator<UpdateLocationDto>
             .WithMessage("Sort order must be greater than or equal to 0");
     }
 }
+
+
+

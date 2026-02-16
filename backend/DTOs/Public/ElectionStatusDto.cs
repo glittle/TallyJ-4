@@ -1,4 +1,6 @@
-namespace TallyJ4.DTOs.Public;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Public;
 
 /// <summary>
 /// Data transfer object representing the status of an election for public viewing.
@@ -21,9 +23,9 @@ public class ElectionStatusDto
     public DateTime? DateOfElection { get; set; }
 
     /// <summary>
-    /// The type of election (e.g., "normal", "single-name").
+    /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
     /// </summary>
-    public string ElectionType { get; set; } = string.Empty;
+    public ElectionTypeCode? ElectionType { get; set; }
 
     /// <summary>
     /// The current tally status of the election.
@@ -45,3 +47,6 @@ public class ElectionStatusDto
     /// </summary>
     public int BallotsSubmitted { get; set; }
 }
+
+
+

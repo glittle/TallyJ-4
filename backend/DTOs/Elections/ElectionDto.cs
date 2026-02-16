@@ -1,4 +1,6 @@
-namespace TallyJ4.DTOs.Elections;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Elections;
 
 /// <summary>
 /// Data transfer object representing an election with its configuration and statistics.
@@ -21,9 +23,9 @@ public class ElectionDto
     public DateTime? DateOfElection { get; set; }
 
     /// <summary>
-    /// The type of election (e.g., "normal", "single-name").
+    /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
     /// </summary>
-    public string? ElectionType { get; set; }
+    public ElectionTypeCode? ElectionType { get; set; }
 
     /// <summary>
     /// The number of positions to be elected.
@@ -41,9 +43,9 @@ public class ElectionDto
     public string? Convenor { get; set; }
 
     /// <summary>
-    /// The mode of the election (e.g., "online", "offline").
+    /// The mode of the election (N=Normal, T=Tie-Break, B=By-election).
     /// </summary>
-    public string? ElectionMode { get; set; }
+    public ElectionModeCode? ElectionMode { get; set; }
 
     /// <summary>
     /// The number of extra positions beyond the required number.
@@ -185,3 +187,6 @@ public class ElectionDto
     /// </summary>
     public string? Flags { get; set; }
 }
+
+
+

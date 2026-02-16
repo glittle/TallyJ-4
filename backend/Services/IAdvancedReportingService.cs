@@ -1,6 +1,6 @@
-using TallyJ4.DTOs.Results;
+﻿using Backend.DTOs.Results;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for advanced reporting features
@@ -32,3 +32,5 @@ public interface IAdvancedReportingService
     /// </summary>
     Task<StatisticalAnalysisDto> GenerateStatisticalAnalysisAsync(Guid electionId);
 }
+
+

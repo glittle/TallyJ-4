@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Services.Analyzers;
+namespace Backend.Services.Analyzers;
 
 /// <summary>
 /// Election analyzer for normal elections where each vote counts as one.
@@ -93,3 +93,6 @@ public class ElectionAnalyzerNormal : ElectionAnalyzerBase
             numProcessed, numVotesTotal);
     }
 }
+
+
+

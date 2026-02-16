@@ -1,8 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.Public;
-using TallyJ4.Domain.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using Backend.DTOs.Public;
+using Backend.Domain.Context;
+using Backend.Domain.Enumerations;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing public-facing operations including election discovery and status information.
@@ -52,17 +53,25 @@ public class PublicService : IPublicService
     /// <returns>A list of AvailableElectionDto objects representing elections with passcodes.</returns>
     public async Task<List<AvailableElectionDto>> GetAvailableElectionsAsync()
     {
-        var elections = await _context.Elections
+        var elections = (await _context.Elections
             .Where(e => !string.IsNullOrEmpty(e.ElectionPasscode))
             .OrderByDescending(e => e.DateOfElection ?? DateTime.MinValue)
+            .Select(e => new
+            {
+                e.ElectionGuid,
+                e.Name,
+                e.DateOfElection,
+                e.ElectionType
+            })
+            .ToListAsync())
             .Select(e => new AvailableElectionDto
             {
                 ElectionGuid = e.ElectionGuid,
                 Name = e.Name,
                 DateOfElection = e.DateOfElection,
-                ElectionType = e.ElectionType ?? "Unknown"
+                ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType)
             })
-            .ToListAsync();
+            .ToList();
 
         _logger.LogInformation("Retrieved {Count} available elections", elections.Count);
 
@@ -103,7 +112,7 @@ public class PublicService : IPublicService
             ElectionGuid = election.ElectionGuid,
             Name = election.Name,
             DateOfElection = election.DateOfElection,
-            ElectionType = election.ElectionType ?? "Unknown",
+            ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType),
             TallyStatus = election.TallyStatus ?? "Unknown",
             IsActive = isActive,
             RegisteredVoters = voterCount,
@@ -195,7 +204,7 @@ public class PublicService : IPublicService
             ElectionName = election.Name ?? "Unknown Election",
             DateOfElection = election.DateOfElection,
             Convenor = election.Convenor ?? string.Empty,
-            ElectionType = election.ElectionType ?? "Unknown",
+            ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType),
             TallyStatus = election.TallyStatus ?? "Unknown",
             NumberToElect = numberToElect,
             NumberExtra = numberExtra,
@@ -215,3 +224,6 @@ public class PublicService : IPublicService
         };
     }
 }
+
+
+

@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.People;
+﻿using FluentValidation;
+using Backend.DTOs.People;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for CreatePersonDto that enforces person creation requirements.
@@ -67,3 +67,6 @@ public class CreatePersonDtoValidator : AbstractValidator<CreatePersonDto>
             .WithMessage("Age group cannot exceed 2 characters");
     }
 }
+
+
+

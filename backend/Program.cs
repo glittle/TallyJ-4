@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -11,17 +11,17 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Identity;
-using TallyJ4.EF.Data;
-using TallyJ4.Middleware;
+using Backend.Domain.Context;
+using Backend.Domain.Identity;
+using Backend.EF.Data;
+using Backend.Middleware;
 using Serilog;
-using TallyJ4.Backend.Helpers;
+using Backend.Helpers;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using TallyJ4.Application.Services.Auth;
-using TallyJ4.Localization;
-using TallyJ4.Services;
+using Backend.Application.Services.Auth;
+using Backend.Localization;
+using Backend.Services;
 using System.Reflection;
 
 Console.WriteLine("Starting up..."); // for server log files
@@ -222,30 +222,30 @@ services.Configure<IdentityOptions>(options =>
 });
 
 // Configure SuperAdmin settings
-services.Configure<TallyJ4.Authorization.SuperAdminSettings>(
-    builderConfiguration.GetSection(TallyJ4.Authorization.SuperAdminSettings.SectionName));
+services.Configure<Backend.Authorization.SuperAdminSettings>(
+    builderConfiguration.GetSection(Backend.Authorization.SuperAdminSettings.SectionName));
 
 // Add authorization (for [Authorize] attributes)
 services.AddAuthorization(options =>
 {
     options.AddPolicy("ElectionAccess", policy =>
-        policy.Requirements.Add(new TallyJ4.Authorization.ElectionAccessRequirement()));
+        policy.Requirements.Add(new Backend.Authorization.ElectionAccessRequirement()));
 
     options.AddPolicy("TellerAccess", policy =>
-        policy.Requirements.Add(new TallyJ4.Authorization.TellerAccessRequirement()));
+        policy.Requirements.Add(new Backend.Authorization.TellerAccessRequirement()));
 
     options.AddPolicy("HeadTellerAccess", policy =>
-        policy.Requirements.Add(new TallyJ4.Authorization.HeadTellerAccessRequirement()));
+        policy.Requirements.Add(new Backend.Authorization.HeadTellerAccessRequirement()));
 
     options.AddPolicy("SuperAdmin", policy =>
-        policy.Requirements.Add(new TallyJ4.Authorization.SuperAdminRequirement()));
+        policy.Requirements.Add(new Backend.Authorization.SuperAdminRequirement()));
 });
 
 // Register custom authorization handlers
-services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.ElectionAccessHandler>();
-services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.TellerAccessHandler>();
-services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.HeadTellerAccessHandler>();
-services.AddScoped<IAuthorizationHandler, TallyJ4.Authorization.SuperAdminHandler>();
+services.AddScoped<IAuthorizationHandler, Backend.Authorization.ElectionAccessHandler>();
+services.AddScoped<IAuthorizationHandler, Backend.Authorization.TellerAccessHandler>();
+services.AddScoped<IAuthorizationHandler, Backend.Authorization.HeadTellerAccessHandler>();
+services.AddScoped<IAuthorizationHandler, Backend.Authorization.SuperAdminHandler>();
 
 // Add JSON localization
 services.Configure<JsonLocalizationOptions>(builderConfiguration.GetSection(JsonLocalizationOptions.SectionName));
@@ -263,25 +263,25 @@ services.AddValidatorsFromAssemblyContaining<Program>();
 services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add application services
-services.AddScoped<TallyJ4.Services.IElectionService, TallyJ4.Services.ElectionService>();
-services.AddScoped<TallyJ4.Services.ILocationService, TallyJ4.Services.LocationService>();
-services.AddScoped<TallyJ4.Services.IComputerService, TallyJ4.Services.ComputerService>();
-services.AddScoped<TallyJ4.Services.ITellerService, TallyJ4.Services.TellerService>();
-services.AddScoped<TallyJ4.Services.IPeopleService, TallyJ4.Services.PeopleService>();
-services.AddScoped<TallyJ4.Services.IBallotService, TallyJ4.Services.BallotService>();
-services.AddScoped<TallyJ4.Services.IVoteService, TallyJ4.Services.VoteService>();
-services.AddScoped<TallyJ4.Services.IDashboardService, TallyJ4.Services.DashboardService>();
-services.AddScoped<TallyJ4.Services.ISetupService, TallyJ4.Services.SetupService>();
-services.AddScoped<TallyJ4.Services.IAccountService, TallyJ4.Services.AccountService>();
-services.AddScoped<TallyJ4.Services.IPublicService, TallyJ4.Services.PublicService>();
-services.AddScoped<TallyJ4.Services.ITallyService, TallyJ4.Services.TallyService>();
-services.AddScoped<TallyJ4.Services.IReportExportService, TallyJ4.Services.ReportExportService>();
-services.AddScoped<TallyJ4.Services.IAdvancedReportingService, TallyJ4.Services.AdvancedReportingService>();
-services.AddScoped<TallyJ4.Services.IFrontDeskService, TallyJ4.Services.FrontDeskService>();
-services.AddScoped<TallyJ4.Services.IOnlineVotingService, TallyJ4.Services.OnlineVotingService>();
-services.AddScoped<TallyJ4.Services.IAuditLogService, TallyJ4.Services.AuditLogService>();
-services.AddScoped<TallyJ4.Services.ISuperAdminService, TallyJ4.Services.SuperAdminService>();
-services.AddScoped<TallyJ4.Backend.Services.ImportService>();
+services.AddScoped<Backend.Services.IElectionService, Backend.Services.ElectionService>();
+services.AddScoped<Backend.Services.ILocationService, Backend.Services.LocationService>();
+services.AddScoped<Backend.Services.IComputerService, Backend.Services.ComputerService>();
+services.AddScoped<Backend.Services.ITellerService, Backend.Services.TellerService>();
+services.AddScoped<Backend.Services.IPeopleService, Backend.Services.PeopleService>();
+services.AddScoped<Backend.Services.IBallotService, Backend.Services.BallotService>();
+services.AddScoped<Backend.Services.IVoteService, Backend.Services.VoteService>();
+services.AddScoped<Backend.Services.IDashboardService, Backend.Services.DashboardService>();
+services.AddScoped<Backend.Services.ISetupService, Backend.Services.SetupService>();
+services.AddScoped<Backend.Services.IAccountService, Backend.Services.AccountService>();
+services.AddScoped<Backend.Services.IPublicService, Backend.Services.PublicService>();
+services.AddScoped<Backend.Services.ITallyService, Backend.Services.TallyService>();
+services.AddScoped<Backend.Services.IReportExportService, Backend.Services.ReportExportService>();
+services.AddScoped<Backend.Services.IAdvancedReportingService, Backend.Services.AdvancedReportingService>();
+services.AddScoped<Backend.Services.IFrontDeskService, Backend.Services.FrontDeskService>();
+services.AddScoped<Backend.Services.IOnlineVotingService, Backend.Services.OnlineVotingService>();
+services.AddScoped<Backend.Services.IAuditLogService, Backend.Services.AuditLogService>();
+services.AddScoped<Backend.Services.ISuperAdminService, Backend.Services.SuperAdminService>();
+services.AddScoped<Backend.Services.ImportService>();
 
 // Add Auth services
 services.AddScoped<JwtTokenService>();
@@ -298,7 +298,7 @@ services.AddHostedService<RefreshTokenCleanupService>();
 
 // Add SignalR
 services.AddSignalR();
-services.AddSingleton<TallyJ4.Services.ISignalRNotificationService, TallyJ4.Services.SignalRNotificationService>();
+services.AddSingleton<Backend.Services.ISignalRNotificationService, Backend.Services.SignalRNotificationService>();
 
 // Add exception handler
 services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -326,7 +326,7 @@ services.AddSwaggerGen(options =>
 
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "TallyJ4 API",
+        Title = "Backend API",
         Version = "v1",
         Description = "Election management and vote tallying system API"
     });
@@ -378,6 +378,7 @@ if (app.Environment.IsDevelopment())
     if (seedOnStartup)
     {
         using var scope = app.Services.CreateScope();
+
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -396,7 +397,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "TallyJ4 API v1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Backend API v1");
         options.RoutePrefix = "swagger";
     });
 }
@@ -423,9 +424,9 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 });
 
 app.UseAuthentication();  // Enables Identity
-app.UseMiddleware<TallyJ4.Middleware.ElectionContextMiddleware>();
+app.UseMiddleware<Backend.Middleware.ElectionContextMiddleware>();
 app.UseAuthorization();
-app.UseMiddleware<TallyJ4.Middleware.AuditMiddleware>();
+app.UseMiddleware<Backend.Middleware.AuditMiddleware>();
 
 // Custom AuthController handles authentication endpoints
 
@@ -433,16 +434,20 @@ app.UseMiddleware<TallyJ4.Middleware.AuditMiddleware>();
 app.MapControllers();
 
 // Map SignalR hubs
-app.MapHub<TallyJ4.Hubs.MainHub>("/hubs/main");
-app.MapHub<TallyJ4.Hubs.AnalyzeHub>("/hubs/analyze");
-app.MapHub<TallyJ4.Hubs.BallotImportHub>("/hubs/ballot-import");
-app.MapHub<TallyJ4.Hubs.FrontDeskHub>("/hubs/front-desk");
-app.MapHub<TallyJ4.Hubs.PublicHub>("/hubs/public");
-app.MapHub<TallyJ4.Hubs.OnlineVotingHub>("/hubs/online-voting");
+app.MapHub<Backend.Hubs.MainHub>("/hubs/main");
+app.MapHub<Backend.Hubs.AnalyzeHub>("/hubs/analyze");
+app.MapHub<Backend.Hubs.BallotImportHub>("/hubs/ballot-import");
+app.MapHub<Backend.Hubs.FrontDeskHub>("/hubs/front-desk");
+app.MapHub<Backend.Hubs.PublicHub>("/hubs/public");
+app.MapHub<Backend.Hubs.OnlineVotingHub>("/hubs/online-voting");
 
 // Test endpoint
 app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
 
 // Start listening
 await app.RunAsync();
+
+
+
+
 

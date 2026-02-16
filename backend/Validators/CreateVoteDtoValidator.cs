@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.Votes;
+﻿using FluentValidation;
+using Backend.DTOs.Votes;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for CreateVoteDto that enforces vote creation requirements.
@@ -37,3 +37,6 @@ public class CreateVoteDtoValidator : AbstractValidator<CreateVoteDto>
         return validCodes.Contains(statusCode);
     }
 }
+
+
+

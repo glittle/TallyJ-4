@@ -1,12 +1,12 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.Domain;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
-using TallyJ4.DTOs.Security;
-using TallyJ4.Models;
+using Backend.Domain;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
+using Backend.DTOs.Security;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service implementation for managing security audit logs.
@@ -229,10 +229,10 @@ public class SecurityAuditService : ISecurityAuditService
         {
             TotalEvents = logs.Count,
             SuspiciousEvents = logs.Count(l => l.IsSuspicious),
-            FailedLoginAttempts = logs.Count(l => l.EventType == TallyJ4.Domain.SecurityEventType.LoginFailure),
-            SuccessfulLogins = logs.Count(l => l.EventType == TallyJ4.Domain.SecurityEventType.LoginSuccess),
-            AccountLockouts = logs.Count(l => l.EventType == TallyJ4.Domain.SecurityEventType.AccountLocked),
-            RateLimitViolations = logs.Count(l => l.EventType == TallyJ4.Domain.SecurityEventType.RateLimitExceeded)
+            FailedLoginAttempts = logs.Count(l => l.EventType == Backend.Domain.SecurityEventType.LoginFailure),
+            SuccessfulLogins = logs.Count(l => l.EventType == Backend.Domain.SecurityEventType.LoginSuccess),
+            AccountLockouts = logs.Count(l => l.EventType == Backend.Domain.SecurityEventType.AccountLocked),
+            RateLimitViolations = logs.Count(l => l.EventType == Backend.Domain.SecurityEventType.RateLimitExceeded)
         };
 
         // Top suspicious IPs
@@ -263,13 +263,13 @@ public class SecurityAuditService : ISecurityAuditService
     public async Task DetectSuspiciousPatternsAsync(DTOs.Security.CreateSecurityAuditLogDto createDto)
     {
         // Check for brute force patterns
-        if (createDto.EventType == TallyJ4.Domain.SecurityEventType.LoginFailure && !string.IsNullOrEmpty(createDto.IpAddress))
+        if (createDto.EventType == Backend.Domain.SecurityEventType.LoginFailure && !string.IsNullOrEmpty(createDto.IpAddress))
         {
             await CheckForBruteForceAttackAsync(createDto.IpAddress, createDto.Email);
         }
 
         // Check for unusual login locations (simplified - in production would use geo-IP)
-        if (createDto.EventType == TallyJ4.Domain.SecurityEventType.LoginSuccess && !string.IsNullOrEmpty(createDto.IpAddress))
+        if (createDto.EventType == Backend.Domain.SecurityEventType.LoginSuccess && !string.IsNullOrEmpty(createDto.IpAddress))
         {
             await CheckForUnusualLoginLocationAsync(createDto.UserId, createDto.IpAddress);
         }
@@ -279,7 +279,7 @@ public class SecurityAuditService : ISecurityAuditService
     {
         var recentFailures = await _context.SecurityAuditLogs
             .Where(l => l.IpAddress == ipAddress &&
-                       l.EventType == TallyJ4.Domain.SecurityEventType.LoginFailure &&
+                       l.EventType == Backend.Domain.SecurityEventType.LoginFailure &&
                        l.Timestamp >= DateTime.UtcNow.AddMinutes(-15))
             .CountAsync();
 
@@ -287,12 +287,12 @@ public class SecurityAuditService : ISecurityAuditService
         {
             await LogSecurityEventAsync(new DTOs.Security.CreateSecurityAuditLogDto
             {
-                EventType = TallyJ4.Domain.SecurityEventType.BruteForceAttemptDetected,
+                EventType = Backend.Domain.SecurityEventType.BruteForceAttemptDetected,
                 IpAddress = ipAddress,
                 Email = email,
                 Details = $"Brute force attack detected: {recentFailures} failed login attempts from {ipAddress} in the last 15 minutes",
                 IsSuspicious = true,
-                Severity = TallyJ4.Domain.SecurityEventSeverity.Critical
+                Severity = Backend.Domain.SecurityEventSeverity.Critical
             });
         }
     }
@@ -304,7 +304,7 @@ public class SecurityAuditService : ISecurityAuditService
         // Get user's recent successful logins from different IPs
         var recentLogins = await _context.SecurityAuditLogs
             .Where(l => l.UserId == userId &&
-                       l.EventType == TallyJ4.Domain.SecurityEventType.LoginSuccess &&
+                       l.EventType == Backend.Domain.SecurityEventType.LoginSuccess &&
                        l.Timestamp >= DateTime.UtcNow.AddDays(-30) &&
                        l.IpAddress != ipAddress)
             .Select(l => l.IpAddress)
@@ -316,13 +316,16 @@ public class SecurityAuditService : ISecurityAuditService
         {
             await LogSecurityEventAsync(new DTOs.Security.CreateSecurityAuditLogDto
             {
-                EventType = TallyJ4.Domain.SecurityEventType.UnusualLoginLocation,
+                EventType = Backend.Domain.SecurityEventType.UnusualLoginLocation,
                 UserId = userId,
                 IpAddress = ipAddress,
                 Details = $"Unusual login location detected: user logged in from {ipAddress} after logging from {recentLogins.Count} different IPs in the last 30 days",
                 IsSuspicious = true,
-                Severity = TallyJ4.Domain.SecurityEventSeverity.Warning
+                Severity = Backend.Domain.SecurityEventSeverity.Warning
             });
         }
     }
 }
+
+
+

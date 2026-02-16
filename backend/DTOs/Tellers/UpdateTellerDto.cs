@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Tellers;
+﻿namespace Backend.DTOs.Tellers;
 
 /// <summary>
 /// Data transfer object for updating an existing teller.
@@ -20,3 +20,6 @@ public class UpdateTellerDto
     /// </summary>
     public bool IsHeadTeller { get; set; }
 }
+
+
+

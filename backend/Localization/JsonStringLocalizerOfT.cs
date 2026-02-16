@@ -1,7 +1,7 @@
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using System.Globalization;
 
-namespace TallyJ4.Localization;
+namespace Backend.Localization;
 
 public class JsonStringLocalizer<T> : IStringLocalizer<T>
 {
@@ -21,3 +21,6 @@ public class JsonStringLocalizer<T> : IStringLocalizer<T>
         return _localizer.GetAllStrings(includeParentCultures);
     }
 }
+
+
+

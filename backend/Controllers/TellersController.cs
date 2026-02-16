@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.Tellers;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.Tellers;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing teller operations including creation, retrieval, updates, and deletion.
@@ -169,3 +169,6 @@ public class TellersController : ControllerBase
         return Ok(ApiResponse<bool>.SuccessResponse(true, "Teller deleted successfully"));
     }
 }
+
+
+

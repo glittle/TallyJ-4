@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Dashboard;
+﻿namespace Backend.DTOs.Dashboard;
 
 /// <summary>
 /// Data transfer object representing an election card for dashboard display.
@@ -45,3 +45,6 @@ public class ElectionCardDto
     /// </summary>
     public double PercentComplete { get; set; }
 }
+
+
+

@@ -46,9 +46,13 @@
               clearable
               @change="handleFilterChange"
             >
-              <el-option label="STV" value="STV" />
-              <el-option label="Condorcet" value="Cond" />
-              <el-option label="Multi-Winner" value="Multi" />
+              <el-option :label="$t('elections.electionTypes.LSA')" value="LSA" />
+              <el-option :label="$t('elections.electionTypes.LSA1')" value="LSA1" />
+              <el-option :label="$t('elections.electionTypes.LSA2')" value="LSA2" />
+              <el-option :label="$t('elections.electionTypes.NSA')" value="NSA" />
+              <el-option :label="$t('elections.electionTypes.Con')" value="Con" />
+              <el-option :label="$t('elections.electionTypes.Reg')" value="Reg" />
+              <el-option :label="$t('elections.electionTypes.Oth')" value="Oth" />
             </el-select>
           </el-col>
           <el-col :span="4">
@@ -92,7 +96,7 @@
             sortable="custom"
           >
             <template #default="scope">
-              <el-tag size="small">{{ scope.row.electionType }}</el-tag>
+              <el-tag size="small">{{ scope.row.electionType ? $t(`elections.electionTypes.${scope.row.electionType}`) : '' }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column

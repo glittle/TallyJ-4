@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Import;
+﻿namespace Backend.DTOs.Import;
 
 /// <summary>
 /// Data transfer object for requesting a ballot import operation.
@@ -25,3 +25,6 @@ public class ImportBallotRequestDto
     /// </summary>
     public ImportConfigurationDto Configuration { get; set; } = new();
 }
+
+
+

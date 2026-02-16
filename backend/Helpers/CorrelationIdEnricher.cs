@@ -1,7 +1,7 @@
-using Serilog.Core;
+﻿using Serilog.Core;
 using Serilog.Events;
 
-namespace TallyJ4.Backend.Helpers;
+namespace Backend.Helpers;
 
 /// <summary>
 /// Serilog enricher that adds correlation ID from the current HTTP context to all log events
@@ -36,3 +36,5 @@ public class CorrelationIdEnricher : ILogEventEnricher
         }
     }
 }
+
+

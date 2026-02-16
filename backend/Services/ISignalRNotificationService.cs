@@ -1,8 +1,8 @@
-using TallyJ4.DTOs.SignalR;
-using TallyJ4.DTOs.Results;
-using TallyJ4.DTOs.FrontDesk;
+﻿using Backend.DTOs.SignalR;
+using Backend.DTOs.Results;
+using Backend.DTOs.FrontDesk;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for sending real-time notifications through SignalR hubs.
@@ -59,3 +59,6 @@ public interface ISignalRNotificationService
     /// <param name="stats">The updated statistics.</param>
     Task NotifyVoterCountUpdatedAsync(Guid electionGuid, FrontDeskStatsDto stats);
 }
+
+
+

@@ -1,8 +1,9 @@
-using AutoMapper;
-using TallyJ4.DTOs.Elections;
-using TallyJ4.Domain.Entities;
+﻿using AutoMapper;
+using Backend.DTOs.Elections;
+using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 
-namespace TallyJ4.Mappings;
+namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for election-related mappings.
@@ -17,15 +18,21 @@ public class ElectionProfile : Profile
     public ElectionProfile()
     {
         CreateMap<Election, ElectionDto>()
+            .ForMember(dest => dest.ElectionType, opt => opt.MapFrom(src => ElectionTypeEnum.ParseCode(src.ElectionType)))
+            .ForMember(dest => dest.ElectionMode, opt => opt.MapFrom(src => ElectionModeEnum.ParseCode(src.ElectionMode)))
             .ForMember(dest => dest.VoterCount, opt => opt.Ignore())
             .ForMember(dest => dest.BallotCount, opt => opt.Ignore())
             .ForMember(dest => dest.LocationCount, opt => opt.Ignore());
 
         CreateMap<Election, ElectionSummaryDto>()
+            .ForMember(dest => dest.ElectionType, opt => opt.MapFrom(src => ElectionTypeEnum.ParseCode(src.ElectionType)))
+            .ForMember(dest => dest.ElectionMode, opt => opt.MapFrom(src => ElectionModeEnum.ParseCode(src.ElectionMode)))
             .ForMember(dest => dest.VoterCount, opt => opt.Ignore())
             .ForMember(dest => dest.BallotCount, opt => opt.Ignore());
 
         CreateMap<CreateElectionDto, Election>()
+            .ForMember(dest => dest.ElectionType, opt => opt.MapFrom(src => ElectionTypeEnum.ToCodeString(src.ElectionType)))
+            .ForMember(dest => dest.ElectionMode, opt => opt.MapFrom(src => ElectionModeEnum.ToCodeString(src.ElectionMode)))
             .ForMember(dest => dest.ElectionGuid, opt => opt.Ignore())
             .ForMember(dest => dest.RowId, opt => opt.Ignore())
             .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
@@ -44,6 +51,8 @@ public class ElectionProfile : Profile
             .ForMember(dest => dest.Tellers, opt => opt.Ignore());
 
         CreateMap<UpdateElectionDto, Election>()
+            .ForMember(dest => dest.ElectionType, opt => opt.MapFrom(src => ElectionTypeEnum.ToCodeString(src.ElectionType)))
+            .ForMember(dest => dest.ElectionMode, opt => opt.MapFrom(src => ElectionModeEnum.ToCodeString(src.ElectionMode)))
             .ForMember(dest => dest.ElectionGuid, opt => opt.Ignore())
             .ForMember(dest => dest.RowId, opt => opt.Ignore())
             .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
@@ -61,3 +70,6 @@ public class ElectionProfile : Profile
             .ForMember(dest => dest.Tellers, opt => opt.Ignore());
     }
 }
+
+
+

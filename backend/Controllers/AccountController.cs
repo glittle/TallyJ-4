@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TallyJ4.DTOs.Account;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.Account;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing user account operations including profile management and password changes.
@@ -113,3 +113,6 @@ public class AccountController : ControllerBase
         }
     }
 }
+
+
+

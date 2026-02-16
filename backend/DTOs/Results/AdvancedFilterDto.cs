@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Advanced filtering options for reports
@@ -92,3 +92,5 @@ public class NumericRangeFilterDto
     /// </summary>
     public decimal? Max { get; set; }
 }
+
+

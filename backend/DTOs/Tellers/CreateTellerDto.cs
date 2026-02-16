@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Tellers;
+﻿namespace Backend.DTOs.Tellers;
 
 /// <summary>
 /// Data transfer object for creating a new teller.
@@ -25,3 +25,6 @@ public class CreateTellerDto
     /// </summary>
     public bool IsHeadTeller { get; set; }
 }
+
+
+

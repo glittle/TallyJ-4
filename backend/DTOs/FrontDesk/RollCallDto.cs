@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.FrontDesk;
+﻿namespace Backend.DTOs.FrontDesk;
 
 /// <summary>
 /// Data transfer object containing roll call information for front desk operations.
@@ -15,3 +15,6 @@ public class RollCallDto
     /// </summary>
     public FrontDeskStatsDto Stats { get; set; } = new();
 }
+
+
+

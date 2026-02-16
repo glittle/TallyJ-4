@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Tellers;
+﻿namespace Backend.DTOs.Tellers;
 
 /// <summary>
 /// Data transfer object representing a teller in an election.
@@ -30,3 +30,6 @@ public class TellerDto
     /// </summary>
     public bool IsHeadTeller { get; set; }
 }
+
+
+

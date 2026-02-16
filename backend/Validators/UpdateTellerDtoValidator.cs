@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.Tellers;
+﻿using FluentValidation;
+using Backend.DTOs.Tellers;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for <see cref="UpdateTellerDto"/>.
@@ -27,3 +27,6 @@ public class UpdateTellerDtoValidator : AbstractValidator<UpdateTellerDto>
             .WithMessage("Computer code must be 2 uppercase letters (AA-ZZ)");
     }
 }
+
+
+

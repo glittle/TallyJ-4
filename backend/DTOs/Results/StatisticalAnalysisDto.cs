@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Comprehensive statistical analysis of election data
@@ -260,3 +260,5 @@ public class PredictionDto
     /// </summary>
     public decimal ConfidenceLevel { get; set; }
 }
+
+

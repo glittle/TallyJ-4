@@ -1,6 +1,6 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
-namespace TallyJ4.Middleware;
+namespace Backend.Middleware;
 
 /// <summary>
 /// Middleware that extracts election GUID from route parameters and adds it to user claims.
@@ -45,3 +45,5 @@ public class ElectionContextMiddleware
         await _next(context);
     }
 }
+
+

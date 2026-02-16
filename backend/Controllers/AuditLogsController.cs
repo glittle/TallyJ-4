@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.AuditLogs;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.AuditLogs;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing audit logs.
@@ -107,3 +107,6 @@ public class AuditLogsController : ControllerBase
             ApiResponse<AuditLogDto>.SuccessResponse(log, "Audit log created successfully"));
     }
 }
+
+
+

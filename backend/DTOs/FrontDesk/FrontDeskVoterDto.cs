@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.FrontDesk;
+﻿namespace Backend.DTOs.FrontDesk;
 
 /// <summary>
 /// Data transfer object representing a voter at the front desk.
@@ -16,7 +16,7 @@ public class FrontDeskVoterDto
     public string FullName { get; set; } = null!;
 
     /// <summary>
-    /// The Bahá'í ID of the voter.
+    /// The BahÃ¡'Ã­ ID of the voter.
     /// </summary>
     public string? BahaiId { get; set; }
 
@@ -65,3 +65,6 @@ public class FrontDeskVoterDto
     /// </summary>
     public bool IsCheckedIn => RegistrationTime.HasValue;
 }
+
+
+

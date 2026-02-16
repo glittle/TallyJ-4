@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Import;
+﻿namespace Backend.DTOs.Import;
 
 /// <summary>
 /// Data transfer object for mapping a source column to a target field during import.
@@ -15,3 +15,6 @@ public class FieldMappingDto
     /// </summary>
     public string TargetField { get; set; } = null!;
 }
+
+
+

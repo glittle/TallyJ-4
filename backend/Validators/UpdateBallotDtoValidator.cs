@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.Ballots;
+﻿using FluentValidation;
+using Backend.DTOs.Ballots;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for UpdateBallotDto that enforces ballot update requirements.
@@ -33,3 +33,6 @@ public class UpdateBallotDtoValidator : AbstractValidator<UpdateBallotDto>
             .WithMessage("Teller2 cannot exceed 25 characters");
     }
 }
+
+
+

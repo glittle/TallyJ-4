@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.Public;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.Public;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for public operations that don't require authentication.
@@ -110,3 +110,6 @@ public class PublicController : ControllerBase
             "Service is running"));
     }
 }
+
+
+

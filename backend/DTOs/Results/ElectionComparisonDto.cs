@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data structure for comparing multiple elections
@@ -134,3 +134,5 @@ public class TrendPointDto
     /// </summary>
     public string ElectionName { get; set; } = string.Empty;
 }
+
+

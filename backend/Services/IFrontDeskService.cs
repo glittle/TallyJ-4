@@ -1,6 +1,6 @@
-using TallyJ4.DTOs.FrontDesk;
+﻿using Backend.DTOs.FrontDesk;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing front desk operations including voter check-in and roll call.
@@ -36,3 +36,6 @@ public interface IFrontDeskService
     /// <returns>The front desk statistics DTO.</returns>
     Task<FrontDeskStatsDto> GetStatsAsync(Guid electionGuid);
 }
+
+
+

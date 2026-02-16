@@ -1,7 +1,7 @@
-using TallyJ4.DTOs.Elections;
-using TallyJ4.DTOs.Setup;
+﻿using Backend.DTOs.Elections;
+using Backend.DTOs.Setup;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for election setup operations including initial creation and configuration.
@@ -30,3 +30,6 @@ public interface ISetupService
     /// <returns>The election setup status, or null if the election was not found.</returns>
     Task<ElectionSetupStatusDto?> GetSetupStatusAsync(Guid electionGuid);
 }
+
+
+

@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Computers;
+﻿namespace Backend.DTOs.Computers;
 
 /// <summary>
 /// Data transfer object representing a registered computer.
@@ -50,3 +50,6 @@ public class ComputerDto
     /// </summary>
     public bool? IsActive { get; set; }
 }
+
+
+

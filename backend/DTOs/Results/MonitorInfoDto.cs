@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data transfer object containing real-time monitoring information for an election.
@@ -143,3 +143,5 @@ public class OnlineVotingInfoDto
     /// </summary>
     public DateTime? OnlineVotingEnd { get; set; }
 }
+
+

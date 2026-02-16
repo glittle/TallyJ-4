@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Computers;
+﻿namespace Backend.DTOs.Computers;
 
 /// <summary>
 /// Data transfer object for registering a new computer.
@@ -30,3 +30,6 @@ public class RegisterComputerDto
     /// </summary>
     public string? IpAddress { get; set; }
 }
+
+
+

@@ -1,14 +1,14 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
-using TallyJ4.DTOs.OnlineVoting;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
+using Backend.DTOs.OnlineVoting;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing online voting operations.
@@ -385,8 +385,8 @@ public class OnlineVotingService : IOnlineVotingService
         };
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"] ?? "TallyJ4",
-            audience: _configuration["Jwt:Audience"] ?? "TallyJ4Client",
+            issuer: _configuration["Jwt:Issuer"] ?? "Backend",
+            audience: _configuration["Jwt:Audience"] ?? "BackendClient",
             claims: claims,
             expires: DateTime.UtcNow.AddHours(24),
             signingCredentials: credentials
@@ -395,3 +395,6 @@ public class OnlineVotingService : IOnlineVotingService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
+
+
+

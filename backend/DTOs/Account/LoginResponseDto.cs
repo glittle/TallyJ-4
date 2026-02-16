@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Account;
+﻿namespace Backend.DTOs.Account;
 
 /// <summary>
 /// Data transfer object for login response containing authentication tokens and user information.
@@ -30,3 +30,6 @@ public class LoginResponseDto
     /// </summary>
     public string? UserName { get; set; }
 }
+
+
+

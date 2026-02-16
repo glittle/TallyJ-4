@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.SuperAdmin;
+﻿namespace Backend.DTOs.SuperAdmin;
 
 public class SuperAdminSummaryDto
 {
@@ -8,3 +8,6 @@ public class SuperAdminSummaryDto
     public int CompletedElections { get; set; }
     public int ArchivedElections { get; set; }
 }
+
+
+

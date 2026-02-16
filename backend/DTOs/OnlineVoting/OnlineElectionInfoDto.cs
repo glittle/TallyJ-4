@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.OnlineVoting;
+﻿namespace Backend.DTOs.OnlineVoting;
 
 /// <summary>
 /// Data transfer object containing information about an online election.
@@ -50,3 +50,6 @@ public class OnlineElectionInfoDto
     /// </summary>
     public string? Instructions { get; set; }
 }
+
+
+

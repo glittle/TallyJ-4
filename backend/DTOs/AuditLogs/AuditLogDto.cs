@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.AuditLogs;
+﻿namespace Backend.DTOs.AuditLogs;
 
 /// <summary>
 /// Data transfer object representing an audit log entry.
@@ -45,3 +45,6 @@ public class AuditLogDto
     /// </summary>
     public string? HostAndVersion { get; set; }
 }
+
+
+

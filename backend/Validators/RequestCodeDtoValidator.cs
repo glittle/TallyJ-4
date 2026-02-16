@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.OnlineVoting;
+﻿using FluentValidation;
+using Backend.DTOs.OnlineVoting;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for <see cref="RequestCodeDto"/>.
@@ -42,3 +42,6 @@ public class RequestCodeDtoValidator : AbstractValidator<RequestCodeDto>
             .WithMessage("Invalid phone number format");
     }
 }
+
+
+

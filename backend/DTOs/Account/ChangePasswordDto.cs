@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Account;
+﻿namespace Backend.DTOs.Account;
 
 /// <summary>
 /// Data transfer object for changing a user's password.
@@ -20,3 +20,6 @@ public class ChangePasswordDto
     /// </summary>
     public string ConfirmPassword { get; set; } = null!;
 }
+
+
+

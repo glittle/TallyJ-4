@@ -1,11 +1,11 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.Tellers;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
-using TallyJ4.Models;
+using Backend.DTOs.Tellers;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service implementation for managing tellers in an election.
@@ -168,3 +168,6 @@ public class TellerService : ITellerService
         return !await query.AnyAsync();
     }
 }
+
+
+

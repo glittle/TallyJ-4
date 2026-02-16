@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.People;
+﻿namespace Backend.DTOs.People;
 
 /// <summary>
 /// Data transfer object for creating a new person in an election.
@@ -41,7 +41,7 @@ public class CreatePersonDto
     public string? Area { get; set; }
 
     /// <summary>
-    /// The person's Bahá'í ID.
+    /// The person's BahÃ¡'Ã­ ID.
     /// </summary>
     public string? BahaiId { get; set; }
 
@@ -75,3 +75,6 @@ public class CreatePersonDto
     /// </summary>
     public Guid? IneligibleReasonGuid { get; set; }
 }
+
+
+

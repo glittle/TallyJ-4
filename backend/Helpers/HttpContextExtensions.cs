@@ -1,4 +1,4 @@
-namespace TallyJ4.Backend.Helpers;
+﻿namespace Backend.Helpers;
 
 /// <summary>
 /// Extensions for HttpContext to easily access correlation ID and other request-specific data
@@ -38,3 +38,5 @@ public static class HttpContextExtensions
         return httpContext.TraceIdentifier;
     }
 }
+
+

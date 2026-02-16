@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.Locations;
+﻿using FluentValidation;
+using Backend.DTOs.Locations;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for CreateLocationDto that enforces location creation requirements.
@@ -48,3 +48,6 @@ public class CreateLocationDtoValidator : AbstractValidator<CreateLocationDto>
             .WithMessage("Sort order must be greater than or equal to 0");
     }
 }
+
+
+

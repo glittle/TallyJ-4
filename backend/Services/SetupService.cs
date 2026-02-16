@@ -1,11 +1,12 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.Elections;
-using TallyJ4.DTOs.Setup;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
+using Backend.Domain.Enumerations;
+using Backend.DTOs.Elections;
+using Backend.DTOs.Setup;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing election setup operations including multi-step election configuration.
@@ -45,8 +46,8 @@ public class SetupService : ISetupService
             TallyStatus = "Setup",
             RowVersion = new byte[8],
             NumberToElect = 1,
-            ElectionType = "STV",
-            ElectionMode = "N"
+            ElectionType = ElectionTypeEnum.LSA.Code,
+            ElectionMode = ElectionModeEnum.Normal.Code
         };
 
         _context.Elections.Add(election);
@@ -79,8 +80,8 @@ public class SetupService : ISetupService
         }
 
         election.NumberToElect = step2Dto.NumberToElect;
-        election.ElectionType = step2Dto.ElectionType;
-        election.ElectionMode = step2Dto.ElectionMode;
+        election.ElectionType = step2Dto.ElectionType.ToString();
+        election.ElectionMode = step2Dto.ElectionMode.ToString();
 
         await _context.SaveChangesAsync();
 
@@ -130,3 +131,6 @@ public class SetupService : ISetupService
         };
     }
 }
+
+
+

@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.Backend.Services;
-using TallyJ4.DTOs.Import;
+using Backend.Services;
+using Backend.DTOs.Import;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for handling data import operations, including CSV parsing and ballot imports.
@@ -92,3 +92,5 @@ public class ParseCsvHeadersRequest
     /// </summary>
     public string? Delimiter { get; set; }
 }
+
+

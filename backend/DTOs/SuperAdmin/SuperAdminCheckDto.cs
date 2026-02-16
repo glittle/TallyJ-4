@@ -1,6 +1,9 @@
-namespace TallyJ4.DTOs.SuperAdmin;
+﻿namespace Backend.DTOs.SuperAdmin;
 
 public class SuperAdminCheckDto
 {
     public bool IsSuperAdmin { get; set; }
 }
+
+
+

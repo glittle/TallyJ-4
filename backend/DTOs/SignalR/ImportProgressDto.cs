@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.SignalR;
+﻿namespace Backend.DTOs.SignalR;
 
 /// <summary>
 /// Data transfer object for import progress notifications via SignalR.
@@ -50,3 +50,6 @@ public class ImportProgressDto
     /// </summary>
     public List<string> Errors { get; set; } = new();
 }
+
+
+

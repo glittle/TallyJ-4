@@ -112,5 +112,15 @@
   "elections.updateError": "Failed to update election",
   "elections.updateSuccess": "Election updated successfully",
   "elections.viewResults": "View Results",
-  "elections.voters": "Voters"
+  "elections.voters": "Voters",
+  "elections.electionTypes.LSA": "Local Spiritual Assembly",
+  "elections.electionTypes.LSA1": "Local Spiritual Assembly (Two-Stage) Local Unit",
+  "elections.electionTypes.LSA2": "Local Spiritual Assembly (Two-Stage) Final",
+  "elections.electionTypes.NSA": "National Spiritual Assembly",
+  "elections.electionTypes.Con": "Unit Convention",
+  "elections.electionTypes.Reg": "Regional Council",
+  "elections.electionTypes.Oth": "Other",
+  "elections.electionModes.N": "Normal Election",
+  "elections.electionModes.T": "Tie-Break",
+  "elections.electionModes.B": "By-election"
 }

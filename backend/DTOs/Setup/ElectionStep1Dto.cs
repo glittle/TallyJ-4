@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Setup;
+﻿namespace Backend.DTOs.Setup;
 
 /// <summary>
 /// Data transfer object for election setup step 1.
@@ -21,3 +21,6 @@ public class ElectionStep1Dto
     /// </summary>
     public string Reason { get; set; } = string.Empty;
 }
+
+
+

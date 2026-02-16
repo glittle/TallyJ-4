@@ -1,7 +1,7 @@
-using TallyJ4.DTOs.AuditLogs;
-using TallyJ4.Models;
+﻿using Backend.DTOs.AuditLogs;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing audit logs.
@@ -34,3 +34,6 @@ public interface IAuditLogService
     /// <returns>The created audit log DTO.</returns>
     Task<AuditLogDto> CreateAuditLogAsync(CreateAuditLogDto createDto);
 }
+
+
+

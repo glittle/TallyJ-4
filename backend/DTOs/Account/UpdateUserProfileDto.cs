@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Account;
+﻿namespace Backend.DTOs.Account;
 
 /// <summary>
 /// Data transfer object for updating user profile information.
@@ -20,3 +20,6 @@ public class UpdateUserProfileDto
     /// </summary>
     public string? PhoneNumber { get; set; }
 }
+
+
+

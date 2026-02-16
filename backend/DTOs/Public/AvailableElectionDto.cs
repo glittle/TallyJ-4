@@ -1,4 +1,6 @@
-namespace TallyJ4.DTOs.Public;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Public;
 
 /// <summary>
 /// Data transfer object representing an election available for public access.
@@ -21,7 +23,10 @@ public class AvailableElectionDto
     public DateTime? DateOfElection { get; set; }
 
     /// <summary>
-    /// The type of election (e.g., "normal", "single-name").
+    /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
     /// </summary>
-    public string ElectionType { get; set; } = string.Empty;
+    public ElectionTypeCode? ElectionType { get; set; }
 }
+
+
+

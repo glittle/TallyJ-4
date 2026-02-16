@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Services.Analyzers;
+namespace Backend.Services.Analyzers;
 
 /// <summary>
 /// Election analyzer for single-name elections where votes can have weighted counts.
@@ -94,3 +94,6 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
             numProcessed, numVotesTotal);
     }
 }
+
+
+

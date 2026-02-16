@@ -1,8 +1,8 @@
-using AutoMapper;
-using TallyJ4.Domain.Entities;
-using TallyJ4.DTOs.Security;
+﻿using AutoMapper;
+using Backend.Domain.Entities;
+using Backend.DTOs.Security;
 
-namespace TallyJ4.Mappings;
+namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for security audit log entity and DTO mappings.
@@ -27,3 +27,5 @@ public class SecurityAuditLogProfile : Profile
                 src.Metadata != null ? System.Text.Json.JsonSerializer.Serialize(src.Metadata) : null));
     }
 }
+
+

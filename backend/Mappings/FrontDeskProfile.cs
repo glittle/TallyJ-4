@@ -1,8 +1,8 @@
-using AutoMapper;
-using TallyJ4.DTOs.FrontDesk;
-using TallyJ4.Domain.Entities;
+﻿using AutoMapper;
+using Backend.DTOs.FrontDesk;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Mappings;
+namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for front desk entity and DTO mappings.
@@ -17,3 +17,6 @@ public class FrontDeskProfile : Profile
         CreateMap<Person, FrontDeskVoterDto>();
     }
 }
+
+
+

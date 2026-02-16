@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Services.Analyzers;
+namespace Backend.Services.Analyzers;
 
 /// <summary>
 /// Base class for election result analyzers.
@@ -393,3 +393,6 @@ public abstract class ElectionAnalyzerBase
         return "Ok";
     }
 }
+
+
+

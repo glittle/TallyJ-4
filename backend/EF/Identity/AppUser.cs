@@ -1,8 +1,8 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
-using TallyJ4.Domain.Entities;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.EF.Identity;
+namespace Backend.EF.Identity;
 
 /// <summary>
 /// Extended Identity user class for the TallyJ application.
@@ -37,3 +37,5 @@ public class AppUser : IdentityUser
     /// </summary>
     public virtual TwoFactorToken? TwoFactorToken { get; set; }
 }
+
+

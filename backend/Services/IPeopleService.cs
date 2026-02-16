@@ -1,7 +1,7 @@
-using TallyJ4.DTOs.People;
-using TallyJ4.Models;
+﻿using Backend.DTOs.People;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for managing people/voters operations including creation, retrieval, updates, and deletion.
@@ -65,3 +65,6 @@ public interface IPeopleService
     /// <returns>A list of all candidates ordered by last name and first name.</returns>
     Task<List<PersonDto>> GetCandidatesAsync(Guid electionGuid);
 }
+
+
+

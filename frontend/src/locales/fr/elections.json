@@ -51,5 +51,15 @@
   "elections.bulkDeleteMessage": "Êtes-vous sûr de vouloir supprimer les {count} élections sélectionnées ?",
   "elections.bulkDeleteSuccess": "{count} élections supprimées avec succès",
   "elections.bulkDeleteError": "Échec de la suppression de certaines élections",
-  "elections.voters": "Électeurs"
+  "elections.voters": "Électeurs",
+  "elections.electionTypes.LSA": "Assemblée spirituelle locale",
+  "elections.electionTypes.LSA1": "Assemblée spirituelle locale (deux étapes) Unité locale",
+  "elections.electionTypes.LSA2": "Assemblée spirituelle locale (deux étapes) Finale",
+  "elections.electionTypes.NSA": "Assemblée spirituelle nationale",
+  "elections.electionTypes.Con": "Convention d'unité",
+  "elections.electionTypes.Reg": "Conseil régional",
+  "elections.electionTypes.Oth": "Autre",
+  "elections.electionModes.N": "Élection normale",
+  "elections.electionModes.T": "Bris d'égalité",
+  "elections.electionModes.B": "Élection partielle"
 }

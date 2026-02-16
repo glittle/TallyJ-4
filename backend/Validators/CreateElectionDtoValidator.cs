@@ -1,7 +1,8 @@
-using FluentValidation;
-using TallyJ4.DTOs.Elections;
+﻿using FluentValidation;
+using Backend.Domain.Enumerations;
+using Backend.DTOs.Elections;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for CreateElectionDto that enforces election creation requirements.
@@ -25,11 +26,9 @@ public class CreateElectionDtoValidator : AbstractValidator<CreateElectionDto>
             .WithMessage("Date of election is required");
 
         RuleFor(x => x.ElectionType)
-            .MaximumLength(5)
-            .WithMessage("Election type cannot exceed 5 characters")
-            .Must(type => string.IsNullOrWhiteSpace(type) ||
-                         new[] { "STV", "Cond", "Multi" }.Contains(type))
-            .WithMessage("Election type must be one of: STV, Cond, Multi");
+            .IsInEnum()
+            .When(x => x.ElectionType.HasValue)
+            .WithMessage($"Election type must be one of: {string.Join(", ", ElectionTypeEnum.AllCodes)}");
 
         RuleFor(x => x.NumberToElect)
             .GreaterThan(0)
@@ -66,10 +65,9 @@ public class CreateElectionDtoValidator : AbstractValidator<CreateElectionDto>
             .WithMessage("Linked election kind cannot exceed 2 characters");
 
         RuleFor(x => x.ElectionMode)
-            .MaximumLength(1)
-            .WithMessage("Election mode must be a single character")
-            .Must(mode => string.IsNullOrWhiteSpace(mode) || new[] { "N", "I" }.Contains(mode))
-            .WithMessage("Election mode must be N (Normal) or I (International)");
+            .IsInEnum()
+            .When(x => x.ElectionMode.HasValue)
+            .WithMessage($"Election mode must be one of: {string.Join(", ", ElectionModeEnum.All.Select(m => $"{m.Code} ({m.Description})"))}");
 
         RuleFor(x => x.OnlineSelectionProcess)
             .MaximumLength(1)
@@ -103,3 +101,6 @@ public class CreateElectionDtoValidator : AbstractValidator<CreateElectionDto>
             .WithMessage("Voting methods cannot exceed 10 characters");
     }
 }
+
+
+

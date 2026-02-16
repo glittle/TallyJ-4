@@ -1,7 +1,7 @@
-using TallyJ4.DTOs.Ballots;
-using TallyJ4.Models;
+﻿using Backend.DTOs.Ballots;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for managing ballot operations including creation, retrieval, updates, and deletion.
@@ -47,3 +47,6 @@ public interface IBallotService
     /// <returns>True if the ballot was successfully deleted, false otherwise.</returns>
     Task<bool> DeleteBallotAsync(Guid ballotGuid);
 }
+
+
+
