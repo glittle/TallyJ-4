@@ -1,13 +1,15 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.Elections;
-using TallyJ4.DTOs.SignalR;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
-using TallyJ4.Models;
+using Backend.DTOs.Elections;
+using Backend.DTOs.SignalR;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
+using Backend.Models;
 using System.Security.Claims;
+using Backend.Helpers;
+using Backend.Domain.Enumerations;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing election operations including creation, retrieval, updates, and deletion.
@@ -82,7 +84,8 @@ public class ElectionService : IElectionService
             DateOfElection = e.DateOfElection,
             TallyStatus = e.TallyStatus,
             VoterCount = e.People.Count(p => p.CanVote == true),
-            BallotCount = e.Locations.SelectMany(l => l.Ballots).Count()
+            BallotCount = e.Locations.SelectMany(l => l.Ballots).Count(),
+            ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType)
         }).ToList();
 
         return PaginatedResponse<ElectionSummaryDto>.Create(electionDtos, pageNumber, pageSize, totalCount);
@@ -110,6 +113,7 @@ public class ElectionService : IElectionService
         dto.VoterCount = election.People.Count(p => p.CanVote == true);
         dto.BallotCount = election.Locations.SelectMany(l => l.Ballots).Count();
         dto.LocationCount = election.Locations.Count;
+        dto.ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType);
 
         return dto;
     }
@@ -235,3 +239,6 @@ public class ElectionService : IElectionService
         return true;
     }
 }
+
+
+

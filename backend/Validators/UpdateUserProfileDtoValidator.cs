@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.Account;
+﻿using FluentValidation;
+using Backend.DTOs.Account;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for UpdateUserProfileDto that enforces user profile update requirements.
@@ -36,3 +36,6 @@ public class UpdateUserProfileDtoValidator : AbstractValidator<UpdateUserProfile
             .WithMessage("Phone number can only contain digits, spaces, and characters: - ( ) + .");
     }
 }
+
+
+

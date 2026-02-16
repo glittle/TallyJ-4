@@ -1,7 +1,7 @@
-using TallyJ4.DTOs.Security;
-using TallyJ4.Models;
+﻿using Backend.DTOs.Security;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing security audit logs.
@@ -50,7 +50,7 @@ public class SecurityAuditLogFilterDto
     /// <summary>
     /// Filter by specific event type.
     /// </summary>
-    public TallyJ4.Domain.SecurityEventType? EventType { get; set; }
+    public global::Backend.Domain.SecurityEventType? EventType { get; set; }
 
     /// <summary>
     /// Filter by user ID.
@@ -75,7 +75,7 @@ public class SecurityAuditLogFilterDto
     /// <summary>
     /// Filter by severity level.
     /// </summary>
-    public TallyJ4.Domain.SecurityEventSeverity? Severity { get; set; }
+    public global::Backend.Domain.SecurityEventSeverity? Severity { get; set; }
 
     /// <summary>
     /// Start date for filtering.
@@ -136,5 +136,5 @@ public class SecurityStatisticsDto
     /// <summary>
     /// Events grouped by type.
     /// </summary>
-    public Dictionary<TallyJ4.Domain.SecurityEventType, int> EventsByType { get; set; } = new();
+    public Dictionary<global::Backend.Domain.SecurityEventType, int> EventsByType { get; set; } = new();
 }

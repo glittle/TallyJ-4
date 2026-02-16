@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.OnlineVoting;
+﻿using FluentValidation;
+using Backend.DTOs.OnlineVoting;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for <see cref="VerifyCodeDto"/>.
@@ -26,3 +26,6 @@ public class VerifyCodeDtoValidator : AbstractValidator<VerifyCodeDto>
             .WithMessage("Verification code cannot exceed 15 characters");
     }
 }
+
+
+

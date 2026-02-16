@@ -1,6 +1,6 @@
-using TallyJ4.DTOs.Votes;
+﻿using Backend.DTOs.Votes;
 
-namespace TallyJ4.DTOs.Ballots;
+namespace Backend.DTOs.Ballots;
 
 /// <summary>
 /// Data transfer object representing a ballot with its associated votes.
@@ -62,3 +62,6 @@ public class BallotDto
     /// </summary>
     public List<VoteDto> Votes { get; set; } = new();
 }
+
+
+

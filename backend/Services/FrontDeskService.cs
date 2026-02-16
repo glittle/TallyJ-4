@@ -1,11 +1,11 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.FrontDesk;
-using TallyJ4.DTOs.SignalR;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
+using Backend.DTOs.FrontDesk;
+using Backend.DTOs.SignalR;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service implementation for managing front desk operations including voter check-in and roll call.
@@ -135,3 +135,6 @@ public class FrontDeskService : IFrontDeskService
         };
     }
 }
+
+
+

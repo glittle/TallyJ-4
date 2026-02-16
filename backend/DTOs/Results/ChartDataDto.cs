@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data structure for chart visualizations
@@ -162,3 +162,5 @@ public class ChartAxisDto
     /// </summary>
     public string Title { get; set; } = string.Empty;
 }
+
+

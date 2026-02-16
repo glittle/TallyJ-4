@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Locations;
+﻿namespace Backend.DTOs.Locations;
 
 /// <summary>
 /// Data transfer object representing a voting location.
@@ -50,3 +50,6 @@ public class LocationDto
     /// </summary>
     public int? BallotsCollected { get; set; }
 }
+
+
+

@@ -1,6 +1,6 @@
-namespace TallyJ4.DTOs.Dashboard;
+﻿namespace Backend.DTOs.Dashboard;
 
-using TallyJ4.DTOs.Elections;
+using Backend.DTOs.Elections;
 
 /// <summary>
 /// Data transfer object representing a dashboard summary with election counts and recent elections.
@@ -22,3 +22,6 @@ public class DashboardSummaryDto
     /// </summary>
     public List<ElectionCardDto> RecentElections { get; set; } = new();
 }
+
+
+

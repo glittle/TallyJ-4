@@ -1023,9 +1023,7 @@ export const AvailableElectionDtoSchema = {
             nullable: true
         },
         electionType: {
-            type: 'string',
-            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionTypeCode'
         }
     },
     additionalProperties: false,
@@ -1795,9 +1793,7 @@ export const CreateElectionDtoSchema = {
             nullable: true
         },
         electionType: {
-            type: 'string',
-            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionTypeCode'
         },
         numberToElect: {
             type: 'integer',
@@ -1811,9 +1807,7 @@ export const CreateElectionDtoSchema = {
             nullable: true
         },
         electionMode: {
-            type: 'string',
-            description: 'The mode of the election (N=Normal, T=Tie-Break, B=By-election).',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionModeCode'
         },
         numberExtra: {
             type: 'integer',
@@ -2017,7 +2011,7 @@ export const CreatePersonDtoSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: "The person's Bahá'í ID.",
+            description: "The person's BahÃ¡'Ã­ ID.",
             nullable: true
         },
         email: {
@@ -2461,9 +2455,7 @@ export const ElectionDtoSchema = {
             nullable: true
         },
         electionType: {
-            type: 'string',
-            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionTypeCode'
         },
         numberToElect: {
             type: 'integer',
@@ -2482,9 +2474,7 @@ export const ElectionDtoSchema = {
             nullable: true
         },
         electionMode: {
-            type: 'string',
-            description: 'The mode of the election (N=Normal, T=Tie-Break, B=By-election).',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionModeCode'
         },
         numberExtra: {
             type: 'integer',
@@ -2634,6 +2624,11 @@ export const ElectionDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object representing an election with its configuration and statistics.'
+} as const;
+
+export const ElectionModeCodeSchema = {
+    enum: ['N', 'T', 'B'],
+    type: 'string'
 } as const;
 
 export const ElectionOverviewDtoSchema = {
@@ -2824,9 +2819,7 @@ export const ElectionStatusDtoSchema = {
             nullable: true
         },
         electionType: {
-            type: 'string',
-            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionTypeCode'
         },
         tallyStatus: {
             type: 'string',
@@ -2891,14 +2884,10 @@ export const ElectionStep2DtoSchema = {
             format: 'int32'
         },
         electionType: {
-            type: 'string',
-            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionTypeCode'
         },
         electionMode: {
-            type: 'string',
-            description: 'The mode of the election (N=Normal, T=Tie-Break, B=By-election).',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionModeCode'
         }
     },
     additionalProperties: false,
@@ -2920,6 +2909,9 @@ export const ElectionSummaryDtoSchema = {
             type: 'string',
             description: 'The name of the election.'
         },
+        electionType: {
+            '$ref': '#/components/schemas/ElectionTypeCode'
+        },
         dateOfElection: {
             type: 'string',
             description: 'The date when the election will be held.',
@@ -2940,10 +2932,18 @@ export const ElectionSummaryDtoSchema = {
             type: 'integer',
             description: 'The total number of ballots cast.',
             format: 'int32'
+        },
+        electionMode: {
+            '$ref': '#/components/schemas/ElectionModeCode'
         }
     },
     additionalProperties: false,
     description: 'Data transfer object representing a summary of election information.'
+} as const;
+
+export const ElectionTypeCodeSchema = {
+    enum: ['LSA', 'LSA1', 'LSA2', 'NSA', 'Con', 'Reg', 'Oth'],
+    type: 'string'
 } as const;
 
 export const Enable2FARequestSchema = {
@@ -3116,7 +3116,7 @@ export const FrontDeskVoterDtoSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: "The Bahá'í ID of the voter.",
+            description: "The BahÃ¡'Ã­ ID of the voter.",
             nullable: true
         },
         area: {
@@ -4059,7 +4059,7 @@ export const PersonDtoSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: "The person's Bahá'í ID.",
+            description: "The person's BahÃ¡'Ã­ ID.",
             nullable: true
         },
         otherLastNames: {
@@ -4340,9 +4340,7 @@ export const PublicDisplayDtoSchema = {
             nullable: true
         },
         electionType: {
-            type: 'string',
-            description: 'The type of election (e.g., "LSA Election", "Unit Convention").',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionTypeCode'
         },
         tallyStatus: {
             type: 'string',
@@ -4510,13 +4508,17 @@ export const RegisterComputerDtoSchema = {
 } as const;
 
 export const RegisterRequestSchema = {
-    required: ['confirmPassword', 'email', 'password'],
+    required: ['confirmPassword', 'displayName', 'email', 'password'],
     type: 'object',
     properties: {
         email: {
             minLength: 1,
             type: 'string',
             format: 'email'
+        },
+        displayName: {
+            minLength: 1,
+            type: 'string'
         },
         password: {
             minLength: 6,
@@ -4821,8 +4823,7 @@ export const SuperAdminElectionDetailDtoSchema = {
             nullable: true
         },
         electionType: {
-            type: 'string',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionTypeCode'
         },
         voterCount: {
             type: 'integer',
@@ -4846,8 +4847,7 @@ export const SuperAdminElectionDetailDtoSchema = {
             nullable: true
         },
         electionMode: {
-            type: 'string',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionModeCode'
         },
         percentComplete: {
             type: 'number',
@@ -4889,8 +4889,7 @@ export const SuperAdminElectionDtoSchema = {
             nullable: true
         },
         electionType: {
-            type: 'string',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionTypeCode'
         },
         voterCount: {
             type: 'integer',
@@ -5511,14 +5510,10 @@ export const UpdateElectionDtoSchema = {
             nullable: true
         },
         electionType: {
-            type: 'string',
-            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionTypeCode'
         },
         electionMode: {
-            type: 'string',
-            description: 'The mode of the election (N=Normal, T=Tie-Break, B=By-election).',
-            nullable: true
+            '$ref': '#/components/schemas/ElectionModeCode'
         },
         canVote: {
             type: 'string',
@@ -5691,7 +5686,7 @@ export const UpdatePersonDtoSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: "The person's Bahá'í ID.",
+            description: "The person's BahÃ¡'Ã­ ID.",
             nullable: true
         },
         email: {
@@ -6271,7 +6266,7 @@ export const FrontDeskVoterDtoWritableSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: "The Bahá'í ID of the voter.",
+            description: "The BahÃ¡'Ã­ ID of the voter.",
             nullable: true
         },
         area: {

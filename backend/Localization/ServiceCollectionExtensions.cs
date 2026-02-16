@@ -1,7 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 
-namespace TallyJ4.Localization;
+namespace Backend.Localization;
 
 public static class ServiceCollectionExtensions
 {
@@ -22,3 +22,6 @@ public static class ServiceCollectionExtensions
         return services;
     }
 }
+
+
+

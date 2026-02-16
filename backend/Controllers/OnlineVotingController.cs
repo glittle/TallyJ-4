@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.OnlineVoting;
-using TallyJ4.Services;
+using Backend.DTOs.OnlineVoting;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing online voting operations including voter verification and ballot submission.
@@ -142,3 +142,6 @@ public class OnlineVotingController : ControllerBase
         return Ok(status);
     }
 }
+
+
+

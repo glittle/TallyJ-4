@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.People;
+﻿using FluentValidation;
+using Backend.DTOs.People;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for UpdatePersonDto that enforces person update requirements.
@@ -63,3 +63,6 @@ public class UpdatePersonDtoValidator : AbstractValidator<UpdatePersonDto>
             .WithMessage("Age group cannot exceed 2 characters");
     }
 }
+
+
+

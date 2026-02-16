@@ -1,10 +1,10 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Net;
-using TallyJ4.Domain;
-using TallyJ4.DTOs.Security;
-using TallyJ4.Services;
+using Backend.Domain;
+using Backend.DTOs.Security;
+using Backend.Services;
 
-namespace TallyJ4.Middleware;
+namespace Backend.Middleware;
 
 /// <summary>
 /// Simple in-memory rate limiting middleware for authentication endpoints.
@@ -98,3 +98,5 @@ public class RateLimitingMiddleware
         }
     }
 }
+
+

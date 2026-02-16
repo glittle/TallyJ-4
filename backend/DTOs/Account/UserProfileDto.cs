@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Account;
+﻿namespace Backend.DTOs.Account;
 
 /// <summary>
 /// Data transfer object representing a user's profile information.
@@ -35,3 +35,6 @@ public class UserProfileDto
     /// </summary>
     public bool PhoneNumberConfirmed { get; set; }
 }
+
+
+

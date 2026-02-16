@@ -1,14 +1,14 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Enumerations;
-using TallyJ4.Domain.Identity;
-using TallyJ4.Domain.Entities;
+using Backend.Domain.Context;
+using Backend.Domain.Enumerations;
+using Backend.Domain.Identity;
+using Backend.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace TallyJ4.EF.Data;
+namespace Backend.EF.Data;
 
 /// <summary>
 /// Static class responsible for seeding the database with initial test data.
@@ -315,7 +315,7 @@ public static class DbSeeder
         var adminUser = await userManager.FindByEmailAsync("admin@tallyj.test");
         var tellerUser = await userManager.FindByEmailAsync("teller@tallyj.test");
         var googleUser = await userManager.FindByEmailAsync("glen.little@gmail.com");
-        
+
         if (adminUser != null)
         {
             context.JoinElectionUsers.Add(new JoinElectionUser
@@ -325,7 +325,7 @@ public static class DbSeeder
                 Role = "Owner"
             });
         }
-        
+
         if (tellerUser != null)
         {
             context.JoinElectionUsers.Add(new JoinElectionUser
@@ -335,7 +335,7 @@ public static class DbSeeder
                 Role = "Teller"
             });
         }
-        
+
         if (googleUser != null)
         {
             context.JoinElectionUsers.Add(new JoinElectionUser
@@ -547,7 +547,7 @@ public static class DbSeeder
 
         var adminUser = await userManager.FindByEmailAsync("admin@tallyj.test");
         var googleUser = await userManager.FindByEmailAsync("glen.little@gmail.com");
-        
+
         if (adminUser != null)
         {
             context.JoinElectionUsers.Add(new JoinElectionUser
@@ -557,7 +557,7 @@ public static class DbSeeder
                 Role = "Owner"
             });
         }
-        
+
         if (googleUser != null)
         {
             context.JoinElectionUsers.Add(new JoinElectionUser
@@ -620,3 +620,6 @@ public static class DbSeeder
         return new Guid(hash);
     }
 }
+
+
+

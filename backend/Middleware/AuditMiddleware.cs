@@ -1,8 +1,8 @@
-using System.Security.Claims;
-using TallyJ4.DTOs.AuditLogs;
-using TallyJ4.Services;
+﻿using System.Security.Claims;
+using Backend.DTOs.AuditLogs;
+using Backend.Services;
 
-namespace TallyJ4.Middleware;
+namespace Backend.Middleware;
 
 /// <summary>
 /// Middleware for logging audit entries for HTTP requests.
@@ -105,3 +105,6 @@ public class AuditMiddleware
         }
     }
 }
+
+
+

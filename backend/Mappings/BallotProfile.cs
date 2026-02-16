@@ -1,8 +1,8 @@
-using AutoMapper;
-using TallyJ4.DTOs.Ballots;
-using TallyJ4.Domain.Entities;
+﻿using AutoMapper;
+using Backend.DTOs.Ballots;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Mappings;
+namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for ballot-related mappings.
@@ -46,3 +46,6 @@ public class BallotProfile : Profile
             .ForMember(dest => dest.Votes, opt => opt.Ignore());
     }
 }
+
+
+

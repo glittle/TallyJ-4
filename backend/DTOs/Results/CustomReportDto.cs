@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Configuration for custom reports
@@ -97,3 +97,5 @@ public class CustomReportDto
     /// </summary>
     public DateTime GeneratedAt { get; set; }
 }
+
+

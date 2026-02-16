@@ -1,6 +1,6 @@
-using TallyJ4.DTOs.Public;
+﻿using Backend.DTOs.Public;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for public-facing operations that don't require authentication.
@@ -34,3 +34,6 @@ public interface IPublicService
     /// <returns>The public display data with results, or null if the election is not found or not public.</returns>
     Task<PublicDisplayDto?> GetPublicDisplayDataAsync(Guid electionGuid);
 }
+
+
+

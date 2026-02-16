@@ -1,20 +1,22 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using TallyJ4.Application.DTOs.Auth;
-using TallyJ4.Application.Services.Auth;
-using TallyJ4.Domain;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Identity;
-using TallyJ4.DTOs.Security;
-using TallyJ4.Middleware;
-using TallyJ4.Services;
+using System.Security.Cryptography;
+using System.Text;
+using Backend.Application.DTOs.Auth;
+using Backend.Application.Services.Auth;
+using Backend.Domain;
+using Backend.Domain.Context;
+using Backend.Domain.Identity;
+using Backend.DTOs.Security;
+using Backend.Middleware;
+using Backend.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for handling authentication and authorization operations including user registration,
@@ -100,7 +102,7 @@ public class AuthController : ControllerBase
                 UserAgent = userAgent,
                 Details = $"Registration failed: {error}",
                 IsSuspicious = false,
-                Severity = TallyJ4.Domain.SecurityEventSeverity.Info
+                Severity = Backend.Domain.SecurityEventSeverity.Info
             });
             return BadRequest(new { error });
         }
@@ -175,7 +177,7 @@ public class AuthController : ControllerBase
         });
 
         // Only set cookies if 2FA is not required
-        if (!response.Requires2FA && !string.IsNullOrEmpty(response.Token))
+        if (response != null && !response.Requires2FA && !string.IsNullOrEmpty(response.Token))
         {
             // Set secure cookies instead of returning tokens in response
             SecureCookieMiddleware.SetAuthCookies(
@@ -194,10 +196,10 @@ public class AuthController : ControllerBase
         {
             Token = null, // Not returned - stored in httpOnly cookie
             RefreshToken = null, // Not returned - stored in httpOnly cookie
-            Email = response.Email,
-            Name = response.Name,
-            AuthMethod = response.AuthMethod,
-            Requires2FA = response.Requires2FA
+            Email = response?.Email ?? "",
+            Name = response?.Name,
+            AuthMethod = response?.AuthMethod ?? "Local",
+            Requires2FA = response?.Requires2FA ?? false
         });
     }
 
@@ -465,7 +467,7 @@ public class AuthController : ControllerBase
         // Set secure cookies with authentication data
         SecureCookieMiddleware.SetAuthCookies(
             HttpContext,
-            response.Token,
+            response.Token ?? "",
             response.RefreshToken ?? "",
             response.Email,
             response.Name,
@@ -480,7 +482,7 @@ public class AuthController : ControllerBase
             RefreshToken = response.RefreshToken,
             Email = response.Email,
             Name = response.Name,
-            AuthMethod = response.AuthMethod,
+            AuthMethod = response.AuthMethod ?? "Local",
             Requires2FA = response.Requires2FA
         });
     }
@@ -892,5 +894,46 @@ public class AuthController : ControllerBase
         return $"{baseUrl}?error={Uri.EscapeDataString(errorMessage)}&mode=officer";
     }
 
+    /// <summary>
+    /// Generates a cryptographically secure random code verifier for PKCE (Proof Key for Code Exchange).
+    /// </summary>
+    /// <returns>A base64url-encoded random string between 43-128 characters.</returns>
+    public static string GenerateCodeVerifier()
+    {
+        var bytes = new byte[32]; // 256 bits
+        RandomNumberGenerator.Fill(bytes);
+        return Base64UrlEncode(bytes);
+    }
+
+    /// <summary>
+    /// Generates a code challenge from a code verifier using SHA256 hashing.
+    /// </summary>
+    /// <param name="codeVerifier">The code verifier to hash.</param>
+    /// <returns>A base64url-encoded SHA256 hash of the code verifier.</returns>
+    public static string GenerateCodeChallenge(string codeVerifier)
+    {
+        using var sha256 = SHA256.Create();
+        var bytes = Encoding.UTF8.GetBytes(codeVerifier);
+        var hash = sha256.ComputeHash(bytes);
+        return Base64UrlEncode(hash);
+    }
+
+    /// <summary>
+    /// Encodes a byte array to base64url format (URL-safe base64).
+    /// </summary>
+    /// <param name="bytes">The bytes to encode.</param>
+    /// <returns>A base64url-encoded string.</returns>
+    public static string Base64UrlEncode(byte[] bytes)
+    {
+        return Convert.ToBase64String(bytes)
+            .Replace('+', '-')
+            .Replace('/', '_')
+            .TrimEnd('=');
+    }
+
 
 }
+
+
+
+

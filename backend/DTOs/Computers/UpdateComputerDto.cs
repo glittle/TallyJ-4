@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Computers;
+﻿namespace Backend.DTOs.Computers;
 
 /// <summary>
 /// Data transfer object for updating an existing computer.
@@ -20,3 +20,6 @@ public class UpdateComputerDto
     /// </summary>
     public bool? IsActive { get; set; }
 }
+
+
+

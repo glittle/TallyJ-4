@@ -1,6 +1,6 @@
-using TallyJ4.DTOs.Dashboard;
+﻿using Backend.DTOs.Dashboard;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for dashboard operations including summary data, election listings, and computer management.
@@ -65,3 +65,6 @@ public interface IDashboardService
     /// <returns>True if the guest teller was successfully removed, false otherwise.</returns>
     Task<bool> RemoveGuestTellerAsync(Guid electionGuid, string tellerName);
 }
+
+
+

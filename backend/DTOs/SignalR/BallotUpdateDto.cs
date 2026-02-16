@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.SignalR;
+﻿namespace Backend.DTOs.SignalR;
 
 /// <summary>
 /// Data transfer object for ballot update notifications via SignalR.
@@ -40,3 +40,5 @@ public class BallotUpdateDto
     /// </summary>
     public DateTime UpdatedAt { get; set; }
 }
+
+

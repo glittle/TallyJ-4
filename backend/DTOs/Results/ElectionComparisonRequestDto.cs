@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Request DTO for comparing multiple elections
@@ -15,3 +15,5 @@ public class ElectionComparisonRequestDto
     /// </summary>
     public List<string> Metrics { get; set; } = new() { "turnout", "votes", "candidates" };
 }
+
+

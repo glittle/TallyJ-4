@@ -1,7 +1,7 @@
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using System.Globalization;
 
-namespace TallyJ4.Localization;
+namespace Backend.Localization;
 
 public class JsonStringLocalizerFactory : IStringLocalizerFactory
 {
@@ -22,3 +22,6 @@ public class JsonStringLocalizerFactory : IStringLocalizerFactory
         return new JsonStringLocalizer(_provider, CultureInfo.CurrentUICulture);
     }
 }
+
+
+

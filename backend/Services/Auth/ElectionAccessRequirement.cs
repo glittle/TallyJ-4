@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 
-namespace TallyJ4.Services.Auth;
+namespace Backend.Services.Auth;
 
 /// <summary>
 /// Authorization requirement for election-specific access control.
@@ -23,3 +23,5 @@ public class ElectionAccessRequirement : IAuthorizationRequirement
         RequiredRole = requiredRole;
     }
 }
+
+

@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using TallyJ4.Domain.Context;
+using Backend.Domain.Context;
 
-namespace TallyJ4.Authorization;
+namespace Backend.Authorization;
 
 /// <summary>
 /// Authorization handler that validates user access to elections based on the ElectionAccessRequirement.
@@ -116,3 +116,5 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
         }
     }
 }
+
+

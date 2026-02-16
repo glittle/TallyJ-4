@@ -1,7 +1,7 @@
-using TallyJ4.DTOs.SuperAdmin;
-using TallyJ4.Models;
+﻿using Backend.DTOs.SuperAdmin;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 public interface ISuperAdminService
 {
@@ -9,3 +9,6 @@ public interface ISuperAdminService
     Task<PaginatedResponse<SuperAdminElectionDto>> GetElectionsAsync(SuperAdminElectionFilterDto filter);
     Task<SuperAdminElectionDetailDto?> GetElectionDetailAsync(Guid electionGuid);
 }
+
+
+

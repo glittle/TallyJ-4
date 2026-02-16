@@ -1,9 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.Public;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Enumerations;
+﻿using Microsoft.EntityFrameworkCore;
+using Backend.DTOs.Public;
+using Backend.Domain.Context;
+using Backend.Domain.Enumerations;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing public-facing operations including election discovery and status information.
@@ -224,3 +224,6 @@ public class PublicService : IPublicService
         };
     }
 }
+
+
+

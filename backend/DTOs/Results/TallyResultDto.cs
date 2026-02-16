@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data transfer object representing the complete results of an election tally.
@@ -91,3 +91,6 @@ public class CandidateResultDto
     /// </summary>
     public bool CloseToPrev { get; set; }
 }
+
+
+

@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Ballots;
+﻿namespace Backend.DTOs.Ballots;
 
 /// <summary>
 /// Data transfer object for creating a new ballot.
@@ -15,3 +15,6 @@ public class CreateBallotDto
     /// </summary>
     public string ComputerCode { get; set; } = null!;
 }
+
+
+

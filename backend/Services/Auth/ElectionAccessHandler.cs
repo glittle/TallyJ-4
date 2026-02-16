@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
-using TallyJ4.Domain.Identity;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
+using Backend.Domain.Identity;
 
-namespace TallyJ4.Services.Auth;
+namespace Backend.Services.Auth;
 
 /// <summary>
 /// Authorization handler for election-specific access control.
@@ -80,3 +80,5 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
         // If we get here, access is denied
     }
 }
+
+

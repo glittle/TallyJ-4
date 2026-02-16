@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace TallyJ4.DTOs.Security;
+namespace Backend.DTOs.Security;
 
 /// <summary>
 /// Data transfer object for creating a new security audit log entry.
@@ -11,7 +11,7 @@ public class CreateSecurityAuditLogDto
     /// The type of security event being logged.
     /// </summary>
     [Required]
-    public TallyJ4.Domain.SecurityEventType EventType { get; set; }
+    public Backend.Domain.SecurityEventType EventType { get; set; }
 
     /// <summary>
     /// The user ID associated with the event (if applicable).
@@ -46,10 +46,13 @@ public class CreateSecurityAuditLogDto
     /// <summary>
     /// Severity level of the security event.
     /// </summary>
-    public TallyJ4.Domain.SecurityEventSeverity Severity { get; set; } = TallyJ4.Domain.SecurityEventSeverity.Info;
+    public Backend.Domain.SecurityEventSeverity Severity { get; set; } = Backend.Domain.SecurityEventSeverity.Info;
 
     /// <summary>
     /// Additional metadata as key-value pairs (JSON serialized).
     /// </summary>
     public Dictionary<string, string>? Metadata { get; set; }
 }
+
+
+

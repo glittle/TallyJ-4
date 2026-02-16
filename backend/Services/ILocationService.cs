@@ -1,7 +1,7 @@
-using TallyJ4.DTOs.Locations;
-using TallyJ4.Models;
+﻿using Backend.DTOs.Locations;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for managing location operations including creation, retrieval, updates, and deletion.
@@ -47,3 +47,6 @@ public interface ILocationService
     /// <returns>True if the location was successfully deleted, false otherwise.</returns>
     Task<bool> DeleteLocationAsync(Guid locationGuid);
 }
+
+
+

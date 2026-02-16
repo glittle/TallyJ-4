@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.Dashboard;
-using TallyJ4.Domain.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using Backend.DTOs.Dashboard;
+using Backend.Domain.Context;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing dashboard operations including election summaries, statistics, and teller management.
@@ -258,3 +258,6 @@ public class DashboardService : IDashboardService
         return true;
     }
 }
+
+
+

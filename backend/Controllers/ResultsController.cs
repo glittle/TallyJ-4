@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.Results;
-using TallyJ4.Services;
+using Backend.DTOs.Results;
+using Backend.Services;
 
-namespace TallyJ4.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing election results and tally operations.
@@ -382,3 +382,6 @@ public class ResultsController : ControllerBase
         }
     }
 }
+
+
+

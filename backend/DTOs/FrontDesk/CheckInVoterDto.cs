@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace TallyJ4.DTOs.FrontDesk;
+namespace Backend.DTOs.FrontDesk;
 
 /// <summary>
 /// Data transfer object for checking in a voter at the front desk.
@@ -31,3 +31,6 @@ public class CheckInVoterDto
     /// </summary>
     public Guid? VotingLocationGuid { get; set; }
 }
+
+
+

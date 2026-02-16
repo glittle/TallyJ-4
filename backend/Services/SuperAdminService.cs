@@ -1,10 +1,10 @@
-using Microsoft.EntityFrameworkCore;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Enumerations;
-using TallyJ4.DTOs.SuperAdmin;
-using TallyJ4.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Backend.Domain.Context;
+using Backend.Domain.Enumerations;
+using Backend.DTOs.SuperAdmin;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 public class SuperAdminService : ISuperAdminService
 {
@@ -238,3 +238,6 @@ public class SuperAdminService : ISuperAdminService
         };
     }
 }
+
+
+

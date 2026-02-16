@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 
-namespace TallyJ4.Hubs;
+namespace Backend.Hubs;
 
 /// <summary>
 /// SignalR hub for real-time online voting notifications.
@@ -73,3 +73,6 @@ public class OnlineVotingHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 }
+
+
+

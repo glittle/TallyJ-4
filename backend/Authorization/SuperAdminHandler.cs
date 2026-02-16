@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace TallyJ4.Authorization;
+namespace Backend.Authorization;
 
 /// <summary>
 /// Authorization handler that validates whether the authenticated user is a super admin
@@ -69,3 +69,6 @@ public class SuperAdminHandler : AuthorizationHandler<SuperAdminRequirement>
         return Task.CompletedTask;
     }
 }
+
+
+

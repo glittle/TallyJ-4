@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.FrontDesk;
+﻿namespace Backend.DTOs.FrontDesk;
 
 /// <summary>
 /// Data transfer object containing statistics for the front desk.
@@ -27,3 +27,6 @@ public class FrontDeskStatsDto
         ? Math.Round((decimal)CheckedIn / TotalEligible * 100, 1)
         : 0;
 }
+
+
+

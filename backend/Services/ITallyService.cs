@@ -1,6 +1,6 @@
-using TallyJ4.DTOs.Results;
+﻿using Backend.DTOs.Results;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for election tally operations including calculation, results retrieval, and reporting.
@@ -95,3 +95,6 @@ public interface ITallyService
     /// <returns>The presentation data.</returns>
     Task<PresentationDto> GetPresentationDataAsync(Guid electionGuid);
 }
+
+
+

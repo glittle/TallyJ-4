@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 
-namespace TallyJ4.Middleware;
+namespace Backend.Middleware;
 
 /// <summary>
 /// Middleware for handling secure cookie-based authentication tokens.
@@ -197,3 +197,5 @@ public class SecureCookieMiddleware
         return context.Request.Cookies[AuthMethodCookieName];
     }
 }
+
+

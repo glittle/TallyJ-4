@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.SignalR;
+﻿namespace Backend.DTOs.SignalR;
 
 /// <summary>
 /// Data transfer object for real-time tally progress updates via SignalR.
@@ -41,3 +41,6 @@ public class TallyProgressDto
     /// </summary>
     public bool IsComplete { get; set; }
 }
+
+
+

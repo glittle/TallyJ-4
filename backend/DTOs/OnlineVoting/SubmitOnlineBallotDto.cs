@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.OnlineVoting;
+﻿namespace Backend.DTOs.OnlineVoting;
 
 /// <summary>
 /// Data transfer object for submitting an online ballot.
@@ -41,3 +41,6 @@ public class OnlineVoteDto
     /// </summary>
     public int PositionOnBallot { get; set; }
 }
+
+
+

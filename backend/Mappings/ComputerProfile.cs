@@ -1,8 +1,8 @@
-using AutoMapper;
-using TallyJ4.DTOs.Computers;
-using TallyJ4.Domain.Entities;
+﻿using AutoMapper;
+using Backend.DTOs.Computers;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Mappings;
+namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for computer entity and DTO mappings.
@@ -37,3 +37,6 @@ public class ComputerProfile : Profile
             .ForMember(dest => dest.Location, opt => opt.Ignore());
     }
 }
+
+
+

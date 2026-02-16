@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
-namespace TallyJ4.Hubs;
+namespace Backend.Hubs;
 
 /// <summary>
 /// Main SignalR hub for election-related real-time communication.
@@ -106,3 +106,6 @@ public class MainHub : Hub
 
     private static string GetGroupName(Guid electionGuid) => $"Main{electionGuid}";
 }
+
+
+

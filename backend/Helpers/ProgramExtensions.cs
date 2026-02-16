@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace TallyJ4.Backend.Helpers;
+namespace Backend.Helpers;
 
 /// <summary>
 /// Extension methods for configuring ASP.NET Core services and middleware.
@@ -93,7 +93,7 @@ public static class ProgramExtensions
                 //);
                 sqlServerDbContextOptionsBuilder
               .MigrationsHistoryTable("__EFMigrations_" + connectionStringName)
-              .MigrationsAssembly("TallyJ4");
+              .MigrationsAssembly("Backend");
             }
           );
 
@@ -230,3 +230,5 @@ public static class ProgramExtensions
         return app;
     }
 }
+
+

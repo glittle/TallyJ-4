@@ -1,6 +1,6 @@
-using TallyJ4.DTOs.Computers;
+﻿using Backend.DTOs.Computers;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing computers registered for online voting.
@@ -72,3 +72,6 @@ public interface IComputerService
     /// <returns>A unique computer code.</returns>
     Task<string> GenerateComputerCodeAsync(Guid electionGuid);
 }
+
+
+

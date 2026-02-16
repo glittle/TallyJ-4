@@ -1,12 +1,12 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.People;
-using TallyJ4.DTOs.SignalR;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
-using TallyJ4.Models;
+using Backend.DTOs.People;
+using Backend.DTOs.SignalR;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing people operations including creation, retrieval, updates, and deletion.
@@ -332,3 +332,6 @@ public class PeopleService : IPeopleService
         }).ToList();
     }
 }
+
+
+

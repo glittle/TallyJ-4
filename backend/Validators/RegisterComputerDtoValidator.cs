@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.Computers;
+﻿using FluentValidation;
+using Backend.DTOs.Computers;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for <see cref="RegisterComputerDto"/>.
@@ -38,3 +38,6 @@ public class RegisterComputerDtoValidator : AbstractValidator<RegisterComputerDt
             .WithMessage("IP address cannot exceed 50 characters");
     }
 }
+
+
+

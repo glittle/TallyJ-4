@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.FrontDesk;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.FrontDesk;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing front desk operations including voter check-in and roll call.
@@ -116,3 +116,6 @@ public class FrontDeskController : ControllerBase
         }
     }
 }
+
+
+

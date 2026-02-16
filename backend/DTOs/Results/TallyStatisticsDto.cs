@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data transfer object representing statistical information about an election tally.
@@ -60,3 +60,6 @@ public class TallyStatisticsDto
     /// </summary>
     public int NumberExtra { get; set; }
 }
+
+
+

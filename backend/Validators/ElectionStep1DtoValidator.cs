@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.Setup;
+﻿using FluentValidation;
+using Backend.DTOs.Setup;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for ElectionStep1Dto that enforces first step election setup requirements.
@@ -26,3 +26,6 @@ public class ElectionStep1DtoValidator : AbstractValidator<ElectionStep1Dto>
             .WithMessage("Election date cannot be more than 1 year in the past");
     }
 }
+
+
+

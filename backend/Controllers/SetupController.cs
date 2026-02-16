@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.Elections;
-using TallyJ4.DTOs.Setup;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.Elections;
+using Backend.DTOs.Setup;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing election setup operations in multiple steps.
@@ -87,3 +87,6 @@ public class SetupController : ControllerBase
         return Ok(ApiResponse<ElectionSetupStatusDto>.SuccessResponse(status));
     }
 }
+
+
+

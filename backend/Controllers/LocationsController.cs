@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.Locations;
-using TallyJ4.DTOs.Computers;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.Locations;
+using Backend.DTOs.Computers;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing voting location operations including creation, retrieval, updates, and deletion.
@@ -249,3 +249,6 @@ public class LocationsController : ControllerBase
         return Ok(ApiResponse<bool>.SuccessResponse(true, "Computer deleted successfully"));
     }
 }
+
+
+

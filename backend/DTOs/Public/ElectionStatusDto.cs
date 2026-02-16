@@ -1,6 +1,6 @@
-using TallyJ4.Domain.Enumerations;
+﻿using Backend.Domain.Enumerations;
 
-namespace TallyJ4.DTOs.Public;
+namespace Backend.DTOs.Public;
 
 /// <summary>
 /// Data transfer object representing the status of an election for public viewing.
@@ -47,3 +47,6 @@ public class ElectionStatusDto
     /// </summary>
     public int BallotsSubmitted { get; set; }
 }
+
+
+

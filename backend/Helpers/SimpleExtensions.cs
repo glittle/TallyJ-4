@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net.Mail;
@@ -10,10 +10,11 @@ using System.Xml.Linq;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Backend.Domain.Enumerations;
 using static System.Threading.Thread;
 using Formatting = Newtonsoft.Json.Formatting;
 
-namespace TallyJ4.Backend.Helpers;
+namespace Backend.Helpers;
 
 /// <summary>
 ///   This file contains extensions that do not change the type of the input, or simply answer a
@@ -2204,4 +2205,15 @@ public static partial class ExtensionsSimple
         dbSet.Add(entity);
         return entity;
     }
+
+    /// <summary>
+    ///  Convert a string to an ElectionType enum value by matching the code, ignoring case. If no match is found, returns ElectionTypeEnum.Oth.
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public static ElectionType AsElectionType(this string? input) =>
+        ElectionTypeEnum.All.FirstOrDefault(e => e.Code.Equals(input, StringComparison.OrdinalIgnoreCase)) ?? ElectionTypeEnum.Oth;
+
 }
+
+

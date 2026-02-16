@@ -1,4 +1,4 @@
-namespace TallyJ4.Authorization;
+﻿namespace Backend.Authorization;
 
 public class SuperAdminSettings
 {
@@ -6,3 +6,6 @@ public class SuperAdminSettings
 
     public string[] Emails { get; set; } = Array.Empty<string>();
 }
+
+
+

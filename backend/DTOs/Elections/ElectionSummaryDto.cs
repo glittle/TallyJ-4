@@ -1,6 +1,7 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Backend.Domain.Enumerations;
 
-namespace TallyJ4.DTOs.Elections;
+namespace Backend.DTOs.Elections;
 
 /// <summary>
 /// Data transfer object representing a summary of election information.
@@ -18,6 +19,11 @@ public class ElectionSummaryDto
     /// </summary>
     [Required]
     public string Name { get; set; } = null!;
+
+    /// <summary>
+    /// The type of the election.
+    /// </summary>
+    public ElectionTypeCode? ElectionType { get; set; }
 
     /// <summary>
     /// The date when the election will be held.
@@ -38,4 +44,13 @@ public class ElectionSummaryDto
     /// The total number of ballots cast.
     /// </summary>
     public int BallotCount { get; set; }
+
+    /// <summary>
+    /// The mode of the election (N=Normal, T=Tie-Break, B=By-election).
+    /// </summary>
+    public ElectionModeCode? ElectionMode { get; set; }
+
 }
+
+
+

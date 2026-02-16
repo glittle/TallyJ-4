@@ -1,7 +1,7 @@
-using TallyJ4.DTOs.Elections;
-using TallyJ4.Models;
+﻿using Backend.DTOs.Elections;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for managing election operations including creation, retrieval, updates, and deletion.
@@ -62,3 +62,6 @@ public interface IElectionService
     /// <returns>True if the listing status was successfully updated, false otherwise.</returns>
     Task<bool> UpdateElectionListingAsync(Guid electionGuid, bool isListed);
 }
+
+
+

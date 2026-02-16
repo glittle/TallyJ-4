@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Ballots;
+﻿namespace Backend.DTOs.Ballots;
 
 /// <summary>
 /// Data transfer object for updating ballot information.
@@ -20,3 +20,6 @@ public class UpdateBallotDto
     /// </summary>
     public string? Teller2 { get; set; }
 }
+
+
+

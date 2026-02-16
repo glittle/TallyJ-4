@@ -1,6 +1,6 @@
-using TallyJ4.Domain.Enumerations;
+﻿using Backend.Domain.Enumerations;
 
-namespace TallyJ4.DTOs.SuperAdmin;
+namespace Backend.DTOs.SuperAdmin;
 
 public class SuperAdminElectionFilterDto
 {
@@ -12,3 +12,6 @@ public class SuperAdminElectionFilterDto
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 25;
 }
+
+
+

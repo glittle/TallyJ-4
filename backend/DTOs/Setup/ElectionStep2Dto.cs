@@ -1,6 +1,6 @@
-using TallyJ4.Domain.Enumerations;
+﻿using Backend.Domain.Enumerations;
 
-namespace TallyJ4.DTOs.Setup;
+namespace Backend.DTOs.Setup;
 
 /// <summary>
 /// Data transfer object for election setup step 2.
@@ -28,3 +28,6 @@ public class ElectionStep2Dto
     /// </summary>
     public ElectionModeCode ElectionMode { get; set; }
 }
+
+
+

@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TallyJ4.Domain.Context;
+using Backend.Domain.Context;
+namespace Backend.EF.Migrations
+
 
 #nullable disable
 
-namespace TallyJ4.EF.Migrations
 {
     [DbContext(typeof(MainDbContext))]
     [Migration("20260206162931_AddDisplayNameToAppUser")]
@@ -158,7 +159,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Ballot", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Ballot", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -223,7 +224,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("Ballots");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Computer", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Computer", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -283,7 +284,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("Computers");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Election", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Election", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -450,7 +451,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("Elections");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.ImportFile", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.ImportFile", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -517,7 +518,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("ImportFiles");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.JoinElectionUser", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.JoinElectionUser", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -554,7 +555,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("JoinElectionUsers");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Location", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Location", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -610,7 +611,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("Locations");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Log", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Log", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -657,7 +658,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("Logs");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Message", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Message", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -695,7 +696,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.OnlineVoter", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.OnlineVoter", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -762,7 +763,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("OnlineVoters");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.OnlineVotingInfo", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.OnlineVotingInfo", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -813,7 +814,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("OnlineVotingInfos");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Person", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Person", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -983,7 +984,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("People");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.RefreshToken", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -1032,7 +1033,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("RefreshToken");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Result", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Result", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -1096,7 +1097,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("Results");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.ResultSummary", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.ResultSummary", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -1176,7 +1177,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("ResultSummaries");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.ResultTie", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.ResultTie", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -1211,7 +1212,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("ResultTies");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.SmsLog", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.SmsLog", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -1263,7 +1264,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("SmsLogs");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Teller", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Teller", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -1303,7 +1304,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("Tellers");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.TwoFactorToken", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.TwoFactorToken", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -1350,7 +1351,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("TwoFactorToken");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Vote", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Vote", b =>
                 {
                     b.Property<int>("RowId")
                         .ValueGeneratedOnAdd()
@@ -1402,7 +1403,7 @@ namespace TallyJ4.EF.Migrations
                     b.ToTable("Votes");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Identity.AppUser", b =>
+            modelBuilder.Entity("Backend.Domain.Identity.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -1496,7 +1497,7 @@ namespace TallyJ4.EF.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Identity.AppUser", null)
+                    b.HasOne("Backend.Domain.Identity.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1505,7 +1506,7 @@ namespace TallyJ4.EF.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Identity.AppUser", null)
+                    b.HasOne("Backend.Domain.Identity.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1520,7 +1521,7 @@ namespace TallyJ4.EF.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TallyJ4.Domain.Identity.AppUser", null)
+                    b.HasOne("Backend.Domain.Identity.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1529,16 +1530,16 @@ namespace TallyJ4.EF.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Identity.AppUser", null)
+                    b.HasOne("Backend.Domain.Identity.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Ballot", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Ballot", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Location", "Location")
+                    b.HasOne("Backend.Domain.Entities.Location", "Location")
                         .WithMany("Ballots")
                         .HasForeignKey("LocationGuid")
                         .HasPrincipalKey("LocationGuid")
@@ -1549,9 +1550,9 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Computer", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Computer", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                    b.HasOne("Backend.Domain.Entities.Election", "Election")
                         .WithMany()
                         .HasForeignKey("ElectionGuid")
                         .HasPrincipalKey("ElectionGuid")
@@ -1559,7 +1560,7 @@ namespace TallyJ4.EF.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Computer_Election");
 
-                    b.HasOne("TallyJ4.Domain.Entities.Location", "Location")
+                    b.HasOne("Backend.Domain.Entities.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationGuid")
                         .HasPrincipalKey("LocationGuid")
@@ -1572,9 +1573,9 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.ImportFile", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.ImportFile", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                    b.HasOne("Backend.Domain.Entities.Election", "Election")
                         .WithMany("ImportFiles")
                         .HasForeignKey("ElectionGuid")
                         .HasPrincipalKey("ElectionGuid")
@@ -1585,9 +1586,9 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Election");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.JoinElectionUser", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.JoinElectionUser", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                    b.HasOne("Backend.Domain.Entities.Election", "Election")
                         .WithMany("JoinElectionUsers")
                         .HasForeignKey("ElectionGuid")
                         .HasPrincipalKey("ElectionGuid")
@@ -1598,9 +1599,9 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Election");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Location", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Location", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                    b.HasOne("Backend.Domain.Entities.Election", "Election")
                         .WithMany("Locations")
                         .HasForeignKey("ElectionGuid")
                         .HasPrincipalKey("ElectionGuid")
@@ -1611,9 +1612,9 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Election");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Message", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Message", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                    b.HasOne("Backend.Domain.Entities.Election", "Election")
                         .WithMany("Messages")
                         .HasForeignKey("ElectionGuid")
                         .HasPrincipalKey("ElectionGuid")
@@ -1624,9 +1625,9 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Election");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Person", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Person", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                    b.HasOne("Backend.Domain.Entities.Election", "Election")
                         .WithMany("People")
                         .HasForeignKey("ElectionGuid")
                         .HasPrincipalKey("ElectionGuid")
@@ -1637,25 +1638,25 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Election");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.RefreshToken", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.RefreshToken", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Identity.AppUser", null)
+                    b.HasOne("Backend.Domain.Identity.AppUser", null)
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Result", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Result", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                    b.HasOne("Backend.Domain.Entities.Election", "Election")
                         .WithMany("Results")
                         .HasForeignKey("ElectionGuid")
                         .HasPrincipalKey("ElectionGuid")
                         .IsRequired()
                         .HasConstraintName("FK_Result_Election");
 
-                    b.HasOne("TallyJ4.Domain.Entities.Person", "Person")
+                    b.HasOne("Backend.Domain.Entities.Person", "Person")
                         .WithMany("Results")
                         .HasForeignKey("PersonGuid")
                         .HasPrincipalKey("PersonGuid")
@@ -1668,9 +1669,9 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.ResultSummary", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.ResultSummary", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                    b.HasOne("Backend.Domain.Entities.Election", "Election")
                         .WithMany("ResultSummaries")
                         .HasForeignKey("ElectionGuid")
                         .HasPrincipalKey("ElectionGuid")
@@ -1681,9 +1682,9 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Election");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.ResultTie", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.ResultTie", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                    b.HasOne("Backend.Domain.Entities.Election", "Election")
                         .WithMany("ResultTies")
                         .HasForeignKey("ElectionGuid")
                         .HasPrincipalKey("ElectionGuid")
@@ -1694,9 +1695,9 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Election");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Teller", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Teller", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Election", "Election")
+                    b.HasOne("Backend.Domain.Entities.Election", "Election")
                         .WithMany("Tellers")
                         .HasForeignKey("ElectionGuid")
                         .HasPrincipalKey("ElectionGuid")
@@ -1706,18 +1707,18 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Election");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.TwoFactorToken", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.TwoFactorToken", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Identity.AppUser", null)
+                    b.HasOne("Backend.Domain.Identity.AppUser", null)
                         .WithOne("TwoFactorToken")
-                        .HasForeignKey("TallyJ4.Domain.Entities.TwoFactorToken", "UserId")
+                        .HasForeignKey("Backend.Domain.Entities.TwoFactorToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Vote", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Vote", b =>
                 {
-                    b.HasOne("TallyJ4.Domain.Entities.Ballot", "Ballot")
+                    b.HasOne("Backend.Domain.Entities.Ballot", "Ballot")
                         .WithMany("Votes")
                         .HasForeignKey("BallotGuid")
                         .HasPrincipalKey("BallotGuid")
@@ -1725,7 +1726,7 @@ namespace TallyJ4.EF.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Vote_Ballot");
 
-                    b.HasOne("TallyJ4.Domain.Entities.Person", "Person")
+                    b.HasOne("Backend.Domain.Entities.Person", "Person")
                         .WithMany("Votes")
                         .HasForeignKey("PersonGuid")
                         .HasPrincipalKey("PersonGuid")
@@ -1736,12 +1737,12 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Ballot", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Ballot", b =>
                 {
                     b.Navigation("Votes");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Election", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Election", b =>
                 {
                     b.Navigation("ImportFiles");
 
@@ -1762,19 +1763,19 @@ namespace TallyJ4.EF.Migrations
                     b.Navigation("Tellers");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Location", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Location", b =>
                 {
                     b.Navigation("Ballots");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Entities.Person", b =>
+            modelBuilder.Entity("Backend.Domain.Entities.Person", b =>
                 {
                     b.Navigation("Results");
 
                     b.Navigation("Votes");
                 });
 
-            modelBuilder.Entity("TallyJ4.Domain.Identity.AppUser", b =>
+            modelBuilder.Entity("Backend.Domain.Identity.AppUser", b =>
                 {
                     b.Navigation("RefreshTokens");
 
@@ -1784,3 +1785,7 @@ namespace TallyJ4.EF.Migrations
         }
     }
 }
+
+
+
+

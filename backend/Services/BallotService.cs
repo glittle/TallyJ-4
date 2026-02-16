@@ -1,12 +1,12 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.Ballots;
-using TallyJ4.DTOs.Votes;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
-using TallyJ4.Models;
+using Backend.DTOs.Ballots;
+using Backend.DTOs.Votes;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing ballot operations including creation, retrieval, updates, and deletion.
@@ -207,3 +207,6 @@ public class BallotService : IBallotService
         return dto;
     }
 }
+
+
+

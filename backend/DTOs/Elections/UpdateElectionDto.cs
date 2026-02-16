@@ -1,6 +1,6 @@
-using TallyJ4.Domain.Enumerations;
+﻿using Backend.Domain.Enumerations;
 
-namespace TallyJ4.DTOs.Elections;
+namespace Backend.DTOs.Elections;
 
 /// <summary>
 /// Data transfer object for updating an existing election.
@@ -167,3 +167,6 @@ public class UpdateElectionDto
     /// </summary>
     public string? Flags { get; set; }
 }
+
+
+

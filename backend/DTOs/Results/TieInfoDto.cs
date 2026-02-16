@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Information about a tie situation in election results.
@@ -30,3 +30,6 @@ public class TieInfoDto
     /// </summary>
     public List<string> CandidateNames { get; set; } = new();
 }
+
+
+

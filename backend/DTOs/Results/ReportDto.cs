@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data transfer object containing comprehensive election report data.
@@ -586,3 +586,5 @@ public class LocationStatisticsDto
     /// </summary>
     public Dictionary<string, int> TopCandidates { get; set; } = new();
 }
+
+

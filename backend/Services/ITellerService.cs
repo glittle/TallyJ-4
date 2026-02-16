@@ -1,7 +1,7 @@
-using TallyJ4.DTOs.Tellers;
-using TallyJ4.Models;
+﻿using Backend.DTOs.Tellers;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing tellers in an election.
@@ -55,3 +55,6 @@ public interface ITellerService
     /// <returns>True if the name is unique, false otherwise.</returns>
     Task<bool> IsTellerNameUniqueAsync(Guid electionGuid, string name, int? excludeRowId = null);
 }
+
+
+

@@ -1,7 +1,5 @@
-using TallyJ4.DTOs.Results;
-using TallyJ4.Services;
-
-namespace TallyJ4.Services;
+﻿using Backend.DTOs.Results;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for advanced reporting features including charts, comparisons, and analytics
@@ -398,3 +396,5 @@ public class AdvancedReportingService : IAdvancedReportingService
         return result;
     }
 }
+
+

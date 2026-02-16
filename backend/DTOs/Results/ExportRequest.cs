@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Request DTO for exporting election reports in different formats.
@@ -20,3 +20,5 @@ public class ExportRequest
     /// </summary>
     public Dictionary<string, string>? Filters { get; set; }
 }
+
+

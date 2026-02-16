@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.Account;
+﻿using FluentValidation;
+using Backend.DTOs.Account;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for ChangePasswordDto that enforces password change requirements.
@@ -39,3 +39,6 @@ public class ChangePasswordDtoValidator : AbstractValidator<ChangePasswordDto>
             .WithMessage("Passwords do not match");
     }
 }
+
+
+

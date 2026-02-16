@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
-namespace TallyJ4.Hubs;
+namespace Backend.Hubs;
 
 /// <summary>
 /// SignalR hub for front desk operations in election management.
@@ -117,3 +117,6 @@ public class FrontDeskHub : Hub
 
     private static string GetGroupName(Guid electionGuid) => $"FrontDesk{electionGuid}";
 }
+
+
+

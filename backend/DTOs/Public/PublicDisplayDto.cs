@@ -1,6 +1,6 @@
-using TallyJ4.Domain.Enumerations;
+﻿using Backend.Domain.Enumerations;
 
-namespace TallyJ4.DTOs.Public;
+namespace Backend.DTOs.Public;
 
 /// <summary>
 /// Data transfer object for public display of election results.
@@ -140,3 +140,6 @@ public class PublicDisplayStatsDto
     /// </summary>
     public decimal TurnoutPercentage { get; set; }
 }
+
+
+

@@ -1,7 +1,7 @@
-using FluentValidation;
-using TallyJ4.DTOs.Ballots;
+﻿using FluentValidation;
+using Backend.DTOs.Ballots;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for CreateBallotDto that enforces ballot creation requirements.
@@ -27,3 +27,6 @@ public class CreateBallotDtoValidator : AbstractValidator<CreateBallotDto>
             .WithMessage("Computer code must be 1-2 uppercase letters");
     }
 }
+
+
+

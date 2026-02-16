@@ -1,11 +1,11 @@
-using TallyJ4.DTOs.Results;
-using TallyJ4.DTOs.SignalR;
-using TallyJ4.Domain.Context;
-using TallyJ4.Services.Analyzers;
+﻿using Backend.DTOs.Results;
+using Backend.DTOs.SignalR;
+using Backend.Domain.Context;
+using Backend.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.Domain.Entities;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing election tally calculations, results, and reporting.
@@ -1109,3 +1109,6 @@ public class TallyService : ITallyService
         };
     }
 }
+
+
+

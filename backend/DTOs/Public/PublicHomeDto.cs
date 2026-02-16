@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Public;
+﻿namespace Backend.DTOs.Public;
 
 /// <summary>
 /// Data transfer object representing information for the public home page.
@@ -30,3 +30,6 @@ public class PublicHomeDto
     /// </summary>
     public DateTime ServerTime { get; set; }
 }
+
+
+

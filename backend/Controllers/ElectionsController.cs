@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.Elections;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.Elections;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing election operations including creation, retrieval, updates, and deletion.
@@ -143,3 +143,6 @@ public class ElectionsController : ControllerBase
         return NoContent();
     }
 }
+
+
+

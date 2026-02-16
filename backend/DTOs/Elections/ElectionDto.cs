@@ -1,6 +1,6 @@
-using TallyJ4.Domain.Enumerations;
+﻿using Backend.Domain.Enumerations;
 
-namespace TallyJ4.DTOs.Elections;
+namespace Backend.DTOs.Elections;
 
 /// <summary>
 /// Data transfer object representing an election with its configuration and statistics.
@@ -187,3 +187,6 @@ public class ElectionDto
     /// </summary>
     public string? Flags { get; set; }
 }
+
+
+

@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Import;
+﻿namespace Backend.DTOs.Import;
 
 /// <summary>
 /// Data transfer object containing the parsed CSV headers and preview data.
@@ -20,3 +20,6 @@ public class ParseCsvHeadersResponseDto
     /// </summary>
     public int TotalRows { get; set; }
 }
+
+
+

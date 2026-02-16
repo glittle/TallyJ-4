@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using TallyJ4.Authorization;
-using TallyJ4.DTOs.SuperAdmin;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.Authorization;
+using Backend.DTOs.SuperAdmin;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Controllers;
+namespace Backend.Controllers;
 
 [ApiController]
 [Route("api/superadmin")]
@@ -72,3 +72,6 @@ public class SuperAdminController : ControllerBase
         return Ok(ApiResponse<SuperAdminElectionDetailDto>.SuccessResponse(detail));
     }
 }
+
+
+

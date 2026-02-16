@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+namespace Backend.EF.Migrations
+
 
 #nullable disable
 
-namespace TallyJ4.EF.Migrations
 {
     /// <inheritdoc />
     public partial class AddComputerEntity : Migration
@@ -70,3 +71,6 @@ namespace TallyJ4.EF.Migrations
         }
     }
 }
+
+
+

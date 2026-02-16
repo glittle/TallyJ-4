@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.Dashboard;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.Dashboard;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for handling dashboard-related operations including election management,
@@ -238,3 +238,6 @@ public class DeleteTellerRequest
     /// </summary>
     public string TellerName { get; set; } = string.Empty;
 }
+
+
+

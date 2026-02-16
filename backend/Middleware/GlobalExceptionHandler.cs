@@ -1,9 +1,9 @@
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace TallyJ4.Middleware;
+namespace Backend.Middleware;
 
 /// <summary>
 /// Global exception handler that catches unhandled exceptions and returns appropriate HTTP error responses.
@@ -75,3 +75,6 @@ public class GlobalExceptionHandler : IExceptionHandler
         return true;
     }
 }
+
+
+

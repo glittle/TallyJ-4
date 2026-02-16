@@ -1,6 +1,6 @@
-using TallyJ4.DTOs.Results;
+﻿using Backend.DTOs.Results;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for exporting election reports in different formats.
@@ -31,3 +31,5 @@ public interface IReportExportService
     /// <returns>A byte array containing the CSV report data.</returns>
     Task<byte[]> GenerateCsvReportAsync(Guid electionId, Dictionary<string, string>? filters = null);
 }
+
+

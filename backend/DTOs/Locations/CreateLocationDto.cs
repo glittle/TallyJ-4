@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Locations;
+﻿namespace Backend.DTOs.Locations;
 
 /// <summary>
 /// Data transfer object for creating a new location.
@@ -35,3 +35,6 @@ public class CreateLocationDto
     /// </summary>
     public int? SortOrder { get; set; }
 }
+
+
+

@@ -1,9 +1,9 @@
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Text.Json;
 
-namespace TallyJ4.Localization;
+namespace Backend.Localization;
 
 public class JsonLocalizationProvider : IJsonLocalizationProvider
 {
@@ -92,3 +92,6 @@ public class JsonLocalizationProvider : IJsonLocalizationProvider
         }) ?? new Dictionary<string, string>();
     }
 }
+
+
+

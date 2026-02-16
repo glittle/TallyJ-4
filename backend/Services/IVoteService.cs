@@ -1,7 +1,7 @@
-using TallyJ4.DTOs.Votes;
-using TallyJ4.Models;
+﻿using Backend.DTOs.Votes;
+using Backend.Models;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for managing vote operations including creation, retrieval, updates, and deletion.
@@ -52,3 +52,6 @@ public interface IVoteService
     /// <returns>True if the vote was successfully deleted, false otherwise.</returns>
     Task<bool> DeleteVoteAsync(int id);
 }
+
+
+

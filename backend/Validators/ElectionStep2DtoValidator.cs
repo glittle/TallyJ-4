@@ -1,8 +1,8 @@
-using FluentValidation;
-using TallyJ4.Domain.Enumerations;
-using TallyJ4.DTOs.Setup;
+﻿using FluentValidation;
+using Backend.Domain.Enumerations;
+using Backend.DTOs.Setup;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for ElectionStep2Dto that enforces second step election setup requirements.
@@ -31,3 +31,6 @@ public class ElectionStep2DtoValidator : AbstractValidator<ElectionStep2Dto>
             .WithMessage($"Election mode must be one of: {string.Join(", ", ElectionModeEnum.All.Select(m => $"{m.Code} ({m.Description})"))}");
     }
 }
+
+
+

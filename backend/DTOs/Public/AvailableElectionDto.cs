@@ -1,6 +1,6 @@
-using TallyJ4.Domain.Enumerations;
+﻿using Backend.Domain.Enumerations;
 
-namespace TallyJ4.DTOs.Public;
+namespace Backend.DTOs.Public;
 
 /// <summary>
 /// Data transfer object representing an election available for public access.
@@ -27,3 +27,6 @@ public class AvailableElectionDto
     /// </summary>
     public ElectionTypeCode? ElectionType { get; set; }
 }
+
+
+

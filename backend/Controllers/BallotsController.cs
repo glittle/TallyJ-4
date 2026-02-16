@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TallyJ4.DTOs.Ballots;
-using TallyJ4.Models;
-using TallyJ4.Services;
+using Backend.DTOs.Ballots;
+using Backend.Models;
+using Backend.Services;
 
-namespace TallyJ4.Backend.Controllers;
+namespace Backend.Controllers;
 
 /// <summary>
 /// Controller for managing ballot operations including creation, retrieval, updates, and deletion.
@@ -135,3 +135,6 @@ public class BallotsController : ControllerBase
         return NoContent();
     }
 }
+
+
+

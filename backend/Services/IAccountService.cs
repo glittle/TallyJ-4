@@ -1,6 +1,6 @@
-using TallyJ4.DTOs.Account;
+﻿using Backend.DTOs.Account;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service interface for managing user account operations.
@@ -31,3 +31,6 @@ public interface IAccountService
     /// <returns>True if the password was changed successfully, false otherwise.</returns>
     Task<bool> ChangePasswordAsync(string userId, ChangePasswordDto changePasswordDto);
 }
+
+
+

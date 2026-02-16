@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Import;
+﻿namespace Backend.DTOs.Import;
 
 /// <summary>
 /// Data transfer object containing the result of an import operation.
@@ -40,3 +40,6 @@ public class ImportResultDto
     /// </summary>
     public List<string> Warnings { get; set; } = new();
 }
+
+
+

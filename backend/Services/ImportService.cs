@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
-using TallyJ4.DTOs.Import;
-using TallyJ4.Hubs;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
+using Backend.DTOs.Import;
+using Backend.Hubs;
 
-namespace TallyJ4.Backend.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for importing ballot data from CSV files.
@@ -318,3 +318,6 @@ public class ImportService
 
     private static string GetGroupName(Guid electionGuid) => $"BallotImport{electionGuid}";
 }
+
+
+

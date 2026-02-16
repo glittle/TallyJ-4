@@ -1,8 +1,8 @@
-using AutoMapper;
-using TallyJ4.Domain.Entities;
-using TallyJ4.DTOs.Tellers;
+﻿using AutoMapper;
+using Backend.Domain.Entities;
+using Backend.DTOs.Tellers;
 
-namespace TallyJ4.Mappings;
+namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for teller entity and DTO mappings.
@@ -29,3 +29,6 @@ public class TellerProfile : Profile
             .ForMember(dest => dest.Election, opt => opt.Ignore());
     }
 }
+
+
+

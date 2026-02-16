@@ -1,8 +1,8 @@
-using FluentValidation;
-using TallyJ4.Domain.Enumerations;
-using TallyJ4.DTOs.Elections;
+﻿using FluentValidation;
+using Backend.Domain.Enumerations;
+using Backend.DTOs.Elections;
 
-namespace TallyJ4.Validators;
+namespace Backend.Validators;
 
 /// <summary>
 /// Validator for UpdateElectionDto that enforces election update requirements.
@@ -108,3 +108,6 @@ public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
             .WithMessage("Voting methods cannot exceed 10 characters");
     }
 }
+
+
+

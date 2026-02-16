@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
-namespace TallyJ4.Hubs;
+namespace Backend.Hubs;
 
 /// <summary>
 /// SignalR hub for real-time communication during ballot import operations.
@@ -117,3 +117,6 @@ public class BallotImportHub : Hub
 
     private static string GetGroupName(Guid electionGuid) => $"BallotImport{electionGuid}";
 }
+
+
+

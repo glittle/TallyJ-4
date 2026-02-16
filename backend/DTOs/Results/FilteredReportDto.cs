@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Results;
+﻿namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Filtered report data with applied filters
@@ -45,3 +45,5 @@ public class FilteredReportDto
     /// </summary>
     public List<VoterReportDto> Voters { get; set; } = new();
 }
+
+

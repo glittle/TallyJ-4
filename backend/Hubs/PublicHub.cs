@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 
-namespace TallyJ4.Hubs;
+namespace Backend.Hubs;
 
 /// <summary>
 /// Public SignalR hub for anonymous users to receive election information and updates.
@@ -113,3 +113,6 @@ public class PublicHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 }
+
+
+

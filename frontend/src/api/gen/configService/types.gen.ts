@@ -707,10 +707,7 @@ export type AvailableElectionDto = {
      * The date when the election will be held.
      */
     dateOfElection?: Date | null;
-    /**
-     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
-     */
-    electionType?: string | null;
+    electionType?: ElectionTypeCode;
 };
 
 /**
@@ -1278,10 +1275,7 @@ export type CreateElectionDto = {
      * The date when the election will be held.
      */
     dateOfElection?: Date | null;
-    /**
-     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
-     */
-    electionType?: string | null;
+    electionType?: ElectionTypeCode;
     /**
      * The number of positions to be elected.
      */
@@ -1290,10 +1284,7 @@ export type CreateElectionDto = {
      * The name of the election convenor.
      */
     convenor?: string | null;
-    /**
-     * The mode of the election (N=Normal, T=Tie-Break, B=By-election).
-     */
-    electionMode?: string | null;
+    electionMode?: ElectionModeCode;
     /**
      * The number of extra positions beyond the required number.
      */
@@ -1451,7 +1442,7 @@ export type CreatePersonDto = {
      */
     area?: string | null;
     /**
-     * The person's Bahá'í ID.
+     * The person's BahÃ¡'Ã­ ID.
      */
     bahaiId?: string | null;
     /**
@@ -1759,10 +1750,7 @@ export type ElectionDto = {
      * The date when the election will be held.
      */
     dateOfElection?: Date | null;
-    /**
-     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
-     */
-    electionType?: string | null;
+    electionType?: ElectionTypeCode;
     /**
      * The number of positions to be elected.
      */
@@ -1775,10 +1763,7 @@ export type ElectionDto = {
      * The name of the election convenor.
      */
     convenor?: string | null;
-    /**
-     * The mode of the election (N=Normal, T=Tie-Break, B=By-election).
-     */
-    electionMode?: string | null;
+    electionMode?: ElectionModeCode;
     /**
      * The number of extra positions beyond the required number.
      */
@@ -1892,6 +1877,14 @@ export type ElectionDto = {
      */
     flags?: string | null;
 };
+
+export const ElectionModeCode = {
+    N: 'N',
+    T: 'T',
+    B: 'B'
+} as const;
+
+export type ElectionModeCode = typeof ElectionModeCode[keyof typeof ElectionModeCode];
 
 /**
  * Data transfer object containing overview statistics for an election.
@@ -2032,10 +2025,7 @@ export type ElectionStatusDto = {
      * The date when the election will be held.
      */
     dateOfElection?: Date | null;
-    /**
-     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
-     */
-    electionType?: string | null;
+    electionType?: ElectionTypeCode;
     /**
      * The current tally status of the election.
      */
@@ -2086,14 +2076,8 @@ export type ElectionStep2Dto = {
      * The number of positions to be elected in this election.
      */
     numberToElect?: number;
-    /**
-     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
-     */
-    electionType?: string | null;
-    /**
-     * The mode of the election (N=Normal, T=Tie-Break, B=By-election).
-     */
-    electionMode?: string | null;
+    electionType?: ElectionTypeCode;
+    electionMode?: ElectionModeCode;
 };
 
 /**
@@ -2108,6 +2092,7 @@ export type ElectionSummaryDto = {
      * The name of the election.
      */
     name: string;
+    electionType?: ElectionTypeCode;
     /**
      * The date when the election will be held.
      */
@@ -2124,7 +2109,20 @@ export type ElectionSummaryDto = {
      * The total number of ballots cast.
      */
     ballotCount?: number;
+    electionMode?: ElectionModeCode;
 };
+
+export const ElectionTypeCode = {
+    LSA: 'LSA',
+    LSA1: 'LSA1',
+    LSA2: 'LSA2',
+    NSA: 'NSA',
+    CON: 'Con',
+    REG: 'Reg',
+    OTH: 'Oth'
+} as const;
+
+export type ElectionTypeCode = typeof ElectionTypeCode[keyof typeof ElectionTypeCode];
 
 export type Enable2FaRequest = {
     code: string;
@@ -2235,7 +2233,7 @@ export type FrontDeskVoterDto = {
      */
     fullName?: string | null;
     /**
-     * The Bahá'í ID of the voter.
+     * The BahÃ¡'Ã­ ID of the voter.
      */
     bahaiId?: string | null;
     /**
@@ -2924,7 +2922,7 @@ export type PersonDto = {
      */
     area?: string | null;
     /**
-     * The person's Bahá'í ID.
+     * The person's BahÃ¡'Ã­ ID.
      */
     bahaiId?: string | null;
     /**
@@ -3136,10 +3134,7 @@ export type PublicDisplayDto = {
      * The name of the convenor/organizer.
      */
     convenor?: string | null;
-    /**
-     * The type of election (e.g., "LSA Election", "Unit Convention").
-     */
-    electionType?: string | null;
+    electionType?: ElectionTypeCode;
     /**
      * Current status of the tally (e.g., "In Progress", "Finalized").
      */
@@ -3259,6 +3254,7 @@ export type RegisterComputerDto = {
 
 export type RegisterRequest = {
     email: string;
+    displayName: string;
     password: string;
     confirmPassword: string;
 };
@@ -3447,13 +3443,13 @@ export type SuperAdminElectionDetailDto = {
     convenor?: string | null;
     dateOfElection?: Date | null;
     tallyStatus?: string | null;
-    electionType?: string | null;
+    electionType?: ElectionTypeCode;
     voterCount?: number;
     ballotCount?: number;
     locationCount?: number;
     ownerEmail?: string | null;
     numberToElect?: number | null;
-    electionMode?: string | null;
+    electionMode?: ElectionModeCode;
     percentComplete?: number;
     owners?: Array<SuperAdminElectionOwnerDto> | null;
 };
@@ -3464,7 +3460,7 @@ export type SuperAdminElectionDto = {
     convenor?: string | null;
     dateOfElection?: Date | null;
     tallyStatus?: string | null;
-    electionType?: string | null;
+    electionType?: ElectionTypeCode;
     voterCount?: number;
     ballotCount?: number;
     locationCount?: number;
@@ -3891,14 +3887,8 @@ export type UpdateElectionDto = {
      * The date and time when online voting closes.
      */
     onlineWhenClose?: Date | null;
-    /**
-     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
-     */
-    electionType?: string | null;
-    /**
-     * The mode of the election (N=Normal, T=Tie-Break, B=By-election).
-     */
-    electionMode?: string | null;
+    electionType?: ElectionTypeCode;
+    electionMode?: ElectionModeCode;
     /**
      * Default eligibility to vote (Y/N/?).
      */
@@ -4032,7 +4022,7 @@ export type UpdatePersonDto = {
      */
     area?: string | null;
     /**
-     * The person's Bahá'í ID.
+     * The person's BahÃ¡'Ã­ ID.
      */
     bahaiId?: string | null;
     /**
@@ -4446,7 +4436,7 @@ export type FrontDeskVoterDtoWritable = {
      */
     fullName?: string | null;
     /**
-     * The Bahá'í ID of the voter.
+     * The BahÃ¡'Ã­ ID of the voter.
      */
     bahaiId?: string | null;
     /**
@@ -6761,7 +6751,7 @@ export type GetApiSuperadminDashboardElectionsData = {
     query?: {
         Search?: string;
         Status?: string;
-        ElectionType?: string;
+        ElectionType?: ElectionTypeCode;
         SortBy?: string;
         SortDirection?: string;
         Page?: number;

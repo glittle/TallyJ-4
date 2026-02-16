@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.SignalR;
+﻿namespace Backend.DTOs.SignalR;
 
 /// <summary>
 /// Data transfer object for person update notifications via SignalR.
@@ -35,3 +35,6 @@ public class PersonUpdateDto
     /// </summary>
     public DateTime UpdatedAt { get; set; }
 }
+
+
+

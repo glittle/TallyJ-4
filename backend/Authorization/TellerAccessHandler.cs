@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.Domain.Context;
+using Backend.Domain.Context;
 
-namespace TallyJ4.Authorization;
+namespace Backend.Authorization;
 
 /// <summary>
 /// Authorization handler that verifies if a user is a teller for an election.
@@ -88,3 +88,6 @@ public class TellerAccessHandler : AuthorizationHandler<TellerAccessRequirement>
         }
     }
 }
+
+
+

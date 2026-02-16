@@ -1,6 +1,6 @@
-using TallyJ4.Domain.Enumerations;
+﻿using Backend.Domain.Enumerations;
 
-namespace TallyJ4.DTOs.SuperAdmin;
+namespace Backend.DTOs.SuperAdmin;
 
 public class SuperAdminElectionDto
 {
@@ -15,3 +15,6 @@ public class SuperAdminElectionDto
     public int LocationCount { get; set; }
     public string? OwnerEmail { get; set; }
 }
+
+
+

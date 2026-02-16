@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.OnlineVoting;
+﻿namespace Backend.DTOs.OnlineVoting;
 
 /// <summary>
 /// Data transfer object for requesting a verification code for online voting.
@@ -20,3 +20,6 @@ public class RequestCodeDto
     /// </summary>
     public string DeliveryMethod { get; set; } = null!;
 }
+
+
+

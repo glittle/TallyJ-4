@@ -1,10 +1,10 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using TallyJ4.DTOs.Computers;
-using TallyJ4.Domain.Context;
-using TallyJ4.Domain.Entities;
+using Backend.DTOs.Computers;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service implementation for managing computers registered for online voting.
@@ -204,3 +204,6 @@ public class ComputerService : IComputerService
         throw new InvalidOperationException("No available computer codes remaining for this election");
     }
 }
+
+
+

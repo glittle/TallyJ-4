@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Identity;
-using TallyJ4.DTOs.Account;
-using TallyJ4.Domain.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Backend.DTOs.Account;
+using Backend.Domain.Identity;
 
-namespace TallyJ4.Services;
+namespace Backend.Services;
 
 /// <summary>
 /// Service for managing user account operations including profile management and password changes.
@@ -151,3 +151,6 @@ public class AccountService : IAccountService
         return true;
     }
 }
+
+
+

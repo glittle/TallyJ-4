@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Setup;
+﻿namespace Backend.DTOs.Setup;
 
 /// <summary>
 /// Data transfer object representing the current status of election setup.
@@ -36,3 +36,6 @@ public class ElectionSetupStatusDto
     /// </summary>
     public int ProgressPercent { get; set; }
 }
+
+
+

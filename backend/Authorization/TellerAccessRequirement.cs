@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 
-namespace TallyJ4.Authorization;
+namespace Backend.Authorization;
 
 /// <summary>
 /// Authorization requirement that specifies a user must be a teller for the specified election.
@@ -8,3 +8,6 @@ namespace TallyJ4.Authorization;
 public class TellerAccessRequirement : IAuthorizationRequirement
 {
 }
+
+
+

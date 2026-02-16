@@ -1,4 +1,4 @@
-namespace TallyJ4.DTOs.Votes;
+﻿namespace Backend.DTOs.Votes;
 
 /// <summary>
 /// Data transfer object for creating a new vote.
@@ -27,3 +27,6 @@ public class CreateVoteDto
     /// </summary>
     public string StatusCode { get; set; } = "ok";
 }
+
+
+
