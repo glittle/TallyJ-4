@@ -29,13 +29,13 @@
           v-model="modelValue.electionType"
           :placeholder="$t('elections.form.typePlaceholder')"
         >
-          <el-option label="Local Spiritual Assembly" value="LSA" />
-          <el-option label="Local Spiritual Assembly (Two-Stage) Local Unit" value="LSA1" />
-          <el-option label="Local Spiritual Assembly (Two-Stage) Final" value="LSA2" />
-          <el-option label="National Spiritual Assembly" value="NSA" />
-          <el-option label="Unit Convention" value="Con" />
-          <el-option label="Regional Council" value="Reg" />
-          <el-option label="Other" value="Oth" />
+          <el-option :label="$t('elections.electionTypes.LSA')" value="LSA" />
+          <el-option :label="$t('elections.electionTypes.LSA1')" value="LSA1" />
+          <el-option :label="$t('elections.electionTypes.LSA2')" value="LSA2" />
+          <el-option :label="$t('elections.electionTypes.NSA')" value="NSA" />
+          <el-option :label="$t('elections.electionTypes.Con')" value="Con" />
+          <el-option :label="$t('elections.electionTypes.Reg')" value="Reg" />
+          <el-option :label="$t('elections.electionTypes.Oth')" value="Oth" />
         </el-select>
       </el-form-item>
 
@@ -44,9 +44,9 @@
           v-model="modelValue.electionMode"
           :placeholder="$t('elections.form.modePlaceholder')"
         >
-          <el-option label="Normal Election" value="N" />
-          <el-option label="Tie-Break" value="T" />
-          <el-option label="By-election" value="B" />
+          <el-option :label="$t('elections.electionModes.N')" value="N" />
+          <el-option :label="$t('elections.electionModes.T')" value="T" />
+          <el-option :label="$t('elections.electionModes.B')" value="B" />
         </el-select>
       </el-form-item>
     </el-tab-pane>

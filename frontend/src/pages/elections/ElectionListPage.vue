@@ -46,13 +46,13 @@
               clearable
               @change="handleFilterChange"
             >
-              <el-option label="Local Spiritual Assembly" value="LSA" />
-              <el-option label="Local Spiritual Assembly (Two-Stage) Local Unit" value="LSA1" />
-              <el-option label="Local Spiritual Assembly (Two-Stage) Final" value="LSA2" />
-              <el-option label="National Spiritual Assembly" value="NSA" />
-              <el-option label="Unit Convention" value="Con" />
-              <el-option label="Regional Council" value="Reg" />
-              <el-option label="Other" value="Oth" />
+              <el-option :label="$t('elections.electionTypes.LSA')" value="LSA" />
+              <el-option :label="$t('elections.electionTypes.LSA1')" value="LSA1" />
+              <el-option :label="$t('elections.electionTypes.LSA2')" value="LSA2" />
+              <el-option :label="$t('elections.electionTypes.NSA')" value="NSA" />
+              <el-option :label="$t('elections.electionTypes.Con')" value="Con" />
+              <el-option :label="$t('elections.electionTypes.Reg')" value="Reg" />
+              <el-option :label="$t('elections.electionTypes.Oth')" value="Oth" />
             </el-select>
           </el-col>
           <el-col :span="4">
@@ -96,7 +96,7 @@
             sortable="custom"
           >
             <template #default="scope">
-              <el-tag size="small">{{ scope.row.electionType }}</el-tag>
+              <el-tag size="small">{{ scope.row.electionType ? $t(`elections.electionTypes.${scope.row.electionType}`) : '' }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
