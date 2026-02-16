@@ -6,17 +6,29 @@ using Backend.Models;
 
 namespace Backend.Services;
 
+/// <summary>
+/// Service implementation for super admin functionality providing system-wide election management and monitoring.
+/// </summary>
 public class SuperAdminService : ISuperAdminService
 {
     private readonly MainDbContext _context;
     private readonly ILogger<SuperAdminService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the SuperAdminService.
+    /// </summary>
+    /// <param name="context">The main database context for accessing election data.</param>
+    /// <param name="logger">The logger for diagnostic output.</param>
     public SuperAdminService(MainDbContext context, ILogger<SuperAdminService> logger)
     {
         _context = context;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Gets a summary of system-wide election statistics for the super admin dashboard.
+    /// </summary>
+    /// <returns>A task containing the super admin summary data.</returns>
     public async Task<SuperAdminSummaryDto> GetSummaryAsync()
     {
         var totalCount = await _context.Elections.CountAsync();
@@ -55,6 +67,11 @@ public class SuperAdminService : ISuperAdminService
         };
     }
 
+    /// <summary>
+    /// Gets a paginated list of elections based on the provided filter criteria.
+    /// </summary>
+    /// <param name="filter">The filter criteria for querying elections.</param>
+    /// <returns>A task containing paginated election data.</returns>
     public async Task<PaginatedResponse<SuperAdminElectionDto>> GetElectionsAsync(SuperAdminElectionFilterDto filter)
     {
         var query = _context.Elections
@@ -133,6 +150,11 @@ public class SuperAdminService : ISuperAdminService
         return PaginatedResponse<SuperAdminElectionDto>.Create(items, page, pageSize, totalCount);
     }
 
+    /// <summary>
+    /// Gets detailed information about a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A task containing detailed election information, or null if not found.</returns>
     public async Task<SuperAdminElectionDetailDto?> GetElectionDetailAsync(Guid electionGuid)
     {
         var election = await _context.Elections

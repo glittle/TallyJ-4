@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Web;
 using Backend.Domain.Context;
 using Backend.Domain.Identity;
 using Backend.EF.Data;
@@ -196,6 +197,49 @@ if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(goo
                 context.HandleResponse();
                 return Task.CompletedTask;
             };
+            options.Events.OnRedirectToAuthorizationEndpoint = context =>
+            {
+                // Get language from authentication properties (set by frontend) or fallback to Accept-Language header
+                var userLanguage = context.Properties.Items["lang"];
+                if (string.IsNullOrEmpty(userLanguage))
+                {
+                    // Fallback to Accept-Language header if no explicit language was set
+                    var acceptLanguage = context.HttpContext.Request.Headers["Accept-Language"].ToString();
+                    if (!string.IsNullOrEmpty(acceptLanguage))
+                    {
+                        // Extract primary language (e.g., "en-US,en" -> "en")
+                        userLanguage = acceptLanguage.Split(',')[0].Split('-')[0];
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(userLanguage))
+                {
+                    // Map common language codes to Google supported locales
+                    var googleLocale = userLanguage switch
+                    {
+                        "en" => "en",
+                        "fr" => "fr",
+                        "es" => "es",
+                        "de" => "de",
+                        "it" => "it",
+                        "pt" => "pt",
+                        "ru" => "ru",
+                        "ja" => "ja",
+                        "ko" => "ko",
+                        "zh" => "zh-CN",
+                        _ => "en" // Default to English
+                    };
+
+                    // Add hl parameter to the authorization URL
+                    var uriBuilder = new UriBuilder(context.RedirectUri);
+                    var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+                    query["hl"] = googleLocale;
+                    uriBuilder.Query = query.ToString();
+                    context.RedirectUri = uriBuilder.ToString();
+                }
+
+                return Task.CompletedTask;
+            };
         });
     Log.Information("Google authentication configured successfully");
 }
@@ -326,7 +370,7 @@ services.AddSwaggerGen(options =>
 
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Backend API",
+        Title = "TallyJ4 API",
         Version = "v1",
         Description = "Election management and vote tallying system API"
     });
@@ -397,7 +441,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Backend API v1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "TallyJ4 API v1");
         options.RoutePrefix = "swagger";
     });
 }

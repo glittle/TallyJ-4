@@ -642,13 +642,17 @@ public class AuthController : ControllerBase
     /// <param name="returnUrl">The URL to redirect to after successful authentication (default: frontend origin).</param>
     /// <returns>A redirect to Google's OAuth consent screen.</returns>
     [HttpGet("google/login")]
-    public async Task<IActionResult> GoogleLogin([FromQuery] string? returnUrl = null)
+    public async Task<IActionResult> GoogleLogin([FromQuery] string? returnUrl = null, [FromQuery] string? lang = null)
     {
         var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
+        _logger.LogInformation("Google login attempt from {ClientIp} with returnUrl: {ReturnUrl}, lang: {Lang}", clientIp, returnUrl, lang);
+
         var googleClientId = _configuration["Google:ClientId"];
         var googleClientSecret = _configuration["Google:ClientSecret"];
+
+        _logger.LogInformation("Google ClientId configured: {!string.IsNullOrWhiteSpace(googleClientId)}, ClientSecret configured: {!string.IsNullOrWhiteSpace(googleClientSecret)}", !string.IsNullOrWhiteSpace(googleClientId), !string.IsNullOrWhiteSpace(googleClientSecret));
 
         if (string.IsNullOrWhiteSpace(googleClientId) || string.IsNullOrWhiteSpace(googleClientSecret)
             || googleClientId.StartsWith("<") || googleClientSecret.StartsWith("<"))
@@ -665,6 +669,7 @@ public class AuthController : ControllerBase
                 Severity = SecurityEventSeverity.Warning
             });
 
+            _logger.LogInformation("Returning BadRequest for Google login");
             return BadRequest(new { error = "Google authentication is not configured on this server. Please contact your administrator or use email/password login." });
         }
 
@@ -676,7 +681,8 @@ public class AuthController : ControllerBase
             Items =
             {
                 { "returnUrl", returnUrl ?? string.Empty },
-                { "redirect", redirect ?? "/elections" }
+                { "redirect", redirect ?? "/elections" },
+                { "lang", lang ?? string.Empty }
             }
         };
 

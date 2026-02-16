@@ -3433,51 +3433,156 @@ export type SubmitOnlineBallotDto = {
     votes?: Array<OnlineVoteDto> | null;
 };
 
+/**
+ * Data transfer object for super admin status check response.
+ */
 export type SuperAdminCheckDto = {
+    /**
+     * Indicates whether the authenticated user has super admin privileges.
+     */
     isSuperAdmin?: boolean;
 };
 
+/**
+ * Data transfer object containing detailed information about an election for super admin dashboard.
+ */
 export type SuperAdminElectionDetailDto = {
+    /**
+     * The unique identifier of the election.
+     */
     electionGuid?: string;
+    /**
+     * The name of the election.
+     */
     name?: string | null;
+    /**
+     * The convenor of the election.
+     */
     convenor?: string | null;
+    /**
+     * The date when the election is scheduled to occur.
+     */
     dateOfElection?: Date | null;
+    /**
+     * The current tally status of the election.
+     */
     tallyStatus?: string | null;
     electionType?: ElectionTypeCode;
+    /**
+     * The total number of voters in the election.
+     */
     voterCount?: number;
+    /**
+     * The total number of ballots in the election.
+     */
     ballotCount?: number;
+    /**
+     * The total number of locations for the election.
+     */
     locationCount?: number;
+    /**
+     * The email address of the election owner.
+     */
     ownerEmail?: string | null;
+    /**
+     * The number of positions to be elected.
+     */
     numberToElect?: number | null;
     electionMode?: ElectionModeCode;
+    /**
+     * The percentage of completion for the election tally process.
+     */
     percentComplete?: number;
+    /**
+     * List of owners and their roles for this election.
+     */
     owners?: Array<SuperAdminElectionOwnerDto> | null;
 };
 
+/**
+ * Data transfer object containing summary information about an election for super admin dashboard.
+ */
 export type SuperAdminElectionDto = {
+    /**
+     * The unique identifier of the election.
+     */
     electionGuid?: string;
+    /**
+     * The name of the election.
+     */
     name?: string | null;
+    /**
+     * The convenor of the election.
+     */
     convenor?: string | null;
+    /**
+     * The date when the election is scheduled to occur.
+     */
     dateOfElection?: Date | null;
+    /**
+     * The current tally status of the election.
+     */
     tallyStatus?: string | null;
     electionType?: ElectionTypeCode;
+    /**
+     * The total number of voters in the election.
+     */
     voterCount?: number;
+    /**
+     * The total number of ballots in the election.
+     */
     ballotCount?: number;
+    /**
+     * The total number of locations for the election.
+     */
     locationCount?: number;
+    /**
+     * The email address of the election owner.
+     */
     ownerEmail?: string | null;
 };
 
+/**
+ * Data transfer object representing an election owner with their role information.
+ */
 export type SuperAdminElectionOwnerDto = {
+    /**
+     * The email address of the election owner.
+     */
     email?: string | null;
+    /**
+     * The display name of the election owner.
+     */
     displayName?: string | null;
+    /**
+     * The role of the owner in the election (e.g., Owner, Teller).
+     */
     role?: string | null;
 };
 
+/**
+ * Data transfer object containing summary statistics for the super admin dashboard.
+ */
 export type SuperAdminSummaryDto = {
+    /**
+     * The total number of elections in the system.
+     */
     totalElections?: number;
+    /**
+     * The number of elections that are currently open for voting.
+     */
     openElections?: number;
+    /**
+     * The number of elections that are scheduled for the future.
+     */
     upcomingElections?: number;
+    /**
+     * The number of elections that have been completed and tallied.
+     */
     completedElections?: number;
+    /**
+     * The number of elections that have been archived.
+     */
     archivedElections?: number;
 };
 
@@ -5148,6 +5253,7 @@ export type GetApiAuthGoogleLoginData = {
          * The URL to redirect to after successful authentication (default: frontend origin).
          */
         returnUrl?: string;
+        lang?: string;
     };
     url: '/api/Auth/google/login';
 };
@@ -6749,12 +6855,33 @@ export type GetApiSuperadminDashboardElectionsData = {
     body?: never;
     path?: never;
     query?: {
+        /**
+         * Search term to filter elections by name or convenor.
+         */
         Search?: string;
+        /**
+         * Filter elections by their tally status.
+         */
         Status?: string;
+        /**
+         * Filter elections by their type.
+         */
         ElectionType?: ElectionTypeCode;
+        /**
+         * Field to sort elections by. Defaults to "dateOfElection".
+         */
         SortBy?: string;
+        /**
+         * Sort direction: "asc" or "desc". Defaults to "desc".
+         */
         SortDirection?: string;
+        /**
+         * Page number for pagination. Defaults to 1.
+         */
         Page?: number;
+        /**
+         * Number of items per page. Defaults to 25.
+         */
         PageSize?: number;
     };
     url: '/api/superadmin/dashboard/elections';
@@ -6772,6 +6899,9 @@ export type GetApiSuperadminDashboardElectionsResponse = GetApiSuperadminDashboa
 export type GetApiSuperadminDashboardElectionsByGuidData = {
     body?: never;
     path: {
+        /**
+         * The unique identifier of the election.
+         */
         guid: string;
     };
     query?: never;

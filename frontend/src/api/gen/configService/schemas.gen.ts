@@ -4792,10 +4792,12 @@ export const SuperAdminCheckDtoSchema = {
     type: 'object',
     properties: {
         isSuperAdmin: {
-            type: 'boolean'
+            type: 'boolean',
+            description: 'Indicates whether the authenticated user has super admin privileges.'
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: 'Data transfer object for super admin status check response.'
 } as const;
 
 export const SuperAdminElectionDetailDtoSchema = {
@@ -4803,23 +4805,28 @@ export const SuperAdminElectionDetailDtoSchema = {
     properties: {
         electionGuid: {
             type: 'string',
+            description: 'The unique identifier of the election.',
             format: 'uuid'
         },
         name: {
             type: 'string',
+            description: 'The name of the election.',
             nullable: true
         },
         convenor: {
             type: 'string',
+            description: 'The convenor of the election.',
             nullable: true
         },
         dateOfElection: {
             type: 'string',
+            description: 'The date when the election is scheduled to occur.',
             format: 'date-time',
             nullable: true
         },
         tallyStatus: {
             type: 'string',
+            description: 'The current tally status of the election.',
             nullable: true
         },
         electionType: {
@@ -4827,22 +4834,27 @@ export const SuperAdminElectionDetailDtoSchema = {
         },
         voterCount: {
             type: 'integer',
+            description: 'The total number of voters in the election.',
             format: 'int32'
         },
         ballotCount: {
             type: 'integer',
+            description: 'The total number of ballots in the election.',
             format: 'int32'
         },
         locationCount: {
             type: 'integer',
+            description: 'The total number of locations for the election.',
             format: 'int32'
         },
         ownerEmail: {
             type: 'string',
+            description: 'The email address of the election owner.',
             nullable: true
         },
         numberToElect: {
             type: 'integer',
+            description: 'The number of positions to be elected.',
             format: 'int32',
             nullable: true
         },
@@ -4851,6 +4863,7 @@ export const SuperAdminElectionDetailDtoSchema = {
         },
         percentComplete: {
             type: 'number',
+            description: 'The percentage of completion for the election tally process.',
             format: 'double'
         },
         owners: {
@@ -4858,10 +4871,12 @@ export const SuperAdminElectionDetailDtoSchema = {
             items: {
                 '$ref': '#/components/schemas/SuperAdminElectionOwnerDto'
             },
+            description: 'List of owners and their roles for this election.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: 'Data transfer object containing detailed information about an election for super admin dashboard.'
 } as const;
 
 export const SuperAdminElectionDtoSchema = {
@@ -4869,23 +4884,28 @@ export const SuperAdminElectionDtoSchema = {
     properties: {
         electionGuid: {
             type: 'string',
+            description: 'The unique identifier of the election.',
             format: 'uuid'
         },
         name: {
             type: 'string',
+            description: 'The name of the election.',
             nullable: true
         },
         convenor: {
             type: 'string',
+            description: 'The convenor of the election.',
             nullable: true
         },
         dateOfElection: {
             type: 'string',
+            description: 'The date when the election is scheduled to occur.',
             format: 'date-time',
             nullable: true
         },
         tallyStatus: {
             type: 'string',
+            description: 'The current tally status of the election.',
             nullable: true
         },
         electionType: {
@@ -4893,22 +4913,27 @@ export const SuperAdminElectionDtoSchema = {
         },
         voterCount: {
             type: 'integer',
+            description: 'The total number of voters in the election.',
             format: 'int32'
         },
         ballotCount: {
             type: 'integer',
+            description: 'The total number of ballots in the election.',
             format: 'int32'
         },
         locationCount: {
             type: 'integer',
+            description: 'The total number of locations for the election.',
             format: 'int32'
         },
         ownerEmail: {
             type: 'string',
+            description: 'The email address of the election owner.',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: 'Data transfer object containing summary information about an election for super admin dashboard.'
 } as const;
 
 export const SuperAdminElectionOwnerDtoSchema = {
@@ -4916,18 +4941,22 @@ export const SuperAdminElectionOwnerDtoSchema = {
     properties: {
         email: {
             type: 'string',
+            description: 'The email address of the election owner.',
             nullable: true
         },
         displayName: {
             type: 'string',
+            description: 'The display name of the election owner.',
             nullable: true
         },
         role: {
             type: 'string',
+            description: 'The role of the owner in the election (e.g., Owner, Teller).',
             nullable: true
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: 'Data transfer object representing an election owner with their role information.'
 } as const;
 
 export const SuperAdminSummaryDtoSchema = {
@@ -4935,26 +4964,32 @@ export const SuperAdminSummaryDtoSchema = {
     properties: {
         totalElections: {
             type: 'integer',
+            description: 'The total number of elections in the system.',
             format: 'int32'
         },
         openElections: {
             type: 'integer',
+            description: 'The number of elections that are currently open for voting.',
             format: 'int32'
         },
         upcomingElections: {
             type: 'integer',
+            description: 'The number of elections that are scheduled for the future.',
             format: 'int32'
         },
         completedElections: {
             type: 'integer',
+            description: 'The number of elections that have been completed and tallied.',
             format: 'int32'
         },
         archivedElections: {
             type: 'integer',
+            description: 'The number of elections that have been archived.',
             format: 'int32'
         }
     },
-    additionalProperties: false
+    additionalProperties: false,
+    description: 'Data transfer object containing summary statistics for the super admin dashboard.'
 } as const;
 
 export const TallyResultDtoSchema = {

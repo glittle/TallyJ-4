@@ -1790,6 +1790,9 @@ export const getApiSetupElectionByGuidStatus = <ThrowOnError extends boolean = f
     });
 };
 
+/**
+ * Checks if the current authenticated user is a super admin.
+ */
 export const getApiSuperadminCheck = <ThrowOnError extends boolean = false>(options?: Options<GetApiSuperadminCheckData, ThrowOnError>) => {
     return (options?.client ?? client).get<GetApiSuperadminCheckResponses, unknown, ThrowOnError>({
         security: [
@@ -1803,6 +1806,9 @@ export const getApiSuperadminCheck = <ThrowOnError extends boolean = false>(opti
     });
 };
 
+/**
+ * Gets a summary of system-wide election statistics for the super admin dashboard.
+ */
 export const getApiSuperadminDashboardSummary = <ThrowOnError extends boolean = false>(options?: Options<GetApiSuperadminDashboardSummaryData, ThrowOnError>) => {
     return (options?.client ?? client).get<GetApiSuperadminDashboardSummaryResponses, unknown, ThrowOnError>({
         security: [
@@ -1816,6 +1822,9 @@ export const getApiSuperadminDashboardSummary = <ThrowOnError extends boolean = 
     });
 };
 
+/**
+ * Gets a paginated list of elections for the super admin dashboard.
+ */
 export const getApiSuperadminDashboardElections = <ThrowOnError extends boolean = false>(options?: Options<GetApiSuperadminDashboardElectionsData, ThrowOnError>) => {
     return (options?.client ?? client).get<GetApiSuperadminDashboardElectionsResponses, unknown, ThrowOnError>({
         responseTransformer: getApiSuperadminDashboardElectionsResponseTransformer,
@@ -1830,6 +1839,9 @@ export const getApiSuperadminDashboardElections = <ThrowOnError extends boolean 
     });
 };
 
+/**
+ * Gets detailed information about a specific election for the super admin dashboard.
+ */
 export const getApiSuperadminDashboardElectionsByGuid = <ThrowOnError extends boolean = false>(options: Options<GetApiSuperadminDashboardElectionsByGuidData, ThrowOnError>) => {
     return (options.client ?? client).get<GetApiSuperadminDashboardElectionsByGuidResponses, unknown, ThrowOnError>({
         responseTransformer: getApiSuperadminDashboardElectionsByGuidResponseTransformer,

@@ -3,8 +3,17 @@ using Microsoft.Extensions.Localization;
 
 namespace Backend.Localization;
 
+/// <summary>
+/// Extension methods for configuring JSON-based localization services.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds JSON-based localization services to the service collection.
+    /// </summary>
+    /// <param name="services">The service collection to add services to.</param>
+    /// <param name="configure">Optional configuration action for localization options.</param>
+    /// <returns>The service collection with localization services added.</returns>
     public static IServiceCollection AddJsonLocalization(
         this IServiceCollection services,
         Action<JsonLocalizationOptions>? configure = null)

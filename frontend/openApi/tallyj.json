@@ -1022,6 +1022,13 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -4310,6 +4317,7 @@
         "tags": [
           "SuperAdmin"
         ],
+        "summary": "Checks if the current authenticated user is a super admin.",
         "responses": {
           "200": {
             "description": "OK",
@@ -4339,6 +4347,7 @@
         "tags": [
           "SuperAdmin"
         ],
+        "summary": "Gets a summary of system-wide election statistics for the super admin dashboard.",
         "responses": {
           "200": {
             "description": "OK",
@@ -4368,10 +4377,12 @@
         "tags": [
           "SuperAdmin"
         ],
+        "summary": "Gets a paginated list of elections for the super admin dashboard.",
         "parameters": [
           {
             "name": "Search",
             "in": "query",
+            "description": "Search term to filter elections by name or convenor.",
             "schema": {
               "type": "string"
             }
@@ -4379,6 +4390,7 @@
           {
             "name": "Status",
             "in": "query",
+            "description": "Filter elections by their tally status.",
             "schema": {
               "type": "string"
             }
@@ -4386,6 +4398,7 @@
           {
             "name": "ElectionType",
             "in": "query",
+            "description": "Filter elections by their type.",
             "schema": {
               "$ref": "#/components/schemas/ElectionTypeCode"
             }
@@ -4393,6 +4406,7 @@
           {
             "name": "SortBy",
             "in": "query",
+            "description": "Field to sort elections by. Defaults to \"dateOfElection\".",
             "schema": {
               "type": "string"
             }
@@ -4400,6 +4414,7 @@
           {
             "name": "SortDirection",
             "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\". Defaults to \"desc\".",
             "schema": {
               "type": "string"
             }
@@ -4407,6 +4422,7 @@
           {
             "name": "Page",
             "in": "query",
+            "description": "Page number for pagination. Defaults to 1.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -4415,6 +4431,7 @@
           {
             "name": "PageSize",
             "in": "query",
+            "description": "Number of items per page. Defaults to 25.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -4450,10 +4467,12 @@
         "tags": [
           "SuperAdmin"
         ],
+        "summary": "Gets detailed information about a specific election for the super admin dashboard.",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "The unique identifier of the election.",
             "required": true,
             "schema": {
               "type": "string",
@@ -9725,33 +9744,40 @@
         "type": "object",
         "properties": {
           "isSuperAdmin": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the authenticated user has super admin privileges."
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Data transfer object for super admin status check response."
       },
       "SuperAdminElectionDetailDto": {
         "type": "object",
         "properties": {
           "electionGuid": {
             "type": "string",
+            "description": "The unique identifier of the election.",
             "format": "uuid"
           },
           "name": {
             "type": "string",
+            "description": "The name of the election.",
             "nullable": true
           },
           "convenor": {
             "type": "string",
+            "description": "The convenor of the election.",
             "nullable": true
           },
           "dateOfElection": {
             "type": "string",
+            "description": "The date when the election is scheduled to occur.",
             "format": "date-time",
             "nullable": true
           },
           "tallyStatus": {
             "type": "string",
+            "description": "The current tally status of the election.",
             "nullable": true
           },
           "electionType": {
@@ -9759,22 +9785,27 @@
           },
           "voterCount": {
             "type": "integer",
+            "description": "The total number of voters in the election.",
             "format": "int32"
           },
           "ballotCount": {
             "type": "integer",
+            "description": "The total number of ballots in the election.",
             "format": "int32"
           },
           "locationCount": {
             "type": "integer",
+            "description": "The total number of locations for the election.",
             "format": "int32"
           },
           "ownerEmail": {
             "type": "string",
+            "description": "The email address of the election owner.",
             "nullable": true
           },
           "numberToElect": {
             "type": "integer",
+            "description": "The number of positions to be elected.",
             "format": "int32",
             "nullable": true
           },
@@ -9783,6 +9814,7 @@
           },
           "percentComplete": {
             "type": "number",
+            "description": "The percentage of completion for the election tally process.",
             "format": "double"
           },
           "owners": {
@@ -9790,33 +9822,40 @@
             "items": {
               "$ref": "#/components/schemas/SuperAdminElectionOwnerDto"
             },
+            "description": "List of owners and their roles for this election.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Data transfer object containing detailed information about an election for super admin dashboard."
       },
       "SuperAdminElectionDto": {
         "type": "object",
         "properties": {
           "electionGuid": {
             "type": "string",
+            "description": "The unique identifier of the election.",
             "format": "uuid"
           },
           "name": {
             "type": "string",
+            "description": "The name of the election.",
             "nullable": true
           },
           "convenor": {
             "type": "string",
+            "description": "The convenor of the election.",
             "nullable": true
           },
           "dateOfElection": {
             "type": "string",
+            "description": "The date when the election is scheduled to occur.",
             "format": "date-time",
             "nullable": true
           },
           "tallyStatus": {
             "type": "string",
+            "description": "The current tally status of the election.",
             "nullable": true
           },
           "electionType": {
@@ -9824,66 +9863,81 @@
           },
           "voterCount": {
             "type": "integer",
+            "description": "The total number of voters in the election.",
             "format": "int32"
           },
           "ballotCount": {
             "type": "integer",
+            "description": "The total number of ballots in the election.",
             "format": "int32"
           },
           "locationCount": {
             "type": "integer",
+            "description": "The total number of locations for the election.",
             "format": "int32"
           },
           "ownerEmail": {
             "type": "string",
+            "description": "The email address of the election owner.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Data transfer object containing summary information about an election for super admin dashboard."
       },
       "SuperAdminElectionOwnerDto": {
         "type": "object",
         "properties": {
           "email": {
             "type": "string",
+            "description": "The email address of the election owner.",
             "nullable": true
           },
           "displayName": {
             "type": "string",
+            "description": "The display name of the election owner.",
             "nullable": true
           },
           "role": {
             "type": "string",
+            "description": "The role of the owner in the election (e.g., Owner, Teller).",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Data transfer object representing an election owner with their role information."
       },
       "SuperAdminSummaryDto": {
         "type": "object",
         "properties": {
           "totalElections": {
             "type": "integer",
+            "description": "The total number of elections in the system.",
             "format": "int32"
           },
           "openElections": {
             "type": "integer",
+            "description": "The number of elections that are currently open for voting.",
             "format": "int32"
           },
           "upcomingElections": {
             "type": "integer",
+            "description": "The number of elections that are scheduled for the future.",
             "format": "int32"
           },
           "completedElections": {
             "type": "integer",
+            "description": "The number of elections that have been completed and tallied.",
             "format": "int32"
           },
           "archivedElections": {
             "type": "integer",
+            "description": "The number of elections that have been archived.",
             "format": "int32"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Data transfer object containing summary statistics for the super admin dashboard."
       },
       "TallyResultDto": {
         "type": "object",

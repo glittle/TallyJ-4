@@ -51,6 +51,7 @@
   "ballots.location": "Location",
   "ballots.locationRequired": "Location is required",
   "ballots.management": "Ballot Management",
+  "ballots.entry": "Ballot Entry",
   "ballots.noMatchesFound": "No matches found",
   "ballots.personUpdated": "{name} was updated",
   "ballots.position": "Position",

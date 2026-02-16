@@ -31,7 +31,7 @@ public class EmailService
         {
             HtmlBody = $@"
                 <h2>Password Reset Request</h2>
-                <p>You requested a password reset for your Backend account.</p>
+                <p>You requested a password reset for your TallyJ account.</p>
                 <p>Use the following token to reset your password:</p>
                 <p><strong>{resetToken}</strong></p>
                 <p>This token will expire in 1 hour.</p>
@@ -40,7 +40,7 @@ public class EmailService
             TextBody = $@"
 Password Reset Request
 
-You requested a password reset for your Backend account.
+You requested a password reset for your TallyJ account.
 Use the following token to reset your password:
 
 {resetToken}
@@ -96,7 +96,7 @@ If you did not request this reset, please ignore this email.
         {
             HtmlBody = $@"
                 <h2>Two-Factor Authentication Setup</h2>
-                <p>You have enabled two-factor authentication for your Backend account.</p>
+                <p>You have enabled two-factor authentication for your TallyJ account.</p>
                 <p>Scan the QR code below with your authenticator app (Google Authenticator, Authy, etc.):</p>
                 <img src='data:image/png;base64,{qrCodeBase64}' alt='2FA QR Code' />
                 <p>If you did not enable 2FA, please contact support immediately.</p>
@@ -104,7 +104,7 @@ If you did not request this reset, please ignore this email.
             TextBody = @"
 Two-Factor Authentication Setup
 
-You have enabled two-factor authentication for your Backend account.
+You have enabled two-factor authentication for your TallyJ account.
 Please use your authenticator app to scan the QR code sent in the HTML version of this email.
 If you did not enable 2FA, please contact support immediately.
             "
@@ -155,7 +155,7 @@ If you did not enable 2FA, please contact support immediately.
         var bodyBuilder = new BodyBuilder
         {
             HtmlBody = $@"
-                <h2>Welcome to Backend</h2>
+                <h2>Welcome to TallyJ</h2>
                 <p>Thank you for registering an account. Please verify your email address to complete your registration.</p>
                 <p>Use the following verification code to confirm your email:</p>
                 <p><strong>{verificationToken}</strong></p>
@@ -163,7 +163,7 @@ If you did not enable 2FA, please contact support immediately.
                 <p>If you did not create this account, please ignore this email.</p>
             ",
             TextBody = $@"
-Welcome to Backend
+Welcome to TallyJ
 
 Thank you for registering an account. Please verify your email address to complete your registration.
 

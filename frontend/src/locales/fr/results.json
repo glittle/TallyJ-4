@@ -1,5 +1,10 @@
 {
   "results.title": "Résultats de l'élection",
+  "results.calculateTally": "Calculer le dépouillement",
+  "results.monitor": "Moniteur d'élection",
+  "results.tieManagement": "Gestion des égalités",
+  "results.presentation": "Vue de présentation",
+  "results.reporting": "Rapports",
   "results.calculatedAt": "Calculé à {date}",
   "results.totalBallots": "Total des bulletins",
   "results.ballotsReceived": "Bulletins reçus",

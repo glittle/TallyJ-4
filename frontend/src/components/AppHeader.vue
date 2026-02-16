@@ -36,7 +36,18 @@ const currentPageTitle = computed(() => {
     "/profile": t("nav.profile"),
   };
 
-  return titleMap[route.path] || (route.meta.title as string) || "";
+  // Check if there's a mapped title first
+  if (titleMap[route.path]) {
+    return titleMap[route.path];
+  }
+
+  // Handle dynamic title from route meta using titleKey
+  const titleKey = route.meta.titleKey;
+  if (typeof titleKey === 'string') {
+    return t(titleKey);
+  }
+
+  return "";
 });
 
 function handleCommand(command: string) {

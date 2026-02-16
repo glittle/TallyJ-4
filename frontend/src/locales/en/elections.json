@@ -9,6 +9,7 @@
   "elections.createFirst": "Create Your First Election",
   "elections.createNew": "Create Election",
   "elections.createSuccess": "Election created successfully",
+  "elections.edit": "Edit Election",
   "elections.date": "Election Date",
   "elections.deleteConfirm": "Are you sure you want to delete this election? This action cannot be undone.",
   "elections.deleteError": "Failed to delete election",

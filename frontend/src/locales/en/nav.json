@@ -2,5 +2,10 @@
   "nav.dashboard": "Dashboard",
   "nav.elections": "Elections",
   "nav.profile": "Profile",
-  "nav.superAdmin": "Super Admin"
+  "nav.superAdmin": "Super Admin",
+  "nav.auditLogs": "Audit Logs",
+  "nav.votingLocations": "Voting Locations",
+  "nav.tellers": "Tellers",
+  "nav.frontDesk": "Front Desk",
+  "nav.publicDisplay": "Election Results Display"
 }

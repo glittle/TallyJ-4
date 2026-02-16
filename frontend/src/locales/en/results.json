@@ -1,5 +1,10 @@
 {
   "results.title": "Election Results",
+  "results.calculateTally": "Calculate Tally",
+  "results.monitor": "Election Monitor",
+  "results.tieManagement": "Tie Management",
+  "results.presentation": "Presentation View",
+  "results.reporting": "Reports",
   "results.calculatedAt": "Calculated at {date}",
   "results.totalBallots": "Total Ballots",
   "results.ballotsReceived": "Ballots Received",

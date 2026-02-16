@@ -27,6 +27,11 @@ public class RateLimitingMiddleware
         { "/api/auth/resetPassword", (3, TimeSpan.FromHours(1)) }
     };
 
+    /// <summary>
+    /// Initializes a new instance of the RateLimitingMiddleware.
+    /// </summary>
+    /// <param name="next">The next middleware in the pipeline.</param>
+    /// <param name="logger">The logger for diagnostic output.</param>
     public RateLimitingMiddleware(RequestDelegate next, ILogger<RateLimitingMiddleware> logger)
     {
         _next = next;
@@ -35,6 +40,12 @@ public class RateLimitingMiddleware
 
     // Note: SecurityAuditService is resolved per-request to avoid circular dependencies
 
+    /// <summary>
+    /// Processes the HTTP request and applies rate limiting if configured for the endpoint.
+    /// </summary>
+    /// <param name="context">The HTTP context for the current request.</param>
+    /// <param name="securityAuditService">The security audit service for logging rate limit violations.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task InvokeAsync(HttpContext context, ISecurityAuditService securityAuditService)
     {
         var path = context.Request.Path.Value;

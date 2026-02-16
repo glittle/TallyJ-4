@@ -6,7 +6,7 @@ import { useAuthStore } from "../stores/authStore";
 import { ElMessage } from "element-plus";
 import type { FormInstance, FormRules } from "element-plus";
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
@@ -139,7 +139,10 @@ const handleGoogleLogin = () => {
   const redirectPath = route.query.redirect
     ? `&redirect=${encodeURIComponent(route.query.redirect as string)}`
     : "";
-  globalThis.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}${redirectPath}`;
+  const languageParam = `&lang=${locale.value}`;
+
+  // Try the Google OAuth redirect
+  globalThis.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}${redirectPath}${languageParam}`;
 };
 
 // add handler so if ESC is pressed, we go back to landing page
