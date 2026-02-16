@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using TallyJ4.DTOs.Elections;
+using TallyJ4.Domain.Enumerations;
 using TallyJ4.Models;
 
 namespace TallyJ4.Tests.IntegrationTests;
@@ -56,7 +57,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Test Election",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "LSA",
+            ElectionType = ElectionTypeCode.LSA,
             NumberToElect = 5
         };
 
@@ -99,7 +100,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Test Election for Get",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "LSA",
+            ElectionType = ElectionTypeCode.LSA,
             NumberToElect = 3
         };
 
@@ -147,7 +148,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Original Name",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "LSA",
+            ElectionType = ElectionTypeCode.LSA,
             NumberToElect = 3
         };
 
@@ -184,7 +185,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         {
             Name = "Election to Delete",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "LSA",
+            ElectionType = ElectionTypeCode.LSA,
             NumberToElect = 3
         };
 

@@ -4,6 +4,7 @@ using Moq;
 using System.Security.Claims;
 using TallyJ4.DTOs.Elections;
 using TallyJ4.Domain.Entities;
+using TallyJ4.Domain.Enumerations;
 using TallyJ4.Services;
 
 namespace TallyJ4.Tests.UnitTests;
@@ -43,7 +44,7 @@ public class ElectionServiceTests : ServiceTestBase
         {
             Name = "Test Election",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "LSA",
+            ElectionType = ElectionTypeCode.LSA,
             NumberToElect = 5
         };
 

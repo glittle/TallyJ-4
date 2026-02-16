@@ -1,3 +1,5 @@
+using TallyJ4.Domain.Enumerations;
+
 namespace TallyJ4.DTOs.Public;
 
 /// <summary>
@@ -23,5 +25,5 @@ public class AvailableElectionDto
     /// <summary>
     /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
     /// </summary>
-    public string ElectionType { get; set; } = string.Empty;
+    public ElectionTypeCode? ElectionType { get; set; }
 }

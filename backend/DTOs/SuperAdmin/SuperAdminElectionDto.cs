@@ -1,3 +1,5 @@
+using TallyJ4.Domain.Enumerations;
+
 namespace TallyJ4.DTOs.SuperAdmin;
 
 public class SuperAdminElectionDto
@@ -7,7 +9,7 @@ public class SuperAdminElectionDto
     public string? Convenor { get; set; }
     public DateTime? DateOfElection { get; set; }
     public string? TallyStatus { get; set; }
-    public string? ElectionType { get; set; }
+    public ElectionTypeCode? ElectionType { get; set; }
     public int VoterCount { get; set; }
     public int BallotCount { get; set; }
     public int LocationCount { get; set; }

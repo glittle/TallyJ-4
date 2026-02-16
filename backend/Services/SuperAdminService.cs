@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TallyJ4.Domain.Context;
+using TallyJ4.Domain.Enumerations;
 using TallyJ4.DTOs.SuperAdmin;
 using TallyJ4.Models;
 
@@ -76,9 +77,10 @@ public class SuperAdminService : ISuperAdminService
             query = query.Where(e => e.TallyStatus == filter.Status);
         }
 
-        if (!string.IsNullOrWhiteSpace(filter.ElectionType))
+        if (filter.ElectionType.HasValue)
         {
-            query = query.Where(e => e.ElectionType == filter.ElectionType);
+            var filterTypeString = filter.ElectionType.Value.ToString();
+            query = query.Where(e => e.ElectionType == filterTypeString);
         }
 
         var totalCount = await query.CountAsync();
@@ -120,7 +122,7 @@ public class SuperAdminService : ISuperAdminService
                 Convenor = e.Convenor,
                 DateOfElection = e.DateOfElection,
                 TallyStatus = e.TallyStatus,
-                ElectionType = e.ElectionType,
+                ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType),
                 VoterCount = e.People.Count(p => p.CanVote == true),
                 BallotCount = e.Locations.SelectMany(l => l.Ballots).Count(),
                 LocationCount = e.Locations.Count,
@@ -191,13 +193,13 @@ public class SuperAdminService : ISuperAdminService
             Convenor = election.Convenor,
             DateOfElection = election.DateOfElection,
             TallyStatus = election.TallyStatus,
-            ElectionType = election.ElectionType,
+            ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType),
             VoterCount = voterCount,
             BallotCount = ballotCount,
             LocationCount = election.Locations.Count,
             OwnerEmail = ownerEmail,
             NumberToElect = election.NumberToElect,
-            ElectionMode = election.ElectionMode,
+            ElectionMode = ElectionModeEnum.ParseCode(election.ElectionMode),
             PercentComplete = percentComplete,
             Owners = owners
         };

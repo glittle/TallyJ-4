@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using TallyJ4.Domain.Entities;
+using TallyJ4.Domain.Enumerations;
 using TallyJ4.DTOs.SuperAdmin;
 using TallyJ4.Services;
 
@@ -150,7 +151,7 @@ public class SuperAdminServiceTests : ServiceTestBase
         Assert.NotNull(detail);
         Assert.Equal("Detail Test", detail!.Name);
         Assert.Equal(9, detail.NumberToElect);
-        Assert.Equal("N", detail.ElectionMode);
+        Assert.Equal(ElectionModeCode.N, detail.ElectionMode);
     }
 
     [Fact]

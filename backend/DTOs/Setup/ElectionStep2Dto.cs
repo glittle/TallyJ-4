@@ -1,3 +1,5 @@
+using TallyJ4.Domain.Enumerations;
+
 namespace TallyJ4.DTOs.Setup;
 
 /// <summary>
@@ -19,10 +21,10 @@ public class ElectionStep2Dto
     /// <summary>
     /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
     /// </summary>
-    public string ElectionType { get; set; } = string.Empty;
+    public ElectionTypeCode ElectionType { get; set; }
 
     /// <summary>
     /// The mode of the election (N=Normal, T=Tie-Break, B=By-election).
     /// </summary>
-    public string ElectionMode { get; set; } = string.Empty;
+    public ElectionModeCode ElectionMode { get; set; }
 }

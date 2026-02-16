@@ -708,7 +708,7 @@ export type AvailableElectionDto = {
      */
     dateOfElection?: Date | null;
     /**
-     * The type of election (e.g., "normal", "single-name").
+     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
      */
     electionType?: string | null;
 };
@@ -1279,7 +1279,7 @@ export type CreateElectionDto = {
      */
     dateOfElection?: Date | null;
     /**
-     * The type of election (e.g., "normal", "single-name").
+     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
      */
     electionType?: string | null;
     /**
@@ -1291,7 +1291,7 @@ export type CreateElectionDto = {
      */
     convenor?: string | null;
     /**
-     * The mode of the election (e.g., "online", "offline").
+     * The mode of the election (N=Normal, T=Tie-Break, B=By-election).
      */
     electionMode?: string | null;
     /**
@@ -1760,7 +1760,7 @@ export type ElectionDto = {
      */
     dateOfElection?: Date | null;
     /**
-     * The type of election (e.g., "normal", "single-name").
+     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
      */
     electionType?: string | null;
     /**
@@ -1776,7 +1776,7 @@ export type ElectionDto = {
      */
     convenor?: string | null;
     /**
-     * The mode of the election (e.g., "online", "offline").
+     * The mode of the election (N=Normal, T=Tie-Break, B=By-election).
      */
     electionMode?: string | null;
     /**
@@ -2033,7 +2033,7 @@ export type ElectionStatusDto = {
      */
     dateOfElection?: Date | null;
     /**
-     * The type of election (e.g., "normal", "single-name").
+     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
      */
     electionType?: string | null;
     /**
@@ -2087,11 +2087,11 @@ export type ElectionStep2Dto = {
      */
     numberToElect?: number;
     /**
-     * The type of election (e.g., "normal", "single-name").
+     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
      */
     electionType?: string | null;
     /**
-     * The mode of the election (e.g., "online", "offline").
+     * The mode of the election (N=Normal, T=Tie-Break, B=By-election).
      */
     electionMode?: string | null;
 };
@@ -3892,11 +3892,11 @@ export type UpdateElectionDto = {
      */
     onlineWhenClose?: Date | null;
     /**
-     * The type of election (e.g., "STV", "Cond").
+     * The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
      */
     electionType?: string | null;
     /**
-     * The mode of the election (e.g., "N" for normal, "I" for international).
+     * The mode of the election (N=Normal, T=Tie-Break, B=By-election).
      */
     electionMode?: string | null;
     /**

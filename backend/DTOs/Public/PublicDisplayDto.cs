@@ -1,3 +1,5 @@
+using TallyJ4.Domain.Enumerations;
+
 namespace TallyJ4.DTOs.Public;
 
 /// <summary>
@@ -27,9 +29,9 @@ public class PublicDisplayDto
     public string Convenor { get; set; } = string.Empty;
 
     /// <summary>
-    /// The type of election (e.g., "LSA Election", "Unit Convention").
+    /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
     /// </summary>
-    public string ElectionType { get; set; } = string.Empty;
+    public ElectionTypeCode? ElectionType { get; set; }
 
     /// <summary>
     /// Current status of the tally (e.g., "In Progress", "Finalized").

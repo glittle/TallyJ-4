@@ -1,0 +1,11 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  TallyJ4.Domain -> C:\Users\glenl\.zenflow\worktrees\election-types-e208\backend\TallyJ4.Domain\bin\Debug\net10.0\TallyJ4.Domain.dll
+  TallyJ4.Application -> C:\Users\glenl\.zenflow\worktrees\election-types-e208\backend\TallyJ4.Application\bin\Debug\net10.0\TallyJ4.Application.dll
+  TallyJ4 -> C:\Users\glenl\.zenflow\worktrees\election-types-e208\backend\bin\Debug\net10.0\TallyJ4.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.05

@@ -26,10 +26,8 @@ public class CreateElectionDtoValidator : AbstractValidator<CreateElectionDto>
             .WithMessage("Date of election is required");
 
         RuleFor(x => x.ElectionType)
-            .MaximumLength(5)
-            .WithMessage("Election type cannot exceed 5 characters")
-            .Must(type => string.IsNullOrWhiteSpace(type) ||
-                         ElectionTypeEnum.AllCodes.Contains(type))
+            .IsInEnum()
+            .When(x => x.ElectionType.HasValue)
             .WithMessage($"Election type must be one of: {string.Join(", ", ElectionTypeEnum.AllCodes)}");
 
         RuleFor(x => x.NumberToElect)
@@ -67,9 +65,8 @@ public class CreateElectionDtoValidator : AbstractValidator<CreateElectionDto>
             .WithMessage("Linked election kind cannot exceed 2 characters");
 
         RuleFor(x => x.ElectionMode)
-            .MaximumLength(1)
-            .WithMessage("Election mode must be a single character")
-            .Must(mode => string.IsNullOrWhiteSpace(mode) || ElectionModeEnum.AllCodes.Contains(mode))
+            .IsInEnum()
+            .When(x => x.ElectionMode.HasValue)
             .WithMessage($"Election mode must be one of: {string.Join(", ", ElectionModeEnum.All.Select(m => $"{m.Code} ({m.Description})"))}");
 
         RuleFor(x => x.OnlineSelectionProcess)

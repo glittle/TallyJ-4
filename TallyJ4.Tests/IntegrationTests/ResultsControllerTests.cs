@@ -2,6 +2,7 @@ using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using TallyJ4.DTOs.Elections;
 using TallyJ4.DTOs.Results;
+using TallyJ4.Domain.Enumerations;
 using TallyJ4.Models;
 using TallyJ4.Domain.Entities;
 using TallyJ4.Domain.Context;
@@ -126,7 +127,7 @@ public class ResultsControllerTests : IntegrationTestBase
         {
             Name = "Test Election for Results",
             DateOfElection = DateTime.UtcNow.AddDays(30),
-            ElectionType = "LSA",
+            ElectionType = ElectionTypeCode.LSA,
             NumberToElect = 3
         };
 

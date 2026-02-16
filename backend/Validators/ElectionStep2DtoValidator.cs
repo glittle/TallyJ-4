@@ -23,15 +23,11 @@ public class ElectionStep2DtoValidator : AbstractValidator<ElectionStep2Dto>
             .LessThanOrEqualTo(100).WithMessage("Number to elect must not exceed 100");
 
         RuleFor(x => x.ElectionType)
-            .NotEmpty().WithMessage("Election type is required")
-            .MaximumLength(5).WithMessage("Election type must not exceed 5 characters")
-            .Must(type => ElectionTypeEnum.AllCodes.Contains(type))
+            .IsInEnum()
             .WithMessage($"Election type must be one of: {string.Join(", ", ElectionTypeEnum.AllCodes)}");
 
         RuleFor(x => x.ElectionMode)
-            .NotEmpty().WithMessage("Election mode is required")
-            .MaximumLength(1).WithMessage("Election mode must be a single character")
-            .Must(mode => ElectionModeEnum.AllCodes.Contains(mode))
+            .IsInEnum()
             .WithMessage($"Election mode must be one of: {string.Join(", ", ElectionModeEnum.All.Select(m => $"{m.Code} ({m.Description})"))}");
     }
 }

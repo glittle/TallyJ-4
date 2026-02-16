@@ -1024,7 +1024,7 @@ export const AvailableElectionDtoSchema = {
         },
         electionType: {
             type: 'string',
-            description: 'The type of election (e.g., "normal", "single-name").',
+            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
             nullable: true
         }
     },
@@ -1796,7 +1796,7 @@ export const CreateElectionDtoSchema = {
         },
         electionType: {
             type: 'string',
-            description: 'The type of election (e.g., "normal", "single-name").',
+            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
             nullable: true
         },
         numberToElect: {
@@ -1812,7 +1812,7 @@ export const CreateElectionDtoSchema = {
         },
         electionMode: {
             type: 'string',
-            description: 'The mode of the election (e.g., "online", "offline").',
+            description: 'The mode of the election (N=Normal, T=Tie-Break, B=By-election).',
             nullable: true
         },
         numberExtra: {
@@ -2462,7 +2462,7 @@ export const ElectionDtoSchema = {
         },
         electionType: {
             type: 'string',
-            description: 'The type of election (e.g., "normal", "single-name").',
+            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
             nullable: true
         },
         numberToElect: {
@@ -2483,7 +2483,7 @@ export const ElectionDtoSchema = {
         },
         electionMode: {
             type: 'string',
-            description: 'The mode of the election (e.g., "online", "offline").',
+            description: 'The mode of the election (N=Normal, T=Tie-Break, B=By-election).',
             nullable: true
         },
         numberExtra: {
@@ -2825,7 +2825,7 @@ export const ElectionStatusDtoSchema = {
         },
         electionType: {
             type: 'string',
-            description: 'The type of election (e.g., "normal", "single-name").',
+            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
             nullable: true
         },
         tallyStatus: {
@@ -2892,12 +2892,12 @@ export const ElectionStep2DtoSchema = {
         },
         electionType: {
             type: 'string',
-            description: 'The type of election (e.g., "normal", "single-name").',
+            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
             nullable: true
         },
         electionMode: {
             type: 'string',
-            description: 'The mode of the election (e.g., "online", "offline").',
+            description: 'The mode of the election (N=Normal, T=Tie-Break, B=By-election).',
             nullable: true
         }
     },
@@ -5512,12 +5512,12 @@ export const UpdateElectionDtoSchema = {
         },
         electionType: {
             type: 'string',
-            description: 'The type of election (e.g., "STV", "Cond").',
+            description: 'The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).',
             nullable: true
         },
         electionMode: {
             type: 'string',
-            description: 'The mode of the election (e.g., "N" for normal, "I" for international).',
+            description: 'The mode of the election (N=Normal, T=Tie-Break, B=By-election).',
             nullable: true
         },
         canVote: {

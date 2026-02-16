@@ -80,8 +80,8 @@ public class SetupService : ISetupService
         }
 
         election.NumberToElect = step2Dto.NumberToElect;
-        election.ElectionType = step2Dto.ElectionType;
-        election.ElectionMode = step2Dto.ElectionMode;
+        election.ElectionType = step2Dto.ElectionType.ToString();
+        election.ElectionMode = step2Dto.ElectionMode.ToString();
 
         await _context.SaveChangesAsync();
 
