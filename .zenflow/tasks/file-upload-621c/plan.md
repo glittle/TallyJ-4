@@ -110,7 +110,8 @@ Create the SignalR hub and REST controller.
 - All endpoints delegate to `IPeopleImportService`
 - Verify: `cd backend && dotnet build && dotnet test`
 
-### [ ] Step 4: Frontend types, service, and store
+### [x] Step 4: Frontend types, service, and store
+<!-- chat-id: 75cb2c34-7c6f-4db9-8a9c-78188a7b8df6 -->
 
 Create frontend TypeScript types, API service wrapper, and Pinia store.
 

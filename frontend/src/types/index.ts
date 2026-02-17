@@ -10,3 +10,4 @@ export * from './OnlineVoting';
 export * from './Import';
 export * from './Public';
 export * from './Eligibility';
+export * from './PeopleImport';
