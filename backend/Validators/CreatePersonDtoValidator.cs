@@ -70,7 +70,16 @@ public class CreatePersonDtoValidator : AbstractValidator<CreatePersonDto>
         RuleFor(x => x.IneligibleReasonGuid)
             .Must(guid => guid == null || IneligibleReasonEnum.GetByGuid(guid) != null)
             .WithMessage("Invalid ineligibility reason GUID")
-            .Must(guid => guid == null || !IneligibleReasonEnum.GetByGuid(guid)?.InternalOnly == true)
+            .Must(guid =>
+            {
+                if (guid == null)
+                {
+                    return true;
+                }
+
+                var reason = IneligibleReasonEnum.GetByGuid(guid);
+                return reason?.InternalOnly != true;
+            })
             .WithMessage("Internal ineligibility reasons cannot be used for person creation");
     }
 }
