@@ -80,7 +80,7 @@ Also displays **Recommended Status Settings** guidance for different election ty
   - If a Bahá'í ID column is mapped and a row has a Bahá'í ID value: match against existing people by Bahá'í ID only. If found, skip (do not update). If not found, create new person.
   - If no Bahá'í ID is mapped or the row's Bahá'í ID is empty: match by exact First Name + Last Name (case-insensitive). If found, skip. If not found, create new person.
 - **Eligibility Status handling**:
-  - If an Eligibility Status column is mapped, the value must exactly match a known `IneligibleReasonEnum` description or code. Unrecognized values are treated as eligible (blank) with a warning.
+  - If an Eligibility Status column is mapped, the value is matched against `IneligibleReasonEnum` by description (e.g., "Deceased", "Youth aged 18/19/20") or by code (e.g., "X01", "V01", "R01"). The old v3 approach of accepting GUIDs in the file is no longer supported — codes are preferred. Unrecognized values are treated as eligible (blank) with a warning.
 - After import, display results summary:
   - People added (count)
   - People skipped as duplicates (count)
