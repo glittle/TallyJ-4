@@ -9,3 +9,4 @@ export * from './ApiResponse';
 export * from './OnlineVoting';
 export * from './Import';
 export * from './Public';
+export * from './Eligibility';

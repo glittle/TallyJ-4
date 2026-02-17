@@ -92,7 +92,8 @@ Update `PeopleService`, DTOs, validators, and AutoMapper profile so that `CanVot
 
 **Verification:** `dotnet test --filter "PeopleServiceTests"` passes. `dotnet build` succeeds.
 
-### [ ] Step 3: Frontend Types + Eligibility Service + Store
+### [x] Step 3: Frontend Types + Eligibility Service + Store
+<!-- chat-id: a2812d68-77ad-4806-9cc6-bd4e9b7755c0 -->
 
 Create TypeScript types, API service, and Pinia store for eligibility reasons. No UI changes yet.
 
