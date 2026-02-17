@@ -41,7 +41,8 @@ Save to `{@artifacts_path}/spec.md` with:
 
 Broke down the spec into 7 implementation steps below.
 
-### [ ] Step 1: Backend DTOs and PeopleImportService interface
+### [x] Step 1: Backend DTOs and PeopleImportService interface
+<!-- chat-id: 7c56fc7e-56f3-49d5-8af7-457408d6c3af -->
 
 Create all DTOs and the service interface needed by the people import feature.
 
