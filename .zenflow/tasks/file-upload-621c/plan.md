@@ -56,7 +56,8 @@ Create all DTOs and the service interface needed by the people import feature.
 - Create `backend/Services/IPeopleImportService.cs` with method signatures for: upload, list files, parse, save mapping, update settings, import, delete file, delete all people, get people count
 - Verify: `cd backend && dotnet build`
 
-### [ ] Step 2: Backend PeopleImportService implementation
+### [x] Step 2: Backend PeopleImportService implementation
+<!-- chat-id: 45213547-0ef6-4ca5-959d-5811beadcf0b -->
 
 Implement `backend/Services/PeopleImportService.cs` with all business logic.
 
