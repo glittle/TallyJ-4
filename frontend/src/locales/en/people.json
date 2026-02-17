@@ -96,5 +96,22 @@
   "people.import.confirmDeleteFile": "Are you sure you want to delete this file?",
   "people.import.deleteFileError": "Failed to delete file",
   "people.import.uploadError": "Failed to upload file",
-  "people.import.mappingSaved": "Column mapping saved successfully"
+  "people.import.mappingSaved": "Column mapping saved successfully",
+  "people.import.importSummary": "Import Summary",
+  "people.import.dataRows": "Data Rows",
+  "people.import.mappedFields": "Mapped Fields",
+  "people.import.validationWarning": "Validation Warning",
+  "people.import.firstNameLastNameRequired": "First Name and Last Name fields must be mapped to proceed with import.",
+  "people.import.importing": "Importing People...",
+  "people.import.importResults": "Import Results",
+  "people.import.peopleAdded": "People Added",
+  "people.import.peopleSkipped": "People Skipped",
+  "people.import.warnings": "Warnings",
+  "people.import.timeElapsed": "Time Elapsed",
+  "people.import.importNow": "Import Now",
+  "people.import.deleteAllPeople": "Delete All People",
+  "people.import.currentPeopleCount": "Current People Count",
+  "people.import.confirmDeleteAllPeople": "Confirm Delete All People",
+  "people.import.deleteAllPeopleMessage": "Are you sure you want to delete all people from this election? This action cannot be undone.",
+  "people.import.deleteAllPeopleError": "Failed to delete all people"
 }

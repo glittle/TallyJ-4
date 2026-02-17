@@ -204,10 +204,113 @@
           </el-collapse>
         </div>
 
-        <!-- Step 3: Import (placeholder for now) -->
+        <!-- Step 3: Import -->
         <div v-if="currentStep === 2" class="import-step">
           <h3>{{ $t('people.import.reviewImport') }}</h3>
           <p>{{ $t('people.import.importStepDesc') }}</p>
+
+          <!-- Import Summary -->
+          <div v-if="parsedResult" class="import-summary">
+            <el-card class="summary-card">
+              <template #header>
+                <h4>{{ $t('people.import.importSummary') }}</h4>
+              </template>
+              <div class="summary-content">
+                <div class="summary-item">
+                  <strong>{{ $t('people.import.dataRows') }}:</strong> {{ parsedResult.totalDataRows }}
+                </div>
+                <div class="summary-item">
+                  <strong>{{ $t('people.import.mappedFields') }}:</strong>
+                  <ul class="mapped-fields-list">
+                    <li v-for="mapping in columnMappings" :key="mapping.fileColumn" v-if="mapping.targetField">
+                      {{ mapping.fileColumn }} → {{ getFieldLabel(mapping.targetField) }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </el-card>
+          </div>
+
+          <!-- Validation Warnings -->
+          <el-alert
+            v-if="!isMappingValid"
+            :title="$t('people.import.validationWarning')"
+            :description="$t('people.import.firstNameLastNameRequired')"
+            type="warning"
+            show-icon
+            class="validation-alert"
+          />
+
+          <!-- Import Progress -->
+          <div v-if="importStore.importing" class="import-progress">
+            <h4>{{ $t('people.import.importing') }}</h4>
+            <el-progress
+              :percentage="importProgress?.progress || 0"
+              :text-inside="true"
+              :stroke-width="20"
+              status="success"
+            />
+            <p v-if="importProgress?.message" class="progress-message">
+              {{ importProgress.message }}
+            </p>
+          </div>
+
+          <!-- Import Results -->
+          <div v-if="importResult && !importStore.importing" class="import-results">
+            <el-card class="results-card">
+              <template #header>
+                <h4>{{ $t('people.import.importResults') }}</h4>
+              </template>
+              <div class="results-content">
+                <div class="result-item success">
+                  <el-icon><Check /></el-icon>
+                  <span>{{ $t('people.import.peopleAdded') }}: {{ importResult.peopleAdded }}</span>
+                </div>
+                <div class="result-item warning" v-if="importResult.peopleSkipped > 0">
+                  <el-icon><Warning /></el-icon>
+                  <span>{{ $t('people.import.peopleSkipped') }}: {{ importResult.peopleSkipped }}</span>
+                </div>
+                <div class="result-item info" v-if="importResult.warnings && importResult.warnings.length > 0">
+                  <el-icon><InfoFilled /></el-icon>
+                  <span>{{ $t('people.import.warnings') }}: {{ importResult.warnings.length }}</span>
+                </div>
+                <div class="result-item time">
+                  <el-icon><Clock /></el-icon>
+                  <span>{{ $t('people.import.timeElapsed') }}: {{ formatTime(importResult.timeElapsedSeconds) }}</span>
+                </div>
+              </div>
+            </el-card>
+          </div>
+
+          <!-- Import Actions -->
+          <div class="import-actions">
+            <el-space>
+              <el-button
+                type="primary"
+                @click="executeImport"
+                :loading="importStore.importing"
+                :disabled="!isMappingValid || !selectedFile"
+              >
+                {{ $t('people.import.importNow') }}
+              </el-button>
+              <el-button
+                type="danger"
+                @click="showDeleteAllConfirm = true"
+                :disabled="canDeleteAllPeople === false"
+              >
+                {{ $t('people.import.deleteAllPeople') }}
+              </el-button>
+            </el-space>
+          </div>
+
+          <!-- People Count -->
+          <div class="people-count">
+            <el-statistic
+              :title="$t('people.import.currentPeopleCount')"
+              :value="importStore.peopleCount"
+              :loading="false"
+            />
+          </div>
         </div>
       </div>
 
@@ -225,6 +328,21 @@
         </el-button>
       </div>
     </el-card>
+
+    <!-- Delete All People Confirmation -->
+    <el-dialog v-model="showDeleteAllConfirm" :title="$t('people.import.confirmDeleteAllPeople')" width="500px">
+      <p>{{ $t('people.import.deleteAllPeopleMessage') }}</p>
+      <p class="warning-text">{{ $t('common.actionIrreversible') }}</p>
+
+      <template #footer>
+        <el-button @click="showDeleteAllConfirm = false">
+          {{ $t('common.cancel') }}
+        </el-button>
+        <el-button type="danger" @click="confirmDeleteAllPeople" :loading="false">
+          {{ $t('common.delete') }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -233,7 +351,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { UploadFilled } from '@element-plus/icons-vue';
+import { UploadFilled, Check, Warning, InfoFilled, Clock } from '@element-plus/icons-vue';
 import type { UploadFile } from 'element-plus';
 import { usePeopleImportStore } from '../../stores/peopleImportStore';
 import type { ImportFileInfo, ColumnMapping } from '../../types';
@@ -254,6 +372,9 @@ const files = computed(() => importStore.files);
 const selectedFile = computed(() => importStore.selectedFile);
 const parsedResult = computed(() => importStore.parsedResult);
 const columnMappings = computed(() => importStore.columnMappings);
+const importResult = computed(() => importStore.importResult);
+const importProgress = computed(() => importStore.importProgress);
+const showDeleteAllConfirm = ref(false);
 
 const availableTargetFields = computed(() => [
   { value: null, label: t('people.import.ignore') },
@@ -276,6 +397,19 @@ const canProceedToNext = computed(() => {
     const lastNameMapped = mappings.some(m => m.targetField === 'LastName');
     return firstNameMapped && lastNameMapped;
   }
+  return true;
+});
+
+const isMappingValid = computed(() => {
+  const mappings = columnMappings.value;
+  const firstNameMapped = mappings.some(m => m.targetField === 'FirstName');
+  const lastNameMapped = mappings.some(m => m.targetField === 'LastName');
+  return firstNameMapped && lastNameMapped;
+});
+
+const canDeleteAllPeople = computed(() => {
+  // This would need to be implemented in the store to check if ballots exist
+  // For now, we'll assume it's always enabled (backend will handle the guards)
   return true;
 });
 
@@ -421,6 +555,51 @@ function getFieldDescription(fieldValue: string): string {
     'OtherInfo': t('people.import.otherInfoDesc')
   };
   return descriptions[fieldValue] || '';
+}
+
+function getFieldLabel(fieldValue: string): string {
+  const field = PEOPLE_TARGET_FIELDS.find(f => f.value === fieldValue);
+  return field ? field.label : fieldValue;
+}
+
+function formatTime(seconds: number): string {
+  if (seconds < 60) {
+    return `${seconds}s`;
+  }
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds}s`;
+}
+
+async function executeImport() {
+  if (!selectedFile.value) return;
+
+  try {
+    await importStore.executeImport(electionGuid);
+  } catch (error) {
+    console.error('Import failed:', error);
+  }
+}
+
+async function confirmDeleteAllPeople() {
+  try {
+    await ElMessageBox.confirm(
+      t('people.import.confirmDeleteAllPeople'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.delete'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    );
+
+    await importStore.deleteAllPeople(electionGuid);
+    showDeleteAllConfirm.value = false;
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || t('people.import.deleteAllPeopleError'));
+    }
+  }
 }
 </script>
 
@@ -582,14 +761,114 @@ function getFieldDescription(fieldValue: string): string {
   }
 
   .import-step {
-    text-align: center;
-
     h3 {
       margin-bottom: 20px;
     }
 
     p {
       color: #666;
+      margin-bottom: 20px;
+    }
+
+    .import-summary {
+      margin-bottom: 20px;
+
+      .summary-card {
+        .summary-content {
+          .summary-item {
+            margin-bottom: 15px;
+
+            strong {
+              display: block;
+              margin-bottom: 5px;
+              color: #303133;
+            }
+
+            .mapped-fields-list {
+              margin: 0;
+              padding-left: 20px;
+
+              li {
+                margin-bottom: 5px;
+                color: #606266;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .validation-alert {
+      margin-bottom: 20px;
+    }
+
+    .import-progress {
+      margin-bottom: 20px;
+
+      h4 {
+        margin-bottom: 15px;
+        color: #303133;
+      }
+
+      .progress-message {
+        margin-top: 10px;
+        color: #606266;
+        font-style: italic;
+      }
+    }
+
+    .import-results {
+      margin-bottom: 20px;
+
+      .results-card {
+        .results-content {
+          .result-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+
+            &.success {
+              background-color: #f0f9ff;
+              color: #67c23a;
+            }
+
+            &.warning {
+              background-color: #fdf6ec;
+              color: #e6a23c;
+            }
+
+            &.info {
+              background-color: #f4f4f5;
+              color: #909399;
+            }
+
+            &.time {
+              background-color: #f5f7fa;
+              color: #606266;
+            }
+
+            .el-icon {
+              margin-right: 8px;
+            }
+
+            span {
+              font-weight: 500;
+            }
+          }
+        }
+      }
+    }
+
+    .import-actions {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .people-count {
+      text-align: center;
+      margin-top: 20px;
     }
   }
 

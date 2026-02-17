@@ -153,7 +153,8 @@ Build the main import page with the first two wizard steps.
 - Style with `<style lang="less">` using nested CSS under component root class
 - Verify: `cd frontend && npx vue-tsc --noEmit`
 
-### [ ] Step 6: Frontend PeopleImportPage — Step 3 (Import) and wiring
+### [x] Step 6: Frontend PeopleImportPage — Step 3 (Import) and wiring
+<!-- chat-id: 6a5e5020-7a27-43a7-8449-05828e53cd2a -->
 
 Complete the import wizard step, add route, update PeopleManagementPage.
 
