@@ -41,7 +41,8 @@ Save to `{@artifacts_path}/spec.md` with:
 
 Created a detailed implementation plan. The Implementation step below has been replaced with 6 concrete tasks.
 
-### [ ] Step 1: Backend Static Class + DTO + API Endpoint
+### [x] Step 1: Backend Static Class + DTO + API Endpoint
+<!-- chat-id: c46cd478-c718-4d88-8b3f-b486c58c4ad1 -->
 
 Create the `IneligibleReasonEnum` static class, the `EligibilityReasonDto`, and the `EligibilityController` API endpoint. Include unit tests for all lookup methods and legacy GUID mapping.
 
@@ -50,16 +51,16 @@ Create the `IneligibleReasonEnum` static class, the `EligibilityReasonDto`, and 
 - `backend/DTOs/EligibilityReasonDto.cs` — DTO with `ReasonGuid`, `Code`, `Description`, `CanVote`, `CanReceiveVotes`, `InternalOnly`.
 - `backend/Controllers/EligibilityController.cs` — `GET /api/eligibility-reasons` returning `ApiResponse<List<EligibilityReasonDto>>`. Maps from `IneligibleReasonEnum.All`. Requires `[Authorize]`.
 - `Backend.Tests/UnitTests/Enumerations/IneligibleReasonEnumTests.cs` — Tests:
-  - [ ] All 20 reasons present in `All` list
-  - [ ] GUIDs match v3 exactly (verify each GUID from requirements.md R3)
-  - [ ] `GetByGuid` returns correct reason for each canonical GUID
-  - [ ] `GetByGuid` resolves legacy sub-GUIDs (5 legacy GUIDs → U01/U02)
-  - [ ] `GetByGuid(null)` returns null
-  - [ ] `GetByCode("X01")` returns correct reason; unknown code returns null
-  - [ ] `GetByDescription("Deceased")` returns X01; case-insensitive match works
-  - [ ] `PersonReasons` excludes U01 and U02
-  - [ ] CanVote/CanReceiveVotes flags correct per group (X=false/false, V=true/false, R=false/true, U=false/false)
-  - [ ] InternalOnly is true only for U01, U02
+  - [x] All 20 reasons present in `All` list
+  - [x] GUIDs match v3 exactly (verify each GUID from requirements.md R3)
+  - [x] `GetByGuid` returns correct reason for each canonical GUID
+  - [x] `GetByGuid` resolves legacy sub-GUIDs (5 legacy GUIDs → U01/U02)
+  - [x] `GetByGuid(null)` returns null
+  - [x] `GetByCode("X01")` returns correct reason; unknown code returns null
+  - [x] `GetByDescription("Deceased")` returns X01; case-insensitive match works
+  - [x] `PersonReasons` excludes U01 and U02
+  - [x] CanVote/CanReceiveVotes flags correct per group (X=false/false, V=true/false, R=false/true, U=false/false)
+  - [x] InternalOnly is true only for U01, U02
 
 **Verification:** `dotnet test --filter "IneligibleReasonEnumTests"` passes. `dotnet build` succeeds.
 
