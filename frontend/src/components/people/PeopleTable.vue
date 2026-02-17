@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { CircleCheck, CircleClose } from '@element-plus/icons-vue';
+import { CircleCheck } from '@element-plus/icons-vue';
+import { useI18n } from 'vue-i18n';
 import type { PersonDto } from '../../types';
+
+const { t } = useI18n();
 
 const props = defineProps<{
   people: PersonDto[];
@@ -31,24 +34,12 @@ function handleSelectionChange(selection: PersonDto[]) {
     <el-table-column prop="fullName" :label="$t('people.fullName')" min-width="200" sortable />
     <el-table-column prop="email" :label="$t('people.email')" min-width="200" />
     <el-table-column prop="phone" :label="$t('people.phone')" width="130" />
-    <el-table-column :label="$t('people.canVote')" width="100" align="center">
+    <el-table-column :label="$t('eligibility.label')" width="200" align="center">
       <template #default="scope">
-        <el-icon v-if="scope.row.canVote" color="#67c23a" :size="18">
+        <el-icon v-if="!scope.row.ineligibleReasonCode" color="#67c23a" :size="18">
           <CircleCheck />
         </el-icon>
-        <el-icon v-else color="#909399" :size="18">
-          <CircleClose />
-        </el-icon>
-      </template>
-    </el-table-column>
-    <el-table-column :label="$t('people.canReceiveVotes')" width="140" align="center">
-      <template #default="scope">
-        <el-icon v-if="scope.row.canReceiveVotes" color="#67c23a" :size="18">
-          <CircleCheck />
-        </el-icon>
-        <el-icon v-else color="#909399" :size="18">
-          <CircleClose />
-        </el-icon>
+        <span v-else>{{ $t(`eligibility.${scope.row.ineligibleReasonCode}`) }}</span>
       </template>
     </el-table-column>
     <el-table-column prop="area" :label="$t('people.area')" width="120" />

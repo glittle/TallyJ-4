@@ -130,7 +130,8 @@ These files are auto-discovered by the glob import in `frontend/src/locales/inde
 
 **Verification:** `npx vue-tsc --noEmit` passes. Dev server loads without i18n warnings.
 
-### [ ] Step 5: Frontend Person Form — Eligibility Dropdown
+### [x] Step 5: Frontend Person Form — Eligibility Dropdown
+<!-- chat-id: 68c279ba-e044-4264-964d-6319fb73b4d2 -->
 
 Replace the two `CanVote`/`CanReceiveVotes` toggle switches in `PersonFormDialog.vue` with a single grouped `el-select` dropdown. Update `PeopleTable.vue` to show eligibility info.
 

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { usePeopleStore } from '../../stores/peopleStore';
+import { useEligibilityStore } from '../../stores/eligibilityStore';
 import type { PersonDto, CreatePersonDto, UpdatePersonDto } from '../../types';
 
 const props = defineProps<{
@@ -19,6 +20,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const peopleStore = usePeopleStore();
+const eligibilityStore = useEligibilityStore();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
@@ -31,8 +33,7 @@ const form = reactive({
   area: '',
   bahaiId: '',
   ageGroup: 'Adult',
-  canVote: true,
-  canReceiveVotes: true
+  ineligibleReasonGuid: null as string | null
 });
 
 const rules = reactive<FormRules>({
@@ -44,6 +45,10 @@ const rules = reactive<FormRules>({
   ]
 });
 
+onMounted(async () => {
+  await eligibilityStore.fetchReasons();
+});
+
 watch(() => props.person, (person) => {
   if (person) {
     form.firstName = person.firstName || '';
@@ -53,8 +58,7 @@ watch(() => props.person, (person) => {
     form.area = person.area || '';
     form.bahaiId = person.bahaiId || '';
     form.ageGroup = person.ageGroup || 'Adult';
-    form.canVote = person.canVote ?? true;
-    form.canReceiveVotes = person.canReceiveVotes ?? true;
+    form.ineligibleReasonGuid = person.ineligibleReasonGuid || null;
   }
 }, { immediate: true });
 
@@ -74,8 +78,7 @@ async function handleSubmit() {
             area: form.area || undefined,
             bahaiId: form.bahaiId || undefined,
             ageGroup: form.ageGroup || undefined,
-            canVote: form.canVote,
-            canReceiveVotes: form.canReceiveVotes
+            ineligibleReasonGuid: form.ineligibleReasonGuid || undefined
           };
           await peopleStore.updatePerson(props.person.personGuid, dto);
           ElMessage.success(t('people.updateSuccess'));
@@ -89,8 +92,7 @@ async function handleSubmit() {
             area: form.area || undefined,
             bahaiId: form.bahaiId || undefined,
             ageGroup: form.ageGroup || undefined,
-            canVote: form.canVote,
-            canReceiveVotes: form.canReceiveVotes
+            ineligibleReasonGuid: form.ineligibleReasonGuid || undefined
           };
           await peopleStore.createPerson(dto);
           ElMessage.success(t('people.createSuccess'));
@@ -157,12 +159,22 @@ function handleClose() {
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="$t('people.canVote')">
-        <el-switch v-model="form.canVote" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.canReceiveVotes')">
-        <el-switch v-model="form.canReceiveVotes" />
+      <el-form-item :label="$t('eligibility.label')">
+        <el-select v-model="form.ineligibleReasonGuid" :placeholder="$t('eligibility.selectReason')" style="width: 100%" clearable>
+          <el-option :label="$t('eligibility.eligible')" :value="null" />
+          <el-option-group
+            v-for="(reasons, group) in eligibilityStore.groupedReasons"
+            :key="group"
+            :label="$t(`eligibility.group${group}`)"
+          >
+            <el-option
+              v-for="reason in reasons"
+              :key="reason.reasonGuid"
+              :label="$t(`eligibility.${reason.code}`)"
+              :value="reason.reasonGuid"
+            />
+          </el-option-group>
+        </el-select>
       </el-form-item>
     </el-form>
 
