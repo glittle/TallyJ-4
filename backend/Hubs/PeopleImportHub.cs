@@ -47,6 +47,62 @@ public class PeopleImportHub : Hub
             Context.ConnectionId, electionGuid);
     }
 
+    // Server-to-client methods for people import progress
+    /// <summary>
+    /// Broadcasts progress information about the ongoing people import operation.
+    /// Includes counts of processed rows and calculated percentage completion.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election where people are being imported.</param>
+    /// <param name="processedRows">The number of rows that have been processed so far.</param>
+    /// <param name="totalRows">The total number of rows to be imported.</param>
+    /// <param name="status">A descriptive status message about the current import phase.</param>
+    public async Task ImportProgress(Guid electionGuid, int processedRows, int totalRows, string status)
+    {
+        var groupName = GetGroupName(electionGuid);
+        var progress = new
+        {
+            processedRows,
+            totalRows,
+            status,
+            percentage = totalRows > 0 ? (processedRows * 100.0 / totalRows) : 0
+        };
+
+        await Clients.Group(groupName).SendAsync("importProgress", progress);
+
+        _logger.LogInformation("People import progress for election {ElectionGuid}: {Processed}/{Total} rows - {Status}",
+            electionGuid, processedRows, totalRows, status);
+    }
+
+    /// <summary>
+    /// Broadcasts an error that occurred during people import to all monitoring clients.
+    /// Includes the error message and the row number where the error occurred.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election where the import error occurred.</param>
+    /// <param name="errorMessage">A description of the error that occurred during import.</param>
+    /// <param name="rowNumber">The row number in the import file where the error occurred.</param>
+    public async Task ImportError(Guid electionGuid, string errorMessage, int rowNumber)
+    {
+        var groupName = GetGroupName(electionGuid);
+        await Clients.Group(groupName).SendAsync("importError", errorMessage, rowNumber);
+
+        _logger.LogWarning("People import error for election {ElectionGuid} at row {RowNumber}: {Error}",
+            electionGuid, rowNumber, errorMessage);
+    }
+
+    /// <summary>
+    /// Broadcasts the completion of the people import operation to all monitoring clients.
+    /// Includes a summary of the import results and statistics.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election where the import was completed.</param>
+    /// <param name="summary">A summary object containing import statistics and results.</param>
+    public async Task ImportComplete(Guid electionGuid, object summary)
+    {
+        var groupName = GetGroupName(electionGuid);
+        await Clients.Group(groupName).SendAsync("importComplete", summary);
+
+        _logger.LogInformation("People import completed for election {ElectionGuid}", electionGuid);
+    }
+
     /// <summary>
     /// Called when a client disconnects from the PeopleImportHub.
     /// Logs the disconnection event for monitoring purposes.

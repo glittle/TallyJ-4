@@ -87,7 +87,8 @@ Implement `backend/Services/PeopleImportService.cs` with all business logic.
   - Delete-all-people guards (blocked when ballots exist, blocked when people have RegistrationTime)
 - Verify: `cd backend && dotnet build && dotnet test`
 
-### [ ] Step 3: Backend PeopleImportHub and PeopleImportController
+### [x] Step 3: Backend PeopleImportHub and PeopleImportController
+<!-- chat-id: 2353be82-dce2-48a0-8d6f-f80ae76f4c1a -->
 
 Create the SignalR hub and REST controller.
 
