@@ -7,13 +7,21 @@ import {
   Clock,
   Finished,
   Search,
+  Refresh,
 } from "@element-plus/icons-vue";
 import { useSuperAdminStore } from "../stores/superAdminStore";
+import { superAdminService } from "../services/superAdminService";
 import type {
   SuperAdminElectionFilter,
   SuperAdminElection,
+  SuperAdminElectionDetail,
 } from "../services/superAdminService";
+import { extractApiErrorMessage } from '@/utils/errorHandler';
 import { useDebounceFn } from '@vueuse/core';
+import { ElectionTypeCode } from "@/api/gen/configService";
+
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const router = useRouter();
 const superAdminStore = useSuperAdminStore();
@@ -25,13 +33,17 @@ const sortBy = ref("dateOfElection");
 const sortDirection = ref("desc");
 const drawerVisible = ref(false);
 
+// Election state moved from store
+const elections = ref<SuperAdminElection[]>([]);
+const selectedElection = ref<SuperAdminElectionDetail | null>(null);
+const totalCount = ref(0);
+const currentPage = ref(1);
+const pageSize = ref(25);
+const totalPages = ref(0);
+const electionError = ref<string | null>(null);
+
 const loading = computed(() => superAdminStore.loading);
 const summary = computed(() => superAdminStore.summary);
-const elections = computed(() => superAdminStore.elections);
-const selectedElection = computed(() => superAdminStore.selectedElection);
-const totalCount = computed(() => superAdminStore.totalCount);
-const currentPage = computed(() => superAdminStore.currentPage);
-const pageSize = computed(() => superAdminStore.pageSize);
 const error = computed(() => superAdminStore.error);
 
 const statusOptions = [
@@ -42,14 +54,13 @@ const statusOptions = [
   { label: "Finalized", value: "Finalized" },
 ];
 
-const typeOptions = [
-  { label: "All", value: "" },
-  { label: "LSA", value: "LSA" },
-  { label: "National", value: "National" },
-  { label: "Unit", value: "Unit" },
-  { label: "Ridvan", value: "Ridvan" },
-  { label: "By-election", value: "By-election" },
-];
+const typeOptions = computed(() => {
+  const types = Object.values(ElectionTypeCode);
+  return [
+    { label: "All", value: "" },
+    ...types.map((type) => ({ label: t('elections.electionTypes.' + type), value: type })),
+  ];
+});
 
 function buildFilter(): SuperAdminElectionFilter {
   return {
@@ -63,11 +74,36 @@ function buildFilter(): SuperAdminElectionFilter {
   };
 }
 
+async function fetchElections(filter?: SuperAdminElectionFilter) {
+  try {
+    const response = await superAdminService.getElections(filter)
+    elections.value = response.items
+    totalCount.value = response.totalCount
+    currentPage.value = response.page
+    pageSize.value = response.pageSize
+    totalPages.value = response.totalPages
+    electionError.value = null
+  } catch (e: any) {
+    electionError.value = extractApiErrorMessage(e)
+    throw e
+  }
+}
+
+async function fetchElectionDetail(guid: string) {
+  try {
+    selectedElection.value = await superAdminService.getElectionDetail(guid)
+    return selectedElection.value
+  } catch (e: any) {
+    electionError.value = extractApiErrorMessage(e)
+    throw e
+  }
+}
+
 async function loadData() {
   try {
     await Promise.all([
       superAdminStore.fetchSummary(),
-      superAdminStore.fetchElections(buildFilter()),
+      fetchElections(buildFilter()),
     ]);
   } catch {
     // error stored in store
@@ -76,20 +112,20 @@ async function loadData() {
 
 const applyFilters = useDebounceFn(async () => {
 
-  superAdminStore.currentPage = 1;
+  currentPage.value = 1;
   try {
-    await superAdminStore.fetchElections(buildFilter());
+    await fetchElections(buildFilter());
   } catch {
-    // error stored in store
+    // error handled in function
   }
 }, 150);
 
 async function handlePageChange(page: number) {
-  superAdminStore.currentPage = page;
+  currentPage.value = page;
   try {
-    await superAdminStore.fetchElections(buildFilter());
+    await fetchElections(buildFilter());
   } catch {
-    // error stored in store
+    // error handled in function
   }
 }
 
@@ -104,18 +140,18 @@ const handleSortChange = useDebounceFn(async ({
   sortBy.value = prop || "dateOfElection";
   sortDirection.value = order === "ascending" ? "asc" : "desc";
   try {
-    await superAdminStore.fetchElections(buildFilter());
+    await fetchElections(buildFilter());
   } catch {
-    // error stored in store
+    // error handled in function
   }
 }, 150);
 
 const showElectionDetail = async (row: SuperAdminElection) => {
   drawerVisible.value = true;
   try {
-    await superAdminStore.fetchElectionDetail(row.electionGuid);
+    await fetchElectionDetail(row.electionGuid);
   } catch {
-    // error stored in store
+    // error handled in function
   }
 };
 
@@ -149,10 +185,20 @@ onMounted(() => {
 <template>
   <main class="sa-dashboard-page">
     <section class="sa-header-section">
-      <h1>{{ $t("superAdmin.title") }}</h1>
+      <div class="sa-header-content">
+        <h1>{{ $t("superAdmin.title") }}</h1>
+        <el-button type="primary" @click="loadData" :loading="loading">
+          <el-icon>
+            <Refresh />
+          </el-icon>
+          {{ $t("common.refresh") }}
+        </el-button>
+      </div>
     </section>
 
     <el-alert v-if="error" type="error" :title="error" show-icon closable @close="superAdminStore.clearError()" />
+    <el-alert v-if="electionError" type="error" :title="electionError" show-icon closable
+      @close="electionError = null" />
 
     <section class="sa-stats-section">
       <el-row :gutter="20" class="sa-stats-row">
@@ -264,7 +310,7 @@ onMounted(() => {
           </el-table>
 
           <div class="sa-pagination">
-            <el-pagination v-model:current-page="superAdminStore.currentPage" :page-size="pageSize" :total="totalCount"
+            <el-pagination v-model:current-page="currentPage" :page-size="pageSize" :total="totalCount"
               layout="total, prev, pager, next" @current-change="handlePageChange" />
           </div>
         </template>
@@ -335,11 +381,17 @@ onMounted(() => {
   .sa-header-section {
     margin-bottom: var(--spacing-6);
 
-    h1 {
-      margin: 0;
-      color: var(--color-text-primary);
-      font-size: var(--font-size-3xl);
-      font-weight: var(--font-weight-bold);
+    .sa-header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h1 {
+        margin: 0;
+        color: var(--color-text-primary);
+        font-size: var(--font-size-3xl);
+        font-weight: var(--font-weight-bold);
+      }
     }
   }
 
