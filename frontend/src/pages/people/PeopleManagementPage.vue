@@ -81,38 +81,7 @@
     <PersonFormDialog v-model="showEditDialog" :election-guid="electionGuid" :person="editingPerson" :is-edit="true"
       @success="handleFormSuccess" />
 
-    <!-- Import Dialog -->
-    <el-dialog v-model="showImportDialog" :title="$t('people.importPeople')" width="600px">
-      <div class="import-instructions">
-        <h4>{{ $t('people.importInstructions') }}</h4>
-        <ul>
-          <li>{{ $t('people.importFormat') }}</li>
-          <li>{{ $t('people.importRequiredFields') }}</li>
-          <li>{{ $t('people.importOptionalFields') }}</li>
-        </ul>
-        <el-alert :title="$t('people.importWarning')" type="warning" :closable="false" style="margin-top: 15px;" />
-      </div>
 
-      <el-upload ref="uploadRef" :action="`${apiBaseUrl}/elections/${electionGuid}/people/import`"
-        :headers="uploadHeaders" :file-list="fileList" :on-success="handleImportSuccess" :on-error="handleImportError"
-        :before-upload="beforeUpload" accept=".csv,.xlsx,.xls" :limit="1" drag>
-        <el-icon class="el-icon--upload">
-          <Upload />
-        </el-icon>
-        <div class="el-upload__text">
-          {{ $t('people.dropFileHere') }}
-        </div>
-        <template #tip>
-          <div class="el-upload__tip">{{ $t('supportedUploadPeopleFormats') }}</div>
-        </template>
-      </el-upload>
-
-      <template #footer>
-        <el-button @click="showImportDialog = false">
-          {{ $t('common.cancel') }}
-        </el-button>
-      </template>
-    </el-dialog>
 
     <!-- Bulk Delete Confirmation -->
     <el-dialog v-model="showBulkDeleteConfirm" :title="$t('people.confirmBulkDelete')" width="500px">
@@ -129,8 +98,7 @@
       </template>
     </el-dialog>
 
-    <!-- Import Progress Dialog -->
-    <ImportProgressDialog v-model="showImportProgress" />
+
   </div>
 </template>
 
@@ -139,14 +107,14 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Search, Plus, MoreFilled, ArrowDown, Upload, Download, Delete } from '@element-plus/icons-vue';
+import { Search, Plus, MoreFilled, ArrowDown, Download, Delete } from '@element-plus/icons-vue';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useImportStore } from '../../stores/importStore';
 import { useAuthStore } from '../../stores/authStore';
 import type { PersonDto } from '../../types';
 import PeopleTable from '../../components/people/PeopleTable.vue';
 import PersonFormDialog from '../../components/people/PersonFormDialog.vue';
-import ImportProgressDialog from '../../components/common/ImportProgressDialog.vue';
+
 
 const router = useRouter();
 const route = useRoute();
@@ -168,10 +136,6 @@ const showBulkDeleteConfirm = ref(false);
 const bulkDeleting = ref(false);
 
 // Import/Export
-const showImportDialog = ref(false);
-const showImportProgress = ref(false);
-const fileList = ref<any[]>([]);
-const uploadRef = ref();
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
@@ -285,7 +249,7 @@ function handleSelectionChange(selection: PersonDto[]) {
 function handleBulkAction(command: string) {
   switch (command) {
     case 'import':
-      showImportDialog.value = true;
+      router.push(`/elections/${electionGuid}/people/import`);
       break;
     case 'export':
       handleExport();
@@ -358,41 +322,7 @@ async function confirmBulkDelete() {
   }
 }
 
-function beforeUpload(file: File) {
-  const isValidType = ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'].includes(file.type);
-  const isValidSize = file.size / 1024 / 1024 < 10; // 10MB limit
 
-  if (!isValidType) {
-    ElMessage.error(t('people.invalidFileType'));
-    return false;
-  }
-
-  if (!isValidSize) {
-    ElMessage.error(t('people.fileTooLarge'));
-    return false;
-  }
-
-  return true;
-}
-
-async function handleImportSuccess(response: any, file: any) {
-  if (response.success) {
-    showImportDialog.value = false;
-    showImportProgress.value = true;
-
-    // Initialize import store for progress tracking
-    await importStore.initializeSignalR();
-    await importStore.joinImportSession(electionGuid);
-
-    ElMessage.success(t('people.importStarted'));
-  } else {
-    ElMessage.error(response.message || t('people.importError'));
-  }
-}
-
-function handleImportError(error: any) {
-  ElMessage.error(t('people.importError'));
-}
 </script>
 
 <style scoped>

@@ -128,7 +128,8 @@ Create frontend TypeScript types, API service wrapper, and Pinia store.
   - SignalR integration: `initializeSignalR`, `joinImportSession`, `leaveImportSession`, handle `importProgress`/`importComplete`/`importError` events
 - Verify: `cd frontend && npx vue-tsc --noEmit`
 
-### [ ] Step 5: Frontend PeopleImportPage — Step 1 (Upload) and Step 2 (Map Columns)
+### [x] Step 5: Frontend PeopleImportPage — Step 1 (Upload) and Step 2 (Map Columns)
+<!-- chat-id: 69308dbc-d83e-46a8-90bd-b7197a21feb6 -->
 
 Build the main import page with the first two wizard steps.
 
