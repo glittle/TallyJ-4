@@ -1,3 +1,260 @@
+<script setup lang="ts">
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { UploadFilled, Check, Warning, InfoFilled, Clock } from '@element-plus/icons-vue';
+import type { UploadFile } from 'element-plus';
+import { usePeopleImportStore } from '../../stores/peopleImportStore';
+import type { ImportFileInfo, ColumnMapping } from '../../types';
+import { PEOPLE_TARGET_FIELDS } from '../../types';
+
+const router = useRouter();
+const route = useRoute();
+const { t } = useI18n();
+const importStore = usePeopleImportStore();
+
+const electionGuid = route.params.id as string;
+const currentStep = ref(0);
+const uploading = ref(false);
+const reparsing = ref<number | null>(null);
+const savingMapping = ref(false);
+
+const files = computed(() => importStore.files);
+const selectedFile = computed(() => importStore.selectedFile);
+const parsedResult = computed(() => importStore.parsedResult);
+const columnMappings = computed(() => importStore.columnMappings);
+const importResult = computed(() => importStore.importResult);
+const importProgress = computed(() => importStore.importProgress);
+const showDeleteAllConfirm = ref(false);
+
+const availableTargetFields = computed(() => [
+  { value: null, label: t('people.import.ignore') },
+  ...PEOPLE_TARGET_FIELDS
+]);
+
+const previewRows = computed(() => {
+  if (!parsedResult.value?.previewRows) return [];
+  return parsedResult.value.previewRows.slice(0, 5); // Show first 5 preview rows
+});
+
+const canProceedToNext = computed(() => {
+  if (currentStep.value === 0) {
+    return selectedFile.value !== null;
+  }
+  if (currentStep.value === 1) {
+    // Check if required fields are mapped
+    const mappings = columnMappings.value;
+    const firstNameMapped = mappings.some(m => m.targetField === 'FirstName');
+    const lastNameMapped = mappings.some(m => m.targetField === 'LastName');
+    return firstNameMapped && lastNameMapped;
+  }
+  return true;
+});
+
+const isMappingValid = computed(() => {
+  const mappings = columnMappings.value;
+  const firstNameMapped = mappings.some(m => m.targetField === 'FirstName');
+  const lastNameMapped = mappings.some(m => m.targetField === 'LastName');
+  return firstNameMapped && lastNameMapped;
+});
+
+const canDeleteAllPeople = computed(() => {
+  // This would need to be implemented in the store to check if ballots exist
+  // For now, we'll assume it's always enabled (backend will handle the guards)
+  return true;
+});
+
+onMounted(async () => {
+  await importStore.initializeSignalR();
+  await importStore.joinImportSession(electionGuid);
+  await importStore.loadFiles(electionGuid);
+  await importStore.loadPeopleCount(electionGuid);
+});
+
+onBeforeUnmount(async () => {
+  await importStore.leaveImportSession(electionGuid);
+});
+
+function goBack() {
+  router.push(`/elections/${electionGuid}/people`);
+}
+
+async function handleFileChange(file: UploadFile) {
+  if (file.raw) {
+    uploading.value = true;
+    try {
+      await importStore.uploadFile(electionGuid, file.raw);
+      await importStore.loadFiles(electionGuid); // Refresh the files list
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      uploading.value = false;
+    }
+  }
+}
+
+function handleUploadSuccess() {
+  // Handled by handleFileChange
+}
+
+function handleUploadError() {
+  uploading.value = false;
+  ElMessage.error(t('people.import.uploadError'));
+}
+
+async function selectFile(file: ImportFileInfo) {
+  await importStore.selectFile(file);
+  await importStore.parseFile(electionGuid);
+}
+
+async function reparseFile(file: ImportFileInfo) {
+  reparsing.value = file.rowId;
+  try {
+    await importStore.selectFile(file);
+    await importStore.parseFile(electionGuid, file.codePage || undefined, file.firstDataRow || undefined);
+  } catch (error) {
+    console.error('Reparse failed:', error);
+  } finally {
+    reparsing.value = null;
+  }
+}
+
+async function updateFileSettings(file: ImportFileInfo) {
+  try {
+    await importStore.updateSettings(electionGuid, {
+      firstDataRow: file.firstDataRow,
+      codePage: file.codePage
+    });
+  } catch (error) {
+    console.error('Update settings failed:', error);
+  }
+}
+
+async function deleteFile(file: ImportFileInfo) {
+  try {
+    await ElMessageBox.confirm(
+      t('people.import.confirmDeleteFile'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.delete'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    );
+
+    await importStore.deleteFile(electionGuid, file.rowId);
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || t('people.import.deleteFileError'));
+    }
+  }
+}
+
+function updateMapping() {
+  // Update the store's columnMappings
+  importStore.columnMappings.splice(0, importStore.columnMappings.length, ...columnMappings.value);
+}
+
+async function saveMapping() {
+  savingMapping.value = true;
+  try {
+    await importStore.saveMapping(electionGuid);
+    ElMessage.success(t('people.import.mappingSaved'));
+  } catch (error) {
+    console.error('Save mapping failed:', error);
+  } finally {
+    savingMapping.value = false;
+  }
+}
+
+async function handleNext() {
+  if (currentStep.value === 0 && selectedFile.value) {
+    // Ensure file is parsed when moving to step 2
+    await importStore.parseFile(electionGuid);
+  }
+  currentStep.value++;
+}
+
+function getStatusType(status: string | null): string {
+  switch (status) {
+    case 'Imported': return 'success';
+    case 'Processing': return 'warning';
+    case 'Failed': return 'danger';
+    default: return 'info';
+  }
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+function getFieldDescription(fieldValue: string): string {
+  const descriptions: Record<string, string> = {
+    'FirstName': t('people.import.firstNameDesc'),
+    'LastName': t('people.import.lastNameDesc'),
+    'BahaiId': t('people.import.bahaiIdDesc'),
+    'IneligibleReasonDescription': t('people.import.eligibilityDesc'),
+    'Area': t('people.import.areaDesc'),
+    'Email': t('people.import.emailDesc'),
+    'Phone': t('people.import.phoneDesc'),
+    'OtherNames': t('people.import.otherNamesDesc'),
+    'OtherLastNames': t('people.import.otherLastNamesDesc'),
+    'OtherInfo': t('people.import.otherInfoDesc')
+  };
+  return descriptions[fieldValue] || '';
+}
+
+function getFieldLabel(fieldValue: string): string {
+  const field = PEOPLE_TARGET_FIELDS.find(f => f.value === fieldValue);
+  return field ? field.label : fieldValue;
+}
+
+function formatTime(seconds: number): string {
+  if (seconds < 60) {
+    return `${seconds}s`;
+  }
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds}s`;
+}
+
+async function executeImport() {
+  if (!selectedFile.value) return;
+
+  try {
+    await importStore.executeImport(electionGuid);
+  } catch (error) {
+    console.error('Import failed:', error);
+  }
+}
+
+async function confirmDeleteAllPeople() {
+  try {
+    await ElMessageBox.confirm(
+      t('people.import.confirmDeleteAllPeople'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.delete'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    );
+
+    await importStore.deleteAllPeople(electionGuid);
+    showDeleteAllConfirm.value = false;
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || t('people.import.deleteAllPeopleError'));
+    }
+  }
+}
+</script>
+
 <template>
   <div class="people-import-page">
     <el-card>
@@ -345,263 +602,6 @@
     </el-dialog>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { UploadFilled, Check, Warning, InfoFilled, Clock } from '@element-plus/icons-vue';
-import type { UploadFile } from 'element-plus';
-import { usePeopleImportStore } from '../../stores/peopleImportStore';
-import type { ImportFileInfo, ColumnMapping } from '../../types';
-import { PEOPLE_TARGET_FIELDS } from '../../types';
-
-const router = useRouter();
-const route = useRoute();
-const { t } = useI18n();
-const importStore = usePeopleImportStore();
-
-const electionGuid = route.params.id as string;
-const currentStep = ref(0);
-const uploading = ref(false);
-const reparsing = ref<number | null>(null);
-const savingMapping = ref(false);
-
-const files = computed(() => importStore.files);
-const selectedFile = computed(() => importStore.selectedFile);
-const parsedResult = computed(() => importStore.parsedResult);
-const columnMappings = computed(() => importStore.columnMappings);
-const importResult = computed(() => importStore.importResult);
-const importProgress = computed(() => importStore.importProgress);
-const showDeleteAllConfirm = ref(false);
-
-const availableTargetFields = computed(() => [
-  { value: null, label: t('people.import.ignore') },
-  ...PEOPLE_TARGET_FIELDS
-]);
-
-const previewRows = computed(() => {
-  if (!parsedResult.value?.previewRows) return [];
-  return parsedResult.value.previewRows.slice(0, 5); // Show first 5 preview rows
-});
-
-const canProceedToNext = computed(() => {
-  if (currentStep.value === 0) {
-    return selectedFile.value !== null;
-  }
-  if (currentStep.value === 1) {
-    // Check if required fields are mapped
-    const mappings = columnMappings.value;
-    const firstNameMapped = mappings.some(m => m.targetField === 'FirstName');
-    const lastNameMapped = mappings.some(m => m.targetField === 'LastName');
-    return firstNameMapped && lastNameMapped;
-  }
-  return true;
-});
-
-const isMappingValid = computed(() => {
-  const mappings = columnMappings.value;
-  const firstNameMapped = mappings.some(m => m.targetField === 'FirstName');
-  const lastNameMapped = mappings.some(m => m.targetField === 'LastName');
-  return firstNameMapped && lastNameMapped;
-});
-
-const canDeleteAllPeople = computed(() => {
-  // This would need to be implemented in the store to check if ballots exist
-  // For now, we'll assume it's always enabled (backend will handle the guards)
-  return true;
-});
-
-onMounted(async () => {
-  await importStore.initializeSignalR();
-  await importStore.joinImportSession(electionGuid);
-  await importStore.loadFiles(electionGuid);
-  await importStore.loadPeopleCount(electionGuid);
-});
-
-onBeforeUnmount(async () => {
-  await importStore.leaveImportSession(electionGuid);
-});
-
-function goBack() {
-  router.push(`/elections/${electionGuid}/people`);
-}
-
-async function handleFileChange(file: UploadFile) {
-  if (file.raw) {
-    uploading.value = true;
-    try {
-      await importStore.uploadFile(electionGuid, file.raw);
-      await importStore.loadFiles(electionGuid); // Refresh the files list
-    } catch (error) {
-      console.error('Upload failed:', error);
-    } finally {
-      uploading.value = false;
-    }
-  }
-}
-
-function handleUploadSuccess() {
-  // Handled by handleFileChange
-}
-
-function handleUploadError() {
-  uploading.value = false;
-  ElMessage.error(t('people.import.uploadError'));
-}
-
-async function selectFile(file: ImportFileInfo) {
-  await importStore.selectFile(file);
-  await importStore.parseFile(electionGuid);
-}
-
-async function reparseFile(file: ImportFileInfo) {
-  reparsing.value = file.rowId;
-  try {
-    await importStore.selectFile(file);
-    await importStore.parseFile(electionGuid, file.codePage || undefined, file.firstDataRow || undefined);
-  } catch (error) {
-    console.error('Reparse failed:', error);
-  } finally {
-    reparsing.value = null;
-  }
-}
-
-async function updateFileSettings(file: ImportFileInfo) {
-  try {
-    await importStore.updateSettings(electionGuid, {
-      firstDataRow: file.firstDataRow,
-      codePage: file.codePage
-    });
-  } catch (error) {
-    console.error('Update settings failed:', error);
-  }
-}
-
-async function deleteFile(file: ImportFileInfo) {
-  try {
-    await ElMessageBox.confirm(
-      t('people.import.confirmDeleteFile'),
-      t('common.warning'),
-      {
-        confirmButtonText: t('common.delete'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
-    );
-
-    await importStore.deleteFile(electionGuid, file.rowId);
-  } catch (error: any) {
-    if (error !== 'cancel') {
-      ElMessage.error(error.message || t('people.import.deleteFileError'));
-    }
-  }
-}
-
-function updateMapping() {
-  // Update the store's columnMappings
-  importStore.columnMappings.splice(0, importStore.columnMappings.length, ...columnMappings.value);
-}
-
-async function saveMapping() {
-  savingMapping.value = true;
-  try {
-    await importStore.saveMapping(electionGuid);
-    ElMessage.success(t('people.import.mappingSaved'));
-  } catch (error) {
-    console.error('Save mapping failed:', error);
-  } finally {
-    savingMapping.value = false;
-  }
-}
-
-async function handleNext() {
-  if (currentStep.value === 0 && selectedFile.value) {
-    // Ensure file is parsed when moving to step 2
-    await importStore.parseFile(electionGuid);
-  }
-  currentStep.value++;
-}
-
-function getStatusType(status: string | null): string {
-  switch (status) {
-    case 'Imported': return 'success';
-    case 'Processing': return 'warning';
-    case 'Failed': return 'danger';
-    default: return 'info';
-  }
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-}
-
-function getFieldDescription(fieldValue: string): string {
-  const descriptions: Record<string, string> = {
-    'FirstName': t('people.import.firstNameDesc'),
-    'LastName': t('people.import.lastNameDesc'),
-    'BahaiId': t('people.import.bahaiIdDesc'),
-    'IneligibleReasonDescription': t('people.import.eligibilityDesc'),
-    'Area': t('people.import.areaDesc'),
-    'Email': t('people.import.emailDesc'),
-    'Phone': t('people.import.phoneDesc'),
-    'OtherNames': t('people.import.otherNamesDesc'),
-    'OtherLastNames': t('people.import.otherLastNamesDesc'),
-    'OtherInfo': t('people.import.otherInfoDesc')
-  };
-  return descriptions[fieldValue] || '';
-}
-
-function getFieldLabel(fieldValue: string): string {
-  const field = PEOPLE_TARGET_FIELDS.find(f => f.value === fieldValue);
-  return field ? field.label : fieldValue;
-}
-
-function formatTime(seconds: number): string {
-  if (seconds < 60) {
-    return `${seconds}s`;
-  }
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}m ${remainingSeconds}s`;
-}
-
-async function executeImport() {
-  if (!selectedFile.value) return;
-
-  try {
-    await importStore.executeImport(electionGuid);
-  } catch (error) {
-    console.error('Import failed:', error);
-  }
-}
-
-async function confirmDeleteAllPeople() {
-  try {
-    await ElMessageBox.confirm(
-      t('people.import.confirmDeleteAllPeople'),
-      t('common.warning'),
-      {
-        confirmButtonText: t('common.delete'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
-    );
-
-    await importStore.deleteAllPeople(electionGuid);
-    showDeleteAllConfirm.value = false;
-  } catch (error: any) {
-    if (error !== 'cancel') {
-      ElMessage.error(error.message || t('people.import.deleteAllPeopleError'));
-    }
-  }
-}
-</script>
 
 <style lang="less">
 .people-import-page {
