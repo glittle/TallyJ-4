@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Backend.DTOs.People;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Mappings;
 
@@ -17,7 +18,8 @@ public class PersonProfile : Profile
     public PersonProfile()
     {
         CreateMap<Person, PersonDto>()
-            .ForMember(dest => dest.VoteCount, opt => opt.Ignore());
+            .ForMember(dest => dest.VoteCount, opt => opt.Ignore())
+            .ForMember(dest => dest.IneligibleReasonCode, opt => opt.MapFrom(src => GetIneligibleReasonCode(src.IneligibleReasonGuid)));
 
         CreateMap<CreatePersonDto, Person>()
             .ForMember(dest => dest.PersonGuid, opt => opt.Ignore())
@@ -41,7 +43,9 @@ public class PersonProfile : Profile
             .ForMember(dest => dest.KioskCode, opt => opt.Ignore())
             .ForMember(dest => dest.Election, opt => opt.Ignore())
             .ForMember(dest => dest.Results, opt => opt.Ignore())
-            .ForMember(dest => dest.Votes, opt => opt.Ignore());
+            .ForMember(dest => dest.Votes, opt => opt.Ignore())
+            .ForMember(dest => dest.CanVote, opt => opt.Ignore())
+            .ForMember(dest => dest.CanReceiveVotes, opt => opt.Ignore());
 
         CreateMap<UpdatePersonDto, Person>()
             .ForMember(dest => dest.PersonGuid, opt => opt.Ignore())
@@ -66,7 +70,14 @@ public class PersonProfile : Profile
             .ForMember(dest => dest.KioskCode, opt => opt.Ignore())
             .ForMember(dest => dest.Election, opt => opt.Ignore())
             .ForMember(dest => dest.Results, opt => opt.Ignore())
-            .ForMember(dest => dest.Votes, opt => opt.Ignore());
+            .ForMember(dest => dest.Votes, opt => opt.Ignore())
+            .ForMember(dest => dest.CanVote, opt => opt.Ignore())
+            .ForMember(dest => dest.CanReceiveVotes, opt => opt.Ignore());
+    }
+
+    private static string? GetIneligibleReasonCode(Guid? guid)
+    {
+        return guid.HasValue ? IneligibleReasonEnum.GetByGuid(guid.Value)?.Code : null;
     }
 }
 

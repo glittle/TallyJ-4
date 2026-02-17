@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Backend.DTOs.People;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Validators;
 
@@ -65,6 +66,12 @@ public class CreatePersonDtoValidator : AbstractValidator<CreatePersonDto>
         RuleFor(x => x.AgeGroup)
             .MaximumLength(2)
             .WithMessage("Age group cannot exceed 2 characters");
+
+        RuleFor(x => x.IneligibleReasonGuid)
+            .Must(guid => guid == null || IneligibleReasonEnum.GetByGuid(guid) != null)
+            .WithMessage("Invalid ineligibility reason GUID")
+            .Must(guid => guid == null || !IneligibleReasonEnum.GetByGuid(guid)?.InternalOnly == true)
+            .WithMessage("Internal ineligibility reasons cannot be used for person creation");
     }
 }
 

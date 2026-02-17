@@ -3,6 +3,7 @@ using Moq;
 using Backend.Domain.Entities;
 using Backend.DTOs.People;
 using Backend.Services;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Tests.UnitTests.Services;
 
@@ -221,6 +222,153 @@ public class PeopleServiceTests : ServiceTestBase
 
         Assert.NotNull(result);
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task CreatePersonAsync_WithNullIneligibleReasonGuid_SetsFullEligibility()
+    {
+        var electionGuid = Guid.NewGuid();
+        var createDto = new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "John",
+            IneligibleReasonGuid = null
+        };
+
+        var result = await _service.CreatePersonAsync(createDto);
+
+        Assert.NotNull(result);
+        Assert.True(result.CanVote);
+        Assert.True(result.CanReceiveVotes);
+        Assert.Null(result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task CreatePersonAsync_WithX01Guid_SetsNoEligibility()
+    {
+        var electionGuid = Guid.NewGuid();
+        var createDto = new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "John",
+            IneligibleReasonGuid = IneligibleReasonEnum.X01_Deceased.ReasonGuid
+        };
+
+        var result = await _service.CreatePersonAsync(createDto);
+
+        Assert.NotNull(result);
+        Assert.False(result.CanVote);
+        Assert.False(result.CanReceiveVotes);
+        Assert.Equal("X01", result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task CreatePersonAsync_WithV01Guid_SetsVoteOnlyEligibility()
+    {
+        var electionGuid = Guid.NewGuid();
+        var createDto = new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "John",
+            IneligibleReasonGuid = IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid
+        };
+
+        var result = await _service.CreatePersonAsync(createDto);
+
+        Assert.NotNull(result);
+        Assert.True(result.CanVote);
+        Assert.False(result.CanReceiveVotes);
+        Assert.Equal("V01", result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task CreatePersonAsync_WithR01Guid_SetsReceiveOnlyEligibility()
+    {
+        var electionGuid = Guid.NewGuid();
+        var createDto = new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "John",
+            IneligibleReasonGuid = IneligibleReasonEnum.R01_NotADelegateInThisElection.ReasonGuid
+        };
+
+        var result = await _service.CreatePersonAsync(createDto);
+
+        Assert.NotNull(result);
+        Assert.False(result.CanVote);
+        Assert.True(result.CanReceiveVotes);
+        Assert.Equal("R01", result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_ChangingIneligibleReasonGuid_UpdatesEligibility()
+    {
+        var electionGuid = Guid.NewGuid();
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "John",
+            FullName = "Smith, John",
+            FullNameFl = "John Smith",
+            CanVote = true,
+            CanReceiveVotes = true,
+            RowVersion = new byte[8]
+        };
+
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var updateDto = new UpdatePersonDto
+        {
+            IneligibleReasonGuid = IneligibleReasonEnum.X01_Deceased.ReasonGuid
+        };
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, updateDto);
+
+        Assert.NotNull(result);
+        Assert.False(result.CanVote);
+        Assert.False(result.CanReceiveVotes);
+        Assert.Equal("X01", result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_ClearingIneligibleReasonGuid_RestoresFullEligibility()
+    {
+        var electionGuid = Guid.NewGuid();
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "John",
+            FullName = "Smith, John",
+            FullNameFl = "John Smith",
+            CanVote = false,
+            CanReceiveVotes = false,
+            IneligibleReasonGuid = IneligibleReasonEnum.X01_Deceased.ReasonGuid,
+            RowVersion = new byte[8]
+        };
+
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var updateDto = new UpdatePersonDto
+        {
+            IneligibleReasonGuid = null
+        };
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, updateDto);
+
+        Assert.NotNull(result);
+        Assert.True(result.CanVote);
+        Assert.True(result.CanReceiveVotes);
+        Assert.Null(result.IneligibleReasonCode);
     }
 }
 

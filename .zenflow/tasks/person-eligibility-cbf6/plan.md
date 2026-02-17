@@ -64,7 +64,8 @@ Create the `IneligibleReasonEnum` static class, the `EligibilityReasonDto`, and 
 
 **Verification:** `dotnet test --filter "IneligibleReasonEnumTests"` passes. `dotnet build` succeeds.
 
-### [ ] Step 2: Backend Eligibility Enforcement in PeopleService
+### [x] Step 2: Backend Eligibility Enforcement in PeopleService
+<!-- chat-id: 4943cf1d-aa97-435c-98aa-cacf902f899d -->
 
 Update `PeopleService`, DTOs, validators, and AutoMapper profile so that `CanVote`/`CanReceiveVotes` are server-computed from `IneligibleReasonGuid`. Include unit tests.
 

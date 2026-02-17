@@ -50,15 +50,7 @@ public class UpdatePersonDto
     /// </summary>
     public string? Phone { get; set; }
 
-    /// <summary>
-    /// Whether the person can receive votes (be a candidate).
-    /// </summary>
-    public bool? CanReceiveVotes { get; set; }
 
-    /// <summary>
-    /// Whether the person can vote.
-    /// </summary>
-    public bool? CanVote { get; set; }
 
     /// <summary>
     /// The person's age group.
