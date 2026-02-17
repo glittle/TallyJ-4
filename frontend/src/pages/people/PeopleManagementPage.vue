@@ -8,43 +8,48 @@
           </div>
           <div class="header-actions">
             <el-space>
-              <el-input
-                v-model="searchQuery"
-                :placeholder="$t('people.search')"
-                style="width: 250px;"
-                clearable
-                @input="handleSearch"
-              >
+              <el-input v-model="searchQuery" :placeholder="$t('people.search')" style="width: 250px;" clearable
+                @input="handleSearch">
                 <template #prefix>
-                  <el-icon><Search /></el-icon>
+                  <el-icon>
+                    <Search />
+                  </el-icon>
                 </template>
               </el-input>
               <el-button type="primary" @click="showAddDialog = true">
-                <el-icon><Plus /></el-icon>
+                <el-icon>
+                  <Plus />
+                </el-icon>
                 {{ $t('people.addPerson') }}
               </el-button>
               <el-dropdown @command="handleBulkAction">
                 <el-button type="default">
-                  <el-icon><MoreFilled /></el-icon>
+                  <el-icon>
+                    <MoreFilled />
+                  </el-icon>
                   {{ $t('people.bulkActions') }}
-                  <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+                  <el-icon class="el-icon--right">
+                    <ArrowDown />
+                  </el-icon>
                 </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item command="import">
-                      <el-icon><Upload /></el-icon>
+                      <el-icon>
+                        <Upload />
+                      </el-icon>
                       {{ $t('people.importPeople') }}
                     </el-dropdown-item>
                     <el-dropdown-item command="export">
-                      <el-icon><Download /></el-icon>
+                      <el-icon>
+                        <Download />
+                      </el-icon>
                       {{ $t('people.exportPeople') }}
                     </el-dropdown-item>
-                    <el-dropdown-item
-                      command="delete"
-                      :disabled="selectedPeople.length === 0"
-                      class="danger-item"
-                    >
-                      <el-icon><Delete /></el-icon>
+                    <el-dropdown-item command="delete" :disabled="selectedPeople.length === 0" class="danger-item">
+                      <el-icon>
+                        <Delete />
+                      </el-icon>
                       {{ $t('people.deleteSelected', { count: selectedPeople.length }) }}
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -57,61 +62,27 @@
 
       <el-tabs v-model="activeTab" @tab-change="handleTabChange">
         <el-tab-pane :label="$t('people.allPeople')" name="all">
-          <PeopleTable
-            :people="filteredPeople"
-            :loading="loading"
-            :show-selection="true"
-            :selected="selectedPeople"
-            @edit="handleEdit"
-            @delete="handleDelete"
-            @selection-change="handleSelectionChange"
-          />
+          <PeopleTable :people="filteredPeople" :loading="loading" :show-selection="true" :selected="selectedPeople"
+            @edit="handleEdit" @delete="handleDelete" @selection-change="handleSelectionChange" />
         </el-tab-pane>
         <el-tab-pane :label="$t('people.voters')" name="voters">
-          <PeopleTable
-            :people="filteredVoters"
-            :loading="loading"
-            :show-selection="true"
-            :selected="selectedPeople"
-            @edit="handleEdit"
-            @delete="handleDelete"
-            @selection-change="handleSelectionChange"
-          />
+          <PeopleTable :people="filteredVoters" :loading="loading" :show-selection="true" :selected="selectedPeople"
+            @edit="handleEdit" @delete="handleDelete" @selection-change="handleSelectionChange" />
         </el-tab-pane>
         <el-tab-pane :label="$t('people.candidates')" name="candidates">
-          <PeopleTable
-            :people="filteredCandidates"
-            :loading="loading"
-            :show-selection="true"
-            :selected="selectedPeople"
-            @edit="handleEdit"
-            @delete="handleDelete"
-            @selection-change="handleSelectionChange"
-          />
+          <PeopleTable :people="filteredCandidates" :loading="loading" :show-selection="true" :selected="selectedPeople"
+            @edit="handleEdit" @delete="handleDelete" @selection-change="handleSelectionChange" />
         </el-tab-pane>
       </el-tabs>
     </el-card>
 
-    <PersonFormDialog
-      v-model="showAddDialog"
-      :election-guid="electionGuid"
-      @success="handleFormSuccess"
-    />
+    <PersonFormDialog v-model="showAddDialog" :election-guid="electionGuid" @success="handleFormSuccess" />
 
-    <PersonFormDialog
-      v-model="showEditDialog"
-      :election-guid="electionGuid"
-      :person="editingPerson"
-      :is-edit="true"
-      @success="handleFormSuccess"
-    />
+    <PersonFormDialog v-model="showEditDialog" :election-guid="electionGuid" :person="editingPerson" :is-edit="true"
+      @success="handleFormSuccess" />
 
     <!-- Import Dialog -->
-    <el-dialog
-      v-model="showImportDialog"
-      :title="$t('people.importPeople')"
-      width="600px"
-    >
+    <el-dialog v-model="showImportDialog" :title="$t('people.importPeople')" width="600px">
       <div class="import-instructions">
         <h4>{{ $t('people.importInstructions') }}</h4>
         <ul>
@@ -119,27 +90,15 @@
           <li>{{ $t('people.importRequiredFields') }}</li>
           <li>{{ $t('people.importOptionalFields') }}</li>
         </ul>
-        <el-alert
-          :title="$t('people.importWarning')"
-          type="warning"
-          :closable="false"
-          style="margin-top: 15px;"
-        />
+        <el-alert :title="$t('people.importWarning')" type="warning" :closable="false" style="margin-top: 15px;" />
       </div>
 
-      <el-upload
-        ref="uploadRef"
-        :action="`${apiBaseUrl}/elections/${electionGuid}/people/import`"
-        :headers="uploadHeaders"
-        :file-list="fileList"
-        :on-success="handleImportSuccess"
-        :on-error="handleImportError"
-        :before-upload="beforeUpload"
-        accept=".csv,.xlsx,.xls"
-        :limit="1"
-        drag
-      >
-        <el-icon class="el-icon--upload"><Upload /></el-icon>
+      <el-upload ref="uploadRef" :action="`${apiBaseUrl}/elections/${electionGuid}/people/import`"
+        :headers="uploadHeaders" :file-list="fileList" :on-success="handleImportSuccess" :on-error="handleImportError"
+        :before-upload="beforeUpload" accept=".csv,.xlsx,.xls" :limit="1" drag>
+        <el-icon class="el-icon--upload">
+          <Upload />
+        </el-icon>
         <div class="el-upload__text">
           {{ $t('people.dropFileHere') }}
         </div>
@@ -156,11 +115,7 @@
     </el-dialog>
 
     <!-- Bulk Delete Confirmation -->
-    <el-dialog
-      v-model="showBulkDeleteConfirm"
-      :title="$t('people.confirmBulkDelete')"
-      width="500px"
-    >
+    <el-dialog v-model="showBulkDeleteConfirm" :title="$t('people.confirmBulkDelete')" width="500px">
       <p>{{ $t('people.bulkDeleteMessage', { count: selectedPeople.length }) }}</p>
       <p class="warning-text">{{ $t('common.actionIrreversible') }}</p>
 
@@ -231,7 +186,9 @@ const voters = computed(() => peopleStore.voters);
 const candidates = computed(() => peopleStore.candidates);
 
 const filteredPeople = computed(() => {
-  if (!searchQuery.value) return allPeople.value;
+  if (!searchQuery.value) {
+    return allPeople.value;
+  }
   const query = searchQuery.value.toLowerCase();
   return allPeople.value.filter(p =>
     p.fullName.toLowerCase().includes(query) ||
@@ -356,7 +313,7 @@ async function handleExport() {
     xhr.withCredentials = true; // Send httpOnly cookies automatically
     xhr.responseType = 'blob';
 
-    xhr.onload = function() {
+    xhr.onload = function () {
       if (xhr.status === 200) {
         const blob = new Blob([xhr.response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const url = window.URL.createObjectURL(blob);
@@ -371,7 +328,7 @@ async function handleExport() {
       }
     };
 
-    xhr.onerror = function() {
+    xhr.onerror = function () {
       ElMessage.error(t('people.exportError'));
     };
 

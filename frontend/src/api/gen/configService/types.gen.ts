@@ -321,6 +321,29 @@ export type ApiResponseListElectionCardDto = {
  * Generic API response wrapper that standardizes the format of all API responses.
  * Provides consistent success/error handling with optional data and error messages.
  */
+export type ApiResponseListEligibilityReasonDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
+    data?: Array<EligibilityReasonDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type ApiResponseListFrontDeskVoterDto = {
     /**
      * Indicates whether the API operation was successful.
@@ -1454,14 +1477,6 @@ export type CreatePersonDto = {
      */
     phone?: string | null;
     /**
-     * Whether the person can receive votes (be a candidate).
-     */
-    canReceiveVotes?: boolean | null;
-    /**
-     * Whether the person can vote.
-     */
-    canVote?: boolean | null;
-    /**
      * The person's age group.
      */
     ageGroup?: string | null;
@@ -2123,6 +2138,36 @@ export const ElectionTypeCode = {
 } as const;
 
 export type ElectionTypeCode = typeof ElectionTypeCode[keyof typeof ElectionTypeCode];
+
+/**
+ * Data transfer object representing an eligibility reason.
+ */
+export type EligibilityReasonDto = {
+    /**
+     * The unique GUID identifier for this reason.
+     */
+    reasonGuid?: string;
+    /**
+     * The short code identifier (e.g., "X01", "V01").
+     */
+    code?: string | null;
+    /**
+     * The human-readable description of the reason.
+     */
+    description?: string | null;
+    /**
+     * Whether a person with this reason can vote.
+     */
+    canVote?: boolean;
+    /**
+     * Whether a person with this reason can receive votes (be a candidate).
+     */
+    canReceiveVotes?: boolean;
+    /**
+     * Whether this reason is for internal use only (not for person forms).
+     */
+    internalOnly?: boolean;
+};
 
 export type Enable2FaRequest = {
     code: string;
@@ -2949,6 +2994,10 @@ export type PersonDto = {
      * The GUID of the reason why the person is ineligible (if applicable).
      */
     ineligibleReasonGuid?: string | null;
+    /**
+     * The code of the reason why the person is ineligible (if applicable).
+     */
+    ineligibleReasonCode?: string | null;
     /**
      * The number of votes this person has received.
      */
@@ -4138,14 +4187,6 @@ export type UpdatePersonDto = {
      * The person's phone number.
      */
     phone?: string | null;
-    /**
-     * Whether the person can receive votes (be a candidate).
-     */
-    canReceiveVotes?: boolean | null;
-    /**
-     * Whether the person can vote.
-     */
-    canVote?: boolean | null;
     /**
      * The person's age group.
      */
@@ -5758,6 +5799,22 @@ export type DeleteApiElectionsByGuidDeleteElectionResponses = {
      */
     200: unknown;
 };
+
+export type GetApiEligibilityEligibilityReasonsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Eligibility/eligibility-reasons';
+};
+
+export type GetApiEligibilityEligibilityReasonsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListEligibilityReasonDto;
+};
+
+export type GetApiEligibilityEligibilityReasonsResponse = GetApiEligibilityEligibilityReasonsResponses[keyof GetApiEligibilityEligibilityReasonsResponses];
 
 export type GetApiByElectionGuidFrontdeskEligibleVotersData = {
     body?: never;

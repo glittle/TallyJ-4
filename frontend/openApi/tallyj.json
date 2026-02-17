@@ -2092,6 +2092,36 @@
         }
       }
     },
+    "/api/Eligibility/eligibility-reasons": {
+      "get": {
+        "tags": [
+          "Eligibility"
+        ],
+        "summary": "Gets all eligibility reasons.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListEligibilityReasonDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListEligibilityReasonDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListEligibilityReasonDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/{electionGuid}/frontdesk/eligibleVoters": {
       "get": {
         "tags": [
@@ -5527,6 +5557,38 @@
         "additionalProperties": false,
         "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
+      "ApiResponseListEligibilityReasonDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EligibilityReasonDto"
+            },
+            "description": "The data returned by the API operation, if successful.",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "description": "An optional message providing additional information about the response.",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of error messages, if the operation failed.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
+      },
       "ApiResponseListFrontDeskVoterDto": {
         "type": "object",
         "properties": {
@@ -7034,16 +7096,6 @@
             "description": "The person's phone number.",
             "nullable": true
           },
-          "canReceiveVotes": {
-            "type": "boolean",
-            "description": "Whether the person can receive votes (be a candidate).",
-            "nullable": true
-          },
-          "canVote": {
-            "type": "boolean",
-            "description": "Whether the person can vote.",
-            "nullable": true
-          },
           "ageGroup": {
             "type": "string",
             "description": "The person's age group.",
@@ -7944,6 +7996,40 @@
           "Oth"
         ],
         "type": "string"
+      },
+      "EligibilityReasonDto": {
+        "type": "object",
+        "properties": {
+          "reasonGuid": {
+            "type": "string",
+            "description": "The unique GUID identifier for this reason.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "The short code identifier (e.g., \"X01\", \"V01\").",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "The human-readable description of the reason.",
+            "nullable": true
+          },
+          "canVote": {
+            "type": "boolean",
+            "description": "Whether a person with this reason can vote."
+          },
+          "canReceiveVotes": {
+            "type": "boolean",
+            "description": "Whether a person with this reason can receive votes (be a candidate)."
+          },
+          "internalOnly": {
+            "type": "boolean",
+            "description": "Whether this reason is for internal use only (not for person forms)."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object representing an eligibility reason."
       },
       "Enable2FARequest": {
         "required": [
@@ -9061,6 +9147,11 @@
             "type": "string",
             "description": "The GUID of the reason why the person is ineligible (if applicable).",
             "format": "uuid",
+            "nullable": true
+          },
+          "ineligibleReasonCode": {
+            "type": "string",
+            "description": "The code of the reason why the person is ineligible (if applicable).",
             "nullable": true
           },
           "voteCount": {
@@ -10668,16 +10759,6 @@
           "phone": {
             "type": "string",
             "description": "The person's phone number.",
-            "nullable": true
-          },
-          "canReceiveVotes": {
-            "type": "boolean",
-            "description": "Whether the person can receive votes (be a candidate).",
-            "nullable": true
-          },
-          "canVote": {
-            "type": "boolean",
-            "description": "Whether the person can vote.",
             "nullable": true
           },
           "ageGroup": {

@@ -86,6 +86,11 @@ public class PersonDto
     public Guid? IneligibleReasonGuid { get; set; }
 
     /// <summary>
+    /// The code of the reason why the person is ineligible (if applicable).
+    /// </summary>
+    public string? IneligibleReasonCode { get; set; }
+
+    /// <summary>
     /// The number of votes this person has received.
     /// </summary>
     public int VoteCount { get; set; }

@@ -15,6 +15,7 @@ export interface PersonDto {
   combinedSoundCodes?: string;
   ageGroup?: string;
   ineligibleReasonGuid?: string;
+  ineligibleReasonCode?: string;
   voteCount: number;
 }
 
@@ -29,8 +30,6 @@ export interface CreatePersonDto {
   lastName: string;
   email?: string;
   phone?: string;
-  canReceiveVotes?: boolean;
-  canVote?: boolean;
   area?: string;
   bahaiId?: string;
   otherLastNames?: string;
@@ -45,8 +44,6 @@ export interface UpdatePersonDto {
   lastName?: string;
   email?: string;
   phone?: string;
-  canReceiveVotes?: boolean;
-  canVote?: boolean;
   area?: string;
   bahaiId?: string;
   otherLastNames?: string;

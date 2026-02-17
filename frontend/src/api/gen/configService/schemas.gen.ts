@@ -461,6 +461,40 @@ export const ApiResponseListElectionCardDtoSchema = {
 Provides consistent success/error handling with optional data and error messages.`
 } as const;
 
+export const ApiResponseListEligibilityReasonDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
+        },
+        data: {
+            type: 'array',
+            items: {
+                '$ref': '#/components/schemas/EligibilityReasonDto'
+            },
+            description: 'The data returned by the API operation, if successful.',
+            nullable: true
+        },
+        message: {
+            type: 'string',
+            description: 'An optional message providing additional information about the response.',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'A list of error messages, if the operation failed.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: `Generic API response wrapper that standardizes the format of all API responses.
+Provides consistent success/error handling with optional data and error messages.`
+} as const;
+
 export const ApiResponseListFrontDeskVoterDtoSchema = {
     type: 'object',
     properties: {
@@ -2024,16 +2058,6 @@ export const CreatePersonDtoSchema = {
             description: "The person's phone number.",
             nullable: true
         },
-        canReceiveVotes: {
-            type: 'boolean',
-            description: 'Whether the person can receive votes (be a candidate).',
-            nullable: true
-        },
-        canVote: {
-            type: 'boolean',
-            description: 'Whether the person can vote.',
-            nullable: true
-        },
         ageGroup: {
             type: 'string',
             description: "The person's age group.",
@@ -2944,6 +2968,41 @@ export const ElectionSummaryDtoSchema = {
 export const ElectionTypeCodeSchema = {
     enum: ['LSA', 'LSA1', 'LSA2', 'NSA', 'Con', 'Reg', 'Oth'],
     type: 'string'
+} as const;
+
+export const EligibilityReasonDtoSchema = {
+    type: 'object',
+    properties: {
+        reasonGuid: {
+            type: 'string',
+            description: 'The unique GUID identifier for this reason.',
+            format: 'uuid'
+        },
+        code: {
+            type: 'string',
+            description: 'The short code identifier (e.g., "X01", "V01").',
+            nullable: true
+        },
+        description: {
+            type: 'string',
+            description: 'The human-readable description of the reason.',
+            nullable: true
+        },
+        canVote: {
+            type: 'boolean',
+            description: 'Whether a person with this reason can vote.'
+        },
+        canReceiveVotes: {
+            type: 'boolean',
+            description: 'Whether a person with this reason can receive votes (be a candidate).'
+        },
+        internalOnly: {
+            type: 'boolean',
+            description: 'Whether this reason is for internal use only (not for person forms).'
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object representing an eligibility reason.'
 } as const;
 
 export const Enable2FARequestSchema = {
@@ -4091,6 +4150,11 @@ export const PersonDtoSchema = {
             type: 'string',
             description: 'The GUID of the reason why the person is ineligible (if applicable).',
             format: 'uuid',
+            nullable: true
+        },
+        ineligibleReasonCode: {
+            type: 'string',
+            description: 'The code of the reason why the person is ineligible (if applicable).',
             nullable: true
         },
         voteCount: {
@@ -5732,16 +5796,6 @@ export const UpdatePersonDtoSchema = {
         phone: {
             type: 'string',
             description: "The person's phone number.",
-            nullable: true
-        },
-        canReceiveVotes: {
-            type: 'boolean',
-            description: 'Whether the person can receive votes (be a candidate).',
-            nullable: true
-        },
-        canVote: {
-            type: 'boolean',
-            description: 'Whether the person can vote.',
             nullable: true
         },
         ageGroup: {

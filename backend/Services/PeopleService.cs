@@ -4,6 +4,7 @@ using Backend.DTOs.People;
 using Backend.DTOs.SignalR;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 using Backend.Models;
 
 namespace Backend.Services;
@@ -156,6 +157,9 @@ public class PeopleService : IPeopleService
             ? person.LastName
             : $"{person.FirstName} {person.LastName}";
 
+        // Sync eligibility based on IneligibleReasonGuid
+        SyncEligibility(person);
+
         _context.People.Add(person);
         await _context.SaveChangesAsync();
 
@@ -225,6 +229,9 @@ public class PeopleService : IPeopleService
         person.FullNameFl = string.IsNullOrWhiteSpace(person.FirstName)
             ? person.LastName
             : $"{person.FirstName} {person.LastName}";
+
+        // Sync eligibility based on IneligibleReasonGuid
+        SyncEligibility(person);
 
         await _context.SaveChangesAsync();
 
@@ -330,6 +337,37 @@ public class PeopleService : IPeopleService
             dto.VoteCount = p.Results.FirstOrDefault()?.VoteCount ?? 0;
             return dto;
         }).ToList();
+    }
+
+    /// <summary>
+    /// Synchronizes the CanVote and CanReceiveVotes properties based on the IneligibleReasonGuid.
+    /// </summary>
+    /// <param name="person">The person entity to update.</param>
+    private void SyncEligibility(Person person)
+    {
+        if (person.IneligibleReasonGuid.HasValue)
+        {
+            var reason = IneligibleReasonEnum.GetByGuid(person.IneligibleReasonGuid.Value);
+            if (reason != null)
+            {
+                person.CanVote = reason.CanVote;
+                person.CanReceiveVotes = reason.CanReceiveVotes;
+            }
+            else
+            {
+                // Unknown GUID - set to ineligible for both
+                person.CanVote = false;
+                person.CanReceiveVotes = false;
+                _logger.LogWarning("Unknown IneligibleReasonGuid {Guid} for person {PersonGuid}, setting CanVote=false, CanReceiveVotes=false",
+                    person.IneligibleReasonGuid, person.PersonGuid);
+            }
+        }
+        else
+        {
+            // No ineligibility reason - fully eligible
+            person.CanVote = true;
+            person.CanReceiveVotes = true;
+        }
     }
 }
 

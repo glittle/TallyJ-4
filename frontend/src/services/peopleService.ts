@@ -1,14 +1,26 @@
-import { getApiPeopleByElectionGuidGetPeople, getApiPeopleByGuidGetPerson, postApiPeopleCreatePerson, putApiPeopleByGuidUpdatePerson, deleteApiPeopleByGuidDeletePerson, getApiPeopleByElectionGuidSearchPeople, getApiPeopleByElectionGuidGetCandidates } from '../api/gen/configService/sdk.gen';
-import type { PersonDto, CreatePersonDto, UpdatePersonDto } from '../types';
+import {
+  getApiPeopleByElectionGuidGetPeople,
+  getApiPeopleByGuidGetPerson,
+  postApiPeopleCreatePerson,
+  putApiPeopleByGuidUpdatePerson,
+  deleteApiPeopleByGuidDeletePerson,
+  getApiPeopleByElectionGuidSearchPeople,
+  getApiPeopleByElectionGuidGetCandidates,
+} from "../api/gen/configService/sdk.gen";
+import type { PersonDto, CreatePersonDto, UpdatePersonDto } from "../types";
 
 export const peopleService = {
   async getAll(electionGuid: string): Promise<PersonDto[]> {
-    const response = await getApiPeopleByElectionGuidGetPeople({ path: { electionGuid } });
-    return (response.data?.data?.items ?? []) as PersonDto[];
+    const response = await getApiPeopleByElectionGuidGetPeople({
+      path: { electionGuid },
+    });
+    return (response.data?.items ?? []) as PersonDto[];
   },
 
   async getById(personGuid: string): Promise<PersonDto> {
-    const response = await getApiPeopleByGuidGetPerson({ path: { guid: personGuid } });
+    const response = await getApiPeopleByGuidGetPerson({
+      path: { guid: personGuid },
+    });
     return response.data?.data as PersonDto;
   },
 
@@ -18,7 +30,10 @@ export const peopleService = {
   },
 
   async update(personGuid: string, dto: UpdatePersonDto): Promise<PersonDto> {
-    const response = await putApiPeopleByGuidUpdatePerson({ path: { guid: personGuid }, body: dto });
+    const response = await putApiPeopleByGuidUpdatePerson({
+      path: { guid: personGuid },
+      body: dto,
+    });
     return response.data?.data as PersonDto;
   },
 
@@ -27,20 +42,26 @@ export const peopleService = {
   },
 
   async search(electionGuid: string, query: string): Promise<PersonDto[]> {
-    const response = await getApiPeopleByElectionGuidSearchPeople({ 
-      path: { electionGuid }, 
-      query: { q: query } 
+    const response = await getApiPeopleByElectionGuidSearchPeople({
+      path: { electionGuid },
+      query: { q: query },
     });
-    return (response.data?.data?.items ?? []) as PersonDto[];
+    // is this correct?
+    debugger;
+    return (response.data?.data ?? []) as PersonDto[];
   },
 
   async getVoters(electionGuid: string): Promise<PersonDto[]> {
-    const response = await getApiPeopleByElectionGuidGetPeople({ path: { electionGuid } });
-    return (response.data?.data?.items ?? []) as PersonDto[];
+    const response = await getApiPeopleByElectionGuidGetPeople({
+      path: { electionGuid },
+    });
+    return (response.data?.items ?? []) as PersonDto[];
   },
 
   async getCandidates(electionGuid: string): Promise<PersonDto[]> {
-    const response = await getApiPeopleByElectionGuidGetCandidates({ path: { electionGuid } });
-    return (response.data?.data?.items ?? []) as PersonDto[];
-  }
+    const response = await getApiPeopleByElectionGuidGetCandidates({
+      path: { electionGuid },
+    });
+    return (response.data?.data ?? []) as PersonDto[];
+  },
 };
