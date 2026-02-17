@@ -111,7 +111,8 @@ Create TypeScript types, API service, and Pinia store for eligibility reasons. N
 
 **Verification:** `npx vue-tsc --noEmit` passes from `frontend/`.
 
-### [ ] Step 4: Frontend i18n for Eligibility Reasons
+### [x] Step 4: Frontend i18n for Eligibility Reasons
+<!-- chat-id: 95575596-7cee-4c96-9f09-b3dfc18570fd -->
 
 Add English and French locale files for all eligibility reason codes, group labels, and UI labels.
 

@@ -37,7 +37,7 @@
   "people.importInstructions": "Instructions d'importation",
   "people.importFormat": "Téléchargez un fichier CSV ou Excel avec les colonnes suivantes :",
   "people.importRequiredFields": "Requis : Prénom, Nom de famille",
-  "people.importOptionalFields": "Optionnel : Email, Téléphone, Secteur, ID Baha'i, Peut voter, Peut recevoir des voix",
+  "people.importOptionalFields": "Optionnel : Email, Téléphone, Secteur, ID Baha'i, Éligibilité",
   "people.importWarning": "Les personnes existantes avec des noms correspondants seront mises à jour. Les nouvelles personnes seront créées.",
   "people.dropFileHere": "Déposez le fichier ici ou cliquez pour télécharger",
   "people.supportedFormats": "Formats supportés : CSV, XLS, XLSX (max 10 Mo)",
