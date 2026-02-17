@@ -17,7 +17,7 @@ Create a new `IneligibleReason` database table (seeded, not user-editable) with:
 | Column | Type | Description |
 |--------|------|-------------|
 | `ReasonGuid` | `Guid` (PK) | Reuses exact GUIDs from v3 for backward compatibility |
-| `ReasonCode` | `string(4)` | Short code like `X01`, `R01`, `V01`, `U01`, `Z01` (see R2) |
+| `ReasonCode` | `string(4)` | Short code like `X01`, `V01`, `R01`, `U01`, `Z01` (see R2) |
 | `DescriptionKey` | `string(80)` | i18n key for the description (e.g. `eligibility.X01`) |
 | `CanVote` | `bool` | Whether the person can vote |
 | `CanReceiveVotes` | `bool` | Whether the person can receive votes |
@@ -30,8 +30,8 @@ Each reason belongs to a group determined by its CanVote/CanReceiveVotes combina
 | Prefix | CanVote | CanReceiveVotes | Meaning |
 |--------|---------|-----------------|---------|
 | `X` | false | false | Cannot vote, cannot receive votes |
-| `R` | true | false | Can vote, cannot receive votes |
-| `V` | false | true | Cannot vote, can receive votes |
+| `V` | true | false | Can **V**ote only (cannot receive votes) |
+| `R` | false | true | Can **R**eceive votes only (cannot vote) |
 | `U` | false | false | Unidentifiable (internal only, used during ballot entry) |
 | `Z` | false | false | Unreadable (internal only, used during ballot entry) |
 
@@ -56,22 +56,22 @@ Every reason from v3 must be preserved with its exact GUID. The following is the
 | X08 | E027534D-D7E8-E011-A095-002269C41D11 | Not a delegate and on other Institution |
 | X09 | D527534D-D7E8-E011-A095-002269C41D11 | Other (cannot vote or be voted for) |
 
-**Group R (Can vote, cannot receive votes):**
+**Group V (Can vote only, cannot receive votes):**
 | Code | GUID | v3 Description |
 |------|------|----------------|
-| R01 | e6dd1cdd-5da0-4222-9f17-f02ce6313b0a | Youth aged 18/19/20 |
-| R02 | C05EAE49-B01B-E111-A7FB-002269C41D11 | By-election: On Institution already |
-| R03 | D427534D-D7E8-E011-A095-002269C41D11 | On other Institution (e.g. Counsellor) |
-| R04 | 920A1A55-C4A5-42E5-9BCE-31756B6A20B9 | Rights removed (cannot be voted for) |
-| R05 | EB159A43-FB09-4FA9-AC12-3F451073010B | Tie-break election: Not tied |
-| R06 | 24278180-fe1b-4604-9f86-d453b151d824 | Other (can vote but not be voted for) |
+| V01 | e6dd1cdd-5da0-4222-9f17-f02ce6313b0a | Youth aged 18/19/20 |
+| V02 | C05EAE49-B01B-E111-A7FB-002269C41D11 | By-election: On Institution already |
+| V03 | D427534D-D7E8-E011-A095-002269C41D11 | On other Institution (e.g. Counsellor) |
+| V04 | 920A1A55-C4A5-42E5-9BCE-31756B6A20B9 | Rights removed (cannot be voted for) |
+| V05 | EB159A43-FB09-4FA9-AC12-3F451073010B | Tie-break election: Not tied |
+| V06 | 24278180-fe1b-4604-9f86-d453b151d824 | Other (can vote but not be voted for) |
 
-**Group V (Cannot vote, can receive votes):**
+**Group R (Can receive votes only, cannot vote):**
 | Code | GUID | v3 Description |
 |------|------|----------------|
-| V01 | 4B2B0F32-4E14-43A4-9103-C5E9C81E8783 | Not a delegate in this election |
-| V02 | 84FA30C9-F007-44E8-B097-CCA430AAA3AA | Rights removed (cannot vote) |
-| V03 | f4c7de9e-d487-49ae-9868-5cd208cd863a | Other (cannot vote but can be voted for) |
+| R01 | 4B2B0F32-4E14-43A4-9103-C5E9C81E8783 | Not a delegate in this election |
+| R02 | 84FA30C9-F007-44E8-B097-CCA430AAA3AA | Rights removed (cannot vote) |
+| R03 | f4c7de9e-d487-49ae-9868-5cd208cd863a | Other (cannot vote but can be voted for) |
 
 **Group U (Unidentifiable - internal only):**
 | Code | GUID | v3 Description |
@@ -99,7 +99,7 @@ Every reason from v3 must be preserved with its exact GUID. The following is the
 Replace the current two independent toggle switches (`canVote`, `canReceiveVotes`) with a single eligibility dropdown:
 
 - Default: "Eligible" (no reason, null IneligibleReasonGuid)
-- Options grouped by code prefix (X, R, V)
+- Options grouped by code prefix (X, V, R)
 - U and Z reasons excluded from the person form (they apply to vote lines, not people)
 - Selecting a reason automatically determines CanVote and CanReceiveVotes
 - Display the localized description from i18n
@@ -120,7 +120,7 @@ When importing people from CSV/Excel:
 
 - Accept an `Eligibility` (or `IneligibleReason`) column
 - Column values can be:
-  - A reason code (`X01`, `R03`, etc.)
+  - A reason code (`X01`, `V03`, etc.)
   - The English description text (for v3 backward compatibility, matched case-insensitively)
   - Empty/missing = fully eligible
 - U and Z codes are rejected in import files with an error message
