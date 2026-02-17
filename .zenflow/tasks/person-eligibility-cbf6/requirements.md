@@ -15,7 +15,7 @@ In v3, eligibility reasons were defined in `IneligibleReasonEnum.cs` as a static
 Define all eligibility reasons as a static class in the backend domain layer (e.g. `IneligibleReasonEnum` in `Backend.Domain/Enumerations/`). Each reason has:
 
 - **ReasonGuid** (`Guid`) - Reuses exact GUIDs from v3 for backward compatibility
-- **ReasonCode** (`string`) - Short code like `X01`, `V01`, `R01`, `U01`, `Z01` (see R2)
+- **ReasonCode** (`string`) - Short code like `X01`, `V01`, `R01`, `U01`, `U02` (see R2)
 - **CanVote** (`bool`) - Whether the person can vote
 - **CanReceiveVotes** (`bool`) - Whether the person can receive votes
 - **InternalOnly** (`bool`) - If true, cannot be used in import files (Unreadable/Unidentifiable reasons)
@@ -31,10 +31,9 @@ Each reason belongs to a group determined by its CanVote/CanReceiveVotes combina
 | `X` | false | false | Cannot vote, cannot receive votes |
 | `V` | true | false | Can **V**ote only (cannot receive votes) |
 | `R` | false | true | Can **R**eceive votes only (cannot vote) |
-| `U` | false | false | Unidentifiable (internal only, used during ballot entry) |
-| `Z` | false | false | Unreadable (internal only, used during ballot entry) |
+| `U` | false | false | Internal only (used during ballot entry for problem vote lines) |
 
-Note: `U` and `Z` are subsets of the "cannot vote / cannot receive votes" group, but are separated because they have special semantics: they describe problems with a vote line on a ballot, not a person's civil eligibility. They must be excluded from import files and from the eligibility dropdown on the Person form.
+Note: `U` reasons describe problems with a vote line on a ballot (unidentifiable or unreadable), not a person's civil eligibility. They are applied to votes, not to people. They must be excluded from import files and from the eligibility dropdown on the Person form.
 
 Persons with no `IneligibleReasonGuid` (null) are fully eligible (can vote and receive votes).
 
@@ -48,7 +47,7 @@ Every reason from v3 must be preserved with its exact GUID. The following is the
 | X01 | D227534D-D7E8-E011-A095-002269C41D11 | Deceased |
 | X02 | CF27534D-D7E8-E011-A095-002269C41D11 | Moved elsewhere recently |
 | X03 | 2add3a15-ec2d-437c-916f-7c581e693baa | Not in this local unit |
-| X04 | D127534D-D7E8-E011-A095-002269C41D11 | Not a registered Baha'i |
+| X04 | D127534D-D7E8-E011-A095-002269C41D11 | Not a registered Bahá'í |
 | X05 | 32e44592-a7d8-408a-b169-8871800f62aa | Under 18 years old |
 | X06 | D327534D-D7E8-E011-A095-002269C41D11 | Resides elsewhere |
 | X07 | D027534D-D7E8-E011-A095-002269C41D11 | Rights removed (entirely) |
@@ -72,20 +71,13 @@ Every reason from v3 must be preserved with its exact GUID. The following is the
 | R02 | 84FA30C9-F007-44E8-B097-CCA430AAA3AA | Rights removed (cannot vote) |
 | R03 | f4c7de9e-d487-49ae-9868-5cd208cd863a | Other (cannot vote but can be voted for) |
 
-**Group U (Unidentifiable - internal only):**
-| Code | GUID | v3 Description |
-|------|------|----------------|
-| U01 | D927534D-D7E8-E011-A095-002269C41D11 | Could refer to more than one person |
-| U02 | D727534D-D7E8-E011-A095-002269C41D11 | Multiple people with identical name |
-| U03 | D827534D-D7E8-E011-A095-002269C41D11 | Name is a mix of multiple people |
-| U04 | CE27534D-D7E8-E011-A095-002269C41D11 | Unknown person |
+**Group U (Internal only - ballot entry):**
+| Code | GUID | Description |
+|------|------|-------------|
+| U01 | CE27534D-D7E8-E011-A095-002269C41D11 | Unidentifiable |
+| U02 | CD27534D-D7E8-E011-A095-002269C41D11 | Unreadable |
 
-**Group Z (Unreadable - internal only):**
-| Code | GUID | v3 Description |
-|------|------|----------------|
-| Z01 | D627534D-D7E8-E011-A095-002269C41D11 | In an unknown language |
-| Z02 | 86DDBE4A-841D-E111-A7FB-002269C41D11 | Not a complete name |
-| Z03 | CD27534D-D7E8-E011-A095-002269C41D11 | Writing is illegible |
+v3 had multiple sub-reasons for Unidentifiable (4 reasons) and Unreadable (3 reasons). In v4 these are collapsed into U01 and U02. The static class includes a mapping of all legacy v3 GUIDs to the corresponding U01/U02 code for backward compatibility.
 
 ### R4: Backend API
 
@@ -98,7 +90,7 @@ Replace the current two independent toggle switches (`canVote`, `canReceiveVotes
 
 - Default: "Eligible" (no reason, null IneligibleReasonGuid)
 - Options grouped by code prefix (X, V, R)
-- U and Z reasons excluded from the person form (they apply to vote lines, not people)
+- U reasons excluded from the person form (they apply to vote lines, not people)
 - Selecting a reason automatically determines CanVote and CanReceiveVotes
 - Display the localized description from i18n
 
@@ -121,7 +113,7 @@ When importing people from CSV/Excel:
   - A reason code (`X01`, `V03`, etc.)
   - The English description text (for v3 backward compatibility, matched case-insensitively)
   - Empty/missing = fully eligible
-- U and Z codes are rejected in import files with an error message
+- U codes are rejected in import files with an error message
 - Invalid codes produce an import error for that row (row is skipped, import continues)
 
 ### R8: Backward Compatibility
@@ -129,6 +121,12 @@ When importing people from CSV/Excel:
 - Existing `Person.IneligibleReasonGuid` values from v3 data continue to work since the GUIDs are preserved
 - The `Person.CanVote` and `Person.CanReceiveVotes` columns remain for index/query performance
 - Existing import files using English descriptions remain supported
+
+## Edge Cases
+
+- **Unknown GUID in `IneligibleReasonGuid`**: If a Person record contains a GUID not in the static class (e.g. corrupted data), treat as ineligible (CanVote=false, CanReceiveVotes=false) and log a warning. During import, reject the row with an error.
+- **Inconsistent `CanVote`/`CanReceiveVotes`**: The backend auto-heals on save. When a Person is loaded or saved, if the stored CanVote/CanReceiveVotes values don't match what the `IneligibleReasonGuid` dictates, correct them silently.
+- **U reasons during ballot entry**: A vote line marked U01 or U02 is not associated with a person. The vote record has the `IneligibleReasonGuid` set but `PersonGuid` is null. This is out of scope for this feature but the static class must support it.
 
 ## Assumptions
 
@@ -141,4 +139,4 @@ When importing people from CSV/Excel:
 - UI for managing/adding custom eligibility reasons
 - Per-election custom reasons
 - Audit trail of eligibility changes (covered by existing log system)
-- Eligibility reason display in vote/ballot entry UI (U/Z reasons are used there but that is a separate feature)
+- Eligibility reason display in vote/ballot entry UI (U01/U02 reasons are used there but that is a separate feature)
