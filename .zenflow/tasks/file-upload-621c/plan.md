@@ -178,7 +178,8 @@ Complete the import wizard step, add route, update PeopleManagementPage.
 - Add i18n keys in `frontend/src/locales/en/people.json` for all new import page labels
 - Verify: `cd frontend && npx vue-tsc --noEmit`
 
-### [ ] Step 7: Final verification and cleanup
+### [x] Step 7: Final verification and cleanup
+<!-- chat-id: 3b9dfa7a-afd1-457a-b286-c241596d5ae8 -->
 
 Run full build, type checks, and tests to ensure everything works.
 

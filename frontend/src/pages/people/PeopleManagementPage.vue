@@ -109,8 +109,6 @@ import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search, Plus, MoreFilled, ArrowDown, Download, Delete } from '@element-plus/icons-vue';
 import { usePeopleStore } from '../../stores/peopleStore';
-import { useImportStore } from '../../stores/importStore';
-import { useAuthStore } from '../../stores/authStore';
 import type { PersonDto } from '../../types';
 import PeopleTable from '../../components/people/PeopleTable.vue';
 import PersonFormDialog from '../../components/people/PersonFormDialog.vue';
@@ -120,8 +118,6 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const peopleStore = usePeopleStore();
-const importStore = useImportStore();
-const authStore = useAuthStore();
 
 const electionGuid = route.params.id as string;
 const searchQuery = ref('');
@@ -135,14 +131,7 @@ const selectedPeople = ref<PersonDto[]>([]);
 const showBulkDeleteConfirm = ref(false);
 const bulkDeleting = ref(false);
 
-// Import/Export
-
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-
-// No need for Authorization header - credentials: 'include' sends httpOnly cookies automatically
-const uploadHeaders = computed(() => ({
-  // Authorization header not needed with httpOnly cookies
-}));
+// Export
 
 const loading = computed(() => peopleStore.loading);
 const allPeople = computed(() => peopleStore.people);
@@ -346,23 +335,7 @@ async function confirmBulkDelete() {
   align-items: center;
 }
 
-.import-instructions {
-  margin-bottom: var(--spacing-4);
-}
 
-.import-instructions h4 {
-  margin: 0 0 var(--spacing-2) 0;
-  color: var(--color-text-primary);
-}
-
-.import-instructions ul {
-  margin: var(--spacing-2) 0;
-  padding-left: var(--spacing-4);
-}
-
-.import-instructions li {
-  margin-bottom: var(--spacing-1);
-}
 
 .warning-text {
   color: var(--color-error-600);
