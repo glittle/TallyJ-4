@@ -75,6 +75,7 @@ public class SuperAdminService : ISuperAdminService
     public async Task<PaginatedResponse<SuperAdminElectionDto>> GetElectionsAsync(SuperAdminElectionFilterDto filter)
     {
         var query = _context.Elections
+            .AsSplitQuery()
             .Include(e => e.People)
             .Include(e => e.Locations)
                 .ThenInclude(l => l.Ballots)
