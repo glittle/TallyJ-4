@@ -5253,12 +5253,25 @@ export type GetApiAuthGoogleLoginData = {
          * The URL to redirect to after successful authentication (default: frontend origin).
          */
         returnUrl?: string;
-        lang?: string;
     };
     url: '/api/Auth/google/login';
 };
 
 export type GetApiAuthGoogleLoginResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiAuthMeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/me';
+};
+
+export type GetApiAuthMeResponses = {
     /**
      * OK
      */

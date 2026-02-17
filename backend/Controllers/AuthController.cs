@@ -642,12 +642,12 @@ public class AuthController : ControllerBase
     /// <param name="returnUrl">The URL to redirect to after successful authentication (default: frontend origin).</param>
     /// <returns>A redirect to Google's OAuth consent screen.</returns>
     [HttpGet("google/login")]
-    public async Task<IActionResult> GoogleLogin([FromQuery] string? returnUrl = null, [FromQuery] string? lang = null)
+    public async Task<IActionResult> GoogleLogin([FromQuery] string? returnUrl = null)
     {
         var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
-        _logger.LogInformation("Google login attempt from {ClientIp} with returnUrl: {ReturnUrl}, lang: {Lang}", clientIp, returnUrl, lang);
+        _logger.LogInformation("Google login attempt from {ClientIp} with returnUrl: {ReturnUrl}", clientIp, returnUrl);
 
         var googleClientId = _configuration["Google:ClientId"];
         var googleClientSecret = _configuration["Google:ClientSecret"];
@@ -681,8 +681,7 @@ public class AuthController : ControllerBase
             Items =
             {
                 { "returnUrl", returnUrl ?? string.Empty },
-                { "redirect", redirect ?? "/elections" },
-                { "lang", lang ?? string.Empty }
+                { "redirect", redirect ?? "/elections" }
             }
         };
 
@@ -697,6 +696,34 @@ public class AuthController : ControllerBase
         });
 
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+    }
+
+    /// <summary>
+    /// Gets information about the currently authenticated user.
+    /// </summary>
+    /// <returns>The current user's information if authenticated, or an error if not.</returns>
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirst("sub")?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new { error = "Not authenticated" });
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound(new { error = "User not found" });
+        }
+
+        return Ok(new
+        {
+            email = user.Email,
+            name = user.DisplayName,
+            authMethod = user.AuthMethod
+        });
     }
 
     /// <summary>

@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.4",
   "info": {
-    "title": "Backend API",
+    "title": "TallyJ4 API",
     "description": "Election management and vote tallying system API",
     "version": "v1"
   },
@@ -1022,15 +1022,21 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "lang",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Gets information about the currently authenticated user.",
         "responses": {
           "200": {
             "description": "OK"

@@ -133,16 +133,15 @@ const handleLogin = async () => {
 
 const handleGoogleLogin = () => {
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
-  const returnUrl = encodeURIComponent(
-    globalThis.location.origin + "/auth/google/callback"
-  );
-  const redirectPath = route.query.redirect
-    ? `&redirect=${encodeURIComponent(route.query.redirect as string)}`
+  const redirectParam = route.query.redirect
+    ? `?redirect=${encodeURIComponent(route.query.redirect as string)}`
     : "";
-  const languageParam = `&lang=${locale.value}`;
+  const returnUrl = encodeURIComponent(
+    globalThis.location.origin + "/auth/google/callback" + redirectParam
+  );
 
   // Try the Google OAuth redirect
-  globalThis.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}${redirectPath}${languageParam}`;
+  globalThis.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}`;
 };
 
 // add handler so if ESC is pressed, we go back to landing page

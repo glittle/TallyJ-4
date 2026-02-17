@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
-using System.Web;
+
 using Backend.Domain.Context;
 using Backend.Domain.Identity;
 using Backend.EF.Data;
@@ -117,25 +117,11 @@ services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = builderConfiguration["Jwt:Issuer"],  // From appsettings.json
-        ValidAudience = builderConfiguration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))  // Secure key (min 256 bits)
+        ValidAudience = builderConfiguration["Jwt:Audience"],  // From appsettings.json
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
-
     options.Events = new JwtBearerEvents
     {
-        OnAuthenticationFailed = context =>
-        {
-            Log.Warning("JWT Authentication failed: {Exception}", context.Exception.Message);
-            Log.Warning("JWT Failure details: {FailureMessage}", context.Exception.ToString());
-            return Task.CompletedTask;
-        },
-        OnTokenValidated = context =>
-        {
-            var userId = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                        ?? context.Principal?.FindFirst("sub")?.Value;
-            Log.Information("JWT Token validated successfully for user: {UserId}", userId);
-            return Task.CompletedTask;
-        },
         OnMessageReceived = context =>
         {
             var accessToken = context.Request.Query["access_token"];
@@ -144,8 +130,6 @@ services.AddAuthentication(options =>
             if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
             {
                 context.Token = accessToken;
-                Log.Information("JWT Token received from query string for SignalR hub: {Path}, TokenLength: {TokenLength}",
-                    path, accessToken.ToString().Length);
             }
             else
             {
@@ -154,23 +138,8 @@ services.AddAuthentication(options =>
                 if (!string.IsNullOrEmpty(tokenCookie))
                 {
                     context.Token = tokenCookie;
-                    Log.Information("JWT Token received from cookie, TokenLength: {TokenLength}", tokenCookie.Length);
-                }
-                else
-                {
-                    var authHeader = context.Request.Headers["Authorization"].ToString();
-                    var hasBearer = authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
-                    var tokenLength = hasBearer ? authHeader.Substring(7).Length : 0;
-                    Log.Information("JWT Message received - Header: {HasHeader}, HasBearer: {HasBearer}, TokenLength: {TokenLength}, ActualHeader: '{AuthHeader}'",
-                        !string.IsNullOrEmpty(authHeader), hasBearer, tokenLength, authHeader.Length > 100 ? authHeader.Substring(0, 100) + "..." : authHeader);
                 }
             }
-            return Task.CompletedTask;
-        },
-        OnChallenge = context =>
-        {
-            Log.Warning("JWT Challenge initiated - Error: {Error}, ErrorDescription: {ErrorDescription}, AuthFailure: {AuthFailure}",
-                context.Error, context.ErrorDescription, context.AuthenticateFailure?.Message);
             return Task.CompletedTask;
         }
     };
@@ -195,49 +164,6 @@ if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(goo
             {
                 context.Response.Redirect("/login?error=" + context.Failure?.Message);
                 context.HandleResponse();
-                return Task.CompletedTask;
-            };
-            options.Events.OnRedirectToAuthorizationEndpoint = context =>
-            {
-                // Get language from authentication properties (set by frontend) or fallback to Accept-Language header
-                var userLanguage = context.Properties.Items["lang"];
-                if (string.IsNullOrEmpty(userLanguage))
-                {
-                    // Fallback to Accept-Language header if no explicit language was set
-                    var acceptLanguage = context.HttpContext.Request.Headers["Accept-Language"].ToString();
-                    if (!string.IsNullOrEmpty(acceptLanguage))
-                    {
-                        // Extract primary language (e.g., "en-US,en" -> "en")
-                        userLanguage = acceptLanguage.Split(',')[0].Split('-')[0];
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(userLanguage))
-                {
-                    // Map common language codes to Google supported locales
-                    var googleLocale = userLanguage switch
-                    {
-                        "en" => "en",
-                        "fr" => "fr",
-                        "es" => "es",
-                        "de" => "de",
-                        "it" => "it",
-                        "pt" => "pt",
-                        "ru" => "ru",
-                        "ja" => "ja",
-                        "ko" => "ko",
-                        "zh" => "zh-CN",
-                        _ => "en" // Default to English
-                    };
-
-                    // Add hl parameter to the authorization URL
-                    var uriBuilder = new UriBuilder(context.RedirectUri);
-                    var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
-                    query["hl"] = googleLocale;
-                    uriBuilder.Query = query.ToString();
-                    context.RedirectUri = uriBuilder.ToString();
-                }
-
                 return Task.CompletedTask;
             };
         });
@@ -447,6 +373,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Serve static files (favicon.ico, etc.)
+app.UseStaticFiles();
 
 // Use CORS
 app.UseCors("AllowFrontend");

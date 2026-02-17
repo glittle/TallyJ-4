@@ -78,9 +78,10 @@ public class SecureCookieMiddleware
         {
             HttpOnly = true,
             Secure = isHttps,
-            SameSite = SameSiteMode.Strict,
+            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddMinutes(15), // Access token expiry
-            Path = "/"
+            Path = "/",
+            Domain = isHttps ? null : "localhost" // Share cookies across localhost ports in dev
         };
 
         context.Response.Cookies.Append(AccessTokenCookieName, accessToken, cookieOptions);
@@ -90,9 +91,10 @@ public class SecureCookieMiddleware
         {
             HttpOnly = true,
             Secure = isHttps,
-            SameSite = SameSiteMode.Strict,
+            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddDays(30), // Refresh token expiry
-            Path = "/"
+            Path = "/",
+            Domain = isHttps ? null : "localhost"
         };
 
         context.Response.Cookies.Append(RefreshTokenCookieName, refreshToken, refreshCookieOptions);
@@ -102,9 +104,10 @@ public class SecureCookieMiddleware
         {
             HttpOnly = false,
             Secure = isHttps,
-            SameSite = SameSiteMode.Strict,
+            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddDays(30),
-            Path = "/"
+            Path = "/",
+            Domain = isHttps ? null : "localhost"
         };
 
         context.Response.Cookies.Append(UserEmailCookieName, email, userCookieOptions);
@@ -125,9 +128,10 @@ public class SecureCookieMiddleware
         {
             HttpOnly = true,
             Secure = context.Request.IsHttps,
-            SameSite = SameSiteMode.Strict,
+            SameSite = context.Request.IsHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddDays(-1), // Expire immediately
-            Path = "/"
+            Path = "/",
+            Domain = context.Request.IsHttps ? null : "localhost"
         };
 
         context.Response.Cookies.Append(AccessTokenCookieName, "", cookieOptions);
@@ -137,9 +141,10 @@ public class SecureCookieMiddleware
         {
             HttpOnly = false,
             Secure = context.Request.IsHttps,
-            SameSite = SameSiteMode.Strict,
+            SameSite = context.Request.IsHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddDays(-1),
-            Path = "/"
+            Path = "/",
+            Domain = context.Request.IsHttps ? null : "localhost"
         };
 
         context.Response.Cookies.Append(UserEmailCookieName, "", userCookieOptions);

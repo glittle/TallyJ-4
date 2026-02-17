@@ -26,12 +26,16 @@ onMounted(async () => {
       return;
     }
 
-    // Tokens are now stored in httpOnly cookies by the backend
-    // Read user info from cookies that were set during the OAuth callback
-    const cookieData = secureTokenService.getAuthData();
+    // Since cookies are set on the backend domain, we need to call the backend API to get user info
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
+    const response = await fetch(`${apiUrl}/api/auth/me`, {
+      method: 'GET',
+      credentials: 'include', // Include cookies for authentication
+    });
 
-    if (!cookieData.email || !cookieData.authMethod) {
-      error.value = "Authentication data not found in cookies";
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to get user info' }));
+      error.value = errorData.error || 'Authentication failed';
       ElMessage.error(t("auth.googleLoginFailed"));
       setTimeout(() => {
         router.push("/login?mode=officer");
@@ -39,17 +43,24 @@ onMounted(async () => {
       return;
     }
 
-    // Update store with cookie data
-    authStore.email = cookieData.email;
-    authStore.name = cookieData.name;
-    authStore.authMethod = cookieData.authMethod;
+    const userData = await response.json();
 
-    // Token is httpOnly and cannot be read, but we know auth succeeded
-    // The store will handle this appropriately
+    // Update store with user data from API
+    authStore.email = userData.email;
+    authStore.name = userData.name;
+    authStore.authMethod = userData.authMethod;
+
+    // Set user info cookies on frontend domain for router guard
+    const secure = window.location.protocol === 'https:' ? '; secure' : '';
+    document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
+    if (userData.name) {
+      document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
+    }
+    document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
 
     ElMessage.success(t("auth.loginSuccess"));
 
-    const redirectPath = (route.query.redirect as string) || "/dashboard";
+    const redirectPath = route.query.redirect ? decodeURIComponent(route.query.redirect as string) : "/dashboard";
     router.push(redirectPath);
   } catch (err) {
     console.error("Google callback error:", err);
