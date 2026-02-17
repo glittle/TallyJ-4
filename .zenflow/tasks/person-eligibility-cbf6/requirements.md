@@ -2,7 +2,7 @@
 
 ## Overview
 
-Implement a comprehensive person eligibility system that tracks whether each person in an election can vote, can receive votes, or both, along with the specific reason for any restriction. This replaces the v3 hard-coded `IneligibleReasonEnum` with a database-driven, i18n-ready approach using short codes.
+Implement a comprehensive person eligibility system that tracks whether each person in an election can vote, can receive votes, or both, along with the specific reason for any restriction. This replaces the v3 hard-coded `IneligibleReasonEnum` with a clean static class using short codes and i18n support.
 
 ## Background
 
@@ -10,18 +10,17 @@ In v3, eligibility reasons were defined in `IneligibleReasonEnum.cs` as a static
 
 ## Requirements
 
-### R1: Eligibility Reason Database Table
+### R1: Static Eligibility Reason Class
 
-Create a new `IneligibleReason` database table (seeded, not user-editable) with:
+Define all eligibility reasons as a static class in the backend domain layer (e.g. `IneligibleReasonEnum` in `Backend.Domain/Enumerations/`). Each reason has:
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `ReasonGuid` | `Guid` (PK) | Reuses exact GUIDs from v3 for backward compatibility |
-| `ReasonCode` | `string(4)` | Short code like `X01`, `V01`, `R01`, `U01`, `Z01` (see R2) |
-| `DescriptionKey` | `string(80)` | i18n key for the description (e.g. `eligibility.X01`) |
-| `CanVote` | `bool` | Whether the person can vote |
-| `CanReceiveVotes` | `bool` | Whether the person can receive votes |
-| `InternalOnly` | `bool` | If true, cannot be used in import files (Unreadable/Unidentifiable reasons) |
+- **ReasonGuid** (`Guid`) - Reuses exact GUIDs from v3 for backward compatibility
+- **ReasonCode** (`string`) - Short code like `X01`, `V01`, `R01`, `U01`, `Z01` (see R2)
+- **CanVote** (`bool`) - Whether the person can vote
+- **CanReceiveVotes** (`bool`) - Whether the person can receive votes
+- **InternalOnly** (`bool`) - If true, cannot be used in import files (Unreadable/Unidentifiable reasons)
+
+No database table. The data is static reference data loaded in memory. Lookup methods provided by GUID, by code, and by description (case-insensitive, for v3 import compatibility).
 
 ### R2: Group Code Scheme
 
@@ -90,9 +89,8 @@ Every reason from v3 must be preserved with its exact GUID. The following is the
 
 ### R4: Backend API
 
-- **GET `/api/eligibility-reasons`** - Returns all reasons (for UI dropdowns, reports). No auth required beyond election access.
-- The Person entity's `CanVote` and `CanReceiveVotes` fields should be computed from the `IneligibleReasonGuid` rather than stored independently. When `IneligibleReasonGuid` is null, the person is fully eligible. When set, look up the reason to determine CanVote/CanReceiveVotes.
-  - **Decision**: Keep `CanVote` and `CanReceiveVotes` as stored DB columns for query performance (indexes exist on them). They are set automatically when `IneligibleReasonGuid` changes. The backend enforces consistency.
+- **GET `/api/eligibility-reasons`** - Returns all reasons from the static class (for UI dropdowns, reports). No auth required beyond election access.
+- The Person entity's `CanVote` and `CanReceiveVotes` fields are kept as stored DB columns for query performance (indexes exist on them). They are set automatically by the backend when `IneligibleReasonGuid` changes, using the static class lookup. The backend enforces consistency.
 
 ### R5: Frontend - Person Form Eligibility
 
@@ -126,20 +124,15 @@ When importing people from CSV/Excel:
 - U and Z codes are rejected in import files with an error message
 - Invalid codes produce an import error for that row (row is skipped, import continues)
 
-### R8: Seed Data
+### R8: Backward Compatibility
 
-Seed the `IneligibleReason` table with all reasons from R3 in `DbSeeder.cs`, following the existing idempotent pattern. This seed data is application-level reference data, not election-specific.
-
-### R9: Backward Compatibility
-
-- Existing `Person.IneligibleReasonGuid` values from v3 data must continue to work since the GUIDs are preserved
+- Existing `Person.IneligibleReasonGuid` values from v3 data continue to work since the GUIDs are preserved
 - The `Person.CanVote` and `Person.CanReceiveVotes` columns remain for index/query performance
 - Existing import files using English descriptions remain supported
 
 ## Assumptions
 
-- The IneligibleReason table is global (not per-election). All elections share the same set of reasons.
-- Reasons are not user-editable. New reasons would be added via migrations/seed updates.
+- Reasons are static, global reference data defined in code. Not per-election, not user-editable.
 - The `CanVote`/`CanReceiveVotes` booleans on Person are treated as denormalized cache of the reason's flags. Backend enforces they stay in sync.
 - French translations for reason descriptions will need to be provided (can use placeholder translations initially).
 
