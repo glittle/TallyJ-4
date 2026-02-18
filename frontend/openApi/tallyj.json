@@ -3591,12 +3591,40 @@
         }
       }
     },
+    "/api/Public/auth-config": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Public/health": {
       "get": {
         "tags": [
           "Public"
         ],
-        "summary": "Performs a health check to verify the service is running properly.",
         "responses": {
           "200": {
             "description": "OK",
