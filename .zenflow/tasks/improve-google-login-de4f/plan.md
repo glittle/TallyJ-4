@@ -57,7 +57,8 @@ Difficulty: **Medium**. Specification saved to `.zenflow/tasks/improve-google-lo
 
 ---
 
-### [ ] Step: Final verification and report
+### [x] Step: Final verification and report
+<!-- chat-id: 4e59858b-aa4f-4746-b410-545e9da0bed8 -->
 
 1. Run full backend tests (`dotnet test`)
 2. Run full frontend type check and tests (`npx vue-tsc --noEmit`, `npm run test`)
