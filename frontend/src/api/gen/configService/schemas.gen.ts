@@ -3231,6 +3231,18 @@ export const FrontDeskVoterDtoSchema = {
     description: 'Data transfer object representing a voter at the front desk.'
 } as const;
 
+export const GoogleOneTapRequestSchema = {
+    required: ['credential'],
+    type: 'object',
+    properties: {
+        credential: {
+            minLength: 1,
+            type: 'string'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ImportBallotRequestDtoSchema = {
     type: 'object',
     properties: {

@@ -63,3 +63,8 @@ Difficulty: **Medium**. Specification saved to `.zenflow/tasks/improve-google-lo
 1. Run full backend tests (`dotnet test`)
 2. Run full frontend type check and tests (`npx vue-tsc --noEmit`, `npm run test`)
 3. Write report to `.zenflow/tasks/improve-google-login-de4f/report.md`
+
+### [x] Step: Activate
+<!-- chat-id: 87ccba74-d92f-4ccf-a317-9b8a5c197ed5 -->
+
+When I view this page (http://localhost:8095/login?mode=officer) the google one-tap does not popup (bad). I'm able to log in with Google normally (good).  The goal of this task was to enable the Google One Tap functions on that page.

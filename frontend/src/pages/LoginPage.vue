@@ -132,7 +132,8 @@ const handleLogin = async () => {
 };
 
 const googleButtonRef = ref<HTMLElement>();
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
+const googleClientId = ref<string | null>(null);
+const googleReady = ref(false);
 
 const handleGoogleOneTapCallback = async (response: GoogleCredentialResponse) => {
   loading.value = true;
@@ -148,19 +149,37 @@ const handleGoogleOneTapCallback = async (response: GoogleCredentialResponse) =>
   }
 };
 
-const initGoogleOneTap = () => {
-  if (!googleClientId || typeof google === "undefined") return;
-
-  google.accounts.id.initialize({
-    client_id: googleClientId,
-    callback: handleGoogleOneTapCallback,
-    auto_select: false,
-    cancel_on_tap_outside: true,
-    use_fedcm_for_prompt: true,
+const waitForGis = (): Promise<void> => {
+  return new Promise((resolve) => {
+    if (typeof google !== "undefined") {
+      resolve();
+      return;
+    }
+    const interval = setInterval(() => {
+      if (typeof google !== "undefined") {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 100);
+    setTimeout(() => { clearInterval(interval); resolve(); }, 5000);
   });
+};
 
+const fetchGoogleClientId = async (): Promise<string | null> => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
+    const resp = await fetch(`${apiUrl}/api/public/auth-config`);
+    if (!resp.ok) return null;
+    const json = await resp.json();
+    return json?.data?.googleClientId || null;
+  } catch {
+    return null;
+  }
+};
+
+const renderGoogleButton = () => {
   nextTick(() => {
-    if (googleButtonRef.value) {
+    if (googleButtonRef.value && googleClientId.value) {
       google.accounts.id.renderButton(googleButtonRef.value, {
         type: "standard",
         theme: "outline",
@@ -171,7 +190,33 @@ const initGoogleOneTap = () => {
       });
     }
   });
+};
 
+watch(googleButtonRef, (el) => {
+  if (el && googleReady.value) {
+    renderGoogleButton();
+  }
+});
+
+const initGoogleOneTap = async () => {
+  const [clientId] = await Promise.all([fetchGoogleClientId(), waitForGis()]);
+  googleClientId.value = clientId;
+
+  if (!clientId || typeof google === "undefined") {
+    googleReady.value = false;
+    return;
+  }
+
+  google.accounts.id.initialize({
+    client_id: clientId,
+    callback: handleGoogleOneTapCallback,
+    auto_select: false,
+    cancel_on_tap_outside: true,
+    use_fedcm_for_prompt: true,
+  });
+
+  googleReady.value = true;
+  renderGoogleButton();
   google.accounts.id.prompt();
 };
 
@@ -241,8 +286,8 @@ onBeforeUnmount(() => {
 
       <!-- Social login only for Officers -->
       <div class="social-login" v-if="mode === 'officer'">
-        <div ref="googleButtonRef" class="google-btn-container"></div>
-        <el-button v-if="!googleClientId" class="google-btn" @click="handleGoogleLogin">
+        <div v-if="googleReady" ref="googleButtonRef" class="google-btn-container"></div>
+        <el-button v-if="!googleReady" class="google-btn" @click="handleGoogleLogin">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
           <span>{{ t("auth.googleLogin") }}</span>
         </el-button>

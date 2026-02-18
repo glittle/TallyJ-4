@@ -1057,6 +1057,39 @@
         }
       }
     },
+    "/api/Auth/google/one-tap": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authenticates a user via Google One Tap by validating a Google ID token credential.",
+        "requestBody": {
+          "description": "The request containing the Google ID token credential.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleOneTapRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleOneTapRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleOneTapRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auth/logout": {
       "get": {
         "tags": [
@@ -8253,6 +8286,19 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object representing a voter at the front desk."
+      },
+      "GoogleOneTapRequest": {
+        "required": [
+          "credential"
+        ],
+        "type": "object",
+        "properties": {
+          "credential": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "ImportBallotRequestDto": {
         "type": "object",

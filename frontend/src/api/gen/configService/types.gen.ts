@@ -2319,6 +2319,10 @@ export type FrontDeskVoterDto = {
     readonly isCheckedIn?: boolean;
 };
 
+export type GoogleOneTapRequest = {
+    credential: string;
+};
+
 /**
  * Data transfer object for requesting a ballot import operation.
  */
@@ -5327,6 +5331,23 @@ export type GetApiAuthGoogleCallbackData = {
 };
 
 export type GetApiAuthGoogleCallbackResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthGoogleOneTapData = {
+    /**
+     * The request containing the Google ID token credential.
+     */
+    body?: GoogleOneTapRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/google/one-tap';
+};
+
+export type PostApiAuthGoogleOneTapResponses = {
     /**
      * OK
      */
