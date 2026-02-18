@@ -63,6 +63,25 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function googleOneTapLogin(credential: string) {
+    try {
+      const response = await authService.googleOneTap(credential);
+
+      const cookieData = secureTokenService.refreshAuthData();
+      email.value = cookieData.email || response.email;
+      name.value = cookieData.name || response.name || null;
+      authMethod.value = cookieData.authMethod || response.authMethod || 'Google';
+
+      requires2FA.value = false;
+      pending2FAEmail.value = null;
+
+      return response;
+    } catch (error) {
+      handleApiError(error as any);
+      throw error;
+    }
+  }
+
   async function logout() {
     // Clear client-side state first
     email.value = null;
@@ -89,6 +108,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     register,
     login,
+    googleOneTapLogin,
     logout
   };
 });

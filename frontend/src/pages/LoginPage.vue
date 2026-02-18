@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, onBeforeUnmount } from "vue";
+import { ref, reactive, computed, onMounted, watch, nextTick, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
@@ -131,6 +131,50 @@ const handleLogin = async () => {
   });
 };
 
+const googleButtonRef = ref<HTMLElement>();
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
+
+const handleGoogleOneTapCallback = async (response: GoogleCredentialResponse) => {
+  loading.value = true;
+  try {
+    await authStore.googleOneTapLogin(response.credential);
+    ElMessage.success(t("auth.loginSuccess"));
+    const redirectPath = (route.query.redirect as string) || "/dashboard";
+    router.push(redirectPath);
+  } catch {
+    ElMessage.error(t("auth.googleLoginFailed"));
+  } finally {
+    loading.value = false;
+  }
+};
+
+const initGoogleOneTap = () => {
+  if (!googleClientId || typeof google === "undefined") return;
+
+  google.accounts.id.initialize({
+    client_id: googleClientId,
+    callback: handleGoogleOneTapCallback,
+    auto_select: false,
+    cancel_on_tap_outside: true,
+    use_fedcm_for_prompt: true,
+  });
+
+  nextTick(() => {
+    if (googleButtonRef.value) {
+      google.accounts.id.renderButton(googleButtonRef.value, {
+        type: "standard",
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+        shape: "rectangular",
+        width: "300",
+      });
+    }
+  });
+
+  google.accounts.id.prompt();
+};
+
 const handleGoogleLogin = () => {
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
   const redirectParam = route.query.redirect
@@ -140,7 +184,6 @@ const handleGoogleLogin = () => {
     globalThis.location.origin + "/auth/google/callback" + redirectParam
   );
 
-  // Try the Google OAuth redirect
   globalThis.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}`;
 };
 
@@ -156,6 +199,9 @@ onMounted(() => {
     router.push("/dashboard");
   }
   globalThis.addEventListener("keydown", handleKeydown);
+  if (mode.value === "officer") {
+    initGoogleOneTap();
+  }
 });
 
 onBeforeUnmount(() => {
@@ -195,7 +241,8 @@ onBeforeUnmount(() => {
 
       <!-- Social login only for Officers -->
       <div class="social-login" v-if="mode === 'officer'">
-        <el-button class="google-btn" @click="handleGoogleLogin">
+        <div ref="googleButtonRef" class="google-btn-container"></div>
+        <el-button v-if="!googleClientId" class="google-btn" @click="handleGoogleLogin">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
           <span>{{ t("auth.googleLogin") }}</span>
         </el-button>
@@ -340,6 +387,11 @@ onBeforeUnmount(() => {
 
   .el-divider--horizontal {
     margin: 2em 0;
+  }
+
+  .google-btn-container {
+    display: flex;
+    justify-content: center;
   }
 
   .google-btn {

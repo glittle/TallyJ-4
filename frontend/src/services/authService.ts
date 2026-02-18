@@ -87,6 +87,23 @@ export const authService = {
     });
   },
 
+  async googleOneTap(credential: string): Promise<AuthResponse> {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
+    const response = await fetch(`${apiUrl}/api/auth/google/one-tap`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Google sign-in failed' }));
+      throw new Error(errorData.error || 'Google sign-in failed');
+    }
+
+    return response.json() as Promise<AuthResponse>;
+  },
+
   async logout(): Promise<void> {
     const response = await fetch('/api/auth/logout', {
       method: 'GET',

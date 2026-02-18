@@ -41,7 +41,8 @@ Difficulty: **Medium**. Specification saved to `.zenflow/tasks/improve-google-lo
 
 ---
 
-### [ ] Step: Frontend - Integrate Google One Tap
+### [x] Step: Frontend - Integrate Google One Tap
+<!-- chat-id: 4894ddeb-08b9-4992-9cba-abe95a9dacd3 -->
 
 1. Add GIS script tag to `frontend/index.html`
 2. Add `VITE_GOOGLE_CLIENT_ID` env variable to `.env` / `.env.development`
