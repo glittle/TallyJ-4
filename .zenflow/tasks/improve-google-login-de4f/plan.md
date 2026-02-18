@@ -27,7 +27,8 @@ Difficulty: **Medium**. Specification saved to `.zenflow/tasks/improve-google-lo
 
 ---
 
-### [ ] Step: Backend - Add Google One Tap endpoint
+### [x] Step: Backend - Add Google One Tap endpoint
+<!-- chat-id: 38c338b7-570b-4597-890d-cf0f5857070d -->
 
 1. Add `Google.Apis.Auth` NuGet package to `backend/Backend.csproj`
 2. Create `Backend.Application/DTOs/Auth/GoogleOneTapRequest.cs` DTO

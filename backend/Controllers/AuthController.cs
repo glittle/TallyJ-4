@@ -13,6 +13,7 @@ using Backend.Domain.Identity;
 using Backend.DTOs.Security;
 using Backend.Middleware;
 using Backend.Services;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 
@@ -866,6 +867,148 @@ public class AuthController : ControllerBase
             _logger.LogError(ex, "Google callback: Unexpected error during Google authentication");
             return Redirect(GetErrorRedirectUrl(returnUrl, "An unexpected error occurred during authentication"));
         }
+    }
+
+    /// <summary>
+    /// Authenticates a user via Google One Tap by validating a Google ID token credential.
+    /// </summary>
+    /// <param name="request">The request containing the Google ID token credential.</param>
+    /// <returns>The authentication response with user info if successful, or an error if validation fails.</returns>
+    [HttpPost("google/one-tap")]
+    public async Task<IActionResult> GoogleOneTap([FromBody] GoogleOneTapRequest request)
+    {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
+        var googleClientId = _configuration["Google:ClientId"];
+        if (string.IsNullOrWhiteSpace(googleClientId) || googleClientId.StartsWith("<"))
+        {
+            _logger.LogWarning("Google One Tap attempted but Google Client ID is not configured");
+            return BadRequest(new { error = "Google authentication is not configured on this server." });
+        }
+
+        GoogleJsonWebSignature.Payload payload;
+        try
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = new[] { googleClientId }
+            };
+            payload = await GoogleJsonWebSignature.ValidateAsync(request.Credential, settings);
+        }
+        catch (InvalidJwtException ex)
+        {
+            _logger.LogWarning(ex, "Google One Tap: Invalid Google ID token");
+
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.OAuthLoginFailure,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = "Google One Tap: Invalid ID token",
+                IsSuspicious = true,
+                Severity = SecurityEventSeverity.Warning
+            });
+
+            return BadRequest(new { error = "Invalid Google credential." });
+        }
+
+        var email = payload.Email;
+        if (string.IsNullOrEmpty(email))
+        {
+            return BadRequest(new { error = "Email not provided by Google." });
+        }
+
+        var googleId = payload.Subject;
+        var displayName = payload.Name ?? payload.GivenName;
+
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            user = new AppUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                DisplayName = displayName,
+                GoogleId = googleId,
+                AuthMethod = "Google"
+            };
+
+            var createResult = await _userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                _logger.LogError("Google One Tap: Failed to create user {Email}: {Errors}",
+                    email, string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                return BadRequest(new { error = "Failed to create user account." });
+            }
+
+            var roleResult = await _userManager.AddToRoleAsync(user, "Officer");
+            if (!roleResult.Succeeded)
+            {
+                _logger.LogWarning("Google One Tap: Failed to assign Officer role to user {Email}: {Errors}",
+                    email, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+            }
+
+            _logger.LogInformation("Google One Tap: Created new user {Email} with Google authentication", email);
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(user.GoogleId))
+            {
+                user.GoogleId = googleId;
+                user.AuthMethod = "Google";
+                if (!string.IsNullOrEmpty(displayName))
+                {
+                    user.DisplayName = displayName;
+                }
+                await _userManager.UpdateAsync(user);
+                _logger.LogInformation("Google One Tap: Linked Google account to existing user {Email}", email);
+            }
+            else if (!string.IsNullOrEmpty(displayName) && string.IsNullOrEmpty(user.DisplayName))
+            {
+                user.DisplayName = displayName;
+                await _userManager.UpdateAsync(user);
+            }
+        }
+
+        var token = _jwtTokenService.GenerateToken(user);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken();
+        var refreshTokenEntity = _jwtTokenService.CreateRefreshToken(user.Id, refreshToken);
+        _context.RefreshTokens.Add(refreshTokenEntity);
+        await _context.SaveChangesAsync();
+
+        SecureCookieMiddleware.SetAuthCookies(
+            HttpContext,
+            token,
+            refreshToken,
+            user.Email!,
+            user.DisplayName,
+            user.AuthMethod ?? "Google",
+            HttpContext.Request.IsHttps
+        );
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.OAuthLoginSuccess,
+            UserId = user.Id,
+            Email = email,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = $"Google One Tap login successful for user {email}",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
+
+        return Ok(new AuthResponse
+        {
+            Token = null,
+            RefreshToken = null,
+            Email = user.Email!,
+            Name = user.DisplayName,
+            AuthMethod = "Google",
+            Requires2FA = false
+        });
     }
 
     private string GetFrontendUrl(string? returnUrl)
