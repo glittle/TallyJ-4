@@ -3414,6 +3414,483 @@
         }
       }
     },
+    "/api/PeopleImport/{electionGuid}/upload": {
+      "post": {
+        "tags": [
+          "PeopleImport"
+        ],
+        "summary": "Uploads a file for people import and stores it in the database.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "The uploaded file.",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportFileDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportFileDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportFileDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PeopleImport/{electionGuid}/files": {
+      "get": {
+        "tags": [
+          "PeopleImport"
+        ],
+        "summary": "Retrieves all import files for a specific election.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImportFileDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImportFileDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImportFileDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PeopleImport/{electionGuid}/files/{rowId}/parse": {
+      "get": {
+        "tags": [
+          "PeopleImport"
+        ],
+        "summary": "Parses an uploaded file and returns headers, preview data, and auto-mappings.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "rowId",
+            "in": "path",
+            "description": "The row ID of the import file.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "codePage",
+            "in": "query",
+            "description": "Optional code page for text encoding.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "firstDataRow",
+            "in": "query",
+            "description": "Optional first data row number (1-based).",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParseFileResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParseFileResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParseFileResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PeopleImport/{electionGuid}/files/{rowId}/mapping": {
+      "put": {
+        "tags": [
+          "PeopleImport"
+        ],
+        "summary": "Saves column mappings for an import file.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "rowId",
+            "in": "path",
+            "description": "The row ID of the import file.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "List of column mappings.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ColumnMappingDto"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ColumnMappingDto"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ColumnMappingDto"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/PeopleImport/{electionGuid}/files/{rowId}/settings": {
+      "put": {
+        "tags": [
+          "PeopleImport"
+        ],
+        "summary": "Updates file settings like first data row and code page.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "rowId",
+            "in": "path",
+            "description": "The row ID of the import file.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The settings to update.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFileSettingsDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFileSettingsDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFileSettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/PeopleImport/{electionGuid}/files/{rowId}/import": {
+      "post": {
+        "tags": [
+          "PeopleImport"
+        ],
+        "summary": "Executes the import of people from the configured file.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "rowId",
+            "in": "path",
+            "description": "The row ID of the import file.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportPeopleResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportPeopleResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportPeopleResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PeopleImport/{electionGuid}/files/{rowId}": {
+      "delete": {
+        "tags": [
+          "PeopleImport"
+        ],
+        "summary": "Deletes an import file.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "rowId",
+            "in": "path",
+            "description": "The row ID of the import file.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/PeopleImport/{electionGuid}/people": {
+      "delete": {
+        "tags": [
+          "PeopleImport"
+        ],
+        "summary": "Deletes all people for an election (with safety guards).",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteAllPeopleResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteAllPeopleResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteAllPeopleResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PeopleImport/{electionGuid}/people-count": {
+      "get": {
+        "tags": [
+          "PeopleImport"
+        ],
+        "summary": "Gets the count of people for an election.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Public/home": {
       "get": {
         "tags": [
@@ -6679,6 +7156,23 @@
         "additionalProperties": false,
         "description": "Request model for assigning a guest teller to an election."
       },
+      "ColumnMappingDto": {
+        "type": "object",
+        "properties": {
+          "fileColumn": {
+            "type": "string",
+            "description": "The name of the column in the source file.",
+            "nullable": true
+          },
+          "targetField": {
+            "type": "string",
+            "description": "The target field name in TallyJ, or null to ignore this column.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for column mapping configuration."
+      },
       "ComparisonMetricsDto": {
         "type": "object",
         "properties": {
@@ -7285,6 +7779,18 @@
         },
         "additionalProperties": false,
         "description": "Date range filter for filtering by date ranges."
+      },
+      "DeleteAllPeopleResult": {
+        "type": "object",
+        "properties": {
+          "deletedCount": {
+            "type": "integer",
+            "description": "Number of people records deleted.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object containing the result of deleting all people."
       },
       "DeleteTellerRequest": {
         "type": "object",
@@ -8313,6 +8819,130 @@
         "additionalProperties": false,
         "description": "Data transfer object for configuring an import operation."
       },
+      "ImportFileDto": {
+        "type": "object",
+        "properties": {
+          "rowId": {
+            "type": "integer",
+            "description": "The unique row identifier for the import file.",
+            "format": "int32"
+          },
+          "electionGuid": {
+            "type": "string",
+            "description": "The GUID of the election this file belongs to.",
+            "format": "uuid"
+          },
+          "uploadTime": {
+            "type": "string",
+            "description": "The time when the file was uploaded.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "importTime": {
+            "type": "string",
+            "description": "The time when the import was completed.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fileSize": {
+            "type": "integer",
+            "description": "The size of the uploaded file in bytes.",
+            "format": "int32",
+            "nullable": true
+          },
+          "hasContent": {
+            "type": "boolean",
+            "description": "Indicates whether the file has content stored.",
+            "nullable": true
+          },
+          "firstDataRow": {
+            "type": "integer",
+            "description": "The row number where data starts (1-based).",
+            "format": "int32",
+            "nullable": true
+          },
+          "columnsToRead": {
+            "type": "string",
+            "description": "JSON string containing column mappings.",
+            "nullable": true
+          },
+          "originalFileName": {
+            "type": "string",
+            "description": "The original name of the uploaded file.",
+            "nullable": true
+          },
+          "processingStatus": {
+            "type": "string",
+            "description": "The current processing status of the file.",
+            "nullable": true
+          },
+          "fileType": {
+            "type": "string",
+            "description": "The type of the file (e.g., csv, xlsx).",
+            "nullable": true
+          },
+          "codePage": {
+            "type": "integer",
+            "description": "The code page for text encoding.",
+            "format": "int32",
+            "nullable": true
+          },
+          "messages": {
+            "type": "string",
+            "description": "Any messages or errors related to the file processing.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for import file information, mapping from ImportFile entity (excluding Contents)."
+      },
+      "ImportPeopleResult": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the import operation was successful."
+          },
+          "peopleAdded": {
+            "type": "integer",
+            "description": "Number of people successfully added.",
+            "format": "int32"
+          },
+          "peopleSkipped": {
+            "type": "integer",
+            "description": "Number of people skipped (duplicates or invalid).",
+            "format": "int32"
+          },
+          "totalRows": {
+            "type": "integer",
+            "description": "Total number of rows processed.",
+            "format": "int32"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of warning messages generated during import.",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of error messages encountered during import.",
+            "nullable": true
+          },
+          "timeElapsedSeconds": {
+            "type": "number",
+            "description": "Time elapsed during the import operation in seconds.",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object containing the result of importing people."
+      },
       "LocationAnalysisDto": {
         "type": "object",
         "properties": {
@@ -9028,6 +9658,45 @@
         },
         "additionalProperties": false,
         "description": "Request model for parsing CSV headers."
+      },
+      "ParseFileResponse": {
+        "type": "object",
+        "properties": {
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of column headers from the parsed file.",
+            "nullable": true
+          },
+          "previewRows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "Preview rows from the file (first few data rows).",
+            "nullable": true
+          },
+          "totalDataRows": {
+            "type": "integer",
+            "description": "Total number of data rows in the file.",
+            "format": "int32"
+          },
+          "autoMappings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ColumnMappingDto"
+            },
+            "description": "Automatically detected column mappings.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for the response when parsing a file."
       },
       "ParticipationRateDto": {
         "type": "object",
@@ -10679,6 +11348,25 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object for updating an existing election."
+      },
+      "UpdateFileSettingsDto": {
+        "type": "object",
+        "properties": {
+          "firstDataRow": {
+            "type": "integer",
+            "description": "The row number where data starts (1-based).",
+            "format": "int32",
+            "nullable": true
+          },
+          "codePage": {
+            "type": "integer",
+            "description": "The code page for text encoding.",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for updating file settings."
       },
       "UpdateLocationDto": {
         "type": "object",

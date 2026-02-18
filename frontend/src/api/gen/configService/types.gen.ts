@@ -1151,6 +1151,20 @@ export type ChooseTellerRequest = {
 };
 
 /**
+ * Data transfer object for column mapping configuration.
+ */
+export type ColumnMappingDto = {
+    /**
+     * The name of the column in the source file.
+     */
+    fileColumn?: string | null;
+    /**
+     * The target field name in TallyJ, or null to ignore this column.
+     */
+    targetField?: string | null;
+};
+
+/**
  * Aggregated metrics for comparing multiple elections.
  */
 export type ComparisonMetricsDto = {
@@ -1618,6 +1632,16 @@ export type DateRangeFilterDto = {
      * The end date of the range (inclusive).
      */
     endDate?: Date | null;
+};
+
+/**
+ * Data transfer object containing the result of deleting all people.
+ */
+export type DeleteAllPeopleResult = {
+    /**
+     * Number of people records deleted.
+     */
+    deletedCount?: number;
 };
 
 /**
@@ -2365,6 +2389,98 @@ export type ImportConfigurationDto = {
 };
 
 /**
+ * Data transfer object for import file information, mapping from ImportFile entity (excluding Contents).
+ */
+export type ImportFileDto = {
+    /**
+     * The unique row identifier for the import file.
+     */
+    rowId?: number;
+    /**
+     * The GUID of the election this file belongs to.
+     */
+    electionGuid?: string;
+    /**
+     * The time when the file was uploaded.
+     */
+    uploadTime?: Date | null;
+    /**
+     * The time when the import was completed.
+     */
+    importTime?: Date | null;
+    /**
+     * The size of the uploaded file in bytes.
+     */
+    fileSize?: number | null;
+    /**
+     * Indicates whether the file has content stored.
+     */
+    hasContent?: boolean | null;
+    /**
+     * The row number where data starts (1-based).
+     */
+    firstDataRow?: number | null;
+    /**
+     * JSON string containing column mappings.
+     */
+    columnsToRead?: string | null;
+    /**
+     * The original name of the uploaded file.
+     */
+    originalFileName?: string | null;
+    /**
+     * The current processing status of the file.
+     */
+    processingStatus?: string | null;
+    /**
+     * The type of the file (e.g., csv, xlsx).
+     */
+    fileType?: string | null;
+    /**
+     * The code page for text encoding.
+     */
+    codePage?: number | null;
+    /**
+     * Any messages or errors related to the file processing.
+     */
+    messages?: string | null;
+};
+
+/**
+ * Data transfer object containing the result of importing people.
+ */
+export type ImportPeopleResult = {
+    /**
+     * Indicates whether the import operation was successful.
+     */
+    success?: boolean;
+    /**
+     * Number of people successfully added.
+     */
+    peopleAdded?: number;
+    /**
+     * Number of people skipped (duplicates or invalid).
+     */
+    peopleSkipped?: number;
+    /**
+     * Total number of rows processed.
+     */
+    totalRows?: number;
+    /**
+     * List of warning messages generated during import.
+     */
+    warnings?: Array<string> | null;
+    /**
+     * List of error messages encountered during import.
+     */
+    errors?: Array<string> | null;
+    /**
+     * Time elapsed during the import operation in seconds.
+     */
+    timeElapsedSeconds?: number;
+};
+
+/**
  * Analysis of voting patterns by geographic location.
  */
 export type LocationAnalysisDto = {
@@ -2896,6 +3012,28 @@ export type ParseCsvHeadersRequest = {
      * Gets or sets the delimiter character (default: comma).
      */
     delimiter?: string | null;
+};
+
+/**
+ * Data transfer object for the response when parsing a file.
+ */
+export type ParseFileResponse = {
+    /**
+     * List of column headers from the parsed file.
+     */
+    headers?: Array<string> | null;
+    /**
+     * Preview rows from the file (first few data rows).
+     */
+    previewRows?: Array<Array<string>> | null;
+    /**
+     * Total number of data rows in the file.
+     */
+    totalDataRows?: number;
+    /**
+     * Automatically detected column mappings.
+     */
+    autoMappings?: Array<ColumnMappingDto> | null;
 };
 
 /**
@@ -4119,6 +4257,20 @@ export type UpdateElectionDto = {
      * Additional flags and settings (JSON).
      */
     flags?: string | null;
+};
+
+/**
+ * Data transfer object for updating file settings.
+ */
+export type UpdateFileSettingsDto = {
+    /**
+     * The row number where data starts (1-based).
+     */
+    firstDataRow?: number | null;
+    /**
+     * The code page for text encoding.
+     */
+    codePage?: number | null;
 };
 
 /**
@@ -6439,6 +6591,229 @@ export type DeleteApiPeopleByGuidDeletePersonResponses = {
      */
     200: unknown;
 };
+
+export type PostApiPeopleImportByElectionGuidUploadData = {
+    body?: {
+        /**
+         * The uploaded file.
+         */
+        file?: Blob | File;
+    };
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/PeopleImport/{electionGuid}/upload';
+};
+
+export type PostApiPeopleImportByElectionGuidUploadResponses = {
+    /**
+     * OK
+     */
+    200: ImportFileDto;
+};
+
+export type PostApiPeopleImportByElectionGuidUploadResponse = PostApiPeopleImportByElectionGuidUploadResponses[keyof PostApiPeopleImportByElectionGuidUploadResponses];
+
+export type GetApiPeopleImportByElectionGuidFilesData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/PeopleImport/{electionGuid}/files';
+};
+
+export type GetApiPeopleImportByElectionGuidFilesResponses = {
+    /**
+     * OK
+     */
+    200: Array<ImportFileDto>;
+};
+
+export type GetApiPeopleImportByElectionGuidFilesResponse = GetApiPeopleImportByElectionGuidFilesResponses[keyof GetApiPeopleImportByElectionGuidFilesResponses];
+
+export type GetApiPeopleImportByElectionGuidFilesByRowIdParseData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+        /**
+         * The row ID of the import file.
+         */
+        rowId: number;
+    };
+    query?: {
+        /**
+         * Optional code page for text encoding.
+         */
+        codePage?: number;
+        /**
+         * Optional first data row number (1-based).
+         */
+        firstDataRow?: number;
+    };
+    url: '/api/PeopleImport/{electionGuid}/files/{rowId}/parse';
+};
+
+export type GetApiPeopleImportByElectionGuidFilesByRowIdParseResponses = {
+    /**
+     * OK
+     */
+    200: ParseFileResponse;
+};
+
+export type GetApiPeopleImportByElectionGuidFilesByRowIdParseResponse = GetApiPeopleImportByElectionGuidFilesByRowIdParseResponses[keyof GetApiPeopleImportByElectionGuidFilesByRowIdParseResponses];
+
+export type PutApiPeopleImportByElectionGuidFilesByRowIdMappingData = {
+    /**
+     * List of column mappings.
+     */
+    body?: Array<ColumnMappingDto>;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+        /**
+         * The row ID of the import file.
+         */
+        rowId: number;
+    };
+    query?: never;
+    url: '/api/PeopleImport/{electionGuid}/files/{rowId}/mapping';
+};
+
+export type PutApiPeopleImportByElectionGuidFilesByRowIdMappingResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PutApiPeopleImportByElectionGuidFilesByRowIdSettingsData = {
+    /**
+     * The settings to update.
+     */
+    body?: UpdateFileSettingsDto;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+        /**
+         * The row ID of the import file.
+         */
+        rowId: number;
+    };
+    query?: never;
+    url: '/api/PeopleImport/{electionGuid}/files/{rowId}/settings';
+};
+
+export type PutApiPeopleImportByElectionGuidFilesByRowIdSettingsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiPeopleImportByElectionGuidFilesByRowIdImportData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+        /**
+         * The row ID of the import file.
+         */
+        rowId: number;
+    };
+    query?: never;
+    url: '/api/PeopleImport/{electionGuid}/files/{rowId}/import';
+};
+
+export type PostApiPeopleImportByElectionGuidFilesByRowIdImportResponses = {
+    /**
+     * OK
+     */
+    200: ImportPeopleResult;
+};
+
+export type PostApiPeopleImportByElectionGuidFilesByRowIdImportResponse = PostApiPeopleImportByElectionGuidFilesByRowIdImportResponses[keyof PostApiPeopleImportByElectionGuidFilesByRowIdImportResponses];
+
+export type DeleteApiPeopleImportByElectionGuidFilesByRowIdData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+        /**
+         * The row ID of the import file.
+         */
+        rowId: number;
+    };
+    query?: never;
+    url: '/api/PeopleImport/{electionGuid}/files/{rowId}';
+};
+
+export type DeleteApiPeopleImportByElectionGuidFilesByRowIdResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type DeleteApiPeopleImportByElectionGuidPeopleData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/PeopleImport/{electionGuid}/people';
+};
+
+export type DeleteApiPeopleImportByElectionGuidPeopleResponses = {
+    /**
+     * OK
+     */
+    200: DeleteAllPeopleResult;
+};
+
+export type DeleteApiPeopleImportByElectionGuidPeopleResponse = DeleteApiPeopleImportByElectionGuidPeopleResponses[keyof DeleteApiPeopleImportByElectionGuidPeopleResponses];
+
+export type GetApiPeopleImportByElectionGuidPeopleCountData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/PeopleImport/{electionGuid}/people-count';
+};
+
+export type GetApiPeopleImportByElectionGuidPeopleCountResponses = {
+    /**
+     * OK
+     */
+    200: number;
+};
+
+export type GetApiPeopleImportByElectionGuidPeopleCountResponse = GetApiPeopleImportByElectionGuidPeopleCountResponses[keyof GetApiPeopleImportByElectionGuidPeopleCountResponses];
 
 export type GetApiPublicHomeData = {
     body?: never;

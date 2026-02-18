@@ -1634,6 +1634,24 @@ export const ChooseTellerRequestSchema = {
     description: 'Request model for assigning a guest teller to an election.'
 } as const;
 
+export const ColumnMappingDtoSchema = {
+    type: 'object',
+    properties: {
+        fileColumn: {
+            type: 'string',
+            description: 'The name of the column in the source file.',
+            nullable: true
+        },
+        targetField: {
+            type: 'string',
+            description: 'The target field name in TallyJ, or null to ignore this column.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for column mapping configuration.'
+} as const;
+
 export const ComparisonMetricsDtoSchema = {
     type: 'object',
     properties: {
@@ -2255,6 +2273,19 @@ export const DateRangeFilterDtoSchema = {
     },
     additionalProperties: false,
     description: 'Date range filter for filtering by date ranges.'
+} as const;
+
+export const DeleteAllPeopleResultSchema = {
+    type: 'object',
+    properties: {
+        deletedCount: {
+            type: 'integer',
+            description: 'Number of people records deleted.',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object containing the result of deleting all people.'
 } as const;
 
 export const DeleteTellerRequestSchema = {
@@ -3292,6 +3323,132 @@ export const ImportConfigurationDtoSchema = {
     description: 'Data transfer object for configuring an import operation.'
 } as const;
 
+export const ImportFileDtoSchema = {
+    type: 'object',
+    properties: {
+        rowId: {
+            type: 'integer',
+            description: 'The unique row identifier for the import file.',
+            format: 'int32'
+        },
+        electionGuid: {
+            type: 'string',
+            description: 'The GUID of the election this file belongs to.',
+            format: 'uuid'
+        },
+        uploadTime: {
+            type: 'string',
+            description: 'The time when the file was uploaded.',
+            format: 'date-time',
+            nullable: true
+        },
+        importTime: {
+            type: 'string',
+            description: 'The time when the import was completed.',
+            format: 'date-time',
+            nullable: true
+        },
+        fileSize: {
+            type: 'integer',
+            description: 'The size of the uploaded file in bytes.',
+            format: 'int32',
+            nullable: true
+        },
+        hasContent: {
+            type: 'boolean',
+            description: 'Indicates whether the file has content stored.',
+            nullable: true
+        },
+        firstDataRow: {
+            type: 'integer',
+            description: 'The row number where data starts (1-based).',
+            format: 'int32',
+            nullable: true
+        },
+        columnsToRead: {
+            type: 'string',
+            description: 'JSON string containing column mappings.',
+            nullable: true
+        },
+        originalFileName: {
+            type: 'string',
+            description: 'The original name of the uploaded file.',
+            nullable: true
+        },
+        processingStatus: {
+            type: 'string',
+            description: 'The current processing status of the file.',
+            nullable: true
+        },
+        fileType: {
+            type: 'string',
+            description: 'The type of the file (e.g., csv, xlsx).',
+            nullable: true
+        },
+        codePage: {
+            type: 'integer',
+            description: 'The code page for text encoding.',
+            format: 'int32',
+            nullable: true
+        },
+        messages: {
+            type: 'string',
+            description: 'Any messages or errors related to the file processing.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for import file information, mapping from ImportFile entity (excluding Contents).'
+} as const;
+
+export const ImportPeopleResultSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean',
+            description: 'Indicates whether the import operation was successful.'
+        },
+        peopleAdded: {
+            type: 'integer',
+            description: 'Number of people successfully added.',
+            format: 'int32'
+        },
+        peopleSkipped: {
+            type: 'integer',
+            description: 'Number of people skipped (duplicates or invalid).',
+            format: 'int32'
+        },
+        totalRows: {
+            type: 'integer',
+            description: 'Total number of rows processed.',
+            format: 'int32'
+        },
+        warnings: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'List of warning messages generated during import.',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'List of error messages encountered during import.',
+            nullable: true
+        },
+        timeElapsedSeconds: {
+            type: 'number',
+            description: 'Time elapsed during the import operation in seconds.',
+            format: 'double'
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object containing the result of importing people.'
+} as const;
+
 export const LocationAnalysisDtoSchema = {
     type: 'object',
     properties: {
@@ -4029,6 +4186,46 @@ export const ParseCsvHeadersRequestSchema = {
     },
     additionalProperties: false,
     description: 'Request model for parsing CSV headers.'
+} as const;
+
+export const ParseFileResponseSchema = {
+    type: 'object',
+    properties: {
+        headers: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'List of column headers from the parsed file.',
+            nullable: true
+        },
+        previewRows: {
+            type: 'array',
+            items: {
+                type: 'array',
+                items: {
+                    type: 'string'
+                }
+            },
+            description: 'Preview rows from the file (first few data rows).',
+            nullable: true
+        },
+        totalDataRows: {
+            type: 'integer',
+            description: 'Total number of data rows in the file.',
+            format: 'int32'
+        },
+        autoMappings: {
+            type: 'array',
+            items: {
+                '$ref': '#/components/schemas/ColumnMappingDto'
+            },
+            description: 'Automatically detected column mappings.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for the response when parsing a file.'
 } as const;
 
 export const ParticipationRateDtoSchema = {
@@ -5714,6 +5911,26 @@ export const UpdateElectionDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object for updating an existing election.'
+} as const;
+
+export const UpdateFileSettingsDtoSchema = {
+    type: 'object',
+    properties: {
+        firstDataRow: {
+            type: 'integer',
+            description: 'The row number where data starts (1-based).',
+            format: 'int32',
+            nullable: true
+        },
+        codePage: {
+            type: 'integer',
+            description: 'The code page for text encoding.',
+            format: 'int32',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for updating file settings.'
 } as const;
 
 export const UpdateLocationDtoSchema = {
