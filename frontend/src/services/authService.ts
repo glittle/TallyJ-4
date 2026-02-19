@@ -7,10 +7,12 @@ import {
   postApiAuthSetup2Fa,
   postApiAuthEnable2Fa,
   postApiAuthDisable2Fa,
+  postApiAuthGoogleOneTap,
 } from "../api/gen/configService/sdk.gen";
 import type {
   RegisterRequest,
   LoginRequest,
+  GoogleOneTapRequest,
 } from "../api/gen/configService/types.gen";
 
 export interface AuthResponse {
@@ -88,20 +90,12 @@ export const authService = {
   },
 
   async googleOneTap(credential: string): Promise<AuthResponse> {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
-    const response = await fetch(`${apiUrl}/api/auth/google/one-tap`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ credential }),
+    const response = await postApiAuthGoogleOneTap({
+      body: { credential } as GoogleOneTapRequest,
+      throwOnError: true,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Google sign-in failed' }));
-      throw new Error(errorData.error || 'Google sign-in failed');
-    }
-
-    return response.json() as Promise<AuthResponse>;
+    return response.data as AuthResponse;
   },
 
   async logout(): Promise<void> {
