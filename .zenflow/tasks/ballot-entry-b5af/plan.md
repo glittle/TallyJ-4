@@ -86,6 +86,7 @@ Update the people store and search logic so the candidate list includes all peop
 ---
 
 ### [ ] Step: Frontend – VoteEntryRow UX + Ineligible Handling
+<!-- chat-id: 21a5552e-ab59-4cc4-8102-de01b616e890 -->
 
 Improve VoteEntryRow to display vote counts, handle ineligible persons, and verify keyboard navigation.
 
