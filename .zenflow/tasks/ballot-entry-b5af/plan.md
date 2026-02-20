@@ -55,7 +55,8 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Backend – Spoiled Votes + All-People Endpoint
+### [x] Step: Backend – Spoiled Votes + All-People Endpoint
+<!-- chat-id: 198c2c0b-5ecc-4b7e-94c1-e34f16f7f585 -->
 
 Backend changes for ineligible-person handling and the new ballot-entry people endpoint.
 

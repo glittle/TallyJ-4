@@ -370,6 +370,145 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.True(result.CanReceiveVotes);
         Assert.Null(result.IneligibleReasonCode);
     }
+
+    [Fact]
+    public async Task GetAllForBallotEntryAsync_ReturnsAllPeople_IncludingIneligible()
+    {
+        var electionGuid = Guid.NewGuid();
+
+        var eligible = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Alpha",
+            FullName = "Alpha",
+            FullNameFl = "Alpha",
+            CanReceiveVotes = true,
+            CanVote = true,
+            RowVersion = new byte[8]
+        };
+        var ineligible = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Beta",
+            FullName = "Beta",
+            FullNameFl = "Beta",
+            CanReceiveVotes = false,
+            CanVote = true,
+            IneligibleReasonGuid = IneligibleReasonEnum.V06_OtherCanVoteButNotBeVotedFor.ReasonGuid,
+            RowVersion = new byte[8]
+        };
+
+        Context.People.AddRange(eligible, ineligible);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetAllForBallotEntryAsync(electionGuid);
+
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, p => p.PersonGuid == eligible.PersonGuid);
+        Assert.Contains(result, p => p.PersonGuid == ineligible.PersonGuid);
+    }
+
+    [Fact]
+    public async Task GetAllForBallotEntryAsync_VoteCount_IsLiveFromVoteTable()
+    {
+        var electionGuid = Guid.NewGuid();
+        var locationGuid = Guid.NewGuid();
+        var ballotGuid = Guid.NewGuid();
+
+        var location = new Backend.Domain.Entities.Location
+        {
+            RowId = 900,
+            LocationGuid = locationGuid,
+            ElectionGuid = electionGuid,
+            Name = "Test Location"
+        };
+        var ballot = new Backend.Domain.Entities.Ballot
+        {
+            RowId = 900,
+            BallotGuid = ballotGuid,
+            LocationGuid = locationGuid,
+            StatusCode = "Ok",
+            ComputerCode = "A",
+            BallotNumAtComputer = 1,
+            RowVersion = new byte[8]
+        };
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Voter",
+            FullName = "Voter",
+            FullNameFl = "Voter",
+            CanReceiveVotes = true,
+            CanVote = true,
+            RowVersion = new byte[8]
+        };
+        Context.Locations.Add(location);
+        Context.Ballots.Add(ballot);
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var vote = new Backend.Domain.Entities.Vote
+        {
+            BallotGuid = ballotGuid,
+            PersonGuid = person.PersonGuid,
+            PositionOnBallot = 1,
+            StatusCode = "ok",
+            RowVersion = new byte[8]
+        };
+        Context.Votes.Add(vote);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetAllForBallotEntryAsync(electionGuid);
+
+        var personDto = result.Single(p => p.PersonGuid == person.PersonGuid);
+        Assert.Equal(1, personDto.VoteCount);
+    }
+
+    [Fact]
+    public async Task GetAllForBallotEntryAsync_VoteCount_ZeroWhenNoVotes()
+    {
+        var electionGuid = Guid.NewGuid();
+
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "NoVotes",
+            FullName = "NoVotes",
+            FullNameFl = "NoVotes",
+            CanReceiveVotes = true,
+            CanVote = true,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetAllForBallotEntryAsync(electionGuid);
+
+        Assert.Single(result);
+        Assert.Equal(0, result[0].VoteCount);
+    }
+
+    [Fact]
+    public async Task GetAllForBallotEntryAsync_ExcludesPeopleFromOtherElections()
+    {
+        var election1 = Guid.NewGuid();
+        var election2 = Guid.NewGuid();
+
+        Context.People.AddRange(
+            new Person { PersonGuid = Guid.NewGuid(), ElectionGuid = election1, LastName = "InElection1", FullName = "InElection1", FullNameFl = "InElection1", RowVersion = new byte[8] },
+            new Person { PersonGuid = Guid.NewGuid(), ElectionGuid = election2, LastName = "InElection2", FullName = "InElection2", FullNameFl = "InElection2", RowVersion = new byte[8] }
+        );
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetAllForBallotEntryAsync(election1);
+
+        Assert.Single(result);
+        Assert.Equal("InElection1", result[0].LastName);
+    }
 }
 
 

@@ -58,6 +58,12 @@ public interface ISignalRNotificationService
     /// <param name="electionGuid">The election GUID.</param>
     /// <param name="stats">The updated statistics.</param>
     Task NotifyVoterCountUpdatedAsync(Guid electionGuid, FrontDeskStatsDto stats);
+
+    /// <summary>
+    /// Sends a live vote count update for a person to all ballot entry clients.
+    /// </summary>
+    /// <param name="update">The updated vote count data for the person.</param>
+    Task SendPersonVoteCountUpdateAsync(PersonVoteCountUpdateDto update);
 }
 
 
