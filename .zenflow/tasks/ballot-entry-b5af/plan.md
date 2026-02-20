@@ -20,7 +20,8 @@ If you are blocked and need user clarification, mark the current step with `[!]`
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
+<!-- chat-id: 92a09eab-71fd-44b8-966a-50652db3e9c5 -->
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
 - easy: Straightforward implementation, trivial bug fix or feature
@@ -54,16 +55,53 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Backend – Spoiled Votes + All-People Endpoint
 
-Implement the task according to the technical specification and general engineering best practices.
+Backend changes for ineligible-person handling and the new ballot-entry people endpoint.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase
-3. If relevant, write unit tests alongside each change.
-4. Run relevant tests and linters in the end of each step.
-5. Perform basic manual verification if applicable.
-6. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+- Add `PersonVoteCountUpdateDto` SignalR DTO (`backend/DTOs/SignalR/PersonVoteCountUpdateDto.cs`)
+- Add `SendPersonVoteCountUpdateAsync` to `ISignalRNotificationService` and implement in `SignalRNotificationService`
+- Add `GetAllForBallotEntryAsync` to `IPeopleService` + implement in `PeopleService` (all people, live vote count from Vote table)
+- Add `GET {electionGuid}/getAllForBallotEntry` endpoint to `PeopleController`
+- Modify `VoteService.CreateVoteAsync`: remove `CanReceiveVotes` exception; if ineligible, set statusCode from `IneligibleReasonCode`; inject `ISignalRNotificationService` and broadcast live vote count after create/delete
+- Write xUnit tests: spoiled vote creation, live vote count query, SignalR broadcast on create/delete
+- Run `dotnet build && dotnet test`
+
+---
+
+### [ ] Step: Frontend – People Store + Search Sorting
+
+Update the people store and search logic so the candidate list includes all people and sorts by live vote count.
+
+- Add `getAllForBallotEntry` method to `peopleService.ts`
+- Update `peopleStore.initializeCandidateCache` to call `getAllForBallotEntry` instead of `getCandidates`
+- Add `PersonVoteCountUpdateEvent` to `frontend/src/types/SignalREvents.ts`
+- Add `handlePersonVoteCountUpdated` to `peopleStore`; wire it up in `initializeSignalR` to listen for `PersonVoteCountUpdated` hub event
+- Update sort comparator in `usePersonSearch.ts`: primary `voteCount` desc, secondary relevance weight desc
+- Write/update Vitest tests for `usePersonSearch` sort order and `peopleStore` vote count handler
+- Run `npx vue-tsc --noEmit && npm run test`
+
+---
+
+### [ ] Step: Frontend – VoteEntryRow UX + Ineligible Handling
+
+Improve VoteEntryRow to display vote counts, handle ineligible persons, and verify keyboard navigation.
+
+- Update autocomplete item template in `VoteEntryRow.vue` to show `voteCount` badge
+- Style ineligible persons differently (e.g., warning colour, eligibility code shown)
+- On person selection: if `canReceiveVotes !== true`, set `statusCode = person.ineligibleReasonCode` in emitted VoteDto
+- Verify arrow-key / Enter keyboard navigation works end-to-end with `el-autocomplete`
+- Update `InlineBallotEntry.vue` to pass statusCode through the emitted vote
+- Update `BallotEntryPage.vue` to pass statusCode to `CreateVoteDto`; show distinct success message for spoiled votes
+- Add i18n keys (`ballots.voteSpoiledSuccess`, `ballots.ineligible`) to `en/ballots.json` and `fr/ballots.json`
+- Run `npx vue-tsc --noEmit && npm run test`
+
+---
+
+### [ ] Step: Verification + Report
+
+End-to-end verification and documentation.
+
+- Manual smoke test: ballot entry page loads all people, ineligible person adds a spoiled vote, second browser sees updated vote count via SignalR
+- Run full test suite: `dotnet test` + `npm run test`
+- Write `{@artifacts_path}/report.md` describing implementation, testing, and challenges
