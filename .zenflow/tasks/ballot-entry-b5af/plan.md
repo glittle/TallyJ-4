@@ -101,7 +101,7 @@ Improve VoteEntryRow to display vote counts, handle ineligible persons, and veri
 
 ---
 
-### [ ] Step: Verification + Report
+### [x] Step: Verification + Report
 <!-- chat-id: 6c39f1c3-23af-4760-9af0-6601ba7ded29 -->
 
 End-to-end verification and documentation.
