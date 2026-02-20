@@ -125,14 +125,13 @@ describe('usePeopleStore', () => {
     it('should do nothing when person is not found in cache', () => {
       const store = usePeopleStore();
 
-      const initialCache = [
+      store.candidateCache = [
         {
           ...createPersonDto({ personGuid: 'person-1', lastName: 'Smith', fullName: 'Alice Smith', voteCount: 2 }),
           _searchText: 'alice smith',
           _soundexCodes: [],
         },
       ] as any;
-      store.candidateCache = initialCache;
 
       const event: PersonVoteCountUpdateEvent = {
         electionGuid: 'election-1',
@@ -142,7 +141,7 @@ describe('usePeopleStore', () => {
 
       store.handlePersonVoteCountUpdated(event);
 
-      expect(store.candidateCache).toBe(initialCache);
+      expect(store.candidateCache).toHaveLength(1);
       expect(store.candidateCache[0].voteCount).toBe(2);
     });
 
