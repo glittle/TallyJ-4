@@ -350,6 +350,78 @@ public class AuthControllerTests : IntegrationTestBase
         responseContent.Should().Contain("Password"); // Should mention password validation error
     }
 
+    [Fact]
+    public async Task GoogleOneTap_WithInvalidCredential_ReturnsBadRequest()
+    {
+        // Arrange
+        var request = new GoogleOneTapRequest
+        {
+            Credential = "invalid-jwt-token"
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(request),
+            Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response = await Client.PostAsync("/api/auth/google/one-tap", content);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        responseContent.Should().Contain("error");
+    }
+
+    [Fact]
+    public async Task GoogleOneTap_WithEmptyCredential_ReturnsBadRequest()
+    {
+        // Arrange
+        var request = new GoogleOneTapRequest
+        {
+            Credential = ""
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(request),
+            Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response = await Client.PostAsync("/api/auth/google/one-tap", content);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task GoogleOneTap_WithMissingGoogleClientId_ReturnsBadRequest()
+    {
+        // Note: This test assumes the test environment doesn't have a valid Google Client ID configured
+        // If the test environment does have a valid Client ID, this test would need to be adjusted
+        // or the configuration would need to be mocked differently
+        
+        // Arrange
+        var request = new GoogleOneTapRequest
+        {
+            Credential = "some-credential"
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(request),
+            Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response = await Client.PostAsync("/api/auth/google/one-tap", content);
+
+        // Assert
+        // Should return BadRequest if Google is not configured OR if the credential is invalid
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        responseContent.Should().Contain("error");
+    }
+
     private Dictionary<string, string> GetCookiesFromResponse(HttpResponseMessage response)
     {
         var cookies = new Dictionary<string, string>();

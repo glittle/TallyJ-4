@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, onBeforeUnmount } from "vue";
+import { ref, reactive, computed, onMounted, watch, nextTick, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
@@ -131,6 +131,132 @@ const handleLogin = async () => {
   });
 };
 
+const googleButtonRef = ref<HTMLElement>();
+const googleClientId = ref<string | null>(null);
+const googleReady = ref(false);
+const gisScriptLoaded = ref(false);
+let gisCleanup: (() => void) | null = null;
+
+const handleGoogleOneTapCallback = async (response: GoogleCredentialResponse) => {
+  loading.value = true;
+  try {
+    await authStore.googleOneTapLogin(response.credential);
+    ElMessage.success(t("auth.loginSuccess"));
+    const redirectPath = (route.query.redirect as string) || "/dashboard";
+    router.push(redirectPath);
+  } catch {
+    ElMessage.error(t("auth.googleLoginFailed"));
+  } finally {
+    loading.value = false;
+  }
+};
+
+const loadGisScript = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (gisScriptLoaded.value || typeof google !== "undefined") {
+      gisScriptLoaded.value = true;
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+
+    script.onload = () => {
+      gisScriptLoaded.value = true;
+      resolve();
+    };
+
+    script.onerror = () => {
+      reject(new Error("Failed to load Google Identity Services script"));
+    };
+
+    document.head.appendChild(script);
+  });
+};
+
+const fetchGoogleClientId = async (): Promise<string | null> => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
+    const resp = await fetch(`${apiUrl}/api/public/auth-config`);
+    if (!resp.ok) return null;
+    const json = await resp.json();
+    return json?.data?.googleClientId || null;
+  } catch {
+    return null;
+  }
+};
+const renderGoogleButton = () => {
+  nextTick(() => {
+    if (googleButtonRef.value && googleClientId.value && googleReady.value) {
+      google.accounts.id.renderButton(googleButtonRef.value, {
+        type: "standard",
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+        shape: "rectangular",
+        width: "300",
+      });
+    }
+  });
+};
+
+watch(googleButtonRef, (el) => {
+  if (el && googleReady.value) {
+    renderGoogleButton();
+  }
+});
+
+const initGoogleOneTap = async () => {
+  try {
+    // Lazy load the GIS script only when needed
+    await loadGisScript();
+    const clientId = await fetchGoogleClientId();
+    googleClientId.value = clientId;
+
+    if (!clientId || typeof google === "undefined") {
+      googleReady.value = false;
+      return;
+    }
+
+    google.accounts.id.initialize({
+      client_id: clientId,
+      callback: handleGoogleOneTapCallback,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+      use_fedcm_for_prompt: true,
+    });
+
+    googleReady.value = true;
+    renderGoogleButton();
+    google.accounts.id.prompt();
+
+    // Store cleanup function
+    gisCleanup = () => {
+      if (typeof google !== "undefined" && googleReady.value) {
+        try {
+          google.accounts.id.cancel();
+        } catch {
+          // Ignore errors from cancel
+        }
+      }
+      googleReady.value = false;
+    };
+  } catch (error) {
+    console.error("Failed to initialize Google One Tap:", error);
+    googleReady.value = false;
+  }
+};
+
+const teardownGoogleOneTap = () => {
+  if (gisCleanup) {
+    gisCleanup();
+    gisCleanup = null;
+  }
+};
+
 const handleGoogleLogin = () => {
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
   const redirectParam = route.query.redirect
@@ -140,7 +266,6 @@ const handleGoogleLogin = () => {
     globalThis.location.origin + "/auth/google/callback" + redirectParam
   );
 
-  // Try the Google OAuth redirect
   globalThis.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}`;
 };
 
@@ -151,15 +276,33 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 };
 
+// Watch mode changes to initialize/teardown Google One Tap
+watch(
+  () => mode.value,
+  (newMode, oldMode) => {
+    if (newMode === "officer") {
+      // Initialize Google One Tap when switching into officer mode
+      initGoogleOneTap();
+    } else if (oldMode === "officer") {
+      // Tear down Google One Tap when leaving officer mode
+      teardownGoogleOneTap();
+    }
+  }
+);
+
 onMounted(() => {
   if (authStore.isAuthenticated && isStandardLogin.value) {
     router.push("/dashboard");
   }
   globalThis.addEventListener("keydown", handleKeydown);
+  if (mode.value === "officer") {
+    initGoogleOneTap();
+  }
 });
 
 onBeforeUnmount(() => {
   globalThis.removeEventListener("keydown", handleKeydown);
+  teardownGoogleOneTap();
 });
 </script>
 
@@ -195,7 +338,8 @@ onBeforeUnmount(() => {
 
       <!-- Social login only for Officers -->
       <div class="social-login" v-if="mode === 'officer'">
-        <el-button class="google-btn" @click="handleGoogleLogin">
+        <div v-if="googleReady" ref="googleButtonRef" class="google-btn-container"></div>
+        <el-button v-if="!googleReady" class="google-btn" @click="handleGoogleLogin">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
           <span>{{ t("auth.googleLogin") }}</span>
         </el-button>
@@ -340,6 +484,11 @@ onBeforeUnmount(() => {
 
   .el-divider--horizontal {
     margin: 2em 0;
+  }
+
+  .google-btn-container {
+    display: flex;
+    justify-content: center;
   }
 
   .google-btn {

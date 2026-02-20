@@ -1057,6 +1057,39 @@
         }
       }
     },
+    "/api/Auth/google/one-tap": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authenticates a user via Google One Tap by validating a Google ID token credential.",
+        "requestBody": {
+          "description": "The request containing the Google ID token credential.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleOneTapRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleOneTapRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleOneTapRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auth/logout": {
       "get": {
         "tags": [
@@ -4035,12 +4068,40 @@
         }
       }
     },
+    "/api/Public/auth-config": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Public/health": {
       "get": {
         "tags": [
           "Public"
         ],
-        "summary": "Performs a health check to verify the service is running properly.",
         "responses": {
           "200": {
             "description": "OK",
@@ -8759,6 +8820,19 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object representing a voter at the front desk."
+      },
+      "GoogleOneTapRequest": {
+        "required": [
+          "credential"
+        ],
+        "type": "object",
+        "properties": {
+          "credential": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "ImportBallotRequestDto": {
         "type": "object",
