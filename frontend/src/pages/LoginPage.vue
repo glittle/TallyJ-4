@@ -134,6 +134,8 @@ const handleLogin = async () => {
 const googleButtonRef = ref<HTMLElement>();
 const googleClientId = ref<string | null>(null);
 const googleReady = ref(false);
+const gisScriptLoaded = ref(false);
+let gisCleanup: (() => void) | null = null;
 
 const handleGoogleOneTapCallback = async (response: GoogleCredentialResponse) => {
   loading.value = true;
@@ -149,19 +151,29 @@ const handleGoogleOneTapCallback = async (response: GoogleCredentialResponse) =>
   }
 };
 
-const waitForGis = (): Promise<void> => {
-  return new Promise((resolve) => {
-    if (typeof google !== "undefined") {
+const loadGisScript = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (gisScriptLoaded.value || typeof google !== "undefined") {
+      gisScriptLoaded.value = true;
       resolve();
       return;
     }
-    const interval = setInterval(() => {
-      if (typeof google !== "undefined") {
-        clearInterval(interval);
-        resolve();
-      }
-    }, 100);
-    setTimeout(() => { clearInterval(interval); resolve(); }, 5000);
+
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+
+    script.onload = () => {
+      gisScriptLoaded.value = true;
+      resolve();
+    };
+
+    script.onerror = () => {
+      reject(new Error("Failed to load Google Identity Services script"));
+    };
+
+    document.head.appendChild(script);
   });
 };
 
@@ -176,10 +188,9 @@ const fetchGoogleClientId = async (): Promise<string | null> => {
     return null;
   }
 };
-
 const renderGoogleButton = () => {
   nextTick(() => {
-    if (googleButtonRef.value && googleClientId.value) {
+    if (googleButtonRef.value && googleClientId.value && googleReady.value) {
       google.accounts.id.renderButton(googleButtonRef.value, {
         type: "standard",
         theme: "outline",
@@ -199,25 +210,51 @@ watch(googleButtonRef, (el) => {
 });
 
 const initGoogleOneTap = async () => {
-  const [clientId] = await Promise.all([fetchGoogleClientId(), waitForGis()]);
-  googleClientId.value = clientId;
+  try {
+    // Lazy load the GIS script only when needed
+    await loadGisScript();
+    const clientId = await fetchGoogleClientId();
+    googleClientId.value = clientId;
 
-  if (!clientId || typeof google === "undefined") {
+    if (!clientId || typeof google === "undefined") {
+      googleReady.value = false;
+      return;
+    }
+
+    google.accounts.id.initialize({
+      client_id: clientId,
+      callback: handleGoogleOneTapCallback,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+      use_fedcm_for_prompt: true,
+    });
+
+    googleReady.value = true;
+    renderGoogleButton();
+    google.accounts.id.prompt();
+
+    // Store cleanup function
+    gisCleanup = () => {
+      if (typeof google !== "undefined" && googleReady.value) {
+        try {
+          google.accounts.id.cancel();
+        } catch {
+          // Ignore errors from cancel
+        }
+      }
+      googleReady.value = false;
+    };
+  } catch (error) {
+    console.error("Failed to initialize Google One Tap:", error);
     googleReady.value = false;
-    return;
   }
+};
 
-  google.accounts.id.initialize({
-    client_id: clientId,
-    callback: handleGoogleOneTapCallback,
-    auto_select: false,
-    cancel_on_tap_outside: true,
-    use_fedcm_for_prompt: true,
-  });
-
-  googleReady.value = true;
-  renderGoogleButton();
-  google.accounts.id.prompt();
+const teardownGoogleOneTap = () => {
+  if (gisCleanup) {
+    gisCleanup();
+    gisCleanup = null;
+  }
 };
 
 const handleGoogleLogin = () => {
@@ -239,6 +276,20 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 };
 
+// Watch mode changes to initialize/teardown Google One Tap
+watch(
+  () => mode.value,
+  (newMode, oldMode) => {
+    if (newMode === "officer") {
+      // Initialize Google One Tap when switching into officer mode
+      initGoogleOneTap();
+    } else if (oldMode === "officer") {
+      // Tear down Google One Tap when leaving officer mode
+      teardownGoogleOneTap();
+    }
+  }
+);
+
 onMounted(() => {
   if (authStore.isAuthenticated && isStandardLogin.value) {
     router.push("/dashboard");
@@ -251,6 +302,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   globalThis.removeEventListener("keydown", handleKeydown);
+  teardownGoogleOneTap();
 });
 </script>
 
