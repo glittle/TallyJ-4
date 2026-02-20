@@ -84,13 +84,16 @@ function handleSelect(item: SearchablePersonDto) {
   selectedPerson.value = item;
   searchQuery.value = item.fullName;
 
+  const isSpoiled = item.canReceiveVotes === false;
+  const statusCode = isSpoiled ? (item.ineligibleReasonCode || 'X01') : 'Ok';
+
   const vote: VoteDto = {
     rowId: props.modelValue?.rowId || 0,
     ballotGuid: props.modelValue?.ballotGuid || '',
     positionOnBallot: props.positionOnBallot,
     personGuid: item.personGuid,
     personFullName: item.fullName,
-    statusCode: props.modelValue?.statusCode || 'Ok'
+    statusCode
   };
 
   emit('update:modelValue', vote);
@@ -208,8 +211,12 @@ defineExpose({
               {{ $t('ballots.addNewPerson') }}
             </el-button>
           </div>
-          <div v-else class="autocomplete-item">
+          <div v-else class="autocomplete-item" :class="{ 'autocomplete-item--ineligible': item.person?.canReceiveVotes === false }">
             <span class="autocomplete-item__name">{{ item.value }}</span>
+            <span v-if="item.person?.canReceiveVotes === false" class="autocomplete-item__ineligible-code" :title="$t('ballots.ineligible')">
+              {{ item.person.ineligibleReasonCode }}
+            </span>
+            <span v-if="item.person?.voteCount > 0" class="autocomplete-item__vote-count">{{ item.person.voteCount }}</span>
           </div>
         </template>
       </el-autocomplete>
@@ -325,6 +332,7 @@ defineExpose({
 .autocomplete-item {
   display: flex;
   align-items: center;
+  gap: var(--spacing-2, 8px);
   padding: var(--spacing-2, 8px);
 
   &__name {
@@ -332,6 +340,35 @@ defineExpose({
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  &__vote-count {
+    flex-shrink: 0;
+    min-width: 20px;
+    padding: 1px 6px;
+    background-color: var(--el-color-primary-light-9);
+    color: var(--el-color-primary);
+    border-radius: 10px;
+    font-size: var(--font-size-xs, 12px);
+    font-weight: var(--font-weight-medium, 500);
+    text-align: center;
+  }
+
+  &__ineligible-code {
+    flex-shrink: 0;
+    padding: 1px 6px;
+    background-color: var(--el-color-warning-light-9);
+    color: var(--el-color-warning-dark-2);
+    border-radius: 4px;
+    font-size: var(--font-size-xs, 12px);
+    font-weight: var(--font-weight-medium, 500);
+    font-family: monospace;
+  }
+
+  &--ineligible {
+    .autocomplete-item__name {
+      color: var(--el-color-warning-dark-2);
+    }
   }
 }
 

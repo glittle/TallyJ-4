@@ -71,5 +71,7 @@
   "ballots.import.failed": "Échec de l'importation",
   "ballots.import.parseError": "Échec de l'analyse du fichier CSV",
   "ballots.noMatchesFound": "Aucun résultat trouvé",
-  "ballots.personUpdated": "{name} a été mis à jour"
+  "ballots.personUpdated": "{name} a été mis à jour",
+  "ballots.ineligible": "Inéligible",
+  "ballots.voteSpoiledSuccess": "Vote ajouté comme nul ({code} – personne inéligible)"
 }

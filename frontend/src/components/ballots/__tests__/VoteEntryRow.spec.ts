@@ -52,7 +52,28 @@ function createMockPerson(
     fullName,
     _searchText: fullName,
     _soundexCodes: [],
-    voteCount: 0
+    voteCount: 0,
+    canReceiveVotes: true
+  };
+}
+
+function createIneligiblePerson(
+  firstName: string,
+  lastName: string,
+  ineligibleReasonCode: string = 'X01',
+  personGuid: string = `guid-ineligible-${firstName}-${lastName}`
+): SearchablePersonDto {
+  const fullName = `${firstName} ${lastName}`;
+  return {
+    personGuid,
+    firstName,
+    lastName,
+    fullName,
+    _searchText: fullName,
+    _soundexCodes: [],
+    voteCount: 0,
+    canReceiveVotes: false,
+    ineligibleReasonCode
   };
 }
 
@@ -281,6 +302,78 @@ describe('VoteEntryRow', () => {
       await nextTick();
 
       expect(wrapper.findComponent(ElAutocomplete).props('disabled')).toBe(true);
+    });
+
+    it('should emit statusCode Ok for eligible person', async () => {
+      const wrapper = mount(VoteEntryRow, {
+        props: {
+          positionOnBallot: 1,
+          modelValue: null,
+          candidates: mockCandidates,
+          duplicatePersonGuids: []
+        },
+        ...defaultMountOptions
+      });
+
+      const autocomplete = wrapper.findComponent(ElAutocomplete);
+      await autocomplete.vm.$emit('select', {
+        value: mockCandidates[0].fullName,
+        person: mockCandidates[0]
+      });
+      await nextTick();
+
+      const voteSelectedEvents = wrapper.emitted('vote-selected') as any[];
+      expect(voteSelectedEvents[0][0].statusCode).toBe('Ok');
+    });
+
+    it('should emit ineligibleReasonCode as statusCode for ineligible person', async () => {
+      const ineligible = createIneligiblePerson('Eve', 'Ineligible', 'R02');
+      const candidates = [...mockCandidates, ineligible];
+
+      const wrapper = mount(VoteEntryRow, {
+        props: {
+          positionOnBallot: 1,
+          modelValue: null,
+          candidates,
+          duplicatePersonGuids: []
+        },
+        ...defaultMountOptions
+      });
+
+      const autocomplete = wrapper.findComponent(ElAutocomplete);
+      await autocomplete.vm.$emit('select', {
+        value: ineligible.fullName,
+        person: ineligible
+      });
+      await nextTick();
+
+      const voteSelectedEvents = wrapper.emitted('vote-selected') as any[];
+      expect(voteSelectedEvents[0][0].statusCode).toBe('R02');
+    });
+
+    it('should fall back to X01 statusCode when ineligible person has no reason code', async () => {
+      const ineligible = createIneligiblePerson('Eve', 'NoCode', '');
+      const candidates = [...mockCandidates, ineligible];
+
+      const wrapper = mount(VoteEntryRow, {
+        props: {
+          positionOnBallot: 1,
+          modelValue: null,
+          candidates,
+          duplicatePersonGuids: []
+        },
+        ...defaultMountOptions
+      });
+
+      const autocomplete = wrapper.findComponent(ElAutocomplete);
+      await autocomplete.vm.$emit('select', {
+        value: ineligible.fullName,
+        person: ineligible
+      });
+      await nextTick();
+
+      const voteSelectedEvents = wrapper.emitted('vote-selected') as any[];
+      expect(voteSelectedEvents[0][0].statusCode).toBe('X01');
     });
   });
 
