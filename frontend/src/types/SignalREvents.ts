@@ -44,4 +44,10 @@ export interface BallotUpdateEvent {
   statusCode?: string;
   voteCount?: number;
   updatedAt: string;
-} 
+}
+
+export interface PersonVoteCountUpdateEvent {
+  electionGuid: string;
+  personGuid: string;
+  voteCount: number;
+}

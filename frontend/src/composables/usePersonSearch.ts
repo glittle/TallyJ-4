@@ -77,6 +77,11 @@ export function usePersonSearch(
     }
 
     results.sort((a, b) => {
+      const voteCountDiff = (b.person.voteCount ?? 0) - (a.person.voteCount ?? 0);
+      if (voteCountDiff !== 0) {
+        return voteCountDiff;
+      }
+
       if (b.weight !== a.weight) {
         return b.weight - a.weight;
       }

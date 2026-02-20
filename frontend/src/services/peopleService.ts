@@ -7,6 +7,7 @@ import {
   getApiPeopleByElectionGuidSearchPeople,
   getApiPeopleByElectionGuidGetCandidates,
 } from "../api/gen/configService/sdk.gen";
+import { client } from "../api/config";
 import type { PersonDto, CreatePersonDto, UpdatePersonDto } from "../types";
 
 export const peopleService = {
@@ -61,6 +62,15 @@ export const peopleService = {
   async getCandidates(electionGuid: string): Promise<PersonDto[]> {
     const response = await getApiPeopleByElectionGuidGetCandidates({
       path: { electionGuid },
+    });
+    return (response.data?.data ?? []) as PersonDto[];
+  },
+
+  async getAllForBallotEntry(electionGuid: string): Promise<PersonDto[]> {
+    const response = await client.get<{ data: PersonDto[] }>({
+      url: '/api/People/{electionGuid}/getAllForBallotEntry',
+      path: { electionGuid },
+      security: [{ scheme: 'bearer', type: 'http' }],
     });
     return (response.data?.data ?? []) as PersonDto[];
   },

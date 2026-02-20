@@ -71,6 +71,7 @@ Backend changes for ineligible-person handling and the new ballot-entry people e
 ---
 
 ### [ ] Step: Frontend – People Store + Search Sorting
+<!-- chat-id: 3b474de5-aac8-4612-9ec9-020f22322c2f -->
 
 Update the people store and search logic so the candidate list includes all people and sorts by live vote count.
 
