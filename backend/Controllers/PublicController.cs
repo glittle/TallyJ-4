@@ -17,16 +17,13 @@ public class PublicController : ControllerBase
 {
     private readonly IPublicService _publicService;
     private readonly ILogger<PublicController> _logger;
+    private readonly IConfiguration _configuration;
 
-    /// <summary>
-    /// Initializes a new instance of the PublicController.
-    /// </summary>
-    /// <param name="publicService">The public service for non-authenticated operations.</param>
-    /// <param name="logger">The logger for recording operations.</param>
-    public PublicController(IPublicService publicService, ILogger<PublicController> logger)
+    public PublicController(IPublicService publicService, ILogger<PublicController> logger, IConfiguration configuration)
     {
         _publicService = publicService;
         _logger = logger;
+        _configuration = configuration;
     }
 
     /// <summary>
@@ -93,10 +90,18 @@ public class PublicController : ControllerBase
         return Ok(ApiResponse<PublicDisplayDto>.SuccessResponse(displayData));
     }
 
-    /// <summary>
-    /// Performs a health check to verify the service is running properly.
-    /// </summary>
-    /// <returns>Health status information including timestamp and service details.</returns>
+    [HttpGet("auth-config")]
+    public ActionResult<ApiResponse<object>> GetAuthConfig()
+    {
+        var googleClientId = _configuration["Google:ClientId"];
+        var hasGoogle = !string.IsNullOrWhiteSpace(googleClientId) && !googleClientId.StartsWith("<");
+
+        return Ok(ApiResponse<object>.SuccessResponse(new
+        {
+            googleClientId = hasGoogle ? googleClientId : null
+        }));
+    }
+
     [HttpGet("health")]
     public ActionResult<ApiResponse<object>> HealthCheck()
     {
