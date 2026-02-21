@@ -51,3 +51,22 @@ export interface PersonVoteCountUpdateEvent {
   personGuid: string;
   voteCount: number;
 }
+}
+
+export interface PeopleImportProgressEvent {
+  processed: number;
+  total: number;
+  status: string;
+}
+
+export interface PeopleImportCompleteEvent {
+  result: {
+    success: boolean;
+    peopleAdded: number;
+    peopleSkipped: number;
+    totalRows: number;
+    warnings: string[];
+    errors: string[];
+    timeElapsedSeconds: number;
+  };
+}

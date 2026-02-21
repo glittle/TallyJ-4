@@ -1,0 +1,730 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+using Backend.Domain.Context;
+using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
+using Backend.DTOs.Import;
+using Backend.Hubs;
+
+namespace Backend.Services;
+
+/// <summary>
+/// Service for managing people import operations including file upload, parsing, mapping, and import execution.
+/// </summary>
+public class PeopleImportService : IPeopleImportService
+{
+    private readonly MainDbContext _context;
+    private readonly IHubContext<PeopleImportHub> _hubContext;
+
+    // Auto-mapping aliases for field matching (case-insensitive, spaces/underscores/hyphens ignored)
+    private static readonly IReadOnlyDictionary<string, IReadOnlyList<string>> FieldAliases = new Dictionary<string, IReadOnlyList<string>>
+    {
+        ["FirstName"] = new[] { "first name", "firstname", "first_name", "given name", "givenname" },
+        ["LastName"] = new[] { "last name", "lastname", "last_name", "surname", "family name", "familyname" },
+        ["BahaiId"] = new[] { "bahai id", "bahaiid", "bahai_id", "baha'i id", "id" },
+        ["IneligibleReasonDescription"] = new[] { "eligibility", "eligibility status", "status", "ineligible reason" },
+        ["Area"] = new[] { "area", "region", "locality", "community" },
+        ["Email"] = new[] { "email", "email address", "e-mail" },
+        ["Phone"] = new[] { "phone", "phone number", "telephone", "tel", "mobile" },
+        ["OtherNames"] = new[] { "other names", "othernames", "other_names", "middle name", "middlename" },
+        ["OtherLastNames"] = new[] { "other last names", "otherlastnames", "maiden name", "former name", "formername" },
+        ["OtherInfo"] = new[] { "other info", "otherinfo", "other_info", "notes", "comments" }
+    };
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeopleImportService"/> class.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="hubContext">The SignalR hub context for people import notifications.</param>
+    public PeopleImportService(MainDbContext context, IHubContext<PeopleImportHub> hubContext)
+    {
+        _context = context;
+        _hubContext = hubContext;
+    }
+
+    /// <summary>
+    /// Uploads a file for people import and stores it in the database.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="file">The uploaded file.</param>
+    /// <returns>The created import file information.</returns>
+    public async Task<ImportFileDto> UploadFileAsync(Guid electionGuid, IFormFile file)
+    {
+        // Validate file extension
+        var allowedExtensions = new[] { ".csv", ".tsv", ".tab", ".txt", ".xlsx" };
+        var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(fileExtension))
+        {
+            throw new ArgumentException($"File type '{fileExtension}' is not supported. Supported types: {string.Join(", ", allowedExtensions)}");
+        }
+
+        // Validate file size (10MB limit)
+        const long maxFileSize = 10 * 1024 * 1024; // 10MB
+        if (file.Length > maxFileSize)
+        {
+            throw new ArgumentException($"File size {file.Length} bytes exceeds the maximum allowed size of {maxFileSize} bytes (10MB)");
+        }
+
+        // Read file content
+        byte[] fileContent;
+        using (var memoryStream = new MemoryStream())
+        {
+            await file.CopyToAsync(memoryStream);
+            fileContent = memoryStream.ToArray();
+        }
+
+        // Determine file type
+        var fileType = fileExtension switch
+        {
+            ".xlsx" => "xlsx",
+            ".csv" => "csv",
+            ".tsv" => "tab",
+            ".tab" => "tab",
+            ".txt" => "csv", // Default to CSV for .txt files
+            _ => "csv"
+        };
+
+        // Create import file record
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            UploadTime = DateTime.UtcNow,
+            FileSize = (int)file.Length,
+            HasContent = true,
+            FirstDataRow = 1, // Default to 1 (headers on row 1)
+            ColumnsToRead = null, // No mapping yet
+            OriginalFileName = file.FileName,
+            ProcessingStatus = "Uploaded",
+            FileType = fileType,
+            CodePage = fileType == "xlsx" ? null : 65001, // UTF-8 for text files, null for XLSX
+            Messages = null,
+            Contents = fileContent
+        };
+
+        _context.ImportFiles.Add(importFile);
+        await _context.SaveChangesAsync();
+
+        // Map to DTO and return
+        var dto = new ImportFileDto
+        {
+            RowId = importFile.RowId,
+            ElectionGuid = importFile.ElectionGuid,
+            UploadTime = importFile.UploadTime,
+            ImportTime = importFile.ImportTime,
+            FileSize = importFile.FileSize,
+            HasContent = importFile.HasContent,
+            FirstDataRow = importFile.FirstDataRow,
+            ColumnsToRead = importFile.ColumnsToRead,
+            OriginalFileName = importFile.OriginalFileName,
+            ProcessingStatus = importFile.ProcessingStatus,
+            FileType = importFile.FileType,
+            CodePage = importFile.CodePage,
+            Messages = importFile.Messages
+        };
+
+        return dto;
+    }
+
+    /// <summary>
+    /// Retrieves all import files for a specific election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <returns>List of import files for the election.</returns>
+    public async Task<List<ImportFileDto>> GetFilesAsync(Guid electionGuid)
+    {
+        var files = await _context.ImportFiles
+            .Where(f => f.ElectionGuid == electionGuid)
+            .OrderByDescending(f => f.UploadTime)
+            .ToListAsync();
+
+        return files.Select(f => new ImportFileDto
+        {
+            RowId = f.RowId,
+            ElectionGuid = f.ElectionGuid,
+            UploadTime = f.UploadTime,
+            ImportTime = f.ImportTime,
+            FileSize = f.FileSize,
+            HasContent = f.HasContent,
+            FirstDataRow = f.FirstDataRow,
+            ColumnsToRead = f.ColumnsToRead,
+            OriginalFileName = f.OriginalFileName,
+            ProcessingStatus = f.ProcessingStatus,
+            FileType = f.FileType,
+            CodePage = f.CodePage,
+            Messages = f.Messages
+        }).ToList();
+    }
+
+    /// <summary>
+    /// Parses an uploaded file and returns headers, preview data, and auto-mappings.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="rowId">The row ID of the import file.</param>
+    /// <param name="codePage">Optional code page for text encoding.</param>
+    /// <param name="firstDataRow">Optional first data row number (1-based).</param>
+    /// <returns>Parsed file information including headers and preview.</returns>
+    public async Task<ParseFileResponse> ParseFileAsync(Guid electionGuid, int rowId, int? codePage = null, int? firstDataRow = null)
+    {
+        var importFile = await _context.ImportFiles
+            .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
+
+        if (importFile == null || importFile.HasContent != true || importFile.Contents == null)
+        {
+            throw new ArgumentException("Import file not found or has no content");
+        }
+
+        // Update settings if provided
+        if (codePage.HasValue)
+            importFile.CodePage = codePage.Value;
+        if (firstDataRow.HasValue)
+            importFile.FirstDataRow = firstDataRow.Value;
+
+        await _context.SaveChangesAsync();
+
+        // Parse the file
+        var (headers, previewRows, totalDataRows) = await ParseFileContentAsync(importFile);
+
+        // Generate auto-mappings
+        var autoMappings = GenerateAutoMappings(headers);
+
+        return new ParseFileResponse
+        {
+            Headers = headers,
+            PreviewRows = previewRows,
+            TotalDataRows = totalDataRows,
+            AutoMappings = autoMappings
+        };
+    }
+
+    /// <summary>
+    /// Saves column mappings for an import file.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="rowId">The row ID of the import file.</param>
+    /// <param name="mappings">List of column mappings.</param>
+    /// <returns>Task representing the operation.</returns>
+    public async Task SaveColumnMappingsAsync(Guid electionGuid, int rowId, List<ColumnMappingDto> mappings)
+    {
+        var importFile = await _context.ImportFiles
+            .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
+
+        if (importFile == null)
+        {
+            throw new ArgumentException("Import file not found");
+        }
+
+        // Serialize mappings to JSON
+        importFile.ColumnsToRead = JsonSerializer.Serialize(mappings);
+        importFile.ProcessingStatus = "Mapped";
+
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Updates file settings like first data row and code page.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="rowId">The row ID of the import file.</param>
+    /// <param name="settings">The settings to update.</param>
+    /// <returns>Task representing the operation.</returns>
+    public async Task UpdateFileSettingsAsync(Guid electionGuid, int rowId, UpdateFileSettingsDto settings)
+    {
+        var importFile = await _context.ImportFiles
+            .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
+
+        if (importFile == null)
+        {
+            throw new ArgumentException("Import file not found");
+        }
+
+        if (settings.FirstDataRow.HasValue)
+            importFile.FirstDataRow = settings.FirstDataRow.Value;
+        if (settings.CodePage.HasValue)
+            importFile.CodePage = settings.CodePage.Value;
+
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Executes the import of people from the configured file.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="rowId">The row ID of the import file.</param>
+    /// <returns>The result of the import operation.</returns>
+    public async Task<ImportPeopleResult> ImportPeopleAsync(Guid electionGuid, int rowId)
+    {
+        var result = new ImportPeopleResult();
+        var groupName = GetGroupName(electionGuid);
+        var startTime = DateTime.UtcNow;
+
+        try
+        {
+            var importFile = await _context.ImportFiles
+                .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
+
+            if (importFile == null || importFile.HasContent != true || importFile.Contents == null)
+            {
+                result.Success = false;
+                result.Errors.Add("Import file not found or has no content");
+                return result;
+            }
+
+            // Deserialize column mappings
+            if (string.IsNullOrEmpty(importFile.ColumnsToRead))
+            {
+                result.Success = false;
+                result.Errors.Add("No column mappings configured");
+                return result;
+            }
+
+            var mappings = JsonSerializer.Deserialize<List<ColumnMappingDto>>(importFile.ColumnsToRead);
+            if (mappings == null || mappings.Count == 0)
+            {
+                result.Success = false;
+                result.Errors.Add("Invalid column mappings");
+                return result;
+            }
+
+            // Validate required mappings
+            var firstNameMapping = mappings.FirstOrDefault(m => m.TargetField == "FirstName");
+            var lastNameMapping = mappings.FirstOrDefault(m => m.TargetField == "LastName");
+
+            if (firstNameMapping == null || lastNameMapping == null)
+            {
+                result.Success = false;
+                result.Errors.Add("FirstName and LastName mappings are required");
+                return result;
+            }
+
+            // Load existing people for deduplication
+            var existingPeople = await _context.People
+                .Where(p => p.ElectionGuid == electionGuid)
+                .ToListAsync();
+
+            var bahaiIdLookup = existingPeople
+                .Where(p => !string.IsNullOrEmpty(p.BahaiId))
+                .ToDictionary(p => p.BahaiId!, StringComparer.OrdinalIgnoreCase);
+
+            var nameLookup = existingPeople
+                .ToDictionary(p => $"{p.FirstName ?? ""} {p.LastName}".Trim().ToLowerInvariant());
+
+            // Parse file content
+            var (headers, allRows, _) = await ParseFileContentAsync(importFile);
+            var dataRows = allRows.Skip(importFile.FirstDataRow.Value - 1).ToList();
+
+            result.TotalRows = dataRows.Count;
+
+            // Process in batches
+            const int batchSize = 100;
+            var peopleToAdd = new List<Person>();
+
+            for (int i = 0; i < dataRows.Count; i++)
+            {
+                var row = dataRows[i];
+                var rowNumber = i + importFile.FirstDataRow.Value;
+
+                await ReportProgress(groupName, i + 1, dataRows.Count, $"Processing row {rowNumber}");
+
+                try
+                {
+                    var person = CreatePersonFromRow(row, headers, mappings, electionGuid, bahaiIdLookup, nameLookup, result);
+                    if (person != null)
+                    {
+                        peopleToAdd.Add(person);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.Errors.Add($"Row {rowNumber}: {ex.Message}");
+                    result.PeopleSkipped++;
+                    continue;
+                }
+
+                // Save batch
+                if (peopleToAdd.Count >= batchSize || i == dataRows.Count - 1)
+                {
+                    _context.People.AddRange(peopleToAdd);
+                    await _context.SaveChangesAsync();
+                    result.PeopleAdded += peopleToAdd.Count;
+                    peopleToAdd.Clear();
+                }
+            }
+
+            // Update import file status
+            importFile.ProcessingStatus = "Imported";
+            importFile.ImportTime = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            result.Success = true;
+            result.TimeElapsedSeconds = (DateTime.UtcNow - startTime).TotalSeconds;
+
+            await _hubContext.Clients.Group(groupName).SendAsync("importComplete", result);
+        }
+        catch (Exception ex)
+        {
+            result.Success = false;
+            result.Errors.Add($"Import failed: {ex.Message}");
+            await _hubContext.Clients.Group(groupName).SendAsync("importError", ex.Message);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Deletes an import file.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="rowId">The row ID of the import file.</param>
+    /// <returns>True if the file was deleted successfully.</returns>
+    public async Task<bool> DeleteFileAsync(Guid electionGuid, int rowId)
+    {
+        var importFile = await _context.ImportFiles
+            .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
+
+        if (importFile == null)
+        {
+            return false;
+        }
+
+        _context.ImportFiles.Remove(importFile);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    /// <summary>
+    /// Deletes all people for an election (with safety guards).
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <returns>The result of the delete operation.</returns>
+    public async Task<DeleteAllPeopleResult> DeleteAllPeopleAsync(Guid electionGuid)
+    {
+        var result = new DeleteAllPeopleResult();
+
+        // Check for existing ballots
+        var ballotCount = await _context.Ballots
+            .Include(b => b.Location)
+            .CountAsync(b => b.Location.ElectionGuid == electionGuid);
+        if (ballotCount > 0)
+        {
+            throw new InvalidOperationException($"Cannot delete all people: {ballotCount} ballots exist for this election");
+        }
+
+        // Check for people with registration time set
+        var registeredPeopleCount = await _context.People.CountAsync(p => p.ElectionGuid == electionGuid && p.RegistrationTime.HasValue);
+        if (registeredPeopleCount > 0)
+        {
+            throw new InvalidOperationException($"Cannot delete all people: {registeredPeopleCount} people have voting status set");
+        }
+
+        // Delete all people
+        var peopleToDelete = await _context.People
+            .Where(p => p.ElectionGuid == electionGuid)
+            .ToListAsync();
+
+        result.DeletedCount = peopleToDelete.Count;
+
+        _context.People.RemoveRange(peopleToDelete);
+        await _context.SaveChangesAsync();
+
+        return result;
+    }
+
+    /// <summary>
+    /// Gets the count of people for an election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <returns>The number of people in the election.</returns>
+    public async Task<int> GetPeopleCountAsync(Guid electionGuid)
+    {
+        return await _context.People.CountAsync(p => p.ElectionGuid == electionGuid);
+    }
+
+    private async Task<(List<string> headers, List<List<string>> rows, int totalDataRows)> ParseFileContentAsync(ImportFile importFile)
+    {
+        if (importFile.FileType == "xlsx")
+        {
+            return await ParseXlsxFileAsync(importFile.Contents!);
+        }
+        else
+        {
+            return ParseTextFile(importFile.Contents!, importFile.FileType!, importFile.CodePage ?? 65001);
+        }
+    }
+
+    private async Task<(List<string> headers, List<List<string>> rows, int totalDataRows)> ParseXlsxFileAsync(byte[] content)
+    {
+        using var stream = new MemoryStream(content);
+        using var workbook = new ClosedXML.Excel.XLWorkbook(stream);
+        var worksheet = workbook.Worksheets.First();
+
+        var headers = new List<string>();
+        var rows = new List<List<string>>();
+
+        // Read headers from first row
+        var firstRow = worksheet.FirstRowUsed();
+        foreach (var cell in firstRow.CellsUsed())
+        {
+            headers.Add(cell.GetValue<string>() ?? "");
+        }
+
+        // Read all data rows
+        var dataRows = worksheet.RowsUsed().Skip(1); // Skip header row
+        foreach (var row in dataRows)
+        {
+            var rowData = new List<string>();
+            for (int i = 1; i <= headers.Count; i++)
+            {
+                var cell = row.Cell(i);
+                rowData.Add(cell.GetValue<string>() ?? "");
+            }
+            rows.Add(rowData);
+        }
+
+        return (headers, rows, rows.Count);
+    }
+
+    private (List<string> headers, List<List<string>> rows, int totalDataRows) ParseTextFile(byte[] content, string fileType, int codePage)
+    {
+        var encoding = Encoding.GetEncoding(codePage);
+        var text = encoding.GetString(content);
+        var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(l => l.Trim('\r', '\n'))
+            .Where(l => !string.IsNullOrWhiteSpace(l))
+            .ToArray();
+
+        if (lines.Length == 0)
+        {
+            return (new List<string>(), new List<List<string>>(), 0);
+        }
+
+        var delimiter = fileType == "tab" ? '\t' : ',';
+        var headers = ParseCsvLine(lines[0], delimiter).ToList();
+        var rows = new List<List<string>>();
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            rows.Add(ParseCsvLine(lines[i], delimiter));
+        }
+
+        return (headers, rows, rows.Count);
+    }
+
+    private List<string> ParseCsvLine(string line, char delimiter)
+    {
+        var result = new List<string>();
+        var current = "";
+        var inQuotes = false;
+
+        for (int i = 0; i < line.Length; i++)
+        {
+            var c = line[i];
+
+            if (c == '"')
+            {
+                if (inQuotes && i + 1 < line.Length && line[i + 1] == '"')
+                {
+                    current += '"';
+                    i++;
+                }
+                else
+                {
+                    inQuotes = !inQuotes;
+                }
+            }
+            else if (c == delimiter && !inQuotes)
+            {
+                result.Add(current);
+                current = "";
+            }
+            else
+            {
+                current += c;
+            }
+        }
+
+        result.Add(current);
+        return result;
+    }
+
+    private List<ColumnMappingDto> GenerateAutoMappings(List<string> headers)
+    {
+        var mappings = new List<ColumnMappingDto>();
+
+        foreach (var header in headers)
+        {
+            var normalizedHeader = NormalizeHeader(header);
+            var targetField = FindMatchingField(normalizedHeader);
+
+            mappings.Add(new ColumnMappingDto
+            {
+                FileColumn = header,
+                TargetField = targetField
+            });
+        }
+
+        return mappings;
+    }
+
+    private string NormalizeHeader(string header)
+    {
+        return header
+            .Replace(" ", "")
+            .Replace("_", "")
+            .Replace("-", "")
+            .ToLowerInvariant();
+    }
+
+    private string? FindMatchingField(string normalizedHeader)
+    {
+        foreach (var (field, aliases) in FieldAliases)
+        {
+            if (aliases.Contains(normalizedHeader))
+            {
+                return field;
+            }
+        }
+        return null;
+    }
+
+    private Person? CreatePersonFromRow(List<string> row, List<string> headers, List<ColumnMappingDto> mappings,
+        Guid electionGuid, Dictionary<string, Person> bahaiIdLookup, Dictionary<string, Person> nameLookup,
+        ImportPeopleResult result)
+    {
+        var person = new Person
+        {
+            ElectionGuid = electionGuid,
+            PersonGuid = Guid.NewGuid(),
+            CanVote = true, // Default to eligible
+            CanReceiveVotes = true // Default to eligible
+        };
+
+        // Apply mappings
+        foreach (var mapping in mappings.Where(m => !string.IsNullOrEmpty(m.TargetField)))
+        {
+            var columnIndex = headers.IndexOf(mapping.FileColumn);
+            if (columnIndex >= 0 && columnIndex < row.Count)
+            {
+                var value = row[columnIndex]?.Trim();
+                ApplyFieldMapping(person, mapping.TargetField!, value);
+            }
+        }
+
+        // Validate required fields
+        if (string.IsNullOrEmpty(person.LastName))
+        {
+            throw new ArgumentException("LastName is required");
+        }
+
+        // Check for duplicates
+        if (!string.IsNullOrEmpty(person.BahaiId) && bahaiIdLookup.ContainsKey(person.BahaiId))
+        {
+            result.PeopleSkipped++;
+            return null; // Skip duplicate
+        }
+
+        var nameKey = $"{person.FirstName ?? ""} {person.LastName}".Trim().ToLowerInvariant();
+        if (nameLookup.ContainsKey(nameKey))
+        {
+            result.PeopleSkipped++;
+            return null; // Skip duplicate
+        }
+
+        // Set eligibility
+        var ineligibleReasonMapping = mappings.FirstOrDefault(m => m.TargetField == "IneligibleReasonDescription");
+        if (ineligibleReasonMapping != null)
+        {
+            var columnIndex = headers.IndexOf(ineligibleReasonMapping.FileColumn);
+            if (columnIndex >= 0 && columnIndex < row.Count)
+            {
+                var eligibilityValue = row[columnIndex]?.Trim();
+                SetEligibility(person, eligibilityValue, result);
+            }
+        }
+
+        // Set computed fields
+        person.FullName = $"{person.FirstName} {person.LastName}".Trim();
+        person.FullNameFl = $"{person.LastName}, {person.FirstName}".Trim();
+
+        return person;
+    }
+
+    private void ApplyFieldMapping(Person person, string targetField, string? value)
+    {
+        if (string.IsNullOrEmpty(value)) return;
+
+        switch (targetField)
+        {
+            case "FirstName":
+                person.FirstName = value;
+                break;
+            case "LastName":
+                person.LastName = value;
+                break;
+            case "BahaiId":
+                person.BahaiId = value;
+                break;
+            case "Area":
+                person.Area = value;
+                break;
+            case "Email":
+                person.Email = value;
+                break;
+            case "Phone":
+                person.Phone = value;
+                break;
+            case "OtherNames":
+                person.OtherNames = value;
+                break;
+            case "OtherLastNames":
+                person.OtherLastNames = value;
+                break;
+            case "OtherInfo":
+                person.OtherInfo = value;
+                break;
+        }
+    }
+
+    private void SetEligibility(Person person, string? eligibilityValue, ImportPeopleResult result)
+    {
+        if (string.IsNullOrEmpty(eligibilityValue))
+        {
+            person.CanVote = true;
+            person.CanReceiveVotes = true;
+            person.IneligibleReasonGuid = null;
+            return;
+        }
+
+        var reason = IneligibleReasonEnum.GetByDescription(eligibilityValue) ??
+                    IneligibleReasonEnum.GetByCode(eligibilityValue);
+
+        if (reason != null)
+        {
+            person.CanVote = reason.CanVote;
+            person.CanReceiveVotes = reason.CanReceiveVotes;
+            person.IneligibleReasonGuid = reason.ReasonGuid;
+        }
+        else
+        {
+            // Unrecognized eligibility value - treat as eligible but warn
+            person.CanVote = true;
+            person.CanReceiveVotes = true;
+            person.IneligibleReasonGuid = null;
+            result.Warnings.Add($"Unrecognized eligibility status: '{eligibilityValue}' - treated as eligible");
+        }
+    }
+
+    private async Task ReportProgress(string groupName, int processed, int total, string status)
+    {
+        await _hubContext.Clients.Group(groupName).SendAsync("importProgress", processed, total, status);
+    }
+
+    private static string GetGroupName(Guid electionGuid) => $"PeopleImport{electionGuid}";
+}

@@ -252,6 +252,7 @@ services.AddScoped<Backend.Services.IOnlineVotingService, Backend.Services.Onlin
 services.AddScoped<Backend.Services.IAuditLogService, Backend.Services.AuditLogService>();
 services.AddScoped<Backend.Services.ISuperAdminService, Backend.Services.SuperAdminService>();
 services.AddScoped<Backend.Services.ImportService>();
+services.AddScoped<Backend.Services.IPeopleImportService, Backend.Services.PeopleImportService>();
 
 // Add Auth services
 services.AddScoped<JwtTokenService>();
@@ -410,6 +411,7 @@ app.MapControllers();
 app.MapHub<Backend.Hubs.MainHub>("/hubs/main");
 app.MapHub<Backend.Hubs.AnalyzeHub>("/hubs/analyze");
 app.MapHub<Backend.Hubs.BallotImportHub>("/hubs/ballot-import");
+app.MapHub<Backend.Hubs.PeopleImportHub>("/hubs/people-import");
 app.MapHub<Backend.Hubs.FrontDeskHub>("/hubs/front-desk");
 app.MapHub<Backend.Hubs.PublicHub>("/hubs/public");
 app.MapHub<Backend.Hubs.OnlineVotingHub>("/hubs/online-voting");
