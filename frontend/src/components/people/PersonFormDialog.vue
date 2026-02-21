@@ -32,7 +32,7 @@ const form = reactive({
   phone: '',
   area: '',
   bahaiId: '',
-  ageGroup: 'Adult',
+  ageGroup: 'A',
   ineligibleReasonGuid: null as string | null
 });
 
@@ -57,7 +57,7 @@ watch(() => props.person, (person) => {
     form.phone = person.phone || '';
     form.area = person.area || '';
     form.bahaiId = person.bahaiId || '';
-    form.ageGroup = person.ageGroup || 'Adult';
+    form.ageGroup = person.ageGroup || 'A';
     form.ineligibleReasonGuid = person.ineligibleReasonGuid || null;
   }
 }, { immediate: true });
@@ -154,8 +154,8 @@ function handleClose() {
 
       <el-form-item :label="$t('people.ageGroup')" prop="ageGroup">
         <el-select v-model="form.ageGroup" style="width: 100%">
-          <el-option label="Adult" value="Adult" />
-          <el-option label="Youth" value="Youth" />
+          <el-option label="Adult" value="A" />
+          <el-option label="Youth" value="Y" />
         </el-select>
       </el-form-item>
 
