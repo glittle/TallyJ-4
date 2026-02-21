@@ -3268,6 +3268,48 @@
         }
       }
     },
+    "/api/People/{electionGuid}/getAllForBallotEntry": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Gets all people in the specified election for ballot entry, including ineligible persons.\nVoteCount reflects the live ballot vote count, not the tally result.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPersonDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPersonDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPersonDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/People/{guid}/getPerson": {
       "get": {
         "tags": [

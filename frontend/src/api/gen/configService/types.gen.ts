@@ -6378,6 +6378,27 @@ export type GetApiPeopleByElectionGuidGetCandidatesResponses = {
 
 export type GetApiPeopleByElectionGuidGetCandidatesResponse = GetApiPeopleByElectionGuidGetCandidatesResponses[keyof GetApiPeopleByElectionGuidGetCandidatesResponses];
 
+export type GetApiPeopleByElectionGuidGetAllForBallotEntryData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/People/{electionGuid}/getAllForBallotEntry';
+};
+
+export type GetApiPeopleByElectionGuidGetAllForBallotEntryResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListPersonDto;
+};
+
+export type GetApiPeopleByElectionGuidGetAllForBallotEntryResponse = GetApiPeopleByElectionGuidGetAllForBallotEntryResponses[keyof GetApiPeopleByElectionGuidGetAllForBallotEntryResponses];
+
 export type GetApiPeopleByGuidGetPersonData = {
     body?: never;
     path: {
