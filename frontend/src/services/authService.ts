@@ -7,12 +7,10 @@ import {
   postApiAuthSetup2Fa,
   postApiAuthEnable2Fa,
   postApiAuthDisable2Fa,
-  postApiAuthGoogleOneTap,
 } from "../api/gen/configService/sdk.gen";
 import type {
   RegisterRequest,
   LoginRequest,
-  GoogleOneTapRequest,
 } from "../api/gen/configService/types.gen";
 
 export interface AuthResponse {
@@ -87,15 +85,6 @@ export const authService = {
       body: { password, code },
       throwOnError: true,
     });
-  },
-
-  async googleOneTap(credential: string): Promise<AuthResponse> {
-    const response = await postApiAuthGoogleOneTap({
-      body: { credential } as GoogleOneTapRequest,
-      throwOnError: true,
-    });
-
-    return response.data as AuthResponse;
   },
 
   async logout(): Promise<void> {

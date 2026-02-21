@@ -63,51 +63,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function googleOneTapLogin(credential: string) {
-    try {
-      const response = await authService.googleOneTap(credential);
-
-      // For cross-origin deployments, cookies set by the backend may not be readable here
-      // Fetch user info from /api/auth/me to ensure we have the latest data
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
-      const meResponse = await fetch(`${apiUrl}/api/auth/me`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-
-      if (meResponse.ok) {
-        const userData = await meResponse.json();
-        
-        // Set readable cookies on the SPA origin for router guards
-        const secure = window.location.protocol === 'https:' ? '; secure' : '';
-        document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
-        if (userData.name) {
-          document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
-        }
-        document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
-
-        // Update store state
-        email.value = userData.email;
-        name.value = userData.name || null;
-        authMethod.value = userData.authMethod || 'Google';
-      } else {
-        // Fallback to response data and refresh cookies
-        const cookieData = secureTokenService.refreshAuthData();
-        email.value = cookieData.email || response.email;
-        name.value = cookieData.name || response.name || null;
-        authMethod.value = cookieData.authMethod || response.authMethod || 'Google';
-      }
-
-      requires2FA.value = false;
-      pending2FAEmail.value = null;
-
-      return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
-    }
-  }
-
   async function logout() {
     // Clear client-side state first
     email.value = null;
@@ -134,7 +89,6 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     register,
     login,
-    googleOneTapLogin,
     logout
   };
 });

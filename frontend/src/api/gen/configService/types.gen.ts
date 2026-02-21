@@ -2343,10 +2343,6 @@ export type FrontDeskVoterDto = {
     readonly isCheckedIn?: boolean;
 };
 
-export type GoogleOneTapRequest = {
-    credential: string;
-};
-
 /**
  * Data transfer object for requesting a ballot import operation.
  */
@@ -5489,23 +5485,6 @@ export type GetApiAuthGoogleCallbackResponses = {
     200: unknown;
 };
 
-export type PostApiAuthGoogleOneTapData = {
-    /**
-     * The request containing the Google ID token credential.
-     */
-    body?: GoogleOneTapRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/google/one-tap';
-};
-
-export type PostApiAuthGoogleOneTapResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
 export type GetApiAuthLogoutData = {
     body?: never;
     path?: never;
@@ -6930,22 +6909,6 @@ export type GetApiPublicByElectionGuidPublicDisplayResponses = {
 };
 
 export type GetApiPublicByElectionGuidPublicDisplayResponse = GetApiPublicByElectionGuidPublicDisplayResponses[keyof GetApiPublicByElectionGuidPublicDisplayResponses];
-
-export type GetApiPublicAuthConfigData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/Public/auth-config';
-};
-
-export type GetApiPublicAuthConfigResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseObject;
-};
-
-export type GetApiPublicAuthConfigResponse = GetApiPublicAuthConfigResponses[keyof GetApiPublicAuthConfigResponses];
 
 export type GetApiPublicHealthData = {
     body?: never;
