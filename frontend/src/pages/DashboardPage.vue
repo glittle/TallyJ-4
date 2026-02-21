@@ -13,13 +13,12 @@
         <el-col :xs="24" :sm="12" :md="6" role="listitem">
           <el-card class="stat-card">
             <div class="stat-icon elections" aria-hidden="true">
-              <el-icon><Document /></el-icon>
+              <el-icon>
+                <Document />
+              </el-icon>
             </div>
             <div class="stat-content">
-              <div
-                class="stat-value"
-                aria-label="{{ statistics.totalElections }} total elections"
-              >
+              <div class="stat-value" aria-label="{{ statistics.totalElections }} total elections">
                 {{ statistics.totalElections }}
               </div>
               <div class="stat-label">{{ $t("dashboard.totalElections") }}</div>
@@ -29,13 +28,12 @@
         <el-col :xs="24" :sm="12" :md="6" role="listitem">
           <el-card class="stat-card">
             <div class="stat-icon active" aria-hidden="true">
-              <el-icon><CircleCheck /></el-icon>
+              <el-icon>
+                <CircleCheck />
+              </el-icon>
             </div>
             <div class="stat-content">
-              <div
-                class="stat-value"
-                aria-label="{{ statistics.activeElections }} active elections"
-              >
+              <div class="stat-value" aria-label="{{ statistics.activeElections }} active elections">
                 {{ statistics.activeElections }}
               </div>
               <div class="stat-label">{{ $t("dashboard.activeElections") }}</div>
@@ -45,13 +43,12 @@
         <el-col :xs="24" :sm="12" :md="6" role="listitem">
           <el-card class="stat-card">
             <div class="stat-icon voters" aria-hidden="true">
-              <el-icon><UserFilled /></el-icon>
+              <el-icon>
+                <UserFilled />
+              </el-icon>
             </div>
             <div class="stat-content">
-              <div
-                class="stat-value"
-                aria-label="{{ statistics.totalVoters }} total voters"
-              >
+              <div class="stat-value" aria-label="{{ statistics.totalVoters }} total voters">
                 {{ statistics.totalVoters }}
               </div>
               <div class="stat-label">{{ $t("dashboard.totalVoters") }}</div>
@@ -61,13 +58,12 @@
         <el-col :xs="24" :sm="12" :md="6" role="listitem">
           <el-card class="stat-card">
             <div class="stat-icon ballots" aria-hidden="true">
-              <el-icon><Tickets /></el-icon>
+              <el-icon>
+                <Tickets />
+              </el-icon>
             </div>
             <div class="stat-content">
-              <div
-                class="stat-value"
-                aria-label="{{ statistics.totalBallots }} total ballots"
-              >
+              <div class="stat-value" aria-label="{{ statistics.totalBallots }} total ballots">
                 {{ statistics.totalBallots }}
               </div>
               <div class="stat-label">{{ $t("dashboard.totalBallots") }}</div>
@@ -82,80 +78,45 @@
         <template #header>
           <div class="card-header">
             <h2 id="recent-elections-heading">{{ $t("dashboard.recentElections") }}</h2>
-            <el-button
-              type="primary"
-              @click="createElection"
-              aria-label="Create new election"
-            >
-              <el-icon aria-hidden="true"><Plus /></el-icon>
+            <el-button type="primary" @click="createElection" aria-label="Create new election">
+              <el-icon aria-hidden="true">
+                <Plus />
+              </el-icon>
               {{ $t("elections.createNew") }}
             </el-button>
           </div>
         </template>
-        <div
-          v-if="loading"
-          class="loading-container"
-          aria-live="polite"
-          aria-label="Loading recent elections"
-        >
+        <div v-if="loading" class="loading-container" aria-live="polite" aria-label="Loading recent elections">
           <el-skeleton :rows="3" animated />
         </div>
         <div v-else-if="elections.length === 0" class="empty-state">
           <el-empty :description="$t('dashboard.noElections')" aria-live="polite">
-            <el-button
-              type="primary"
-              @click="createElection"
-              aria-label="Create your first election"
-            >
+            <el-button type="primary" @click="createElection" aria-label="Create your first election">
               {{ $t("elections.createFirst") }}
             </el-button>
           </el-empty>
         </div>
-        <div
-          v-else
-          role="table"
-          aria-label="Recent elections table"
-          class="elections-table-container"
-        >
+        <div v-else role="table" aria-label="Recent elections table" class="elections-table-container">
           <el-table :data="elections" style="width: 100%">
             <el-table-column prop="name" :label="$t('elections.name')" min-width="200" />
-            <el-table-column
-              prop="electionType"
-              :label="$t('elections.type')"
-              width="120"
-            />
-            <el-table-column
-              prop="dateOfElection"
-              :label="$t('elections.date')"
-              width="140"
-            >
+            <el-table-column prop="electionType" :label="$t('elections.type')" width="120" />
+            <el-table-column prop="voterCount" :label="$t('elections.voters')" min-width="60" align="center" />
+            <el-table-column prop="dateOfElection" :label="$t('elections.date')" width="140">
               <template #default="scope">
                 <time :datetime="scope.row.dateOfElection">{{
                   formatDate(scope.row.dateOfElection)
                 }}</time>
               </template>
             </el-table-column>
-            <el-table-column
-              prop="tallyStatus"
-              :label="$t('elections.status')"
-              width="120"
-            >
+            <el-table-column prop="tallyStatus" :label="$t('elections.status')" width="120">
               <template #default="scope">
-                <el-tag
-                  :type="getStatusType(scope.row.tallyStatus)"
-                  aria-label="Status: {{ scope.row.tallyStatus || 'Draft' }}"
-                >
-                  {{ scope.row.tallyStatus || "Draft" }}
-                </el-tag>
+                {{ scope.row.tallyStatus || "Draft" }}
               </template>
             </el-table-column>
             <el-table-column :label="$t('common.actions')" width="150" fixed="right">
               <template #default="scope">
-                <el-button
-                  size="small"
-                  @click="viewElection(scope.row.electionGuid)"
-                  :aria-label="'View election: ' + scope.row.name"
-                >
+                <el-button size="small" @click="viewElection(scope.row.electionGuid)"
+                  :aria-label="'View election: ' + scope.row.name">
                   {{ $t("common.view") }}
                 </el-button>
               </template>
@@ -293,11 +254,9 @@ function getStatusType(status: string) {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 100%);
   opacity: 0;
   transition: var(--transition-normal);
 }
@@ -546,7 +505,7 @@ function getStatusType(status: string) {
       border-bottom: 1px solid var(--color-gray-100);
     }
 
-    .el-table tbody tr:hover > td {
+    .el-table tbody tr:hover>td {
       background-color: var(--color-gray-50);
     }
 

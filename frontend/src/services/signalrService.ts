@@ -107,6 +107,10 @@ class SignalRService {
     return this.connect('/hubs/front-desk', accessToken);
   }
 
+  async connectToPeopleImportHub(accessToken?: string): Promise<signalR.HubConnection> {
+    return this.connect('/hubs/people-import', accessToken);
+  }
+
   async joinElection(electionGuid: string): Promise<void> {
     const mainConnection = this.getConnection('/hubs/main');
     if (mainConnection) {
@@ -156,6 +160,20 @@ class SignalRService {
     const importConnection = this.getConnection('/hubs/ballot-import');
     if (importConnection) {
       await importConnection.invoke('LeaveImportSession', electionGuid);
+    }
+  }
+
+  async joinPeopleImportSession(electionGuid: string): Promise<void> {
+    const peopleImportConnection = this.getConnection('/hubs/people-import');
+    if (peopleImportConnection) {
+      await peopleImportConnection.invoke('JoinImportSession', electionGuid);
+    }
+  }
+
+  async leavePeopleImportSession(electionGuid: string): Promise<void> {
+    const peopleImportConnection = this.getConnection('/hubs/people-import');
+    if (peopleImportConnection) {
+      await peopleImportConnection.invoke('LeaveImportSession', electionGuid);
     }
   }
 

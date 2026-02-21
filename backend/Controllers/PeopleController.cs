@@ -89,6 +89,19 @@ public class PeopleController : ControllerBase
     }
 
     /// <summary>
+    /// Gets all people in the specified election for ballot entry, including ineligible persons.
+    /// VoteCount reflects the live ballot vote count, not the tally result.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <returns>A list of all people with live vote counts.</returns>
+    [HttpGet("{electionGuid}/getAllForBallotEntry")]
+    public async Task<ActionResult<ApiResponse<List<PersonDto>>>> GetAllForBallotEntry(Guid electionGuid)
+    {
+        var people = await _peopleService.GetAllForBallotEntryAsync(electionGuid);
+        return Ok(ApiResponse<List<PersonDto>>.SuccessResponse(people));
+    }
+
+    /// <summary>
     /// Gets a specific person by their GUID.
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>

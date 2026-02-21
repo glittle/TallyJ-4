@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { peopleService } from '../services/peopleService';
 import { signalrService } from '../services/signalrService';
 import type { PersonDto, CreatePersonDto, UpdatePersonDto, SearchablePersonDto } from '../types';
-import type { PersonUpdateEvent } from '../types/SignalREvents';
+import type { PersonUpdateEvent, PersonVoteCountUpdateEvent } from '../types/SignalREvents';
 
 export const usePeopleStore = defineStore('people', () => {
   const people = ref<PersonDto[]>([]);
@@ -149,12 +149,21 @@ export const usePeopleStore = defineStore('people', () => {
     if (isCacheInitialized.value) return;
 
     try {
-      const candidates = await peopleService.getCandidates(electionGuid);
-      candidateCache.value = candidates.map(enrichPersonForSearch);
+      const allPeople = await peopleService.getAllForBallotEntry(electionGuid);
+      candidateCache.value = allPeople.map(enrichPersonForSearch);
       isCacheInitialized.value = true;
     } catch (e) {
       console.error('Failed to initialize candidate cache:', e);
       throw e;
+    }
+  }
+
+  function handlePersonVoteCountUpdated(data: PersonVoteCountUpdateEvent) {
+    const index = candidateCache.value.findIndex(p => p.personGuid === data.personGuid);
+    if (index !== -1) {
+      const newCache = [...candidateCache.value];
+      newCache[index] = { ...candidateCache.value[index], voteCount: data.voteCount };
+      candidateCache.value = newCache;
     }
   }
 
@@ -198,6 +207,10 @@ export const usePeopleStore = defineStore('people', () => {
         window.location.reload();
       });
 
+      connection.on('PersonVoteCountUpdated', (data: PersonVoteCountUpdateEvent) => {
+        handlePersonVoteCountUpdated(data);
+      });
+
       signalrInitialized.value = true;
     } catch (e) {
       console.error('Failed to initialize SignalR for people store:', e);
@@ -209,7 +222,7 @@ export const usePeopleStore = defineStore('people', () => {
     if (!exists) {
       try {
         const person = await fetchPersonById(data.personGuid);
-        if (isCacheInitialized.value && person?.canReceiveVotes) {
+        if (isCacheInitialized.value && person) {
           const searchablePerson = enrichPersonForSearch(person);
           candidateCache.value.push(searchablePerson);
         }
@@ -222,19 +235,14 @@ export const usePeopleStore = defineStore('people', () => {
   async function handlePersonUpdated(data: PersonUpdateEvent) {
     try {
       const person = await fetchPersonById(data.personGuid);
-      
-      if (isCacheInitialized.value) {
+
+      if (isCacheInitialized.value && person) {
         const index = candidateCache.value.findIndex(p => p.personGuid === data.personGuid);
-        
-        if (person?.canReceiveVotes) {
-          const searchablePerson = enrichPersonForSearch(person);
-          if (index !== -1) {
-            candidateCache.value[index] = searchablePerson;
-          } else {
-            candidateCache.value.push(searchablePerson);
-          }
-        } else if (index !== -1) {
-          candidateCache.value.splice(index, 1);
+        const searchablePerson = enrichPersonForSearch(person);
+        if (index !== -1) {
+          candidateCache.value[index] = searchablePerson;
+        } else {
+          candidateCache.value.push(searchablePerson);
         }
       }
     } catch (e) {
@@ -288,6 +296,7 @@ export const usePeopleStore = defineStore('people', () => {
     leaveElection,
     handlePersonAdded,
     handlePersonUpdated,
-    handlePersonDeleted
+    handlePersonDeleted,
+    handlePersonVoteCountUpdated
   };
 });

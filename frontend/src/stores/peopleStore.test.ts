@@ -12,7 +12,8 @@ vi.mock('../services/peopleService', () => ({
     delete: vi.fn(),
     search: vi.fn(),
     getVoters: vi.fn(),
-    getCandidates: vi.fn()
+    getCandidates: vi.fn(),
+    getAllForBallotEntry: vi.fn()
   }
 }));
 
@@ -108,30 +109,30 @@ describe('People Store - Candidate Cache', () => {
   });
 
   describe('initializeCandidateCache', () => {
-    it('should fetch candidates and enrich them', async () => {
-      vi.mocked(peopleService.getCandidates).mockResolvedValue([mockPerson, mockPerson2]);
+    it('should fetch all people and enrich them', async () => {
+      vi.mocked(peopleService.getAllForBallotEntry).mockResolvedValue([mockPerson, mockPerson2]);
 
       await store.initializeCandidateCache('election-123');
 
-      expect(peopleService.getCandidates).toHaveBeenCalledWith('election-123');
+      expect(peopleService.getAllForBallotEntry).toHaveBeenCalledWith('election-123');
       expect(store.candidateCache).toHaveLength(2);
       expect(store.candidateCache[0]._searchText).toBe('john smith');
       expect(store.candidateCache[1]._searchText).toBe('jane doe janet dough');
       expect(store.isCacheInitialized).toBe(true);
     });
 
-    it('should not fetch candidates if already initialized', async () => {
-      vi.mocked(peopleService.getCandidates).mockResolvedValue([mockPerson]);
+    it('should not fetch if already initialized', async () => {
+      vi.mocked(peopleService.getAllForBallotEntry).mockResolvedValue([mockPerson]);
 
       await store.initializeCandidateCache('election-123');
       await store.initializeCandidateCache('election-123');
 
-      expect(peopleService.getCandidates).toHaveBeenCalledTimes(1);
+      expect(peopleService.getAllForBallotEntry).toHaveBeenCalledTimes(1);
     });
 
     it('should throw error if fetch fails', async () => {
       const error = new Error('Network error');
-      vi.mocked(peopleService.getCandidates).mockRejectedValue(error);
+      vi.mocked(peopleService.getAllForBallotEntry).mockRejectedValue(error);
 
       await expect(store.initializeCandidateCache('election-123')).rejects.toThrow('Network error');
       expect(store.isCacheInitialized).toBe(false);
@@ -159,11 +160,11 @@ describe('People Store - Candidate Cache', () => {
       expect(store.candidateCache[0]._searchText).toBe('john smith');
     });
 
-    it('should not add ineligible person to cache', async () => {
+    it('should add ineligible person to cache', async () => {
       store.isCacheInitialized = true;
       store.candidateCache = [];
 
-      const ineligiblePerson = { ...mockPerson, canReceiveVotes: false };
+      const ineligiblePerson = { ...mockPerson, canReceiveVotes: false, ineligibleReasonCode: 'X01' };
       vi.mocked(peopleService.getById).mockResolvedValue(ineligiblePerson);
 
       await store.handlePersonAdded({
@@ -175,7 +176,8 @@ describe('People Store - Candidate Cache', () => {
         updatedAt: new Date().toISOString()
       });
 
-      expect(store.candidateCache).toHaveLength(0);
+      expect(store.candidateCache).toHaveLength(1);
+      expect(store.candidateCache[0].ineligibleReasonCode).toBe('X01');
     });
 
     it('should not add to cache if not initialized', async () => {
@@ -240,12 +242,12 @@ describe('People Store - Candidate Cache', () => {
       expect(store.candidateCache[0].personGuid).toBe(mockPerson.personGuid);
     });
 
-    it('should remove person from cache if they become ineligible', async () => {
+    it('should keep ineligible person in cache when they become ineligible', async () => {
       const initialEnriched = store.enrichPersonForSearch(mockPerson);
       store.isCacheInitialized = true;
       store.candidateCache = [initialEnriched];
 
-      const ineligiblePerson = { ...mockPerson, canReceiveVotes: false };
+      const ineligiblePerson = { ...mockPerson, canReceiveVotes: false, ineligibleReasonCode: 'X01' };
       vi.mocked(peopleService.getById).mockResolvedValue(ineligiblePerson);
 
       await store.handlePersonUpdated({
@@ -257,7 +259,8 @@ describe('People Store - Candidate Cache', () => {
         updatedAt: new Date().toISOString()
       });
 
-      expect(store.candidateCache).toHaveLength(0);
+      expect(store.candidateCache).toHaveLength(1);
+      expect(store.candidateCache[0].ineligibleReasonCode).toBe('X01');
     });
   });
 

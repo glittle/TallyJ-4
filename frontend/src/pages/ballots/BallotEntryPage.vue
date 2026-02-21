@@ -84,7 +84,12 @@ async function handleVoteAdded(vote: VoteDto) {
     };
 
     await ballotStore.createVote(createDto);
-    ElMessage.success(t('ballots.voteAddedSuccess'));
+    const isSpoiled = createDto.statusCode && createDto.statusCode !== 'Ok';
+    if (isSpoiled) {
+      ElMessage.warning(t('ballots.voteSpoiledSuccess', { code: createDto.statusCode }));
+    } else {
+      ElMessage.success(t('ballots.voteAddedSuccess'));
+    }
   } catch (error: any) {
     ElMessage.error(error.message || t('ballots.voteAddedError'));
   }

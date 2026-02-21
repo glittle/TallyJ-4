@@ -64,6 +64,14 @@ public interface IPeopleService
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <returns>A list of all candidates ordered by last name and first name.</returns>
     Task<List<PersonDto>> GetCandidatesAsync(Guid electionGuid);
+
+    /// <summary>
+    /// Retrieves all people in an election for ballot entry, including ineligible persons.
+    /// VoteCount reflects the live count from the Vote table, not the tally results.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A list of all people ordered by last name and first name.</returns>
+    Task<List<PersonDto>> GetAllForBallotEntryAsync(Guid electionGuid);
 }
 
 

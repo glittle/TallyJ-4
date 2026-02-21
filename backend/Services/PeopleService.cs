@@ -340,6 +340,34 @@ public class PeopleService : IPeopleService
     }
 
     /// <summary>
+    /// Retrieves all people in an election for ballot entry, including ineligible persons.
+    /// VoteCount is computed live from the Vote table rather than the Result (tally) table.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A list of all people ordered by last name and first name.</returns>
+    public async Task<List<PersonDto>> GetAllForBallotEntryAsync(Guid electionGuid)
+    {
+        var people = await _context.People
+            .Where(p => p.ElectionGuid == electionGuid)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
+            .ToListAsync();
+
+        var liveVoteCounts = await _context.Votes
+            .Where(v => v.PersonGuid != null && v.Ballot.Location.ElectionGuid == electionGuid)
+            .GroupBy(v => v.PersonGuid!.Value)
+            .Select(g => new { PersonGuid = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.PersonGuid, x => x.Count);
+
+        return people.Select(p =>
+        {
+            var dto = _mapper.Map<PersonDto>(p);
+            dto.VoteCount = liveVoteCounts.TryGetValue(p.PersonGuid, out var count) ? count : 0;
+            return dto;
+        }).ToList();
+    }
+
+    /// <summary>
     /// Synchronizes the CanVote and CanReceiveVotes properties based on the IneligibleReasonGuid.
     /// </summary>
     /// <param name="person">The person entity to update.</param>

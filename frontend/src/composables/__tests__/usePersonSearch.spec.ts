@@ -8,7 +8,8 @@ function createMockPerson(
   lastName: string,
   soundCodes: string[] = [],
   otherNames?: string,
-  otherLastNames?: string
+  otherLastNames?: string,
+  voteCount = 0
 ): SearchablePersonDto {
   const fullName = `${firstName} ${lastName}`;
   return {
@@ -18,7 +19,7 @@ function createMockPerson(
     fullName,
     _searchText: `${firstName} ${lastName} ${otherNames || ''} ${otherLastNames || ''}`.trim(),
     _soundexCodes: soundCodes,
-    voteCount: 0,
+    voteCount,
     otherNames,
     otherLastNames
   };
@@ -228,6 +229,34 @@ describe('usePersonSearch', () => {
       expect(searchResults.value[0].lastName).toBe('Apple');
       expect(searchResults.value[1].lastName).toBe('Mango');
       expect(searchResults.value[2].lastName).toBe('Zebra');
+    });
+
+    it('should sort results by voteCount descending as primary key', () => {
+      const candidatesWithVoteCounts = ref([
+        createMockPerson('Alice', 'Brown', ['A420', 'B650'], undefined, undefined, 1),
+        createMockPerson('Bob', 'Brown', ['B100', 'B650'], undefined, undefined, 5),
+        createMockPerson('Carol', 'Brown', ['C640', 'B650'], undefined, undefined, 3),
+      ]);
+      const searchQuery = ref('Brown');
+      const { searchResults } = usePersonSearch(searchQuery, candidatesWithVoteCounts);
+
+      expect(searchResults.value).toHaveLength(3);
+      expect(searchResults.value[0].firstName).toBe('Bob');
+      expect(searchResults.value[1].firstName).toBe('Carol');
+      expect(searchResults.value[2].firstName).toBe('Alice');
+    });
+
+    it('should use weight as secondary sort when voteCount is equal', () => {
+      const candidatesEqualVoteCount = ref([
+        createMockPerson('John', 'Doe', ['J500', 'D000'], undefined, undefined, 2),
+        createMockPerson('Jonathan', 'Smith', ['J535', 'S530'], undefined, undefined, 2),
+      ]);
+      const searchQuery = ref('John Doe');
+      const { searchResults } = usePersonSearch(searchQuery, candidatesEqualVoteCount);
+
+      expect(searchResults.value.length).toBeGreaterThan(0);
+      expect(searchResults.value[0].firstName).toBe('John');
+      expect(searchResults.value[0].lastName).toBe('Doe');
     });
 
     it('should break lastName ties by firstName alphabetically', () => {

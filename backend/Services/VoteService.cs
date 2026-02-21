@@ -1,8 +1,10 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Backend.DTOs.SignalR;
 using Backend.DTOs.Votes;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Services;
 
@@ -15,6 +17,7 @@ public class VoteService : IVoteService
     private readonly MainDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<VoteService> _logger;
+    private readonly ISignalRNotificationService _signalRNotificationService;
 
     /// <summary>
     /// Initializes a new instance of the VoteService.
@@ -22,11 +25,13 @@ public class VoteService : IVoteService
     /// <param name="context">The main database context for accessing vote data.</param>
     /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
     /// <param name="logger">Logger for recording vote service operations.</param>
-    public VoteService(MainDbContext context, IMapper mapper, ILogger<VoteService> logger)
+    /// <param name="signalRNotificationService">Service for broadcasting real-time updates.</param>
+    public VoteService(MainDbContext context, IMapper mapper, ILogger<VoteService> logger, ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
         _mapper = mapper;
         _logger = logger;
+        _signalRNotificationService = signalRNotificationService;
     }
 
     /// <summary>
@@ -85,17 +90,25 @@ public class VoteService : IVoteService
 
     /// <summary>
     /// Creates a new vote for a ballot.
+    /// If the person is ineligible to receive votes, the vote is created as a spoiled vote
+    /// with the person's ineligibility reason code as the status.
     /// </summary>
     /// <param name="createDto">The data transfer object containing vote creation information.</param>
     /// <returns>A VoteDto representing the created vote.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when the ballot or person is not found, or when validation fails.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the ballot or person is not found.</exception>
     public async Task<VoteDto> CreateVoteAsync(CreateVoteDto createDto)
     {
-        var ballot = await _context.Ballots.FirstOrDefaultAsync(b => b.BallotGuid == createDto.BallotGuid);
+        var ballot = await _context.Ballots
+            .Include(b => b.Location)
+            .FirstOrDefaultAsync(b => b.BallotGuid == createDto.BallotGuid);
+
         if (ballot == null)
         {
             throw new InvalidOperationException($"Ballot with GUID '{createDto.BallotGuid}' not found");
         }
+
+        var electionGuid = ballot.Location.ElectionGuid;
+        var statusCode = createDto.StatusCode;
 
         if (createDto.PersonGuid.HasValue)
         {
@@ -107,7 +120,10 @@ public class VoteService : IVoteService
 
             if (person.CanReceiveVotes != true)
             {
-                throw new InvalidOperationException($"Person '{person.FullName}' is not eligible to receive votes (CanReceiveVotes = false)");
+                var ineligibleCode = IneligibleReasonEnum.GetByGuid(person.IneligibleReasonGuid)?.Code;
+                statusCode = ineligibleCode ?? "spoiled";
+                _logger.LogInformation("Person '{FullName}' is ineligible; vote created as spoiled with status '{StatusCode}'",
+                    person.FullName, statusCode);
             }
 
             var duplicateVote = await _context.Votes
@@ -124,7 +140,7 @@ public class VoteService : IVoteService
             BallotGuid = createDto.BallotGuid,
             PersonGuid = createDto.PersonGuid,
             PositionOnBallot = createDto.PositionOnBallot,
-            StatusCode = createDto.StatusCode ?? "ok",
+            StatusCode = statusCode ?? "ok",
             RowVersion = new byte[8]
         };
 
@@ -133,6 +149,11 @@ public class VoteService : IVoteService
 
         _logger.LogInformation("Created vote {VoteId} for ballot {BallotGuid} at position {Position}",
             vote.RowId, vote.BallotGuid, vote.PositionOnBallot);
+
+        if (createDto.PersonGuid.HasValue)
+        {
+            await BroadcastPersonVoteCountAsync(createDto.PersonGuid.Value, electionGuid);
+        }
 
         return await GetVoteByIdAsync(vote.RowId) ?? _mapper.Map<VoteDto>(vote);
     }
@@ -194,23 +215,58 @@ public class VoteService : IVoteService
 
     /// <summary>
     /// Deletes a vote by its database identifier.
+    /// Broadcasts the updated live vote count for the affected person via SignalR.
     /// </summary>
     /// <param name="id">The database row identifier of the vote to delete.</param>
     /// <returns>True if the vote was successfully deleted, false if the vote was not found.</returns>
     public async Task<bool> DeleteVoteAsync(int id)
     {
-        var vote = await _context.Votes.FirstOrDefaultAsync(v => v.RowId == id);
+        var vote = await _context.Votes
+            .Include(v => v.Ballot)
+                .ThenInclude(b => b.Location)
+            .FirstOrDefaultAsync(v => v.RowId == id);
+
         if (vote == null)
         {
             return false;
         }
+
+        var personGuid = vote.PersonGuid;
+        var electionGuid = vote.Ballot.Location.ElectionGuid;
 
         _context.Votes.Remove(vote);
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Deleted vote {VoteId}", id);
 
+        if (personGuid.HasValue)
+        {
+            await BroadcastPersonVoteCountAsync(personGuid.Value, electionGuid);
+        }
+
         return true;
+    }
+
+    private async Task BroadcastPersonVoteCountAsync(Guid personGuid, Guid electionGuid)
+    {
+        try
+        {
+            var liveCount = await _context.Votes
+                .CountAsync(v => v.PersonGuid == personGuid &&
+                                 v.Ballot.Location.ElectionGuid == electionGuid);
+
+            await _signalRNotificationService.SendPersonVoteCountUpdateAsync(new PersonVoteCountUpdateDto
+            {
+                ElectionGuid = electionGuid,
+                PersonGuid = personGuid,
+                VoteCount = liveCount
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error broadcasting vote count for person {PersonGuid} in election {ElectionGuid}",
+                personGuid, electionGuid);
+        }
     }
 
     private VoteDto MapToVoteDto(Vote vote)
@@ -220,6 +276,3 @@ public class VoteService : IVoteService
         return dto;
     }
 }
-
-
-

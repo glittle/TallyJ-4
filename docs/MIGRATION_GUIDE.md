@@ -19,13 +19,13 @@ TallyJ v4 is a complete rewrite of the election management system with modern te
 
 ### Technology Changes
 
-| Component       | v3                          | v4                              |
-| --------------- | --------------------------- | ------------------------------- |
-| **Backend**     | ASP.NET MVC (.NET Framework) | ASP.NET Core Web API (.NET 10)  |
-| **Frontend**    | jQuery, Knockout.js         | Vue 3 + TypeScript              |
-| **Database**    | SQL Server (Entity Framework 6) | SQL Server (EF Core 10)   |
-| **Auth**        | Forms Authentication        | JWT Bearer Tokens               |
-| **Real-time**   | SignalR (Classic)           | SignalR Core                    |
+| Component     | v3                              | v4                             |
+| ------------- | ------------------------------- | ------------------------------ |
+| **Backend**   | ASP.NET MVC (.NET Framework)    | ASP.NET Core Web API (.NET 10) |
+| **Frontend**  | jQuery, Knockout.js             | Vue 3 + TypeScript             |
+| **Database**  | SQL Server (Entity Framework 6) | SQL Server (EF Core 10)        |
+| **Auth**      | Forms Authentication            | JWT Bearer Tokens              |
+| **Real-time** | SignalR (Classic)               | SignalR Core                   |
 
 ### Migration Timeline
 
@@ -91,6 +91,7 @@ TallyJ v4 is a complete rewrite of the election management system with modern te
 **Impact:** Users must log in again after migration.
 
 **Action Required:**
+
 - Inform users they will need to reset passwords
 - Use the password reset feature in v4
 - Update any API integrations to use JWT tokens
@@ -103,6 +104,7 @@ TallyJ v4 is a complete rewrite of the election management system with modern te
 **Impact:** Any custom integrations or scripts must be updated.
 
 **Action Required:**
+
 - Review API documentation at `/swagger`
 - Update integration scripts
 - Test all API calls before production migration
@@ -113,6 +115,7 @@ TallyJ v4 is a complete rewrite of the election management system with modern te
 **v4:** EF Core 10 with explicit migrations
 
 **Major Changes:**
+
 - New primary key strategy (GUIDs instead of integers)
 - Computed columns for full names and ballot codes
 - Additional indexes for performance
@@ -128,6 +131,7 @@ The following v3 features are not yet implemented in v4:
 - **Public kiosk display** (partial implementation)
 
 **Action Required:**
+
 - Plan workarounds for missing features
 - Contact support for timeline on missing features
 - Consider staying on v3 if these are critical
@@ -139,11 +143,13 @@ The following v3 features are not yet implemented in v4:
 ### Option 1: Fresh Start (Recommended for Small Organizations)
 
 **Best for:**
+
 - Organizations with 1-5 elections
 - No historical data to preserve
 - Willing to re-enter data
 
 **Steps:**
+
 1. Export active voters/candidates from v3 to CSV
 2. Install TallyJ v4
 3. Create new elections
@@ -158,6 +164,7 @@ The following v3 features are not yet implemented in v4:
 ### Option 2: Database Migration Script
 
 **Best for:**
+
 - Organizations with significant historical data
 - Need to preserve all past elections
 - Have technical resources to run scripts
@@ -184,11 +191,11 @@ GO
 
 -- Step 4: Migrate Elections
 INSERT INTO TallyJ4.dbo.Election (
-    ElectionGuid, Name, DateOfElection, ElectionType, 
-    NumberToElect, NumberExtra, TallyStatus, 
+    ElectionGuid, Name, DateOfElection, ElectionType,
+    NumberToElect, NumberExtra, TallyStatus,
     OwnerGuid, CreatedDate, LastModifiedDate
 )
-SELECT 
+SELECT
     NEWID() AS ElectionGuid,
     Name,
     CAST(DateOfElection AS DATETIME2),
@@ -228,14 +235,14 @@ INSERT INTO TallyJ4.dbo.Person (
     CanVote, CanReceiveVotes, AgeGroup,
     CreatedDate, LastModifiedDate
 )
-SELECT 
+SELECT
     NEWID(),
     em.NewGuid,
     p.FirstName,
     p.LastName,
     CAST(p.CanVote AS BIT),
     CAST(p.CanReceiveVotes AS BIT),
-    ISNULL(p.AgeGroup, 'Adult'),
+    ISNULL(p.AgeGroup, 'A'),
     p.CreatedDate,
     GETDATE()
 FROM TallyJ3.dbo.People p
@@ -258,6 +265,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 ```
 
 **⚠️ Important Notes:**
+
 - Test on a backup database first
 - Review and adjust GUID mapping as needed
 - User accounts must be recreated (different auth system)
@@ -268,11 +276,13 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 ### Option 3: Parallel Operation
 
 **Best for:**
+
 - Large organizations requiring zero downtime
 - Gradual transition preferred
 - Critical elections in progress
 
 **Steps:**
+
 1. Keep v3 running for current elections
 2. Install v4 on separate server
 3. Use v4 for new elections only
@@ -294,6 +304,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 **v4:** Elections → Create New Election
 
 **Changes:**
+
 - More fields available in v4
 - Tally method selected upfront
 - Passcode field added
@@ -304,6 +315,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 **v4:** People → Add New Person
 
 **Changes:**
+
 - Same basic fields
 - Location assignment in UI (if locations created first)
 - Age group field added
@@ -314,6 +326,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 **v4:** Ballots → New Ballot
 
 **Changes:**
+
 - Autocomplete for name search (faster)
 - Real-time validation
 - Computer code must be registered first
@@ -324,6 +337,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 **v4:** Tally → Start Tally
 
 **Changes:**
+
 - Real-time progress bar
 - Automatic re-calculation if ballots change
 - Better error messages
@@ -334,6 +348,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 **v4:** Results → Select Election
 
 **Changes:**
+
 - Enhanced visualizations
 - Export options (PDF, Excel, CSV)
 - Result history tracking
@@ -345,6 +360,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 ### Phase 1: Preparation (1-2 Days)
 
 1. **Backup v3 Database**
+
    ```bash
    sqlcmd -S server -Q "BACKUP DATABASE TallyJ3 TO DISK='C:\Backups\TallyJ3.bak'"
    ```
@@ -374,6 +390,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
    - Verify data integrity
 
 3. **Recreate User Accounts**
+
    ```bash
    # Use API to create users
    curl -X POST http://localhost:5016/auth/register \
@@ -480,6 +497,7 @@ If migration fails or critical issues arise:
 ### Immediate Rollback (Within 24 Hours)
 
 1. **Restore v3 Database**
+
    ```sql
    RESTORE DATABASE TallyJ3
    FROM DISK = 'C:\Backups\TallyJ3.bak'
@@ -516,11 +534,13 @@ If migration fails or critical issues arise:
 ## Support and Resources
 
 ### Documentation
+
 - [User Guide](USER_GUIDE.md) - End-user documentation
 - [Admin Guide](ADMIN_GUIDE.md) - System administration
 - [Deployment Guide](DEPLOYMENT.md) - Installation and deployment
 
 ### Migration Assistance
+
 - Email: support@tallyj.com (if applicable)
 - GitHub Issues: [TallyJ v4 Repository](https://github.com/your-org/tallyj4)
 - Community Forum: [Link if available]
@@ -542,28 +562,28 @@ If migration fails or critical issues arise:
 
 ### Election Entity
 
-| v3 Field              | v4 Field              | Notes                    |
-| --------------------- | --------------------- | ------------------------ |
-| Id (int)              | ElectionGuid (guid)   | Primary key change       |
-| Name                  | Name                  | Same                     |
-| DateOfElection (date) | DateOfElection (datetime2) | Type change         |
-| ElectionType (int)    | ElectionType (string) | Enum to string           |
-| NumberToElect         | NumberToElect         | Same                     |
-| NumberExtra           | NumberExtra           | Same                     |
-| Status (int)          | TallyStatus (string)  | Enum to string           |
-| OwnerId               | OwnerGuid             | References User GUID     |
+| v3 Field              | v4 Field                   | Notes                |
+| --------------------- | -------------------------- | -------------------- |
+| Id (int)              | ElectionGuid (guid)        | Primary key change   |
+| Name                  | Name                       | Same                 |
+| DateOfElection (date) | DateOfElection (datetime2) | Type change          |
+| ElectionType (int)    | ElectionType (string)      | Enum to string       |
+| NumberToElect         | NumberToElect              | Same                 |
+| NumberExtra           | NumberExtra                | Same                 |
+| Status (int)          | TallyStatus (string)       | Enum to string       |
+| OwnerId               | OwnerGuid                  | References User GUID |
 
 ### Person Entity
 
-| v3 Field            | v4 Field            | Notes              |
-| ------------------- | ------------------- | ------------------ |
-| Id (int)            | PersonGuid (guid)   | Primary key change |
-| ElectionId (int)    | ElectionGuid (guid) | Foreign key change |
-| FirstName           | FirstName           | Same               |
-| LastName            | LastName            | Same               |
-| CanVote (bit)       | CanVote (bit)       | Same               |
-| CanReceiveVotes (bit) | CanReceiveVotes (bit) | Same            |
-| _FullName (computed) | _FullName (computed) | Both auto-generated |
+| v3 Field              | v4 Field              | Notes               |
+| --------------------- | --------------------- | ------------------- |
+| Id (int)              | PersonGuid (guid)     | Primary key change  |
+| ElectionId (int)      | ElectionGuid (guid)   | Foreign key change  |
+| FirstName             | FirstName             | Same                |
+| LastName              | LastName              | Same                |
+| CanVote (bit)         | CanVote (bit)         | Same                |
+| CanReceiveVotes (bit) | CanReceiveVotes (bit) | Same                |
+| \_FullName (computed) | \_FullName (computed) | Both auto-generated |
 
 ---
 

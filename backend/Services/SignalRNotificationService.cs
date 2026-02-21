@@ -214,6 +214,24 @@ public class SignalRNotificationService : ISignalRNotificationService
             _logger.LogError(ex, "Error sending VoterCountUpdated notification for election {ElectionGuid}", electionGuid);
         }
     }
+
+    /// <summary>
+    /// Sends a live vote count update for a person to all ballot entry clients.
+    /// </summary>
+    /// <param name="update">The updated vote count data for the person.</param>
+    public async Task SendPersonVoteCountUpdateAsync(PersonVoteCountUpdateDto update)
+    {
+        try
+        {
+            var groupName = $"FrontDesk{update.ElectionGuid}";
+            await _frontDeskHubContext.Clients.Group(groupName).SendAsync("PersonVoteCountUpdated", update);
+            _logger.LogInformation("Sent PersonVoteCountUpdated notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending PersonVoteCountUpdated notification for election {ElectionGuid}", update.ElectionGuid);
+        }
+    }
 }
 
 

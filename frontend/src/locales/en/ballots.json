@@ -71,5 +71,7 @@
   "ballots.votes": "Votes - {code}",
   "ballots.voteSaveError": "Failed to save vote",
   "ballots.votesEntered": "{count} of {max} votes entered",
-  "ballots.votesList": "Votes List"
+  "ballots.votesList": "Votes List",
+  "ballots.ineligible": "Ineligible",
+  "ballots.voteSpoiledSuccess": "Vote added as spoiled ({code} – person is ineligible)"
 }

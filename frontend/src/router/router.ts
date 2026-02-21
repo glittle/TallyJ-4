@@ -95,6 +95,11 @@ const routes = [
         meta: { titleKey: 'people.management' },
       },
       {
+        path: "elections/:id/people/import",
+        component: () => import("../pages/people/PeopleImportPage.vue"),
+        meta: { titleKey: 'people.import.title' },
+      },
+      {
         path: "elections/:id/locations",
         component: () => import("../pages/locations/LocationsListPage.vue"),
         meta: { titleKey: 'nav.votingLocations' },
