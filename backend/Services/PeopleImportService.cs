@@ -92,6 +92,24 @@ public class PeopleImportService : IPeopleImportService
             _ => "csv"
         };
 
+        // Auto-detect header row for XLSX files
+        int detectedHeaderRow = 1;
+        if (fileType == "xlsx")
+        {
+            try
+            {
+                using var stream = new MemoryStream(fileContent);
+                using var workbook = new ClosedXML.Excel.XLWorkbook(stream);
+                var worksheet = workbook.Worksheets.First();
+                detectedHeaderRow = DetectHeaderRow(worksheet);
+            }
+            catch
+            {
+                // If detection fails, default to row 1
+                detectedHeaderRow = 1;
+            }
+        }
+
         // Create import file record
         var importFile = new ImportFile
         {
@@ -99,7 +117,7 @@ public class PeopleImportService : IPeopleImportService
             UploadTime = DateTime.UtcNow,
             FileSize = (int)file.Length,
             HasContent = true,
-            FirstDataRow = 1, // Default to 1 (headers on row 1)
+            FirstDataRow = detectedHeaderRow, // Use auto-detected row for XLSX, 1 for others
             ColumnsToRead = null, // No mapping yet
             OriginalFileName = file.FileName,
             ProcessingStatus = "Uploaded",
@@ -451,7 +469,7 @@ public class PeopleImportService : IPeopleImportService
     {
         if (importFile.FileType == "xlsx")
         {
-            return await ParseXlsxFileAsync(importFile.Contents!);
+            return await ParseXlsxFileAsync(importFile.Contents!, importFile.FirstDataRow);
         }
         else
         {
@@ -459,7 +477,7 @@ public class PeopleImportService : IPeopleImportService
         }
     }
 
-    private async Task<(List<string> headers, List<List<string>> rows, int totalDataRows)> ParseXlsxFileAsync(byte[] content)
+    private async Task<(List<string> headers, List<List<string>> rows, int totalDataRows)> ParseXlsxFileAsync(byte[] content, int? firstDataRow = null)
     {
         using var stream = new MemoryStream(content);
         using var workbook = new ClosedXML.Excel.XLWorkbook(stream);
@@ -468,27 +486,120 @@ public class PeopleImportService : IPeopleImportService
         var headers = new List<string>();
         var rows = new List<List<string>>();
 
-        // Read headers from first row
-        var firstRow = worksheet.FirstRowUsed();
-        foreach (var cell in firstRow.CellsUsed())
+        // Determine header row: use provided firstDataRow or auto-detect
+        int headerRowNumber;
+        if (firstDataRow.HasValue && firstDataRow.Value > 0)
+        {
+            headerRowNumber = firstDataRow.Value;
+        }
+        else
+        {
+            headerRowNumber = DetectHeaderRow(worksheet);
+        }
+
+        // Read headers from detected row
+        var headerRow = worksheet.Row(headerRowNumber);
+        var columnCount = headerRow.CellsUsed().Count();
+        foreach (var cell in headerRow.CellsUsed())
         {
             headers.Add(cell.GetValue<string>() ?? "");
         }
 
-        // Read all data rows
-        var dataRows = worksheet.RowsUsed().Skip(1); // Skip header row
-        foreach (var row in dataRows)
+        // Read all data rows after the header row
+        var allRows = worksheet.RowsUsed().ToList();
+        var dataRowsStartIndex = allRows.FindIndex(r => r.RowNumber() == headerRowNumber) + 1;
+        
+        for (int i = dataRowsStartIndex; i < allRows.Count; i++)
         {
+            var row = allRows[i];
             var rowData = new List<string>();
-            for (int i = 1; i <= headers.Count; i++)
+            for (int colNum = 1; colNum <= columnCount; colNum++)
             {
-                var cell = row.Cell(i);
+                var cell = row.Cell(colNum);
                 rowData.Add(cell.GetValue<string>() ?? "");
             }
             rows.Add(rowData);
         }
 
         return (headers, rows, rows.Count);
+    }
+
+    /// <summary>
+    /// Detects the row number (1-based) where column headers are likely located.
+    /// Scans the first 10 rows looking for text-based headers that match known field names.
+    /// </summary>
+    private int DetectHeaderRow(ClosedXML.Excel.IXLWorksheet worksheet)
+    {
+        const int maxRowsToScan = 10;
+        var allRows = worksheet.RowsUsed().Take(maxRowsToScan).ToList();
+        
+        if (!allRows.Any())
+            return 1; // Default to first row if no rows found
+
+        int bestRowNumber = 1;
+        int bestScore = 0;
+
+        foreach (var row in allRows)
+        {
+            int score = ScoreHeaderRow(row);
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestRowNumber = row.RowNumber();
+            }
+        }
+
+        return bestRowNumber;
+    }
+
+    /// <summary>
+    /// Scores a row based on how likely it is to be a header row.
+    /// Higher scores indicate more header-like characteristics.
+    /// </summary>
+    private int ScoreHeaderRow(ClosedXML.Excel.IXLRow row)
+    {
+        int score = 0;
+        var cells = row.CellsUsed().ToList();
+
+        if (!cells.Any())
+            return 0;
+
+        foreach (var cell in cells)
+        {
+            var value = cell.GetValue<string>()?.Trim() ?? "";
+            
+            if (string.IsNullOrWhiteSpace(value))
+                continue;
+
+            // Bonus: Cell contains text (not just numbers)
+            if (!double.TryParse(value, out _))
+            {
+                score += 2;
+            }
+
+            // Bonus: Matches known field aliases
+            var normalizedValue = NormalizeHeader(value);
+            foreach (var fieldAliases in FieldAliases.Values)
+            {
+                if (fieldAliases.Any(alias => NormalizeHeader(alias) == normalizedValue))
+                {
+                    score += 10; // Strong indicator of a header
+                    break;
+                }
+            }
+
+            // Bonus: Contains common header keywords
+            var lowerValue = value.ToLower();
+            if (lowerValue.Contains("name") || lowerValue.Contains("id") || 
+                lowerValue.Contains("email") || lowerValue.Contains("phone") ||
+                lowerValue.Contains("area") || lowerValue.Contains("status") ||
+                lowerValue.Contains("eligibility"))
+            {
+                score += 5;
+            }
+        }
+
+        return score;
     }
 
     private (List<string> headers, List<List<string>> rows, int totalDataRows) ParseTextFile(byte[] content, string fileType, int codePage)
