@@ -295,11 +295,14 @@ globalThis.addEventListener("keydown", (event) => {
   .benefits-header h2 {
     font-size: 2.5rem;
     margin-bottom: 20px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: white;
+    
+    @supports (background-clip: text) or (-webkit-background-clip: text) {
+      background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
   }
 
   .benefits-subtitle {
