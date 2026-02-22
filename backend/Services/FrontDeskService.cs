@@ -208,7 +208,7 @@ public class FrontDeskService : IFrontDeskService
             TellerName = tellerName,
             LocationName = locationName,
             EnvNum = person.EnvNum,
-            PerformedBy = reason ?? tellerName // Use reason if provided, otherwise teller name
+            PerformedBy = reason ?? tellerName // For unregister, reason describes why; for checkin, teller name
         };
 
         historyEntries.Add(entry);
