@@ -114,6 +114,8 @@
   "elections.updateSuccess": "Election updated successfully",
   "elections.viewResults": "View Results",
   "elections.voters": "Voters",
+  "elections.people": "People",
+  "elections.ballots": "Ballots",
   "elections.electionTypes.LSA": "Local Spiritual Assembly",
   "elections.electionTypes.LSA1": "Local Spiritual Assembly (Two-Stage) Local Unit",
   "elections.electionTypes.LSA2": "Local Spiritual Assembly (Two-Stage) Final",

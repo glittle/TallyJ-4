@@ -10,7 +10,7 @@
     <section class="stats-section" aria-labelledby="stats-heading">
       <h2 id="stats-heading" class="sr-only">{{ $t("dashboard.statistics") }}</h2>
       <el-row :gutter="20" class="stats-row" role="list" aria-label="Election statistics">
-        <el-col :xs="24" :sm="12" :md="6" role="listitem">
+        <el-col :xs="24" :sm="12" role="listitem">
           <el-card class="stat-card">
             <div class="stat-icon elections" aria-hidden="true">
               <el-icon>
@@ -25,7 +25,7 @@
             </div>
           </el-card>
         </el-col>
-        <el-col :xs="24" :sm="12" :md="6" role="listitem">
+        <el-col :xs="24" :sm="12" role="listitem">
           <el-card class="stat-card">
             <div class="stat-icon active" aria-hidden="true">
               <el-icon>
@@ -37,36 +37,6 @@
                 {{ statistics.activeElections }}
               </div>
               <div class="stat-label">{{ $t("dashboard.activeElections") }}</div>
-            </div>
-          </el-card>
-        </el-col>
-        <el-col :xs="24" :sm="12" :md="6" role="listitem">
-          <el-card class="stat-card">
-            <div class="stat-icon voters" aria-hidden="true">
-              <el-icon>
-                <UserFilled />
-              </el-icon>
-            </div>
-            <div class="stat-content">
-              <div class="stat-value" aria-label="{{ statistics.totalVoters }} total voters">
-                {{ statistics.totalVoters }}
-              </div>
-              <div class="stat-label">{{ $t("dashboard.totalVoters") }}</div>
-            </div>
-          </el-card>
-        </el-col>
-        <el-col :xs="24" :sm="12" :md="6" role="listitem">
-          <el-card class="stat-card">
-            <div class="stat-icon ballots" aria-hidden="true">
-              <el-icon>
-                <Tickets />
-              </el-icon>
-            </div>
-            <div class="stat-content">
-              <div class="stat-value" aria-label="{{ statistics.totalBallots }} total ballots">
-                {{ statistics.totalBallots }}
-              </div>
-              <div class="stat-label">{{ $t("dashboard.totalBallots") }}</div>
             </div>
           </el-card>
         </el-col>
@@ -100,7 +70,6 @@
           <el-table :data="elections" style="width: 100%">
             <el-table-column prop="name" :label="$t('elections.name')" min-width="200" />
             <el-table-column prop="electionType" :label="$t('elections.type')" width="120" />
-            <el-table-column prop="voterCount" :label="$t('elections.voters')" min-width="60" align="center" />
             <el-table-column prop="dateOfElection" :label="$t('elections.date')" width="140">
               <template #default="scope">
                 <time :datetime="scope.row.dateOfElection">{{
@@ -108,6 +77,8 @@
                 }}</time>
               </template>
             </el-table-column>
+            <el-table-column prop="voterCount" :label="$t('elections.people')" min-width="100" align="center" />
+            <el-table-column prop="ballotCount" :label="$t('elections.ballots')" min-width="100" align="center" />
             <el-table-column prop="tallyStatus" :label="$t('elections.status')" width="120">
               <template #default="scope">
                 {{ scope.row.tallyStatus || "Draft" }}
@@ -134,8 +105,6 @@ import { useRouter } from "vue-router";
 import {
   Document,
   CircleCheck,
-  UserFilled,
-  Tickets,
   Plus,
 } from "@element-plus/icons-vue";
 import { useElectionStore } from "../stores/electionStore";
@@ -143,14 +112,22 @@ import { useElectionStore } from "../stores/electionStore";
 const router = useRouter();
 const electionStore = useElectionStore();
 
-const elections = computed(() => electionStore.elections.slice(0, 5));
+const elections = computed(() => {
+  // Sort by dateOfElection descending (most recent first), then take first 5
+  return electionStore.elections
+    .slice()
+    .sort((a, b) => {
+      const dateA = a.dateOfElection ? new Date(a.dateOfElection).getTime() : 0;
+      const dateB = b.dateOfElection ? new Date(b.dateOfElection).getTime() : 0;
+      return dateB - dateA; // Descending order
+    })
+    .slice(0, 5);
+});
 const loading = computed(() => electionStore.loading);
 
 const statistics = computed(() => ({
   totalElections: electionStore.elections.length,
   activeElections: electionStore.activeElections.length,
-  totalVoters: electionStore.elections.reduce((sum, e) => sum + e.voterCount, 0),
-  totalBallots: electionStore.elections.reduce((sum, e) => sum + e.ballotCount, 0),
 }));
 
 onMounted(async () => {
