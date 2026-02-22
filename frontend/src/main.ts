@@ -9,6 +9,8 @@ import App from "./App.vue";
 import { router } from "./router/router";
 import "./api/config";
 import { i18n } from "./locales";
+import { secureTokenService } from "./services/secureTokenService";
+import { tokenRefreshService } from "./services/tokenRefreshService";
 
 // Sentry error tracking and performance monitoring
 import * as Sentry from "@sentry/vue";
@@ -57,6 +59,15 @@ globalThis.addEventListener("unhandledrejection", (event) => {
 globalThis.addEventListener("error", (event) => {
   console.error("Uncaught error:", event.error);
 });
+
+// Initialize automatic token refresh if user is already authenticated
+if (secureTokenService.isAuthenticated()) {
+  tokenRefreshService.initialize({
+    tokenExpiryMinutes: 60,
+    refreshThreshold: 0.75,
+    enabled: true
+  });
+}
 
 // Register service worker for offline support
 // if ("serviceWorker" in navigator) {

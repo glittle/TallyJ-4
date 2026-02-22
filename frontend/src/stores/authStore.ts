@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { authService, type LoginRequest, type RegisterRequest } from '../services/authService';
 import { secureTokenService } from '../services/secureTokenService';
+import { tokenRefreshService } from '../services/tokenRefreshService';
 import { useApiErrorHandler } from '../composables/useApiErrorHandler';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -30,6 +31,13 @@ export const useAuthStore = defineStore('auth', () => {
         email.value = cookieData.email || response.email;
         name.value = cookieData.name || response.name || null;
         authMethod.value = cookieData.authMethod || response.authMethod || 'Local';
+        
+        // Start automatic token refresh
+        tokenRefreshService.initialize({
+          tokenExpiryMinutes: 60,
+          refreshThreshold: 0.75,
+          enabled: true
+        });
       }
 
       return response;
@@ -54,6 +62,13 @@ export const useAuthStore = defineStore('auth', () => {
 
         requires2FA.value = false;
         pending2FAEmail.value = null;
+        
+        // Start automatic token refresh
+        tokenRefreshService.initialize({
+          tokenExpiryMinutes: 60,
+          refreshThreshold: 0.75,
+          enabled: true
+        });
       }
 
       return response;
@@ -100,6 +115,13 @@ export const useAuthStore = defineStore('auth', () => {
 
       requires2FA.value = false;
       pending2FAEmail.value = null;
+      
+      // Start automatic token refresh
+      tokenRefreshService.initialize({
+        tokenExpiryMinutes: 60,
+        refreshThreshold: 0.75,
+        enabled: true
+      });
 
       return response;
     } catch (error) {
@@ -109,6 +131,9 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout() {
+    // Stop automatic token refresh
+    tokenRefreshService.stopAutoRefresh();
+    
     // Clear client-side state first
     email.value = null;
     name.value = null;

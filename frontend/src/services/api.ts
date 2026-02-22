@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { cacheService } from './cacheService';
 import { secureTokenService } from './secureTokenService';
+import { tokenRefreshService } from './tokenRefreshService';
 import { router } from '../router/router';
 import { i18n } from '../locales';
 import { ElMessage } from 'element-plus';
@@ -14,6 +15,7 @@ const api = axios.create({
 });
 
 let redirectingFor401 = false;
+let isRefreshingToken = false;
 
 // Request interceptor for caching
 api.interceptors.request.use(async (config) => {
@@ -59,8 +61,32 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
+    // Handle 401 Unauthorized - try to refresh token once, then redirect to login
     if (error.response?.status === 401 && !redirectingFor401) {
+      // Don't try to refresh if this is already the refresh endpoint
+      if (!error.config?.url?.includes('/refreshToken')) {
+        // Try to refresh token once
+        if (!isRefreshingToken) {
+          isRefreshingToken = true;
+          
+          try {
+            const refreshed = await tokenRefreshService.refreshToken();
+            isRefreshingToken = false;
+            
+            if (refreshed) {
+              // Retry the original request
+              return api.request(error.config);
+            }
+          } catch (refreshError) {
+            isRefreshingToken = false;
+            console.error('Token refresh failed:', refreshError);
+          }
+        }
+      }
+      
+      // If refresh failed or this is the refresh endpoint, redirect to login
       redirectingFor401 = true;
+      tokenRefreshService.stopAutoRefresh();
       secureTokenService.clearAuthData();
       const { t } = i18n.global;
       ElMessage({ message: t('error.sessionExpired'), type: 'warning', duration: 0, showClose: true });
