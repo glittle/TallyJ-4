@@ -3414,7 +3414,7 @@ export type PublicHomeDto = {
 };
 
 export type RefreshTokenRequest = {
-    refreshToken: string;
+    refreshToken?: string | null;
 };
 
 /**
@@ -5354,7 +5354,7 @@ export type PostApiAuthVerify2FaResponses = {
 
 export type PostApiAuthRefreshTokenData = {
     /**
-     * The refresh token request containing the refresh token.
+     * The refresh token request containing the refresh token (optional if using cookies).
      */
     body?: RefreshTokenRequest;
     path?: never;

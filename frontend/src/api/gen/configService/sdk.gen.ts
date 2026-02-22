@@ -404,6 +404,7 @@ export const postApiAuthVerify2Fa = <ThrowOnError extends boolean = false>(optio
 
 /**
  * Refreshes an access token using a valid refresh token and sets secure cookies.
+ * Supports reading refresh token from either request body or httpOnly cookie.
  */
 export const postApiAuthRefreshToken = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthRefreshTokenData, ThrowOnError>) => {
     return (options?.client ?? client).post<PostApiAuthRefreshTokenResponses, unknown, ThrowOnError>({

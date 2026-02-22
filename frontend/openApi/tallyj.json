@@ -877,9 +877,9 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Refreshes an access token using a valid refresh token and sets secure cookies.",
+        "summary": "Refreshes an access token using a valid refresh token and sets secure cookies.\nSupports reading refresh token from either request body or httpOnly cookie.",
         "requestBody": {
-          "description": "The refresh token request containing the refresh token.",
+          "description": "The refresh token request containing the refresh token (optional if using cookies).",
           "content": {
             "application/json": {
               "schema": {
@@ -10298,14 +10298,11 @@
         "description": "Data transfer object representing information for the public home page."
       },
       "RefreshTokenRequest": {
-        "required": [
-          "refreshToken"
-        ],
         "type": "object",
         "properties": {
           "refreshToken": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

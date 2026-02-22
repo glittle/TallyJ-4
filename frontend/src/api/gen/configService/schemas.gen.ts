@@ -4736,12 +4736,11 @@ export const PublicHomeDtoSchema = {
 } as const;
 
 export const RefreshTokenRequestSchema = {
-    required: ['refreshToken'],
     type: 'object',
     properties: {
         refreshToken: {
-            minLength: 1,
-            type: 'string'
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false
