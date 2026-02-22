@@ -141,8 +141,8 @@ async function handleFileChange(file: UploadFile) {
       const uploadedFile = await peopleImportService.uploadFile(electionGuid, file.raw);
       await loadFiles();
       
-      // Show message if headers were detected at a non-standard row
-      if (uploadedFile.firstDataRow && uploadedFile.firstDataRow > 1 && uploadedFile.fileType === 'xlsx') {
+      // Show message if headers were detected at a non-standard row (row 2 or higher)
+      if (uploadedFile.firstDataRow && uploadedFile.firstDataRow >= 2 && uploadedFile.fileType === 'xlsx') {
         ElMessage.success({
           message: t('people.import.headerAutoDetected', { row: uploadedFile.firstDataRow }),
           duration: 5000

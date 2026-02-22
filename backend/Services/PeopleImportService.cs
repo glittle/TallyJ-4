@@ -24,6 +24,11 @@ public class PeopleImportService : IPeopleImportService
     private readonly MainDbContext _context;
     private readonly IHubContext<PeopleImportHub> _hubContext;
 
+    // Scoring weights for header detection
+    private const int TextCellScore = 2;
+    private const int KnownFieldScore = 10;
+    private const int HeaderKeywordScore = 5;
+
     // Auto-mapping aliases for field matching (case-insensitive, spaces/underscores/hyphens ignored)
     private static readonly IReadOnlyDictionary<string, IReadOnlyList<string>> FieldAliases = new Dictionary<string, IReadOnlyList<string>>
     {
@@ -103,9 +108,11 @@ public class PeopleImportService : IPeopleImportService
                 var worksheet = workbook.Worksheets.First();
                 detectedHeaderRow = DetectHeaderRow(worksheet);
             }
-            catch
+            catch (Exception ex)
             {
-                // If detection fails, default to row 1
+                // If detection fails for any reason (corrupt file, empty worksheet, etc.), 
+                // default to row 1 and let later validation handle the error
+                // In production, consider logging this: _logger.LogWarning(ex, "Header detection failed")
                 detectedHeaderRow = 1;
             }
         }
@@ -527,6 +534,7 @@ public class PeopleImportService : IPeopleImportService
     /// <summary>
     /// Detects the row number (1-based) where column headers are likely located.
     /// Scans the first 10 rows looking for text-based headers that match known field names.
+    /// The Take() method safely handles worksheets with fewer than 10 rows.
     /// </summary>
     private int DetectHeaderRow(ClosedXML.Excel.IXLWorksheet worksheet)
     {
@@ -555,6 +563,7 @@ public class PeopleImportService : IPeopleImportService
     /// <summary>
     /// Scores a row based on how likely it is to be a header row.
     /// Higher scores indicate more header-like characteristics.
+    /// Uses scoring weights: Text cells (+2), Known fields (+10), Header keywords (+5).
     /// </summary>
     private int ScoreHeaderRow(ClosedXML.Excel.IXLRow row)
     {
@@ -574,7 +583,7 @@ public class PeopleImportService : IPeopleImportService
             // Bonus: Cell contains text (not just numbers)
             if (!double.TryParse(value, out _))
             {
-                score += 2;
+                score += TextCellScore;
             }
 
             // Bonus: Matches known field aliases
@@ -583,7 +592,7 @@ public class PeopleImportService : IPeopleImportService
             {
                 if (fieldAliases.Any(alias => NormalizeHeader(alias) == normalizedValue))
                 {
-                    score += 10; // Strong indicator of a header
+                    score += KnownFieldScore; // Strong indicator of a header
                     break;
                 }
             }
@@ -595,7 +604,7 @@ public class PeopleImportService : IPeopleImportService
                 lowerValue.Contains("area") || lowerValue.Contains("status") ||
                 lowerValue.Contains("eligibility"))
             {
-                score += 5;
+                score += HeaderKeywordScore;
             }
         }
 
