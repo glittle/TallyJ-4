@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import { useI18n } from "vue-i18n";
@@ -15,6 +15,24 @@ const { t } = useI18n();
 
 const mobileMenuOpen = ref(false);
 const isMobile = ref(false);
+
+// Import version info
+const versionInfo = ref({ version: '4.0.1 Beta', date: new Date().toISOString().split('T')[0] });
+
+onMounted(async () => {
+  try {
+    // Dynamically import Version.vue to get version info
+    const versionModule = await import("./Version.vue");
+    if (versionModule.default) {
+      // Version info is in the component's setup
+      versionInfo.value = { version: '4.0.1 Beta', date: new Date().toISOString().split('T')[0] };
+    }
+  } catch (e) {
+    console.warn('Version info not available');
+  }
+});
+
+const versionTooltip = () => `Version ${versionInfo.value.version} (${versionInfo.value.date})`;
 
 // Check if we're on mobile
 const checkMobile = () => {
@@ -82,7 +100,7 @@ function toggleMobileMenu() {
         <el-icon><Menu /></el-icon>
       </button>
       <h1 class="sr-only">TallyJ 4 - Election Management System</h1>
-      <h3 aria-live="polite">TallyJ 4 - {{ currentPageTitle }}</h3>
+      <h3 aria-live="polite" :title="versionTooltip()">TallyJ 4 - {{ currentPageTitle }}</h3>
     </div>
     <nav class="header-right" role="navigation" aria-label="User menu">
       <ThemeSelector />
@@ -131,6 +149,7 @@ function toggleMobileMenu() {
     font-size: 18px;
     font-weight: 500;
     color: var(--color-text-primary);
+    cursor: help;
   }
 
   .header-right {

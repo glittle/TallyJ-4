@@ -116,4 +116,16 @@ describe('AppHeader', () => {
 
     expect(mockRouterPush).toHaveBeenCalledWith('/profile')
   })
+
+  it('displays version tooltip on TallyJ 4 header', () => {
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n]
+      }
+    })
+    const headerH3 = wrapper.find('.header-left h3')
+    expect(headerH3.exists()).toBe(true)
+    expect(headerH3.attributes('title')).toContain('Version')
+    expect(headerH3.attributes('title')).toContain('4.0.1 Beta')
+  })
 })

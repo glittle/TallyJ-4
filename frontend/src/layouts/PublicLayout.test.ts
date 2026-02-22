@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createRouter, createWebHistory } from 'vue-router'
 import PublicLayout from './PublicLayout.vue'
+import { i18n } from '../test/setup'
 
 describe('PublicLayout', () => {
   let router: any
@@ -16,7 +17,7 @@ describe('PublicLayout', () => {
   it('renders properly', () => {
     const wrapper = mount(PublicLayout, {
       global: {
-        plugins: [router],
+        plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
           ThemeSelector: true
@@ -29,7 +30,7 @@ describe('PublicLayout', () => {
   it('displays the application title', () => {
     const wrapper = mount(PublicLayout, {
       global: {
-        plugins: [router],
+        plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
           ThemeSelector: true
@@ -42,7 +43,7 @@ describe('PublicLayout', () => {
   it('has the correct layout structure', () => {
     const wrapper = mount(PublicLayout, {
       global: {
-        plugins: [router],
+        plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
           ThemeSelector: true
@@ -57,7 +58,7 @@ describe('PublicLayout', () => {
   it('includes the logo image', () => {
     const wrapper = mount(PublicLayout, {
       global: {
-        plugins: [router],
+        plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
           ThemeSelector: true
@@ -72,7 +73,7 @@ describe('PublicLayout', () => {
   it('renders LanguageSelector and ThemeSelector components', () => {
     const wrapper = mount(PublicLayout, {
       global: {
-        plugins: [router],
+        plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
           ThemeSelector: true
@@ -86,7 +87,7 @@ describe('PublicLayout', () => {
   it('includes router-view for content', () => {
     const wrapper = mount(PublicLayout, {
       global: {
-        plugins: [router],
+        plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
           ThemeSelector: true
@@ -94,5 +95,21 @@ describe('PublicLayout', () => {
       }
     })
     expect(wrapper.findComponent({ name: 'RouterView' }).exists()).toBe(true)
+  })
+
+  it('displays version tooltip on logo', () => {
+    const wrapper = mount(PublicLayout, {
+      global: {
+        plugins: [router, i18n],
+        stubs: {
+          LanguageSelector: true,
+          ThemeSelector: true
+        }
+      }
+    })
+    const logoH2 = wrapper.find('.logo h2')
+    expect(logoH2.exists()).toBe(true)
+    expect(logoH2.attributes('title')).toContain('Version')
+    expect(logoH2.attributes('title')).toContain('4.0.1 Beta')
   })
 })
