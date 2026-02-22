@@ -38,6 +38,10 @@ TallyJ-4/
 
    The application will be available at `http://localhost:5000` and the database will be automatically seeded with test users and sample data.
 
+3. **Verify setup:**
+   
+   Open your browser to `http://localhost:5000/swagger` to verify the API is running.
+
 See **[backend/SETUP.md](backend/SETUP.md)** for detailed setup instructions.
 
 ### Test Credentials
