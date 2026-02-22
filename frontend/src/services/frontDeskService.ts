@@ -1,5 +1,6 @@
 import { getApiElectionsByElectionGuidFrontdeskEligibleVoters, postApiElectionsByElectionGuidFrontdeskCheckin, getApiElectionsByElectionGuidFrontdeskRollcall, getApiElectionsByElectionGuidFrontdeskStats } from '../api/gen/configService/sdk.gen';
-import type { FrontDeskVoterDto, CheckInVoterDto, RollCallDto, FrontDeskStatsDto } from '../types/FrontDesk';
+import type { FrontDeskVoterDto, CheckInVoterDto, RollCallDto, FrontDeskStatsDto, UnregisterVoterDto } from '../types/FrontDesk';
+import { client } from '../api/client';
 
 export const frontDeskService = {
   async getEligibleVoters(electionGuid: string): Promise<FrontDeskVoterDto[]> {
@@ -12,6 +13,11 @@ export const frontDeskService = {
       path: { electionGuid }, 
       body: checkInDto 
     });
+    return response.data?.data as FrontDeskVoterDto;
+  },
+
+  async unregisterVoter(electionGuid: string, unregisterDto: UnregisterVoterDto): Promise<FrontDeskVoterDto> {
+    const response = await client.post(`/api/${electionGuid}/frontdesk/unregisterVoter`, unregisterDto);
     return response.data?.data as FrontDeskVoterDto;
   },
 
