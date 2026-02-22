@@ -138,9 +138,18 @@ async function handleFileChange(file: UploadFile) {
   if (file.raw) {
     uploading.value = true;
     try {
-      await peopleImportService.uploadFile(electionGuid, file.raw);
+      const uploadedFile = await peopleImportService.uploadFile(electionGuid, file.raw);
       await loadFiles();
-      ElMessage.success('File uploaded successfully');
+      
+      // Show message if headers were detected at a non-standard row
+      if (uploadedFile.firstDataRow && uploadedFile.firstDataRow > 1 && uploadedFile.fileType === 'xlsx') {
+        ElMessage.success({
+          message: t('people.import.headerAutoDetected', { row: uploadedFile.firstDataRow }),
+          duration: 5000
+        });
+      } else {
+        ElMessage.success('File uploaded successfully');
+      }
     } catch (error) {
       console.error('Upload failed:', error);
       ElMessage.error(t('people.import.uploadError'));
@@ -416,7 +425,15 @@ async function confirmDeleteAllPeople() {
                   {{ scope.row.uploadTime ? new Date(scope.row.uploadTime).toLocaleString() : '-' }}
                 </template>
               </el-table-column>
-              <el-table-column prop="firstDataRow" :label="$t('people.import.headersOnLine')" width="120">
+              <el-table-column prop="firstDataRow" width="140">
+                <template #header>
+                  <el-tooltip :content="$t('people.import.headersOnLineTooltip')" placement="top">
+                    <span>
+                      {{ $t('people.import.headersOnLine') }}
+                      <el-icon style="margin-left: 4px; vertical-align: middle;"><InfoFilled /></el-icon>
+                    </span>
+                  </el-tooltip>
+                </template>
                 <template #default="scope">
                   <el-input-number v-model="scope.row.firstDataRow" :min="1" :max="10" size="small"
                     :disabled="scope.row.processingStatus === 'Imported'" @change="updateFileSettings(scope.row)" />
