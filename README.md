@@ -65,7 +65,7 @@ dotnet run
 
 API available at: `http://localhost:5000`
 
-**API Documentation**: Swagger UI available at `http://localhost:5000/swagger` for developers with access to the running application.
+**API Documentation**: Swagger UI available at `http://localhost:5000/swagger`
 
 > **Note**: Google OAuth is available for officer/admin login. See [backend/SETUP.md](backend/SETUP.md#google-oauth-configuration-optional) for configuration instructions.
 
