@@ -22,7 +22,7 @@ class TokenRefreshService {
     refreshThreshold: 0.75,
     enabled: true
   };
-  private isRefreshing = false;
+  private refreshPromise: Promise<boolean> | null = null;
   private lastRefreshTime: number | null = null;
 
   /**
@@ -79,12 +79,14 @@ class TokenRefreshService {
 
   /**
    * Manually refresh the authentication token.
+   * If a refresh is already in progress, returns the existing promise.
    * @returns Promise resolving to true if refresh succeeded, false otherwise.
    */
   async refreshToken(): Promise<boolean> {
-    if (this.isRefreshing) {
-      console.log('[TokenRefresh] Refresh already in progress, skipping');
-      return false;
+    // If already refreshing, return the existing promise
+    if (this.refreshPromise) {
+      console.log('[TokenRefresh] Refresh already in progress, waiting...');
+      return this.refreshPromise;
     }
 
     if (!secureTokenService.isAuthenticated()) {
@@ -93,8 +95,23 @@ class TokenRefreshService {
       return false;
     }
 
-    this.isRefreshing = true;
+    // Create a new refresh promise
+    this.refreshPromise = this.performRefresh();
+    
+    try {
+      const result = await this.refreshPromise;
+      return result;
+    } finally {
+      // Clear the promise when done
+      this.refreshPromise = null;
+    }
+  }
 
+  /**
+   * Perform the actual token refresh operation.
+   * @private
+   */
+  private async performRefresh(): Promise<boolean> {
     try {
       console.log('[TokenRefresh] Refreshing token...');
       
@@ -116,13 +133,14 @@ class TokenRefreshService {
       console.error('[TokenRefresh] Token refresh failed:', error);
       
       // If refresh fails with 401, user is logged out, stop auto-refresh
-      if ((error as any)?.response?.status === 401) {
-        this.stopAutoRefresh();
+      if (error && typeof error === 'object' && 'response' in error) {
+        const errorWithResponse = error as { response?: { status?: number } };
+        if (errorWithResponse.response?.status === 401) {
+          this.stopAutoRefresh();
+        }
       }
       
       return false;
-    } finally {
-      this.isRefreshing = false;
     }
   }
 

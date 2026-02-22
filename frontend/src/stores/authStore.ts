@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { authService, type LoginRequest, type RegisterRequest } from '../services/authService';
 import { secureTokenService } from '../services/secureTokenService';
 import { tokenRefreshService } from '../services/tokenRefreshService';
+import { TOKEN_REFRESH_CONFIG } from '../config/tokenRefreshConfig';
 import { useApiErrorHandler } from '../composables/useApiErrorHandler';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -33,11 +34,7 @@ export const useAuthStore = defineStore('auth', () => {
         authMethod.value = cookieData.authMethod || response.authMethod || 'Local';
         
         // Start automatic token refresh
-        tokenRefreshService.initialize({
-          tokenExpiryMinutes: 60,
-          refreshThreshold: 0.75,
-          enabled: true
-        });
+        tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
       }
 
       return response;
@@ -64,11 +61,7 @@ export const useAuthStore = defineStore('auth', () => {
         pending2FAEmail.value = null;
         
         // Start automatic token refresh
-        tokenRefreshService.initialize({
-          tokenExpiryMinutes: 60,
-          refreshThreshold: 0.75,
-          enabled: true
-        });
+        tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
       }
 
       return response;
@@ -117,11 +110,7 @@ export const useAuthStore = defineStore('auth', () => {
       pending2FAEmail.value = null;
       
       // Start automatic token refresh
-      tokenRefreshService.initialize({
-        tokenExpiryMinutes: 60,
-        refreshThreshold: 0.75,
-        enabled: true
-      });
+      tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
 
       return response;
     } catch (error) {

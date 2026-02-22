@@ -11,6 +11,7 @@ import "./api/config";
 import { i18n } from "./locales";
 import { secureTokenService } from "./services/secureTokenService";
 import { tokenRefreshService } from "./services/tokenRefreshService";
+import { TOKEN_REFRESH_CONFIG } from "./config/tokenRefreshConfig";
 
 // Sentry error tracking and performance monitoring
 import * as Sentry from "@sentry/vue";
@@ -62,11 +63,7 @@ globalThis.addEventListener("error", (event) => {
 
 // Initialize automatic token refresh if user is already authenticated
 if (secureTokenService.isAuthenticated()) {
-  tokenRefreshService.initialize({
-    tokenExpiryMinutes: 60,
-    refreshThreshold: 0.75,
-    enabled: true
-  });
+  tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
 }
 
 // Register service worker for offline support

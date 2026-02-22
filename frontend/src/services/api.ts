@@ -15,7 +15,6 @@ const api = axios.create({
 });
 
 let redirectingFor401 = false;
-let isRefreshingToken = false;
 
 // Request interceptor for caching
 api.interceptors.request.use(async (config) => {
@@ -65,22 +64,16 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !redirectingFor401) {
       // Don't try to refresh if this is already the refresh endpoint
       if (!error.config?.url?.includes('/refreshToken')) {
-        // Try to refresh token once
-        if (!isRefreshingToken) {
-          isRefreshingToken = true;
+        try {
+          // Try to refresh token (uses shared promise to prevent concurrent refreshes)
+          const refreshed = await tokenRefreshService.refreshToken();
           
-          try {
-            const refreshed = await tokenRefreshService.refreshToken();
-            isRefreshingToken = false;
-            
-            if (refreshed) {
-              // Retry the original request
-              return api.request(error.config);
-            }
-          } catch (refreshError) {
-            isRefreshingToken = false;
-            console.error('Token refresh failed:', refreshError);
+          if (refreshed) {
+            // Retry the original request
+            return api.request(error.config);
           }
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
         }
       }
       
