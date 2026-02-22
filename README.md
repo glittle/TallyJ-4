@@ -478,6 +478,23 @@ The backend respects the `Accept-Language` HTTP header and error messages are au
 
 This is a rebuild of the TallyJ election system. Comprehensive reverse engineering documentation is available in `.zenflow/tasks/reverse-engineer-and-design-new-cd6a/`.
 
+### GitHub Copilot Setup
+
+This repository is configured for GitHub Copilot coding agent with:
+
+- **`.github/copilot-instructions.md`**: Comprehensive project overview, architecture patterns, and development workflows
+- **`AGENTS.md`**: Critical Vue component structure requirements and coding conventions
+- **`.github/workflows/copilot-setup-steps.yml`**: Automated environment setup workflow that installs dependencies and prepares the workspace
+
+The Copilot setup ensures AI assistants understand:
+- Full-stack architecture (.NET 10 + Vue 3)
+- Development workflows and build processes
+- Coding conventions and patterns
+- Testing requirements
+- Documentation structure
+
+For more information on using GitHub Copilot with this project, see [GitHub's best practices for Copilot coding agent](https://docs.github.com/en/copilot/tutorials/coding-agent/improve-a-project).
+
 ## License
 
 TBD
