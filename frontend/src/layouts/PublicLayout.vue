@@ -1,23 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import LanguageSelector from "../components/common/LanguageSelector.vue";
 import ThemeSelector from "../components/common/ThemeSelector.vue";
+import { VERSION, BUILD_DATE } from "../components/version";
 
-// Import version info
-const versionInfo = ref({ version: '4.0.1 Beta', date: new Date().toISOString().split('T')[0] });
-
-onMounted(async () => {
-  try {
-    // Dynamically import Version.vue to get version info
-    const versionModule = await import("../components/Version.vue");
-    if (versionModule.default) {
-      // Version info is in the component's setup
-      versionInfo.value = { version: '4.0.1 Beta', date: new Date().toISOString().split('T')[0] };
-    }
-  } catch (e) {
-    console.warn('Version info not available');
-  }
-});
+// Version info from version.ts
+const versionInfo = ref({ version: VERSION, date: BUILD_DATE });
 
 const versionTooltip = () => `Version ${versionInfo.value.version} (${versionInfo.value.date})`;
 </script>

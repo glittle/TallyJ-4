@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
+import { computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import { useI18n } from "vue-i18n";
@@ -7,6 +7,7 @@ import { ElMessage } from "element-plus";
 import { ArrowDown, User, Setting, SwitchButton, Menu } from "@element-plus/icons-vue";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
+import { VERSION, BUILD_DATE } from "./version";
 
 const router = useRouter();
 const route = useRoute();
@@ -16,21 +17,8 @@ const { t } = useI18n();
 const mobileMenuOpen = ref(false);
 const isMobile = ref(false);
 
-// Import version info
-const versionInfo = ref({ version: '4.0.1 Beta', date: new Date().toISOString().split('T')[0] });
-
-onMounted(async () => {
-  try {
-    // Dynamically import Version.vue to get version info
-    const versionModule = await import("./Version.vue");
-    if (versionModule.default) {
-      // Version info is in the component's setup
-      versionInfo.value = { version: '4.0.1 Beta', date: new Date().toISOString().split('T')[0] };
-    }
-  } catch (e) {
-    console.warn('Version info not available');
-  }
-});
+// Version info from version.ts
+const versionInfo = ref({ version: VERSION, date: BUILD_DATE });
 
 const versionTooltip = () => `Version ${versionInfo.value.version} (${versionInfo.value.date})`;
 
