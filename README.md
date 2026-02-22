@@ -36,12 +36,11 @@ TallyJ-4/
    dotnet run
    ```
 
+   The application will be available at `http://localhost:5000` and the database will be automatically seeded with test users and sample data.
+
 3. **Verify setup:**
-   ```bash
-   curl -X POST http://localhost:5000/auth/login \
-     -H "Content-Type: application/json" \
-     -d '{"email":"admin@tallyj.test","password":"TestPass123!"}'
-   ```
+   
+   Open your browser to `http://localhost:5000/swagger` to verify the API is running.
 
 See **[backend/SETUP.md](backend/SETUP.md)** for detailed setup instructions.
 
@@ -67,18 +66,6 @@ dotnet run
 API available at: `http://localhost:5000`
 
 **API Documentation**: Swagger UI available at `http://localhost:5000/swagger`
-
-**Core endpoints:**
-
-- Authentication: `/auth/register`, `/auth/login`, `/auth/refresh`, `/api/auth/google/login` (OAuth)
-- Elections: `/api/elections`
-- People: `/api/people`
-- Ballots: `/api/ballots`
-- Votes: `/api/votes`
-- Tellers: `/api/tellers`
-- Results: `/api/results`
-- Import: `/api/import`
-- Logs: `/api/logs`
 
 > **Note**: Google OAuth is available for officer/admin login. See [backend/SETUP.md](backend/SETUP.md#google-oauth-configuration-optional) for configuration instructions.
 
@@ -251,208 +238,7 @@ VITE_API_URL=https://your-api-domain.com/api
 - Regular security updates for dependencies
 - Database backups and recovery procedures
 
-## API Usage Examples
-
-### Authentication
-
-**Login:**
-
-```bash
-curl -X POST http://localhost:5000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@tallyj.test","password":"TestPass123!"}'
-```
-
-Response includes `accessToken` and `refreshToken`. Use the access token in subsequent requests:
-
-```bash
-export TOKEN="your_access_token_here"
-```
-
-### Elections API
-
-**Create Election:**
-
-```bash
-curl -X POST http://localhost:5000/api/elections \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Local Assembly Election 2024",
-    "dateOfElection": "2024-12-15T00:00:00Z",
-    "electionType": "LSA",
-    "numberOfElections": 1,
-    "numberToElect": 9,
-    "numberExtra": 0
-  }'
-```
-
-**Get All Elections (Paginated):**
-
-```bash
-curl -X GET "http://localhost:5000/api/elections?pageNumber=1&pageSize=10" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-**Get Election by GUID:**
-
-```bash
-curl -X GET http://localhost:5000/api/elections/{electionGuid} \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-**Update Election:**
-
-```bash
-curl -X PUT http://localhost:5000/api/elections/{electionGuid} \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Updated Election Name",
-    "tallyStatus": "InProgress",
-    "numberOfElections": 1
-  }'
-```
-
-**Delete Election:**
-
-```bash
-curl -X DELETE http://localhost:5000/api/elections/{electionGuid} \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### People API
-
-**Create Person:**
-
-```bash
-curl -X POST http://localhost:5000/api/people \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "firstName": "Jane",
-    "lastName": "Smith",
-    "electionGuid": "{electionGuid}",
-    "canReceiveVotes": true,
-    "canVote": true
-  }'
-```
-
-**Get People by Election:**
-
-```bash
-curl -X GET "http://localhost:5000/api/people/election/{electionGuid}?pageNumber=1&pageSize=20" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-**Search People:**
-
-```bash
-curl -X GET "http://localhost:5000/api/people/search?electionGuid={electionGuid}&searchTerm=smith" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Ballots API
-
-**Create Ballot:**
-
-```bash
-curl -X POST http://localhost:5000/api/ballots \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "electionGuid": "{electionGuid}",
-    "ballotCode": "A001",
-    "statusCode": "Ok"
-  }'
-```
-
-**Get Ballots by Election:**
-
-```bash
-curl -X GET "http://localhost:5000/api/ballots/election/{electionGuid}?pageNumber=1&pageSize=20" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Votes API
-
-**Create Vote:**
-
-```bash
-curl -X POST http://localhost:5000/api/votes \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "ballotGuid": "{ballotGuid}",
-    "personGuid": "{personGuid}",
-    "singleNameElectionCount": 0
-  }'
-```
-
-**Get Votes by Ballot:**
-
-```bash
-curl -X GET http://localhost:5000/api/votes/ballot/{ballotGuid} \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Results API
-
-**Get Election Results:**
-
-```bash
-curl -X GET http://localhost:5000/api/results/election/{electionGuid} \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-**Get Final Results:**
-
-```bash
-curl -X GET http://localhost:5000/api/results/election/{electionGuid}/final \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Tellers API
-
-**Assign Teller to Election:**
-
-```bash
-curl -X POST http://localhost:5000/api/tellers \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "electionGuid": "{electionGuid}",
-    "userId": "{userId}",
-    "role": "HeadTeller"
-  }'
-```
-
-**Get Tellers by Election:**
-
-```bash
-curl -X GET http://localhost:5000/api/tellers/election/{electionGuid} \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Import API
-
-**Import People CSV:**
-
-```bash
-curl -X POST http://localhost:5000/api/import/people \
-  -H "Authorization: Bearer $TOKEN" \
-  -F "file=@people.csv" \
-  -F "electionGuid={electionGuid}"
-```
-
-### Logs API
-
-**Get Logs by Election:**
-
-```bash
-curl -X GET "http://localhost:5000/api/logs/election/{electionGuid}?pageNumber=1&pageSize=50" \
-  -H "Authorization: Bearer $TOKEN"
-```
+## Database Management
 
 ### Reset Database
 
@@ -624,21 +410,7 @@ For production deployments, update `ResourcesPath` to the absolute path where lo
 
 ### Backend Localization
 
-The backend respects the `Accept-Language` HTTP header:
-
-```bash
-# Request in English
-curl -X GET http://localhost:5000/api/elections \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Accept-Language: en"
-
-# Request in French
-curl -X GET http://localhost:5000/api/elections \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Accept-Language: fr"
-```
-
-Error messages and validation messages are automatically localized based on the request language.
+The backend respects the `Accept-Language` HTTP header and error messages are automatically localized based on the request language.
 
 ## Documentation
 
