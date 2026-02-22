@@ -115,6 +115,34 @@ public class FrontDeskController : ControllerBase
             return StatusCode(500, ApiResponse<FrontDeskStatsDto>.ErrorResponse("Failed to retrieve statistics"));
         }
     }
+
+    /// <summary>
+    /// Unregisters a voter (removes their check-in status).
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="unregisterDto">The unregister data.</param>
+    /// <returns>The updated voter information.</returns>
+    [HttpPost("unregisterVoter")]
+    public async Task<ActionResult<ApiResponse<FrontDeskVoterDto>>> UnregisterVoter(
+        Guid electionGuid,
+        [FromBody] UnregisterVoterDto unregisterDto)
+    {
+        try
+        {
+            var voter = await _frontDeskService.UnregisterVoterAsync(electionGuid, unregisterDto);
+            return Ok(ApiResponse<FrontDeskVoterDto>.SuccessResponse(voter, "Voter unregistered successfully"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<FrontDeskVoterDto>.ErrorResponse(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error unregistering voter {PersonGuid} for election {ElectionGuid}",
+                unregisterDto.PersonGuid, electionGuid);
+            return StatusCode(500, ApiResponse<FrontDeskVoterDto>.ErrorResponse("Failed to unregister voter"));
+        }
+    }
 }
 
 

@@ -64,6 +64,11 @@ public class FrontDeskVoterDto
     /// Indicates whether the voter has checked in.
     /// </summary>
     public bool IsCheckedIn => RegistrationTime.HasValue;
+
+    /// <summary>
+    /// Registration history entries for this voter.
+    /// </summary>
+    public List<RegistrationHistoryEntryDto>? RegistrationHistory { get; set; }
 }
 
 

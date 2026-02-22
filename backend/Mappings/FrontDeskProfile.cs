@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Backend.DTOs.FrontDesk;
 using Backend.Domain.Entities;
+using System.Text.Json;
 
 namespace Backend.Mappings;
 
@@ -14,7 +15,11 @@ public class FrontDeskProfile : Profile
     /// </summary>
     public FrontDeskProfile()
     {
-        CreateMap<Person, FrontDeskVoterDto>();
+        CreateMap<Person, FrontDeskVoterDto>()
+            .ForMember(dest => dest.RegistrationHistory,
+                opt => opt.MapFrom(src => string.IsNullOrEmpty(src.RegistrationHistory)
+                    ? null
+                    : JsonSerializer.Deserialize<List<RegistrationHistoryEntryDto>>(src.RegistrationHistory)));
     }
 }
 

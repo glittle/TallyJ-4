@@ -4,6 +4,7 @@ using Backend.DTOs.FrontDesk;
 using Backend.DTOs.SignalR;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using System.Text.Json;
 
 namespace Backend.Services;
 
@@ -90,6 +91,9 @@ public class FrontDeskService : IFrontDeskService
             .MaxAsync(p => (int?)p.EnvNum) ?? 0;
         person.EnvNum = nextEnvNum + 1;
 
+        // Add history entry
+        await AddRegistrationHistoryEntry(person, "CheckedIn", checkInDto.TellerName);
+
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Voter {PersonGuid} checked in for election {ElectionGuid} with envelope {EnvNum}",
@@ -133,6 +137,82 @@ public class FrontDeskService : IFrontDeskService
             CheckedIn = checkedIn,
             NotYetCheckedIn = totalEligible - checkedIn
         };
+    }
+
+    /// <inheritdoc />
+    public async Task<FrontDeskVoterDto> UnregisterVoterAsync(Guid electionGuid, UnregisterVoterDto unregisterDto)
+    {
+        var person = await _context.People
+            .FirstOrDefaultAsync(p => p.PersonGuid == unregisterDto.PersonGuid && p.ElectionGuid == electionGuid);
+
+        if (person == null)
+        {
+            throw new InvalidOperationException("Person not found");
+        }
+
+        if (!person.RegistrationTime.HasValue)
+        {
+            throw new InvalidOperationException("Person is not currently checked in");
+        }
+
+        // Store the envelope number for history
+        var envNum = person.EnvNum;
+
+        // Clear check-in data
+        person.RegistrationTime = null;
+        person.VotingMethod = null;
+        person.VotingLocationGuid = null;
+        person.EnvNum = null;
+        person.Teller1 = null;
+        person.Teller2 = null;
+
+        // Add history entry with reason
+        await AddRegistrationHistoryEntry(person, "Unregistered", null, unregisterDto.Reason);
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Voter {PersonGuid} unregistered from election {ElectionGuid}. Former envelope: {EnvNum}",
+            person.PersonGuid, electionGuid, envNum);
+
+        var voterDto = _mapper.Map<FrontDeskVoterDto>(person);
+
+        await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
+
+        var stats = await GetStatsAsync(electionGuid);
+        await _signalRNotificationService.NotifyVoterCountUpdatedAsync(electionGuid, stats);
+
+        return voterDto;
+    }
+
+    /// <summary>
+    /// Adds a registration history entry to the person's history log.
+    /// </summary>
+    private async Task AddRegistrationHistoryEntry(Person person, string action, string? tellerName, string? reason = null)
+    {
+        var historyEntries = string.IsNullOrEmpty(person.RegistrationHistory)
+            ? new List<RegistrationHistoryEntryDto>()
+            : JsonSerializer.Deserialize<List<RegistrationHistoryEntryDto>>(person.RegistrationHistory) ?? new List<RegistrationHistoryEntryDto>();
+
+        var locationName = person.VotingLocationGuid.HasValue
+            ? await _context.Locations
+                .Where(l => l.LocationGuid == person.VotingLocationGuid)
+                .Select(l => l.Name)
+                .FirstOrDefaultAsync()
+            : null;
+
+        var entry = new RegistrationHistoryEntryDto
+        {
+            Timestamp = DateTime.UtcNow,
+            Action = action,
+            VotingMethod = person.VotingMethod,
+            TellerName = tellerName,
+            LocationName = locationName,
+            EnvNum = person.EnvNum,
+            PerformedBy = reason ?? tellerName // Use reason if provided, otherwise teller name
+        };
+
+        historyEntries.Add(entry);
+        person.RegistrationHistory = JsonSerializer.Serialize(historyEntries);
     }
 }
 

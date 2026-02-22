@@ -112,6 +112,11 @@ public partial class Person
     [Unicode(false)]
     public string? KioskCode { get; set; }
 
+    /// <summary>
+    /// JSON array of registration history entries. Each entry contains timestamp, action, and metadata.
+    /// </summary>
+    public string? RegistrationHistory { get; set; }
+
     [ForeignKey("ElectionGuid")]
     public virtual Election Election { get; set; } = null!;
 
