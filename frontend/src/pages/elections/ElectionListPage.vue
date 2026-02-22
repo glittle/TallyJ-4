@@ -118,13 +118,13 @@
           <el-table-column
             prop="voterCount"
             :label="$t('elections.people')"
-            width="100"
+            min-width="100"
             sortable="custom"
           />
           <el-table-column
             prop="ballotCount"
             :label="$t('elections.ballots')"
-            width="100"
+            min-width="100"
             sortable="custom"
           />
           <el-table-column

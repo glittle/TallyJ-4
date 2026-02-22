@@ -77,8 +77,8 @@
                 }}</time>
               </template>
             </el-table-column>
-            <el-table-column prop="voterCount" :label="$t('elections.people')" width="100" align="center" />
-            <el-table-column prop="ballotCount" :label="$t('elections.ballots')" width="100" align="center" />
+            <el-table-column prop="voterCount" :label="$t('elections.people')" min-width="100" align="center" />
+            <el-table-column prop="ballotCount" :label="$t('elections.ballots')" min-width="100" align="center" />
             <el-table-column prop="tallyStatus" :label="$t('elections.status')" width="120">
               <template #default="scope">
                 {{ scope.row.tallyStatus || "Draft" }}
