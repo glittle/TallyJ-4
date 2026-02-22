@@ -1387,6 +1387,40 @@ button:focus-visible {
   background-size: 200% 100%;
 }
 
+/* Element Plus Select Dropdown - Fix transparency issues */
+.el-select-dropdown,
+.el-popper.is-light {
+  background-color: var(--el-bg-color);
+}
+
+.el-select-dropdown__item {
+  background-color: var(--el-bg-color);
+  color: var(--el-text-color-primary);
+}
+
+.el-select-dropdown__item:hover {
+  background-color: var(--el-fill-color-light);
+}
+
+.el-select-dropdown__item.selected {
+  color: var(--el-color-primary);
+  background-color: var(--el-fill-color-light);
+}
+
+.el-dropdown-menu {
+  background-color: var(--el-bg-color);
+}
+
+.el-dropdown-menu__item {
+  background-color: var(--el-bg-color);
+  color: var(--el-text-color-primary);
+}
+
+.el-dropdown-menu__item:hover {
+  background-color: var(--el-fill-color-light);
+  color: var(--el-color-primary);
+}
+
 /* Dark mode support (future enhancement) */
 @media (prefers-color-scheme: dark) {
   :root {

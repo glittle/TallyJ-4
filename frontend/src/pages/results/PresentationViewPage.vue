@@ -44,8 +44,8 @@
               <div class="candidate-votes">{{ $t('presentation.votes', { count: candidate.voteCount }) }}</div>
             </div>
             <div class="candidate-status">
-              <el-icon v-if="candidate.isWinner" size="24" color="#67C23A"><Check /></el-icon>
-              <el-icon v-if="candidate.isTied" size="24" color="#E6A23C"><Warning /></el-icon>
+              <el-icon v-if="candidate.isWinner" size="24" class="icon-success"><Check /></el-icon>
+              <el-icon v-if="candidate.isTied" size="24" class="icon-warning"><Warning /></el-icon>
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@
               <div class="candidate-votes">{{ $t('presentation.votes', { count: candidate.voteCount }) }}</div>
             </div>
             <div class="candidate-status">
-              <el-icon v-if="candidate.isTied" size="24" color="#E6A23C"><Warning /></el-icon>
+              <el-icon v-if="candidate.isTied" size="24" class="icon-warning"><Warning /></el-icon>
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@
               </div>
             </div>
             <div class="tie-status" v-if="tie.tieBreakRequired">
-              <el-icon size="20" color="#F56C6C"><Warning /></el-icon>
+              <el-icon size="20" class="icon-error"><Warning /></el-icon>
               <span>{{ $t('presentation.tieBreakRequired') }}</span>
             </div>
           </div>
@@ -201,9 +201,9 @@ function getSectionLabel(section: string) {
 <style lang="less">
 .presentation-view {
   min-height: 100vh;
-  background: #000;
-  color: #fff;
-  font-family: 'Arial', sans-serif;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-primary);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -213,15 +213,16 @@ function getSectionLabel(section: string) {
   text-align: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%);
   border-radius: 10px;
+  color: var(--color-text-inverse);
 }
 
 .election-title {
   font-size: 3rem;
   font-weight: bold;
   margin: 0 0 10px 0;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .election-meta {
@@ -241,7 +242,7 @@ function getSectionLabel(section: string) {
   align-items: center;
   justify-content: center;
   flex: 1;
-  color: #fff;
+  color: var(--color-text-primary);
 }
 
 .loading-icon {
@@ -275,26 +276,27 @@ function getSectionLabel(section: string) {
   font-size: 1.5rem;
   font-weight: bold;
   text-transform: uppercase;
+  color: var(--color-text-inverse);
 }
 
 .status-complete {
-  background: linear-gradient(135deg, #67C23A 0%, #4CAF50 100%);
+  background: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-success-600) 100%);
 }
 
 .status-progress {
-  background: linear-gradient(135deg, #E6A23C 0%, #FF9800 100%);
+  background: linear-gradient(135deg, var(--color-warning-500) 0%, var(--color-warning-600) 100%);
 }
 
 .status-paused {
-  background: linear-gradient(135deg, #909399 0%, #A8ABB2 100%);
+  background: linear-gradient(135deg, var(--color-gray-500) 0%, var(--color-gray-600) 100%);
 }
 
 .status-error {
-  background: linear-gradient(135deg, #F56C6C 0%, #F44336 100%);
+  background: linear-gradient(135deg, var(--color-error-500) 0%, var(--color-error-600) 100%);
 }
 
 .status-default {
-  background: linear-gradient(135deg, #409EFF 0%, #2196F3 100%);
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
 }
 
 .results-section {
@@ -311,15 +313,15 @@ function getSectionLabel(section: string) {
 }
 
 .elected-title {
-  color: #67C23A;
+  color: var(--color-success-500);
 }
 
 .extra-title {
-  color: #E6A23C;
+  color: var(--color-warning-500);
 }
 
 .ties-title {
-  color: #F56C6C;
+  color: var(--color-error-500);
 }
 
 .candidates-grid {
@@ -329,15 +331,13 @@ function getSectionLabel(section: string) {
 }
 
 .candidate-card {
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--el-border-color);
   border-radius: 10px;
   padding: 20px;
   display: flex;
   align-items: center;
   gap: 15px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px); /* Safari support */
   transition: transform 0.3s ease;
 }
 
@@ -346,24 +346,36 @@ function getSectionLabel(section: string) {
 }
 
 .elected-card {
-  border-color: #67C23A;
-  background: rgba(103, 194, 58, 0.1);
+  border-color: var(--color-success-500);
+  background: var(--color-success-50);
+}
+
+.dark .elected-card {
+  background: rgba(34, 197, 94, 0.1);
 }
 
 .extra-card {
-  border-color: #E6A23C;
-  background: rgba(230, 162, 60, 0.1);
+  border-color: var(--color-warning-500);
+  background: var(--color-warning-50);
+}
+
+.dark .extra-card {
+  background: rgba(245, 158, 11, 0.1);
 }
 
 .tied-candidate {
-  border-color: #F56C6C !important;
-  background: rgba(245, 108, 108, 0.1) !important;
+  border-color: var(--color-error-500) !important;
+  background: var(--color-error-50) !important;
+}
+
+.dark .tied-candidate {
+  background: rgba(239, 68, 68, 0.1) !important;
 }
 
 .candidate-rank {
   font-size: 2rem;
   font-weight: bold;
-  color: #409EFF;
+  color: var(--color-primary-500);
   min-width: 50px;
   text-align: center;
 }
@@ -376,15 +388,29 @@ function getSectionLabel(section: string) {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 5px;
+  color: var(--color-text-primary);
 }
 
 .candidate-votes {
   font-size: 1.2rem;
   opacity: 0.8;
+  color: var(--color-text-secondary);
 }
 
 .candidate-status {
   font-size: 1.5rem;
+  
+  .icon-success {
+    color: var(--color-success-500);
+  }
+  
+  .icon-warning {
+    color: var(--color-warning-500);
+  }
+  
+  .icon-error {
+    color: var(--color-error-500);
+  }
 }
 
 .ties-section {
@@ -398,17 +424,23 @@ function getSectionLabel(section: string) {
 }
 
 .tie-card {
-  background: rgba(245, 108, 108, 0.1);
-  border: 2px solid #F56C6C;
+  background: var(--color-error-50);
+  border: 2px solid var(--color-error-500);
   border-radius: 10px;
   padding: 20px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px); /* Safari support */
+}
+
+.dark .tie-card {
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .tie-break-required {
-  border-color: #F56C6C;
-  background: rgba(245, 108, 108, 0.2);
+  border-color: var(--color-error-600);
+  background: var(--color-error-50);
+}
+
+.dark .tie-break-required {
+  background: rgba(239, 68, 68, 0.2);
 }
 
 .tie-header {
@@ -418,6 +450,7 @@ function getSectionLabel(section: string) {
   margin-bottom: 15px;
   font-size: 1.3rem;
   font-weight: bold;
+  color: var(--color-text-primary);
 }
 
 .tie-candidates {
@@ -428,7 +461,8 @@ function getSectionLabel(section: string) {
   font-size: 1.2rem;
   margin-bottom: 5px;
   padding: 5px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--el-border-color-light);
+  color: var(--color-text-primary);
 }
 
 .tie-candidate-name:last-child {
@@ -440,15 +474,16 @@ function getSectionLabel(section: string) {
   align-items: center;
   gap: 8px;
   font-size: 1rem;
-  color: #F56C6C;
+  color: var(--color-error-600);
   font-weight: bold;
 }
 
 .presentation-footer {
   margin-top: auto;
   padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid var(--el-border-color);
   text-align: center;
+  color: var(--color-text-secondary);
 }
 
 .footer-content {
@@ -468,7 +503,7 @@ function getSectionLabel(section: string) {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--color-text-primary);
 }
 
 /* Responsive adjustments */
