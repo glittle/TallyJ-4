@@ -328,17 +328,19 @@ onUnmounted(async () => {
   width: 100vw;
   overflow: auto;
   padding: 2rem;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
   transition: background-color 0.3s, color 0.3s;
 }
 
 .public-display-page.light {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 .public-display-page.dark {
-  background-color: #1a1a1a;
-  color: #ffffff;
+  background-color: var(--color-gray-900);
+  color: var(--color-gray-50);
 }
 
 .loading-container,
@@ -354,6 +356,7 @@ onUnmounted(async () => {
 .loading-icon,
 .error-icon {
   animation: pulse 2s infinite;
+  color: var(--color-text-primary);
 }
 
 @keyframes pulse {
@@ -370,6 +373,7 @@ onUnmounted(async () => {
 .error-text {
   font-size: 2rem;
   font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .display-container {
@@ -381,7 +385,7 @@ onUnmounted(async () => {
   text-align: center;
   margin-bottom: 3rem;
   padding-bottom: 2rem;
-  border-bottom: 3px solid currentColor;
+  border-bottom: 3px solid var(--el-border-color);
 }
 
 .election-name {
@@ -389,6 +393,7 @@ onUnmounted(async () => {
   font-weight: bold;
   margin: 0 0 1rem 0;
   line-height: 1.2;
+  color: var(--color-text-primary);
 }
 
 .election-meta {
@@ -399,6 +404,7 @@ onUnmounted(async () => {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   opacity: 0.8;
+  color: var(--color-text-secondary);
 }
 
 .status-badge {
@@ -411,18 +417,18 @@ onUnmounted(async () => {
 }
 
 .status-finalized {
-  background-color: #67c23a;
-  color: white;
+  background-color: var(--color-success-500);
+  color: var(--color-text-inverse);
 }
 
 .status-in-progress {
-  background-color: #e6a23c;
-  color: white;
+  background-color: var(--color-warning-500);
+  color: var(--color-text-inverse);
 }
 
 .status-pending {
-  background-color: #909399;
-  color: white;
+  background-color: var(--color-gray-500);
+  color: var(--color-text-inverse);
 }
 
 .results-section {
@@ -435,6 +441,7 @@ onUnmounted(async () => {
   margin-bottom: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 2px;
+  color: var(--color-text-primary);
 }
 
 .candidates-list {
@@ -450,30 +457,33 @@ onUnmounted(async () => {
   padding: 1.5rem 2rem;
   border-radius: 12px;
   font-size: 2rem;
+  background-color: var(--color-bg-secondary);
   transition: background-color 0.2s;
 }
 
 .light .candidate-row {
-  background-color: #f5f5f5;
+  background-color: var(--color-bg-secondary);
 }
 
 .dark .candidate-row {
-  background-color: #2a2a2a;
+  background-color: var(--color-gray-800);
 }
 
 .candidate-row.tied {
-  border-left: 6px solid #e6a23c;
+  border-left: 6px solid var(--color-warning-500);
 }
 
 .rank {
   font-weight: bold;
   min-width: 60px;
   opacity: 0.7;
+  color: var(--color-text-secondary);
 }
 
 .name {
   flex: 1;
   font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .votes {
@@ -481,6 +491,7 @@ onUnmounted(async () => {
   opacity: 0.8;
   min-width: 150px;
   text-align: right;
+  color: var(--color-text-secondary);
 }
 
 .tie-tag {
@@ -491,7 +502,7 @@ onUnmounted(async () => {
 .statistics-section {
   margin-top: 4rem;
   padding-top: 2rem;
-  border-top: 2px solid currentColor;
+  border-top: 2px solid var(--el-border-color);
 }
 
 .stats-grid {
@@ -504,36 +515,40 @@ onUnmounted(async () => {
   text-align: center;
   padding: 1.5rem;
   border-radius: 12px;
+  background-color: var(--color-bg-secondary);
 }
 
 .light .stat-item {
-  background-color: #f5f5f5;
+  background-color: var(--color-bg-secondary);
 }
 
 .dark .stat-item {
-  background-color: #2a2a2a;
+  background-color: var(--color-gray-800);
 }
 
 .stat-label {
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
   opacity: 0.7;
+  color: var(--color-text-secondary);
 }
 
 .stat-value {
   font-size: 2.5rem;
   font-weight: bold;
+  color: var(--color-text-primary);
 }
 
 .display-footer {
   margin-top: 4rem;
   padding-top: 2rem;
-  border-top: 2px solid currentColor;
+  border-top: 2px solid var(--el-border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 1.25rem;
   opacity: 0.7;
+  color: var(--color-text-secondary);
 }
 
 .auto-refresh {
@@ -548,7 +563,7 @@ onUnmounted(async () => {
   right: 2rem;
   padding: 1rem;
   border-radius: 12px;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--color-bg-overlay);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;

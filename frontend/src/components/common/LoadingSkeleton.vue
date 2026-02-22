@@ -26,7 +26,7 @@ withDefaults(defineProps<Props>(), {
 
 <style lang="less">
 .loading-skeleton {
-  background: #f5f7fa;
+  background: var(--el-fill-color-light);
   border-radius: 4px;
   position: relative;
   overflow: hidden;
@@ -45,6 +45,15 @@ withDefaults(defineProps<Props>(), {
     transparent
   );
   animation: shimmer 1.5s infinite;
+}
+
+.dark .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
 }
 
 @keyframes shimmer {

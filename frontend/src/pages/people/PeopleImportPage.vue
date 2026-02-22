@@ -691,13 +691,13 @@ async function confirmDeleteAllPeople() {
 
       h4 {
         margin-bottom: 15px;
-        color: #666;
+        color: var(--el-text-color-secondary);
       }
     }
 
     .encoding-text {
       font-size: 12px;
-      color: #999;
+      color: var(--el-text-color-placeholder);
     }
   }
 
@@ -708,7 +708,7 @@ async function confirmDeleteAllPeople() {
 
     p {
       margin-bottom: 20px;
-      color: #666;
+      color: var(--el-text-color-secondary);
     }
 
     .column-mapping {
@@ -733,48 +733,48 @@ async function confirmDeleteAllPeople() {
       }
 
       .target-header {
-        background-color: #4067ee;
-        color: #fff;
+        background-color: var(--el-color-primary);
+        color: var(--color-text-inverse);
         font-weight: bold;
         min-width: 150px;
       }
 
       .file-header {
-        background-color: #4067ee;
-        color: #fff;
+        background-color: var(--el-color-primary);
+        color: var(--color-text-inverse);
         font-weight: bold;
         min-width: 120px;
       }
 
       .target-cell {
-        background-color: #fafafa;
+        background-color: var(--el-fill-color-light);
         font-weight: bold;
       }
 
       .mapping-row {
         .target-cell {
-          background-color: #4067ee;
-          color: #fff;
+          background-color: var(--el-color-primary);
+          color: var(--color-text-inverse);
           font-weight: bold;
         }
       }
 
       .mapping-cell {
-        background-color: #fff;
+        background-color: var(--el-bg-color);
       }
 
       .preview-row {
-        background-color: #f9f9f9;
+        background-color: var(--el-fill-color-lighter);
       }
 
       .preview-cell {
         font-size: 12px;
-        color: #666;
+        color: var(--el-text-color-secondary);
       }
 
       .preview-label {
         font-size: 12px;
-        color: #999;
+        color: var(--el-text-color-placeholder);
       }
 
       .mapping-row .el-select {
@@ -795,23 +795,23 @@ async function confirmDeleteAllPeople() {
       .field-item {
         margin-bottom: 10px;
         padding: 8px;
-        background-color: #f5f7fa;
+        background-color: var(--el-fill-color-light);
         border-radius: 4px;
 
         strong {
           display: block;
-          color: #303133;
+          color: var(--el-text-color-primary);
         }
 
         .required-mark {
-          color: #f56c6c;
+          color: var(--el-color-error);
           margin-left: 4px;
         }
 
         .field-desc {
           display: block;
           font-size: 12px;
-          color: #909399;
+          color: var(--el-text-color-secondary);
           margin-top: 4px;
         }
       }
@@ -834,7 +834,7 @@ async function confirmDeleteAllPeople() {
     }
 
     p {
-      color: #666;
+      color: var(--el-text-color-secondary);
       margin-bottom: 20px;
     }
 
@@ -849,7 +849,7 @@ async function confirmDeleteAllPeople() {
             strong {
               display: block;
               margin-bottom: 5px;
-              color: #303133;
+              color: var(--el-text-color-primary);
             }
 
             .mapped-fields-list {

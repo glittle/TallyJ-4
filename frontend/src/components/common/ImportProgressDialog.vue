@@ -115,12 +115,12 @@ function handleCancel() {
   }
 
   .error-count {
-    color: #f56c6c;
+    color: var(--el-color-error);
   }
 
   .status {
     font-weight: bold;
-    color: #409eff;
+    color: var(--el-color-primary);
   }
 
   .import-errors {
@@ -129,7 +129,7 @@ function handleCancel() {
 
   .import-errors h4 {
     margin-bottom: 10px;
-    color: #f56c6c;
+    color: var(--el-color-error);
   }
 
   .import-complete {
