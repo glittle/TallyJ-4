@@ -65,6 +65,7 @@ TallyJ-4 is a full-stack, real-time election management and ballot tallying syst
 - UI/UX: Use multi-step wizards for election setup, state-based navigation, and responsive layouts (see `v3_ui_patterns.md`)
 - Feature development should reference the v3 vs v4 matrix to avoid regressions
 - Documentation and planning: follow the SDD workflow and consolidation patterns in `.zenflow` and `.zencoder`
+- **Important**: See `AGENTS.md` for critical Vue component structure requirements and build workflow notes
 
 ## Feature Gaps & Priorities
 - Use `v3_vs_v4_feature_matrix.md` to identify missing/partial features (e.g., location management, teller assignment, online voting, audit logs, public display)
