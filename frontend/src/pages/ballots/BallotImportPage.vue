@@ -368,7 +368,7 @@ function getDelimiterLabel(delimiter: string): string {
 
     p {
       margin-bottom: 20px;
-      color: #666;
+      color: var(--el-text-color-secondary);
     }
 
     .field-mapping-form {

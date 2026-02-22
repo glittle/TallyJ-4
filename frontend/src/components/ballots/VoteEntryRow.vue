@@ -262,16 +262,11 @@ defineExpose({
     min-width: 32px;
     height: 32px;
     padding: 0 var(--spacing-2, 8px);
-    background-color: var(--color-gray-100, #f5f5f5);
+    background-color: var(--el-fill-color-lighter);
     border-radius: var(--radius-sm, 4px);
     font-weight: var(--font-weight-medium, 500);
-    color: var(--color-gray-700, #666);
+    color: var(--el-text-color-regular);
     font-size: var(--font-size-sm, 14px);
-
-    .dark & {
-      background-color: var(--color-gray-800, #2c2c2c);
-      color: var(--color-gray-300, #ccc);
-    }
   }
 
   &__input {
@@ -316,12 +311,6 @@ defineExpose({
     color: var(--el-color-warning-dark-2);
     margin-top: var(--spacing-1, 4px);
     z-index: 1;
-
-    .dark & {
-      background-color: rgba(230, 162, 60, 0.2);
-      border-color: var(--el-color-warning);
-      color: var(--el-color-warning-light-3);
-    }
   }
 
   &__warning-icon {
@@ -388,20 +377,12 @@ defineExpose({
     span {
       font-size: var(--font-size-base, 16px);
       font-weight: var(--font-weight-medium, 500);
-      color: var(--color-gray-700, #666);
-
-      .dark & {
-        color: var(--color-gray-300, #ccc);
-      }
+      color: var(--el-text-color-regular);
     }
 
     small {
       font-size: var(--font-size-sm, 14px);
-      color: var(--color-gray-500, #999);
-
-      .dark & {
-        color: var(--color-gray-400, #aaa);
-      }
+      color: var(--el-text-color-secondary);
     }
   }
 

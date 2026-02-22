@@ -4,7 +4,7 @@ namespace Backend.Application.DTOs.Auth;
 
 public class RefreshTokenRequest
 {
-    [Required]
-    public string RefreshToken { get; set; } = null!;
+    // Optional - can be provided in request body or read from httpOnly cookie
+    public string? RefreshToken { get; set; }
 }
 

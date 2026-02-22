@@ -74,17 +74,12 @@ onMounted(() => {
     }
 
     .el-input__inner {
-      color: var(--text-color-primary, #333);
+      color: var(--el-text-color-primary);
+      background-color: var(--el-fill-color-blank);
     }
     .el-select__placeholder {
       display: inline-flex;
       align-items: center;
-    }
-
-    .el-select-dropdown {
-      .el-select-dropdown__item {
-        color: var(--text-color-primary, #333);
-      }
     }
   }
 }

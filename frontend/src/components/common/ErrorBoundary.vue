@@ -78,17 +78,17 @@ onErrorCaptured((error, instance, info) => {
   }
 
   .error-icon {
-    color: #f56c6c;
+    color: var(--el-color-error);
     margin-bottom: 16px;
   }
 
   .error-content h2 {
-    color: #303133;
+    color: var(--el-text-color-primary);
     margin-bottom: 8px;
   }
 
   .error-content p {
-    color: #606266;
+    color: var(--el-text-color-regular);
     margin-bottom: 24px;
   }
 
@@ -106,16 +106,16 @@ onErrorCaptured((error, instance, info) => {
 
   .error-details summary {
     cursor: pointer;
-    color: #909399;
+    color: var(--el-text-color-secondary);
     margin-bottom: 8px;
   }
 
   .error-details pre {
-    background: #f5f7fa;
+    background: var(--el-fill-color-light);
     padding: 12px;
     border-radius: 4px;
     font-size: 12px;
-    color: #606266;
+    color: var(--el-text-color-regular);
     overflow-x: auto;
     white-space: pre-wrap;
   }

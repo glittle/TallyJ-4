@@ -117,8 +117,14 @@
           />
           <el-table-column
             prop="voterCount"
-            :label="$t('elections.voters')"
-            width="100"
+            :label="$t('elections.people')"
+            min-width="100"
+            sortable="custom"
+          />
+          <el-table-column
+            prop="ballotCount"
+            :label="$t('elections.ballots')"
+            min-width="100"
             sortable="custom"
           />
           <el-table-column
