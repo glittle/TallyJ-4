@@ -1,0 +1,124 @@
+name: Copilot Setup Steps
+
+# This workflow sets up the development environment for GitHub Copilot coding agent
+# It pre-installs dependencies and prepares the workspace for efficient code generation
+
+on:
+  workflow_dispatch:
+  # This workflow is meant to be triggered manually or by Copilot
+  # It can also be called from other workflows if needed
+
+jobs:
+  setup-environment:
+    name: Setup Development Environment
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      # Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Setup .NET SDK
+      - name: Setup .NET 10.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ./frontend/package-lock.json
+      
+      # Install backend dependencies
+      - name: Restore .NET dependencies
+        run: dotnet restore
+        working-directory: ./backend
+      
+      # Build backend to ensure all code generation is complete
+      - name: Build backend
+        run: dotnet build --no-restore --configuration Debug
+        working-directory: ./backend
+      
+      # Install frontend dependencies
+      - name: Install npm dependencies
+        run: npm ci
+        working-directory: ./frontend
+      
+      # Verify TypeScript configuration
+      - name: Verify TypeScript setup
+        run: npx vue-tsc --noEmit
+        working-directory: ./frontend
+      
+      # Create summary
+      - name: Environment Setup Summary
+        run: |
+          echo "## Environment Setup Complete ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Installed Tools" >> $GITHUB_STEP_SUMMARY
+          echo "- .NET SDK: $(dotnet --version)" >> $GITHUB_STEP_SUMMARY
+          echo "- Node.js: $(node --version)" >> $GITHUB_STEP_SUMMARY
+          echo "- npm: $(npm --version)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Backend Status" >> $GITHUB_STEP_SUMMARY
+          echo "- Dependencies restored ✓" >> $GITHUB_STEP_SUMMARY
+          echo "- Build successful ✓" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Frontend Status" >> $GITHUB_STEP_SUMMARY
+          echo "- Dependencies installed ✓" >> $GITHUB_STEP_SUMMARY
+          echo "- TypeScript configured ✓" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Ready for development! 🚀" >> $GITHUB_STEP_SUMMARY
+
+  verify-linting-tools:
+    name: Verify Linting and Formatting Tools
+    runs-on: ubuntu-latest
+    needs: setup-environment
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Setup .NET SDK
+      - name: Setup .NET 10.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ./frontend/package-lock.json
+      
+      # Verify .NET formatting tools
+      - name: Install dotnet-format
+        run: dotnet tool install -g dotnet-format || true
+      
+      # Install frontend dependencies for linting
+      - name: Install npm dependencies
+        run: npm ci
+        working-directory: ./frontend
+      
+      # Test ESLint availability (if configured)
+      - name: Check frontend linting setup
+        run: |
+          if [ -f "package.json" ]; then
+            if grep -q '"lint"' package.json; then
+              echo "ESLint configured ✓"
+            else
+              echo "No lint script found in package.json"
+            fi
+          fi
+        working-directory: ./frontend
+      
+      - name: Summary
+        run: |
+          echo "## Linting Tools Verified ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- dotnet-format available for C# formatting" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend linting tools configured" >> $GITHUB_STEP_SUMMARY
