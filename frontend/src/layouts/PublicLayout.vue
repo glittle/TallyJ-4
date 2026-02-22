@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import LanguageSelector from "../components/common/LanguageSelector.vue";
 import ThemeSelector from "../components/common/ThemeSelector.vue";
 import { VERSION, BUILD_DATE } from "../components/version";
 
-// Version info from version.ts
-const versionInfo = ref({ version: VERSION, date: BUILD_DATE });
-
-const versionTooltip = () => `Version ${versionInfo.value.version} (${versionInfo.value.date})`;
+// Version tooltip - static string computed once
+const versionTooltip = `Version ${VERSION} (${BUILD_DATE})`;
 </script>
 
 <template>
   <div class="public-layout">
     <div class="public-header">
       <div class="logo">
-        <h2 :title="versionTooltip()">
+        <h2 :title="versionTooltip">
           <img
             src="/logo-zoom.png"
             alt="TallyJ Logo"

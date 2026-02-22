@@ -17,10 +17,8 @@ const { t } = useI18n();
 const mobileMenuOpen = ref(false);
 const isMobile = ref(false);
 
-// Version info from version.ts
-const versionInfo = ref({ version: VERSION, date: BUILD_DATE });
-
-const versionTooltip = () => `Version ${versionInfo.value.version} (${versionInfo.value.date})`;
+// Version tooltip - static string computed once
+const versionTooltip = `Version ${VERSION} (${BUILD_DATE})`;
 
 // Check if we're on mobile
 const checkMobile = () => {
@@ -88,7 +86,7 @@ function toggleMobileMenu() {
         <el-icon><Menu /></el-icon>
       </button>
       <h1 class="sr-only">TallyJ 4 - Election Management System</h1>
-      <h3 aria-live="polite" :title="versionTooltip()">TallyJ 4 - {{ currentPageTitle }}</h3>
+      <h3 aria-live="polite" :title="versionTooltip">TallyJ 4 - {{ currentPageTitle }}</h3>
     </div>
     <nav class="header-right" role="navigation" aria-label="User menu">
       <ThemeSelector />
