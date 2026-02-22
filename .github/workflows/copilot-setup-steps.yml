@@ -13,6 +13,8 @@ jobs:
     name: Setup Development Environment
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
 
     steps:
       # Checkout repository
@@ -77,6 +79,8 @@ jobs:
     name: Verify Linting and Formatting Tools
     runs-on: ubuntu-latest
     needs: setup-environment
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout code
