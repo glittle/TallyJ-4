@@ -490,13 +490,28 @@ public class AuthController : ControllerBase
 
     /// <summary>
     /// Refreshes an access token using a valid refresh token and sets secure cookies.
+    /// Supports reading refresh token from either request body or httpOnly cookie.
     /// </summary>
-    /// <param name="request">The refresh token request containing the refresh token.</param>
+    /// <param name="request">The refresh token request containing the refresh token (optional if using cookies).</param>
     /// <returns>New access and refresh tokens if successful, or an error if the refresh token is invalid.</returns>
     [HttpPost("refreshToken")]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest? request)
     {
-        var tokenHash = _jwtTokenService.HashRefreshToken(request.RefreshToken);
+        // Try to get refresh token from request body first, then fall back to cookie
+        var refreshTokenValue = request?.RefreshToken;
+        
+        if (string.IsNullOrEmpty(refreshTokenValue))
+        {
+            // Try to get from cookie
+            refreshTokenValue = HttpContext.Request.Cookies["refresh_token"];
+        }
+        
+        if (string.IsNullOrEmpty(refreshTokenValue))
+        {
+            return BadRequest(new { error = "Refresh token is required" });
+        }
+        
+        var tokenHash = _jwtTokenService.HashRefreshToken(refreshTokenValue);
         var refreshToken = await _context.RefreshTokens
             .FirstOrDefaultAsync(rt => rt.TokenHash == tokenHash && !rt.IsRevoked);
 
