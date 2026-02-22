@@ -23,7 +23,6 @@ TallyJ-4/
 
 - .NET SDK 10.0 or later
 - SQL Server Express (or Docker SQL Server)
-- Optional: SQL Server Management Studio or Azure Data Studio
 
 ### Database Setup
 
