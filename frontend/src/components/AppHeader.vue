@@ -7,6 +7,7 @@ import { useNotifications } from '@/composables/useNotifications';
 import { ArrowDown, User, Setting, SwitchButton, Menu } from "@element-plus/icons-vue";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
+import { VERSION, BUILD_DATE } from "./version";
 
 const router = useRouter();
 const route = useRoute();
@@ -16,6 +17,9 @@ const { showSuccessMessage, showInfoMessage } = useNotifications();
 
 const mobileMenuOpen = ref(false);
 const isMobile = ref(false);
+
+// Version tooltip - static string computed once
+const versionTooltip = `Version ${VERSION} (${BUILD_DATE})`;
 
 // Check if we're on mobile
 const checkMobile = () => {
@@ -83,7 +87,7 @@ function toggleMobileMenu() {
         <el-icon><Menu /></el-icon>
       </button>
       <h1 class="sr-only">TallyJ 4 - Election Management System</h1>
-      <h3 aria-live="polite">TallyJ 4 - {{ currentPageTitle }}</h3>
+      <h3 aria-live="polite" :title="versionTooltip">TallyJ 4 - {{ currentPageTitle }}</h3>
     </div>
     <nav class="header-right" role="navigation" aria-label="User menu">
       <ThemeSelector />
@@ -132,6 +136,7 @@ function toggleMobileMenu() {
     font-size: 18px;
     font-weight: 500;
     color: var(--color-text-primary);
+    cursor: help;
   }
 
   .header-right {
