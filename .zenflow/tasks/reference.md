@@ -78,7 +78,7 @@ TallyJ uses Entity Framework 6.4.4 Code First with SQL Server. The database sche
 | OtherNames           | string   | Yes      | Middle names, alternate first names               |
 | OtherInfo            | string   | Yes      | Additional identifying information                |
 | Area                 | string   | Yes      | Sector/geographic area                            |
-| BahaiId              | string   | Yes      | Bahá'í ID number                                  |
+| BahaiId              | string   | Yes      | Bahá’í ID number                                  |
 | CombinedInfo         | string   | Yes      | Searchable combined text (computed)               |
 | CombinedSoundCodes   | string   | Yes      | Soundex codes for fuzzy matching                  |
 | CombinedInfoAtStart  | string   | Yes      | Original combined info (before edits)             |
@@ -180,7 +180,7 @@ TallyJ uses Entity Framework 6.4.4 Code First with SQL Server. The database sche
 
 ### Tally Algorithm Overview
 
-TallyJ implements sophisticated ballot tallying logic to count votes, detect ties, rank candidates, and generate election results. The tally system handles various election types (LSA elections, conventions, by-elections, tie-breaks) with specific Bahá'í electoral rules.
+TallyJ implements sophisticated ballot tallying logic to count votes, detect ties, rank candidates, and generate election results. The tally system handles various election types (LSA elections, conventions, by-elections, tie-breaks) with specific Bahá’í electoral rules.
 
 ---
 
@@ -267,7 +267,7 @@ Persist all `Result` records and `ResultSummary`
 
 ---
 
-### Bahá'í Electoral Principles
+### Bahá’í Electoral Principles
 
 1. **Secret Ballot**: No link between `Ballot` and `Person` (voter)
 2. **No Nominations**: All eligible persons are candidates (marked as "Can be Voted for")

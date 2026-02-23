@@ -877,9 +877,9 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Refreshes an access token using a valid refresh token and sets secure cookies.",
+        "summary": "Refreshes an access token using a valid refresh token and sets secure cookies.\nSupports reading refresh token from either request body or httpOnly cookie.",
         "requestBody": {
-          "description": "The refresh token request containing the refresh token.",
+          "description": "The refresh token request containing the refresh token (optional if using cookies).",
           "content": {
             "application/json": {
               "schema": {
@@ -3733,6 +3733,65 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "PeopleImport"
+        ],
+        "summary": "Gets saved column mappings for an import file.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "rowId",
+            "in": "path",
+            "description": "The row ID of the import file.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ColumnMappingDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ColumnMappingDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ColumnMappingDto"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -8935,6 +8994,26 @@
         "additionalProperties": false,
         "description": "Data transfer object for configuring an import operation."
       },
+      "ImportErrorDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The i18n key for the error message.",
+            "nullable": true
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Parameters to substitute into the error message.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for import error messages."
+      },
       "ImportFileDto": {
         "type": "object",
         "properties": {
@@ -9037,7 +9116,7 @@
           "warnings": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/ImportWarningDto"
             },
             "description": "List of warning messages generated during import.",
             "nullable": true
@@ -9045,7 +9124,7 @@
           "errors": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/ImportErrorDto"
             },
             "description": "List of error messages encountered during import.",
             "nullable": true
@@ -9058,6 +9137,26 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object containing the result of importing people."
+      },
+      "ImportWarningDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The i18n key for the warning message.",
+            "nullable": true
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Parameters to substitute into the warning message.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for import warning messages."
       },
       "LocationAnalysisDto": {
         "type": "object",
@@ -10298,14 +10397,11 @@
         "description": "Data transfer object representing information for the public home page."
       },
       "RefreshTokenRequest": {
-        "required": [
-          "refreshToken"
-        ],
         "type": "object",
         "properties": {
           "refreshToken": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

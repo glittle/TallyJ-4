@@ -119,7 +119,8 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { Loading, Check, Warning, Clock } from '@element-plus/icons-vue';
 import { useResultStore } from '../../stores/resultStore';
 import type { PresentationDto } from '../../types';
@@ -127,6 +128,8 @@ import type { PresentationDto } from '../../types';
 const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
+const { showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
 const presentationData = ref<PresentationDto | null>(null);
@@ -142,7 +145,7 @@ async function loadPresentationData() {
     const data = await resultStore.fetchPresentationData(electionGuid);
     presentationData.value = data;
   } catch (error) {
-    ElMessage.error(t('presentation.loadError'));
+    handleApiError(error);
   } finally {
     loading.value = false;
   }

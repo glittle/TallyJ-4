@@ -162,7 +162,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { usePublicStore } from "../stores/publicStore";
 import { storeToRefs } from "pinia";
-import { ElMessage } from "element-plus";
+import { useNotifications } from '@/composables/useNotifications';
 import {
   Loading,
   WarningFilled,
@@ -177,6 +177,7 @@ import type { PublicDisplayDto } from "../types";
 
 const route = useRoute();
 const publicStore = usePublicStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 const { displayData, loading, error, displayOptions } = storeToRefs(publicStore);
 
 const showControls = ref(false);
@@ -237,9 +238,9 @@ function toggleAutoRefresh() {
 async function refreshNow() {
   try {
     await publicStore.fetchPublicDisplay(electionGuid.value);
-    ElMessage.success("Display refreshed");
+    showSuccessMessage("Display refreshed");
   } catch (e: any) {
-    ElMessage.error("Failed to refresh display");
+    showErrorMessage("Failed to refresh display");
   }
 }
 
@@ -310,7 +311,7 @@ onMounted(async () => {
     }
     document.addEventListener("keypress", handleKeyPress);
   } catch (e: any) {
-    ElMessage.error(e.message || "Failed to load public display");
+    showErrorMessage(e.message || "Failed to load public display");
   }
 });
 

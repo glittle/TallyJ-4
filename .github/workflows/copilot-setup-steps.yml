@@ -9,7 +9,7 @@ on:
   # It can also be called from other workflows if needed
 
 jobs:
-  setup-environment:
+  copilot-setup-steps:
     name: Setup Development Environment
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -78,7 +78,7 @@ jobs:
   verify-linting-tools:
     name: Verify Linting and Formatting Tools
     runs-on: ubuntu-latest
-    needs: setup-environment
+    needs: copilot-setup-steps
     permissions:
       contents: read
 

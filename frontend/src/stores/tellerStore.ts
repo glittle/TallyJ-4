@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { tellerService } from '@/services/tellerService'
 import type { Teller, CreateTellerDto, UpdateTellerDto } from '@/types/teller'
-import { ElMessage } from 'element-plus'
 
 export const useTellerStore = defineStore('teller', () => {
   const tellers = ref<Teller[]>([])
@@ -24,7 +23,6 @@ export const useTellerStore = defineStore('teller', () => {
       pageSize.value = response.pageSize
     } catch (err: any) {
       error.value = err.message || 'Failed to fetch tellers'
-      ElMessage.error(error.value)
       throw err
     } finally {
       loading.value = false
@@ -40,7 +38,6 @@ export const useTellerStore = defineStore('teller', () => {
       return teller
     } catch (err: any) {
       error.value = err.message || 'Failed to fetch teller'
-      ElMessage.error(error.value)
       throw err
     } finally {
       loading.value = false
@@ -54,11 +51,9 @@ export const useTellerStore = defineStore('teller', () => {
       const newTeller = await tellerService.createTeller(electionGuid, tellerData)
       tellers.value.push(newTeller)
       totalCount.value++
-      ElMessage.success('Teller created successfully')
       return newTeller
     } catch (err: any) {
       error.value = err.message || 'Failed to create teller'
-      ElMessage.error(error.value)
       throw err
     } finally {
       loading.value = false
@@ -77,11 +72,9 @@ export const useTellerStore = defineStore('teller', () => {
       if (currentTeller.value?.rowId === rowId) {
         currentTeller.value = updatedTeller
       }
-      ElMessage.success('Teller updated successfully')
       return updatedTeller
     } catch (err: any) {
       error.value = err.message || 'Failed to update teller'
-      ElMessage.error(error.value)
       throw err
     } finally {
       loading.value = false
@@ -98,10 +91,8 @@ export const useTellerStore = defineStore('teller', () => {
       if (currentTeller.value?.rowId === rowId) {
         currentTeller.value = null
       }
-      ElMessage.success('Teller deleted successfully')
     } catch (err: any) {
       error.value = err.message || 'Failed to delete teller'
-      ElMessage.error(error.value)
       throw err
     } finally {
       loading.value = false

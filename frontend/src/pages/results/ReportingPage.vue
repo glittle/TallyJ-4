@@ -824,7 +824,7 @@
 import { ref, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -860,6 +860,7 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
+const { showSuccessMessage, showErrorMessage, showWarningMessage, showInfoMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const selectedReportType = ref<string>('');
@@ -946,9 +947,9 @@ async function generateReport() {
       reportData.value = await resultStore.fetchReportData(electionGuid, selectedReportType.value);
     }
 
-    ElMessage.success(t('reporting.reportGenerated'));
+    showSuccessMessage(t('reporting.reportGenerated'));
   } catch (error) {
-    ElMessage.error(t('reporting.reportGenerationError'));
+    showErrorMessage(t('reporting.reportGenerationError'));
   } finally {
     loading.value = false;
   }
@@ -956,7 +957,7 @@ async function generateReport() {
 
 async function exportReport(format: 'pdf' | 'excel' | 'csv') {
   try {
-    ElMessage.info(`${t('reporting.exportStarted')} ${format.toUpperCase()}`);
+    showInfoMessage(`${t('reporting.exportStarted')} ${format.toUpperCase()}`);
 
     const blob = await reportsApi.exportReport(electionGuid, { format });
 
@@ -972,9 +973,9 @@ async function exportReport(format: 'pdf' | 'excel' | 'csv') {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
 
-    ElMessage.success(`${t('reporting.exportCompleted')} ${format.toUpperCase()}`);
+    showSuccessMessage(`${t('reporting.exportCompleted')} ${format.toUpperCase()}`);
   } catch (error) {
-    ElMessage.error(t('reporting.exportError'));
+    showErrorMessage(t('reporting.exportError'));
   }
 }
 
@@ -1204,12 +1205,12 @@ function applyFilters() {
 
 async function generateCustomReport() {
   if (!customReportConfig.value.reportName.trim()) {
-    ElMessage.warning(t('reporting.reportNameRequired'));
+    showWarningMessage(t('reporting.reportNameRequired'));
     return;
   }
 
   if (customReportConfig.value.sections.length === 0) {
-    ElMessage.warning(t('reporting.atLeastOneSectionRequired'));
+    showWarningMessage(t('reporting.atLeastOneSectionRequired'));
     return;
   }
 
@@ -1235,11 +1236,11 @@ async function generateCustomReport() {
     };
 
     // For now, just show a success message since the backend implementation is basic
-    ElMessage.success(t('reporting.customReportGenerated'));
+    showSuccessMessage(t('reporting.customReportGenerated'));
     console.log('Custom report config:', config);
 
   } catch (error) {
-    ElMessage.error(t('reporting.customReportGenerationError'));
+    showErrorMessage(t('reporting.customReportGenerationError'));
   } finally {
     loading.value = false;
   }
@@ -1247,12 +1248,12 @@ async function generateCustomReport() {
 
 async function generateComparison() {
   if (selectedElectionsForComparison.value.length < 2) {
-    ElMessage.warning(t('reporting.selectAtLeastTwoElections'));
+    showWarningMessage(t('reporting.selectAtLeastTwoElections'));
     return;
   }
 
   if (comparisonMetrics.value.length === 0) {
-    ElMessage.warning(t('reporting.selectAtLeastOneMetric'));
+    showWarningMessage(t('reporting.selectAtLeastOneMetric'));
     return;
   }
 
@@ -1279,10 +1280,10 @@ async function generateComparison() {
       }
     };
 
-    ElMessage.success(t('reporting.comparisonGenerated'));
+    showSuccessMessage(t('reporting.comparisonGenerated'));
 
   } catch (error) {
-    ElMessage.error(t('reporting.comparisonGenerationError'));
+    showErrorMessage(t('reporting.comparisonGenerationError'));
   } finally {
     loading.value = false;
   }

@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import LanguageSelector from "../components/common/LanguageSelector.vue";
 import ThemeSelector from "../components/common/ThemeSelector.vue";
+import { VERSION, BUILD_DATE } from "../components/version";
+
+// Version tooltip - static string computed once
+const versionTooltip = `Version ${VERSION} (${BUILD_DATE})`;
 </script>
 
 <template>
   <div class="public-layout">
     <div class="public-header">
       <div class="logo">
-        <h2>
+        <h2 :title="versionTooltip">
           <img
             src="/logo-zoom.png"
             alt="TallyJ Logo"
@@ -51,6 +55,7 @@ import ThemeSelector from "../components/common/ThemeSelector.vue";
     margin: 0;
     font-size: 24px;
     font-weight: 600;
+    cursor: help;
 
     img {
       background-color: rgba(255, 255, 255, 0.4);

@@ -1,6 +1,6 @@
 # TallyJ 4
 
-TallyJ-4 is a full-stack, real-time election management and ballot tallying system for Bahá'í communities. It uses a .NET 10 ASP.NET Core Web API backend and a Vue 3 + Vite SPA frontend. The system is designed for multi-user collaboration, secure authentication, and robust election workflows, with a focus on feature parity and modernization from TallyJ v3.
+TallyJ-4 is a full-stack, real-time election management and ballot tallying system for Bahá’í communities. It uses a .NET 10 ASP.NET Core Web API backend and a Vue 3 + Vite SPA frontend. The system is designed for multi-user collaboration, secure authentication, and robust election workflows, with a focus on feature parity and modernization from TallyJ v3.
 
 ## Project Structure
 
@@ -39,7 +39,7 @@ TallyJ-4/
    The application will be available at `http://localhost:5000` and the database will be automatically seeded with test users and sample data.
 
 3. **Verify setup:**
-   
+
    Open your browser to `http://localhost:5000/swagger` to verify the API is running.
 
 See **[backend/SETUP.md](backend/SETUP.md)** for detailed setup instructions.
@@ -345,6 +345,7 @@ For production deployments, update `ResourcesPath` to the absolute path where lo
 2. **Add the translation key** in **all locale files** with matching structure:
 
    **en/auth.json:**
+
    ```json
    {
      "auth": {
@@ -356,6 +357,7 @@ For production deployments, update `ResourcesPath` to the absolute path where lo
    ```
 
    **fr/auth.json:**
+
    ```json
    {
      "auth": {
@@ -369,13 +371,15 @@ For production deployments, update `ResourcesPath` to the absolute path where lo
 3. **Use the translation:**
 
    **Frontend (Vue):**
+
    ```vue
    <template>
-     <h1>{{ $t('auth.login.title') }}</h1>
+     <h1>{{ $t("auth.login.title") }}</h1>
    </template>
    ```
 
    **Backend (C#):**
+
    ```csharp
    public class AuthService
    {
@@ -487,6 +491,7 @@ This repository is configured for GitHub Copilot coding agent with:
 - **`.github/workflows/copilot-setup-steps.yml`**: Automated environment setup workflow that installs dependencies and prepares the workspace
 
 The Copilot setup ensures AI assistants understand:
+
 - Full-stack architecture (.NET 10 + Vue 3)
 - Development workflows and build processes
 - Coding conventions and patterns

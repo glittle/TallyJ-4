@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { electionService } from '../services/electionService';
 import { signalrService } from '../services/signalrService';
-import { ElMessage } from 'element-plus';
+
 import type { ElectionDto, CreateElectionDto, UpdateElectionDto } from '../types';
 import type { ElectionUpdateEvent } from '../types/SignalREvents';
 import { extractApiErrorMessage } from '../utils/errorHandler';
@@ -210,13 +210,7 @@ export const useElectionStore = defineStore('election', () => {
   function showElectionStatusNotification(electionName: string, statusType: 'tally' | 'election', newStatus: string) {
     const message = `${electionName} ${statusType} status changed to: ${newStatus}`;
 
-    if (newStatus === 'Finalized' || newStatus === 'Closed') {
-      ElMessage.success(message);
-    } else if (newStatus === 'Tallying' || newStatus === 'Voting') {
-      ElMessage.info(message);
-    } else {
-      ElMessage.info(message);
-    }
+
   }
 
   async function joinElection(electionGuid: string) {

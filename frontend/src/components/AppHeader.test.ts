@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { createTestingPinia } from '@pinia/testing'
 import AppHeader from './AppHeader.vue'
 import { pinia, i18n } from '../test/setup'
+import { VERSION } from './version'
 
 // Mock the auth store
 const mockLogout = vi.fn()
@@ -115,5 +116,17 @@ describe('AppHeader', () => {
     await wrapper.vm.handleCommand('profile')
 
     expect(mockRouterPush).toHaveBeenCalledWith('/profile')
+  })
+
+  it('displays version tooltip on TallyJ 4 header', () => {
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n]
+      }
+    })
+    const headerH3 = wrapper.find('.header-left h3')
+    expect(headerH3.exists()).toBe(true)
+    expect(headerH3.attributes('title')).toContain('Version')
+    expect(headerH3.attributes('title')).toContain(VERSION)
   })
 })

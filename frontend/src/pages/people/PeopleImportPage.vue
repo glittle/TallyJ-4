@@ -2,8 +2,9 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { UploadFilled, Check, Warning, InfoFilled, Clock } from '@element-plus/icons-vue';
+import { useNotifications } from '../../composables/useNotifications';
 import type { UploadFile } from 'element-plus';
 import { peopleImportService } from '../../services/peopleImportService';
 import { signalrService } from '../../services/signalrService';
@@ -14,9 +15,13 @@ import type {
   PeopleImportCompleteEvent,
 } from '../../types/SignalREvents';
 
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
+const { handleApiError } = useApiErrorHandler();
+
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
+const { showErrorMessage, showSuccessMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const currentStep = ref(0);
@@ -40,7 +45,9 @@ const availableTargetFields = computed(() => [
 ]);
 
 const previewRows = computed(() => {
-  if (!parsedResult.value?.previewRows) return [];
+  if (!parsedResult.value?.previewRows) {
+    return [];
+  }
   return parsedResult.value.previewRows.slice(0, 5);
 });
 
@@ -64,12 +71,31 @@ const isMappingValid = computed(() => {
 
 const canDeleteAllPeople = computed(() => true);
 
+const translatedErrors = computed(() => {
+  if (!importResult.value?.errors) {
+    return [];
+  }
+  return importResult.value.errors.map(error => ({
+    ...error,
+    message: t(error.key, error.parameters)
+  }));
+});
+
+const translatedWarnings = computed(() => {
+  if (!importResult.value?.warnings) {
+    return [];
+  }
+  return importResult.value.warnings.map(warning => ({
+    ...warning,
+    message: t(warning.key, warning.parameters)
+  }));
+});
+
 async function loadFiles() {
   try {
     files.value = await peopleImportService.getFiles(electionGuid);
   } catch (error) {
-    console.error('Failed to load import files:', error);
-    ElMessage.error(t('people.import.loadFilesError'));
+    handleApiError(error);
   }
 }
 
@@ -78,7 +104,7 @@ async function loadPeopleCount() {
     const result = await peopleImportService.getPeopleCount(electionGuid);
     peopleCount.value = result.count;
   } catch (error) {
-    console.error('Failed to load people count:', error);
+    handleApiError(error);
   }
 }
 
@@ -90,43 +116,44 @@ async function initializeSignalR() {
       importProgress.value = data;
     });
 
-    connection.on('importError', (errorMessage: string) => {
-      ElMessage.error(`Import error: ${errorMessage}`);
+    connection.on('importError', (msg: string) => {
+      showErrorMessage(msg);
     });
 
     connection.on('importComplete', (data: PeopleImportCompleteEvent) => {
       importing.value = false;
-      importResult.value = data.result;
       importProgress.value = null;
       if (data.result.success) {
-        ElMessage.success(
+        showSuccessMessage(
           `Import completed: ${data.result.peopleAdded} people added, ${data.result.peopleSkipped} skipped`
         );
       } else {
-        ElMessage.error('Import failed');
+        showErrorMessage('Import failed - ' + translatedErrors.value.length + ' errors');
       }
     });
   } catch (e) {
-    console.error('Failed to initialize SignalR for people import:', e);
+    handleApiError(e);
   }
 }
 
 onMounted(async () => {
-  await initializeSignalR();
+  Promise.all([
+    initializeSignalR(),
+    loadFiles(),
+    loadPeopleCount()
+  ]);
   try {
     await signalrService.joinPeopleImportSession(electionGuid);
   } catch (e) {
-    console.error('Failed to join people import session:', e);
+    handleApiError(e);
   }
-  await loadFiles();
-  await loadPeopleCount();
 });
 
 onBeforeUnmount(async () => {
   try {
     await signalrService.leavePeopleImportSession(electionGuid);
   } catch (e) {
-    console.error('Failed to leave people import session:', e);
+    handleApiError(e);
   }
 });
 
@@ -138,12 +165,18 @@ async function handleFileChange(file: UploadFile) {
   if (file.raw) {
     uploading.value = true;
     try {
-      await peopleImportService.uploadFile(electionGuid, file.raw);
+      const uploadedFile = await peopleImportService.uploadFile(electionGuid, file.raw);
       await loadFiles();
-      ElMessage.success('File uploaded successfully');
+
+      // Show message if headers were detected at a non-standard row (row 2 or higher)
+      if (uploadedFile.firstDataRow && uploadedFile.firstDataRow >= 2 && uploadedFile.fileType === 'xlsx') {
+        showSuccessMessage(t('people.import.headerAutoDetected', { row: uploadedFile.firstDataRow }));
+      } else {
+        showSuccessMessage(t('people.import.fileUploadedSuccessfully'));
+      }
     } catch (error) {
       console.error('Upload failed:', error);
-      ElMessage.error(t('people.import.uploadError'));
+      showErrorMessage(t('people.import.uploadError'));
     } finally {
       uploading.value = false;
     }
@@ -156,11 +189,13 @@ function handleUploadSuccess() {
 
 function handleUploadError() {
   uploading.value = false;
-  ElMessage.error(t('people.import.uploadError'));
+  showErrorMessage(t('people.import.uploadError'));
 }
 
 async function parseFile(codePage?: number, firstDataRow?: number) {
-  if (!selectedFile.value) return;
+  if (!selectedFile.value) {
+    return;
+  }
 
   try {
     const result = await peopleImportService.parseFile(
@@ -172,8 +207,7 @@ async function parseFile(codePage?: number, firstDataRow?: number) {
     parsedResult.value = result;
     columnMappings.value = result.autoMappings || [];
   } catch (error) {
-    console.error('Failed to parse file:', error);
-    ElMessage.error('Failed to parse file');
+    handleApiError(error);
     throw error;
   }
 }
@@ -184,6 +218,21 @@ async function selectFile(file: ImportFileInfo) {
   columnMappings.value = [];
   importResult.value = null;
   importProgress.value = null;
+
+  // First try to load saved mappings
+  try {
+    const savedMappings = await peopleImportService.getMapping(electionGuid, file.rowId);
+    if (savedMappings && savedMappings.length > 0) {
+      // If we have saved mappings, parse the file to get headers and preview, but use saved mappings
+      await parseFile();
+      columnMappings.value = savedMappings;
+      return;
+    }
+  } catch (error) {
+    console.warn('Failed to load saved mappings, falling back to auto-mapping:', error);
+  }
+
+  // Fall back to parsing file with auto-mappings
   await parseFile();
 }
 
@@ -197,7 +246,7 @@ async function reparseFile(file: ImportFileInfo) {
     importProgress.value = null;
     await parseFile(file.codePage || undefined, file.firstDataRow || undefined);
   } catch (error) {
-    console.error('Reparse failed:', error);
+    handleApiError(error);
   } finally {
     reparsing.value = null;
   }
@@ -218,8 +267,7 @@ async function updateFileSettings(file: ImportFileInfo) {
     }
     await parseFile(updatedFile.codePage || undefined, updatedFile.firstDataRow || undefined);
   } catch (error) {
-    console.error('Update settings failed:', error);
-    ElMessage.error('Failed to update file settings');
+    handleApiError(error);
   }
 }
 
@@ -242,24 +290,25 @@ async function deleteFile(file: ImportFileInfo) {
       parsedResult.value = null;
       columnMappings.value = [];
     }
-    ElMessage.success('File deleted');
+    showSuccessMessage('File deleted');
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || t('people.import.deleteFileError'));
+      showErrorMessage(error.message || t('people.import.deleteFileError'));
     }
   }
 }
 
 async function saveMapping() {
-  if (!selectedFile.value) return;
+  if (!selectedFile.value) {
+    return;
+  }
 
   savingMapping.value = true;
   try {
     await peopleImportService.saveMapping(electionGuid, selectedFile.value.rowId, columnMappings.value);
-    ElMessage.success(t('people.import.mappingSaved'));
+    showSuccessMessage(t('people.import.mappingSaved'));
   } catch (error) {
-    console.error('Save mapping failed:', error);
-    ElMessage.error('Failed to save column mapping');
+    handleApiError(error);
   } finally {
     savingMapping.value = false;
   }
@@ -282,11 +331,13 @@ function getStatusType(status: string | null): string {
 }
 
 function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) {
+    return '0 B';
+  }
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
 function getFieldDescription(fieldValue: string): string {
@@ -320,7 +371,9 @@ function formatTime(seconds: number): string {
 }
 
 async function executeImport() {
-  if (!selectedFile.value) return;
+  if (!selectedFile.value) {
+    return;
+  }
 
   importing.value = true;
   importResult.value = null;
@@ -330,16 +383,16 @@ async function executeImport() {
     const result = await peopleImportService.executeImport(electionGuid, selectedFile.value.rowId);
     importResult.value = result;
     if (result.success) {
-      ElMessage.success(
+      showSuccessMessage(
         `Import completed: ${result.peopleAdded} people added, ${result.peopleSkipped} skipped`
       );
       await loadPeopleCount();
     } else {
-      ElMessage.error('Import failed');
+      showErrorMessage('Import failed: ' + result.errors.length);
     }
   } catch (error) {
     console.error('Import failed:', error);
-    ElMessage.error('Failed to execute import');
+    showErrorMessage('Failed to execute import');
   } finally {
     importing.value = false;
   }
@@ -358,13 +411,14 @@ async function confirmDeleteAllPeople() {
     );
 
     const result = await peopleImportService.deleteAllPeople(electionGuid);
-    ElMessage.success(`${result.deletedCount} people deleted`);
+    showSuccessMessage(`${result.deletedCount} people deleted`);
     await loadPeopleCount();
     showDeleteAllConfirm.value = false;
-  } catch (error: any) {
+  } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || t('people.import.deleteAllPeopleError'));
+      handleApiError(error);
     }
+    showDeleteAllConfirm.value = false;
   }
 }
 </script>
@@ -416,7 +470,17 @@ async function confirmDeleteAllPeople() {
                   {{ scope.row.uploadTime ? new Date(scope.row.uploadTime).toLocaleString() : '-' }}
                 </template>
               </el-table-column>
-              <el-table-column prop="firstDataRow" :label="$t('people.import.headersOnLine')" width="120">
+              <el-table-column prop="firstDataRow" width="140">
+                <template #header>
+                  <el-tooltip :content="$t('people.import.headersOnLineTooltip')" placement="top">
+                    <span>
+                      {{ $t('people.import.headersOnLine') }}
+                      <el-icon style="margin-left: 4px; vertical-align: middle;">
+                        <InfoFilled />
+                      </el-icon>
+                    </span>
+                  </el-tooltip>
+                </template>
                 <template #default="scope">
                   <el-input-number v-model="scope.row.firstDataRow" :min="1" :max="10" size="small"
                     :disabled="scope.row.processingStatus === 'Imported'" @change="updateFileSettings(scope.row)" />
@@ -485,8 +549,8 @@ async function confirmDeleteAllPeople() {
                   <tr class="mapping-row">
                     <td class="target-cell">{{ $t('people.import.mapTo') }}</td>
                     <td v-for="(header, index) in parsedResult.headers" :key="`mapping-${index}`" class="mapping-cell">
-                      <el-select v-model="columnMappings[index].targetField" size="small" clearable
-                        :placeholder="$t('people.import.ignore')">
+                      <el-select v-if="columnMappings[index]" v-model="columnMappings[index].targetField" size="small"
+                        clearable :placeholder="$t('people.import.ignore')">
                         <el-option v-for="field in availableTargetFields" :key="field.value" :label="field.label"
                           :value="field.value" />
                       </el-select>
@@ -597,17 +661,40 @@ async function confirmDeleteAllPeople() {
                   </el-icon>
                   <span>{{ $t('people.import.peopleSkipped') }}: {{ importResult.peopleSkipped }}</span>
                 </div>
-                <div class="result-item info" v-if="importResult.warnings && importResult.warnings.length > 0">
+                <div class="result-item info" v-if="translatedWarnings.length > 0">
                   <el-icon>
                     <InfoFilled />
                   </el-icon>
-                  <span>{{ $t('people.import.warnings') }}: {{ importResult.warnings.length }}</span>
+                  <span>{{ $t('people.import.warnings') }}: {{ translatedWarnings.length }}</span>
                 </div>
                 <div class="result-item time">
                   <el-icon>
                     <Clock />
                   </el-icon>
                   <span>{{ $t('people.import.timeElapsed') }}: {{ formatTime(importResult.timeElapsedSeconds) }}</span>
+                </div>
+              </div>
+            </el-card>
+          </div>
+
+          <!-- Detailed Errors and Warnings -->
+          <div v-if="translatedErrors.length > 0 || translatedWarnings.length > 0" class="import-details">
+            <el-card class="details-card">
+              <template #header>
+                <h4>{{ $t('import.errors') }}</h4>
+              </template>
+              <div class="details-content">
+                <div v-for="error in translatedErrors" :key="`error-${error.key}`" class="detail-item error">
+                  <el-icon>
+                    <Warning />
+                  </el-icon>
+                  <span>{{ error.message }}</span>
+                </div>
+                <div v-for="warning in translatedWarnings" :key="`warning-${warning.key}`" class="detail-item warning">
+                  <el-icon>
+                    <InfoFilled />
+                  </el-icon>
+                  <span>{{ warning.message }}</span>
                 </div>
               </div>
             </el-card>
@@ -875,12 +962,12 @@ async function confirmDeleteAllPeople() {
 
       h4 {
         margin-bottom: 15px;
-        color: #303133;
+        color: var(--color-text-primary);
       }
 
       .progress-message {
         margin-top: 10px;
-        color: #606266;
+        color: var(--color-text-secondary);
         font-style: italic;
       }
     }
@@ -898,23 +985,23 @@ async function confirmDeleteAllPeople() {
             border-radius: 4px;
 
             &.success {
-              background-color: #f0f9ff;
-              color: #67c23a;
+              background-color: var(--color-success-50);
+              color: var(--color-success-600);
             }
 
             &.warning {
-              background-color: #fdf6ec;
-              color: #e6a23c;
+              background-color: var(--color-warning-50);
+              color: var(--color-warning-600);
             }
 
             &.info {
-              background-color: #f4f4f5;
-              color: #909399;
+              background-color: var(--color-gray-100);
+              color: var(--color-gray-400);
             }
 
             &.time {
-              background-color: #f5f7fa;
-              color: #606266;
+              background-color: var(--color-gray-100);
+              color: var(--color-text-secondary);
             }
 
             .el-icon {
@@ -923,6 +1010,45 @@ async function confirmDeleteAllPeople() {
 
             span {
               font-weight: 500;
+            }
+          }
+        }
+      }
+    }
+
+    .import-details {
+      margin-bottom: 20px;
+
+      .details-card {
+        .details-content {
+          .detail-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+
+            &.error {
+              background-color: var(--color-error-50);
+              color: var(--color-error-600);
+              border: 1px solid var(--color-error-500);
+            }
+
+            &.warning {
+              background-color: var(--color-warning-50);
+              color: var(--color-warning-600);
+              border: 1px solid var(--color-warning-500);
+            }
+
+            .el-icon {
+              margin-right: 8px;
+              margin-top: 2px;
+              flex-shrink: 0;
+            }
+
+            span {
+              line-height: 1.4;
             }
           }
         }

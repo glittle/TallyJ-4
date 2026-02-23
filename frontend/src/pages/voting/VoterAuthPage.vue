@@ -8,7 +8,7 @@ import { useNotifications } from '../../composables/useNotifications';
 const router = useRouter();
 const route = useRoute();
 const onlineVotingStore = useOnlineVotingStore();
-const { showSuccess, showError } = useNotifications();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const activeTab = ref('email');
 const step = ref<'request' | 'verify'>('request');
@@ -43,7 +43,7 @@ async function handleRequestEmailCode() {
     });
     verificationForm.value.voterId = emailForm.value.email;
     step.value = 'verify';
-    showSuccess('Verification code sent to your email');
+    showSuccessMessage('Verification code sent to your email');
   } catch (error) {
     console.error('Error requesting email code:', error);
   } finally {
@@ -61,7 +61,7 @@ async function handleRequestPhoneCode() {
     });
     verificationForm.value.voterId = phoneForm.value.phone;
     step.value = 'verify';
-    showSuccess(`Verification code sent via ${phoneForm.value.deliveryMethod}`);
+    showSuccessMessage(`Verification code sent via ${phoneForm.value.deliveryMethod}`);
   } catch (error) {
     console.error('Error requesting phone code:', error);
   } finally {
@@ -80,7 +80,7 @@ async function handleDirectCodeLogin() {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showError('No election specified');
+      showErrorMessage('No election specified');
     }
   } catch (error) {
     console.error('Error with direct code:', error);
@@ -97,7 +97,7 @@ async function handleVerifyCode() {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showError('No election specified');
+      showErrorMessage('No election specified');
     }
   } catch (error) {
     console.error('Error verifying code:', error);
@@ -128,22 +128,11 @@ function backToRequest() {
             <ElTabPane label="Email" name="email">
               <ElForm :model="emailForm" @submit.prevent="handleRequestEmailCode">
                 <ElFormItem label="Email Address">
-                  <ElInput
-                    v-model="emailForm.email"
-                    type="email"
-                    placeholder="Enter your email address"
-                    size="large"
-                    required
-                  />
+                  <ElInput v-model="emailForm.email" type="email" placeholder="Enter your email address" size="large"
+                    required />
                 </ElFormItem>
                 <ElFormItem>
-                  <ElButton 
-                    type="primary" 
-                    native-type="submit" 
-                    :loading="loading"
-                    size="large"
-                    style="width: 100%"
-                  >
+                  <ElButton type="primary" native-type="submit" :loading="loading" size="large" style="width: 100%">
                     Send Verification Code
                   </ElButton>
                 </ElFormItem>
@@ -153,13 +142,7 @@ function backToRequest() {
             <ElTabPane label="Phone" name="phone">
               <ElForm :model="phoneForm" @submit.prevent="handleRequestPhoneCode">
                 <ElFormItem label="Phone Number">
-                  <ElInput
-                    v-model="phoneForm.phone"
-                    type="tel"
-                    placeholder="+1234567890"
-                    size="large"
-                    required
-                  />
+                  <ElInput v-model="phoneForm.phone" type="tel" placeholder="+1234567890" size="large" required />
                 </ElFormItem>
                 <ElFormItem label="Delivery Method">
                   <ElRadioGroup v-model="phoneForm.deliveryMethod">
@@ -168,13 +151,7 @@ function backToRequest() {
                   </ElRadioGroup>
                 </ElFormItem>
                 <ElFormItem>
-                  <ElButton 
-                    type="primary" 
-                    native-type="submit" 
-                    :loading="loading"
-                    size="large"
-                    style="width: 100%"
-                  >
+                  <ElButton type="primary" native-type="submit" :loading="loading" size="large" style="width: 100%">
                     Send Verification Code
                   </ElButton>
                 </ElFormItem>
@@ -184,21 +161,11 @@ function backToRequest() {
             <ElTabPane label="Code" name="code">
               <ElForm :model="codeForm" @submit.prevent="handleDirectCodeLogin">
                 <ElFormItem label="Voting Code">
-                  <ElInput
-                    v-model="codeForm.code"
-                    placeholder="Enter your pre-provided voting code"
-                    size="large"
-                    required
-                  />
+                  <ElInput v-model="codeForm.code" placeholder="Enter your pre-provided voting code" size="large"
+                    required />
                 </ElFormItem>
                 <ElFormItem>
-                  <ElButton 
-                    type="primary" 
-                    native-type="submit" 
-                    :loading="loading"
-                    size="large"
-                    style="width: 100%"
-                  >
+                  <ElButton type="primary" native-type="submit" :loading="loading" size="large" style="width: 100%">
                     Proceed to Vote
                   </ElButton>
                 </ElFormItem>
@@ -213,28 +180,15 @@ function backToRequest() {
               We've sent a verification code to <strong>{{ verificationForm.voterId }}</strong>
             </p>
             <ElFormItem label="Verification Code">
-              <ElInput
-                v-model="verificationForm.verifyCode"
-                placeholder="Enter the code you received"
-                size="large"
-                required
-              />
+              <ElInput v-model="verificationForm.verifyCode" placeholder="Enter the code you received" size="large"
+                required />
             </ElFormItem>
             <ElFormItem>
-              <ElButton 
-                type="primary" 
-                native-type="submit" 
-                :loading="loading"
-                size="large"
-                style="width: 100%; margin-bottom: 10px;"
-              >
+              <ElButton type="primary" native-type="submit" :loading="loading" size="large"
+                style="width: 100%; margin-bottom: 10px;">
                 Verify and Continue
               </ElButton>
-              <ElButton 
-                @click="backToRequest"
-                size="large"
-                style="width: 100%"
-              >
+              <ElButton @click="backToRequest" size="large" style="width: 100%">
                 Back
               </ElButton>
             </ElFormItem>
@@ -262,12 +216,12 @@ function backToRequest() {
 .auth-card {
   .card-header {
     text-align: center;
-    
+
     h2 {
       margin: 0 0 10px 0;
       color: var(--el-color-primary);
     }
-    
+
     p {
       margin: 0;
       color: var(--el-text-color-secondary);
