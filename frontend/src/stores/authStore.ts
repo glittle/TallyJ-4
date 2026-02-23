@@ -14,11 +14,36 @@ export const useAuthStore = defineStore('auth', () => {
   const email = ref<string | null>(authData.email);
   const name = ref<string | null>(authData.name);
   const authMethod = ref<string | null>(authData.authMethod);
+  const isSuperAdmin = ref<boolean>(false);
   const requires2FA = ref(false);
   const pending2FAEmail = ref<string | null>(null);
 
   // Check authentication based on cookie presence (not in-memory token)
   const isAuthenticated = computed(() => secureTokenService.isAuthenticated());
+
+  // API base URL constant
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5016';
+
+  async function fetchUserInfo() {
+    try {
+      const meResponse = await fetch(`${API_URL}/api/auth/me`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (meResponse.ok) {
+        const userData = await meResponse.json();
+        email.value = userData.email;
+        name.value = userData.name || null;
+        authMethod.value = userData.authMethod || null;
+        isSuperAdmin.value = userData.isSuperAdmin || false;
+        return userData;
+      }
+    } catch (error) {
+      console.error('Failed to fetch user info:', error);
+    }
+    return null;
+  }
 
   async function register(data: RegisterRequest) {
     try {
@@ -32,6 +57,9 @@ export const useAuthStore = defineStore('auth', () => {
         email.value = cookieData.email || response.email;
         name.value = cookieData.name || response.name || null;
         authMethod.value = cookieData.authMethod || response.authMethod || 'Local';
+        
+        // Fetch user info including isSuperAdmin
+        await fetchUserInfo();
         
         // Start automatic token refresh
         tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
@@ -60,6 +88,9 @@ export const useAuthStore = defineStore('auth', () => {
         requires2FA.value = false;
         pending2FAEmail.value = null;
         
+        // Fetch user info including isSuperAdmin
+        await fetchUserInfo();
+        
         // Start automatic token refresh
         tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
       }
@@ -77,15 +108,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       // For cross-origin deployments, cookies set by the backend may not be readable here
       // Fetch user info from /api/auth/me to ensure we have the latest data
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
-      const meResponse = await fetch(`${apiUrl}/api/auth/me`, {
-        method: 'GET',
-        credentials: 'include',
-      });
+      const userData = await fetchUserInfo();
 
-      if (meResponse.ok) {
-        const userData = await meResponse.json();
-        
+      if (userData) {
         // Set readable cookies on the SPA origin for router guards
         const secure = window.location.protocol === 'https:' ? '; secure' : '';
         document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
@@ -93,11 +118,6 @@ export const useAuthStore = defineStore('auth', () => {
           document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
         }
         document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
-
-        // Update store state
-        email.value = userData.email;
-        name.value = userData.name || null;
-        authMethod.value = userData.authMethod || 'Google';
       } else {
         // Fallback to response data and refresh cookies
         const cookieData = secureTokenService.refreshAuthData();
@@ -127,6 +147,7 @@ export const useAuthStore = defineStore('auth', () => {
     email.value = null;
     name.value = null;
     authMethod.value = null;
+    isSuperAdmin.value = false;
     requires2FA.value = false;
     pending2FAEmail.value = null;
 
@@ -135,17 +156,18 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Navigate to logout endpoint which will clear server-side cookies and redirect to login page
     // This ensures proper server-side logout and page refresh
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
-    window.location.href = `${apiUrl}/api/auth/logout`;
+    window.location.href = `${API_URL}/api/auth/logout`;
   }
 
   return {
     email,
     name,
     authMethod,
+    isSuperAdmin,
     requires2FA,
     pending2FAEmail,
     isAuthenticated,
+    fetchUserInfo,
     register,
     login,
     googleOneTapLogin,

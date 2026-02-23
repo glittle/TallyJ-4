@@ -194,9 +194,8 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
 
   if (isAuthenticated) {
     const superAdminStore = useSuperAdminStore();
-    if (!superAdminStore.checkedStatus) {
-      await superAdminStore.checkSuperAdminStatus();
-    }
+    // Ensure we have checked super admin status
+    await superAdminStore.checkSuperAdminStatus();
 
     if (to.meta.requiresSuperAdmin && !superAdminStore.isSuperAdmin) {
       return "/dashboard";

@@ -1,10 +1,6 @@
 import api from "./api";
 import type { ApiResponse, PaginatedResponse } from "@/types/ApiResponse";
 
-export interface SuperAdminCheckResult {
-  isSuperAdmin: boolean;
-}
-
 export interface SuperAdminSummary {
   totalElections: number;
   openElections: number;
@@ -50,13 +46,6 @@ export interface SuperAdminElectionFilter {
 }
 
 export const superAdminService = {
-  async check(): Promise<SuperAdminCheckResult> {
-    const response = await api.get<ApiResponse<SuperAdminCheckResult>>(
-      "/api/superadmin/check",
-    );
-    return response.data.data;
-  },
-
   async getSummary(): Promise<SuperAdminSummary> {
     const response = await api.get<ApiResponse<SuperAdminSummary>>(
       "/api/superadmin/dashboard/summary",

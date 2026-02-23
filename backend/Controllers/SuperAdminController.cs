@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Backend.Authorization;
 using Backend.DTOs.SuperAdmin;
 using Backend.Models;
 using Backend.Services;
@@ -17,42 +15,19 @@ namespace Backend.Controllers;
 public class SuperAdminController : ControllerBase
 {
     private readonly ISuperAdminService _superAdminService;
-    private readonly SuperAdminSettings _settings;
     private readonly ILogger<SuperAdminController> _logger;
 
     /// <summary>
     /// Initializes a new instance of the SuperAdminController.
     /// </summary>
     /// <param name="superAdminService">The super admin service for business logic.</param>
-    /// <param name="settings">The super admin configuration settings.</param>
     /// <param name="logger">The logger for diagnostic output.</param>
     public SuperAdminController(
         ISuperAdminService superAdminService,
-        IOptions<SuperAdminSettings> settings,
         ILogger<SuperAdminController> logger)
     {
         _superAdminService = superAdminService;
-        _settings = settings.Value;
         _logger = logger;
-    }
-
-    /// <summary>
-    /// Checks if the current authenticated user is a super admin.
-    /// </summary>
-    /// <returns>An ApiResponse containing whether the user is a super admin.</returns>
-    [HttpGet("check")]
-    public ActionResult<ApiResponse<SuperAdminCheckDto>> Check()
-    {
-        var email = User.FindFirst("email")?.Value
-                    ?? User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
-
-        var isSuperAdmin = !string.IsNullOrEmpty(email)
-            && _settings.Emails.Any(e => string.Equals(e, email, StringComparison.OrdinalIgnoreCase));
-
-        return Ok(ApiResponse<SuperAdminCheckDto>.SuccessResponse(new SuperAdminCheckDto
-        {
-            IsSuperAdmin = isSuperAdmin
-        }));
     }
 
     /// <summary>

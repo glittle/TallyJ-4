@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Backend.Application.DTOs.Auth;
 using Backend.Application.Services.Auth;
+using Backend.Authorization;
 using Backend.Domain;
 using Backend.Domain.Context;
 using Backend.Domain.Identity;
@@ -16,6 +17,7 @@ using Backend.Services;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.Extensions.Options;
 
 namespace Backend.Controllers;
 
@@ -37,6 +39,7 @@ public class AuthController : ControllerBase
     private readonly ILogger<AuthController> _logger;
     private readonly IConfiguration _configuration;
     private readonly SignInManager<AppUser> _signInManager;
+    private readonly SuperAdminSettings _superAdminSettings;
 
     private readonly ISecurityAuditService _securityAuditService;
 
@@ -53,6 +56,7 @@ public class AuthController : ControllerBase
     /// <param name="logger">Logger for recording operations.</param>
     /// <param name="configuration">Application configuration.</param>
     /// <param name="signInManager">ASP.NET Core Identity sign-in manager.</param>
+    /// <param name="superAdminSettings">Configuration settings for super admin functionality.</param>
     /// <param name="securityAuditService">Service for logging security events.</param>
     public AuthController(
         LocalAuthService localAuthService,
@@ -65,6 +69,7 @@ public class AuthController : ControllerBase
         ILogger<AuthController> logger,
         IConfiguration configuration,
         SignInManager<AppUser> signInManager,
+        IOptions<SuperAdminSettings> superAdminSettings,
         ISecurityAuditService securityAuditService)
     {
         _localAuthService = localAuthService;
@@ -77,6 +82,7 @@ public class AuthController : ControllerBase
         _logger = logger;
         _configuration = configuration;
         _signInManager = signInManager;
+        _superAdminSettings = superAdminSettings.Value;
         _securityAuditService = securityAuditService;
     }
 
@@ -734,11 +740,16 @@ public class AuthController : ControllerBase
             return NotFound(new { error = "User not found" });
         }
 
+        // Check if user is a super admin by comparing email with configured super admin emails
+        var isSuperAdmin = !string.IsNullOrEmpty(user.Email)
+            && _superAdminSettings.Emails.Any(e => string.Equals(e, user.Email, StringComparison.OrdinalIgnoreCase));
+
         return Ok(new
         {
             email = user.Email,
             name = user.DisplayName,
-            authMethod = user.AuthMethod
+            authMethod = user.AuthMethod,
+            isSuperAdmin
         });
     }
 
