@@ -740,12 +740,9 @@ public class AuthController : ControllerBase
             return NotFound(new { error = "User not found" });
         }
 
-        // Check if user is a super admin
-        var email = user.Email ?? User.FindFirst("email")?.Value
-                    ?? User.FindFirst(ClaimTypes.Email)?.Value;
-
-        var isSuperAdmin = !string.IsNullOrEmpty(email)
-            && _superAdminSettings.Emails.Any(e => string.Equals(e, email, StringComparison.OrdinalIgnoreCase));
+        // Check if user is a super admin by comparing email with configured super admin emails
+        var isSuperAdmin = !string.IsNullOrEmpty(user.Email)
+            && _superAdminSettings.Emails.Any(e => string.Equals(e, user.Email, StringComparison.OrdinalIgnoreCase));
 
         return Ok(new
         {

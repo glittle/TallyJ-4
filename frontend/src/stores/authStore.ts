@@ -21,10 +21,12 @@ export const useAuthStore = defineStore('auth', () => {
   // Check authentication based on cookie presence (not in-memory token)
   const isAuthenticated = computed(() => secureTokenService.isAuthenticated());
 
+  // API base URL constant
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5016';
+
   async function fetchUserInfo() {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
-      const meResponse = await fetch(`${apiUrl}/api/auth/me`, {
+      const meResponse = await fetch(`${API_URL}/api/auth/me`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -154,8 +156,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Navigate to logout endpoint which will clear server-side cookies and redirect to login page
     // This ensures proper server-side logout and page refresh
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
-    window.location.href = `${apiUrl}/api/auth/logout`;
+    window.location.href = `${API_URL}/api/auth/logout`;
   }
 
   return {

@@ -14,7 +14,8 @@ export const useSuperAdminStore = defineStore("superAdmin", () => {
 
   async function checkSuperAdminStatus() {
     // Ensure auth store has fetched user info
-    if (!authStore.email && authStore.isAuthenticated) {
+    // Only fetch if we're authenticated and email hasn't been populated yet
+    if (authStore.isAuthenticated && authStore.email === null) {
       await authStore.fetchUserInfo();
     }
     return authStore.isSuperAdmin;
