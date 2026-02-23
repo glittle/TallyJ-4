@@ -166,6 +166,10 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
                 .IsUnique()
                 .HasFilter("([Phone] IS NOT NULL AND [Phone]<>'')");
 
+            entity.HasIndex(e => new { e.ElectionGuid, e.BahaiId }, "IX_PersonBahaiID")
+                .IsUnique()
+                .HasFilter("([BahaiId] IS NOT NULL AND [BahaiId]<>'')");
+
             entity.Property(e => e.FullName).HasComputedColumnSql("((((([LastName]+coalesce((' ['+nullif([OtherLastNames],''))+']',''))+', ')+coalesce([FirstName],''))+coalesce((' ['+nullif([OtherNames],''))+']',''))+coalesce((' ('+nullif([OtherInfo],''))+')',''))", true);
             entity.Property(e => e.FullNameFl).HasComputedColumnSql("((((coalesce([FirstName]+' ','')+[LastName])+coalesce((' ['+nullif([OtherNames],''))+']',''))+coalesce((' ['+nullif([OtherLastNames],''))+']',''))+coalesce((' ('+nullif([OtherInfo],''))+')',''))", true);
             entity.Property(e => e.RowVersion)

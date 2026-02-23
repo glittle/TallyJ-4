@@ -3,13 +3,14 @@ import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import { secureTokenService } from "../services/secureTokenService";
-import { ElMessage } from "element-plus";
+import { useNotifications } from '@/composables/useNotifications';
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 const error = ref<string | null>(null);
 
 onMounted(async () => {
@@ -19,7 +20,7 @@ onMounted(async () => {
 
     if (errorParam) {
       error.value = errorParam;
-      ElMessage.error(t("auth.googleLoginFailed"));
+      showErrorMessage(t("auth.googleLoginFailed"));
       setTimeout(() => {
         router.push("/login?mode=officer");
       }, 2000);
@@ -36,7 +37,7 @@ onMounted(async () => {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ error: 'Failed to get user info' }));
       error.value = errorData.error || 'Authentication failed';
-      ElMessage.error(t("auth.googleLoginFailed"));
+      showErrorMessage(t("auth.googleLoginFailed"));
       setTimeout(() => {
         router.push("/login?mode=officer");
       }, 2000);
@@ -58,14 +59,14 @@ onMounted(async () => {
     }
     document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
 
-    ElMessage.success(t("auth.loginSuccess"));
+    showSuccessMessage(t("auth.loginSuccess"));
 
     const redirectPath = route.query.redirect ? decodeURIComponent(route.query.redirect as string) : "/dashboard";
     router.push(redirectPath);
   } catch (err) {
     console.error("Google callback error:", err);
     error.value = err instanceof Error ? err.message : "Unknown error";
-    ElMessage.error(t("auth.googleLoginFailed"));
+    showErrorMessage(t("auth.googleLoginFailed"));
     setTimeout(() => {
       router.push("/login?mode=officer");
     }, 2000);

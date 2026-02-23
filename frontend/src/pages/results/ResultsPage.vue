@@ -88,7 +88,8 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { useResultStore } from '../../stores/resultStore';
 import ResultsTable from '../../components/results/ResultsTable.vue';
 import TiesDisplay from '../../components/results/TiesDisplay.vue';
@@ -97,6 +98,8 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
+const { showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
 const activeTab = ref('all');
@@ -120,7 +123,7 @@ onMounted(async () => {
     await resultStore.initializeSignalR();
     await resultStore.joinTallySession(electionGuid);
   } catch (error) {
-    ElMessage.error(t('results.loadError'));
+    handleApiError(error);
   }
 });
 

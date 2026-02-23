@@ -628,7 +628,7 @@ Admin view shows table with columns:
 
 **Header:**
 
-- "TallyJ - Bahá'í Election System" title
+- "TallyJ - Bahá’í Election System" title
 - "Log out" button (top right)
 - "Take time to meditate" button (centered banner)
 
@@ -679,10 +679,10 @@ Admin view shows table with columns:
 
 **Resources Section:**
 
-- "To help you prepare to vote, here are a few online resources about voting in Bahá'í elections:"
-- Links to Bahá'í Quotes on Elections
-- "The Sanctity and Nature of Bahá'í Elections" link
-- "How Bahá'í Voters Should Vote" link
+- "To help you prepare to vote, here are a few online resources about voting in Bahá’í elections:"
+- Links to Bahá’í Quotes on Elections
+- "The Sanctity and Nature of Bahá’í Elections" link
+- "How Bahá’í Voters Should Vote" link
 
 ---
 
@@ -717,7 +717,7 @@ Admin view shows table with columns:
 
 **Voting Guidance Quote:**
 
-- Bahá'í quote about selection criteria
+- Bahá’í quote about selection criteria
 - Source citation: "Universal House of Justice (view source)"
 
 ### Right Column: "Voting for 5 People"

@@ -1,22 +1,21 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import { onlineVotingService } from '../services/onlineVotingService';
-import { useApiErrorHandler } from '../composables/useApiErrorHandler';
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import { onlineVotingService } from "../services/onlineVotingService";
+import { useApiErrorHandler } from "../composables/useApiErrorHandler";
 import type {
   RequestCodeDto,
   VerifyCodeDto,
-  OnlineVoterAuthResponse,
   OnlineElectionInfo,
   OnlineCandidate,
   SubmitOnlineBallotDto,
-  OnlineVoteStatus
-} from '../types';
+  OnlineVoteStatus,
+} from "../types";
 
-export const useOnlineVotingStore = defineStore('onlineVoting', () => {
+export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   const { handleApiError } = useApiErrorHandler();
 
-  const voterToken = ref<string | null>(localStorage.getItem('voter_token'));
-  const voterId = ref<string | null>(localStorage.getItem('voter_id'));
+  const voterToken = ref<string | null>(localStorage.getItem("voter_token"));
+  const voterId = ref<string | null>(localStorage.getItem("voter_id"));
   const electionInfo = ref<OnlineElectionInfo | null>(null);
   const candidates = ref<OnlineCandidate[]>([]);
   const voteStatus = ref<OnlineVoteStatus | null>(null);
@@ -41,8 +40,8 @@ export const useOnlineVotingStore = defineStore('onlineVoting', () => {
       const response = await onlineVotingService.verifyCode(data);
       voterToken.value = response.token;
       voterId.value = response.voterId;
-      localStorage.setItem('voter_token', response.token);
-      localStorage.setItem('voter_id', response.voterId);
+      localStorage.setItem("voter_token", response.token);
+      localStorage.setItem("voter_id", response.voterId);
       return response;
     } catch (error) {
       handleApiError(error as any);
@@ -80,10 +79,16 @@ export const useOnlineVotingStore = defineStore('onlineVoting', () => {
     }
   }
 
-  async function submitBallot(electionGuid: string, data: SubmitOnlineBallotDto) {
+  async function submitBallot(
+    electionGuid: string,
+    data: SubmitOnlineBallotDto,
+  ) {
     try {
       loading.value = true;
-      const response = await onlineVotingService.submitBallot(electionGuid, data);
+      const response = await onlineVotingService.submitBallot(
+        electionGuid,
+        data,
+      );
       return response;
     } catch (error) {
       handleApiError(error as any);
@@ -96,7 +101,10 @@ export const useOnlineVotingStore = defineStore('onlineVoting', () => {
   async function checkVoteStatus(electionGuid: string, voterIdToCheck: string) {
     try {
       loading.value = true;
-      const data = await onlineVotingService.getVoteStatus(electionGuid, voterIdToCheck);
+      const data = await onlineVotingService.getVoteStatus(
+        electionGuid,
+        voterIdToCheck,
+      );
       voteStatus.value = data;
       return data;
     } catch (error) {
@@ -113,8 +121,8 @@ export const useOnlineVotingStore = defineStore('onlineVoting', () => {
     electionInfo.value = null;
     candidates.value = [];
     voteStatus.value = null;
-    localStorage.removeItem('voter_token');
-    localStorage.removeItem('voter_id');
+    localStorage.removeItem("voter_token");
+    localStorage.removeItem("voter_id");
   }
 
   return {
@@ -130,6 +138,6 @@ export const useOnlineVotingStore = defineStore('onlineVoting', () => {
     loadCandidates,
     submitBallot,
     checkVoteStatus,
-    logout
+    logout,
   };
 });

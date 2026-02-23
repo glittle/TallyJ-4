@@ -69,7 +69,8 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import { Plus, Upload } from '@element-plus/icons-vue';
 import { useBallotStore } from '../../stores/ballotStore';
 import type { BallotDto } from '../../types';
@@ -80,6 +81,7 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const ballotStore = useBallotStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const showAddDialog = ref(false);
@@ -95,7 +97,7 @@ onMounted(async () => {
     await ballotStore.initializeSignalR();
     await ballotStore.joinElection(electionGuid);
   } catch (error) {
-    ElMessage.error(t('ballots.loadError'));
+    showErrorMessage(t('ballots.loadError'));
   }
 });
 
@@ -141,10 +143,10 @@ async function handleDelete(ballot: BallotDto) {
     );
 
     await ballotStore.deleteBallot(ballot.ballotGuid);
-    ElMessage.success(t('ballots.deleteSuccess'));
+    showSuccessMessage(t('ballots.deleteSuccess'));
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || t('ballots.deleteError'));
+      showErrorMessage(error.message || t('ballots.deleteError'));
     }
   }
 }

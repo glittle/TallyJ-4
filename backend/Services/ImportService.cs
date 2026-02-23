@@ -220,7 +220,7 @@ public class ImportService
         }
         catch (Exception ex)
         {
-            result.Errors.Add($"Import failed: {ex.Message}");
+            result.Errors.Add($"Ballot Import failed: {ex.Message}");
             await _hubContext.Clients.Group(groupName).SendAsync("importError", ex.Message, 0);
         }
 

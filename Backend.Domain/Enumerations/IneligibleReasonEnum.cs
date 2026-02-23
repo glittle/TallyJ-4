@@ -75,7 +75,7 @@ public static class IneligibleReasonEnum
     public static readonly IneligibleReason X03_NotInThisLocalUnit = new(
         Guid.Parse("2add3a15-ec2d-437c-916f-7c581e693baa"), "X03", "Not in this local unit", false, false, false);
     public static readonly IneligibleReason X04_NotARegisteredBahai = new(
-        Guid.Parse("D127534D-D7E8-E011-A095-002269C41D11"), "X04", "Not a registered Bahá'í", false, false, false);
+        Guid.Parse("D127534D-D7E8-E011-A095-002269C41D11"), "X04", "Not a registered Bahá’í", false, false, false);
     public static readonly IneligibleReason X05_Under18YearsOld = new(
         Guid.Parse("32e44592-a7d8-408a-b169-8871800f62aa"), "X05", "Under 18 years old", false, false, false);
     public static readonly IneligibleReason X06_ResidesElsewhere = new(

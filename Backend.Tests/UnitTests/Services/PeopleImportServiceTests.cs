@@ -158,6 +158,151 @@ public class PeopleImportServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task ParseFileAsync_XlsxFileWithHeadersOnRow5_AutoDetectsHeaders()
+    {
+        // Arrange - Simulates Canadian XLSX files where headers start at row 5
+        var electionGuid = Guid.NewGuid();
+        using var workbook = new ClosedXML.Excel.XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Sheet1");
+        
+        // Add some metadata/description rows at the top (like Canadian files)
+        worksheet.Cell(1, 1).Value = "Government of Canada";
+        worksheet.Cell(2, 1).Value = "Voter Registration List";
+        worksheet.Cell(3, 1).Value = "Election Date: 2024-01-01";
+        worksheet.Cell(4, 1).Value = ""; // Empty row
+        
+        // Headers on row 5
+        worksheet.Cell(5, 1).Value = "First Name";
+        worksheet.Cell(5, 2).Value = "Last Name";
+        worksheet.Cell(5, 3).Value = "Email";
+        
+        // Data rows
+        worksheet.Cell(6, 1).Value = "John";
+        worksheet.Cell(6, 2).Value = "Doe";
+        worksheet.Cell(6, 3).Value = "john@example.com";
+        worksheet.Cell(7, 1).Value = "Jane";
+        worksheet.Cell(7, 2).Value = "Smith";
+        worksheet.Cell(7, 3).Value = "jane@example.com";
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        var fileContent = stream.ToArray();
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "xlsx",
+            Contents = fileContent,
+            HasContent = true,
+            FirstDataRow = null // Let it auto-detect
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        // Act
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Headers.Count);
+        Assert.Contains("First Name", result.Headers);
+        Assert.Contains("Last Name", result.Headers);
+        Assert.Contains("Email", result.Headers);
+        Assert.Equal(2, result.TotalDataRows); // Should only have 2 data rows after header row 5
+        Assert.Equal(2, result.PreviewRows.Count);
+        
+        // Verify data starts after header row
+        Assert.Equal("John", result.PreviewRows[0][0]);
+        Assert.Equal("Doe", result.PreviewRows[0][1]);
+    }
+
+    [Fact]
+    public async Task UploadFileAsync_XlsxWithHeadersOnRow6_DetectsCorrectHeaderRow()
+    {
+        // Arrange - Test upload auto-detection
+        var electionGuid = Guid.NewGuid();
+        using var workbook = new ClosedXML.Excel.XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Sheet1");
+        
+        // Add metadata rows
+        worksheet.Cell(1, 1).Value = "Report Title";
+        worksheet.Cell(2, 1).Value = "Generated: 2024-01-01";
+        worksheet.Cell(3, 1).Value = 12345; // Numeric value
+        worksheet.Cell(4, 1).Value = ""; // Empty row
+        worksheet.Cell(5, 1).Value = "Summary info";
+        
+        // Headers on row 6 with known field names
+        worksheet.Cell(6, 1).Value = "FirstName";
+        worksheet.Cell(6, 2).Value = "LastName";
+        worksheet.Cell(6, 3).Value = "BahaiId";
+        
+        // Data
+        worksheet.Cell(7, 1).Value = "Alice";
+        worksheet.Cell(7, 2).Value = "Johnson";
+        worksheet.Cell(7, 3).Value = "789";
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        var fileContent = stream.ToArray();
+
+        var file = new FormFile(new MemoryStream(fileContent), 0, fileContent.Length, "file", "test.xlsx")
+        {
+            Headers = new HeaderDictionary(),
+            ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        };
+
+        // Act
+        var result = await _service.UploadFileAsync(electionGuid, file);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(6, result.FirstDataRow); // Should auto-detect row 6 as header row
+        Assert.Equal("xlsx", result.FileType);
+    }
+
+    [Fact]
+    public async Task ParseFileAsync_XlsxWithManualFirstDataRow_UsesProvidedRow()
+    {
+        // Arrange - Test that manual override works
+        var electionGuid = Guid.NewGuid();
+        using var workbook = new ClosedXML.Excel.XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Sheet1");
+        
+        worksheet.Cell(1, 1).Value = "Skip this";
+        worksheet.Cell(2, 1).Value = "Skip this too";
+        worksheet.Cell(3, 1).Value = "FirstName";
+        worksheet.Cell(3, 2).Value = "LastName";
+        worksheet.Cell(4, 1).Value = "Bob";
+        worksheet.Cell(4, 2).Value = "Brown";
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        var fileContent = stream.ToArray();
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "xlsx",
+            Contents = fileContent,
+            HasContent = true,
+            FirstDataRow = 3 // Manually specify row 3
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        // Act
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Headers.Count);
+        Assert.Equal("FirstName", result.Headers[0]);
+        Assert.Equal("LastName", result.Headers[1]);
+        Assert.Equal(1, result.TotalDataRows);
+        Assert.Equal("Bob", result.PreviewRows[0][0]);
+    }
+
+    [Fact]
     public async Task SaveColumnMappingsAsync_ValidMappings_SavesToDatabase()
     {
         // Arrange

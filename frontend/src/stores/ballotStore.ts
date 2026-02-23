@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { ballotService } from "../services/ballotService";
 import { voteService } from "../services/voteService";
 import { signalrService } from "../services/signalrService";
-import { ElMessage } from "element-plus";
+
 import type {
   BallotDto,
   CreateBallotDto,
@@ -218,14 +218,12 @@ export const useBallotStore = defineStore("ballot", () => {
     if (!exists) {
       // Fetch the new ballot to get full details
       fetchBallotById(data.ballotGuid).catch(console.error);
-      ElMessage.info(`Ballot ${data.ballotCode || data.ballotGuid} was added`);
     }
   }
 
   function handleBallotUpdated(data: BallotUpdateEvent) {
     // Refresh the ballot data
     fetchBallotById(data.ballotGuid).catch(console.error);
-    ElMessage.info(`Ballot ${data.ballotCode || data.ballotGuid} was updated`);
   }
 
   function handleBallotDeleted(data: BallotUpdateEvent) {
@@ -236,10 +234,6 @@ export const useBallotStore = defineStore("ballot", () => {
     if (currentBallot.value?.ballotGuid === data.ballotGuid) {
       currentBallot.value = null;
     }
-
-    ElMessage.warning(
-      `Ballot ${data.ballotCode || data.ballotGuid} was deleted`,
-    );
   }
 
   async function joinElection(electionGuid: string) {

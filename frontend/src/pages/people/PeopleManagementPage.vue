@@ -106,7 +106,8 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import { Search, Plus, MoreFilled, ArrowDown, Download, Delete } from '@element-plus/icons-vue';
 import { usePeopleStore } from '../../stores/peopleStore';
 import type { PersonDto } from '../../types';
@@ -118,6 +119,7 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const peopleStore = usePeopleStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const searchQuery = ref('');
@@ -174,7 +176,7 @@ onMounted(async () => {
     await peopleStore.joinElection(electionGuid);
     await peopleStore.fetchPeople(electionGuid);
   } catch (error) {
-    ElMessage.error(t('people.loadError'));
+    showErrorMessage(t('people.loadError'));
   }
 });
 
@@ -217,10 +219,10 @@ async function handleDelete(person: PersonDto) {
     );
 
     await peopleStore.deletePerson(person.personGuid);
-    ElMessage.success(t('people.deleteSuccess'));
+    showSuccessMessage(t('people.deleteSuccess'));
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || t('people.deleteError'));
+      showErrorMessage(error.message || t('people.deleteError'));
     }
   }
 }
@@ -275,19 +277,19 @@ async function handleExport() {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        ElMessage.success(t('people.exportSuccess'));
+        showSuccessMessage(t('people.exportSuccess'));
       } else {
-        ElMessage.error(t('people.exportError'));
+        showErrorMessage(t('people.exportError'));
       }
     };
 
     xhr.onerror = function () {
-      ElMessage.error(t('people.exportError'));
+      showErrorMessage(t('people.exportError'));
     };
 
     xhr.send();
   } catch (error) {
-    ElMessage.error(t('people.exportError'));
+    showErrorMessage(t('people.exportError'));
   }
 }
 
@@ -301,11 +303,11 @@ async function confirmBulkDelete() {
     );
 
     await Promise.all(deletePromises);
-    ElMessage.success(t('people.bulkDeleteSuccess', { count: selectedPeople.value.length }));
+    showSuccessMessage(t('people.bulkDeleteSuccess', { count: selectedPeople.value.length }));
     selectedPeople.value = [];
     showBulkDeleteConfirm.value = false;
   } catch (error: any) {
-    ElMessage.error(error.message || t('people.bulkDeleteError'));
+    showErrorMessage(error.message || t('people.bulkDeleteError'));
   } finally {
     bulkDeleting.value = false;
   }

@@ -198,7 +198,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useFrontDeskStore } from '@/stores/frontDeskStore';
 import { useLocationStore } from '@/stores/locationStore';
-import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
+import { ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import { Search, UserFilled, User, Tickets } from '@element-plus/icons-vue';
 import type { FrontDeskVoterDto } from '@/types/FrontDesk';
 
@@ -206,6 +207,7 @@ const route = useRoute();
 const router = useRouter();
 const frontDeskStore = useFrontDeskStore();
 const locationStore = useLocationStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = ref(route.params.electionId as string);
 const searchQuery = ref('');
@@ -259,7 +261,7 @@ async function loadData() {
     await frontDeskStore.fetchEligibleVoters(electionGuid.value);
     await locationStore.fetchLocations(electionGuid.value);
   } catch (error: any) {
-    ElMessage.error(error.message || 'Failed to load data');
+    showErrorMessage(error.message || 'Failed to load data');
   }
 }
 
@@ -297,11 +299,11 @@ async function confirmCheckIn() {
         votingLocationGuid: checkInForm.value.votingLocationGuid || undefined
       });
 
-      ElMessage.success('Voter checked in successfully');
+      showSuccessMessage('Voter checked in successfully');
       showCheckInDialog.value = false;
       selectedVoter.value = null;
     } catch (error: any) {
-      ElMessage.error(error.message || 'Failed to check in voter');
+      showErrorMessage(error.message || 'Failed to check in voter');
     }
   });
 }

@@ -43,6 +43,11 @@ export const peopleImportService = {
     return response.data;
   },
 
+  async getMapping(electionGuid: string, rowId: number): Promise<ColumnMapping[] | null> {
+    const response = await api.get<ColumnMapping[]>(`/api/PeopleImport/${electionGuid}/files/${rowId}/mapping`);
+    return response.data;
+  },
+
   async updateSettings(electionGuid: string, rowId: number, settings: UpdateFileSettingsDto): Promise<ImportFileInfo> {
     const response = await api.put<ImportFileInfo>(`/api/PeopleImport/${electionGuid}/files/${rowId}/settings`, settings);
     return response.data;

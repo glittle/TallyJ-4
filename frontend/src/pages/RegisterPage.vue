@@ -3,12 +3,13 @@ import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
-import { ElMessage } from "element-plus";
+import { useNotifications } from '@/composables/useNotifications';
 import type { FormInstance, FormRules } from "element-plus";
 
 const { t } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const registerFormRef = ref<FormInstance>();
 const loading = ref(false);
@@ -89,11 +90,11 @@ const handleRegister = async () => {
           password: registerForm.password,
           confirmPassword: registerForm.confirmPassword,
         });
-        ElMessage.success(t("auth.registerSuccess"));
+        showSuccessMessage(t("auth.registerSuccess"));
         router.push("/dashboard");
       } catch (error) {
         console.error("Registration failed:", error);
-        ElMessage.error(t("auth.registerFailed"));
+        showErrorMessage(t("auth.registerFailed"));
       } finally {
         loading.value = false;
       }

@@ -46,6 +46,14 @@ public interface IPeopleImportService
     Task SaveColumnMappingsAsync(Guid electionGuid, int rowId, List<ColumnMappingDto> mappings);
 
     /// <summary>
+    /// Gets saved column mappings for an import file.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="rowId">The row ID of the import file.</param>
+    /// <returns>List of column mappings, or null if none are saved.</returns>
+    Task<List<ColumnMappingDto>?> GetColumnMappingsAsync(Guid electionGuid, int rowId);
+
+    /// <summary>
     /// Updates file settings like first data row and code page.
     /// </summary>
     /// <param name="electionGuid">The GUID of the election.</param>

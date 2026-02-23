@@ -121,14 +121,16 @@
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete } from '@element-plus/icons-vue';
 import { useElectionStore } from '../../stores/electionStore';
+import { useNotifications } from '@/composables/useNotifications';
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const electionStore = useElectionStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const loading = computed(() => electionStore.loading);
@@ -140,7 +142,7 @@ onMounted(async () => {
     await electionStore.fetchElectionById(electionGuid);
     await electionStore.joinElection(electionGuid);
   } catch (error) {
-    ElMessage({ message: t('elections.loadError'), type: 'error', duration: 0, showClose: true });
+    showErrorMessage(t('elections.loadError'));
   }
 });
 
@@ -194,11 +196,11 @@ async function confirmDelete() {
     );
     
     await electionStore.deleteElection(electionGuid);
-    ElMessage.success(t('elections.deleteSuccess'));
+    showSuccessMessage(t('elections.deleteSuccess'));
     router.push('/elections');
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || t('elections.deleteError'));
+      showErrorMessage(error.message || t('elections.deleteError'));
     }
   }
 }

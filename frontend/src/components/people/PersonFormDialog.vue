@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
+import { type FormInstance, type FormRules } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useEligibilityStore } from '../../stores/eligibilityStore';
 import type { PersonDto, CreatePersonDto, UpdatePersonDto } from '../../types';
@@ -21,6 +23,8 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const peopleStore = usePeopleStore();
 const eligibilityStore = useEligibilityStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
@@ -81,7 +85,7 @@ async function handleSubmit() {
             ineligibleReasonGuid: form.ineligibleReasonGuid || undefined
           };
           await peopleStore.updatePerson(props.person.personGuid, dto);
-          ElMessage.success(t('people.updateSuccess'));
+          showSuccessMessage(t('people.updateSuccess'));
         } else {
           const dto: CreatePersonDto = {
             electionGuid: props.electionGuid,
@@ -95,11 +99,11 @@ async function handleSubmit() {
             ineligibleReasonGuid: form.ineligibleReasonGuid || undefined
           };
           await peopleStore.createPerson(dto);
-          ElMessage.success(t('people.createSuccess'));
+          showSuccessMessage(t('people.createSuccess'));
         }
         emit('success');
-      } catch (error: any) {
-        ElMessage.error(error.message || t('people.saveError'));
+      } catch (error) {
+        handleApiError(error);
       } finally {
         submitting.value = false;
       }

@@ -26,12 +26,12 @@ No database table. The data is static reference data loaded in memory. Lookup me
 
 Each reason belongs to a group determined by its CanVote/CanReceiveVotes combination. The code prefix letter reflects the group; the numeric suffix distinguishes reasons within the group.
 
-| Prefix | CanVote | CanReceiveVotes | Meaning |
-|--------|---------|-----------------|---------|
-| `X` | false | false | Cannot vote, cannot receive votes |
-| `V` | true | false | Can **V**ote only (cannot receive votes) |
-| `R` | false | true | Can **R**eceive votes only (cannot vote) |
-| `U` | false | false | Internal only (used during ballot entry for problem vote lines) |
+| Prefix | CanVote | CanReceiveVotes | Meaning                                                         |
+| ------ | ------- | --------------- | --------------------------------------------------------------- |
+| `X`    | false   | false           | Cannot vote, cannot receive votes                               |
+| `V`    | true    | false           | Can **V**ote only (cannot receive votes)                        |
+| `R`    | false   | true            | Can **R**eceive votes only (cannot vote)                        |
+| `U`    | false   | false           | Internal only (used during ballot entry for problem vote lines) |
 
 Note: `U` reasons describe problems with a vote line on a ballot (unidentifiable or unreadable), not a person's civil eligibility. They are applied to votes, not to people. They must be excluded from import files and from the eligibility dropdown on the Person form.
 
@@ -47,7 +47,7 @@ Every reason from v3 must be preserved with its exact GUID. The following is the
 | X01 | D227534D-D7E8-E011-A095-002269C41D11 | Deceased |
 | X02 | CF27534D-D7E8-E011-A095-002269C41D11 | Moved elsewhere recently |
 | X03 | 2add3a15-ec2d-437c-916f-7c581e693baa | Not in this local unit |
-| X04 | D127534D-D7E8-E011-A095-002269C41D11 | Not a registered Bahá'í |
+| X04 | D127534D-D7E8-E011-A095-002269C41D11 | Not a registered Bahá’í |
 | X05 | 32e44592-a7d8-408a-b169-8871800f62aa | Under 18 years old |
 | X06 | D327534D-D7E8-E011-A095-002269C41D11 | Resides elsewhere |
 | X07 | D027534D-D7E8-E011-A095-002269C41D11 | Rights removed (entirely) |

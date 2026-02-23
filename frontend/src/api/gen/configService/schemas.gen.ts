@@ -3335,6 +3335,27 @@ export const ImportConfigurationDtoSchema = {
     description: 'Data transfer object for configuring an import operation.'
 } as const;
 
+export const ImportErrorDtoSchema = {
+    type: 'object',
+    properties: {
+        key: {
+            type: 'string',
+            description: 'The i18n key for the error message.',
+            nullable: true
+        },
+        parameters: {
+            type: 'object',
+            additionalProperties: {
+                type: 'string'
+            },
+            description: 'Parameters to substitute into the error message.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for import error messages.'
+} as const;
+
 export const ImportFileDtoSchema = {
     type: 'object',
     properties: {
@@ -3438,7 +3459,7 @@ export const ImportPeopleResultSchema = {
         warnings: {
             type: 'array',
             items: {
-                type: 'string'
+                '$ref': '#/components/schemas/ImportWarningDto'
             },
             description: 'List of warning messages generated during import.',
             nullable: true
@@ -3446,7 +3467,7 @@ export const ImportPeopleResultSchema = {
         errors: {
             type: 'array',
             items: {
-                type: 'string'
+                '$ref': '#/components/schemas/ImportErrorDto'
             },
             description: 'List of error messages encountered during import.',
             nullable: true
@@ -3459,6 +3480,27 @@ export const ImportPeopleResultSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object containing the result of importing people.'
+} as const;
+
+export const ImportWarningDtoSchema = {
+    type: 'object',
+    properties: {
+        key: {
+            type: 'string',
+            description: 'The i18n key for the warning message.',
+            nullable: true
+        },
+        parameters: {
+            type: 'object',
+            additionalProperties: {
+                type: 'string'
+            },
+            description: 'Parameters to substitute into the warning message.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for import warning messages.'
 } as const;
 
 export const LocationAnalysisDtoSchema = {
@@ -4736,12 +4778,11 @@ export const PublicHomeDtoSchema = {
 } as const;
 
 export const RefreshTokenRequestSchema = {
-    required: ['refreshToken'],
     type: 'object',
     properties: {
         refreshToken: {
-            minLength: 1,
-            type: 'string'
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false
