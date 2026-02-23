@@ -71,13 +71,13 @@ All GUIDs reused exactly from v3 `IneligibleReasonEnum.cs`. See requirements.md 
 
 v3 had 4 Unidentifiable sub-reasons and 3 Unreadable sub-reasons. In v4 these collapse into U01 and U02. The `GetByGuid` method checks the legacy map first, so old data resolves correctly.
 
-| Legacy v3 GUID | v3 Description | Maps to |
-|---|---|---|
-| D927534D-... | Could refer to more than one person | U01 |
-| D727534D-... | Multiple people with identical name | U01 |
-| D827534D-... | Name is a mix of multiple people | U01 |
-| D627534D-... | In an unknown language | U02 |
-| 86DDBE4A-... | Not a complete name | U02 |
+| Legacy v3 GUID | v3 Description                      | Maps to |
+| -------------- | ----------------------------------- | ------- |
+| D927534D-...   | Could refer to more than one person | U01     |
+| D727534D-...   | Multiple people with identical name | U01     |
+| D827534D-...   | Name is a mix of multiple people    | U01     |
+| D627534D-...   | In an unknown language              | U02     |
+| 86DDBE4A-...   | Not a complete name                 | U02     |
 
 U01 keeps `CE27534D-D7E8-E011-A095-002269C41D11` (the "Unknown person" GUID from v3) as its canonical GUID.
 U02 keeps `CD27534D-D7E8-E011-A095-002269C41D11` (the "Writing is illegible" GUID from v3) as its canonical GUID.
@@ -133,6 +133,7 @@ else
 ```
 
 This replaces the current behavior where `CanVote` and `CanReceiveVotes` are set independently by the client. The DTOs (`CreatePersonDto`, `UpdatePersonDto`) will be updated:
+
 - **Remove** `CanVote` and `CanReceiveVotes` fields from `CreatePersonDto` and `UpdatePersonDto` (they become server-computed)
 - **Keep** `IneligibleReasonGuid` as the single input field for eligibility
 - `PersonDto` (response) **keeps** `CanVote`, `CanReceiveVotes`, and `IneligibleReasonGuid` for display
@@ -140,6 +141,7 @@ This replaces the current behavior where `CanVote` and `CanReceiveVotes` are set
 #### Validator Updates
 
 Add a validation rule to `CreatePersonDtoValidator` and `UpdatePersonDtoValidator`:
+
 - If `IneligibleReasonGuid` is provided, it must match a known reason in `IneligibleReasonEnum`
 - U-group reasons (InternalOnly) must be rejected for person records
 
@@ -194,6 +196,7 @@ Calls `GET /api/eligibility-reasons`. Caches result in memory (data is static).
 #### `frontend/src/stores/eligibilityStore.ts` (new)
 
 Pinia store that:
+
 - Fetches and caches all reasons on first access
 - Provides computed getters: `personReasons` (excluding U group), `groupedReasons` (by prefix)
 - Provides lookup helpers: `getByGuid(guid)`, `getByCode(code)`
@@ -223,7 +226,7 @@ Replace the two `el-switch` controls for `canVote`/`canReceiveVotes` in `PersonF
   "eligibility.X01": "Deceased",
   "eligibility.X02": "Moved elsewhere recently",
   "eligibility.X03": "Not in this local unit",
-  "eligibility.X04": "Not a registered Bahá'í",
+  "eligibility.X04": "Not a registered Bahá’í",
   "eligibility.X05": "Under 18 years old",
   "eligibility.X06": "Resides elsewhere",
   "eligibility.X07": "Rights removed (entirely)",
@@ -250,6 +253,7 @@ These files are auto-discovered by the existing glob import in `locales/index.ts
 ### 10. Name Import Integration
 
 Update import processing (when a people/names import is implemented) to:
+
 - Accept an `Eligibility` or `IneligibleReason` column
 - Match by code (`X01`, `V03`, etc.) first
 - Fall back to case-insensitive English description match via `IneligibleReasonEnum.GetByDescription()`
@@ -262,35 +266,35 @@ Update import processing (when a people/names import is implemented) to:
 
 ### New Files
 
-| File | Purpose |
-|------|---------|
-| `Backend.Domain/Enumerations/IneligibleReasonEnum.cs` | Static reason definitions + lookup methods |
-| `backend/DTOs/EligibilityReasonDto.cs` | DTO for API response |
-| `backend/Controllers/EligibilityController.cs` | GET endpoint for reasons list |
-| `frontend/src/types/Eligibility.ts` | TypeScript types |
-| `frontend/src/services/eligibilityService.ts` | API service |
-| `frontend/src/stores/eligibilityStore.ts` | Pinia store |
-| `frontend/src/locales/en/eligibility.json` | English i18n |
-| `frontend/src/locales/fr/eligibility.json` | French i18n |
-| `Backend.Tests/UnitTests/Enumerations/IneligibleReasonEnumTests.cs` | Unit tests for static class |
-| `Backend.Tests/UnitTests/Services/EligibilityConsistencyTests.cs` | Tests for CanVote/CanReceiveVotes sync |
+| File                                                                | Purpose                                    |
+| ------------------------------------------------------------------- | ------------------------------------------ |
+| `Backend.Domain/Enumerations/IneligibleReasonEnum.cs`               | Static reason definitions + lookup methods |
+| `backend/DTOs/EligibilityReasonDto.cs`                              | DTO for API response                       |
+| `backend/Controllers/EligibilityController.cs`                      | GET endpoint for reasons list              |
+| `frontend/src/types/Eligibility.ts`                                 | TypeScript types                           |
+| `frontend/src/services/eligibilityService.ts`                       | API service                                |
+| `frontend/src/stores/eligibilityStore.ts`                           | Pinia store                                |
+| `frontend/src/locales/en/eligibility.json`                          | English i18n                               |
+| `frontend/src/locales/fr/eligibility.json`                          | French i18n                                |
+| `Backend.Tests/UnitTests/Enumerations/IneligibleReasonEnumTests.cs` | Unit tests for static class                |
+| `Backend.Tests/UnitTests/Services/EligibilityConsistencyTests.cs`   | Tests for CanVote/CanReceiveVotes sync     |
 
 ### Modified Files
 
-| File | Change |
-|------|--------|
-| `backend/DTOs/People/CreatePersonDto.cs` | Remove `CanVote`, `CanReceiveVotes` |
-| `backend/DTOs/People/UpdatePersonDto.cs` | Remove `CanVote`, `CanReceiveVotes` |
-| `backend/DTOs/People/PersonDto.cs` | Add `IneligibleReasonCode` |
-| `backend/Mappings/PersonProfile.cs` | Map `IneligibleReasonCode` via `IneligibleReasonEnum` |
-| `backend/Services/PeopleService.cs` | Add eligibility sync logic in create/update |
-| `backend/Validators/CreatePersonDtoValidator.cs` | Add `IneligibleReasonGuid` validation |
-| `backend/Validators/UpdatePersonDtoValidator.cs` | Add `IneligibleReasonGuid` validation |
-| `backend/Program.cs` | Register `EligibilityController` (auto if in same assembly) |
-| `frontend/src/types/Person.ts` | Remove `canVote`/`canReceiveVotes` from Create/Update DTOs, add `ineligibleReasonCode` to PersonDto |
-| `frontend/src/types/index.ts` | Export new Eligibility types |
-| `frontend/src/components/people/PersonFormDialog.vue` | Replace switches with eligibility dropdown |
-| `frontend/src/locales/en/people.json` | Update import instructions text |
+| File                                                  | Change                                                                                              |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `backend/DTOs/People/CreatePersonDto.cs`              | Remove `CanVote`, `CanReceiveVotes`                                                                 |
+| `backend/DTOs/People/UpdatePersonDto.cs`              | Remove `CanVote`, `CanReceiveVotes`                                                                 |
+| `backend/DTOs/People/PersonDto.cs`                    | Add `IneligibleReasonCode`                                                                          |
+| `backend/Mappings/PersonProfile.cs`                   | Map `IneligibleReasonCode` via `IneligibleReasonEnum`                                               |
+| `backend/Services/PeopleService.cs`                   | Add eligibility sync logic in create/update                                                         |
+| `backend/Validators/CreatePersonDtoValidator.cs`      | Add `IneligibleReasonGuid` validation                                                               |
+| `backend/Validators/UpdatePersonDtoValidator.cs`      | Add `IneligibleReasonGuid` validation                                                               |
+| `backend/Program.cs`                                  | Register `EligibilityController` (auto if in same assembly)                                         |
+| `frontend/src/types/Person.ts`                        | Remove `canVote`/`canReceiveVotes` from Create/Update DTOs, add `ineligibleReasonCode` to PersonDto |
+| `frontend/src/types/index.ts`                         | Export new Eligibility types                                                                        |
+| `frontend/src/components/people/PersonFormDialog.vue` | Replace switches with eligibility dropdown                                                          |
+| `frontend/src/locales/en/people.json`                 | Update import instructions text                                                                     |
 
 ### No Schema Migration Required
 
@@ -299,6 +303,7 @@ The `Person` table already has `IneligibleReasonGuid`, `CanVote`, and `CanReceiv
 ## Data Flow
 
 ### Person Create/Update
+
 ```
 Frontend: user selects eligibility reason (or "Eligible")
   → sends { ineligibleReasonGuid: guid | null }
@@ -309,6 +314,7 @@ Frontend: user selects eligibility reason (or "Eligible")
 ```
 
 ### Eligibility Reasons List
+
 ```
 Frontend: eligibilityStore.fetchReasons()
   → GET /api/eligibility-reasons
@@ -317,6 +323,7 @@ Frontend: eligibilityStore.fetchReasons()
 ```
 
 ### Name Import (future)
+
 ```
 Import file row has "Eligibility" column = "X01" or "Deceased"
   → IneligibleReasonEnum.GetByCode("X01") or GetByDescription("Deceased")
@@ -327,11 +334,13 @@ Import file row has "Eligibility" column = "X01" or "Deceased"
 ## Delivery Phases
 
 ### Phase 1: Backend Static Class + API
+
 1. Create `IneligibleReasonEnum` static class with all reasons, GUIDs, legacy mapping
 2. Create `EligibilityReasonDto` and `EligibilityController`
 3. Unit tests for static class (GUID correctness, lookup methods, legacy mapping)
 
 ### Phase 2: Backend Eligibility Enforcement
+
 1. Update `CreatePersonDto`/`UpdatePersonDto` (remove CanVote/CanReceiveVotes)
 2. Add eligibility sync logic to `PeopleService`
 3. Add `IneligibleReasonCode` to `PersonDto` + AutoMapper config
@@ -339,12 +348,14 @@ Import file row has "Eligibility" column = "X01" or "Deceased"
 5. Unit tests for sync logic
 
 ### Phase 3: Frontend Types + Service + Store
+
 1. Update `Person.ts` types
 2. Create `Eligibility.ts` types
 3. Create `eligibilityService.ts` and `eligibilityStore.ts`
 4. Add i18n JSON files (en, fr)
 
 ### Phase 4: Frontend UI
+
 1. Update `PersonFormDialog.vue` - replace switches with grouped dropdown
 2. Update `PeopleTable.vue` if it displays eligibility info
 3. Update import instructions text

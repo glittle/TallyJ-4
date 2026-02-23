@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
+import { type FormInstance, type FormRules } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import { useLocationStore } from '../../stores/locationStore';
 import type { RegisterComputerDto } from '../../types';
 
@@ -16,6 +17,7 @@ const emit = defineEmits<{
 }>();
 
 const locationStore = useLocationStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
@@ -80,10 +82,10 @@ async function handleSubmit() {
           ipAddress: form.ipAddress || undefined
         };
         await locationStore.registerComputer(props.electionGuid, props.locationGuid, dto);
-        ElMessage.success('Computer registered successfully');
+        showSuccessMessage('Computer registered successfully');
         emit('success');
       } catch (error: any) {
-        ElMessage.error(error.message || 'Failed to register computer');
+        showErrorMessage(error.message || 'Failed to register computer');
       } finally {
         submitting.value = false;
       }

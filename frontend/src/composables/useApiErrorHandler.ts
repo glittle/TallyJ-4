@@ -1,5 +1,5 @@
-import { useNotifications } from './useNotifications';
-import { i18n } from '../locales';
+import { useNotifications } from "./useNotifications";
+import { i18n } from "../locales";
 
 export interface ApiError {
   response?: {
@@ -14,37 +14,38 @@ export interface ApiError {
 }
 
 export function useApiErrorHandler() {
-  const { errorMessage } = useNotifications();
+  const { showErrorMessage } = useNotifications();
   const { t } = i18n.global;
 
   const handleApiError = (error: ApiError, customMessage?: string) => {
-    let message = customMessage || t('error.somethingWentWrong');
+    let message = customMessage || t("error.somethingWentWrong");
 
     if (error.response) {
       const { status, data } = error.response;
 
       switch (status) {
         case 400:
-          message = data?.error || data?.message || t('error.validationError');
+          message = data?.error || data?.message || t("error.validationError");
           break;
         case 401:
-          message = t('error.unauthorized');
+          message = t("error.unauthorized");
           break;
         case 403:
-          message = t('error.forbidden');
+          message = t("error.forbidden");
           break;
         case 404:
-          message = t('error.notFound');
+          message = t("error.notFound");
           break;
         case 500:
-          message = t('error.serverError');
+          message = t("error.serverError");
           break;
         default:
-          message = data?.error || data?.message || t('error.somethingWentWrong');
+          message =
+            data?.error || data?.message || t("error.somethingWentWrong");
       }
 
       // Handle validation errors (field-specific errors)
-      if (data?.errors && typeof data.errors === 'object') {
+      if (data?.errors && typeof data.errors === "object") {
         const validationErrors = Object.values(data.errors).flat();
         if (validationErrors.length > 0) {
           message = validationErrors[0] || message;
@@ -52,14 +53,17 @@ export function useApiErrorHandler() {
       }
     } else if (error.message) {
       // Network or other errors
-      if (error.message.includes('Network Error') || error.message.includes('fetch')) {
-        message = t('error.networkError');
+      if (
+        error.message.includes("Network Error") ||
+        error.message.includes("fetch")
+      ) {
+        message = t("error.networkError");
       } else {
         message = error.message;
       }
     }
 
-    errorMessage(message);
+    showErrorMessage(message);
     return message;
   };
 
@@ -70,6 +74,6 @@ export function useApiErrorHandler() {
 
   return {
     handleApiError,
-    handleApiSuccess
+    handleApiSuccess,
   };
 }

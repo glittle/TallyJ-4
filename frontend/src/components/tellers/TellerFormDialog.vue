@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { type FormInstance, type FormRules } from 'element-plus'
 import { useTellerStore } from '@/stores/tellerStore'
+import { useNotifications } from '@/composables/useNotifications'
 import type { Teller, CreateTellerDto, UpdateTellerDto } from '@/types/teller'
 
 const props = defineProps<{
@@ -17,6 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const tellerStore = useTellerStore()
+const { showErrorMessage } = useNotifications()
 
 const formRef = ref<FormInstance>()
 const submitting = ref(false)
@@ -90,7 +92,7 @@ async function handleSubmit() {
         }
         emit('success')
       } catch (error: any) {
-        ElMessage.error(error.message || 'Failed to save teller')
+        showErrorMessage(error.message || 'Failed to save teller')
       } finally {
         submitting.value = false
       }

@@ -217,15 +217,31 @@ public class PeopleImportService : IPeopleImportService
         // Parse the file
         var (headers, previewRows, totalDataRows) = await ParseFileContentAsync(importFile);
 
-        // Generate auto-mappings
-        var autoMappings = GenerateAutoMappings(headers);
+        // Check for saved mappings first, otherwise generate auto-mappings
+        List<ColumnMappingDto> mappings;
+        if (!string.IsNullOrEmpty(importFile.ColumnsToRead))
+        {
+            try
+            {
+                mappings = JsonSerializer.Deserialize<List<ColumnMappingDto>>(importFile.ColumnsToRead) ?? new List<ColumnMappingDto>();
+            }
+            catch (JsonException)
+            {
+                // If deserialization fails, fall back to auto-mappings
+                mappings = GenerateAutoMappings(headers);
+            }
+        }
+        else
+        {
+            mappings = GenerateAutoMappings(headers);
+        }
 
         return new ParseFileResponse
         {
             Headers = headers,
             PreviewRows = previewRows,
             TotalDataRows = totalDataRows,
-            AutoMappings = autoMappings
+            AutoMappings = mappings
         };
     }
 
@@ -251,6 +267,32 @@ public class PeopleImportService : IPeopleImportService
         importFile.ProcessingStatus = "Mapped";
 
         await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Gets saved column mappings for an import file.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="rowId">The row ID of the import file.</param>
+    /// <returns>List of column mappings, or null if none are saved.</returns>
+    public async Task<List<ColumnMappingDto>?> GetColumnMappingsAsync(Guid electionGuid, int rowId)
+    {
+        var importFile = await _context.ImportFiles
+            .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
+
+        if (importFile == null || string.IsNullOrEmpty(importFile.ColumnsToRead))
+        {
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<List<ColumnMappingDto>>(importFile.ColumnsToRead);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
     }
 
     /// <summary>
@@ -290,113 +332,212 @@ public class PeopleImportService : IPeopleImportService
         var groupName = GetGroupName(electionGuid);
         var startTime = DateTime.UtcNow;
 
+        var importFile = await _context.ImportFiles
+            .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
+
+        if (importFile == null || importFile.HasContent != true || importFile.Contents == null)
+        {
+            result.Success = false;
+            result.Errors.Add(new ImportErrorDto
+            {
+                Key = "import.errors.fileNotFound",
+                Parameters = new Dictionary<string, string>()
+            });
+            return result;
+        }
+
+        // Deserialize column mappings
+        if (string.IsNullOrEmpty(importFile.ColumnsToRead))
+        {
+            result.Success = false;
+            result.Errors.Add(new ImportErrorDto
+            {
+                Key = "import.errors.noMappings",
+                Parameters = new Dictionary<string, string>()
+            });
+            return result;
+        }
+
+        var mappings = JsonSerializer.Deserialize<List<ColumnMappingDto>>(importFile.ColumnsToRead);
+        if (mappings == null || mappings.Count == 0)
+        {
+            result.Success = false;
+            result.Errors.Add(new ImportErrorDto
+            {
+                Key = "import.errors.invalidMappings",
+                Parameters = new Dictionary<string, string>()
+            });
+            return result;
+        }
+
+        // Validate required mappings
+        var firstNameMapping = mappings.FirstOrDefault(m => m.TargetField == "FirstName");
+        var lastNameMapping = mappings.FirstOrDefault(m => m.TargetField == "LastName");
+
+        if (firstNameMapping == null || lastNameMapping == null)
+        {
+            result.Success = false;
+            result.Errors.Add(new ImportErrorDto
+            {
+                Key = "import.errors.missingRequiredMappings",
+                Parameters = new Dictionary<string, string>()
+            });
+            return result;
+        }
+
+        // Load existing people for deduplication
+        var existingPeople = await _context.People
+            .Where(p => p.ElectionGuid == electionGuid)
+            .ToListAsync();
+
+        var bahaiIdLookup = existingPeople
+            .Where(p => !string.IsNullOrEmpty(p.BahaiId))
+            .Select(p => p.BahaiId!)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        // for voter login, the email and phone must be unique
+        var emailLookup = existingPeople
+        .Where(p => !string.IsNullOrEmpty(p.Email))
+        .Select(p => p.Email!)
+        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var phoneLookup = existingPeople
+        .Where(p => !string.IsNullOrEmpty(p.Phone))
+        .Select(p => p.Phone!)
+        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var nameLookup = existingPeople
+            .Select(p => $"{p.FirstName ?? ""} {p.LastName}".Trim().ToLowerInvariant())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        var rowNumber = 0; // Initialize row number for error reporting
+
         try
         {
-            var importFile = await _context.ImportFiles
-                .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
-
-            if (importFile == null || importFile.HasContent != true || importFile.Contents == null)
-            {
-                result.Success = false;
-                result.Errors.Add("Import file not found or has no content");
-                return result;
-            }
-
-            // Deserialize column mappings
-            if (string.IsNullOrEmpty(importFile.ColumnsToRead))
-            {
-                result.Success = false;
-                result.Errors.Add("No column mappings configured");
-                return result;
-            }
-
-            var mappings = JsonSerializer.Deserialize<List<ColumnMappingDto>>(importFile.ColumnsToRead);
-            if (mappings == null || mappings.Count == 0)
-            {
-                result.Success = false;
-                result.Errors.Add("Invalid column mappings");
-                return result;
-            }
-
-            // Validate required mappings
-            var firstNameMapping = mappings.FirstOrDefault(m => m.TargetField == "FirstName");
-            var lastNameMapping = mappings.FirstOrDefault(m => m.TargetField == "LastName");
-
-            if (firstNameMapping == null || lastNameMapping == null)
-            {
-                result.Success = false;
-                result.Errors.Add("FirstName and LastName mappings are required");
-                return result;
-            }
-
-            // Load existing people for deduplication
-            var existingPeople = await _context.People
-                .Where(p => p.ElectionGuid == electionGuid)
-                .ToListAsync();
-
-            var bahaiIdLookup = existingPeople
-                .Where(p => !string.IsNullOrEmpty(p.BahaiId))
-                .ToDictionary(p => p.BahaiId!, StringComparer.OrdinalIgnoreCase);
-
-            var nameLookup = existingPeople
-                .ToDictionary(p => $"{p.FirstName ?? ""} {p.LastName}".Trim().ToLowerInvariant());
-
             // Parse file content
             var (headers, allRows, _) = await ParseFileContentAsync(importFile);
-            var dataRows = allRows.Skip(importFile.FirstDataRow.Value - 1).ToList();
+            var firstRowNum = importFile!.FirstDataRow ?? 0;
+            var dataRows = allRows.Skip(firstRowNum - 1).ToList();
 
             result.TotalRows = dataRows.Count;
 
             // Process in batches
             const int batchSize = 100;
             var peopleToAdd = new List<Person>();
+            var errorsFound = false;
 
             for (int i = 0; i < dataRows.Count; i++)
             {
                 var row = dataRows[i];
-                var rowNumber = i + importFile.FirstDataRow.Value;
+                rowNumber = i + firstRowNum + 1; // Calculate actual row number in the file for error reporting
 
                 await ReportProgress(groupName, i + 1, dataRows.Count, $"Processing row {rowNumber}");
 
                 try
                 {
-                    var person = CreatePersonFromRow(row, headers, mappings, electionGuid, bahaiIdLookup, nameLookup, result);
+                    var person = CreatePersonFromRow(row, headers, mappings, electionGuid, bahaiIdLookup, emailLookup, phoneLookup, nameLookup, rowNumber, result);
                     if (person != null)
                     {
                         peopleToAdd.Add(person);
                     }
+                    else
+                    {
+                        errorsFound = true;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    result.Errors.Add($"Row {rowNumber}: {ex.Message}");
+                    result.Errors.Add(new ImportErrorDto
+                    {
+                        Key = "import.errors.lineError",
+                        Parameters = new Dictionary<string, string>
+                        {
+                            ["rowNumber"] = rowNumber.ToString(),
+                            ["message"] = ex.Message
+                        }
+                    });
                     result.PeopleSkipped++;
+                    errorsFound = true;
                     continue;
                 }
 
                 // Save batch
-                if (peopleToAdd.Count >= batchSize || i == dataRows.Count - 1)
+                if (!errorsFound && (peopleToAdd.Count >= batchSize || i == dataRows.Count - 1))
                 {
                     _context.People.AddRange(peopleToAdd);
-                    await _context.SaveChangesAsync();
-                    result.PeopleAdded += peopleToAdd.Count;
-                    peopleToAdd.Clear();
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                        result.PeopleAdded += peopleToAdd.Count;
+                        peopleToAdd.Clear();
+                    }
+                    catch (Exception ex)
+                    {
+                        result.Errors.Add(new ImportErrorDto
+                        {
+                            Key = "import.errors.batchSaveFailed",
+                            Parameters = new Dictionary<string, string>
+                            {
+                                ["message"] = ex.InnerException?.Message ?? ex.Message
+                            }
+                        });
+                        errorsFound = true;
+                    }
                 }
             }
 
-            // Update import file status
-            importFile.ProcessingStatus = "Imported";
-            importFile.ImportTime = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
+            if (!errorsFound)
+            {
+                // If no errors, update status to Imported
+                importFile.ProcessingStatus = "Imported";
+                importFile.ImportTime = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
 
-            result.Success = true;
-            result.TimeElapsedSeconds = (DateTime.UtcNow - startTime).TotalSeconds;
+                // Commit the transaction
+                await transaction.CommitAsync();
 
-            await _hubContext.Clients.Group(groupName).SendAsync("importComplete", result);
+                result.Success = true;
+                result.TimeElapsedSeconds = (DateTime.UtcNow - startTime).TotalSeconds;
+
+                await _hubContext.Clients.Group(groupName).SendAsync("importComplete", result);
+            }
+            else
+            {
+                // If errors found, rollback the transaction
+                await transaction.RollbackAsync();
+            }
         }
         catch (Exception ex)
         {
+            // Rollback transaction on any exception
+            await transaction.RollbackAsync();
+
             result.Success = false;
-            result.Errors.Add($"Import failed: {ex.Message}");
+            if (rowNumber > 0)
+            {
+                result.Errors.Add(new ImportErrorDto
+                {
+                    Key = "import.errors.importFailedAtLine",
+                    Parameters = new Dictionary<string, string>
+                    {
+                        ["rowNumber"] = rowNumber.ToString(),
+                        ["message"] = ex.Message
+                    }
+                });
+            }
+            else
+            {
+                result.Errors.Add(new ImportErrorDto
+                {
+                    Key = "import.errors.importFailed",
+                    Parameters = new Dictionary<string, string>
+                    {
+                        ["message"] = ex.Message
+                    }
+                });
+            }
             await _hubContext.Clients.Group(groupName).SendAsync("importError", ex.Message);
         }
 
@@ -515,7 +656,7 @@ public class PeopleImportService : IPeopleImportService
         // Read all data rows after the header row
         var allRows = worksheet.RowsUsed().ToList();
         var dataRowsStartIndex = allRows.FindIndex(r => r.RowNumber() == headerRowNumber) + 1;
-        
+
         for (int i = dataRowsStartIndex; i < allRows.Count; i++)
         {
             var row = allRows[i];
@@ -540,7 +681,7 @@ public class PeopleImportService : IPeopleImportService
     {
         const int maxRowsToScan = 10;
         var allRows = worksheet.RowsUsed().Take(maxRowsToScan).ToList();
-        
+
         if (!allRows.Any())
             return 1; // Default to first row if no rows found
 
@@ -576,7 +717,7 @@ public class PeopleImportService : IPeopleImportService
         foreach (var cell in cells)
         {
             var value = cell.GetValue<string>()?.Trim() ?? "";
-            
+
             if (string.IsNullOrWhiteSpace(value))
                 continue;
 
@@ -599,7 +740,7 @@ public class PeopleImportService : IPeopleImportService
 
             // Bonus: Contains common header keywords
             var lowerValue = value.ToLower();
-            if (lowerValue.Contains("name") || lowerValue.Contains("id") || 
+            if (lowerValue.Contains("name") || lowerValue.Contains("id") ||
                 lowerValue.Contains("email") || lowerValue.Contains("phone") ||
                 lowerValue.Contains("area") || lowerValue.Contains("status") ||
                 lowerValue.Contains("eligibility"))
@@ -714,9 +855,9 @@ public class PeopleImportService : IPeopleImportService
         return null;
     }
 
-    private Person? CreatePersonFromRow(List<string> row, List<string> headers, List<ColumnMappingDto> mappings,
-        Guid electionGuid, Dictionary<string, Person> bahaiIdLookup, Dictionary<string, Person> nameLookup,
-        ImportPeopleResult result)
+    private Person? CreatePersonFromRow(List<string> cellsInRow, List<string> headers, List<ColumnMappingDto> mappings,
+        Guid electionGuid, HashSet<string> bahaiIdLookup, HashSet<string> emailLookup, HashSet<string> phoneLookup, HashSet<string> nameLookup,
+        int rowNumber, ImportPeopleResult result)
     {
         var person = new Person
         {
@@ -730,43 +871,155 @@ public class PeopleImportService : IPeopleImportService
         foreach (var mapping in mappings.Where(m => !string.IsNullOrEmpty(m.TargetField)))
         {
             var columnIndex = headers.IndexOf(mapping.FileColumn);
-            if (columnIndex >= 0 && columnIndex < row.Count)
+            if (columnIndex >= 0 && columnIndex < cellsInRow.Count)
             {
-                var value = row[columnIndex]?.Trim();
+                var value = cellsInRow[columnIndex]?.Trim();
                 ApplyFieldMapping(person, mapping.TargetField!, value);
             }
         }
 
+        var foundErrors = false;
+
         // Validate required fields
+
         if (string.IsNullOrEmpty(person.LastName))
         {
-            throw new ArgumentException("LastName is required");
+            result.PeopleSkipped++;
+            result.Errors.Add(new ImportErrorDto
+            {
+                Key = "import.errors.missingLastName",
+                Parameters = new Dictionary<string, string>
+                {
+                    ["rowNumber"] = rowNumber.ToString()
+                }
+            });
+            foundErrors = true;
         }
 
-        // Check for duplicates
-        if (!string.IsNullOrEmpty(person.BahaiId) && bahaiIdLookup.ContainsKey(person.BahaiId))
+        if (string.IsNullOrEmpty(person.FirstName))
         {
             result.PeopleSkipped++;
-            return null; // Skip duplicate
+            result.Errors.Add(new ImportErrorDto
+            {
+                Key = "import.errors.missingFirstName",
+                Parameters = new Dictionary<string, string>
+                {
+                    ["rowNumber"] = rowNumber.ToString()
+                }
+            });
+            foundErrors = true;
         }
+
+        if (!string.IsNullOrEmpty(person.BahaiId))
+        {
+            if (bahaiIdLookup.Contains(person.BahaiId))
+            {
+                result.PeopleSkipped++;
+                result.Errors.Add(new ImportErrorDto
+                {
+                    Key = "import.errors.duplicateBahaiId",
+                    Parameters = new Dictionary<string, string>
+                    {
+                        ["rowNumber"] = rowNumber.ToString(),
+                        ["bahaiId"] = person.BahaiId
+                    }
+                });
+                foundErrors = true;
+            }
+            else
+            {
+                // add it
+                bahaiIdLookup.Add(person.BahaiId);
+            }
+        }
+
+
+        if (!string.IsNullOrEmpty(person.Email))
+        {
+            if (emailLookup.Contains(person.Email))
+            {
+                result.PeopleSkipped++;
+                result.Errors.Add(new ImportErrorDto
+                {
+                    Key = "import.errors.duplicateEmail",
+                    Parameters = new Dictionary<string, string>
+                    {
+                        ["rowNumber"] = rowNumber.ToString(),
+                        ["email"] = person.Email
+                    }
+                });
+                foundErrors = true;
+            }
+            else
+            {
+                // add it
+                emailLookup.Add(person.Email);
+            }
+        }
+
+
+        if (!string.IsNullOrEmpty(person.Phone))
+        {
+            if (phoneLookup.Contains(person.Phone))
+            {
+                result.PeopleSkipped++;
+                result.Errors.Add(new ImportErrorDto
+                {
+                    Key = "import.errors.duplicatePhone",
+                    Parameters = new Dictionary<string, string>
+                    {
+                        ["rowNumber"] = rowNumber.ToString(),
+                        ["phone"] = person.Phone
+                    }
+                });
+                foundErrors = true;
+            }
+            else
+            {
+                // add it
+                phoneLookup.Add(person.Phone);
+            }
+        }
+
 
         var nameKey = $"{person.FirstName ?? ""} {person.LastName}".Trim().ToLowerInvariant();
-        if (nameLookup.ContainsKey(nameKey))
+        if (nameLookup.Contains(nameKey))
         {
             result.PeopleSkipped++;
-            return null; // Skip duplicate
+            result.Warnings.Add(new ImportWarningDto
+            {
+                Key = "import.errors.duplicateName",
+                Parameters = new Dictionary<string, string>
+                {
+                    ["rowNumber"] = rowNumber.ToString(),
+                    ["firstName"] = person.FirstName ?? "",
+                    ["lastName"] = person.LastName ?? ""
+                }
+            });
+            foundErrors = true;
         }
+        else
+        {
+            // add it
+            nameLookup.Add(nameKey);
+        }
+
 
         // Set eligibility
         var ineligibleReasonMapping = mappings.FirstOrDefault(m => m.TargetField == "IneligibleReasonDescription");
         if (ineligibleReasonMapping != null)
         {
             var columnIndex = headers.IndexOf(ineligibleReasonMapping.FileColumn);
-            if (columnIndex >= 0 && columnIndex < row.Count)
+            if (columnIndex >= 0 && columnIndex < cellsInRow.Count)
             {
-                var eligibilityValue = row[columnIndex]?.Trim();
-                SetEligibility(person, eligibilityValue, result);
+                var eligibilityValue = cellsInRow[columnIndex]?.Trim();
+                SetEligibility(person, eligibilityValue, result, rowNumber);
             }
+        }
+
+        if (foundErrors)
+        {
+            return null; // Skip this person due to validation errors
         }
 
         // Set computed fields
@@ -812,7 +1065,7 @@ public class PeopleImportService : IPeopleImportService
         }
     }
 
-    private void SetEligibility(Person person, string? eligibilityValue, ImportPeopleResult result)
+    private void SetEligibility(Person person, string? eligibilityValue, ImportPeopleResult result, int rowNumber)
     {
         if (string.IsNullOrEmpty(eligibilityValue))
         {
@@ -837,7 +1090,15 @@ public class PeopleImportService : IPeopleImportService
             person.CanVote = true;
             person.CanReceiveVotes = true;
             person.IneligibleReasonGuid = null;
-            result.Warnings.Add($"Unrecognized eligibility status: '{eligibilityValue}' - treated as eligible");
+            result.Warnings.Add(new ImportWarningDto
+            {
+                Key = "import.warnings.unrecognizedEligibility",
+                Parameters = new Dictionary<string, string>
+                {
+                    ["rowNumber"] = rowNumber.ToString(),
+                    ["eligibilityValue"] = eligibilityValue
+                }
+            });
         }
     }
 

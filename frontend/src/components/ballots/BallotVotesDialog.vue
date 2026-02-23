@@ -76,7 +76,8 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessageBox } from "element-plus";
+import { useNotifications } from '@/composables/useNotifications';
 import { Plus } from "@element-plus/icons-vue";
 import { useBallotStore } from "../../stores/ballotStore";
 import type { BallotDto, VoteDto } from "../../types";
@@ -94,6 +95,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const ballotStore = useBallotStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const showAddVote = ref(false);
 
@@ -111,10 +113,10 @@ async function handleDeleteVote(vote: VoteDto) {
     });
 
     await ballotStore.deleteVote(vote.ballotGuid, vote.positionOnBallot);
-    ElMessage.success(t("ballots.deleteVoteSuccess"));
+    showSuccessMessage(t("ballots.deleteVoteSuccess"));
   } catch (error: any) {
     if (error !== "cancel") {
-      ElMessage.error(error.message || t("ballots.deleteVoteError"));
+      showErrorMessage(error.message || t("ballots.deleteVoteError"));
     }
   }
 }

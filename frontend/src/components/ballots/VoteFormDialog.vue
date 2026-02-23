@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
+import { type FormInstance, type FormRules } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import { useBallotStore } from '../../stores/ballotStore';
 import { usePeopleStore } from '../../stores/peopleStore';
 import type { CreateVoteDto, PersonDto } from '../../types';
@@ -21,6 +22,7 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const ballotStore = useBallotStore();
 const peopleStore = usePeopleStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
@@ -46,7 +48,7 @@ onMounted(async () => {
     await peopleStore.fetchPeople(props.electionGuid);
     candidates.value = peopleStore.candidates;
   } catch (error) {
-    ElMessage.error(t('people.loadError'));
+    showErrorMessage(t('people.loadError'));
   }
 });
 
@@ -61,7 +63,7 @@ async function searchPeople(query: string) {
     const results = await peopleStore.searchPeople(props.electionGuid, query);
     candidates.value = results.filter(p => p.canReceiveVotes);
   } catch (error) {
-    ElMessage.error(t('people.searchError'));
+    showErrorMessage(t('people.searchError'));
   } finally {
     searching.value = false;
   }
@@ -81,10 +83,10 @@ async function handleSubmit() {
           statusCode: 'Ok'
         };
         await ballotStore.createVote(dto);
-        ElMessage.success(t('ballots.voteCreateSuccess'));
+        showSuccessMessage(t('ballots.voteCreateSuccess'));
         emit('success');
       } catch (error: any) {
-        ElMessage.error(error.message || t('ballots.voteSaveError'));
+        showErrorMessage(error.message || t('ballots.voteSaveError'));
       } finally {
         submitting.value = false;
       }

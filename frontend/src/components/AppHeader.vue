@@ -3,7 +3,7 @@ import { computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import { useI18n } from "vue-i18n";
-import { ElMessage } from "element-plus";
+import { useNotifications } from '@/composables/useNotifications';
 import { ArrowDown, User, Setting, SwitchButton, Menu } from "@element-plus/icons-vue";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
@@ -12,6 +12,7 @@ const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 const { t } = useI18n();
+const { showSuccessMessage, showInfoMessage } = useNotifications();
 
 const mobileMenuOpen = ref(false);
 const isMobile = ref(false);
@@ -53,12 +54,12 @@ const currentPageTitle = computed(() => {
 function handleCommand(command: string) {
   if (command === "logout") {
     authStore.logout();
-    ElMessage.success(t("auth.logoutSuccess"));
+    showSuccessMessage(t("auth.logoutSuccess"));
     router.push("/login?mode=officer");
   } else if (command === "profile") {
     router.push("/profile");
   } else if (command === "settings") {
-    ElMessage.info("Settings page coming soon");
+    showInfoMessage("Settings page coming soon");
   }
 }
 

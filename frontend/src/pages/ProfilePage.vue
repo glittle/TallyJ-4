@@ -61,10 +61,11 @@
 import { ref, computed } from 'vue';
 import { useAuthStore } from '../stores/authStore';
 import { useI18n } from 'vue-i18n';
-import { ElMessage } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 
 const authStore = useAuthStore();
 const { t } = useI18n();
+const { showErrorMessage, showInfoMessage } = useNotifications();
 
 const currentUser = computed(() => ({ 
   name: authStore.name,
@@ -86,11 +87,11 @@ function formatDate(date: any) {
 
 function handleChangePassword() {
   if (passwordForm.value.new !== passwordForm.value.confirm) {
-    ElMessage.error(t('profile.passwordsDoNotMatch'));
+    showErrorMessage(t('profile.passwordsDoNotMatch'));
     return;
   }
-  
-  ElMessage.info('Password change functionality coming soon');
+
+  showInfoMessage('Password change functionality coming soon');
   showChangePassword.value = false;
 }
 </script>

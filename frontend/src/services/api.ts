@@ -4,6 +4,8 @@ import { secureTokenService } from './secureTokenService';
 import { tokenRefreshService } from './tokenRefreshService';
 import { router } from '../router/router';
 import { i18n } from '../locales';
+// Note: Services cannot use composables, so ElMessage is used directly here
+// for HTTP interceptor notifications
 import { ElMessage } from 'element-plus';
 
 const api = axios.create({

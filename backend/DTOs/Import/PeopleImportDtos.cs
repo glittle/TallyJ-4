@@ -133,6 +133,38 @@ public class UpdateFileSettingsDto
 }
 
 /// <summary>
+/// Data transfer object for import error messages.
+/// </summary>
+public class ImportErrorDto
+{
+    /// <summary>
+    /// The i18n key for the error message.
+    /// </summary>
+    public string Key { get; set; } = null!;
+
+    /// <summary>
+    /// Parameters to substitute into the error message.
+    /// </summary>
+    public Dictionary<string, string> Parameters { get; set; } = new();
+}
+
+/// <summary>
+/// Data transfer object for import warning messages.
+/// </summary>
+public class ImportWarningDto
+{
+    /// <summary>
+    /// The i18n key for the warning message.
+    /// </summary>
+    public string Key { get; set; } = null!;
+
+    /// <summary>
+    /// Parameters to substitute into the warning message.
+    /// </summary>
+    public Dictionary<string, string> Parameters { get; set; } = new();
+}
+
+/// <summary>
 /// Data transfer object containing the result of importing people.
 /// </summary>
 public class ImportPeopleResult
@@ -160,12 +192,12 @@ public class ImportPeopleResult
     /// <summary>
     /// List of warning messages generated during import.
     /// </summary>
-    public List<string> Warnings { get; set; } = new();
+    public List<ImportWarningDto> Warnings { get; set; } = new();
 
     /// <summary>
     /// List of error messages encountered during import.
     /// </summary>
-    public List<string> Errors { get; set; } = new();
+    public List<ImportErrorDto> Errors { get; set; } = new();
 
     /// <summary>
     /// Time elapsed during the import operation in seconds.

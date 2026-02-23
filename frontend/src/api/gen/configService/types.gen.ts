@@ -2393,6 +2393,22 @@ export type ImportConfigurationDto = {
 };
 
 /**
+ * Data transfer object for import error messages.
+ */
+export type ImportErrorDto = {
+    /**
+     * The i18n key for the error message.
+     */
+    key?: string | null;
+    /**
+     * Parameters to substitute into the error message.
+     */
+    parameters?: {
+        [key: string]: string;
+    } | null;
+};
+
+/**
  * Data transfer object for import file information, mapping from ImportFile entity (excluding Contents).
  */
 export type ImportFileDto = {
@@ -2473,15 +2489,31 @@ export type ImportPeopleResult = {
     /**
      * List of warning messages generated during import.
      */
-    warnings?: Array<string> | null;
+    warnings?: Array<ImportWarningDto> | null;
     /**
      * List of error messages encountered during import.
      */
-    errors?: Array<string> | null;
+    errors?: Array<ImportErrorDto> | null;
     /**
      * Time elapsed during the import operation in seconds.
      */
     timeElapsedSeconds?: number;
+};
+
+/**
+ * Data transfer object for import warning messages.
+ */
+export type ImportWarningDto = {
+    /**
+     * The i18n key for the warning message.
+     */
+    key?: string | null;
+    /**
+     * Parameters to substitute into the warning message.
+     */
+    parameters?: {
+        [key: string]: string;
+    } | null;
 };
 
 /**
@@ -6714,6 +6746,31 @@ export type GetApiPeopleImportByElectionGuidFilesByRowIdParseResponses = {
 };
 
 export type GetApiPeopleImportByElectionGuidFilesByRowIdParseResponse = GetApiPeopleImportByElectionGuidFilesByRowIdParseResponses[keyof GetApiPeopleImportByElectionGuidFilesByRowIdParseResponses];
+
+export type GetApiPeopleImportByElectionGuidFilesByRowIdMappingData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+        /**
+         * The row ID of the import file.
+         */
+        rowId: number;
+    };
+    query?: never;
+    url: '/api/PeopleImport/{electionGuid}/files/{rowId}/mapping';
+};
+
+export type GetApiPeopleImportByElectionGuidFilesByRowIdMappingResponses = {
+    /**
+     * OK
+     */
+    200: Array<ColumnMappingDto>;
+};
+
+export type GetApiPeopleImportByElectionGuidFilesByRowIdMappingResponse = GetApiPeopleImportByElectionGuidFilesByRowIdMappingResponses[keyof GetApiPeopleImportByElectionGuidFilesByRowIdMappingResponses];
 
 export type PutApiPeopleImportByElectionGuidFilesByRowIdMappingData = {
     /**

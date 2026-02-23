@@ -2,10 +2,10 @@
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage } from 'element-plus';
 import { useBallotStore } from '../../stores/ballotStore';
 import { useElectionStore } from '../../stores/electionStore';
 import { usePeopleStore } from '../../stores/peopleStore';
+import { useNotifications } from '@/composables/useNotifications';
 import InlineBallotEntry from '../../components/ballots/InlineBallotEntry.vue';
 import type { VoteDto, CreateVoteDto } from '../../types';
 
@@ -15,6 +15,7 @@ const { t } = useI18n();
 const ballotStore = useBallotStore();
 const electionStore = useElectionStore();
 const peopleStore = usePeopleStore();
+const { showSuccessMessage, showErrorMessage, showWarningMessage, showInfoMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const ballotGuid = route.params.ballotId as string;
@@ -42,7 +43,7 @@ onMounted(async () => {
 
     setupPersonUpdateHandler();
   } catch (error) {
-    ElMessage.error(t('ballots.loadError'));
+    showErrorMessage(t('ballots.loadError'));
   }
 });
 
@@ -65,7 +66,7 @@ function setupPersonUpdateHandler() {
 
     if (data.firstName || data.lastName) {
       const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ');
-      ElMessage.info(t('ballots.personUpdated', { name: fullName }));
+      showInfoMessage(t('ballots.personUpdated', { name: fullName }));
     }
   };
 }
@@ -86,21 +87,21 @@ async function handleVoteAdded(vote: VoteDto) {
     await ballotStore.createVote(createDto);
     const isSpoiled = createDto.statusCode && createDto.statusCode !== 'Ok';
     if (isSpoiled) {
-      ElMessage.warning(t('ballots.voteSpoiledSuccess', { code: createDto.statusCode }));
+      showWarningMessage(t('ballots.voteSpoiledSuccess', { code: createDto.statusCode }));
     } else {
-      ElMessage.success(t('ballots.voteAddedSuccess'));
+      showSuccessMessage(t('ballots.voteAddedSuccess'));
     }
   } catch (error: any) {
-    ElMessage.error(error.message || t('ballots.voteAddedError'));
+    showErrorMessage(error.message || t('ballots.voteAddedError'));
   }
 }
 
 async function handleVoteRemoved(positionOnBallot: number) {
   try {
     await ballotStore.deleteVote(ballotGuid, positionOnBallot);
-    ElMessage.success(t('ballots.voteRemovedSuccess'));
+    showSuccessMessage(t('ballots.voteRemovedSuccess'));
   } catch (error: any) {
-    ElMessage.error(error.message || t('ballots.voteRemovedError'));
+    showErrorMessage(error.message || t('ballots.voteRemovedError'));
   }
 }
 

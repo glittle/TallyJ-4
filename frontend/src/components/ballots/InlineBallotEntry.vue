@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ElMessage } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import { usePeopleStore } from '@/stores/peopleStore';
 import VoteEntryRow from './VoteEntryRow.vue';
 import type { BallotDto } from '@/types/Ballot';
@@ -21,6 +21,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const peopleStore = usePeopleStore();
+const { showWarningMessage, showErrorMessage } = useNotifications();
 
 const votes = ref<(VoteDto | null)[]>([]);
 const voteRowRefs = ref<InstanceType<typeof VoteEntryRow>[]>([]);
@@ -70,7 +71,7 @@ async function handleVoteSelected(vote: VoteDto, index: number) {
 
   const duplicates = duplicatePersonGuids.value;
   if (duplicates.includes(vote.personGuid!)) {
-    ElMessage.warning(t('ballots.duplicateWarning'));
+    showWarningMessage(t('ballots.duplicateWarning'));
   }
 
   emit('vote-added', vote);
@@ -117,7 +118,7 @@ onMounted(async () => {
   } catch (e) {
     console.error('Failed to initialize candidate cache:', e);
     cacheError.value = true;
-    ElMessage.error(t('ballots.cacheLoadError'));
+    showErrorMessage(t('ballots.cacheLoadError'));
   } finally {
     cacheLoading.value = false;
   }

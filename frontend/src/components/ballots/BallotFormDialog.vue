@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
+import { type FormInstance, type FormRules } from 'element-plus';
 import { useBallotStore } from '../../stores/ballotStore';
 import type { CreateBallotDto } from '../../types';
+
+import { useNotifications } from '../../composables/useNotifications';
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const props = defineProps<{
   modelValue: boolean;
@@ -46,7 +49,7 @@ const rules = reactive<FormRules>({
 
 async function handleSubmit() {
   if (!formRef.value) return;
-  
+
   await formRef.value.validate(async (valid) => {
     if (valid) {
       submitting.value = true;
@@ -60,10 +63,10 @@ async function handleSubmit() {
           statusCode: 'Ok'
         };
         await ballotStore.createBallot(dto);
-        ElMessage.success(t('ballots.createSuccess'));
+        showSuccessMessage(t('ballots.createSuccess'));
         emit('success');
       } catch (error: any) {
-        ElMessage.error(error.message || t('ballots.saveError'));
+        showErrorMessage(error.message || t('ballots.saveError'));
       } finally {
         submitting.value = false;
       }
@@ -78,28 +81,13 @@ function handleClose() {
 </script>
 
 <template>
-  <el-dialog
-    :model-value="modelValue"
-    :title="$t('ballots.addBallot')"
-    width="500px"
-    @update:model-value="$emit('update:modelValue', $event)"
-    @close="handleClose"
-  >
-    <el-form
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-width="120px"
-      label-position="left"
-    >
+  <el-dialog :model-value="modelValue" :title="$t('ballots.addBallot')" width="500px"
+    @update:model-value="$emit('update:modelValue', $event)" @close="handleClose">
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" label-position="left">
       <el-form-item :label="$t('ballots.location')" prop="locationGuid">
         <el-select v-model="form.locationGuid" style="width: 100%">
-          <el-option
-            v-for="location in locations"
-            :key="location.value"
-            :label="location.label"
-            :value="location.value"
-          />
+          <el-option v-for="location in locations" :key="location.value" :label="location.label"
+            :value="location.value" />
         </el-select>
       </el-form-item>
 

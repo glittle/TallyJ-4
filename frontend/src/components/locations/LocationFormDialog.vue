@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
+import { type FormInstance, type FormRules } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import { useLocationStore } from '../../stores/locationStore';
 import type { LocationDto, CreateLocationDto, UpdateLocationDto } from '../../types';
 
@@ -17,6 +18,7 @@ const emit = defineEmits<{
 }>();
 
 const locationStore = useLocationStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
@@ -100,7 +102,7 @@ async function handleSubmit() {
             sortOrder: form.sortOrder
           };
           await locationStore.updateLocation(props.electionGuid, props.location.locationGuid, dto);
-          ElMessage.success('Location updated successfully');
+          showSuccessMessage('Location updated successfully');
         } else {
           const dto: CreateLocationDto = {
             electionGuid: props.electionGuid,
@@ -111,11 +113,11 @@ async function handleSubmit() {
             sortOrder: form.sortOrder
           };
           await locationStore.createLocation(props.electionGuid, dto);
-          ElMessage.success('Location created successfully');
+          showSuccessMessage('Location created successfully');
         }
         emit('success');
       } catch (error: any) {
-        ElMessage.error(error.message || 'Failed to save location');
+        showErrorMessage(error.message || 'Failed to save location');
       } finally {
         submitting.value = false;
       }

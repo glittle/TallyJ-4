@@ -30,7 +30,7 @@ public class IneligibleReasonEnumTests
     [InlineData("D227534D-D7E8-E011-A095-002269C41D11", "X01", "Deceased", false, false, false)]
     [InlineData("CF27534D-D7E8-E011-A095-002269C41D11", "X02", "Moved elsewhere recently", false, false, false)]
     [InlineData("2add3a15-ec2d-437c-916f-7c581e693baa", "X03", "Not in this local unit", false, false, false)]
-    [InlineData("D127534D-D7E8-E011-A095-002269C41D11", "X04", "Not a registered Bahá'í", false, false, false)]
+    [InlineData("D127534D-D7E8-E011-A095-002269C41D11", "X04", "Not a registered Bahá’í", false, false, false)]
     [InlineData("32e44592-a7d8-408a-b169-8871800f62aa", "X05", "Under 18 years old", false, false, false)]
     [InlineData("D327534D-D7E8-E011-A095-002269C41D11", "X06", "Resides elsewhere", false, false, false)]
     [InlineData("D027534D-D7E8-E011-A095-002269C41D11", "X07", "Rights removed (entirely)", false, false, false)]

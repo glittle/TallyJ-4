@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { auditLogService } from '@/services/auditLogService'
 import type { AuditLog, AuditLogFilter, CreateAuditLogDto } from '@/types/AuditLog'
-import { ElMessage } from 'element-plus'
+
 
 export const useAuditLogStore = defineStore('auditLog', () => {
   const auditLogs = ref<AuditLog[]>([])
@@ -24,7 +24,6 @@ export const useAuditLogStore = defineStore('auditLog', () => {
       pageSize.value = response.pageSize
     } catch (err: any) {
       error.value = err.message || 'Failed to fetch audit logs'
-      ElMessage.error(error.value)
       throw err
     } finally {
       loading.value = false
@@ -40,7 +39,6 @@ export const useAuditLogStore = defineStore('auditLog', () => {
       return auditLog
     } catch (err: any) {
       error.value = err.message || 'Failed to fetch audit log'
-      ElMessage.error(error.value)
       throw err
     } finally {
       loading.value = false
@@ -54,11 +52,9 @@ export const useAuditLogStore = defineStore('auditLog', () => {
       const newAuditLog = await auditLogService.createAuditLog(auditLogData)
       auditLogs.value.unshift(newAuditLog)
       totalCount.value++
-      ElMessage.success('Audit log created successfully')
       return newAuditLog
     } catch (err: any) {
       error.value = err.message || 'Failed to create audit log'
-      ElMessage.error(error.value)
       throw err
     } finally {
       loading.value = false

@@ -172,12 +172,13 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { Plus, Search } from "@element-plus/icons-vue";
 import { useElectionStore } from "../../stores/electionStore";
-import { ElMessage } from "element-plus";
+import { useNotifications } from '@/composables/useNotifications';
 import type { ElectionDto } from "../../types";
 
 const router = useRouter();
 const { t } = useI18n();
 const electionStore = useElectionStore();
+const { showErrorMessage } = useNotifications();
 
 const loading = computed(() => electionStore.loading);
 const allElections = computed(() => electionStore.elections);
@@ -286,7 +287,7 @@ async function loadElections() {
   try {
     await electionStore.fetchElections();
   } catch (error) {
-    ElMessage({ message: t("elections.loadError"), type: 'error', duration: 0, showClose: true });
+    showErrorMessage(t("elections.loadError"));
   }
 }
 

@@ -145,7 +145,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import { UploadFilled } from '@element-plus/icons-vue';
 import type { UploadFile } from 'element-plus';
 import { importService } from '../../services/importService';
@@ -162,6 +162,7 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const importStore = useImportStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const currentStep = ref(0);
@@ -265,7 +266,7 @@ async function parseHeaders() {
       ) || '';
     }
   } catch (error: any) {
-    ElMessage.error(t('ballots.import.parseError'));
+    showErrorMessage(t('ballots.import.parseError'));
   }
 }
 
@@ -303,15 +304,15 @@ async function handleImport() {
     });
 
     if (result.success) {
-      ElMessage.success(t('ballots.import.success'));
+      showSuccessMessage(t('ballots.import.success'));
       setTimeout(() => {
         router.push(`/elections/${electionGuid}/ballots`);
       }, 2000);
     } else {
-      ElMessage.error(t('ballots.import.failed'));
+      showErrorMessage(t('ballots.import.failed'));
     }
   } catch (error: any) {
-    ElMessage.error(error.message || t('ballots.import.failed'));
+    showErrorMessage(error.message || t('ballots.import.failed'));
   } finally {
     importing.value = false;
   }

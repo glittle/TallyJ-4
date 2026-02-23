@@ -2,8 +2,9 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
 import { UploadFilled, Check, Warning, InfoFilled, Clock } from '@element-plus/icons-vue';
+import { useNotifications } from '../../composables/useNotifications';
 import type { UploadFile } from 'element-plus';
 import { peopleImportService } from '../../services/peopleImportService';
 import { signalrService } from '../../services/signalrService';
@@ -13,10 +14,12 @@ import type {
   PeopleImportProgressEvent,
   PeopleImportCompleteEvent,
 } from '../../types/SignalREvents';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
+const { showErrorMessage, showSuccessMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const currentStep = ref(0);
@@ -64,12 +67,28 @@ const isMappingValid = computed(() => {
 
 const canDeleteAllPeople = computed(() => true);
 
+const translatedErrors = computed(() => {
+  if (!importResult.value?.errors) return [];
+  return importResult.value.errors.map(error => ({
+    ...error,
+    message: t(error.key, error.parameters)
+  }));
+});
+
+const translatedWarnings = computed(() => {
+  if (!importResult.value?.warnings) return [];
+  return importResult.value.warnings.map(warning => ({
+    ...warning,
+    message: t(warning.key, warning.parameters)
+  }));
+});
+
 async function loadFiles() {
   try {
     files.value = await peopleImportService.getFiles(electionGuid);
   } catch (error) {
     console.error('Failed to load import files:', error);
-    ElMessage.error(t('people.import.loadFilesError'));
+    showErrorMessage(t('people.import.loadFilesError'));
   }
 }
 
@@ -79,6 +98,7 @@ async function loadPeopleCount() {
     peopleCount.value = result.count;
   } catch (error) {
     console.error('Failed to load people count:', error);
+    showErrorMessage(t('people.import.loadPeopleCountError'));
   }
 }
 
@@ -90,20 +110,19 @@ async function initializeSignalR() {
       importProgress.value = data;
     });
 
-    connection.on('importError', (errorMessage: string) => {
-      ElMessage.error(`Import error: ${errorMessage}`);
+    connection.on('importError', (msg: string) => {
+      showErrorMessage(msg);
     });
 
     connection.on('importComplete', (data: PeopleImportCompleteEvent) => {
       importing.value = false;
-      importResult.value = data.result;
       importProgress.value = null;
       if (data.result.success) {
-        ElMessage.success(
+        showSuccessMessage(
           `Import completed: ${data.result.peopleAdded} people added, ${data.result.peopleSkipped} skipped`
         );
       } else {
-        ElMessage.error('Import failed');
+        showErrorMessage('Import failed - ' + translatedErrors.value.length + ' errors');
       }
     });
   } catch (e) {
@@ -112,14 +131,16 @@ async function initializeSignalR() {
 }
 
 onMounted(async () => {
-  await initializeSignalR();
+  Promise.all([
+    initializeSignalR(),
+    loadFiles(),
+    loadPeopleCount()
+  ]);
   try {
     await signalrService.joinPeopleImportSession(electionGuid);
   } catch (e) {
     console.error('Failed to join people import session:', e);
   }
-  await loadFiles();
-  await loadPeopleCount();
 });
 
 onBeforeUnmount(async () => {
@@ -140,19 +161,16 @@ async function handleFileChange(file: UploadFile) {
     try {
       const uploadedFile = await peopleImportService.uploadFile(electionGuid, file.raw);
       await loadFiles();
-      
+
       // Show message if headers were detected at a non-standard row (row 2 or higher)
       if (uploadedFile.firstDataRow && uploadedFile.firstDataRow >= 2 && uploadedFile.fileType === 'xlsx') {
-        ElMessage.success({
-          message: t('people.import.headerAutoDetected', { row: uploadedFile.firstDataRow }),
-          duration: 5000
-        });
+        showSuccessMessage(t('people.import.headerAutoDetected', { row: uploadedFile.firstDataRow }));
       } else {
-        ElMessage.success('File uploaded successfully');
+        showSuccessMessage(t('people.import.fileUploadedSuccessfully'));
       }
     } catch (error) {
       console.error('Upload failed:', error);
-      ElMessage.error(t('people.import.uploadError'));
+      showErrorMessage(t('people.import.uploadError'));
     } finally {
       uploading.value = false;
     }
@@ -165,7 +183,7 @@ function handleUploadSuccess() {
 
 function handleUploadError() {
   uploading.value = false;
-  ElMessage.error(t('people.import.uploadError'));
+  showErrorMessage(t('people.import.uploadError'));
 }
 
 async function parseFile(codePage?: number, firstDataRow?: number) {
@@ -182,7 +200,7 @@ async function parseFile(codePage?: number, firstDataRow?: number) {
     columnMappings.value = result.autoMappings || [];
   } catch (error) {
     console.error('Failed to parse file:', error);
-    ElMessage.error('Failed to parse file');
+    showErrorMessage(t('people.import.parseFileError'));
     throw error;
   }
 }
@@ -193,6 +211,21 @@ async function selectFile(file: ImportFileInfo) {
   columnMappings.value = [];
   importResult.value = null;
   importProgress.value = null;
+
+  // First try to load saved mappings
+  try {
+    const savedMappings = await peopleImportService.getMapping(electionGuid, file.rowId);
+    if (savedMappings && savedMappings.length > 0) {
+      // If we have saved mappings, parse the file to get headers and preview, but use saved mappings
+      await parseFile();
+      columnMappings.value = savedMappings;
+      return;
+    }
+  } catch (error) {
+    console.warn('Failed to load saved mappings, falling back to auto-mapping:', error);
+  }
+
+  // Fall back to parsing file with auto-mappings
   await parseFile();
 }
 
@@ -228,7 +261,7 @@ async function updateFileSettings(file: ImportFileInfo) {
     await parseFile(updatedFile.codePage || undefined, updatedFile.firstDataRow || undefined);
   } catch (error) {
     console.error('Update settings failed:', error);
-    ElMessage.error('Failed to update file settings');
+    showErrorMessage('Failed to update file settings');
   }
 }
 
@@ -251,10 +284,10 @@ async function deleteFile(file: ImportFileInfo) {
       parsedResult.value = null;
       columnMappings.value = [];
     }
-    ElMessage.success('File deleted');
+    showSuccessMessage('File deleted');
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || t('people.import.deleteFileError'));
+      showErrorMessage(error.message || t('people.import.deleteFileError'));
     }
   }
 }
@@ -265,10 +298,10 @@ async function saveMapping() {
   savingMapping.value = true;
   try {
     await peopleImportService.saveMapping(electionGuid, selectedFile.value.rowId, columnMappings.value);
-    ElMessage.success(t('people.import.mappingSaved'));
+    showSuccessMessage(t('people.import.mappingSaved'));
   } catch (error) {
     console.error('Save mapping failed:', error);
-    ElMessage.error('Failed to save column mapping');
+    showErrorMessage('Failed to save column mapping');
   } finally {
     savingMapping.value = false;
   }
@@ -339,16 +372,16 @@ async function executeImport() {
     const result = await peopleImportService.executeImport(electionGuid, selectedFile.value.rowId);
     importResult.value = result;
     if (result.success) {
-      ElMessage.success(
+      showSuccessMessage(
         `Import completed: ${result.peopleAdded} people added, ${result.peopleSkipped} skipped`
       );
       await loadPeopleCount();
     } else {
-      ElMessage.error('Import failed');
+      showErrorMessage('Import failed: ' + result.errors.length);
     }
   } catch (error) {
     console.error('Import failed:', error);
-    ElMessage.error('Failed to execute import');
+    showErrorMessage('Failed to execute import');
   } finally {
     importing.value = false;
   }
@@ -367,13 +400,15 @@ async function confirmDeleteAllPeople() {
     );
 
     const result = await peopleImportService.deleteAllPeople(electionGuid);
-    ElMessage.success(`${result.deletedCount} people deleted`);
+    showSuccessMessage(`${result.deletedCount} people deleted`);
     await loadPeopleCount();
     showDeleteAllConfirm.value = false;
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || t('people.import.deleteAllPeopleError'));
+      const x = useApiErrorHandler();
+      x.handleApiError(error);
     }
+    showDeleteAllConfirm.value = false;
   }
 }
 </script>
@@ -430,7 +465,9 @@ async function confirmDeleteAllPeople() {
                   <el-tooltip :content="$t('people.import.headersOnLineTooltip')" placement="top">
                     <span>
                       {{ $t('people.import.headersOnLine') }}
-                      <el-icon style="margin-left: 4px; vertical-align: middle;"><InfoFilled /></el-icon>
+                      <el-icon style="margin-left: 4px; vertical-align: middle;">
+                        <InfoFilled />
+                      </el-icon>
                     </span>
                   </el-tooltip>
                 </template>
@@ -502,8 +539,8 @@ async function confirmDeleteAllPeople() {
                   <tr class="mapping-row">
                     <td class="target-cell">{{ $t('people.import.mapTo') }}</td>
                     <td v-for="(header, index) in parsedResult.headers" :key="`mapping-${index}`" class="mapping-cell">
-                      <el-select v-model="columnMappings[index].targetField" size="small" clearable
-                        :placeholder="$t('people.import.ignore')">
+                      <el-select v-if="columnMappings[index]" v-model="columnMappings[index].targetField" size="small"
+                        clearable :placeholder="$t('people.import.ignore')">
                         <el-option v-for="field in availableTargetFields" :key="field.value" :label="field.label"
                           :value="field.value" />
                       </el-select>
@@ -614,17 +651,40 @@ async function confirmDeleteAllPeople() {
                   </el-icon>
                   <span>{{ $t('people.import.peopleSkipped') }}: {{ importResult.peopleSkipped }}</span>
                 </div>
-                <div class="result-item info" v-if="importResult.warnings && importResult.warnings.length > 0">
+                <div class="result-item info" v-if="translatedWarnings.length > 0">
                   <el-icon>
                     <InfoFilled />
                   </el-icon>
-                  <span>{{ $t('people.import.warnings') }}: {{ importResult.warnings.length }}</span>
+                  <span>{{ $t('people.import.warnings') }}: {{ translatedWarnings.length }}</span>
                 </div>
                 <div class="result-item time">
                   <el-icon>
                     <Clock />
                   </el-icon>
                   <span>{{ $t('people.import.timeElapsed') }}: {{ formatTime(importResult.timeElapsedSeconds) }}</span>
+                </div>
+              </div>
+            </el-card>
+          </div>
+
+          <!-- Detailed Errors and Warnings -->
+          <div v-if="translatedErrors.length > 0 || translatedWarnings.length > 0" class="import-details">
+            <el-card class="details-card">
+              <template #header>
+                <h4>{{ $t('import.errors') }}</h4>
+              </template>
+              <div class="details-content">
+                <div v-for="error in translatedErrors" :key="`error-${error.key}`" class="detail-item error">
+                  <el-icon>
+                    <Warning />
+                  </el-icon>
+                  <span>{{ error.message }}</span>
+                </div>
+                <div v-for="warning in translatedWarnings" :key="`warning-${warning.key}`" class="detail-item warning">
+                  <el-icon>
+                    <InfoFilled />
+                  </el-icon>
+                  <span>{{ warning.message }}</span>
                 </div>
               </div>
             </el-card>
@@ -940,6 +1000,45 @@ async function confirmDeleteAllPeople() {
 
             span {
               font-weight: 500;
+            }
+          }
+        }
+      }
+    }
+
+    .import-details {
+      margin-bottom: 20px;
+
+      .details-card {
+        .details-content {
+          .detail-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+
+            &.error {
+              background-color: #fef0f0;
+              color: #f56c6c;
+              border: 1px solid #fbc4c4;
+            }
+
+            &.warning {
+              background-color: #fdf6ec;
+              color: #e6a23c;
+              border: 1px solid #f5dab1;
+            }
+
+            .el-icon {
+              margin-right: 8px;
+              margin-top: 2px;
+              flex-shrink: 0;
+            }
+
+            span {
+              line-height: 1.4;
             }
           }
         }

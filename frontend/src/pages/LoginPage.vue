@@ -3,13 +3,14 @@ import { ref, reactive, computed, onMounted, watch, nextTick, onBeforeUnmount } 
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
-import { ElMessage } from "element-plus";
+import { useNotifications } from '@/composables/useNotifications';
 import type { FormInstance, FormRules } from "element-plus";
 
 const { t, locale } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
+const { showSuccessMessage, showErrorMessage, showWarningMessage } = useNotifications();
 
 const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
@@ -78,14 +79,14 @@ const rules = computed<FormRules>(() => {
 
 const requestCode = async () => {
   if (!loginForm.email) {
-    ElMessage.warning(t("auth.emailRequired"));
+    showWarningMessage(t("auth.emailRequired"));
     return;
   }
   loading.value = true;
   try {
     // API Call for System 3 OTC request would go here
     // await authService.requestVoterCode(loginForm.email);
-    ElMessage.success(t("auth.voterLogin.emailSent"));
+    showSuccessMessage(t("auth.voterLogin.emailSent"));
     codeSent.value = true;
   } finally {
     loading.value = false;
@@ -108,23 +109,23 @@ const handleLogin = async () => {
       } else if (isVoterLogin.value) {
         // Handle System 3 login (OTC)
         // await authStore.loginVoter(loginForm.email, loginForm.code);
-        ElMessage.warning("Voter OTC login not fully implemented in backend yet.");
+        showWarningMessage("Voter OTC login not fully implemented in backend yet.");
         return;
       } else if (isTellerLogin.value) {
         // Handle System 2 login (Passcode)
         // await authStore.loginTeller(loginForm.passcode);
-        ElMessage.warning(
+        showWarningMessage(
           "Guest Teller passcode login not fully implemented in backend yet."
         );
         return;
       }
 
-      ElMessage.success(t("auth.loginSuccess"));
+      showSuccessMessage(t("auth.loginSuccess"));
       const redirectPath = (route.query.redirect as string) || "/dashboard";
       router.push(redirectPath);
     } catch (error) {
       console.error("Login failed:", error);
-      ElMessage.error(t("auth.loginFailed"));
+      showErrorMessage(t("auth.loginFailed"));
     } finally {
       loading.value = false;
     }
@@ -141,11 +142,11 @@ const handleGoogleOneTapCallback = async (response: GoogleCredentialResponse) =>
   loading.value = true;
   try {
     await authStore.googleOneTapLogin(response.credential);
-    ElMessage.success(t("auth.loginSuccess"));
+    showSuccessMessage(t("auth.loginSuccess"));
     const redirectPath = (route.query.redirect as string) || "/dashboard";
     router.push(redirectPath);
   } catch {
-    ElMessage.error(t("auth.googleLoginFailed"));
+    showErrorMessage(t("auth.googleLoginFailed"));
   } finally {
     loading.value = false;
   }

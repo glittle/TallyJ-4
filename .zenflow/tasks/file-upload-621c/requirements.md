@@ -11,7 +11,7 @@ Replace the current simple file-upload dialog in PeopleManagementPage with a ded
 - Store uploaded files server-side (in the `ImportFile` database table) so users can return days later to finish mapping/importing.
 - Support multiple uploaded files per election; user selects which file to work with.
 - Auto-detect column mappings where possible; allow manual override.
-- Deduplicate on import: match by Bahá'í ID if present, otherwise by First+Last name exact match.
+- Deduplicate on import: match by Bahá’í ID if present, otherwise by First+Last name exact match.
 - Provide progress feedback and a summary of results after import.
 
 ## User Flow
@@ -44,25 +44,25 @@ Dedicated page at route `/elections/:id/people/import`. Accessible from PeopleMa
 
 #### TallyJ Target Fields
 
-| Field | Required | Description |
-|---|---|---|
-| First Name | Required | The individual's first/given name. |
-| Last Name | Required | The individual's last name/surname. |
-| Bahá'í ID | | Useful for reporting and deduplication. |
-| Eligibility Status | | Must exactly match a known reason description or code. See below. |
-| Area | | Geographical area. Useful for reporting. |
-| Email | | Email address. Needed for Online Voting. |
-| Phone | | Phone number. Needed for Online Voting. |
-| Other Names | | Other names this person may be known by. |
-| Other Last Names | | Other last names this person may be known by. |
-| Other Info | | Other distinguishing information to identify this person. |
+| Field              | Required | Description                                                       |
+| ------------------ | -------- | ----------------------------------------------------------------- |
+| First Name         | Required | The individual's first/given name.                                |
+| Last Name          | Required | The individual's last name/surname.                               |
+| Bahá’í ID          |          | Useful for reporting and deduplication.                           |
+| Eligibility Status |          | Must exactly match a known reason description or code. See below. |
+| Area               |          | Geographical area. Useful for reporting.                          |
+| Email              |          | Email address. Needed for Online Voting.                          |
+| Phone              |          | Phone number. Needed for Online Voting.                           |
+| Other Names        |          | Other names this person may be known by.                          |
+| Other Last Names   |          | Other last names this person may be known by.                     |
+| Other Info         |          | Other distinguishing information to identify this person.         |
 
 #### Eligibility Status Reference
 
 The page displays (collapsible) the list of valid Eligibility Status values grouped by category, matching the `IneligibleReasonEnum` definitions:
 
 - **Can Vote and be Voted For**: Eligible (blank/empty)
-- **Cannot Vote, Cannot be Voted For**: Under 18 years old, Resides elsewhere, Moved elsewhere recently, Not in this local unit, Deceased, Not a delegate and on other Institution, Not a registered Bahá'í, Rights removed (entirely), Other (cannot vote or be voted for)
+- **Cannot Vote, Cannot be Voted For**: Under 18 years old, Resides elsewhere, Moved elsewhere recently, Not in this local unit, Deceased, Not a delegate and on other Institution, Not a registered Bahá’í, Rights removed (entirely), Other (cannot vote or be voted for)
 - **Can Vote (but cannot be voted for)**: Youth aged 18/19/20, On other Institution (e.g. Counsellor), By-election: On Institution already, Tie-break election: Not tied, Rights removed (cannot be voted for), Other (can vote but not be voted for)
 - **Cannot Vote (but can be voted for)**: Not a delegate in this election, Rights removed (cannot vote), Other (cannot vote but can be voted for)
 
@@ -77,8 +77,8 @@ Also displays **Recommended Status Settings** guidance for different election ty
 - **"Import now"** button starts the import.
 - Progress indicator during import (can use SignalR for real-time updates on large files).
 - **Deduplication logic**:
-  - If a Bahá'í ID column is mapped and a row has a Bahá'í ID value: match against existing people by Bahá'í ID only. If found, skip (do not update). If not found, create new person.
-  - If no Bahá'í ID is mapped or the row's Bahá'í ID is empty: match by exact First Name + Last Name (case-insensitive). If found, skip. If not found, create new person.
+  - If a Bahá’í ID column is mapped and a row has a Bahá’í ID value: match against existing people by Bahá’í ID only. If found, skip (do not update). If not found, create new person.
+  - If no Bahá’í ID is mapped or the row's Bahá’í ID is empty: match by exact First Name + Last Name (case-insensitive). If found, skip. If not found, create new person.
 - **Eligibility Status handling**:
   - If an Eligibility Status column is mapped, the value is matched against `IneligibleReasonEnum` by description (e.g., "Deceased", "Youth aged 18/19/20") or by code (e.g., "X01", "V01", "R01"). The old v3 approach of accepting GUIDs in the file is no longer supported — codes are preferred. Unrecognized values are treated as eligible (blank) with a warning.
 - After import, display results summary:
@@ -114,16 +114,16 @@ Also displays **Recommended Status Settings** guidance for different election ty
 
 ## Existing Code to Reuse or Replace
 
-| Component | Current State | Action |
-|---|---|---|
-| `ImportFile` entity | Exists with correct schema | Reuse |
-| `ImportController` | Currently handles ballot imports only | Extend with people import endpoints |
-| `ImportService` | Ballot-specific CSV parsing | New `PeopleImportService` needed |
-| `PeopleManagementPage` import dialog | Simple file upload dialog | Replace with navigation to new page |
-| `importStore` (Pinia) | Ballot import SignalR state | Extend or create `peopleImportStore` |
-| `IneligibleReasonEnum` | Complete with all codes | Reuse — `GetByDescription` and `GetByCode` for eligibility matching |
-| `CreatePersonDto` | All person fields | Reuse for creating people during import |
-| `IPeopleService` | CRUD operations | Extend with bulk create / duplicate check |
+| Component                            | Current State                         | Action                                                              |
+| ------------------------------------ | ------------------------------------- | ------------------------------------------------------------------- |
+| `ImportFile` entity                  | Exists with correct schema            | Reuse                                                               |
+| `ImportController`                   | Currently handles ballot imports only | Extend with people import endpoints                                 |
+| `ImportService`                      | Ballot-specific CSV parsing           | New `PeopleImportService` needed                                    |
+| `PeopleManagementPage` import dialog | Simple file upload dialog             | Replace with navigation to new page                                 |
+| `importStore` (Pinia)                | Ballot import SignalR state           | Extend or create `peopleImportStore`                                |
+| `IneligibleReasonEnum`               | Complete with all codes               | Reuse — `GetByDescription` and `GetByCode` for eligibility matching |
+| `CreatePersonDto`                    | All person fields                     | Reuse for creating people during import                             |
+| `IPeopleService`                     | CRUD operations                       | Extend with bulk create / duplicate check                           |
 
 ## Assumptions
 

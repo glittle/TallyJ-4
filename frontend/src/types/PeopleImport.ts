@@ -31,13 +31,23 @@ export interface UpdateFileSettingsDto {
   codePage?: number;
 }
 
+export interface ImportErrorDto {
+  key: string;
+  parameters: Record<string, string>;
+}
+
+export interface ImportWarningDto {
+  key: string;
+  parameters: Record<string, string>;
+}
+
 export interface ImportPeopleResult {
   success: boolean;
   peopleAdded: number;
   peopleSkipped: number;
   totalRows: number;
-  warnings: string[];
-  errors: string[];
+  warnings: ImportWarningDto[];
+  errors: ImportErrorDto[];
   timeElapsedSeconds: number;
 }
 

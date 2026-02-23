@@ -1,6 +1,6 @@
 # TallyJ 4 - Election Management System
 
-A modern, real-time election management and ballot tallying system designed for Bahá'í communities.
+A modern, real-time election management and ballot tallying system designed for Bahá’í communities.
 
 ## Features
 
@@ -36,12 +36,14 @@ A modern, real-time election management and ballot tallying system designed for 
 ### Development
 
 1. Start the backend API:
+
    ```bash
    cd backend
    dotnet run
    ```
 
 2. Start the frontend development server:
+
    ```bash
    cd frontend
    npm run dev
@@ -82,6 +84,7 @@ dotnet test
 ## Deployment
 
 The application is configured for deployment with:
+
 - Frontend: Static hosting (Vercel, Netlify, etc.)
 - Backend: Azure App Service, AWS, or any ASP.NET Core hosting
 - Database: SQL Server (Azure SQL, AWS RDS, etc.)
@@ -103,4 +106,4 @@ The application is configured for deployment with:
 
 ## License
 
-Copyright © Bahá'í communities. All rights reserved.
+Copyright © Bahá’í communities. All rights reserved.
