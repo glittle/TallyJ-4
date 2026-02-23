@@ -6,4 +6,4 @@
 
 // Version information - UPDATE THIS BEFORE DEPLOYMENT
 export const VERSION = '4.0.1 Beta';
-export const BUILD_DATE = '2026-02-22'; // YYYY-MM-DD format
+export const BUILD_DATE = '22 February 2026 / 18 Dominion 182'; // any format

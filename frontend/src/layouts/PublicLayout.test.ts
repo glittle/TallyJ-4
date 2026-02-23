@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { createRouter, createWebHistory } from 'vue-router'
 import PublicLayout from './PublicLayout.vue'
 import { i18n } from '../test/setup'
+import { VERSION } from '../components/version'
 
 describe('PublicLayout', () => {
   let router: any
@@ -110,6 +111,6 @@ describe('PublicLayout', () => {
     const logoH2 = wrapper.find('.logo h2')
     expect(logoH2.exists()).toBe(true)
     expect(logoH2.attributes('title')).toContain('Version')
-    expect(logoH2.attributes('title')).toContain('4.0.1 Beta')
+    expect(logoH2.attributes('title')).toContain(VERSION)
   })
 })
