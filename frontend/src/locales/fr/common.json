@@ -13,6 +13,7 @@
   "common.save": "Enregistrer",
   "common.delete": "Supprimer",
   "common.edit": "Modifier",
+  "common.enter": "Entrer",
   "common.view": "Voir",
   "common.create": "Créer",
   "common.actions": "Actions",
@@ -35,5 +36,6 @@
   "common.previous": "Précédent",
   "common.yes": "Oui",
   "common.no": "Non",
-  "common.close": "Fermer"
+  "common.close": "Fermer",
+  "common.refresh": "Actualiser"
 }
