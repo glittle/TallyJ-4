@@ -94,6 +94,7 @@ import { Plus, Edit, Delete } from '@element-plus/icons-vue'
 import { useTellerStore } from '@/stores/tellerStore'
 import { ElMessageBox } from 'element-plus';
 import { useNotifications } from '@/composables/useNotifications'
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler'
 import type { Teller } from '@/types/teller'
 import TellerFormDialog from '@/components/tellers/TellerFormDialog.vue'
 
@@ -101,6 +102,7 @@ const router = useRouter()
 const route = useRoute()
 const tellerStore = useTellerStore()
 const { showErrorMessage } = useNotifications()
+const { handleApiError } = useApiErrorHandler()
 
 const electionGuid = route.params.id as string
 const showCreateDialog = ref(false)
@@ -128,7 +130,7 @@ async function loadTellers() {
   try {
     await tellerStore.fetchTellers(electionGuid, currentPage.value, pageSize.value)
   } catch (error) {
-    showErrorMessage('Failed to load tellers')
+    handleApiError(error)
   }
 }
 

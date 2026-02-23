@@ -14,7 +14,9 @@ import type {
   PeopleImportProgressEvent,
   PeopleImportCompleteEvent,
 } from '../../types/SignalREvents';
+
 import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
+const { handleApiError } = useApiErrorHandler();
 
 const router = useRouter();
 const route = useRoute();
@@ -43,7 +45,9 @@ const availableTargetFields = computed(() => [
 ]);
 
 const previewRows = computed(() => {
-  if (!parsedResult.value?.previewRows) return [];
+  if (!parsedResult.value?.previewRows) {
+    return [];
+  }
   return parsedResult.value.previewRows.slice(0, 5);
 });
 
@@ -68,7 +72,9 @@ const isMappingValid = computed(() => {
 const canDeleteAllPeople = computed(() => true);
 
 const translatedErrors = computed(() => {
-  if (!importResult.value?.errors) return [];
+  if (!importResult.value?.errors) {
+    return [];
+  }
   return importResult.value.errors.map(error => ({
     ...error,
     message: t(error.key, error.parameters)
@@ -76,7 +82,9 @@ const translatedErrors = computed(() => {
 });
 
 const translatedWarnings = computed(() => {
-  if (!importResult.value?.warnings) return [];
+  if (!importResult.value?.warnings) {
+    return [];
+  }
   return importResult.value.warnings.map(warning => ({
     ...warning,
     message: t(warning.key, warning.parameters)
@@ -87,8 +95,7 @@ async function loadFiles() {
   try {
     files.value = await peopleImportService.getFiles(electionGuid);
   } catch (error) {
-    console.error('Failed to load import files:', error);
-    showErrorMessage(t('people.import.loadFilesError'));
+    handleApiError(error);
   }
 }
 
@@ -97,8 +104,7 @@ async function loadPeopleCount() {
     const result = await peopleImportService.getPeopleCount(electionGuid);
     peopleCount.value = result.count;
   } catch (error) {
-    console.error('Failed to load people count:', error);
-    showErrorMessage(t('people.import.loadPeopleCountError'));
+    handleApiError(error);
   }
 }
 
@@ -126,7 +132,7 @@ async function initializeSignalR() {
       }
     });
   } catch (e) {
-    console.error('Failed to initialize SignalR for people import:', e);
+    handleApiError(e);
   }
 }
 
@@ -139,7 +145,7 @@ onMounted(async () => {
   try {
     await signalrService.joinPeopleImportSession(electionGuid);
   } catch (e) {
-    console.error('Failed to join people import session:', e);
+    handleApiError(e);
   }
 });
 
@@ -147,7 +153,7 @@ onBeforeUnmount(async () => {
   try {
     await signalrService.leavePeopleImportSession(electionGuid);
   } catch (e) {
-    console.error('Failed to leave people import session:', e);
+    handleApiError(e);
   }
 });
 
@@ -187,7 +193,9 @@ function handleUploadError() {
 }
 
 async function parseFile(codePage?: number, firstDataRow?: number) {
-  if (!selectedFile.value) return;
+  if (!selectedFile.value) {
+    return;
+  }
 
   try {
     const result = await peopleImportService.parseFile(
@@ -199,8 +207,7 @@ async function parseFile(codePage?: number, firstDataRow?: number) {
     parsedResult.value = result;
     columnMappings.value = result.autoMappings || [];
   } catch (error) {
-    console.error('Failed to parse file:', error);
-    showErrorMessage(t('people.import.parseFileError'));
+    handleApiError(error);
     throw error;
   }
 }
@@ -239,7 +246,7 @@ async function reparseFile(file: ImportFileInfo) {
     importProgress.value = null;
     await parseFile(file.codePage || undefined, file.firstDataRow || undefined);
   } catch (error) {
-    console.error('Reparse failed:', error);
+    handleApiError(error);
   } finally {
     reparsing.value = null;
   }
@@ -260,8 +267,7 @@ async function updateFileSettings(file: ImportFileInfo) {
     }
     await parseFile(updatedFile.codePage || undefined, updatedFile.firstDataRow || undefined);
   } catch (error) {
-    console.error('Update settings failed:', error);
-    showErrorMessage('Failed to update file settings');
+    handleApiError(error);
   }
 }
 
@@ -293,15 +299,16 @@ async function deleteFile(file: ImportFileInfo) {
 }
 
 async function saveMapping() {
-  if (!selectedFile.value) return;
+  if (!selectedFile.value) {
+    return;
+  }
 
   savingMapping.value = true;
   try {
     await peopleImportService.saveMapping(electionGuid, selectedFile.value.rowId, columnMappings.value);
     showSuccessMessage(t('people.import.mappingSaved'));
   } catch (error) {
-    console.error('Save mapping failed:', error);
-    showErrorMessage('Failed to save column mapping');
+    handleApiError(error);
   } finally {
     savingMapping.value = false;
   }
@@ -324,11 +331,13 @@ function getStatusType(status: string | null): string {
 }
 
 function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) {
+    return '0 B';
+  }
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
 function getFieldDescription(fieldValue: string): string {
@@ -362,7 +371,9 @@ function formatTime(seconds: number): string {
 }
 
 async function executeImport() {
-  if (!selectedFile.value) return;
+  if (!selectedFile.value) {
+    return;
+  }
 
   importing.value = true;
   importResult.value = null;
@@ -403,10 +414,9 @@ async function confirmDeleteAllPeople() {
     showSuccessMessage(`${result.deletedCount} people deleted`);
     await loadPeopleCount();
     showDeleteAllConfirm.value = false;
-  } catch (error: any) {
+  } catch (error) {
     if (error !== 'cancel') {
-      const x = useApiErrorHandler();
-      x.handleApiError(error);
+      handleApiError(error);
     }
     showDeleteAllConfirm.value = false;
   }
@@ -952,12 +962,12 @@ async function confirmDeleteAllPeople() {
 
       h4 {
         margin-bottom: 15px;
-        color: #303133;
+        color: var(--color-text-primary);
       }
 
       .progress-message {
         margin-top: 10px;
-        color: #606266;
+        color: var(--color-text-secondary);
         font-style: italic;
       }
     }
@@ -975,23 +985,23 @@ async function confirmDeleteAllPeople() {
             border-radius: 4px;
 
             &.success {
-              background-color: #f0f9ff;
-              color: #67c23a;
+              background-color: var(--color-success-50);
+              color: var(--color-success-600);
             }
 
             &.warning {
-              background-color: #fdf6ec;
-              color: #e6a23c;
+              background-color: var(--color-warning-50);
+              color: var(--color-warning-600);
             }
 
             &.info {
-              background-color: #f4f4f5;
-              color: #909399;
+              background-color: var(--color-gray-100);
+              color: var(--color-gray-400);
             }
 
             &.time {
-              background-color: #f5f7fa;
-              color: #606266;
+              background-color: var(--color-gray-100);
+              color: var(--color-text-secondary);
             }
 
             .el-icon {
@@ -1020,15 +1030,15 @@ async function confirmDeleteAllPeople() {
             font-size: 14px;
 
             &.error {
-              background-color: #fef0f0;
-              color: #f56c6c;
-              border: 1px solid #fbc4c4;
+              background-color: var(--color-error-50);
+              color: var(--color-error-600);
+              border: 1px solid var(--color-error-500);
             }
 
             &.warning {
-              background-color: #fdf6ec;
-              color: #e6a23c;
-              border: 1px solid #f5dab1;
+              background-color: var(--color-warning-50);
+              color: var(--color-warning-600);
+              border: 1px solid var(--color-warning-500);
             }
 
             .el-icon {

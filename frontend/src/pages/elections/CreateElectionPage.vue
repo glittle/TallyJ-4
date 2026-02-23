@@ -39,6 +39,7 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { type FormInstance, type FormRules } from 'element-plus';
 import { useNotifications } from '@/composables/useNotifications';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { useElectionStore } from '../../stores/electionStore';
 import type { CreateElectionDto, ElectionSummaryDto } from '../../types';
 import ElectionFormTabs from '../../components/elections/ElectionFormTabs.vue';
@@ -48,6 +49,7 @@ const router = useRouter();
 const { t } = useI18n();
 const electionStore = useElectionStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
@@ -109,8 +111,8 @@ async function submitForm() {
         const election = await electionStore.createElection(dto);
         showSuccessMessage(t('elections.createSuccess'));
         router.push(`/elections/${election.electionGuid}`);
-      } catch (error: any) {
-        showErrorMessage(extractApiErrorMessage(error));
+      } catch (error) {
+        handleApiError(error);
       } finally {
         submitting.value = false;
       }

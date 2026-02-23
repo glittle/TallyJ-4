@@ -6,7 +6,10 @@ import { useBallotStore } from '../../stores/ballotStore';
 import type { CreateBallotDto } from '../../types';
 
 import { useNotifications } from '../../composables/useNotifications';
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showSuccessMessage } = useNotifications();
+
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
+const { handleApiError } = useApiErrorHandler();
 
 const props = defineProps<{
   modelValue: boolean;
@@ -48,7 +51,9 @@ const rules = reactive<FormRules>({
 });
 
 async function handleSubmit() {
-  if (!formRef.value) return;
+  if (!formRef.value) {
+    return;
+  }
 
   await formRef.value.validate(async (valid) => {
     if (valid) {
@@ -65,8 +70,8 @@ async function handleSubmit() {
         await ballotStore.createBallot(dto);
         showSuccessMessage(t('ballots.createSuccess'));
         emit('success');
-      } catch (error: any) {
-        showErrorMessage(error.message || t('ballots.saveError'));
+      } catch (error) {
+        handleApiError(error);
       } finally {
         submitting.value = false;
       }

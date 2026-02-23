@@ -1,78 +1,3 @@
-<template>
-  <el-dialog
-    :model-value="modelValue"
-    :title="$t('ballots.votes', { code: ballot?.ballotCode })"
-    width="800px"
-    @update:model-value="$emit('update:modelValue', $event)"
-  >
-    <div v-if="ballot" class="ballot-votes-dialog">
-      <div class="ballot-info">
-        <el-descriptions :column="2" border size="small">
-          <el-descriptions-item :label="$t('ballots.location')">
-            {{ ballot.locationName }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('ballots.status')">
-            <el-tag :type="getStatusType(ballot.statusCode)">
-              {{ ballot.statusCode }}
-            </el-tag>
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('ballots.teller1')">
-            {{ ballot.teller1 || "-" }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('ballots.teller2')">
-            {{ ballot.teller2 || "-" }}
-          </el-descriptions-item>
-        </el-descriptions>
-      </div>
-
-      <div class="votes-section">
-        <div class="section-header">
-          <h4>{{ $t("ballots.votesList") }}</h4>
-          <el-button size="small" type="primary" @click="showAddVote = true">
-            <el-icon><Plus /></el-icon>
-            {{ $t("ballots.addVote") }}
-          </el-button>
-        </div>
-
-        <el-table :data="ballot.votes" style="width: 100%" size="small">
-          <el-table-column
-            prop="positionOnBallot"
-            :label="$t('ballots.position')"
-            width="80"
-          />
-          <el-table-column
-            prop="personFullName"
-            :label="$t('ballots.candidate')"
-            min-width="200"
-          />
-          <el-table-column prop="statusCode" :label="$t('ballots.status')" width="100">
-            <template #default="scope">
-              <el-tag size="small" :type="getVoteStatusType(scope.row.statusCode)">
-                {{ scope.row.statusCode }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('common.actions')" width="100">
-            <template #default="scope">
-              <el-button size="small" type="danger" @click="handleDeleteVote(scope.row)">
-                {{ $t("common.delete") }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-    </div>
-
-    <VoteFormDialog
-      v-model="showAddVote"
-      :ballot-guid="ballot?.ballotGuid || ''"
-      :election-guid="electionGuid"
-      :next-position="nextPosition"
-      @success="handleVoteSuccess"
-    />
-  </el-dialog>
-</template>
-
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -82,6 +7,8 @@ import { Plus } from "@element-plus/icons-vue";
 import { useBallotStore } from "../../stores/ballotStore";
 import type { BallotDto, VoteDto } from "../../types";
 import VoteFormDialog from "./VoteFormDialog.vue";
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
+const { handleApiError } = useApiErrorHandler();
 
 const props = defineProps<{
   modelValue: boolean;
@@ -95,12 +22,14 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const ballotStore = useBallotStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showSuccessMessage } = useNotifications();
 
 const showAddVote = ref(false);
 
 const nextPosition = computed(() => {
-  if (!props.ballot?.votes.length) return 1;
+  if (!props.ballot?.votes.length) {
+    return 1;
+  }
   return Math.max(...props.ballot.votes.map((v) => v.positionOnBallot)) + 1;
 });
 
@@ -116,7 +45,7 @@ async function handleDeleteVote(vote: VoteDto) {
     showSuccessMessage(t("ballots.deleteVoteSuccess"));
   } catch (error: any) {
     if (error !== "cancel") {
-      showErrorMessage(error.message || t("ballots.deleteVoteError"));
+      handleApiError(error);
     }
   }
 }
@@ -146,6 +75,66 @@ function getVoteStatusType(status: string) {
   return typeMap[status] || "info";
 }
 </script>
+
+<template>
+  <el-dialog :model-value="modelValue" :title="$t('ballots.votes', { code: ballot?.ballotCode })" width="800px"
+    @update:model-value="$emit('update:modelValue', $event)">
+    <div v-if="ballot" class="ballot-votes-dialog">
+      <div class="ballot-info">
+        <el-descriptions :column="2" border size="small">
+          <el-descriptions-item :label="$t('ballots.location')">
+            {{ ballot.locationName }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="$t('ballots.status')">
+            <el-tag :type="getStatusType(ballot.statusCode)">
+              {{ ballot.statusCode }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="$t('ballots.teller1')">
+            {{ ballot.teller1 || "-" }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="$t('ballots.teller2')">
+            {{ ballot.teller2 || "-" }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+
+      <div class="votes-section">
+        <div class="section-header">
+          <h4>{{ $t("ballots.votesList") }}</h4>
+          <el-button size="small" type="primary" @click="showAddVote = true">
+            <el-icon>
+              <Plus />
+            </el-icon>
+            {{ $t("ballots.addVote") }}
+          </el-button>
+        </div>
+
+        <el-table :data="ballot.votes" style="width: 100%" size="small">
+          <el-table-column prop="positionOnBallot" :label="$t('ballots.position')" width="80" />
+          <el-table-column prop="personFullName" :label="$t('ballots.candidate')" min-width="200" />
+          <el-table-column prop="statusCode" :label="$t('ballots.status')" width="100">
+            <template #default="scope">
+              <el-tag size="small" :type="getVoteStatusType(scope.row.statusCode)">
+                {{ scope.row.statusCode }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('common.actions')" width="100">
+            <template #default="scope">
+              <el-button size="small" type="danger" @click="handleDeleteVote(scope.row)">
+                {{ $t("common.delete") }}
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
+
+    <VoteFormDialog v-model="showAddVote" :ballot-guid="ballot?.ballotGuid || ''" :election-guid="electionGuid"
+      :next-position="nextPosition" @success="handleVoteSuccess" />
+  </el-dialog>
+</template>
 
 <style lang="less">
 .ballot-votes-dialog {

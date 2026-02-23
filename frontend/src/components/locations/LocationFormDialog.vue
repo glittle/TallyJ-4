@@ -2,6 +2,7 @@
 import { ref, reactive, watch } from 'vue';
 import { type FormInstance, type FormRules } from 'element-plus';
 import { useNotifications } from '@/composables/useNotifications';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { useLocationStore } from '../../stores/locationStore';
 import type { LocationDto, CreateLocationDto, UpdateLocationDto } from '../../types';
 
@@ -19,6 +20,7 @@ const emit = defineEmits<{
 
 const locationStore = useLocationStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
@@ -116,8 +118,8 @@ async function handleSubmit() {
           showSuccessMessage('Location created successfully');
         }
         emit('success');
-      } catch (error: any) {
-        showErrorMessage(error.message || 'Failed to save location');
+      } catch (error) {
+        handleApiError(error);
       } finally {
         submitting.value = false;
       }

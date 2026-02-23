@@ -102,6 +102,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useNotifications } from '@/composables/useNotifications';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { Operation } from '@element-plus/icons-vue';
 import { useResultStore } from '../../stores/resultStore';
 
@@ -110,6 +111,7 @@ const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
 const electionType = ref<'normal' | 'singlename'>('normal');
@@ -143,8 +145,8 @@ async function handleCalculate() {
   try {
     await resultStore.calculateTally(electionGuid, electionType.value);
     showSuccessMessage(t('tally.calculateSuccess'));
-  } catch (error: any) {
-    showErrorMessage(error.message || t('tally.calculateError'));
+  } catch (error) {
+    handleApiError(error);
   }
 }
 

@@ -3,6 +3,7 @@ import { ref, reactive, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { type FormInstance, type FormRules } from 'element-plus';
 import { useNotifications } from '@/composables/useNotifications';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useEligibilityStore } from '../../stores/eligibilityStore';
 import type { PersonDto, CreatePersonDto, UpdatePersonDto } from '../../types';
@@ -23,6 +24,7 @@ const { t } = useI18n();
 const peopleStore = usePeopleStore();
 const eligibilityStore = useEligibilityStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
@@ -100,8 +102,8 @@ async function handleSubmit() {
           showSuccessMessage(t('people.createSuccess'));
         }
         emit('success');
-      } catch (error: any) {
-        showErrorMessage(error.message || t('people.saveError'));
+      } catch (error) {
+        handleApiError(error);
       } finally {
         submitting.value = false;
       }

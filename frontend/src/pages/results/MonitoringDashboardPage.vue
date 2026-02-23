@@ -169,6 +169,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useNotifications } from '@/composables/useNotifications';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { DocumentChecked, Check, Monitor, Location } from '@element-plus/icons-vue';
 import { useResultStore } from '../../stores/resultStore';
 import type { MonitorInfoDto } from '../../types';
@@ -178,6 +179,7 @@ const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
 const { showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
 const monitorInfo = ref<MonitorInfoDto | null>(null);
@@ -201,7 +203,7 @@ async function loadData() {
     const data = await resultStore.fetchMonitorInfo(electionGuid);
     monitorInfo.value = data;
   } catch (error) {
-    showErrorMessage(t('monitoring.loadError'));
+    handleApiError(error);
   } finally {
     loading.value = false;
   }

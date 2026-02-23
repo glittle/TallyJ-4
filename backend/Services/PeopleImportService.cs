@@ -262,6 +262,19 @@ public class PeopleImportService : IPeopleImportService
             throw new ArgumentException("Import file not found");
         }
 
+        // check that there are no duplicate target fields in the mappings
+        var duplicateTargets = mappings
+        .Where(m => !string.IsNullOrEmpty(m.TargetField))
+        .GroupBy(m => m.TargetField)
+        .Where(g => g.Count() > 1)
+        .Select(g => string.Join(", ", g.Select(t => $"{t.FileColumn} → {g.Key}")))
+        .ToList();
+
+        if (duplicateTargets.Any())
+        {
+            throw new ArgumentException($"Duplicate target fields in mappings: {string.Join("; ", duplicateTargets)}");
+        }
+
         // Serialize mappings to JSON
         importFile.ColumnsToRead = JsonSerializer.Serialize(mappings);
         importFile.ProcessingStatus = "Mapped";

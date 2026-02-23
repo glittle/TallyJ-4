@@ -6,6 +6,7 @@ import { useNotifications } from '@/composables/useNotifications';
 import { useBallotStore } from '../../stores/ballotStore';
 import { usePeopleStore } from '../../stores/peopleStore';
 import type { CreateVoteDto, PersonDto } from '../../types';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 
 const props = defineProps<{
   modelValue: boolean;
@@ -22,7 +23,8 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const ballotStore = useBallotStore();
 const peopleStore = usePeopleStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showSuccessMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
@@ -48,7 +50,7 @@ onMounted(async () => {
     await peopleStore.fetchPeople(props.electionGuid);
     candidates.value = peopleStore.candidates;
   } catch (error) {
-    showErrorMessage(t('people.loadError'));
+    handleApiError(error);
   }
 });
 
@@ -57,21 +59,23 @@ async function searchPeople(query: string) {
     candidates.value = peopleStore.candidates;
     return;
   }
-  
+
   searching.value = true;
   try {
     const results = await peopleStore.searchPeople(props.electionGuid, query);
     candidates.value = results.filter(p => p.canReceiveVotes);
   } catch (error) {
-    showErrorMessage(t('people.searchError'));
+    handleApiError(error);
   } finally {
     searching.value = false;
   }
 }
 
 async function handleSubmit() {
-  if (!formRef.value) return;
-  
+  if (!formRef.value) {
+    return;
+  }
+
   await formRef.value.validate(async (valid) => {
     if (valid) {
       submitting.value = true;
@@ -85,8 +89,8 @@ async function handleSubmit() {
         await ballotStore.createVote(dto);
         showSuccessMessage(t('ballots.voteCreateSuccess'));
         emit('success');
-      } catch (error: any) {
-        showErrorMessage(error.message || t('ballots.voteSaveError'));
+      } catch (error) {
+        handleApiError(error);
       } finally {
         submitting.value = false;
       }
@@ -101,39 +105,18 @@ function handleClose() {
 </script>
 
 <template>
-  <el-dialog
-    :model-value="modelValue"
-    :title="$t('ballots.addVote')"
-    width="400px"
-    @update:model-value="$emit('update:modelValue', $event)"
-    @close="handleClose"
-  >
-    <el-form
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-width="100px"
-      label-position="left"
-    >
+  <el-dialog :model-value="modelValue" :title="$t('ballots.addVote')" width="400px"
+    @update:model-value="$emit('update:modelValue', $event)" @close="handleClose">
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" label-position="left">
       <el-form-item :label="$t('ballots.position')" prop="positionOnBallot">
         <el-input-number v-model="form.positionOnBallot" :min="1" :max="50" />
       </el-form-item>
 
       <el-form-item :label="$t('ballots.candidate')" prop="personGuid">
-        <el-select
-          v-model="form.personGuid"
-          filterable
-          remote
-          :remote-method="searchPeople"
-          :loading="searching"
-          style="width: 100%"
-        >
-          <el-option
-            v-for="person in candidates"
-            :key="person.personGuid"
-            :label="person.fullName"
-            :value="person.personGuid"
-          />
+        <el-select v-model="form.personGuid" filterable remote :remote-method="searchPeople" :loading="searching"
+          style="width: 100%">
+          <el-option v-for="person in candidates" :key="person.personGuid" :label="person.fullName"
+            :value="person.personGuid" />
         </el-select>
       </el-form-item>
     </el-form>

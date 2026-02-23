@@ -3,6 +3,7 @@ import { ref, reactive, watch } from 'vue'
 import { type FormInstance, type FormRules } from 'element-plus'
 import { useTellerStore } from '@/stores/tellerStore'
 import { useNotifications } from '@/composables/useNotifications'
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler'
 import type { Teller, CreateTellerDto, UpdateTellerDto } from '@/types/teller'
 
 const props = defineProps<{
@@ -19,6 +20,7 @@ const emit = defineEmits<{
 
 const tellerStore = useTellerStore()
 const { showErrorMessage } = useNotifications()
+const { handleApiError } = useApiErrorHandler()
 
 const formRef = ref<FormInstance>()
 const submitting = ref(false)
@@ -91,8 +93,8 @@ async function handleSubmit() {
           await tellerStore.createTeller(props.electionGuid, dto)
         }
         emit('success')
-      } catch (error: any) {
-        showErrorMessage(error.message || 'Failed to save teller')
+      } catch (error) {
+        handleApiError(error)
       } finally {
         submitting.value = false
       }
