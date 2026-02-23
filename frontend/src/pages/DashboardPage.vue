@@ -67,9 +67,94 @@
           </el-empty>
         </div>
         <div v-else role="table" aria-label="Recent elections table" class="elections-table-container">
-          <el-table :data="elections" style="width: 100%">
-            <el-table-column prop="name" :label="$t('elections.name')" min-width="200" />
-            <el-table-column prop="electionType" :label="$t('elections.type')" width="120" />
+          <el-table :data="electionsWithDetails" style="width: 100%" :expand-row-keys="expandedRowKeys" row-key="electionGuid">
+            <el-table-column type="expand">
+              <template #default="{ row }">
+                <div class="expanded-content">
+                  <el-row :gutter="20">
+                    <!-- Left Column: Election Details -->
+                    <el-col :xs="24" :md="12">
+                      <div class="detail-section">
+                        <h4>{{ $t('dashboard.electionDetails') }}</h4>
+                        <div class="detail-row">
+                          <span class="detail-label">{{ $t('elections.convenor') }}:</span>
+                          <span class="detail-value">{{ row.convenor || '-' }}</span>
+                        </div>
+                        <div class="detail-row">
+                          <span class="detail-label">{{ $t('elections.type') }}:</span>
+                          <span class="detail-value">{{ row.electionType || '-' }}</span>
+                        </div>
+                        <div class="detail-row">
+                          <span class="detail-label">{{ $t('elections.mode') }}:</span>
+                          <span class="detail-value">{{ row.electionMode || '-' }}</span>
+                        </div>
+                        <div class="detail-row">
+                          <span class="detail-label">{{ $t('elections.toElect') }}:</span>
+                          <span class="detail-value">{{ row.numberToElect || 0 }}</span>
+                        </div>
+                        <div class="detail-row">
+                          <span class="detail-label">{{ $t('dashboard.canVote') }}:</span>
+                          <span class="detail-value">{{ row.voterCount }}</span>
+                        </div>
+                        <div class="detail-row">
+                          <span class="detail-label">{{ $t('dashboard.registered') }}:</span>
+                          <span class="detail-value">{{ row.voterCount }}</span>
+                        </div>
+                        <div class="detail-row">
+                          <span class="detail-label">{{ $t('dashboard.ballotsEntered') }}:</span>
+                          <span class="detail-value">{{ row.ballotCount }}</span>
+                        </div>
+                      </div>
+                    </el-col>
+
+                    <!-- Right Column: Online Voting & Ballots -->
+                    <el-col :xs="24" :md="12">
+                      <div class="detail-section">
+                        <h4>{{ $t('dashboard.onlineVoting') }}</h4>
+                        <div class="detail-row">
+                          <span class="detail-label">{{ $t('dashboard.opens') }}:</span>
+                          <span class="detail-value">{{ formatDateTime(row.onlineWhenOpen) }}</span>
+                        </div>
+                        <div class="detail-row">
+                          <span class="detail-label">{{ $t('dashboard.closes') }}:</span>
+                          <span class="detail-value">{{ formatDateTime(row.onlineWhenClose) }}</span>
+                        </div>
+                      </div>
+
+                      <div class="detail-section" style="margin-top: 20px;">
+                        <h4>{{ $t('dashboard.tellers') }}</h4>
+                        <div v-if="row.tellerCount > 0" class="detail-row">
+                          <span class="detail-label">{{ $t('dashboard.tellerCount') }}:</span>
+                          <span class="detail-value">
+                            <el-tag>{{ row.tellerCount }}</el-tag>
+                          </span>
+                        </div>
+                        <div v-else class="detail-row">
+                          <span class="detail-value">{{ $t('dashboard.noTellers') }}</span>
+                        </div>
+                      </div>
+                    </el-col>
+                  </el-row>
+
+                  <div class="expanded-actions">
+                    <el-button type="primary" @click="viewElection(row.electionGuid)">
+                      {{ $t("common.enter") }}
+                    </el-button>
+                    <el-button @click="viewElection(row.electionGuid)">
+                      {{ $t("dashboard.otherActions") }}
+                    </el-button>
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" :label="$t('elections.name')" min-width="200">
+              <template #default="scope">
+                <div class="election-name">
+                  <el-tag v-if="scope.row.showAsTest" type="danger" size="small" class="test-badge">TEST</el-tag>
+                  {{ scope.row.name }}
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="dateOfElection" :label="$t('elections.date')" width="140">
               <template #default="scope">
                 <time :datetime="scope.row.dateOfElection">{{
@@ -77,18 +162,47 @@
                 }}</time>
               </template>
             </el-table-column>
-            <el-table-column prop="voterCount" :label="$t('elections.people')" min-width="100" align="center" />
-            <el-table-column prop="ballotCount" :label="$t('elections.ballots')" min-width="100" align="center" />
             <el-table-column prop="tallyStatus" :label="$t('elections.status')" width="120">
               <template #default="scope">
-                {{ scope.row.tallyStatus || "Draft" }}
+                <el-tag :type="getStatusType(scope.row.tallyStatus || 'Draft')">
+                  {{ scope.row.tallyStatus || "Draft" }}
+                </el-tag>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('common.actions')" width="150" fixed="right">
+            <el-table-column :label="$t('dashboard.onlineVoting')" width="140" align="center">
               <template #default="scope">
-                <el-button size="small" @click="viewElection(scope.row.electionGuid)"
-                  :aria-label="'View election: ' + scope.row.name">
-                  {{ $t("common.view") }}
+                <div class="status-indicator">
+                  <el-switch 
+                    :model-value="isOnlineVotingOpen(scope.row)" 
+                    :disabled="true"
+                    inline-prompt
+                    :active-text="$t('dashboard.open')"
+                    :inactive-text="$t('dashboard.closed')"
+                  />
+                  <div v-if="scope.row.onlineWhenClose" class="status-time">
+                    {{ formatRelativeTime(scope.row.onlineWhenClose) }}
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('dashboard.tellersStatus')" width="140" align="center">
+              <template #default="scope">
+                <div class="status-indicator">
+                  <el-switch 
+                    :model-value="scope.row.tellerCount > 0" 
+                    :disabled="true"
+                    inline-prompt
+                    :active-text="$t('dashboard.active')"
+                    :inactive-text="$t('dashboard.closed')"
+                  />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('common.actions')" width="120" fixed="right" align="center">
+              <template #default="scope">
+                <el-button type="primary" size="small" @click="viewElection(scope.row.electionGuid)"
+                  :aria-label="'Enter election: ' + scope.row.name">
+                  {{ $t("common.enter") }}
                 </el-button>
               </template>
             </el-table-column>
@@ -100,7 +214,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
   Document,
@@ -108,9 +222,16 @@ import {
   Plus,
 } from "@element-plus/icons-vue";
 import { useElectionStore } from "../stores/electionStore";
+import { tellerService } from "../services/tellerService";
+import type { ElectionDto } from "../types";
 
 const router = useRouter();
 const electionStore = useElectionStore();
+const expandedRowKeys = ref<string[]>([]);
+
+interface ElectionWithDetails extends ElectionDto {
+  tellerCount: number;
+}
 
 const elections = computed(() => {
   // Sort by dateOfElection descending (most recent first), then take first 5
@@ -123,6 +244,8 @@ const elections = computed(() => {
     })
     .slice(0, 5);
 });
+
+const electionsWithDetails = ref<ElectionWithDetails[]>([]);
 const loading = computed(() => electionStore.loading);
 
 const statistics = computed(() => ({
@@ -138,9 +261,33 @@ async function loadDashboardData() {
   try {
     await electionStore.fetchElections();
     await electionStore.initializeSignalR();
+    await loadTellerCounts();
   } catch (error) {
     console.error("Failed to load dashboard data:", error);
   }
+}
+
+async function loadTellerCounts() {
+  // Load teller counts for all elections
+  const electionsData: ElectionWithDetails[] = [];
+  
+  for (const election of elections.value) {
+    try {
+      const tellers = await tellerService.getTellersByElection(election.electionGuid, 1, 1);
+      electionsData.push({
+        ...election,
+        tellerCount: tellers.totalCount || 0
+      });
+    } catch (error) {
+      // If we can't fetch tellers, just use 0
+      electionsData.push({
+        ...election,
+        tellerCount: 0
+      });
+    }
+  }
+  
+  electionsWithDetails.value = electionsData;
 }
 
 function createElection() {
@@ -154,6 +301,41 @@ function viewElection(guid: string) {
 function formatDate(date: string) {
   if (!date) return "-";
   return new Date(date).toLocaleDateString();
+}
+
+function formatDateTime(date: string | null | undefined) {
+  if (!date) return "-";
+  const dateObj = new Date(date);
+  return dateObj.toLocaleString();
+}
+
+function formatRelativeTime(date: string | null | undefined) {
+  if (!date) return "";
+  const now = new Date();
+  const target = new Date(date);
+  const diff = target.getTime() - now.getTime();
+  
+  if (diff < 0) {
+    const daysPast = Math.floor(Math.abs(diff) / (1000 * 60 * 60 * 24));
+    if (daysPast === 0) return "closed today";
+    if (daysPast === 1) return "closed yesterday";
+    return `closed ${daysPast} days ago`;
+  } else {
+    const daysUntil = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hoursUntil = Math.floor(diff / (1000 * 60 * 60));
+    if (hoursUntil < 24) return `in ${hoursUntil} hours`;
+    if (daysUntil === 0) return "closes today";
+    if (daysUntil === 1) return "tomorrow";
+    return `in ${daysUntil} days`;
+  }
+}
+
+function isOnlineVotingOpen(election: ElectionDto) {
+  if (!election.onlineWhenOpen || !election.onlineWhenClose) return false;
+  const now = new Date();
+  const open = new Date(election.onlineWhenOpen);
+  const close = new Date(election.onlineWhenClose);
+  return now >= open && now <= close;
 }
 
 function getStatusType(status: string) {
@@ -172,6 +354,77 @@ function getStatusType(status: string) {
   // max-width: 1400px;
   margin: 0 auto;
   padding: var(--spacing-6) var(--spacing-4);
+
+  .election-name {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+
+    .test-badge {
+      font-weight: bold;
+    }
+  }
+
+  .status-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-1);
+
+    .status-time {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+    }
+  }
+
+  .expanded-content {
+    padding: var(--spacing-6);
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+
+    .detail-section {
+      margin-bottom: var(--spacing-4);
+
+      h4 {
+        margin: 0 0 var(--spacing-3) 0;
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        border-bottom: 2px solid var(--color-primary-500);
+        padding-bottom: var(--spacing-2);
+      }
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: var(--spacing-2) 0;
+        border-bottom: 1px solid var(--color-border-light);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .detail-label {
+          font-weight: var(--font-weight-medium);
+          color: var(--color-text-secondary);
+        }
+
+        .detail-value {
+          color: var(--color-text-primary);
+          text-align: right;
+        }
+      }
+    }
+
+    .expanded-actions {
+      margin-top: var(--spacing-6);
+      padding-top: var(--spacing-4);
+      border-top: 2px solid var(--color-border);
+      display: flex;
+      gap: var(--spacing-3);
+      justify-content: flex-end;
+    }
+  }
 }
 
 .welcome-section {
@@ -423,6 +676,18 @@ function getStatusType(status: string) {
 
     .empty-state {
       padding: var(--spacing-8) var(--spacing-4);
+    }
+
+    .expanded-content {
+      padding: var(--spacing-4);
+
+      .expanded-actions {
+        flex-direction: column;
+
+        .el-button {
+          width: 100%;
+        }
+      }
     }
   }
 }
