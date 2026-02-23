@@ -1,30 +1,23 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { superAdminService } from "@/services/superAdminService";
 import type { SuperAdminSummary } from "@/services/superAdminService";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
+import { useAuthStore } from "./authStore";
 
 export const useSuperAdminStore = defineStore("superAdmin", () => {
-  const isSuperAdmin = ref(false);
-  const checkedStatus = ref(false);
+  const authStore = useAuthStore();
+  const isSuperAdmin = computed(() => authStore.isSuperAdmin);
   const summary = ref<SuperAdminSummary | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
 
   async function checkSuperAdminStatus() {
-    if (checkedStatus.value) {
-      return isSuperAdmin.value;
+    // Ensure auth store has fetched user info
+    if (!authStore.email && authStore.isAuthenticated) {
+      await authStore.fetchUserInfo();
     }
-    try {
-      const result = await superAdminService.check();
-      isSuperAdmin.value = result.isSuperAdmin;
-      checkedStatus.value = true;
-      return result.isSuperAdmin;
-    } catch {
-      isSuperAdmin.value = false;
-      checkedStatus.value = true;
-      return false;
-    }
+    return authStore.isSuperAdmin;
   }
 
   async function fetchSummary() {
@@ -45,8 +38,6 @@ export const useSuperAdminStore = defineStore("superAdmin", () => {
   }
 
   function $reset() {
-    isSuperAdmin.value = false;
-    checkedStatus.value = false;
     summary.value = null;
     loading.value = false;
     error.value = null;
@@ -54,7 +45,6 @@ export const useSuperAdminStore = defineStore("superAdmin", () => {
 
   return {
     isSuperAdmin,
-    checkedStatus,
     summary,
     loading,
     error,
