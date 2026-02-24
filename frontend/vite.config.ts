@@ -6,9 +6,23 @@ import { resolve, dirname } from "node:path";
 import { visualizer } from "rollup-plugin-visualizer";
 import viteCompression from "vite-plugin-compression";
 import path from "path";
+import simpleGit from "simple-git";
+
+const git = simpleGit();
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(async () => {
+  const branchInfo = await git.branch();
+  const branchName = branchInfo.current;
+  const commitHash = await git.revparse(["--short", "HEAD"], (err, result) => {
+    if (err) {
+      console.error(err);
+      return "";
+    }
+    return result;
+  });
+
+  return {
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -114,4 +128,9 @@ export default defineConfig({
     reportCompressedSize: true, // Report compressed sizes
   },
   publicDir: "public", // Ensure service worker is copied
+  define: {
+    "process.env.BRANCH_NAME": JSON.stringify(branchName),
+    "process.env.COMMIT_HASH": JSON.stringify(commitHash),
+  },
+};
 });
