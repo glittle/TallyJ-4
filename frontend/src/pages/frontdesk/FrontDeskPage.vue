@@ -1,3 +1,256 @@
+<script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useFrontDeskStore } from '@/stores/frontDeskStore';
+import { useLocationStore } from '@/stores/locationStore';
+import { ElMessageBox } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
+import { Search, UserFilled, User, Tickets, Clock, Warning } from '@element-plus/icons-vue';
+import type { FrontDeskVoterDto } from '@/types/FrontDesk';
+
+const route = useRoute();
+const router = useRouter();
+const frontDeskStore = useFrontDeskStore();
+const locationStore = useLocationStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
+
+const electionGuid = ref(route.params.id as string);
+const searchQuery = ref('');
+const loading = computed(() => frontDeskStore.loading);
+const stats = computed(() => frontDeskStore.stats);
+const locations = computed(() => locationStore.locations);
+
+// Keyboard navigation
+const searchInputRef = ref();
+const selectedIndex = ref(0);
+const selectedVoter = ref<FrontDeskVoterDto | null>(null);
+const showRegistrationButtons = ref(false);
+const selectedButtonIndex = ref(0);
+
+// History dialog
+const showHistoryDialog = ref(false);
+const historyVoter = ref<FrontDeskVoterDto | null>(null);
+
+const notCheckedInVoters = computed(() => frontDeskStore.notCheckedInVoters);
+const checkedInVoters = computed(() => frontDeskStore.checkedInVoters);
+
+// Registration type options
+const registrationTypes = [
+  { value: 'I', label: 'In Person', key: '1' },
+  { value: 'M', label: 'Mail', key: '2' },
+  { value: 'O', label: 'Online', key: '3' },
+  { value: 'C', label: 'Call-In', key: '4' }
+];
+
+const recentCheckIns = computed(() => {
+  return checkedInVoters.value
+    .slice()
+    .sort((a, b) => {
+      const aTime = a.registrationTime ? new Date(a.registrationTime).getTime() : 0;
+      const bTime = b.registrationTime ? new Date(b.registrationTime).getTime() : 0;
+      return bTime - aTime;
+    })
+    .slice(0, 5);
+});
+
+onMounted(async () => {
+  await loadData();
+  await frontDeskStore.initializeSignalR();
+  await frontDeskStore.joinElection(electionGuid.value);
+
+  // Focus search input
+  nextTick(() => {
+    searchInputRef.value?.focus();
+  });
+});
+
+onUnmounted(async () => {
+  await frontDeskStore.leaveElection(electionGuid.value);
+});
+
+// Watch search query and update selection
+watch(searchQuery, () => {
+  selectedIndex.value = 0;
+  updateSelectedVoter();
+  showRegistrationButtons.value = false;
+});
+
+// Watch filtered voters and update selection
+watch(notCheckedInVoters, () => {
+  updateSelectedVoter();
+});
+
+async function loadData() {
+  try {
+    await frontDeskStore.fetchEligibleVoters(electionGuid.value);
+    await locationStore.fetchLocations(electionGuid.value);
+  } catch (error: any) {
+    showErrorMessage(error.message || 'Failed to load data');
+  }
+}
+
+function updateSelectedVoter() {
+  const voters = notCheckedInVoters.value;
+  if (voters.length > 0 && selectedIndex.value >= 0 && selectedIndex.value < voters.length) {
+    selectedVoter.value = voters[selectedIndex.value]!;
+  } else {
+    selectedVoter.value = null;
+  }
+}
+
+function handleSearch() {
+  frontDeskStore.setSearchQuery(searchQuery.value);
+}
+
+function handleSearchKeydown(event: KeyboardEvent) {
+  const voters = notCheckedInVoters.value;
+
+  if (showRegistrationButtons.value) {
+    // Handle button navigation
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      selectedButtonIndex.value = Math.max(0, selectedButtonIndex.value - 1);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      selectedButtonIndex.value = Math.min(registrationTypes.length - 1, selectedButtonIndex.value + 1);
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      const selectedType = registrationTypes[selectedButtonIndex.value];
+      if (selectedType) {
+        confirmCheckIn(selectedType.value);
+      }
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      showRegistrationButtons.value = false;
+      selectedButtonIndex.value = 0;
+    } else if (event.key >= '1' && event.key <= '4') {
+      event.preventDefault();
+      const index = parseInt(event.key) - 1;
+      if (index >= 0 && index < registrationTypes.length) {
+        const regType = registrationTypes[index];
+        if (!regType) {
+          showErrorMessage(`Invalid registration type selected: ${index}`);
+          return;
+        }
+        confirmCheckIn(regType.value);
+      }
+    }
+  } else {
+    // Handle list navigation
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      selectedIndex.value = Math.min(voters.length - 1, selectedIndex.value + 1);
+      updateSelectedVoter();
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      selectedIndex.value = Math.max(0, selectedIndex.value - 1);
+      updateSelectedVoter();
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (selectedVoter.value) {
+        showRegistrationButtons.value = true;
+        selectedButtonIndex.value = 0;
+      }
+    }
+  }
+}
+
+function handleRowClick(row: FrontDeskVoterDto) {
+  selectedVoter.value = row;
+  selectedIndex.value = notCheckedInVoters.value.findIndex(v => v.personGuid === row.personGuid);
+  showRegistrationButtons.value = true;
+  selectedButtonIndex.value = 0;
+}
+
+async function confirmCheckIn(votingMethod: string) {
+  if (!selectedVoter.value) return;
+
+  try {
+    await frontDeskStore.checkInVoter(electionGuid.value, {
+      personGuid: selectedVoter.value.personGuid,
+      votingMethod,
+      tellerName: undefined,
+      votingLocationGuid: undefined
+    });
+
+    showSuccessMessage(`${selectedVoter.value.fullName} checked in successfully`);
+    showRegistrationButtons.value = false;
+
+    // Move to next voter or reset
+    const voters = notCheckedInVoters.value;
+    if (selectedIndex.value >= voters.length) {
+      selectedIndex.value = Math.max(0, voters.length - 1);
+    }
+    updateSelectedVoter();
+
+    // Refocus search input
+    nextTick(() => {
+      searchInputRef.value?.focus();
+    });
+  } catch (error: any) {
+    showErrorMessage(error.message || 'Failed to check in voter');
+  }
+}
+
+async function handleUnregister(voter: FrontDeskVoterDto) {
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to unregister ${voter.fullName}? This will clear their check-in status.`,
+      'Confirm Unregister',
+      {
+        confirmButtonText: 'Unregister',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }
+    );
+
+    await frontDeskStore.unregisterVoter(electionGuid.value, {
+      personGuid: voter.personGuid,
+      reason: 'Unregistered by front desk'
+    });
+
+    showSuccessMessage('Voter unregistered successfully');
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      showErrorMessage(error.message || 'Failed to unregister voter');
+    }
+  }
+}
+
+function showHistory(voter: FrontDeskVoterDto) {
+  historyVoter.value = voter;
+  showHistoryDialog.value = true;
+}
+
+function formatTime(time?: string): string {
+  if (!time) return '';
+  const date = new Date(time);
+  return date.toLocaleString();
+}
+
+function formatTimeShort(time?: string): string {
+  if (!time) return '';
+  const date = new Date(time);
+  return date.toLocaleTimeString();
+}
+
+function getProgressColor(percentage: number): string {
+  if (percentage < 30) return '#f56c6c';
+  if (percentage < 70) return '#e6a23c';
+  return '#67c23a';
+}
+
+function getRowClassName({ row, rowIndex }: { row: FrontDeskVoterDto, rowIndex: number }) {
+  if (rowIndex === selectedIndex.value) {
+    return 'selected-row';
+  }
+  return '';
+}
+
+function goBack() {
+  router.push(`/elections/${electionGuid.value}`);
+}
+</script>
 <template>
   <div class="front-desk-page">
     <el-card>
@@ -190,365 +443,116 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useFrontDeskStore } from '@/stores/frontDeskStore';
-import { useLocationStore } from '@/stores/locationStore';
-import { ElMessageBox } from 'element-plus';
-import { useNotifications } from '@/composables/useNotifications';
-import { Search, UserFilled, User, Tickets, Clock, Warning } from '@element-plus/icons-vue';
-import type { FrontDeskVoterDto } from '@/types/FrontDesk';
-
-const route = useRoute();
-const router = useRouter();
-const frontDeskStore = useFrontDeskStore();
-const locationStore = useLocationStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
-
-const electionGuid = ref(route.params.electionId as string);
-const searchQuery = ref('');
-const loading = computed(() => frontDeskStore.loading);
-const stats = computed(() => frontDeskStore.stats);
-const locations = computed(() => locationStore.locations);
-
-// Keyboard navigation
-const searchInputRef = ref();
-const selectedIndex = ref(0);
-const selectedVoter = ref<FrontDeskVoterDto | null>(null);
-const showRegistrationButtons = ref(false);
-const selectedButtonIndex = ref(0);
-
-// History dialog
-const showHistoryDialog = ref(false);
-const historyVoter = ref<FrontDeskVoterDto | null>(null);
-
-const notCheckedInVoters = computed(() => frontDeskStore.notCheckedInVoters);
-const checkedInVoters = computed(() => frontDeskStore.checkedInVoters);
-
-// Registration type options
-const registrationTypes = [
-  { value: 'I', label: 'In Person', key: '1' },
-  { value: 'M', label: 'Mail', key: '2' },
-  { value: 'O', label: 'Online', key: '3' },
-  { value: 'C', label: 'Call-In', key: '4' }
-];
-
-const recentCheckIns = computed(() => {
-  return checkedInVoters.value
-    .slice()
-    .sort((a, b) => {
-      const aTime = a.registrationTime ? new Date(a.registrationTime).getTime() : 0;
-      const bTime = b.registrationTime ? new Date(b.registrationTime).getTime() : 0;
-      return bTime - aTime;
-    })
-    .slice(0, 5);
-});
-
-onMounted(async () => {
-  await loadData();
-  await frontDeskStore.initializeSignalR();
-  await frontDeskStore.joinElection(electionGuid.value);
-
-  // Focus search input
-  nextTick(() => {
-    searchInputRef.value?.focus();
-  });
-});
-
-onUnmounted(async () => {
-  await frontDeskStore.leaveElection(electionGuid.value);
-});
-
-// Watch search query and update selection
-watch(searchQuery, () => {
-  selectedIndex.value = 0;
-  updateSelectedVoter();
-  showRegistrationButtons.value = false;
-});
-
-// Watch filtered voters and update selection
-watch(notCheckedInVoters, () => {
-  updateSelectedVoter();
-});
-
-async function loadData() {
-  try {
-    await frontDeskStore.fetchEligibleVoters(electionGuid.value);
-    await locationStore.fetchLocations(electionGuid.value);
-  } catch (error: any) {
-    ElMessage.error(error.message || 'Failed to load data');
-  }
-}
-
-function updateSelectedVoter() {
-  const voters = notCheckedInVoters.value;
-  if (voters.length > 0 && selectedIndex.value >= 0 && selectedIndex.value < voters.length) {
-    selectedVoter.value = voters[selectedIndex.value];
-  } else {
-    selectedVoter.value = null;
-  }
-}
-
-function handleSearch() {
-  frontDeskStore.setSearchQuery(searchQuery.value);
-}
-
-function handleSearchKeydown(event: KeyboardEvent) {
-  const voters = notCheckedInVoters.value;
-
-  if (showRegistrationButtons.value) {
-    // Handle button navigation
-    if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      selectedButtonIndex.value = Math.max(0, selectedButtonIndex.value - 1);
-    } else if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      selectedButtonIndex.value = Math.min(registrationTypes.length - 1, selectedButtonIndex.value + 1);
-    } else if (event.key === 'Enter') {
-      event.preventDefault();
-      const selectedType = registrationTypes[selectedButtonIndex.value];
-      if (selectedType) {
-        confirmCheckIn(selectedType.value);
-      }
-    } else if (event.key === 'Escape') {
-      event.preventDefault();
-      showRegistrationButtons.value = false;
-      selectedButtonIndex.value = 0;
-    } else if (event.key >= '1' && event.key <= '4') {
-      event.preventDefault();
-      const index = parseInt(event.key) - 1;
-      if (index >= 0 && index < registrationTypes.length) {
-        confirmCheckIn(registrationTypes[index].value);
-      }
-    }
-  } else {
-    // Handle list navigation
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      selectedIndex.value = Math.min(voters.length - 1, selectedIndex.value + 1);
-      updateSelectedVoter();
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      selectedIndex.value = Math.max(0, selectedIndex.value - 1);
-      updateSelectedVoter();
-    } else if (event.key === 'Enter') {
-      event.preventDefault();
-      if (selectedVoter.value) {
-        showRegistrationButtons.value = true;
-        selectedButtonIndex.value = 0;
-      }
-    }
-  }
-}
-
-function handleRowClick(row: FrontDeskVoterDto) {
-  selectedVoter.value = row;
-  selectedIndex.value = notCheckedInVoters.value.findIndex(v => v.personGuid === row.personGuid);
-  showRegistrationButtons.value = true;
-  selectedButtonIndex.value = 0;
-}
-
-async function confirmCheckIn(votingMethod: string) {
-  if (!selectedVoter.value) return;
-
-  try {
-    await frontDeskStore.checkInVoter(electionGuid.value, {
-      personGuid: selectedVoter.value.personGuid,
-      votingMethod,
-      tellerName: undefined,
-      votingLocationGuid: undefined
-    });
-
-    showSuccessMessage(`${selectedVoter.value.fullName} checked in successfully`);
-    showRegistrationButtons.value = false;
-
-    // Move to next voter or reset
-    const voters = notCheckedInVoters.value;
-    if (selectedIndex.value >= voters.length) {
-      selectedIndex.value = Math.max(0, voters.length - 1);
-    }
-    updateSelectedVoter();
-
-    // Refocus search input
-    nextTick(() => {
-      searchInputRef.value?.focus();
-    });
-  } catch (error: any) {
-    showErrorMessage(error.message || 'Failed to check in voter');
-  }
-}
-
-async function handleUnregister(voter: FrontDeskVoterDto) {
-  try {
-    await ElMessageBox.confirm(
-      `Are you sure you want to unregister ${voter.fullName}? This will clear their check-in status.`,
-      'Confirm Unregister',
-      {
-        confirmButtonText: 'Unregister',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }
-    );
-
-    await frontDeskStore.unregisterVoter(electionGuid.value, {
-      personGuid: voter.personGuid,
-      reason: 'Unregistered by front desk'
-    });
-
-    ElMessage.success('Voter unregistered successfully');
-  } catch (error: any) {
-    if (error !== 'cancel') {
-      ElMessage.error(error.message || 'Failed to unregister voter');
-    }
-  }
-}
-
-function showHistory(voter: FrontDeskVoterDto) {
-  historyVoter.value = voter;
-  showHistoryDialog.value = true;
-}
-
-function formatTime(time?: string): string {
-  if (!time) return '';
-  const date = new Date(time);
-  return date.toLocaleString();
-}
-
-function formatTimeShort(time?: string): string {
-  if (!time) return '';
-  const date = new Date(time);
-  return date.toLocaleTimeString();
-}
-
-function getProgressColor(percentage: number): string {
-  if (percentage < 30) return '#f56c6c';
-  if (percentage < 70) return '#e6a23c';
-  return '#67c23a';
-}
-
-function getRowClassName({ row, rowIndex }: { row: FrontDeskVoterDto, rowIndex: number }) {
-  if (rowIndex === selectedIndex.value) {
-    return 'selected-row';
-  }
-  return '';
-}
-
-function goBack() {
-  router.push(`/elections/${electionGuid.value}`);
-}
-</script>
-
-<style scoped>
+<style lang="less">
 .front-desk-page {
   padding: 20px;
-}
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.section-header h3 {
-  margin: 0;
-}
+  .section-header h3 {
+    margin: 0;
+  }
 
-.registration-buttons {
-  padding: 20px;
-  background: var(--el-color-primary-light-9);
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
+  .registration-buttons {
+    padding: 20px;
+    background: var(--el-color-primary-light-9);
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
 
-.selected-voter-info {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 20px;
-  font-size: 18px;
-}
+  .selected-voter-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    font-size: 18px;
+  }
 
-.voter-detail {
-  color: var(--el-text-color-secondary);
-  font-size: 14px;
-}
+  .voter-detail {
+    color: var(--el-text-color-secondary);
+    font-size: 14px;
+  }
 
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
+  .button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
 
-.button-group .el-button {
-  flex: 1;
-  position: relative;
-}
+  .button-group .el-button {
+    flex: 1;
+    position: relative;
+  }
 
-.button-group kbd {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  font-size: 10px;
-  padding: 2px 4px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-}
+  .button-group kbd {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 10px;
+    padding: 2px 4px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+  }
 
-.selected-button {
-  transform: scale(1.05);
-  box-shadow: 0 0 10px var(--el-color-primary);
-}
+  .selected-button {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--el-color-primary);
+  }
 
-.instruction-text {
-  text-align: center;
-  color: var(--el-text-color-secondary);
-  font-size: 12px;
-  margin-top: 10px;
-}
+  .instruction-text {
+    text-align: center;
+    color: var(--el-text-color-secondary);
+    font-size: 12px;
+    margin-top: 10px;
+  }
 
-.keyboard-hint {
-  margin-top: 10px;
-  text-align: center;
-  color: var(--el-text-color-secondary);
-  font-size: 12px;
-}
+  .keyboard-hint {
+    margin-top: 10px;
+    text-align: center;
+    color: var(--el-text-color-secondary);
+    font-size: 12px;
+  }
 
-.stats-section {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+  .stats-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 
-.progress-section {
-  margin-top: 16px;
-}
+  .progress-section {
+    margin-top: 16px;
+  }
 
-.progress-label {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
 
-.progress-percentage {
-  color: var(--el-color-primary);
-}
+  .progress-percentage {
+    color: var(--el-color-primary);
+  }
 
-:deep(.selected-row) {
-  background-color: var(--el-color-primary-light-9) !important;
-  font-weight: bold;
-}
+  :deep(.selected-row) {
+    background-color: var(--el-color-primary-light-9) !important;
+    font-weight: bold;
+  }
 
-.performed-by {
-  color: var(--el-text-color-secondary);
-  font-size: 12px;
-  font-style: italic;
+  .performed-by {
+    color: var(--el-text-color-secondary);
+    font-size: 12px;
+    font-style: italic;
+  }
 }
 </style>

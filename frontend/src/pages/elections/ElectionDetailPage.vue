@@ -67,6 +67,10 @@
                 <el-icon><Tickets /></el-icon>
                 {{ $t('elections.manageBallots') }}
               </el-button>
+              <el-button @click="openFrontDesk">
+                <el-icon><Check /></el-icon>
+                {{ $t('nav.frontDesk') }}
+              </el-button>
               <el-button @click="viewResults">
                 <el-icon><DataAnalysis /></el-icon>
                 {{ $t('elections.viewResults') }}
@@ -122,7 +126,7 @@ import { computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessageBox } from 'element-plus';
-import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete } from '@element-plus/icons-vue';
+import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete, Check } from '@element-plus/icons-vue';
 import { useElectionStore } from '../../stores/electionStore';
 import { useNotifications } from '@/composables/useNotifications';
 
@@ -172,6 +176,10 @@ function manageLocations() {
 
 function manageBallots() {
   router.push(`/elections/${electionGuid}/ballots`);
+}
+
+function openFrontDesk() {
+  router.push(`/elections/${electionGuid}/frontdesk`);
 }
 
 function viewResults() {

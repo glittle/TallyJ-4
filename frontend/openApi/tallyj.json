@@ -2343,6 +2343,68 @@
         }
       }
     },
+    "/api/{electionGuid}/frontdesk/unregisterVoter": {
+      "post": {
+        "tags": [
+          "FrontDesk"
+        ],
+        "summary": "Unregisters a voter (removes their check-in status).",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The election GUID.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The unregister data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnregisterVoterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnregisterVoterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnregisterVoterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFrontDeskVoterDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFrontDeskVoterDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFrontDeskVoterDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Import/parse-csv-headers": {
       "post": {
         "tags": [
@@ -8860,6 +8922,14 @@
             "type": "boolean",
             "description": "Indicates whether the voter has checked in.",
             "readOnly": true
+          },
+          "registrationHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegistrationHistoryEntryDto"
+            },
+            "description": "Registration history entries for this voter.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -10410,6 +10480,49 @@
         },
         "additionalProperties": false
       },
+      "RegistrationHistoryEntryDto": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp of the action (stored in UTC).",
+            "format": "date-time"
+          },
+          "action": {
+            "type": "string",
+            "description": "Action performed (e.g., \"CheckedIn\", \"Unregistered\").",
+            "nullable": true
+          },
+          "votingMethod": {
+            "type": "string",
+            "description": "Voting method used (if applicable).",
+            "nullable": true
+          },
+          "tellerName": {
+            "type": "string",
+            "description": "Teller name (if applicable).",
+            "nullable": true
+          },
+          "locationName": {
+            "type": "string",
+            "description": "Location name (if applicable).",
+            "nullable": true
+          },
+          "envNum": {
+            "type": "integer",
+            "description": "Envelope number (if applicable).",
+            "format": "int32",
+            "nullable": true
+          },
+          "performedBy": {
+            "type": "string",
+            "description": "User who performed the action.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a single registration history entry for a person."
+      },
       "ReportDataResponseDto": {
         "type": "object",
         "properties": {
@@ -11300,6 +11413,23 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object containing analysis of voter turnout patterns."
+      },
+      "UnregisterVoterDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "description": "The unique identifier of the person to unregister.",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason for unregistering (optional).",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for unregistering a voter."
       },
       "UpdateBallotDto": {
         "type": "object",

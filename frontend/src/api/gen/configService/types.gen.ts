@@ -2321,6 +2321,10 @@ export type FrontDeskVoterDto = {
      * Indicates whether the voter has checked in.
      */
     readonly isCheckedIn?: boolean;
+    /**
+     * Registration history entries for this voter.
+     */
+    registrationHistory?: Array<RegistrationHistoryEntryDto> | null;
 };
 
 export type GoogleOneTapRequest = {
@@ -3463,6 +3467,40 @@ export type RegisterRequest = {
 };
 
 /**
+ * Represents a single registration history entry for a person.
+ */
+export type RegistrationHistoryEntryDto = {
+    /**
+     * Timestamp of the action (stored in UTC).
+     */
+    timestamp?: Date;
+    /**
+     * Action performed (e.g., "CheckedIn", "Unregistered").
+     */
+    action?: string | null;
+    /**
+     * Voting method used (if applicable).
+     */
+    votingMethod?: string | null;
+    /**
+     * Teller name (if applicable).
+     */
+    tellerName?: string | null;
+    /**
+     * Location name (if applicable).
+     */
+    locationName?: string | null;
+    /**
+     * Envelope number (if applicable).
+     */
+    envNum?: number | null;
+    /**
+     * User who performed the action.
+     */
+    performedBy?: string | null;
+};
+
+/**
  * Data transfer object containing report data response.
  */
 export type ReportDataResponseDto = {
@@ -4117,6 +4155,20 @@ export type TurnoutAnalysisDto = {
      */
     timeBasedTurnout?: Array<TimeBasedTurnoutDto> | null;
     participationRates?: ParticipationRateDto;
+};
+
+/**
+ * Data transfer object for unregistering a voter.
+ */
+export type UnregisterVoterDto = {
+    /**
+     * The unique identifier of the person to unregister.
+     */
+    personGuid?: string;
+    /**
+     * Reason for unregistering (optional).
+     */
+    reason?: string | null;
 };
 
 /**
@@ -4775,6 +4827,10 @@ export type FrontDeskVoterDtoWritable = {
      * The name of the second teller.
      */
     teller2?: string | null;
+    /**
+     * Registration history entries for this voter.
+     */
+    registrationHistory?: Array<RegistrationHistoryEntryDto> | null;
 };
 
 /**
@@ -6077,6 +6133,30 @@ export type GetApiByElectionGuidFrontdeskStatsResponses = {
 };
 
 export type GetApiByElectionGuidFrontdeskStatsResponse = GetApiByElectionGuidFrontdeskStatsResponses[keyof GetApiByElectionGuidFrontdeskStatsResponses];
+
+export type PostApiByElectionGuidFrontdeskUnregisterVoterData = {
+    /**
+     * The unregister data.
+     */
+    body?: UnregisterVoterDto;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/{electionGuid}/frontdesk/unregisterVoter';
+};
+
+export type PostApiByElectionGuidFrontdeskUnregisterVoterResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseFrontDeskVoterDto;
+};
+
+export type PostApiByElectionGuidFrontdeskUnregisterVoterResponse = PostApiByElectionGuidFrontdeskUnregisterVoterResponses[keyof PostApiByElectionGuidFrontdeskUnregisterVoterResponses];
 
 export type PostApiImportParseCsvHeadersData = {
     /**
