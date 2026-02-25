@@ -1,10 +1,11 @@
-
 # Copilot Instructions for TallyJ-4
 
 ## Project Overview
-TallyJ-4 is a full-stack, real-time election management and ballot tallying system for Bahá'í communities. It uses a .NET 10 ASP.NET Core Web API backend and a Vue 3 + Vite SPA frontend. The system is designed for multi-user collaboration, secure authentication, and robust election workflows, with a focus on feature parity and modernization from TallyJ v3.
+
+TallyJ-4 is a full-stack, real-time election management and ballot tallying system for Bahá’í communities. It uses a .NET 10 ASP.NET Core Web API backend and a Vue 3 + Vite SPA frontend. The system is designed for multi-user collaboration, secure authentication, and robust election workflows, with a focus on feature parity and modernization from TallyJ v3.
 
 ## Architecture & Key Patterns
+
 - **Backend** (`backend/`):
   - ASP.NET Core Web API (controllers in `Controllers/`)
   - Entity Framework Core for data access (`EF/`)
@@ -23,6 +24,7 @@ TallyJ-4 is a full-stack, real-time election management and ballot tallying syst
   - Design system: Element Plus + custom tokens/components
 
 ## Developer Workflows
+
 - **Backend:**
   - Restore/build/run: `cd backend && dotnet restore && dotnet build && dotnet run`
   - Database migration: `dotnet ef database update`
@@ -39,12 +41,14 @@ TallyJ-4 is a full-stack, real-time election management and ballot tallying syst
   - API base URL set in `.env` as `VITE_API_URL`
 
 ## Planning & Documentation
+
 - All major requirements, specs, and plans are consolidated in `.zenflow/tasks/` (see `requirements.md`, `specifications.md`, `plans.md`, `reports.md`, `reference.md`).
 - Use the v3 vs v4 feature matrix (`v3_vs_v4_feature_matrix.md`) to identify feature gaps and priorities.
 - UI/UX patterns and workflows are documented in `v3_ui_patterns.md` (multi-step wizards, state-based navigation, admin/assistant roles).
 - Implementation is phased (A-G): documentation, critical fixes, missing features, UI polish, testing, reporting, deployment.
 
 ## Conventions & Integration
+
 - **API endpoints**: `/auth/*`, `/api/elections`, `/api/people`, etc. (see `README.md` and `.zenflow/tasks/specifications.md` for full list)
 - **DTOs**: All API input/output uses DTOs in `backend/DTOs/`
 - **AutoMapper**: Entity-DTO mapping in `backend/Mappings/`
@@ -55,6 +59,7 @@ TallyJ-4 is a full-stack, real-time election management and ballot tallying syst
 - **Documentation consolidation**: `.zenflow` and `.zencoder` contain all planning, requirements, and technical docs; see consolidation strategy in `.zencoder/chats/44a6743a-a8b4-45af-bf5f-df5990f49083/`.
 
 ## Notable Patterns & Tips
+
 - Use DTOs for all API communication; never expose EF entities directly
 - Use AutoMapper for mapping between entities and DTOs
 - Real-time updates (e.g., ballot status, results) use SignalR hubs; follow group naming conventions
@@ -65,13 +70,16 @@ TallyJ-4 is a full-stack, real-time election management and ballot tallying syst
 - UI/UX: Use multi-step wizards for election setup, state-based navigation, and responsive layouts (see `v3_ui_patterns.md`)
 - Feature development should reference the v3 vs v4 matrix to avoid regressions
 - Documentation and planning: follow the SDD workflow and consolidation patterns in `.zenflow` and `.zencoder`
+- **Important**: See `AGENTS.md` for critical Vue component structure requirements and build workflow notes
 
 ## Feature Gaps & Priorities
+
 - Use `v3_vs_v4_feature_matrix.md` to identify missing/partial features (e.g., location management, teller assignment, online voting, audit logs, public display)
 - Prioritize features marked HIGH in the matrix
 - Expose all entity fields in UI forms as per v3 parity requirements
 
 ## References
+
 - [backend/SETUP.md](../backend/SETUP.md)
 - [README.md](../README.md)
 - [frontend/README.md](../frontend/README.md)
@@ -82,4 +90,5 @@ TallyJ-4 is a full-stack, real-time election management and ballot tallying syst
 - [.zencoder/rules/repo.md], [.zencoder/chats/44a6743a-a8b4-45af-bf5f-df5990f49083/plan.md]
 
 ---
+
 For any unclear or missing conventions, please request clarification or review the referenced documentation.

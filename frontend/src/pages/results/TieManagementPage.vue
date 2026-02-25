@@ -100,7 +100,8 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import { useResultStore } from '../../stores/resultStore';
 import type { TieDetailsDto, TieCandidateDto } from '../../types';
 
@@ -108,6 +109,7 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
+const { showSuccessMessage, showErrorMessage, showInfoMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const tieDetails = ref<TieDetailsDto[]>([]);
@@ -130,7 +132,7 @@ async function loadTieDetails() {
     tieDetails.value = JSON.parse(JSON.stringify(details)); // Deep copy
     originalTieDetails.value = JSON.parse(JSON.stringify(details)); // Store original
   } catch (error) {
-    ElMessage.error(t('tieManagement.loadError'));
+    showErrorMessage(t('tieManagement.loadError'));
   } finally {
     loading.value = false;
   }
@@ -167,18 +169,18 @@ async function saveTieCounts() {
     const response = await resultStore.saveTieCounts(electionGuid, counts);
 
     if (response.success) {
-      ElMessage.success(t('tieManagement.saveSuccess'));
+      showSuccessMessage(t('tieManagement.saveSuccess'));
       await loadTieDetails(); // Reload to get updated data
 
       if (response.reAnalysisTriggered) {
-        ElMessage.info(t('tieManagement.reAnalysisTriggered'));
+        showInfoMessage(t('tieManagement.reAnalysisTriggered'));
       }
     } else {
-      ElMessage.error(response.message || t('tieManagement.saveError'));
+      showErrorMessage(response.message || t('tieManagement.saveError'));
     }
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error(t('tieManagement.saveError'));
+      showErrorMessage(t('tieManagement.saveError'));
     }
   } finally {
     saving.value = false;

@@ -2,7 +2,7 @@
 
 ## 1. System Overview
 
-**TallyJ** is an election management and ballot tallying system designed for Bahá'í communities of up to 50,000 members. It facilitates the complete election process including voter registration, ballot collection, online voting, and tally reporting.
+**TallyJ** is an election management and ballot tallying system designed for Bahá’í communities of up to 50,000 members. It facilitates the complete election process including voter registration, ballot collection, online voting, and tally reporting.
 
 **Current Version**: 3.5.28 (April 4, 2024)
 **Current Location**: `C:\Dev\TallyJ\v3\Site`
@@ -22,7 +22,7 @@
 
 ### 2.2 Build Phase Objectives
 
-Build the initial implementation of TallyJ 4, an election management and ballot tallying system for Bahá'í communities, using .NET 10.0, Entity Framework Core, and SQL Express.
+Build the initial implementation of TallyJ 4, an election management and ballot tallying system for Bahá’í communities, using .NET 10.0, Entity Framework Core, and SQL Express.
 
 **Previous Work**: Comprehensive reverse engineering documentation exists in `.zenflow/tasks/` documenting the original ASP.NET Framework 4.8 system.
 

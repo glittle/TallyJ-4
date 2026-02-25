@@ -7,5 +7,20 @@
   "dashboard.totalVoters": "Total des électeurs",
   "dashboard.totalBallots": "Total des bulletins",
   "dashboard.recentElections": "Élections récentes",
-  "dashboard.noElections": "Aucune élection trouvée"
+  "dashboard.noElections": "Aucune élection trouvée",
+  "dashboard.electionDetails": "Détails de l'élection",
+  "dashboard.onlineVoting": "Vote en ligne",
+  "dashboard.tellersStatus": "Scrutateurs",
+  "dashboard.open": "Ouvert",
+  "dashboard.closed": "Fermé",
+  "dashboard.active": "Actif",
+  "dashboard.opens": "Ouvre",
+  "dashboard.closes": "Ferme",
+  "dashboard.tellers": "Scrutateurs",
+  "dashboard.tellerCount": "Nombre de scrutateurs",
+  "dashboard.noTellers": "Aucun scrutateur assigné",
+  "dashboard.canVote": "Peut voter",
+  "dashboard.registered": "Enregistré",
+  "dashboard.ballotsEntered": "Bulletins saisis",
+  "dashboard.otherActions": "Autres actions..."
 }

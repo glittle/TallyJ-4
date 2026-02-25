@@ -177,7 +177,8 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { Plus, Edit, Delete, Monitor } from '@element-plus/icons-vue';
 import { useLocationStore } from '../../stores/locationStore';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 import type { LocationDto, ComputerDto } from '../../types';
 import LocationFormDialog from '../../components/locations/LocationFormDialog.vue';
 import ComputerRegistrationDialog from '../../components/locations/ComputerRegistrationDialog.vue';
@@ -185,6 +186,7 @@ import ComputerRegistrationDialog from '../../components/locations/ComputerRegis
 const router = useRouter();
 const route = useRoute();
 const locationStore = useLocationStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const showCreateDialog = ref(false);
@@ -213,7 +215,7 @@ async function loadLocations() {
   try {
     await locationStore.fetchLocations(electionGuid, pagination.value.pageNumber, pagination.value.pageSize);
   } catch (error) {
-    ElMessage.error('Failed to load locations');
+    showErrorMessage('Failed to load locations');
   }
 }
 
@@ -239,10 +241,10 @@ async function deleteLocation(location: LocationDto) {
     );
 
     await locationStore.deleteLocation(electionGuid, location.locationGuid);
-    ElMessage.success('Location deleted successfully');
+    showSuccessMessage('Location deleted successfully');
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || 'Failed to delete location');
+      showErrorMessage(error.message || 'Failed to delete location');
     }
   }
 }
@@ -289,7 +291,7 @@ async function viewComputers(location: LocationDto) {
   try {
     await locationStore.fetchComputers(electionGuid, location.locationGuid);
   } catch (error: any) {
-    ElMessage.error('Failed to load computers');
+    showErrorMessage('Failed to load computers');
   }
 }
 
@@ -319,10 +321,10 @@ async function deleteComputer(computer: ComputerDto) {
     );
 
     await locationStore.deleteComputer(electionGuid, selectedLocation.value.locationGuid, computer.computerGuid);
-    ElMessage.success('Computer deleted successfully');
+    showSuccessMessage('Computer deleted successfully');
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || 'Failed to delete computer');
+      showErrorMessage(error.message || 'Failed to delete computer');
     }
   }
 }

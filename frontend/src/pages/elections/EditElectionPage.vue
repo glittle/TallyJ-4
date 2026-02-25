@@ -39,7 +39,9 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
+import { type FormInstance, type FormRules } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { useElectionStore } from '../../stores/electionStore';
 import type { UpdateElectionDto, ElectionSummaryDto } from '../../types';
 import ElectionFormTabs from '../../components/elections/ElectionFormTabs.vue';
@@ -49,6 +51,8 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const electionStore = useElectionStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
 const formRef = ref<FormInstance>();
@@ -149,8 +153,8 @@ onMounted(async () => {
         flags: election.value.flags
       });
     }
-  } catch (error: any) {
-    ElMessage.error(extractApiErrorMessage(error));
+  } catch (error) {
+    handleApiError(error);
   }
 });
 
@@ -162,10 +166,10 @@ async function submitForm() {
       submitting.value = true;
       try {
         await electionStore.updateElection(electionGuid, form);
-        ElMessage.success(t('elections.updateSuccess'));
+        showSuccessMessage(t('elections.updateSuccess'));
         router.push(`/elections/${electionGuid}`);
-      } catch (error: any) {
-        ElMessage.error(extractApiErrorMessage(error));
+      } catch (error) {
+        handleApiError(error);
       } finally {
         submitting.value = false;
       }

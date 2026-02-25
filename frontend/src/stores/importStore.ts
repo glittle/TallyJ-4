@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { signalrService } from '../services/signalrService';
-import { ElMessage } from 'element-plus';
+
 import type { ImportProgressEvent } from '../types/SignalREvents';
 
 export const useImportStore = defineStore('import', () => {
@@ -42,13 +42,11 @@ export const useImportStore = defineStore('import', () => {
   function handleImportError(errorMessage: string, rowNumber: number) {
     const error = `Row ${rowNumber}: ${errorMessage}`;
     importErrors.value.push(error);
-    ElMessage.error(`Import error: ${error}`);
   }
 
   function handleImportComplete(_summary: any) {
     importComplete.value = true;
     importProgress.value = null;
-    ElMessage.success('Ballot import completed successfully');
   }
 
   async function joinImportSession(electionGuid: string) {

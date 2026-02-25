@@ -44,11 +44,9 @@ Register in `Program.cs`:
 
 ### 3. Super Admin API Endpoint to Check SA Status
 
-Add a lightweight endpoint so the frontend can determine if the logged-in user is a super admin:
+The super admin status check is integrated into the existing `/api/auth/me` endpoint, which returns the authenticated user's information including an `isSuperAdmin` boolean flag. This eliminates the need for a separate endpoint.
 
-`GET /api/auth/me` or similar — this may already return user info. Alternative: add a dedicated `GET /api/superadmin/status` that returns `{ isSuperAdmin: true/false }`. The simplest approach is to add an `isSuperAdmin` field to the existing auth response (login, token refresh) or expose it through a new lightweight endpoint.
-
-**Chosen approach**: Add `GET /api/superadmin/check` endpoint (protected by `[Authorize]` only) that returns `{ isSuperAdmin: bool }`. This keeps SA logic self-contained.
+**Updated approach**: The `/api/auth/me` endpoint (protected by `[Authorize]`) now returns `{ email, name, authMethod, isSuperAdmin }`. The `isSuperAdmin` flag is determined by checking if the user's email is in the `SuperAdminSettings.Emails` array (case-insensitive comparison).
 
 ### 4. Super Admin Dashboard API (Backend)
 
@@ -58,12 +56,11 @@ New controller: `SuperAdminController.cs` at `api/superadmin`, all endpoints pro
 
 | Method | Route | Description | Response |
 |--------|-------|-------------|----------|
-| `GET` | `/api/superadmin/check` | Check if current user is SA | `ApiResponse<SuperAdminCheckDto>` |
 | `GET` | `/api/superadmin/dashboard/summary` | Summary stats (counts by status) | `ApiResponse<SuperAdminSummaryDto>` |
 | `GET` | `/api/superadmin/dashboard/elections` | Paginated/filterable election list | `ApiResponse<PaginatedResponse<SuperAdminElectionDto>>` |
 | `GET` | `/api/superadmin/dashboard/elections/{guid}` | Election detail for side panel | `ApiResponse<SuperAdminElectionDetailDto>` |
 
-**Note**: The `check` endpoint uses `[Authorize]` only (not the SuperAdmin policy), so any authenticated user can call it. All other SA endpoints use the `SuperAdmin` policy.
+**Note**: The super admin status is now checked via `/api/auth/me` endpoint which is called on login/app init. All SA dashboard endpoints use the `SuperAdmin` policy.
 
 ### 5. Super Admin Service (Backend)
 
@@ -77,25 +74,26 @@ New service: `ISuperAdminService` / `SuperAdminService`.
 
 New DTOs in `backend/DTOs/SuperAdmin/`:
 
-- **`SuperAdminCheckDto`**: `{ isSuperAdmin: bool }`
 - **`SuperAdminSummaryDto`**: `{ totalElections, openElections, upcomingElections, completedElections, archivedElections }`
 - **`SuperAdminElectionDto`**: `{ electionGuid, name, convenor, dateOfElection, tallyStatus, electionType, voterCount, ballotCount, locationCount, ownerEmail }`
 - **`SuperAdminElectionDetailDto`**: extends above + `{ owners: [{ email, displayName, role }], numberToElect, electionMode, percentComplete, createdDate }`
 - **`SuperAdminElectionFilterDto`**: `{ search?, status?, electionType?, sortBy?, sortDirection?, page, pageSize }`
 
+**Note**: `SuperAdminCheckDto` has been removed as the super admin status is now returned by `/api/auth/me`.
+
 ### 7. Frontend: Super Admin Store
 
 New Pinia store: `frontend/src/stores/superAdminStore.ts`
 
-- State: `isSuperAdmin`, `summary`, `elections`, `selectedElection`, `loading`, `filter`
-- Actions: `checkSuperAdminStatus()`, `fetchSummary()`, `fetchElections(filter)`, `fetchElectionDetail(guid)`
-- Called once after login (or on app init) to set `isSuperAdmin`.
+- State: `isSuperAdmin` (computed from `authStore.isSuperAdmin`), `summary`, `elections`, `selectedElection`, `loading`, `filter`
+- Actions: `checkSuperAdminStatus()` (reads from authStore), `fetchSummary()`, `fetchElections(filter)`, `fetchElectionDetail(guid)`
+- The `isSuperAdmin` flag is populated automatically when the user logs in (via `/api/auth/me`).
 
 ### 8. Frontend: Super Admin Service
 
 New service: `frontend/src/services/superAdminService.ts`
 
-Wraps API calls to `/api/superadmin/*` endpoints using the existing Axios-based `api.ts` (since these are new endpoints not in the generated SDK initially).
+Wraps API calls to `/api/superadmin/*` endpoints using the existing Axios-based `api.ts`. The `check()` method has been removed as super admin status is obtained from `/api/auth/me`.
 
 ### 9. Frontend: Super Admin Dashboard Page
 
@@ -117,9 +115,10 @@ Structure:
 
 ### 11. Frontend: Auth Integration
 
-- On login / app init, call `GET /api/superadmin/check` and store result in `superAdminStore.isSuperAdmin`
-- Add `is_super_admin` cookie (non-httpOnly) set by backend during login, OR call the check endpoint on app startup. **Chosen**: call the check endpoint on app startup (avoids modifying auth cookie flow).
-- `secureTokenService` or `authStore` can trigger the check.
+- On login / app init, the `/api/auth/me` endpoint is called which returns user info including `isSuperAdmin` flag
+- `authStore.isSuperAdmin` is populated with this value
+- `superAdminStore.isSuperAdmin` is a computed property that references `authStore.isSuperAdmin`
+- No separate endpoint call is needed; the super admin status is retrieved along with other user info
 
 ### 12. Localization
 
@@ -171,10 +170,13 @@ SA status is determined by config, not stored in the database. Election queries 
 
 ### New API Endpoints
 
-All under `/api/superadmin`:
+Modified endpoint:
 
-1. **`GET /api/superadmin/check`** — `[Authorize]` (any authenticated user)
-   - Response: `ApiResponse<SuperAdminCheckDto>` → `{ data: { isSuperAdmin: bool } }`
+1. **`GET /api/auth/me`** — `[Authorize]` (any authenticated user)
+   - Response: `{ email, name, authMethod, isSuperAdmin }`
+   - The `isSuperAdmin` flag is now included in the response
+
+Super Admin endpoints under `/api/superadmin`:
 
 2. **`GET /api/superadmin/dashboard/summary`** — `[Authorize(Policy = "SuperAdmin")]`
    - Response: `ApiResponse<SuperAdminSummaryDto>`

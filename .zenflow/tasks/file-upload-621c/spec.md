@@ -3,28 +3,31 @@
 ## Technical Context
 
 ### Language & Runtime
+
 - **Backend**: C# / .NET 10, ASP.NET Core Web API, Entity Framework Core, SignalR
 - **Frontend**: TypeScript, Vue 3 (Composition API), Vite, Pinia, Element Plus, vue-i18n
 
 ### Key Dependencies Already Available
+
 - **ClosedXML 0.105.0** (backend) — XLSX reading/writing
 - **CsvHelper 33.0.1** (backend) — CSV parsing
 - **@microsoft/signalr** (frontend) — real-time progress
 - **element-plus** (frontend) — UI components (el-steps, el-upload, el-table, el-select, etc.)
 
 ### Existing Code to Reuse
-| Component | Location | Reuse Strategy |
-|---|---|---|
-| `ImportFile` entity | `Backend.Domain/Entities/ImportFile.cs` | Reuse as-is — has all needed columns (Contents, ColumnsToRead, ProcessingStatus, FileType, CodePage, FirstDataRow, OriginalFileName) |
-| `MainDbContext.ImportFiles` DbSet | `Backend.Domain/Context/MainDbContext.cs:23` | Reuse — already configured with computed columns (FileSize, HasContent) |
-| `IneligibleReasonEnum` | `Backend.Domain/Enumerations/IneligibleReasonEnum.cs` | Reuse `GetByDescription()` and `GetByCode()` for eligibility matching during import |
-| `CreatePersonDto` | `backend/DTOs/People/CreatePersonDto.cs` | Reuse for bulk person creation |
-| `PeopleService.CreatePersonAsync` | `backend/Services/PeopleService.cs:129` | Reference `SyncEligibility()` logic; bulk import bypasses single-person creation (too slow) |
-| `BallotImportHub` | `backend/Hubs/BallotImportHub.cs` | Pattern reference for new `PeopleImportHub` |
-| `BallotImportPage.vue` | `frontend/src/pages/ballots/BallotImportPage.vue` | Pattern reference for 3-step wizard UI |
-| `importStore.ts` | `frontend/src/stores/importStore.ts` | Pattern reference for SignalR integration in store |
-| `signalrService.ts` | `frontend/src/services/signalrService.ts` | Extend with people import hub connection methods |
-| `EligibilityController` | `backend/Controllers/EligibilityController.cs` | Already provides GET endpoint for eligibility reasons list |
+
+| Component                         | Location                                              | Reuse Strategy                                                                                                                       |
+| --------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `ImportFile` entity               | `Backend.Domain/Entities/ImportFile.cs`               | Reuse as-is — has all needed columns (Contents, ColumnsToRead, ProcessingStatus, FileType, CodePage, FirstDataRow, OriginalFileName) |
+| `MainDbContext.ImportFiles` DbSet | `Backend.Domain/Context/MainDbContext.cs:23`          | Reuse — already configured with computed columns (FileSize, HasContent)                                                              |
+| `IneligibleReasonEnum`            | `Backend.Domain/Enumerations/IneligibleReasonEnum.cs` | Reuse `GetByDescription()` and `GetByCode()` for eligibility matching during import                                                  |
+| `CreatePersonDto`                 | `backend/DTOs/People/CreatePersonDto.cs`              | Reuse for bulk person creation                                                                                                       |
+| `PeopleService.CreatePersonAsync` | `backend/Services/PeopleService.cs:129`               | Reference `SyncEligibility()` logic; bulk import bypasses single-person creation (too slow)                                          |
+| `BallotImportHub`                 | `backend/Hubs/BallotImportHub.cs`                     | Pattern reference for new `PeopleImportHub`                                                                                          |
+| `BallotImportPage.vue`            | `frontend/src/pages/ballots/BallotImportPage.vue`     | Pattern reference for 3-step wizard UI                                                                                               |
+| `importStore.ts`                  | `frontend/src/stores/importStore.ts`                  | Pattern reference for SignalR integration in store                                                                                   |
+| `signalrService.ts`               | `frontend/src/services/signalrService.ts`             | Extend with people import hub connection methods                                                                                     |
+| `EligibilityController`           | `backend/Controllers/EligibilityController.cs`        | Already provides GET endpoint for eligibility reasons list                                                                           |
 
 ---
 
@@ -55,31 +58,33 @@ Create a dedicated page at `/elections/:id/people/import` with a 3-step wizard (
 ### New Files
 
 #### Backend
-| File | Purpose |
-|---|---|
-| `backend/Controllers/PeopleImportController.cs` | REST endpoints for file upload, file list, file operations, parsing, column mapping, import execution, and delete-all-people |
-| `backend/Services/PeopleImportService.cs` | Business logic: file storage, XLSX/CSV/TAB parsing, auto-mapping, deduplication, bulk person creation |
-| `backend/Services/IPeopleImportService.cs` | Interface for PeopleImportService |
-| `backend/DTOs/Import/PeopleImportDtos.cs` | All DTOs for people import (ImportFileDto, UploadFileResponse, ParseFileResponse, ColumnMappingDto, ImportPeopleRequest, ImportPeopleResult, DeleteAllPeopleResult) |
-| `backend/Hubs/PeopleImportHub.cs` | SignalR hub for real-time import progress |
+
+| File                                            | Purpose                                                                                                                                                             |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `backend/Controllers/PeopleImportController.cs` | REST endpoints for file upload, file list, file operations, parsing, column mapping, import execution, and delete-all-people                                        |
+| `backend/Services/PeopleImportService.cs`       | Business logic: file storage, XLSX/CSV/TAB parsing, auto-mapping, deduplication, bulk person creation                                                               |
+| `backend/Services/IPeopleImportService.cs`      | Interface for PeopleImportService                                                                                                                                   |
+| `backend/DTOs/Import/PeopleImportDtos.cs`       | All DTOs for people import (ImportFileDto, UploadFileResponse, ParseFileResponse, ColumnMappingDto, ImportPeopleRequest, ImportPeopleResult, DeleteAllPeopleResult) |
+| `backend/Hubs/PeopleImportHub.cs`               | SignalR hub for real-time import progress                                                                                                                           |
 
 #### Frontend
-| File | Purpose |
-|---|---|
-| `frontend/src/pages/people/PeopleImportPage.vue` | Main 3-step import wizard page |
-| `frontend/src/stores/peopleImportStore.ts` | Pinia store for import state, file list, SignalR events |
-| `frontend/src/services/peopleImportService.ts` | API service wrapping people import endpoints |
-| `frontend/src/types/PeopleImport.ts` | TypeScript types for people import |
+
+| File                                             | Purpose                                                 |
+| ------------------------------------------------ | ------------------------------------------------------- |
+| `frontend/src/pages/people/PeopleImportPage.vue` | Main 3-step import wizard page                          |
+| `frontend/src/stores/peopleImportStore.ts`       | Pinia store for import state, file list, SignalR events |
+| `frontend/src/services/peopleImportService.ts`   | API service wrapping people import endpoints            |
+| `frontend/src/types/PeopleImport.ts`             | TypeScript types for people import                      |
 
 ### Modified Files
 
-| File | Change |
-|---|---|
-| `backend/Program.cs` | Register `IPeopleImportService`/`PeopleImportService`, map `PeopleImportHub` |
-| `frontend/src/router/router.ts` | Add route `elections/:id/people/import` -> `PeopleImportPage.vue` |
-| `frontend/src/pages/people/PeopleManagementPage.vue` | Change "Import People" action from dialog to `router.push` to new page |
-| `frontend/src/services/signalrService.ts` | Add `connectToPeopleImportHub()`, `joinPeopleImportSession()`, `leavePeopleImportSession()` methods |
-| `frontend/src/locales/en/people.json` (or equivalent) | Add i18n keys for import page labels |
+| File                                                  | Change                                                                                              |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `backend/Program.cs`                                  | Register `IPeopleImportService`/`PeopleImportService`, map `PeopleImportHub`                        |
+| `frontend/src/router/router.ts`                       | Add route `elections/:id/people/import` -> `PeopleImportPage.vue`                                   |
+| `frontend/src/pages/people/PeopleManagementPage.vue`  | Change "Import People" action from dialog to `router.push` to new page                              |
+| `frontend/src/services/signalrService.ts`             | Add `connectToPeopleImportHub()`, `joinPeopleImportSession()`, `leavePeopleImportSession()` methods |
+| `frontend/src/locales/en/people.json` (or equivalent) | Add i18n keys for import page labels                                                                |
 
 ---
 
@@ -89,22 +94,22 @@ Create a dedicated page at `/elections/:id/people/import` with a 3-step wizard (
 
 The existing entity already has all required columns:
 
-| Column | Type | Purpose |
-|---|---|---|
-| `RowId` | int (PK, identity) | Primary key |
-| `ElectionGuid` | Guid (FK) | Links to election |
-| `UploadTime` | DateTime? | When file was uploaded |
-| `ImportTime` | DateTime? | When import was executed |
-| `FileSize` | int? (computed) | `datalength(Contents)` |
-| `HasContent` | bool? (computed) | Whether Contents is non-null |
-| `FirstDataRow` | int? | 1-based row number of first data row (header row number) |
-| `ColumnsToRead` | string? | JSON column mapping configuration |
-| `OriginalFileName` | string?(50) | Original file name |
-| `ProcessingStatus` | string?(20) | `Uploaded`, `Mapped`, `Imported` |
-| `FileType` | string?(10) | `csv`, `tab`, `xlsx` |
-| `CodePage` | int? | Encoding code page for text files |
-| `Messages` | string? | Status/error messages |
-| `Contents` | byte[]? (image) | File binary content |
+| Column             | Type               | Purpose                                                  |
+| ------------------ | ------------------ | -------------------------------------------------------- |
+| `RowId`            | int (PK, identity) | Primary key                                              |
+| `ElectionGuid`     | Guid (FK)          | Links to election                                        |
+| `UploadTime`       | DateTime?          | When file was uploaded                                   |
+| `ImportTime`       | DateTime?          | When import was executed                                 |
+| `FileSize`         | int? (computed)    | `datalength(Contents)`                                   |
+| `HasContent`       | bool? (computed)   | Whether Contents is non-null                             |
+| `FirstDataRow`     | int?               | 1-based row number of first data row (header row number) |
+| `ColumnsToRead`    | string?            | JSON column mapping configuration                        |
+| `OriginalFileName` | string?(50)        | Original file name                                       |
+| `ProcessingStatus` | string?(20)        | `Uploaded`, `Mapped`, `Imported`                         |
+| `FileType`         | string?(10)        | `csv`, `tab`, `xlsx`                                     |
+| `CodePage`         | int?               | Encoding code page for text files                        |
+| `Messages`         | string?            | Status/error messages                                    |
+| `Contents`         | byte[]? (image)    | File binary content                                      |
 
 ### ColumnsToRead JSON Format
 
@@ -112,7 +117,7 @@ Stored in `ImportFile.ColumnsToRead` as a JSON array:
 
 ```json
 [
-  { "fileColumn": "Bahá'í ID", "targetField": "BahaiId" },
+  { "fileColumn": "Bahá’í ID", "targetField": "BahaiId" },
   { "fileColumn": "LastName", "targetField": "LastName" },
   { "fileColumn": "FirstName", "targetField": "FirstName" },
   { "fileColumn": "G", "targetField": null }
@@ -128,7 +133,9 @@ Each entry maps one file column to a TallyJ target field (or `null` to ignore).
 All endpoints under `api/PeopleImport` with `[Authorize]`.
 
 ### POST `api/PeopleImport/{electionGuid}/upload`
+
 Upload a file. Accepts `multipart/form-data` with single file.
+
 - Validates file extension (.csv, .tsv, .tab, .txt, .xlsx), size (<=10MB)
 - Detects file type from extension
 - Stores binary in `ImportFile.Contents`
@@ -136,30 +143,40 @@ Upload a file. Accepts `multipart/form-data` with single file.
 - Returns: `ImportFileDto`
 
 ### GET `api/PeopleImport/{electionGuid}/files`
+
 List all import files for this election.
+
 - Returns: `List<ImportFileDto>` (without Contents binary)
 
 ### GET `api/PeopleImport/{electionGuid}/files/{rowId}/parse`
+
 Parse the specified file and return headers + preview rows.
+
 - Query params: `codePage` (optional, override encoding), `firstDataRow` (optional, override header row)
 - Reads binary from `ImportFile.Contents`
 - Parses based on `FileType` (ClosedXML for xlsx, CsvHelper for csv/tab)
 - Returns: `ParseFileResponse { headers: string[], previewRows: string[][], totalDataRows: int }`
 
 ### PUT `api/PeopleImport/{electionGuid}/files/{rowId}/mapping`
+
 Save column mapping for a file.
+
 - Body: `List<ColumnMappingDto>` (array of `{ fileColumn, targetField }`)
 - Serializes to JSON and saves in `ImportFile.ColumnsToRead`
 - Sets `ProcessingStatus = "Mapped"`
 - Returns: `ImportFileDto`
 
 ### PUT `api/PeopleImport/{electionGuid}/files/{rowId}/settings`
+
 Update file settings (firstDataRow, codePage).
+
 - Body: `UpdateFileSettingsDto { firstDataRow?: int, codePage?: int }`
 - Returns: `ImportFileDto`
 
 ### POST `api/PeopleImport/{electionGuid}/files/{rowId}/import`
+
 Execute the import for the specified file.
+
 - Reads stored binary and column mapping from `ImportFile`
 - Validates: FirstName and LastName must be mapped
 - Parses file rows using stored settings
@@ -175,16 +192,22 @@ Execute the import for the specified file.
 - Returns: `ImportPeopleResult { peopleAdded, peopleSkipped, warnings[], totalRows, timeElapsed }`
 
 ### DELETE `api/PeopleImport/{electionGuid}/files/{rowId}`
+
 Delete an import file record.
+
 - Returns: 204 No Content
 
 ### DELETE `api/PeopleImport/{electionGuid}/people`
+
 Delete all people for an election.
+
 - Validates: no ballots exist, no people have voting status (RegistrationTime set)
 - Returns: `DeleteAllPeopleResult { deletedCount }`
 
 ### GET `api/PeopleImport/{electionGuid}/people-count`
+
 Get current people count for the election.
+
 - Returns: `{ count: int }`
 
 ---
@@ -192,6 +215,7 @@ Get current people count for the election.
 ## DTOs
 
 ### ImportFileDto
+
 ```csharp
 public class ImportFileDto
 {
@@ -212,6 +236,7 @@ public class ImportFileDto
 ```
 
 ### ParseFileResponse
+
 ```csharp
 public class ParseFileResponse
 {
@@ -222,6 +247,7 @@ public class ParseFileResponse
 ```
 
 ### ColumnMappingDto
+
 ```csharp
 public class ColumnMappingDto
 {
@@ -231,6 +257,7 @@ public class ColumnMappingDto
 ```
 
 ### ImportPeopleResult
+
 ```csharp
 public class ImportPeopleResult
 {
@@ -245,6 +272,7 @@ public class ImportPeopleResult
 ```
 
 ### UpdateFileSettingsDto
+
 ```csharp
 public class UpdateFileSettingsDto
 {
@@ -254,6 +282,7 @@ public class UpdateFileSettingsDto
 ```
 
 ### DeleteAllPeopleResult
+
 ```csharp
 public class DeleteAllPeopleResult
 {
@@ -266,56 +295,57 @@ public class DeleteAllPeopleResult
 ## Frontend Types
 
 ### `PeopleImport.ts`
+
 ```typescript
 export interface ImportFileInfo {
-  rowId: number
-  electionGuid: string
-  uploadTime: string | null
-  importTime: string | null
-  fileSize: number | null
-  hasContent: boolean | null
-  firstDataRow: number | null
-  columnsToRead: string | null
-  originalFileName: string | null
-  processingStatus: string | null
-  fileType: string | null
-  codePage: number | null
-  messages: string | null
+  rowId: number;
+  electionGuid: string;
+  uploadTime: string | null;
+  importTime: string | null;
+  fileSize: number | null;
+  hasContent: boolean | null;
+  firstDataRow: number | null;
+  columnsToRead: string | null;
+  originalFileName: string | null;
+  processingStatus: string | null;
+  fileType: string | null;
+  codePage: number | null;
+  messages: string | null;
 }
 
 export interface ParseFileResult {
-  headers: string[]
-  previewRows: string[][]
-  totalDataRows: number
+  headers: string[];
+  previewRows: string[][];
+  totalDataRows: number;
 }
 
 export interface ColumnMapping {
-  fileColumn: string
-  targetField: string | null
+  fileColumn: string;
+  targetField: string | null;
 }
 
 export interface ImportPeopleResult {
-  success: boolean
-  peopleAdded: number
-  peopleSkipped: number
-  totalRows: number
-  warnings: string[]
-  errors: string[]
-  timeElapsedSeconds: number
+  success: boolean;
+  peopleAdded: number;
+  peopleSkipped: number;
+  totalRows: number;
+  warnings: string[];
+  errors: string[];
+  timeElapsedSeconds: number;
 }
 
 export const PEOPLE_TARGET_FIELDS = [
-  { value: 'FirstName', label: 'First Name', required: true },
-  { value: 'LastName', label: 'Last Name', required: true },
-  { value: 'BahaiId', label: "Baha'i ID" },
-  { value: 'IneligibleReasonDescription', label: 'Eligibility Status' },
-  { value: 'Area', label: 'Area' },
-  { value: 'Email', label: 'Email' },
-  { value: 'Phone', label: 'Phone' },
-  { value: 'OtherNames', label: 'Other Names' },
-  { value: 'OtherLastNames', label: 'Other Last Names' },
-  { value: 'OtherInfo', label: 'Other Info' },
-] as const
+  { value: "FirstName", label: "First Name", required: true },
+  { value: "LastName", label: "Last Name", required: true },
+  { value: "BahaiId", label: "Baha'i ID" },
+  { value: "IneligibleReasonDescription", label: "Eligibility Status" },
+  { value: "Area", label: "Area" },
+  { value: "Email", label: "Email" },
+  { value: "Phone", label: "Phone" },
+  { value: "OtherNames", label: "Other Names" },
+  { value: "OtherLastNames", label: "Other Last Names" },
+  { value: "OtherInfo", label: "Other Info" },
+] as const;
 ```
 
 ---
@@ -325,11 +355,13 @@ export const PEOPLE_TARGET_FIELDS = [
 ### PeopleImportHub (`/hubs/people-import`)
 
 **Server-to-client events:**
+
 - `importProgress(processed: int, total: int, status: string)` — row-level progress
 - `importError(message: string)` — non-fatal error/warning
 - `importComplete(result: ImportPeopleResult)` — import finished
 
 **Client-to-server methods:**
+
 - `JoinImportSession(electionGuid: Guid)` — join group `PeopleImport{electionGuid}`
 - `LeaveImportSession(electionGuid: Guid)` — leave group
 
@@ -339,18 +371,18 @@ export const PEOPLE_TARGET_FIELDS = [
 
 When a file is parsed, the backend attempts to auto-match file column headers to TallyJ target fields. The matching uses a configurable alias table:
 
-| Target Field | Aliases (case-insensitive, spaces/underscores ignored) |
-|---|---|
-| FirstName | first name, firstname, first_name, given name, givenname |
-| LastName | last name, lastname, last_name, surname, family name, familyname |
-| BahaiId | bahai id, bahaiid, bahai_id, baha'i id, id |
-| IneligibleReasonDescription | eligibility, eligibility status, status, ineligible reason |
-| Area | area, region, locality, community |
-| Email | email, email address, e-mail |
-| Phone | phone, phone number, telephone, tel, mobile |
-| OtherNames | other names, othernames, other_names, middle name, middlename |
-| OtherLastNames | other last names, otherlastnames, maiden name, former name, formername |
-| OtherInfo | other info, otherinfo, other_info, notes, comments |
+| Target Field                | Aliases (case-insensitive, spaces/underscores ignored)                 |
+| --------------------------- | ---------------------------------------------------------------------- |
+| FirstName                   | first name, firstname, first_name, given name, givenname               |
+| LastName                    | last name, lastname, last_name, surname, family name, familyname       |
+| BahaiId                     | bahai id, bahaiid, bahai_id, baha'i id, id                             |
+| IneligibleReasonDescription | eligibility, eligibility status, status, ineligible reason             |
+| Area                        | area, region, locality, community                                      |
+| Email                       | email, email address, e-mail                                           |
+| Phone                       | phone, phone number, telephone, tel, mobile                            |
+| OtherNames                  | other names, othernames, other_names, middle name, middlename          |
+| OtherLastNames              | other last names, otherlastnames, maiden name, former name, formername |
+| OtherInfo                   | other info, otherinfo, other_info, notes, comments                     |
 
 Normalization: strip spaces, underscores, hyphens; lowercase; then compare.
 
@@ -365,12 +397,14 @@ The auto-mapped result is returned as part of the parse response and the client 
 Uses `el-steps` component (same pattern as `BallotImportPage.vue`).
 
 #### Step 1: Upload File
+
 - Drag-and-drop `el-upload` zone accepting `.csv,.tsv,.tab,.txt,.xlsx`
 - On upload success, file appears in the **"Files on Server"** table
 - Table columns: Action (Select button), Status, File Name, Upload Time, Headers on Line (editable `el-input-number`), Content Encoding (dropdown for text files; hidden for xlsx), Size, Other Actions (re-parse icon button, delete icon button)
 - Clicking "Select" on a row sets it as the active file and triggers parse
 
 #### Step 2: Map Columns
+
 - Horizontal scrollable mapping table:
   - **Row 1 (header)**: file column names
   - **Row 2 (mapping)**: dropdown per column selecting TallyJ field or "(ignore)"
@@ -381,6 +415,7 @@ Uses `el-steps` component (same pattern as `BallotImportPage.vue`).
 - Mappings auto-save on change via PUT mapping endpoint
 
 #### Step 3: Import People
+
 - Summary: number of data rows, mapped fields list
 - Validation: First Name and Last Name must be mapped
 - "Import now" button — starts import, shows progress bar
@@ -394,6 +429,7 @@ Uses `el-steps` component (same pattern as `BallotImportPage.vue`).
 ## Delivery Phases
 
 ### Phase 1: Backend — File Storage & Parsing
+
 - `PeopleImportController` with upload, list, delete, parse, settings endpoints
 - `PeopleImportService` with file storage, XLSX/CSV/TAB parsing, auto-mapping
 - DTOs
@@ -401,6 +437,7 @@ Uses `el-steps` component (same pattern as `BallotImportPage.vue`).
 - Unit tests for parsing and auto-mapping logic
 
 ### Phase 2: Backend — Import Execution
+
 - Import endpoint in controller
 - Deduplication and bulk person creation logic in service
 - `PeopleImportHub` SignalR hub
@@ -408,6 +445,7 @@ Uses `el-steps` component (same pattern as `BallotImportPage.vue`).
 - Unit tests for deduplication and import logic
 
 ### Phase 3: Frontend — Import Page & Store
+
 - `PeopleImportPage.vue` with all 3 steps
 - `peopleImportStore.ts` with SignalR integration
 - `peopleImportService.ts` API wrapper
@@ -422,18 +460,21 @@ Uses `el-steps` component (same pattern as `BallotImportPage.vue`).
 ## Verification Approach
 
 ### Backend
+
 ```bash
 cd backend && dotnet build
 cd TallyJ4.Tests && dotnet test
 ```
 
 ### Frontend
+
 ```bash
 cd frontend && npx vue-tsc --noEmit
 cd frontend && npm run test:run
 ```
 
 ### Manual Testing
+
 1. Upload CSV, TAB, XLSX files and verify parsing
 2. Verify auto-mapping for common column names
 3. Import with duplicates and verify skip logic

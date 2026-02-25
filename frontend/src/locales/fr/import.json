@@ -4,7 +4,21 @@
   "import.successCount": "Réussites : {count}",
   "import.errorCount": "Erreurs : {count}",
   "import.currentStatus": "Statut : {status}",
-  "import.errors": "Erreurs d'importation",
+  "import.errorsTitle": "Erreurs d'importation",
   "import.moreErrors": "et {count} autres erreurs...",
-  "import.completed": "Importation terminée avec succès"
+  "import.completed": "Importation terminée avec succès",
+  "import.errors.fileNotFound": "Fichier d'importation introuvable ou vide",
+  "import.errors.noMappings": "Aucun mappage de colonnes configuré",
+  "import.errors.invalidMappings": "Mappages de colonnes invalides",
+  "import.errors.missingRequiredMappings": "Les mappages Prénom et Nom sont requis",
+  "import.errors.lineError": "Ligne {rowNumber}: {message}",
+  "import.errors.importFailedAtLine": "Échec de l'importation à la ligne {rowNumber}: {message}",
+  "import.errors.importFailed": "Échec de l'importation: {message}",
+  "import.errors.missingLastName": "Ligne {rowNumber}: Nom manquant - ignoré",
+  "import.errors.missingFirstName": "Ligne {rowNumber}: Prénom manquant - ignoré",
+  "import.errors.duplicateBahaiId": "Ligne {rowNumber}: ID Bahá’í en double '{bahaiId}' - ignoré",
+  "import.errors.duplicateEmail": "Ligne {rowNumber}: Email en double '{email}' - ignoré",
+  "import.errors.duplicatePhone": "Ligne {rowNumber}: Téléphone en double '{phone}' - ignoré",
+  "import.errors.duplicateName": "Ligne {rowNumber}: Nom en double '{firstName} {lastName}' - ignoré",
+  "import.warnings.unrecognizedEligibility": "Ligne {rowNumber}: Statut d'éligibilité non reconnu: '{eligibilityValue}' - traité comme éligible"
 }

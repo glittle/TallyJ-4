@@ -29,7 +29,7 @@ withDefaults(defineProps<Props>(), {
 
 <style lang="less">
 .table-skeleton {
-  background: white;
+  background: var(--el-bg-color);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
@@ -38,8 +38,8 @@ withDefaults(defineProps<Props>(), {
 .table-header {
   display: flex;
   padding: 16px;
-  background: #fafafa;
-  border-bottom: 1px solid #ebeef5;
+  background: var(--el-fill-color-light);
+  border-bottom: 1px solid var(--el-border-color-lighter);
 }
 
 .header-cell {
@@ -50,7 +50,7 @@ withDefaults(defineProps<Props>(), {
 .table-row {
   display: flex;
   padding: 16px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid var(--el-border-color-lighter);
 }
 
 .table-row:last-child {

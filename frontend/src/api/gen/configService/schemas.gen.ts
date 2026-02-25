@@ -4,7 +4,7 @@ export const AdvancedFilterDtoSchema = {
     type: 'object',
     properties: {
         dateRange: {
-            '$ref': '#/components/schemas/DateRangeFilterDto'
+            $ref: '#/components/schemas/DateRangeFilterDto'
         },
         locations: {
             type: 'array',
@@ -23,10 +23,10 @@ export const AdvancedFilterDtoSchema = {
             nullable: true
         },
         voteCountRange: {
-            '$ref': '#/components/schemas/NumericRangeFilterDto'
+            $ref: '#/components/schemas/NumericRangeFilterDto'
         },
         turnoutRange: {
-            '$ref': '#/components/schemas/NumericRangeFilterDto'
+            $ref: '#/components/schemas/NumericRangeFilterDto'
         },
         ballotStatuses: {
             type: 'array',
@@ -76,7 +76,7 @@ export const ApiResponseAuditLogDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/AuditLogDto'
+            $ref: '#/components/schemas/AuditLogDto'
         },
         message: {
             type: 'string',
@@ -93,8 +93,7 @@ export const ApiResponseAuditLogDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseBallotDtoSchema = {
@@ -105,7 +104,7 @@ export const ApiResponseBallotDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/BallotDto'
+            $ref: '#/components/schemas/BallotDto'
         },
         message: {
             type: 'string',
@@ -122,8 +121,7 @@ export const ApiResponseBallotDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseBooleanSchema = {
@@ -152,8 +150,7 @@ export const ApiResponseBooleanSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseComputerDtoSchema = {
@@ -164,7 +161,7 @@ export const ApiResponseComputerDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/ComputerDto'
+            $ref: '#/components/schemas/ComputerDto'
         },
         message: {
             type: 'string',
@@ -181,8 +178,7 @@ export const ApiResponseComputerDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseDashboardSummaryDtoSchema = {
@@ -193,7 +189,7 @@ export const ApiResponseDashboardSummaryDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/DashboardSummaryDto'
+            $ref: '#/components/schemas/DashboardSummaryDto'
         },
         message: {
             type: 'string',
@@ -210,8 +206,7 @@ export const ApiResponseDashboardSummaryDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseElectionDtoSchema = {
@@ -222,7 +217,7 @@ export const ApiResponseElectionDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/ElectionDto'
+            $ref: '#/components/schemas/ElectionDto'
         },
         message: {
             type: 'string',
@@ -239,8 +234,7 @@ export const ApiResponseElectionDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseElectionSetupStatusDtoSchema = {
@@ -251,7 +245,7 @@ export const ApiResponseElectionSetupStatusDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/ElectionSetupStatusDto'
+            $ref: '#/components/schemas/ElectionSetupStatusDto'
         },
         message: {
             type: 'string',
@@ -268,8 +262,7 @@ export const ApiResponseElectionSetupStatusDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseElectionStatusDtoSchema = {
@@ -280,7 +273,7 @@ export const ApiResponseElectionStatusDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/ElectionStatusDto'
+            $ref: '#/components/schemas/ElectionStatusDto'
         },
         message: {
             type: 'string',
@@ -297,8 +290,7 @@ export const ApiResponseElectionStatusDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseFrontDeskStatsDtoSchema = {
@@ -309,7 +301,7 @@ export const ApiResponseFrontDeskStatsDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/FrontDeskStatsDto'
+            $ref: '#/components/schemas/FrontDeskStatsDto'
         },
         message: {
             type: 'string',
@@ -326,8 +318,7 @@ export const ApiResponseFrontDeskStatsDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseFrontDeskVoterDtoSchema = {
@@ -338,7 +329,7 @@ export const ApiResponseFrontDeskVoterDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/FrontDeskVoterDto'
+            $ref: '#/components/schemas/FrontDeskVoterDto'
         },
         message: {
             type: 'string',
@@ -355,8 +346,7 @@ export const ApiResponseFrontDeskVoterDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseListAvailableElectionDtoSchema = {
@@ -369,7 +359,7 @@ export const ApiResponseListAvailableElectionDtoSchema = {
         data: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/AvailableElectionDto'
+                $ref: '#/components/schemas/AvailableElectionDto'
             },
             description: 'The data returned by the API operation, if successful.',
             nullable: true
@@ -389,8 +379,7 @@ export const ApiResponseListAvailableElectionDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseListComputerDtoSchema = {
@@ -403,7 +392,7 @@ export const ApiResponseListComputerDtoSchema = {
         data: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/ComputerDto'
+                $ref: '#/components/schemas/ComputerDto'
             },
             description: 'The data returned by the API operation, if successful.',
             nullable: true
@@ -423,8 +412,7 @@ export const ApiResponseListComputerDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseListElectionCardDtoSchema = {
@@ -437,7 +425,7 @@ export const ApiResponseListElectionCardDtoSchema = {
         data: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/ElectionCardDto'
+                $ref: '#/components/schemas/ElectionCardDto'
             },
             description: 'The data returned by the API operation, if successful.',
             nullable: true
@@ -457,8 +445,7 @@ export const ApiResponseListElectionCardDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseListEligibilityReasonDtoSchema = {
@@ -471,7 +458,7 @@ export const ApiResponseListEligibilityReasonDtoSchema = {
         data: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/EligibilityReasonDto'
+                $ref: '#/components/schemas/EligibilityReasonDto'
             },
             description: 'The data returned by the API operation, if successful.',
             nullable: true
@@ -491,8 +478,7 @@ export const ApiResponseListEligibilityReasonDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseListFrontDeskVoterDtoSchema = {
@@ -505,7 +491,7 @@ export const ApiResponseListFrontDeskVoterDtoSchema = {
         data: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/FrontDeskVoterDto'
+                $ref: '#/components/schemas/FrontDeskVoterDto'
             },
             description: 'The data returned by the API operation, if successful.',
             nullable: true
@@ -525,8 +511,7 @@ export const ApiResponseListFrontDeskVoterDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseListPersonDtoSchema = {
@@ -539,7 +524,7 @@ export const ApiResponseListPersonDtoSchema = {
         data: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/PersonDto'
+                $ref: '#/components/schemas/PersonDto'
             },
             description: 'The data returned by the API operation, if successful.',
             nullable: true
@@ -559,8 +544,7 @@ export const ApiResponseListPersonDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseListVoteDtoSchema = {
@@ -573,7 +557,7 @@ export const ApiResponseListVoteDtoSchema = {
         data: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/VoteDto'
+                $ref: '#/components/schemas/VoteDto'
             },
             description: 'The data returned by the API operation, if successful.',
             nullable: true
@@ -593,8 +577,7 @@ export const ApiResponseListVoteDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseLocationDtoSchema = {
@@ -605,7 +588,7 @@ export const ApiResponseLocationDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/LocationDto'
+            $ref: '#/components/schemas/LocationDto'
         },
         message: {
             type: 'string',
@@ -622,8 +605,7 @@ export const ApiResponseLocationDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseObjectSchema = {
@@ -652,8 +634,7 @@ export const ApiResponseObjectSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponsePaginatedResponseSuperAdminElectionDtoSchema = {
@@ -664,7 +645,7 @@ export const ApiResponsePaginatedResponseSuperAdminElectionDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/PaginatedResponseSuperAdminElectionDto'
+            $ref: '#/components/schemas/PaginatedResponseSuperAdminElectionDto'
         },
         message: {
             type: 'string',
@@ -681,8 +662,7 @@ export const ApiResponsePaginatedResponseSuperAdminElectionDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponsePersonDtoSchema = {
@@ -693,7 +673,7 @@ export const ApiResponsePersonDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/PersonDto'
+            $ref: '#/components/schemas/PersonDto'
         },
         message: {
             type: 'string',
@@ -710,8 +690,7 @@ export const ApiResponsePersonDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponsePublicDisplayDtoSchema = {
@@ -722,7 +701,7 @@ export const ApiResponsePublicDisplayDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/PublicDisplayDto'
+            $ref: '#/components/schemas/PublicDisplayDto'
         },
         message: {
             type: 'string',
@@ -739,8 +718,7 @@ export const ApiResponsePublicDisplayDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponsePublicHomeDtoSchema = {
@@ -751,7 +729,7 @@ export const ApiResponsePublicHomeDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/PublicHomeDto'
+            $ref: '#/components/schemas/PublicHomeDto'
         },
         message: {
             type: 'string',
@@ -768,8 +746,7 @@ export const ApiResponsePublicHomeDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseRollCallDtoSchema = {
@@ -780,7 +757,7 @@ export const ApiResponseRollCallDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/RollCallDto'
+            $ref: '#/components/schemas/RollCallDto'
         },
         message: {
             type: 'string',
@@ -797,37 +774,7 @@ export const ApiResponseRollCallDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
-} as const;
-
-export const ApiResponseSuperAdminCheckDtoSchema = {
-    type: 'object',
-    properties: {
-        success: {
-            type: 'boolean',
-            description: 'Indicates whether the API operation was successful.'
-        },
-        data: {
-            '$ref': '#/components/schemas/SuperAdminCheckDto'
-        },
-        message: {
-            type: 'string',
-            description: 'An optional message providing additional information about the response.',
-            nullable: true
-        },
-        errors: {
-            type: 'array',
-            items: {
-                type: 'string'
-            },
-            description: 'A list of error messages, if the operation failed.',
-            nullable: true
-        }
-    },
-    additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseSuperAdminElectionDetailDtoSchema = {
@@ -838,7 +785,7 @@ export const ApiResponseSuperAdminElectionDetailDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/SuperAdminElectionDetailDto'
+            $ref: '#/components/schemas/SuperAdminElectionDetailDto'
         },
         message: {
             type: 'string',
@@ -855,8 +802,7 @@ export const ApiResponseSuperAdminElectionDetailDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseSuperAdminSummaryDtoSchema = {
@@ -867,7 +813,7 @@ export const ApiResponseSuperAdminSummaryDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/SuperAdminSummaryDto'
+            $ref: '#/components/schemas/SuperAdminSummaryDto'
         },
         message: {
             type: 'string',
@@ -884,8 +830,7 @@ export const ApiResponseSuperAdminSummaryDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseTellerDtoSchema = {
@@ -896,7 +841,7 @@ export const ApiResponseTellerDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/TellerDto'
+            $ref: '#/components/schemas/TellerDto'
         },
         message: {
             type: 'string',
@@ -913,8 +858,7 @@ export const ApiResponseTellerDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseUserProfileDtoSchema = {
@@ -925,7 +869,7 @@ export const ApiResponseUserProfileDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/UserProfileDto'
+            $ref: '#/components/schemas/UserProfileDto'
         },
         message: {
             type: 'string',
@@ -942,8 +886,7 @@ export const ApiResponseUserProfileDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseVoteDtoSchema = {
@@ -954,7 +897,7 @@ export const ApiResponseVoteDtoSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/VoteDto'
+            $ref: '#/components/schemas/VoteDto'
         },
         message: {
             type: 'string',
@@ -971,12 +914,13 @@ export const ApiResponseVoteDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const AssignRoleRequestSchema = {
-    required: ['roleName'],
+    required: [
+        'roleName'
+    ],
     type: 'object',
     properties: {
         roleName: {
@@ -1057,7 +1001,7 @@ export const AvailableElectionDtoSchema = {
             nullable: true
         },
         electionType: {
-            '$ref': '#/components/schemas/ElectionTypeCode'
+            $ref: '#/components/schemas/ElectionTypeCode'
         }
     },
     additionalProperties: false,
@@ -1120,7 +1064,7 @@ export const BallotDtoSchema = {
         votes: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/VoteDto'
+                $ref: '#/components/schemas/VoteDto'
             },
             description: 'The list of votes associated with this ballot.',
             nullable: true
@@ -1151,7 +1095,7 @@ export const BallotReportDtoSchema = {
         votes: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/VoteReportDto'
+                $ref: '#/components/schemas/VoteReportDto'
             },
             description: 'List of votes recorded on this ballot.',
             nullable: true
@@ -1177,7 +1121,7 @@ export const CandidateAnalysisDtoSchema = {
         clusters: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/CandidateClusterDto'
+                $ref: '#/components/schemas/CandidateClusterDto'
             },
             description: 'Clusters of candidates with similar performance characteristics.',
             nullable: true
@@ -1354,11 +1298,11 @@ export const CandidateResultDtoSchema = {
         },
         closeToNext: {
             type: 'boolean',
-            description: "Whether this candidate's vote count is close to the next candidate's count."
+            description: 'Whether this candidate\'s vote count is close to the next candidate\'s count.'
         },
         closeToPrev: {
             type: 'boolean',
-            description: "Whether this candidate's vote count is close to the previous candidate's count."
+            description: 'Whether this candidate\'s vote count is close to the previous candidate\'s count.'
         }
     },
     additionalProperties: false,
@@ -1370,7 +1314,7 @@ export const ChangePasswordDtoSchema = {
     properties: {
         currentPassword: {
             type: 'string',
-            description: "The user's current password.",
+            description: 'The user\'s current password.',
             nullable: true
         },
         newPassword: {
@@ -1385,7 +1329,7 @@ export const ChangePasswordDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: "Data transfer object for changing a user's password."
+    description: 'Data transfer object for changing a user\'s password.'
 } as const;
 
 export const ChartAxisDtoSchema = {
@@ -1429,13 +1373,13 @@ export const ChartDataDtoSchema = {
         datasets: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/ChartDatasetDto'
+                $ref: '#/components/schemas/ChartDatasetDto'
             },
             description: 'Datasets containing the chart data.',
             nullable: true
         },
         options: {
-            '$ref': '#/components/schemas/ChartOptionsDto'
+            $ref: '#/components/schemas/ChartOptionsDto'
         }
     },
     additionalProperties: false,
@@ -1510,10 +1454,10 @@ export const ChartOptionsDtoSchema = {
             description: 'Whether the chart should be responsive to container size changes.'
         },
         plugins: {
-            '$ref': '#/components/schemas/ChartPluginsDto'
+            $ref: '#/components/schemas/ChartPluginsDto'
         },
         scales: {
-            '$ref': '#/components/schemas/ChartScalesDto'
+            $ref: '#/components/schemas/ChartScalesDto'
         }
     },
     additionalProperties: false,
@@ -1524,10 +1468,10 @@ export const ChartPluginsDtoSchema = {
     type: 'object',
     properties: {
         legend: {
-            '$ref': '#/components/schemas/ChartLegendDto'
+            $ref: '#/components/schemas/ChartLegendDto'
         },
         title: {
-            '$ref': '#/components/schemas/ChartTitleDto'
+            $ref: '#/components/schemas/ChartTitleDto'
         }
     },
     additionalProperties: false,
@@ -1538,10 +1482,10 @@ export const ChartScalesDtoSchema = {
     type: 'object',
     properties: {
         x: {
-            '$ref': '#/components/schemas/ChartAxisDto'
+            $ref: '#/components/schemas/ChartAxisDto'
         },
         y: {
-            '$ref': '#/components/schemas/ChartAxisDto'
+            $ref: '#/components/schemas/ChartAxisDto'
         }
     },
     additionalProperties: false,
@@ -1566,7 +1510,10 @@ export const ChartTitleDtoSchema = {
 } as const;
 
 export const CheckInVoterDtoSchema = {
-    required: ['personGuid', 'votingMethod'],
+    required: [
+        'personGuid',
+        'votingMethod'
+    ],
     type: 'object',
     properties: {
         personGuid: {
@@ -1578,7 +1525,7 @@ export const CheckInVoterDtoSchema = {
             maxLength: 1,
             minLength: 0,
             type: 'string',
-            description: "The voting method (e.g., 'P' for paper, 'O' for online)."
+            description: 'The voting method (e.g., \'P\' for paper, \'O\' for online).'
         },
         tellerName: {
             maxLength: 25,
@@ -1613,7 +1560,7 @@ export const ChooseLocationRequestSchema = {
         }
     },
     additionalProperties: false,
-    description: "Request model for setting a computer's physical location."
+    description: 'Request model for setting a computer\'s physical location.'
 } as const;
 
 export const ChooseTellerRequestSchema = {
@@ -1845,7 +1792,7 @@ export const CreateElectionDtoSchema = {
             nullable: true
         },
         electionType: {
-            '$ref': '#/components/schemas/ElectionTypeCode'
+            $ref: '#/components/schemas/ElectionTypeCode'
         },
         numberToElect: {
             type: 'integer',
@@ -1859,7 +1806,7 @@ export const CreateElectionDtoSchema = {
             nullable: true
         },
         electionMode: {
-            '$ref': '#/components/schemas/ElectionModeCode'
+            $ref: '#/components/schemas/ElectionModeCode'
         },
         numberExtra: {
             type: 'integer',
@@ -2033,12 +1980,12 @@ export const CreatePersonDtoSchema = {
         },
         lastName: {
             type: 'string',
-            description: "The person's last name (required).",
+            description: 'The person\'s last name (required).',
             nullable: true
         },
         firstName: {
             type: 'string',
-            description: "The person's first name.",
+            description: 'The person\'s first name.',
             nullable: true
         },
         otherLastNames: {
@@ -2063,22 +2010,22 @@ export const CreatePersonDtoSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: "The person's BahÃ¡'Ã­ ID.",
+            description: 'The person\'s BahÃ¡\'Ã­ ID.',
             nullable: true
         },
         email: {
             type: 'string',
-            description: "The person's email address.",
+            description: 'The person\'s email address.',
             nullable: true
         },
         phone: {
             type: 'string',
-            description: "The person's phone number.",
+            description: 'The person\'s phone number.',
             nullable: true
         },
         ageGroup: {
             type: 'string',
-            description: "The person's age group.",
+            description: 'The person\'s age group.',
             nullable: true
         },
         ineligibleReasonGuid: {
@@ -2129,8 +2076,7 @@ export const CreateVoteDtoSchema = {
         },
         personGuid: {
             type: 'string',
-            description: `The unique identifier of the person (candidate) being voted for.
-Can be null for certain types of votes.`,
+            description: 'The unique identifier of the person (candidate) being voted for.\nCan be null for certain types of votes.',
             format: 'uuid',
             nullable: true
         },
@@ -2146,8 +2092,7 @@ Can be null for certain types of votes.`,
         }
     },
     additionalProperties: false,
-    description: `Data transfer object for creating a new vote.
-Contains the essential information needed to record a vote on a ballot.`
+    description: 'Data transfer object for creating a new vote.\nContains the essential information needed to record a vote on a ballot.'
 } as const;
 
 export const CustomReportConfigDtoSchema = {
@@ -2166,13 +2111,13 @@ export const CustomReportConfigDtoSchema = {
         sections: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/ReportSectionDto'
+                $ref: '#/components/schemas/ReportSectionDto'
             },
             description: 'The sections that make up the custom report.',
             nullable: true
         },
         defaultFilters: {
-            '$ref': '#/components/schemas/AdvancedFilterDto'
+            $ref: '#/components/schemas/AdvancedFilterDto'
         },
         exportFormats: {
             type: 'array',
@@ -2211,7 +2156,7 @@ export const CustomReportDtoSchema = {
             format: 'uuid'
         },
         config: {
-            '$ref': '#/components/schemas/CustomReportConfigDto'
+            $ref: '#/components/schemas/CustomReportConfigDto'
         },
         generatedData: {
             type: 'object',
@@ -2245,7 +2190,7 @@ export const DashboardSummaryDtoSchema = {
         recentElections: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/ElectionCardDto'
+                $ref: '#/components/schemas/ElectionCardDto'
             },
             description: 'A list of recent elections for display on the dashboard.',
             nullable: true
@@ -2343,26 +2288,26 @@ export const DetailedStatisticsDtoSchema = {
     type: 'object',
     properties: {
         overview: {
-            '$ref': '#/components/schemas/ElectionOverviewDto'
+            $ref: '#/components/schemas/ElectionOverviewDto'
         },
         voteDistribution: {
-            '$ref': '#/components/schemas/VoteDistributionDto'
+            $ref: '#/components/schemas/VoteDistributionDto'
         },
         candidatePerformance: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/CandidatePerformanceDto'
+                $ref: '#/components/schemas/CandidatePerformanceDto'
             },
             description: 'Performance metrics for each candidate.',
             nullable: true
         },
         turnoutAnalysis: {
-            '$ref': '#/components/schemas/TurnoutAnalysisDto'
+            $ref: '#/components/schemas/TurnoutAnalysisDto'
         },
         locationStatistics: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/LocationStatisticsDto'
+                $ref: '#/components/schemas/LocationStatisticsDto'
             },
             description: 'Statistics broken down by voting location.',
             nullable: true
@@ -2373,7 +2318,10 @@ export const DetailedStatisticsDtoSchema = {
 } as const;
 
 export const Disable2FARequestSchema = {
-    required: ['code', 'password'],
+    required: [
+        'code',
+        'password'
+    ],
     type: 'object',
     properties: {
         password: {
@@ -2444,18 +2392,18 @@ export const ElectionComparisonDtoSchema = {
         elections: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/ResultsElectionSummaryDto'
+                $ref: '#/components/schemas/ResultsElectionSummaryDto'
             },
             description: 'List of elections being compared.',
             nullable: true
         },
         metrics: {
-            '$ref': '#/components/schemas/ComparisonMetricsDto'
+            $ref: '#/components/schemas/ComparisonMetricsDto'
         },
         trends: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/TrendDataDto'
+                $ref: '#/components/schemas/TrendDataDto'
             },
             description: 'Trend data showing changes over time across elections.',
             nullable: true
@@ -2510,7 +2458,7 @@ export const ElectionDtoSchema = {
             nullable: true
         },
         electionType: {
-            '$ref': '#/components/schemas/ElectionTypeCode'
+            $ref: '#/components/schemas/ElectionTypeCode'
         },
         numberToElect: {
             type: 'integer',
@@ -2529,7 +2477,7 @@ export const ElectionDtoSchema = {
             nullable: true
         },
         electionMode: {
-            '$ref': '#/components/schemas/ElectionModeCode'
+            $ref: '#/components/schemas/ElectionModeCode'
         },
         numberExtra: {
             type: 'integer',
@@ -2682,7 +2630,11 @@ export const ElectionDtoSchema = {
 } as const;
 
 export const ElectionModeCodeSchema = {
-    enum: ['N', 'T', 'B'],
+    enum: [
+        'N',
+        'T',
+        'B'
+    ],
     type: 'string'
 } as const;
 
@@ -2783,7 +2735,7 @@ export const ElectionReportDtoSchema = {
         elected: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/CandidateReportDto'
+                $ref: '#/components/schemas/CandidateReportDto'
             },
             description: 'List of candidates who have been elected.',
             nullable: true
@@ -2791,7 +2743,7 @@ export const ElectionReportDtoSchema = {
         extra: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/CandidateReportDto'
+                $ref: '#/components/schemas/CandidateReportDto'
             },
             description: 'List of additional candidates who received votes but were not elected.',
             nullable: true
@@ -2799,7 +2751,7 @@ export const ElectionReportDtoSchema = {
         other: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/CandidateReportDto'
+                $ref: '#/components/schemas/CandidateReportDto'
             },
             description: 'List of other candidates who participated but received no votes.',
             nullable: true
@@ -2807,7 +2759,7 @@ export const ElectionReportDtoSchema = {
         ties: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/TieReportDto'
+                $ref: '#/components/schemas/TieReportDto'
             },
             description: 'List of tie situations in the election results.',
             nullable: true
@@ -2850,8 +2802,7 @@ export const ElectionSetupStatusDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Data transfer object representing the current status of election setup.
-Tracks completion of setup steps and overall progress.`
+    description: 'Data transfer object representing the current status of election setup.\nTracks completion of setup steps and overall progress.'
 } as const;
 
 export const ElectionStatusDtoSchema = {
@@ -2874,7 +2825,7 @@ export const ElectionStatusDtoSchema = {
             nullable: true
         },
         electionType: {
-            '$ref': '#/components/schemas/ElectionTypeCode'
+            $ref: '#/components/schemas/ElectionTypeCode'
         },
         tallyStatus: {
             type: 'string',
@@ -2921,8 +2872,7 @@ export const ElectionStep1DtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Data transfer object for election setup step 1.
-Contains basic election information including name, date, and reason.`
+    description: 'Data transfer object for election setup step 1.\nContains basic election information including name, date, and reason.'
 } as const;
 
 export const ElectionStep2DtoSchema = {
@@ -2939,19 +2889,21 @@ export const ElectionStep2DtoSchema = {
             format: 'int32'
         },
         electionType: {
-            '$ref': '#/components/schemas/ElectionTypeCode'
+            $ref: '#/components/schemas/ElectionTypeCode'
         },
         electionMode: {
-            '$ref': '#/components/schemas/ElectionModeCode'
+            $ref: '#/components/schemas/ElectionModeCode'
         }
     },
     additionalProperties: false,
-    description: `Data transfer object for election setup step 2.
-Contains configuration details for election type, mode, and number of positions to elect.`
+    description: 'Data transfer object for election setup step 2.\nContains configuration details for election type, mode, and number of positions to elect.'
 } as const;
 
 export const ElectionSummaryDtoSchema = {
-    required: ['electionGuid', 'name'],
+    required: [
+        'electionGuid',
+        'name'
+    ],
     type: 'object',
     properties: {
         electionGuid: {
@@ -2965,7 +2917,7 @@ export const ElectionSummaryDtoSchema = {
             description: 'The name of the election.'
         },
         electionType: {
-            '$ref': '#/components/schemas/ElectionTypeCode'
+            $ref: '#/components/schemas/ElectionTypeCode'
         },
         dateOfElection: {
             type: 'string',
@@ -2989,7 +2941,7 @@ export const ElectionSummaryDtoSchema = {
             format: 'int32'
         },
         electionMode: {
-            '$ref': '#/components/schemas/ElectionModeCode'
+            $ref: '#/components/schemas/ElectionModeCode'
         }
     },
     additionalProperties: false,
@@ -2997,7 +2949,15 @@ export const ElectionSummaryDtoSchema = {
 } as const;
 
 export const ElectionTypeCodeSchema = {
-    enum: ['LSA', 'LSA1', 'LSA2', 'NSA', 'Con', 'Reg', 'Oth'],
+    enum: [
+        'LSA',
+        'LSA1',
+        'LSA2',
+        'NSA',
+        'Con',
+        'Reg',
+        'Oth'
+    ],
     type: 'string'
 } as const;
 
@@ -3037,7 +2997,9 @@ export const EligibilityReasonDtoSchema = {
 } as const;
 
 export const Enable2FARequestSchema = {
-    required: ['code'],
+    required: [
+        'code'
+    ],
     type: 'object',
     properties: {
         code: {
@@ -3097,7 +3059,7 @@ export const FilteredReportDtoSchema = {
     type: 'object',
     properties: {
         appliedFilters: {
-            '$ref': '#/components/schemas/AdvancedFilterDto'
+            $ref: '#/components/schemas/AdvancedFilterDto'
         },
         totalRecords: {
             type: 'integer',
@@ -3110,12 +3072,12 @@ export const FilteredReportDtoSchema = {
             format: 'int32'
         },
         summary: {
-            '$ref': '#/components/schemas/ElectionReportDto'
+            $ref: '#/components/schemas/ElectionReportDto'
         },
         candidates: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/CandidateReportDto'
+                $ref: '#/components/schemas/CandidateReportDto'
             },
             description: 'Filtered list of candidate results.',
             nullable: true
@@ -3123,7 +3085,7 @@ export const FilteredReportDtoSchema = {
         locations: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/LocationReportDto'
+                $ref: '#/components/schemas/LocationReportDto'
             },
             description: 'Filtered list of location results.',
             nullable: true
@@ -3131,7 +3093,7 @@ export const FilteredReportDtoSchema = {
         ballots: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/BallotReportDto'
+                $ref: '#/components/schemas/BallotReportDto'
             },
             description: 'Filtered list of ballot results.',
             nullable: true
@@ -3139,7 +3101,7 @@ export const FilteredReportDtoSchema = {
         voters: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/VoterReportDto'
+                $ref: '#/components/schemas/VoterReportDto'
             },
             description: 'Filtered list of voter information.',
             nullable: true
@@ -3150,7 +3112,9 @@ export const FilteredReportDtoSchema = {
 } as const;
 
 export const ForgotPasswordRequestSchema = {
-    required: ['email'],
+    required: [
+        'email'
+    ],
     type: 'object',
     properties: {
         email: {
@@ -3206,7 +3170,7 @@ export const FrontDeskVoterDtoSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: "The BahÃ¡'Ã­ ID of the voter.",
+            description: 'The BahÃ¡\'Ã­ ID of the voter.',
             nullable: true
         },
         area: {
@@ -3221,7 +3185,7 @@ export const FrontDeskVoterDtoSchema = {
         },
         votingMethod: {
             type: 'string',
-            description: "The voting method (e.g., 'P' for paper, 'O' for online).",
+            description: 'The voting method (e.g., \'P\' for paper, \'O\' for online).',
             nullable: true
         },
         envNum: {
@@ -3263,7 +3227,9 @@ export const FrontDeskVoterDtoSchema = {
 } as const;
 
 export const GoogleOneTapRequestSchema = {
-    required: ['credential'],
+    required: [
+        'credential'
+    ],
     type: 'object',
     properties: {
         credential: {
@@ -3294,7 +3260,7 @@ export const ImportBallotRequestDtoSchema = {
             nullable: true
         },
         configuration: {
-            '$ref': '#/components/schemas/ImportConfigurationDto'
+            $ref: '#/components/schemas/ImportConfigurationDto'
         }
     },
     additionalProperties: false,
@@ -3321,7 +3287,7 @@ export const ImportConfigurationDtoSchema = {
         fieldMappings: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/FieldMappingDto'
+                $ref: '#/components/schemas/FieldMappingDto'
             },
             description: 'List of field mappings from source columns to target fields.',
             nullable: true
@@ -3333,6 +3299,27 @@ export const ImportConfigurationDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object for configuring an import operation.'
+} as const;
+
+export const ImportErrorDtoSchema = {
+    type: 'object',
+    properties: {
+        key: {
+            type: 'string',
+            description: 'The i18n key for the error message.',
+            nullable: true
+        },
+        parameters: {
+            type: 'object',
+            additionalProperties: {
+                type: 'string'
+            },
+            description: 'Parameters to substitute into the error message.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for import error messages.'
 } as const;
 
 export const ImportFileDtoSchema = {
@@ -3438,7 +3425,7 @@ export const ImportPeopleResultSchema = {
         warnings: {
             type: 'array',
             items: {
-                type: 'string'
+                $ref: '#/components/schemas/ImportWarningDto'
             },
             description: 'List of warning messages generated during import.',
             nullable: true
@@ -3446,7 +3433,7 @@ export const ImportPeopleResultSchema = {
         errors: {
             type: 'array',
             items: {
-                type: 'string'
+                $ref: '#/components/schemas/ImportErrorDto'
             },
             description: 'List of error messages encountered during import.',
             nullable: true
@@ -3459,6 +3446,27 @@ export const ImportPeopleResultSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object containing the result of importing people.'
+} as const;
+
+export const ImportWarningDtoSchema = {
+    type: 'object',
+    properties: {
+        key: {
+            type: 'string',
+            description: 'The i18n key for the warning message.',
+            nullable: true
+        },
+        parameters: {
+            type: 'object',
+            additionalProperties: {
+                type: 'string'
+            },
+            description: 'Parameters to substitute into the warning message.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for import warning messages.'
 } as const;
 
 export const LocationAnalysisDtoSchema = {
@@ -3481,7 +3489,7 @@ export const LocationAnalysisDtoSchema = {
         clusters: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/LocationClusterDto'
+                $ref: '#/components/schemas/LocationClusterDto'
             },
             description: 'Clusters of locations with similar voting characteristics.',
             nullable: true
@@ -3696,7 +3704,10 @@ export const LocationStatisticsDtoSchema = {
 } as const;
 
 export const LoginRequestSchema = {
-    required: ['email', 'password'],
+    required: [
+        'email',
+        'password'
+    ],
     type: 'object',
     properties: {
         email: {
@@ -3727,7 +3738,7 @@ export const MonitorInfoDtoSchema = {
         computers: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/ComputerInfoDto'
+                $ref: '#/components/schemas/ComputerInfoDto'
             },
             description: 'List of computers participating in the election with their status information.',
             nullable: true
@@ -3735,13 +3746,13 @@ export const MonitorInfoDtoSchema = {
         locations: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/LocationInfoDto'
+                $ref: '#/components/schemas/LocationInfoDto'
             },
             description: 'List of voting locations with their current statistics.',
             nullable: true
         },
         onlineVotingInfo: {
-            '$ref': '#/components/schemas/OnlineVotingInfoDto'
+            $ref: '#/components/schemas/OnlineVotingInfoDto'
         },
         totalBallots: {
             type: 'integer',
@@ -3852,7 +3863,7 @@ export const PaginatedResponseAuditLogDtoSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/AuditLogDto'
+                $ref: '#/components/schemas/AuditLogDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -3890,8 +3901,7 @@ export const PaginatedResponseAuditLogDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponseBallotDtoSchema = {
@@ -3900,7 +3910,7 @@ export const PaginatedResponseBallotDtoSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/BallotDto'
+                $ref: '#/components/schemas/BallotDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -3938,8 +3948,7 @@ export const PaginatedResponseBallotDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponseElectionSummaryDtoSchema = {
@@ -3948,7 +3957,7 @@ export const PaginatedResponseElectionSummaryDtoSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/ElectionSummaryDto'
+                $ref: '#/components/schemas/ElectionSummaryDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -3986,8 +3995,7 @@ export const PaginatedResponseElectionSummaryDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponseLocationDtoSchema = {
@@ -3996,7 +4004,7 @@ export const PaginatedResponseLocationDtoSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/LocationDto'
+                $ref: '#/components/schemas/LocationDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -4034,8 +4042,7 @@ export const PaginatedResponseLocationDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponsePersonDtoSchema = {
@@ -4044,7 +4051,7 @@ export const PaginatedResponsePersonDtoSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/PersonDto'
+                $ref: '#/components/schemas/PersonDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -4082,8 +4089,7 @@ export const PaginatedResponsePersonDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponseSuperAdminElectionDtoSchema = {
@@ -4092,7 +4098,7 @@ export const PaginatedResponseSuperAdminElectionDtoSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/SuperAdminElectionDto'
+                $ref: '#/components/schemas/SuperAdminElectionDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -4130,8 +4136,7 @@ export const PaginatedResponseSuperAdminElectionDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponseTellerDtoSchema = {
@@ -4140,7 +4145,7 @@ export const PaginatedResponseTellerDtoSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/TellerDto'
+                $ref: '#/components/schemas/TellerDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -4178,8 +4183,7 @@ export const PaginatedResponseTellerDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const ParseCsvHeadersRequestSchema = {
@@ -4230,7 +4234,7 @@ export const ParseFileResponseSchema = {
         autoMappings: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/ColumnMappingDto'
+                $ref: '#/components/schemas/ColumnMappingDto'
             },
             description: 'Automatically detected column mappings.',
             nullable: true
@@ -4287,27 +4291,27 @@ export const PersonDtoSchema = {
         },
         firstName: {
             type: 'string',
-            description: "The person's first name.",
+            description: 'The person\'s first name.',
             nullable: true
         },
         lastName: {
             type: 'string',
-            description: "The person's last name.",
+            description: 'The person\'s last name.',
             nullable: true
         },
         fullName: {
             type: 'string',
-            description: "The person's full name (combination of first and last names).",
+            description: 'The person\'s full name (combination of first and last names).',
             nullable: true
         },
         email: {
             type: 'string',
-            description: "The person's email address.",
+            description: 'The person\'s email address.',
             nullable: true
         },
         phone: {
             type: 'string',
-            description: "The person's phone number.",
+            description: 'The person\'s phone number.',
             nullable: true
         },
         canReceiveVotes: {
@@ -4327,7 +4331,7 @@ export const PersonDtoSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: "The person's BahÃ¡'Ã­ ID.",
+            description: 'The person\'s BahÃ¡\'Ã­ ID.',
             nullable: true
         },
         otherLastNames: {
@@ -4352,7 +4356,7 @@ export const PersonDtoSchema = {
         },
         ageGroup: {
             type: 'string',
-            description: "The person's age group.",
+            description: 'The person\'s age group.',
             nullable: true
         },
         ineligibleReasonGuid: {
@@ -4410,7 +4414,7 @@ export const PredictiveMetricsDtoSchema = {
         predictions: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/PredictionDto'
+                $ref: '#/components/schemas/PredictionDto'
             },
             description: 'List of predictions for various election metrics.',
             nullable: true
@@ -4492,7 +4496,7 @@ export const PresentationDtoSchema = {
         electedCandidates: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/PresentationCandidateDto'
+                $ref: '#/components/schemas/PresentationCandidateDto'
             },
             description: 'List of candidates who have been elected.',
             nullable: true
@@ -4500,7 +4504,7 @@ export const PresentationDtoSchema = {
         extraCandidates: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/PresentationCandidateDto'
+                $ref: '#/components/schemas/PresentationCandidateDto'
             },
             description: 'List of additional candidates who received votes but were not elected.',
             nullable: true
@@ -4512,7 +4516,7 @@ export const PresentationDtoSchema = {
         ties: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/PresentationTieDto'
+                $ref: '#/components/schemas/PresentationTieDto'
             },
             description: 'List of tie situations that need to be resolved.',
             nullable: true
@@ -4613,7 +4617,7 @@ export const PublicDisplayDtoSchema = {
             nullable: true
         },
         electionType: {
-            '$ref': '#/components/schemas/ElectionTypeCode'
+            $ref: '#/components/schemas/ElectionTypeCode'
         },
         tallyStatus: {
             type: 'string',
@@ -4633,7 +4637,7 @@ export const PublicDisplayDtoSchema = {
         electedCandidates: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/PublicCandidateDto'
+                $ref: '#/components/schemas/PublicCandidateDto'
             },
             description: 'List of elected candidates.',
             nullable: true
@@ -4641,13 +4645,13 @@ export const PublicDisplayDtoSchema = {
         additionalCandidates: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/PublicCandidateDto'
+                $ref: '#/components/schemas/PublicCandidateDto'
             },
             description: 'List of additional candidates (next highest).',
             nullable: true
         },
         statistics: {
-            '$ref': '#/components/schemas/PublicDisplayStatsDto'
+            $ref: '#/components/schemas/PublicDisplayStatsDto'
         },
         lastUpdated: {
             type: 'string',
@@ -4660,8 +4664,7 @@ export const PublicDisplayDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: `Data transfer object for public display of election results.
-Optimized for full-screen presentation on teller computers or public displays.`
+    description: 'Data transfer object for public display of election results.\nOptimized for full-screen presentation on teller computers or public displays.'
 } as const;
 
 export const PublicDisplayStatsDtoSchema = {
@@ -4736,12 +4739,11 @@ export const PublicHomeDtoSchema = {
 } as const;
 
 export const RefreshTokenRequestSchema = {
-    required: ['refreshToken'],
     type: 'object',
     properties: {
         refreshToken: {
-            minLength: 1,
-            type: 'string'
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false
@@ -4781,7 +4783,12 @@ export const RegisterComputerDtoSchema = {
 } as const;
 
 export const RegisterRequestSchema = {
-    required: ['confirmPassword', 'displayName', 'email', 'password'],
+    required: [
+        'confirmPassword',
+        'displayName',
+        'email',
+        'password'
+    ],
     type: 'object',
     properties: {
         email: {
@@ -4856,17 +4863,17 @@ export const RequestCodeDtoSchema = {
     properties: {
         voterId: {
             type: 'string',
-            description: "The voter's unique identifier (email, phone, or custom code).",
+            description: 'The voter\'s unique identifier (email, phone, or custom code).',
             nullable: true
         },
         voterIdType: {
             type: 'string',
-            description: "The type of voter ID: 'E' (email), 'P' (phone), or 'C' (code).",
+            description: 'The type of voter ID: \'E\' (email), \'P\' (phone), or \'C\' (code).',
             nullable: true
         },
         deliveryMethod: {
             type: 'string',
-            description: "The delivery method for the verification code: 'email', 'sms', or 'voice'.",
+            description: 'The delivery method for the verification code: \'email\', \'sms\', or \'voice\'.',
             nullable: true
         }
     },
@@ -4875,7 +4882,12 @@ export const RequestCodeDtoSchema = {
 } as const;
 
 export const ResetPasswordRequestSchema = {
-    required: ['confirmPassword', 'email', 'newPassword', 'token'],
+    required: [
+        'confirmPassword',
+        'email',
+        'newPassword',
+        'token'
+    ],
     type: 'object',
     properties: {
         token: {
@@ -4959,13 +4971,13 @@ export const RollCallDtoSchema = {
         voters: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/FrontDeskVoterDto'
+                $ref: '#/components/schemas/FrontDeskVoterDto'
             },
             description: 'List of voters at the front desk.',
             nullable: true
         },
         stats: {
-            '$ref': '#/components/schemas/FrontDeskStatsDto'
+            $ref: '#/components/schemas/FrontDeskStatsDto'
         }
     },
     additionalProperties: false,
@@ -4978,7 +4990,7 @@ export const SaveTieCountsRequestDtoSchema = {
         counts: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/TieCountDto'
+                $ref: '#/components/schemas/TieCountDto'
             },
             description: 'List of tie-break counts for candidates.',
             nullable: true
@@ -5013,22 +5025,22 @@ export const StatisticalAnalysisDtoSchema = {
     type: 'object',
     properties: {
         overview: {
-            '$ref': '#/components/schemas/ElectionOverviewDto'
+            $ref: '#/components/schemas/ElectionOverviewDto'
         },
         votingPatterns: {
-            '$ref': '#/components/schemas/VotingPatternAnalysisDto'
+            $ref: '#/components/schemas/VotingPatternAnalysisDto'
         },
         candidateAnalysis: {
-            '$ref': '#/components/schemas/CandidateAnalysisDto'
+            $ref: '#/components/schemas/CandidateAnalysisDto'
         },
         locationAnalysis: {
-            '$ref': '#/components/schemas/LocationAnalysisDto'
+            $ref: '#/components/schemas/LocationAnalysisDto'
         },
         timeBasedAnalysis: {
-            '$ref': '#/components/schemas/TimeBasedAnalysisDto'
+            $ref: '#/components/schemas/TimeBasedAnalysisDto'
         },
         predictiveMetrics: {
-            '$ref': '#/components/schemas/PredictiveMetricsDto'
+            $ref: '#/components/schemas/PredictiveMetricsDto'
         }
     },
     additionalProperties: false,
@@ -5045,13 +5057,13 @@ export const SubmitOnlineBallotDtoSchema = {
         },
         voterId: {
             type: 'string',
-            description: "The voter's unique identifier.",
+            description: 'The voter\'s unique identifier.',
             nullable: true
         },
         votes: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/OnlineVoteDto'
+                $ref: '#/components/schemas/OnlineVoteDto'
             },
             description: 'The list of votes on the ballot.',
             nullable: true
@@ -5059,18 +5071,6 @@ export const SubmitOnlineBallotDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object for submitting an online ballot.'
-} as const;
-
-export const SuperAdminCheckDtoSchema = {
-    type: 'object',
-    properties: {
-        isSuperAdmin: {
-            type: 'boolean',
-            description: 'Indicates whether the authenticated user has super admin privileges.'
-        }
-    },
-    additionalProperties: false,
-    description: 'Data transfer object for super admin status check response.'
 } as const;
 
 export const SuperAdminElectionDetailDtoSchema = {
@@ -5103,7 +5103,7 @@ export const SuperAdminElectionDetailDtoSchema = {
             nullable: true
         },
         electionType: {
-            '$ref': '#/components/schemas/ElectionTypeCode'
+            $ref: '#/components/schemas/ElectionTypeCode'
         },
         voterCount: {
             type: 'integer',
@@ -5132,7 +5132,7 @@ export const SuperAdminElectionDetailDtoSchema = {
             nullable: true
         },
         electionMode: {
-            '$ref': '#/components/schemas/ElectionModeCode'
+            $ref: '#/components/schemas/ElectionModeCode'
         },
         percentComplete: {
             type: 'number',
@@ -5142,7 +5142,7 @@ export const SuperAdminElectionDetailDtoSchema = {
         owners: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/SuperAdminElectionOwnerDto'
+                $ref: '#/components/schemas/SuperAdminElectionOwnerDto'
             },
             description: 'List of owners and their roles for this election.',
             nullable: true
@@ -5182,7 +5182,7 @@ export const SuperAdminElectionDtoSchema = {
             nullable: true
         },
         electionType: {
-            '$ref': '#/components/schemas/ElectionTypeCode'
+            $ref: '#/components/schemas/ElectionTypeCode'
         },
         voterCount: {
             type: 'integer',
@@ -5284,12 +5284,12 @@ export const TallyResultDtoSchema = {
             format: 'date-time'
         },
         statistics: {
-            '$ref': '#/components/schemas/TallyStatisticsDto'
+            $ref: '#/components/schemas/TallyStatisticsDto'
         },
         results: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/CandidateResultDto'
+                $ref: '#/components/schemas/CandidateResultDto'
             },
             description: 'The list of candidate results.',
             nullable: true
@@ -5297,7 +5297,7 @@ export const TallyResultDtoSchema = {
         ties: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/TieInfoDto'
+                $ref: '#/components/schemas/TieInfoDto'
             },
             description: 'Information about any ties in the election.',
             nullable: true
@@ -5465,7 +5465,7 @@ export const TieDetailsDtoSchema = {
         candidates: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/TieCandidateDto'
+                $ref: '#/components/schemas/TieCandidateDto'
             },
             description: 'List of candidates involved in the tie.',
             nullable: true
@@ -5552,7 +5552,7 @@ export const TimeBasedAnalysisDtoSchema = {
         segments: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/TimeSegmentDto'
+                $ref: '#/components/schemas/TimeSegmentDto'
             },
             description: 'Voting data segmented by time periods.',
             nullable: true
@@ -5633,7 +5633,7 @@ export const TrendDataDtoSchema = {
         points: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/TrendPointDto'
+                $ref: '#/components/schemas/TrendPointDto'
             },
             description: 'Data points for this metric over time.',
             nullable: true
@@ -5710,7 +5710,7 @@ export const TurnoutAnalysisDtoSchema = {
         demographicBreakdown: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/DemographicTurnoutDto'
+                $ref: '#/components/schemas/DemographicTurnoutDto'
             },
             description: 'Turnout breakdown by demographic categories.',
             nullable: true
@@ -5718,13 +5718,13 @@ export const TurnoutAnalysisDtoSchema = {
         timeBasedTurnout: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/TimeBasedTurnoutDto'
+                $ref: '#/components/schemas/TimeBasedTurnoutDto'
             },
             description: 'Time-based turnout analysis.',
             nullable: true
         },
         participationRates: {
-            '$ref': '#/components/schemas/ParticipationRateDto'
+            $ref: '#/components/schemas/ParticipationRateDto'
         }
     },
     additionalProperties: false,
@@ -5818,10 +5818,10 @@ export const UpdateElectionDtoSchema = {
             nullable: true
         },
         electionType: {
-            '$ref': '#/components/schemas/ElectionTypeCode'
+            $ref: '#/components/schemas/ElectionTypeCode'
         },
         electionMode: {
-            '$ref': '#/components/schemas/ElectionModeCode'
+            $ref: '#/components/schemas/ElectionModeCode'
         },
         canVote: {
             type: 'string',
@@ -5984,12 +5984,12 @@ export const UpdatePersonDtoSchema = {
     properties: {
         lastName: {
             type: 'string',
-            description: "The person's last name (required).",
+            description: 'The person\'s last name (required).',
             nullable: true
         },
         firstName: {
             type: 'string',
-            description: "The person's first name.",
+            description: 'The person\'s first name.',
             nullable: true
         },
         otherLastNames: {
@@ -6014,22 +6014,22 @@ export const UpdatePersonDtoSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: "The person's BahÃ¡'Ã­ ID.",
+            description: 'The person\'s BahÃ¡\'Ã­ ID.',
             nullable: true
         },
         email: {
             type: 'string',
-            description: "The person's email address.",
+            description: 'The person\'s email address.',
             nullable: true
         },
         phone: {
             type: 'string',
-            description: "The person's phone number.",
+            description: 'The person\'s phone number.',
             nullable: true
         },
         ageGroup: {
             type: 'string',
-            description: "The person's age group.",
+            description: 'The person\'s age group.',
             nullable: true
         },
         ineligibleReasonGuid: {
@@ -6113,19 +6113,23 @@ export const UserProfileDtoSchema = {
         },
         emailConfirmed: {
             type: 'boolean',
-            description: "Indicates whether the user's email address has been confirmed."
+            description: 'Indicates whether the user\'s email address has been confirmed.'
         },
         phoneNumberConfirmed: {
             type: 'boolean',
-            description: "Indicates whether the user's phone number has been confirmed."
+            description: 'Indicates whether the user\'s phone number has been confirmed.'
         }
     },
     additionalProperties: false,
-    description: "Data transfer object representing a user's profile information."
+    description: 'Data transfer object representing a user\'s profile information.'
 } as const;
 
 export const Verify2FARequestSchema = {
-    required: ['code', 'email', 'password'],
+    required: [
+        'code',
+        'email',
+        'password'
+    ],
     type: 'object',
     properties: {
         email: {
@@ -6151,7 +6155,7 @@ export const VerifyCodeDtoSchema = {
     properties: {
         voterId: {
             type: 'string',
-            description: "The voter's unique identifier.",
+            description: 'The voter\'s unique identifier.',
             nullable: true
         },
         verifyCode: {
@@ -6161,11 +6165,14 @@ export const VerifyCodeDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: "Data transfer object for verifying a voter's code for online voting."
+    description: 'Data transfer object for verifying a voter\'s code for online voting.'
 } as const;
 
 export const VerifyEmailRequestSchema = {
-    required: ['email', 'token'],
+    required: [
+        'email',
+        'token'
+    ],
     type: 'object',
     properties: {
         email: {
@@ -6251,8 +6258,7 @@ export const VoteDtoSchema = {
         },
         personGuid: {
             type: 'string',
-            description: `The unique identifier of the person (candidate) being voted for.
-Can be null for certain types of votes.`,
+            description: 'The unique identifier of the person (candidate) being voted for.\nCan be null for certain types of votes.',
             format: 'uuid',
             nullable: true
         },
@@ -6278,8 +6284,7 @@ Can be null for certain types of votes.`,
         }
     },
     additionalProperties: false,
-    description: `Data transfer object representing a vote in an election.
-Contains vote details including candidate information and ballot context.`
+    description: 'Data transfer object representing a vote in an election.\nContains vote details including candidate information and ballot context.'
 } as const;
 
 export const VoteReportDtoSchema = {
@@ -6363,7 +6368,7 @@ export const VotingPatternAnalysisDtoSchema = {
         patterns: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/VotingPatternDto'
+                $ref: '#/components/schemas/VotingPatternDto'
             },
             description: 'List of identified voting patterns.',
             nullable: true
@@ -6404,7 +6409,7 @@ export const ApiResponseFrontDeskStatsDtoWritableSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/FrontDeskStatsDtoWritable'
+            $ref: '#/components/schemas/FrontDeskStatsDtoWritable'
         },
         message: {
             type: 'string',
@@ -6421,8 +6426,7 @@ export const ApiResponseFrontDeskStatsDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseFrontDeskVoterDtoWritableSchema = {
@@ -6433,7 +6437,7 @@ export const ApiResponseFrontDeskVoterDtoWritableSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/FrontDeskVoterDtoWritable'
+            $ref: '#/components/schemas/FrontDeskVoterDtoWritable'
         },
         message: {
             type: 'string',
@@ -6450,8 +6454,7 @@ export const ApiResponseFrontDeskVoterDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseListFrontDeskVoterDtoWritableSchema = {
@@ -6464,7 +6467,7 @@ export const ApiResponseListFrontDeskVoterDtoWritableSchema = {
         data: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/FrontDeskVoterDtoWritable'
+                $ref: '#/components/schemas/FrontDeskVoterDtoWritable'
             },
             description: 'The data returned by the API operation, if successful.',
             nullable: true
@@ -6484,8 +6487,7 @@ export const ApiResponseListFrontDeskVoterDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponsePaginatedResponseSuperAdminElectionDtoWritableSchema = {
@@ -6496,7 +6498,7 @@ export const ApiResponsePaginatedResponseSuperAdminElectionDtoWritableSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/PaginatedResponseSuperAdminElectionDtoWritable'
+            $ref: '#/components/schemas/PaginatedResponseSuperAdminElectionDtoWritable'
         },
         message: {
             type: 'string',
@@ -6513,8 +6515,7 @@ export const ApiResponsePaginatedResponseSuperAdminElectionDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const ApiResponseRollCallDtoWritableSchema = {
@@ -6525,7 +6526,7 @@ export const ApiResponseRollCallDtoWritableSchema = {
             description: 'Indicates whether the API operation was successful.'
         },
         data: {
-            '$ref': '#/components/schemas/RollCallDtoWritable'
+            $ref: '#/components/schemas/RollCallDtoWritable'
         },
         message: {
             type: 'string',
@@ -6542,8 +6543,7 @@ export const ApiResponseRollCallDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic API response wrapper that standardizes the format of all API responses.
-Provides consistent success/error handling with optional data and error messages.`
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
 export const FrontDeskStatsDtoWritableSchema = {
@@ -6584,7 +6584,7 @@ export const FrontDeskVoterDtoWritableSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: "The BahÃ¡'Ã­ ID of the voter.",
+            description: 'The BahÃ¡\'Ã­ ID of the voter.',
             nullable: true
         },
         area: {
@@ -6599,7 +6599,7 @@ export const FrontDeskVoterDtoWritableSchema = {
         },
         votingMethod: {
             type: 'string',
-            description: "The voting method (e.g., 'P' for paper, 'O' for online).",
+            description: 'The voting method (e.g., \'P\' for paper, \'O\' for online).',
             nullable: true
         },
         envNum: {
@@ -6641,7 +6641,7 @@ export const PaginatedResponseAuditLogDtoWritableSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/AuditLogDto'
+                $ref: '#/components/schemas/AuditLogDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -6663,8 +6663,7 @@ export const PaginatedResponseAuditLogDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponseBallotDtoWritableSchema = {
@@ -6673,7 +6672,7 @@ export const PaginatedResponseBallotDtoWritableSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/BallotDto'
+                $ref: '#/components/schemas/BallotDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -6695,8 +6694,7 @@ export const PaginatedResponseBallotDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponseElectionSummaryDtoWritableSchema = {
@@ -6705,7 +6703,7 @@ export const PaginatedResponseElectionSummaryDtoWritableSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/ElectionSummaryDto'
+                $ref: '#/components/schemas/ElectionSummaryDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -6727,8 +6725,7 @@ export const PaginatedResponseElectionSummaryDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponseLocationDtoWritableSchema = {
@@ -6737,7 +6734,7 @@ export const PaginatedResponseLocationDtoWritableSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/LocationDto'
+                $ref: '#/components/schemas/LocationDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -6759,8 +6756,7 @@ export const PaginatedResponseLocationDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponsePersonDtoWritableSchema = {
@@ -6769,7 +6765,7 @@ export const PaginatedResponsePersonDtoWritableSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/PersonDto'
+                $ref: '#/components/schemas/PersonDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -6791,8 +6787,7 @@ export const PaginatedResponsePersonDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponseSuperAdminElectionDtoWritableSchema = {
@@ -6801,7 +6796,7 @@ export const PaginatedResponseSuperAdminElectionDtoWritableSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/SuperAdminElectionDto'
+                $ref: '#/components/schemas/SuperAdminElectionDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -6823,8 +6818,7 @@ export const PaginatedResponseSuperAdminElectionDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const PaginatedResponseTellerDtoWritableSchema = {
@@ -6833,7 +6827,7 @@ export const PaginatedResponseTellerDtoWritableSchema = {
         items: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/TellerDto'
+                $ref: '#/components/schemas/TellerDto'
             },
             description: 'The items on the current page.',
             nullable: true
@@ -6855,8 +6849,7 @@ export const PaginatedResponseTellerDtoWritableSchema = {
         }
     },
     additionalProperties: false,
-    description: `Generic paginated response wrapper for collections that require pagination.
-Provides metadata about the current page, total items, and navigation information.`
+    description: 'Generic paginated response wrapper for collections that require pagination.\nProvides metadata about the current page, total items, and navigation information.'
 } as const;
 
 export const RollCallDtoWritableSchema = {
@@ -6865,13 +6858,13 @@ export const RollCallDtoWritableSchema = {
         voters: {
             type: 'array',
             items: {
-                '$ref': '#/components/schemas/FrontDeskVoterDtoWritable'
+                $ref: '#/components/schemas/FrontDeskVoterDtoWritable'
             },
             description: 'List of voters at the front desk.',
             nullable: true
         },
         stats: {
-            '$ref': '#/components/schemas/FrontDeskStatsDtoWritable'
+            $ref: '#/components/schemas/FrontDeskStatsDtoWritable'
         }
     },
     additionalProperties: false,

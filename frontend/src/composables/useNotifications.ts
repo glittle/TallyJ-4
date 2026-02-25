@@ -1,7 +1,6 @@
-import { ElMessage, ElNotification } from 'element-plus';
-import { i18n } from '../locales';
+import { ElMessage, ElNotification } from "element-plus";
 
-export type NotificationType = 'success' | 'warning' | 'info' | 'error';
+export type NotificationType = "success" | "warning" | "info" | "error";
 
 export interface NotificationOptions {
   title?: string;
@@ -12,89 +11,87 @@ export interface NotificationOptions {
 }
 
 export function useNotifications() {
-  const { t } = i18n.global;
+  const computeDuration = (message: string): number => {
+    // Base duration on message length (e.g., 300ms per character, with a minimum of 2000ms and a maximum of 10000ms)
+    const calculatedDuration = message.length * 300;
+    return Math.min(Math.max(calculatedDuration, 2000), 10000);
+  };
 
   const showMessage = (options: NotificationOptions) => {
-    const { type = 'info', message, duration = 3000, showClose = true } = options;
+    const {
+      type = options.type || "info",
+      message = options.message,
+      duration = options.duration ?? computeDuration(message),
+      showClose = options.showClose ?? false,
+    } = options;
 
     ElMessage({
       message,
       type,
       duration,
-      showClose
+      showClose,
     });
   };
 
-  const showNotification = (options: NotificationOptions) => {
-    const { title, message, type = 'info', duration = 4500, showClose = true } = options;
+  // const showNotification = (options: NotificationOptions) => {
+  //   const {
+  //     title,
+  //     message,
+  //     type = "info",
+  //     duration = 4500,
+  //     showClose = true,
+  //   } = options;
 
-    ElNotification({
-      title: title || getDefaultTitle(type),
+  //   ElNotification({
+  //     title: title || getDefaultTitle(type),
+  //     message,
+  //     type,
+  //     duration,
+  //     showClose,
+  //   });
+  // };
+
+  // const getDefaultTitle = (type: NotificationType): string => {
+  //   switch (type) {
+  //     case "success":
+  //       return t("notification.success");
+  //     case "warning":
+  //       return t("notification.warning");
+  //     case "error":
+  //       return t("notification.error");
+  //     case "info":
+  //     default:
+  //       return t("notification.info");
+  //   }
+  // };
+
+  const showSuccessMessage = (message: string, duration?: number) => {
+    showMessage({ message, type: "success", duration });
+  };
+
+  const showErrorMessage = (message: string, duration?: number) => {
+    showMessage({
       message,
-      type,
-      duration,
-      showClose
+      type: "error",
+      duration: duration ?? 0,
+      showClose: true,
     });
   };
 
-  const getDefaultTitle = (type: NotificationType): string => {
-    switch (type) {
-      case 'success':
-        return t('notification.success');
-      case 'warning':
-        return t('notification.warning');
-      case 'error':
-        return t('notification.error');
-      case 'info':
-      default:
-        return t('notification.info');
-    }
+  const showWarningMessage = (message: string, duration?: number) => {
+    showMessage({ message, type: "warning", duration });
   };
 
-  // Convenience methods
-  const success = (message: string, title?: string) => {
-    showNotification({ message, type: 'success', title });
-  };
-
-  const error = (message: string, title?: string) => {
-    showNotification({ message, type: 'error', title, duration: 0, showClose: true });
-  };
-
-  const warning = (message: string, title?: string) => {
-    showNotification({ message, type: 'warning', title });
-  };
-
-  const info = (message: string, title?: string) => {
-    showNotification({ message, type: 'info', title });
-  };
-
-  // Quick message methods (less intrusive)
-  const successMessage = (message: string) => {
-    showMessage({ message, type: 'success' });
-  };
-
-  const errorMessage = (message: string) => {
-    showMessage({ message, type: 'error', duration: 0, showClose: true });
-  };
-
-  const warningMessage = (message: string) => {
-    showMessage({ message, type: 'warning' });
-  };
-
-  const infoMessage = (message: string) => {
-    showMessage({ message, type: 'info' });
+  const showInfoMessage = (message: string, duration?: number) => {
+    showMessage({ message, type: "info", duration });
   };
 
   return {
-    showMessage,
-    showNotification,
-    success,
-    error,
-    warning,
-    info,
-    successMessage,
-    errorMessage,
-    warningMessage,
-    infoMessage
+    // showMessage,
+    // showNotification,
+    showSuccessMessage,
+    showErrorMessage,
+    showWarningMessage,
+    showInfoMessage,
   };
 }

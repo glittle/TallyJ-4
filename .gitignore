@@ -60,3 +60,4 @@ dist/
 build/ 
 .cache/ 
 *.log
+frontend/package-lock.json

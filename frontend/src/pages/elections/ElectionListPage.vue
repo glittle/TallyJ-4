@@ -117,8 +117,14 @@
           />
           <el-table-column
             prop="voterCount"
-            :label="$t('elections.voters')"
-            width="100"
+            :label="$t('elections.people')"
+            min-width="100"
+            sortable="custom"
+          />
+          <el-table-column
+            prop="ballotCount"
+            :label="$t('elections.ballots')"
+            min-width="100"
             sortable="custom"
           />
           <el-table-column
@@ -166,12 +172,15 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { Plus, Search } from "@element-plus/icons-vue";
 import { useElectionStore } from "../../stores/electionStore";
-import { ElMessage } from "element-plus";
+import { useNotifications } from '@/composables/useNotifications';
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import type { ElectionDto } from "../../types";
 
 const router = useRouter();
 const { t } = useI18n();
 const electionStore = useElectionStore();
+const { showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const loading = computed(() => electionStore.loading);
 const allElections = computed(() => electionStore.elections);
@@ -280,7 +289,7 @@ async function loadElections() {
   try {
     await electionStore.fetchElections();
   } catch (error) {
-    ElMessage({ message: t("elections.loadError"), type: 'error', duration: 0, showClose: true });
+    handleApiError(error);
   }
 }
 

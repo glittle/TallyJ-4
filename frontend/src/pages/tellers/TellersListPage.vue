@@ -92,13 +92,17 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Plus, Edit, Delete } from '@element-plus/icons-vue'
 import { useTellerStore } from '@/stores/tellerStore'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessageBox } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications'
+import { useApiErrorHandler } from '@/composables/useApiErrorHandler'
 import type { Teller } from '@/types/teller'
 import TellerFormDialog from '@/components/tellers/TellerFormDialog.vue'
 
 const router = useRouter()
 const route = useRoute()
 const tellerStore = useTellerStore()
+const { showErrorMessage } = useNotifications()
+const { handleApiError } = useApiErrorHandler()
 
 const electionGuid = route.params.id as string
 const showCreateDialog = ref(false)
@@ -126,7 +130,7 @@ async function loadTellers() {
   try {
     await tellerStore.fetchTellers(electionGuid, currentPage.value, pageSize.value)
   } catch (error) {
-    ElMessage.error('Failed to load tellers')
+    handleApiError(error)
   }
 }
 
@@ -154,7 +158,7 @@ async function deleteTeller(teller: Teller) {
     await tellerStore.deleteTeller(electionGuid, teller.rowId)
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || 'Failed to delete teller')
+      showErrorMessage(error.message || 'Failed to delete teller')
     }
   }
 }

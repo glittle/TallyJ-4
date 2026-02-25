@@ -830,6 +830,10 @@ namespace Backend.EF.Migrations
 
                     b.HasIndex(new[] { "ElectionGuid" }, "IX_Person");
 
+                    b.HasIndex(new[] { "ElectionGuid", "BahaiId" }, "IX_PersonBahaiID")
+                        .IsUnique()
+                        .HasFilter("([BahaiId] IS NOT NULL AND [BahaiId]<>'')");
+
                     b.HasIndex(new[] { "ElectionGuid", "FullName" }, "IX_PersonElection");
 
                     b.HasIndex(new[] { "ElectionGuid", "Email" }, "IX_PersonEmail")

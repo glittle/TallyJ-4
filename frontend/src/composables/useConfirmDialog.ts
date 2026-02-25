@@ -1,5 +1,5 @@
 import { ElMessageBox } from 'element-plus';
-import { i18n } from '../locales';
+import { useI18n } from 'vue-i18n';
 
 export interface ConfirmOptions {
   title?: string;
@@ -12,7 +12,7 @@ export interface ConfirmOptions {
 }
 
 export function useConfirmDialog() {
-  const { t } = i18n.global;
+  const { t } = useI18n();
 
   const confirm = async (options: ConfirmOptions): Promise<boolean> => {
     try {

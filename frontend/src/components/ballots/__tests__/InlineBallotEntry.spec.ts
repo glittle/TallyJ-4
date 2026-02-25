@@ -6,7 +6,8 @@ import VoteEntryRow from '../VoteEntryRow.vue';
 import type { BallotDto } from '@/types/Ballot';
 import type { VoteDto } from '@/types/Vote';
 import type { SearchablePersonDto } from '@/types/Person';
-import { ElMessage, ElButton, ElSkeleton, ElAlert, ElAutocomplete, ElIcon } from 'element-plus';
+import { ElButton, ElSkeleton, ElAlert, ElAutocomplete, ElIcon } from 'element-plus';
+import { useNotifications } from '@/composables/useNotifications';
 
 const mockT = (key: string, values?: any) => {
   const translations: Record<string, string> = {
@@ -33,23 +34,20 @@ const mockT = (key: string, values?: any) => {
 };
 
 vi.mock('vue-i18n', () => ({
+  createI18n: vi.fn(),
   useI18n: () => ({
     t: mockT
   })
 }));
 
-vi.mock('element-plus', async () => {
-  const actual = await vi.importActual('element-plus');
-  return {
-    ...actual,
-    ElMessage: {
-      warning: vi.fn(),
-      error: vi.fn(),
-      success: vi.fn(),
-      info: vi.fn()
-    }
-  };
-});
+vi.mock('@/composables/useNotifications', () => ({
+  useNotifications: () => ({
+    showWarningMessage: vi.fn(),
+    showErrorMessage: vi.fn(),
+    showSuccessMessage: vi.fn(),
+    showInfoMessage: vi.fn()
+  })
+}));
 
 const mockPeopleStore = {
   candidateCache: [] as SearchablePersonDto[],
@@ -257,7 +255,8 @@ describe('InlineBallotEntry', () => {
 
       expect(wrapper.find('.inline-ballot-entry__error').exists()).toBe(true);
       expect(wrapper.findComponent(ElAlert).exists()).toBe(true);
-      expect(ElMessage.error).toHaveBeenCalled();
+      const { showErrorMessage } = useNotifications();
+      expect(showErrorMessage).toHaveBeenCalled();
     });
   });
 
@@ -427,7 +426,8 @@ describe('InlineBallotEntry', () => {
       await voteRows[1].vm.$emit('vote-selected', vote2);
       await nextTick();
 
-      expect(ElMessage.warning).toHaveBeenCalled();
+      const { showWarningMessage } = useNotifications();
+      expect(showWarningMessage).toHaveBeenCalled();
     });
   });
 

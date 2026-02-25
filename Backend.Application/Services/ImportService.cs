@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
@@ -118,19 +119,20 @@ public class ImportService
         }
         catch (Exception ex)
         {
-            result.Errors.Add($"Import failed: {ex.Message}");
+            result.Errors.Add($"Ballot Import failed: {ex.Message}");
         }
 
         return result;
     }
 
-    private string[] ParseCsvLine(string line)
+    private static string[] ParseCsvLine(string line)
     {
         var result = new List<string>();
-        var current = "";
+        var current = new StringBuilder();
         var inQuotes = false;
 
-        for (int i = 0; i < line.Length; i++)
+        int i = 0;
+        while (i < line.Length)
         {
             var c = line[i];
 
@@ -138,7 +140,7 @@ public class ImportService
             {
                 if (inQuotes && i + 1 < line.Length && line[i + 1] == '"')
                 {
-                    current += '"';
+                    current.Append('"');
                     i++; // Skip next quote
                 }
                 else
@@ -148,16 +150,18 @@ public class ImportService
             }
             else if (c == ',' && !inQuotes)
             {
-                result.Add(current);
-                current = "";
+                result.Add(current.ToString());
+                current.Clear();
             }
             else
             {
-                current += c;
+                current.Append(c);
             }
+
+            i++;
         }
 
-        result.Add(current);
+        result.Add(current.ToString());
         return result.ToArray();
     }
 }

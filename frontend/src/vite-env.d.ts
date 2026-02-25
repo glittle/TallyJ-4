@@ -15,4 +15,11 @@ declare global {
   var router: import('vue-router').Router;
   var i18n: import('vue-i18n').I18n;
   var ElementPlus: typeof import('element-plus');
+
+  namespace NodeJS {
+    interface ProcessEnv {
+      BRANCH_NAME?: string;
+      COMMIT_HASH?: string;
+    }
+  }
 }

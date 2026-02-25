@@ -556,26 +556,6 @@ export type ApiResponseRollCallDto = {
  * Generic API response wrapper that standardizes the format of all API responses.
  * Provides consistent success/error handling with optional data and error messages.
  */
-export type ApiResponseSuperAdminCheckDto = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: SuperAdminCheckDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
 export type ApiResponseSuperAdminElectionDetailDto = {
     /**
      * Indicates whether the API operation was successful.
@@ -2393,6 +2373,22 @@ export type ImportConfigurationDto = {
 };
 
 /**
+ * Data transfer object for import error messages.
+ */
+export type ImportErrorDto = {
+    /**
+     * The i18n key for the error message.
+     */
+    key?: string | null;
+    /**
+     * Parameters to substitute into the error message.
+     */
+    parameters?: {
+        [key: string]: string;
+    } | null;
+};
+
+/**
  * Data transfer object for import file information, mapping from ImportFile entity (excluding Contents).
  */
 export type ImportFileDto = {
@@ -2473,15 +2469,31 @@ export type ImportPeopleResult = {
     /**
      * List of warning messages generated during import.
      */
-    warnings?: Array<string> | null;
+    warnings?: Array<ImportWarningDto> | null;
     /**
      * List of error messages encountered during import.
      */
-    errors?: Array<string> | null;
+    errors?: Array<ImportErrorDto> | null;
     /**
      * Time elapsed during the import operation in seconds.
      */
     timeElapsedSeconds?: number;
+};
+
+/**
+ * Data transfer object for import warning messages.
+ */
+export type ImportWarningDto = {
+    /**
+     * The i18n key for the warning message.
+     */
+    key?: string | null;
+    /**
+     * Parameters to substitute into the warning message.
+     */
+    parameters?: {
+        [key: string]: string;
+    } | null;
 };
 
 /**
@@ -3414,7 +3426,7 @@ export type PublicHomeDto = {
 };
 
 export type RefreshTokenRequest = {
-    refreshToken: string;
+    refreshToken?: string | null;
 };
 
 /**
@@ -3622,16 +3634,6 @@ export type SubmitOnlineBallotDto = {
      * The list of votes on the ballot.
      */
     votes?: Array<OnlineVoteDto> | null;
-};
-
-/**
- * Data transfer object for super admin status check response.
- */
-export type SuperAdminCheckDto = {
-    /**
-     * Indicates whether the authenticated user has super admin privileges.
-     */
-    isSuperAdmin?: boolean;
 };
 
 /**
@@ -5354,7 +5356,7 @@ export type PostApiAuthVerify2FaResponses = {
 
 export type PostApiAuthRefreshTokenData = {
     /**
-     * The refresh token request containing the refresh token.
+     * The refresh token request containing the refresh token (optional if using cookies).
      */
     body?: RefreshTokenRequest;
     path?: never;
@@ -6715,6 +6717,31 @@ export type GetApiPeopleImportByElectionGuidFilesByRowIdParseResponses = {
 
 export type GetApiPeopleImportByElectionGuidFilesByRowIdParseResponse = GetApiPeopleImportByElectionGuidFilesByRowIdParseResponses[keyof GetApiPeopleImportByElectionGuidFilesByRowIdParseResponses];
 
+export type GetApiPeopleImportByElectionGuidFilesByRowIdMappingData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+        /**
+         * The row ID of the import file.
+         */
+        rowId: number;
+    };
+    query?: never;
+    url: '/api/PeopleImport/{electionGuid}/files/{rowId}/mapping';
+};
+
+export type GetApiPeopleImportByElectionGuidFilesByRowIdMappingResponses = {
+    /**
+     * OK
+     */
+    200: Array<ColumnMappingDto>;
+};
+
+export type GetApiPeopleImportByElectionGuidFilesByRowIdMappingResponse = GetApiPeopleImportByElectionGuidFilesByRowIdMappingResponses[keyof GetApiPeopleImportByElectionGuidFilesByRowIdMappingResponses];
+
 export type PutApiPeopleImportByElectionGuidFilesByRowIdMappingData = {
     /**
      * List of column mappings.
@@ -7321,22 +7348,6 @@ export type GetApiSetupElectionByGuidStatusResponses = {
 };
 
 export type GetApiSetupElectionByGuidStatusResponse = GetApiSetupElectionByGuidStatusResponses[keyof GetApiSetupElectionByGuidStatusResponses];
-
-export type GetApiSuperadminCheckData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/superadmin/check';
-};
-
-export type GetApiSuperadminCheckResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseSuperAdminCheckDto;
-};
-
-export type GetApiSuperadminCheckResponse = GetApiSuperadminCheckResponses[keyof GetApiSuperadminCheckResponses];
 
 export type GetApiSuperadminDashboardSummaryData = {
     body?: never;

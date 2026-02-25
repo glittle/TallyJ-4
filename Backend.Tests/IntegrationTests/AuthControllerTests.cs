@@ -446,6 +446,59 @@ public class AuthControllerTests : IntegrationTestBase
         var parts = cookieString.Split('=', 2);
         return parts.Length == 2 ? parts[1].Split(';')[0] : "";
     }
+
+    [Fact]
+    public async Task GetMe_ReturnsUserInfoWithSuperAdminFlag()
+    {
+        // Arrange - Login first to get authenticated
+        var loginRequest = new LoginRequest
+        {
+            Email = "admin@tallyj.test",
+            Password = "TestPass123!"
+        };
+
+        var loginContent = new StringContent(
+            JsonSerializer.Serialize(loginRequest),
+            Encoding.UTF8,
+            "application/json");
+
+        var loginResponse = await Client.PostAsync("/api/auth/login", loginContent);
+        loginResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        // Get cookies from login response
+        var cookies = GetCookiesFromResponse(loginResponse);
+
+        // Create request with cookies
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/auth/me");
+        
+        // Add cookies to request
+        foreach (var cookie in cookies)
+        {
+            var cookieValue = ExtractCookieValue(cookie.Value);
+            request.Headers.Add("Cookie", $"{cookie.Key}={cookieValue}");
+        }
+
+        // Act
+        var response = await Client.SendAsync(request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var userInfo = JsonSerializer.Deserialize<JsonElement>(responseContent, JsonOptions);
+
+        userInfo.TryGetProperty("email", out var emailProp).Should().BeTrue();
+        emailProp.GetString().Should().Be("admin@tallyj.test");
+
+        userInfo.TryGetProperty("authMethod", out var authMethodProp).Should().BeTrue();
+        authMethodProp.GetString().Should().Be("Local");
+
+        userInfo.TryGetProperty("isSuperAdmin", out var isSuperAdminProp).Should().BeTrue();
+        // Note: The value depends on whether admin@tallyj.test is in SuperAdmin:Emails config
+        // This test just verifies the field exists and is a boolean
+        var isSuperAdminValue = isSuperAdminProp.ValueKind;
+        (isSuperAdminValue == JsonValueKind.True || isSuperAdminValue == JsonValueKind.False).Should().BeTrue();
+    }
 }
 
 
