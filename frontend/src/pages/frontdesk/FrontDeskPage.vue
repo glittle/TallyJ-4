@@ -15,13 +15,17 @@ const locationStore = useLocationStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = ref(route.params.id as string);
-const searchQuery = ref('');
+const searchQuery = computed({
+  get: () => frontDeskStore.searchQuery,
+  set: (value) => frontDeskStore.setSearchQuery(value)
+});
 const loading = computed(() => frontDeskStore.loading);
 const stats = computed(() => frontDeskStore.stats);
 const locations = computed(() => locationStore.locations);
 
 // Keyboard navigation
 const searchInputRef = ref();
+const voterTableRef = ref();
 const selectedIndex = ref(0);
 const selectedVoter = ref<FrontDeskVoterDto | null>(null);
 const showRegistrationButtons = ref(false);
@@ -84,6 +88,10 @@ async function loadData() {
   try {
     await frontDeskStore.fetchEligibleVoters(electionGuid.value);
     await locationStore.fetchLocations(electionGuid.value);
+    // Select first voter after loading
+    nextTick(() => {
+      updateSelectedVoter();
+    });
   } catch (error: any) {
     showErrorMessage(error.message || 'Failed to load data');
   }
@@ -96,14 +104,31 @@ function updateSelectedVoter() {
   } else {
     selectedVoter.value = null;
   }
+  scrollToSelectedRow();
 }
 
-function handleSearch() {
-  frontDeskStore.setSearchQuery(searchQuery.value);
+function scrollToSelectedRow() {
+  nextTick(() => {
+    if (voterTableRef.value && selectedIndex.value >= 0) {
+      const tableWrapper = voterTableRef.value.$el.querySelector('.el-table__body-wrapper');
+      if (tableWrapper) {
+        const rows = tableWrapper.querySelectorAll('.el-table__row');
+        const selectedRow = rows[selectedIndex.value];
+        if (selectedRow) {
+          selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    }
+  });
 }
+
+
 
 function handleSearchKeydown(event: KeyboardEvent) {
+  console.log('handleSearchKeydown called with key:', event.key);
+  console.log('Key pressed:', event.key, 'showRegistrationButtons:', showRegistrationButtons.value);
   const voters = notCheckedInVoters.value;
+  console.log('Voters count:', voters.length);
 
   if (showRegistrationButtons.value) {
     // Handle button navigation
@@ -139,14 +164,19 @@ function handleSearchKeydown(event: KeyboardEvent) {
     // Handle list navigation
     if (event.key === 'ArrowDown') {
       event.preventDefault();
+      console.log('ArrowDown pressed, current index:', selectedIndex.value, 'voters length:', voters.length);
       selectedIndex.value = Math.min(voters.length - 1, selectedIndex.value + 1);
+      console.log('New index:', selectedIndex.value);
       updateSelectedVoter();
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
+      console.log('ArrowUp pressed, current index:', selectedIndex.value);
       selectedIndex.value = Math.max(0, selectedIndex.value - 1);
+      console.log('New index:', selectedIndex.value);
       updateSelectedVoter();
     } else if (event.key === 'Enter') {
       event.preventDefault();
+      console.log('Enter pressed, selectedVoter:', selectedVoter.value);
       if (selectedVoter.value) {
         showRegistrationButtons.value = true;
         selectedButtonIndex.value = 0;
@@ -268,7 +298,7 @@ function goBack() {
                 <h3>Quick Check-In</h3>
                 <el-input ref="searchInputRef" v-model="searchQuery"
                   placeholder="Type name to search (↑↓ arrows, Enter to select)" style="width: 450px;" clearable
-                  @input="handleSearch" @keydown="handleSearchKeydown">
+                  @keydown="handleSearchKeydown">
                   <template #prefix>
                     <el-icon>
                       <Search />
@@ -299,8 +329,8 @@ function goBack() {
 
             <!-- Not checked in voters list -->
             <div v-else>
-              <el-table :data="notCheckedInVoters" :loading="loading" style="width: 100%" max-height="500px"
-                :row-class-name="getRowClassName" @row-click="handleRowClick">
+              <el-table ref="voterTableRef" :data="notCheckedInVoters" :loading="loading" style="width: 100%"
+                max-height="500px" :row-class-name="getRowClassName" @row-click="handleRowClick">
                 <el-table-column prop="fullName" label="Name" sortable />
                 <el-table-column prop="bahaiId" label="Bahá'í ID" width="120" />
                 <el-table-column prop="area" label="Area" width="150" />
@@ -465,7 +495,7 @@ function goBack() {
 
   .registration-buttons {
     padding: 20px;
-    background: var(--el-color-primary-light-9);
+    background: var(--el-color-primary-light-1);
     border-radius: 8px;
     margin-bottom: 20px;
   }
@@ -544,7 +574,7 @@ function goBack() {
     color: var(--el-color-primary);
   }
 
-  :deep(.selected-row) {
+  .selected-row {
     background-color: var(--el-color-primary-light-9) !important;
     font-weight: bold;
   }
