@@ -1,6 +1,4 @@
 import { ElMessage, ElNotification } from "element-plus";
-import { i18n } from "../locales";
-const { t } = i18n.global;
 
 export type NotificationType = "success" | "warning" | "info" | "error";
 

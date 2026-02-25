@@ -17,6 +17,7 @@ const mockT = (key: string) => {
 };
 
 vi.mock('vue-i18n', () => ({
+  createI18n: vi.fn(),
   useI18n: () => ({
     t: mockT
   })

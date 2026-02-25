@@ -681,7 +681,7 @@ async function confirmDeleteAllPeople() {
           <div v-if="translatedErrors.length > 0 || translatedWarnings.length > 0" class="import-details">
             <el-card class="details-card">
               <template #header>
-                <h4>{{ $t('import.errors') }}</h4>
+                <h4>{{ $t('import.errorsTitle') }}</h4>
               </template>
               <div class="details-content">
                 <div v-for="error in translatedErrors" :key="`error-${error.key}`" class="detail-item error">

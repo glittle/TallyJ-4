@@ -4987,36 +4987,6 @@
         }
       }
     },
-    "/api/superadmin/check": {
-      "get": {
-        "tags": [
-          "SuperAdmin"
-        ],
-        "summary": "Checks if the current authenticated user is a super admin.",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseSuperAdminCheckDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseSuperAdminCheckDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseSuperAdminCheckDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/superadmin/dashboard/summary": {
       "get": {
         "tags": [
@@ -6496,33 +6466,6 @@
           },
           "data": {
             "$ref": "#/components/schemas/RollCallDto"
-          },
-          "message": {
-            "type": "string",
-            "description": "An optional message providing additional information about the response.",
-            "nullable": true
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "A list of error messages, if the operation failed.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
-      },
-      "ApiResponseSuperAdminCheckDto": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "description": "Indicates whether the API operation was successful."
-          },
-          "data": {
-            "$ref": "#/components/schemas/SuperAdminCheckDto"
           },
           "message": {
             "type": "string",
@@ -10717,17 +10660,6 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object for submitting an online ballot."
-      },
-      "SuperAdminCheckDto": {
-        "type": "object",
-        "properties": {
-          "isSuperAdmin": {
-            "type": "boolean",
-            "description": "Indicates whether the authenticated user has super admin privileges."
-          }
-        },
-        "additionalProperties": false,
-        "description": "Data transfer object for super admin status check response."
       },
       "SuperAdminElectionDetailDto": {
         "type": "object",
