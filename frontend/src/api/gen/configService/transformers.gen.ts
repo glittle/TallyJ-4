@@ -2,32 +2,9 @@
 
 import type { GetApiAdvancedReportsStatisticsByElectionIdResponse, GetApiAuditLogsByRowIdGetAuditLogResponse, GetApiAuditLogsGetAuditLogsResponse, GetApiByElectionGuidFrontdeskEligibleVotersResponse, GetApiByElectionGuidFrontdeskRollCallResponse, GetApiByElectionGuidLocationsByLocationGuidGetComputersResponse, GetApiDashboardElectionListResponse, GetApiDashboardRecentElectionsResponse, GetApiDashboardSummaryResponse, GetApiElectionsByGuidElectionResponse, GetApiElectionsByGuidElectionSummaryResponse, GetApiElectionsGetElectionsResponse, GetApiPeopleImportByElectionGuidFilesResponse, GetApiPublicByElectionGuidElectionStatusResponse, GetApiPublicByElectionGuidPublicDisplayResponse, GetApiPublicElectionsResponse, GetApiPublicHomeResponse, GetApiResultsByElectionGuidCompleteReportResponse, GetApiResultsByElectionGuidDetailedStatisticsResponse, GetApiResultsByElectionGuidFinalResponse, GetApiResultsByElectionGuidMonitorResponse, GetApiResultsByElectionGuidPresentationDataResponse, GetApiResultsByElectionGuidResultsResponse, GetApiSuperadminDashboardElectionsByGuidResponse, GetApiSuperadminDashboardElectionsResponse, PostApiAdvancedReportsCompareResponse, PostApiAdvancedReportsCustomResponse, PostApiAdvancedReportsFilterByElectionIdResponse, PostApiAuditLogsCreateAuditLogResponse, PostApiByElectionGuidFrontdeskCheckInVoterResponse, PostApiByElectionGuidLocationsByLocationGuidRegisterComputerResponse, PostApiDashboardReloadElectionsResponse, PostApiElectionsCreateElectionResponse, PostApiPeopleImportByElectionGuidUploadResponse, PostApiResultsByElectionGuidRefreshMonitorResponse, PostApiSetupElectionStep1Response, PostByElectionGuidCalculateTallyResponse, PutApiElectionsByGuidUpdateElectionResponse, PutApiSetupElectionByGuidStep2Response } from './types.gen';
 
-const electionComparisonDtoSchemaResponseTransformer = (data: any) => {
-    if (data.elections) {
-        data.elections = data.elections.map((item: any) => {
-            return resultsElectionSummaryDtoSchemaResponseTransformer(item);
-        });
-    }
-    if (data.trends) {
-        data.trends = data.trends.map((item: any) => {
-            return trendDataDtoSchemaResponseTransformer(item);
-        });
-    }
-    return data;
-};
-
 const resultsElectionSummaryDtoSchemaResponseTransformer = (data: any) => {
     if (data.electionDate) {
         data.electionDate = new Date(data.electionDate);
-    }
-    return data;
-};
-
-const trendDataDtoSchemaResponseTransformer = (data: any) => {
-    if (data.points) {
-        data.points = data.points.map((item: any) => {
-            return trendPointDtoSchemaResponseTransformer(item);
-        });
     }
     return data;
 };
@@ -39,30 +16,25 @@ const trendPointDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
+const trendDataDtoSchemaResponseTransformer = (data: any) => {
+    if (data.points) {
+        data.points = data.points.map((item: any) => trendPointDtoSchemaResponseTransformer(item));
+    }
+    return data;
+};
+
+const electionComparisonDtoSchemaResponseTransformer = (data: any) => {
+    if (data.elections) {
+        data.elections = data.elections.map((item: any) => resultsElectionSummaryDtoSchemaResponseTransformer(item));
+    }
+    if (data.trends) {
+        data.trends = data.trends.map((item: any) => trendDataDtoSchemaResponseTransformer(item));
+    }
+    return data;
+};
+
 export const postApiAdvancedReportsCompareResponseTransformer = async (data: any): Promise<PostApiAdvancedReportsCompareResponse> => {
     data = electionComparisonDtoSchemaResponseTransformer(data);
-    return data;
-};
-
-const filteredReportDtoSchemaResponseTransformer = (data: any) => {
-    if (data.appliedFilters) {
-        data.appliedFilters = advancedFilterDtoSchemaResponseTransformer(data.appliedFilters);
-    }
-    if (data.summary) {
-        data.summary = electionReportDtoSchemaResponseTransformer(data.summary);
-    }
-    if (data.voters) {
-        data.voters = data.voters.map((item: any) => {
-            return voterReportDtoSchemaResponseTransformer(item);
-        });
-    }
-    return data;
-};
-
-const advancedFilterDtoSchemaResponseTransformer = (data: any) => {
-    if (data.dateRange) {
-        data.dateRange = dateRangeFilterDtoSchemaResponseTransformer(data.dateRange);
-    }
     return data;
 };
 
@@ -72,6 +44,13 @@ const dateRangeFilterDtoSchemaResponseTransformer = (data: any) => {
     }
     if (data.endDate) {
         data.endDate = new Date(data.endDate);
+    }
+    return data;
+};
+
+const advancedFilterDtoSchemaResponseTransformer = (data: any) => {
+    if (data.dateRange) {
+        data.dateRange = dateRangeFilterDtoSchemaResponseTransformer(data.dateRange);
     }
     return data;
 };
@@ -90,18 +69,21 @@ const voterReportDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const postApiAdvancedReportsFilterByElectionIdResponseTransformer = async (data: any): Promise<PostApiAdvancedReportsFilterByElectionIdResponse> => {
-    data = filteredReportDtoSchemaResponseTransformer(data);
+const filteredReportDtoSchemaResponseTransformer = (data: any) => {
+    if (data.appliedFilters) {
+        data.appliedFilters = advancedFilterDtoSchemaResponseTransformer(data.appliedFilters);
+    }
+    if (data.summary) {
+        data.summary = electionReportDtoSchemaResponseTransformer(data.summary);
+    }
+    if (data.voters) {
+        data.voters = data.voters.map((item: any) => voterReportDtoSchemaResponseTransformer(item));
+    }
     return data;
 };
 
-const customReportDtoSchemaResponseTransformer = (data: any) => {
-    if (data.config) {
-        data.config = customReportConfigDtoSchemaResponseTransformer(data.config);
-    }
-    if (data.generatedAt) {
-        data.generatedAt = new Date(data.generatedAt);
-    }
+export const postApiAdvancedReportsFilterByElectionIdResponseTransformer = async (data: any): Promise<PostApiAdvancedReportsFilterByElectionIdResponse> => {
+    data = filteredReportDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -118,15 +100,18 @@ const customReportConfigDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const postApiAdvancedReportsCustomResponseTransformer = async (data: any): Promise<PostApiAdvancedReportsCustomResponse> => {
-    data = customReportDtoSchemaResponseTransformer(data);
+const customReportDtoSchemaResponseTransformer = (data: any) => {
+    if (data.config) {
+        data.config = customReportConfigDtoSchemaResponseTransformer(data.config);
+    }
+    if (data.generatedAt) {
+        data.generatedAt = new Date(data.generatedAt);
+    }
     return data;
 };
 
-const statisticalAnalysisDtoSchemaResponseTransformer = (data: any) => {
-    if (data.overview) {
-        data.overview = electionOverviewDtoSchemaResponseTransformer(data.overview);
-    }
+export const postApiAdvancedReportsCustomResponseTransformer = async (data: any): Promise<PostApiAdvancedReportsCustomResponse> => {
+    data = customReportDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -137,23 +122,28 @@ const electionOverviewDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiAdvancedReportsStatisticsByElectionIdResponseTransformer = async (data: any): Promise<GetApiAdvancedReportsStatisticsByElectionIdResponse> => {
-    data = statisticalAnalysisDtoSchemaResponseTransformer(data);
+const statisticalAnalysisDtoSchemaResponseTransformer = (data: any) => {
+    if (data.overview) {
+        data.overview = electionOverviewDtoSchemaResponseTransformer(data.overview);
+    }
     return data;
 };
 
-const paginatedResponseAuditLogDtoSchemaResponseTransformer = (data: any) => {
-    if (data.items) {
-        data.items = data.items.map((item: any) => {
-            return auditLogDtoSchemaResponseTransformer(item);
-        });
-    }
+export const getApiAdvancedReportsStatisticsByElectionIdResponseTransformer = async (data: any): Promise<GetApiAdvancedReportsStatisticsByElectionIdResponse> => {
+    data = statisticalAnalysisDtoSchemaResponseTransformer(data);
     return data;
 };
 
 const auditLogDtoSchemaResponseTransformer = (data: any) => {
     if (data.asOf) {
         data.asOf = new Date(data.asOf);
+    }
+    return data;
+};
+
+const paginatedResponseAuditLogDtoSchemaResponseTransformer = (data: any) => {
+    if (data.items) {
+        data.items = data.items.map((item: any) => auditLogDtoSchemaResponseTransformer(item));
     }
     return data;
 };
@@ -180,25 +170,23 @@ export const postApiAuditLogsCreateAuditLogResponseTransformer = async (data: an
     return data;
 };
 
-const apiResponseDashboardSummaryDtoSchemaResponseTransformer = (data: any) => {
-    if (data.data) {
-        data.data = dashboardSummaryDtoSchemaResponseTransformer(data.data);
+const electionCardDtoSchemaResponseTransformer = (data: any) => {
+    if (data.dateOfElection) {
+        data.dateOfElection = new Date(data.dateOfElection);
     }
     return data;
 };
 
 const dashboardSummaryDtoSchemaResponseTransformer = (data: any) => {
     if (data.recentElections) {
-        data.recentElections = data.recentElections.map((item: any) => {
-            return electionCardDtoSchemaResponseTransformer(item);
-        });
+        data.recentElections = data.recentElections.map((item: any) => electionCardDtoSchemaResponseTransformer(item));
     }
     return data;
 };
 
-const electionCardDtoSchemaResponseTransformer = (data: any) => {
-    if (data.dateOfElection) {
-        data.dateOfElection = new Date(data.dateOfElection);
+const apiResponseDashboardSummaryDtoSchemaResponseTransformer = (data: any) => {
+    if (data.data) {
+        data.data = dashboardSummaryDtoSchemaResponseTransformer(data.data);
     }
     return data;
 };
@@ -210,9 +198,7 @@ export const getApiDashboardSummaryResponseTransformer = async (data: any): Prom
 
 const apiResponseListElectionCardDtoSchemaResponseTransformer = (data: any) => {
     if (data.data) {
-        data.data = data.data.map((item: any) => {
-            return electionCardDtoSchemaResponseTransformer(item);
-        });
+        data.data = data.data.map((item: any) => electionCardDtoSchemaResponseTransformer(item));
     }
     return data;
 };
@@ -232,15 +218,6 @@ export const postApiDashboardReloadElectionsResponseTransformer = async (data: a
     return data;
 };
 
-const paginatedResponseElectionSummaryDtoSchemaResponseTransformer = (data: any) => {
-    if (data.items) {
-        data.items = data.items.map((item: any) => {
-            return electionSummaryDtoSchemaResponseTransformer(item);
-        });
-    }
-    return data;
-};
-
 const electionSummaryDtoSchemaResponseTransformer = (data: any) => {
     if (data.dateOfElection) {
         data.dateOfElection = new Date(data.dateOfElection);
@@ -248,15 +225,15 @@ const electionSummaryDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiElectionsGetElectionsResponseTransformer = async (data: any): Promise<GetApiElectionsGetElectionsResponse> => {
-    data = paginatedResponseElectionSummaryDtoSchemaResponseTransformer(data);
+const paginatedResponseElectionSummaryDtoSchemaResponseTransformer = (data: any) => {
+    if (data.items) {
+        data.items = data.items.map((item: any) => electionSummaryDtoSchemaResponseTransformer(item));
+    }
     return data;
 };
 
-const apiResponseElectionDtoSchemaResponseTransformer = (data: any) => {
-    if (data.data) {
-        data.data = electionDtoSchemaResponseTransformer(data.data);
-    }
+export const getApiElectionsGetElectionsResponseTransformer = async (data: any): Promise<GetApiElectionsGetElectionsResponse> => {
+    data = paginatedResponseElectionSummaryDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -272,6 +249,13 @@ const electionDtoSchemaResponseTransformer = (data: any) => {
     }
     if (data.onlineAnnounced) {
         data.onlineAnnounced = new Date(data.onlineAnnounced);
+    }
+    return data;
+};
+
+const apiResponseElectionDtoSchemaResponseTransformer = (data: any) => {
+    if (data.data) {
+        data.data = electionDtoSchemaResponseTransformer(data.data);
     }
     return data;
 };
@@ -296,18 +280,16 @@ export const putApiElectionsByGuidUpdateElectionResponseTransformer = async (dat
     return data;
 };
 
-const apiResponseListFrontDeskVoterDtoSchemaResponseTransformer = (data: any) => {
-    if (data.data) {
-        data.data = data.data.map((item: any) => {
-            return frontDeskVoterDtoSchemaResponseTransformer(item);
-        });
+const frontDeskVoterDtoSchemaResponseTransformer = (data: any) => {
+    if (data.registrationTime) {
+        data.registrationTime = new Date(data.registrationTime);
     }
     return data;
 };
 
-const frontDeskVoterDtoSchemaResponseTransformer = (data: any) => {
-    if (data.registrationTime) {
-        data.registrationTime = new Date(data.registrationTime);
+const apiResponseListFrontDeskVoterDtoSchemaResponseTransformer = (data: any) => {
+    if (data.data) {
+        data.data = data.data.map((item: any) => frontDeskVoterDtoSchemaResponseTransformer(item));
     }
     return data;
 };
@@ -329,6 +311,13 @@ export const postApiByElectionGuidFrontdeskCheckInVoterResponseTransformer = asy
     return data;
 };
 
+const rollCallDtoSchemaResponseTransformer = (data: any) => {
+    if (data.voters) {
+        data.voters = data.voters.map((item: any) => frontDeskVoterDtoSchemaResponseTransformer(item));
+    }
+    return data;
+};
+
 const apiResponseRollCallDtoSchemaResponseTransformer = (data: any) => {
     if (data.data) {
         data.data = rollCallDtoSchemaResponseTransformer(data.data);
@@ -336,24 +325,8 @@ const apiResponseRollCallDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-const rollCallDtoSchemaResponseTransformer = (data: any) => {
-    if (data.voters) {
-        data.voters = data.voters.map((item: any) => {
-            return frontDeskVoterDtoSchemaResponseTransformer(item);
-        });
-    }
-    return data;
-};
-
 export const getApiByElectionGuidFrontdeskRollCallResponseTransformer = async (data: any): Promise<GetApiByElectionGuidFrontdeskRollCallResponse> => {
     data = apiResponseRollCallDtoSchemaResponseTransformer(data);
-    return data;
-};
-
-const apiResponseComputerDtoSchemaResponseTransformer = (data: any) => {
-    if (data.data) {
-        data.data = computerDtoSchemaResponseTransformer(data.data);
-    }
     return data;
 };
 
@@ -367,6 +340,13 @@ const computerDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
+const apiResponseComputerDtoSchemaResponseTransformer = (data: any) => {
+    if (data.data) {
+        data.data = computerDtoSchemaResponseTransformer(data.data);
+    }
+    return data;
+};
+
 export const postApiByElectionGuidLocationsByLocationGuidRegisterComputerResponseTransformer = async (data: any): Promise<PostApiByElectionGuidLocationsByLocationGuidRegisterComputerResponse> => {
     data = apiResponseComputerDtoSchemaResponseTransformer(data);
     return data;
@@ -374,9 +354,7 @@ export const postApiByElectionGuidLocationsByLocationGuidRegisterComputerRespons
 
 const apiResponseListComputerDtoSchemaResponseTransformer = (data: any) => {
     if (data.data) {
-        data.data = data.data.map((item: any) => {
-            return computerDtoSchemaResponseTransformer(item);
-        });
+        data.data = data.data.map((item: any) => computerDtoSchemaResponseTransformer(item));
     }
     return data;
 };
@@ -402,16 +380,7 @@ export const postApiPeopleImportByElectionGuidUploadResponseTransformer = async 
 };
 
 export const getApiPeopleImportByElectionGuidFilesResponseTransformer = async (data: any): Promise<GetApiPeopleImportByElectionGuidFilesResponse> => {
-    data = data.map((item: any) => {
-        return importFileDtoSchemaResponseTransformer(item);
-    });
-    return data;
-};
-
-const apiResponsePublicHomeDtoSchemaResponseTransformer = (data: any) => {
-    if (data.data) {
-        data.data = publicHomeDtoSchemaResponseTransformer(data.data);
-    }
+    data = data.map((item: any) => importFileDtoSchemaResponseTransformer(item));
     return data;
 };
 
@@ -422,17 +391,15 @@ const publicHomeDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiPublicHomeResponseTransformer = async (data: any): Promise<GetApiPublicHomeResponse> => {
-    data = apiResponsePublicHomeDtoSchemaResponseTransformer(data);
+const apiResponsePublicHomeDtoSchemaResponseTransformer = (data: any) => {
+    if (data.data) {
+        data.data = publicHomeDtoSchemaResponseTransformer(data.data);
+    }
     return data;
 };
 
-const apiResponseListAvailableElectionDtoSchemaResponseTransformer = (data: any) => {
-    if (data.data) {
-        data.data = data.data.map((item: any) => {
-            return availableElectionDtoSchemaResponseTransformer(item);
-        });
-    }
+export const getApiPublicHomeResponseTransformer = async (data: any): Promise<GetApiPublicHomeResponse> => {
+    data = apiResponsePublicHomeDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -443,15 +410,15 @@ const availableElectionDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiPublicElectionsResponseTransformer = async (data: any): Promise<GetApiPublicElectionsResponse> => {
-    data = apiResponseListAvailableElectionDtoSchemaResponseTransformer(data);
+const apiResponseListAvailableElectionDtoSchemaResponseTransformer = (data: any) => {
+    if (data.data) {
+        data.data = data.data.map((item: any) => availableElectionDtoSchemaResponseTransformer(item));
+    }
     return data;
 };
 
-const apiResponseElectionStatusDtoSchemaResponseTransformer = (data: any) => {
-    if (data.data) {
-        data.data = electionStatusDtoSchemaResponseTransformer(data.data);
-    }
+export const getApiPublicElectionsResponseTransformer = async (data: any): Promise<GetApiPublicElectionsResponse> => {
+    data = apiResponseListAvailableElectionDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -462,15 +429,15 @@ const electionStatusDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-export const getApiPublicByElectionGuidElectionStatusResponseTransformer = async (data: any): Promise<GetApiPublicByElectionGuidElectionStatusResponse> => {
-    data = apiResponseElectionStatusDtoSchemaResponseTransformer(data);
+const apiResponseElectionStatusDtoSchemaResponseTransformer = (data: any) => {
+    if (data.data) {
+        data.data = electionStatusDtoSchemaResponseTransformer(data.data);
+    }
     return data;
 };
 
-const apiResponsePublicDisplayDtoSchemaResponseTransformer = (data: any) => {
-    if (data.data) {
-        data.data = publicDisplayDtoSchemaResponseTransformer(data.data);
-    }
+export const getApiPublicByElectionGuidElectionStatusResponseTransformer = async (data: any): Promise<GetApiPublicByElectionGuidElectionStatusResponse> => {
+    data = apiResponseElectionStatusDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -480,6 +447,13 @@ const publicDisplayDtoSchemaResponseTransformer = (data: any) => {
     }
     if (data.lastUpdated) {
         data.lastUpdated = new Date(data.lastUpdated);
+    }
+    return data;
+};
+
+const apiResponsePublicDisplayDtoSchemaResponseTransformer = (data: any) => {
+    if (data.data) {
+        data.data = publicDisplayDtoSchemaResponseTransformer(data.data);
     }
     return data;
 };
@@ -511,21 +485,6 @@ export const getApiResultsByElectionGuidFinalResponseTransformer = async (data: 
     return data;
 };
 
-const monitorInfoDtoSchemaResponseTransformer = (data: any) => {
-    if (data.computers) {
-        data.computers = data.computers.map((item: any) => {
-            return computerInfoDtoSchemaResponseTransformer(item);
-        });
-    }
-    if (data.onlineVotingInfo) {
-        data.onlineVotingInfo = onlineVotingInfoDtoSchemaResponseTransformer(data.onlineVotingInfo);
-    }
-    if (data.lastUpdated) {
-        data.lastUpdated = new Date(data.lastUpdated);
-    }
-    return data;
-};
-
 const computerInfoDtoSchemaResponseTransformer = (data: any) => {
     if (data.lastContact) {
         data.lastContact = new Date(data.lastContact);
@@ -539,6 +498,19 @@ const onlineVotingInfoDtoSchemaResponseTransformer = (data: any) => {
     }
     if (data.onlineVotingEnd) {
         data.onlineVotingEnd = new Date(data.onlineVotingEnd);
+    }
+    return data;
+};
+
+const monitorInfoDtoSchemaResponseTransformer = (data: any) => {
+    if (data.computers) {
+        data.computers = data.computers.map((item: any) => computerInfoDtoSchemaResponseTransformer(item));
+    }
+    if (data.onlineVotingInfo) {
+        data.onlineVotingInfo = onlineVotingInfoDtoSchemaResponseTransformer(data.onlineVotingInfo);
+    }
+    if (data.lastUpdated) {
+        data.lastUpdated = new Date(data.lastUpdated);
     }
     return data;
 };
@@ -570,28 +542,26 @@ export const getApiResultsByElectionGuidPresentationDataResponseTransformer = as
     return data;
 };
 
-const detailedStatisticsDtoSchemaResponseTransformer = (data: any) => {
-    if (data.overview) {
-        data.overview = electionOverviewDtoSchemaResponseTransformer(data.overview);
-    }
-    if (data.turnoutAnalysis) {
-        data.turnoutAnalysis = turnoutAnalysisDtoSchemaResponseTransformer(data.turnoutAnalysis);
+const timeBasedTurnoutDtoSchemaResponseTransformer = (data: any) => {
+    if (data.timePeriod) {
+        data.timePeriod = new Date(data.timePeriod);
     }
     return data;
 };
 
 const turnoutAnalysisDtoSchemaResponseTransformer = (data: any) => {
     if (data.timeBasedTurnout) {
-        data.timeBasedTurnout = data.timeBasedTurnout.map((item: any) => {
-            return timeBasedTurnoutDtoSchemaResponseTransformer(item);
-        });
+        data.timeBasedTurnout = data.timeBasedTurnout.map((item: any) => timeBasedTurnoutDtoSchemaResponseTransformer(item));
     }
     return data;
 };
 
-const timeBasedTurnoutDtoSchemaResponseTransformer = (data: any) => {
-    if (data.timePeriod) {
-        data.timePeriod = new Date(data.timePeriod);
+const detailedStatisticsDtoSchemaResponseTransformer = (data: any) => {
+    if (data.overview) {
+        data.overview = electionOverviewDtoSchemaResponseTransformer(data.overview);
+    }
+    if (data.turnoutAnalysis) {
+        data.turnoutAnalysis = turnoutAnalysisDtoSchemaResponseTransformer(data.turnoutAnalysis);
     }
     return data;
 };
@@ -611,25 +581,23 @@ export const putApiSetupElectionByGuidStep2ResponseTransformer = async (data: an
     return data;
 };
 
-const apiResponsePaginatedResponseSuperAdminElectionDtoSchemaResponseTransformer = (data: any) => {
-    if (data.data) {
-        data.data = paginatedResponseSuperAdminElectionDtoSchemaResponseTransformer(data.data);
+const superAdminElectionDtoSchemaResponseTransformer = (data: any) => {
+    if (data.dateOfElection) {
+        data.dateOfElection = new Date(data.dateOfElection);
     }
     return data;
 };
 
 const paginatedResponseSuperAdminElectionDtoSchemaResponseTransformer = (data: any) => {
     if (data.items) {
-        data.items = data.items.map((item: any) => {
-            return superAdminElectionDtoSchemaResponseTransformer(item);
-        });
+        data.items = data.items.map((item: any) => superAdminElectionDtoSchemaResponseTransformer(item));
     }
     return data;
 };
 
-const superAdminElectionDtoSchemaResponseTransformer = (data: any) => {
-    if (data.dateOfElection) {
-        data.dateOfElection = new Date(data.dateOfElection);
+const apiResponsePaginatedResponseSuperAdminElectionDtoSchemaResponseTransformer = (data: any) => {
+    if (data.data) {
+        data.data = paginatedResponseSuperAdminElectionDtoSchemaResponseTransformer(data.data);
     }
     return data;
 };
@@ -639,16 +607,16 @@ export const getApiSuperadminDashboardElectionsResponseTransformer = async (data
     return data;
 };
 
-const apiResponseSuperAdminElectionDetailDtoSchemaResponseTransformer = (data: any) => {
-    if (data.data) {
-        data.data = superAdminElectionDetailDtoSchemaResponseTransformer(data.data);
+const superAdminElectionDetailDtoSchemaResponseTransformer = (data: any) => {
+    if (data.dateOfElection) {
+        data.dateOfElection = new Date(data.dateOfElection);
     }
     return data;
 };
 
-const superAdminElectionDetailDtoSchemaResponseTransformer = (data: any) => {
-    if (data.dateOfElection) {
-        data.dateOfElection = new Date(data.dateOfElection);
+const apiResponseSuperAdminElectionDetailDtoSchemaResponseTransformer = (data: any) => {
+    if (data.data) {
+        data.data = superAdminElectionDetailDtoSchemaResponseTransformer(data.data);
     }
     return data;
 };

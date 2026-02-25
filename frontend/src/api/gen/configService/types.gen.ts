@@ -556,26 +556,6 @@ export type ApiResponseRollCallDto = {
  * Generic API response wrapper that standardizes the format of all API responses.
  * Provides consistent success/error handling with optional data and error messages.
  */
-export type ApiResponseSuperAdminCheckDto = {
-    /**
-     * Indicates whether the API operation was successful.
-     */
-    success?: boolean;
-    data?: SuperAdminCheckDto;
-    /**
-     * An optional message providing additional information about the response.
-     */
-    message?: string | null;
-    /**
-     * A list of error messages, if the operation failed.
-     */
-    errors?: Array<string> | null;
-};
-
-/**
- * Generic API response wrapper that standardizes the format of all API responses.
- * Provides consistent success/error handling with optional data and error messages.
- */
 export type ApiResponseSuperAdminElectionDetailDto = {
     /**
      * Indicates whether the API operation was successful.
@@ -3654,16 +3634,6 @@ export type SubmitOnlineBallotDto = {
      * The list of votes on the ballot.
      */
     votes?: Array<OnlineVoteDto> | null;
-};
-
-/**
- * Data transfer object for super admin status check response.
- */
-export type SuperAdminCheckDto = {
-    /**
-     * Indicates whether the authenticated user has super admin privileges.
-     */
-    isSuperAdmin?: boolean;
 };
 
 /**
@@ -7378,22 +7348,6 @@ export type GetApiSetupElectionByGuidStatusResponses = {
 };
 
 export type GetApiSetupElectionByGuidStatusResponse = GetApiSetupElectionByGuidStatusResponses[keyof GetApiSetupElectionByGuidStatusResponses];
-
-export type GetApiSuperadminCheckData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/superadmin/check';
-};
-
-export type GetApiSuperadminCheckResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseSuperAdminCheckDto;
-};
-
-export type GetApiSuperadminCheckResponse = GetApiSuperadminCheckResponses[keyof GetApiSuperadminCheckResponses];
 
 export type GetApiSuperadminDashboardSummaryData = {
     body?: never;

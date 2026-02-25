@@ -1,24 +1,15 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 import DashboardPage from './DashboardPage.vue'
-
-// Mock i18n
-vi.mock('vue-i18n', () => ({
-  useI18n: () => ({
-    t: (key: string) => key
-  })
-}))
+import { i18n } from '../test/setup'
 
 describe('DashboardPage', () => {
   it('renders dashboard page', () => {
     const wrapper = mount(DashboardPage, {
       global: {
-        plugins: [createTestingPinia()],
-        stubs: ['el-card', 'el-row', 'el-col', 'el-icon'],
-        mocks: {
-          $t: (key: string) => key
-        }
+        plugins: [createTestingPinia(), i18n],
+        stubs: ['el-card', 'el-row', 'el-col', 'el-icon']
       }
     })
     expect(wrapper.exists()).toBe(true)
@@ -27,11 +18,8 @@ describe('DashboardPage', () => {
   it('displays statistics section', () => {
     const wrapper = mount(DashboardPage, {
       global: {
-        plugins: [createTestingPinia()],
-        stubs: ['el-card', 'el-row', 'el-col', 'el-icon'],
-        mocks: {
-          $t: (key: string) => key
-        }
+        plugins: [createTestingPinia(), i18n],
+        stubs: ['el-card', 'el-row', 'el-col', 'el-icon']
       }
     })
     expect(wrapper.text()).toContain('dashboard.statistics')

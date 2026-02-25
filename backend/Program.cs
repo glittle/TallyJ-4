@@ -342,7 +342,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     // Generate OpenAPI file
-    app.WriteOpenApiSpecToFile("..\\frontend\\openapi\\tallyj.json");
+    app.WriteOpenApiSpecToFile(Path.Combine("..", "frontend", "openApi", "tallyj.json"));
 
     // Seed database in development
     var seedOnStartup = builder.Configuration.GetValue<bool>("Database:SeedOnStartup", true);

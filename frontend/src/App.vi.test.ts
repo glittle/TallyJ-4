@@ -1,32 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
-import { pinia, i18n } from './test/setup'
+import { pinia, router } from './test/setup'
 
 // Mock ErrorBoundary component
 vi.mock('./components/common/ErrorBoundary.vue', () => ({
   default: {
+    name: 'ErrorBoundary',
     template: '<div><slot /></div>'
   }
 }))
 
 describe('App', () => {
-  let router: any
-
-  beforeEach(() => {
-    router = createRouter({
-      history: createWebHistory(),
-      routes: [
-        { path: '/', name: 'Home' }
-      ]
-    })
-  })
 
   it('renders properly', () => {
     const wrapper = mount(App, {
       global: {
-        plugins: [pinia, router, i18n]
+        plugins: [pinia, router],
+        stubs: ['RouterView']
       }
     })
     expect(wrapper.exists()).toBe(true)
@@ -39,7 +30,8 @@ describe('App', () => {
 
     const wrapper = mount(App, {
       global: {
-        plugins: [pinia, router, i18n]
+        plugins: [pinia, router],
+        stubs: ['RouterView']
       }
     })
 
@@ -60,7 +52,8 @@ describe('App', () => {
 
     const wrapper = mount(App, {
       global: {
-        plugins: [pinia, router, i18n]
+        plugins: [pinia, router],
+        stubs: ['RouterView']
       }
     })
 
@@ -80,7 +73,8 @@ describe('App', () => {
 
     const wrapper = mount(App, {
       global: {
-        plugins: [pinia, router, i18n]
+        plugins: [pinia, router],
+        stubs: ['RouterView']
       }
     })
 
@@ -107,7 +101,8 @@ describe('App', () => {
 
     const wrapper = mount(App, {
       global: {
-        plugins: [pinia, router, i18n]
+        plugins: [pinia, router],
+        stubs: ['RouterView']
       }
     })
 

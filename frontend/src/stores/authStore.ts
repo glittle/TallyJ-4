@@ -7,7 +7,6 @@ import { TOKEN_REFRESH_CONFIG } from '../config/tokenRefreshConfig';
 import { useApiErrorHandler } from '../composables/useApiErrorHandler';
 
 export const useAuthStore = defineStore('auth', () => {
-  const { handleApiError } = useApiErrorHandler();
 
   // Initialize from cookies instead of localStorage
   const authData = secureTokenService.getAuthData();
@@ -57,16 +56,17 @@ export const useAuthStore = defineStore('auth', () => {
         email.value = cookieData.email || response.email;
         name.value = cookieData.name || response.name || null;
         authMethod.value = cookieData.authMethod || response.authMethod || 'Local';
-        
+
         // Fetch user info including isSuperAdmin
         await fetchUserInfo();
-        
+
         // Start automatic token refresh
         tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
       }
 
       return response;
     } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
       handleApiError(error as any);
       throw error;
     }
@@ -87,16 +87,17 @@ export const useAuthStore = defineStore('auth', () => {
 
         requires2FA.value = false;
         pending2FAEmail.value = null;
-        
+
         // Fetch user info including isSuperAdmin
         await fetchUserInfo();
-        
+
         // Start automatic token refresh
         tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
       }
 
       return response;
     } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
       handleApiError(error as any);
       throw error;
     }
@@ -128,12 +129,13 @@ export const useAuthStore = defineStore('auth', () => {
 
       requires2FA.value = false;
       pending2FAEmail.value = null;
-      
+
       // Start automatic token refresh
       tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
 
       return response;
     } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
       handleApiError(error as any);
       throw error;
     }

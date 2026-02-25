@@ -4,7 +4,7 @@
   "import.successCount": "Successful: {count}",
   "import.errorCount": "Errors: {count}",
   "import.currentStatus": "Status: {status}",
-  "import.errors": "Import Errors",
+  "import.errorsTitle": "Import Errors",
   "import.moreErrors": "and {count} more errors...",
   "import.completed": "Import completed successfully",
   "import.errors.fileNotFound": "Import file not found or has no content",

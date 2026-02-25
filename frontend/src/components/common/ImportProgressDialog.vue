@@ -34,7 +34,7 @@
     </div>
 
     <div v-if="importErrors.length > 0" class="import-errors">
-      <h4>{{ $t("import.errors") }}</h4>
+      <h4>{{ $t("import.errorsTitle") }}</h4>
       <el-alert
         v-for="(error, index) in importErrors.slice(0, 5)"
         :key="index"
