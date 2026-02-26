@@ -2322,6 +2322,10 @@ export type FrontDeskVoterDto = {
      */
     readonly isCheckedIn?: boolean;
     /**
+     * Flags/labels assigned to this voter (comma-separated).
+     */
+    flags?: string | null;
+    /**
      * Registration history entries for this voter.
      */
     registrationHistory?: Array<RegistrationHistoryEntryDto> | null;
@@ -4408,6 +4412,20 @@ export type UpdatePersonDto = {
 };
 
 /**
+ * Data transfer object for updating a person's flags.
+ */
+export type UpdatePersonFlagsDto = {
+    /**
+     * The unique identifier of the person.
+     */
+    personGuid?: string;
+    /**
+     * Comma-separated list of flags to set for this person.
+     */
+    flags?: string | null;
+};
+
+/**
  * Data transfer object for updating an existing teller.
  */
 export type UpdateTellerDto = {
@@ -4827,6 +4845,10 @@ export type FrontDeskVoterDtoWritable = {
      * The name of the second teller.
      */
     teller2?: string | null;
+    /**
+     * Flags/labels assigned to this voter (comma-separated).
+     */
+    flags?: string | null;
     /**
      * Registration history entries for this voter.
      */
@@ -6157,6 +6179,30 @@ export type PostApiByElectionGuidFrontdeskUnregisterVoterResponses = {
 };
 
 export type PostApiByElectionGuidFrontdeskUnregisterVoterResponse = PostApiByElectionGuidFrontdeskUnregisterVoterResponses[keyof PostApiByElectionGuidFrontdeskUnregisterVoterResponses];
+
+export type PostApiByElectionGuidFrontdeskUpdatePersonFlagsData = {
+    /**
+     * The flags update data.
+     */
+    body?: UpdatePersonFlagsDto;
+    path: {
+        /**
+         * The election GUID.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/{electionGuid}/frontdesk/updatePersonFlags';
+};
+
+export type PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseFrontDeskVoterDto;
+};
+
+export type PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponse = PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses[keyof PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses];
 
 export type PostApiImportParseCsvHeadersData = {
     /**

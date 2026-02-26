@@ -21,6 +21,7 @@ export interface FrontDeskVoterDto {
   teller1?: string;
   teller2?: string;
   isCheckedIn: boolean;
+  flags?: string;
   registrationHistory?: RegistrationHistoryEntryDto[];
 }
 
@@ -46,4 +47,9 @@ export interface FrontDeskStatsDto {
 export interface RollCallDto {
   voters: FrontDeskVoterDto[];
   stats: FrontDeskStatsDto;
+}
+
+export interface UpdatePersonFlagsDto {
+  personGuid: string;
+  flags?: string;
 }
