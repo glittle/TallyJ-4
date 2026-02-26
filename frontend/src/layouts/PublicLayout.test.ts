@@ -21,6 +21,7 @@ describe('PublicLayout', () => {
         plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
+          LanguageFlagsSelector: true,
           ThemeSelector: true
         }
       }
@@ -34,6 +35,7 @@ describe('PublicLayout', () => {
         plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
+          LanguageFlagsSelector: true,
           ThemeSelector: true
         }
       }
@@ -47,6 +49,7 @@ describe('PublicLayout', () => {
         plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
+          LanguageFlagsSelector: true,
           ThemeSelector: true
         }
       }
@@ -62,6 +65,7 @@ describe('PublicLayout', () => {
         plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
+          LanguageFlagsSelector: true,
           ThemeSelector: true
         }
       }
@@ -71,17 +75,21 @@ describe('PublicLayout', () => {
     expect(img.attributes('alt')).toBe('TallyJ Logo')
   })
 
-  it('renders LanguageSelector and ThemeSelector components', () => {
+  it('renders language selector and ThemeSelector components', () => {
     const wrapper = mount(PublicLayout, {
       global: {
         plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
+          LanguageFlagsSelector: true,
           ThemeSelector: true
         }
       }
     })
-    expect(wrapper.findComponent({ name: 'LanguageSelector' }).exists()).toBe(true)
+    // Either LanguageSelector or LanguageFlagsSelector is rendered based on route
+    const hasLanguageSelector = wrapper.findComponent({ name: 'LanguageSelector' }).exists()
+    const hasLanguageFlagsSelector = wrapper.findComponent({ name: 'LanguageFlagsSelector' }).exists()
+    expect(hasLanguageSelector || hasLanguageFlagsSelector).toBe(true)
     expect(wrapper.findComponent({ name: 'ThemeSelector' }).exists()).toBe(true)
   })
 
@@ -91,6 +99,7 @@ describe('PublicLayout', () => {
         plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
+          LanguageFlagsSelector: true,
           ThemeSelector: true
         }
       }
@@ -104,6 +113,7 @@ describe('PublicLayout', () => {
         plugins: [router, i18n],
         stubs: {
           LanguageSelector: true,
+          LanguageFlagsSelector: true,
           ThemeSelector: true
         }
       }
