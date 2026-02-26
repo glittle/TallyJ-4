@@ -1,3 +1,13 @@
+export interface RegistrationHistoryEntryDto {
+  timestamp: string;
+  action: string;
+  votingMethod?: string;
+  tellerName?: string;
+  locationName?: string;
+  envNum?: number;
+  performedBy?: string;
+}
+
 export interface FrontDeskVoterDto {
   personGuid: string;
   fullName: string;
@@ -11,6 +21,7 @@ export interface FrontDeskVoterDto {
   teller1?: string;
   teller2?: string;
   isCheckedIn: boolean;
+  registrationHistory?: RegistrationHistoryEntryDto[];
 }
 
 export interface CheckInVoterDto {
@@ -18,6 +29,11 @@ export interface CheckInVoterDto {
   votingMethod: string;
   tellerName?: string;
   votingLocationGuid?: string;
+}
+
+export interface UnregisterVoterDto {
+  personGuid: string;
+  reason?: string;
 }
 
 export interface FrontDeskStatsDto {

@@ -124,7 +124,7 @@ function handleKeyDown(event: KeyboardEvent) {
 
 function querySearch(queryString: string, cb: (results: any[]) => void) {
   searchQuery.value = queryString;
-  
+
   if (!queryString || !queryString.trim()) {
     cb([]);
     return;
@@ -171,74 +171,48 @@ defineExpose({
 </script>
 
 <template>
-  <div 
-    class="vote-entry-row"
-    :class="{ 'is-duplicate': isDuplicate }"
-  >
+  <div class="vote-entry-row" :class="{ 'is-duplicate': isDuplicate }">
     <div class="vote-entry-row__position">
       {{ positionOnBallot }}
     </div>
-    
+
     <div class="vote-entry-row__input">
-      <el-autocomplete
-        ref="inputRef"
-        v-model="searchQuery"
-        :fetch-suggestions="querySearch"
-        :placeholder="$t('ballots.candidate')"
-        :disabled="!!selectedPerson"
-        clearable
-        @select="handleAutocompleteSelect"
+      <el-autocomplete ref="inputRef" v-model="searchQuery" :fetch-suggestions="querySearch"
+        :placeholder="$t('ballots.candidate')" :disabled="!!selectedPerson" clearable @select="handleAutocompleteSelect"
         @keydown="handleKeyDown"
         :aria-label="`${$t('ballots.position')} ${positionOnBallot} - ${$t('ballots.candidate')}`"
         :aria-describedby="isDuplicate ? `duplicate-warning-${positionOnBallot}` : undefined"
-        class="vote-entry-row__autocomplete"
-      >
+        class="vote-entry-row__autocomplete">
         <template #default="{ item }">
           <div v-if="item.isEmpty" class="autocomplete-empty">
             <div class="autocomplete-empty__message">
               <span>{{ $t('ballots.noMatchesFound') }}</span>
               <small>{{ $t('ballots.checkSpelling') }}</small>
             </div>
-            <el-button
-              v-if="onAddNewPerson"
-              :icon="Plus"
-              size="small"
-              type="primary"
-              plain
-              class="autocomplete-empty__button"
-              @click.stop="handleAddNewPerson"
-            >
+            <el-button v-if="onAddNewPerson" :icon="Plus" size="small" type="primary" plain
+              class="autocomplete-empty__button" @click.stop="handleAddNewPerson">
               {{ $t('ballots.addNewPerson') }}
             </el-button>
           </div>
-          <div v-else class="autocomplete-item" :class="{ 'autocomplete-item--ineligible': item.person?.canReceiveVotes === false }">
+          <div v-else class="autocomplete-item"
+            :class="{ 'autocomplete-item--ineligible': item.person?.canReceiveVotes === false }">
             <span class="autocomplete-item__name">{{ item.value }}</span>
-            <span v-if="item.person?.canReceiveVotes === false" class="autocomplete-item__ineligible-code" :title="$t('ballots.ineligible')">
+            <span v-if="item.person?.canReceiveVotes === false" class="autocomplete-item__ineligible-code"
+              :title="$t('ballots.ineligible')">
               {{ item.person.ineligibleReasonCode }}
             </span>
-            <span v-if="item.person?.voteCount > 0" class="autocomplete-item__vote-count">{{ item.person.voteCount }}</span>
+            <span v-if="item.person?.voteCount > 0" class="autocomplete-item__vote-count">{{ item.person.voteCount
+              }}</span>
           </div>
         </template>
       </el-autocomplete>
 
-      <el-button
-        v-if="selectedPerson"
-        :icon="Close"
-        circle
-        size="small"
-        class="vote-entry-row__clear"
-        @click="handleClear"
-        :aria-label="$t('common.clear')"
-      />
+      <el-button v-if="selectedPerson" :icon="Close" circle size="small" class="vote-entry-row__clear"
+        @click="handleClear" :aria-label="$t('common.clear')" />
     </div>
 
-    <div 
-      v-if="isDuplicate"
-      :id="`duplicate-warning-${positionOnBallot}`"
-      class="vote-entry-row__warning"
-      role="alert"
-      aria-live="polite"
-    >
+    <div v-if="isDuplicate" :id="`duplicate-warning-${positionOnBallot}`" class="vote-entry-row__warning" role="alert"
+      aria-live="polite">
       <el-icon class="vote-entry-row__warning-icon">
         <WarningFilled />
       </el-icon>
@@ -247,7 +221,7 @@ defineExpose({
   </div>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .vote-entry-row {
   display: flex;
   align-items: flex-start;
@@ -280,13 +254,13 @@ defineExpose({
   &__autocomplete {
     flex: 1;
 
-    :deep(.el-input__wrapper) {
+    .el-input__wrapper {
       transition: all var(--transition-normal, 0.2s);
     }
   }
 
   &.is-duplicate {
-    :deep(.el-input__wrapper) {
+    .el-input__wrapper {
       border-color: var(--el-color-warning);
       box-shadow: 0 0 0 1px var(--el-color-warning) inset;
     }

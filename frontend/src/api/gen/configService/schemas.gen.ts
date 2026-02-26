@@ -3220,6 +3220,14 @@ export const FrontDeskVoterDtoSchema = {
             type: 'boolean',
             description: 'Indicates whether the voter has checked in.',
             readOnly: true
+        },
+        registrationHistory: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/RegistrationHistoryEntryDto'
+            },
+            description: 'Registration history entries for this voter.',
+            nullable: true
         }
     },
     additionalProperties: false,
@@ -4812,6 +4820,50 @@ export const RegisterRequestSchema = {
     additionalProperties: false
 } as const;
 
+export const RegistrationHistoryEntryDtoSchema = {
+    type: 'object',
+    properties: {
+        timestamp: {
+            type: 'string',
+            description: 'Timestamp of the action (stored in UTC).',
+            format: 'date-time'
+        },
+        action: {
+            type: 'string',
+            description: 'Action performed (e.g., "CheckedIn", "Unregistered").',
+            nullable: true
+        },
+        votingMethod: {
+            type: 'string',
+            description: 'Voting method used (if applicable).',
+            nullable: true
+        },
+        tellerName: {
+            type: 'string',
+            description: 'Teller name (if applicable).',
+            nullable: true
+        },
+        locationName: {
+            type: 'string',
+            description: 'Location name (if applicable).',
+            nullable: true
+        },
+        envNum: {
+            type: 'integer',
+            description: 'Envelope number (if applicable).',
+            format: 'int32',
+            nullable: true
+        },
+        performedBy: {
+            type: 'string',
+            description: 'User who performed the action.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Represents a single registration history entry for a person.'
+} as const;
+
 export const ReportDataResponseDtoSchema = {
     type: 'object',
     properties: {
@@ -5731,6 +5783,24 @@ export const TurnoutAnalysisDtoSchema = {
     description: 'Data transfer object containing analysis of voter turnout patterns.'
 } as const;
 
+export const UnregisterVoterDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            description: 'The unique identifier of the person to unregister.',
+            format: 'uuid'
+        },
+        reason: {
+            type: 'string',
+            description: 'Reason for unregistering (optional).',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for unregistering a voter.'
+} as const;
+
 export const UpdateBallotDtoSchema = {
     type: 'object',
     properties: {
@@ -6628,6 +6698,14 @@ export const FrontDeskVoterDtoWritableSchema = {
         teller2: {
             type: 'string',
             description: 'The name of the second teller.',
+            nullable: true
+        },
+        registrationHistory: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/RegistrationHistoryEntryDto'
+            },
+            description: 'Registration history entries for this voter.',
             nullable: true
         }
     },

@@ -4,6 +4,7 @@ using Backend.Domain.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.EF.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260222181411_AddRegistrationHistoryToPersons")]
+    partial class AddRegistrationHistoryToPersons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -829,10 +832,6 @@ namespace Backend.EF.Migrations
                     b.HasKey("RowId");
 
                     b.HasIndex(new[] { "ElectionGuid" }, "IX_Person");
-
-                    b.HasIndex(new[] { "ElectionGuid", "BahaiId" }, "IX_PersonBahaiID")
-                        .IsUnique()
-                        .HasFilter("([BahaiId] IS NOT NULL AND [BahaiId]<>'')");
 
                     b.HasIndex(new[] { "ElectionGuid", "FullName" }, "IX_PersonElection");
 

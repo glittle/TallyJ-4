@@ -1078,7 +1078,9 @@ button:focus-visible {
 
 /* Micro-interactions and Animations */
 .hover-lift {
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  transition:
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal);
 }
 
 .hover-lift:hover {
@@ -1129,7 +1131,8 @@ button:focus-visible {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -1226,7 +1229,11 @@ button:focus-visible {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-700) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1261,12 +1268,20 @@ button:focus-visible {
 }
 
 .el-button--primary {
-  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-600) 100%
+  );
   border: none;
 }
 
 .el-button--primary:not(:disabled):hover {
-  background: linear-gradient(135deg, var(--color-primary-400) 0%, var(--color-primary-500) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-400) 0%,
+    var(--color-primary-500) 100%
+  );
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
@@ -1278,13 +1293,17 @@ button:focus-visible {
 }
 
 .el-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-700) 100%
+  );
   opacity: 0;
   transition: opacity var(--transition-normal);
 }
@@ -1419,29 +1438,4 @@ button:focus-visible {
 .el-dropdown-menu__item:hover {
   background-color: var(--el-fill-color-light);
   color: var(--el-color-primary);
-}
-
-/* Dark mode support (future enhancement) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg-primary: #0f172a;
-    --color-bg-secondary: #1e293b;
-    --color-bg-tertiary: #334155;
-    --color-text-primary: #f8fafc;
-    --color-text-secondary: #cbd5e1;
-    --color-text-tertiary: #94a3b8;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: var(--color-text-primary);
-    background-color: var(--color-bg-primary);
-  }
-  a:hover {
-    color: var(--color-primary-600);
-  }
-  button {
-    background-color: var(--color-gray-50);
-  }
 }

@@ -35,6 +35,14 @@ public interface IFrontDeskService
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <returns>The front desk statistics DTO.</returns>
     Task<FrontDeskStatsDto> GetStatsAsync(Guid electionGuid);
+
+    /// <summary>
+    /// Unregisters a voter (removes their check-in status).
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="unregisterDto">The unregister data.</param>
+    /// <returns>The updated voter DTO.</returns>
+    Task<FrontDeskVoterDto> UnregisterVoterAsync(Guid electionGuid, UnregisterVoterDto unregisterDto);
 }
 
 

@@ -7,8 +7,8 @@ packages
 ###############################
 # Build and Output Folders
 ###############################
-bin/
-obj/
+[Bb]in/
+[Oo]bj/
 bld/
 artifacts/
 wwwroot/

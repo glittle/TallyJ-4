@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { frontDeskService } from '../services/frontDeskService';
 import { signalrService } from '../services/signalrService';
-import type { FrontDeskVoterDto, CheckInVoterDto, FrontDeskStatsDto } from '../types/FrontDesk';
+import type { FrontDeskVoterDto, CheckInVoterDto, FrontDeskStatsDto, UnregisterVoterDto } from '../types/FrontDesk';
 
 export const useFrontDeskStore = defineStore('frontDesk', () => {
   const voters = ref<FrontDeskVoterDto[]>([]);
@@ -61,6 +61,26 @@ export const useFrontDeskStore = defineStore('frontDesk', () => {
       return updatedVoter;
     } catch (e: any) {
       error.value = e.message || 'Failed to check in voter';
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function unregisterVoter(electionGuid: string, unregisterDto: UnregisterVoterDto) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const updatedVoter = await frontDeskService.unregisterVoter(electionGuid, unregisterDto);
+      
+      const index = voters.value.findIndex(v => v.personGuid === updatedVoter.personGuid);
+      if (index !== -1) {
+        voters.value[index] = updatedVoter;
+      }
+      
+      return updatedVoter;
+    } catch (e: any) {
+      error.value = e.message || 'Failed to unregister voter';
       throw e;
     } finally {
       loading.value = false;
@@ -149,6 +169,7 @@ export const useFrontDeskStore = defineStore('frontDesk', () => {
     notCheckedInVoters,
     fetchEligibleVoters,
     checkInVoter,
+    unregisterVoter,
     fetchRollCall,
     fetchStats,
     clearError,
