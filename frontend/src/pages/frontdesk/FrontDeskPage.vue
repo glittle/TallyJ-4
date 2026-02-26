@@ -5,7 +5,7 @@ import { useFrontDeskStore } from '@/stores/frontDeskStore';
 import { useLocationStore } from '@/stores/locationStore';
 import { ElMessageBox } from 'element-plus';
 import { useNotifications } from '@/composables/useNotifications';
-import { Search, UserFilled, User, Tickets, Clock, Warning } from '@element-plus/icons-vue';
+import { Search, UserFilled, Clock, Warning } from '@element-plus/icons-vue';
 import type { FrontDeskVoterDto } from '@/types/FrontDesk';
 
 const route = useRoute();
@@ -38,6 +38,17 @@ const historyVoter = ref<FrontDeskVoterDto | null>(null);
 const notCheckedInVoters = computed(() => frontDeskStore.notCheckedInVoters);
 const checkedInVoters = computed(() => frontDeskStore.checkedInVoters);
 
+// Merge not-checked-in and checked-in voters into one list
+const allVoters = computed(() => {
+  // Sort by registration status (not checked in first) then by name
+  return [...notCheckedInVoters.value, ...checkedInVoters.value].sort((a, b) => {
+    if (a.isCheckedIn === b.isCheckedIn) {
+      return a.fullName.localeCompare(b.fullName);
+    }
+    return a.isCheckedIn ? 1 : -1;
+  });
+});
+
 // Registration type options
 const registrationTypes = [
   { value: 'I', label: 'In Person', key: '1' },
@@ -45,17 +56,6 @@ const registrationTypes = [
   { value: 'O', label: 'Online', key: '3' },
   { value: 'C', label: 'Call-In', key: '4' }
 ];
-
-const recentCheckIns = computed(() => {
-  return checkedInVoters.value
-    .slice()
-    .sort((a, b) => {
-      const aTime = a.registrationTime ? new Date(a.registrationTime).getTime() : 0;
-      const bTime = b.registrationTime ? new Date(b.registrationTime).getTime() : 0;
-      return bTime - aTime;
-    })
-    .slice(0, 5);
-});
 
 onMounted(async () => {
   await loadData();
@@ -80,7 +80,7 @@ watch(searchQuery, () => {
 });
 
 // Watch filtered voters and update selection
-watch(notCheckedInVoters, () => {
+watch(allVoters, () => {
   updateSelectedVoter();
 });
 
@@ -98,7 +98,7 @@ async function loadData() {
 }
 
 function updateSelectedVoter() {
-  const voters = notCheckedInVoters.value;
+  const voters = allVoters.value;
   if (voters.length > 0 && selectedIndex.value >= 0 && selectedIndex.value < voters.length) {
     selectedVoter.value = voters[selectedIndex.value]!;
   } else {
@@ -127,7 +127,7 @@ function scrollToSelectedRow() {
 function handleSearchKeydown(event: KeyboardEvent) {
   console.log('handleSearchKeydown called with key:', event.key);
   console.log('Key pressed:', event.key, 'showRegistrationButtons:', showRegistrationButtons.value);
-  const voters = notCheckedInVoters.value;
+  const voters = allVoters.value;
   console.log('Voters count:', voters.length);
 
   if (showRegistrationButtons.value) {
@@ -187,7 +187,7 @@ function handleSearchKeydown(event: KeyboardEvent) {
 
 function handleRowClick(row: FrontDeskVoterDto) {
   selectedVoter.value = row;
-  selectedIndex.value = notCheckedInVoters.value.findIndex(v => v.personGuid === row.personGuid);
+  selectedIndex.value = allVoters.value.findIndex(v => v.personGuid === row.personGuid);
   showRegistrationButtons.value = true;
   selectedButtonIndex.value = 0;
 }
@@ -207,7 +207,7 @@ async function confirmCheckIn(votingMethod: string) {
     showRegistrationButtons.value = false;
 
     // Move to next voter or reset
-    const voters = notCheckedInVoters.value;
+    const voters = allVoters.value;
     if (selectedIndex.value >= voters.length) {
       selectedIndex.value = Math.max(0, voters.length - 1);
     }
@@ -312,11 +312,18 @@ function goBack() {
       <template #header>
         <div class="card-header">
           <el-page-header @back="goBack" content="Front Desk - Voter Check-In" />
+          <div v-if="stats" class="header-stats">
+            <el-statistic :value="stats.checkedIn" title="Checked In">
+              <template #prefix>
+                <el-icon><UserFilled /></el-icon>
+              </template>
+            </el-statistic>
+          </div>
         </div>
       </template>
 
       <el-row :gutter="20">
-        <el-col :span="16">
+        <el-col :span="24">
           <el-card shadow="never">
             <template #header>
               <div class="section-header">
@@ -352,113 +359,44 @@ function goBack() {
               </div>
             </div>
 
-            <!-- Not checked in voters list -->
+            <!-- All voters list (merged not-checked-in and checked-in) -->
             <div v-else>
-              <el-table ref="voterTableRef" :data="notCheckedInVoters" :loading="loading" style="width: 100%"
-                max-height="500px" :row-class-name="getRowClassName" @row-click="handleRowClick">
-                <el-table-column prop="fullName" label="Name" sortable />
+              <el-table ref="voterTableRef" :data="allVoters" :loading="loading" style="width: 100%"
+                max-height="600px" :row-class-name="getRowClassName" @row-click="handleRowClick">
+                <el-table-column prop="fullName" label="Name" sortable width="200" />
                 <el-table-column prop="bahaiId" label="Bahá'í ID" width="120" />
-                <el-table-column prop="area" label="Area" width="150" />
+                <el-table-column prop="area" label="Area" width="120" />
+                <el-table-column prop="envNum" label="Env #" width="80" />
+                <el-table-column label="Method" width="110">
+                  <template #default="{ row }">
+                    <el-tag v-if="row.votingMethod === 'I'" type="success" size="small">In Person</el-tag>
+                    <el-tag v-else-if="row.votingMethod === 'M'" type="info" size="small">Mail</el-tag>
+                    <el-tag v-else-if="row.votingMethod === 'O'" type="primary" size="small">Online</el-tag>
+                    <el-tag v-else-if="row.votingMethod === 'C'" type="warning" size="small">Call-In</el-tag>
+                    <span v-else>-</span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Time" width="100">
+                  <template #default="{ row }">
+                    <span v-if="row.registrationTime">{{ formatTimeShort(row.registrationTime) }}</span>
+                    <span v-else>-</span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Actions" width="120" fixed="right">
+                  <template #default="{ row }">
+                    <template v-if="row.isCheckedIn">
+                      <el-button type="default" size="small" :icon="Clock" @click.stop="showHistory(row)" circle
+                        title="View History" />
+                      <el-button type="warning" size="small" :icon="Warning" @click.stop="handleUnregister(row)" circle
+                        title="Unregister" />
+                    </template>
+                  </template>
+                </el-table-column>
               </el-table>
               <div class="keyboard-hint">
-                {{ notCheckedInVoters.length }} voters shown. Use keyboard to navigate and check in.
+                {{ notCheckedInVoters.length }} not checked in, {{ checkedInVoters.length }} checked in. Use keyboard to navigate and check in.
               </div>
             </div>
-
-            <!-- Checked in voters -->
-            <el-divider />
-            <h4>Recently Checked In ({{ checkedInVoters.length }} total)</h4>
-            <el-table :data="checkedInVoters.slice(0, 10)" style="width: 100%" max-height="300px">
-              <el-table-column prop="fullName" label="Name" width="200" />
-              <el-table-column prop="bahaiId" label="Bahá'í ID" width="120" />
-              <el-table-column prop="envNum" label="Env #" width="80" />
-              <el-table-column label="Method" width="100">
-                <template #default="{ row }">
-                  <el-tag v-if="row.votingMethod === 'I'" type="success" size="small">In Person</el-tag>
-                  <el-tag v-else-if="row.votingMethod === 'M'" type="info" size="small">Mail</el-tag>
-                  <el-tag v-else-if="row.votingMethod === 'O'" type="primary" size="small">Online</el-tag>
-                  <el-tag v-else-if="row.votingMethod === 'C'" type="warning" size="small">Call-In</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="Time" width="100">
-                <template #default="{ row }">
-                  {{ formatTimeShort(row.registrationTime) }}
-                </template>
-              </el-table-column>
-              <el-table-column label="Actions" width="120" fixed="right">
-                <template #default="{ row }">
-                  <el-button type="default" size="small" :icon="Clock" @click.stop="showHistory(row)" circle
-                    title="View History" />
-                  <el-button type="warning" size="small" :icon="Warning" @click.stop="handleUnregister(row)" circle
-                    title="Unregister" />
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-card>
-        </el-col>
-
-        <el-col :span="8">
-          <el-card shadow="never">
-            <template #header>
-              <h3>Statistics</h3>
-            </template>
-
-            <div v-if="stats" class="stats-section">
-              <el-statistic :value="stats.checkedIn" title="Checked In">
-                <template #prefix>
-                  <el-icon>
-                    <UserFilled />
-                  </el-icon>
-                </template>
-              </el-statistic>
-
-              <el-divider />
-
-              <el-statistic :value="stats.notYetCheckedIn" title="Not Yet Checked In">
-                <template #prefix>
-                  <el-icon>
-                    <User />
-                  </el-icon>
-                </template>
-              </el-statistic>
-
-              <el-divider />
-
-              <el-statistic :value="stats.totalEligible" title="Total Eligible">
-                <template #prefix>
-                  <el-icon>
-                    <Tickets />
-                  </el-icon>
-                </template>
-              </el-statistic>
-
-              <el-divider />
-
-              <div class="progress-section">
-                <div class="progress-label">
-                  <span>Progress</span>
-                  <span class="progress-percentage">{{ stats.checkInPercentage.toFixed(1) }}%</span>
-                </div>
-                <el-progress :percentage="stats.checkInPercentage" :color="getProgressColor(stats.checkInPercentage)"
-                  :stroke-width="20" />
-              </div>
-            </div>
-          </el-card>
-
-          <el-card shadow="never" style="margin-top: 20px;">
-            <template #header>
-              <h3>Recent Check-Ins</h3>
-            </template>
-
-            <el-timeline>
-              <el-timeline-item v-for="voter in recentCheckIns" :key="voter.personGuid"
-                :timestamp="formatTime(voter.registrationTime)" placement="top">
-                <el-card>
-                  <p><strong>{{ voter.fullName }}</strong></p>
-                  <p>Envelope: #{{ voter.envNum }}</p>
-                </el-card>
-              </el-timeline-item>
-            </el-timeline>
           </el-card>
         </el-col>
       </el-row>
@@ -499,6 +437,12 @@ function goBack() {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .header-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
 
   .section-header {
