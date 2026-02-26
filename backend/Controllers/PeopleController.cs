@@ -102,6 +102,38 @@ public class PeopleController : ControllerBase
     }
 
     /// <summary>
+    /// Gets all people in the specified election as a lightweight list for display.
+    /// Returns only essential fields (full name, area, eligibility) for efficient list rendering.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <returns>A list of lightweight person DTOs.</returns>
+    [HttpGet("{electionGuid}/getAllPeople")]
+    public async Task<ActionResult<ApiResponse<List<PersonListDto>>>> GetAllPeople(Guid electionGuid)
+    {
+        var people = await _peopleService.GetAllPeopleForListAsync(electionGuid);
+        return Ok(ApiResponse<List<PersonListDto>>.SuccessResponse(people));
+    }
+
+    /// <summary>
+    /// Gets detailed information about a specific person, including all editable fields,
+    /// registration history, and vote history.
+    /// </summary>
+    /// <param name="guid">The GUID of the person.</param>
+    /// <returns>Detailed person information with history.</returns>
+    [HttpGet("{guid}/getPersonDetails")]
+    public async Task<ActionResult<ApiResponse<PersonDetailDto>>> GetPersonDetails(Guid guid)
+    {
+        var person = await _peopleService.GetPersonDetailsAsync(guid);
+
+        if (person == null)
+        {
+            return NotFound(ApiResponse<PersonDetailDto>.ErrorResponse("Person not found"));
+        }
+
+        return Ok(ApiResponse<PersonDetailDto>.SuccessResponse(person));
+    }
+
+    /// <summary>
     /// Gets a specific person by their GUID.
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>

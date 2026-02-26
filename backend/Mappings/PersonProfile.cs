@@ -21,6 +21,19 @@ public class PersonProfile : Profile
             .ForMember(dest => dest.VoteCount, opt => opt.Ignore())
             .ForMember(dest => dest.IneligibleReasonCode, opt => opt.MapFrom(src => GetIneligibleReasonCode(src.IneligibleReasonGuid)));
 
+        CreateMap<Person, PersonListDto>()
+            .ForMember(dest => dest.IneligibleReasonCode, opt => opt.MapFrom(src => GetIneligibleReasonCode(src.IneligibleReasonGuid)));
+
+        CreateMap<Person, PersonDetailDto>()
+            .ForMember(dest => dest.VoteCount, opt => opt.Ignore())
+            .ForMember(dest => dest.VoteHistory, opt => opt.Ignore())
+            .ForMember(dest => dest.IneligibleReasonCode, opt => opt.MapFrom(src => GetIneligibleReasonCode(src.IneligibleReasonGuid)));
+
+        CreateMap<Vote, VoteHistoryDto>()
+            .ForMember(dest => dest.PersonName, opt => opt.MapFrom(src => src.Person != null ? src.Person.FullName : null))
+            .ForMember(dest => dest.BallotNumber, opt => opt.MapFrom(src => src.Ballot != null ? src.Ballot.BallotNumAtComputer : (int?)null))
+            .ForMember(dest => dest.BallotStatusCode, opt => opt.MapFrom(src => src.Ballot != null ? src.Ballot.StatusCode : null));
+
         CreateMap<CreatePersonDto, Person>()
             .ForMember(dest => dest.PersonGuid, opt => opt.Ignore())
             .ForMember(dest => dest.RowId, opt => opt.Ignore())
