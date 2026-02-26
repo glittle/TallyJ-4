@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { frontDeskService } from '../services/frontDeskService';
 import { signalrService } from '../services/signalrService';
-import type { FrontDeskVoterDto, CheckInVoterDto, FrontDeskStatsDto, UnregisterVoterDto } from '../types/FrontDesk';
+import type { FrontDeskVoterDto, CheckInVoterDto, FrontDeskStatsDto, UnregisterVoterDto, UpdatePersonFlagsDto } from '../types/FrontDesk';
 
 export const useFrontDeskStore = defineStore('frontDesk', () => {
   const voters = ref<FrontDeskVoterDto[]>([]);
@@ -136,6 +136,13 @@ export const useFrontDeskStore = defineStore('frontDesk', () => {
         stats.value = updatedStats;
       });
 
+      connection.on('PersonFlagsUpdated', (voter: FrontDeskVoterDto) => {
+        const index = voters.value.findIndex(v => v.personGuid === voter.personGuid);
+        if (index !== -1) {
+          voters.value[index] = voter;
+        }
+      });
+
       signalrInitialized.value = true;
     } catch (e) {
       console.error('Failed to initialize SignalR for front desk store:', e);
@@ -158,6 +165,26 @@ export const useFrontDeskStore = defineStore('frontDesk', () => {
     }
   }
 
+  async function updatePersonFlags(electionGuid: string, updateFlagsDto: UpdatePersonFlagsDto) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const updatedVoter = await frontDeskService.updatePersonFlags(electionGuid, updateFlagsDto);
+      
+      const index = voters.value.findIndex(v => v.personGuid === updatedVoter.personGuid);
+      if (index !== -1) {
+        voters.value[index] = updatedVoter;
+      }
+      
+      return updatedVoter;
+    } catch (e: any) {
+      error.value = e.message || 'Failed to update person flags';
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     voters,
     stats,
@@ -176,6 +203,7 @@ export const useFrontDeskStore = defineStore('frontDesk', () => {
     setSearchQuery,
     initializeSignalR,
     joinElection,
-    leaveElection
+    leaveElection,
+    updatePersonFlags
   };
 });

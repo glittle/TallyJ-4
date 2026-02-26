@@ -3,15 +3,17 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useFrontDeskStore } from '@/stores/frontDeskStore';
 import { useLocationStore } from '@/stores/locationStore';
+import { useElectionStore } from '@/stores/electionStore';
 import { ElMessageBox } from 'element-plus';
 import { useNotifications } from '@/composables/useNotifications';
-import { Search, UserFilled, Clock, Warning } from '@element-plus/icons-vue';
+import { Search, UserFilled, Clock, Warning, Check } from '@element-plus/icons-vue';
 import type { FrontDeskVoterDto } from '@/types/FrontDesk';
 
 const route = useRoute();
 const router = useRouter();
 const frontDeskStore = useFrontDeskStore();
 const locationStore = useLocationStore();
+const electionStore = useElectionStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = ref(route.params.id as string);
@@ -22,6 +24,18 @@ const searchQuery = computed({
 const loading = computed(() => frontDeskStore.loading);
 const stats = computed(() => frontDeskStore.stats);
 const locations = computed(() => locationStore.locations);
+const currentElection = computed(() => electionStore.currentElection);
+
+// Parse election flags
+const electionFlags = computed(() => {
+  if (!currentElection.value?.flags) return [];
+  try {
+    const parsed = JSON.parse(currentElection.value.flags);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return currentElection.value.flags.split(',').map((f: string) => f.trim()).filter(Boolean);
+  }
+});
 
 // Keyboard navigation
 const searchInputRef = ref();
@@ -51,14 +65,29 @@ const allVoters = computed(() => {
 
 // Registration type options
 const registrationTypes = [
-  { value: 'I', label: 'In Person', key: '1' },
-  { value: 'M', label: 'Mail', key: '2' },
-  { value: 'O', label: 'Online', key: '3' },
-  { value: 'C', label: 'Call-In', key: '4' }
+  { value: 'I', label: 'In Person', key: '1', isVotingMethod: true },
+  { value: 'M', label: 'Mail', key: '2', isVotingMethod: true },
+  { value: 'O', label: 'Online', key: '3', isVotingMethod: true },
+  { value: 'C', label: 'Call-In', key: '4', isVotingMethod: true }
 ];
+
+// All buttons including voting methods and flags
+const allButtons = computed(() => {
+  const buttons = [...registrationTypes];
+  electionFlags.value.forEach((flag: string, index: number) => {
+    buttons.push({
+      value: flag,
+      label: flag,
+      key: String(5 + index),
+      isVotingMethod: false
+    });
+  });
+  return buttons;
+});
 
 onMounted(async () => {
   await loadData();
+  await electionStore.fetchElectionById(electionGuid.value);
   await frontDeskStore.initializeSignalR();
   await frontDeskStore.joinElection(electionGuid.value);
 
@@ -131,33 +160,34 @@ function handleSearchKeydown(event: KeyboardEvent) {
   console.log('Voters count:', voters.length);
 
   if (showRegistrationButtons.value) {
+    const buttons = allButtons.value;
     // Handle button navigation
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
       selectedButtonIndex.value = Math.max(0, selectedButtonIndex.value - 1);
     } else if (event.key === 'ArrowRight') {
       event.preventDefault();
-      selectedButtonIndex.value = Math.min(registrationTypes.length - 1, selectedButtonIndex.value + 1);
+      selectedButtonIndex.value = Math.min(buttons.length - 1, selectedButtonIndex.value + 1);
     } else if (event.key === 'Enter') {
       event.preventDefault();
-      const selectedType = registrationTypes[selectedButtonIndex.value];
-      if (selectedType) {
-        confirmCheckIn(selectedType.value);
+      const selectedButton = buttons[selectedButtonIndex.value];
+      if (selectedButton) {
+        handleButtonClick(selectedButton);
       }
     } else if (event.key === 'Escape') {
       event.preventDefault();
       showRegistrationButtons.value = false;
       selectedButtonIndex.value = 0;
-    } else if (event.key >= '1' && event.key <= '4') {
+    } else if (event.key >= '1' && event.key <= '9') {
       event.preventDefault();
       const index = parseInt(event.key) - 1;
-      if (index >= 0 && index < registrationTypes.length) {
-        const regType = registrationTypes[index];
-        if (!regType) {
-          showErrorMessage(`Invalid registration type selected: ${index}`);
+      if (index >= 0 && index < buttons.length) {
+        const button = buttons[index];
+        if (!button) {
+          showErrorMessage(`Invalid button selected: ${index}`);
           return;
         }
-        confirmCheckIn(regType.value);
+        handleButtonClick(button);
       }
     }
   } else {
@@ -219,6 +249,74 @@ async function confirmCheckIn(votingMethod: string) {
     });
   } catch (error: any) {
     showErrorMessage(error.message || 'Failed to check in voter');
+  }
+}
+
+async function handleButtonClick(button: any) {
+  if (!selectedVoter.value) return;
+
+  if (button.isVotingMethod) {
+    // This is a voting method, proceed with check-in
+    await confirmCheckIn(button.value);
+  } else {
+    // This is a flag, toggle it
+    await toggleFlag(button.value);
+  }
+}
+
+function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
+  if (!voter.flags) return false;
+  const flags = voter.flags.split(',').map(f => f.trim());
+  return flags.includes(flag);
+}
+
+async function toggleFlag(flag: string) {
+  if (!selectedVoter.value) return;
+
+  const currentFlags = selectedVoter.value.flags ? 
+    selectedVoter.value.flags.split(',').map(f => f.trim()).filter(Boolean) : [];
+  
+  const hasCurrentFlag = currentFlags.includes(flag);
+
+  if (hasCurrentFlag) {
+    // Ask for confirmation before removing flag
+    try {
+      await ElMessageBox.confirm(
+        `Remove flag "${flag}" from ${selectedVoter.value.fullName}?`,
+        'Confirm Remove Flag',
+        {
+          confirmButtonText: 'Remove',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }
+      );
+    } catch {
+      // User cancelled
+      return;
+    }
+
+    // Remove the flag
+    const updatedFlags = currentFlags.filter(f => f !== flag);
+    await updatePersonFlags(updatedFlags);
+  } else {
+    // Add the flag
+    currentFlags.push(flag);
+    await updatePersonFlags(currentFlags);
+  }
+}
+
+async function updatePersonFlags(flags: string[]) {
+  if (!selectedVoter.value) return;
+
+  try {
+    await frontDeskStore.updatePersonFlags(electionGuid.value, {
+      personGuid: selectedVoter.value.personGuid,
+      flags: flags.join(', ')
+    });
+
+    showSuccessMessage('Flags updated successfully');
+  } catch (error: any) {
+    showErrorMessage(error.message || 'Failed to update flags');
   }
 }
 
@@ -343,19 +441,42 @@ function goBack() {
             <!-- Registration type selection (shown after pressing Enter) -->
             <div v-if="showRegistrationButtons && selectedVoter" class="registration-buttons">
               <div class="selected-voter-info">
-                <strong>Check in: {{ selectedVoter.fullName }}</strong>
+                <strong>{{ selectedVoter.isCheckedIn ? 'Update: ' : 'Check in: ' }}{{ selectedVoter.fullName }}</strong>
                 <span v-if="selectedVoter.bahaiId" class="voter-detail">ID: {{ selectedVoter.bahaiId }}</span>
                 <span v-if="selectedVoter.area" class="voter-detail">Area: {{ selectedVoter.area }}</span>
               </div>
-              <div class="button-group">
-                <el-button v-for="(type, index) in registrationTypes" :key="type.value"
-                  :type="index === selectedButtonIndex ? 'primary' : 'default'" size="large"
-                  @click="confirmCheckIn(type.value)" :class="{ 'selected-button': index === selectedButtonIndex }">
-                  {{ type.label }} <kbd>{{ type.key }}</kbd>
-                </el-button>
+              
+              <!-- Voting Methods -->
+              <div v-if="!selectedVoter.isCheckedIn" class="button-section">
+                <h4>Voting Method</h4>
+                <div class="button-group">
+                  <el-button v-for="(type, index) in registrationTypes" :key="type.value"
+                    :type="index === selectedButtonIndex ? 'primary' : 'default'" size="large"
+                    @click="handleButtonClick(type)" :class="{ 'selected-button': index === selectedButtonIndex }">
+                    {{ type.label }} <kbd>{{ type.key }}</kbd>
+                  </el-button>
+                </div>
               </div>
+              
+              <!-- Flags -->
+              <div v-if="electionFlags.length > 0" class="button-section">
+                <h4>Flags</h4>
+                <div class="button-group">
+                  <el-button v-for="(flag, index) in electionFlags" :key="flag"
+                    :type="(4 + index) === selectedButtonIndex ? 'primary' : hasFlag(selectedVoter, flag) ? 'success' : 'default'" 
+                    size="large"
+                    @click="toggleFlag(flag)" 
+                    :class="{ 'selected-button': (4 + index) === selectedButtonIndex }">
+                    {{ flag }} <kbd>{{ 5 + index }}</kbd>
+                    <el-icon v-if="hasFlag(selectedVoter, flag)" style="margin-left: 5px;">
+                      <Check />
+                    </el-icon>
+                  </el-button>
+                </div>
+              </div>
+              
               <div class="instruction-text">
-                Use ← → arrows or number keys 1-4, press Enter to confirm, Esc to cancel
+                Use ← → arrows or number keys, press Enter to confirm, Esc to cancel
               </div>
             </div>
 
@@ -457,9 +578,19 @@ function goBack() {
 
   .registration-buttons {
     padding: 20px;
-    background: var(--el-color-primary-light-1);
+    background: var(--el-color-primary-light-9);
     border-radius: 8px;
     margin-bottom: 20px;
+  }
+
+  .button-section {
+    margin-bottom: 20px;
+
+    h4 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: var(--el-text-color-regular);
+    }
   }
 
   .selected-voter-info {

@@ -11,7 +11,9 @@ import type {
   RollCallDto,
   FrontDeskStatsDto,
   UnregisterVoterDto,
+  UpdatePersonFlagsDto,
 } from "../types/FrontDesk";
+import axios from 'axios';
 
 export const frontDeskService = {
   async getEligibleVoters(electionGuid: string): Promise<FrontDeskVoterDto[]> {
@@ -56,5 +58,16 @@ export const frontDeskService = {
       path: { electionGuid },
     });
     return response.data?.data as FrontDeskStatsDto;
+  },
+
+  async updatePersonFlags(
+    electionGuid: string,
+    updateFlagsDto: UpdatePersonFlagsDto,
+  ): Promise<FrontDeskVoterDto> {
+    const response = await axios.post(
+      `/api/${electionGuid}/frontdesk/updatePersonFlags`,
+      updateFlagsDto
+    );
+    return response.data?.data as FrontDeskVoterDto;
   },
 };
