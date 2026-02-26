@@ -43,6 +43,14 @@ public interface IFrontDeskService
     /// <param name="unregisterDto">The unregister data.</param>
     /// <returns>The updated voter DTO.</returns>
     Task<FrontDeskVoterDto> UnregisterVoterAsync(Guid electionGuid, UnregisterVoterDto unregisterDto);
+
+    /// <summary>
+    /// Updates the flags for a person.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="updateFlagsDto">The flags update data.</param>
+    /// <returns>The updated voter DTO.</returns>
+    Task<FrontDeskVoterDto> UpdatePersonFlagsAsync(Guid electionGuid, UpdatePersonFlagsDto updateFlagsDto);
 }
 
 

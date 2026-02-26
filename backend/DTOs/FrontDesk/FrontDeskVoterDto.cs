@@ -66,6 +66,11 @@ public class FrontDeskVoterDto
     public bool IsCheckedIn => RegistrationTime.HasValue;
 
     /// <summary>
+    /// Flags/labels assigned to this voter (comma-separated).
+    /// </summary>
+    public string? Flags { get; set; }
+
+    /// <summary>
     /// Registration history entries for this voter.
     /// </summary>
     public List<RegistrationHistoryEntryDto>? RegistrationHistory { get; set; }

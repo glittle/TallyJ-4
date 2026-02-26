@@ -214,6 +214,31 @@ public class FrontDeskService : IFrontDeskService
         historyEntries.Add(entry);
         person.RegistrationHistory = JsonSerializer.Serialize(historyEntries);
     }
+
+    /// <inheritdoc />
+    public async Task<FrontDeskVoterDto> UpdatePersonFlagsAsync(Guid electionGuid, UpdatePersonFlagsDto updateFlagsDto)
+    {
+        var person = await _context.People
+            .FirstOrDefaultAsync(p => p.PersonGuid == updateFlagsDto.PersonGuid && p.ElectionGuid == electionGuid);
+
+        if (person == null)
+        {
+            throw new InvalidOperationException("Person not found");
+        }
+
+        person.Flags = updateFlagsDto.Flags;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Updated flags for person {PersonGuid} in election {ElectionGuid}",
+            person.PersonGuid, electionGuid);
+
+        var voterDto = _mapper.Map<FrontDeskVoterDto>(person);
+
+        // Send SignalR notification to update all connected clients
+        await _signalRNotificationService.SendPersonFlagsUpdatedAsync(electionGuid, voterDto);
+
+        return voterDto;
+    }
 }
 
 

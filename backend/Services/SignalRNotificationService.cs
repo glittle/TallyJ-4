@@ -232,6 +232,25 @@ public class SignalRNotificationService : ISignalRNotificationService
             _logger.LogError(ex, "Error sending PersonVoteCountUpdated notification for election {ElectionGuid}", update.ElectionGuid);
         }
     }
+
+    /// <summary>
+    /// Sends person flags updated notification to front desk clients.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="voter">The voter with updated flags.</param>
+    public async Task SendPersonFlagsUpdatedAsync(Guid electionGuid, FrontDeskVoterDto voter)
+    {
+        try
+        {
+            var groupName = $"election-{electionGuid}";
+            await _frontDeskHubContext.Clients.Group(groupName).SendAsync("PersonFlagsUpdated", voter);
+            _logger.LogInformation("Sent PersonFlagsUpdated notification to group {GroupName} for person {PersonGuid}", groupName, voter.PersonGuid);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending PersonFlagsUpdated notification for election {ElectionGuid}", electionGuid);
+        }
+    }
 }
 
 
