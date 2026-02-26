@@ -65,25 +65,31 @@ onMounted(async () => {
   await eligibilityStore.fetchReasons();
 });
 
+function resetForm() {
+  form.firstName = '';
+  form.lastName = '';
+  form.email = '';
+  form.phone = '';
+  form.area = '';
+  form.bahaiId = '';
+  form.ageGroup = 'A';
+  form.ineligibleReasonGuid = null;
+}
+
 watch(() => props.modelValue, async (visible) => {
   if (visible && props.isEdit && props.person) {
     await loadPersonDetails();
+  } else if (visible && !props.isEdit) {
+    resetForm();
   }
 });
 
 watch(() => props.person, (person) => {
   if (person && !props.isEdit) {
-    // For create, just use the basic fields if provided
-    form.firstName = '';
-    form.lastName = '';
-    form.email = '';
-    form.phone = '';
-    form.area = '';
-    form.bahaiId = '';
-    form.ageGroup = 'A';
-    form.ineligibleReasonGuid = null;
+    // For create, use reset form
+    resetForm();
   }
-}, { immediate: true });
+});
 
 async function loadPersonDetails() {
   if (!props.person) return;
@@ -156,6 +162,7 @@ async function handleSubmit() {
 
 function handleClose() {
   formRef.value?.resetFields();
+  personDetails.value = null;
   emit('update:modelValue', false);
 }
 </script>

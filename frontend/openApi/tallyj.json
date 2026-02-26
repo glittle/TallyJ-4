@@ -3372,6 +3372,90 @@
         }
       }
     },
+    "/api/People/{electionGuid}/getAllPeople": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Gets all people in the specified election as a lightweight list for display.\nReturns only essential fields (full name, area, eligibility) for efficient list rendering.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPersonListDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPersonListDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListPersonListDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/People/{guid}/getPersonDetails": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "summary": "Gets detailed information about a specific person, including all editable fields,\nregistration history, and vote history.",
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "description": "The GUID of the person.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePersonDetailDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePersonDetailDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePersonDetailDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/People/{guid}/getPerson": {
       "get": {
         "tags": [
@@ -6324,6 +6408,38 @@
         "additionalProperties": false,
         "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
       },
+      "ApiResponseListPersonListDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonListDto"
+            },
+            "description": "The data returned by the API operation, if successful.",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "description": "An optional message providing additional information about the response.",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of error messages, if the operation failed.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
+      },
       "ApiResponseListVoteDto": {
         "type": "object",
         "properties": {
@@ -6420,6 +6536,33 @@
           },
           "data": {
             "$ref": "#/components/schemas/PaginatedResponseSuperAdminElectionDto"
+          },
+          "message": {
+            "type": "string",
+            "description": "An optional message providing additional information about the response.",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of error messages, if the operation failed.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
+      },
+      "ApiResponsePersonDetailDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
+          },
+          "data": {
+            "$ref": "#/components/schemas/PersonDetailDto"
           },
           "message": {
             "type": "string",
@@ -9962,6 +10105,155 @@
         "additionalProperties": false,
         "description": "Data transfer object containing participation rates by different voting methods."
       },
+      "PersonDetailDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "description": "The unique identifier for the person.",
+            "format": "uuid"
+          },
+          "electionGuid": {
+            "type": "string",
+            "description": "The GUID of the election this person belongs to.",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The person's first name.",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The person's last name.",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "description": "The person's full name (combination of first and last names).",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "The person's email address.",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "The person's phone number.",
+            "nullable": true
+          },
+          "canReceiveVotes": {
+            "type": "boolean",
+            "description": "Whether the person can receive votes (be a candidate).",
+            "nullable": true
+          },
+          "canVote": {
+            "type": "boolean",
+            "description": "Whether the person can vote.",
+            "nullable": true
+          },
+          "area": {
+            "type": "string",
+            "description": "The area or region the person belongs to.",
+            "nullable": true
+          },
+          "bahaiId": {
+            "type": "string",
+            "description": "The person's Bahá'í ID.",
+            "nullable": true
+          },
+          "otherLastNames": {
+            "type": "string",
+            "description": "Other last names associated with the person.",
+            "nullable": true
+          },
+          "otherNames": {
+            "type": "string",
+            "description": "Other names associated with the person.",
+            "nullable": true
+          },
+          "otherInfo": {
+            "type": "string",
+            "description": "Additional information about the person.",
+            "nullable": true
+          },
+          "ageGroup": {
+            "type": "string",
+            "description": "The person's age group.",
+            "nullable": true
+          },
+          "ineligibleReasonGuid": {
+            "type": "string",
+            "description": "The GUID of the reason why the person is ineligible (if applicable).",
+            "format": "uuid",
+            "nullable": true
+          },
+          "ineligibleReasonCode": {
+            "type": "string",
+            "description": "The code of the reason why the person is ineligible (if applicable).",
+            "nullable": true
+          },
+          "registrationTime": {
+            "type": "string",
+            "description": "The time when the person was registered (checked in).",
+            "format": "date-time",
+            "nullable": true
+          },
+          "votingLocationGuid": {
+            "type": "string",
+            "description": "The GUID of the voting location where the person is registered.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "votingMethod": {
+            "type": "string",
+            "description": "The voting method (e.g., 'P' for paper, 'O' for online).",
+            "nullable": true
+          },
+          "envNum": {
+            "type": "integer",
+            "description": "Envelope number assigned to the person.",
+            "format": "int32",
+            "nullable": true
+          },
+          "teller1": {
+            "type": "string",
+            "description": "Name of the first teller assigned to this person.",
+            "nullable": true
+          },
+          "teller2": {
+            "type": "string",
+            "description": "Name of the second teller assigned to this person.",
+            "nullable": true
+          },
+          "hasOnlineBallot": {
+            "type": "boolean",
+            "description": "Whether the person has submitted an online ballot.",
+            "nullable": true
+          },
+          "registrationHistory": {
+            "type": "string",
+            "description": "JSON array of registration history entries.\nEach entry contains timestamp, action, and metadata.",
+            "nullable": true
+          },
+          "voteHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoteHistoryDto"
+            },
+            "description": "List of votes cast by this person on various ballots.",
+            "nullable": true
+          },
+          "voteCount": {
+            "type": "integer",
+            "description": "The number of votes this person has received.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Detailed DTO for editing a person.\nContains all editable fields plus registration and vote history."
+      },
       "PersonDto": {
         "type": "object",
         "properties": {
@@ -10059,6 +10351,53 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object representing a person in an election."
+      },
+      "PersonListDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "description": "The unique identifier for the person.",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "The person's full name (combination of first and last names).",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "The person's email address.",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "The person's phone number.",
+            "nullable": true
+          },
+          "area": {
+            "type": "string",
+            "description": "The area or region the person belongs to.",
+            "nullable": true
+          },
+          "canVote": {
+            "type": "boolean",
+            "description": "Whether the person can vote.",
+            "nullable": true
+          },
+          "canReceiveVotes": {
+            "type": "boolean",
+            "description": "Whether the person can receive votes (be a candidate).",
+            "nullable": true
+          },
+          "ineligibleReasonCode": {
+            "type": "string",
+            "description": "The code of the reason why the person is ineligible (if applicable).",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Lightweight DTO for displaying people in a list view.\nContains only the essential fields needed for list display and filtering."
       },
       "PredictionDto": {
         "type": "object",
@@ -11973,6 +12312,56 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object representing a vote in an election.\nContains vote details including candidate information and ballot context."
+      },
+      "VoteHistoryDto": {
+        "type": "object",
+        "properties": {
+          "ballotGuid": {
+            "type": "string",
+            "description": "The GUID of the ballot this vote belongs to.",
+            "format": "uuid"
+          },
+          "positionOnBallot": {
+            "type": "integer",
+            "description": "The position of this vote on the ballot.",
+            "format": "int32"
+          },
+          "personGuid": {
+            "type": "string",
+            "description": "The GUID of the person who received this vote.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "personName": {
+            "type": "string",
+            "description": "The full name of the person who received this vote.",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "string",
+            "description": "Status code of the vote (e.g., 'ok', 'extra', 'invalid').",
+            "nullable": true
+          },
+          "invalidReasonGuid": {
+            "type": "string",
+            "description": "The GUID of the reason why this vote is invalid (if applicable).",
+            "format": "uuid",
+            "nullable": true
+          },
+          "ballotNumber": {
+            "type": "integer",
+            "description": "The ballot number for display purposes.",
+            "format": "int32",
+            "nullable": true
+          },
+          "ballotStatusCode": {
+            "type": "string",
+            "description": "The status code of the ballot.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a single vote in a person's vote history."
       },
       "VoteReportDto": {
         "type": "object",
