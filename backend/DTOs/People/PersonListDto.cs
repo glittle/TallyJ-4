@@ -17,6 +17,16 @@ public class PersonListDto
     public string FullName { get; set; } = null!;
 
     /// <summary>
+    /// The person's email address.
+    /// </summary>
+    public string? Email { get; set; }
+
+    /// <summary>
+    /// The person's phone number.
+    /// </summary>
+    public string? Phone { get; set; }
+
+    /// <summary>
     /// The area or region the person belongs to.
     /// </summary>
     public string? Area { get; set; }

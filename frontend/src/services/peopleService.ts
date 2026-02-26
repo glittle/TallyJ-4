@@ -8,7 +8,7 @@ import {
   getApiPeopleByElectionGuidGetCandidates,
 } from "../api/gen/configService/sdk.gen";
 import { client } from "../api/config";
-import type { PersonDto, CreatePersonDto, UpdatePersonDto } from "../types";
+import type { PersonDto, PersonListDto, PersonDetailDto, CreatePersonDto, UpdatePersonDto } from "../types";
 
 export const peopleService = {
   async getAll(electionGuid: string): Promise<PersonDto[]> {
@@ -18,11 +18,29 @@ export const peopleService = {
     return (response.data?.items ?? []) as PersonDto[];
   },
 
+  async getAllPeople(electionGuid: string): Promise<PersonListDto[]> {
+    const response = await client.get<{ data: PersonListDto[] }>({
+      url: '/api/People/{electionGuid}/getAllPeople',
+      path: { electionGuid },
+      security: [{ scheme: 'bearer', type: 'http' }],
+    });
+    return (response.data?.data ?? []) as PersonListDto[];
+  },
+
   async getById(personGuid: string): Promise<PersonDto> {
     const response = await getApiPeopleByGuidGetPerson({
       path: { guid: personGuid },
     });
     return response.data?.data as PersonDto;
+  },
+
+  async getDetails(personGuid: string): Promise<PersonDetailDto> {
+    const response = await client.get<{ data: PersonDetailDto }>({
+      url: '/api/People/{guid}/getPersonDetails',
+      path: { guid: personGuid },
+      security: [{ scheme: 'bearer', type: 'http' }],
+    });
+    return response.data?.data as PersonDetailDto;
   },
 
   async create(dto: CreatePersonDto): Promise<PersonDto> {

@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { CircleCheck } from '@element-plus/icons-vue';
 import { useI18n } from 'vue-i18n';
-import type { PersonDto } from '../../types';
+import type { PersonListDto } from '../../types';
 
 const { t } = useI18n();
 
 const props = defineProps<{
-  people: PersonDto[];
+  people: PersonListDto[];
   loading: boolean;
   showSelection?: boolean;
-  selected?: PersonDto[];
+  selected?: PersonListDto[];
 }>();
 
 const emit = defineEmits<{
-  edit: [person: PersonDto];
-  delete: [person: PersonDto];
-  selectionChange?: [selection: PersonDto[]];
+  edit: [person: PersonListDto];
+  delete: [person: PersonListDto];
+  selectionChange?: [selection: PersonListDto[]];
 }>();
 
-function handleSelectionChange(selection: PersonDto[]) {
+function handleSelectionChange(selection: PersonListDto[]) {
   emit('selectionChange', selection);
 }
 </script>
@@ -28,6 +28,7 @@ function handleSelectionChange(selection: PersonDto[]) {
     :data="people"
     v-loading="loading"
     style="width: 100%"
+    height="600"
     @selection-change="handleSelectionChange"
   >
     <el-table-column v-if="showSelection" type="selection" width="55" />
@@ -57,3 +58,12 @@ function handleSelectionChange(selection: PersonDto[]) {
     </el-table-column>
   </el-table>
 </template>
+
+<style lang="less">
+.people-table-container {
+  .people-table-container {
+    height: 100%;
+    width: 100%;
+  }
+}
+</style>
