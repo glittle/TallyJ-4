@@ -1,28 +1,31 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useFrontDeskStore } from '@/stores/frontDeskStore';
 import { useLocationStore } from '@/stores/locationStore';
 import { useElectionStore } from '@/stores/electionStore';
 import { ElMessageBox } from 'element-plus';
 import { useNotifications } from '@/composables/useNotifications';
 import { Search, UserFilled, Clock, Warning, Check } from '@element-plus/icons-vue';
-import type { FrontDeskVoterDto } from '@/types/FrontDesk';
+import { frontDeskService } from '@/services/frontDeskService';
+import { signalrService } from '@/services/signalrService';
+import type { FrontDeskVoterDto, CheckInVoterDto, FrontDeskStatsDto, UnregisterVoterDto, UpdatePersonFlagsDto } from '@/types/FrontDesk';
 
 const route = useRoute();
 const router = useRouter();
-const frontDeskStore = useFrontDeskStore();
 const locationStore = useLocationStore();
 const electionStore = useElectionStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = ref(route.params.id as string);
-const searchQuery = computed({
-  get: () => frontDeskStore.searchQuery,
-  set: (value) => frontDeskStore.setSearchQuery(value)
-});
-const loading = computed(() => frontDeskStore.loading);
-const stats = computed(() => frontDeskStore.stats);
+
+// State
+const voters = ref<FrontDeskVoterDto[]>([]);
+const stats = ref<FrontDeskStatsDto | null>(null);
+const loading = ref(false);
+const error = ref<string | null>(null);
+const signalrInitialized = ref(false);
+const searchQuery = ref('');
+
 const locations = computed(() => locationStore.locations);
 const currentElection = computed(() => electionStore.currentElection);
 
@@ -54,37 +57,45 @@ const selectedMethodFilters = ref<string[]>([]);
 const selectedFlagFilters = ref<string[]>([]);
 const showAllRegistered = ref(false);
 
-const notCheckedInVoters = computed(() => frontDeskStore.notCheckedInVoters);
-const checkedInVoters = computed(() => frontDeskStore.checkedInVoters);
+// Voter filtering
+const filteredVoters = computed(() => {
+  if (!searchQuery.value.trim()) return voters.value;
+  const query = searchQuery.value.toLowerCase();
+  return voters.value.filter(voter =>
+    voter.fullName.toLowerCase().includes(query) ||
+    voter.bahaiId?.toLowerCase().includes(query) ||
+    voter.area?.toLowerCase().includes(query)
+  );
+});
+
+const checkedInVoters = computed(() => filteredVoters.value.filter(v => v.isCheckedIn));
+const notCheckedInVoters = computed(() => filteredVoters.value.filter(v => !v.isCheckedIn));
 
 // Filter voters based on selected filters
 const filteredByConditions = computed(() => {
-  let voters = showAllRegistered.value ? 
-    [...notCheckedInVoters.value, ...checkedInVoters.value] : 
+  let result = showAllRegistered.value ?
+    [...notCheckedInVoters.value, ...checkedInVoters.value] :
     notCheckedInVoters.value;
 
-  // Filter by voting methods
   if (selectedMethodFilters.value.length > 0) {
-    voters = voters.filter(v => 
+    result = result.filter(v =>
       v.votingMethod && selectedMethodFilters.value.includes(v.votingMethod)
     );
   }
 
-  // Filter by flags (AND logic - must have all selected flags)
   if (selectedFlagFilters.value.length > 0) {
-    voters = voters.filter(v => {
+    result = result.filter(v => {
       if (!v.flags) return false;
       const voterFlags = v.flags.split(',').map(f => f.trim());
       return selectedFlagFilters.value.every(flag => voterFlags.includes(flag));
     });
   }
 
-  return voters;
+  return result;
 });
 
 // Merge not-checked-in and checked-in voters into one list
 const allVoters = computed(() => {
-  // If filters are active, use filtered list
   if (selectedMethodFilters.value.length > 0 || selectedFlagFilters.value.length > 0 || showAllRegistered.value) {
     return filteredByConditions.value.sort((a, b) => {
       if (a.isCheckedIn === b.isCheckedIn) {
@@ -94,7 +105,6 @@ const allVoters = computed(() => {
     });
   }
 
-  // No filters, show all voters
   return [...notCheckedInVoters.value, ...checkedInVoters.value].sort((a, b) => {
     if (a.isCheckedIn === b.isCheckedIn) {
       return a.fullName.localeCompare(b.fullName);
@@ -157,20 +167,141 @@ function getFlagAbbr(flag: string): string {
     .slice(0, 3);
 }
 
+async function fetchStats(guid: string) {
+  try {
+    stats.value = await frontDeskService.getStats(guid);
+  } catch (e: any) {
+    console.error('Failed to fetch stats:', e);
+  }
+}
+
+async function fetchEligibleVoters(guid: string) {
+  loading.value = true;
+  error.value = null;
+  try {
+    voters.value = await frontDeskService.getEligibleVoters(guid);
+    await fetchStats(guid);
+  } catch (e: any) {
+    error.value = e.message || 'Failed to fetch eligible voters';
+    throw e;
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function checkInVoter(guid: string, checkInDto: CheckInVoterDto) {
+  loading.value = true;
+  error.value = null;
+  try {
+    const updatedVoter = await frontDeskService.checkInVoter(guid, checkInDto);
+    const index = voters.value.findIndex(v => v.personGuid === updatedVoter.personGuid);
+    if (index !== -1) {
+      voters.value[index] = updatedVoter;
+    }
+    return updatedVoter;
+  } catch (e: any) {
+    error.value = e.message || 'Failed to check in voter';
+    throw e;
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function unregisterVoter(guid: string, unregisterDto: UnregisterVoterDto) {
+  loading.value = true;
+  error.value = null;
+  try {
+    const updatedVoter = await frontDeskService.unregisterVoter(guid, unregisterDto);
+    const index = voters.value.findIndex(v => v.personGuid === updatedVoter.personGuid);
+    if (index !== -1) {
+      voters.value[index] = updatedVoter;
+    }
+    return updatedVoter;
+  } catch (e: any) {
+    error.value = e.message || 'Failed to unregister voter';
+    throw e;
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function savePersonFlags(guid: string, updateFlagsDto: UpdatePersonFlagsDto) {
+  loading.value = true;
+  error.value = null;
+  try {
+    const updatedVoter = await frontDeskService.updatePersonFlags(guid, updateFlagsDto);
+    const index = voters.value.findIndex(v => v.personGuid === updatedVoter.personGuid);
+    if (index !== -1) {
+      voters.value[index] = updatedVoter;
+    }
+    return updatedVoter;
+  } catch (e: any) {
+    error.value = e.message || 'Failed to update person flags';
+    throw e;
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function initializeSignalR() {
+  if (signalrInitialized.value) return;
+
+  try {
+    const connection = await signalrService.connectToFrontDeskHub();
+
+    connection.on('PersonCheckedIn', (voter: FrontDeskVoterDto) => {
+      const index = voters.value.findIndex(v => v.personGuid === voter.personGuid);
+      if (index !== -1) {
+        voters.value[index] = voter;
+      }
+    });
+
+    connection.on('VoterCountUpdated', (updatedStats: FrontDeskStatsDto) => {
+      stats.value = updatedStats;
+    });
+
+    connection.on('PersonFlagsUpdated', (voter: FrontDeskVoterDto) => {
+      const index = voters.value.findIndex(v => v.personGuid === voter.personGuid);
+      if (index !== -1) {
+        voters.value[index] = voter;
+      }
+    });
+
+    signalrInitialized.value = true;
+  } catch (e) {
+    console.error('Failed to initialize SignalR for front desk:', e);
+  }
+}
+
+async function joinElection(guid: string) {
+  try {
+    await signalrService.joinFrontDeskElection(guid);
+  } catch (e) {
+    console.error('Failed to join election group for front desk updates:', e);
+  }
+}
+
+async function leaveElection(guid: string) {
+  try {
+    await signalrService.leaveFrontDeskElection(guid);
+  } catch (e) {
+    console.error('Failed to leave election group for front desk updates:', e);
+  }
+}
+
 onMounted(async () => {
   await loadData();
   await electionStore.fetchElectionById(electionGuid.value);
-  await frontDeskStore.initializeSignalR();
-  await frontDeskStore.joinElection(electionGuid.value);
+  await initializeSignalR();
+  await joinElection(electionGuid.value);
 
-  // Focus search input
   nextTick(() => {
     searchInputRef.value?.focus();
   });
 });
 
 onUnmounted(async () => {
-  await frontDeskStore.leaveElection(electionGuid.value);
+  await leaveElection(electionGuid.value);
 });
 
 // Watch search query and update selection
@@ -187,21 +318,20 @@ watch(allVoters, () => {
 
 async function loadData() {
   try {
-    await frontDeskStore.fetchEligibleVoters(electionGuid.value);
+    await fetchEligibleVoters(electionGuid.value);
     await locationStore.fetchLocations(electionGuid.value);
-    // Select first voter after loading
     nextTick(() => {
       updateSelectedVoter();
     });
-  } catch (error: any) {
-    showErrorMessage(error.message || 'Failed to load data');
+  } catch (err: any) {
+    showErrorMessage(err.message || 'Failed to load data');
   }
 }
 
 function updateSelectedVoter() {
-  const voters = allVoters.value;
-  if (voters.length > 0 && selectedIndex.value >= 0 && selectedIndex.value < voters.length) {
-    selectedVoter.value = voters[selectedIndex.value]!;
+  const voterList = allVoters.value;
+  if (voterList.length > 0 && selectedIndex.value >= 0 && selectedIndex.value < voterList.length) {
+    selectedVoter.value = voterList[selectedIndex.value]!;
   } else {
     selectedVoter.value = null;
   }
@@ -223,17 +353,14 @@ function scrollToSelectedRow() {
   });
 }
 
-
-
 function handleSearchKeydown(event: KeyboardEvent) {
   console.log('handleSearchKeydown called with key:', event.key);
   console.log('Key pressed:', event.key, 'showRegistrationButtons:', showRegistrationButtons.value);
-  const voters = allVoters.value;
-  console.log('Voters count:', voters.length);
+  const voterList = allVoters.value;
+  console.log('Voters count:', voterList.length);
 
   if (showRegistrationButtons.value) {
     const buttons = allButtons.value;
-    // Handle button navigation
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
       selectedButtonIndex.value = Math.max(0, selectedButtonIndex.value - 1);
@@ -263,11 +390,10 @@ function handleSearchKeydown(event: KeyboardEvent) {
       }
     }
   } else {
-    // Handle list navigation
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      console.log('ArrowDown pressed, current index:', selectedIndex.value, 'voters length:', voters.length);
-      selectedIndex.value = Math.min(voters.length - 1, selectedIndex.value + 1);
+      console.log('ArrowDown pressed, current index:', selectedIndex.value, 'voters length:', voterList.length);
+      selectedIndex.value = Math.min(voterList.length - 1, selectedIndex.value + 1);
       console.log('New index:', selectedIndex.value);
       updateSelectedVoter();
     } else if (event.key === 'ArrowUp') {
@@ -298,7 +424,7 @@ async function confirmCheckIn(votingMethod: string) {
   if (!selectedVoter.value) return;
 
   try {
-    await frontDeskStore.checkInVoter(electionGuid.value, {
+    await checkInVoter(electionGuid.value, {
       personGuid: selectedVoter.value.personGuid,
       votingMethod,
       tellerName: undefined,
@@ -308,19 +434,17 @@ async function confirmCheckIn(votingMethod: string) {
     showSuccessMessage(`${selectedVoter.value.fullName} checked in successfully`);
     showRegistrationButtons.value = false;
 
-    // Move to next voter or reset
-    const voters = allVoters.value;
-    if (selectedIndex.value >= voters.length) {
-      selectedIndex.value = Math.max(0, voters.length - 1);
+    const voterList = allVoters.value;
+    if (selectedIndex.value >= voterList.length) {
+      selectedIndex.value = Math.max(0, voterList.length - 1);
     }
     updateSelectedVoter();
 
-    // Refocus search input
     nextTick(() => {
       searchInputRef.value?.focus();
     });
-  } catch (error: any) {
-    showErrorMessage(error.message || 'Failed to check in voter');
+  } catch (err: any) {
+    showErrorMessage(err.message || 'Failed to check in voter');
   }
 }
 
@@ -328,10 +452,8 @@ async function handleButtonClick(button: any) {
   if (!selectedVoter.value) return;
 
   if (button.isVotingMethod) {
-    // This is a voting method, proceed with check-in
     await confirmCheckIn(button.value);
   } else {
-    // This is a flag, toggle it
     await toggleFlag(button.value);
   }
 }
@@ -345,13 +467,12 @@ function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
 async function toggleFlag(flag: string) {
   if (!selectedVoter.value) return;
 
-  const currentFlags = selectedVoter.value.flags ? 
+  const currentFlags = selectedVoter.value.flags ?
     selectedVoter.value.flags.split(',').map(f => f.trim()).filter(Boolean) : [];
-  
+
   const hasCurrentFlag = currentFlags.includes(flag);
 
   if (hasCurrentFlag) {
-    // Ask for confirmation before removing flag
     try {
       await ElMessageBox.confirm(
         `Remove flag "${flag}" from ${selectedVoter.value.fullName}?`,
@@ -363,15 +484,12 @@ async function toggleFlag(flag: string) {
         }
       );
     } catch {
-      // User cancelled
       return;
     }
 
-    // Remove the flag
     const updatedFlags = currentFlags.filter(f => f !== flag);
     await updatePersonFlags(updatedFlags);
   } else {
-    // Add the flag
     currentFlags.push(flag);
     await updatePersonFlags(currentFlags);
   }
@@ -381,14 +499,14 @@ async function updatePersonFlags(flags: string[]) {
   if (!selectedVoter.value) return;
 
   try {
-    await frontDeskStore.updatePersonFlags(electionGuid.value, {
+    await savePersonFlags(electionGuid.value, {
       personGuid: selectedVoter.value.personGuid,
       flags: flags.join(', ')
     });
 
     showSuccessMessage('Flags updated successfully');
-  } catch (error: any) {
-    showErrorMessage(error.message || 'Failed to update flags');
+  } catch (err: any) {
+    showErrorMessage(err.message || 'Failed to update flags');
   }
 }
 
@@ -404,15 +522,15 @@ async function handleUnregister(voter: FrontDeskVoterDto) {
       }
     );
 
-    await frontDeskStore.unregisterVoter(electionGuid.value, {
+    await unregisterVoter(electionGuid.value, {
       personGuid: voter.personGuid,
       reason: 'Unregistered by front desk'
     });
 
     showSuccessMessage('Voter unregistered successfully');
-  } catch (error: any) {
-    if (error !== 'cancel') {
-      showErrorMessage(error.message || 'Failed to unregister voter');
+  } catch (err: any) {
+    if (err !== 'cancel') {
+      showErrorMessage(err.message || 'Failed to unregister voter');
     }
   }
 }
@@ -452,11 +570,6 @@ function formatTimeline(entry: any): string {
   if (entry.action === 'CheckedIn') {
     items.push(`Checked in - ${entry.votingMethod === 'I' ? 'In Person' : entry.votingMethod === 'M' ? 'Mail' : entry.votingMethod === 'O' ? 'Online' : entry.votingMethod === 'C' ? 'Call-In' : entry.votingMethod}`);
   }
-  //               <span v-if="entry.votingMethod">Method: {{ entry.votingMethod }}</span>
-  // <span v -if= "entry.tellerName" > Teller: { { entry.tellerName } } </span>
-  //   < span v -if= "entry.locationName" > Location: { { entry.locationName } } </>
-  //     < span v -if= "entry.envNum" > Envelope: #{ { entry.envNum } } </>
-  //       < span v -if= "entry.performedBy" class="performed-by" > By: { { entry.performedBy } } </>
   if (entry.tellerName) {
     items.push(`Teller: ${entry.tellerName}`);
   }
