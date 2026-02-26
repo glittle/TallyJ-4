@@ -143,6 +143,34 @@ public class FrontDeskController : ControllerBase
             return StatusCode(500, ApiResponse<FrontDeskVoterDto>.ErrorResponse("Failed to unregister voter"));
         }
     }
+
+    /// <summary>
+    /// Updates the flags for a person.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="updateFlagsDto">The flags update data.</param>
+    /// <returns>The updated voter information.</returns>
+    [HttpPost("updatePersonFlags")]
+    public async Task<ActionResult<ApiResponse<FrontDeskVoterDto>>> UpdatePersonFlags(
+        Guid electionGuid,
+        [FromBody] UpdatePersonFlagsDto updateFlagsDto)
+    {
+        try
+        {
+            var voter = await _frontDeskService.UpdatePersonFlagsAsync(electionGuid, updateFlagsDto);
+            return Ok(ApiResponse<FrontDeskVoterDto>.SuccessResponse(voter, "Person flags updated successfully"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<FrontDeskVoterDto>.ErrorResponse(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating person flags {PersonGuid} for election {ElectionGuid}",
+                updateFlagsDto.PersonGuid, electionGuid);
+            return StatusCode(500, ApiResponse<FrontDeskVoterDto>.ErrorResponse("Failed to update person flags"));
+        }
+    }
 }
 
 

@@ -3221,6 +3221,11 @@ export const FrontDeskVoterDtoSchema = {
             description: 'Indicates whether the voter has checked in.',
             readOnly: true
         },
+        flags: {
+            type: 'string',
+            description: 'Flags/labels assigned to this voter (comma-separated).',
+            nullable: true
+        },
         registrationHistory: {
             type: 'array',
             items: {
@@ -6113,6 +6118,24 @@ export const UpdatePersonDtoSchema = {
     description: 'Data transfer object for updating an existing person in an election.'
 } as const;
 
+export const UpdatePersonFlagsDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            description: 'The unique identifier of the person.',
+            format: 'uuid'
+        },
+        flags: {
+            type: 'string',
+            description: 'Comma-separated list of flags to set for this person.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for updating a person\'s flags.'
+} as const;
+
 export const UpdateTellerDtoSchema = {
     type: 'object',
     properties: {
@@ -6698,6 +6721,11 @@ export const FrontDeskVoterDtoWritableSchema = {
         teller2: {
             type: 'string',
             description: 'The name of the second teller.',
+            nullable: true
+        },
+        flags: {
+            type: 'string',
+            description: 'Flags/labels assigned to this voter (comma-separated).',
             nullable: true
         },
         registrationHistory: {

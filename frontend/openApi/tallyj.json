@@ -2405,6 +2405,68 @@
         }
       }
     },
+    "/api/{electionGuid}/frontdesk/updatePersonFlags": {
+      "post": {
+        "tags": [
+          "FrontDesk"
+        ],
+        "summary": "Updates the flags for a person.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The election GUID.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The flags update data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePersonFlagsDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePersonFlagsDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePersonFlagsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFrontDeskVoterDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFrontDeskVoterDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFrontDeskVoterDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Import/parse-csv-headers": {
       "post": {
         "tags": [
@@ -8923,6 +8985,11 @@
             "description": "Indicates whether the voter has checked in.",
             "readOnly": true
           },
+          "flags": {
+            "type": "string",
+            "description": "Flags/labels assigned to this voter (comma-separated).",
+            "nullable": true
+          },
           "registrationHistory": {
             "type": "array",
             "items": {
@@ -11737,6 +11804,23 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object for updating an existing person in an election."
+      },
+      "UpdatePersonFlagsDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "description": "The unique identifier of the person.",
+            "format": "uuid"
+          },
+          "flags": {
+            "type": "string",
+            "description": "Comma-separated list of flags to set for this person.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for updating a person's flags."
       },
       "UpdateTellerDto": {
         "type": "object",
