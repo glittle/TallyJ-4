@@ -4,6 +4,8 @@ import { locationService } from '../services/locationService';
 import { computerService } from '../services/computerService';
 import type { LocationDto, CreateLocationDto, UpdateLocationDto, ComputerDto, RegisterComputerDto } from '../types';
 
+const SELECTED_LOCATION_KEY = 'tallyj_selected_location';
+
 export const useLocationStore = defineStore('location', () => {
   const locations = ref<LocationDto[]>([]);
   const currentLocation = ref<LocationDto | null>(null);
@@ -17,6 +19,37 @@ export const useLocationStore = defineStore('location', () => {
     totalCount: 0,
     totalPages: 0
   });
+
+  // Persistent location selection (survives page refresh until logout)
+  const selectedLocationGuid = ref<string | null>(null);
+
+  // Initialize from localStorage
+  const initializeSelectedLocation = () => {
+    try {
+      const stored = localStorage.getItem(SELECTED_LOCATION_KEY);
+      if (stored) {
+        selectedLocationGuid.value = stored;
+      }
+    } catch (e) {
+      console.error('Failed to load selected location from localStorage:', e);
+    }
+  };
+
+  // Save to localStorage whenever it changes
+  const persistSelectedLocation = (locationGuid: string | null) => {
+    try {
+      if (locationGuid) {
+        localStorage.setItem(SELECTED_LOCATION_KEY, locationGuid);
+      } else {
+        localStorage.removeItem(SELECTED_LOCATION_KEY);
+      }
+    } catch (e) {
+      console.error('Failed to save selected location to localStorage:', e);
+    }
+  };
+
+  // Initialize on store creation
+  initializeSelectedLocation();
 
   const sortedLocations = computed(() => 
     [...locations.value].sort((a, b) => {
@@ -136,6 +169,26 @@ export const useLocationStore = defineStore('location', () => {
     currentLocation.value = location;
   }
 
+  function selectLocation(locationGuid: string | null) {
+    selectedLocationGuid.value = locationGuid;
+    persistSelectedLocation(locationGuid);
+    
+    // Update currentLocation if the location is already loaded
+    if (locationGuid) {
+      const location = locations.value.find(l => l.locationGuid === locationGuid);
+      if (location) {
+        currentLocation.value = location;
+      }
+    } else {
+      currentLocation.value = null;
+    }
+  }
+
+  function clearSelectedLocation() {
+    selectedLocationGuid.value = null;
+    persistSelectedLocation(null);
+  }
+
   function clearError() {
     error.value = null;
   }
@@ -203,12 +256,15 @@ export const useLocationStore = defineStore('location', () => {
     error,
     pagination,
     sortedLocations,
+    selectedLocationGuid,
     fetchLocations,
     fetchLocationById,
     createLocation,
     updateLocation,
     deleteLocation,
     setCurrentLocation,
+    selectLocation,
+    clearSelectedLocation,
     clearError,
     clearLocations,
     fetchComputers,

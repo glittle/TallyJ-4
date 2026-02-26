@@ -156,6 +156,13 @@ export const useAuthStore = defineStore('auth', () => {
     // Clear cookies (readable ones)
     secureTokenService.clearAuthData();
 
+    // Clear selected location from localStorage
+    try {
+      localStorage.removeItem('tallyj_selected_location');
+    } catch (e) {
+      console.error('Failed to clear selected location on logout:', e);
+    }
+
     // Navigate to logout endpoint which will clear server-side cookies and redirect to login page
     // This ensures proper server-side logout and page refresh
     window.location.href = `${API_URL}/api/auth/logout`;

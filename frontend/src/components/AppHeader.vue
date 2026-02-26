@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
+import { useLocationStore } from "../stores/locationStore";
+import { useElectionStore } from "../stores/electionStore";
 import { useI18n } from "vue-i18n";
 import { useNotifications } from '@/composables/useNotifications';
-import { ArrowDown, User, Setting, SwitchButton, Menu } from "@element-plus/icons-vue";
+import { ArrowDown, User, Setting, SwitchButton, Menu, Location } from "@element-plus/icons-vue";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
 import { VERSION, BUILD_DATE } from "./version";
@@ -12,6 +14,8 @@ import { VERSION, BUILD_DATE } from "./version";
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
+const locationStore = useLocationStore();
+const electionStore = useElectionStore();
 const { t } = useI18n();
 const { showSuccessMessage, showInfoMessage } = useNotifications();
 
@@ -55,6 +59,55 @@ const currentPageTitle = computed(() => {
   return "";
 });
 
+// Get current election GUID from route
+const currentElectionGuid = computed(() => {
+  // Try to get from route params
+  if (route.params.id) {
+    return route.params.id as string;
+  }
+  // Try to get from current election in store
+  if (electionStore.currentElection?.electionGuid) {
+    return electionStore.currentElection.electionGuid;
+  }
+  return null;
+});
+
+// Get selected location details
+const selectedLocation = computed(() => {
+  if (!locationStore.selectedLocationGuid) return null;
+  return locationStore.locations.find(
+    (loc) => loc.locationGuid === locationStore.selectedLocationGuid
+  );
+});
+
+// Load locations when election is available
+watch(currentElectionGuid, async (electionGuid) => {
+  if (electionGuid && locationStore.locations.length === 0) {
+    try {
+      await locationStore.fetchLocations(electionGuid);
+    } catch (error) {
+      console.error('Failed to load locations:', error);
+    }
+  }
+}, { immediate: true });
+
+// Ensure locations are loaded on mount if we have an election
+onMounted(async () => {
+  const electionGuid = currentElectionGuid.value;
+  if (electionGuid && locationStore.locations.length === 0) {
+    try {
+      await locationStore.fetchLocations(electionGuid);
+    } catch (error) {
+      console.error('Failed to load locations:', error);
+    }
+  }
+});
+
+function handleLocationChange(locationGuid: string) {
+  locationStore.selectLocation(locationGuid);
+  showSuccessMessage(t("locations.locationSelected"));
+}
+
 function handleCommand(command: string) {
   if (command === "logout") {
     authStore.logout();
@@ -88,6 +141,27 @@ function toggleMobileMenu() {
       </button>
       <h1 class="sr-only">TallyJ 4 - Election Management System</h1>
       <h3 aria-live="polite" :title="versionTooltip">TallyJ 4 - {{ currentPageTitle }}</h3>
+      
+      <!-- Location Selector -->
+      <div v-if="currentElectionGuid && locationStore.locations.length > 0" class="location-selector">
+        <el-icon class="location-icon"><Location /></el-icon>
+        <el-select
+          :model-value="locationStore.selectedLocationGuid"
+          @update:model-value="handleLocationChange"
+          :placeholder="$t('locations.selectLocation')"
+          clearable
+          :aria-label="$t('locations.currentLocation')"
+          size="small"
+          class="location-select"
+        >
+          <el-option
+            v-for="location in locationStore.sortedLocations"
+            :key="location.locationGuid"
+            :label="location.name"
+            :value="location.locationGuid"
+          />
+        </el-select>
+      </div>
     </div>
     <nav class="header-right" role="navigation" aria-label="User menu">
       <ThemeSelector />
@@ -131,12 +205,39 @@ function toggleMobileMenu() {
   justify-content: space-between;
   align-items: center;
 
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+  }
+
   .header-left h3 {
     margin: 0;
     font-size: 18px;
     font-weight: 500;
     color: var(--color-text-primary);
     cursor: help;
+    white-space: nowrap;
+  }
+
+  .location-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 16px;
+    padding-left: 16px;
+    border-left: 1px solid var(--el-border-color-lighter);
+
+    .location-icon {
+      color: var(--el-color-primary);
+      font-size: 16px;
+    }
+
+    .location-select {
+      min-width: 180px;
+      max-width: 250px;
+    }
   }
 
   .header-right {
@@ -196,10 +297,21 @@ function toggleMobileMenu() {
     .header-left {
       display: flex;
       align-items: center;
+      gap: 8px;
     }
 
     .header-left h3 {
       font-size: 16px;
+    }
+
+    .location-selector {
+      margin-left: 8px;
+      padding-left: 8px;
+
+      .location-select {
+        min-width: 120px;
+        max-width: 150px;
+      }
     }
 
     .header-right {
@@ -214,6 +326,17 @@ function toggleMobileMenu() {
   @media (max-width: 480px) {
     .header-left h3 {
       font-size: 14px;
+    }
+
+    .location-selector {
+      .location-icon {
+        display: none;
+      }
+
+      .location-select {
+        min-width: 100px;
+        max-width: 120px;
+      }
     }
 
     .user-dropdown {
