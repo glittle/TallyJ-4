@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import { useLocationStore } from "../stores/locationStore";
@@ -90,18 +90,6 @@ watch(currentElectionGuid, async (electionGuid) => {
     }
   }
 }, { immediate: true });
-
-// Ensure locations are loaded on mount if we have an election
-onMounted(async () => {
-  const electionGuid = currentElectionGuid.value;
-  if (electionGuid && locationStore.locations.length === 0) {
-    try {
-      await locationStore.fetchLocations(electionGuid);
-    } catch (error) {
-      console.error('Failed to load locations:', error);
-    }
-  }
-});
 
 function handleLocationChange(locationGuid: string) {
   locationStore.selectLocation(locationGuid);

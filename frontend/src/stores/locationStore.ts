@@ -4,7 +4,7 @@ import { locationService } from '../services/locationService';
 import { computerService } from '../services/computerService';
 import type { LocationDto, CreateLocationDto, UpdateLocationDto, ComputerDto, RegisterComputerDto } from '../types';
 
-const SELECTED_LOCATION_KEY = 'tallyj_selected_location';
+export const SELECTED_LOCATION_KEY = 'tallyj_selected_location';
 
 export const useLocationStore = defineStore('location', () => {
   const locations = ref<LocationDto[]>([]);

@@ -5,6 +5,7 @@ import { secureTokenService } from '../services/secureTokenService';
 import { tokenRefreshService } from '../services/tokenRefreshService';
 import { TOKEN_REFRESH_CONFIG } from '../config/tokenRefreshConfig';
 import { useApiErrorHandler } from '../composables/useApiErrorHandler';
+import { SELECTED_LOCATION_KEY } from './locationStore';
 
 export const useAuthStore = defineStore('auth', () => {
 
@@ -158,7 +159,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Clear selected location from localStorage
     try {
-      localStorage.removeItem('tallyj_selected_location');
+      localStorage.removeItem(SELECTED_LOCATION_KEY);
     } catch (e) {
       console.error('Failed to clear selected location on logout:', e);
     }
