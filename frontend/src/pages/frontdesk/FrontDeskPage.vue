@@ -277,6 +277,31 @@ function getRowClassName({ row, rowIndex }: { row: FrontDeskVoterDto, rowIndex: 
   return '';
 }
 
+function formatTimeline(entry: any): string {
+  const items = [];
+  if (entry.action === 'CheckedIn') {
+    items.push(`Checked in - ${entry.votingMethod === 'I' ? 'In Person' : entry.votingMethod === 'M' ? 'Mail' : entry.votingMethod === 'O' ? 'Online' : entry.votingMethod === 'C' ? 'Call-In' : entry.votingMethod}`);
+  }
+  //               <span v-if="entry.votingMethod">Method: {{ entry.votingMethod }}</span>
+  // <span v -if= "entry.tellerName" > Teller: { { entry.tellerName } } </span>
+  //   < span v -if= "entry.locationName" > Location: { { entry.locationName } } </>
+  //     < span v -if= "entry.envNum" > Envelope: #{ { entry.envNum } } </>
+  //       < span v -if= "entry.performedBy" class="performed-by" > By: { { entry.performedBy } } </>
+  if (entry.tellerName) {
+    items.push(`Teller: ${entry.tellerName}`);
+  }
+  if (entry.locationName) {
+    items.push(`Location: ${entry.locationName}`);
+  }
+  if (entry.envNum) {
+    items.push(`Envelope: #${entry.envNum}`);
+  }
+  if (entry.performedBy) {
+    items.push(entry.performedBy);
+  }
+  return items.join(', ');
+}
+
 function goBack() {
   router.push(`/elections/${electionGuid.value}`);
 }
@@ -440,24 +465,17 @@ function goBack() {
     </el-card>
 
     <!-- History dialog -->
-    <el-dialog v-model="showHistoryDialog" title="Registration History" width="600px">
+    <el-dialog v-model="showHistoryDialog" title="Registration History" width="760px" class="history-detail">
       <div v-if="historyVoter">
-        <h4>{{ historyVoter.fullName }}</h4>
-        <p v-if="historyVoter.bahaiId">Bahá'í ID: {{ historyVoter.bahaiId }}</p>
+        <h4>{{ historyVoter.fullName }} <span v-if="historyVoter.bahaiId">Bahá'í ID: {{ historyVoter.bahaiId }}</span>
+        </h4>
         <el-divider />
 
         <div v-if="historyVoter.registrationHistory && historyVoter.registrationHistory.length > 0">
           <el-timeline>
             <el-timeline-item v-for="(entry, index) in historyVoter.registrationHistory" :key="index"
-              :timestamp="formatTime(entry.timestamp)" placement="top">
-              <el-card>
-                <p><strong>{{ entry.action }}</strong></p>
-                <p v-if="entry.votingMethod">Method: {{ entry.votingMethod }}</p>
-                <p v-if="entry.tellerName">Teller: {{ entry.tellerName }}</p>
-                <p v-if="entry.locationName">Location: {{ entry.locationName }}</p>
-                <p v-if="entry.envNum">Envelope: #{{ entry.envNum }}</p>
-                <p v-if="entry.performedBy" class="performed-by">By: {{ entry.performedBy }}</p>
-              </el-card>
+              :timestamp="formatTimeline(entry)">
+              {{ formatTime(entry.timestamp) }}
             </el-timeline-item>
           </el-timeline>
         </div>
@@ -583,6 +601,15 @@ function goBack() {
     color: var(--el-text-color-secondary);
     font-size: 12px;
     font-style: italic;
+  }
+
+  .history-detail {
+    h4 {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      justify-content: space-between;
+    }
   }
 }
 </style>
