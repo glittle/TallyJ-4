@@ -49,12 +49,52 @@ const selectedButtonIndex = ref(0);
 const showHistoryDialog = ref(false);
 const historyVoter = ref<FrontDeskVoterDto | null>(null);
 
+// Filters
+const selectedMethodFilters = ref<string[]>([]);
+const selectedFlagFilters = ref<string[]>([]);
+const showAllRegistered = ref(false);
+
 const notCheckedInVoters = computed(() => frontDeskStore.notCheckedInVoters);
 const checkedInVoters = computed(() => frontDeskStore.checkedInVoters);
 
+// Filter voters based on selected filters
+const filteredByConditions = computed(() => {
+  let voters = showAllRegistered.value ? 
+    [...notCheckedInVoters.value, ...checkedInVoters.value] : 
+    notCheckedInVoters.value;
+
+  // Filter by voting methods
+  if (selectedMethodFilters.value.length > 0) {
+    voters = voters.filter(v => 
+      v.votingMethod && selectedMethodFilters.value.includes(v.votingMethod)
+    );
+  }
+
+  // Filter by flags (AND logic - must have all selected flags)
+  if (selectedFlagFilters.value.length > 0) {
+    voters = voters.filter(v => {
+      if (!v.flags) return false;
+      const voterFlags = v.flags.split(',').map(f => f.trim());
+      return selectedFlagFilters.value.every(flag => voterFlags.includes(flag));
+    });
+  }
+
+  return voters;
+});
+
 // Merge not-checked-in and checked-in voters into one list
 const allVoters = computed(() => {
-  // Sort by registration status (not checked in first) then by name
+  // If filters are active, use filtered list
+  if (selectedMethodFilters.value.length > 0 || selectedFlagFilters.value.length > 0 || showAllRegistered.value) {
+    return filteredByConditions.value.sort((a, b) => {
+      if (a.isCheckedIn === b.isCheckedIn) {
+        return a.fullName.localeCompare(b.fullName);
+      }
+      return a.isCheckedIn ? 1 : -1;
+    });
+  }
+
+  // No filters, show all voters
   return [...notCheckedInVoters.value, ...checkedInVoters.value].sort((a, b) => {
     if (a.isCheckedIn === b.isCheckedIn) {
       return a.fullName.localeCompare(b.fullName);
@@ -84,6 +124,38 @@ const allButtons = computed(() => {
   });
   return buttons;
 });
+
+// Compute counts for each voting method
+const methodCounts = computed(() => {
+  const counts: Record<string, number> = {};
+  registrationTypes.forEach(method => {
+    counts[method.value] = checkedInVoters.value.filter(v => v.votingMethod === method.value).length;
+  });
+  return counts;
+});
+
+// Compute counts for each flag
+const flagCounts = computed(() => {
+  const counts: Record<string, number> = {};
+  electionFlags.value.forEach((flag: string) => {
+    counts[flag] = [...notCheckedInVoters.value, ...checkedInVoters.value].filter(v => {
+      if (!v.flags) return false;
+      const voterFlags = v.flags.split(',').map(f => f.trim());
+      return voterFlags.includes(flag);
+    }).length;
+  });
+  return counts;
+});
+
+// Generate abbreviations for flags (first letters, max 3 chars)
+function getFlagAbbr(flag: string): string {
+  return flag
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 3);
+}
 
 onMounted(async () => {
   await loadData();
@@ -403,6 +475,30 @@ function formatTimeline(entry: any): string {
 function goBack() {
   router.push(`/elections/${electionGuid.value}`);
 }
+
+function toggleMethodFilter(method: string) {
+  const index = selectedMethodFilters.value.indexOf(method);
+  if (index > -1) {
+    selectedMethodFilters.value.splice(index, 1);
+  } else {
+    selectedMethodFilters.value.push(method);
+  }
+}
+
+function toggleFlagFilter(flag: string) {
+  const index = selectedFlagFilters.value.indexOf(flag);
+  if (index > -1) {
+    selectedFlagFilters.value.splice(index, 1);
+  } else {
+    selectedFlagFilters.value.push(flag);
+  }
+}
+
+function clearFilters() {
+  selectedMethodFilters.value = [];
+  selectedFlagFilters.value = [];
+  showAllRegistered.value = false;
+}
 </script>
 <template>
   <div class="front-desk-page">
@@ -437,6 +533,60 @@ function goBack() {
                 </el-input>
               </div>
             </template>
+
+            <!-- Filters -->
+            <div class="filters-section">
+              <div class="filter-group">
+                <el-button 
+                  :type="showAllRegistered ? 'primary' : 'default'" 
+                  @click="showAllRegistered = !showAllRegistered"
+                  size="small">
+                  Show All Registered ({{ checkedInVoters.length }})
+                </el-button>
+                
+                <el-divider direction="vertical" />
+                
+                <span class="filter-label">Voting Methods:</span>
+                <el-button 
+                  v-for="method in registrationTypes" 
+                  :key="method.value"
+                  :type="selectedMethodFilters.includes(method.value) ? 'primary' : 'default'"
+                  @click="toggleMethodFilter(method.value)"
+                  size="small">
+                  {{ method.label }} ({{ methodCounts[method.value] || 0 }})
+                </el-button>
+                
+                <template v-if="electionFlags.length > 0">
+                  <el-divider direction="vertical" />
+                  
+                  <span class="filter-label">Flags:</span>
+                  <el-button 
+                    v-for="flag in electionFlags" 
+                    :key="flag"
+                    :type="selectedFlagFilters.includes(flag) ? 'primary' : 'default'"
+                    @click="toggleFlagFilter(flag)"
+                    size="small">
+                    {{ flag }} ({{ flagCounts[flag] || 0 }})
+                  </el-button>
+                </template>
+                
+                <el-button 
+                  v-if="selectedMethodFilters.length > 0 || selectedFlagFilters.length > 0 || showAllRegistered"
+                  @click="clearFilters"
+                  type="info"
+                  size="small">
+                  Clear Filters
+                </el-button>
+              </div>
+              
+              <!-- Flag Legend -->
+              <div v-if="electionFlags.length > 0" class="flag-legend">
+                <span class="legend-label">Flag Abbreviations:</span>
+                <el-tag v-for="flag in electionFlags" :key="flag" size="small" class="legend-tag">
+                  {{ getFlagAbbr(flag) }} = {{ flag }}
+                </el-tag>
+              </div>
+            </div>
 
             <!-- Registration type selection (shown after pressing Enter) -->
             <div v-if="showRegistrationButtons && selectedVoter" class="registration-buttons">
@@ -486,14 +636,29 @@ function goBack() {
                 max-height="600px" :row-class-name="getRowClassName" @row-click="handleRowClick">
                 <el-table-column prop="fullName" label="Name" sortable width="200" />
                 <el-table-column prop="bahaiId" label="Bahá'í ID" width="120" />
-                <el-table-column prop="area" label="Area" width="120" />
+                <el-table-column prop="area" label="Area" width="100" />
                 <el-table-column prop="envNum" label="Env #" width="80" />
-                <el-table-column label="Method" width="110">
+                <el-table-column label="Method" width="100">
                   <template #default="{ row }">
                     <el-tag v-if="row.votingMethod === 'I'" type="success" size="small">In Person</el-tag>
                     <el-tag v-else-if="row.votingMethod === 'M'" type="info" size="small">Mail</el-tag>
                     <el-tag v-else-if="row.votingMethod === 'O'" type="primary" size="small">Online</el-tag>
                     <el-tag v-else-if="row.votingMethod === 'C'" type="warning" size="small">Call-In</el-tag>
+                    <span v-else>-</span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Flags" width="100" v-if="electionFlags.length > 0">
+                  <template #default="{ row }">
+                    <template v-if="row.flags">
+                      <el-tag 
+                        v-for="flag in electionFlags.filter(f => hasFlag(row, f))" 
+                        :key="flag" 
+                        size="small" 
+                        type="success"
+                        class="flag-tag">
+                        {{ getFlagAbbr(flag) }}
+                      </el-tag>
+                    </template>
                     <span v-else>-</span>
                   </template>
                 </el-table-column>
@@ -564,6 +729,50 @@ function goBack() {
     display: flex;
     align-items: center;
     gap: 20px;
+  }
+
+  .filters-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: var(--el-fill-color-light);
+    border-radius: 8px;
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .filter-label {
+      font-weight: bold;
+      color: var(--el-text-color-regular);
+      margin: 0 5px;
+    }
+
+    .flag-legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--el-border-color);
+
+      .legend-label {
+        font-weight: bold;
+        color: var(--el-text-color-secondary);
+        font-size: 12px;
+      }
+
+      .legend-tag {
+        margin: 0;
+      }
+    }
+  }
+
+  .flag-tag {
+    margin-right: 4px;
   }
 
   .section-header {
