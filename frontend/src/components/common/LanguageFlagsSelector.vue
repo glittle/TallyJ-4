@@ -58,13 +58,13 @@ onMounted(() => {
     justify-content: center;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: var(--el-fill-color-light);
+      border-color: var(--el-border-color);
     }
 
     &.active {
-      border-color: rgba(255, 255, 255, 0.6);
-      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--el-color-primary);
+      background: var(--el-fill-color);
     }
 
     &:focus-visible {
