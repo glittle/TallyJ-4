@@ -1,10 +1,18 @@
 <script setup lang="ts">
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import LanguageSelector from "../components/common/LanguageSelector.vue";
+import LanguageFlagsSelector from "../components/common/LanguageFlagsSelector.vue";
 import ThemeSelector from "../components/common/ThemeSelector.vue";
 import { VERSION, BUILD_DATE } from "../components/version";
 
+const route = useRoute();
+
 // Version tooltip - static string computed once
 const versionTooltip = `Version ${VERSION} (${BUILD_DATE})`;
+
+// Check if we're on the landing page
+const isLandingPage = computed(() => route.path === "/" || route.name === "landing");
 </script>
 
 <template>
@@ -22,7 +30,8 @@ const versionTooltip = `Version ${VERSION} (${BUILD_DATE})`;
       </div>
       <div class="header-right">
         <ThemeSelector />
-        <LanguageSelector />
+        <LanguageFlagsSelector v-if="isLandingPage" />
+        <LanguageSelector v-else />
       </div>
     </div>
     <div class="public-content">
