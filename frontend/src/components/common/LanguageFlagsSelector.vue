@@ -27,14 +27,8 @@ onMounted(() => {
 
 <template>
   <div class="language-flags-selector">
-    <button
-      v-for="lang in languages"
-      :key="lang.value"
-      :class="['flag-button', { active: isActive(lang.value) }]"
-      :aria-label="`Switch to ${lang.label}`"
-      :title="lang.label"
-      @click="changeLanguage(lang.value)"
-    >
+    <button v-for="lang in languages" :key="lang.value" :class="['flag-button', { active: isActive(lang.value) }]"
+      :aria-label="`${lang.label}`" :title="lang.label" @click="changeLanguage(lang.value)">
       <country-flag :country="lang.flag" size="normal" />
     </button>
   </div>
@@ -43,15 +37,13 @@ onMounted(() => {
 <style lang="less">
 .language-flags-selector {
   display: flex;
-  gap: 8px;
   align-items: center;
 
   .flag-button {
     background: transparent;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     border-radius: 4px;
     cursor: pointer;
-    padding: 4px 8px;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
@@ -74,6 +66,7 @@ onMounted(() => {
 
     span.flag {
       display: block;
+      margin: -14px -26px;
       font-size: 24px;
     }
   }
