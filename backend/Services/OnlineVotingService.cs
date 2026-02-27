@@ -63,22 +63,16 @@ public class OnlineVotingService : IOnlineVotingService
             }
 
             // 2. Verify the voter is listed in this election (SMS pumping prevention)
-            Person? person = null;
-            switch (dto.VoterIdType)
+            Person? person = dto.VoterIdType switch
             {
-                case "E": // Email
-                    person = await _context.People
-                        .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && p.Email == dto.VoterId);
-                    break;
-                case "P": // Phone
-                    person = await _context.People
-                        .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && p.Phone == dto.VoterId);
-                    break;
-                case "C": // Kiosk code
-                    person = await _context.People
-                        .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && p.KioskCode == dto.VoterId);
-                    break;
-            }
+                "E" => await _context.People
+                    .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && p.Email == dto.VoterId),
+                "P" => await _context.People
+                    .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && p.Phone == dto.VoterId),
+                "C" => await _context.People
+                    .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && p.KioskCode == dto.VoterId),
+                _ => null
+            };
 
             if (person == null)
             {

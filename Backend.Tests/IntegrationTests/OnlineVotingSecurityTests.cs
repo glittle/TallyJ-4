@@ -257,7 +257,8 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         context.People.Add(person);
         await context.SaveChangesAsync();
 
-        var voterId = email ?? phone ?? kioskCode ?? "unknown";
+        var voterId = email ?? phone ?? kioskCode 
+            ?? throw new InvalidOperationException("At least one of email, phone, or kioskCode must be provided");
         return (electionGuid, voterId);
     }
 
@@ -297,7 +298,8 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         context.People.Add(person);
         await context.SaveChangesAsync();
 
-        var voterId = email ?? phone ?? "unknown";
+        var voterId = email ?? phone 
+            ?? throw new InvalidOperationException("At least one of email or phone must be provided");
         return (electionGuid, voterId);
     }
 }
