@@ -397,6 +397,58 @@ public class PeopleService : IPeopleService
             person.CanReceiveVotes = true;
         }
     }
+
+    /// <summary>
+    /// Retrieves all people in an election as a lightweight list for display.
+    /// Returns only the essential fields needed for the list view.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A list of lightweight person DTOs ordered by last name and first name.</returns>
+    public async Task<List<PersonListDto>> GetAllPeopleForListAsync(Guid electionGuid)
+    {
+        var people = await _context.People
+            .Where(p => p.ElectionGuid == electionGuid)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
+            .ToListAsync();
+
+        return _mapper.Map<List<PersonListDto>>(people);
+    }
+
+    /// <summary>
+    /// Retrieves detailed information about a specific person, including registration and vote history.
+    /// Includes all editable fields plus complete voting records cast by this person.
+    /// </summary>
+    /// <param name="personGuid">The unique identifier of the person.</param>
+    /// <returns>Detailed person data with history, or null if not found.</returns>
+    public async Task<PersonDetailDto?> GetPersonDetailsAsync(Guid personGuid)
+    {
+        var person = await _context.People
+            .Include(p => p.Results)
+            .Include(p => p.Votes)
+                .ThenInclude(v => v.Ballot)
+            .Include(p => p.Votes)
+                .ThenInclude(v => v.Person)
+            .FirstOrDefaultAsync(p => p.PersonGuid == personGuid);
+
+        if (person == null)
+        {
+            return null;
+        }
+
+        var dto = _mapper.Map<PersonDetailDto>(person);
+
+        // Get vote count (how many votes this person has received)
+        dto.VoteCount = person.Results.FirstOrDefault()?.VoteCount ?? 0;
+
+        // Map vote history (votes cast by this person on ballots)
+        dto.VoteHistory = _mapper.Map<List<VoteHistoryDto>>(person.Votes
+            .OrderBy(v => v.BallotGuid)
+            .ThenBy(v => v.PositionOnBallot)
+            .ToList());
+
+        return dto;
+    }
 }
 
 

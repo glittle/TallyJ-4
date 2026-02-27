@@ -2,11 +2,12 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { peopleService } from '../services/peopleService';
 import { signalrService } from '../services/signalrService';
-import type { PersonDto, CreatePersonDto, UpdatePersonDto, SearchablePersonDto } from '../types';
+import type { PersonDto, PersonListDto, CreatePersonDto, UpdatePersonDto, SearchablePersonDto } from '../types';
 import type { PersonUpdateEvent, PersonVoteCountUpdateEvent } from '../types/SignalREvents';
 
 export const usePeopleStore = defineStore('people', () => {
   const people = ref<PersonDto[]>([]);
+  const peopleList = ref<PersonListDto[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
   const signalrInitialized = ref(false);
@@ -14,11 +15,11 @@ export const usePeopleStore = defineStore('people', () => {
   const isCacheInitialized = ref(false);
 
   const voters = computed(() => 
-    people.value.filter(p => p.canVote === true)
+    peopleList.value.filter(p => p.canVote === true)
   );
 
   const candidates = computed(() => 
-    people.value.filter(p => p.canReceiveVotes === true)
+    peopleList.value.filter(p => p.canReceiveVotes === true)
   );
 
   async function fetchPeople(electionGuid: string) {
@@ -26,6 +27,19 @@ export const usePeopleStore = defineStore('people', () => {
     error.value = null;
     try {
       people.value = await peopleService.getAll(electionGuid);
+    } catch (e: any) {
+      error.value = e.message || 'Failed to fetch people';
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchPeopleList(electionGuid: string) {
+    loading.value = true;
+    error.value = null;
+    try {
+      peopleList.value = await peopleService.getAllPeople(electionGuid);
     } catch (e: any) {
       error.value = e.message || 'Failed to fetch people';
       throw e;
@@ -276,6 +290,7 @@ export const usePeopleStore = defineStore('people', () => {
 
   return {
     people,
+    peopleList,
     loading,
     error,
     voters,
@@ -283,6 +298,7 @@ export const usePeopleStore = defineStore('people', () => {
     candidateCache,
     isCacheInitialized,
     fetchPeople,
+    fetchPeopleList,
     fetchPersonById,
     createPerson,
     updatePerson,

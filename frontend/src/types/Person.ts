@@ -19,6 +19,58 @@ export interface PersonDto {
   voteCount: number;
 }
 
+export interface PersonListDto {
+  personGuid: string;
+  fullName: string;
+  email?: string;
+  phone?: string;
+  area?: string;
+  canVote?: boolean;
+  canReceiveVotes?: boolean;
+  ineligibleReasonCode?: string;
+}
+
+export interface VoteHistoryDto {
+  ballotGuid: string;
+  positionOnBallot: number;
+  personGuid?: string;
+  personName?: string;
+  statusCode: string;
+  invalidReasonGuid?: string;
+  ballotNumber?: number;
+  ballotStatusCode?: string;
+}
+
+export interface PersonDetailDto {
+  personGuid: string;
+  electionGuid: string;
+  firstName?: string;
+  lastName: string;
+  fullName: string;
+  email?: string;
+  phone?: string;
+  canReceiveVotes?: boolean;
+  canVote?: boolean;
+  area?: string;
+  bahaiId?: string;
+  otherLastNames?: string;
+  otherNames?: string;
+  otherInfo?: string;
+  ageGroup?: string;
+  ineligibleReasonGuid?: string;
+  ineligibleReasonCode?: string;
+  registrationTime?: string;
+  votingLocationGuid?: string;
+  votingMethod?: string;
+  envNum?: number;
+  teller1?: string;
+  teller2?: string;
+  hasOnlineBallot?: boolean;
+  registrationHistory?: string;
+  voteHistory: VoteHistoryDto[];
+  voteCount: number;
+}
+
 export interface SearchablePersonDto extends PersonDto {
   _searchText: string;
   _soundexCodes: string[];
