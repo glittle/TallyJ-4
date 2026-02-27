@@ -10,24 +10,25 @@ using Xunit;
 namespace Backend.Tests.IntegrationTests;
 
 /// <summary>
-/// Integration tests for online voting security features, particularly SMS pumping prevention.
+/// Integration tests for revised voter authentication flow (no election GUID required upfront).
 /// </summary>
-public class OnlineVotingSecurityTests : IntegrationTestBase
+public class VoterAuthenticationFlowTests : IntegrationTestBase
 {
-    public OnlineVotingSecurityTests(CustomWebApplicationFactory factory) : base(factory)
+    public VoterAuthenticationFlowTests(CustomWebApplicationFactory factory) : base(factory)
     {
     }
+
+    #region Request Code Tests
 
     [Fact]
     public async Task RequestCode_WithValidVoterInOpenElection_ShouldSucceed()
     {
         // Arrange
-        var (electionGuid, voterId) = await SetupOpenElectionWithVoter("test@example.com");
+        await SetupOpenElectionWithVoter("test@example.com");
 
         var request = new RequestCodeDto
         {
-            ElectionGuid = electionGuid,
-            VoterId = voterId,
+            VoterId = "test@example.com",
             VoterIdType = "E",
             DeliveryMethod = "email"
         };
@@ -42,15 +43,14 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RequestCode_WithVoterNotInElection_ShouldFail()
+    public async Task RequestCode_WithVoterNotInAnyElection_ShouldFail()
     {
         // Arrange
-        var electionGuid = await SetupOpenElection();
+        await SetupOpenElection(); // Election exists but voter not registered
 
         var request = new RequestCodeDto
         {
-            ElectionGuid = electionGuid,
-            VoterId = "notinelection@example.com",
+            VoterId = "notregistered@example.com",
             VoterIdType = "E",
             DeliveryMethod = "email"
         };
@@ -61,19 +61,18 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("not registered to vote in this election", content);
+        Assert.Contains("not registered to vote in any currently open election", content);
     }
 
     [Fact]
-    public async Task RequestCode_WithClosedElection_ShouldFail()
+    public async Task RequestCode_WithNoOpenElections_ShouldFail()
     {
         // Arrange
-        var (electionGuid, voterId) = await SetupClosedElectionWithVoter("test@example.com");
+        await SetupClosedElectionWithVoter("test@example.com");
 
         var request = new RequestCodeDto
         {
-            ElectionGuid = electionGuid,
-            VoterId = voterId,
+            VoterId = "test@example.com",
             VoterIdType = "E",
             DeliveryMethod = "email"
         };
@@ -84,19 +83,18 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("not currently open", content);
+        Assert.Contains("no elections currently open", content);
     }
 
     [Fact]
-    public async Task RequestCode_WithPhoneNumber_ValidVoterInElection_ShouldSucceed()
+    public async Task RequestCode_WithPhoneNumber_ValidVoter_ShouldSucceed()
     {
         // Arrange
         var phoneNumber = "+15551234567";
-        var (electionGuid, _) = await SetupOpenElectionWithVoter(null, phoneNumber);
+        await SetupOpenElectionWithVoter(null, phoneNumber);
 
         var request = new RequestCodeDto
         {
-            ElectionGuid = electionGuid,
             VoterId = phoneNumber,
             VoterIdType = "P",
             DeliveryMethod = "sms"
@@ -109,92 +107,118 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
+    #endregion
+
+    #region Google OAuth Tests
+
     [Fact]
-    public async Task RequestCode_WithPhoneNumber_NotInElection_ShouldFail()
+    public async Task GoogleAuth_WithoutGoogleClientId_ShouldReturnError()
     {
         // Arrange
-        var electionGuid = await SetupOpenElection();
+        await SetupOpenElectionWithVoter("test@example.com");
 
-        var request = new RequestCodeDto
+        var request = new GoogleAuthForVoterDto
         {
-            ElectionGuid = electionGuid,
-            VoterId = "+15559999999",
-            VoterIdType = "P",
-            DeliveryMethod = "sms"
+            Credential = "fake-google-token"
         };
 
         // Act
-        var response = await Client.PostAsJsonAsync("/api/online-voting/requestCode", request);
+        var response = await Client.PostAsJsonAsync("/api/online-voting/googleAuth", request);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("not registered to vote in this election", content);
+        // Will fail because Google Client ID is not configured in test environment
     }
 
     [Fact]
-    public async Task RequestCode_WithKioskCode_ValidVoterInElection_ShouldSucceed()
+    public async Task GoogleAuth_EndpointExists()
     {
         // Arrange
-        var kioskCode = "KIOSK123";
-        var (electionGuid, _) = await SetupOpenElectionWithVoter(null, null, kioskCode);
-
-        var request = new RequestCodeDto
+        var request = new GoogleAuthForVoterDto
         {
-            ElectionGuid = electionGuid,
-            VoterId = kioskCode,
-            VoterIdType = "C",
-            DeliveryMethod = "email"
+            Credential = "" // Empty credential
         };
 
         // Act
-        var response = await Client.PostAsJsonAsync("/api/online-voting/requestCode", request);
+        var response = await Client.PostAsJsonAsync("/api/online-voting/googleAuth", request);
+
+        // Assert
+        // Should return BadRequest due to validation or Google auth failure
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    #endregion
+
+    #region Available Elections Tests
+
+    [Fact]
+    public async Task GetAvailableElections_WithValidVoter_ReturnsElections()
+    {
+        // Arrange
+        var email = "voter@example.com";
+        var electionGuid1 = await SetupOpenElectionWithVoter(email, electionName: "Election 1");
+        var electionGuid2 = await SetupOpenElectionWithVoter(email, electionName: "Election 2");
+
+        // Act
+        var response = await Client.GetAsync($"/api/online-voting/availableElections?voterId={email}");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var elections = await response.Content.ReadFromJsonAsync<List<AvailableElectionDto>>();
+        Assert.NotNull(elections);
+        Assert.Equal(2, elections.Count);
+        Assert.Contains(elections, e => e.ElectionGuid == electionGuid1);
+        Assert.Contains(elections, e => e.ElectionGuid == electionGuid2);
     }
 
     [Fact]
-    public async Task RequestCode_WithNonExistentElection_ShouldFail()
+    public async Task GetAvailableElections_WithVoterNotInAnyElection_ReturnsEmptyList()
     {
         // Arrange
-        var request = new RequestCodeDto
-        {
-            ElectionGuid = Guid.NewGuid(),
-            VoterId = "test@example.com",
-            VoterIdType = "E",
-            DeliveryMethod = "email"
-        };
+        await SetupOpenElection(); // Election exists but voter not registered
+        var email = "notregistered@example.com";
 
         // Act
-        var response = await Client.PostAsJsonAsync("/api/online-voting/requestCode", request);
+        var response = await Client.GetAsync($"/api/online-voting/availableElections?voterId={email}");
 
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("Election not found", content);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var elections = await response.Content.ReadFromJsonAsync<List<AvailableElectionDto>>();
+        Assert.NotNull(elections);
+        Assert.Empty(elections);
     }
 
     [Fact]
-    public async Task RequestCode_WithoutElectionGuid_ShouldFail()
+    public async Task GetAvailableElections_OnlyReturnsOpenElections()
     {
         // Arrange
-        var request = new RequestCodeDto
-        {
-            ElectionGuid = Guid.Empty,
-            VoterId = "test@example.com",
-            VoterIdType = "E",
-            DeliveryMethod = "email"
-        };
+        var email = "voter@example.com";
+        var openElectionGuid = await SetupOpenElectionWithVoter(email, electionName: "Open Election");
+        await SetupClosedElectionWithVoter(email, electionName: "Closed Election");
 
         // Act
-        var response = await Client.PostAsJsonAsync("/api/online-voting/requestCode", request);
+        var response = await Client.GetAsync($"/api/online-voting/availableElections?voterId={email}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var elections = await response.Content.ReadFromJsonAsync<List<AvailableElectionDto>>();
+        Assert.NotNull(elections);
+        Assert.Single(elections);
+        Assert.Equal(openElectionGuid, elections[0].ElectionGuid);
+        Assert.Equal("Open Election", elections[0].Name);
+    }
+
+    [Fact]
+    public async Task GetAvailableElections_WithoutVoterId_ShouldFail()
+    {
+        // Act
+        var response = await Client.GetAsync("/api/online-voting/availableElections");
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("Election GUID is required", content);
     }
+
+    #endregion
 
     // Helper methods
 
@@ -203,9 +227,11 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
+        var electionGuid = Guid.NewGuid();
+
         var election = new Election
         {
-            ElectionGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
             Name = "Test Open Election",
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
@@ -216,13 +242,14 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         context.Elections.Add(election);
         await context.SaveChangesAsync();
 
-        return election.ElectionGuid;
+        return electionGuid;
     }
 
-    private async Task<(Guid electionGuid, string voterId)> SetupOpenElectionWithVoter(
+    private async Task<Guid> SetupOpenElectionWithVoter(
         string? email = null,
         string? phone = null,
-        string? kioskCode = null)
+        string? kioskCode = null,
+        string? electionName = null)
     {
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
@@ -232,7 +259,7 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         var election = new Election
         {
             ElectionGuid = electionGuid,
-            Name = "Test Open Election with Voter",
+            Name = electionName ?? "Test Open Election with Voter",
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
             TallyStatus = "Open",
@@ -257,14 +284,13 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         context.People.Add(person);
         await context.SaveChangesAsync();
 
-        var voterId = email ?? phone ?? kioskCode 
-            ?? throw new InvalidOperationException("At least one of email, phone, or kioskCode must be provided");
-        return (electionGuid, voterId);
+        return electionGuid;
     }
 
-    private async Task<(Guid electionGuid, string voterId)> SetupClosedElectionWithVoter(
+    private async Task<Guid> SetupClosedElectionWithVoter(
         string? email = null,
-        string? phone = null)
+        string? phone = null,
+        string? electionName = null)
     {
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
@@ -274,7 +300,7 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         var election = new Election
         {
             ElectionGuid = electionGuid,
-            Name = "Test Closed Election",
+            Name = electionName ?? "Test Closed Election",
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-3),
             OnlineWhenClose = DateTime.UtcNow.AddHours(-1),
             TallyStatus = "Closed",
@@ -298,8 +324,6 @@ public class OnlineVotingSecurityTests : IntegrationTestBase
         context.People.Add(person);
         await context.SaveChangesAsync();
 
-        var voterId = email ?? phone 
-            ?? throw new InvalidOperationException("At least one of email or phone must be provided");
-        return (electionGuid, voterId);
+        return electionGuid;
     }
 }

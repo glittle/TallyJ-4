@@ -112,12 +112,11 @@ Trigger result calculation.
 ### Online Voting
 
 #### POST /api/online-voting/requestCode
-Request a verification code for online voting. **SMS Pumping Prevention**: Only sends codes to voters registered in an open election.
+Request a verification code for online voting. **Security Enhancement**: No election GUID needed - system checks if voter is registered in ANY currently open election.
 
 **Request:**
 ```json
 {
-  "electionGuid": "election-guid-here",
   "voterId": "voter@example.com",
   "voterIdType": "E",
   "deliveryMethod": "email"
@@ -125,16 +124,15 @@ Request a verification code for online voting. **SMS Pumping Prevention**: Only 
 ```
 
 **Parameters:**
-- `electionGuid` (required): The GUID of the election
 - `voterId` (required): Email address, phone number (+15551234567), or kiosk code
 - `voterIdType` (required): 'E' (email), 'P' (phone), or 'C' (kiosk code)
 - `deliveryMethod` (required): 'email', 'sms', or 'voice'
 
-**Validation:**
-- Election must exist and be currently open for online voting
-- Voter must be registered in the election (exists in Person table)
+**Validation & Security:**
+- Validates voter is registered in at least one currently open election
 - Email format validated for type 'E'
 - International phone format validated for type 'P' (E.164 format)
+- **SMS Pumping Prevention**: Only sends codes to voters in open elections
 
 **Response (Success):**
 ```json
@@ -146,7 +144,7 @@ Request a verification code for online voting. **SMS Pumping Prevention**: Only 
 **Response (Error):**
 ```json
 {
-  "error": "You are not registered to vote in this election."
+  "error": "You are not registered to vote in any currently open election."
 }
 ```
 
@@ -176,26 +174,24 @@ Verify a voter's verification code and receive authentication token.
 - Maximum 5 failed attempts before lockout
 - JWT token valid for 24 hours
 
-#### POST /api/online-voting/{electionGuid}/googleAuth
-Authenticate a voter using Google OAuth (Google One Tap or Sign-In).
+#### POST /api/online-voting/googleAuth
+Authenticate a voter using Google OAuth (Google One Tap or Sign-In). **Security Enhancement**: No election GUID needed - system checks if voter is registered in ANY currently open election.
 
 **Request:**
 ```json
 {
-  "electionGuid": "election-guid-here",
   "credential": "google-jwt-token-from-one-tap"
 }
 ```
 
 **Parameters:**
-- `electionGuid` (required): The GUID of the election (must match URL parameter)
 - `credential` (required): Google JWT credential from Google One Tap or Sign-In
 
-**Validation:**
+**Validation & Security:**
 - Google JWT token must be valid and not expired
 - Google email must be verified
-- Election must exist and be currently open for online voting
-- Voter's Google email must be registered in the election (exists in Person table)
+- Validates voter's Google email is registered in at least one currently open election
+- **SMS Pumping Prevention**: Same validation as code-based auth
 
 **Response (Success):**
 ```json
@@ -210,7 +206,7 @@ Authenticate a voter using Google OAuth (Google One Tap or Sign-In).
 **Response (Error):**
 ```json
 {
-  "error": "You are not registered to vote in this election."
+  "error": "You are not registered to vote in any currently open election."
 }
 ```
 
@@ -218,7 +214,45 @@ Authenticate a voter using Google OAuth (Google One Tap or Sign-In).
 - Uses existing Google OAuth infrastructure (Google.Apis.Auth package)
 - Only accepts verified Google emails
 - JWT token valid for 24 hours (same as code-based auth)
-- Provides same level of security as code verification with SMS pumping prevention
+- Provides same level of security as code verification
+
+#### GET /api/online-voting/availableElections
+Get the list of elections available to an authenticated voter. Called after successful authentication to show voter which elections they can participate in.
+
+**Request:**
+```
+GET /api/online-voting/availableElections?voterId=voter@example.com
+```
+
+**Parameters:**
+- `voterId` (required): The voter's identifier from authentication
+
+**Response:**
+```json
+[
+  {
+    "electionGuid": "guid-1",
+    "name": "Annual Election 2024",
+    "onlineWhenOpen": "2024-01-01T00:00:00Z",
+    "onlineWhenClose": "2024-01-31T23:59:59Z",
+    "dateOfElection": "2024-01-15T00:00:00Z",
+    "hasVoted": false
+  },
+  {
+    "electionGuid": "guid-2",
+    "name": "Special Election",
+    "onlineWhenOpen": "2024-02-01T00:00:00Z",
+    "onlineWhenClose": "2024-02-15T23:59:59Z",
+    "dateOfElection": "2024-02-10T00:00:00Z",
+    "hasVoted": true
+  }
+]
+```
+
+**Notes:**
+- Only returns currently open elections
+- Indicates if voter has already voted in each election
+- Voter selects an election from this list to proceed with voting
 
 #### GET /api/online-voting/{electionGuid}/electionInfo
 Get public information about an election for online voting.
