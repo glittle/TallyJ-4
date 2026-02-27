@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.Domain.Entities;
-using Backend.DTOs.SignalR;
 using Backend.DTOs.Votes;
 using Backend.Services;
 using Backend.Domain.Enumerations;
@@ -12,7 +11,7 @@ public class VoteServiceTests : ServiceTestBase
 {
     private readonly VoteService _service;
     private readonly Mock<ILogger<VoteService>> _loggerMock;
-    private readonly Mock<ISignalRNotificationService> _signalRMock;
+    private readonly Mock<IVoteCountBroadcastService> _voteCountBroadcastMock;
 
     private static readonly Guid ElectionGuid = Guid.NewGuid();
     private static readonly Guid LocationGuid = Guid.NewGuid();
@@ -21,8 +20,8 @@ public class VoteServiceTests : ServiceTestBase
     public VoteServiceTests()
     {
         _loggerMock = new Mock<ILogger<VoteService>>();
-        _signalRMock = new Mock<ISignalRNotificationService>();
-        _service = new VoteService(Context, Mapper, _loggerMock.Object, _signalRMock.Object);
+        _voteCountBroadcastMock = new Mock<IVoteCountBroadcastService>();
+        _service = new VoteService(Context, Mapper, _loggerMock.Object, _voteCountBroadcastMock.Object);
 
         SeedElectionGraph();
     }
@@ -153,7 +152,7 @@ public class VoteServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task CreateVoteAsync_BroadcastsVoteCountUpdate()
+    public async Task CreateVoteAsync_QueuesVoteCountUpdate()
     {
         var person = CreatePerson();
 
@@ -167,16 +166,14 @@ public class VoteServiceTests : ServiceTestBase
 
         await _service.CreateVoteAsync(dto);
 
-        _signalRMock.Verify(s => s.SendPersonVoteCountUpdateAsync(
-            It.Is<PersonVoteCountUpdateDto>(u =>
-                u.PersonGuid == person.PersonGuid &&
-                u.ElectionGuid == ElectionGuid &&
-                u.VoteCount == 1)),
+        _voteCountBroadcastMock.Verify(s => s.QueueVoteCountUpdate(
+            person.PersonGuid,
+            ElectionGuid),
             Times.Once);
     }
 
     [Fact]
-    public async Task CreateVoteAsync_IneligiblePerson_BroadcastsVoteCountUpdate()
+    public async Task CreateVoteAsync_IneligiblePerson_QueuesVoteCountUpdate()
     {
         var person = CreatePerson(
             ineligibleReasonGuid: IneligibleReasonEnum.V03_OnOtherInstitutionCounsellor.ReasonGuid,
@@ -192,10 +189,9 @@ public class VoteServiceTests : ServiceTestBase
 
         await _service.CreateVoteAsync(dto);
 
-        _signalRMock.Verify(s => s.SendPersonVoteCountUpdateAsync(
-            It.Is<PersonVoteCountUpdateDto>(u =>
-                u.PersonGuid == person.PersonGuid &&
-                u.ElectionGuid == ElectionGuid)),
+        _voteCountBroadcastMock.Verify(s => s.QueueVoteCountUpdate(
+            person.PersonGuid,
+            ElectionGuid),
             Times.Once);
     }
 
@@ -218,11 +214,9 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.DeleteVoteAsync(vote.RowId);
 
         Assert.True(result);
-        _signalRMock.Verify(s => s.SendPersonVoteCountUpdateAsync(
-            It.Is<PersonVoteCountUpdateDto>(u =>
-                u.PersonGuid == person.PersonGuid &&
-                u.ElectionGuid == ElectionGuid &&
-                u.VoteCount == 0)),
+        _voteCountBroadcastMock.Verify(s => s.QueueVoteCountUpdate(
+            person.PersonGuid,
+            ElectionGuid),
             Times.Once);
     }
 
@@ -243,7 +237,7 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.DeleteVoteAsync(vote.RowId);
 
         Assert.True(result);
-        _signalRMock.Verify(s => s.SendPersonVoteCountUpdateAsync(It.IsAny<PersonVoteCountUpdateDto>()), Times.Never);
+        _voteCountBroadcastMock.Verify(s => s.QueueVoteCountUpdate(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
     }
 
     [Fact]

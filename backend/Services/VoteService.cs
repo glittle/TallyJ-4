@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Backend.DTOs.SignalR;
 using Backend.DTOs.Votes;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
@@ -17,7 +16,7 @@ public class VoteService : IVoteService
     private readonly MainDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<VoteService> _logger;
-    private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly IVoteCountBroadcastService _voteCountBroadcastService;
 
     /// <summary>
     /// Initializes a new instance of the VoteService.
@@ -25,13 +24,13 @@ public class VoteService : IVoteService
     /// <param name="context">The main database context for accessing vote data.</param>
     /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
     /// <param name="logger">Logger for recording vote service operations.</param>
-    /// <param name="signalRNotificationService">Service for broadcasting real-time updates.</param>
-    public VoteService(MainDbContext context, IMapper mapper, ILogger<VoteService> logger, ISignalRNotificationService signalRNotificationService)
+    /// <param name="voteCountBroadcastService">Service for batching and broadcasting vote count updates.</param>
+    public VoteService(MainDbContext context, IMapper mapper, ILogger<VoteService> logger, IVoteCountBroadcastService voteCountBroadcastService)
     {
         _context = context;
         _mapper = mapper;
         _logger = logger;
-        _signalRNotificationService = signalRNotificationService;
+        _voteCountBroadcastService = voteCountBroadcastService;
     }
 
     /// <summary>
@@ -152,7 +151,7 @@ public class VoteService : IVoteService
 
         if (createDto.PersonGuid.HasValue)
         {
-            await BroadcastPersonVoteCountAsync(createDto.PersonGuid.Value, electionGuid);
+            QueueVoteCountBroadcast(createDto.PersonGuid.Value, electionGuid);
         }
 
         return await GetVoteByIdAsync(vote.RowId) ?? _mapper.Map<VoteDto>(vote);
@@ -241,32 +240,17 @@ public class VoteService : IVoteService
 
         if (personGuid.HasValue)
         {
-            await BroadcastPersonVoteCountAsync(personGuid.Value, electionGuid);
+            QueueVoteCountBroadcast(personGuid.Value, electionGuid);
         }
 
         return true;
     }
 
-    private async Task BroadcastPersonVoteCountAsync(Guid personGuid, Guid electionGuid)
+    private void QueueVoteCountBroadcast(Guid personGuid, Guid electionGuid)
     {
-        try
-        {
-            var liveCount = await _context.Votes
-                .CountAsync(v => v.PersonGuid == personGuid &&
-                                 v.Ballot.Location.ElectionGuid == electionGuid);
-
-            await _signalRNotificationService.SendPersonVoteCountUpdateAsync(new PersonVoteCountUpdateDto
-            {
-                ElectionGuid = electionGuid,
-                PersonGuid = personGuid,
-                VoteCount = liveCount
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error broadcasting vote count for person {PersonGuid} in election {ElectionGuid}",
-                personGuid, electionGuid);
-        }
+        _voteCountBroadcastService.QueueVoteCountUpdate(personGuid, electionGuid);
+        _logger.LogDebug("Queued vote count broadcast for person {PersonGuid} in election {ElectionGuid}",
+            personGuid, electionGuid);
     }
 
     private VoteDto MapToVoteDto(Vote vote)
