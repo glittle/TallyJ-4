@@ -8,12 +8,6 @@ namespace Backend.DTOs.OnlineVoting;
 public class GoogleAuthForVoterDto
 {
     /// <summary>
-    /// The election GUID for which the voter is requesting access.
-    /// </summary>
-    [Required]
-    public Guid ElectionGuid { get; set; }
-
-    /// <summary>
     /// The Google credential (JWT token) from Google One Tap or Sign-In.
     /// </summary>
     [Required]

@@ -69,18 +69,12 @@ public class OnlineVotingController : ControllerBase
     /// <summary>
     /// Authenticates a voter using Google OAuth for online voting access.
     /// </summary>
-    /// <param name="electionGuid">The election GUID.</param>
     /// <param name="dto">The Google authentication request.</param>
     /// <returns>The voter session information if successful.</returns>
-    [HttpPost("{electionGuid}/googleAuth")]
+    [HttpPost("googleAuth")]
     [AllowAnonymous]
-    public async Task<IActionResult> GoogleAuth(Guid electionGuid, [FromBody] GoogleAuthForVoterDto dto)
+    public async Task<IActionResult> GoogleAuth([FromBody] GoogleAuthForVoterDto dto)
     {
-        if (dto.ElectionGuid != electionGuid)
-        {
-            return BadRequest(new { error = "Election GUID mismatch." });
-        }
-
         var (success, error, response) = await _onlineVotingService.AuthenticateVoterWithGoogleAsync(dto);
 
         if (!success)
@@ -89,6 +83,24 @@ public class OnlineVotingController : ControllerBase
         }
 
         return Ok(response);
+    }
+
+    /// <summary>
+    /// Gets the list of elections available to an authenticated voter.
+    /// </summary>
+    /// <param name="voterId">The voter's identifier (from JWT token).</param>
+    /// <returns>The list of elections the voter can participate in.</returns>
+    [HttpGet("availableElections")]
+    [AllowAnonymous] // Token validation done in service layer based on voterId
+    public async Task<IActionResult> GetAvailableElections([FromQuery] string voterId)
+    {
+        if (string.IsNullOrWhiteSpace(voterId))
+        {
+            return BadRequest(new { error = "Voter ID is required." });
+        }
+
+        var elections = await _onlineVotingService.GetAvailableElectionsAsync(voterId);
+        return Ok(elections);
     }
 
     /// <summary>
