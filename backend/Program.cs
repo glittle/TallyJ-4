@@ -266,6 +266,8 @@ services.AddScoped<ISecurityAuditService, SecurityAuditService>();
 
 // Add background services
 services.AddHostedService<RefreshTokenCleanupService>();
+services.AddSingleton<IVoteCountBroadcastService, VoteCountBroadcastService>();
+services.AddHostedService<VoteCountBroadcastService>(sp => (VoteCountBroadcastService)sp.GetRequiredService<IVoteCountBroadcastService>());
 
 // Add SignalR
 services.AddSignalR();
