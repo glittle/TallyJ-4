@@ -167,8 +167,22 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         var elections = await response.Content.ReadFromJsonAsync<List<AvailableElectionDto>>();
         Assert.NotNull(elections);
         Assert.Equal(2, elections.Count);
-        Assert.Contains(elections, e => e.ElectionGuid == electionGuid1);
-        Assert.Contains(elections, e => e.ElectionGuid == electionGuid2);
+        
+        // Verify election 1
+        var election1 = elections.FirstOrDefault(e => e.ElectionGuid == electionGuid1);
+        Assert.NotNull(election1);
+        Assert.Equal("Election 1", election1.Name);
+        Assert.NotNull(election1.OnlineWhenOpen);
+        Assert.NotNull(election1.OnlineWhenClose);
+        Assert.False(election1.HasVoted);
+        
+        // Verify election 2
+        var election2 = elections.FirstOrDefault(e => e.ElectionGuid == electionGuid2);
+        Assert.NotNull(election2);
+        Assert.Equal("Election 2", election2.Name);
+        Assert.NotNull(election2.OnlineWhenOpen);
+        Assert.NotNull(election2.OnlineWhenClose);
+        Assert.False(election2.HasVoted);
     }
 
     [Fact]

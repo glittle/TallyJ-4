@@ -509,6 +509,7 @@ public class OnlineVotingService : IOnlineVotingService
             var now = DateTime.UtcNow;
 
             // Find all open elections where this voter is registered
+            // Use GroupBy to handle potential duplicate Person records per election
             var availableElections = await _context.People
                 .Where(p => (p.Email == voterId || p.Phone == voterId || p.KioskCode == voterId))
                 .Join(_context.Elections,
@@ -519,6 +520,8 @@ public class OnlineVotingService : IOnlineVotingService
                            x.Election.OnlineWhenClose != null &&
                            x.Election.OnlineWhenOpen <= now &&
                            x.Election.OnlineWhenClose >= now)
+                .GroupBy(x => x.Election.ElectionGuid)
+                .Select(g => g.First())
                 .Select(x => new AvailableElectionDto
                 {
                     ElectionGuid = x.Election.ElectionGuid,
@@ -528,7 +531,6 @@ public class OnlineVotingService : IOnlineVotingService
                     DateOfElection = x.Election.DateOfElection,
                     HasVoted = x.Person.HasOnlineBallot == true
                 })
-                .Distinct()
                 .OrderBy(e => e.Name)
                 .ToListAsync();
 
