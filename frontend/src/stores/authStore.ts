@@ -5,6 +5,7 @@ import { secureTokenService } from '../services/secureTokenService';
 import { tokenRefreshService } from '../services/tokenRefreshService';
 import { TOKEN_REFRESH_CONFIG } from '../config/tokenRefreshConfig';
 import { useApiErrorHandler } from '../composables/useApiErrorHandler';
+import { SELECTED_LOCATION_KEY } from './locationStore';
 
 export const useAuthStore = defineStore('auth', () => {
 
@@ -155,6 +156,13 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Clear cookies (readable ones)
     secureTokenService.clearAuthData();
+
+    // Clear selected location from localStorage
+    try {
+      localStorage.removeItem(SELECTED_LOCATION_KEY);
+    } catch (e) {
+      console.error('Failed to clear selected location on logout:', e);
+    }
 
     // Navigate to logout endpoint which will clear server-side cookies and redirect to login page
     // This ensures proper server-side logout and page refresh
