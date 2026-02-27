@@ -109,6 +109,85 @@ Get real-time results (via SignalR).
 #### POST /api/elections/{electionId}/tally
 Trigger result calculation.
 
+### Online Voting
+
+#### POST /api/online-voting/requestCode
+Request a verification code for online voting. **SMS Pumping Prevention**: Only sends codes to voters registered in an open election.
+
+**Request:**
+```json
+{
+  "electionGuid": "election-guid-here",
+  "voterId": "voter@example.com",
+  "voterIdType": "E",
+  "deliveryMethod": "email"
+}
+```
+
+**Parameters:**
+- `electionGuid` (required): The GUID of the election
+- `voterId` (required): Email address, phone number (+15551234567), or kiosk code
+- `voterIdType` (required): 'E' (email), 'P' (phone), or 'C' (kiosk code)
+- `deliveryMethod` (required): 'email', 'sms', or 'voice'
+
+**Validation:**
+- Election must exist and be currently open for online voting
+- Voter must be registered in the election (exists in Person table)
+- Email format validated for type 'E'
+- International phone format validated for type 'P' (E.164 format)
+
+**Response (Success):**
+```json
+{
+  "message": "Verification code sent successfully."
+}
+```
+
+**Response (Error):**
+```json
+{
+  "error": "You are not registered to vote in this election."
+}
+```
+
+#### POST /api/online-voting/verifyCode
+Verify a voter's verification code and receive authentication token.
+
+**Request:**
+```json
+{
+  "voterId": "voter@example.com",
+  "verifyCode": "ABC123"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "jwt-token-here",
+  "voterId": "voter@example.com",
+  "voterIdType": "E",
+  "expiresAt": "2024-01-02T00:00:00Z"
+}
+```
+
+**Notes:**
+- Verification codes expire after 15 minutes
+- Maximum 5 failed attempts before lockout
+- JWT token valid for 24 hours
+
+#### GET /api/online-voting/{electionGuid}/electionInfo
+Get public information about an election for online voting.
+
+#### GET /api/online-voting/{electionGuid}/candidates
+Get the list of candidates for an election.
+
+#### POST /api/online-voting/{electionGuid}/submitBallot
+Submit an online ballot for an election.
+
+#### GET /api/online-voting/{electionGuid}/{voterId}/voteStatus
+Get the voting status for a specific voter in an election.
+
 ## Real-time Updates (SignalR)
 
 The API uses SignalR for real-time updates. Connect to the following hubs:
