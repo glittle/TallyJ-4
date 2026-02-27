@@ -7,6 +7,7 @@ using System.Text;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.DTOs.OnlineVoting;
+using Google.Apis.Auth;
 
 namespace Backend.Services;
 
@@ -40,6 +41,42 @@ public class OnlineVotingService : IOnlineVotingService
     {
         try
         {
+            // 1. Find all open elections where this voter is registered (SMS pumping prevention)
+            var now = DateTime.UtcNow;
+            var openElections = await _context.Elections
+                .Where(e => e.OnlineWhenOpen != null &&
+                           e.OnlineWhenClose != null &&
+                           e.OnlineWhenOpen <= now &&
+                           e.OnlineWhenClose >= now)
+                .Select(e => e.ElectionGuid)
+                .ToListAsync();
+
+            if (!openElections.Any())
+            {
+                _logger.LogWarning("Login code request rejected: No elections currently open for online voting");
+                return (false, "There are no elections currently open for online voting.");
+            }
+
+            // 2. Check if voter is registered in ANY of the open elections
+            var isVoterRegistered = dto.VoterIdType switch
+            {
+                "E" => await _context.People.AnyAsync(p => 
+                    openElections.Contains(p.ElectionGuid) && p.Email == dto.VoterId),
+                "P" => await _context.People.AnyAsync(p => 
+                    openElections.Contains(p.ElectionGuid) && p.Phone == dto.VoterId),
+                "C" => await _context.People.AnyAsync(p => 
+                    openElections.Contains(p.ElectionGuid) && p.KioskCode == dto.VoterId),
+                _ => false
+            };
+
+            if (!isVoterRegistered)
+            {
+                _logger.LogWarning("Login code request rejected: VoterId {VoterId} (type: {VoterIdType}) not found in any open election",
+                    dto.VoterId, dto.VoterIdType);
+                return (false, "You are not registered to vote in any currently open election.");
+            }
+
+            // 3. Create or update OnlineVoter record for tracking
             var onlineVoter = await _context.OnlineVoters
                 .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId);
 
@@ -70,7 +107,8 @@ public class OnlineVotingService : IOnlineVotingService
                 return (false, "Failed to send verification code. Please try again.");
             }
 
-            _logger.LogInformation("Verification code sent to {VoterId} via {Method}", dto.VoterId, dto.DeliveryMethod);
+            _logger.LogInformation("Verification code sent to {VoterId} via {Method} (registered in {Count} open election(s))",
+                dto.VoterId, dto.DeliveryMethod, openElections.Count);
 
             return (true, null);
         }
@@ -351,6 +389,161 @@ public class OnlineVotingService : IOnlineVotingService
                 ? "You have already submitted your ballot for this election."
                 : "You have not yet submitted a ballot for this election."
         };
+    }
+
+    /// <inheritdoc/>
+    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithGoogleAsync(GoogleAuthForVoterDto dto)
+    {
+        try
+        {
+            // 1. Get Google Client ID from configuration
+            var googleClientId = _configuration["Google:ClientId"];
+            if (string.IsNullOrWhiteSpace(googleClientId) || googleClientId.StartsWith("<"))
+            {
+                _logger.LogWarning("Google OAuth attempted but Google Client ID is not configured");
+                return (false, "Google authentication is not configured on this server.", null);
+            }
+
+            // 2. Validate Google JWT token
+            GoogleJsonWebSignature.Payload payload;
+            try
+            {
+                var settings = new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { googleClientId }
+                };
+                payload = await GoogleJsonWebSignature.ValidateAsync(dto.Credential, settings);
+            }
+            catch (InvalidJwtException ex)
+            {
+                _logger.LogWarning(ex, "Google OAuth for voter: Invalid Google ID token");
+                return (false, "Invalid Google credential.", null);
+            }
+
+            var email = payload.Email;
+            if (string.IsNullOrEmpty(email))
+            {
+                return (false, "Email not provided by Google.", null);
+            }
+
+            // Only accept verified emails
+            if (!payload.EmailVerified)
+            {
+                _logger.LogWarning("Google OAuth for voter: Email {Email} not verified by Google", email);
+                return (false, "Google email must be verified to vote.", null);
+            }
+
+            // 3. Find all open elections where this voter is registered
+            var now = DateTime.UtcNow;
+            var openElections = await _context.Elections
+                .Where(e => e.OnlineWhenOpen != null &&
+                           e.OnlineWhenClose != null &&
+                           e.OnlineWhenOpen <= now &&
+                           e.OnlineWhenClose >= now)
+                .Select(e => e.ElectionGuid)
+                .ToListAsync();
+
+            if (!openElections.Any())
+            {
+                _logger.LogWarning("Google OAuth rejected: No elections currently open for online voting");
+                return (false, "There are no elections currently open for online voting.", null);
+            }
+
+            // 4. Check if voter's email is registered in ANY of the open elections
+            var isVoterRegistered = await _context.People
+                .AnyAsync(p => openElections.Contains(p.ElectionGuid) && p.Email == email);
+
+            if (!isVoterRegistered)
+            {
+                _logger.LogWarning("Google OAuth rejected: Email {Email} not found in any open election", email);
+                return (false, "You are not registered to vote in any currently open election.", null);
+            }
+
+            // 5. Create or update OnlineVoter record for tracking
+            var onlineVoter = await _context.OnlineVoters
+                .FirstOrDefaultAsync(ov => ov.VoterId == email);
+
+            if (onlineVoter == null)
+            {
+                onlineVoter = new OnlineVoter
+                {
+                    VoterId = email,
+                    VoterIdType = "E",
+                    WhenRegistered = DateTime.UtcNow
+                };
+                _context.OnlineVoters.Add(onlineVoter);
+            }
+
+            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            // 6. Generate JWT token (same format as code verification)
+            var token = GenerateJwtToken(onlineVoter);
+            var expiresAt = DateTime.UtcNow.AddHours(24);
+
+            var response = new OnlineVoterAuthResponse
+            {
+                Token = token,
+                VoterId = onlineVoter.VoterId,
+                VoterIdType = onlineVoter.VoterIdType,
+                ExpiresAt = expiresAt
+            };
+
+            _logger.LogInformation("Voter {Email} authenticated successfully via Google OAuth (registered in {Count} open election(s))",
+                email, openElections.Count);
+
+            return (true, null, response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error authenticating voter with Google");
+            return (false, "An error occurred while processing your Google authentication.", null);
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<AvailableElectionDto>> GetAvailableElectionsAsync(string voterId)
+    {
+        try
+        {
+            var now = DateTime.UtcNow;
+
+            // Find all open elections where this voter is registered
+            // Use GroupBy to handle potential duplicate Person records per election
+            var availableElections = await _context.People
+                .Where(p => (p.Email == voterId || p.Phone == voterId || p.KioskCode == voterId))
+                .Join(_context.Elections,
+                    person => person.ElectionGuid,
+                    election => election.ElectionGuid,
+                    (person, election) => new { Person = person, Election = election })
+                .Where(x => x.Election.OnlineWhenOpen != null &&
+                           x.Election.OnlineWhenClose != null &&
+                           x.Election.OnlineWhenOpen <= now &&
+                           x.Election.OnlineWhenClose >= now)
+                .GroupBy(x => x.Election.ElectionGuid)
+                .Select(g => g.First())
+                .Select(x => new AvailableElectionDto
+                {
+                    ElectionGuid = x.Election.ElectionGuid,
+                    Name = x.Election.Name,
+                    OnlineWhenOpen = x.Election.OnlineWhenOpen,
+                    OnlineWhenClose = x.Election.OnlineWhenClose,
+                    DateOfElection = x.Election.DateOfElection,
+                    HasVoted = x.Person.HasOnlineBallot == true
+                })
+                .OrderBy(e => e.Name)
+                .ToListAsync();
+
+            _logger.LogInformation("Found {Count} available elections for voter {VoterId}", 
+                availableElections.Count, voterId);
+
+            return availableElections;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting available elections for {VoterId}", voterId);
+            return new List<AvailableElectionDto>();
+        }
     }
 
     private string GenerateVerificationCode()

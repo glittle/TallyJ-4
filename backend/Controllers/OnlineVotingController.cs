@@ -67,6 +67,43 @@ public class OnlineVotingController : ControllerBase
     }
 
     /// <summary>
+    /// Authenticates a voter using Google OAuth for online voting access.
+    /// </summary>
+    /// <param name="dto">The Google authentication request.</param>
+    /// <returns>The voter session information if successful.</returns>
+    [HttpPost("googleAuth")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GoogleAuth([FromBody] GoogleAuthForVoterDto dto)
+    {
+        var (success, error, response) = await _onlineVotingService.AuthenticateVoterWithGoogleAsync(dto);
+
+        if (!success)
+        {
+            return BadRequest(new { error });
+        }
+
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Gets the list of elections available to an authenticated voter.
+    /// </summary>
+    /// <param name="voterId">The voter's identifier (from JWT token).</param>
+    /// <returns>The list of elections the voter can participate in.</returns>
+    [HttpGet("availableElections")]
+    [AllowAnonymous] // Token validation done in service layer based on voterId
+    public async Task<IActionResult> GetAvailableElections([FromQuery] string voterId)
+    {
+        if (string.IsNullOrWhiteSpace(voterId))
+        {
+            return BadRequest(new { error = "Voter ID is required." });
+        }
+
+        var elections = await _onlineVotingService.GetAvailableElectionsAsync(voterId);
+        return Ok(elections);
+    }
+
+    /// <summary>
     /// Gets public information about an election for online voting.
     /// </summary>
     /// <param name="electionGuid">The election GUID.</param>
