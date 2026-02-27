@@ -72,6 +72,20 @@ public interface IPeopleService
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <returns>A list of all people ordered by last name and first name.</returns>
     Task<List<PersonDto>> GetAllForBallotEntryAsync(Guid electionGuid);
+
+    /// <summary>
+    /// Retrieves all people in an election as a lightweight list for display.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>A list of lightweight person DTOs for list display.</returns>
+    Task<List<PersonListDto>> GetAllPeopleForListAsync(Guid electionGuid);
+
+    /// <summary>
+    /// Retrieves detailed information about a specific person, including registration and vote history.
+    /// </summary>
+    /// <param name="personGuid">The unique identifier of the person.</param>
+    /// <returns>Detailed person data with history, or null if not found.</returns>
+    Task<PersonDetailDto?> GetPersonDetailsAsync(Guid personGuid);
 }
 
 

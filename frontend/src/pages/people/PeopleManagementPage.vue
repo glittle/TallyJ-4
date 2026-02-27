@@ -110,7 +110,7 @@ import { ElMessageBox } from 'element-plus';
 import { useNotifications } from '@/composables/useNotifications';
 import { Search, Plus, MoreFilled, ArrowDown, Download, Delete } from '@element-plus/icons-vue';
 import { usePeopleStore } from '../../stores/peopleStore';
-import type { PersonDto } from '../../types';
+import type { PersonListDto } from '../../types';
 import PeopleTable from '../../components/people/PeopleTable.vue';
 import PersonFormDialog from '../../components/people/PersonFormDialog.vue';
 
@@ -126,17 +126,17 @@ const searchQuery = ref('');
 const activeTab = ref('all');
 const showAddDialog = ref(false);
 const showEditDialog = ref(false);
-const editingPerson = ref<PersonDto | null>(null);
+const editingPerson = ref<PersonListDto | null>(null);
 
 // Bulk operations
-const selectedPeople = ref<PersonDto[]>([]);
+const selectedPeople = ref<PersonListDto[]>([]);
 const showBulkDeleteConfirm = ref(false);
 const bulkDeleting = ref(false);
 
 // Export
 
 const loading = computed(() => peopleStore.loading);
-const allPeople = computed(() => peopleStore.people);
+const allPeople = computed(() => peopleStore.peopleList);
 const voters = computed(() => peopleStore.voters);
 const candidates = computed(() => peopleStore.candidates);
 
@@ -174,7 +174,7 @@ onMounted(async () => {
   try {
     await peopleStore.initializeSignalR();
     await peopleStore.joinElection(electionGuid);
-    await peopleStore.fetchPeople(electionGuid);
+    await peopleStore.fetchPeopleList(electionGuid);
   } catch (error) {
     showErrorMessage(t('people.loadError'));
   }
@@ -201,12 +201,12 @@ function handleSearch() {
   selectedPeople.value = []; // Clear selection when searching
 }
 
-function handleEdit(person: PersonDto) {
+function handleEdit(person: PersonListDto) {
   editingPerson.value = person;
   showEditDialog.value = true;
 }
 
-async function handleDelete(person: PersonDto) {
+async function handleDelete(person: PersonListDto) {
   try {
     await ElMessageBox.confirm(
       t('people.deleteConfirm', { name: person.fullName }),
@@ -233,7 +233,7 @@ function handleFormSuccess() {
   editingPerson.value = null;
 }
 
-function handleSelectionChange(selection: PersonDto[]) {
+function handleSelectionChange(selection: PersonListDto[]) {
   selectedPeople.value = selection;
 }
 
