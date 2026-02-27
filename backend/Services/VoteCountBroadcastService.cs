@@ -83,22 +83,29 @@ public class VoteCountBroadcastService : BackgroundService, IVoteCountBroadcastS
             return;
         }
 
-        // Take snapshot of pending updates and clear the queue
-        var updates = _pendingUpdates.Keys.ToList();
-        _pendingUpdates.Clear();
+        // Atomically swap the pending updates with a new empty dictionary
+        // This prevents race conditions where updates could be lost
+        var updatesToProcess = new List<(Guid electionGuid, Guid personGuid)>();
+        foreach (var key in _pendingUpdates.Keys.ToList())
+        {
+            if (_pendingUpdates.TryRemove(key, out _))
+            {
+                updatesToProcess.Add(key);
+            }
+        }
 
-        if (updates.Count == 0)
+        if (updatesToProcess.Count == 0)
         {
             return;
         }
 
-        _logger.LogInformation("Broadcasting {Count} vote count updates", updates.Count);
+        _logger.LogInformation("Broadcasting {Count} vote count updates", updatesToProcess.Count);
 
         using var scope = _scopeFactory.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         var signalRService = scope.ServiceProvider.GetRequiredService<ISignalRNotificationService>();
 
-        foreach (var (electionGuid, personGuid) in updates)
+        foreach (var (electionGuid, personGuid) in updatesToProcess)
         {
             if (cancellationToken.IsCancellationRequested)
             {

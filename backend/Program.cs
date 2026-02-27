@@ -266,8 +266,14 @@ services.AddScoped<ISecurityAuditService, SecurityAuditService>();
 
 // Add background services
 services.AddHostedService<RefreshTokenCleanupService>();
-services.AddSingleton<IVoteCountBroadcastService, VoteCountBroadcastService>();
-services.AddHostedService<VoteCountBroadcastService>(sp => (VoteCountBroadcastService)sp.GetRequiredService<IVoteCountBroadcastService>());
+
+// Register VoteCountBroadcastService as both singleton and hosted service
+// The singleton registration provides dependency injection for IVoteCountBroadcastService
+// The hosted service registration starts the background worker
+// Note: Both registrations must use the same instance (singleton)
+services.AddSingleton<VoteCountBroadcastService>();
+services.AddSingleton<IVoteCountBroadcastService>(sp => sp.GetRequiredService<VoteCountBroadcastService>());
+services.AddHostedService(sp => sp.GetRequiredService<VoteCountBroadcastService>());
 
 // Add SignalR
 services.AddSignalR();
