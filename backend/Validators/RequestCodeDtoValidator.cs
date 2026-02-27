@@ -13,6 +13,10 @@ public class RequestCodeDtoValidator : AbstractValidator<RequestCodeDto>
     /// </summary>
     public RequestCodeDtoValidator()
     {
+        RuleFor(x => x.ElectionGuid)
+            .NotEmpty()
+            .WithMessage("Election GUID is required");
+
         RuleFor(x => x.VoterId)
             .NotEmpty()
             .WithMessage("Voter ID is required")

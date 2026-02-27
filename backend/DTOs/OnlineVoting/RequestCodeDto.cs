@@ -6,6 +6,11 @@
 public class RequestCodeDto
 {
     /// <summary>
+    /// The election GUID for which the voter is requesting access.
+    /// </summary>
+    public Guid ElectionGuid { get; set; }
+
+    /// <summary>
     /// The voter's unique identifier (email, phone, or custom code).
     /// </summary>
     public string VoterId { get; set; } = null!;

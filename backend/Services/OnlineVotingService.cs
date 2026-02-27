@@ -40,6 +40,54 @@ public class OnlineVotingService : IOnlineVotingService
     {
         try
         {
+            // 1. Verify the election exists and is currently open for online voting
+            var election = await _context.Elections
+                .FirstOrDefaultAsync(e => e.ElectionGuid == dto.ElectionGuid);
+
+            if (election == null)
+            {
+                _logger.LogWarning("Login code request rejected: Election {ElectionGuid} not found", dto.ElectionGuid);
+                return (false, "Election not found.");
+            }
+
+            var now = DateTime.UtcNow;
+            var isElectionOpen = election.OnlineWhenOpen != null &&
+                                 election.OnlineWhenClose != null &&
+                                 election.OnlineWhenOpen <= now &&
+                                 election.OnlineWhenClose >= now;
+
+            if (!isElectionOpen)
+            {
+                _logger.LogWarning("Login code request rejected: Election {ElectionGuid} is not currently open for online voting", dto.ElectionGuid);
+                return (false, "Online voting is not currently open for this election.");
+            }
+
+            // 2. Verify the voter is listed in this election (SMS pumping prevention)
+            Person? person = null;
+            switch (dto.VoterIdType)
+            {
+                case "E": // Email
+                    person = await _context.People
+                        .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && p.Email == dto.VoterId);
+                    break;
+                case "P": // Phone
+                    person = await _context.People
+                        .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && p.Phone == dto.VoterId);
+                    break;
+                case "C": // Kiosk code
+                    person = await _context.People
+                        .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && p.KioskCode == dto.VoterId);
+                    break;
+            }
+
+            if (person == null)
+            {
+                _logger.LogWarning("Login code request rejected: VoterId {VoterId} (type: {VoterIdType}) not found in election {ElectionGuid}",
+                    dto.VoterId, dto.VoterIdType, dto.ElectionGuid);
+                return (false, "You are not registered to vote in this election.");
+            }
+
+            // 3. Create or update OnlineVoter record for tracking
             var onlineVoter = await _context.OnlineVoters
                 .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId);
 
@@ -70,13 +118,15 @@ public class OnlineVotingService : IOnlineVotingService
                 return (false, "Failed to send verification code. Please try again.");
             }
 
-            _logger.LogInformation("Verification code sent to {VoterId} via {Method}", dto.VoterId, dto.DeliveryMethod);
+            _logger.LogInformation("Verification code sent to {VoterId} via {Method} for election {ElectionGuid}",
+                dto.VoterId, dto.DeliveryMethod, dto.ElectionGuid);
 
             return (true, null);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error requesting verification code for {VoterId}", dto.VoterId);
+            _logger.LogError(ex, "Error requesting verification code for {VoterId} in election {ElectionGuid}",
+                dto.VoterId, dto.ElectionGuid);
             return (false, "An error occurred while processing your request.");
         }
     }
