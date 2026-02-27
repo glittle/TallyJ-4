@@ -258,9 +258,9 @@ paths:
 
 ## Related Documentation
 
-- [Google Sign-In Documentation](https://developers.google.com/identity/sign-in/web)
+- [Google Identity Services Documentation](https://developers.google.com/identity/gsi/web/guides/overview)
 - [Google One Tap Documentation](https://developers.google.com/identity/gsi/web)
-- [JWT Validation](https://developers.google.com/identity/sign-in/web/backend-auth)
+- [JWT Validation with Google Identity Services](https://developers.google.com/identity/gsi/web/guides/verify-google-id-token)
 
 ## References
 
