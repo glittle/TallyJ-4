@@ -176,6 +176,50 @@ Verify a voter's verification code and receive authentication token.
 - Maximum 5 failed attempts before lockout
 - JWT token valid for 24 hours
 
+#### POST /api/online-voting/{electionGuid}/googleAuth
+Authenticate a voter using Google OAuth (Google One Tap or Sign-In).
+
+**Request:**
+```json
+{
+  "electionGuid": "election-guid-here",
+  "credential": "google-jwt-token-from-one-tap"
+}
+```
+
+**Parameters:**
+- `electionGuid` (required): The GUID of the election (must match URL parameter)
+- `credential` (required): Google JWT credential from Google One Tap or Sign-In
+
+**Validation:**
+- Google JWT token must be valid and not expired
+- Google email must be verified
+- Election must exist and be currently open for online voting
+- Voter's Google email must be registered in the election (exists in Person table)
+
+**Response (Success):**
+```json
+{
+  "token": "jwt-token-here",
+  "voterId": "voter@example.com",
+  "voterIdType": "E",
+  "expiresAt": "2024-01-02T00:00:00Z"
+}
+```
+
+**Response (Error):**
+```json
+{
+  "error": "You are not registered to vote in this election."
+}
+```
+
+**Notes:**
+- Uses existing Google OAuth infrastructure (Google.Apis.Auth package)
+- Only accepts verified Google emails
+- JWT token valid for 24 hours (same as code-based auth)
+- Provides same level of security as code verification with SMS pumping prevention
+
 #### GET /api/online-voting/{electionGuid}/electionInfo
 Get public information about an election for online voting.
 

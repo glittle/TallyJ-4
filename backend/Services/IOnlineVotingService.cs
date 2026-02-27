@@ -49,6 +49,13 @@ public interface IOnlineVotingService
     /// <param name="voterId">The voter's identifier.</param>
     /// <returns>A task containing the voter's status information.</returns>
     Task<OnlineVoteStatusDto> GetVoteStatusAsync(Guid electionGuid, string voterId);
+
+    /// <summary>
+    /// Authenticates a voter using Google OAuth.
+    /// </summary>
+    /// <param name="dto">The Google authentication request containing election GUID and credential.</param>
+    /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
+    Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithGoogleAsync(GoogleAuthForVoterDto dto);
 }
 
 

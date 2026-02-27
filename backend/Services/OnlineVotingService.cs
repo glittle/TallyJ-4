@@ -7,6 +7,7 @@ using System.Text;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.DTOs.OnlineVoting;
+using Google.Apis.Auth;
 
 namespace Backend.Services;
 
@@ -395,6 +396,122 @@ public class OnlineVotingService : IOnlineVotingService
                 ? "You have already submitted your ballot for this election."
                 : "You have not yet submitted a ballot for this election."
         };
+    }
+
+    /// <inheritdoc/>
+    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithGoogleAsync(GoogleAuthForVoterDto dto)
+    {
+        try
+        {
+            // 1. Get Google Client ID from configuration
+            var googleClientId = _configuration["Google:ClientId"];
+            if (string.IsNullOrWhiteSpace(googleClientId) || googleClientId.StartsWith("<"))
+            {
+                _logger.LogWarning("Google OAuth attempted but Google Client ID is not configured");
+                return (false, "Google authentication is not configured on this server.", null);
+            }
+
+            // 2. Validate Google JWT token
+            GoogleJsonWebSignature.Payload payload;
+            try
+            {
+                var settings = new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { googleClientId }
+                };
+                payload = await GoogleJsonWebSignature.ValidateAsync(dto.Credential, settings);
+            }
+            catch (InvalidJwtException ex)
+            {
+                _logger.LogWarning(ex, "Google OAuth for voter: Invalid Google ID token");
+                return (false, "Invalid Google credential.", null);
+            }
+
+            var email = payload.Email;
+            if (string.IsNullOrEmpty(email))
+            {
+                return (false, "Email not provided by Google.", null);
+            }
+
+            // Only accept verified emails
+            if (!payload.EmailVerified)
+            {
+                _logger.LogWarning("Google OAuth for voter: Email {Email} not verified by Google", email);
+                return (false, "Google email must be verified to vote.", null);
+            }
+
+            // 3. Check election exists and is currently open
+            var election = await _context.Elections
+                .FirstOrDefaultAsync(e => e.ElectionGuid == dto.ElectionGuid);
+
+            if (election == null)
+            {
+                _logger.LogWarning("Google OAuth rejected: Election {ElectionGuid} not found", dto.ElectionGuid);
+                return (false, "Election not found.", null);
+            }
+
+            var now = DateTime.UtcNow;
+            var isElectionOpen = election.OnlineWhenOpen != null &&
+                                 election.OnlineWhenClose != null &&
+                                 election.OnlineWhenOpen <= now &&
+                                 election.OnlineWhenClose >= now;
+
+            if (!isElectionOpen)
+            {
+                _logger.LogWarning("Google OAuth rejected: Election {ElectionGuid} is not currently open for online voting", dto.ElectionGuid);
+                return (false, "Online voting is not currently open for this election.", null);
+            }
+
+            // 4. Find person by Google email in the election
+            var person = await _context.People
+                .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid && p.Email == email);
+
+            if (person == null)
+            {
+                _logger.LogWarning("Google OAuth rejected: Email {Email} not found in election {ElectionGuid}", email, dto.ElectionGuid);
+                return (false, "You are not registered to vote in this election.", null);
+            }
+
+            // 5. Create or update OnlineVoter record for tracking
+            var onlineVoter = await _context.OnlineVoters
+                .FirstOrDefaultAsync(ov => ov.VoterId == email);
+
+            if (onlineVoter == null)
+            {
+                onlineVoter = new OnlineVoter
+                {
+                    VoterId = email,
+                    VoterIdType = "E",
+                    WhenRegistered = DateTime.UtcNow
+                };
+                _context.OnlineVoters.Add(onlineVoter);
+            }
+
+            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            // 6. Generate JWT token (same format as code verification)
+            var token = GenerateJwtToken(onlineVoter);
+            var expiresAt = DateTime.UtcNow.AddHours(24);
+
+            var response = new OnlineVoterAuthResponse
+            {
+                Token = token,
+                VoterId = onlineVoter.VoterId,
+                VoterIdType = onlineVoter.VoterIdType,
+                ExpiresAt = expiresAt
+            };
+
+            _logger.LogInformation("Voter {Email} authenticated successfully via Google OAuth for election {ElectionGuid}",
+                email, dto.ElectionGuid);
+
+            return (true, null, response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error authenticating voter with Google for election {ElectionGuid}", dto.ElectionGuid);
+            return (false, "An error occurred while processing your Google authentication.", null);
+        }
     }
 
     private string GenerateVerificationCode()
