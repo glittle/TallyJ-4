@@ -30,17 +30,6 @@ export interface PersonListDto {
   ineligibleReasonCode?: string;
 }
 
-export interface VoteHistoryDto {
-  ballotGuid: string;
-  positionOnBallot: number;
-  personGuid?: string;
-  personName?: string;
-  statusCode: string;
-  invalidReasonGuid?: string;
-  ballotNumber?: number;
-  ballotStatusCode?: string;
-}
-
 export interface PersonDetailDto {
   personGuid: string;
   electionGuid: string;
@@ -67,7 +56,6 @@ export interface PersonDetailDto {
   teller2?: string;
   hasOnlineBallot?: boolean;
   registrationHistory?: string;
-  voteHistory: VoteHistoryDto[];
   voteCount: number;
 }
 

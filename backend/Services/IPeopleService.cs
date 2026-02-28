@@ -81,7 +81,7 @@ public interface IPeopleService
     Task<List<PersonListDto>> GetAllPeopleForListAsync(Guid electionGuid);
 
     /// <summary>
-    /// Retrieves detailed information about a specific person, including registration and vote history.
+    /// Retrieves detailed information about a specific person, including registration history.
     /// </summary>
     /// <param name="personGuid">The unique identifier of the person.</param>
     /// <returns>Detailed person data with history, or null if not found.</returns>

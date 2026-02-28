@@ -13,18 +13,11 @@ namespace Backend.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [AllowAnonymous]
-public class PublicController : ControllerBase
+public class PublicController(IPublicService publicService, ILogger<PublicController> logger, IConfiguration configuration) : ControllerBase
 {
-    private readonly IPublicService _publicService;
-    private readonly ILogger<PublicController> _logger;
-    private readonly IConfiguration _configuration;
-
-    public PublicController(IPublicService publicService, ILogger<PublicController> logger, IConfiguration configuration)
-    {
-        _publicService = publicService;
-        _logger = logger;
-        _configuration = configuration;
-    }
+    private readonly IPublicService _publicService = publicService;
+    private readonly ILogger<PublicController> _logger = logger;
+    private readonly IConfiguration _configuration = configuration;
 
     /// <summary>
     /// Gets public home page data including system information.
@@ -90,6 +83,10 @@ public class PublicController : ControllerBase
         return Ok(ApiResponse<PublicDisplayDto>.SuccessResponse(displayData));
     }
 
+    /// <summary>
+    /// Gets the authentication configuration for the frontend, such as available OAuth providers and their client IDs. This allows the frontend to dynamically adjust its authentication options based on the backend configuration.
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("auth-config")]
     public ActionResult<ApiResponse<object>> GetAuthConfig()
     {
@@ -102,6 +99,10 @@ public class PublicController : ControllerBase
         }));
     }
 
+    /// <summary>
+    /// Health check endpoint to verify that the API is running and responsive. This can be used by monitoring tools or load balancers to check the health of the service. It returns a simple status message along with a timestamp and service name to confirm that the API is operational.
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("health")]
     public ActionResult<ApiResponse<object>> HealthCheck()
     {
