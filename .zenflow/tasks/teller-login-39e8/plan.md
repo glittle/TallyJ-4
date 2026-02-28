@@ -90,6 +90,7 @@ Add a "Teller Access" card after Quick Actions showing: toggle, access code, sha
 ---
 
 ### [ ] Step 6: Teller Join Route & Page
+<!-- chat-id: 34b200f0-2354-4b38-8a80-536f250e9f30 -->
 
 Create `TellerJoinPage.vue` (public route `/teller-join/:electionGuid?code=...`) that reads params, calls the teller-login endpoint, and redirects on success.
 
