@@ -390,6 +390,29 @@ export type ApiResponseListPersonDto = {
  * Generic API response wrapper that standardizes the format of all API responses.
  * Provides consistent success/error handling with optional data and error messages.
  */
+export type ApiResponseListPersonListDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    /**
+     * The data returned by the API operation, if successful.
+     */
+    data?: Array<PersonListDto> | null;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
 export type ApiResponseListVoteDto = {
     /**
      * Indicates whether the API operation was successful.
@@ -462,6 +485,26 @@ export type ApiResponsePaginatedResponseSuperAdminElectionDto = {
      */
     success?: boolean;
     data?: PaginatedResponseSuperAdminElectionDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponsePersonDetailDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: PersonDetailDto;
     /**
      * An optional message providing additional information about the response.
      */
@@ -2331,6 +2374,16 @@ export type FrontDeskVoterDto = {
     registrationHistory?: Array<RegistrationHistoryEntryDto> | null;
 };
 
+/**
+ * Data transfer object for Google OAuth authentication for online voters.
+ */
+export type GoogleAuthForVoterDto = {
+    /**
+     * The Google credential (JWT token) from Google One Tap or Sign-In.
+     */
+    credential: string;
+};
+
 export type GoogleOneTapRequest = {
     credential: string;
 };
@@ -3089,6 +3142,118 @@ export type ParticipationRateDto = {
 };
 
 /**
+ * Detailed DTO for editing a person.
+ * Contains all editable fields plus registration history.
+ */
+export type PersonDetailDto = {
+    /**
+     * The unique identifier for the person.
+     */
+    personGuid?: string;
+    /**
+     * The GUID of the election this person belongs to.
+     */
+    electionGuid?: string;
+    /**
+     * The person's first name.
+     */
+    firstName?: string | null;
+    /**
+     * The person's last name.
+     */
+    lastName?: string | null;
+    /**
+     * The person's full name (combination of first and last names).
+     */
+    fullName?: string | null;
+    /**
+     * The person's email address.
+     */
+    email?: string | null;
+    /**
+     * The person's phone number.
+     */
+    phone?: string | null;
+    /**
+     * Whether the person can receive votes (be a candidate).
+     */
+    canReceiveVotes?: boolean | null;
+    /**
+     * Whether the person can vote.
+     */
+    canVote?: boolean | null;
+    /**
+     * The area or region the person belongs to.
+     */
+    area?: string | null;
+    /**
+     * The person's Bahá'í ID.
+     */
+    bahaiId?: string | null;
+    /**
+     * Other last names associated with the person.
+     */
+    otherLastNames?: string | null;
+    /**
+     * Other names associated with the person.
+     */
+    otherNames?: string | null;
+    /**
+     * Additional information about the person.
+     */
+    otherInfo?: string | null;
+    /**
+     * The person's age group.
+     */
+    ageGroup?: string | null;
+    /**
+     * The GUID of the reason why the person is ineligible (if applicable).
+     */
+    ineligibleReasonGuid?: string | null;
+    /**
+     * The code of the reason why the person is ineligible (if applicable).
+     */
+    ineligibleReasonCode?: string | null;
+    /**
+     * The time when the person was registered (checked in).
+     */
+    registrationTime?: Date | null;
+    /**
+     * The GUID of the voting location where the person is registered.
+     */
+    votingLocationGuid?: string | null;
+    /**
+     * The voting method (e.g., 'P' for paper, 'O' for online).
+     */
+    votingMethod?: string | null;
+    /**
+     * Envelope number assigned to the person.
+     */
+    envNum?: number | null;
+    /**
+     * Name of the first teller assigned to this person.
+     */
+    teller1?: string | null;
+    /**
+     * Name of the second teller assigned to this person.
+     */
+    teller2?: string | null;
+    /**
+     * Whether the person has submitted an online ballot.
+     */
+    hasOnlineBallot?: boolean | null;
+    /**
+     * JSON array of registration history entries.
+     * Each entry contains timestamp, action, and metadata.
+     */
+    registrationHistory?: string | null;
+    /**
+     * The number of votes this person has received.
+     */
+    voteCount?: number;
+};
+
+/**
  * Data transfer object representing a person in an election.
  */
 export type PersonDto = {
@@ -3164,6 +3329,45 @@ export type PersonDto = {
      * The number of votes this person has received.
      */
     voteCount?: number;
+};
+
+/**
+ * Lightweight DTO for displaying people in a list view.
+ * Contains only the essential fields needed for list display and filtering.
+ */
+export type PersonListDto = {
+    /**
+     * The unique identifier for the person.
+     */
+    personGuid?: string;
+    /**
+     * The person's full name (combination of first and last names).
+     */
+    fullName?: string | null;
+    /**
+     * The person's email address.
+     */
+    email?: string | null;
+    /**
+     * The person's phone number.
+     */
+    phone?: string | null;
+    /**
+     * The area or region the person belongs to.
+     */
+    area?: string | null;
+    /**
+     * Whether the person can vote.
+     */
+    canVote?: boolean | null;
+    /**
+     * Whether the person can receive votes (be a candidate).
+     */
+    canReceiveVotes?: boolean | null;
+    /**
+     * The code of the reason why the person is ineligible (if applicable).
+     */
+    ineligibleReasonCode?: string | null;
 };
 
 /**
@@ -6486,6 +6690,42 @@ export type PostApiOnlineVotingVerifyCodeResponses = {
     200: unknown;
 };
 
+export type PostApiOnlineVotingGoogleAuthData = {
+    /**
+     * The Google authentication request.
+     */
+    body?: GoogleAuthForVoterDto;
+    path?: never;
+    query?: never;
+    url: '/api/online-voting/googleAuth';
+};
+
+export type PostApiOnlineVotingGoogleAuthResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiOnlineVotingAvailableElectionsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The voter's identifier (from JWT token).
+         */
+        voterId?: string;
+    };
+    url: '/api/online-voting/availableElections';
+};
+
+export type GetApiOnlineVotingAvailableElectionsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetApiOnlineVotingByElectionGuidElectionInfoData = {
     body?: never;
     path: {
@@ -6678,6 +6918,48 @@ export type GetApiPeopleByElectionGuidGetAllForBallotEntryResponses = {
 };
 
 export type GetApiPeopleByElectionGuidGetAllForBallotEntryResponse = GetApiPeopleByElectionGuidGetAllForBallotEntryResponses[keyof GetApiPeopleByElectionGuidGetAllForBallotEntryResponses];
+
+export type GetApiPeopleByElectionGuidGetAllPeopleData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/People/{electionGuid}/getAllPeople';
+};
+
+export type GetApiPeopleByElectionGuidGetAllPeopleResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListPersonListDto;
+};
+
+export type GetApiPeopleByElectionGuidGetAllPeopleResponse = GetApiPeopleByElectionGuidGetAllPeopleResponses[keyof GetApiPeopleByElectionGuidGetAllPeopleResponses];
+
+export type GetApiPeopleByGuidGetPersonDetailsData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the person.
+         */
+        guid: string;
+    };
+    query?: never;
+    url: '/api/People/{guid}/getPersonDetails';
+};
+
+export type GetApiPeopleByGuidGetPersonDetailsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePersonDetailDto;
+};
+
+export type GetApiPeopleByGuidGetPersonDetailsResponse = GetApiPeopleByGuidGetPersonDetailsResponses[keyof GetApiPeopleByGuidGetPersonDetailsResponses];
 
 export type GetApiPeopleByGuidGetPersonData = {
     body?: never;

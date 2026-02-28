@@ -115,8 +115,8 @@ public class PeopleController : ControllerBase
     }
 
     /// <summary>
-    /// Gets detailed information about a specific person, including all editable fields,
-    /// registration history, and vote history.
+    /// Gets detailed information about a specific person, including all editable fields
+    /// and registration history.
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>
     /// <returns>Detailed person information with history.</returns>

@@ -33,9 +33,9 @@ const checkMobile = () => {
 checkMobile();
 window.addEventListener("resize", checkMobile);
 
-const currentUser = computed(() => ({ 
+const currentUser = computed(() => ({
   name: authStore.name,
-  email: authStore.email 
+  email: authStore.email
 }));
 
 const currentPageTitle = computed(() => {
@@ -118,36 +118,25 @@ function toggleMobileMenu() {
 <template>
   <header class="app-header" role="banner">
     <div class="header-left">
-      <button
-        v-if="isMobile"
-        class="mobile-menu-btn"
-        @click="toggleMobileMenu"
-        aria-label="Toggle navigation menu"
-        :aria-expanded="mobileMenuOpen"
-      >
-        <el-icon><Menu /></el-icon>
+      <button v-if="isMobile" class="mobile-menu-btn" @click="toggleMobileMenu" aria-label="Toggle navigation menu"
+        :aria-expanded="mobileMenuOpen">
+        <el-icon>
+          <Menu />
+        </el-icon>
       </button>
       <h1 class="sr-only">TallyJ 4 - Election Management System</h1>
       <h3 aria-live="polite" :title="versionTooltip">TallyJ 4 - {{ currentPageTitle }}</h3>
-      
+
       <!-- Location Selector -->
-      <div v-if="currentElectionGuid && locationStore.locations.length > 0" class="location-selector">
-        <el-icon class="location-icon"><Location /></el-icon>
-        <el-select
-          :model-value="locationStore.selectedLocationGuid"
-          @update:model-value="handleLocationChange"
-          :placeholder="$t('locations.selectLocation')"
-          clearable
-          :aria-label="$t('locations.currentLocation')"
-          size="small"
-          class="location-select"
-        >
-          <el-option
-            v-for="location in locationStore.sortedLocations"
-            :key="location.locationGuid"
-            :label="location.name"
-            :value="location.locationGuid"
-          />
+      <div v-if="currentElectionGuid && locationStore.locations?.length > 0" class="location-selector">
+        <el-icon class="location-icon">
+          <Location />
+        </el-icon>
+        <el-select :model-value="locationStore.selectedLocationGuid" @update:model-value="handleLocationChange"
+          :placeholder="$t('locations.selectLocation')" clearable :aria-label="$t('locations.currentLocation')"
+          size="small" class="location-select">
+          <el-option v-for="location in locationStore.sortedLocations" :key="location.locationGuid"
+            :label="location.name" :value="location.locationGuid" />
         </el-select>
       </div>
     </div>
@@ -155,28 +144,31 @@ function toggleMobileMenu() {
       <ThemeSelector />
       <LanguageSelector />
       <el-dropdown trigger="click" @command="handleCommand">
-        <button
-          class="user-dropdown"
-          aria-haspopup="menu"
-          :aria-expanded="false"
-          :aria-label="t('common.userMenu')"
-        >
+        <button class="user-dropdown" aria-haspopup="menu" :aria-expanded="false" :aria-label="t('common.userMenu')">
           <el-avatar :size="32" icon="UserFilled" aria-hidden="true" />
           <span class="username">{{ currentUser?.name || currentUser?.email || "User" }}</span>
-          <el-icon aria-hidden="true"><ArrowDown /></el-icon>
+          <el-icon aria-hidden="true">
+            <ArrowDown />
+          </el-icon>
         </button>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="profile">
-              <el-icon><User /></el-icon>
+              <el-icon>
+                <User />
+              </el-icon>
               {{ $t("common.profile") }}
             </el-dropdown-item>
             <el-dropdown-item command="settings">
-              <el-icon><Setting /></el-icon>
+              <el-icon>
+                <Setting />
+              </el-icon>
               {{ $t("common.settings") }}
             </el-dropdown-item>
             <el-dropdown-item divided command="logout">
-              <el-icon><SwitchButton /></el-icon>
+              <el-icon>
+                <SwitchButton />
+              </el-icon>
               {{ $t("auth.logout") }}
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -307,7 +299,8 @@ function toggleMobileMenu() {
     }
 
     .username {
-      display: none; /* Hide username on mobile to save space */
+      display: none;
+      /* Hide username on mobile to save space */
     }
   }
 

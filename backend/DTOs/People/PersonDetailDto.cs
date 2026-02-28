@@ -2,7 +2,7 @@ namespace Backend.DTOs.People;
 
 /// <summary>
 /// Detailed DTO for editing a person.
-/// Contains all editable fields plus registration and vote history.
+/// Contains all editable fields plus registration history.
 /// </summary>
 public class PersonDetailDto
 {
@@ -133,58 +133,7 @@ public class PersonDetailDto
     public string? RegistrationHistory { get; set; }
 
     /// <summary>
-    /// List of votes cast by this person on various ballots.
-    /// </summary>
-    public List<VoteHistoryDto> VoteHistory { get; set; } = new();
-
-    /// <summary>
     /// The number of votes this person has received.
     /// </summary>
     public int VoteCount { get; set; }
-}
-
-/// <summary>
-/// Represents a single vote in a person's vote history.
-/// </summary>
-public class VoteHistoryDto
-{
-    /// <summary>
-    /// The GUID of the ballot this vote belongs to.
-    /// </summary>
-    public Guid BallotGuid { get; set; }
-
-    /// <summary>
-    /// The position of this vote on the ballot.
-    /// </summary>
-    public int PositionOnBallot { get; set; }
-
-    /// <summary>
-    /// The GUID of the person who received this vote.
-    /// </summary>
-    public Guid? PersonGuid { get; set; }
-
-    /// <summary>
-    /// The full name of the person who received this vote.
-    /// </summary>
-    public string? PersonName { get; set; }
-
-    /// <summary>
-    /// Status code of the vote (e.g., 'ok', 'extra', 'invalid').
-    /// </summary>
-    public string StatusCode { get; set; } = null!;
-
-    /// <summary>
-    /// The GUID of the reason why this vote is invalid (if applicable).
-    /// </summary>
-    public Guid? InvalidReasonGuid { get; set; }
-
-    /// <summary>
-    /// The ballot number for display purposes.
-    /// </summary>
-    public int? BallotNumber { get; set; }
-
-    /// <summary>
-    /// The status code of the ballot.
-    /// </summary>
-    public string? BallotStatusCode { get; set; }
 }
