@@ -20,50 +20,83 @@ If you are blocked and need user clarification, mark the current step with `[!]`
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
 
-Assess the task's difficulty, as underestimating it leads to poor outcomes.
-- easy: Straightforward implementation, trivial bug fix or feature
-- medium: Moderate complexity, some edge cases or caveats to consider
-- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
-
-Create a technical specification for the task that is appropriate for the complexity level:
-- Review the existing codebase architecture and identify reusable components.
-- Define the implementation approach based on established patterns in the project.
-- Identify all source code files that will be created or modified.
-- Define any necessary data model, API, or interface changes.
-- Describe verification steps using the project's test and lint commands.
-
-Save the output to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach
-- Source code structure changes
-- Data model / API / interface changes
-- Verification approach
-
-If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
-- Break down the work into concrete tasks (incrementable, testable milestones)
-- Each task should reference relevant contracts and include verification steps
-- Replace the Implementation step below with the planned tasks
-
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
-
-Important: unit tests must be part of each implementation task, not separate tasks. Each task should implement the code and its tests together, if relevant.
-
-Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+Spec saved to `.zenflow/tasks/teller-login-39e8/spec.md`. Difficulty: **Hard**.
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step 1: Backend DTOs & Election Service — Teller Access Fields
 
-Implement the task according to the technical specification and general engineering best practices.
+Add `IsTellerAccessOpen`, `TellerAccessOpenedAt` to `ElectionDto` and `IsTellerAccessOpen`, `IsOnlineVotingEnabled`, `ShowAsTest` to `ElectionSummaryDto`. Update `ElectionProfile` mappings, `ElectionService` projections, and `IElectionService` interface. Add `ToggleTellerAccessAsync` method to service and controller endpoint `PUT /api/elections/{guid}/teller-access`.
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase
-3. If relevant, write unit tests alongside each change.
-4. Run relevant tests and linters in the end of each step.
-5. Perform basic manual verification if applicable.
-6. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+- [ ] Modify `ElectionSummaryDto.cs`, `ElectionDto.cs`
+- [ ] Modify `ElectionProfile.cs` mapping
+- [ ] Modify `ElectionService.cs` — populate new fields + add toggle method
+- [ ] Modify `IElectionService.cs` — add toggle method signature
+- [ ] Modify `ElectionsController.cs` — add toggle endpoint
+- [ ] Run `dotnet build` and `dotnet test`
+
+---
+
+### [ ] Step 2: Backend Teller Login Endpoint
+
+Add `[AllowAnonymous] POST /api/auth/teller-login` endpoint that validates election GUID + access code against `ElectionPasscode`, checks `ListedForPublicAsOf` is non-null, and returns a limited JWT with teller claims.
+
+- [ ] Add teller login request/response DTOs
+- [ ] Add endpoint in `AuthController.cs`
+- [ ] Run `dotnet build` and `dotnet test`
+
+---
+
+### [ ] Step 3: Frontend Types, Services & Store Updates
+
+Update frontend TypeScript types, services, and Pinia store for the new backend fields and endpoints.
+
+- [ ] Update `Election.ts` types (`isTellerAccessOpen`, `tellerAccessOpenedAt`, etc.)
+- [ ] Update `electionService.ts` — map new fields in `getAll()`
+- [ ] Update `authService.ts` — add `tellerLogin()` method
+- [ ] Update `tellerService.ts` — add `toggleTellerAccess()` method
+- [ ] Update `electionStore.ts` — add toggle action
+- [ ] Run `npx vue-tsc --noEmit` and `npm run test:run`
+
+---
+
+### [ ] Step 4: Dashboard — Remove Teller Count Calls, Use `isTellerAccessOpen`
+
+Remove the N+1 teller count API calls from `DashboardPage.vue`. Use `isTellerAccessOpen` from the election summary data instead.
+
+- [ ] Remove `loadTellerCounts()`, `ElectionWithDetails`, and teller service import
+- [ ] Update teller status column and expanded row section
+- [ ] Run `npx vue-tsc --noEmit`
+
+---
+
+### [ ] Step 5: Election Detail Page — Teller Information Section + QR Code
+
+Add a "Teller Access" card after Quick Actions showing: toggle, access code, shareable URL, QR code. Also show online voting status. Install `qrcode` npm dependency.
+
+- [ ] `npm install qrcode @types/qrcode`
+- [ ] Add teller info section to `ElectionDetailPage.vue`
+- [ ] Add i18n keys to `en/elections.json` and `en/dashboard.json`
+- [ ] Add French i18n keys
+- [ ] Run `npx vue-tsc --noEmit`
+
+---
+
+### [ ] Step 6: Teller Join Route & Page
+
+Create `TellerJoinPage.vue` (public route `/teller-join/:electionGuid?code=...`) that reads params, calls the teller-login endpoint, and redirects on success.
+
+- [ ] Create `TellerJoinPage.vue`
+- [ ] Add route to `router.ts` (public, no auth required)
+- [ ] Add i18n keys for teller join page
+- [ ] Run `npx vue-tsc --noEmit` and `npm run test:run`
+
+---
+
+### [ ] Step 7: Final Verification & Report
+
+- [ ] Run full backend build and tests
+- [ ] Run full frontend type-check and tests
+- [ ] Write report to `.zenflow/tasks/teller-login-39e8/report.md`
