@@ -66,6 +66,7 @@ Update frontend TypeScript types, services, and Pinia store for the new backend 
 ---
 
 ### [ ] Step 4: Dashboard — Remove Teller Count Calls, Use `isTellerAccessOpen`
+<!-- chat-id: f3a085df-49f4-4721-b6f4-85e02283a79c -->
 
 Remove the N+1 teller count API calls from `DashboardPage.vue`. Use `isTellerAccessOpen` from the election summary data instead.
 
