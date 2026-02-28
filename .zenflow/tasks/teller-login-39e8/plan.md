@@ -52,6 +52,7 @@ Add `[AllowAnonymous] POST /api/auth/teller-login` endpoint that validates elect
 ---
 
 ### [ ] Step 3: Frontend Types, Services & Store Updates
+<!-- chat-id: a47e2b88-584c-4a9c-a684-872cf5db987e -->
 
 Update frontend TypeScript types, services, and Pinia store for the new backend fields and endpoints.
 
