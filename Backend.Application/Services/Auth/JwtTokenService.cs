@@ -47,6 +47,35 @@ public class JwtTokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    public string GenerateTellerToken(Guid electionGuid)
+    {
+        var key = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT key not configured");
+        var issuer = _configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer not configured");
+        var audience = _configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT audience not configured");
+
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var claims = new List<Claim>
+        {
+            new("electionGuid", electionGuid.ToString()),
+            new("isTeller", "true"),
+            new(ClaimTypes.Role, "Teller"),
+            new("authMethod", "AccessCode"),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(8),
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
     public string GenerateRefreshToken()
     {
         var randomNumber = new byte[32];

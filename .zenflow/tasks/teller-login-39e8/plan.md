@@ -40,13 +40,14 @@ Add `IsTellerAccessOpen`, `TellerAccessOpenedAt` to `ElectionDto` and `IsTellerA
 
 ---
 
-### [ ] Step 2: Backend Teller Login Endpoint
+### [x] Step 2: Backend Teller Login Endpoint
+<!-- chat-id: 099c0b5a-a821-424c-9200-39ce0448cd16 -->
 
 Add `[AllowAnonymous] POST /api/auth/teller-login` endpoint that validates election GUID + access code against `ElectionPasscode`, checks `ListedForPublicAsOf` is non-null, and returns a limited JWT with teller claims.
 
-- [ ] Add teller login request/response DTOs
-- [ ] Add endpoint in `AuthController.cs`
-- [ ] Run `dotnet build` and `dotnet test`
+- [x] Add teller login request/response DTOs
+- [x] Add endpoint in `AuthController.cs`
+- [x] Run `dotnet build` and `dotnet test`
 
 ---
 
