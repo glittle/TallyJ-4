@@ -26,16 +26,17 @@ Spec saved to `.zenflow/tasks/teller-login-39e8/spec.md`. Difficulty: **Hard**.
 
 ---
 
-### [ ] Step 1: Backend DTOs & Election Service — Teller Access Fields
+### [x] Step 1: Backend DTOs & Election Service — Teller Access Fields
+<!-- chat-id: 95a5c597-2ba9-48d4-9d87-bceced4c580b -->
 
 Add `IsTellerAccessOpen`, `TellerAccessOpenedAt` to `ElectionDto` and `IsTellerAccessOpen`, `IsOnlineVotingEnabled`, `ShowAsTest` to `ElectionSummaryDto`. Update `ElectionProfile` mappings, `ElectionService` projections, and `IElectionService` interface. Add `ToggleTellerAccessAsync` method to service and controller endpoint `PUT /api/elections/{guid}/teller-access`.
 
-- [ ] Modify `ElectionSummaryDto.cs`, `ElectionDto.cs`
-- [ ] Modify `ElectionProfile.cs` mapping
-- [ ] Modify `ElectionService.cs` — populate new fields + add toggle method
-- [ ] Modify `IElectionService.cs` — add toggle method signature
-- [ ] Modify `ElectionsController.cs` — add toggle endpoint
-- [ ] Run `dotnet build` and `dotnet test`
+- [x] Modify `ElectionSummaryDto.cs`, `ElectionDto.cs`
+- [x] Modify `ElectionProfile.cs` mapping
+- [x] Modify `ElectionService.cs` — populate new fields + add toggle method
+- [x] Modify `IElectionService.cs` — add toggle method signature
+- [x] Modify `ElectionsController.cs` — add toggle endpoint
+- [x] Run `dotnet build` and `dotnet test`
 
 ---
 

@@ -85,7 +85,10 @@ public class ElectionService : IElectionService
             TallyStatus = e.TallyStatus,
             VoterCount = e.People.Count(p => p.CanVote == true),
             BallotCount = e.Locations.SelectMany(l => l.Ballots).Count(),
-            ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType)
+            ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType),
+            IsTellerAccessOpen = e.ListedForPublicAsOf != null,
+            IsOnlineVotingEnabled = e.OnlineWhenOpen != null && e.OnlineWhenClose != null,
+            ShowAsTest = e.ShowAsTest
         }).ToList();
 
         return PaginatedResponse<ElectionSummaryDto>.Create(electionDtos, pageNumber, pageSize, totalCount);
@@ -114,6 +117,8 @@ public class ElectionService : IElectionService
         dto.BallotCount = election.Locations.SelectMany(l => l.Ballots).Count();
         dto.LocationCount = election.Locations.Count;
         dto.ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType);
+        dto.IsTellerAccessOpen = election.ListedForPublicAsOf != null;
+        dto.TellerAccessOpenedAt = election.ListedForPublicAsOf;
 
         return dto;
     }
@@ -213,6 +218,29 @@ public class ElectionService : IElectionService
     /// <returns>An ElectionDto containing the election summary information, or null if not found.</returns>
     public async Task<ElectionDto?> GetElectionSummaryAsync(Guid electionGuid)
     {
+        return await GetElectionByGuidAsync(electionGuid);
+    }
+
+    /// <summary>
+    /// Toggles teller access for an election by setting or clearing the ListedForPublicAsOf timestamp.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="isOpen">Whether to open or close teller access.</param>
+    /// <returns>The updated ElectionDto, or null if the election was not found.</returns>
+    public async Task<ElectionDto?> ToggleTellerAccessAsync(Guid electionGuid, bool isOpen)
+    {
+        var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+
+        if (election == null)
+        {
+            return null;
+        }
+
+        election.ListedForPublicAsOf = isOpen ? DateTime.UtcNow : null;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Toggled teller access for election {ElectionGuid} to {IsOpen}", electionGuid, isOpen);
+
         return await GetElectionByGuidAsync(electionGuid);
     }
 

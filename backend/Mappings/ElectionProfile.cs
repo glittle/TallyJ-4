@@ -22,13 +22,17 @@ public class ElectionProfile : Profile
             .ForMember(dest => dest.ElectionMode, opt => opt.MapFrom(src => ElectionModeEnum.ParseCode(src.ElectionMode)))
             .ForMember(dest => dest.VoterCount, opt => opt.Ignore())
             .ForMember(dest => dest.BallotCount, opt => opt.Ignore())
-            .ForMember(dest => dest.LocationCount, opt => opt.Ignore());
+            .ForMember(dest => dest.LocationCount, opt => opt.Ignore())
+            .ForMember(dest => dest.IsTellerAccessOpen, opt => opt.MapFrom(src => src.ListedForPublicAsOf != null))
+            .ForMember(dest => dest.TellerAccessOpenedAt, opt => opt.MapFrom(src => src.ListedForPublicAsOf));
 
         CreateMap<Election, ElectionSummaryDto>()
             .ForMember(dest => dest.ElectionType, opt => opt.MapFrom(src => ElectionTypeEnum.ParseCode(src.ElectionType)))
             .ForMember(dest => dest.ElectionMode, opt => opt.MapFrom(src => ElectionModeEnum.ParseCode(src.ElectionMode)))
             .ForMember(dest => dest.VoterCount, opt => opt.Ignore())
-            .ForMember(dest => dest.BallotCount, opt => opt.Ignore());
+            .ForMember(dest => dest.BallotCount, opt => opt.Ignore())
+            .ForMember(dest => dest.IsTellerAccessOpen, opt => opt.MapFrom(src => src.ListedForPublicAsOf != null))
+            .ForMember(dest => dest.IsOnlineVotingEnabled, opt => opt.MapFrom(src => src.OnlineWhenOpen != null && src.OnlineWhenClose != null));
 
         CreateMap<CreateElectionDto, Election>()
             .ForMember(dest => dest.ElectionType, opt => opt.MapFrom(src => ElectionTypeEnum.ToCodeString(src.ElectionType)))

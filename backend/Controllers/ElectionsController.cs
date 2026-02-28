@@ -125,6 +125,26 @@ public class ElectionsController : ControllerBase
     }
 
     /// <summary>
+    /// Toggles teller access for an election.
+    /// </summary>
+    /// <param name="guid">The GUID of the election.</param>
+    /// <param name="dto">The toggle request containing the desired open/closed state.</param>
+    /// <returns>The updated election information.</returns>
+    [HttpPut("{guid}/teller-access")]
+    [Authorize(Policy = "ElectionAccess")]
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> ToggleTellerAccess(Guid guid, ToggleTellerAccessDto dto)
+    {
+        var election = await _electionService.ToggleTellerAccessAsync(guid, dto.IsOpen);
+
+        if (election == null)
+        {
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
+        }
+
+        return Ok(ApiResponse<ElectionDto>.SuccessResponse(election, dto.IsOpen ? "Teller access opened" : "Teller access closed"));
+    }
+
+    /// <summary>
     /// Deletes an election by its GUID.
     /// </summary>
     /// <param name="guid">The GUID of the election to delete.</param>

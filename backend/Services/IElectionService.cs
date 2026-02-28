@@ -55,6 +55,14 @@ public interface IElectionService
     Task<ElectionDto?> GetElectionSummaryAsync(Guid electionGuid);
 
     /// <summary>
+    /// Toggles teller access for an election by setting or clearing the ListedForPublicAsOf timestamp.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="isOpen">Whether to open or close teller access.</param>
+    /// <returns>The updated election data, or null if the election was not found.</returns>
+    Task<ElectionDto?> ToggleTellerAccessAsync(Guid electionGuid, bool isOpen);
+
+    /// <summary>
     /// Updates the listing status of an election (whether it appears in public listings).
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>

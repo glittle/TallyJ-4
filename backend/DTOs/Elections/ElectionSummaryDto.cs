@@ -50,6 +50,20 @@ public class ElectionSummaryDto
     /// </summary>
     public ElectionModeCode? ElectionMode { get; set; }
 
+    /// <summary>
+    /// Whether the election is currently open for assistant tellers to join.
+    /// </summary>
+    public bool IsTellerAccessOpen { get; set; }
+
+    /// <summary>
+    /// Whether online voting is currently enabled for this election.
+    /// </summary>
+    public bool IsOnlineVotingEnabled { get; set; }
+
+    /// <summary>
+    /// Whether this election is marked as a test election.
+    /// </summary>
+    public bool? ShowAsTest { get; set; }
 }
 
 
