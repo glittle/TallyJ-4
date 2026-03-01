@@ -101,9 +101,9 @@ Create `TellerJoinPage.vue` (public route `/teller-join/:electionGuid?code=...`)
 
 ---
 
-### [ ] Step 7: Final Verification & Report
+### [x] Step 7: Final Verification & Report
 <!-- chat-id: b1c578e8-432e-4668-8346-390774ccbe7f -->
 
-- [ ] Run full backend build and tests
-- [ ] Run full frontend type-check and tests
-- [ ] Write report to `.zenflow/tasks/teller-login-39e8/report.md`
+- [x] Run full backend build and tests
+- [x] Run full frontend type-check and tests
+- [x] Write report to `.zenflow/tasks/teller-login-39e8/report.md`
