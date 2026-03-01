@@ -108,6 +108,14 @@ export const authService = {
       throw new Error('Logout failed');
     }
   },
+
+  async tellerLogin(electionGuid: string, accessCode: string): Promise<{ electionGuid: string; electionName: string }> {
+    const response = await api.post('/api/auth/teller-login', {
+      electionGuid,
+      accessCode,
+    });
+    return response.data;
+  },
 };
 
 export {

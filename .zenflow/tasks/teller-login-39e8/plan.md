@@ -51,17 +51,17 @@ Add `[AllowAnonymous] POST /api/auth/teller-login` endpoint that validates elect
 
 ---
 
-### [ ] Step 3: Frontend Types, Services & Store Updates
+### [x] Step 3: Frontend Types, Services & Store Updates
 <!-- chat-id: a47e2b88-584c-4a9c-a684-872cf5db987e -->
 
 Update frontend TypeScript types, services, and Pinia store for the new backend fields and endpoints.
 
-- [ ] Update `Election.ts` types (`isTellerAccessOpen`, `tellerAccessOpenedAt`, etc.)
-- [ ] Update `electionService.ts` — map new fields in `getAll()`
-- [ ] Update `authService.ts` — add `tellerLogin()` method
-- [ ] Update `tellerService.ts` — add `toggleTellerAccess()` method
-- [ ] Update `electionStore.ts` — add toggle action
-- [ ] Run `npx vue-tsc --noEmit` and `npm run test:run`
+- [x] Update `Election.ts` types (`isTellerAccessOpen`, `tellerAccessOpenedAt`, etc.)
+- [x] Update `electionService.ts` — map new fields in `getAll()`
+- [x] Update `authService.ts` — add `tellerLogin()` method
+- [x] Update `tellerService.ts` — add `toggleTellerAccess()` method
+- [x] Update `electionStore.ts` — add toggle action
+- [x] Run `npx vue-tsc --noEmit` and `npm run test:run`
 
 ---
 

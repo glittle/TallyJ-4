@@ -115,4 +115,7 @@ export interface ElectionSummaryDto {
   tallyStatus?: string;
   voterCount: number;
   ballotCount: number;
+  isTellerAccessOpen?: boolean;
+  isOnlineVotingEnabled?: boolean;
+  showAsTest?: boolean;
 }
