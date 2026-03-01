@@ -65,14 +65,14 @@ Update frontend TypeScript types, services, and Pinia store for the new backend 
 
 ---
 
-### [ ] Step 4: Dashboard — Remove Teller Count Calls, Use `isTellerAccessOpen`
+### [x] Step 4: Dashboard — Remove Teller Count Calls, Use `isTellerAccessOpen`
 <!-- chat-id: f3a085df-49f4-4721-b6f4-85e02283a79c -->
 
 Remove the N+1 teller count API calls from `DashboardPage.vue`. Use `isTellerAccessOpen` from the election summary data instead.
 
-- [ ] Remove `loadTellerCounts()`, `ElectionWithDetails`, and teller service import
-- [ ] Update teller status column and expanded row section
-- [ ] Run `npx vue-tsc --noEmit`
+- [x] Remove `loadTellerCounts()`, `ElectionWithDetails`, and teller service import
+- [x] Update teller status column and expanded row section
+- [x] Run `npx vue-tsc --noEmit`
 
 ---
 
@@ -89,15 +89,15 @@ Add a "Teller Access" card after Quick Actions showing: toggle, access code, sha
 
 ---
 
-### [ ] Step 6: Teller Join Route & Page
+### [x] Step 6: Teller Join Route & Page
 <!-- chat-id: 34b200f0-2354-4b38-8a80-536f250e9f30 -->
 
 Create `TellerJoinPage.vue` (public route `/teller-join/:electionGuid?code=...`) that reads params, calls the teller-login endpoint, and redirects on success.
 
-- [ ] Create `TellerJoinPage.vue`
-- [ ] Add route to `router.ts` (public, no auth required)
-- [ ] Add i18n keys for teller join page
-- [ ] Run `npx vue-tsc --noEmit` and `npm run test:run`
+- [x] Create `TellerJoinPage.vue`
+- [x] Add route to `router.ts` (public, no auth required)
+- [x] Add i18n keys for teller join page
+- [x] Run `npx vue-tsc --noEmit` and `npm run test:run`
 
 ---
 
