@@ -64,7 +64,8 @@ public class TellerAccessHandler : AuthorizationHandler<TellerAccessRequirement>
         var electionGuidClaim = user.FindFirst("electionGuid")?.Value;
         var authMethod = user.FindFirst("authMethod")?.Value;
 
-        if (isTellerClaim == "true" && authMethod == "AccessCode")
+        if (bool.TryParse(isTellerClaim, out var isGuestTeller) && isGuestTeller && 
+            string.Equals(authMethod, "AccessCode", StringComparison.OrdinalIgnoreCase))
         {
             // Guest teller authenticated with access code
             if (Guid.TryParse(electionGuidClaim, out var tokenElectionGuid) && tokenElectionGuid == electionGuid)

@@ -507,6 +507,7 @@ public class AuthControllerTests : IntegrationTestBase
         // Arrange - Create a test election with access code and open for teller access
         var electionGuid = Guid.NewGuid();
         var accessCode = "TestAccessCode123";
+        var testDate = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
 
         using (var scope = Factory.Services.CreateScope())
         {
@@ -518,10 +519,10 @@ public class AuthControllerTests : IntegrationTestBase
                 ElectionType = Backend.Domain.Enumerations.ElectionTypeEnum.LSA.Code,
                 ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
                 NumberToElect = 9,
-                DateOfElection = DateTime.UtcNow.AddDays(1),
+                DateOfElection = testDate.AddDays(1),
                 TallyStatus = "NotStarted",
                 ElectionPasscode = accessCode,
-                ListedForPublicAsOf = DateTime.UtcNow, // Open for teller access
+                ListedForPublicAsOf = testDate, // Open for teller access
                 OwnerLoginId = "admin@tallyj.test",
                 ShowAsTest = true
             };
@@ -575,6 +576,7 @@ public class AuthControllerTests : IntegrationTestBase
     {
         // Arrange - Use existing election without valid access code
         var electionGuid = Guid.NewGuid();
+        var testDate = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
 
         using (var scope = Factory.Services.CreateScope())
         {
@@ -586,10 +588,10 @@ public class AuthControllerTests : IntegrationTestBase
                 ElectionType = Backend.Domain.Enumerations.ElectionTypeEnum.LSA.Code,
                 ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
                 NumberToElect = 9,
-                DateOfElection = DateTime.UtcNow.AddDays(1),
+                DateOfElection = testDate.AddDays(1),
                 TallyStatus = "NotStarted",
                 ElectionPasscode = "CorrectCode",
-                ListedForPublicAsOf = DateTime.UtcNow,
+                ListedForPublicAsOf = testDate,
                 OwnerLoginId = "admin@tallyj.test",
                 ShowAsTest = true
             };
@@ -621,6 +623,7 @@ public class AuthControllerTests : IntegrationTestBase
         // Arrange - Create election with null ListedForPublicAsOf (closed for tellers)
         var electionGuid = Guid.NewGuid();
         var accessCode = "TestCode";
+        var testDate = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
 
         using (var scope = Factory.Services.CreateScope())
         {
@@ -632,7 +635,7 @@ public class AuthControllerTests : IntegrationTestBase
                 ElectionType = Backend.Domain.Enumerations.ElectionTypeEnum.LSA.Code,
                 ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
                 NumberToElect = 9,
-                DateOfElection = DateTime.UtcNow.AddDays(1),
+                DateOfElection = testDate.AddDays(1),
                 TallyStatus = "NotStarted",
                 ElectionPasscode = accessCode,
                 ListedForPublicAsOf = null, // Closed for teller access
