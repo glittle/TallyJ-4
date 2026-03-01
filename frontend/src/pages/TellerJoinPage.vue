@@ -118,57 +118,22 @@ onMounted(async () => {
         <el-empty :description="t('auth.tellerJoin.noElections')" />
       </div>
 
-      <el-form
-        v-else
-        ref="joinFormRef"
-        :model="joinForm"
-        :rules="rules"
-        label-position="top"
-        @keyup.enter="handleJoin"
-      >
-        <el-form-item
-          :label="t('auth.tellerJoin.selectElection')"
-          prop="electionGuid"
-        >
-          <el-select
-            v-model="joinForm.electionGuid"
-            :placeholder="t('auth.tellerJoin.selectElectionPlaceholder')"
-            filterable
-            style="width: 100%"
-          >
-            <el-option
-              v-for="election in elections"
-              :key="election.electionGuid"
-              :label="election.name"
-              :value="election.electionGuid"
-            >
-              <div class="election-option">
-                <span class="election-name">{{ election.name }}</span>
-                <span v-if="election.dateOfElection" class="election-date">{{ formatDate(election.dateOfElection) }}</span>
-              </div>
-            </el-option>
-          </el-select>
+      <el-form v-else ref="joinFormRef" :model="joinForm" :rules="rules" label-position="top" @keyup.enter="handleJoin">
+        <el-form-item :label="t('auth.tellerJoin.selectElection')" prop="electionGuid">
+          <select v-model="joinForm.electionGuid" size="9" style="width: 100%; padding: 8px; border: 1px solid #dcdfe6; border-radius: 4px;">
+            <option v-for="election in elections" :key="election.electionGuid" :value="election.electionGuid">
+              {{ election.name }}{{ election.dateOfElection ? ' - ' + formatDate(election.dateOfElection) : '' }}
+            </option>
+          </select>
         </el-form-item>
 
-        <el-form-item
-          :label="t('auth.tellerJoin.accessCodeLabel')"
-          prop="accessCode"
-        >
-          <el-input
-            v-model="joinForm.accessCode"
-            :placeholder="t('auth.tellerJoin.accessCodePlaceholder')"
-            type="password"
-            show-password
-          />
+        <el-form-item :label="t('auth.tellerJoin.accessCodeLabel')" prop="accessCode">
+          <el-input v-model="joinForm.accessCode" :placeholder="t('auth.tellerJoin.accessCodePlaceholder')"
+            type="text" />
         </el-form-item>
 
         <div class="join-actions">
-          <el-button
-            type="primary"
-            :loading="loading"
-            class="join-btn"
-            @click="handleJoin"
-          >
+          <el-button type="primary" :loading="loading" class="join-btn" @click="handleJoin">
             {{ t("auth.tellerJoin.joinButton") }}
           </el-button>
         </div>
@@ -182,27 +147,26 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-  background: var(--el-bg-color-page);
+  padding-top: 40px;
 
   .join-card {
     width: 100%;
-    max-width: 450px;
+    max-width: 400px;
+    border-radius: 12px;
 
     .join-header {
       text-align: center;
+    }
 
-      h2 {
-        margin: 0 0 8px 0;
-        color: var(--el-text-color-primary);
-      }
+    .join-header h2 {
+      margin: 0;
+      color: var(--color-text-primary);
+    }
 
-      .description {
-        margin: 0;
-        color: var(--el-text-color-regular);
-        font-size: 14px;
-      }
+    .description {
+      margin-top: 10px;
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
     }
 
     .loading-elections {
@@ -213,26 +177,12 @@ onMounted(async () => {
       padding: 20px 0;
     }
 
-    .election-option {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-
-      .election-name {
-        flex: 1;
-      }
-
-      .election-date {
-        color: var(--el-text-color-secondary);
-        font-size: 12px;
-        margin-left: 12px;
-      }
-    }
 
     .join-actions {
-      text-align: center;
-      margin-top: 24px;
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
 
       .join-btn {
         width: 100%;
@@ -240,4 +190,6 @@ onMounted(async () => {
     }
   }
 }
+
+
 </style>

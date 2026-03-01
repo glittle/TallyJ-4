@@ -33,13 +33,11 @@ const isStandardLogin = computed(
   () => mode.value === "officer" || mode.value === "full-teller"
 );
 const isVoterLogin = computed(() => mode.value === "voter");
-const isTellerLogin = computed(() => mode.value === "teller");
 
 const loginForm = reactive({
   email: "",
   password: "",
   code: "", // Voter OTC
-  passcode: "", // Teller Passcode
 });
 
 const rules = computed<FormRules>(() => {
@@ -64,15 +62,7 @@ const rules = computed<FormRules>(() => {
     ];
   }
 
-  if (isTellerLogin.value) {
-    baseRules.passcode = [
-      {
-        required: true,
-        message: t("auth.tellerLogin.passcodeRequired"),
-        trigger: "blur",
-      },
-    ];
-  }
+
 
   return baseRules;
 });
@@ -110,9 +100,6 @@ const handleLogin = async () => {
         // Handle System 3 login (OTC)
         // await authStore.loginVoter(loginForm.email, loginForm.code);
         showWarningMessage("Voter OTC login not fully implemented in backend yet.");
-        return;
-      } else if (isTellerLogin.value) {
-        router.push({ name: 'teller-join' });
         return;
       }
 
@@ -319,15 +306,12 @@ onBeforeUnmount(() => {
             }}
           </h2>
           <h2 v-else-if="isVoterLogin">{{ t("auth.voterLogin.title") }}</h2>
-          <h2 v-else-if="isTellerLogin">{{ t("auth.tellerLogin.title") }}</h2>
 
           <p class="mode-hint">
             {{
               isStandardLogin
                 ? t("auth.landing.optionOfficerDesc")
-                : isVoterLogin
-                  ? t("auth.landing.optionVoterDesc")
-                  : t("auth.landing.optionTellerDesc")
+                : t("auth.landing.optionVoterDesc")
             }}
           </p>
         </div>
@@ -361,10 +345,7 @@ onBeforeUnmount(() => {
           <el-input v-model="loginForm.code" :placeholder="t('auth.voterLogin.codePlaceholder')" maxlength="6" />
         </el-form-item>
 
-        <!-- System 2: Election Passcode Field -->
-        <el-form-item v-if="isTellerLogin" :label="t('auth.tellerLogin.passcodeLabel')" prop="passcode">
-          <el-input v-model="loginForm.passcode" :placeholder="t('auth.tellerLogin.passcodePlaceholder')" />
-        </el-form-item>
+
 
         <div class="login-actions">
           <!-- System 3: Request Code Button -->
@@ -378,9 +359,7 @@ onBeforeUnmount(() => {
             {{
               isVoterLogin
                 ? t("auth.voterLogin.loginButton")
-                : isTellerLogin
-                  ? t("auth.tellerLogin.loginButton")
-                  : t("auth.loginButton")
+                : t("auth.loginButton")
             }}
           </el-button>
 

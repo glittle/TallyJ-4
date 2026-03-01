@@ -1,36 +1,37 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import LanguageSelector from "../components/common/LanguageSelector.vue";
 import LanguageFlagsSelector from "../components/common/LanguageFlagsSelector.vue";
 import ThemeSelector from "../components/common/ThemeSelector.vue";
 import { VERSION, BUILD_DATE } from "../components/version";
 
 const route = useRoute();
+const router = useRouter();
 
 // Version tooltip - static string computed once
 const versionTooltip = `Version ${VERSION} (${BUILD_DATE})`;
 
 // Check if we're on the landing page
-const isLandingPage = computed(() => route.path === "/" || route.name === "landing");
+const expandLanguageSelector = true; // computed(() => route.path === "/" || route.name === "landing");
+
+const handleLogoClick = () => {
+  router.push("/");
+};
 </script>
 
 <template>
   <div class="public-layout">
     <div class="public-header">
       <div class="logo">
-        <h2 :title="versionTooltip">
-          <img
-            src="/logo-zoom.png"
-            alt="TallyJ Logo"
-            style="height: 24px; vertical-align: middle; margin-left: 8px"
-          />
+        <h2 :title="versionTooltip" @click="handleLogoClick" style="cursor: pointer;">
+          <img src="/logo-zoom.png" alt="TallyJ Logo" style="height: 24px; vertical-align: middle; margin-left: 8px" />
           <span>{{ $t('title') }}</span>
         </h2>
       </div>
       <div class="header-right">
         <ThemeSelector />
-        <LanguageFlagsSelector v-if="isLandingPage" />
+        <LanguageFlagsSelector v-if="expandLanguageSelector" />
         <LanguageSelector v-else />
       </div>
     </div>
@@ -44,6 +45,7 @@ const isLandingPage = computed(() => route.path === "/" || route.name === "landi
 .public-layout {
   min-height: 100vh;
   background: var(--color-public-bg-gradient);
+
   .public-header {
     display: flex;
     justify-content: space-between;
@@ -52,7 +54,8 @@ const isLandingPage = computed(() => route.path === "/" || route.name === "landi
     backdrop-filter: blur(10px);
     /* Fallback for browsers that don't support backdrop-filter */
     background: var(--color-public-header-bg);
-    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    -webkit-backdrop-filter: blur(10px);
+    /* Safari support */
   }
 
   .logo h2 {
