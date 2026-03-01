@@ -661,6 +661,39 @@
         }
       }
     },
+    "/api/Auth/teller-login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authenticates an assistant teller using an election access code.",
+        "requestBody": {
+          "description": "The teller login request containing election GUID and access code.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TellerLoginRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TellerLoginRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TellerLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auth/forgotPassword": {
       "post": {
         "tags": [
@@ -2100,6 +2133,68 @@
         }
       }
     },
+    "/api/Elections/{guid}/teller-access": {
+      "put": {
+        "tags": [
+          "Elections"
+        ],
+        "summary": "Toggles teller access for an election.",
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "description": "The GUID of the election.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The toggle request containing the desired open/closed state.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleTellerAccessDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleTellerAccessDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToggleTellerAccessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Elections/{guid}/deleteElection": {
       "delete": {
         "tags": [
@@ -3078,6 +3173,62 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/online-voting/googleAuth": {
+      "post": {
+        "tags": [
+          "OnlineVoting"
+        ],
+        "summary": "Authenticates a voter using Google OAuth for online voting access.",
+        "requestBody": {
+          "description": "The Google authentication request.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleAuthForVoterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleAuthForVoterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleAuthForVoterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/online-voting/availableElections": {
+      "get": {
+        "tags": [
+          "OnlineVoting"
+        ],
+        "summary": "Gets the list of elections available to an authenticated voter.",
+        "parameters": [
+          {
+            "name": "voterId",
+            "in": "query",
+            "description": "The voter's identifier (from JWT token).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -8547,6 +8698,16 @@
             "type": "string",
             "description": "Additional flags and settings (JSON).",
             "nullable": true
+          },
+          "isTellerAccessOpen": {
+            "type": "boolean",
+            "description": "Whether the election is currently open for assistant tellers to join."
+          },
+          "tellerAccessOpenedAt": {
+            "type": "string",
+            "description": "The date and time when teller access was opened.",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -8858,6 +9019,19 @@
           },
           "electionMode": {
             "$ref": "#/components/schemas/ElectionModeCode"
+          },
+          "isTellerAccessOpen": {
+            "type": "boolean",
+            "description": "Whether the election is currently open for assistant tellers to join."
+          },
+          "isOnlineVotingEnabled": {
+            "type": "boolean",
+            "description": "Whether online voting is currently enabled for this election."
+          },
+          "showAsTest": {
+            "type": "boolean",
+            "description": "Whether this election is marked as a test election.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -9144,6 +9318,21 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object representing a voter at the front desk."
+      },
+      "GoogleAuthForVoterDto": {
+        "required": [
+          "credential"
+        ],
+        "type": "object",
+        "properties": {
+          "credential": {
+            "minLength": 1,
+            "type": "string",
+            "description": "The Google credential (JWT token) from Google One Tap or Sign-In."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for Google OAuth authentication for online voters."
       },
       "GoogleOneTapRequest": {
         "required": [
@@ -11502,6 +11691,24 @@
         "additionalProperties": false,
         "description": "Data transfer object representing a teller in an election."
       },
+      "TellerLoginRequest": {
+        "required": [
+          "accessCode",
+          "electionGuid"
+        ],
+        "type": "object",
+        "properties": {
+          "electionGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accessCode": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "TieCandidateDto": {
         "type": "object",
         "properties": {
@@ -11713,6 +11920,17 @@
         },
         "additionalProperties": false,
         "description": "A time segment with voting statistics."
+      },
+      "ToggleTellerAccessDto": {
+        "type": "object",
+        "properties": {
+          "isOpen": {
+            "type": "boolean",
+            "description": "Whether to open (true) or close (false) teller access."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for toggling teller access on an election."
       },
       "TrendDataDto": {
         "type": "object",

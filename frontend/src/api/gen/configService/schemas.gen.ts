@@ -547,6 +547,39 @@ export const ApiResponseListPersonDtoSchema = {
     description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
+export const ApiResponseListPersonListDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
+        },
+        data: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/PersonListDto'
+            },
+            description: 'The data returned by the API operation, if successful.',
+            nullable: true
+        },
+        message: {
+            type: 'string',
+            description: 'An optional message providing additional information about the response.',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'A list of error messages, if the operation failed.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
+} as const;
+
 export const ApiResponseListVoteDtoSchema = {
     type: 'object',
     properties: {
@@ -646,6 +679,34 @@ export const ApiResponsePaginatedResponseSuperAdminElectionDtoSchema = {
         },
         data: {
             $ref: '#/components/schemas/PaginatedResponseSuperAdminElectionDto'
+        },
+        message: {
+            type: 'string',
+            description: 'An optional message providing additional information about the response.',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'A list of error messages, if the operation failed.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
+} as const;
+
+export const ApiResponsePersonDetailDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
+        },
+        data: {
+            $ref: '#/components/schemas/PersonDetailDto'
         },
         message: {
             type: 'string',
@@ -2623,6 +2684,16 @@ export const ElectionDtoSchema = {
             type: 'string',
             description: 'Additional flags and settings (JSON).',
             nullable: true
+        },
+        isTellerAccessOpen: {
+            type: 'boolean',
+            description: 'Whether the election is currently open for assistant tellers to join.'
+        },
+        tellerAccessOpenedAt: {
+            type: 'string',
+            description: 'The date and time when teller access was opened.',
+            format: 'date-time',
+            nullable: true
         }
     },
     additionalProperties: false,
@@ -2942,6 +3013,19 @@ export const ElectionSummaryDtoSchema = {
         },
         electionMode: {
             $ref: '#/components/schemas/ElectionModeCode'
+        },
+        isTellerAccessOpen: {
+            type: 'boolean',
+            description: 'Whether the election is currently open for assistant tellers to join.'
+        },
+        isOnlineVotingEnabled: {
+            type: 'boolean',
+            description: 'Whether online voting is currently enabled for this election.'
+        },
+        showAsTest: {
+            type: 'boolean',
+            description: 'Whether this election is marked as a test election.',
+            nullable: true
         }
     },
     additionalProperties: false,
@@ -3237,6 +3321,22 @@ export const FrontDeskVoterDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object representing a voter at the front desk.'
+} as const;
+
+export const GoogleAuthForVoterDtoSchema = {
+    required: [
+        'credential'
+    ],
+    type: 'object',
+    properties: {
+        credential: {
+            minLength: 1,
+            type: 'string',
+            description: 'The Google credential (JWT token) from Google One Tap or Sign-In.'
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for Google OAuth authentication for online voters.'
 } as const;
 
 export const GoogleOneTapRequestSchema = {
@@ -4294,6 +4394,156 @@ export const ParticipationRateDtoSchema = {
     description: 'Data transfer object containing participation rates by different voting methods.'
 } as const;
 
+export const PersonDetailDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            description: 'The unique identifier for the person.',
+            format: 'uuid'
+        },
+        electionGuid: {
+            type: 'string',
+            description: 'The GUID of the election this person belongs to.',
+            format: 'uuid'
+        },
+        firstName: {
+            type: 'string',
+            description: 'The person\'s first name.',
+            nullable: true
+        },
+        lastName: {
+            type: 'string',
+            description: 'The person\'s last name.',
+            nullable: true
+        },
+        fullName: {
+            type: 'string',
+            description: 'The person\'s full name (combination of first and last names).',
+            nullable: true
+        },
+        email: {
+            type: 'string',
+            description: 'The person\'s email address.',
+            nullable: true
+        },
+        phone: {
+            type: 'string',
+            description: 'The person\'s phone number.',
+            nullable: true
+        },
+        canReceiveVotes: {
+            type: 'boolean',
+            description: 'Whether the person can receive votes (be a candidate).',
+            nullable: true
+        },
+        canVote: {
+            type: 'boolean',
+            description: 'Whether the person can vote.',
+            nullable: true
+        },
+        area: {
+            type: 'string',
+            description: 'The area or region the person belongs to.',
+            nullable: true
+        },
+        bahaiId: {
+            type: 'string',
+            description: 'The person\'s Bahá\'í ID.',
+            nullable: true
+        },
+        otherLastNames: {
+            type: 'string',
+            description: 'Other last names associated with the person.',
+            nullable: true
+        },
+        otherNames: {
+            type: 'string',
+            description: 'Other names associated with the person.',
+            nullable: true
+        },
+        otherInfo: {
+            type: 'string',
+            description: 'Additional information about the person.',
+            nullable: true
+        },
+        ageGroup: {
+            type: 'string',
+            description: 'The person\'s age group.',
+            nullable: true
+        },
+        ineligibleReasonGuid: {
+            type: 'string',
+            description: 'The GUID of the reason why the person is ineligible (if applicable).',
+            format: 'uuid',
+            nullable: true
+        },
+        ineligibleReasonCode: {
+            type: 'string',
+            description: 'The code of the reason why the person is ineligible (if applicable).',
+            nullable: true
+        },
+        registrationTime: {
+            type: 'string',
+            description: 'The time when the person was registered (checked in).',
+            format: 'date-time',
+            nullable: true
+        },
+        votingLocationGuid: {
+            type: 'string',
+            description: 'The GUID of the voting location where the person is registered.',
+            format: 'uuid',
+            nullable: true
+        },
+        votingMethod: {
+            type: 'string',
+            description: 'The voting method (e.g., \'P\' for paper, \'O\' for online).',
+            nullable: true
+        },
+        envNum: {
+            type: 'integer',
+            description: 'Envelope number assigned to the person.',
+            format: 'int32',
+            nullable: true
+        },
+        teller1: {
+            type: 'string',
+            description: 'Name of the first teller assigned to this person.',
+            nullable: true
+        },
+        teller2: {
+            type: 'string',
+            description: 'Name of the second teller assigned to this person.',
+            nullable: true
+        },
+        hasOnlineBallot: {
+            type: 'boolean',
+            description: 'Whether the person has submitted an online ballot.',
+            nullable: true
+        },
+        registrationHistory: {
+            type: 'string',
+            description: 'JSON array of registration history entries.\nEach entry contains timestamp, action, and metadata.',
+            nullable: true
+        },
+        voteHistory: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/VoteHistoryDto'
+            },
+            description: 'List of votes cast by this person on various ballots.',
+            nullable: true
+        },
+        voteCount: {
+            type: 'integer',
+            description: 'The number of votes this person has received.',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false,
+    description: 'Detailed DTO for editing a person.\nContains all editable fields plus registration and vote history.'
+} as const;
+
 export const PersonDtoSchema = {
     type: 'object',
     properties: {
@@ -4391,6 +4641,54 @@ export const PersonDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object representing a person in an election.'
+} as const;
+
+export const PersonListDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            description: 'The unique identifier for the person.',
+            format: 'uuid'
+        },
+        fullName: {
+            type: 'string',
+            description: 'The person\'s full name (combination of first and last names).',
+            nullable: true
+        },
+        email: {
+            type: 'string',
+            description: 'The person\'s email address.',
+            nullable: true
+        },
+        phone: {
+            type: 'string',
+            description: 'The person\'s phone number.',
+            nullable: true
+        },
+        area: {
+            type: 'string',
+            description: 'The area or region the person belongs to.',
+            nullable: true
+        },
+        canVote: {
+            type: 'boolean',
+            description: 'Whether the person can vote.',
+            nullable: true
+        },
+        canReceiveVotes: {
+            type: 'boolean',
+            description: 'Whether the person can receive votes (be a candidate).',
+            nullable: true
+        },
+        ineligibleReasonCode: {
+            type: 'string',
+            description: 'The code of the reason why the person is ineligible (if applicable).',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Lightweight DTO for displaying people in a list view.\nContains only the essential fields needed for list display and filtering.'
 } as const;
 
 export const PredictionDtoSchema = {
@@ -5459,6 +5757,25 @@ export const TellerDtoSchema = {
     description: 'Data transfer object representing a teller in an election.'
 } as const;
 
+export const TellerLoginRequestSchema = {
+    required: [
+        'accessCode',
+        'electionGuid'
+    ],
+    type: 'object',
+    properties: {
+        electionGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        accessCode: {
+            minLength: 1,
+            type: 'string'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const TieCandidateDtoSchema = {
     type: 'object',
     properties: {
@@ -5677,6 +5994,18 @@ export const TimeSegmentDtoSchema = {
     },
     additionalProperties: false,
     description: 'A time segment with voting statistics.'
+} as const;
+
+export const ToggleTellerAccessDtoSchema = {
+    type: 'object',
+    properties: {
+        isOpen: {
+            type: 'boolean',
+            description: 'Whether to open (true) or close (false) teller access.'
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for toggling teller access on an election.'
 } as const;
 
 export const TrendDataDtoSchema = {
@@ -6378,6 +6707,57 @@ export const VoteDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object representing a vote in an election.\nContains vote details including candidate information and ballot context.'
+} as const;
+
+export const VoteHistoryDtoSchema = {
+    type: 'object',
+    properties: {
+        ballotGuid: {
+            type: 'string',
+            description: 'The GUID of the ballot this vote belongs to.',
+            format: 'uuid'
+        },
+        positionOnBallot: {
+            type: 'integer',
+            description: 'The position of this vote on the ballot.',
+            format: 'int32'
+        },
+        personGuid: {
+            type: 'string',
+            description: 'The GUID of the person who received this vote.',
+            format: 'uuid',
+            nullable: true
+        },
+        personName: {
+            type: 'string',
+            description: 'The full name of the person who received this vote.',
+            nullable: true
+        },
+        statusCode: {
+            type: 'string',
+            description: 'Status code of the vote (e.g., \'ok\', \'extra\', \'invalid\').',
+            nullable: true
+        },
+        invalidReasonGuid: {
+            type: 'string',
+            description: 'The GUID of the reason why this vote is invalid (if applicable).',
+            format: 'uuid',
+            nullable: true
+        },
+        ballotNumber: {
+            type: 'integer',
+            description: 'The ballot number for display purposes.',
+            format: 'int32',
+            nullable: true
+        },
+        ballotStatusCode: {
+            type: 'string',
+            description: 'The status code of the ballot.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Represents a single vote in a person\'s vote history.'
 } as const;
 
 export const VoteReportDtoSchema = {

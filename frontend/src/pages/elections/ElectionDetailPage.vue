@@ -144,7 +144,7 @@
                 <div class="qr-container" style="margin-top: 10px;">
                   <img v-if="qrCodeUrl" :src="qrCodeUrl" alt="QR Code" class="qr-code" />
                   <div v-else class="qr-placeholder">
-                    <el-icon size="48"><QrCode /></el-icon>
+                    <el-icon size="48"><Link /></el-icon>
                     <p>{{ $t('common.loading') }}</p>
                   </div>
                 </div>
@@ -205,7 +205,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessageBox } from 'element-plus';
-import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete, Check, CopyDocument, QrCode } from '@element-plus/icons-vue';
+import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete, Check, CopyDocument, Link } from '@element-plus/icons-vue';
 import { useElectionStore } from '../../stores/electionStore';
 import { useNotifications } from '@/composables/useNotifications';
 import QRCode from 'qrcode';

@@ -1,4 +1,4 @@
-// import { postApiAuthRegister, postApiAuthLogin, postApiAuthPasswordForgot, postApiAuthPasswordReset, postApiAuth2FaSetup, postApiAuth2FaEnable, postApiAuth2FaDisable } from '../api/gen/configService/sdk.gen';
+import api from './api';
 import {
   postApiAuthRegisterAccount,
   postApiAuthLogin,

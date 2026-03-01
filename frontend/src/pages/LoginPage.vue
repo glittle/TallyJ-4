@@ -112,11 +112,7 @@ const handleLogin = async () => {
         showWarningMessage("Voter OTC login not fully implemented in backend yet.");
         return;
       } else if (isTellerLogin.value) {
-        // Handle System 2 login (Passcode)
-        // await authStore.loginTeller(loginForm.passcode);
-        showWarningMessage(
-          "Guest Teller passcode login not fully implemented in backend yet."
-        );
+        router.push({ name: 'teller-join' });
         return;
       }
 
