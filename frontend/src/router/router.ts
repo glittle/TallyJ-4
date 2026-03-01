@@ -57,6 +57,12 @@ const routes = [
         component: () => import("../pages/PublicDisplayPage.vue"),
         meta: { titleKey: 'nav.publicDisplay' },
       },
+      {
+        path: "teller-join/:electionGuid?",
+        name: "teller-join",
+        component: () => import("../pages/TellerJoinPage.vue"),
+        meta: { titleKey: 'auth.tellerJoin.title' },
+      },
     ],
   },
   {

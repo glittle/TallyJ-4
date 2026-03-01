@@ -41,5 +41,13 @@ export const tellerService = {
       `/api/elections/${electionGuid}/tellers/${rowId}`
     )
     return response.data.data
+  },
+
+  async toggleTellerAccess(electionGuid: string, isOpen: boolean) {
+    const response = await api.put<ApiResponse<boolean>>(
+      `/api/elections/${electionGuid}/teller-access`,
+      { isOpen }
+    )
+    return response.data.data
   }
 }

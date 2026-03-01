@@ -24,7 +24,7 @@ const options = [
     title: "auth.landing.optionTeller",
     description: "auth.landing.optionTellerDesc",
     buttonText: "auth.landing.loginTeller",
-    action: () => navigateToLogin("teller"),
+    action: () => router.push({ name: "teller-join" }),
   },
   {
     type: "officer",

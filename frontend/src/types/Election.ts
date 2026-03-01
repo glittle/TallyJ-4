@@ -36,6 +36,8 @@ export interface ElectionDto {
   customMethods?: string;
   votingMethods?: string;
   flags?: string;
+  isTellerAccessOpen?: boolean;
+  tellerAccessOpenedAt?: string;
 }
 
 export interface CreateElectionDto {
@@ -115,4 +117,7 @@ export interface ElectionSummaryDto {
   tallyStatus?: string;
   voterCount: number;
   ballotCount: number;
+  isTellerAccessOpen?: boolean;
+  isOnlineVotingEnabled?: boolean;
+  showAsTest?: boolean;
 }

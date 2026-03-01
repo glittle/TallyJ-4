@@ -1938,6 +1938,14 @@ export type ElectionDto = {
      * Additional flags and settings (JSON).
      */
     flags?: string | null;
+    /**
+     * Whether the election is currently open for assistant tellers to join.
+     */
+    isTellerAccessOpen?: boolean;
+    /**
+     * The date and time when teller access was opened.
+     */
+    tellerAccessOpenedAt?: Date | null;
 };
 
 export const ElectionModeCode = {
@@ -2172,6 +2180,18 @@ export type ElectionSummaryDto = {
      */
     ballotCount?: number;
     electionMode?: ElectionModeCode;
+    /**
+     * Whether the election is currently open for assistant tellers to join.
+     */
+    isTellerAccessOpen?: boolean;
+    /**
+     * Whether online voting is currently enabled for this election.
+     */
+    isOnlineVotingEnabled?: boolean;
+    /**
+     * Whether this election is marked as a test election.
+     */
+    showAsTest?: boolean | null;
 };
 
 export const ElectionTypeCode = {
@@ -4128,6 +4148,11 @@ export type TellerDto = {
     isHeadTeller?: boolean;
 };
 
+export type TellerLoginRequest = {
+    electionGuid: string;
+    accessCode: string;
+};
+
 /**
  * Information about a candidate involved in a tie.
  */
@@ -4288,6 +4313,16 @@ export type TimeSegmentDto = {
      * The voting rate during this time segment.
      */
     votingRate?: number;
+};
+
+/**
+ * Data transfer object for toggling teller access on an election.
+ */
+export type ToggleTellerAccessDto = {
+    /**
+     * Whether to open (true) or close (false) teller access.
+     */
+    isOpen?: boolean;
 };
 
 /**
@@ -5520,6 +5555,23 @@ export type PostApiAuthLoginResponses = {
     200: unknown;
 };
 
+export type PostApiAuthTellerLoginData = {
+    /**
+     * The teller login request containing election GUID and access code.
+     */
+    body?: TellerLoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/teller-login';
+};
+
+export type PostApiAuthTellerLoginResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type PostApiAuthForgotPasswordData = {
     /**
      * The forgot password request containing the user's email.
@@ -6237,6 +6289,30 @@ export type PutApiElectionsByGuidUpdateElectionResponses = {
 };
 
 export type PutApiElectionsByGuidUpdateElectionResponse = PutApiElectionsByGuidUpdateElectionResponses[keyof PutApiElectionsByGuidUpdateElectionResponses];
+
+export type PutApiElectionsByGuidTellerAccessData = {
+    /**
+     * The toggle request containing the desired open/closed state.
+     */
+    body?: ToggleTellerAccessDto;
+    path: {
+        /**
+         * The GUID of the election.
+         */
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/teller-access';
+};
+
+export type PutApiElectionsByGuidTellerAccessResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseElectionDto;
+};
+
+export type PutApiElectionsByGuidTellerAccessResponse = PutApiElectionsByGuidTellerAccessResponses[keyof PutApiElectionsByGuidTellerAccessResponses];
 
 export type DeleteApiElectionsByGuidDeleteElectionData = {
     body?: never;

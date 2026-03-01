@@ -186,6 +186,16 @@ public class ElectionDto
     /// Additional flags and settings (JSON).
     /// </summary>
     public string? Flags { get; set; }
+
+    /// <summary>
+    /// Whether the election is currently open for assistant tellers to join.
+    /// </summary>
+    public bool IsTellerAccessOpen { get; set; }
+
+    /// <summary>
+    /// The date and time when teller access was opened.
+    /// </summary>
+    public DateTime? TellerAccessOpenedAt { get; set; }
 }
 
 

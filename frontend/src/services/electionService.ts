@@ -32,6 +32,9 @@ export const electionService = {
         tallyStatus: item.tallyStatus ?? undefined,
         voterCount: item.voterCount ?? 0,
         ballotCount: item.ballotCount ?? 0,
+        isTellerAccessOpen: item.isTellerAccessOpen ?? false,
+        isOnlineVotingEnabled: item.isOnlineVotingEnabled ?? false,
+        showAsTest: item.showAsTest ?? false,
       })) || []
     );
   },

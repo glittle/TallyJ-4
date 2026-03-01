@@ -1,4 +1,4 @@
-// import { postApiAuthRegister, postApiAuthLogin, postApiAuthPasswordForgot, postApiAuthPasswordReset, postApiAuth2FaSetup, postApiAuth2FaEnable, postApiAuth2FaDisable } from '../api/gen/configService/sdk.gen';
+import api from './api';
 import {
   postApiAuthRegisterAccount,
   postApiAuthLogin,
@@ -107,6 +107,14 @@ export const authService = {
     if (!response.ok) {
       throw new Error('Logout failed');
     }
+  },
+
+  async tellerLogin(electionGuid: string, accessCode: string): Promise<{ electionGuid: string; electionName: string }> {
+    const response = await api.post('/api/auth/teller-login', {
+      electionGuid,
+      accessCode,
+    });
+    return response.data;
   },
 };
 

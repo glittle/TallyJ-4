@@ -53,6 +53,10 @@ public enum SecurityEventType
     BruteForceAttemptDetected,
     UnusualLoginLocation,
 
+    // Teller Events
+    TellerLoginSuccess,
+    TellerLoginFailure,
+
     // Rate Limiting Events
     RateLimitExceeded,
 

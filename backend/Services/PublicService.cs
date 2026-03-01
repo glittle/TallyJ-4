@@ -32,7 +32,7 @@ public class PublicService : IPublicService
     public async Task<PublicHomeDto> GetPublicHomeDataAsync()
     {
         var availableElectionsCount = await _context.Elections
-            .Where(e => !string.IsNullOrEmpty(e.ElectionPasscode))
+            .Where(e => e.ListedForPublicAsOf != null)
             .CountAsync();
 
         _logger.LogInformation("Public home data requested. Available elections: {Count}", availableElectionsCount);
@@ -54,7 +54,7 @@ public class PublicService : IPublicService
     public async Task<List<AvailableElectionDto>> GetAvailableElectionsAsync()
     {
         var elections = (await _context.Elections
-            .Where(e => !string.IsNullOrEmpty(e.ElectionPasscode))
+            .Where(e => e.ListedForPublicAsOf != null)
             .OrderByDescending(e => e.DateOfElection ?? DateTime.MinValue)
             .Select(e => new
             {

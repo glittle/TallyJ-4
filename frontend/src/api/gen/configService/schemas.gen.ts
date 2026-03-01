@@ -2684,6 +2684,16 @@ export const ElectionDtoSchema = {
             type: 'string',
             description: 'Additional flags and settings (JSON).',
             nullable: true
+        },
+        isTellerAccessOpen: {
+            type: 'boolean',
+            description: 'Whether the election is currently open for assistant tellers to join.'
+        },
+        tellerAccessOpenedAt: {
+            type: 'string',
+            description: 'The date and time when teller access was opened.',
+            format: 'date-time',
+            nullable: true
         }
     },
     additionalProperties: false,
@@ -3003,6 +3013,19 @@ export const ElectionSummaryDtoSchema = {
         },
         electionMode: {
             $ref: '#/components/schemas/ElectionModeCode'
+        },
+        isTellerAccessOpen: {
+            type: 'boolean',
+            description: 'Whether the election is currently open for assistant tellers to join.'
+        },
+        isOnlineVotingEnabled: {
+            type: 'boolean',
+            description: 'Whether online voting is currently enabled for this election.'
+        },
+        showAsTest: {
+            type: 'boolean',
+            description: 'Whether this election is marked as a test election.',
+            nullable: true
         }
     },
     additionalProperties: false,
@@ -5726,6 +5749,25 @@ export const TellerDtoSchema = {
     description: 'Data transfer object representing a teller in an election.'
 } as const;
 
+export const TellerLoginRequestSchema = {
+    required: [
+        'accessCode',
+        'electionGuid'
+    ],
+    type: 'object',
+    properties: {
+        electionGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        accessCode: {
+            minLength: 1,
+            type: 'string'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const TieCandidateDtoSchema = {
     type: 'object',
     properties: {
@@ -5944,6 +5986,18 @@ export const TimeSegmentDtoSchema = {
     },
     additionalProperties: false,
     description: 'A time segment with voting statistics.'
+} as const;
+
+export const ToggleTellerAccessDtoSchema = {
+    type: 'object',
+    properties: {
+        isOpen: {
+            type: 'boolean',
+            description: 'Whether to open (true) or close (false) teller access.'
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for toggling teller access on an election.'
 } as const;
 
 export const TrendDataDtoSchema = {

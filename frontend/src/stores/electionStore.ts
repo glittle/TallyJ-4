@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { electionService } from '../services/electionService';
 import { signalrService } from '../services/signalrService';
+import { tellerService } from '../services/tellerService';
 
 import type { ElectionDto, CreateElectionDto, UpdateElectionDto } from '../types';
 import type { ElectionUpdateEvent } from '../types/SignalREvents';
@@ -229,6 +230,35 @@ export const useElectionStore = defineStore('election', () => {
     }
   }
 
+  async function toggleTellerAccess(electionGuid: string, isOpen: boolean) {
+    loading.value = true;
+    error.value = null;
+    try {
+      await tellerService.toggleTellerAccess(electionGuid, isOpen);
+
+      // Update the local election data
+      const index = elections.value.findIndex(e => e.electionGuid === electionGuid);
+      if (index !== -1) {
+        elections.value[index] = {
+          ...elections.value[index],
+          isTellerAccessOpen: isOpen,
+        } as ElectionDto;
+      }
+
+      if (currentElection.value?.electionGuid === electionGuid) {
+        currentElection.value = {
+          ...currentElection.value,
+          isTellerAccessOpen: isOpen,
+        } as ElectionDto;
+      }
+    } catch (e: any) {
+      error.value = extractApiErrorMessage(e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     elections,
     currentElection,
@@ -245,6 +275,7 @@ export const useElectionStore = defineStore('election', () => {
     clearError,
     initializeSignalR,
     joinElection,
-    leaveElection
+    leaveElection,
+    toggleTellerAccess
   };
 });

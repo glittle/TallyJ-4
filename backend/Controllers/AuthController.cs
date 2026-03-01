@@ -211,6 +211,93 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
+    /// Authenticates an assistant teller using an election access code.
+    /// </summary>
+    /// <param name="request">The teller login request containing election GUID and access code.</param>
+    /// <returns>A teller authentication response with a limited JWT if successful.</returns>
+    [AllowAnonymous]
+    [HttpPost("teller-login")]
+    public async Task<IActionResult> TellerLogin([FromBody] TellerLoginRequest request)
+    {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
+        var election = await _context.Elections
+            .FirstOrDefaultAsync(e => e.ElectionGuid == request.ElectionGuid);
+
+        if (election == null)
+        {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.TellerLoginFailure,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"Teller login failed: election not found ({request.ElectionGuid})",
+                IsSuspicious = false,
+                Severity = SecurityEventSeverity.Info
+            });
+            return BadRequest(new { error = "Invalid election or access code" });
+        }
+
+        if (election.ListedForPublicAsOf == null)
+        {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.TellerLoginFailure,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"Teller login failed: election not open for tellers ({request.ElectionGuid})",
+                IsSuspicious = false,
+                Severity = SecurityEventSeverity.Info
+            });
+            return BadRequest(new { error = "This election is not currently open for teller access" });
+        }
+
+        if (string.IsNullOrEmpty(election.ElectionPasscode) ||
+            !string.Equals(election.ElectionPasscode, request.AccessCode, StringComparison.Ordinal))
+        {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.TellerLoginFailure,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"Teller login failed: invalid access code for election ({request.ElectionGuid})",
+                IsSuspicious = true,
+                Severity = SecurityEventSeverity.Warning
+            });
+            return BadRequest(new { error = "Invalid election or access code" });
+        }
+
+        var token = _jwtTokenService.GenerateTellerToken(election.ElectionGuid);
+
+        SecureCookieMiddleware.SetAuthCookies(
+            HttpContext,
+            token,
+            "",
+            "",
+            "Teller",
+            "AccessCode",
+            HttpContext.Request.IsHttps
+        );
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.TellerLoginSuccess,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = $"Teller login successful for election ({request.ElectionGuid})",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
+
+        return Ok(new TellerLoginResponse
+        {
+            ElectionGuid = election.ElectionGuid,
+            ElectionName = election.Name
+        });
+    }
+
+    /// <summary>
     /// Initiates a password reset by sending a reset email to the user.
     /// </summary>
     /// <param name="request">The forgot password request containing the user's email.</param>
