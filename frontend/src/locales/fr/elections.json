@@ -123,5 +123,15 @@
   "elections.tabs.publicDisplay": "Affichage public",
   "elections.tabs.results": "Résultats",
   "elections.tabs.tellers": "Scrutateurs",
-  "elections.tabs.votingMethods": "Méthodes de vote"
+  "elections.tabs.votingMethods": "Méthodes de vote",
+  "elections.tellerAccess": "Accès Scrutateur",
+  "elections.tellerAccessOpen": "L'accès scrutateur est ouvert",
+  "elections.tellerAccessClosed": "L'accès scrutateur est fermé",
+  "elections.tellerAccessCode": "Code d'accès",
+  "elections.tellerAccessUrl": "URL partageable",
+  "elections.tellerAccessQrCode": "Code QR",
+  "elections.onlineVotingEnabled": "Le vote en ligne est activé",
+  "elections.onlineVotingDisabled": "Le vote en ligne est désactivé",
+  "elections.toggleTellerAccess": "Basculer l'accès scrutateur",
+  "elections.copyUrl": "Copier l'URL"
 }

@@ -67,7 +67,7 @@
           </el-empty>
         </div>
         <div v-else role="table" aria-label="Recent elections table" class="elections-table-container">
-          <el-table :data="electionsWithDetails" style="width: 100%" :expand-row-keys="expandedRowKeys" row-key="electionGuid">
+          <el-table :data="elections" style="width: 100%" :expand-row-keys="expandedRowKeys" row-key="electionGuid">
             <el-table-column type="expand">
               <template #default="{ row }">
                 <div class="expanded-content">
@@ -123,14 +123,13 @@
 
                       <div class="detail-section" style="margin-top: 20px;">
                         <h4>{{ $t('dashboard.tellers') }}</h4>
-                        <div v-if="row.tellerCount > 0" class="detail-row">
-                          <span class="detail-label">{{ $t('dashboard.tellerCount') }}:</span>
+                        <div class="detail-row">
+                          <span class="detail-label">{{ $t('dashboard.tellersStatus') }}:</span>
                           <span class="detail-value">
-                            <el-tag>{{ row.tellerCount }}</el-tag>
+                            <el-tag :type="row.isTellerAccessOpen ? 'success' : 'info'">
+                              {{ row.isTellerAccessOpen ? $t('dashboard.open') : $t('dashboard.closed') }}
+                            </el-tag>
                           </span>
-                        </div>
-                        <div v-else class="detail-row">
-                          <span class="detail-value">{{ $t('dashboard.noTellers') }}</span>
                         </div>
                       </div>
                     </el-col>
@@ -173,15 +172,12 @@
               <template #default="scope">
                 <div class="status-indicator">
                   <el-switch 
-                    :model-value="isOnlineVotingOpen(scope.row)" 
+                    :model-value="scope.row.isOnlineVotingEnabled === true" 
                     :disabled="true"
                     inline-prompt
                     :active-text="$t('dashboard.open')"
                     :inactive-text="$t('dashboard.closed')"
                   />
-                  <div v-if="scope.row.onlineWhenClose" class="status-time">
-                    {{ formatRelativeTime(scope.row.onlineWhenClose) }}
-                  </div>
                 </div>
               </template>
             </el-table-column>
@@ -189,10 +185,10 @@
               <template #default="scope">
                 <div class="status-indicator">
                   <el-switch 
-                    :model-value="scope.row.tellerCount > 0" 
+                    :model-value="scope.row.isTellerAccessOpen === true" 
                     :disabled="true"
                     inline-prompt
-                    :active-text="$t('dashboard.active')"
+                    :active-text="$t('dashboard.open')"
                     :inactive-text="$t('dashboard.closed')"
                   />
                 </div>
@@ -222,30 +218,23 @@ import {
   Plus,
 } from "@element-plus/icons-vue";
 import { useElectionStore } from "../stores/electionStore";
-import { tellerService } from "../services/tellerService";
-import type { ElectionDto } from "../types";
+import type { ElectionSummaryDto } from "../types";
 
 const router = useRouter();
 const electionStore = useElectionStore();
 const expandedRowKeys = ref<string[]>([]);
 
-interface ElectionWithDetails extends ElectionDto {
-  tellerCount: number;
-}
-
-const elections = computed(() => {
-  // Sort by dateOfElection descending (most recent first), then take first 5
-  return electionStore.elections
+const elections = computed<ElectionSummaryDto[]>(() => {
+  return (electionStore.elections as ElectionSummaryDto[])
     .slice()
     .sort((a, b) => {
       const dateA = a.dateOfElection ? new Date(a.dateOfElection).getTime() : 0;
       const dateB = b.dateOfElection ? new Date(b.dateOfElection).getTime() : 0;
-      return dateB - dateA; // Descending order
+      return dateB - dateA;
     })
     .slice(0, 5);
 });
 
-const electionsWithDetails = ref<ElectionWithDetails[]>([]);
 const loading = computed(() => electionStore.loading);
 
 const statistics = computed(() => ({
@@ -261,33 +250,9 @@ async function loadDashboardData() {
   try {
     await electionStore.fetchElections();
     await electionStore.initializeSignalR();
-    await loadTellerCounts();
   } catch (error) {
     console.error("Failed to load dashboard data:", error);
   }
-}
-
-async function loadTellerCounts() {
-  // Load teller counts for all elections
-  const electionsData: ElectionWithDetails[] = [];
-  
-  for (const election of elections.value) {
-    try {
-      const tellers = await tellerService.getTellersByElection(election.electionGuid, 1, 1);
-      electionsData.push({
-        ...election,
-        tellerCount: tellers.totalCount || 0
-      });
-    } catch (error) {
-      // If we can't fetch tellers, just use 0
-      electionsData.push({
-        ...election,
-        tellerCount: 0
-      });
-    }
-  }
-  
-  electionsWithDetails.value = electionsData;
 }
 
 function createElection() {
@@ -307,35 +272,6 @@ function formatDateTime(date: string | null | undefined) {
   if (!date) return "-";
   const dateObj = new Date(date);
   return dateObj.toLocaleString();
-}
-
-function formatRelativeTime(date: string | null | undefined) {
-  if (!date) return "";
-  const now = new Date();
-  const target = new Date(date);
-  const diff = target.getTime() - now.getTime();
-  
-  if (diff < 0) {
-    const daysPast = Math.floor(Math.abs(diff) / (1000 * 60 * 60 * 24));
-    if (daysPast === 0) return "closed today";
-    if (daysPast === 1) return "closed yesterday";
-    return `closed ${daysPast} days ago`;
-  } else {
-    const daysUntil = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hoursUntil = Math.floor(diff / (1000 * 60 * 60));
-    if (hoursUntil < 24) return `in ${hoursUntil} hours`;
-    if (daysUntil === 0) return "closes today";
-    if (daysUntil === 1) return "tomorrow";
-    return `in ${daysUntil} days`;
-  }
-}
-
-function isOnlineVotingOpen(election: ElectionDto) {
-  if (!election.onlineWhenOpen || !election.onlineWhenClose) return false;
-  const now = new Date();
-  const open = new Date(election.onlineWhenOpen);
-  const close = new Date(election.onlineWhenClose);
-  return now >= open && now <= close;
 }
 
 function getStatusType(status: string) {

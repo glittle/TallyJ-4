@@ -76,16 +76,16 @@ Remove the N+1 teller count API calls from `DashboardPage.vue`. Use `isTellerAcc
 
 ---
 
-### [ ] Step 5: Election Detail Page — Teller Information Section + QR Code
+### [x] Step 5: Election Detail Page — Teller Information Section + QR Code
 <!-- chat-id: 859df183-9e89-4bde-85a5-c264a64ef10c -->
 
 Add a "Teller Access" card after Quick Actions showing: toggle, access code, shareable URL, QR code. Also show online voting status. Install `qrcode` npm dependency.
 
-- [ ] `npm install qrcode @types/qrcode`
-- [ ] Add teller info section to `ElectionDetailPage.vue`
-- [ ] Add i18n keys to `en/elections.json` and `en/dashboard.json`
-- [ ] Add French i18n keys
-- [ ] Run `npx vue-tsc --noEmit`
+- [x] `npm install qrcode @types/qrcode`
+- [x] Add teller info section to `ElectionDetailPage.vue`
+- [x] Add i18n keys to `en/elections.json` and `en/dashboard.json`
+- [x] Add French i18n keys
+- [x] Run `npx vue-tsc --noEmit`
 
 ---
 

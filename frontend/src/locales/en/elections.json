@@ -125,5 +125,15 @@
   "elections.electionTypes.Oth": "Other",
   "elections.electionModes.N": "Normal Election",
   "elections.electionModes.T": "Tie-Break",
-  "elections.electionModes.B": "By-election"
+  "elections.electionModes.B": "By-election",
+  "elections.tellerAccess": "Teller Access",
+  "elections.tellerAccessOpen": "Teller access is open",
+  "elections.tellerAccessClosed": "Teller access is closed",
+  "elections.tellerAccessCode": "Access Code",
+  "elections.tellerAccessUrl": "Shareable URL",
+  "elections.tellerAccessQrCode": "QR Code",
+  "elections.onlineVotingEnabled": "Online voting is enabled",
+  "elections.onlineVotingDisabled": "Online voting is disabled",
+  "elections.toggleTellerAccess": "Toggle Teller Access",
+  "elections.copyUrl": "Copy URL"
 }
