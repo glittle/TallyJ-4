@@ -119,3 +119,8 @@ When I attempted to log in as an assistant/guest teller, I got "Guest Teller pas
 - `authService.tellerLogin()` used `api.post()` but `api` was never imported — added `import api from './api'`
 - `LoginPage.vue` teller mode still had stub message — changed to redirect to `TellerJoinPage` which has the full working flow
 - `ElectionDetailPage.vue` imported `QrCode` from `@element-plus/icons-vue` which doesn't exist — replaced with `Link` icon
+- `PublicService.GetAvailableElectionsAsync()` filter changed from `!string.IsNullOrEmpty(e.ElectionPasscode)` to `e.ListedForPublicAsOf != null` for correctness
+- `TellerJoinPage.vue` rewritten: replaced manual GUID input with election dropdown from `GET /api/public/elections`, added `show-password` toggle
+- French i18n (`fr/auth.json`) updated with new `tellerJoin` keys matching English (`selectElection`, `selectElectionPlaceholder`, `electionRequired`, `noElections`)
+
+**Verification:** Backend build — 0 errors, 11 pre-existing warnings. Frontend `vue-tsc --noEmit` — clean.
