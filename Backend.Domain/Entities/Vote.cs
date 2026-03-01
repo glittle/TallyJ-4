@@ -18,6 +18,9 @@ public partial class Vote
 
     public int PositionOnBallot { get; set; }
 
+    /// <summary>
+    /// The GUID of the person this vote is for.
+    /// </summary>
     public Guid? PersonGuid { get; set; }
 
     [StringLength(10)]

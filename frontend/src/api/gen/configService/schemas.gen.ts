@@ -4526,14 +4526,6 @@ export const PersonDetailDtoSchema = {
             description: 'JSON array of registration history entries.\nEach entry contains timestamp, action, and metadata.',
             nullable: true
         },
-        voteHistory: {
-            type: 'array',
-            items: {
-                $ref: '#/components/schemas/VoteHistoryDto'
-            },
-            description: 'List of votes cast by this person on various ballots.',
-            nullable: true
-        },
         voteCount: {
             type: 'integer',
             description: 'The number of votes this person has received.',
@@ -4541,7 +4533,7 @@ export const PersonDetailDtoSchema = {
         }
     },
     additionalProperties: false,
-    description: 'Detailed DTO for editing a person.\nContains all editable fields plus registration and vote history.'
+    description: 'Detailed DTO for editing a person.\nContains all editable fields plus registration history.'
 } as const;
 
 export const PersonDtoSchema = {
@@ -6707,57 +6699,6 @@ export const VoteDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object representing a vote in an election.\nContains vote details including candidate information and ballot context.'
-} as const;
-
-export const VoteHistoryDtoSchema = {
-    type: 'object',
-    properties: {
-        ballotGuid: {
-            type: 'string',
-            description: 'The GUID of the ballot this vote belongs to.',
-            format: 'uuid'
-        },
-        positionOnBallot: {
-            type: 'integer',
-            description: 'The position of this vote on the ballot.',
-            format: 'int32'
-        },
-        personGuid: {
-            type: 'string',
-            description: 'The GUID of the person who received this vote.',
-            format: 'uuid',
-            nullable: true
-        },
-        personName: {
-            type: 'string',
-            description: 'The full name of the person who received this vote.',
-            nullable: true
-        },
-        statusCode: {
-            type: 'string',
-            description: 'Status code of the vote (e.g., \'ok\', \'extra\', \'invalid\').',
-            nullable: true
-        },
-        invalidReasonGuid: {
-            type: 'string',
-            description: 'The GUID of the reason why this vote is invalid (if applicable).',
-            format: 'uuid',
-            nullable: true
-        },
-        ballotNumber: {
-            type: 'integer',
-            description: 'The ballot number for display purposes.',
-            format: 'int32',
-            nullable: true
-        },
-        ballotStatusCode: {
-            type: 'string',
-            description: 'The status code of the ballot.',
-            nullable: true
-        }
-    },
-    additionalProperties: false,
-    description: 'Represents a single vote in a person\'s vote history.'
 } as const;
 
 export const VoteReportDtoSchema = {

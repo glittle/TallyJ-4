@@ -3163,7 +3163,7 @@ export type ParticipationRateDto = {
 
 /**
  * Detailed DTO for editing a person.
- * Contains all editable fields plus registration and vote history.
+ * Contains all editable fields plus registration history.
  */
 export type PersonDetailDto = {
     /**
@@ -3267,10 +3267,6 @@ export type PersonDetailDto = {
      * Each entry contains timestamp, action, and metadata.
      */
     registrationHistory?: string | null;
-    /**
-     * List of votes cast by this person on various ballots.
-     */
-    voteHistory?: Array<VoteHistoryDto> | null;
     /**
      * The number of votes this person has received.
      */
@@ -4831,44 +4827,6 @@ export type VoteDto = {
      * Raw data from online voting systems.
      */
     onlineVoteRaw?: string | null;
-};
-
-/**
- * Represents a single vote in a person's vote history.
- */
-export type VoteHistoryDto = {
-    /**
-     * The GUID of the ballot this vote belongs to.
-     */
-    ballotGuid?: string;
-    /**
-     * The position of this vote on the ballot.
-     */
-    positionOnBallot?: number;
-    /**
-     * The GUID of the person who received this vote.
-     */
-    personGuid?: string | null;
-    /**
-     * The full name of the person who received this vote.
-     */
-    personName?: string | null;
-    /**
-     * Status code of the vote (e.g., 'ok', 'extra', 'invalid').
-     */
-    statusCode?: string | null;
-    /**
-     * The GUID of the reason why this vote is invalid (if applicable).
-     */
-    invalidReasonGuid?: string | null;
-    /**
-     * The ballot number for display purposes.
-     */
-    ballotNumber?: number | null;
-    /**
-     * The status code of the ballot.
-     */
-    ballotStatusCode?: string | null;
 };
 
 /**

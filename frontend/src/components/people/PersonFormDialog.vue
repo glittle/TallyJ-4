@@ -236,16 +236,6 @@ function handleClose() {
       <div v-if="isEdit && personDetails" class="history-section">
         <el-divider />
         
-        <div v-if="personDetails.voteHistory && personDetails.voteHistory.length > 0" class="vote-history">
-          <h4>{{ $t('people.voteHistory') }}</h4>
-          <el-table :data="personDetails.voteHistory" size="small" max-height="200">
-            <el-table-column prop="ballotNumber" :label="$t('ballot.number')" width="80" />
-            <el-table-column prop="positionOnBallot" :label="$t('ballot.position')" width="80" />
-            <el-table-column prop="personName" :label="$t('people.votedFor')" />
-            <el-table-column prop="statusCode" :label="$t('ballot.status')" width="100" />
-          </el-table>
-        </div>
-        
         <div v-if="personDetails.voteCount > 0" class="vote-count">
           <p><strong>{{ $t('people.votesReceived') }}:</strong> {{ personDetails.voteCount }}</p>
         </div>
@@ -285,7 +275,6 @@ function handleClose() {
       font-weight: var(--font-weight-semibold);
     }
     
-    .vote-history,
     .registration-history,
     .vote-count {
       margin-bottom: var(--spacing-4);

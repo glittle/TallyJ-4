@@ -416,8 +416,8 @@ public class PeopleService : IPeopleService
     }
 
     /// <summary>
-    /// Retrieves detailed information about a specific person, including registration and vote history.
-    /// Includes all editable fields plus complete voting records cast by this person.
+    /// Retrieves detailed information about a specific person, including registration history.
+    /// Includes all editable fields.
     /// </summary>
     /// <param name="personGuid">The unique identifier of the person.</param>
     /// <returns>Detailed person data with history, or null if not found.</returns>
@@ -425,10 +425,6 @@ public class PeopleService : IPeopleService
     {
         var person = await _context.People
             .Include(p => p.Results)
-            .Include(p => p.Votes)
-                .ThenInclude(v => v.Ballot)
-            .Include(p => p.Votes)
-                .ThenInclude(v => v.Person)
             .FirstOrDefaultAsync(p => p.PersonGuid == personGuid);
 
         if (person == null)
@@ -440,12 +436,6 @@ public class PeopleService : IPeopleService
 
         // Get vote count (how many votes this person has received)
         dto.VoteCount = person.Results.FirstOrDefault()?.VoteCount ?? 0;
-
-        // Map vote history (votes cast by this person on ballots)
-        dto.VoteHistory = _mapper.Map<List<VoteHistoryDto>>(person.Votes
-            .OrderBy(v => v.BallotGuid)
-            .ThenBy(v => v.PositionOnBallot)
-            .ToList());
 
         return dto;
     }

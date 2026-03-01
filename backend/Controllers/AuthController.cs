@@ -561,7 +561,7 @@ public class AuthController : ControllerBase
         // Set secure cookies with authentication data
         SecureCookieMiddleware.SetAuthCookies(
             HttpContext,
-            response.Token ?? "",
+            response!.Token ?? "",
             response.RefreshToken ?? "",
             response.Email,
             response.Name,
@@ -592,18 +592,18 @@ public class AuthController : ControllerBase
     {
         // Try to get refresh token from request body first, then fall back to cookie
         var refreshTokenValue = request?.RefreshToken;
-        
+
         if (string.IsNullOrEmpty(refreshTokenValue))
         {
             // Try to get from cookie
             refreshTokenValue = HttpContext.Request.Cookies["refresh_token"];
         }
-        
+
         if (string.IsNullOrEmpty(refreshTokenValue))
         {
             return BadRequest(new { error = "Refresh token is required" });
         }
-        
+
         var tokenHash = _jwtTokenService.HashRefreshToken(refreshTokenValue);
         var refreshToken = await _context.RefreshTokens
             .FirstOrDefaultAsync(rt => rt.TokenHash == tokenHash && !rt.IsRevoked);
@@ -632,6 +632,8 @@ public class AuthController : ControllerBase
         _context.RefreshTokens.Add(newRefreshTokenEntity);
         await _context.SaveChangesAsync();
 
+        var authMethod = user.AuthMethod ?? "Local";
+
         // Set secure cookies with new tokens
         SecureCookieMiddleware.SetAuthCookies(
             HttpContext,
@@ -639,7 +641,7 @@ public class AuthController : ControllerBase
             newRefreshToken,
             user.Email!,
             user.DisplayName,
-            user.AuthMethod ?? "Local",
+            authMethod,
             HttpContext.Request.IsHttps
         );
 
@@ -649,7 +651,7 @@ public class AuthController : ControllerBase
             RefreshToken = null, // Not returned - stored in httpOnly cookie
             Email = user.Email!,
             Name = user.DisplayName,
-            AuthMethod = user.AuthMethod,
+            AuthMethod = authMethod,
             Requires2FA = false
         });
     }
@@ -859,8 +861,10 @@ public class AuthController : ControllerBase
                 return Redirect(GetErrorRedirectUrl(returnUrl, "Failed to retrieve login information from Google"));
             }
 
+            var principal = authenticateResult.Principal!;
+
             _logger.LogInformation("Google callback: External auth succeeded, principal: {Principal}",
-                authenticateResult.Principal?.Identity?.Name ?? "null");
+                principal.Identity?.Name ?? "null");
 
             // Extract return URL and redirect from authentication properties
             if (authenticateResult.Properties?.Items.TryGetValue("returnUrl", out var returnUrlValue) == true)
@@ -879,16 +883,16 @@ public class AuthController : ControllerBase
             }
 
             // Extract claims directly from the authenticated principal
-            var email = authenticateResult.Principal.FindFirstValue(ClaimTypes.Email);
+            var email = principal.FindFirstValue(ClaimTypes.Email);
             if (string.IsNullOrEmpty(email))
             {
                 _logger.LogWarning("Google callback: Email claim is missing from Google response");
                 return Redirect(GetErrorRedirectUrl(returnUrl, "Email not provided by Google"));
             }
 
-            var googleId = authenticateResult.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            var displayName = authenticateResult.Principal.FindFirstValue(ClaimTypes.Name) ??
-                              authenticateResult.Principal.FindFirstValue(ClaimTypes.GivenName);
+            var googleId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            var displayName = principal.FindFirstValue(ClaimTypes.Name) ??
+                              principal.FindFirstValue(ClaimTypes.GivenName);
 
             var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
             var userAgent = HttpContext.Request.Headers.UserAgent.ToString();

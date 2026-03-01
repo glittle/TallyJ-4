@@ -108,7 +108,7 @@ public class PeopleImportService : IPeopleImportService
                 var worksheet = workbook.Worksheets.First();
                 detectedHeaderRow = DetectHeaderRow(worksheet);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // If detection fails for any reason (corrupt file, empty worksheet, etc.), 
                 // default to row 1 and let later validation handle the error

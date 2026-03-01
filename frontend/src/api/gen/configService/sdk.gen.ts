@@ -971,8 +971,8 @@ export const getApiPeopleByElectionGuidGetAllPeople = <ThrowOnError extends bool
 });
 
 /**
- * Gets detailed information about a specific person, including all editable fields,
- * registration history, and vote history.
+ * Gets detailed information about a specific person, including all editable fields
+ * and registration history.
  */
 export const getApiPeopleByGuidGetPersonDetails = <ThrowOnError extends boolean = false>(options: Options<GetApiPeopleByGuidGetPersonDetailsData, ThrowOnError>) => (options.client ?? client).get<GetApiPeopleByGuidGetPersonDetailsResponses, unknown, ThrowOnError>({
     responseTransformer: getApiPeopleByGuidGetPersonDetailsResponseTransformer,
@@ -1170,12 +1170,18 @@ export const getApiPublicByElectionGuidPublicDisplay = <ThrowOnError extends boo
     ...options
 });
 
+/**
+ * Gets the authentication configuration for the frontend, such as available OAuth providers and their client IDs. This allows the frontend to dynamically adjust its authentication options based on the backend configuration.
+ */
 export const getApiPublicAuthConfig = <ThrowOnError extends boolean = false>(options?: Options<GetApiPublicAuthConfigData, ThrowOnError>) => (options?.client ?? client).get<GetApiPublicAuthConfigResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/Public/auth-config',
     ...options
 });
 
+/**
+ * Health check endpoint to verify that the API is running and responsive. This can be used by monitoring tools or load balancers to check the health of the service. It returns a simple status message along with a timestamp and service name to confirm that the API is operational.
+ */
 export const getApiPublicHealth = <ThrowOnError extends boolean = false>(options?: Options<GetApiPublicHealthData, ThrowOnError>) => (options?.client ?? client).get<GetApiPublicHealthResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/Public/health',
