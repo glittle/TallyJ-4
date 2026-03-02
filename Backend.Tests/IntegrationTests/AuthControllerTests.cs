@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Backend.Application.DTOs.Auth;
 using Backend.Middleware;
 using Xunit;
@@ -498,6 +499,169 @@ public class AuthControllerTests : IntegrationTestBase
         // This test just verifies the field exists and is a boolean
         var isSuperAdminValue = isSuperAdminProp.ValueKind;
         (isSuperAdminValue == JsonValueKind.True || isSuperAdminValue == JsonValueKind.False).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task TellerLogin_WithValidAccessCode_SetsSecureCookies_AndReturnsElectionInfo()
+    {
+        // Arrange - Create a test election with access code and open for teller access
+        var electionGuid = Guid.NewGuid();
+        var accessCode = "TestAccessCode123";
+        var testDate = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<Backend.Domain.Context.MainDbContext>();
+            var election = new Backend.Domain.Entities.Election
+            {
+                ElectionGuid = electionGuid,
+                Name = "Test Teller Login Election",
+                ElectionType = Backend.Domain.Enumerations.ElectionTypeEnum.LSA.Code,
+                ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
+                NumberToElect = 9,
+                DateOfElection = testDate.AddDays(1),
+                TallyStatus = "NotStarted",
+                ElectionPasscode = accessCode,
+                ListedForPublicAsOf = testDate, // Open for teller access
+                OwnerLoginId = "admin@tallyj.test",
+                ShowAsTest = true
+            };
+            context.Elections.Add(election);
+            await context.SaveChangesAsync();
+        }
+
+        var tellerLoginRequest = new TellerLoginRequest
+        {
+            ElectionGuid = electionGuid,
+            AccessCode = accessCode
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(tellerLoginRequest),
+            Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response = await Client.PostAsync("/api/auth/teller-login", content);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var tellerResponse = JsonSerializer.Deserialize<TellerLoginResponse>(responseContent, JsonOptions);
+
+        tellerResponse.Should().NotBeNull();
+        tellerResponse!.ElectionGuid.Should().Be(electionGuid);
+        tellerResponse.ElectionName.Should().Be("Test Teller Login Election");
+
+        // Check that secure cookies are set
+        var cookies = GetCookiesFromResponse(response);
+        cookies.Should().ContainKey(SecureCookieMiddleware.AccessTokenCookieName);
+        cookies.Should().ContainKey(SecureCookieMiddleware.AuthMethodCookieName);
+
+        // Verify cookie attributes
+        var accessTokenCookie = cookies[SecureCookieMiddleware.AccessTokenCookieName];
+        accessTokenCookie.Should().Contain("HttpOnly");
+        accessTokenCookie.Should().Contain("Secure");
+        accessTokenCookie.Should().Contain("SameSite=Strict");
+
+        // Verify auth method cookie value
+        var authMethodCookie = cookies[SecureCookieMiddleware.AuthMethodCookieName];
+        var authMethodValue = ExtractCookieValue(authMethodCookie);
+        authMethodValue.Should().Be("AccessCode");
+    }
+
+    [Fact]
+    public async Task TellerLogin_WithInvalidAccessCode_ReturnsBadRequest()
+    {
+        // Arrange - Use existing election without valid access code
+        var electionGuid = Guid.NewGuid();
+        var testDate = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<Backend.Domain.Context.MainDbContext>();
+            var election = new Backend.Domain.Entities.Election
+            {
+                ElectionGuid = electionGuid,
+                Name = "Test Election Invalid Code",
+                ElectionType = Backend.Domain.Enumerations.ElectionTypeEnum.LSA.Code,
+                ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
+                NumberToElect = 9,
+                DateOfElection = testDate.AddDays(1),
+                TallyStatus = "NotStarted",
+                ElectionPasscode = "CorrectCode",
+                ListedForPublicAsOf = testDate,
+                OwnerLoginId = "admin@tallyj.test",
+                ShowAsTest = true
+            };
+            context.Elections.Add(election);
+            await context.SaveChangesAsync();
+        }
+
+        var tellerLoginRequest = new TellerLoginRequest
+        {
+            ElectionGuid = electionGuid,
+            AccessCode = "WrongCode"
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(tellerLoginRequest),
+            Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response = await Client.PostAsync("/api/auth/teller-login", content);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task TellerLogin_WithClosedElection_ReturnsBadRequest()
+    {
+        // Arrange - Create election with null ListedForPublicAsOf (closed for tellers)
+        var electionGuid = Guid.NewGuid();
+        var accessCode = "TestCode";
+        var testDate = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<Backend.Domain.Context.MainDbContext>();
+            var election = new Backend.Domain.Entities.Election
+            {
+                ElectionGuid = electionGuid,
+                Name = "Closed Election",
+                ElectionType = Backend.Domain.Enumerations.ElectionTypeEnum.LSA.Code,
+                ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
+                NumberToElect = 9,
+                DateOfElection = testDate.AddDays(1),
+                TallyStatus = "NotStarted",
+                ElectionPasscode = accessCode,
+                ListedForPublicAsOf = null, // Closed for teller access
+                OwnerLoginId = "admin@tallyj.test",
+                ShowAsTest = true
+            };
+            context.Elections.Add(election);
+            await context.SaveChangesAsync();
+        }
+
+        var tellerLoginRequest = new TellerLoginRequest
+        {
+            ElectionGuid = electionGuid,
+            AccessCode = accessCode
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(tellerLoginRequest),
+            Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response = await Client.PostAsync("/api/auth/teller-login", content);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }
 
