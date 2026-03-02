@@ -19,6 +19,7 @@
   "people.lastNameRequired": "Last name is required",
   "people.emailInvalid": "Please enter a valid email",
   "people.loadError": "Failed to load people",
+  "people.leaveElectionGroupError": "Failed to leave election group:",
   "people.createSuccess": "Person added successfully",
   "people.updateSuccess": "Person updated successfully",
   "people.deleteSuccess": "Person deleted successfully",

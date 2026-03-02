@@ -19,12 +19,7 @@ const hideName = () => {
   <ErrorBoundary>
     <RouterView />
   </ErrorBoundary>
-  <div
-    v-if="branchName"
-    class="devBranchName"
-    title="Click to remove"
-    @click="hideName"
-  >
+  <div v-if="branchName" class="devBranchName" title="Click to remove" @click="hideName">
     {{ branchName }}
   </div>
 </template>

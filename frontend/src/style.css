@@ -1013,11 +1013,16 @@ button:focus-visible {
   border-radius: var(--radius-md);
   font-weight: var(--font-weight-medium);
   transition: var(--transition-normal);
+  padding: 0.5em 0.75em;
 }
 
 .el-button:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+}
+
+.el-button > span {
+  gap: 8px;
 }
 
 .el-input {
