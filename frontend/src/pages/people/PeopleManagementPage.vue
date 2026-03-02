@@ -1,114 +1,10 @@
-<template>
-  <div class="people-management-page">
-    <el-card>
-      <template #header>
-        <div class="card-header">
-          <div class="header-left">
-            <el-page-header @back="goBack" :content="$t('people.management')" />
-          </div>
-          <div class="header-actions">
-            <el-space>
-              <el-input v-model="searchQuery" :placeholder="$t('people.search')" style="width: 250px;" clearable
-                @input="handleSearch">
-                <template #prefix>
-                  <el-icon>
-                    <Search />
-                  </el-icon>
-                </template>
-              </el-input>
-              <el-button type="primary" @click="showAddDialog = true">
-                <el-icon>
-                  <Plus />
-                </el-icon>
-                {{ $t('people.addPerson') }}
-              </el-button>
-              <el-dropdown @command="handleBulkAction">
-                <el-button type="default">
-                  <el-icon>
-                    <MoreFilled />
-                  </el-icon>
-                  {{ $t('people.bulkActions') }}
-                  <el-icon class="el-icon--right">
-                    <ArrowDown />
-                  </el-icon>
-                </el-button>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item command="import">
-                      <el-icon>
-                        <Upload />
-                      </el-icon>
-                      {{ $t('people.importPeople') }}
-                    </el-dropdown-item>
-                    <el-dropdown-item command="export">
-                      <el-icon>
-                        <Download />
-                      </el-icon>
-                      {{ $t('people.exportPeople') }}
-                    </el-dropdown-item>
-                    <el-dropdown-item command="delete" :disabled="selectedPeople.length === 0" class="danger-item">
-                      <el-icon>
-                        <Delete />
-                      </el-icon>
-                      {{ $t('people.deleteSelected', { count: selectedPeople.length }) }}
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </el-space>
-          </div>
-        </div>
-      </template>
-
-      <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-        <el-tab-pane :label="$t('people.allPeople')" name="all">
-          <PeopleTable :people="filteredPeople" :loading="loading" :show-selection="true" :selected="selectedPeople"
-            @edit="handleEdit" @delete="handleDelete" @selection-change="handleSelectionChange" />
-        </el-tab-pane>
-        <el-tab-pane :label="$t('people.voters')" name="voters">
-          <PeopleTable :people="filteredVoters" :loading="loading" :show-selection="true" :selected="selectedPeople"
-            @edit="handleEdit" @delete="handleDelete" @selection-change="handleSelectionChange" />
-        </el-tab-pane>
-        <el-tab-pane :label="$t('people.candidates')" name="candidates">
-          <PeopleTable :people="filteredCandidates" :loading="loading" :show-selection="true" :selected="selectedPeople"
-            @edit="handleEdit" @delete="handleDelete" @selection-change="handleSelectionChange" />
-        </el-tab-pane>
-      </el-tabs>
-    </el-card>
-
-    <PersonFormDialog v-model="showAddDialog" :election-guid="electionGuid" @success="handleFormSuccess" />
-
-    <PersonFormDialog v-model="showEditDialog" :election-guid="electionGuid" :person="editingPerson" :is-edit="true"
-      @success="handleFormSuccess" />
-
-
-
-    <!-- Bulk Delete Confirmation -->
-    <el-dialog v-model="showBulkDeleteConfirm" :title="$t('people.confirmBulkDelete')" width="500px">
-      <p>{{ $t('people.bulkDeleteMessage', { count: selectedPeople.length }) }}</p>
-      <p class="warning-text">{{ $t('common.actionIrreversible') }}</p>
-
-      <template #footer>
-        <el-button @click="showBulkDeleteConfirm = false">
-          {{ $t('common.cancel') }}
-        </el-button>
-        <el-button type="danger" @click="confirmBulkDelete" :loading="bulkDeleting">
-          {{ $t('common.delete') }}
-        </el-button>
-      </template>
-    </el-dialog>
-
-
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessageBox } from 'element-plus';
 import { useNotifications } from '@/composables/useNotifications';
-import { Search, Plus, MoreFilled, ArrowDown, Download, Delete } from '@element-plus/icons-vue';
+import { Search, Plus, MoreFilled, ArrowDown, Delete, Upload } from '@element-plus/icons-vue';
 import { usePeopleStore } from '../../stores/peopleStore';
 import type { PersonListDto } from '../../types';
 import PeopleTable from '../../components/people/PeopleTable.vue';
@@ -147,26 +43,8 @@ const filteredPeople = computed(() => {
   const query = searchQuery.value.toLowerCase();
   return allPeople.value.filter(p =>
     p.fullName.toLowerCase().includes(query) ||
-    p.email?.toLowerCase().includes(query) ||
-    p.bahaiId?.toLowerCase().includes(query)
-  );
-});
-
-const filteredVoters = computed(() => {
-  if (!searchQuery.value) return voters.value;
-  const query = searchQuery.value.toLowerCase();
-  return voters.value.filter(p =>
-    p.fullName.toLowerCase().includes(query) ||
     p.email?.toLowerCase().includes(query)
-  );
-});
-
-const filteredCandidates = computed(() => {
-  if (!searchQuery.value) return candidates.value;
-  const query = searchQuery.value.toLowerCase();
-  return candidates.value.filter(p =>
-    p.fullName.toLowerCase().includes(query) ||
-    p.email?.toLowerCase().includes(query)
+    // p.bahaiId?.toLowerCase().includes(query)
   );
 });
 
@@ -176,7 +54,7 @@ onMounted(async () => {
     await peopleStore.joinElection(electionGuid);
     await peopleStore.fetchPeopleList(electionGuid);
   } catch (error) {
-    showErrorMessage(t('people.loadError'));
+    showErrorMessage(`${t('people.loadError')} ${error}`);
   }
 });
 
@@ -184,17 +62,12 @@ onUnmounted(async () => {
   try {
     await peopleStore.leaveElection(electionGuid);
   } catch (error) {
-    console.error('Failed to leave election group:', error);
+    console.error(t('people.leaveElectionGroupError'), error);
   }
 });
 
 function goBack() {
   router.push(`/elections/${electionGuid}`);
-}
-
-function handleTabChange() {
-  searchQuery.value = '';
-  selectedPeople.value = []; // Clear selection when changing tabs
 }
 
 function handleSearch() {
@@ -233,18 +106,12 @@ function handleFormSuccess() {
   editingPerson.value = null;
 }
 
-function handleSelectionChange(selection: PersonListDto[]) {
-  selectedPeople.value = selection;
+function handleImport() {
+  router.push(`/elections/${electionGuid}/people/import`);
 }
 
 function handleBulkAction(command: string) {
   switch (command) {
-    case 'import':
-      router.push(`/elections/${electionGuid}/people/import`);
-      break;
-    case 'export':
-      handleExport();
-      break;
     case 'delete':
       if (selectedPeople.value.length > 0) {
         showBulkDeleteConfirm.value = true;
@@ -253,45 +120,7 @@ function handleBulkAction(command: string) {
   }
 }
 
-async function handleExport() {
-  try {
-    // Create a download link for the export API
-    const exportUrl = `${apiBaseUrl}/elections/${electionGuid}/people/export`;
-    const link = document.createElement('a');
-    link.href = exportUrl;
-    link.setAttribute('download', `people-${electionGuid}.xlsx`);
-    link.style.display = 'none';
 
-    // Use XMLHttpRequest with credentials to send httpOnly cookies
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', exportUrl);
-    xhr.withCredentials = true; // Send httpOnly cookies automatically
-    xhr.responseType = 'blob';
-
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        const blob = new Blob([xhr.response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const url = window.URL.createObjectURL(blob);
-        link.href = url;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        showSuccessMessage(t('people.exportSuccess'));
-      } else {
-        showErrorMessage(t('people.exportError'));
-      }
-    };
-
-    xhr.onerror = function () {
-      showErrorMessage(t('people.exportError'));
-    };
-
-    xhr.send();
-  } catch (error) {
-    showErrorMessage(t('people.exportError'));
-  }
-}
 
 async function confirmBulkDelete() {
   if (selectedPeople.value.length === 0) return;
@@ -316,40 +145,126 @@ async function confirmBulkDelete() {
 
 </script>
 
-<style scoped>
+<template>
+  <div class="people-management-page">
+    <el-card>
+      <template #header>
+        <div class="card-header">
+          <div class="header-left">
+            <el-page-header @back="goBack" :content="$t('people.management')" />
+          </div>
+          <div class="header-actions">
+            <el-space>
+              <el-input v-model="searchQuery" :placeholder="$t('people.search')" style="width: 250px;" clearable
+                @input="handleSearch">
+                <template #prefix>
+                  <el-icon>
+                    <Search />
+                  </el-icon>
+                </template>
+              </el-input>
+              <el-button type="primary" @click="showAddDialog = true">
+                <el-icon>
+                  <Plus />
+                </el-icon>
+                {{ $t('people.addPerson') }}
+              </el-button>
+              <el-button type="default" @click="handleImport">
+                <el-icon>
+                  <Upload />
+                </el-icon>
+                {{ $t('people.importPeople') }}
+              </el-button>
+              <el-dropdown @command="handleBulkAction">
+                <el-button type="default">
+                  <el-icon>
+                    <MoreFilled />
+                  </el-icon>
+                  {{ $t('people.bulkActions') }}
+                  <el-icon class="el-icon--right">
+                    <ArrowDown />
+                  </el-icon>
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="delete" :disabled="selectedPeople.length === 0" class="danger-item">
+                      <el-icon>
+                        <Delete />
+                      </el-icon>
+                      {{ $t('people.deleteSelected', { count: selectedPeople.length }) }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </el-space>
+          </div>
+        </div>
+      </template>
+
+      <PeopleTable :people="filteredPeople" :loading="loading" :show-selection="true" :selected="selectedPeople"
+        @edit="handleEdit" @delete="handleDelete" />
+    </el-card>
+
+    <PersonFormDialog v-model="showAddDialog" :election-guid="electionGuid" @success="handleFormSuccess" />
+
+    <PersonFormDialog v-model="showEditDialog" :election-guid="electionGuid" :person="editingPerson" :is-edit="true"
+      @success="handleFormSuccess" />
+
+
+
+    <!-- Bulk Delete Confirmation -->
+    <el-dialog v-model="showBulkDeleteConfirm" :title="$t('people.confirmBulkDelete')" width="500px">
+      <p>{{ $t('people.bulkDeleteMessage', { count: selectedPeople.length }) }}</p>
+      <p class="warning-text">{{ $t('common.actionIrreversible') }}</p>
+
+      <template #footer>
+        <el-button @click="showBulkDeleteConfirm = false">
+          {{ $t('common.cancel') }}
+        </el-button>
+        <el-button type="danger" @click="confirmBulkDelete" :loading="bulkDeleting">
+          {{ $t('common.delete') }}
+        </el-button>
+      </template>
+    </el-dialog>
+
+
+  </div>
+</template>
+
+<style type="less">
 .people-management-page {
   max-width: 1400px;
   margin: 0 auto;
-}
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.header-left {
-  flex: 1;
-}
+  .header-left {
+    flex: 1;
+  }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-}
-
+  .header-actions {
+    display: flex;
+    align-items: center;
+  }
 
 
-.warning-text {
-  color: var(--color-error-600);
-  font-weight: var(--font-weight-medium);
-  margin: var(--spacing-2) 0 0 0;
-}
 
-.danger-item {
-  color: var(--color-error-600);
-}
+  .warning-text {
+    color: var(--color-error-600);
+    font-weight: var(--font-weight-medium);
+    margin: var(--spacing-2) 0 0 0;
+  }
 
-.danger-item:hover {
-  background-color: var(--color-error-50);
+  .danger-item {
+    color: var(--color-error-600);
+  }
+
+  .danger-item:hover {
+    background-color: var(--color-error-50);
+  }
 }
 </style>

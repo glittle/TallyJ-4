@@ -19,6 +19,7 @@
   "people.lastNameRequired": "Le nom de famille est requis",
   "people.emailInvalid": "Veuillez entrer un email valide",
   "people.loadError": "Échec du chargement des personnes",
+  "people.leaveElectionGroupError": "Échec de quitter le groupe d'élection :",
   "people.createSuccess": "Personne ajoutée avec succès",
   "people.updateSuccess": "Personne mise à jour avec succès",
   "people.deleteSuccess": "Personne supprimée avec succès",
