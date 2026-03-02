@@ -113,6 +113,7 @@
   "elections.updateError": "Failed to update election",
   "elections.updateSuccess": "Election updated successfully",
   "elections.viewResults": "View Results",
+  "elections.viewReports": "View Reports",
   "elections.voters": "Voters",
   "elections.people": "People",
   "elections.ballots": "Ballots",

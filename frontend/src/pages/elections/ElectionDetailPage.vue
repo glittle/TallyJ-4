@@ -75,6 +75,10 @@
                 <el-icon><DataAnalysis /></el-icon>
                 {{ $t('elections.viewResults') }}
               </el-button>
+              <el-button @click="viewReports">
+                <el-icon><Document /></el-icon>
+                {{ $t('elections.viewReports') }}
+              </el-button>
               <el-button @click="calculateTally" type="warning">
                 <el-icon><Operation /></el-icon>
                 {{ $t('elections.calculateTally') }}
@@ -205,7 +209,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessageBox } from 'element-plus';
-import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete, Check, CopyDocument, Link } from '@element-plus/icons-vue';
+import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete, Check, CopyDocument, Link, Document } from '@element-plus/icons-vue';
 import { useElectionStore } from '../../stores/electionStore';
 import { useNotifications } from '@/composables/useNotifications';
 import QRCode from 'qrcode';
@@ -284,6 +288,10 @@ function openFrontDesk() {
 
 function viewResults() {
   router.push(`/elections/${electionGuid}/results`);
+}
+
+function viewReports() {
+  router.push(`/elections/${electionGuid}/reporting`);
 }
 
 function calculateTally() {
