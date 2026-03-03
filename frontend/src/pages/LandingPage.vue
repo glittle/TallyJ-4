@@ -10,7 +10,7 @@ const options = [
   {
     type: "voter",
     icon: Ticket,
-    color: "#67c23a",
+    color: "#8DC63F",
     title: "auth.landing.optionVoter",
     description: "auth.landing.optionVoterDesc",
     buttonText: "auth.landing.loginVoter",
@@ -20,7 +20,7 @@ const options = [
   {
     type: "teller",
     icon: Monitor,
-    color: "#e6a23c",
+    color: "#F47920",
     title: "auth.landing.optionTeller",
     description: "auth.landing.optionTellerDesc",
     buttonText: "auth.landing.loginTeller",
@@ -29,7 +29,7 @@ const options = [
   {
     type: "officer",
     icon: UserFilled,
-    color: "#409eff",
+    color: "#2563a8",
     title: "auth.landing.optionOfficer",
     description: "auth.landing.optionOfficerDesc",
     buttonText: "auth.landing.loginOfficer",
@@ -41,7 +41,7 @@ const options2 = [
   {
     type: "external",
     icon: Connection,
-    color: "#f56c6c",
+    color: "#F47920",
     title: "auth.landing.optionExternal",
     description: "auth.landing.optionExternalDesc",
     buttonText: "auth.landing.gotoExternal",
@@ -52,37 +52,37 @@ const options2 = [
 const features = [
   {
     icon: Clock,
-    color: "#409eff",
+    color: "#2563a8",
     title: "auth.landing.features.realtime.title",
     description: "auth.landing.features.realtime.description",
   },
   {
     icon: Lock,
-    color: "#67c23a",
+    color: "#8DC63F",
     title: "auth.landing.features.secure.title",
     description: "auth.landing.features.secure.description",
   },
   {
     icon: Pointer,
-    color: "#e6a23c",
+    color: "#F47920",
     title: "auth.landing.features.flexible.title",
     description: "auth.landing.features.flexible.description",
   },
   {
     icon: Document,
-    color: "#909399",
+    color: "#1C3A6A",
     title: "auth.landing.features.transparent.title",
     description: "auth.landing.features.transparent.description",
   },
   {
     icon: Location,
-    color: "#5470c6",
+    color: "#2563a8",
     title: "auth.landing.features.multilingual.title",
     description: "auth.landing.features.multilingual.description",
   },
   {
     icon: Check,
-    color: "#91cc75",
+    color: "#8DC63F",
     title: "auth.landing.features.accessible.title",
     description: "auth.landing.features.accessible.description",
   },

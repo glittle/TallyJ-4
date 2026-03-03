@@ -24,17 +24,41 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.625;
 
-  /* Colors - Primary Palette */
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
+  /* Colors - Primary Palette (Navy Blue, logo-aligned) */
+  --color-primary-50: #eef2f9;
+  --color-primary-100: #d4dff0;
+  --color-primary-200: #a8bfe1;
+  --color-primary-300: #739dcf;
+  --color-primary-400: #3f7abe;
+  --color-primary-500: #2563a8;
+  --color-primary-600: #1e4f8c;
+  --color-primary-700: #1c3a6a;
+  --color-primary-800: #14284d;
+  --color-primary-900: #0c1830;
+
+  /* Colors - Accent Orange (logo-aligned) */
+  --color-orange-50: #fff5eb;
+  --color-orange-100: #fedfba;
+  --color-orange-200: #fdc075;
+  --color-orange-300: #fca044;
+  --color-orange-400: #f88420;
+  --color-orange-500: #f47920;
+  --color-orange-600: #d96510;
+  --color-orange-700: #b74f08;
+  --color-orange-800: #8f3c05;
+  --color-orange-900: #682c03;
+
+  /* Colors - Accent Green (logo-aligned) */
+  --color-green-50: #f4f9e9;
+  --color-green-100: #e4f0c3;
+  --color-green-200: #cde397;
+  --color-green-300: #b3d369;
+  --color-green-400: #9eca50;
+  --color-green-500: #8dc63f;
+  --color-green-600: #74a833;
+  --color-green-700: #5c8a27;
+  --color-green-800: #446c1d;
+  --color-green-900: #2e4e12;
 
   /* Colors - Neutral Gray */
   --color-gray-50: #f9fafb;
@@ -71,16 +95,16 @@
   --color-bg-overlay: rgba(0, 0, 0, 0.5);
 
   /* Colors - Sidebar */
-  --color-sidebar-bg: #f8fafc;
+  --color-sidebar-bg: #eef2f9;
   --color-sidebar-text: #374151;
-  --color-sidebar-text-active: #2563eb;
-  --color-sidebar-border: #e5e7eb;
-  --color-sidebar-hover: #f1f5f9;
-  --color-sidebar-active: #dbeafe;
+  --color-sidebar-text-active: #1c3a6a;
+  --color-sidebar-border: #d4dff0;
+  --color-sidebar-hover: #e0e8f4;
+  --color-sidebar-active: #d4dff0;
 
   /* Colors - Public Layout */
-  --color-public-bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --color-public-header-bg: rgba(255, 255, 255, 0.1);
+  --color-public-bg-gradient: linear-gradient(135deg, #1c3a6a 0%, #14284d 100%);
+  --color-public-header-bg: rgba(255, 255, 255, 0.12);
   --color-public-text: #ffffff;
 
   /* Colors - Text */
@@ -149,7 +173,7 @@
   -moz-osx-font-smoothing: grayscale;
 
   /* Element Plus light theme variables */
-  --el-color-primary: var(--color-primary-500);
+  --el-color-primary: #2563a8;
   --el-color-primary-dark-2: var(--color-primary-600);
   --el-color-primary-light-3: var(--color-primary-400);
   --el-color-primary-light-5: var(--color-primary-300);
@@ -201,20 +225,20 @@
   --color-text-tertiary: var(--color-gray-400);
 
   /* Sidebar dark theme */
-  --color-sidebar-bg: #304156;
-  --color-sidebar-text: #bfcbd9;
-  --color-sidebar-text-active: #409eff;
-  --color-sidebar-border: #263445;
-  --color-sidebar-hover: #263445;
-  --color-sidebar-active: #001528;
+  --color-sidebar-bg: #0e2040;
+  --color-sidebar-text: #a8bfe1;
+  --color-sidebar-text-active: #f47920;
+  --color-sidebar-border: #14284d;
+  --color-sidebar-hover: #1c3a6a;
+  --color-sidebar-active: #14284d;
 
   /* Public layout dark theme */
-  --color-public-bg-gradient: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --color-public-bg-gradient: linear-gradient(135deg, #0c1830 0%, #14284d 100%);
   --color-public-header-bg: rgba(0, 0, 0, 0.2);
   --color-public-text: #f1f5f9;
 
   /* Element Plus dark theme variables */
-  --el-color-primary: var(--color-primary-500);
+  --el-color-primary: #2563a8;
   --el-color-primary-dark-2: var(--color-primary-600);
   --el-color-primary-light-3: var(--color-primary-400);
   --el-color-primary-light-5: var(--color-primary-300);
@@ -254,11 +278,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #2563a8;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #1e4f8c;
 }
 
 body {
@@ -286,7 +310,7 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #1e4f8c;
 }
 button:focus,
 button:focus-visible {
@@ -341,7 +365,7 @@ button:focus-visible {
 
 /* Enhanced focus indicators */
 *:focus {
-  outline: 2px solid #409eff;
+  outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
 }
 
@@ -350,7 +374,7 @@ button:focus-visible {
 }
 
 *:focus-visible {
-  outline: 2px solid #409eff;
+  outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
 }
 
@@ -378,7 +402,7 @@ button:focus-visible {
   position: absolute;
   top: -40px;
   left: 6px;
-  background: #409eff;
+  background: var(--color-primary-700);
   color: white;
   padding: 8px;
   text-decoration: none;

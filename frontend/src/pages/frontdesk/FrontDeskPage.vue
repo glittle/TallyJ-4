@@ -622,7 +622,9 @@ function clearFilters() {
           <div v-if="stats" class="header-stats">
             <el-statistic :value="stats.checkedIn" title="Checked In">
               <template #prefix>
-                <el-icon><UserFilled /></el-icon>
+                <el-icon>
+                  <UserFilled />
+                </el-icon>
               </template>
             </el-statistic>
           </div>
@@ -650,48 +652,38 @@ function clearFilters() {
             <!-- Filters -->
             <div class="filters-section">
               <div class="filter-group">
-                <el-button 
-                  :type="showAllRegistered ? 'primary' : 'default'" 
-                  @click="showAllRegistered = !showAllRegistered"
-                  size="small">
+                <el-button :type="showAllRegistered ? 'primary' : 'default'"
+                  @click="showAllRegistered = !showAllRegistered" size="small">
                   Show All Registered ({{ checkedInVoters.length }})
                 </el-button>
-                
+
                 <el-divider direction="vertical" />
-                
+
                 <span class="filter-label">Voting Methods:</span>
-                <el-button 
-                  v-for="method in registrationTypes" 
-                  :key="method.value"
+                <el-button v-for="method in registrationTypes" :key="method.value"
                   :type="selectedMethodFilters.includes(method.value) ? 'primary' : 'default'"
-                  @click="toggleMethodFilter(method.value)"
-                  size="small">
+                  @click="toggleMethodFilter(method.value)" size="small">
                   {{ method.label }} ({{ methodCounts[method.value] || 0 }})
                 </el-button>
-                
+
                 <template v-if="electionFlags.length > 0">
                   <el-divider direction="vertical" />
-                  
+
                   <span class="filter-label">Flags:</span>
-                  <el-button 
-                    v-for="flag in electionFlags" 
-                    :key="flag"
-                    :type="selectedFlagFilters.includes(flag) ? 'primary' : 'default'"
-                    @click="toggleFlagFilter(flag)"
+                  <el-button v-for="flag in electionFlags" :key="flag"
+                    :type="selectedFlagFilters.includes(flag) ? 'primary' : 'default'" @click="toggleFlagFilter(flag)"
                     size="small">
                     {{ flag }} ({{ flagCounts[flag] || 0 }})
                   </el-button>
                 </template>
-                
-                <el-button 
+
+                <el-button
                   v-if="selectedMethodFilters.length > 0 || selectedFlagFilters.length > 0 || showAllRegistered"
-                  @click="clearFilters"
-                  type="info"
-                  size="small">
+                  @click="clearFilters" type="info" size="small">
                   Clear Filters
                 </el-button>
               </div>
-              
+
               <!-- Flag Legend -->
               <div v-if="electionFlags.length > 0" class="flag-legend">
                 <span class="legend-label">Flag Abbreviations:</span>
@@ -708,7 +700,7 @@ function clearFilters() {
                 <span v-if="selectedVoter.bahaiId" class="voter-detail">ID: {{ selectedVoter.bahaiId }}</span>
                 <span v-if="selectedVoter.area" class="voter-detail">Area: {{ selectedVoter.area }}</span>
               </div>
-              
+
               <!-- Voting Methods -->
               <div v-if="!selectedVoter.isCheckedIn" class="button-section">
                 <h4>Voting Method</h4>
@@ -720,15 +712,14 @@ function clearFilters() {
                   </el-button>
                 </div>
               </div>
-              
+
               <!-- Flags -->
               <div v-if="electionFlags.length > 0" class="button-section">
                 <h4>Flags</h4>
                 <div class="button-group">
                   <el-button v-for="(flag, index) in electionFlags" :key="flag"
-                    :type="(4 + index) === selectedButtonIndex ? 'primary' : hasFlag(selectedVoter, flag) ? 'success' : 'default'" 
-                    size="large"
-                    @click="toggleFlag(flag)" 
+                    :type="(4 + index) === selectedButtonIndex ? 'primary' : hasFlag(selectedVoter, flag) ? 'success' : 'default'"
+                    size="large" @click="toggleFlag(flag)"
                     :class="{ 'selected-button': (4 + index) === selectedButtonIndex }">
                     {{ flag }} <kbd>{{ 5 + index }}</kbd>
                     <el-icon v-if="hasFlag(selectedVoter, flag)" style="margin-left: 5px;">
@@ -737,7 +728,7 @@ function clearFilters() {
                   </el-button>
                 </div>
               </div>
-              
+
               <div class="instruction-text">
                 Use ← → arrows or number keys, press Enter to confirm, Esc to cancel
               </div>
@@ -745,8 +736,8 @@ function clearFilters() {
 
             <!-- All voters list (merged not-checked-in and checked-in) -->
             <div v-else>
-              <el-table ref="voterTableRef" :data="allVoters" :loading="loading" style="width: 100%"
-                max-height="600px" :row-class-name="getRowClassName" @row-click="handleRowClick">
+              <el-table ref="voterTableRef" :data="allVoters" :loading="loading" style="width: 100%" max-height="600px"
+                :row-class-name="getRowClassName" @row-click="handleRowClick">
                 <el-table-column prop="fullName" label="Name" sortable width="200" />
                 <el-table-column prop="bahaiId" label="Bahá'í ID" width="120" />
                 <el-table-column prop="area" label="Area" width="100" />
@@ -763,12 +754,8 @@ function clearFilters() {
                 <el-table-column label="Flags" width="100" v-if="electionFlags.length > 0">
                   <template #default="{ row }">
                     <template v-if="row.flags">
-                      <el-tag 
-                        v-for="flag in electionFlags.filter(f => hasFlag(row, f))" 
-                        :key="flag" 
-                        size="small" 
-                        type="success"
-                        class="flag-tag">
+                      <el-tag v-for="flag in electionFlags.filter(f => hasFlag(row, f))" :key="flag" size="small"
+                        type="success" class="flag-tag">
                         {{ getFlagAbbr(flag) }}
                       </el-tag>
                     </template>
@@ -793,7 +780,8 @@ function clearFilters() {
                 </el-table-column>
               </el-table>
               <div class="keyboard-hint">
-                {{ notCheckedInVoters.length }} not checked in, {{ checkedInVoters.length }} checked in. Use keyboard to navigate and check in.
+                {{ notCheckedInVoters.length }} not checked in, {{ checkedInVoters.length }} checked in. Use keyboard to
+                navigate and check in.
               </div>
             </div>
           </el-card>
@@ -991,7 +979,6 @@ function clearFilters() {
 
   .selected-row {
     background-color: var(--el-color-primary-light-9) !important;
-    font-weight: bold;
   }
 
   .performed-by {
