@@ -27,5 +27,12 @@
   "voting.auth.verify.placeholder": "Entrez le code que vous avez reçu",
   "voting.auth.verify.submit": "Vérifier et continuer",
   "voting.auth.verify.back": "Retour",
-  "voting.auth.error.noElection": "Aucune élection spécifiée"
+  "voting.auth.error.noElection": "Aucune élection spécifiée",
+  "voting.confirmation.title": "Bulletin soumis avec succès !",
+  "voting.confirmation.subtitle": "Merci d'avoir participé à l'élection",
+  "voting.confirmation.submitted": "Soumis :",
+  "voting.confirmation.election": "Élection :",
+  "voting.confirmation.recorded": "Votre bulletin a été enregistré en toute sécurité.",
+  "voting.confirmation.noChange": "Veuillez noter que vous ne pouvez pas modifier ou soumettre à nouveau votre bulletin.",
+  "voting.confirmation.close": "Fermer"
 }

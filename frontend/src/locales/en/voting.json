@@ -27,5 +27,12 @@
   "voting.auth.verify.placeholder": "Enter the code you received",
   "voting.auth.verify.submit": "Verify and Continue",
   "voting.auth.verify.back": "Back",
-  "voting.auth.error.noElection": "No election specified"
+  "voting.auth.error.noElection": "No election specified",
+  "voting.confirmation.title": "Ballot Submitted Successfully!",
+  "voting.confirmation.subtitle": "Thank you for participating in the election",
+  "voting.confirmation.submitted": "Submitted:",
+  "voting.confirmation.election": "Election:",
+  "voting.confirmation.recorded": "Your ballot has been securely recorded.",
+  "voting.confirmation.noChange": "Please note that you cannot change or resubmit your ballot.",
+  "voting.confirmation.close": "Close"
 }
