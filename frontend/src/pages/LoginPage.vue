@@ -175,6 +175,7 @@ const fetchGoogleClientId = async (): Promise<string | null> => {
 const renderGoogleButton = () => {
   nextTick(() => {
     if (googleButtonRef.value && googleClientId.value && googleReady.value) {
+      console.log("Rendering Google One Tap button with locale:", locale.value);
       google.accounts.id.renderButton(googleButtonRef.value, {
         type: "standard",
         theme: "outline",
@@ -182,6 +183,7 @@ const renderGoogleButton = () => {
         text: "signin_with",
         shape: "rectangular",
         width: "300",
+        locale: locale.value,
       });
     }
   });
