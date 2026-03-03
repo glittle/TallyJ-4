@@ -28,7 +28,8 @@ See `spec.md` for full details.
 
 ---
 
-### [ ] Step: Update core design tokens in style.css
+### [x] Step: Update core design tokens in style.css
+<!-- chat-id: 263fb44b-15c3-47e4-8b29-186af708bcdc -->
 
 Update `frontend/src/style.css`:
 - Replace `--color-primary-*` scale with navy blue derived from logo `#1C3A6A`
