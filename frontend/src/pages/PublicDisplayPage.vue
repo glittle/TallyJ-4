@@ -4,7 +4,7 @@
       <el-icon class="loading-icon" :size="100">
         <Loading />
       </el-icon>
-      <p class="loading-text">Loading election results...</p>
+      <p class="loading-text">{{ $t('public.display.loading') }}</p>
     </div>
 
     <div v-else-if="error" class="error-container">
@@ -22,7 +22,7 @@
             {{ formatDate(displayData.dateOfElection) }}
           </span>
           <span v-if="displayData.convenor" class="convenor">
-            Convenor: {{ displayData.convenor }}
+            {{ $t('public.display.convenor', { name: displayData.convenor }) }}
           </span>
         </div>
         <div class="status-badge" :class="statusClass">
@@ -33,8 +33,8 @@
       <main class="display-content">
         <section v-if="displayData.electedCandidates.length > 0" class="results-section">
           <h2 class="section-title">
-            ELECTED ({{ displayData.numberToElect }}
-            {{ displayData.numberToElect === 1 ? "position" : "positions" }})
+            {{ $t('public.display.elected') }} ({{ displayData.numberToElect }}
+            {{ displayData.numberToElect === 1 ? $t('public.display.position') : $t('public.display.positions') }})
           </h2>
           <div class="candidates-list">
             <div
@@ -47,7 +47,7 @@
               <span class="name">{{ candidate.fullName }}</span>
               <span v-if="displayOptions.showVoteCounts" class="votes">
                 {{ candidate.voteCount }}
-                {{ candidate.voteCount === 1 ? "vote" : "votes" }}
+                {{ candidate.voteCount === 1 ? $t('public.display.vote') : $t('public.display.votes') }}
               </span>
               <el-tag
                 v-if="candidate.tieBreakRequired"
@@ -55,7 +55,7 @@
                 size="large"
                 class="tie-tag"
               >
-                TIE BREAK REQUIRED
+                {{ $t('public.display.tieBreakRequired') }}
               </el-tag>
             </div>
           </div>
@@ -69,8 +69,8 @@
           class="results-section additional"
         >
           <h2 class="section-title">
-            ADDITIONAL NAMES ({{ displayData.numberExtra }}
-            {{ displayData.numberExtra === 1 ? "position" : "positions" }})
+            {{ $t('public.display.additionalNames') }} ({{ displayData.numberExtra }}
+            {{ displayData.numberExtra === 1 ? $t('public.display.position') : $t('public.display.positions') }})
           </h2>
           <div class="candidates-list">
             <div
@@ -83,7 +83,7 @@
               <span class="name">{{ candidate.fullName }}</span>
               <span v-if="displayOptions.showVoteCounts" class="votes">
                 {{ candidate.voteCount }}
-                {{ candidate.voteCount === 1 ? "vote" : "votes" }}
+                {{ candidate.voteCount === 1 ? $t('public.display.vote') : $t('public.display.votes') }}
               </span>
             </div>
           </div>
@@ -92,23 +92,23 @@
         <section v-if="displayOptions.showStatistics" class="statistics-section">
           <div class="stats-grid">
             <div class="stat-item">
-              <div class="stat-label">Total Ballots</div>
+              <div class="stat-label">{{ $t('public.display.totalBallots') }}</div>
               <div class="stat-value">{{ displayData.statistics.totalBallots }}</div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">Valid Ballots</div>
+              <div class="stat-label">{{ $t('public.display.validBallots') }}</div>
               <div class="stat-value">{{ displayData.statistics.validBallots }}</div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">Spoiled Ballots</div>
+              <div class="stat-label">{{ $t('public.display.spoiledBallots') }}</div>
               <div class="stat-value">{{ displayData.statistics.spoiledBallots }}</div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">Total Votes</div>
+              <div class="stat-label">{{ $t('public.display.totalVotes') }}</div>
               <div class="stat-value">{{ displayData.statistics.totalVotes }}</div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">Turnout</div>
+              <div class="stat-label">{{ $t('public.display.turnout') }}</div>
               <div class="stat-value">
                 {{ displayData.statistics.turnoutPercentage.toFixed(1) }}%
               </div>
@@ -122,10 +122,10 @@
           <el-icon v-if="displayOptions.autoRefresh" :size="20">
             <Refresh />
           </el-icon>
-          Auto-refresh: {{ displayOptions.autoRefresh ? "ON" : "OFF" }}
+          {{ $t('public.display.autoRefresh') }} {{ displayOptions.autoRefresh ? $t('public.display.on') : $t('public.display.off') }}
         </div>
         <div class="last-updated">
-          Last updated: {{ formatTime(displayData.lastUpdated) }}
+          {{ $t('public.display.lastUpdated', { time: formatTime(displayData.lastUpdated) }) }}
         </div>
       </footer>
 
@@ -133,23 +133,23 @@
         <el-button-group>
           <el-button @click="toggleTheme">
             <el-icon><Sunny /></el-icon>
-            Toggle Theme
+            {{ $t('public.display.toggleTheme') }}
           </el-button>
           <el-button @click="toggleVoteCounts">
             <el-icon><View /></el-icon>
-            {{ displayOptions.showVoteCounts ? "Hide" : "Show" }} Votes
+            {{ displayOptions.showVoteCounts ? $t('public.display.hideVotes') : $t('public.display.showVotes') }} {{ $t('public.display.votesLabel') }}
           </el-button>
           <el-button @click="toggleStatistics">
             <el-icon><DataAnalysis /></el-icon>
-            {{ displayOptions.showStatistics ? "Hide" : "Show" }} Stats
+            {{ displayOptions.showStatistics ? $t('public.display.hideStats') : $t('public.display.showStats') }} {{ $t('public.display.statsLabel') }}
           </el-button>
           <el-button @click="toggleAutoRefresh">
             <el-icon><Refresh /></el-icon>
-            {{ displayOptions.autoRefresh ? "Disable" : "Enable" }} Auto-refresh
+            {{ displayOptions.autoRefresh ? $t('public.display.disableAutoRefresh') : $t('public.display.enableAutoRefresh') }} {{ $t('public.display.autoRefreshLabel') }}
           </el-button>
           <el-button @click="refreshNow">
             <el-icon><RefreshRight /></el-icon>
-            Refresh Now
+            {{ $t('public.display.refreshNow') }}
           </el-button>
         </el-button-group>
       </div>

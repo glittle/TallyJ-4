@@ -21,27 +21,27 @@ function handleLogout() {
       <ElCard class="confirmation-card">
         <ElResult
           icon="success"
-          title="Ballot Submitted Successfully!"
-          sub-title="Thank you for participating in the election"
+          :title="$t('voting.confirmation.title')"
+          :sub-title="$t('voting.confirmation.subtitle')"
         >
           <template #extra>
             <div class="confirmation-details">
               <p v-if="voteStatus?.whenSubmitted">
-                <strong>Submitted:</strong> {{ new Date(voteStatus.whenSubmitted).toLocaleString() }}
+                <strong>{{ $t('voting.confirmation.submitted') }}</strong> {{ new Date(voteStatus.whenSubmitted).toLocaleString() }}
               </p>
               <p v-if="onlineVotingStore.electionInfo">
-                <strong>Election:</strong> {{ onlineVotingStore.electionInfo.name }}
+                <strong>{{ $t('voting.confirmation.election') }}</strong> {{ onlineVotingStore.electionInfo.name }}
               </p>
               <div class="info-message">
-                <p>Your ballot has been securely recorded.</p>
-                <p>Please note that you cannot change or resubmit your ballot.</p>
+                <p>{{ $t('voting.confirmation.recorded') }}</p>
+                <p>{{ $t('voting.confirmation.noChange') }}</p>
               </div>
               <ElButton 
                 type="primary" 
                 @click="handleLogout"
                 size="large"
               >
-                Close
+                {{ $t('voting.confirmation.close') }}
               </ElButton>
             </div>
           </template>

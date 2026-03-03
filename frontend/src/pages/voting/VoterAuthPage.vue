@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { ElCard, ElTabs, ElTabPane, ElForm, ElFormItem, ElInput, ElButton, ElRadioGroup, ElRadio } from 'element-plus';
 import { useOnlineVotingStore } from '../../stores/onlineVotingStore';
 import { useNotifications } from '../../composables/useNotifications';
 
 const router = useRouter();
 const route = useRoute();
+const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
@@ -48,7 +50,7 @@ async function handleRequestEmailCode() {
     });
     verificationForm.value.voterId = emailForm.value.email;
     step.value = 'verify';
-    showSuccessMessage('Verification code sent to your email');
+    showSuccessMessage(t('voting.auth.email.codeSent'));
   } catch (error) {
     console.error('Error requesting email code:', error);
   } finally {
@@ -66,7 +68,7 @@ async function handleRequestPhoneCode() {
     });
     verificationForm.value.voterId = phoneForm.value.phone;
     step.value = 'verify';
-    showSuccessMessage(`Verification code sent via ${phoneForm.value.deliveryMethod}`);
+    showSuccessMessage(t('voting.auth.phone.codeSent', { method: phoneForm.value.deliveryMethod }));
   } catch (error) {
     console.error('Error requesting phone code:', error);
   } finally {
@@ -85,7 +87,7 @@ async function handleDirectCodeLogin() {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage('No election specified');
+      showErrorMessage(t('voting.auth.error.noElection'));
     }
   } catch (error) {
     console.error('Error with direct code:', error);
@@ -102,7 +104,7 @@ async function handleVerifyCode() {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage('No election specified');
+      showErrorMessage(t('voting.auth.error.noElection'));
     }
   } catch (error) {
     console.error('Error verifying code:', error);
@@ -125,7 +127,7 @@ const handleGoogleOneTapCallback = async (response: GoogleCredentialResponse) =>
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage('No election specified');
+      showErrorMessage(t('voting.auth.error.noElection'));
     }
   } catch (error) {
     console.error('Error with Google authentication:', error);
@@ -246,70 +248,70 @@ onBeforeUnmount(() => {
       <ElCard class="auth-card">
         <template #header>
           <div class="card-header">
-            <h2>TallyJ Online Voting</h2>
-            <p>Please authenticate to cast your ballot</p>
+            <h2>{{ $t('voting.auth.title') }}</h2>
+            <p>{{ $t('voting.auth.subtitle') }}</p>
           </div>
         </template>
 
         <div v-if="step === 'request'">
           <ElTabs v-model="activeTab">
-            <ElTabPane label="Email" name="email">
+            <ElTabPane :label="$t('voting.auth.tabs.email')" name="email">
               <ElForm :model="emailForm" @submit.prevent="handleRequestEmailCode">
-                <ElFormItem label="Email Address">
-                  <ElInput v-model="emailForm.email" type="email" placeholder="Enter your email address" size="large"
+                <ElFormItem :label="$t('voting.auth.email.label')">
+                  <ElInput v-model="emailForm.email" type="email" :placeholder="$t('voting.auth.email.placeholder')" size="large"
                     required />
                 </ElFormItem>
                 <ElFormItem>
                   <ElButton type="primary" native-type="submit" :loading="loading" size="large" style="width: 100%">
-                    Send Verification Code
+                    {{ $t('voting.auth.email.sendCode') }}
                   </ElButton>
                 </ElFormItem>
               </ElForm>
             </ElTabPane>
 
-            <ElTabPane label="Phone" name="phone">
+            <ElTabPane :label="$t('voting.auth.tabs.phone')" name="phone">
               <ElForm :model="phoneForm" @submit.prevent="handleRequestPhoneCode">
-                <ElFormItem label="Phone Number">
-                  <ElInput v-model="phoneForm.phone" type="tel" placeholder="+1234567890" size="large" required />
+                <ElFormItem :label="$t('voting.auth.phone.label')">
+                  <ElInput v-model="phoneForm.phone" type="tel" :placeholder="$t('voting.auth.phone.placeholder')" size="large" required />
                 </ElFormItem>
-                <ElFormItem label="Delivery Method">
+                <ElFormItem :label="$t('voting.auth.phone.deliveryMethod')">
                   <ElRadioGroup v-model="phoneForm.deliveryMethod">
-                    <ElRadio value="sms">SMS Text</ElRadio>
-                    <ElRadio value="voice">Voice Call</ElRadio>
+                    <ElRadio value="sms">{{ $t('voting.auth.phone.sms') }}</ElRadio>
+                    <ElRadio value="voice">{{ $t('voting.auth.phone.voice') }}</ElRadio>
                   </ElRadioGroup>
                 </ElFormItem>
                 <ElFormItem>
                   <ElButton type="primary" native-type="submit" :loading="loading" size="large" style="width: 100%">
-                    Send Verification Code
+                    {{ $t('voting.auth.phone.sendCode') }}
                   </ElButton>
                 </ElFormItem>
               </ElForm>
             </ElTabPane>
 
-            <ElTabPane label="Code" name="code">
+            <ElTabPane :label="$t('voting.auth.tabs.code')" name="code">
               <ElForm :model="codeForm" @submit.prevent="handleDirectCodeLogin">
-                <ElFormItem label="Voting Code">
-                  <ElInput v-model="codeForm.code" placeholder="Enter your pre-provided voting code" size="large"
+                <ElFormItem :label="$t('voting.auth.code.label')">
+                  <ElInput v-model="codeForm.code" :placeholder="$t('voting.auth.code.placeholder')" size="large"
                     required />
                 </ElFormItem>
                 <ElFormItem>
                   <ElButton type="primary" native-type="submit" :loading="loading" size="large" style="width: 100%">
-                    Proceed to Vote
+                    {{ $t('voting.auth.code.proceed') }}
                   </ElButton>
                 </ElFormItem>
               </ElForm>
             </ElTabPane>
 
-            <ElTabPane label="Google" name="google">
+            <ElTabPane :label="$t('voting.auth.tabs.google')" name="google">
               <div class="google-auth-section">
                 <p class="google-description">
-                  Sign in with your Google account to vote. You must be registered in an open election to proceed.
+                  {{ $t('voting.auth.google.description') }}
                 </p>
                 <div v-if="!googleReady" class="google-loading">
-                  <p>Loading Google authentication...</p>
+                  <p>{{ $t('voting.auth.google.loading') }}</p>
                 </div>
                 <div v-else class="google-prompt">
-                  <p>Google One Tap will appear automatically. If it doesn't, check your browser settings.</p>
+                  <p>{{ $t('voting.auth.google.prompt') }}</p>
                 </div>
               </div>
             </ElTabPane>
@@ -319,19 +321,19 @@ onBeforeUnmount(() => {
         <div v-else-if="step === 'verify'">
           <ElForm :model="verificationForm" @submit.prevent="handleVerifyCode">
             <p class="verify-message">
-              We've sent a verification code to <strong>{{ verificationForm.voterId }}</strong>
+              {{ $t('voting.auth.verify.message', { voterId: verificationForm.voterId }) }}
             </p>
-            <ElFormItem label="Verification Code">
-              <ElInput v-model="verificationForm.verifyCode" placeholder="Enter the code you received" size="large"
+            <ElFormItem :label="$t('voting.auth.verify.label')">
+              <ElInput v-model="verificationForm.verifyCode" :placeholder="$t('voting.auth.verify.placeholder')" size="large"
                 required />
             </ElFormItem>
             <ElFormItem>
               <ElButton type="primary" native-type="submit" :loading="loading" size="large"
                 style="width: 100%; margin-bottom: 10px;">
-                Verify and Continue
+                {{ $t('voting.auth.verify.submit') }}
               </ElButton>
               <ElButton @click="backToRequest" size="large" style="width: 100%">
-                Back
+                {{ $t('voting.auth.verify.back') }}
               </ElButton>
             </ElFormItem>
           </ElForm>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
 import { type FormInstance, type FormRules } from 'element-plus';
+import { useI18n } from 'vue-i18n';
 import { useNotifications } from '@/composables/useNotifications';
 import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { useLocationStore } from '../../stores/locationStore';
@@ -18,6 +19,7 @@ const emit = defineEmits<{
   success: [];
 }>();
 
+const { t } = useI18n();
 const locationStore = useLocationStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
@@ -35,28 +37,28 @@ const form = reactive({
 
 const rules = reactive<FormRules>({
   name: [
-    { required: true, message: 'Location name is required', trigger: 'blur' },
-    { max: 50, message: 'Location name cannot exceed 50 characters', trigger: 'blur' }
+    { required: true, message: t('locations.form.nameRequired'), trigger: 'blur' },
+    { max: 50, message: t('locations.form.nameMaxLength'), trigger: 'blur' }
   ],
   contactInfo: [
-    { max: 250, message: 'Contact info cannot exceed 250 characters', trigger: 'blur' }
+    { max: 250, message: t('locations.form.contactInfoMaxLength'), trigger: 'blur' }
   ],
   longitude: [
     { 
       pattern: /^-?([0-9]{1,3}(\.[0-9]+)?|180(\.0+)?)$/, 
-      message: 'Longitude must be a valid coordinate between -180 and 180', 
+      message: t('locations.form.longitudeInvalid'), 
       trigger: 'blur' 
     }
   ],
   latitude: [
     { 
       pattern: /^-?([0-9]{1,2}(\.[0-9]+)?|90(\.0+)?)$/, 
-      message: 'Latitude must be a valid coordinate between -90 and 90', 
+      message: t('locations.form.latitudeInvalid'), 
       trigger: 'blur' 
     }
   ],
   sortOrder: [
-    { type: 'number', message: 'Sort order must be a number', trigger: 'blur' }
+    { type: 'number', message: t('locations.form.sortOrderInvalid'), trigger: 'blur' }
   ]
 });
 
@@ -104,7 +106,7 @@ async function handleSubmit() {
             sortOrder: form.sortOrder
           };
           await locationStore.updateLocation(props.electionGuid, props.location.locationGuid, dto);
-          showSuccessMessage('Location updated successfully');
+          showSuccessMessage(t('locations.form.updated'));
         } else {
           const dto: CreateLocationDto = {
             electionGuid: props.electionGuid,
@@ -115,7 +117,7 @@ async function handleSubmit() {
             sortOrder: form.sortOrder
           };
           await locationStore.createLocation(props.electionGuid, dto);
-          showSuccessMessage('Location created successfully');
+          showSuccessMessage(t('locations.form.created'));
         }
         emit('success');
       } catch (error) {
@@ -136,7 +138,7 @@ function handleClose() {
 <template>
   <el-dialog
     :model-value="modelValue"
-    :title="isEdit ? 'Edit Location' : 'Add Location'"
+    :title="isEdit ? $t('locations.form.titleEdit') : $t('locations.form.titleAdd')"
     width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
     @close="handleClose"
@@ -148,54 +150,54 @@ function handleClose() {
       label-width="150px"
       label-position="left"
     >
-      <el-form-item label="Location Name" prop="name">
-        <el-input v-model="form.name" placeholder="Enter location name" />
+      <el-form-item :label="$t('locations.form.name')" prop="name">
+        <el-input v-model="form.name" :placeholder="$t('locations.form.namePlaceholder')" />
       </el-form-item>
 
-      <el-form-item label="Contact Info" prop="contactInfo">
+      <el-form-item :label="$t('locations.form.contactInfo')" prop="contactInfo">
         <el-input 
           v-model="form.contactInfo" 
           type="textarea" 
           :rows="3"
-          placeholder="Enter contact information"
+          :placeholder="$t('locations.form.contactInfoPlaceholder')"
         />
       </el-form-item>
 
-      <el-form-item label="Longitude" prop="longitude">
+      <el-form-item :label="$t('locations.form.longitude')" prop="longitude">
         <el-input 
           v-model="form.longitude" 
-          placeholder="e.g., -122.4194"
+          :placeholder="$t('locations.form.longitudePlaceholder')"
         >
           <template #append>°</template>
         </el-input>
-        <div class="form-help-text">Range: -180 to 180</div>
+        <div class="form-help-text">{{ $t('locations.form.longitudeHelp') }}</div>
       </el-form-item>
 
-      <el-form-item label="Latitude" prop="latitude">
+      <el-form-item :label="$t('locations.form.latitude')" prop="latitude">
         <el-input 
           v-model="form.latitude" 
-          placeholder="e.g., 37.7749"
+          :placeholder="$t('locations.form.latitudePlaceholder')"
         >
           <template #append>°</template>
         </el-input>
-        <div class="form-help-text">Range: -90 to 90</div>
+        <div class="form-help-text">{{ $t('locations.form.latitudeHelp') }}</div>
       </el-form-item>
 
-      <el-form-item label="Sort Order" prop="sortOrder">
+      <el-form-item :label="$t('locations.form.sortOrder')" prop="sortOrder">
         <el-input-number 
           v-model="form.sortOrder" 
           :min="0" 
           :step="1"
           style="width: 100%"
         />
-        <div class="form-help-text">Used to order locations in lists</div>
+        <div class="form-help-text">{{ $t('locations.form.sortOrderHelp') }}</div>
       </el-form-item>
     </el-form>
 
     <template #footer>
-      <el-button @click="handleClose">Cancel</el-button>
+      <el-button @click="handleClose">{{ $t('locations.form.cancel') }}</el-button>
       <el-button type="primary" @click="handleSubmit" :loading="submitting">
-        {{ isEdit ? 'Save' : 'Create' }}
+        {{ isEdit ? $t('locations.form.save') : $t('locations.form.create') }}
       </el-button>
     </template>
   </el-dialog>

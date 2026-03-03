@@ -3,92 +3,92 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <h2>Audit Logs</h2>
+          <h2>{{ $t('audit.title') }}</h2>
         </div>
       </template>
 
       <div class="filters-container">
         <el-form :inline="true" :model="filters" class="filter-form">
-          <el-form-item label="Election GUID">
+          <el-form-item :label="$t('audit.filters.electionGuid')">
             <el-input
               v-model="filters.electionGuid"
-              placeholder="Filter by Election GUID"
+              :placeholder="$t('audit.filters.electionGuidPlaceholder')"
               clearable
               @change="applyFilters"
             />
           </el-form-item>
-          <el-form-item label="Location GUID">
+          <el-form-item :label="$t('audit.filters.locationGuid')">
             <el-input
               v-model="filters.locationGuid"
-              placeholder="Filter by Location GUID"
+              :placeholder="$t('audit.filters.locationGuidPlaceholder')"
               clearable
               @change="applyFilters"
             />
           </el-form-item>
-          <el-form-item label="Voter ID">
+          <el-form-item :label="$t('audit.filters.voterId')">
             <el-input
               v-model="filters.voterId"
-              placeholder="Filter by Voter ID"
+              :placeholder="$t('audit.filters.voterIdPlaceholder')"
               clearable
               @change="applyFilters"
             />
           </el-form-item>
-          <el-form-item label="Computer Code">
+          <el-form-item :label="$t('audit.filters.computerCode')">
             <el-input
               v-model="filters.computerCode"
-              placeholder="Filter by Computer Code"
+              :placeholder="$t('audit.filters.computerCodePlaceholder')"
               clearable
               @change="applyFilters"
             />
           </el-form-item>
-          <el-form-item label="Start Date">
+          <el-form-item :label="$t('audit.filters.startDate')">
             <el-date-picker
               v-model="filters.startDate"
               type="datetime"
-              placeholder="Start Date"
+              :placeholder="$t('audit.filters.startDatePlaceholder')"
               clearable
               @change="applyFilters"
             />
           </el-form-item>
-          <el-form-item label="End Date">
+          <el-form-item :label="$t('audit.filters.endDate')">
             <el-date-picker
               v-model="filters.endDate"
               type="datetime"
-              placeholder="End Date"
+              :placeholder="$t('audit.filters.endDatePlaceholder')"
               clearable
               @change="applyFilters"
             />
           </el-form-item>
-          <el-form-item label="Search">
+          <el-form-item :label="$t('audit.filters.search')">
             <el-input
               v-model="filters.searchTerm"
-              placeholder="Search all fields"
+              :placeholder="$t('audit.filters.searchPlaceholder')"
               clearable
               @change="applyFilters"
             />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="applyFilters">Apply Filters</el-button>
-            <el-button @click="clearFilters">Clear Filters</el-button>
+            <el-button type="primary" @click="applyFilters">{{ $t('audit.filters.apply') }}</el-button>
+            <el-button @click="clearFilters">{{ $t('audit.filters.clear') }}</el-button>
           </el-form-item>
         </el-form>
       </div>
 
       <div class="table-container">
         <el-table :data="auditLogs" v-loading="loading" style="width: 100%">
-          <el-table-column prop="asOf" label="Date/Time" width="180">
+          <el-table-column prop="asOf" :label="$t('audit.table.dateTime')" width="180">
             <template #default="scope">
               {{ formatDate(scope.row.asOf) }}
             </template>
           </el-table-column>
-          <el-table-column prop="details" label="Details" min-width="300" />
-          <el-table-column prop="voterId" label="User ID" width="150">
+          <el-table-column prop="details" :label="$t('audit.table.details')" min-width="300" />
+          <el-table-column prop="voterId" :label="$t('audit.table.userId')" width="150">
             <template #default="scope">
               <span v-if="scope.row.voterId">{{ scope.row.voterId }}</span>
               <span v-else class="text-muted">-</span>
             </template>
           </el-table-column>
-          <el-table-column prop="computerCode" label="Computer" width="120" align="center">
+          <el-table-column prop="computerCode" :label="$t('audit.table.computer')" width="120" align="center">
             <template #default="scope">
               <el-tag v-if="scope.row.computerCode" type="info">
                 {{ scope.row.computerCode }}
@@ -96,19 +96,19 @@
               <span v-else class="text-muted">-</span>
             </template>
           </el-table-column>
-          <el-table-column prop="electionGuid" label="Election" width="100" align="center">
+          <el-table-column prop="electionGuid" :label="$t('audit.table.election')" width="100" align="center">
             <template #default="scope">
               <el-tag v-if="scope.row.electionGuid" type="success" size="small">
-                Yes
+                {{ $t('audit.table.yes') }}
               </el-tag>
               <span v-else class="text-muted">-</span>
             </template>
           </el-table-column>
-          <el-table-column label="Actions" width="100" fixed="right">
+          <el-table-column :label="$t('audit.table.actions')" width="100" fixed="right">
             <template #default="scope">
               <el-button size="small" @click="viewDetails(scope.row)">
                 <el-icon><View /></el-icon>
-                View
+                {{ $t('audit.table.view') }}
               </el-button>
             </template>
           </el-table-column>
@@ -128,31 +128,31 @@
       </div>
     </el-card>
 
-    <el-dialog v-model="detailsDialogVisible" title="Audit Log Details" width="600px">
+    <el-dialog v-model="detailsDialogVisible" :title="$t('audit.dialog.title')" width="600px">
       <div v-if="selectedLog" class="log-details">
         <el-descriptions :column="1" border>
-          <el-descriptions-item label="Row ID">
+          <el-descriptions-item :label="$t('audit.dialog.rowId')">
             {{ selectedLog.rowId }}
           </el-descriptions-item>
-          <el-descriptions-item label="Date/Time">
+          <el-descriptions-item :label="$t('audit.dialog.dateTime')">
             {{ formatDate(selectedLog.asOf) }}
           </el-descriptions-item>
-          <el-descriptions-item label="Details">
+          <el-descriptions-item :label="$t('audit.dialog.details')">
             {{ selectedLog.details || '-' }}
           </el-descriptions-item>
-          <el-descriptions-item label="User ID">
+          <el-descriptions-item :label="$t('audit.dialog.userId')">
             {{ selectedLog.voterId || '-' }}
           </el-descriptions-item>
-          <el-descriptions-item label="Computer Code">
+          <el-descriptions-item :label="$t('audit.dialog.computerCode')">
             {{ selectedLog.computerCode || '-' }}
           </el-descriptions-item>
-          <el-descriptions-item label="Election GUID">
+          <el-descriptions-item :label="$t('audit.dialog.electionGuid')">
             {{ selectedLog.electionGuid || '-' }}
           </el-descriptions-item>
-          <el-descriptions-item label="Location GUID">
+          <el-descriptions-item :label="$t('audit.dialog.locationGuid')">
             {{ selectedLog.locationGuid || '-' }}
           </el-descriptions-item>
-          <el-descriptions-item label="Host and Version">
+          <el-descriptions-item :label="$t('audit.dialog.hostAndVersion')">
             {{ selectedLog.hostAndVersion || '-' }}
           </el-descriptions-item>
         </el-descriptions>

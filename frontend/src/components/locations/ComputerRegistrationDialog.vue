@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
 import { type FormInstance, type FormRules } from 'element-plus';
+import { useI18n } from 'vue-i18n';
 import { useNotifications } from '@/composables/useNotifications';
 import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
 import { useLocationStore } from '../../stores/locationStore';
@@ -17,6 +18,7 @@ const emit = defineEmits<{
   success: [];
 }>();
 
+const { t } = useI18n();
 const locationStore = useLocationStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
@@ -34,20 +36,20 @@ const rules = reactive<FormRules>({
   computerCode: [
     {
       len: 2,
-      message: 'Computer code must be exactly 2 characters',
+      message: t('locations.computer.codeLength'),
       trigger: 'blur'
     },
     {
       pattern: /^[A-Z0-9]{2}$/,
-      message: 'Computer code must be 2 uppercase letters or numbers',
+      message: t('locations.computer.codeInvalid'),
       trigger: 'blur'
     }
   ],
   browserInfo: [
-    { max: 250, message: 'Browser info cannot exceed 250 characters', trigger: 'blur' }
+    { max: 250, message: t('locations.computer.browserInfoMaxLength'), trigger: 'blur' }
   ],
   ipAddress: [
-    { max: 50, message: 'IP address cannot exceed 50 characters', trigger: 'blur' }
+    { max: 50, message: t('locations.computer.ipAddressMaxLength'), trigger: 'blur' }
   ]
 });
 
@@ -86,7 +88,7 @@ async function handleSubmit() {
           ipAddress: form.ipAddress || undefined
         };
         await locationStore.registerComputer(props.electionGuid, props.locationGuid, dto);
-        showSuccessMessage('Computer registered successfully');
+        showSuccessMessage(t('locations.computer.success'));
         emit('success');
       } catch (error) {
         handleApiError(error);
@@ -104,31 +106,31 @@ function handleClose() {
 </script>
 
 <template>
-  <el-dialog :model-value="modelValue" title="Register Computer" width="600px"
+  <el-dialog :model-value="modelValue" :title="$t('locations.computer.title')" width="600px"
     @update:model-value="$emit('update:modelValue', $event)" @close="handleClose">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="150px" label-position="left">
-      <el-form-item label="Computer Code" prop="computerCode">
-        <el-input v-model="form.computerCode" placeholder="AA (leave empty to auto-generate)" maxlength="2"
+      <el-form-item :label="$t('locations.computer.code')" prop="computerCode">
+        <el-input v-model="form.computerCode" :placeholder="$t('locations.computer.codePlaceholder')" maxlength="2"
           style="text-transform: uppercase" />
-        <div class="form-help-text">2-character code (e.g., AA, AB, A1). Leave empty to auto-generate.</div>
+        <div class="form-help-text">{{ $t('locations.computer.codeHelp') }}</div>
       </el-form-item>
 
-      <el-form-item label="Browser Info" prop="browserInfo">
-        <el-input v-model="form.browserInfo" type="textarea" :rows="3" placeholder="Auto-detected browser information"
+      <el-form-item :label="$t('locations.computer.browserInfo')" prop="browserInfo">
+        <el-input v-model="form.browserInfo" type="textarea" :rows="3" :placeholder="$t('locations.computer.browserInfoPlaceholder')"
           readonly />
-        <div class="form-help-text">Automatically detected from your browser</div>
+        <div class="form-help-text">{{ $t('locations.computer.browserInfoHelp') }}</div>
       </el-form-item>
 
-      <el-form-item label="IP Address" prop="ipAddress">
-        <el-input v-model="form.ipAddress" placeholder="Optional: Enter IP address" />
-        <div class="form-help-text">Optional: Computer's IP address</div>
+      <el-form-item :label="$t('locations.computer.ipAddress')" prop="ipAddress">
+        <el-input v-model="form.ipAddress" :placeholder="$t('locations.computer.ipAddressPlaceholder')" />
+        <div class="form-help-text">{{ $t('locations.computer.ipAddressHelp') }}</div>
       </el-form-item>
     </el-form>
 
     <template #footer>
-      <el-button @click="handleClose">Cancel</el-button>
+      <el-button @click="handleClose">{{ $t('locations.computer.cancel') }}</el-button>
       <el-button type="primary" @click="handleSubmit" :loading="submitting">
-        Register
+        {{ $t('locations.computer.register') }}
       </el-button>
     </template>
   </el-dialog>
