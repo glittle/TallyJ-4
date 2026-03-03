@@ -47,5 +47,7 @@
   "people.importStarted": "Importation démarrée. Veuillez patienter.",
   "people.importError": "Échec du démarrage de l'importation",
   "people.exportSuccess": "Personnes exportées avec succès",
-  "people.exportError": "Échec de l'exportation des personnes"
+  "people.exportError": "Échec de l'exportation des personnes",
+  "people.ageGroup.adult": "Adulte",
+  "people.ageGroup.youth": "Jeune"
 }

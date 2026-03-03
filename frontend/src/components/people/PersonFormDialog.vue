@@ -209,8 +209,8 @@ function handleClose() {
 
         <el-form-item :label="$t('people.ageGroup')" prop="ageGroup">
           <el-select v-model="form.ageGroup" style="width: 100%">
-            <el-option label="Adult" value="A" />
-            <el-option label="Youth" value="Y" />
+            <el-option :label="$t('people.ageGroup.adult')" value="A" />
+            <el-option :label="$t('people.ageGroup.youth')" value="Y" />
           </el-select>
         </el-form-item>
 

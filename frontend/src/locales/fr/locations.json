@@ -26,5 +26,22 @@
   "locations.form.save": "Sauvegarder",
   "locations.form.create": "Créer",
   "locations.form.updated": "Emplacement modifié avec succès",
-  "locations.form.created": "Emplacement créé avec succès"
+  "locations.form.created": "Emplacement créé avec succès",
+  "locations.computer.title": "Enregistrer l'ordinateur",
+  "locations.computer.code": "Code d'ordinateur",
+  "locations.computer.codePlaceholder": "AA (laisser vide pour générer automatiquement)",
+  "locations.computer.codeLength": "Le code d'ordinateur doit contenir exactement 2 caractères",
+  "locations.computer.codeInvalid": "Le code d'ordinateur doit être 2 lettres majuscules ou chiffres",
+  "locations.computer.codeHelp": "Code à 2 caractères (par ex., AA, AB, A1). Laisser vide pour générer automatiquement.",
+  "locations.computer.browserInfo": "Info du navigateur",
+  "locations.computer.browserInfoPlaceholder": "Informations du navigateur détectées automatiquement",
+  "locations.computer.browserInfoMaxLength": "Les informations du navigateur ne peuvent pas dépasser 250 caractères",
+  "locations.computer.browserInfoHelp": "Détecté automatiquement depuis votre navigateur",
+  "locations.computer.ipAddress": "Adresse IP",
+  "locations.computer.ipAddressPlaceholder": "Optionnel : Entrer l'adresse IP",
+  "locations.computer.ipAddressMaxLength": "L'adresse IP ne peut pas dépasser 50 caractères",
+  "locations.computer.ipAddressHelp": "Optionnel : Adresse IP de l'ordinateur",
+  "locations.computer.cancel": "Annuler",
+  "locations.computer.register": "Enregistrer",
+  "locations.computer.success": "Ordinateur enregistré avec succès"
 }

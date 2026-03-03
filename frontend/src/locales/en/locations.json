@@ -26,5 +26,22 @@
   "locations.form.save": "Save",
   "locations.form.create": "Create",
   "locations.form.updated": "Location updated successfully",
-  "locations.form.created": "Location created successfully"
+  "locations.form.created": "Location created successfully",
+  "locations.computer.title": "Register Computer",
+  "locations.computer.code": "Computer Code",
+  "locations.computer.codePlaceholder": "AA (leave empty to auto-generate)",
+  "locations.computer.codeLength": "Computer code must be exactly 2 characters",
+  "locations.computer.codeInvalid": "Computer code must be 2 uppercase letters or numbers",
+  "locations.computer.codeHelp": "2-character code (e.g., AA, AB, A1). Leave empty to auto-generate.",
+  "locations.computer.browserInfo": "Browser Info",
+  "locations.computer.browserInfoPlaceholder": "Auto-detected browser information",
+  "locations.computer.browserInfoMaxLength": "Browser info cannot exceed 250 characters",
+  "locations.computer.browserInfoHelp": "Automatically detected from your browser",
+  "locations.computer.ipAddress": "IP Address",
+  "locations.computer.ipAddressPlaceholder": "Optional: Enter IP address",
+  "locations.computer.ipAddressMaxLength": "IP address cannot exceed 50 characters",
+  "locations.computer.ipAddressHelp": "Optional: Computer's IP address",
+  "locations.computer.cancel": "Cancel",
+  "locations.computer.register": "Register",
+  "locations.computer.success": "Computer registered successfully"
 }

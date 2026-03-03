@@ -117,5 +117,7 @@
   "people.import.deleteAllPeopleError": "Failed to delete all people",
   "people.import.headerAutoDetected": "Headers automatically detected on row {row}",
   "people.import.loadFilesError": "Failed to load import files",
-  "people.import.headersOnLineTooltip": "Specify which row contains column headers. Auto-detected for Excel files, but can be adjusted if needed."
+  "people.import.headersOnLineTooltip": "Specify which row contains column headers. Auto-detected for Excel files, but can be adjusted if needed.",
+  "people.ageGroup.adult": "Adult",
+  "people.ageGroup.youth": "Youth"
 }
