@@ -43,7 +43,15 @@ export const secureTokenService = {
    */
   isAuthenticated(): boolean {
     const data = this.getAuthData();
-    return !!(data.email && data.authMethod);
+    // Regular users have email and authMethod
+    if (data.email && data.authMethod) {
+      return true;
+    }
+    // Tellers have name="Teller" and authMethod="AccessCode"
+    if (data.name === "Teller" && data.authMethod === "AccessCode") {
+      return true;
+    }
+    return false;
   },
 
   /**

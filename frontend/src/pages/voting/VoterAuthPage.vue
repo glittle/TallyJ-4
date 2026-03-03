@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ElCard, ElTabs, ElTabPane, ElForm, ElFormItem, ElInput, ElButton, ElRadioGroup, ElRadio } from 'element-plus';
 import { useOnlineVotingStore } from '../../stores/onlineVotingStore';
@@ -12,6 +12,11 @@ const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const activeTab = ref('email');
 const step = ref<'request' | 'verify'>('request');
+
+// Google One Tap variables
+const googleReady = ref(false);
+const gisScriptLoaded = ref(false);
+let gisCleanup: (() => void) | null = null;
 
 const emailForm = ref({
   email: ''
@@ -110,6 +115,129 @@ function backToRequest() {
   step.value = 'request';
   verificationForm.value.verifyCode = '';
 }
+
+// Google One Tap functions
+const handleGoogleOneTapCallback = async (response: GoogleCredentialResponse) => {
+  try {
+    loading.value = true;
+    await onlineVotingStore.googleAuth({ credential: response.credential });
+    const electionGuid = route.query.election as string;
+    if (electionGuid) {
+      router.push(`/vote/${electionGuid}`);
+    } else {
+      showErrorMessage('No election specified');
+    }
+  } catch (error) {
+    console.error('Error with Google authentication:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const loadGisScript = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (gisScriptLoaded.value || typeof google !== "undefined") {
+      gisScriptLoaded.value = true;
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+
+    script.onload = () => {
+      gisScriptLoaded.value = true;
+      resolve();
+    };
+
+    script.onerror = () => {
+      reject(new Error("Failed to load Google Identity Services script"));
+    };
+
+    document.head.appendChild(script);
+  });
+};
+
+const fetchGoogleClientId = async (): Promise<string | null> => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
+    const resp = await fetch(`${apiUrl}/api/public/auth-config`);
+    if (!resp.ok) return null;
+    const json = await resp.json();
+    return json?.data?.googleClientId || null;
+  } catch {
+    return null;
+  }
+};
+
+const initGoogleOneTap = async () => {
+  try {
+    // Lazy load the GIS script only when needed
+    await loadGisScript();
+    const clientId = await fetchGoogleClientId();
+
+    if (!clientId || typeof google === "undefined") {
+      googleReady.value = false;
+      return;
+    }
+
+    google.accounts.id.initialize({
+      client_id: clientId,
+      callback: handleGoogleOneTapCallback,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+      use_fedcm_for_prompt: true,
+    });
+
+    googleReady.value = true;
+    google.accounts.id.prompt();
+
+    // Store cleanup function
+    gisCleanup = () => {
+      if (typeof google !== "undefined" && googleReady.value) {
+        try {
+          google.accounts.id.cancel();
+        } catch {
+          // Ignore errors from cancel
+        }
+      }
+      googleReady.value = false;
+    };
+  } catch (error) {
+    console.error("Failed to initialize Google One Tap:", error);
+    googleReady.value = false;
+  }
+};
+
+const teardownGoogleOneTap = () => {
+  if (gisCleanup) {
+    gisCleanup();
+    gisCleanup = null;
+  }
+};
+
+// Watch for tab changes to initialize Google One Tap
+watch(activeTab, (newTab, oldTab) => {
+  if (oldTab === 'google') {
+    teardownGoogleOneTap();
+  }
+  if (newTab === 'google') {
+    initGoogleOneTap();
+  }
+});
+
+// Lifecycle hooks
+onMounted(() => {
+  if (activeTab.value === 'google') {
+    initGoogleOneTap();
+  }
+});
+
+onBeforeUnmount(() => {
+  teardownGoogleOneTap();
+});
 </script>
 
 <template>
@@ -170,6 +298,20 @@ function backToRequest() {
                   </ElButton>
                 </ElFormItem>
               </ElForm>
+            </ElTabPane>
+
+            <ElTabPane label="Google" name="google">
+              <div class="google-auth-section">
+                <p class="google-description">
+                  Sign in with your Google account to vote. You must be registered in an open election to proceed.
+                </p>
+                <div v-if="!googleReady" class="google-loading">
+                  <p>Loading Google authentication...</p>
+                </div>
+                <div v-else class="google-prompt">
+                  <p>Google One Tap will appear automatically. If it doesn't, check your browser settings.</p>
+                </div>
+              </div>
             </ElTabPane>
           </ElTabs>
         </div>
@@ -233,5 +375,24 @@ function backToRequest() {
   text-align: center;
   margin-bottom: 20px;
   color: var(--el-text-color-regular);
+}
+
+.google-auth-section {
+  text-align: center;
+
+  .google-description {
+    margin-bottom: 20px;
+    color: var(--el-text-color-regular);
+    font-size: 14px;
+  }
+
+  .google-loading,
+  .google-prompt {
+    p {
+      margin: 0;
+      color: var(--el-text-color-secondary);
+      font-size: 13px;
+    }
+  }
 }
 </style>

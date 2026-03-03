@@ -42,8 +42,8 @@ public class FrontDeskService : IFrontDeskService
     {
         var voters = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true)
-            .OrderBy(p => p.LastName)
-            .ThenBy(p => p.FirstName)
+            // .OrderBy(p => p.LastName)
+            // .ThenBy(p => p.FirstName)
             .ToListAsync();
 
         return _mapper.Map<List<FrontDeskVoterDto>>(voters);

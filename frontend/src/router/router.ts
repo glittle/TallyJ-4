@@ -199,11 +199,21 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
   }
 
   if (isAuthenticated) {
-    const superAdminStore = useSuperAdminStore();
-    // Ensure we have checked super admin status
-    await superAdminStore.checkSuperAdminStatus();
+    // Only check super admin status for regular users, not tellers
+    // Tellers are identified by authMethod="AccessCode" and name="Teller"
+    const authData = secureTokenService.getAuthData();
+    const isTeller = authData.name === "Teller" && authData.authMethod === "AccessCode";
 
-    if (to.meta.requiresSuperAdmin && !superAdminStore.isSuperAdmin) {
+    if (!isTeller) {
+      const superAdminStore = useSuperAdminStore();
+      // Ensure we have checked super admin status
+      await superAdminStore.checkSuperAdminStatus();
+
+      if (to.meta.requiresSuperAdmin && !superAdminStore.isSuperAdmin) {
+        return "/dashboard";
+      }
+    } else if (to.meta.requiresSuperAdmin) {
+      // Tellers can never be super admins, redirect them
       return "/dashboard";
     }
   }

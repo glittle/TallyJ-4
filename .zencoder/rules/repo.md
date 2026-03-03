@@ -9,6 +9,41 @@ alwaysApply: true
 
 TallyJ 4 is an election management and ballot tallying system designed for Bahá’í communities. It provides a comprehensive platform for managing elections, people, ballots, votes, and results with real-time capabilities.
 
+## Authentication System
+
+TallyJ 4 implements a multi-tier authentication system supporting four distinct user types:
+
+### User Types & Authentication Methods
+
+1. **Local Users** - Email/password authentication via ASP.NET Core Identity
+   - Full application access including election management
+   - Can be assigned super admin privileges
+   - JWT tokens stored in httpOnly cookies
+
+2. **Google Users** - OAuth authentication via Google One Tap
+   - Full application access equivalent to local users
+   - Can be assigned super admin privileges
+   - JWT tokens stored in httpOnly cookies
+
+3. **Tellers** - Access code authentication (guest users)
+   - Limited access to specific election management features
+   - No user accounts in database, authenticated via election-specific access codes
+   - Cannot be super admins
+   - JWT tokens with restricted claims
+
+4. **Voters** - OTP or Google authentication for online voting
+   - Isolated authentication system using separate token storage (localStorage)
+   - Access limited to online voting pages only
+   - Completely separate from main authentication system
+   - No integration with user management or permissions
+
+### Authentication Architecture
+
+- **Main System**: ASP.NET Core Identity with JWT tokens for users 1-3
+- **Voter System**: Separate token-based authentication for online voting
+- **Security**: HttpOnly cookies for main auth, localStorage for voter tokens
+- **Authorization**: Role-based access control with election-specific permissions
+
 ## Repository Structure
 
 - **backend/**: ASP.NET Core Web API with Entity Framework, SignalR, and JWT authentication

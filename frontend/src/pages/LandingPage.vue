@@ -14,7 +14,7 @@ const options = [
     title: "auth.landing.optionVoter",
     description: "auth.landing.optionVoterDesc",
     buttonText: "auth.landing.loginVoter",
-    action: () => navigateToLogin("voter"),
+    action: () => router.push({ name: "voter-auth" }),
   },
 
   {
@@ -89,7 +89,11 @@ const features = [
 ];
 
 const navigateToLogin = (type: string) => {
-  router.push({ path: "/login", query: { mode: type } });
+  if (type === "voter") {
+    router.push({ name: "voter-auth" });
+  } else {
+    router.push({ path: "/login", query: { mode: type } });
+  }
 };
 
 // add keyboard shortcut: if user presses "v", go to voter login; if "t", teller login; if "o", officer login

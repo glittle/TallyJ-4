@@ -52,3 +52,7 @@ export interface OnlineVoteStatus {
   whenSubmitted?: string;
   message?: string;
 }
+
+export interface GoogleAuthForVoterDto {
+  credential: string;
+}

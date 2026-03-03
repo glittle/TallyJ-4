@@ -3,19 +3,21 @@
     <div v-if="loading" class="loading-container">
       <el-skeleton :rows="5" animated />
     </div>
-    
+
     <div v-else-if="election">
       <el-page-header @back="goBack" :content="election.name">
         <template #extra>
           <el-button type="primary" @click="editElection">
-            <el-icon><Edit /></el-icon>
+            <el-icon>
+              <Edit />
+            </el-icon>
             {{ $t('common.edit') }}
           </el-button>
         </template>
       </el-page-header>
 
       <el-row :gutter="20" style="margin-top: 20px;">
-        <el-col :span="16">
+        <el-col :span="18">
           <el-card class="info-card">
             <template #header>
               <span>{{ $t('elections.details') }}</span>
@@ -56,31 +58,45 @@
             </template>
             <el-space wrap :size="15">
               <el-button @click="managePeople">
-                <el-icon><UserFilled /></el-icon>
+                <el-icon>
+                  <UserFilled />
+                </el-icon>
                 {{ $t('elections.managePeople') }}
               </el-button>
               <el-button @click="manageLocations">
-                <el-icon><LocationFilled /></el-icon>
+                <el-icon>
+                  <LocationFilled />
+                </el-icon>
                 {{ $t('elections.manageLocations') }}
               </el-button>
               <el-button @click="manageBallots">
-                <el-icon><Tickets /></el-icon>
+                <el-icon>
+                  <Tickets />
+                </el-icon>
                 {{ $t('elections.manageBallots') }}
               </el-button>
               <el-button @click="openFrontDesk">
-                <el-icon><Check /></el-icon>
+                <el-icon>
+                  <Check />
+                </el-icon>
                 {{ $t('nav.frontDesk') }}
               </el-button>
               <el-button @click="viewResults">
-                <el-icon><DataAnalysis /></el-icon>
+                <el-icon>
+                  <DataAnalysis />
+                </el-icon>
                 {{ $t('elections.viewResults') }}
               </el-button>
               <el-button @click="viewReports">
-                <el-icon><Document /></el-icon>
+                <el-icon>
+                  <Document />
+                </el-icon>
                 {{ $t('elections.viewReports') }}
               </el-button>
               <el-button @click="calculateTally" type="warning">
-                <el-icon><Operation /></el-icon>
+                <el-icon>
+                  <Operation />
+                </el-icon>
                 {{ $t('elections.calculateTally') }}
               </el-button>
             </el-space>
@@ -93,7 +109,8 @@
 
             <div class="access-status">
               <el-tag :type="election?.isTellerAccessOpen ? 'success' : 'info'">
-                {{ election?.isTellerAccessOpen ? $t('elections.tellerAccessOpen') : $t('elections.tellerAccessClosed') }}
+                {{ election?.isTellerAccessOpen ? $t('elections.tellerAccessOpen') : $t('elections.tellerAccessClosed')
+                }}
               </el-tag>
             </div>
 
@@ -105,39 +122,21 @@
 
             <el-divider />
 
-            <el-button
-              type="primary"
-              @click="toggleTellerAccess"
-              :loading="loading"
-              style="margin-bottom: 15px;"
-            >
+            <el-button type="primary" @click="toggleTellerAccess" :loading="loading" style="margin-bottom: 15px;">
               {{ $t('elections.toggleTellerAccess') }}
             </el-button>
 
             <div v-if="election?.electionPasscode" class="access-details">
               <div class="access-item">
                 <label>{{ $t('elections.tellerAccessCode') }}:</label>
-                <el-input
-                  :model-value="election.electionPasscode"
-                  readonly
-                  style="margin-top: 5px;"
-                />
+                <el-input :model-value="election.electionPasscode" readonly style="margin-top: 5px;" />
               </div>
 
               <div class="access-item" style="margin-top: 15px;">
                 <label>{{ $t('elections.tellerAccessUrl') }}:</label>
                 <div class="url-container">
-                  <el-input
-                    :model-value="shareableUrl"
-                    readonly
-                    style="margin-top: 5px;"
-                  />
-                  <el-button
-                    type="primary"
-                    @click="copyUrl"
-                    :icon="CopyDocument"
-                    style="margin-left: 10px;"
-                  >
+                  <el-input :model-value="shareableUrl" readonly style="margin-top: 5px;" />
+                  <el-button type="primary" @click="copyUrl" :icon="CopyDocument" style="margin-left: 10px;">
                     {{ $t('elections.copyUrl') }}
                   </el-button>
                 </div>
@@ -148,7 +147,9 @@
                 <div class="qr-container" style="margin-top: 10px;">
                   <img v-if="qrCodeUrl" :src="qrCodeUrl" alt="QR Code" class="qr-code" />
                   <div v-else class="qr-placeholder">
-                    <el-icon size="48"><Link /></el-icon>
+                    <el-icon size="48">
+                      <Link />
+                    </el-icon>
                     <p>{{ $t('common.loading') }}</p>
                   </div>
                 </div>
@@ -156,17 +157,13 @@
             </div>
 
             <div v-else class="no-passcode">
-              <el-alert
-                type="warning"
-                :title="$t('common.warning')"
-                :description="$t('elections.form.electionPasscodeHelp')"
-                show-icon
-              />
+              <el-alert type="warning" :title="$t('common.warning')"
+                :description="$t('elections.form.electionPasscodeHelp')" show-icon />
             </div>
           </el-card>
         </el-col>
 
-        <el-col :span="8">
+        <el-col :span="6">
           <el-card class="stats-card">
             <template #header>
               <span>{{ $t('elections.statistics') }}</span>
@@ -186,17 +183,20 @@
               <div class="stat-value">{{ election.locationCount }}</div>
             </div>
           </el-card>
-
-          <el-card class="danger-zone" style="margin-top: 20px;">
-            <template #header>
-              <span style="color: #f56c6c;">{{ $t('common.dangerZone') }}</span>
-            </template>
-            <el-button type="danger" plain @click="confirmDelete" style="width: 100%;">
-              <el-icon><Delete /></el-icon>
-              {{ $t('common.delete') }}
-            </el-button>
-          </el-card>
         </el-col>
+      </el-row>
+      <el-row>
+        <el-card class="danger-zone" style="margin-top: 20px;">
+          <template #header>
+            <span style="color: #f56c6c;">{{ $t('common.dangerZone') }}</span>
+          </template>
+          <el-button type="danger" plain @click="confirmDelete" style="width: 100%;">
+            <el-icon>
+              <Delete />
+            </el-icon>
+            {{ $t('common.delete') }}
+          </el-button>
+        </el-card>
       </el-row>
     </div>
 
@@ -310,7 +310,7 @@ async function confirmDelete() {
         confirmButtonClass: 'el-button--danger'
       }
     );
-    
+
     await electionStore.deleteElection(electionGuid);
     showSuccessMessage(t('elections.deleteSuccess'));
     router.push('/elections');

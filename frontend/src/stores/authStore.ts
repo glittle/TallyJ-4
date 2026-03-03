@@ -142,6 +142,40 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function tellerLogin(electionGuid: string, accessCode: string) {
+    try {
+      const response = await authService.tellerLogin(electionGuid, accessCode);
+
+      // Update auth store state from cookies
+      const cookieData = secureTokenService.refreshAuthData();
+      email.value = cookieData.email;
+      name.value = cookieData.name;
+      authMethod.value = cookieData.authMethod || 'AccessCode';
+
+      requires2FA.value = false;
+      pending2FAEmail.value = null;
+
+      // For tellers, skip fetchUserInfo since they don't have user accounts
+      // Tellers are identified by name="Teller" and authMethod="AccessCode"
+      if (name.value !== "Teller" || authMethod.value !== "AccessCode") {
+        // Fetch user info including isSuperAdmin for regular users
+        await fetchUserInfo();
+      } else {
+        // For tellers, set default values
+        isSuperAdmin.value = false;
+      }
+
+      // Start automatic token refresh
+      tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
+
+      return response;
+    } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
+      handleApiError(error as any);
+      throw error;
+    }
+  }
+
   async function logout() {
     // Stop automatic token refresh
     tokenRefreshService.stopAutoRefresh();
@@ -181,6 +215,7 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     login,
     googleOneTapLogin,
+    tellerLogin,
     logout
   };
 });

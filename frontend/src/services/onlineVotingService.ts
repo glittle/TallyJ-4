@@ -6,7 +6,8 @@ import type {
   OnlineElectionInfo,
   OnlineCandidate,
   SubmitOnlineBallotDto,
-  OnlineVoteStatus
+  OnlineVoteStatus,
+  GoogleAuthForVoterDto
 } from '../types';
 
 export const onlineVotingService = {
@@ -17,6 +18,11 @@ export const onlineVotingService = {
 
   async verifyCode(data: VerifyCodeDto): Promise<OnlineVoterAuthResponse> {
     const response = await api.post<OnlineVoterAuthResponse>('/online-voting/verify-code', data);
+    return response.data;
+  },
+
+  async googleAuth(data: GoogleAuthForVoterDto): Promise<OnlineVoterAuthResponse> {
+    const response = await api.post<OnlineVoterAuthResponse>('/online-voting/googleAuth', data);
     return response.data;
   },
 

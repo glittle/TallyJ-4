@@ -5,7 +5,7 @@ import { useLocationStore } from '@/stores/locationStore';
 import { useElectionStore } from '@/stores/electionStore';
 import { ElMessageBox } from 'element-plus';
 import { useNotifications } from '@/composables/useNotifications';
-import { Search, UserFilled, Clock, Warning, Check } from '@element-plus/icons-vue';
+import { Search, UserFilled, Clock, Warning, Check, User } from '@element-plus/icons-vue';
 import { frontDeskService } from '@/services/frontDeskService';
 import { signalrService } from '@/services/signalrService';
 import type { FrontDeskVoterDto, CheckInVoterDto, FrontDeskStatsDto, UnregisterVoterDto, UpdatePersonFlagsDto } from '@/types/FrontDesk';
@@ -74,7 +74,7 @@ const notCheckedInVoters = computed(() => filteredVoters.value.filter(v => !v.is
 // Filter voters based on selected filters
 const filteredByConditions = computed(() => {
   let result = showAllRegistered.value ?
-    [...notCheckedInVoters.value, ...checkedInVoters.value] :
+    filteredVoters.value :
     notCheckedInVoters.value;
 
   if (selectedMethodFilters.value.length > 0) {
@@ -97,20 +97,10 @@ const filteredByConditions = computed(() => {
 // Merge not-checked-in and checked-in voters into one list
 const allVoters = computed(() => {
   if (selectedMethodFilters.value.length > 0 || selectedFlagFilters.value.length > 0 || showAllRegistered.value) {
-    return filteredByConditions.value.sort((a, b) => {
-      if (a.isCheckedIn === b.isCheckedIn) {
-        return a.fullName.localeCompare(b.fullName);
-      }
-      return a.isCheckedIn ? 1 : -1;
-    });
+    return filteredByConditions.value;
   }
 
-  return [...notCheckedInVoters.value, ...checkedInVoters.value].sort((a, b) => {
-    if (a.isCheckedIn === b.isCheckedIn) {
-      return a.fullName.localeCompare(b.fullName);
-    }
-    return a.isCheckedIn ? 1 : -1;
-  });
+  return filteredVoters.value;
 });
 
 // Registration type options
@@ -148,7 +138,7 @@ const methodCounts = computed(() => {
 const flagCounts = computed(() => {
   const counts: Record<string, number> = {};
   electionFlags.value.forEach((flag: string) => {
-    counts[flag] = [...notCheckedInVoters.value, ...checkedInVoters.value].filter(v => {
+    counts[flag] = filteredVoters.value.filter(v => {
       if (!v.flags) return false;
       const voterFlags = v.flags.split(',').map(f => f.trim());
       return voterFlags.includes(flag);
@@ -179,7 +169,7 @@ async function fetchEligibleVoters(guid: string) {
   loading.value = true;
   error.value = null;
   try {
-    voters.value = await frontDeskService.getEligibleVoters(guid);
+    voters.value = (await frontDeskService.getEligibleVoters(guid)).sort((a, b) => a.fullName.localeCompare(b.fullName));
     await fetchStats(guid);
   } catch (e: any) {
     error.value = e.message || 'Failed to fetch eligible voters';
@@ -620,10 +610,17 @@ function clearFilters() {
         <div class="card-header">
           <el-page-header @back="goBack" content="Front Desk - Voter Check-In" />
           <div v-if="stats" class="header-stats">
-            <el-statistic :value="stats.checkedIn" title="Checked In">
+            <el-statistic :value="stats.checkedIn" title="Checked In" align="center">
               <template #prefix>
                 <el-icon>
                   <UserFilled />
+                </el-icon>
+              </template>
+            </el-statistic>
+            <el-statistic :value="stats.notYetCheckedIn" title="Not Checked In" align="center">
+              <template #prefix>
+                <el-icon>
+                  <User />
                 </el-icon>
               </template>
             </el-statistic>
@@ -738,7 +735,7 @@ function clearFilters() {
             <div v-else>
               <el-table ref="voterTableRef" :data="allVoters" :loading="loading" style="width: 100%" max-height="600px"
                 :row-class-name="getRowClassName" @row-click="handleRowClick">
-                <el-table-column prop="fullName" label="Name" sortable width="200" />
+                <el-table-column prop="fullName" label="Name" sortable width="350" />
                 <el-table-column prop="bahaiId" label="Bahá'í ID" width="120" />
                 <el-table-column prop="area" label="Area" width="100" />
                 <el-table-column prop="envNum" label="Env #" width="80" />
@@ -878,8 +875,8 @@ function clearFilters() {
 
   .section-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 3em;
   }
 
   .section-header h3 {
