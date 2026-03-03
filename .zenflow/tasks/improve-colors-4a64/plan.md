@@ -1,7 +1,7 @@
 # Spec and build
 
 ## Configuration
-- **Artifacts Path**: {@artifacts_path} → `.zenflow/tasks/{task_id}`
+- **Artifacts Path**: `.zenflow/tasks/improve-colors-4a64`
 
 ---
 
@@ -20,50 +20,42 @@ If you are blocked and need user clarification, mark the current step with `[!]`
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
 
-Assess the task's difficulty, as underestimating it leads to poor outcomes.
-- easy: Straightforward implementation, trivial bug fix or feature
-- medium: Moderate complexity, some edge cases or caveats to consider
-- hard: Complex logic, many caveats, architectural considerations, or high-risk changes
-
-Create a technical specification for the task that is appropriate for the complexity level:
-- Review the existing codebase architecture and identify reusable components.
-- Define the implementation approach based on established patterns in the project.
-- Identify all source code files that will be created or modified.
-- Define any necessary data model, API, or interface changes.
-- Describe verification steps using the project's test and lint commands.
-
-Save the output to `{@artifacts_path}/spec.md` with:
-- Technical context (language, dependencies)
-- Implementation approach
-- Source code structure changes
-- Data model / API / interface changes
-- Verification approach
-
-If the task is complex enough, create a detailed implementation plan based on `{@artifacts_path}/spec.md`:
-- Break down the work into concrete tasks (incrementable, testable milestones)
-- Each task should reference relevant contracts and include verification steps
-- Replace the Implementation step below with the planned tasks
-
-Rule of thumb for step size: each step should represent a coherent unit of work (e.g., implement a component, add an API endpoint, write tests for a module). Avoid steps that are too granular (single function).
-
-Important: unit tests must be part of each implementation task, not separate tasks. Each task should implement the code and its tests together, if relevant.
-
-Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warrant this breakdown, keep the Implementation step below as is.
+Analyzed logo colors (navy #1C3A6A, orange #F47920, lime green #8DC63F), mapped current palette,
+identified all files with hardcoded colors not matching logo, and created a WCAG AA-aware implementation plan.
+See `spec.md` for full details.
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Update core design tokens in style.css
 
-Implement the task according to the technical specification and general engineering best practices.
+Update `frontend/src/style.css`:
+- Replace `--color-primary-*` scale with navy blue derived from logo `#1C3A6A`
+- Add `--color-orange-*` and `--color-green-*` token scales for logo accent colors
+- Update sidebar CSS variables (light and dark mode)
+- Update public layout gradient to navy (replace purple `#667eea`/`#764ba2`)
+- Fix hardcoded link colors (`#646cff`, `#535bf2` → navy tokens)
+- Fix hardcoded button border hover (`#646cff`)
+- Fix hardcoded focus outline colors (`#409eff` → CSS variable)
+- Fix hardcoded skip-link background (`#409eff`)
+- Update `--el-color-primary` to `#2563a8` (navy, AA compliant)
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase
-3. If relevant, write unit tests alongside each change.
-4. Run relevant tests and linters in the end of each step.
-5. Perform basic manual verification if applicable.
-6. After completion, write a report to `{@artifacts_path}/report.md` describing:
-   - What was implemented
-   - How the solution was tested
-   - The biggest issues or challenges encountered
+---
+
+### [ ] Step: Update component hardcoded colors
+
+Update these files to replace off-brand hardcoded colors:
+- `frontend/src/components/AppHeader.vue`: Replace `#409eff` focus outlines with `var(--color-primary-700)`
+- `frontend/src/pages/DashboardPage.vue`: Replace 4 stat icon gradient colors with logo-aligned gradients (navy, orange, green, blue)
+- `frontend/src/pages/LandingPage.vue`: Replace feature/option icon `color` props with logo-aligned values (`#F47920`, `#8DC63F`, `#2563a8`, etc.)
+- `frontend/src/pages/SuperAdminDashboardPage.vue`: Replace purple gradient with navy gradient
+- `frontend/src/pages/results/ReportingPage.vue`: Replace `#409eff` color attributes with `var(--color-primary-500)` or `#2563a8`
+
+---
+
+### [ ] Step: Verify changes
+
+- Run `npx vue-tsc --noEmit` from `frontend/` directory to confirm no TypeScript errors
+- Confirm no CSS syntax errors in Vite build output
+- Write report to `.zenflow/tasks/improve-colors-4a64/report.md`
