@@ -329,7 +329,7 @@ onBeforeUnmount(() => {
 
       <el-form ref="loginFormRef" :model="loginForm" :rules="rules" label-position="top" @keyup.enter="handleLogin">
         <!-- System 1 & 3: Email Field -->
-        <el-form-item v-if="!isTellerLogin" :label="t('auth.email')" prop="email">
+        <el-form-item :label="t('auth.email')" prop="email">
           <el-input v-model="loginForm.email" :placeholder="t('auth.emailPlaceholder')"
             :disabled="isVoterLogin && codeSent" autofocus />
         </el-form-item>

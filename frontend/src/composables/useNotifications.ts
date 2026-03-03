@@ -22,7 +22,7 @@ export function useNotifications() {
       type = options.type || "info",
       message = options.message,
       duration = options.duration ?? computeDuration(message),
-      showClose = options.showClose ?? false,
+      showClose = options.showClose ?? true,
     } = options;
 
     ElMessage({

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, onBeforeUnmount, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import { useNotifications } from '@/composables/useNotifications';
@@ -83,6 +83,13 @@ function formatDate(date?: string) {
   return new Date(date).toLocaleDateString();
 }
 
+// add handler so if ESC is pressed, we go back to landing page
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === "Escape") {
+    router.push("/");
+  }
+};
+
 onMounted(async () => {
   const electionGuid = route.params.electionGuid as string;
   const accessCode = route.query.code as string;
@@ -97,16 +104,21 @@ onMounted(async () => {
   }
 
   await fetchAvailableElections();
+  globalThis.addEventListener("keydown", handleKeydown);
+});
+
+onBeforeUnmount(() => {
+  globalThis.removeEventListener("keydown", handleKeydown);
 });
 </script>
 
 <template>
-  <div class="teller-join-page">
-    <el-card class="join-card">
+  <div class="login-page">
+    <el-card class="login-card">
       <template #header>
-        <div class="join-header">
+        <div class="login-header">
           <h2>{{ t("auth.tellerJoin.title") }}</h2>
-          <p class="description">{{ t("auth.tellerJoin.description") }}</p>
+          <p class="mode-hint">{{ t("auth.tellerJoin.description") }}</p>
         </div>
       </template>
 
@@ -132,10 +144,16 @@ onMounted(async () => {
             type="text" />
         </el-form-item>
 
-        <div class="join-actions">
-          <el-button type="primary" :loading="loading" class="join-btn" @click="handleJoin">
+        <div class="login-actions">
+          <el-button type="primary" :loading="loading" class="submit-btn" @click="handleJoin">
             {{ t("auth.tellerJoin.joinButton") }}
           </el-button>
+        </div>
+
+        <div class="auth-links">
+          <router-link to="/">
+            {{ t("common.cancel") }}
+          </router-link>
         </div>
       </el-form>
     </el-card>
@@ -143,53 +161,68 @@ onMounted(async () => {
 </template>
 
 <style lang="less">
-.teller-join-page {
+.login-page {
   display: flex;
   justify-content: center;
   align-items: center;
   padding-top: 40px;
 
-  .join-card {
+  .login-card {
     width: 100%;
     max-width: 400px;
     border-radius: 12px;
+  }
 
-    .join-header {
-      text-align: center;
-    }
+  .login-header {
+    text-align: center;
+  }
 
-    .join-header h2 {
-      margin: 0;
-      color: var(--color-text-primary);
-    }
+  .login-header h2 {
+    margin: 0;
+    color: var(--color-text-primary);
+  }
 
-    .description {
-      margin-top: 10px;
-      color: var(--color-text-secondary);
-      font-size: 0.9rem;
-    }
+  .mode-hint {
+    margin-top: 10px;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+  }
 
-    .loading-elections {
-      padding: 20px 0;
-    }
+  .loading-elections {
+    padding: 20px 0;
+  }
 
-    .no-elections {
-      padding: 20px 0;
-    }
+  .no-elections {
+    padding: 20px 0;
+  }
 
+  .login-actions {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
-    .join-actions {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+  .submit-btn {
+    width: 100%;
+  }
 
-      .join-btn {
-        width: 100%;
-      }
-    }
+  .auth-links {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .auth-links a {
+    color: var(--color-primary-500);
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+
+  .auth-links a:hover {
+    text-decoration: underline;
   }
 }
-
-
 </style>

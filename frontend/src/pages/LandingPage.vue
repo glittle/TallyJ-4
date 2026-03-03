@@ -117,7 +117,7 @@ globalThis.addEventListener("keydown", (event) => {
     </div>
 
     <div class="options-grid">
-      <el-card v-for="opt in options" :key="opt.type" class="option-card" shadow="hover" @click="opt.action">
+      <el-card v-for="opt in options" :key="opt.type" class="option-card" shadow="hover" tabindex="0" @click="opt.action" @keydown.enter="opt.action" @keydown.space.prevent="opt.action">
         <template #header>
           <div class="card-header">
             <el-icon :size="40" :color="opt.color">
@@ -135,7 +135,7 @@ globalThis.addEventListener("keydown", (event) => {
       </el-card>
     </div>
     <div class="options-grid2">
-      <el-card v-for="opt in options2" :key="opt.type" class="option-card" shadow="hover" @click="opt.action">
+      <el-card v-for="opt in options2" :key="opt.type" class="option-card" shadow="hover" tabindex="0" @click="opt.action" @keydown.enter="opt.action" @keydown.space.prevent="opt.action">
         <template #header>
           <div class="card-header">
             <el-icon :size="40" :color="opt.color">
@@ -242,7 +242,8 @@ globalThis.addEventListener("keydown", (event) => {
     }
   }
 
-  .option-card:hover {
+  .option-card:hover,
+  .option-card:focus {
     transform: translateY(-10px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
   }
@@ -296,7 +297,7 @@ globalThis.addEventListener("keydown", (event) => {
     font-size: 2.5rem;
     margin-bottom: 20px;
     color: white;
-    
+
     @supports (background-clip: text) or (-webkit-background-clip: text) {
       background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
       -webkit-background-clip: text;
@@ -383,6 +384,7 @@ globalThis.addEventListener("keydown", (event) => {
     from {
       opacity: 0;
     }
+
     to {
       opacity: 1;
     }
@@ -393,6 +395,7 @@ globalThis.addEventListener("keydown", (event) => {
       opacity: 0;
       transform: translateY(30px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
