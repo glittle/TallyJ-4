@@ -242,7 +242,7 @@ function toggleMobileMenu() {
   .user-dropdown:hover,
   .user-dropdown:focus {
     background-color: var(--color-bg-secondary);
-    outline: 2px solid #409eff;
+    outline: 2px solid var(--color-primary-700);
     outline-offset: 2px;
   }
 
@@ -264,7 +264,7 @@ function toggleMobileMenu() {
   .mobile-menu-btn:hover,
   .mobile-menu-btn:focus {
     background-color: var(--color-bg-secondary);
-    outline: 2px solid #409eff;
+    outline: 2px solid var(--color-primary-700);
     outline-offset: 2px;
   }
 

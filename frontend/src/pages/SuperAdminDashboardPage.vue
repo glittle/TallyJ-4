@@ -436,23 +436,23 @@ onMounted(() => {
   }
 
   .stat-icon.elections {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #1C3A6A 0%, #2563a8 100%);
+    box-shadow: 0 4px 12px rgba(28, 58, 106, 0.3);
   }
 
   .stat-icon.active {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    box-shadow: 0 4px 12px rgba(240, 147, 251, 0.3);
+    background: linear-gradient(135deg, #F47920 0%, #d4661a 100%);
+    box-shadow: 0 4px 12px rgba(244, 121, 32, 0.3);
   }
 
   .stat-icon.voters {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+    background: linear-gradient(135deg, #8DC63F 0%, #5a9e1a 100%);
+    box-shadow: 0 4px 12px rgba(141, 198, 63, 0.3);
   }
 
   .stat-icon.ballots {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3);
+    background: linear-gradient(135deg, #2563a8 0%, #1C3A6A 100%);
+    box-shadow: 0 4px 12px rgba(37, 99, 168, 0.3);
   }
 
   .stat-icon .el-icon {

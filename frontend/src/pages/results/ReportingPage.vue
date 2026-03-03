@@ -193,7 +193,7 @@
                     <el-progress
                       :percentage="100"
                       :show-text="false"
-                      color="#409eff"
+                      color="#2563a8"
                       class="stat-progress"
                     />
                   </el-card>
@@ -205,7 +205,7 @@
                     <el-progress
                       :percentage="electionReport?.totalBallots ? (electionReport.totalVotes / electionReport.totalBallots) * 100 : 0"
                       :show-text="false"
-                      color="#67c23a"
+                      color="#8DC63F"
                       class="stat-progress"
                     />
                   </el-card>
@@ -229,7 +229,7 @@
                     <el-progress
                       :percentage="100"
                       :show-text="false"
-                      color="#e6a23c"
+                      color="#F47920"
                       class="stat-progress"
                     />
                   </el-card>
@@ -281,7 +281,7 @@
                           :percentage="getVotePercentage(candidate.voteCount)"
                           :show-text="false"
                           :stroke-width="8"
-                          color="#409eff"
+                          color="#2563a8"
                         />
                         <span class="vote-count">{{ candidate.voteCount }} {{ $t('reporting.votes') }}</span>
                       </div>
@@ -456,7 +456,7 @@
                     <el-statistic
                       :title="$t('reporting.overallTurnout')"
                       :value="detailedStatistics?.turnoutAnalysis.overallTurnout.toFixed(1) + '%'"
-                      :value-style="{ color: '#3f8600' }"
+                      :value-style="{ color: '#5a9e1a' }"
                     />
                   </el-col>
                   <el-col :span="6">
@@ -550,28 +550,28 @@
                     <el-statistic
                       :title="$t('reporting.onlineVoters')"
                       :value="detailedStatistics?.turnoutAnalysis.participationRates.onlineVoters.toFixed(1) + '%'"
-                      :value-style="{ color: '#1890ff' }"
+                      :value-style="{ color: '#2563a8' }"
                     />
                   </el-col>
                   <el-col :span="6">
                     <el-statistic
                       :title="$t('reporting.inPersonVoters')"
                       :value="detailedStatistics?.turnoutAnalysis.participationRates.inPersonVoters.toFixed(1) + '%'"
-                      :value-style="{ color: '#52c41a' }"
+                      :value-style="{ color: '#8DC63F' }"
                     />
                   </el-col>
                   <el-col :span="6">
                     <el-statistic
                       :title="$t('reporting.firstTimeVoters')"
                       :value="detailedStatistics?.turnoutAnalysis.participationRates.firstTimeVoters.toFixed(1) + '%'"
-                      :value-style="{ color: '#faad14' }"
+                      :value-style="{ color: '#F47920' }"
                     />
                   </el-col>
                   <el-col :span="6">
                     <el-statistic
                       :title="$t('reporting.returningVoters')"
                       :value="detailedStatistics?.turnoutAnalysis.participationRates.returningVoters.toFixed(1) + '%'"
-                      :value-style="{ color: '#722ed1' }"
+                      :value-style="{ color: '#1C3A6A' }"
                     />
                   </el-col>
                 </el-row>

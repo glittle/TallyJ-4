@@ -44,7 +44,8 @@ Update `frontend/src/style.css`:
 
 ---
 
-### [ ] Step: Update component hardcoded colors
+### [x] Step: Update component hardcoded colors
+<!-- chat-id: 1d636afc-1b23-44d4-9938-42cc08b19230 -->
 
 Update these files to replace off-brand hardcoded colors:
 - `frontend/src/components/AppHeader.vue`: Replace `#409eff` focus outlines with `var(--color-primary-700)`
