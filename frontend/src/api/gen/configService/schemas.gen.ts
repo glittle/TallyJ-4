@@ -3121,6 +3121,22 @@ export const ExportRequestSchema = {
     description: 'Request DTO for exporting election reports in different formats.'
 } as const;
 
+export const FacebookAuthForVoterDtoSchema = {
+    required: [
+        'accessToken'
+    ],
+    type: 'object',
+    properties: {
+        accessToken: {
+            minLength: 1,
+            type: 'string',
+            description: 'The Facebook user access token obtained from the Facebook Login flow.'
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for Facebook OAuth authentication for online voters.'
+} as const;
+
 export const FieldMappingDtoSchema = {
     type: 'object',
     properties: {
@@ -3580,6 +3596,22 @@ export const ImportWarningDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object for import warning messages.'
+} as const;
+
+export const KakaoAuthForVoterDtoSchema = {
+    required: [
+        'accessToken'
+    ],
+    type: 'object',
+    properties: {
+        accessToken: {
+            minLength: 1,
+            type: 'string',
+            description: 'The Kakao access token obtained from the Kakao Login flow.'
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for Kakao OAuth authentication for online voters.'
 } as const;
 
 export const LocationAnalysisDtoSchema = {
