@@ -86,6 +86,44 @@ public class OnlineVotingController : ControllerBase
     }
 
     /// <summary>
+    /// Authenticates a voter using Facebook OAuth for online voting access.
+    /// </summary>
+    /// <param name="dto">The Facebook authentication request.</param>
+    /// <returns>The voter session information if successful.</returns>
+    [HttpPost("facebookAuth")]
+    [AllowAnonymous]
+    public async Task<IActionResult> FacebookAuth([FromBody] FacebookAuthForVoterDto dto)
+    {
+        var (success, error, response) = await _onlineVotingService.FacebookAuthAsync(dto);
+
+        if (!success)
+        {
+            return BadRequest(new { error });
+        }
+
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Authenticates a voter using Kakao OAuth for online voting access.
+    /// </summary>
+    /// <param name="dto">The Kakao authentication request.</param>
+    /// <returns>The voter session information if successful.</returns>
+    [HttpPost("kakaoAuth")]
+    [AllowAnonymous]
+    public async Task<IActionResult> KakaoAuth([FromBody] KakaoAuthForVoterDto dto)
+    {
+        var (success, error, response) = await _onlineVotingService.KakaoAuthAsync(dto);
+
+        if (!success)
+        {
+            return BadRequest(new { error });
+        }
+
+        return Ok(response);
+    }
+
+    /// <summary>
     /// Gets the list of elections available to an authenticated voter.
     /// </summary>
     /// <param name="voterId">The voter's identifier (from JWT token).</param>

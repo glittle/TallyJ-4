@@ -221,6 +221,17 @@ services.AddScoped<IAuthorizationHandler, Backend.Authorization.SuperAdminHandle
 services.Configure<JsonLocalizationOptions>(builderConfiguration.GetSection(JsonLocalizationOptions.SectionName));
 services.AddJsonLocalization();
 
+// Add HTTP clients
+services.AddHttpClient("GreenApi");
+services.AddHttpClient("Facebook", c =>
+{
+    c.BaseAddress = new Uri("https://graph.facebook.com");
+});
+services.AddHttpClient("Kakao", c =>
+{
+    c.BaseAddress = new Uri("https://kapi.kakao.com");
+});
+
 // Add HTTP context accessor
 services.AddHttpContextAccessor();
 

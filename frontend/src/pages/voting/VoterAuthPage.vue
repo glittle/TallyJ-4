@@ -10,6 +10,9 @@ import { Message, Phone, Key, ChromeFilled, Lock, QuestionFilled } from '@elemen
 import { useOnlineVotingStore } from '../../stores/onlineVotingStore';
 import { useNotifications } from '../../composables/useNotifications';
 
+declare const FB: any;
+declare const Kakao: any;
+
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
@@ -24,11 +27,35 @@ const googleReady = ref(false);
 const googleError = ref(false);
 const gisScriptLoaded = ref(false);
 
+const fbReady = ref(false);
+const fbError = ref(false);
+const fbScriptLoaded = ref(false);
+
+const kakaoReady = ref(false);
+const kakaoError = ref(false);
+const kakaoScriptLoaded = ref(false);
+
+const authConfig = ref<{ googleClientId?: string; facebookAppId?: string; kakaoJsKey?: string } | null>(null);
+
 const emailForm = ref({ email: '' });
-const phoneForm = ref({ phone: '', deliveryMethod: 'sms' as 'sms' | 'voice' });
+const phoneForm = ref({ phone: '', deliveryMethod: 'sms' as 'sms' | 'voice' | 'whatsapp' });
 const codeForm = ref({ code: '' });
 const verificationForm = ref({ voterId: '', verifyCode: '' });
 const loading = ref(false);
+
+const fetchAuthConfig = async () => {
+  if (authConfig.value) return authConfig.value;
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
+    const resp = await fetch(`${apiUrl}/api/public/auth-config`);
+    if (!resp.ok) return null;
+    const json = await resp.json();
+    authConfig.value = json?.data ?? null;
+    return authConfig.value;
+  } catch {
+    return null;
+  }
+};
 
 async function handleRequestEmailCode() {
   try {
@@ -143,15 +170,8 @@ const loadGisScript = (): Promise<void> => {
 };
 
 const fetchGoogleClientId = async (): Promise<string | null> => {
-  try {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
-    const resp = await fetch(`${apiUrl}/api/public/auth-config`);
-    if (!resp.ok) return null;
-    const json = await resp.json();
-    return json?.data?.googleClientId || null;
-  } catch {
-    return null;
-  }
+  const config = await fetchAuthConfig();
+  return config?.googleClientId ?? null;
 };
 
 const initGoogleSignIn = async () => {
@@ -186,16 +206,149 @@ const initGoogleSignIn = async () => {
   }
 };
 
+const handleFacebookLogin = async () => {
+  try {
+    loading.value = true;
+    FB.login(async (res: any) => {
+      if (res.authResponse?.accessToken) {
+        await onlineVotingStore.facebookAuth({ accessToken: res.authResponse.accessToken });
+        const electionGuid = route.query.election as string;
+        if (electionGuid) {
+          router.push(`/vote/${electionGuid}`);
+        } else {
+          showErrorMessage(t('voting.auth.error.noElection'));
+        }
+      } else {
+        showErrorMessage(t('voting.auth.facebook.cancelled'));
+      }
+      loading.value = false;
+    }, { scope: 'email' });
+  } catch (error) {
+    console.error('Error with Facebook authentication:', error);
+    loading.value = false;
+  }
+};
+
+const loadFacebookSdk = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (fbScriptLoaded.value || typeof FB !== 'undefined') {
+      fbScriptLoaded.value = true;
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://connect.facebook.net/en_US/sdk.js';
+    script.async = true;
+    script.defer = true;
+    script.crossOrigin = 'anonymous';
+    script.onload = () => { fbScriptLoaded.value = true; resolve(); };
+    script.onerror = () => reject(new Error('Failed to load Facebook SDK'));
+    document.head.appendChild(script);
+  });
+};
+
+const initFacebookSdk = async () => {
+  try {
+    fbError.value = false;
+    const config = await fetchAuthConfig();
+    if (!config?.facebookAppId) {
+      fbError.value = true;
+      return;
+    }
+    await loadFacebookSdk();
+    FB.init({
+      appId: config.facebookAppId,
+      cookie: true,
+      xfbml: true,
+      version: 'v19.0'
+    });
+    fbReady.value = true;
+  } catch (error) {
+    console.error('Failed to initialize Facebook SDK:', error);
+    fbError.value = true;
+  }
+};
+
+const handleKakaoLogin = async () => {
+  try {
+    loading.value = true;
+    Kakao.Auth.login({
+      success: async (authObj: any) => {
+        await onlineVotingStore.kakaoAuth({ accessToken: authObj.access_token });
+        const electionGuid = route.query.election as string;
+        if (electionGuid) {
+          router.push(`/vote/${electionGuid}`);
+        } else {
+          showErrorMessage(t('voting.auth.error.noElection'));
+        }
+        loading.value = false;
+      },
+      fail: (err: any) => {
+        console.error('Kakao login failed:', err);
+        loading.value = false;
+      }
+    });
+  } catch (error) {
+    console.error('Error with Kakao authentication:', error);
+    loading.value = false;
+  }
+};
+
+const loadKakaoSdk = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (kakaoScriptLoaded.value || typeof Kakao !== 'undefined') {
+      kakaoScriptLoaded.value = true;
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js';
+    script.async = true;
+    script.onload = () => { kakaoScriptLoaded.value = true; resolve(); };
+    script.onerror = () => reject(new Error('Failed to load Kakao SDK'));
+    document.head.appendChild(script);
+  });
+};
+
+const initKakaoSdk = async () => {
+  try {
+    kakaoError.value = false;
+    const config = await fetchAuthConfig();
+    if (!config?.kakaoJsKey) {
+      kakaoError.value = true;
+      return;
+    }
+    await loadKakaoSdk();
+    if (!Kakao.isInitialized()) {
+      Kakao.init(config.kakaoJsKey);
+    }
+    kakaoReady.value = true;
+  } catch (error) {
+    console.error('Failed to initialize Kakao SDK:', error);
+    kakaoError.value = true;
+  }
+};
+
 watch(activeTab, async (newTab) => {
   if (newTab === 'google') {
     await nextTick();
     await initGoogleSignIn();
+  } else if (newTab === 'facebook') {
+    await nextTick();
+    await initFacebookSdk();
+  } else if (newTab === 'kakao') {
+    await nextTick();
+    await initKakaoSdk();
   }
 });
 
 onMounted(() => {
   if (activeTab.value === 'google') {
     initGoogleSignIn();
+  } else if (activeTab.value === 'facebook') {
+    initFacebookSdk();
+  } else if (activeTab.value === 'kakao') {
+    initKakaoSdk();
   }
 });
 
@@ -279,7 +432,11 @@ onBeforeUnmount(() => {
                     <ElRadioGroup v-model="phoneForm.deliveryMethod" class="delivery-options">
                       <ElRadio value="sms">{{ $t('voting.auth.phone.sms') }}</ElRadio>
                       <ElRadio value="voice">{{ $t('voting.auth.phone.voice') }}</ElRadio>
+                      <ElRadio value="whatsapp">{{ $t('voting.auth.phone.whatsapp') }}</ElRadio>
                     </ElRadioGroup>
+                  </ElFormItem>
+                  <ElFormItem v-if="phoneForm.deliveryMethod === 'whatsapp'">
+                    <p class="whatsapp-note">{{ $t('voting.auth.phone.whatsappNote') }}</p>
                   </ElFormItem>
                   <ElFormItem>
                     <ElButton type="primary" native-type="submit" :loading="loading" size="large" class="full-width-btn">
@@ -341,6 +498,75 @@ onBeforeUnmount(() => {
                     </ElButton>
                   </ElFormItem>
                 </ElForm>
+              </div>
+            </ElTabPane>
+
+            <ElTabPane name="facebook">
+              <template #label>
+                <span class="tab-label">
+                  <svg class="facebook-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="#1877F2" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                  <span>{{ $t('voting.auth.tabs.facebook') }}</span>
+                </span>
+              </template>
+              <div class="method-section facebook-section">
+                <p class="method-description">{{ $t('voting.auth.facebook.description') }}</p>
+                <div v-if="fbError">
+                  <ElAlert
+                    :title="$t('voting.auth.facebook.error')"
+                    type="warning"
+                    :closable="false"
+                    show-icon
+                  />
+                </div>
+                <div v-else class="sso-button-wrapper">
+                  <div v-if="!fbReady" class="sso-loading">
+                    <span>{{ $t('voting.auth.facebook.loading') }}</span>
+                  </div>
+                  <ElButton
+                    v-else
+                    class="facebook-login-btn"
+                    size="large"
+                    :loading="loading"
+                    @click="handleFacebookLogin"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" style="margin-right:8px"><path fill="#ffffff" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                    {{ $t('voting.auth.facebook.button') }}
+                  </ElButton>
+                </div>
+              </div>
+            </ElTabPane>
+
+            <ElTabPane name="kakao">
+              <template #label>
+                <span class="tab-label">
+                  <svg class="kakao-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="#3C1E1E" d="M12 3C6.477 3 2 6.582 2 11c0 2.785 1.682 5.226 4.236 6.73l-.931 3.47a.352.352 0 0 0 .538.378L9.927 18.9A12.3 12.3 0 0 0 12 19c5.523 0 10-3.582 10-8S17.523 3 12 3z"/></svg>
+                  <span>{{ $t('voting.auth.tabs.kakao') }}</span>
+                </span>
+              </template>
+              <div class="method-section kakao-section">
+                <p class="method-description">{{ $t('voting.auth.kakao.description') }}</p>
+                <div v-if="kakaoError">
+                  <ElAlert
+                    :title="$t('voting.auth.kakao.error')"
+                    type="warning"
+                    :closable="false"
+                    show-icon
+                  />
+                </div>
+                <div v-else class="sso-button-wrapper">
+                  <div v-if="!kakaoReady" class="sso-loading">
+                    <span>{{ $t('voting.auth.kakao.loading') }}</span>
+                  </div>
+                  <ElButton
+                    v-else
+                    class="kakao-login-btn"
+                    size="large"
+                    :loading="loading"
+                    @click="handleKakaoLogin"
+                  >
+                    {{ $t('voting.auth.kakao.button') }}
+                  </ElButton>
+                </div>
               </div>
             </ElTabPane>
 
@@ -532,6 +758,59 @@ onBeforeUnmount(() => {
           min-height: 44px;
           display: flex;
           justify-content: center;
+        }
+      }
+    }
+
+    .whatsapp-note {
+      font-size: 0.88rem;
+      color: #25D366;
+      margin: 0;
+      font-style: italic;
+    }
+
+    .sso-button-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0;
+
+      .sso-loading {
+        color: var(--el-text-color-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+      }
+    }
+
+    .facebook-section {
+      .facebook-login-btn {
+        background-color: #1877F2;
+        border-color: #1877F2;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 260px;
+        font-weight: 600;
+
+        &:hover {
+          background-color: #166FE5;
+          border-color: #166FE5;
+        }
+      }
+    }
+
+    .kakao-section {
+      .kakao-login-btn {
+        background-color: #FEE500;
+        border-color: #FEE500;
+        color: #3C1E1E;
+        min-width: 260px;
+        font-weight: 600;
+
+        &:hover {
+          background-color: #FADA0F;
+          border-color: #FADA0F;
         }
       }
     }

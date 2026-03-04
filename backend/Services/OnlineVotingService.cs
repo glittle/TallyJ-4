@@ -4,10 +4,15 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Net.Http.Headers;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.DTOs.OnlineVoting;
 using Google.Apis.Auth;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 namespace Backend.Services;
 
@@ -19,6 +24,7 @@ public class OnlineVotingService : IOnlineVotingService
     private readonly MainDbContext _context;
     private readonly IConfiguration _configuration;
     private readonly ILogger<OnlineVotingService> _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineVotingService"/> class.
@@ -26,14 +32,17 @@ public class OnlineVotingService : IOnlineVotingService
     /// <param name="context">The database context.</param>
     /// <param name="configuration">The application configuration.</param>
     /// <param name="logger">The logger instance.</param>
+    /// <param name="httpClientFactory">The HTTP client factory.</param>
     public OnlineVotingService(
         MainDbContext context,
         IConfiguration configuration,
-        ILogger<OnlineVotingService> logger)
+        ILogger<OnlineVotingService> logger,
+        IHttpClientFactory httpClientFactory)
     {
         _context = context;
         _configuration = configuration;
         _logger = logger;
+        _httpClientFactory = httpClientFactory;
     }
 
     /// <inheritdoc/>
@@ -546,6 +555,208 @@ public class OnlineVotingService : IOnlineVotingService
         }
     }
 
+    /// <inheritdoc/>
+    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> FacebookAuthAsync(FacebookAuthForVoterDto dto)
+    {
+        try
+        {
+            var client = _httpClientFactory.CreateClient("Facebook");
+            var response = await client.GetAsync($"/me?fields=id,email&access_token={Uri.EscapeDataString(dto.AccessToken)}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Facebook Graph API returned non-success for voter auth: {Status}", response.StatusCode);
+                return (false, "Invalid Facebook access token.", null);
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+
+            if (!doc.RootElement.TryGetProperty("email", out var emailElement))
+            {
+                return (false, "Your Facebook account has no verified email address. Please use another login method.", null);
+            }
+
+            var email = emailElement.GetString();
+            if (string.IsNullOrEmpty(email))
+            {
+                return (false, "Your Facebook account has no verified email address. Please use another login method.", null);
+            }
+
+            var now = DateTime.UtcNow;
+            var openElections = await _context.Elections
+                .Where(e => e.OnlineWhenOpen != null &&
+                           e.OnlineWhenClose != null &&
+                           e.OnlineWhenOpen <= now &&
+                           e.OnlineWhenClose >= now)
+                .Select(e => e.ElectionGuid)
+                .ToListAsync();
+
+            if (!openElections.Any())
+            {
+                return (false, "There are no elections currently open for online voting.", null);
+            }
+
+            var isVoterRegistered = await _context.People
+                .AnyAsync(p => openElections.Contains(p.ElectionGuid) && p.Email == email);
+
+            if (!isVoterRegistered)
+            {
+                _logger.LogWarning("Facebook auth rejected: Email {Email} not found in any open election", email);
+                return (false, "You are not registered to vote in any currently open election.", null);
+            }
+
+            var onlineVoter = await _context.OnlineVoters.FirstOrDefaultAsync(ov => ov.VoterId == email);
+            if (onlineVoter == null)
+            {
+                onlineVoter = new OnlineVoter
+                {
+                    VoterId = email,
+                    VoterIdType = "E",
+                    WhenRegistered = DateTime.UtcNow
+                };
+                _context.OnlineVoters.Add(onlineVoter);
+            }
+
+            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            var token = GenerateJwtToken(onlineVoter);
+            var expiresAt = DateTime.UtcNow.AddHours(24);
+
+            var authResponse = new OnlineVoterAuthResponse
+            {
+                Token = token,
+                VoterId = onlineVoter.VoterId,
+                VoterIdType = onlineVoter.VoterIdType,
+                ExpiresAt = expiresAt
+            };
+
+            _logger.LogInformation("Voter {Email} authenticated via Facebook OAuth (in {Count} open election(s))", email, openElections.Count);
+            return (true, null, authResponse);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error authenticating voter with Facebook");
+            return (false, "An error occurred while processing your Facebook authentication.", null);
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> KakaoAuthAsync(KakaoAuthForVoterDto dto)
+    {
+        try
+        {
+            var client = _httpClientFactory.CreateClient("Kakao");
+            var request = new HttpRequestMessage(HttpMethod.Get, "/v2/user/me");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", dto.AccessToken);
+
+            var response = await client.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Kakao API returned non-success for voter auth: {Status}", response.StatusCode);
+                return (false, "Invalid Kakao access token.", null);
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+
+            string? email = null;
+            string? phone = null;
+
+            if (doc.RootElement.TryGetProperty("kakao_account", out var account))
+            {
+                if (account.TryGetProperty("email", out var emailEl))
+                    email = emailEl.GetString();
+
+                if (account.TryGetProperty("phone_number", out var phoneEl))
+                    phone = NormalizeKakaoPhone(phoneEl.GetString());
+            }
+
+            if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(phone))
+            {
+                return (false, "Your Kakao account did not provide an email or phone number. Please use another login method.", null);
+            }
+
+            var now = DateTime.UtcNow;
+            var openElections = await _context.Elections
+                .Where(e => e.OnlineWhenOpen != null &&
+                           e.OnlineWhenClose != null &&
+                           e.OnlineWhenOpen <= now &&
+                           e.OnlineWhenClose >= now)
+                .Select(e => e.ElectionGuid)
+                .ToListAsync();
+
+            if (!openElections.Any())
+            {
+                return (false, "There are no elections currently open for online voting.", null);
+            }
+
+            string? matchedVoterId = null;
+            string? matchedVoterIdType = null;
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                var found = await _context.People.AnyAsync(p => openElections.Contains(p.ElectionGuid) && p.Email == email);
+                if (found) { matchedVoterId = email; matchedVoterIdType = "E"; }
+            }
+
+            if (matchedVoterId == null && !string.IsNullOrEmpty(phone))
+            {
+                var found = await _context.People.AnyAsync(p => openElections.Contains(p.ElectionGuid) && p.Phone == phone);
+                if (found) { matchedVoterId = phone; matchedVoterIdType = "P"; }
+            }
+
+            if (matchedVoterId == null)
+            {
+                _logger.LogWarning("Kakao auth rejected: email/phone not found in any open election");
+                return (false, "You are not registered to vote in any currently open election.", null);
+            }
+
+            var onlineVoter = await _context.OnlineVoters.FirstOrDefaultAsync(ov => ov.VoterId == matchedVoterId);
+            if (onlineVoter == null)
+            {
+                onlineVoter = new OnlineVoter
+                {
+                    VoterId = matchedVoterId,
+                    VoterIdType = matchedVoterIdType!,
+                    WhenRegistered = DateTime.UtcNow
+                };
+                _context.OnlineVoters.Add(onlineVoter);
+            }
+
+            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            var token = GenerateJwtToken(onlineVoter);
+            var expiresAt = DateTime.UtcNow.AddHours(24);
+
+            var authResponse = new OnlineVoterAuthResponse
+            {
+                Token = token,
+                VoterId = onlineVoter.VoterId,
+                VoterIdType = onlineVoter.VoterIdType,
+                ExpiresAt = expiresAt
+            };
+
+            _logger.LogInformation("Voter {VoterId} authenticated via Kakao OAuth (in {Count} open election(s))", matchedVoterId, openElections.Count);
+            return (true, null, authResponse);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error authenticating voter with Kakao");
+            return (false, "An error occurred while processing your Kakao authentication.", null);
+        }
+    }
+
+    private static string? NormalizeKakaoPhone(string? phone)
+    {
+        if (string.IsNullOrEmpty(phone)) return null;
+        var digits = new string(phone.Where(char.IsDigit).ToArray());
+        return digits.Length > 0 ? $"+{digits}" : null;
+    }
+
     private string GenerateVerificationCode()
     {
         const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -556,12 +767,196 @@ public class OnlineVotingService : IOnlineVotingService
 
     private async Task<bool> SendVerificationCodeAsync(string recipient, string method, string code)
     {
-        _logger.LogInformation("Sending verification code {Code} to {Recipient} via {Method}",
-            code, recipient, method);
+        _logger.LogInformation("Sending verification code to {Recipient} via {Method}", recipient, method);
 
-        await Task.Delay(100);
+        try
+        {
+            return method switch
+            {
+                "email" => await SendEmailCodeAsync(recipient, code),
+                "sms" => await SendSmsCodeAsync(recipient, code),
+                "voice" => await SendVoiceCodeAsync(recipient, code),
+                "whatsapp" => await SendWhatsAppCodeAsync(recipient, code),
+                _ => throw new ArgumentException($"Unknown delivery method: {method}")
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send verification code to {Recipient} via {Method}", recipient, method);
+            return false;
+        }
+    }
 
+    private async Task<bool> SendEmailCodeAsync(string email, string code)
+    {
+        var smtpHost = _configuration["Email:SmtpHost"];
+        if (string.IsNullOrWhiteSpace(smtpHost) || smtpHost.StartsWith("<"))
+        {
+            _logger.LogWarning("Email not configured; skipping send for {Email}", email);
+            return true;
+        }
+
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(
+            _configuration["Email:FromName"] ?? "TallyJ4",
+            _configuration["Email:FromAddress"] ?? "noreply@tallyj.local"));
+        message.To.Add(new MailboxAddress(email, email));
+        message.Subject = "Your TallyJ Voting Code";
+
+        var bodyBuilder = new BodyBuilder
+        {
+            HtmlBody = $@"<h2>Your Voting Verification Code</h2>
+<p>Your one-time code is: <strong style=""font-size:1.5em;letter-spacing:0.15em"">{code}</strong></p>
+<p>This code expires in 15 minutes.</p>
+<p>If you did not request this code, please ignore this email.</p>",
+            TextBody = $"Your TallyJ voting code is: {code}\n\nThis code expires in 15 minutes."
+        };
+        message.Body = bodyBuilder.ToMessageBody();
+
+        using var client = new SmtpClient();
+        var smtpPort = int.Parse(_configuration["Email:SmtpPort"] ?? "587");
+        var useSsl = bool.Parse(_configuration["Email:UseSsl"] ?? "true");
+        await client.ConnectAsync(smtpHost, smtpPort, useSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTlsWhenAvailable);
+
+        var username = _configuration["Email:Username"];
+        var password = _configuration["Email:Password"];
+        if (!string.IsNullOrWhiteSpace(username))
+        {
+            await client.AuthenticateAsync(username, password);
+        }
+
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
+        _logger.LogInformation("Email verification code sent to {Email}", email);
         return true;
+    }
+
+    private async Task<bool> SendSmsCodeAsync(string phone, string code)
+    {
+        var accountSid = _configuration["Twilio:AccountSid"];
+        if (string.IsNullOrWhiteSpace(accountSid) || accountSid.StartsWith("<"))
+        {
+            _logger.LogWarning("Twilio not configured; skipping SMS for {Phone}", phone);
+            return true;
+        }
+
+        var authToken = _configuration["Twilio:AuthToken"];
+        var fromNumber = _configuration["Twilio:FromNumber"];
+
+        var client = _httpClientFactory.CreateClient();
+        var credentials = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{accountSid}:{authToken}"));
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        var formData = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("To", phone),
+            new KeyValuePair<string, string>("From", fromNumber ?? ""),
+            new KeyValuePair<string, string>("Body", $"Your TallyJ voting code is: {code}\n\nThis code expires in 15 minutes.")
+        });
+
+        var response = await client.PostAsync(
+            $"https://api.twilio.com/2010-04-01/Accounts/{accountSid}/Messages.json",
+            formData);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            _logger.LogError("Twilio SMS failed for {Phone}: {Status} - {Body}", phone, response.StatusCode, body);
+            return false;
+        }
+
+        _logger.LogInformation("SMS verification code sent to {Phone}", phone);
+        return true;
+    }
+
+    private async Task<bool> SendVoiceCodeAsync(string phone, string code)
+    {
+        var accountSid = _configuration["Twilio:AccountSid"];
+        if (string.IsNullOrWhiteSpace(accountSid) || accountSid.StartsWith("<"))
+        {
+            _logger.LogWarning("Twilio not configured; skipping voice call for {Phone}", phone);
+            return true;
+        }
+
+        var authToken = _configuration["Twilio:AuthToken"];
+        var fromNumber = _configuration["Twilio:FromNumber"];
+
+        var spokenCode = string.Join(". ", code.ToCharArray());
+        var twiml = $@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Response>
+  <Say language=""en-US"">Your TallyJ voting code is: {spokenCode}. I repeat: {spokenCode}. This code expires in 15 minutes.</Say>
+</Response>";
+
+        var client = _httpClientFactory.CreateClient();
+        var credentials = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{accountSid}:{authToken}"));
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        var formData = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("To", phone),
+            new KeyValuePair<string, string>("From", fromNumber ?? ""),
+            new KeyValuePair<string, string>("Twiml", twiml)
+        });
+
+        var response = await client.PostAsync(
+            $"https://api.twilio.com/2010-04-01/Accounts/{accountSid}/Calls.json",
+            formData);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            _logger.LogError("Twilio voice call failed for {Phone}: {Status} - {Body}", phone, response.StatusCode, body);
+            return false;
+        }
+
+        _logger.LogInformation("Voice verification code sent to {Phone}", phone);
+        return true;
+    }
+
+    private async Task<bool> SendWhatsAppCodeAsync(string phone, string code)
+    {
+        var idInstance = _configuration["GreenApi:IdInstance"];
+        var apiToken = _configuration["GreenApi:ApiToken"];
+        var baseUrl = _configuration["GreenApi:BaseUrl"] ?? "https://api.green-api.com";
+
+        if (string.IsNullOrWhiteSpace(idInstance) || idInstance.StartsWith("<"))
+        {
+            _logger.LogWarning("GreenAPI not configured; skipping WhatsApp for {Phone}", phone);
+            return true;
+        }
+
+        var normalizedPhone = NormalizePhoneForWhatsApp(phone);
+        var chatId = $"{normalizedPhone}@c.us";
+
+        var client = _httpClientFactory.CreateClient("GreenApi");
+        var url = $"{baseUrl}/waInstance{idInstance}/sendMessage/{apiToken}";
+
+        var payload = new
+        {
+            chatId,
+            message = $"Your TallyJ voting code is: {code}\n\nThis code expires in 15 minutes."
+        };
+
+        var json = JsonSerializer.Serialize(payload);
+        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync(url, content);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            _logger.LogError("GreenAPI WhatsApp failed for {Phone}: {Status} - {Body}", phone, response.StatusCode, body);
+            return false;
+        }
+
+        _logger.LogInformation("WhatsApp verification code sent to {Phone}", phone);
+        return true;
+    }
+
+    private static string NormalizePhoneForWhatsApp(string phone)
+    {
+        var digits = new string(phone.Where(char.IsDigit).ToArray());
+        return digits;
     }
 
     private string GenerateJwtToken(OnlineVoter onlineVoter)

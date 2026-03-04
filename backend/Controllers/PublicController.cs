@@ -93,9 +93,17 @@ public class PublicController(IPublicService publicService, ILogger<PublicContro
         var googleClientId = _configuration["Google:ClientId"];
         var hasGoogle = !string.IsNullOrWhiteSpace(googleClientId) && !googleClientId.StartsWith("<");
 
+        var facebookAppId = _configuration["Facebook:AppId"];
+        var hasFacebook = !string.IsNullOrWhiteSpace(facebookAppId) && !facebookAppId.StartsWith("<");
+
+        var kakaoJsKey = _configuration["KakaoApi:JsKey"];
+        var hasKakao = !string.IsNullOrWhiteSpace(kakaoJsKey) && !kakaoJsKey.StartsWith("<");
+
         return Ok(ApiResponse<object>.SuccessResponse(new
         {
-            googleClientId = hasGoogle ? googleClientId : null
+            googleClientId = hasGoogle ? googleClientId : null,
+            facebookAppId = hasFacebook ? facebookAppId : null,
+            kakaoJsKey = hasKakao ? kakaoJsKey : null
         }));
     }
 

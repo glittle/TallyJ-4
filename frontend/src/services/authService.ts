@@ -89,6 +89,11 @@ export const authService = {
     });
   },
 
+  async get2FAStatus(): Promise<{ isEnabled: boolean; method: string | null }> {
+    const response = await api.get('/api/auth/2fa/status');
+    return response.data;
+  },
+
   async googleOneTap(credential: string): Promise<AuthResponse> {
     const response = await postApiAuthGoogleOneTap({
       body: { credential } as GoogleOneTapRequest,

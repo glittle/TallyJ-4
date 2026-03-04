@@ -7,7 +7,9 @@ import type {
   OnlineCandidate,
   SubmitOnlineBallotDto,
   OnlineVoteStatus,
-  GoogleAuthForVoterDto
+  GoogleAuthForVoterDto,
+  FacebookAuthForVoterDto,
+  KakaoAuthForVoterDto
 } from '../types';
 
 export const onlineVotingService = {
@@ -23,6 +25,16 @@ export const onlineVotingService = {
 
   async googleAuth(data: GoogleAuthForVoterDto): Promise<OnlineVoterAuthResponse> {
     const response = await api.post<OnlineVoterAuthResponse>('/online-voting/googleAuth', data);
+    return response.data;
+  },
+
+  async facebookAuth(data: FacebookAuthForVoterDto): Promise<OnlineVoterAuthResponse> {
+    const response = await api.post<OnlineVoterAuthResponse>('/online-voting/facebookAuth', data);
+    return response.data;
+  },
+
+  async kakaoAuth(data: KakaoAuthForVoterDto): Promise<OnlineVoterAuthResponse> {
+    const response = await api.post<OnlineVoterAuthResponse>('/online-voting/kakaoAuth', data);
     return response.data;
   },
 

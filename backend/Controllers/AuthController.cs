@@ -509,6 +509,33 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
+    /// Gets the two-factor authentication status for the authenticated user.
+    /// </summary>
+    /// <returns>The 2FA status including whether it is enabled and the method used.</returns>
+    [Authorize]
+    [HttpGet("2fa/status")]
+    public async Task<IActionResult> Get2FAStatus()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound(new { error = "User not found" });
+        }
+
+        return Ok(new
+        {
+            isEnabled = user.TwoFactorEnabled,
+            method = user.TwoFactorEnabled ? "totp" : (string?)null
+        });
+    }
+
+    /// <summary>
     /// Verifies a two-factor authentication code for login.
     /// </summary>
     /// <param name="request">The verify 2FA request containing email, password, and verification code.</param>

@@ -63,6 +63,20 @@ public interface IOnlineVotingService
     /// <param name="voterId">The voter's identifier (email/phone/code).</param>
     /// <returns>A task containing the list of available elections.</returns>
     Task<List<AvailableElectionDto>> GetAvailableElectionsAsync(string voterId);
+
+    /// <summary>
+    /// Authenticates a voter using Facebook OAuth and returns authentication token if voter is in at least one open election.
+    /// </summary>
+    /// <param name="dto">The Facebook authentication request containing the access token.</param>
+    /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
+    Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> FacebookAuthAsync(FacebookAuthForVoterDto dto);
+
+    /// <summary>
+    /// Authenticates a voter using Kakao OAuth and returns authentication token if voter is in at least one open election.
+    /// </summary>
+    /// <param name="dto">The Kakao authentication request containing the access token.</param>
+    /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
+    Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> KakaoAuthAsync(KakaoAuthForVoterDto dto);
 }
 
 
