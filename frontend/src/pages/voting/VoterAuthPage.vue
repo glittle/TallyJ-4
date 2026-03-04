@@ -381,10 +381,35 @@ onBeforeUnmount(() => {
         <div v-if="step === 'request'">
           <ElTabs v-model="activeTab" class="auth-tabs">
 
+            <ElTabPane name="google">
+              <template #label>
+                <span class="tab-label">
+                  <ElIcon>
+                    <ChromeFilled />
+                  </ElIcon>
+                  <span>{{ $t('voting.auth.tabs.google') }}</span>
+                </span>
+              </template>
+              <div class="method-section google-section">
+                <p class="method-description">{{ $t('voting.auth.google.description') }}</p>
+                <p class="method-description">{{ $t('voting.auth.google.prompt') }}</p>
+                <div v-if="googleError">
+                  <ElAlert :title="$t('voting.auth.google.error')" type="warning" :closable="false" show-icon />
+                </div>
+                <div v-else class="google-button-wrapper">
+                  <div v-if="!googleReady" class="google-loading">
+                    <span>{{ $t('voting.auth.google.loading') }}</span>
+                  </div>
+                  <div ref="googleButtonContainer" class="google-button-container"></div>
+                </div>
+              </div>
+            </ElTabPane>
             <ElTabPane name="email">
               <template #label>
                 <span class="tab-label">
-                  <ElIcon><Message /></ElIcon>
+                  <ElIcon>
+                    <Message />
+                  </ElIcon>
                   <span>{{ $t('voting.auth.tabs.email') }}</span>
                 </span>
               </template>
@@ -392,16 +417,12 @@ onBeforeUnmount(() => {
                 <p class="method-description">{{ $t('voting.auth.email.description') }}</p>
                 <ElForm :model="emailForm" @submit.prevent="handleRequestEmailCode">
                   <ElFormItem :label="$t('voting.auth.email.label')">
-                    <ElInput
-                      v-model="emailForm.email"
-                      type="email"
-                      :placeholder="$t('voting.auth.email.placeholder')"
-                      size="large"
-                      required
-                    />
+                    <ElInput v-model="emailForm.email" type="email" :placeholder="$t('voting.auth.email.placeholder')"
+                      size="large" required />
                   </ElFormItem>
                   <ElFormItem>
-                    <ElButton type="primary" native-type="submit" :loading="loading" size="large" class="full-width-btn">
+                    <ElButton type="primary" native-type="submit" :loading="loading" size="large"
+                      class="full-width-btn">
                       {{ $t('voting.auth.email.sendCode') }}
                     </ElButton>
                   </ElFormItem>
@@ -412,7 +433,9 @@ onBeforeUnmount(() => {
             <ElTabPane name="phone">
               <template #label>
                 <span class="tab-label">
-                  <ElIcon><Phone /></ElIcon>
+                  <ElIcon>
+                    <Phone />
+                  </ElIcon>
                   <span>{{ $t('voting.auth.tabs.phone') }}</span>
                 </span>
               </template>
@@ -420,13 +443,8 @@ onBeforeUnmount(() => {
                 <p class="method-description">{{ $t('voting.auth.phone.description') }}</p>
                 <ElForm :model="phoneForm" @submit.prevent="handleRequestPhoneCode">
                   <ElFormItem :label="$t('voting.auth.phone.label')">
-                    <ElInput
-                      v-model="phoneForm.phone"
-                      type="tel"
-                      :placeholder="$t('voting.auth.phone.placeholder')"
-                      size="large"
-                      required
-                    />
+                    <ElInput v-model="phoneForm.phone" type="tel" :placeholder="$t('voting.auth.phone.placeholder')"
+                      size="large" required />
                   </ElFormItem>
                   <ElFormItem :label="$t('voting.auth.phone.deliveryMethod')">
                     <ElRadioGroup v-model="phoneForm.deliveryMethod" class="delivery-options">
@@ -439,7 +457,8 @@ onBeforeUnmount(() => {
                     <p class="whatsapp-note">{{ $t('voting.auth.phone.whatsappNote') }}</p>
                   </ElFormItem>
                   <ElFormItem>
-                    <ElButton type="primary" native-type="submit" :loading="loading" size="large" class="full-width-btn">
+                    <ElButton type="primary" native-type="submit" :loading="loading" size="large"
+                      class="full-width-btn">
                       {{ $t('voting.auth.phone.sendCode') }}
                     </ElButton>
                   </ElFormItem>
@@ -447,37 +466,13 @@ onBeforeUnmount(() => {
               </div>
             </ElTabPane>
 
-            <ElTabPane name="google">
-              <template #label>
-                <span class="tab-label">
-                  <ElIcon><ChromeFilled /></ElIcon>
-                  <span>{{ $t('voting.auth.tabs.google') }}</span>
-                </span>
-              </template>
-              <div class="method-section google-section">
-                <p class="method-description">{{ $t('voting.auth.google.description') }}</p>
-                <p class="method-description">{{ $t('voting.auth.google.prompt') }}</p>
-                <div v-if="googleError">
-                  <ElAlert
-                    :title="$t('voting.auth.google.error')"
-                    type="warning"
-                    :closable="false"
-                    show-icon
-                  />
-                </div>
-                <div v-else class="google-button-wrapper">
-                  <div v-if="!googleReady" class="google-loading">
-                    <span>{{ $t('voting.auth.google.loading') }}</span>
-                  </div>
-                  <div ref="googleButtonContainer" class="google-button-container"></div>
-                </div>
-              </div>
-            </ElTabPane>
 
             <ElTabPane name="code">
               <template #label>
                 <span class="tab-label">
-                  <ElIcon><Key /></ElIcon>
+                  <ElIcon>
+                    <Key />
+                  </ElIcon>
                   <span>{{ $t('voting.auth.tabs.code') }}</span>
                 </span>
               </template>
@@ -485,15 +480,12 @@ onBeforeUnmount(() => {
                 <p class="method-description">{{ $t('voting.auth.code.description') }}</p>
                 <ElForm :model="codeForm" @submit.prevent="handleDirectCodeLogin">
                   <ElFormItem :label="$t('voting.auth.code.label')">
-                    <ElInput
-                      v-model="codeForm.code"
-                      :placeholder="$t('voting.auth.code.placeholder')"
-                      size="large"
-                      required
-                    />
+                    <ElInput v-model="codeForm.code" :placeholder="$t('voting.auth.code.placeholder')" size="large"
+                      required />
                   </ElFormItem>
                   <ElFormItem>
-                    <ElButton type="primary" native-type="submit" :loading="loading" size="large" class="full-width-btn">
+                    <ElButton type="primary" native-type="submit" :loading="loading" size="large"
+                      class="full-width-btn">
                       {{ $t('voting.auth.code.proceed') }}
                     </ElButton>
                   </ElFormItem>
@@ -504,32 +496,30 @@ onBeforeUnmount(() => {
             <ElTabPane name="facebook">
               <template #label>
                 <span class="tab-label">
-                  <svg class="facebook-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="#1877F2" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                  <svg class="facebook-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16"
+                    height="16">
+                    <path fill="#1877F2"
+                      d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" />
+                  </svg>
                   <span>{{ $t('voting.auth.tabs.facebook') }}</span>
                 </span>
               </template>
               <div class="method-section facebook-section">
                 <p class="method-description">{{ $t('voting.auth.facebook.description') }}</p>
                 <div v-if="fbError">
-                  <ElAlert
-                    :title="$t('voting.auth.facebook.error')"
-                    type="warning"
-                    :closable="false"
-                    show-icon
-                  />
+                  <ElAlert :title="$t('voting.auth.facebook.error')" type="warning" :closable="false" show-icon />
                 </div>
                 <div v-else class="sso-button-wrapper">
                   <div v-if="!fbReady" class="sso-loading">
                     <span>{{ $t('voting.auth.facebook.loading') }}</span>
                   </div>
-                  <ElButton
-                    v-else
-                    class="facebook-login-btn"
-                    size="large"
-                    :loading="loading"
-                    @click="handleFacebookLogin"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" style="margin-right:8px"><path fill="#ffffff" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                  <ElButton v-else class="facebook-login-btn" size="large" :loading="loading"
+                    @click="handleFacebookLogin">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"
+                      style="margin-right:8px">
+                      <path fill="#ffffff"
+                        d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" />
+                    </svg>
                     {{ $t('voting.auth.facebook.button') }}
                   </ElButton>
                 </div>
@@ -539,31 +529,23 @@ onBeforeUnmount(() => {
             <ElTabPane name="kakao">
               <template #label>
                 <span class="tab-label">
-                  <svg class="kakao-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="#3C1E1E" d="M12 3C6.477 3 2 6.582 2 11c0 2.785 1.682 5.226 4.236 6.73l-.931 3.47a.352.352 0 0 0 .538.378L9.927 18.9A12.3 12.3 0 0 0 12 19c5.523 0 10-3.582 10-8S17.523 3 12 3z"/></svg>
+                  <svg class="kakao-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                    <path fill="#3C1E1E"
+                      d="M12 3C6.477 3 2 6.582 2 11c0 2.785 1.682 5.226 4.236 6.73l-.931 3.47a.352.352 0 0 0 .538.378L9.927 18.9A12.3 12.3 0 0 0 12 19c5.523 0 10-3.582 10-8S17.523 3 12 3z" />
+                  </svg>
                   <span>{{ $t('voting.auth.tabs.kakao') }}</span>
                 </span>
               </template>
               <div class="method-section kakao-section">
                 <p class="method-description">{{ $t('voting.auth.kakao.description') }}</p>
                 <div v-if="kakaoError">
-                  <ElAlert
-                    :title="$t('voting.auth.kakao.error')"
-                    type="warning"
-                    :closable="false"
-                    show-icon
-                  />
+                  <ElAlert :title="$t('voting.auth.kakao.error')" type="warning" :closable="false" show-icon />
                 </div>
                 <div v-else class="sso-button-wrapper">
                   <div v-if="!kakaoReady" class="sso-loading">
                     <span>{{ $t('voting.auth.kakao.loading') }}</span>
                   </div>
-                  <ElButton
-                    v-else
-                    class="kakao-login-btn"
-                    size="large"
-                    :loading="loading"
-                    @click="handleKakaoLogin"
-                  >
+                  <ElButton v-else class="kakao-login-btn" size="large" :loading="loading" @click="handleKakaoLogin">
                     {{ $t('voting.auth.kakao.button') }}
                   </ElButton>
                 </div>
@@ -575,18 +557,16 @@ onBeforeUnmount(() => {
 
         <div v-else-if="step === 'verify'" class="verify-section">
           <div class="verify-header">
-            <ElIcon :size="40" color="#409EFF"><Message /></ElIcon>
+            <ElIcon :size="40" color="#409EFF">
+              <Message />
+            </ElIcon>
             <h3>{{ $t('voting.auth.verify.message', { voterId: verificationForm.voterId }) }}</h3>
             <p>{{ $t('voting.auth.verify.detail') }}</p>
           </div>
           <ElForm :model="verificationForm" @submit.prevent="handleVerifyCode">
             <ElFormItem :label="$t('voting.auth.verify.label')">
-              <ElInput
-                v-model="verificationForm.verifyCode"
-                :placeholder="$t('voting.auth.verify.placeholder')"
-                size="large"
-                required
-              />
+              <ElInput v-model="verificationForm.verifyCode" :placeholder="$t('voting.auth.verify.placeholder')"
+                size="large" required />
             </ElFormItem>
             <ElFormItem>
               <ElButton type="primary" native-type="submit" :loading="loading" size="large" class="full-width-btn">
@@ -605,7 +585,9 @@ onBeforeUnmount(() => {
 
       <div class="faq-section">
         <div class="faq-header">
-          <ElIcon :size="24" color="rgba(255,255,255,0.85)"><QuestionFilled /></ElIcon>
+          <ElIcon :size="24" color="rgba(255,255,255,0.85)">
+            <QuestionFilled />
+          </ElIcon>
           <h2>{{ $t('voting.auth.faq.title') }}</h2>
         </div>
         <ElCollapse class="faq-collapse">
