@@ -32,19 +32,15 @@ public class OnlineVotingController : ControllerBase
     /// Requests a verification code for online voting.
     /// </summary>
     /// <param name="dto">The request code data.</param>
-    /// <returns>A success message if the code was sent.</returns>
+    /// <returns>A success message regardless of whether the code was sent.</returns>
     [HttpPost("requestCode")]
     [AllowAnonymous]
     public async Task<IActionResult> RequestCode([FromBody] RequestCodeDto dto)
     {
-        var (success, error) = await _onlineVotingService.RequestVerificationCodeAsync(dto);
+        // Always attempt to send the code but don't reveal success/failure to prevent enumeration attacks
+        var messageKey = await _onlineVotingService.RequestVerificationCodeAsync(dto);
 
-        if (!success)
-        {
-            return BadRequest(new { error });
-        }
-
-        return Ok(new { message = "Verification code sent successfully." });
+        return Ok(new { messageKey });
     }
 
     /// <summary>
@@ -76,6 +72,44 @@ public class OnlineVotingController : ControllerBase
     public async Task<IActionResult> GoogleAuth([FromBody] GoogleAuthForVoterDto dto)
     {
         var (success, error, response) = await _onlineVotingService.AuthenticateVoterWithGoogleAsync(dto);
+
+        if (!success)
+        {
+            return BadRequest(new { error });
+        }
+
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Authenticates a voter using Facebook OAuth for online voting access.
+    /// </summary>
+    /// <param name="dto">The Facebook authentication request.</param>
+    /// <returns>The voter session information if successful.</returns>
+    [HttpPost("facebookAuth")]
+    [AllowAnonymous]
+    public async Task<IActionResult> FacebookAuth([FromBody] FacebookAuthForVoterDto dto)
+    {
+        var (success, error, response) = await _onlineVotingService.FacebookAuthAsync(dto);
+
+        if (!success)
+        {
+            return BadRequest(new { error });
+        }
+
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Authenticates a voter using Kakao OAuth for online voting access.
+    /// </summary>
+    /// <param name="dto">The Kakao authentication request.</param>
+    /// <returns>The voter session information if successful.</returns>
+    [HttpPost("kakaoAuth")]
+    [AllowAnonymous]
+    public async Task<IActionResult> KakaoAuth([FromBody] KakaoAuthForVoterDto dto)
+    {
+        var (success, error, response) = await _onlineVotingService.KakaoAuthAsync(dto);
 
         if (!success)
         {

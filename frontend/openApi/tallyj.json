@@ -872,6 +872,19 @@
         }
       }
     },
+    "/api/Auth/2fa/status": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Gets the two-factor authentication status for the authenticated user.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auth/verify2fa": {
       "post": {
         "tags": [
@@ -3213,6 +3226,72 @@
         }
       }
     },
+    "/api/online-voting/facebookAuth": {
+      "post": {
+        "tags": [
+          "OnlineVoting"
+        ],
+        "summary": "Authenticates a voter using Facebook OAuth for online voting access.",
+        "requestBody": {
+          "description": "The Facebook authentication request.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacebookAuthForVoterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacebookAuthForVoterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacebookAuthForVoterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/online-voting/kakaoAuth": {
+      "post": {
+        "tags": [
+          "OnlineVoting"
+        ],
+        "summary": "Authenticates a voter using Kakao OAuth for online voting access.",
+        "requestBody": {
+          "description": "The Kakao authentication request.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KakaoAuthForVoterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KakaoAuthForVoterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/KakaoAuthForVoterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/online-voting/availableElections": {
       "get": {
         "tags": [
@@ -4629,57 +4708,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          }
-        }
-      }
-    },
-    "/{electionGuid}/calculateTally": {
-      "post": {
-        "tags": [
-          "Results"
-        ],
-        "summary": "Calculates the tally results for a specific election.",
-        "parameters": [
-          {
-            "name": "electionGuid",
-            "in": "path",
-            "description": "The GUID of the election to calculate results for.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "electionType",
-            "in": "query",
-            "description": "The type of election calculation (\"normal\" or \"singlename\").",
-            "schema": {
-              "type": "string",
-              "default": "normal"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TallyResultDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TallyResultDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TallyResultDto"
-                }
-              }
-            }
           }
         }
       }
@@ -9124,6 +9152,21 @@
         "additionalProperties": false,
         "description": "Request DTO for exporting election reports in different formats."
       },
+      "FacebookAuthForVoterDto": {
+        "required": [
+          "accessToken"
+        ],
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "minLength": 1,
+            "type": "string",
+            "description": "The Facebook user access token obtained from the Facebook Login flow."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for Facebook OAuth authentication for online voters."
+      },
       "FieldMappingDto": {
         "type": "object",
         "properties": {
@@ -9571,6 +9614,21 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object for import warning messages."
+      },
+      "KakaoAuthForVoterDto": {
+        "required": [
+          "accessToken"
+        ],
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "minLength": 1,
+            "type": "string",
+            "description": "The Kakao access token obtained from the Kakao Login flow."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for Kakao OAuth authentication for online voters."
       },
       "LocationAnalysisDto": {
         "type": "object",
@@ -12728,10 +12786,5 @@
         "bearerFormat": "JWT"
       }
     }
-  },
-  "security": [
-    {
-      "Bearer": [ ]
-    }
-  ]
+  }
 }

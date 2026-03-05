@@ -2261,6 +2261,16 @@ export type ExportRequest = {
 };
 
 /**
+ * Data transfer object for Facebook OAuth authentication for online voters.
+ */
+export type FacebookAuthForVoterDto = {
+    /**
+     * The Facebook user access token obtained from the Facebook Login flow.
+     */
+    accessToken: string;
+};
+
+/**
  * Data transfer object for mapping a source column to a target field during import.
  */
 export type FieldMappingDto = {
@@ -2575,6 +2585,16 @@ export type ImportWarningDto = {
     parameters?: {
         [key: string]: string;
     } | null;
+};
+
+/**
+ * Data transfer object for Kakao OAuth authentication for online voters.
+ */
+export type KakaoAuthForVoterDto = {
+    /**
+     * The Kakao access token obtained from the Kakao Login flow.
+     */
+    accessToken: string;
 };
 
 /**
@@ -5671,6 +5691,20 @@ export type PostApiAuthDisable2FaResponses = {
     200: unknown;
 };
 
+export type GetApiAuth2FaStatusData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/2fa/status';
+};
+
+export type GetApiAuth2FaStatusResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type PostApiAuthVerify2FaData = {
     /**
      * The verify 2FA request containing email, password, and verification code.
@@ -6783,6 +6817,40 @@ export type PostApiOnlineVotingGoogleAuthResponses = {
     200: unknown;
 };
 
+export type PostApiOnlineVotingFacebookAuthData = {
+    /**
+     * The Facebook authentication request.
+     */
+    body?: FacebookAuthForVoterDto;
+    path?: never;
+    query?: never;
+    url: '/api/online-voting/facebookAuth';
+};
+
+export type PostApiOnlineVotingFacebookAuthResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiOnlineVotingKakaoAuthData = {
+    /**
+     * The Kakao authentication request.
+     */
+    body?: KakaoAuthForVoterDto;
+    path?: never;
+    query?: never;
+    url: '/api/online-voting/kakaoAuth';
+};
+
+export type PostApiOnlineVotingKakaoAuthResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetApiOnlineVotingAvailableElectionsData = {
     body?: never;
     path?: never;
@@ -7495,32 +7563,6 @@ export type PostApiReportExportsByElectionIdResponses = {
      */
     200: unknown;
 };
-
-export type PostByElectionGuidCalculateTallyData = {
-    body?: never;
-    path: {
-        /**
-         * The GUID of the election to calculate results for.
-         */
-        electionGuid: string;
-    };
-    query?: {
-        /**
-         * The type of election calculation ("normal" or "singlename").
-         */
-        electionType?: string;
-    };
-    url: '/{electionGuid}/calculateTally';
-};
-
-export type PostByElectionGuidCalculateTallyResponses = {
-    /**
-     * OK
-     */
-    200: TallyResultDto;
-};
-
-export type PostByElectionGuidCalculateTallyResponse = PostByElectionGuidCalculateTallyResponses[keyof PostByElectionGuidCalculateTallyResponses];
 
 export type GetApiResultsByElectionGuidResultsData = {
     body?: never;

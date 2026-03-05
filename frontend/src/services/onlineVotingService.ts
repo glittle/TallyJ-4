@@ -1,4 +1,15 @@
-import api from './api';
+import {
+  postApiOnlineVotingRequestCode,
+  postApiOnlineVotingVerifyCode,
+  postApiOnlineVotingGoogleAuth,
+  postApiOnlineVotingFacebookAuth,
+  postApiOnlineVotingKakaoAuth,
+  getApiOnlineVotingAvailableElections,
+  getApiOnlineVotingByElectionGuidElectionInfo,
+  getApiOnlineVotingByElectionGuidCandidates,
+  postApiOnlineVotingByElectionGuidSubmitBallot,
+  getApiOnlineVotingByElectionGuidByVoterIdVoteStatus,
+} from "../api/gen/configService/sdk.gen";
 import type {
   RequestCodeDto,
   VerifyCodeDto,
@@ -7,44 +18,92 @@ import type {
   OnlineCandidate,
   SubmitOnlineBallotDto,
   OnlineVoteStatus,
-  GoogleAuthForVoterDto
-} from '../types';
+  GoogleAuthForVoterDto,
+  FacebookAuthForVoterDto,
+  KakaoAuthForVoterDto,
+} from "../types";
 
 export const onlineVotingService = {
-  async requestCode(data: RequestCodeDto): Promise<{ message: string }> {
-    const response = await api.post<{ message: string }>('/online-voting/request-code', data);
-    return response.data;
+  async requestCode(data: RequestCodeDto): Promise<{ messageKey: string }> {
+    const response = await postApiOnlineVotingRequestCode({
+      body: data,
+    });
+    return response.data as { messageKey: string };
   },
 
   async verifyCode(data: VerifyCodeDto): Promise<OnlineVoterAuthResponse> {
-    const response = await api.post<OnlineVoterAuthResponse>('/online-voting/verify-code', data);
-    return response.data;
+    const response = await postApiOnlineVotingVerifyCode({
+      body: data,
+    });
+    return response.data as OnlineVoterAuthResponse;
   },
 
-  async googleAuth(data: GoogleAuthForVoterDto): Promise<OnlineVoterAuthResponse> {
-    const response = await api.post<OnlineVoterAuthResponse>('/online-voting/googleAuth', data);
-    return response.data;
+  async googleAuth(
+    data: GoogleAuthForVoterDto,
+  ): Promise<OnlineVoterAuthResponse> {
+    const response = await postApiOnlineVotingGoogleAuth({
+      body: data,
+    });
+    return response.data as OnlineVoterAuthResponse;
+  },
+
+  async facebookAuth(
+    data: FacebookAuthForVoterDto,
+  ): Promise<OnlineVoterAuthResponse> {
+    const response = await postApiOnlineVotingFacebookAuth({
+      body: data,
+    });
+    return response.data as OnlineVoterAuthResponse;
+  },
+
+  async kakaoAuth(
+    data: KakaoAuthForVoterDto,
+  ): Promise<OnlineVoterAuthResponse> {
+    const response = await postApiOnlineVotingKakaoAuth({
+      body: data,
+    });
+    return response.data as OnlineVoterAuthResponse;
+  },
+
+  async getAvailableElections(voterId: string): Promise<OnlineElectionInfo[]> {
+    const response = await getApiOnlineVotingAvailableElections({
+      query: { voterId },
+    });
+    return response.data as OnlineElectionInfo[];
   },
 
   async getElectionInfo(electionGuid: string): Promise<OnlineElectionInfo> {
-    const response = await api.get<OnlineElectionInfo>(`/online-voting/elections/${electionGuid}`);
-    return response.data;
+    const response = await getApiOnlineVotingByElectionGuidElectionInfo({
+      path: { electionGuid },
+    });
+    return response.data as OnlineElectionInfo;
   },
 
   async getCandidates(electionGuid: string): Promise<OnlineCandidate[]> {
-    const response = await api.get<OnlineCandidate[]>(`/online-voting/elections/${electionGuid}/candidates`);
-    return response.data;
-  },
-
-  async submitBallot(electionGuid: string, data: SubmitOnlineBallotDto): Promise<{ message: string }> {
-    const response = await api.post<{ message: string }>(`/online-voting/elections/${electionGuid}/submit-ballot`, data);
-    return response.data;
-  },
-
-  async getVoteStatus(electionGuid: string, voterId: string): Promise<OnlineVoteStatus> {
-    const response = await api.get<OnlineVoteStatus>(`/online-voting/elections/${electionGuid}/vote-status`, {
-      params: { voterId }
+    const response = await getApiOnlineVotingByElectionGuidCandidates({
+      path: { electionGuid },
     });
-    return response.data;
-  }
+    return response.data as OnlineCandidate[];
+  },
+
+  async submitBallot(
+    electionGuid: string,
+    data: SubmitOnlineBallotDto,
+  ): Promise<{ message: string }> {
+    const response = await postApiOnlineVotingByElectionGuidSubmitBallot({
+      path: { electionGuid },
+      body: data,
+    });
+    return response.data as { message: string };
+  },
+
+  async getVoteStatus(
+    electionGuid: string,
+    voterId: string,
+  ): Promise<OnlineVoteStatus> {
+    const response = await getApiOnlineVotingByElectionGuidByVoterIdVoteStatus({
+      path: { electionGuid, voterId },
+    });
+    return response.data as OnlineVoteStatus;
+  },
 };

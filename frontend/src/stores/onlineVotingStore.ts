@@ -10,6 +10,8 @@ import type {
   SubmitOnlineBallotDto,
   OnlineVoteStatus,
   GoogleAuthForVoterDto,
+  FacebookAuthForVoterDto,
+  KakaoAuthForVoterDto,
 } from "../types";
 
 export const useOnlineVotingStore = defineStore("onlineVoting", () => {
@@ -26,7 +28,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.requestCode(data);
-      return response;
+      return response.messageKey;
     } catch (error) {
       handleApiError(error as any);
       throw error;
@@ -56,6 +58,40 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.googleAuth(data);
+      voterToken.value = response.token;
+      voterId.value = response.voterId;
+      localStorage.setItem("voter_token", response.token);
+      localStorage.setItem("voter_id", response.voterId);
+      return response;
+    } catch (error) {
+      handleApiError(error as any);
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function facebookAuth(data: FacebookAuthForVoterDto) {
+    try {
+      loading.value = true;
+      const response = await onlineVotingService.facebookAuth(data);
+      voterToken.value = response.token;
+      voterId.value = response.voterId;
+      localStorage.setItem("voter_token", response.token);
+      localStorage.setItem("voter_id", response.voterId);
+      return response;
+    } catch (error) {
+      handleApiError(error as any);
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function kakaoAuth(data: KakaoAuthForVoterDto) {
+    try {
+      loading.value = true;
+      const response = await onlineVotingService.kakaoAuth(data);
       voterToken.value = response.token;
       voterId.value = response.voterId;
       localStorage.setItem("voter_token", response.token);
@@ -153,6 +189,8 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     requestVerificationCode,
     verifyCode,
     googleAuth,
+    facebookAuth,
+    kakaoAuth,
     loadElectionInfo,
     loadCandidates,
     submitBallot,

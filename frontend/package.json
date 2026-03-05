@@ -54,6 +54,7 @@
   },
   "overrides": {
     "glob": "^11.0.0",
-    "minimatch": "^10.2.1"
+    "minimatch": "^10.2.1",
+    "vue-i18n": "^11.2.8"
   }
 }

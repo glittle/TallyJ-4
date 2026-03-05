@@ -1,7 +1,7 @@
 export interface RequestCodeDto {
   voterId: string;
   voterIdType: 'E' | 'P' | 'C';
-  deliveryMethod: 'email' | 'sms' | 'voice';
+  deliveryMethod: 'email' | 'sms' | 'voice' | 'whatsapp';
 }
 
 export interface VerifyCodeDto {
@@ -55,4 +55,12 @@ export interface OnlineVoteStatus {
 
 export interface GoogleAuthForVoterDto {
   credential: string;
+}
+
+export interface FacebookAuthForVoterDto {
+  accessToken: string;
+}
+
+export interface KakaoAuthForVoterDto {
+  accessToken: string;
 }
