@@ -9,6 +9,7 @@ import {
 import { Message, Phone, Key, ChromeFilled, Lock, QuestionFilled } from '@element-plus/icons-vue';
 import { useOnlineVotingStore } from '../../stores/onlineVotingStore';
 import { useNotifications } from '../../composables/useNotifications';
+import { useStorage } from '@vueuse/core';
 
 declare const FB: any;
 declare const Kakao: any;
@@ -19,7 +20,7 @@ const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
-const activeTab = ref('email');
+const activeTab = useStorage('voterLoginTab', 'google');
 const step = ref<'request' | 'verify'>('request');
 
 const googleButtonContainer = ref<HTMLElement | null>(null);
@@ -60,14 +61,14 @@ const fetchAuthConfig = async () => {
 async function handleRequestEmailCode() {
   try {
     loading.value = true;
-    await onlineVotingStore.requestVerificationCode({
+    const messageKey = await onlineVotingStore.requestVerificationCode({
       voterId: emailForm.value.email,
       voterIdType: 'E',
       deliveryMethod: 'email'
     });
     verificationForm.value.voterId = emailForm.value.email;
     step.value = 'verify';
-    showSuccessMessage(t('voting.auth.email.codeSent'));
+    showSuccessMessage(t(messageKey));
   } catch (error) {
     console.error('Error requesting email code:', error);
   } finally {
@@ -78,14 +79,14 @@ async function handleRequestEmailCode() {
 async function handleRequestPhoneCode() {
   try {
     loading.value = true;
-    await onlineVotingStore.requestVerificationCode({
+    const messageKey = await onlineVotingStore.requestVerificationCode({
       voterId: phoneForm.value.phone,
       voterIdType: 'P',
       deliveryMethod: phoneForm.value.deliveryMethod
     });
     verificationForm.value.voterId = phoneForm.value.phone;
     step.value = 'verify';
-    showSuccessMessage(t('voting.auth.phone.codeSent', { method: phoneForm.value.deliveryMethod }));
+    showSuccessMessage(t(messageKey));
   } catch (error) {
     console.error('Error requesting phone code:', error);
   } finally {
@@ -446,7 +447,7 @@ onBeforeUnmount(() => {
                     <ElInput v-model="phoneForm.phone" type="tel" :placeholder="$t('voting.auth.phone.placeholder')"
                       size="large" required />
                   </ElFormItem>
-                  <ElFormItem :label="$t('voting.auth.phone.deliveryMethod')">
+                  <ElFormItem :label="$t('voting.auth.phone.deliveryMethod')" class="phone-form">
                     <ElRadioGroup v-model="phoneForm.deliveryMethod" class="delivery-options">
                       <ElRadio value="sms">{{ $t('voting.auth.phone.sms') }}</ElRadio>
                       <ElRadio value="voice">{{ $t('voting.auth.phone.voice') }}</ElRadio>
@@ -631,6 +632,16 @@ onBeforeUnmount(() => {
     max-width: 780px;
   }
 
+  .phone-form {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+
+    .el-form-item__content {
+      align-self: center;
+    }
+  }
+
   .welcome-section {
     text-align: center;
     padding: 20px 0 32px;
@@ -719,7 +730,6 @@ onBeforeUnmount(() => {
       .delivery-options {
         display: flex;
         gap: 24px;
-        padding: 8px 0;
       }
     }
 

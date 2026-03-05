@@ -331,20 +331,9 @@ services.AddSwaggerGen(options =>
         Description = "JWT Authorization header using the Bearer scheme. Enter your token in the text input below."
     });
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+    // Only add global security requirement for authenticated endpoints
+    // Individual endpoints will specify their own security requirements
+    // This allows anonymous endpoints to be included without requiring auth
 
     options.IncludeXmlComments(
     Path.Combine(
@@ -352,6 +341,13 @@ services.AddSwaggerGen(options =>
       $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"
     )
   );
+
+    // Ensure all API controllers are included, including anonymous ones
+    options.DocInclusionPredicate((docName, apiDesc) =>
+    {
+        // Include all API endpoints regardless of authentication
+        return apiDesc.RelativePath?.StartsWith("api/") == true;
+    });
 });
 
 

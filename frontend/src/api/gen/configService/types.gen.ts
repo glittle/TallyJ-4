@@ -7564,32 +7564,6 @@ export type PostApiReportExportsByElectionIdResponses = {
     200: unknown;
 };
 
-export type PostByElectionGuidCalculateTallyData = {
-    body?: never;
-    path: {
-        /**
-         * The GUID of the election to calculate results for.
-         */
-        electionGuid: string;
-    };
-    query?: {
-        /**
-         * The type of election calculation ("normal" or "singlename").
-         */
-        electionType?: string;
-    };
-    url: '/{electionGuid}/calculateTally';
-};
-
-export type PostByElectionGuidCalculateTallyResponses = {
-    /**
-     * OK
-     */
-    200: TallyResultDto;
-};
-
-export type PostByElectionGuidCalculateTallyResponse = PostByElectionGuidCalculateTallyResponses[keyof PostByElectionGuidCalculateTallyResponses];
-
 export type GetApiResultsByElectionGuidResultsData = {
     body?: never;
     path: {

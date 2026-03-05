@@ -46,34 +46,32 @@ public class OnlineVotingService : IOnlineVotingService
     }
 
     /// <inheritdoc/>
-    public async Task<(bool Success, string? Error)> RequestVerificationCodeAsync(RequestCodeDto dto)
+    public async Task<string> RequestVerificationCodeAsync(RequestCodeDto dto)
     {
         try
         {
             // 1. Find all open elections where this voter is registered (SMS pumping prevention)
             var now = DateTime.UtcNow;
             var openElections = await _context.Elections
-                .Where(e => e.OnlineWhenOpen != null &&
-                           e.OnlineWhenClose != null &&
-                           e.OnlineWhenOpen <= now &&
-                           e.OnlineWhenClose >= now)
+                .Where(e => e.OnlineWhenOpen != null && e.OnlineWhenOpen <= now &&
+                           (e.OnlineWhenClose == null || e.OnlineWhenClose > now))
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
 
             if (!openElections.Any())
             {
                 _logger.LogWarning("Login code request rejected: No elections currently open for online voting");
-                return (false, "There are no elections currently open for online voting.");
+                return "voting.auth.requestCode.noOpenElections";
             }
 
             // 2. Check if voter is registered in ANY of the open elections
             var isVoterRegistered = dto.VoterIdType switch
             {
-                "E" => await _context.People.AnyAsync(p => 
+                "E" => await _context.People.AnyAsync(p =>
                     openElections.Contains(p.ElectionGuid) && p.Email == dto.VoterId),
-                "P" => await _context.People.AnyAsync(p => 
+                "P" => await _context.People.AnyAsync(p =>
                     openElections.Contains(p.ElectionGuid) && p.Phone == dto.VoterId),
-                "C" => await _context.People.AnyAsync(p => 
+                "C" => await _context.People.AnyAsync(p =>
                     openElections.Contains(p.ElectionGuid) && p.KioskCode == dto.VoterId),
                 _ => false
             };
@@ -82,7 +80,7 @@ public class OnlineVotingService : IOnlineVotingService
             {
                 _logger.LogWarning("Login code request rejected: VoterId {VoterId} (type: {VoterIdType}) not found in any open election",
                     dto.VoterId, dto.VoterIdType);
-                return (false, "You are not registered to vote in any currently open election.");
+                return "voting.auth.requestCode.notRegistered";
             }
 
             // 3. Create or update OnlineVoter record for tracking
@@ -113,18 +111,18 @@ public class OnlineVotingService : IOnlineVotingService
 
             if (!sent)
             {
-                return (false, "Failed to send verification code. Please try again.");
+                return "voting.auth.requestCode.sendFailed";
             }
 
             _logger.LogInformation("Verification code sent to {VoterId} via {Method} (registered in {Count} open election(s))",
                 dto.VoterId, dto.DeliveryMethod, openElections.Count);
 
-            return (true, null);
+            return "voting.auth.requestCode.sent";
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error requesting verification code for {VoterId}", dto.VoterId);
-            return (false, "An error occurred while processing your request.");
+            return "voting.auth.requestCode.error";
         }
     }
 
@@ -205,10 +203,8 @@ public class OnlineVotingService : IOnlineVotingService
         }
 
         var now = DateTime.UtcNow;
-        var isOpen = election.OnlineWhenOpen != null &&
-                     election.OnlineWhenClose != null &&
-                     election.OnlineWhenOpen <= now &&
-                     election.OnlineWhenClose >= now;
+        var isOpen = (election.OnlineWhenOpen == null || election.OnlineWhenOpen <= now) &&
+                     (election.OnlineWhenClose == null || election.OnlineWhenClose > now);
 
         return new OnlineElectionInfoDto
         {
@@ -258,8 +254,8 @@ public class OnlineVotingService : IOnlineVotingService
             }
 
             var now = DateTime.UtcNow;
-            if (election.OnlineWhenOpen == null || election.OnlineWhenClose == null ||
-                election.OnlineWhenOpen > now || election.OnlineWhenClose < now)
+            if ((election.OnlineWhenOpen != null && election.OnlineWhenOpen > now) ||
+                (election.OnlineWhenClose != null && election.OnlineWhenClose <= now))
             {
                 return (false, "Online voting is not currently open for this election.");
             }
@@ -543,7 +539,7 @@ public class OnlineVotingService : IOnlineVotingService
                 .OrderBy(e => e.Name)
                 .ToListAsync();
 
-            _logger.LogInformation("Found {Count} available elections for voter {VoterId}", 
+            _logger.LogInformation("Found {Count} available elections for voter {VoterId}",
                 availableElections.Count, voterId);
 
             return availableElections;

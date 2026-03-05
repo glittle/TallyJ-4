@@ -4712,57 +4712,6 @@
         }
       }
     },
-    "/{electionGuid}/calculateTally": {
-      "post": {
-        "tags": [
-          "Results"
-        ],
-        "summary": "Calculates the tally results for a specific election.",
-        "parameters": [
-          {
-            "name": "electionGuid",
-            "in": "path",
-            "description": "The GUID of the election to calculate results for.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "electionType",
-            "in": "query",
-            "description": "The type of election calculation (\"normal\" or \"singlename\").",
-            "schema": {
-              "type": "string",
-              "default": "normal"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TallyResultDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TallyResultDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TallyResultDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Results/{electionGuid}/results": {
       "get": {
         "tags": [
@@ -12837,10 +12786,5 @@
         "bearerFormat": "JWT"
       }
     }
-  },
-  "security": [
-    {
-      "Bearer": [ ]
-    }
-  ]
+  }
 }

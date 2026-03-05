@@ -32,19 +32,15 @@ public class OnlineVotingController : ControllerBase
     /// Requests a verification code for online voting.
     /// </summary>
     /// <param name="dto">The request code data.</param>
-    /// <returns>A success message if the code was sent.</returns>
+    /// <returns>A success message regardless of whether the code was sent.</returns>
     [HttpPost("requestCode")]
     [AllowAnonymous]
     public async Task<IActionResult> RequestCode([FromBody] RequestCodeDto dto)
     {
-        var (success, error) = await _onlineVotingService.RequestVerificationCodeAsync(dto);
+        // Always attempt to send the code but don't reveal success/failure to prevent enumeration attacks
+        var messageKey = await _onlineVotingService.RequestVerificationCodeAsync(dto);
 
-        if (!success)
-        {
-            return BadRequest(new { error });
-        }
-
-        return Ok(new { message = "Verification code sent successfully." });
+        return Ok(new { messageKey });
     }
 
     /// <summary>

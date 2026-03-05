@@ -28,7 +28,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.requestCode(data);
-      return response;
+      return response.messageKey;
     } catch (error) {
       handleApiError(error as any);
       throw error;
