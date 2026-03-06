@@ -1,4 +1,6 @@
-﻿namespace Backend.DTOs.Ballots;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Ballots;
 
 /// <summary>
 /// Data transfer object for updating ballot information.
@@ -6,9 +8,9 @@
 public class UpdateBallotDto
 {
     /// <summary>
-    /// The status code of the ballot.
+    /// The status of the ballot.
     /// </summary>
-    public string StatusCode { get; set; } = null!;
+    public BallotStatus StatusCode { get; set; }
 
     /// <summary>
     /// The name of the first teller who processed the ballot.

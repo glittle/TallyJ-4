@@ -7,7 +7,7 @@ import { useElectionStore } from '../../stores/electionStore';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useNotifications } from '@/composables/useNotifications';
 import InlineBallotEntry from '../../components/ballots/InlineBallotEntry.vue';
-import type { VoteDto, CreateVoteDto } from '../../types';
+import type { VoteDto, CreateVoteDto, VoteWithBallotStatusDto } from '../../types';
 
 const router = useRouter();
 const route = useRoute();
@@ -81,13 +81,12 @@ async function handleVoteAdded(vote: VoteDto) {
       ballotGuid: vote.ballotGuid,
       positionOnBallot: vote.positionOnBallot,
       personGuid: vote.personGuid || undefined,
-      statusCode: vote.statusCode
     };
 
-    await ballotStore.createVote(createDto);
-    const isSpoiled = createDto.statusCode && createDto.statusCode !== 'Ok';
+    const result: VoteWithBallotStatusDto = await ballotStore.createVote(createDto);
+    const isSpoiled = result.vote.statusCode && result.vote.statusCode !== 'ok';
     if (isSpoiled) {
-      showWarningMessage(t('ballots.voteSpoiledSuccess', { code: createDto.statusCode }));
+      showWarningMessage(t('ballots.voteSpoiledSuccess', { code: result.vote.statusCode }));
     } else {
       showSuccessMessage(t('ballots.voteAddedSuccess'));
     }
@@ -107,9 +106,9 @@ async function handleVoteRemoved(positionOnBallot: number) {
 
 function getStatusType(status: string) {
   const typeMap: Record<string, any> = {
-    'Ok': 'success',
-    'Review': 'warning',
-    'Spoiled': 'danger'
+    'ok': 'success',
+    'review': 'warning',
+    'spoiled': 'danger'
   };
   return typeMap[status] || 'info';
 }

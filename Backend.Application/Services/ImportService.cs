@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Application.Services;
 
@@ -78,7 +79,7 @@ public class ImportService
                     BallotGuid = ballotGuid,
                     LocationGuid = location.LocationGuid,
                     BallotCode = ballotCode,
-                    StatusCode = "Ok",
+                    StatusCode = BallotStatus.Ok,
                     ComputerCode = "IMPORT",
                     BallotNumAtComputer = i
                 };

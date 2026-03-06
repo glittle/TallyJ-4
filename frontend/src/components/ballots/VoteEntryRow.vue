@@ -85,11 +85,11 @@ function handleSelect(item: SearchablePersonDto) {
   searchQuery.value = item.fullName;
 
   const isSpoiled = item.canReceiveVotes === false;
-  const statusCode = isSpoiled ? (item.ineligibleReasonCode || 'X01') : 'Ok';
+  const statusCode = isSpoiled ? (item.ineligibleReasonCode || 'X01') : 'ok';
 
   const vote: VoteDto = {
     rowId: props.modelValue?.rowId || 0,
-    ballotGuid: props.modelValue?.ballotGuid || '',
+    ballotGuid: '', // will be filled by parent component
     positionOnBallot: props.positionOnBallot,
     personGuid: item.personGuid,
     personFullName: item.fullName,
@@ -202,7 +202,7 @@ defineExpose({
               {{ item.person.ineligibleReasonCode }}
             </span>
             <span v-if="item.person?.voteCount > 0" class="autocomplete-item__vote-count">{{ item.person.voteCount
-              }}</span>
+            }}</span>
           </div>
         </template>
       </el-autocomplete>

@@ -4,6 +4,7 @@ using Backend.DTOs.Ballots;
 using Backend.DTOs.Votes;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 using Backend.Models;
 
 namespace Backend.Services;
@@ -130,7 +131,7 @@ public class BallotService : IBallotService
             ComputerCode = createDto.ComputerCode,
             BallotNumAtComputer = nextBallotNum,
             BallotCode = $"{createDto.ComputerCode}{nextBallotNum}",
-            StatusCode = "New",
+            StatusCode = BallotStatus.Raw,
             RowVersion = new byte[8]
         };
 

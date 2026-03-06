@@ -40,7 +40,7 @@ public class VoteServiceTests : ServiceTestBase
             RowId = 1,
             BallotGuid = BallotGuid,
             LocationGuid = LocationGuid,
-            StatusCode = "Ok",
+            StatusCode = BallotStatus.Ok,
             ComputerCode = "A",
             BallotNumAtComputer = 1,
             RowVersion = new byte[8]
@@ -87,8 +87,8 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
-        Assert.Equal("ok", result.StatusCode);
-        Assert.Equal(person.PersonGuid, result.PersonGuid);
+        Assert.Equal("ok", result.Vote.StatusCode);
+        Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
     }
 
     [Fact]
@@ -109,8 +109,8 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
-        Assert.Equal("V06", result.StatusCode);
-        Assert.Equal(person.PersonGuid, result.PersonGuid);
+        Assert.Equal("V06", result.Vote.StatusCode);
+        Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public class VoteServiceTests : ServiceTestBase
 
         var result = await _service.CreateVoteAsync(dto);
 
-        Assert.Equal("X01", result.StatusCode);
+        Assert.Equal("X01", result.Vote.StatusCode);
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public class VoteServiceTests : ServiceTestBase
 
         var result = await _service.CreateVoteAsync(dto);
 
-        Assert.Equal("spoiled", result.StatusCode);
+        Assert.Equal("spoiled", result.Vote.StatusCode);
     }
 
     [Fact]
@@ -255,7 +255,7 @@ public class VoteServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task CreateVoteAsync_DuplicatePersonOnBallot_ThrowsInvalidOperationException()
+    public async Task CreateVoteAsync_DuplicatePersonOnBallot_CreatesVoteAndSetsBallotStatusToDup()
     {
         var person = CreatePerson();
 
@@ -278,6 +278,15 @@ public class VoteServiceTests : ServiceTestBase
             StatusCode = "ok"
         };
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => _service.CreateVoteAsync(dto));
+        var result = await _service.CreateVoteAsync(dto);
+
+        Assert.NotNull(result);
+        Assert.Equal(BallotStatus.Dup, result.BallotStatusCode);
+        Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
+
+        var ballotInDb = Context.Ballots.First(b => b.BallotGuid == BallotGuid);
+        Assert.Equal(BallotStatus.Dup, ballotInDb.StatusCode);
+
+        Assert.Equal(2, Context.Votes.Count(v => v.BallotGuid == BallotGuid));
     }
 }

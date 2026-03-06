@@ -67,6 +67,8 @@ function initializeVotes(ballotVotes: VoteDto[]) {
 }
 
 async function handleVoteSelected(vote: VoteDto, index: number) {
+  vote.ballotGuid = props.ballot.ballotGuid; // ensure ballotGuid is set
+
   votes.value[index] = vote;
 
   const duplicates = duplicatePersonGuids.value;
@@ -127,8 +129,7 @@ onMounted(async () => {
 
 <template>
   <div class="inline-ballot-entry">
-    <output v-if="cacheLoading" class="inline-ballot-entry__loading"
-      :aria-label="$t('ballots.cacheLoading')">
+    <output v-if="cacheLoading" class="inline-ballot-entry__loading" :aria-label="$t('ballots.cacheLoading')">
       <el-skeleton :rows="maxVotes" animated />
     </output>
 

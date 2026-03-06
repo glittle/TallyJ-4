@@ -5969,7 +5969,7 @@
         "tags": [
           "Votes"
         ],
-        "summary": "Creates a new vote.",
+        "summary": "Creates a new vote. The vote status is determined server-side based on the person's eligibility.",
         "requestBody": {
           "description": "The vote creation data.",
           "content": {
@@ -5996,17 +5996,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVoteDto"
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVoteDto"
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVoteDto"
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
                 }
               }
             }
@@ -6019,7 +6019,7 @@
         "tags": [
           "Votes"
         ],
-        "summary": "Updates an existing vote.",
+        "summary": "Updates an existing vote. The vote status is determined server-side based on the person's eligibility.",
         "parameters": [
           {
             "name": "id",
@@ -6058,17 +6058,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVoteDto"
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVoteDto"
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVoteDto"
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
                 }
               }
             }
@@ -7049,6 +7049,33 @@
           },
           "data": {
             "$ref": "#/components/schemas/VoteDto"
+          },
+          "message": {
+            "type": "string",
+            "description": "An optional message providing additional information about the response.",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of error messages, if the operation failed.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages."
+      },
+      "ApiResponseVoteWithBallotStatusDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the API operation was successful."
+          },
+          "data": {
+            "$ref": "#/components/schemas/VoteWithBallotStatusDto"
           },
           "message": {
             "type": "string",
@@ -8202,11 +8229,6 @@
             "type": "integer",
             "description": "The position of this vote on the ballot (1-based indexing).",
             "format": "int32"
-          },
-          "statusCode": {
-            "type": "string",
-            "description": "The status code of the vote (e.g., \"ok\", \"spoiled\").",
-            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -12683,6 +12705,21 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object containing information about a single vote in election reports."
+      },
+      "VoteWithBallotStatusDto": {
+        "type": "object",
+        "properties": {
+          "vote": {
+            "$ref": "#/components/schemas/VoteDto"
+          },
+          "ballotStatusCode": {
+            "type": "string",
+            "description": "The current status code of the ballot containing this vote.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response DTO for vote create/update operations, containing the vote and the ballot's current status."
       },
       "VoterReportDto": {
         "type": "object",

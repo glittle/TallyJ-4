@@ -13,5 +13,9 @@ export interface CreateVoteDto {
   ballotGuid: string;
   positionOnBallot: number;
   personGuid?: string;
-  statusCode?: string;
+}
+
+export interface VoteWithBallotStatusDto {
+  vote: VoteDto;
+  ballotStatusCode: string;
 }

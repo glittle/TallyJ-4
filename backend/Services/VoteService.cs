@@ -89,13 +89,13 @@ public class VoteService : IVoteService
 
     /// <summary>
     /// Creates a new vote for a ballot.
-    /// If the person is ineligible to receive votes, the vote is created as a spoiled vote
-    /// with the person's ineligibility reason code as the status.
+    /// The vote status is determined server-side based on the person's eligibility.
+    /// If the person is ineligible, the status is set from their ineligibility reason code.
     /// </summary>
     /// <param name="createDto">The data transfer object containing vote creation information.</param>
-    /// <returns>A VoteDto representing the created vote.</returns>
+    /// <returns>A VoteWithBallotStatusDto containing the created vote and the ballot's current status.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the ballot or person is not found.</exception>
-    public async Task<VoteDto> CreateVoteAsync(CreateVoteDto createDto)
+    public async Task<VoteWithBallotStatusDto> CreateVoteAsync(CreateVoteDto createDto)
     {
         var ballot = await _context.Ballots
             .Include(b => b.Location)
@@ -107,7 +107,7 @@ public class VoteService : IVoteService
         }
 
         var electionGuid = ballot.Location.ElectionGuid;
-        var statusCode = createDto.StatusCode;
+        var statusCode = "ok";
 
         if (createDto.PersonGuid.HasValue)
         {
@@ -130,7 +130,9 @@ public class VoteService : IVoteService
 
             if (duplicateVote)
             {
-                throw new InvalidOperationException($"Person '{person.FullName}' already has a vote on this ballot");
+                ballot.StatusCode = BallotStatus.Dup;
+                _logger.LogInformation("Duplicate vote detected for person '{FullName}' on ballot {BallotGuid}; ballot status set to Dup",
+                    person.FullName, createDto.BallotGuid);
             }
         }
 
@@ -139,7 +141,7 @@ public class VoteService : IVoteService
             BallotGuid = createDto.BallotGuid,
             PersonGuid = createDto.PersonGuid,
             PositionOnBallot = createDto.PositionOnBallot,
-            StatusCode = statusCode ?? "ok",
+            StatusCode = statusCode,
             RowVersion = new byte[8]
         };
 
@@ -154,17 +156,19 @@ public class VoteService : IVoteService
             QueueVoteCountBroadcast(createDto.PersonGuid.Value, electionGuid);
         }
 
-        return await GetVoteByIdAsync(vote.RowId) ?? _mapper.Map<VoteDto>(vote);
+        var voteDto = await GetVoteByIdAsync(vote.RowId) ?? _mapper.Map<VoteDto>(vote);
+        return new VoteWithBallotStatusDto { Vote = voteDto, BallotStatusCode = ballot.StatusCode };
     }
 
     /// <summary>
     /// Updates an existing vote with new information.
+    /// The vote status is determined server-side based on the person's eligibility.
     /// </summary>
     /// <param name="id">The database row identifier of the vote to update.</param>
     /// <param name="updateDto">The data transfer object containing updated vote information.</param>
-    /// <returns>A VoteDto representing the updated vote, or null if the vote was not found.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when the ballot or person is not found, or when validation fails.</exception>
-    public async Task<VoteDto?> UpdateVoteAsync(int id, CreateVoteDto updateDto)
+    /// <returns>A VoteWithBallotStatusDto containing the updated vote and ballot status, or null if the vote was not found.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the ballot or person is not found.</exception>
+    public async Task<VoteWithBallotStatusDto?> UpdateVoteAsync(int id, CreateVoteDto updateDto)
     {
         var vote = await _context.Votes.FirstOrDefaultAsync(v => v.RowId == id);
         if (vote == null)
@@ -178,6 +182,9 @@ public class VoteService : IVoteService
             throw new InvalidOperationException($"Ballot with GUID '{updateDto.BallotGuid}' not found");
         }
 
+        var statusCode = "ok";
+        var duplicateFound = false;
+
         if (updateDto.PersonGuid.HasValue)
         {
             var person = await _context.People.FirstOrDefaultAsync(p => p.PersonGuid == updateDto.PersonGuid.Value);
@@ -188,7 +195,10 @@ public class VoteService : IVoteService
 
             if (person.CanReceiveVotes != true)
             {
-                throw new InvalidOperationException($"Person '{person.FullName}' is not eligible to receive votes (CanReceiveVotes = false)");
+                var ineligibleCode = IneligibleReasonEnum.GetByGuid(person.IneligibleReasonGuid)?.Code;
+                statusCode = ineligibleCode ?? "spoiled";
+                _logger.LogInformation("Person '{FullName}' is ineligible; vote updated as spoiled with status '{StatusCode}'",
+                    person.FullName, statusCode);
             }
 
             var duplicateVote = await _context.Votes
@@ -196,20 +206,35 @@ public class VoteService : IVoteService
 
             if (duplicateVote)
             {
-                throw new InvalidOperationException($"Person '{person.FullName}' already has a vote on this ballot");
+                duplicateFound = true;
+                ballot.StatusCode = BallotStatus.Dup;
+                _logger.LogInformation("Duplicate vote detected for person '{FullName}' on ballot {BallotGuid}; ballot status set to Dup",
+                    person.FullName, updateDto.BallotGuid);
             }
         }
 
         vote.BallotGuid = updateDto.BallotGuid;
         vote.PersonGuid = updateDto.PersonGuid;
         vote.PositionOnBallot = updateDto.PositionOnBallot;
-        vote.StatusCode = updateDto.StatusCode ?? "ok";
+        vote.StatusCode = statusCode;
 
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Updated vote {VoteId} for ballot {BallotGuid}", id, updateDto.BallotGuid);
 
-        return await GetVoteByIdAsync(id);
+        if (!duplicateFound && ballot.StatusCode == BallotStatus.Dup)
+        {
+            var hasDuplicates = await HasBallotDuplicatesAsync(ballot.BallotGuid);
+            if (!hasDuplicates)
+            {
+                ballot.StatusCode = BallotStatus.Ok;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        var voteDto = await GetVoteByIdAsync(id);
+        if (voteDto == null) return null;
+        return new VoteWithBallotStatusDto { Vote = voteDto, BallotStatusCode = ballot.StatusCode };
     }
 
     /// <summary>
@@ -233,6 +258,9 @@ public class VoteService : IVoteService
         var personGuid = vote.PersonGuid;
         var electionGuid = vote.Ballot.Location.ElectionGuid;
 
+        var ballotGuid = vote.BallotGuid;
+        var ballot = vote.Ballot;
+
         _context.Votes.Remove(vote);
         await _context.SaveChangesAsync();
 
@@ -243,7 +271,26 @@ public class VoteService : IVoteService
             QueueVoteCountBroadcast(personGuid.Value, electionGuid);
         }
 
+        if (ballot?.StatusCode == BallotStatus.Dup)
+        {
+            var hasDuplicates = await HasBallotDuplicatesAsync(ballotGuid);
+            if (!hasDuplicates)
+            {
+                ballot.StatusCode = BallotStatus.Ok;
+                await _context.SaveChangesAsync();
+            }
+        }
+
         return true;
+    }
+
+    private async Task<bool> HasBallotDuplicatesAsync(Guid ballotGuid)
+    {
+        var personGuids = await _context.Votes
+            .Where(v => v.BallotGuid == ballotGuid && v.PersonGuid != null)
+            .Select(v => v.PersonGuid!.Value)
+            .ToListAsync();
+        return personGuids.GroupBy(g => g).Any(g => g.Count() > 1);
     }
 
     private void QueueVoteCountBroadcast(Guid personGuid, Guid electionGuid)

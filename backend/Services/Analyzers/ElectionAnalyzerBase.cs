@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Services.Analyzers;
 
@@ -166,7 +167,7 @@ public abstract class ElectionAnalyzerBase
         Logger.LogInformation("Calculating ballot statistics");
 
         var invalidBallotGuids = Ballots
-            .Where(b => b.StatusCode != "Ok")
+            .Where(b => b.StatusCode != BallotStatus.Ok)
             .Select(b => b.BallotGuid)
             .ToList();
 
@@ -353,7 +354,7 @@ public abstract class ElectionAnalyzerBase
     /// <returns>True if the ballot needs review, false otherwise.</returns>
     protected virtual bool BallotNeedsReview(Ballot ballot)
     {
-        if (ballot.StatusCode != "Ok")
+        if (ballot.StatusCode != BallotStatus.Ok)
             return true;
 
         var ballotVotes = Votes.Where(v => v.BallotGuid == ballot.BallotGuid).ToList();

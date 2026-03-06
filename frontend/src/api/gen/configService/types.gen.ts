@@ -695,6 +695,26 @@ export type ApiResponseVoteDto = {
     errors?: Array<string> | null;
 };
 
+/**
+ * Generic API response wrapper that standardizes the format of all API responses.
+ * Provides consistent success/error handling with optional data and error messages.
+ */
+export type ApiResponseVoteWithBallotStatusDto = {
+    /**
+     * Indicates whether the API operation was successful.
+     */
+    success?: boolean;
+    data?: VoteWithBallotStatusDto;
+    /**
+     * An optional message providing additional information about the response.
+     */
+    message?: string | null;
+    /**
+     * A list of error messages, if the operation failed.
+     */
+    errors?: Array<string> | null;
+};
+
 export type AssignRoleRequest = {
     roleName: string;
 };
@@ -1563,10 +1583,6 @@ export type CreateVoteDto = {
      * The position of this vote on the ballot (1-based indexing).
      */
     positionOnBallot?: number;
-    /**
-     * The status code of the vote (e.g., "ok", "spoiled").
-     */
-    statusCode?: string | null;
 };
 
 /**
@@ -4861,6 +4877,17 @@ export type VoteReportDto = {
      * Position/order of this vote on the ballot.
      */
     position?: number;
+};
+
+/**
+ * Response DTO for vote create/update operations, containing the vote and the ballot's current status.
+ */
+export type VoteWithBallotStatusDto = {
+    vote?: VoteDto;
+    /**
+     * The current status code of the ballot containing this vote.
+     */
+    ballotStatusCode?: string | null;
 };
 
 /**
@@ -8166,7 +8193,7 @@ export type PostApiVotesCreateVoteResponses = {
     /**
      * OK
      */
-    200: ApiResponseVoteDto;
+    200: ApiResponseVoteWithBallotStatusDto;
 };
 
 export type PostApiVotesCreateVoteResponse = PostApiVotesCreateVoteResponses[keyof PostApiVotesCreateVoteResponses];
@@ -8190,7 +8217,7 @@ export type PutApiVotesByIdUpdateVoteResponses = {
     /**
      * OK
      */
-    200: ApiResponseVoteDto;
+    200: ApiResponseVoteWithBallotStatusDto;
 };
 
 export type PutApiVotesByIdUpdateVoteResponse = PutApiVotesByIdUpdateVoteResponses[keyof PutApiVotesByIdUpdateVoteResponses];

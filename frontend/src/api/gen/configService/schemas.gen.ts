@@ -978,6 +978,34 @@ export const ApiResponseVoteDtoSchema = {
     description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
 } as const;
 
+export const ApiResponseVoteWithBallotStatusDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean',
+            description: 'Indicates whether the API operation was successful.'
+        },
+        data: {
+            $ref: '#/components/schemas/VoteWithBallotStatusDto'
+        },
+        message: {
+            type: 'string',
+            description: 'An optional message providing additional information about the response.',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            description: 'A list of error messages, if the operation failed.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Generic API response wrapper that standardizes the format of all API responses.\nProvides consistent success/error handling with optional data and error messages.'
+} as const;
+
 export const AssignRoleRequestSchema = {
     required: [
         'roleName'
@@ -2145,11 +2173,6 @@ export const CreateVoteDtoSchema = {
             type: 'integer',
             description: 'The position of this vote on the ballot (1-based indexing).',
             format: 'int32'
-        },
-        statusCode: {
-            type: 'string',
-            description: 'The status code of the vote (e.g., "ok", "spoiled").',
-            nullable: true
         }
     },
     additionalProperties: false,
@@ -6749,6 +6772,22 @@ export const VoteReportDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object containing information about a single vote in election reports.'
+} as const;
+
+export const VoteWithBallotStatusDtoSchema = {
+    type: 'object',
+    properties: {
+        vote: {
+            $ref: '#/components/schemas/VoteDto'
+        },
+        ballotStatusCode: {
+            type: 'string',
+            description: 'The current status code of the ballot containing this vote.',
+            nullable: true
+        }
+    },
+    additionalProperties: false,
+    description: 'Response DTO for vote create/update operations, containing the vote and the ballot\'s current status.'
 } as const;
 
 export const VoterReportDtoSchema = {

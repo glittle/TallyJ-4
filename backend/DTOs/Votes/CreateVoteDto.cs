@@ -21,11 +21,6 @@ public class CreateVoteDto
     /// The position of this vote on the ballot (1-based indexing).
     /// </summary>
     public int PositionOnBallot { get; set; }
-
-    /// <summary>
-    /// The status code of the vote (e.g., "ok", "spoiled").
-    /// </summary>
-    public string StatusCode { get; set; } = "ok";
 }
 
 

@@ -210,20 +210,46 @@ const initGoogleSignIn = async () => {
 const handleFacebookLogin = async () => {
   try {
     loading.value = true;
-    FB.login(async (res: any) => {
-      if (res.authResponse?.accessToken) {
-        await onlineVotingStore.facebookAuth({ accessToken: res.authResponse.accessToken });
-        const electionGuid = route.query.election as string;
-        if (electionGuid) {
-          router.push(`/vote/${electionGuid}`);
-        } else {
-          showErrorMessage(t('voting.auth.error.noElection'));
-        }
-      } else {
-        showErrorMessage(t('voting.auth.facebook.cancelled'));
-      }
+
+    // Check if FB is available
+    if (typeof FB === 'undefined') {
+      console.error('Facebook SDK not loaded');
+      showErrorMessage(t('voting.auth.facebook.error'));
       loading.value = false;
-    }, { scope: 'email' });
+      return;
+    }
+
+    // Set a timeout to reset loading if FB.login callback is never called
+    const timeoutId = setTimeout(() => {
+      console.warn('Facebook login timeout - callback never called');
+      loading.value = false;
+      showErrorMessage(t('voting.auth.facebook.popupBlocked'));
+    }, 10000); // 10 seconds timeout
+
+    console.log('Calling FB.login...');
+    try {
+      FB.login(async (res: any) => {
+        console.log('FB.login callback called with result:', res);
+        clearTimeout(timeoutId); // Clear the timeout since callback was called
+        if (res.authResponse?.accessToken) {
+          await onlineVotingStore.facebookAuth({ accessToken: res.authResponse.accessToken });
+          const electionGuid = route.query.election as string;
+          if (electionGuid) {
+            router.push(`/vote/${electionGuid}`);
+          } else {
+            showErrorMessage(t('voting.auth.error.noElection'));
+          }
+        } else {
+          showErrorMessage(t('voting.auth.facebook.cancelled'));
+        }
+        loading.value = false;
+      }, { scope: 'email' });
+    } catch (syncError) {
+      console.error('FB.login threw synchronously:', syncError);
+      clearTimeout(timeoutId);
+      showErrorMessage(t('voting.auth.facebook.error'));
+      loading.value = false;
+    }
   } catch (error) {
     console.error('Error with Facebook authentication:', error);
     loading.value = false;
@@ -251,18 +277,31 @@ const loadFacebookSdk = (): Promise<void> => {
 const initFacebookSdk = async () => {
   try {
     fbError.value = false;
+    console.log('Initializing Facebook SDK...');
     const config = await fetchAuthConfig();
+    console.log('Auth config:', config);
     if (!config?.facebookAppId) {
+      console.error('No Facebook App ID in config');
       fbError.value = true;
       return;
     }
+
+    // Check if we're on localhost and show a warning
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocalhost) {
+      console.warn('Facebook login may not work on localhost. Configure your Facebook App with a local domain like local.tallyj.com and update your hosts file, or use ngrok for testing.');
+    }
+
+    console.log('Loading Facebook SDK...');
     await loadFacebookSdk();
+    console.log('Facebook SDK loaded, initializing...');
     FB.init({
       appId: config.facebookAppId,
       cookie: true,
       xfbml: true,
-      version: 'v19.0'
+      version: 'v18.0'
     });
+    console.log('Facebook SDK initialized successfully');
     fbReady.value = true;
   } catch (error) {
     console.error('Failed to initialize Facebook SDK:', error);
@@ -273,8 +312,16 @@ const initFacebookSdk = async () => {
 const handleKakaoLogin = async () => {
   try {
     loading.value = true;
+
+    // Set a timeout to reset loading if Kakao.Auth.login callback is never called
+    const timeoutId = setTimeout(() => {
+      loading.value = false;
+      showErrorMessage(t('voting.auth.kakao.popupBlocked'));
+    }, 10000); // 10 seconds timeout
+
     Kakao.Auth.login({
       success: async (authObj: any) => {
+        clearTimeout(timeoutId); // Clear the timeout since callback was called
         await onlineVotingStore.kakaoAuth({ accessToken: authObj.access_token });
         const electionGuid = route.query.election as string;
         if (electionGuid) {
@@ -285,6 +332,7 @@ const handleKakaoLogin = async () => {
         loading.value = false;
       },
       fail: (err: any) => {
+        clearTimeout(timeoutId);
         console.error('Kakao login failed:', err);
         loading.value = false;
       }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Services.Analyzers;
 
@@ -31,14 +32,14 @@ public class ElectionAnalyzerNormal : ElectionAnalyzerBase
         Logger.LogInformation("Starting vote count for normal election");
 
         var validBallotGuids = Ballots
-            .Where(b => b.StatusCode == "Ok")
+            .Where(b => b.StatusCode == BallotStatus.Ok)
             .Select(b => b.BallotGuid)
             .ToHashSet();
 
         var numProcessed = 0;
         var numVotesTotal = 0;
 
-        foreach (var ballot in Ballots.Where(b => b.StatusCode == "Ok"))
+        foreach (var ballot in Ballots.Where(b => b.StatusCode == BallotStatus.Ok))
         {
             numProcessed++;
 

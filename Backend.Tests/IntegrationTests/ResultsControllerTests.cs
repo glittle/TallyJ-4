@@ -172,7 +172,7 @@ public class ResultsControllerTests : IntegrationTestBase
             var ballot = new Ballot
             {
                 BallotGuid = Guid.NewGuid(),
-                StatusCode = "Ok",
+                StatusCode = BallotStatus.Ok,
                 BallotNumAtComputer = i + 1,
                 ComputerCode = "C1",
                 LocationGuid = location.LocationGuid,

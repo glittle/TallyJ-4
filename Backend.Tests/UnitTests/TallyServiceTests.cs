@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 using Backend.Services;
 
 namespace Backend.Tests.UnitTests;
@@ -250,7 +251,7 @@ public class TallyServiceTests : ServiceTestBase
         {
             LocationGuid = location.LocationGuid,
             BallotGuid = Guid.NewGuid(),
-            StatusCode = "Spoiled",
+            StatusCode = BallotStatus.Review,
             ComputerCode = "A",
             BallotNumAtComputer = 1,
             RowVersion = new byte[8]
@@ -261,7 +262,7 @@ public class TallyServiceTests : ServiceTestBase
         {
             LocationGuid = location.LocationGuid,
             BallotGuid = Guid.NewGuid(),
-            StatusCode = "Ok",
+            StatusCode = BallotStatus.Ok,
             ComputerCode = "A",
             BallotNumAtComputer = 2,
             RowVersion = new byte[8]
@@ -518,7 +519,7 @@ public class TallyServiceTests : ServiceTestBase
             {
                 LocationGuid = locationGuid,
                 BallotGuid = Guid.NewGuid(),
-                StatusCode = "Ok",
+                StatusCode = BallotStatus.Ok,
                 ComputerCode = "A",
                 BallotNumAtComputer = i + 1,
                 RowVersion = new byte[8]

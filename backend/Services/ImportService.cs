@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 using Backend.DTOs.Import;
 using Backend.Hubs;
 
@@ -168,7 +169,7 @@ public class ImportService
                     BallotGuid = ballotGuid,
                     LocationGuid = location.LocationGuid,
                     BallotCode = ballotCode,
-                    StatusCode = "Ok",
+                    StatusCode = BallotStatus.Ok,
                     ComputerCode = "IMPORT",
                     BallotNumAtComputer = ballotCounter++,
                     Teller1 = teller1,

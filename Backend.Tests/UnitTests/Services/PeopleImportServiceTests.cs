@@ -502,7 +502,7 @@ public class PeopleImportServiceTests : ServiceTestBase
         // Arrange
         var electionGuid = Guid.NewGuid();
         var person = new Person { PersonGuid = Guid.NewGuid(), ElectionGuid = electionGuid, FirstName = "John", LastName = "Doe", RowVersion = new byte[8] };
-        var ballot = new Ballot { BallotGuid = Guid.NewGuid(), ElectionGuid = electionGuid, LocationGuid = Guid.NewGuid(), BallotCode = "001", StatusCode = "Ok" };
+        var ballot = new Ballot { BallotGuid = Guid.NewGuid(), ElectionGuid = electionGuid, LocationGuid = Guid.NewGuid(), BallotCode = "001", StatusCode = BallotStatus.Ok };
 
         Context.People.Add(person);
         Context.Ballots.Add(ballot);

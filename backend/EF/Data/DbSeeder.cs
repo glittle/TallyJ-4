@@ -199,7 +199,7 @@ public static class DbSeeder
         for (int i = 0; i < 15; i++)
         {
             var ballotGuid = CreateGuid($"BallotIP{electionGuid}{i}");
-            var statusCode = i < 12 ? "Ok" : (i < 14 ? "Review" : "Spoiled");
+            var statusCode = i < 12 ? BallotStatus.Ok : (i < 14 ? BallotStatus.Review : BallotStatus.Verify);
             var computerCode = i < 8 ? "A" : "B";
             var ballotNum = (i < 8 ? i : i - 8) + 1;
 
@@ -215,7 +215,7 @@ public static class DbSeeder
             };
             ballots.Add(ballot);
 
-            if (statusCode == "Ok")
+            if (statusCode == BallotStatus.Ok)
             {
                 var numVotes = rng.Next(1, 10);
                 for (int v = 0; v < numVotes; v++)
@@ -240,7 +240,7 @@ public static class DbSeeder
             {
                 BallotGuid = ballotGuid,
                 LocationGuid = mainHallGuid,
-                StatusCode = "Ok",
+                StatusCode = BallotStatus.Ok,
                 ComputerCode = "OL",
                 BallotNumAtComputer = i + 1
             };
@@ -446,7 +446,7 @@ public static class DbSeeder
             {
                 BallotGuid = ballotGuid,
                 LocationGuid = locationGuid,
-                StatusCode = "Ok",
+                StatusCode = BallotStatus.Ok,
                 ComputerCode = "A",
                 BallotNumAtComputer = b + 1,
                 Teller1 = "Convention Teller"

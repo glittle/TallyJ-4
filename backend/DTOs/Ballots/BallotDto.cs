@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Votes;
+﻿using Backend.Domain.Enumerations;
+using Backend.DTOs.Votes;
 
 namespace Backend.DTOs.Ballots;
 
@@ -38,9 +39,9 @@ public class BallotDto
     public string ComputerCode { get; set; } = null!;
 
     /// <summary>
-    /// The status code of the ballot.
+    /// The status of the ballot.
     /// </summary>
-    public string StatusCode { get; set; } = null!;
+    public BallotStatus StatusCode { get; set; }
 
     /// <summary>
     /// The name of the first teller who processed the ballot.

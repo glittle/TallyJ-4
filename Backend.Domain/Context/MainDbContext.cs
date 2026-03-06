@@ -61,6 +61,7 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
         modelBuilder.Entity<Ballot>(entity =>
         {
             entity.Property(e => e.BallotCode).HasComputedColumnSql("([ComputerCode]+CONVERT([varchar],[BallotNumAtComputer],(0)))", true);
+            entity.Property(e => e.StatusCode).HasConversion<string>().HasMaxLength(10).IsUnicode(false);
             entity.Property(e => e.RowVersion)
                 .IsRowVersion()
                 .IsConcurrencyToken();

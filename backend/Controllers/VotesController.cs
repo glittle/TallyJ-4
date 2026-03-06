@@ -71,47 +71,47 @@ public class VotesController : ControllerBase
     }
 
     /// <summary>
-    /// Creates a new vote.
+    /// Creates a new vote. The vote status is determined server-side based on the person's eligibility.
     /// </summary>
     /// <param name="createDto">The vote creation data.</param>
-    /// <returns>The created vote information.</returns>
+    /// <returns>The created vote information and the ballot's current status.</returns>
     [HttpPost("createVote")]
-    public async Task<ActionResult<ApiResponse<VoteDto>>> CreateVote(CreateVoteDto createDto)
+    public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> CreateVote(CreateVoteDto createDto)
     {
         try
         {
-            var vote = await _voteService.CreateVoteAsync(createDto);
-            return CreatedAtAction(nameof(GetVote), new { id = vote.BallotGuid }, ApiResponse<VoteDto>.SuccessResponse(vote));
+            var result = await _voteService.CreateVoteAsync(createDto);
+            return CreatedAtAction(nameof(GetVote), new { id = result.Vote.RowId }, ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result));
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(ApiResponse<VoteDto>.ErrorResponse(ex.Message));
+            return BadRequest(ApiResponse<VoteWithBallotStatusDto>.ErrorResponse(ex.Message));
         }
     }
 
     /// <summary>
-    /// Updates an existing vote.
+    /// Updates an existing vote. The vote status is determined server-side based on the person's eligibility.
     /// </summary>
     /// <param name="id">The ID of the vote to update.</param>
     /// <param name="updateDto">The updated vote data.</param>
-    /// <returns>The updated vote information.</returns>
+    /// <returns>The updated vote information and the ballot's current status.</returns>
     [HttpPut("{id}/updateVote")]
-    public async Task<ActionResult<ApiResponse<VoteDto>>> UpdateVote(int id, CreateVoteDto updateDto)
+    public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> UpdateVote(int id, CreateVoteDto updateDto)
     {
         try
         {
-            var vote = await _voteService.UpdateVoteAsync(id, updateDto);
+            var result = await _voteService.UpdateVoteAsync(id, updateDto);
 
-            if (vote == null)
+            if (result == null)
             {
-                return NotFound(ApiResponse<VoteDto>.ErrorResponse($"Vote with ID '{id}' not found"));
+                return NotFound(ApiResponse<VoteWithBallotStatusDto>.ErrorResponse($"Vote with ID '{id}' not found"));
             }
 
-            return Ok(ApiResponse<VoteDto>.SuccessResponse(vote));
+            return Ok(ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result));
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(ApiResponse<VoteDto>.ErrorResponse(ex.Message));
+            return BadRequest(ApiResponse<VoteWithBallotStatusDto>.ErrorResponse(ex.Message));
         }
     }
 

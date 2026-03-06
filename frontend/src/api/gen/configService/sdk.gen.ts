@@ -1206,7 +1206,7 @@ export const getApiVotesByElectionGuidGetVotesByElection = <ThrowOnError extends
 export const getApiVotesByIdGetVote = <ThrowOnError extends boolean = false>(options: Options<GetApiVotesByIdGetVoteData, ThrowOnError>) => (options.client ?? client).get<GetApiVotesByIdGetVoteResponses, unknown, ThrowOnError>({ url: '/api/Votes/{id}/getVote', ...options });
 
 /**
- * Creates a new vote.
+ * Creates a new vote. The vote status is determined server-side based on the person's eligibility.
  */
 export const postApiVotesCreateVote = <ThrowOnError extends boolean = false>(options?: Options<PostApiVotesCreateVoteData, ThrowOnError>) => (options?.client ?? client).post<PostApiVotesCreateVoteResponses, unknown, ThrowOnError>({
     url: '/api/Votes/createVote',
@@ -1218,7 +1218,7 @@ export const postApiVotesCreateVote = <ThrowOnError extends boolean = false>(opt
 });
 
 /**
- * Updates an existing vote.
+ * Updates an existing vote. The vote status is determined server-side based on the person's eligibility.
  */
 export const putApiVotesByIdUpdateVote = <ThrowOnError extends boolean = false>(options: Options<PutApiVotesByIdUpdateVoteData, ThrowOnError>) => (options.client ?? client).put<PutApiVotesByIdUpdateVoteResponses, unknown, ThrowOnError>({
     url: '/api/Votes/{id}/updateVote',

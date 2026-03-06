@@ -429,7 +429,7 @@ public class PeopleServiceTests : ServiceTestBase
             RowId = 900,
             BallotGuid = ballotGuid,
             LocationGuid = locationGuid,
-            StatusCode = "Ok",
+            StatusCode = BallotStatus.Ok,
             ComputerCode = "A",
             BallotNumAtComputer = 1,
             RowVersion = new byte[8]
