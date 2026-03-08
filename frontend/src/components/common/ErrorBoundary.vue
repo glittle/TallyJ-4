@@ -13,15 +13,25 @@
         <h2 id="error-heading">{{ $t("error.somethingWentWrong") }}</h2>
         <p>{{ $t("error.pageError") }}</p>
         <div class="error-actions">
-          <el-button @click="retry" type="primary" aria-label="Retry loading the page">
+          <el-button
+            type="primary"
+            aria-label="Retry loading the page"
+            @click="retry"
+          >
             {{ $t("error.tryAgain") }}
           </el-button>
-          <el-button @click="goHome" type="default" aria-label="Go to home page">
+          <el-button
+            type="default"
+            aria-label="Go to home page"
+            @click="goHome"
+          >
             {{ $t("error.goHome") }}
           </el-button>
         </div>
         <details v-if="showDetails" class="error-details">
-          <summary aria-expanded="false">{{ $t("error.errorDetails") }}</summary>
+          <summary aria-expanded="false">
+            {{ $t("error.errorDetails") }}
+          </summary>
           <pre role="log" aria-label="Error details">{{ errorMessage }}</pre>
         </details>
       </div>

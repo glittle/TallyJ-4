@@ -1,16 +1,28 @@
-import { onUnmounted, ref, computed } from 'vue';
-import { signalrService } from '@/services/signalrService';
-import { ConnectionState } from '@/types/SignalRConnection';
-import type { HubConnection } from '@microsoft/signalr';
+import { onUnmounted, ref, computed } from "vue";
+import { signalrService } from "@/services/signalrService";
+import { ConnectionState } from "@/types/SignalRConnection";
+import type { HubConnection } from "@microsoft/signalr";
 
 export function useSignalR(hubPath: string) {
-  const connection = ref<HubConnection | undefined>(signalrService.getConnection(hubPath));
-  const connectionState = ref<ConnectionState>(signalrService.getConnectionState(hubPath));
+  const connection = ref<HubConnection | undefined>(
+    signalrService.getConnection(hubPath),
+  );
+  const connectionState = ref<ConnectionState>(
+    signalrService.getConnectionState(hubPath),
+  );
 
-  const isConnected = computed(() => connectionState.value === ConnectionState.Connected);
-  const isConnecting = computed(() => connectionState.value === ConnectionState.Connecting);
-  const isDisconnected = computed(() => connectionState.value === ConnectionState.Disconnected);
-  const isReconnecting = computed(() => connectionState.value === ConnectionState.Reconnecting);
+  const isConnected = computed(
+    () => connectionState.value === ConnectionState.Connected,
+  );
+  const isConnecting = computed(
+    () => connectionState.value === ConnectionState.Connecting,
+  );
+  const isDisconnected = computed(
+    () => connectionState.value === ConnectionState.Disconnected,
+  );
+  const isReconnecting = computed(
+    () => connectionState.value === ConnectionState.Reconnecting,
+  );
 
   function on(eventName: string, callback: (...args: any[]) => void) {
     connection.value?.on(eventName, callback);
@@ -47,8 +59,7 @@ export function useSignalR(hubPath: string) {
     connectionState.value = ConnectionState.Disconnected;
   }
 
-  onUnmounted(() => {
-  });
+  onUnmounted(() => {});
 
   return {
     connection,
@@ -61,26 +72,26 @@ export function useSignalR(hubPath: string) {
     off,
     invoke,
     connect,
-    disconnect
+    disconnect,
   };
 }
 
 export function useMainHub() {
-  return useSignalR('/hubs/main');
+  return useSignalR("/hubs/main");
 }
 
 export function useAnalyzeHub() {
-  return useSignalR('/hubs/analyze');
+  return useSignalR("/hubs/analyze");
 }
 
 export function useBallotImportHub() {
-  return useSignalR('/hubs/ballot-import');
+  return useSignalR("/hubs/ballot-import");
 }
 
 export function useFrontDeskHub() {
-  return useSignalR('/hubs/front-desk');
+  return useSignalR("/hubs/front-desk");
 }
 
 export function usePublicHub() {
-  return useSignalR('/hubs/public');
+  return useSignalR("/hubs/public");
 }

@@ -3,7 +3,7 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-page-header @back="goBack" :content="$t('results.title')" />
+          <el-page-header :content="$t('results.title')" @back="goBack" />
         </div>
       </template>
 
@@ -14,35 +14,48 @@
       <div v-else-if="results">
         <el-alert
           v-if="results.calculatedAt"
-          :title="$t('results.calculatedAt', { date: formatDateTime(results.calculatedAt) })"
+          :title="
+            $t('results.calculatedAt', {
+              date: formatDateTime(results.calculatedAt),
+            })
+          "
           type="info"
           :closable="false"
-          style="margin-bottom: 20px;"
+          style="margin-bottom: 20px"
         />
 
         <el-alert
           v-if="calculating || tallyProgress"
-          :title="calculating ? $t('results.calculating') : $t('results.tallyProgress')"
+          :title="
+            calculating
+              ? $t('results.calculating')
+              : $t('results.tallyProgress')
+          "
           type="warning"
           :closable="false"
-          style="margin-bottom: 20px;"
+          style="margin-bottom: 20px"
         >
-          <div v-if="tallyProgress" style="margin-top: 10px;">
+          <div v-if="tallyProgress" style="margin-top: 10px">
             <el-progress
               :percentage="tallyProgress.percentComplete"
               :text-inside="true"
               :stroke-width="20"
               status="warning"
             />
-            <div style="margin-top: 10px; font-size: 14px;">
+            <div style="margin-top: 10px; font-size: 14px">
               {{ tallyProgress.message }}
-              <br>
-              {{ $t('results.processedBallots', { processed: tallyProgress.processedBallots, total: tallyProgress.totalBallots }) }}
+              <br />
+              {{
+                $t("results.processedBallots", {
+                  processed: tallyProgress.processedBallots,
+                  total: tallyProgress.totalBallots,
+                })
+              }}
             </div>
           </div>
         </el-alert>
 
-        <el-descriptions :column="2" border style="margin-bottom: 20px;">
+        <el-descriptions :column="2" border style="margin-bottom: 20px">
           <el-descriptions-item :label="$t('results.totalBallots')">
             {{ results.statistics.totalBallots }}
           </el-descriptions-item>
@@ -73,7 +86,11 @@
           <el-tab-pane :label="$t('results.extra')" name="extra">
             <ResultsTable :results="extraCandidates" />
           </el-tab-pane>
-          <el-tab-pane :label="$t('results.ties')" name="ties" :badge="results.ties.length || undefined">
+          <el-tab-pane
+            :label="$t('results.ties')"
+            name="ties"
+            :badge="results.ties.length || undefined"
+          >
             <TiesDisplay :ties="results.ties" />
           </el-tab-pane>
         </el-tabs>
@@ -85,14 +102,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { useNotifications } from '@/composables/useNotifications';
-import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
-import { useResultStore } from '../../stores/resultStore';
-import ResultsTable from '../../components/results/ResultsTable.vue';
-import TiesDisplay from '../../components/results/TiesDisplay.vue';
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { useNotifications } from "@/composables/useNotifications";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useResultStore } from "../../stores/resultStore";
+import ResultsTable from "../../components/results/ResultsTable.vue";
+import TiesDisplay from "../../components/results/TiesDisplay.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -102,19 +119,19 @@ const { showErrorMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
-const activeTab = ref('all');
+const activeTab = ref("all");
 
 const loading = computed(() => resultStore.loading);
 const results = computed(() => resultStore.results);
 const calculating = computed(() => resultStore.calculating);
 const tallyProgress = computed(() => resultStore.tallyProgress);
 
-const electedCandidates = computed(() => 
-  results.value?.results.filter(r => r.section === 'E') || []
+const electedCandidates = computed(
+  () => results.value?.results.filter((r) => r.section === "E") || [],
 );
 
-const extraCandidates = computed(() => 
-  results.value?.results.filter(r => r.section === 'X') || []
+const extraCandidates = computed(
+  () => results.value?.results.filter((r) => r.section === "X") || [],
 );
 
 onMounted(async () => {
@@ -131,7 +148,7 @@ onBeforeUnmount(async () => {
   try {
     await resultStore.leaveTallySession(electionGuid);
   } catch (error) {
-    console.error('Failed to leave tally session:', error);
+    console.error("Failed to leave tally session:", error);
   }
 });
 
@@ -140,7 +157,7 @@ function goBack() {
 }
 
 function formatDateTime(date: string) {
-  if (!date) return '-';
+  if (!date) return "-";
   return new Date(date).toLocaleString();
 }
 </script>

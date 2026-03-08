@@ -1,9 +1,15 @@
-import { getApiVotesByBallotGuidGetVotesByBallot, postApiVotesCreateVote, deleteApiVotesByIdDeleteVote } from '../api/gen/configService/sdk.gen';
-import type { VoteDto, CreateVoteDto, VoteWithBallotStatusDto } from '../types';
+import {
+  getApiVotesByBallotGuidGetVotesByBallot,
+  postApiVotesCreateVote,
+  deleteApiVotesByIdDeleteVote,
+} from "../api/gen/configService/sdk.gen";
+import type { VoteDto, CreateVoteDto, VoteWithBallotStatusDto } from "../types";
 
 export const voteService = {
   async getByBallot(ballotGuid: string): Promise<VoteDto[]> {
-    const response = await getApiVotesByBallotGuidGetVotesByBallot({ path: { ballotGuid } });
+    const response = await getApiVotesByBallotGuidGetVotesByBallot({
+      path: { ballotGuid },
+    });
     return (response.data?.data?.items ?? []) as VoteDto[];
   },
 
@@ -14,5 +20,5 @@ export const voteService = {
 
   async delete(voteId: number): Promise<void> {
     await deleteApiVotesByIdDeleteVote({ path: { id: voteId } });
-  }
+  },
 };

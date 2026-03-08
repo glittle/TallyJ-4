@@ -7,5 +7,5 @@ export const TOKEN_REFRESH_CONFIG = {
   /** When to refresh as a percentage of token lifetime (0.75 = 75%) */
   refreshThreshold: 0.75,
   /** Whether to enable automatic refresh */
-  enabled: true
+  enabled: true,
 } as const;

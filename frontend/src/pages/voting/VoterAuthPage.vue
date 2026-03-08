@@ -1,15 +1,41 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
+import type { GoogleCredentialResponse } from "../../types/google-one-tap";
+
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
+import { ref, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 import {
-  ElCard, ElTabs, ElTabPane, ElForm, ElFormItem, ElInput, ElButton,
-  ElRadioGroup, ElRadio, ElCollapse, ElCollapseItem, ElIcon, ElAlert
-} from 'element-plus';
-import { Message, Phone, Key, ChromeFilled, Lock, QuestionFilled } from '@element-plus/icons-vue';
-import { useOnlineVotingStore } from '../../stores/onlineVotingStore';
-import { useNotifications } from '../../composables/useNotifications';
-import { useStorage } from '@vueuse/core';
+  ElCard,
+  ElTabs,
+  ElTabPane,
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElButton,
+  ElRadioGroup,
+  ElRadio,
+  ElCollapse,
+  ElCollapseItem,
+  ElIcon,
+  ElAlert,
+} from "element-plus";
+import {
+  Message,
+  Phone,
+  Key,
+  ChromeFilled,
+  Lock,
+  QuestionFilled,
+} from "@element-plus/icons-vue";
+import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
+import { useNotifications } from "../../composables/useNotifications";
+import { useStorage } from "@vueuse/core";
 
 declare const FB: any;
 declare const Kakao: any;
@@ -20,8 +46,8 @@ const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
-const activeTab = useStorage('voterLoginTab', 'google');
-const step = ref<'request' | 'verify'>('request');
+const activeTab = useStorage("voterLoginTab", "google");
+const step = ref<"request" | "verify">("request");
 
 const googleButtonContainer = ref<HTMLElement | null>(null);
 const googleReady = ref(false);
@@ -36,18 +62,25 @@ const kakaoReady = ref(false);
 const kakaoError = ref(false);
 const kakaoScriptLoaded = ref(false);
 
-const authConfig = ref<{ googleClientId?: string; facebookAppId?: string; kakaoJsKey?: string } | null>(null);
+const authConfig = ref<{
+  googleClientId?: string;
+  facebookAppId?: string;
+  kakaoJsKey?: string;
+} | null>(null);
 
-const emailForm = ref({ email: '' });
-const phoneForm = ref({ phone: '', deliveryMethod: 'sms' as 'sms' | 'voice' | 'whatsapp' });
-const codeForm = ref({ code: '' });
-const verificationForm = ref({ voterId: '', verifyCode: '' });
+const emailForm = ref({ email: "" });
+const phoneForm = ref({
+  phone: "",
+  deliveryMethod: "sms" as "sms" | "voice" | "whatsapp",
+});
+const codeForm = ref({ code: "" });
+const verificationForm = ref({ voterId: "", verifyCode: "" });
 const loading = ref(false);
 
 const fetchAuthConfig = async () => {
   if (authConfig.value) return authConfig.value;
   try {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
     const resp = await fetch(`${apiUrl}/api/public/auth-config`);
     if (!resp.ok) return null;
     const json = await resp.json();
@@ -63,14 +96,14 @@ async function handleRequestEmailCode() {
     loading.value = true;
     const messageKey = await onlineVotingStore.requestVerificationCode({
       voterId: emailForm.value.email,
-      voterIdType: 'E',
-      deliveryMethod: 'email'
+      voterIdType: "E",
+      deliveryMethod: "email",
     });
     verificationForm.value.voterId = emailForm.value.email;
-    step.value = 'verify';
+    step.value = "verify";
     showSuccessMessage(t(messageKey));
   } catch (error) {
-    console.error('Error requesting email code:', error);
+    console.error("Error requesting email code:", error);
   } finally {
     loading.value = false;
   }
@@ -81,14 +114,14 @@ async function handleRequestPhoneCode() {
     loading.value = true;
     const messageKey = await onlineVotingStore.requestVerificationCode({
       voterId: phoneForm.value.phone,
-      voterIdType: 'P',
-      deliveryMethod: phoneForm.value.deliveryMethod
+      voterIdType: "P",
+      deliveryMethod: phoneForm.value.deliveryMethod,
     });
     verificationForm.value.voterId = phoneForm.value.phone;
-    step.value = 'verify';
+    step.value = "verify";
     showSuccessMessage(t(messageKey));
   } catch (error) {
-    console.error('Error requesting phone code:', error);
+    console.error("Error requesting phone code:", error);
   } finally {
     loading.value = false;
   }
@@ -99,16 +132,16 @@ async function handleDirectCodeLogin() {
     loading.value = true;
     await onlineVotingStore.verifyCode({
       voterId: codeForm.value.code,
-      verifyCode: codeForm.value.code
+      verifyCode: codeForm.value.code,
     });
     const electionGuid = route.query.election as string;
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t('voting.auth.error.noElection'));
+      showErrorMessage(t("voting.auth.error.noElection"));
     }
   } catch (error) {
-    console.error('Error with direct code:', error);
+    console.error("Error with direct code:", error);
   } finally {
     loading.value = false;
   }
@@ -122,21 +155,23 @@ async function handleVerifyCode() {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t('voting.auth.error.noElection'));
+      showErrorMessage(t("voting.auth.error.noElection"));
     }
   } catch (error) {
-    console.error('Error verifying code:', error);
+    console.error("Error verifying code:", error);
   } finally {
     loading.value = false;
   }
 }
 
 function backToRequest() {
-  step.value = 'request';
-  verificationForm.value.verifyCode = '';
+  step.value = "request";
+  verificationForm.value.verifyCode = "";
 }
 
-const handleGoogleCredentialCallback = async (response: GoogleCredentialResponse) => {
+const handleGoogleCredentialCallback = async (
+  response: GoogleCredentialResponse,
+) => {
   try {
     loading.value = true;
     await onlineVotingStore.googleAuth({ credential: response.credential });
@@ -144,10 +179,10 @@ const handleGoogleCredentialCallback = async (response: GoogleCredentialResponse
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t('voting.auth.error.noElection'));
+      showErrorMessage(t("voting.auth.error.noElection"));
     }
   } catch (error) {
-    console.error('Error with Google authentication:', error);
+    console.error("Error with Google authentication:", error);
   } finally {
     loading.value = false;
   }
@@ -155,17 +190,21 @@ const handleGoogleCredentialCallback = async (response: GoogleCredentialResponse
 
 const loadGisScript = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (gisScriptLoaded.value || typeof google !== 'undefined') {
+    if (gisScriptLoaded.value || typeof google !== "undefined") {
       gisScriptLoaded.value = true;
       resolve();
       return;
     }
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
     script.async = true;
     script.defer = true;
-    script.onload = () => { gisScriptLoaded.value = true; resolve(); };
-    script.onerror = () => reject(new Error('Failed to load Google Identity Services script'));
+    script.onload = () => {
+      gisScriptLoaded.value = true;
+      resolve();
+    };
+    script.onerror = () =>
+      reject(new Error("Failed to load Google Identity Services script"));
     document.head.appendChild(script);
   });
 };
@@ -180,11 +219,11 @@ const initGoogleSignIn = async () => {
     googleError.value = false;
     await loadGisScript();
     const clientId = await fetchGoogleClientId();
-    if (!clientId || typeof google === 'undefined') {
+    if (!clientId || typeof window.google === "undefined") {
       googleError.value = true;
       return;
     }
-    google.accounts.id.initialize({
+    window.google.accounts.id.initialize({
       client_id: clientId,
       callback: handleGoogleCredentialCallback,
       auto_select: false,
@@ -192,17 +231,17 @@ const initGoogleSignIn = async () => {
     });
     await nextTick();
     if (googleButtonContainer.value) {
-      google.accounts.id.renderButton(googleButtonContainer.value, {
-        theme: 'outline',
-        size: 'large',
-        text: 'signin_with',
-        shape: 'rectangular',
+      window.google.accounts.id.renderButton(googleButtonContainer.value, {
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+        shape: "rectangular",
         width: 300,
       });
       googleReady.value = true;
     }
   } catch (error) {
-    console.error('Failed to initialize Google Sign-In:', error);
+    console.error("Failed to initialize Google Sign-In:", error);
     googleError.value = true;
   }
 };
@@ -212,64 +251,72 @@ const handleFacebookLogin = async () => {
     loading.value = true;
 
     // Check if FB is available
-    if (typeof FB === 'undefined') {
-      console.error('Facebook SDK not loaded');
-      showErrorMessage(t('voting.auth.facebook.error'));
+    if (typeof FB === "undefined") {
+      console.error("Facebook SDK not loaded");
+      showErrorMessage(t("voting.auth.facebook.error"));
       loading.value = false;
       return;
     }
 
     // Set a timeout to reset loading if FB.login callback is never called
     const timeoutId = setTimeout(() => {
-      console.warn('Facebook login timeout - callback never called');
+      console.warn("Facebook login timeout - callback never called");
       loading.value = false;
-      showErrorMessage(t('voting.auth.facebook.popupBlocked'));
+      showErrorMessage(t("voting.auth.facebook.popupBlocked"));
     }, 10000); // 10 seconds timeout
 
-    console.log('Calling FB.login...');
+    console.log("Calling FB.login...");
     try {
-      FB.login(async (res: any) => {
-        console.log('FB.login callback called with result:', res);
-        clearTimeout(timeoutId); // Clear the timeout since callback was called
-        if (res.authResponse?.accessToken) {
-          await onlineVotingStore.facebookAuth({ accessToken: res.authResponse.accessToken });
-          const electionGuid = route.query.election as string;
-          if (electionGuid) {
-            router.push(`/vote/${electionGuid}`);
+      FB.login(
+        async (res: any) => {
+          console.log("FB.login callback called with result:", res);
+          clearTimeout(timeoutId); // Clear the timeout since callback was called
+          if (res.authResponse?.accessToken) {
+            await onlineVotingStore.facebookAuth({
+              accessToken: res.authResponse.accessToken,
+            });
+            const electionGuid = route.query.election as string;
+            if (electionGuid) {
+              router.push(`/vote/${electionGuid}`);
+            } else {
+              showErrorMessage(t("voting.auth.error.noElection"));
+            }
           } else {
-            showErrorMessage(t('voting.auth.error.noElection'));
+            showErrorMessage(t("voting.auth.facebook.cancelled"));
           }
-        } else {
-          showErrorMessage(t('voting.auth.facebook.cancelled'));
-        }
-        loading.value = false;
-      }, { scope: 'email' });
+          loading.value = false;
+        },
+        { scope: "email" },
+      );
     } catch (syncError) {
-      console.error('FB.login threw synchronously:', syncError);
+      console.error("FB.login threw synchronously:", syncError);
       clearTimeout(timeoutId);
-      showErrorMessage(t('voting.auth.facebook.error'));
+      showErrorMessage(t("voting.auth.facebook.error"));
       loading.value = false;
     }
   } catch (error) {
-    console.error('Error with Facebook authentication:', error);
+    console.error("Error with Facebook authentication:", error);
     loading.value = false;
   }
 };
 
 const loadFacebookSdk = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (fbScriptLoaded.value || typeof FB !== 'undefined') {
+    if (fbScriptLoaded.value || typeof FB !== "undefined") {
       fbScriptLoaded.value = true;
       resolve();
       return;
     }
-    const script = document.createElement('script');
-    script.src = 'https://connect.facebook.net/en_US/sdk.js';
+    const script = document.createElement("script");
+    script.src = "https://connect.facebook.net/en_US/sdk.js";
     script.async = true;
     script.defer = true;
-    script.crossOrigin = 'anonymous';
-    script.onload = () => { fbScriptLoaded.value = true; resolve(); };
-    script.onerror = () => reject(new Error('Failed to load Facebook SDK'));
+    script.crossOrigin = "anonymous";
+    script.onload = () => {
+      fbScriptLoaded.value = true;
+      resolve();
+    };
+    script.onerror = () => reject(new Error("Failed to load Facebook SDK"));
     document.head.appendChild(script);
   });
 };
@@ -277,34 +324,38 @@ const loadFacebookSdk = (): Promise<void> => {
 const initFacebookSdk = async () => {
   try {
     fbError.value = false;
-    console.log('Initializing Facebook SDK...');
+    console.log("Initializing Facebook SDK...");
     const config = await fetchAuthConfig();
-    console.log('Auth config:', config);
+    console.log("Auth config:", config);
     if (!config?.facebookAppId) {
-      console.error('No Facebook App ID in config');
+      console.error("No Facebook App ID in config");
       fbError.value = true;
       return;
     }
 
     // Check if we're on localhost and show a warning
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isLocalhost =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
     if (isLocalhost) {
-      console.warn('Facebook login may not work on localhost. Configure your Facebook App with a local domain like local.tallyj.com and update your hosts file, or use ngrok for testing.');
+      console.warn(
+        "Facebook login may not work on localhost. Configure your Facebook App with a local domain like local.tallyj.com and update your hosts file, or use ngrok for testing.",
+      );
     }
 
-    console.log('Loading Facebook SDK...');
+    console.log("Loading Facebook SDK...");
     await loadFacebookSdk();
-    console.log('Facebook SDK loaded, initializing...');
+    console.log("Facebook SDK loaded, initializing...");
     FB.init({
       appId: config.facebookAppId,
       cookie: true,
       xfbml: true,
-      version: 'v18.0'
+      version: "v18.0",
     });
-    console.log('Facebook SDK initialized successfully');
+    console.log("Facebook SDK initialized successfully");
     fbReady.value = true;
   } catch (error) {
-    console.error('Failed to initialize Facebook SDK:', error);
+    console.error("Failed to initialize Facebook SDK:", error);
     fbError.value = true;
   }
 };
@@ -316,45 +367,50 @@ const handleKakaoLogin = async () => {
     // Set a timeout to reset loading if Kakao.Auth.login callback is never called
     const timeoutId = setTimeout(() => {
       loading.value = false;
-      showErrorMessage(t('voting.auth.kakao.popupBlocked'));
+      showErrorMessage(t("voting.auth.kakao.popupBlocked"));
     }, 10000); // 10 seconds timeout
 
     Kakao.Auth.login({
       success: async (authObj: any) => {
         clearTimeout(timeoutId); // Clear the timeout since callback was called
-        await onlineVotingStore.kakaoAuth({ accessToken: authObj.access_token });
+        await onlineVotingStore.kakaoAuth({
+          accessToken: authObj.access_token,
+        });
         const electionGuid = route.query.election as string;
         if (electionGuid) {
           router.push(`/vote/${electionGuid}`);
         } else {
-          showErrorMessage(t('voting.auth.error.noElection'));
+          showErrorMessage(t("voting.auth.error.noElection"));
         }
         loading.value = false;
       },
       fail: (err: any) => {
         clearTimeout(timeoutId);
-        console.error('Kakao login failed:', err);
+        console.error("Kakao login failed:", err);
         loading.value = false;
-      }
+      },
     });
   } catch (error) {
-    console.error('Error with Kakao authentication:', error);
+    console.error("Error with Kakao authentication:", error);
     loading.value = false;
   }
 };
 
 const loadKakaoSdk = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (kakaoScriptLoaded.value || typeof Kakao !== 'undefined') {
+    if (kakaoScriptLoaded.value || typeof Kakao !== "undefined") {
       kakaoScriptLoaded.value = true;
       resolve();
       return;
     }
-    const script = document.createElement('script');
-    script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js';
+    const script = document.createElement("script");
+    script.src = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js";
     script.async = true;
-    script.onload = () => { kakaoScriptLoaded.value = true; resolve(); };
-    script.onerror = () => reject(new Error('Failed to load Kakao SDK'));
+    script.onload = () => {
+      kakaoScriptLoaded.value = true;
+      resolve();
+    };
+    script.onerror = () => reject(new Error("Failed to load Kakao SDK"));
     document.head.appendChild(script);
   });
 };
@@ -373,37 +429,41 @@ const initKakaoSdk = async () => {
     }
     kakaoReady.value = true;
   } catch (error) {
-    console.error('Failed to initialize Kakao SDK:', error);
+    console.error("Failed to initialize Kakao SDK:", error);
     kakaoError.value = true;
   }
 };
 
 watch(activeTab, async (newTab) => {
-  if (newTab === 'google') {
+  if (newTab === "google") {
     await nextTick();
     await initGoogleSignIn();
-  } else if (newTab === 'facebook') {
+  } else if (newTab === "facebook") {
     await nextTick();
     await initFacebookSdk();
-  } else if (newTab === 'kakao') {
+  } else if (newTab === "kakao") {
     await nextTick();
     await initKakaoSdk();
   }
 });
 
 onMounted(() => {
-  if (activeTab.value === 'google') {
+  if (activeTab.value === "google") {
     initGoogleSignIn();
-  } else if (activeTab.value === 'facebook') {
+  } else if (activeTab.value === "facebook") {
     initFacebookSdk();
-  } else if (activeTab.value === 'kakao') {
+  } else if (activeTab.value === "kakao") {
     initKakaoSdk();
   }
 });
 
 onBeforeUnmount(() => {
-  if (typeof google !== 'undefined' && googleReady.value) {
-    try { google.accounts.id.cancel(); } catch { /* ignore */ }
+  if (typeof window.google !== "undefined" && googleReady.value) {
+    try {
+      window.google.accounts.id.cancel();
+    } catch {
+      /* ignore */
+    }
   }
   googleReady.value = false;
 });
@@ -412,44 +472,53 @@ onBeforeUnmount(() => {
 <template>
   <div class="voter-auth-page">
     <div class="auth-container">
-
       <div class="welcome-section">
         <div class="welcome-icon">
           <ElIcon :size="56" color="#ffffff">
             <Lock />
           </ElIcon>
         </div>
-        <h1>{{ $t('voting.auth.welcome.heading') }}</h1>
-        <p class="welcome-intro">{{ $t('voting.auth.welcome.intro') }}</p>
-        <p class="welcome-detail">{{ $t('voting.auth.welcome.detail') }}</p>
-        <p class="welcome-choose">{{ $t('voting.auth.welcome.choose') }}</p>
+        <h1>{{ $t("voting.auth.welcome.heading") }}</h1>
+        <p class="welcome-intro">{{ $t("voting.auth.welcome.intro") }}</p>
+        <p class="welcome-detail">{{ $t("voting.auth.welcome.detail") }}</p>
+        <p class="welcome-choose">{{ $t("voting.auth.welcome.choose") }}</p>
       </div>
 
       <ElCard class="auth-card" shadow="always">
-
         <div v-if="step === 'request'">
           <ElTabs v-model="activeTab" class="auth-tabs">
-
             <ElTabPane name="google">
               <template #label>
                 <span class="tab-label">
                   <ElIcon>
                     <ChromeFilled />
                   </ElIcon>
-                  <span>{{ $t('voting.auth.tabs.google') }}</span>
+                  <span>{{ $t("voting.auth.tabs.google") }}</span>
                 </span>
               </template>
               <div class="method-section google-section">
-                <p class="method-description">{{ $t('voting.auth.google.description') }}</p>
-                <p class="method-description">{{ $t('voting.auth.google.prompt') }}</p>
+                <p class="method-description">
+                  {{ $t("voting.auth.google.description") }}
+                </p>
+                <p class="method-description">
+                  {{ $t("voting.auth.google.prompt") }}
+                </p>
                 <div v-if="googleError">
-                  <ElAlert :title="$t('voting.auth.google.error')" type="warning" :closable="false" show-icon />
+                  <ElAlert
+                    :title="$t('voting.auth.google.error')"
+                    type="warning"
+                    :closable="false"
+                    show-icon
+                  />
                 </div>
                 <div v-else class="google-button-wrapper">
                   <div v-if="!googleReady" class="google-loading">
-                    <span>{{ $t('voting.auth.google.loading') }}</span>
+                    <span>{{ $t("voting.auth.google.loading") }}</span>
                   </div>
-                  <div ref="googleButtonContainer" class="google-button-container"></div>
+                  <div
+                    ref="googleButtonContainer"
+                    class="google-button-container"
+                  ></div>
                 </div>
               </div>
             </ElTabPane>
@@ -459,20 +528,35 @@ onBeforeUnmount(() => {
                   <ElIcon>
                     <Message />
                   </ElIcon>
-                  <span>{{ $t('voting.auth.tabs.email') }}</span>
+                  <span>{{ $t("voting.auth.tabs.email") }}</span>
                 </span>
               </template>
               <div class="method-section">
-                <p class="method-description">{{ $t('voting.auth.email.description') }}</p>
-                <ElForm :model="emailForm" @submit.prevent="handleRequestEmailCode">
+                <p class="method-description">
+                  {{ $t("voting.auth.email.description") }}
+                </p>
+                <ElForm
+                  :model="emailForm"
+                  @submit.prevent="handleRequestEmailCode"
+                >
                   <ElFormItem :label="$t('voting.auth.email.label')">
-                    <ElInput v-model="emailForm.email" type="email" :placeholder="$t('voting.auth.email.placeholder')"
-                      size="large" required />
+                    <ElInput
+                      v-model="emailForm.email"
+                      type="email"
+                      :placeholder="$t('voting.auth.email.placeholder')"
+                      size="large"
+                      required
+                    />
                   </ElFormItem>
                   <ElFormItem>
-                    <ElButton type="primary" native-type="submit" :loading="loading" size="large"
-                      class="full-width-btn">
-                      {{ $t('voting.auth.email.sendCode') }}
+                    <ElButton
+                      type="primary"
+                      native-type="submit"
+                      :loading="loading"
+                      size="large"
+                      class="full-width-btn"
+                    >
+                      {{ $t("voting.auth.email.sendCode") }}
                     </ElButton>
                   </ElFormItem>
                 </ElForm>
@@ -485,36 +569,64 @@ onBeforeUnmount(() => {
                   <ElIcon>
                     <Phone />
                   </ElIcon>
-                  <span>{{ $t('voting.auth.tabs.phone') }}</span>
+                  <span>{{ $t("voting.auth.tabs.phone") }}</span>
                 </span>
               </template>
               <div class="method-section">
-                <p class="method-description">{{ $t('voting.auth.phone.description') }}</p>
-                <ElForm :model="phoneForm" @submit.prevent="handleRequestPhoneCode">
+                <p class="method-description">
+                  {{ $t("voting.auth.phone.description") }}
+                </p>
+                <ElForm
+                  :model="phoneForm"
+                  @submit.prevent="handleRequestPhoneCode"
+                >
                   <ElFormItem :label="$t('voting.auth.phone.label')">
-                    <ElInput v-model="phoneForm.phone" type="tel" :placeholder="$t('voting.auth.phone.placeholder')"
-                      size="large" required />
+                    <ElInput
+                      v-model="phoneForm.phone"
+                      type="tel"
+                      :placeholder="$t('voting.auth.phone.placeholder')"
+                      size="large"
+                      required
+                    />
                   </ElFormItem>
-                  <ElFormItem :label="$t('voting.auth.phone.deliveryMethod')" class="phone-form">
-                    <ElRadioGroup v-model="phoneForm.deliveryMethod" class="delivery-options">
-                      <ElRadio value="sms">{{ $t('voting.auth.phone.sms') }}</ElRadio>
-                      <ElRadio value="voice">{{ $t('voting.auth.phone.voice') }}</ElRadio>
-                      <ElRadio value="whatsapp">{{ $t('voting.auth.phone.whatsapp') }}</ElRadio>
+                  <ElFormItem
+                    :label="$t('voting.auth.phone.deliveryMethod')"
+                    class="phone-form"
+                  >
+                    <ElRadioGroup
+                      v-model="phoneForm.deliveryMethod"
+                      class="delivery-options"
+                    >
+                      <ElRadio value="sms">{{
+                        $t("voting.auth.phone.sms")
+                      }}</ElRadio>
+                      <ElRadio value="voice">{{
+                        $t("voting.auth.phone.voice")
+                      }}</ElRadio>
+                      <ElRadio value="whatsapp">{{
+                        $t("voting.auth.phone.whatsapp")
+                      }}</ElRadio>
                     </ElRadioGroup>
                   </ElFormItem>
                   <ElFormItem v-if="phoneForm.deliveryMethod === 'whatsapp'">
-                    <p class="whatsapp-note">{{ $t('voting.auth.phone.whatsappNote') }}</p>
+                    <p class="whatsapp-note">
+                      {{ $t("voting.auth.phone.whatsappNote") }}
+                    </p>
                   </ElFormItem>
                   <ElFormItem>
-                    <ElButton type="primary" native-type="submit" :loading="loading" size="large"
-                      class="full-width-btn">
-                      {{ $t('voting.auth.phone.sendCode') }}
+                    <ElButton
+                      type="primary"
+                      native-type="submit"
+                      :loading="loading"
+                      size="large"
+                      class="full-width-btn"
+                    >
+                      {{ $t("voting.auth.phone.sendCode") }}
                     </ElButton>
                   </ElFormItem>
                 </ElForm>
               </div>
             </ElTabPane>
-
 
             <ElTabPane name="code">
               <template #label>
@@ -522,20 +634,34 @@ onBeforeUnmount(() => {
                   <ElIcon>
                     <Key />
                   </ElIcon>
-                  <span>{{ $t('voting.auth.tabs.code') }}</span>
+                  <span>{{ $t("voting.auth.tabs.code") }}</span>
                 </span>
               </template>
               <div class="method-section">
-                <p class="method-description">{{ $t('voting.auth.code.description') }}</p>
-                <ElForm :model="codeForm" @submit.prevent="handleDirectCodeLogin">
+                <p class="method-description">
+                  {{ $t("voting.auth.code.description") }}
+                </p>
+                <ElForm
+                  :model="codeForm"
+                  @submit.prevent="handleDirectCodeLogin"
+                >
                   <ElFormItem :label="$t('voting.auth.code.label')">
-                    <ElInput v-model="codeForm.code" :placeholder="$t('voting.auth.code.placeholder')" size="large"
-                      required />
+                    <ElInput
+                      v-model="codeForm.code"
+                      :placeholder="$t('voting.auth.code.placeholder')"
+                      size="large"
+                      required
+                    />
                   </ElFormItem>
                   <ElFormItem>
-                    <ElButton type="primary" native-type="submit" :loading="loading" size="large"
-                      class="full-width-btn">
-                      {{ $t('voting.auth.code.proceed') }}
+                    <ElButton
+                      type="primary"
+                      native-type="submit"
+                      :loading="loading"
+                      size="large"
+                      class="full-width-btn"
+                    >
+                      {{ $t("voting.auth.code.proceed") }}
                     </ElButton>
                   </ElFormItem>
                 </ElForm>
@@ -545,31 +671,57 @@ onBeforeUnmount(() => {
             <ElTabPane name="facebook">
               <template #label>
                 <span class="tab-label">
-                  <svg class="facebook-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16"
-                    height="16">
-                    <path fill="#1877F2"
-                      d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" />
+                  <svg
+                    class="facebook-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                  >
+                    <path
+                      fill="#1877F2"
+                      d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"
+                    />
                   </svg>
-                  <span>{{ $t('voting.auth.tabs.facebook') }}</span>
+                  <span>{{ $t("voting.auth.tabs.facebook") }}</span>
                 </span>
               </template>
               <div class="method-section facebook-section">
-                <p class="method-description">{{ $t('voting.auth.facebook.description') }}</p>
+                <p class="method-description">
+                  {{ $t("voting.auth.facebook.description") }}
+                </p>
                 <div v-if="fbError">
-                  <ElAlert :title="$t('voting.auth.facebook.error')" type="warning" :closable="false" show-icon />
+                  <ElAlert
+                    :title="$t('voting.auth.facebook.error')"
+                    type="warning"
+                    :closable="false"
+                    show-icon
+                  />
                 </div>
                 <div v-else class="sso-button-wrapper">
                   <div v-if="!fbReady" class="sso-loading">
-                    <span>{{ $t('voting.auth.facebook.loading') }}</span>
+                    <span>{{ $t("voting.auth.facebook.loading") }}</span>
                   </div>
-                  <ElButton v-else class="facebook-login-btn" size="large" :loading="loading"
-                    @click="handleFacebookLogin">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"
-                      style="margin-right:8px">
-                      <path fill="#ffffff"
-                        d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" />
+                  <ElButton
+                    v-else
+                    class="facebook-login-btn"
+                    size="large"
+                    :loading="loading"
+                    @click="handleFacebookLogin"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      style="margin-right: 8px"
+                    >
+                      <path
+                        fill="#ffffff"
+                        d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"
+                      />
                     </svg>
-                    {{ $t('voting.auth.facebook.button') }}
+                    {{ $t("voting.auth.facebook.button") }}
                   </ElButton>
                 </div>
               </div>
@@ -578,29 +730,49 @@ onBeforeUnmount(() => {
             <ElTabPane name="kakao">
               <template #label>
                 <span class="tab-label">
-                  <svg class="kakao-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-                    <path fill="#3C1E1E"
-                      d="M12 3C6.477 3 2 6.582 2 11c0 2.785 1.682 5.226 4.236 6.73l-.931 3.47a.352.352 0 0 0 .538.378L9.927 18.9A12.3 12.3 0 0 0 12 19c5.523 0 10-3.582 10-8S17.523 3 12 3z" />
+                  <svg
+                    class="kakao-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                  >
+                    <path
+                      fill="#3C1E1E"
+                      d="M12 3C6.477 3 2 6.582 2 11c0 2.785 1.682 5.226 4.236 6.73l-.931 3.47a.352.352 0 0 0 .538.378L9.927 18.9A12.3 12.3 0 0 0 12 19c5.523 0 10-3.582 10-8S17.523 3 12 3z"
+                    />
                   </svg>
-                  <span>{{ $t('voting.auth.tabs.kakao') }}</span>
+                  <span>{{ $t("voting.auth.tabs.kakao") }}</span>
                 </span>
               </template>
               <div class="method-section kakao-section">
-                <p class="method-description">{{ $t('voting.auth.kakao.description') }}</p>
+                <p class="method-description">
+                  {{ $t("voting.auth.kakao.description") }}
+                </p>
                 <div v-if="kakaoError">
-                  <ElAlert :title="$t('voting.auth.kakao.error')" type="warning" :closable="false" show-icon />
+                  <ElAlert
+                    :title="$t('voting.auth.kakao.error')"
+                    type="warning"
+                    :closable="false"
+                    show-icon
+                  />
                 </div>
                 <div v-else class="sso-button-wrapper">
                   <div v-if="!kakaoReady" class="sso-loading">
-                    <span>{{ $t('voting.auth.kakao.loading') }}</span>
+                    <span>{{ $t("voting.auth.kakao.loading") }}</span>
                   </div>
-                  <ElButton v-else class="kakao-login-btn" size="large" :loading="loading" @click="handleKakaoLogin">
-                    {{ $t('voting.auth.kakao.button') }}
+                  <ElButton
+                    v-else
+                    class="kakao-login-btn"
+                    size="large"
+                    :loading="loading"
+                    @click="handleKakaoLogin"
+                  >
+                    {{ $t("voting.auth.kakao.button") }}
                   </ElButton>
                 </div>
               </div>
             </ElTabPane>
-
           </ElTabs>
         </div>
 
@@ -609,27 +781,46 @@ onBeforeUnmount(() => {
             <ElIcon :size="40" color="#409EFF">
               <Message />
             </ElIcon>
-            <h3>{{ $t('voting.auth.verify.message', { voterId: verificationForm.voterId }) }}</h3>
-            <p>{{ $t('voting.auth.verify.detail') }}</p>
+            <h3>
+              {{
+                $t("voting.auth.verify.message", {
+                  voterId: verificationForm.voterId,
+                })
+              }}
+            </h3>
+            <p>{{ $t("voting.auth.verify.detail") }}</p>
           </div>
           <ElForm :model="verificationForm" @submit.prevent="handleVerifyCode">
             <ElFormItem :label="$t('voting.auth.verify.label')">
-              <ElInput v-model="verificationForm.verifyCode" :placeholder="$t('voting.auth.verify.placeholder')"
-                size="large" required />
+              <ElInput
+                v-model="verificationForm.verifyCode"
+                :placeholder="$t('voting.auth.verify.placeholder')"
+                size="large"
+                required
+              />
             </ElFormItem>
             <ElFormItem>
-              <ElButton type="primary" native-type="submit" :loading="loading" size="large" class="full-width-btn">
-                {{ $t('voting.auth.verify.submit') }}
+              <ElButton
+                type="primary"
+                native-type="submit"
+                :loading="loading"
+                size="large"
+                class="full-width-btn"
+              >
+                {{ $t("voting.auth.verify.submit") }}
               </ElButton>
             </ElFormItem>
             <ElFormItem>
-              <ElButton @click="backToRequest" size="large" class="full-width-btn">
-                {{ $t('voting.auth.verify.back') }}
+              <ElButton
+                size="large"
+                class="full-width-btn"
+                @click="backToRequest"
+              >
+                {{ $t("voting.auth.verify.back") }}
               </ElButton>
             </ElFormItem>
           </ElForm>
         </div>
-
       </ElCard>
 
       <div class="faq-section">
@@ -637,33 +828,32 @@ onBeforeUnmount(() => {
           <ElIcon :size="24" color="rgba(255,255,255,0.85)">
             <QuestionFilled />
           </ElIcon>
-          <h2>{{ $t('voting.auth.faq.title') }}</h2>
+          <h2>{{ $t("voting.auth.faq.title") }}</h2>
         </div>
         <ElCollapse class="faq-collapse">
           <ElCollapseItem :title="$t('voting.auth.faq.q1')" name="1">
-            {{ $t('voting.auth.faq.a1') }}
+            {{ $t("voting.auth.faq.a1") }}
           </ElCollapseItem>
           <ElCollapseItem :title="$t('voting.auth.faq.q2')" name="2">
-            {{ $t('voting.auth.faq.a2') }}
+            {{ $t("voting.auth.faq.a2") }}
           </ElCollapseItem>
           <ElCollapseItem :title="$t('voting.auth.faq.q3')" name="3">
-            {{ $t('voting.auth.faq.a3') }}
+            {{ $t("voting.auth.faq.a3") }}
           </ElCollapseItem>
           <ElCollapseItem :title="$t('voting.auth.faq.q4')" name="4">
-            {{ $t('voting.auth.faq.a4') }}
+            {{ $t("voting.auth.faq.a4") }}
           </ElCollapseItem>
           <ElCollapseItem :title="$t('voting.auth.faq.q5')" name="5">
-            {{ $t('voting.auth.faq.a5') }}
+            {{ $t("voting.auth.faq.a5") }}
           </ElCollapseItem>
           <ElCollapseItem :title="$t('voting.auth.faq.q6')" name="6">
-            {{ $t('voting.auth.faq.a6') }}
+            {{ $t("voting.auth.faq.a6") }}
           </ElCollapseItem>
           <ElCollapseItem :title="$t('voting.auth.faq.q7')" name="7">
-            {{ $t('voting.auth.faq.a7') }}
+            {{ $t("voting.auth.faq.a7") }}
           </ElCollapseItem>
         </ElCollapse>
       </div>
-
     </div>
   </div>
 </template>
@@ -804,7 +994,7 @@ onBeforeUnmount(() => {
 
     .whatsapp-note {
       font-size: 0.88rem;
-      color: #25D366;
+      color: #25d366;
       margin: 0;
       font-style: italic;
     }
@@ -824,8 +1014,8 @@ onBeforeUnmount(() => {
 
     .facebook-section {
       .facebook-login-btn {
-        background-color: #1877F2;
-        border-color: #1877F2;
+        background-color: #1877f2;
+        border-color: #1877f2;
         color: #ffffff;
         display: flex;
         align-items: center;
@@ -834,23 +1024,23 @@ onBeforeUnmount(() => {
         font-weight: 600;
 
         &:hover {
-          background-color: #166FE5;
-          border-color: #166FE5;
+          background-color: #166fe5;
+          border-color: #166fe5;
         }
       }
     }
 
     .kakao-section {
       .kakao-login-btn {
-        background-color: #FEE500;
-        border-color: #FEE500;
-        color: #3C1E1E;
+        background-color: #fee500;
+        border-color: #fee500;
+        color: #3c1e1e;
         min-width: 260px;
         font-weight: 600;
 
         &:hover {
-          background-color: #FADA0F;
-          border-color: #FADA0F;
+          background-color: #fada0f;
+          border-color: #fada0f;
         }
       }
     }

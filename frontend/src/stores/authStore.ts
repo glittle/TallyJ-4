@@ -1,14 +1,17 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import { authService, type LoginRequest, type RegisterRequest } from '../services/authService';
-import { secureTokenService } from '../services/secureTokenService';
-import { tokenRefreshService } from '../services/tokenRefreshService';
-import { TOKEN_REFRESH_CONFIG } from '../config/tokenRefreshConfig';
-import { useApiErrorHandler } from '../composables/useApiErrorHandler';
-import { SELECTED_LOCATION_KEY } from './locationStore';
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import {
+  authService,
+  type LoginRequest,
+  type RegisterRequest,
+} from "../services/authService";
+import { secureTokenService } from "../services/secureTokenService";
+import { tokenRefreshService } from "../services/tokenRefreshService";
+import { TOKEN_REFRESH_CONFIG } from "../config/tokenRefreshConfig";
+import { useApiErrorHandler } from "../composables/useApiErrorHandler";
+import { SELECTED_LOCATION_KEY } from "./locationStore";
 
-export const useAuthStore = defineStore('auth', () => {
-
+export const useAuthStore = defineStore("auth", () => {
   // Initialize from cookies instead of localStorage
   const authData = secureTokenService.getAuthData();
   const email = ref<string | null>(authData.email);
@@ -22,13 +25,13 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => secureTokenService.isAuthenticated());
 
   // API base URL constant
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5016';
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5016";
 
   async function fetchUserInfo() {
     try {
       const meResponse = await fetch(`${API_URL}/api/auth/me`, {
-        method: 'GET',
-        credentials: 'include',
+        method: "GET",
+        credentials: "include",
       });
 
       if (meResponse.ok) {
@@ -40,7 +43,7 @@ export const useAuthStore = defineStore('auth', () => {
         return userData;
       }
     } catch (error) {
-      console.error('Failed to fetch user info:', error);
+      console.error("Failed to fetch user info:", error);
     }
     return null;
   }
@@ -56,7 +59,8 @@ export const useAuthStore = defineStore('auth', () => {
         const cookieData = secureTokenService.refreshAuthData();
         email.value = cookieData.email || response.email;
         name.value = cookieData.name || response.name || null;
-        authMethod.value = cookieData.authMethod || response.authMethod || 'Local';
+        authMethod.value =
+          cookieData.authMethod || response.authMethod || "Local";
 
         // Fetch user info including isSuperAdmin
         await fetchUserInfo();
@@ -84,7 +88,8 @@ export const useAuthStore = defineStore('auth', () => {
         const cookieData = secureTokenService.refreshAuthData();
         email.value = cookieData.email || response.email;
         name.value = cookieData.name || response.name || null;
-        authMethod.value = cookieData.authMethod || response.authMethod || 'Local';
+        authMethod.value =
+          cookieData.authMethod || response.authMethod || "Local";
 
         requires2FA.value = false;
         pending2FAEmail.value = null;
@@ -114,7 +119,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (userData) {
         // Set readable cookies on the SPA origin for router guards
-        const secure = window.location.protocol === 'https:' ? '; secure' : '';
+        const secure = window.location.protocol === "https:" ? "; secure" : "";
         document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
         if (userData.name) {
           document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
@@ -125,7 +130,8 @@ export const useAuthStore = defineStore('auth', () => {
         const cookieData = secureTokenService.refreshAuthData();
         email.value = cookieData.email || response.email;
         name.value = cookieData.name || response.name || null;
-        authMethod.value = cookieData.authMethod || response.authMethod || 'Google';
+        authMethod.value =
+          cookieData.authMethod || response.authMethod || "Google";
       }
 
       requires2FA.value = false;
@@ -150,7 +156,7 @@ export const useAuthStore = defineStore('auth', () => {
       const cookieData = secureTokenService.refreshAuthData();
       email.value = cookieData.email;
       name.value = cookieData.name;
-      authMethod.value = cookieData.authMethod || 'AccessCode';
+      authMethod.value = cookieData.authMethod || "AccessCode";
 
       requires2FA.value = false;
       pending2FAEmail.value = null;
@@ -179,7 +185,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function logout() {
     // Stop automatic token refresh
     tokenRefreshService.stopAutoRefresh();
-    
+
     // Clear client-side state first
     email.value = null;
     name.value = null;
@@ -195,7 +201,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       localStorage.removeItem(SELECTED_LOCATION_KEY);
     } catch (e) {
-      console.error('Failed to clear selected location on logout:', e);
+      console.error("Failed to clear selected location on logout:", e);
     }
 
     // Navigate to logout endpoint which will clear server-side cookies and redirect to login page
@@ -216,6 +222,6 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     googleOneTapLogin,
     tellerLogin,
-    logout
+    logout,
   };
 });

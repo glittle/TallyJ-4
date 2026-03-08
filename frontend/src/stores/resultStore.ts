@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import { resultService } from '../services/resultService';
-import { signalrService } from '../services/signalrService';
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import { resultService } from "../services/resultService";
+import { signalrService } from "../services/signalrService";
 import type {
   TallyResultDto,
   TallyStatisticsDto,
@@ -10,11 +10,11 @@ import type {
   TieDetailsDto,
   PresentationDto,
   MonitorInfoDto,
-  DetailedStatisticsDto
-} from '../types';
-import type { TallyProgressEvent } from '../types/SignalREvents';
+  DetailedStatisticsDto,
+} from "../types";
+import type { TallyProgressEvent } from "../types/SignalREvents";
 
-export const useResultStore = defineStore('result', () => {
+export const useResultStore = defineStore("result", () => {
   const results = ref<TallyResultDto | null>(null);
   const statistics = ref<TallyStatisticsDto | null>(null);
   const electionReport = ref<ElectionReportDto | null>(null);
@@ -28,20 +28,26 @@ export const useResultStore = defineStore('result', () => {
   const error = ref<string | null>(null);
   const signalrInitialized = ref(false);
   const tallyProgress = ref<TallyProgressEvent | null>(null);
-  const currentElectionGuid = ref<string>('');
+  const currentElectionGuid = ref<string>("");
 
-  async function calculateTally(electionGuid: string, electionType: 'normal' | 'singlename' = 'normal') {
+  async function calculateTally(
+    electionGuid: string,
+    electionType: "normal" | "singlename" = "normal",
+  ) {
     calculating.value = true;
     loading.value = true;
     error.value = null;
     try {
-      const result = await resultService.calculateTally(electionGuid, electionType);
+      const result = await resultService.calculateTally(
+        electionGuid,
+        electionType,
+      );
 
       results.value = result;
       statistics.value = result.statistics;
       return result;
     } catch (e: any) {
-      error.value = e.message || 'Failed to calculate tally';
+      error.value = e.message || "Failed to calculate tally";
       throw e;
     } finally {
       calculating.value = false;
@@ -58,7 +64,7 @@ export const useResultStore = defineStore('result', () => {
       statistics.value = result.statistics;
       return result;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch results';
+      error.value = e.message || "Failed to fetch results";
       throw e;
     } finally {
       loading.value = false;
@@ -73,7 +79,7 @@ export const useResultStore = defineStore('result', () => {
       statistics.value = stats;
       return stats;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch statistics';
+      error.value = e.message || "Failed to fetch statistics";
       throw e;
     } finally {
       loading.value = false;
@@ -104,7 +110,7 @@ export const useResultStore = defineStore('result', () => {
       monitorInfo.value = info;
       return info;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch monitor info';
+      error.value = e.message || "Failed to fetch monitor info";
       throw e;
     } finally {
       loading.value = false;
@@ -120,7 +126,7 @@ export const useResultStore = defineStore('result', () => {
       electionReport.value = report;
       return report;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch election report';
+      error.value = e.message || "Failed to fetch election report";
       throw e;
     } finally {
       loading.value = false;
@@ -135,7 +141,7 @@ export const useResultStore = defineStore('result', () => {
       reportData.value = data;
       return data;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch report data';
+      error.value = e.message || "Failed to fetch report data";
       throw e;
     } finally {
       loading.value = false;
@@ -151,14 +157,17 @@ export const useResultStore = defineStore('result', () => {
       tieDetails.value = details;
       return details;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch tie details';
+      error.value = e.message || "Failed to fetch tie details";
       throw e;
     } finally {
       loading.value = false;
     }
   }
 
-  async function saveTieCounts(electionGuid: string, counts: { personGuid: string; tieBreakCount: number }[]) {
+  async function saveTieCounts(
+    electionGuid: string,
+    counts: { personGuid: string; tieBreakCount: number }[],
+  ) {
     loading.value = true;
     error.value = null;
     try {
@@ -166,7 +175,7 @@ export const useResultStore = defineStore('result', () => {
       const response = await resultService.saveTieCounts(electionGuid, request);
       return response;
     } catch (e: any) {
-      error.value = e.message || 'Failed to save tie counts';
+      error.value = e.message || "Failed to save tie counts";
       throw e;
     } finally {
       loading.value = false;
@@ -182,7 +191,7 @@ export const useResultStore = defineStore('result', () => {
       presentationData.value = data;
       return data;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch presentation data';
+      error.value = e.message || "Failed to fetch presentation data";
       throw e;
     } finally {
       loading.value = false;
@@ -197,7 +206,7 @@ export const useResultStore = defineStore('result', () => {
       detailedStatistics.value = data;
       return data;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch detailed statistics';
+      error.value = e.message || "Failed to fetch detailed statistics";
       throw e;
     } finally {
       loading.value = false;
@@ -210,7 +219,7 @@ export const useResultStore = defineStore('result', () => {
     try {
       const connection = await signalrService.connectToAnalyzeHub();
 
-      connection.on('tallyProgress', (data: any) => {
+      connection.on("tallyProgress", (data: any) => {
         // AnalyzeHub sends tallyProgress with processedBallots, totalBallots, processedVotes, totalVotes, percentage
         const progressEvent: TallyProgressEvent = {
           electionGuid: currentElectionGuid.value,
@@ -219,21 +228,21 @@ export const useResultStore = defineStore('result', () => {
           totalVotes: data.totalVotes || 0,
           message: `Processing ballots: ${data.processedBallots}/${data.totalBallots}`,
           percentComplete: data.percentage || 0,
-          isComplete: data.processedBallots >= data.totalBallots
+          isComplete: data.processedBallots >= data.totalBallots,
         };
         handleTallyProgress(progressEvent);
       });
 
-      connection.on('tallyComplete', (data: any) => {
+      connection.on("tallyComplete", (data: any) => {
         // AnalyzeHub sends tallyComplete with results
         const completeEvent: TallyProgressEvent = {
           electionGuid: currentElectionGuid.value,
           totalBallots: 0,
           processedBallots: 0,
           totalVotes: 0,
-          message: 'Tally calculation completed',
+          message: "Tally calculation completed",
           percentComplete: 100,
-          isComplete: true
+          isComplete: true,
         };
         handleTallyComplete(completeEvent);
         // Optionally update results if data contains them
@@ -242,15 +251,18 @@ export const useResultStore = defineStore('result', () => {
         }
       });
 
-      connection.on('statusUpdate', (message: string, showProgress: boolean) => {
-        // Handle status update messages
-        console.log('Tally status update:', message);
-        // Could update a status message in the UI
-      });
+      connection.on(
+        "statusUpdate",
+        (message: string, showProgress: boolean) => {
+          // Handle status update messages
+          console.log("Tally status update:", message);
+          // Could update a status message in the UI
+        },
+      );
 
       signalrInitialized.value = true;
     } catch (e) {
-      console.error('Failed to initialize SignalR for result store:', e);
+      console.error("Failed to initialize SignalR for result store:", e);
     }
   }
 
@@ -271,7 +283,7 @@ export const useResultStore = defineStore('result', () => {
       currentElectionGuid.value = electionGuid;
       await signalrService.joinTallySession(electionGuid);
     } catch (e) {
-      console.error('Failed to join tally session:', e);
+      console.error("Failed to join tally session:", e);
     }
   }
 
@@ -279,11 +291,11 @@ export const useResultStore = defineStore('result', () => {
     try {
       await signalrService.leaveTallySession(electionGuid);
       if (currentElectionGuid.value === electionGuid) {
-        currentElectionGuid.value = '';
+        currentElectionGuid.value = "";
         tallyProgress.value = null;
       }
     } catch (e) {
-      console.error('Failed to leave tally session:', e);
+      console.error("Failed to leave tally session:", e);
     }
   }
 
@@ -317,6 +329,6 @@ export const useResultStore = defineStore('result', () => {
     clearError,
     initializeSignalR,
     joinTallySession,
-    leaveTallySession
+    leaveTallySession,
   };
 });

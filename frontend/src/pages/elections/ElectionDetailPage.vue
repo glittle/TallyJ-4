@@ -1,12 +1,24 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { ElMessageBox } from 'element-plus';
-import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete, Check, CopyDocument, Link, Document } from '@element-plus/icons-vue';
-import { useElectionStore } from '../../stores/electionStore';
-import { useNotifications } from '@/composables/useNotifications';
-import QRCode from 'qrcode';
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { ElMessageBox } from "element-plus";
+import {
+  Edit,
+  UserFilled,
+  LocationFilled,
+  Tickets,
+  DataAnalysis,
+  Operation,
+  Delete,
+  Check,
+  CopyDocument,
+  Link,
+  Document,
+} from "@element-plus/icons-vue";
+import { useElectionStore } from "../../stores/electionStore";
+import { useNotifications } from "@/composables/useNotifications";
+import QRCode from "qrcode";
 
 const router = useRouter();
 const route = useRoute();
@@ -18,21 +30,22 @@ const electionGuid = route.params.id as string;
 const loading = computed(() => electionStore.loading);
 const election = computed(() => electionStore.currentElection);
 
-const qrCodeUrl = ref('');
-
+const qrCodeUrl = ref("");
 
 const hashPassphrase = async (passphrase: string) => {
   const msgUint8 = new TextEncoder().encode(passphrase); // encode as (UTF-8)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8); // hash the message
   const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join(""); // convert bytes to hex string
   return hashHex;
-}
+};
 
-const shareableUrl = ref('');
+const shareableUrl = ref("");
 const updateShareableUrl = async () => {
   if (!election.value?.electionPasscode) {
-    shareableUrl.value = '';
+    shareableUrl.value = "";
     return;
   }
 
@@ -41,7 +54,6 @@ const updateShareableUrl = async () => {
   shareableUrl.value = `${baseUrl}/teller-join/${code}/${electionGuid}`;
   generateQrCode();
 };
-
 
 const onlineVotingStatus = computed(() => {
   // Check if online voting is enabled based on onlineWhenOpen and onlineWhenClose
@@ -61,13 +73,13 @@ onMounted(async () => {
 onUnmounted(async () => {
   try {
     await electionStore.leaveElection(electionGuid);
-  } catch (error) {
-    console.error('Failed to leave election:', error);
+  } catch (_error) {
+    console.error("Failed to leave election:", _error);
   }
 });
 
 function goBack() {
-  router.push('/elections');
+  router.push("/elections");
 }
 
 function editElection() {
@@ -105,39 +117,39 @@ function calculateTally() {
 async function confirmDelete() {
   try {
     await ElMessageBox.confirm(
-      t('elections.deleteConfirm'),
-      t('common.warning'),
+      t("elections.deleteConfirm"),
+      t("common.warning"),
       {
-        confirmButtonText: t('common.delete'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning',
-        confirmButtonClass: 'el-button--danger'
-      }
+        confirmButtonText: t("common.delete"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+        confirmButtonClass: "el-button--danger",
+      },
     );
 
     await electionStore.deleteElection(electionGuid);
-    showSuccessMessage(t('elections.deleteSuccess'));
-    router.push('/elections');
+    showSuccessMessage(t("elections.deleteSuccess"));
+    router.push("/elections");
   } catch (error: any) {
-    if (error !== 'cancel') {
-      showErrorMessage(error.message || t('elections.deleteError'));
+    if (error !== "cancel") {
+      showErrorMessage(error.message || t("elections.deleteError"));
     }
   }
 }
 
 function formatDate(date?: string) {
-  if (!date) return '-';
+  if (!date) return "-";
   return new Date(date).toLocaleDateString();
 }
 
 function getStatusType(status?: string) {
   const typeMap: Record<string, any> = {
-    'Draft': 'info',
-    'Voting': 'success',
-    'Tallying': 'warning',
-    'Finalized': 'info'
+    Draft: "info",
+    Voting: "success",
+    Tallying: "warning",
+    Finalized: "info",
   };
-  return typeMap[status || ''] || 'info';
+  return typeMap[status || ""] || "info";
 }
 
 async function toggleTellerAccess() {
@@ -148,11 +160,11 @@ async function toggleTellerAccess() {
     await electionStore.toggleTellerAccess(electionGuid, newState);
     showSuccessMessage(
       newState
-        ? t('elections.tellerAccessOpen')
-        : t('elections.tellerAccessClosed')
+        ? t("elections.tellerAccessOpen")
+        : t("elections.tellerAccessClosed"),
     );
-  } catch (error) {
-    showErrorMessage(t('common.error'));
+  } catch (_error) {
+    showErrorMessage(t("common.error"));
   }
 }
 
@@ -161,9 +173,9 @@ async function copyUrl() {
 
   try {
     await navigator.clipboard.writeText(await shareableUrl.value);
-    showSuccessMessage(t('common.copied'));
-  } catch (error) {
-    showErrorMessage(t('common.error'));
+    showSuccessMessage(t("common.copied"));
+  } catch (_error) {
+    showErrorMessage(t("common.error"));
   }
 }
 
@@ -175,12 +187,12 @@ async function generateQrCode() {
       width: 200,
       margin: 2,
       color: {
-        dark: '#000000',
-        light: '#FFFFFF'
-      }
+        dark: "#000000",
+        light: "#FFFFFF",
+      },
     });
-  } catch (error) {
-    console.error('Failed to generate QR code:', error);
+  } catch (_error) {
+    console.error("Failed to generate QR code:", _error);
   }
 }
 </script>
@@ -192,36 +204,36 @@ async function generateQrCode() {
     </div>
 
     <div v-else-if="election">
-      <el-page-header @back="goBack" :content="election.name">
+      <el-page-header :content="election.name" @back="goBack">
         <template #extra>
           <el-button type="primary" @click="editElection">
             <el-icon>
               <Edit />
             </el-icon>
-            {{ $t('common.edit') }}
+            {{ $t("common.edit") }}
           </el-button>
         </template>
       </el-page-header>
 
-      <el-row :gutter="20" style="margin-top: 20px;">
+      <el-row :gutter="20" style="margin-top: 20px">
         <el-col :span="18">
           <el-card class="info-card">
             <template #header>
-              <span>{{ $t('elections.details') }}</span>
+              <span>{{ $t("elections.details") }}</span>
             </template>
             <el-descriptions :column="2" border>
               <el-descriptions-item :label="$t('elections.form.name')">
                 {{ election.name }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('elections.form.type')">
-                {{ election.electionType || '-' }}
+                {{ election.electionType || "-" }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('elections.form.date')">
                 {{ formatDate(election.dateOfElection) }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('elections.status')">
                 <el-tag :type="getStatusType(election.tallyStatus)">
-                  {{ election.tallyStatus || 'Draft' }}
+                  {{ election.tallyStatus || "Draft" }}
                 </el-tag>
               </el-descriptions-item>
               <el-descriptions-item :label="$t('elections.form.numberToElect')">
@@ -231,122 +243,156 @@ async function generateQrCode() {
                 {{ election.numberExtra }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('elections.form.convenor')">
-                {{ election.convenor || '-' }}
+                {{ election.convenor || "-" }}
               </el-descriptions-item>
               <el-descriptions-item :label="$t('elections.form.electionMode')">
-                {{ election.electionMode || '-' }}
+                {{ election.electionMode || "-" }}
               </el-descriptions-item>
             </el-descriptions>
           </el-card>
 
-          <el-card class="actions-card" style="margin-top: 20px;">
+          <el-card class="actions-card" style="margin-top: 20px">
             <template #header>
-              <span>{{ $t('elections.quickActions') }}</span>
+              <span>{{ $t("elections.quickActions") }}</span>
             </template>
             <el-space wrap :size="15">
               <el-button @click="managePeople">
                 <el-icon>
                   <UserFilled />
                 </el-icon>
-                {{ $t('elections.managePeople') }}
+                {{ $t("elections.managePeople") }}
               </el-button>
               <el-button @click="manageLocations">
                 <el-icon>
                   <LocationFilled />
                 </el-icon>
-                {{ $t('elections.manageLocations') }}
+                {{ $t("elections.manageLocations") }}
               </el-button>
               <el-button @click="manageBallots">
                 <el-icon>
                   <Tickets />
                 </el-icon>
-                {{ $t('elections.manageBallots') }}
+                {{ $t("elections.manageBallots") }}
               </el-button>
               <el-button @click="openFrontDesk">
                 <el-icon>
                   <Check />
                 </el-icon>
-                {{ $t('nav.frontDesk') }}
+                {{ $t("nav.frontDesk") }}
               </el-button>
               <el-button @click="viewResults">
                 <el-icon>
                   <DataAnalysis />
                 </el-icon>
-                {{ $t('elections.viewResults') }}
+                {{ $t("elections.viewResults") }}
               </el-button>
               <el-button @click="viewReports">
                 <el-icon>
                   <Document />
                 </el-icon>
-                {{ $t('elections.viewReports') }}
+                {{ $t("elections.viewReports") }}
               </el-button>
-              <el-button @click="calculateTally" type="warning">
+              <el-button type="warning" @click="calculateTally">
                 <el-icon>
                   <Operation />
                 </el-icon>
-                {{ $t('elections.calculateTally') }}
+                {{ $t("elections.calculateTally") }}
               </el-button>
             </el-space>
           </el-card>
 
-          <el-card class="teller-access-card" style="margin-top: 20px;">
+          <el-card class="teller-access-card" style="margin-top: 20px">
             <template #header>
-              <span>{{ $t('elections.tellerAccess') }}</span>
+              <span>{{ $t("elections.tellerAccess") }}</span>
             </template>
 
             <div class="access-status">
               <el-tag :type="election?.isTellerAccessOpen ? 'success' : 'info'">
-                {{ election?.isTellerAccessOpen ? $t('elections.tellerAccessOpen') : $t('elections.tellerAccessClosed')
+                {{
+                  election?.isTellerAccessOpen
+                    ? $t("elections.tellerAccessOpen")
+                    : $t("elections.tellerAccessClosed")
                 }}
               </el-tag>
             </div>
 
-            <div class="access-status" style="margin-top: 10px;">
+            <div class="access-status" style="margin-top: 10px">
               <el-tag :type="onlineVotingStatus ? 'success' : 'info'">
-                {{ onlineVotingStatus ? $t('elections.onlineVotingEnabled') : $t('elections.onlineVotingDisabled') }}
+                {{
+                  onlineVotingStatus
+                    ? $t("elections.onlineVotingEnabled")
+                    : $t("elections.onlineVotingDisabled")
+                }}
               </el-tag>
             </div>
 
             <el-divider />
 
-            <el-button type="primary" @click="toggleTellerAccess" :loading="loading" style="margin-bottom: 15px;">
-              {{ $t('elections.toggleTellerAccess') }}
+            <el-button
+              type="primary"
+              :loading="loading"
+              style="margin-bottom: 15px"
+              @click="toggleTellerAccess"
+            >
+              {{ $t("elections.toggleTellerAccess") }}
             </el-button>
 
             <div v-if="election?.electionPasscode" class="access-details">
               <div class="access-item">
-                <label>{{ $t('elections.tellerAccessCode') }}:</label>
-                <el-input :model-value="election.electionPasscode" readonly style="margin-top: 5px;"
-                  @change="updateShareableUrl" />
+                <label>{{ $t("elections.tellerAccessCode") }}:</label>
+                <el-input
+                  :model-value="election.electionPasscode"
+                  readonly
+                  style="margin-top: 5px"
+                  @change="updateShareableUrl"
+                />
               </div>
 
-              <div class="access-item" style="margin-top: 15px;">
-                <label>{{ $t('elections.tellerAccessUrl') }}:</label>
+              <div class="access-item" style="margin-top: 15px">
+                <label>{{ $t("elections.tellerAccessUrl") }}:</label>
                 <div class="url-container">
-                  <el-input :model-value="shareableUrl" readonly style="margin-top: 5px;" />
-                  <el-button type="primary" @click="copyUrl" :icon="CopyDocument" style="margin-left: 10px;">
-                    {{ $t('elections.copyUrl') }}
+                  <el-input
+                    :model-value="shareableUrl"
+                    readonly
+                    style="margin-top: 5px"
+                  />
+                  <el-button
+                    type="primary"
+                    :icon="CopyDocument"
+                    style="margin-left: 10px"
+                    @click="copyUrl"
+                  >
+                    {{ $t("elections.copyUrl") }}
                   </el-button>
                 </div>
               </div>
 
-              <div class="access-item" style="margin-top: 15px;">
-                <label>{{ $t('elections.tellerAccessQrCode') }}:</label>
-                <div class="qr-container" style="margin-top: 10px;">
-                  <img v-if="qrCodeUrl" :src="qrCodeUrl" alt="QR Code" class="qr-code" />
+              <div class="access-item" style="margin-top: 15px">
+                <label>{{ $t("elections.tellerAccessQrCode") }}:</label>
+                <div class="qr-container" style="margin-top: 10px">
+                  <img
+                    v-if="qrCodeUrl"
+                    :src="qrCodeUrl"
+                    alt="QR Code"
+                    class="qr-code"
+                  />
                   <div v-else class="qr-placeholder">
                     <el-icon size="48">
                       <Link />
                     </el-icon>
-                    <p>{{ $t('common.loading') }}</p>
+                    <p>{{ $t("common.loading") }}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div v-else class="no-passcode">
-              <el-alert type="warning" :title="$t('common.warning')"
-                :description="$t('elections.form.electionPasscodeHelp')" show-icon />
+              <el-alert
+                type="warning"
+                :title="$t('common.warning')"
+                :description="$t('elections.form.electionPasscodeHelp')"
+                show-icon
+              />
             </div>
           </el-card>
         </el-col>
@@ -354,35 +400,40 @@ async function generateQrCode() {
         <el-col :span="6">
           <el-card class="stats-card">
             <template #header>
-              <span>{{ $t('elections.statistics') }}</span>
+              <span>{{ $t("elections.statistics") }}</span>
             </template>
             <div class="stat-item">
-              <div class="stat-label">{{ $t('dashboard.totalVoters') }}</div>
+              <div class="stat-label">{{ $t("dashboard.totalVoters") }}</div>
               <div class="stat-value">{{ election.voterCount }}</div>
             </div>
             <el-divider />
             <div class="stat-item">
-              <div class="stat-label">{{ $t('dashboard.totalBallots') }}</div>
+              <div class="stat-label">{{ $t("dashboard.totalBallots") }}</div>
               <div class="stat-value">{{ election.ballotCount }}</div>
             </div>
             <el-divider />
             <div class="stat-item">
-              <div class="stat-label">{{ $t('elections.locations') }}</div>
+              <div class="stat-label">{{ $t("elections.locations") }}</div>
               <div class="stat-value">{{ election.locationCount }}</div>
             </div>
           </el-card>
         </el-col>
       </el-row>
       <el-row>
-        <el-card class="danger-zone" style="margin-top: 20px;">
+        <el-card class="danger-zone" style="margin-top: 20px">
           <template #header>
-            <span style="color: #f56c6c;">{{ $t('common.dangerZone') }}</span>
+            <span style="color: #f56c6c">{{ $t("common.dangerZone") }}</span>
           </template>
-          <el-button type="danger" plain @click="confirmDelete" style="width: 100%;">
+          <el-button
+            type="danger"
+            plain
+            style="width: 100%"
+            @click="confirmDelete"
+          >
             <el-icon>
               <Delete />
             </el-icon>
-            {{ $t('common.delete') }}
+            {{ $t("common.delete") }}
           </el-button>
         </el-card>
       </el-row>

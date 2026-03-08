@@ -1,12 +1,12 @@
-import { createPinia } from 'pinia'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createPinia } from "pinia";
+import { createRouter, createWebHistory } from "vue-router";
 
 // Create global instances for testing
-const testPinia = createPinia()
+const testPinia = createPinia();
 const testRouter = createRouter({
   history: createWebHistory(),
-  routes: []
-})
+  routes: [],
+});
 
 // Export for direct imports if needed
-export { testPinia as pinia, testRouter as router }
+export { testPinia as pinia, testRouter as router };

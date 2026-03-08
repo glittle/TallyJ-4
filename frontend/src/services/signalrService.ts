@@ -1,5 +1,5 @@
-import * as signalR from '@microsoft/signalr';
-import { ConnectionState } from '@/types/SignalRConnection';
+import * as signalR from "@microsoft/signalr";
+import { ConnectionState } from "@/types/SignalRConnection";
 
 class SignalRService {
   private connections: Map<string, signalR.HubConnection> = new Map();
@@ -7,22 +7,28 @@ class SignalRService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5016';
+    this.baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
   }
 
-  async connect(hubPath: string, accessToken?: string): Promise<signalR.HubConnection> {
+  async connect(
+    hubPath: string,
+    accessToken?: string,
+  ): Promise<signalR.HubConnection> {
     const existingConnection = this.connections.get(hubPath);
-    if (existingConnection && existingConnection.state === signalR.HubConnectionState.Connected) {
+    if (
+      existingConnection &&
+      existingConnection.state === signalR.HubConnectionState.Connected
+    ) {
       return existingConnection;
     }
 
     const hubUrl = `${this.baseUrl}${hubPath}`;
-    
+
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(hubUrl, {
         // Cookies are sent automatically by the browser with the initial HTTP request
         // No need to provide accessTokenFactory when using httpOnly cookies
-        withCredentials: true
+        withCredentials: true,
       })
       .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
       .configureLogging(signalR.LogLevel.Warning)
@@ -39,7 +45,9 @@ class SignalRService {
     });
 
     connection.onreconnected((connectionId) => {
-      console.log(`SignalR reconnected for ${hubPath}. Connection ID: ${connectionId}`);
+      console.log(
+        `SignalR reconnected for ${hubPath}. Connection ID: ${connectionId}`,
+      );
       this.connectionStates.set(hubPath, ConnectionState.Connected);
     });
 
@@ -67,14 +75,17 @@ class SignalRService {
         this.connectionStates.set(hubPath, ConnectionState.Disconnected);
         console.log(`SignalR disconnected from ${hubPath}`);
       } catch (error) {
-        console.error(`Error disconnecting from SignalR hub ${hubPath}:`, error);
+        console.error(
+          `Error disconnecting from SignalR hub ${hubPath}:`,
+          error,
+        );
       }
     }
   }
 
   async disconnectAll(): Promise<void> {
-    const disconnectPromises = Array.from(this.connections.keys()).map(hubPath => 
-      this.disconnect(hubPath)
+    const disconnectPromises = Array.from(this.connections.keys()).map(
+      (hubPath) => this.disconnect(hubPath),
     );
     await Promise.all(disconnectPromises);
   }
@@ -88,120 +99,128 @@ class SignalRService {
   }
 
   async connectToMainHub(accessToken?: string): Promise<signalR.HubConnection> {
-    return this.connect('/hubs/main', accessToken);
+    return this.connect("/hubs/main", accessToken);
   }
 
-  async connectToAnalyzeHub(accessToken?: string): Promise<signalR.HubConnection> {
-    return this.connect('/hubs/analyze', accessToken);
+  async connectToAnalyzeHub(
+    accessToken?: string,
+  ): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/analyze", accessToken);
   }
 
-  async connectToBallotImportHub(accessToken?: string): Promise<signalR.HubConnection> {
-    return this.connect('/hubs/ballot-import', accessToken);
+  async connectToBallotImportHub(
+    accessToken?: string,
+  ): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/ballot-import", accessToken);
   }
 
   async connectToPublicHub(): Promise<signalR.HubConnection> {
-    return this.connect('/hubs/public');
+    return this.connect("/hubs/public");
   }
 
-  async connectToFrontDeskHub(accessToken?: string): Promise<signalR.HubConnection> {
-    return this.connect('/hubs/front-desk', accessToken);
+  async connectToFrontDeskHub(
+    accessToken?: string,
+  ): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/front-desk", accessToken);
   }
 
-  async connectToPeopleImportHub(accessToken?: string): Promise<signalR.HubConnection> {
-    return this.connect('/hubs/people-import', accessToken);
+  async connectToPeopleImportHub(
+    accessToken?: string,
+  ): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/people-import", accessToken);
   }
 
   async joinElection(electionGuid: string): Promise<void> {
-    const mainConnection = this.getConnection('/hubs/main');
+    const mainConnection = this.getConnection("/hubs/main");
     if (mainConnection) {
-      await mainConnection.invoke('JoinElection', electionGuid);
+      await mainConnection.invoke("JoinElection", electionGuid);
     }
 
-    const frontDeskConnection = this.getConnection('/hubs/front-desk');
+    const frontDeskConnection = this.getConnection("/hubs/front-desk");
     if (frontDeskConnection) {
-      await frontDeskConnection.invoke('JoinElection', electionGuid);
+      await frontDeskConnection.invoke("JoinElection", electionGuid);
     }
   }
 
   async leaveElection(electionGuid: string): Promise<void> {
-    const mainConnection = this.getConnection('/hubs/main');
+    const mainConnection = this.getConnection("/hubs/main");
     if (mainConnection) {
-      await mainConnection.invoke('LeaveElection', electionGuid);
+      await mainConnection.invoke("LeaveElection", electionGuid);
     }
 
-    const frontDeskConnection = this.getConnection('/hubs/front-desk');
+    const frontDeskConnection = this.getConnection("/hubs/front-desk");
     if (frontDeskConnection) {
-      await frontDeskConnection.invoke('LeaveElection', electionGuid);
+      await frontDeskConnection.invoke("LeaveElection", electionGuid);
     }
   }
 
   async joinTallySession(electionGuid: string): Promise<void> {
-    const analyzeConnection = this.getConnection('/hubs/analyze');
+    const analyzeConnection = this.getConnection("/hubs/analyze");
     if (analyzeConnection) {
-      await analyzeConnection.invoke('JoinTallySession', electionGuid);
+      await analyzeConnection.invoke("JoinTallySession", electionGuid);
     }
   }
 
   async leaveTallySession(electionGuid: string): Promise<void> {
-    const analyzeConnection = this.getConnection('/hubs/analyze');
+    const analyzeConnection = this.getConnection("/hubs/analyze");
     if (analyzeConnection) {
-      await analyzeConnection.invoke('LeaveTallySession', electionGuid);
+      await analyzeConnection.invoke("LeaveTallySession", electionGuid);
     }
   }
 
   async joinImportSession(electionGuid: string): Promise<void> {
-    const importConnection = this.getConnection('/hubs/ballot-import');
+    const importConnection = this.getConnection("/hubs/ballot-import");
     if (importConnection) {
-      await importConnection.invoke('JoinImportSession', electionGuid);
+      await importConnection.invoke("JoinImportSession", electionGuid);
     }
   }
 
   async leaveImportSession(electionGuid: string): Promise<void> {
-    const importConnection = this.getConnection('/hubs/ballot-import');
+    const importConnection = this.getConnection("/hubs/ballot-import");
     if (importConnection) {
-      await importConnection.invoke('LeaveImportSession', electionGuid);
+      await importConnection.invoke("LeaveImportSession", electionGuid);
     }
   }
 
   async joinPeopleImportSession(electionGuid: string): Promise<void> {
-    const peopleImportConnection = this.getConnection('/hubs/people-import');
+    const peopleImportConnection = this.getConnection("/hubs/people-import");
     if (peopleImportConnection) {
-      await peopleImportConnection.invoke('JoinImportSession', electionGuid);
+      await peopleImportConnection.invoke("JoinImportSession", electionGuid);
     }
   }
 
   async leavePeopleImportSession(electionGuid: string): Promise<void> {
-    const peopleImportConnection = this.getConnection('/hubs/people-import');
+    const peopleImportConnection = this.getConnection("/hubs/people-import");
     if (peopleImportConnection) {
-      await peopleImportConnection.invoke('LeaveImportSession', electionGuid);
+      await peopleImportConnection.invoke("LeaveImportSession", electionGuid);
     }
   }
 
   async joinFrontDeskElection(electionGuid: string): Promise<void> {
-    const frontDeskConnection = this.getConnection('/hubs/front-desk');
+    const frontDeskConnection = this.getConnection("/hubs/front-desk");
     if (frontDeskConnection) {
-      await frontDeskConnection.invoke('JoinElection', electionGuid);
+      await frontDeskConnection.invoke("JoinElection", electionGuid);
     }
   }
 
   async leaveFrontDeskElection(electionGuid: string): Promise<void> {
-    const frontDeskConnection = this.getConnection('/hubs/front-desk');
+    const frontDeskConnection = this.getConnection("/hubs/front-desk");
     if (frontDeskConnection) {
-      await frontDeskConnection.invoke('LeaveElection', electionGuid);
+      await frontDeskConnection.invoke("LeaveElection", electionGuid);
     }
   }
 
   async joinPublicDisplay(electionGuid: string): Promise<void> {
-    const publicConnection = this.getConnection('/hubs/public');
+    const publicConnection = this.getConnection("/hubs/public");
     if (publicConnection) {
-      await publicConnection.invoke('JoinPublicDisplay', electionGuid);
+      await publicConnection.invoke("JoinPublicDisplay", electionGuid);
     }
   }
 
   async leavePublicDisplay(electionGuid: string): Promise<void> {
-    const publicConnection = this.getConnection('/hubs/public');
+    const publicConnection = this.getConnection("/hubs/public");
     if (publicConnection) {
-      await publicConnection.invoke('LeavePublicDisplay', electionGuid);
+      await publicConnection.invoke("LeavePublicDisplay", electionGuid);
     }
   }
 }

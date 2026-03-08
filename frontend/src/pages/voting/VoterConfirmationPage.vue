@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useOnlineVotingStore } from '../../stores/onlineVotingStore';
-import { ElCard, ElResult, ElButton } from 'element-plus';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from "vue";
+import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
+import { ElCard, ElResult, ElButton } from "element-plus";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 const onlineVotingStore = useOnlineVotingStore();
@@ -11,7 +11,7 @@ const voteStatus = ref(onlineVotingStore.voteStatus);
 
 function handleLogout() {
   onlineVotingStore.logout();
-  router.push('/');
+  router.push("/");
 }
 </script>
 
@@ -27,21 +27,19 @@ function handleLogout() {
           <template #extra>
             <div class="confirmation-details">
               <p v-if="voteStatus?.whenSubmitted">
-                <strong>{{ $t('voting.confirmation.submitted') }}</strong> {{ new Date(voteStatus.whenSubmitted).toLocaleString() }}
+                <strong>{{ $t("voting.confirmation.submitted") }}</strong>
+                {{ new Date(voteStatus.whenSubmitted).toLocaleString() }}
               </p>
               <p v-if="onlineVotingStore.electionInfo">
-                <strong>{{ $t('voting.confirmation.election') }}</strong> {{ onlineVotingStore.electionInfo.name }}
+                <strong>{{ $t("voting.confirmation.election") }}</strong>
+                {{ onlineVotingStore.electionInfo.name }}
               </p>
               <div class="info-message">
-                <p>{{ $t('voting.confirmation.recorded') }}</p>
-                <p>{{ $t('voting.confirmation.noChange') }}</p>
+                <p>{{ $t("voting.confirmation.recorded") }}</p>
+                <p>{{ $t("voting.confirmation.noChange") }}</p>
               </div>
-              <ElButton 
-                type="primary" 
-                @click="handleLogout"
-                size="large"
-              >
-                {{ $t('voting.confirmation.close') }}
+              <ElButton type="primary" size="large" @click="handleLogout">
+                {{ $t("voting.confirmation.close") }}
               </ElButton>
             </div>
           </template>

@@ -5,7 +5,9 @@
         <div class="card-header">
           <h2>{{ $t("elections.list") }}</h2>
           <el-button type="primary" @click="createElection">
-            <el-icon><Plus /></el-icon>
+            <el-icon>
+              <Plus />
+            </el-icon>
             {{ $t("elections.createNew") }}
           </el-button>
         </div>
@@ -22,7 +24,9 @@
               @input="handleSearch"
             >
               <template #prefix>
-                <el-icon><Search /></el-icon>
+                <el-icon>
+                  <Search />
+                </el-icon>
               </template>
             </el-input>
           </el-col>
@@ -46,13 +50,34 @@
               clearable
               @change="handleFilterChange"
             >
-              <el-option :label="$t('elections.electionTypes.LSA')" value="LSA" />
-              <el-option :label="$t('elections.electionTypes.LSA1')" value="LSA1" />
-              <el-option :label="$t('elections.electionTypes.LSA2')" value="LSA2" />
-              <el-option :label="$t('elections.electionTypes.NSA')" value="NSA" />
-              <el-option :label="$t('elections.electionTypes.Con')" value="Con" />
-              <el-option :label="$t('elections.electionTypes.Reg')" value="Reg" />
-              <el-option :label="$t('elections.electionTypes.Oth')" value="Oth" />
+              <el-option
+                :label="$t('elections.electionTypes.LSA')"
+                value="LSA"
+              />
+              <el-option
+                :label="$t('elections.electionTypes.LSA1')"
+                value="LSA1"
+              />
+              <el-option
+                :label="$t('elections.electionTypes.LSA2')"
+                value="LSA2"
+              />
+              <el-option
+                :label="$t('elections.electionTypes.NSA')"
+                value="NSA"
+              />
+              <el-option
+                :label="$t('elections.electionTypes.Con')"
+                value="Con"
+              />
+              <el-option
+                :label="$t('elections.electionTypes.Reg')"
+                value="Reg"
+              />
+              <el-option
+                :label="$t('elections.electionTypes.Oth')"
+                value="Oth"
+              />
             </el-select>
           </el-col>
           <el-col :span="4">
@@ -67,7 +92,7 @@
           </el-col>
           <el-col :span="6" class="text-right">
             <el-space>
-              <el-button @click="clearFilters" :disabled="!hasActiveFilters">
+              <el-button :disabled="!hasActiveFilters" @click="clearFilters">
                 {{ $t("common.clearFilters") }}
               </el-button>
             </el-space>
@@ -77,11 +102,11 @@
 
       <div class="table-container">
         <el-table
-          :data="filteredElections"
           v-loading="loading"
+          :data="filteredElections"
           style="width: 100%"
-          @sort-change="handleSortChange"
           :default-sort="{ prop: 'dateOfElection', order: 'descending' }"
+          @sort-change="handleSortChange"
         >
           <el-table-column
             prop="name"
@@ -96,7 +121,11 @@
             sortable="custom"
           >
             <template #default="scope">
-              <el-tag size="small">{{ scope.row.electionType ? $t(`elections.electionTypes.${scope.row.electionType}`) : '' }}</el-tag>
+              <el-tag size="small">{{
+                scope.row.electionType
+                  ? $t(`elections.electionTypes.${scope.row.electionType}`)
+                  : ""
+              }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -139,9 +168,17 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('common.actions')" width="120" fixed="right">
+          <el-table-column
+            :label="$t('common.actions')"
+            width="120"
+            fixed="right"
+          >
             <template #default="scope">
-              <el-button type="primary" size="small" @click="openElection(scope.row.electionGuid)">
+              <el-button
+                type="primary"
+                size="small"
+                @click="openElection(scope.row.electionGuid)"
+              >
                 {{ $t("common.open") }}
               </el-button>
             </template>
@@ -161,25 +198,18 @@
         </div>
       </div>
     </el-card>
-
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
 import { Plus, Search } from "@element-plus/icons-vue";
 import { useElectionStore } from "../../stores/electionStore";
-import { useNotifications } from '@/composables/useNotifications';
-import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
-import type { ElectionDto } from "../../types";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 
 const router = useRouter();
-const { t } = useI18n();
 const electionStore = useElectionStore();
-const { showErrorMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const loading = computed(() => electionStore.loading);
@@ -199,8 +229,6 @@ const sort = ref({
   order: "descending" as "ascending" | "descending",
 });
 
-
-
 // Pagination
 const pagination = ref({
   page: 1,
@@ -208,8 +236,8 @@ const pagination = ref({
   total: 0,
 });
 
-// Filtered and sorted elections
-const filteredElections = computed(() => {
+// Filtered and sorted elections (without pagination)
+const filteredElectionsUnpaginated = computed(() => {
   let filtered = [...allElections.value];
 
   // Apply filters
@@ -218,19 +246,19 @@ const filteredElections = computed(() => {
     filtered = filtered.filter(
       (election) =>
         election.name.toLowerCase().includes(search) ||
-        election.convenor?.toLowerCase().includes(search)
+        election.convenor?.toLowerCase().includes(search),
     );
   }
 
   if (filters.value.status) {
     filtered = filtered.filter(
-      (election) => (election.tallyStatus || "Draft") === filters.value.status
+      (election) => (election.tallyStatus || "Draft") === filters.value.status,
     );
   }
 
   if (filters.value.type) {
     filtered = filtered.filter(
-      (election) => election.electionType === filters.value.type
+      (election) => election.electionType === filters.value.type,
     );
   }
 
@@ -265,11 +293,23 @@ const filteredElections = computed(() => {
     });
   }
 
-  // Apply pagination
-  pagination.value.total = filtered.length;
+  return filtered;
+});
+
+// Update pagination total when filtered elections change
+watch(
+  filteredElectionsUnpaginated,
+  (filtered) => {
+    pagination.value.total = filtered.length;
+  },
+  { immediate: true },
+);
+
+// Filtered and sorted elections with pagination
+const filteredElections = computed(() => {
   const start = (pagination.value.page - 1) * pagination.value.pageSize;
   const end = start + pagination.value.pageSize;
-  return filtered.slice(start, end);
+  return filteredElectionsUnpaginated.value.slice(start, end);
 });
 
 const hasActiveFilters = computed(() => {
@@ -323,8 +363,6 @@ function handleSortChange({ prop, order }: any) {
   sort.value.prop = prop;
   sort.value.order = order;
 }
-
-
 
 function handleSizeChange() {
   pagination.value.page = 1; // Reset to first page when changing page size
@@ -386,7 +424,5 @@ function getStatusType(status: string) {
     justify-content: flex-end;
     margin-top: var(--spacing-6);
   }
-
-
 }
 </style>

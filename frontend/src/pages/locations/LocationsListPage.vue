@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <div class="header-left">
-            <el-page-header @back="goBack" content="Voting Locations" />
+            <el-page-header content="Voting Locations" @back="goBack" />
           </div>
           <div class="header-actions">
             <el-button type="primary" @click="showCreateDialog = true">
@@ -17,35 +17,63 @@
 
       <div class="table-container">
         <el-table
-          :data="sortedLocations"
           v-loading="loading"
+          :data="sortedLocations"
           style="width: 100%"
           @sort-change="handleSortChange"
         >
-          <el-table-column prop="name" label="Location Name" min-width="200" sortable="custom" />
-          <el-table-column prop="contactInfo" label="Contact Info" min-width="200" />
+          <el-table-column
+            prop="name"
+            label="Location Name"
+            min-width="200"
+            sortable="custom"
+          />
+          <el-table-column
+            prop="contactInfo"
+            label="Contact Info"
+            min-width="200"
+          />
           <el-table-column prop="tallyStatus" label="Tally Status" width="150">
             <template #default="scope">
-              <el-tag v-if="scope.row.tallyStatus" :type="getStatusType(scope.row.tallyStatus)">
+              <el-tag
+                v-if="scope.row.tallyStatus"
+                :type="getStatusType(scope.row.tallyStatus)"
+              >
                 {{ scope.row.tallyStatus }}
               </el-tag>
               <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column prop="ballotsCollected" label="Ballots" width="100" align="center" sortable="custom">
+          <el-table-column
+            prop="ballotsCollected"
+            label="Ballots"
+            width="100"
+            align="center"
+            sortable="custom"
+          >
             <template #default="scope">
               {{ scope.row.ballotsCollected || 0 }}
             </template>
           </el-table-column>
-          <el-table-column prop="sortOrder" label="Sort Order" width="120" align="center" sortable="custom">
+          <el-table-column
+            prop="sortOrder"
+            label="Sort Order"
+            width="120"
+            align="center"
+            sortable="custom"
+          >
             <template #default="scope">
-              {{ scope.row.sortOrder ?? '-' }}
+              {{ scope.row.sortOrder ?? "-" }}
             </template>
           </el-table-column>
           <el-table-column label="Coordinates" width="180">
             <template #default="scope">
-              <span v-if="scope.row.longitude && scope.row.latitude" class="coordinates">
-                {{ formatCoordinate(scope.row.longitude) }}, {{ formatCoordinate(scope.row.latitude) }}
+              <span
+                v-if="scope.row.longitude && scope.row.latitude"
+                class="coordinates"
+              >
+                {{ formatCoordinate(scope.row.longitude) }},
+                {{ formatCoordinate(scope.row.latitude) }}
               </span>
               <span v-else>-</span>
             </template>
@@ -74,7 +102,7 @@
           </el-table-column>
         </el-table>
 
-        <div class="pagination-container" v-if="pagination.totalPages > 1">
+        <div v-if="pagination.totalPages > 1" class="pagination-container">
           <el-pagination
             v-model:current-page="pagination.pageNumber"
             v-model:page-size="pagination.pageSize"
@@ -117,23 +145,29 @@
         </div>
 
         <el-table
-          :data="computers"
           v-loading="computersLoading"
+          :data="computers"
           style="width: 100%"
           class="computers-table"
         >
           <el-table-column prop="computerCode" label="Code" width="80" />
           <el-table-column prop="browserInfo" label="Browser" min-width="200">
             <template #default="scope">
-              <span class="browser-info">{{ scope.row.browserInfo || '-' }}</span>
+              <span class="browser-info">{{
+                scope.row.browserInfo || "-"
+              }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="ipAddress" label="IP Address" width="150">
             <template #default="scope">
-              {{ scope.row.ipAddress || '-' }}
+              {{ scope.row.ipAddress || "-" }}
             </template>
           </el-table-column>
-          <el-table-column prop="lastActivity" label="Last Activity" width="180">
+          <el-table-column
+            prop="lastActivity"
+            label="Last Activity"
+            width="180"
+          >
             <template #default="scope">
               {{ formatDateTime(scope.row.lastActivity) }}
             </template>
@@ -141,7 +175,7 @@
           <el-table-column label="Status" width="100">
             <template #default="scope">
               <el-tag :type="scope.row.isActive ? 'success' : 'info'">
-                {{ scope.row.isActive ? 'Active' : 'Inactive' }}
+                {{ scope.row.isActive ? "Active" : "Inactive" }}
               </el-tag>
             </template>
           </el-table-column>
@@ -158,7 +192,10 @@
           </el-table-column>
         </el-table>
 
-        <el-empty v-if="!computersLoading && computers.length === 0" description="No computers registered" />
+        <el-empty
+          v-if="!computersLoading && computers.length === 0"
+          description="No computers registered"
+        />
       </div>
     </el-drawer>
 
@@ -173,15 +210,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { Plus, Edit, Delete, Monitor } from '@element-plus/icons-vue';
-import { useLocationStore } from '../../stores/locationStore';
-import { ElMessageBox } from 'element-plus';
-import { useNotifications } from '@/composables/useNotifications';
-import type { LocationDto, ComputerDto } from '../../types';
-import LocationFormDialog from '../../components/locations/LocationFormDialog.vue';
-import ComputerRegistrationDialog from '../../components/locations/ComputerRegistrationDialog.vue';
+import { ref, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { Plus, Edit, Delete, Monitor } from "@element-plus/icons-vue";
+import { useLocationStore } from "../../stores/locationStore";
+import { ElMessageBox } from "element-plus";
+import { useNotifications } from "@/composables/useNotifications";
+import type { LocationDto, ComputerDto } from "../../types";
+import LocationFormDialog from "../../components/locations/LocationFormDialog.vue";
+import ComputerRegistrationDialog from "../../components/locations/ComputerRegistrationDialog.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -203,8 +240,8 @@ const computers = computed(() => locationStore.computers);
 const computersLoading = computed(() => locationStore.computersLoading);
 
 const sort = ref({
-  prop: 'sortOrder',
-  order: 'ascending' as 'ascending' | 'descending'
+  prop: "sortOrder",
+  order: "ascending" as "ascending" | "descending",
 });
 
 onMounted(async () => {
@@ -213,9 +250,13 @@ onMounted(async () => {
 
 async function loadLocations() {
   try {
-    await locationStore.fetchLocations(electionGuid, pagination.value.pageNumber, pagination.value.pageSize);
+    await locationStore.fetchLocations(
+      electionGuid,
+      pagination.value.pageNumber,
+      pagination.value.pageSize,
+    );
   } catch (error) {
-    showErrorMessage('Failed to load locations');
+    showErrorMessage("Failed to load locations");
   }
 }
 
@@ -232,19 +273,19 @@ async function deleteLocation(location: LocationDto) {
   try {
     await ElMessageBox.confirm(
       `Are you sure you want to delete location "${location.name}"?`,
-      'Warning',
+      "Warning",
       {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }
+        confirmButtonText: "Delete",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      },
     );
 
     await locationStore.deleteLocation(electionGuid, location.locationGuid);
-    showSuccessMessage('Location deleted successfully');
+    showSuccessMessage("Location deleted successfully");
   } catch (error: any) {
-    if (error !== 'cancel') {
-      showErrorMessage(error.message || 'Failed to delete location');
+    if (error !== "cancel") {
+      showErrorMessage(error.message || "Failed to delete location");
     }
   }
 }
@@ -270,19 +311,19 @@ async function handlePageChange() {
 }
 
 function formatCoordinate(coord: string | undefined): string {
-  if (!coord) return '';
+  if (!coord) return "";
   const num = parseFloat(coord);
   return isNaN(num) ? coord : num.toFixed(4);
 }
 
 function getStatusType(status: string) {
   const typeMap: Record<string, any> = {
-    'NotStarted': '',
-    'InProgress': 'warning',
-    'Completed': 'success',
-    'Verified': 'info'
+    NotStarted: "",
+    InProgress: "warning",
+    Completed: "success",
+    Verified: "info",
   };
-  return typeMap[status] || 'info';
+  return typeMap[status] || "info";
 }
 
 async function viewComputers(location: LocationDto) {
@@ -291,7 +332,7 @@ async function viewComputers(location: LocationDto) {
   try {
     await locationStore.fetchComputers(electionGuid, location.locationGuid);
   } catch (error: any) {
-    showErrorMessage('Failed to load computers');
+    showErrorMessage("Failed to load computers");
   }
 }
 
@@ -302,35 +343,42 @@ function openRegisterComputerDialog() {
 function handleComputerRegistered() {
   showComputerRegisterDialog.value = false;
   if (selectedLocation.value) {
-    locationStore.fetchComputers(electionGuid, selectedLocation.value.locationGuid);
+    locationStore.fetchComputers(
+      electionGuid,
+      selectedLocation.value.locationGuid,
+    );
   }
 }
 
 async function deleteComputer(computer: ComputerDto) {
   if (!selectedLocation.value) return;
-  
+
   try {
     await ElMessageBox.confirm(
       `Are you sure you want to delete computer "${computer.computerCode}"?`,
-      'Warning',
+      "Warning",
       {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }
+        confirmButtonText: "Delete",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      },
     );
 
-    await locationStore.deleteComputer(electionGuid, selectedLocation.value.locationGuid, computer.computerGuid);
-    showSuccessMessage('Computer deleted successfully');
+    await locationStore.deleteComputer(
+      electionGuid,
+      selectedLocation.value.locationGuid,
+      computer.computerGuid,
+    );
+    showSuccessMessage("Computer deleted successfully");
   } catch (error: any) {
-    if (error !== 'cancel') {
-      showErrorMessage(error.message || 'Failed to delete computer');
+    if (error !== "cancel") {
+      showErrorMessage(error.message || "Failed to delete computer");
     }
   }
 }
 
 function formatDateTime(dateStr?: string): string {
-  if (!dateStr) return '-';
+  if (!dateStr) return "-";
   const date = new Date(dateStr);
   return date.toLocaleString();
 }

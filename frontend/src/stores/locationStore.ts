@@ -1,12 +1,18 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import { locationService } from '../services/locationService';
-import { computerService } from '../services/computerService';
-import type { LocationDto, CreateLocationDto, UpdateLocationDto, ComputerDto, RegisterComputerDto } from '../types';
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import { locationService } from "../services/locationService";
+import { computerService } from "../services/computerService";
+import type {
+  LocationDto,
+  CreateLocationDto,
+  UpdateLocationDto,
+  ComputerDto,
+  RegisterComputerDto,
+} from "../types";
 
-export const SELECTED_LOCATION_KEY = 'tallyj_selected_location';
+export const SELECTED_LOCATION_KEY = "tallyj_selected_location";
 
-export const useLocationStore = defineStore('location', () => {
+export const useLocationStore = defineStore("location", () => {
   const locations = ref<LocationDto[]>([]);
   const currentLocation = ref<LocationDto | null>(null);
   const computers = ref<ComputerDto[]>([]);
@@ -17,7 +23,7 @@ export const useLocationStore = defineStore('location', () => {
     pageNumber: 1,
     pageSize: 50,
     totalCount: 0,
-    totalPages: 0
+    totalPages: 0,
   });
 
   // Persistent location selection (survives page refresh until logout)
@@ -31,7 +37,7 @@ export const useLocationStore = defineStore('location', () => {
         selectedLocationGuid.value = stored;
       }
     } catch (e) {
-      console.error('Failed to load selected location from localStorage:', e);
+      console.error("Failed to load selected location from localStorage:", e);
     }
   };
 
@@ -44,36 +50,44 @@ export const useLocationStore = defineStore('location', () => {
         localStorage.removeItem(SELECTED_LOCATION_KEY);
       }
     } catch (e) {
-      console.error('Failed to save selected location to localStorage:', e);
+      console.error("Failed to save selected location to localStorage:", e);
     }
   };
 
   // Initialize on store creation
   initializeSelectedLocation();
 
-  const sortedLocations = computed(() => 
+  const sortedLocations = computed(() =>
     [...locations.value].sort((a, b) => {
       if (a.sortOrder !== b.sortOrder) {
         return (a.sortOrder || 0) - (b.sortOrder || 0);
       }
       return a.name.localeCompare(b.name);
-    })
+    }),
   );
 
-  async function fetchLocations(electionGuid: string, pageNumber = 1, pageSize = 50) {
+  async function fetchLocations(
+    electionGuid: string,
+    pageNumber = 1,
+    pageSize = 50,
+  ) {
     loading.value = true;
     error.value = null;
     try {
-      const response = await locationService.getAll(electionGuid, pageNumber, pageSize);
+      const response = await locationService.getAll(
+        electionGuid,
+        pageNumber,
+        pageSize,
+      );
       locations.value = response.data;
       pagination.value = {
         pageNumber: response.pageNumber,
         pageSize: response.pageSize,
         totalCount: response.totalCount,
-        totalPages: response.totalPages
+        totalPages: response.totalPages,
       };
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch locations';
+      error.value = e.message || "Failed to fetch locations";
       throw e;
     } finally {
       loading.value = false;
@@ -84,19 +98,24 @@ export const useLocationStore = defineStore('location', () => {
     loading.value = true;
     error.value = null;
     try {
-      const location = await locationService.getById(electionGuid, locationGuid);
+      const location = await locationService.getById(
+        electionGuid,
+        locationGuid,
+      );
       currentLocation.value = location;
-      
-      const index = locations.value.findIndex(l => l.locationGuid === locationGuid);
+
+      const index = locations.value.findIndex(
+        (l) => l.locationGuid === locationGuid,
+      );
       if (index !== -1) {
         locations.value[index] = location;
       } else {
         locations.value.push(location);
       }
-      
+
       return location;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch location';
+      error.value = e.message || "Failed to fetch location";
       throw e;
     } finally {
       loading.value = false;
@@ -113,31 +132,41 @@ export const useLocationStore = defineStore('location', () => {
       pagination.value.totalCount++;
       return location;
     } catch (e: any) {
-      error.value = e.message || 'Failed to create location';
+      error.value = e.message || "Failed to create location";
       throw e;
     } finally {
       loading.value = false;
     }
   }
 
-  async function updateLocation(electionGuid: string, locationGuid: string, dto: UpdateLocationDto) {
+  async function updateLocation(
+    electionGuid: string,
+    locationGuid: string,
+    dto: UpdateLocationDto,
+  ) {
     loading.value = true;
     error.value = null;
     try {
-      const location = await locationService.update(electionGuid, locationGuid, dto);
-      
-      const index = locations.value.findIndex(l => l.locationGuid === locationGuid);
+      const location = await locationService.update(
+        electionGuid,
+        locationGuid,
+        dto,
+      );
+
+      const index = locations.value.findIndex(
+        (l) => l.locationGuid === locationGuid,
+      );
       if (index !== -1) {
         locations.value[index] = location;
       }
-      
+
       if (currentLocation.value?.locationGuid === locationGuid) {
         currentLocation.value = location;
       }
-      
+
       return location;
     } catch (e: any) {
-      error.value = e.message || 'Failed to update location';
+      error.value = e.message || "Failed to update location";
       throw e;
     } finally {
       loading.value = false;
@@ -149,16 +178,18 @@ export const useLocationStore = defineStore('location', () => {
     error.value = null;
     try {
       await locationService.delete(electionGuid, locationGuid);
-      
-      locations.value = locations.value.filter(l => l.locationGuid !== locationGuid);
-      
+
+      locations.value = locations.value.filter(
+        (l) => l.locationGuid !== locationGuid,
+      );
+
       if (currentLocation.value?.locationGuid === locationGuid) {
         currentLocation.value = null;
       }
-      
+
       pagination.value.totalCount--;
     } catch (e: any) {
-      error.value = e.message || 'Failed to delete location';
+      error.value = e.message || "Failed to delete location";
       throw e;
     } finally {
       loading.value = false;
@@ -172,10 +203,12 @@ export const useLocationStore = defineStore('location', () => {
   function selectLocation(locationGuid: string | null) {
     selectedLocationGuid.value = locationGuid;
     persistSelectedLocation(locationGuid);
-    
+
     // Update currentLocation if the location is already loaded
     if (locationGuid) {
-      const location = locations.value.find(l => l.locationGuid === locationGuid);
+      const location = locations.value.find(
+        (l) => l.locationGuid === locationGuid,
+      );
       if (location) {
         currentLocation.value = location;
       }
@@ -201,7 +234,7 @@ export const useLocationStore = defineStore('location', () => {
       pageNumber: 1,
       pageSize: 50,
       totalCount: 0,
-      totalPages: 0
+      totalPages: 0,
     };
   }
 
@@ -209,38 +242,55 @@ export const useLocationStore = defineStore('location', () => {
     computersLoading.value = true;
     error.value = null;
     try {
-      computers.value = await computerService.getByLocation(electionGuid, locationGuid);
+      computers.value = await computerService.getByLocation(
+        electionGuid,
+        locationGuid,
+      );
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch computers';
+      error.value = e.message || "Failed to fetch computers";
       throw e;
     } finally {
       computersLoading.value = false;
     }
   }
 
-  async function registerComputer(electionGuid: string, locationGuid: string, dto: RegisterComputerDto) {
+  async function registerComputer(
+    electionGuid: string,
+    locationGuid: string,
+    dto: RegisterComputerDto,
+  ) {
     computersLoading.value = true;
     error.value = null;
     try {
-      const computer = await computerService.register(electionGuid, locationGuid, dto);
+      const computer = await computerService.register(
+        electionGuid,
+        locationGuid,
+        dto,
+      );
       computers.value.push(computer);
       return computer;
     } catch (e: any) {
-      error.value = e.message || 'Failed to register computer';
+      error.value = e.message || "Failed to register computer";
       throw e;
     } finally {
       computersLoading.value = false;
     }
   }
 
-  async function deleteComputer(electionGuid: string, locationGuid: string, computerGuid: string) {
+  async function deleteComputer(
+    electionGuid: string,
+    locationGuid: string,
+    computerGuid: string,
+  ) {
     computersLoading.value = true;
     error.value = null;
     try {
       await computerService.delete(electionGuid, locationGuid, computerGuid);
-      computers.value = computers.value.filter(c => c.computerGuid !== computerGuid);
+      computers.value = computers.value.filter(
+        (c) => c.computerGuid !== computerGuid,
+      );
     } catch (e: any) {
-      error.value = e.message || 'Failed to delete computer';
+      error.value = e.message || "Failed to delete computer";
       throw e;
     } finally {
       computersLoading.value = false;
@@ -269,6 +319,6 @@ export const useLocationStore = defineStore('location', () => {
     clearLocations,
     fetchComputers,
     registerComputer,
-    deleteComputer
+    deleteComputer,
   };
 });

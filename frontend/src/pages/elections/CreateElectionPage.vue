@@ -21,7 +21,7 @@
         />
 
         <el-form-item style="margin-top: 20px">
-          <el-button type="primary" @click="submitForm" :loading="submitting">
+          <el-button type="primary" :loading="submitting" @click="submitForm">
             {{ $t("common.create") }}
           </el-button>
           <el-button @click="cancel">
@@ -34,21 +34,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { type FormInstance, type FormRules } from 'element-plus';
-import { useNotifications } from '@/composables/useNotifications';
-import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
-import { useElectionStore } from '../../stores/electionStore';
-import type { CreateElectionDto, ElectionSummaryDto } from '../../types';
-import ElectionFormTabs from '../../components/elections/ElectionFormTabs.vue';
-import { extractApiErrorMessage } from '../../utils/errorHandler';
+import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { type FormInstance, type FormRules } from "element-plus";
+import { useNotifications } from "@/composables/useNotifications";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useElectionStore } from "../../stores/electionStore";
+import type { CreateElectionDto, ElectionSummaryDto } from "../../types";
+import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
 
 const router = useRouter();
 const { t } = useI18n();
 const electionStore = useElectionStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showSuccessMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
@@ -56,33 +55,49 @@ const submitting = ref(false);
 const availableElections = ref<ElectionSummaryDto[]>([]);
 
 const form = reactive<CreateElectionDto>({
-  name: '',
+  name: "",
   dateOfElection: undefined,
-  electionType: 'LSA',
+  electionType: "LSA",
   numberToElect: 9,
-  convenor: '',
-  electionMode: 'N',
+  convenor: "",
+  electionMode: "N",
   numberExtra: 0,
   showFullReport: true,
   listForPublic: false,
   showAsTest: false,
-  canVote: 'Y',
-  canReceive: 'Y'
+  canVote: "Y",
+  canReceive: "Y",
 });
 
 const rules = reactive<FormRules>({
   name: [
-    { required: true, message: t('elections.form.nameRequired'), trigger: 'blur' }
+    {
+      required: true,
+      message: t("elections.form.nameRequired"),
+      trigger: "blur",
+    },
   ],
   electionType: [
-    { required: true, message: t('elections.form.typeRequired'), trigger: 'change' }
+    {
+      required: true,
+      message: t("elections.form.typeRequired"),
+      trigger: "change",
+    },
   ],
   numberToElect: [
-    { required: true, message: t('elections.form.numberToElectRequired'), trigger: 'blur' }
+    {
+      required: true,
+      message: t("elections.form.numberToElectRequired"),
+      trigger: "blur",
+    },
   ],
   emailFromAddress: [
-    { type: 'email', message: t('elections.form.emailInvalid'), trigger: 'blur' }
-  ]
+    {
+      type: "email",
+      message: t("elections.form.emailInvalid"),
+      trigger: "blur",
+    },
+  ],
 });
 
 onMounted(async () => {
@@ -90,12 +105,17 @@ onMounted(async () => {
     await electionStore.fetchElections();
     availableElections.value = electionStore.elections || [];
   } catch (error) {
-    console.error('Failed to fetch elections for linked election dropdown', error);
+    console.error(
+      "Failed to fetch elections for linked election dropdown",
+      error,
+    );
   }
 });
 
 async function submitForm() {
-  if (!formRef.value) { return; }
+  if (!formRef.value) {
+    return;
+  }
 
   await formRef.value.validate(async (valid) => {
     if (valid) {
@@ -105,11 +125,11 @@ async function submitForm() {
           ...form,
           dateOfElection: form.dateOfElection
             ? new Date(form.dateOfElection).toISOString()
-            : undefined
+            : undefined,
         };
 
         const election = await electionStore.createElection(dto);
-        showSuccessMessage(t('elections.createSuccess'));
+        showSuccessMessage(t("elections.createSuccess"));
         router.push(`/elections/${election.electionGuid}`);
       } catch (error) {
         handleApiError(error);

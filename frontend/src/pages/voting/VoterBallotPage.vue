@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { ElCard, ElForm, ElFormItem, ElAutocomplete, ElButton, ElAlert, ElEmpty } from 'element-plus';
-import { useOnlineVotingStore } from '../../stores/onlineVotingStore';
-import { useNotifications } from '../../composables/useNotifications';
-import type { OnlineCandidate, OnlineVote } from '../../types';
+import { ref, onMounted, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import {
+  ElCard,
+  ElForm,
+  ElFormItem,
+  ElAutocomplete,
+  ElButton,
+  ElAlert,
+  ElEmpty,
+} from "element-plus";
+import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
+import { useNotifications } from "../../composables/useNotifications";
+import type { OnlineCandidate, OnlineVote } from "../../types";
 
 const router = useRouter();
 const route = useRoute();
@@ -14,12 +22,21 @@ const { showSuccess, showError } = useNotifications();
 const electionGuid = ref(route.params.electionId as string);
 const loading = ref(false);
 const submitting = ref(false);
-const votes = ref<Array<{ position: number; candidate: OnlineCandidate | null; searchText: string }>>([]);
+const votes = ref<
+  Array<{
+    position: number;
+    candidate: OnlineCandidate | null;
+    searchText: string;
+  }>
+>([]);
 
 onMounted(async () => {
   if (!onlineVotingStore.voterId) {
-    showError('Please authenticate first');
-    router.push({ name: 'voter-auth', query: { election: electionGuid.value } });
+    showError("Please authenticate first");
+    router.push({
+      name: "voter-auth",
+      query: { election: electionGuid.value },
+    });
     return;
   }
 
@@ -29,20 +46,23 @@ onMounted(async () => {
 async function loadElectionData() {
   try {
     loading.value = true;
-    
+
     const [electionInfo, voteStatus] = await Promise.all([
       onlineVotingStore.loadElectionInfo(electionGuid.value),
-      onlineVotingStore.checkVoteStatus(electionGuid.value, onlineVotingStore.voterId!)
+      onlineVotingStore.checkVoteStatus(
+        electionGuid.value,
+        onlineVotingStore.voterId!,
+      ),
     ]);
 
     if (voteStatus.hasVoted) {
-      showError(voteStatus.message || 'You have already voted');
-      router.push({ name: 'voter-confirmation' });
+      showError(voteStatus.message || "You have already voted");
+      router.push({ name: "voter-confirmation" });
       return;
     }
 
     if (!electionInfo.isOpen) {
-      showError('Online voting is not currently open for this election');
+      showError("Online voting is not currently open for this election");
       return;
     }
 
@@ -52,27 +72,27 @@ async function loadElectionData() {
     votes.value = Array.from({ length: numToElect }, (_, i) => ({
       position: i + 1,
       candidate: null,
-      searchText: ''
+      searchText: "",
     }));
   } catch (error) {
-    console.error('Error loading election data:', error);
+    console.error("Error loading election data:", error);
   } finally {
     loading.value = false;
   }
 }
 
 const candidateOptions = computed(() => {
-  return onlineVotingStore.candidates.map(c => ({
+  return onlineVotingStore.candidates.map((c) => ({
     value: c.fullName,
-    candidate: c
+    candidate: c,
   }));
 });
 
 function handleCandidateSelect(position: number, value: string) {
-  const voteSlot = votes.value.find(v => v.position === position);
+  const voteSlot = votes.value.find((v) => v.position === position);
   if (!voteSlot) return;
 
-  const option = candidateOptions.value.find(opt => opt.value === value);
+  const option = candidateOptions.value.find((opt) => opt.value === value);
   if (option) {
     voteSlot.candidate = option.candidate;
     voteSlot.searchText = value;
@@ -80,32 +100,32 @@ function handleCandidateSelect(position: number, value: string) {
 }
 
 function clearVote(position: number) {
-  const voteSlot = votes.value.find(v => v.position === position);
+  const voteSlot = votes.value.find((v) => v.position === position);
   if (voteSlot) {
     voteSlot.candidate = null;
-    voteSlot.searchText = '';
+    voteSlot.searchText = "";
   }
 }
 
 const canSubmit = computed(() => {
-  return votes.value.some(v => v.candidate !== null);
+  return votes.value.some((v) => v.candidate !== null);
 });
 
 const duplicateVotes = computed(() => {
   const selectedCandidates = votes.value
-    .filter(v => v.candidate !== null)
-    .map(v => v.candidate!.personGuid);
-  
-  const duplicates = selectedCandidates.filter((guid, index) => 
-    selectedCandidates.indexOf(guid) !== index
+    .filter((v) => v.candidate !== null)
+    .map((v) => v.candidate!.personGuid);
+
+  const duplicates = selectedCandidates.filter(
+    (guid, index) => selectedCandidates.indexOf(guid) !== index,
   );
-  
+
   return duplicates.length > 0;
 });
 
 async function handleSubmit() {
   if (duplicateVotes.value) {
-    showError('You cannot vote for the same candidate multiple times');
+    showError("You cannot vote for the same candidate multiple times");
     return;
   }
 
@@ -113,23 +133,23 @@ async function handleSubmit() {
     submitting.value = true;
 
     const onlineVotes: OnlineVote[] = votes.value
-      .filter(v => v.candidate !== null)
-      .map(v => ({
+      .filter((v) => v.candidate !== null)
+      .map((v) => ({
         personGuid: v.candidate!.personGuid,
         voteName: v.candidate!.fullName,
-        positionOnBallot: v.position
+        positionOnBallot: v.position,
       }));
 
     await onlineVotingStore.submitBallot(electionGuid.value, {
       electionGuid: electionGuid.value,
       voterId: onlineVotingStore.voterId!,
-      votes: onlineVotes
+      votes: onlineVotes,
     });
 
-    showSuccess('Ballot submitted successfully!');
-    router.push({ name: 'voter-confirmation' });
+    showSuccess("Ballot submitted successfully!");
+    router.push({ name: "voter-confirmation" });
   } catch (error) {
-    console.error('Error submitting ballot:', error);
+    console.error("Error submitting ballot:", error);
   } finally {
     submitting.value = false;
   }
@@ -140,7 +160,9 @@ async function handleSubmit() {
   <div class="voter-ballot-page">
     <div class="ballot-container">
       <ElCard v-if="loading">
-        <div style="text-align: center; padding: 40px;">Loading election information...</div>
+        <div style="text-align: center; padding: 40px">
+          Loading election information...
+        </div>
       </ElCard>
 
       <ElCard v-else-if="onlineVotingStore.electionInfo" class="ballot-card">
@@ -148,7 +170,12 @@ async function handleSubmit() {
           <div class="card-header">
             <h2>{{ onlineVotingStore.electionInfo.name }}</h2>
             <p v-if="onlineVotingStore.electionInfo.dateOfElection">
-              Date: {{ new Date(onlineVotingStore.electionInfo.dateOfElection).toLocaleDateString() }}
+              Date:
+              {{
+                new Date(
+                  onlineVotingStore.electionInfo.dateOfElection,
+                ).toLocaleDateString()
+              }}
             </p>
             <p v-if="onlineVotingStore.electionInfo.convenor">
               Convenor: {{ onlineVotingStore.electionInfo.convenor }}
@@ -156,74 +183,75 @@ async function handleSubmit() {
           </div>
         </template>
 
-        <ElAlert 
-          v-if="duplicateVotes" 
-          type="error" 
+        <ElAlert
+          v-if="duplicateVotes"
+          type="error"
           :closable="false"
           style="margin-bottom: 20px"
         >
-          You have selected the same candidate multiple times. Please review your ballot.
+          You have selected the same candidate multiple times. Please review
+          your ballot.
         </ElAlert>
 
-        <ElAlert 
-          type="info" 
-          :closable="false"
-          style="margin-bottom: 20px"
-        >
+        <ElAlert type="info" :closable="false" style="margin-bottom: 20px">
           {{ onlineVotingStore.electionInfo.instructions }}
         </ElAlert>
 
         <ElForm @submit.prevent="handleSubmit">
-          <div 
-            v-for="vote in votes" 
-            :key="vote.position"
-            class="vote-item"
-          >
+          <div v-for="vote in votes" :key="vote.position" class="vote-item">
             <ElFormItem :label="`${vote.position}.`">
               <div class="vote-input-wrapper">
                 <ElAutocomplete
                   v-model="vote.searchText"
-                  :fetch-suggestions="(queryString: string, cb: Function) => {
-                    const results = queryString
-                      ? candidateOptions.filter(opt => 
-                          opt.value.toLowerCase().includes(queryString.toLowerCase())
-                        )
-                      : candidateOptions;
-                    cb(results);
-                  }"
+                  :fetch-suggestions="
+                    (queryString: string, cb: Function) => {
+                      const results = queryString
+                        ? candidateOptions.filter((opt) =>
+                            opt.value
+                              .toLowerCase()
+                              .includes(queryString.toLowerCase()),
+                          )
+                        : candidateOptions;
+                      cb(results);
+                    }
+                  "
                   placeholder="Search for a candidate"
-                  @select="(item: any) => handleCandidateSelect(vote.position, item.value)"
                   clearable
                   style="flex: 1"
                   size="large"
+                  @select="
+                    (item: any) =>
+                      handleCandidateSelect(vote.position, item.value)
+                  "
                 />
-                <ElButton 
+                <ElButton
                   v-if="vote.candidate"
-                  @click="clearVote(vote.position)"
                   type="danger"
                   text
+                  @click="clearVote(vote.position)"
                 >
                   Clear
                 </ElButton>
               </div>
               <div v-if="vote.candidate" class="candidate-info">
-                <span class="candidate-name">{{ vote.candidate.fullName }}</span>
-                <span v-if="vote.candidate.area" class="candidate-detail">{{ vote.candidate.area }}</span>
+                <span class="candidate-name">{{
+                  vote.candidate.fullName
+                }}</span>
+                <span v-if="vote.candidate.area" class="candidate-detail">{{
+                  vote.candidate.area
+                }}</span>
               </div>
             </ElFormItem>
           </div>
 
-          <ElAlert 
-            type="warning" 
-            :closable="false"
-            style="margin: 20px 0"
-          >
-            ⚠️ You can only vote once! Please review your ballot carefully before submitting.
+          <ElAlert type="warning" :closable="false" style="margin: 20px 0">
+            ⚠️ You can only vote once! Please review your ballot carefully
+            before submitting.
           </ElAlert>
 
           <div class="submit-actions">
-            <ElButton 
-              type="primary" 
+            <ElButton
+              type="primary"
               native-type="submit"
               :loading="submitting"
               :disabled="!canSubmit || duplicateVotes"
@@ -260,7 +288,7 @@ async function handleSubmit() {
       margin: 0 0 10px 0;
       color: var(--el-color-primary);
     }
-    
+
     p {
       margin: 5px 0;
       color: var(--el-text-color-secondary);

@@ -18,10 +18,13 @@
         label-width="200px"
         label-position="left"
       >
-        <ElectionFormTabs v-model="form" :available-elections="availableElections" />
+        <ElectionFormTabs
+          v-model="form"
+          :available-elections="availableElections"
+        />
 
         <el-form-item style="margin-top: 20px">
-          <el-button type="primary" @click="submitForm" :loading="submitting">
+          <el-button type="primary" :loading="submitting" @click="submitForm">
             {{ $t("common.save") }}
           </el-button>
           <el-button @click="cancel">
@@ -36,22 +39,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { type FormInstance, type FormRules } from 'element-plus';
-import { useNotifications } from '@/composables/useNotifications';
-import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
-import { useElectionStore } from '../../stores/electionStore';
-import type { UpdateElectionDto, ElectionSummaryDto } from '../../types';
-import ElectionFormTabs from '../../components/elections/ElectionFormTabs.vue';
-import { extractApiErrorMessage } from '../../utils/errorHandler';
+import { ref, reactive, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { type FormInstance, type FormRules } from "element-plus";
+import { useNotifications } from "@/composables/useNotifications";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useElectionStore } from "../../stores/electionStore";
+import type { UpdateElectionDto, ElectionSummaryDto } from "../../types";
+import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const electionStore = useElectionStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showSuccessMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
@@ -62,7 +64,7 @@ const election = computed(() => electionStore.currentElection);
 const availableElections = ref<ElectionSummaryDto[]>([]);
 
 const form = reactive<UpdateElectionDto>({
-  name: '',
+  name: "",
   dateOfElection: undefined,
   electionType: undefined,
   numberToElect: undefined,
@@ -93,29 +95,47 @@ const form = reactive<UpdateElectionDto>({
   smsText: undefined,
   customMethods: undefined,
   votingMethods: undefined,
-  flags: undefined
+  flags: undefined,
 });
 
 const rules = reactive<FormRules>({
   name: [
-    { required: true, message: t('elections.form.nameRequired'), trigger: 'blur' }
+    {
+      required: true,
+      message: t("elections.form.nameRequired"),
+      trigger: "blur",
+    },
   ],
   numberToElect: [
-    { required: true, message: t('elections.form.numberToElectRequired'), trigger: 'blur' }
+    {
+      required: true,
+      message: t("elections.form.numberToElectRequired"),
+      trigger: "blur",
+    },
   ],
   dateOfElection: [
-    { required: true, message: t('elections.form.dateRequired'), trigger: 'change' }
+    {
+      required: true,
+      message: t("elections.form.dateRequired"),
+      trigger: "change",
+    },
   ],
   emailFromAddress: [
-    { type: 'email', message: t('elections.form.emailInvalid'), trigger: 'blur' }
-  ]
+    {
+      type: "email",
+      message: t("elections.form.emailInvalid"),
+      trigger: "blur",
+    },
+  ],
 });
 
 onMounted(async () => {
   try {
     await electionStore.fetchElectionById(electionGuid);
     await electionStore.fetchElections();
-    availableElections.value = electionStore.elections?.filter(e => e.electionGuid !== electionGuid) || [];
+    availableElections.value =
+      electionStore.elections?.filter((e) => e.electionGuid !== electionGuid) ||
+      [];
 
     if (election.value) {
       Object.assign(form, {
@@ -150,7 +170,7 @@ onMounted(async () => {
         smsText: election.value.smsText,
         customMethods: election.value.customMethods,
         votingMethods: election.value.votingMethods,
-        flags: election.value.flags
+        flags: election.value.flags,
       });
     }
   } catch (error) {
@@ -166,7 +186,7 @@ async function submitForm() {
       submitting.value = true;
       try {
         await electionStore.updateElection(electionGuid, form);
-        showSuccessMessage(t('elections.updateSuccess'));
+        showSuccessMessage(t("elections.updateSuccess"));
         router.push(`/elections/${electionGuid}`);
       } catch (error) {
         handleApiError(error);

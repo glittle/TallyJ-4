@@ -4,7 +4,7 @@
       <el-icon class="loading-icon" :size="100">
         <Loading />
       </el-icon>
-      <p class="loading-text">{{ $t('public.display.loading') }}</p>
+      <p class="loading-text">{{ $t("public.display.loading") }}</p>
     </div>
 
     <div v-else-if="error" class="error-container">
@@ -22,7 +22,7 @@
             {{ formatDate(displayData.dateOfElection) }}
           </span>
           <span v-if="displayData.convenor" class="convenor">
-            {{ $t('public.display.convenor', { name: displayData.convenor }) }}
+            {{ $t("public.display.convenor", { name: displayData.convenor }) }}
           </span>
         </div>
         <div class="status-badge" :class="statusClass">
@@ -31,10 +31,17 @@
       </header>
 
       <main class="display-content">
-        <section v-if="displayData.electedCandidates.length > 0" class="results-section">
+        <section
+          v-if="displayData.electedCandidates.length > 0"
+          class="results-section"
+        >
           <h2 class="section-title">
-            {{ $t('public.display.elected') }} ({{ displayData.numberToElect }}
-            {{ displayData.numberToElect === 1 ? $t('public.display.position') : $t('public.display.positions') }})
+            {{ $t("public.display.elected") }} ({{ displayData.numberToElect }}
+            {{
+              displayData.numberToElect === 1
+                ? $t("public.display.position")
+                : $t("public.display.positions")
+            }})
           </h2>
           <div class="candidates-list">
             <div
@@ -47,7 +54,11 @@
               <span class="name">{{ candidate.fullName }}</span>
               <span v-if="displayOptions.showVoteCounts" class="votes">
                 {{ candidate.voteCount }}
-                {{ candidate.voteCount === 1 ? $t('public.display.vote') : $t('public.display.votes') }}
+                {{
+                  candidate.voteCount === 1
+                    ? $t("public.display.vote")
+                    : $t("public.display.votes")
+                }}
               </span>
               <el-tag
                 v-if="candidate.tieBreakRequired"
@@ -55,7 +66,7 @@
                 size="large"
                 class="tie-tag"
               >
-                {{ $t('public.display.tieBreakRequired') }}
+                {{ $t("public.display.tieBreakRequired") }}
               </el-tag>
             </div>
           </div>
@@ -69,8 +80,14 @@
           class="results-section additional"
         >
           <h2 class="section-title">
-            {{ $t('public.display.additionalNames') }} ({{ displayData.numberExtra }}
-            {{ displayData.numberExtra === 1 ? $t('public.display.position') : $t('public.display.positions') }})
+            {{ $t("public.display.additionalNames") }} ({{
+              displayData.numberExtra
+            }}
+            {{
+              displayData.numberExtra === 1
+                ? $t("public.display.position")
+                : $t("public.display.positions")
+            }})
           </h2>
           <div class="candidates-list">
             <div
@@ -83,32 +100,55 @@
               <span class="name">{{ candidate.fullName }}</span>
               <span v-if="displayOptions.showVoteCounts" class="votes">
                 {{ candidate.voteCount }}
-                {{ candidate.voteCount === 1 ? $t('public.display.vote') : $t('public.display.votes') }}
+                {{
+                  candidate.voteCount === 1
+                    ? $t("public.display.vote")
+                    : $t("public.display.votes")
+                }}
               </span>
             </div>
           </div>
         </section>
 
-        <section v-if="displayOptions.showStatistics" class="statistics-section">
+        <section
+          v-if="displayOptions.showStatistics"
+          class="statistics-section"
+        >
           <div class="stats-grid">
             <div class="stat-item">
-              <div class="stat-label">{{ $t('public.display.totalBallots') }}</div>
-              <div class="stat-value">{{ displayData.statistics.totalBallots }}</div>
+              <div class="stat-label">
+                {{ $t("public.display.totalBallots") }}
+              </div>
+              <div class="stat-value">
+                {{ displayData.statistics.totalBallots }}
+              </div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">{{ $t('public.display.validBallots') }}</div>
-              <div class="stat-value">{{ displayData.statistics.validBallots }}</div>
+              <div class="stat-label">
+                {{ $t("public.display.validBallots") }}
+              </div>
+              <div class="stat-value">
+                {{ displayData.statistics.validBallots }}
+              </div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">{{ $t('public.display.spoiledBallots') }}</div>
-              <div class="stat-value">{{ displayData.statistics.spoiledBallots }}</div>
+              <div class="stat-label">
+                {{ $t("public.display.spoiledBallots") }}
+              </div>
+              <div class="stat-value">
+                {{ displayData.statistics.spoiledBallots }}
+              </div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">{{ $t('public.display.totalVotes') }}</div>
-              <div class="stat-value">{{ displayData.statistics.totalVotes }}</div>
+              <div class="stat-label">
+                {{ $t("public.display.totalVotes") }}
+              </div>
+              <div class="stat-value">
+                {{ displayData.statistics.totalVotes }}
+              </div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">{{ $t('public.display.turnout') }}</div>
+              <div class="stat-label">{{ $t("public.display.turnout") }}</div>
               <div class="stat-value">
                 {{ displayData.statistics.turnoutPercentage.toFixed(1) }}%
               </div>
@@ -122,10 +162,19 @@
           <el-icon v-if="displayOptions.autoRefresh" :size="20">
             <Refresh />
           </el-icon>
-          {{ $t('public.display.autoRefresh') }} {{ displayOptions.autoRefresh ? $t('public.display.on') : $t('public.display.off') }}
+          {{ $t("public.display.autoRefresh") }}
+          {{
+            displayOptions.autoRefresh
+              ? $t("public.display.on")
+              : $t("public.display.off")
+          }}
         </div>
         <div class="last-updated">
-          {{ $t('public.display.lastUpdated', { time: formatTime(displayData.lastUpdated) }) }}
+          {{
+            $t("public.display.lastUpdated", {
+              time: formatTime(displayData.lastUpdated),
+            })
+          }}
         </div>
       </footer>
 
@@ -133,23 +182,38 @@
         <el-button-group>
           <el-button @click="toggleTheme">
             <el-icon><Sunny /></el-icon>
-            {{ $t('public.display.toggleTheme') }}
+            {{ $t("public.display.toggleTheme") }}
           </el-button>
           <el-button @click="toggleVoteCounts">
             <el-icon><View /></el-icon>
-            {{ displayOptions.showVoteCounts ? $t('public.display.hideVotes') : $t('public.display.showVotes') }} {{ $t('public.display.votesLabel') }}
+            {{
+              displayOptions.showVoteCounts
+                ? $t("public.display.hideVotes")
+                : $t("public.display.showVotes")
+            }}
+            {{ $t("public.display.votesLabel") }}
           </el-button>
           <el-button @click="toggleStatistics">
             <el-icon><DataAnalysis /></el-icon>
-            {{ displayOptions.showStatistics ? $t('public.display.hideStats') : $t('public.display.showStats') }} {{ $t('public.display.statsLabel') }}
+            {{
+              displayOptions.showStatistics
+                ? $t("public.display.hideStats")
+                : $t("public.display.showStats")
+            }}
+            {{ $t("public.display.statsLabel") }}
           </el-button>
           <el-button @click="toggleAutoRefresh">
             <el-icon><Refresh /></el-icon>
-            {{ displayOptions.autoRefresh ? $t('public.display.disableAutoRefresh') : $t('public.display.enableAutoRefresh') }} {{ $t('public.display.autoRefreshLabel') }}
+            {{
+              displayOptions.autoRefresh
+                ? $t("public.display.disableAutoRefresh")
+                : $t("public.display.enableAutoRefresh")
+            }}
+            {{ $t("public.display.autoRefreshLabel") }}
           </el-button>
           <el-button @click="refreshNow">
             <el-icon><RefreshRight /></el-icon>
-            {{ $t('public.display.refreshNow') }}
+            {{ $t("public.display.refreshNow") }}
           </el-button>
         </el-button-group>
       </div>
@@ -162,7 +226,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { usePublicStore } from "../stores/publicStore";
 import { storeToRefs } from "pinia";
-import { useNotifications } from '@/composables/useNotifications';
+import { useNotifications } from "@/composables/useNotifications";
 import {
   Loading,
   WarningFilled,
@@ -178,7 +242,8 @@ import type { PublicDisplayDto } from "../types";
 const route = useRoute();
 const publicStore = usePublicStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
-const { displayData, loading, error, displayOptions } = storeToRefs(publicStore);
+const { displayData, loading, error, displayOptions } =
+  storeToRefs(publicStore);
 
 const showControls = ref(false);
 let refreshTimer: number | null = null;
@@ -219,15 +284,21 @@ function toggleTheme() {
 }
 
 function toggleVoteCounts() {
-  publicStore.setDisplayOptions({ showVoteCounts: !displayOptions.value.showVoteCounts });
+  publicStore.setDisplayOptions({
+    showVoteCounts: !displayOptions.value.showVoteCounts,
+  });
 }
 
 function toggleStatistics() {
-  publicStore.setDisplayOptions({ showStatistics: !displayOptions.value.showStatistics });
+  publicStore.setDisplayOptions({
+    showStatistics: !displayOptions.value.showStatistics,
+  });
 }
 
 function toggleAutoRefresh() {
-  publicStore.setDisplayOptions({ autoRefresh: !displayOptions.value.autoRefresh });
+  publicStore.setDisplayOptions({
+    autoRefresh: !displayOptions.value.autoRefresh,
+  });
   if (displayOptions.value.autoRefresh) {
     startAutoRefresh();
   } else {
@@ -239,7 +310,7 @@ async function refreshNow() {
   try {
     await publicStore.fetchPublicDisplay(electionGuid.value);
     showSuccessMessage("Display refreshed");
-  } catch (e: any) {
+  } catch (_e: any) {
     showErrorMessage("Failed to refresh display");
   }
 }
@@ -331,7 +402,9 @@ onUnmounted(async () => {
   padding: 2rem;
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
 
 .public-display-page.light {

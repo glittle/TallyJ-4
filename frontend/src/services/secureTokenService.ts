@@ -15,11 +15,11 @@ export const secureTokenService = {
    * Cookie names used by the backend SecureCookieMiddleware
    */
   cookieNames: {
-    accessToken: 'auth_token',
-    refreshToken: 'refresh_token',
-    userEmail: 'user_email',
-    userName: 'user_name',
-    authMethod: 'auth_method'
+    accessToken: "auth_token",
+    refreshToken: "refresh_token",
+    userEmail: "user_email",
+    userName: "user_name",
+    authMethod: "auth_method",
   } as const,
 
   /**
@@ -33,7 +33,7 @@ export const secureTokenService = {
       refreshToken: null, // Cannot read httpOnly cookie from JavaScript
       email: this.getCookie(this.cookieNames.userEmail),
       name: this.getCookie(this.cookieNames.userName),
-      authMethod: this.getCookie(this.cookieNames.authMethod)
+      authMethod: this.getCookie(this.cookieNames.authMethod),
     };
   },
 
@@ -61,9 +61,9 @@ export const secureTokenService = {
    */
   clearAuthData(): void {
     // Clear readable cookies by setting them to expire
-    this.setCookie(this.cookieNames.userEmail, '', -1);
-    this.setCookie(this.cookieNames.userName, '', -1);
-    this.setCookie(this.cookieNames.authMethod, '', -1);
+    this.setCookie(this.cookieNames.userEmail, "", -1);
+    this.setCookie(this.cookieNames.userName, "", -1);
+    this.setCookie(this.cookieNames.authMethod, "", -1);
   },
 
   /**
@@ -73,7 +73,7 @@ export const secureTokenService = {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) {
-      const raw = parts.pop()?.split(';').shift() || null;
+      const raw = parts.pop()?.split(";").shift() || null;
       return raw ? decodeURIComponent(raw) : null;
     }
     return null;
@@ -83,8 +83,9 @@ export const secureTokenService = {
    * Sets a cookie with the given name, value, and max age in days.
    */
   setCookie(name: string, value: string, maxAgeDays: number = 30): void {
-    const maxAge = maxAgeDays > 0 ? `; max-age=${maxAgeDays * 24 * 60 * 60}` : '; max-age=0';
-    const secure = window.location.protocol === 'https:' ? '; secure' : '';
+    const maxAge =
+      maxAgeDays > 0 ? `; max-age=${maxAgeDays * 24 * 60 * 60}` : "; max-age=0";
+    const secure = window.location.protocol === "https:" ? "; secure" : "";
     document.cookie = `${name}=${value}; path=/; samesite=strict${secure}${maxAge}`;
   },
 
@@ -94,5 +95,5 @@ export const secureTokenService = {
    */
   refreshAuthData(): AuthCookieData {
     return this.getAuthData();
-  }
+  },
 };

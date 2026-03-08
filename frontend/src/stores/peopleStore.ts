@@ -1,11 +1,20 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import { peopleService } from '../services/peopleService';
-import { signalrService } from '../services/signalrService';
-import type { PersonDto, PersonListDto, CreatePersonDto, UpdatePersonDto, SearchablePersonDto } from '../types';
-import type { PersonUpdateEvent, PersonVoteCountUpdateEvent } from '../types/SignalREvents';
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
+import { peopleService } from "../services/peopleService";
+import { signalrService } from "../services/signalrService";
+import type {
+  PersonDto,
+  PersonListDto,
+  CreatePersonDto,
+  UpdatePersonDto,
+  SearchablePersonDto,
+} from "../types";
+import type {
+  PersonUpdateEvent,
+  PersonVoteCountUpdateEvent,
+} from "../types/SignalREvents";
 
-export const usePeopleStore = defineStore('people', () => {
+export const usePeopleStore = defineStore("people", () => {
   const people = ref<PersonDto[]>([]);
   const peopleList = ref<PersonListDto[]>([]);
   const loading = ref(false);
@@ -14,12 +23,12 @@ export const usePeopleStore = defineStore('people', () => {
   const candidateCache = ref<SearchablePersonDto[]>([]);
   const isCacheInitialized = ref(false);
 
-  const voters = computed(() => 
-    peopleList.value.filter(p => p.canVote === true)
+  const voters = computed(() =>
+    peopleList.value.filter((p) => p.canVote === true),
   );
 
-  const candidates = computed(() => 
-    peopleList.value.filter(p => p.canReceiveVotes === true)
+  const candidates = computed(() =>
+    peopleList.value.filter((p) => p.canReceiveVotes === true),
   );
 
   async function fetchPeople(electionGuid: string) {
@@ -28,7 +37,7 @@ export const usePeopleStore = defineStore('people', () => {
     try {
       people.value = await peopleService.getAll(electionGuid);
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch people';
+      error.value = e.message || "Failed to fetch people";
       throw e;
     } finally {
       loading.value = false;
@@ -41,7 +50,7 @@ export const usePeopleStore = defineStore('people', () => {
     try {
       peopleList.value = await peopleService.getAllPeople(electionGuid);
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch people';
+      error.value = e.message || "Failed to fetch people";
       throw e;
     } finally {
       loading.value = false;
@@ -53,17 +62,17 @@ export const usePeopleStore = defineStore('people', () => {
     error.value = null;
     try {
       const person = await peopleService.getById(personGuid);
-      
-      const index = people.value.findIndex(p => p.personGuid === personGuid);
+
+      const index = people.value.findIndex((p) => p.personGuid === personGuid);
       if (index !== -1) {
         people.value[index] = person;
       } else {
         people.value.push(person);
       }
-      
+
       return person;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch person';
+      error.value = e.message || "Failed to fetch person";
       throw e;
     } finally {
       loading.value = false;
@@ -78,7 +87,7 @@ export const usePeopleStore = defineStore('people', () => {
       people.value.push(person);
       return person;
     } catch (e: any) {
-      error.value = e.message || 'Failed to create person';
+      error.value = e.message || "Failed to create person";
       throw e;
     } finally {
       loading.value = false;
@@ -90,15 +99,15 @@ export const usePeopleStore = defineStore('people', () => {
     error.value = null;
     try {
       const person = await peopleService.update(personGuid, dto);
-      
-      const index = people.value.findIndex(p => p.personGuid === personGuid);
+
+      const index = people.value.findIndex((p) => p.personGuid === personGuid);
       if (index !== -1) {
         people.value[index] = person;
       }
-      
+
       return person;
     } catch (e: any) {
-      error.value = e.message || 'Failed to update person';
+      error.value = e.message || "Failed to update person";
       throw e;
     } finally {
       loading.value = false;
@@ -110,9 +119,9 @@ export const usePeopleStore = defineStore('people', () => {
     error.value = null;
     try {
       await peopleService.delete(personGuid);
-      people.value = people.value.filter(p => p.personGuid !== personGuid);
+      people.value = people.value.filter((p) => p.personGuid !== personGuid);
     } catch (e: any) {
-      error.value = e.message || 'Failed to delete person';
+      error.value = e.message || "Failed to delete person";
       throw e;
     } finally {
       loading.value = false;
@@ -125,7 +134,7 @@ export const usePeopleStore = defineStore('people', () => {
     try {
       return await peopleService.search(electionGuid, query);
     } catch (e: any) {
-      error.value = e.message || 'Failed to search people';
+      error.value = e.message || "Failed to search people";
       throw e;
     } finally {
       loading.value = false;
@@ -138,24 +147,27 @@ export const usePeopleStore = defineStore('people', () => {
 
   function enrichPersonForSearch(person: PersonDto): SearchablePersonDto {
     const searchText = [
-      person.firstName || '',
-      person.lastName || '',
-      person.otherNames || '',
-      person.otherLastNames || ''
+      person.firstName || "",
+      person.lastName || "",
+      person.otherNames || "",
+      person.otherLastNames || "",
     ]
       .filter(Boolean)
-      .join(' ')
+      .join(" ")
       .toLowerCase()
       .trim();
 
     const soundexCodes = person.combinedSoundCodes
-      ? person.combinedSoundCodes.split(',').map(code => code.trim()).filter(Boolean)
+      ? person.combinedSoundCodes
+          .split(",")
+          .map((code) => code.trim())
+          .filter(Boolean)
       : [];
 
     return {
       ...person,
       _searchText: searchText,
-      _soundexCodes: soundexCodes
+      _soundexCodes: soundexCodes,
     };
   }
 
@@ -167,16 +179,21 @@ export const usePeopleStore = defineStore('people', () => {
       candidateCache.value = allPeople.map(enrichPersonForSearch);
       isCacheInitialized.value = true;
     } catch (e) {
-      console.error('Failed to initialize candidate cache:', e);
+      console.error("Failed to initialize candidate cache:", e);
       throw e;
     }
   }
 
   function handlePersonVoteCountUpdated(data: PersonVoteCountUpdateEvent) {
-    const index = candidateCache.value.findIndex(p => p.personGuid === data.personGuid);
+    const index = candidateCache.value.findIndex(
+      (p) => p.personGuid === data.personGuid,
+    );
     if (index !== -1) {
       const newCache = [...candidateCache.value];
-      newCache[index] = { ...candidateCache.value[index], voteCount: data.voteCount };
+      newCache[index] = {
+        ...candidateCache.value[index],
+        voteCount: data.voteCount,
+      };
       candidateCache.value = newCache;
     }
   }
@@ -187,52 +204,55 @@ export const usePeopleStore = defineStore('people', () => {
     try {
       const connection = await signalrService.connectToFrontDeskHub();
 
-      connection.on('updatePeople', (data: any) => {
+      connection.on("updatePeople", (data: any) => {
         // FrontDeskHub sends updatePeople with person update information
         // The data structure should contain action, personGuid, and other person details
-        if (data && typeof data === 'object') {
+        if (data && typeof data === "object") {
           const updateEvent: PersonUpdateEvent = {
-            electionGuid: data.electionGuid || '',
-            personGuid: data.personGuid || '',
-            action: data.action || 'updated',
+            electionGuid: data.electionGuid || "",
+            personGuid: data.personGuid || "",
+            action: data.action || "updated",
             firstName: data.firstName,
             lastName: data.lastName,
-            updatedAt: data.updatedAt || new Date().toISOString()
+            updatedAt: data.updatedAt || new Date().toISOString(),
           };
 
           switch (updateEvent.action) {
-            case 'added':
+            case "added":
               handlePersonAdded(updateEvent);
               break;
-            case 'updated':
+            case "updated":
               handlePersonUpdated(updateEvent);
               break;
-            case 'deleted':
+            case "deleted":
               handlePersonDeleted(updateEvent);
               break;
           }
         }
       });
 
-      connection.on('reloadPage', () => {
+      connection.on("reloadPage", () => {
         // Handle page reload command from server
-        console.log('Server requested page reload');
+        console.log("Server requested page reload");
         // Could trigger a page refresh or data reload
         window.location.reload();
       });
 
-      connection.on('PersonVoteCountUpdated', (data: PersonVoteCountUpdateEvent) => {
-        handlePersonVoteCountUpdated(data);
-      });
+      connection.on(
+        "PersonVoteCountUpdated",
+        (data: PersonVoteCountUpdateEvent) => {
+          handlePersonVoteCountUpdated(data);
+        },
+      );
 
       signalrInitialized.value = true;
     } catch (e) {
-      console.error('Failed to initialize SignalR for people store:', e);
+      console.error("Failed to initialize SignalR for people store:", e);
     }
   }
 
   async function handlePersonAdded(data: PersonUpdateEvent) {
-    const exists = people.value.some(p => p.personGuid === data.personGuid);
+    const exists = people.value.some((p) => p.personGuid === data.personGuid);
     if (!exists) {
       try {
         const person = await fetchPersonById(data.personGuid);
@@ -241,7 +261,7 @@ export const usePeopleStore = defineStore('people', () => {
           candidateCache.value.push(searchablePerson);
         }
       } catch (e) {
-        console.error('Failed to handle person added:', e);
+        console.error("Failed to handle person added:", e);
       }
     }
   }
@@ -251,7 +271,9 @@ export const usePeopleStore = defineStore('people', () => {
       const person = await fetchPersonById(data.personGuid);
 
       if (isCacheInitialized.value && person) {
-        const index = candidateCache.value.findIndex(p => p.personGuid === data.personGuid);
+        const index = candidateCache.value.findIndex(
+          (p) => p.personGuid === data.personGuid,
+        );
         const searchablePerson = enrichPersonForSearch(person);
         if (index !== -1) {
           candidateCache.value[index] = searchablePerson;
@@ -260,15 +282,17 @@ export const usePeopleStore = defineStore('people', () => {
         }
       }
     } catch (e) {
-      console.error('Failed to handle person updated:', e);
+      console.error("Failed to handle person updated:", e);
     }
   }
 
   function handlePersonDeleted(data: PersonUpdateEvent) {
-    people.value = people.value.filter(p => p.personGuid !== data.personGuid);
-    
+    people.value = people.value.filter((p) => p.personGuid !== data.personGuid);
+
     if (isCacheInitialized.value) {
-      candidateCache.value = candidateCache.value.filter(p => p.personGuid !== data.personGuid);
+      candidateCache.value = candidateCache.value.filter(
+        (p) => p.personGuid !== data.personGuid,
+      );
     }
   }
 
@@ -276,7 +300,7 @@ export const usePeopleStore = defineStore('people', () => {
     try {
       await signalrService.joinElection(electionGuid);
     } catch (e) {
-      console.error('Failed to join election group for people updates:', e);
+      console.error("Failed to join election group for people updates:", e);
     }
   }
 
@@ -284,7 +308,7 @@ export const usePeopleStore = defineStore('people', () => {
     try {
       await signalrService.leaveElection(electionGuid);
     } catch (e) {
-      console.error('Failed to leave election group for people updates:', e);
+      console.error("Failed to leave election group for people updates:", e);
     }
   }
 
@@ -313,6 +337,6 @@ export const usePeopleStore = defineStore('people', () => {
     handlePersonAdded,
     handlePersonUpdated,
     handlePersonDeleted,
-    handlePersonVoteCountUpdated
+    handlePersonVoteCountUpdated,
   };
 });

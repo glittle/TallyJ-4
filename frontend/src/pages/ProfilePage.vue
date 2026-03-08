@@ -1,49 +1,53 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useAuthStore } from '../stores/authStore';
-import { useI18n } from 'vue-i18n';
-import { useNotifications } from '@/composables/useNotifications';
-import { authService } from '../services/authService';
+import { ref, computed, onMounted } from "vue";
+import { useAuthStore } from "../stores/authStore";
+import { useI18n } from "vue-i18n";
+import { useNotifications } from "@/composables/useNotifications";
+import { authService } from "../services/authService";
 
 const authStore = useAuthStore();
 const { t } = useI18n();
-const { showErrorMessage, showInfoMessage, showSuccessMessage } = useNotifications();
+const { showErrorMessage, showInfoMessage, showSuccessMessage } =
+  useNotifications();
 
 const currentUser = computed(() => ({
   name: authStore.name,
   email: authStore.email,
   authMethod: authStore.authMethod,
-  createdAt: null
+  createdAt: null,
 }));
 const showChangePassword = ref(false);
 const passwordForm = ref({
-  current: '',
-  new: '',
-  confirm: ''
+  current: "",
+  new: "",
+  confirm: "",
 });
 
-const twoFactorStatus = ref<{ isEnabled: boolean; method: string | null } | null>(null);
+const twoFactorStatus = ref<{
+  isEnabled: boolean;
+  method: string | null;
+} | null>(null);
 const twoFactorLoading = ref(false);
 
 const showSetup2FA = ref(false);
 const showDisable2FA = ref(false);
 const setupData = ref<{ secret: string; qrCodeDataUrl: string } | null>(null);
-const setupCode = ref('');
-const disablePassword = ref('');
-const disableCode = ref('');
+const setupCode = ref("");
+const disablePassword = ref("");
+const disableCode = ref("");
 const twoFactorActionLoading = ref(false);
 
 function formatDate(date: any) {
-  if (!date) return '-';
+  if (!date) return "-";
   return new Date(date).toLocaleDateString();
 }
 
 function handleChangePassword() {
   if (passwordForm.value.new !== passwordForm.value.confirm) {
-    showErrorMessage(t('profile.passwordsDoNotMatch'));
+    showErrorMessage(t("profile.passwordsDoNotMatch"));
     return;
   }
-  showInfoMessage('Password change functionality coming soon');
+  showInfoMessage("Password change functionality coming soon");
   showChangePassword.value = false;
 }
 
@@ -62,10 +66,10 @@ async function openSetup2FA() {
   try {
     twoFactorActionLoading.value = true;
     setupData.value = await authService.setup2FA();
-    setupCode.value = '';
+    setupCode.value = "";
     showSetup2FA.value = true;
   } catch (err: any) {
-    showErrorMessage(err?.message || 'Failed to initiate 2FA setup');
+    showErrorMessage(err?.message || "Failed to initiate 2FA setup");
   } finally {
     twoFactorActionLoading.value = false;
   }
@@ -78,11 +82,11 @@ async function confirmSetup2FA() {
     await authService.enable2FA(setupCode.value);
     showSetup2FA.value = false;
     setupData.value = null;
-    setupCode.value = '';
-    showSuccessMessage(t('profile.twoFactor.setupSuccess'));
+    setupCode.value = "";
+    showSuccessMessage(t("profile.twoFactor.setupSuccess"));
     await load2FAStatus();
   } catch (err: any) {
-    showErrorMessage(err?.message || 'Failed to enable 2FA');
+    showErrorMessage(err?.message || "Failed to enable 2FA");
   } finally {
     twoFactorActionLoading.value = false;
   }
@@ -94,12 +98,12 @@ async function confirmDisable2FA() {
     twoFactorActionLoading.value = true;
     await authService.disable2FA(disablePassword.value, disableCode.value);
     showDisable2FA.value = false;
-    disablePassword.value = '';
-    disableCode.value = '';
-    showSuccessMessage(t('profile.twoFactor.disableSuccess'));
+    disablePassword.value = "";
+    disableCode.value = "";
+    showSuccessMessage(t("profile.twoFactor.disableSuccess"));
     await load2FAStatus();
   } catch (err: any) {
-    showErrorMessage(err?.message || 'Failed to disable 2FA');
+    showErrorMessage(err?.message || "Failed to disable 2FA");
   } finally {
     twoFactorActionLoading.value = false;
   }
@@ -114,19 +118,19 @@ onMounted(() => {
   <div class="profile-page">
     <el-card>
       <template #header>
-        <h2>{{ $t('common.profile') }}</h2>
+        <h2>{{ $t("common.profile") }}</h2>
       </template>
 
       <div class="profile-content">
         <el-descriptions :column="1" border>
           <el-descriptions-item :label="$t('profile.name')">
-            {{ currentUser?.name || '-' }}
+            {{ currentUser?.name || "-" }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('auth.email')">
-            {{ currentUser?.email || '-' }}
+            {{ currentUser?.email || "-" }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('profile.loginMethod')">
-            {{ currentUser?.authMethod || '-' }}
+            {{ currentUser?.authMethod || "-" }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('profile.createdAt')">
             {{ formatDate(currentUser?.createdAt) }}
@@ -135,7 +139,7 @@ onMounted(() => {
 
         <div class="actions">
           <el-button type="primary" @click="showChangePassword = true">
-            {{ $t('profile.changePassword') }}
+            {{ $t("profile.changePassword") }}
           </el-button>
         </div>
       </div>
@@ -143,20 +147,29 @@ onMounted(() => {
 
     <el-card class="two-factor-card">
       <template #header>
-        <h2>{{ $t('profile.twoFactor.title') }}</h2>
+        <h2>{{ $t("profile.twoFactor.title") }}</h2>
       </template>
 
       <div class="two-factor-content">
-        <div v-if="twoFactorLoading" class="loading-text">{{ $t('profile.twoFactor.loading') }}</div>
+        <div v-if="twoFactorLoading" class="loading-text">
+          {{ $t("profile.twoFactor.loading") }}
+        </div>
         <template v-else-if="twoFactorStatus !== null">
           <el-descriptions :column="1" border>
             <el-descriptions-item :label="$t('profile.twoFactor.status')">
               <el-tag :type="twoFactorStatus.isEnabled ? 'success' : 'info'">
-                {{ twoFactorStatus.isEnabled ? $t('profile.twoFactor.enabled') : $t('profile.twoFactor.disabled') }}
+                {{
+                  twoFactorStatus.isEnabled
+                    ? $t("profile.twoFactor.enabled")
+                    : $t("profile.twoFactor.disabled")
+                }}
               </el-tag>
             </el-descriptions-item>
-            <el-descriptions-item v-if="twoFactorStatus.isEnabled" :label="$t('profile.twoFactor.method')">
-              {{ $t('profile.twoFactor.methodTotp') }}
+            <el-descriptions-item
+              v-if="twoFactorStatus.isEnabled"
+              :label="$t('profile.twoFactor.method')"
+            >
+              {{ $t("profile.twoFactor.methodTotp") }}
             </el-descriptions-item>
           </el-descriptions>
 
@@ -167,7 +180,7 @@ onMounted(() => {
               :loading="twoFactorActionLoading"
               @click="openSetup2FA"
             >
-              {{ $t('profile.twoFactor.setup') }}
+              {{ $t("profile.twoFactor.setup") }}
             </el-button>
             <el-button
               v-else
@@ -175,7 +188,7 @@ onMounted(() => {
               :loading="twoFactorActionLoading"
               @click="showDisable2FA = true"
             >
-              {{ $t('profile.twoFactor.disable') }}
+              {{ $t("profile.twoFactor.disable") }}
             </el-button>
           </div>
         </template>
@@ -200,10 +213,10 @@ onMounted(() => {
       </el-form>
       <template #footer>
         <el-button @click="showChangePassword = false">
-          {{ $t('common.cancel') }}
+          {{ $t("common.cancel") }}
         </el-button>
         <el-button type="primary" @click="handleChangePassword">
-          {{ $t('common.save') }}
+          {{ $t("common.save") }}
         </el-button>
       </template>
     </el-dialog>
@@ -214,13 +227,17 @@ onMounted(() => {
       width="480px"
     >
       <div v-if="setupData" class="setup-2fa-content">
-        <p>{{ $t('profile.twoFactor.scanQr') }}</p>
+        <p>{{ $t("profile.twoFactor.scanQr") }}</p>
         <div class="qr-wrapper">
           <img :src="setupData.qrCodeDataUrl" alt="QR Code" class="qr-image" />
         </div>
-        <p class="secret-label">{{ $t('profile.twoFactor.secretKey') }}</p>
-        <el-input :model-value="setupData.secret" readonly class="secret-input" />
-        <p class="confirm-label">{{ $t('profile.twoFactor.confirmCode') }}</p>
+        <p class="secret-label">{{ $t("profile.twoFactor.secretKey") }}</p>
+        <el-input
+          :model-value="setupData.secret"
+          readonly
+          class="secret-input"
+        />
+        <p class="confirm-label">{{ $t("profile.twoFactor.confirmCode") }}</p>
         <el-input
           v-model="setupCode"
           :placeholder="$t('profile.twoFactor.confirmPlaceholder')"
@@ -229,14 +246,16 @@ onMounted(() => {
         />
       </div>
       <template #footer>
-        <el-button @click="showSetup2FA = false">{{ $t('common.cancel') }}</el-button>
+        <el-button @click="showSetup2FA = false">{{
+          $t("common.cancel")
+        }}</el-button>
         <el-button
           type="primary"
           :loading="twoFactorActionLoading"
           :disabled="setupCode.length !== 6"
           @click="confirmSetup2FA"
         >
-          {{ $t('profile.twoFactor.confirmSetup') }}
+          {{ $t("profile.twoFactor.confirmSetup") }}
         </el-button>
       </template>
     </el-dialog>
@@ -259,14 +278,16 @@ onMounted(() => {
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showDisable2FA = false">{{ $t('common.cancel') }}</el-button>
+        <el-button @click="showDisable2FA = false">{{
+          $t("common.cancel")
+        }}</el-button>
         <el-button
           type="danger"
           :loading="twoFactorActionLoading"
           :disabled="disableCode.length !== 6"
           @click="confirmDisable2FA"
         >
-          {{ $t('profile.twoFactor.disable') }}
+          {{ $t("profile.twoFactor.disable") }}
         </el-button>
       </template>
     </el-dialog>

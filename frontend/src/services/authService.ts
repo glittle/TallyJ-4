@@ -1,4 +1,4 @@
-import api from './api';
+import api from "./api";
 import {
   postApiAuthRegisterAccount,
   postApiAuthLogin,
@@ -90,7 +90,7 @@ export const authService = {
   },
 
   async get2FAStatus(): Promise<{ isEnabled: boolean; method: string | null }> {
-    const response = await api.get('/api/auth/2fa/status');
+    const response = await api.get("/api/auth/2fa/status");
     return response.data;
   },
 
@@ -104,18 +104,21 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    const response = await fetch('/api/auth/logout', {
-      method: 'GET',
-      credentials: 'include', // Include cookies for authentication
+    const response = await fetch("/api/auth/logout", {
+      method: "GET",
+      credentials: "include", // Include cookies for authentication
     });
 
     if (!response.ok) {
-      throw new Error('Logout failed');
+      throw new Error("Logout failed");
     }
   },
 
-  async tellerLogin(electionGuid: string, accessCode: string): Promise<{ electionGuid: string; electionName: string }> {
-    const response = await api.post('/api/auth/teller-login', {
+  async tellerLogin(
+    electionGuid: string,
+    accessCode: string,
+  ): Promise<{ electionGuid: string; electionName: string }> {
+    const response = await api.post("/api/auth/teller-login", {
       electionGuid,
       accessCode,
     });

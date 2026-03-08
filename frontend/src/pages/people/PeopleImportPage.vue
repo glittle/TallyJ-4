@@ -1,21 +1,31 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { ElMessageBox } from 'element-plus';
-import { UploadFilled, Check, Warning, InfoFilled, Clock } from '@element-plus/icons-vue';
-import { useNotifications } from '../../composables/useNotifications';
-import type { UploadFile } from 'element-plus';
-import { peopleImportService } from '../../services/peopleImportService';
-import { signalrService } from '../../services/signalrService';
-import type { ImportFileInfo, ColumnMapping, ImportPeopleResult } from '../../types';
-import { PEOPLE_TARGET_FIELDS } from '../../types';
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { ElMessageBox } from "element-plus";
+import {
+  UploadFilled,
+  Check,
+  Warning,
+  InfoFilled,
+  Clock,
+} from "@element-plus/icons-vue";
+import { useNotifications } from "../../composables/useNotifications";
+import type { UploadFile } from "element-plus";
+import { peopleImportService } from "../../services/peopleImportService";
+import { signalrService } from "../../services/signalrService";
+import type {
+  ImportFileInfo,
+  ColumnMapping,
+  ImportPeopleResult,
+} from "../../types";
+import { PEOPLE_TARGET_FIELDS } from "../../types";
 import type {
   PeopleImportProgressEvent,
   PeopleImportCompleteEvent,
-} from '../../types/SignalREvents';
+} from "../../types/SignalREvents";
 
-import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 const { handleApiError } = useApiErrorHandler();
 
 const router = useRouter();
@@ -31,7 +41,7 @@ const savingMapping = ref(false);
 
 const files = ref<ImportFileInfo[]>([]);
 const selectedFile = ref<ImportFileInfo | null>(null);
-const parsedResult = ref<import('../../types').ParseFileResult | null>(null);
+const parsedResult = ref<import("../../types").ParseFileResult | null>(null);
 const columnMappings = ref<ColumnMapping[]>([]);
 const importing = ref(false);
 const importResult = ref<ImportPeopleResult | null>(null);
@@ -40,8 +50,8 @@ const importProgress = ref<PeopleImportProgressEvent | null>(null);
 const showDeleteAllConfirm = ref(false);
 
 const availableTargetFields = computed(() => [
-  { value: null, label: t('people.import.ignore') },
-  ...PEOPLE_TARGET_FIELDS
+  { value: null, label: t("people.import.ignore") },
+  ...PEOPLE_TARGET_FIELDS,
 ]);
 
 const previewRows = computed(() => {
@@ -56,16 +66,24 @@ const canProceedToNext = computed(() => {
     return selectedFile.value !== null;
   }
   if (currentStep.value === 1) {
-    const firstNameMapped = columnMappings.value.some(m => m?.targetField === 'FirstName');
-    const lastNameMapped = columnMappings.value.some(m => m?.targetField === 'LastName');
+    const firstNameMapped = columnMappings.value.some(
+      (m) => m?.targetField === "FirstName",
+    );
+    const lastNameMapped = columnMappings.value.some(
+      (m) => m?.targetField === "LastName",
+    );
     return firstNameMapped && lastNameMapped;
   }
   return true;
 });
 
 const isMappingValid = computed(() => {
-  const firstNameMapped = columnMappings.value.some(m => m.targetField === 'FirstName');
-  const lastNameMapped = columnMappings.value.some(m => m?.targetField === 'LastName');
+  const firstNameMapped = columnMappings.value.some(
+    (m) => m.targetField === "FirstName",
+  );
+  const lastNameMapped = columnMappings.value.some(
+    (m) => m?.targetField === "LastName",
+  );
   return firstNameMapped && lastNameMapped;
 });
 
@@ -75,9 +93,9 @@ const translatedErrors = computed(() => {
   if (!importResult.value?.errors) {
     return [];
   }
-  return importResult.value.errors.map(error => ({
+  return importResult.value.errors.map((error) => ({
     ...error,
-    message: t(error.key, error.parameters)
+    message: t(error.key, error.parameters),
   }));
 });
 
@@ -85,9 +103,9 @@ const translatedWarnings = computed(() => {
   if (!importResult.value?.warnings) {
     return [];
   }
-  return importResult.value.warnings.map(warning => ({
+  return importResult.value.warnings.map((warning) => ({
     ...warning,
-    message: t(warning.key, warning.parameters)
+    message: t(warning.key, warning.parameters),
   }));
 });
 
@@ -112,23 +130,25 @@ async function initializeSignalR() {
   try {
     const connection = await signalrService.connectToPeopleImportHub();
 
-    connection.on('importProgress', (data: PeopleImportProgressEvent) => {
+    connection.on("importProgress", (data: PeopleImportProgressEvent) => {
       importProgress.value = data;
     });
 
-    connection.on('importError', (msg: string) => {
+    connection.on("importError", (msg: string) => {
       showErrorMessage(msg);
     });
 
-    connection.on('importComplete', (data: PeopleImportCompleteEvent) => {
+    connection.on("importComplete", (data: PeopleImportCompleteEvent) => {
       importing.value = false;
       importProgress.value = null;
       if (data.result.success) {
         showSuccessMessage(
-          `Import completed: ${data.result.peopleAdded} people added, ${data.result.peopleSkipped} skipped`
+          `Import completed: ${data.result.peopleAdded} people added, ${data.result.peopleSkipped} skipped`,
         );
       } else {
-        showErrorMessage('Import failed - ' + translatedErrors.value.length + ' errors');
+        showErrorMessage(
+          "Import failed - " + translatedErrors.value.length + " errors",
+        );
       }
     });
   } catch (e) {
@@ -137,11 +157,7 @@ async function initializeSignalR() {
 }
 
 onMounted(async () => {
-  Promise.all([
-    initializeSignalR(),
-    loadFiles(),
-    loadPeopleCount()
-  ]);
+  Promise.all([initializeSignalR(), loadFiles(), loadPeopleCount()]);
   try {
     await signalrService.joinPeopleImportSession(electionGuid);
   } catch (e) {
@@ -165,18 +181,29 @@ async function handleFileChange(file: UploadFile) {
   if (file.raw) {
     uploading.value = true;
     try {
-      const uploadedFile = await peopleImportService.uploadFile(electionGuid, file.raw);
+      const uploadedFile = await peopleImportService.uploadFile(
+        electionGuid,
+        file.raw,
+      );
       await loadFiles();
 
       // Show message if headers were detected at a non-standard row (row 2 or higher)
-      if (uploadedFile.firstDataRow && uploadedFile.firstDataRow >= 2 && uploadedFile.fileType === 'xlsx') {
-        showSuccessMessage(t('people.import.headerAutoDetected', { row: uploadedFile.firstDataRow }));
+      if (
+        uploadedFile.firstDataRow &&
+        uploadedFile.firstDataRow >= 2 &&
+        uploadedFile.fileType === "xlsx"
+      ) {
+        showSuccessMessage(
+          t("people.import.headerAutoDetected", {
+            row: uploadedFile.firstDataRow,
+          }),
+        );
       } else {
-        showSuccessMessage(t('people.import.fileUploadedSuccessfully'));
+        showSuccessMessage(t("people.import.fileUploadedSuccessfully"));
       }
     } catch (error) {
-      console.error('Upload failed:', error);
-      showErrorMessage(t('people.import.uploadError'));
+      console.error("Upload failed:", error);
+      showErrorMessage(t("people.import.uploadError"));
     } finally {
       uploading.value = false;
     }
@@ -189,7 +216,7 @@ function handleUploadSuccess() {
 
 function handleUploadError() {
   uploading.value = false;
-  showErrorMessage(t('people.import.uploadError'));
+  showErrorMessage(t("people.import.uploadError"));
 }
 
 async function parseFile(codePage?: number, firstDataRow?: number) {
@@ -221,7 +248,10 @@ async function selectFile(file: ImportFileInfo) {
 
   // First try to load saved mappings
   try {
-    const savedMappings = await peopleImportService.getMapping(electionGuid, file.rowId);
+    const savedMappings = await peopleImportService.getMapping(
+      electionGuid,
+      file.rowId,
+    );
     if (savedMappings && savedMappings.length > 0) {
       // If we have saved mappings, parse the file to get headers and preview, but use saved mappings
       await parseFile();
@@ -229,7 +259,10 @@ async function selectFile(file: ImportFileInfo) {
       return;
     }
   } catch (error) {
-    console.warn('Failed to load saved mappings, falling back to auto-mapping:', error);
+    console.warn(
+      "Failed to load saved mappings, falling back to auto-mapping:",
+      error,
+    );
   }
 
   // Fall back to parsing file with auto-mappings
@@ -254,18 +287,25 @@ async function reparseFile(file: ImportFileInfo) {
 
 async function updateFileSettings(file: ImportFileInfo) {
   try {
-    const updatedFile = await peopleImportService.updateSettings(electionGuid, file.rowId, {
-      firstDataRow: file.firstDataRow ?? undefined,
-      codePage: file.codePage ?? undefined,
-    });
-    const index = files.value.findIndex(f => f.rowId === updatedFile.rowId);
+    const updatedFile = await peopleImportService.updateSettings(
+      electionGuid,
+      file.rowId,
+      {
+        firstDataRow: file.firstDataRow ?? undefined,
+        codePage: file.codePage ?? undefined,
+      },
+    );
+    const index = files.value.findIndex((f) => f.rowId === updatedFile.rowId);
     if (index !== -1) {
       files.value[index] = updatedFile;
     }
     if (selectedFile.value?.rowId === updatedFile.rowId) {
       selectedFile.value = updatedFile;
     }
-    await parseFile(updatedFile.codePage || undefined, updatedFile.firstDataRow || undefined);
+    await parseFile(
+      updatedFile.codePage || undefined,
+      updatedFile.firstDataRow || undefined,
+    );
   } catch (error) {
     handleApiError(error);
   }
@@ -274,26 +314,26 @@ async function updateFileSettings(file: ImportFileInfo) {
 async function deleteFile(file: ImportFileInfo) {
   try {
     await ElMessageBox.confirm(
-      t('people.import.confirmDeleteFile'),
-      t('common.warning'),
+      t("people.import.confirmDeleteFile"),
+      t("common.warning"),
       {
-        confirmButtonText: t('common.delete'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
+        confirmButtonText: t("common.delete"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      },
     );
 
     await peopleImportService.deleteFile(electionGuid, file.rowId);
-    files.value = files.value.filter(f => f.rowId !== file.rowId);
+    files.value = files.value.filter((f) => f.rowId !== file.rowId);
     if (selectedFile.value?.rowId === file.rowId) {
       selectedFile.value = null;
       parsedResult.value = null;
       columnMappings.value = [];
     }
-    showSuccessMessage('File deleted');
+    showSuccessMessage("File deleted");
   } catch (error: any) {
-    if (error !== 'cancel') {
-      showErrorMessage(error.message || t('people.import.deleteFileError'));
+    if (error !== "cancel") {
+      showErrorMessage(error.message || t("people.import.deleteFileError"));
     }
   }
 }
@@ -305,8 +345,12 @@ async function saveMapping() {
 
   savingMapping.value = true;
   try {
-    await peopleImportService.saveMapping(electionGuid, selectedFile.value.rowId, columnMappings.value);
-    showSuccessMessage(t('people.import.mappingSaved'));
+    await peopleImportService.saveMapping(
+      electionGuid,
+      selectedFile.value.rowId,
+      columnMappings.value,
+    );
+    showSuccessMessage(t("people.import.mappingSaved"));
   } catch (error) {
     handleApiError(error);
   } finally {
@@ -323,41 +367,47 @@ async function handleNext() {
 
 function getStatusType(status: string | null): string {
   switch (status) {
-    case 'Imported': return 'success';
-    case 'Processing': return 'warning';
-    case 'Failed': return 'danger';
-    default: return 'info';
+    case "Imported":
+      return "success";
+    case "Processing":
+      return "warning";
+    case "Failed":
+      return "danger";
+    default:
+      return "info";
   }
 }
 
 function formatFileSize(bytes: number): string {
   if (bytes === 0) {
-    return '0 B';
+    return "0 B";
   }
   const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const sizes = ["B", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  return (
+    Number.parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i]
+  );
 }
 
 function getFieldDescription(fieldValue: string): string {
   const descriptions: Record<string, string> = {
-    'FirstName': t('people.import.firstNameDesc'),
-    'LastName': t('people.import.lastNameDesc'),
-    'BahaiId': t('people.import.bahaiIdDesc'),
-    'IneligibleReasonDescription': t('people.import.eligibilityDesc'),
-    'Area': t('people.import.areaDesc'),
-    'Email': t('people.import.emailDesc'),
-    'Phone': t('people.import.phoneDesc'),
-    'OtherNames': t('people.import.otherNamesDesc'),
-    'OtherLastNames': t('people.import.otherLastNamesDesc'),
-    'OtherInfo': t('people.import.otherInfoDesc')
+    FirstName: t("people.import.firstNameDesc"),
+    LastName: t("people.import.lastNameDesc"),
+    BahaiId: t("people.import.bahaiIdDesc"),
+    IneligibleReasonDescription: t("people.import.eligibilityDesc"),
+    Area: t("people.import.areaDesc"),
+    Email: t("people.import.emailDesc"),
+    Phone: t("people.import.phoneDesc"),
+    OtherNames: t("people.import.otherNamesDesc"),
+    OtherLastNames: t("people.import.otherLastNamesDesc"),
+    OtherInfo: t("people.import.otherInfoDesc"),
   };
-  return descriptions[fieldValue] || '';
+  return descriptions[fieldValue] || "";
 }
 
 function getFieldLabel(fieldValue: string): string {
-  const field = PEOPLE_TARGET_FIELDS.find(f => f.value === fieldValue);
+  const field = PEOPLE_TARGET_FIELDS.find((f) => f.value === fieldValue);
   return field ? field.label : fieldValue;
 }
 
@@ -380,19 +430,22 @@ async function executeImport() {
   importProgress.value = null;
 
   try {
-    const result = await peopleImportService.executeImport(electionGuid, selectedFile.value.rowId);
+    const result = await peopleImportService.executeImport(
+      electionGuid,
+      selectedFile.value.rowId,
+    );
     importResult.value = result;
     if (result.success) {
       showSuccessMessage(
-        `Import completed: ${result.peopleAdded} people added, ${result.peopleSkipped} skipped`
+        `Import completed: ${result.peopleAdded} people added, ${result.peopleSkipped} skipped`,
       );
       await loadPeopleCount();
     } else {
-      showErrorMessage('Import failed: ' + result.errors.length);
+      showErrorMessage("Import failed: " + result.errors.length);
     }
   } catch (error) {
-    console.error('Import failed:', error);
-    showErrorMessage('Failed to execute import');
+    console.error("Import failed:", error);
+    showErrorMessage("Failed to execute import");
   } finally {
     importing.value = false;
   }
@@ -401,13 +454,13 @@ async function executeImport() {
 async function confirmDeleteAllPeople() {
   try {
     await ElMessageBox.confirm(
-      t('people.import.confirmDeleteAllPeople'),
-      t('common.warning'),
+      t("people.import.confirmDeleteAllPeople"),
+      t("common.warning"),
       {
-        confirmButtonText: t('common.delete'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
+        confirmButtonText: t("common.delete"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      },
     );
 
     const result = await peopleImportService.deleteAllPeople(electionGuid);
@@ -415,7 +468,7 @@ async function confirmDeleteAllPeople() {
     await loadPeopleCount();
     showDeleteAllConfirm.value = false;
   } catch (error) {
-    if (error !== 'cancel') {
+    if (error !== "cancel") {
       handleApiError(error);
     }
     showDeleteAllConfirm.value = false;
@@ -428,7 +481,7 @@ async function confirmDeleteAllPeople() {
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-page-header @back="goBack" :content="$t('people.import.title')" />
+          <el-page-header :content="$t('people.import.title')" @back="goBack" />
         </div>
       </template>
 
@@ -441,55 +494,100 @@ async function confirmDeleteAllPeople() {
       <div class="step-content">
         <!-- Step 1: Upload -->
         <div v-if="currentStep === 0" class="upload-step">
-          <h3>{{ $t('people.import.uploadFile') }}</h3>
-          <el-upload ref="uploadRef" :auto-upload="false" :limit="1" :on-change="handleFileChange"
-            :on-success="handleUploadSuccess" :on-error="handleUploadError" accept=".csv,.tsv,.tab,.txt,.xlsx" drag
-            :disabled="uploading">
+          <h3>{{ $t("people.import.uploadFile") }}</h3>
+          <el-upload
+            ref="uploadRef"
+            :auto-upload="false"
+            :limit="1"
+            :on-change="handleFileChange"
+            :on-success="handleUploadSuccess"
+            :on-error="handleUploadError"
+            accept=".csv,.tsv,.tab,.txt,.xlsx"
+            drag
+            :disabled="uploading"
+          >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">
-              {{ $t('people.import.dropFile') }} <em>{{ $t('people.import.clickToUpload') }}</em>
+              {{ $t("people.import.dropFile") }}
+              <em>{{ $t("people.import.clickToUpload") }}</em>
             </div>
             <template #tip>
-              <div class="el-upload__tip">{{ $t('people.import.supportedFormats') }}</div>
+              <div class="el-upload__tip">
+                {{ $t("people.import.supportedFormats") }}
+              </div>
             </template>
           </el-upload>
 
           <div v-if="files.length > 0" class="files-section">
-            <h4>{{ $t('people.import.filesOnServer') }}</h4>
+            <h4>{{ $t("people.import.filesOnServer") }}</h4>
             <el-table :data="files" stripe style="width: 100%">
-              <el-table-column prop="originalFileName" :label="$t('people.import.fileName')" width="200" />
-              <el-table-column prop="processingStatus" :label="$t('people.import.status')" width="120">
+              <el-table-column
+                prop="originalFileName"
+                :label="$t('people.import.fileName')"
+                width="200"
+              />
+              <el-table-column
+                prop="processingStatus"
+                :label="$t('people.import.status')"
+                width="120"
+              >
                 <template #default="scope">
                   <el-tag :type="getStatusType(scope.row.processingStatus)">
-                    {{ scope.row.processingStatus || 'Uploaded' }}
+                    {{ scope.row.processingStatus || "Uploaded" }}
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="uploadTime" :label="$t('people.import.uploadTime')" width="180">
+              <el-table-column
+                prop="uploadTime"
+                :label="$t('people.import.uploadTime')"
+                width="180"
+              >
                 <template #default="scope">
-                  {{ scope.row.uploadTime ? new Date(scope.row.uploadTime).toLocaleString() : '-' }}
+                  {{
+                    scope.row.uploadTime
+                      ? new Date(scope.row.uploadTime).toLocaleString()
+                      : "-"
+                  }}
                 </template>
               </el-table-column>
               <el-table-column prop="firstDataRow" width="140">
                 <template #header>
-                  <el-tooltip :content="$t('people.import.headersOnLineTooltip')" placement="top">
+                  <el-tooltip
+                    :content="$t('people.import.headersOnLineTooltip')"
+                    placement="top"
+                  >
                     <span>
-                      {{ $t('people.import.headersOnLine') }}
-                      <el-icon style="margin-left: 4px; vertical-align: middle;">
+                      {{ $t("people.import.headersOnLine") }}
+                      <el-icon style="margin-left: 4px; vertical-align: middle">
                         <InfoFilled />
                       </el-icon>
                     </span>
                   </el-tooltip>
                 </template>
                 <template #default="scope">
-                  <el-input-number v-model="scope.row.firstDataRow" :min="1" :max="10" size="small"
-                    :disabled="scope.row.processingStatus === 'Imported'" @change="updateFileSettings(scope.row)" />
+                  <el-input-number
+                    v-model="scope.row.firstDataRow"
+                    :min="1"
+                    :max="10"
+                    size="small"
+                    :disabled="scope.row.processingStatus === 'Imported'"
+                    @change="updateFileSettings(scope.row)"
+                  />
                 </template>
               </el-table-column>
-              <el-table-column prop="codePage" :label="$t('people.import.contentEncoding')" width="150">
+              <el-table-column
+                prop="codePage"
+                :label="$t('people.import.contentEncoding')"
+                width="150"
+              >
                 <template #default="scope">
-                  <el-select v-if="scope.row.fileType !== 'xlsx'" v-model="scope.row.codePage" size="small"
-                    :disabled="scope.row.processingStatus === 'Imported'" @change="updateFileSettings(scope.row)">
+                  <el-select
+                    v-if="scope.row.fileType !== 'xlsx'"
+                    v-model="scope.row.codePage"
+                    size="small"
+                    :disabled="scope.row.processingStatus === 'Imported'"
+                    @change="updateFileSettings(scope.row)"
+                  >
                     <el-option label="UTF-8" :value="65001" />
                     <el-option label="Windows-1252" :value="1252" />
                     <el-option label="ISO-8859-1" :value="28591" />
@@ -497,29 +595,54 @@ async function confirmDeleteAllPeople() {
                   <span v-else class="encoding-text">UTF-8 (Excel)</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="fileSize" :label="$t('people.import.size')" width="100">
+              <el-table-column
+                prop="fileSize"
+                :label="$t('people.import.size')"
+                width="100"
+              >
                 <template #default="scope">
-                  {{ scope.row.fileSize ? formatFileSize(scope.row.fileSize) : '-' }}
+                  {{
+                    scope.row.fileSize
+                      ? formatFileSize(scope.row.fileSize)
+                      : "-"
+                  }}
                 </template>
               </el-table-column>
               <el-table-column :label="$t('people.import.action')" width="120">
                 <template #default="scope">
-                  <el-button v-if="selectedFile?.rowId !== scope.row.rowId" type="primary" size="small"
-                    @click="selectFile(scope.row)">
-                    {{ $t('people.import.select') }}
+                  <el-button
+                    v-if="selectedFile?.rowId !== scope.row.rowId"
+                    type="primary"
+                    size="small"
+                    @click="selectFile(scope.row)"
+                  >
+                    {{ $t("people.import.select") }}
                   </el-button>
-                  <el-tag v-else type="success">{{ $t('people.import.selected') }}</el-tag>
+                  <el-tag v-else type="success">{{
+                    $t("people.import.selected")
+                  }}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column :label="$t('people.import.otherActions')" width="150">
+              <el-table-column
+                :label="$t('people.import.otherActions')"
+                width="150"
+              >
                 <template #default="scope">
                   <el-space>
-                    <el-button type="default" size="small" @click="reparseFile(scope.row)"
-                      :loading="reparsing === scope.row.rowId">
-                      {{ $t('people.import.reparse') }}
+                    <el-button
+                      type="default"
+                      size="small"
+                      :loading="reparsing === scope.row.rowId"
+                      @click="reparseFile(scope.row)"
+                    >
+                      {{ $t("people.import.reparse") }}
                     </el-button>
-                    <el-button type="danger" size="small" @click="deleteFile(scope.row)">
-                      {{ $t('common.delete') }}
+                    <el-button
+                      type="danger"
+                      size="small"
+                      @click="deleteFile(scope.row)"
+                    >
+                      {{ $t("common.delete") }}
                     </el-button>
                   </el-space>
                 </template>
@@ -530,16 +653,25 @@ async function confirmDeleteAllPeople() {
 
         <!-- Step 2: Map Columns -->
         <div v-if="currentStep === 1" class="mapping-step">
-          <h3>{{ $t('people.import.mapColumns') }}</h3>
-          <p>{{ $t('people.import.mapColumnsDesc') }}</p>
+          <h3>{{ $t("people.import.mapColumns") }}</h3>
+          <p>{{ $t("people.import.mapColumnsDesc") }}</p>
 
-          <div v-if="parsedResult && parsedResult.headers.length > 0" class="column-mapping">
+          <div
+            v-if="parsedResult && parsedResult.headers.length > 0"
+            class="column-mapping"
+          >
             <div class="mapping-table-container">
               <table class="mapping-table">
                 <thead>
                   <tr>
-                    <th class="target-header">{{ $t('people.import.tallyJField') }}</th>
-                    <th v-for="header in parsedResult.headers" :key="header" class="file-header">
+                    <th class="target-header">
+                      {{ $t("people.import.tallyJField") }}
+                    </th>
+                    <th
+                      v-for="header in parsedResult.headers"
+                      :key="header"
+                      class="file-header"
+                    >
                       {{ header }}
                     </th>
                   </tr>
@@ -547,19 +679,42 @@ async function confirmDeleteAllPeople() {
                 <tbody>
                   <!-- Mapping row -->
                   <tr class="mapping-row">
-                    <td class="target-cell">{{ $t('people.import.mapTo') }}</td>
-                    <td v-for="(header, index) in parsedResult.headers" :key="`mapping-${index}`" class="mapping-cell">
-                      <el-select v-if="columnMappings[index]" v-model="columnMappings[index].targetField" size="small"
-                        clearable :placeholder="$t('people.import.ignore')">
-                        <el-option v-for="field in availableTargetFields" :key="field.value" :label="field.label"
-                          :value="field.value" />
+                    <td class="target-cell">{{ $t("people.import.mapTo") }}</td>
+                    <td
+                      v-for="(header, index) in parsedResult.headers"
+                      :key="`mapping-${index}`"
+                      class="mapping-cell"
+                    >
+                      <el-select
+                        v-if="columnMappings[index]"
+                        v-model="columnMappings[index].targetField"
+                        size="small"
+                        clearable
+                        :placeholder="$t('people.import.ignore')"
+                      >
+                        <el-option
+                          v-for="field in availableTargetFields"
+                          :key="field.value"
+                          :label="field.label"
+                          :value="field.value"
+                        />
                       </el-select>
                     </td>
                   </tr>
                   <!-- Preview rows -->
-                  <tr v-for="(row, rowIndex) in previewRows" :key="`preview-${rowIndex}`" class="preview-row">
-                    <td class="target-cell preview-label">{{ $t('people.import.preview') }} {{ rowIndex + 1 }}</td>
-                    <td v-for="(cell, cellIndex) in row" :key="`cell-${rowIndex}-${cellIndex}`" class="preview-cell">
+                  <tr
+                    v-for="(row, rowIndex) in previewRows"
+                    :key="`preview-${rowIndex}`"
+                    class="preview-row"
+                  >
+                    <td class="target-cell preview-label">
+                      {{ $t("people.import.preview") }} {{ rowIndex + 1 }}
+                    </td>
+                    <td
+                      v-for="(cell, cellIndex) in row"
+                      :key="`cell-${rowIndex}-${cellIndex}`"
+                      class="preview-cell"
+                    >
                       {{ cell }}
                     </td>
                   </tr>
@@ -568,31 +723,59 @@ async function confirmDeleteAllPeople() {
             </div>
 
             <div class="mapping-actions">
-              <el-button type="primary" @click="saveMapping" :loading="savingMapping">
-                {{ $t('people.import.saveMapping') }}
+              <el-button
+                type="primary"
+                :loading="savingMapping"
+                @click="saveMapping"
+              >
+                {{ $t("people.import.saveMapping") }}
               </el-button>
             </div>
           </div>
 
           <!-- Reference sections -->
           <el-collapse class="reference-sections">
-            <el-collapse-item :title="$t('people.import.tallyJFields')" name="fields">
+            <el-collapse-item
+              :title="$t('people.import.tallyJFields')"
+              name="fields"
+            >
               <div class="field-reference">
-                <div v-for="field in PEOPLE_TARGET_FIELDS" :key="field.value" class="field-item">
+                <div
+                  v-for="field in PEOPLE_TARGET_FIELDS"
+                  :key="field.value"
+                  class="field-item"
+                >
                   <strong>{{ field.label }}</strong>
                   <span v-if="field.required" class="required-mark">*</span>
-                  <span class="field-desc">{{ getFieldDescription(field.value) }}</span>
+                  <span class="field-desc">{{
+                    getFieldDescription(field.value)
+                  }}</span>
                 </div>
               </div>
             </el-collapse-item>
-            <el-collapse-item :title="$t('people.import.eligibilityValues')" name="eligibility">
+            <el-collapse-item
+              :title="$t('people.import.eligibilityValues')"
+              name="eligibility"
+            >
               <div class="eligibility-reference">
-                <p>{{ $t('people.import.eligibilityDesc') }}</p>
+                <p>{{ $t("people.import.eligibilityDesc") }}</p>
                 <ul>
-                  <li><strong>Eligible</strong> - {{ $t('people.import.eligibleDesc') }}</li>
-                  <li><strong>Ineligible</strong> - {{ $t('people.import.ineligibleDesc') }}</li>
-                  <li><strong>Under Age</strong> - {{ $t('people.import.underAgeDesc') }}</li>
-                  <li><strong>Duplicate</strong> - {{ $t('people.import.duplicateDesc') }}</li>
+                  <li>
+                    <strong>Eligible</strong> -
+                    {{ $t("people.import.eligibleDesc") }}
+                  </li>
+                  <li>
+                    <strong>Ineligible</strong> -
+                    {{ $t("people.import.ineligibleDesc") }}
+                  </li>
+                  <li>
+                    <strong>Under Age</strong> -
+                    {{ $t("people.import.underAgeDesc") }}
+                  </li>
+                  <li>
+                    <strong>Duplicate</strong> -
+                    {{ $t("people.import.duplicateDesc") }}
+                  </li>
                 </ul>
               </div>
             </el-collapse-item>
@@ -601,25 +784,36 @@ async function confirmDeleteAllPeople() {
 
         <!-- Step 3: Import -->
         <div v-if="currentStep === 2" class="import-step">
-          <h3>{{ $t('people.import.reviewImport') }}</h3>
-          <p>{{ $t('people.import.importStepDesc') }}</p>
+          <h3>{{ $t("people.import.reviewImport") }}</h3>
+          <p>{{ $t("people.import.importStepDesc") }}</p>
 
           <!-- Import Summary -->
           <div v-if="parsedResult" class="import-summary">
             <el-card class="summary-card">
               <template #header>
-                <h4>{{ $t('people.import.importSummary') }}</h4>
+                <h4>{{ $t("people.import.importSummary") }}</h4>
               </template>
               <div class="summary-content">
                 <div class="summary-item">
-                  <strong>{{ $t('people.import.dataRows') }}:</strong> {{ parsedResult.totalDataRows }}
+                  <strong>{{ $t("people.import.dataRows") }}:</strong>
+                  {{ parsedResult.totalDataRows }}
                 </div>
                 <div class="summary-item">
-                  <strong>{{ $t('people.import.mappedFields') }}:</strong>
+                  <strong>{{ $t("people.import.mappedFields") }}:</strong>
                   <ul class="mapped-fields-list">
-                    <li v-for="mapping in columnMappings" :key="mapping.fileColumn" v-if="columnMappings.length > 0">
-                      {{ mapping.fileColumn }} → {{ mapping.targetField ? getFieldLabel(mapping.targetField) : '?' }}
-                    </li>
+                    <template v-if="columnMappings.length > 0">
+                      <li
+                        v-for="mapping in columnMappings"
+                        :key="mapping.fileColumn"
+                      >
+                        {{ mapping.fileColumn }} →
+                        {{
+                          mapping.targetField
+                            ? getFieldLabel(mapping.targetField)
+                            : "?"
+                        }}
+                      </li>
+                    </template>
                   </ul>
                 </div>
               </div>
@@ -627,16 +821,27 @@ async function confirmDeleteAllPeople() {
           </div>
 
           <!-- Validation Warnings -->
-          <el-alert v-if="!isMappingValid" :title="$t('people.import.validationWarning')"
-            :description="$t('people.import.firstNameLastNameRequired')" type="warning" show-icon
-            class="validation-alert" />
+          <el-alert
+            v-if="!isMappingValid"
+            :title="$t('people.import.validationWarning')"
+            :description="$t('people.import.firstNameLastNameRequired')"
+            type="warning"
+            show-icon
+            class="validation-alert"
+          />
 
           <!-- Import Progress -->
           <div v-if="importing" class="import-progress">
-            <h4>{{ $t('people.import.importing') }}</h4>
-            <el-progress v-if="importProgress"
-              :percentage="(importProgress.processed / importProgress.total) * 100 || 0" :text-inside="true"
-              :stroke-width="20" status="success" />
+            <h4>{{ $t("people.import.importing") }}</h4>
+            <el-progress
+              v-if="importProgress"
+              :percentage="
+                (importProgress.processed / importProgress.total) * 100 || 0
+              "
+              :text-inside="true"
+              :stroke-width="20"
+              status="success"
+            />
             <p v-if="importProgress?.status" class="progress-message">
               {{ importProgress.status }}
             </p>
@@ -646,51 +851,80 @@ async function confirmDeleteAllPeople() {
           <div v-if="importResult && !importing" class="import-results">
             <el-card class="results-card">
               <template #header>
-                <h4>{{ $t('people.import.importResults') }}</h4>
+                <h4>{{ $t("people.import.importResults") }}</h4>
               </template>
               <div class="results-content">
                 <div class="result-item success">
                   <el-icon>
                     <Check />
                   </el-icon>
-                  <span>{{ $t('people.import.peopleAdded') }}: {{ importResult.peopleAdded }}</span>
+                  <span
+                    >{{ $t("people.import.peopleAdded") }}:
+                    {{ importResult.peopleAdded }}</span
+                  >
                 </div>
-                <div class="result-item warning" v-if="importResult.peopleSkipped > 0">
+                <div
+                  v-if="importResult.peopleSkipped > 0"
+                  class="result-item warning"
+                >
                   <el-icon>
                     <Warning />
                   </el-icon>
-                  <span>{{ $t('people.import.peopleSkipped') }}: {{ importResult.peopleSkipped }}</span>
+                  <span
+                    >{{ $t("people.import.peopleSkipped") }}:
+                    {{ importResult.peopleSkipped }}</span
+                  >
                 </div>
-                <div class="result-item info" v-if="translatedWarnings.length > 0">
+                <div
+                  v-if="translatedWarnings.length > 0"
+                  class="result-item info"
+                >
                   <el-icon>
                     <InfoFilled />
                   </el-icon>
-                  <span>{{ $t('people.import.warnings') }}: {{ translatedWarnings.length }}</span>
+                  <span
+                    >{{ $t("people.import.warnings") }}:
+                    {{ translatedWarnings.length }}</span
+                  >
                 </div>
                 <div class="result-item time">
                   <el-icon>
                     <Clock />
                   </el-icon>
-                  <span>{{ $t('people.import.timeElapsed') }}: {{ formatTime(importResult.timeElapsedSeconds) }}</span>
+                  <span
+                    >{{ $t("people.import.timeElapsed") }}:
+                    {{ formatTime(importResult.timeElapsedSeconds) }}</span
+                  >
                 </div>
               </div>
             </el-card>
           </div>
 
           <!-- Detailed Errors and Warnings -->
-          <div v-if="translatedErrors.length > 0 || translatedWarnings.length > 0" class="import-details">
+          <div
+            v-if="translatedErrors.length > 0 || translatedWarnings.length > 0"
+            class="import-details"
+          >
             <el-card class="details-card">
               <template #header>
-                <h4>{{ $t('import.errorsTitle') }}</h4>
+                <h4>{{ $t("import.errorsTitle") }}</h4>
               </template>
               <div class="details-content">
-                <div v-for="error in translatedErrors" :key="`error-${error.key}`" class="detail-item error">
+                <div
+                  v-for="error in translatedErrors"
+                  :key="`error-${error.key}`"
+                  class="detail-item error"
+                >
                   <el-icon>
                     <Warning />
                   </el-icon>
                   <span>{{ error.message }}</span>
                 </div>
-                <div v-for="warning in translatedWarnings" :key="`warning-${warning.key}`" class="detail-item warning">
+                <div
+                  v-for="warning in translatedWarnings"
+                  :key="`warning-${warning.key}`"
+                  class="detail-item warning"
+                >
                   <el-icon>
                     <InfoFilled />
                   </el-icon>
@@ -703,44 +937,69 @@ async function confirmDeleteAllPeople() {
           <!-- Import Actions -->
           <div class="import-actions">
             <el-space>
-              <el-button type="primary" @click="executeImport" :loading="importing"
-                :disabled="!isMappingValid || !selectedFile">
-                {{ $t('people.import.importNow') }}
+              <el-button
+                type="primary"
+                :loading="importing"
+                :disabled="!isMappingValid || !selectedFile"
+                @click="executeImport"
+              >
+                {{ $t("people.import.importNow") }}
               </el-button>
-              <el-button type="danger" @click="showDeleteAllConfirm = true" :disabled="canDeleteAllPeople === false">
-                {{ $t('people.import.deleteAllPeople') }}
+              <el-button
+                type="danger"
+                :disabled="canDeleteAllPeople === false"
+                @click="showDeleteAllConfirm = true"
+              >
+                {{ $t("people.import.deleteAllPeople") }}
               </el-button>
             </el-space>
           </div>
 
           <!-- People Count -->
           <div class="people-count">
-            <el-statistic :title="$t('people.import.currentPeopleCount')" :value="peopleCount" :loading="false" />
+            <el-statistic
+              :title="$t('people.import.currentPeopleCount')"
+              :value="peopleCount"
+              :loading="false"
+            />
           </div>
         </div>
       </div>
 
       <div class="step-actions">
         <el-button v-if="currentStep > 0" @click="currentStep--">
-          {{ $t('common.previous') }}
+          {{ $t("common.previous") }}
         </el-button>
-        <el-button v-if="currentStep < 2" type="primary" :disabled="!canProceedToNext" @click="handleNext">
-          {{ $t('common.next') }}
+        <el-button
+          v-if="currentStep < 2"
+          type="primary"
+          :disabled="!canProceedToNext"
+          @click="handleNext"
+        >
+          {{ $t("common.next") }}
         </el-button>
       </div>
     </el-card>
 
     <!-- Delete All People Confirmation -->
-    <el-dialog v-model="showDeleteAllConfirm" :title="$t('people.import.confirmDeleteAllPeople')" width="500px">
-      <p>{{ $t('people.import.deleteAllPeopleMessage') }}</p>
-      <p class="warning-text">{{ $t('common.actionIrreversible') }}</p>
+    <el-dialog
+      v-model="showDeleteAllConfirm"
+      :title="$t('people.import.confirmDeleteAllPeople')"
+      width="500px"
+    >
+      <p>{{ $t("people.import.deleteAllPeopleMessage") }}</p>
+      <p class="warning-text">{{ $t("common.actionIrreversible") }}</p>
 
       <template #footer>
         <el-button @click="showDeleteAllConfirm = false">
-          {{ $t('common.cancel') }}
+          {{ $t("common.cancel") }}
         </el-button>
-        <el-button type="danger" @click="confirmDeleteAllPeople" :loading="false">
-          {{ $t('common.delete') }}
+        <el-button
+          type="danger"
+          :loading="false"
+          @click="confirmDeleteAllPeople"
+        >
+          {{ $t("common.delete") }}
         </el-button>
       </template>
     </el-dialog>

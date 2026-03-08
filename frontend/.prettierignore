@@ -1,0 +1,8 @@
+dist
+public
+src/api/generated
+.eslint.auto-import-globals.js
+node_modules
+*.cjs
+.eslintcache
+build_rollup_stats.html

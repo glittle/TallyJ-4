@@ -27,8 +27,14 @@ onMounted(() => {
 
 <template>
   <div class="language-flags-selector">
-    <button v-for="lang in languages" :key="lang.value" :class="['flag-button', { active: isActive(lang.value) }]"
-      :aria-label="`${lang.label}`" :title="lang.label" @click="changeLanguage(lang.value)">
+    <button
+      v-for="lang in languages"
+      :key="lang.value"
+      :class="['flag-button', { active: isActive(lang.value) }]"
+      :aria-label="`${lang.label}`"
+      :title="lang.label"
+      @click="changeLanguage(lang.value)"
+    >
       <country-flag :country="lang.flag" size="normal" />
     </button>
   </div>

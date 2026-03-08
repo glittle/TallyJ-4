@@ -31,7 +31,7 @@ export interface ImportProgressEvent {
 export interface PersonUpdateEvent {
   electionGuid: string;
   personGuid: string;
-  action: 'added' | 'updated' | 'deleted';
+  action: "added" | "updated" | "deleted";
   firstName?: string;
   lastName?: string;
   updatedAt: string;
@@ -39,7 +39,7 @@ export interface PersonUpdateEvent {
 export interface BallotUpdateEvent {
   electionGuid: string;
   ballotGuid: string;
-  action: 'added' | 'updated' | 'deleted';
+  action: "added" | "updated" | "deleted";
   ballotCode?: string;
   statusCode?: string;
   voteCount?: number;
@@ -50,7 +50,6 @@ export interface PersonVoteCountUpdateEvent {
   electionGuid: string;
   personGuid: string;
   voteCount: number;
-}
 }
 
 export interface PeopleImportProgressEvent {

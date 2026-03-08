@@ -17,12 +17,12 @@ export interface ApiError {
 
 export function extractApiErrorMessage(error: any): string {
   if (!error) {
-    return 'An unknown error occurred';
+    return "An unknown error occurred";
   }
 
   const apiError = error as ApiError;
 
-  if (apiError.errors && typeof apiError.errors === 'object') {
+  if (apiError.errors && typeof apiError.errors === "object") {
     const validationErrors: string[] = [];
     for (const [field, messages] of Object.entries(apiError.errors)) {
       if (Array.isArray(messages)) {
@@ -30,7 +30,7 @@ export function extractApiErrorMessage(error: any): string {
       }
     }
     if (validationErrors.length > 0) {
-      return validationErrors.join('; ');
+      return validationErrors.join("; ");
     }
   }
 
@@ -49,7 +49,7 @@ export function extractApiErrorMessage(error: any): string {
   if (apiError.response?.data) {
     const { data } = apiError.response;
 
-    if (data.errors && typeof data.errors === 'object') {
+    if (data.errors && typeof data.errors === "object") {
       const validationErrors: string[] = [];
       for (const [field, messages] of Object.entries(data.errors)) {
         if (Array.isArray(messages)) {
@@ -57,7 +57,7 @@ export function extractApiErrorMessage(error: any): string {
         }
       }
       if (validationErrors.length > 0) {
-        return validationErrors.join('; ');
+        return validationErrors.join("; ");
       }
     }
 
@@ -74,5 +74,5 @@ export function extractApiErrorMessage(error: any): string {
     }
   }
 
-  return 'An unknown error occurred';
+  return "An unknown error occurred";
 }

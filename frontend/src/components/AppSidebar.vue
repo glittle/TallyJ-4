@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { HomeFilled, Document, ArrowLeft, Setting } from "@element-plus/icons-vue";
+import {
+  HomeFilled,
+  Document,
+  ArrowLeft,
+  Setting,
+} from "@element-plus/icons-vue";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
 
@@ -44,11 +49,15 @@ function goBackToElections() {
 <template>
   <nav class="app-sidebar" role="navigation" aria-label="Main navigation">
     <div class="logo">
-      <img src="/logo-zoom.png" alt="TallyJ Logo" style="height: 24px; vertical-align: middle; margin-left: 8px" />
+      <img
+        src="/logo-zoom.png"
+        alt="TallyJ Logo"
+        style="height: 24px; vertical-align: middle; margin-left: 8px"
+      />
       <h2>TallyJ v4</h2>
     </div>
     <div class="testOnlyWarning">
-      {{ $t('common.testOnlyShort') }}
+      {{ $t("common.testOnlyShort") }}
     </div>
 
     <!-- Election breadcrumb navigation -->
@@ -66,7 +75,13 @@ function goBackToElections() {
     </div>
 
     <!-- Main navigation menu -->
-    <el-menu v-else :default-active="activeRoute" :router="true" aria-label="Main menu" @select="handleMenuSelect">
+    <el-menu
+      v-else
+      :default-active="activeRoute"
+      :router="true"
+      aria-label="Main menu"
+      @select="handleMenuSelect"
+    >
       <el-menu-item index="/dashboard" role="menuitem">
         <el-icon aria-hidden="true">
           <HomeFilled />
@@ -186,6 +201,5 @@ function goBackToElections() {
     font-weight: bold;
     border-radius: 10px;
   }
-
 }
 </style>

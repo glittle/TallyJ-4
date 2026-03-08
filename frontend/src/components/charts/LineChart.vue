@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Line } from 'vue-chartjs';
+import { computed } from "vue";
+import { Line } from "vue-chartjs";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,8 +16,8 @@ import {
   Legend,
   Filler,
   type ChartData,
-  type ChartOptions
-} from 'chart.js';
+  type ChartOptions,
+} from "chart.js";
 
 ChartJS.register(
   CategoryScale,
@@ -27,7 +27,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 interface Props {
@@ -50,37 +50,40 @@ const props = withDefaults(defineProps<Props>(), {
   title: undefined,
   showLegend: true,
   showGrid: true,
-  smooth: true
+  smooth: true,
 });
 
 const defaultColors = [
-  'rgb(59, 130, 246)',
-  'rgb(239, 68, 68)',
-  'rgb(34, 197, 94)',
-  'rgb(245, 158, 11)',
-  'rgb(168, 85, 247)',
-  'rgb(236, 72, 153)',
+  "rgb(59, 130, 246)",
+  "rgb(239, 68, 68)",
+  "rgb(34, 197, 94)",
+  "rgb(245, 158, 11)",
+  "rgb(168, 85, 247)",
+  "rgb(236, 72, 153)",
 ];
 
-const chartData = computed<ChartData<'line'>>(() => ({
+const chartData = computed<ChartData<"line">>(() => ({
   labels: props.labels,
   datasets: props.datasets.map((dataset, index) => ({
     label: dataset.label,
     data: dataset.data,
-    borderColor: dataset.borderColor || defaultColors[index % defaultColors.length],
-    backgroundColor: dataset.backgroundColor || `${defaultColors[index % defaultColors.length]}33`,
+    borderColor:
+      dataset.borderColor || defaultColors[index % defaultColors.length],
+    backgroundColor:
+      dataset.backgroundColor ||
+      `${defaultColors[index % defaultColors.length]}33`,
     fill: dataset.fill ?? false,
-    tension: dataset.tension ?? (props.smooth ? 0.4 : 0)
-  }))
+    tension: dataset.tension ?? (props.smooth ? 0.4 : 0),
+  })),
 }));
 
-const chartOptions = computed<ChartOptions<'line'>>(() => ({
+const chartOptions = computed<ChartOptions<"line">>(() => ({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
     legend: {
       display: props.showLegend,
-      position: 'top' as const,
+      position: "top" as const,
     },
     title: {
       display: !!props.title,
@@ -91,14 +94,14 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
     y: {
       beginAtZero: true,
       grid: {
-        display: props.showGrid
-      }
+        display: props.showGrid,
+      },
     },
     x: {
       grid: {
-        display: props.showGrid
-      }
-    }
-  }
+        display: props.showGrid,
+      },
+    },
+  },
 }));
 </script>

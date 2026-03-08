@@ -115,7 +115,9 @@ export const useBallotStore = defineStore("ballot", () => {
     }
   }
 
-  async function createVote(dto: CreateVoteDto): Promise<VoteWithBallotStatusDto> {
+  async function createVote(
+    dto: CreateVoteDto,
+  ): Promise<VoteWithBallotStatusDto> {
     loading.value = true;
     error.value = null;
     try {
@@ -148,7 +150,9 @@ export const useBallotStore = defineStore("ballot", () => {
     error.value = null;
     try {
       const vote = currentBallot.value?.votes.find(
-        (v) => v.ballotGuid === ballotGuid && v.positionOnBallot === positionOnBallot,
+        (v) =>
+          v.ballotGuid === ballotGuid &&
+          v.positionOnBallot === positionOnBallot,
       );
       if (!vote) {
         throw new Error("Vote not found");
