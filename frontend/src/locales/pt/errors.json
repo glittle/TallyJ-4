@@ -1,0 +1,18 @@
+{
+  "notification.success": "Sucesso",
+  "notification.error": "Erro",
+  "notification.warning": "Aviso",
+  "notification.info": "Informação",
+  "error.somethingWentWrong": "Algo deu errado",
+  "error.pageError": "Ocorreu um erro ao carregar esta página. Por favor, tente novamente.",
+  "error.tryAgain": "Tentar Novamente",
+  "error.goHome": "Ir para o Início",
+  "error.errorDetails": "Detalhes do Erro",
+  "error.networkError": "Erro de rede. Por favor, verifique sua conexão e tente novamente.",
+  "error.serverError": "Erro do servidor. Por favor, tente novamente mais tarde.",
+  "error.sessionExpired": "Sua sessão expirou. Por favor, faça login novamente.",
+  "error.unauthorized": "Você não está autorizado a realizar esta ação.",
+  "error.forbidden": "Acesso negado.",
+  "error.notFound": "O recurso solicitado não foi encontrado.",
+  "error.validationError": "Por favor, verifique sua entrada e tente novamente."
+}
