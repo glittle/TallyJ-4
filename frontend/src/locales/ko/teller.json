@@ -1,0 +1,17 @@
+{
+  "teller.form.titleEdit": "개표원 편집",
+  "teller.form.titleAdd": "개표원 추가",
+  "teller.form.name": "개표원 이름",
+  "teller.form.namePlaceholder": "개표원 이름 입력",
+  "teller.form.nameRequired": "개표원 이름이 필요합니다",
+  "teller.form.nameMaxLength": "개표원 이름은 50자를 초과할 수 없습니다",
+  "teller.form.computerCode": "컴퓨터 코드",
+  "teller.form.computerCodePlaceholder": "예: AA",
+  "teller.form.computerCodeInvalid": "컴퓨터 코드는 대문자 2자 (AA-ZZ)여야 합니다",
+  "teller.form.computerCodeHelp": "대문자 2자 (AA-ZZ) 또는 비워두기",
+  "teller.form.headTeller": "수석 개표원",
+  "teller.form.headTellerHelp": "수석 개표원은 추가 권한을 가집니다",
+  "teller.form.cancel": "취소",
+  "teller.form.save": "저장",
+  "teller.form.create": "만들기"
+}
