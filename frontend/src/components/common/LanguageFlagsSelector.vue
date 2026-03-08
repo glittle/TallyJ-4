@@ -8,6 +8,7 @@ const { locale } = useI18n();
 const languages = [
   { value: "en", flag: "us", label: "English" },
   { value: "fr", flag: "fr", label: "Français" },
+  { value: "ko", flag: "kr", label: "한국어" },
 ];
 
 const changeLanguage = (lang: string) => {
