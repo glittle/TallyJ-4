@@ -39,6 +39,7 @@ function flatToNested(flat: any): any {
 // Load all locale files using Vite's glob import
 const enModules = import.meta.glob("./en/*.json", { eager: true });
 const frModules = import.meta.glob("./fr/*.json", { eager: true });
+const koModules = import.meta.glob("./ko/*.json", { eager: true });
 
 // Merge all JSON files for a locale
 function mergeLocaleFiles(modules: Record<string, any>): any {
@@ -60,10 +61,11 @@ export const i18n = createI18n({
   messages: {
     en: deepMerge(common, mergeLocaleFiles(enModules)),
     fr: deepMerge(common, mergeLocaleFiles(frModules)),
+    ko: deepMerge(common, mergeLocaleFiles(koModules)),
   },
 });
 
-export function setLocale(locale: "en" | "fr") {
+export function setLocale(locale: "en" | "fr" | "ko") {
   i18n.global.locale = locale;
   localStorage.setItem("preferred-language", locale);
 }

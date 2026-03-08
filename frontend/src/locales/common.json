@@ -2,6 +2,7 @@
   "title": "TallyJ v4",
   "english": "English",
   "french": "Français",
+  "korean": "한국어",
   "supportedUploadPeopleFormats": [
     "CSV",
     "XLS",
