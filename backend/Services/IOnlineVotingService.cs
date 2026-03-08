@@ -77,6 +77,14 @@ public interface IOnlineVotingService
     /// <param name="dto">The Kakao authentication request containing the access token.</param>
     /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
     Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> KakaoAuthAsync(KakaoAuthForVoterDto dto);
+
+    /// <summary>
+    /// Authenticates a voter using the Telegram Login Widget and returns authentication token
+    /// if the voter's Telegram ID is registered in at least one open election.
+    /// </summary>
+    /// <param name="dto">The Telegram authentication request containing the widget callback data.</param>
+    /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
+    Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> TelegramAuthAsync(TelegramAuthForVoterDto dto);
 }
 
 

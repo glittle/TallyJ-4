@@ -11,6 +11,11 @@ public class AppUser : IdentityUser
 
     public string? GoogleId { get; set; }
 
+    /// <summary>
+    /// The Telegram user ID for users who authenticate via Telegram Login Widget.
+    /// </summary>
+    public string? TelegramId { get; set; }
+
     [Required]
     [StringLength(20)]
     public string AuthMethod { get; set; } = "Local";
