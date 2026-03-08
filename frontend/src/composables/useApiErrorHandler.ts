@@ -18,7 +18,11 @@ export function useApiErrorHandler() {
   const { t } = useI18n();
 
   const isApiError = (error: any): error is ApiError => {
-    return error && typeof error === 'object' && ('response' in error || 'message' in error);
+    return (
+      error &&
+      typeof error === "object" &&
+      ("response" in error || "message" in error)
+    );
   };
 
   const handleApiError = (error: any, customMessage?: string) => {
@@ -30,7 +34,8 @@ export function useApiErrorHandler() {
 
         switch (status) {
           case 400:
-            message = data?.error || data?.message || t("error.validationError");
+            message =
+              data?.error || data?.message || t("error.validationError");
             break;
           case 401:
             message = t("error.unauthorized");
@@ -67,6 +72,8 @@ export function useApiErrorHandler() {
           message = error.message;
         }
       }
+    } else if (error.error) {
+      message = t(error.error) || error.error || message;
     }
 
     showErrorMessage(message);

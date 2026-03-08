@@ -16,11 +16,11 @@ import type {
   SuperAdminElection,
   SuperAdminElectionDetail,
 } from "../services/superAdminService";
-import { extractApiErrorMessage } from '@/utils/errorHandler';
-import { useDebounceFn } from '@vueuse/core';
+import { extractApiErrorMessage } from "@/utils/errorHandler";
+import { useDebounceFn } from "@vueuse/core";
 import { ElectionTypeCode } from "@/api/gen/configService";
 
-import { useI18n } from 'vue-i18n';
+import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const router = useRouter();
@@ -58,7 +58,10 @@ const typeOptions = computed(() => {
   const types = Object.values(ElectionTypeCode);
   return [
     { label: "All", value: "" },
-    ...types.map((type) => ({ label: t('elections.electionTypes.' + type), value: type })),
+    ...types.map((type) => ({
+      label: t("elections.electionTypes." + type),
+      value: type,
+    })),
   ];
 });
 
@@ -76,26 +79,26 @@ function buildFilter(): SuperAdminElectionFilter {
 
 async function fetchElections(filter?: SuperAdminElectionFilter) {
   try {
-    const response = await superAdminService.getElections(filter)
-    elections.value = response.items
-    totalCount.value = response.totalCount
-    currentPage.value = response.page
-    pageSize.value = response.pageSize
-    totalPages.value = response.totalPages
-    electionError.value = null
+    const response = await superAdminService.getElections(filter);
+    elections.value = response.items;
+    totalCount.value = response.totalCount;
+    currentPage.value = response.page;
+    pageSize.value = response.pageSize;
+    totalPages.value = response.totalPages;
+    electionError.value = null;
   } catch (e: any) {
-    electionError.value = extractApiErrorMessage(e)
-    throw e
+    electionError.value = extractApiErrorMessage(e);
+    throw e;
   }
 }
 
 async function fetchElectionDetail(guid: string) {
   try {
-    selectedElection.value = await superAdminService.getElectionDetail(guid)
-    return selectedElection.value
+    selectedElection.value = await superAdminService.getElectionDetail(guid);
+    return selectedElection.value;
   } catch (e: any) {
-    electionError.value = extractApiErrorMessage(e)
-    throw e
+    electionError.value = extractApiErrorMessage(e);
+    throw e;
   }
 }
 
@@ -111,7 +114,6 @@ async function loadData() {
 }
 
 const applyFilters = useDebounceFn(async () => {
-
   currentPage.value = 1;
   try {
     await fetchElections(buildFilter());
@@ -129,22 +131,19 @@ async function handlePageChange(page: number) {
   }
 }
 
-const handleSortChange = useDebounceFn(async ({
-  prop,
-  order,
-}: {
-  prop: string;
-  order: string | null;
-}) => {
-  console.log("Sorting by", prop, "order", order);
-  sortBy.value = prop || "dateOfElection";
-  sortDirection.value = order === "ascending" ? "asc" : "desc";
-  try {
-    await fetchElections(buildFilter());
-  } catch {
-    // error handled in function
-  }
-}, 150);
+const handleSortChange = useDebounceFn(
+  async ({ prop, order }: { prop: string; order: string | null }) => {
+    console.log("Sorting by", prop, "order", order);
+    sortBy.value = prop || "dateOfElection";
+    sortDirection.value = order === "ascending" ? "asc" : "desc";
+    try {
+      await fetchElections(buildFilter());
+    } catch {
+      // error handled in function
+    }
+  },
+  150,
+);
 
 const showElectionDetail = async (row: SuperAdminElection) => {
   drawerVisible.value = true;
@@ -187,7 +186,7 @@ onMounted(() => {
     <section class="sa-header-section">
       <div class="sa-header-content">
         <h1>{{ $t("superAdmin.title") }}</h1>
-        <el-button type="primary" @click="loadData" :loading="loading">
+        <el-button type="primary" :loading="loading" @click="loadData">
           <el-icon>
             <Refresh />
           </el-icon>
@@ -196,9 +195,22 @@ onMounted(() => {
       </div>
     </section>
 
-    <el-alert v-if="error" type="error" :title="error" show-icon closable @close="superAdminStore.clearError()" />
-    <el-alert v-if="electionError" type="error" :title="electionError" show-icon closable
-      @close="electionError = null" />
+    <el-alert
+      v-if="error"
+      type="error"
+      :title="error"
+      show-icon
+      closable
+      @close="superAdminStore.clearError()"
+    />
+    <el-alert
+      v-if="electionError"
+      type="error"
+      :title="electionError"
+      show-icon
+      closable
+      @close="electionError = null"
+    />
 
     <section class="sa-stats-section">
       <el-row :gutter="20" class="sa-stats-row">
@@ -211,7 +223,9 @@ onMounted(() => {
             </div>
             <div class="stat-content">
               <div class="stat-value">{{ summary?.totalElections ?? 0 }}</div>
-              <div class="stat-label">{{ $t("superAdmin.summary.totalElections") }}</div>
+              <div class="stat-label">
+                {{ $t("superAdmin.summary.totalElections") }}
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -224,7 +238,9 @@ onMounted(() => {
             </div>
             <div class="stat-content">
               <div class="stat-value">{{ summary?.openElections ?? 0 }}</div>
-              <div class="stat-label">{{ $t("superAdmin.summary.openElections") }}</div>
+              <div class="stat-label">
+                {{ $t("superAdmin.summary.openElections") }}
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -236,8 +252,12 @@ onMounted(() => {
               </el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value">{{ summary?.upcomingElections ?? 0 }}</div>
-              <div class="stat-label">{{ $t("superAdmin.summary.upcomingElections") }}</div>
+              <div class="stat-value">
+                {{ summary?.upcomingElections ?? 0 }}
+              </div>
+              <div class="stat-label">
+                {{ $t("superAdmin.summary.upcomingElections") }}
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -249,8 +269,12 @@ onMounted(() => {
               </el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value">{{ summary?.completedElections ?? 0 }}</div>
-              <div class="stat-label">{{ $t("superAdmin.summary.completedElections") }}</div>
+              <div class="stat-value">
+                {{ summary?.completedElections ?? 0 }}
+              </div>
+              <div class="stat-label">
+                {{ $t("superAdmin.summary.completedElections") }}
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -261,15 +285,38 @@ onMounted(() => {
       <el-card>
         <template #header>
           <div class="sa-filter-bar">
-            <el-input v-model="searchText" :placeholder="$t('superAdmin.elections.search')" :prefix-icon="Search"
-              clearable class="sa-search-input" />
-            <el-select v-model="statusFilter" :placeholder="$t('superAdmin.elections.filterStatus')" clearable
-              class="sa-filter-select">
-              <el-option v-for="opt in statusOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
+            <el-input
+              v-model="searchText"
+              :placeholder="$t('superAdmin.elections.search')"
+              :prefix-icon="Search"
+              clearable
+              class="sa-search-input"
+            />
+            <el-select
+              v-model="statusFilter"
+              :placeholder="$t('superAdmin.elections.filterStatus')"
+              clearable
+              class="sa-filter-select"
+            >
+              <el-option
+                v-for="opt in statusOptions"
+                :key="opt.value"
+                :label="opt.label"
+                :value="opt.value"
+              />
             </el-select>
-            <el-select v-model="typeFilter" :placeholder="$t('superAdmin.elections.filterType')" clearable
-              class="sa-filter-select">
-              <el-option v-for="opt in typeOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
+            <el-select
+              v-model="typeFilter"
+              :placeholder="$t('superAdmin.elections.filterType')"
+              clearable
+              class="sa-filter-select"
+            >
+              <el-option
+                v-for="opt in typeOptions"
+                :key="opt.value"
+                :label="opt.label"
+                :value="opt.value"
+              />
             </el-select>
           </div>
         </template>
@@ -281,43 +328,91 @@ onMounted(() => {
           <el-empty :description="$t('superAdmin.elections.noResults')" />
         </div>
         <template v-else>
-          <el-table :data="elections" style="width: 100%" @sort-change="handleSortChange"
-            @row-click="showElectionDetail" class="sa-elections-table">
-            <el-table-column prop="name" :label="$t('superAdmin.elections.name')" min-width="200" sortable="custom" />
-            <el-table-column prop="convenor" :label="$t('superAdmin.elections.convenor')" min-width="150"
-              sortable="custom" />
-            <el-table-column prop="dateOfElection" :label="$t('superAdmin.elections.date')" width="140"
-              sortable="custom">
+          <el-table
+            :data="elections"
+            style="width: 100%"
+            class="sa-elections-table"
+            @sort-change="handleSortChange"
+            @row-click="showElectionDetail"
+          >
+            <el-table-column
+              prop="name"
+              :label="$t('superAdmin.elections.name')"
+              min-width="200"
+              sortable="custom"
+            />
+            <el-table-column
+              prop="convenor"
+              :label="$t('superAdmin.elections.convenor')"
+              min-width="150"
+              sortable="custom"
+            />
+            <el-table-column
+              prop="dateOfElection"
+              :label="$t('superAdmin.elections.date')"
+              width="140"
+              sortable="custom"
+            >
               <template #default="scope">
                 {{ formatDate(scope.row.dateOfElection) }}
               </template>
             </el-table-column>
-            <el-table-column prop="tallyStatus" :label="$t('superAdmin.elections.status')" width="120"
-              sortable="custom">
+            <el-table-column
+              prop="tallyStatus"
+              :label="$t('superAdmin.elections.status')"
+              width="120"
+              sortable="custom"
+            >
               <template #default="scope">
                 <el-tag :type="getStatusType(scope.row.tallyStatus)">
                   {{ scope.row.tallyStatus || "Draft" }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="electionType" :label="$t('superAdmin.elections.type')" width="120"
-              sortable="custom" />
-            <el-table-column prop="voterCount" :label="$t('superAdmin.elections.voters')" width="100"
-              sortable="custom" />
-            <el-table-column prop="ballotCount" :label="$t('superAdmin.elections.ballots')" width="100"
-              sortable="custom" />
-            <el-table-column prop="ownerEmail" :label="$t('superAdmin.elections.owner')" min-width="180" />
+            <el-table-column
+              prop="electionType"
+              :label="$t('superAdmin.elections.type')"
+              width="120"
+              sortable="custom"
+            />
+            <el-table-column
+              prop="voterCount"
+              :label="$t('superAdmin.elections.voters')"
+              width="100"
+              sortable="custom"
+            />
+            <el-table-column
+              prop="ballotCount"
+              :label="$t('superAdmin.elections.ballots')"
+              width="100"
+              sortable="custom"
+            />
+            <el-table-column
+              prop="ownerEmail"
+              :label="$t('superAdmin.elections.owner')"
+              min-width="180"
+            />
           </el-table>
 
           <div class="sa-pagination">
-            <el-pagination v-model:current-page="currentPage" :page-size="pageSize" :total="totalCount"
-              layout="total, prev, pager, next" @current-change="handlePageChange" />
+            <el-pagination
+              v-model:current-page="currentPage"
+              :page-size="pageSize"
+              :total="totalCount"
+              layout="total, prev, pager, next"
+              @current-change="handlePageChange"
+            />
           </div>
         </template>
       </el-card>
     </section>
 
-    <el-drawer v-model="drawerVisible" :title="$t('superAdmin.detail.title')" direction="rtl" size="500px">
+    <el-drawer
+      v-model="drawerVisible"
+      :title="$t('superAdmin.detail.title')"
+      direction="rtl"
+      size="500px"
+    >
       <div v-if="loading && !selectedElection" class="sa-loading">
         <el-skeleton :rows="6" animated />
       </div>
@@ -355,14 +450,23 @@ onMounted(() => {
           <el-descriptions-item :label="$t('superAdmin.detail.locations')">
             {{ selectedElection.locationCount }}
           </el-descriptions-item>
-          <el-descriptions-item :label="$t('superAdmin.detail.percentComplete')">
-            <el-progress :percentage="selectedElection.percentComplete" :stroke-width="16" />
+          <el-descriptions-item
+            :label="$t('superAdmin.detail.percentComplete')"
+          >
+            <el-progress
+              :percentage="selectedElection.percentComplete"
+              :stroke-width="16"
+            />
           </el-descriptions-item>
         </el-descriptions>
 
         <div class="sa-owners-section">
           <h3>{{ $t("superAdmin.detail.owners") }}</h3>
-          <el-table :data="selectedElection.owners" style="width: 100%" size="small">
+          <el-table
+            :data="selectedElection.owners"
+            style="width: 100%"
+            size="small"
+          >
             <el-table-column prop="displayName" label="Name" />
             <el-table-column prop="email" label="Email" />
             <el-table-column prop="role" label="Role" width="100" />
@@ -436,22 +540,22 @@ onMounted(() => {
   }
 
   .stat-icon.elections {
-    background: linear-gradient(135deg, #1C3A6A 0%, #2563a8 100%);
+    background: linear-gradient(135deg, #1c3a6a 0%, #2563a8 100%);
     box-shadow: 0 4px 12px rgba(28, 58, 106, 0.3);
   }
 
   .stat-icon.active {
-    background: linear-gradient(135deg, #F47920 0%, #d4661a 100%);
+    background: linear-gradient(135deg, #f47920 0%, #d4661a 100%);
     box-shadow: 0 4px 12px rgba(244, 121, 32, 0.3);
   }
 
   .stat-icon.voters {
-    background: linear-gradient(135deg, #8DC63F 0%, #5a9e1a 100%);
+    background: linear-gradient(135deg, #8dc63f 0%, #5a9e1a 100%);
     box-shadow: 0 4px 12px rgba(141, 198, 63, 0.3);
   }
 
   .stat-icon.ballots {
-    background: linear-gradient(135deg, #2563a8 0%, #1C3A6A 100%);
+    background: linear-gradient(135deg, #2563a8 0%, #1c3a6a 100%);
     box-shadow: 0 4px 12px rgba(37, 99, 168, 0.3);
   }
 

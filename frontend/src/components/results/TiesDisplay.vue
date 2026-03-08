@@ -10,7 +10,7 @@ const props = defineProps<{
 const { t } = useI18n();
 
 const hasRequiredTieBreaks = computed(() =>
-  props.ties.some((tie) => tie.tieBreakRequired)
+  props.ties.some((tie) => tie.tieBreakRequired),
 );
 
 function getSectionType(section: string) {
@@ -67,7 +67,10 @@ function getSectionLabel(section: string) {
         <div class="tie-content">
           <div class="tie-info">
             <strong>{{ $t("results.section") }}:</strong>
-            <el-tag :type="getSectionType(tie.section)" style="margin-left: 10px">
+            <el-tag
+              :type="getSectionType(tie.section)"
+              style="margin-left: 10px"
+            >
               {{ getSectionLabel(tie.section) }}
             </el-tag>
           </div>

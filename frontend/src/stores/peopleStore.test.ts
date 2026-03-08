@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { setActivePinia, createPinia } from 'pinia';
-import { usePeopleStore } from './peopleStore';
-import type { PersonDto } from '../types';
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { setActivePinia, createPinia } from "pinia";
+import { usePeopleStore } from "./peopleStore";
+import type { PersonDto } from "../types";
 
-vi.mock('../services/peopleService', () => ({
+vi.mock("../services/peopleService", () => ({
   peopleService: {
     getAll: vi.fn(),
     getById: vi.fn(),
@@ -13,45 +13,45 @@ vi.mock('../services/peopleService', () => ({
     search: vi.fn(),
     getVoters: vi.fn(),
     getCandidates: vi.fn(),
-    getAllForBallotEntry: vi.fn()
-  }
+    getAllForBallotEntry: vi.fn(),
+  },
 }));
 
-vi.mock('../services/signalrService', () => ({
+vi.mock("../services/signalrService", () => ({
   signalrService: {
     connectToFrontDeskHub: vi.fn(),
     joinElection: vi.fn(),
-    leaveElection: vi.fn()
-  }
+    leaveElection: vi.fn(),
+  },
 }));
 
-import { peopleService } from '../services/peopleService';
+import { peopleService } from "../services/peopleService";
 
-describe('People Store - Candidate Cache', () => {
+describe("People Store - Candidate Cache", () => {
   let store: ReturnType<typeof usePeopleStore>;
 
   const mockPerson: PersonDto = {
-    personGuid: '123e4567-e89b-12d3-a456-426614174000',
-    firstName: 'John',
-    lastName: 'Smith',
-    fullName: 'John Smith',
+    personGuid: "123e4567-e89b-12d3-a456-426614174000",
+    firstName: "John",
+    lastName: "Smith",
+    fullName: "John Smith",
     canReceiveVotes: true,
     canVote: true,
     voteCount: 0,
-    combinedSoundCodes: 'J500,S530'
+    combinedSoundCodes: "J500,S530",
   };
 
   const mockPerson2: PersonDto = {
-    personGuid: '123e4567-e89b-12d3-a456-426614174001',
-    firstName: 'Jane',
-    lastName: 'Doe',
-    fullName: 'Jane Doe',
+    personGuid: "123e4567-e89b-12d3-a456-426614174001",
+    firstName: "Jane",
+    lastName: "Doe",
+    fullName: "Jane Doe",
     canReceiveVotes: true,
     canVote: true,
     voteCount: 0,
-    combinedSoundCodes: 'J500,D000',
-    otherNames: 'Janet',
-    otherLastNames: 'Dough'
+    combinedSoundCodes: "J500,D000",
+    otherNames: "Janet",
+    otherLastNames: "Dough",
   };
 
   beforeEach(() => {
@@ -64,165 +64,181 @@ describe('People Store - Candidate Cache', () => {
     vi.clearAllMocks();
   });
 
-  describe('enrichPersonForSearch', () => {
-    it('should add _searchText and _soundexCodes to person', () => {
+  describe("enrichPersonForSearch", () => {
+    it("should add _searchText and _soundexCodes to person", () => {
       const enriched = store.enrichPersonForSearch(mockPerson);
 
-      expect(enriched._searchText).toBe('john smith');
-      expect(enriched._soundexCodes).toEqual(['J500', 'S530']);
+      expect(enriched._searchText).toBe("john smith");
+      expect(enriched._soundexCodes).toEqual(["J500", "S530"]);
       expect(enriched.personGuid).toBe(mockPerson.personGuid);
       expect(enriched.firstName).toBe(mockPerson.firstName);
     });
 
-    it('should include otherNames and otherLastNames in _searchText', () => {
+    it("should include otherNames and otherLastNames in _searchText", () => {
       const enriched = store.enrichPersonForSearch(mockPerson2);
 
-      expect(enriched._searchText).toBe('jane doe janet dough');
-      expect(enriched._soundexCodes).toEqual(['J500', 'D000']);
+      expect(enriched._searchText).toBe("jane doe janet dough");
+      expect(enriched._soundexCodes).toEqual(["J500", "D000"]);
     });
 
-    it('should handle missing combinedSoundCodes', () => {
-      const personWithoutCodes = { ...mockPerson, combinedSoundCodes: undefined };
+    it("should handle missing combinedSoundCodes", () => {
+      const personWithoutCodes = {
+        ...mockPerson,
+        combinedSoundCodes: undefined,
+      };
       const enriched = store.enrichPersonForSearch(personWithoutCodes);
 
       expect(enriched._soundexCodes).toEqual([]);
     });
 
-    it('should handle empty combinedSoundCodes', () => {
-      const personWithEmptyCodes = { ...mockPerson, combinedSoundCodes: '' };
+    it("should handle empty combinedSoundCodes", () => {
+      const personWithEmptyCodes = { ...mockPerson, combinedSoundCodes: "" };
       const enriched = store.enrichPersonForSearch(personWithEmptyCodes);
 
       expect(enriched._soundexCodes).toEqual([]);
     });
 
-    it('should trim and filter empty strings from search text', () => {
+    it("should trim and filter empty strings from search text", () => {
       const personWithMissingFields = {
         ...mockPerson,
         firstName: undefined,
         otherNames: undefined,
-        otherLastNames: undefined
+        otherLastNames: undefined,
       };
       const enriched = store.enrichPersonForSearch(personWithMissingFields);
 
-      expect(enriched._searchText).toBe('smith');
+      expect(enriched._searchText).toBe("smith");
     });
   });
 
-  describe('initializeCandidateCache', () => {
-    it('should fetch all people and enrich them', async () => {
-      vi.mocked(peopleService.getAllForBallotEntry).mockResolvedValue([mockPerson, mockPerson2]);
+  describe("initializeCandidateCache", () => {
+    it("should fetch all people and enrich them", async () => {
+      vi.mocked(peopleService.getAllForBallotEntry).mockResolvedValue([
+        mockPerson,
+        mockPerson2,
+      ]);
 
-      await store.initializeCandidateCache('election-123');
+      await store.initializeCandidateCache("election-123");
 
-      expect(peopleService.getAllForBallotEntry).toHaveBeenCalledWith('election-123');
+      expect(peopleService.getAllForBallotEntry).toHaveBeenCalledWith(
+        "election-123",
+      );
       expect(store.candidateCache).toHaveLength(2);
-      expect(store.candidateCache[0]._searchText).toBe('john smith');
-      expect(store.candidateCache[1]._searchText).toBe('jane doe janet dough');
+      expect(store.candidateCache[0]._searchText).toBe("john smith");
+      expect(store.candidateCache[1]._searchText).toBe("jane doe janet dough");
       expect(store.isCacheInitialized).toBe(true);
     });
 
-    it('should not fetch if already initialized', async () => {
-      vi.mocked(peopleService.getAllForBallotEntry).mockResolvedValue([mockPerson]);
+    it("should not fetch if already initialized", async () => {
+      vi.mocked(peopleService.getAllForBallotEntry).mockResolvedValue([
+        mockPerson,
+      ]);
 
-      await store.initializeCandidateCache('election-123');
-      await store.initializeCandidateCache('election-123');
+      await store.initializeCandidateCache("election-123");
+      await store.initializeCandidateCache("election-123");
 
       expect(peopleService.getAllForBallotEntry).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw error if fetch fails', async () => {
-      const error = new Error('Network error');
+    it("should throw error if fetch fails", async () => {
+      const error = new Error("Network error");
       vi.mocked(peopleService.getAllForBallotEntry).mockRejectedValue(error);
 
-      await expect(store.initializeCandidateCache('election-123')).rejects.toThrow('Network error');
+      await expect(
+        store.initializeCandidateCache("election-123"),
+      ).rejects.toThrow("Network error");
       expect(store.isCacheInitialized).toBe(false);
     });
   });
 
-  describe('SignalR handlePersonAdded', () => {
-    it('should add eligible person to cache', async () => {
+  describe("SignalR handlePersonAdded", () => {
+    it("should add eligible person to cache", async () => {
       store.isCacheInitialized = true;
       store.candidateCache = [];
 
       vi.mocked(peopleService.getById).mockResolvedValue(mockPerson);
 
       await store.handlePersonAdded({
-        electionGuid: 'election-123',
+        electionGuid: "election-123",
         personGuid: mockPerson.personGuid,
-        action: 'added',
+        action: "added",
         firstName: mockPerson.firstName,
         lastName: mockPerson.lastName,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
 
       expect(store.candidateCache).toHaveLength(1);
       expect(store.candidateCache[0].personGuid).toBe(mockPerson.personGuid);
-      expect(store.candidateCache[0]._searchText).toBe('john smith');
+      expect(store.candidateCache[0]._searchText).toBe("john smith");
     });
 
-    it('should add ineligible person to cache', async () => {
+    it("should add ineligible person to cache", async () => {
       store.isCacheInitialized = true;
       store.candidateCache = [];
 
-      const ineligiblePerson = { ...mockPerson, canReceiveVotes: false, ineligibleReasonCode: 'X01' };
+      const ineligiblePerson = {
+        ...mockPerson,
+        canReceiveVotes: false,
+        ineligibleReasonCode: "X01",
+      };
       vi.mocked(peopleService.getById).mockResolvedValue(ineligiblePerson);
 
       await store.handlePersonAdded({
-        electionGuid: 'election-123',
+        electionGuid: "election-123",
         personGuid: mockPerson.personGuid,
-        action: 'added',
+        action: "added",
         firstName: mockPerson.firstName,
         lastName: mockPerson.lastName,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
 
       expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].ineligibleReasonCode).toBe('X01');
+      expect(store.candidateCache[0].ineligibleReasonCode).toBe("X01");
     });
 
-    it('should not add to cache if not initialized', async () => {
+    it("should not add to cache if not initialized", async () => {
       store.isCacheInitialized = false;
       store.candidateCache = [];
 
       vi.mocked(peopleService.getById).mockResolvedValue(mockPerson);
 
       await store.handlePersonAdded({
-        electionGuid: 'election-123',
+        electionGuid: "election-123",
         personGuid: mockPerson.personGuid,
-        action: 'added',
+        action: "added",
         firstName: mockPerson.firstName,
         lastName: mockPerson.lastName,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
 
       expect(store.candidateCache).toHaveLength(0);
     });
   });
 
-  describe('SignalR handlePersonUpdated', () => {
-    it('should update existing person in cache', async () => {
+  describe("SignalR handlePersonUpdated", () => {
+    it("should update existing person in cache", async () => {
       const initialEnriched = store.enrichPersonForSearch(mockPerson);
       store.isCacheInitialized = true;
       store.candidateCache = [initialEnriched];
 
-      const updatedPerson = { ...mockPerson, firstName: 'Johnny' };
+      const updatedPerson = { ...mockPerson, firstName: "Johnny" };
       vi.mocked(peopleService.getById).mockResolvedValue(updatedPerson);
 
       await store.handlePersonUpdated({
-        electionGuid: 'election-123',
+        electionGuid: "election-123",
         personGuid: mockPerson.personGuid,
-        action: 'updated',
-        firstName: 'Johnny',
+        action: "updated",
+        firstName: "Johnny",
         lastName: mockPerson.lastName,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
 
       expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].firstName).toBe('Johnny');
-      expect(store.candidateCache[0]._searchText).toBe('johnny smith');
+      expect(store.candidateCache[0].firstName).toBe("Johnny");
+      expect(store.candidateCache[0]._searchText).toBe("johnny smith");
     });
 
-    it('should add person to cache if they become eligible', async () => {
+    it("should add person to cache if they become eligible", async () => {
       store.isCacheInitialized = true;
       store.candidateCache = [];
 
@@ -230,70 +246,74 @@ describe('People Store - Candidate Cache', () => {
       vi.mocked(peopleService.getById).mockResolvedValue(nowEligiblePerson);
 
       await store.handlePersonUpdated({
-        electionGuid: 'election-123',
+        electionGuid: "election-123",
         personGuid: mockPerson.personGuid,
-        action: 'updated',
+        action: "updated",
         firstName: mockPerson.firstName,
         lastName: mockPerson.lastName,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
 
       expect(store.candidateCache).toHaveLength(1);
       expect(store.candidateCache[0].personGuid).toBe(mockPerson.personGuid);
     });
 
-    it('should keep ineligible person in cache when they become ineligible', async () => {
+    it("should keep ineligible person in cache when they become ineligible", async () => {
       const initialEnriched = store.enrichPersonForSearch(mockPerson);
       store.isCacheInitialized = true;
       store.candidateCache = [initialEnriched];
 
-      const ineligiblePerson = { ...mockPerson, canReceiveVotes: false, ineligibleReasonCode: 'X01' };
+      const ineligiblePerson = {
+        ...mockPerson,
+        canReceiveVotes: false,
+        ineligibleReasonCode: "X01",
+      };
       vi.mocked(peopleService.getById).mockResolvedValue(ineligiblePerson);
 
       await store.handlePersonUpdated({
-        electionGuid: 'election-123',
+        electionGuid: "election-123",
         personGuid: mockPerson.personGuid,
-        action: 'updated',
+        action: "updated",
         firstName: mockPerson.firstName,
         lastName: mockPerson.lastName,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
 
       expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].ineligibleReasonCode).toBe('X01');
+      expect(store.candidateCache[0].ineligibleReasonCode).toBe("X01");
     });
   });
 
-  describe('SignalR handlePersonDeleted', () => {
-    it('should remove person from cache', () => {
+  describe("SignalR handlePersonDeleted", () => {
+    it("should remove person from cache", () => {
       const enriched = store.enrichPersonForSearch(mockPerson);
       store.isCacheInitialized = true;
       store.candidateCache = [enriched];
 
       store.handlePersonDeleted({
-        electionGuid: 'election-123',
+        electionGuid: "election-123",
         personGuid: mockPerson.personGuid,
-        action: 'deleted',
+        action: "deleted",
         firstName: mockPerson.firstName,
         lastName: mockPerson.lastName,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
 
       expect(store.candidateCache).toHaveLength(0);
     });
 
-    it('should not fail if cache is not initialized', () => {
+    it("should not fail if cache is not initialized", () => {
       store.isCacheInitialized = false;
       store.candidateCache = [];
 
       expect(() => {
         store.handlePersonDeleted({
-          electionGuid: 'election-123',
+          electionGuid: "election-123",
           personGuid: mockPerson.personGuid,
-          action: 'deleted',
+          action: "deleted",
           firstName: mockPerson.firstName,
           lastName: mockPerson.lastName,
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         });
       }).not.toThrow();
     });

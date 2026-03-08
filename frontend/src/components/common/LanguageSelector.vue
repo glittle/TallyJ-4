@@ -29,15 +29,17 @@ onMounted(() => {
 
 <template>
   <div class="language-selector">
-    <label for="language-select" class="sr-only">{{ $t("common.language") }}</label>
+    <label for="language-select" class="sr-only">{{
+      $t("common.language")
+    }}</label>
     <el-select
       id="language-select"
       :model-value="locale"
-      @update:model-value="changeLanguage"
       size="small"
       filterable
       aria-label="Select language"
       popper-class="language-select-dropdown"
+      @update:model-value="changeLanguage"
     >
       <template #label="{ label, value }">
         <country-flag :country="getFlag(value)" size="small" />

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, onBeforeUnmount, computed } from "vue";
+import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
-import { useNotifications } from '@/composables/useNotifications';
+import { useNotifications } from "@/composables/useNotifications";
 import { useAuthStore } from "../stores/authStore";
 import api from "../services/api";
 import type { FormInstance, FormRules } from "element-plus";
@@ -33,22 +33,27 @@ const joinForm = reactive({
 
 const rules: FormRules = {
   electionGuid: [
-    { required: true, message: t("auth.tellerJoin.electionRequired"), trigger: "change" },
+    {
+      required: true,
+      message: t("auth.tellerJoin.electionRequired"),
+      trigger: "change",
+    },
   ],
   accessCode: [
-    { required: true, message: t("auth.tellerJoin.accessCodeRequired"), trigger: "blur" },
+    {
+      required: true,
+      message: t("auth.tellerJoin.accessCodeRequired"),
+      trigger: "blur",
+    },
   ],
 };
-
-const selectedElectionName = computed(() => {
-  const found = elections.value.find(e => e.electionGuid === joinForm.electionGuid);
-  return found?.name;
-});
 
 async function fetchAvailableElections() {
   loadingElections.value = true;
   try {
-    const response = await api.get<{ data: AvailableElection[] }>('/api/public/elections');
+    const response = await api.get<{ data: AvailableElection[] }>(
+      "/api/public/elections",
+    );
     elections.value = response.data?.data ?? [];
   } catch (error) {
     console.error("Failed to fetch elections:", error);
@@ -58,7 +63,7 @@ async function fetchAvailableElections() {
 }
 
 const handleJoin = async () => {
-  console.log('Joining election...', joinFormRef.value);
+  console.log("Joining election...", joinFormRef.value);
   if (!joinFormRef.value) return;
 
   await joinFormRef.value.validate(async (valid) => {
@@ -66,7 +71,10 @@ const handleJoin = async () => {
 
     loading.value = true;
     try {
-      const result = await authStore.tellerLogin(joinForm.electionGuid, joinForm.accessCode);
+      const result = await authStore.tellerLogin(
+        joinForm.electionGuid,
+        joinForm.accessCode,
+      );
 
       showSuccessMessage(t("auth.tellerJoin.joinSuccess"));
 
@@ -98,12 +106,11 @@ onMounted(async () => {
   if (electionGuid) {
     prefilledFromUrl.value = true;
 
-    const accessCode = route.query.code as string;
+    const accessCode = route.params.accessCode as string;
     if (accessCode) {
       joinForm.accessCode = accessCode;
     }
   }
-
 
   await fetchAvailableElections();
 
@@ -135,27 +142,68 @@ onBeforeUnmount(() => {
         <el-skeleton :rows="3" animated />
       </div>
 
-      <div v-else-if="elections.length === 0 && !prefilledFromUrl" class="no-elections">
+      <div
+        v-else-if="elections.length === 0 && !prefilledFromUrl"
+        class="no-elections"
+      >
         <el-empty :description="t('auth.tellerJoin.noElections')" />
       </div>
 
-      <el-form v-else ref="joinFormRef" :model="joinForm" :rules="rules" label-position="top" @keyup.enter="handleJoin">
-        <el-form-item :label="t('auth.tellerJoin.selectElection')" prop="electionGuid">
-          <select v-model="joinForm.electionGuid" size="9"
-            style="width: 100%; padding: 8px; border: 1px solid #dcdfe6; border-radius: 4px;">
-            <option v-for="election in elections" :key="election.electionGuid" :value="election.electionGuid">
-              {{ election.name }}{{ election.dateOfElection ? ' - ' + formatDate(election.dateOfElection) : '' }}
+      <el-form
+        v-else
+        ref="joinFormRef"
+        :model="joinForm"
+        :rules="rules"
+        label-position="top"
+        @keyup.enter="handleJoin"
+      >
+        <el-form-item
+          :label="t('auth.tellerJoin.selectElection')"
+          prop="electionGuid"
+        >
+          <select
+            v-model="joinForm.electionGuid"
+            size="9"
+            style="
+              width: 100%;
+              padding: 8px;
+              border: 1px solid #dcdfe6;
+              border-radius: 4px;
+            "
+          >
+            <option
+              v-for="election in elections"
+              :key="election.electionGuid"
+              :value="election.electionGuid"
+            >
+              {{ election.name
+              }}{{
+                election.dateOfElection
+                  ? " - " + formatDate(election.dateOfElection)
+                  : ""
+              }}
             </option>
           </select>
         </el-form-item>
 
-        <el-form-item :label="t('auth.tellerJoin.accessCodeLabel')" prop="accessCode">
-          <el-input v-model="joinForm.accessCode" :placeholder="t('auth.tellerJoin.accessCodePlaceholder')"
-            type="text" />
+        <el-form-item
+          :label="t('auth.tellerJoin.accessCodeLabel')"
+          prop="accessCode"
+        >
+          <el-input
+            v-model="joinForm.accessCode"
+            :placeholder="t('auth.tellerJoin.accessCodePlaceholder')"
+            type="text"
+          />
         </el-form-item>
 
         <div class="login-actions">
-          <el-button type="primary" :loading="loading" class="submit-btn" @click="handleJoin">
+          <el-button
+            type="primary"
+            :loading="loading"
+            class="submit-btn"
+            @click="handleJoin"
+          >
             {{ t("auth.tellerJoin.joinButton") }}
           </el-button>
         </div>

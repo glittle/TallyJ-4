@@ -1,6 +1,7 @@
 ﻿using Backend.DTOs.Results;
 using Backend.DTOs.SignalR;
 using Backend.Domain.Context;
+using Backend.Domain.Enumerations;
 using Backend.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Entities;
@@ -305,7 +306,7 @@ public class TallyService : ITallyService
             {
                 LocationGuid = l.LocationGuid,
                 LocationName = l.Name ?? UnknownLocationName,
-                BallotCount = l.Ballots.Count(b => b.StatusCode == "Ok"),
+                BallotCount = l.Ballots.Count(b => b.StatusCode == BallotStatus.Ok),
                 VoteCount = l.Ballots.Sum(b => b.Votes.Count),
                 VoterCount = _context.People.Count(p => p.ElectionGuid == electionGuid && p.VotingLocationGuid == l.LocationGuid && p.CanVote == true),
                 Status = l.Ballots.Any() ? "Active" : "No Ballots"
@@ -675,7 +676,7 @@ public class TallyService : ITallyService
                 LocationName = l.Name ?? UnknownFallbackValue,
                 TotalVoters = _context.People.Count(p => p.ElectionGuid == electionGuid && p.VotingLocationGuid == l.LocationGuid && p.CanVote == true),
                 Voted = _context.People.Count(p => p.ElectionGuid == electionGuid && p.VotingLocationGuid == l.LocationGuid && p.HasOnlineBallot == true),
-                BallotsEntered = l.Ballots.Count(b => b.StatusCode == "Ok"),
+                BallotsEntered = l.Ballots.Count(b => b.StatusCode == BallotStatus.Ok),
                 TotalVotes = l.Ballots.Sum(b => b.Votes.Count)
             })
             .ToListAsync();
@@ -800,11 +801,11 @@ public class TallyService : ITallyService
     {
         var votesPerPosition = new int[election.NumberToElect ?? 9];
         var ballotLengths = allBallots
-            .Where(b => b.StatusCode == "Ok")
+            .Where(b => b.StatusCode == BallotStatus.Ok)
             .Select(b => b.Votes.Count)
             .ToList();
 
-        foreach (var ballot in allBallots.Where(b => b.StatusCode == "Ok"))
+        foreach (var ballot in allBallots.Where(b => b.StatusCode == BallotStatus.Ok))
         {
             var voteCount = ballot.Votes.Count;
             if (voteCount > 0 && voteCount <= votesPerPosition.Length)
@@ -899,7 +900,7 @@ public class TallyService : ITallyService
                                p.VotingLocationGuid == location.LocationGuid &&
                                p.CanVote == true);
 
-            var locationBallotCount = location.Ballots.Count(b => b.StatusCode == "Ok");
+            var locationBallotCount = location.Ballots.Count(b => b.StatusCode == BallotStatus.Ok);
             var turnout = locationVoterCount > 0
                 ? (decimal)locationBallotCount / locationVoterCount * 100
                 : 0;
@@ -1013,12 +1014,12 @@ public class TallyService : ITallyService
                                p.VotingLocationGuid == location.LocationGuid &&
                                p.CanVote == true);
 
-            var locationBallots = location.Ballots.Count(b => b.StatusCode == "Ok");
+            var locationBallots = location.Ballots.Count(b => b.StatusCode == BallotStatus.Ok);
             var locationVotes = location.Ballots.Sum(b => b.Votes.Count);
 
             // Get top candidates for this location
             var locationCandidateVotes = location.Ballots
-                .Where(b => b.StatusCode == "Ok")
+                .Where(b => b.StatusCode == BallotStatus.Ok)
                 .SelectMany(b => b.Votes)
                 .GroupBy(v => v.Person?.FullNameFl ?? UnknownFallbackValue)
                 .OrderByDescending(g => g.Count())
@@ -1031,7 +1032,7 @@ public class TallyService : ITallyService
                 RegisteredVoters = locationVoters,
                 BallotsCast = locationBallots,
                 ValidBallots = locationBallots,
-                SpoiledBallots = location.Ballots.Count(b => b.StatusCode != "Ok"),
+                SpoiledBallots = location.Ballots.Count(b => b.StatusCode != BallotStatus.Ok),
                 TurnoutPercentage = locationVoters > 0 ? (decimal)locationBallots / locationVoters * 100 : 0,
                 TotalVotes = locationVotes,
                 TopCandidates = locationCandidateVotes
@@ -1080,7 +1081,7 @@ public class TallyService : ITallyService
         var totalRegisteredVoters = await _context.People
             .CountAsync(p => p.ElectionGuid == electionGuid && p.CanVote == true);
         var totalBallotsCast = allBallots.Count;
-        var validBallots = allBallots.Count(b => b.StatusCode == "Ok");
+        var validBallots = allBallots.Count(b => b.StatusCode == BallotStatus.Ok);
         var spoiledBallots = summary?.SpoiledBallots ?? 0;
         var totalVotes = summary?.TotalVotes ?? 0;
 

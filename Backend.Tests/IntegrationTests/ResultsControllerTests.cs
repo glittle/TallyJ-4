@@ -172,7 +172,7 @@ public class ResultsControllerTests : IntegrationTestBase
             var ballot = new Ballot
             {
                 BallotGuid = Guid.NewGuid(),
-                StatusCode = "Ok",
+                StatusCode = BallotStatus.Ok,
                 BallotNumAtComputer = i + 1,
                 ComputerCode = "C1",
                 LocationGuid = location.LocationGuid,
@@ -188,8 +188,8 @@ public class ResultsControllerTests : IntegrationTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = people[v % people.Count].PersonGuid,
                     PositionOnBallot = v + 1,
-                    StatusCode = "Ok",
-                    InvalidReasonGuid = null,
+                    VoteStatus = VoteStatus.Ok,
+                    IneligibleReasonCode = null,
                     RowVersion = new byte[] { 1 }
                 });
             }

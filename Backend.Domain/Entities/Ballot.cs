@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Domain.Enumerations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Domain.Entities;
@@ -33,11 +34,9 @@ public partial class Ballot
     public Guid BallotGuid { get; set; }
 
     /// <summary>
-    /// The status code of the ballot (e.g., "Ok", "Spoiled").
+    /// The status of the ballot.
     /// </summary>
-    [StringLength(10)]
-    [Unicode(false)]
-    public string StatusCode { get; set; } = null!;
+    public BallotStatus StatusCode { get; set; }
 
     /// <summary>
     /// The computer code where this ballot was entered.

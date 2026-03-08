@@ -1,7 +1,18 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { Ticket, Monitor, Connection, UserFilled, Clock, Lock, Pointer, Document, Location, Check } from "@element-plus/icons-vue";
+import {
+  Ticket,
+  Monitor,
+  Connection,
+  UserFilled,
+  Clock,
+  Lock,
+  Pointer,
+  Document,
+  Location,
+  Check,
+} from "@element-plus/icons-vue";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -99,18 +110,23 @@ const navigateToLogin = (type: string) => {
 // add keyboard shortcut: if user presses "v", go to voter login; if "t", teller login; if "o", officer login
 // use the first letter of the type as the shortcut
 globalThis.addEventListener("keydown", (event) => {
-  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+  if (
+    event.target instanceof HTMLInputElement ||
+    event.target instanceof HTMLTextAreaElement
+  ) {
     // Don't trigger shortcuts when typing in input fields
     return;
   }
 
   // find the options that matches the pressed key and navigate to the corresponding login page
-  const matched = options.find(opt => t(opt.title)[0]?.toLocaleLowerCase() === event.key.toLocaleLowerCase());
+  const matched = options.find(
+    (opt) =>
+      t(opt.title)[0]?.toLocaleLowerCase() === event.key.toLocaleLowerCase(),
+  );
   if (matched) {
     matched.action();
   }
 });
-
 </script>
 
 <template>
@@ -121,7 +137,16 @@ globalThis.addEventListener("keydown", (event) => {
     </div>
 
     <div class="options-grid">
-      <el-card v-for="opt in options" :key="opt.type" class="option-card" shadow="hover" tabindex="0" @click="opt.action" @keydown.enter="opt.action" @keydown.space.prevent="opt.action">
+      <el-card
+        v-for="opt in options"
+        :key="opt.type"
+        class="option-card"
+        shadow="hover"
+        tabindex="0"
+        @click="opt.action"
+        @keydown.enter="opt.action"
+        @keydown.space.prevent="opt.action"
+      >
         <template #header>
           <div class="card-header">
             <el-icon :size="40" :color="opt.color">
@@ -132,14 +157,26 @@ globalThis.addEventListener("keydown", (event) => {
         </template>
         <p>{{ t(opt.description) }}</p>
         <div class="card-footer">
-          <el-button :type="opt.type === 'external' ? 'danger' : 'primary'" plain>
+          <el-button
+            :type="opt.type === 'external' ? 'danger' : 'primary'"
+            plain
+          >
             {{ t(opt.buttonText) }}
           </el-button>
         </div>
       </el-card>
     </div>
     <div class="options-grid2">
-      <el-card v-for="opt in options2" :key="opt.type" class="option-card" shadow="hover" tabindex="0" @click="opt.action" @keydown.enter="opt.action" @keydown.space.prevent="opt.action">
+      <el-card
+        v-for="opt in options2"
+        :key="opt.type"
+        class="option-card"
+        shadow="hover"
+        tabindex="0"
+        @click="opt.action"
+        @keydown.enter="opt.action"
+        @keydown.space.prevent="opt.action"
+      >
         <template #header>
           <div class="card-header">
             <el-icon :size="40" :color="opt.color">
@@ -150,7 +187,10 @@ globalThis.addEventListener("keydown", (event) => {
         </template>
         <p>{{ t(opt.description) }}</p>
         <div class="card-footer">
-          <el-button :type="opt.type === 'external' ? 'danger' : 'primary'" plain>
+          <el-button
+            :type="opt.type === 'external' ? 'danger' : 'primary'"
+            plain
+          >
             {{ t(opt.buttonText) }}
           </el-button>
         </div>
@@ -161,11 +201,17 @@ globalThis.addEventListener("keydown", (event) => {
     <div class="benefits-section">
       <div class="benefits-header">
         <h2>{{ t("auth.landing.benefits.title") }}</h2>
-        <p class="benefits-subtitle">{{ t("auth.landing.benefits.subtitle") }}</p>
+        <p class="benefits-subtitle">
+          {{ t("auth.landing.benefits.subtitle") }}
+        </p>
       </div>
 
       <div class="features-grid">
-        <div v-for="feature in features" :key="feature.title" class="feature-card">
+        <div
+          v-for="feature in features"
+          :key="feature.title"
+          class="feature-card"
+        >
           <div class="feature-icon">
             <el-icon :size="32" :color="feature.color">
               <component :is="feature.icon" />
@@ -219,7 +265,9 @@ globalThis.addEventListener("keydown", (event) => {
 
     .option-card {
       cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
       text-align: center;
       border-radius: 12px;
       border: none;
@@ -236,7 +284,9 @@ globalThis.addEventListener("keydown", (event) => {
 
     .option-card {
       cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
       text-align: center;
       border-radius: 12px;
       border: none;

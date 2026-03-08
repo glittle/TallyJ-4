@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Services.Analyzers;
 
@@ -166,7 +167,7 @@ public abstract class ElectionAnalyzerBase
         Logger.LogInformation("Calculating ballot statistics");
 
         var invalidBallotGuids = Ballots
-            .Where(b => b.StatusCode != "Ok")
+            .Where(b => b.StatusCode != BallotStatus.Ok)
             .Select(b => b.BallotGuid)
             .ToList();
 
@@ -182,7 +183,7 @@ public abstract class ElectionAnalyzerBase
 
         var invalidVotes = Votes
             .Where(v => !invalidBallotGuids.Contains(v.BallotGuid) &&
-                       DetermineVoteStatus(v) != "Ok")
+                       DetermineVoteStatus(v) != VoteStatus.Ok)
             .ToList();
 
         ResultSummaryCalc.SpoiledVotes = invalidVotes.Count;
@@ -353,7 +354,7 @@ public abstract class ElectionAnalyzerBase
     /// <returns>True if the ballot needs review, false otherwise.</returns>
     protected virtual bool BallotNeedsReview(Ballot ballot)
     {
-        if (ballot.StatusCode != "Ok")
+        if (ballot.StatusCode != BallotStatus.Ok)
             return true;
 
         var ballotVotes = Votes.Where(v => v.BallotGuid == ballot.BallotGuid).ToList();
@@ -362,7 +363,7 @@ public abstract class ElectionAnalyzerBase
         if (ballotVotes.Count != numberToElect)
             return true;
 
-        if (ballotVotes.Any(v => DetermineVoteStatus(v) == "Changed"))
+        if (ballotVotes.Any(v => DetermineVoteStatus(v) == VoteStatus.Changed))
             return true;
 
         return false;
@@ -372,25 +373,25 @@ public abstract class ElectionAnalyzerBase
     /// Determines the status of a vote based on candidate eligibility and data consistency.
     /// </summary>
     /// <param name="vote">The vote to evaluate.</param>
-    /// <returns>The vote status: "Ok", "Spoiled", or "Changed".</returns>
-    protected virtual string DetermineVoteStatus(Vote vote)
+    /// <returns>The vote status.</returns>
+    protected virtual VoteStatus DetermineVoteStatus(Vote vote)
     {
         var person = People.FirstOrDefault(p => p.PersonGuid == vote.PersonGuid);
 
         if (person == null)
-            return "Spoiled";
+            return VoteStatus.Spoiled;
 
         if (person.CanReceiveVotes != true)
-            return "Spoiled";
+            return VoteStatus.Spoiled;
 
         if (!string.IsNullOrEmpty(vote.PersonCombinedInfo) &&
             !string.IsNullOrEmpty(person.CombinedInfo) &&
             !person.CombinedInfo.StartsWith(vote.PersonCombinedInfo))
         {
-            return "Changed";
+            return VoteStatus.Changed;
         }
 
-        return "Ok";
+        return VoteStatus.Ok;
     }
 }
 

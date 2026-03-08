@@ -1,4 +1,6 @@
-﻿namespace Backend.DTOs.Results;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data transfer object containing comprehensive election report data.
@@ -121,7 +123,7 @@ public class BallotReportDto
     /// <summary>
     /// Current status of the ballot.
     /// </summary>
-    public string Status { get; set; } = string.Empty;
+    public BallotStatus Status { get; set; }
 
     /// <summary>
     /// List of votes recorded on this ballot.

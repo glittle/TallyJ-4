@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { type FormInstance, type FormRules } from 'element-plus';
-import { useNotifications } from '@/composables/useNotifications';
-import { useBallotStore } from '../../stores/ballotStore';
-import { usePeopleStore } from '../../stores/peopleStore';
-import type { CreateVoteDto, PersonDto } from '../../types';
-import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
+import { ref, reactive, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { type FormInstance, type FormRules } from "element-plus";
+import { useNotifications } from "@/composables/useNotifications";
+import { useBallotStore } from "../../stores/ballotStore";
+import { usePeopleStore } from "../../stores/peopleStore";
+import type { CreateVoteDto, PersonDto } from "../../types";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 
 const props = defineProps<{
   modelValue: boolean;
@@ -16,7 +16,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean];
+  "update:modelValue": [value: boolean];
   success: [];
 }>();
 
@@ -33,16 +33,20 @@ const candidates = ref<PersonDto[]>([]);
 
 const form = reactive({
   positionOnBallot: props.nextPosition,
-  personGuid: ''
+  personGuid: "",
 });
 
 const rules = reactive<FormRules>({
   positionOnBallot: [
-    { required: true, message: t('ballots.positionRequired'), trigger: 'blur' }
+    { required: true, message: t("ballots.positionRequired"), trigger: "blur" },
   ],
   personGuid: [
-    { required: true, message: t('ballots.candidateRequired'), trigger: 'change' }
-  ]
+    {
+      required: true,
+      message: t("ballots.candidateRequired"),
+      trigger: "change",
+    },
+  ],
 });
 
 onMounted(async () => {
@@ -63,7 +67,7 @@ async function searchPeople(query: string) {
   searching.value = true;
   try {
     const results = await peopleStore.searchPeople(props.electionGuid, query);
-    candidates.value = results.filter(p => p.canReceiveVotes);
+    candidates.value = results.filter((p) => p.canReceiveVotes);
   } catch (error) {
     handleApiError(error);
   } finally {
@@ -84,11 +88,11 @@ async function handleSubmit() {
           ballotGuid: props.ballotGuid,
           positionOnBallot: form.positionOnBallot,
           personGuid: form.personGuid,
-          statusCode: 'Ok'
+          statusCode: "Ok",
         };
         await ballotStore.createVote(dto);
-        showSuccessMessage(t('ballots.voteCreateSuccess'));
-        emit('success');
+        showSuccessMessage(t("ballots.voteCreateSuccess"));
+        emit("success");
       } catch (error) {
         handleApiError(error);
       } finally {
@@ -100,31 +104,52 @@ async function handleSubmit() {
 
 function handleClose() {
   formRef.value?.resetFields();
-  emit('update:modelValue', false);
+  emit("update:modelValue", false);
 }
 </script>
 
 <template>
-  <el-dialog :model-value="modelValue" :title="$t('ballots.addVote')" width="400px"
-    @update:model-value="$emit('update:modelValue', $event)" @close="handleClose">
-    <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" label-position="left">
+  <el-dialog
+    :model-value="modelValue"
+    :title="$t('ballots.addVote')"
+    width="400px"
+    @update:model-value="$emit('update:modelValue', $event)"
+    @close="handleClose"
+  >
+    <el-form
+      ref="formRef"
+      :model="form"
+      :rules="rules"
+      label-width="100px"
+      label-position="left"
+    >
       <el-form-item :label="$t('ballots.position')" prop="positionOnBallot">
         <el-input-number v-model="form.positionOnBallot" :min="1" :max="50" />
       </el-form-item>
 
       <el-form-item :label="$t('ballots.candidate')" prop="personGuid">
-        <el-select v-model="form.personGuid" filterable remote :remote-method="searchPeople" :loading="searching"
-          style="width: 100%">
-          <el-option v-for="person in candidates" :key="person.personGuid" :label="person.fullName"
-            :value="person.personGuid" />
+        <el-select
+          v-model="form.personGuid"
+          filterable
+          remote
+          :remote-method="searchPeople"
+          :loading="searching"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="person in candidates"
+            :key="person.personGuid"
+            :label="person.fullName"
+            :value="person.personGuid"
+          />
         </el-select>
       </el-form-item>
     </el-form>
 
     <template #footer>
-      <el-button @click="handleClose">{{ $t('common.cancel') }}</el-button>
-      <el-button type="primary" @click="handleSubmit" :loading="submitting">
-        {{ $t('common.create') }}
+      <el-button @click="handleClose">{{ $t("common.cancel") }}</el-button>
+      <el-button type="primary" :loading="submitting" @click="handleSubmit">
+        {{ $t("common.create") }}
       </el-button>
     </template>
   </el-dialog>

@@ -1,14 +1,28 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useLocationStore } from '@/stores/locationStore';
-import { useElectionStore } from '@/stores/electionStore';
-import { ElMessageBox } from 'element-plus';
-import { useNotifications } from '@/composables/useNotifications';
-import { Search, UserFilled, Clock, Warning, Check, User } from '@element-plus/icons-vue';
-import { frontDeskService } from '@/services/frontDeskService';
-import { signalrService } from '@/services/signalrService';
-import type { FrontDeskVoterDto, CheckInVoterDto, FrontDeskStatsDto, UnregisterVoterDto, UpdatePersonFlagsDto } from '@/types/FrontDesk';
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useLocationStore } from "@/stores/locationStore";
+import { useElectionStore } from "@/stores/electionStore";
+import { ElMessageBox } from "element-plus";
+import { useNotifications } from "@/composables/useNotifications";
+import type { ElTable } from "element-plus";
+import {
+  Search,
+  UserFilled,
+  Clock,
+  Warning,
+  Check,
+  User,
+} from "@element-plus/icons-vue";
+import { frontDeskService } from "@/services/frontDeskService";
+import { signalrService } from "@/services/signalrService";
+import type {
+  FrontDeskVoterDto,
+  CheckInVoterDto,
+  FrontDeskStatsDto,
+  UnregisterVoterDto,
+  UpdatePersonFlagsDto,
+} from "@/types/FrontDesk";
 
 const route = useRoute();
 const router = useRouter();
@@ -24,25 +38,30 @@ const stats = ref<FrontDeskStatsDto | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const signalrInitialized = ref(false);
-const searchQuery = ref('');
+const searchQuery = ref("");
 
 const locations = computed(() => locationStore.locations);
 const currentElection = computed(() => electionStore.currentElection);
 
 // Parse election flags
 const electionFlags = computed(() => {
-  if (!currentElection.value?.flags) return [];
+  if (!currentElection.value?.flags) {
+    return [];
+  }
   try {
     const parsed = JSON.parse(currentElection.value.flags);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return currentElection.value.flags.split(',').map((f: string) => f.trim()).filter(Boolean);
+    return currentElection.value.flags
+      .split(",")
+      .map((f: string) => f.trim())
+      .filter(Boolean);
   }
 });
 
 // Keyboard navigation
-const searchInputRef = ref();
-const voterTableRef = ref();
+const searchInputRef = ref<HTMLInputElement | null>(null);
+const voterTableRef = ref<InstanceType<typeof ElTable> | null>(null);
 const selectedIndex = ref(0);
 const selectedVoter = ref<FrontDeskVoterDto | null>(null);
 const showRegistrationButtons = ref(false);
@@ -59,35 +78,45 @@ const showAllRegistered = ref(false);
 
 // Voter filtering
 const filteredVoters = computed(() => {
-  if (!searchQuery.value.trim()) return voters.value;
+  if (!searchQuery.value.trim()) {
+    return voters.value;
+  }
   const query = searchQuery.value.toLowerCase();
-  return voters.value.filter(voter =>
-    voter.fullName.toLowerCase().includes(query) ||
-    voter.bahaiId?.toLowerCase().includes(query) ||
-    voter.area?.toLowerCase().includes(query)
+  return voters.value.filter(
+    (voter) =>
+      voter.fullName.toLowerCase().includes(query) ||
+      voter.bahaiId?.toLowerCase().includes(query) ||
+      voter.area?.toLowerCase().includes(query),
   );
 });
 
-const checkedInVoters = computed(() => filteredVoters.value.filter(v => v.isCheckedIn));
-const notCheckedInVoters = computed(() => filteredVoters.value.filter(v => !v.isCheckedIn));
+const checkedInVoters = computed(() =>
+  filteredVoters.value.filter((v) => v.isCheckedIn),
+);
+const notCheckedInVoters = computed(() =>
+  filteredVoters.value.filter((v) => !v.isCheckedIn),
+);
 
 // Filter voters based on selected filters
 const filteredByConditions = computed(() => {
-  let result = showAllRegistered.value ?
-    filteredVoters.value :
-    notCheckedInVoters.value;
+  let result = showAllRegistered.value
+    ? filteredVoters.value
+    : notCheckedInVoters.value;
 
   if (selectedMethodFilters.value.length > 0) {
-    result = result.filter(v =>
-      v.votingMethod && selectedMethodFilters.value.includes(v.votingMethod)
+    result = result.filter(
+      (v) =>
+        v.votingMethod && selectedMethodFilters.value.includes(v.votingMethod),
     );
   }
 
   if (selectedFlagFilters.value.length > 0) {
-    result = result.filter(v => {
+    result = result.filter((v) => {
       if (!v.flags) return false;
-      const voterFlags = v.flags.split(',').map(f => f.trim());
-      return selectedFlagFilters.value.every(flag => voterFlags.includes(flag));
+      const voterFlags = v.flags.split(",").map((f) => f.trim());
+      return selectedFlagFilters.value.every((flag) =>
+        voterFlags.includes(flag),
+      );
     });
   }
 
@@ -96,7 +125,11 @@ const filteredByConditions = computed(() => {
 
 // Merge not-checked-in and checked-in voters into one list
 const allVoters = computed(() => {
-  if (selectedMethodFilters.value.length > 0 || selectedFlagFilters.value.length > 0 || showAllRegistered.value) {
+  if (
+    selectedMethodFilters.value.length > 0 ||
+    selectedFlagFilters.value.length > 0 ||
+    showAllRegistered.value
+  ) {
     return filteredByConditions.value;
   }
 
@@ -105,10 +138,10 @@ const allVoters = computed(() => {
 
 // Registration type options
 const registrationTypes = [
-  { value: 'I', label: 'In Person', key: '1', isVotingMethod: true },
-  { value: 'M', label: 'Mail', key: '2', isVotingMethod: true },
-  { value: 'O', label: 'Online', key: '3', isVotingMethod: true },
-  { value: 'C', label: 'Call-In', key: '4', isVotingMethod: true }
+  { value: "I", label: "In Person", key: "1", isVotingMethod: true },
+  { value: "M", label: "Mail", key: "2", isVotingMethod: true },
+  { value: "O", label: "Online", key: "3", isVotingMethod: true },
+  { value: "C", label: "Call-In", key: "4", isVotingMethod: true },
 ];
 
 // All buttons including voting methods and flags
@@ -119,7 +152,7 @@ const allButtons = computed(() => {
       value: flag,
       label: flag,
       key: String(5 + index),
-      isVotingMethod: false
+      isVotingMethod: false,
     });
   });
   return buttons;
@@ -128,8 +161,10 @@ const allButtons = computed(() => {
 // Compute counts for each voting method
 const methodCounts = computed(() => {
   const counts: Record<string, number> = {};
-  registrationTypes.forEach(method => {
-    counts[method.value] = checkedInVoters.value.filter(v => v.votingMethod === method.value).length;
+  registrationTypes.forEach((method) => {
+    counts[method.value] = checkedInVoters.value.filter(
+      (v) => v.votingMethod === method.value,
+    ).length;
   });
   return counts;
 });
@@ -138,9 +173,9 @@ const methodCounts = computed(() => {
 const flagCounts = computed(() => {
   const counts: Record<string, number> = {};
   electionFlags.value.forEach((flag: string) => {
-    counts[flag] = filteredVoters.value.filter(v => {
+    counts[flag] = filteredVoters.value.filter((v) => {
       if (!v.flags) return false;
-      const voterFlags = v.flags.split(',').map(f => f.trim());
+      const voterFlags = v.flags.split(",").map((f) => f.trim());
       return voterFlags.includes(flag);
     }).length;
   });
@@ -150,9 +185,9 @@ const flagCounts = computed(() => {
 // Generate abbreviations for flags (first letters, max 3 chars)
 function getFlagAbbr(flag: string): string {
   return flag
-    .split(' ')
-    .map(word => word[0])
-    .join('')
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
     .toUpperCase()
     .slice(0, 3);
 }
@@ -161,7 +196,7 @@ async function fetchStats(guid: string) {
   try {
     stats.value = await frontDeskService.getStats(guid);
   } catch (e: any) {
-    console.error('Failed to fetch stats:', e);
+    console.error("Failed to fetch stats:", e);
   }
 }
 
@@ -169,10 +204,12 @@ async function fetchEligibleVoters(guid: string) {
   loading.value = true;
   error.value = null;
   try {
-    voters.value = (await frontDeskService.getEligibleVoters(guid)).sort((a, b) => a.fullName.localeCompare(b.fullName));
+    voters.value = (await frontDeskService.getEligibleVoters(guid)).sort(
+      (a, b) => a.fullName.localeCompare(b.fullName),
+    );
     await fetchStats(guid);
   } catch (e: any) {
-    error.value = e.message || 'Failed to fetch eligible voters';
+    error.value = e.message || "Failed to fetch eligible voters";
     throw e;
   } finally {
     loading.value = false;
@@ -184,49 +221,67 @@ async function checkInVoter(guid: string, checkInDto: CheckInVoterDto) {
   error.value = null;
   try {
     const updatedVoter = await frontDeskService.checkInVoter(guid, checkInDto);
-    const index = voters.value.findIndex(v => v.personGuid === updatedVoter.personGuid);
+    const index = voters.value.findIndex(
+      (v) => v.personGuid === updatedVoter.personGuid,
+    );
     if (index !== -1) {
       voters.value[index] = updatedVoter;
     }
     return updatedVoter;
   } catch (e: any) {
-    error.value = e.message || 'Failed to check in voter';
+    error.value = e.message || "Failed to check in voter";
     throw e;
   } finally {
     loading.value = false;
   }
 }
 
-async function unregisterVoter(guid: string, unregisterDto: UnregisterVoterDto) {
+async function unregisterVoter(
+  guid: string,
+  unregisterDto: UnregisterVoterDto,
+) {
   loading.value = true;
   error.value = null;
   try {
-    const updatedVoter = await frontDeskService.unregisterVoter(guid, unregisterDto);
-    const index = voters.value.findIndex(v => v.personGuid === updatedVoter.personGuid);
+    const updatedVoter = await frontDeskService.unregisterVoter(
+      guid,
+      unregisterDto,
+    );
+    const index = voters.value.findIndex(
+      (v) => v.personGuid === updatedVoter.personGuid,
+    );
     if (index !== -1) {
       voters.value[index] = updatedVoter;
     }
     return updatedVoter;
   } catch (e: any) {
-    error.value = e.message || 'Failed to unregister voter';
+    error.value = e.message || "Failed to unregister voter";
     throw e;
   } finally {
     loading.value = false;
   }
 }
 
-async function savePersonFlags(guid: string, updateFlagsDto: UpdatePersonFlagsDto) {
+async function savePersonFlags(
+  guid: string,
+  updateFlagsDto: UpdatePersonFlagsDto,
+) {
   loading.value = true;
   error.value = null;
   try {
-    const updatedVoter = await frontDeskService.updatePersonFlags(guid, updateFlagsDto);
-    const index = voters.value.findIndex(v => v.personGuid === updatedVoter.personGuid);
+    const updatedVoter = await frontDeskService.updatePersonFlags(
+      guid,
+      updateFlagsDto,
+    );
+    const index = voters.value.findIndex(
+      (v) => v.personGuid === updatedVoter.personGuid,
+    );
     if (index !== -1) {
       voters.value[index] = updatedVoter;
     }
     return updatedVoter;
   } catch (e: any) {
-    error.value = e.message || 'Failed to update person flags';
+    error.value = e.message || "Failed to update person flags";
     throw e;
   } finally {
     loading.value = false;
@@ -239,19 +294,23 @@ async function initializeSignalR() {
   try {
     const connection = await signalrService.connectToFrontDeskHub();
 
-    connection.on('PersonCheckedIn', (voter: FrontDeskVoterDto) => {
-      const index = voters.value.findIndex(v => v.personGuid === voter.personGuid);
+    connection.on("PersonCheckedIn", (voter: FrontDeskVoterDto) => {
+      const index = voters.value.findIndex(
+        (v) => v.personGuid === voter.personGuid,
+      );
       if (index !== -1) {
         voters.value[index] = voter;
       }
     });
 
-    connection.on('VoterCountUpdated', (updatedStats: FrontDeskStatsDto) => {
+    connection.on("VoterCountUpdated", (updatedStats: FrontDeskStatsDto) => {
       stats.value = updatedStats;
     });
 
-    connection.on('PersonFlagsUpdated', (voter: FrontDeskVoterDto) => {
-      const index = voters.value.findIndex(v => v.personGuid === voter.personGuid);
+    connection.on("PersonFlagsUpdated", (voter: FrontDeskVoterDto) => {
+      const index = voters.value.findIndex(
+        (v) => v.personGuid === voter.personGuid,
+      );
       if (index !== -1) {
         voters.value[index] = voter;
       }
@@ -259,7 +318,7 @@ async function initializeSignalR() {
 
     signalrInitialized.value = true;
   } catch (e) {
-    console.error('Failed to initialize SignalR for front desk:', e);
+    console.error("Failed to initialize SignalR for front desk:", e);
   }
 }
 
@@ -267,7 +326,7 @@ async function joinElection(guid: string) {
   try {
     await signalrService.joinFrontDeskElection(guid);
   } catch (e) {
-    console.error('Failed to join election group for front desk updates:', e);
+    console.error("Failed to join election group for front desk updates:", e);
   }
 }
 
@@ -275,7 +334,7 @@ async function leaveElection(guid: string) {
   try {
     await signalrService.leaveFrontDeskElection(guid);
   } catch (e) {
-    console.error('Failed to leave election group for front desk updates:', e);
+    console.error("Failed to leave election group for front desk updates:", e);
   }
 }
 
@@ -314,13 +373,17 @@ async function loadData() {
       updateSelectedVoter();
     });
   } catch (err: any) {
-    showErrorMessage(err.message || 'Failed to load data');
+    showErrorMessage(err.message || "Failed to load data");
   }
 }
 
 function updateSelectedVoter() {
   const voterList = allVoters.value;
-  if (voterList.length > 0 && selectedIndex.value >= 0 && selectedIndex.value < voterList.length) {
+  if (
+    voterList.length > 0 &&
+    selectedIndex.value >= 0 &&
+    selectedIndex.value < voterList.length
+  ) {
     selectedVoter.value = voterList[selectedIndex.value]!;
   } else {
     selectedVoter.value = null;
@@ -331,12 +394,14 @@ function updateSelectedVoter() {
 function scrollToSelectedRow() {
   nextTick(() => {
     if (voterTableRef.value && selectedIndex.value >= 0) {
-      const tableWrapper = voterTableRef.value.$el.querySelector('.el-table__body-wrapper');
+      const tableWrapper = voterTableRef.value.$el.querySelector(
+        ".el-table__body-wrapper",
+      );
       if (tableWrapper) {
-        const rows = tableWrapper.querySelectorAll('.el-table__row');
+        const rows = tableWrapper.querySelectorAll(".el-table__row");
         const selectedRow = rows[selectedIndex.value];
         if (selectedRow) {
-          selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          selectedRow.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }
       }
     }
@@ -344,30 +409,33 @@ function scrollToSelectedRow() {
 }
 
 function handleSearchKeydown(event: KeyboardEvent) {
-  console.log('handleSearchKeydown called with key:', event.key);
-  console.log('Key pressed:', event.key, 'showRegistrationButtons:', showRegistrationButtons.value);
+  // console.log('handleSearchKeydown called with key:', event.key);
+  // console.log('Key pressed:', event.key, 'showRegistrationButtons:', showRegistrationButtons.value);
   const voterList = allVoters.value;
-  console.log('Voters count:', voterList.length);
+  // console.log('Voters count:', voterList.length);
 
   if (showRegistrationButtons.value) {
     const buttons = allButtons.value;
-    if (event.key === 'ArrowLeft') {
+    if (event.key === "ArrowLeft") {
       event.preventDefault();
       selectedButtonIndex.value = Math.max(0, selectedButtonIndex.value - 1);
-    } else if (event.key === 'ArrowRight') {
+    } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      selectedButtonIndex.value = Math.min(buttons.length - 1, selectedButtonIndex.value + 1);
-    } else if (event.key === 'Enter') {
+      selectedButtonIndex.value = Math.min(
+        buttons.length - 1,
+        selectedButtonIndex.value + 1,
+      );
+    } else if (event.key === "Enter") {
       event.preventDefault();
       const selectedButton = buttons[selectedButtonIndex.value];
       if (selectedButton) {
         handleButtonClick(selectedButton);
       }
-    } else if (event.key === 'Escape') {
+    } else if (event.key === "Escape") {
       event.preventDefault();
       showRegistrationButtons.value = false;
       selectedButtonIndex.value = 0;
-    } else if (event.key >= '1' && event.key <= '9') {
+    } else if (event.key >= "1" && event.key <= "9") {
       event.preventDefault();
       const index = parseInt(event.key) - 1;
       if (index >= 0 && index < buttons.length) {
@@ -380,21 +448,29 @@ function handleSearchKeydown(event: KeyboardEvent) {
       }
     }
   } else {
-    if (event.key === 'ArrowDown') {
+    if (event.key === "ArrowDown") {
       event.preventDefault();
-      console.log('ArrowDown pressed, current index:', selectedIndex.value, 'voters length:', voterList.length);
-      selectedIndex.value = Math.min(voterList.length - 1, selectedIndex.value + 1);
-      console.log('New index:', selectedIndex.value);
+      console.log(
+        "ArrowDown pressed, current index:",
+        selectedIndex.value,
+        "voters length:",
+        voterList.length,
+      );
+      selectedIndex.value = Math.min(
+        voterList.length - 1,
+        selectedIndex.value + 1,
+      );
+      console.log("New index:", selectedIndex.value);
       updateSelectedVoter();
-    } else if (event.key === 'ArrowUp') {
+    } else if (event.key === "ArrowUp") {
       event.preventDefault();
-      console.log('ArrowUp pressed, current index:', selectedIndex.value);
+      console.log("ArrowUp pressed, current index:", selectedIndex.value);
       selectedIndex.value = Math.max(0, selectedIndex.value - 1);
-      console.log('New index:', selectedIndex.value);
+      console.log("New index:", selectedIndex.value);
       updateSelectedVoter();
-    } else if (event.key === 'Enter') {
+    } else if (event.key === "Enter") {
       event.preventDefault();
-      console.log('Enter pressed, selectedVoter:', selectedVoter.value);
+      console.log("Enter pressed, selectedVoter:", selectedVoter.value);
       if (selectedVoter.value) {
         showRegistrationButtons.value = true;
         selectedButtonIndex.value = 0;
@@ -405,7 +481,9 @@ function handleSearchKeydown(event: KeyboardEvent) {
 
 function handleRowClick(row: FrontDeskVoterDto) {
   selectedVoter.value = row;
-  selectedIndex.value = allVoters.value.findIndex(v => v.personGuid === row.personGuid);
+  selectedIndex.value = allVoters.value.findIndex(
+    (v) => v.personGuid === row.personGuid,
+  );
   showRegistrationButtons.value = true;
   selectedButtonIndex.value = 0;
 }
@@ -418,10 +496,12 @@ async function confirmCheckIn(votingMethod: string) {
       personGuid: selectedVoter.value.personGuid,
       votingMethod,
       tellerName: undefined,
-      votingLocationGuid: undefined
+      votingLocationGuid: undefined,
     });
 
-    showSuccessMessage(`${selectedVoter.value.fullName} checked in successfully`);
+    showSuccessMessage(
+      `${selectedVoter.value.fullName} checked in successfully`,
+    );
     showRegistrationButtons.value = false;
 
     const voterList = allVoters.value;
@@ -434,7 +514,7 @@ async function confirmCheckIn(votingMethod: string) {
       searchInputRef.value?.focus();
     });
   } catch (err: any) {
-    showErrorMessage(err.message || 'Failed to check in voter');
+    showErrorMessage(err.message || "Failed to check in voter");
   }
 }
 
@@ -450,15 +530,19 @@ async function handleButtonClick(button: any) {
 
 function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
   if (!voter.flags) return false;
-  const flags = voter.flags.split(',').map(f => f.trim());
+  const flags = voter.flags.split(",").map((f) => f.trim());
   return flags.includes(flag);
 }
 
 async function toggleFlag(flag: string) {
   if (!selectedVoter.value) return;
 
-  const currentFlags = selectedVoter.value.flags ?
-    selectedVoter.value.flags.split(',').map(f => f.trim()).filter(Boolean) : [];
+  const currentFlags = selectedVoter.value.flags
+    ? selectedVoter.value.flags
+      .split(",")
+      .map((f) => f.trim())
+      .filter(Boolean)
+    : [];
 
   const hasCurrentFlag = currentFlags.includes(flag);
 
@@ -466,18 +550,18 @@ async function toggleFlag(flag: string) {
     try {
       await ElMessageBox.confirm(
         `Remove flag "${flag}" from ${selectedVoter.value.fullName}?`,
-        'Confirm Remove Flag',
+        "Confirm Remove Flag",
         {
-          confirmButtonText: 'Remove',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        },
       );
     } catch {
       return;
     }
 
-    const updatedFlags = currentFlags.filter(f => f !== flag);
+    const updatedFlags = currentFlags.filter((f) => f !== flag);
     await updatePersonFlags(updatedFlags);
   } else {
     currentFlags.push(flag);
@@ -491,12 +575,12 @@ async function updatePersonFlags(flags: string[]) {
   try {
     await savePersonFlags(electionGuid.value, {
       personGuid: selectedVoter.value.personGuid,
-      flags: flags.join(', ')
+      flags: flags.join(", "),
     });
 
-    showSuccessMessage('Flags updated successfully');
+    showSuccessMessage("Flags updated successfully");
   } catch (err: any) {
-    showErrorMessage(err.message || 'Failed to update flags');
+    showErrorMessage(err.message || "Failed to update flags");
   }
 }
 
@@ -504,23 +588,23 @@ async function handleUnregister(voter: FrontDeskVoterDto) {
   try {
     await ElMessageBox.confirm(
       `Are you sure you want to unregister ${voter.fullName}? This will clear their check-in status.`,
-      'Confirm Unregister',
+      "Confirm Unregister",
       {
-        confirmButtonText: 'Unregister',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }
+        confirmButtonText: "Unregister",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      },
     );
 
     await unregisterVoter(electionGuid.value, {
       personGuid: voter.personGuid,
-      reason: 'Unregistered by front desk'
+      reason: "Unregistered by front desk",
     });
 
-    showSuccessMessage('Voter unregistered successfully');
+    showSuccessMessage("Voter unregistered successfully");
   } catch (err: any) {
-    if (err !== 'cancel') {
-      showErrorMessage(err.message || 'Failed to unregister voter');
+    if (err !== "cancel") {
+      showErrorMessage(err.message || "Failed to unregister voter");
     }
   }
 }
@@ -531,34 +615,42 @@ function showHistory(voter: FrontDeskVoterDto) {
 }
 
 function formatTime(time?: string): string {
-  if (!time) return '';
+  if (!time) return "";
   const date = new Date(time);
   return date.toLocaleString();
 }
 
 function formatTimeShort(time?: string): string {
-  if (!time) return '';
+  if (!time) return "";
   const date = new Date(time);
   return date.toLocaleTimeString();
 }
 
 function getProgressColor(percentage: number): string {
-  if (percentage < 30) return '#f56c6c';
-  if (percentage < 70) return '#e6a23c';
-  return '#67c23a';
+  if (percentage < 30) return "#f56c6c";
+  if (percentage < 70) return "#e6a23c";
+  return "#67c23a";
 }
 
-function getRowClassName({ row, rowIndex }: { row: FrontDeskVoterDto, rowIndex: number }) {
+function getRowClassName({
+  row,
+  rowIndex,
+}: {
+  row: FrontDeskVoterDto;
+  rowIndex: number;
+}) {
   if (rowIndex === selectedIndex.value) {
-    return 'selected-row';
+    return "selected-row";
   }
-  return '';
+  return "";
 }
 
 function formatTimeline(entry: any): string {
   const items = [];
-  if (entry.action === 'CheckedIn') {
-    items.push(`Checked in - ${entry.votingMethod === 'I' ? 'In Person' : entry.votingMethod === 'M' ? 'Mail' : entry.votingMethod === 'O' ? 'Online' : entry.votingMethod === 'C' ? 'Call-In' : entry.votingMethod}`);
+  if (entry.action === "CheckedIn") {
+    items.push(
+      `Checked in - ${entry.votingMethod === "I" ? "In Person" : entry.votingMethod === "M" ? "Mail" : entry.votingMethod === "O" ? "Online" : entry.votingMethod === "C" ? "Call-In" : entry.votingMethod}`,
+    );
   }
   if (entry.tellerName) {
     items.push(`Teller: ${entry.tellerName}`);
@@ -572,7 +664,7 @@ function formatTimeline(entry: any): string {
   if (entry.performedBy) {
     items.push(entry.performedBy);
   }
-  return items.join(', ');
+  return items.join(", ");
 }
 
 function goBack() {
@@ -608,7 +700,7 @@ function clearFilters() {
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-page-header @back="goBack" content="Front Desk - Voter Check-In" />
+          <el-page-header content="Front Desk - Voter Check-In" @back="goBack" />
           <div v-if="stats" class="header-stats">
             <el-statistic :value="stats.checkedIn" title="Checked In" align="center">
               <template #prefix>
@@ -635,7 +727,7 @@ function clearFilters() {
               <div class="section-header">
                 <h3>Quick Check-In</h3>
                 <el-input ref="searchInputRef" v-model="searchQuery"
-                  placeholder="Type name to search (↑↓ arrows, Enter to select)" style="width: 450px;" clearable
+                  placeholder="Type name to search (↑↓ arrows, Enter to select)" style="width: 450px" clearable
                   @keydown="handleSearchKeydown">
                   <template #prefix>
                     <el-icon>
@@ -649,17 +741,18 @@ function clearFilters() {
             <!-- Filters -->
             <div class="filters-section">
               <div class="filter-group">
-                <el-button :type="showAllRegistered ? 'primary' : 'default'"
-                  @click="showAllRegistered = !showAllRegistered" size="small">
+                <el-button :type="showAllRegistered ? 'primary' : 'default'" size="small"
+                  @click="showAllRegistered = !showAllRegistered">
                   Show All Registered ({{ checkedInVoters.length }})
                 </el-button>
 
                 <el-divider direction="vertical" />
 
                 <span class="filter-label">Voting Methods:</span>
-                <el-button v-for="method in registrationTypes" :key="method.value"
-                  :type="selectedMethodFilters.includes(method.value) ? 'primary' : 'default'"
-                  @click="toggleMethodFilter(method.value)" size="small">
+                <el-button v-for="method in registrationTypes" :key="method.value" :type="selectedMethodFilters.includes(method.value)
+                    ? 'primary'
+                    : 'default'
+                  " size="small" @click="toggleMethodFilter(method.value)">
                   {{ method.label }} ({{ methodCounts[method.value] || 0 }})
                 </el-button>
 
@@ -667,16 +760,17 @@ function clearFilters() {
                   <el-divider direction="vertical" />
 
                   <span class="filter-label">Flags:</span>
-                  <el-button v-for="flag in electionFlags" :key="flag"
-                    :type="selectedFlagFilters.includes(flag) ? 'primary' : 'default'" @click="toggleFlagFilter(flag)"
-                    size="small">
+                  <el-button v-for="flag in electionFlags" :key="flag" :type="selectedFlagFilters.includes(flag) ? 'primary' : 'default'
+                    " size="small" @click="toggleFlagFilter(flag)">
                     {{ flag }} ({{ flagCounts[flag] || 0 }})
                   </el-button>
                 </template>
 
-                <el-button
-                  v-if="selectedMethodFilters.length > 0 || selectedFlagFilters.length > 0 || showAllRegistered"
-                  @click="clearFilters" type="info" size="small">
+                <el-button v-if="
+                  selectedMethodFilters.length > 0 ||
+                  selectedFlagFilters.length > 0 ||
+                  showAllRegistered
+                " type="info" size="small" @click="clearFilters">
                   Clear Filters
                 </el-button>
               </div>
@@ -693,7 +787,8 @@ function clearFilters() {
             <!-- Registration type selection (shown after pressing Enter) -->
             <div v-if="showRegistrationButtons && selectedVoter" class="registration-buttons">
               <div class="selected-voter-info">
-                <strong>{{ selectedVoter.isCheckedIn ? 'Update: ' : 'Check in: ' }}{{ selectedVoter.fullName }}</strong>
+                <strong>{{ selectedVoter.isCheckedIn ? "Update: " : "Check in: "
+                }}{{ selectedVoter.fullName }}</strong>
                 <span v-if="selectedVoter.bahaiId" class="voter-detail">ID: {{ selectedVoter.bahaiId }}</span>
                 <span v-if="selectedVoter.area" class="voter-detail">Area: {{ selectedVoter.area }}</span>
               </div>
@@ -702,9 +797,10 @@ function clearFilters() {
               <div v-if="!selectedVoter.isCheckedIn" class="button-section">
                 <h4>Voting Method</h4>
                 <div class="button-group">
-                  <el-button v-for="(type, index) in registrationTypes" :key="type.value"
-                    :type="index === selectedButtonIndex ? 'primary' : 'default'" size="large"
-                    @click="handleButtonClick(type)" :class="{ 'selected-button': index === selectedButtonIndex }">
+                  <el-button v-for="(type, index) in registrationTypes" :key="type.value" :type="index === selectedButtonIndex ? 'primary' : 'default'
+                    " size="large" :class="{
+                      'selected-button': index === selectedButtonIndex,
+                    }" @click="handleButtonClick(type)">
                     {{ type.label }} <kbd>{{ type.key }}</kbd>
                   </el-button>
                 </div>
@@ -714,12 +810,16 @@ function clearFilters() {
               <div v-if="electionFlags.length > 0" class="button-section">
                 <h4>Flags</h4>
                 <div class="button-group">
-                  <el-button v-for="(flag, index) in electionFlags" :key="flag"
-                    :type="(4 + index) === selectedButtonIndex ? 'primary' : hasFlag(selectedVoter, flag) ? 'success' : 'default'"
-                    size="large" @click="toggleFlag(flag)"
-                    :class="{ 'selected-button': (4 + index) === selectedButtonIndex }">
+                  <el-button v-for="(flag, index) in electionFlags" :key="flag" :type="4 + index === selectedButtonIndex
+                      ? 'primary'
+                      : hasFlag(selectedVoter, flag)
+                        ? 'success'
+                        : 'default'
+                    " size="large" :class="{
+                      'selected-button': 4 + index === selectedButtonIndex,
+                    }" @click="toggleFlag(flag)">
                     {{ flag }} <kbd>{{ 5 + index }}</kbd>
-                    <el-icon v-if="hasFlag(selectedVoter, flag)" style="margin-left: 5px;">
+                    <el-icon v-if="hasFlag(selectedVoter, flag)" style="margin-left: 5px">
                       <Check />
                     </el-icon>
                   </el-button>
@@ -727,7 +827,8 @@ function clearFilters() {
               </div>
 
               <div class="instruction-text">
-                Use ← → arrows or number keys, press Enter to confirm, Esc to cancel
+                Use ← → arrows or number keys, press Enter to confirm, Esc to
+                cancel
               </div>
             </div>
 
@@ -748,11 +849,12 @@ function clearFilters() {
                     <span v-else>-</span>
                   </template>
                 </el-table-column>
-                <el-table-column label="Flags" width="100" v-if="electionFlags.length > 0">
+                <el-table-column v-if="electionFlags.length > 0" label="Flags" width="100">
                   <template #default="{ row }">
                     <template v-if="row.flags">
-                      <el-tag v-for="flag in electionFlags.filter(f => hasFlag(row, f))" :key="flag" size="small"
-                        type="success" class="flag-tag">
+                      <el-tag v-for="flag in electionFlags.filter((f) =>
+                        hasFlag(row, f),
+                      )" :key="flag" size="small" type="success" class="flag-tag">
                         {{ getFlagAbbr(flag) }}
                       </el-tag>
                     </template>
@@ -761,23 +863,26 @@ function clearFilters() {
                 </el-table-column>
                 <el-table-column label="Time" width="100">
                   <template #default="{ row }">
-                    <span v-if="row.registrationTime">{{ formatTimeShort(row.registrationTime) }}</span>
+                    <span v-if="row.registrationTime">{{
+                      formatTimeShort(row.registrationTime)
+                    }}</span>
                     <span v-else>-</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="Actions" width="120" fixed="right">
                   <template #default="{ row }">
                     <template v-if="row.isCheckedIn">
-                      <el-button type="default" size="small" :icon="Clock" @click.stop="showHistory(row)" circle
-                        title="View History" />
-                      <el-button type="warning" size="small" :icon="Warning" @click.stop="handleUnregister(row)" circle
-                        title="Unregister" />
+                      <el-button type="default" size="small" :icon="Clock" circle title="View History"
+                        @click.stop="showHistory(row)" />
+                      <el-button type="warning" size="small" :icon="Warning" circle title="Unregister"
+                        @click.stop="handleUnregister(row)" />
                     </template>
                   </template>
                 </el-table-column>
               </el-table>
               <div class="keyboard-hint">
-                {{ notCheckedInVoters.length }} not checked in, {{ checkedInVoters.length }} checked in. Use keyboard to
+                {{ notCheckedInVoters.length }} not checked in,
+                {{ checkedInVoters.length }} checked in. Use keyboard to
                 navigate and check in.
               </div>
             </div>
@@ -789,11 +894,16 @@ function clearFilters() {
     <!-- History dialog -->
     <el-dialog v-model="showHistoryDialog" title="Registration History" width="760px" class="history-detail">
       <div v-if="historyVoter">
-        <h4>{{ historyVoter.fullName }} <span v-if="historyVoter.bahaiId">Bahá'í ID: {{ historyVoter.bahaiId }}</span>
+        <h4>
+          {{ historyVoter.fullName }}
+          <span v-if="historyVoter.bahaiId">Bahá'í ID: {{ historyVoter.bahaiId }}</span>
         </h4>
         <el-divider />
 
-        <div v-if="historyVoter.registrationHistory && historyVoter.registrationHistory.length > 0">
+        <div v-if="
+          historyVoter.registrationHistory &&
+          historyVoter.registrationHistory.length > 0
+        ">
           <el-timeline>
             <el-timeline-item v-for="(entry, index) in historyVoter.registrationHistory" :key="index"
               :timestamp="formatTimeline(entry)">

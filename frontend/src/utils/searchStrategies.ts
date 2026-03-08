@@ -1,4 +1,4 @@
-import type { SearchablePersonDto } from '@/types/Person';
+import type { SearchablePersonDto } from "@/types/Person";
 
 export interface SearchResult {
   person: SearchablePersonDto;
@@ -10,9 +10,9 @@ export function normalizeSearchText(text: string): string {
   return text
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, ' ')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
+    .replace(/\s+/g, " ")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 export function calculateLevenshteinDistance(a: string, b: string): number {
@@ -37,7 +37,7 @@ export function calculateLevenshteinDistance(a: string, b: string): number {
         matrix[i][j] = Math.min(
           matrix[i - 1][j - 1] + 1,
           matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1
+          matrix[i - 1][j] + 1,
         );
       }
     }
@@ -46,7 +46,10 @@ export function calculateLevenshteinDistance(a: string, b: string): number {
   return matrix[b.length][a.length];
 }
 
-export function compareSoundexCodes(codes1: string[], codes2: string[]): number {
+export function compareSoundexCodes(
+  codes1: string[],
+  codes2: string[],
+): number {
   if (codes1.length === 0 || codes2.length === 0) return 0;
 
   let matches = 0;
@@ -64,7 +67,10 @@ export function compareSoundexCodes(codes1: string[], codes2: string[]): number 
   return totalCodes > 0 ? (matches / totalCodes) * 100 : 0;
 }
 
-export function exactMatch(searchTerm: string, person: SearchablePersonDto): number | null {
+export function exactMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
   const normalizedSearch = normalizeSearchText(searchTerm);
   const normalizedPersonText = normalizeSearchText(person._searchText);
 
@@ -75,11 +81,14 @@ export function exactMatch(searchTerm: string, person: SearchablePersonDto): num
   return null;
 }
 
-export function prefixMatch(searchTerm: string, person: SearchablePersonDto): number | null {
+export function prefixMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
   const normalizedSearch = normalizeSearchText(searchTerm);
-  
+
   if (normalizedSearch.length === 0) return null;
-  
+
   const normalizedPersonText = normalizeSearchText(person._searchText);
 
   if (normalizedPersonText.startsWith(normalizedSearch)) {
@@ -89,19 +98,24 @@ export function prefixMatch(searchTerm: string, person: SearchablePersonDto): nu
   return null;
 }
 
-export function wordBoundaryMatch(searchTerm: string, person: SearchablePersonDto): number | null {
+export function wordBoundaryMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
   const normalizedSearch = normalizeSearchText(searchTerm);
-  const searchWords = normalizedSearch.split(' ').filter(w => w.length > 0);
-  
+  const searchWords = normalizedSearch.split(" ").filter((w) => w.length > 0);
+
   if (searchWords.length === 0) return null;
 
   const normalizedPersonText = normalizeSearchText(person._searchText);
-  const personWords = normalizedPersonText.split(' ').filter(w => w.length > 0);
+  const personWords = normalizedPersonText
+    .split(" ")
+    .filter((w) => w.length > 0);
 
   let allWordsMatch = true;
   for (const searchWord of searchWords) {
-    const matchesAnyPersonWord = personWords.some(personWord => 
-      personWord.startsWith(searchWord)
+    const matchesAnyPersonWord = personWords.some((personWord) =>
+      personWord.startsWith(searchWord),
     );
     if (!matchesAnyPersonWord) {
       allWordsMatch = false;
@@ -116,7 +130,10 @@ export function wordBoundaryMatch(searchTerm: string, person: SearchablePersonDt
   return null;
 }
 
-export function substringMatch(searchTerm: string, person: SearchablePersonDto): number | null {
+export function substringMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
   const normalizedSearch = normalizeSearchText(searchTerm);
   const normalizedPersonText = normalizeSearchText(person._searchText);
 
@@ -127,16 +144,19 @@ export function substringMatch(searchTerm: string, person: SearchablePersonDto):
   return null;
 }
 
-export function otherNamesMatch(searchTerm: string, person: SearchablePersonDto): number | null {
+export function otherNamesMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
   const normalizedSearch = normalizeSearchText(searchTerm);
-  
-  const otherNames = normalizeSearchText(person.otherNames || '');
-  const otherLastNames = normalizeSearchText(person.otherLastNames || '');
-  
+
+  const otherNames = normalizeSearchText(person.otherNames || "");
+  const otherLastNames = normalizeSearchText(person.otherLastNames || "");
+
   if (otherNames && otherNames.includes(normalizedSearch)) {
     return 70;
   }
-  
+
   if (otherLastNames && otherLastNames.includes(normalizedSearch)) {
     return 70;
   }
@@ -144,11 +164,16 @@ export function otherNamesMatch(searchTerm: string, person: SearchablePersonDto)
   return null;
 }
 
-export function phoneticMatch(searchTerm: string, person: SearchablePersonDto): number | null {
+export function phoneticMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
   if (searchTerm.length < 3) return null;
   if (!person._soundexCodes || person._soundexCodes.length === 0) return null;
 
-  const searchWords = normalizeSearchText(searchTerm).split(' ').filter(w => w.length > 0);
+  const searchWords = normalizeSearchText(searchTerm)
+    .split(" ")
+    .filter((w) => w.length > 0);
   if (searchWords.length === 0) return null;
 
   const searchSoundex = generateSoundexCodesForWords(searchWords);
@@ -163,19 +188,27 @@ export function phoneticMatch(searchTerm: string, person: SearchablePersonDto): 
   return null;
 }
 
-export function fuzzyMatch(searchTerm: string, person: SearchablePersonDto): number | null {
+export function fuzzyMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
   if (searchTerm.length < 3) return null;
 
   const normalizedSearch = normalizeSearchText(searchTerm);
   const normalizedPersonText = normalizeSearchText(person._searchText);
 
-  const distance = calculateLevenshteinDistance(normalizedSearch, normalizedPersonText);
+  const distance = calculateLevenshteinDistance(
+    normalizedSearch,
+    normalizedPersonText,
+  );
 
   if (distance <= 2) {
     return 50;
   }
 
-  const personWords = normalizedPersonText.split(' ').filter(w => w.length > 0);
+  const personWords = normalizedPersonText
+    .split(" ")
+    .filter((w) => w.length > 0);
   for (const word of personWords) {
     const wordDistance = calculateLevenshteinDistance(normalizedSearch, word);
     if (wordDistance <= 2) {
@@ -187,28 +220,42 @@ export function fuzzyMatch(searchTerm: string, person: SearchablePersonDto): num
 }
 
 function generateSoundexCodesForWords(words: string[]): string[] {
-  return words.map(word => generateSoundex(word)).filter(code => code !== '');
+  return words
+    .map((word) => generateSoundex(word))
+    .filter((code) => code !== "");
 }
 
 function generateSoundex(word: string): string {
-  if (!word || word.length === 0) return '';
+  if (!word || word.length === 0) return "";
 
-  const cleaned = word.toUpperCase().replace(/[^A-Z]/g, '');
-  if (cleaned.length === 0) return '';
+  const cleaned = word.toUpperCase().replace(/[^A-Z]/g, "");
+  if (cleaned.length === 0) return "";
 
   const firstLetter = cleaned[0];
-  
+
   const soundexMap: Record<string, string> = {
-    'B': '1', 'F': '1', 'P': '1', 'V': '1',
-    'C': '2', 'G': '2', 'J': '2', 'K': '2', 'Q': '2', 'S': '2', 'X': '2', 'Z': '2',
-    'D': '3', 'T': '3',
-    'L': '4',
-    'M': '5', 'N': '5',
-    'R': '6'
+    B: "1",
+    F: "1",
+    P: "1",
+    V: "1",
+    C: "2",
+    G: "2",
+    J: "2",
+    K: "2",
+    Q: "2",
+    S: "2",
+    X: "2",
+    Z: "2",
+    D: "3",
+    T: "3",
+    L: "4",
+    M: "5",
+    N: "5",
+    R: "6",
   };
 
   let code = firstLetter;
-  let prevCode = soundexMap[firstLetter] || '';
+  let prevCode = soundexMap[firstLetter] || "";
 
   for (let i = 1; i < cleaned.length && code.length < 4; i++) {
     const char = cleaned[i];
@@ -218,12 +265,12 @@ function generateSoundex(word: string): string {
       code += currentCode;
       prevCode = currentCode;
     } else if (!currentCode) {
-      prevCode = '';
+      prevCode = "";
     }
   }
 
   while (code.length < 4) {
-    code += '0';
+    code += "0";
   }
 
   return code.substring(0, 4);
@@ -231,20 +278,20 @@ function generateSoundex(word: string): string {
 
 export function applyAllStrategies(
   searchTerm: string,
-  person: SearchablePersonDto
+  person: SearchablePersonDto,
 ): SearchResult | null {
   const strategies = [
-    { name: 'exact', fn: exactMatch },
-    { name: 'prefix', fn: prefixMatch },
-    { name: 'wordBoundary', fn: wordBoundaryMatch },
-    { name: 'substring', fn: substringMatch },
-    { name: 'otherNames', fn: otherNamesMatch },
-    { name: 'phonetic', fn: phoneticMatch },
-    { name: 'fuzzy', fn: fuzzyMatch }
+    { name: "exact", fn: exactMatch },
+    { name: "prefix", fn: prefixMatch },
+    { name: "wordBoundary", fn: wordBoundaryMatch },
+    { name: "substring", fn: substringMatch },
+    { name: "otherNames", fn: otherNamesMatch },
+    { name: "phonetic", fn: phoneticMatch },
+    { name: "fuzzy", fn: fuzzyMatch },
   ];
 
   let bestWeight = 0;
-  let bestStrategy = '';
+  let bestStrategy = "";
 
   for (const strategy of strategies) {
     const weight = strategy.fn(searchTerm, person);
@@ -258,7 +305,7 @@ export function applyAllStrategies(
     return {
       person,
       weight: bestWeight,
-      matchedStrategy: bestStrategy
+      matchedStrategy: bestStrategy,
     };
   }
 

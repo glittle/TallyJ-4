@@ -8,9 +8,16 @@
     </section>
 
     <section class="stats-section" aria-labelledby="stats-heading">
-      <h2 id="stats-heading" class="sr-only">{{ $t("dashboard.statistics") }}</h2>
-      <el-row :gutter="20" class="stats-row" role="list" aria-label="Election statistics">
-        <el-col :xs="24" :sm="12" role="listitem">
+      <h2 id="stats-heading" class="sr-only">
+        {{ $t("dashboard.statistics") }}
+      </h2>
+      <el-row
+        :gutter="4"
+        class="stats-row"
+        role="list"
+        aria-label="Election statistics"
+      >
+        <el-col role="listitem">
           <el-card class="stat-card">
             <div class="stat-icon elections" aria-hidden="true">
               <el-icon>
@@ -18,14 +25,17 @@
               </el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value" aria-label="{{ statistics.totalElections }} total elections">
+              <div
+                class="stat-value"
+                aria-label="{{ statistics.totalElections }} total elections"
+              >
                 {{ statistics.totalElections }}
               </div>
               <div class="stat-label">{{ $t("dashboard.totalElections") }}</div>
             </div>
           </el-card>
         </el-col>
-        <el-col :xs="24" :sm="12" role="listitem">
+        <el-col role="listitem">
           <el-card class="stat-card">
             <div class="stat-icon active" aria-hidden="true">
               <el-icon>
@@ -33,22 +43,36 @@
               </el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value" aria-label="{{ statistics.activeElections }} active elections">
+              <div
+                class="stat-value"
+                aria-label="{{ statistics.activeElections }} active elections"
+              >
                 {{ statistics.activeElections }}
               </div>
-              <div class="stat-label">{{ $t("dashboard.activeElections") }}</div>
+              <div class="stat-label">
+                {{ $t("dashboard.activeElections") }}
+              </div>
             </div>
           </el-card>
         </el-col>
       </el-row>
     </section>
 
-    <section class="recent-elections-section" aria-labelledby="recent-elections-heading">
+    <section
+      class="recent-elections-section"
+      aria-labelledby="recent-elections-heading"
+    >
       <el-card class="recent-elections-card">
         <template #header>
           <div class="card-header">
-            <h2 id="recent-elections-heading">{{ $t("dashboard.recentElections") }}</h2>
-            <el-button type="primary" @click="createElection" aria-label="Create new election">
+            <h2 id="recent-elections-heading">
+              {{ $t("dashboard.recentElections") }}
+            </h2>
+            <el-button
+              type="primary"
+              aria-label="Create new election"
+              @click="createElection"
+            >
               <el-icon aria-hidden="true">
                 <Plus />
               </el-icon>
@@ -56,18 +80,40 @@
             </el-button>
           </div>
         </template>
-        <div v-if="loading" class="loading-container" aria-live="polite" aria-label="Loading recent elections">
+        <div
+          v-if="loading"
+          class="loading-container"
+          aria-live="polite"
+          aria-label="Loading recent elections"
+        >
           <el-skeleton :rows="3" animated />
         </div>
         <div v-else-if="elections.length === 0" class="empty-state">
-          <el-empty :description="$t('dashboard.noElections')" aria-live="polite">
-            <el-button type="primary" @click="createElection" aria-label="Create your first election">
+          <el-empty
+            :description="$t('dashboard.noElections')"
+            aria-live="polite"
+          >
+            <el-button
+              type="primary"
+              aria-label="Create your first election"
+              @click="createElection"
+            >
               {{ $t("elections.createFirst") }}
             </el-button>
           </el-empty>
         </div>
-        <div v-else role="table" aria-label="Recent elections table" class="elections-table-container">
-          <el-table :data="elections" style="width: 100%" :expand-row-keys="expandedRowKeys" row-key="electionGuid">
+        <div
+          v-else
+          role="table"
+          aria-label="Recent elections table"
+          class="elections-table-container"
+        >
+          <el-table
+            :data="elections"
+            style="width: 100%"
+            :expand-row-keys="expandedRowKeys"
+            row-key="electionGuid"
+          >
             <el-table-column type="expand">
               <template #default="{ row }">
                 <div class="expanded-content">
@@ -75,34 +121,58 @@
                     <!-- Left Column: Election Details -->
                     <el-col :xs="24" :md="12">
                       <div class="detail-section">
-                        <h4>{{ $t('dashboard.electionDetails') }}</h4>
+                        <h4>{{ $t("dashboard.electionDetails") }}</h4>
                         <div class="detail-row">
-                          <span class="detail-label">{{ $t('elections.convenor') }}:</span>
-                          <span class="detail-value">{{ row.convenor || '-' }}</span>
+                          <span class="detail-label"
+                            >{{ $t("elections.convenor") }}:</span
+                          >
+                          <span class="detail-value">{{
+                            row.convenor || "-"
+                          }}</span>
                         </div>
                         <div class="detail-row">
-                          <span class="detail-label">{{ $t('elections.type') }}:</span>
-                          <span class="detail-value">{{ row.electionType || '-' }}</span>
+                          <span class="detail-label"
+                            >{{ $t("elections.type") }}:</span
+                          >
+                          <span class="detail-value">{{
+                            row.electionType || "-"
+                          }}</span>
                         </div>
                         <div class="detail-row">
-                          <span class="detail-label">{{ $t('elections.mode') }}:</span>
-                          <span class="detail-value">{{ row.electionMode || '-' }}</span>
+                          <span class="detail-label"
+                            >{{ $t("elections.mode") }}:</span
+                          >
+                          <span class="detail-value">{{
+                            row.electionMode || "-"
+                          }}</span>
                         </div>
                         <div class="detail-row">
-                          <span class="detail-label">{{ $t('elections.toElect') }}:</span>
-                          <span class="detail-value">{{ row.numberToElect || 0 }}</span>
+                          <span class="detail-label"
+                            >{{ $t("elections.toElect") }}:</span
+                          >
+                          <span class="detail-value">{{
+                            row.numberToElect || 0
+                          }}</span>
                         </div>
                         <div class="detail-row">
-                          <span class="detail-label">{{ $t('dashboard.canVote') }}:</span>
+                          <span class="detail-label"
+                            >{{ $t("dashboard.canVote") }}:</span
+                          >
                           <span class="detail-value">{{ row.voterCount }}</span>
                         </div>
                         <div class="detail-row">
-                          <span class="detail-label">{{ $t('dashboard.registered') }}:</span>
+                          <span class="detail-label"
+                            >{{ $t("dashboard.registered") }}:</span
+                          >
                           <span class="detail-value">{{ row.voterCount }}</span>
                         </div>
                         <div class="detail-row">
-                          <span class="detail-label">{{ $t('dashboard.ballotsEntered') }}:</span>
-                          <span class="detail-value">{{ row.ballotCount }}</span>
+                          <span class="detail-label"
+                            >{{ $t("dashboard.ballotsEntered") }}:</span
+                          >
+                          <span class="detail-value">{{
+                            row.ballotCount
+                          }}</span>
                         </div>
                       </div>
                     </el-col>
@@ -110,24 +180,42 @@
                     <!-- Right Column: Online Voting & Ballots -->
                     <el-col :xs="24" :md="12">
                       <div class="detail-section">
-                        <h4>{{ $t('dashboard.onlineVoting') }}</h4>
+                        <h4>{{ $t("dashboard.onlineVoting") }}</h4>
                         <div class="detail-row">
-                          <span class="detail-label">{{ $t('dashboard.opens') }}:</span>
-                          <span class="detail-value">{{ formatDateTime(row.onlineWhenOpen) }}</span>
+                          <span class="detail-label"
+                            >{{ $t("dashboard.opens") }}:</span
+                          >
+                          <span class="detail-value">{{
+                            formatDateTime(row.onlineWhenOpen)
+                          }}</span>
                         </div>
                         <div class="detail-row">
-                          <span class="detail-label">{{ $t('dashboard.closes') }}:</span>
-                          <span class="detail-value">{{ formatDateTime(row.onlineWhenClose) }}</span>
+                          <span class="detail-label"
+                            >{{ $t("dashboard.closes") }}:</span
+                          >
+                          <span class="detail-value">{{
+                            formatDateTime(row.onlineWhenClose)
+                          }}</span>
                         </div>
                       </div>
 
-                      <div class="detail-section" style="margin-top: 20px;">
-                        <h4>{{ $t('dashboard.tellers') }}</h4>
+                      <div class="detail-section" style="margin-top: 20px">
+                        <h4>{{ $t("dashboard.tellers") }}</h4>
                         <div class="detail-row">
-                          <span class="detail-label">{{ $t('dashboard.tellersStatus') }}:</span>
+                          <span class="detail-label"
+                            >{{ $t("dashboard.tellersStatus") }}:</span
+                          >
                           <span class="detail-value">
-                            <el-tag :type="row.isTellerAccessOpen ? 'success' : 'info'">
-                              {{ row.isTellerAccessOpen ? $t('dashboard.open') : $t('dashboard.closed') }}
+                            <el-tag
+                              :type="
+                                row.isTellerAccessOpen ? 'success' : 'info'
+                              "
+                            >
+                              {{
+                                row.isTellerAccessOpen
+                                  ? $t("dashboard.open")
+                                  : $t("dashboard.closed")
+                              }}
                             </el-tag>
                           </span>
                         </div>
@@ -136,7 +224,10 @@
                   </el-row>
 
                   <div class="expanded-actions">
-                    <el-button type="primary" @click="viewElection(row.electionGuid)">
+                    <el-button
+                      type="primary"
+                      @click="viewElection(row.electionGuid)"
+                    >
                       {{ $t("common.enter") }}
                     </el-button>
                     <el-button @click="viewElection(row.electionGuid)">
@@ -146,33 +237,55 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="name" :label="$t('elections.name')" min-width="200">
+            <el-table-column
+              prop="name"
+              :label="$t('elections.name')"
+              min-width="200"
+            >
               <template #default="scope">
                 <div class="election-name">
-                  <el-tag v-if="scope.row.showAsTest" type="danger" size="small" class="test-badge">TEST</el-tag>
+                  <el-tag
+                    v-if="scope.row.showAsTest"
+                    type="danger"
+                    size="small"
+                    class="test-badge"
+                    >TEST</el-tag
+                  >
                   {{ scope.row.name }}
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="dateOfElection" :label="$t('elections.date')" width="140">
+            <el-table-column
+              prop="dateOfElection"
+              :label="$t('elections.date')"
+              width="140"
+            >
               <template #default="scope">
                 <time :datetime="scope.row.dateOfElection">{{
                   formatDate(scope.row.dateOfElection)
                 }}</time>
               </template>
             </el-table-column>
-            <el-table-column prop="tallyStatus" :label="$t('elections.status')" width="120">
+            <el-table-column
+              prop="tallyStatus"
+              :label="$t('elections.status')"
+              width="120"
+            >
               <template #default="scope">
                 <el-tag :type="getStatusType(scope.row.tallyStatus || 'Draft')">
                   {{ scope.row.tallyStatus || "Draft" }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('dashboard.onlineVoting')" width="140" align="center">
+            <el-table-column
+              :label="$t('dashboard.onlineVoting')"
+              width="140"
+              align="center"
+            >
               <template #default="scope">
                 <div class="status-indicator">
-                  <el-switch 
-                    :model-value="scope.row.isOnlineVotingEnabled === true" 
+                  <el-switch
+                    :model-value="scope.row.isOnlineVotingEnabled === true"
                     :disabled="true"
                     inline-prompt
                     :active-text="$t('dashboard.open')"
@@ -181,11 +294,15 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('dashboard.tellersStatus')" width="140" align="center">
+            <el-table-column
+              :label="$t('dashboard.tellersStatus')"
+              width="140"
+              align="center"
+            >
               <template #default="scope">
                 <div class="status-indicator">
-                  <el-switch 
-                    :model-value="scope.row.isTellerAccessOpen === true" 
+                  <el-switch
+                    :model-value="scope.row.isTellerAccessOpen === true"
                     :disabled="true"
                     inline-prompt
                     :active-text="$t('dashboard.open')"
@@ -194,10 +311,19 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('common.actions')" width="120" fixed="right" align="center">
+            <el-table-column
+              :label="$t('common.actions')"
+              width="120"
+              fixed="right"
+              align="center"
+            >
               <template #default="scope">
-                <el-button type="primary" size="small" @click="viewElection(scope.row.electionGuid)"
-                  :aria-label="'Enter election: ' + scope.row.name">
+                <el-button
+                  type="primary"
+                  size="small"
+                  :aria-label="'Enter election: ' + scope.row.name"
+                  @click="viewElection(scope.row.electionGuid)"
+                >
                   {{ $t("common.enter") }}
                 </el-button>
               </template>
@@ -212,11 +338,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import {
-  Document,
-  CircleCheck,
-  Plus,
-} from "@element-plus/icons-vue";
+import { Document, CircleCheck, Plus } from "@element-plus/icons-vue";
 import { useElectionStore } from "../stores/electionStore";
 import type { ElectionSummaryDto } from "../types";
 
@@ -420,9 +542,11 @@ function getStatusType(status: string) {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
   opacity: 0;
   transition: var(--transition-normal);
 }
@@ -456,22 +580,22 @@ function getStatusType(status: string) {
 }
 
 .stat-icon.elections {
-  background: linear-gradient(135deg, #1C3A6A 0%, #2563a8 100%);
+  background: linear-gradient(135deg, #1c3a6a 0%, #2563a8 100%);
   box-shadow: 0 4px 12px rgba(28, 58, 106, 0.3);
 }
 
 .stat-icon.active {
-  background: linear-gradient(135deg, #F47920 0%, #d4661a 100%);
+  background: linear-gradient(135deg, #f47920 0%, #d4661a 100%);
   box-shadow: 0 4px 12px rgba(244, 121, 32, 0.3);
 }
 
 .stat-icon.voters {
-  background: linear-gradient(135deg, #8DC63F 0%, #5a9e1a 100%);
+  background: linear-gradient(135deg, #8dc63f 0%, #5a9e1a 100%);
   box-shadow: 0 4px 12px rgba(141, 198, 63, 0.3);
 }
 
 .stat-icon.ballots {
-  background: linear-gradient(135deg, #2563a8 0%, #1C3A6A 100%);
+  background: linear-gradient(135deg, #2563a8 0%, #1c3a6a 100%);
   box-shadow: 0 4px 12px rgba(37, 99, 168, 0.3);
 }
 
@@ -683,7 +807,7 @@ function getStatusType(status: string) {
       border-bottom: 1px solid var(--color-gray-100);
     }
 
-    .el-table tbody tr:hover>td {
+    .el-table tbody tr:hover > td {
       background-color: var(--color-gray-50);
     }
 

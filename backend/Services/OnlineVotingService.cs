@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Net.Http.Headers;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 using Backend.DTOs.OnlineVoting;
 using Google.Apis.Auth;
 using MailKit.Net.Smtp;
@@ -136,23 +137,23 @@ public class OnlineVotingService : IOnlineVotingService
 
             if (onlineVoter == null)
             {
-                return (false, "Voter not found. Please request a verification code first.", null);
+                return (false, "voting.auth.verify.voterNotFound", null);
             }
 
             if (string.IsNullOrEmpty(onlineVoter.VerifyCode))
             {
-                return (false, "No verification code found. Please request a new code.", null);
+                return (false, "voting.auth.verify.noCodeFound", null);
             }
 
             if (onlineVoter.VerifyCodeDate == null ||
                 onlineVoter.VerifyCodeDate.Value.AddMinutes(15) < DateTime.UtcNow)
             {
-                return (false, "Verification code has expired. Please request a new code.", null);
+                return (false, "voting.auth.verify.codeExpired", null);
             }
 
             if (onlineVoter.VerifyAttempts >= 5)
             {
-                return (false, "Too many failed attempts. Please request a new code.", null);
+                return (false, "voting.auth.verify.tooManyAttempts", null);
             }
 
             if (onlineVoter.VerifyCode != dto.VerifyCode)
@@ -160,7 +161,7 @@ public class OnlineVotingService : IOnlineVotingService
                 onlineVoter.VerifyAttempts = (onlineVoter.VerifyAttempts ?? 0) + 1;
                 await _context.SaveChangesAsync();
 
-                return (false, $"Invalid verification code. {5 - onlineVoter.VerifyAttempts} attempts remaining.", null);
+                return (false, $"voting.auth.verify.invalidCode:{5 - onlineVoter.VerifyAttempts}", null);
             }
 
             onlineVoter.WhenLastLogin = DateTime.UtcNow;
@@ -186,7 +187,7 @@ public class OnlineVotingService : IOnlineVotingService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error verifying code for {VoterId}", dto.VoterId);
-            return (false, "An error occurred while verifying your code.", null);
+            return (false, "voting.auth.verify.error", null);
         }
     }
 
@@ -216,7 +217,7 @@ public class OnlineVotingService : IOnlineVotingService
             OnlineWhenOpen = election.OnlineWhenOpen,
             OnlineWhenClose = election.OnlineWhenClose,
             IsOpen = isOpen,
-            Instructions = $"Please vote for {election.NumberToElect ?? 9} candidates."
+            Instructions = $"voting.election.instructions:{election.NumberToElect ?? 9}"
         };
     }
 
@@ -250,14 +251,14 @@ public class OnlineVotingService : IOnlineVotingService
 
             if (election == null)
             {
-                return (false, "Election not found.");
+                return (false, "voting.submit.electionNotFound");
             }
 
             var now = DateTime.UtcNow;
             if ((election.OnlineWhenOpen != null && election.OnlineWhenOpen > now) ||
                 (election.OnlineWhenClose != null && election.OnlineWhenClose <= now))
             {
-                return (false, "Online voting is not currently open for this election.");
+                return (false, "voting.submit.notOpen");
             }
 
             var onlineVoter = await _context.OnlineVoters
@@ -265,7 +266,7 @@ public class OnlineVotingService : IOnlineVotingService
 
             if (onlineVoter == null)
             {
-                return (false, "Voter not found. Please authenticate first.");
+                return (false, "voting.submit.voterNotFound");
             }
 
             var person = await _context.People
@@ -274,7 +275,7 @@ public class OnlineVotingService : IOnlineVotingService
 
             if (person != null && person.HasOnlineBallot == true)
             {
-                return (false, "You have already submitted a ballot for this election.");
+                return (false, "voting.submit.alreadyVoted");
             }
 
             var location = await _context.Locations
@@ -297,7 +298,7 @@ public class OnlineVotingService : IOnlineVotingService
             {
                 LocationGuid = location.LocationGuid,
                 BallotGuid = Guid.NewGuid(),
-                StatusCode = "Ok",
+                StatusCode = BallotStatus.Ok,
                 ComputerCode = "WW",
                 BallotNumAtComputer = 0,
                 Teller1 = "Online",
@@ -314,7 +315,7 @@ public class OnlineVotingService : IOnlineVotingService
                     BallotGuid = ballot.BallotGuid,
                     PositionOnBallot = voteDto.PositionOnBallot,
                     PersonGuid = voteDto.PersonGuid,
-                    StatusCode = voteDto.PersonGuid.HasValue ? "Valid" : "Invalid",
+                    VoteStatus = voteDto.PersonGuid.HasValue ? VoteStatus.Ok : VoteStatus.Spoiled,
                     OnlineVoteRaw = voteDto.VoteName,
                     RowVersion = new byte[8]
                 };
@@ -361,7 +362,7 @@ public class OnlineVotingService : IOnlineVotingService
         {
             await transaction.RollbackAsync();
             _logger.LogError(ex, "Error submitting online ballot for voter {VoterId}", dto.VoterId);
-            return (false, "An error occurred while submitting your ballot. Please try again.");
+            return (false, "voting.submit.error");
         }
     }
 
@@ -377,7 +378,7 @@ public class OnlineVotingService : IOnlineVotingService
             return new OnlineVoteStatusDto
             {
                 HasVoted = false,
-                Message = "Voter not found in this election."
+                Message = "voting.status.voterNotFound"
             };
         }
 
@@ -391,8 +392,8 @@ public class OnlineVotingService : IOnlineVotingService
             HasVoted = person.HasOnlineBallot == true,
             WhenSubmitted = votingInfo?.WhenBallotCreated,
             Message = person.HasOnlineBallot == true
-                ? "You have already submitted your ballot for this election."
-                : "You have not yet submitted a ballot for this election."
+                ? "voting.status.alreadyVoted"
+                : "voting.status.notVoted"
         };
     }
 
@@ -406,7 +407,7 @@ public class OnlineVotingService : IOnlineVotingService
             if (string.IsNullOrWhiteSpace(googleClientId) || googleClientId.StartsWith("<"))
             {
                 _logger.LogWarning("Google OAuth attempted but Google Client ID is not configured");
-                return (false, "Google authentication is not configured on this server.", null);
+                return (false, "voting.auth.google.notConfigured", null);
             }
 
             // 2. Validate Google JWT token
@@ -422,20 +423,20 @@ public class OnlineVotingService : IOnlineVotingService
             catch (InvalidJwtException ex)
             {
                 _logger.LogWarning(ex, "Google OAuth for voter: Invalid Google ID token");
-                return (false, "Invalid Google credential.", null);
+                return (false, "voting.auth.google.invalidCredential", null);
             }
 
             var email = payload.Email;
             if (string.IsNullOrEmpty(email))
             {
-                return (false, "Email not provided by Google.", null);
+                return (false, "voting.auth.google.noEmail", null);
             }
 
             // Only accept verified emails
             if (!payload.EmailVerified)
             {
                 _logger.LogWarning("Google OAuth for voter: Email {Email} not verified by Google", email);
-                return (false, "Google email must be verified to vote.", null);
+                return (false, "voting.auth.google.emailNotVerified", null);
             }
 
             // 3. Find all open elections where this voter is registered
@@ -451,7 +452,7 @@ public class OnlineVotingService : IOnlineVotingService
             if (!openElections.Any())
             {
                 _logger.LogWarning("Google OAuth rejected: No elections currently open for online voting");
-                return (false, "There are no elections currently open for online voting.", null);
+                return (false, "voting.auth.google.noOpenElections", null);
             }
 
             // 4. Check if voter's email is registered in ANY of the open elections
@@ -461,7 +462,7 @@ public class OnlineVotingService : IOnlineVotingService
             if (!isVoterRegistered)
             {
                 _logger.LogWarning("Google OAuth rejected: Email {Email} not found in any open election", email);
-                return (false, "You are not registered to vote in any currently open election.", null);
+                return (false, "voting.auth.google.notRegistered", null);
             }
 
             // 5. Create or update OnlineVoter record for tracking
@@ -502,7 +503,7 @@ public class OnlineVotingService : IOnlineVotingService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error authenticating voter with Google");
-            return (false, "An error occurred while processing your Google authentication.", null);
+            return (false, "voting.auth.google.error", null);
         }
     }
 
@@ -562,7 +563,7 @@ public class OnlineVotingService : IOnlineVotingService
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogWarning("Facebook Graph API returned non-success for voter auth: {Status}", response.StatusCode);
-                return (false, "Invalid Facebook access token.", null);
+                return (false, "voting.auth.facebook.invalidToken", null);
             }
 
             var json = await response.Content.ReadAsStringAsync();
@@ -570,13 +571,13 @@ public class OnlineVotingService : IOnlineVotingService
 
             if (!doc.RootElement.TryGetProperty("email", out var emailElement))
             {
-                return (false, "Your Facebook account has no verified email address. Please use another login method.", null);
+                return (false, "voting.auth.facebook.noEmail", null);
             }
 
             var email = emailElement.GetString();
             if (string.IsNullOrEmpty(email))
             {
-                return (false, "Your Facebook account has no verified email address. Please use another login method.", null);
+                return (false, "voting.auth.facebook.noEmail", null);
             }
 
             var now = DateTime.UtcNow;
@@ -590,7 +591,7 @@ public class OnlineVotingService : IOnlineVotingService
 
             if (!openElections.Any())
             {
-                return (false, "There are no elections currently open for online voting.", null);
+                return (false, "voting.auth.facebook.noOpenElections", null);
             }
 
             var isVoterRegistered = await _context.People
@@ -599,7 +600,7 @@ public class OnlineVotingService : IOnlineVotingService
             if (!isVoterRegistered)
             {
                 _logger.LogWarning("Facebook auth rejected: Email {Email} not found in any open election", email);
-                return (false, "You are not registered to vote in any currently open election.", null);
+                return (false, "voting.auth.facebook.notRegistered", null);
             }
 
             var onlineVoter = await _context.OnlineVoters.FirstOrDefaultAsync(ov => ov.VoterId == email);
@@ -634,7 +635,7 @@ public class OnlineVotingService : IOnlineVotingService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error authenticating voter with Facebook");
-            return (false, "An error occurred while processing your Facebook authentication.", null);
+            return (false, "voting.auth.facebook.error", null);
         }
     }
 
@@ -652,7 +653,7 @@ public class OnlineVotingService : IOnlineVotingService
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogWarning("Kakao API returned non-success for voter auth: {Status}", response.StatusCode);
-                return (false, "Invalid Kakao access token.", null);
+                return (false, "voting.auth.kakao.invalidToken", null);
             }
 
             var json = await response.Content.ReadAsStringAsync();
@@ -672,7 +673,7 @@ public class OnlineVotingService : IOnlineVotingService
 
             if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(phone))
             {
-                return (false, "Your Kakao account did not provide an email or phone number. Please use another login method.", null);
+                return (false, "voting.auth.kakao.noContact", null);
             }
 
             var now = DateTime.UtcNow;
@@ -686,7 +687,7 @@ public class OnlineVotingService : IOnlineVotingService
 
             if (!openElections.Any())
             {
-                return (false, "There are no elections currently open for online voting.", null);
+                return (false, "voting.auth.kakao.noOpenElections", null);
             }
 
             string? matchedVoterId = null;
@@ -707,7 +708,7 @@ public class OnlineVotingService : IOnlineVotingService
             if (matchedVoterId == null)
             {
                 _logger.LogWarning("Kakao auth rejected: email/phone not found in any open election");
-                return (false, "You are not registered to vote in any currently open election.", null);
+                return (false, "voting.auth.kakao.notRegistered", null);
             }
 
             var onlineVoter = await _context.OnlineVoters.FirstOrDefaultAsync(ov => ov.VoterId == matchedVoterId);
@@ -742,10 +743,15 @@ public class OnlineVotingService : IOnlineVotingService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error authenticating voter with Kakao");
-            return (false, "An error occurred while processing your Kakao authentication.", null);
+            return (false, "voting.auth.kakao.error", null);
         }
     }
 
+    /// <summary>
+    /// Normalizes a phone number from Kakao by extracting digits and adding a + prefix.
+    /// </summary>
+    /// <param name="phone">The phone number from Kakao to normalize.</param>
+    /// <returns>The normalized phone number with + prefix, or null if invalid.</returns>
     private static string? NormalizeKakaoPhone(string? phone)
     {
         if (string.IsNullOrEmpty(phone)) return null;
@@ -753,6 +759,10 @@ public class OnlineVotingService : IOnlineVotingService
         return digits.Length > 0 ? $"+{digits}" : null;
     }
 
+    /// <summary>
+    /// Generates a random 6-character verification code using alphanumeric characters.
+    /// </summary>
+    /// <returns>A 6-character verification code.</returns>
     private string GenerateVerificationCode()
     {
         const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -761,6 +771,13 @@ public class OnlineVotingService : IOnlineVotingService
             .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
+    /// <summary>
+    /// Sends a verification code to the recipient using the specified delivery method.
+    /// </summary>
+    /// <param name="recipient">The recipient's contact information (email or phone).</param>
+    /// <param name="method">The delivery method (email, sms, voice, whatsapp).</param>
+    /// <param name="code">The verification code to send.</param>
+    /// <returns>True if the code was sent successfully, false otherwise.</returns>
     private async Task<bool> SendVerificationCodeAsync(string recipient, string method, string code)
     {
         _logger.LogInformation("Sending verification code to {Recipient} via {Method}", recipient, method);
@@ -783,6 +800,12 @@ public class OnlineVotingService : IOnlineVotingService
         }
     }
 
+    /// <summary>
+    /// Sends a verification code via email using SMTP.
+    /// </summary>
+    /// <param name="email">The recipient's email address.</param>
+    /// <param name="code">The verification code to send.</param>
+    /// <returns>True if the email was sent successfully, false otherwise.</returns>
     private async Task<bool> SendEmailCodeAsync(string email, string code)
     {
         var smtpHost = _configuration["Email:SmtpHost"];
@@ -827,6 +850,12 @@ public class OnlineVotingService : IOnlineVotingService
         return true;
     }
 
+    /// <summary>
+    /// Sends a verification code via SMS using Twilio API.
+    /// </summary>
+    /// <param name="phone">The recipient's phone number.</param>
+    /// <param name="code">The verification code to send.</param>
+    /// <returns>True if the SMS was sent successfully, false otherwise.</returns>
     private async Task<bool> SendSmsCodeAsync(string phone, string code)
     {
         var accountSid = _configuration["Twilio:AccountSid"];
@@ -865,6 +894,12 @@ public class OnlineVotingService : IOnlineVotingService
         return true;
     }
 
+    /// <summary>
+    /// Sends a verification code via voice call using Twilio API.
+    /// </summary>
+    /// <param name="phone">The recipient's phone number.</param>
+    /// <param name="code">The verification code to send.</param>
+    /// <returns>True if the voice call was initiated successfully, false otherwise.</returns>
     private async Task<bool> SendVoiceCodeAsync(string phone, string code)
     {
         var accountSid = _configuration["Twilio:AccountSid"];
@@ -909,6 +944,12 @@ public class OnlineVotingService : IOnlineVotingService
         return true;
     }
 
+    /// <summary>
+    /// Sends a verification code via WhatsApp using GreenAPI.
+    /// </summary>
+    /// <param name="phone">The recipient's phone number.</param>
+    /// <param name="code">The verification code to send.</param>
+    /// <returns>True if the WhatsApp message was sent successfully, false otherwise.</returns>
     private async Task<bool> SendWhatsAppCodeAsync(string phone, string code)
     {
         var idInstance = _configuration["GreenApi:IdInstance"];
@@ -949,12 +990,22 @@ public class OnlineVotingService : IOnlineVotingService
         return true;
     }
 
+    /// <summary>
+    /// Normalizes a phone number for WhatsApp by extracting only the digits.
+    /// </summary>
+    /// <param name="phone">The phone number to normalize.</param>
+    /// <returns>The normalized phone number containing only digits.</returns>
     private static string NormalizePhoneForWhatsApp(string phone)
     {
         var digits = new string(phone.Where(char.IsDigit).ToArray());
         return digits;
     }
 
+    /// <summary>
+    /// Generates a JWT token for an authenticated online voter.
+    /// </summary>
+    /// <param name="onlineVoter">The online voter to generate the token for.</param>
+    /// <returns>A JWT token string valid for 24 hours.</returns>
     private string GenerateJwtToken(OnlineVoter onlineVoter)
     {
         var key = _configuration["Jwt:Key"] ?? "DefaultSecretKeyForDevelopmentPurposesOnly123456789";

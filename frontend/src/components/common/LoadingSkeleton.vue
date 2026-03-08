@@ -19,8 +19,8 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  width: '100%',
-  height: '20px'
+  width: "100%",
+  height: "20px",
 });
 </script>
 

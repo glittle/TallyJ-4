@@ -3,7 +3,7 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-page-header @back="goBack" :content="$t('tieManagement.title')" />
+          <el-page-header :content="$t('tieManagement.title')" @back="goBack" />
           <div class="header-actions">
             <el-button
               type="primary"
@@ -11,7 +11,7 @@
               :disabled="!hasChanges"
               @click="saveTieCounts"
             >
-              {{ $t('tieManagement.saveChanges') }}
+              {{ $t("tieManagement.saveChanges") }}
             </el-button>
           </div>
         </div>
@@ -26,33 +26,59 @@
           :title="$t('tieManagement.instructions')"
           type="info"
           :closable="false"
-          style="margin-bottom: 20px;"
+          style="margin-bottom: 20px"
         />
 
-        <div v-for="tie in tieDetails" :key="tie.tieBreakGroup" class="tie-group-card">
-          <el-card class="tie-card" :class="{ 'tie-break-required': tie.section === 'E' }">
+        <div
+          v-for="tie in tieDetails"
+          :key="tie.tieBreakGroup"
+          class="tie-group-card"
+        >
+          <el-card
+            class="tie-card"
+            :class="{ 'tie-break-required': tie.section === 'E' }"
+          >
             <template #header>
               <div class="tie-header">
                 <span>
-                  {{ $t('tieManagement.tieGroup', { group: tie.tieBreakGroup }) }}
-                  - {{ $t('tieManagement.section') }}: {{ getSectionLabel(tie.section) }}
+                  {{
+                    $t("tieManagement.tieGroup", { group: tie.tieBreakGroup })
+                  }}
+                  - {{ $t("tieManagement.section") }}:
+                  {{ getSectionLabel(tie.section) }}
                 </span>
                 <el-tag v-if="tie.section === 'E'" type="danger">
-                  {{ $t('tieManagement.tieBreakRequired') }}
+                  {{ $t("tieManagement.tieBreakRequired") }}
                 </el-tag>
               </div>
             </template>
 
             <div class="tie-content">
-              <div class="instructions" v-if="tie.instructions">
-                <el-alert :title="tie.instructions" type="warning" :closable="false" />
+              <div v-if="tie.instructions" class="instructions">
+                <el-alert
+                  :title="tie.instructions"
+                  type="warning"
+                  :closable="false"
+                />
               </div>
 
               <div class="candidates-table">
                 <el-table :data="tie.candidates" stripe style="width: 100%">
-                  <el-table-column prop="fullName" :label="$t('tieManagement.candidate')" width="300" />
-                  <el-table-column prop="voteCount" :label="$t('tieManagement.voteCount')" width="150" align="center" />
-                  <el-table-column :label="$t('tieManagement.tieBreakCount')" width="200">
+                  <el-table-column
+                    prop="fullName"
+                    :label="$t('tieManagement.candidate')"
+                    width="300"
+                  />
+                  <el-table-column
+                    prop="voteCount"
+                    :label="$t('tieManagement.voteCount')"
+                    width="150"
+                    align="center"
+                  />
+                  <el-table-column
+                    :label="$t('tieManagement.tieBreakCount')"
+                    width="200"
+                  >
                     <template #default="scope">
                       <el-input-number
                         v-model="scope.row.tieBreakCount"
@@ -60,26 +86,29 @@
                         :max="999"
                         :precision="0"
                         controls-position="right"
+                        style="width: 120px"
                         @change="onTieBreakCountChange"
-                        style="width: 120px;"
                       />
                     </template>
                   </el-table-column>
-                  <el-table-column :label="$t('tieManagement.actions')" width="150">
+                  <el-table-column
+                    :label="$t('tieManagement.actions')"
+                    width="150"
+                  >
                     <template #default="scope">
                       <el-button
                         type="primary"
                         size="small"
                         @click="clearTieBreakCount(scope.row)"
                       >
-                        {{ $t('common.clear') }}
+                        {{ $t("common.clear") }}
                       </el-button>
                     </template>
                   </el-table-column>
                 </el-table>
               </div>
 
-              <div class="tie-validation" v-if="getTieValidation(tie)">
+              <div v-if="getTieValidation(tie)" class="tie-validation">
                 <el-alert
                   :title="getTieValidation(tie)"
                   type="error"
@@ -97,19 +126,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { ElMessageBox } from 'element-plus';
-import { useNotifications } from '@/composables/useNotifications';
-import { useResultStore } from '../../stores/resultStore';
-import type { TieDetailsDto, TieCandidateDto } from '../../types';
+import { ref, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { ElMessageBox } from "element-plus";
+import { useNotifications } from "@/composables/useNotifications";
+import { useResultStore } from "../../stores/resultStore";
+import type { TieDetailsDto, TieCandidateDto } from "../../types";
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
-const { showSuccessMessage, showErrorMessage, showInfoMessage } = useNotifications();
+const { showSuccessMessage, showErrorMessage, showInfoMessage } =
+  useNotifications();
 
 const electionGuid = route.params.id as string;
 const tieDetails = ref<TieDetailsDto[]>([]);
@@ -118,7 +148,10 @@ const loading = ref(false);
 const saving = ref(false);
 
 const hasChanges = computed(() => {
-  return JSON.stringify(tieDetails.value) !== JSON.stringify(originalTieDetails.value);
+  return (
+    JSON.stringify(tieDetails.value) !==
+    JSON.stringify(originalTieDetails.value)
+  );
 });
 
 onMounted(async () => {
@@ -132,7 +165,7 @@ async function loadTieDetails() {
     tieDetails.value = JSON.parse(JSON.stringify(details)); // Deep copy
     originalTieDetails.value = JSON.parse(JSON.stringify(details)); // Store original
   } catch (error) {
-    showErrorMessage(t('tieManagement.loadError'));
+    showErrorMessage(t("tieManagement.loadError"));
   } finally {
     loading.value = false;
   }
@@ -141,13 +174,13 @@ async function loadTieDetails() {
 async function saveTieCounts() {
   try {
     await ElMessageBox.confirm(
-      t('tieManagement.confirmSave'),
-      t('common.confirmation'),
+      t("tieManagement.confirmSave"),
+      t("common.confirmation"),
       {
-        confirmButtonText: t('common.yes'),
-        cancelButtonText: t('common.no'),
-        type: 'warning',
-      }
+        confirmButtonText: t("common.yes"),
+        cancelButtonText: t("common.no"),
+        type: "warning",
+      },
     );
 
     saving.value = true;
@@ -155,12 +188,15 @@ async function saveTieCounts() {
     // Collect all tie break counts
     const counts: { personGuid: string; tieBreakCount: number }[] = [];
 
-    tieDetails.value.forEach(tie => {
-      tie.candidates.forEach(candidate => {
-        if (candidate.tieBreakCount !== undefined && candidate.tieBreakCount > 0) {
+    tieDetails.value.forEach((tie) => {
+      tie.candidates.forEach((candidate) => {
+        if (
+          candidate.tieBreakCount !== undefined &&
+          candidate.tieBreakCount > 0
+        ) {
           counts.push({
             personGuid: candidate.personGuid,
-            tieBreakCount: candidate.tieBreakCount
+            tieBreakCount: candidate.tieBreakCount,
           });
         }
       });
@@ -169,18 +205,18 @@ async function saveTieCounts() {
     const response = await resultStore.saveTieCounts(electionGuid, counts);
 
     if (response.success) {
-      showSuccessMessage(t('tieManagement.saveSuccess'));
+      showSuccessMessage(t("tieManagement.saveSuccess"));
       await loadTieDetails(); // Reload to get updated data
 
       if (response.reAnalysisTriggered) {
-        showInfoMessage(t('tieManagement.reAnalysisTriggered'));
+        showInfoMessage(t("tieManagement.reAnalysisTriggered"));
       }
     } else {
-      showErrorMessage(response.message || t('tieManagement.saveError'));
+      showErrorMessage(response.message || t("tieManagement.saveError"));
     }
   } catch (error) {
-    if (error !== 'cancel') {
-      showErrorMessage(t('tieManagement.saveError'));
+    if (error !== "cancel") {
+      showErrorMessage(t("tieManagement.saveError"));
     }
   } finally {
     saving.value = false;
@@ -197,19 +233,21 @@ function clearTieBreakCount(candidate: TieCandidateDto) {
 
 function getSectionLabel(section: string) {
   const labelMap: Record<string, string> = {
-    'E': t('results.elected'),
-    'X': t('results.extra'),
-    'O': t('results.other')
+    E: t("results.elected"),
+    X: t("results.extra"),
+    O: t("results.other"),
   };
   return labelMap[section] || section;
 }
 
 function getTieValidation(tie: TieDetailsDto): string | null {
   // Check if all candidates in elected ties have tie break counts
-  if (tie.section === 'E') {
-    const candidatesWithoutCount = tie.candidates.filter(c => !c.tieBreakCount || c.tieBreakCount === 0);
+  if (tie.section === "E") {
+    const candidatesWithoutCount = tie.candidates.filter(
+      (c) => !c.tieBreakCount || c.tieBreakCount === 0,
+    );
     if (candidatesWithoutCount.length > 0) {
-      return t('tieManagement.validationRequired');
+      return t("tieManagement.validationRequired");
     }
   }
   return null;

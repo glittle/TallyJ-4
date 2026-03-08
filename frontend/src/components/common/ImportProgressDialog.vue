@@ -25,7 +25,11 @@
             })
           }}
         </p>
-        <p>{{ $t("import.successCount", { count: importProgress.successCount }) }}</p>
+        <p>
+          {{
+            $t("import.successCount", { count: importProgress.successCount })
+          }}
+        </p>
         <p v-if="importProgress.errorCount > 0" class="error-count">
           {{ $t("import.errorCount", { count: importProgress.errorCount }) }}
         </p>
@@ -49,14 +53,18 @@
     </div>
 
     <div v-if="importComplete" class="import-complete">
-      <el-alert :title="$t('import.completed')" type="success" :closable="false" />
+      <el-alert
+        :title="$t('import.completed')"
+        type="success"
+        :closable="false"
+      />
     </div>
 
     <template #footer>
       <el-button v-if="importComplete" type="primary" @click="handleClose">
         {{ $t("common.close") }}
       </el-button>
-      <el-button v-else @click="handleCancel" :disabled="true">
+      <el-button v-else :disabled="true" @click="handleCancel">
         {{ $t("common.cancel") }}
       </el-button>
     </template>

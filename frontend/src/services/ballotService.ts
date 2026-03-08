@@ -12,7 +12,7 @@ export const ballotService = {
     const response = await getApiBallotsByElectionGuidBallots({
       path: { electionGuid },
     });
-    return (response.data?.data?.items ?? []) as BallotDto[];
+    return (response.data?.items ?? []) as BallotDto[];
   },
 
   async getById(ballotGuid: string): Promise<BallotDto> {

@@ -57,6 +57,30 @@ Vue files **MUST** follow this exact order:
 - Test migrations with reset script: `backend/scripts/reset-database.ps1` or `.sh`
 - Database seeding is idempotent and automated
 
+### Package Management
+- When upgrading NuGet packages, prefer manual editing of `.csproj` files over `dotnet add package` if CLI commands fail
+- If `dotnet list package --outdated` fails with "Value cannot be null" errors, check for project reference issues before retrying
+- As fallback for checking outdated packages, use NuGet API directly: `https://api.nuget.org/v3-flatcontainer/{package-id}/index.json`
+- Always verify package upgrades by running `dotnet build` after changes
+- For security vulnerabilities, prioritize upgrading to latest patch versions (e.g., 4.15.0 → 4.15.1)
+
+### Environment-Specific Commands
+
+#### Windows CMD Environment (Local Development)
+- **Path syntax**: Always use backslashes (`\`) in file paths, never forward slashes (`/`)
+- **Drive letters**: Use uppercase (e.g., `C:\Dev\TallyJ\v4\repo`, not `c:\dev\tallyj\v4\repo`)
+- **Directory changes**: Use `cd /d "C:\full\path\to\directory"` for changing drives/directories
+- **Command chaining**: Use `&&` for sequential commands, not `;` (which is ignored in CMD)
+- **Quotes**: Use double quotes for paths with spaces: `"C:\Program Files\app.exe"`
+- **Common mistake**: Avoid Unix-style commands like `cat`, `grep`, `ls` - use Windows equivalents (`type`, `findstr`, `dir`)
+
+#### Linux/bash Environment (GitHub Copilot/CI)
+- **Path syntax**: Use forward slashes (`/`) in file paths
+- **Directory changes**: Use `cd /full/path/to/directory`
+- **Command chaining**: Use `&&` for sequential commands or `;` for unconditional chaining
+- **Quotes**: Use double quotes for paths with spaces: `"/path/to/my dir/app"`
+- **Available commands**: Standard Unix tools (`cat`, `grep`, `ls`, etc.) are available
+
 ### Documentation
 - Update relevant README files when adding features
 - Document API changes in Swagger (XML comments)

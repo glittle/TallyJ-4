@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Domain.Enumerations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Domain.Entities;
@@ -23,11 +24,12 @@ public partial class Vote
     /// </summary>
     public Guid? PersonGuid { get; set; }
 
-    [StringLength(10)]
-    [Unicode(false)]
-    public string StatusCode { get; set; } = null!;
+    public VoteStatus VoteStatus { get; set; }
 
-    public Guid? InvalidReasonGuid { get; set; }
+    /// <summary>
+    /// The <see cref="IneligibleReasonEnum"/> code (e.g., "X01") of the person linked to this vote, or why there is no person
+    /// </summary>
+    public string? IneligibleReasonCode { get; set; }
 
     public int? SingleNameElectionCount { get; set; }
 

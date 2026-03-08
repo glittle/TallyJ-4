@@ -1,4 +1,4 @@
-import { ElMessage, ElNotification } from "element-plus";
+import { ElMessage } from "element-plus";
 
 export type NotificationType = "success" | "warning" | "info" | "error";
 

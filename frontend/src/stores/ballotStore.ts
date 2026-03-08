@@ -9,6 +9,7 @@ import type {
   CreateBallotDto,
   UpdateBallotDto,
   CreateVoteDto,
+  VoteWithBallotStatusDto,
 } from "../types";
 import type { BallotUpdateEvent } from "../types/SignalREvents";
 
@@ -114,18 +115,28 @@ export const useBallotStore = defineStore("ballot", () => {
     }
   }
 
-  async function createVote(dto: CreateVoteDto) {
+  async function createVote(
+    dto: CreateVoteDto,
+  ): Promise<VoteWithBallotStatusDto> {
     loading.value = true;
     error.value = null;
     try {
-      const vote = await voteService.create(dto);
+      const result = await voteService.create(dto);
 
       if (currentBallot.value?.ballotGuid === dto.ballotGuid) {
-        currentBallot.value.votes.push(vote);
+        const existingIndex = currentBallot.value.votes.findIndex(
+          (v) => v.positionOnBallot === result.vote.positionOnBallot,
+        );
+        if (existingIndex !== -1) {
+          currentBallot.value.votes[existingIndex] = result.vote;
+        } else {
+          currentBallot.value.votes.push(result.vote);
+        }
         currentBallot.value.voteCount = currentBallot.value.votes.length;
+        currentBallot.value.statusCode = result.ballotStatusCode;
       }
 
-      return vote;
+      return result;
     } catch (e: any) {
       error.value = e.message || "Failed to create vote";
       throw e;
@@ -139,7 +150,9 @@ export const useBallotStore = defineStore("ballot", () => {
     error.value = null;
     try {
       const vote = currentBallot.value?.votes.find(
-        (v) => v.ballotGuid === ballotGuid && v.positionOnBallot === positionOnBallot,
+        (v) =>
+          v.ballotGuid === ballotGuid &&
+          v.positionOnBallot === positionOnBallot,
       );
       if (!vote) {
         throw new Error("Vote not found");

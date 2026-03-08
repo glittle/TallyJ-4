@@ -1297,8 +1297,8 @@ namespace Backend.EF.Migrations
                     b.Property<Guid>("BallotGuid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("InvalidReasonGuid")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("IneligibleReasonCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OnlineVoteRaw")
                         .HasColumnType("nvarchar(max)");
@@ -1322,7 +1322,7 @@ namespace Backend.EF.Migrations
                     b.Property<int?>("SingleNameElectionCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("StatusCode")
+                    b.Property<string>("VoteStatus")
                         .IsRequired()
                         .HasMaxLength(10)
                         .IsUnicode(false)

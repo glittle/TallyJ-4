@@ -1,7 +1,7 @@
 export interface RequestCodeDto {
   voterId: string;
-  voterIdType: 'E' | 'P' | 'C';
-  deliveryMethod: 'email' | 'sms' | 'voice' | 'whatsapp';
+  voterIdType: "E" | "P" | "C";
+  deliveryMethod: "email" | "sms" | "voice" | "whatsapp";
 }
 
 export interface VerifyCodeDto {

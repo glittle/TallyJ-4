@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Backend.Domain.Enumerations;
 using Backend.DTOs.Ballots;
 
 namespace Backend.Validators;
@@ -9,20 +10,14 @@ namespace Backend.Validators;
 /// </summary>
 public class UpdateBallotDtoValidator : AbstractValidator<UpdateBallotDto>
 {
-    private static readonly string[] ValidStatusCodes = { "New", "Review", "OK", "Dup", "Spoil", "EmptyQ" };
-
     /// <summary>
     /// Initializes a new instance of the UpdateBallotDtoValidator with validation rules.
     /// </summary>
     public UpdateBallotDtoValidator()
     {
         RuleFor(x => x.StatusCode)
-            .NotEmpty()
-            .WithMessage("Status code is required")
-            .MaximumLength(10)
-            .WithMessage("Status code cannot exceed 10 characters")
-            .Must(code => ValidStatusCodes.Contains(code))
-            .WithMessage($"Status code must be one of: {string.Join(", ", ValidStatusCodes)}");
+            .IsInEnum()
+            .WithMessage($"Status code must be one of: {string.Join(", ", Enum.GetNames<BallotStatus>())}");
 
         RuleFor(x => x.Teller1)
             .MaximumLength(25)

@@ -1,10 +1,15 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import { ballotService } from '../services/ballotService';
-import { voteService } from '../services/voteService';
-import type { BallotDto, CreateBallotDto, UpdateBallotDto, CreateVoteDto } from '../types';
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import { ballotService } from "../services/ballotService";
+import { voteService } from "../services/voteService";
+import type {
+  BallotDto,
+  CreateBallotDto,
+  UpdateBallotDto,
+  CreateVoteDto,
+} from "../types";
 
-export const useBallotStore = defineStore('ballot', () => {
+export const useBallotStore = defineStore("ballot", () => {
   const ballots = ref<BallotDto[]>([]);
   const currentBallot = ref<BallotDto | null>(null);
   const loading = ref(false);
@@ -16,7 +21,7 @@ export const useBallotStore = defineStore('ballot', () => {
     try {
       ballots.value = await ballotService.getAll(electionGuid);
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch ballots';
+      error.value = e.message || "Failed to fetch ballots";
       throw e;
     } finally {
       loading.value = false;
@@ -29,17 +34,17 @@ export const useBallotStore = defineStore('ballot', () => {
     try {
       const ballot = await ballotService.getById(ballotGuid);
       currentBallot.value = ballot;
-      
-      const index = ballots.value.findIndex(b => b.ballotGuid === ballotGuid);
+
+      const index = ballots.value.findIndex((b) => b.ballotGuid === ballotGuid);
       if (index !== -1) {
         ballots.value[index] = ballot;
       } else {
         ballots.value.push(ballot);
       }
-      
+
       return ballot;
     } catch (e: any) {
-      error.value = e.message || 'Failed to fetch ballot';
+      error.value = e.message || "Failed to fetch ballot";
       throw e;
     } finally {
       loading.value = false;
@@ -55,7 +60,7 @@ export const useBallotStore = defineStore('ballot', () => {
       currentBallot.value = ballot;
       return ballot;
     } catch (e: any) {
-      error.value = e.message || 'Failed to create ballot';
+      error.value = e.message || "Failed to create ballot";
       throw e;
     } finally {
       loading.value = false;
@@ -67,19 +72,19 @@ export const useBallotStore = defineStore('ballot', () => {
     error.value = null;
     try {
       const ballot = await ballotService.update(ballotGuid, dto);
-      
-      const index = ballots.value.findIndex(b => b.ballotGuid === ballotGuid);
+
+      const index = ballots.value.findIndex((b) => b.ballotGuid === ballotGuid);
       if (index !== -1) {
         ballots.value[index] = ballot;
       }
-      
+
       if (currentBallot.value?.ballotGuid === ballotGuid) {
         currentBallot.value = ballot;
       }
-      
+
       return ballot;
     } catch (e: any) {
-      error.value = e.message || 'Failed to update ballot';
+      error.value = e.message || "Failed to update ballot";
       throw e;
     } finally {
       loading.value = false;
@@ -91,14 +96,14 @@ export const useBallotStore = defineStore('ballot', () => {
     error.value = null;
     try {
       await ballotService.delete(ballotGuid);
-      
-      ballots.value = ballots.value.filter(b => b.ballotGuid !== ballotGuid);
-      
+
+      ballots.value = ballots.value.filter((b) => b.ballotGuid !== ballotGuid);
+
       if (currentBallot.value?.ballotGuid === ballotGuid) {
         currentBallot.value = null;
       }
     } catch (e: any) {
-      error.value = e.message || 'Failed to delete ballot';
+      error.value = e.message || "Failed to delete ballot";
       throw e;
     } finally {
       loading.value = false;
@@ -110,15 +115,15 @@ export const useBallotStore = defineStore('ballot', () => {
     error.value = null;
     try {
       const vote = await voteService.create(dto);
-      
+
       if (currentBallot.value?.ballotGuid === dto.ballotGuid) {
         currentBallot.value.votes.push(vote);
         currentBallot.value.voteCount = currentBallot.value.votes.length;
       }
-      
+
       return vote;
     } catch (e: any) {
-      error.value = e.message || 'Failed to create vote';
+      error.value = e.message || "Failed to create vote";
       throw e;
     } finally {
       loading.value = false;
@@ -130,22 +135,24 @@ export const useBallotStore = defineStore('ballot', () => {
     error.value = null;
     try {
       const vote = currentBallot.value?.votes.find(
-        v => v.ballotGuid === ballotGuid && v.positionOnBallot === positionOnBallot
+        (v) =>
+          v.ballotGuid === ballotGuid &&
+          v.positionOnBallot === positionOnBallot,
       );
       if (!vote) {
-        throw new Error('Vote not found');
+        throw new Error("Vote not found");
       }
 
       await voteService.delete(vote.rowId);
-      
+
       if (currentBallot.value?.ballotGuid === ballotGuid) {
         currentBallot.value.votes = currentBallot.value.votes.filter(
-          v => v.positionOnBallot !== positionOnBallot
+          (v) => v.positionOnBallot !== positionOnBallot,
         );
         currentBallot.value.voteCount = currentBallot.value.votes.length;
       }
     } catch (e: any) {
-      error.value = e.message || 'Failed to delete vote';
+      error.value = e.message || "Failed to delete vote";
       throw e;
     } finally {
       loading.value = false;
@@ -173,6 +180,6 @@ export const useBallotStore = defineStore('ballot', () => {
     createVote,
     deleteVote,
     setCurrentBallot,
-    clearError
+    clearError,
   };
 });

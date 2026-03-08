@@ -1,4 +1,6 @@
-﻿namespace Backend.DTOs.Votes;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Votes;
 
 /// <summary>
 /// Data transfer object representing a vote in an election.
@@ -33,9 +35,9 @@ public class VoteDto
     public string? PersonFullName { get; set; }
 
     /// <summary>
-    /// The status code of the vote (e.g., "ok", "spoiled").
+    /// The status of the vote.
     /// </summary>
-    public string StatusCode { get; set; } = null!;
+    public VoteStatus VoteStatus { get; set; }
 
     /// <summary>
     /// Combined information about the person for display purposes.

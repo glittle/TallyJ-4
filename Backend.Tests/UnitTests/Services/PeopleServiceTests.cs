@@ -429,7 +429,7 @@ public class PeopleServiceTests : ServiceTestBase
             RowId = 900,
             BallotGuid = ballotGuid,
             LocationGuid = locationGuid,
-            StatusCode = "Ok",
+            StatusCode = BallotStatus.Ok,
             ComputerCode = "A",
             BallotNumAtComputer = 1,
             RowVersion = new byte[8]
@@ -455,7 +455,7 @@ public class PeopleServiceTests : ServiceTestBase
             BallotGuid = ballotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok",
+            StatusCode = VoteStatus.Ok,
             RowVersion = new byte[8]
         };
         Context.Votes.Add(vote);

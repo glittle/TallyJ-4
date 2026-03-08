@@ -1,4 +1,4 @@
-import type { VoteDto } from './Vote';
+import type { VoteDto } from "./Vote";
 
 export interface BallotDto {
   ballotGuid: string;

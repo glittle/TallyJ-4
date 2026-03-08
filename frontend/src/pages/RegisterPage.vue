@@ -3,7 +3,7 @@ import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
-import { useNotifications } from '@/composables/useNotifications';
+import { useNotifications } from "@/composables/useNotifications";
 import type { FormInstance, FormRules } from "element-plus";
 
 const { t } = useI18n();
@@ -20,7 +20,7 @@ const registerForm = reactive({
   confirmPassword: "",
 });
 
-const validatePassword = (rule: any, value: any, callback: any) => {
+const validatePassword = (_rule: any, value: any, callback: any) => {
   if (value === "") {
     callback(new Error(t("auth.passwordRequired")));
     return;
@@ -55,7 +55,7 @@ const validatePassword = (rule: any, value: any, callback: any) => {
   }
 };
 
-const validatePass2 = (rule: any, value: any, callback: any) => {
+const validatePass2 = (_rule: any, value: any, callback: any) => {
   if (value === "") {
     callback(new Error(t("auth.confirmPasswordRequired")));
   } else if (value !== registerForm.password) {
@@ -70,12 +70,8 @@ const rules = reactive<FormRules>({
     { required: true, message: t("auth.emailRequired"), trigger: "blur" },
     { type: "email", message: t("auth.emailInvalid"), trigger: "blur" },
   ],
-  password: [
-    { validator: validatePassword, trigger: "blur" },
-  ],
-  confirmPassword: [
-    { validator: validatePass2, trigger: "blur" },
-  ],
+  password: [{ validator: validatePassword, trigger: "blur" }],
+  confirmPassword: [{ validator: validatePass2, trigger: "blur" }],
 });
 
 const handleRegister = async () => {
@@ -112,24 +108,45 @@ const handleRegister = async () => {
         </div>
       </template>
 
-      <el-form ref="registerFormRef" :model="registerForm" :rules="rules" label-position="top"
-        @keyup.enter="handleRegister">
+      <el-form
+        ref="registerFormRef"
+        :model="registerForm"
+        :rules="rules"
+        label-position="top"
+        @keyup.enter="handleRegister"
+      >
         <el-form-item :label="t('auth.email')" prop="email">
-          <el-input v-model="registerForm.email" :placeholder="t('auth.emailPlaceholder')" />
+          <el-input
+            v-model="registerForm.email"
+            :placeholder="t('auth.emailPlaceholder')"
+          />
         </el-form-item>
 
         <el-form-item :label="t('auth.password')" prop="password">
-          <el-input v-model="registerForm.password" type="password" :placeholder="t('auth.passwordPlaceholder')"
-            show-password />
+          <el-input
+            v-model="registerForm.password"
+            type="password"
+            :placeholder="t('auth.passwordPlaceholder')"
+            show-password
+          />
         </el-form-item>
 
         <el-form-item :label="t('auth.confirmPassword')" prop="confirmPassword">
-          <el-input v-model="registerForm.confirmPassword" type="password"
-            :placeholder="t('auth.confirmPasswordPlaceholder')" show-password />
+          <el-input
+            v-model="registerForm.confirmPassword"
+            type="password"
+            :placeholder="t('auth.confirmPasswordPlaceholder')"
+            show-password
+          />
         </el-form-item>
 
         <div class="register-actions">
-          <el-button type="primary" :loading="loading" class="submit-btn" @click="handleRegister">
+          <el-button
+            type="primary"
+            :loading="loading"
+            class="submit-btn"
+            @click="handleRegister"
+          >
             {{ t("auth.registerButton") }}
           </el-button>
         </div>

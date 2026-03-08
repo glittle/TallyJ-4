@@ -1,36 +1,61 @@
 <template>
   <div class="presentation-view">
     <div class="presentation-header">
-      <h1 class="election-title">{{ presentationData?.electionName || $t('presentation.electionResults') }}</h1>
-      <div class="election-meta" v-if="presentationData">
-        <span class="election-date" v-if="presentationData.electionDate">
+      <h1 class="election-title">
+        {{
+          presentationData?.electionName || $t("presentation.electionResults")
+        }}
+      </h1>
+      <div v-if="presentationData" class="election-meta">
+        <span v-if="presentationData.electionDate" class="election-date">
           {{ formatDate(presentationData.electionDate) }}
         </span>
         <span class="election-stats">
-          {{ $t('presentation.positionsToFill', { count: presentationData.numToElect }) }} |
-          {{ $t('presentation.totalBallots', { count: presentationData.totalBallots }) }} |
-          {{ $t('presentation.totalVotes', { count: presentationData.totalVotes }) }}
+          {{
+            $t("presentation.positionsToFill", {
+              count: presentationData.numToElect,
+            })
+          }}
+          |
+          {{
+            $t("presentation.totalBallots", {
+              count: presentationData.totalBallots,
+            })
+          }}
+          |
+          {{
+            $t("presentation.totalVotes", {
+              count: presentationData.totalVotes,
+            })
+          }}
         </span>
       </div>
     </div>
 
     <div v-if="loading" class="loading-container">
       <el-icon class="loading-icon" size="48"><Loading /></el-icon>
-      <div class="loading-text">{{ $t('common.loading') }}</div>
+      <div class="loading-text">{{ $t("common.loading") }}</div>
     </div>
 
     <div v-else-if="presentationData" class="presentation-content">
       <!-- Status Banner -->
-      <div class="status-banner" :class="getStatusClass(presentationData.status)">
+      <div
+        class="status-banner"
+        :class="getStatusClass(presentationData.status)"
+      >
         <el-icon size="32" :class="getStatusIcon(presentationData.status)">
           <component :is="getStatusIcon(presentationData.status)" />
         </el-icon>
-        <span class="status-text">{{ getStatusText(presentationData.status) }}</span>
+        <span class="status-text">{{
+          getStatusText(presentationData.status)
+        }}</span>
       </div>
 
       <!-- Elected Candidates -->
       <div class="results-section">
-        <h2 class="section-title elected-title">{{ $t('presentation.electedCandidates') }}</h2>
+        <h2 class="section-title elected-title">
+          {{ $t("presentation.electedCandidates") }}
+        </h2>
         <div class="candidates-grid">
           <div
             v-for="candidate in presentationData.electedCandidates"
@@ -41,19 +66,30 @@
             <div class="candidate-rank">{{ candidate.rank }}</div>
             <div class="candidate-info">
               <div class="candidate-name">{{ candidate.fullName }}</div>
-              <div class="candidate-votes">{{ $t('presentation.votes', { count: candidate.voteCount }) }}</div>
+              <div class="candidate-votes">
+                {{ $t("presentation.votes", { count: candidate.voteCount }) }}
+              </div>
             </div>
             <div class="candidate-status">
-              <el-icon v-if="candidate.isWinner" size="24" class="icon-success"><Check /></el-icon>
-              <el-icon v-if="candidate.isTied" size="24" class="icon-warning"><Warning /></el-icon>
+              <el-icon v-if="candidate.isWinner" size="24" class="icon-success"
+                ><Check
+              /></el-icon>
+              <el-icon v-if="candidate.isTied" size="24" class="icon-warning"
+                ><Warning
+              /></el-icon>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Extra Candidates -->
-      <div class="results-section" v-if="presentationData.extraCandidates.length > 0">
-        <h2 class="section-title extra-title">{{ $t('presentation.extraCandidates') }}</h2>
+      <div
+        v-if="presentationData.extraCandidates.length > 0"
+        class="results-section"
+      >
+        <h2 class="section-title extra-title">
+          {{ $t("presentation.extraCandidates") }}
+        </h2>
         <div class="candidates-grid">
           <div
             v-for="candidate in presentationData.extraCandidates"
@@ -64,18 +100,25 @@
             <div class="candidate-rank">{{ candidate.rank }}</div>
             <div class="candidate-info">
               <div class="candidate-name">{{ candidate.fullName }}</div>
-              <div class="candidate-votes">{{ $t('presentation.votes', { count: candidate.voteCount }) }}</div>
+              <div class="candidate-votes">
+                {{ $t("presentation.votes", { count: candidate.voteCount }) }}
+              </div>
             </div>
             <div class="candidate-status">
-              <el-icon v-if="candidate.isTied" size="24" class="icon-warning"><Warning /></el-icon>
+              <el-icon v-if="candidate.isTied" size="24" class="icon-warning"
+                ><Warning
+              /></el-icon>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Ties Section -->
-      <div class="ties-section" v-if="presentationData.hasTies && presentationData.ties.length > 0">
-        <h2 class="section-title ties-title">{{ $t('presentation.ties') }}</h2>
+      <div
+        v-if="presentationData.hasTies && presentationData.ties.length > 0"
+        class="ties-section"
+      >
+        <h2 class="section-title ties-title">{{ $t("presentation.ties") }}</h2>
         <div class="ties-grid">
           <div
             v-for="tie in presentationData.ties"
@@ -84,17 +127,25 @@
             :class="{ 'tie-break-required': tie.tieBreakRequired }"
           >
             <div class="tie-header">
-              <span class="tie-group">{{ $t('presentation.tieGroup', { group: tie.tieBreakGroup }) }}</span>
-              <span class="tie-section">{{ getSectionLabel(tie.section) }}</span>
+              <span class="tie-group">{{
+                $t("presentation.tieGroup", { group: tie.tieBreakGroup })
+              }}</span>
+              <span class="tie-section">{{
+                getSectionLabel(tie.section)
+              }}</span>
             </div>
             <div class="tie-candidates">
-              <div v-for="name in tie.candidateNames" :key="name" class="tie-candidate-name">
+              <div
+                v-for="name in tie.candidateNames"
+                :key="name"
+                class="tie-candidate-name"
+              >
                 {{ name }}
               </div>
             </div>
-            <div class="tie-status" v-if="tie.tieBreakRequired">
+            <div v-if="tie.tieBreakRequired" class="tie-status">
               <el-icon size="20" class="icon-error"><Warning /></el-icon>
-              <span>{{ $t('presentation.tieBreakRequired') }}</span>
+              <span>{{ $t("presentation.tieBreakRequired") }}</span>
             </div>
           </div>
         </div>
@@ -108,7 +159,11 @@
     <!-- Footer -->
     <div class="presentation-footer">
       <div class="footer-content">
-        <span class="footer-text">{{ $t('presentation.generatedAt', { time: formatDateTime(new Date().toISOString()) }) }}</span>
+        <span class="footer-text">{{
+          $t("presentation.generatedAt", {
+            time: formatDateTime(new Date().toISOString()),
+          })
+        }}</span>
         <span class="footer-brand">TallyJ4 Election System</span>
       </div>
     </div>
@@ -116,14 +171,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { useNotifications } from '@/composables/useNotifications';
-import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
-import { Loading, Check, Warning, Clock } from '@element-plus/icons-vue';
-import { useResultStore } from '../../stores/resultStore';
-import type { PresentationDto } from '../../types';
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { useNotifications } from "@/composables/useNotifications";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { Loading, Check, Warning, Clock } from "@element-plus/icons-vue";
+import { useResultStore } from "../../stores/resultStore";
+import type { PresentationDto } from "../../types";
 
 const route = useRoute();
 const { t } = useI18n();
@@ -152,50 +207,50 @@ async function loadPresentationData() {
 }
 
 function formatDate(date: string) {
-  if (!date) return '';
+  if (!date) return "";
   return new Date(date).toLocaleDateString();
 }
 
 function formatDateTime(date: string) {
-  if (!date) return '';
+  if (!date) return "";
   return new Date(date).toLocaleString();
 }
 
 function getStatusClass(status: string) {
   const classMap: Record<string, string> = {
-    'Complete': 'status-complete',
-    'InProgress': 'status-progress',
-    'Paused': 'status-paused',
-    'Error': 'status-error'
+    Complete: "status-complete",
+    InProgress: "status-progress",
+    Paused: "status-paused",
+    Error: "status-error",
   };
-  return classMap[status] || 'status-default';
+  return classMap[status] || "status-default";
 }
 
 function getStatusIcon(status: string) {
   const iconMap: Record<string, any> = {
-    'Complete': Check,
-    'InProgress': Clock,
-    'Paused': Warning,
-    'Error': Warning
+    Complete: Check,
+    InProgress: Clock,
+    Paused: Warning,
+    Error: Warning,
   };
   return iconMap[status] || Clock;
 }
 
 function getStatusText(status: string) {
   const textMap: Record<string, string> = {
-    'Complete': t('presentation.statusComplete'),
-    'InProgress': t('presentation.statusInProgress'),
-    'Paused': t('presentation.statusPaused'),
-    'Error': t('presentation.statusError')
+    Complete: t("presentation.statusComplete"),
+    InProgress: t("presentation.statusInProgress"),
+    Paused: t("presentation.statusPaused"),
+    Error: t("presentation.statusError"),
   };
   return textMap[status] || status;
 }
 
 function getSectionLabel(section: string) {
   const labelMap: Record<string, string> = {
-    'E': t('presentation.elected'),
-    'X': t('presentation.extra'),
-    'O': t('presentation.other')
+    E: t("presentation.elected"),
+    X: t("presentation.extra"),
+    O: t("presentation.other"),
   };
   return labelMap[section] || section;
 }
@@ -216,7 +271,11 @@ function getSectionLabel(section: string) {
   text-align: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-700) 100%
+  );
   border-radius: 10px;
   color: var(--color-text-inverse);
 }
@@ -225,7 +284,7 @@ function getSectionLabel(section: string) {
   font-size: 3rem;
   font-weight: bold;
   margin: 0 0 10px 0;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .election-meta {
@@ -254,8 +313,12 @@ function getSectionLabel(section: string) {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-text {
@@ -283,23 +346,43 @@ function getSectionLabel(section: string) {
 }
 
 .status-complete {
-  background: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-success-600) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-success-500) 0%,
+    var(--color-success-600) 100%
+  );
 }
 
 .status-progress {
-  background: linear-gradient(135deg, var(--color-warning-500) 0%, var(--color-warning-600) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-warning-500) 0%,
+    var(--color-warning-600) 100%
+  );
 }
 
 .status-paused {
-  background: linear-gradient(135deg, var(--color-gray-500) 0%, var(--color-gray-600) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-gray-500) 0%,
+    var(--color-gray-600) 100%
+  );
 }
 
 .status-error {
-  background: linear-gradient(135deg, var(--color-error-500) 0%, var(--color-error-600) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-error-500) 0%,
+    var(--color-error-600) 100%
+  );
 }
 
 .status-default {
-  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-600) 100%
+  );
 }
 
 .results-section {
@@ -402,15 +485,15 @@ function getSectionLabel(section: string) {
 
 .candidate-status {
   font-size: 1.5rem;
-  
+
   .icon-success {
     color: var(--color-success-500);
   }
-  
+
   .icon-warning {
     color: var(--color-warning-500);
   }
-  
+
   .icon-error {
     color: var(--color-error-500);
   }

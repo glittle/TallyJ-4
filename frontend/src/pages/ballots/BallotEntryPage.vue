@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { useBallotStore } from '../../stores/ballotStore';
-import { useElectionStore } from '../../stores/electionStore';
-import { usePeopleStore } from '../../stores/peopleStore';
-import { useNotifications } from '@/composables/useNotifications';
-import InlineBallotEntry from '../../components/ballots/InlineBallotEntry.vue';
-import type { VoteDto, CreateVoteDto } from '../../types';
+import { computed, onMounted, onUnmounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { useBallotStore } from "../../stores/ballotStore";
+import { useElectionStore } from "../../stores/electionStore";
+import { usePeopleStore } from "../../stores/peopleStore";
+import { useNotifications } from "@/composables/useNotifications";
+import InlineBallotEntry from "../../components/ballots/InlineBallotEntry.vue";
+import type {
+  VoteDto,
+  CreateVoteDto,
+  VoteWithBallotStatusDto,
+} from "../../types";
 
 const router = useRouter();
 const route = useRoute();
@@ -15,7 +19,12 @@ const { t } = useI18n();
 const ballotStore = useBallotStore();
 const electionStore = useElectionStore();
 const peopleStore = usePeopleStore();
-const { showSuccessMessage, showErrorMessage, showWarningMessage, showInfoMessage } = useNotifications();
+const {
+  showSuccessMessage,
+  showErrorMessage,
+  showWarningMessage,
+  showInfoMessage,
+} = useNotifications();
 
 const electionGuid = route.params.id as string;
 const ballotGuid = route.params.ballotId as string;
@@ -28,22 +37,22 @@ onMounted(async () => {
   try {
     await Promise.all([
       ballotStore.initializeSignalR(),
-      peopleStore.initializeSignalR()
+      peopleStore.initializeSignalR(),
     ]);
 
     await Promise.all([
       ballotStore.joinElection(electionGuid),
-      peopleStore.joinElection(electionGuid)
+      peopleStore.joinElection(electionGuid),
     ]);
 
     await Promise.all([
       ballotStore.fetchBallotById(ballotGuid),
-      electionStore.fetchElectionById(electionGuid)
+      electionStore.fetchElectionById(electionGuid),
     ]);
 
     setupPersonUpdateHandler();
-  } catch (error) {
-    showErrorMessage(t('ballots.loadError'));
+  } catch (_error) {
+    showErrorMessage(t("ballots.loadError"));
   }
 });
 
@@ -51,10 +60,10 @@ onUnmounted(async () => {
   try {
     await Promise.all([
       ballotStore.leaveElection(electionGuid),
-      peopleStore.leaveElection(electionGuid)
+      peopleStore.leaveElection(electionGuid),
     ]);
   } catch (error) {
-    console.error('Failed to leave election group for ballot entry:', error);
+    console.error("Failed to leave election group for ballot entry:", error);
   }
 });
 
@@ -65,8 +74,10 @@ function setupPersonUpdateHandler() {
     await originalHandler(data);
 
     if (data.firstName || data.lastName) {
-      const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ');
-      showInfoMessage(t('ballots.personUpdated', { name: fullName }));
+      const fullName = [data.firstName, data.lastName]
+        .filter(Boolean)
+        .join(" ");
+      showInfoMessage(t("ballots.personUpdated", { name: fullName }));
     }
   };
 }
@@ -81,37 +92,39 @@ async function handleVoteAdded(vote: VoteDto) {
       ballotGuid: vote.ballotGuid,
       positionOnBallot: vote.positionOnBallot,
       personGuid: vote.personGuid || undefined,
-      statusCode: vote.statusCode
     };
 
-    await ballotStore.createVote(createDto);
-    const isSpoiled = createDto.statusCode && createDto.statusCode !== 'Ok';
+    const result: VoteWithBallotStatusDto =
+      await ballotStore.createVote(createDto);
+    const isSpoiled = result.vote.statusCode && result.vote.statusCode !== "ok";
     if (isSpoiled) {
-      showWarningMessage(t('ballots.voteSpoiledSuccess', { code: createDto.statusCode }));
+      showWarningMessage(
+        t("ballots.voteSpoiledSuccess", { code: result.vote.statusCode }),
+      );
     } else {
-      showSuccessMessage(t('ballots.voteAddedSuccess'));
+      showSuccessMessage(t("ballots.voteAddedSuccess"));
     }
   } catch (error: any) {
-    showErrorMessage(error.message || t('ballots.voteAddedError'));
+    showErrorMessage(error.message || t("ballots.voteAddedError"));
   }
 }
 
 async function handleVoteRemoved(positionOnBallot: number) {
   try {
     await ballotStore.deleteVote(ballotGuid, positionOnBallot);
-    showSuccessMessage(t('ballots.voteRemovedSuccess'));
+    showSuccessMessage(t("ballots.voteRemovedSuccess"));
   } catch (error: any) {
-    showErrorMessage(error.message || t('ballots.voteRemovedError'));
+    showErrorMessage(error.message || t("ballots.voteRemovedError"));
   }
 }
 
 function getStatusType(status: string) {
   const typeMap: Record<string, any> = {
-    'Ok': 'success',
-    'Review': 'warning',
-    'Spoiled': 'danger'
+    ok: "success",
+    review: "warning",
+    spoiled: "danger",
   };
-  return typeMap[status] || 'info';
+  return typeMap[status] || "info";
 }
 </script>
 <template>
@@ -119,7 +132,10 @@ function getStatusType(status: string) {
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-page-header @back="goBack" :content="$t('ballots.entry', { code: ballot?.ballotCode })" />
+          <el-page-header
+            :content="$t('ballots.entry', { code: ballot?.ballotCode })"
+            @back="goBack"
+          />
         </div>
       </template>
 
@@ -139,10 +155,10 @@ function getStatusType(status: string) {
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item :label="$t('ballots.teller1')">
-              {{ ballot.teller1 || '-' }}
+              {{ ballot.teller1 || "-" }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('ballots.teller2')">
-              {{ ballot.teller2 || '-' }}
+              {{ ballot.teller2 || "-" }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('ballots.voteCount')">
               {{ ballot.voteCount }}
@@ -151,8 +167,13 @@ function getStatusType(status: string) {
         </div>
 
         <div class="votes-section">
-          <InlineBallotEntry :election-guid="electionGuid" :ballot="ballot" :max-votes="election.numberToElect || 9"
-            @vote-added="handleVoteAdded" @vote-removed="handleVoteRemoved" />
+          <InlineBallotEntry
+            :election-guid="electionGuid"
+            :ballot="ballot"
+            :max-votes="election.numberToElect || 9"
+            @vote-added="handleVoteAdded"
+            @vote-removed="handleVoteRemoved"
+          />
         </div>
       </div>
     </el-card>

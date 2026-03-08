@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { ElMessageBox } from 'element-plus';
-import { useNotifications } from '@/composables/useNotifications';
-import { Search, Plus, MoreFilled, ArrowDown, Delete, Upload } from '@element-plus/icons-vue';
-import { usePeopleStore } from '../../stores/peopleStore';
-import type { PersonListDto } from '../../types';
-import PeopleTable from '../../components/people/PeopleTable.vue';
-import PersonFormDialog from '../../components/people/PersonFormDialog.vue';
-
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { ElMessageBox } from "element-plus";
+import { useNotifications } from "@/composables/useNotifications";
+import {
+  Search,
+  Plus,
+  MoreFilled,
+  ArrowDown,
+  Delete,
+  Upload,
+} from "@element-plus/icons-vue";
+import { usePeopleStore } from "../../stores/peopleStore";
+import type { PersonListDto } from "../../types";
+import PeopleTable from "../../components/people/PeopleTable.vue";
+import PersonFormDialog from "../../components/people/PersonFormDialog.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -18,8 +24,8 @@ const peopleStore = usePeopleStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
-const searchQuery = ref('');
-const activeTab = ref('all');
+const searchQuery = ref("");
+const activeTab = ref("all");
 const showAddDialog = ref(false);
 const showEditDialog = ref(false);
 const editingPerson = ref<PersonListDto | null>(null);
@@ -41,9 +47,10 @@ const filteredPeople = computed(() => {
     return allPeople.value;
   }
   const query = searchQuery.value.toLowerCase();
-  return allPeople.value.filter(p =>
-    p.fullName.toLowerCase().includes(query) ||
-    p.email?.toLowerCase().includes(query)
+  return allPeople.value.filter(
+    (p) =>
+      p.fullName.toLowerCase().includes(query) ||
+      p.email?.toLowerCase().includes(query),
     // p.bahaiId?.toLowerCase().includes(query)
   );
 });
@@ -54,7 +61,7 @@ onMounted(async () => {
     await peopleStore.joinElection(electionGuid);
     await peopleStore.fetchPeopleList(electionGuid);
   } catch (error) {
-    showErrorMessage(`${t('people.loadError')} ${error}`);
+    showErrorMessage(`${t("people.loadError")} ${error}`);
   }
 });
 
@@ -62,7 +69,7 @@ onUnmounted(async () => {
   try {
     await peopleStore.leaveElection(electionGuid);
   } catch (error) {
-    console.error(t('people.leaveElectionGroupError'), error);
+    console.error(t("people.leaveElectionGroupError"), error);
   }
 });
 
@@ -82,20 +89,20 @@ function handleEdit(person: PersonListDto) {
 async function handleDelete(person: PersonListDto) {
   try {
     await ElMessageBox.confirm(
-      t('people.deleteConfirm', { name: person.fullName }),
-      t('common.warning'),
+      t("people.deleteConfirm", { name: person.fullName }),
+      t("common.warning"),
       {
-        confirmButtonText: t('common.delete'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
+        confirmButtonText: t("common.delete"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      },
     );
 
     await peopleStore.deletePerson(person.personGuid);
-    showSuccessMessage(t('people.deleteSuccess'));
+    showSuccessMessage(t("people.deleteSuccess"));
   } catch (error: any) {
-    if (error !== 'cancel') {
-      showErrorMessage(error.message || t('people.deleteError'));
+    if (error !== "cancel") {
+      showErrorMessage(error.message || t("people.deleteError"));
     }
   }
 }
@@ -112,7 +119,7 @@ function handleImport() {
 
 function handleBulkAction(command: string) {
   switch (command) {
-    case 'delete':
+    case "delete":
       if (selectedPeople.value.length > 0) {
         showBulkDeleteConfirm.value = true;
       }
@@ -120,29 +127,27 @@ function handleBulkAction(command: string) {
   }
 }
 
-
-
 async function confirmBulkDelete() {
   if (selectedPeople.value.length === 0) return;
 
   bulkDeleting.value = true;
   try {
-    const deletePromises = selectedPeople.value.map(person =>
-      peopleStore.deletePerson(person.personGuid)
+    const deletePromises = selectedPeople.value.map((person) =>
+      peopleStore.deletePerson(person.personGuid),
     );
 
     await Promise.all(deletePromises);
-    showSuccessMessage(t('people.bulkDeleteSuccess', { count: selectedPeople.value.length }));
+    showSuccessMessage(
+      t("people.bulkDeleteSuccess", { count: selectedPeople.value.length }),
+    );
     selectedPeople.value = [];
     showBulkDeleteConfirm.value = false;
   } catch (error: any) {
-    showErrorMessage(error.message || t('people.bulkDeleteError'));
+    showErrorMessage(error.message || t("people.bulkDeleteError"));
   } finally {
     bulkDeleting.value = false;
   }
 }
-
-
 </script>
 
 <template>
@@ -151,12 +156,17 @@ async function confirmBulkDelete() {
       <template #header>
         <div class="card-header">
           <div class="header-left">
-            <el-page-header @back="goBack" :content="$t('people.management')" />
+            <el-page-header :content="$t('people.management')" @back="goBack" />
           </div>
           <div class="header-actions">
             <el-space>
-              <el-input v-model="searchQuery" :placeholder="$t('people.search')" style="width: 250px;" clearable
-                @input="handleSearch">
+              <el-input
+                v-model="searchQuery"
+                :placeholder="$t('people.search')"
+                style="width: 250px"
+                clearable
+                @input="handleSearch"
+              >
                 <template #prefix>
                   <el-icon>
                     <Search />
@@ -167,31 +177,39 @@ async function confirmBulkDelete() {
                 <el-icon>
                   <Plus />
                 </el-icon>
-                {{ $t('people.addPerson') }}
+                {{ $t("people.addPerson") }}
               </el-button>
               <el-button type="default" @click="handleImport">
                 <el-icon>
                   <Upload />
                 </el-icon>
-                {{ $t('people.importPeople') }}
+                {{ $t("people.importPeople") }}
               </el-button>
               <el-dropdown @command="handleBulkAction">
                 <el-button type="default">
                   <el-icon>
                     <MoreFilled />
                   </el-icon>
-                  {{ $t('people.bulkActions') }}
+                  {{ $t("people.bulkActions") }}
                   <el-icon class="el-icon--right">
                     <ArrowDown />
                   </el-icon>
                 </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item command="delete" :disabled="selectedPeople.length === 0" class="danger-item">
+                    <el-dropdown-item
+                      command="delete"
+                      :disabled="selectedPeople.length === 0"
+                      class="danger-item"
+                    >
                       <el-icon>
                         <Delete />
                       </el-icon>
-                      {{ $t('people.deleteSelected', { count: selectedPeople.length }) }}
+                      {{
+                        $t("people.deleteSelected", {
+                          count: selectedPeople.length,
+                        })
+                      }}
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -201,33 +219,54 @@ async function confirmBulkDelete() {
         </div>
       </template>
 
-      <PeopleTable :people="filteredPeople" :loading="loading" :show-selection="true" :selected="selectedPeople"
-        @edit="handleEdit" @delete="handleDelete" />
+      <PeopleTable
+        :people="filteredPeople"
+        :loading="loading"
+        :show-selection="true"
+        :selected="selectedPeople"
+        @edit="handleEdit"
+        @delete="handleDelete"
+      />
     </el-card>
 
-    <PersonFormDialog v-model="showAddDialog" :election-guid="electionGuid" @success="handleFormSuccess" />
+    <PersonFormDialog
+      v-model="showAddDialog"
+      :election-guid="electionGuid"
+      @success="handleFormSuccess"
+    />
 
-    <PersonFormDialog v-model="showEditDialog" :election-guid="electionGuid" :person="editingPerson" :is-edit="true"
-      @success="handleFormSuccess" />
-
-
+    <PersonFormDialog
+      v-model="showEditDialog"
+      :election-guid="electionGuid"
+      :person="editingPerson"
+      :is-edit="true"
+      @success="handleFormSuccess"
+    />
 
     <!-- Bulk Delete Confirmation -->
-    <el-dialog v-model="showBulkDeleteConfirm" :title="$t('people.confirmBulkDelete')" width="500px">
-      <p>{{ $t('people.bulkDeleteMessage', { count: selectedPeople.length }) }}</p>
-      <p class="warning-text">{{ $t('common.actionIrreversible') }}</p>
+    <el-dialog
+      v-model="showBulkDeleteConfirm"
+      :title="$t('people.confirmBulkDelete')"
+      width="500px"
+    >
+      <p>
+        {{ $t("people.bulkDeleteMessage", { count: selectedPeople.length }) }}
+      </p>
+      <p class="warning-text">{{ $t("common.actionIrreversible") }}</p>
 
       <template #footer>
         <el-button @click="showBulkDeleteConfirm = false">
-          {{ $t('common.cancel') }}
+          {{ $t("common.cancel") }}
         </el-button>
-        <el-button type="danger" @click="confirmBulkDelete" :loading="bulkDeleting">
-          {{ $t('common.delete') }}
+        <el-button
+          type="danger"
+          :loading="bulkDeleting"
+          @click="confirmBulkDelete"
+        >
+          {{ $t("common.delete") }}
         </el-button>
       </template>
     </el-dialog>
-
-
   </div>
 </template>
 
@@ -250,8 +289,6 @@ async function confirmBulkDelete() {
     display: flex;
     align-items: center;
   }
-
-
 
   .warning-text {
     color: var(--color-error-600);

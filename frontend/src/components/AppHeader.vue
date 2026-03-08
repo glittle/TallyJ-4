@@ -5,8 +5,15 @@ import { useAuthStore } from "../stores/authStore";
 import { useLocationStore } from "../stores/locationStore";
 import { useElectionStore } from "../stores/electionStore";
 import { useI18n } from "vue-i18n";
-import { useNotifications } from '@/composables/useNotifications';
-import { ArrowDown, User, Setting, SwitchButton, Menu, Location } from "@element-plus/icons-vue";
+import { useNotifications } from "@/composables/useNotifications";
+import {
+  ArrowDown,
+  User,
+  Setting,
+  SwitchButton,
+  Menu,
+  Location,
+} from "@element-plus/icons-vue";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
 import { VERSION, BUILD_DATE } from "./version";
@@ -35,7 +42,7 @@ window.addEventListener("resize", checkMobile);
 
 const currentUser = computed(() => ({
   name: authStore.name,
-  email: authStore.email
+  email: authStore.email,
 }));
 
 const currentPageTitle = computed(() => {
@@ -52,7 +59,7 @@ const currentPageTitle = computed(() => {
 
   // Handle dynamic title from route meta using titleKey
   const titleKey = route.meta.titleKey;
-  if (typeof titleKey === 'string') {
+  if (typeof titleKey === "string") {
     return t(titleKey);
   }
 
@@ -73,23 +80,27 @@ const currentElectionGuid = computed(() => {
 });
 
 // Get selected location details
-const selectedLocation = computed(() => {
+const _selectedLocation = computed(() => {
   if (!locationStore.selectedLocationGuid) return null;
   return locationStore.locations.find(
-    (loc) => loc.locationGuid === locationStore.selectedLocationGuid
+    (loc) => loc.locationGuid === locationStore.selectedLocationGuid,
   );
 });
 
 // Load locations when election is available
-watch(currentElectionGuid, async (electionGuid) => {
-  if (electionGuid && locationStore.locations.length === 0) {
-    try {
-      await locationStore.fetchLocations(electionGuid);
-    } catch (error) {
-      console.error('Failed to load locations:', error);
+watch(
+  currentElectionGuid,
+  async (electionGuid) => {
+    if (electionGuid && locationStore.locations.length === 0) {
+      try {
+        await locationStore.fetchLocations(electionGuid);
+      } catch (error) {
+        console.error("Failed to load locations:", error);
+      }
     }
-  }
-}, { immediate: true });
+  },
+  { immediate: true },
+);
 
 function handleLocationChange(locationGuid: string) {
   locationStore.selectLocation(locationGuid);
@@ -118,25 +129,45 @@ function toggleMobileMenu() {
 <template>
   <header class="app-header" role="banner">
     <div class="header-left">
-      <button v-if="isMobile" class="mobile-menu-btn" @click="toggleMobileMenu" aria-label="Toggle navigation menu"
-        :aria-expanded="mobileMenuOpen">
+      <button
+        v-if="isMobile"
+        class="mobile-menu-btn"
+        aria-label="Toggle navigation menu"
+        :aria-expanded="mobileMenuOpen"
+        @click="toggleMobileMenu"
+      >
         <el-icon>
           <Menu />
         </el-icon>
       </button>
       <h1 class="sr-only">TallyJ 4 - Election Management System</h1>
-      <h3 aria-live="polite" :title="versionTooltip">TallyJ 4 - {{ currentPageTitle }}</h3>
+      <h3 aria-live="polite" :title="versionTooltip">
+        TallyJ 4 - {{ currentPageTitle }}
+      </h3>
 
       <!-- Location Selector -->
-      <div v-if="currentElectionGuid && locationStore.locations?.length > 0" class="location-selector">
+      <div
+        v-if="currentElectionGuid && locationStore.locations?.length > 0"
+        class="location-selector"
+      >
         <el-icon class="location-icon">
           <Location />
         </el-icon>
-        <el-select :model-value="locationStore.selectedLocationGuid" @update:model-value="handleLocationChange"
-          :placeholder="$t('locations.selectLocation')" clearable :aria-label="$t('locations.currentLocation')"
-          size="small" class="location-select">
-          <el-option v-for="location in locationStore.sortedLocations" :key="location.locationGuid"
-            :label="location.name" :value="location.locationGuid" />
+        <el-select
+          :model-value="locationStore.selectedLocationGuid"
+          :placeholder="$t('locations.selectLocation')"
+          clearable
+          :aria-label="$t('locations.currentLocation')"
+          size="small"
+          class="location-select"
+          @update:model-value="handleLocationChange"
+        >
+          <el-option
+            v-for="location in locationStore.sortedLocations"
+            :key="location.locationGuid"
+            :label="location.name"
+            :value="location.locationGuid"
+          />
         </el-select>
       </div>
     </div>
@@ -144,9 +175,16 @@ function toggleMobileMenu() {
       <ThemeSelector />
       <LanguageSelector />
       <el-dropdown trigger="click" @command="handleCommand">
-        <button class="user-dropdown" aria-haspopup="menu" :aria-expanded="false" :aria-label="t('common.userMenu')">
+        <button
+          class="user-dropdown"
+          aria-haspopup="menu"
+          :aria-expanded="false"
+          :aria-label="t('common.userMenu')"
+        >
           <el-avatar :size="32" icon="UserFilled" aria-hidden="true" />
-          <span class="username">{{ currentUser?.name || currentUser?.email || "User" }}</span>
+          <span class="username">{{
+            currentUser?.name || currentUser?.email || "User"
+          }}</span>
           <el-icon aria-hidden="true">
             <ArrowDown />
           </el-icon>

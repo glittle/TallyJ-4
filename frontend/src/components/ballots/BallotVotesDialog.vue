@@ -2,12 +2,12 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { ElMessageBox } from "element-plus";
-import { useNotifications } from '@/composables/useNotifications';
+import { useNotifications } from "@/composables/useNotifications";
 import { Plus } from "@element-plus/icons-vue";
 import { useBallotStore } from "../../stores/ballotStore";
 import type { BallotDto, VoteDto } from "../../types";
 import VoteFormDialog from "./VoteFormDialog.vue";
-import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 const { handleApiError } = useApiErrorHandler();
 
 const props = defineProps<{
@@ -35,11 +35,15 @@ const nextPosition = computed(() => {
 
 async function handleDeleteVote(vote: VoteDto) {
   try {
-    await ElMessageBox.confirm(t("ballots.deleteVoteConfirm"), t("common.warning"), {
-      confirmButtonText: t("common.delete"),
-      cancelButtonText: t("common.cancel"),
-      type: "warning",
-    });
+    await ElMessageBox.confirm(
+      t("ballots.deleteVoteConfirm"),
+      t("common.warning"),
+      {
+        confirmButtonText: t("common.delete"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      },
+    );
 
     await ballotStore.deleteVote(vote.ballotGuid, vote.positionOnBallot);
     showSuccessMessage(t("ballots.deleteVoteSuccess"));
@@ -77,8 +81,12 @@ function getVoteStatusType(status: string) {
 </script>
 
 <template>
-  <el-dialog :model-value="modelValue" :title="$t('ballots.votes', { code: ballot?.ballotCode })" width="800px"
-    @update:model-value="$emit('update:modelValue', $event)">
+  <el-dialog
+    :model-value="modelValue"
+    :title="$t('ballots.votes', { code: ballot?.ballotCode })"
+    width="800px"
+    @update:model-value="$emit('update:modelValue', $event)"
+  >
     <div v-if="ballot" class="ballot-votes-dialog">
       <div class="ballot-info">
         <el-descriptions :column="2" border size="small">
@@ -111,18 +119,37 @@ function getVoteStatusType(status: string) {
         </div>
 
         <el-table :data="ballot.votes" style="width: 100%" size="small">
-          <el-table-column prop="positionOnBallot" :label="$t('ballots.position')" width="80" />
-          <el-table-column prop="personFullName" :label="$t('ballots.candidate')" min-width="200" />
-          <el-table-column prop="statusCode" :label="$t('ballots.status')" width="100">
+          <el-table-column
+            prop="positionOnBallot"
+            :label="$t('ballots.position')"
+            width="80"
+          />
+          <el-table-column
+            prop="personFullName"
+            :label="$t('ballots.candidate')"
+            min-width="200"
+          />
+          <el-table-column
+            prop="statusCode"
+            :label="$t('ballots.status')"
+            width="100"
+          >
             <template #default="scope">
-              <el-tag size="small" :type="getVoteStatusType(scope.row.statusCode)">
+              <el-tag
+                size="small"
+                :type="getVoteStatusType(scope.row.statusCode)"
+              >
                 {{ scope.row.statusCode }}
               </el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="$t('common.actions')" width="100">
             <template #default="scope">
-              <el-button size="small" type="danger" @click="handleDeleteVote(scope.row)">
+              <el-button
+                size="small"
+                type="danger"
+                @click="handleDeleteVote(scope.row)"
+              >
                 {{ $t("common.delete") }}
               </el-button>
             </template>
@@ -131,8 +158,13 @@ function getVoteStatusType(status: string) {
       </div>
     </div>
 
-    <VoteFormDialog v-model="showAddVote" :ballot-guid="ballot?.ballotGuid || ''" :election-guid="electionGuid"
-      :next-position="nextPosition" @success="handleVoteSuccess" />
+    <VoteFormDialog
+      v-model="showAddVote"
+      :ballot-guid="ballot?.ballotGuid || ''"
+      :election-guid="electionGuid"
+      :next-position="nextPosition"
+      @success="handleVoteSuccess"
+    />
   </el-dialog>
 </template>
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { usePersonSearch } from '@/composables/usePersonSearch';
-import type { VoteDto } from '@/types/Vote';
-import type { SearchablePersonDto } from '@/types/Person';
-import { Close, WarningFilled, Plus } from '@element-plus/icons-vue';
+import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { usePersonSearch } from "@/composables/usePersonSearch";
+import type { VoteDto } from "@/types/Vote";
+import type { SearchablePersonDto } from "@/types/Person";
+import { Close, WarningFilled, Plus } from "@element-plus/icons-vue";
 
 const props = defineProps<{
   positionOnBallot: number;
@@ -15,21 +15,23 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: VoteDto | null];
-  'vote-selected': [vote: VoteDto];
-  'vote-cleared': [positionOnBallot: number];
-  'add-new-person': [];
+  "update:modelValue": [value: VoteDto | null];
+  "vote-selected": [vote: VoteDto];
+  "vote-cleared": [positionOnBallot: number];
+  "add-new-person": [];
 }>();
 
-const { t } = useI18n();
+const { t: _t } = useI18n();
 
-const searchQuery = ref('');
+const searchQuery = ref("");
 const inputRef = ref();
 const selectedPerson = ref<SearchablePersonDto | null>(null);
-const showDropdown = ref(false);
+const _showDropdown = ref(false);
 
 const candidatesRef = computed(() => props.candidates);
-const { searchResults } = usePersonSearch(searchQuery, candidatesRef, { maxResults: 20 });
+const { searchResults } = usePersonSearch(searchQuery, candidatesRef, {
+  maxResults: 20,
+});
 
 const hasSearchQuery = computed(() => {
   return searchQuery.value.trim().length > 0;
@@ -39,79 +41,87 @@ const hasResults = computed(() => {
   return searchResults.value.length > 0;
 });
 
-const showEmptyState = computed(() => {
+const _showEmptyState = computed(() => {
   return hasSearchQuery.value && !hasResults.value && !selectedPerson.value;
 });
 
 const isDuplicate = computed(() => {
-  return selectedPerson.value ? props.duplicatePersonGuids.includes(selectedPerson.value.personGuid) : false;
+  return selectedPerson.value
+    ? props.duplicatePersonGuids.includes(selectedPerson.value.personGuid)
+    : false;
 });
 
-const displayValue = computed(() => {
+const _displayValue = computed(() => {
   if (selectedPerson.value) {
     return selectedPerson.value.fullName;
   }
   if (props.modelValue?.personFullName) {
     return props.modelValue.personFullName;
   }
-  return '';
+  return "";
 });
 
-watch(() => props.modelValue, (newValue) => {
-  if (newValue?.personGuid && newValue?.personFullName) {
-    const person = props.candidates.find(c => c.personGuid === newValue.personGuid);
-    if (person) {
-      selectedPerson.value = person;
-      searchQuery.value = person.fullName;
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue?.personGuid && newValue?.personFullName) {
+      const person = props.candidates.find(
+        (c) => c.personGuid === newValue.personGuid,
+      );
+      if (person) {
+        selectedPerson.value = person;
+        searchQuery.value = person.fullName;
+      } else {
+        selectedPerson.value = {
+          personGuid: newValue.personGuid,
+          fullName: newValue.personFullName,
+          lastName: newValue.personFullName,
+          _searchText: newValue.personFullName,
+          _soundexCodes: [],
+          voteCount: 0,
+        } as SearchablePersonDto;
+        searchQuery.value = newValue.personFullName;
+      }
     } else {
-      selectedPerson.value = {
-        personGuid: newValue.personGuid,
-        fullName: newValue.personFullName,
-        lastName: newValue.personFullName,
-        _searchText: newValue.personFullName,
-        _soundexCodes: [],
-        voteCount: 0
-      } as SearchablePersonDto;
-      searchQuery.value = newValue.personFullName;
+      selectedPerson.value = null;
+      searchQuery.value = "";
     }
-  } else {
-    selectedPerson.value = null;
-    searchQuery.value = '';
-  }
-}, { immediate: true });
+  },
+  { immediate: true },
+);
 
 function handleSelect(item: SearchablePersonDto) {
   selectedPerson.value = item;
   searchQuery.value = item.fullName;
 
   const isSpoiled = item.canReceiveVotes === false;
-  const statusCode = isSpoiled ? (item.ineligibleReasonCode || 'X01') : 'Ok';
+  const statusCode = isSpoiled ? item.ineligibleReasonCode || "X01" : "ok";
 
   const vote: VoteDto = {
     rowId: props.modelValue?.rowId || 0,
-    ballotGuid: props.modelValue?.ballotGuid || '',
+    ballotGuid: "", // will be filled by parent component
     positionOnBallot: props.positionOnBallot,
     personGuid: item.personGuid,
     personFullName: item.fullName,
-    statusCode
+    statusCode,
   };
 
-  emit('update:modelValue', vote);
-  emit('vote-selected', vote);
+  emit("update:modelValue", vote);
+  emit("vote-selected", vote);
 }
 
 function handleClear() {
   selectedPerson.value = null;
-  searchQuery.value = '';
-  emit('update:modelValue', null);
-  emit('vote-cleared', props.positionOnBallot);
+  searchQuery.value = "";
+  emit("update:modelValue", null);
+  emit("vote-cleared", props.positionOnBallot);
   inputRef.value?.focus();
 }
 
 function handleKeyDown(event: KeyboardEvent) {
-  if (event.key === 'Escape') {
+  if (event.key === "Escape") {
     if (searchQuery.value && !selectedPerson.value) {
-      searchQuery.value = '';
+      searchQuery.value = "";
       event.stopPropagation();
       event.preventDefault();
     } else if (selectedPerson.value) {
@@ -130,16 +140,18 @@ function querySearch(queryString: string, cb: (results: any[]) => void) {
     return;
   }
 
-  const results = searchResults.value.map(person => ({
+  const results = searchResults.value.map((person) => ({
     value: person.fullName,
-    person: person
+    person: person,
   }));
 
   if (results.length === 0 && props.onAddNewPerson) {
-    cb([{
-      value: '__EMPTY_STATE__',
-      isEmpty: true
-    }]);
+    cb([
+      {
+        value: "__EMPTY_STATE__",
+        isEmpty: true,
+      },
+    ]);
   } else {
     cb(results);
   }
@@ -155,7 +167,7 @@ function handleAutocompleteSelect(item: any) {
 }
 
 function handleAddNewPerson() {
-  emit('add-new-person');
+  emit("add-new-person");
   if (props.onAddNewPerson) {
     props.onAddNewPerson();
   }
@@ -166,7 +178,7 @@ function focusInput() {
 }
 
 defineExpose({
-  focusInput
+  focusInput,
 });
 </script>
 
@@ -177,46 +189,86 @@ defineExpose({
     </div>
 
     <div class="vote-entry-row__input">
-      <el-autocomplete ref="inputRef" v-model="searchQuery" :fetch-suggestions="querySearch"
-        :placeholder="$t('ballots.candidate')" :disabled="!!selectedPerson" clearable @select="handleAutocompleteSelect"
-        @keydown="handleKeyDown"
+      <el-autocomplete
+        ref="inputRef"
+        v-model="searchQuery"
+        :fetch-suggestions="querySearch"
+        :placeholder="$t('ballots.candidate')"
+        :disabled="!!selectedPerson"
+        clearable
         :aria-label="`${$t('ballots.position')} ${positionOnBallot} - ${$t('ballots.candidate')}`"
-        :aria-describedby="isDuplicate ? `duplicate-warning-${positionOnBallot}` : undefined"
-        class="vote-entry-row__autocomplete">
+        :aria-describedby="
+          isDuplicate ? `duplicate-warning-${positionOnBallot}` : undefined
+        "
+        class="vote-entry-row__autocomplete"
+        @select="handleAutocompleteSelect"
+        @keydown="handleKeyDown"
+      >
         <template #default="{ item }">
           <div v-if="item.isEmpty" class="autocomplete-empty">
             <div class="autocomplete-empty__message">
-              <span>{{ $t('ballots.noMatchesFound') }}</span>
-              <small>{{ $t('ballots.checkSpelling') }}</small>
+              <span>{{ $t("ballots.noMatchesFound") }}</span>
+              <small>{{ $t("ballots.checkSpelling") }}</small>
             </div>
-            <el-button v-if="onAddNewPerson" :icon="Plus" size="small" type="primary" plain
-              class="autocomplete-empty__button" @click.stop="handleAddNewPerson">
-              {{ $t('ballots.addNewPerson') }}
+            <el-button
+              v-if="onAddNewPerson"
+              :icon="Plus"
+              size="small"
+              type="primary"
+              plain
+              class="autocomplete-empty__button"
+              @click.stop="handleAddNewPerson"
+            >
+              {{ $t("ballots.addNewPerson") }}
             </el-button>
           </div>
-          <div v-else class="autocomplete-item"
-            :class="{ 'autocomplete-item--ineligible': item.person?.canReceiveVotes === false }">
+          <div
+            v-else
+            class="autocomplete-item"
+            :class="{
+              'autocomplete-item--ineligible':
+                item.person?.canReceiveVotes === false,
+            }"
+          >
             <span class="autocomplete-item__name">{{ item.value }}</span>
-            <span v-if="item.person?.canReceiveVotes === false" class="autocomplete-item__ineligible-code"
-              :title="$t('ballots.ineligible')">
+            <span
+              v-if="item.person?.canReceiveVotes === false"
+              class="autocomplete-item__ineligible-code"
+              :title="$t('ballots.ineligible')"
+            >
               {{ item.person.ineligibleReasonCode }}
             </span>
-            <span v-if="item.person?.voteCount > 0" class="autocomplete-item__vote-count">{{ item.person.voteCount
-              }}</span>
+            <span
+              v-if="item.person?.voteCount > 0"
+              class="autocomplete-item__vote-count"
+              >{{ item.person.voteCount }}</span
+            >
           </div>
         </template>
       </el-autocomplete>
 
-      <el-button v-if="selectedPerson" :icon="Close" circle size="small" class="vote-entry-row__clear"
-        @click="handleClear" :aria-label="$t('common.clear')" />
+      <el-button
+        v-if="selectedPerson"
+        :icon="Close"
+        circle
+        size="small"
+        class="vote-entry-row__clear"
+        :aria-label="$t('common.clear')"
+        @click="handleClear"
+      />
     </div>
 
-    <div v-if="isDuplicate" :id="`duplicate-warning-${positionOnBallot}`" class="vote-entry-row__warning" role="alert"
-      aria-live="polite">
+    <div
+      v-if="isDuplicate"
+      :id="`duplicate-warning-${positionOnBallot}`"
+      class="vote-entry-row__warning"
+      role="alert"
+      aria-live="polite"
+    >
       <el-icon class="vote-entry-row__warning-icon">
         <WarningFilled />
       </el-icon>
-      <span>{{ $t('ballots.duplicateWarning') }}</span>
+      <span>{{ $t("ballots.duplicateWarning") }}</span>
     </div>
   </div>
 </template>
@@ -272,8 +324,8 @@ defineExpose({
 
   &__warning {
     position: absolute;
-    top: 100%;
-    left: 44px;
+    top: 0px;
+    right: 37px;
     display: flex;
     align-items: center;
     gap: var(--spacing-1, 4px);

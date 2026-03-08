@@ -40,7 +40,7 @@ public class VoteServiceTests : ServiceTestBase
             RowId = 1,
             BallotGuid = BallotGuid,
             LocationGuid = LocationGuid,
-            StatusCode = "Ok",
+            StatusCode = BallotStatus.Ok,
             ComputerCode = "A",
             BallotNumAtComputer = 1,
             RowVersion = new byte[8]
@@ -81,14 +81,13 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
-        Assert.Equal("ok", result.StatusCode);
-        Assert.Equal(person.PersonGuid, result.PersonGuid);
+        Assert.Equal(VoteStatus.Ok, result.Vote.VoteStatus);
+        Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
     }
 
     [Fact]
@@ -103,14 +102,13 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
-        Assert.Equal("V06", result.StatusCode);
-        Assert.Equal(person.PersonGuid, result.PersonGuid);
+        Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
+        Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
     }
 
     [Fact]
@@ -125,12 +123,11 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         var result = await _service.CreateVoteAsync(dto);
 
-        Assert.Equal("X01", result.StatusCode);
+        Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
     }
 
     [Fact]
@@ -143,12 +140,11 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         var result = await _service.CreateVoteAsync(dto);
 
-        Assert.Equal("spoiled", result.StatusCode);
+        Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
     }
 
     [Fact]
@@ -161,7 +157,6 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         await _service.CreateVoteAsync(dto);
@@ -184,7 +179,6 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         await _service.CreateVoteAsync(dto);
@@ -205,7 +199,7 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok",
+            VoteStatus = VoteStatus.Ok,
             RowVersion = new byte[8]
         };
         Context.Votes.Add(vote);
@@ -228,7 +222,7 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = null,
             PositionOnBallot = 1,
-            StatusCode = "spoiled",
+            VoteStatus = VoteStatus.Spoiled,
             RowVersion = new byte[8]
         };
         Context.Votes.Add(vote);
@@ -248,14 +242,13 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = Guid.NewGuid(),
             PersonGuid = Guid.NewGuid(),
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => _service.CreateVoteAsync(dto));
     }
 
     [Fact]
-    public async Task CreateVoteAsync_DuplicatePersonOnBallot_ThrowsInvalidOperationException()
+    public async Task CreateVoteAsync_DuplicatePersonOnBallot_CreatesVoteAndSetsBallotStatusToDup()
     {
         var person = CreatePerson();
 
@@ -264,7 +257,7 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok",
+            VoteStatus = VoteStatus.Ok,
             RowVersion = new byte[8]
         };
         Context.Votes.Add(existingVote);
@@ -275,9 +268,17 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 2,
-            StatusCode = "ok"
         };
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => _service.CreateVoteAsync(dto));
+        var result = await _service.CreateVoteAsync(dto);
+
+        Assert.NotNull(result);
+        Assert.Equal(BallotStatus.Dup, result.BallotStatusCode);
+        Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
+
+        var ballotInDb = Context.Ballots.First(b => b.BallotGuid == BallotGuid);
+        Assert.Equal(BallotStatus.Dup, ballotInDb.StatusCode);
+
+        Assert.Equal(2, Context.Votes.Count(v => v.BallotGuid == BallotGuid));
     }
 }

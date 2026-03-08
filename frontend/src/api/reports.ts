@@ -1,7 +1,7 @@
-import api from '../services/api';
+import api from "../services/api";
 
 export interface ExportRequest {
-  format: 'pdf' | 'excel' | 'csv';
+  format: "pdf" | "excel" | "csv";
   filters?: Record<string, any>;
 }
 
@@ -53,15 +53,27 @@ export interface ChartAxis {
 }
 
 export const reportsApi = {
-  async exportReport(electionId: string, request: ExportRequest): Promise<Blob> {
-    const response = await api.post<Blob>(`/report-exports/${electionId}`, request, {
-      responseType: 'blob'
-    });
+  async exportReport(
+    electionId: string,
+    request: ExportRequest,
+  ): Promise<Blob> {
+    const response = await api.post<Blob>(
+      `/report-exports/${electionId}`,
+      request,
+      {
+        responseType: "blob",
+      },
+    );
     return response.data;
   },
 
-  async getChartData(electionId: string, chartType: string): Promise<ChartData> {
-    const response = await api.get<ChartData>(`/advanced-reports/chart/${electionId}/${chartType}`);
+  async getChartData(
+    electionId: string,
+    chartType: string,
+  ): Promise<ChartData> {
+    const response = await api.get<ChartData>(
+      `/advanced-reports/chart/${electionId}/${chartType}`,
+    );
     return response.data;
-  }
+  },
 };

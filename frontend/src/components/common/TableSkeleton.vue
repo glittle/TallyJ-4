@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LoadingSkeleton from './LoadingSkeleton.vue';
+import LoadingSkeleton from "./LoadingSkeleton.vue";
 
 interface Props {
   columns?: number;
@@ -8,7 +8,7 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   columns: 4,
-  rows: 5
+  rows: 5,
 });
 </script>
 

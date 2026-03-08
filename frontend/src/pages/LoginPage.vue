@@ -1,16 +1,33 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, nextTick, onBeforeUnmount } from "vue";
+import type { GoogleCredentialResponse } from "../types/google-one-tap";
+
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  watch,
+  nextTick,
+  onBeforeUnmount,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
-import { useNotifications } from '@/composables/useNotifications';
+import { useNotifications } from "@/composables/useNotifications";
 import type { FormInstance, FormRules } from "element-plus";
 
 const { t, locale } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
-const { showSuccessMessage, showErrorMessage, showWarningMessage } = useNotifications();
+const { showSuccessMessage, showErrorMessage, showWarningMessage } =
+  useNotifications();
 
 const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
@@ -26,11 +43,11 @@ watch(
     if (newMode) {
       mode.value = newMode as string;
     }
-  }
+  },
 );
 
 const isStandardLogin = computed(
-  () => mode.value === "officer" || mode.value === "full-teller"
+  () => mode.value === "officer" || mode.value === "full-teller",
 );
 const isVoterLogin = computed(() => mode.value === "voter");
 
@@ -58,11 +75,13 @@ const rules = computed<FormRules>(() => {
 
   if (isVoterLogin.value && codeSent.value) {
     baseRules.code = [
-      { required: true, message: t("auth.voterLogin.codeRequired"), trigger: "blur" },
+      {
+        required: true,
+        message: t("auth.voterLogin.codeRequired"),
+        trigger: "blur",
+      },
     ];
   }
-
-
 
   return baseRules;
 });
@@ -99,7 +118,9 @@ const handleLogin = async () => {
       } else if (isVoterLogin.value) {
         // Handle System 3 login (OTC)
         // await authStore.loginVoter(loginForm.email, loginForm.code);
-        showWarningMessage("Voter OTC login not fully implemented in backend yet.");
+        showWarningMessage(
+          "Voter OTC login not fully implemented in backend yet.",
+        );
         return;
       }
 
@@ -121,7 +142,9 @@ const googleReady = ref(false);
 const gisScriptLoaded = ref(false);
 let gisCleanup: (() => void) | null = null;
 
-const handleGoogleOneTapCallback = async (response: GoogleCredentialResponse) => {
+const handleGoogleOneTapCallback = async (
+  response: GoogleCredentialResponse,
+) => {
   loading.value = true;
   try {
     await authStore.googleOneTapLogin(response.credential);
@@ -176,7 +199,7 @@ const renderGoogleButton = () => {
   nextTick(() => {
     if (googleButtonRef.value && googleClientId.value && googleReady.value) {
       console.log("Rendering Google One Tap button with locale:", locale.value);
-      google.accounts.id.renderButton(googleButtonRef.value, {
+      window.google.accounts.id.renderButton(googleButtonRef.value, {
         type: "standard",
         theme: "outline",
         size: "large",
@@ -202,12 +225,12 @@ const initGoogleOneTap = async () => {
     const clientId = await fetchGoogleClientId();
     googleClientId.value = clientId;
 
-    if (!clientId || typeof google === "undefined") {
+    if (!clientId || typeof window.google === "undefined") {
       googleReady.value = false;
       return;
     }
 
-    google.accounts.id.initialize({
+    window.google.accounts.id.initialize({
       client_id: clientId,
       callback: handleGoogleOneTapCallback,
       auto_select: false,
@@ -217,13 +240,13 @@ const initGoogleOneTap = async () => {
 
     googleReady.value = true;
     renderGoogleButton();
-    google.accounts.id.prompt();
+    window.google.accounts.id.prompt();
 
     // Store cleanup function
     gisCleanup = () => {
-      if (typeof google !== "undefined" && googleReady.value) {
+      if (typeof window.google !== "undefined" && googleReady.value) {
         try {
-          google.accounts.id.cancel();
+          window.google.accounts.id.cancel();
         } catch {
           // Ignore errors from cancel
         }
@@ -249,7 +272,7 @@ const handleGoogleLogin = () => {
     ? `?redirect=${encodeURIComponent(route.query.redirect as string)}`
     : "";
   const returnUrl = encodeURIComponent(
-    globalThis.location.origin + "/auth/google/callback" + redirectParam
+    globalThis.location.origin + "/auth/google/callback" + redirectParam,
   );
 
   globalThis.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}`;
@@ -273,7 +296,7 @@ watch(
       // Tear down Google One Tap when leaving officer mode
       teardownGoogleOneTap();
     }
-  }
+  },
 );
 
 onMounted(() => {
@@ -303,7 +326,7 @@ onBeforeUnmount(() => {
                 `auth.landing.login${mode
                   .replace("-", " ")
                   .replace(/\b\w/g, (l) => l.toUpperCase())
-                  .replace(" ", "")}`
+                  .replace(" ", "")}`,
               )
             }}
           </h2>
@@ -320,44 +343,90 @@ onBeforeUnmount(() => {
       </template>
 
       <!-- Social login only for Officers -->
-      <div class="social-login" v-if="mode === 'officer'">
-        <div v-if="googleReady" ref="googleButtonRef" class="google-btn-container"></div>
-        <el-button v-if="!googleReady" class="google-btn" @click="handleGoogleLogin">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+      <div v-if="mode === 'officer'" class="social-login">
+        <div
+          v-if="googleReady"
+          ref="googleButtonRef"
+          class="google-btn-container"
+        ></div>
+        <el-button
+          v-if="!googleReady"
+          class="google-btn"
+          @click="handleGoogleLogin"
+        >
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google"
+          />
           <span>{{ t("auth.googleLogin") }}</span>
         </el-button>
         <el-divider>{{ t("common.or") }}</el-divider>
       </div>
 
-      <el-form ref="loginFormRef" :model="loginForm" :rules="rules" label-position="top" @keyup.enter="handleLogin">
+      <el-form
+        ref="loginFormRef"
+        :model="loginForm"
+        :rules="rules"
+        label-position="top"
+        @keyup.enter="handleLogin"
+      >
         <!-- System 1 & 3: Email Field -->
         <el-form-item :label="t('auth.email')" prop="email">
-          <el-input v-model="loginForm.email" :placeholder="t('auth.emailPlaceholder')"
-            :disabled="isVoterLogin && codeSent" autofocus />
+          <el-input
+            v-model="loginForm.email"
+            :placeholder="t('auth.emailPlaceholder')"
+            :disabled="isVoterLogin && codeSent"
+            autofocus
+          />
         </el-form-item>
 
         <!-- System 1: Password Field -->
-        <el-form-item v-if="isStandardLogin" :label="t('auth.password')" prop="password">
-          <el-input v-model="loginForm.password" type="password" :placeholder="t('auth.passwordPlaceholder')"
-            show-password />
+        <el-form-item
+          v-if="isStandardLogin"
+          :label="t('auth.password')"
+          prop="password"
+        >
+          <el-input
+            v-model="loginForm.password"
+            type="password"
+            :placeholder="t('auth.passwordPlaceholder')"
+            show-password
+          />
         </el-form-item>
 
         <!-- System 3: One-Time Code Field -->
-        <el-form-item v-if="isVoterLogin && codeSent" :label="t('auth.voterLogin.codeLabel')" prop="code">
-          <el-input v-model="loginForm.code" :placeholder="t('auth.voterLogin.codePlaceholder')" maxlength="6" />
+        <el-form-item
+          v-if="isVoterLogin && codeSent"
+          :label="t('auth.voterLogin.codeLabel')"
+          prop="code"
+        >
+          <el-input
+            v-model="loginForm.code"
+            :placeholder="t('auth.voterLogin.codePlaceholder')"
+            maxlength="6"
+          />
         </el-form-item>
-
-
 
         <div class="login-actions">
           <!-- System 3: Request Code Button -->
-          <el-button v-if="isVoterLogin && !codeSent" type="primary" :loading="loading" class="submit-btn"
-            @click="requestCode">
+          <el-button
+            v-if="isVoterLogin && !codeSent"
+            type="primary"
+            :loading="loading"
+            class="submit-btn"
+            @click="requestCode"
+          >
             {{ t("auth.voterLogin.requestButton") }}
           </el-button>
 
           <!-- General Login Button -->
-          <el-button v-else type="primary" :loading="loading" class="submit-btn" @click="handleLogin">
+          <el-button
+            v-else
+            type="primary"
+            :loading="loading"
+            class="submit-btn"
+            @click="handleLogin"
+          >
             {{
               isVoterLogin
                 ? t("auth.voterLogin.loginButton")
@@ -365,13 +434,22 @@ onBeforeUnmount(() => {
             }}
           </el-button>
 
-          <el-button v-if="isVoterLogin && codeSent" link class="retry-link" @click="codeSent = false">
+          <el-button
+            v-if="isVoterLogin && codeSent"
+            link
+            class="retry-link"
+            @click="codeSent = false"
+          >
             {{ t("common.tryAgain") }}
           </el-button>
         </div>
 
         <div class="auth-links">
-          <router-link to="/register" v-if="mode === 'officer'" class="register">
+          <router-link
+            v-if="mode === 'officer'"
+            to="/register"
+            class="register"
+          >
             {{ t("auth.noAccount") }}
           </router-link>
           <router-link to="/">
@@ -379,8 +457,6 @@ onBeforeUnmount(() => {
           </router-link>
         </div>
       </el-form>
-
-
     </el-card>
   </div>
 </template>
@@ -435,7 +511,6 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 10px;
   }
-
 
   .auth-links a {
     color: var(--color-primary-500);

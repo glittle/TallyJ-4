@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted, computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { type FormInstance, type FormRules } from 'element-plus';
-import { useNotifications } from '@/composables/useNotifications';
-import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
-import { usePeopleStore } from '../../stores/peopleStore';
-import { useEligibilityStore } from '../../stores/eligibilityStore';
-import { peopleService } from '../../services/peopleService';
-import type { PersonListDto, PersonDetailDto, CreatePersonDto, UpdatePersonDto } from '../../types';
+import { ref, reactive, watch, onMounted, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { type FormInstance, type FormRules } from "element-plus";
+import { useNotifications } from "@/composables/useNotifications";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { usePeopleStore } from "../../stores/peopleStore";
+import { useEligibilityStore } from "../../stores/eligibilityStore";
+import { peopleService } from "../../services/peopleService";
+import type {
+  PersonListDto,
+  PersonDetailDto,
+  CreatePersonDto,
+  UpdatePersonDto,
+} from "../../types";
 
 const props = defineProps<{
   modelValue: boolean;
@@ -17,14 +22,15 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean];
+  "update:modelValue": [value: boolean];
   success: [];
 }>();
 
 const { t } = useI18n();
 const peopleStore = usePeopleStore();
 const eligibilityStore = useEligibilityStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showSuccessMessage, showErrorMessage: _showErrorMessage } =
+  useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
@@ -33,23 +39,23 @@ const loadingDetails = ref(false);
 const personDetails = ref<PersonDetailDto | null>(null);
 
 const form = reactive({
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  area: '',
-  bahaiId: '',
-  ageGroup: 'A',
-  ineligibleReasonGuid: null as string | null
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  area: "",
+  bahaiId: "",
+  ageGroup: "A",
+  ineligibleReasonGuid: null as string | null,
 });
 
 const rules = reactive<FormRules>({
   lastName: [
-    { required: true, message: t('people.lastNameRequired'), trigger: 'blur' }
+    { required: true, message: t("people.lastNameRequired"), trigger: "blur" },
   ],
   email: [
-    { type: 'email', message: t('people.emailInvalid'), trigger: 'blur' }
-  ]
+    { type: "email", message: t("people.emailInvalid"), trigger: "blur" },
+  ],
 });
 
 const registrationHistory = computed(() => {
@@ -66,47 +72,56 @@ onMounted(async () => {
 });
 
 function resetForm() {
-  form.firstName = '';
-  form.lastName = '';
-  form.email = '';
-  form.phone = '';
-  form.area = '';
-  form.bahaiId = '';
-  form.ageGroup = 'A';
+  form.firstName = "";
+  form.lastName = "";
+  form.email = "";
+  form.phone = "";
+  form.area = "";
+  form.bahaiId = "";
+  form.ageGroup = "A";
   form.ineligibleReasonGuid = null;
 }
 
-watch(() => props.modelValue, async (visible) => {
-  if (visible && props.isEdit && props.person) {
-    await loadPersonDetails();
-  } else if (visible && !props.isEdit) {
-    resetForm();
-  }
-});
+watch(
+  () => props.modelValue,
+  async (visible) => {
+    if (visible && props.isEdit && props.person) {
+      await loadPersonDetails();
+    } else if (visible && !props.isEdit) {
+      resetForm();
+    }
+  },
+);
 
-watch(() => props.person, (person) => {
-  if (person && !props.isEdit) {
-    // For create, use reset form
-    resetForm();
-  }
-});
+watch(
+  () => props.person,
+  (person) => {
+    if (person && !props.isEdit) {
+      // For create, use reset form
+      resetForm();
+    }
+  },
+);
 
 async function loadPersonDetails() {
   if (!props.person) return;
-  
+
   loadingDetails.value = true;
   try {
-    personDetails.value = await peopleService.getDetails(props.person.personGuid);
-    
+    personDetails.value = await peopleService.getDetails(
+      props.person.personGuid,
+    );
+
     if (personDetails.value) {
-      form.firstName = personDetails.value.firstName || '';
+      form.firstName = personDetails.value.firstName || "";
       form.lastName = personDetails.value.lastName;
-      form.email = personDetails.value.email || '';
-      form.phone = personDetails.value.phone || '';
-      form.area = personDetails.value.area || '';
-      form.bahaiId = personDetails.value.bahaiId || '';
-      form.ageGroup = personDetails.value.ageGroup || 'A';
-      form.ineligibleReasonGuid = personDetails.value.ineligibleReasonGuid || null;
+      form.email = personDetails.value.email || "";
+      form.phone = personDetails.value.phone || "";
+      form.area = personDetails.value.area || "";
+      form.bahaiId = personDetails.value.bahaiId || "";
+      form.ageGroup = personDetails.value.ageGroup || "A";
+      form.ineligibleReasonGuid =
+        personDetails.value.ineligibleReasonGuid || null;
     }
   } catch (error) {
     handleApiError(error);
@@ -117,7 +132,7 @@ async function loadPersonDetails() {
 
 async function handleSubmit() {
   if (!formRef.value) return;
-  
+
   await formRef.value.validate(async (valid) => {
     if (valid) {
       submitting.value = true;
@@ -131,10 +146,10 @@ async function handleSubmit() {
             area: form.area || undefined,
             bahaiId: form.bahaiId || undefined,
             ageGroup: form.ageGroup || undefined,
-            ineligibleReasonGuid: form.ineligibleReasonGuid || undefined
+            ineligibleReasonGuid: form.ineligibleReasonGuid || undefined,
           };
           await peopleStore.updatePerson(props.person.personGuid, dto);
-          showSuccessMessage(t('people.updateSuccess'));
+          showSuccessMessage(t("people.updateSuccess"));
         } else {
           const dto: CreatePersonDto = {
             electionGuid: props.electionGuid,
@@ -145,12 +160,12 @@ async function handleSubmit() {
             area: form.area || undefined,
             bahaiId: form.bahaiId || undefined,
             ageGroup: form.ageGroup || undefined,
-            ineligibleReasonGuid: form.ineligibleReasonGuid || undefined
+            ineligibleReasonGuid: form.ineligibleReasonGuid || undefined,
           };
           await peopleStore.createPerson(dto);
-          showSuccessMessage(t('people.createSuccess'));
+          showSuccessMessage(t("people.createSuccess"));
         }
-        emit('success');
+        emit("success");
       } catch (error) {
         handleApiError(error);
       } finally {
@@ -163,7 +178,7 @@ async function handleSubmit() {
 function handleClose() {
   formRef.value?.resetFields();
   personDetails.value = null;
-  emit('update:modelValue', false);
+  emit("update:modelValue", false);
 }
 </script>
 
@@ -215,7 +230,12 @@ function handleClose() {
         </el-form-item>
 
         <el-form-item :label="$t('eligibility.label')">
-          <el-select v-model="form.ineligibleReasonGuid" :placeholder="$t('eligibility.selectReason')" style="width: 100%" clearable>
+          <el-select
+            v-model="form.ineligibleReasonGuid"
+            :placeholder="$t('eligibility.selectReason')"
+            style="width: 100%"
+            clearable
+          >
             <el-option :label="$t('eligibility.eligible')" :value="null" />
             <el-option-group
               v-for="(reasons, group) in eligibilityStore.groupedReasons"
@@ -235,13 +255,16 @@ function handleClose() {
 
       <div v-if="isEdit && personDetails" class="history-section">
         <el-divider />
-        
+
         <div v-if="personDetails.voteCount > 0" class="vote-count">
-          <p><strong>{{ $t('people.votesReceived') }}:</strong> {{ personDetails.voteCount }}</p>
+          <p>
+            <strong>{{ $t("people.votesReceived") }}:</strong>
+            {{ personDetails.voteCount }}
+          </p>
         </div>
-        
+
         <div v-if="registrationHistory.length > 0" class="registration-history">
-          <h4>{{ $t('people.registrationHistory') }}</h4>
+          <h4>{{ $t("people.registrationHistory") }}</h4>
           <el-timeline>
             <el-timeline-item
               v-for="(entry, index) in registrationHistory"
@@ -256,9 +279,9 @@ function handleClose() {
     </div>
 
     <template #footer>
-      <el-button @click="handleClose">{{ $t('common.cancel') }}</el-button>
-      <el-button type="primary" @click="handleSubmit" :loading="submitting">
-        {{ isEdit ? $t('common.save') : $t('common.create') }}
+      <el-button @click="handleClose">{{ $t("common.cancel") }}</el-button>
+      <el-button type="primary" :loading="submitting" @click="handleSubmit">
+        {{ isEdit ? $t("common.save") : $t("common.create") }}
       </el-button>
     </template>
   </el-dialog>
@@ -268,18 +291,18 @@ function handleClose() {
 .history-section {
   .history-section {
     margin-top: var(--spacing-4);
-    
+
     h4 {
       margin: var(--spacing-3) 0 var(--spacing-2);
       font-size: var(--font-size-base);
       font-weight: var(--font-weight-semibold);
     }
-    
+
     .registration-history,
     .vote-count {
       margin-bottom: var(--spacing-4);
     }
-    
+
     .vote-count {
       padding: var(--spacing-2);
       background-color: var(--color-neutral-50);

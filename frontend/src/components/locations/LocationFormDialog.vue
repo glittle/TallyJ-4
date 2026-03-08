@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue';
-import { type FormInstance, type FormRules } from 'element-plus';
-import { useI18n } from 'vue-i18n';
-import { useNotifications } from '@/composables/useNotifications';
-import { useApiErrorHandler } from '@/composables/useApiErrorHandler';
-import { useLocationStore } from '../../stores/locationStore';
-import type { LocationDto, CreateLocationDto, UpdateLocationDto } from '../../types';
+import { ref, reactive, watch } from "vue";
+import { type FormInstance, type FormRules } from "element-plus";
+import { useI18n } from "vue-i18n";
+import { useNotifications } from "@/composables/useNotifications";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useLocationStore } from "../../stores/locationStore";
+import type {
+  LocationDto,
+  CreateLocationDto,
+  UpdateLocationDto,
+} from "../../types";
 
 const props = defineProps<{
   modelValue: boolean;
@@ -15,84 +19,104 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean];
+  "update:modelValue": [value: boolean];
   success: [];
 }>();
 
 const { t } = useI18n();
 const locationStore = useLocationStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showSuccessMessage, showErrorMessage: _showErrorMessage } =
+  useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
 
 const form = reactive({
-  name: '',
-  contactInfo: '',
-  longitude: '',
-  latitude: '',
-  sortOrder: 0
+  name: "",
+  contactInfo: "",
+  longitude: "",
+  latitude: "",
+  sortOrder: 0,
 });
 
 const rules = reactive<FormRules>({
   name: [
-    { required: true, message: t('locations.form.nameRequired'), trigger: 'blur' },
-    { max: 50, message: t('locations.form.nameMaxLength'), trigger: 'blur' }
+    {
+      required: true,
+      message: t("locations.form.nameRequired"),
+      trigger: "blur",
+    },
+    { max: 50, message: t("locations.form.nameMaxLength"), trigger: "blur" },
   ],
   contactInfo: [
-    { max: 250, message: t('locations.form.contactInfoMaxLength'), trigger: 'blur' }
+    {
+      max: 250,
+      message: t("locations.form.contactInfoMaxLength"),
+      trigger: "blur",
+    },
   ],
   longitude: [
-    { 
-      pattern: /^-?([0-9]{1,3}(\.[0-9]+)?|180(\.0+)?)$/, 
-      message: t('locations.form.longitudeInvalid'), 
-      trigger: 'blur' 
-    }
+    {
+      pattern: /^-?([0-9]{1,3}(\.[0-9]+)?|180(\.0+)?)$/,
+      message: t("locations.form.longitudeInvalid"),
+      trigger: "blur",
+    },
   ],
   latitude: [
-    { 
-      pattern: /^-?([0-9]{1,2}(\.[0-9]+)?|90(\.0+)?)$/, 
-      message: t('locations.form.latitudeInvalid'), 
-      trigger: 'blur' 
-    }
+    {
+      pattern: /^-?([0-9]{1,2}(\.[0-9]+)?|90(\.0+)?)$/,
+      message: t("locations.form.latitudeInvalid"),
+      trigger: "blur",
+    },
   ],
   sortOrder: [
-    { type: 'number', message: t('locations.form.sortOrderInvalid'), trigger: 'blur' }
-  ]
+    {
+      type: "number",
+      message: t("locations.form.sortOrderInvalid"),
+      trigger: "blur",
+    },
+  ],
 });
 
-watch(() => props.location, (location) => {
-  if (location) {
-    form.name = location.name;
-    form.contactInfo = location.contactInfo || '';
-    form.longitude = location.longitude || '';
-    form.latitude = location.latitude || '';
-    form.sortOrder = location.sortOrder ?? 0;
-  }
-}, { immediate: true });
+watch(
+  () => props.location,
+  (location) => {
+    if (location) {
+      form.name = location.name;
+      form.contactInfo = location.contactInfo || "";
+      form.longitude = location.longitude || "";
+      form.latitude = location.latitude || "";
+      form.sortOrder = location.sortOrder ?? 0;
+    }
+  },
+  { immediate: true },
+);
 
-watch(() => props.modelValue, (value) => {
-  if (!value) {
-    resetForm();
-  } else if (!props.isEdit) {
-    resetForm();
-  }
-});
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (!value) {
+      resetForm();
+    } else if (!props.isEdit) {
+      resetForm();
+    }
+  },
+);
 
 function resetForm() {
   if (!props.isEdit) {
-    form.name = '';
-    form.contactInfo = '';
-    form.longitude = '';
-    form.latitude = '';
+    form.name = "";
+    form.contactInfo = "";
+    form.longitude = "";
+    form.latitude = "";
     form.sortOrder = 0;
   }
 }
 
 async function handleSubmit() {
   if (!formRef.value) return;
-  
+
   await formRef.value.validate(async (valid) => {
     if (valid) {
       submitting.value = true;
@@ -103,10 +127,14 @@ async function handleSubmit() {
             contactInfo: form.contactInfo || undefined,
             longitude: form.longitude || undefined,
             latitude: form.latitude || undefined,
-            sortOrder: form.sortOrder
+            sortOrder: form.sortOrder,
           };
-          await locationStore.updateLocation(props.electionGuid, props.location.locationGuid, dto);
-          showSuccessMessage(t('locations.form.updated'));
+          await locationStore.updateLocation(
+            props.electionGuid,
+            props.location.locationGuid,
+            dto,
+          );
+          showSuccessMessage(t("locations.form.updated"));
         } else {
           const dto: CreateLocationDto = {
             electionGuid: props.electionGuid,
@@ -114,12 +142,12 @@ async function handleSubmit() {
             contactInfo: form.contactInfo || undefined,
             longitude: form.longitude || undefined,
             latitude: form.latitude || undefined,
-            sortOrder: form.sortOrder
+            sortOrder: form.sortOrder,
           };
           await locationStore.createLocation(props.electionGuid, dto);
-          showSuccessMessage(t('locations.form.created'));
+          showSuccessMessage(t("locations.form.created"));
         }
-        emit('success');
+        emit("success");
       } catch (error) {
         handleApiError(error);
       } finally {
@@ -131,14 +159,16 @@ async function handleSubmit() {
 
 function handleClose() {
   formRef.value?.resetFields();
-  emit('update:modelValue', false);
+  emit("update:modelValue", false);
 }
 </script>
 
 <template>
   <el-dialog
     :model-value="modelValue"
-    :title="isEdit ? $t('locations.form.titleEdit') : $t('locations.form.titleAdd')"
+    :title="
+      isEdit ? $t('locations.form.titleEdit') : $t('locations.form.titleAdd')
+    "
     width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
     @close="handleClose"
@@ -151,53 +181,67 @@ function handleClose() {
       label-position="left"
     >
       <el-form-item :label="$t('locations.form.name')" prop="name">
-        <el-input v-model="form.name" :placeholder="$t('locations.form.namePlaceholder')" />
+        <el-input
+          v-model="form.name"
+          :placeholder="$t('locations.form.namePlaceholder')"
+        />
       </el-form-item>
 
-      <el-form-item :label="$t('locations.form.contactInfo')" prop="contactInfo">
-        <el-input 
-          v-model="form.contactInfo" 
-          type="textarea" 
+      <el-form-item
+        :label="$t('locations.form.contactInfo')"
+        prop="contactInfo"
+      >
+        <el-input
+          v-model="form.contactInfo"
+          type="textarea"
           :rows="3"
           :placeholder="$t('locations.form.contactInfoPlaceholder')"
         />
       </el-form-item>
 
       <el-form-item :label="$t('locations.form.longitude')" prop="longitude">
-        <el-input 
-          v-model="form.longitude" 
+        <el-input
+          v-model="form.longitude"
           :placeholder="$t('locations.form.longitudePlaceholder')"
         >
           <template #append>°</template>
         </el-input>
-        <div class="form-help-text">{{ $t('locations.form.longitudeHelp') }}</div>
+        <div class="form-help-text">
+          {{ $t("locations.form.longitudeHelp") }}
+        </div>
       </el-form-item>
 
       <el-form-item :label="$t('locations.form.latitude')" prop="latitude">
-        <el-input 
-          v-model="form.latitude" 
+        <el-input
+          v-model="form.latitude"
           :placeholder="$t('locations.form.latitudePlaceholder')"
         >
           <template #append>°</template>
         </el-input>
-        <div class="form-help-text">{{ $t('locations.form.latitudeHelp') }}</div>
+        <div class="form-help-text">
+          {{ $t("locations.form.latitudeHelp") }}
+        </div>
       </el-form-item>
 
       <el-form-item :label="$t('locations.form.sortOrder')" prop="sortOrder">
-        <el-input-number 
-          v-model="form.sortOrder" 
-          :min="0" 
+        <el-input-number
+          v-model="form.sortOrder"
+          :min="0"
           :step="1"
           style="width: 100%"
         />
-        <div class="form-help-text">{{ $t('locations.form.sortOrderHelp') }}</div>
+        <div class="form-help-text">
+          {{ $t("locations.form.sortOrderHelp") }}
+        </div>
       </el-form-item>
     </el-form>
 
     <template #footer>
-      <el-button @click="handleClose">{{ $t('locations.form.cancel') }}</el-button>
-      <el-button type="primary" @click="handleSubmit" :loading="submitting">
-        {{ isEdit ? $t('locations.form.save') : $t('locations.form.create') }}
+      <el-button @click="handleClose">{{
+        $t("locations.form.cancel")
+      }}</el-button>
+      <el-button type="primary" :loading="submitting" @click="handleSubmit">
+        {{ isEdit ? $t("locations.form.save") : $t("locations.form.create") }}
       </el-button>
     </template>
   </el-dialog>

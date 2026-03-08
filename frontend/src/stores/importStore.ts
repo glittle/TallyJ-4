@@ -1,10 +1,10 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import { signalrService } from '../services/signalrService';
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import { signalrService } from "../services/signalrService";
 
-import type { ImportProgressEvent } from '../types/SignalREvents';
+import type { ImportProgressEvent } from "../types/SignalREvents";
 
-export const useImportStore = defineStore('import', () => {
+export const useImportStore = defineStore("import", () => {
   const importProgress = ref<ImportProgressEvent | null>(null);
   const importErrors = ref<string[]>([]);
   const importComplete = ref(false);
@@ -16,21 +16,24 @@ export const useImportStore = defineStore('import', () => {
     try {
       const connection = await signalrService.connectToBallotImportHub();
 
-      connection.on('importProgress', (data: ImportProgressEvent) => {
+      connection.on("importProgress", (data: ImportProgressEvent) => {
         handleImportProgress(data);
       });
 
-      connection.on('importError', (errorMessage: string, rowNumber: number) => {
-        handleImportError(errorMessage, rowNumber);
-      });
+      connection.on(
+        "importError",
+        (errorMessage: string, rowNumber: number) => {
+          handleImportError(errorMessage, rowNumber);
+        },
+      );
 
-      connection.on('importComplete', (summary: any) => {
+      connection.on("importComplete", (summary: any) => {
         handleImportComplete(summary);
       });
 
       signalrInitialized.value = true;
     } catch (e) {
-      console.error('Failed to initialize SignalR for import store:', e);
+      console.error("Failed to initialize SignalR for import store:", e);
     }
   }
 
@@ -53,7 +56,7 @@ export const useImportStore = defineStore('import', () => {
     try {
       await signalrService.joinImportSession(electionGuid);
     } catch (e) {
-      console.error('Failed to join import session:', e);
+      console.error("Failed to join import session:", e);
     }
   }
 
@@ -61,7 +64,7 @@ export const useImportStore = defineStore('import', () => {
     try {
       await signalrService.leaveImportSession(electionGuid);
     } catch (e) {
-      console.error('Failed to leave import session:', e);
+      console.error("Failed to leave import session:", e);
     }
   }
 
@@ -78,6 +81,6 @@ export const useImportStore = defineStore('import', () => {
     initializeSignalR,
     joinImportSession,
     leaveImportSession,
-    clearImportState
+    clearImportState,
   };
 });

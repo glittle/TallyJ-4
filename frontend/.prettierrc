@@ -1,0 +1,17 @@
+{
+    "trailingComma": "all",
+    "endOfLine": "crlf",
+    "singleQuote": false,
+    "semi": true,
+    "overrides": [
+        {
+            "files": [
+                "*.ts",
+                "*.tsx",
+                "*.vue",
+                "*.d.ts"
+            ],
+            "options": {}
+        }
+    ]
+}

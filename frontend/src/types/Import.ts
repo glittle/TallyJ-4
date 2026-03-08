@@ -40,8 +40,8 @@ export interface ParseCsvHeadersResponse {
 }
 
 export const IMPORT_TARGET_FIELDS = [
-  { value: 'BallotCode', label: 'Ballot Code' },
-  { value: 'Votes', label: 'Votes (separated by |)' },
-  { value: 'Teller1', label: 'Teller 1' },
-  { value: 'Teller2', label: 'Teller 2' }
+  { value: "BallotCode", label: "Ballot Code" },
+  { value: "Votes", label: "Votes (separated by |)" },
+  { value: "Teller1", label: "Teller 1" },
+  { value: "Teller2", label: "Teller 2" },
 ] as const;

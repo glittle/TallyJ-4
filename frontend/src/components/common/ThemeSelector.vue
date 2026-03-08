@@ -15,10 +15,10 @@ const toggleTheme = () => {
 <template>
   <div class="theme-selector">
     <ElButton
-      @click="toggleTheme"
       :aria-label="$t('common.toggleTheme', 'Toggle Theme')"
       size="small"
       class="theme-toggle-btn"
+      @click="toggleTheme"
     >
       <ElIcon>
         <Sunny v-if="themeStore.theme === 'light'" />
