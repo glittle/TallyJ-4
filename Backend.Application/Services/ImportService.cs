@@ -101,7 +101,7 @@ public class ImportService
                             BallotGuid = ballotGuid,
                             PersonGuid = person.PersonGuid,
                             PositionOnBallot = pos + 1,
-                            StatusCode = "Ok"
+                            VoteStatus = VoteStatus.Ok
                         };
                         _context.Votes.Add(vote);
                         result.VotesCreated++;

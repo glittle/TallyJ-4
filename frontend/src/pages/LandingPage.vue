@@ -121,7 +121,8 @@ globalThis.addEventListener("keydown", (event) => {
     </div>
 
     <div class="options-grid">
-      <el-card v-for="opt in options" :key="opt.type" class="option-card" shadow="hover" tabindex="0" @click="opt.action" @keydown.enter="opt.action" @keydown.space.prevent="opt.action">
+      <el-card v-for="opt in options" :key="opt.type" class="option-card" shadow="hover" tabindex="0"
+        @click="opt.action" @keydown.enter="opt.action" @keydown.space.prevent="opt.action">
         <template #header>
           <div class="card-header">
             <el-icon :size="40" :color="opt.color">
@@ -139,7 +140,8 @@ globalThis.addEventListener("keydown", (event) => {
       </el-card>
     </div>
     <div class="options-grid2">
-      <el-card v-for="opt in options2" :key="opt.type" class="option-card" shadow="hover" tabindex="0" @click="opt.action" @keydown.enter="opt.action" @keydown.space.prevent="opt.action">
+      <el-card v-for="opt in options2" :key="opt.type" class="option-card" shadow="hover" tabindex="0"
+        @click="opt.action" @keydown.enter="opt.action" @keydown.space.prevent="opt.action">
         <template #header>
           <div class="card-header">
             <el-icon :size="40" :color="opt.color">
@@ -443,5 +445,6 @@ globalThis.addEventListener("keydown", (event) => {
       font-size: 1rem;
     }
   }
+
 }
 </style>

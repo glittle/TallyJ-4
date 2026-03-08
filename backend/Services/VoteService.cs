@@ -107,7 +107,7 @@ public class VoteService : IVoteService
         }
 
         var electionGuid = ballot.Location.ElectionGuid;
-        var statusCode = "ok";
+        var statusCode = VoteStatus.Ok;
 
         if (createDto.PersonGuid.HasValue)
         {
@@ -119,10 +119,9 @@ public class VoteService : IVoteService
 
             if (person.CanReceiveVotes != true)
             {
-                var ineligibleCode = IneligibleReasonEnum.GetByGuid(person.IneligibleReasonGuid)?.Code;
-                statusCode = ineligibleCode ?? "spoiled";
-                _logger.LogInformation("Person '{FullName}' is ineligible; vote created as spoiled with status '{StatusCode}'",
-                    person.FullName, statusCode);
+                statusCode = VoteStatus.Spoiled;
+                _logger.LogInformation("Person '{FullName}' is ineligible; vote created as spoiled",
+                    person.FullName);
             }
 
             var duplicateVote = await _context.Votes
@@ -141,7 +140,7 @@ public class VoteService : IVoteService
             BallotGuid = createDto.BallotGuid,
             PersonGuid = createDto.PersonGuid,
             PositionOnBallot = createDto.PositionOnBallot,
-            StatusCode = statusCode,
+            VoteStatus = statusCode,
             RowVersion = new byte[8]
         };
 
@@ -182,7 +181,7 @@ public class VoteService : IVoteService
             throw new InvalidOperationException($"Ballot with GUID '{updateDto.BallotGuid}' not found");
         }
 
-        var statusCode = "ok";
+        var statusCode = VoteStatus.Ok;
         var duplicateFound = false;
 
         if (updateDto.PersonGuid.HasValue)
@@ -195,10 +194,9 @@ public class VoteService : IVoteService
 
             if (person.CanReceiveVotes != true)
             {
-                var ineligibleCode = IneligibleReasonEnum.GetByGuid(person.IneligibleReasonGuid)?.Code;
-                statusCode = ineligibleCode ?? "spoiled";
-                _logger.LogInformation("Person '{FullName}' is ineligible; vote updated as spoiled with status '{StatusCode}'",
-                    person.FullName, statusCode);
+                statusCode = VoteStatus.Spoiled;
+                _logger.LogInformation("Person '{FullName}' is ineligible; vote updated as spoiled",
+                    person.FullName);
             }
 
             var duplicateVote = await _context.Votes
@@ -216,7 +214,7 @@ public class VoteService : IVoteService
         vote.BallotGuid = updateDto.BallotGuid;
         vote.PersonGuid = updateDto.PersonGuid;
         vote.PositionOnBallot = updateDto.PositionOnBallot;
-        vote.StatusCode = statusCode;
+        vote.VoteStatus = statusCode;
 
         await _context.SaveChangesAsync();
 

@@ -44,13 +44,19 @@ function goBackToElections() {
 <template>
   <nav class="app-sidebar" role="navigation" aria-label="Main navigation">
     <div class="logo">
-      <h2>TallyJ 4</h2>
+      <img src="/logo-zoom.png" alt="TallyJ Logo" style="height: 24px; vertical-align: middle; margin-left: 8px" />
+      <h2>TallyJ v4</h2>
+    </div>
+    <div class="testOnlyWarning">
+      {{ $t('common.testOnlyShort') }}
     </div>
 
     <!-- Election breadcrumb navigation -->
     <div v-if="isInElectionContext" class="breadcrumb-nav">
       <div class="breadcrumb-item" @click="goBackToElections">
-        <el-icon><ArrowLeft /></el-icon>
+        <el-icon>
+          <ArrowLeft />
+        </el-icon>
         <span>{{ $t("nav.elections") }}</span>
       </div>
       <div class="breadcrumb-separator">/</div>
@@ -60,25 +66,25 @@ function goBackToElections() {
     </div>
 
     <!-- Main navigation menu -->
-    <el-menu
-      v-else
-      :default-active="activeRoute"
-      :router="true"
-      aria-label="Main menu"
-      @select="handleMenuSelect"
-    >
+    <el-menu v-else :default-active="activeRoute" :router="true" aria-label="Main menu" @select="handleMenuSelect">
       <el-menu-item index="/dashboard" role="menuitem">
-        <el-icon aria-hidden="true"><HomeFilled /></el-icon>
+        <el-icon aria-hidden="true">
+          <HomeFilled />
+        </el-icon>
         <span>{{ $t("nav.dashboard") }}</span>
       </el-menu-item>
 
       <el-menu-item index="/elections" role="menuitem">
-        <el-icon aria-hidden="true"><Document /></el-icon>
+        <el-icon aria-hidden="true">
+          <Document />
+        </el-icon>
         <span>{{ $t("nav.elections") }}</span>
       </el-menu-item>
 
       <el-menu-item v-if="isSuperAdmin" index="/super-admin" role="menuitem">
-        <el-icon aria-hidden="true"><Setting /></el-icon>
+        <el-icon aria-hidden="true">
+          <Setting />
+        </el-icon>
         <span>{{ $t("nav.superAdmin") }}</span>
       </el-menu-item>
     </el-menu>
@@ -92,6 +98,10 @@ function goBackToElections() {
   flex-direction: column;
 
   .logo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
     text-align: center;
     border-bottom: 1px solid var(--color-sidebar-border);
@@ -165,5 +175,17 @@ function goBackToElections() {
     font-size: 14px;
     margin: 0 8px;
   }
+
+  .testOnlyWarning {
+    padding: 1em;
+    margin: 0 3px;
+    text-align: center;
+    background-color: var(--el-color-error);
+    color: var(--color-sidebar-text);
+    font-size: 1.5em;
+    font-weight: bold;
+    border-radius: 10px;
+  }
+
 }
 </style>

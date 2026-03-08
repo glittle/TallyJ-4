@@ -804,10 +804,7 @@ export type BallotDto = {
      * The code of the computer that processed this ballot.
      */
     computerCode?: string | null;
-    /**
-     * The status code of the ballot.
-     */
-    statusCode?: string | null;
+    statusCode?: BallotStatus;
     /**
      * The name of the first teller who processed the ballot.
      */
@@ -838,15 +835,26 @@ export type BallotReportDto = {
      * Name of the location where this ballot was cast.
      */
     locationName?: string | null;
-    /**
-     * Current status of the ballot.
-     */
-    status?: string | null;
+    status?: BallotStatus;
     /**
      * List of votes recorded on this ballot.
      */
     votes?: Array<VoteReportDto> | null;
 };
+
+export const BallotStatus = {
+    OK: 'Ok',
+    REVIEW: 'Review',
+    VERIFY: 'Verify',
+    TOO_MANY: 'TooMany',
+    TOO_FEW: 'TooFew',
+    DUP: 'Dup',
+    EMPTY: 'Empty',
+    RAW: 'Raw',
+    NEW: 'New'
+} as const;
+
+export type BallotStatus = typeof BallotStatus[keyof typeof BallotStatus];
 
 /**
  * Analysis of candidate performance and clustering.
@@ -4454,10 +4462,7 @@ export type UnregisterVoterDto = {
  * Data transfer object for updating ballot information.
  */
 export type UpdateBallotDto = {
-    /**
-     * The status code of the ballot.
-     */
-    statusCode?: string | null;
+    statusCode?: BallotStatus;
     /**
      * The name of the first teller who processed the ballot.
      */
@@ -4851,10 +4856,7 @@ export type VoteDto = {
      * The full name of the person being voted for.
      */
     personFullName?: string | null;
-    /**
-     * The status code of the vote (e.g., "ok", "spoiled").
-     */
-    statusCode?: string | null;
+    voteStatus?: VoteStatus;
     /**
      * Combined information about the person for display purposes.
      */
@@ -4879,15 +4881,21 @@ export type VoteReportDto = {
     position?: number;
 };
 
+export const VoteStatus = {
+    OK: 'Ok',
+    CHANGED: 'Changed',
+    SPOILED: 'Spoiled',
+    RAW: 'Raw'
+} as const;
+
+export type VoteStatus = typeof VoteStatus[keyof typeof VoteStatus];
+
 /**
  * Response DTO for vote create/update operations, containing the vote and the ballot's current status.
  */
 export type VoteWithBallotStatusDto = {
     vote?: VoteDto;
-    /**
-     * The current status code of the ballot containing this vote.
-     */
-    ballotStatusCode?: string | null;
+    ballotStatusCode?: BallotStatus;
 };
 
 /**

@@ -226,7 +226,7 @@ public static class DbSeeder
                         BallotGuid = ballotGuid,
                         PositionOnBallot = v + 1,
                         PersonGuid = votePersonGuid,
-                        StatusCode = "Ok"
+                        VoteStatus = VoteStatus.Ok
                     });
                 }
             }
@@ -255,7 +255,7 @@ public static class DbSeeder
                     BallotGuid = ballotGuid,
                     PositionOnBallot = v + 1,
                     PersonGuid = votePersonGuid,
-                    StatusCode = "Ok"
+                    VoteStatus = VoteStatus.Ok
                 });
             }
         }
@@ -494,7 +494,7 @@ public static class DbSeeder
                     BallotGuid = ballotGuid,
                     PositionOnBallot = position++,
                     PersonGuid = people[candidateIndex].PersonGuid,
-                    StatusCode = "Ok"
+                    VoteStatus = VoteStatus.Ok
                 });
             }
         }

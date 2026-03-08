@@ -8,6 +8,7 @@ namespace Backend.Application.Services.Auth;
 
 public class EmailService
 {
+    private const string defaultReplyFromEmail = "noreply@tallyj.com";
     private readonly IConfiguration _configuration;
     private readonly ILogger<EmailService> _logger;
 
@@ -22,7 +23,7 @@ public class EmailService
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(
             _configuration["Email:FromName"],
-            _configuration["Email:FromAddress"]
+            _configuration["Email:FromAddress"] ?? defaultReplyFromEmail
         ));
         message.To.Add(new MailboxAddress(toEmail, toEmail));
         message.Subject = "Password Reset Request";
@@ -87,7 +88,7 @@ If you did not request this reset, please ignore this email.
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(
             _configuration["Email:FromName"],
-            _configuration["Email:FromAddress"]
+            _configuration["Email:FromAddress"] ?? defaultReplyFromEmail
         ));
         message.To.Add(new MailboxAddress(toEmail, toEmail));
         message.Subject = "Two-Factor Authentication Setup";
@@ -147,7 +148,7 @@ If you did not enable 2FA, please contact support immediately.
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(
             _configuration["Email:FromName"],
-            _configuration["Email:FromAddress"]
+            _configuration["Email:FromAddress"] ?? defaultReplyFromEmail
         ));
         message.To.Add(new MailboxAddress(toEmail, toEmail));
         message.Subject = "Verify Your Email Address";

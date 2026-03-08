@@ -12,7 +12,8 @@ public enum BallotStatus
     TooFew,
     Dup,
     Empty,
-    Raw
+    Raw,
+    New
 }
 
 public static class BallotStatusEnum
@@ -25,10 +26,11 @@ public static class BallotStatusEnum
     public static readonly BallotStatusInfo Dup = new(BallotStatus.Dup, "Duplicate names");
     public static readonly BallotStatusInfo Empty = new(BallotStatus.Empty, "Empty");
     public static readonly BallotStatusInfo Raw = new(BallotStatus.Raw, "Raw - Teller to Finish");
+    public static readonly BallotStatusInfo New = new(BallotStatus.New, "Just Started");
 
     public static readonly IReadOnlyList<BallotStatusInfo> All = new List<BallotStatusInfo>
     {
-        Ok, Review, Verify, TooMany, TooFew, Dup, Empty, Raw
+        Ok, Review, Verify, TooMany, TooFew, Dup, Empty, Raw, New
     };
 
     public static BallotStatus? ParseCode(string? value) =>

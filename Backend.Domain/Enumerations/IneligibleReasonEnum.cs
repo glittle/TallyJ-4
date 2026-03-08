@@ -12,7 +12,7 @@ public class IneligibleReason
     /// </summary>
     /// <param name="reasonGuid">The unique GUID identifier for this reason.</param>
     /// <param name="code">The short code identifier (e.g., "X01", "V01").</param>
-    /// <param name="description">The human-readable description of the reason.</param>
+    /// <param name="description">The English human-readable description of the reason.</param>
     /// <param name="canVote">Whether a person with this reason can vote.</param>
     /// <param name="canReceiveVotes">Whether a person with this reason can receive votes (be a candidate).</param>
     /// <param name="internalOnly">Whether this reason is for internal use only (not for person forms).</param>
@@ -52,7 +52,7 @@ public class IneligibleReason
     public bool CanReceiveVotes { get; }
 
     /// <summary>
-    /// Whether this reason is for internal use only (not for person forms).
+    /// Whether this reason is for vote use only. A person cannot have this eligibility reason, only a vote not associated to a person record.
     /// </summary>
     public bool InternalOnly { get; }
 

@@ -1131,9 +1131,7 @@ export const BallotDtoSchema = {
             nullable: true
         },
         statusCode: {
-            type: 'string',
-            description: 'The status code of the ballot.',
-            nullable: true
+            $ref: '#/components/schemas/BallotStatus'
         },
         teller1: {
             type: 'string',
@@ -1177,9 +1175,7 @@ export const BallotReportDtoSchema = {
             nullable: true
         },
         status: {
-            type: 'string',
-            description: 'Current status of the ballot.',
-            nullable: true
+            $ref: '#/components/schemas/BallotStatus'
         },
         votes: {
             type: 'array',
@@ -1192,6 +1188,21 @@ export const BallotReportDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object containing information about a ballot in election reports.'
+} as const;
+
+export const BallotStatusSchema = {
+    enum: [
+        'Ok',
+        'Review',
+        'Verify',
+        'TooMany',
+        'TooFew',
+        'Dup',
+        'Empty',
+        'Raw',
+        'New'
+    ],
+    type: 'string'
 } as const;
 
 export const CandidateAnalysisDtoSchema = {
@@ -6186,9 +6197,7 @@ export const UpdateBallotDtoSchema = {
     type: 'object',
     properties: {
         statusCode: {
-            type: 'string',
-            description: 'The status code of the ballot.',
-            nullable: true
+            $ref: '#/components/schemas/BallotStatus'
         },
         teller1: {
             type: 'string',
@@ -6736,10 +6745,8 @@ export const VoteDtoSchema = {
             description: 'The full name of the person being voted for.',
             nullable: true
         },
-        statusCode: {
-            type: 'string',
-            description: 'The status code of the vote (e.g., "ok", "spoiled").',
-            nullable: true
+        voteStatus: {
+            $ref: '#/components/schemas/VoteStatus'
         },
         personCombinedInfo: {
             type: 'string',
@@ -6774,6 +6781,16 @@ export const VoteReportDtoSchema = {
     description: 'Data transfer object containing information about a single vote in election reports.'
 } as const;
 
+export const VoteStatusSchema = {
+    enum: [
+        'Ok',
+        'Changed',
+        'Spoiled',
+        'Raw'
+    ],
+    type: 'string'
+} as const;
+
 export const VoteWithBallotStatusDtoSchema = {
     type: 'object',
     properties: {
@@ -6781,9 +6798,7 @@ export const VoteWithBallotStatusDtoSchema = {
             $ref: '#/components/schemas/VoteDto'
         },
         ballotStatusCode: {
-            type: 'string',
-            description: 'The current status code of the ballot containing this vote.',
-            nullable: true
+            $ref: '#/components/schemas/BallotStatus'
         }
     },
     additionalProperties: false,

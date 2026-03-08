@@ -55,7 +55,7 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
             {
                 var voteStatus = DetermineVoteStatus(vote);
 
-                if (voteStatus != "Ok")
+                if (voteStatus != VoteStatus.Ok)
                     continue;
 
                 var voteCount = vote.SingleNameElectionCount ?? 1;

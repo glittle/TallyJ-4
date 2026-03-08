@@ -265,6 +265,7 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Vote>(entity =>
         {
+            entity.Property(e => e.VoteStatus).HasConversion<string>().HasMaxLength(10).IsUnicode(false);
             entity.Property(e => e.RowVersion)
                 .IsRowVersion()
                 .IsConcurrencyToken();

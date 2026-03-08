@@ -98,7 +98,7 @@ onMounted(async () => {
   if (electionGuid) {
     prefilledFromUrl.value = true;
 
-    const accessCode = route.query.code as string;
+    const accessCode = route.params.accessCode as string;
     if (accessCode) {
       joinForm.accessCode = accessCode;
     }

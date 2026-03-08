@@ -38,5 +38,7 @@
   "common.userMenu": "User account menu",
   "common.view": "View",
   "common.warning": "Warning",
-  "common.yes": "Yes"
+  "common.yes": "Yes",
+  "common.testOnlyShort": "Test Only. Not for real elections.",
+  "common.testOnlyLong": "This TallyJ v4 Beta is for test only. Not ready for use in real elections."
 }

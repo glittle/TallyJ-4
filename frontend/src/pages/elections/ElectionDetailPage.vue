@@ -1,3 +1,190 @@
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { ElMessageBox } from 'element-plus';
+import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete, Check, CopyDocument, Link, Document } from '@element-plus/icons-vue';
+import { useElectionStore } from '../../stores/electionStore';
+import { useNotifications } from '@/composables/useNotifications';
+import QRCode from 'qrcode';
+
+const router = useRouter();
+const route = useRoute();
+const { t } = useI18n();
+const electionStore = useElectionStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
+
+const electionGuid = route.params.id as string;
+const loading = computed(() => electionStore.loading);
+const election = computed(() => electionStore.currentElection);
+
+const qrCodeUrl = ref('');
+
+
+const hashPassphrase = async (passphrase: string) => {
+  const msgUint8 = new TextEncoder().encode(passphrase); // encode as (UTF-8)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
+  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+  return hashHex;
+}
+
+const shareableUrl = ref('');
+const updateShareableUrl = async () => {
+  if (!election.value?.electionPasscode) {
+    shareableUrl.value = '';
+    return;
+  }
+
+  const baseUrl = globalThis.location.origin;
+  const code = await hashPassphrase(election.value.electionPasscode);
+  shareableUrl.value = `${baseUrl}/teller-join/${code}/${electionGuid}`;
+  generateQrCode();
+};
+
+
+const onlineVotingStatus = computed(() => {
+  // Check if online voting is enabled based on onlineWhenOpen and onlineWhenClose
+  return election.value?.onlineWhenOpen && election.value?.onlineWhenClose;
+});
+
+onMounted(async () => {
+  await electionStore.fetchElectionById(electionGuid);
+
+  electionStore.initializeSignalR().then(() => {
+    electionStore.joinElection(electionGuid);
+  });
+
+  updateShareableUrl();
+});
+
+onUnmounted(async () => {
+  try {
+    await electionStore.leaveElection(electionGuid);
+  } catch (error) {
+    console.error('Failed to leave election:', error);
+  }
+});
+
+function goBack() {
+  router.push('/elections');
+}
+
+function editElection() {
+  router.push(`/ elections / ${electionGuid}/edit`);
+}
+
+function managePeople() {
+  router.push(`/elections/${electionGuid}/people`);
+}
+
+function manageLocations() {
+  router.push(`/elections/${electionGuid}/locations`);
+}
+
+function manageBallots() {
+  router.push(`/elections/${electionGuid}/ballots`);
+}
+
+function openFrontDesk() {
+  router.push(`/elections/${electionGuid}/frontdesk`);
+}
+
+function viewResults() {
+  router.push(`/elections/${electionGuid}/results`);
+}
+
+function viewReports() {
+  router.push(`/elections/${electionGuid}/reporting`);
+}
+
+function calculateTally() {
+  router.push(`/elections/${electionGuid}/tally`);
+}
+
+async function confirmDelete() {
+  try {
+    await ElMessageBox.confirm(
+      t('elections.deleteConfirm'),
+      t('common.warning'),
+      {
+        confirmButtonText: t('common.delete'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning',
+        confirmButtonClass: 'el-button--danger'
+      }
+    );
+
+    await electionStore.deleteElection(electionGuid);
+    showSuccessMessage(t('elections.deleteSuccess'));
+    router.push('/elections');
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      showErrorMessage(error.message || t('elections.deleteError'));
+    }
+  }
+}
+
+function formatDate(date?: string) {
+  if (!date) return '-';
+  return new Date(date).toLocaleDateString();
+}
+
+function getStatusType(status?: string) {
+  const typeMap: Record<string, any> = {
+    'Draft': 'info',
+    'Voting': 'success',
+    'Tallying': 'warning',
+    'Finalized': 'info'
+  };
+  return typeMap[status || ''] || 'info';
+}
+
+async function toggleTellerAccess() {
+  if (!election.value) return;
+
+  try {
+    const newState = !election.value.isTellerAccessOpen;
+    await electionStore.toggleTellerAccess(electionGuid, newState);
+    showSuccessMessage(
+      newState
+        ? t('elections.tellerAccessOpen')
+        : t('elections.tellerAccessClosed')
+    );
+  } catch (error) {
+    showErrorMessage(t('common.error'));
+  }
+}
+
+async function copyUrl() {
+  if (!shareableUrl.value) return;
+
+  try {
+    await navigator.clipboard.writeText(await shareableUrl.value);
+    showSuccessMessage(t('common.copied'));
+  } catch (error) {
+    showErrorMessage(t('common.error'));
+  }
+}
+
+async function generateQrCode() {
+  if (!shareableUrl.value) return;
+
+  try {
+    qrCodeUrl.value = await QRCode.toDataURL(await shareableUrl.value, {
+      width: 200,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      }
+    });
+  } catch (error) {
+    console.error('Failed to generate QR code:', error);
+  }
+}
+</script>
+
 <template>
   <div class="election-detail-page">
     <div v-if="loading" class="loading-container">
@@ -129,7 +316,8 @@
             <div v-if="election?.electionPasscode" class="access-details">
               <div class="access-item">
                 <label>{{ $t('elections.tellerAccessCode') }}:</label>
-                <el-input :model-value="election.electionPasscode" readonly style="margin-top: 5px;" />
+                <el-input :model-value="election.electionPasscode" readonly style="margin-top: 5px;"
+                  @change="updateShareableUrl" />
               </div>
 
               <div class="access-item" style="margin-top: 15px;">
@@ -203,183 +391,6 @@
     <el-empty v-else :description="$t('elections.notFound')" />
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { ElMessageBox } from 'element-plus';
-import { Edit, UserFilled, LocationFilled, Tickets, DataAnalysis, Operation, Delete, Check, CopyDocument, Link, Document } from '@element-plus/icons-vue';
-import { useElectionStore } from '../../stores/electionStore';
-import { useNotifications } from '@/composables/useNotifications';
-import QRCode from 'qrcode';
-
-const router = useRouter();
-const route = useRoute();
-const { t } = useI18n();
-const electionStore = useElectionStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
-
-const electionGuid = route.params.id as string;
-const loading = computed(() => electionStore.loading);
-const election = computed(() => electionStore.currentElection);
-
-const qrCodeUrl = ref('');
-const shareableUrl = computed(() => {
-  if (!election.value?.electionPasscode) return '';
-  const baseUrl = window.location.origin;
-  return `${baseUrl}/teller-join/${electionGuid}?code=${encodeURIComponent(election.value.electionPasscode)}`;
-});
-
-const onlineVotingStatus = computed(() => {
-  // Check if online voting is enabled based on onlineWhenOpen and onlineWhenClose
-  return election.value?.onlineWhenOpen && election.value?.onlineWhenClose;
-});
-
-onMounted(async () => {
-  try {
-    await electionStore.initializeSignalR();
-    await electionStore.fetchElectionById(electionGuid);
-    await electionStore.joinElection(electionGuid);
-    await generateQrCode();
-  } catch (error) {
-    showErrorMessage(t('elections.loadError'));
-  }
-});
-
-// Watch for changes to shareable URL to regenerate QR code
-watch(shareableUrl, async (newUrl) => {
-  if (newUrl) {
-    await generateQrCode();
-  }
-});
-
-onUnmounted(async () => {
-  try {
-    await electionStore.leaveElection(electionGuid);
-  } catch (error) {
-    console.error('Failed to leave election:', error);
-  }
-});
-
-function goBack() {
-  router.push('/elections');
-}
-
-function editElection() {
-  router.push(`/elections/${electionGuid}/edit`);
-}
-
-function managePeople() {
-  router.push(`/elections/${electionGuid}/people`);
-}
-
-function manageLocations() {
-  router.push(`/elections/${electionGuid}/locations`);
-}
-
-function manageBallots() {
-  router.push(`/elections/${electionGuid}/ballots`);
-}
-
-function openFrontDesk() {
-  router.push(`/elections/${electionGuid}/frontdesk`);
-}
-
-function viewResults() {
-  router.push(`/elections/${electionGuid}/results`);
-}
-
-function viewReports() {
-  router.push(`/elections/${electionGuid}/reporting`);
-}
-
-function calculateTally() {
-  router.push(`/elections/${electionGuid}/tally`);
-}
-
-async function confirmDelete() {
-  try {
-    await ElMessageBox.confirm(
-      t('elections.deleteConfirm'),
-      t('common.warning'),
-      {
-        confirmButtonText: t('common.delete'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning',
-        confirmButtonClass: 'el-button--danger'
-      }
-    );
-
-    await electionStore.deleteElection(electionGuid);
-    showSuccessMessage(t('elections.deleteSuccess'));
-    router.push('/elections');
-  } catch (error: any) {
-    if (error !== 'cancel') {
-      showErrorMessage(error.message || t('elections.deleteError'));
-    }
-  }
-}
-
-function formatDate(date?: string) {
-  if (!date) return '-';
-  return new Date(date).toLocaleDateString();
-}
-
-function getStatusType(status?: string) {
-  const typeMap: Record<string, any> = {
-    'Draft': 'info',
-    'Voting': 'success',
-    'Tallying': 'warning',
-    'Finalized': 'info'
-  };
-  return typeMap[status || ''] || 'info';
-}
-
-async function toggleTellerAccess() {
-  if (!election.value) return;
-
-  try {
-    const newState = !election.value.isTellerAccessOpen;
-    await electionStore.toggleTellerAccess(electionGuid, newState);
-    showSuccessMessage(
-      newState
-        ? t('elections.tellerAccessOpen')
-        : t('elections.tellerAccessClosed')
-    );
-  } catch (error) {
-    showErrorMessage(t('common.error'));
-  }
-}
-
-async function copyUrl() {
-  if (!shareableUrl.value) return;
-
-  try {
-    await navigator.clipboard.writeText(shareableUrl.value);
-    showSuccessMessage(t('common.copied'));
-  } catch (error) {
-    showErrorMessage(t('common.error'));
-  }
-}
-
-async function generateQrCode() {
-  if (!shareableUrl.value) return;
-
-  try {
-    qrCodeUrl.value = await QRCode.toDataURL(shareableUrl.value, {
-      width: 200,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#FFFFFF'
-      }
-    });
-  } catch (error) {
-    console.error('Failed to generate QR code:', error);
-  }
-}
-</script>
 
 <style lang="less">
 .election-detail-page {

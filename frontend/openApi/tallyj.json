@@ -7216,9 +7216,7 @@
             "nullable": true
           },
           "statusCode": {
-            "type": "string",
-            "description": "The status code of the ballot.",
-            "nullable": true
+            "$ref": "#/components/schemas/BallotStatus"
           },
           "teller1": {
             "type": "string",
@@ -7261,9 +7259,7 @@
             "nullable": true
           },
           "status": {
-            "type": "string",
-            "description": "Current status of the ballot.",
-            "nullable": true
+            "$ref": "#/components/schemas/BallotStatus"
           },
           "votes": {
             "type": "array",
@@ -7276,6 +7272,20 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object containing information about a ballot in election reports."
+      },
+      "BallotStatus": {
+        "enum": [
+          "Ok",
+          "Review",
+          "Verify",
+          "TooMany",
+          "TooFew",
+          "Dup",
+          "Empty",
+          "Raw",
+          "New"
+        ],
+        "type": "string"
       },
       "CandidateAnalysisDto": {
         "type": "object",
@@ -12133,9 +12143,7 @@
         "type": "object",
         "properties": {
           "statusCode": {
-            "type": "string",
-            "description": "The status code of the ballot.",
-            "nullable": true
+            "$ref": "#/components/schemas/BallotStatus"
           },
           "teller1": {
             "type": "string",
@@ -12670,10 +12678,8 @@
             "description": "The full name of the person being voted for.",
             "nullable": true
           },
-          "statusCode": {
-            "type": "string",
-            "description": "The status code of the vote (e.g., \"ok\", \"spoiled\").",
-            "nullable": true
+          "voteStatus": {
+            "$ref": "#/components/schemas/VoteStatus"
           },
           "personCombinedInfo": {
             "type": "string",
@@ -12706,6 +12712,15 @@
         "additionalProperties": false,
         "description": "Data transfer object containing information about a single vote in election reports."
       },
+      "VoteStatus": {
+        "enum": [
+          "Ok",
+          "Changed",
+          "Spoiled",
+          "Raw"
+        ],
+        "type": "string"
+      },
       "VoteWithBallotStatusDto": {
         "type": "object",
         "properties": {
@@ -12713,9 +12728,7 @@
             "$ref": "#/components/schemas/VoteDto"
           },
           "ballotStatusCode": {
-            "type": "string",
-            "description": "The current status code of the ballot containing this vote.",
-            "nullable": true
+            "$ref": "#/components/schemas/BallotStatus"
           }
         },
         "additionalProperties": false,

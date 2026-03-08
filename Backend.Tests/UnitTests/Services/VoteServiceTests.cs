@@ -81,13 +81,12 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
-        Assert.Equal("ok", result.Vote.StatusCode);
+        Assert.Equal(VoteStatus.Ok, result.Vote.VoteStatus);
         Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
     }
 
@@ -103,13 +102,12 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
-        Assert.Equal("V06", result.Vote.StatusCode);
+        Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
         Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
     }
 
@@ -125,12 +123,11 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         var result = await _service.CreateVoteAsync(dto);
 
-        Assert.Equal("X01", result.Vote.StatusCode);
+        Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
     }
 
     [Fact]
@@ -143,12 +140,11 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         var result = await _service.CreateVoteAsync(dto);
 
-        Assert.Equal("spoiled", result.Vote.StatusCode);
+        Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
     }
 
     [Fact]
@@ -161,7 +157,6 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         await _service.CreateVoteAsync(dto);
@@ -184,7 +179,6 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         await _service.CreateVoteAsync(dto);
@@ -205,7 +199,7 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok",
+            VoteStatus = VoteStatus.Ok,
             RowVersion = new byte[8]
         };
         Context.Votes.Add(vote);
@@ -228,7 +222,7 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = null,
             PositionOnBallot = 1,
-            StatusCode = "spoiled",
+            VoteStatus = VoteStatus.Spoiled,
             RowVersion = new byte[8]
         };
         Context.Votes.Add(vote);
@@ -248,7 +242,6 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = Guid.NewGuid(),
             PersonGuid = Guid.NewGuid(),
             PositionOnBallot = 1,
-            StatusCode = "ok"
         };
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => _service.CreateVoteAsync(dto));
@@ -264,7 +257,7 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = "ok",
+            VoteStatus = VoteStatus.Ok,
             RowVersion = new byte[8]
         };
         Context.Votes.Add(existingVote);
@@ -275,7 +268,6 @@ public class VoteServiceTests : ServiceTestBase
             BallotGuid = BallotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 2,
-            StatusCode = "ok"
         };
 
         var result = await _service.CreateVoteAsync(dto);

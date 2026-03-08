@@ -315,7 +315,7 @@ public class OnlineVotingService : IOnlineVotingService
                     BallotGuid = ballot.BallotGuid,
                     PositionOnBallot = voteDto.PositionOnBallot,
                     PersonGuid = voteDto.PersonGuid,
-                    StatusCode = voteDto.PersonGuid.HasValue ? "Valid" : "Invalid",
+                    VoteStatus = voteDto.PersonGuid.HasValue ? VoteStatus.Ok : VoteStatus.Spoiled,
                     OnlineVoteRaw = voteDto.VoteName,
                     RowVersion = new byte[8]
                 };

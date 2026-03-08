@@ -55,7 +55,7 @@ public class ElectionAnalyzerNormal : ElectionAnalyzerBase
             {
                 var voteStatus = DetermineVoteStatus(vote);
 
-                if (voteStatus != "Ok")
+                if (voteStatus != VoteStatus.Ok)
                     continue;
 
                 numVotesTotal++;
