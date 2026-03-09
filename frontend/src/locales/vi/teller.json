@@ -1,0 +1,17 @@
+{
+  "teller.form.titleEdit": "Chỉnh Sửa Kiểm Phiếu Viên",
+  "teller.form.titleAdd": "Thêm Kiểm Phiếu Viên",
+  "teller.form.name": "Tên Kiểm Phiếu Viên",
+  "teller.form.namePlaceholder": "Nhập tên kiểm phiếu viên",
+  "teller.form.nameRequired": "Tên kiểm phiếu viên là bắt buộc",
+  "teller.form.nameMaxLength": "Tên kiểm phiếu viên không được vượt quá 50 ký tự",
+  "teller.form.computerCode": "Mã Máy Tính",
+  "teller.form.computerCodePlaceholder": "ví dụ: AA",
+  "teller.form.computerCodeInvalid": "Mã máy tính phải là 2 chữ hoa (AA-ZZ)",
+  "teller.form.computerCodeHelp": "Hai chữ hoa (AA-ZZ) hoặc để trống",
+  "teller.form.headTeller": "Trưởng Ban Kiểm Phiếu",
+  "teller.form.headTellerHelp": "Trưởng ban kiểm phiếu có thêm quyền hạn",
+  "teller.form.cancel": "Hủy",
+  "teller.form.save": "Lưu",
+  "teller.form.create": "Tạo"
+}

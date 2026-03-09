@@ -1,0 +1,17 @@
+{
+  "teller.form.titleEdit": "गणनाकर्ता संपादित करें",
+  "teller.form.titleAdd": "गणनाकर्ता जोड़ें",
+  "teller.form.name": "गणनाकर्ता का नाम",
+  "teller.form.namePlaceholder": "गणनाकर्ता का नाम दर्ज करें",
+  "teller.form.nameRequired": "गणनाकर्ता का नाम आवश्यक है",
+  "teller.form.nameMaxLength": "गणनाकर्ता का नाम 50 वर्णों से अधिक नहीं हो सकता",
+  "teller.form.computerCode": "कंप्यूटर कोड",
+  "teller.form.computerCodePlaceholder": "जैसे, AA",
+  "teller.form.computerCodeInvalid": "कंप्यूटर कोड 2 अपरकेस अक्षर होने चाहिए (AA-ZZ)",
+  "teller.form.computerCodeHelp": "दो अपरकेस अक्षर (AA-ZZ) या खाली छोड़ें",
+  "teller.form.headTeller": "मुख्य गणनाकर्ता",
+  "teller.form.headTellerHelp": "मुख्य गणनाकर्ताओं के पास अतिरिक्त अनुमतियाँ हैं",
+  "teller.form.cancel": "रद्द करें",
+  "teller.form.save": "सहेजें",
+  "teller.form.create": "बनाएं"
+}

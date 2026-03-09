@@ -1,0 +1,11 @@
+{
+  "nav.dashboard": "Painel de Controle",
+  "nav.elections": "Eleições",
+  "nav.profile": "Perfil",
+  "nav.superAdmin": "Super Admin",
+  "nav.auditLogs": "Registros de Auditoria",
+  "nav.votingLocations": "Locais de Votação",
+  "nav.tellers": "Escrutinadores",
+  "nav.frontDesk": "Recepção",
+  "nav.publicDisplay": "Exibição Pública de Resultados"
+}

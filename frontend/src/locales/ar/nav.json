@@ -1,0 +1,11 @@
+{
+  "nav.dashboard": "لوحة التحكم",
+  "nav.elections": "الانتخابات",
+  "nav.profile": "الملف الشخصي",
+  "nav.superAdmin": "المشرف العام",
+  "nav.auditLogs": "سجلات التدقيق",
+  "nav.votingLocations": "Voting Locations",
+  "nav.tellers": "Tellers",
+  "nav.frontDesk": "Front Desk",
+  "nav.publicDisplay": "Election Results Display"
+}

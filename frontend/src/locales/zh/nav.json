@@ -1,0 +1,11 @@
+{
+  "nav.dashboard": "仪表盘",
+  "nav.elections": "选举",
+  "nav.profile": "个人资料",
+  "nav.superAdmin": "超级管理员",
+  "nav.auditLogs": "审计日志",
+  "nav.votingLocations": "Voting Locations",
+  "nav.tellers": "Tellers",
+  "nav.frontDesk": "Front Desk",
+  "nav.publicDisplay": "Election Results Display"
+}
