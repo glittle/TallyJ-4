@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
@@ -1135,6 +1136,5 @@ public class OnlineVotingService : IOnlineVotingService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
-
 
 

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Collections.Generic;
 using Backend.Application.DTOs.Auth;
 using Backend.Application.Services.Auth;
 using Backend.Authorization;
@@ -1028,6 +1029,64 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
+    /// Authenticates a user using the Telegram Login Widget for officer / teller flows.
+    /// </summary>
+    [HttpPost("telegram")]
+    public async Task<IActionResult> TelegramLogin([FromBody] TelegramLoginRequest request)
+    {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
+        var botToken = _configuration["Telegram:BotToken"];
+        if (string.IsNullOrWhiteSpace(botToken) || botToken.StartsWith("<"))
+        {
+            _logger.LogWarning("Telegram login attempted but Telegram bot token is not configured");
+            return BadRequest(new { error = "Telegram authentication is not configured on this server." });
+        }
+
+        if (!ValidateTelegramHash(request, botToken))
+        {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.OAuthLoginFailure,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = "Telegram login: invalid hash",
+                IsSuspicious = true,
+                Severity = SecurityEventSeverity.Warning
+            });
+
+            return BadRequest(new { error = "Invalid Telegram data." });
+        }
+
+        var authAgeSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - request.AuthDate;
+        if (authAgeSeconds > 86400)
+        {
+            return BadRequest(new { error = "Telegram login request expired." });
+        }
+
+        try
+        {
+            var (user, _) = await ProcessTelegramUserAsync(request, clientIp, userAgent);
+
+            return Ok(new AuthResponse
+            {
+                Token = null,
+                RefreshToken = null,
+                Email = user.Email!,
+                Name = user.DisplayName,
+                AuthMethod = "Telegram",
+                Requires2FA = false
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Telegram login: error processing user {TelegramId}", request.Id);
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
     /// Helper method to handle the shared logic of finding or creating a user from Google authentication,
     /// linking their Google account, assigning roles, generating tokens, and setting cookies.
     /// </summary>
@@ -1130,6 +1189,142 @@ public class AuthController : ControllerBase
         return (user, isNewUser);
     }
 
+    private async Task<(AppUser user, bool isNewUser)> ProcessTelegramUserAsync(
+        TelegramLoginRequest request,
+        string? clientIp,
+        string? userAgent)
+    {
+        var telegramId = request.Id.ToString();
+        var displayName = $"{request.FirstName} {request.LastName}".Trim();
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            displayName = request.Username ?? $"Telegram {telegramId}";
+        }
+
+        var email = !string.IsNullOrWhiteSpace(request.Username)
+            ? $"{request.Username}@telegram.local"
+            : $"telegram_{telegramId}@telegram.local";
+
+        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId);
+        bool isNewUser = false;
+
+        if (user == null)
+        {
+            user = new AppUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                DisplayName = displayName,
+                TelegramId = telegramId,
+                AuthMethod = "Telegram"
+            };
+
+            var createResult = await _userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                _logger.LogError("Failed to create Telegram user {TelegramId}: {Errors}",
+                    telegramId, string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                throw new InvalidOperationException("Failed to create user account.");
+            }
+
+            var roleResult = await _userManager.AddToRoleAsync(user, "Officer");
+            if (!roleResult.Succeeded)
+            {
+                _logger.LogWarning("Failed to assign Officer role to Telegram user {TelegramId}: {Errors}",
+                    telegramId, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+            }
+
+            _logger.LogInformation("Created new user for Telegram ID {TelegramId}", telegramId);
+            isNewUser = true;
+        }
+        else
+        {
+            var needsUpdate = false;
+            if (string.IsNullOrEmpty(user.TelegramId))
+            {
+                user.TelegramId = telegramId;
+                needsUpdate = true;
+            }
+
+            if (string.IsNullOrEmpty(user.DisplayName) && !string.IsNullOrEmpty(displayName))
+            {
+                user.DisplayName = displayName;
+                needsUpdate = true;
+            }
+
+            user.AuthMethod = "Telegram";
+
+            if (needsUpdate)
+            {
+                await _userManager.UpdateAsync(user);
+            }
+        }
+
+        var token = _jwtTokenService.GenerateToken(user);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken();
+        var refreshTokenEntity = _jwtTokenService.CreateRefreshToken(user.Id, refreshToken);
+        _context.RefreshTokens.Add(refreshTokenEntity);
+        await _context.SaveChangesAsync();
+
+        SecureCookieMiddleware.SetAuthCookies(
+            HttpContext,
+            token,
+            refreshToken,
+            user.Email!,
+            user.DisplayName,
+            user.AuthMethod ?? "Telegram",
+            HttpContext.Request.IsHttps
+        );
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.OAuthLoginSuccess,
+            UserId = user.Id,
+            Email = user.Email,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = $"Telegram login successful for Telegram ID {telegramId}",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
+
+        return (user, isNewUser);
+    }
+
+    private static string BuildTelegramDataCheckString(TelegramLoginRequest request)
+    {
+        var fields = new SortedDictionary<string, string>
+        {
+            ["auth_date"] = request.AuthDate.ToString(),
+            ["first_name"] = request.FirstName,
+            ["id"] = request.Id.ToString()
+        };
+
+        if (!string.IsNullOrEmpty(request.LastName)) fields["last_name"] = request.LastName;
+        if (!string.IsNullOrEmpty(request.PhotoUrl)) fields["photo_url"] = request.PhotoUrl;
+        if (!string.IsNullOrEmpty(request.Username)) fields["username"] = request.Username;
+
+        return string.Join("\n", fields.Select(kv => $"{kv.Key}={kv.Value}"));
+    }
+
+    private static string ComputeTelegramHash(string dataCheckString, string botToken)
+    {
+        using var sha256 = SHA256.Create();
+        var secretKey = sha256.ComputeHash(Encoding.UTF8.GetBytes(botToken));
+
+        using var hmac = new HMACSHA256(secretKey);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dataCheckString));
+        return Convert.ToHexString(computedHash).ToLowerInvariant();
+    }
+
+    private bool ValidateTelegramHash(TelegramLoginRequest request, string botToken)
+    {
+        var dataCheckString = BuildTelegramDataCheckString(request);
+        var expectedHash = ComputeTelegramHash(dataCheckString, botToken);
+        return string.Equals(expectedHash, request.Hash, StringComparison.OrdinalIgnoreCase);
+    }
+
     private string GetFrontendUrl(string? returnUrl)
     {
         if (!string.IsNullOrEmpty(returnUrl) && Uri.TryCreate(returnUrl, UriKind.Absolute, out var uri))
@@ -1228,7 +1423,4 @@ public class AuthController : ControllerBase
 
 
 }
-
-
-
 

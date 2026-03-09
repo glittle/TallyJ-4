@@ -12,6 +12,7 @@ import type {
   GoogleAuthForVoterDto,
   FacebookAuthForVoterDto,
   KakaoAuthForVoterDto,
+  TelegramAuthForVoterDto,
 } from "../types";
 
 export const useOnlineVotingStore = defineStore("onlineVoting", () => {
@@ -92,6 +93,23 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.kakaoAuth(data);
+      voterToken.value = response.token;
+      voterId.value = response.voterId;
+      localStorage.setItem("voter_token", response.token);
+      localStorage.setItem("voter_id", response.voterId);
+      return response;
+    } catch (error) {
+      handleApiError(error as any);
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function telegramAuth(data: TelegramAuthForVoterDto) {
+    try {
+      loading.value = true;
+      const response = await onlineVotingService.telegramAuth(data);
       voterToken.value = response.token;
       voterId.value = response.voterId;
       localStorage.setItem("voter_token", response.token);
@@ -191,6 +209,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     googleAuth,
     facebookAuth,
     kakaoAuth,
+    telegramAuth,
     loadElectionInfo,
     loadCandidates,
     submitBallot,

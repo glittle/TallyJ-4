@@ -79,5 +79,9 @@
   "voting.confirmation.election": "Élection :",
   "voting.confirmation.recorded": "Votre bulletin a été enregistré en toute sécurité.",
   "voting.confirmation.noChange": "Veuillez noter que vous ne pouvez pas modifier ou soumettre à nouveau votre bulletin.",
-  "voting.confirmation.close": "Fermer"
+  "voting.confirmation.close": "Fermer",
+  "voting.auth.tabs.telegram": "Telegram",
+  "voting.auth.telegram.description": "Connexion via Telegram.",
+  "voting.auth.telegram.loading": "Chargement du widget Telegram...",
+  "voting.auth.telegram.error": "La connexion Telegram est indisponible pour le moment."
 }
