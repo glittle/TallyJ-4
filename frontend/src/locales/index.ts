@@ -40,6 +40,15 @@ function flatToNested(flat: any): any {
 const enModules = import.meta.glob("./en/*.json", { eager: true });
 const frModules = import.meta.glob("./fr/*.json", { eager: true });
 const koModules = import.meta.glob("./ko/*.json", { eager: true });
+const esModules = import.meta.glob("./es/*.json", { eager: true });
+const ptModules = import.meta.glob("./pt/*.json", { eager: true });
+const hiModules = import.meta.glob("./hi/*.json", { eager: true });
+const viModules = import.meta.glob("./vi/*.json", { eager: true });
+const faModules = import.meta.glob("./fa/*.json", { eager: true });
+const swModules = import.meta.glob("./sw/*.json", { eager: true });
+const arModules = import.meta.glob("./ar/*.json", { eager: true });
+const zhModules = import.meta.glob("./zh/*.json", { eager: true });
+const ruModules = import.meta.glob("./ru/*.json", { eager: true });
 
 // Merge all JSON files for a locale
 function mergeLocaleFiles(modules: Record<string, any>): any {
@@ -62,10 +71,33 @@ export const i18n = createI18n({
     en: deepMerge(common, mergeLocaleFiles(enModules)),
     fr: deepMerge(common, mergeLocaleFiles(frModules)),
     ko: deepMerge(common, mergeLocaleFiles(koModules)),
+    es: deepMerge(common, mergeLocaleFiles(esModules)),
+    pt: deepMerge(common, mergeLocaleFiles(ptModules)),
+    hi: deepMerge(common, mergeLocaleFiles(hiModules)),
+    vi: deepMerge(common, mergeLocaleFiles(viModules)),
+    fa: deepMerge(common, mergeLocaleFiles(faModules)),
+    sw: deepMerge(common, mergeLocaleFiles(swModules)),
+    ar: deepMerge(common, mergeLocaleFiles(arModules)),
+    zh: deepMerge(common, mergeLocaleFiles(zhModules)),
+    ru: deepMerge(common, mergeLocaleFiles(ruModules)),
   },
 });
 
-export function setLocale(locale: "en" | "fr" | "ko") {
+export function setLocale(
+  locale:
+    | "en"
+    | "fr"
+    | "ko"
+    | "es"
+    | "pt"
+    | "hi"
+    | "vi"
+    | "fa"
+    | "sw"
+    | "ar"
+    | "zh"
+    | "ru",
+) {
   i18n.global.locale = locale;
   localStorage.setItem("preferred-language", locale);
 }

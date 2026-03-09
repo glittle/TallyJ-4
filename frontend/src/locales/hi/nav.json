@@ -1,0 +1,11 @@
+{
+  "nav.dashboard": "डैशबोर्ड",
+  "nav.elections": "चुनाव",
+  "nav.profile": "प्रोफ़ाइल",
+  "nav.superAdmin": "सुपर एडमिन",
+  "nav.auditLogs": "ऑडिट लॉग",
+  "nav.votingLocations": "मतदान स्थान",
+  "nav.tellers": "गणनाकर्ता",
+  "nav.frontDesk": "फ्रंट डेस्क",
+  "nav.publicDisplay": "चुनाव परिणाम प्रदर्शन"
+}

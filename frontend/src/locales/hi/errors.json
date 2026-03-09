@@ -1,0 +1,18 @@
+{
+  "notification.success": "सफलता",
+  "notification.error": "त्रुटि",
+  "notification.warning": "चेतावनी",
+  "notification.info": "जानकारी",
+  "error.somethingWentWrong": "कुछ गलत हो गया",
+  "error.pageError": "इस पृष्ठ को लोड करते समय एक त्रुटि हुई। कृपया पुनः प्रयास करें।",
+  "error.tryAgain": "पुनः प्रयास करें",
+  "error.goHome": "होम पर जाएं",
+  "error.errorDetails": "त्रुटि विवरण",
+  "error.networkError": "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जाँचें और पुनः प्रयास करें।",
+  "error.serverError": "सर्वर त्रुटि। कृपया बाद में पुनः प्रयास करें।",
+  "error.sessionExpired": "आपका सत्र समाप्त हो गया है। कृपया फिर से लॉग इन करें।",
+  "error.unauthorized": "आप इस क्रिया को करने के लिए अधिकृत नहीं हैं।",
+  "error.forbidden": "पहुँच अस्वीकृत।",
+  "error.notFound": "अनुरोधित संसाधन नहीं मिला।",
+  "error.validationError": "कृपया अपना इनपुट जाँचें और पुनः प्रयास करें।"
+}

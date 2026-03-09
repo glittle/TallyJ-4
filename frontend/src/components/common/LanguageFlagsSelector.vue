@@ -8,6 +8,16 @@ const { locale } = useI18n();
 const languages = [
   { value: "en", flag: "us", label: "English" },
   { value: "fr", flag: "fr", label: "Français" },
+  { value: "ko", flag: "kr", label: "한국어" },
+  { value: "es", flag: "es", label: "Español" },
+  { value: "pt", flag: "br", label: "Português" },
+  { value: "hi", flag: "in", label: "हिन्दी" },
+  { value: "vi", flag: "vn", label: "Tiếng Việt" },
+  { value: "fa", flag: "ir", label: "فارسی" },
+  { value: "sw", flag: "tz", label: "Kiswahili" },
+  { value: "ar", flag: "sa", label: "العربية" },
+  { value: "zh", flag: "cn", label: "中文" },
+  { value: "ru", flag: "ru", label: "Русский" },
 ];
 
 const changeLanguage = (lang: string) => {
