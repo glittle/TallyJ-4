@@ -8,12 +8,14 @@ import {
   postApiAuthEnable2Fa,
   postApiAuthDisable2Fa,
   postApiAuthGoogleOneTap,
+  // No generated SDK for Telegram; use axios via api
 } from "../api/gen/configService/sdk.gen";
 import type {
   RegisterRequest,
   LoginRequest,
   GoogleOneTapRequest,
 } from "../api/gen/configService/types.gen";
+import type { TelegramLoginRequest } from "../types";
 
 export interface AuthResponse {
   email: string;
@@ -100,6 +102,11 @@ export const authService = {
       throwOnError: true,
     });
 
+    return response.data as AuthResponse;
+  },
+
+  async telegramLogin(data: TelegramLoginRequest): Promise<AuthResponse> {
+    const response = await api.post("/api/auth/telegram", data);
     return response.data as AuthResponse;
   },
 

@@ -120,6 +120,25 @@ public class OnlineVotingController : ControllerBase
     }
 
     /// <summary>
+    /// Authenticates a voter using the Telegram Login Widget.
+    /// </summary>
+    /// <param name="dto">The Telegram authentication request.</param>
+    /// <returns>The voter session information if successful.</returns>
+    [HttpPost("telegramAuth")]
+    [AllowAnonymous]
+    public async Task<IActionResult> TelegramAuth([FromBody] TelegramAuthForVoterDto dto)
+    {
+        var (success, error, response) = await _onlineVotingService.TelegramAuthAsync(dto);
+
+        if (!success)
+        {
+            return BadRequest(new { error });
+        }
+
+        return Ok(response);
+    }
+
+    /// <summary>
     /// Gets the list of elections available to an authenticated voter.
     /// </summary>
     /// <param name="voterId">The voter's identifier (from JWT token).</param>
@@ -213,6 +232,5 @@ public class OnlineVotingController : ControllerBase
         return Ok(status);
     }
 }
-
 
 

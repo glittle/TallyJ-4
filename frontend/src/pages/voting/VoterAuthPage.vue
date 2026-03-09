@@ -36,6 +36,7 @@ import {
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 import { useNotifications } from "../../composables/useNotifications";
 import { useStorage } from "@vueuse/core";
+import TelegramLoginButton from "../../components/auth/TelegramLoginButton.vue";
 
 declare const FB: any;
 declare const Kakao: any;
@@ -62,10 +63,15 @@ const kakaoReady = ref(false);
 const kakaoError = ref(false);
 const kakaoScriptLoaded = ref(false);
 
+const telegramReady = ref(false);
+const telegramError = ref(false);
+const telegramBotUsername = ref<string | null>(null);
+
 const authConfig = ref<{
   googleClientId?: string;
   facebookAppId?: string;
   kakaoJsKey?: string;
+  telegramBotUsername?: string;
 } | null>(null);
 
 const emailForm = ref({ email: "" });
@@ -85,6 +91,8 @@ const fetchAuthConfig = async () => {
     if (!resp.ok) return null;
     const json = await resp.json();
     authConfig.value = json?.data ?? null;
+    telegramBotUsername.value = authConfig.value?.telegramBotUsername ?? null;
+    telegramReady.value = Boolean(authConfig.value?.telegramBotUsername);
     return authConfig.value;
   } catch {
     return null;
@@ -396,6 +404,31 @@ const handleKakaoLogin = async () => {
   }
 };
 
+const handleTelegramLogin = async (user: any) => {
+  try {
+    loading.value = true;
+    await onlineVotingStore.telegramAuth({
+      id: user.id,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      username: user.username,
+      photoUrl: user.photo_url,
+      authDate: user.auth_date,
+      hash: user.hash,
+    });
+    const electionGuid = route.query.election as string;
+    if (electionGuid) {
+      router.push(`/vote/${electionGuid}`);
+    } else {
+      showErrorMessage(t("voting.auth.error.noElection"));
+    }
+  } catch (error) {
+    console.error("Error with Telegram authentication:", error);
+  } finally {
+    loading.value = false;
+  }
+};
+
 const loadKakaoSdk = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     if (kakaoScriptLoaded.value || typeof Kakao !== "undefined") {
@@ -448,6 +481,7 @@ watch(activeTab, async (newTab) => {
 });
 
 onMounted(() => {
+  fetchAuthConfig();
   if (activeTab.value === "google") {
     initGoogleSignIn();
   } else if (activeTab.value === "facebook") {
@@ -773,6 +807,40 @@ onBeforeUnmount(() => {
                 </div>
               </div>
             </ElTabPane>
+
+            <ElTabPane name="telegram" v-if="telegramBotUsername">
+              <template #label>
+                <span class="tab-label">
+                  <ElIcon>
+                    <Message />
+                  </ElIcon>
+                  <span>{{ $t("voting.auth.tabs.telegram") }}</span>
+                </span>
+              </template>
+              <div class="method-section telegram-section">
+                <p class="method-description">
+                  {{ $t("voting.auth.telegram.description") }}
+                </p>
+                <div v-if="telegramError || !telegramReady">
+                  <ElAlert
+                    :title="$t('voting.auth.telegram.error')"
+                    type="warning"
+                    :closable="false"
+                    show-icon
+                  />
+                </div>
+                <div v-else class="sso-button-wrapper">
+                  <div v-if="loading" class="sso-loading">
+                    <span>{{ $t("voting.auth.telegram.loading") }}</span>
+                  </div>
+                  <TelegramLoginButton
+                    v-else
+                    :bot-username="telegramBotUsername!"
+                    @success="handleTelegramLogin"
+                  />
+                </div>
+              </div>
+            </ElTabPane>
           </ElTabs>
         </div>
 
@@ -1042,6 +1110,14 @@ onBeforeUnmount(() => {
           background-color: #fada0f;
           border-color: #fada0f;
         }
+      }
+    }
+
+    .telegram-section {
+      .telegram-login-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
       }
     }
 

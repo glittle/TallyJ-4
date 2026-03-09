@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
@@ -747,6 +748,111 @@ public class OnlineVotingService : IOnlineVotingService
         }
     }
 
+    /// <inheritdoc/>
+    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> TelegramAuthAsync(TelegramAuthForVoterDto dto)
+    {
+        try
+        {
+            if (!ValidateTelegramHash(dto.Id, dto.FirstName, dto.LastName, dto.Username, dto.PhotoUrl, dto.AuthDate, dto.Hash))
+            {
+                _logger.LogWarning("Telegram voter auth: invalid hash for Telegram ID {TelegramId}", dto.Id);
+                return (false, "voting.auth.telegram.invalidHash", null);
+            }
+
+            // Reject auth data older than 24 hours
+            var authAge = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - dto.AuthDate;
+            if (authAge > 86400)
+            {
+                _logger.LogWarning("Telegram voter auth: auth_date too old for Telegram ID {TelegramId}", dto.Id);
+                return (false, "voting.auth.telegram.expired", null);
+            }
+
+            var telegramVoterId = dto.Id.ToString();
+
+            // Check if there is an open election where this voter is registered by Telegram ID
+            var now = DateTime.UtcNow;
+            var openElections = await _context.Elections
+                .Where(e => e.OnlineWhenOpen != null &&
+                           e.OnlineWhenClose != null &&
+                           e.OnlineWhenOpen <= now &&
+                           e.OnlineWhenClose >= now)
+                .Select(e => e.ElectionGuid)
+                .ToListAsync();
+
+            if (!openElections.Any())
+            {
+                return (false, "voting.auth.telegram.noOpenElections", null);
+            }
+
+            // Look up existing OnlineVoter record with this Telegram ID
+            var onlineVoter = await _context.OnlineVoters
+                .FirstOrDefaultAsync(ov => ov.VoterId == telegramVoterId && ov.VoterIdType == "T");
+
+            if (onlineVoter == null)
+            {
+                _logger.LogWarning("Telegram voter auth: Telegram ID {TelegramId} not registered as a voter", dto.Id);
+                return (false, "voting.auth.telegram.notRegistered", null);
+            }
+
+            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            var token = GenerateJwtToken(onlineVoter);
+            var authResponse = new OnlineVoterAuthResponse
+            {
+                Token = token,
+                VoterId = onlineVoter.VoterId,
+                VoterIdType = onlineVoter.VoterIdType,
+                ExpiresAt = DateTime.UtcNow.AddHours(24)
+            };
+
+            _logger.LogInformation("Voter {TelegramId} authenticated via Telegram Login Widget", dto.Id);
+            return (true, null, authResponse);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error authenticating voter with Telegram");
+            return (false, "voting.auth.telegram.error", null);
+        }
+    }
+
+    /// <summary>
+    /// Validates the HMAC-SHA256 hash from the Telegram Login Widget callback per the official spec.
+    /// See https://core.telegram.org/widgets/login#checking-authorization
+    /// </summary>
+    private bool ValidateTelegramHash(long id, string firstName, string? lastName, string? username, string? photoUrl, long authDate, string hash)
+    {
+        var botToken = _configuration["Telegram:BotToken"];
+        if (string.IsNullOrWhiteSpace(botToken) || botToken.StartsWith("<"))
+        {
+            _logger.LogWarning("Telegram bot token is not configured");
+            return false;
+        }
+
+        // Build sorted data-check string (all non-hash fields)
+        var fields = new SortedDictionary<string, string>
+        {
+            ["auth_date"] = authDate.ToString(),
+            ["first_name"] = firstName,
+            ["id"] = id.ToString()
+        };
+        if (!string.IsNullOrEmpty(lastName)) fields["last_name"] = lastName;
+        if (!string.IsNullOrEmpty(photoUrl)) fields["photo_url"] = photoUrl;
+        if (!string.IsNullOrEmpty(username)) fields["username"] = username;
+
+        var dataCheckString = string.Join("\n", fields.Select(kv => $"{kv.Key}={kv.Value}"));
+
+        // Secret key = SHA256(bot_token)
+        using var sha256 = SHA256.Create();
+        var secretKey = sha256.ComputeHash(Encoding.UTF8.GetBytes(botToken));
+
+        using var hmac = new HMACSHA256(secretKey);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dataCheckString));
+        var computedHashHex = Convert.ToHexString(computedHash).ToLowerInvariant();
+
+        return computedHashHex == hash.ToLowerInvariant();
+    }
+
     /// <summary>
     /// Normalizes a phone number from Kakao by extracting digits and adding a + prefix.
     /// </summary>
@@ -1030,6 +1136,5 @@ public class OnlineVotingService : IOnlineVotingService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
-
 
 
