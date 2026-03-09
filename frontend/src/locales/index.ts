@@ -54,6 +54,8 @@ const enModules = import.meta.glob("./en/*.json", { eager: true });
 
 const frModules = import.meta.glob("./fr/*.json", { eager: true });
 
+const fiModules = import.meta.glob("./fi/*.json", { eager: true });
+
 const koModules = import.meta.glob("./ko/*.json", { eager: true });
 
 const esModules = import.meta.glob("./es/*.json", { eager: true });
@@ -92,6 +94,8 @@ const supportedLocales = [
   "en",
 
   "fr",
+
+  "fi",
 
   "ko",
 
@@ -163,6 +167,8 @@ export const i18n = createI18n({
     en: deepMerge(common, mergeLocaleFiles(enModules)),
 
     fr: deepMerge(common, mergeLocaleFiles(frModules)),
+
+    fi: deepMerge(common, mergeLocaleFiles(fiModules)),
 
     ko: deepMerge(common, mergeLocaleFiles(koModules)),
 

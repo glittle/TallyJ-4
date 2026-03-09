@@ -8,6 +8,7 @@ const { locale } = useI18n();
 const languages = [
   { value: "en", flag: "us", label: "English" },
   { value: "fr", flag: "fr", label: "Français" },
+  { value: "fi", flag: "fi", label: "Suomi" },
   { value: "ko", flag: "kr", label: "한국어" },
   { value: "es", flag: "es", label: "Español" },
   { value: "pt", flag: "br", label: "Português" },

@@ -72,7 +72,31 @@ Add the language name to `frontend/src/locales/common.json`:
 }
 ```
 
-### 4. Add CSS Font Support
+### 4. Update Language Selector Components
+
+**LanguageSelector.vue** (dropdown selector):
+Add the new language to the languages array:
+
+```typescript
+const languages = [
+  { value: "en", flag: "us", label: t("english") },
+  { value: "fr", flag: "fr", label: t("french") },
+  { value: "{lang}", flag: "{flag}", label: t("{lang}") },
+];
+```
+
+**LanguageFlagsSelector.vue** (flag button selector):
+Add the new language to the languages array:
+
+```typescript
+const languages = [
+  { value: "en", flag: "us", label: "English" },
+  { value: "fr", flag: "fr", label: "Français" },
+  { value: "{lang}", flag: "{flag}", label: "{Native Language Name}" },
+];
+```
+
+### 5. Add CSS Font Support
 
 Add language-specific font-family rules to `frontend/src/style.css`:
 
@@ -128,6 +152,43 @@ cd frontend
 npm run validate:i18n
 ```
 
+Or run the validation script directly:
+
+```bash
+cd frontend
+node src/locales/validate-translations.js
+```
+
+## Critical Checklist
+
+When adding a new language, ensure you complete ALL of these steps:
+
+### ✅ Required Steps
+- [ ] Create language directory: `frontend/src/locales/{lang}/`
+- [ ] Add translation files with proper JSON structure
+- [ ] Update `frontend/src/locales/index.ts`:
+  - Add language module import
+  - Add to supportedLocales array
+  - Add to messages object
+- [ ] Add language name to `frontend/src/locales/common.json`
+- [ ] **Update LanguageSelector.vue**: Add to languages array
+- [ ] **Update LanguageFlagsSelector.vue**: Add to languages array
+- [ ] Add CSS font support in `frontend/src/style.css` (if needed)
+- [ ] Run translation validation: `node src/locales/validate-translations.js`
+
+### 🚨 Critical Reminders
+- **DO NOT forget the language selector components!** Both `LanguageSelector.vue` and `LanguageFlagsSelector.vue` must be updated.
+- Test that the language appears in both the dropdown selector (AppHeader) and flag buttons (PublicLayout).
+- Use appropriate ISO country codes for flags (e.g., "fi" for Finland, "kr" for South Korea).
+
+## Windows CMD Syntax Reminder
+
+When working on Windows CMD environment:
+- **Delete files**: `del c:\full\path\to\file.ext` (no quotes needed for full paths)
+- **Copy files**: `xcopy /E /I "source" "destination"`
+- **Change directory**: `cd /d "c:\full\path\to\directory"`
+- **Directory operations**: Use backslashes `\` in paths, not forward slashes `/`
+
 ## Notes
 
 - Start with minimal translations (just the language name) and expand as needed
@@ -143,4 +204,4 @@ Following the steps above with these values:
 - Flag code: `kr`
 - Native name: `한국어`
 
-Results in Korean language support with South Korean flag in the language selector.
+Results in Korean language support with South Korean flag in both the dropdown and flag button language selectors.

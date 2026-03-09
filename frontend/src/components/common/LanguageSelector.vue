@@ -9,6 +9,7 @@ const { locale, t } = useI18n();
 const languages = [
   { value: "en", flag: "us", label: t("english") },
   { value: "fr", flag: "fr", label: t("french") },
+  { value: "fi", flag: "fi", label: t("finnish") },
   { value: "ko", flag: "kr", label: t("korean") },
   { value: "es", flag: "es", label: t("spanish") },
   { value: "pt", flag: "br", label: t("portuguese") },
