@@ -1468,3 +1468,18 @@ button:focus-visible {
   background-color: var(--el-fill-color-light);
   color: var(--el-color-primary);
 }
+
+/* Korean Language Support */
+:lang(ko) {
+  font-family:
+    "Noto Sans KR",
+    "Malgun Gothic",
+    "Apple Gothic",
+    "Apple SD Gothic Neo",
+    "Nanum Gothic",
+    "돋움",
+    "Dotum",
+    "굴림",
+    "Gulim",
+    var(--font-family-primary);
+}

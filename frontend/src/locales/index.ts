@@ -83,7 +83,21 @@ export const i18n = createI18n({
   },
 });
 
-export function setLocale(locale: "en" | "fr" | "ko" | "es" | "pt" | "hi" | "vi" | "fa" | "sw" | "ar" | "zh" | "ru") {
+export function setLocale(
+  locale:
+    | "en"
+    | "fr"
+    | "ko"
+    | "es"
+    | "pt"
+    | "hi"
+    | "vi"
+    | "fa"
+    | "sw"
+    | "ar"
+    | "zh"
+    | "ru",
+) {
   i18n.global.locale = locale;
   localStorage.setItem("preferred-language", locale);
 }
