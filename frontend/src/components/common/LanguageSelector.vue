@@ -42,25 +42,13 @@ onMounted(() => {
     <label for="language-select" class="sr-only">{{
       $t("common.language")
     }}</label>
-    <el-select
-      id="language-select"
-      :model-value="locale"
-      size="small"
-      filterable
-      aria-label="Select language"
-      popper-class="language-select-dropdown"
-      @update:model-value="changeLanguage"
-    >
+    <el-select id="language-select" :model-value="locale" size="small" filterable aria-label="Select language"
+      popper-class="language-select-dropdown" @update:model-value="changeLanguage">
       <template #label="{ label, value }">
         <country-flag :country="getFlag(value)" size="small" />
         {{ label }}
       </template>
-      <el-option
-        v-for="lang in languages"
-        :key="lang.value"
-        :label="lang.label"
-        :value="lang.value"
-      >
+      <el-option v-for="lang in languages" :key="lang.value" :label="lang.label" :value="lang.value">
         <template #default>
           <country-flag :country="lang.flag" size="small" />
           {{ lang.label }}
@@ -81,6 +69,7 @@ onMounted(() => {
 
   .el-select {
     width: 120px;
+
     span.flag {
       margin-right: -0.75em;
     }
@@ -89,12 +78,14 @@ onMounted(() => {
       color: var(--el-text-color-primary);
       background-color: var(--el-fill-color-blank);
     }
+
     .el-select__placeholder {
       display: inline-flex;
       align-items: center;
     }
   }
 }
+
 .language-select-dropdown {
   span.flag {
     margin-right: -0.75em;
