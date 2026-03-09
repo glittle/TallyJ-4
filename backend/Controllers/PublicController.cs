@@ -99,11 +99,15 @@ public class PublicController(IPublicService publicService, ILogger<PublicContro
         var kakaoJsKey = _configuration["KakaoApi:JsKey"];
         var hasKakao = !string.IsNullOrWhiteSpace(kakaoJsKey) && !kakaoJsKey.StartsWith("<");
 
+        var telegramBotUsername = _configuration["Telegram:BotUsername"];
+        var hasTelegram = !string.IsNullOrWhiteSpace(telegramBotUsername) && !telegramBotUsername.StartsWith("<");
+
         return Ok(ApiResponse<object>.SuccessResponse(new
         {
             googleClientId = hasGoogle ? googleClientId : null,
             facebookAppId = hasFacebook ? facebookAppId : null,
-            kakaoJsKey = hasKakao ? kakaoJsKey : null
+            kakaoJsKey = hasKakao ? kakaoJsKey : null,
+            telegramBotUsername = hasTelegram ? telegramBotUsername : null
         }));
     }
 
@@ -124,6 +128,5 @@ public class PublicController(IPublicService publicService, ILogger<PublicContro
             "Service is running"));
     }
 }
-
 
 

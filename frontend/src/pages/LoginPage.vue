@@ -21,6 +21,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import { useNotifications } from "@/composables/useNotifications";
 import type { FormInstance, FormRules } from "element-plus";
+import TelegramLoginButton from "../components/auth/TelegramLoginButton.vue";
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -139,6 +140,8 @@ const handleLogin = async () => {
 const googleButtonRef = ref<HTMLElement>();
 const googleClientId = ref<string | null>(null);
 const googleReady = ref(false);
+const telegramBotUsername = ref<string | null>(null);
+const telegramReady = ref(false);
 const gisScriptLoaded = ref(false);
 let gisCleanup: (() => void) | null = null;
 
@@ -148,6 +151,28 @@ const handleGoogleOneTapCallback = async (
   loading.value = true;
   try {
     await authStore.googleOneTapLogin(response.credential);
+    showSuccessMessage(t("auth.loginSuccess"));
+    const redirectPath = (route.query.redirect as string) || "/dashboard";
+    router.push(redirectPath);
+  } catch {
+    showErrorMessage(t("auth.googleLoginFailed"));
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleTelegramSuccess = async (user: any) => {
+  loading.value = true;
+  try {
+    await authStore.telegramLogin({
+      id: user.id,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      username: user.username,
+      photoUrl: user.photo_url,
+      authDate: user.auth_date,
+      hash: user.hash,
+    });
     showSuccessMessage(t("auth.loginSuccess"));
     const redirectPath = (route.query.redirect as string) || "/dashboard";
     router.push(redirectPath);
@@ -190,6 +215,8 @@ const fetchGoogleClientId = async (): Promise<string | null> => {
     const resp = await fetch(`${apiUrl}/api/public/auth-config`);
     if (!resp.ok) return null;
     const json = await resp.json();
+    telegramBotUsername.value = json?.data?.telegramBotUsername || null;
+    telegramReady.value = Boolean(telegramBotUsername.value);
     return json?.data?.googleClientId || null;
   } catch {
     return null;
@@ -360,6 +387,12 @@ onBeforeUnmount(() => {
           />
           <span>{{ t("auth.googleLogin") }}</span>
         </el-button>
+        <div v-if="telegramReady && telegramBotUsername" class="telegram-btn">
+          <TelegramLoginButton
+            :bot-username="telegramBotUsername"
+            @success="handleTelegramSuccess"
+          />
+        </div>
         <el-divider>{{ t("common.or") }}</el-divider>
       </div>
 
@@ -555,6 +588,12 @@ onBeforeUnmount(() => {
   .google-btn img {
     width: 18px;
     height: 18px;
+  }
+
+  .telegram-btn {
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 }
 </style>

@@ -10,6 +10,7 @@ import { tokenRefreshService } from "../services/tokenRefreshService";
 import { TOKEN_REFRESH_CONFIG } from "../config/tokenRefreshConfig";
 import { useApiErrorHandler } from "../composables/useApiErrorHandler";
 import { SELECTED_LOCATION_KEY } from "./locationStore";
+import type { TelegramLoginRequest } from "../types";
 
 export const useAuthStore = defineStore("auth", () => {
   // Initialize from cookies instead of localStorage
@@ -148,6 +149,40 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  async function telegramLogin(data: TelegramLoginRequest) {
+    try {
+      const response = await authService.telegramLogin(data);
+
+      const userData = await fetchUserInfo();
+
+      if (userData) {
+        const secure = window.location.protocol === "https:" ? "; secure" : "";
+        document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
+        if (userData.name) {
+          document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
+        }
+        document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
+      } else {
+        const cookieData = secureTokenService.refreshAuthData();
+        email.value = cookieData.email || response.email;
+        name.value = cookieData.name || response.name || null;
+        authMethod.value =
+          cookieData.authMethod || response.authMethod || "Telegram";
+      }
+
+      requires2FA.value = false;
+      pending2FAEmail.value = null;
+
+      tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
+
+      return response;
+    } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
+      handleApiError(error as any);
+      throw error;
+    }
+  }
+
   async function tellerLogin(electionGuid: string, accessCode: string) {
     try {
       const response = await authService.tellerLogin(electionGuid, accessCode);
@@ -221,6 +256,7 @@ export const useAuthStore = defineStore("auth", () => {
     register,
     login,
     googleOneTapLogin,
+    telegramLogin,
     tellerLogin,
     logout,
   };
