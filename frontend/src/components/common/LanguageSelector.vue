@@ -10,6 +10,15 @@ const languages = [
   { value: "en", flag: "us", label: t("english") },
   { value: "fr", flag: "fr", label: t("french") },
   { value: "ko", flag: "kr", label: t("korean") },
+  { value: "es", flag: "es", label: t("spanish") },
+  { value: "pt", flag: "br", label: t("portuguese") },
+  { value: "hi", flag: "in", label: t("hindi") },
+  { value: "vi", flag: "vn", label: t("vietnamese") },
+  { value: "fa", flag: "ir", label: t("persian") },
+  { value: "sw", flag: "tz", label: t("swahili") },
+  { value: "ar", flag: "sa", label: t("arabic") },
+  { value: "zh", flag: "cn", label: t("chinese") },
+  { value: "ru", flag: "ru", label: t("russian") },
 ];
 
 const getFlag = (lang: string) => {

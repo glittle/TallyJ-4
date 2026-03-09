@@ -1,0 +1,11 @@
+{
+  "nav.dashboard": "Dashibodi",
+  "nav.elections": "Uchaguzi",
+  "nav.profile": "Wasifu",
+  "nav.superAdmin": "Msimamizi Mkuu",
+  "nav.auditLogs": "Kumbukumbu za Ukaguzi",
+  "nav.votingLocations": "Voting Locations",
+  "nav.tellers": "Tellers",
+  "nav.frontDesk": "Front Desk",
+  "nav.publicDisplay": "Election Results Display"
+}

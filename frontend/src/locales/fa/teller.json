@@ -1,0 +1,17 @@
+{
+  "teller.form.titleEdit": "Edit Teller",
+  "teller.form.titleAdd": "Add Teller",
+  "teller.form.name": "Teller Name",
+  "teller.form.namePlaceholder": "Enter teller name",
+  "teller.form.nameRequired": "Teller name is required",
+  "teller.form.nameMaxLength": "Teller name cannot exceed 50 characters",
+  "teller.form.computerCode": "Computer Code",
+  "teller.form.computerCodePlaceholder": "e.g., AA",
+  "teller.form.computerCodeInvalid": "Computer code must be 2 uppercase letters (AA-ZZ)",
+  "teller.form.computerCodeHelp": "Two uppercase letters (AA-ZZ) or leave empty",
+  "teller.form.headTeller": "Head Teller",
+  "teller.form.headTellerHelp": "Head tellers have additional permissions",
+  "teller.form.cancel": "لغو",
+  "teller.form.save": "ذخیره",
+  "teller.form.create": "ایجاد"
+}

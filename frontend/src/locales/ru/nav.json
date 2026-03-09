@@ -1,0 +1,11 @@
+{
+  "nav.dashboard": "Панель управления",
+  "nav.elections": "Выборы",
+  "nav.profile": "Профиль",
+  "nav.superAdmin": "Суперадминистратор",
+  "nav.auditLogs": "Журнал аудита",
+  "nav.votingLocations": "Voting Locations",
+  "nav.tellers": "Tellers",
+  "nav.frontDesk": "Front Desk",
+  "nav.publicDisplay": "Election Results Display"
+}

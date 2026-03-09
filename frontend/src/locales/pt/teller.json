@@ -1,0 +1,17 @@
+{
+  "teller.form.titleEdit": "Editar Escrutinador",
+  "teller.form.titleAdd": "Adicionar Escrutinador",
+  "teller.form.name": "Nome do Escrutinador",
+  "teller.form.namePlaceholder": "Digite o nome do escrutinador",
+  "teller.form.nameRequired": "O nome do escrutinador é obrigatório",
+  "teller.form.nameMaxLength": "O nome do escrutinador não pode exceder 50 caracteres",
+  "teller.form.computerCode": "Código do Computador",
+  "teller.form.computerCodePlaceholder": "ex.: AA",
+  "teller.form.computerCodeInvalid": "O código do computador deve ser 2 letras maiúsculas (AA-ZZ)",
+  "teller.form.computerCodeHelp": "Duas letras maiúsculas (AA-ZZ) ou deixe vazio",
+  "teller.form.headTeller": "Escrutinador-Chefe",
+  "teller.form.headTellerHelp": "Os escrutinadores-chefes têm permissões adicionais",
+  "teller.form.cancel": "Cancelar",
+  "teller.form.save": "Salvar",
+  "teller.form.create": "Criar"
+}
