@@ -1483,3 +1483,78 @@ button:focus-visible {
     "Gulim",
     var(--font-family-primary);
 }
+
+/* Right-to-Left Language Support */
+:lang(ar),
+:lang(fa) {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Arabic Language Support */
+:lang(ar) {
+  font-family:
+    "Noto Sans Arabic",
+    "Arial Unicode MS",
+    "Simplified Arabic",
+    "Traditional Arabic",
+    "Amiri",
+    "Scheherazade",
+    var(--font-family-primary);
+}
+
+/* Farsi/Persian Language Support */
+:lang(fa) {
+  font-family:
+    "Noto Sans Arabic",
+    "Arial Unicode MS",
+    "Simplified Arabic",
+    "Traditional Arabic",
+    "Vazir",
+    "Sahel",
+    "Tanha",
+    var(--font-family-primary);
+}
+
+/* Hindi Language Support */
+:lang(hi) {
+  font-family:
+    "Noto Sans Devanagari",
+    "Mangal",
+    "Arial Unicode MS",
+    "Nirmala UI",
+    var(--font-family-primary);
+}
+
+/* Russian Language Support */
+:lang(ru) {
+  font-family:
+    "Noto Sans",
+    "Arial Unicode MS",
+    "Segoe UI",
+    "Trebuchet MS",
+    var(--font-family-primary);
+}
+
+/* Chinese Language Support */
+:lang(zh) {
+  font-family:
+    "Noto Sans SC",
+    "Noto Sans TC",
+    "Microsoft YaHei",
+    "SimSun",
+    "Arial Unicode MS",
+    "PingFang SC",
+    "Hiragino Sans GB",
+    var(--font-family-primary);
+}
+
+/* Vietnamese Language Support */
+:lang(vi) {
+  font-family:
+    "Noto Sans",
+    "Arial Unicode MS",
+    "Segoe UI",
+    "Trebuchet MS",
+    var(--font-family-primary);
+}

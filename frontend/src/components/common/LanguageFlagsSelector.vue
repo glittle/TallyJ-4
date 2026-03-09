@@ -54,6 +54,7 @@ onMounted(() => {
 .language-flags-selector {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 
   .flag-button {
     background: transparent;
