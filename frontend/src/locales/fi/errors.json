@@ -1,0 +1,18 @@
+{
+  "notification.success": "Onnistuminen",
+  "notification.error": "Virhe",
+  "notification.warning": "Varoitus",
+  "notification.info": "Tiedot",
+  "error.somethingWentWrong": "Jotain meni pieleen",
+  "error.pageError": "Tämän sivun latauksessa tapahtui virhe. Yritä uudelleen.",
+  "error.tryAgain": "Yritä uudelleen",
+  "error.goHome": "Siirry kotiin",
+  "error.errorDetails": "Virhetiedot",
+  "error.networkError": "Verkkovirhe. Tarkista yhteys ja yritä uudelleen.",
+  "error.serverError": "Palvelinvirhe. Yritä myöhemmin uudelleen.",
+  "error.sessionExpired": "Istuntosi on vanhentunut. Kirjaudu sisään uudelleen.",
+  "error.unauthorized": "Sinulla ei ole oikeuksia suorittaa tätä toimintoa.",
+  "error.forbidden": "Pääsy estetty.",
+  "error.notFound": "Pyydettyä resurssia ei löytynyt.",
+  "error.validationError": "Tarkista syötteesi ja yritä uudelleen."
+}
