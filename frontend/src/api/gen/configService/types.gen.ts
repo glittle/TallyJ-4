@@ -4167,6 +4167,51 @@ export type TallyStatisticsDto = {
 };
 
 /**
+ * Data transfer object for Telegram Login Widget authentication for online voters.
+ * Contains the fields returned by the Telegram Login Widget callback.
+ */
+export type TelegramAuthForVoterDto = {
+    /**
+     * The Telegram user's numeric ID.
+     */
+    id: bigint;
+    /**
+     * The Telegram user's first name.
+     */
+    firstName: string;
+    /**
+     * The Telegram user's last name (optional).
+     */
+    lastName?: string | null;
+    /**
+     * The Telegram user's username (optional).
+     */
+    username?: string | null;
+    /**
+     * URL of the Telegram user's profile photo (optional).
+     */
+    photoUrl?: string | null;
+    /**
+     * Unix timestamp of when the authorization was made.
+     */
+    authDate: bigint;
+    /**
+     * HMAC-SHA256 hash used to verify the authenticity of the data.
+     */
+    hash: string;
+};
+
+export type TelegramLoginRequest = {
+    id: bigint;
+    firstName: string;
+    lastName?: string | null;
+    username?: string | null;
+    photoUrl?: string | null;
+    authDate: bigint;
+    hash: string;
+};
+
+/**
  * Data transfer object representing a teller in an election.
  */
 export type TellerDto = {
@@ -5911,6 +5956,20 @@ export type PostApiAuthGoogleOneTapResponses = {
     200: unknown;
 };
 
+export type PostApiAuthTelegramData = {
+    body?: TelegramLoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/telegram';
+};
+
+export type PostApiAuthTelegramResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetApiAuthLogoutData = {
     body?: never;
     path?: never;
@@ -6880,6 +6939,23 @@ export type PostApiOnlineVotingKakaoAuthData = {
 };
 
 export type PostApiOnlineVotingKakaoAuthResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiOnlineVotingTelegramAuthData = {
+    /**
+     * The Telegram authentication request.
+     */
+    body?: TelegramAuthForVoterDto;
+    path?: never;
+    query?: never;
+    url: '/api/online-voting/telegramAuth';
+};
+
+export type PostApiOnlineVotingTelegramAuthResponses = {
     /**
      * OK
      */

@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
 import {
-  HomeFilled,
-  Document,
   ArrowLeft,
+  Document,
+  HomeFilled,
   Setting,
 } from "@element-plus/icons-vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
+const { t } = useI18n();
 
 const emit = defineEmits<{
   "close-mobile-sidebar": [];
@@ -26,13 +28,17 @@ const isInElectionContext = computed(() => {
 });
 
 const electionName = computed(() => {
-  return electionStore.currentElection?.name || "Election";
+  return electionStore.currentElection?.name || t("common.election");
 });
 
 const activeRoute = computed(() => {
   const path = route.path;
-  if (path.startsWith("/super-admin")) return "/super-admin";
-  if (path.startsWith("/elections")) return "/elections";
+  if (path.startsWith("/super-admin")) {
+    return "/super-admin";
+  }
+  if (path.startsWith("/elections")) {
+    return "/elections";
+  }
   return "/dashboard";
 });
 
@@ -51,10 +57,10 @@ function goBackToElections() {
     <div class="logo">
       <img
         src="/logo-zoom.png"
-        alt="TallyJ Logo"
+        :alt="$t('common.logoAlt')"
         style="height: 24px; vertical-align: middle; margin-left: 8px"
       />
-      <h2>TallyJ v4</h2>
+      <h2>{{ $t("common.appTitle") }}</h2>
     </div>
     <div class="testOnlyWarning">
       {{ $t("common.testOnlyShort") }}

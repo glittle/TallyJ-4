@@ -30,7 +30,7 @@ export const peopleService = {
       path: { electionGuid },
       security: [{ scheme: "bearer", type: "http" }],
     });
-    return response.data ?? [];
+    return response.data?.data ?? [];
   },
 
   async getById(personGuid: string): Promise<PersonDto> {
@@ -46,12 +46,12 @@ export const peopleService = {
       path: { guid: personGuid },
       security: [{ scheme: "bearer", type: "http" }],
     });
-    return response.data as PersonDetailDto;
+    return response.data?.data as PersonDetailDto;
   },
 
   async create(dto: CreatePersonDto): Promise<PersonDto> {
     const response = await postApiPeopleCreatePerson({ body: dto });
-    return response.data as PersonDto;
+    return response.data?.data as PersonDto;
   },
 
   async update(personGuid: string, dto: UpdatePersonDto): Promise<PersonDto> {
@@ -59,7 +59,7 @@ export const peopleService = {
       path: { guid: personGuid },
       body: dto,
     });
-    return response.data as PersonDto;
+    return response.data?.data as PersonDto;
   },
 
   async delete(personGuid: string): Promise<void> {
@@ -71,14 +71,14 @@ export const peopleService = {
       path: { electionGuid },
       query: { q: query },
     });
-    return response.data ?? [];
+    return response.data?.data ?? [];
   },
 
   async getVoters(electionGuid: string): Promise<PersonDto[]> {
     const response = await getApiPeopleByElectionGuidGetPeople({
       path: { electionGuid },
     });
-    return response.data ?? [];
+    return (response.data?.items ?? []) as PersonDto[];
   },
 
   async getCandidates(electionGuid: string): Promise<PersonDto[]> {
@@ -94,6 +94,6 @@ export const peopleService = {
       path: { electionGuid },
       security: [{ scheme: "bearer", type: "http" }],
     });
-    return response.data ?? [];
+    return response.data?.data ?? [];
   },
 };

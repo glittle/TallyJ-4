@@ -16,6 +16,7 @@
   "common.delete": "Delete",
   "common.deleteSelected": "Delete Selected",
   "common.edit": "Edit",
+  "common.election": "Election",
   "common.endDate": "End Date",
   "common.enter": "Enter",
   "common.error": "An error occurred",
@@ -40,5 +41,7 @@
   "common.warning": "Warning",
   "common.yes": "Yes",
   "common.testOnlyShort": "Test Only. Not for real elections.",
-  "common.testOnlyLong": "This TallyJ v4 Beta is for test only. Not ready for use in real elections."
+  "common.testOnlyLong": "This TallyJ v4 Beta is for test only. Not ready for use in real elections.",
+  "common.logoAlt": "TallyJ Logo",
+  "common.appTitle": "TallyJ v4"
 }

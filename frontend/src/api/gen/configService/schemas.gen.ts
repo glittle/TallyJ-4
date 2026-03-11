@@ -5783,6 +5783,96 @@ export const TallyStatisticsDtoSchema = {
     description: 'Data transfer object representing statistical information about an election tally.'
 } as const;
 
+export const TelegramAuthForVoterDtoSchema = {
+    required: [
+        'authDate',
+        'firstName',
+        'hash',
+        'id'
+    ],
+    type: 'object',
+    properties: {
+        id: {
+            type: 'integer',
+            description: 'The Telegram user\'s numeric ID.',
+            format: 'int64'
+        },
+        firstName: {
+            minLength: 1,
+            type: 'string',
+            description: 'The Telegram user\'s first name.'
+        },
+        lastName: {
+            type: 'string',
+            description: 'The Telegram user\'s last name (optional).',
+            nullable: true
+        },
+        username: {
+            type: 'string',
+            description: 'The Telegram user\'s username (optional).',
+            nullable: true
+        },
+        photoUrl: {
+            type: 'string',
+            description: 'URL of the Telegram user\'s profile photo (optional).',
+            nullable: true
+        },
+        authDate: {
+            type: 'integer',
+            description: 'Unix timestamp of when the authorization was made.',
+            format: 'int64'
+        },
+        hash: {
+            minLength: 1,
+            type: 'string',
+            description: 'HMAC-SHA256 hash used to verify the authenticity of the data.'
+        }
+    },
+    additionalProperties: false,
+    description: 'Data transfer object for Telegram Login Widget authentication for online voters.\nContains the fields returned by the Telegram Login Widget callback.'
+} as const;
+
+export const TelegramLoginRequestSchema = {
+    required: [
+        'authDate',
+        'firstName',
+        'hash',
+        'id'
+    ],
+    type: 'object',
+    properties: {
+        id: {
+            type: 'integer',
+            format: 'int64'
+        },
+        firstName: {
+            minLength: 1,
+            type: 'string'
+        },
+        lastName: {
+            type: 'string',
+            nullable: true
+        },
+        username: {
+            type: 'string',
+            nullable: true
+        },
+        photoUrl: {
+            type: 'string',
+            nullable: true
+        },
+        authDate: {
+            type: 'integer',
+            format: 'int64'
+        },
+        hash: {
+            minLength: 1,
+            type: 'string'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const TellerDtoSchema = {
     type: 'object',
     properties: {

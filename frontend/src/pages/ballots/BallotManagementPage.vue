@@ -1,119 +1,3 @@
-<template>
-  <div class="ballot-management-page">
-    <el-card>
-      <template #header>
-        <div class="card-header">
-          <el-page-header :content="$t('ballots.management')" @back="goBack" />
-          <div class="header-actions">
-            <el-button @click="handleImport">
-              <el-icon>
-                <Upload />
-              </el-icon>
-              {{ $t("ballots.import.button") }}
-            </el-button>
-            <el-button type="primary" @click="showAddDialog = true">
-              <el-icon>
-                <Plus />
-              </el-icon>
-              {{ $t("ballots.addBallot") }}
-            </el-button>
-          </div>
-        </div>
-      </template>
-
-      <div v-if="loading" class="loading-container">
-        <el-skeleton :rows="5" animated />
-      </div>
-
-      <div v-else>
-        <el-table :data="ballots" style="width: 100%">
-          <el-table-column
-            prop="ballotCode"
-            :label="$t('ballots.code')"
-            width="120"
-          />
-          <el-table-column
-            prop="locationName"
-            :label="$t('ballots.location')"
-            min-width="150"
-          />
-          <el-table-column
-            prop="computerCode"
-            :label="$t('ballots.computer')"
-            width="120"
-          />
-          <el-table-column
-            prop="statusCode"
-            :label="$t('ballots.status')"
-            width="100"
-          >
-            <template #default="scope">
-              <el-tag :type="getStatusType(scope.row?.statusCode)">
-                {{ scope.row?.statusCode || "-" }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="teller1"
-            :label="$t('ballots.teller1')"
-            width="120"
-          />
-          <el-table-column
-            prop="teller2"
-            :label="$t('ballots.teller2')"
-            width="120"
-          />
-          <el-table-column
-            prop="voteCount"
-            :label="$t('ballots.voteCount')"
-            width="100"
-            align="center"
-          />
-          <el-table-column
-            :label="$t('common.actions')"
-            width="250"
-            fixed="right"
-          >
-            <template #default="scope">
-              <el-button-group>
-                <el-button
-                  size="small"
-                  type="primary"
-                  @click="handleEnterVotes(scope.row)"
-                >
-                  {{ $t("ballots.enterVotes") }}
-                </el-button>
-                <el-button size="small" @click="handleViewVotes(scope.row)">
-                  {{ $t("ballots.viewVotes") }}
-                </el-button>
-                <el-button
-                  size="small"
-                  type="danger"
-                  @click="handleDelete(scope.row)"
-                >
-                  {{ $t("common.delete") }}
-                </el-button>
-              </el-button-group>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-    </el-card>
-
-    <BallotFormDialog
-      v-model="showAddDialog"
-      :election-guid="electionGuid"
-      @success="handleFormSuccess"
-    />
-
-    <BallotVotesDialog
-      v-model="showVotesDialog"
-      :ballot="selectedBallot"
-      :election-guid="electionGuid"
-    />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -182,15 +66,11 @@ function handleViewVotes(ballot: BallotDto) {
 async function handleDelete(ballot: BallotDto) {
   if (!ballot?.ballotGuid) return;
   try {
-    await ElMessageBox.confirm(
-      t("ballots.deleteConfirm"),
-      t("common.warning"),
-      {
-        confirmButtonText: t("common.delete"),
-        cancelButtonText: t("common.cancel"),
-        type: "warning",
-      },
-    );
+    await ElMessageBox.confirm(t("ballots.deleteConfirm"), t("common.warning"), {
+      confirmButtonText: t("common.delete"),
+      cancelButtonText: t("common.cancel"),
+      type: "warning",
+    });
 
     await ballotStore.deleteBallot(ballot.ballotGuid);
     showSuccessMessage(t("ballots.deleteSuccess"));
@@ -206,15 +86,107 @@ function handleFormSuccess() {
 }
 
 function getStatusType(status: string | undefined) {
-  if (!status) return "info";
-  const typeMap: Record<string, any> = {
-    Ok: "success",
-    Review: "warning",
-    Spoiled: "danger",
-  };
-  return typeMap[status] || "info";
+  if (!status) {
+    return "info";
+  }
+  if (status.toLowerCase() === "ok") {
+    return "success";
+  }
+  return "warning";
 }
 </script>
+
+<template>
+  <div class="ballot-management-page">
+    <el-card>
+      <template #header>
+        <div class="card-header">
+          <el-page-header :content="$t('ballots.management')" @back="goBack" />
+          <div class="header-actions">
+            <el-button @click="handleImport">
+              <el-icon>
+                <Upload />
+              </el-icon>
+              {{ $t("ballots.import.button") }}
+            </el-button>
+            <el-button type="primary" @click="showAddDialog = true">
+              <el-icon>
+                <Plus />
+              </el-icon>
+              {{ $t("ballots.addBallot") }}
+            </el-button>
+          </div>
+        </div>
+      </template>
+
+      <div v-if="loading" class="loading-container">
+        <el-skeleton :rows="5" animated />
+      </div>
+
+      <div v-else>
+        <el-table :data="ballots" style="width: 100%">
+          <el-table-column prop="ballotCode" :label="$t('ballots.code')" width="120" />
+          <el-table-column
+            prop="locationName"
+            :label="$t('ballots.location')"
+            min-width="150"
+          />
+          <el-table-column
+            prop="computerCode"
+            :label="$t('ballots.computer')"
+            width="120"
+          />
+          <el-table-column prop="statusCode" :label="$t('ballots.status')" width="100">
+            <template #default="scope">
+              <el-tag :type="getStatusType(scope.row?.statusCode)">
+                {{ $t(`ballots.status.${scope.row?.statusCode}`) || "-" }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="teller1" :label="$t('ballots.teller1')" width="120" />
+          <el-table-column prop="teller2" :label="$t('ballots.teller2')" width="120" />
+          <el-table-column
+            prop="voteCount"
+            :label="$t('ballots.voteCount')"
+            width="100"
+            align="center"
+          />
+          <el-table-column :label="$t('common.actions')" width="250" fixed="right">
+            <template #default="scope">
+              <el-button-group>
+                <el-button
+                  size="small"
+                  type="primary"
+                  @click="handleEnterVotes(scope.row)"
+                >
+                  {{ $t("ballots.enterVotes") }}
+                </el-button>
+                <el-button size="small" @click="handleViewVotes(scope.row)">
+                  {{ $t("ballots.viewVotes") }}
+                </el-button>
+                <el-button size="small" type="danger" @click="handleDelete(scope.row)">
+                  {{ $t("common.delete") }}
+                </el-button>
+              </el-button-group>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-card>
+
+    <BallotFormDialog
+      v-model="showAddDialog"
+      :election-guid="electionGuid"
+      @success="handleFormSuccess"
+    />
+
+    <BallotVotesDialog
+      v-model="showVotesDialog"
+      :ballot="selectedBallot"
+      :election-guid="electionGuid"
+    />
+  </div>
+</template>
 
 <style lang="less">
 .ballot-management-page {

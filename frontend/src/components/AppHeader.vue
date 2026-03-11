@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useAuthStore } from "../stores/authStore";
-import { useLocationStore } from "../stores/locationStore";
-import { useElectionStore } from "../stores/electionStore";
-import { useI18n } from "vue-i18n";
 import { useNotifications } from "@/composables/useNotifications";
 import {
   ArrowDown,
-  User,
+  Location,
+  Menu,
   Setting,
   SwitchButton,
-  Menu,
-  Location,
+  User,
 } from "@element-plus/icons-vue";
+import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "../stores/authStore";
+import { useElectionStore } from "../stores/electionStore";
+import { useLocationStore } from "../stores/locationStore";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
-import { VERSION, BUILD_DATE } from "./version";
+import { BUILD_DATE, VERSION } from "./version";
 
 const router = useRouter();
 const route = useRoute();
@@ -140,9 +140,12 @@ function toggleMobileMenu() {
           <Menu />
         </el-icon>
       </button>
-      <h1 class="sr-only">TallyJ 4 - Election Management System</h1>
+      <h1 class="sr-only">
+        {{ $t("common.appTitle") }} -
+        {{ $t("common.electionManagementSystem") }}
+      </h1>
       <h3 aria-live="polite" :title="versionTooltip">
-        TallyJ 4 - {{ currentPageTitle }}
+        {{ $t("common.appTitle") }} - {{ currentPageTitle }}
       </h3>
 
       <!-- Location Selector -->

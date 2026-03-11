@@ -1136,6 +1136,38 @@
         }
       }
     },
+    "/api/Auth/telegram": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authenticates a user using the Telegram Login Widget for officer / teller flows.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramLoginRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramLoginRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auth/logout": {
       "get": {
         "tags": [
@@ -3281,6 +3313,39 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/KakaoAuthForVoterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/online-voting/telegramAuth": {
+      "post": {
+        "tags": [
+          "OnlineVoting"
+        ],
+        "summary": "Authenticates a voter using the Telegram Login Widget.",
+        "requestBody": {
+          "description": "The Telegram authentication request.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramAuthForVoterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramAuthForVoterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramAuthForVoterDto"
               }
             }
           }
@@ -11743,6 +11808,94 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object representing statistical information about an election tally."
+      },
+      "TelegramAuthForVoterDto": {
+        "required": [
+          "authDate",
+          "firstName",
+          "hash",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The Telegram user's numeric ID.",
+            "format": "int64"
+          },
+          "firstName": {
+            "minLength": 1,
+            "type": "string",
+            "description": "The Telegram user's first name."
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The Telegram user's last name (optional).",
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "description": "The Telegram user's username (optional).",
+            "nullable": true
+          },
+          "photoUrl": {
+            "type": "string",
+            "description": "URL of the Telegram user's profile photo (optional).",
+            "nullable": true
+          },
+          "authDate": {
+            "type": "integer",
+            "description": "Unix timestamp of when the authorization was made.",
+            "format": "int64"
+          },
+          "hash": {
+            "minLength": 1,
+            "type": "string",
+            "description": "HMAC-SHA256 hash used to verify the authenticity of the data."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for Telegram Login Widget authentication for online voters.\nContains the fields returned by the Telegram Login Widget callback."
+      },
+      "TelegramLoginRequest": {
+        "required": [
+          "authDate",
+          "firstName",
+          "hash",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "firstName": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "photoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "authDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "hash": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "TellerDto": {
         "type": "object",
