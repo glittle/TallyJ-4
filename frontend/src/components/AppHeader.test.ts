@@ -44,7 +44,7 @@ describe("AppHeader", () => {
         plugins: [pinia, router, i18n],
       },
     });
-    expect(wrapper.text()).toContain("TallyJ 4");
+    expect(wrapper.text()).toContain("v4 Beta (Version 4.0.1)");
   });
 
   it("displays user email in dropdown", () => {

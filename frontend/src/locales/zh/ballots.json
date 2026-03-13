@@ -20,7 +20,7 @@
   "ballots.deleteVoteSuccess": "Vote deleted successfully",
   "ballots.duplicateWarning": "Duplicate: This person is already selected",
   "ballots.enterVotes": "Enter Votes",
-  "ballots.entry": "Ballot Entry",
+  "ballots.entryPage": "Ballot Entry",
   "ballots.import.button": "Import Ballots",
   "ballots.import.clickToUpload": "click to upload",
   "ballots.import.csvOnly": "Only CSV files are supported",

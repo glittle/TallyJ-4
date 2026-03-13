@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import LanguageSelector from "../components/common/LanguageSelector.vue";
 import LanguageFlagsSelector from "../components/common/LanguageFlagsSelector.vue";
@@ -6,9 +8,12 @@ import ThemeSelector from "../components/common/ThemeSelector.vue";
 import { VERSION, BUILD_DATE } from "../components/version";
 
 const router = useRouter();
+const { t } = useI18n();
 
-// Version tooltip - static string computed once
-const versionTooltip = `Version ${VERSION} (${BUILD_DATE})`;
+// Version tooltip - dynamically localized
+const versionTooltip = computed(() =>
+  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE })
+);
 
 // Check if we're on the landing page
 const expandLanguageSelector = true; // computed(() => route.path === "/" || route.name === "landing");
@@ -32,7 +37,7 @@ const handleLogoClick = () => {
             alt="TallyJ Logo"
             style="height: 24px; vertical-align: middle; margin-left: 8px"
           />
-          <span>{{ $t("title") }}</span>
+          <span>{{ $t("common.versionDisplay", { version: VERSION }) }}</span>
         </h2>
       </div>
       <div class="testOnlyWarning">

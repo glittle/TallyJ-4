@@ -44,5 +44,7 @@
   "common.testOnlyLong": "Ce ScrutinJ v4 Beta est réservé aux tests. Pas prêt pour des élections réelles.",
   "common.logoAlt": "Logo ScrutinJ",
   "common.appTitle": "ScrutinJ v4",
-  "common.appName": "ScrutinJ"
+  "common.appName": "ScrutinJ",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

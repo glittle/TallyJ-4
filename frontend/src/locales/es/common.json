@@ -43,5 +43,7 @@
   "common.testOnlyLong": "Este EscrutiJ v4 Beta es solo para pruebas. No está listo para usar en elecciones reales.",
   "common.logoAlt": "Logo de EscrutiJ",
   "common.appTitle": "EscrutiJ v4",
-  "common.appName": "EscrutiJ"
+  "common.appName": "EscrutiJ",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

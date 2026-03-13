@@ -51,7 +51,7 @@
   "ballots.location": "Ubicación",
   "ballots.locationRequired": "La ubicación es obligatoria",
   "ballots.management": "Gestión de Boletas",
-  "ballots.entry": "Ingreso de Boleta",
+  "ballots.entryPage": "Ingreso de Boleta",
   "ballots.noMatchesFound": "No se encontraron coincidencias",
   "ballots.personUpdated": "{name} fue actualizado",
   "ballots.position": "Posición",

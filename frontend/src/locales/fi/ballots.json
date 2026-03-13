@@ -50,7 +50,7 @@
   "ballots.location": "Sijainti",
   "ballots.locationRequired": "Sijainti vaaditaan",
   "ballots.management": "Äänestyslipukkeiden hallinta",
-  "ballots.entry": "Äänestyslipukkeen syöttö",
+  "ballots.entryPage": "Äänestyslipukkeen syöttö",
   "ballots.noMatchesFound": "Vastaavuuksia ei löytynyt",
   "ballots.personUpdated": "{name} päivitettiin",
   "ballots.position": "Asema",

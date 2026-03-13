@@ -29,8 +29,10 @@ const { showSuccessMessage, showInfoMessage } = useNotifications();
 const mobileMenuOpen = ref(false);
 const isMobile = ref(false);
 
-// Version tooltip - static string computed once
-const versionTooltip = `Version ${VERSION} (${BUILD_DATE})`;
+// Version tooltip - dynamically localized
+const versionTooltip = computed(() =>
+  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE })
+);
 
 // Check if we're on mobile
 const checkMobile = () => {
@@ -141,11 +143,11 @@ function toggleMobileMenu() {
         </el-icon>
       </button>
       <h1 class="sr-only">
-        {{ $t("common.appTitle") }} -
+        {{ $t("common.versionDisplay", { version: VERSION }) }} -
         {{ $t("common.electionManagementSystem") }}
       </h1>
       <h3 aria-live="polite" :title="versionTooltip">
-        {{ $t("common.appTitle") }} - {{ currentPageTitle }}
+        {{ $t("common.versionDisplay", { version: VERSION }) }} - {{ currentPageTitle }}
       </h3>
 
       <!-- Location Selector -->

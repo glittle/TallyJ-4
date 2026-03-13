@@ -43,5 +43,7 @@
   "common.testOnlyLong": "СчётДж v4 Beta только для тестирования. Не готов для реальных выборов.",
   "common.logoAlt": "Логотип СчётДж",
   "common.appTitle": "СчётДж v4",
-  "common.appName": "СчётДж"
+  "common.appName": "СчётДж",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

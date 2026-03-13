@@ -43,5 +43,7 @@
   "common.testOnlyLong": "HesabuJ v4 Beta ni kwa majaribio tu. Haijawa tayari kutumika katika uchaguzi wa kweli.",
   "common.logoAlt": "Nembo ya HesabuJ",
   "common.appTitle": "HesabuJ v4",
-  "common.appName": "HesabuJ"
+  "common.appName": "HesabuJ",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

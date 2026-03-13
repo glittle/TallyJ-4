@@ -51,7 +51,7 @@
   "ballots.location": "Local",
   "ballots.locationRequired": "O local é obrigatório",
   "ballots.management": "Gestão de Cédulas",
-  "ballots.entry": "Inserção de Cédula",
+  "ballots.entryPage": "Inserção de Cédula",
   "ballots.noMatchesFound": "Nenhum resultado encontrado",
   "ballots.personUpdated": "{name} foi atualizado",
   "ballots.position": "Posição",

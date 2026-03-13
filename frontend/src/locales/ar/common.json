@@ -43,5 +43,7 @@
   "common.testOnlyLong": "فَرْزَج v4 بيتا للاختبار فقط. غير جاهز للاستخدام في الانتخابات الحقيقية.",
   "common.logoAlt": "شعار فَرْزَج",
   "common.appTitle": "فَرْزَج v4",
-  "common.appName": "فَرْزَج"
+  "common.appName": "فَرْزَج",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

@@ -20,7 +20,7 @@
   "ballots.deleteVoteSuccess": "मत सफलतापूर्वक हटाया गया",
   "ballots.duplicateWarning": "डुप्लिकेट: यह व्यक्ति पहले से चुना गया है",
   "ballots.enterVotes": "मत दर्ज करें",
-  "ballots.entry": "मतपत्र प्रविष्टि",
+  "ballots.entryPage": "मतपत्र प्रविष्टि",
   "ballots.import.button": "मतपत्र आयात करें",
   "ballots.import.clickToUpload": "अपलोड करने के लिए क्लिक करें",
   "ballots.import.csvOnly": "केवल CSV फ़ाइलें समर्थित हैं",
