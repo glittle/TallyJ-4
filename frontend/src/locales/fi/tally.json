@@ -1,0 +1,14 @@
+{
+  "tally.title": "Laske ääntenlasku",
+  "tally.warning": "Varoitus",
+  "tally.warningMessage": "Ääntenlaskun laskeminen korvaa kaikki olemassa olevat tulokset. Tätä toimintoa ei voi peruuttaa.",
+  "tally.normalElection": "Normaalit vaalit",
+  "tally.singleNameElection": "Yhden nimen vaalit",
+  "tally.calculate": "Laske ääntenlasku",
+  "tally.calculateSuccess": "Ääntenlasku laskettu onnistuneesti",
+  "tally.calculateError": "Ääntenlaskun laskeminen epäonnistui",
+  "tally.calculatingProgress": "Lasketaan edistymistä",
+  "tally.processedBallots": "Käsitellyt äänestysliput",
+  "tally.resultsPreview": "Tulosten esikatselu (Top 10)",
+  "tally.viewFullResults": "Näytä koko tulokset"
+}

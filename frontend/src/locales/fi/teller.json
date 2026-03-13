@@ -1,0 +1,17 @@
+{
+  "teller.form.titleEdit": "Muokkaa ääntenlaskijaa",
+  "teller.form.titleAdd": "Lisää ääntenlaskija",
+  "teller.form.name": "Ääntenlaskijan nimi",
+  "teller.form.namePlaceholder": "Syötä ääntenlaskijan nimi",
+  "teller.form.nameRequired": "Ääntenlaskijan nimi vaaditaan",
+  "teller.form.nameMaxLength": "Ääntenlaskijan nimi ei voi ylittää 50 merkkiä",
+  "teller.form.computerCode": "Tietokoneen koodi",
+  "teller.form.computerCodePlaceholder": "esim. AA",
+  "teller.form.computerCodeInvalid": "Tietokoneen koodin on oltava 2 isoa kirjainta (AA-ZZ)",
+  "teller.form.computerCodeHelp": "Kaksi isoa kirjainta (AA-ZZ) tai jätä tyhjäksi",
+  "teller.form.headTeller": "Pää-ääntenlaskija",
+  "teller.form.headTellerHelp": "Pää-ääntenlaskijoilla on lisäoikeuksia",
+  "teller.form.cancel": "Peruuta",
+  "teller.form.save": "Tallenna",
+  "teller.form.create": "Luo"
+}

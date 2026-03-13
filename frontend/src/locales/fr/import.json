@@ -20,5 +20,6 @@
   "import.errors.duplicateEmail": "Ligne {rowNumber}: Email en double '{email}' - ignoré",
   "import.errors.duplicatePhone": "Ligne {rowNumber}: Téléphone en double '{phone}' - ignoré",
   "import.errors.duplicateName": "Ligne {rowNumber}: Nom en double '{firstName} {lastName}' - ignoré",
+  "import.errors.batchSaveFailed": "Échec de la sauvegarde par lot: {message}",
   "import.warnings.unrecognizedEligibility": "Ligne {rowNumber}: Statut d'éligibilité non reconnu: '{eligibilityValue}' - traité comme éligible"
 }
