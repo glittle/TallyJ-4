@@ -1,5 +1,5 @@
 {
-  "voting.auth.title": "Vote en ligne TallyJ",
+  "voting.auth.title": "Vote en ligne ScrutinJ",
   "voting.auth.subtitle": "Veuillez vous authentifier pour voter",
   "voting.auth.welcome.heading": "Bienvenue — Vous êtes presque prêt à voter",
   "voting.auth.welcome.intro": "Pour voter à cette élection, nous devons confirmer votre identité. Vos informations doivent correspondre à celles que l'administrateur de l'élection a enregistrées pour les électeurs admissibles.",

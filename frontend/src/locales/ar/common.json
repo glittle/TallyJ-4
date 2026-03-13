@@ -40,5 +40,8 @@
   "common.warning": "تحذير",
   "common.yes": "نعم",
   "common.testOnlyShort": "للاختبار فقط. ليس للانتخابات الحقيقية.",
-  "common.testOnlyLong": "TallyJ v4 بيتا للاختبار فقط. غير جاهز للاستخدام في الانتخابات الحقيقية."
+  "common.testOnlyLong": "فَرْزَج v4 بيتا للاختبار فقط. غير جاهز للاستخدام في الانتخابات الحقيقية.",
+  "common.logoAlt": "شعار فَرْزَج",
+  "common.appTitle": "فَرْزَج v4",
+  "common.appName": "فَرْزَج"
 }

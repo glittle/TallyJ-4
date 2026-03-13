@@ -38,5 +38,11 @@
   "common.yes": "Oui",
   "common.no": "Non",
   "common.close": "Fermer",
-  "common.refresh": "Actualiser"
+  "common.refresh": "Actualiser",
+  "common.election": "Élection",
+  "common.testOnlyShort": "Réservé aux tests. Pas pour de vraies élections.",
+  "common.testOnlyLong": "Ce ScrutinJ v4 Beta est réservé aux tests. Pas prêt pour des élections réelles.",
+  "common.logoAlt": "Logo ScrutinJ",
+  "common.appTitle": "ScrutinJ v4",
+  "common.appName": "ScrutinJ"
 }

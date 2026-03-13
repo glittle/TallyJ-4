@@ -40,5 +40,8 @@
   "common.warning": "Aviso",
   "common.yes": "Sim",
   "common.testOnlyShort": "Apenas para testes. Não para eleições reais.",
-  "common.testOnlyLong": "Este TallyJ v4 Beta é apenas para testes. Não está pronto para uso em eleições reais."
+  "common.testOnlyLong": "Este ApuraJ v4 Beta é apenas para testes. Não está pronto para uso em eleições reais.",
+  "common.logoAlt": "Logo do ApuraJ",
+  "common.appTitle": "ApuraJ v4",
+  "common.appName": "ApuraJ"
 }

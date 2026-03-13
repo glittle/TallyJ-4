@@ -40,5 +40,8 @@
   "common.warning": "चेतावनी",
   "common.yes": "हाँ",
   "common.testOnlyShort": "केवल परीक्षण के लिए। वास्तविक चुनावों के लिए नहीं।",
-  "common.testOnlyLong": "यह TallyJ v4 बीटा केवल परीक्षण के लिए है। वास्तविक चुनावों में उपयोग के लिए तैयार नहीं है।"
+  "common.testOnlyLong": "यह गिनतीज v4 बीटा केवल परीक्षण के लिए है। वास्तविक चुनावों में उपयोग के लिए तैयार नहीं है।",
+  "common.logoAlt": "गिनतीज लोगो",
+  "common.appTitle": "गिनतीज v4",
+  "common.appName": "गिनतीज"
 }

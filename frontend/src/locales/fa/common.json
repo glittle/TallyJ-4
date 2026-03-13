@@ -40,5 +40,8 @@
   "common.warning": "هشدار",
   "common.yes": "بله",
   "common.testOnlyShort": "فقط آزمایشی. برای انتخابات واقعی نیست.",
-  "common.testOnlyLong": "نسخه بتای TallyJ v4 فقط برای آزمایش است. آماده انتخابات واقعی نیست."
+  "common.testOnlyLong": "نسخه بتای شمارَج v4 فقط برای آزمایش است. آماده انتخابات واقعی نیست.",
+  "common.logoAlt": "لوگوی شمارَج",
+  "common.appTitle": "شمارَج v4",
+  "common.appName": "شمارَج"
 }

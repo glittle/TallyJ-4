@@ -40,5 +40,8 @@
   "common.warning": "Onyo",
   "common.yes": "Ndiyo",
   "common.testOnlyShort": "Majaribio tu. Si kwa uchaguzi wa kweli.",
-  "common.testOnlyLong": "TallyJ v4 Beta ni kwa majaribio tu. Haijawa tayari kutumika katika uchaguzi wa kweli."
+  "common.testOnlyLong": "HesabuJ v4 Beta ni kwa majaribio tu. Haijawa tayari kutumika katika uchaguzi wa kweli.",
+  "common.logoAlt": "Nembo ya HesabuJ",
+  "common.appTitle": "HesabuJ v4",
+  "common.appName": "HesabuJ"
 }

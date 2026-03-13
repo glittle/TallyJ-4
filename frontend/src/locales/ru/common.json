@@ -40,5 +40,8 @@
   "common.warning": "Предупреждение",
   "common.yes": "Да",
   "common.testOnlyShort": "Только для тестирования. Не для реальных выборов.",
-  "common.testOnlyLong": "TallyJ v4 Beta только для тестирования. Не готов для реальных выборов."
+  "common.testOnlyLong": "СчётДж v4 Beta только для тестирования. Не готов для реальных выборов.",
+  "common.logoAlt": "Логотип СчётДж",
+  "common.appTitle": "СчётДж v4",
+  "common.appName": "СчётДж"
 }

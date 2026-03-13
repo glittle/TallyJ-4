@@ -40,5 +40,8 @@
   "common.warning": "Varoitus",
   "common.yes": "Kyllä",
   "common.testOnlyShort": "Vain testiä varten. Ei oikeisiin vaaleihin.",
-  "common.testOnlyLong": "Tämä TallyJ v4 Beta on vain testiä varten. Ei valmis käytettäväksi oikeissa vaaleissa."
+  "common.testOnlyLong": "Tämä LaskiJ v4 Beta on vain testiä varten. Ei valmis käytettäväksi oikeissa vaaleissa.",
+  "common.logoAlt": "LaskiJ-logo",
+  "common.appTitle": "LaskiJ v4",
+  "common.appName": "LaskiJ"
 }

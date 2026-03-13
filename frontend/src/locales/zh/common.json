@@ -40,5 +40,8 @@
   "common.warning": "警告",
   "common.yes": "是",
   "common.testOnlyShort": "仅供测试。不适用于真实选举。",
-  "common.testOnlyLong": "TallyJ v4 Beta 仅供测试，尚未准备好用于真实选举。"
+  "common.testOnlyLong": "计票J v4 Beta 仅供测试，尚未准备好用于真实选举。",
+  "common.logoAlt": "计票J 标志",
+  "common.appTitle": "计票J v4",
+  "common.appName": "计票J"
 }

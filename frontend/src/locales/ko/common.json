@@ -40,5 +40,8 @@
   "common.warning": "경고",
   "common.yes": "예",
   "common.testOnlyShort": "테스트 전용. 실제 선거에 사용 불가.",
-  "common.testOnlyLong": "이 TallyJ v4 베타는 테스트 전용입니다. 실제 선거에 사용할 준비가 되어 있지 않습니다."
+  "common.testOnlyLong": "이 개표J v4 베타는 테스트 전용입니다. 실제 선거에 사용할 준비가 되어 있지 않습니다.",
+  "common.logoAlt": "개표J 로고",
+  "common.appTitle": "개표J v4",
+  "common.appName": "개표J"
 }

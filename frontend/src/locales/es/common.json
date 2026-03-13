@@ -40,5 +40,8 @@
   "common.warning": "Advertencia",
   "common.yes": "Sí",
   "common.testOnlyShort": "Solo para pruebas. No para elecciones reales.",
-  "common.testOnlyLong": "Este TallyJ v4 Beta es solo para pruebas. No está listo para usar en elecciones reales."
+  "common.testOnlyLong": "Este EscrutiJ v4 Beta es solo para pruebas. No está listo para usar en elecciones reales.",
+  "common.logoAlt": "Logo de EscrutiJ",
+  "common.appTitle": "EscrutiJ v4",
+  "common.appName": "EscrutiJ"
 }
