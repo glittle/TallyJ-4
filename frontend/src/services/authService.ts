@@ -110,6 +110,16 @@ export const authService = {
     return response.data as AuthResponse;
   },
 
+  async facebookLogin(accessToken: string): Promise<AuthResponse> {
+    const response = await api.post("/api/auth/facebook", { accessToken });
+    return response.data as AuthResponse;
+  },
+
+  async kakaoLogin(accessToken: string): Promise<AuthResponse> {
+    const response = await api.post("/api/auth/kakao", { accessToken });
+    return response.data as AuthResponse;
+  },
+
   async logout(): Promise<void> {
     const response = await fetch("/api/auth/logout", {
       method: "GET",

@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Net.Http.Headers;
 using System.Collections.Generic;
 using Backend.Application.DTOs.Auth;
 using Backend.Application.Services.Auth;
@@ -41,6 +43,7 @@ public class AuthController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly SuperAdminSettings _superAdminSettings;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     private readonly ISecurityAuditService _securityAuditService;
 
@@ -58,6 +61,7 @@ public class AuthController : ControllerBase
     /// <param name="configuration">Application configuration.</param>
     /// <param name="signInManager">ASP.NET Core Identity sign-in manager.</param>
     /// <param name="superAdminSettings">Configuration settings for super admin functionality.</param>
+    /// <param name="httpClientFactory">HTTP client factory for external API requests.</param>
     /// <param name="securityAuditService">Service for logging security events.</param>
     public AuthController(
         LocalAuthService localAuthService,
@@ -71,6 +75,7 @@ public class AuthController : ControllerBase
         IConfiguration configuration,
         SignInManager<AppUser> signInManager,
         IOptions<SuperAdminSettings> superAdminSettings,
+        IHttpClientFactory httpClientFactory,
         ISecurityAuditService securityAuditService)
     {
         _localAuthService = localAuthService;
@@ -84,6 +89,7 @@ public class AuthController : ControllerBase
         _configuration = configuration;
         _signInManager = signInManager;
         _superAdminSettings = superAdminSettings.Value;
+        _httpClientFactory = httpClientFactory;
         _securityAuditService = securityAuditService;
     }
 
@@ -1097,7 +1103,251 @@ public class AuthController : ControllerBase
     /// <param name="userAgent">The user agent string for audit logging.</param>
     /// <param name="eventDetails">Details for the security audit log.</param>
     /// <returns>The authenticated user and a boolean indicating if the user was newly created.</returns>
-    private async Task<(AppUser user, bool isNewUser)> ProcessGoogleUserAsync(
+    
+    /// <summary>
+    /// Authenticates a user using Facebook for officer / teller flows.
+    /// </summary>
+    [HttpPost("facebook")]
+    public async Task<IActionResult> FacebookLogin([FromBody] FacebookLoginRequest request)
+    {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient("Facebook");
+            var response = await client.GetAsync($"/me?fields=id,email,name&access_token={Uri.EscapeDataString(request.AccessToken)}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Facebook API returned non-success for teller auth: {Status}", response.StatusCode);
+                return BadRequest(new { error = "Invalid Facebook token." });
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+
+            if (!doc.RootElement.TryGetProperty("email", out var emailElement))
+            {
+                return BadRequest(new { error = "Email not provided by Facebook." });
+            }
+
+            var email = emailElement.GetString();
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest(new { error = "Email not provided by Facebook." });
+            }
+
+            var fbId = doc.RootElement.TryGetProperty("id", out var idElement) ? idElement.GetString() : null;
+            var displayName = doc.RootElement.TryGetProperty("name", out var nameElement) ? nameElement.GetString() : null;
+
+            if (string.IsNullOrEmpty(fbId)) 
+            {
+                return BadRequest(new { error = "ID not provided by Facebook." });
+            }
+
+            var (user, _) = await ProcessExternalUserAsync(
+                email,
+                "Facebook",
+                fbId,
+                displayName,
+                clientIp,
+                userAgent,
+                $"Facebook login successful for user {email}"
+            );
+
+            return Ok(new AuthResponse
+            {
+                Token = null,
+                RefreshToken = null,
+                Email = user.Email!,
+                Name = user.DisplayName,
+                AuthMethod = "Facebook",
+                Requires2FA = false
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Facebook login: error processing user");
+            return BadRequest(new { error = "Error authenticating with Facebook." });
+        }
+    }
+
+    /// <summary>
+    /// Authenticates a user using Kakao for officer / teller flows.
+    /// </summary>
+    [HttpPost("kakao")]
+    public async Task<IActionResult> KakaoLogin([FromBody] KakaoLoginRequest request)
+    {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient("Kakao");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/v2/user/me");
+            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", request.AccessToken);
+
+            var response = await client.SendAsync(httpRequest);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Kakao API returned non-success for teller auth: {Status}", response.StatusCode);
+                return BadRequest(new { error = "Invalid Kakao token." });
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+
+            string? email = null;
+            string? displayName = null;
+            var kakaoId = doc.RootElement.TryGetProperty("id", out var idElement) ? idElement.GetInt64().ToString() : null;
+
+            if (doc.RootElement.TryGetProperty("kakao_account", out var account))
+            {
+                if (account.TryGetProperty("email", out var emailEl))
+                    email = emailEl.GetString();
+
+                if (account.TryGetProperty("profile", out var profile) && profile.TryGetProperty("nickname", out var nameEl))
+                    displayName = nameEl.GetString();
+            }
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest(new { error = "Email not provided by Kakao." });
+            }
+            if (string.IsNullOrEmpty(kakaoId))
+            {
+                return BadRequest(new { error = "ID not provided by Kakao." });
+            }
+
+            var (user, _) = await ProcessExternalUserAsync(
+                email,
+                "Kakao",
+                kakaoId,
+                displayName,
+                clientIp,
+                userAgent,
+                $"Kakao login successful for user {email}"
+            );
+
+            return Ok(new AuthResponse
+            {
+                Token = null,
+                RefreshToken = null,
+                Email = user.Email!,
+                Name = user.DisplayName,
+                AuthMethod = "Kakao",
+                Requires2FA = false
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Kakao login: error processing user");
+            return BadRequest(new { error = "Error authenticating with Kakao." });
+        }
+    }
+
+    private async Task<(AppUser user, bool isNewUser)> ProcessExternalUserAsync(
+        string email,
+        string provider,
+        string providerKey,
+        string? displayName,
+        string? clientIp,
+        string? userAgent,
+        string eventDetails)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        bool isNewUser = false;
+
+        if (user == null)
+        {
+            user = new AppUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                DisplayName = displayName,
+                AuthMethod = provider
+            };
+
+            var createResult = await _userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                _logger.LogError("Failed to create user {Email}: {Errors}",
+                    email, string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                throw new InvalidOperationException("Failed to create user account.");
+            }
+
+            var roleResult = await _userManager.AddToRoleAsync(user, "Officer");
+            if (!roleResult.Succeeded)
+            {
+                _logger.LogWarning("Failed to assign Officer role to user {Email}: {Errors}",
+                    email, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+            }
+
+            _logger.LogInformation("Created new user {Email} with {Provider} authentication", email, provider);
+            isNewUser = true;
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(displayName) && string.IsNullOrEmpty(user.DisplayName))
+            {
+                user.DisplayName = displayName;
+                await _userManager.UpdateAsync(user);
+            }
+        }
+
+        var logins = await _userManager.GetLoginsAsync(user);
+        if (!logins.Any(l => l.LoginProvider == provider && l.ProviderKey == providerKey))
+        {
+            var addLoginResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerKey, provider));
+            if (!addLoginResult.Succeeded)
+            {
+                _logger.LogWarning("Failed to add {Provider} login to user {Email}: {Errors}",
+                    provider, email, string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
+            }
+            
+            var methods = string.IsNullOrEmpty(user.AuthMethod) ? new List<string>() : new List<string>(user.AuthMethod.Split(','));
+            if (!methods.Contains(provider))
+            {
+                methods.Add(provider);
+                user.AuthMethod = string.Join(",", methods);
+                await _userManager.UpdateAsync(user);
+            }
+        }
+
+        var token = _jwtTokenService.GenerateToken(user);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken();
+        var refreshTokenEntity = _jwtTokenService.CreateRefreshToken(user.Id, refreshToken);
+        _context.RefreshTokens.Add(refreshTokenEntity);
+        await _context.SaveChangesAsync();
+
+        SecureCookieMiddleware.SetAuthCookies(
+            HttpContext,
+            token,
+            refreshToken,
+            user.Email!,
+            user.DisplayName,
+            user.AuthMethod ?? provider,
+            HttpContext.Request.IsHttps
+        );
+
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.OAuthLoginSuccess,
+            UserId = user.Id,
+            Email = email,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = eventDetails,
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
+
+        return (user, isNewUser);
+    }
+private async Task<(AppUser user, bool isNewUser)> ProcessGoogleUserAsync(
         string email,
         string googleId,
         string? displayName,
@@ -1137,6 +1387,7 @@ public class AuthController : ControllerBase
 
             _logger.LogInformation("Created new user {Email} with Google authentication", email);
             isNewUser = true;
+            await _userManager.AddLoginAsync(user, new UserLoginInfo("Google", googleId, "Google"));
         }
         else
         {
@@ -1149,6 +1400,7 @@ public class AuthController : ControllerBase
                     user.DisplayName = displayName;
                 }
                 await _userManager.UpdateAsync(user);
+                await _userManager.AddLoginAsync(user, new UserLoginInfo("Google", googleId, "Google"));
                 _logger.LogInformation("Linked Google account to existing user {Email}", email);
             }
             else if (!string.IsNullOrEmpty(displayName) && string.IsNullOrEmpty(user.DisplayName))
@@ -1245,6 +1497,7 @@ public class AuthController : ControllerBase
             {
                 user.TelegramId = telegramId;
                 needsUpdate = true;
+                await _userManager.AddLoginAsync(user, new UserLoginInfo("Telegram", telegramId, "Telegram"));
             }
 
             if (string.IsNullOrEmpty(user.DisplayName) && !string.IsNullOrEmpty(displayName))
