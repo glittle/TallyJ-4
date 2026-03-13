@@ -1,94 +1,82 @@
-# Copilot Instructions for TallyJ-4
+# Copilot instructions for TallyJ 4
 
-## Project Overview
+## Start here
 
-TallyJ-4 is a full-stack, real-time election management and ballot tallying system for Bahá’í communities. It uses a .NET 10 ASP.NET Core Web API backend and a Vue 3 + Vite SPA frontend. The system is designed for multi-user collaboration, secure authentication, and robust election workflows, with a focus on feature parity and modernization from TallyJ v3.
+Use these files as the primary sources of current guidance:
 
-## Architecture & Key Patterns
+- `README.md`
+- `backend/SETUP.md`
+- `frontend/README.md`
+- `docs/DEPLOYMENT.md`
+- `AGENTS.md`
 
-- **Backend** (`backend/`):
-  - ASP.NET Core Web API (controllers in `Controllers/`)
-  - Entity Framework Core for data access (`EF/`)
-  - DTOs and AutoMapper profiles for entity-DTO mapping (`DTOs/`, `Mappings/`)
-  - SignalR hubs for real-time updates (`Hubs/`)
-  - Global error handling, JWT authentication, and Serilog logging
-  - Database seeding on startup (see `SETUP.md`)
-  - Service layer with interface-based design
-  - Testing: xUnit (unit/integration), see `TallyJ4.Tests/`
-- **Frontend** (`frontend/`):
-  - Vue 3 (Composition API), TypeScript, Vite
-  - State management with Pinia, UI with Element Plus
-  - API calls via Axios, real-time via SignalR
-  - Environment config via `.env` files
-  - Testing: Vitest, @vue/test-utils
-  - Design system: Element Plus + custom tokens/components
+Do not treat older implementation summaries or phase reports as the source of truth when the codebase or the canonical docs disagree.
 
-## Developer Workflows
+## Project overview
 
-- **Backend:**
-  - Restore/build/run: `cd backend && dotnet restore && dotnet build && dotnet run`
-  - Database migration: `dotnet ef database update`
-  - Reset DB: `cd backend/scripts && ./reset-database.ps1` (Win) or `./reset-database.sh` (Unix)
-  - Test users auto-seeded; see `SETUP.md` for credentials
-  - Run tests: `dotnet test` (see `TallyJ4.Tests/`)
-  - Lint/format: `dotnet format` (optional)
-- **Frontend:**
-  - Install deps: `cd frontend && npm install`
-  - Dev server: `npm run dev` (default port 8095)
-  - Build: `npm run build`
-  - Test: `npm run test` or `npm run test:coverage`
-  - Type check: `npx vue-tsc --noEmit`
-  - API base URL set in `.env` as `VITE_API_URL`
+TallyJ 4 is a .NET 10 + Vue 3 election management system.
 
-## Planning & Documentation
+- backend: ASP.NET Core API
+- frontend: Vue 3, TypeScript, Vite, Pinia, Element Plus
+- tests: xUnit and Vitest
 
-- All major requirements, specs, and plans are consolidated in `.zenflow/tasks/` (see `requirements.md`, `specifications.md`, `plans.md`, `reports.md`, `reference.md`).
-- Use the v3 vs v4 feature matrix (`v3_vs_v4_feature_matrix.md`) to identify feature gaps and priorities.
-- UI/UX patterns and workflows are documented in `v3_ui_patterns.md` (multi-step wizards, state-based navigation, admin/assistant roles).
-- Implementation is phased (A-G): documentation, critical fixes, missing features, UI polish, testing, reporting, deployment.
+## Key repo conventions
 
-## Conventions & Integration
+### Frontend
 
-- **API endpoints**: `/auth/*`, `/api/elections`, `/api/people`, etc. (see `README.md` and `.zenflow/tasks/specifications.md` for full list)
-- **DTOs**: All API input/output uses DTOs in `backend/DTOs/`
-- **AutoMapper**: Entity-DTO mapping in `backend/Mappings/`
-- **Real-time**: SignalR hubs in `backend/Hubs/` and frontend SignalR clients; group names standardized as `election-{electionGuid}`
-- **Testing**: Unit/integration tests in `TallyJ4.Tests/` (backend), Vitest for frontend
-- **Seeding**: On first run, DB is seeded with users, elections, ballots, etc.
-- **Reverse engineering docs**: `.zenflow/tasks/reverse-engineer-and-design-new-cd6a/`
-- **Documentation consolidation**: `.zenflow` and `.zencoder` contain all planning, requirements, and technical docs; see consolidation strategy in `.zencoder/chats/44a6743a-a8b4-45af-bf5f-df5990f49083/`.
+- use Composition API with `<script setup lang="ts">`
+- Vue file order is script, template, style
+- use `<style lang="less">`
+- do not use `<style scoped>`
+- all user-facing strings should use `$t()`
+- prefer existing stores and services over ad-hoc API calls in components
 
-## Notable Patterns & Tips
+### Backend
 
-- Use DTOs for all API communication; never expose EF entities directly
-- Use AutoMapper for mapping between entities and DTOs
-- Real-time updates (e.g., ballot status, results) use SignalR hubs; follow group naming conventions
-- All authentication is JWT-based; tokens required for protected endpoints
-- Database seeding is idempotent and can be disabled in `appsettings.Development.json`
-- For new migrations, use `dotnet ef migrations add <Name>`
-- For troubleshooting, see `backend/SETUP.md` and logs via Serilog
-- UI/UX: Use multi-step wizards for election setup, state-based navigation, and responsive layouts (see `v3_ui_patterns.md`)
-- Feature development should reference the v3 vs v4 matrix to avoid regressions
-- Documentation and planning: follow the SDD workflow and consolidation patterns in `.zenflow` and `.zencoder`
-- **Important**: See `AGENTS.md` for critical Vue component structure requirements and build workflow notes
+- use DTOs for API contracts
+- use AutoMapper and FluentValidation
+- keep business logic in services
+- most endpoints require JWT auth
 
-## Feature Gaps & Priorities
+## Important implementation notes
 
-- Use `v3_vs_v4_feature_matrix.md` to identify missing/partial features (e.g., location management, teller assignment, online voting, audit logs, public display)
-- Prioritize features marked HIGH in the matrix
-- Expose all entity fields in UI forms as per v3 parity requirements
+- JWT user IDs may need to be read from `sub`, not only `ClaimTypes.NameIdentifier`
+- frontend services must account for both `ApiResponse<T>` and `PaginatedResponse<T>` response shapes
+- election SignalR groups should use `election-{electionGuid}`
 
-## References
+## Validation commands
 
-- [backend/SETUP.md](../backend/SETUP.md)
-- [README.md](../README.md)
-- [frontend/README.md](../frontend/README.md)
-- [backend/Controllers/], [backend/DTOs/], [backend/Hubs/], [backend/Mappings/]
-- [TallyJ4.Tests/]
-- [.zenflow/tasks/requirements.md], [.zenflow/tasks/specifications.md], [.zenflow/tasks/plans.md], [.zenflow/tasks/reports.md], [.zenflow/tasks/reference.md]
-- [.zenflow/tasks/v3_vs_v4_feature_matrix.md], [.zenflow/tasks/v3_ui_patterns.md]
-- [.zencoder/rules/repo.md], [.zencoder/chats/44a6743a-a8b4-45af-bf5f-df5990f49083/plan.md]
+### Backend
 
----
+```bash
+dotnet build backend/Backend.csproj
+dotnet test Backend.Tests/Backend.Tests.csproj
+```
 
-For any unclear or missing conventions, please request clarification or review the referenced documentation.
+### Frontend
+
+```bash
+cd frontend
+npm run check
+npm run test:run
+```
+
+Run `npm run validate:i18n` after locale changes.
+
+## Local defaults
+
+- backend: `http://localhost:5016`
+- frontend: `http://localhost:8095`
+- Swagger: `http://localhost:5016/swagger`
+
+## Windows CMD file operations
+
+When removing repo files from the Windows CMD shell, use repo-relative paths from the workspace root.
+
+- single file: `if exist "docs\OLD.md" del /q "docs\OLD.md"`
+- multiple files: `for %f in ("API_DOCUMENTATION.md" "docs\ADMIN_GUIDE.md" "backend\API_EXAMPLES.md") do @if exist %f del /q %f`
+- verify from the same worktree context with `if exist ...` and `git status --short`
+
+## Documentation policy
+
+If a change affects developer workflow, setup, deployment, or validation, update one of the canonical docs instead of creating a new summary file.

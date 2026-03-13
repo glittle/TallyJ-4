@@ -1,5 +1,5 @@
 {
-  "voting.auth.title": "TallyJ Online-äänestys",
+  "voting.auth.title": "LaskiJ Online-äänestys",
   "voting.auth.subtitle": "Tunnistaudu antaaksesi äänesi",
   "voting.auth.welcome.heading": "Tervetuloa — Olet lähes valmis äänestämään",
   "voting.auth.welcome.intro": "Voidaksesi äänestää tässä vaalissa, meidän on vahvistettava henkilöllisyytesi. Henkilöllisyytesi on vastattava vaalien järjestäjän tiedostoissa olevia tietoja kelpoisten äänestäjien osalta.",
@@ -48,6 +48,7 @@
   "voting.auth.kakao.popupBlocked": "Kakao-kirjautumisen ponnahdusikkuna estettiin. Salli ponnahdusikkunat tälle sivustolle ja yritä uudelleen.",
   "voting.auth.verify.message": "Olemme lähettäneet vahvistuskoodin osoitteeseen {voterId}",
   "voting.auth.verify.detail": "Tarkista sähköpostisi (ja roskapostikansio varmuuden vuoksi) ja syötä alla oleva koodi. Koodi on voimassa rajoitetun ajan.",
+  "voting.auth.verify.label": "Vahvistuskoodi",
   "voting.auth.verify.placeholder": "Syötä vastaanottamasi koodi",
   "voting.auth.verify.submit": "Vahvista ja jatka äänestämään",
   "voting.auth.verify.back": "Kokeile eri menetelmää",

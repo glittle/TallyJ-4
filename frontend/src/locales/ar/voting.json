@@ -1,5 +1,5 @@
 {
-  "voting.auth.title": "TallyJ Online Voting",
+  "voting.auth.title": "التصويت الإلكتروني عبر فَرْزَج",
   "voting.auth.subtitle": "Please authenticate to cast your ballot",
   "voting.auth.welcome.heading": "Welcome — You're Almost Ready to Vote",
   "voting.auth.welcome.intro": "In order to vote in this election, we need to confirm who you are. Your identity must match the information that the election administrator has on file for eligible voters.",
@@ -11,6 +11,10 @@
   "voting.auth.tabs.google": "Google",
   "voting.auth.tabs.facebook": "Facebook",
   "voting.auth.tabs.kakao": "Kakao",
+  "voting.auth.tabs.telegram": "Telegram",
+  "voting.auth.telegram.description": "تسجيل دخول آمن بنقرة واحدة مع Telegram.",
+  "voting.auth.telegram.loading": "جارٍ تحميل أداة Telegram...",
+  "voting.auth.telegram.error": "تسجيل الدخول عبر Telegram غير متاح حالياً.",
   "voting.auth.email.label": "Email Address",
   "voting.auth.email.placeholder": "Enter your email address",
   "voting.auth.email.sendCode": "Send Verification Code",

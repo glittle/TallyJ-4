@@ -1,5 +1,5 @@
 {
-  "voting.auth.title": "TallyJ Online Voting",
+  "voting.auth.title": "Kupiga Kura Mtandaoni kwa HesabuJ",
   "voting.auth.subtitle": "Please authenticate to cast your ballot",
   "voting.auth.welcome.heading": "Welcome — You're Almost Ready to Vote",
   "voting.auth.welcome.intro": "In order to vote in this election, we need to confirm who you are. Your identity must match the information that the election administrator has on file for eligible voters.",
@@ -11,6 +11,10 @@
   "voting.auth.tabs.google": "Google",
   "voting.auth.tabs.facebook": "Facebook",
   "voting.auth.tabs.kakao": "Kakao",
+  "voting.auth.tabs.telegram": "Telegram",
+  "voting.auth.telegram.description": "Ingia salama na Telegram.",
+  "voting.auth.telegram.loading": "Inapakia wijeti ya Telegram...",
+  "voting.auth.telegram.error": "Kuingia kwa Telegram hakupatikani kwa sasa.",
   "voting.auth.email.label": "Email Address",
   "voting.auth.email.placeholder": "Enter your email address",
   "voting.auth.email.sendCode": "Send Verification Code",

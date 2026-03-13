@@ -1,109 +1,108 @@
-# TallyJ 4 - Election Management System
+# Frontend developer guide
 
-A modern, real-time election management and ballot tallying system designed for Bahá’í communities.
+This package contains the TallyJ 4 Vue 3 single-page application.
 
-## Features
+## Stack
 
-- **Election Management**: Create and configure elections with custom settings
-- **People Management**: Import and manage voter lists with bulk operations
-- **Ballot Management**: Handle ballot creation, distribution, and collection
-- **Real-time Results**: Live tallying and result reporting with SignalR
-- **Multi-user Collaboration**: Real-time updates for election officials
-- **Responsive Design**: Works on desktop and mobile devices
-- **Offline Support**: Service worker for offline functionality
+- Vue 3 with Composition API
+- TypeScript
+- Vite
+- Pinia
+- Vue Router
+- Element Plus
+- Vue I18n
+- Axios
+- SignalR client
 
-## Quick Start
-
-### Prerequisites
-
-- Node.js 18+
-- .NET 8.0+
-
-### Installation
-
-1. Clone the repository
-2. Install frontend dependencies:
-   ```bash
-   cd frontend
-   npm install
-   ```
-3. Install backend dependencies:
-   ```bash
-   cd backend
-   dotnet restore
-   ```
-
-### Development
-
-1. Start the backend API:
-
-   ```bash
-   cd backend
-   dotnet run
-   ```
-
-2. Start the frontend development server:
-
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-
-3. Open http://localhost:8095 in your browser
-
-### Building for Production
+## Getting started
 
 ```bash
 cd frontend
-npm run build
+npm install
+npm run dev
 ```
 
-## Environment Variables
+Default local URL: `http://localhost:8095`
 
-Create a `.env` file in the frontend directory:
+## Environment
+
+Copy `.env.example` to `.env.development` or `.env.production` and adjust values as needed.
+
+Minimum useful local setup:
 
 ```env
-VITE_API_BASE_URL=http://localhost:5000/api
-VITE_SENTRY_DSN=your_sentry_dsn_here
+VITE_API_URL=http://localhost:5016
 ```
 
-## Testing
+Common variables:
+
+- `VITE_API_URL` - backend base URL
+- `VITE_APP_NAME` - app title shown by the frontend
+- `VITE_ENV` - environment label
+- `VITE_ENABLE_ANALYTICS` - analytics toggle
+- `VITE_ENABLE_ERROR_REPORTING` - error reporting toggle
+- `VITE_SENTRY_DSN` - Sentry DSN when error reporting is enabled
+- `VITE_TELEGRAM_BOT_USERNAME` - optional Telegram integration setting
+
+## Scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start Vite dev server |
+| `npm run start` | Regenerate OpenAPI client, then start Vite |
+| `npm run gen` | Regenerate the generated API client |
+| `npm run tsc` | Run `vue-tsc --noEmit` |
+| `npm run lint` | Run ESLint over `src/` |
+| `npm run check` | Run typecheck and lint |
+| `npm run test` | Start Vitest in watch mode |
+| `npm run test:run` | Run Vitest once |
+| `npm run test:coverage` | Run Vitest with coverage |
+| `npm run validate:i18n` | Validate locale file consistency |
+
+## Project structure
+
+- `src/pages/` - route-level pages
+- `src/components/` - reusable UI components
+- `src/stores/` - Pinia state containers
+- `src/services/` - service wrappers around API calls
+- `src/api/gen/configService/` - generated API client
+- `src/locales/` - shared translation files used by frontend and backend
+
+## Conventions
+
+### Vue file order
+
+Vue single-file components should use this order:
+
+1. `<script setup lang="ts">`
+2. `<template>`
+3. `<style lang="less">`
+
+### Styling
+
+- Do not use `<style scoped>` in this repo
+- Nest styles under the component root selector
+- Prefer existing tokens and patterns over one-off styling
+
+### State and services
+
+The standard data flow is:
+
+`component -> Pinia store -> service -> generated API client -> backend API`
+
+### Localization
+
+- All user-facing strings should go through `$t()`
+- Update both `en` and `fr` locale files together
+- Run `npm run validate:i18n` after translation changes
+
+## Validation workflow
+
+For frontend changes, the expected validation commands are:
 
 ```bash
-# Run unit tests
-npm run test
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run backend tests
-cd ../backend
-dotnet test
+npm run check
+npm run test:run
 ```
 
-## Deployment
-
-The application is configured for deployment with:
-
-- Frontend: Static hosting (Vercel, Netlify, etc.)
-- Backend: Azure App Service, AWS, or any ASP.NET Core hosting
-- Database: SQL Server (Azure SQL, AWS RDS, etc.)
-
-## Architecture
-
-- **Frontend**: Vue 3 + TypeScript + Vite + Element Plus
-- **Backend**: ASP.NET Core + Entity Framework + SignalR
-- **Database**: SQL Server
-- **Real-time**: SignalR for live updates
-- **Styling**: Element Plus component library
-
-## Contributing
-
-1. Follow the existing code style and conventions
-2. Write tests for new features
-3. Ensure all tests pass before submitting PRs
-4. Update documentation as needed
-
-## License
-
-Copyright © Bahá’í communities. All rights reserved.
+Use `npm run build` only when you explicitly need a production build artifact or production-build verification.

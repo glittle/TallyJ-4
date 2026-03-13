@@ -16,6 +16,7 @@
   "common.delete": "Удалить",
   "common.deleteSelected": "Удалить выбранные",
   "common.edit": "Редактировать",
+  "common.election": "Выборы",
   "common.endDate": "Дата окончания",
   "common.enter": "Ввод",
   "common.error": "Произошла ошибка",
@@ -40,5 +41,10 @@
   "common.warning": "Предупреждение",
   "common.yes": "Да",
   "common.testOnlyShort": "Только для тестирования. Не для реальных выборов.",
-  "common.testOnlyLong": "TallyJ v4 Beta только для тестирования. Не готов для реальных выборов."
+  "common.testOnlyLong": "СчётДж v4 Beta только для тестирования. Не готов для реальных выборов.",
+  "common.logoAlt": "Логотип СчётДж",
+  "common.appTitle": "СчётДж v4",
+  "common.appName": "СчётДж",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

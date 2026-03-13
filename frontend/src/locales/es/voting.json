@@ -1,5 +1,5 @@
 {
-  "voting.auth.title": "Votación en Línea TallyJ",
+  "voting.auth.title": "Votación en Línea EscrutiJ",
   "voting.auth.subtitle": "Por favor autentíquese para emitir su voto",
   "voting.auth.welcome.heading": "Bienvenido — Está Casi Listo para Votar",
   "voting.auth.welcome.intro": "Para votar en esta elección, necesitamos confirmar quién es usted. Su identidad debe coincidir con la información que el administrador de la elección tiene registrada para los votantes elegibles.",
@@ -11,6 +11,10 @@
   "voting.auth.tabs.google": "Google",
   "voting.auth.tabs.facebook": "Facebook",
   "voting.auth.tabs.kakao": "Kakao",
+  "voting.auth.tabs.telegram": "Telegram",
+  "voting.auth.telegram.description": "Inicio de sesión seguro con un solo toque con Telegram.",
+  "voting.auth.telegram.loading": "Cargando widget de Telegram...",
+  "voting.auth.telegram.error": "El inicio de sesión con Telegram no está disponible actualmente.",
   "voting.auth.email.label": "Dirección de Correo Electrónico",
   "voting.auth.email.placeholder": "Ingrese su dirección de correo electrónico",
   "voting.auth.email.sendCode": "Enviar Código de Verificación",

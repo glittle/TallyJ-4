@@ -1,88 +1,123 @@
-# Agent Instructions for TallyJ-4
+# TallyJ 4 agent notes
 
-## Development Workflow Notes
+This file contains the repo-specific guidance that should stay current for AI agents and human contributors.
 
-### Frontend Build Process
-- **Do NOT run `npm run build`** after making frontend changes - the developer has it running in watch mode
-- Focus on code changes and let the watch process handle the build
+## Canonical docs
 
-### Vue Component Structure
-Vue files **MUST** follow this exact order:
-1. `<script setup lang="ts">` - TypeScript script (Composition API)
-2. `<template>` - HTML template
-3. `<style lang="less">` - Styles using Less
+Use these as the primary sources of current project guidance:
 
-**Important Style Rules:**
-- **NEVER use `<style scoped>`** - This breaks the component styling pattern
-- All CSS content must be nested inside the component's root element CSS selector
-- Example:
-  ```vue
-  <style lang="less">
-  .my-component {
-    // All component styles nested here
-    .child-element {
-      // Child styles
-    }
-  }
-  </style>
-  ```
+- `README.md`
+- `backend/SETUP.md`
+- `frontend/README.md`
+- `docs/DEPLOYMENT.md`
+- `E2E_TESTING_GUIDE.md`
 
-### Coding Conventions
+Treat `.zenflow/tasks/**` and `.zencoder/**` as historical planning and research artifacts unless a task explicitly tells you to consult them.
 
-#### Backend (.NET)
-- Use DTOs for all API communication (never expose EF entities directly)
-- Use AutoMapper for entity-DTO mapping
-- All endpoints require JWT authentication unless explicitly marked with `[AllowAnonymous]`
-- Follow service layer pattern with interfaces
-- Use FluentValidation for request validation
-- SignalR hub group names: `election-{electionGuid}`
+## Repository shape
 
-#### Frontend (Vue 3 + TypeScript)
-- Use Composition API with `<script setup>`
-- TypeScript strict mode enabled - all types must be defined
+- `backend/` - ASP.NET Core API host
+- `Backend.Application/` - application services
+- `Backend.Domain/` - domain and persistence layer
+- `Backend.Tests/` - xUnit tests
+- `frontend/` - Vue 3 SPA
+
+## Core conventions
+
+### Frontend
+
+- Vue SFC order is always:
+  1. `<script setup lang="ts">`
+  2. `<template>`
+  3. `<style lang="less">`
+- Do not use `<style scoped>`
+- Nest style rules under the component root selector
 - Use Pinia stores for state management
-- API calls via Axios with interceptors for auth
-- Element Plus for UI components
-- Use `$t()` for all user-facing strings (i18n)
-- Responsive design required (mobile-first approach)
+- Use `$t()` for all user-facing strings
+- Standard flow: `component -> store -> service -> generated API client -> backend`
 
-### Testing Requirements
-- Backend: xUnit tests in `Backend.Tests/`
-- Frontend: Vitest tests co-located with components
-- All new features require tests
-- Run tests before committing changes
+### Backend
 
-### Database Changes
-- Use EF Core migrations: `dotnet ef migrations add <Name>`
-- Test migrations with reset script: `backend/scripts/reset-database.ps1` or `.sh`
-- Database seeding is idempotent and automated
+- Use DTOs for API input/output
+- Use AutoMapper for entity-to-DTO mapping
+- Use FluentValidation for request validation
+- Keep controller logic thin and use services for business rules
+- Default API auth is JWT unless an endpoint is explicitly anonymous
 
-### Package Management
-- When upgrading NuGet packages, prefer manual editing of `.csproj` files over `dotnet add package` if CLI commands fail
-- If `dotnet list package --outdated` fails with "Value cannot be null" errors, check for project reference issues before retrying
-- As fallback for checking outdated packages, use NuGet API directly: `https://api.nuget.org/v3-flatcontainer/{package-id}/index.json`
-- Always verify package upgrades by running `dotnet build` after changes
-- For security vulnerabilities, prioritize upgrading to latest patch versions (e.g., 4.15.0 → 4.15.1)
+## Important architecture details
 
-### Environment-Specific Commands
+### Auth claim lookup
 
-#### Windows CMD Environment (Local Development)
-- **Path syntax**: Always use backslashes (`\`) in file paths, never forward slashes (`/`)
-- **Drive letters**: Use uppercase (e.g., `C:\Dev\TallyJ\v4\repo`, not `c:\dev\tallyj\v4\repo`)
-- **Directory changes**: Use `cd /d "C:\full\path\to\directory"` for changing drives/directories
-- **Command chaining**: Use `&&` for sequential commands, not `;` (which is ignored in CMD)
-- **Quotes**: Use double quotes for paths with spaces: `"C:\Program Files\app.exe"`
-- **Common mistake**: Avoid Unix-style commands like `cat`, `grep`, `ls` - use Windows equivalents (`type`, `findstr`, `dir`)
+User IDs are stored in JWT `sub` claims. On .NET 10, code that reads the current user ID should check both:
 
-#### Linux/bash Environment (GitHub Copilot/CI)
-- **Path syntax**: Use forward slashes (`/`) in file paths
-- **Directory changes**: Use `cd /full/path/to/directory`
-- **Command chaining**: Use `&&` for sequential commands or `;` for unconditional chaining
-- **Quotes**: Use double quotes for paths with spaces: `"/path/to/my dir/app"`
-- **Available commands**: Standard Unix tools (`cat`, `grep`, `ls`, etc.) are available
+```csharp
+User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value
+```
 
-### Documentation
-- Update relevant README files when adding features
-- Document API changes in Swagger (XML comments)
-- Update `.zenflow/tasks/` documentation for major features
-- Follow the v3 vs v4 feature matrix when implementing features
+### API response wrappers
+
+Two response patterns are in active use:
+
+1. `ApiResponse<T>` returns payload in `.data`
+2. `PaginatedResponse<T>` returns `.items` at the root
+
+Do not assume every backend response uses the same wrapper.
+
+### SignalR group naming
+
+Election-scoped hub groups should use:
+
+```text
+election-{electionGuid}
+```
+
+## Validation commands
+
+### Backend
+
+```bash
+dotnet build backend/Backend.csproj
+dotnet test Backend.Tests/Backend.Tests.csproj
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm run check
+npm run test:run
+```
+
+Run `npm run validate:i18n` when you touch locale files.
+
+## Local development assumptions
+
+- backend default dev URL: `http://localhost:5016`
+- frontend default dev URL: `http://localhost:8095`
+- backend development config seeds the database on startup
+- Swagger is the source of truth for current routes and schemas
+
+## Windows CMD file operations
+
+When deleting repo files from the Windows CMD-based shell tooling in this workspace:
+
+- run from the workspace root and use repo-relative paths
+- for a single file, prefer `if exist "docs\OLD.md" del /q "docs\OLD.md"`
+- for multiple files, prefer a guarded loop instead of one long `del` command:
+
+```bat
+for %f in ("API_DOCUMENTATION.md" "docs\ADMIN_GUIDE.md" "backend\API_EXAMPLES.md") do @if exist %f del /q %f
+```
+
+- verify deletions from the same worktree context with `if exist ...` and `git status --short`
+- if `git status` does not show a tracked file as deleted, the removal did not affect the active worktree
+
+## Frontend workflow note
+
+For routine local development, prefer `npm run dev`. Only use `npm run build` when you explicitly need a production build or are validating production output.
+
+## Documentation hygiene
+
+When features change, update the canonical docs above instead of adding one-off summary files.
+
+Avoid leaving behind implementation summaries, phase reports, or temporary investigation notes as long-term guidance unless the repository explicitly wants them preserved as archives.

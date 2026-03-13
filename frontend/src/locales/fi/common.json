@@ -16,6 +16,7 @@
   "common.delete": "Poista",
   "common.deleteSelected": "Poista valitut",
   "common.edit": "Muokkaa",
+  "common.election": "Vaalit",
   "common.endDate": "Päättymispäivä",
   "common.enter": "Syötä",
   "common.error": "Tapahtui virhe",
@@ -40,5 +41,10 @@
   "common.warning": "Varoitus",
   "common.yes": "Kyllä",
   "common.testOnlyShort": "Vain testiä varten. Ei oikeisiin vaaleihin.",
-  "common.testOnlyLong": "Tämä TallyJ v4 Beta on vain testiä varten. Ei valmis käytettäväksi oikeissa vaaleissa."
+  "common.testOnlyLong": "Tämä LaskiJ v4 Beta on vain testiä varten. Ei valmis käytettäväksi oikeissa vaaleissa.",
+  "common.logoAlt": "LaskiJ-logo",
+  "common.appTitle": "LaskiJ v4",
+  "common.appName": "LaskiJ",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

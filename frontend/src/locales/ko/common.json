@@ -16,6 +16,7 @@
   "common.delete": "삭제",
   "common.deleteSelected": "선택 항목 삭제",
   "common.edit": "편집",
+  "common.election": "선거",
   "common.endDate": "종료 날짜",
   "common.enter": "입력",
   "common.error": "오류가 발생했습니다",
@@ -40,5 +41,10 @@
   "common.warning": "경고",
   "common.yes": "예",
   "common.testOnlyShort": "테스트 전용. 실제 선거에 사용 불가.",
-  "common.testOnlyLong": "이 TallyJ v4 베타는 테스트 전용입니다. 실제 선거에 사용할 준비가 되어 있지 않습니다."
+  "common.testOnlyLong": "이 개표J v4 베타는 테스트 전용입니다. 실제 선거에 사용할 준비가 되어 있지 않습니다.",
+  "common.logoAlt": "개표J 로고",
+  "common.appTitle": "개표J v4",
+  "common.appName": "개표J",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

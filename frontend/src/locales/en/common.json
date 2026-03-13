@@ -43,5 +43,8 @@
   "common.testOnlyShort": "Test Only. Not for real elections.",
   "common.testOnlyLong": "This TallyJ v4 Beta is for test only. Not ready for use in real elections.",
   "common.logoAlt": "TallyJ Logo",
-  "common.appTitle": "TallyJ v4"
+  "common.appTitle": "TallyJ v4",
+  "common.appName": "TallyJ",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

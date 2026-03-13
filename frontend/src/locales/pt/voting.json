@@ -1,5 +1,5 @@
 {
-  "voting.auth.title": "Votação Online TallyJ",
+  "voting.auth.title": "Votação Online ApuraJ",
   "voting.auth.subtitle": "Por favor, autentique-se para votar",
   "voting.auth.welcome.heading": "Bem-vindo — Você Está Quase Pronto para Votar",
   "voting.auth.welcome.intro": "Para votar nesta eleição, precisamos confirmar quem você é. Sua identidade deve corresponder às informações que o administrador da eleição tem cadastradas para os eleitores elegíveis.",
@@ -11,6 +11,10 @@
   "voting.auth.tabs.google": "Google",
   "voting.auth.tabs.facebook": "Facebook",
   "voting.auth.tabs.kakao": "Kakao",
+  "voting.auth.tabs.telegram": "Telegram",
+  "voting.auth.telegram.description": "Login seguro com um toque com Telegram.",
+  "voting.auth.telegram.loading": "Carregando widget do Telegram...",
+  "voting.auth.telegram.error": "O login do Telegram não está disponível no momento.",
   "voting.auth.email.label": "Endereço de E-mail",
   "voting.auth.email.placeholder": "Digite seu endereço de e-mail",
   "voting.auth.email.sendCode": "Enviar Código de Verificação",

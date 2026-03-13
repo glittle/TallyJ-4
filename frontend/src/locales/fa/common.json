@@ -16,6 +16,7 @@
   "common.delete": "حذف",
   "common.deleteSelected": "حذف موارد انتخاب‌شده",
   "common.edit": "ویرایش",
+  "common.election": "انتخابات",
   "common.endDate": "تاریخ پایان",
   "common.enter": "ورود",
   "common.error": "خطایی رخ داده است",
@@ -40,5 +41,10 @@
   "common.warning": "هشدار",
   "common.yes": "بله",
   "common.testOnlyShort": "فقط آزمایشی. برای انتخابات واقعی نیست.",
-  "common.testOnlyLong": "نسخه بتای TallyJ v4 فقط برای آزمایش است. آماده انتخابات واقعی نیست."
+  "common.testOnlyLong": "نسخه بتای شمارَج v4 فقط برای آزمایش است. آماده انتخابات واقعی نیست.",
+  "common.logoAlt": "لوگوی شمارَج",
+  "common.appTitle": "شمارَج v4",
+  "common.appName": "شمارَج",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

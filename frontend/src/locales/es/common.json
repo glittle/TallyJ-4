@@ -16,6 +16,7 @@
   "common.delete": "Eliminar",
   "common.deleteSelected": "Eliminar Seleccionados",
   "common.edit": "Editar",
+  "common.election": "Elección",
   "common.endDate": "Fecha de Fin",
   "common.enter": "Ingresar",
   "common.error": "Ocurrió un error",
@@ -40,5 +41,10 @@
   "common.warning": "Advertencia",
   "common.yes": "Sí",
   "common.testOnlyShort": "Solo para pruebas. No para elecciones reales.",
-  "common.testOnlyLong": "Este TallyJ v4 Beta es solo para pruebas. No está listo para usar en elecciones reales."
+  "common.testOnlyLong": "Este EscrutiJ v4 Beta es solo para pruebas. No está listo para usar en elecciones reales.",
+  "common.logoAlt": "Logo de EscrutiJ",
+  "common.appTitle": "EscrutiJ v4",
+  "common.appName": "EscrutiJ",
+  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionTooltip": "Version {version} ({date})"
 }

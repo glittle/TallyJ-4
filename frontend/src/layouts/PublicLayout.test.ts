@@ -40,7 +40,7 @@ describe("PublicLayout", () => {
         },
       },
     });
-    expect(wrapper.text()).toContain("TallyJ 4");
+    expect(wrapper.text()).toContain("v4 Beta (Version 4.0.1)");
   });
 
   it("has the correct layout structure", () => {

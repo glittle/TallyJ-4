@@ -1,5 +1,5 @@
 {
-  "voting.auth.title": "TallyJ Bỏ Phiếu Trực Tuyến",
+  "voting.auth.title": "KiểmJ Bỏ Phiếu Trực Tuyến",
   "voting.auth.subtitle": "Vui lòng xác thực để bỏ phiếu",
   "voting.auth.welcome.heading": "Chào mừng — Bạn Sắp Sẵn Sàng Bỏ Phiếu",
   "voting.auth.welcome.intro": "Để bỏ phiếu trong cuộc bầu cử này, chúng tôi cần xác nhận danh tính của bạn. Danh tính của bạn phải khớp với thông tin mà quản trị viên bầu cử có trong hồ sơ cho cử tri đủ điều kiện.",
@@ -11,6 +11,10 @@
   "voting.auth.tabs.google": "Google",
   "voting.auth.tabs.facebook": "Facebook",
   "voting.auth.tabs.kakao": "Kakao",
+  "voting.auth.tabs.telegram": "Telegram",
+  "voting.auth.telegram.description": "Đăng nhập an toàn một chạm với Telegram.",
+  "voting.auth.telegram.loading": "Đang tải tiện ích Telegram...",
+  "voting.auth.telegram.error": "Đăng nhập Telegram hiện không khả dụng.",
   "voting.auth.email.label": "Địa Chỉ Email",
   "voting.auth.email.placeholder": "Nhập địa chỉ email của bạn",
   "voting.auth.email.sendCode": "Gửi Mã Xác Minh",

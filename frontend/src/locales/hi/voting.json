@@ -1,5 +1,5 @@
 {
-  "voting.auth.title": "TallyJ ऑनलाइन मतदान",
+  "voting.auth.title": "गिनतीज ऑनलाइन मतदान",
   "voting.auth.subtitle": "अपना मतपत्र डालने के लिए कृपया प्रमाणित करें",
   "voting.auth.welcome.heading": "स्वागत है — आप मतदान के लिए लगभग तैयार हैं",
   "voting.auth.welcome.intro": "इस चुनाव में मतदान करने के लिए, हमें यह पुष्टि करनी होगी कि आप कौन हैं। आपकी पहचान उस जानकारी से मेल खानी चाहिए जो चुनाव प्रशासक के पास पात्र मतदाताओं के लिए है।",
@@ -11,6 +11,10 @@
   "voting.auth.tabs.google": "Google",
   "voting.auth.tabs.facebook": "Facebook",
   "voting.auth.tabs.kakao": "Kakao",
+  "voting.auth.tabs.telegram": "Telegram",
+  "voting.auth.telegram.description": "Telegram के साथ एक-टैप सुरक्षित लॉगिन।",
+  "voting.auth.telegram.loading": "Telegram विजेट लोड हो रहा है...",
+  "voting.auth.telegram.error": "Telegram लॉगिन वर्तमान में उपलब्ध नहीं है।",
   "voting.auth.email.label": "ईमेल पता",
   "voting.auth.email.placeholder": "अपना ईमेल पता दर्ज करें",
   "voting.auth.email.sendCode": "सत्यापन कोड भेजें",
