@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRouter, useRoute } from "vue-router";
 import { useNotifications } from "@/composables/useNotifications";
-import { useAuthStore } from "../stores/authStore";
-import api from "../services/api";
 import type { FormInstance, FormRules } from "element-plus";
+import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
+import api from "../services/api";
+import { useAuthStore } from "../stores/authStore";
 
 interface AvailableElection {
   electionGuid: string;
@@ -100,6 +100,12 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 };
 
+const selectIfSingleElection = () => {
+  if (elections.value.length === 1) {
+    joinForm.electionGuid = elections.value[0]!.electionGuid;
+  }
+};
+
 onMounted(async () => {
   const electionGuid = route.params.electionGuid as string;
 
@@ -113,6 +119,8 @@ onMounted(async () => {
   }
 
   await fetchAvailableElections();
+
+  selectIfSingleElection();
 
   if (prefilledFromUrl.value) {
     // if we prefilled the form from the URL, immediately try to join
@@ -164,12 +172,7 @@ onBeforeUnmount(() => {
           <select
             v-model="joinForm.electionGuid"
             size="9"
-            style="
-              width: 100%;
-              padding: 8px;
-              border: 1px solid #dcdfe6;
-              border-radius: 4px;
-            "
+            class="electionSelect"
           >
             <option
               v-for="election in elections"
@@ -227,7 +230,7 @@ onBeforeUnmount(() => {
 
   .login-card {
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     border-radius: 12px;
   }
 
@@ -238,6 +241,15 @@ onBeforeUnmount(() => {
   .login-header h2 {
     margin: 0;
     color: var(--color-text-primary);
+  }
+
+  .electionSelect {
+    width: 100%;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    option {
+      padding: 0.5em;
+    }
   }
 
   .mode-hint {

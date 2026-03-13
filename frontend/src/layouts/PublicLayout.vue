@@ -2,17 +2,17 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import LanguageSelector from "../components/common/LanguageSelector.vue";
 import LanguageFlagsSelector from "../components/common/LanguageFlagsSelector.vue";
+import LanguageSelector from "../components/common/LanguageSelector.vue";
 import ThemeSelector from "../components/common/ThemeSelector.vue";
-import { VERSION, BUILD_DATE } from "../components/version";
+import { BUILD_DATE, VERSION } from "../components/version";
 
 const router = useRouter();
 const { t } = useI18n();
 
 // Version tooltip - dynamically localized
 const versionTooltip = computed(() =>
-  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE })
+  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE }),
 );
 
 // Check if we're on the landing page
@@ -34,7 +34,6 @@ const handleLogoClick = () => {
         >
           <img
             src="/logo-zoom.png"
-            alt="TallyJ Logo"
             style="height: 24px; vertical-align: middle; margin-left: 8px"
           />
           <span>{{ $t("common.versionDisplay", { version: VERSION }) }}</span>
