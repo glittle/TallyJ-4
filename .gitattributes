@@ -1,0 +1,5 @@
+* text=auto eol=lf
+
+# Exception for Windows batch scripts
+*.bat text eol=crlf
+*.cmd text eol=crlf
