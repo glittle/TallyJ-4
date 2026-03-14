@@ -7,36 +7,36 @@ declare global {
   }
 }
 
-import { ref, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
 import {
-  ElCard,
-  ElTabs,
-  ElTabPane,
-  ElForm,
-  ElFormItem,
-  ElInput,
-  ElButton,
-  ElRadioGroup,
-  ElRadio,
-  ElCollapse,
-  ElCollapseItem,
-  ElIcon,
-  ElAlert,
-} from "element-plus";
-import {
+  ChromeFilled,
+  Key,
+  Lock,
   Message,
   Phone,
-  Key,
-  ChromeFilled,
-  Lock,
   QuestionFilled,
 } from "@element-plus/icons-vue";
-import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
-import { useNotifications } from "../../composables/useNotifications";
 import { useStorage } from "@vueuse/core";
+import {
+  ElAlert,
+  ElButton,
+  ElCard,
+  ElCollapse,
+  ElCollapseItem,
+  ElForm,
+  ElFormItem,
+  ElIcon,
+  ElInput,
+  ElRadio,
+  ElRadioGroup,
+  ElTabPane,
+  ElTabs,
+} from "element-plus";
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import TelegramLoginButton from "../../components/auth/TelegramLoginButton.vue";
+import { useNotifications } from "../../composables/useNotifications";
+import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 
 declare const FB: any;
 declare const Kakao: any;
@@ -82,6 +82,13 @@ const phoneForm = ref({
 const codeForm = ref({ code: "" });
 const verificationForm = ref({ voterId: "", verifyCode: "" });
 const loading = ref(false);
+
+// add handler so if ESC is pressed, we go back to landing page
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === "Escape") {
+    router.push("/");
+  }
+};
 
 const fetchAuthConfig = async () => {
   if (authConfig.value) return authConfig.value;
@@ -489,10 +496,11 @@ onMounted(() => {
   } else if (activeTab.value === "kakao") {
     initKakaoSdk();
   }
+  globalThis.addEventListener("keydown", handleKeydown);
 });
 
 onBeforeUnmount(() => {
-  if (typeof window.google !== "undefined" && googleReady.value) {
+  if (window.google !== undefined && googleReady.value) {
     try {
       window.google.accounts.id.cancel();
     } catch {
@@ -500,6 +508,7 @@ onBeforeUnmount(() => {
     }
   }
   googleReady.value = false;
+  globalThis.removeEventListener("keydown", handleKeydown);
 });
 </script>
 
@@ -808,7 +817,7 @@ onBeforeUnmount(() => {
               </div>
             </ElTabPane>
 
-            <ElTabPane name="telegram" v-if="telegramBotUsername">
+            <ElTabPane v-if="telegramBotUsername" name="telegram">
               <template #label>
                 <span class="tab-label">
                   <ElIcon>
