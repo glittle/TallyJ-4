@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
 using Backend.Application.DTOs.Auth;
@@ -1116,7 +1117,9 @@ public class AuthController : ControllerBase
         try
         {
             var client = _httpClientFactory.CreateClient("Facebook");
-            var response = await client.GetAsync($"/me?fields=id,email,name&access_token={Uri.EscapeDataString(request.AccessToken)}");
+            using var fbRequest = new HttpRequestMessage(HttpMethod.Get, "/me?fields=id,email,name");
+            fbRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", request.AccessToken);
+            var response = await client.SendAsync(fbRequest);
 
             if (!response.IsSuccessStatusCode)
             {
