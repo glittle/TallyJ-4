@@ -336,15 +336,21 @@ const handleFacebookLogin = async () => {
       FB.login(
         async (res: any) => {
           clearTimeout(timeoutId);
-          if (res.authResponse?.accessToken) {
-            await authStore.facebookLogin(res.authResponse.accessToken);
-            showSuccessMessage(t("auth.loginSuccess"));
-            const redirectPath = (route.query.redirect as string) || "/dashboard";
-            router.push(redirectPath);
-          } else {
-            showErrorMessage(t("voting.auth.facebook.cancelled"));
+          try {
+            if (res.authResponse?.accessToken) {
+              await authStore.facebookLogin(res.authResponse.accessToken);
+              showSuccessMessage(t("auth.loginSuccess"));
+              const redirectPath = (route.query.redirect as string) || "/dashboard";
+              await router.push(redirectPath);
+            } else {
+              showErrorMessage(t("voting.auth.facebook.cancelled"));
+            }
+          } catch (callbackError) {
+            console.error("Error during Facebook login callback:", callbackError);
+            showErrorMessage(t("auth.loginFailed"));
+          } finally {
+            loading.value = false;
           }
-          loading.value = false;
         },
         { scope: "email" },
       );
