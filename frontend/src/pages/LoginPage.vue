@@ -588,7 +588,7 @@ onBeforeUnmount(() => {
             <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 3c-5.523 0-10 3.518-10 7.857 0 2.805 1.821 5.253 4.582 6.643-.243.91-1.025 3.861-1.053 4.004-.035.18.118.256.24.167.098-.071 3.253-2.203 4.536-3.111.551.082 1.118.125 1.695.125 5.523 0 10-3.518 10-7.857C22 6.518 17.523 3 12 3z" fill="#3E2723"/>
             </svg>
-            <span>{{ t("voting.auth.kakao.login") || 'Login with Kakao' }}</span>
+            <span>{{ t("voting.auth.kakao.button") || 'Login with Kakao' }}</span>
           </el-button>
         </div>
         <div v-else-if="kakaoError">
