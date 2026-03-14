@@ -216,9 +216,13 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  async function kakaoLogin(accessToken: string) {
+  async function processOAuthLogin(
+    serviceFn: (accessToken: string) => Promise<any>,
+    accessToken: string,
+    fallbackAuthMethod: string
+  ) {
     try {
-      const response = await authService.kakaoLogin(accessToken);
+      const response = await serviceFn(accessToken);
 
       const userData = await fetchUserInfo();
 
@@ -233,7 +237,8 @@ export const useAuthStore = defineStore("auth", () => {
         const cookieData = secureTokenService.refreshAuthData();
         email.value = cookieData.email || response.email;
         name.value = cookieData.name || response.name || null;
-        authMethod.value = cookieData.authMethod || response.authMethod || "Kakao";
+        authMethod.value =
+          cookieData.authMethod || response.authMethod || fallbackAuthMethod;
       }
 
       requires2FA.value = false;
@@ -247,6 +252,10 @@ export const useAuthStore = defineStore("auth", () => {
       handleApiError(error as any);
       throw error;
     }
+  }
+
+  async function kakaoLogin(accessToken: string) {
+    return processOAuthLogin(authService.kakaoLogin, accessToken, "Kakao");
   }
 
   async function tellerLogin(electionGuid: string, accessCode: string) {
