@@ -2294,6 +2294,10 @@ export type FacebookAuthForVoterDto = {
     accessToken: string;
 };
 
+export type FacebookLoginRequest = {
+    accessToken: string;
+};
+
 /**
  * Data transfer object for mapping a source column to a target field during import.
  */
@@ -2618,6 +2622,10 @@ export type KakaoAuthForVoterDto = {
     /**
      * The Kakao access token obtained from the Kakao Login flow.
      */
+    accessToken: string;
+};
+
+export type KakaoLoginRequest = {
     accessToken: string;
 };
 
@@ -5964,6 +5972,34 @@ export type PostApiAuthTelegramData = {
 };
 
 export type PostApiAuthTelegramResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthFacebookData = {
+    body?: FacebookLoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/facebook';
+};
+
+export type PostApiAuthFacebookResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthKakaoData = {
+    body?: KakaoLoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/kakao';
+};
+
+export type PostApiAuthKakaoResponses = {
     /**
      * OK
      */
