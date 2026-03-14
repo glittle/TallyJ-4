@@ -1338,7 +1338,7 @@ public class AuthController : ControllerBase
 
         return (user, isNewUser);
     }
-private async Task<(AppUser user, bool isNewUser)> ProcessGoogleUserAsync(
+    private async Task<(AppUser user, bool isNewUser)> ProcessGoogleUserAsync(
         string email,
         string googleId,
         string? displayName,
