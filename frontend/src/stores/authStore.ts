@@ -183,6 +183,81 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  async function facebookLogin(accessToken: string) {
+    try {
+      const response = await authService.facebookLogin(accessToken);
+
+      const userData = await fetchUserInfo();
+
+      if (userData) {
+        const secure = window.location.protocol === "https:" ? "; secure" : "";
+        document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
+        if (userData.name) {
+          document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
+        }
+        document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
+      } else {
+        const cookieData = secureTokenService.refreshAuthData();
+        email.value = cookieData.email || response.email;
+        name.value = cookieData.name || response.name || null;
+        authMethod.value = cookieData.authMethod || response.authMethod || "Facebook";
+      }
+
+      requires2FA.value = false;
+      pending2FAEmail.value = null;
+
+      tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
+
+      return response;
+    } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
+      handleApiError(error as any);
+      throw error;
+    }
+  }
+
+  async function processOAuthLogin(
+    serviceFn: (accessToken: string) => Promise<any>,
+    accessToken: string,
+    fallbackAuthMethod: string
+  ) {
+    try {
+      const response = await serviceFn(accessToken);
+
+      const userData = await fetchUserInfo();
+
+      if (userData) {
+        const secure = window.location.protocol === "https:" ? "; secure" : "";
+        document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
+        if (userData.name) {
+          document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
+        }
+        document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
+      } else {
+        const cookieData = secureTokenService.refreshAuthData();
+        email.value = cookieData.email || response.email;
+        name.value = cookieData.name || response.name || null;
+        authMethod.value =
+          cookieData.authMethod || response.authMethod || fallbackAuthMethod;
+      }
+
+      requires2FA.value = false;
+      pending2FAEmail.value = null;
+
+      tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
+
+      return response;
+    } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
+      handleApiError(error as any);
+      throw error;
+    }
+  }
+
+  async function kakaoLogin(accessToken: string) {
+    return processOAuthLogin(authService.kakaoLogin, accessToken, "Kakao");
+  }
+
   async function tellerLogin(electionGuid: string, accessCode: string) {
     try {
       const response = await authService.tellerLogin(electionGuid, accessCode);
@@ -257,6 +332,8 @@ export const useAuthStore = defineStore("auth", () => {
     login,
     googleOneTapLogin,
     telegramLogin,
+    facebookLogin,
+    kakaoLogin,
     tellerLogin,
     logout,
   };

@@ -1168,6 +1168,70 @@
         }
       }
     },
+    "/api/Auth/facebook": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Helper method to handle the shared logic of finding or creating a user from Google authentication,\nlinking their Google account, assigning roles, generating tokens, and setting cookies.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacebookLoginRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacebookLoginRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacebookLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/kakao": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authenticates a user using Kakao for officer / teller flows.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KakaoLoginRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KakaoLoginRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/KakaoLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auth/logout": {
       "get": {
         "tags": [
@@ -9264,6 +9328,19 @@
         "additionalProperties": false,
         "description": "Data transfer object for Facebook OAuth authentication for online voters."
       },
+      "FacebookLoginRequest": {
+        "required": [
+          "accessToken"
+        ],
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "FieldMappingDto": {
         "type": "object",
         "properties": {
@@ -9726,6 +9803,19 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object for Kakao OAuth authentication for online voters."
+      },
+      "KakaoLoginRequest": {
+        "required": [
+          "accessToken"
+        ],
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "LocationAnalysisDto": {
         "type": "object",

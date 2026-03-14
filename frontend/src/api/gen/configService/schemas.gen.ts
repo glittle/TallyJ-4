@@ -3171,6 +3171,20 @@ export const FacebookAuthForVoterDtoSchema = {
     description: 'Data transfer object for Facebook OAuth authentication for online voters.'
 } as const;
 
+export const FacebookLoginRequestSchema = {
+    required: [
+        'accessToken'
+    ],
+    type: 'object',
+    properties: {
+        accessToken: {
+            minLength: 1,
+            type: 'string'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const FieldMappingDtoSchema = {
     type: 'object',
     properties: {
@@ -3646,6 +3660,20 @@ export const KakaoAuthForVoterDtoSchema = {
     },
     additionalProperties: false,
     description: 'Data transfer object for Kakao OAuth authentication for online voters.'
+} as const;
+
+export const KakaoLoginRequestSchema = {
+    required: [
+        'accessToken'
+    ],
+    type: 'object',
+    properties: {
+        accessToken: {
+            minLength: 1,
+            type: 'string'
+        }
+    },
+    additionalProperties: false
 } as const;
 
 export const LocationAnalysisDtoSchema = {

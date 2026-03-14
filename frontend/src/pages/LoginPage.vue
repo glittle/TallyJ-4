@@ -7,21 +7,24 @@ declare global {
   }
 }
 
-import {
-  ref,
-  reactive,
-  computed,
-  onMounted,
-  watch,
-  nextTick,
-  onBeforeUnmount,
-} from "vue";
-import { useI18n } from "vue-i18n";
-import { useRouter, useRoute } from "vue-router";
-import { useAuthStore } from "../stores/authStore";
+declare const FB: any;
+declare const Kakao: any;
+
 import { useNotifications } from "@/composables/useNotifications";
 import type { FormInstance, FormRules } from "element-plus";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import TelegramLoginButton from "../components/auth/TelegramLoginButton.vue";
+import { useAuthStore } from "../stores/authStore";
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -142,6 +145,22 @@ const googleClientId = ref<string | null>(null);
 const googleReady = ref(false);
 const telegramBotUsername = ref<string | null>(null);
 const telegramReady = ref(false);
+
+const fbReady = ref(false);
+const fbError = ref(false);
+const fbScriptLoaded = ref(false);
+
+const kakaoReady = ref(false);
+const kakaoError = ref(false);
+const kakaoScriptLoaded = ref(false);
+
+const authConfig = ref<{
+  googleClientId?: string;
+  facebookAppId?: string;
+  kakaoJsKey?: string;
+  telegramBotUsername?: string;
+} | null>(null);
+
 const gisScriptLoaded = ref(false);
 let gisCleanup: (() => void) | null = null;
 
@@ -209,18 +228,24 @@ const loadGisScript = (): Promise<void> => {
   });
 };
 
-const fetchGoogleClientId = async (): Promise<string | null> => {
+const fetchAuthConfig = async () => {
+  if (authConfig.value) return authConfig.value;
   try {
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
     const resp = await fetch(`${apiUrl}/api/public/auth-config`);
     if (!resp.ok) return null;
     const json = await resp.json();
-    telegramBotUsername.value = json?.data?.telegramBotUsername || null;
+    authConfig.value = json?.data ?? null;
+    telegramBotUsername.value = authConfig.value?.telegramBotUsername || null;
     telegramReady.value = Boolean(telegramBotUsername.value);
-    return json?.data?.googleClientId || null;
+    return authConfig.value;
   } catch {
     return null;
   }
+};
+const fetchGoogleClientId = async (): Promise<string | null> => {
+  const config = await fetchAuthConfig();
+  return config?.googleClientId || null;
 };
 const renderGoogleButton = () => {
   nextTick(() => {
@@ -293,6 +318,176 @@ const teardownGoogleOneTap = () => {
   }
 };
 
+const handleFacebookLogin = async () => {
+  try {
+    loading.value = true;
+    if (typeof FB === "undefined") {
+      console.error("Facebook SDK not loaded");
+      showErrorMessage(t("voting.auth.facebook.error"));
+      loading.value = false;
+      return;
+    }
+    const timeoutId = setTimeout(() => {
+      console.warn("Facebook login timeout - callback never called");
+      loading.value = false;
+      showErrorMessage(t("voting.auth.facebook.popupBlocked"));
+    }, 10000);
+    try {
+      FB.login(
+        async (res: any) => {
+          clearTimeout(timeoutId);
+          try {
+            if (res.authResponse?.accessToken) {
+              await authStore.facebookLogin(res.authResponse.accessToken);
+              showSuccessMessage(t("auth.loginSuccess"));
+              const redirectPath =
+                (route.query.redirect as string) || "/dashboard";
+              await router.push(redirectPath);
+            } else {
+              showErrorMessage(t("voting.auth.facebook.cancelled"));
+            }
+          } catch (callbackError) {
+            console.error(
+              "Error during Facebook login callback:",
+              callbackError,
+            );
+            showErrorMessage(t("auth.loginFailed"));
+          } finally {
+            loading.value = false;
+          }
+        },
+        { scope: "email" },
+      );
+    } catch (syncError) {
+      console.error("FB.login threw synchronously:", syncError);
+      clearTimeout(timeoutId);
+      showErrorMessage(t("voting.auth.facebook.error"));
+      loading.value = false;
+    }
+  } catch (error) {
+    console.error("Error with Facebook authentication:", error);
+    showErrorMessage(t("auth.loginFailed"));
+    loading.value = false;
+  }
+};
+
+const loadFacebookSdk = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (fbScriptLoaded.value || typeof FB !== "undefined") {
+      fbScriptLoaded.value = true;
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://connect.facebook.net/en_US/sdk.js";
+    script.async = true;
+    script.defer = true;
+    script.crossOrigin = "anonymous";
+    script.onload = () => {
+      fbScriptLoaded.value = true;
+      resolve();
+    };
+    script.onerror = () => reject(new Error("Failed to load Facebook SDK"));
+    document.head.appendChild(script);
+  });
+};
+
+const initFacebookSdk = async () => {
+  try {
+    fbError.value = false;
+    const config = await fetchAuthConfig();
+    if (!config?.facebookAppId) {
+      fbError.value = true;
+      return;
+    }
+    await loadFacebookSdk();
+    FB.init({
+      appId: config.facebookAppId,
+      cookie: true,
+      xfbml: true,
+      version: "v18.0",
+    });
+    fbReady.value = true;
+  } catch (error) {
+    console.error("Failed to initialize Facebook SDK:", error);
+    fbError.value = true;
+  }
+};
+
+const handleKakaoLogin = async () => {
+  try {
+    loading.value = true;
+    const timeoutId = setTimeout(() => {
+      loading.value = false;
+      showErrorMessage(t("voting.auth.kakao.popupBlocked"));
+    }, 10000);
+    Kakao.Auth.login({
+      success: async (authObj: any) => {
+        clearTimeout(timeoutId);
+        try {
+          await authStore.kakaoLogin(authObj.access_token);
+          showSuccessMessage(t("auth.loginSuccess"));
+          const redirectPath = (route.query.redirect as string) || "/dashboard";
+          router.push(redirectPath);
+        } catch (error) {
+          console.error("Kakao login success handler failed:", error);
+          showErrorMessage(t("auth.loginFailed"));
+        } finally {
+          loading.value = false;
+        }
+      },
+      fail: (err: any) => {
+        clearTimeout(timeoutId);
+        console.error("Kakao login failed:", err);
+        showErrorMessage(t("auth.loginFailed"));
+        loading.value = false;
+      },
+    });
+  } catch (error) {
+    console.error("Error with Kakao authentication:", error);
+    showErrorMessage(t("auth.loginFailed"));
+    loading.value = false;
+  }
+};
+
+const loadKakaoSdk = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (kakaoScriptLoaded.value || typeof Kakao !== "undefined") {
+      kakaoScriptLoaded.value = true;
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js";
+    script.async = true;
+    script.onload = () => {
+      kakaoScriptLoaded.value = true;
+      resolve();
+    };
+    script.onerror = () => reject(new Error("Failed to load Kakao SDK"));
+    document.head.appendChild(script);
+  });
+};
+
+const initKakaoSdk = async () => {
+  try {
+    kakaoError.value = false;
+    const config = await fetchAuthConfig();
+    if (!config?.kakaoJsKey) {
+      kakaoError.value = true;
+      return;
+    }
+    await loadKakaoSdk();
+    if (!Kakao.isInitialized()) {
+      Kakao.init(config.kakaoJsKey);
+    }
+    kakaoReady.value = true;
+  } catch (error) {
+    console.error("Failed to initialize Kakao SDK:", error);
+    kakaoError.value = true;
+  }
+};
+
 const handleGoogleLogin = () => {
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
   const redirectParam = route.query.redirect
@@ -319,6 +514,8 @@ watch(
     if (newMode === "officer") {
       // Initialize Google One Tap when switching into officer mode
       initGoogleOneTap();
+      initFacebookSdk();
+      initKakaoSdk();
     } else if (oldMode === "officer") {
       // Tear down Google One Tap when leaving officer mode
       teardownGoogleOneTap();
@@ -333,6 +530,8 @@ onMounted(() => {
   globalThis.addEventListener("keydown", handleKeydown);
   if (mode.value === "officer") {
     initGoogleOneTap();
+    initFacebookSdk();
+    initKakaoSdk();
   }
 });
 
@@ -387,6 +586,69 @@ onBeforeUnmount(() => {
           />
           <span>{{ t("auth.googleLogin") }}</span>
         </el-button>
+
+        <div v-if="fbReady" class="facebook-btn-container">
+          <el-button
+            class="facebook-btn"
+            @click="handleFacebookLogin"
+            :loading="loading"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                fill="#1877F2"
+              />
+            </svg>
+            <span>{{
+              t("voting.auth.facebook.button") || "Login with Facebook"
+            }}</span>
+          </el-button>
+        </div>
+        <div v-else-if="fbError">
+          <el-alert
+            :title="
+              t('voting.auth.facebook.error') || 'Facebook login unavailable'
+            "
+            type="warning"
+            :closable="false"
+          />
+        </div>
+
+        <div v-if="kakaoReady" class="kakao-btn-container">
+          <el-button
+            class="kakao-btn"
+            @click="handleKakaoLogin"
+            :loading="loading"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 3c-5.523 0-10 3.518-10 7.857 0 2.805 1.821 5.253 4.582 6.643-.243.91-1.025 3.861-1.053 4.004-.035.18.118.256.24.167.098-.071 3.253-2.203 4.536-3.111.551.082 1.118.125 1.695.125 5.523 0 10-3.518 10-7.857C22 6.518 17.523 3 12 3z"
+                fill="#3E2723"
+              />
+            </svg>
+            <span>{{
+              t("voting.auth.kakao.button") || "Login with Kakao"
+            }}</span>
+          </el-button>
+        </div>
+        <div v-else-if="kakaoError">
+          <el-alert
+            :title="t('voting.auth.kakao.error') || 'Kakao login unavailable'"
+            type="warning"
+            :closable="false"
+          />
+        </div>
+
         <div v-if="telegramReady && telegramBotUsername" class="telegram-btn">
           <TelegramLoginButton
             :bot-username="telegramBotUsername"
@@ -590,10 +852,72 @@ onBeforeUnmount(() => {
     height: 18px;
   }
 
+  .facebook-btn-container,
+  .kakao-btn-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .facebook-btn,
+  hover {
+    text-decoration: underline;
+  }
+
+  .social-login {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .el-divider--horizontal {
+    margin: 2em 0;
+  }
+
+  .google-btn-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .google-btn {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .google-btn img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .facebook-btn-container,
+  .kakao-btn-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .facebook-btn,
+  .kakao-btn {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
   .telegram-btn {
     display: flex;
     justify-content: center;
     width: 100%;
+    margin-top: 10px;
   }
 }
 </style>
