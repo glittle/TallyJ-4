@@ -1094,18 +1094,6 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Helper method to handle the shared logic of finding or creating a user from Google authentication,
-    /// linking their Google account, assigning roles, generating tokens, and setting cookies.
-    /// </summary>
-    /// <param name="email">The user's email from Google.</param>
-    /// <param name="googleId">The user's Google ID.</param>
-    /// <param name="displayName">The user's display name from Google.</param>
-    /// <param name="clientIp">The client IP address for audit logging.</param>
-    /// <param name="userAgent">The user agent string for audit logging.</param>
-    /// <param name="eventDetails">Details for the security audit log.</param>
-    /// <returns>The authenticated user and a boolean indicating if the user was newly created.</returns>
-    
-    /// <summary>
     /// Authenticates a user using Facebook for officer / teller flows.
     /// </summary>
     [HttpPost("facebook")]
