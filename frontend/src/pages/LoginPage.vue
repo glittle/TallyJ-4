@@ -420,11 +420,17 @@ const handleKakaoLogin = async () => {
     Kakao.Auth.login({
       success: async (authObj: any) => {
         clearTimeout(timeoutId);
-        await authStore.kakaoLogin(authObj.access_token);
-        showSuccessMessage(t("auth.loginSuccess"));
-        const redirectPath = (route.query.redirect as string) || "/dashboard";
-        router.push(redirectPath);
-        loading.value = false;
+        try {
+          await authStore.kakaoLogin(authObj.access_token);
+          showSuccessMessage(t("auth.loginSuccess"));
+          const redirectPath = (route.query.redirect as string) || "/dashboard";
+          router.push(redirectPath);
+        } catch (error) {
+          console.error("Kakao login success handler failed:", error);
+          showErrorMessage(t("auth.loginFailed"));
+        } finally {
+          loading.value = false;
+        }
       },
       fail: (err: any) => {
         clearTimeout(timeoutId);
