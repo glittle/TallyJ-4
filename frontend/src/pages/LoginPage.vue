@@ -10,21 +10,21 @@ declare global {
 declare const FB: any;
 declare const Kakao: any;
 
-import {
-  ref,
-  reactive,
-  computed,
-  onMounted,
-  watch,
-  nextTick,
-  onBeforeUnmount,
-} from "vue";
-import { useI18n } from "vue-i18n";
-import { useRouter, useRoute } from "vue-router";
-import { useAuthStore } from "../stores/authStore";
 import { useNotifications } from "@/composables/useNotifications";
 import type { FormInstance, FormRules } from "element-plus";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import TelegramLoginButton from "../components/auth/TelegramLoginButton.vue";
+import { useAuthStore } from "../stores/authStore";
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -340,13 +340,17 @@ const handleFacebookLogin = async () => {
             if (res.authResponse?.accessToken) {
               await authStore.facebookLogin(res.authResponse.accessToken);
               showSuccessMessage(t("auth.loginSuccess"));
-              const redirectPath = (route.query.redirect as string) || "/dashboard";
+              const redirectPath =
+                (route.query.redirect as string) || "/dashboard";
               await router.push(redirectPath);
             } else {
               showErrorMessage(t("voting.auth.facebook.cancelled"));
             }
           } catch (callbackError) {
-            console.error("Error during Facebook login callback:", callbackError);
+            console.error(
+              "Error during Facebook login callback:",
+              callbackError,
+            );
             showErrorMessage(t("auth.loginFailed"));
           } finally {
             loading.value = false;
@@ -584,27 +588,65 @@ onBeforeUnmount(() => {
         </el-button>
 
         <div v-if="fbReady" class="facebook-btn-container">
-          <el-button class="facebook-btn" @click="handleFacebookLogin" :loading="loading">
-            <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/>
+          <el-button
+            class="facebook-btn"
+            @click="handleFacebookLogin"
+            :loading="loading"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                fill="#1877F2"
+              />
             </svg>
-            <span>{{ t("voting.auth.facebook.login") || 'Login with Facebook' }}</span>
+            <span>{{
+              t("voting.auth.facebook.button") || "Login with Facebook"
+            }}</span>
           </el-button>
         </div>
         <div v-else-if="fbError">
-          <el-alert :title="t('voting.auth.facebook.error') || 'Facebook login unavailable'" type="warning" :closable="false" />
+          <el-alert
+            :title="
+              t('voting.auth.facebook.error') || 'Facebook login unavailable'
+            "
+            type="warning"
+            :closable="false"
+          />
         </div>
 
         <div v-if="kakaoReady" class="kakao-btn-container">
-          <el-button class="kakao-btn" @click="handleKakaoLogin" :loading="loading">
-            <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 3c-5.523 0-10 3.518-10 7.857 0 2.805 1.821 5.253 4.582 6.643-.243.91-1.025 3.861-1.053 4.004-.035.18.118.256.24.167.098-.071 3.253-2.203 4.536-3.111.551.082 1.118.125 1.695.125 5.523 0 10-3.518 10-7.857C22 6.518 17.523 3 12 3z" fill="#3E2723"/>
+          <el-button
+            class="kakao-btn"
+            @click="handleKakaoLogin"
+            :loading="loading"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 3c-5.523 0-10 3.518-10 7.857 0 2.805 1.821 5.253 4.582 6.643-.243.91-1.025 3.861-1.053 4.004-.035.18.118.256.24.167.098-.071 3.253-2.203 4.536-3.111.551.082 1.118.125 1.695.125 5.523 0 10-3.518 10-7.857C22 6.518 17.523 3 12 3z"
+                fill="#3E2723"
+              />
             </svg>
-            <span>{{ t("voting.auth.kakao.button") || 'Login with Kakao' }}</span>
+            <span>{{
+              t("voting.auth.kakao.button") || "Login with Kakao"
+            }}</span>
           </el-button>
         </div>
         <div v-else-if="kakaoError">
-          <el-alert :title="t('voting.auth.kakao.error') || 'Kakao login unavailable'" type="warning" :closable="false" />
+          <el-alert
+            :title="t('voting.auth.kakao.error') || 'Kakao login unavailable'"
+            type="warning"
+            :closable="false"
+          />
         </div>
 
         <div v-if="telegramReady && telegramBotUsername" class="telegram-btn">
@@ -810,14 +852,60 @@ onBeforeUnmount(() => {
     height: 18px;
   }
 
-  .facebook-btn-container, .kakao-btn-container {
+  .facebook-btn-container,
+  .kakao-btn-container {
     display: flex;
     justify-content: center;
     width: 100%;
     margin-top: 10px;
   }
 
-  .facebook-btn, .kakao-btn {
+  .facebook-btn,
+  hover {
+    text-decoration: underline;
+  }
+
+  .social-login {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .el-divider--horizontal {
+    margin: 2em 0;
+  }
+
+  .google-btn-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .google-btn {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .google-btn img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .facebook-btn-container,
+  .kakao-btn-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .facebook-btn,
+  .kakao-btn {
     width: 80%;
     display: flex;
     align-items: center;
