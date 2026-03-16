@@ -330,8 +330,7 @@ export const postApiAuthTelegram = <ThrowOnError extends boolean = false>(option
 });
 
 /**
- * Helper method to handle the shared logic of finding or creating a user from Google authentication,
- * linking their Google account, assigning roles, generating tokens, and setting cookies.
+ * Authenticates a user using Facebook for officer / teller flows.
  */
 export const postApiAuthFacebook = <ThrowOnError extends boolean = false>(options?: Options<PostApiAuthFacebookData, ThrowOnError>) => (options?.client ?? client).post<PostApiAuthFacebookResponses, unknown, ThrowOnError>({
     url: '/api/Auth/facebook',

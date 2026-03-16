@@ -1,10 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Writers;
+using Microsoft.OpenApi;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using Swashbuckle.AspNetCore.Swagger;

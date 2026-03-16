@@ -107,10 +107,14 @@ const requestCode = async () => {
 };
 
 const handleLogin = async () => {
-  if (!loginFormRef.value) return;
+  if (!loginFormRef.value) {
+    return;
+  }
 
   await loginFormRef.value.validate(async (valid) => {
-    if (!valid) return;
+    if (!valid) {
+      return;
+    }
 
     loading.value = true;
     try {
@@ -229,11 +233,15 @@ const loadGisScript = (): Promise<void> => {
 };
 
 const fetchAuthConfig = async () => {
-  if (authConfig.value) return authConfig.value;
+  if (authConfig.value) {
+    return authConfig.value;
+  }
   try {
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
     const resp = await fetch(`${apiUrl}/api/public/auth-config`);
-    if (!resp.ok) return null;
+    if (!resp.ok) {
+      return null;
+    }
     const json = await resp.json();
     authConfig.value = json?.data ?? null;
     telegramBotUsername.value = authConfig.value?.telegramBotUsername || null;
@@ -574,7 +582,9 @@ onBeforeUnmount(() => {
           v-if="googleReady"
           ref="googleButtonRef"
           class="google-btn-container"
-        ></div>
+        >
+          <!-- filled by Google One Tap -->
+        </div>
         <el-button
           v-if="!googleReady"
           class="google-btn"
@@ -590,8 +600,8 @@ onBeforeUnmount(() => {
         <div v-if="fbReady" class="facebook-btn-container">
           <el-button
             class="facebook-btn"
-            @click="handleFacebookLogin"
             :loading="loading"
+            @click="handleFacebookLogin"
           >
             <svg
               viewBox="0 0 24 24"
@@ -609,7 +619,7 @@ onBeforeUnmount(() => {
             }}</span>
           </el-button>
         </div>
-        <div v-else-if="fbError">
+        <!-- <div v-else-if="fbError">
           <el-alert
             :title="
               t('voting.auth.facebook.error') || 'Facebook login unavailable'
@@ -617,13 +627,13 @@ onBeforeUnmount(() => {
             type="warning"
             :closable="false"
           />
-        </div>
+        </div> -->
 
         <div v-if="kakaoReady" class="kakao-btn-container">
           <el-button
             class="kakao-btn"
-            @click="handleKakaoLogin"
             :loading="loading"
+            @click="handleKakaoLogin"
           >
             <svg
               viewBox="0 0 24 24"
@@ -641,13 +651,13 @@ onBeforeUnmount(() => {
             }}</span>
           </el-button>
         </div>
-        <div v-else-if="kakaoError">
+        <!-- <div v-else-if="kakaoError">
           <el-alert
             :title="t('voting.auth.kakao.error') || 'Kakao login unavailable'"
             type="warning"
             :closable="false"
           />
-        </div>
+        </div> -->
 
         <div v-if="telegramReady && telegramBotUsername" class="telegram-btn">
           <TelegramLoginButton

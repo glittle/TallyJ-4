@@ -139,6 +139,17 @@ JWT user IDs are stored in the `sub` claim. On .NET 10, code that reads the curr
 
 ## Troubleshooting
 
+### NuGet restore fails with `Value cannot be null. (Parameter 'path1')`
+
+Delete the `backend\obj` folder and rebuild:
+
+```bat
+rmdir /s /q backend\obj
+dotnet build backend/Backend.csproj
+```
+
+This is a known issue with .NET 10 SDK tooling where stale NuGet cache state in `obj` causes restore failures.
+
 ### `dotnet ef` cannot connect to SQL Server
 
 - Confirm the SQL Server instance is running
