@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
@@ -10,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
 using System.Globalization;
-using System.Collections.Generic;
 
 using Backend.Domain.Context;
 using Backend.Domain.Identity;
@@ -23,20 +21,17 @@ using FluentValidation.AspNetCore;
 using Backend.Application.Services.Auth;
 using Backend.Localization;
 using Backend.Services;
+using Mapster;
 using System.Reflection;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.FileProviders;
 
 Console.WriteLine("Starting up..."); // for server log files
 
-var builder = WebApplication.CreateBuilder(args);
-ConfigureBuilder(builder);
-ConfigureServices(builder);
+var machineName = Environment.MachineName;
+var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
-var app = builder.Build();
-await ConfigureApp(app, builder.Configuration);
-
-await app.RunAsync();
-
-static void ConfigureBuilder(WebApplicationBuilder builder)
+void ConfigureBuilder(WebApplicationBuilder builder)
 {
     Log.Logger = new LoggerConfiguration()
         .ConfigureWithColorfulConsole(builder.Configuration)
@@ -45,10 +40,27 @@ static void ConfigureBuilder(WebApplicationBuilder builder)
     builder.Host.UseSerilog();
 }
 
-static void ConfigureServices(WebApplicationBuilder builder)
+void ConfigureServices(WebApplicationBuilder builder)
 {
-    var builderConfiguration = builder.Configuration;
     var services = builder.Services;
+    var builderConfiguration = builder.Configuration;
+
+    var aspNetEnvironmentCode = builder.Environment.EnvironmentName;
+
+    builderConfiguration.AddJsonFile($"appsettings.{aspNetEnvironmentCode}.json", optional: true, reloadOnChange: true);
+    builderConfiguration.AddJsonFile($"appsettings.{machineName}.json", optional: true, reloadOnChange: true);
+    builderConfiguration.AddJsonFile($"c:\\dev\\tallyj\\v4\\appsettings.json", optional: true, reloadOnChange: true);
+    builderConfiguration.AddJsonFile($"c:\\AppSettings\\TallyJ4.json", optional: true, reloadOnChange: true);
+
+    var filesAttempted = builder.Configuration.Sources
+        .OfType<JsonConfigurationSource>()
+        .Where(s => s.Path != null)
+        .Select(s => Path.Combine((s.FileProvider as PhysicalFileProvider)?.Root ?? "", s.Path!));
+
+    Log.Information(
+      "Configuration files potentially loaded:\n{Files}",
+      string.Join("\n", filesAttempted)
+    );
 
     if (!builder.Environment.IsEnvironment("Testing"))
     {
@@ -134,7 +146,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     services.AddFluentValidationAutoValidation();
     services.AddValidatorsFromAssemblyContaining<Program>();
 
-    services.AddAutoMapper(_ => { }, AppDomain.CurrentDomain.GetAssemblies());
+    services.AddMapster();
 
     RegisterApplicationServices(services);
     RegisterAuthServices(services);
@@ -146,10 +158,13 @@ static void ConfigureServices(WebApplicationBuilder builder)
     services.AddExceptionHandler<GlobalExceptionHandler>();
     services.AddProblemDetails();
 
-    ConfigureSwagger(services);
+    if (isDevelopment)
+    {
+        ConfigureSwagger(services);
+    }
 }
 
-static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
+void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
 {
     services.AddAuthentication(options =>
     {
@@ -222,7 +237,7 @@ static void ConfigureAuthentication(IServiceCollection services, IConfiguration 
     }
 }
 
-static void ConfigureIdentityOptions(IServiceCollection services)
+void ConfigureIdentityOptions(IServiceCollection services)
 {
     services.Configure<IdentityOptions>(options =>
     {
@@ -239,7 +254,7 @@ static void ConfigureIdentityOptions(IServiceCollection services)
     });
 }
 
-static void ConfigureAuthorization(IServiceCollection services)
+void ConfigureAuthorization(IServiceCollection services)
 {
     services.AddAuthorization(options =>
     {
@@ -262,7 +277,7 @@ static void ConfigureAuthorization(IServiceCollection services)
     services.AddScoped<IAuthorizationHandler, Backend.Authorization.SuperAdminHandler>();
 }
 
-static void RegisterApplicationServices(IServiceCollection services)
+void RegisterApplicationServices(IServiceCollection services)
 {
     services.AddScoped<Backend.Services.IElectionService, Backend.Services.ElectionService>();
     services.AddScoped<Backend.Services.ILocationService, Backend.Services.LocationService>();
@@ -286,7 +301,7 @@ static void RegisterApplicationServices(IServiceCollection services)
     services.AddScoped<Backend.Services.IPeopleImportService, Backend.Services.PeopleImportService>();
 }
 
-static void RegisterAuthServices(IServiceCollection services)
+void RegisterAuthServices(IServiceCollection services)
 {
     services.AddScoped<JwtTokenService>();
     services.AddScoped<EmailService>();
@@ -298,7 +313,7 @@ static void RegisterAuthServices(IServiceCollection services)
     services.AddScoped<ISecurityAuditService, SecurityAuditService>();
 }
 
-static void RegisterBackgroundServices(IServiceCollection services)
+void RegisterBackgroundServices(IServiceCollection services)
 {
     services.AddHostedService<RefreshTokenCleanupService>();
 
@@ -307,7 +322,7 @@ static void RegisterBackgroundServices(IServiceCollection services)
     services.AddHostedService(sp => sp.GetRequiredService<VoteCountBroadcastService>());
 }
 
-static void ConfigureSwagger(IServiceCollection services)
+void ConfigureSwagger(IServiceCollection services)
 {
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen(options =>
@@ -359,9 +374,9 @@ static void ConfigureSwagger(IServiceCollection services)
     });
 }
 
-static async Task ConfigureApp(WebApplication app, IConfiguration configuration)
+async Task ConfigureApp(WebApplication app, IConfiguration configuration)
 {
-    if (app.Environment.IsDevelopment())
+    if (isDevelopment)
     {
         app.WriteOpenApiSpecToFile(Path.Combine("..", "frontend", "openApi", "tallyj.json"));
 
@@ -382,7 +397,7 @@ static async Task ConfigureApp(WebApplication app, IConfiguration configuration)
 
     app.UseExceptionHandler();
 
-    if (app.Environment.IsDevelopment())
+    if (isDevelopment)
     {
         app.UseSwagger();
         app.UseSwaggerUI(options =>
@@ -426,3 +441,12 @@ static async Task ConfigureApp(WebApplication app, IConfiguration configuration)
 
     app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
 }
+
+var builder = WebApplication.CreateBuilder(args);
+ConfigureBuilder(builder);
+ConfigureServices(builder);
+
+var app = builder.Build();
+await ConfigureApp(app, builder.Configuration);
+
+await app.RunAsync();

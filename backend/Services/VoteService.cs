@@ -1,9 +1,10 @@
-using AutoMapper;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.Votes;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using MapsterMapper;
 
 namespace Backend.Services;
 

@@ -1,31 +1,28 @@
-﻿using AutoMapper;
 using Backend.Domain.Entities;
 using Backend.DTOs.Security;
+using Mapster;
+using System.Text.Json;
 
 namespace Backend.Mappings;
 
 /// <summary>
 /// AutoMapper profile for security audit log entity and DTO mappings.
 /// </summary>
-public class SecurityAuditLogProfile : Profile
+public class SecurityAuditLogProfile : IRegister
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="SecurityAuditLogProfile"/> class.
     /// </summary>
-    public SecurityAuditLogProfile()
+    public void Register(TypeAdapterConfig config)
     {
-        CreateMap<SecurityAuditLog, SecurityAuditLogDto>()
-            .ForMember(dest => dest.Metadata, opt => opt.MapFrom(src =>
+        config.NewConfig<SecurityAuditLog, SecurityAuditLogDto>()
+            .Map(dest => dest.Metadata, src =>
                 !string.IsNullOrEmpty(src.MetadataJson)
-                    ? System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(src.MetadataJson)
-                    : null));
+                    ? JsonSerializer.Deserialize<Dictionary<string, string>>(src.MetadataJson)
+                    : null);
 
-        CreateMap<CreateSecurityAuditLogDto, SecurityAuditLog>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.Timestamp, opt => opt.Ignore())
-            .ForMember(dest => dest.MetadataJson, opt => opt.MapFrom(src =>
-                src.Metadata != null ? System.Text.Json.JsonSerializer.Serialize(src.Metadata) : null));
+        config.NewConfig<CreateSecurityAuditLogDto, SecurityAuditLog>()
+            .Map(dest => dest.MetadataJson, src =>
+                src.Metadata != null ? JsonSerializer.Serialize(src.Metadata) : null);
     }
 }
-
-

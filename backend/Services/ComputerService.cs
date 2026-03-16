@@ -1,8 +1,9 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.Computers;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using MapsterMapper;
 
 namespace Backend.Services;
 

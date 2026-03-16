@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.Elections;
 using Backend.DTOs.SignalR;
@@ -8,6 +8,7 @@ using Backend.Models;
 using System.Security.Claims;
 using Backend.Helpers;
 using Backend.Domain.Enumerations;
+using MapsterMapper;
 
 namespace Backend.Services;
 

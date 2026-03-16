@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.FrontDesk;
 using Backend.DTOs.SignalR;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using System.Text.Json;
+using MapsterMapper;
 
 namespace Backend.Services;
 
