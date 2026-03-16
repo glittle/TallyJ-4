@@ -6,33 +6,52 @@ import {
   ElForm,
   ElFormItem,
   ElAutocomplete,
+  ElInput,
   ElButton,
   ElAlert,
   ElEmpty,
+  ElTag,
+  ElDivider,
 } from "element-plus";
+import { Delete } from "@element-plus/icons-vue";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 import { useNotifications } from "../../composables/useNotifications";
+import { useI18n } from "vue-i18n";
 import type { OnlineCandidate, OnlineVote } from "../../types";
 
 const router = useRouter();
 const route = useRoute();
+const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccess, showError } = useNotifications();
 
 const electionGuid = ref(route.params.electionId as string);
 const loading = ref(false);
 const submitting = ref(false);
-const votes = ref<
-  Array<{
-    position: number;
-    candidate: OnlineCandidate | null;
-    searchText: string;
-  }>
->([]);
+
+interface VoteSlot {
+  position: number;
+  candidate: OnlineCandidate | null;
+  freeText: string;
+  searchText: string;
+}
+
+const votes = ref<VoteSlot[]>([]);
+
+const selectionMode = computed(
+  () => onlineVotingStore.electionInfo?.onlineSelectionProcess ?? "A",
+);
+
+const isModeList = computed(() => selectionMode.value === "A");
+const isModeRandom = computed(() => selectionMode.value === "B");
+const isModeBoth = computed(() => selectionMode.value === "C");
+const showCandidateList = computed(
+  () => isModeList.value || isModeBoth.value,
+);
 
 onMounted(async () => {
   if (!onlineVotingStore.voterId) {
-    showError("Please authenticate first");
+    showError(t("voting.ballot.authRequired"));
     router.push({
       name: "voter-auth",
       query: { election: electionGuid.value },
@@ -56,22 +75,25 @@ async function loadElectionData() {
     ]);
 
     if (voteStatus.hasVoted) {
-      showError(voteStatus.message || "You have already voted");
+      showError(voteStatus.message || t("voting.ballot.alreadyVoted"));
       router.push({ name: "voter-confirmation" });
       return;
     }
 
     if (!electionInfo.isOpen) {
-      showError("Online voting is not currently open for this election");
+      showError(t("voting.ballot.notOpen"));
       return;
     }
 
-    await onlineVotingStore.loadCandidates(electionGuid.value);
+    if (showCandidateList.value) {
+      await onlineVotingStore.loadCandidates(electionGuid.value);
+    }
 
     const numToElect = electionInfo.numberToElect || 9;
     votes.value = Array.from({ length: numToElect }, (_, i) => ({
       position: i + 1,
       candidate: null,
+      freeText: "",
       searchText: "",
     }));
   } catch (error) {
@@ -81,51 +103,64 @@ async function loadElectionData() {
   }
 }
 
-const candidateOptions = computed(() => {
-  return onlineVotingStore.candidates.map((c) => ({
+const candidateOptions = computed(() =>
+  onlineVotingStore.candidates.map((c) => ({
     value: c.fullName,
     candidate: c,
-  }));
-});
+  })),
+);
 
-function handleCandidateSelect(position: number, value: string) {
-  const voteSlot = votes.value.find((v) => v.position === position);
-  if (!voteSlot) return;
+function handleCandidateSelect(position: number, item: { value: string; candidate: OnlineCandidate }) {
+  const slot = votes.value.find((v) => v.position === position);
+  if (!slot) return;
+  slot.candidate = item.candidate;
+  slot.searchText = item.value;
+  slot.freeText = "";
+}
 
-  const option = candidateOptions.value.find((opt) => opt.value === value);
-  if (option) {
-    voteSlot.candidate = option.candidate;
-    voteSlot.searchText = value;
+function handleSearchInput(position: number, value: string) {
+  const slot = votes.value.find((v) => v.position === position);
+  if (!slot) return;
+  if (slot.candidate && slot.candidate.fullName !== value) {
+    slot.candidate = null;
   }
+  slot.searchText = value;
 }
 
 function clearVote(position: number) {
-  const voteSlot = votes.value.find((v) => v.position === position);
-  if (voteSlot) {
-    voteSlot.candidate = null;
-    voteSlot.searchText = "";
+  const slot = votes.value.find((v) => v.position === position);
+  if (slot) {
+    slot.candidate = null;
+    slot.freeText = "";
+    slot.searchText = "";
   }
 }
 
-const canSubmit = computed(() => {
-  return votes.value.some((v) => v.candidate !== null);
-});
-
 const duplicateVotes = computed(() => {
-  const selectedCandidates = votes.value
+  const guids = votes.value
     .filter((v) => v.candidate !== null)
     .map((v) => v.candidate!.personGuid);
-
-  const duplicates = selectedCandidates.filter(
-    (guid, index) => selectedCandidates.indexOf(guid) !== index,
-  );
-
-  return duplicates.length > 0;
+  return guids.some((g, i) => guids.indexOf(g) !== i);
 });
+
+const hasAnyVote = computed(() =>
+  votes.value.some(
+    (v) => v.candidate !== null || v.freeText.trim().length > 0,
+  ),
+);
+
+const canSubmit = computed(() => hasAnyVote.value && !duplicateVotes.value);
+
+function getEffectiveName(slot: VoteSlot): string {
+  if (slot.candidate) return slot.candidate.fullName;
+  if (isModeRandom.value) return slot.freeText;
+  if (isModeBoth.value) return slot.searchText || slot.freeText;
+  return "";
+}
 
 async function handleSubmit() {
   if (duplicateVotes.value) {
-    showError("You cannot vote for the same candidate multiple times");
+    showError(t("voting.ballot.duplicateError"));
     return;
   }
 
@@ -133,10 +168,10 @@ async function handleSubmit() {
     submitting.value = true;
 
     const onlineVotes: OnlineVote[] = votes.value
-      .filter((v) => v.candidate !== null)
+      .filter((v) => v.candidate !== null || (isModeRandom.value && v.freeText.trim()) || (isModeBoth.value && (v.searchText.trim() || v.freeText.trim())))
       .map((v) => ({
-        personGuid: v.candidate!.personGuid,
-        voteName: v.candidate!.fullName,
+        personGuid: v.candidate?.personGuid,
+        voteName: getEffectiveName(v) || undefined,
         positionOnBallot: v.position,
       }));
 
@@ -146,7 +181,7 @@ async function handleSubmit() {
       votes: onlineVotes,
     });
 
-    showSuccess("Ballot submitted successfully!");
+    showSuccess(t("voting.ballot.submitSuccess"));
     router.push({ name: "voter-confirmation" });
   } catch (error) {
     console.error("Error submitting ballot:", error);
@@ -154,32 +189,41 @@ async function handleSubmit() {
     submitting.value = false;
   }
 }
+
+function backToElections() {
+  router.push({ name: "voter-elections" });
+}
 </script>
 
 <template>
   <div class="voter-ballot-page">
     <div class="ballot-container">
       <ElCard v-if="loading">
-        <div style="text-align: center; padding: 40px">
-          Loading election information...
-        </div>
+        <div class="loading-text">{{ $t("voting.ballot.loading") }}</div>
       </ElCard>
 
       <ElCard v-else-if="onlineVotingStore.electionInfo" class="ballot-card">
         <template #header>
-          <div class="card-header">
-            <h2>{{ onlineVotingStore.electionInfo.name }}</h2>
-            <p v-if="onlineVotingStore.electionInfo.dateOfElection">
-              Date:
-              {{
-                new Date(
-                  onlineVotingStore.electionInfo.dateOfElection,
-                ).toLocaleDateString()
-              }}
-            </p>
-            <p v-if="onlineVotingStore.electionInfo.convenor">
-              Convenor: {{ onlineVotingStore.electionInfo.convenor }}
-            </p>
+          <div class="ballot-card-header">
+            <div class="header-left">
+              <ElButton text size="small" @click="backToElections">
+                ← {{ $t("voting.ballot.backToElections") }}
+              </ElButton>
+              <h2>{{ onlineVotingStore.electionInfo.name }}</h2>
+              <p v-if="onlineVotingStore.electionInfo.dateOfElection">
+                {{
+                  new Date(
+                    onlineVotingStore.electionInfo.dateOfElection,
+                  ).toLocaleDateString()
+                }}
+              </p>
+              <p v-if="onlineVotingStore.electionInfo.convenor">
+                {{ onlineVotingStore.electionInfo.convenor }}
+              </p>
+            </div>
+            <div class="header-right">
+              <ElTag type="success">{{ $t("voting.ballot.openNow") }}</ElTag>
+            </div>
           </div>
         </template>
 
@@ -187,21 +231,81 @@ async function handleSubmit() {
           v-if="duplicateVotes"
           type="error"
           :closable="false"
-          style="margin-bottom: 20px"
+          class="ballot-alert"
         >
-          You have selected the same candidate multiple times. Please review
-          your ballot.
+          {{ $t("voting.ballot.duplicateError") }}
         </ElAlert>
 
-        <ElAlert type="info" :closable="false" style="margin-bottom: 20px">
-          {{ onlineVotingStore.electionInfo.instructions }}
-        </ElAlert>
+        <div class="ballot-body">
+          <div class="left-panel" v-if="isModeBoth">
+            <h3>{{ $t("voting.ballot.addToPool") }}</h3>
+            <p class="panel-description">{{ $t("voting.ballot.addToPoolDescription") }}</p>
+            <ElForm>
+              <ElFormItem :label="$t('voting.ballot.firstName')">
+                <ElInput :placeholder="$t('voting.ballot.firstNamePlaceholder')" />
+              </ElFormItem>
+              <ElFormItem :label="$t('voting.ballot.lastName')">
+                <ElInput :placeholder="$t('voting.ballot.lastNamePlaceholder')" />
+              </ElFormItem>
+              <ElFormItem :label="$t('voting.ballot.extraInfo')">
+                <ElInput
+                  type="textarea"
+                  :placeholder="$t('voting.ballot.extraInfoPlaceholder')"
+                  :rows="2"
+                />
+              </ElFormItem>
+              <ElButton type="default">{{ $t("voting.ballot.addPersonToPool") }}</ElButton>
+            </ElForm>
 
-        <ElForm @submit.prevent="handleSubmit">
-          <div v-for="vote in votes" :key="vote.position" class="vote-item">
-            <ElFormItem :label="`${vote.position}.`">
-              <div class="vote-input-wrapper">
+            <ElDivider />
+
+            <div class="guidelines">
+              <p class="guideline-quote">{{ $t("voting.ballot.guideline") }}</p>
+            </div>
+          </div>
+
+          <div :class="isModeBoth ? 'right-panel' : 'full-panel'">
+            <h3>
+              {{
+                $t("voting.ballot.votingFor", {
+                  count: onlineVotingStore.electionInfo.numberToElect ?? 9,
+                })
+              }}
+            </h3>
+
+            <ElAlert
+              v-if="isModeRandom"
+              type="info"
+              :closable="false"
+              class="mode-hint"
+            >
+              {{ $t("voting.ballot.randomModeHint") }}
+            </ElAlert>
+
+            <ElAlert
+              v-if="isModeBoth"
+              type="info"
+              :closable="false"
+              class="mode-hint"
+            >
+              {{ $t("voting.ballot.bothModeHint") }}
+            </ElAlert>
+
+            <p class="ballot-note">{{ $t("voting.ballot.orderNote") }}</p>
+
+            <div class="my-ballot-label">{{ $t("voting.ballot.myBallot") }}</div>
+
+            <ElForm @submit.prevent="handleSubmit">
+              <div
+                v-for="vote in votes"
+                :key="vote.position"
+                class="vote-item"
+                :class="{ 'vote-filled': vote.candidate || (isModeRandom && vote.freeText) || (isModeBoth && (vote.searchText || vote.freeText)) }"
+              >
+                <span class="vote-number">{{ vote.position }}.</span>
+
                 <ElAutocomplete
+                  v-if="showCandidateList"
                   v-model="vote.searchText"
                   :fetch-suggestions="
                     (queryString: string, cb: Function) => {
@@ -215,119 +319,221 @@ async function handleSubmit() {
                       cb(results);
                     }
                   "
-                  placeholder="Search for a candidate"
+                  :placeholder="$t('voting.ballot.searchPlaceholder')"
                   clearable
-                  style="flex: 1"
-                  size="large"
-                  @select="
-                    (item: any) =>
-                      handleCandidateSelect(vote.position, item.value)
-                  "
+                  class="vote-input"
+                  size="default"
+                  @select="(item: any) => handleCandidateSelect(vote.position, item)"
+                  @input="(val: string) => handleSearchInput(vote.position, val)"
                 />
+
+                <ElInput
+                  v-else-if="isModeRandom"
+                  v-model="vote.freeText"
+                  :placeholder="$t('voting.ballot.namePlaceholder')"
+                  class="vote-input"
+                  size="default"
+                />
+
+                <span v-if="vote.candidate" class="candidate-tag">
+                  {{ vote.candidate.fullName }}
+                  <ElButton
+                    text
+                    size="small"
+                    :icon="Delete"
+                    @click="clearVote(vote.position)"
+                    class="clear-btn"
+                  />
+                </span>
+                <span v-else-if="isModeRandom && vote.freeText" class="random-tag">
+                  {{ vote.freeText }}
+                  <ElButton
+                    text
+                    size="small"
+                    :icon="Delete"
+                    @click="clearVote(vote.position)"
+                    class="clear-btn"
+                  />
+                </span>
+              </div>
+
+              <ElAlert type="warning" :closable="false" class="ballot-warning">
+                {{ $t("voting.ballot.onceWarning") }}
+              </ElAlert>
+
+              <div class="submit-actions">
                 <ElButton
-                  v-if="vote.candidate"
-                  type="danger"
-                  text
-                  @click="clearVote(vote.position)"
+                  type="primary"
+                  native-type="submit"
+                  :loading="submitting"
+                  :disabled="!canSubmit"
+                  size="large"
+                  class="submit-btn"
                 >
-                  Clear
+                  {{ $t("voting.ballot.submit") }}
                 </ElButton>
               </div>
-              <div v-if="vote.candidate" class="candidate-info">
-                <span class="candidate-name">{{
-                  vote.candidate.fullName
-                }}</span>
-                <span v-if="vote.candidate.area" class="candidate-detail">{{
-                  vote.candidate.area
-                }}</span>
-              </div>
-            </ElFormItem>
+            </ElForm>
           </div>
-
-          <ElAlert type="warning" :closable="false" style="margin: 20px 0">
-            ⚠️ You can only vote once! Please review your ballot carefully
-            before submitting.
-          </ElAlert>
-
-          <div class="submit-actions">
-            <ElButton
-              type="primary"
-              native-type="submit"
-              :loading="submitting"
-              :disabled="!canSubmit || duplicateVotes"
-              size="large"
-              style="width: 100%"
-            >
-              Submit Ballot
-            </ElButton>
-          </div>
-        </ElForm>
+        </div>
       </ElCard>
 
       <ElCard v-else>
-        <ElEmpty description="Election not found" />
+        <ElEmpty :description="$t('voting.ballot.electionNotFound')" />
       </ElCard>
     </div>
   </div>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .voter-ballot-page {
   min-height: calc(100vh - 100px);
   padding: 20px;
-}
 
-.ballot-container {
-  max-width: 800px;
-  margin: 0 auto;
-}
+  .ballot-container {
+    max-width: 900px;
+    margin: 0 auto;
 
-.ballot-card {
-  .card-header {
-    h2 {
-      margin: 0 0 10px 0;
-      color: var(--el-color-primary);
+    .loading-text {
+      text-align: center;
+      padding: 40px;
     }
 
-    p {
-      margin: 5px 0;
-      color: var(--el-text-color-secondary);
-      font-size: 14px;
+    .ballot-card {
+      .ballot-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        .header-left {
+          h2 {
+            margin: 4px 0;
+            color: var(--el-color-primary);
+          }
+
+          p {
+            margin: 2px 0;
+            color: var(--el-text-color-secondary);
+            font-size: 13px;
+          }
+        }
+      }
+
+      .ballot-alert {
+        margin-bottom: 16px;
+      }
+
+      .ballot-body {
+        display: flex;
+        gap: 24px;
+
+        .left-panel {
+          flex: 0 0 300px;
+          border-right: 1px solid var(--el-border-color-lighter);
+          padding-right: 24px;
+
+          h3 {
+            margin: 0 0 8px 0;
+          }
+
+          .panel-description {
+            font-size: 13px;
+            color: var(--el-text-color-secondary);
+            margin-bottom: 16px;
+          }
+
+          .guidelines {
+            .guideline-quote {
+              font-size: 12px;
+              font-style: italic;
+              color: var(--el-text-color-secondary);
+              line-height: 1.6;
+            }
+          }
+        }
+
+        .right-panel,
+        .full-panel {
+          flex: 1;
+
+          h3 {
+            margin: 0 0 8px 0;
+          }
+
+          .mode-hint {
+            margin-bottom: 12px;
+          }
+
+          .ballot-note {
+            font-size: 12px;
+            color: var(--el-text-color-secondary);
+            margin-bottom: 8px;
+            text-align: right;
+          }
+
+          .my-ballot-label {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--el-border-color-lighter);
+            padding-bottom: 4px;
+          }
+        }
+      }
+
+      .vote-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        padding: 6px 8px;
+        border: 1px solid var(--el-border-color-lighter);
+        border-radius: 4px;
+        min-height: 40px;
+
+        &.vote-filled {
+          background-color: var(--el-color-success-light-9);
+          border-color: var(--el-color-success-light-5);
+        }
+
+        .vote-number {
+          font-size: 13px;
+          color: var(--el-text-color-secondary);
+          min-width: 20px;
+        }
+
+        .vote-input {
+          flex: 1;
+        }
+
+        .candidate-tag,
+        .random-tag {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 14px;
+          font-weight: 500;
+
+          .clear-btn {
+            padding: 0;
+            min-height: unset;
+          }
+        }
+      }
+
+      .ballot-warning {
+        margin: 16px 0;
+      }
+
+      .submit-actions {
+        margin-top: 16px;
+
+        .submit-btn {
+          width: 100%;
+        }
+      }
     }
   }
-}
-
-.vote-item {
-  margin-bottom: 20px;
-
-  .vote-input-wrapper {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .candidate-info {
-    display: flex;
-    flex-direction: column;
-    margin-top: 5px;
-    padding: 8px 12px;
-    background-color: var(--el-fill-color-light);
-    border-radius: 4px;
-
-    .candidate-name {
-      font-weight: 500;
-      color: var(--el-text-color-primary);
-    }
-
-    .candidate-detail {
-      font-size: 12px;
-      color: var(--el-text-color-secondary);
-      margin-top: 2px;
-    }
-  }
-}
-
-.submit-actions {
-  margin-top: 30px;
 }
 </style>

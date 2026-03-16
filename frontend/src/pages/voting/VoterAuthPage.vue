@@ -161,7 +161,7 @@ async function handleDirectCodeLogin() {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t("voting.auth.error.noElection"));
+      router.push({ name: "voter-elections" });
     }
   } catch (error) {
     console.error("Error with direct code:", error);
@@ -178,7 +178,7 @@ async function handleVerifyCode() {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t("voting.auth.error.noElection"));
+      router.push({ name: "voter-elections" });
     }
   } catch (error) {
     console.error("Error verifying code:", error);
@@ -202,7 +202,7 @@ const handleGoogleCredentialCallback = async (
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t("voting.auth.error.noElection"));
+      router.push({ name: "voter-elections" });
     }
   } catch (error) {
     console.error("Error with Google authentication:", error);
@@ -302,7 +302,7 @@ const handleFacebookLogin = async () => {
             if (electionGuid) {
               router.push(`/vote/${electionGuid}`);
             } else {
-              showErrorMessage(t("voting.auth.error.noElection"));
+              router.push({ name: "voter-elections" });
             }
           } else {
             showErrorMessage(t("voting.auth.facebook.cancelled"));
@@ -403,7 +403,7 @@ const handleKakaoLogin = async () => {
         if (electionGuid) {
           router.push(`/vote/${electionGuid}`);
         } else {
-          showErrorMessage(t("voting.auth.error.noElection"));
+          router.push({ name: "voter-elections" });
         }
         loading.value = false;
       },
@@ -435,7 +435,7 @@ const handleTelegramLogin = async (user: any) => {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t("voting.auth.error.noElection"));
+      router.push({ name: "voter-elections" });
     }
   } catch (error) {
     console.error("Error with Telegram authentication:", error);

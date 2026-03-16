@@ -23,6 +23,7 @@ import type {
   FacebookAuthForVoterDto,
   KakaoAuthForVoterDto,
   TelegramAuthForVoterDto,
+  AvailableElection,
 } from "../types";
 
 export const onlineVotingService = {
@@ -74,11 +75,11 @@ export const onlineVotingService = {
     return response.data as OnlineVoterAuthResponse;
   },
 
-  async getAvailableElections(voterId: string): Promise<OnlineElectionInfo[]> {
+  async getAvailableElections(voterId: string): Promise<AvailableElection[]> {
     const response = await getApiOnlineVotingAvailableElections({
       query: { voterId },
     });
-    return response.data as OnlineElectionInfo[];
+    return response.data as AvailableElection[];
   },
 
   async getElectionInfo(electionGuid: string): Promise<OnlineElectionInfo> {

@@ -13,6 +13,7 @@ import type {
   FacebookAuthForVoterDto,
   KakaoAuthForVoterDto,
   TelegramAuthForVoterDto,
+  AvailableElection,
 } from "../types";
 
 export const useOnlineVotingStore = defineStore("onlineVoting", () => {
@@ -23,6 +24,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   const electionInfo = ref<OnlineElectionInfo | null>(null);
   const candidates = ref<OnlineCandidate[]>([]);
   const voteStatus = ref<OnlineVoteStatus | null>(null);
+  const availableElections = ref<AvailableElection[]>([]);
   const loading = ref(false);
 
   async function requestVerificationCode(data: RequestCodeDto) {
@@ -170,6 +172,20 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     }
   }
 
+  async function loadAvailableElections(voterIdToLoad: string) {
+    try {
+      loading.value = true;
+      const data = await onlineVotingService.getAvailableElections(voterIdToLoad);
+      availableElections.value = data;
+      return data;
+    } catch (error) {
+      handleApiError(error as any);
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function checkVoteStatus(electionGuid: string, voterIdToCheck: string) {
     try {
       loading.value = true;
@@ -193,6 +209,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     electionInfo.value = null;
     candidates.value = [];
     voteStatus.value = null;
+    availableElections.value = [];
     localStorage.removeItem("voter_token");
     localStorage.removeItem("voter_id");
   }
@@ -203,6 +220,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     electionInfo,
     candidates,
     voteStatus,
+    availableElections,
     loading,
     requestVerificationCode,
     verifyCode,
@@ -210,6 +228,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     facebookAuth,
     kakaoAuth,
     telegramAuth,
+    loadAvailableElections,
     loadElectionInfo,
     loadCandidates,
     submitBallot,
