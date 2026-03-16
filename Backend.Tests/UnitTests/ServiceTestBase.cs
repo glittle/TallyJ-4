@@ -1,4 +1,4 @@
-﻿using Mapster;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Backend.Domain.Context;
