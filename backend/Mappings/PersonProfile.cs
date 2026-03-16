@@ -6,14 +6,13 @@ using Mapster;
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for person-related mappings.
+/// Mapping registration for person-related mappings using Mapster.
 /// Defines mappings between person entities and DTOs.
 /// </summary>
 public class PersonProfile : IRegister
 {
     /// <summary>
-    /// Initializes a new instance of the PersonProfile.
-    /// Configures mappings between Person entities and various DTOs.
+    /// Registers mappings between Person entities and various DTOs.
     /// </summary>
     public void Register(TypeAdapterConfig config)
     {
