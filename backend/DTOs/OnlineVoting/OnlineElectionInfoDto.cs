@@ -49,6 +49,11 @@ public class OnlineElectionInfoDto
     /// Instructions for voters.
     /// </summary>
     public string? Instructions { get; set; }
+
+    /// <summary>
+    /// The name selection process mode: A = List only, B = Random (free text), C = Both (list + free entry).
+    /// </summary>
+    public string? OnlineSelectionProcess { get; set; }
 }
 
 

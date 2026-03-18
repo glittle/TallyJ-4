@@ -26,6 +26,23 @@ export interface OnlineElectionInfo {
   onlineWhenClose?: string;
   isOpen: boolean;
   instructions?: string;
+  onlineSelectionProcess?: string;
+}
+
+export interface AvailableElection {
+  electionGuid: string;
+  name: string;
+  convenor?: string;
+  onlineWhenOpen?: string;
+  onlineWhenClose?: string;
+  onlineCloseIsEstimate: boolean;
+  dateOfElection?: string;
+  isOpen: boolean;
+  hasOnlineVoting: boolean;
+  hasVoted: boolean;
+  voterName?: string;
+  ballotStatus?: string;
+  whenBallotStatus?: string;
 }
 
 export interface OnlineCandidate {

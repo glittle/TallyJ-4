@@ -218,7 +218,8 @@ public class OnlineVotingService : IOnlineVotingService
             OnlineWhenOpen = election.OnlineWhenOpen,
             OnlineWhenClose = election.OnlineWhenClose,
             IsOpen = isOpen,
-            Instructions = $"voting.election.instructions:{election.NumberToElect ?? 9}"
+            Instructions = $"voting.election.instructions:{election.NumberToElect ?? 9}",
+            OnlineSelectionProcess = election.OnlineSelectionProcess
         };
     }
 
@@ -515,36 +516,62 @@ public class OnlineVotingService : IOnlineVotingService
         {
             var now = DateTime.UtcNow;
 
-            // Find all open elections where this voter is registered
-            // Use GroupBy to handle potential duplicate Person records per election
-            var availableElections = await _context.People
-                .Where(p => (p.Email == voterId || p.Phone == voterId || p.KioskCode == voterId))
+            // Find all elections where this voter is registered (by email, phone, or kiosk code)
+            var personElections = await _context.People
+                .Where(p => p.Email == voterId || p.Phone == voterId || p.KioskCode == voterId)
                 .Join(_context.Elections,
                     person => person.ElectionGuid,
                     election => election.ElectionGuid,
                     (person, election) => new { Person = person, Election = election })
-                .Where(x => x.Election.OnlineWhenOpen != null &&
-                           x.Election.OnlineWhenClose != null &&
-                           x.Election.OnlineWhenOpen <= now &&
-                           x.Election.OnlineWhenClose >= now)
                 .GroupBy(x => x.Election.ElectionGuid)
                 .Select(g => g.First())
-                .Select(x => new AvailableElectionDto
+                .ToListAsync();
+
+            // Look up OnlineVotingInfo for each person
+            var personGuids = personElections.Select(x => x.Person.PersonGuid).ToList();
+            var electionGuids = personElections.Select(x => x.Election.ElectionGuid).ToList();
+
+            var votingInfos = await _context.OnlineVotingInfos
+                .Where(ovi => personGuids.Contains(ovi.PersonGuid) && electionGuids.Contains(ovi.ElectionGuid))
+                .ToListAsync();
+
+            var result = personElections.Select(x =>
+            {
+                var hasOnlineVoting = x.Election.OnlineWhenOpen != null || x.Election.OnlineWhenClose != null;
+                var isOpen = hasOnlineVoting &&
+                             (x.Election.OnlineWhenOpen == null || x.Election.OnlineWhenOpen <= now) &&
+                             (x.Election.OnlineWhenClose == null || x.Election.OnlineWhenClose > now);
+
+                var votingInfo = votingInfos
+                    .Where(ovi => ovi.ElectionGuid == x.Election.ElectionGuid && ovi.PersonGuid == x.Person.PersonGuid)
+                    .OrderByDescending(ovi => ovi.WhenBallotCreated)
+                    .FirstOrDefault();
+
+                return new AvailableElectionDto
                 {
                     ElectionGuid = x.Election.ElectionGuid,
                     Name = x.Election.Name,
+                    Convenor = x.Election.Convenor,
                     OnlineWhenOpen = x.Election.OnlineWhenOpen,
                     OnlineWhenClose = x.Election.OnlineWhenClose,
+                    OnlineCloseIsEstimate = x.Election.OnlineCloseIsEstimate,
                     DateOfElection = x.Election.DateOfElection,
-                    HasVoted = x.Person.HasOnlineBallot == true
-                })
-                .OrderBy(e => e.Name)
-                .ToListAsync();
+                    IsOpen = isOpen,
+                    HasOnlineVoting = hasOnlineVoting,
+                    HasVoted = x.Person.HasOnlineBallot == true,
+                    VoterName = x.Person.FullName,
+                    BallotStatus = votingInfo?.Status,
+                    WhenBallotStatus = votingInfo?.WhenStatus
+                };
+            })
+            .OrderBy(e => !e.IsOpen)
+            .ThenBy(e => e.Name)
+            .ToList();
 
-            _logger.LogInformation("Found {Count} available elections for voter {VoterId}",
-                availableElections.Count, voterId);
+            _logger.LogInformation("Found {Count} elections for voter {VoterId}",
+                result.Count, voterId);
 
-            return availableElections;
+            return result;
         }
         catch (Exception ex)
         {

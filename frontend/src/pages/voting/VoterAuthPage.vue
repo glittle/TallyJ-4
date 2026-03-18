@@ -93,13 +93,9 @@ const handleKeydown = (event: KeyboardEvent) => {
 const fetchAuthConfig = async () => {
   if (authConfig.value) {
     return authConfig.value;
-
-    return authConfig.value;
   }
   try {
-    const apiUrl =
-      return null;
-    env.VITE_API_URL || "http://localhost:5016";
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
     const resp = await fetch(`${apiUrl}/api/public/auth-config`);
     if (!resp.ok) {
       return null;
@@ -161,7 +157,7 @@ async function handleDirectCodeLogin() {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t("voting.auth.error.noElection"));
+      router.push({ name: "voter-elections" });
     }
   } catch (error) {
     console.error("Error with direct code:", error);
@@ -178,7 +174,7 @@ async function handleVerifyCode() {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t("voting.auth.error.noElection"));
+      router.push({ name: "voter-elections" });
     }
   } catch (error) {
     console.error("Error verifying code:", error);
@@ -202,7 +198,7 @@ const handleGoogleCredentialCallback = async (
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t("voting.auth.error.noElection"));
+      router.push({ name: "voter-elections" });
     }
   } catch (error) {
     console.error("Error with Google authentication:", error);
@@ -302,7 +298,7 @@ const handleFacebookLogin = async () => {
             if (electionGuid) {
               router.push(`/vote/${electionGuid}`);
             } else {
-              showErrorMessage(t("voting.auth.error.noElection"));
+              router.push({ name: "voter-elections" });
             }
           } else {
             showErrorMessage(t("voting.auth.facebook.cancelled"));
@@ -403,7 +399,7 @@ const handleKakaoLogin = async () => {
         if (electionGuid) {
           router.push(`/vote/${electionGuid}`);
         } else {
-          showErrorMessage(t("voting.auth.error.noElection"));
+          router.push({ name: "voter-elections" });
         }
         loading.value = false;
       },
@@ -435,7 +431,7 @@ const handleTelegramLogin = async (user: any) => {
     if (electionGuid) {
       router.push(`/vote/${electionGuid}`);
     } else {
-      showErrorMessage(t("voting.auth.error.noElection"));
+      router.push({ name: "voter-elections" });
     }
   } catch (error) {
     console.error("Error with Telegram authentication:", error);

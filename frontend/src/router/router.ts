@@ -62,6 +62,16 @@ const routes = [
       },
 
       {
+        path: "voter-elections",
+
+        name: "voter-elections",
+
+        component: () => import("../pages/voting/VoterElectionsPage.vue"),
+
+        meta: { titleKey: "voting.elections.title" },
+      },
+
+      {
         path: "vote/:electionId",
 
         name: "voter-ballot",
