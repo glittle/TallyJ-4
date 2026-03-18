@@ -6,7 +6,7 @@ using Mapster;
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for election-related mappings.
+/// Mapster profile for election-related mappings.
 /// Defines mappings between election entities and DTOs.
 /// </summary>
 public class ElectionProfile : IRegister

@@ -5,7 +5,7 @@ using Mapster;
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for audit log entity and DTO mappings.
+/// Mapster profile for audit log entity and DTO mappings.
 /// </summary>
 public class AuditLogProfile : IRegister
 {

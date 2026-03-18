@@ -31,7 +31,7 @@ const isMobile = ref(false);
 
 // Version tooltip - dynamically localized
 const versionTooltip = computed(() =>
-  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE })
+  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE }),
 );
 
 // Check if we're on mobile
@@ -143,11 +143,10 @@ function toggleMobileMenu() {
         </el-icon>
       </button>
       <h1 class="sr-only">
-        {{ $t("common.versionDisplay", { version: VERSION }) }} -
         {{ $t("common.electionManagementSystem") }}
       </h1>
       <h3 aria-live="polite" :title="versionTooltip">
-        {{ $t("common.versionDisplay", { version: VERSION }) }} - {{ currentPageTitle }}
+        {{ currentPageTitle }}
       </h3>
 
       <!-- Location Selector -->

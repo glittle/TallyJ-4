@@ -53,7 +53,7 @@ public class TallyServiceTests : ServiceTestBase
         var location = await CreateTestLocationAsync(election.ElectionGuid);
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 15);
         var ballots = await CreateTestBallotsAsync(location.LocationGuid, 10);
-        
+
         await CreateTiedVotesAsync(ballots, people, 9);
 
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
@@ -144,7 +144,7 @@ public class TallyServiceTests : ServiceTestBase
         var location = await CreateTestLocationAsync(election.ElectionGuid);
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 12);
         var ballots = await CreateTestBallotsAsync(location.LocationGuid, 4);
-        
+
         await CreateVotesWithTieSpanningSectionsAsync(ballots, people);
 
         await _service.CalculateNormalElectionAsync(election.ElectionGuid);
@@ -153,7 +153,7 @@ public class TallyServiceTests : ServiceTestBase
             .Where(r => r.ElectionGuid == election.ElectionGuid)
             .OrderBy(r => r.Rank)
             .ToList();
-        
+
         var resultTies = Context.ResultTies
             .Where(rt => rt.ElectionGuid == election.ElectionGuid)
             .ToList();
@@ -215,7 +215,7 @@ public class TallyServiceTests : ServiceTestBase
         var location = await CreateTestLocationAsync(election.ElectionGuid);
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 1);
         var ballots = await CreateTestBallotsAsync(location.LocationGuid, 5);
-        
+
         foreach (var ballot in ballots)
         {
             var vote = new Vote
@@ -223,7 +223,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballot.BallotGuid,
                 PersonGuid = people[0].PersonGuid,
                 PositionOnBallot = 1,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[0].CombinedInfo,
                 RowVersion = new byte[8]
             };
@@ -246,7 +246,7 @@ public class TallyServiceTests : ServiceTestBase
         var election = await CreateTestElectionAsync(numberToElect: 9);
         var location = await CreateTestLocationAsync(election.ElectionGuid);
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 5);
-        
+
         var ballot1 = new Ballot
         {
             LocationGuid = location.LocationGuid,
@@ -277,7 +277,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballot1.BallotGuid,
                 PersonGuid = people[i].PersonGuid,
                 PositionOnBallot = i + 1,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[i].CombinedInfo,
                 RowVersion = new byte[8]
             };
@@ -291,7 +291,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballot2.BallotGuid,
                 PersonGuid = people[i].PersonGuid,
                 PositionOnBallot = i + 1,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[i].CombinedInfo,
                 RowVersion = new byte[8]
             };
@@ -305,7 +305,7 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Equal(1, result.Statistics.BallotsReceived);
         Assert.Equal(1, result.Statistics.SpoiledBallots);
         Assert.Equal(2, result.Statistics.TotalBallots);
-        
+
         var candidatesWithVotes = result.Results.Where(r => r.VoteCount > 0).ToList();
         Assert.Equal(3, candidatesWithVotes.Count);
         Assert.All(candidatesWithVotes, c => Assert.Equal(1, c.VoteCount));
@@ -372,7 +372,7 @@ public class TallyServiceTests : ServiceTestBase
         Assert.True(tiedAtBoundary.All(r => r.TieBreakRequired));
         Assert.True(tiedAtBoundary.All(r => r.IsTied));
         Assert.True(tiedAtBoundary.All(r => r.TieBreakGroup > 0));
-        
+
         var resultTies = Context.ResultTies
             .Where(rt => rt.ElectionGuid == election.ElectionGuid && rt.TieBreakRequired == true)
             .ToList();
@@ -397,7 +397,7 @@ public class TallyServiceTests : ServiceTestBase
         Assert.True(tiedAtBoundary.All(r => r.TieBreakRequired));
         Assert.True(tiedAtBoundary.All(r => r.IsTied));
         Assert.True(tiedAtBoundary.All(r => r.TieBreakGroup > 0));
-        
+
         var resultTies = Context.ResultTies
             .Where(rt => rt.ElectionGuid == election.ElectionGuid && rt.TieBreakRequired == true)
             .ToList();
@@ -421,7 +421,7 @@ public class TallyServiceTests : ServiceTestBase
 
         Assert.True(tiedWithinElected.All(r => !r.TieBreakRequired));
         Assert.True(tiedWithinElected.All(r => r.IsTied));
-        
+
         var resultTies = Context.ResultTies
             .Where(rt => rt.ElectionGuid == election.ElectionGuid && rt.TieBreakRequired == true)
             .ToList();
@@ -443,7 +443,7 @@ public class TallyServiceTests : ServiceTestBase
 
         Assert.NotNull(result);
         Assert.Equal(100, result.Statistics.BallotsReceived);
-        Assert.True(stopwatch.ElapsedMilliseconds < 1000, 
+        Assert.True(stopwatch.ElapsedMilliseconds < 1000,
             $"Tally calculation took {stopwatch.ElapsedMilliseconds}ms, expected < 1000ms");
     }
 
@@ -548,7 +548,7 @@ public class TallyServiceTests : ServiceTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = selectedPeople[i].PersonGuid,
                     PositionOnBallot = i + 1,
-                    StatusCode = VoteStatus.Ok,
+                    VoteStatus = VoteStatus.Ok,
                     PersonCombinedInfo = selectedPeople[i].CombinedInfo,
                     RowVersion = new byte[8]
                 };
@@ -574,7 +574,7 @@ public class TallyServiceTests : ServiceTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = selectedPeople[i].PersonGuid,
                     PositionOnBallot = i + 1,
-                    StatusCode = VoteStatus.Ok,
+                    VoteStatus = VoteStatus.Ok,
                     PersonCombinedInfo = selectedPeople[i].CombinedInfo,
                     RowVersion = new byte[8]
                 };
@@ -599,7 +599,7 @@ public class TallyServiceTests : ServiceTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = people[i].PersonGuid,
                     PositionOnBallot = i + 1,
-                    StatusCode = VoteStatus.Ok,
+                    VoteStatus = VoteStatus.Ok,
                     SingleNameElectionCount = random.Next(1, 6),
                     PersonCombinedInfo = people[i].CombinedInfo,
                     RowVersion = new byte[8]
@@ -618,7 +618,7 @@ public class TallyServiceTests : ServiceTestBase
         {
             var ballot = ballots[ballotIndex];
             var positionCounter = 1;
-            
+
             for (int personIndex = 0; personIndex < 6; personIndex++)
             {
                 Context.Votes.Add(new Vote
@@ -626,18 +626,18 @@ public class TallyServiceTests : ServiceTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = people[personIndex].PersonGuid,
                     PositionOnBallot = positionCounter++,
-                    StatusCode = VoteStatus.Ok,
+                    VoteStatus = VoteStatus.Ok,
                     PersonCombinedInfo = people[personIndex].CombinedInfo,
                     RowVersion = new byte[8]
                 });
             }
         }
-        
+
         for (int ballotIndex = 0; ballotIndex < 3; ballotIndex++)
         {
             var ballot = ballots[ballotIndex];
             var positionCounter = 7;
-            
+
             for (int personIndex = 6; personIndex < 11; personIndex++)
             {
                 Context.Votes.Add(new Vote
@@ -645,7 +645,7 @@ public class TallyServiceTests : ServiceTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = people[personIndex].PersonGuid,
                     PositionOnBallot = positionCounter++,
-                    StatusCode = VoteStatus.Ok,
+                    VoteStatus = VoteStatus.Ok,
                     PersonCombinedInfo = people[personIndex].CombinedInfo,
                     RowVersion = new byte[8]
                 });
@@ -666,7 +666,7 @@ public class TallyServiceTests : ServiceTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = people[i].PersonGuid,
                     PositionOnBallot = i + 1,
-                    StatusCode = VoteStatus.Ok,
+                    VoteStatus = VoteStatus.Ok,
                     PersonCombinedInfo = people[i].CombinedInfo,
                     RowVersion = new byte[8]
                 };
@@ -689,7 +689,7 @@ public class TallyServiceTests : ServiceTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = people[i].PersonGuid,
                     PositionOnBallot = i + 1,
-                    StatusCode = VoteStatus.Ok,
+                    VoteStatus = VoteStatus.Ok,
                     PersonCombinedInfo = people[i].CombinedInfo,
                     RowVersion = new byte[8]
                 });
@@ -704,7 +704,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballots[ballotIndex].BallotGuid,
                 PersonGuid = people[8].PersonGuid,
                 PositionOnBallot = 9,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[8].CombinedInfo,
                 RowVersion = new byte[8]
             });
@@ -717,7 +717,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballots[ballotIndex].BallotGuid,
                 PersonGuid = people[9].PersonGuid,
                 PositionOnBallot = 9,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[9].CombinedInfo,
                 RowVersion = new byte[8]
             });
@@ -737,7 +737,7 @@ public class TallyServiceTests : ServiceTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = people[i].PersonGuid,
                     PositionOnBallot = i + 1,
-                    StatusCode = VoteStatus.Ok,
+                    VoteStatus = VoteStatus.Ok,
                     PersonCombinedInfo = people[i].CombinedInfo,
                     RowVersion = new byte[8]
                 });
@@ -752,7 +752,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballots[ballotIndex].BallotGuid,
                 PersonGuid = people[10].PersonGuid,
                 PositionOnBallot = 11,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[10].CombinedInfo,
                 RowVersion = new byte[8]
             });
@@ -765,7 +765,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballots[ballotIndex].BallotGuid,
                 PersonGuid = people[11].PersonGuid,
                 PositionOnBallot = 11,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[11].CombinedInfo,
                 RowVersion = new byte[8]
             });
@@ -785,7 +785,7 @@ public class TallyServiceTests : ServiceTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = people[i].PersonGuid,
                     PositionOnBallot = i + 1,
-                    StatusCode = VoteStatus.Ok,
+                    VoteStatus = VoteStatus.Ok,
                     PersonCombinedInfo = people[i].CombinedInfo,
                     RowVersion = new byte[8]
                 });
@@ -800,7 +800,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballots[ballotIndex].BallotGuid,
                 PersonGuid = people[6].PersonGuid,
                 PositionOnBallot = 7,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[6].CombinedInfo,
                 RowVersion = new byte[8]
             });
@@ -813,7 +813,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballots[ballotIndex].BallotGuid,
                 PersonGuid = people[7].PersonGuid,
                 PositionOnBallot = 7,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[7].CombinedInfo,
                 RowVersion = new byte[8]
             });
@@ -826,7 +826,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballot.BallotGuid,
                 PersonGuid = people[8].PersonGuid,
                 PositionOnBallot = 8,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[8].CombinedInfo,
                 RowVersion = new byte[8]
             });
@@ -846,7 +846,7 @@ public class TallyServiceTests : ServiceTestBase
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = people[i].PersonGuid,
                     PositionOnBallot = i + 1,
-                    StatusCode = VoteStatus.Ok,
+                    VoteStatus = VoteStatus.Ok,
                     PersonCombinedInfo = people[i].CombinedInfo,
                     RowVersion = new byte[8]
                 });
@@ -860,7 +860,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballot.BallotGuid,
                 PersonGuid = people[9].PersonGuid,
                 PositionOnBallot = 10,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[9].CombinedInfo,
                 RowVersion = new byte[8]
             });
@@ -874,7 +874,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballots[ballotIndex].BallotGuid,
                 PersonGuid = people[10].PersonGuid,
                 PositionOnBallot = 11,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[10].CombinedInfo,
                 RowVersion = new byte[8]
             });
@@ -887,7 +887,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballots[ballotIndex].BallotGuid,
                 PersonGuid = people[11].PersonGuid,
                 PositionOnBallot = 11,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[11].CombinedInfo,
                 RowVersion = new byte[8]
             });
@@ -900,7 +900,7 @@ public class TallyServiceTests : ServiceTestBase
                 BallotGuid = ballots[ballotIndex].BallotGuid,
                 PersonGuid = people[12].PersonGuid,
                 PositionOnBallot = 12,
-                StatusCode = VoteStatus.Ok,
+                VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[12].CombinedInfo,
                 RowVersion = new byte[8]
             });

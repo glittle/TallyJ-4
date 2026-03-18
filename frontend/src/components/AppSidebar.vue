@@ -10,6 +10,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
+import { BUILD_DATE, VERSION } from "./version";
 const { t } = useI18n();
 
 const emit = defineEmits<{
@@ -26,6 +27,10 @@ const isSuperAdmin = computed(() => superAdminStore.isSuperAdmin);
 const isInElectionContext = computed(() => {
   return route.path.startsWith("/elections/") && route.params.id;
 });
+
+const versionTooltip = computed(() =>
+  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE }),
+);
 
 const electionName = computed(() => {
   return electionStore.currentElection?.name || t("common.election");
@@ -55,12 +60,17 @@ function goBackToElections() {
 <template>
   <nav class="app-sidebar" role="navigation" aria-label="Main navigation">
     <div class="logo">
-      <img
-        src="/logo-zoom.png"
-        :alt="$t('common.logoAlt')"
-        style="height: 24px; vertical-align: middle; margin-left: 8px"
-      />
-      <h2>{{ $t("common.appTitle") }}</h2>
+      <div class="logoTop">
+        <img
+          src="/logo-zoom.png"
+          :alt="$t('common.logoAlt')"
+          style="height: 24px; vertical-align: middle; margin-left: 8px"
+        />
+        <h2>{{ $t("common.appTitle") }}</h2>
+      </div>
+      <div class="version-tooltip" :title="versionTooltip">
+        {{ $t("common.versionDisplay", { version: VERSION }) }}
+      </div>
     </div>
     <div class="testOnlyWarning">
       {{ $t("common.testOnlyShort") }}
@@ -119,13 +129,22 @@ function goBackToElections() {
   flex-direction: column;
 
   .logo {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
     padding: 20px;
     text-align: center;
     border-bottom: 1px solid var(--color-sidebar-border);
+  }
+  .logoTop {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .version-tooltip {
+    text-align: center;
+    font-size: 0.75em;
+    color: var(--color-gray-500);
+    margin: 4px 0 6px 0;
   }
 
   .logo h2 {

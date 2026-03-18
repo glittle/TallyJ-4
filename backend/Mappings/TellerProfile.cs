@@ -5,7 +5,7 @@ using Mapster;
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for teller entity and DTO mappings.
+/// Mapster profile for teller entity and DTO mappings.
 /// </summary>
 public class TellerProfile : IRegister
 {

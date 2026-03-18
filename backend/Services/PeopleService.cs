@@ -25,7 +25,7 @@ public class PeopleService : IPeopleService
     /// Initializes a new instance of the PeopleService.
     /// </summary>
     /// <param name="context">The main database context for accessing people data.</param>
-    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="mapper">Mapster instance for object mapping operations.</param>
     /// <param name="logger">Logger for recording people service operations.</param>
     /// <param name="signalRNotificationService">Service for sending real-time notifications about people updates.</param>
     public PeopleService(MainDbContext context, IMapper mapper, ILogger<PeopleService> logger, ISignalRNotificationService signalRNotificationService)

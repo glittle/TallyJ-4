@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import { locationService } from "../services/locationService";
+import { computed, ref } from "vue";
 import { computerService } from "../services/computerService";
+import { locationService } from "../services/locationService";
 import type {
-  LocationDto,
-  CreateLocationDto,
-  UpdateLocationDto,
   ComputerDto,
+  CreateLocationDto,
+  LocationDto,
   RegisterComputerDto,
+  UpdateLocationDto,
 } from "../types";
 
 export const SELECTED_LOCATION_KEY = "tallyj_selected_location";
@@ -79,7 +79,7 @@ export const useLocationStore = defineStore("location", () => {
         pageNumber,
         pageSize,
       );
-      locations.value = response.data;
+      locations.value = response.items;
       pagination.value = {
         pageNumber: response.pageNumber,
         pageSize: response.pageSize,

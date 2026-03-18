@@ -5,7 +5,7 @@ using Mapster;
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for location-related mappings.
+/// Mapster profile for location-related mappings.
 /// Defines mappings between location entities and DTOs.
 /// </summary>
 public class LocationProfile : IRegister

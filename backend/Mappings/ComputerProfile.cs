@@ -5,7 +5,7 @@ using Mapster;
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for computer entity and DTO mappings.
+/// Mapster profile for computer entity and DTO mappings.
 /// </summary>
 public class ComputerProfile : IRegister
 {

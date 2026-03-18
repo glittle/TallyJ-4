@@ -5,7 +5,7 @@ using Mapster;
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for ballot-related mappings.
+/// Mapster profile for ballot-related mappings.
 /// Defines mappings between ballot entities and DTOs.
 /// </summary>
 public class BallotProfile : IRegister
