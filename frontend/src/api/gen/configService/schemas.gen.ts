@@ -3318,7 +3318,7 @@ export const FrontDeskVoterDtoSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: 'The BahÃ¡\'Ã­ ID of the voter.',
+            description: 'The Baha\'i­ ID of the voter.',
             nullable: true
         },
         area: {
@@ -7202,7 +7202,7 @@ export const FrontDeskVoterDtoWritableSchema = {
         },
         bahaiId: {
             type: 'string',
-            description: 'The BahÃ¡\'Ã­ ID of the voter.',
+            description: 'The Baha\'i­ ID of the voter.',
             nullable: true
         },
         area: {

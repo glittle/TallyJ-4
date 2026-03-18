@@ -93,13 +93,9 @@ const handleKeydown = (event: KeyboardEvent) => {
 const fetchAuthConfig = async () => {
   if (authConfig.value) {
     return authConfig.value;
-
-    return authConfig.value;
   }
   try {
-    const apiUrl =
-      return null;
-    env.VITE_API_URL || "http://localhost:5016";
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
     const resp = await fetch(`${apiUrl}/api/public/auth-config`);
     if (!resp.ok) {
       return null;

@@ -2383,7 +2383,7 @@ export type FrontDeskVoterDto = {
      */
     fullName?: string | null;
     /**
-     * The BahÃ¡'Ã­ ID of the voter.
+     * The Baha'i­ ID of the voter.
      */
     bahaiId?: string | null;
     /**
@@ -5157,7 +5157,7 @@ export type FrontDeskVoterDtoWritable = {
      */
     fullName?: string | null;
     /**
-     * The BahÃ¡'Ã­ ID of the voter.
+     * The Baha'i­ ID of the voter.
      */
     bahaiId?: string | null;
     /**
