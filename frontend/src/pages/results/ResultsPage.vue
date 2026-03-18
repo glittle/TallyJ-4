@@ -104,8 +104,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { useNotifications } from "@/composables/useNotifications";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useResultStore } from "../../stores/resultStore";
 import ResultsTable from "../../components/results/ResultsTable.vue";
@@ -113,9 +111,7 @@ import TiesDisplay from "../../components/results/TiesDisplay.vue";
 
 const router = useRouter();
 const route = useRoute();
-const { t } = useI18n();
 const resultStore = useResultStore();
-const { showErrorMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;

@@ -3,7 +3,6 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <h2>{{ $t("elections.list") }}</h2>
           <el-button type="primary" @click="createElection">
             <el-icon>
               <Plus />
@@ -202,11 +201,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
-import { Plus, Search } from "@element-plus/icons-vue";
-import { useElectionStore } from "../../stores/electionStore";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { Plus, Search } from "@element-plus/icons-vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useElectionStore } from "../../stores/electionStore";
 
 const router = useRouter();
 const electionStore = useElectionStore();

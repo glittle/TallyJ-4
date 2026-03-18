@@ -7,7 +7,7 @@
     <el-card v-else-if="election">
       <template #header>
         <div class="card-header">
-          <h2>{{ $t("elections.editElection") }}</h2>
+          <h2>{{ $t("elections.edit") }}</h2>
         </div>
       </template>
 
@@ -39,15 +39,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { type FormInstance, type FormRules } from "element-plus";
-import { useNotifications } from "@/composables/useNotifications";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
-import { useElectionStore } from "../../stores/electionStore";
-import type { UpdateElectionDto, ElectionSummaryDto } from "../../types";
+import { useNotifications } from "@/composables/useNotifications";
+import { type FormInstance, type FormRules } from "element-plus";
+import { computed, onMounted, reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
+import { useElectionStore } from "../../stores/electionStore";
+import type { ElectionSummaryDto, UpdateElectionDto } from "../../types";
 
 const router = useRouter();
 const route = useRoute();

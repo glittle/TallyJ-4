@@ -92,7 +92,7 @@
   --color-bg-primary: #ffffff;
   --color-bg-secondary: #f8fafc;
   --color-bg-tertiary: #f1f5f9;
-  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+  --color-bg-overlay: #efeeef;
 
   /* Colors - Sidebar */
   --color-sidebar-bg: #eef2f9;
@@ -1472,16 +1472,8 @@ button:focus-visible {
 /* Korean Language Support */
 :lang(ko) {
   font-family:
-    "Noto Sans KR",
-    "Malgun Gothic",
-    "Apple Gothic",
-    "Apple SD Gothic Neo",
-    "Nanum Gothic",
-    "돋움",
-    "Dotum",
-    "굴림",
-    "Gulim",
-    var(--font-family-primary);
+    "Noto Sans KR", "Malgun Gothic", "Apple Gothic", "Apple SD Gothic Neo",
+    "Nanum Gothic", "돋움", "Dotum", "굴림", "Gulim", var(--font-family-primary);
 }
 
 /* Right-to-Left Language Support */
@@ -1494,67 +1486,42 @@ button:focus-visible {
 /* Arabic Language Support */
 :lang(ar) {
   font-family:
-    "Noto Sans Arabic",
-    "Arial Unicode MS",
-    "Simplified Arabic",
-    "Traditional Arabic",
-    "Amiri",
-    "Scheherazade",
-    var(--font-family-primary);
+    "Noto Sans Arabic", "Arial Unicode MS", "Simplified Arabic",
+    "Traditional Arabic", "Amiri", "Scheherazade", var(--font-family-primary);
 }
 
 /* Farsi/Persian Language Support */
 :lang(fa) {
   font-family:
-    "Noto Sans Arabic",
-    "Arial Unicode MS",
-    "Simplified Arabic",
-    "Traditional Arabic",
-    "Vazir",
-    "Sahel",
-    "Tanha",
-    var(--font-family-primary);
+    "Noto Sans Arabic", "Arial Unicode MS", "Simplified Arabic",
+    "Traditional Arabic", "Vazir", "Sahel", "Tanha", var(--font-family-primary);
 }
 
 /* Hindi Language Support */
 :lang(hi) {
   font-family:
-    "Noto Sans Devanagari",
-    "Mangal",
-    "Arial Unicode MS",
-    "Nirmala UI",
+    "Noto Sans Devanagari", "Mangal", "Arial Unicode MS", "Nirmala UI",
     var(--font-family-primary);
 }
 
 /* Russian Language Support */
 :lang(ru) {
   font-family:
-    "Noto Sans",
-    "Arial Unicode MS",
-    "Segoe UI",
-    "Trebuchet MS",
+    "Noto Sans", "Arial Unicode MS", "Segoe UI", "Trebuchet MS",
     var(--font-family-primary);
 }
 
 /* Chinese Language Support */
 :lang(zh) {
   font-family:
-    "Noto Sans SC",
-    "Noto Sans TC",
-    "Microsoft YaHei",
-    "SimSun",
-    "Arial Unicode MS",
-    "PingFang SC",
-    "Hiragino Sans GB",
+    "Noto Sans SC", "Noto Sans TC", "Microsoft YaHei", "SimSun",
+    "Arial Unicode MS", "PingFang SC", "Hiragino Sans GB",
     var(--font-family-primary);
 }
 
 /* Vietnamese Language Support */
 :lang(vi) {
   font-family:
-    "Noto Sans",
-    "Arial Unicode MS",
-    "Segoe UI",
-    "Trebuchet MS",
+    "Noto Sans", "Arial Unicode MS", "Segoe UI", "Trebuchet MS",
     var(--font-family-primary);
 }

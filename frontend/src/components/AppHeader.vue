@@ -142,12 +142,9 @@ function toggleMobileMenu() {
           <Menu />
         </el-icon>
       </button>
-      <h1 class="sr-only">
-        {{ $t("common.electionManagementSystem") }}
-      </h1>
-      <h3 aria-live="polite" :title="versionTooltip">
+      <h2 aria-live="polite" :title="versionTooltip">
         {{ currentPageTitle }}
-      </h3>
+      </h2>
 
       <!-- Location Selector -->
       <div

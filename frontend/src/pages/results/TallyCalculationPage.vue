@@ -131,11 +131,13 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showSuccessMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
-const electionType = ref<"normal" | "singlename">("normal");
+const electionType = ref<"normal" | "singlename">(
+  route.query.electionType === "singlename" ? "singlename" : "normal",
+);
 
 const calculating = computed(() => resultStore.calculating);
 const results = computed(() => resultStore.results);
@@ -147,8 +149,9 @@ onMounted(async () => {
   try {
     await resultStore.initializeSignalR();
     await resultStore.joinTallySession(electionGuid);
-  } catch (error) {
-    console.error("Failed to initialize SignalR for tally calculation:", error);
+    await resultStore.fetchResults(electionGuid);
+  } catch (_error) {
+    resultStore.clearError();
   }
 });
 

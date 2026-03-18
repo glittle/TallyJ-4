@@ -353,4 +353,3 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
 
   return true;
 });
-

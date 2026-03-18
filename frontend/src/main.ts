@@ -1,17 +1,17 @@
-import { createApp } from "vue";
 import { createPinia } from "pinia";
+import { createApp } from "vue";
 
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import "./style.css";
 
-import App from "./App.vue";
-import { router } from "./router/router";
 import "./api/config";
+import App from "./App.vue";
+import { TOKEN_REFRESH_CONFIG } from "./config/tokenRefreshConfig";
 import { i18n } from "./locales";
+import { router } from "./router/router";
 import { secureTokenService } from "./services/secureTokenService";
 import { tokenRefreshService } from "./services/tokenRefreshService";
-import { TOKEN_REFRESH_CONFIG } from "./config/tokenRefreshConfig";
 
 // Sentry error tracking and performance monitoring
 import * as Sentry from "@sentry/vue";
@@ -58,6 +58,9 @@ globalThis.addEventListener("unhandledrejection", (event) => {
 
 // Handle uncaught errors
 globalThis.addEventListener("error", (event) => {
+  if (event.message?.startsWith("ResizeObserver loop")) {
+    return;
+  }
   console.error("Uncaught error:", event.error);
 });
 

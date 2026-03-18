@@ -83,7 +83,7 @@ function goBack() {
 }
 
 function editElection() {
-  router.push(`/ elections / ${electionGuid}/edit`);
+  router.push(`/elections/${electionGuid}/edit`);
 }
 
 function managePeople() {
