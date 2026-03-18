@@ -1,9 +1,10 @@
-using AutoMapper;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.Votes;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using MapsterMapper;
 
 namespace Backend.Services;
 
@@ -22,7 +23,7 @@ public class VoteService : IVoteService
     /// Initializes a new instance of the VoteService.
     /// </summary>
     /// <param name="context">The main database context for accessing vote data.</param>
-    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="mapper">Mapster instance for object mapping operations.</param>
     /// <param name="logger">Logger for recording vote service operations.</param>
     /// <param name="voteCountBroadcastService">Service for batching and broadcasting vote count updates.</param>
     public VoteService(MainDbContext context, IMapper mapper, ILogger<VoteService> logger, IVoteCountBroadcastService voteCountBroadcastService)

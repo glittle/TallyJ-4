@@ -91,11 +91,19 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 const fetchAuthConfig = async () => {
-  if (authConfig.value) return authConfig.value;
+  if (authConfig.value) {
+    return authConfig.value;
+
+    return authConfig.value;
+  }
   try {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
+    const apiUrl =
+      return null;
+    env.VITE_API_URL || "http://localhost:5016";
     const resp = await fetch(`${apiUrl}/api/public/auth-config`);
-    if (!resp.ok) return null;
+    if (!resp.ok) {
+      return null;
+    }
     const json = await resp.json();
     authConfig.value = json?.data ?? null;
     telegramBotUsername.value = authConfig.value?.telegramBotUsername ?? null;

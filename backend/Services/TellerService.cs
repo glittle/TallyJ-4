@@ -1,9 +1,10 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.Tellers;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Models;
+using MapsterMapper;
 
 namespace Backend.Services;
 
@@ -20,7 +21,7 @@ public class TellerService : ITellerService
     /// Initializes a new instance of the <see cref="TellerService"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
-    /// <param name="mapper">The AutoMapper instance.</param>
+    /// <param name="mapper">The Mapster instance.</param>
     /// <param name="logger">The logger instance.</param>
     public TellerService(MainDbContext context, IMapper mapper, ILogger<TellerService> logger)
     {

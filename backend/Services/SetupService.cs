@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Enumerations;
 using Backend.DTOs.Elections;
 using Backend.DTOs.Setup;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using MapsterMapper;
 
 namespace Backend.Services;
 
@@ -22,7 +23,7 @@ public class SetupService : ISetupService
     /// Initializes a new instance of the SetupService.
     /// </summary>
     /// <param name="context">The main database context for accessing election data.</param>
-    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="mapper">Mapster instance for object mapping operations.</param>
     /// <param name="logger">Logger for recording setup service operations.</param>
     public SetupService(MainDbContext context, IMapper mapper, ILogger<SetupService> logger)
     {

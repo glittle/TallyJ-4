@@ -1,34 +1,24 @@
-﻿using AutoMapper;
 using Backend.Domain.Entities;
 using Backend.DTOs.Tellers;
+using Mapster;
 
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for teller entity and DTO mappings.
+/// Mapster profile for teller entity and DTO mappings.
 /// </summary>
-public class TellerProfile : Profile
+public class TellerProfile : IRegister
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TellerProfile"/> class.
     /// </summary>
-    public TellerProfile()
+    public void Register(TypeAdapterConfig config)
     {
-        CreateMap<Teller, TellerDto>()
-            .ForMember(dest => dest.IsHeadTeller, opt => opt.MapFrom(src => src.IsHeadTeller ?? false));
+        config.NewConfig<Teller, TellerDto>()
+            .Map(dest => dest.IsHeadTeller, src => src.IsHeadTeller ?? false);
 
-        CreateMap<CreateTellerDto, Teller>()
-            .ForMember(dest => dest.RowId, opt => opt.Ignore())
-            .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
-            .ForMember(dest => dest.Election, opt => opt.Ignore());
+        config.NewConfig<CreateTellerDto, Teller>();
 
-        CreateMap<UpdateTellerDto, Teller>()
-            .ForMember(dest => dest.RowId, opt => opt.Ignore())
-            .ForMember(dest => dest.ElectionGuid, opt => opt.Ignore())
-            .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
-            .ForMember(dest => dest.Election, opt => opt.Ignore());
+        config.NewConfig<UpdateTellerDto, Teller>();
     }
 }
-
-
-

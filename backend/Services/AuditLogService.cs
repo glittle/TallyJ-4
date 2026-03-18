@@ -1,9 +1,10 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.AuditLogs;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Models;
+using MapsterMapper;
 
 namespace Backend.Services;
 
@@ -20,7 +21,7 @@ public class AuditLogService : IAuditLogService
     /// Initializes a new instance of the <see cref="AuditLogService"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
-    /// <param name="mapper">The AutoMapper instance.</param>
+    /// <param name="mapper">The Mapster instance.</param>
     /// <param name="logger">The logger instance.</param>
     public AuditLogService(MainDbContext context, IMapper mapper, ILogger<AuditLogService> logger)
     {

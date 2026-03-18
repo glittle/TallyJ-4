@@ -16,7 +16,7 @@ public class FrontDeskVoterDto
     public string FullName { get; set; } = null!;
 
     /// <summary>
-    /// The BahÃ¡'Ã­ ID of the voter.
+    /// The Baha'i­ ID of the voter.
     /// </summary>
     public string? BahaiId { get; set; }
 

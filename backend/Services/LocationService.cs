@@ -1,9 +1,10 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.Locations;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Models;
+using MapsterMapper;
 
 namespace Backend.Services;
 
@@ -21,7 +22,7 @@ public class LocationService : ILocationService
     /// Initializes a new instance of the LocationService.
     /// </summary>
     /// <param name="context">The main database context for accessing location data.</param>
-    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="mapper">Mapster instance for object mapping operations.</param>
     /// <param name="logger">Logger for recording location service operations.</param>
     public LocationService(MainDbContext context, IMapper mapper, ILogger<LocationService> logger)
     {

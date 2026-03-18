@@ -1,8 +1,9 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.Computers;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using MapsterMapper;
 
 namespace Backend.Services;
 
@@ -19,7 +20,7 @@ public class ComputerService : IComputerService
     /// Initializes a new instance of the <see cref="ComputerService"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
-    /// <param name="mapper">The AutoMapper instance.</param>
+    /// <param name="mapper">The Mapster instance.</param>
     /// <param name="logger">The logger instance.</param>
     public ComputerService(MainDbContext context, IMapper mapper, ILogger<ComputerService> logger)
     {

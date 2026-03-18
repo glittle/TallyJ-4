@@ -4,7 +4,6 @@ using Xunit;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
 
 namespace Backend.Tests.UnitTests;
 
@@ -267,7 +266,7 @@ public class TestCookieCollection : IRequestCookieCollection
 
     public bool ContainsKey(string key) => _cookies.ContainsKey(key);
 
-    public bool TryGetValue(string key, out string? value) => _cookies.TryGetValue(key, out value);
+    public bool TryGetValue(string key, out string? value) => _cookies.TryGetValue(key, out value!);
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => _cookies.GetEnumerator();
 

@@ -2,15 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using System.Text;
 using System.Globalization;
-using System.Collections.Generic;
 
 using Backend.Domain.Context;
 using Backend.Domain.Identity;
@@ -23,421 +21,433 @@ using FluentValidation.AspNetCore;
 using Backend.Application.Services.Auth;
 using Backend.Localization;
 using Backend.Services;
+using Mapster;
 using System.Reflection;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.FileProviders;
 
 Console.WriteLine("Starting up..."); // for server log files
 
-var builder = WebApplication.CreateBuilder(args);
+var machineName = Environment.MachineName;
+var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
-// Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .ConfigureWithColorfulConsole(builder.Configuration)
-    .CreateLogger();
-
-builder.Host.UseSerilog();
-
-var builderConfiguration = builder.Configuration;
-var services = builder.Services;
-
-// Connect to DB (skip in Testing environment - tests configure their own database)
-if (!builder.Environment.IsEnvironment("Testing"))
+void ConfigureBuilder(WebApplicationBuilder builder)
 {
-    var connectionStringName = "TallyJ4";
-    var connectionString = builderConfiguration.GetConnectionString(connectionStringName);
+    Log.Logger = new LoggerConfiguration()
+        .ConfigureWithColorfulConsole(builder.Configuration)
+        .CreateLogger();
 
-    var regex = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
+    builder.Host.UseSerilog();
+}
+
+void ConfigureServices(WebApplicationBuilder builder)
+{
+    var services = builder.Services;
+    var builderConfiguration = builder.Configuration;
+
+    var aspNetEnvironmentCode = builder.Environment.EnvironmentName;
+
+    builderConfiguration.AddJsonFile($"appsettings.{aspNetEnvironmentCode}.json", optional: true, reloadOnChange: true);
+    builderConfiguration.AddJsonFile($"appsettings.{machineName}.json", optional: true, reloadOnChange: true);
+    builderConfiguration.AddJsonFile($"c:\\dev\\tallyj\\v4\\appsettings.json", optional: true, reloadOnChange: true);
+    builderConfiguration.AddJsonFile($"c:\\AppSettings\\TallyJ4.json", optional: true, reloadOnChange: true);
+
+    var filesAttempted = builder.Configuration.Sources
+        .OfType<JsonConfigurationSource>()
+        .Where(s => s.Path != null)
+        .Select(s => Path.Combine((s.FileProvider as PhysicalFileProvider)?.Root ?? "", s.Path!));
+
     Log.Information(
-      "Connection string {Name}: {ConnectionString}",
-      connectionStringName,
-      regex.Replace(connectionString ?? "(Empty)", "Password=******;")
+      "Configuration files potentially loaded:\n{Files}",
+      string.Join("\n", filesAttempted)
     );
-    if (connectionString == null)
+
+    if (!builder.Environment.IsEnvironment("Testing"))
     {
-        Log.Fatal(
-          "Connection string {Name} is not set. Check your appsettings.json configuration.",
-          connectionStringName
+        var connectionStringName = "TallyJ4";
+        var connectionString = builderConfiguration.GetConnectionString(connectionStringName);
+
+        var regex = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
+        Log.Information(
+          "Connection string {Name}: {ConnectionString}",
+          connectionStringName,
+          regex.Replace(connectionString ?? "(Empty)", "Password=******;")
         );
-        Environment.Exit(1);
-    }
-
-    services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
-}
-
-// Add CORS
-services.AddCors(options =>
-{
-    var frontendBaseUrl = builderConfiguration["Frontend:BaseUrl"];
-    var allowedOrigins = new List<string>();
-
-    if (!string.IsNullOrEmpty(frontendBaseUrl))
-    {
-        allowedOrigins.Add(frontendBaseUrl);
-    }
-
-    // Add development localhost origins as fallback
-    allowedOrigins.AddRange(new[] { "http://localhost:5173", "http://localhost:5174", "http://localhost:8095" });
-
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins(allowedOrigins.Distinct().ToArray())
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
-    });
-});
-
-// Add Identity (without the built-in API endpoints that conflict with JWT)
-services.AddIdentity<AppUser, IdentityRole>()
-    .AddEntityFrameworkStores<MainDbContext>()
-    .AddDefaultTokenProviders();
-
-// Configure external authentication cookie for OAuth flows
-services.ConfigureExternalCookie(options =>
-{
-    options.Cookie.SameSite = SameSiteMode.Lax;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.Cookie.HttpOnly = true;
-    options.Cookie.Path = "/";
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
-});
-
-// Add JWT Bearer authentication
-services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    var jwtKey = builderConfiguration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured");
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builderConfiguration["Jwt:Issuer"],  // From appsettings.json
-        ValidAudience = builderConfiguration["Jwt:Audience"],  // From appsettings.json
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-    };
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
+        if (connectionString == null)
         {
-            var accessToken = context.Request.Query["access_token"];
-            var path = context.HttpContext.Request.Path;
-
-            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
-            {
-                context.Token = accessToken;
-            }
-            else
-            {
-                // Try to read token from httpOnly cookie
-                var tokenCookie = context.Request.Cookies["auth_token"];
-                if (!string.IsNullOrEmpty(tokenCookie))
-                {
-                    context.Token = tokenCookie;
-                }
-            }
-            return Task.CompletedTask;
+            Log.Fatal(
+              "Connection string {Name} is not set. Check your appsettings.json configuration.",
+              connectionStringName
+            );
+            Environment.Exit(1);
         }
-    };
-});
 
-// Add Google authentication (optional - gracefully handles missing credentials)
-var googleClientId = builderConfiguration["Google:ClientId"];
-var googleClientSecret = builderConfiguration["Google:ClientSecret"];
+        services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
+    }
 
-if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret)
-    && !googleClientId.StartsWith("<") && !googleClientSecret.StartsWith("<"))
-{
-    services.AddAuthentication()
-        .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+    services.AddCors(options =>
+    {
+        var frontendBaseUrl = builderConfiguration["Frontend:BaseUrl"];
+        var allowedOrigins = new List<string>();
+
+        if (!string.IsNullOrEmpty(frontendBaseUrl))
         {
-            options.ClientId = googleClientId;
-            options.ClientSecret = googleClientSecret;
-            options.CallbackPath = "/signin-google";
-            options.SaveTokens = true;
-            options.SignInScheme = IdentityConstants.ExternalScheme;
-            options.Events.OnRemoteFailure = context =>
-            {
-                context.Response.Redirect("/login?error=" + context.Failure?.Message);
-                context.HandleResponse();
-                return Task.CompletedTask;
-            };
+            allowedOrigins.Add(frontendBaseUrl);
+        }
+
+        allowedOrigins.AddRange(new[] { "http://localhost:5173", "http://localhost:5174", "http://localhost:8095" });
+
+        options.AddPolicy("AllowFrontend", policy =>
+        {
+            policy.WithOrigins(allowedOrigins.Distinct().ToArray())
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
         });
-    Log.Information("Google authentication configured successfully");
-}
-else
-{
-    Log.Warning("Google authentication not configured - ClientId or ClientSecret is missing or using placeholder values. Google login will not be available.");
-}
+    });
 
-// Configure Identity options (password requirements and account lockout)
-services.Configure<IdentityOptions>(options =>
-{
-    // Password requirements (NIST guidelines - longer passwords with complexity)
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 12;
-    options.Password.RequiredUniqueChars = 1; // Prevent all identical characters
+    services.AddIdentity<AppUser, IdentityRole>()
+        .AddEntityFrameworkStores<MainDbContext>()
+        .AddDefaultTokenProviders();
 
-    // Account lockout settings
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Lockout duration
-    options.Lockout.MaxFailedAccessAttempts = 5; // Number of failed attempts before lockout
-    options.Lockout.AllowedForNewUsers = true; // Enable lockout for new users
-});
-
-// Configure SuperAdmin settings
-services.Configure<Backend.Authorization.SuperAdminSettings>(
-    builderConfiguration.GetSection(Backend.Authorization.SuperAdminSettings.SectionName));
-
-// Add authorization (for [Authorize] attributes)
-services.AddAuthorization(options =>
-{
-    options.AddPolicy("ElectionAccess", policy =>
-        policy.Requirements.Add(new Backend.Authorization.ElectionAccessRequirement()));
-
-    options.AddPolicy("TellerAccess", policy =>
-        policy.Requirements.Add(new Backend.Authorization.TellerAccessRequirement()));
-
-    options.AddPolicy("HeadTellerAccess", policy =>
-        policy.Requirements.Add(new Backend.Authorization.HeadTellerAccessRequirement()));
-
-    options.AddPolicy("SuperAdmin", policy =>
-        policy.Requirements.Add(new Backend.Authorization.SuperAdminRequirement()));
-});
-
-// Register custom authorization handlers
-services.AddScoped<IAuthorizationHandler, Backend.Authorization.ElectionAccessHandler>();
-services.AddScoped<IAuthorizationHandler, Backend.Authorization.TellerAccessHandler>();
-services.AddScoped<IAuthorizationHandler, Backend.Authorization.HeadTellerAccessHandler>();
-services.AddScoped<IAuthorizationHandler, Backend.Authorization.SuperAdminHandler>();
-
-// Add JSON localization
-services.Configure<JsonLocalizationOptions>(builderConfiguration.GetSection(JsonLocalizationOptions.SectionName));
-services.AddJsonLocalization();
-
-// Add HTTP clients
-services.AddHttpClient("GreenApi");
-services.AddHttpClient("Facebook", c =>
-{
-    c.BaseAddress = new Uri("https://graph.facebook.com");
-});
-services.AddHttpClient("Kakao", c =>
-{
-    c.BaseAddress = new Uri("https://kapi.kakao.com");
-});
-
-// Add HTTP context accessor
-services.AddHttpContextAccessor();
-
-// Add controllers with FluentValidation
-services.AddControllers();
-services.AddFluentValidationAutoValidation();
-services.AddValidatorsFromAssemblyContaining<Program>();
-
-// Add AutoMapper
-services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-// Add application services
-services.AddScoped<Backend.Services.IElectionService, Backend.Services.ElectionService>();
-services.AddScoped<Backend.Services.ILocationService, Backend.Services.LocationService>();
-services.AddScoped<Backend.Services.IComputerService, Backend.Services.ComputerService>();
-services.AddScoped<Backend.Services.ITellerService, Backend.Services.TellerService>();
-services.AddScoped<Backend.Services.IPeopleService, Backend.Services.PeopleService>();
-services.AddScoped<Backend.Services.IBallotService, Backend.Services.BallotService>();
-services.AddScoped<Backend.Services.IVoteService, Backend.Services.VoteService>();
-services.AddScoped<Backend.Services.IDashboardService, Backend.Services.DashboardService>();
-services.AddScoped<Backend.Services.ISetupService, Backend.Services.SetupService>();
-services.AddScoped<Backend.Services.IAccountService, Backend.Services.AccountService>();
-services.AddScoped<Backend.Services.IPublicService, Backend.Services.PublicService>();
-services.AddScoped<Backend.Services.ITallyService, Backend.Services.TallyService>();
-services.AddScoped<Backend.Services.IReportExportService, Backend.Services.ReportExportService>();
-services.AddScoped<Backend.Services.IAdvancedReportingService, Backend.Services.AdvancedReportingService>();
-services.AddScoped<Backend.Services.IFrontDeskService, Backend.Services.FrontDeskService>();
-services.AddScoped<Backend.Services.IOnlineVotingService, Backend.Services.OnlineVotingService>();
-services.AddScoped<Backend.Services.IAuditLogService, Backend.Services.AuditLogService>();
-services.AddScoped<Backend.Services.ISuperAdminService, Backend.Services.SuperAdminService>();
-services.AddScoped<Backend.Services.ImportService>();
-services.AddScoped<Backend.Services.IPeopleImportService, Backend.Services.PeopleImportService>();
-
-// Add Auth services
-services.AddScoped<JwtTokenService>();
-services.AddScoped<EmailService>();
-services.AddScoped<LocalAuthService>();
-services.AddScoped<PasswordResetService>();
-services.AddScoped<TwoFactorService>();
-services.AddScoped<EncryptionService>();
-
-services.AddScoped<ISecurityAuditService, SecurityAuditService>();
-
-// Add background services
-services.AddHostedService<RefreshTokenCleanupService>();
-
-// Register VoteCountBroadcastService as both singleton and hosted service
-// The singleton registration provides dependency injection for IVoteCountBroadcastService
-// The hosted service registration starts the background worker
-// Note: Both registrations must use the same instance (singleton)
-services.AddSingleton<VoteCountBroadcastService>();
-services.AddSingleton<IVoteCountBroadcastService>(sp => sp.GetRequiredService<VoteCountBroadcastService>());
-services.AddHostedService(sp => sp.GetRequiredService<VoteCountBroadcastService>());
-
-// Add SignalR
-services.AddSignalR();
-services.AddSingleton<Backend.Services.ISignalRNotificationService, Backend.Services.SignalRNotificationService>();
-
-// Add exception handler
-services.AddExceptionHandler<GlobalExceptionHandler>();
-services.AddProblemDetails();
-
-// Configure Swagger/OpenAPI
-services.AddEndpointsApiExplorer();
-services.AddSwaggerGen(options =>
-{
-    options.UseAllOfForInheritance();
-    options.CustomSchemaIds(type =>
+    services.ConfigureExternalCookie(options =>
     {
-        static string GetSchemaId(Type t)
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.Path = "/";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+    });
+
+    ConfigureAuthentication(services, builderConfiguration);
+    ConfigureIdentityOptions(services);
+
+    services.Configure<Backend.Authorization.SuperAdminSettings>(
+        builderConfiguration.GetSection(Backend.Authorization.SuperAdminSettings.SectionName));
+
+    ConfigureAuthorization(services);
+
+    services.Configure<JsonLocalizationOptions>(builderConfiguration.GetSection(JsonLocalizationOptions.SectionName));
+    services.AddJsonLocalization();
+
+    services.AddHttpClient("GreenApi");
+    services.AddHttpClient("Facebook", c =>
+    {
+        c.BaseAddress = new Uri("https://graph.facebook.com");
+    });
+    services.AddHttpClient("Kakao", c =>
+    {
+        c.BaseAddress = new Uri("https://kapi.kakao.com");
+    });
+
+    services.AddHttpContextAccessor();
+
+    services.AddControllers();
+    services.AddFluentValidationAutoValidation();
+    services.AddValidatorsFromAssemblyContaining<Program>();
+
+    TypeAdapterConfig.GlobalSettings.Scan(typeof(Program).Assembly);
+    services.AddMapster();
+
+    RegisterApplicationServices(services);
+    RegisterAuthServices(services);
+    RegisterBackgroundServices(services);
+
+    services.AddSignalR();
+    services.AddSingleton<Backend.Services.ISignalRNotificationService, Backend.Services.SignalRNotificationService>();
+
+    services.AddExceptionHandler<GlobalExceptionHandler>();
+    services.AddProblemDetails();
+
+    if (isDevelopment)
+    {
+        ConfigureSwagger(services);
+    }
+}
+
+void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
+{
+    services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        var jwtKey = configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured");
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            if (!t.IsGenericType)
-                return t.Name;
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["Jwt:Issuer"],
+            ValidAudience = configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
 
-            var typeName = t.Name.Substring(0, t.Name.IndexOf('`'));
-            var genericArgs = string.Join("", t.GetGenericArguments().Select(GetSchemaId));
-            return $"{typeName}{genericArgs}";
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                {
+                    context.Token = accessToken;
+                }
+                else
+                {
+                    var tokenCookie = context.Request.Cookies["auth_token"];
+                    if (!string.IsNullOrEmpty(tokenCookie))
+                    {
+                        context.Token = tokenCookie;
+                    }
+                }
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+    var googleClientId = configuration["Google:ClientId"];
+    var googleClientSecret = configuration["Google:ClientSecret"];
+
+    if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret)
+        && !googleClientId.StartsWith("<") && !googleClientSecret.StartsWith("<"))
+    {
+        services.AddAuthentication()
+            .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+            {
+                options.ClientId = googleClientId;
+                options.ClientSecret = googleClientSecret;
+                options.CallbackPath = "/signin-google";
+                options.SaveTokens = true;
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.Events.OnRemoteFailure = context =>
+                {
+                    context.Response.Redirect("/login?error=" + context.Failure?.Message);
+                    context.HandleResponse();
+                    return Task.CompletedTask;
+                };
+            });
+        Log.Information("Google authentication configured successfully");
+    }
+    else
+    {
+        Log.Warning("Google authentication not configured - ClientId or ClientSecret is missing or using placeholder values. Google login will not be available.");
+    }
+}
+
+void ConfigureIdentityOptions(IServiceCollection services)
+{
+    services.Configure<IdentityOptions>(options =>
+    {
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireNonAlphanumeric = true;
+        options.Password.RequiredLength = 12;
+        options.Password.RequiredUniqueChars = 1;
+
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
+    });
+}
+
+void ConfigureAuthorization(IServiceCollection services)
+{
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("ElectionAccess", policy =>
+            policy.Requirements.Add(new Backend.Authorization.ElectionAccessRequirement()));
+
+        options.AddPolicy("TellerAccess", policy =>
+            policy.Requirements.Add(new Backend.Authorization.TellerAccessRequirement()));
+
+        options.AddPolicy("HeadTellerAccess", policy =>
+            policy.Requirements.Add(new Backend.Authorization.HeadTellerAccessRequirement()));
+
+        options.AddPolicy("SuperAdmin", policy =>
+            policy.Requirements.Add(new Backend.Authorization.SuperAdminRequirement()));
+    });
+
+    services.AddScoped<IAuthorizationHandler, Backend.Authorization.ElectionAccessHandler>();
+    services.AddScoped<IAuthorizationHandler, Backend.Authorization.TellerAccessHandler>();
+    services.AddScoped<IAuthorizationHandler, Backend.Authorization.HeadTellerAccessHandler>();
+    services.AddScoped<IAuthorizationHandler, Backend.Authorization.SuperAdminHandler>();
+}
+
+void RegisterApplicationServices(IServiceCollection services)
+{
+    services.AddScoped<Backend.Services.IElectionService, Backend.Services.ElectionService>();
+    services.AddScoped<Backend.Services.ILocationService, Backend.Services.LocationService>();
+    services.AddScoped<Backend.Services.IComputerService, Backend.Services.ComputerService>();
+    services.AddScoped<Backend.Services.ITellerService, Backend.Services.TellerService>();
+    services.AddScoped<Backend.Services.IPeopleService, Backend.Services.PeopleService>();
+    services.AddScoped<Backend.Services.IBallotService, Backend.Services.BallotService>();
+    services.AddScoped<Backend.Services.IVoteService, Backend.Services.VoteService>();
+    services.AddScoped<Backend.Services.IDashboardService, Backend.Services.DashboardService>();
+    services.AddScoped<Backend.Services.ISetupService, Backend.Services.SetupService>();
+    services.AddScoped<Backend.Services.IAccountService, Backend.Services.AccountService>();
+    services.AddScoped<Backend.Services.IPublicService, Backend.Services.PublicService>();
+    services.AddScoped<Backend.Services.ITallyService, Backend.Services.TallyService>();
+    services.AddScoped<Backend.Services.IReportExportService, Backend.Services.ReportExportService>();
+    services.AddScoped<Backend.Services.IAdvancedReportingService, Backend.Services.AdvancedReportingService>();
+    services.AddScoped<Backend.Services.IFrontDeskService, Backend.Services.FrontDeskService>();
+    services.AddScoped<Backend.Services.IOnlineVotingService, Backend.Services.OnlineVotingService>();
+    services.AddScoped<Backend.Services.IAuditLogService, Backend.Services.AuditLogService>();
+    services.AddScoped<Backend.Services.ISuperAdminService, Backend.Services.SuperAdminService>();
+    services.AddScoped<Backend.Services.ImportService>();
+    services.AddScoped<Backend.Services.IPeopleImportService, Backend.Services.PeopleImportService>();
+}
+
+void RegisterAuthServices(IServiceCollection services)
+{
+    services.AddScoped<JwtTokenService>();
+    services.AddScoped<EmailService>();
+    services.AddScoped<LocalAuthService>();
+    services.AddScoped<PasswordResetService>();
+    services.AddScoped<TwoFactorService>();
+    services.AddScoped<EncryptionService>();
+
+    services.AddScoped<ISecurityAuditService, SecurityAuditService>();
+}
+
+void RegisterBackgroundServices(IServiceCollection services)
+{
+    services.AddHostedService<RefreshTokenCleanupService>();
+
+    services.AddSingleton<VoteCountBroadcastService>();
+    services.AddSingleton<IVoteCountBroadcastService>(sp => sp.GetRequiredService<VoteCountBroadcastService>());
+    services.AddHostedService(sp => sp.GetRequiredService<VoteCountBroadcastService>());
+}
+
+void ConfigureSwagger(IServiceCollection services)
+{
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen(options =>
+    {
+        options.UseAllOfForInheritance();
+        options.CustomSchemaIds(type =>
+        {
+            static string GetSchemaId(Type t)
+            {
+                if (!t.IsGenericType)
+                    return t.Name;
+
+                var typeName = t.Name.Substring(0, t.Name.IndexOf('`'));
+                var genericArgs = string.Join("", t.GetGenericArguments().Select(GetSchemaId));
+                return $"{typeName}{genericArgs}";
+            }
+
+            return GetSchemaId(type);
+        });
+
+        options.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "TallyJ4 API",
+            Version = "v1",
+            Description = "Election management and vote tallying system API"
+        });
+
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "JWT Authorization header using the Bearer scheme. Enter your token in the text input below."
+        });
+
+        options.IncludeXmlComments(
+        Path.Combine(
+          AppContext.BaseDirectory,
+          $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"
+        )
+      );
+
+        options.DocInclusionPredicate((docName, apiDesc) =>
+        {
+            return apiDesc.RelativePath?.StartsWith("api/") == true;
+        });
+    });
+}
+
+async Task ConfigureApp(WebApplication app, IConfiguration configuration)
+{
+    if (isDevelopment)
+    {
+        app.WriteOpenApiSpecToFile(Path.Combine("..", "frontend", "openApi", "tallyj.json"));
+
+        var seedOnStartup = configuration.GetValue<bool>("Database:SeedOnStartup", true);
+        if (seedOnStartup)
+        {
+            using var scope = app.Services.CreateScope();
+
+            var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+            await context.Database.MigrateAsync();
+            await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
         }
+    }
 
-        return GetSchemaId(type);
-    });
+    app.UseExceptionHandler();
 
-    options.SwaggerDoc("v1", new OpenApiInfo
+    if (isDevelopment)
     {
-        Title = "TallyJ4 API",
-        Version = "v1",
-        Description = "Election management and vote tallying system API"
-    });
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "TallyJ4 API v1");
+            options.RoutePrefix = "swagger";
+        });
+    }
 
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+    app.UseCors("AllowFrontend");
+    app.UseMiddleware<RateLimitingMiddleware>();
+
+    var localizationOptions = app.Services.GetRequiredService<IOptions<JsonLocalizationOptions>>().Value;
+    var supportedCultures = localizationOptions.SupportedCultures
+        .Select(c => new CultureInfo(c))
+        .ToArray();
+
+    app.UseRequestLocalization(new RequestLocalizationOptions
     {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. Enter your token in the text input below."
+        DefaultRequestCulture = new RequestCulture(localizationOptions.DefaultCulture),
+        SupportedCultures = supportedCultures,
+        SupportedUICultures = supportedCultures
     });
 
-    // Only add global security requirement for authenticated endpoints
-    // Individual endpoints will specify their own security requirements
-    // This allows anonymous endpoints to be included without requiring auth
+    app.UseAuthentication();
+    app.UseMiddleware<Backend.Middleware.ElectionContextMiddleware>();
+    app.UseAuthorization();
+    app.UseMiddleware<Backend.Middleware.AuditMiddleware>();
 
-    options.IncludeXmlComments(
-    Path.Combine(
-      AppContext.BaseDirectory,
-      $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"
-    )
-  );
+    app.MapControllers();
 
-    // Ensure all API controllers are included, including anonymous ones
-    options.DocInclusionPredicate((docName, apiDesc) =>
-    {
-        // Include all API endpoints regardless of authentication
-        return apiDesc.RelativePath?.StartsWith("api/") == true;
-    });
-});
+    app.MapHub<Backend.Hubs.MainHub>("/hubs/main");
+    app.MapHub<Backend.Hubs.AnalyzeHub>("/hubs/analyze");
+    app.MapHub<Backend.Hubs.BallotImportHub>("/hubs/ballot-import");
+    app.MapHub<Backend.Hubs.PeopleImportHub>("/hubs/people-import");
+    app.MapHub<Backend.Hubs.FrontDeskHub>("/hubs/front-desk");
+    app.MapHub<Backend.Hubs.PublicHub>("/hubs/public");
+    app.MapHub<Backend.Hubs.OnlineVotingHub>("/hubs/online-voting");
 
+    app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
+}
 
+var builder = WebApplication.CreateBuilder(args);
+ConfigureBuilder(builder);
+ConfigureServices(builder);
 
 var app = builder.Build();
+await ConfigureApp(app, builder.Configuration);
 
-if (app.Environment.IsDevelopment())
-{
-    // Generate OpenAPI file
-    app.WriteOpenApiSpecToFile(Path.Combine("..", "frontend", "openApi", "tallyj.json"));
-
-    // Seed database in development
-    var seedOnStartup = builder.Configuration.GetValue<bool>("Database:SeedOnStartup", true);
-    if (seedOnStartup)
-    {
-        using var scope = app.Services.CreateScope();
-
-        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-        await context.Database.MigrateAsync();
-        await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
-    }
-}
-
-// Middleware pipeline (order matters)
-app.UseExceptionHandler();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "TallyJ4 API v1");
-        options.RoutePrefix = "swagger";
-    });
-}
-
-app.UseHttpsRedirection();
-
-// Serve static files (favicon.ico, etc.)
-app.UseStaticFiles();
-
-// Use CORS
-app.UseCors("AllowFrontend");
-
-// Use custom rate limiting
-app.UseMiddleware<RateLimitingMiddleware>();
-
-// Configure request localization
-var localizationOptions = app.Services.GetRequiredService<IOptions<JsonLocalizationOptions>>().Value;
-var supportedCultures = localizationOptions.SupportedCultures
-    .Select(c => new CultureInfo(c))
-    .ToArray();
-
-app.UseRequestLocalization(new RequestLocalizationOptions
-{
-    DefaultRequestCulture = new RequestCulture(localizationOptions.DefaultCulture),
-    SupportedCultures = supportedCultures,
-    SupportedUICultures = supportedCultures
-});
-
-app.UseAuthentication();  // Enables Identity
-app.UseMiddleware<Backend.Middleware.ElectionContextMiddleware>();
-app.UseAuthorization();
-app.UseMiddleware<Backend.Middleware.AuditMiddleware>();
-
-// Custom AuthController handles authentication endpoints
-
-// Map API controllers
-app.MapControllers();
-
-// Map SignalR hubs
-app.MapHub<Backend.Hubs.MainHub>("/hubs/main");
-app.MapHub<Backend.Hubs.AnalyzeHub>("/hubs/analyze");
-app.MapHub<Backend.Hubs.BallotImportHub>("/hubs/ballot-import");
-app.MapHub<Backend.Hubs.PeopleImportHub>("/hubs/people-import");
-app.MapHub<Backend.Hubs.FrontDeskHub>("/hubs/front-desk");
-app.MapHub<Backend.Hubs.PublicHub>("/hubs/public");
-app.MapHub<Backend.Hubs.OnlineVotingHub>("/hubs/online-voting");
-
-// Test endpoint
-app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
-
-// Start listening
 await app.RunAsync();
-
-
-
-
-

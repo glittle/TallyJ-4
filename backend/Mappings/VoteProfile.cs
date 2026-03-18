@@ -1,27 +1,24 @@
-﻿using AutoMapper;
 using Backend.DTOs.Votes;
 using Backend.Domain.Entities;
+using Mapster;
 
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for vote-related mappings.
+/// Mapster profile for vote-related mappings.
 /// Defines mappings between vote entities and DTOs.
 /// </summary>
-public class VoteProfile : Profile
+public class VoteProfile : IRegister
 {
     /// <summary>
     /// Initializes a new instance of the VoteProfile.
     /// Configures mappings between Vote entities and DTOs.
     /// </summary>
-    public VoteProfile()
+    public void Register(TypeAdapterConfig config)
     {
-        CreateMap<Vote, VoteDto>()
-            .ForMember(dest => dest.PersonFullName, opt => opt.MapFrom(src => src.Person != null ? src.Person.FullName : null));
+        config.NewConfig<Vote, VoteDto>()
+            .Map(dest => dest.PersonFullName, src => src.Person != null ? src.Person.FullName : null);
 
-        CreateMap<CreateVoteDto, Vote>();
+        config.NewConfig<CreateVoteDto, Vote>();
     }
 }
-
-
-

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.Elections;
 using Backend.DTOs.SignalR;
@@ -8,6 +8,7 @@ using Backend.Models;
 using System.Security.Claims;
 using Backend.Helpers;
 using Backend.Domain.Enumerations;
+using MapsterMapper;
 
 namespace Backend.Services;
 
@@ -27,7 +28,7 @@ public class ElectionService : IElectionService
     /// Initializes a new instance of the ElectionService.
     /// </summary>
     /// <param name="context">The main database context for accessing election data.</param>
-    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="mapper">Mapster instance for object mapping operations.</param>
     /// <param name="logger">Logger for recording election service operations.</param>
     /// <param name="signalRNotificationService">Service for sending real-time notifications about election updates.</param>
     /// <param name="httpContextAccessor">HTTP context accessor for retrieving current user information.</param>

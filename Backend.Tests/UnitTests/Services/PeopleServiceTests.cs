@@ -455,7 +455,7 @@ public class PeopleServiceTests : ServiceTestBase
             BallotGuid = ballotGuid,
             PersonGuid = person.PersonGuid,
             PositionOnBallot = 1,
-            StatusCode = VoteStatus.Ok,
+            VoteStatus = VoteStatus.Ok,
             RowVersion = new byte[8]
         };
         Context.Votes.Add(vote);
