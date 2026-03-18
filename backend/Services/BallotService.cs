@@ -24,7 +24,7 @@ public class BallotService : IBallotService
     /// Initializes a new instance of the BallotService.
     /// </summary>
     /// <param name="context">The main database context for accessing ballot data.</param>
-    /// <param name="mapper">AutoMapper instance for object mapping operations.</param>
+    /// <param name="mapper">Mapster instance for object mapping operations.</param>
     /// <param name="logger">Logger for recording ballot service operations.</param>
     public BallotService(MainDbContext context, IMapper mapper, ILogger<BallotService> logger)
     {

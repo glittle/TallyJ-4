@@ -146,6 +146,7 @@ void ConfigureServices(WebApplicationBuilder builder)
     services.AddFluentValidationAutoValidation();
     services.AddValidatorsFromAssemblyContaining<Program>();
 
+    TypeAdapterConfig.GlobalSettings.Scan(typeof(Program).Assembly);
     services.AddMapster();
 
     RegisterApplicationServices(services);

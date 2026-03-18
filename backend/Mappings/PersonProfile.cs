@@ -1,7 +1,9 @@
 using Backend.DTOs.People;
+using Backend.DTOs.FrontDesk;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
 using Mapster;
+using System.Text.Json;
 
 namespace Backend.Mappings;
 
@@ -28,6 +30,24 @@ public class PersonProfile : IRegister
         config.NewConfig<CreatePersonDto, Person>();
 
         config.NewConfig<UpdatePersonDto, Person>();
+
+        config.NewConfig<Person, FrontDeskVoterDto>()
+            .Map(dest => dest.RegistrationHistory, src => DeserializeRegistrationHistory(src.RegistrationHistory, src.PersonGuid));
+    }
+
+    private static List<RegistrationHistoryEntryDto>? DeserializeRegistrationHistory(string? json, Guid personGuid)
+    {
+        if (string.IsNullOrEmpty(json))
+            return null;
+
+        try
+        {
+            return JsonSerializer.Deserialize<List<RegistrationHistoryEntryDto>>(json);
+        }
+        catch (JsonException ex)
+        {
+            throw new InvalidOperationException($"Failed to deserialize RegistrationHistory for Person {personGuid}: {ex.Message}. JSON: {json}", ex);
+        }
     }
 
     private static string? GetIneligibleReasonCode(Guid? guid)

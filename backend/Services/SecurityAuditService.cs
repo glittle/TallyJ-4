@@ -22,7 +22,7 @@ public class SecurityAuditService : ISecurityAuditService
     /// Initializes a new instance of the <see cref="SecurityAuditService"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
-    /// <param name="mapper">The AutoMapper instance.</param>
+    /// <param name="mapper">The Mapster instance.</param>
     /// <param name="logger">The logger instance.</param>
     public SecurityAuditService(MainDbContext context, IMapper mapper, ILogger<SecurityAuditService> logger)
     {

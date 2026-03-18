@@ -23,7 +23,7 @@ public class FrontDeskService : IFrontDeskService
     /// Initializes a new instance of the <see cref="FrontDeskService"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
-    /// <param name="mapper">The AutoMapper instance.</param>
+    /// <param name="mapper">The Mapster instance.</param>
     /// <param name="logger">The logger instance.</param>
     /// <param name="signalRNotificationService">The SignalR notification service.</param>
     public FrontDeskService(
@@ -47,6 +47,13 @@ public class FrontDeskService : IFrontDeskService
             // .ThenBy(p => p.FirstName)
             .ToListAsync();
 
+        // Add logging to see the actual RegistrationHistory data
+        foreach (var voter in voters)
+        {
+            _logger.LogInformation("Person {PersonGuid}: RegistrationHistory = '{History}'",
+                voter.PersonGuid, voter.RegistrationHistory ?? "null");
+        }
+
         return _mapper.Map<List<FrontDeskVoterDto>>(voters);
     }
 
@@ -61,7 +68,7 @@ public class FrontDeskService : IFrontDeskService
             throw new InvalidOperationException("Person not found");
         }
 
-        if (person.CanVote != true)
+        if (!person.CanVote.GetValueOrDefault())
         {
             throw new InvalidOperationException("Person is not eligible to vote");
         }

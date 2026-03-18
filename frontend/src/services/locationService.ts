@@ -1,13 +1,13 @@
 import {
-  getApiByElectionGuidLocationsGetLocations,
+  deleteApiByElectionGuidLocationsByLocationGuidDeleteLocation,
   getApiByElectionGuidLocationsByLocationGuidGetLocation,
+  getApiByElectionGuidLocationsGetLocations,
   postApiByElectionGuidLocationsCreateLocation,
   putApiByElectionGuidLocationsByLocationGuidUpdateLocation,
-  deleteApiByElectionGuidLocationsByLocationGuidDeleteLocation,
 } from "../api/gen/configService/sdk.gen";
 import type {
-  LocationDto,
   CreateLocationDto,
+  LocationDto,
   UpdateLocationDto,
 } from "../types";
 
@@ -17,7 +17,7 @@ export const locationService = {
     pageNumber = 1,
     pageSize = 50,
   ): Promise<{
-    data: LocationDto[];
+    items: LocationDto[];
     pageNumber: number;
     pageSize: number;
     totalCount: number;
@@ -28,7 +28,7 @@ export const locationService = {
       query: { pageNumber, pageSize },
     });
     return response.data as {
-      data: LocationDto[];
+      items: LocationDto[];
       pageNumber: number;
       pageSize: number;
       totalCount: number;

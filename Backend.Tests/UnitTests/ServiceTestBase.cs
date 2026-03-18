@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Mapster;
+using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Backend.Domain.Context;
@@ -20,16 +21,10 @@ public abstract class ServiceTestBase : IDisposable
 
         Context = new MainDbContext(options);
 
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<ElectionProfile>();
-            cfg.AddProfile<PersonProfile>();
-            cfg.AddProfile<BallotProfile>();
-            cfg.AddProfile<VoteProfile>();
-            cfg.AddProfile<SecurityAuditLogProfile>();
-        });
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(typeof(ElectionProfile).Assembly);
 
-        Mapper = config.CreateMapper();
+        Mapper = new Mapper(config);
     }
 
     public void Dispose()

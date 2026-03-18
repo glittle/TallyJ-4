@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using Backend.Application.DTOs.Auth;
 using Backend.Application.Services.Auth;
@@ -13,6 +14,7 @@ using Backend.Domain.Identity;
 using Backend.Middleware;
 using Backend.Services;
 using Xunit;
+using Backend.Authorization;
 
 namespace Backend.Tests.UnitTests;
 
@@ -31,6 +33,8 @@ public class AuthControllerTests : ServiceTestBase
     private readonly Mock<ILogger<AuthController>> _loggerMock;
     private readonly Mock<IConfiguration> _configurationMock;
     private readonly Mock<SignInManager<AppUser>> _signInManagerMock;
+    private readonly Mock<IOptions<SuperAdminSettings>> _superAdminSettingsMock;
+    private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
     private readonly Mock<OAuthStateService> _oauthStateServiceMock;
     private readonly Mock<ISecurityAuditService> _securityAuditServiceMock;
 
@@ -53,6 +57,8 @@ public class AuthControllerTests : ServiceTestBase
             Mock.Of<IHttpContextAccessor>(),
             Mock.Of<IUserClaimsPrincipalFactory<AppUser>>(),
             null!, null!, null!, null!);
+        _superAdminSettingsMock = new Mock<IOptions<SuperAdminSettings>>();
+        _httpClientFactoryMock = new Mock<IHttpClientFactory>();
         _oauthStateServiceMock = new Mock<OAuthStateService>();
         _securityAuditServiceMock = new Mock<ISecurityAuditService>();
 
@@ -67,6 +73,8 @@ public class AuthControllerTests : ServiceTestBase
             _loggerMock.Object,
             _configurationMock.Object,
             _signInManagerMock.Object,
+            _superAdminSettingsMock.Object,
+            _httpClientFactoryMock.Object,
             _securityAuditServiceMock.Object);
 
         // Setup HttpContext for cookie middleware

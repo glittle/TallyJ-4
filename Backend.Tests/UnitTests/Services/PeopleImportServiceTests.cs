@@ -1,11 +1,14 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.Domain.Entities;
 using Backend.DTOs.Import;
 using Backend.Services;
 using Backend.Domain.Enumerations;
+using Backend.Hubs;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Tests.UnitTests.Services;
 
@@ -19,7 +22,7 @@ public class PeopleImportServiceTests : ServiceTestBase
     {
         _hubContextMock = new Mock<IHubContext<PeopleImportHub>>();
         _loggerMock = new Mock<ILogger<PeopleImportService>>();
-        _service = new PeopleImportService(Context, _hubContextMock.Object, _loggerMock.Object);
+        _service = new PeopleImportService(Context, _hubContextMock.Object);
     }
 
     [Fact]
@@ -164,18 +167,18 @@ public class PeopleImportServiceTests : ServiceTestBase
         var electionGuid = Guid.NewGuid();
         using var workbook = new ClosedXML.Excel.XLWorkbook();
         var worksheet = workbook.Worksheets.Add("Sheet1");
-        
+
         // Add some metadata/description rows at the top (like Canadian files)
         worksheet.Cell(1, 1).Value = "Government of Canada";
         worksheet.Cell(2, 1).Value = "Voter Registration List";
         worksheet.Cell(3, 1).Value = "Election Date: 2024-01-01";
         worksheet.Cell(4, 1).Value = ""; // Empty row
-        
+
         // Headers on row 5
         worksheet.Cell(5, 1).Value = "First Name";
         worksheet.Cell(5, 2).Value = "Last Name";
         worksheet.Cell(5, 3).Value = "Email";
-        
+
         // Data rows
         worksheet.Cell(6, 1).Value = "John";
         worksheet.Cell(6, 2).Value = "Doe";
@@ -210,7 +213,7 @@ public class PeopleImportServiceTests : ServiceTestBase
         Assert.Contains("Email", result.Headers);
         Assert.Equal(2, result.TotalDataRows); // Should only have 2 data rows after header row 5
         Assert.Equal(2, result.PreviewRows.Count);
-        
+
         // Verify data starts after header row
         Assert.Equal("John", result.PreviewRows[0][0]);
         Assert.Equal("Doe", result.PreviewRows[0][1]);
@@ -223,19 +226,19 @@ public class PeopleImportServiceTests : ServiceTestBase
         var electionGuid = Guid.NewGuid();
         using var workbook = new ClosedXML.Excel.XLWorkbook();
         var worksheet = workbook.Worksheets.Add("Sheet1");
-        
+
         // Add metadata rows
         worksheet.Cell(1, 1).Value = "Report Title";
         worksheet.Cell(2, 1).Value = "Generated: 2024-01-01";
         worksheet.Cell(3, 1).Value = 12345; // Numeric value
         worksheet.Cell(4, 1).Value = ""; // Empty row
         worksheet.Cell(5, 1).Value = "Summary info";
-        
+
         // Headers on row 6 with known field names
         worksheet.Cell(6, 1).Value = "FirstName";
         worksheet.Cell(6, 2).Value = "LastName";
         worksheet.Cell(6, 3).Value = "BahaiId";
-        
+
         // Data
         worksheet.Cell(7, 1).Value = "Alice";
         worksheet.Cell(7, 2).Value = "Johnson";
@@ -267,7 +270,7 @@ public class PeopleImportServiceTests : ServiceTestBase
         var electionGuid = Guid.NewGuid();
         using var workbook = new ClosedXML.Excel.XLWorkbook();
         var worksheet = workbook.Worksheets.Add("Sheet1");
-        
+
         worksheet.Cell(1, 1).Value = "Skip this";
         worksheet.Cell(2, 1).Value = "Skip this too";
         worksheet.Cell(3, 1).Value = "FirstName";
@@ -372,7 +375,7 @@ public class PeopleImportServiceTests : ServiceTestBase
         Assert.Equal(2, result.PeopleAdded);
         Assert.Equal(0, result.PeopleSkipped);
 
-        var people = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync();
+        var people = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>();
         Assert.Equal(2, people.Count);
         Assert.Contains(people, p => p.FirstName == "John" && p.LastName == "Doe");
         Assert.Contains(people, p => p.FirstName == "Jane" && p.LastName == "Smith");
@@ -419,7 +422,7 @@ public class PeopleImportServiceTests : ServiceTestBase
         Assert.Equal(1, result.PeopleAdded);
         Assert.Equal(1, result.PeopleSkipped);
 
-        var people = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync();
+        var people = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>();
         Assert.Single(people);
     }
 
@@ -460,7 +463,7 @@ public class PeopleImportServiceTests : ServiceTestBase
 
         // Assert
         Assert.True(result.Success);
-        var people = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync();
+        var people = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>();
         Assert.Equal(2, people.Count);
 
         var john = people.First(p => p.FirstName == "John");
@@ -492,7 +495,7 @@ public class PeopleImportServiceTests : ServiceTestBase
 
         // Assert
         Assert.Equal(2, result.DeletedCount);
-        var remainingPeople = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync();
+        var remainingPeople = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>();
         Assert.Empty(remainingPeople);
     }
 
@@ -502,7 +505,7 @@ public class PeopleImportServiceTests : ServiceTestBase
         // Arrange
         var electionGuid = Guid.NewGuid();
         var person = new Person { PersonGuid = Guid.NewGuid(), ElectionGuid = electionGuid, FirstName = "John", LastName = "Doe", RowVersion = new byte[8] };
-        var ballot = new Ballot { BallotGuid = Guid.NewGuid(), ElectionGuid = electionGuid, LocationGuid = Guid.NewGuid(), BallotCode = "001", StatusCode = BallotStatus.Ok };
+        var ballot = new Ballot { BallotGuid = Guid.NewGuid(), LocationGuid = Guid.NewGuid(), BallotCode = "001", StatusCode = BallotStatus.Ok };
 
         Context.People.Add(person);
         Context.Ballots.Add(ballot);

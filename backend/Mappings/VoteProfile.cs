@@ -5,7 +5,7 @@ using Mapster;
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for vote-related mappings.
+/// Mapster profile for vote-related mappings.
 /// Defines mappings between vote entities and DTOs.
 /// </summary>
 public class VoteProfile : IRegister

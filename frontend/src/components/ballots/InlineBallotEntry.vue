@@ -155,28 +155,25 @@ onMounted(async () => {
   cacheLoading.value = true;
   cacheError.value = false;
 
-  try {
-    await peopleStore.initializeCandidateCache(props.electionGuid);
-  } catch (e) {
-    console.error("Failed to initialize candidate cache:", e);
-    cacheError.value = true;
-    showErrorMessage(t("ballots.cacheLoadError"));
-  } finally {
-    cacheLoading.value = false;
-    nextTick(() => {
-      searchInputRef.value?.focus();
+  peopleStore.initializeCandidateCache(props.electionGuid)
+    .then(() => {
+      cacheLoading.value = false;
+      nextTick(() => {
+        searchInputRef.value?.focus();
+      });
+    })
+    .catch((e) => {
+      console.error("Failed to initialize candidate cache:", e);
+      cacheError.value = true;
+      cacheLoading.value = false;
+      showErrorMessage(t("ballots.cacheLoadError"));
     });
-  }
 });
 </script>
 
 <template>
   <div class="inline-ballot-entry">
-    <div v-if="cacheLoading" class="inline-ballot-entry__loading">
-      <el-skeleton :rows="5" animated />
-    </div>
-
-    <div v-else-if="cacheError" class="inline-ballot-entry__error">
+    <div v-if="cacheError" class="inline-ballot-entry__error">
       <el-alert type="error" :title="$t('ballots.cacheLoadError')" :closable="false" />
     </div>
 

@@ -6,7 +6,7 @@ using System.Text.Json;
 namespace Backend.Mappings;
 
 /// <summary>
-/// AutoMapper profile for security audit log entity and DTO mappings.
+/// Mapster profile for security audit log entity and DTO mappings.
 /// </summary>
 public class SecurityAuditLogProfile : IRegister
 {
