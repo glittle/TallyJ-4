@@ -1,3 +1,84 @@
+<script setup lang="ts">
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useNotifications } from "@/composables/useNotifications";
+import { Operation } from "@element-plus/icons-vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
+import { useResultStore } from "../../stores/resultStore";
+
+const router = useRouter();
+const route = useRoute();
+const { t } = useI18n();
+const resultStore = useResultStore();
+const { showSuccessMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
+
+const electionGuid = route.params.id as string;
+const electionType = ref<"normal" | "singlename">(
+  route.query.electionType === "singlename" ? "singlename" : "normal",
+);
+
+const calculating = computed(() => resultStore.calculating);
+const results = computed(() => resultStore.results);
+const tallyProgress = computed(() => resultStore.tallyProgress);
+
+const topResults = computed(() => results.value?.results.slice(0, 10) || []);
+
+onMounted(async () => {
+  try {
+    await resultStore.initializeSignalR();
+    await resultStore.joinTallySession(electionGuid);
+    await resultStore.fetchResults(electionGuid);
+  } catch (_error) {
+    resultStore.clearError();
+  }
+});
+
+onUnmounted(async () => {
+  try {
+    await resultStore.leaveTallySession(electionGuid);
+  } catch (error) {
+    console.error("Failed to leave tally session:", error);
+  }
+});
+
+async function handleCalculate() {
+  try {
+    await resultStore.calculateTally(electionGuid, electionType.value);
+    showSuccessMessage(t("tally.calculateSuccess"));
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
+function viewFullResults() {
+  router.push(`/elections/${electionGuid}/results`);
+}
+
+function goBack() {
+  router.push(`/elections/${electionGuid}`);
+}
+
+function getSectionType(section: string) {
+  const typeMap: Record<string, any> = {
+    E: "success",
+    X: "warning",
+    O: "info",
+  };
+  return typeMap[section] || "";
+}
+
+function getSectionLabel(section: string) {
+  const labelMap: Record<string, string> = {
+    E: t("results.elected"),
+    X: t("results.extra"),
+    O: t("results.other"),
+  };
+  return labelMap[section] || section;
+}
+</script>
+
 <template>
   <div class="tally-calculation-page">
     <el-card>
@@ -117,87 +198,6 @@
     </el-card>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { useNotifications } from "@/composables/useNotifications";
-import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
-import { Operation } from "@element-plus/icons-vue";
-import { useResultStore } from "../../stores/resultStore";
-
-const router = useRouter();
-const route = useRoute();
-const { t } = useI18n();
-const resultStore = useResultStore();
-const { showSuccessMessage } = useNotifications();
-const { handleApiError } = useApiErrorHandler();
-
-const electionGuid = route.params.id as string;
-const electionType = ref<"normal" | "singlename">(
-  route.query.electionType === "singlename" ? "singlename" : "normal",
-);
-
-const calculating = computed(() => resultStore.calculating);
-const results = computed(() => resultStore.results);
-const tallyProgress = computed(() => resultStore.tallyProgress);
-
-const topResults = computed(() => results.value?.results.slice(0, 10) || []);
-
-onMounted(async () => {
-  try {
-    await resultStore.initializeSignalR();
-    await resultStore.joinTallySession(electionGuid);
-    await resultStore.fetchResults(electionGuid);
-  } catch (_error) {
-    resultStore.clearError();
-  }
-});
-
-onUnmounted(async () => {
-  try {
-    await resultStore.leaveTallySession(electionGuid);
-  } catch (error) {
-    console.error("Failed to leave tally session:", error);
-  }
-});
-
-async function handleCalculate() {
-  try {
-    await resultStore.calculateTally(electionGuid, electionType.value);
-    showSuccessMessage(t("tally.calculateSuccess"));
-  } catch (error) {
-    handleApiError(error);
-  }
-}
-
-function viewFullResults() {
-  router.push(`/elections/${electionGuid}/results`);
-}
-
-function goBack() {
-  router.push(`/elections/${electionGuid}`);
-}
-
-function getSectionType(section: string) {
-  const typeMap: Record<string, any> = {
-    E: "success",
-    X: "warning",
-    O: "info",
-  };
-  return typeMap[section] || "";
-}
-
-function getSectionLabel(section: string) {
-  const labelMap: Record<string, string> = {
-    E: t("results.elected"),
-    X: t("results.extra"),
-    O: t("results.other"),
-  };
-  return labelMap[section] || section;
-}
-</script>
 
 <style lang="less">
 .tally-calculation-page {

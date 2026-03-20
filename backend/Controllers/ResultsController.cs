@@ -40,7 +40,7 @@ public class ResultsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election to calculate results for.</param>
     /// <param name="electionType">The type of election calculation ("normal" or "singlename").</param>
     /// <returns>The calculated tally results.</returns>
-    [HttpPost("/{electionGuid:guid}/calculateTally")]
+    [HttpPost("election/{electionGuid:guid}/calculate")]
     public async Task<ActionResult<TallyResultDto>> CalculateTally(
         Guid electionGuid,
         [FromQuery] string? electionType = "normal")
@@ -81,7 +81,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get results for.</param>
     /// <returns>The tally results for the specified election.</returns>
-    [HttpGet("{electionGuid:guid}/results")]
+    [HttpGet("election/{electionGuid:guid}")]
     public async Task<ActionResult<TallyResultDto>> GetResults(Guid electionGuid)
     {
         try
@@ -106,7 +106,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get statistics for.</param>
     /// <returns>The summary statistics for the specified election.</returns>
-    [HttpGet("{electionGuid:guid}/summary")]
+    [HttpGet("election/{electionGuid:guid}/summary")]
     public async Task<ActionResult<TallyStatisticsDto>> GetSummary(Guid electionGuid)
     {
         try
@@ -131,7 +131,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get final results for.</param>
     /// <returns>The final election results.</returns>
-    [HttpGet("{electionGuid:guid}/final")]
+    [HttpGet("election/{electionGuid:guid}/final")]
     public async Task<ActionResult<TallyResultDto>> GetFinalResults(Guid electionGuid)
     {
         try
@@ -205,7 +205,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get monitor info for.</param>
     /// <returns>The monitoring information for the specified election.</returns>
-    [HttpGet("{electionGuid:guid}/monitor")]
+    [HttpGet("election/{electionGuid:guid}/monitor")]
     public async Task<ActionResult<MonitorInfoDto>> GetMonitorInfo(Guid electionGuid)
     {
         try
@@ -259,7 +259,7 @@ public class ResultsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <param name="request">The tie counts request data.</param>
     /// <returns>The response indicating the result of saving tie counts.</returns>
-    [HttpPost("{electionGuid:guid}/saveTies")]
+    [HttpPost("election/{electionGuid:guid}/ties/save")]
     public async Task<ActionResult<SaveTieCountsResponseDto>> SaveTieCounts(Guid electionGuid, [FromBody] SaveTieCountsRequestDto request)
     {
         try
@@ -284,7 +284,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get the report for.</param>
     /// <returns>The complete election report.</returns>
-    [HttpGet("{electionGuid:guid}/completeReport")]
+    [HttpGet("election/{electionGuid:guid}/report")]
     public async Task<ActionResult<ElectionReportDto>> GetElectionReport(Guid electionGuid)
     {
         try
@@ -310,7 +310,7 @@ public class ResultsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <param name="reportCode">The code identifying the specific report.</param>
     /// <returns>The report data for the specified report code.</returns>
-    [HttpGet("{electionGuid:guid}/{reportCode}/getReportData")]
+    [HttpGet("election/{electionGuid:guid}/report/{reportCode}")]
     public async Task<ActionResult<ReportDataResponseDto>> GetReportData(Guid electionGuid, string reportCode)
     {
         try
@@ -337,7 +337,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get presentation data for.</param>
     /// <returns>The presentation data for the specified election.</returns>
-    [HttpGet("{electionGuid:guid}/presentationData")]
+    [HttpGet("election/{electionGuid:guid}/presentation")]
     public async Task<ActionResult<PresentationDto>> GetPresentationData(Guid electionGuid)
     {
         try
@@ -362,7 +362,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get detailed statistics for.</param>
     /// <returns>The detailed statistics for the specified election.</returns>
-    [HttpGet("{electionGuid:guid}/detailedStatistics")]
+    [HttpGet("election/{electionGuid:guid}/detailed-statistics")]
     public async Task<ActionResult<DetailedStatisticsDto>> GetDetailedStatistics(Guid electionGuid)
     {
         try

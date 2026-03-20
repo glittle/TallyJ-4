@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { ElMessageBox } from "element-plus";
+import { useNotifications } from "@/composables/useNotifications";
 import {
-  Edit,
-  UserFilled,
-  LocationFilled,
-  Tickets,
-  DataAnalysis,
-  Operation,
-  Delete,
   Check,
   CopyDocument,
-  Link,
+  DataAnalysis,
+  Delete,
   Document,
+  Edit,
+  Link,
+  LocationFilled,
+  Operation,
+  Tickets,
+  UserFilled,
 } from "@element-plus/icons-vue";
-import { useElectionStore } from "../../stores/electionStore";
-import { useNotifications } from "@/composables/useNotifications";
+import { ElMessageBox } from "element-plus";
 import QRCode from "qrcode";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
+import { useElectionStore } from "../../stores/electionStore";
 
 const router = useRouter();
 const route = useRoute();
