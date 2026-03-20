@@ -1,0 +1,40 @@
+# frontend-pipeline.yml
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - frontend/* # Only trigger for Vite/frontend changes
+    exclude:
+    - backend/*  # Ignore .NET/backend changes
+
+pool:
+  vmImage: 'ubuntu-latest' # Faster/Cheaper for Node/Vite than Windows
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.x'
+
+- script: |
+    cd frontend
+    npm install
+    npm run build
+  displayName: 'Build Vite Project'
+
+- task: IISWebAppDeploymentOnMachineGroup@0
+  displayName: 'Deploy Frontend to IIS'
+  inputs:
+    WebSiteName: 'TallyJv4-UAT'
+    # Target the 'dist' folder created by Vite
+    Package: '$(System.DefaultWorkingDirectory)/frontend/dist'
+    TakeAppOfflineFlag: true
+
+# Debug step to see the frontend workspace if it fails
+- task: PublishPipelineArtifact@1
+  condition: always()
+  inputs:
+    targetPath: '$(Pipeline.Workspace)'
+    artifact: 'FrontendDebugWorkspace'
+
