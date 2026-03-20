@@ -1,6 +1,13 @@
 trigger:
-- main
-
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - backend/*  # Only trigger if files in this folder change
+    exclude:
+    - frontend/* # Explicitly ignore frontend changes
+    
 pool:
   vmImage: 'windows-latest'
 
