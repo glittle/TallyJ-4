@@ -6,7 +6,7 @@ pool:
 
 variables:
   # Adjusted to point specifically to the backend folder
-  solution: 'backend/**/*.sln' 
+  solution: 'backend/*.sln' 
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
