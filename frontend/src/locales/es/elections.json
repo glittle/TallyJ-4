@@ -46,6 +46,7 @@
   "elections.form.flagsHelp": "Los indicadores se usan para condiciones electorales especiales.",
   "elections.form.flagsPlaceholder": "Ingrese cualquier indicador",
   "elections.form.hidePreBallotPages": "Ocultar Páginas Pre-Boleta",
+  "elections.form.lockedByBallots": "Bloqueado — se han ingresado boletas",
   "elections.form.linkedElection": "Elección Vinculada",
   "elections.form.linkedElectionCount_plural": "{count} elecciones vinculadas disponibles",
   "elections.form.linkedElectionCount": "{count} elección vinculada disponible",

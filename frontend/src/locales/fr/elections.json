@@ -68,6 +68,7 @@
   "elections.form.flagsHelp": "Les drapeaux sont utilisés pour des conditions d'élection spéciales.",
   "elections.form.flagsPlaceholder": "Entrez tous les drapeaux",
   "elections.form.hidePreBallotPages": "Masquer les pages pré-bulletin",
+  "elections.form.lockedByBallots": "Verrouillé — des bulletins ont été saisis",
   "elections.form.linkedElection": "Élection liée",
   "elections.form.linkedElectionCount_plural": "{count} élections liées disponibles",
   "elections.form.linkedElectionCount": "{count} élection liée disponible",

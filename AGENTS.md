@@ -97,6 +97,8 @@ npm run test:run
 
 Run `npm run validate:i18n` when you touch locale files.
 
+When adding new user-facing strings, **only add them to the English locale** (`src/locales/en/`). Other languages are updated separately in periodic review cycles — do not add placeholder or machine-translated strings to non-English locales.
+
 ## Local development assumptions
 
 - backend default dev URL: `http://localhost:5016`

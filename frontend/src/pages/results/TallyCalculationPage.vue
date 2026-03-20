@@ -2,31 +2,36 @@
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
 import { Operation } from "@element-plus/icons-vue";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useResultStore } from "../../stores/resultStore";
+import { useElectionStore } from "../../stores/electionStore";
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
+const electionStore = useElectionStore();
 const { showSuccessMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
-const electionType = ref<"normal" | "singlename">(
-  route.query.electionType === "singlename" ? "singlename" : "normal",
-);
 
 const calculating = computed(() => resultStore.calculating);
 const results = computed(() => resultStore.results);
 const tallyProgress = computed(() => resultStore.tallyProgress);
+const election = computed(() => electionStore.currentElection);
+
+const electionType = computed<"normal" | "singlename">(() =>
+  election.value?.numberToElect === 1 ? "singlename" : "normal",
+);
 
 const topResults = computed(() => results.value?.results.slice(0, 10) || []);
 
 onMounted(async () => {
   try {
+    await electionStore.fetchElectionById(electionGuid);
     await resultStore.initializeSignalR();
     await resultStore.joinTallySession(electionGuid);
     await resultStore.fetchResults(electionGuid);
@@ -98,15 +103,6 @@ function getSectionLabel(section: string) {
       </el-alert>
 
       <el-form label-width="150px" label-position="left">
-        <el-form-item :label="$t('elections.form.type')">
-          <el-radio-group v-model="electionType">
-            <el-radio value="normal">{{ $t("tally.normalElection") }}</el-radio>
-            <el-radio value="singlename">{{
-              $t("tally.singleNameElection")
-            }}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
         <el-form-item>
           <el-button
             type="primary"

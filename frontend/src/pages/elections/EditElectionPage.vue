@@ -21,6 +21,7 @@
         <ElectionFormTabs
           v-model="form"
           :available-elections="availableElections"
+          :ballot-count="election?.ballotCount"
         />
 
         <el-form-item style="margin-top: 20px">

@@ -46,6 +46,7 @@
   "elections.form.flagsHelp": "Flags are used for special election conditions.",
   "elections.form.flagsPlaceholder": "Enter any flags",
   "elections.form.hidePreBallotPages": "Hide Pre-Ballot Pages",
+  "elections.form.lockedByBallots": "Locked — ballots have been entered",
   "elections.form.linkedElection": "Linked Election",
   "elections.form.linkedElectionCount_plural": "{count} linked elections available",
   "elections.form.linkedElectionCount": "{count} linked election available",

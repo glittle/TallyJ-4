@@ -46,6 +46,7 @@
   "elections.form.flagsHelp": "Os sinalizadores são usados para condições eleitorais especiais.",
   "elections.form.flagsPlaceholder": "Digite quaisquer sinalizadores",
   "elections.form.hidePreBallotPages": "Ocultar Páginas Pré-Cédula",
+  "elections.form.lockedByBallots": "Bloqueado — cédulas foram inseridas",
   "elections.form.linkedElection": "Eleição Vinculada",
   "elections.form.linkedElectionCount_plural": "{count} eleições vinculadas disponíveis",
   "elections.form.linkedElectionCount": "{count} eleição vinculada disponível",

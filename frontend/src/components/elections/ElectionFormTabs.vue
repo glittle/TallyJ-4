@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import type {
   CreateElectionDto,
   UpdateElectionDto,
@@ -10,6 +10,7 @@ interface Props {
   modelValue: CreateElectionDto | UpdateElectionDto;
   availableElections: ElectionSummaryDto[];
   formRef?: any;
+  ballotCount?: number;
 }
 
 const props = defineProps<Props>();
@@ -50,6 +51,8 @@ onMounted(() => {
     formRef: props.formRef,
   });
 });
+
+const hasBallotsEntered = computed(() => (props.ballotCount ?? 0) > 0);
 
 const activeTab = ref("basic");
 
@@ -143,6 +146,7 @@ function tabLabel(tab: string, label: string) {
         <el-select
           v-model="formData.electionType"
           :placeholder="$t('elections.form.typePlaceholder')"
+          :disabled="hasBallotsEntered"
         >
           <el-option :label="$t('elections.electionTypes.LSA')" value="LSA" />
           <el-option :label="$t('elections.electionTypes.LSA1')" value="LSA1" />
@@ -152,6 +156,9 @@ function tabLabel(tab: string, label: string) {
           <el-option :label="$t('elections.electionTypes.Reg')" value="Reg" />
           <el-option :label="$t('elections.electionTypes.Oth')" value="Oth" />
         </el-select>
+        <span v-if="hasBallotsEntered" class="locked-hint">{{
+          $t("elections.form.lockedByBallots")
+        }}</span>
       </el-form-item>
 
       <el-form-item
@@ -161,11 +168,15 @@ function tabLabel(tab: string, label: string) {
         <el-select
           v-model="formData.electionMode"
           :placeholder="$t('elections.form.modePlaceholder')"
+          :disabled="hasBallotsEntered"
         >
           <el-option :label="$t('elections.electionModes.N')" value="N" />
           <el-option :label="$t('elections.electionModes.T')" value="T" />
           <el-option :label="$t('elections.electionModes.B')" value="B" />
         </el-select>
+        <span v-if="hasBallotsEntered" class="locked-hint">{{
+          $t("elections.form.lockedByBallots")
+        }}</span>
       </el-form-item>
     </el-tab-pane>
 
@@ -177,7 +188,15 @@ function tabLabel(tab: string, label: string) {
         :label="$t('elections.form.numberToElect')"
         prop="numberToElect"
       >
-        <el-input-number v-model="formData.numberToElect" :min="1" :max="50" />
+        <el-input-number
+          v-model="formData.numberToElect"
+          :min="1"
+          :max="50"
+          :disabled="hasBallotsEntered"
+        />
+        <span v-if="hasBallotsEntered" class="locked-hint">{{
+          $t("elections.form.lockedByBallots")
+        }}</span>
       </el-form-item>
 
       <el-form-item
@@ -485,6 +504,12 @@ function tabLabel(tab: string, label: string) {
     border-radius: 50%;
     margin-left: 6px;
     vertical-align: middle;
+  }
+
+  .locked-hint {
+    font-size: 12px;
+    color: #909399;
+    margin-left: 8px;
   }
 }
 </style>

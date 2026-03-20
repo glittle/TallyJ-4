@@ -46,6 +46,7 @@
   "elections.form.flagsHelp": "Các cờ được sử dụng cho các điều kiện bầu cử đặc biệt.",
   "elections.form.flagsPlaceholder": "Nhập các cờ",
   "elections.form.hidePreBallotPages": "Ẩn Trang Trước Khi Bỏ Phiếu",
+  "elections.form.lockedByBallots": "Đã khóa — phiếu bầu đã được nhập",
   "elections.form.linkedElection": "Cuộc Bầu Cử Liên Kết",
   "elections.form.linkedElectionCount_plural": "{count} cuộc bầu cử liên kết có sẵn",
   "elections.form.linkedElectionCount": "{count} cuộc bầu cử liên kết có sẵn",

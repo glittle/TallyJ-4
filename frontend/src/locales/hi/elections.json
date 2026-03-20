@@ -46,6 +46,7 @@
   "elections.form.flagsHelp": "फ्लैग विशेष चुनाव शर्तों के लिए उपयोग किए जाते हैं।",
   "elections.form.flagsPlaceholder": "कोई फ्लैग दर्ज करें",
   "elections.form.hidePreBallotPages": "मतपत्र-पूर्व पृष्ठ छिपाएं",
+  "elections.form.lockedByBallots": "लॉक — मतपत्र दर्ज किए जा चुके हैं",
   "elections.form.linkedElection": "लिंक किया गया चुनाव",
   "elections.form.linkedElectionCount_plural": "{count} लिंक किए गए चुनाव उपलब्ध हैं",
   "elections.form.linkedElectionCount": "{count} लिंक किया गया चुनाव उपलब्ध है",

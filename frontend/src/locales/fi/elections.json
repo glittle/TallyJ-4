@@ -46,6 +46,7 @@
   "elections.form.flagsHelp": "Lippuja käytetään erityisiin vaaliehtoihin.",
   "elections.form.flagsPlaceholder": "Syötä liput",
   "elections.form.hidePreBallotPages": "Piilota esitäyssivut",
+  "elections.form.lockedByBallots": "Lukittu — äänestyslippuja on syötetty",
   "elections.form.linkedElection": "Linkitetty vaali",
   "elections.form.linkedElectionCount": "{count} linkitetty vaali saatavilla",
   "elections.form.linkedElectionCount_plural": "{count} linkitettyä vaalia saatavilla",

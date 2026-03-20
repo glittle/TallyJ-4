@@ -46,6 +46,7 @@
   "elections.form.flagsHelp": "플래그는 특수 선거 조건에 사용됩니다.",
   "elections.form.flagsPlaceholder": "플래그 입력",
   "elections.form.hidePreBallotPages": "투표 전 페이지 숨기기",
+  "elections.form.lockedByBallots": "잠김 — 투표지가 입력되었습니다",
   "elections.form.linkedElection": "연결된 선거",
   "elections.form.linkedElectionCount_plural": "{count}개의 연결된 선거 사용 가능",
   "elections.form.linkedElectionCount": "{count}개의 연결된 선거 사용 가능",
