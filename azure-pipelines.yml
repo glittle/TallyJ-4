@@ -1,8 +1,3 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
 - main
 
@@ -10,7 +5,8 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
+  # Adjusted to point specifically to the backend folder
+  solution: 'backend/**/*.sln' 
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -19,11 +15,11 @@ steps:
 
 - task: NuGetCommand@2
   inputs:
-    restoreSolution: '$(solution)\backend'
+    restoreSolution: '$(solution)'
 
 - task: VSBuild@1
   inputs:
-    solution: '$(solution)\backend'
+    solution: '$(solution)'
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
@@ -33,8 +29,19 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+# This step usually requires a Deployment Group; 
+# if this is where it's failing, the artifact below will show you why.
 - task: IISWebAppDeploymentOnMachineGroup@0
   inputs:
     WebSiteName: 'TallyJv4-UAT'
-    Package: '$(System.DefaultWorkingDirectory)\**\*.zip'
+    Package: '$(build.artifactStagingDirectory)\WebApp.zip'
     TakeAppOfflineFlag: true
+
+# THE DEBUG STEP
+- task: PublishPipelineArtifact@1
+  displayName: 'Download Workspace for Inspection'
+  condition: always() 
+  inputs:
+    targetPath: '$(Pipeline.Workspace)'
+    artifact: 'DebugWorkspace'
+    publishLocation: 'pipeline'
