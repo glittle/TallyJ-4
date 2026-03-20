@@ -10,7 +10,7 @@ trigger:
     - backend/*  # Ignore .NET/backend changes
 
 pool:
-  vmImage: 'ubuntu-latest' # Faster/Cheaper for Node/Vite than Windows
+  vmImage: 'windows-latest'
 
 steps:
 - task: NodeTool@0
