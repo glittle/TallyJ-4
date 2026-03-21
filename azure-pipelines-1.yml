@@ -2,7 +2,7 @@
 trigger:
   branches:
     include:
-    - main
+    - deploy
   paths:
     include:
     - frontend/* # Only trigger for Vite/frontend changes
