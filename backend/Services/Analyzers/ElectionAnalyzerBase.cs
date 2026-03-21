@@ -5,63 +5,23 @@ using Backend.Domain.Enumerations;
 
 namespace Backend.Services.Analyzers;
 
-/// <summary>
-/// Base class for election result analyzers.
-/// Provides common functionality for calculating election tallies, processing votes, and determining winners.
-/// </summary>
 public abstract class ElectionAnalyzerBase
 {
-    /// <summary>
-    /// The database context for accessing election data.
-    /// </summary>
+    private const int ThresholdForCloseVote = 3;
+
     protected readonly MainDbContext Context;
-
-    /// <summary>
-    /// The logger for recording analysis operations.
-    /// </summary>
     protected readonly ILogger Logger;
-
-    /// <summary>
-    /// The election being analyzed.
-    /// </summary>
     protected readonly Election TargetElection;
 
-    /// <summary>
-    /// Collection of ballots for the election.
-    /// </summary>
     protected List<Ballot> Ballots = new();
-
-    /// <summary>
-    /// Collection of votes from all ballots.
-    /// </summary>
     protected List<Vote> Votes = new();
-
-    /// <summary>
-    /// Collection of people (candidates) in the election.
-    /// </summary>
     protected List<Person> People = new();
-
-    /// <summary>
-    /// Collection of calculated results.
-    /// </summary>
     protected List<Result> Results = new();
-
-    /// <summary>
-    /// Collection of tie records.
-    /// </summary>
     protected List<ResultTie> ResultTies = new();
-
-    /// <summary>
-    /// The result summary being calculated.
-    /// </summary>
     protected ResultSummary ResultSummaryCalc = new();
+    protected ResultSummary ResultSummaryFinal = new();
+    private Dictionary<Guid, int> _previousTieBreakCounts = new();
 
-    /// <summary>
-    /// Initializes a new instance of the ElectionAnalyzerBase.
-    /// </summary>
-    /// <param name="context">The database context.</param>
-    /// <param name="logger">The logger instance.</param>
-    /// <param name="election">The election to analyze.</param>
     protected ElectionAnalyzerBase(MainDbContext context, ILogger logger, Election election)
     {
         Context = context;
@@ -69,11 +29,6 @@ public abstract class ElectionAnalyzerBase
         TargetElection = election;
     }
 
-    /// <summary>
-    /// Performs the complete election analysis process.
-    /// Includes data preparation, vote counting, result calculation, and persistence.
-    /// </summary>
-    /// <returns>A task representing the asynchronous analysis operation.</returns>
     public async Task AnalyzeAsync()
     {
         using var transaction = await Context.Database.BeginTransactionAsync();
@@ -82,10 +37,12 @@ public abstract class ElectionAnalyzerBase
             Logger.LogInformation("Starting tally calculation transaction for election {ElectionGuid}", TargetElection.ElectionGuid);
 
             await PrepareForAnalysisAsync();
+            RefreshBallotStatuses();
+            FillResultSummaryCalc();
             CalculateBallotStatistics();
             await CountVotesAsync();
             FinalizeResultsAndTies();
-            await FinalizeSummariesAsync();
+            FinalizeSummaries();
             await SaveResultsAsync();
 
             await transaction.CommitAsync();
@@ -99,10 +56,6 @@ public abstract class ElectionAnalyzerBase
         }
     }
 
-    /// <summary>
-    /// Prepares the analyzer for analysis by loading required data and clearing previous results.
-    /// </summary>
-    /// <returns>A task representing the asynchronous preparation operation.</returns>
     protected virtual async Task PrepareForAnalysisAsync()
     {
         Logger.LogInformation("Preparing for analysis of election {ElectionGuid}", TargetElection.ElectionGuid);
@@ -110,6 +63,10 @@ public abstract class ElectionAnalyzerBase
         var existingResults = await Context.Results
             .Where(r => r.ElectionGuid == TargetElection.ElectionGuid)
             .ToListAsync();
+
+        _previousTieBreakCounts = existingResults
+            .Where(r => r.TieBreakCount.HasValue)
+            .ToDictionary(r => r.PersonGuid, r => r.TieBreakCount!.Value);
 
         if (existingResults.Any())
         {
@@ -125,6 +82,15 @@ public abstract class ElectionAnalyzerBase
         {
             Context.ResultTies.RemoveRange(existingResultTies);
             Logger.LogInformation("Cleared {ResultTieCount} existing ResultTie records", existingResultTies.Count);
+        }
+
+        var existingNonManualSummaries = await Context.ResultSummaries
+            .Where(rs => rs.ElectionGuid == TargetElection.ElectionGuid && rs.ResultType != "M")
+            .ToListAsync();
+
+        if (existingNonManualSummaries.Any())
+        {
+            Context.ResultSummaries.RemoveRange(existingNonManualSummaries);
         }
 
         await Context.SaveChangesAsync();
@@ -149,190 +115,405 @@ public abstract class ElectionAnalyzerBase
             .ToListAsync();
 
         Results = new List<Result>();
+        ResultTies = new List<ResultTie>();
 
-        ResultSummaryCalc = await Context.ResultSummaries
-            .FirstOrDefaultAsync(rs => rs.ElectionGuid == TargetElection.ElectionGuid)
-            ?? new ResultSummary { ElectionGuid = TargetElection.ElectionGuid, ResultType = "N" };
+        ResultSummaryCalc = new ResultSummary
+        {
+            ElectionGuid = TargetElection.ElectionGuid,
+            ResultType = "C"
+        };
+        Context.ResultSummaries.Add(ResultSummaryCalc);
+
+        ResultSummaryFinal = new ResultSummary
+        {
+            ElectionGuid = TargetElection.ElectionGuid,
+            ResultType = "F"
+        };
+        Context.ResultSummaries.Add(ResultSummaryFinal);
 
         Logger.LogInformation("Loaded {BallotCount} ballots, {VoteCount} votes, {PeopleCount} people",
             Ballots.Count, Votes.Count, People.Count);
     }
 
-    /// <summary>
-    /// Calculates statistics about ballots and votes for the election.
-    /// Determines counts of valid, spoiled, and review-needed ballots.
-    /// </summary>
+    protected virtual void RefreshBallotStatuses()
+    {
+        foreach (var vote in Votes)
+        {
+            var newStatus = DetermineVoteStatus(vote);
+            vote.VoteStatus = newStatus;
+        }
+
+        var isSingleName = IsSingleNameElection();
+        var numberToElect = TargetElection.NumberToElect ?? 0;
+        var ballotAnalyzer = new BallotAnalyzer(numberToElect, isSingleName);
+
+        foreach (var ballot in Ballots)
+        {
+            var ballotVotes = Votes.Where(v => v.BallotGuid == ballot.BallotGuid).ToList();
+            var voteInfos = ballotVotes.Select(v => CreateBallotVoteInfo(v)).ToList();
+            ballotAnalyzer.DetermineStatusFromVotes(ballot.StatusCode, voteInfos, out var newStatus, out _);
+            ballot.StatusCode = newStatus;
+        }
+    }
+
+    protected BallotVoteInfo CreateBallotVoteInfo(Vote vote)
+    {
+        var person = People.FirstOrDefault(p => p.PersonGuid == vote.PersonGuid);
+        return new BallotVoteInfo
+        {
+            PersonGuid = vote.PersonGuid,
+            PersonCanReceiveVotes = person?.CanReceiveVotes ?? false,
+            PersonCombinedInfo = person?.CombinedInfo,
+            VoteCombinedInfo = vote.PersonCombinedInfo,
+            VoteIneligibleReasonCode = vote.IneligibleReasonCode,
+            PersonIneligibleReasonGuid = person?.IneligibleReasonGuid,
+            OnlineVoteRaw = vote.OnlineVoteRaw,
+            SingleNameElectionCount = vote.SingleNameElectionCount,
+            VoteStatusCode = vote.VoteStatus
+        };
+    }
+
+    protected virtual bool IsSingleNameElection()
+    {
+        var electionType = TargetElection.ElectionType;
+        return electionType == "Oth";
+    }
+
+    protected virtual void FillResultSummaryCalc()
+    {
+        ResultSummaryCalc.NumVoters = People.Count(p => !string.IsNullOrEmpty(p.VotingMethod));
+        ResultSummaryCalc.NumEligibleToVote = People.Count(p => p.CanVote == true);
+
+        ResultSummaryCalc.InPersonBallots = People.Count(p => p.VotingMethod == "P");
+        ResultSummaryCalc.MailedInBallots = People.Count(p => p.VotingMethod == "M");
+        ResultSummaryCalc.DroppedOffBallots = People.Count(p => p.VotingMethod == "D");
+        ResultSummaryCalc.CalledInBallots = People.Count(p => p.VotingMethod == "C");
+        ResultSummaryCalc.OnlineBallots = People.Count(p => p.VotingMethod == "O" || p.VotingMethod == "K");
+        ResultSummaryCalc.ImportedBallots = People.Count(p => p.VotingMethod == "I");
+        ResultSummaryCalc.Custom1Ballots = People.Count(p => p.VotingMethod == "1");
+        ResultSummaryCalc.Custom2Ballots = People.Count(p => p.VotingMethod == "2");
+        ResultSummaryCalc.Custom3Ballots = People.Count(p => p.VotingMethod == "3");
+    }
+
     protected virtual void CalculateBallotStatistics()
     {
         Logger.LogInformation("Calculating ballot statistics");
+
+        ResultSummaryCalc.BallotsNeedingReview = Ballots.Count(b => BallotAnalyzer.BallotNeedsReview(b.StatusCode));
+
+        ResultSummaryCalc.TotalVotes = Ballots.Count * TargetElection.NumberToElect;
 
         var invalidBallotGuids = Ballots
             .Where(b => b.StatusCode != BallotStatus.Ok)
             .Select(b => b.BallotGuid)
             .ToList();
 
-        var totalBallots = Ballots.Count;
-        var spoiledBallots = invalidBallotGuids.Count;
+        ResultSummaryCalc.SpoiledBallots = invalidBallotGuids.Count;
+        ResultSummaryCalc.BallotsReceived = Ballots.Count - ResultSummaryCalc.SpoiledBallots;
 
-        ResultSummaryCalc.BallotsReceived = totalBallots - spoiledBallots;
-        ResultSummaryCalc.SpoiledBallots = spoiledBallots;
-        ResultSummaryCalc.BallotsNeedingReview = Ballots.Count(b => BallotNeedsReview(b));
-
-        var numberToElect = TargetElection.NumberToElect ?? 9;
-        ResultSummaryCalc.TotalVotes = totalBallots * numberToElect;
-
-        var invalidVotes = Votes
-            .Where(v => !invalidBallotGuids.Contains(v.BallotGuid) &&
-                       DetermineVoteStatus(v) != VoteStatus.Ok)
-            .ToList();
-
-        ResultSummaryCalc.SpoiledVotes = invalidVotes.Count;
+        ResultSummaryCalc.SpoiledVotes = Votes
+            .Count(v => !invalidBallotGuids.Contains(v.BallotGuid) && v.VoteStatus != VoteStatus.Ok);
 
         Logger.LogInformation("Statistics: {TotalBallots} ballots ({SpoiledBallots} spoiled), {TotalVotes} potential votes ({SpoiledVotes} spoiled)",
-            totalBallots, spoiledBallots, ResultSummaryCalc.TotalVotes, ResultSummaryCalc.SpoiledVotes);
+            Ballots.Count, ResultSummaryCalc.SpoiledBallots, ResultSummaryCalc.TotalVotes, ResultSummaryCalc.SpoiledVotes);
     }
 
-    /// <summary>
-    /// Counts the votes for the election according to the specific election type rules.
-    /// </summary>
-    /// <returns>A task representing the asynchronous vote counting operation.</returns>
     protected abstract Task CountVotesAsync();
 
-    /// <summary>
-    /// Finalizes the election results by assigning ranks and detecting ties.
-    /// </summary>
     protected virtual void FinalizeResultsAndTies()
     {
         Logger.LogInformation("Finalizing results and detecting ties");
 
-        var groupedByVotes = Results
-            .GroupBy(r => r.VoteCount ?? 0)
-            .OrderByDescending(g => g.Key)
-            .ToList();
+        Results.RemoveAll(r => (r.VoteCount ?? 0) == 0);
 
-        var rank = 1;
-        var ordinal = 1;
-        var tieGroupNumber = 1;
-        var numberToElect = TargetElection.NumberToElect ?? 9;
-        var numberExtra = TargetElection.NumberExtra ?? 0;
-
-        foreach (var group in groupedByVotes)
+        foreach (var result in Results)
         {
-            var candidatesInGroup = group.ToList();
-            var isTied = candidatesInGroup.Count > 1;
-
-            foreach (var result in candidatesInGroup)
+            if (_previousTieBreakCounts.TryGetValue(result.PersonGuid, out var tbc))
             {
-                result.Rank = rank;
-                result.IsTied = isTied;
+                result.TieBreakCount = tbc;
+            }
+        }
 
-                if (isTied)
-                {
-                    result.TieBreakGroup = tieGroupNumber;
-                }
+        DetermineOrderAndSections();
+        AnalyzeForTies();
 
-                if (ordinal <= numberToElect)
+        Logger.LogInformation("Finalized {ResultCount} results, {TieCount} tie groups",
+            Results.Count, ResultTies.Count);
+    }
+
+    internal void DetermineOrderAndSections()
+    {
+        var numberToElect = TargetElection.NumberToElect ?? 0;
+        var numberExtra = TargetElection.NumberExtra ?? 0;
+        var ordinalRank = 0;
+        var ordinalRankInExtra = 0;
+
+        foreach (var result in Results
+            .OrderByDescending(r => r.VoteCount)
+            .ThenByDescending(r => r.TieBreakCount ?? 0)
+            .ThenBy(r =>
+            {
+                var person = People.FirstOrDefault(p => p.PersonGuid == r.PersonGuid);
+                return person?.FullNameFl ?? r.RowId.ToString();
+            }))
+        {
+            ordinalRank++;
+            result.Rank = ordinalRank;
+
+            if (ordinalRank <= numberToElect)
+            {
+                result.Section = "E";
+            }
+            else if (ordinalRank <= numberToElect + numberExtra)
+            {
+                result.Section = "X";
+            }
+            else
+            {
+                result.Section = "O";
+            }
+
+            if (result.Section == "X")
+            {
+                ordinalRankInExtra++;
+                result.RankInExtra = ordinalRankInExtra;
+            }
+        }
+    }
+
+    internal void AnalyzeForTies()
+    {
+        Result? aboveResult = null;
+        var nextTieBreakGroup = 1;
+        var foundFirstOneInOther = false;
+
+        foreach (var result in Results.OrderBy(r => r.Rank))
+        {
+            result.IsTied = false;
+            result.TieBreakGroup = null;
+            result.ForceShowInOther = false;
+            result.IsTieResolved = null;
+            result.TieBreakRequired = false;
+
+            if (aboveResult != null)
+            {
+                var numFewerVotes = (aboveResult.VoteCount ?? 0) - (result.VoteCount ?? 0);
+                if (numFewerVotes == 0)
                 {
-                    result.Section = "E";
-                }
-                else if (ordinal <= numberToElect + numberExtra)
-                {
-                    result.Section = "X";
+                    aboveResult.IsTied = true;
+                    result.IsTied = true;
+
+                    if (!foundFirstOneInOther && result.Section == "O")
+                    {
+                        foundFirstOneInOther = true;
+                    }
+
+                    if (aboveResult.TieBreakGroup == null)
+                    {
+                        aboveResult.TieBreakGroup = nextTieBreakGroup;
+                        nextTieBreakGroup++;
+                    }
+                    result.TieBreakGroup = aboveResult.TieBreakGroup;
                 }
                 else
                 {
-                    result.Section = "O";
+                    if (foundFirstOneInOther)
+                    {
+                        break;
+                    }
                 }
 
-                ordinal++;
+                var isClose = numFewerVotes <= ThresholdForCloseVote;
+                aboveResult.CloseToNext = isClose;
+                result.CloseToPrev = isClose;
+            }
+            else
+            {
+                result.CloseToPrev = false;
             }
 
-            rank += candidatesInGroup.Count;
-            if (isTied) tieGroupNumber++;
+            aboveResult = result;
         }
 
-        foreach (var group in groupedByVotes.Where(g => g.Count() > 1))
+        if (aboveResult != null)
         {
-            var sections = group.Select(r => r.Section).Distinct().ToList();
-
-            if (sections.Count > 1)
-            {
-                var tieBreakGroup = 0;
-                foreach (var result in group)
-                {
-                    result.TieBreakRequired = true;
-                    tieBreakGroup = result.TieBreakGroup ?? 0;
-                }
-
-                var resultTie = new ResultTie
-                {
-                    ElectionGuid = TargetElection.ElectionGuid,
-                    TieBreakGroup = tieBreakGroup,
-                    TieBreakRequired = true,
-                    NumInTie = group.Count(),
-                    NumToElect = numberToElect
-                };
-                ResultTies.Add(resultTie);
-            }
+            aboveResult.CloseToNext = false;
         }
 
-        var resultsOrdered = Results.OrderBy(r => r.Rank).ToList();
-        for (int i = 0; i < resultsOrdered.Count; i++)
+        for (var groupCode = 1; groupCode < nextTieBreakGroup; groupCode++)
         {
-            var current = resultsOrdered[i];
+            var code = groupCode;
 
-            if (i > 0)
+            var resultTie = new ResultTie
             {
-                var prev = resultsOrdered[i - 1];
-                var diff = (prev.VoteCount ?? 0) - (current.VoteCount ?? 0);
-                current.CloseToPrev = diff >= 1 && diff <= 3;
-            }
+                ElectionGuid = TargetElection.ElectionGuid,
+                TieBreakGroup = code,
+            };
 
-            if (i < resultsOrdered.Count - 1)
-            {
-                var next = resultsOrdered[i + 1];
-                var diff = (current.VoteCount ?? 0) - (next.VoteCount ?? 0);
-                current.CloseToNext = diff >= 1 && diff <= 3;
-            }
+            ResultTies.Add(resultTie);
+
+            AnalyzeTieGroup(resultTie, Results.Where(r => r.TieBreakGroup == code).OrderBy(r => r.Rank).ToList());
         }
-
-        Logger.LogInformation("Finalized {ResultCount} results, {TieCount} tie groups",
-            Results.Count, groupedByVotes.Count(g => g.Count() > 1));
     }
 
-    /// <summary>
-    /// Finalizes the result summary and saves it to the database.
-    /// </summary>
-    /// <returns>A task representing the asynchronous summary finalization operation.</returns>
-    protected virtual async Task FinalizeSummariesAsync()
+    private void AnalyzeTieGroup(ResultTie resultTie, List<Result> results)
     {
-        Logger.LogInformation("Finalizing summaries");
+        if (results.Count == 0) return;
 
-        ResultSummaryCalc.UseOnReports = true;
-        ResultSummaryCalc.ElectionGuid = TargetElection.ElectionGuid;
+        resultTie.NumInTie = results.Count;
+        resultTie.NumToElect = 0;
+        resultTie.TieBreakRequired = false;
 
-        var existingSummary = await Context.ResultSummaries
-            .FirstOrDefaultAsync(rs => rs.ElectionGuid == TargetElection.ElectionGuid);
+        var groupInTop = false;
+        var groupInExtra = false;
+        var groupInOther = false;
 
-        if (existingSummary == null)
+        foreach (var result in results)
         {
-            Context.ResultSummaries.Add(ResultSummaryCalc);
+            switch (result.Section)
+            {
+                case "E":
+                    groupInTop = true;
+                    break;
+                case "X":
+                    groupInExtra = true;
+                    break;
+                case "O":
+                    groupInOther = true;
+                    break;
+            }
+        }
+
+        var groupOnlyInTop = groupInTop && !(groupInExtra || groupInOther);
+        var groupOnlyInOther = groupInOther && !(groupInTop || groupInExtra);
+        var isResolved = true;
+
+        foreach (var r in results)
+        {
+            r.TieBreakRequired = !(groupOnlyInOther || groupOnlyInTop);
+
+            var stillTied = results.Any(other => other != r
+                && (other.TieBreakCount ?? 0) == (r.TieBreakCount ?? 0)
+                && (other.Section != r.Section || r.Section == "X"));
+
+            if (stillTied)
+            {
+                isResolved = false;
+            }
+        }
+
+        foreach (var r in results)
+        {
+            r.IsTieResolved = isResolved;
+        }
+        resultTie.IsResolved = isResolved;
+
+        if (groupInOther && (groupInTop || groupInExtra))
+        {
+            foreach (var r in results.Where(r => r.Section == "O"))
+            {
+                r.ForceShowInOther = true;
+            }
+        }
+
+        if (groupInTop)
+        {
+            if (!groupOnlyInTop)
+            {
+                resultTie.NumToElect += results.Count(r => r.Section == "E");
+                resultTie.TieBreakRequired = true;
+            }
+        }
+
+        if (groupInExtra)
+        {
+            resultTie.TieBreakRequired = true;
+
+            if (!groupInTop)
+            {
+                resultTie.NumToElect += results.Count(r => r.Section == "X");
+            }
+        }
+
+        if (resultTie.NumInTie == resultTie.NumToElect)
+        {
+            resultTie.NumToElect--;
+        }
+
+        if (resultTie.TieBreakRequired == true)
+        {
+            foreach (var r in results)
+            {
+                r.TieBreakCount ??= 0;
+            }
         }
         else
         {
-            existingSummary.BallotsReceived = ResultSummaryCalc.BallotsReceived;
-            existingSummary.SpoiledBallots = ResultSummaryCalc.SpoiledBallots;
-            existingSummary.BallotsNeedingReview = ResultSummaryCalc.BallotsNeedingReview;
-            existingSummary.TotalVotes = ResultSummaryCalc.TotalVotes;
-            existingSummary.SpoiledVotes = ResultSummaryCalc.SpoiledVotes;
-            existingSummary.UseOnReports = true;
+            foreach (var r in results)
+            {
+                r.TieBreakCount = null;
+            }
         }
     }
 
-    /// <summary>
-    /// Saves the calculated results and tie records to the database.
-    /// </summary>
-    /// <returns>A task representing the asynchronous save operation.</returns>
+    protected virtual void FinalizeSummaries()
+    {
+        Logger.LogInformation("Finalizing summaries");
+
+        CombineCalcAndManualSummaries();
+
+        var numBallotsWithManual = (ResultSummaryFinal.BallotsReceived ?? 0) + (ResultSummaryFinal.SpoiledBallots ?? 0);
+        var sumOfEnvelopes = SumOfEnvelopesCollected(ResultSummaryFinal);
+
+        ResultSummaryFinal.UseOnReports =
+            ResultSummaryFinal.BallotsNeedingReview == 0
+            && ResultTies.All(rt => rt.IsResolved == true)
+            && numBallotsWithManual == sumOfEnvelopes;
+    }
+
+    protected void CombineCalcAndManualSummaries()
+    {
+        var manualSummaries = Context.ResultSummaries
+            .Where(rs => rs.ElectionGuid == TargetElection.ElectionGuid && rs.ResultType == "M")
+            .ToList();
+        var manualOverride = manualSummaries.FirstOrDefault() ?? new ResultSummary();
+
+        ResultSummaryFinal.NumEligibleToVote = manualOverride.NumEligibleToVote ?? ResultSummaryCalc.NumEligibleToVote ?? 0;
+        ResultSummaryFinal.InPersonBallots = manualOverride.InPersonBallots ?? ResultSummaryCalc.InPersonBallots ?? 0;
+        ResultSummaryFinal.DroppedOffBallots = manualOverride.DroppedOffBallots ?? ResultSummaryCalc.DroppedOffBallots ?? 0;
+        ResultSummaryFinal.MailedInBallots = manualOverride.MailedInBallots ?? ResultSummaryCalc.MailedInBallots ?? 0;
+        ResultSummaryFinal.CalledInBallots = manualOverride.CalledInBallots ?? ResultSummaryCalc.CalledInBallots ?? 0;
+        ResultSummaryFinal.Custom1Ballots = manualOverride.Custom1Ballots ?? ResultSummaryCalc.Custom1Ballots ?? 0;
+        ResultSummaryFinal.Custom2Ballots = manualOverride.Custom2Ballots ?? ResultSummaryCalc.Custom2Ballots ?? 0;
+        ResultSummaryFinal.Custom3Ballots = manualOverride.Custom3Ballots ?? ResultSummaryCalc.Custom3Ballots ?? 0;
+        ResultSummaryFinal.ImportedBallots = ResultSummaryCalc.ImportedBallots ?? 0;
+        ResultSummaryFinal.OnlineBallots = ResultSummaryCalc.OnlineBallots ?? 0;
+
+        ResultSummaryFinal.BallotsReceived = ResultSummaryCalc.BallotsReceived ?? 0;
+        ResultSummaryFinal.NumVoters = manualOverride.NumVoters ?? ResultSummaryCalc.NumVoters ?? 0;
+        ResultSummaryFinal.SpoiledManualBallots = manualOverride.SpoiledManualBallots;
+        ResultSummaryFinal.BallotsNeedingReview = ResultSummaryCalc.BallotsNeedingReview;
+
+        ResultSummaryFinal.SpoiledBallots =
+            (manualOverride.SpoiledManualBallots ?? 0) + (ResultSummaryCalc.SpoiledBallots ?? 0);
+
+        ResultSummaryFinal.SpoiledVotes = ResultSummaryCalc.SpoiledVotes;
+        ResultSummaryFinal.TotalVotes = ResultSummaryCalc.TotalVotes;
+    }
+
+    protected static int SumOfEnvelopesCollected(ResultSummary rs)
+    {
+        if (rs.InPersonBallots.HasValue || rs.DroppedOffBallots.HasValue || rs.MailedInBallots.HasValue ||
+            rs.CalledInBallots.HasValue || rs.OnlineBallots.HasValue || rs.ImportedBallots.HasValue ||
+            rs.Custom1Ballots.HasValue || rs.Custom2Ballots.HasValue || rs.Custom3Ballots.HasValue)
+        {
+            return (rs.InPersonBallots ?? 0) + (rs.DroppedOffBallots ?? 0) + (rs.MailedInBallots ?? 0)
+                   + (rs.CalledInBallots ?? 0) + (rs.OnlineBallots ?? 0) + (rs.ImportedBallots ?? 0)
+                   + (rs.Custom1Ballots ?? 0) + (rs.Custom2Ballots ?? 0) + (rs.Custom3Ballots ?? 0);
+        }
+        return 0;
+    }
+
     protected virtual async Task SaveResultsAsync()
     {
         Logger.LogInformation("Saving results to database");
@@ -347,45 +528,33 @@ public abstract class ElectionAnalyzerBase
         Logger.LogInformation("Results saved successfully");
     }
 
-    /// <summary>
-    /// Determines if a ballot needs review based on its status and vote validity.
-    /// </summary>
-    /// <param name="ballot">The ballot to check.</param>
-    /// <returns>True if the ballot needs review, false otherwise.</returns>
-    protected virtual bool BallotNeedsReview(Ballot ballot)
+    protected VoteStatus DetermineVoteStatus(Vote vote)
     {
-        if (ballot.StatusCode != BallotStatus.Ok)
-            return true;
+        if (!string.IsNullOrEmpty(vote.OnlineVoteRaw)
+            && vote.PersonGuid == null
+            && string.IsNullOrEmpty(vote.IneligibleReasonCode))
+        {
+            var person2 = People.FirstOrDefault(p => p.PersonGuid == vote.PersonGuid);
+            if (person2 == null || person2.IneligibleReasonGuid == null)
+            {
+                return VoteStatus.Raw;
+            }
+        }
 
-        var ballotVotes = Votes.Where(v => v.BallotGuid == ballot.BallotGuid).ToList();
-        var numberToElect = TargetElection.NumberToElect ?? 9;
-
-        if (ballotVotes.Count != numberToElect)
-            return true;
-
-        if (ballotVotes.Any(v => DetermineVoteStatus(v) == VoteStatus.Changed))
-            return true;
-
-        return false;
-    }
-
-    /// <summary>
-    /// Determines the status of a vote based on candidate eligibility and data consistency.
-    /// </summary>
-    /// <param name="vote">The vote to evaluate.</param>
-    /// <returns>The vote status.</returns>
-    protected virtual VoteStatus DetermineVoteStatus(Vote vote)
-    {
         var person = People.FirstOrDefault(p => p.PersonGuid == vote.PersonGuid);
 
         if (person == null)
+        {
+            if (!string.IsNullOrEmpty(vote.IneligibleReasonCode))
+                return VoteStatus.Spoiled;
             return VoteStatus.Spoiled;
+        }
 
         if (person.CanReceiveVotes != true)
             return VoteStatus.Spoiled;
 
-        if (!string.IsNullOrEmpty(vote.PersonCombinedInfo) &&
-            !string.IsNullOrEmpty(person.CombinedInfo) &&
+        if (!string.IsNullOrEmpty(person.CombinedInfo) &&
+            !string.IsNullOrEmpty(vote.PersonCombinedInfo) &&
             !person.CombinedInfo.StartsWith(vote.PersonCombinedInfo))
         {
             return VoteStatus.Changed;

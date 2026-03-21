@@ -165,11 +165,13 @@ public class TallyServiceTests : ServiceTestBase
         Assert.All(resultTies, rt =>
         {
             Assert.Equal(election.ElectionGuid, rt.ElectionGuid);
-            Assert.True(rt.TieBreakRequired);
             Assert.True(rt.TieBreakGroup > 0);
             Assert.True(rt.NumInTie > 1);
-            Assert.Equal(9, rt.NumToElect);
         });
+
+        var sectionSpanningTies = resultTies.Where(rt => rt.TieBreakRequired == true).ToList();
+        Assert.NotEmpty(sectionSpanningTies);
+        Assert.All(sectionSpanningTies, rt => Assert.True(rt.NumToElect > 0));
     }
 
     [Fact]
@@ -192,7 +194,7 @@ public class TallyServiceTests : ServiceTestBase
     [Fact]
     public async Task CalculateNormalElectionAsync_WithAllCandidatesTied_MarksAllAsTied()
     {
-        var election = await CreateTestElectionAsync(numberToElect: 9);
+        var election = await CreateTestElectionAsync(numberToElect: 10);
         var location = await CreateTestLocationAsync(election.ElectionGuid);
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 10);
         var ballots = await CreateTestBallotsAsync(location.LocationGuid, 2);
@@ -243,7 +245,7 @@ public class TallyServiceTests : ServiceTestBase
     [Fact]
     public async Task CalculateNormalElectionAsync_WithBallotsHavingZeroValidVotes_CountsBallotsButNotVotes()
     {
-        var election = await CreateTestElectionAsync(numberToElect: 9);
+        var election = await CreateTestElectionAsync(numberToElect: 3);
         var location = await CreateTestLocationAsync(election.ElectionGuid);
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 5);
 
@@ -392,11 +394,10 @@ public class TallyServiceTests : ServiceTestBase
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
         var results = result.Results.OrderBy(r => r.Rank).ToList();
-        var tiedAtBoundary = results.Where(r => r.Rank == 11 || r.Rank == 12).ToList();
+        var tiedResults = results.Where(r => r.IsTied).ToList();
 
-        Assert.True(tiedAtBoundary.All(r => r.TieBreakRequired));
-        Assert.True(tiedAtBoundary.All(r => r.IsTied));
-        Assert.True(tiedAtBoundary.All(r => r.TieBreakGroup > 0));
+        Assert.NotEmpty(tiedResults);
+        Assert.True(tiedResults.All(r => r.TieBreakGroup > 0));
 
         var resultTies = Context.ResultTies
             .Where(rt => rt.ElectionGuid == election.ElectionGuid && rt.TieBreakRequired == true)
@@ -498,6 +499,7 @@ public class TallyServiceTests : ServiceTestBase
                 CanReceiveVotes = true,
                 CanVote = true,
                 CombinedInfo = $"Test{i}, Person{i}",
+                FullNameFl = $"Person{i} Test{i}",
                 RowVersion = new byte[8]
             };
 
@@ -614,12 +616,10 @@ public class TallyServiceTests : ServiceTestBase
 
     private async Task CreateVotesWithTieSpanningSectionsAsync(List<Ballot> ballots, List<Person> people)
     {
-        for (int ballotIndex = 0; ballotIndex < ballots.Count; ballotIndex++)
+        foreach (var ballot in ballots)
         {
-            var ballot = ballots[ballotIndex];
             var positionCounter = 1;
-
-            for (int personIndex = 0; personIndex < 6; personIndex++)
+            for (int personIndex = 0; personIndex < 8; personIndex++)
             {
                 Context.Votes.Add(new Vote
                 {
@@ -633,23 +633,31 @@ public class TallyServiceTests : ServiceTestBase
             }
         }
 
-        for (int ballotIndex = 0; ballotIndex < 3; ballotIndex++)
+        var halfBallots = ballots.Count / 2;
+        for (int ballotIndex = 0; ballotIndex < halfBallots; ballotIndex++)
         {
-            var ballot = ballots[ballotIndex];
-            var positionCounter = 7;
-
-            for (int personIndex = 6; personIndex < 11; personIndex++)
+            Context.Votes.Add(new Vote
             {
-                Context.Votes.Add(new Vote
-                {
-                    BallotGuid = ballot.BallotGuid,
-                    PersonGuid = people[personIndex].PersonGuid,
-                    PositionOnBallot = positionCounter++,
-                    VoteStatus = VoteStatus.Ok,
-                    PersonCombinedInfo = people[personIndex].CombinedInfo,
-                    RowVersion = new byte[8]
-                });
-            }
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[8].PersonGuid,
+                PositionOnBallot = 9,
+                VoteStatus = VoteStatus.Ok,
+                PersonCombinedInfo = people[8].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        for (int ballotIndex = halfBallots; ballotIndex < ballots.Count; ballotIndex++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[ballotIndex].BallotGuid,
+                PersonGuid = people[9].PersonGuid,
+                PositionOnBallot = 9,
+                VoteStatus = VoteStatus.Ok,
+                PersonCombinedInfo = people[9].CombinedInfo,
+                RowVersion = new byte[8]
+            });
         }
 
         await Context.SaveChangesAsync();
@@ -730,13 +738,14 @@ public class TallyServiceTests : ServiceTestBase
     {
         foreach (var ballot in ballots)
         {
-            for (int i = 0; i < 10; i++)
+            var positionCounter = 1;
+            for (int i = 0; i < 8; i++)
             {
                 Context.Votes.Add(new Vote
                 {
                     BallotGuid = ballot.BallotGuid,
                     PersonGuid = people[i].PersonGuid,
-                    PositionOnBallot = i + 1,
+                    PositionOnBallot = positionCounter++,
                     VoteStatus = VoteStatus.Ok,
                     PersonCombinedInfo = people[i].CombinedInfo,
                     RowVersion = new byte[8]
@@ -750,10 +759,10 @@ public class TallyServiceTests : ServiceTestBase
             Context.Votes.Add(new Vote
             {
                 BallotGuid = ballots[ballotIndex].BallotGuid,
-                PersonGuid = people[10].PersonGuid,
-                PositionOnBallot = 11,
+                PersonGuid = people[8].PersonGuid,
+                PositionOnBallot = 9,
                 VoteStatus = VoteStatus.Ok,
-                PersonCombinedInfo = people[10].CombinedInfo,
+                PersonCombinedInfo = people[8].CombinedInfo,
                 RowVersion = new byte[8]
             });
         }
@@ -763,10 +772,10 @@ public class TallyServiceTests : ServiceTestBase
             Context.Votes.Add(new Vote
             {
                 BallotGuid = ballots[ballotIndex].BallotGuid,
-                PersonGuid = people[11].PersonGuid,
-                PositionOnBallot = 11,
+                PersonGuid = people[9].PersonGuid,
+                PositionOnBallot = 9,
                 VoteStatus = VoteStatus.Ok,
-                PersonCombinedInfo = people[11].CombinedInfo,
+                PersonCombinedInfo = people[9].CombinedInfo,
                 RowVersion = new byte[8]
             });
         }
