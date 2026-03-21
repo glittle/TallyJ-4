@@ -18,7 +18,7 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
     {
         Logger.LogInformation("Calculating single-name ballot statistics");
 
-        var totalVotes = Votes.Sum(v => v.SingleNameElectionCount ?? 0);
+        var totalVotes = Votes.Sum(v => v.SingleNameElectionCount ?? 1);
         ResultSummaryCalc.BallotsReceived = totalVotes;
         ResultSummaryCalc.NumVoters = totalVotes;
         ResultSummaryCalc.TotalVotes = totalVotes;
@@ -32,7 +32,7 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
 
         ResultSummaryCalc.SpoiledVotes = Votes
             .Where(v => !invalidBallotGuids.Contains(v.BallotGuid) && v.VoteStatus != VoteStatus.Ok)
-            .Sum(v => v.SingleNameElectionCount ?? 0);
+            .Sum(v => v.SingleNameElectionCount ?? 1);
 
         ResultSummaryCalc.BallotsNeedingReview = Votes.Count(v =>
         {

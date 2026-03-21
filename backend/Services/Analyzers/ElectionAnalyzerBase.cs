@@ -31,6 +31,11 @@ public abstract class ElectionAnalyzerBase
 
     public async Task AnalyzeAsync()
     {
+        if (TargetElection.NumberToElect == null)
+        {
+            throw new InvalidOperationException($"Election {TargetElection.ElectionGuid} has no NumberToElect specified. This is required for analysis.");
+        }
+
         using var transaction = await Context.Database.BeginTransactionAsync();
         try
         {
@@ -144,12 +149,15 @@ public abstract class ElectionAnalyzerBase
         }
 
         var isSingleName = IsSingleNameElection();
-        var numberToElect = TargetElection.NumberToElect ?? 0;
+        var numberToElect = TargetElection.NumberToElect.Value;
         var ballotAnalyzer = new BallotAnalyzer(numberToElect, isSingleName);
+
+        // Pre-group votes by BallotGuid for O(1) lookup instead of O(votes) per ballot
+        var votesByBallotGuid = Votes.ToLookup(v => v.BallotGuid);
 
         foreach (var ballot in Ballots)
         {
-            var ballotVotes = Votes.Where(v => v.BallotGuid == ballot.BallotGuid).ToList();
+            var ballotVotes = votesByBallotGuid[ballot.BallotGuid].ToList();
             var voteInfos = ballotVotes.Select(v => CreateBallotVoteInfo(v)).ToList();
             ballotAnalyzer.DetermineStatusFromVotes(ballot.StatusCode, voteInfos, out var newStatus, out _);
             ballot.StatusCode = newStatus;
@@ -201,12 +209,12 @@ public abstract class ElectionAnalyzerBase
 
         ResultSummaryCalc.BallotsNeedingReview = Ballots.Count(b => BallotAnalyzer.BallotNeedsReview(b.StatusCode));
 
-        ResultSummaryCalc.TotalVotes = Ballots.Count * TargetElection.NumberToElect;
+        ResultSummaryCalc.TotalVotes = Ballots.Count * TargetElection.NumberToElect.Value;
 
         var invalidBallotGuids = Ballots
             .Where(b => b.StatusCode != BallotStatus.Ok)
             .Select(b => b.BallotGuid)
-            .ToList();
+            .ToHashSet();
 
         ResultSummaryCalc.SpoiledBallots = invalidBallotGuids.Count;
         ResultSummaryCalc.BallotsReceived = Ballots.Count - ResultSummaryCalc.SpoiledBallots;
@@ -243,7 +251,7 @@ public abstract class ElectionAnalyzerBase
 
     internal void DetermineOrderAndSections()
     {
-        var numberToElect = TargetElection.NumberToElect ?? 0;
+        var numberToElect = TargetElection.NumberToElect.Value;
         var numberExtra = TargetElection.NumberExtra ?? 0;
         var ordinalRank = 0;
         var ordinalRankInExtra = 0;
@@ -534,11 +542,7 @@ public abstract class ElectionAnalyzerBase
             && vote.PersonGuid == null
             && string.IsNullOrEmpty(vote.IneligibleReasonCode))
         {
-            var person2 = People.FirstOrDefault(p => p.PersonGuid == vote.PersonGuid);
-            if (person2 == null || person2.IneligibleReasonGuid == null)
-            {
-                return VoteStatus.Raw;
-            }
+            return VoteStatus.Raw;
         }
 
         var person = People.FirstOrDefault(p => p.PersonGuid == vote.PersonGuid);
