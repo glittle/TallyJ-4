@@ -5,9 +5,9 @@ trigger:
     - deploy
   paths:
     include:
-    - frontend/* # Only trigger for Vite/frontend changes
+    - frontend/*
     exclude:
-    - backend/*  # Ignore .NET/backend changes
+    - backend/*
 
 pool:
   vmImage: 'windows-latest'
@@ -15,26 +15,38 @@ pool:
 steps:
 - task: NodeTool@0
   inputs:
-    versionSpec: '20.x'
+    versionSpec: '22.x'
+  displayName: 'Install Node.js 22'
 
-- script: |
-    cd frontend
-    npm install
-    npm run build
-  displayName: 'Build Vite Project'
+- script: npm install
+  displayName: 'Npm Install'
+  workingDirectory: 'frontend' # Sets the context for this script
+
+- script: npm run build
+  displayName: 'Vite Build'
+  workingDirectory: 'frontend' # Sets the context for this script
+  
+- task: ArchiveFiles@2
+  displayName: 'Zip Frontend Dist'
+  inputs:
+    # Since ArchiveFiles is a Task, we point directly to the path
+    rootFolderOrFile: 'frontend/dist' 
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/frontend.zip'
+    replaceExistingArchive: true
 
 - task: IISWebAppDeploymentOnMachineGroup@0
   displayName: 'Deploy Frontend to IIS'
   inputs:
     WebSiteName: 'TallyJv4-UAT'
-    # Target the 'dist' folder created by Vite
-    Package: '$(System.DefaultWorkingDirectory)/frontend/dist'
+    Package: '$(Build.ArtifactStagingDirectory)/frontend.zip'
     TakeAppOfflineFlag: true
 
-# Debug step to see the frontend workspace if it fails
 - task: PublishPipelineArtifact@1
+  displayName: 'Debug: Check Workspace (Ignoring node_modules)'
   condition: always()
   inputs:
-    targetPath: '$(Pipeline.Workspace)'
-    artifact: 'FrontendDebugWorkspace'
-
+    targetPath: '$(Build.SourcesDirectory)' # Only captures your code
+    artifact: 'FrontendSourceDebug'
+    publishLocation: 'pipeline'

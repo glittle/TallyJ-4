@@ -12,12 +12,18 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  # Adjusted to point specifically to the backend folder
-  solution: 'backend/*.sln' 
+  solution: '*.sln' 
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK from global.json'
+  inputs:
+    packageType: 'sdk'
+    useGlobalJson: true
+    workingDirectory: '$(Build.SourcesDirectory)' # Point to where global.json lives
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -46,9 +52,9 @@ steps:
 
 # THE DEBUG STEP
 - task: PublishPipelineArtifact@1
-  displayName: 'Download Workspace for Inspection'
-  condition: always() 
+  displayName: 'Debug: Check Workspace'
+  condition: always()
   inputs:
-    targetPath: '$(Pipeline.Workspace)'
-    artifact: 'DebugWorkspace'
+    targetPath: '$(Build.SourcesDirectory)' # Only captures your code
+    artifact: 'BackendSourceDebug'
     publishLocation: 'pipeline'
