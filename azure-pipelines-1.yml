@@ -15,7 +15,8 @@ pool:
 steps:
 - task: NodeTool@0
   inputs:
-    versionSpec: '20.x'
+    versionSpec: '22.x' # Change from 20.x to 22.x
+  displayName: 'Install Node.js 22'
 
 - script: |
     cd frontend
