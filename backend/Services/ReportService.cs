@@ -180,17 +180,13 @@ public class ReportService : IReportService
             });
         }
 
-        var validBallotGuids = await _context.Ballots
-            .Include(b => b.Location)
-            .Where(b => b.Location.ElectionGuid == electionGuid && b.StatusCode == BallotStatus.Ok)
-            .Select(b => b.BallotGuid)
-            .ToListAsync();
-
         var votes = await _context.Votes
             .Include(v => v.Person)
-            .Where(v => validBallotGuids.Contains(v.BallotGuid))
+            .Where(v => _context.Ballots.Any(b =>
+                b.BallotGuid == v.BallotGuid &&
+                b.StatusCode == BallotStatus.Ok &&
+                b.Location.ElectionGuid == electionGuid))
             .ToListAsync();
-
         var spoiledVoteReasons = votes
             .Where(v =>
             {
