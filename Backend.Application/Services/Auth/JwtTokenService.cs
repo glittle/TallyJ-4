@@ -18,6 +18,12 @@ public class JwtTokenService
         _configuration = configuration;
     }
 
+    [Obsolete("This constructor is for testing purposes only. Use the parameterized constructor in production.")]
+    public JwtTokenService()
+    {
+        _configuration = null!;
+    }
+
     public string GenerateToken(AppUser user)
     {
         var key = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT key not configured");

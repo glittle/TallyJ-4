@@ -1576,7 +1576,7 @@ public class AuthController : ControllerBase
             return returnUrl;
         }
 
-        var frontendBaseUrl = _configuration["Frontend:BaseUrl"];
+        var frontendBaseUrl = _configuration["Frontend:BaseUrl"]?.Trim();
         if (!string.IsNullOrEmpty(frontendBaseUrl))
         {
             return frontendBaseUrl + "/auth/google/callback";
@@ -1589,8 +1589,8 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Logs out the current user by clearing authentication cookies.
     /// </summary>
-    /// <returns>A redirect to the login page.</returns>
-    [HttpGet("logout")]
+    /// <returns>A success message confirming the user has been logged out.</returns>
+    [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
         var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -1610,15 +1610,7 @@ public class AuthController : ControllerBase
 
         SecureCookieMiddleware.ClearAuthCookies(HttpContext);
 
-        // Redirect to frontend root page
-        var frontendUrl = _configuration["Frontend:BaseUrl"];
-        if (!string.IsNullOrEmpty(frontendUrl))
-        {
-            return Redirect(frontendUrl);
-        }
-
-        // Fallback to localhost for development
-        return Redirect("http://localhost:8095/");
+        return Ok(new { message = "Logged out successfully" });
     }
 
     private string GetErrorRedirectUrl(string? returnUrl, string errorMessage)

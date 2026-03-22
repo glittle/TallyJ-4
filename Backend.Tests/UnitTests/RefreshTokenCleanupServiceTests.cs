@@ -19,7 +19,7 @@ public class RefreshTokenCleanupServiceTests : ServiceTestBase
         _loggerMock = new Mock<ILogger<RefreshTokenCleanupService>>();
 
         var serviceCollection = new ServiceCollection();
-        serviceCollection.AddScoped(_ => Context);
+        serviceCollection.AddSingleton(_ => Context);
         _serviceProvider = serviceCollection.BuildServiceProvider();
 
         _service = new RefreshTokenCleanupService(_loggerMock.Object, _serviceProvider);

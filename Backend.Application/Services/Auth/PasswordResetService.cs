@@ -26,6 +26,11 @@ public class PasswordResetService
         _emailService = emailService;
     }
 
+    [Obsolete("This constructor is for testing purposes only. Use the parameterized constructor in production.")]
+    public PasswordResetService()
+    {
+    }
+
     public async Task<(bool Success, string? Error)> GenerateResetTokenAsync(ForgotPasswordRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);

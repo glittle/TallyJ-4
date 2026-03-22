@@ -37,6 +37,7 @@ x86/
 *.wsl.json
 *.DotSettings.user
 _ReSharper.*
+*.txt
 
 ###############################
 # Database Files

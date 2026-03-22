@@ -68,7 +68,7 @@ public class PeopleImportServiceTests : ServiceTestBase
     {
         // Arrange
         var electionGuid = Guid.NewGuid();
-        var file = CreateFormFile("test.txt", "text/plain", "content");
+        var file = CreateFormFile("test.pdf", "application/pdf", "content");
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(
@@ -505,9 +505,12 @@ public class PeopleImportServiceTests : ServiceTestBase
         // Arrange
         var electionGuid = Guid.NewGuid();
         var person = new Person { PersonGuid = Guid.NewGuid(), ElectionGuid = electionGuid, FirstName = "John", LastName = "Doe", RowVersion = new byte[8] };
-        var ballot = new Ballot { BallotGuid = Guid.NewGuid(), LocationGuid = Guid.NewGuid(), BallotCode = "001", StatusCode = BallotStatus.Ok };
+        var locationGuid = Guid.NewGuid();
+        var location = new Location { LocationGuid = locationGuid, ElectionGuid = electionGuid, Name = "Test Location" };
+        var ballot = new Ballot { BallotGuid = Guid.NewGuid(), LocationGuid = locationGuid, StatusCode = BallotStatus.Ok, ComputerCode = "T1" };
 
         Context.People.Add(person);
+        Context.Locations.Add(location);
         Context.Ballots.Add(ballot);
         await Context.SaveChangesAsync();
 

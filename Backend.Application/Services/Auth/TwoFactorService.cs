@@ -20,6 +20,11 @@ public class TwoFactorService
     private readonly EmailService _emailService;
     private readonly EncryptionService _encryptionService;
 
+    [Obsolete("This constructor is for testing purposes only. Use the parameterized constructor in production.")]
+    public TwoFactorService()
+    {
+    }
+
     public TwoFactorService(
         UserManager<AppUser> userManager,
         IStringLocalizer<TwoFactorService> localizer,

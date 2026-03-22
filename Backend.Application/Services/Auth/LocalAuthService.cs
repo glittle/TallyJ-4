@@ -14,6 +14,7 @@ public class LocalAuthService
     private readonly MainDbContext _context;
     private readonly IStringLocalizer<LocalAuthService> _localizer;
     private readonly EmailService _emailService;
+    private readonly TwoFactorService _twoFactorService;
 
     public LocalAuthService(
         UserManager<AppUser> userManager,
@@ -21,7 +22,8 @@ public class LocalAuthService
         JwtTokenService jwtTokenService,
         MainDbContext context,
         IStringLocalizer<LocalAuthService> localizer,
-        EmailService emailService)
+        EmailService emailService,
+        TwoFactorService twoFactorService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -29,6 +31,15 @@ public class LocalAuthService
         _context = context;
         _localizer = localizer;
         _emailService = emailService;
+        _twoFactorService = twoFactorService;
+    }
+
+    // Parameterless constructor for testing purposes only
+    [Obsolete("This constructor is for testing purposes only. Use the parameterized constructor in production.")]
+    public LocalAuthService()
+    {
+        // This constructor exists only to allow Moq to create proxy instances for testing
+        // It should never be used in production code
     }
 
     public async Task<(bool Success, string? Error, AuthResponse? Response)> RegisterAsync(RegisterRequest request)
@@ -84,7 +95,7 @@ public class LocalAuthService
         });
     }
 
-    public async Task<(bool Success, string? Error, AuthResponse? Response)> LoginAsync(LoginRequest request)
+    public virtual async Task<(bool Success, string? Error, AuthResponse? Response)> LoginAsync(LoginRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
@@ -112,13 +123,7 @@ public class LocalAuthService
             return (false, _localizer["auth.errors.accountLocked"], null);
         }
 
-        if (!signInResult.Succeeded)
-        {
-            return (false, _localizer["auth.errors.invalidCredentials"], null);
-        }
-
-        // Handle 2FA if enabled
-        if (user.TwoFactorEnabled)
+        if (signInResult.RequiresTwoFactor || user.TwoFactorEnabled)
         {
             if (string.IsNullOrEmpty(request.TwoFactorCode))
             {
@@ -132,6 +137,16 @@ public class LocalAuthService
                     Requires2FA = true
                 });
             }
+
+            var (codeValid, codeError) = await _twoFactorService.VerifyAsync(user.Id, request.TwoFactorCode);
+            if (!codeValid)
+            {
+                return (false, codeError ?? _localizer["auth.errors.invalid2FACode"], null);
+            }
+        }
+        else if (!signInResult.Succeeded)
+        {
+            return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
         var token = _jwtTokenService.GenerateToken(user);

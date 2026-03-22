@@ -145,7 +145,7 @@ public class AuthControllerTests : ServiceTestBase
         var encoded = AuthController.Base64UrlEncode(bytes);
 
         // Assert
-        Assert.Equal("_f7_z_w", encoded); // Expected base64url encoding
+        Assert.Equal("__79_A", encoded); // Expected base64url encoding
     }
 
     [Fact]

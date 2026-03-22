@@ -15,6 +15,7 @@ public class ElectionServiceTests : ServiceTestBase
     private readonly Mock<ILogger<ElectionService>> _loggerMock;
     private readonly Mock<ISignalRNotificationService> _signalRMock;
     private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
+    private readonly Guid _testUserId;
 
     public ElectionServiceTests()
     {
@@ -22,7 +23,8 @@ public class ElectionServiceTests : ServiceTestBase
         _signalRMock = new Mock<ISignalRNotificationService>();
         _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
         
-        var userId = Guid.NewGuid().ToString();
+        _testUserId = Guid.NewGuid();
+        var userId = _testUserId.ToString();
         var claims = new List<Claim>
         {
             new Claim("sub", userId),
@@ -179,9 +181,10 @@ public class ElectionServiceTests : ServiceTestBase
     {
         for (int i = 0; i < 15; i++)
         {
+            var electionGuid = Guid.NewGuid();
             var election = new Election
             {
-                ElectionGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
                 Name = $"Election {i}",
                 ElectionType = "LSA",
                 NumberToElect = 3,
@@ -190,6 +193,11 @@ public class ElectionServiceTests : ServiceTestBase
                 RowVersion = new byte[8]
             };
             Context.Elections.Add(election);
+            Context.JoinElectionUsers.Add(new Backend.Domain.Entities.JoinElectionUser
+            {
+                ElectionGuid = electionGuid,
+                UserId = _testUserId
+            });
         }
         await Context.SaveChangesAsync();
 
@@ -208,9 +216,10 @@ public class ElectionServiceTests : ServiceTestBase
     {
         for (int i = 0; i < 10; i++)
         {
+            var electionGuid = Guid.NewGuid();
             var election = new Election
             {
-                ElectionGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
                 Name = $"Election {i}",
                 ElectionType = "LSA",
                 NumberToElect = 3,
@@ -219,6 +228,11 @@ public class ElectionServiceTests : ServiceTestBase
                 RowVersion = new byte[8]
             };
             Context.Elections.Add(election);
+            Context.JoinElectionUsers.Add(new Backend.Domain.Entities.JoinElectionUser
+            {
+                ElectionGuid = electionGuid,
+                UserId = _testUserId
+            });
         }
         await Context.SaveChangesAsync();
 
