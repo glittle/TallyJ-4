@@ -17,6 +17,20 @@ namespace Backend.EF.Migrations
                 unicode: false,
                 maxLength: 15,
                 nullable: true);
+
+            // Backfill LocationTypeCode for existing known sentinel locations to avoid creating duplicates
+            // or excluding them from reports that filter by LocationTypeCode.
+            migrationBuilder.Sql(@"
+                UPDATE Locations
+                SET LocationTypeCode = 'Online'
+                WHERE Name = 'Online' AND LocationTypeCode IS NULL;
+            ");
+
+            migrationBuilder.Sql(@"
+                UPDATE Locations
+                SET LocationTypeCode = 'Imported'
+                WHERE Name = 'Imported' AND LocationTypeCode IS NULL;
+            ");
         }
 
         /// <inheritdoc />
