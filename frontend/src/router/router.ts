@@ -6,11 +6,11 @@ import { useSuperAdminStore } from "../stores/superAdminStore";
 
 import { secureTokenService } from "../services/secureTokenService";
 
-// Layouts - keep these static as they're used frequently
-
-import MainLayout from "../layouts/MainLayout.vue";
-
+// PublicLayout is static - needed immediately for all public/voting routes
 import PublicLayout from "../layouts/PublicLayout.vue";
+
+// MainLayout is lazy - only authenticated admin users need it
+const MainLayout = () => import("../layouts/MainLayout.vue");
 
 const routes = [
   {
