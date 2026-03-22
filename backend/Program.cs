@@ -292,8 +292,7 @@ void RegisterApplicationServices(IServiceCollection services)
     services.AddScoped<Backend.Services.IAccountService, Backend.Services.AccountService>();
     services.AddScoped<Backend.Services.IPublicService, Backend.Services.PublicService>();
     services.AddScoped<Backend.Services.ITallyService, Backend.Services.TallyService>();
-    services.AddScoped<Backend.Services.IReportExportService, Backend.Services.ReportExportService>();
-    services.AddScoped<Backend.Services.IAdvancedReportingService, Backend.Services.AdvancedReportingService>();
+    services.AddScoped<Backend.Services.IReportService, Backend.Services.ReportService>();
     services.AddScoped<Backend.Services.IFrontDeskService, Backend.Services.FrontDeskService>();
     services.AddScoped<Backend.Services.IOnlineVotingService, Backend.Services.OnlineVotingService>();
     services.AddScoped<Backend.Services.IAuditLogService, Backend.Services.AuditLogService>();
@@ -361,13 +360,6 @@ void ConfigureSwagger(IServiceCollection services)
             In = ParameterLocation.Header,
             Description = "JWT Authorization header using the Bearer scheme. Enter your token in the text input below."
         });
-
-        options.IncludeXmlComments(
-        Path.Combine(
-          AppContext.BaseDirectory,
-          $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"
-        )
-      );
 
         options.DocInclusionPredicate((docName, apiDesc) =>
         {

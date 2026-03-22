@@ -18,21 +18,50 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Implementation
+### [x] Step: Implementation
+<!-- chat-id: e9c5475e-49f1-4c0f-b447-cd041d14eca6 -->
 
-**Debug requests, questions, and investigations:** answer or investigate first. Do not create a plan upfront — the user needs an answer, not a plan. A plan may become relevant later once the investigation reveals what needs to change.
+Replace all v4 reports with v3-equivalent reports. V3 had 21 report types across two categories (Ballot Reports and Voter Reports). V4's existing reports (chart-based, advanced filtering, comparison) are unrelated to v3 and will be removed.
 
-**For all other tasks**, before writing any code, assess the scope of the actual change (not the prompt length — a one-sentence prompt can describe a large feature). Scale your approach:
+**Architecture:**
+- Backend: New `ReportsController` + `IReportService`/`ReportService` with one endpoint per report, returning typed DTOs
+- Frontend: New `ReportsPage.vue` with sidebar chooser + report panel, individual report sub-components
+- Print CSS for clean printing
 
-- **Trivial** (typo, config tweak, single obvious change): implement directly, no plan needed.
-- **Small** (a few files, clear what to do): write 2–3 sentences in `plan.md` describing what and why, then implement. No substeps.
-- **Medium** (multiple components, design decisions, edge cases): write a plan in `plan.md` with requirements, affected files, key decisions, verification. Break into 3–5 steps.
-- **Large** (new feature, cross-cutting, unclear scope): gather requirements and write a technical spec first (`requirements.md`, `spec.md` in `{@artifacts_path}/`). Then write `plan.md` with concrete steps referencing the spec.
+**V3 Reports to implement:**
 
-**Skip planning and implement directly when** the task is trivial, or the user explicitly asks to "just do it" / gives a clear direct instruction.
+Ballot Reports:
+1. Main (Election Summary) - elected candidates, statistics, spoiled info
+2. VotesByNum - Tellers' Report by vote count
+3. VotesByName - Tellers' Report alphabetical
+4. Ballots - All ballots for review
+5. BallotsOnline - Online ballots only (conditional)
+6. BallotsImported - Imported ballots only (conditional)
+7. BallotsTied - Ballots containing tied candidates
+8. SpoiledVotes - Spoiled votes on valid ballots
+9. BallotAlignment - Ballot alignment to results
+10. BallotsSame - Duplicate ballots
+11. BallotsSummary - Ballots summary with tellers
 
-To reflect the actual purpose of the first step, you can rename it to something more relevant (e.g., Planning, Investigation). Do NOT remove meta information like comments for any step.
+Voter Reports:
+12. AllCanReceive - People eligible to receive votes
+13. Voters - Participation (who voted and how)
+14. Flags - Attendance checklists
+15. VotersOnline - Online voters (conditional)
+16. VotersByArea - Eligible/voted by area
+17. VotersByLocation - Voting method by venue (conditional)
+18. VotersByLocationArea - Attendance by venue (conditional)
+19. ChangedPeople - Updated people records
+20. AllNonEligible - People with eligibility status
+21. VoterEmails - Email & phone list (conditional)
 
-Rule of thumb for step size: each step = a coherent unit of work (component, endpoint, test suite). Not too granular (single function), not too broad (entire feature). Unit tests are part of each step, not separate.
+- [x] Investigation and planning
+- [x] Backend: DTOs, service interface, service implementation, controller
+- [x] Frontend: Remove old reports, create new ReportsPage + report components
+- [x] Locale strings (English only), print styles
+- [x] Build and verify
 
-Update `{@artifacts_path}/plan.md`.
+### [x] Step: Review Location detiails
+<!-- chat-id: 3eb15a1d-1c19-41db-9a87-28726a2debfb -->
+
+Ballot locations are mostly random, added by admins in an election. However, there are two special "locations" - "Online" and "Imported". Those are automatic locations enabled by settings in the Election setup page.  The current code relies on the visible name to identify these locations. In a multilingual project, that's not a good idea. We should add an enum for LocationType with Manual, Online, Imported as the possible answers.   If that sounds good, let's do that. I can add an EF migration after.

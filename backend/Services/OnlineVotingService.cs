@@ -281,7 +281,7 @@ public class OnlineVotingService : IOnlineVotingService
             }
 
             var location = await _context.Locations
-                .FirstOrDefaultAsync(l => l.ElectionGuid == dto.ElectionGuid);
+                .FirstOrDefaultAsync(l => l.ElectionGuid == dto.ElectionGuid && l.LocationTypeCode == nameof(Domain.Enumerations.LocationType.Online));
 
             if (location == null)
             {
@@ -290,7 +290,8 @@ public class OnlineVotingService : IOnlineVotingService
                     ElectionGuid = dto.ElectionGuid,
                     Name = "Online",
                     ContactInfo = "Online voting",
-                    SortOrder = 999
+                    SortOrder = 999,
+                    LocationTypeCode = nameof(Domain.Enumerations.LocationType.Online)
                 };
                 _context.Locations.Add(location);
                 await _context.SaveChangesAsync();

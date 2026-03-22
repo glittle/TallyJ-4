@@ -49,6 +49,11 @@ public class LocationDto
     /// The number of ballots collected at this location.
     /// </summary>
     public int? BallotsCollected { get; set; }
+
+    /// <summary>
+    /// The type of location: Manual, Online, or Imported.
+    /// </summary>
+    public string? LocationType { get; set; }
 }
 
 

@@ -18,7 +18,8 @@ public class LocationProfile : IRegister
     {
         config.NewConfig<Location, LocationDto>()
             .Map(dest => dest.Longitude, src => src.Long)
-            .Map(dest => dest.Latitude, src => src.Lat);
+            .Map(dest => dest.Latitude, src => src.Lat)
+            .Map(dest => dest.LocationType, src => src.LocationTypeCode);
 
         config.NewConfig<CreateLocationDto, Location>()
             .Map(dest => dest.Long, src => src.Longitude)

@@ -1,2163 +1,1489 @@
-<template>
-  <div class="reporting-page">
-    <el-card>
-      <template #header>
-        <div class="card-header">
-          <el-page-header :content="$t('reporting.title')" @back="goBack" />
-        </div>
-      </template>
-
-      <div class="reporting-content">
-        <!-- Report Selection -->
-        <el-card class="report-selection-card" shadow="never">
-          <template #header>
-            <span>{{ $t("reporting.selectReport") }}</span>
-          </template>
-
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-select
-                v-model="selectedReportType"
-                :placeholder="$t('reporting.selectReportType')"
-                style="width: 100%"
-                @change="onReportTypeChange"
-              >
-                <el-option
-                  v-for="report in availableReports"
-                  :key="report.code"
-                  :label="report.name"
-                  :value="report.code"
-                />
-              </el-select>
-            </el-col>
-            <el-col :span="12">
-              <el-button
-                type="primary"
-                :loading="loading"
-                :disabled="!selectedReportType"
-                icon="Document"
-                @click="generateReport"
-              >
-                {{ $t("reporting.generateReport") }}
-              </el-button>
-            </el-col>
-          </el-row>
-        </el-card>
-
-        <!-- Advanced Filters -->
-        <el-card v-if="showFilters" class="filters-card" shadow="never">
-          <template #header>
-            <span>{{ $t("reporting.advancedFilters") }}</span>
-          </template>
-
-          <el-form :model="filters" label-width="120px">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item :label="$t('reporting.dateRange')">
-                  <el-date-picker
-                    v-model="filters.dateRange"
-                    type="daterange"
-                    :range-separator="$t('reporting.to')"
-                    :start-placeholder="$t('reporting.startDate')"
-                    :end-placeholder="$t('reporting.endDate')"
-                    format="YYYY-MM-DD"
-                    value-format="YYYY-MM-DD"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item :label="$t('reporting.locations')">
-                  <el-select
-                    v-model="filters.locations"
-                    multiple
-                    :placeholder="$t('reporting.selectLocations')"
-                    style="width: 100%"
-                    collapse-tags
-                  >
-                    <el-option
-                      v-for="location in availableLocations"
-                      :key="location"
-                      :label="location"
-                      :value="location"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item :label="$t('reporting.candidateName')">
-                  <el-input
-                    v-model="filters.candidateName"
-                    :placeholder="$t('reporting.enterCandidateName')"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item :label="$t('reporting.voteRange')">
-                  <el-slider
-                    v-model="filters.voteRange"
-                    range
-                    :min="0"
-                    :max="maxVotes"
-                    :step="10"
-                    show-stops
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item :label="$t('reporting.turnoutRange')">
-                  <el-slider
-                    v-model="filters.turnoutRange"
-                    range
-                    :min="0"
-                    :max="100"
-                    :step="5"
-                    show-stops
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item :label="$t('reporting.sortBy')">
-                  <el-select
-                    v-model="filters.sortBy"
-                    :placeholder="$t('reporting.selectSortBy')"
-                  >
-                    <el-option :label="$t('reporting.name')" value="name" />
-                    <el-option :label="$t('reporting.votes')" value="votes" />
-                    <el-option
-                      :label="$t('reporting.turnout')"
-                      value="turnout"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-
-            <el-row>
-              <el-col :span="24" style="text-align: right">
-                <el-button @click="clearFilters">{{
-                  $t("reporting.clearFilters")
-                }}</el-button>
-                <el-button type="primary" @click="applyFilters">{{
-                  $t("reporting.applyFilters")
-                }}</el-button>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-card>
-
-        <!-- Report Display -->
-        <div v-if="currentReport" class="report-display">
-          <el-card class="report-content-card">
-            <template #header>
-              <div class="report-header">
-                <span>{{ currentReport.title }}</span>
-                <div class="report-actions">
-                  <el-button
-                    type="success"
-                    icon="Download"
-                    @click="exportReport('pdf')"
-                  >
-                    {{ $t("reporting.exportPDF") }}
-                  </el-button>
-                  <el-button
-                    type="info"
-                    icon="Download"
-                    @click="exportReport('excel')"
-                  >
-                    {{ $t("reporting.exportExcel") }}
-                  </el-button>
-                  <el-button
-                    type="primary"
-                    icon="Download"
-                    @click="exportReport('csv')"
-                  >
-                    {{ $t("reporting.exportCSV") }}
-                  </el-button>
-                  <el-button type="warning" icon="Printer" @click="printReport">
-                    {{ $t("reporting.print") }}
-                  </el-button>
-                </div>
-              </div>
-            </template>
-
-            <!-- Election Summary Report -->
-            <div v-if="selectedReportType === 'summary'" class="report-section">
-              <h3>{{ $t("reporting.electionSummary") }}</h3>
-
-              <!-- Key Statistics Cards -->
-              <el-row :gutter="20" class="stats-row">
-                <el-col :span="6">
-                  <el-card class="stat-card">
-                    <div class="stat-value">
-                      {{ electionReport?.totalBallots || 0 }}
-                    </div>
-                    <div class="stat-label">
-                      {{ $t("reporting.totalBallots") }}
-                    </div>
-                    <el-progress
-                      :percentage="100"
-                      :show-text="false"
-                      color="#2563a8"
-                      class="stat-progress"
-                    />
-                  </el-card>
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="stat-card">
-                    <div class="stat-value">
-                      {{ electionReport?.totalVotes || 0 }}
-                    </div>
-                    <div class="stat-label">
-                      {{ $t("reporting.totalVotes") }}
-                    </div>
-                    <el-progress
-                      :percentage="
-                        electionReport?.totalBallots
-                          ? (electionReport.totalVotes /
-                              electionReport.totalBallots) *
-                            100
-                          : 0
-                      "
-                      :show-text="false"
-                      color="#8DC63F"
-                      class="stat-progress"
-                    />
-                  </el-card>
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="stat-card">
-                    <div class="stat-value">
-                      {{ electionReport?.spoiledBallots || 0 }}
-                    </div>
-                    <div class="stat-label">
-                      {{ $t("reporting.spoiledBallots") }}
-                    </div>
-                    <el-progress
-                      :percentage="
-                        electionReport?.totalBallots
-                          ? (electionReport.spoiledBallots /
-                              electionReport.totalBallots) *
-                            100
-                          : 0
-                      "
-                      :show-text="false"
-                      color="#f56c6c"
-                      class="stat-progress"
-                    />
-                  </el-card>
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="stat-card">
-                    <div class="stat-value">
-                      {{ electionReport?.numToElect || 0 }}
-                    </div>
-                    <div class="stat-label">
-                      {{ $t("reporting.positionsToElect") }}
-                    </div>
-                    <el-progress
-                      :percentage="100"
-                      :show-text="false"
-                      color="#F47920"
-                      class="stat-progress"
-                    />
-                  </el-card>
-                </el-col>
-              </el-row>
-
-              <!-- Election Details -->
-              <el-card class="details-card" style="margin-top: 20px">
-                <template #header>
-                  <span>{{ $t("reporting.electionDetails") }}</span>
-                </template>
-                <el-descriptions :column="2" border>
-                  <el-descriptions-item :label="$t('reporting.electionName')">
-                    {{ electionReport?.electionName }}
-                  </el-descriptions-item>
-                  <el-descriptions-item
-                    v-if="electionReport?.electionDate"
-                    :label="$t('reporting.electionDate')"
-                  >
-                    {{ formatDate(electionReport.electionDate) }}
-                  </el-descriptions-item>
-                  <el-descriptions-item :label="$t('reporting.electionType')">
-                    {{ electionReport?.electionType }}
-                  </el-descriptions-item>
-                  <el-descriptions-item :label="$t('reporting.voterTurnout')">
-                    {{ calculateElectionTurnout() }}%
-                  </el-descriptions-item>
-                </el-descriptions>
-              </el-card>
-
-              <!-- Elected Candidates -->
-              <el-card class="candidates-card" style="margin-top: 20px">
-                <template #header>
-                  <span>{{ $t("reporting.electedCandidates") }}</span>
-                </template>
-                <div class="candidates-list">
-                  <div
-                    v-for="(candidate, index) in electionReport?.elected || []"
-                    :key="candidate.personGuid"
-                    class="candidate-item"
-                    :class="{
-                      winner: index < (electionReport?.numToElect || 0),
-                    }"
-                  >
-                    <div class="candidate-rank">
-                      <el-tag
-                        :type="
-                          index < (electionReport?.numToElect || 0)
-                            ? 'success'
-                            : 'info'
-                        "
-                        size="small"
-                      >
-                        #{{ candidate.rank }}
-                      </el-tag>
-                    </div>
-                    <div class="candidate-info">
-                      <div class="candidate-name">{{ candidate.fullName }}</div>
-                      <div class="candidate-votes">
-                        <el-progress
-                          :percentage="getVotePercentage(candidate.voteCount)"
-                          :show-text="false"
-                          :stroke-width="8"
-                          color="#2563a8"
-                        />
-                        <span class="vote-count"
-                          >{{ candidate.voteCount }}
-                          {{ $t("reporting.votes") }}</span
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </el-card>
-
-              <h4 v-if="electionReport?.extra?.length">
-                {{ $t("reporting.extraCandidates") }}
-              </h4>
-              <el-table
-                v-if="electionReport?.extra?.length"
-                :data="electionReport.extra"
-                stripe
-                style="width: 100%; margin-bottom: 20px"
-              >
-                <el-table-column
-                  prop="rank"
-                  :label="$t('reporting.rank')"
-                  width="80"
-                  align="center"
-                />
-                <el-table-column
-                  prop="fullName"
-                  :label="$t('reporting.candidate')"
-                  width="300"
-                />
-                <el-table-column
-                  prop="voteCount"
-                  :label="$t('reporting.votes')"
-                  width="120"
-                  align="center"
-                />
-              </el-table>
-
-              <h4 v-if="electionReport?.ties?.length">
-                {{ $t("reporting.ties") }}
-              </h4>
-              <div v-if="electionReport?.ties?.length" class="ties-list">
-                <el-card
-                  v-for="tie in electionReport.ties"
-                  :key="tie.tieBreakGroup"
-                  class="tie-card"
-                  size="small"
-                >
-                  <template #header>
-                    <span
-                      >{{
-                        $t("reporting.tieGroup", { group: tie.tieBreakGroup })
-                      }}
-                      - {{ getSectionLabel(tie.section) }}</span
-                    >
-                  </template>
-                  <ul>
-                    <li v-for="name in tie.candidateNames" :key="name">
-                      {{ name }}
-                    </li>
-                  </ul>
-                </el-card>
-              </div>
-            </div>
-
-            <!-- Detailed Statistics Report -->
-            <div
-              v-else-if="selectedReportType === 'detailed-statistics'"
-              class="report-section"
-            >
-              <h3>{{ $t("reporting.detailedStatistics") }}</h3>
-
-              <!-- Election Overview -->
-              <el-card class="stats-card" size="small">
-                <template #header>
-                  <span>{{ $t("reporting.electionOverview") }}</span>
-                </template>
-                <el-descriptions :column="2" border>
-                  <el-descriptions-item :label="$t('reporting.electionName')">
-                    {{ detailedStatistics?.overview.electionName }}
-                  </el-descriptions-item>
-                  <el-descriptions-item
-                    v-if="detailedStatistics?.overview.electionDate"
-                    :label="$t('reporting.electionDate')"
-                  >
-                    {{ formatDate(detailedStatistics.overview.electionDate) }}
-                  </el-descriptions-item>
-                  <el-descriptions-item
-                    :label="$t('reporting.registeredVoters')"
-                  >
-                    {{ detailedStatistics?.overview.totalRegisteredVoters }}
-                  </el-descriptions-item>
-                  <el-descriptions-item
-                    :label="$t('reporting.totalBallotsCast')"
-                  >
-                    {{ detailedStatistics?.overview.totalBallotsCast }}
-                  </el-descriptions-item>
-                  <el-descriptions-item :label="$t('reporting.validBallots')">
-                    {{ detailedStatistics?.overview.validBallots }}
-                  </el-descriptions-item>
-                  <el-descriptions-item :label="$t('reporting.spoiledBallots')">
-                    {{ detailedStatistics?.overview.spoiledBallots }}
-                  </el-descriptions-item>
-                  <el-descriptions-item :label="$t('reporting.totalVotes')">
-                    {{ detailedStatistics?.overview.totalVotes }}
-                  </el-descriptions-item>
-                  <el-descriptions-item :label="$t('reporting.overallTurnout')">
-                    {{
-                      detailedStatistics?.overview.overallTurnoutPercentage.toFixed(
-                        1,
-                      )
-                    }}%
-                  </el-descriptions-item>
-                </el-descriptions>
-              </el-card>
-
-              <!-- Vote Distribution -->
-              <el-card class="stats-card" size="small">
-                <template #header>
-                  <span>{{ $t("reporting.voteDistribution") }}</span>
-                </template>
-                <el-row :gutter="20">
-                  <el-col :span="12">
-                    <h4>{{ $t("reporting.ballotLengthDistribution") }}</h4>
-                    <el-table
-                      :data="getBallotLengthData()"
-                      stripe
-                      size="small"
-                      style="width: 100%"
-                    >
-                      <el-table-column
-                        prop="length"
-                        :label="$t('reporting.votesPerBallot')"
-                        width="120"
-                      />
-                      <el-table-column
-                        prop="count"
-                        :label="$t('reporting.ballotCount')"
-                        width="100"
-                      />
-                      <el-table-column
-                        :label="$t('reporting.percentage')"
-                        width="100"
-                      >
-                        <template #default="scope">
-                          {{
-                            (
-                              (scope.row.count /
-                                (detailedStatistics?.overview
-                                  .totalBallotsCast || 1)) *
-                              100
-                            ).toFixed(1)
-                          }}%
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </el-col>
-                  <el-col :span="12">
-                    <h4>{{ $t("reporting.summaryStats") }}</h4>
-                    <el-descriptions :column="1" size="small">
-                      <el-descriptions-item
-                        :label="$t('reporting.averageVotesPerBallot')"
-                      >
-                        {{
-                          detailedStatistics?.voteDistribution.averageVotesPerBallot.toFixed(
-                            1,
-                          )
-                        }}
-                      </el-descriptions-item>
-                      <el-descriptions-item
-                        :label="$t('reporting.maxVotesOnBallot')"
-                      >
-                        {{
-                          detailedStatistics?.voteDistribution
-                            .maxVotesOnSingleBallot
-                        }}
-                      </el-descriptions-item>
-                      <el-descriptions-item
-                        :label="$t('reporting.minVotesOnBallot')"
-                      >
-                        {{
-                          detailedStatistics?.voteDistribution
-                            .minVotesOnSingleBallot
-                        }}
-                      </el-descriptions-item>
-                    </el-descriptions>
-                  </el-col>
-                </el-row>
-              </el-card>
-
-              <!-- Candidate Performance -->
-              <el-card class="stats-card" size="small">
-                <template #header>
-                  <span>{{ $t("reporting.candidatePerformance") }}</span>
-                </template>
-                <el-table
-                  :data="detailedStatistics?.candidatePerformance || []"
-                  stripe
-                  style="width: 100%"
-                >
-                  <el-table-column
-                    prop="rank"
-                    :label="$t('reporting.rank')"
-                    width="80"
-                    align="center"
-                  />
-                  <el-table-column
-                    prop="fullName"
-                    :label="$t('reporting.candidate')"
-                    width="200"
-                  />
-                  <el-table-column
-                    prop="totalVotes"
-                    :label="$t('reporting.totalVotes')"
-                    width="120"
-                    align="center"
-                  />
-                  <el-table-column
-                    prop="votePercentage"
-                    :label="$t('reporting.votePercentage')"
-                    width="120"
-                    align="center"
-                  >
-                    <template #default="scope">
-                      {{ scope.row.votePercentage.toFixed(1) }}%
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    :label="$t('reporting.status')"
-                    width="120"
-                    align="center"
-                  >
-                    <template #default="scope">
-                      <el-tag :type="getCandidateStatusType(scope.row)">
-                        {{ getCandidateStatusText(scope.row) }}
-                      </el-tag>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="firstChoicePercentage"
-                    :label="$t('reporting.firstChoice')"
-                    width="120"
-                    align="center"
-                  >
-                    <template #default="scope">
-                      {{ scope.row.firstChoicePercentage.toFixed(1) }}%
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-card>
-
-              <!-- Location Statistics -->
-              <el-card class="stats-card" size="small">
-                <template #header>
-                  <span>{{ $t("reporting.locationStatistics") }}</span>
-                </template>
-                <el-table
-                  :data="detailedStatistics?.locationStatistics || []"
-                  stripe
-                  style="width: 100%"
-                >
-                  <el-table-column
-                    prop="locationName"
-                    :label="$t('reporting.location')"
-                    width="200"
-                  />
-                  <el-table-column
-                    prop="registeredVoters"
-                    :label="$t('reporting.registeredVoters')"
-                    width="150"
-                    align="center"
-                  />
-                  <el-table-column
-                    prop="ballotsCast"
-                    :label="$t('reporting.ballotsCast')"
-                    width="120"
-                    align="center"
-                  />
-                  <el-table-column
-                    prop="turnoutPercentage"
-                    :label="$t('reporting.turnout')"
-                    width="100"
-                    align="center"
-                  >
-                    <template #default="scope">
-                      {{ scope.row.turnoutPercentage.toFixed(1) }}%
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="totalVotes"
-                    :label="$t('reporting.totalVotes')"
-                    width="120"
-                    align="center"
-                  />
-                  <el-table-column
-                    :label="$t('reporting.topCandidates')"
-                    min-width="200"
-                  >
-                    <template #default="scope">
-                      <div
-                        v-for="(votes, name) in scope.row.topCandidates"
-                        :key="name"
-                        class="top-candidate"
-                      >
-                        {{ name }}: {{ votes }}
-                      </div>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-card>
-            </div>
-
-            <!-- Turnout Analysis Report -->
-            <div
-              v-else-if="selectedReportType === 'turnout-analysis'"
-              class="report-section"
-            >
-              <h3>{{ $t("reporting.turnoutAnalysis") }}</h3>
-
-              <!-- Overall Turnout Summary -->
-              <el-card class="stats-card" size="small">
-                <template #header>
-                  <span>{{ $t("reporting.overallTurnoutSummary") }}</span>
-                </template>
-                <el-row :gutter="20">
-                  <el-col :span="6">
-                    <el-statistic
-                      :title="$t('reporting.overallTurnout')"
-                      :value="
-                        detailedStatistics?.turnoutAnalysis.overallTurnout.toFixed(
-                          1,
-                        ) + '%'
-                      "
-                      :value-style="{ color: '#5a9e1a' }"
-                    />
-                  </el-col>
-                  <el-col :span="6">
-                    <el-statistic
-                      :title="$t('reporting.electionDayVoting')"
-                      :value="
-                        detailedStatistics?.turnoutAnalysis
-                          .electionDayVotingCount
-                      "
-                    />
-                  </el-col>
-                  <el-col :span="6">
-                    <el-statistic
-                      :title="$t('reporting.earlyVoting')"
-                      :value="
-                        detailedStatistics?.turnoutAnalysis.earlyVotingCount
-                      "
-                    />
-                  </el-col>
-                  <el-col :span="6">
-                    <el-statistic
-                      :title="$t('reporting.earlyVotingPercentage')"
-                      :value="
-                        detailedStatistics?.turnoutAnalysis.earlyVotingPercentage.toFixed(
-                          1,
-                        ) + '%'
-                      "
-                    />
-                  </el-col>
-                </el-row>
-              </el-card>
-
-              <!-- Turnout by Location -->
-              <el-card class="stats-card" size="small">
-                <template #header>
-                  <span>{{ $t("reporting.turnoutByLocation") }}</span>
-                </template>
-                <el-table
-                  :data="getLocationTurnoutData()"
-                  stripe
-                  style="width: 100%"
-                >
-                  <el-table-column
-                    prop="location"
-                    :label="$t('reporting.location')"
-                    width="200"
-                  />
-                  <el-table-column
-                    prop="turnout"
-                    :label="$t('reporting.turnoutPercentage')"
-                    width="150"
-                    align="center"
-                  >
-                    <template #default="scope">
-                      {{ scope.row.turnout.toFixed(1) }}%
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    :label="$t('reporting.performance')"
-                    width="150"
-                    align="center"
-                  >
-                    <template #default="scope">
-                      <el-tag
-                        :type="getTurnoutPerformanceType(scope.row.turnout)"
-                      >
-                        {{ getTurnoutPerformanceText(scope.row.turnout) }}
-                      </el-tag>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-card>
-
-              <!-- Demographic Breakdown -->
-              <el-card class="stats-card" size="small">
-                <template #header>
-                  <span>{{ $t("reporting.demographicBreakdown") }}</span>
-                </template>
-                <el-table
-                  :data="
-                    detailedStatistics?.turnoutAnalysis.demographicBreakdown ||
-                    []
-                  "
-                  stripe
-                  style="width: 100%"
-                >
-                  <el-table-column
-                    prop="demographicCategory"
-                    :label="$t('reporting.category')"
-                    width="150"
-                  />
-                  <el-table-column
-                    prop="demographicValue"
-                    :label="$t('reporting.value')"
-                    width="150"
-                  />
-                  <el-table-column
-                    prop="totalVoters"
-                    :label="$t('reporting.totalVoters')"
-                    width="120"
-                    align="center"
-                  />
-                  <el-table-column
-                    prop="voted"
-                    :label="$t('reporting.voted')"
-                    width="100"
-                    align="center"
-                  />
-                  <el-table-column
-                    prop="turnoutPercentage"
-                    :label="$t('reporting.turnoutPercentage')"
-                    width="150"
-                    align="center"
-                  >
-                    <template #default="scope">
-                      {{ scope.row.turnoutPercentage.toFixed(1) }}%
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-card>
-
-              <!-- Time-Based Turnout -->
-              <el-card class="stats-card" size="small">
-                <template #header>
-                  <span>{{ $t("reporting.timeBasedTurnout") }}</span>
-                </template>
-                <el-table
-                  :data="
-                    detailedStatistics?.turnoutAnalysis.timeBasedTurnout || []
-                  "
-                  stripe
-                  style="width: 100%"
-                >
-                  <el-table-column
-                    prop="timePeriod"
-                    :label="$t('reporting.timePeriod')"
-                    width="180"
-                  >
-                    <template #default="scope">
-                      {{
-                        formatTimePeriod(
-                          scope.row.timePeriod,
-                          scope.row.periodType,
-                        )
-                      }}
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="ballotsCast"
-                    :label="$t('reporting.ballotsCast')"
-                    width="120"
-                    align="center"
-                  />
-                  <el-table-column
-                    prop="cumulativeTurnout"
-                    :label="$t('reporting.cumulativeTurnout')"
-                    width="150"
-                    align="center"
-                  >
-                    <template #default="scope">
-                      {{ scope.row.cumulativeTurnout.toFixed(1) }}%
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-card>
-
-              <!-- Participation Rates -->
-              <el-card class="stats-card" size="small">
-                <template #header>
-                  <span>{{ $t("reporting.participationRates") }}</span>
-                </template>
-                <el-row :gutter="20">
-                  <el-col :span="6">
-                    <el-statistic
-                      :title="$t('reporting.onlineVoters')"
-                      :value="
-                        detailedStatistics?.turnoutAnalysis.participationRates.onlineVoters.toFixed(
-                          1,
-                        ) + '%'
-                      "
-                      :value-style="{ color: '#2563a8' }"
-                    />
-                  </el-col>
-                  <el-col :span="6">
-                    <el-statistic
-                      :title="$t('reporting.inPersonVoters')"
-                      :value="
-                        detailedStatistics?.turnoutAnalysis.participationRates.inPersonVoters.toFixed(
-                          1,
-                        ) + '%'
-                      "
-                      :value-style="{ color: '#8DC63F' }"
-                    />
-                  </el-col>
-                  <el-col :span="6">
-                    <el-statistic
-                      :title="$t('reporting.firstTimeVoters')"
-                      :value="
-                        detailedStatistics?.turnoutAnalysis.participationRates.firstTimeVoters.toFixed(
-                          1,
-                        ) + '%'
-                      "
-                      :value-style="{ color: '#F47920' }"
-                    />
-                  </el-col>
-                  <el-col :span="6">
-                    <el-statistic
-                      :title="$t('reporting.returningVoters')"
-                      :value="
-                        detailedStatistics?.turnoutAnalysis.participationRates.returningVoters.toFixed(
-                          1,
-                        ) + '%'
-                      "
-                      :value-style="{ color: '#1C3A6A' }"
-                    />
-                  </el-col>
-                </el-row>
-              </el-card>
-            </div>
-
-            <!-- Ballot Report -->
-            <div
-              v-else-if="selectedReportType === 'ballots'"
-              class="report-section"
-            >
-              <h3>{{ $t("reporting.ballotReport") }}</h3>
-              <el-table
-                :data="reportData?.data || []"
-                stripe
-                style="width: 100%"
-              >
-                <el-table-column
-                  prop="ballotGuid"
-                  :label="$t('reporting.ballotId')"
-                  width="200"
-                />
-                <el-table-column
-                  prop="locationName"
-                  :label="$t('reporting.location')"
-                  width="200"
-                />
-                <el-table-column
-                  prop="status"
-                  :label="$t('reporting.status')"
-                  width="120"
-                />
-                <el-table-column :label="$t('reporting.votes')" min-width="300">
-                  <template #default="scope">
-                    <div
-                      v-for="vote in scope.row.votes"
-                      :key="vote.position"
-                      class="vote-item"
-                    >
-                      {{ vote.position }}. {{ vote.fullName }}
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-
-            <!-- Voter Report -->
-            <div
-              v-else-if="selectedReportType === 'voters'"
-              class="report-section"
-            >
-              <h3>{{ $t("reporting.voterReport") }}</h3>
-              <el-table
-                :data="reportData?.data || []"
-                stripe
-                style="width: 100%"
-              >
-                <el-table-column
-                  prop="fullName"
-                  :label="$t('reporting.voterName')"
-                  width="250"
-                />
-                <el-table-column
-                  prop="locationName"
-                  :label="$t('reporting.location')"
-                  width="200"
-                />
-                <el-table-column
-                  prop="voted"
-                  :label="$t('reporting.voted')"
-                  width="100"
-                  align="center"
-                >
-                  <template #default="scope">
-                    <el-tag :type="scope.row.voted ? 'success' : 'danger'">
-                      {{ scope.row.voted ? $t("common.yes") : $t("common.no") }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  prop="voteTime"
-                  :label="$t('reporting.voteTime')"
-                  width="180"
-                >
-                  <template #default="scope">
-                    {{
-                      scope.row.voteTime
-                        ? formatDateTime(scope.row.voteTime)
-                        : "-"
-                    }}
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-
-            <!-- Location Report -->
-            <div
-              v-else-if="selectedReportType === 'locations'"
-              class="report-section"
-            >
-              <h3>{{ $t("reporting.locationReport") }}</h3>
-              <el-table
-                :data="reportData?.data || []"
-                stripe
-                style="width: 100%"
-              >
-                <el-table-column
-                  prop="locationName"
-                  :label="$t('reporting.location')"
-                  width="250"
-                />
-                <el-table-column
-                  prop="totalVoters"
-                  :label="$t('reporting.registeredVoters')"
-                  width="150"
-                  align="center"
-                />
-                <el-table-column
-                  prop="voted"
-                  :label="$t('reporting.voted')"
-                  width="120"
-                  align="center"
-                />
-                <el-table-column
-                  prop="ballotsEntered"
-                  :label="$t('reporting.ballotsEntered')"
-                  width="150"
-                  align="center"
-                />
-                <el-table-column
-                  prop="totalVotes"
-                  :label="$t('reporting.totalVotes')"
-                  width="120"
-                  align="center"
-                />
-                <el-table-column
-                  :label="$t('reporting.turnout')"
-                  width="100"
-                  align="center"
-                >
-                  <template #default="scope">
-                    {{
-                      calculateTurnout(scope.row.totalVoters, scope.row.voted)
-                    }}%
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-
-            <!-- Charts Report -->
-            <div
-              v-else-if="selectedReportType === 'charts'"
-              class="report-section"
-            >
-              <h3>{{ $t("reporting.charts") }}</h3>
-
-              <el-row :gutter="20">
-                <el-col :span="12">
-                  <el-card class="chart-card">
-                    <template #header>
-                      <span>{{ $t("reporting.turnoutByLocation") }}</span>
-                    </template>
-                    <div class="chart-container">
-                      <canvas ref="turnoutChartRef"></canvas>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="12">
-                  <el-card class="chart-card">
-                    <template #header>
-                      <span>{{ $t("reporting.candidateVotes") }}</span>
-                    </template>
-                    <div class="chart-container">
-                      <canvas ref="candidateChartRef"></canvas>
-                    </div>
-                  </el-card>
-                </el-col>
-              </el-row>
-
-              <el-row :gutter="20" style="margin-top: 20px">
-                <el-col :span="12">
-                  <el-card class="chart-card">
-                    <template #header>
-                      <span>{{ $t("reporting.voteDistribution") }}</span>
-                    </template>
-                    <div class="chart-container">
-                      <canvas ref="voteDistributionChartRef"></canvas>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="12">
-                  <el-card class="chart-card">
-                    <template #header>
-                      <span>{{ $t("reporting.turnoutOverTime") }}</span>
-                    </template>
-                    <div class="chart-container">
-                      <canvas ref="turnoutTimeChartRef"></canvas>
-                    </div>
-                  </el-card>
-                </el-col>
-              </el-row>
-            </div>
-
-            <!-- Custom Report Configuration -->
-            <div
-              v-else-if="selectedReportType === 'custom'"
-              class="report-section"
-            >
-              <h3>{{ $t("reporting.customReport") }}</h3>
-
-              <el-card class="custom-report-config">
-                <template #header>
-                  <span>{{ $t("reporting.configureReport") }}</span>
-                </template>
-
-                <el-form :model="customReportConfig" label-width="120px">
-                  <el-form-item :label="$t('reporting.reportName')">
-                    <el-input
-                      v-model="customReportConfig.reportName"
-                      :placeholder="$t('reporting.enterReportName')"
-                    />
-                  </el-form-item>
-
-                  <el-form-item :label="$t('reporting.description')">
-                    <el-input
-                      v-model="customReportConfig.description"
-                      type="textarea"
-                      :placeholder="$t('reporting.enterDescription')"
-                    />
-                  </el-form-item>
-
-                  <el-form-item :label="$t('reporting.includeSections')">
-                    <el-checkbox-group v-model="customReportConfig.sections">
-                      <el-checkbox label="summary">{{
-                        $t("reporting.summary")
-                      }}</el-checkbox>
-                      <el-checkbox label="candidates">{{
-                        $t("reporting.candidates")
-                      }}</el-checkbox>
-                      <el-checkbox label="locations">{{
-                        $t("reporting.locations")
-                      }}</el-checkbox>
-                      <el-checkbox label="statistics">{{
-                        $t("reporting.statistics")
-                      }}</el-checkbox>
-                      <el-checkbox label="charts">{{
-                        $t("reporting.charts")
-                      }}</el-checkbox>
-                    </el-checkbox-group>
-                  </el-form-item>
-
-                  <el-form-item :label="$t('reporting.exportFormats')">
-                    <el-checkbox-group
-                      v-model="customReportConfig.exportFormats"
-                    >
-                      <el-checkbox label="pdf">PDF</el-checkbox>
-                      <el-checkbox label="excel">Excel</el-checkbox>
-                      <el-checkbox label="csv">CSV</el-checkbox>
-                    </el-checkbox-group>
-                  </el-form-item>
-
-                  <el-form-item>
-                    <el-button
-                      type="primary"
-                      :loading="loading"
-                      @click="generateCustomReport"
-                    >
-                      {{ $t("reporting.generateCustomReport") }}
-                    </el-button>
-                  </el-form-item>
-                </el-form>
-              </el-card>
-            </div>
-
-            <!-- Historical Comparison -->
-            <div
-              v-else-if="selectedReportType === 'historical-comparison'"
-              class="report-section"
-            >
-              <h3>{{ $t("reporting.historicalComparison") }}</h3>
-
-              <el-card class="comparison-config">
-                <template #header>
-                  <span>{{ $t("reporting.selectElectionsToCompare") }}</span>
-                </template>
-
-                <el-form label-width="120px">
-                  <el-form-item :label="$t('reporting.selectElections')">
-                    <el-select
-                      v-model="selectedElectionsForComparison"
-                      multiple
-                      :placeholder="$t('reporting.selectMultipleElections')"
-                      style="width: 100%"
-                      collapse-tags
-                    >
-                      <el-option
-                        v-for="election in availableElections"
-                        :key="election.guid"
-                        :label="election.name"
-                        :value="election.guid"
-                      />
-                    </el-select>
-                  </el-form-item>
-
-                  <el-form-item :label="$t('reporting.metricsToCompare')">
-                    <el-checkbox-group v-model="comparisonMetrics">
-                      <el-checkbox label="turnout">{{
-                        $t("reporting.turnout")
-                      }}</el-checkbox>
-                      <el-checkbox label="votes">{{
-                        $t("reporting.totalVotes")
-                      }}</el-checkbox>
-                      <el-checkbox label="voters">{{
-                        $t("reporting.registeredVoters")
-                      }}</el-checkbox>
-                      <el-checkbox label="candidates">{{
-                        $t("reporting.candidates")
-                      }}</el-checkbox>
-                    </el-checkbox-group>
-                  </el-form-item>
-
-                  <el-form-item>
-                    <el-button
-                      type="primary"
-                      :loading="loading"
-                      :disabled="selectedElectionsForComparison.length < 2"
-                      @click="generateComparison"
-                    >
-                      {{ $t("reporting.generateComparison") }}
-                    </el-button>
-                  </el-form-item>
-                </el-form>
-              </el-card>
-
-              <!-- Comparison Results -->
-              <div v-if="comparisonData" class="comparison-results">
-                <el-card class="comparison-summary">
-                  <template #header>
-                    <span>{{ $t("reporting.comparisonSummary") }}</span>
-                  </template>
-
-                  <el-table
-                    :data="comparisonData.elections"
-                    stripe
-                    style="width: 100%"
-                  >
-                    <el-table-column
-                      prop="electionName"
-                      :label="$t('reporting.election')"
-                      width="250"
-                    />
-                    <el-table-column
-                      prop="electionDate"
-                      :label="$t('reporting.date')"
-                      width="150"
-                    >
-                      <template #default="scope">
-                        {{ formatDate(scope.row.electionDate) }}
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      prop="turnoutPercentage"
-                      :label="$t('reporting.turnout')"
-                      width="120"
-                      align="center"
-                    >
-                      <template #default="scope">
-                        {{ scope.row.turnoutPercentage.toFixed(1) }}%
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      prop="totalVotes"
-                      :label="$t('reporting.totalVotes')"
-                      width="120"
-                      align="center"
-                    />
-                    <el-table-column
-                      prop="totalRegisteredVoters"
-                      :label="$t('reporting.registeredVoters')"
-                      width="150"
-                      align="center"
-                    />
-                    <el-table-column
-                      prop="electedCount"
-                      :label="$t('reporting.elected')"
-                      width="100"
-                      align="center"
-                    />
-                  </el-table>
-                </el-card>
-              </div>
-            </div>
-
-            <!-- Generic Report Display -->
-            <div v-else class="report-section">
-              <pre class="report-raw-data">{{
-                JSON.stringify(reportData?.data, null, 2)
-              }}</pre>
-            </div>
-          </el-card>
-        </div>
-      </div>
-    </el-card>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, nextTick } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useNotifications } from "@/composables/useNotifications";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  PointElement,
-  LineElement,
-} from "chart.js";
-import { Bar, Pie, Line } from "vue-chartjs";
-
-import { useResultStore } from "../../stores/resultStore";
-import { reportsApi } from "../../api/reports";
+import { useRoute, useRouter } from "vue-router";
+import { reportService } from "../../services/reportService";
 import type {
-  ElectionReportDto,
-  ReportDataResponseDto,
-  DetailedStatisticsDto,
+  AllCanReceiveReport,
+  AllNonEligibleReport,
+  BallotAlignmentReport,
+  BallotsReport,
+  BallotsSameReport,
+  BallotsSummaryReport,
+  ChangedPeopleReport,
+  FlagsReport,
+  MainReport,
+  ReportListItem,
+  SpoiledVotesReport,
+  VoterEmailsReport,
+  VotersByAreaReport,
+  VotersByLocationAreaReport,
+  VotersByLocationReport,
+  VotersOnlineReport,
+  VotersReport,
+  VotesByNameReport,
+  VotesByNumReport,
 } from "../../types";
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  PointElement,
-  LineElement,
+const route = useRoute();
+const router = useRouter();
+const { t } = useI18n();
+
+const electionGuid = computed(() => route.params.id as string);
+const availableReports = ref<ReportListItem[]>([]);
+const selectedReport = ref<string>("");
+const reportData = ref<unknown>(null);
+const loading = ref(false);
+const loadingList = ref(true);
+const error = ref("");
+
+const ballotReports = computed(() =>
+  availableReports.value.filter((r) => r.category === "Ballot Reports"),
+);
+const voterReports = computed(() =>
+  availableReports.value.filter((r) => r.category === "Voter Reports"),
 );
 
-const router = useRouter();
-const route = useRoute();
-const { t } = useI18n();
-const resultStore = useResultStore();
-const {
-  showSuccessMessage,
-  showErrorMessage,
-  showWarningMessage,
-  showInfoMessage,
-} = useNotifications();
+const selectedReportName = computed(
+  () =>
+    availableReports.value.find((r) => r.code === selectedReport.value)?.name ??
+    "",
+);
 
-const electionGuid = route.params.id as string;
-const selectedReportType = ref<string>("");
-const currentReport = ref<{
-  title: string;
-  code: string;
-  name?: string;
-} | null>(null);
-const electionReport = ref<ElectionReportDto | null>(null);
-const reportData = ref<ReportDataResponseDto | null>(null);
-const detailedStatistics = ref<DetailedStatisticsDto | null>(null);
-const loading = ref(false);
-
-// Chart refs
-const turnoutChartRef = ref<HTMLCanvasElement>();
-const candidateChartRef = ref<HTMLCanvasElement>();
-const voteDistributionChartRef = ref<HTMLCanvasElement>();
-const turnoutTimeChartRef = ref<HTMLCanvasElement>();
-
-// Filter refs
-const showFilters = ref(false);
-const availableLocations = ref<string[]>([]);
-const maxVotes = ref(1000);
-const filters = ref({
-  dateRange: [],
-  locations: [],
-  candidateName: "",
-  voteRange: [0, 1000],
-  turnoutRange: [0, 100],
-  sortBy: "",
+onMounted(async () => {
+  try {
+    availableReports.value = await reportService.getAvailableReports(
+      electionGuid.value,
+    );
+  } catch {
+    error.value = t("reporting.error");
+  } finally {
+    loadingList.value = false;
+  }
 });
 
-// Custom report refs
-const customReportConfig = ref({
-  reportName: "",
-  description: "",
-  sections: [] as string[],
-  exportFormats: ["pdf"] as string[],
-});
-
-// Historical comparison refs
-const availableElections = ref<any[]>([]);
-const selectedElectionsForComparison = ref<string[]>([]);
-const comparisonMetrics = ref<string[]>(["turnout", "votes"]);
-const comparisonData = ref<any>(null);
-
-const availableReports = [
-  { code: "summary", name: t("reporting.summaryReport") },
-  { code: "detailed-statistics", name: t("reporting.detailedStatistics") },
-  { code: "turnout-analysis", name: t("reporting.turnoutAnalysis") },
-  { code: "ballots", name: t("reporting.ballotReport") },
-  { code: "voters", name: t("reporting.voterReport") },
-  { code: "locations", name: t("reporting.locationReport") },
-  { code: "charts", name: t("reporting.charts") },
-  { code: "historical-comparison", name: t("reporting.historicalComparison") },
-  { code: "custom", name: t("reporting.customReport") },
-];
-
-function onReportTypeChange() {
-  const report = availableReports.find(
-    (r) => r.code === selectedReportType.value,
-  );
-  if (report) {
-    currentReport.value = {
-      title: report.name,
-      code: report.code,
-      name: report.name,
-    };
-    // Show filters for certain report types
-    showFilters.value = [
-      "summary",
-      "detailed-statistics",
-      "ballots",
-      "voters",
-      "locations",
-    ].includes(report.code);
-  } else {
-    currentReport.value = null;
-    showFilters.value = false;
+async function selectReport(code: string) {
+  if (selectedReport.value === code && reportData.value) {
+    return;
   }
-}
-
-async function generateReport() {
-  if (!selectedReportType.value) return;
-
+  selectedReport.value = code;
+  reportData.value = null;
+  loading.value = true;
+  error.value = "";
   try {
-    loading.value = true;
-
-    if (selectedReportType.value === "summary") {
-      electionReport.value =
-        await resultStore.fetchElectionReport(electionGuid);
-    } else if (selectedReportType.value === "detailed-statistics") {
-      detailedStatistics.value =
-        await resultStore.fetchDetailedStatistics(electionGuid);
-    } else if (selectedReportType.value === "charts") {
-      await generateCharts();
-    } else {
-      reportData.value = await resultStore.fetchReportData(
-        electionGuid,
-        selectedReportType.value,
-      );
-    }
-
-    showSuccessMessage(t("reporting.reportGenerated"));
-  } catch (error) {
-    showErrorMessage(t("reporting.reportGenerationError"));
+    reportData.value = await reportService.getReport(electionGuid.value, code);
+  } catch {
+    error.value = t("reporting.error");
   } finally {
     loading.value = false;
   }
-}
-
-async function exportReport(format: "pdf" | "excel" | "csv") {
-  try {
-    showInfoMessage(`${t("reporting.exportStarted")} ${format.toUpperCase()}`);
-
-    const blob = await reportsApi.exportReport(electionGuid, { format });
-
-    // Create a download link
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `election-report-${electionGuid}.${format}`;
-    document.body.appendChild(link);
-    link.click();
-
-    // Clean up
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-
-    showSuccessMessage(
-      `${t("reporting.exportCompleted")} ${format.toUpperCase()}`,
-    );
-  } catch (error) {
-    showErrorMessage(t("reporting.exportError"));
-  }
-}
-
-async function generateCharts() {
-  // Load required data
-  if (!electionReport.value) {
-    electionReport.value = await resultStore.fetchElectionReport(electionGuid);
-  }
-  if (!detailedStatistics.value) {
-    detailedStatistics.value =
-      await resultStore.fetchDetailedStatistics(electionGuid);
-  }
-
-  await nextTick();
-
-  // Generate charts
-  generateTurnoutChart();
-  generateCandidateChart();
-  generateVoteDistributionChart();
-  generateTurnoutTimeChart();
-}
-
-function generateTurnoutChart() {
-  if (!turnoutChartRef.value || !detailedStatistics.value) return;
-
-  const ctx = turnoutChartRef.value.getContext("2d");
-  if (!ctx) return;
-
-  const locationData = detailedStatistics.value.locationStatistics || [];
-  const labels = locationData.map((l) => l.locationName);
-  const data = locationData.map((l) => l.turnoutPercentage);
-
-  new ChartJS(ctx, {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [
-        {
-          label: t("reporting.turnoutPercentage"),
-          data,
-          backgroundColor: "rgba(64, 158, 255, 0.6)",
-          borderColor: "rgba(64, 158, 255, 1)",
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: "top",
-        },
-        title: {
-          display: true,
-          text: t("reporting.turnoutByLocation"),
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 100,
-        },
-      },
-    },
-  });
-}
-
-function generateCandidateChart() {
-  if (!candidateChartRef.value || !electionReport.value) return;
-
-  const ctx = candidateChartRef.value.getContext("2d");
-  if (!ctx) return;
-
-  const candidates = [
-    ...(electionReport.value.elected || []),
-    ...(electionReport.value.other || []),
-    ...(electionReport.value.extra || []),
-  ]
-    .sort((a, b) => b.voteCount - a.voteCount)
-    .slice(0, 10); // Top 10
-
-  const labels = candidates.map((c) =>
-    c.fullName.length > 20 ? c.fullName.substring(0, 20) + "..." : c.fullName,
-  );
-  const data = candidates.map((c) => c.voteCount);
-
-  new ChartJS(ctx, {
-    type: "horizontalBar",
-    data: {
-      labels,
-      datasets: [
-        {
-          label: t("reporting.votes"),
-          data,
-          backgroundColor: "rgba(103, 194, 58, 0.6)",
-          borderColor: "rgba(103, 194, 58, 1)",
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      indexAxis: "y",
-      responsive: true,
-      plugins: {
-        legend: {
-          position: "top",
-        },
-        title: {
-          display: true,
-          text: t("reporting.candidateVotes"),
-        },
-      },
-      scales: {
-        x: {
-          beginAtZero: true,
-        },
-      },
-    },
-  });
-}
-
-function generateVoteDistributionChart() {
-  if (!voteDistributionChartRef.value || !detailedStatistics.value) return;
-
-  const ctx = voteDistributionChartRef.value.getContext("2d");
-  if (!ctx) return;
-
-  const distribution =
-    detailedStatistics.value.voteDistribution?.voteCountDistribution || {};
-  const labels = Object.keys(distribution);
-  const data = Object.values(distribution);
-
-  new ChartJS(ctx, {
-    type: "pie",
-    data: {
-      labels,
-      datasets: [
-        {
-          data,
-          backgroundColor: [
-            "rgba(64, 158, 255, 0.6)",
-            "rgba(103, 194, 58, 0.6)",
-            "rgba(230, 162, 60, 0.6)",
-            "rgba(245, 108, 108, 0.6)",
-            "rgba(144, 147, 153, 0.6)",
-          ],
-          borderColor: [
-            "rgba(64, 158, 255, 1)",
-            "rgba(103, 194, 58, 1)",
-            "rgba(230, 162, 60, 1)",
-            "rgba(245, 108, 108, 1)",
-            "rgba(144, 147, 153, 1)",
-          ],
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: "top",
-        },
-        title: {
-          display: true,
-          text: t("reporting.voteDistribution"),
-        },
-      },
-    },
-  });
-}
-
-function generateTurnoutTimeChart() {
-  if (!turnoutTimeChartRef.value || !detailedStatistics.value) return;
-
-  const ctx = turnoutTimeChartRef.value.getContext("2d");
-  if (!ctx) return;
-
-  // Placeholder data - in real implementation, this would come from time-based turnout data
-  const labels = ["Start", "Early", "Mid", "Late", "End"];
-  const data = [
-    detailedStatistics.value.overview.overallTurnoutPercentage * 0.1,
-    detailedStatistics.value.overview.overallTurnoutPercentage * 0.3,
-    detailedStatistics.value.overview.overallTurnoutPercentage * 0.6,
-    detailedStatistics.value.overview.overallTurnoutPercentage * 0.8,
-    detailedStatistics.value.overview.overallTurnoutPercentage,
-  ];
-
-  new ChartJS(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets: [
-        {
-          label: t("reporting.cumulativeTurnout"),
-          data,
-          borderColor: "rgba(64, 158, 255, 1)",
-          backgroundColor: "rgba(64, 158, 255, 0.1)",
-          tension: 0.4,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: "top",
-        },
-        title: {
-          display: true,
-          text: t("reporting.turnoutOverTime"),
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 100,
-        },
-      },
-    },
-  });
-}
-
-function printReport() {
-  window.print();
-}
-
-function clearFilters() {
-  filters.value = {
-    dateRange: [],
-    locations: [],
-    candidateName: "",
-    voteRange: [0, maxVotes.value],
-    turnoutRange: [0, 100],
-    sortBy: "",
-  };
-}
-
-function applyFilters() {
-  // Re-generate the current report with filters applied
-  generateReport();
-}
-
-async function generateCustomReport() {
-  if (!customReportConfig.value.reportName.trim()) {
-    showWarningMessage(t("reporting.reportNameRequired"));
-    return;
-  }
-
-  if (customReportConfig.value.sections.length === 0) {
-    showWarningMessage(t("reporting.atLeastOneSectionRequired"));
-    return;
-  }
-
-  try {
-    loading.value = true;
-
-    // Convert sections to the expected format
-    const sections = customReportConfig.value.sections.map((section) => ({
-      sectionType: section,
-      title: section.charAt(0).toUpperCase() + section.slice(1),
-      parameters: {},
-      order: customReportConfig.value.sections.indexOf(section),
-    }));
-
-    const config = {
-      reportName: customReportConfig.value.reportName,
-      description: customReportConfig.value.description,
-      sections,
-      exportFormats: customReportConfig.value.exportFormats,
-      isPublic: false,
-      createdAt: new Date().toISOString(),
-      defaultFilters: {},
-    };
-
-    // For now, just show a success message since the backend implementation is basic
-    showSuccessMessage(t("reporting.customReportGenerated"));
-    console.log("Custom report config:", config);
-  } catch (error) {
-    showErrorMessage(t("reporting.customReportGenerationError"));
-  } finally {
-    loading.value = false;
-  }
-}
-
-async function generateComparison() {
-  if (selectedElectionsForComparison.value.length < 2) {
-    showWarningMessage(t("reporting.selectAtLeastTwoElections"));
-    return;
-  }
-
-  if (comparisonMetrics.value.length === 0) {
-    showWarningMessage(t("reporting.selectAtLeastOneMetric"));
-    return;
-  }
-
-  try {
-    loading.value = true;
-
-    // For now, simulate comparison data since we don't have the actual API call set up
-    // In a real implementation, this would call the backend comparison endpoint
-    comparisonData.value = {
-      elections: selectedElectionsForComparison.value.map((guid, index) => ({
-        electionGuid: guid,
-        electionName: `Election ${index + 1}`,
-        electionDate: new Date(
-          Date.now() - index * 365 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
-        totalRegisteredVoters: 1000 + index * 100,
-        totalBallotsCast: 700 + index * 50,
-        turnoutPercentage: 70 + index * 5,
-        totalVotes: 2500 + index * 200,
-        positionsToElect: 9,
-        electedCount: 9,
-      })),
-      metrics: {
-        averageTurnout: 75,
-        totalElections: selectedElectionsForComparison.value.length,
-      },
-    };
-
-    showSuccessMessage(t("reporting.comparisonGenerated"));
-  } catch (error) {
-    showErrorMessage(t("reporting.comparisonGenerationError"));
-  } finally {
-    loading.value = false;
-  }
-}
-
-async function loadAvailableLocations() {
-  try {
-    // Load locations from detailed statistics
-    if (!detailedStatistics.value) {
-      detailedStatistics.value =
-        await resultStore.fetchDetailedStatistics(electionGuid);
-    }
-    availableLocations.value = detailedStatistics.value.locationStatistics.map(
-      (l) => l.locationName,
-    );
-  } catch (error) {
-    console.error("Error loading locations:", error);
-  }
-}
-
-function formatDate(date: string) {
-  if (!date) return "-";
-  return new Date(date).toLocaleDateString();
-}
-
-function formatDateTime(date: string) {
-  if (!date) return "-";
-  return new Date(date).toLocaleString();
-}
-
-function getSectionLabel(section: string) {
-  const labelMap: Record<string, string> = {
-    E: t("results.elected"),
-    X: t("results.extra"),
-    O: t("results.other"),
-  };
-  return labelMap[section] || section;
-}
-
-function calculateTurnout(registered: number, voted: number) {
-  if (registered === 0) return 0;
-  return Math.round((voted / registered) * 100);
-}
-
-function getBallotLengthData() {
-  if (!detailedStatistics.value) return [];
-  return Object.entries(
-    detailedStatistics.value.voteDistribution.ballotLengthDistribution,
-  )
-    .map(([length, count]) => ({
-      length: parseInt(length),
-      count,
-    }))
-    .sort((a, b) => a.length - b.length);
-}
-
-function getCandidateStatusType(candidate: any) {
-  if (candidate.isElected) return "success";
-  if (candidate.isEliminated) return "danger";
-  return "warning";
-}
-
-function getCandidateStatusText(candidate: any) {
-  if (candidate.isElected) return t("reporting.elected");
-  if (candidate.isEliminated) return t("reporting.eliminated");
-  return t("reporting.contender");
-}
-
-function getLocationTurnoutData() {
-  if (!detailedStatistics.value) return [];
-  return Object.entries(
-    detailedStatistics.value.turnoutAnalysis.turnoutByLocation,
-  )
-    .map(([location, turnout]) => ({
-      location,
-      turnout,
-    }))
-    .sort((a, b) => b.turnout - a.turnout);
-}
-
-function getTurnoutPerformanceType(turnout: number) {
-  if (turnout >= 80) return "success";
-  if (turnout >= 60) return "warning";
-  return "danger";
-}
-
-function getTurnoutPerformanceText(turnout: number) {
-  if (turnout >= 80) return "High";
-  if (turnout >= 60) return "Medium";
-  return "Low";
-}
-
-function formatTimePeriod(timePeriod: string, periodType: string) {
-  if (periodType === "Hour") {
-    const date = new Date(timePeriod);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  }
-  return timePeriod;
-}
-
-function calculateElectionTurnout() {
-  // Calculate voter turnout based on available data
-  // This is a simplified calculation - in a real scenario you'd have registered voter count
-  const totalBallots = electionReport.value?.totalBallots || 0;
-  const spoiledBallots = electionReport.value?.spoiledBallots || 0;
-  const validBallots = totalBallots - spoiledBallots;
-
-  if (totalBallots === 0) return 0;
-  return Math.round((validBallots / totalBallots) * 100);
-}
-
-function getVotePercentage(voteCount: number) {
-  if (
-    !electionReport.value?.totalVotes ||
-    electionReport.value.totalVotes === 0
-  )
-    return 0;
-  return Math.round((voteCount / electionReport.value.totalVotes) * 100);
 }
 
 function goBack() {
-  router.push(`/elections/${electionGuid}/results`);
+  router.back();
 }
+
+function printPage() {
+  globalThis.print();
+}
+
+function formatDate(d?: string) {
+  if (!d) {
+    return "";
+  }
+  return new Date(d).toLocaleDateString();
+}
+
+function formatDateTime(d?: string) {
+  if (!d) {
+    return "";
+  }
+  return new Date(d).toLocaleString();
+}
+
+function formatPercent(v: number) {
+  return (v / 100).toLocaleString(undefined, {
+    style: "percent",
+    minimumFractionDigits: 0,
+  });
+}
+
+const mainData = computed(() => reportData.value as MainReport | null);
+const votesByNumData = computed(
+  () => reportData.value as VotesByNumReport | null,
+);
+const votesByNameData = computed(
+  () => reportData.value as VotesByNameReport | null,
+);
+const ballotsData = computed(() => reportData.value as BallotsReport | null);
+const spoiledVotesData = computed(
+  () => reportData.value as SpoiledVotesReport | null,
+);
+const alignmentData = computed(
+  () => reportData.value as BallotAlignmentReport | null,
+);
+const ballotsSameData = computed(
+  () => reportData.value as BallotsSameReport | null,
+);
+const ballotsSummaryData = computed(
+  () => reportData.value as BallotsSummaryReport | null,
+);
+const allCanReceiveData = computed(
+  () => reportData.value as AllCanReceiveReport | null,
+);
+const votersData = computed(() => reportData.value as VotersReport | null);
+const flagsData = computed(() => reportData.value as FlagsReport | null);
+const votersOnlineData = computed(
+  () => reportData.value as VotersOnlineReport | null,
+);
+const votersByAreaData = computed(
+  () => reportData.value as VotersByAreaReport | null,
+);
+const votersByLocationData = computed(
+  () => reportData.value as VotersByLocationReport | null,
+);
+const votersByLocationAreaData = computed(
+  () => reportData.value as VotersByLocationAreaReport | null,
+);
+const changedPeopleData = computed(
+  () => reportData.value as ChangedPeopleReport | null,
+);
+const allNonEligibleData = computed(
+  () => reportData.value as AllNonEligibleReport | null,
+);
+const voterEmailsData = computed(
+  () => reportData.value as VoterEmailsReport | null,
+);
+
+const isBallotReport = computed(() =>
+  ["Ballots", "BallotsOnline", "BallotsImported", "BallotsTied"].includes(
+    selectedReport.value,
+  ),
+);
 </script>
 
+<template>
+  <div class="reports-page">
+    <div class="reports-chooser no-print">
+      <div class="chooser-inner">
+        <div v-if="ballotReports.length">
+          <h3>{{ $t("reporting.ballotReports") }}</h3>
+          <ul>
+            <li
+              v-for="r in ballotReports"
+              :key="r.code"
+              :class="{ active: selectedReport === r.code }"
+            >
+              <a href="#" @click.prevent="selectReport(r.code)">{{ r.name }}</a>
+            </li>
+          </ul>
+        </div>
+        <div v-if="voterReports.length">
+          <h3>{{ $t("reporting.voterReports") }}</h3>
+          <ul>
+            <li
+              v-for="r in voterReports"
+              :key="r.code"
+              :class="{ active: selectedReport === r.code }"
+            >
+              <a href="#" @click.prevent="selectReport(r.code)">{{ r.name }}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="chooser-actions">
+          <el-button type="primary" @click="printPage">
+            {{ $t("reporting.print") }}
+          </el-button>
+          <p class="print-hint">{{ $t("reporting.printHint") }}</p>
+        </div>
+        <div class="chooser-actions">
+          <el-button @click="goBack">{{ $t("common.back") }}</el-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="reports-panel">
+      <div v-if="!selectedReport" class="placeholder">
+        {{ $t("reporting.selectReport") }}
+      </div>
+
+      <div v-else-if="loading" class="placeholder">
+        <el-skeleton :rows="8" animated />
+      </div>
+
+      <div v-else-if="error" class="placeholder error-text">
+        {{ error }}
+      </div>
+
+      <div v-else-if="reportData" class="report-content">
+        <!-- Main Election Report -->
+        <div v-if="selectedReport === 'Main' && mainData" class="report-main">
+          <h2>{{ mainData.electionName }}</h2>
+          <div class="report-meta">
+            <div v-if="mainData.convenor">
+              {{ $t("reporting.convenor") }}: {{ mainData.convenor }}
+            </div>
+            <div>
+              {{ $t("reporting.dateOfElection") }}:
+              {{ formatDate(mainData.dateOfElection) }}
+            </div>
+          </div>
+
+          <table class="info-table">
+            <tr>
+              <td>{{ $t("reporting.numEligibleToVote") }}</td>
+              <td class="num">
+                {{ mainData.numEligibleToVote.toLocaleString() }}
+              </td>
+            </tr>
+            <tr>
+              <td>{{ $t("reporting.voted") }}</td>
+              <td class="num">
+                {{ mainData.sumOfEnvelopesCollected.toLocaleString() }}
+              </td>
+            </tr>
+            <tr
+              v-if="
+                mainData.sumOfEnvelopesCollected !==
+                mainData.numBallotsWithManual
+              "
+              class="warn-row"
+            >
+              <td>Ballots received ≠ Voted</td>
+              <td class="num">
+                {{ mainData.numBallotsWithManual.toLocaleString() }}
+              </td>
+            </tr>
+            <tr class="spacer">
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+              <td>{{ $t("reporting.percentParticipation") }}</td>
+              <td class="num">
+                {{ formatPercent(mainData.percentParticipation) }}
+              </td>
+            </tr>
+            <tr class="spacer">
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+              <td>Did not vote</td>
+              <td class="num">
+                {{
+                  (
+                    mainData.numEligibleToVote -
+                    mainData.sumOfEnvelopesCollected
+                  ).toLocaleString()
+                }}
+              </td>
+            </tr>
+            <tr class="divider">
+              <td colspan="2"><div></div></td>
+            </tr>
+            <tr>
+              <td>Ballots cast in person</td>
+              <td class="num">
+                {{ mainData.inPersonBallots.toLocaleString() }}
+              </td>
+            </tr>
+            <tr>
+              <td>Ballots received by mail</td>
+              <td class="num">
+                {{ mainData.mailedInBallots.toLocaleString() }}
+              </td>
+            </tr>
+            <tr>
+              <td>Ballots hand-delivered</td>
+              <td class="num">
+                {{ mainData.droppedOffBallots.toLocaleString() }}
+              </td>
+            </tr>
+            <tr v-if="mainData.onlineBallots > 0">
+              <td>Ballots cast online</td>
+              <td class="num">{{ mainData.onlineBallots.toLocaleString() }}</td>
+            </tr>
+            <tr v-if="mainData.importedBallots > 0">
+              <td>Ballots imported</td>
+              <td class="num">
+                {{ mainData.importedBallots.toLocaleString() }}
+              </td>
+            </tr>
+            <tr v-if="mainData.calledInBallots > 0">
+              <td>Ballots phoned-in</td>
+              <td class="num">
+                {{ mainData.calledInBallots.toLocaleString() }}
+              </td>
+            </tr>
+            <tr v-if="mainData.custom1Ballots > 0">
+              <td>Ballots: {{ mainData.custom1Name }}</td>
+              <td class="num">
+                {{ mainData.custom1Ballots.toLocaleString() }}
+              </td>
+            </tr>
+            <tr v-if="mainData.custom2Ballots > 0">
+              <td>Ballots: {{ mainData.custom2Name }}</td>
+              <td class="num">
+                {{ mainData.custom2Ballots.toLocaleString() }}
+              </td>
+            </tr>
+            <tr v-if="mainData.custom3Ballots > 0">
+              <td>Ballots: {{ mainData.custom3Name }}</td>
+              <td class="num">
+                {{ mainData.custom3Ballots.toLocaleString() }}
+              </td>
+            </tr>
+            <tr class="divider">
+              <td colspan="2"><div></div></td>
+            </tr>
+            <tr>
+              <td>{{ $t("reporting.spoiledBallots") }}</td>
+              <td class="num">
+                {{ mainData.spoiledBallots.toLocaleString() }}
+              </td>
+            </tr>
+            <tr
+              v-for="sb in mainData.spoiledBallotReasons"
+              :key="sb.reason"
+              class="sub-row"
+            >
+              <td colspan="2">{{ sb.ballotCount }} - {{ sb.reason }}</td>
+            </tr>
+            <tr class="divider">
+              <td colspan="2"><div></div></td>
+            </tr>
+            <tr>
+              <td>{{ $t("reporting.spoiledVotes") }}</td>
+              <td class="num">{{ mainData.spoiledVotes.toLocaleString() }}</td>
+            </tr>
+            <tr
+              v-for="sv in mainData.spoiledVoteReasons"
+              :key="sv.reason"
+              class="sub-row"
+            >
+              <td colspan="2">{{ sv.voteCount }} - {{ sv.reason }}</td>
+            </tr>
+          </table>
+
+          <div class="page-break"></div>
+          <h3>{{ $t("reporting.electedPersons") }}</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>{{ $t("reporting.name") }}</th>
+                <th>{{ $t("reporting.bahaiId") }}</th>
+                <th>
+                  {{ $t("reporting.votes")
+                  }}{{ mainData.hasTies ? " / Tie Break" : "" }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="p in mainData.elected"
+                :key="p.rank + p.name"
+                :class="'section-' + p.section"
+              >
+                <td>{{ p.rank }}</td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.bahaiId }}</td>
+                <td>{{ p.voteCountDisplay }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Votes By Number -->
+        <div
+          v-if="selectedReport === 'VotesByNum' && votesByNumData"
+          class="report-votes"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ votesByNumData.electionName }}</div>
+            <div>{{ formatDate(votesByNumData.dateOfElection) }}</div>
+          </div>
+          <div class="votes-list">
+            <template v-for="(p, i) in votesByNumData.people" :key="i">
+              <div v-if="p.showBreak" class="section-break"></div>
+              <div class="vote-person" :class="{ elected: p.section === 'E' }">
+                <span class="vote-count"
+                  >{{ p.voteCount
+                  }}{{ p.tieBreakRequired ? " / " + p.tieBreakCount : "" }} -
+                </span>
+                <span class="vote-name">{{ p.personName }}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- Votes By Name -->
+        <div
+          v-if="selectedReport === 'VotesByName' && votesByNameData"
+          class="report-votes"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ votesByNameData.electionName }}</div>
+            <div>{{ formatDate(votesByNameData.dateOfElection) }}</div>
+          </div>
+          <div class="votes-list">
+            <template v-for="(p, i) in votesByNameData.people" :key="i">
+              <div v-if="p.showBreak" class="section-break"></div>
+              <div class="vote-person" :class="{ elected: p.section === 'E' }">
+                <span class="vote-name">{{ p.personName }}</span>
+                <span class="vote-count">
+                  - {{ p.voteCount
+                  }}{{
+                    p.tieBreakRequired ? " / " + p.tieBreakCount : ""
+                  }}</span
+                >
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- Ballots (All, Online, Imported, Tied) -->
+        <div v-if="isBallotReport && ballotsData" class="report-ballots">
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ ballotsData.electionName }}</div>
+            <div>{{ formatDate(ballotsData.dateOfElection) }}</div>
+          </div>
+          <div v-if="ballotsData.ballots.length === 0" class="empty-msg">
+            {{ $t("reporting.noBallots") }}
+          </div>
+          <table v-else class="ballots-table">
+            <tbody>
+              <tr
+                v-for="b in ballotsData.ballots"
+                :key="b.ballotId"
+                :class="{ spoiled: b.spoiled }"
+              >
+                <td class="ballot-id">
+                  <div class="ballot-code">{{ b.ballotCode }}</div>
+                  <div v-if="b.location" class="ballot-loc">
+                    {{ b.location }}
+                  </div>
+                  <div v-if="b.spoiled" class="ballot-status">
+                    {{ b.statusCode }}
+                  </div>
+                </td>
+                <td class="ballot-votes">
+                  <span
+                    v-for="(v, vi) in b.votes"
+                    :key="vi"
+                    class="vote-entry"
+                    :class="{ 'vote-spoiled': v.spoiled }"
+                  >
+                    <template v-if="ballotsData.isSingleNameElection">
+                      <span class="sne-count">{{
+                        v.singleNameElectionCount
+                      }}</span>
+                    </template>
+                    {{ v.personName }}
+                    <span v-if="v.invalidReasonDesc" class="invalid-reason">{{
+                      v.invalidReasonDesc
+                    }}</span>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Spoiled Votes -->
+        <div
+          v-if="selectedReport === 'SpoiledVotes' && spoiledVotesData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ spoiledVotesData.electionName }}</div>
+            <div>{{ formatDate(spoiledVotesData.dateOfElection) }}</div>
+          </div>
+          <div v-if="spoiledVotesData.people.length === 0" class="empty-msg">
+            {{ $t("reporting.noSpoiledVotes") }}
+          </div>
+          <table v-else class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.name") }}</th>
+                <th>{{ $t("reporting.votes") }}</th>
+                <th>{{ $t("reporting.reason") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(p, i) in spoiledVotesData.people" :key="i">
+                <td>{{ p.personName }}</td>
+                <td class="num">{{ p.voteCount }}</td>
+                <td>{{ p.invalidReasonDesc }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Ballot Alignment -->
+        <div
+          v-if="selectedReport === 'BallotAlignment' && alignmentData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ alignmentData.electionName }}</div>
+            <div>{{ formatDate(alignmentData.dateOfElection) }}</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.matchingNames") }}</th>
+                <th>{{ $t("reporting.numBallots") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(r, i) in alignmentData.rows" :key="i">
+                <td class="num">
+                  {{ r.matchingNames }} / {{ alignmentData.numToElect }}
+                </td>
+                <td class="num">{{ r.ballotCount }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Duplicate Ballots -->
+        <div
+          v-if="selectedReport === 'BallotsSame' && ballotsSameData"
+          class="report-ballots"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ ballotsSameData.electionName }}</div>
+            <div>{{ formatDate(ballotsSameData.dateOfElection) }}</div>
+          </div>
+          <div v-if="ballotsSameData.groups.length === 0" class="empty-msg">
+            {{ $t("reporting.noDuplicates") }}
+          </div>
+          <div
+            v-for="g in ballotsSameData.groups"
+            :key="g.groupNumber"
+            class="dup-group"
+          >
+            <h4>{{ $t("reporting.groupN", { n: g.groupNumber }) }}</h4>
+            <table class="ballots-table">
+              <tbody>
+                <tr
+                  v-for="b in g.ballots"
+                  :key="b.ballotId"
+                  :class="{ spoiled: b.spoiled }"
+                >
+                  <td class="ballot-id">
+                    <div class="ballot-code">{{ b.ballotCode }}</div>
+                    <div v-if="b.location" class="ballot-loc">
+                      {{ b.location }}
+                    </div>
+                  </td>
+                  <td class="ballot-votes">
+                    <span
+                      v-for="(v, vi) in b.votes"
+                      :key="vi"
+                      class="vote-entry"
+                      :class="{ 'vote-spoiled': v.spoiled }"
+                    >
+                      {{ v.personName }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Ballots Summary -->
+        <div
+          v-if="selectedReport === 'BallotsSummary' && ballotsSummaryData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ ballotsSummaryData.electionName }}</div>
+            <div>{{ formatDate(ballotsSummaryData.dateOfElection) }}</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.ballotCode") }}</th>
+                <th>{{ $t("reporting.location") }}</th>
+                <th>{{ $t("reporting.status") }}</th>
+                <th>{{ $t("reporting.spoiledVotes") }}</th>
+                <th>{{ $t("reporting.teller1") }}</th>
+                <th>{{ $t("reporting.teller2") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="b in ballotsSummaryData.ballots"
+                :key="b.ballotId"
+                :class="{ spoiled: b.spoiled }"
+              >
+                <td>{{ b.ballotCode }}</td>
+                <td>{{ b.location }}</td>
+                <td>{{ b.statusCode }}</td>
+                <td class="num">{{ b.spoiledVotes }}</td>
+                <td>{{ b.teller1 }}</td>
+                <td>{{ b.teller2 }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- All Can Receive -->
+        <div
+          v-if="selectedReport === 'AllCanReceive' && allCanReceiveData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ allCanReceiveData.electionName }}</div>
+            <div>{{ formatDate(allCanReceiveData.dateOfElection) }}</div>
+          </div>
+          <p>
+            {{
+              $t("reporting.totalVoters", {
+                count: allCanReceiveData.people.length,
+              })
+            }}
+          </p>
+          <div class="name-columns">
+            <div
+              v-for="(name, i) in allCanReceiveData.people"
+              :key="i"
+              class="name-entry"
+            >
+              {{ name }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Voters (Participation) -->
+        <div
+          v-if="selectedReport === 'Voters' && votersData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ votersData.electionName }}</div>
+            <div>{{ formatDate(votersData.dateOfElection) }}</div>
+          </div>
+          <p>
+            {{ $t("reporting.totalVoters", { count: votersData.totalCount }) }}
+          </p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.name") }}</th>
+                <th>{{ $t("reporting.votingMethod") }}</th>
+                <th>{{ $t("reporting.bahaiId") }}</th>
+                <th v-if="votersData.hasMultipleLocations">
+                  {{ $t("reporting.location") }}
+                </th>
+                <th>{{ $t("reporting.registrationTime") }}</th>
+                <th>{{ $t("reporting.teller1") }}</th>
+                <th>{{ $t("reporting.teller2") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(p, i) in votersData.people" :key="i">
+                <td>{{ p.personName }}</td>
+                <td>{{ p.votingMethod }}</td>
+                <td>{{ p.bahaiId }}</td>
+                <td v-if="votersData.hasMultipleLocations">{{ p.location }}</td>
+                <td>{{ formatDateTime(p.registrationTime) }}</td>
+                <td>{{ p.teller1 }}</td>
+                <td>{{ p.teller2 }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Flags (Attendance Checklists) -->
+        <div
+          v-if="selectedReport === 'Flags' && flagsData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ flagsData.electionName }}</div>
+            <div>{{ formatDate(flagsData.dateOfElection) }}</div>
+          </div>
+          <div v-if="flagsData.flagNames.length === 0" class="empty-msg">
+            {{ $t("reporting.noFlags") }}
+          </div>
+          <table v-else class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.name") }}</th>
+                <th v-if="flagsData.hasMultipleLocations">
+                  {{ $t("reporting.location") }}
+                </th>
+                <th v-for="f in flagsData.flagNames" :key="f">{{ f }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="p in flagsData.people" :key="p.rowId">
+                <td>{{ p.personName }}</td>
+                <td v-if="flagsData.hasMultipleLocations">{{ p.location }}</td>
+                <td
+                  v-for="(f, fi) in flagsData.flagNames"
+                  :key="fi"
+                  class="flag-cell"
+                >
+                  {{ p.flags.includes(f) ? "✓" : "" }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Voters Online -->
+        <div
+          v-if="selectedReport === 'VotersOnline' && votersOnlineData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ votersOnlineData.electionName }}</div>
+            <div>{{ formatDate(votersOnlineData.dateOfElection) }}</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.name") }}</th>
+                <th>{{ $t("reporting.votingMethod") }}</th>
+                <th>{{ $t("reporting.onlineStatus") }}</th>
+                <th>{{ $t("reporting.whenStatus") }}</th>
+                <th>{{ $t("reporting.email") }}</th>
+                <th>{{ $t("reporting.whenEmail") }}</th>
+                <th>{{ $t("reporting.phone") }}</th>
+                <th>{{ $t("reporting.whenPhone") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="p in votersOnlineData.people" :key="p.personId">
+                <td>{{ p.fullName }}</td>
+                <td>{{ p.votingMethodDisplay }}</td>
+                <td>{{ p.status }}</td>
+                <td>{{ formatDateTime(p.whenStatus) }}</td>
+                <td>{{ p.email }}</td>
+                <td>{{ formatDateTime(p.whenEmail) }}</td>
+                <td>{{ p.phone }}</td>
+                <td>{{ formatDateTime(p.whenPhone) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Voters By Area -->
+        <div
+          v-if="selectedReport === 'VotersByArea' && votersByAreaData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ votersByAreaData.electionName }}</div>
+            <div>{{ formatDate(votersByAreaData.dateOfElection) }}</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.area") }}</th>
+                <th>{{ $t("reporting.totalEligible") }}</th>
+                <th>{{ $t("reporting.voted") }}</th>
+                <th>{{ $t("reporting.inPerson") }}</th>
+                <th>{{ $t("reporting.mailedIn") }}</th>
+                <th>{{ $t("reporting.droppedOff") }}</th>
+                <th>{{ $t("reporting.calledIn") }}</th>
+                <th v-if="votersByAreaData.custom1Name">
+                  {{ votersByAreaData.custom1Name }}
+                </th>
+                <th v-if="votersByAreaData.custom2Name">
+                  {{ votersByAreaData.custom2Name }}
+                </th>
+                <th v-if="votersByAreaData.custom3Name">
+                  {{ votersByAreaData.custom3Name }}
+                </th>
+                <th>{{ $t("reporting.onlineKiosk") }}</th>
+                <th>{{ $t("reporting.imported") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="a in votersByAreaData.areas" :key="a.areaName">
+                <td>{{ a.areaName }}</td>
+                <td class="num">{{ a.totalEligible }}</td>
+                <td class="num">{{ a.voted }}</td>
+                <td class="num">{{ a.inPerson }}</td>
+                <td class="num">{{ a.mailedIn }}</td>
+                <td class="num">{{ a.droppedOff }}</td>
+                <td class="num">{{ a.calledIn }}</td>
+                <td v-if="votersByAreaData.custom1Name" class="num">
+                  {{ a.custom1 }}
+                </td>
+                <td v-if="votersByAreaData.custom2Name" class="num">
+                  {{ a.custom2 }}
+                </td>
+                <td v-if="votersByAreaData.custom3Name" class="num">
+                  {{ a.custom3 }}
+                </td>
+                <td class="num">{{ a.online + a.onlineKiosk }}</td>
+                <td class="num">{{ a.imported }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td>{{ $t("reporting.total") }}</td>
+                <td class="num">{{ votersByAreaData.total.totalEligible }}</td>
+                <td class="num">{{ votersByAreaData.total.voted }}</td>
+                <td class="num">{{ votersByAreaData.total.inPerson }}</td>
+                <td class="num">{{ votersByAreaData.total.mailedIn }}</td>
+                <td class="num">{{ votersByAreaData.total.droppedOff }}</td>
+                <td class="num">{{ votersByAreaData.total.calledIn }}</td>
+                <td v-if="votersByAreaData.custom1Name" class="num">
+                  {{ votersByAreaData.total.custom1 }}
+                </td>
+                <td v-if="votersByAreaData.custom2Name" class="num">
+                  {{ votersByAreaData.total.custom2 }}
+                </td>
+                <td v-if="votersByAreaData.custom3Name" class="num">
+                  {{ votersByAreaData.total.custom3 }}
+                </td>
+                <td class="num">
+                  {{
+                    votersByAreaData.total.online +
+                    votersByAreaData.total.onlineKiosk
+                  }}
+                </td>
+                <td class="num">{{ votersByAreaData.total.imported }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <!-- Voters By Location -->
+        <div
+          v-if="selectedReport === 'VotersByLocation' && votersByLocationData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ votersByLocationData.electionName }}</div>
+            <div>{{ formatDate(votersByLocationData.dateOfElection) }}</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.location") }}</th>
+                <th>{{ $t("reporting.totalVoters", { count: "" }).trim() }}</th>
+                <th>{{ $t("reporting.inPerson") }}</th>
+                <th>{{ $t("reporting.mailedIn") }}</th>
+                <th>{{ $t("reporting.droppedOff") }}</th>
+                <th>{{ $t("reporting.calledIn") }}</th>
+                <th v-if="votersByLocationData.custom1Name">
+                  {{ votersByLocationData.custom1Name }}
+                </th>
+                <th v-if="votersByLocationData.custom2Name">
+                  {{ votersByLocationData.custom2Name }}
+                </th>
+                <th v-if="votersByLocationData.custom3Name">
+                  {{ votersByLocationData.custom3Name }}
+                </th>
+                <th>{{ $t("reporting.onlineKiosk") }}</th>
+                <th>{{ $t("reporting.imported") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="l in votersByLocationData.locations"
+                :key="l.locationName"
+              >
+                <td>{{ l.locationName }}</td>
+                <td class="num">{{ l.totalVoters }}</td>
+                <td class="num">{{ l.inPerson }}</td>
+                <td class="num">{{ l.mailedIn }}</td>
+                <td class="num">{{ l.droppedOff }}</td>
+                <td class="num">{{ l.calledIn }}</td>
+                <td v-if="votersByLocationData.custom1Name" class="num">
+                  {{ l.custom1 }}
+                </td>
+                <td v-if="votersByLocationData.custom2Name" class="num">
+                  {{ l.custom2 }}
+                </td>
+                <td v-if="votersByLocationData.custom3Name" class="num">
+                  {{ l.custom3 }}
+                </td>
+                <td class="num">{{ l.online + l.onlineKiosk }}</td>
+                <td class="num">{{ l.imported }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td>{{ $t("reporting.total") }}</td>
+                <td class="num">
+                  {{ votersByLocationData.total.totalVoters }}
+                </td>
+                <td class="num">{{ votersByLocationData.total.inPerson }}</td>
+                <td class="num">{{ votersByLocationData.total.mailedIn }}</td>
+                <td class="num">{{ votersByLocationData.total.droppedOff }}</td>
+                <td class="num">{{ votersByLocationData.total.calledIn }}</td>
+                <td v-if="votersByLocationData.custom1Name" class="num">
+                  {{ votersByLocationData.total.custom1 }}
+                </td>
+                <td v-if="votersByLocationData.custom2Name" class="num">
+                  {{ votersByLocationData.total.custom2 }}
+                </td>
+                <td v-if="votersByLocationData.custom3Name" class="num">
+                  {{ votersByLocationData.total.custom3 }}
+                </td>
+                <td class="num">
+                  {{
+                    votersByLocationData.total.online +
+                    votersByLocationData.total.onlineKiosk
+                  }}
+                </td>
+                <td class="num">{{ votersByLocationData.total.imported }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <!-- Voters By Location Area -->
+        <div
+          v-if="
+            selectedReport === 'VotersByLocationArea' &&
+            votersByLocationAreaData
+          "
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ votersByLocationAreaData.electionName }}</div>
+            <div>{{ formatDate(votersByLocationAreaData.dateOfElection) }}</div>
+          </div>
+          <div
+            v-for="loc in votersByLocationAreaData.locations"
+            :key="loc.locationName"
+            class="loc-area-group"
+          >
+            <h4>{{ loc.locationName }} ({{ loc.totalCount }})</h4>
+            <table class="data-table compact">
+              <thead>
+                <tr>
+                  <th>{{ $t("reporting.area") }}</th>
+                  <th>{{ $t("reporting.count") }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="a in loc.areas" :key="a.areaName">
+                  <td>{{ a.areaName }}</td>
+                  <td class="num">{{ a.count }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Changed People -->
+        <div
+          v-if="selectedReport === 'ChangedPeople' && changedPeopleData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ changedPeopleData.electionName }}</div>
+            <div>{{ formatDate(changedPeopleData.dateOfElection) }}</div>
+          </div>
+          <div v-if="changedPeopleData.people.length === 0" class="empty-msg">
+            {{ $t("reporting.noChanges") }}
+          </div>
+          <table v-else class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.change") }}</th>
+                <th>{{ $t("reporting.firstName") }}</th>
+                <th>{{ $t("reporting.lastName") }}</th>
+                <th>{{ $t("reporting.bahaiId") }}</th>
+                <th>{{ $t("reporting.canVote") }}</th>
+                <th>{{ $t("reporting.canReceiveVotes") }}</th>
+                <th>{{ $t("reporting.eligibilityReason") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(p, i) in changedPeopleData.people" :key="i">
+                <td>{{ p.change }}</td>
+                <td>{{ p.firstName }}</td>
+                <td>{{ p.lastName }}</td>
+                <td>{{ p.bahaiId }}</td>
+                <td>
+                  {{ p.canVote ? $t("reporting.yes") : $t("reporting.no") }}
+                </td>
+                <td>
+                  {{
+                    p.canReceiveVotes ? $t("reporting.yes") : $t("reporting.no")
+                  }}
+                </td>
+                <td>{{ p.invalidReasonDesc }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- All Non-Eligible -->
+        <div
+          v-if="selectedReport === 'AllNonEligible' && allNonEligibleData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ allNonEligibleData.electionName }}</div>
+            <div>{{ formatDate(allNonEligibleData.dateOfElection) }}</div>
+          </div>
+          <div v-if="allNonEligibleData.people.length === 0" class="empty-msg">
+            {{ $t("reporting.noNonEligible") }}
+          </div>
+          <table v-else class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.name") }}</th>
+                <th>{{ $t("reporting.canVote") }}</th>
+                <th>{{ $t("reporting.canReceiveVotes") }}</th>
+                <th>{{ $t("reporting.eligibilityReason") }}</th>
+                <th>{{ $t("reporting.votingMethod") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(p, i) in allNonEligibleData.people" :key="i">
+                <td>{{ p.personName }}</td>
+                <td>
+                  {{ p.canVote ? $t("reporting.yes") : $t("reporting.no") }}
+                </td>
+                <td>
+                  {{
+                    p.canReceiveVotes ? $t("reporting.yes") : $t("reporting.no")
+                  }}
+                </td>
+                <td>{{ p.invalidReasonDesc }}</td>
+                <td>{{ p.votingMethod }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Voter Emails -->
+        <div
+          v-if="selectedReport === 'VoterEmails' && voterEmailsData"
+          class="report-generic"
+        >
+          <h2>{{ selectedReportName }}</h2>
+          <div class="report-meta">
+            <div>{{ voterEmailsData.electionName }}</div>
+            <div>{{ formatDate(voterEmailsData.dateOfElection) }}</div>
+          </div>
+          <div v-if="voterEmailsData.people.length === 0" class="empty-msg">
+            {{ $t("reporting.noEmails") }}
+          </div>
+          <table v-else class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t("reporting.name") }}</th>
+                <th>{{ $t("reporting.bahaiId") }}</th>
+                <th>{{ $t("reporting.email") }}</th>
+                <th>{{ $t("reporting.phone") }}</th>
+                <th>{{ $t("reporting.canVote") }}</th>
+                <th>{{ $t("reporting.votingMethod") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(p, i) in voterEmailsData.people" :key="i">
+                <td>{{ p.fullName }}</td>
+                <td>{{ p.bahaiId }}</td>
+                <td>{{ p.email }}</td>
+                <td>{{ p.phone }}</td>
+                <td>
+                  {{ p.canVote ? $t("reporting.yes") : $t("reporting.no") }}
+                </td>
+                <td>{{ p.votingMethod }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style lang="less">
-.reporting-page {
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.card-header {
+.reports-page {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.reporting-content {
-  display: flex;
-  flex-direction: column;
   gap: 20px;
+  min-height: calc(100vh - 120px);
+
+  .reports-chooser {
+    width: 220px;
+    flex-shrink: 0;
+
+    .chooser-inner {
+      position: sticky;
+      top: 70px;
+    }
+
+    h3 {
+      margin: 16px 0 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 0;
+        margin: 0;
+
+        a {
+          display: block;
+          padding: 4px 8px;
+          font-size: 13px;
+          color: #409eff;
+          text-decoration: none;
+          border-radius: 4px;
+
+          &:hover {
+            background: #ecf5ff;
+          }
+        }
+
+        &.active a {
+          background: #409eff;
+          color: #fff;
+        }
+      }
+    }
+
+    .chooser-actions {
+      margin-top: 16px;
+    }
+
+    .print-hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #999;
+    }
+  }
+
+  .reports-panel {
+    flex: 1;
+    min-width: 0;
+
+    .placeholder {
+      padding: 40px;
+      text-align: center;
+      color: #999;
+      font-size: 16px;
+    }
+
+    .error-text {
+      color: #f56c6c;
+    }
+  }
+
+  .report-content {
+    padding: 0 8px;
+
+    h2 {
+      margin: 0 0 4px;
+      font-size: 20px;
+    }
+
+    h3 {
+      margin: 20px 0 8px;
+      font-size: 16px;
+    }
+
+    h4 {
+      margin: 16px 0 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .report-meta {
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .empty-msg {
+      padding: 20px;
+      color: #999;
+      font-style: italic;
+    }
+  }
+
+  .info-table {
+    margin-left: 10px;
+    border-collapse: collapse;
+
+    td {
+      padding: 2px 8px;
+      vertical-align: top;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .warn-row td {
+      color: #e6a23c;
+    }
+
+    .spacer td {
+      padding: 6px 0;
+    }
+
+    .divider td {
+      padding: 4px 0;
+
+      div {
+        border-top: 1px solid #ddd;
+      }
+    }
+
+    .sub-row td {
+      font-size: 85%;
+      color: #666;
+      padding: 1px 0 0 16px;
+    }
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+
+    &.compact {
+      width: auto;
+    }
+
+    thead {
+      background: #f5f7fa;
+    }
+
+    th,
+    td {
+      padding: 6px 10px;
+      border: 1px solid #e4e7ed;
+      text-align: left;
+    }
+
+    th {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .flag-cell {
+      text-align: center;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .total-row {
+      font-weight: 600;
+      background: #f0f0ff;
+    }
+
+    .section-E td {
+      border-top: 3px double #bbb;
+    }
+
+    .section-E + .section-E td {
+      border-top: 1px solid #e4e7ed;
+    }
+
+    .section-X td {
+      color: #888;
+    }
+
+    .section-O td {
+      color: #aaa;
+    }
+
+    .spoiled td {
+      color: #f56c6c;
+      text-decoration: line-through;
+    }
+  }
+
+  .ballots-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    td {
+      padding: 4px 8px;
+      border: 1px solid #e4e7ed;
+      vertical-align: top;
+    }
+
+    .ballot-id {
+      white-space: nowrap;
+      width: 1%;
+    }
+
+    .ballot-code {
+      font-weight: 600;
+    }
+
+    .ballot-loc {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .ballot-status {
+      font-size: 12px;
+      color: #f56c6c;
+    }
+
+    .ballot-votes {
+      .vote-entry {
+        display: inline-block;
+        margin-right: 10px;
+        white-space: nowrap;
+      }
+
+      .vote-spoiled {
+        color: #f56c6c;
+        text-decoration: line-through;
+      }
+
+      .sne-count {
+        font-weight: 600;
+        padding-right: 4px;
+      }
+
+      .invalid-reason {
+        font-size: 11px;
+        color: #999;
+      }
+    }
+
+    .spoiled td {
+      color: #f56c6c;
+    }
+  }
+
+  .votes-list {
+    column-width: 14em;
+    column-gap: 1em;
+    min-height: 200px;
+
+    .vote-person {
+      text-indent: -2em;
+      margin-left: 2em;
+      line-height: 1.6;
+
+      &.elected {
+        font-weight: 600;
+      }
+    }
+
+    .vote-count {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .section-break {
+      border-top: 1px solid #999;
+      margin: 4px 0;
+      break-inside: avoid;
+    }
+  }
+
+  .name-columns {
+    column-width: 16em;
+    column-gap: 1em;
+
+    .name-entry {
+      padding: 2px 0;
+      line-height: 1.4;
+    }
+  }
+
+  .dup-group {
+    margin-bottom: 16px;
+  }
+
+  .loc-area-group {
+    margin-bottom: 16px;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
 }
 
-.report-selection-card {
-  margin-bottom: 20px;
-}
+@media print {
+  .no-print {
+    display: none !important;
+  }
 
-.report-display {
-  margin-top: 20px;
-}
+  .reports-page {
+    display: block;
 
-.report-content-card {
-  min-height: 400px;
-}
+    .reports-panel {
+      width: 100%;
+    }
 
-.report-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
+    .report-content {
+      padding: 0;
+    }
+  }
 
-.report-actions {
-  display: flex;
-  gap: 10px;
-}
+  .data-table {
+    th,
+    td {
+      padding: 3px 6px;
+      font-size: 11px;
+    }
+  }
 
-.report-section {
-  margin-bottom: 30px;
-}
+  .ballots-table td {
+    padding: 2px 4px;
+    font-size: 11px;
+  }
 
-.stats-row {
-  margin-bottom: var(--spacing-4);
-}
+  .votes-list .vote-person {
+    font-size: 11px;
+    line-height: 1.4;
+  }
 
-.stat-card {
-  text-align: center;
-  padding: var(--spacing-4);
-}
+  table {
+    page-break-inside: auto;
+  }
 
-.stat-value {
-  font-size: 2rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-2);
-}
+  tr {
+    page-break-inside: avoid;
+  }
 
-.stat-label {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-2);
-}
-
-.stat-progress {
-  margin: 0 auto;
-  width: 80%;
-}
-
-.details-card {
-  margin-top: var(--spacing-6);
-}
-
-.candidates-card {
-  margin-top: var(--spacing-6);
-}
-
-.candidates-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
-}
-
-.candidate-item {
-  display: flex;
-  align-items: center;
-  padding: var(--spacing-3);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-md);
-  background-color: var(--color-bg-primary);
-  transition: all 0.2s ease;
-}
-
-.candidate-item:hover {
-  box-shadow: var(--shadow-sm);
-}
-
-.candidate-item.winner {
-  border-color: #67c23a;
-  background-color: #f0f9ff;
-}
-
-.candidate-rank {
-  margin-right: var(--spacing-4);
-}
-
-.candidate-info {
-  flex: 1;
-}
-
-.candidate-name {
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-2);
-}
-
-.candidate-votes {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-}
-
-.vote-count {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  min-width: 80px;
-}
-
-.ties-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
-  margin-top: var(--spacing-4);
-}
-
-.tie-card {
-  border-left: 4px solid #e6a23c;
-}
-
-.tie-card ul {
-  margin: 0;
-  padding-left: var(--spacing-4);
-}
-
-.tie-card li {
-  margin-bottom: var(--spacing-1);
-  color: var(--color-text-secondary);
-}
-
-.report-section h3 {
-  margin-bottom: 20px;
-  color: #303133;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.report-section h4 {
-  margin: 25px 0 15px 0;
-  color: #606266;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.ties-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.tie-card {
-  border: 1px solid #ebeef5;
-}
-
-.tie-card ul {
-  margin: 0;
-  padding-left: 20px;
-}
-
-.tie-card li {
-  margin: 5px 0;
-  color: #606266;
-}
-
-.vote-item {
-  margin: 2px 0;
-  padding: 2px 0;
-  border-bottom: 1px solid #f5f5f5;
-  font-size: 0.9rem;
-}
-
-.vote-item:last-child {
-  border-bottom: none;
-}
-
-.stats-card {
-  margin-bottom: 20px;
-}
-
-.stats-card .el-card__header {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
-.top-candidate {
-  margin: 2px 0;
-  padding: 2px 0;
-  font-size: 0.9rem;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.top-candidate:last-child {
-  border-bottom: none;
-}
-
-.report-raw-data {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 4px;
-  font-family: "Courier New", monospace;
-  font-size: 0.9rem;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  max-height: 600px;
-  overflow-y: auto;
-}
-
-.chart-card {
-  height: 400px;
-}
-
-.chart-container {
-  position: relative;
-  height: 320px;
-  width: 100%;
-}
-
-.chart-container canvas {
-  max-height: 100%;
-  max-width: 100%;
+  thead {
+    display: table-header-group;
+  }
 }
 </style>
