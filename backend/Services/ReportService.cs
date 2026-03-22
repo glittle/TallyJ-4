@@ -872,10 +872,29 @@ public class ReportService : IReportService
             .OrderBy(p => p.FullName)
             .ToListAsync();
 
-        var onlineVoters = await _context.OnlineVoters.ToListAsync(); // across all elections
-        var emailVoterIds = onlineVoters.Where(ov => ov.VoterIdType == "E").Select(ov => ov.VoterId).ToHashSet();
-        var phoneVoterIds = onlineVoters.Where(ov => ov.VoterIdType == "P").Select(ov => ov.VoterId).ToHashSet();
+        // Collect the distinct email and phone values for this election's people
+        var personEmails = people
+            .Where(p => !string.IsNullOrEmpty(p.Email))
+            .Select(p => p.Email!)
+            .Distinct()
+            .ToList();
 
+        var personPhones = people
+            .Where(p => !string.IsNullOrEmpty(p.Phone))
+            .Select(p => p.Phone!)
+            .Distinct()
+            .ToList();
+
+        // Query only relevant online voters by type and matching voter IDs, projecting just VoterId
+        var emailVoterIds = await _context.OnlineVoters
+            .Where(ov => ov.VoterIdType == "E" && personEmails.Contains(ov.VoterId))
+            .Select(ov => ov.VoterId)
+            .ToHashSetAsync();
+
+        var phoneVoterIds = await _context.OnlineVoters
+            .Where(ov => ov.VoterIdType == "P" && personPhones.Contains(ov.VoterId))
+            .Select(ov => ov.VoterId)
+            .ToHashSetAsync();
         return new VoterEmailsReportDto
         {
             ElectionName = election.Name,
