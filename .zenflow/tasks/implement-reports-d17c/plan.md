@@ -65,3 +65,8 @@ Voter Reports:
 <!-- chat-id: 3eb15a1d-1c19-41db-9a87-28726a2debfb -->
 
 Ballot locations are mostly random, added by admins in an election. However, there are two special "locations" - "Online" and "Imported". Those are automatic locations enabled by settings in the Election setup page.  The current code relies on the visible name to identify these locations. In a multilingual project, that's not a good idea. We should add an enum for LocationType with Manual, Online, Imported as the possible answers.   If that sounds good, let's do that. I can add an EF migration after.
+
+### [x] Step: Add unit tests
+<!-- chat-id: c524c1af-34b4-4fb7-965b-8b4226aee5f7 -->
+
+ReportService introduces substantial new reporting behavior (many report shapes and multiple query paths), but there are no corresponding unit tests added here. The repo already has extensive xUnit coverage (e.g., ReportExportServiceTests and analyzer tests), so it would be good to add focused tests for at least the main report and one or two representative report queries to prevent regressions (especially around filters like Online/Imported/Tied).
