@@ -44,8 +44,9 @@ steps:
     TakeAppOfflineFlag: true
 
 - task: PublishPipelineArtifact@1
-  displayName: 'Debug: Check Workspace'
+  displayName: 'Debug: Check Workspace (Ignoring node_modules)'
   condition: always()
   inputs:
-    targetPath: '$(Pipeline.Workspace)'
-    artifact: 'FrontendDebugWorkspace'
+    targetPath: '$(Build.SourcesDirectory)' # Only captures your code
+    artifact: 'FrontendSourceDebug'
+    publishLocation: 'pipeline'
