@@ -22,13 +22,23 @@ steps:
     npm install
     npm run build
   displayName: 'Build Vite Project'
+  
+# 1. Zip the dist folder so MSDeploy can handle it
+- task: ArchiveFiles@2
+  displayName: 'Zip Frontend Dist'
+  inputs:
+    rootFolderOrFile: 'frontend/dist'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/frontend.zip'
+    replaceExistingArchive: true
 
+# 2. Deploy using the zip file
 - task: IISWebAppDeploymentOnMachineGroup@0
   displayName: 'Deploy Frontend to IIS'
   inputs:
     WebSiteName: 'TallyJv4-UAT'
-    # Target the 'dist' folder created by Vite
-    Package: '$(System.DefaultWorkingDirectory)/frontend/dist'
+    Package: '$(Build.ArtifactStagingDirectory)/frontend.zip' # Point to the zip
     TakeAppOfflineFlag: true
 
 # Debug step to see the frontend workspace if it fails
