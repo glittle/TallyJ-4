@@ -263,21 +263,20 @@ public class ReportService : IReportService
             .ThenBy(r => r.Person!.FullNameFl)
             .ToListAsync();
 
-        var section = "E";
-        var people = results.Select(r =>
+        var people = new List<VotePersonDto>();
+        for (var i = 0; i < results.Count; i++)
         {
-            var showBreak = r.Section != section;
-            section = r.Section;
-            return new VotePersonDto
+            var r = results[i];
+            people.Add(new VotePersonDto
             {
                 PersonName = r.Person?.FullNameFl ?? "",
                 VoteCount = r.VoteCount ?? 0,
                 TieBreakCount = r.TieBreakCount,
                 TieBreakRequired = r.TieBreakRequired == true,
                 Section = r.Section,
-                ShowBreak = showBreak
-            };
-        }).ToList();
+                ShowBreak = i == 0 || r.Section != results[i - 1].Section
+            });
+        }
 
         return new VotesByNumDto
         {

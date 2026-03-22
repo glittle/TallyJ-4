@@ -48,6 +48,7 @@
   "reporting.teller2": "Teller 2",
   "reporting.allCanReceive": "People who can be voted for",
   "reporting.totalVoters": "Total: {count}",
+  "reporting.totalVotersHeader": "Total Voters",
   "reporting.votingMethod": "Voting Method",
   "reporting.registrationTime": "Registration Time",
   "reporting.registrationLog": "Registration Log",

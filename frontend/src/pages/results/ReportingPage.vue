@@ -882,7 +882,7 @@ const isBallotReport = computed(() =>
             <thead>
               <tr>
                 <th>{{ $t("reporting.location") }}</th>
-                <th>{{ $t("reporting.totalVoters", { count: "" }).trim() }}</th>
+                <th>{{ $t("reporting.totalVotersHeader") }}</th>
                 <th>{{ $t("reporting.inPerson") }}</th>
                 <th>{{ $t("reporting.mailedIn") }}</th>
                 <th>{{ $t("reporting.droppedOff") }}</th>
