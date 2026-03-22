@@ -18,7 +18,7 @@ public class EmailService
         _logger = logger;
     }
 
-    public async Task SendPasswordResetEmailAsync(string toEmail, string resetToken)
+    public virtual async Task SendPasswordResetEmailAsync(string toEmail, string resetToken)
     {
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(
@@ -83,7 +83,7 @@ If you did not request this reset, please ignore this email.
         }
     }
 
-    public async Task Send2FASetupEmailAsync(string toEmail, string qrCodeBase64)
+    public virtual async Task Send2FASetupEmailAsync(string toEmail, string qrCodeBase64)
     {
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(
@@ -143,7 +143,7 @@ If you did not enable 2FA, please contact support immediately.
         }
     }
 
-    public async Task SendEmailVerificationEmailAsync(string toEmail, string verificationToken)
+    public virtual async Task SendEmailVerificationEmailAsync(string toEmail, string verificationToken)
     {
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(

@@ -44,21 +44,21 @@ public class SecureCookieMiddlewareTests
 
         // Check user email cookie
         var emailCookie = cookies.First(c => c.Name == SecureCookieMiddleware.UserEmailCookieName);
-        Assert.Equal(email, emailCookie.Value.Value);
+        Assert.Equal(email, Uri.UnescapeDataString(emailCookie.Value.Value));
         Assert.False(emailCookie.HttpOnly); // User info cookies are not httpOnly
         Assert.True(emailCookie.Secure);
         Assert.Equal("Strict", emailCookie.SameSite.ToString());
 
         // Check user name cookie
         var nameCookie = cookies.First(c => c.Name == SecureCookieMiddleware.UserNameCookieName);
-        Assert.Equal(name, nameCookie.Value.Value);
+        Assert.Equal(name, Uri.UnescapeDataString(nameCookie.Value.Value));
         Assert.False(nameCookie.HttpOnly);
         Assert.True(nameCookie.Secure);
         Assert.Equal("Strict", nameCookie.SameSite.ToString());
 
         // Check auth method cookie
         var methodCookie = cookies.First(c => c.Name == SecureCookieMiddleware.AuthMethodCookieName);
-        Assert.Equal(authMethod, methodCookie.Value.Value);
+        Assert.Equal(authMethod, Uri.UnescapeDataString(methodCookie.Value.Value));
         Assert.False(methodCookie.HttpOnly);
         Assert.True(methodCookie.Secure);
         Assert.Equal("Strict", methodCookie.SameSite.ToString());
@@ -217,7 +217,7 @@ public class SecureCookieMiddlewareTests
         var expectedName = "Test User";
         httpContext.Request.Cookies = new TestCookieCollection(new Dictionary<string, string>
         {
-            [SecureCookieMiddleware.UserNameCookieName] = expectedName
+            [SecureCookieMiddleware.UserNameCookieName] = Uri.EscapeDataString(expectedName)
         });
 
         // Act

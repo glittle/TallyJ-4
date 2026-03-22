@@ -15,7 +15,7 @@ public class ElectionsControllerTests : IntegrationTestBase
     [Fact]
     public async Task GetElections_WithoutAuth_ReturnsUnauthorized()
     {
-        var response = await GetAsync("/api/elections");
+        var response = await GetAsync("/api/elections/getElections");
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -26,7 +26,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         var token = await GetAuthTokenAsync();
         SetAuthToken(token);
 
-        var response = await GetAsync("/api/elections");
+        var response = await GetAsync("/api/elections/getElections");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
@@ -37,7 +37,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         var token = await GetAuthTokenAsync();
         SetAuthToken(token);
 
-        var response = await GetAsync("/api/elections?pageNumber=1&pageSize=10");
+        var response = await GetAsync("/api/elections/getElections?pageNumber=1&pageSize=10");
         response.EnsureSuccessStatusCode();
 
         var result = await DeserializeResponseAsync<PaginatedResponse<ElectionSummaryDto>>(response);
@@ -61,7 +61,7 @@ public class ElectionsControllerTests : IntegrationTestBase
             NumberToElect = 5
         };
 
-        var response = await PostJsonAsync("/api/elections", createDto);
+        var response = await PostJsonAsync("/api/elections/createElection", createDto);
         
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
@@ -85,7 +85,7 @@ public class ElectionsControllerTests : IntegrationTestBase
             NumberToElect = -1
         };
 
-        var response = await PostJsonAsync("/api/elections", createDto);
+        var response = await PostJsonAsync("/api/elections/createElection", createDto);
         
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -104,7 +104,7 @@ public class ElectionsControllerTests : IntegrationTestBase
             NumberToElect = 3
         };
 
-        var createResponse = await PostJsonAsync("/api/elections", createDto);
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
         
         // Add diagnostic info
         if (!createResponse.IsSuccessStatusCode)
@@ -116,7 +116,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
         var electionGuid = createResult!.Data!.ElectionGuid;
 
-        var response = await GetAsync($"/api/elections/{electionGuid}");
+        var response = await GetAsync($"/api/elections/{electionGuid}/election");
         
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -133,7 +133,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         var token = await GetAuthTokenAsync();
         SetAuthToken(token);
 
-        var response = await GetAsync($"/api/elections/{Guid.NewGuid()}");
+        var response = await GetAsync($"/api/elections/{Guid.NewGuid()}/election");
         
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -152,7 +152,7 @@ public class ElectionsControllerTests : IntegrationTestBase
             NumberToElect = 3
         };
 
-        var createResponse = await PostJsonAsync("/api/elections", createDto);
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
         var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
         var electionGuid = createResult!.Data!.ElectionGuid;
 
@@ -164,7 +164,7 @@ public class ElectionsControllerTests : IntegrationTestBase
             TallyStatus = "Processing"
         };
 
-        var response = await PutJsonAsync($"/api/elections/{electionGuid}", updateDto);
+        var response = await PutJsonAsync($"/api/elections/{electionGuid}/updateElection", updateDto);
         
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -189,15 +189,15 @@ public class ElectionsControllerTests : IntegrationTestBase
             NumberToElect = 3
         };
 
-        var createResponse = await PostJsonAsync("/api/elections", createDto);
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
         var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
         var electionGuid = createResult!.Data!.ElectionGuid;
 
-        var response = await DeleteAsync($"/api/elections/{electionGuid}");
+        var response = await DeleteAsync($"/api/elections/{electionGuid}/deleteElection");
         
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-        var getResponse = await GetAsync($"/api/elections/{electionGuid}");
+        var getResponse = await GetAsync($"/api/elections/{electionGuid}/election");
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
 }

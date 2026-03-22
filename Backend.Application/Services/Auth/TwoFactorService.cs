@@ -12,7 +12,7 @@ using Backend.Domain.Context;
 
 namespace Backend.Application.Services.Auth;
 
-public class TwoFactorService
+public class TwoFactorService : ITwoFactorService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IStringLocalizer<TwoFactorService> _localizer;

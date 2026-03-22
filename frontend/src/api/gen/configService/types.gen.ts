@@ -6006,14 +6006,14 @@ export type PostApiAuthKakaoResponses = {
     200: unknown;
 };
 
-export type GetApiAuthLogoutData = {
+export type PostApiAuthLogoutData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/api/Auth/logout';
 };
 
-export type GetApiAuthLogoutResponses = {
+export type PostApiAuthLogoutResponses = {
     /**
      * OK
      */
@@ -7711,7 +7711,33 @@ export type PostApiReportExportsByElectionIdResponses = {
     200: unknown;
 };
 
-export type GetApiResultsByElectionGuidResultsData = {
+export type PostApiResultsElectionByElectionGuidCalculateData = {
+    body?: never;
+    path: {
+        /**
+         * The GUID of the election to calculate results for.
+         */
+        electionGuid: string;
+    };
+    query?: {
+        /**
+         * The type of election calculation ("normal" or "singlename").
+         */
+        electionType?: string;
+    };
+    url: '/api/Results/election/{electionGuid}/calculate';
+};
+
+export type PostApiResultsElectionByElectionGuidCalculateResponses = {
+    /**
+     * OK
+     */
+    200: TallyResultDto;
+};
+
+export type PostApiResultsElectionByElectionGuidCalculateResponse = PostApiResultsElectionByElectionGuidCalculateResponses[keyof PostApiResultsElectionByElectionGuidCalculateResponses];
+
+export type GetApiResultsElectionByElectionGuidData = {
     body?: never;
     path: {
         /**
@@ -7720,19 +7746,19 @@ export type GetApiResultsByElectionGuidResultsData = {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/{electionGuid}/results';
+    url: '/api/Results/election/{electionGuid}';
 };
 
-export type GetApiResultsByElectionGuidResultsResponses = {
+export type GetApiResultsElectionByElectionGuidResponses = {
     /**
      * OK
      */
     200: TallyResultDto;
 };
 
-export type GetApiResultsByElectionGuidResultsResponse = GetApiResultsByElectionGuidResultsResponses[keyof GetApiResultsByElectionGuidResultsResponses];
+export type GetApiResultsElectionByElectionGuidResponse = GetApiResultsElectionByElectionGuidResponses[keyof GetApiResultsElectionByElectionGuidResponses];
 
-export type GetApiResultsByElectionGuidSummaryData = {
+export type GetApiResultsElectionByElectionGuidSummaryData = {
     body?: never;
     path: {
         /**
@@ -7741,19 +7767,19 @@ export type GetApiResultsByElectionGuidSummaryData = {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/{electionGuid}/summary';
+    url: '/api/Results/election/{electionGuid}/summary';
 };
 
-export type GetApiResultsByElectionGuidSummaryResponses = {
+export type GetApiResultsElectionByElectionGuidSummaryResponses = {
     /**
      * OK
      */
     200: TallyStatisticsDto;
 };
 
-export type GetApiResultsByElectionGuidSummaryResponse = GetApiResultsByElectionGuidSummaryResponses[keyof GetApiResultsByElectionGuidSummaryResponses];
+export type GetApiResultsElectionByElectionGuidSummaryResponse = GetApiResultsElectionByElectionGuidSummaryResponses[keyof GetApiResultsElectionByElectionGuidSummaryResponses];
 
-export type GetApiResultsByElectionGuidFinalData = {
+export type GetApiResultsElectionByElectionGuidFinalData = {
     body?: never;
     path: {
         /**
@@ -7762,17 +7788,17 @@ export type GetApiResultsByElectionGuidFinalData = {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/{electionGuid}/final';
+    url: '/api/Results/election/{electionGuid}/final';
 };
 
-export type GetApiResultsByElectionGuidFinalResponses = {
+export type GetApiResultsElectionByElectionGuidFinalResponses = {
     /**
      * OK
      */
     200: TallyResultDto;
 };
 
-export type GetApiResultsByElectionGuidFinalResponse = GetApiResultsByElectionGuidFinalResponses[keyof GetApiResultsByElectionGuidFinalResponses];
+export type GetApiResultsElectionByElectionGuidFinalResponse = GetApiResultsElectionByElectionGuidFinalResponses[keyof GetApiResultsElectionByElectionGuidFinalResponses];
 
 export type PostApiResultsByElectionGuidRefreshMonitorData = {
     body?: never;
@@ -7800,7 +7826,7 @@ export type PostApiResultsByElectionGuidRefreshMonitorResponses = {
 
 export type PostApiResultsByElectionGuidRefreshMonitorResponse = PostApiResultsByElectionGuidRefreshMonitorResponses[keyof PostApiResultsByElectionGuidRefreshMonitorResponses];
 
-export type GetApiResultsByElectionGuidMonitorData = {
+export type GetApiResultsElectionByElectionGuidMonitorData = {
     body?: never;
     path: {
         /**
@@ -7809,17 +7835,17 @@ export type GetApiResultsByElectionGuidMonitorData = {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/{electionGuid}/monitor';
+    url: '/api/Results/election/{electionGuid}/monitor';
 };
 
-export type GetApiResultsByElectionGuidMonitorResponses = {
+export type GetApiResultsElectionByElectionGuidMonitorResponses = {
     /**
      * OK
      */
     200: MonitorInfoDto;
 };
 
-export type GetApiResultsByElectionGuidMonitorResponse = GetApiResultsByElectionGuidMonitorResponses[keyof GetApiResultsByElectionGuidMonitorResponses];
+export type GetApiResultsElectionByElectionGuidMonitorResponse = GetApiResultsElectionByElectionGuidMonitorResponses[keyof GetApiResultsElectionByElectionGuidMonitorResponses];
 
 export type GetApiResultsByElectionGuidByTieBreakGroupTiesData = {
     body?: never;
@@ -7846,7 +7872,7 @@ export type GetApiResultsByElectionGuidByTieBreakGroupTiesResponses = {
 
 export type GetApiResultsByElectionGuidByTieBreakGroupTiesResponse = GetApiResultsByElectionGuidByTieBreakGroupTiesResponses[keyof GetApiResultsByElectionGuidByTieBreakGroupTiesResponses];
 
-export type PostApiResultsByElectionGuidSaveTiesData = {
+export type PostApiResultsElectionByElectionGuidTiesSaveData = {
     /**
      * The tie counts request data.
      */
@@ -7858,19 +7884,19 @@ export type PostApiResultsByElectionGuidSaveTiesData = {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/{electionGuid}/saveTies';
+    url: '/api/Results/election/{electionGuid}/ties/save';
 };
 
-export type PostApiResultsByElectionGuidSaveTiesResponses = {
+export type PostApiResultsElectionByElectionGuidTiesSaveResponses = {
     /**
      * OK
      */
     200: SaveTieCountsResponseDto;
 };
 
-export type PostApiResultsByElectionGuidSaveTiesResponse = PostApiResultsByElectionGuidSaveTiesResponses[keyof PostApiResultsByElectionGuidSaveTiesResponses];
+export type PostApiResultsElectionByElectionGuidTiesSaveResponse = PostApiResultsElectionByElectionGuidTiesSaveResponses[keyof PostApiResultsElectionByElectionGuidTiesSaveResponses];
 
-export type GetApiResultsByElectionGuidCompleteReportData = {
+export type GetApiResultsElectionByElectionGuidReportData = {
     body?: never;
     path: {
         /**
@@ -7879,19 +7905,19 @@ export type GetApiResultsByElectionGuidCompleteReportData = {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/{electionGuid}/completeReport';
+    url: '/api/Results/election/{electionGuid}/report';
 };
 
-export type GetApiResultsByElectionGuidCompleteReportResponses = {
+export type GetApiResultsElectionByElectionGuidReportResponses = {
     /**
      * OK
      */
     200: ElectionReportDto;
 };
 
-export type GetApiResultsByElectionGuidCompleteReportResponse = GetApiResultsByElectionGuidCompleteReportResponses[keyof GetApiResultsByElectionGuidCompleteReportResponses];
+export type GetApiResultsElectionByElectionGuidReportResponse = GetApiResultsElectionByElectionGuidReportResponses[keyof GetApiResultsElectionByElectionGuidReportResponses];
 
-export type GetApiResultsByElectionGuidByReportCodeGetReportDataData = {
+export type GetApiResultsElectionByElectionGuidReportByReportCodeData = {
     body?: never;
     path: {
         /**
@@ -7904,19 +7930,19 @@ export type GetApiResultsByElectionGuidByReportCodeGetReportDataData = {
         reportCode: string;
     };
     query?: never;
-    url: '/api/Results/{electionGuid}/{reportCode}/getReportData';
+    url: '/api/Results/election/{electionGuid}/report/{reportCode}';
 };
 
-export type GetApiResultsByElectionGuidByReportCodeGetReportDataResponses = {
+export type GetApiResultsElectionByElectionGuidReportByReportCodeResponses = {
     /**
      * OK
      */
     200: ReportDataResponseDto;
 };
 
-export type GetApiResultsByElectionGuidByReportCodeGetReportDataResponse = GetApiResultsByElectionGuidByReportCodeGetReportDataResponses[keyof GetApiResultsByElectionGuidByReportCodeGetReportDataResponses];
+export type GetApiResultsElectionByElectionGuidReportByReportCodeResponse = GetApiResultsElectionByElectionGuidReportByReportCodeResponses[keyof GetApiResultsElectionByElectionGuidReportByReportCodeResponses];
 
-export type GetApiResultsByElectionGuidPresentationDataData = {
+export type GetApiResultsElectionByElectionGuidPresentationData = {
     body?: never;
     path: {
         /**
@@ -7925,19 +7951,19 @@ export type GetApiResultsByElectionGuidPresentationDataData = {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/{electionGuid}/presentationData';
+    url: '/api/Results/election/{electionGuid}/presentation';
 };
 
-export type GetApiResultsByElectionGuidPresentationDataResponses = {
+export type GetApiResultsElectionByElectionGuidPresentationResponses = {
     /**
      * OK
      */
     200: PresentationDto;
 };
 
-export type GetApiResultsByElectionGuidPresentationDataResponse = GetApiResultsByElectionGuidPresentationDataResponses[keyof GetApiResultsByElectionGuidPresentationDataResponses];
+export type GetApiResultsElectionByElectionGuidPresentationResponse = GetApiResultsElectionByElectionGuidPresentationResponses[keyof GetApiResultsElectionByElectionGuidPresentationResponses];
 
-export type GetApiResultsByElectionGuidDetailedStatisticsData = {
+export type GetApiResultsElectionByElectionGuidDetailedStatisticsData = {
     body?: never;
     path: {
         /**
@@ -7946,17 +7972,17 @@ export type GetApiResultsByElectionGuidDetailedStatisticsData = {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/{electionGuid}/detailedStatistics';
+    url: '/api/Results/election/{electionGuid}/detailed-statistics';
 };
 
-export type GetApiResultsByElectionGuidDetailedStatisticsResponses = {
+export type GetApiResultsElectionByElectionGuidDetailedStatisticsResponses = {
     /**
      * OK
      */
     200: DetailedStatisticsDto;
 };
 
-export type GetApiResultsByElectionGuidDetailedStatisticsResponse = GetApiResultsByElectionGuidDetailedStatisticsResponses[keyof GetApiResultsByElectionGuidDetailedStatisticsResponses];
+export type GetApiResultsElectionByElectionGuidDetailedStatisticsResponse = GetApiResultsElectionByElectionGuidDetailedStatisticsResponses[keyof GetApiResultsElectionByElectionGuidDetailedStatisticsResponses];
 
 export type PostApiSetupElectionStep1Data = {
     /**

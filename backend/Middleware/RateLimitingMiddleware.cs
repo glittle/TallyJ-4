@@ -13,9 +13,7 @@ public class RateLimitingMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<RateLimitingMiddleware> _logger;
-
-    // In-memory storage for rate limiting (in production, use Redis or database)
-    private static readonly ConcurrentDictionary<string, List<DateTime>> _requestLog = new();
+    private readonly RateLimitStore _store;
 
     // Rate limits: key = endpoint, value = (max requests, time window)
     private static readonly Dictionary<string, (int MaxRequests, TimeSpan Window)> _rateLimits = new()
@@ -32,10 +30,12 @@ public class RateLimitingMiddleware
     /// </summary>
     /// <param name="next">The next middleware in the pipeline.</param>
     /// <param name="logger">The logger for diagnostic output.</param>
-    public RateLimitingMiddleware(RequestDelegate next, ILogger<RateLimitingMiddleware> logger)
+    /// <param name="store">The rate limit store for persisting request counts.</param>
+    public RateLimitingMiddleware(RequestDelegate next, ILogger<RateLimitingMiddleware> logger, RateLimitStore store)
     {
         _next = next;
         _logger = logger;
+        _store = store;
     }
 
     // Note: SecurityAuditService is resolved per-request to avoid circular dependencies
@@ -59,7 +59,7 @@ public class RateLimitingMiddleware
             CleanupOldRequests(clientKey, limit.Window);
 
             // Check if rate limit exceeded
-            var requests = _requestLog.GetOrAdd(clientKey, _ => new List<DateTime>());
+            var requests = _store.RequestLog.GetOrAdd(clientKey, _ => new List<DateTime>());
             if (requests.Count >= limit.MaxRequests)
             {
                 _logger.LogWarning("Rate limit exceeded for {Path} by client {ClientKey}", path, clientKey);
@@ -96,7 +96,7 @@ public class RateLimitingMiddleware
 
     private void CleanupOldRequests(string clientKey, TimeSpan window)
     {
-        if (_requestLog.TryGetValue(clientKey, out var requests))
+        if (_store.RequestLog.TryGetValue(clientKey, out var requests))
         {
             var cutoff = DateTime.UtcNow - window;
             requests.RemoveAll(r => r < cutoff);
@@ -104,7 +104,7 @@ public class RateLimitingMiddleware
             // Remove empty lists to prevent memory leaks
             if (requests.Count == 0)
             {
-                _requestLog.TryRemove(clientKey, out _);
+                _store.RequestLog.TryRemove(clientKey, out _);
             }
         }
     }

@@ -21,7 +21,9 @@ public class RateLimitingTests : IntegrationTestBase
     [Fact]
     public async Task Login_WithinRateLimit_Succeeds()
     {
-        // Arrange
+        // Arrange - ensure test user exists
+        await GetAuthTokenAsync("admin@tallyj.test", "TestPass123!");
+
         var loginRequest = new LoginRequest
         {
             Email = "admin@tallyj.test",

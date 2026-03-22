@@ -7,7 +7,7 @@ using Backend.Domain.Identity;
 
 namespace Backend.Application.Services.Auth;
 
-public class PasswordResetService
+public class PasswordResetService : IPasswordResetService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IStringLocalizer<PasswordResetService> _localizer;

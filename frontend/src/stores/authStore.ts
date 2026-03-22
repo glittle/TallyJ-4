@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
+import { useApiErrorHandler } from "../composables/useApiErrorHandler";
+import { TOKEN_REFRESH_CONFIG } from "../config/tokenRefreshConfig";
 import {
   authService,
   type LoginRequest,
@@ -7,10 +9,8 @@ import {
 } from "../services/authService";
 import { secureTokenService } from "../services/secureTokenService";
 import { tokenRefreshService } from "../services/tokenRefreshService";
-import { TOKEN_REFRESH_CONFIG } from "../config/tokenRefreshConfig";
-import { useApiErrorHandler } from "../composables/useApiErrorHandler";
-import { SELECTED_LOCATION_KEY } from "./locationStore";
 import type { TelegramLoginRequest } from "../types";
+import { SELECTED_LOCATION_KEY } from "./locationStore";
 
 export const useAuthStore = defineStore("auth", () => {
   // Initialize from cookies instead of localStorage
@@ -200,7 +200,8 @@ export const useAuthStore = defineStore("auth", () => {
         const cookieData = secureTokenService.refreshAuthData();
         email.value = cookieData.email || response.email;
         name.value = cookieData.name || response.name || null;
-        authMethod.value = cookieData.authMethod || response.authMethod || "Facebook";
+        authMethod.value =
+          cookieData.authMethod || response.authMethod || "Facebook";
       }
 
       requires2FA.value = false;
@@ -219,7 +220,7 @@ export const useAuthStore = defineStore("auth", () => {
   async function processOAuthLogin(
     serviceFn: (accessToken: string) => Promise<any>,
     accessToken: string,
-    fallbackAuthMethod: string
+    fallbackAuthMethod: string,
   ) {
     try {
       const response = await serviceFn(accessToken);
@@ -314,9 +315,11 @@ export const useAuthStore = defineStore("auth", () => {
       console.error("Failed to clear selected location on logout:", e);
     }
 
-    // Navigate to logout endpoint which will clear server-side cookies and redirect to login page
-    // This ensures proper server-side logout and page refresh
-    window.location.href = `${API_URL}/api/auth/logout`;
+    try {
+      await authService.logout();
+    } catch {}
+
+    window.location.href = "/";
   }
 
   return {

@@ -56,8 +56,13 @@ public class OAuthStateService
     /// </summary>
     /// <param name="state">The state parameter to validate.</param>
     /// <returns>The return URL if state is valid, null otherwise.</returns>
-    public string? ValidateState(string state)
+    public string? ValidateState(string? state)
     {
+        if (string.IsNullOrEmpty(state))
+        {
+            return null;
+        }
+
         if (_stateStore.TryRemove(state, out var entry) && entry.ExpiresAt > DateTime.UtcNow)
         {
             return entry.ReturnUrl;

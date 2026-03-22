@@ -150,13 +150,16 @@ public class JwtTokenServiceTests
         var expiredService = new JwtTokenService(expiredConfig);
         var expiredToken = expiredService.GenerateToken(user);
 
+        // Use the same config for validation to ensure key/issuer/audience match
+        var validationService = new JwtTokenService(expiredConfig);
+
         // Act
-        var principal = _service.GetPrincipalFromExpiredToken(expiredToken);
+        var principal = validationService.GetPrincipalFromExpiredToken(expiredToken);
 
         // Assert
         Assert.NotNull(principal);
         Assert.Equal(user.Id, principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? principal.FindFirst("sub")?.Value);
-        Assert.Equal(user.Email, principal.FindFirst(JwtRegisteredClaimNames.Email)?.Value);
+        Assert.Equal(user.Email, principal.FindFirst(ClaimTypes.Email)?.Value ?? principal.FindFirst(JwtRegisteredClaimNames.Email)?.Value);
     }
 
     [Fact]

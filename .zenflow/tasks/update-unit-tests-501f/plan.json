@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "steps": [
+    {
+      "id": "e28a03f2-435e-452a-9806-18982e72976a",
+      "name": "Investigation and Planning",
+      "description": "Investigate v3 tests and v4 implementation. Catalog all gaps and differences. Produce detailed plan.",
+      "status": "Completed",
+      "sort_order": 0,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-21T16:43:53.269953900Z",
+      "updated_at": "2026-03-21T16:43:58.696913400Z"
+    },
+    {
+      "id": "bde91338-57f6-4c87-83b0-9915211a774b",
+      "name": "Create BallotAnalyzer service",
+      "description": "Create backend/Services/Analyzers/BallotAnalyzer.cs with DetermineStatusFromVotes method. Port v3 BallotAnalyzer logic. Create BallotVoteInfo DTO. Write 14 unit tests in Backend.Tests/UnitTests/BallotAnalyzerTests.cs.",
+      "status": "Pending",
+      "sort_order": 1,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-21T16:43:53.269953900Z",
+      "updated_at": "2026-03-21T16:43:53.269953900Z"
+    },
+    {
+      "id": "40dbd902-c101-4e12-b3ca-82bf2a8ab89a",
+      "name": "Fix ElectionAnalyzerBase tie analysis logic",
+      "description": "Rewrite FinalizeResultsAndTies to match v3: DetermineOrderAndSections (sort by VoteCount+TieBreakCount+name), AnalyzeForTies (CloseTo includes diff=0, create ResultTie for ALL groups), AnalyzeTieGroup (correct NumToElect, ForceShowInOther, IsTieResolved/IsResolved). Remove zero-VoteCount results.",
+      "status": "Pending",
+      "sort_order": 2,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-21T16:43:53.269953900Z",
+      "updated_at": "2026-03-21T16:43:53.269953900Z"
+    },
+    {
+      "id": "c1886aaa-d56e-4bee-abcd-1fcf41969a24",
+      "name": "Fix ElectionAnalyzerBase ballot statistics and summary logic",
+      "description": "Integrate BallotAnalyzer into PrepareForAnalysisAsync. Add FillResultSummaryCalc (voting method counts). Add CombineCalcAndManualSummaries. Fix FinalizeSummaries (UseOnReports logic). Add NumBallotsWithManual/SumOfEnvelopesCollected computed properties.",
+      "status": "Pending",
+      "sort_order": 3,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-21T16:43:53.269953900Z",
+      "updated_at": "2026-03-21T16:43:53.269953900Z"
+    },
+    {
+      "id": "6f997dfe-731d-46ad-8b58-53cf355ceb75",
+      "name": "Fix ElectionAnalyzerSingleName statistics",
+      "description": "Override statistics for single-name: BallotsReceived=NumVoters=TotalVotes=sum of SingleNameElectionCount. SpoiledVotes=sum of counts for non-Ok votes. BallotsNeedingReview=count of votes needing review.",
+      "status": "Pending",
+      "sort_order": 4,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-21T16:43:53.269953900Z",
+      "updated_at": "2026-03-21T16:43:53.269953900Z"
+    },
+    {
+      "id": "8a460e0e-12a1-4496-a77e-fecff4a876e7",
+      "name": "Write ElectionAnalyzerNormal unit tests",
+      "description": "Create Backend.Tests/UnitTests/ElectionAnalyzerNormalTests.cs. Port all 15 v3 AnalyzerNormalTests: Ballot_TwoPeople, NameChanged, NameExtended, AllSpoiled, OlderYouth, Tie_Not_Required, 3_way_Tie, TwoSetsOfTies, TieSpanningTopExtraOther, TieBreak resolution tests, NSA election, TwoStage election.",
+      "status": "Pending",
+      "sort_order": 5,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-21T16:43:53.269953900Z",
+      "updated_at": "2026-03-21T16:43:53.269953900Z"
+    },
+    {
+      "id": "4f228148-af3b-42e0-b188-1243631a8af4",
+      "name": "Write ElectionAnalyzerSingleName unit tests",
+      "description": "Create Backend.Tests/UnitTests/ElectionAnalyzerSingleNameTests.cs. Port all 9 v3 AnalyzerSingleNameTests: Election_3_people, With_Manual_Results, Tie, SingleNameElection_1_person, Invalid_Ballots, Invalid_People, 3_people, 3_people_with_Tie, 3_way_Tie.",
+      "status": "Pending",
+      "sort_order": 6,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-21T16:43:53.269953900Z",
+      "updated_at": "2026-03-21T16:43:53.269953900Z"
+    },
+    {
+      "id": "84e8fe4d-093d-4f6f-9ff1-1ca767c92058",
+      "name": "Update existing TallyServiceTests for compatibility",
+      "description": "Run existing TallyServiceTests. Fix failing assertions for corrected v3-compatible behavior (NumToElect per-group, CloseTo includes ties, ballot status re-evaluation). Do not weaken assertions.",
+      "status": "Pending",
+      "sort_order": 7,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-21T16:43:53.269953900Z",
+      "updated_at": "2026-03-21T16:43:53.269953900Z"
+    },
+    {
+      "id": "c0648fa1-b7a4-47d9-9926-071a1685cd34",
+      "name": "Final validation",
+      "description": "Run full test suite: dotnet build + dotnet test. Verify all tests pass and test count increased significantly.",
+      "status": "Pending",
+      "sort_order": 8,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-21T16:43:53.269953900Z",
+      "updated_at": "2026-03-21T16:43:53.269953900Z"
+    }
+  ]
+}

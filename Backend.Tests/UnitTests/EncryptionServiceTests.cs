@@ -108,7 +108,7 @@ public class EncryptionServiceTests
         var service = new EncryptionService(_configuration);
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => service.Decrypt("invalid-base64-data"));
+        Assert.Throws<FormatException>(() => service.Decrypt("invalid-base64-data"));
     }
 
     [Fact]

@@ -9,17 +9,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Identity;
+using Backend.Middleware;
 
 namespace Backend.Tests.IntegrationTests;
 
-public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFactory>
+public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFactory>, IAsyncLifetime
 {
     protected readonly CustomWebApplicationFactory Factory;
     protected readonly HttpClient Client;
     protected readonly JsonSerializerOptions JsonOptions;
     private string? _currentAuthToken;
-
-    private static bool _databaseSeeded = false;
 
     protected IntegrationTestBase(CustomWebApplicationFactory factory)
     {
@@ -29,16 +28,9 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         {
             PropertyNameCaseInsensitive = true
         };
-
-        // Seed database once per test session
-        if (!_databaseSeeded)
-        {
-            SeedDatabaseAsync().GetAwaiter().GetResult();
-            _databaseSeeded = true;
-        }
     }
 
-    protected async Task<string> GetAuthTokenAsync(string email = "admin@tallyj.com", string password = "Test1234!")
+    protected async Task<string> GetAuthTokenAsync(string email = "admin@tallyj.com", string password = "Admin1234!XY")
     {
         // Ensure test user exists first with the correct password
         await CreateTestUserAsync(email, password);
@@ -62,14 +54,32 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             throw new Exception($"Login failed with status {response.StatusCode}: {errorContent}");
         }
 
-        var loginResponse = await JsonSerializer.DeserializeAsync<LoginResponse>(
-            await response.Content.ReadAsStreamAsync(),
-            JsonOptions);
+        // Token is stored in httpOnly cookie, not response body
+        string? token = null;
+        if (response.Headers.TryGetValues("Set-Cookie", out var setCookies))
+        {
+            foreach (var cookie in setCookies)
+            {
+                if (cookie.StartsWith("auth_token="))
+                {
+                    token = cookie.Split(';')[0].Substring("auth_token=".Length);
+                    break;
+                }
+            }
+        }
 
-        var token = loginResponse?.Token ?? throw new Exception("Failed to get access token");
+        token = token ?? throw new Exception("Failed to get access token from cookie");
         Console.WriteLine($"[TEST] Got auth token: {token.Substring(0, Math.Min(50, token.Length))}...");
         return token;
     }
+
+    public async Task InitializeAsync()
+    {
+        await SeedDatabaseAsync();
+        Factory.Services.GetRequiredService<RateLimitStore>().Reset();
+    }
+
+    public Task DisposeAsync() => Task.CompletedTask;
 
     protected void SetAuthToken(string token)
     {
@@ -182,7 +192,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             Email = "admin@tallyj.com",
             EmailConfirmed = true
         };
-        await userManager.CreateAsync(adminUser, "Admin123!");
+        await userManager.CreateAsync(adminUser, "Admin1234!XY");
 
         var testUser = new AppUser
         {
@@ -190,7 +200,15 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             Email = "test@tallyj.com",
             EmailConfirmed = true
         };
-        await userManager.CreateAsync(testUser, "Test123!");
+        await userManager.CreateAsync(testUser, "Tester1234!X");
+
+        var adminTestUser = new AppUser
+        {
+            UserName = "admin@tallyj.test",
+            Email = "admin@tallyj.test",
+            EmailConfirmed = true
+        };
+        await userManager.CreateAsync(adminTestUser, "TestPass123!");
 
         // Create test elections
         var election1 = new Election
@@ -246,6 +264,23 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         await dbContext.SaveChangesAsync();
     }
 
+    protected async Task ConfirmEmailAsync(string email)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var user = await userManager.FindByEmailAsync(email);
+        if (user != null && !user.EmailConfirmed)
+        {
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            await userManager.ConfirmEmailAsync(user, token);
+        }
+    }
+
+    protected void ResetRateLimit()
+    {
+        Factory.Services.GetRequiredService<RateLimitStore>().Reset();
+    }
+
     private async Task CreateTestUserAsync(string email, string password)
     {
         using var scope = Factory.Services.CreateScope();
@@ -278,11 +313,6 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         }
     }
 
-    private class LoginResponse
-    {
-        public string Token { get; set; } = string.Empty;
-        public string RefreshToken { get; set; } = string.Empty;
-    }
 }
 
 

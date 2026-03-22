@@ -9,7 +9,7 @@ using Backend.Domain.Identity;
 
 namespace Backend.Application.Services.Auth;
 
-public class JwtTokenService
+public class JwtTokenService : IJwtTokenService
 {
     private readonly IConfiguration _configuration;
 

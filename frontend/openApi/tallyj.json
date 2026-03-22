@@ -1233,7 +1233,7 @@
       }
     },
     "/api/Auth/logout": {
-      "get": {
+      "post": {
         "tags": [
           "Auth"
         ],
@@ -4841,7 +4841,58 @@
         }
       }
     },
-    "/api/Results/{electionGuid}/results": {
+    "/api/Results/election/{electionGuid}/calculate": {
+      "post": {
+        "tags": [
+          "Results"
+        ],
+        "summary": "Calculates the tally results for a specific election.",
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "description": "The GUID of the election to calculate results for.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "electionType",
+            "in": "query",
+            "description": "The type of election calculation (\"normal\" or \"singlename\").",
+            "schema": {
+              "type": "string",
+              "default": "normal"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TallyResultDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TallyResultDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TallyResultDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Results/election/{electionGuid}": {
       "get": {
         "tags": [
           "Results"
@@ -4883,7 +4934,7 @@
         }
       }
     },
-    "/api/Results/{electionGuid}/summary": {
+    "/api/Results/election/{electionGuid}/summary": {
       "get": {
         "tags": [
           "Results"
@@ -4925,7 +4976,7 @@
         }
       }
     },
-    "/api/Results/{electionGuid}/final": {
+    "/api/Results/election/{electionGuid}/final": {
       "get": {
         "tags": [
           "Results"
@@ -5018,7 +5069,7 @@
         }
       }
     },
-    "/api/Results/{electionGuid}/monitor": {
+    "/api/Results/election/{electionGuid}/monitor": {
       "get": {
         "tags": [
           "Results"
@@ -5112,7 +5163,7 @@
         }
       }
     },
-    "/api/Results/{electionGuid}/saveTies": {
+    "/api/Results/election/{electionGuid}/ties/save": {
       "post": {
         "tags": [
           "Results"
@@ -5174,7 +5225,7 @@
         }
       }
     },
-    "/api/Results/{electionGuid}/completeReport": {
+    "/api/Results/election/{electionGuid}/report": {
       "get": {
         "tags": [
           "Results"
@@ -5216,7 +5267,7 @@
         }
       }
     },
-    "/api/Results/{electionGuid}/{reportCode}/getReportData": {
+    "/api/Results/election/{electionGuid}/report/{reportCode}": {
       "get": {
         "tags": [
           "Results"
@@ -5267,7 +5318,7 @@
         }
       }
     },
-    "/api/Results/{electionGuid}/presentationData": {
+    "/api/Results/election/{electionGuid}/presentation": {
       "get": {
         "tags": [
           "Results"
@@ -5309,7 +5360,7 @@
         }
       }
     },
-    "/api/Results/{electionGuid}/detailedStatistics": {
+    "/api/Results/election/{electionGuid}/detailed-statistics": {
       "get": {
         "tags": [
           "Results"

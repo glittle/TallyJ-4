@@ -27,7 +27,7 @@ public class TwoFactorToken
 
     [Column("_RowVersion")]
     [Timestamp]
-    public byte[] RowVersion { get; set; } = null!;
+    public byte[] RowVersion { get; set; } = new byte[8];
 }
 
 

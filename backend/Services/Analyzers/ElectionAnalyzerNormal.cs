@@ -5,36 +5,16 @@ using Backend.Domain.Enumerations;
 
 namespace Backend.Services.Analyzers;
 
-/// <summary>
-/// Election analyzer for normal elections where each vote counts as one.
-/// Implements standard vote counting logic for typical elections.
-/// </summary>
 public class ElectionAnalyzerNormal : ElectionAnalyzerBase
 {
-    /// <summary>
-    /// Initializes a new instance of the ElectionAnalyzerNormal.
-    /// </summary>
-    /// <param name="context">The database context.</param>
-    /// <param name="logger">The logger instance.</param>
-    /// <param name="election">The election to analyze.</param>
     public ElectionAnalyzerNormal(MainDbContext context, ILogger logger, Election election)
         : base(context, logger, election)
     {
     }
 
-    /// <summary>
-    /// Counts votes for a normal election where each valid vote counts as one.
-    /// Processes ballots and aggregates vote counts for each candidate.
-    /// </summary>
-    /// <returns>A task representing the asynchronous vote counting operation.</returns>
     protected override async Task CountVotesAsync()
     {
         Logger.LogInformation("Starting vote count for normal election");
-
-        var validBallotGuids = Ballots
-            .Where(b => b.StatusCode == BallotStatus.Ok)
-            .Select(b => b.BallotGuid)
-            .ToHashSet();
 
         var numProcessed = 0;
         var numVotesTotal = 0;
@@ -53,9 +33,7 @@ public class ElectionAnalyzerNormal : ElectionAnalyzerBase
 
             foreach (var vote in ballotVotes)
             {
-                var voteStatus = DetermineVoteStatus(vote);
-
-                if (voteStatus != VoteStatus.Ok)
+                if (vote.VoteStatus != VoteStatus.Ok)
                     continue;
 
                 numVotesTotal++;

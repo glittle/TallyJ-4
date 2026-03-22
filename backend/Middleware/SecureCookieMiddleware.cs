@@ -130,6 +130,7 @@ public class SecureCookieMiddleware
             Secure = context.Request.IsHttps,
             SameSite = context.Request.IsHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddDays(-1), // Expire immediately
+            MaxAge = TimeSpan.Zero,
             Path = "/",
             Domain = context.Request.IsHttps ? null : "localhost"
         };
@@ -143,6 +144,7 @@ public class SecureCookieMiddleware
             Secure = context.Request.IsHttps,
             SameSite = context.Request.IsHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddDays(-1),
+            MaxAge = TimeSpan.Zero,
             Path = "/",
             Domain = context.Request.IsHttps ? null : "localhost"
         };
@@ -179,7 +181,8 @@ public class SecureCookieMiddleware
     /// <returns>The user email if present, null otherwise.</returns>
     public static string? GetUserEmail(HttpContext context)
     {
-        return context.Request.Cookies[UserEmailCookieName];
+        var value = context.Request.Cookies[UserEmailCookieName];
+        return value != null ? Uri.UnescapeDataString(value) : null;
     }
 
     /// <summary>
@@ -189,7 +192,8 @@ public class SecureCookieMiddleware
     /// <returns>The user name if present, null otherwise.</returns>
     public static string? GetUserName(HttpContext context)
     {
-        return context.Request.Cookies[UserNameCookieName];
+        var value = context.Request.Cookies[UserNameCookieName];
+        return value != null ? Uri.UnescapeDataString(value) : null;
     }
 
     /// <summary>
@@ -199,7 +203,8 @@ public class SecureCookieMiddleware
     /// <returns>The auth method if present, null otherwise.</returns>
     public static string? GetAuthMethod(HttpContext context)
     {
-        return context.Request.Cookies[AuthMethodCookieName];
+        var value = context.Request.Cookies[AuthMethodCookieName];
+        return value != null ? Uri.UnescapeDataString(value) : null;
     }
 }
 

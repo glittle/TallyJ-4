@@ -45,11 +45,11 @@ public class ProgramStartupTests : IntegrationTestBase
         var services = Factory.Services;
 
         // Act & Assert: Verify auth services are registered
-        Assert.NotNull(services.GetService<Backend.Application.Services.Auth.JwtTokenService>());
+        Assert.NotNull(services.GetService<Backend.Application.Services.Auth.IJwtTokenService>());
         Assert.NotNull(services.GetService<Backend.Application.Services.Auth.EmailService>());
-        Assert.NotNull(services.GetService<Backend.Application.Services.Auth.LocalAuthService>());
-        Assert.NotNull(services.GetService<Backend.Application.Services.Auth.PasswordResetService>());
-        Assert.NotNull(services.GetService<Backend.Application.Services.Auth.TwoFactorService>());
+        Assert.NotNull(services.GetService<Backend.Application.Services.Auth.ILocalAuthService>());
+        Assert.NotNull(services.GetService<Backend.Application.Services.Auth.IPasswordResetService>());
+        Assert.NotNull(services.GetService<Backend.Application.Services.Auth.ITwoFactorService>());
     }
 
     [Fact]

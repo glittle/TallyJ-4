@@ -6,22 +6,24 @@ using Backend.Domain.Identity;
 
 namespace Backend.Application.Services.Auth;
 
-public class LocalAuthService
+public class LocalAuthService : ILocalAuthService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly JwtTokenService _jwtTokenService;
+    private readonly IJwtTokenService _jwtTokenService;
     private readonly MainDbContext _context;
     private readonly IStringLocalizer<LocalAuthService> _localizer;
     private readonly EmailService _emailService;
+    private readonly ITwoFactorService _twoFactorService;
 
     public LocalAuthService(
         UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
-        JwtTokenService jwtTokenService,
+        IJwtTokenService jwtTokenService,
         MainDbContext context,
         IStringLocalizer<LocalAuthService> localizer,
-        EmailService emailService)
+        EmailService emailService,
+        ITwoFactorService twoFactorService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -29,6 +31,7 @@ public class LocalAuthService
         _context = context;
         _localizer = localizer;
         _emailService = emailService;
+        _twoFactorService = twoFactorService;
     }
 
     public async Task<(bool Success, string? Error, AuthResponse? Response)> RegisterAsync(RegisterRequest request)
@@ -112,13 +115,7 @@ public class LocalAuthService
             return (false, _localizer["auth.errors.accountLocked"], null);
         }
 
-        if (!signInResult.Succeeded)
-        {
-            return (false, _localizer["auth.errors.invalidCredentials"], null);
-        }
-
-        // Handle 2FA if enabled
-        if (user.TwoFactorEnabled)
+        if (signInResult.RequiresTwoFactor || user.TwoFactorEnabled)
         {
             if (string.IsNullOrEmpty(request.TwoFactorCode))
             {
@@ -132,6 +129,16 @@ public class LocalAuthService
                     Requires2FA = true
                 });
             }
+
+            var (codeValid, codeError) = await _twoFactorService.VerifyAsync(user.Id, request.TwoFactorCode);
+            if (!codeValid)
+            {
+                return (false, codeError ?? _localizer["auth.errors.invalid2FACode"], null);
+            }
+        }
+        else if (!signInResult.Succeeded)
+        {
+            return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
         var token = _jwtTokenService.GenerateToken(user);

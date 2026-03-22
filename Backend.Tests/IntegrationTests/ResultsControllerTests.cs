@@ -131,7 +131,7 @@ public class ResultsControllerTests : IntegrationTestBase
             NumberToElect = 3
         };
 
-        var createResponse = await PostJsonAsync("/api/elections", createDto);
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
         var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
         var electionGuid = createResult!.Data!.ElectionGuid;
 

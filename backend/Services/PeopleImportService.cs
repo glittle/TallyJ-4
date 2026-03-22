@@ -450,12 +450,13 @@ public class PeopleImportService : IPeopleImportService
 
                 try
                 {
+                    var skippedBefore = result.PeopleSkipped;
                     var person = CreatePersonFromRow(row, headers, mappings, electionGuid, bahaiIdLookup, emailLookup, phoneLookup, nameLookup, rowNumber, result);
                     if (person != null)
                     {
                         peopleToAdd.Add(person);
                     }
-                    else
+                    else if (result.PeopleSkipped == skippedBefore)
                     {
                         errorsFound = true;
                     }

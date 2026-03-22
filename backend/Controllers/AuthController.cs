@@ -33,10 +33,10 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly LocalAuthService _localAuthService;
-    private readonly PasswordResetService _passwordResetService;
-    private readonly TwoFactorService _twoFactorService;
-    private readonly JwtTokenService _jwtTokenService;
+    private readonly ILocalAuthService _localAuthService;
+    private readonly IPasswordResetService _passwordResetService;
+    private readonly ITwoFactorService _twoFactorService;
+    private readonly IJwtTokenService _jwtTokenService;
     private readonly MainDbContext _context;
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
@@ -65,10 +65,10 @@ public class AuthController : ControllerBase
     /// <param name="httpClientFactory">HTTP client factory for external API requests.</param>
     /// <param name="securityAuditService">Service for logging security events.</param>
     public AuthController(
-        LocalAuthService localAuthService,
-        PasswordResetService passwordResetService,
-        TwoFactorService twoFactorService,
-        JwtTokenService jwtTokenService,
+        ILocalAuthService localAuthService,
+        IPasswordResetService passwordResetService,
+        ITwoFactorService twoFactorService,
+        IJwtTokenService jwtTokenService,
         MainDbContext context,
         UserManager<AppUser> userManager,
         RoleManager<IdentityRole> roleManager,
@@ -1576,7 +1576,7 @@ public class AuthController : ControllerBase
             return returnUrl;
         }
 
-        var frontendBaseUrl = _configuration["Frontend:BaseUrl"];
+        var frontendBaseUrl = _configuration["Frontend:BaseUrl"]?.Trim();
         if (!string.IsNullOrEmpty(frontendBaseUrl))
         {
             return frontendBaseUrl + "/auth/google/callback";
@@ -1589,8 +1589,8 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Logs out the current user by clearing authentication cookies.
     /// </summary>
-    /// <returns>A redirect to the login page.</returns>
-    [HttpGet("logout")]
+    /// <returns>A success message confirming the user has been logged out.</returns>
+    [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
         var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -1610,15 +1610,7 @@ public class AuthController : ControllerBase
 
         SecureCookieMiddleware.ClearAuthCookies(HttpContext);
 
-        // Redirect to frontend root page
-        var frontendUrl = _configuration["Frontend:BaseUrl"];
-        if (!string.IsNullOrEmpty(frontendUrl))
-        {
-            return Redirect(frontendUrl);
-        }
-
-        // Fallback to localhost for development
-        return Redirect("http://localhost:8095/");
+        return Ok(new { message = "Logged out successfully" });
     }
 
     private string GetErrorRedirectUrl(string? returnUrl, string errorMessage)

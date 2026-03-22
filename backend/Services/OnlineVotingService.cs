@@ -568,6 +568,8 @@ public class OnlineVotingService : IOnlineVotingService
             .ThenBy(e => e.Name)
             .ToList();
 
+            result = result.Where(e => e.IsOpen).ToList();
+
             _logger.LogInformation("Found {Count} elections for voter {VoterId}",
                 result.Count, voterId);
 
