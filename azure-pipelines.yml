@@ -17,6 +17,13 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK from global.json'
+  inputs:
+    packageType: 'sdk'
+    useGlobalJson: true
+    workingDirectory: '$(Build.SourcesDirectory)' # Point to where global.json lives
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
