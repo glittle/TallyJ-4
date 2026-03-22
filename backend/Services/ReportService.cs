@@ -396,16 +396,15 @@ public class ReportService : IReportService
     {
         var election = await GetElectionAsync(electionGuid);
 
-        var validBallotGuids = await _context.Ballots
-            .Include(b => b.Location)
-            .Where(b => b.Location.ElectionGuid == electionGuid && b.StatusCode == BallotStatus.Ok)
-            .Select(b => b.BallotGuid)
-            .ToListAsync();
-
         var votes = await _context.Votes
             .Include(v => v.Person)
-            .Where(v => validBallotGuids.Contains(v.BallotGuid))
-            .Where(v => v.IneligibleReasonCode != null || (v.Person != null && v.Person.IneligibleReasonGuid != null))
+            .Where(v =>
+                v.Ballot != null &&
+                v.Ballot.Location != null &&
+                v.Ballot.Location.ElectionGuid == electionGuid &&
+                v.Ballot.StatusCode == BallotStatus.Ok)
+            .Where(v => v.IneligibleReasonCode != null ||
+                        (v.Person != null && v.Person.IneligibleReasonGuid != null))
             .ToListAsync();
 
         var grouped = votes
