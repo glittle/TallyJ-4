@@ -12,8 +12,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  # Adjusted to point specifically to the backend folder
-  solution: 'backend/*.sln' 
+  solution: '*.sln' 
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
