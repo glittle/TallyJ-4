@@ -6006,14 +6006,14 @@ export type PostApiAuthKakaoResponses = {
     200: unknown;
 };
 
-export type GetApiAuthLogoutData = {
+export type PostApiAuthLogoutData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/api/Auth/logout';
 };
 
-export type GetApiAuthLogoutResponses = {
+export type PostApiAuthLogoutResponses = {
     /**
      * OK
      */

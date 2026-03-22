@@ -1,8 +1,8 @@
-import { client } from "./gen/configService/client.gen";
+import { i18n } from "../locales";
+import { router } from "../router/router";
 import { secureTokenService } from "../services/secureTokenService";
 import { tokenRefreshService } from "../services/tokenRefreshService";
-import { router } from "../router/router";
-import { i18n } from "../locales";
+import { client } from "./gen/configService/client.gen";
 
 import { useNotifications } from "../composables/useNotifications";
 const { showWarningMessage } = useNotifications();
@@ -42,7 +42,7 @@ client.interceptors.response.use(async (response) => {
     secureTokenService.clearAuthData();
     const { t } = i18n.global;
     showWarningMessage(t("error.sessionExpired"));
-    router.push("/login");
+    router.push("/");
     setTimeout(() => {
       redirectingFor401 = false;
     }, 2000);

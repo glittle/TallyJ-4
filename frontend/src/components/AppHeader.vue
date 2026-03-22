@@ -109,11 +109,11 @@ function handleLocationChange(locationGuid: string) {
   showSuccessMessage(t("locations.locationSelected"));
 }
 
-function handleCommand(command: string) {
+async function handleCommand(command: string) {
   if (command === "logout") {
-    authStore.logout();
+    await authStore.logout();
     showSuccessMessage(t("auth.logoutSuccess"));
-    router.push("/login?mode=officer");
+    router.push("/");
   } else if (command === "profile") {
     router.push("/profile");
   } else if (command === "settings") {

@@ -1233,7 +1233,7 @@
       }
     },
     "/api/Auth/logout": {
-      "get": {
+      "post": {
         "tags": [
           "Auth"
         ],

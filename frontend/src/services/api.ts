@@ -1,9 +1,9 @@
 import axios from "axios";
+import { i18n } from "../locales";
+import { router } from "../router/router";
 import { cacheService } from "./cacheService";
 import { secureTokenService } from "./secureTokenService";
 import { tokenRefreshService } from "./tokenRefreshService";
-import { router } from "../router/router";
-import { i18n } from "../locales";
 // Note: Services cannot use composables, so ElMessage is used directly here
 // for HTTP interceptor notifications
 import { ElMessage } from "element-plus";
@@ -97,7 +97,7 @@ api.interceptors.response.use(
         duration: 0,
         showClose: true,
       });
-      router.push("/login");
+      router.push("/");
       setTimeout(() => {
         redirectingFor401 = false;
       }, 2000);

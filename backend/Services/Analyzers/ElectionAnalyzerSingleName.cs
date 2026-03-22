@@ -14,6 +14,13 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
 
     protected override bool IsSingleNameElection() => true;
 
+    /// <summary>
+    /// Calculates ballot statistics specific to single-name elections, including total votes, spoiled ballots, and ballots needing review.
+    /// </summary>
+    /// <remarks>
+    /// For single-name elections, each ballot can contribute multiple votes if the voter selected multiple candidates.
+    /// The ballots status is ignored, since each vote is a ballot on it own.
+    /// </remarks>
     protected override void CalculateBallotStatistics()
     {
         Logger.LogInformation("Calculating single-name ballot statistics");
@@ -26,7 +33,7 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
         var invalidBallotGuids = Ballots
             .Where(b => b.StatusCode != BallotStatus.Ok)
             .Select(b => b.BallotGuid)
-            .ToList();
+            .ToHashSet();
 
         ResultSummaryCalc.SpoiledBallots = invalidBallotGuids.Count;
 

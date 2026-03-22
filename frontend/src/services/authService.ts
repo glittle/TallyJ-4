@@ -122,8 +122,8 @@ export const authService = {
 
   async logout(): Promise<void> {
     const response = await fetch("/api/auth/logout", {
-      method: "GET",
-      credentials: "include", // Include cookies for authentication
+      method: "POST",
+      credentials: "include",
     });
 
     if (!response.ok) {
