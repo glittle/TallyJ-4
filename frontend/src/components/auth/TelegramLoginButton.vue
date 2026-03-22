@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, defineEmits, defineProps } from "vue";
+import { onBeforeUnmount, onMounted } from "vue";
 
 type RequestAccess = "write" | "read";
 type ButtonSize = "large" | "medium" | "small";
