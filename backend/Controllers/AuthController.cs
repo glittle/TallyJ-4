@@ -33,10 +33,10 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly LocalAuthService _localAuthService;
-    private readonly PasswordResetService _passwordResetService;
-    private readonly TwoFactorService _twoFactorService;
-    private readonly JwtTokenService _jwtTokenService;
+    private readonly ILocalAuthService _localAuthService;
+    private readonly IPasswordResetService _passwordResetService;
+    private readonly ITwoFactorService _twoFactorService;
+    private readonly IJwtTokenService _jwtTokenService;
     private readonly MainDbContext _context;
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
@@ -65,10 +65,10 @@ public class AuthController : ControllerBase
     /// <param name="httpClientFactory">HTTP client factory for external API requests.</param>
     /// <param name="securityAuditService">Service for logging security events.</param>
     public AuthController(
-        LocalAuthService localAuthService,
-        PasswordResetService passwordResetService,
-        TwoFactorService twoFactorService,
-        JwtTokenService jwtTokenService,
+        ILocalAuthService localAuthService,
+        IPasswordResetService passwordResetService,
+        ITwoFactorService twoFactorService,
+        IJwtTokenService jwtTokenService,
         MainDbContext context,
         UserManager<AppUser> userManager,
         RoleManager<IdentityRole> roleManager,

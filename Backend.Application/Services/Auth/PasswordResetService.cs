@@ -7,7 +7,7 @@ using Backend.Domain.Identity;
 
 namespace Backend.Application.Services.Auth;
 
-public class PasswordResetService
+public class PasswordResetService : IPasswordResetService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IStringLocalizer<PasswordResetService> _localizer;
@@ -24,11 +24,6 @@ public class PasswordResetService
         _localizer = localizer;
         _configuration = configuration;
         _emailService = emailService;
-    }
-
-    [Obsolete("This constructor is for testing purposes only. Use the parameterized constructor in production.")]
-    public PasswordResetService()
-    {
     }
 
     public async Task<(bool Success, string? Error)> GenerateResetTokenAsync(ForgotPasswordRequest request)

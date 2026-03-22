@@ -6,24 +6,24 @@ using Backend.Domain.Identity;
 
 namespace Backend.Application.Services.Auth;
 
-public class LocalAuthService
+public class LocalAuthService : ILocalAuthService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly JwtTokenService _jwtTokenService;
+    private readonly IJwtTokenService _jwtTokenService;
     private readonly MainDbContext _context;
     private readonly IStringLocalizer<LocalAuthService> _localizer;
     private readonly EmailService _emailService;
-    private readonly TwoFactorService _twoFactorService;
+    private readonly ITwoFactorService _twoFactorService;
 
     public LocalAuthService(
         UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
-        JwtTokenService jwtTokenService,
+        IJwtTokenService jwtTokenService,
         MainDbContext context,
         IStringLocalizer<LocalAuthService> localizer,
         EmailService emailService,
-        TwoFactorService twoFactorService)
+        ITwoFactorService twoFactorService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -32,14 +32,6 @@ public class LocalAuthService
         _localizer = localizer;
         _emailService = emailService;
         _twoFactorService = twoFactorService;
-    }
-
-    // Parameterless constructor for testing purposes only
-    [Obsolete("This constructor is for testing purposes only. Use the parameterized constructor in production.")]
-    public LocalAuthService()
-    {
-        // This constructor exists only to allow Moq to create proxy instances for testing
-        // It should never be used in production code
     }
 
     public async Task<(bool Success, string? Error, AuthResponse? Response)> RegisterAsync(RegisterRequest request)
@@ -95,7 +87,7 @@ public class LocalAuthService
         });
     }
 
-    public virtual async Task<(bool Success, string? Error, AuthResponse? Response)> LoginAsync(LoginRequest request)
+    public async Task<(bool Success, string? Error, AuthResponse? Response)> LoginAsync(LoginRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)

@@ -9,19 +9,13 @@ using Backend.Domain.Identity;
 
 namespace Backend.Application.Services.Auth;
 
-public class JwtTokenService
+public class JwtTokenService : IJwtTokenService
 {
     private readonly IConfiguration _configuration;
 
     public JwtTokenService(IConfiguration configuration)
     {
         _configuration = configuration;
-    }
-
-    [Obsolete("This constructor is for testing purposes only. Use the parameterized constructor in production.")]
-    public JwtTokenService()
-    {
-        _configuration = null!;
     }
 
     public string GenerateToken(AppUser user)

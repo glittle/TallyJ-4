@@ -24,10 +24,10 @@ namespace Backend.Tests.UnitTests;
 public class AuthControllerTests : ServiceTestBase
 {
     private readonly AuthController _controller;
-    private readonly Mock<LocalAuthService> _localAuthServiceMock;
-    private readonly Mock<PasswordResetService> _passwordResetServiceMock;
-    private readonly Mock<TwoFactorService> _twoFactorServiceMock;
-    private readonly Mock<JwtTokenService> _jwtTokenServiceMock;
+    private readonly Mock<ILocalAuthService> _localAuthServiceMock;
+    private readonly Mock<IPasswordResetService> _passwordResetServiceMock;
+    private readonly Mock<ITwoFactorService> _twoFactorServiceMock;
+    private readonly Mock<IJwtTokenService> _jwtTokenServiceMock;
     private readonly Mock<UserManager<AppUser>> _userManagerMock;
     private readonly Mock<RoleManager<IdentityRole>> _roleManagerMock;
     private readonly Mock<ILogger<AuthController>> _loggerMock;
@@ -40,10 +40,10 @@ public class AuthControllerTests : ServiceTestBase
 
     public AuthControllerTests()
     {
-        _localAuthServiceMock = new Mock<LocalAuthService>();
-        _passwordResetServiceMock = new Mock<PasswordResetService>();
-        _twoFactorServiceMock = new Mock<TwoFactorService>();
-        _jwtTokenServiceMock = new Mock<JwtTokenService>();
+        _localAuthServiceMock = new Mock<ILocalAuthService>();
+        _passwordResetServiceMock = new Mock<IPasswordResetService>();
+        _twoFactorServiceMock = new Mock<ITwoFactorService>();
+        _jwtTokenServiceMock = new Mock<IJwtTokenService>();
         _userManagerMock = new Mock<UserManager<AppUser>>(
             Mock.Of<IUserStore<AppUser>>(),
             null!, null!, null!, null!, null!, null!, null!, null!);

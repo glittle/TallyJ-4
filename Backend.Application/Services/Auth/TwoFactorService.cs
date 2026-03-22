@@ -12,18 +12,13 @@ using Backend.Domain.Context;
 
 namespace Backend.Application.Services.Auth;
 
-public class TwoFactorService
+public class TwoFactorService : ITwoFactorService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IStringLocalizer<TwoFactorService> _localizer;
     private readonly MainDbContext _dbContext;
     private readonly EmailService _emailService;
     private readonly EncryptionService _encryptionService;
-
-    [Obsolete("This constructor is for testing purposes only. Use the parameterized constructor in production.")]
-    public TwoFactorService()
-    {
-    }
 
     public TwoFactorService(
         UserManager<AppUser> userManager,

@@ -304,11 +304,11 @@ void RegisterApplicationServices(IServiceCollection services)
 
 void RegisterAuthServices(IServiceCollection services)
 {
-    services.AddScoped<JwtTokenService>();
+    services.AddScoped<IJwtTokenService, JwtTokenService>();
     services.AddScoped<EmailService>();
-    services.AddScoped<LocalAuthService>();
-    services.AddScoped<PasswordResetService>();
-    services.AddScoped<TwoFactorService>();
+    services.AddScoped<ILocalAuthService, LocalAuthService>();
+    services.AddScoped<IPasswordResetService, PasswordResetService>();
+    services.AddScoped<ITwoFactorService, TwoFactorService>();
     services.AddScoped<EncryptionService>();
 
     services.AddScoped<ISecurityAuditService, SecurityAuditService>();
