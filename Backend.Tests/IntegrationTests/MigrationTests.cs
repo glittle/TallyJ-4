@@ -116,7 +116,7 @@ public class MigrationTests : IntegrationTestBase
 
         // Assert
         Assert.Equal(2, adminJoins.Count); // Admin should be in both test elections
-        Assert.Equal(1, testUserJoins.Count); // Test user should be in one election
+        Assert.Single(testUserJoins); // Test user should be in one election
         Assert.Contains(adminJoins, j => j.Role == "Admin");
         Assert.Contains(testUserJoins, j => j.Role == "Teller");
     }
@@ -176,9 +176,10 @@ public class MigrationTests : IntegrationTestBase
         var savedPerson = await dbContext.People.FindAsync(person.RowId);
 
         // Assert - Test computed columns
-        Assert.NotNull(savedPerson.FullName);
-        Assert.Contains(savedPerson.FirstName, savedPerson.FullName);
-        Assert.Contains(savedPerson.LastName, savedPerson.FullName);
+        Assert.NotNull(savedPerson!.FullName);
+        var fullName = savedPerson.FullName;
+        Assert.Contains(savedPerson.FirstName!, fullName);
+        Assert.Contains(savedPerson.LastName!, fullName);
     }
 }
 

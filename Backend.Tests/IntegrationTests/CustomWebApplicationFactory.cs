@@ -27,7 +27,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 ["Jwt:Key"] = "ThisIsATestKeyThatIsAtLeast32CharactersLongForJWT",
                 ["Jwt:Issuer"] = "BackendTestAPI",
                 ["Jwt:Audience"] = "BackendTestClient",
-                ["Jwt:ExpiryMinutes"] = "60"
+                ["Jwt:ExpiryMinutes"] = "60",
+                ["Logging:LogLevel:Backend.Services.SecurityAuditService"] = "Error"
             });
         });
 

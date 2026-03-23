@@ -1,5 +1,5 @@
-using Backend.DTOs.Locations;
 using Backend.Domain.Entities;
+using Backend.DTOs.Locations;
 using Mapster;
 
 namespace Backend.Mappings;

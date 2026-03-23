@@ -275,7 +275,7 @@ public class AuthControllerTests : ServiceTestBase
     public void GetFrontendUrl_WithNullConfiguration_ReturnsFallbackUrl()
     {
         // Arrange
-        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns((string)null);
+        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns((string?)null);
 
         // Act
         var result = InvokeGetFrontendUrl(null);
@@ -326,7 +326,7 @@ public class AuthControllerTests : ServiceTestBase
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal("Email verified successfully", ((dynamic)okResult.Value).message);
+        Assert.Equal("Email verified successfully", ((dynamic)okResult.Value!).message);
     }
 
     [Fact]
@@ -335,14 +335,14 @@ public class AuthControllerTests : ServiceTestBase
         // Arrange
         var request = new VerifyEmailRequest { Email = "nonexistent@example.com", Token = "token" };
 
-        _userManagerMock.Setup(um => um.FindByEmailAsync(request.Email)).ReturnsAsync((AppUser)null);
+        _userManagerMock.Setup(um => um.FindByEmailAsync(request.Email)).ReturnsAsync((AppUser?)null);
 
         // Act
         var result = await _controller.VerifyEmail(request);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("User not found", ((dynamic)badRequestResult.Value).error);
+        Assert.Equal("User not found", ((dynamic)badRequestResult.Value!).error);
     }
 
     [Fact]
@@ -359,7 +359,7 @@ public class AuthControllerTests : ServiceTestBase
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("Email is already verified", ((dynamic)badRequestResult.Value).error);
+        Assert.Equal("Email is already verified", ((dynamic)badRequestResult.Value!).error);
     }
 
     [Fact]
@@ -380,7 +380,7 @@ public class AuthControllerTests : ServiceTestBase
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Contains("Invalid token", ((dynamic)badRequestResult.Value).error);
+        Assert.Contains("Invalid token", ((dynamic)badRequestResult.Value!).error);
     }
 
     [Fact]
@@ -403,7 +403,11 @@ public class AuthControllerTests : ServiceTestBase
         // Use reflection to access the private method
         var method = typeof(AuthController).GetMethod("GetFrontendUrl",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        return (string)method.Invoke(_controller, new object[] { returnUrl });
+        if (method == null)
+        {
+            throw new InvalidOperationException("GetFrontendUrl method not found");
+        }
+        return (string)(method.Invoke(_controller, [returnUrl]) ?? throw new InvalidOperationException("Method returned null"));
     }
 }
 

@@ -1,6 +1,6 @@
-﻿using FluentValidation;
-using Backend.Domain.Enumerations;
+﻿using Backend.Domain.Enumerations;
 using Backend.DTOs.Setup;
+using FluentValidation;
 
 namespace Backend.Validators;
 

@@ -1,6 +1,6 @@
-using Backend.DTOs.Elections;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using Backend.DTOs.Elections;
 using Mapster;
 
 namespace Backend.Mappings;

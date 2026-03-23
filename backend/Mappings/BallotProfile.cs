@@ -1,5 +1,5 @@
-using Backend.DTOs.Ballots;
 using Backend.Domain.Entities;
+using Backend.DTOs.Ballots;
 using Mapster;
 
 namespace Backend.Mappings;

@@ -572,6 +572,7 @@ public class ReportServiceTests : ServiceTestBase
     public async Task GetVoters_MultipleLocations_ShowsLocationName()
     {
         var loc1 = AddLocation("Hall A");
+        AddLocation("Hall B");
 
         AddPerson("Person1", "P", canVote: true, votingLocationGuid: loc1.LocationGuid);
 
@@ -692,6 +693,7 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVoterEmails_WithOnlineVoter_SetsSignedInFlags()
     {
+        AddPerson("WithEmail", "E", email: "voter@test.com");
         Context.OnlineVoters.Add(new OnlineVoter
         {
             VoterId = "voter@test.com",

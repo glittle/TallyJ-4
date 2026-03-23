@@ -1,14 +1,14 @@
-﻿using Mapster;
-using Microsoft.EntityFrameworkCore;
-using Backend.DTOs.Elections;
-using Backend.DTOs.SignalR;
+﻿using System.Security.Claims;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
-using Backend.Models;
-using System.Security.Claims;
-using Backend.Helpers;
 using Backend.Domain.Enumerations;
+using Backend.DTOs.Elections;
+using Backend.DTOs.SignalR;
+using Backend.Helpers;
+using Backend.Models;
+using Mapster;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 

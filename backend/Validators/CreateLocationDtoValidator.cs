@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using Backend.DTOs.Locations;
+﻿using Backend.DTOs.Locations;
+using FluentValidation;
 
 namespace Backend.Validators;
 

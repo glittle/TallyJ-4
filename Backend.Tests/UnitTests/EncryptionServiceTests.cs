@@ -16,7 +16,7 @@ public class EncryptionServiceTests
         };
 
         _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(config)
+            .AddInMemoryCollection(config.Select(kvp => new KeyValuePair<string, string?>(kvp.Key, kvp.Value)))
             .Build();
     }
 

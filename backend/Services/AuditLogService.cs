@@ -1,10 +1,10 @@
-﻿using Mapster;
-using Microsoft.EntityFrameworkCore;
-using Backend.DTOs.AuditLogs;
-using Backend.Domain.Context;
+﻿using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.DTOs.AuditLogs;
 using Backend.Models;
+using Mapster;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 
@@ -123,7 +123,7 @@ public class AuditLogService : IAuditLogService
     /// <inheritdoc />
     public async Task<AuditLogDto> CreateAuditLogAsync(CreateAuditLogDto createDto)
     {
-        _logger.LogInformation("Creating new audit log entry");
+        // _logger.LogInformation("Creating new audit log entry");
 
         var log = _mapper.Map<Log>(createDto);
         log.AsOf = DateTime.UtcNow;
@@ -133,7 +133,7 @@ public class AuditLogService : IAuditLogService
 
         var logDto = _mapper.Map<AuditLogDto>(log);
 
-        _logger.LogInformation("Successfully created audit log {RowId}", log.RowId);
+        // _logger.LogInformation("Successfully created audit log {RowId}", log.RowId);
 
         return logDto;
     }

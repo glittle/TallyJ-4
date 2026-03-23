@@ -1,13 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-namespace Backend.EF.Migrations
-
 
 #nullable disable
 
+namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMar2026 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,7 +30,9 @@ namespace Backend.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     GoogleId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TelegramId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AuthMethod = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     PasswordResetToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordResetExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -169,6 +170,28 @@ namespace Backend.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SecurityAuditLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Timestamp = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false, defaultValueSql: "(getdate())"),
+                    EventType = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
+                    UserAgent = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Details = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    IsSuspicious = table.Column<bool>(type: "bit", nullable: false),
+                    Severity = table.Column<int>(type: "int", nullable: false),
+                    MetadataJson = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SecurityAuditLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SmsLogs",
                 columns: table => new
                 {
@@ -295,6 +318,33 @@ namespace Backend.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshToken",
+                columns: table => new
+                {
+                    _RowId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    TokenHash = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
+                    IsRevoked = table.Column<bool>(type: "bit", nullable: false),
+                    RevokedReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReplacedByToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    _RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshToken", x => x._RowId);
+                    table.ForeignKey(
+                        name: "FK_RefreshToken_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TwoFactorToken",
                 columns: table => new
                 {
@@ -387,7 +437,8 @@ namespace Backend.EF.Migrations
                     Lat = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     TallyStatus = table.Column<string>(type: "varchar(15)", unicode: false, maxLength: 15, nullable: true),
                     SortOrder = table.Column<int>(type: "int", nullable: true),
-                    BallotsCollected = table.Column<int>(type: "int", nullable: true)
+                    BallotsCollected = table.Column<int>(type: "int", nullable: true),
+                    LocationTypeCode = table.Column<string>(type: "varchar(15)", unicode: false, maxLength: 15, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -461,7 +512,8 @@ namespace Backend.EF.Migrations
                     HasOnlineBallot = table.Column<bool>(type: "bit", nullable: true),
                     Flags = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     UnitName = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
-                    KioskCode = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: true)
+                    KioskCode = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: true),
+                    RegistrationHistory = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -588,6 +640,38 @@ namespace Backend.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Computers",
+                columns: table => new
+                {
+                    _RowId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ElectionGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LocationGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ComputerGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ComputerCode = table.Column<string>(type: "varchar(2)", unicode: false, maxLength: 2, nullable: false),
+                    BrowserInfo = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    LastActivity = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "(getdate())"),
+                    RegisteredAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "(getdate())"),
+                    IsActive = table.Column<bool>(type: "bit", nullable: true, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Computers", x => x._RowId);
+                    table.ForeignKey(
+                        name: "FK_Computer_Election",
+                        column: x => x.ElectionGuid,
+                        principalTable: "Elections",
+                        principalColumn: "ElectionGuid",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Computer_Location",
+                        column: x => x.LocationGuid,
+                        principalTable: "Locations",
+                        principalColumn: "LocationGuid");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Results",
                 columns: table => new
                 {
@@ -633,8 +717,8 @@ namespace Backend.EF.Migrations
                     BallotGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PositionOnBallot = table.Column<int>(type: "int", nullable: false),
                     PersonGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    StatusCode = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
-                    InvalidReasonGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    VoteStatus = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
+                    IneligibleReasonCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SingleNameElectionCount = table.Column<int>(type: "int", nullable: true),
                     _RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     PersonCombinedInfo = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -709,6 +793,23 @@ namespace Backend.EF.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Ballot_Location",
                 table: "Ballots",
+                column: "LocationGuid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Computer",
+                table: "Computers",
+                column: "ComputerGuid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Computer_Code",
+                table: "Computers",
+                columns: new[] { "ElectionGuid", "ComputerCode" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Computer_Location",
+                table: "Computers",
                 column: "LocationGuid");
 
             migrationBuilder.CreateIndex(
@@ -791,6 +892,13 @@ namespace Backend.EF.Migrations
                 columns: new[] { "CanVote", "IneligibleReasonGuid" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_PersonBahaiID",
+                table: "People",
+                columns: new[] { "ElectionGuid", "BahaiId" },
+                unique: true,
+                filter: "([BahaiId] IS NOT NULL AND [BahaiId]<>'')");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PersonElection",
                 table: "People",
                 columns: new[] { "ElectionGuid", "_FullName" });
@@ -815,6 +923,11 @@ namespace Backend.EF.Migrations
                 column: "ElectionGuid");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshToken_UserId",
+                table: "RefreshToken",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Result_Election",
                 table: "Results",
                 column: "ElectionGuid");
@@ -834,6 +947,26 @@ namespace Backend.EF.Migrations
                 table: "ResultTies",
                 columns: new[] { "ElectionGuid", "TieBreakGroup" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SecurityAuditLogs_EventType",
+                table: "SecurityAuditLogs",
+                column: "EventType");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SecurityAuditLogs_IsSuspicious",
+                table: "SecurityAuditLogs",
+                column: "IsSuspicious");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SecurityAuditLogs_Timestamp",
+                table: "SecurityAuditLogs",
+                column: "Timestamp");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SecurityAuditLogs_UserId",
+                table: "SecurityAuditLogs",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SmsLog",
@@ -888,6 +1021,9 @@ namespace Backend.EF.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Computers");
+
+            migrationBuilder.DropTable(
                 name: "ImportFiles");
 
             migrationBuilder.DropTable(
@@ -906,6 +1042,9 @@ namespace Backend.EF.Migrations
                 name: "OnlineVotingInfos");
 
             migrationBuilder.DropTable(
+                name: "RefreshToken");
+
+            migrationBuilder.DropTable(
                 name: "Results");
 
             migrationBuilder.DropTable(
@@ -913,6 +1052,9 @@ namespace Backend.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "ResultTies");
+
+            migrationBuilder.DropTable(
+                name: "SecurityAuditLogs");
 
             migrationBuilder.DropTable(
                 name: "SmsLogs");
@@ -946,6 +1088,3 @@ namespace Backend.EF.Migrations
         }
     }
 }
-
-
-

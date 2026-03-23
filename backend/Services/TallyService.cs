@@ -1,10 +1,10 @@
-﻿using Backend.DTOs.Results;
-using Backend.DTOs.SignalR;
-using Backend.Domain.Context;
+﻿using Backend.Domain.Context;
+using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using Backend.DTOs.Results;
+using Backend.DTOs.SignalR;
 using Backend.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
-using Backend.Domain.Entities;
 
 namespace Backend.Services;
 

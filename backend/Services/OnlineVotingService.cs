@@ -1,19 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+﻿using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Collections.Generic;
-using System.Net.Http.Headers;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
 using Backend.DTOs.OnlineVoting;
+using Backend.Application.Services.Auth;
 using Google.Apis.Auth;
-using MailKit.Net.Smtp;
-using MailKit.Security;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 
 namespace Backend.Services;
@@ -27,6 +26,7 @@ public class OnlineVotingService : IOnlineVotingService
     private readonly IConfiguration _configuration;
     private readonly ILogger<OnlineVotingService> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IEmailSender _emailSender;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineVotingService"/> class.
@@ -35,16 +35,19 @@ public class OnlineVotingService : IOnlineVotingService
     /// <param name="configuration">The application configuration.</param>
     /// <param name="logger">The logger instance.</param>
     /// <param name="httpClientFactory">The HTTP client factory.</param>
+    /// <param name="emailSender">The email sender service.</param>
     public OnlineVotingService(
         MainDbContext context,
         IConfiguration configuration,
         ILogger<OnlineVotingService> logger,
-        IHttpClientFactory httpClientFactory)
+        IHttpClientFactory httpClientFactory,
+        IEmailSender emailSender)
     {
         _context = context;
         _configuration = configuration;
         _logger = logger;
         _httpClientFactory = httpClientFactory;
+        _emailSender = emailSender;
     }
 
     /// <inheritdoc/>
@@ -944,13 +947,6 @@ public class OnlineVotingService : IOnlineVotingService
     /// <returns>True if the email was sent successfully, false otherwise.</returns>
     private async Task<bool> SendEmailCodeAsync(string email, string code)
     {
-        var smtpHost = _configuration["Email:SmtpHost"];
-        if (string.IsNullOrWhiteSpace(smtpHost) || smtpHost.StartsWith("<"))
-        {
-            _logger.LogWarning("Email not configured; skipping send for {Email}", email);
-            return true;
-        }
-
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(
             _configuration["Email:FromName"] ?? "TallyJ4",
@@ -968,20 +964,7 @@ public class OnlineVotingService : IOnlineVotingService
         };
         message.Body = bodyBuilder.ToMessageBody();
 
-        using var client = new SmtpClient();
-        var smtpPort = int.Parse(_configuration["Email:SmtpPort"] ?? "587");
-        var useSsl = bool.Parse(_configuration["Email:UseSsl"] ?? "true");
-        await client.ConnectAsync(smtpHost, smtpPort, useSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTlsWhenAvailable);
-
-        var username = _configuration["Email:Username"];
-        var password = _configuration["Email:Password"];
-        if (!string.IsNullOrWhiteSpace(username))
-        {
-            await client.AuthenticateAsync(username, password);
-        }
-
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
+        await _emailSender.SendAsync(message);
         _logger.LogInformation("Email verification code sent to {Email}", email);
         return true;
     }

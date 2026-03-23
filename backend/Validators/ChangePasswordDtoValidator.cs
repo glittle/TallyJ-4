@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using Backend.DTOs.Account;
+﻿using Backend.DTOs.Account;
+using FluentValidation;
 
 namespace Backend.Validators;
 
