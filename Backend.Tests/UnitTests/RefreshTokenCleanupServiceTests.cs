@@ -224,7 +224,7 @@ public class RefreshTokenCleanupServiceTests : ServiceTestBase
 
         Assert.NotNull(method);
 
-        var task = (Task)method.Invoke(_service, new object[] { CancellationToken.None });
+        var task = (Task)method.Invoke(_service, new object[] { CancellationToken.None })!;
         await task;
     }
 }

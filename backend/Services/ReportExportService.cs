@@ -1,15 +1,15 @@
-﻿using ClosedXML.Excel;
+﻿using System.Globalization;
+using Backend.DTOs.Results;
+using ClosedXML.Excel;
 using CsvHelper;
-using iText.Kernel.Pdf;
-using iText.Kernel.Font;
+using iText.IO.Font.Constants;
 using iText.Kernel.Colors;
+using iText.Kernel.Font;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
-using iText.IO.Font.Constants;
-using System.Globalization;
-using Backend.DTOs.Results;
 namespace Backend.Services;
 
 /// <summary>

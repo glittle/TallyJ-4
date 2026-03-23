@@ -1,4 +1,6 @@
-﻿namespace Backend.DTOs.Locations;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Locations;
 
 /// <summary>
 /// Data transfer object representing a voting location.
@@ -49,6 +51,11 @@ public class LocationDto
     /// The number of ballots collected at this location.
     /// </summary>
     public int? BallotsCollected { get; set; }
+
+    /// <summary>
+    /// The type of location: Manual, Online, or Imported.
+    /// </summary>
+    public LocationType? LocationType { get; set; }
 }
 
 

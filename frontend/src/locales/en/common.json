@@ -1,6 +1,7 @@
 {
   "common.actionIrreversible": "This action cannot be undone.",
   "common.actions": "Actions",
+  "common.back": "Back",
   "common.cancel": "Cancel",
   "common.clear": "Clear",
   "common.copied": "Copied to clipboard",

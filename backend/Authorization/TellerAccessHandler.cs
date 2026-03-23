@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Backend.Domain.Context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Backend.Domain.Context;
 
 namespace Backend.Authorization;
 
@@ -64,7 +64,7 @@ public class TellerAccessHandler : AuthorizationHandler<TellerAccessRequirement>
         var electionGuidClaim = user.FindFirst("electionGuid")?.Value;
         var authMethod = user.FindFirst("authMethod")?.Value;
 
-        if (bool.TryParse(isTellerClaim, out var isGuestTeller) && isGuestTeller && 
+        if (bool.TryParse(isTellerClaim, out var isGuestTeller) && isGuestTeller &&
             string.Equals(authMethod, "AccessCode", StringComparison.OrdinalIgnoreCase))
         {
             // Guest teller authenticated with access code

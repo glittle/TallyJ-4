@@ -1,6 +1,6 @@
-﻿using Backend.DTOs.SignalR;
+﻿using Backend.DTOs.FrontDesk;
 using Backend.DTOs.Results;
-using Backend.DTOs.FrontDesk;
+using Backend.DTOs.SignalR;
 
 namespace Backend.Services;
 

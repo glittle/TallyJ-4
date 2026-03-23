@@ -9,18 +9,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Backend.EF.Migrations
+namespace Backend.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20260307133759_Votes")]
-    partial class Votes
+    [Migration("20260322204412_InitialMar2026")]
+    partial class InitialMar2026
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.1")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -447,6 +447,11 @@ namespace Backend.EF.Migrations
 
                     b.Property<Guid>("LocationGuid")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LocationTypeCode")
+                        .HasMaxLength(15)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(15)");
 
                     b.Property<string>("Long")
                         .HasMaxLength(50)
@@ -1401,6 +1406,9 @@ namespace Backend.EF.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TelegramId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")

@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Backend.Domain.Context;
+﻿using Backend.Domain.Context;
 using Backend.Domain.Enumerations;
 using Backend.DTOs.SuperAdmin;
 using Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 

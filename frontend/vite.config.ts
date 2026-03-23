@@ -65,19 +65,29 @@ export default defineConfig(async () => {
   ],
   build: {
     rollupOptions: {
+      onwarn(warning, warn) {
+        if (
+          warning.code === "INVALID_ANNOTATION" &&
+          warning.id?.includes("@microsoft/signalr")
+        ) {
+          return;
+        }
+        warn(warning);
+      },
       output: {
         manualChunks: (id) => {
           // Vendor chunks
           if (id.includes("node_modules")) {
-            if (
-              id.includes("vue") ||
-              id.includes("vue-router") ||
-              id.includes("pinia")
-            ) {
-              return "vue-vendor";
-            }
             if (id.includes("element-plus")) {
               return "element-plus";
+            }
+            if (
+              id.includes("/vue/") ||
+              id.includes("/vue-router/") ||
+              id.includes("/pinia/") ||
+              id.includes("/@vue/")
+            ) {
+              return "vue-vendor";
             }
             if (id.includes("vue-i18n") || id.includes("@intlify")) {
               return "i18n";
@@ -95,6 +105,16 @@ export default defineConfig(async () => {
             return "vendor";
           }
           // Feature chunks
+          if (id.includes("/src/pages/voting/")) {
+            return "voting";
+          }
+          if (
+            id.includes("/src/layouts/MainLayout") ||
+            id.includes("/src/components/AppHeader") ||
+            id.includes("/src/components/AppSidebar")
+          ) {
+            return "admin-layout";
+          }
           if (id.includes("/src/pages/elections/")) {
             return "elections";
           }
@@ -106,6 +126,9 @@ export default defineConfig(async () => {
           }
           if (id.includes("/src/pages/ballots/")) {
             return "ballots";
+          }
+          if (id.includes("/src/pages/SuperAdminDashboardPage")) {
+            return "super-admin";
           }
         },
         chunkFileNames: "assets/[name]-[hash].js",

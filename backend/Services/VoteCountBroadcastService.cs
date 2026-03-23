@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Context;
 using Backend.DTOs.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 

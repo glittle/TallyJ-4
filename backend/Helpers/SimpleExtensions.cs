@@ -7,10 +7,10 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
+using Backend.Domain.Enumerations;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Backend.Domain.Enumerations;
 using static System.Threading.Thread;
 using Formatting = Newtonsoft.Json.Formatting;
 

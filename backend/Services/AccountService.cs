@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Backend.Domain.Identity;
 using Backend.DTOs.Account;
-using Backend.Domain.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Services;
 

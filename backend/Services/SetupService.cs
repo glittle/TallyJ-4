@@ -1,11 +1,11 @@
-﻿using Mapster;
-using Microsoft.EntityFrameworkCore;
+﻿using Backend.Domain.Context;
+using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
 using Backend.DTOs.Elections;
 using Backend.DTOs.Setup;
-using Backend.Domain.Context;
-using Backend.Domain.Entities;
+using Mapster;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 

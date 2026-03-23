@@ -23,7 +23,7 @@ public class JwtTokenServiceTests
         };
 
         _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(config)
+            .AddInMemoryCollection(config.Select(kvp => new KeyValuePair<string, string?>(kvp.Key, kvp.Value)))
             .Build();
 
         _service = new JwtTokenService(_configuration);
@@ -144,7 +144,7 @@ public class JwtTokenServiceTests
         };
 
         var expiredConfig = new ConfigurationBuilder()
-            .AddInMemoryCollection(configWithShortExpiry)
+            .AddInMemoryCollection(configWithShortExpiry.Select(kvp => new KeyValuePair<string, string?>(kvp.Key, kvp.Value)))
             .Build();
 
         var expiredService = new JwtTokenService(expiredConfig);
@@ -172,7 +172,7 @@ public class JwtTokenServiceTests
         };
 
         var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(incompleteConfig)
+            .AddInMemoryCollection(incompleteConfig.Select(kvp => new KeyValuePair<string, string?>(kvp.Key, kvp.Value)))
             .Build();
 
         var service = new JwtTokenService(configuration);

@@ -3,6 +3,7 @@ using Backend.Middleware;
 using Xunit;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Backend.Tests.UnitTests;
@@ -44,21 +45,21 @@ public class SecureCookieMiddlewareTests
 
         // Check user email cookie
         var emailCookie = cookies.First(c => c.Name == SecureCookieMiddleware.UserEmailCookieName);
-        Assert.Equal(email, Uri.UnescapeDataString(emailCookie.Value.Value));
+        Assert.Equal(email, Uri.UnescapeDataString(emailCookie.Value.Value!));
         Assert.False(emailCookie.HttpOnly); // User info cookies are not httpOnly
         Assert.True(emailCookie.Secure);
         Assert.Equal("Strict", emailCookie.SameSite.ToString());
 
         // Check user name cookie
         var nameCookie = cookies.First(c => c.Name == SecureCookieMiddleware.UserNameCookieName);
-        Assert.Equal(name, Uri.UnescapeDataString(nameCookie.Value.Value));
+        Assert.Equal(name, Uri.UnescapeDataString(nameCookie.Value.Value!));
         Assert.False(nameCookie.HttpOnly);
         Assert.True(nameCookie.Secure);
         Assert.Equal("Strict", nameCookie.SameSite.ToString());
 
         // Check auth method cookie
         var methodCookie = cookies.First(c => c.Name == SecureCookieMiddleware.AuthMethodCookieName);
-        Assert.Equal(authMethod, Uri.UnescapeDataString(methodCookie.Value.Value));
+        Assert.Equal(authMethod, Uri.UnescapeDataString(methodCookie.Value.Value!));
         Assert.False(methodCookie.HttpOnly);
         Assert.True(methodCookie.Secure);
         Assert.Equal("Strict", methodCookie.SameSite.ToString());
@@ -266,7 +267,19 @@ public class TestCookieCollection : IRequestCookieCollection
 
     public bool ContainsKey(string key) => _cookies.ContainsKey(key);
 
-    public bool TryGetValue(string key, out string? value) => _cookies.TryGetValue(key, out value!);
+    public bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
+    {
+        var result = _cookies.TryGetValue(key, out var value2);
+        if (!result)
+        {
+            value = null;
+        }
+        else
+        {
+            value = value2;
+        }
+        return result;
+    }
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => _cookies.GetEnumerator();
 

@@ -1,3 +1,5 @@
+export type LocationTypeCode = "Manual" | "Online" | "Imported";
+
 export interface LocationDto {
   locationGuid: string;
   electionGuid: string;
@@ -8,6 +10,7 @@ export interface LocationDto {
   tallyStatus?: string;
   sortOrder?: number;
   ballotsCollected?: number;
+  locationType?: LocationTypeCode;
 }
 
 export interface CreateLocationDto {

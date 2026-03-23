@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
 using Backend.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Backend.EF.Identity;
 

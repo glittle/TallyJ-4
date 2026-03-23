@@ -52,7 +52,8 @@ public class TwoFactorServiceTests : ServiceTestBase
         var emailConfig = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>())
             .Build();
-        _emailServiceMock = new Mock<EmailService>(emailConfig, NullLogger<EmailService>.Instance);
+        var emailSenderMock = new Mock<IEmailSender>();
+        _emailServiceMock = new Mock<EmailService>(emailConfig, NullLogger<EmailService>.Instance, emailSenderMock.Object);
 
         var config = new Dictionary<string, string?>
         {
