@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
-[Authorize]
 [Authorize(Policy = "ElectionAccess")]
 [ApiController]
 [Route("api/[controller]")]
