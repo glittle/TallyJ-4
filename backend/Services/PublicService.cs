@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Backend.DTOs.Public;
-using Backend.Domain.Context;
+﻿using Backend.Domain.Context;
 using Backend.Domain.Enumerations;
+using Backend.DTOs.Public;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 

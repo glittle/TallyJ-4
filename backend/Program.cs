@@ -1,35 +1,45 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
+﻿using System.Globalization;
 using System.Text;
-using System.Globalization;
-
+using Backend.Application.Services.Auth;
 using Backend.Domain.Context;
 using Backend.Domain.Identity;
 using Backend.EF.Data;
-using Backend.Middleware;
-using Serilog;
 using Backend.Helpers;
+using Backend.Localization;
+using Backend.Middleware;
+using Backend.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Backend.Application.Services.Auth;
-using Backend.Localization;
-using Backend.Services;
 using Mapster;
-using System.Reflection;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.Json;
-using Microsoft.Extensions.FileProviders;
-
-Console.WriteLine("Starting up..."); // for server log files
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using Serilog;
+using System.Linq;
 
 var machineName = Environment.MachineName;
 var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+var isTesting = AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "testhost");
+
+if (isTesting)
+{
+    Console.WriteLine("Starting up in TESTING mode");
+}
+if (isDevelopment)
+{
+    Console.WriteLine("Starting up in DEVELOPMENT mode");
+}
+if (!isDevelopment && !isTesting)
+{
+    Console.WriteLine("Starting up in NORMAL mode");
+}
 
 void ConfigureBuilder(WebApplicationBuilder builder)
 {
@@ -45,33 +55,36 @@ void ConfigureServices(WebApplicationBuilder builder)
     var services = builder.Services;
     var builderConfiguration = builder.Configuration;
 
-    var aspNetEnvironmentCode = builder.Environment.EnvironmentName;
+    builder.Configuration.AddJsonFile($"appsettings.{machineName}.json", optional: true, reloadOnChange: true);
 
-    builderConfiguration.AddJsonFile($"appsettings.{aspNetEnvironmentCode}.json", optional: true, reloadOnChange: true);
-    builderConfiguration.AddJsonFile($"appsettings.{machineName}.json", optional: true, reloadOnChange: true);
-    builderConfiguration.AddJsonFile($"c:\\dev\\tallyj\\v4\\appsettings.json", optional: true, reloadOnChange: true);
-    builderConfiguration.AddJsonFile($"c:\\AppSettings\\TallyJ4.json", optional: true, reloadOnChange: true);
+    // look in a folder given by an environment variable, useful for docker and some hosting environments
+    var envConfigPath = Environment.GetEnvironmentVariable("TALLYJ_CONFIG_PATH");
+    if (!string.IsNullOrEmpty(envConfigPath))
+    {
+        builder.Configuration.AddJsonFile(envConfigPath, optional: true, reloadOnChange: true);
+    }
 
-    var filesAttempted = builder.Configuration.Sources
-        .OfType<JsonConfigurationSource>()
-        .Where(s => s.Path != null)
-        .Select(s => Path.Combine((s.FileProvider as PhysicalFileProvider)?.Root ?? "", s.Path!));
+    // Look in a fixed shared location... easier for some environments to keep it outside of the repo folders
+    builder.Configuration.AddJsonFile($"c:\\AppSettings\\TallyJ4.json", optional: true, reloadOnChange: true);
 
-    Log.Information(
-      "Configuration files potentially loaded:\n{Files}",
-      string.Join("\n", filesAttempted)
-    );
+    foreach (var fileInfo in from provider in ((IConfigurationRoot)builder.Configuration).Providers.OfType<JsonConfigurationProvider>()
+                             let fileInfo = provider.Source.FileProvider?.GetFileInfo(provider.Source.Path ?? "")
+                             where fileInfo?.Exists == true
+                             select fileInfo)
+    {
+        Log.Information("Loaded config {Path}", fileInfo.PhysicalPath);
+    }
 
-    if (!builder.Environment.IsEnvironment("Testing"))
+    if (!isTesting)
     {
         var connectionStringName = "TallyJ4";
         var connectionString = builderConfiguration.GetConnectionString(connectionStringName);
 
-        var regex = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
+        var regexToRemovePw = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
         Log.Information(
           "Connection string {Name}: {ConnectionString}",
           connectionStringName,
-          regex.Replace(connectionString ?? "(Empty)", "Password=******;")
+          regexToRemovePw.Replace(connectionString ?? "(Empty)", "---;")
         );
         if (connectionString == null)
         {
@@ -133,11 +146,11 @@ void ConfigureServices(WebApplicationBuilder builder)
     services.AddHttpClient("GreenApi");
     services.AddHttpClient("Facebook", c =>
     {
-        c.BaseAddress = new Uri("https://graph.facebook.com");
+        c.BaseAddress = new Uri(builderConfiguration["Facebook:BaseUrl"]!);
     });
     services.AddHttpClient("Kakao", c =>
     {
-        c.BaseAddress = new Uri("https://kapi.kakao.com");
+        c.BaseAddress = new Uri(builderConfiguration["KakaoApi:BaseUrl"]!);
     });
 
     services.AddHttpContextAccessor();
@@ -213,7 +226,7 @@ void ConfigureAuthentication(IServiceCollection services, IConfiguration configu
     var googleClientSecret = configuration["Google:ClientSecret"];
 
     if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret)
-        && !googleClientId.StartsWith("<") && !googleClientSecret.StartsWith("<"))
+        && !googleClientId.StartsWith('<') && !googleClientSecret.StartsWith('<'))
     {
         services.AddAuthentication()
             .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
@@ -292,8 +305,7 @@ void RegisterApplicationServices(IServiceCollection services)
     services.AddScoped<Backend.Services.IAccountService, Backend.Services.AccountService>();
     services.AddScoped<Backend.Services.IPublicService, Backend.Services.PublicService>();
     services.AddScoped<Backend.Services.ITallyService, Backend.Services.TallyService>();
-    services.AddScoped<Backend.Services.IReportExportService, Backend.Services.ReportExportService>();
-    services.AddScoped<Backend.Services.IAdvancedReportingService, Backend.Services.AdvancedReportingService>();
+    services.AddScoped<Backend.Services.IReportService, Backend.Services.ReportService>();
     services.AddScoped<Backend.Services.IFrontDeskService, Backend.Services.FrontDeskService>();
     services.AddScoped<Backend.Services.IOnlineVotingService, Backend.Services.OnlineVotingService>();
     services.AddScoped<Backend.Services.IAuditLogService, Backend.Services.AuditLogService>();
@@ -304,6 +316,7 @@ void RegisterApplicationServices(IServiceCollection services)
 
 void RegisterAuthServices(IServiceCollection services)
 {
+    services.AddScoped<IEmailSender, SmtpEmailSender>();
     services.AddScoped<IJwtTokenService, JwtTokenService>();
     services.AddScoped<EmailService>();
     services.AddScoped<ILocalAuthService, LocalAuthService>();
@@ -316,9 +329,15 @@ void RegisterAuthServices(IServiceCollection services)
 
 void RegisterBackgroundServices(IServiceCollection services)
 {
-    services.AddHostedService<RefreshTokenCleanupService>();
-
     services.AddSingleton<Backend.Middleware.RateLimitStore>();
+
+    if (isTesting) // don't register the real broadcast service during testing, to avoid interference with tests and allow testing of the broadcast mechanism itself
+    {
+        services.AddSingleton<IVoteCountBroadcastService, NullVoteCountBroadcastService>();
+        return;
+    }
+
+    services.AddHostedService<RefreshTokenCleanupService>();
     services.AddSingleton<VoteCountBroadcastService>();
     services.AddSingleton<IVoteCountBroadcastService>(sp => sp.GetRequiredService<VoteCountBroadcastService>());
     services.AddHostedService(sp => sp.GetRequiredService<VoteCountBroadcastService>());
@@ -362,13 +381,6 @@ void ConfigureSwagger(IServiceCollection services)
             Description = "JWT Authorization header using the Bearer scheme. Enter your token in the text input below."
         });
 
-        options.IncludeXmlComments(
-        Path.Combine(
-          AppContext.BaseDirectory,
-          $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"
-        )
-      );
-
         options.DocInclusionPredicate((docName, apiDesc) =>
         {
             return apiDesc.RelativePath?.StartsWith("api/") == true;
@@ -382,9 +394,10 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     {
         app.WriteOpenApiSpecToFile(Path.Combine("..", "frontend", "openApi", "tallyj.json"));
 
-        var seedOnStartup = configuration.GetValue<bool>("Database:SeedOnStartup", true);
+        var seedOnStartup = configuration.GetValue("Database:SeedOnStartup", false);
         if (seedOnStartup)
         {
+            Log.Information("Seeding database on startup as configured");
             using var scope = app.Services.CreateScope();
 
             var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
@@ -395,6 +408,10 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
             await context.Database.MigrateAsync();
             await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
         }
+    }
+    else
+    {
+        Log.Information("Not migrating or seeding database on startup in non-development environment");
     }
 
     app.UseExceptionHandler();

@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Collections.Generic;
 using Backend.Application.DTOs.Auth;
 using Backend.Application.Services.Auth;
 using Backend.Authorization;
@@ -21,6 +17,10 @@ using Backend.Services;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Backend.Controllers;
@@ -1132,7 +1132,7 @@ public class AuthController : ControllerBase
             var fbId = doc.RootElement.TryGetProperty("id", out var idElement) ? idElement.GetString() : null;
             var displayName = doc.RootElement.TryGetProperty("name", out var nameElement) ? nameElement.GetString() : null;
 
-            if (string.IsNullOrEmpty(fbId)) 
+            if (string.IsNullOrEmpty(fbId))
             {
                 return BadRequest(new { error = "ID not provided by Facebook." });
             }
@@ -1298,7 +1298,7 @@ public class AuthController : ControllerBase
                 _logger.LogWarning("Failed to add {Provider} login to user {Email}: {Errors}",
                     provider, email, string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
             }
-            
+
             var methods = string.IsNullOrEmpty(user.AuthMethod) ? new List<string>() : new List<string>(user.AuthMethod.Split(','));
             if (!methods.Contains(provider))
             {

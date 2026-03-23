@@ -1,12 +1,12 @@
-﻿using Mapster;
-using Microsoft.EntityFrameworkCore;
-using Backend.DTOs.People;
-using Backend.DTOs.SignalR;
-using Backend.Domain.Context;
+﻿using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using Backend.DTOs.People;
+using Backend.DTOs.SignalR;
 using Backend.Models;
+using Mapster;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 

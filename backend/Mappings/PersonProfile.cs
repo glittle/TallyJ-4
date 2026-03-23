@@ -1,9 +1,9 @@
-using Backend.DTOs.People;
-using Backend.DTOs.FrontDesk;
+using System.Text.Json;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using Backend.DTOs.FrontDesk;
+using Backend.DTOs.People;
 using Mapster;
-using System.Text.Json;
 
 namespace Backend.Mappings;
 

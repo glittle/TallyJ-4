@@ -1,5 +1,3 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MimeKit;
@@ -11,11 +9,13 @@ public class EmailService
     private const string defaultReplyFromEmail = "noreply@tallyj.com";
     private readonly IConfiguration _configuration;
     private readonly ILogger<EmailService> _logger;
+    private readonly IEmailSender _emailSender;
 
-    public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
+    public EmailService(IConfiguration configuration, ILogger<EmailService> logger, IEmailSender emailSender)
     {
         _configuration = configuration;
         _logger = logger;
+        _emailSender = emailSender;
     }
 
     public virtual async Task SendPasswordResetEmailAsync(string toEmail, string resetToken)
@@ -55,25 +55,7 @@ If you did not request this reset, please ignore this email.
 
         try
         {
-            using var client = new SmtpClient();
-            var smtpHost = _configuration["Email:SmtpHost"];
-            var smtpPort = int.Parse(_configuration["Email:SmtpPort"] ?? "587");
-            var useSsl = bool.Parse(_configuration["Email:UseSsl"] ?? "true");
-
-            await client.ConnectAsync(smtpHost, smtpPort,
-                useSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
-
-            var username = _configuration["Email:Username"];
-            var password = _configuration["Email:Password"];
-
-            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
-            {
-                await client.AuthenticateAsync(username, password);
-            }
-
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
-
+            await _emailSender.SendAsync(message);
             _logger.LogInformation("Password reset email sent to {Email}", toEmail);
         }
         catch (Exception ex)
@@ -115,25 +97,7 @@ If you did not enable 2FA, please contact support immediately.
 
         try
         {
-            using var client = new SmtpClient();
-            var smtpHost = _configuration["Email:SmtpHost"];
-            var smtpPort = int.Parse(_configuration["Email:SmtpPort"] ?? "587");
-            var useSsl = bool.Parse(_configuration["Email:UseSsl"] ?? "true");
-
-            await client.ConnectAsync(smtpHost, smtpPort,
-                useSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
-
-            var username = _configuration["Email:Username"];
-            var password = _configuration["Email:Password"];
-
-            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
-            {
-                await client.AuthenticateAsync(username, password);
-            }
-
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
-
+            await _emailSender.SendAsync(message);
             _logger.LogInformation("2FA setup email sent to {Email}", toEmail);
         }
         catch (Exception ex)
@@ -182,25 +146,7 @@ If you did not create this account, please ignore this email.
 
         try
         {
-            using var client = new SmtpClient();
-            var smtpHost = _configuration["Email:SmtpHost"];
-            var smtpPort = int.Parse(_configuration["Email:SmtpPort"] ?? "587");
-            var useSsl = bool.Parse(_configuration["Email:UseSsl"] ?? "true");
-
-            await client.ConnectAsync(smtpHost, smtpPort,
-                useSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
-
-            var username = _configuration["Email:Username"];
-            var password = _configuration["Email:Password"];
-
-            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
-            {
-                await client.AuthenticateAsync(username, password);
-            }
-
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
-
+            await _emailSender.SendAsync(message);
             _logger.LogInformation("Email verification email sent to {Email}", toEmail);
         }
         catch (Exception ex)
@@ -210,5 +156,3 @@ If you did not create this account, please ignore this email.
         }
     }
 }
-
-

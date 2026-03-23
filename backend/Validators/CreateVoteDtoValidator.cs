@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using Backend.DTOs.Votes;
+﻿using Backend.DTOs.Votes;
+using FluentValidation;
 
 namespace Backend.Validators;
 

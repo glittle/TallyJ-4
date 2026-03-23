@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <UserSecretsId>617c8fa8-7fec-4b4b-a655-946cda25beff</UserSecretsId>
     <AssemblyName>Backend</AssemblyName>
     <RootNamespace>Backend</RootNamespace>

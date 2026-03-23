@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Backend.Domain.Context;
+﻿using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services.Analyzers;
 
@@ -149,7 +149,7 @@ public abstract class ElectionAnalyzerBase
         }
 
         var isSingleName = IsSingleNameElection();
-        var numberToElect = TargetElection.NumberToElect.Value;
+        var numberToElect = TargetElection.NumberToElect!.Value;
         var ballotAnalyzer = new BallotAnalyzer(numberToElect, isSingleName);
 
         // Pre-group votes by BallotGuid for O(1) lookup instead of O(votes) per ballot
@@ -209,7 +209,7 @@ public abstract class ElectionAnalyzerBase
 
         ResultSummaryCalc.BallotsNeedingReview = Ballots.Count(b => BallotAnalyzer.BallotNeedsReview(b.StatusCode));
 
-        ResultSummaryCalc.TotalVotes = Ballots.Count * TargetElection.NumberToElect.Value;
+        ResultSummaryCalc.TotalVotes = Ballots.Count * TargetElection.NumberToElect!.Value;
 
         var invalidBallotGuids = Ballots
             .Where(b => b.StatusCode != BallotStatus.Ok)
@@ -251,7 +251,7 @@ public abstract class ElectionAnalyzerBase
 
     internal void DetermineOrderAndSections()
     {
-        var numberToElect = TargetElection.NumberToElect.Value;
+        var numberToElect = TargetElection.NumberToElect!.Value;
         var numberExtra = TargetElection.NumberExtra ?? 0;
         var ordinalRank = 0;
         var ordinalRankInExtra = 0;
@@ -424,13 +424,10 @@ public abstract class ElectionAnalyzerBase
             }
         }
 
-        if (groupInTop)
+        if (groupInTop && !groupOnlyInTop)
         {
-            if (!groupOnlyInTop)
-            {
-                resultTie.NumToElect += results.Count(r => r.Section == "E");
-                resultTie.TieBreakRequired = true;
-            }
+            resultTie.NumToElect += results.Count(r => r.Section == "E");
+            resultTie.TieBreakRequired = true;
         }
 
         if (groupInExtra)

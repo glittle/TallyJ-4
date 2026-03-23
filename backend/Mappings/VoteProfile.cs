@@ -1,5 +1,5 @@
-using Backend.DTOs.Votes;
 using Backend.Domain.Entities;
+using Backend.DTOs.Votes;
 using Mapster;
 
 namespace Backend.Mappings;

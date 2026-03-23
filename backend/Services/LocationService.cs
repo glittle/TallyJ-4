@@ -1,10 +1,10 @@
-﻿using Mapster;
-using Microsoft.EntityFrameworkCore;
-using Backend.DTOs.Locations;
-using Backend.Domain.Context;
+﻿using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.DTOs.Locations;
 using Backend.Models;
+using Mapster;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 

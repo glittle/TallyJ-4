@@ -1,7 +1,7 @@
+using System.Text.Json;
 using Backend.Domain.Entities;
 using Backend.DTOs.Security;
 using Mapster;
-using System.Text.Json;
 
 namespace Backend.Mappings;
 
