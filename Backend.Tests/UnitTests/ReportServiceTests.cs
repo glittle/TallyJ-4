@@ -6,7 +6,7 @@ using LocationTypeEnum = Backend.Domain.Enumerations.LocationType;
 
 namespace Backend.Tests.UnitTests;
 
-public class ReportServiceTests : ServiceTestBase
+public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
 {
     private readonly ReportService _service;
     private readonly Guid _electionGuid = Guid.NewGuid();
@@ -14,10 +14,16 @@ public class ReportServiceTests : ServiceTestBase
     public ReportServiceTests()
     {
         _service = new ReportService(Context);
-        SeedElection();
     }
 
-    private void SeedElection(
+    public async Task InitializeAsync()
+    {
+        await SeedElection();
+    }
+
+    public Task DisposeAsync() => Task.CompletedTask;
+
+    private async Task SeedElection(
         string name = "Test Election",
         string electionType = "LSA",
         int numberToElect = 3,
@@ -31,7 +37,6 @@ public class ReportServiceTests : ServiceTestBase
         if (existing != null)
         {
             Context.Elections.Remove(existing);
-            Context.SaveChangesAsync().GetAwaiter().GetResult();
         }
 
         Context.Elections.Add(new Election
@@ -48,10 +53,10 @@ public class ReportServiceTests : ServiceTestBase
             Flags = flags,
             RowVersion = new byte[8]
         });
-        Context.SaveChangesAsync().GetAwaiter().GetResult();
+        await Context.SaveChangesAsync();
     }
 
-    private Location AddLocation(string name = "Main Hall", LocationTypeEnum locType = LocationTypeEnum.Manual)
+    private async Task<Location> AddLocation(string name = "Main Hall", LocationTypeEnum locType = LocationTypeEnum.Manual)
     {
         var loc = new Location
         {
@@ -61,11 +66,11 @@ public class ReportServiceTests : ServiceTestBase
             LocationTypeCode = locType.ToString()
         };
         Context.Locations.Add(loc);
-        Context.SaveChangesAsync().GetAwaiter().GetResult();
+        await Context.SaveChangesAsync();
         return loc;
     }
 
-    private Person AddPerson(
+    private async Task<Person> AddPerson(
         string lastName = "Doe",
         string? firstName = "John",
         bool canVote = true,
@@ -100,11 +105,11 @@ public class ReportServiceTests : ServiceTestBase
             RowVersion = new byte[8]
         };
         Context.People.Add(person);
-        Context.SaveChangesAsync().GetAwaiter().GetResult();
+        await Context.SaveChangesAsync();
         return person;
     }
 
-    private void AddResult(Guid personGuid, int rank, int voteCount, string section = "T",
+    private async Task AddResult(Guid personGuid, int rank, int voteCount, string section = "T",
         bool? tieBreakRequired = null, int? tieBreakCount = null, int? rankInExtra = null)
     {
         var result = new Result
@@ -119,10 +124,10 @@ public class ReportServiceTests : ServiceTestBase
             RankInExtra = rankInExtra
         };
         Context.Results.Add(result);
-        Context.SaveChangesAsync().GetAwaiter().GetResult();
+        await Context.SaveChangesAsync();
     }
 
-    private Ballot AddBallot(Guid locationGuid, BallotStatus status = BallotStatus.Ok,
+    private async Task<Ballot> AddBallot(Guid locationGuid, BallotStatus status = BallotStatus.Ok,
         string computerCode = "A", int ballotNum = 1, string? teller1 = null, string? teller2 = null)
     {
         var ballot = new Ballot
@@ -137,11 +142,11 @@ public class ReportServiceTests : ServiceTestBase
             RowVersion = new byte[8]
         };
         Context.Ballots.Add(ballot);
-        Context.SaveChangesAsync().GetAwaiter().GetResult();
+        await Context.SaveChangesAsync();
         return ballot;
     }
 
-    private void AddVote(Guid ballotGuid, Guid? personGuid = null, int position = 1,
+    private async Task AddVote(Guid ballotGuid, Guid? personGuid = null, int position = 1,
         VoteStatus voteStatus = VoteStatus.Ok, string? ineligibleReasonCode = null)
     {
         var vote = new Vote
@@ -154,10 +159,10 @@ public class ReportServiceTests : ServiceTestBase
             RowVersion = new byte[8]
         };
         Context.Votes.Add(vote);
-        Context.SaveChangesAsync().GetAwaiter().GetResult();
+        await Context.SaveChangesAsync();
     }
 
-    private void AddResultSummary(int numEligible = 100, int numVoters = 80, int ballotsReceived = 80,
+    private async Task AddResultSummary(int numEligible = 100, int numVoters = 80, int ballotsReceived = 80,
         int spoiledBallots = 2, int spoiledVotes = 3, int inPerson = 60, int mailedIn = 10,
         int online = 5, int imported = 5, int? spoiledManual = null)
     {
@@ -177,13 +182,13 @@ public class ReportServiceTests : ServiceTestBase
             SpoiledManualBallots = spoiledManual
         };
         Context.ResultSummaries.Add(summary);
-        Context.SaveChangesAsync().GetAwaiter().GetResult();
+        await Context.SaveChangesAsync();
     }
 
     [Fact]
     public async Task GetAvailableReports_BaseSet_ReturnsMinimumReports()
     {
-        AddLocation("Main Hall");
+        await AddLocation("Main Hall");
 
         var reports = await _service.GetAvailableReportsAsync(_electionGuid);
 
@@ -202,8 +207,8 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetAvailableReports_OnlineEnabled_IncludesOnlineReports()
     {
-        SeedElection(onlineWhenOpen: DateTime.UtcNow);
-        AddLocation("Main Hall");
+        await SeedElection(onlineWhenOpen: DateTime.UtcNow);
+        await AddLocation("Main Hall");
 
         var reports = await _service.GetAvailableReportsAsync(_electionGuid);
 
@@ -215,8 +220,8 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetAvailableReports_ImportedEnabled_IncludesImportedReport()
     {
-        SeedElection(votingMethods: "P,IM");
-        AddLocation("Main Hall");
+        await SeedElection(votingMethods: "P,IM");
+        await AddLocation("Main Hall");
 
         var reports = await _service.GetAvailableReportsAsync(_electionGuid);
 
@@ -226,8 +231,8 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetAvailableReports_MultipleLocations_IncludesLocationReports()
     {
-        AddLocation("Hall A");
-        AddLocation("Hall B");
+        await AddLocation("Hall A");
+        await AddLocation("Hall B");
 
         var reports = await _service.GetAvailableReportsAsync(_electionGuid);
 
@@ -238,7 +243,7 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetAvailableReports_SingleLocation_ExcludesLocationReports()
     {
-        AddLocation("Main Hall");
+        await AddLocation("Main Hall");
 
         var reports = await _service.GetAvailableReportsAsync(_electionGuid);
 
@@ -249,14 +254,14 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetMainReport_ReturnsElectedAndStatistics()
     {
-        AddLocation("Hall");
-        AddResultSummary();
-        var p1 = AddPerson("Alpha", "A", canReceiveVotes: true);
-        var p2 = AddPerson("Beta", "B", canReceiveVotes: true);
-        var p3 = AddPerson("Gamma", "G", canReceiveVotes: true);
-        AddResult(p1.PersonGuid, 1, 50, "T");
-        AddResult(p2.PersonGuid, 2, 40, "T");
-        AddResult(p3.PersonGuid, 3, 30, "T");
+        await AddLocation("Hall");
+        await AddResultSummary();
+        var p1 = await AddPerson("Alpha", "A", canReceiveVotes: true);
+        var p2 = await AddPerson("Beta", "B", canReceiveVotes: true);
+        var p3 = await AddPerson("Gamma", "G", canReceiveVotes: true);
+        await AddResult(p1.PersonGuid, 1, 50, "T");
+        await AddResult(p2.PersonGuid, 2, 40, "T");
+        await AddResult(p3.PersonGuid, 3, 30, "T");
 
         var report = await _service.GetMainReportAsync(_electionGuid);
 
@@ -271,12 +276,12 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetMainReport_WithTies_SetsHasTies()
     {
-        AddLocation("Hall");
-        AddResultSummary();
-        var p1 = AddPerson("Alpha", "A");
-        var p2 = AddPerson("Beta", "B");
-        AddResult(p1.PersonGuid, 1, 50, "T", tieBreakRequired: true, tieBreakCount: 3);
-        AddResult(p2.PersonGuid, 2, 40, "T");
+        await AddLocation("Hall");
+        await AddResultSummary();
+        var p1 = await AddPerson("Alpha", "A");
+        var p2 = await AddPerson("Beta", "B");
+        await AddResult(p1.PersonGuid, 1, 50, "T", tieBreakRequired: true, tieBreakCount: 3);
+        await AddResult(p2.PersonGuid, 2, 40, "T");
 
         var report = await _service.GetMainReportAsync(_electionGuid);
 
@@ -287,16 +292,16 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetMainReport_ExtraResults_ShowsNextRank()
     {
-        AddLocation("Hall");
-        AddResultSummary();
-        var p1 = AddPerson("Alpha", "A");
-        var p2 = AddPerson("Beta", "B");
-        var p3 = AddPerson("Gamma", "G");
-        var p4 = AddPerson("Delta", "D");
-        AddResult(p1.PersonGuid, 1, 50, "T");
-        AddResult(p2.PersonGuid, 2, 40, "T");
-        AddResult(p3.PersonGuid, 3, 30, "T");
-        AddResult(p4.PersonGuid, 4, 20, "X", rankInExtra: 1);
+        await AddLocation("Hall");
+        await AddResultSummary();
+        var p1 = await AddPerson("Alpha", "A");
+        var p2 = await AddPerson("Beta", "B");
+        var p3 = await AddPerson("Gamma", "G");
+        var p4 = await AddPerson("Delta", "D");
+        await AddResult(p1.PersonGuid, 1, 50, "T");
+        await AddResult(p2.PersonGuid, 2, 40, "T");
+        await AddResult(p3.PersonGuid, 3, 30, "T");
+        await AddResult(p4.PersonGuid, 4, 20, "X", rankInExtra: 1);
 
         var report = await _service.GetMainReportAsync(_electionGuid);
 
@@ -307,11 +312,11 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetMainReport_SpoiledBallots_GroupedByReason()
     {
-        var loc = AddLocation("Hall");
-        AddResultSummary(spoiledBallots: 3);
-        AddBallot(loc.LocationGuid, BallotStatus.TooMany);
-        AddBallot(loc.LocationGuid, BallotStatus.TooMany);
-        AddBallot(loc.LocationGuid, BallotStatus.TooFew);
+        var loc = await AddLocation("Hall");
+        await AddResultSummary(spoiledBallots: 3);
+        await AddBallot(loc.LocationGuid, BallotStatus.TooMany);
+        await AddBallot(loc.LocationGuid, BallotStatus.TooMany);
+        await AddBallot(loc.LocationGuid, BallotStatus.TooFew);
 
         var report = await _service.GetMainReportAsync(_electionGuid);
 
@@ -323,7 +328,7 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetMainReport_ManualSpoiledBallots_IncludedInReasons()
     {
-        AddResultSummary(spoiledManual: 5);
+        await AddResultSummary(spoiledManual: 5);
 
         var report = await _service.GetMainReportAsync(_electionGuid);
 
@@ -333,10 +338,10 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVotesByNum_OrderedByRank()
     {
-        var p1 = AddPerson("Zulu", "Z");
-        var p2 = AddPerson("Alpha", "A");
-        AddResult(p1.PersonGuid, 1, 50, "T");
-        AddResult(p2.PersonGuid, 2, 30, "T");
+        var p1 = await AddPerson("Zulu", "Z");
+        var p2 = await AddPerson("Alpha", "A");
+        await AddResult(p1.PersonGuid, 1, 50, "T");
+        await AddResult(p2.PersonGuid, 2, 30, "T");
 
         var report = await _service.GetVotesByNumAsync(_electionGuid);
 
@@ -348,12 +353,12 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVotesByNum_ShowBreak_SetOnSectionChange()
     {
-        var p1 = AddPerson("Alpha", "A");
-        var p2 = AddPerson("Beta", "B");
-        var p3 = AddPerson("Gamma", "G");
-        AddResult(p1.PersonGuid, 1, 50, "T");
-        AddResult(p2.PersonGuid, 2, 40, "T");
-        AddResult(p3.PersonGuid, 3, 30, "O");
+        var p1 = await AddPerson("Alpha", "A");
+        var p2 = await AddPerson("Beta", "B");
+        var p3 = await AddPerson("Gamma", "G");
+        await AddResult(p1.PersonGuid, 1, 50, "T");
+        await AddResult(p2.PersonGuid, 2, 40, "T");
+        await AddResult(p3.PersonGuid, 3, 30, "O");
 
         var report = await _service.GetVotesByNumAsync(_electionGuid);
 
@@ -365,10 +370,10 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVotesByName_OrderedAlphabetically()
     {
-        var p1 = AddPerson("Zulu", "Z");
-        var p2 = AddPerson("Alpha", "A");
-        AddResult(p1.PersonGuid, 1, 50, "T");
-        AddResult(p2.PersonGuid, 2, 30, "T");
+        var p1 = await AddPerson("Zulu", "Z");
+        var p2 = await AddPerson("Alpha", "A");
+        await AddResult(p1.PersonGuid, 1, 50, "T");
+        await AddResult(p2.PersonGuid, 2, 30, "T");
 
         var report = await _service.GetVotesByNameAsync(_electionGuid);
 
@@ -378,12 +383,12 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetBallotsReport_NoFilter_ReturnsAllBallots()
     {
-        var loc = AddLocation("Hall");
-        var person = AddPerson("Test", "T");
-        var b1 = AddBallot(loc.LocationGuid);
-        var b2 = AddBallot(loc.LocationGuid, ballotNum: 2);
-        AddVote(b1.BallotGuid, person.PersonGuid, 1);
-        AddVote(b2.BallotGuid, person.PersonGuid, 1);
+        var loc = await AddLocation("Hall");
+        var person = await AddPerson("Test", "T");
+        var b1 = await AddBallot(loc.LocationGuid);
+        var b2 = await AddBallot(loc.LocationGuid, ballotNum: 2);
+        await AddVote(b1.BallotGuid, person.PersonGuid, 1);
+        await AddVote(b2.BallotGuid, person.PersonGuid, 1);
 
         var report = await _service.GetBallotsReportAsync(_electionGuid);
 
@@ -394,10 +399,10 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetBallotsReport_OnlineFilter_ReturnsOnlyOnlineBallots()
     {
-        var manualLoc = AddLocation("Hall", LocationTypeEnum.Manual);
-        var onlineLoc = AddLocation("Online", LocationTypeEnum.Online);
-        AddBallot(manualLoc.LocationGuid);
-        AddBallot(onlineLoc.LocationGuid);
+        var manualLoc = await AddLocation("Hall", LocationTypeEnum.Manual);
+        var onlineLoc = await AddLocation("Online", LocationTypeEnum.Online);
+        await AddBallot(manualLoc.LocationGuid);
+        await AddBallot(onlineLoc.LocationGuid);
 
         var report = await _service.GetBallotsReportAsync(_electionGuid, "Online");
 
@@ -408,10 +413,10 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetBallotsReport_ImportedFilter_ReturnsOnlyImportedBallots()
     {
-        var manualLoc = AddLocation("Hall", LocationTypeEnum.Manual);
-        var importedLoc = AddLocation("Imported", LocationTypeEnum.Imported);
-        AddBallot(manualLoc.LocationGuid);
-        AddBallot(importedLoc.LocationGuid);
+        var manualLoc = await AddLocation("Hall", LocationTypeEnum.Manual);
+        var importedLoc = await AddLocation("Imported", LocationTypeEnum.Imported);
+        await AddBallot(manualLoc.LocationGuid);
+        await AddBallot(importedLoc.LocationGuid);
 
         var report = await _service.GetBallotsReportAsync(_electionGuid, "Imported");
 
@@ -422,17 +427,17 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetBallotsReport_TiedFilter_ReturnsBallotsWithTiedCandidates()
     {
-        var loc = AddLocation("Hall");
-        var tiedPerson = AddPerson("Tied", "T");
-        var normalPerson = AddPerson("Normal", "N");
-        AddResult(tiedPerson.PersonGuid, 1, 50, "T", tieBreakRequired: true);
-        AddResult(normalPerson.PersonGuid, 2, 30, "T");
+        var loc = await AddLocation("Hall");
+        var tiedPerson = await AddPerson("Tied", "T");
+        var normalPerson = await AddPerson("Normal", "N");
+        await AddResult(tiedPerson.PersonGuid, 1, 50, "T", tieBreakRequired: true);
+        await AddResult(normalPerson.PersonGuid, 2, 30, "T");
 
-        var b1 = AddBallot(loc.LocationGuid);
-        AddVote(b1.BallotGuid, tiedPerson.PersonGuid, 1);
+        var b1 = await AddBallot(loc.LocationGuid);
+        await AddVote(b1.BallotGuid, tiedPerson.PersonGuid, 1);
 
-        var b2 = AddBallot(loc.LocationGuid, ballotNum: 2);
-        AddVote(b2.BallotGuid, normalPerson.PersonGuid, 1);
+        var b2 = await AddBallot(loc.LocationGuid, ballotNum: 2);
+        await AddVote(b2.BallotGuid, normalPerson.PersonGuid, 1);
 
         var report = await _service.GetBallotsReportAsync(_electionGuid, "Tied");
 
@@ -443,9 +448,9 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetBallotsReport_SingleNameElection_SetsFlag()
     {
-        SeedElection(electionType: "Con");
-        var loc = AddLocation("Hall");
-        AddBallot(loc.LocationGuid);
+        await SeedElection(electionType: "Con");
+        var loc = await AddLocation("Hall");
+        await AddBallot(loc.LocationGuid);
 
         var report = await _service.GetBallotsReportAsync(_electionGuid);
 
@@ -455,21 +460,21 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetBallotAlignment_CountsMatchingVotes()
     {
-        var loc = AddLocation("Hall");
-        var p1 = AddPerson("A", "A");
-        var p2 = AddPerson("B", "B");
-        var p3 = AddPerson("C", "C");
-        AddResult(p1.PersonGuid, 1, 50, "T");
-        AddResult(p2.PersonGuid, 2, 40, "T");
-        AddResult(p3.PersonGuid, 3, 30, "T");
+        var loc = await AddLocation("Hall");
+        var p1 = await AddPerson("A", "A");
+        var p2 = await AddPerson("B", "B");
+        var p3 = await AddPerson("C", "C");
+        await AddResult(p1.PersonGuid, 1, 50, "T");
+        await AddResult(p2.PersonGuid, 2, 40, "T");
+        await AddResult(p3.PersonGuid, 3, 30, "T");
 
-        var b1 = AddBallot(loc.LocationGuid);
-        AddVote(b1.BallotGuid, p1.PersonGuid, 1);
-        AddVote(b1.BallotGuid, p2.PersonGuid, 2);
-        AddVote(b1.BallotGuid, p3.PersonGuid, 3);
+        var b1 = await AddBallot(loc.LocationGuid);
+        await AddVote(b1.BallotGuid, p1.PersonGuid, 1);
+        await AddVote(b1.BallotGuid, p2.PersonGuid, 2);
+        await AddVote(b1.BallotGuid, p3.PersonGuid, 3);
 
-        var b2 = AddBallot(loc.LocationGuid, ballotNum: 2);
-        AddVote(b2.BallotGuid, p1.PersonGuid, 1);
+        var b2 = await AddBallot(loc.LocationGuid, ballotNum: 2);
+        await AddVote(b2.BallotGuid, p1.PersonGuid, 1);
 
         var report = await _service.GetBallotAlignmentAsync(_electionGuid);
 
@@ -481,13 +486,13 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetBallotsSame_FindsDuplicateBallots()
     {
-        var loc = AddLocation("Hall");
-        var person = AddPerson("Test", "T");
+        var loc = await AddLocation("Hall");
+        var person = await AddPerson("Test", "T");
 
-        var b1 = AddBallot(loc.LocationGuid);
-        AddVote(b1.BallotGuid, person.PersonGuid, 1);
-        var b2 = AddBallot(loc.LocationGuid, ballotNum: 2);
-        AddVote(b2.BallotGuid, person.PersonGuid, 1);
+        var b1 = await AddBallot(loc.LocationGuid);
+        await AddVote(b1.BallotGuid, person.PersonGuid, 1);
+        var b2 = await AddBallot(loc.LocationGuid, ballotNum: 2);
+        await AddVote(b2.BallotGuid, person.PersonGuid, 1);
 
         var report = await _service.GetBallotsSameAsync(_electionGuid);
 
@@ -498,14 +503,14 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetBallotsSame_NoDuplicates_ReturnsEmpty()
     {
-        var loc = AddLocation("Hall");
-        var p1 = AddPerson("Alpha", "A");
-        var p2 = AddPerson("Beta", "B");
+        var loc = await AddLocation("Hall");
+        var p1 = await AddPerson("Alpha", "A");
+        var p2 = await AddPerson("Beta", "B");
 
-        var b1 = AddBallot(loc.LocationGuid);
-        AddVote(b1.BallotGuid, p1.PersonGuid, 1);
-        var b2 = AddBallot(loc.LocationGuid, ballotNum: 2);
-        AddVote(b2.BallotGuid, p2.PersonGuid, 1);
+        var b1 = await AddBallot(loc.LocationGuid);
+        await AddVote(b1.BallotGuid, p1.PersonGuid, 1);
+        var b2 = await AddBallot(loc.LocationGuid, ballotNum: 2);
+        await AddVote(b2.BallotGuid, p2.PersonGuid, 1);
 
         var report = await _service.GetBallotsSameAsync(_electionGuid);
 
@@ -515,10 +520,10 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetBallotsSummary_ReturnsBallotInfo()
     {
-        var loc = AddLocation("Hall");
-        var b = AddBallot(loc.LocationGuid, teller1: "Alice", teller2: "Bob");
-        AddVote(b.BallotGuid, position: 1, voteStatus: VoteStatus.Spoiled);
-        AddVote(b.BallotGuid, position: 2);
+        var loc = await AddLocation("Hall");
+        var b = await AddBallot(loc.LocationGuid, teller1: "Alice", teller2: "Bob");
+        await AddVote(b.BallotGuid, position: 1, voteStatus: VoteStatus.Spoiled);
+        await AddVote(b.BallotGuid, position: 2);
 
         var report = await _service.GetBallotsSummaryAsync(_electionGuid);
 
@@ -531,9 +536,9 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetBallotsSummary_SpoiledBallot_ZeroSpoiledVoteCount()
     {
-        var loc = AddLocation("Hall");
-        var b = AddBallot(loc.LocationGuid, status: BallotStatus.TooMany);
-        AddVote(b.BallotGuid, position: 1, voteStatus: VoteStatus.Spoiled);
+        var loc = await AddLocation("Hall");
+        var b = await AddBallot(loc.LocationGuid, status: BallotStatus.TooMany);
+        await AddVote(b.BallotGuid, position: 1, voteStatus: VoteStatus.Spoiled);
 
         var report = await _service.GetBallotsSummaryAsync(_electionGuid);
 
@@ -544,8 +549,8 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetAllCanReceive_ReturnsEligiblePeople()
     {
-        AddPerson("Eligible", "E", canReceiveVotes: true);
-        AddPerson("Ineligible", "I", canReceiveVotes: false);
+        await AddPerson("Eligible", "E", canReceiveVotes: true);
+        await AddPerson("Ineligible", "I", canReceiveVotes: false);
 
         var report = await _service.GetAllCanReceiveAsync(_electionGuid);
 
@@ -555,10 +560,10 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVoters_ReturnsVoterParticipation()
     {
-        var loc = AddLocation("Hall");
-        AddPerson("Voted", "V", canVote: true, votingMethod: "P", votingLocationGuid: loc.LocationGuid);
-        AddPerson("NotVoted", "N", canVote: true);
-        AddPerson("CantVote", "C", canVote: false);
+        var loc = await AddLocation("Hall");
+        await AddPerson("Voted", "V", canVote: true, votingMethod: "P", votingLocationGuid: loc.LocationGuid);
+        await AddPerson("NotVoted", "N", canVote: true);
+        await AddPerson("CantVote", "C", canVote: false);
 
         var report = await _service.GetVotersAsync(_electionGuid);
 
@@ -571,10 +576,10 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVoters_MultipleLocations_ShowsLocationName()
     {
-        var loc1 = AddLocation("Hall A");
-        AddLocation("Hall B");
+        var loc1 = await AddLocation("Hall A");
+        await AddLocation("Hall B");
 
-        AddPerson("Person1", "P", canVote: true, votingLocationGuid: loc1.LocationGuid);
+        await AddPerson("Person1", "P", canVote: true, votingLocationGuid: loc1.LocationGuid);
 
         var report = await _service.GetVotersAsync(_electionGuid);
 
@@ -585,10 +590,10 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetFlagsReport_ReturnsFlags()
     {
-        SeedElection(flags: "Arrived|Has Badge");
-        AddLocation("Hall");
-        AddPerson("Person1", "P", flags: "Arrived|Has Badge");
-        AddPerson("Person2", "Q", flags: "Arrived");
+        await SeedElection(flags: "Arrived|Has Badge");
+        await AddLocation("Hall");
+        await AddPerson("Person1", "P", flags: "Arrived|Has Badge");
+        await AddPerson("Person2", "Q", flags: "Arrived");
 
         var report = await _service.GetFlagsReportAsync(_electionGuid);
 
@@ -602,9 +607,9 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVotersByArea_GroupsByArea()
     {
-        AddPerson("P1", "A", canVote: true, area: "North", votingMethod: "P");
-        AddPerson("P2", "B", canVote: true, area: "North", votingMethod: "M");
-        AddPerson("P3", "C", canVote: true, area: "South", votingMethod: "P");
+        await AddPerson("P1", "A", canVote: true, area: "North", votingMethod: "P");
+        await AddPerson("P2", "B", canVote: true, area: "North", votingMethod: "M");
+        await AddPerson("P3", "C", canVote: true, area: "South", votingMethod: "P");
 
         var report = await _service.GetVotersByAreaAsync(_electionGuid);
 
@@ -621,10 +626,10 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVotersByLocation_GroupsByLocation()
     {
-        var loc1 = AddLocation("Hall A");
-        var loc2 = AddLocation("Hall B");
-        AddPerson("P1", "A", canVote: true, votingMethod: "P", votingLocationGuid: loc1.LocationGuid);
-        AddPerson("P2", "B", canVote: true, votingMethod: "M", votingLocationGuid: loc2.LocationGuid);
+        var loc1 = await AddLocation("Hall A");
+        var loc2 = await AddLocation("Hall B");
+        await AddPerson("P1", "A", canVote: true, votingMethod: "P", votingLocationGuid: loc1.LocationGuid);
+        await AddPerson("P2", "B", canVote: true, votingMethod: "M", votingLocationGuid: loc2.LocationGuid);
 
         var report = await _service.GetVotersByLocationAsync(_electionGuid);
 
@@ -635,9 +640,9 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVotersByLocationArea_GroupsByLocationThenArea()
     {
-        var loc = AddLocation("Hall A");
-        AddPerson("P1", "A", canVote: true, area: "North", votingLocationGuid: loc.LocationGuid, votingMethod: "P");
-        AddPerson("P2", "B", canVote: true, area: "South", votingLocationGuid: loc.LocationGuid, votingMethod: "P");
+        var loc = await AddLocation("Hall A");
+        await AddPerson("P1", "A", canVote: true, area: "North", votingLocationGuid: loc.LocationGuid, votingMethod: "P");
+        await AddPerson("P2", "B", canVote: true, area: "South", votingLocationGuid: loc.LocationGuid, votingMethod: "P");
 
         var report = await _service.GetVotersByLocationAreaAsync(_electionGuid);
 
@@ -649,9 +654,9 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetChangedPeople_ReturnsChangedAndNew()
     {
-        AddPerson("Changed", "C", combinedInfo: "new-info", combinedInfoAtStart: "old-info");
-        AddPerson("New", "N", combinedInfo: "some-info", combinedInfoAtStart: "");
-        AddPerson("Same", "S", combinedInfo: "same", combinedInfoAtStart: "same");
+        await AddPerson("Changed", "C", combinedInfo: "new-info", combinedInfoAtStart: "old-info");
+        await AddPerson("New", "N", combinedInfo: "some-info", combinedInfoAtStart: "");
+        await AddPerson("Same", "S", combinedInfo: "same", combinedInfoAtStart: "same");
 
         var report = await _service.GetChangedPeopleAsync(_electionGuid);
 
@@ -663,10 +668,10 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetAllNonEligible_ReturnsIneligiblePeople()
     {
-        AddPerson("FullEligible", "F", canVote: true, canReceiveVotes: true);
-        AddPerson("CantVote", "C", canVote: false, canReceiveVotes: true,
+        await AddPerson("FullEligible", "F", canVote: true, canReceiveVotes: true);
+        await AddPerson("CantVote", "C", canVote: false, canReceiveVotes: true,
             ineligibleReasonGuid: IneligibleReasonEnum.R01_NotADelegateInThisElection.ReasonGuid);
-        AddPerson("CantReceive", "R", canVote: true, canReceiveVotes: false,
+        await AddPerson("CantReceive", "R", canVote: true, canReceiveVotes: false,
             ineligibleReasonGuid: IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid);
 
         var report = await _service.GetAllNonEligibleAsync(_electionGuid);
@@ -679,9 +684,9 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVoterEmails_ReturnsEmailsAndPhones()
     {
-        AddPerson("WithEmail", "E", email: "test@example.com");
-        AddPerson("WithPhone", "P", phone: "555-1234");
-        AddPerson("Neither", "N");
+        await AddPerson("WithEmail", "E", email: "test@example.com");
+        await AddPerson("WithPhone", "P", phone: "555-1234");
+        await AddPerson("Neither", "N");
 
         var report = await _service.GetVoterEmailsAsync(_electionGuid);
 
@@ -693,7 +698,7 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVoterEmails_WithOnlineVoter_SetsSignedInFlags()
     {
-        AddPerson("WithEmail", "E", email: "voter@test.com");
+        await AddPerson("WithEmail", "E", email: "voter@test.com");
         Context.OnlineVoters.Add(new OnlineVoter
         {
             VoterId = "voter@test.com",
@@ -712,11 +717,11 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetSpoiledVotes_ReturnsSpoiledVotesByPerson()
     {
-        var loc = AddLocation("Hall");
-        var person = AddPerson("Ineligible", "I", canReceiveVotes: false,
+        var loc = await AddLocation("Hall");
+        var person = await AddPerson("Ineligible", "I", canReceiveVotes: false,
             ineligibleReasonGuid: IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid);
-        var ballot = AddBallot(loc.LocationGuid);
-        AddVote(ballot.BallotGuid, person.PersonGuid, 1, VoteStatus.Ok, ineligibleReasonCode: "V01");
+        var ballot = await AddBallot(loc.LocationGuid);
+        await AddVote(ballot.BallotGuid, person.PersonGuid, 1, VoteStatus.Ok, ineligibleReasonCode: "V01");
 
         var report = await _service.GetSpoiledVotesAsync(_electionGuid);
 
@@ -734,8 +739,8 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVotersOnline_ReturnsOnlineVoterInfo()
     {
-        SeedElection(onlineWhenOpen: DateTime.UtcNow);
-        var person = AddPerson("Online", "O", votingMethod: "O", email: "test@example.com");
+        await SeedElection(onlineWhenOpen: DateTime.UtcNow);
+        var person = await AddPerson("Online", "O", votingMethod: "O", email: "test@example.com");
         var now = DateTime.UtcNow;
         Context.OnlineVotingInfos.Add(new OnlineVotingInfo
         {
@@ -756,7 +761,7 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVotersByArea_NoArea_GroupsAsUnknown()
     {
-        AddPerson("NoArea", "N", canVote: true, area: null, votingMethod: "P");
+        await AddPerson("NoArea", "N", canVote: true, area: null, votingMethod: "P");
 
         var report = await _service.GetVotersByAreaAsync(_electionGuid);
 
@@ -767,8 +772,8 @@ public class ReportServiceTests : ServiceTestBase
     [Fact]
     public async Task GetVotersByArea_CustomMethods_PassedThrough()
     {
-        SeedElection(customMethods: "Special1|Special2|Special3");
-        AddPerson("P1", "A", canVote: true, area: "North", votingMethod: "1");
+        await SeedElection(customMethods: "Special1|Special2|Special3");
+        await AddPerson("P1", "A", canVote: true, area: "North", votingMethod: "1");
 
         var report = await _service.GetVotersByAreaAsync(_electionGuid);
 
