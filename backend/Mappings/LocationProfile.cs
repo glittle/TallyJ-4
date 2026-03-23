@@ -1,4 +1,5 @@
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 using Backend.DTOs.Locations;
 using Mapster;
 
@@ -19,7 +20,7 @@ public class LocationProfile : IRegister
         config.NewConfig<Location, LocationDto>()
             .Map(dest => dest.Longitude, src => src.Long)
             .Map(dest => dest.Latitude, src => src.Lat)
-            .Map(dest => dest.LocationType, src => src.LocationTypeCode);
+            .Map(dest => dest.LocationType, src => src.LocationTypeCode != null ? (LocationType?)src.LocationTypeEnum : null);
 
         config.NewConfig<CreateLocationDto, Location>()
             .Map(dest => dest.Long, src => src.Longitude)
