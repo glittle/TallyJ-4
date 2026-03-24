@@ -210,6 +210,7 @@
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { Plus, Search, Upload } from "@element-plus/icons-vue";
 import { computed, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useElectionStore } from "../../stores/electionStore";
 import { useNotifications } from "@/composables/useNotifications";
@@ -217,6 +218,7 @@ import { electionService } from "../../services/electionService";
 import type { ElectionDto } from "../../types";
 
 const router = useRouter();
+const { t } = useI18n();
 const electionStore = useElectionStore();
 const { handleApiError } = useApiErrorHandler();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
@@ -362,20 +364,20 @@ async function importElection() {
         } else if (file.name.toLowerCase().endsWith('.xml')) {
           election = await electionService.importTallyJv2ElectionFromFile(file);
         } else {
-          showErrorMessage("Please select a .json or .xml file");
+          showErrorMessage(t("elections.importElectionError"));
           return;
         }
 
-        showSuccessMessage("elections.importElectionSuccess");
-        await loadElections(); // Refresh the list
+        showSuccessMessage(t("elections.importElectionSuccess"));
+        await loadElections();
         router.push(`/elections/${election.electionGuid}`);
       } catch (error: any) {
-        showErrorMessage(error.message || "elections.importElectionError");
+        showErrorMessage(error.message || t("elections.importElectionError"));
       }
     };
     input.click();
   } catch (error: any) {
-    showErrorMessage(error.message || "elections.importElectionError");
+    showErrorMessage(error.message || t("elections.importElectionError"));
   }
 }
 

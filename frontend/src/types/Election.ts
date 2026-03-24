@@ -123,11 +123,11 @@ export interface ElectionSummaryDto {
 }
 
 export interface ImportResultDto {
-  Success: boolean;
-  Errors: string[];
-  Warnings: string[];
-  BallotsCreated: number;
-  VotesCreated: number;
-  TotalRows: number;
-  SkippedRows: number;
+  success: boolean;
+  errors: string[];
+  warnings: string[];
+  ballotsCreated: number;
+  votesCreated: number;
+  totalRows: number;
+  skippedRows: number;
 }

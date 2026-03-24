@@ -24,6 +24,18 @@ public class ElectionExportImportService
         _electionService = electionService;
     }
 
+    private async Task AssociateUserWithElectionAsync(Guid electionGuid, Guid userId)
+    {
+        var joinEntry = new JoinElectionUser
+        {
+            ElectionGuid = electionGuid,
+            UserId = userId,
+            Role = "Admin"
+        };
+        _context.JoinElectionUsers.Add(joinEntry);
+        await _context.SaveChangesAsync();
+    }
+
     // Job 1: Import from CdnBallotImport.xsd format
     public async Task<ImportResultDto> ImportCdnBallotsAsync(Guid electionGuid, Stream xmlStream)
     {
@@ -121,8 +133,8 @@ public class ElectionExportImportService
 
             // Process voters and ballots
             var peopleCache = await _context.People
-                .Where(p => p.ElectionGuid == electionGuid)
-                .ToDictionaryAsync(p => p.BahaiId);
+                .Where(p => p.ElectionGuid == electionGuid && p.BahaiId != null)
+                .ToDictionaryAsync(p => p.BahaiId!);
 
             var ballotCounter = await _context.Ballots
                 .Where(b => b.LocationGuid == importedLocation.LocationGuid)
@@ -149,8 +161,6 @@ public class ElectionExportImportService
                 person.RegistrationTime = DateTime.UtcNow;
                 person.EnvNum = null;
                 _context.People.Update(person);
-
-                result.VotesCreated++;
             }
 
             // Create ballots
@@ -212,8 +222,9 @@ public class ElectionExportImportService
     }
 
     // Job 2: Import from TallyJv2-Export.xsd format
-    public async Task<ElectionDto> ImportTallyJv2ElectionAsync(Stream xmlStream)
+    public async Task<ElectionDto> ImportTallyJv2ElectionAsync(Stream xmlStream, Guid? userId = null)
     {
+        using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
             // Validate XML against schema
@@ -551,13 +562,18 @@ public class ElectionExportImportService
 
             await _context.SaveChangesAsync();
 
-            // Create admin user association
-            // Note: This would need to be handled by the calling controller with current user context
+            if (userId.HasValue)
+            {
+                await AssociateUserWithElectionAsync(newElectionGuid, userId.Value);
+            }
+
+            await transaction.CommitAsync();
 
             return await _electionService.GetElectionByGuidAsync(newElectionGuid) ?? throw new InvalidOperationException("Failed to create election");
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync();
             throw new InvalidOperationException($"Import failed: {ex.Message}", ex);
         }
     }
@@ -763,8 +779,9 @@ public class ElectionExportImportService
     }
 
     // Job 3: Import from new JSON format
-    public async Task<ElectionDto> ImportElectionFromJsonAsync(Stream jsonStream)
+    public async Task<ElectionDto> ImportElectionFromJsonAsync(Stream jsonStream, Guid? userId = null)
     {
+        using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
             using var reader = new StreamReader(jsonStream);
@@ -1037,10 +1054,18 @@ public class ElectionExportImportService
 
             await _context.SaveChangesAsync();
 
+            if (userId.HasValue)
+            {
+                await AssociateUserWithElectionAsync(newElectionGuid, userId.Value);
+            }
+
+            await transaction.CommitAsync();
+
             return await _electionService.GetElectionByGuidAsync(newElectionGuid) ?? throw new InvalidOperationException("Failed to create election");
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync();
             throw new InvalidOperationException($"Import failed: {ex.Message}", ex);
         }
     }

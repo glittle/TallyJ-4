@@ -234,12 +234,11 @@ async function importCdnBallots() {
       try {
         const result: ImportResultDto = await electionService.importCdnBallots(electionGuid, file);
 
-        if (result.Success) {
+        if (result.success) {
           showSuccessMessage(t("elections.importCdnBallotsSuccess"));
-          // Refresh election data
           await electionStore.fetchElectionById(electionGuid);
         } else {
-          showErrorMessage(result.Errors.join('; ') || t("elections.importCdnBallotsError"));
+          showErrorMessage(result.errors?.join('; ') || t("elections.importCdnBallotsError"));
         }
       } catch (error: any) {
         showErrorMessage(error.message || t("elections.importCdnBallotsError"));

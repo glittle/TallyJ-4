@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Import;
+﻿using System.Security.Claims;
+using Backend.DTOs.Import;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,13 @@ public class ImportController : ControllerBase
     {
         _importService = importService;
         _electionExportImportService = electionExportImportService;
+    }
+
+    private Guid? GetCurrentUserId()
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("sub")?.Value;
+        return !string.IsNullOrEmpty(userIdString) && Guid.TryParse(userIdString, out var userId) ? userId : null;
     }
 
     /// <summary>
@@ -134,7 +142,7 @@ public class ImportController : ControllerBase
             }
 
             using var stream = file.OpenReadStream();
-            var election = await _electionExportImportService.ImportTallyJv2ElectionAsync(stream);
+            var election = await _electionExportImportService.ImportTallyJv2ElectionAsync(stream, GetCurrentUserId());
 
             return CreatedAtAction(
                 "GetElection",
@@ -164,7 +172,7 @@ public class ImportController : ControllerBase
             }
 
             using var stream = file.OpenReadStream();
-            var election = await _electionExportImportService.ImportElectionFromJsonAsync(stream);
+            var election = await _electionExportImportService.ImportElectionFromJsonAsync(stream, GetCurrentUserId());
 
             return CreatedAtAction(
                 "GetElection",

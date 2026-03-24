@@ -12,6 +12,7 @@ import type {
   CreateElectionDto,
   UpdateElectionDto,
   ElectionSummaryDto,
+  ImportResultDto,
 } from "../types";
 
 const convertStringToDate = (dateString?: string): Date | null => {
@@ -123,9 +124,7 @@ export const electionService = {
   async exportElectionToJson(electionGuid: string): Promise<Blob> {
     const response = await fetch(`/api/import/exportElectionToJson/${electionGuid}`, {
       method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${secureTokenService.getAccessToken()}`,
-      },
+      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -141,9 +140,7 @@ export const electionService = {
 
     const response = await fetch('/api/import/importElectionFromJson', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${secureTokenService.getAccessToken()}`,
-      },
+      credentials: 'include',
       body: formData,
     });
 
@@ -161,9 +158,7 @@ export const electionService = {
 
     const response = await fetch('/api/import/importTallyJv2Election', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${secureTokenService.getAccessToken()}`,
-      },
+      credentials: 'include',
       body: formData,
     });
 
@@ -181,9 +176,7 @@ export const electionService = {
 
     const response = await fetch(`/api/import/importCdnBallots/${electionGuid}`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${secureTokenService.getAccessToken()}`,
-      },
+      credentials: 'include',
       body: formData,
     });
 
