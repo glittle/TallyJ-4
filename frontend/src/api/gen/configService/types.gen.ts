@@ -920,7 +920,7 @@ export type LocationDto = {
     tallyStatus?: string | null;
     sortOrder?: number | null;
     ballotsCollected?: number | null;
-    locationType?: string | null;
+    locationType?: LocationType;
 };
 
 export type LocationInfoDto = {
@@ -959,6 +959,14 @@ export type LocationStatisticsDto = {
         [key: string]: number;
     } | null;
 };
+
+export const LocationType = {
+    MANUAL: 'Manual',
+    ONLINE: 'Online',
+    IMPORTED: 'Imported'
+} as const;
+
+export type LocationType = typeof LocationType[keyof typeof LocationType];
 
 export type LoginRequest = {
     email: string;

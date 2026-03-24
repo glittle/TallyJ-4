@@ -9705,8 +9705,7 @@
             "nullable": true
           },
           "locationType": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/LocationType"
           }
         },
         "additionalProperties": false
@@ -9836,6 +9835,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "LocationType": {
+        "enum": [
+          "Manual",
+          "Online",
+          "Imported"
+        ],
+        "type": "string"
       },
       "LoginRequest": {
         "required": [
