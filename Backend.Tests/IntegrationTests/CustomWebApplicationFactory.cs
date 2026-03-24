@@ -32,6 +32,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 ["Jwt:ExpiryMinutes"] = "60",
                 ["Encryption:Key"] = "ThisIsATestEncryptionKeyThatIsAtLeast32CharactersLong",
                 ["Email:SmtpHost"] = "<not-configured-for-tests>",
+                ["Email:FromAddress"] = "test@tallyj.com",
+                ["Email:FromName"] = "TallyJ Test",
+                ["Localization:ResourcesPath"] = "../frontend/src/locales",
                 ["Logging:LogLevel:Backend.Services.SecurityAuditService"] = "Error"
             });
         });

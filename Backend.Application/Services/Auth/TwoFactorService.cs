@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using OtpNet;
 using QRCoder;
 using Backend.Application.DTOs.Auth;
@@ -19,92 +20,111 @@ public class TwoFactorService : ITwoFactorService
     private readonly MainDbContext _dbContext;
     private readonly EmailService _emailService;
     private readonly EncryptionService _encryptionService;
+    private readonly ILogger<TwoFactorService> _logger;
 
     public TwoFactorService(
         UserManager<AppUser> userManager,
         IStringLocalizer<TwoFactorService> localizer,
         MainDbContext dbContext,
         EmailService emailService,
-        EncryptionService encryptionService)
+        EncryptionService encryptionService,
+        ILogger<TwoFactorService> logger)
     {
         _userManager = userManager;
         _localizer = localizer;
         _dbContext = dbContext;
         _emailService = emailService;
         _encryptionService = encryptionService;
+        _logger = logger;
     }
 
     public async Task<(bool Success, string? Error, TwoFactorSetupResponse? Response)> SetupAsync(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
+        try
         {
-            return (false, _localizer["auth.errors.userNotFound"], null);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return (false, _localizer["auth.errors.userNotFound"], null);
+            }
+
+            if (user.TwoFactorEnabled)
+            {
+                return (false, _localizer["auth.errors.twoFactorAlreadyEnabled"], null);
+            }
+
+            var secret = GenerateSecret();
+            var encryptedSecret = _encryptionService.Encrypt(secret);
+
+            var twoFactorToken = new TwoFactorToken
+            {
+                TokenGuid = Guid.NewGuid(),
+                UserId = user.Id,
+                Secret = encryptedSecret,
+                IsEnabled = false,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _dbContext.Set<TwoFactorToken>().Add(twoFactorToken);
+            await _dbContext.SaveChangesAsync();
+
+            var qrCodeDataUrl = GenerateQrCode(user.Email!, secret);
+
+            return (true, null, new TwoFactorSetupResponse
+            {
+                Secret = secret,
+                QrCodeDataUrl = qrCodeDataUrl
+            });
         }
-
-        if (user.TwoFactorEnabled)
+        catch (Exception ex)
         {
-            return (false, _localizer["auth.errors.twoFactorAlreadyEnabled"], null);
+            _logger.LogError(ex, "Error setting up 2FA for user {UserId}", userId);
+            return (false, _localizer["auth.errors.failedToSetup2FA"], null);
         }
-
-        var secret = GenerateSecret();
-        var encryptedSecret = _encryptionService.Encrypt(secret);
-
-        var twoFactorToken = new TwoFactorToken
-        {
-            TokenGuid = Guid.NewGuid(),
-            UserId = user.Id,
-            Secret = encryptedSecret,
-            IsEnabled = false,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        _dbContext.Set<TwoFactorToken>().Add(twoFactorToken);
-        await _dbContext.SaveChangesAsync();
-
-        var qrCodeDataUrl = GenerateQrCode(user.Email!, secret);
-
-        return (true, null, new TwoFactorSetupResponse
-        {
-            Secret = secret,
-            QrCodeDataUrl = qrCodeDataUrl
-        });
     }
 
     public async Task<(bool Success, string? Error)> EnableAsync(string userId, Enable2FARequest request)
     {
-        var user = await _userManager.Users
-            .Include(u => u.TwoFactorToken)
-            .FirstOrDefaultAsync(u => u.Id == userId);
-
-        if (user == null)
+        try
         {
-            return (false, _localizer["auth.errors.userNotFound"]);
-        }
+            var user = await _userManager.Users
+                .Include(u => u.TwoFactorToken)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
-        if (user.TwoFactorToken == null)
+            if (user == null)
+            {
+                return (false, _localizer["auth.errors.userNotFound"]);
+            }
+
+            if (user.TwoFactorToken == null)
+            {
+                return (false, _localizer["auth.errors.twoFactorNotSetup"]);
+            }
+
+            var secret = _encryptionService.Decrypt(user.TwoFactorToken.Secret);
+            var isValid = VerifyCode(secret, request.Code);
+
+            if (!isValid)
+            {
+                return (false, _localizer["auth.errors.invalid2FACode"]);
+            }
+
+            user.TwoFactorToken.IsEnabled = true;
+            user.TwoFactorToken.VerifiedAt = DateTime.UtcNow;
+            user.TwoFactorEnabled = true;
+
+            await _dbContext.SaveChangesAsync();
+
+            var qrCodeDataUrl = GenerateQrCode(user.Email!, secret);
+            await _emailService.Send2FASetupEmailAsync(user.Email!, qrCodeDataUrl);
+
+            return (true, null);
+        }
+        catch (Exception ex)
         {
-            return (false, _localizer["auth.errors.twoFactorNotSetup"]);
+            _logger.LogError(ex, "Error enabling 2FA for user {UserId}", userId);
+            return (false, _localizer["auth.errors.failedToEnable2FA"]);
         }
-
-        var secret = _encryptionService.Decrypt(user.TwoFactorToken.Secret);
-        var isValid = VerifyCode(secret, request.Code);
-
-        if (!isValid)
-        {
-            return (false, _localizer["auth.errors.invalid2FACode"]);
-        }
-
-        user.TwoFactorToken.IsEnabled = true;
-        user.TwoFactorToken.VerifiedAt = DateTime.UtcNow;
-        user.TwoFactorEnabled = true;
-
-        await _dbContext.SaveChangesAsync();
-
-        var qrCodeDataUrl = GenerateQrCode(user.Email!, secret);
-        await _emailService.Send2FASetupEmailAsync(user.Email!, qrCodeDataUrl);
-
-        return (true, null);
     }
 
     public async Task<(bool Success, string? Error)> VerifyAsync(string userId, string code)

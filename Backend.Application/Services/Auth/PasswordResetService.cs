@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Backend.Application.DTOs.Auth;
 using Backend.Domain.Identity;
 
@@ -13,79 +14,98 @@ public class PasswordResetService : IPasswordResetService
     private readonly IStringLocalizer<PasswordResetService> _localizer;
     private readonly IConfiguration _configuration;
     private readonly EmailService _emailService;
+    private readonly ILogger<PasswordResetService> _logger;
 
     public PasswordResetService(
         UserManager<AppUser> userManager,
         IStringLocalizer<PasswordResetService> localizer,
         IConfiguration configuration,
-        EmailService emailService)
+        EmailService emailService,
+        ILogger<PasswordResetService> logger)
     {
         _userManager = userManager;
         _localizer = localizer;
         _configuration = configuration;
         _emailService = emailService;
+        _logger = logger;
     }
 
     public async Task<(bool Success, string? Error)> GenerateResetTokenAsync(ForgotPasswordRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
-        if (user == null)
+        try
         {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return (true, null);
+            }
+
+            if (user.AuthMethod != "Local")
+            {
+                return (false, _localizer["auth.errors.passwordResetNotAvailableForOAuth"]);
+            }
+
+            var token = GenerateSecureToken();
+            user.PasswordResetToken = token;
+            user.PasswordResetExpiry = DateTime.UtcNow.AddHours(1);
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return (false, _localizer["auth.errors.failedToGenerateResetToken"]);
+            }
+
+            await _emailService.SendPasswordResetEmailAsync(user.Email!, token);
+
             return (true, null);
         }
-
-        if (user.AuthMethod != "Local")
+        catch (Exception ex)
         {
-            return (false, _localizer["auth.errors.passwordResetNotAvailableForOAuth"]);
-        }
-
-        var token = GenerateSecureToken();
-        user.PasswordResetToken = token;
-        user.PasswordResetExpiry = DateTime.UtcNow.AddHours(1);
-
-        var result = await _userManager.UpdateAsync(user);
-        if (!result.Succeeded)
-        {
+            _logger.LogError(ex, "Error generating password reset token for email {Email}", request.Email);
             return (false, _localizer["auth.errors.failedToGenerateResetToken"]);
         }
-
-        await _emailService.SendPasswordResetEmailAsync(user.Email!, token);
-
-        return (true, null);
     }
 
     public async Task<(bool Success, string? Error)> ResetPasswordAsync(ResetPasswordRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
-        if (user == null)
+        try
         {
-            return (false, _localizer["auth.errors.invalidResetToken"]);
-        }
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return (false, _localizer["auth.errors.invalidResetToken"]);
+            }
 
-        if (user.PasswordResetToken != request.Token)
+            if (user.PasswordResetToken != request.Token)
+            {
+                return (false, _localizer["auth.errors.invalidResetToken"]);
+            }
+
+            if (user.PasswordResetExpiry == null || user.PasswordResetExpiry < DateTime.UtcNow)
+            {
+                return (false, _localizer["auth.errors.resetTokenExpired"]);
+            }
+
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, request.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return (false, errors);
+            }
+
+            user.PasswordResetToken = null;
+            user.PasswordResetExpiry = null;
+            await _userManager.UpdateAsync(user);
+
+            return (true, null);
+        }
+        catch (Exception ex)
         {
-            return (false, _localizer["auth.errors.invalidResetToken"]);
+            _logger.LogError(ex, "Error resetting password for email {Email}", request.Email);
+            return (false, _localizer["auth.errors.failedToResetPassword"]);
         }
-
-        if (user.PasswordResetExpiry == null || user.PasswordResetExpiry < DateTime.UtcNow)
-        {
-            return (false, _localizer["auth.errors.resetTokenExpired"]);
-        }
-
-        var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-        var result = await _userManager.ResetPasswordAsync(user, resetToken, request.NewPassword);
-
-        if (!result.Succeeded)
-        {
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            return (false, errors);
-        }
-
-        user.PasswordResetToken = null;
-        user.PasswordResetExpiry = null;
-        await _userManager.UpdateAsync(user);
-
-        return (true, null);
     }
 
     private static string GenerateSecureToken()
