@@ -121,3 +121,13 @@ export interface ElectionSummaryDto {
   isOnlineVotingEnabled?: boolean;
   showAsTest?: boolean;
 }
+
+export interface ImportResultDto {
+  Success: boolean;
+  Errors: string[];
+  Warnings: string[];
+  BallotsCreated: number;
+  VotesCreated: number;
+  TotalRows: number;
+  SkippedRows: number;
+}

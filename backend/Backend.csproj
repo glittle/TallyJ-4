@@ -68,4 +68,9 @@
     <ProjectReference Include="..\Backend.Domain\Backend.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Schemas\CdnBallotImport.xsd" />
+    <EmbeddedResource Include="Schemas\TallyJv2-Export.xsd" />
+  </ItemGroup>
+
 </Project>

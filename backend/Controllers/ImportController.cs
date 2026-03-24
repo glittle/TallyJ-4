@@ -14,14 +14,17 @@ namespace Backend.Controllers;
 public class ImportController : ControllerBase
 {
     private readonly ImportService _importService;
+    private readonly ElectionExportImportService _electionExportImportService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ImportController"/> class.
     /// </summary>
     /// <param name="importService">The import service.</param>
-    public ImportController(ImportService importService)
+    /// <param name="electionExportImportService">The election export/import service.</param>
+    public ImportController(ImportService importService, ElectionExportImportService electionExportImportService)
     {
         _importService = importService;
+        _electionExportImportService = electionExportImportService;
     }
 
     /// <summary>
@@ -74,6 +77,129 @@ public class ImportController : ControllerBase
         }
 
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Imports Canadian ballot data from XML file.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to import ballots into.</param>
+    /// <returns>The import result.</returns>
+    [HttpPost("importCdnBallots/{electionGuid}")]
+    [Authorize(Policy = "ElectionAccess")]
+    public async Task<IActionResult> ImportCdnBallots(Guid electionGuid)
+    {
+        try
+        {
+            var file = Request.Form.Files.FirstOrDefault();
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { error = "No file provided" });
+            }
+
+            using var stream = file.OpenReadStream();
+            var result = await _electionExportImportService.ImportCdnBallotsAsync(electionGuid, stream);
+
+            if (!result.Success)
+            {
+                return BadRequest(new
+                {
+                    errors = result.Errors,
+                    warnings = result.Warnings,
+                    ballotsCreated = result.BallotsCreated,
+                    votesCreated = result.VotesCreated
+                });
+            }
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = $"Import failed: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
+    /// Imports an entire election from TallyJ v2 XML format.
+    /// </summary>
+    /// <returns>The created election information.</returns>
+    [HttpPost("importTallyJv2Election")]
+    public async Task<IActionResult> ImportTallyJv2Election()
+    {
+        try
+        {
+            var file = Request.Form.Files.FirstOrDefault();
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { error = "No file provided" });
+            }
+
+            using var stream = file.OpenReadStream();
+            var election = await _electionExportImportService.ImportTallyJv2ElectionAsync(stream);
+
+            return CreatedAtAction(
+                "GetElection",
+                "Elections",
+                new { guid = election.ElectionGuid },
+                new { message = "Election imported successfully", election });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = $"Import failed: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
+    /// Imports an entire election from TallyJ v4 JSON format.
+    /// </summary>
+    /// <returns>The created election information.</returns>
+    [HttpPost("importElectionFromJson")]
+    public async Task<IActionResult> ImportElectionFromJson()
+    {
+        try
+        {
+            var file = Request.Form.Files.FirstOrDefault();
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { error = "No file provided" });
+            }
+
+            using var stream = file.OpenReadStream();
+            var election = await _electionExportImportService.ImportElectionFromJsonAsync(stream);
+
+            return CreatedAtAction(
+                "GetElection",
+                "Elections",
+                new { guid = election.ElectionGuid },
+                new { message = "Election imported successfully", election });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = $"Import failed: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
+    /// Exports an election to JSON format.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to export.</param>
+    /// <returns>The JSON export data.</returns>
+    [HttpGet("exportElectionToJson/{electionGuid}")]
+    [Authorize(Policy = "ElectionAccess")]
+    public async Task<IActionResult> ExportElectionToJson(Guid electionGuid)
+    {
+        try
+        {
+            var jsonContent = await _electionExportImportService.ExportElectionToJsonAsync(electionGuid);
+
+            return File(
+                System.Text.Encoding.UTF8.GetBytes(jsonContent),
+                "application/json",
+                $"Election_{electionGuid}.json");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = $"Export failed: {ex.Message}" });
+        }
     }
 }
 

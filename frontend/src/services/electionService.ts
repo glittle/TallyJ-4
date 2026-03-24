@@ -120,6 +120,80 @@ export const electionService = {
     );
   },
 
+  async exportElectionToJson(electionGuid: string): Promise<Blob> {
+    const response = await fetch(`/api/import/exportElectionToJson/${electionGuid}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${secureTokenService.getAccessToken()}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Export failed');
+    }
+
+    return await response.blob();
+  },
+
+  async importElectionFromFile(file: File): Promise<ElectionDto> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/api/import/importElectionFromJson', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${secureTokenService.getAccessToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Import failed');
+    }
+
+    const result = await response.json();
+    return result.election;
+  },
+
+  async importTallyJv2ElectionFromFile(file: File): Promise<ElectionDto> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/api/import/importTallyJv2Election', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${secureTokenService.getAccessToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Import failed');
+    }
+
+    const result = await response.json();
+    return result.election;
+  },
+
+  async importCdnBallots(electionGuid: string, file: File): Promise<ImportResultDto> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`/api/import/importCdnBallots/${electionGuid}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${secureTokenService.getAccessToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Import failed');
+    }
+
+    return await response.json();
+  },
+
   // async getCurrentElection(): Promise<ElectionDto | null> {
   //   try {
   //     const response = await getApiElectionsByGuidElection();

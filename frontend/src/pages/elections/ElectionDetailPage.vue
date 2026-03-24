@@ -12,6 +12,8 @@ import {
   Operation,
   Tickets,
   UserFilled,
+  Upload,
+  Download,
 } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import QRCode from "qrcode";
@@ -19,6 +21,8 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useElectionStore } from "../../stores/electionStore";
+import { electionService } from "../../services/electionService";
+import type { ImportResultDto } from "../../types";
 
 const router = useRouter();
 const route = useRoute();
@@ -195,6 +199,57 @@ async function generateQrCode() {
     console.error("Failed to generate QR code:", _error);
   }
 }
+
+async function exportElection() {
+  if (!electionGuid) return;
+
+  try {
+    const blob = await electionService.exportElectionToJson(electionGuid);
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Election_${electionGuid}.json`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+
+    showSuccessMessage(t("elections.exportElectionSuccess"));
+  } catch (_error) {
+    showErrorMessage(t("elections.exportElectionError"));
+  }
+}
+
+async function importCdnBallots() {
+  if (!electionGuid) return;
+
+  try {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xml';
+    input.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      try {
+        const result: ImportResultDto = await electionService.importCdnBallots(electionGuid, file);
+
+        if (result.Success) {
+          showSuccessMessage(t("elections.importCdnBallotsSuccess"));
+          // Refresh election data
+          await electionStore.fetchElectionById(electionGuid);
+        } else {
+          showErrorMessage(result.Errors.join('; ') || t("elections.importCdnBallotsError"));
+        }
+      } catch (error: any) {
+        showErrorMessage(error.message || t("elections.importCdnBallotsError"));
+      }
+    };
+    input.click();
+  } catch (error: any) {
+    showErrorMessage(error.message || t("elections.importCdnBallotsError"));
+  }
+}
 </script>
 
 <template>
@@ -297,6 +352,18 @@ async function generateQrCode() {
                   <Operation />
                 </el-icon>
                 {{ $t("elections.calculateTally") }}
+              </el-button>
+              <el-button type="success" @click="exportElection">
+                <el-icon>
+                  <Download />
+                </el-icon>
+                {{ $t("elections.exportElection") }}
+              </el-button>
+              <el-button type="info" @click="importCdnBallots">
+                <el-icon>
+                  <Upload />
+                </el-icon>
+                {{ $t("elections.importCdnBallots") }}
               </el-button>
             </el-space>
           </el-card>

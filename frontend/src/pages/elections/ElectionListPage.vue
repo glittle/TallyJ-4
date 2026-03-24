@@ -9,6 +9,12 @@
             </el-icon>
             {{ $t("elections.createNew") }}
           </el-button>
+          <el-button type="default" @click="importElection">
+            <el-icon>
+              <Upload />
+            </el-icon>
+            {{ $t("elections.importElection") }}
+          </el-button>
         </div>
       </template>
 
@@ -202,14 +208,18 @@
 
 <script setup lang="ts">
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
-import { Plus, Search } from "@element-plus/icons-vue";
+import { Plus, Search, Upload } from "@element-plus/icons-vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useElectionStore } from "../../stores/electionStore";
+import { useNotifications } from "@/composables/useNotifications";
+import { electionService } from "../../services/electionService";
+import type { ElectionDto } from "../../types";
 
 const router = useRouter();
 const electionStore = useElectionStore();
 const { handleApiError } = useApiErrorHandler();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const loading = computed(() => electionStore.loading);
 const allElections = computed(() => electionStore.elections);
@@ -334,6 +344,39 @@ async function loadElections() {
 
 function createElection() {
   router.push("/elections/create");
+}
+
+async function importElection() {
+  try {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,.xml';
+    input.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      try {
+        let election: ElectionDto;
+        if (file.name.toLowerCase().endsWith('.json')) {
+          election = await electionService.importElectionFromFile(file);
+        } else if (file.name.toLowerCase().endsWith('.xml')) {
+          election = await electionService.importTallyJv2ElectionFromFile(file);
+        } else {
+          showErrorMessage("Please select a .json or .xml file");
+          return;
+        }
+
+        showSuccessMessage("elections.importElectionSuccess");
+        await loadElections(); // Refresh the list
+        router.push(`/elections/${election.electionGuid}`);
+      } catch (error: any) {
+        showErrorMessage(error.message || "elections.importElectionError");
+      }
+    };
+    input.click();
+  } catch (error: any) {
+    showErrorMessage(error.message || "elections.importElectionError");
+  }
 }
 
 function openElection(guid: string) {
