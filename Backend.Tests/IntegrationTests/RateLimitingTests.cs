@@ -64,7 +64,7 @@ public class RateLimitingTests : IntegrationTestBase
             lastResponse = await Client.PostAsync("/api/auth/login", content);
 
             // Small delay to ensure requests are processed
-            await Task.Delay(100);
+            await Task.Delay(200);
         }
 
         // Assert - Last request should be rate limited
@@ -117,7 +117,7 @@ public class RateLimitingTests : IntegrationTestBase
             lastResponse = await Client.PostAsync("/api/auth/registerAccount", content);
 
             // Small delay to ensure requests are processed
-            await Task.Delay(100);
+            await Task.Delay(200);
         }
 
         // Assert - Last request should be rate limited
@@ -168,7 +168,7 @@ public class RateLimitingTests : IntegrationTestBase
             lastResponse = await Client.PostAsync("/api/auth/verify2fa", content);
 
             // Small delay to ensure requests are processed
-            await Task.Delay(100);
+            await Task.Delay(200);
         }
 
         // Assert - Last request should be rate limited
@@ -217,7 +217,7 @@ public class RateLimitingTests : IntegrationTestBase
             lastResponse = await Client.PostAsync("/api/auth/forgotPassword", content);
 
             // Small delay to ensure requests are processed
-            await Task.Delay(100);
+            await Task.Delay(200);
         }
 
         // Assert - Last request should be rate limited
@@ -270,7 +270,7 @@ public class RateLimitingTests : IntegrationTestBase
             lastResponse = await Client.PostAsync("/api/auth/resetPassword", content);
 
             // Small delay to ensure requests are processed
-            await Task.Delay(100);
+            await Task.Delay(200);
         }
 
         // Assert - Last request should be rate limited

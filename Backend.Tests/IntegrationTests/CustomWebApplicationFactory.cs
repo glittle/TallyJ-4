@@ -10,6 +10,8 @@ using Microsoft.Extensions.Hosting;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Identity;
+using Backend.Application.Services.Auth;
+using MimeKit;
 
 namespace Backend.Tests.IntegrationTests;
 
@@ -28,6 +30,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 ["Jwt:Issuer"] = "BackendTestAPI",
                 ["Jwt:Audience"] = "BackendTestClient",
                 ["Jwt:ExpiryMinutes"] = "60",
+                ["Encryption:Key"] = "ThisIsATestEncryptionKeyThatIsAtLeast32CharactersLong",
+                ["Email:SmtpHost"] = "<not-configured-for-tests>",
                 ["Logging:LogLevel:Backend.Services.SecurityAuditService"] = "Error"
             });
         });
@@ -44,6 +48,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 options.UseSqlServer(connectionString, b => b.MigrationsAssembly("Backend"));
                 options.EnableSensitiveDataLogging();
             });
+
+            // Mock external services for testing
+            services.AddSingleton<Backend.Application.Services.Auth.IEmailSender, MockEmailSender>();
         });
     }
 
@@ -57,6 +64,20 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         dbContext.Database.Migrate();
 
         return host;
+    }
+
+    /// <summary>
+    /// Mock email sender that doesn't make any external connections.
+    /// Used in integration tests to avoid external dependencies.
+    /// </summary>
+    private class MockEmailSender : IEmailSender
+    {
+        public Task SendAsync(MimeMessage message)
+        {
+            // Do nothing - just log that we would have sent an email
+            Console.WriteLine($"[MOCK EMAIL] Would send email to {message.To} with subject '{message.Subject}'");
+            return Task.CompletedTask;
+        }
     }
 
 

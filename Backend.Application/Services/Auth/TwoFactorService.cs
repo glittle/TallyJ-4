@@ -178,7 +178,7 @@ public class TwoFactorService : ITwoFactorService
     private static bool VerifyCode(string secret, string code)
     {
         var totp = new Totp(Base32Encoding.ToBytes(secret));
-        return totp.VerifyTotp(code, out _, new VerificationWindow(2, 2));
+        return totp.VerifyTotp(code, out _, new VerificationWindow(5, 5));
     }
 
     private static string GenerateQrCode(string email, string secret)
