@@ -76,6 +76,14 @@ function goBackToElections() {
       {{ $t("common.testOnlyShort") }}
     </div>
 
+    <div class="statusDocLink">
+      <a
+        href="https://docs.google.com/document/d/1WXrVy2Jl3Lk-Vs1k77t2QnrrdK5zjzSeHMXnOx0Deao/edit?usp=sharing"
+        target="statusDoc"
+        >Status & Feedback Document V4</a
+      >
+    </div>
+
     <!-- Election breadcrumb navigation -->
     <div v-if="isInElectionContext" class="breadcrumb-nav">
       <div class="breadcrumb-item" @click="goBackToElections">
@@ -217,14 +225,22 @@ function goBackToElections() {
   }
 
   .testOnlyWarning {
-    padding: 1em;
-    margin: 0 3px;
+    padding: 0.5em 0.25em;
+    margin: 0 0.5em;
     text-align: center;
     background-color: var(--el-color-error);
     color: var(--color-sidebar-text);
     font-size: 1.5em;
     font-weight: bold;
-    border-radius: 10px;
+    border-radius: 4px;
+  }
+
+  .statusDocLink {
+    padding: 0 0.5em;
+    text-align: center;
+    margin: 2em 0.5em 2em;
+    border: 2px solid var(--el-color-error);
+    border-radius: 4px;
   }
 }
 </style>

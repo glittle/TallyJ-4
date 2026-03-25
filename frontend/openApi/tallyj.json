@@ -931,6 +931,111 @@
         }
       }
     },
+    "/api/Import/parse-csv-headers": {
+      "post": {
+        "tags": [
+          "BallotImport"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParseCsvHeadersRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParseCsvHeadersRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParseCsvHeadersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Import/importBallots": {
+      "post": {
+        "tags": [
+          "BallotImport"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportBallotRequestDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportBallotRequestDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportBallotRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Import/importCdnBallots/{electionGuid}": {
+      "post": {
+        "tags": [
+          "BallotImport"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Ballots/{electionGuid}/ballots": {
       "get": {
         "tags": [
@@ -1639,6 +1744,93 @@
         }
       }
     },
+    "/api/Import/importTallyJv2Election": {
+      "post": {
+        "tags": [
+          "ElectionImport"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Import/importElectionFromJson": {
+      "post": {
+        "tags": [
+          "ElectionImport"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Import/exportElectionToJson/{electionGuid}": {
+      "get": {
+        "tags": [
+          "ElectionImport"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Elections/getElections": {
       "get": {
         "tags": [
@@ -2286,68 +2478,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/Import/parse-csv-headers": {
-      "post": {
-        "tags": [
-          "Import"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParseCsvHeadersRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParseCsvHeadersRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParseCsvHeadersRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Import/importBallots": {
-      "post": {
-        "tags": [
-          "Import"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImportBallotRequestDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImportBallotRequestDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImportBallotRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -9705,8 +9835,7 @@
             "nullable": true
           },
           "locationType": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/LocationType"
           }
         },
         "additionalProperties": false
@@ -9836,6 +9965,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "LocationType": {
+        "enum": [
+          "Manual",
+          "Online",
+          "Imported"
+        ],
+        "type": "string"
       },
       "LoginRequest": {
         "required": [
@@ -12662,10 +12799,16 @@
       "name": "Auth"
     },
     {
+      "name": "BallotImport"
+    },
+    {
       "name": "Ballots"
     },
     {
       "name": "Dashboard"
+    },
+    {
+      "name": "ElectionImport"
     },
     {
       "name": "Elections"
@@ -12675,9 +12818,6 @@
     },
     {
       "name": "FrontDesk"
-    },
-    {
-      "name": "Import"
     },
     {
       "name": "Locations"

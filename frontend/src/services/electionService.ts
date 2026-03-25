@@ -1,18 +1,23 @@
+import { getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
+import type {
+  CreateElectionDto,
+  ElectionDto,
+  ElectionSummaryDto,
+  ImportResultDto,
+  UpdateElectionDto,
+} from "../types";
 import {
   deleteApiElectionsByGuidDeleteElection,
   getApiElectionsByGuidElection,
   getApiElectionsByGuidElectionSummary,
+  getApiImportExportElectionToJsonByElectionGuid,
   postApiElectionsCreateElection,
+  postApiImportImportCdnBallotsByElectionGuid,
+  postApiImportImportElectionFromJson,
+  postApiImportImportTallyJv2Election,
   putApiElectionsByGuidUpdateElection,
 } from "./../api/gen/configService/sdk.gen";
-import { getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
 import { cacheService } from "./cacheService";
-import type {
-  ElectionDto,
-  CreateElectionDto,
-  UpdateElectionDto,
-  ElectionSummaryDto,
-} from "../types";
 
 const convertStringToDate = (dateString?: string): Date | null => {
   return dateString ? new Date(dateString) : null;
@@ -118,6 +123,48 @@ export const electionService = {
         method: "GET",
       }),
     );
+  },
+
+  async exportElectionToJson(electionGuid: string): Promise<Blob> {
+    const blob = await getApiImportExportElectionToJsonByElectionGuid(
+      {
+        path: { electionGuid },
+      },
+      {
+        parseAs: "blob",
+        responseStyle: "data",
+      },
+    );
+
+    return blob;
+  },
+
+  async importElectionFromFile(file: File): Promise<ElectionDto> {
+    const response = await postApiImportImportElectionFromJson({
+      body: { file },
+    });
+
+    return response.data.election;
+  },
+
+  async importTallyJv2ElectionFromFile(file: File): Promise<ElectionDto> {
+    const response = await postApiImportImportTallyJv2Election({
+      body: { file },
+    });
+
+    return response.data.election;
+  },
+
+  async importCdnBallots(
+    electionGuid: string,
+    file: File,
+  ): Promise<ImportResultDto> {
+    const response = await postApiImportImportCdnBallotsByElectionGuid({
+      path: { electionGuid },
+      body: { file },
+    });
+
+    return response.data;
   },
 
   // async getCurrentElection(): Promise<ElectionDto | null> {

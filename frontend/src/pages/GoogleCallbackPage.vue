@@ -4,6 +4,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import { useNotifications } from "@/composables/useNotifications";
 import { useI18n } from "vue-i18n";
+import { getApiAuthMe } from "../api/gen/configService/sdk.gen";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -27,11 +28,7 @@ onMounted(async () => {
     }
 
     // Since cookies are set on the backend domain, we need to call the backend API to get user info
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
-    const response = await fetch(`${apiUrl}/api/auth/me`, {
-      method: "GET",
-      credentials: "include", // Include cookies for authentication
-    });
+    const response = await getApiAuthMe();
 
     if (!response.ok) {
       const errorData = await response

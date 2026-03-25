@@ -3207,8 +3207,7 @@ export const LocationDtoSchema = {
             nullable: true
         },
         locationType: {
-            type: 'string',
-            nullable: true
+            $ref: '#/components/schemas/LocationType'
         }
     },
     additionalProperties: false
@@ -3341,6 +3340,15 @@ export const LocationStatisticsDtoSchema = {
         }
     },
     additionalProperties: false
+} as const;
+
+export const LocationTypeSchema = {
+    enum: [
+        'Manual',
+        'Online',
+        'Imported'
+    ],
+    type: 'string'
 } as const;
 
 export const LoginRequestSchema = {

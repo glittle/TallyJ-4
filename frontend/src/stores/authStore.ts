@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useApiErrorHandler } from "../composables/useApiErrorHandler";
 import { TOKEN_REFRESH_CONFIG } from "../config/tokenRefreshConfig";
+import { getApiAuthMe } from "../api/gen/configService/sdk.gen";
 import {
   authService,
   type LoginRequest,
@@ -25,15 +26,9 @@ export const useAuthStore = defineStore("auth", () => {
   // Check authentication based on cookie presence (not in-memory token)
   const isAuthenticated = computed(() => secureTokenService.isAuthenticated());
 
-  // API base URL constant
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5016";
-
   async function fetchUserInfo() {
     try {
-      const meResponse = await fetch(`${API_URL}/api/auth/me`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const meResponse = await getApiAuthMe();
 
       if (meResponse.ok) {
         const userData = await meResponse.json();
