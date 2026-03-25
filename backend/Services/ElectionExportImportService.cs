@@ -160,7 +160,7 @@ public class ElectionExportImportService
                     BallotGuid = Guid.NewGuid(),
                     LocationGuid = importedLocation.LocationGuid,
                     StatusCode = BallotStatus.Ok,
-                    ComputerCode = "IMPORT",
+                    ComputerCode = "IM",
                     BallotNumAtComputer = ballotCounter++,
                     RowVersion = new byte[8]
                 };
