@@ -119,7 +119,11 @@ public class TallyJv2ElectionImportService : ElectionImportExportBase
         {
             foreach (XmlElement locationNode in locationNodes)
             {
-                var oldGuid = Guid.Parse(locationNode.GetAttribute(LocationGuidAttribute) ?? Guid.NewGuid().ToString());
+                var oldGuidAttr = locationNode.GetAttribute(LocationGuidAttribute);
+                if (!Guid.TryParse(oldGuidAttr, out var oldGuid))
+                {
+                    oldGuid = Guid.NewGuid();
+                }
                 var newGuid = Guid.NewGuid();
                 guidMap[oldGuid] = newGuid;
 
