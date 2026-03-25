@@ -137,12 +137,17 @@ public class CdnBallotImportService : ElectionImportExportBase
         }
     }
 
-    private async Task<(Dictionary<string, Person> peopleCache, int ballotCounter, List<string> missingBahaiIds)> PrepareVoterProcessingAsync(
+    private async Task<(Dictionary<string, Person> peopleCache, Dictionary<string, Person> peopleByName, int ballotCounter, List<string> missingBahaiIds)> PrepareVoterProcessingAsync(
         Guid electionGuid, Guid importedLocationGuid, List<CdnVoter> voters)
     {
-        var peopleCache = await _context.People
+        var people = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.BahaiId != null)
-            .ToDictionaryAsync(p => p.BahaiId!);
+            .ToListAsync();
+
+        var peopleCache = people.ToDictionary(p => p.BahaiId!);
+        var peopleByName = people
+            .Where(p => p.FirstName != null && p.LastName != null)
+            .ToDictionary(p => $"{p.FirstName!.ToLower()}{p.LastName!.ToLower()}");
 
         var ballotCounter = await _context.Ballots
             .Where(b => b.LocationGuid == importedLocationGuid)
@@ -151,7 +156,7 @@ public class CdnBallotImportService : ElectionImportExportBase
         var voterBahaiIds = voters.Select(v => v.bahaiid).ToList();
         var missingBahaiIds = voterBahaiIds.Where(id => !peopleCache.ContainsKey(id)).ToList();
 
-        return (peopleCache, ballotCounter, missingBahaiIds);
+        return (peopleCache, peopleByName, ballotCounter, missingBahaiIds);
     }
 
     private void ProcessVoters(List<CdnVoter> voters, Dictionary<string, Person> peopleCache,
@@ -176,7 +181,7 @@ public class CdnBallotImportService : ElectionImportExportBase
         }
     }
 
-    private void ProcessBallots(List<CdnBallot> ballots, Dictionary<string, Person> peopleCache,
+    private void ProcessBallots(List<CdnBallot> ballots, Dictionary<string, Person> peopleCache, Dictionary<string, Person> peopleByName,
         Guid importedLocationGuid, ref int ballotCounter, ImportResultDto result)
     {
         foreach (var ballot in ballots)
@@ -193,20 +198,17 @@ public class CdnBallotImportService : ElectionImportExportBase
 
             _context.Ballots.Add(ballotEntity);
 
+            var position = 1;
             foreach (var vote in ballot.Votes)
             {
-                var matchedPerson = peopleCache.Values
-                    .FirstOrDefault(p =>
-                        p.FirstName?.ToLower() == vote.First?.ToLower() &&
-                        p.LastName?.ToLower() == vote.Last?.ToLower());
-
-                if (matchedPerson != null)
+                var nameKey = $"{vote.First?.ToLower()}{vote.Last?.ToLower()}";
+                if (peopleByName.TryGetValue(nameKey, out var matchedPerson))
                 {
                     var voteEntity = new Vote
                     {
                         BallotGuid = ballotEntity.BallotGuid,
                         PersonGuid = matchedPerson.PersonGuid,
-                        PositionOnBallot = ballot.Votes.IndexOf(vote) + 1,
+                        PositionOnBallot = position,
                         VoteStatus = VoteStatus.Ok,
                         PersonCombinedInfo = matchedPerson.CombinedInfo,
                         RowVersion = new byte[8]
@@ -218,6 +220,7 @@ public class CdnBallotImportService : ElectionImportExportBase
                 {
                     result.Warnings.Add($"Could not match vote '{vote.First} {vote.Last}' in ballot {ballot.index}");
                 }
+                position++;
             }
 
             result.BallotsCreated++;
@@ -233,21 +236,13 @@ public class CdnBallotImportService : ElectionImportExportBase
         try
         {
             var schemaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Schemas", "CdnBallotImport.xsd");
-            var validationErrors = await ValidateXmlAgainstSchemaAsync(xmlStream, schemaPath);
+            var (validationErrors, xmlDoc) = await ValidateXmlAgainstSchemaAsync(xmlStream, schemaPath);
 
             if (validationErrors.Any())
             {
                 result.Errors.AddRange(validationErrors);
                 result.Success = false;
                 return result;
-            }
-
-            // Re-load the XML since the stream was consumed by validation
-            var xmlDoc = new XmlDocument();
-            using (var reader = new StreamReader(xmlStream))
-            {
-                var xmlContent = await reader.ReadToEndAsync();
-                xmlDoc.LoadXml(xmlContent);
             }
 
             var electionNode = xmlDoc.DocumentElement!;
@@ -268,7 +263,7 @@ public class CdnBallotImportService : ElectionImportExportBase
             var importedLocation = await EnsureImportedLocationExistsAsync(electionGuid);
             await UpdateElectionVotingMethodsAsync(electionGuid);
 
-            var (peopleCache, ballotCounter, missingBahaiIds) = await PrepareVoterProcessingAsync(
+            var (peopleCache, peopleByName, ballotCounter, missingBahaiIds) = await PrepareVoterProcessingAsync(
                 electionGuid, importedLocation.LocationGuid, voters);
 
             foreach (var missingId in missingBahaiIds)
@@ -278,7 +273,7 @@ public class CdnBallotImportService : ElectionImportExportBase
 
             ProcessVoters(voters, peopleCache, importedLocation.LocationGuid, result);
 
-            ProcessBallots(ballots, peopleCache, importedLocation.LocationGuid, ref ballotCounter, result);
+            ProcessBallots(ballots, peopleCache, peopleByName, importedLocation.LocationGuid, ref ballotCounter, result);
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();

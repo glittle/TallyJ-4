@@ -30,7 +30,7 @@ public abstract class ElectionImportExportBase
         await _context.SaveChangesAsync();
     }
 
-    protected static async Task<List<string>> ValidateXmlAgainstSchemaAsync(Stream xmlStream, string schemaPath)
+    protected static async Task<(List<string> errors, XmlDocument xmlDoc)> ValidateXmlAgainstSchemaAsync(Stream xmlStream, string schemaPath)
     {
         var xmlDoc = new XmlDocument();
 
@@ -38,6 +38,12 @@ public abstract class ElectionImportExportBase
         {
             var xmlContent = await reader.ReadToEndAsync();
             xmlDoc.LoadXml(xmlContent);
+        }
+
+        // Reset stream position if seekable, so caller can read it again if needed
+        if (xmlStream.CanSeek)
+        {
+            xmlStream.Position = 0;
         }
 
         xmlDoc.Schemas.Add("", schemaPath);
@@ -48,7 +54,7 @@ public abstract class ElectionImportExportBase
                 validationErrors.Add(args.Message);
         });
 
-        return validationErrors;
+        return (validationErrors, xmlDoc);
     }
 
     // Helper methods
@@ -273,9 +279,9 @@ public abstract class ElectionImportExportBase
     protected sealed class JsonLog
     {
         public string AsOf { get; set; } = "";
-        public Guid? LocationGuid { get; }
-        public string? VoterId { get; }
-        public string? ComputerCode { get; }
-        public string? Details { get; }
+        public Guid? LocationGuid { get; set; }
+        public string? VoterId { get; set; }
+        public string? ComputerCode { get; set; }
+        public string? Details { get; set; }
     }
 }

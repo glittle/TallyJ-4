@@ -33,6 +33,12 @@ public class TallyJv2ElectionImportService : ElectionImportExportBase
             xmlDoc.LoadXml(xmlContent);
         }
 
+        // Reset stream position if seekable, so caller can read it again if needed
+        if (xmlStream.CanSeek)
+        {
+            xmlStream.Position = 0;
+        }
+
         // Validate against schema
         xmlDoc.Schemas.Add("urn:tallyj.bahai:v2", schemaPath);
         var validationErrors = new List<string>();

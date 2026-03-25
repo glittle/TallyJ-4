@@ -18,12 +18,17 @@ public class ElectionExportImportService : ElectionImportExportBase
     private readonly TallyJv2ElectionImportService _tallyJv2ElectionImportService;
     private readonly JsonElectionImportExportService _jsonElectionImportExportService;
 
-    public ElectionExportImportService(MainDbContext context, IElectionService electionService)
+    public ElectionExportImportService(
+        MainDbContext context,
+        IElectionService electionService,
+        CdnBallotImportService cdnBallotImportService,
+        TallyJv2ElectionImportService tallyJv2ElectionImportService,
+        JsonElectionImportExportService jsonElectionImportExportService)
         : base(context, electionService)
     {
-        _cdnBallotImportService = new CdnBallotImportService(context, electionService);
-        _tallyJv2ElectionImportService = new TallyJv2ElectionImportService(context, electionService);
-        _jsonElectionImportExportService = new JsonElectionImportExportService(context, electionService);
+        _cdnBallotImportService = cdnBallotImportService;
+        _tallyJv2ElectionImportService = tallyJv2ElectionImportService;
+        _jsonElectionImportExportService = jsonElectionImportExportService;
     }
 
     // Job 1: Import from CdnBallotImport.xsd format
