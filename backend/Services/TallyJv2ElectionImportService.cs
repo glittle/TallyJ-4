@@ -125,7 +125,11 @@ public class TallyJv2ElectionImportService : ElectionImportExportBase
         {
             foreach (XmlElement locationNode in locationNodes)
             {
-                var oldGuid = Guid.Parse(locationNode.GetAttribute(LocationGuidAttribute) ?? Guid.NewGuid().ToString());
+                var oldGuidAttr = locationNode.GetAttribute(LocationGuidAttribute);
+                if (!Guid.TryParse(oldGuidAttr, out var oldGuid))
+                {
+                    oldGuid = Guid.NewGuid();
+                }
                 var newGuid = Guid.NewGuid();
                 guidMap[oldGuid] = newGuid;
 
@@ -154,7 +158,11 @@ public class TallyJv2ElectionImportService : ElectionImportExportBase
         {
             foreach (XmlElement personNode in personNodes)
             {
-                var oldGuid = Guid.Parse(personNode.GetAttribute(PersonGuidAttribute) ?? Guid.NewGuid().ToString());
+                var personGuidAttribute = personNode.GetAttribute(PersonGuidAttribute);
+                if (!Guid.TryParse(personGuidAttribute, out var oldGuid))
+                {
+                    oldGuid = Guid.NewGuid();
+                }
                 var newGuid = Guid.NewGuid();
                 guidMap[oldGuid] = newGuid;
 
@@ -245,7 +253,11 @@ public class TallyJv2ElectionImportService : ElectionImportExportBase
     private void ImportBallotsForLocationFromXml(XmlElement locationNode, XmlNamespaceManager nsm, Dictionary<Guid, Guid> guidMap)
     {
         var attr = locationNode.GetAttribute(LocationGuidAttribute);
-        var oldLocationGuid = attr != null ? Guid.Parse(attr) : Guid.Empty;
+        if (string.IsNullOrWhiteSpace(attr))
+        {
+            throw new InvalidOperationException($"Missing required '{LocationGuidAttribute}' attribute on location node for ballot loading");
+        }
+        var oldLocationGuid = Guid.Parse(attr);
         if (!guidMap.ContainsKey(oldLocationGuid))
         {
             throw new InvalidOperationException($"Location GUID {oldLocationGuid} not found in map for ballot loading");

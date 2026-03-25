@@ -194,25 +194,25 @@ public abstract class ElectionImportExportBase
         public int BallotNumAtComputer { get; set; }
         public string? Teller1 { get; set; }
         public string? Teller2 { get; set; }
-        public List<JsonVote> votes { get; } = new();
+        public List<JsonVote> votes { get; set; } = new();
     }
 
     protected sealed class JsonVote
     {
-        public int PositionOnBallot { get; }
-        public Guid? PersonGuid { get; }
-        public string? VoteStatus { get; }
-        public string? IneligibleReasonCode { get; }
-        public int? SingleNameElectionCount { get; }
-        public string? PersonCombinedInfo { get; }
-        public string? OnlineVoteRaw { get; }
+        public int PositionOnBallot { get; set; }
+        public Guid? PersonGuid { get; set; }
+        public string? VoteStatus { get; set; }
+        public string? IneligibleReasonCode { get; set; }
+        public int? SingleNameElectionCount { get; set; }
+        public string? PersonCombinedInfo { get; set; }
+        public string? OnlineVoteRaw { get; set; }
     }
 
     protected sealed class JsonTeller
     {
-        public string? Name { get; }
-        public bool? IsHeadTeller { get; }
-        public string? UsingComputerCode { get; }
+        public string? Name { get; set; }
+        public bool? IsHeadTeller { get; set; }
+        public string? UsingComputerCode { get; set; }
     }
 
     protected sealed class JsonResult
