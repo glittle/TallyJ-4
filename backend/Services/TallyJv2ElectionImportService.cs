@@ -239,7 +239,11 @@ public class TallyJv2ElectionImportService : ElectionImportExportBase
     private void ImportBallotsForLocationFromXml(XmlElement locationNode, XmlNamespaceManager nsm, Dictionary<Guid, Guid> guidMap)
     {
         var attr = locationNode.GetAttribute(LocationGuidAttribute);
-        var oldLocationGuid = attr != null ? Guid.Parse(attr) : Guid.Empty;
+        if (string.IsNullOrWhiteSpace(attr))
+        {
+            throw new InvalidOperationException($"Missing required '{LocationGuidAttribute}' attribute on location node for ballot loading");
+        }
+        var oldLocationGuid = Guid.Parse(attr);
         if (!guidMap.ContainsKey(oldLocationGuid))
         {
             throw new InvalidOperationException($"Location GUID {oldLocationGuid} not found in map for ballot loading");
