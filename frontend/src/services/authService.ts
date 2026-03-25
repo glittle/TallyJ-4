@@ -8,6 +8,7 @@ import {
   postApiAuthEnable2Fa,
   postApiAuthDisable2Fa,
   postApiAuthGoogleOneTap,
+  postApiAuthLogout,
   // No generated SDK for Telegram; use axios via api
 } from "../api/gen/configService/sdk.gen";
 import type {
@@ -121,14 +122,7 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    const response = await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      throw new Error("Logout failed");
-    }
+    await postApiAuthLogout();
   },
 
   async tellerLogin(

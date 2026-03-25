@@ -28,6 +28,14 @@
             <xs:attribute name="OnlineWhenOpen" type="xs:string" use="optional" />
             <xs:attribute name="OnlineWhenClose" type="xs:string" use="optional" />
             <xs:attribute name="OnlineCloseIsEstimate" type="xs:boolean" use="optional" />
+            <xs:attribute name="OnlineSelectionProcess" type="xs:string" use="optional" />
+            <xs:attribute name="EmailFromAddress" type="xs:string" use="optional" />
+            <xs:attribute name="EmailFromName" type="xs:string" use="optional" />
+            <xs:attribute name="EmailText" type="xs:string" use="optional" />
+            <xs:attribute name="SmsText" type="xs:string" use="optional" />
+            <xs:attribute name="EmailSubject" type="xs:string" use="optional" />
+            <xs:attribute name="VotingMethods" type="xs:string" use="optional" />
+            <xs:attribute name="Flags" type="xs:string" use="optional" />
           </xs:complexType>
         </xs:element>
         <xs:element name="resultSummary" minOccurs="0" maxOccurs="unbounded">
@@ -182,6 +190,9 @@
             <xs:attribute name="Email" type="xs:string" use="optional" />
             <xs:attribute name="Phone" type="xs:string" use="optional" />
             <xs:attribute name="HasOnlineBallot" type="xs:boolean" use="optional" />
+            <xs:attribute name="CombinedInfo" type="xs:string" use="optional" />
+            <xs:attribute name="Teller1" type="xs:string" use="optional" />
+            <xs:attribute name="Flags" type="xs:string" use="optional" />
           </xs:complexType>
         </xs:element>
         <xs:element maxOccurs="unbounded" minOccurs="0" name="reason">
@@ -191,6 +202,13 @@
             <xs:attribute name="CanReceiveVotes" type="xs:boolean" use="required" />
             <xs:attribute name="DisplayText" type="xs:string" use="required" />
             <xs:attribute name="Description" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="log">
+          <xs:complexType>
+            <xs:attribute name="AsOf" type="xs:string" use="required" />
+            <xs:attribute name="ComputerCode" type="xs:string" use="optional" />
+            <xs:attribute name="Details" type="xs:string" use="required" />
           </xs:complexType>
         </xs:element>
       </xs:sequence>

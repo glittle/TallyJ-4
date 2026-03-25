@@ -11,14 +11,14 @@ export const importService = {
     request: ParseCsvHeadersRequest,
   ): Promise<ParseCsvHeadersResponse> {
     const response = await api.post<ParseCsvHeadersResponse>(
-      "/import/parse-csv-headers",
+      "/api/Import/parse-csv-headers",
       request,
     );
     return response.data;
   },
 
   async importBallots(request: ImportBallotRequest): Promise<ImportResult> {
-    const response = await api.post<ImportResult>("/import/ballots", request);
+    const response = await api.post<ImportResult>("/api/Import/importBallots", request);
     return response.data;
   },
 };

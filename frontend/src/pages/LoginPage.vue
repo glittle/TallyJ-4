@@ -25,6 +25,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import TelegramLoginButton from "../components/auth/TelegramLoginButton.vue";
 import { useAuthStore } from "../stores/authStore";
+import { getApiPublicAuthConfig } from "../api/gen/configService/sdk.gen";
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -237,8 +238,7 @@ const fetchAuthConfig = async () => {
     return authConfig.value;
   }
   try {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
-    const resp = await fetch(`${apiUrl}/api/public/auth-config`);
+    const resp = await getApiPublicAuthConfig();
     if (!resp.ok) {
       return null;
     }

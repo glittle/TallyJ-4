@@ -39,12 +39,16 @@ const handleLogoClick = () => {
           <span>{{ $t("common.versionDisplay", { version: VERSION }) }}</span>
         </h2>
       </div>
-      <div class="testOnlyWarning">
-        {{ $t("common.testOnlyLong") }}
+      <div class="header-middle">
+        <div class="testOnlyWarning">
+          {{ $t("common.testOnlyLong") }}
+        </div>
+        <div>
+          <LanguageFlagsSelector v-if="expandLanguageSelector" />
+          <LanguageSelector v-else />
+        </div>
       </div>
       <div class="header-right">
-        <LanguageFlagsSelector v-if="expandLanguageSelector" />
-        <LanguageSelector v-else />
         <ThemeSelector />
       </div>
     </div>
@@ -72,6 +76,13 @@ const handleLogoClick = () => {
     /* Safari support */
   }
 
+  .header-middle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
   .logo h2 {
     display: flex;
     align-items: center;
@@ -81,7 +92,6 @@ const handleLogoClick = () => {
     margin: 0;
     font-size: 24px;
     font-weight: 600;
-    cursor: help;
 
     img {
       background-color: rgba(255, 255, 255, 0.4);
@@ -101,12 +111,11 @@ const handleLogoClick = () => {
   }
 
   .testOnlyWarning {
-    padding: 0.25em 1em;
-    margin: -10px auto;
+    padding: 0.25em 0.5em;
     text-align: center;
     background-color: var(--el-color-error);
     color: var(--color-sidebar-text);
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: bold;
     border-radius: 10px;
     width: fit-content;

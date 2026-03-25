@@ -1,19 +1,23 @@
+import { getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
+import type {
+  CreateElectionDto,
+  ElectionDto,
+  ElectionSummaryDto,
+  ImportResultDto,
+  UpdateElectionDto,
+} from "../types";
 import {
   deleteApiElectionsByGuidDeleteElection,
   getApiElectionsByGuidElection,
   getApiElectionsByGuidElectionSummary,
+  getApiImportExportElectionToJsonByElectionGuid,
   postApiElectionsCreateElection,
+  postApiImportImportCdnBallotsByElectionGuid,
+  postApiImportImportElectionFromJson,
+  postApiImportImportTallyJv2Election,
   putApiElectionsByGuidUpdateElection,
 } from "./../api/gen/configService/sdk.gen";
-import { getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
 import { cacheService } from "./cacheService";
-import type {
-  ElectionDto,
-  CreateElectionDto,
-  UpdateElectionDto,
-  ElectionSummaryDto,
-  ImportResultDto,
-} from "../types";
 
 const convertStringToDate = (dateString?: string): Date | null => {
   return dateString ? new Date(dateString) : null;
@@ -122,69 +126,39 @@ export const electionService = {
   },
 
   async exportElectionToJson(electionGuid: string): Promise<Blob> {
-    const response = await fetch(`/api/import/exportElectionToJson/${electionGuid}`, {
-      method: 'GET',
-      credentials: 'include',
+    const response = await getApiImportExportElectionToJsonByElectionGuid({
+      path: { electionGuid },
     });
-
-    if (!response.ok) {
-      throw new Error('Export failed');
-    }
 
     return await response.blob();
   },
 
   async importElectionFromFile(file: File): Promise<ElectionDto> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await fetch('/api/import/importElectionFromJson', {
-      method: 'POST',
-      credentials: 'include',
-      body: formData,
+    const response = await postApiImportImportElectionFromJson({
+      body: { file },
     });
 
-    if (!response.ok) {
-      throw new Error('Import failed');
-    }
-
-    const result = await response.json();
-    return result.election;
+    return response.data.election;
   },
 
   async importTallyJv2ElectionFromFile(file: File): Promise<ElectionDto> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await fetch('/api/import/importTallyJv2Election', {
-      method: 'POST',
-      credentials: 'include',
-      body: formData,
+    const response = await postApiImportImportTallyJv2Election({
+      body: { file },
     });
 
-    if (!response.ok) {
-      throw new Error('Import failed');
-    }
-
-    const result = await response.json();
-    return result.election;
+    return response.data.election;
   },
 
-  async importCdnBallots(electionGuid: string, file: File): Promise<ImportResultDto> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await fetch(`/api/import/importCdnBallots/${electionGuid}`, {
-      method: 'POST',
-      credentials: 'include',
-      body: formData,
+  async importCdnBallots(
+    electionGuid: string,
+    file: File,
+  ): Promise<ImportResultDto> {
+    const response = await postApiImportImportCdnBallotsByElectionGuid({
+      path: { electionGuid },
+      body: { file },
     });
 
-    if (!response.ok) {
-      throw new Error('Import failed');
-    }
-
-    return await response.json();
+    return response.data;
   },
 
   // async getCurrentElection(): Promise<ElectionDto | null> {

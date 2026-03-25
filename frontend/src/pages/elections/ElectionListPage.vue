@@ -3,13 +3,16 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-button type="primary" @click="createElection">
+          <el-button
+            :type="allElections.length ? 'info' : 'primary'"
+            @click="createElection"
+          >
             <el-icon>
               <Plus />
             </el-icon>
             {{ $t("elections.createNew") }}
           </el-button>
-          <el-button type="default" @click="importElection">
+          <el-button type="info" @click="importElection">
             <el-icon>
               <Upload />
             </el-icon>
@@ -208,14 +211,15 @@
 
 <script setup lang="ts">
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useNotifications } from "@/composables/useNotifications";
 import { Plus, Search, Upload } from "@element-plus/icons-vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { useElectionStore } from "../../stores/electionStore";
-import { useNotifications } from "@/composables/useNotifications";
 import { electionService } from "../../services/electionService";
+import { useElectionStore } from "../../stores/electionStore";
 import type { ElectionDto } from "../../types";
+import { extractApiErrorMessage } from "../../utils/errorHandler";
 
 const router = useRouter();
 const { t } = useI18n();
@@ -276,9 +280,14 @@ const filteredElectionsUnpaginated = computed(() => {
   if (filters.value.dateRange && filters.value.dateRange.length === 2) {
     const [startDate, endDate] = filters.value.dateRange;
     filtered = filtered.filter((election) => {
-      if (!election.dateOfElection) return false;
+      if (!election.dateOfElection) {
+        return false;
+      }
       const electionDate = new Date(election.dateOfElection);
-      return electionDate >= startDate && electionDate <= endDate;
+      return (
+        electionDate >= (startDate ?? 0) &&
+        electionDate <= (endDate ?? Infinity)
+      );
     });
   }
 
@@ -295,11 +304,19 @@ const filteredElectionsUnpaginated = computed(() => {
       }
 
       // Handle string sorting
-      if (typeof aVal === "string") aVal = aVal.toLowerCase();
-      if (typeof bVal === "string") bVal = bVal.toLowerCase();
+      if (typeof aVal === "string") {
+        aVal = aVal.toLowerCase();
+      }
+      if (typeof bVal === "string") {
+        bVal = bVal.toLowerCase();
+      }
 
-      if (aVal < bVal) return sort.value.order === "ascending" ? -1 : 1;
-      if (aVal > bVal) return sort.value.order === "ascending" ? 1 : -1;
+      if (aVal < bVal) {
+        return sort.value.order === "ascending" ? -1 : 1;
+      }
+      if (aVal > bVal) {
+        return sort.value.order === "ascending" ? 1 : -1;
+      }
       return 0;
     });
   }
@@ -350,18 +367,20 @@ function createElection() {
 
 async function importElection() {
   try {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json,.xml';
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json,.xml";
     input.onchange = async (event) => {
       const file = (event.target as HTMLInputElement).files?.[0];
-      if (!file) return;
+      if (!file) {
+        return;
+      }
 
       try {
         let election: ElectionDto;
-        if (file.name.toLowerCase().endsWith('.json')) {
+        if (file.name.toLowerCase().endsWith(".json")) {
           election = await electionService.importElectionFromFile(file);
-        } else if (file.name.toLowerCase().endsWith('.xml')) {
+        } else if (file.name.toLowerCase().endsWith(".xml")) {
           election = await electionService.importTallyJv2ElectionFromFile(file);
         } else {
           showErrorMessage(t("elections.importElectionError"));
@@ -369,15 +388,19 @@ async function importElection() {
         }
 
         showSuccessMessage(t("elections.importElectionSuccess"));
-        await loadElections();
+        await loadElections(); // is this needed if we go elsewhere immediately?
         router.push(`/elections/${election.electionGuid}`);
       } catch (error: any) {
-        showErrorMessage(error.message || t("elections.importElectionError"));
+        showErrorMessage(
+          extractApiErrorMessage(error) || t("elections.importElectionError"),
+        );
       }
     };
     input.click();
   } catch (error: any) {
-    showErrorMessage(error.message || t("elections.importElectionError"));
+    showErrorMessage(
+      extractApiErrorMessage(error) || t("elections.importElectionError"),
+    );
   }
 }
 
@@ -417,7 +440,9 @@ function handlePageChange() {
 }
 
 function formatDate(date: string) {
-  if (!date) return "-";
+  if (!date) {
+    return "-";
+  }
   return new Date(date).toLocaleDateString();
 }
 
@@ -439,8 +464,10 @@ function getStatusType(status: string) {
 
   .card-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 20px;
     align-items: center;
+    margin: 0;
   }
 
   .card-header h2 {
