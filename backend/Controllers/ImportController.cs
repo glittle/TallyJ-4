@@ -14,6 +14,7 @@ namespace Backend.Controllers;
 [Authorize]
 public class ImportController : ControllerBase
 {
+    private const long MaxFileSize = 50 * 1024 * 1024;
     private readonly ImportService _importService;
     private readonly ElectionExportImportService _electionExportImportService;
 
@@ -104,6 +105,11 @@ public class ImportController : ControllerBase
                 return BadRequest(new { error = "No file provided" });
             }
 
+            if (file.Length > MaxFileSize)
+            {
+                return BadRequest(new { error = "File too large" });
+            }
+
             using var stream = file.OpenReadStream();
             var result = await _electionExportImportService.ImportCdnBallotsAsync(electionGuid, stream);
 
@@ -141,6 +147,11 @@ public class ImportController : ControllerBase
                 return BadRequest(new { error = "No file provided" });
             }
 
+            if (file.Length > MaxFileSize)
+            {
+                return BadRequest(new { error = "File too large" });
+            }
+
             using var stream = file.OpenReadStream();
             var election = await _electionExportImportService.ImportTallyJv2ElectionAsync(stream, GetCurrentUserId());
 
@@ -169,6 +180,11 @@ public class ImportController : ControllerBase
             if (file == null || file.Length == 0)
             {
                 return BadRequest(new { error = "No file provided" });
+            }
+
+            if (file.Length > MaxFileSize)
+            {
+                return BadRequest(new { error = "File too large" });
             }
 
             using var stream = file.OpenReadStream();

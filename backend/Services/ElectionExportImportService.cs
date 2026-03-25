@@ -40,10 +40,10 @@ public class ElectionExportImportService
     public async Task<ImportResultDto> ImportCdnBallotsAsync(Guid electionGuid, Stream xmlStream)
     {
         var result = new ImportResultDto();
+        using var transaction = await _context.Database.BeginTransactionAsync();
 
         try
         {
-            // Validate XML against schema
             var schemaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Schemas", "CdnBallotImport.xsd");
             var xmlDoc = new XmlDocument();
 
@@ -53,7 +53,6 @@ public class ElectionExportImportService
                 xmlDoc.LoadXml(xmlContent);
             }
 
-            // Validate against schema
             xmlDoc.Schemas.Add("", schemaPath);
             var validationErrors = new List<string>();
             xmlDoc.Validate((sender, args) =>
@@ -69,12 +68,10 @@ public class ElectionExportImportService
                 return result;
             }
 
-            // Parse XML and create import data
             var electionNode = xmlDoc.DocumentElement;
             var voters = new List<CdnVoter>();
             var ballots = new List<CdnBallot>();
 
-            // Parse voters
             foreach (XmlElement voterNode in electionNode.SelectNodes("descendant::voter"))
             {
                 var voter = new CdnVoter();
@@ -84,7 +81,6 @@ public class ElectionExportImportService
                 voters.Add(voter);
             }
 
-            // Parse ballots
             foreach (XmlElement ballotNode in electionNode.SelectNodes("descendant::ballot"))
             {
                 var ballot = new CdnBallot();
@@ -99,7 +95,6 @@ public class ElectionExportImportService
                 ballots.Add(ballot);
             }
 
-            // Validate data
             if (voters.Count != ballots.Count)
             {
                 result.Errors.Add($"Voter count ({voters.Count}) must match ballot count ({ballots.Count})");
@@ -107,7 +102,6 @@ public class ElectionExportImportService
                 return result;
             }
 
-            // Get or create Imported location
             var importedLocation = await _context.Locations
                 .FirstOrDefaultAsync(l => l.ElectionGuid == electionGuid && l.LocationTypeEnum == LocationType.Imported);
 
@@ -123,15 +117,13 @@ public class ElectionExportImportService
                 _context.Locations.Add(importedLocation);
             }
 
-            // Ensure election supports Imported voting method
             var election = await _context.Elections.FindAsync(electionGuid);
-            if (election != null && !election.VotingMethods.Contains("I"))
+            if (election != null && !(election.VotingMethods?.Contains("I") == true))
             {
                 election.VotingMethods = (election.VotingMethods ?? "") + "I";
                 _context.Elections.Update(election);
             }
 
-            // Process voters and ballots
             var peopleCache = await _context.People
                 .Where(p => p.ElectionGuid == electionGuid && p.BahaiId != null)
                 .ToDictionaryAsync(p => p.BahaiId!);
@@ -148,14 +140,12 @@ public class ElectionExportImportService
                     continue;
                 }
 
-                // Check if already voted
                 if (!string.IsNullOrEmpty(person.VotingMethod) && person.VotingMethod != "I")
                 {
                     result.Warnings.Add($"{person.FullNameFl} has already voted with method {person.VotingMethod}");
                     continue;
                 }
 
-                // Update person voting method
                 person.VotingMethod = "I";
                 person.VotingLocationGuid = importedLocation.LocationGuid;
                 person.RegistrationTime = DateTime.UtcNow;
@@ -163,7 +153,6 @@ public class ElectionExportImportService
                 _context.People.Update(person);
             }
 
-            // Create ballots
             foreach (var ballot in ballots)
             {
                 var ballotEntity = new Ballot
@@ -178,7 +167,6 @@ public class ElectionExportImportService
 
                 _context.Ballots.Add(ballotEntity);
 
-                // Create votes by matching names
                 foreach (var vote in ballot.Votes)
                 {
                     var matchedPerson = peopleCache.Values
@@ -210,10 +198,12 @@ public class ElectionExportImportService
             }
 
             await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
             result.Success = true;
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync();
             result.Errors.Add($"Import failed: {ex.Message}");
             result.Success = false;
         }
