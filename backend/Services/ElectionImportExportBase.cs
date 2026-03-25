@@ -1,12 +1,7 @@
 using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
 using Backend.Domain.Context;
-using Backend.DTOs.Import;
-using Backend.DTOs.Elections;
 using Backend.Models;
-using Microsoft.EntityFrameworkCore;
 using System.Globalization;
-using System.Text.Json;
 using System.Xml;
 using System.Xml.Schema;
 
