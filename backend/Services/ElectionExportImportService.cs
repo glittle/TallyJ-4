@@ -160,7 +160,7 @@ public class ElectionExportImportService
                     BallotGuid = Guid.NewGuid(),
                     LocationGuid = importedLocation.LocationGuid,
                     StatusCode = BallotStatus.Ok,
-                    ComputerCode = "IMPORT",
+                    ComputerCode = "IM",
                     BallotNumAtComputer = ballotCounter++,
                     RowVersion = new byte[8]
                 };
@@ -199,7 +199,7 @@ public class ElectionExportImportService
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
-            result.Success = true;
+            result.Success = result.Errors.Count == 0;
         }
         catch (Exception ex)
         {

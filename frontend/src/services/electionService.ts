@@ -126,11 +126,17 @@ export const electionService = {
   },
 
   async exportElectionToJson(electionGuid: string): Promise<Blob> {
-    const response = await getApiImportExportElectionToJsonByElectionGuid({
-      path: { electionGuid },
-    });
+    const blob = await getApiImportExportElectionToJsonByElectionGuid(
+      {
+        path: { electionGuid },
+      },
+      {
+        parseAs: "blob",
+        responseStyle: "data",
+      },
+    );
 
-    return await response.blob();
+    return blob;
   },
 
   async importElectionFromFile(file: File): Promise<ElectionDto> {

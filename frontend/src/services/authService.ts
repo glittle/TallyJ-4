@@ -122,7 +122,9 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    await postApiAuthLogout();
+    await postApiAuthLogout({
+      throwOnError: true,
+    });
   },
 
   async tellerLogin(
