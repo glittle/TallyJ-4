@@ -199,7 +199,7 @@ public class ElectionExportImportService
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
-            result.Success = true;
+            result.Success = result.Errors.Count == 0;
         }
         catch (Exception ex)
         {
