@@ -68,16 +68,6 @@
             <h2 id="recent-elections-heading">
               {{ $t("dashboard.recentElections") }}
             </h2>
-            <el-button
-              type="primary"
-              aria-label="Create new election"
-              @click="createElection"
-            >
-              <el-icon aria-hidden="true">
-                <Plus />
-              </el-icon>
-              {{ $t("elections.createNew") }}
-            </el-button>
           </div>
         </template>
         <div
@@ -104,7 +94,6 @@
         </div>
         <div
           v-else
-          role="table"
           aria-label="Recent elections table"
           class="elections-table-container"
         >
@@ -336,9 +325,9 @@
 </template>
 
 <script setup lang="ts">
+import { CircleCheck, Document } from "@element-plus/icons-vue";
 import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { Document, CircleCheck, Plus } from "@element-plus/icons-vue";
 import { useElectionStore } from "../stores/electionStore";
 import type { ElectionSummaryDto } from "../types";
 

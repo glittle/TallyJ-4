@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Import;
+﻿using System.Security.Claims;
+using Backend.DTOs.Import;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,22 +7,26 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers;
 
 /// <summary>
-/// Controller for handling data import operations, including CSV parsing and ballot imports.
+/// Controller for handling ballot import operations, including CSV parsing and ballot imports.
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/Import")]
 [Authorize]
-public class ImportController : ControllerBase
+public class BallotImportController : ControllerBase
 {
+    private const long MaxFileSize = 50 * 1024 * 1024;
     private readonly ImportService _importService;
+    private readonly ElectionExportImportService _electionExportImportService;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ImportController"/> class.
+    /// Initializes a new instance of the <see cref="BallotImportController"/> class.
     /// </summary>
     /// <param name="importService">The import service.</param>
-    public ImportController(ImportService importService)
+    /// <param name="electionExportImportService">The election export/import service.</param>
+    public BallotImportController(ImportService importService, ElectionExportImportService electionExportImportService)
     {
         _importService = importService;
+        _electionExportImportService = electionExportImportService;
     }
 
     /// <summary>
@@ -75,6 +80,50 @@ public class ImportController : ControllerBase
 
         return Ok(result);
     }
+
+    /// <summary>
+    /// Imports Canadian ballot data from XML file.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election to import ballots into.</param>
+    /// <param name="file">The XML file to import.</param>
+    /// <returns>The import result.</returns>
+    [HttpPost("importCdnBallots/{electionGuid}")]
+    [Authorize(Policy = "ElectionAccess")]
+    public async Task<IActionResult> ImportCdnBallots(Guid electionGuid, IFormFile file)
+    {
+        try
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { error = "No file provided" });
+            }
+
+            if (file.Length > MaxFileSize)
+            {
+                return BadRequest(new { error = "File too large" });
+            }
+
+            using var stream = file.OpenReadStream();
+            var result = await _electionExportImportService.ImportCdnBallotsAsync(electionGuid, stream);
+
+            if (!result.Success)
+            {
+                return BadRequest(new
+                {
+                    errors = result.Errors,
+                    warnings = result.Warnings,
+                    ballotsCreated = result.BallotsCreated,
+                    votesCreated = result.VotesCreated
+                });
+            }
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = $"Import failed: {ex.Message}" });
+        }
+    }
 }
 
 /// <summary>
@@ -92,5 +141,3 @@ public class ParseCsvHeadersRequest
     /// </summary>
     public string? Delimiter { get; set; }
 }
-
-

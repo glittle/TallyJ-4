@@ -312,6 +312,7 @@ void RegisterApplicationServices(IServiceCollection services)
     services.AddScoped<Backend.Services.ISuperAdminService, Backend.Services.SuperAdminService>();
     services.AddScoped<Backend.Services.ImportService>();
     services.AddScoped<Backend.Services.IPeopleImportService, Backend.Services.PeopleImportService>();
+    services.AddScoped<Backend.Services.ElectionExportImportService>();
 }
 
 void RegisterAuthServices(IServiceCollection services)

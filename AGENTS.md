@@ -75,17 +75,8 @@ election-{electionGuid}
 
 ### Backend
 
-If the build fails with a NuGet restore error like `Value cannot be null. (Parameter 'path1')`, delete the `obj` folders and retry:
-
-```bat
-rmdir /s /q backend\obj
-dotnet build
-```
-
-```bash
-dotnet build backend/Backend.csproj
-dotnet test Backend.Tests/Backend.Tests.csproj
-```
+If the build fails with a NuGet restore error like `Value cannot be null. (Parameter 'path1')`, know that we are unable to
+run dotnet commands on this computer. Ask the user to run it for us.
 
 ### Frontend
 

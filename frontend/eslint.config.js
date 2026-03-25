@@ -17,6 +17,7 @@ export default [
       "no-var": "error",
       "prefer-const": "warn",
       eqeqeq: "error",
+      curly: "error",
       singleQuote: "off",
       semicolon: "off",
       eolLast: "off",

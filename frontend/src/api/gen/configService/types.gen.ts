@@ -2329,6 +2329,52 @@ export type PostApiAuthLogoutResponses = {
     200: unknown;
 };
 
+export type PostApiImportParseCsvHeadersData = {
+    body?: ParseCsvHeadersRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Import/parse-csv-headers';
+};
+
+export type PostApiImportParseCsvHeadersResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiImportImportBallotsData = {
+    body?: ImportBallotRequestDto;
+    path?: never;
+    query?: never;
+    url: '/api/Import/importBallots';
+};
+
+export type PostApiImportImportBallotsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiImportImportCdnBallotsByElectionGuidData = {
+    body?: {
+        file?: Blob | File;
+    };
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/Import/importCdnBallots/{electionGuid}';
+};
+
+export type PostApiImportImportCdnBallotsByElectionGuidResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetApiBallotsByElectionGuidBallotsData = {
     body?: never;
     path: {
@@ -2598,6 +2644,54 @@ export type PostApiDashboardDeleteTellerResponses = {
 
 export type PostApiDashboardDeleteTellerResponse = PostApiDashboardDeleteTellerResponses[keyof PostApiDashboardDeleteTellerResponses];
 
+export type PostApiImportImportTallyJv2ElectionData = {
+    body?: {
+        file?: Blob | File;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/Import/importTallyJv2Election';
+};
+
+export type PostApiImportImportTallyJv2ElectionResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiImportImportElectionFromJsonData = {
+    body?: {
+        file?: Blob | File;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/Import/importElectionFromJson';
+};
+
+export type PostApiImportImportElectionFromJsonResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiImportExportElectionToJsonByElectionGuidData = {
+    body?: never;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/Import/exportElectionToJson/{electionGuid}';
+};
+
+export type GetApiImportExportElectionToJsonByElectionGuidResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetApiElectionsGetElectionsData = {
     body?: never;
     path?: never;
@@ -2845,34 +2939,6 @@ export type PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses = {
 };
 
 export type PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponse = PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses[keyof PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses];
-
-export type PostApiImportParseCsvHeadersData = {
-    body?: ParseCsvHeadersRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Import/parse-csv-headers';
-};
-
-export type PostApiImportParseCsvHeadersResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiImportImportBallotsData = {
-    body?: ImportBallotRequestDto;
-    path?: never;
-    query?: never;
-    url: '/api/Import/importBallots';
-};
-
-export type PostApiImportImportBallotsResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
 
 export type GetApiByElectionGuidLocationsGetLocationsData = {
     body?: never;

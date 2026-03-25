@@ -1,2 +1,0 @@
-  async function initializeSignalR() { 
-    if (signalrInitialized.value) return; 

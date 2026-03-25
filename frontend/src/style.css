@@ -981,7 +981,7 @@ button:focus-visible {
   --el-color-error-light: var(--color-error-50);
   --el-color-error-dark: var(--color-error-600);
 
-  --el-color-info: var(--color-primary-500);
+  --el-color-info: var(--color-primary-300);
   --el-color-info-light: var(--color-primary-50);
   --el-color-info-dark: var(--color-primary-600);
 

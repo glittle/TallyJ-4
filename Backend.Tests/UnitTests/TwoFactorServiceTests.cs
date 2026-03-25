@@ -69,7 +69,8 @@ public class TwoFactorServiceTests : ServiceTestBase
             _localizerMock.Object,
             Context,
             _emailServiceMock.Object,
-            _encryptionService);
+            _encryptionService,
+            NullLogger<TwoFactorService>.Instance);
     }
 
     private async Task<AppUser> CreateUserAsync(string id, string email = "test@example.com",
