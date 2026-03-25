@@ -4,17 +4,19 @@ using Backend.Domain.Context;
 using Backend.DTOs.Import;
 using Backend.DTOs.Elections;
 using Backend.Models;
-using Backend.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using System.Text.Json;
 using System.Xml;
 using System.Xml.Schema;
-using System.Xml.Linq;
 
 namespace Backend.Services;
 
 public class ElectionExportImportService
 {
+    private const string LocationGuidAttribute = "LocationGuid";
+    private const string PersonGuidAttribute = "PersonGuid";
+
     private readonly MainDbContext _context;
     private readonly IElectionService _electionService;
 
@@ -36,6 +38,603 @@ public class ElectionExportImportService
         await _context.SaveChangesAsync();
     }
 
+    private static async Task<List<string>> ValidateXmlAgainstSchemaAsync(Stream xmlStream, string schemaPath)
+    {
+        var xmlDoc = new XmlDocument();
+
+        using (var reader = new StreamReader(xmlStream))
+        {
+            var xmlContent = await reader.ReadToEndAsync();
+            xmlDoc.LoadXml(xmlContent);
+        }
+
+        xmlDoc.Schemas.Add("", schemaPath);
+        var validationErrors = new List<string>();
+        xmlDoc.Validate((sender, args) =>
+        {
+            if (args.Severity == XmlSeverityType.Error)
+                validationErrors.Add(args.Message);
+        });
+
+        return validationErrors;
+    }
+
+    private static async Task<XmlDocument> ValidateAndLoadTallyJv2XmlDocumentAsync(Stream xmlStream)
+    {
+        var schemaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Schemas", "TallyJv2-Export.xsd");
+        var xmlDoc = new XmlDocument();
+
+        using (var reader = new StreamReader(xmlStream))
+        {
+            var xmlContent = await reader.ReadToEndAsync();
+            xmlDoc.LoadXml(xmlContent);
+        }
+
+        // Validate against schema
+        xmlDoc.Schemas.Add("urn:tallyj.bahai:v2", schemaPath);
+        var validationErrors = new List<string>();
+        xmlDoc.Validate((sender, args) =>
+        {
+            if (args.Severity == XmlSeverityType.Error)
+                validationErrors.Add(args.Message);
+        });
+
+        if (validationErrors.Any())
+        {
+            throw new InvalidOperationException("XML validation failed: " + string.Join("; ", validationErrors));
+        }
+
+        return xmlDoc;
+    }
+
+    private static (Election election, Dictionary<Guid, Guid> guidMap) CreateElectionFromXml(XmlElement root, XmlNamespaceManager nsm)
+    {
+        var electionNode = root.SelectSingleNode("t:election", nsm) as XmlElement;
+        if (electionNode == null) throw new InvalidOperationException("No election element found");
+
+        // Create new election with remapped GUIDs
+        var guidMap = new Dictionary<Guid, Guid>();
+        var newElectionGuid = Guid.NewGuid();
+
+        var election = new Election
+        {
+            ElectionGuid = newElectionGuid,
+            Name = electionNode.GetAttribute("Name") ?? "Imported Election",
+            Convenor = electionNode.GetAttribute("Convenor"),
+            DateOfElection = ParseDateTime(electionNode.GetAttribute("DateOfElection")),
+            ElectionType = electionNode.GetAttribute("ElectionType"),
+            ElectionMode = electionNode.GetAttribute("ElectionMode"),
+            NumberToElect = ParseInt(electionNode.GetAttribute("NumberToElect")),
+            NumberExtra = ParseInt(electionNode.GetAttribute("NumberExtra")),
+            CanVote = electionNode.GetAttribute("CanVote"),
+            CanReceive = electionNode.GetAttribute("CanReceive"),
+            ElectionPasscode = electionNode.GetAttribute("ElectionPasscode"),
+            LastEnvNum = ParseInt(electionNode.GetAttribute("LastEnvNum")),
+            ListForPublic = ParseBool(electionNode.GetAttribute("ListForPublic")),
+            ShowFullReport = ParseBool(electionNode.GetAttribute("ShowFullReport")),
+            OnlineWhenOpen = ParseDateTime(electionNode.GetAttribute("OnlineWhenOpen")),
+            OnlineWhenClose = ParseDateTime(electionNode.GetAttribute("OnlineWhenClose")),
+            OnlineCloseIsEstimate = ParseBool(electionNode.GetAttribute("OnlineCloseIsEstimate")) ?? true,
+            OnlineSelectionProcess = electionNode.GetAttribute("OnlineSelectionProcess"),
+            EmailFromAddress = electionNode.GetAttribute("EmailFromAddress"),
+            EmailFromName = electionNode.GetAttribute("EmailFromName"),
+            EmailText = electionNode.GetAttribute("EmailText"),
+            SmsText = electionNode.GetAttribute("SmsText"),
+            EmailSubject = electionNode.GetAttribute("EmailSubject"),
+            CustomMethods = electionNode.GetAttribute("CustomMethods"),
+            VotingMethods = electionNode.GetAttribute("VotingMethods"),
+            Flags = electionNode.GetAttribute("Flags"),
+            RowVersion = new byte[8]
+        };
+
+        return (election, guidMap);
+    }
+
+    private void ImportTellersFromXml(XmlElement root, XmlNamespaceManager nsm, Guid electionGuid)
+    {
+        var tellerNodes = root.SelectNodes("t:teller", nsm);
+        if (tellerNodes != null)
+        {
+            foreach (XmlElement tellerNode in tellerNodes)
+            {
+                var teller = new Teller
+                {
+                    ElectionGuid = electionGuid,
+                    Name = tellerNode.GetAttribute("Name") ?? "",
+                    IsHeadTeller = ParseBool(tellerNode.GetAttribute("IsHeadTeller")),
+                    RowVersion = new byte[8]
+                };
+                _context.Tellers.Add(teller);
+            }
+        }
+    }
+
+    private void ImportLocationsFromXml(XmlElement root, XmlNamespaceManager nsm, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
+    {
+        var locationNodes = root.SelectNodes("t:location", nsm);
+        if (locationNodes != null)
+        {
+            foreach (XmlElement locationNode in locationNodes)
+            {
+                var oldGuid = Guid.Parse(locationNode.GetAttribute(LocationGuidAttribute) ?? Guid.NewGuid().ToString());
+                var newGuid = Guid.NewGuid();
+                guidMap[oldGuid] = newGuid;
+
+                var location = new Location
+                {
+                    ElectionGuid = electionGuid,
+                    LocationGuid = newGuid,
+                    Name = locationNode.GetAttribute("Name") ?? "",
+                    ContactInfo = locationNode.GetAttribute("ContactInfo"),
+                    Long = locationNode.GetAttribute("Long"),
+                    Lat = locationNode.GetAttribute("Lat"),
+                    TallyStatus = locationNode.GetAttribute("TallyStatus"),
+                    SortOrder = ParseInt(locationNode.GetAttribute("SortOrder")),
+                    BallotsCollected = ParseInt(locationNode.GetAttribute("BallotsCollected")),
+                    LocationTypeCode = locationNode.GetAttribute("LocationTypeCode") ?? LocationType.Manual.ToString()
+                };
+                _context.Locations.Add(location);
+            }
+        }
+    }
+
+    private void ImportPeopleFromXml(XmlElement root, XmlNamespaceManager nsm, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
+    {
+        var personNodes = root.SelectNodes("t:person", nsm);
+        if (personNodes != null)
+        {
+            foreach (XmlElement personNode in personNodes)
+            {
+                var oldGuid = Guid.Parse(personNode.GetAttribute(PersonGuidAttribute) ?? Guid.NewGuid().ToString());
+                var newGuid = Guid.NewGuid();
+                guidMap[oldGuid] = newGuid;
+
+                var person = new Person
+                {
+                    ElectionGuid = electionGuid,
+                    PersonGuid = newGuid,
+                    LastName = personNode.GetAttribute("LastName") ?? "",
+                    FirstName = personNode.GetAttribute("FirstName"),
+                    OtherLastNames = personNode.GetAttribute("OtherLastNames"),
+                    OtherNames = personNode.GetAttribute("OtherNames"),
+                    OtherInfo = personNode.GetAttribute("OtherInfo"),
+                    Area = personNode.GetAttribute("Area"),
+                    BahaiId = personNode.GetAttribute("BahaiId"),
+                    CombinedInfo = personNode.GetAttribute("CombinedInfo"),
+                    CombinedSoundCodes = personNode.GetAttribute("CombinedSoundCodes"),
+                    CombinedInfoAtStart = personNode.GetAttribute("CombinedInfoAtStart"),
+                    AgeGroup = personNode.GetAttribute("AgeGroup"),
+                    CanVote = ParseBool(personNode.GetAttribute("CanVote")) ?? true,
+                    CanReceiveVotes = ParseBool(personNode.GetAttribute("CanReceiveVotes")),
+                    IneligibleReasonGuid = ParseGuid(personNode.GetAttribute("IneligibleReasonGuid")),
+                    RegistrationTime = ParseDateTime(personNode.GetAttribute("RegistrationTime")),
+                    VotingLocationGuid = guidMap.ContainsKey(ParseGuid(personNode.GetAttribute("VotingLocationGuid")) ?? Guid.Empty)
+                        ? guidMap[ParseGuid(personNode.GetAttribute("VotingLocationGuid")) ?? Guid.Empty]
+                        : null,
+                    VotingMethod = personNode.GetAttribute("VotingMethod"),
+                    EnvNum = ParseInt(personNode.GetAttribute("EnvNum")),
+                    Teller1 = personNode.GetAttribute("TellerAtKeyboard"),
+                    Teller2 = personNode.GetAttribute("TellerAssisting"),
+                    Email = personNode.GetAttribute("Email"),
+                    Phone = personNode.GetAttribute("Phone"),
+                    HasOnlineBallot = ParseBool(personNode.GetAttribute("HasOnlineBallot")),
+                    Flags = personNode.GetAttribute("Flags"),
+                    UnitName = personNode.GetAttribute("UnitName"),
+                    KioskCode = personNode.GetAttribute("KioskCode"),
+                    RegistrationHistory = personNode.GetAttribute("RegistrationHistory"),
+                    RowVersion = new byte[8]
+                };
+                _context.People.Add(person);
+            }
+        }
+    }
+
+    private void ImportVotesFromXml(Guid ballotGuid, XmlNodeList voteNodes, Dictionary<Guid, Guid> guidMap)
+    {
+        if (voteNodes != null)
+        {
+            var position = 1;
+            foreach (XmlElement voteNode in voteNodes)
+            {
+                var vote = new Vote
+                {
+                    BallotGuid = ballotGuid,
+                    PositionOnBallot = position++,
+                    PersonGuid = guidMap.ContainsKey(ParseGuid(voteNode.GetAttribute(PersonGuidAttribute)) ?? Guid.Empty)
+                        ? guidMap[ParseGuid(voteNode.GetAttribute(PersonGuidAttribute)) ?? Guid.Empty]
+                        : null,
+                    VoteStatus = Enum.Parse<VoteStatus>(voteNode.GetAttribute("StatusCode") ?? "Ok"),
+                    IneligibleReasonCode = voteNode.GetAttribute("InvalidReasonGuid"),
+                    SingleNameElectionCount = ParseInt(voteNode.GetAttribute("SingleNameElectionCount")),
+                    RowVersion = new byte[8]
+                };
+                _context.Votes.Add(vote);
+            }
+        }
+    }
+
+    private void ImportBallotFromXml(XmlElement ballotNode, Guid locationGuid, XmlNamespaceManager nsm, Dictionary<Guid, Guid> guidMap)
+    {
+        var ballotGuid = Guid.NewGuid();
+        var ballot = new Ballot
+        {
+            BallotGuid = ballotGuid,
+            LocationGuid = locationGuid,
+            StatusCode = Enum.Parse<BallotStatus>(ballotNode.GetAttribute("StatusCode") ?? "Ok"),
+            ComputerCode = ballotNode.GetAttribute("ComputerCode"),
+            BallotNumAtComputer = ParseInt(ballotNode.GetAttribute("BallotNumAtComputer")) ?? 0,
+            Teller1 = ballotNode.GetAttribute("TellerAtKeyboard"),
+            Teller2 = ballotNode.GetAttribute("TellerAssisting"),
+            RowVersion = new byte[8]
+        };
+        _context.Ballots.Add(ballot);
+
+        var voteNodes = ballotNode.SelectNodes("t:vote", nsm);
+        ImportVotesFromXml(ballotGuid, voteNodes!, guidMap);
+    }
+
+    private void ImportBallotsForLocationFromXml(XmlElement locationNode, XmlNamespaceManager nsm, Dictionary<Guid, Guid> guidMap)
+    {
+        var attr = locationNode.GetAttribute(LocationGuidAttribute);
+        var oldLocationGuid = attr != null ? Guid.Parse(attr) : Guid.Empty;
+        if (!guidMap.ContainsKey(oldLocationGuid))
+        {
+            throw new InvalidOperationException($"Location GUID {oldLocationGuid} not found in map for ballot loading");
+        }
+        var locationGuid = guidMap[oldLocationGuid];
+        var ballotNodes = locationNode.SelectNodes("t:ballot", nsm);
+
+        if (ballotNodes != null)
+        {
+            foreach (XmlElement ballotNode in ballotNodes)
+            {
+                ImportBallotFromXml(ballotNode, locationGuid, nsm, guidMap);
+            }
+        }
+    }
+
+    private void ImportBallotsAndVotesFromXml(XmlNodeList locationNodes, XmlNamespaceManager nsm, Dictionary<Guid, Guid> guidMap)
+    {
+        foreach (XmlElement locationNode in locationNodes)
+        {
+            ImportBallotsForLocationFromXml(locationNode, nsm, guidMap);
+        }
+    }
+
+    private void ImportResultsFromXml(XmlElement root, XmlNamespaceManager nsm, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
+    {
+        // Load result summaries
+        var resultSummaryNodes = root.SelectNodes("t:resultSummary", nsm);
+        if (resultSummaryNodes != null)
+        {
+            foreach (XmlElement rsNode in resultSummaryNodes)
+            {
+                var resultSummary = new ResultSummary
+                {
+                    ElectionGuid = electionGuid,
+                    ResultType = rsNode.GetAttribute("ResultType") ?? "M",
+                    NumVoters = ParseInt(rsNode.GetAttribute("NumVoters")),
+                    NumEligibleToVote = ParseInt(rsNode.GetAttribute("NumEligibleToVote")),
+                    BallotsReceived = ParseInt(rsNode.GetAttribute("NumBallotsEntered")) ?? ParseInt(rsNode.GetAttribute("BallotsReceived")),
+                    InPersonBallots = ParseInt(rsNode.GetAttribute("EnvelopesInPerson")) ?? ParseInt(rsNode.GetAttribute("InPersonBallots")),
+                    DroppedOffBallots = ParseInt(rsNode.GetAttribute("EnvelopesDroppedOff")) ?? ParseInt(rsNode.GetAttribute("DroppedOffBallots")),
+                    MailedInBallots = ParseInt(rsNode.GetAttribute("EnvelopesMailedIn")) ?? ParseInt(rsNode.GetAttribute("MailedInBallots")),
+                    CalledInBallots = ParseInt(rsNode.GetAttribute("EnvelopesCalledIn")) ?? ParseInt(rsNode.GetAttribute("CalledInBallots")),
+                    OnlineBallots = ParseInt(rsNode.GetAttribute("EnvelopesOnline")) ?? ParseInt(rsNode.GetAttribute("OnlineBallots")),
+                    ImportedBallots = ParseInt(rsNode.GetAttribute("EnvelopesImported")) ?? ParseInt(rsNode.GetAttribute("ImportedBallots")),
+                    Custom1Ballots = ParseInt(rsNode.GetAttribute("EnvelopesCustom1")) ?? ParseInt(rsNode.GetAttribute("Custom1Ballots")),
+                    Custom2Ballots = ParseInt(rsNode.GetAttribute("EnvelopesCustom2")) ?? ParseInt(rsNode.GetAttribute("Custom2Ballots")),
+                    Custom3Ballots = ParseInt(rsNode.GetAttribute("EnvelopesCustom3")) ?? ParseInt(rsNode.GetAttribute("Custom3Ballots")),
+                    BallotsNeedingReview = ParseInt(rsNode.GetAttribute("BallotsNeedingReview")),
+                    SpoiledBallots = ParseInt(rsNode.GetAttribute("SpoiledBallots")),
+                    SpoiledVotes = ParseInt(rsNode.GetAttribute("SpoiledVotes")),
+                    TotalVotes = ParseInt(rsNode.GetAttribute("TotalVotes")),
+                    UseOnReports = ParseBool(rsNode.GetAttribute("UseOnReports")),
+                    SpoiledManualBallots = ParseInt(rsNode.GetAttribute("SpoiledManualBallots"))
+                };
+                _context.ResultSummaries.Add(resultSummary);
+            }
+        }
+
+        // Load results
+        var resultNodes = root.SelectNodes("t:result", nsm);
+        if (resultNodes != null)
+        {
+            foreach (XmlElement resultNode in resultNodes)
+            {
+                var result = new Result
+                {
+                    ElectionGuid = electionGuid,
+                    PersonGuid = guidMap[Guid.Parse(resultNode.GetAttribute(PersonGuidAttribute) ?? Guid.Empty.ToString())],
+                    VoteCount = ParseInt(resultNode.GetAttribute("VoteCount")),
+                    Rank = ParseInt(resultNode.GetAttribute("Rank")) ?? 0,
+                    Section = resultNode.GetAttribute("Section") ?? "T",
+                    IsTied = ParseBool(resultNode.GetAttribute("IsTied")),
+                    IsTieResolved = ParseBool(resultNode.GetAttribute("IsTieResolved")),
+                    TieBreakGroup = ParseInt(resultNode.GetAttribute("TieBreakGroup")),
+                    CloseToPrev = ParseBool(resultNode.GetAttribute("CloseToPrev")),
+                    CloseToNext = ParseBool(resultNode.GetAttribute("CloseToNext")),
+                    RankInExtra = ParseInt(resultNode.GetAttribute("RankInExtra")),
+                    TieBreakRequired = ParseBool(resultNode.GetAttribute("TieBreakRequired")),
+                    TieBreakCount = ParseInt(resultNode.GetAttribute("TieBreakCount")),
+                    ForceShowInOther = ParseBool(resultNode.GetAttribute("ForceShowInOther"))
+                };
+                _context.Results.Add(result);
+            }
+        }
+
+        // Load result ties
+        var resultTieNodes = root.SelectNodes("t:resultTie", nsm);
+        if (resultTieNodes != null)
+        {
+            foreach (XmlElement rtNode in resultTieNodes)
+            {
+                var resultTie = new ResultTie
+                {
+                    ElectionGuid = electionGuid,
+                    TieBreakGroup = ParseInt(rtNode.GetAttribute("TieBreakGroup")) ?? 0,
+                    NumInTie = ParseInt(rtNode.GetAttribute("NumInTie")) ?? 0,
+                    IsResolved = ParseBool(rtNode.GetAttribute("IsResolved")) ?? false,
+                    TieBreakRequired = ParseBool(rtNode.GetAttribute("TieBreakRequired")),
+                    NumToElect = ParseInt(rtNode.GetAttribute("NumToElect")) ?? 0
+                };
+                _context.ResultTies.Add(resultTie);
+            }
+        }
+    }
+
+    private void ImportOnlineVotingInfoFromXml(XmlElement root, XmlNamespaceManager nsm, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
+    {
+        var oviNodes = root.SelectNodes("t:onlineVoterInfo", nsm);
+        if (oviNodes != null)
+        {
+            foreach (XmlElement oviNode in oviNodes)
+            {
+                var ovi = new OnlineVotingInfo
+                {
+                    ElectionGuid = electionGuid,
+                    PersonGuid = guidMap[Guid.Parse(oviNode.GetAttribute(PersonGuidAttribute) ?? Guid.Empty.ToString())],
+                    WhenBallotCreated = ParseDateTime(oviNode.GetAttribute("WhenBallotCreated")),
+                    Status = oviNode.GetAttribute("Status") ?? "",
+                    WhenStatus = ParseDateTime(oviNode.GetAttribute("WhenStatus")),
+                    ListPool = oviNode.GetAttribute("ListPool"),
+                    PoolLocked = ParseBool(oviNode.GetAttribute("PoolLocked")),
+                    HistoryStatus = oviNode.GetAttribute("HistoryStatus"),
+                    NotifiedAboutOpening = ParseBool(oviNode.GetAttribute("NotifiedAboutOpening"))
+                };
+                _context.OnlineVotingInfos.Add(ovi);
+            }
+        }
+    }
+
+    private void ImportLogsFromXml(XmlElement root, XmlNamespaceManager nsm, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
+    {
+        var logNodes = root.SelectNodes("t:log", nsm);
+        if (logNodes != null)
+        {
+            foreach (XmlElement logNode in logNodes)
+            {
+                var log = new Log
+                {
+                    ElectionGuid = electionGuid,
+                    LocationGuid = guidMap.ContainsKey(ParseGuid(logNode.GetAttribute(LocationGuidAttribute)) ?? Guid.Empty)
+                        ? guidMap[ParseGuid(logNode.GetAttribute(LocationGuidAttribute)) ?? Guid.Empty]
+                        : null,
+                    VoterId = logNode.GetAttribute("VoterId"),
+                    ComputerCode = logNode.GetAttribute("ComputerCode"),
+                    Details = logNode.GetAttribute("Details"),
+                    AsOf = ParseDateTime(logNode.GetAttribute("AsOf")) ?? DateTime.UtcNow
+                };
+                _context.Logs.Add(log);
+            }
+        }
+    }
+
+    private static (List<CdnVoter> voters, List<string> errors) ParseVotersFromXml(XmlElement electionNode)
+    {
+        var voters = new List<CdnVoter>();
+        var errors = new List<string>();
+
+        foreach (XmlElement voterNode in electionNode.SelectNodes("descendant::voter")!)
+        {
+            var bahaiid = voterNode.GetAttribute("bahaiid");
+            var firstname = voterNode.GetAttribute("firstname");
+            var lastname = voterNode.GetAttribute("lastname");
+
+            if (string.IsNullOrEmpty(bahaiid))
+            {
+                errors.Add("Voter is missing required bahaiid attribute");
+                continue;
+            }
+            if (string.IsNullOrEmpty(firstname))
+            {
+                errors.Add("Voter is missing required firstname attribute");
+                continue;
+            }
+            if (string.IsNullOrEmpty(lastname))
+            {
+                errors.Add("Voter is missing required lastname attribute");
+                continue;
+            }
+
+            var voter = new CdnVoter();
+            voter.bahaiid = bahaiid;
+            voter.firstname = firstname;
+            voter.lastname = lastname;
+            voters.Add(voter);
+        }
+
+        return (voters, errors);
+    }
+
+    private static (List<CdnBallot> ballots, List<string> errors) ParseBallotsFromXml(XmlElement electionNode)
+    {
+        var ballots = new List<CdnBallot>();
+        var errors = new List<string>();
+
+        foreach (XmlElement ballotNode in electionNode.SelectNodes("descendant::ballot")!)
+        {
+            var indexAttr = ballotNode.GetAttribute("index");
+            var guidAttr = ballotNode.GetAttribute("guid");
+
+            if (string.IsNullOrEmpty(indexAttr))
+            {
+                errors.Add("Ballot is missing required index attribute");
+                continue;
+            }
+            if (string.IsNullOrEmpty(guidAttr))
+            {
+                errors.Add("Ballot is missing required guid attribute");
+                continue;
+            }
+
+            if (!int.TryParse(indexAttr, out var index))
+            {
+                errors.Add($"Ballot has invalid index attribute: {indexAttr}");
+                continue;
+            }
+
+            var ballot = new CdnBallot();
+            ballot.index = index;
+            ballot.guid = guidAttr;
+
+            foreach (XmlElement voteNode in ballotNode.SelectNodes("vote")!)
+            {
+                var rawVote = new OnlineRawVote(voteNode.InnerText);
+                ballot.Votes.Add(rawVote);
+            }
+            ballots.Add(ballot);
+        }
+
+        return (ballots, errors);
+    }
+
+    private static string? ValidateVoterBallotCounts(List<CdnVoter> voters, List<CdnBallot> ballots)
+    {
+        if (voters.Count != ballots.Count)
+        {
+            return $"Voter count ({voters.Count}) must match ballot count ({ballots.Count})";
+        }
+        return null;
+    }
+
+    private async Task<Location> EnsureImportedLocationExistsAsync(Guid electionGuid)
+    {
+        var importedLocation = await _context.Locations
+            .FirstOrDefaultAsync(l => l.ElectionGuid == electionGuid && l.LocationTypeEnum == LocationType.Imported);
+
+        if (importedLocation == null)
+        {
+            importedLocation = new Location
+            {
+                LocationGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                Name = "Imported",
+                LocationTypeCode = LocationType.Imported.ToString()
+            };
+            _context.Locations.Add(importedLocation);
+        }
+
+        return importedLocation;
+    }
+
+    private async Task UpdateElectionVotingMethodsAsync(Guid electionGuid)
+    {
+        var election = await _context.Elections.FindAsync(electionGuid);
+        if (election != null && (election.VotingMethods?.Contains("I") != true))
+        {
+            election.VotingMethods = (election.VotingMethods ?? "") + "I";
+            _context.Elections.Update(election);
+        }
+    }
+
+    private async Task<(Dictionary<string, Person> peopleCache, int ballotCounter, List<string> missingBahaiIds)> PrepareVoterProcessingAsync(
+        Guid electionGuid, Guid importedLocationGuid, List<CdnVoter> voters)
+    {
+        var peopleCache = await _context.People
+            .Where(p => p.ElectionGuid == electionGuid && p.BahaiId != null)
+            .ToDictionaryAsync(p => p.BahaiId!);
+
+        var ballotCounter = await _context.Ballots
+            .Where(b => b.LocationGuid == importedLocationGuid)
+            .CountAsync() + 1;
+
+        var voterBahaiIds = voters.Select(v => v.bahaiid).ToList();
+        var missingBahaiIds = voterBahaiIds.Where(id => !peopleCache.ContainsKey(id)).ToList();
+
+        return (peopleCache, ballotCounter, missingBahaiIds);
+    }
+
+    private void ProcessVoters(List<CdnVoter> voters, Dictionary<string, Person> peopleCache,
+        Guid importedLocationGuid, ImportResultDto result)
+    {
+        var validVoters = voters.Where(v => peopleCache.ContainsKey(v.bahaiid)).ToList();
+        foreach (var voter in validVoters)
+        {
+            var person = peopleCache[voter.bahaiid];
+
+            if (!string.IsNullOrEmpty(person.VotingMethod) && person.VotingMethod != "I")
+            {
+                result.Warnings.Add($"{person.FullNameFl} has already voted with method {person.VotingMethod}");
+                continue;
+            }
+
+            person.VotingMethod = "I";
+            person.VotingLocationGuid = importedLocationGuid;
+            person.RegistrationTime = DateTime.UtcNow;
+            person.EnvNum = null;
+            _context.People.Update(person);
+        }
+    }
+
+    private void ProcessBallots(List<CdnBallot> ballots, Dictionary<string, Person> peopleCache,
+        Guid importedLocationGuid, ref int ballotCounter, ImportResultDto result)
+    {
+        foreach (var ballot in ballots)
+        {
+            var ballotEntity = new Ballot
+            {
+                BallotGuid = Guid.NewGuid(),
+                LocationGuid = importedLocationGuid,
+                StatusCode = BallotStatus.Ok,
+                ComputerCode = "IM",
+                BallotNumAtComputer = ballotCounter++,
+                RowVersion = new byte[8]
+            };
+
+            _context.Ballots.Add(ballotEntity);
+
+            foreach (var vote in ballot.Votes)
+            {
+                var matchedPerson = peopleCache.Values
+                    .FirstOrDefault(p =>
+                        p.FirstName?.ToLower() == vote.First?.ToLower() &&
+                        p.LastName?.ToLower() == vote.Last?.ToLower());
+
+                if (matchedPerson != null)
+                {
+                    var voteEntity = new Vote
+                    {
+                        BallotGuid = ballotEntity.BallotGuid,
+                        PersonGuid = matchedPerson.PersonGuid,
+                        PositionOnBallot = ballot.Votes.IndexOf(vote) + 1,
+                        VoteStatus = VoteStatus.Ok,
+                        PersonCombinedInfo = matchedPerson.CombinedInfo,
+                        RowVersion = new byte[8]
+                    };
+                    _context.Votes.Add(voteEntity);
+                    result.VotesCreated++;
+                }
+                else
+                {
+                    result.Warnings.Add($"Could not match vote '{vote.First} {vote.Last}' in ballot {ballot.index}");
+                }
+            }
+
+            result.BallotsCreated++;
+        }
+    }
+
     // Job 1: Import from CdnBallotImport.xsd format
     public async Task<ImportResultDto> ImportCdnBallotsAsync(Guid electionGuid, Stream xmlStream)
     {
@@ -45,21 +644,7 @@ public class ElectionExportImportService
         try
         {
             var schemaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Schemas", "CdnBallotImport.xsd");
-            var xmlDoc = new XmlDocument();
-
-            using (var reader = new StreamReader(xmlStream))
-            {
-                var xmlContent = await reader.ReadToEndAsync();
-                xmlDoc.LoadXml(xmlContent);
-            }
-
-            xmlDoc.Schemas.Add("", schemaPath);
-            var validationErrors = new List<string>();
-            xmlDoc.Validate((sender, args) =>
-            {
-                if (args.Severity == XmlSeverityType.Error)
-                    validationErrors.Add(args.Message);
-            });
+            var validationErrors = await ValidateXmlAgainstSchemaAsync(xmlStream, schemaPath);
 
             if (validationErrors.Any())
             {
@@ -68,134 +653,43 @@ public class ElectionExportImportService
                 return result;
             }
 
-            var electionNode = xmlDoc.DocumentElement;
-            var voters = new List<CdnVoter>();
-            var ballots = new List<CdnBallot>();
-
-            foreach (XmlElement voterNode in electionNode.SelectNodes("descendant::voter"))
+            // Re-load the XML since the stream was consumed by validation
+            var xmlDoc = new XmlDocument();
+            using (var reader = new StreamReader(xmlStream))
             {
-                var voter = new CdnVoter();
-                voter.bahaiid = voterNode.GetAttribute("bahaiid");
-                voter.firstname = voterNode.GetAttribute("firstname");
-                voter.lastname = voterNode.GetAttribute("lastname");
-                voters.Add(voter);
+                var xmlContent = await reader.ReadToEndAsync();
+                xmlDoc.LoadXml(xmlContent);
             }
 
-            foreach (XmlElement ballotNode in electionNode.SelectNodes("descendant::ballot"))
-            {
-                var ballot = new CdnBallot();
-                ballot.index = int.Parse(ballotNode.GetAttribute("index"));
-                ballot.guid = ballotNode.GetAttribute("guid");
+            var electionNode = xmlDoc.DocumentElement!;
+            var (voters, voterErrors) = ParseVotersFromXml(electionNode);
+            result.Errors.AddRange(voterErrors);
 
-                foreach (XmlElement voteNode in ballotNode.SelectNodes("vote"))
-                {
-                    var rawVote = new OnlineRawVote(voteNode.InnerText);
-                    ballot.Votes.Add(rawVote);
-                }
-                ballots.Add(ballot);
-            }
+            var (ballots, ballotErrors) = ParseBallotsFromXml(electionNode);
+            result.Errors.AddRange(ballotErrors);
 
-            if (voters.Count != ballots.Count)
+            var countValidationError = ValidateVoterBallotCounts(voters, ballots);
+            if (countValidationError != null)
             {
-                result.Errors.Add($"Voter count ({voters.Count}) must match ballot count ({ballots.Count})");
+                result.Errors.Add(countValidationError);
                 result.Success = false;
                 return result;
             }
 
-            var importedLocation = await _context.Locations
-                .FirstOrDefaultAsync(l => l.ElectionGuid == electionGuid && l.LocationTypeEnum == LocationType.Imported);
+            var importedLocation = await EnsureImportedLocationExistsAsync(electionGuid);
+            await UpdateElectionVotingMethodsAsync(electionGuid);
 
-            if (importedLocation == null)
+            var (peopleCache, ballotCounter, missingBahaiIds) = await PrepareVoterProcessingAsync(
+                electionGuid, importedLocation.LocationGuid, voters);
+
+            foreach (var missingId in missingBahaiIds)
             {
-                importedLocation = new Location
-                {
-                    LocationGuid = Guid.NewGuid(),
-                    ElectionGuid = electionGuid,
-                    Name = "Imported",
-                    LocationTypeCode = LocationType.Imported.ToString()
-                };
-                _context.Locations.Add(importedLocation);
+                result.Errors.Add($"Voter with BahaiId {missingId} not found in election");
             }
 
-            var election = await _context.Elections.FindAsync(electionGuid);
-            if (election != null && !(election.VotingMethods?.Contains("I") == true))
-            {
-                election.VotingMethods = (election.VotingMethods ?? "") + "I";
-                _context.Elections.Update(election);
-            }
+            ProcessVoters(voters, peopleCache, importedLocation.LocationGuid, result);
 
-            var peopleCache = await _context.People
-                .Where(p => p.ElectionGuid == electionGuid && p.BahaiId != null)
-                .ToDictionaryAsync(p => p.BahaiId!);
-
-            var ballotCounter = await _context.Ballots
-                .Where(b => b.LocationGuid == importedLocation.LocationGuid)
-                .CountAsync() + 1;
-
-            foreach (var voter in voters)
-            {
-                if (!peopleCache.TryGetValue(voter.bahaiid, out var person))
-                {
-                    result.Errors.Add($"Voter with BahaiId {voter.bahaiid} not found in election");
-                    continue;
-                }
-
-                if (!string.IsNullOrEmpty(person.VotingMethod) && person.VotingMethod != "I")
-                {
-                    result.Warnings.Add($"{person.FullNameFl} has already voted with method {person.VotingMethod}");
-                    continue;
-                }
-
-                person.VotingMethod = "I";
-                person.VotingLocationGuid = importedLocation.LocationGuid;
-                person.RegistrationTime = DateTime.UtcNow;
-                person.EnvNum = null;
-                _context.People.Update(person);
-            }
-
-            foreach (var ballot in ballots)
-            {
-                var ballotEntity = new Ballot
-                {
-                    BallotGuid = Guid.NewGuid(),
-                    LocationGuid = importedLocation.LocationGuid,
-                    StatusCode = BallotStatus.Ok,
-                    ComputerCode = "IM",
-                    BallotNumAtComputer = ballotCounter++,
-                    RowVersion = new byte[8]
-                };
-
-                _context.Ballots.Add(ballotEntity);
-
-                foreach (var vote in ballot.Votes)
-                {
-                    var matchedPerson = peopleCache.Values
-                        .FirstOrDefault(p =>
-                            p.FirstName?.ToLower() == vote.First?.ToLower() &&
-                            p.LastName?.ToLower() == vote.Last?.ToLower());
-
-                    if (matchedPerson != null)
-                    {
-                        var voteEntity = new Vote
-                        {
-                            BallotGuid = ballotEntity.BallotGuid,
-                            PersonGuid = matchedPerson.PersonGuid,
-                            PositionOnBallot = ballot.Votes.IndexOf(vote) + 1,
-                            VoteStatus = VoteStatus.Ok,
-                            PersonCombinedInfo = matchedPerson.CombinedInfo,
-                            RowVersion = new byte[8]
-                        };
-                        _context.Votes.Add(voteEntity);
-                        result.VotesCreated++;
-                    }
-                    else
-                    {
-                        result.Warnings.Add($"Could not match vote '{vote.First} {vote.Last}' in ballot {ballot.index}");
-                    }
-                }
-
-                result.BallotsCreated++;
-            }
+            ProcessBallots(ballots, peopleCache, importedLocation.LocationGuid, ref ballotCounter, result);
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
@@ -217,349 +711,41 @@ public class ElectionExportImportService
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            // Validate XML against schema
-            var schemaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Schemas", "TallyJv2-Export.xsd");
-            var xmlDoc = new XmlDocument();
-
-            using (var reader = new StreamReader(xmlStream))
-            {
-                var xmlContent = await reader.ReadToEndAsync();
-                xmlDoc.LoadXml(xmlContent);
-            }
-
-            // Validate against schema
-            xmlDoc.Schemas.Add("urn:tallyj.bahai:v2", schemaPath);
-            var validationErrors = new List<string>();
-            xmlDoc.Validate((sender, args) =>
-            {
-                if (args.Severity == XmlSeverityType.Error)
-                    validationErrors.Add(args.Message);
-            });
-
-            if (validationErrors.Any())
-            {
-                throw new InvalidOperationException("XML validation failed: " + string.Join("; ", validationErrors));
-            }
+            var xmlDoc = await ValidateAndLoadTallyJv2XmlDocumentAsync(xmlStream);
 
             // Parse and create new election
-            var root = xmlDoc.DocumentElement;
+            var root = xmlDoc.DocumentElement!;
             var nsm = new XmlNamespaceManager(xmlDoc.NameTable);
             nsm.AddNamespace("t", "urn:tallyj.bahai:v2");
 
-            var electionNode = root.SelectSingleNode("t:election", nsm) as XmlElement;
-            if (electionNode == null) throw new InvalidOperationException("No election element found");
-
-            // Create new election with remapped GUIDs
-            var guidMap = new Dictionary<Guid, Guid>();
-            var newElectionGuid = Guid.NewGuid();
-
-            var election = new Election
-            {
-                ElectionGuid = newElectionGuid,
-                Name = electionNode.GetAttribute("Name") ?? "Imported Election",
-                Convenor = electionNode.GetAttribute("Convenor"),
-                DateOfElection = ParseDateTime(electionNode.GetAttribute("DateOfElection")),
-                ElectionType = electionNode.GetAttribute("ElectionType"),
-                ElectionMode = electionNode.GetAttribute("ElectionMode"),
-                NumberToElect = ParseInt(electionNode.GetAttribute("NumberToElect")),
-                NumberExtra = ParseInt(electionNode.GetAttribute("NumberExtra")),
-                CanVote = electionNode.GetAttribute("CanVote"),
-                CanReceive = electionNode.GetAttribute("CanReceive"),
-                ElectionPasscode = electionNode.GetAttribute("ElectionPasscode"),
-                LastEnvNum = ParseInt(electionNode.GetAttribute("LastEnvNum")),
-                ListForPublic = ParseBool(electionNode.GetAttribute("ListForPublic")),
-                ShowFullReport = ParseBool(electionNode.GetAttribute("ShowFullReport")),
-                OnlineWhenOpen = ParseDateTime(electionNode.GetAttribute("OnlineWhenOpen")),
-                OnlineWhenClose = ParseDateTime(electionNode.GetAttribute("OnlineWhenClose")),
-                OnlineCloseIsEstimate = ParseBool(electionNode.GetAttribute("OnlineCloseIsEstimate")) ?? true,
-                OnlineSelectionProcess = electionNode.GetAttribute("OnlineSelectionProcess"),
-                EmailFromAddress = electionNode.GetAttribute("EmailFromAddress"),
-                EmailFromName = electionNode.GetAttribute("EmailFromName"),
-                EmailText = electionNode.GetAttribute("EmailText"),
-                SmsText = electionNode.GetAttribute("SmsText"),
-                EmailSubject = electionNode.GetAttribute("EmailSubject"),
-                CustomMethods = electionNode.GetAttribute("CustomMethods"),
-                VotingMethods = electionNode.GetAttribute("VotingMethods"),
-                Flags = electionNode.GetAttribute("Flags"),
-                RowVersion = new byte[8]
-            };
-
+            var (election, guidMap) = CreateElectionFromXml(root, nsm);
             _context.Elections.Add(election);
 
-            // Load tellers
-            var tellerNodes = root.SelectNodes("t:teller", nsm);
-            if (tellerNodes != null)
-            {
-                foreach (XmlElement tellerNode in tellerNodes)
-                {
-                    var teller = new Teller
-                    {
-                        ElectionGuid = newElectionGuid,
-                        Name = tellerNode.GetAttribute("Name") ?? "",
-                        IsHeadTeller = ParseBool(tellerNode.GetAttribute("IsHeadTeller")),
-                        RowVersion = new byte[8]
-                    };
-                    _context.Tellers.Add(teller);
-                }
-            }
+            ImportTellersFromXml(root, nsm, election.ElectionGuid);
 
-            // Load locations
+            ImportLocationsFromXml(root, nsm, election.ElectionGuid, guidMap);
+
+            ImportPeopleFromXml(root, nsm, election.ElectionGuid, guidMap);
+
             var locationNodes = root.SelectNodes("t:location", nsm);
-            if (locationNodes != null)
-            {
-                foreach (XmlElement locationNode in locationNodes)
-                {
-                    var oldGuid = Guid.Parse(locationNode.GetAttribute("LocationGuid") ?? Guid.NewGuid().ToString());
-                    var newGuid = Guid.NewGuid();
-                    guidMap[oldGuid] = newGuid;
+            ImportBallotsAndVotesFromXml(locationNodes!, nsm, guidMap);
 
-                    var location = new Location
-                    {
-                        ElectionGuid = newElectionGuid,
-                        LocationGuid = newGuid,
-                        Name = locationNode.GetAttribute("Name") ?? "",
-                        ContactInfo = locationNode.GetAttribute("ContactInfo"),
-                        Long = locationNode.GetAttribute("Long"),
-                        Lat = locationNode.GetAttribute("Lat"),
-                        TallyStatus = locationNode.GetAttribute("TallyStatus"),
-                        SortOrder = ParseInt(locationNode.GetAttribute("SortOrder")),
-                        BallotsCollected = ParseInt(locationNode.GetAttribute("BallotsCollected")),
-                        LocationTypeCode = locationNode.GetAttribute("LocationTypeCode") ?? LocationType.Manual.ToString()
-                    };
-                    _context.Locations.Add(location);
-                }
-            }
+            ImportResultsFromXml(root, nsm, election.ElectionGuid, guidMap);
 
-            // Load people
-            var personNodes = root.SelectNodes("t:person", nsm);
-            if (personNodes != null)
-            {
-                foreach (XmlElement personNode in personNodes)
-                {
-                    var oldGuid = Guid.Parse(personNode.GetAttribute("PersonGuid") ?? Guid.NewGuid().ToString());
-                    var newGuid = Guid.NewGuid();
-                    guidMap[oldGuid] = newGuid;
+            ImportOnlineVotingInfoFromXml(root, nsm, election.ElectionGuid, guidMap);
 
-                    var person = new Person
-                    {
-                        ElectionGuid = newElectionGuid,
-                        PersonGuid = newGuid,
-                        LastName = personNode.GetAttribute("LastName") ?? "",
-                        FirstName = personNode.GetAttribute("FirstName"),
-                        OtherLastNames = personNode.GetAttribute("OtherLastNames"),
-                        OtherNames = personNode.GetAttribute("OtherNames"),
-                        OtherInfo = personNode.GetAttribute("OtherInfo"),
-                        Area = personNode.GetAttribute("Area"),
-                        BahaiId = personNode.GetAttribute("BahaiId"),
-                        CombinedInfo = personNode.GetAttribute("CombinedInfo"),
-                        CombinedSoundCodes = personNode.GetAttribute("CombinedSoundCodes"),
-                        CombinedInfoAtStart = personNode.GetAttribute("CombinedInfoAtStart"),
-                        AgeGroup = personNode.GetAttribute("AgeGroup"),
-                        CanVote = ParseBool(personNode.GetAttribute("CanVote")) ?? true,
-                        CanReceiveVotes = ParseBool(personNode.GetAttribute("CanReceiveVotes")),
-                        IneligibleReasonGuid = ParseGuid(personNode.GetAttribute("IneligibleReasonGuid")),
-                        RegistrationTime = ParseDateTime(personNode.GetAttribute("RegistrationTime")),
-                        VotingLocationGuid = guidMap.ContainsKey(ParseGuid(personNode.GetAttribute("VotingLocationGuid")) ?? Guid.Empty)
-                            ? guidMap[ParseGuid(personNode.GetAttribute("VotingLocationGuid")) ?? Guid.Empty]
-                            : null,
-                        VotingMethod = personNode.GetAttribute("VotingMethod"),
-                        EnvNum = ParseInt(personNode.GetAttribute("EnvNum")),
-                        Teller1 = personNode.GetAttribute("TellerAtKeyboard"),
-                        Teller2 = personNode.GetAttribute("TellerAssisting"),
-                        Email = personNode.GetAttribute("Email"),
-                        Phone = personNode.GetAttribute("Phone"),
-                        HasOnlineBallot = ParseBool(personNode.GetAttribute("HasOnlineBallot")),
-                        Flags = personNode.GetAttribute("Flags"),
-                        UnitName = personNode.GetAttribute("UnitName"),
-                        KioskCode = personNode.GetAttribute("KioskCode"),
-                        RegistrationHistory = personNode.GetAttribute("RegistrationHistory"),
-                        RowVersion = new byte[8]
-                    };
-                    _context.People.Add(person);
-                }
-            }
-
-            // Load ballots and votes
-            foreach (XmlElement locationNode in locationNodes)
-            {
-                var locationGuid = guidMap[Guid.Parse(locationNode.GetAttribute("LocationGuid") ?? Guid.Empty.ToString())];
-                var ballotNodes = locationNode.SelectNodes("t:ballot", nsm);
-
-                if (ballotNodes != null)
-                {
-                    foreach (XmlElement ballotNode in ballotNodes)
-                    {
-                        var ballotGuid = Guid.NewGuid();
-                        var ballot = new Ballot
-                        {
-                            BallotGuid = ballotGuid,
-                            LocationGuid = locationGuid,
-                            StatusCode = Enum.Parse<BallotStatus>(ballotNode.GetAttribute("StatusCode") ?? "Ok"),
-                            ComputerCode = ballotNode.GetAttribute("ComputerCode"),
-                            BallotNumAtComputer = ParseInt(ballotNode.GetAttribute("BallotNumAtComputer")) ?? 0,
-                            Teller1 = ballotNode.GetAttribute("TellerAtKeyboard"),
-                            Teller2 = ballotNode.GetAttribute("TellerAssisting"),
-                            RowVersion = new byte[8]
-                        };
-                        _context.Ballots.Add(ballot);
-
-                        var voteNodes = ballotNode.SelectNodes("t:vote", nsm);
-                        if (voteNodes != null)
-                        {
-                            var position = 1;
-                            foreach (XmlElement voteNode in voteNodes)
-                            {
-                                var vote = new Vote
-                                {
-                                    BallotGuid = ballotGuid,
-                                    PositionOnBallot = position++,
-                                    PersonGuid = guidMap.ContainsKey(ParseGuid(voteNode.GetAttribute("PersonGuid")) ?? Guid.Empty)
-                                        ? guidMap[ParseGuid(voteNode.GetAttribute("PersonGuid")) ?? Guid.Empty]
-                                        : null,
-                                    VoteStatus = Enum.Parse<VoteStatus>(voteNode.GetAttribute("StatusCode") ?? "Ok"),
-                                    IneligibleReasonCode = voteNode.GetAttribute("InvalidReasonGuid"),
-                                    SingleNameElectionCount = ParseInt(voteNode.GetAttribute("SingleNameElectionCount")),
-                                    RowVersion = new byte[8]
-                                };
-                                _context.Votes.Add(vote);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Load result summaries
-            var resultSummaryNodes = root.SelectNodes("t:resultSummary", nsm);
-            if (resultSummaryNodes != null)
-            {
-                foreach (XmlElement rsNode in resultSummaryNodes)
-                {
-                    var resultSummary = new ResultSummary
-                    {
-                        ElectionGuid = newElectionGuid,
-                        ResultType = rsNode.GetAttribute("ResultType") ?? "M",
-                        NumVoters = ParseInt(rsNode.GetAttribute("NumVoters")),
-                        NumEligibleToVote = ParseInt(rsNode.GetAttribute("NumEligibleToVote")),
-                        BallotsReceived = ParseInt(rsNode.GetAttribute("NumBallotsEntered")) ?? ParseInt(rsNode.GetAttribute("BallotsReceived")),
-                        InPersonBallots = ParseInt(rsNode.GetAttribute("EnvelopesInPerson")) ?? ParseInt(rsNode.GetAttribute("InPersonBallots")),
-                        DroppedOffBallots = ParseInt(rsNode.GetAttribute("EnvelopesDroppedOff")) ?? ParseInt(rsNode.GetAttribute("DroppedOffBallots")),
-                        MailedInBallots = ParseInt(rsNode.GetAttribute("EnvelopesMailedIn")) ?? ParseInt(rsNode.GetAttribute("MailedInBallots")),
-                        CalledInBallots = ParseInt(rsNode.GetAttribute("EnvelopesCalledIn")) ?? ParseInt(rsNode.GetAttribute("CalledInBallots")),
-                        OnlineBallots = ParseInt(rsNode.GetAttribute("EnvelopesOnline")) ?? ParseInt(rsNode.GetAttribute("OnlineBallots")),
-                        ImportedBallots = ParseInt(rsNode.GetAttribute("EnvelopesImported")) ?? ParseInt(rsNode.GetAttribute("ImportedBallots")),
-                        Custom1Ballots = ParseInt(rsNode.GetAttribute("EnvelopesCustom1")) ?? ParseInt(rsNode.GetAttribute("Custom1Ballots")),
-                        Custom2Ballots = ParseInt(rsNode.GetAttribute("EnvelopesCustom2")) ?? ParseInt(rsNode.GetAttribute("Custom2Ballots")),
-                        Custom3Ballots = ParseInt(rsNode.GetAttribute("EnvelopesCustom3")) ?? ParseInt(rsNode.GetAttribute("Custom3Ballots")),
-                        BallotsNeedingReview = ParseInt(rsNode.GetAttribute("BallotsNeedingReview")),
-                        SpoiledBallots = ParseInt(rsNode.GetAttribute("SpoiledBallots")),
-                        SpoiledVotes = ParseInt(rsNode.GetAttribute("SpoiledVotes")),
-                        TotalVotes = ParseInt(rsNode.GetAttribute("TotalVotes")),
-                        UseOnReports = ParseBool(rsNode.GetAttribute("UseOnReports")),
-                        SpoiledManualBallots = ParseInt(rsNode.GetAttribute("SpoiledManualBallots"))
-                    };
-                    _context.ResultSummaries.Add(resultSummary);
-                }
-            }
-
-            // Load results
-            var resultNodes = root.SelectNodes("t:result", nsm);
-            if (resultNodes != null)
-            {
-                foreach (XmlElement resultNode in resultNodes)
-                {
-                    var result = new Result
-                    {
-                        ElectionGuid = newElectionGuid,
-                        PersonGuid = guidMap[Guid.Parse(resultNode.GetAttribute("PersonGuid") ?? Guid.Empty.ToString())],
-                        VoteCount = ParseInt(resultNode.GetAttribute("VoteCount")),
-                        Rank = ParseInt(resultNode.GetAttribute("Rank")) ?? 0,
-                        Section = resultNode.GetAttribute("Section") ?? "T",
-                        IsTied = ParseBool(resultNode.GetAttribute("IsTied")),
-                        IsTieResolved = ParseBool(resultNode.GetAttribute("IsTieResolved")),
-                        TieBreakGroup = ParseInt(resultNode.GetAttribute("TieBreakGroup")),
-                        CloseToPrev = ParseBool(resultNode.GetAttribute("CloseToPrev")),
-                        CloseToNext = ParseBool(resultNode.GetAttribute("CloseToNext")),
-                        RankInExtra = ParseInt(resultNode.GetAttribute("RankInExtra")),
-                        TieBreakRequired = ParseBool(resultNode.GetAttribute("TieBreakRequired")),
-                        TieBreakCount = ParseInt(resultNode.GetAttribute("TieBreakCount")),
-                        ForceShowInOther = ParseBool(resultNode.GetAttribute("ForceShowInOther"))
-                    };
-                    _context.Results.Add(result);
-                }
-            }
-
-            // Load result ties
-            var resultTieNodes = root.SelectNodes("t:resultTie", nsm);
-            if (resultTieNodes != null)
-            {
-                foreach (XmlElement rtNode in resultTieNodes)
-                {
-                    var resultTie = new ResultTie
-                    {
-                        ElectionGuid = newElectionGuid,
-                        TieBreakGroup = ParseInt(rtNode.GetAttribute("TieBreakGroup")) ?? 0,
-                        NumInTie = ParseInt(rtNode.GetAttribute("NumInTie")) ?? 0,
-                        IsResolved = ParseBool(rtNode.GetAttribute("IsResolved")) ?? false,
-                        TieBreakRequired = ParseBool(rtNode.GetAttribute("TieBreakRequired")),
-                        NumToElect = ParseInt(rtNode.GetAttribute("NumToElect")) ?? 0
-                    };
-                    _context.ResultTies.Add(resultTie);
-                }
-            }
-
-            // Load online voting info
-            var oviNodes = root.SelectNodes("t:onlineVoterInfo", nsm);
-            if (oviNodes != null)
-            {
-                foreach (XmlElement oviNode in oviNodes)
-                {
-                    var ovi = new OnlineVotingInfo
-                    {
-                        ElectionGuid = newElectionGuid,
-                        PersonGuid = guidMap[Guid.Parse(oviNode.GetAttribute("PersonGuid") ?? Guid.Empty.ToString())],
-                        WhenBallotCreated = ParseDateTime(oviNode.GetAttribute("WhenBallotCreated")),
-                        Status = oviNode.GetAttribute("Status") ?? "",
-                        WhenStatus = ParseDateTime(oviNode.GetAttribute("WhenStatus")),
-                        ListPool = oviNode.GetAttribute("ListPool"),
-                        PoolLocked = ParseBool(oviNode.GetAttribute("PoolLocked")),
-                        HistoryStatus = oviNode.GetAttribute("HistoryStatus"),
-                        NotifiedAboutOpening = ParseBool(oviNode.GetAttribute("NotifiedAboutOpening"))
-                    };
-                    _context.OnlineVotingInfos.Add(ovi);
-                }
-            }
-
-            // Load logs
-            var logNodes = root.SelectNodes("t:log", nsm);
-            if (logNodes != null)
-            {
-                foreach (XmlElement logNode in logNodes)
-                {
-                    var log = new Log
-                    {
-                        ElectionGuid = newElectionGuid,
-                        LocationGuid = guidMap.ContainsKey(ParseGuid(logNode.GetAttribute("LocationGuid")) ?? Guid.Empty)
-                            ? guidMap[ParseGuid(logNode.GetAttribute("LocationGuid")) ?? Guid.Empty]
-                            : null,
-                        VoterId = logNode.GetAttribute("VoterId"),
-                        ComputerCode = logNode.GetAttribute("ComputerCode"),
-                        Details = logNode.GetAttribute("Details"),
-                        AsOf = ParseDateTime(logNode.GetAttribute("AsOf")) ?? DateTime.UtcNow
-                    };
-                    _context.Logs.Add(log);
-                }
-            }
+            ImportLogsFromXml(root, nsm, election.ElectionGuid, guidMap);
 
             await _context.SaveChangesAsync();
 
             if (userId.HasValue)
             {
-                await AssociateUserWithElectionAsync(newElectionGuid, userId.Value);
+                await AssociateUserWithElectionAsync(election.ElectionGuid, userId.Value);
             }
 
             await transaction.CommitAsync();
 
-            return await _electionService.GetElectionByGuidAsync(newElectionGuid) ?? throw new InvalidOperationException("Failed to create election");
+            return await _electionService.GetElectionByGuidAsync(election.ElectionGuid) ?? throw new InvalidOperationException("Failed to create election");
         }
         catch (Exception ex)
         {
@@ -822,236 +1008,26 @@ public class ElectionExportImportService
 
             _context.Elections.Add(election);
 
-            // Import locations
-            foreach (var loc in importData.locations)
-            {
-                var oldGuid = loc.LocationGuid;
-                var newGuid = Guid.NewGuid();
-                guidMap[oldGuid] = newGuid;
-
-                var location = new Location
-                {
-                    ElectionGuid = newElectionGuid,
-                    LocationGuid = newGuid,
-                    Name = loc.Name ?? "",
-                    ContactInfo = loc.ContactInfo,
-                    Long = loc.Long,
-                    Lat = loc.Lat,
-                    TallyStatus = loc.TallyStatus,
-                    SortOrder = loc.SortOrder,
-                    BallotsCollected = loc.BallotsCollected,
-                    LocationTypeCode = loc.LocationTypeCode ?? LocationType.Manual.ToString()
-                };
-                _context.Locations.Add(location);
-            }
-
-            // Import people
-            foreach (var person in importData.people)
-            {
-                var oldGuid = person.PersonGuid;
-                var newGuid = Guid.NewGuid();
-                guidMap[oldGuid] = newGuid;
-
-                var p = new Person
-                {
-                    ElectionGuid = newElectionGuid,
-                    PersonGuid = newGuid,
-                    LastName = person.LastName ?? "",
-                    FirstName = person.FirstName,
-                    OtherLastNames = person.OtherLastNames,
-                    OtherNames = person.OtherNames,
-                    OtherInfo = person.OtherInfo,
-                    Area = person.Area,
-                    BahaiId = person.BahaiId,
-                    CombinedInfo = person.CombinedInfo,
-                    CombinedSoundCodes = person.CombinedSoundCodes,
-                    CombinedInfoAtStart = person.CombinedInfoAtStart,
-                    AgeGroup = person.AgeGroup,
-                    CanVote = person.CanVote,
-                    CanReceiveVotes = person.CanReceiveVotes,
-                    IneligibleReasonGuid = person.IneligibleReasonGuid,
-                    RegistrationTime = ParseDateTime(person.RegistrationTime),
-                    VotingLocationGuid = person.VotingLocationGuid.HasValue && guidMap.ContainsKey(person.VotingLocationGuid.Value)
-                        ? guidMap[person.VotingLocationGuid.Value]
-                        : null,
-                    VotingMethod = person.VotingMethod,
-                    EnvNum = person.EnvNum,
-                    Teller1 = person.Teller1,
-                    Teller2 = person.Teller2,
-                    Email = person.Email,
-                    Phone = person.Phone,
-                    HasOnlineBallot = person.HasOnlineBallot,
-                    Flags = person.Flags,
-                    UnitName = person.UnitName,
-                    KioskCode = person.KioskCode,
-                    RegistrationHistory = person.RegistrationHistory,
-                    RowVersion = new byte[8]
-                };
-                _context.People.Add(p);
-            }
-
-            // Import ballots and votes
-            foreach (var ballot in importData.ballots)
-            {
-                var b = new Ballot
-                {
-                    BallotGuid = Guid.NewGuid(),
-                    LocationGuid = guidMap[ballot.LocationGuid],
-                    StatusCode = Enum.Parse<BallotStatus>(ballot.StatusCode ?? "Ok"),
-                    ComputerCode = ballot.ComputerCode,
-                    BallotNumAtComputer = ballot.BallotNumAtComputer,
-                    Teller1 = ballot.Teller1,
-                    Teller2 = ballot.Teller2,
-                    RowVersion = new byte[8]
-                };
-                _context.Ballots.Add(b);
-
-                foreach (var vote in ballot.votes)
-                {
-                    var v = new Vote
-                    {
-                        BallotGuid = b.BallotGuid,
-                        PositionOnBallot = vote.PositionOnBallot,
-                        PersonGuid = vote.PersonGuid.HasValue && guidMap.ContainsKey(vote.PersonGuid.Value)
-                            ? guidMap[vote.PersonGuid.Value]
-                            : null,
-                        VoteStatus = Enum.Parse<VoteStatus>(vote.VoteStatus ?? "Ok"),
-                        IneligibleReasonCode = vote.IneligibleReasonCode,
-                        SingleNameElectionCount = vote.SingleNameElectionCount,
-                        PersonCombinedInfo = vote.PersonCombinedInfo,
-                        OnlineVoteRaw = vote.OnlineVoteRaw,
-                        RowVersion = new byte[8]
-                    };
-                    _context.Votes.Add(v);
-                }
-            }
-
-            // Import tellers
-            foreach (var teller in importData.tellers)
-            {
-                var t = new Teller
-                {
-                    ElectionGuid = newElectionGuid,
-                    Name = teller.Name ?? "",
-                    IsHeadTeller = teller.IsHeadTeller,
-                    UsingComputerCode = teller.UsingComputerCode,
-                    RowVersion = new byte[8]
-                };
-                _context.Tellers.Add(t);
-            }
-
-            // Import results
-            foreach (var result in importData.results)
-            {
-                var r = new Result
-                {
-                    ElectionGuid = newElectionGuid,
-                    PersonGuid = guidMap[result.PersonGuid],
-                    VoteCount = result.VoteCount,
-                    Rank = result.Rank,
-                    Section = result.Section ?? "T",
-                    IsTied = result.IsTied,
-                    IsTieResolved = result.IsTieResolved,
-                    TieBreakGroup = result.TieBreakGroup,
-                    CloseToPrev = result.CloseToPrev,
-                    CloseToNext = result.CloseToNext,
-                    RankInExtra = result.RankInExtra,
-                    TieBreakRequired = result.TieBreakRequired,
-                    TieBreakCount = result.TieBreakCount,
-                    ForceShowInOther = result.ForceShowInOther
-                };
-                _context.Results.Add(r);
-            }
-
-            // Import result summaries
-            foreach (var rs in importData.resultSummaries)
-            {
-                var resultSummary = new ResultSummary
-                {
-                    ElectionGuid = newElectionGuid,
-                    ResultType = rs.ResultType ?? "M",
-                    NumVoters = rs.NumVoters,
-                    NumEligibleToVote = rs.NumEligibleToVote,
-                    BallotsReceived = rs.BallotsReceived,
-                    InPersonBallots = rs.InPersonBallots,
-                    DroppedOffBallots = rs.DroppedOffBallots,
-                    MailedInBallots = rs.MailedInBallots,
-                    CalledInBallots = rs.CalledInBallots,
-                    OnlineBallots = rs.OnlineBallots,
-                    ImportedBallots = rs.ImportedBallots,
-                    Custom1Ballots = rs.Custom1Ballots,
-                    Custom2Ballots = rs.Custom2Ballots,
-                    Custom3Ballots = rs.Custom3Ballots,
-                    BallotsNeedingReview = rs.BallotsNeedingReview,
-                    SpoiledBallots = rs.SpoiledBallots,
-                    SpoiledVotes = rs.SpoiledVotes,
-                    TotalVotes = rs.TotalVotes,
-                    UseOnReports = rs.UseOnReports,
-                    SpoiledManualBallots = rs.SpoiledManualBallots
-                };
-                _context.ResultSummaries.Add(resultSummary);
-            }
-
-            // Import result ties
-            foreach (var rt in importData.resultTies)
-            {
-                var resultTie = new ResultTie
-                {
-                    ElectionGuid = newElectionGuid,
-                    TieBreakGroup = rt.TieBreakGroup,
-                    NumInTie = rt.NumInTie,
-                    IsResolved = rt.IsResolved,
-                    TieBreakRequired = rt.TieBreakRequired,
-                    NumToElect = rt.NumToElect ?? 0
-                };
-                _context.ResultTies.Add(resultTie);
-            }
-
-            // Import online voting info
-            foreach (var ovi in importData.onlineVotingInfos)
-            {
-                var onlineVotingInfo = new OnlineVotingInfo
-                {
-                    ElectionGuid = newElectionGuid,
-                    PersonGuid = guidMap[ovi.PersonGuid],
-                    WhenBallotCreated = ParseDateTime(ovi.WhenBallotCreated),
-                    Status = ovi.Status ?? "",
-                    WhenStatus = ParseDateTime(ovi.WhenStatus),
-                    ListPool = ovi.ListPool,
-                    PoolLocked = ovi.PoolLocked,
-                    HistoryStatus = ovi.HistoryStatus,
-                    NotifiedAboutOpening = ovi.NotifiedAboutOpening
-                };
-                _context.OnlineVotingInfos.Add(onlineVotingInfo);
-            }
-
-            // Import logs
-            foreach (var log in importData.logs)
-            {
-                var l = new Log
-                {
-                    ElectionGuid = newElectionGuid,
-                    LocationGuid = log.LocationGuid.HasValue && guidMap.ContainsKey(log.LocationGuid.Value)
-                        ? guidMap[log.LocationGuid.Value]
-                        : null,
-                    VoterId = log.VoterId,
-                    ComputerCode = log.ComputerCode,
-                    Details = log.Details,
-                    AsOf = ParseDateTime(log.AsOf) ?? DateTime.UtcNow
-                };
-                _context.Logs.Add(l);
-            }
+            ImportLocations(importData, newElectionGuid, guidMap);
+            ImportPeople(importData, newElectionGuid, guidMap);
+            ImportBallotsAndVotes(importData, guidMap);
+            ImportTellers(importData, newElectionGuid);
+            ImportResults(importData, newElectionGuid, guidMap);
+            ImportResultSummaries(importData, newElectionGuid);
+            ImportResultTies(importData, newElectionGuid);
+            ImportOnlineVotingInfos(importData, newElectionGuid, guidMap);
+            ImportLogs(importData, newElectionGuid, guidMap);
 
             await _context.SaveChangesAsync();
 
             if (userId.HasValue)
             {
-                await AssociateUserWithElectionAsync(newElectionGuid, userId.Value);
+                await AssociateUserWithElectionAsync(election.ElectionGuid, userId.Value);
             }
 
             await transaction.CommitAsync();
 
-            return await _electionService.GetElectionByGuidAsync(newElectionGuid) ?? throw new InvalidOperationException("Failed to create election");
+            return await _electionService.GetElectionByGuidAsync(election.ElectionGuid) ?? throw new InvalidOperationException("Failed to create election");
         }
         catch (Exception ex)
         {
@@ -1060,10 +1036,248 @@ public class ElectionExportImportService
         }
     }
 
+    private void ImportLocations(JsonImportData importData, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
+    {
+        foreach (var loc in importData.locations)
+        {
+            var oldGuid = loc.LocationGuid;
+            var newGuid = Guid.NewGuid();
+            guidMap[oldGuid] = newGuid;
+
+            var location = new Location
+            {
+                ElectionGuid = electionGuid,
+                LocationGuid = newGuid,
+                Name = loc.Name ?? "",
+                ContactInfo = loc.ContactInfo,
+                Long = loc.Long,
+                Lat = loc.Lat,
+                TallyStatus = loc.TallyStatus,
+                SortOrder = loc.SortOrder,
+                BallotsCollected = loc.BallotsCollected,
+                LocationTypeCode = loc.LocationTypeCode ?? LocationType.Manual.ToString()
+            };
+            _context.Locations.Add(location);
+        }
+    }
+
+    private void ImportPeople(JsonImportData importData, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
+    {
+        foreach (var person in importData.people)
+        {
+            var oldGuid = person.PersonGuid;
+            var newGuid = Guid.NewGuid();
+            guidMap[oldGuid] = newGuid;
+
+            var p = new Person
+            {
+                ElectionGuid = electionGuid,
+                PersonGuid = newGuid,
+                LastName = person.LastName ?? "",
+                FirstName = person.FirstName,
+                OtherLastNames = person.OtherLastNames,
+                OtherNames = person.OtherNames,
+                OtherInfo = person.OtherInfo,
+                Area = person.Area,
+                BahaiId = person.BahaiId,
+                CombinedInfo = person.CombinedInfo,
+                CombinedSoundCodes = person.CombinedSoundCodes,
+                CombinedInfoAtStart = person.CombinedInfoAtStart,
+                AgeGroup = person.AgeGroup,
+                CanVote = person.CanVote,
+                CanReceiveVotes = person.CanReceiveVotes,
+                IneligibleReasonGuid = person.IneligibleReasonGuid,
+                RegistrationTime = ParseDateTime(person.RegistrationTime),
+                VotingLocationGuid = person.VotingLocationGuid.HasValue && guidMap.ContainsKey(person.VotingLocationGuid.Value)
+                    ? guidMap[person.VotingLocationGuid.Value]
+                    : null,
+                VotingMethod = person.VotingMethod,
+                EnvNum = person.EnvNum,
+                Teller1 = person.Teller1,
+                Teller2 = person.Teller2,
+                Email = person.Email,
+                Phone = person.Phone,
+                HasOnlineBallot = person.HasOnlineBallot,
+                Flags = person.Flags,
+                UnitName = person.UnitName,
+                KioskCode = person.KioskCode,
+                RegistrationHistory = person.RegistrationHistory,
+                RowVersion = new byte[8]
+            };
+            _context.People.Add(p);
+        }
+    }
+
+    private void ImportBallotsAndVotes(JsonImportData importData, Dictionary<Guid, Guid> guidMap)
+    {
+        foreach (var ballot in importData.ballots)
+        {
+            var b = new Ballot
+            {
+                BallotGuid = Guid.NewGuid(),
+                LocationGuid = guidMap[ballot.LocationGuid],
+                StatusCode = Enum.Parse<BallotStatus>(ballot.StatusCode ?? "Ok"),
+                ComputerCode = ballot.ComputerCode ?? "??",
+                BallotNumAtComputer = ballot.BallotNumAtComputer,
+                Teller1 = ballot.Teller1,
+                Teller2 = ballot.Teller2,
+                RowVersion = new byte[8]
+            };
+            _context.Ballots.Add(b);
+
+            foreach (var vote in ballot.votes)
+            {
+                var v = new Vote
+                {
+                    BallotGuid = b.BallotGuid,
+                    PositionOnBallot = vote.PositionOnBallot,
+                    PersonGuid = vote.PersonGuid.HasValue && guidMap.ContainsKey(vote.PersonGuid.Value)
+                        ? guidMap[vote.PersonGuid.Value]
+                        : null,
+                    VoteStatus = Enum.Parse<VoteStatus>(vote.VoteStatus ?? "Ok"),
+                    IneligibleReasonCode = vote.IneligibleReasonCode,
+                    SingleNameElectionCount = vote.SingleNameElectionCount,
+                    PersonCombinedInfo = vote.PersonCombinedInfo,
+                    OnlineVoteRaw = vote.OnlineVoteRaw,
+                    RowVersion = new byte[8]
+                };
+                _context.Votes.Add(v);
+            }
+        }
+    }
+
+    private void ImportTellers(JsonImportData importData, Guid electionGuid)
+    {
+        foreach (var teller in importData.tellers)
+        {
+            var t = new Teller
+            {
+                ElectionGuid = electionGuid,
+                Name = teller.Name ?? "",
+                IsHeadTeller = teller.IsHeadTeller,
+                UsingComputerCode = teller.UsingComputerCode,
+                RowVersion = new byte[8]
+            };
+            _context.Tellers.Add(t);
+        }
+    }
+
+    private void ImportResults(JsonImportData importData, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
+    {
+        foreach (var result in importData.results)
+        {
+            var r = new Result
+            {
+                ElectionGuid = electionGuid,
+                PersonGuid = guidMap[result.PersonGuid],
+                VoteCount = result.VoteCount,
+                Rank = result.Rank,
+                Section = result.Section ?? "T",
+                IsTied = result.IsTied,
+                IsTieResolved = result.IsTieResolved,
+                TieBreakGroup = result.TieBreakGroup,
+                CloseToPrev = result.CloseToPrev,
+                CloseToNext = result.CloseToNext,
+                RankInExtra = result.RankInExtra,
+                TieBreakRequired = result.TieBreakRequired,
+                TieBreakCount = result.TieBreakCount,
+                ForceShowInOther = result.ForceShowInOther
+            };
+            _context.Results.Add(r);
+        }
+    }
+
+    private void ImportResultSummaries(JsonImportData importData, Guid electionGuid)
+    {
+        foreach (var rs in importData.resultSummaries)
+        {
+            var resultSummary = new ResultSummary
+            {
+                ElectionGuid = electionGuid,
+                ResultType = rs.ResultType ?? "M",
+                NumVoters = rs.NumVoters,
+                NumEligibleToVote = rs.NumEligibleToVote,
+                BallotsReceived = rs.BallotsReceived,
+                InPersonBallots = rs.InPersonBallots,
+                DroppedOffBallots = rs.DroppedOffBallots,
+                MailedInBallots = rs.MailedInBallots,
+                CalledInBallots = rs.CalledInBallots,
+                OnlineBallots = rs.OnlineBallots,
+                ImportedBallots = rs.ImportedBallots,
+                Custom1Ballots = rs.Custom1Ballots,
+                Custom2Ballots = rs.Custom2Ballots,
+                Custom3Ballots = rs.Custom3Ballots,
+                BallotsNeedingReview = rs.BallotsNeedingReview,
+                SpoiledBallots = rs.SpoiledBallots,
+                SpoiledVotes = rs.SpoiledVotes,
+                TotalVotes = rs.TotalVotes,
+                UseOnReports = rs.UseOnReports,
+                SpoiledManualBallots = rs.SpoiledManualBallots
+            };
+            _context.ResultSummaries.Add(resultSummary);
+        }
+    }
+
+    private void ImportResultTies(JsonImportData importData, Guid electionGuid)
+    {
+        foreach (var rt in importData.resultTies)
+        {
+            var resultTie = new ResultTie
+            {
+                ElectionGuid = electionGuid,
+                TieBreakGroup = rt.TieBreakGroup,
+                NumInTie = rt.NumInTie,
+                IsResolved = rt.IsResolved,
+                TieBreakRequired = rt.TieBreakRequired,
+                NumToElect = rt.NumToElect ?? 0
+            };
+            _context.ResultTies.Add(resultTie);
+        }
+    }
+
+    private void ImportOnlineVotingInfos(JsonImportData importData, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
+    {
+        foreach (var ovi in importData.onlineVotingInfos)
+        {
+            var onlineVotingInfo = new OnlineVotingInfo
+            {
+                ElectionGuid = electionGuid,
+                PersonGuid = guidMap[ovi.PersonGuid],
+                WhenBallotCreated = ParseDateTime(ovi.WhenBallotCreated),
+                Status = ovi.Status ?? "",
+                WhenStatus = ParseDateTime(ovi.WhenStatus),
+                ListPool = ovi.ListPool,
+                PoolLocked = ovi.PoolLocked,
+                HistoryStatus = ovi.HistoryStatus,
+                NotifiedAboutOpening = ovi.NotifiedAboutOpening
+            };
+            _context.OnlineVotingInfos.Add(onlineVotingInfo);
+        }
+    }
+
+    private void ImportLogs(JsonImportData importData, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
+    {
+        foreach (var log in importData.logs)
+        {
+            var l = new Log
+            {
+                ElectionGuid = electionGuid,
+                LocationGuid = log.LocationGuid.HasValue && guidMap.ContainsKey(log.LocationGuid.Value)
+                    ? guidMap[log.LocationGuid.Value]
+                    : null,
+                VoterId = log.VoterId,
+                ComputerCode = log.ComputerCode,
+                Details = log.Details,
+                AsOf = ParseDateTime(log.AsOf) ?? DateTime.UtcNow
+            };
+            _context.Logs.Add(l);
+        }
+    }
+
     // Helper methods
     private static DateTime? ParseDateTime(string? value)
     {
-        return string.IsNullOrEmpty(value) ? null : DateTime.Parse(value);
+        return string.IsNullOrEmpty(value) ? null : DateTime.Parse(value, CultureInfo.InvariantCulture);
     }
 
     private static int? ParseInt(string? value)
@@ -1082,24 +1296,21 @@ public class ElectionExportImportService
     }
 
     // Data classes for import
-    private class CdnVoter
+    private sealed class CdnVoter
     {
         public string bahaiid { get; set; } = "";
         public string firstname { get; set; } = "";
         public string lastname { get; set; } = "";
-        public Guid? PersonGuid { get; set; }
-        public string? VotingMethod { get; set; }
-        public bool ImportBlocked { get; set; }
     }
 
-    private class CdnBallot
+    private sealed class CdnBallot
     {
         public int index { get; set; }
         public string guid { get; set; } = "";
         public List<OnlineRawVote> Votes { get; set; } = new();
     }
 
-    private class JsonImportData
+    private sealed class JsonImportData
     {
         public string format { get; set; } = "";
         public string version { get; set; } = "";
@@ -1116,7 +1327,7 @@ public class ElectionExportImportService
         public List<JsonLog> logs { get; set; } = new();
     }
 
-    private class JsonElection
+    private sealed class JsonElection
     {
         public Guid ElectionGuid { get; set; }
         public string? Name { get; set; }
@@ -1146,7 +1357,7 @@ public class ElectionExportImportService
         public string? Flags { get; set; }
     }
 
-    private class JsonLocation
+    private sealed class JsonLocation
     {
         public Guid LocationGuid { get; set; }
         public string? Name { get; set; }
@@ -1159,7 +1370,7 @@ public class ElectionExportImportService
         public string? LocationTypeCode { get; set; }
     }
 
-    private class JsonPerson
+    private sealed class JsonPerson
     {
         public Guid PersonGuid { get; set; }
         public string? LastName { get; set; }
@@ -1191,7 +1402,7 @@ public class ElectionExportImportService
         public string? RegistrationHistory { get; set; }
     }
 
-    private class JsonBallot
+    private sealed class JsonBallot
     {
         public Guid BallotGuid { get; set; }
         public Guid LocationGuid { get; set; }
@@ -1200,94 +1411,94 @@ public class ElectionExportImportService
         public int BallotNumAtComputer { get; set; }
         public string? Teller1 { get; set; }
         public string? Teller2 { get; set; }
-        public List<JsonVote> votes { get; set; } = new();
+        public List<JsonVote> votes { get; } = new();
     }
 
-    private class JsonVote
+    private sealed class JsonVote
     {
-        public int PositionOnBallot { get; set; }
-        public Guid? PersonGuid { get; set; }
-        public string? VoteStatus { get; set; }
-        public string? IneligibleReasonCode { get; set; }
-        public int? SingleNameElectionCount { get; set; }
-        public string? PersonCombinedInfo { get; set; }
-        public string? OnlineVoteRaw { get; set; }
+        public int PositionOnBallot { get; }
+        public Guid? PersonGuid { get; }
+        public string? VoteStatus { get; }
+        public string? IneligibleReasonCode { get; }
+        public int? SingleNameElectionCount { get; }
+        public string? PersonCombinedInfo { get; }
+        public string? OnlineVoteRaw { get; }
     }
 
-    private class JsonTeller
+    private sealed class JsonTeller
     {
-        public string? Name { get; set; }
-        public bool? IsHeadTeller { get; set; }
-        public string? UsingComputerCode { get; set; }
+        public string? Name { get; }
+        public bool? IsHeadTeller { get; }
+        public string? UsingComputerCode { get; }
     }
 
-    private class JsonResult
+    private sealed class JsonResult
     {
-        public Guid PersonGuid { get; set; }
-        public int? VoteCount { get; set; }
-        public int Rank { get; set; }
-        public string? Section { get; set; }
-        public bool? IsTied { get; set; }
-        public bool? IsTieResolved { get; set; }
-        public int? TieBreakGroup { get; set; }
-        public bool? CloseToPrev { get; set; }
-        public bool? CloseToNext { get; set; }
-        public int? RankInExtra { get; set; }
-        public bool? TieBreakRequired { get; set; }
-        public int? TieBreakCount { get; set; }
-        public bool? ForceShowInOther { get; set; }
+        public Guid PersonGuid { get; }
+        public int? VoteCount { get; }
+        public int Rank { get; }
+        public string? Section { get; }
+        public bool? IsTied { get; }
+        public bool? IsTieResolved { get; }
+        public int? TieBreakGroup { get; }
+        public bool? CloseToPrev { get; }
+        public bool? CloseToNext { get; }
+        public int? RankInExtra { get; }
+        public bool? TieBreakRequired { get; }
+        public int? TieBreakCount { get; }
+        public bool? ForceShowInOther { get; }
     }
 
-    private class JsonResultSummary
+    private sealed class JsonResultSummary
     {
-        public string? ResultType { get; set; }
-        public int? NumVoters { get; set; }
-        public int? NumEligibleToVote { get; set; }
-        public int? BallotsReceived { get; set; }
-        public int? InPersonBallots { get; set; }
-        public int? DroppedOffBallots { get; set; }
-        public int? MailedInBallots { get; set; }
-        public int? CalledInBallots { get; set; }
-        public int? OnlineBallots { get; set; }
-        public int? ImportedBallots { get; set; }
-        public int? Custom1Ballots { get; set; }
-        public int? Custom2Ballots { get; set; }
-        public int? Custom3Ballots { get; set; }
-        public int? BallotsNeedingReview { get; set; }
-        public int? SpoiledBallots { get; set; }
-        public int? SpoiledVotes { get; set; }
-        public int? TotalVotes { get; set; }
-        public bool? UseOnReports { get; set; }
-        public int? SpoiledManualBallots { get; set; }
+        public string? ResultType { get; }
+        public int? NumVoters { get; }
+        public int? NumEligibleToVote { get; }
+        public int? BallotsReceived { get; }
+        public int? InPersonBallots { get; }
+        public int? DroppedOffBallots { get; }
+        public int? MailedInBallots { get; }
+        public int? CalledInBallots { get; }
+        public int? OnlineBallots { get; }
+        public int? ImportedBallots { get; }
+        public int? Custom1Ballots { get; }
+        public int? Custom2Ballots { get; }
+        public int? Custom3Ballots { get; }
+        public int? BallotsNeedingReview { get; }
+        public int? SpoiledBallots { get; }
+        public int? SpoiledVotes { get; }
+        public int? TotalVotes { get; }
+        public bool? UseOnReports { get; }
+        public int? SpoiledManualBallots { get; }
     }
 
-    private class JsonResultTie
+    private sealed class JsonResultTie
     {
-        public int TieBreakGroup { get; set; }
-        public int NumInTie { get; set; }
-        public bool IsResolved { get; set; }
-        public bool? TieBreakRequired { get; set; }
-        public int? NumToElect { get; set; }
+        public int TieBreakGroup { get; }
+        public int NumInTie { get; }
+        public bool IsResolved { get; }
+        public bool? TieBreakRequired { get; }
+        public int? NumToElect { get; }
     }
 
-    private class JsonOnlineVotingInfo
+    private sealed class JsonOnlineVotingInfo
     {
-        public Guid PersonGuid { get; set; }
-        public string? WhenBallotCreated { get; set; }
-        public string? Status { get; set; }
-        public string? WhenStatus { get; set; }
-        public string? ListPool { get; set; }
-        public bool? PoolLocked { get; set; }
-        public string? HistoryStatus { get; set; }
-        public bool? NotifiedAboutOpening { get; set; }
+        public Guid PersonGuid { get; }
+        public string? WhenBallotCreated { get; }
+        public string? Status { get; }
+        public string? WhenStatus { get; }
+        public string? ListPool { get; }
+        public bool? PoolLocked { get; }
+        public string? HistoryStatus { get; }
+        public bool? NotifiedAboutOpening { get; }
     }
 
-    private class JsonLog
+    private sealed class JsonLog
     {
-        public string? AsOf { get; set; }
-        public Guid? LocationGuid { get; set; }
-        public string? VoterId { get; set; }
-        public string? ComputerCode { get; set; }
-        public string? Details { get; set; }
+        public string? AsOf { get; }
+        public Guid? LocationGuid { get; }
+        public string? VoterId { get; }
+        public string? ComputerCode { get; }
+        public string? Details { get; }
     }
-}  
+}

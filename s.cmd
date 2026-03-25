@@ -3,7 +3,8 @@
 wt -w 0 nt --tabColor "#6699FF" --title "TallyJ .NET" --suppressApplicationTitle -p "Command Prompt" -d "Backend" ^
 cmd /k dotnet watch
 
-:: timeout /t 2  -- use Timeout to put both commands into the same Terminal window. Without, they open into separate windows.
+::use Timeout to put both commands into the same Terminal window. Or comment out to open into separate windows.
+timeout /t 2  
 
 :: Start the Front end
 wt -w 0 nt --tabColor "#00FF00" --title "TallyJ Web" --suppressApplicationTitle -p "Command Prompt" -d "Frontend" ^
