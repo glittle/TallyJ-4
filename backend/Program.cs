@@ -22,7 +22,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
-using System.Linq;
 
 var machineName = Environment.MachineName;
 var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
@@ -167,7 +166,7 @@ void ConfigureServices(WebApplicationBuilder builder)
     RegisterBackgroundServices(services);
 
     services.AddSignalR();
-    services.AddSingleton<Backend.Services.ISignalRNotificationService, Backend.Services.SignalRNotificationService>();
+    services.AddSingleton<ISignalRNotificationService, SignalRNotificationService>();
 
     services.AddExceptionHandler<GlobalExceptionHandler>();
     services.AddProblemDetails();
@@ -293,29 +292,29 @@ void ConfigureAuthorization(IServiceCollection services)
 
 void RegisterApplicationServices(IServiceCollection services)
 {
-    services.AddScoped<Backend.Services.IElectionService, Backend.Services.ElectionService>();
-    services.AddScoped<Backend.Services.ILocationService, Backend.Services.LocationService>();
-    services.AddScoped<Backend.Services.IComputerService, Backend.Services.ComputerService>();
-    services.AddScoped<Backend.Services.ITellerService, Backend.Services.TellerService>();
-    services.AddScoped<Backend.Services.IPeopleService, Backend.Services.PeopleService>();
-    services.AddScoped<Backend.Services.IBallotService, Backend.Services.BallotService>();
-    services.AddScoped<Backend.Services.IVoteService, Backend.Services.VoteService>();
-    services.AddScoped<Backend.Services.IDashboardService, Backend.Services.DashboardService>();
-    services.AddScoped<Backend.Services.ISetupService, Backend.Services.SetupService>();
-    services.AddScoped<Backend.Services.IAccountService, Backend.Services.AccountService>();
-    services.AddScoped<Backend.Services.IPublicService, Backend.Services.PublicService>();
-    services.AddScoped<Backend.Services.ITallyService, Backend.Services.TallyService>();
-    services.AddScoped<Backend.Services.IReportService, Backend.Services.ReportService>();
-    services.AddScoped<Backend.Services.IFrontDeskService, Backend.Services.FrontDeskService>();
-    services.AddScoped<Backend.Services.IOnlineVotingService, Backend.Services.OnlineVotingService>();
-    services.AddScoped<Backend.Services.IAuditLogService, Backend.Services.AuditLogService>();
-    services.AddScoped<Backend.Services.ISuperAdminService, Backend.Services.SuperAdminService>();
-    services.AddScoped<Backend.Services.ImportService>();
-    services.AddScoped<Backend.Services.IPeopleImportService, Backend.Services.PeopleImportService>();
-    services.AddScoped<Backend.Services.CdnBallotImportService>();
-    services.AddScoped<Backend.Services.TallyJv2ElectionImportService>();
-    services.AddScoped<Backend.Services.JsonElectionImportExportService>();
-    services.AddScoped<Backend.Services.ElectionExportImportService>();
+    services.AddScoped<IElectionService, ElectionService>();
+    services.AddScoped<ILocationService, LocationService>();
+    services.AddScoped<IComputerService, ComputerService>();
+    services.AddScoped<ITellerService, TellerService>();
+    services.AddScoped<IPeopleService, PeopleService>();
+    services.AddScoped<IBallotService, BallotService>();
+    services.AddScoped<IVoteService, VoteService>();
+    services.AddScoped<IDashboardService, DashboardService>();
+    services.AddScoped<ISetupService, SetupService>();
+    services.AddScoped<IAccountService, AccountService>();
+    services.AddScoped<IPublicService, PublicService>();
+    services.AddScoped<ITallyService, TallyService>();
+    services.AddScoped<IReportService, ReportService>();
+    services.AddScoped<IFrontDeskService, FrontDeskService>();
+    services.AddScoped<IOnlineVotingService, OnlineVotingService>();
+    services.AddScoped<IAuditLogService, AuditLogService>();
+    services.AddScoped<ISuperAdminService, SuperAdminService>();
+    services.AddScoped<ImportService>();
+    services.AddScoped<IPeopleImportService, PeopleImportService>();
+    services.AddScoped<CdnBallotImportService>();
+    services.AddScoped<TallyJv2ElectionImportService>();
+    services.AddScoped<JsonElectionImportExportService>();
+    services.AddScoped<ElectionExportImportService>();
 }
 
 void RegisterAuthServices(IServiceCollection services)
@@ -333,7 +332,7 @@ void RegisterAuthServices(IServiceCollection services)
 
 void RegisterBackgroundServices(IServiceCollection services)
 {
-    services.AddSingleton<Backend.Middleware.RateLimitStore>();
+    services.AddSingleton<RateLimitStore>();
 
     if (isTesting) // don't register the real broadcast service during testing, to avoid interference with tests and allow testing of the broadcast mechanism itself
     {
@@ -431,6 +430,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     }
 
     app.UseHttpsRedirection();
+    app.UseDefaultFiles();
     app.UseStaticFiles();
     app.UseCors("AllowFrontend");
     app.Use(async (context, next) =>
@@ -455,11 +455,14 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     });
 
     app.UseAuthentication();
-    app.UseMiddleware<Backend.Middleware.ElectionContextMiddleware>();
+    app.UseMiddleware<ElectionContextMiddleware>();
     app.UseAuthorization();
-    app.UseMiddleware<Backend.Middleware.AuditMiddleware>();
+    app.UseMiddleware<AuditMiddleware>();
 
     app.MapControllers();
+
+    // Add SPA fallback for web history routing - exclude systemhealth and hub routes
+    app.MapFallbackToFile("{*path:regex(^(?!systemhealth$|hubs/).*$)}", "index.html").AllowAnonymous();
 
     app.MapHub<Backend.Hubs.MainHub>("/hubs/main");
     app.MapHub<Backend.Hubs.AnalyzeHub>("/hubs/analyze");
@@ -470,6 +473,13 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     app.MapHub<Backend.Hubs.OnlineVotingHub>("/hubs/online-voting");
 
     app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
+
+    // add a shutdown hook to help with server logs
+    app.Lifetime.ApplicationStopping.Register(async () =>
+    {
+        Log.Information("Application Stopping...");
+        await Log.CloseAndFlushAsync();
+    });
 }
 
 var builder = WebApplication.CreateBuilder(args);
