@@ -2,6 +2,7 @@ export interface AppConfig {
   apiUrl: string;
   env: string;
   sentryDsn: string;
+  googleClientId?: string;
 }
 
 declare global {

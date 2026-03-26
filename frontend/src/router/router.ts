@@ -210,11 +210,11 @@ const routes = [
       },
 
       {
-        path: "elections/:id/ballots/import",
+        path: "elections/:id/ballots/cdn-import",
 
-        component: () => import("../pages/ballots/BallotImportPage.vue"),
+        component: () => import("../pages/ballots/CdnBallotImportPage.vue"),
 
-        meta: { titleKey: "ballots.import.title" },
+        meta: { titleKey: "ballots.cdnImport.title" },
       },
 
       {

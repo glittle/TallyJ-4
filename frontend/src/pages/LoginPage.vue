@@ -11,6 +11,7 @@ declare const FB: any;
 declare const Kakao: any;
 
 import { getAppConfig } from "@/config/appConfig";
+import type { AppConfig } from "@/config/appConfig";
 import { useNotifications } from "@/composables/useNotifications";
 import type { FormInstance, FormRules } from "element-plus";
 import {
@@ -253,8 +254,20 @@ const fetchAuthConfig = async () => {
   }
 };
 const fetchGoogleClientId = async (): Promise<string | null> => {
+  // First check app config
+  const appConfig = getAppConfig();
+  if (appConfig.googleClientId) {
+    return appConfig.googleClientId;
+  }
+
+  // Then check backend API
   const config = await fetchAuthConfig();
-  return config?.googleClientId || null;
+  if (config?.googleClientId) {
+    return config.googleClientId;
+  }
+
+  // Finally fallback to environment variable
+  return import.meta.env.VITE_GOOGLE_CLIENT_ID || null;
 };
 const renderGoogleButton = () => {
   nextTick(() => {

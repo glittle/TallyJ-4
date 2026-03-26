@@ -45,8 +45,8 @@ function goBack() {
   router.push(`/elections/${electionGuid}`);
 }
 
-function handleImport() {
-  router.push(`/elections/${electionGuid}/ballots/import`);
+function handleImportCdn() {
+  router.push(`/elections/${electionGuid}/ballots/cdn-import`);
 }
 
 function handleEnterVotes(ballot: BallotDto) {
@@ -103,11 +103,11 @@ function getStatusType(status: string | undefined) {
         <div class="card-header">
           <el-page-header :content="$t('ballots.management')" @back="goBack" />
           <div class="header-actions">
-            <el-button @click="handleImport">
+            <el-button @click="handleImportCdn">
               <el-icon>
                 <Upload />
               </el-icon>
-              {{ $t("ballots.import.button") }}
+              {{ $t("ballots.cdnImport.button") }}
             </el-button>
             <el-button type="primary" @click="showAddDialog = true">
               <el-icon>

@@ -12,7 +12,6 @@ import {
   Operation,
   Tickets,
   UserFilled,
-  Upload,
   Download,
 } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
@@ -22,7 +21,6 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useElectionStore } from "../../stores/electionStore";
 import { electionService } from "../../services/electionService";
-import type { ImportResultDto } from "../../types";
 
 const router = useRouter();
 const route = useRoute();
@@ -220,35 +218,6 @@ async function exportElection() {
   }
 }
 
-async function importCdnBallots() {
-  if (!electionGuid) return;
-
-  try {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.xml';
-    input.onchange = async (event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      try {
-        const result: ImportResultDto = await electionService.importCdnBallots(electionGuid, file);
-
-        if (result.success) {
-          showSuccessMessage(t("elections.importCdnBallotsSuccess"));
-          await electionStore.fetchElectionById(electionGuid);
-        } else {
-          showErrorMessage(result.errors?.join('; ') || t("elections.importCdnBallotsError"));
-        }
-      } catch (error: any) {
-        showErrorMessage(error.message || t("elections.importCdnBallotsError"));
-      }
-    };
-    input.click();
-  } catch (error: any) {
-    showErrorMessage(error.message || t("elections.importCdnBallotsError"));
-  }
-}
 </script>
 
 <template>
@@ -357,12 +326,6 @@ async function importCdnBallots() {
                   <Download />
                 </el-icon>
                 {{ $t("elections.exportElection") }}
-              </el-button>
-              <el-button type="info" @click="importCdnBallots">
-                <el-icon>
-                  <Upload />
-                </el-icon>
-                {{ $t("elections.importCdnBallots") }}
               </el-button>
             </el-space>
           </el-card>
