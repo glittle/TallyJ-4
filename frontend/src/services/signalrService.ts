@@ -1,13 +1,13 @@
 import * as signalR from "@microsoft/signalr";
+import { getAppConfig } from "@/config/appConfig";
 import { ConnectionState } from "@/types/SignalRConnection";
 
 class SignalRService {
   private connections: Map<string, signalR.HubConnection> = new Map();
   private connectionStates: Map<string, ConnectionState> = new Map();
-  private baseUrl: string;
 
-  constructor() {
-    this.baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
+  private get baseUrl(): string {
+    return getAppConfig().apiUrl;
   }
 
   async connect(

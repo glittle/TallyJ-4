@@ -23,22 +23,17 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
 
+Log.Logger = new LoggerConfiguration().ConfigureStartupConsole().CreateLogger();
+
 var machineName = Environment.MachineName;
 var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 var isTesting = AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "testhost");
+var siteType = Environment.CommandLine.DetermineSiteType();
 
-if (isTesting)
-{
-    Console.WriteLine("Starting up in TESTING mode");
-}
-if (isDevelopment)
-{
-    Console.WriteLine("Starting up in DEVELOPMENT mode");
-}
-if (!isDevelopment && !isTesting)
-{
-    Console.WriteLine("Starting up in NORMAL mode");
-}
+var nonTestMode = isDevelopment ? "DEVELOPMENT" : "PRODUCTION";
+var siteMode = isTesting ? "TESTING" : nonTestMode;
+
+Log.Information("Starting up in {SiteMode} mode on machine {MachineName} with site type {SiteType}", siteMode, machineName, siteType);
 
 void ConfigureBuilder(WebApplicationBuilder builder)
 {
@@ -55,6 +50,7 @@ void ConfigureServices(WebApplicationBuilder builder)
     var builderConfiguration = builder.Configuration;
 
     builder.Configuration.AddJsonFile($"appsettings.{machineName}.json", optional: true, reloadOnChange: true);
+    builder.Configuration.AddJsonFile($"appsettings.{siteType}.json", optional: true, reloadOnChange: true);
 
     // look in a folder given by an environment variable, useful for docker and some hosting environments
     var envConfigPath = Environment.GetEnvironmentVariable("TALLYJ_CONFIG_PATH");
@@ -482,7 +478,41 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     });
 }
 
-var builder = WebApplication.CreateBuilder(args);
+string? webRootFolder = null; // dev uses vite directly
+if (siteType != "Dev")
+{
+    string suffix;
+    if (siteType == "UAT")
+    {
+        suffix = "-uat";
+    }
+    else if (siteType == "Prod")
+    {
+        suffix = "-prod";
+    }
+    else
+    {
+        suffix = "-x"; // not known!
+    }
+
+    webRootFolder = "wwwroot" + suffix;
+}
+
+if (webRootFolder != null)
+{
+    Log.Information("Expected wwwroot folder: {WebRootPath}", webRootFolder);
+}
+else
+{
+    Log.Information("Using Vite Development Server - no webRoot folder");
+}
+
+var builder = isDevelopment
+  ? WebApplication.CreateBuilder(args)
+  : WebApplication.CreateBuilder(
+    new WebApplicationOptions { Args = args, WebRootPath = webRootFolder, }
+  );
+
 ConfigureBuilder(builder);
 ConfigureServices(builder);
 

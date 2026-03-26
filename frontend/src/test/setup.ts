@@ -1,12 +1,17 @@
 import { createPinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
+import { setAppConfig } from "../config/appConfig";
 
-// Create global instances for testing
+setAppConfig({
+  apiUrl: "http://localhost:5016",
+  env: "development",
+  sentryDsn: "",
+});
+
 const testPinia = createPinia();
 const testRouter = createRouter({
   history: createWebHistory(),
   routes: [],
 });
 
-// Export for direct imports if needed
 export { testPinia as pinia, testRouter as router };

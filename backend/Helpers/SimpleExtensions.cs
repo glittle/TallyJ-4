@@ -824,24 +824,24 @@ public static partial class ExtensionsSimple
     }
 
     /// <summary>
-    ///   Determine if Live, Preview or Dev.  Defaults to Live.
+    ///   Determine if Prod, UAT or Dev.  Defaults to Prod.
     /// </summary>
     /// <param name="path"></param>
     /// <returns>The site type</returns>
     public static string DetermineSiteType(this string path)
     {
         var pathParts = path.Split('\\');
-        if (pathParts.Contains("Debug") || pathParts.Contains("Release"))
+        if (pathParts.Contains("Debug") || pathParts.Contains("Dev") || pathParts.Contains("Local"))
         {
             return "Dev";
         }
 
-        if (pathParts.Contains("Preview"))
+        if (pathParts.Contains("Preview") || pathParts.Contains("UAT") || pathParts.Contains("Staging"))
         {
-            return "Preview";
+            return "UAT";
         }
 
-        return "Live";
+        return "Prod";
     }
 
     /// <summary>

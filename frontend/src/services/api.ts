@@ -1,25 +1,37 @@
 import axios from "axios";
+import { getAppConfig } from "../config/appConfig";
 import { i18n } from "../locales";
 import { router } from "../router/router";
 import { cacheService } from "./cacheService";
 import { secureTokenService } from "./secureTokenService";
 import { tokenRefreshService } from "./tokenRefreshService";
-// Note: Services cannot use composables, so ElMessage is used directly here
-// for HTTP interceptor notifications
 import { ElMessage } from "element-plus";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5016",
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// Create axios instance lazily to ensure config is available
+let api: ReturnType<typeof axios.create>;
+
+function getApiInstance() {
+  if (!api) {
+    const config = getAppConfig();
+    api = axios.create({
+      baseURL: config.apiUrl,
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Set up interceptors only when the instance is first created
+    setupInterceptors(api);
+  }
+  return api;
+}
 
 let redirectingFor401 = false;
 
-// Request interceptor for caching
-api.interceptors.request.use(async (config) => {
+function setupInterceptors(apiInstance: ReturnType<typeof axios.create>) {
+  // Request interceptor for caching
+  apiInstance.interceptors.request.use(async (config) => {
   // No need for Authorization header - credentials are sent via httpOnly cookies
 
   // Only cache GET requests
@@ -47,8 +59,8 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Response interceptor for caching
-api.interceptors.response.use(
+  // Response interceptor for caching
+  apiInstance.interceptors.response.use(
   async (response) => {
     // Cache successful GET responses
     if (
@@ -79,7 +91,7 @@ api.interceptors.response.use(
 
           if (refreshed) {
             // Retry the original request
-            return api.request(error.config);
+            return getApiInstance().request(error.config);
           }
         } catch (refreshError) {
           console.error("Token refresh failed:", refreshError);
@@ -122,6 +134,13 @@ api.interceptors.response.use(
     }
     return Promise.reject(error);
   },
-);
+  );
+}
 
-export default api;
+// Export a proxy that lazily initializes the API instance
+export default new Proxy({} as ReturnType<typeof axios.create>, {
+  get(_target, prop) {
+    const instance = getApiInstance();
+    return (instance as any)[prop];
+  },
+});

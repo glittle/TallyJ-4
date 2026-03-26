@@ -5,8 +5,8 @@ import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import "./style.css";
 
-import "./api/config";
 import App from "./App.vue";
+import { type AppConfig, setAppConfig } from "./config/appConfig";
 import { TOKEN_REFRESH_CONFIG } from "./config/tokenRefreshConfig";
 import { i18n } from "./locales";
 import { router } from "./router/router";
@@ -16,75 +16,59 @@ import { tokenRefreshService } from "./services/tokenRefreshService";
 // Sentry error tracking and performance monitoring
 import * as Sentry from "@sentry/vue";
 
-const pinia = createPinia();
+async function init() {
+  const response = await fetch("./config.json");
+  const config: AppConfig = await response.json();
+  setAppConfig(config);
 
-const app = createApp(App);
+  const { initApiClient } = await import("./api/config");
+  initApiClient();
 
-app.use(ElementPlus);
-app.use(pinia);
-app.use(router);
-app.use(i18n);
+  const pinia = createPinia();
 
-// Initialize Sentry for error tracking and performance monitoring
-Sentry.init({
-  app,
-  dsn:
-    import.meta.env.VITE_SENTRY_DSN ||
-    "https://placeholder@example.ingest.sentry.io/placeholder",
-  environment: import.meta.env.MODE || "development",
-  integrations: [
-    Sentry.browserTracingIntegration({ router }),
-    Sentry.replayIntegration(),
-  ],
-  // Performance Monitoring
-  tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0, // 10% in production, 100% in development
-  // Session Replay
-  replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
-  replaysOnErrorSampleRate: 1.0,
-});
+  const app = createApp(App);
 
-// Global error handler for unhandled errors
-app.config.errorHandler = (error, instance, info) => {
-  console.error("Global error handler:", error, instance, info);
-  // Could send to error reporting service here
-};
+  app.use(ElementPlus);
+  app.use(pinia);
+  app.use(router);
+  app.use(i18n);
 
-// Handle unhandled promise rejections
-globalThis.addEventListener("unhandledrejection", (event) => {
-  console.error("Unhandled promise rejection:", event.reason);
-  // Prevent the default browser behavior (logging to console)
-  event.preventDefault();
-});
+  Sentry.init({
+    app,
+    dsn:
+      config.sentryDsn ||
+      "https://placeholder@example.ingest.sentry.io/placeholder",
+    environment: config.env || "production",
+    integrations: [
+      Sentry.browserTracingIntegration({ router }),
+      Sentry.replayIntegration(),
+    ],
+    tracesSampleRate: config.env === "development" ? 1 : 0.1,
+    replaysSessionSampleRate: config.env === "development" ? 1 : 0.1,
+    replaysOnErrorSampleRate: 1,
+  });
 
-// Handle uncaught errors
-globalThis.addEventListener("error", (event) => {
-  if (event.message?.startsWith("ResizeObserver loop")) {
-    return;
+  app.config.errorHandler = (error, instance, info) => {
+    console.error("Global error handler:", error, instance, info);
+  };
+
+  globalThis.addEventListener("unhandledrejection", (event) => {
+    console.error("Unhandled promise rejection:", event.reason);
+    event.preventDefault();
+  });
+
+  globalThis.addEventListener("error", (event) => {
+    if (event.message?.startsWith("ResizeObserver loop")) {
+      return;
+    }
+    console.error("Uncaught error:", event.error);
+  });
+
+  if (secureTokenService.isAuthenticated()) {
+    tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
   }
-  console.error("Uncaught error:", event.error);
-});
 
-// Initialize automatic token refresh if user is already authenticated
-if (secureTokenService.isAuthenticated()) {
-  tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
+  app.mount("#app");
 }
 
-// Register service worker for offline support
-// if ("serviceWorker" in navigator) {
-//   window.addEventListener("load", () => {
-//     navigator.serviceWorker
-//       .register("/sw.js")
-//       .then((registration) => {
-//         console.log(
-//           "Service Worker registered successfully:",
-//           registration.scope,
-//         );
-//       })
-//       .catch((error) => {
-//         console.log("Service Worker registration failed:", error);
-//       });
-//   });
-// }
-
-// router.isReady().then(() =>
-app.mount("#app");
+init(); // NOSONAR

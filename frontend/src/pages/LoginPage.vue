@@ -10,6 +10,7 @@ declare global {
 declare const FB: any;
 declare const Kakao: any;
 
+import { getAppConfig } from "@/config/appConfig";
 import { useNotifications } from "@/composables/useNotifications";
 import type { FormInstance, FormRules } from "element-plus";
 import {
@@ -497,7 +498,7 @@ const initKakaoSdk = async () => {
 };
 
 const handleGoogleLogin = () => {
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5016";
+  const apiUrl = getAppConfig().apiUrl;
   const redirectParam = route.query.redirect
     ? `?redirect=${encodeURIComponent(route.query.redirect as string)}`
     : "";
