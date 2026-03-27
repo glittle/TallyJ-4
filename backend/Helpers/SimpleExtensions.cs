@@ -830,13 +830,16 @@ public static partial class ExtensionsSimple
     /// <returns>The site type</returns>
     public static string DetermineSiteType(this string path)
     {
-        var pathParts = path.Split('\\');
-        if (pathParts.Contains("Debug") || pathParts.Contains("Dev") || pathParts.Contains("Local"))
+        if (path.Contains("Debug", StringComparison.OrdinalIgnoreCase)
+            || path.Contains("Dev", StringComparison.OrdinalIgnoreCase)
+            || path.Contains("Local", StringComparison.OrdinalIgnoreCase))
         {
             return "Dev";
         }
 
-        if (pathParts.Contains("Preview") || pathParts.Contains("UAT") || pathParts.Contains("Staging"))
+        if (path.Contains("Preview", StringComparison.OrdinalIgnoreCase)
+            || path.Contains("UAT", StringComparison.OrdinalIgnoreCase)
+            || path.Contains("Staging", StringComparison.OrdinalIgnoreCase))
         {
             return "UAT";
         }

@@ -61,6 +61,7 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     // Look in a fixed shared location... easier for some environments to keep it outside of the repo folders
     builder.Configuration.AddJsonFile($"c:\\AppSettings\\TallyJ4.json", optional: true, reloadOnChange: true);
+    builder.Configuration.AddJsonFile($"c:\\AppSettings\\TallyJ4.{siteType}.json", optional: true, reloadOnChange: true);
 
     foreach (var fileInfo in from provider in ((IConfigurationRoot)builder.Configuration).Providers.OfType<JsonConfigurationProvider>()
                              let fileInfo = provider.Source.FileProvider?.GetFileInfo(provider.Source.Path ?? "")
