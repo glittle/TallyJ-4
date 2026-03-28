@@ -831,7 +831,6 @@ public static partial class ExtensionsSimple
     public static string DetermineSiteType(this string path)
     {
         if (path.Contains("Debug", StringComparison.OrdinalIgnoreCase)
-            || path.Contains("Dev", StringComparison.OrdinalIgnoreCase)
             || path.Contains("Local", StringComparison.OrdinalIgnoreCase))
         {
             return "Dev";
