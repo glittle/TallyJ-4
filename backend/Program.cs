@@ -33,7 +33,7 @@ var siteType = Environment.CommandLine.DetermineSiteType();
 var nonTestMode = isDevelopment ? "DEVELOPMENT" : "PRODUCTION";
 var siteMode = isTesting ? "TESTING" : nonTestMode;
 
-Log.Information("Starting up in {SiteMode} mode on machine {MachineName} with site type {SiteType}", siteMode, machineName, siteType);
+Log.Information("Starting up in {SiteType} mode ({SiteMode}) on machine {MachineName}", siteType, siteMode, machineName);
 
 void ConfigureBuilder(WebApplicationBuilder builder)
 {
@@ -68,7 +68,7 @@ void ConfigureServices(WebApplicationBuilder builder)
                              where fileInfo?.Exists == true
                              select fileInfo)
     {
-        Log.Information("Loaded config {Path}", fileInfo.PhysicalPath);
+        Log.Information("Applied config from {Path}", fileInfo.PhysicalPath);
     }
 
     if (!isTesting)
@@ -96,19 +96,21 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     services.AddCors(options =>
     {
+        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
         var frontendBaseUrl = builderConfiguration["Frontend:BaseUrl"];
-        var allowedOrigins = new List<string>();
 
         if (!string.IsNullOrEmpty(frontendBaseUrl))
         {
-            allowedOrigins.Add(frontendBaseUrl);
+            allowedOrigins = allowedOrigins.Append(frontendBaseUrl).ToArray();
         }
 
-        allowedOrigins.AddRange(new[] { "http://localhost:5173", "http://localhost:5174", "http://localhost:8095" });
+        allowedOrigins = allowedOrigins.Distinct().ToArray();
+
+        Log.Information("CORS allowed origins: {AllowedOrigins}", allowedOrigins);
 
         options.AddPolicy("AllowFrontend", policy =>
         {
-            policy.WithOrigins(allowedOrigins.Distinct().ToArray())
+            policy.WithOrigins(allowedOrigins)
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
@@ -390,34 +392,26 @@ void ConfigureSwagger(IServiceCollection services)
 
 async Task ConfigureApp(WebApplication app, IConfiguration configuration)
 {
-    if (isDevelopment)
+    var seedOnStartup = configuration.GetValue("Database:SeedOnStartup", false);
+    if (seedOnStartup)
     {
-        app.WriteOpenApiSpecToFile(Path.Combine("..", "frontend", "openApi", "tallyj.json"));
+        Log.Information("Seeding and updating the database on startup as configured");
+        using var scope = app.Services.CreateScope();
 
-        var seedOnStartup = configuration.GetValue("Database:SeedOnStartup", false);
-        if (seedOnStartup)
-        {
-            Log.Information("Seeding database on startup as configured");
-            using var scope = app.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-            var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-            await context.Database.MigrateAsync();
-            await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
-        }
-    }
-    else
-    {
-        Log.Information("Not migrating or seeding database on startup in non-development environment");
+        await context.Database.MigrateAsync();
+        await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
     }
 
     app.UseExceptionHandler();
 
     if (isDevelopment)
     {
+        app.WriteOpenApiSpecToFile(Path.Combine("..", "frontend", "openApi", "tallyj.json"));
         app.UseSwagger();
         app.UseSwaggerUI(options =>
         {
@@ -499,19 +493,19 @@ if (siteType != "Dev")
     webRootFolder = "wwwroot" + suffix;
 }
 
-if (webRootFolder != null)
-{
-    Log.Information("Expected wwwroot folder: {WebRootPath}", webRootFolder);
-}
-else
+if (webRootFolder == null)
 {
     Log.Information("Using Vite Development Server - no webRoot folder");
 }
+else
+{
+    Log.Information("Using {WwwRoot} folder: {WebRootPath}", "wwwroot", webRootFolder);
+}
 
-var builder = isDevelopment
+var builder = webRootFolder == null
   ? WebApplication.CreateBuilder(args)
   : WebApplication.CreateBuilder(
-    new WebApplicationOptions { Args = args, WebRootPath = webRootFolder, }
+    new WebApplicationOptions { Args = args, WebRootPath = webRootFolder }
   );
 
 ConfigureBuilder(builder);

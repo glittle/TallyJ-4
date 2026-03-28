@@ -48,6 +48,11 @@ public class AuditMiddleware
         }
     }
 
+    /// <summary>
+    /// Determines whether the given HTTP request should be logged for auditing purposes based on its path and method.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
     private bool ShouldLogRequest(HttpContext context)
     {
         var path = context.Request.Path.Value?.ToLower() ?? "";
@@ -64,6 +69,12 @@ public class AuditMiddleware
         return method is "POST" or "PUT" or "DELETE";
     }
 
+    /// <summary>
+    /// Logs an audit entry for the given HTTP context using the provided audit log service.
+    /// </summary>
+    /// <param name="context">The HTTP context.</param>
+    /// <param name="auditLogService">The audit log service for creating audit entries.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     private async Task LogAuditEntry(HttpContext context, IAuditLogService auditLogService)
     {
         try
