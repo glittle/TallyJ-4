@@ -28,6 +28,15 @@ if (Test-Path $EnvFile) {
     Write-Host "⚠ Warning: .env.$Environment not found" -ForegroundColor Yellow
 }
 
+# Determine frontend build mode and backend wwwroot folder from the environment name
+if ($Environment -eq "uat") {
+    $FrontendBuildScript = "build-uat"
+    $WwwrootFolder = "wwwroot-uat"
+} else {
+    $FrontendBuildScript = "build-production"
+    $WwwrootFolder = "wwwroot-prod"
+}
+
 # Step 1: Build Backend
 Write-Host ""
 Write-Host "Step 1: Building Backend..." -ForegroundColor Cyan
@@ -42,12 +51,26 @@ Write-Host ""
 Write-Host "Step 2: Building Frontend..." -ForegroundColor Cyan
 Set-Location (Join-Path $ProjectRoot "frontend")
 npm ci
-npm run build
-Write-Host "✓ Frontend build complete" -ForegroundColor Green
+npm run $FrontendBuildScript
+Write-Host "✓ Frontend build complete ($FrontendBuildScript)" -ForegroundColor Green
 
-# Step 3: Run Database Migrations
+# Step 3: Copy frontend dist into backend publish output
+# The backend serves static files from wwwroot-{env}/ relative to its working directory.
 Write-Host ""
-Write-Host "Step 3: Running Database Migrations..." -ForegroundColor Cyan
+Write-Host "Step 3: Bundling frontend into backend publish output..." -ForegroundColor Cyan
+$WwwrootTarget = Join-Path $ProjectRoot "backend\publish\$WwwrootFolder"
+# Remove stale files from a previous build before copying, mirroring rsync --delete behaviour
+if (Test-Path $WwwrootTarget) {
+    Remove-Item -Path $WwwrootTarget -Recurse -Force
+}
+New-Item -ItemType Directory -Force -Path $WwwrootTarget | Out-Null
+$FrontendDist = Join-Path $ProjectRoot "frontend\dist"
+Copy-Item -Path "$FrontendDist\*" -Destination $WwwrootTarget -Recurse -Force
+Write-Host "✓ Frontend assets copied to $WwwrootTarget" -ForegroundColor Green
+
+# Step 4: Run Database Migrations
+Write-Host ""
+Write-Host "Step 4: Running Database Migrations..." -ForegroundColor Cyan
 Set-Location (Join-Path $ProjectRoot "backend")
 if ($DB_CONNECTION_STRING) {
     dotnet ef database update --connection $DB_CONNECTION_STRING
@@ -56,25 +79,14 @@ if ($DB_CONNECTION_STRING) {
     Write-Host "⚠ Skipping migrations: DB_CONNECTION_STRING not set" -ForegroundColor Yellow
 }
 
-# Step 4: Deploy Backend
+# Step 5: Deploy Backend (includes frontend assets in wwwroot-{env}/)
 Write-Host ""
-Write-Host "Step 4: Deploying Backend..." -ForegroundColor Cyan
+Write-Host "Step 5: Deploying Backend..." -ForegroundColor Cyan
 if ($BACKEND_DEPLOY_PATH) {
     Copy-Item -Path ".\publish\*" -Destination $BACKEND_DEPLOY_PATH -Recurse -Force
-    Write-Host "✓ Backend deployed to $BACKEND_DEPLOY_PATH" -ForegroundColor Green
+    Write-Host "✓ Backend (with frontend assets) deployed to $BACKEND_DEPLOY_PATH" -ForegroundColor Green
 } else {
     Write-Host "⚠ Skipping backend deployment: BACKEND_DEPLOY_PATH not set" -ForegroundColor Yellow
-}
-
-# Step 5: Deploy Frontend
-Write-Host ""
-Write-Host "Step 5: Deploying Frontend..." -ForegroundColor Cyan
-if ($FRONTEND_DEPLOY_PATH) {
-    $FrontendDist = Join-Path $ProjectRoot "frontend\dist"
-    Copy-Item -Path "$FrontendDist\*" -Destination $FRONTEND_DEPLOY_PATH -Recurse -Force
-    Write-Host "✓ Frontend deployed to $FRONTEND_DEPLOY_PATH" -ForegroundColor Green
-} else {
-    Write-Host "⚠ Skipping frontend deployment: FRONTEND_DEPLOY_PATH not set" -ForegroundColor Yellow
 }
 
 # Step 6: Restart Services

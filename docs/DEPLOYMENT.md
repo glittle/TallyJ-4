@@ -4,11 +4,10 @@ This is the canonical deployment document for the current repository.
 
 ## Supported deployment shape
 
-TallyJ 4 is deployed as three pieces:
+TallyJ 4 is deployed as two pieces:
 
 1. SQL Server database
-2. ASP.NET Core backend API
-3. Static frontend build served by a web server
+2. ASP.NET Core backend — it serves both the API and the compiled frontend static files
 
 ## Pre-deployment checklist
 
@@ -90,17 +89,43 @@ The important requirement is that the externally visible frontend origin and the
 
 ## Frontend deployment
 
+The backend serves the compiled frontend from a folder that sits **inside** its working directory.  The folder name depends on the target environment:
+
+| Environment | wwwroot folder   |
+|-------------|------------------|
+| UAT         | `wwwroot-uat`    |
+| Production  | `wwwroot-prod`   |
+
 ### Build
+
+Use the npm script that matches the target environment:
 
 ```bash
 cd frontend
 npm ci
-npm run build
+
+# UAT
+npm run build-uat
+
+# Production
+npm run build-production
 ```
 
-Deploy the contents of `frontend/dist/` to your static web host or reverse-proxied web server.
+### Copy assets into the backend publish output
 
-Your web server must route unknown paths back to `index.html` so Vue Router can handle client-side navigation.
+After building, copy the contents of `frontend/dist/` into the corresponding webroot folder inside the backend publish directory **before** deploying:
+
+```bash
+# UAT example
+cp -r frontend/dist/ backend/publish/wwwroot-uat/
+
+# Production example
+cp -r frontend/dist/ backend/publish/wwwroot-prod/
+```
+
+Then deploy `backend/publish/` to the server.  The backend detects the environment from its command-line path and automatically selects the correct folder to serve static files from.
+
+> **Why this matters:** if the frontend files are missing from `wwwroot-{env}/`, or are placed in a different directory, the backend will serve `index.html` as a fallback for all asset requests (`.js`, `.css`, etc.), which causes the application to fail silently in the browser.
 
 ## Smoke tests after deployment
 
