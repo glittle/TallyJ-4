@@ -222,7 +222,7 @@ function handleClose() {
           <el-input v-model="form.bahaiId" />
         </el-form-item>
 
-        <el-form-item :label="$t('people.ageGroup')" prop="ageGroup">
+        <el-form-item :label="$t('people.ageGroupLabel')" prop="ageGroup">
           <el-select v-model="form.ageGroup" style="width: 100%">
             <el-option :label="$t('people.ageGroup.adult')" value="A" />
             <el-option :label="$t('people.ageGroup.youth')" value="Y" />

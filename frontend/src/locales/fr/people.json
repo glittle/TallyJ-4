@@ -13,7 +13,7 @@
   "people.phone": "Téléphone",
   "people.area": "Secteur",
   "people.bahaiId": "ID Baha'i",
-  "people.ageGroup": "Groupe d'âge",
+  "people.ageGroupLabel": "Groupe d'âge",
   "people.canVote": "Peut voter",
   "people.canReceiveVotes": "Peut recevoir des voix",
   "people.lastNameRequired": "Le nom de famille est requis",

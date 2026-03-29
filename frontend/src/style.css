@@ -103,9 +103,9 @@
   --color-sidebar-active: #d4dff0;
 
   /* Colors - Public Layout */
-  --color-public-bg-gradient: linear-gradient(135deg, #1c3a6a 0%, #14284d 100%);
-  --color-public-header-bg: rgba(255, 255, 255, 0.12);
-  --color-public-text: #ffffff;
+  --color-public-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --color-public-header-bg: rgba(255, 255, 255, 0.8);
+  --color-public-text: var(--color-primary-800);
 
   /* Colors - Text */
   --color-text-primary: var(--color-gray-900);

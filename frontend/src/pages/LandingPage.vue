@@ -21,7 +21,7 @@ const options = [
   {
     type: "voter",
     icon: Ticket,
-    color: "#8DC63F",
+    color: "#F47920",
     title: "auth.landing.optionVoter",
     description: "auth.landing.optionVoterDesc",
     buttonText: "auth.landing.loginVoter",
@@ -31,7 +31,7 @@ const options = [
   {
     type: "teller",
     icon: Monitor,
-    color: "#F47920",
+    color: "#8DC63F",
     title: "auth.landing.optionTeller",
     description: "auth.landing.optionTellerDesc",
     buttonText: "auth.landing.loginTeller",
@@ -157,10 +157,7 @@ globalThis.addEventListener("keydown", (event) => {
         </template>
         <p>{{ t(opt.description) }}</p>
         <div class="card-footer">
-          <el-button
-            :type="opt.type === 'external' ? 'danger' : 'primary'"
-            plain
-          >
+          <el-button :color="opt.color">
             {{ t(opt.buttonText) }}
           </el-button>
         </div>
@@ -187,10 +184,7 @@ globalThis.addEventListener("keydown", (event) => {
         </template>
         <p>{{ t(opt.description) }}</p>
         <div class="card-footer">
-          <el-button
-            :type="opt.type === 'external' ? 'danger' : 'primary'"
-            plain
-          >
+          <el-button :color="opt.color">
             {{ t(opt.buttonText) }}
           </el-button>
         </div>
@@ -271,7 +265,7 @@ globalThis.addEventListener("keydown", (event) => {
       text-align: center;
       border-radius: 12px;
       border: none;
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--el-bg-color);
       display: flex;
       flex-direction: column;
     }
@@ -290,7 +284,7 @@ globalThis.addEventListener("keydown", (event) => {
       text-align: center;
       border-radius: 12px;
       border: none;
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--el-bg-color);
       display: flex;
       flex-direction: column;
     }
@@ -311,12 +305,12 @@ globalThis.addEventListener("keydown", (event) => {
 
   .card-header h3 {
     margin: 0;
-    color: #303133;
+    color: var(--el-text-color-primary);
     font-size: 1.3rem;
   }
 
   .option-card p {
-    color: #606266;
+    color: var(--el-text-color-regular);
     min-height: 60px;
     font-size: 0.95rem;
   }
@@ -324,10 +318,6 @@ globalThis.addEventListener("keydown", (event) => {
   .card-footer {
     margin-top: auto;
     padding-top: 20px;
-
-    .el-button {
-      --el-button-text-color: white;
-    }
   }
 
   .el-button {
@@ -350,14 +340,7 @@ globalThis.addEventListener("keydown", (event) => {
   .benefits-header h2 {
     font-size: 2.5rem;
     margin-bottom: 20px;
-    color: white;
-
-    @supports (background-clip: text) or (-webkit-background-clip: text) {
-      background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+    color: var(--color-public-text);
   }
 
   .benefits-subtitle {
@@ -376,18 +359,17 @@ globalThis.addEventListener("keydown", (event) => {
   }
 
   .feature-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    background: var(--el-bg-color);
     border-radius: 16px;
     padding: 30px;
     text-align: center;
     transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--el-border-color);
 
     &:hover {
-      background: rgba(255, 255, 255, 0.15);
+      background: var(--el-bg-color-page);
       transform: translateY(-5px);
-      border-color: rgba(255, 255, 255, 0.3);
+      border-color: var(--el-border-color-darker);
     }
 
     .feature-icon {
@@ -401,11 +383,11 @@ globalThis.addEventListener("keydown", (event) => {
     h3 {
       font-size: 1.3rem;
       margin-bottom: 15px;
-      color: white;
+      color: var(--el-text-color-primary);
     }
 
     p {
-      color: rgba(255, 255, 255, 0.85);
+      color: var(--el-text-color-regular);
       line-height: 1.6;
       font-size: 0.95rem;
     }
@@ -414,20 +396,19 @@ globalThis.addEventListener("keydown", (event) => {
   .cta-section {
     text-align: center;
     padding: 40px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
+    background: var(--el-bg-color);
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--el-border-color);
 
     h3 {
       font-size: 1.8rem;
       margin-bottom: 15px;
-      color: white;
+      color: var(--el-text-color-primary);
     }
 
     p {
       font-size: 1.1rem;
-      opacity: 0.85;
+      color: var(--el-text-color-regular);
       max-width: 600px;
       margin: 0 auto;
     }
