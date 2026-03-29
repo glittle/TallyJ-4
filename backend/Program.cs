@@ -22,8 +22,12 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
+using Serilog.Settings.Configuration;
+using Serilog.Sinks.SystemConsole.Themes;
 
-Log.Logger = new LoggerConfiguration().ConfigureStartupConsole().CreateLogger();
+Log.Logger = new LoggerConfiguration()
+    .ConfigureStartupConsole()
+    .CreateLogger();
 
 var machineName = Environment.MachineName;
 var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
@@ -35,7 +39,7 @@ var siteMode = isTesting ? "TESTING" : nonTestMode;
 
 Log.Information("Starting up in {SiteType} mode ({SiteMode}) on machine {MachineName}", siteType, siteMode, machineName);
 
-void ConfigureBuilder(WebApplicationBuilder builder)
+void AddLogging(WebApplicationBuilder builder)
 {
     Log.Logger = new LoggerConfiguration()
         .ConfigureWithColorfulConsole(builder.Configuration)
@@ -423,6 +427,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     app.UseHttpsRedirection();
     app.UseDefaultFiles();
     app.UseStaticFiles();
+    app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseCors("AllowFrontend");
     app.Use(async (context, next) =>
     {
@@ -508,10 +513,29 @@ var builder = webRootFolder == null
     new WebApplicationOptions { Args = args, WebRootPath = webRootFolder }
   );
 
-ConfigureBuilder(builder);
+AddLogging(builder);
 ConfigureServices(builder);
 
 var app = builder.Build();
+
+// Reconfigure logger with correlation ID enricher now that services are available
+var loggerConfiguration = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.With(new CorrelationIdEnricher(app.Services.GetRequiredService<IHttpContextAccessor>()));
+
+// Create new logger with the same sinks as the original but with correlation ID enricher
+var isDev = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+var isWatch = Environment.GetEnvironmentVariable("DOTNET_WATCH") == "1";
+var theme = (isDev || isWatch) ? CustomConsoleTheme.RichColors : AnsiConsoleTheme.Code;
+
+Log.Logger = loggerConfiguration
+    .WriteTo.Console(
+        theme: theme,
+        outputTemplate: SerilogExtensions.OutputTemplates.WithCorrelationId,
+        applyThemeToRedirectedOutput: isDev || isWatch
+    )
+    .CreateLogger();
+
 await ConfigureApp(app, builder.Configuration);
 
 await app.RunAsync();

@@ -15,13 +15,11 @@ public static class SerilogExtensions
   /// <param name="configuration">The logger configuration</param>
   /// <param name="appConfiguration">The application configuration</param>
   /// <param name="sectionName">The configuration section name (optional)</param>
-  /// <param name="serviceProvider">Service provider for dependency injection (optional)</param>
   /// <returns>The configured logger configuration</returns>
   public static LoggerConfiguration ConfigureWithColorfulConsole(
     this LoggerConfiguration configuration,
     IConfiguration appConfiguration,
-    string? sectionName = null,
-    IServiceProvider? serviceProvider = null
+    string? sectionName = null
   )
   {
     var options = string.IsNullOrEmpty(sectionName)
@@ -30,16 +28,6 @@ public static class SerilogExtensions
 
     // First apply configuration-based settings (excluding console sinks)
     configuration = configuration.ReadFrom.Configuration(appConfiguration, options);
-
-    // Add correlation ID enricher if service provider is available
-    if (serviceProvider != null)
-    {
-      var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
-      if (httpContextAccessor != null)
-      {
-        configuration = configuration.Enrich.With(new CorrelationIdEnricher(httpContextAccessor));
-      }
-    }
 
     // Force colors for dotnet watch and development scenarios
     var isDevelopment =
@@ -59,6 +47,25 @@ public static class SerilogExtensions
   }
 
   /// <summary>
+  /// Adds correlation ID enricher to an existing logger configuration
+  /// </summary>
+  /// <param name="configuration">The logger configuration</param>
+  /// <param name="serviceProvider">Service provider for dependency injection</param>
+  /// <returns>The configured logger configuration with correlation ID enricher</returns>
+  public static LoggerConfiguration WithCorrelationIdEnricher(
+    this LoggerConfiguration configuration,
+    IServiceProvider serviceProvider
+  )
+  {
+    var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+    if (httpContextAccessor != null)
+    {
+      configuration = configuration.Enrich.With(new CorrelationIdEnricher(httpContextAccessor));
+    }
+    return configuration;
+  }
+
+  /// <summary>
   /// Configures a simple colorful console logger for early startup
   /// </summary>
   /// <param name="configuration">The logger configuration</param>
@@ -69,7 +76,9 @@ public static class SerilogExtensions
       Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
     var isDotnetWatch = Environment.GetEnvironmentVariable("DOTNET_WATCH") == "1";
 
-    return configuration.WriteTo.Console(
+    return configuration
+    .Enrich.FromLogContext()
+    .WriteTo.Console(
       theme: CustomConsoleTheme.RichColors,
       outputTemplate: OutputTemplates.Clean,
       applyThemeToRedirectedOutput: isDevelopment || isDotnetWatch // Force colors for dev/watch

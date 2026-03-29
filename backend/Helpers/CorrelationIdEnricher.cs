@@ -1,5 +1,6 @@
 ﻿using Serilog.Core;
 using Serilog.Events;
+using Backend.Middleware;
 
 namespace Backend.Helpers;
 
@@ -26,14 +27,28 @@ public class CorrelationIdEnricher : ILogEventEnricher
     /// <param name="propertyFactory">The property factory for creating log event properties.</param>
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
-        var httpContext = _httpContextAccessor.HttpContext;
-        var correlationId = httpContext?.TryGetCorrelationId();
+        var correlationId = GetCorrelationId();
 
         if (!string.IsNullOrEmpty(correlationId))
         {
             var property = propertyFactory.CreateProperty("CorrelationId", correlationId);
             logEvent.AddPropertyIfAbsent(property);
         }
+    }
+
+    private string? GetCorrelationId()
+    {
+        // First try to get from HttpContext
+        var httpContext = _httpContextAccessor.HttpContext;
+        var correlationId = httpContext?.TryGetCorrelationId();
+
+        if (!string.IsNullOrEmpty(correlationId))
+        {
+            return correlationId;
+        }
+
+        // Fallback to AsyncLocal correlation ID (for logging outside of request context)
+        return CorrelationIdMiddleware.CurrentCorrelationId;
     }
 }
 
