@@ -64,9 +64,9 @@ const handleLogoClick = () => {
   background: var(--color-public-bg-gradient);
 
   .public-header {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     gap: 1em;
-    justify-content: space-between;
     align-items: center;
     padding: 20px 40px;
     backdrop-filter: blur(10px);
@@ -101,7 +101,7 @@ const handleLogoClick = () => {
   }
 
   .header-right {
-    display: flex;
+    text-align: right;
     align-items: center;
     gap: 20px;
   }

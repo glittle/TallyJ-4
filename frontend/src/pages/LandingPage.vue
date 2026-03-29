@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
 import {
-  Ticket,
-  Monitor,
-  Connection,
-  UserFilled,
+  Check,
   Clock,
-  Lock,
-  Pointer,
+  Connection,
   Document,
   Location,
-  Check,
+  Lock,
+  Monitor,
+  Pointer,
+  Ticket,
+  UserFilled,
 } from "@element-plus/icons-vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -234,8 +234,8 @@ globalThis.addEventListener("keydown", (event) => {
 .landing-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
-  color: white;
+  padding: 10px;
+  color: var(--el-text-color-primary);
 
   .welcome-section {
     text-align: center;
