@@ -1,9 +1,8 @@
 import { createI18n } from "vue-i18n";
-
+import { nextTick } from "vue";
 import common from "./common.json";
 
 // Utility function to deep merge objects
-
 function deepMerge(target: any, source: any): any {
   const result = { ...target };
 
@@ -23,22 +22,18 @@ function deepMerge(target: any, source: any): any {
 }
 
 // Utility function to convert flat dotted keys to nested objects
-
 function flatToNested(flat: any): any {
   const result: any = {};
 
   for (const key in flat) {
     const keys = key.split(".");
-
     let current = result;
 
     for (let i = 0; i < keys.length - 1; i++) {
       const k = keys[i]!;
-
       if (!current[k]) {
         current[k] = {};
       }
-
       current = current[k];
     }
 
@@ -48,42 +43,18 @@ function flatToNested(flat: any): any {
   return result;
 }
 
-// Load all locale files using Vite's glob import
-
+// Load English synchronously as it is the fallback language
 const enModules = import.meta.glob("./en/*.json", { eager: true });
 
-const frModules = import.meta.glob("./fr/*.json", { eager: true });
-
-const fiModules = import.meta.glob("./fi/*.json", { eager: true });
-
-const koModules = import.meta.glob("./ko/*.json", { eager: true });
-
-const esModules = import.meta.glob("./es/*.json", { eager: true });
-
-const ptModules = import.meta.glob("./pt/*.json", { eager: true });
-
-const hiModules = import.meta.glob("./hi/*.json", { eager: true });
-
-const viModules = import.meta.glob("./vi/*.json", { eager: true });
-
-const faModules = import.meta.glob("./fa/*.json", { eager: true });
-
-const swModules = import.meta.glob("./sw/*.json", { eager: true });
-
-const arModules = import.meta.glob("./ar/*.json", { eager: true });
-
-const zhModules = import.meta.glob("./zh/*.json", { eager: true });
-
-const ruModules = import.meta.glob("./ru/*.json", { eager: true });
+// Load other languages dynamically
+const localeModulesAsync = import.meta.glob("./*/*.json");
 
 // Merge all JSON files for a locale
-
 function mergeLocaleFiles(modules: Record<string, any>): any {
   let merged = {};
 
   for (const path in modules) {
     const content = modules[path].default || modules[path];
-
     merged = deepMerge(merged, content);
   }
 
@@ -92,29 +63,17 @@ function mergeLocaleFiles(modules: Record<string, any>): any {
 
 const supportedLocales = [
   "en",
-
   "fr",
-
   "fi",
-
   "ko",
-
   "es",
-
   "pt",
-
   "hi",
-
   "vi",
-
   "fa",
-
   "sw",
-
   "ar",
-
   "zh",
-
   "ru",
 ] as const;
 
@@ -155,46 +114,52 @@ function getBestLocale(): SupportedLocale {
 }
 
 const savedLocale = getBestLocale();
-
 console.log("Saved locale:", savedLocale);
 
 export const i18n = createI18n({
-  locale: savedLocale,
-
+  locale: "en", // Start with English, we will switch it after loading
   fallbackLocale: "en",
-
   messages: {
     en: deepMerge(common, mergeLocaleFiles(enModules)),
-
-    fr: deepMerge(common, mergeLocaleFiles(frModules)),
-
-    fi: deepMerge(common, mergeLocaleFiles(fiModules)),
-
-    ko: deepMerge(common, mergeLocaleFiles(koModules)),
-
-    es: deepMerge(common, mergeLocaleFiles(esModules)),
-
-    pt: deepMerge(common, mergeLocaleFiles(ptModules)),
-
-    hi: deepMerge(common, mergeLocaleFiles(hiModules)),
-
-    vi: deepMerge(common, mergeLocaleFiles(viModules)),
-
-    fa: deepMerge(common, mergeLocaleFiles(faModules)),
-
-    sw: deepMerge(common, mergeLocaleFiles(swModules)),
-
-    ar: deepMerge(common, mergeLocaleFiles(arModules)),
-
-    zh: deepMerge(common, mergeLocaleFiles(zhModules)),
-
-    ru: deepMerge(common, mergeLocaleFiles(ruModules)),
   },
 });
 
-export function setLocale(locale: SupportedLocale) {
-  i18n.global.locale = locale;
+export async function loadLocaleMessages(locale: SupportedLocale) {
+  // If the language is already loaded
+  if (i18n.global.availableLocales.includes(locale)) {
+    return nextTick();
+  }
 
-  localStorage.setItem("preferred-language", locale);
+  const regex = new RegExp(`^\\./${locale}/.*\\.json$`);
+  let merged = {};
+  const loadPromises = [];
+
+  for (const path in localeModulesAsync) {
+    if (regex.test(path)) {
+      loadPromises.push(
+        localeModulesAsync[path]().then((mod: any) => {
+          const content = mod.default || mod;
+          merged = deepMerge(merged, content);
+        })
+      );
+    }
+  }
+
+  await Promise.all(loadPromises);
+
+  const finalMessages = flatToNested(deepMerge(common, merged));
+  i18n.global.setLocaleMessage(locale, finalMessages);
+  return nextTick();
 }
 
+export async function setLocale(locale: SupportedLocale) {
+  await loadLocaleMessages(locale);
+  i18n.global.locale = locale;
+  localStorage.setItem("preferred-language", locale);
+  document.querySelector("html")?.setAttribute("lang", locale);
+}
+
+// Load the saved locale
+if (savedLocale !== "en") {
+  setLocale(savedLocale);
+}

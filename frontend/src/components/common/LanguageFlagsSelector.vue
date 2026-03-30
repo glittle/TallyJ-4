@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { onMounted } from "vue";
 import CountryFlag from "vue-country-flag-next";
+import { setLocale, type SupportedLocale } from "@/locales";
 
 const { locale } = useI18n();
 
@@ -21,10 +22,9 @@ const languages = [
   { value: "ru", flag: "ru", label: "Русский" },
 ];
 
-const changeLanguage = (lang: string) => {
+const changeLanguage = async (lang: string) => {
+  await setLocale(lang as SupportedLocale);
   locale.value = lang;
-  localStorage.setItem("preferred-language", lang);
-  document.documentElement.lang = lang;
 };
 
 const isActive = (lang: string) => {
