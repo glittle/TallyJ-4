@@ -1,3 +1,94 @@
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { View } from "@element-plus/icons-vue";
+import { useAuditLogStore } from "@/stores/auditLogStore";
+import type { AuditLog, AuditLogFilter } from "@/types/AuditLog";
+
+const auditLogStore = useAuditLogStore();
+
+const filters = ref<AuditLogFilter>({});
+const detailsDialogVisible = ref(false);
+const selectedLog = ref<AuditLog | null>(null);
+
+const auditLogs = computed(() => auditLogStore.auditLogs);
+const loading = computed(() => auditLogStore.loading);
+const totalCount = computed(() => auditLogStore.totalCount);
+const currentPage = computed({
+  get: () => auditLogStore.currentPage,
+  set: (val) => (auditLogStore.currentPage = val),
+});
+const pageSize = computed({
+  get: () => auditLogStore.pageSize,
+  set: (val) => (auditLogStore.pageSize = val),
+});
+const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value));
+
+onMounted(() => {
+  loadAuditLogs();
+});
+
+async function loadAuditLogs() {
+  const filterParams: AuditLogFilter = {};
+  if (filters.value.electionGuid)
+    filterParams.electionGuid = filters.value.electionGuid;
+  if (filters.value.locationGuid)
+    filterParams.locationGuid = filters.value.locationGuid;
+  if (filters.value.voterId) filterParams.voterId = filters.value.voterId;
+  if (filters.value.computerCode)
+    filterParams.computerCode = filters.value.computerCode;
+  if (filters.value.startDate)
+    filterParams.startDate = new Date(filters.value.startDate).toISOString();
+  if (filters.value.endDate)
+    filterParams.endDate = new Date(filters.value.endDate).toISOString();
+  if (filters.value.searchTerm)
+    filterParams.searchTerm = filters.value.searchTerm;
+
+  await auditLogStore.fetchAuditLogs(
+    filterParams,
+    currentPage.value,
+    pageSize.value,
+  );
+}
+
+function applyFilters() {
+  currentPage.value = 1;
+  loadAuditLogs();
+}
+
+function clearFilters() {
+  filters.value = {};
+  currentPage.value = 1;
+  loadAuditLogs();
+}
+
+function handlePageChange(_page: number) {
+  loadAuditLogs();
+}
+
+function handleSizeChange(_size: number) {
+  currentPage.value = 1;
+  loadAuditLogs();
+}
+
+function viewDetails(log: AuditLog) {
+  selectedLog.value = log;
+  detailsDialogVisible.value = true;
+}
+
+function formatDate(dateString: string) {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  return date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+</script>
+
 <template>
   <div class="audit-logs-page">
     <el-card>
@@ -195,98 +286,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { View } from "@element-plus/icons-vue";
-import { useAuditLogStore } from "@/stores/auditLogStore";
-import type { AuditLog, AuditLogFilter } from "@/types/AuditLog";
-
-const auditLogStore = useAuditLogStore();
-
-const filters = ref<AuditLogFilter>({});
-const detailsDialogVisible = ref(false);
-const selectedLog = ref<AuditLog | null>(null);
-
-const auditLogs = computed(() => auditLogStore.auditLogs);
-const loading = computed(() => auditLogStore.loading);
-const totalCount = computed(() => auditLogStore.totalCount);
-const currentPage = computed({
-  get: () => auditLogStore.currentPage,
-  set: (val) => (auditLogStore.currentPage = val),
-});
-const pageSize = computed({
-  get: () => auditLogStore.pageSize,
-  set: (val) => (auditLogStore.pageSize = val),
-});
-const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value));
-
-onMounted(() => {
-  loadAuditLogs();
-});
-
-async function loadAuditLogs() {
-  const filterParams: AuditLogFilter = {};
-  if (filters.value.electionGuid)
-    filterParams.electionGuid = filters.value.electionGuid;
-  if (filters.value.locationGuid)
-    filterParams.locationGuid = filters.value.locationGuid;
-  if (filters.value.voterId) filterParams.voterId = filters.value.voterId;
-  if (filters.value.computerCode)
-    filterParams.computerCode = filters.value.computerCode;
-  if (filters.value.startDate)
-    filterParams.startDate = new Date(filters.value.startDate).toISOString();
-  if (filters.value.endDate)
-    filterParams.endDate = new Date(filters.value.endDate).toISOString();
-  if (filters.value.searchTerm)
-    filterParams.searchTerm = filters.value.searchTerm;
-
-  await auditLogStore.fetchAuditLogs(
-    filterParams,
-    currentPage.value,
-    pageSize.value,
-  );
-}
-
-function applyFilters() {
-  currentPage.value = 1;
-  loadAuditLogs();
-}
-
-function clearFilters() {
-  filters.value = {};
-  currentPage.value = 1;
-  loadAuditLogs();
-}
-
-function handlePageChange(_page: number) {
-  loadAuditLogs();
-}
-
-function handleSizeChange(_size: number) {
-  currentPage.value = 1;
-  loadAuditLogs();
-}
-
-function viewDetails(log: AuditLog) {
-  selectedLog.value = log;
-  detailsDialogVisible.value = true;
-}
-
-function formatDate(dateString: string) {
-  if (!dateString) return "-";
-  const date = new Date(dateString);
-  return date.toLocaleString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-}
-</script>
-
-<style scoped>
+<style lang="less">
 .audit-logs-page {
   padding: 20px;
 }

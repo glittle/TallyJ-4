@@ -11,9 +11,8 @@ const router = useRouter();
 const { t } = useI18n();
 
 // Version tooltip - dynamically localized
-const versionTooltip = computed(() =>
-  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE }),
-);
+const versionName = computed(() => VERSION);
+const versionDate = computed(() => BUILD_DATE);
 
 // Check if we're on the landing page
 const expandLanguageSelector = true; // computed(() => route.path === "/" || route.name === "landing");
@@ -26,23 +25,22 @@ const handleLogoClick = () => {
 <template>
   <div class="public-layout">
     <div class="public-header">
-      <div class="logo">
-        <h2
-          :title="versionTooltip"
-          style="cursor: pointer"
-          @click="handleLogoClick"
-        >
+      <div class="logo" style="cursor: pointer" @click="handleLogoClick">
+        <h2>
           <img
             src="/logo-zoom.png"
+            :alt="$t('common.logoAlt')"
             style="height: 24px; vertical-align: middle; margin-left: 8px"
           />
-          <span>{{ $t("common.versionDisplay", { version: VERSION }) }}</span>
+          <span>
+            <div>{{ $t("common.versionDisplay") }}</div>
+            <div class="versionName" :title="versionDate">
+              {{ versionName }}
+            </div>
+          </span>
         </h2>
       </div>
       <div class="header-middle">
-        <div class="testOnlyWarning">
-          {{ $t("common.testOnlyLong") }}
-        </div>
         <div>
           <LanguageFlagsSelector v-if="expandLanguageSelector" />
           <LanguageSelector v-else />
@@ -63,10 +61,15 @@ const handleLogoClick = () => {
   min-height: 100vh;
   background: var(--color-public-bg-gradient);
 
+  .versionName {
+    font-size: 0.5em;
+    color: var(--color-text-secondary);
+  }
+
   .public-header {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     gap: 1em;
-    justify-content: space-between;
     align-items: center;
     padding: 20px 40px;
     backdrop-filter: blur(10px);
@@ -101,7 +104,7 @@ const handleLogoClick = () => {
   }
 
   .header-right {
-    display: flex;
+    text-align: right;
     align-items: center;
     gap: 20px;
   }
@@ -109,16 +112,4 @@ const handleLogoClick = () => {
   .public-content {
     padding: 20px;
   }
-
-  .testOnlyWarning {
-    padding: 0.25em 0.5em;
-    text-align: center;
-    background-color: var(--el-color-error);
-    color: var(--color-sidebar-text);
-    font-size: 1.3em;
-    font-weight: bold;
-    border-radius: 10px;
-    width: fit-content;
-  }
-}
 </style>

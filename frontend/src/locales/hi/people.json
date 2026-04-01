@@ -13,7 +13,7 @@
   "people.phone": "फ़ोन",
   "people.area": "क्षेत्र",
   "people.bahaiId": "Baha'i ID",
-  "people.ageGroup": "आयु समूह",
+  "people.ageGroupLabel": "आयु समूह",
   "people.canVote": "मतदान कर सकते हैं",
   "people.canReceiveVotes": "मत प्राप्त कर सकते हैं",
   "people.lastNameRequired": "अंतिम नाम आवश्यक है",

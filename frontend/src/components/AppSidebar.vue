@@ -28,9 +28,8 @@ const isInElectionContext = computed(() => {
   return route.path.startsWith("/elections/") && route.params.id;
 });
 
-const versionTooltip = computed(() =>
-  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE }),
-);
+const versionName = computed(() => VERSION);
+const versionDate = computed(() => BUILD_DATE);
 
 const electionName = computed(() => {
   return electionStore.currentElection?.name || t("common.election");
@@ -68,8 +67,8 @@ function goBackToElections() {
         />
         <h2>{{ $t("common.appTitle") }}</h2>
       </div>
-      <div class="version-tooltip" :title="versionTooltip">
-        {{ $t("common.versionDisplay", { version: VERSION }) }}
+      <div class="version-tooltip" :title="versionDate">
+        {{ $t("common.versionDisplay", { version: versionName }) }}
       </div>
     </div>
     <div class="testOnlyWarning">

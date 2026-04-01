@@ -84,6 +84,56 @@ const codeForm = ref({ code: "" });
 const verificationForm = ref({ voterId: "", verifyCode: "" });
 const loading = ref(false);
 
+const emailRules = {
+  email: [
+    {
+      required: true,
+      validator: (_rule: any, value: any, callback: any) => {
+        if (!value) {
+          callback(new Error(t("auth.emailRequired")));
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          callback(new Error(t("auth.emailInvalid")));
+        } else {
+          callback();
+        }
+      },
+      trigger: ["blur", "change"],
+    },
+  ],
+};
+
+const phoneRules = {
+  phone: [
+    {
+      required: true,
+      validator: (_rule: any, value: any, callback: any) => {
+        if (!value) {
+          callback(new Error(t("voting.auth.phone.label") + " is required"));
+        } else {
+          callback();
+        }
+      },
+      trigger: ["blur", "change"],
+    },
+  ],
+};
+
+const codeRules = {
+  code: [
+    {
+      required: true,
+      validator: (_rule: any, value: any, callback: any) => {
+        if (!value) {
+          callback(new Error(t("voting.auth.code.label") + " is required"));
+        } else {
+          callback();
+        }
+      },
+      trigger: ["blur", "change"],
+    },
+  ],
+};
+
 // add handler so if ESC is pressed, we go back to landing page
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === "Escape") {
@@ -233,7 +283,11 @@ const fetchGoogleClientId = async (): Promise<string | null> => {
   return config?.googleClientId ?? null;
 };
 
+let isInitializingGis = false;
+
 const initGoogleSignIn = async () => {
+  if (googleReady.value || isInitializingGis) return;
+  isInitializingGis = true;
   try {
     googleError.value = false;
     await loadGisScript();
@@ -262,6 +316,8 @@ const initGoogleSignIn = async () => {
   } catch (error) {
     console.error("Failed to initialize Google Sign-In:", error);
     googleError.value = true;
+  } finally {
+    isInitializingGis = false;
   }
 };
 
@@ -521,7 +577,7 @@ onBeforeUnmount(() => {
     <div class="auth-container">
       <div class="welcome-section">
         <div class="welcome-icon">
-          <ElIcon :size="56" color="#ffffff">
+          <ElIcon :size="56" color="var(--color-public-text)">
             <Lock />
           </ElIcon>
         </div>
@@ -584,15 +640,15 @@ onBeforeUnmount(() => {
                 </p>
                 <ElForm
                   :model="emailForm"
+                  :rules="emailRules"
                   @submit.prevent="handleRequestEmailCode"
                 >
-                  <ElFormItem :label="$t('voting.auth.email.label')">
+                  <ElFormItem :label="$t('voting.auth.email.label')" prop="email">
                     <ElInput
                       v-model="emailForm.email"
                       type="email"
                       :placeholder="$t('voting.auth.email.placeholder')"
                       size="large"
-                      required
                     />
                   </ElFormItem>
                   <ElFormItem>
@@ -625,15 +681,15 @@ onBeforeUnmount(() => {
                 </p>
                 <ElForm
                   :model="phoneForm"
+                  :rules="phoneRules"
                   @submit.prevent="handleRequestPhoneCode"
                 >
-                  <ElFormItem :label="$t('voting.auth.phone.label')">
+                  <ElFormItem :label="$t('voting.auth.phone.label')" prop="phone">
                     <ElInput
                       v-model="phoneForm.phone"
                       type="tel"
                       :placeholder="$t('voting.auth.phone.placeholder')"
                       size="large"
-                      required
                     />
                   </ElFormItem>
                   <ElFormItem
@@ -690,14 +746,14 @@ onBeforeUnmount(() => {
                 </p>
                 <ElForm
                   :model="codeForm"
+                  :rules="codeRules"
                   @submit.prevent="handleDirectCodeLogin"
                 >
-                  <ElFormItem :label="$t('voting.auth.code.label')">
+                  <ElFormItem :label="$t('voting.auth.code.label')" prop="code">
                     <ElInput
                       v-model="codeForm.code"
                       :placeholder="$t('voting.auth.code.placeholder')"
                       size="large"
-                      required
                     />
                   </ElFormItem>
                   <ElFormItem>
@@ -906,7 +962,7 @@ onBeforeUnmount(() => {
 
       <div class="faq-section">
         <div class="faq-header">
-          <ElIcon :size="24" color="rgba(255,255,255,0.85)">
+          <ElIcon :size="24" color="var(--color-public-text)">
             <QuestionFilled />
           </ElIcon>
           <h2>{{ $t("voting.auth.faq.title") }}</h2>
@@ -964,7 +1020,7 @@ onBeforeUnmount(() => {
   .welcome-section {
     text-align: center;
     padding: 20px 0 32px;
-    color: #ffffff;
+    color: var(--color-public-text);
 
     .welcome-icon {
       margin-bottom: 16px;
@@ -974,7 +1030,7 @@ onBeforeUnmount(() => {
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.15);
+      background: var(--color-public-header-bg);
       backdrop-filter: blur(8px);
       margin-left: auto;
       margin-right: auto;
@@ -1176,7 +1232,7 @@ onBeforeUnmount(() => {
       margin-bottom: 16px;
 
       h2 {
-        color: rgba(255, 255, 255, 0.92);
+        color: var(--color-public-text);
         font-size: 1.3rem;
         margin: 0;
         font-weight: 600;
@@ -1186,9 +1242,9 @@ onBeforeUnmount(() => {
     .faq-collapse {
       border-radius: 10px;
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.97);
+      background: var(--el-bg-color);
       border: none;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      box-shadow: var(--el-box-shadow-light);
 
       .el-collapse-item__header {
         font-size: 0.95rem;

@@ -30,9 +30,8 @@ const mobileMenuOpen = ref(false);
 const isMobile = ref(false);
 
 // Version tooltip - dynamically localized
-const versionTooltip = computed(() =>
-  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE }),
-);
+const versionName = computed(() => VERSION);
+const versionDate = computed(() => BUILD_DATE);
 
 // Check if we're on mobile
 const checkMobile = () => {
@@ -83,7 +82,9 @@ const currentElectionGuid = computed(() => {
 
 // Get selected location details
 const _selectedLocation = computed(() => {
-  if (!locationStore.selectedLocationGuid) return null;
+  if (!locationStore.selectedLocationGuid) {
+    return null;
+  }
   return locationStore.locations.find(
     (loc) => loc.locationGuid === locationStore.selectedLocationGuid,
   );
@@ -142,9 +143,15 @@ function toggleMobileMenu() {
           <Menu />
         </el-icon>
       </button>
-      <h2 aria-live="polite" :title="versionTooltip">
+      <h2 aria-live="polite">
         {{ currentPageTitle }}
       </h2>
+      <div class="versionName">
+        {{ versionName }}
+      </div>
+      <div class="versionDate">
+        {{ versionDate }}
+      </div>
 
       <!-- Location Selector -->
       <div
@@ -223,6 +230,17 @@ function toggleMobileMenu() {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .versionName {
+    font-size: 0.9em;
+    color: var(--color-text-secondary);
+    margin-left: 16px;
+  }
+  .versionDate {
+    font-size: 0.8em;
+    color: var(--color-text-secondary);
+    margin-left: 8px;
+  }
 
   .header-left {
     display: flex;

@@ -13,7 +13,7 @@
   "people.phone": "전화번호",
   "people.area": "지역",
   "people.bahaiId": "바하이 ID",
-  "people.ageGroup": "연령 그룹",
+  "people.ageGroupLabel": "연령 그룹",
   "people.canVote": "투표 가능",
   "people.canReceiveVotes": "투표 받기 가능",
   "people.lastNameRequired": "성이 필요합니다",

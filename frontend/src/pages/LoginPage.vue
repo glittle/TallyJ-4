@@ -69,14 +69,35 @@ const rules = computed<FormRules>(() => {
 
   if (isStandardLogin.value || isVoterLogin.value) {
     baseRules.email = [
-      { required: true, message: t("auth.emailRequired"), trigger: "blur" },
-      { type: "email", message: t("auth.emailInvalid"), trigger: "blur" },
+      {
+        required: true,
+        validator: (_rule: any, value: any, callback: any) => {
+          if (!value) {
+            callback(new Error(t("auth.emailRequired")));
+          } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            callback(new Error(t("auth.emailInvalid")));
+          } else {
+            callback();
+          }
+        },
+        trigger: "blur",
+      },
     ];
   }
 
   if (isStandardLogin.value) {
     baseRules.password = [
-      { required: true, message: t("auth.passwordRequired"), trigger: "blur" },
+      {
+        required: true,
+        validator: (_rule: any, value: any, callback: any) => {
+          if (!value) {
+            callback(new Error(t("auth.passwordRequired")));
+          } else {
+            callback();
+          }
+        },
+        trigger: "blur",
+      },
     ];
   }
 
@@ -84,7 +105,13 @@ const rules = computed<FormRules>(() => {
     baseRules.code = [
       {
         required: true,
-        message: t("auth.voterLogin.codeRequired"),
+        validator: (_rule: any, value: any, callback: any) => {
+          if (!value) {
+            callback(new Error(t("auth.voterLogin.codeRequired")));
+          } else {
+            callback();
+          }
+        },
         trigger: "blur",
       },
     ];
@@ -292,7 +319,11 @@ watch(googleButtonRef, (el) => {
   }
 });
 
+let isInitializingGis = false;
+
 const initGoogleOneTap = async () => {
+  if (googleReady.value || isInitializingGis) return;
+  isInitializingGis = true;
   try {
     // Lazy load the GIS script only when needed
     await loadGisScript();
@@ -330,6 +361,8 @@ const initGoogleOneTap = async () => {
   } catch (error) {
     console.error("Failed to initialize Google One Tap:", error);
     googleReady.value = false;
+  } finally {
+    isInitializingGis = false;
   }
 };
 

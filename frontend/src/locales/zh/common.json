@@ -45,6 +45,6 @@
   "common.logoAlt": "计票J 标志",
   "common.appTitle": "计票J v4",
   "common.appName": "计票J",
-  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionDisplay": "v4 Beta",
   "common.versionTooltip": "Version {version} ({date})"
 }

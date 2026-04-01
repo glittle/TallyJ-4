@@ -27,7 +27,7 @@ public class TallyJv2ElectionImportService : ElectionImportExportBase
         var schemaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Schemas", "TallyJv2-Export.xsd");
         var xmlDoc = new XmlDocument();
 
-        using (var reader = new StreamReader(xmlStream))
+        using (var reader = new StreamReader(xmlStream, System.Text.Encoding.UTF8, true, 1024, leaveOpen: true))
         {
             var xmlContent = await reader.ReadToEndAsync();
             xmlDoc.LoadXml(xmlContent);

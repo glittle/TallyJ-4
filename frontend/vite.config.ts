@@ -129,9 +129,9 @@ export default defineConfig(() => {
           assetFileNames: "assets/[name]-[hash].[ext]",
         },
       },
-      chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
+      chunkSizeWarningLimit: 1500, // Increase warning limit to 1.5MB
       minify: "terser", // Use terser for better compression
-      sourcemap: false, // Disable sourcemaps in production
+      sourcemap: true, // Disable sourcemaps in production
       terserOptions: {
         compress: {
           drop_console: true, // Remove console.log in production

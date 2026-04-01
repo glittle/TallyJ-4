@@ -67,8 +67,19 @@ const validatePass2 = (_rule: any, value: any, callback: any) => {
 
 const rules = reactive<FormRules>({
   email: [
-    { required: true, message: t("auth.emailRequired"), trigger: "blur" },
-    { type: "email", message: t("auth.emailInvalid"), trigger: "blur" },
+    {
+      required: true,
+      validator: (_rule: any, value: any, callback: any) => {
+        if (!value) {
+          callback(new Error(t("auth.emailRequired")));
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          callback(new Error(t("auth.emailInvalid")));
+        } else {
+          callback();
+        }
+      },
+      trigger: "blur",
+    },
   ],
   password: [{ validator: validatePassword, trigger: "blur" }],
   confirmPassword: [{ validator: validatePass2, trigger: "blur" }],

@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { ElSelect, ElOption } from "element-plus";
 import { onMounted } from "vue";
 import CountryFlag from "vue-country-flag-next";
+import { setLocale, type SupportedLocale } from "@/locales";
 
 const { locale, t } = useI18n();
 
@@ -27,10 +28,9 @@ const getFlag = (lang: string) => {
   return langObj ? langObj.flag : "us";
 };
 
-const changeLanguage = (lang: string) => {
+const changeLanguage = async (lang: string) => {
+  await setLocale(lang as SupportedLocale);
   locale.value = lang;
-  localStorage.setItem("preferred-language", lang);
-  document.documentElement.lang = lang;
 };
 
 onMounted(() => {

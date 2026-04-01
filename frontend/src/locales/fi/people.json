@@ -13,7 +13,7 @@
   "people.phone": "Puhelin",
   "people.area": "Alue",
   "people.bahaiId": "Bahá'í ID",
-  "people.ageGroup": "Ikäryhmä",
+  "people.ageGroupLabel": "Ikäryhmä",
   "people.canVote": "Voi äänestää",
   "people.canReceiveVotes": "Voi vastaanottaa ääniä",
   "people.lastNameRequired": "Sukunimi vaaditaan",

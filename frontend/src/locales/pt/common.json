@@ -45,6 +45,6 @@
   "common.logoAlt": "Logo do ApuraJ",
   "common.appTitle": "ApuraJ v4",
   "common.appName": "ApuraJ",
-  "common.versionDisplay": "v4 Beta (Version {version})",
+  "common.versionDisplay": "v4 Beta",
   "common.versionTooltip": "Version {version} ({date})"
 }

@@ -13,7 +13,7 @@
   "people.phone": "الهاتف",
   "people.area": "Area",
   "people.bahaiId": "Baha'i ID",
-  "people.ageGroup": "Age Group",
+  "people.ageGroupLabel": "Age Group",
   "people.canVote": "Can Vote",
   "people.canReceiveVotes": "Can Receive Votes",
   "people.lastNameRequired": "Last name is required",
