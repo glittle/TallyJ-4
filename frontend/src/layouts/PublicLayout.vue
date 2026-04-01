@@ -41,9 +41,6 @@ const handleLogoClick = () => {
         </h2>
       </div>
       <div class="header-middle">
-        <div class="testOnlyWarning">
-          {{ $t("common.testOnlyLong") }}
-        </div>
         <div>
           <LanguageFlagsSelector v-if="expandLanguageSelector" />
           <LanguageSelector v-else />
@@ -115,16 +112,4 @@ const handleLogoClick = () => {
   .public-content {
     padding: 20px;
   }
-
-  .testOnlyWarning {
-    padding: 0.25em 0.5em;
-    text-align: center;
-    background-color: var(--el-color-error);
-    color: var(--color-sidebar-text);
-    font-size: 1.3em;
-    font-weight: bold;
-    border-radius: 10px;
-    width: fit-content;
-  }
-}
 </style>

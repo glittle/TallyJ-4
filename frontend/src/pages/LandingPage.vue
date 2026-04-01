@@ -131,6 +131,9 @@ globalThis.addEventListener("keydown", (event) => {
 
 <template>
   <div class="landing-container">
+    <div class="testOnlyWarning">
+      {{ $t("common.testOnlyLong") }}
+    </div>
     <div class="welcome-section">
       <h1>{{ t("auth.landing.title") }}</h1>
       <p class="description">{{ t("auth.landing.description") }}</p>
@@ -143,6 +146,7 @@ globalThis.addEventListener("keydown", (event) => {
         class="option-card"
         shadow="hover"
         tabindex="0"
+        :style="{ '--card-accent-color': opt.color }"
         @click="opt.action"
         @keydown.enter="opt.action"
         @keydown.space.prevent="opt.action"
@@ -170,6 +174,7 @@ globalThis.addEventListener("keydown", (event) => {
         class="option-card"
         shadow="hover"
         tabindex="0"
+        :style="{ '--card-accent-color': opt.color }"
         @click="opt.action"
         @keydown.enter="opt.action"
         @keydown.space.prevent="opt.action"
@@ -302,6 +307,10 @@ globalThis.addEventListener("keydown", (event) => {
   .option-card:focus {
     transform: translateY(-10px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .option-card::before {
+    background: var(--card-accent-color);
   }
 
   .card-header {
@@ -440,6 +449,20 @@ globalThis.addEventListener("keydown", (event) => {
     }
   }
 
+  .testOnlyWarning {
+    padding: 0.25em 0.5em;
+    text-align: center;
+    margin-left: 5%;
+    background-color: var(--el-color-error);
+    color: var(--color-sidebar-text);
+    font-size: 1.3em;
+    font-weight: bold;
+    border-radius: 10px;
+    width: fit-content;
+    transform: rotate(-5deg);
+    animation: pulse 3s ease-in-out infinite;
+  }
+
   // Animations
   @keyframes fadeIn {
     from {
@@ -448,6 +471,16 @@ globalThis.addEventListener("keydown", (event) => {
 
     to {
       opacity: 1;
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: rotate(-5deg) scale(1);
+    }
+    50% {
+      transform: rotate(-5deg) scale(1.05);
     }
   }
 
