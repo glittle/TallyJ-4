@@ -225,7 +225,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            using var reader = new StreamReader(jsonStream);
+            using var reader = new StreamReader(jsonStream, System.Text.Encoding.UTF8, true, 1024, leaveOpen: true);
             var jsonContent = await reader.ReadToEndAsync();
 
             var importData = JsonSerializer.Deserialize<JsonImportData>(jsonContent, new JsonSerializerOptions
