@@ -207,12 +207,16 @@ async function loadPresentationData() {
 }
 
 function formatDate(date: string) {
-  if (!date) return "";
+  if (!date) {
+    return "";
+  }
   return new Date(date).toLocaleDateString();
 }
 
 function formatDateTime(date: string) {
-  if (!date) return "";
+  if (!date) {
+    return "";
+  }
   return new Date(date).toLocaleString();
 }
 

@@ -112,7 +112,9 @@ const filteredByConditions = computed(() => {
 
   if (selectedFlagFilters.value.length > 0) {
     result = result.filter((v) => {
-      if (!v.flags) return false;
+      if (!v.flags) {
+        return false;
+      }
       const voterFlags = v.flags.split(",").map((f) => f.trim());
       return selectedFlagFilters.value.every((flag) =>
         voterFlags.includes(flag),
@@ -174,7 +176,9 @@ const flagCounts = computed(() => {
   const counts: Record<string, number> = {};
   electionFlags.value.forEach((flag: string) => {
     counts[flag] = filteredVoters.value.filter((v) => {
-      if (!v.flags) return false;
+      if (!v.flags) {
+        return false;
+      }
       const voterFlags = v.flags.split(",").map((f) => f.trim());
       return voterFlags.includes(flag);
     }).length;
@@ -289,7 +293,9 @@ async function savePersonFlags(
 }
 
 async function initializeSignalR() {
-  if (signalrInitialized.value) return;
+  if (signalrInitialized.value) {
+    return;
+  }
 
   try {
     const connection = await signalrService.connectToFrontDeskHub();
@@ -489,7 +495,9 @@ function handleRowClick(row: FrontDeskVoterDto) {
 }
 
 async function confirmCheckIn(votingMethod: string) {
-  if (!selectedVoter.value) return;
+  if (!selectedVoter.value) {
+    return;
+  }
 
   try {
     await checkInVoter(electionGuid.value, {
@@ -519,7 +527,9 @@ async function confirmCheckIn(votingMethod: string) {
 }
 
 async function handleButtonClick(button: any) {
-  if (!selectedVoter.value) return;
+  if (!selectedVoter.value) {
+    return;
+  }
 
   if (button.isVotingMethod) {
     await confirmCheckIn(button.value);
@@ -529,19 +539,23 @@ async function handleButtonClick(button: any) {
 }
 
 function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
-  if (!voter.flags) return false;
+  if (!voter.flags) {
+    return false;
+  }
   const flags = voter.flags.split(",").map((f) => f.trim());
   return flags.includes(flag);
 }
 
 async function toggleFlag(flag: string) {
-  if (!selectedVoter.value) return;
+  if (!selectedVoter.value) {
+    return;
+  }
 
   const currentFlags = selectedVoter.value.flags
     ? selectedVoter.value.flags
-      .split(",")
-      .map((f) => f.trim())
-      .filter(Boolean)
+        .split(",")
+        .map((f) => f.trim())
+        .filter(Boolean)
     : [];
 
   const hasCurrentFlag = currentFlags.includes(flag);
@@ -570,7 +584,9 @@ async function toggleFlag(flag: string) {
 }
 
 async function updatePersonFlags(flags: string[]) {
-  if (!selectedVoter.value) return;
+  if (!selectedVoter.value) {
+    return;
+  }
 
   try {
     await savePersonFlags(electionGuid.value, {
@@ -615,20 +631,28 @@ function showHistory(voter: FrontDeskVoterDto) {
 }
 
 function formatTime(time?: string): string {
-  if (!time) return "";
+  if (!time) {
+    return "";
+  }
   const date = new Date(time);
   return date.toLocaleString();
 }
 
 function formatTimeShort(time?: string): string {
-  if (!time) return "";
+  if (!time) {
+    return "";
+  }
   const date = new Date(time);
   return date.toLocaleTimeString();
 }
 
 function getProgressColor(percentage: number): string {
-  if (percentage < 30) return "#f56c6c";
-  if (percentage < 70) return "#e6a23c";
+  if (percentage < 30) {
+    return "#f56c6c";
+  }
+  if (percentage < 70) {
+    return "#e6a23c";
+  }
   return "#67c23a";
 }
 
@@ -700,16 +724,27 @@ function clearFilters() {
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-page-header content="Front Desk - Voter Check-In" @back="goBack" />
+          <el-page-header
+            content="Front Desk - Voter Check-In"
+            @back="goBack"
+          />
           <div v-if="stats" class="header-stats">
-            <el-statistic :value="stats.checkedIn" title="Checked In" align="center">
+            <el-statistic
+              :value="stats.checkedIn"
+              title="Checked In"
+              align="center"
+            >
               <template #prefix>
                 <el-icon>
                   <UserFilled />
                 </el-icon>
               </template>
             </el-statistic>
-            <el-statistic :value="stats.notYetCheckedIn" title="Not Checked In" align="center">
+            <el-statistic
+              :value="stats.notYetCheckedIn"
+              title="Not Checked In"
+              align="center"
+            >
               <template #prefix>
                 <el-icon>
                   <User />
@@ -726,9 +761,14 @@ function clearFilters() {
             <template #header>
               <div class="section-header">
                 <h3>Quick Check-In</h3>
-                <el-input ref="searchInputRef" v-model="searchQuery"
-                  placeholder="Type name to search (↑↓ arrows, Enter to select)" style="width: 450px" clearable
-                  @keydown="handleSearchKeydown">
+                <el-input
+                  ref="searchInputRef"
+                  v-model="searchQuery"
+                  placeholder="Type name to search (↑↓ arrows, Enter to select)"
+                  style="width: 450px"
+                  clearable
+                  @keydown="handleSearchKeydown"
+                >
                   <template #prefix>
                     <el-icon>
                       <Search />
@@ -741,18 +781,28 @@ function clearFilters() {
             <!-- Filters -->
             <div class="filters-section">
               <div class="filter-group">
-                <el-button :type="showAllRegistered ? 'primary' : 'default'" size="small"
-                  @click="showAllRegistered = !showAllRegistered">
+                <el-button
+                  :type="showAllRegistered ? 'primary' : 'default'"
+                  size="small"
+                  @click="showAllRegistered = !showAllRegistered"
+                >
                   Show All Registered ({{ checkedInVoters.length }})
                 </el-button>
 
                 <el-divider direction="vertical" />
 
                 <span class="filter-label">Voting Methods:</span>
-                <el-button v-for="method in registrationTypes" :key="method.value" :type="selectedMethodFilters.includes(method.value)
-                    ? 'primary'
-                    : 'default'
-                  " size="small" @click="toggleMethodFilter(method.value)">
+                <el-button
+                  v-for="method in registrationTypes"
+                  :key="method.value"
+                  :type="
+                    selectedMethodFilters.includes(method.value)
+                      ? 'primary'
+                      : 'default'
+                  "
+                  size="small"
+                  @click="toggleMethodFilter(method.value)"
+                >
                   {{ method.label }} ({{ methodCounts[method.value] || 0 }})
                 </el-button>
 
@@ -760,17 +810,29 @@ function clearFilters() {
                   <el-divider direction="vertical" />
 
                   <span class="filter-label">Flags:</span>
-                  <el-button v-for="flag in electionFlags" :key="flag" :type="selectedFlagFilters.includes(flag) ? 'primary' : 'default'
-                    " size="small" @click="toggleFlagFilter(flag)">
+                  <el-button
+                    v-for="flag in electionFlags"
+                    :key="flag"
+                    :type="
+                      selectedFlagFilters.includes(flag) ? 'primary' : 'default'
+                    "
+                    size="small"
+                    @click="toggleFlagFilter(flag)"
+                  >
                     {{ flag }} ({{ flagCounts[flag] || 0 }})
                   </el-button>
                 </template>
 
-                <el-button v-if="
-                  selectedMethodFilters.length > 0 ||
-                  selectedFlagFilters.length > 0 ||
-                  showAllRegistered
-                " type="info" size="small" @click="clearFilters">
+                <el-button
+                  v-if="
+                    selectedMethodFilters.length > 0 ||
+                    selectedFlagFilters.length > 0 ||
+                    showAllRegistered
+                  "
+                  type="info"
+                  size="small"
+                  @click="clearFilters"
+                >
                   Clear Filters
                 </el-button>
               </div>
@@ -778,29 +840,51 @@ function clearFilters() {
               <!-- Flag Legend -->
               <div v-if="electionFlags.length > 0" class="flag-legend">
                 <span class="legend-label">Flag Abbreviations:</span>
-                <el-tag v-for="flag in electionFlags" :key="flag" size="small" class="legend-tag">
+                <el-tag
+                  v-for="flag in electionFlags"
+                  :key="flag"
+                  size="small"
+                  class="legend-tag"
+                >
                   {{ getFlagAbbr(flag) }} = {{ flag }}
                 </el-tag>
               </div>
             </div>
 
             <!-- Registration type selection (shown after pressing Enter) -->
-            <div v-if="showRegistrationButtons && selectedVoter" class="registration-buttons">
+            <div
+              v-if="showRegistrationButtons && selectedVoter"
+              class="registration-buttons"
+            >
               <div class="selected-voter-info">
-                <strong>{{ selectedVoter.isCheckedIn ? "Update: " : "Check in: "
-                }}{{ selectedVoter.fullName }}</strong>
-                <span v-if="selectedVoter.bahaiId" class="voter-detail">ID: {{ selectedVoter.bahaiId }}</span>
-                <span v-if="selectedVoter.area" class="voter-detail">Area: {{ selectedVoter.area }}</span>
+                <strong
+                  >{{ selectedVoter.isCheckedIn ? "Update: " : "Check in: "
+                  }}{{ selectedVoter.fullName }}</strong
+                >
+                <span v-if="selectedVoter.bahaiId" class="voter-detail"
+                  >ID: {{ selectedVoter.bahaiId }}</span
+                >
+                <span v-if="selectedVoter.area" class="voter-detail"
+                  >Area: {{ selectedVoter.area }}</span
+                >
               </div>
 
               <!-- Voting Methods -->
               <div v-if="!selectedVoter.isCheckedIn" class="button-section">
                 <h4>Voting Method</h4>
                 <div class="button-group">
-                  <el-button v-for="(type, index) in registrationTypes" :key="type.value" :type="index === selectedButtonIndex ? 'primary' : 'default'
-                    " size="large" :class="{
+                  <el-button
+                    v-for="(type, index) in registrationTypes"
+                    :key="type.value"
+                    :type="
+                      index === selectedButtonIndex ? 'primary' : 'default'
+                    "
+                    size="large"
+                    :class="{
                       'selected-button': index === selectedButtonIndex,
-                    }" @click="handleButtonClick(type)">
+                    }"
+                    @click="handleButtonClick(type)"
+                  >
                     {{ type.label }} <kbd>{{ type.key }}</kbd>
                   </el-button>
                 </div>
@@ -810,16 +894,27 @@ function clearFilters() {
               <div v-if="electionFlags.length > 0" class="button-section">
                 <h4>Flags</h4>
                 <div class="button-group">
-                  <el-button v-for="(flag, index) in electionFlags" :key="flag" :type="4 + index === selectedButtonIndex
-                      ? 'primary'
-                      : hasFlag(selectedVoter, flag)
-                        ? 'success'
-                        : 'default'
-                    " size="large" :class="{
+                  <el-button
+                    v-for="(flag, index) in electionFlags"
+                    :key="flag"
+                    :type="
+                      4 + index === selectedButtonIndex
+                        ? 'primary'
+                        : hasFlag(selectedVoter, flag)
+                          ? 'success'
+                          : 'default'
+                    "
+                    size="large"
+                    :class="{
                       'selected-button': 4 + index === selectedButtonIndex,
-                    }" @click="toggleFlag(flag)">
+                    }"
+                    @click="toggleFlag(flag)"
+                  >
                     {{ flag }} <kbd>{{ 5 + index }}</kbd>
-                    <el-icon v-if="hasFlag(selectedVoter, flag)" style="margin-left: 5px">
+                    <el-icon
+                      v-if="hasFlag(selectedVoter, flag)"
+                      style="margin-left: 5px"
+                    >
                       <Check />
                     </el-icon>
                   </el-button>
@@ -834,27 +929,69 @@ function clearFilters() {
 
             <!-- All voters list (merged not-checked-in and checked-in) -->
             <div v-else>
-              <el-table ref="voterTableRef" :data="allVoters" :loading="loading" style="width: 100%" max-height="600px"
-                :row-class-name="getRowClassName" @row-click="handleRowClick">
-                <el-table-column prop="fullName" label="Name" sortable width="350" />
+              <el-table
+                ref="voterTableRef"
+                :data="allVoters"
+                :loading="loading"
+                style="width: 100%"
+                max-height="600px"
+                :row-class-name="getRowClassName"
+                @row-click="handleRowClick"
+              >
+                <el-table-column
+                  prop="fullName"
+                  label="Name"
+                  sortable
+                  width="350"
+                />
                 <el-table-column prop="bahaiId" label="Bahá'í ID" width="120" />
                 <el-table-column prop="area" label="Area" width="100" />
                 <el-table-column prop="envNum" label="Env #" width="80" />
                 <el-table-column label="Method" width="100">
                   <template #default="{ row }">
-                    <el-tag v-if="row.votingMethod === 'I'" type="success" size="small">In Person</el-tag>
-                    <el-tag v-else-if="row.votingMethod === 'M'" type="info" size="small">Mail</el-tag>
-                    <el-tag v-else-if="row.votingMethod === 'O'" type="primary" size="small">Online</el-tag>
-                    <el-tag v-else-if="row.votingMethod === 'C'" type="warning" size="small">Call-In</el-tag>
+                    <el-tag
+                      v-if="row.votingMethod === 'I'"
+                      type="success"
+                      size="small"
+                      >In Person</el-tag
+                    >
+                    <el-tag
+                      v-else-if="row.votingMethod === 'M'"
+                      type="info"
+                      size="small"
+                      >Mail</el-tag
+                    >
+                    <el-tag
+                      v-else-if="row.votingMethod === 'O'"
+                      type="primary"
+                      size="small"
+                      >Online</el-tag
+                    >
+                    <el-tag
+                      v-else-if="row.votingMethod === 'C'"
+                      type="warning"
+                      size="small"
+                      >Call-In</el-tag
+                    >
                     <span v-else>-</span>
                   </template>
                 </el-table-column>
-                <el-table-column v-if="electionFlags.length > 0" label="Flags" width="100">
+                <el-table-column
+                  v-if="electionFlags.length > 0"
+                  label="Flags"
+                  width="100"
+                >
                   <template #default="{ row }">
                     <template v-if="row.flags">
-                      <el-tag v-for="flag in electionFlags.filter((f) =>
-                        hasFlag(row, f),
-                      )" :key="flag" size="small" type="success" class="flag-tag">
+                      <el-tag
+                        v-for="flag in electionFlags.filter((f) =>
+                          hasFlag(row, f),
+                        )"
+                        :key="flag"
+                        size="small"
+                        type="success"
+                        class="flag-tag"
+                      >
                         {{ getFlagAbbr(flag) }}
                       </el-tag>
                     </template>
@@ -872,10 +1009,22 @@ function clearFilters() {
                 <el-table-column label="Actions" width="120" fixed="right">
                   <template #default="{ row }">
                     <template v-if="row.isCheckedIn">
-                      <el-button type="default" size="small" :icon="Clock" circle title="View History"
-                        @click.stop="showHistory(row)" />
-                      <el-button type="warning" size="small" :icon="Warning" circle title="Unregister"
-                        @click.stop="handleUnregister(row)" />
+                      <el-button
+                        type="default"
+                        size="small"
+                        :icon="Clock"
+                        circle
+                        title="View History"
+                        @click.stop="showHistory(row)"
+                      />
+                      <el-button
+                        type="warning"
+                        size="small"
+                        :icon="Warning"
+                        circle
+                        title="Unregister"
+                        @click.stop="handleUnregister(row)"
+                      />
                     </template>
                   </template>
                 </el-table-column>
@@ -892,21 +1041,33 @@ function clearFilters() {
     </el-card>
 
     <!-- History dialog -->
-    <el-dialog v-model="showHistoryDialog" title="Registration History" width="760px" class="history-detail">
+    <el-dialog
+      v-model="showHistoryDialog"
+      title="Registration History"
+      width="760px"
+      class="history-detail"
+    >
       <div v-if="historyVoter">
         <h4>
           {{ historyVoter.fullName }}
-          <span v-if="historyVoter.bahaiId">Bahá'í ID: {{ historyVoter.bahaiId }}</span>
+          <span v-if="historyVoter.bahaiId"
+            >Bahá'í ID: {{ historyVoter.bahaiId }}</span
+          >
         </h4>
         <el-divider />
 
-        <div v-if="
-          historyVoter.registrationHistory &&
-          historyVoter.registrationHistory.length > 0
-        ">
+        <div
+          v-if="
+            historyVoter.registrationHistory &&
+            historyVoter.registrationHistory.length > 0
+          "
+        >
           <el-timeline>
-            <el-timeline-item v-for="(entry, index) in historyVoter.registrationHistory" :key="index"
-              :timestamp="formatTimeline(entry)">
+            <el-timeline-item
+              v-for="(entry, index) in historyVoter.registrationHistory"
+              :key="index"
+              :timestamp="formatTimeline(entry)"
+            >
               {{ formatTime(entry.timestamp) }}
             </el-timeline-item>
           </el-timeline>

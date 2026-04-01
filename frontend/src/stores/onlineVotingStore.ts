@@ -175,7 +175,8 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   async function loadAvailableElections(voterIdToLoad: string) {
     try {
       loading.value = true;
-      const data = await onlineVotingService.getAvailableElections(voterIdToLoad);
+      const data =
+        await onlineVotingService.getAvailableElections(voterIdToLoad);
       availableElections.value = data;
       return data;
     } catch (error) {

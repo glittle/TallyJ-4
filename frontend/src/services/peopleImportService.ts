@@ -39,9 +39,12 @@ export const peopleImportService = {
     firstDataRow?: number,
   ): Promise<ParseFileResult> {
     const params = new URLSearchParams();
-    if (codePage !== undefined) params.append("codePage", codePage.toString());
-    if (firstDataRow !== undefined)
+    if (codePage !== undefined) {
+      params.append("codePage", codePage.toString());
+    }
+    if (firstDataRow !== undefined) {
       params.append("firstDataRow", firstDataRow.toString());
+    }
 
     const queryString = params.toString();
     const url = `/api/PeopleImport/${electionGuid}/files/${rowId}/parse${queryString ? `?${queryString}` : ""}`;

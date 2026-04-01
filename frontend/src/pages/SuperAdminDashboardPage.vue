@@ -155,7 +155,9 @@ const showElectionDetail = async (row: SuperAdminElection) => {
 };
 
 function formatDate(date?: string) {
-  if (!date) return "-";
+  if (!date) {
+    return "-";
+  }
   return new Date(date).toLocaleDateString();
 }
 

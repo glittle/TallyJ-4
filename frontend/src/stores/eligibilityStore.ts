@@ -39,7 +39,9 @@ export const useEligibilityStore = defineStore("eligibility", () => {
   );
 
   async function fetchReasons() {
-    if (loaded.value) return;
+    if (loaded.value) {
+      return;
+    }
 
     try {
       reasons.value = await eligibilityService.getAll();

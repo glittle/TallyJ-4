@@ -11,7 +11,9 @@ export const useImportStore = defineStore("import", () => {
   const signalrInitialized = ref(false);
 
   async function initializeSignalR() {
-    if (signalrInitialized.value) return;
+    if (signalrInitialized.value) {
+      return;
+    }
 
     try {
       const connection = await signalrService.connectToBallotImportHub();

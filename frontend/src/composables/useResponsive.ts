@@ -32,11 +32,21 @@ export function useResponsive() {
 
   const breakpoint = computed<Breakpoint>(() => {
     const w = width.value;
-    if (w >= breakpoints["2xl"]) return "2xl";
-    if (w >= breakpoints.xl) return "xl";
-    if (w >= breakpoints.lg) return "lg";
-    if (w >= breakpoints.md) return "md";
-    if (w >= breakpoints.sm) return "sm";
+    if (w >= breakpoints["2xl"]) {
+      return "2xl";
+    }
+    if (w >= breakpoints.xl) {
+      return "xl";
+    }
+    if (w >= breakpoints.lg) {
+      return "lg";
+    }
+    if (w >= breakpoints.md) {
+      return "md";
+    }
+    if (w >= breakpoints.sm) {
+      return "sm";
+    }
     return "xs";
   });
 

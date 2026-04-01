@@ -59,7 +59,9 @@ const rules = reactive<FormRules>({
 });
 
 const registrationHistory = computed(() => {
-  if (!personDetails.value?.registrationHistory) return [];
+  if (!personDetails.value?.registrationHistory) {
+    return [];
+  }
   try {
     return JSON.parse(personDetails.value.registrationHistory);
   } catch {
@@ -104,7 +106,9 @@ watch(
 );
 
 async function loadPersonDetails() {
-  if (!props.person) return;
+  if (!props.person) {
+    return;
+  }
 
   loadingDetails.value = true;
   try {
@@ -131,7 +135,9 @@ async function loadPersonDetails() {
 }
 
 async function handleSubmit() {
-  if (!formRef.value) return;
+  if (!formRef.value) {
+    return;
+  }
 
   await formRef.value.validate(async (valid) => {
     if (valid) {

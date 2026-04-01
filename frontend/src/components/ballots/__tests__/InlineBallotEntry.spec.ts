@@ -71,7 +71,9 @@ vi.mock("@/composables/usePersonSearch", () => ({
       searchResults: {
         get value() {
           const query = searchQuery.value?.toLowerCase() || "";
-          if (!query) return [];
+          if (!query) {
+            return [];
+          }
 
           return candidates.value.filter((c: SearchablePersonDto) =>
             c.fullName.toLowerCase().includes(query),

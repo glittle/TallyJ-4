@@ -286,7 +286,9 @@ const fetchGoogleClientId = async (): Promise<string | null> => {
 let isInitializingGis = false;
 
 const initGoogleSignIn = async () => {
-  if (googleReady.value || isInitializingGis) return;
+  if (googleReady.value || isInitializingGis) {
+    return;
+  }
   isInitializingGis = true;
   try {
     googleError.value = false;
@@ -643,7 +645,10 @@ onBeforeUnmount(() => {
                   :rules="emailRules"
                   @submit.prevent="handleRequestEmailCode"
                 >
-                  <ElFormItem :label="$t('voting.auth.email.label')" prop="email">
+                  <ElFormItem
+                    :label="$t('voting.auth.email.label')"
+                    prop="email"
+                  >
                     <ElInput
                       v-model="emailForm.email"
                       type="email"
@@ -684,7 +689,10 @@ onBeforeUnmount(() => {
                   :rules="phoneRules"
                   @submit.prevent="handleRequestPhoneCode"
                 >
-                  <ElFormItem :label="$t('voting.auth.phone.label')" prop="phone">
+                  <ElFormItem
+                    :label="$t('voting.auth.phone.label')"
+                    prop="phone"
+                  >
                     <ElInput
                       v-model="phoneForm.phone"
                       type="tel"

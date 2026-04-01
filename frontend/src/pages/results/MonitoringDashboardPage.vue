@@ -309,7 +309,9 @@ function goBack() {
 }
 
 function formatDateTime(date: string) {
-  if (!date) return "-";
+  if (!date) {
+    return "-";
+  }
   return new Date(date).toLocaleString();
 }
 
@@ -325,7 +327,9 @@ function getStatusType(status: string) {
 }
 
 function calculateTurnout(registered: number, ballots: number) {
-  if (registered === 0) return 0;
+  if (registered === 0) {
+    return 0;
+  }
   return Math.round((ballots / registered) * 100);
 }
 </script>

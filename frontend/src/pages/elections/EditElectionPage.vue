@@ -180,7 +180,9 @@ onMounted(async () => {
 });
 
 async function submitForm() {
-  if (!formRef.value) return;
+  if (!formRef.value) {
+    return;
+  }
 
   await formRef.value.validate(async (valid) => {
     if (valid) {

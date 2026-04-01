@@ -79,7 +79,9 @@ function resetForm() {
 }
 
 async function handleSubmit() {
-  if (!formRef.value) return;
+  if (!formRef.value) {
+    return;
+  }
 
   await formRef.value.validate(async (valid) => {
     if (valid) {

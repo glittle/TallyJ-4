@@ -18,7 +18,9 @@ const emit = defineEmits<{
 const scriptEl = document.createElement("script");
 
 onMounted(() => {
-  if (!props.botUsername) return;
+  if (!props.botUsername) {
+    return;
+  }
 
   (window as any).onTelegramAuth = (user: any) => {
     emit("success", user);

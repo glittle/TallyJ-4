@@ -128,7 +128,9 @@ function handleBulkAction(command: string) {
 }
 
 async function confirmBulkDelete() {
-  if (selectedPeople.value.length === 0) return;
+  if (selectedPeople.value.length === 0) {
+    return;
+  }
 
   bulkDeleting.value = true;
   try {

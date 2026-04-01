@@ -138,7 +138,9 @@ export const useElectionStore = defineStore("election", () => {
   }
 
   async function initializeSignalR() {
-    if (signalrInitialized.value) return;
+    if (signalrInitialized.value) {
+      return;
+    }
 
     try {
       const connection = await signalrService.connectToMainHub();
