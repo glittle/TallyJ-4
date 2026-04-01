@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import {
-  ElCard,
-  ElButton,
-  ElEmpty,
-  ElTag,
-  ElAlert,
-} from "element-plus";
+import { ElCard, ElButton, ElEmpty, ElTag, ElAlert } from "element-plus";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 import { useNotifications } from "../../composables/useNotifications";
 import { useI18n } from "vue-i18n";
@@ -43,41 +37,75 @@ function selectElection(electionGuid: string) {
 }
 
 function formatDate(dateStr: string | undefined): string {
-  if (!dateStr) return "";
+  if (!dateStr) {
+    return "";
+  }
   return new Date(dateStr).toLocaleString();
 }
 
 function formatDateOnly(dateStr: string | undefined): string {
-  if (!dateStr) return "";
+  if (!dateStr) {
+    return "";
+  }
   return new Date(dateStr).toLocaleDateString();
 }
 
 function closedAgo(closeDate: string | undefined): string {
-  if (!closeDate) return t("voting.elections.status.closed");
+  if (!closeDate) {
+    return t("voting.elections.status.closed");
+  }
   const diff = Date.now() - new Date(closeDate).getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  if (days < 1) return t("voting.elections.status.closedToday");
-  if (days === 1) return t("voting.elections.status.closedYesterday");
-  if (days < 30) return t("voting.elections.status.closedDaysAgo", { days });
+  if (days < 1) {
+    return t("voting.elections.status.closedToday");
+  }
+  if (days === 1) {
+    return t("voting.elections.status.closedYesterday");
+  }
+  if (days < 30) {
+    return t("voting.elections.status.closedDaysAgo", { days });
+  }
   const months = Math.floor(days / 30);
-  if (months < 12) return t("voting.elections.status.closedMonthsAgo", { months });
+  if (months < 12) {
+    return t("voting.elections.status.closedMonthsAgo", { months });
+  }
   const years = Math.floor(months / 12);
   return t("voting.elections.status.closedYearsAgo", { years });
 }
 
-function timeUntilClose(closeDate: string | undefined, isEstimate: boolean): string {
-  if (!closeDate) return t("voting.elections.status.open");
+function timeUntilClose(
+  closeDate: string | undefined,
+  isEstimate: boolean,
+): string {
+  if (!closeDate) {
+    return t("voting.elections.status.open");
+  }
   const diff = new Date(closeDate).getTime() - Date.now();
   const minutes = Math.floor(diff / (1000 * 60));
-  if (minutes < 1) return t("voting.elections.status.closingSoon");
-  if (minutes < 60) return t("voting.elections.status.closingInMinutes", { minutes });
+  if (minutes < 1) {
+    return t("voting.elections.status.closingSoon");
+  }
+  if (minutes < 60) {
+    return t("voting.elections.status.closingInMinutes", { minutes });
+  }
   const hours = Math.floor(minutes / 60);
   if (hours < 24) {
     const remainingMinutes = minutes % 60;
-    const atTime = new Date(closeDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const suffix = isEstimate ? t("voting.elections.status.estimatedSuffix") : "";
+    const atTime = new Date(closeDate).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const suffix = isEstimate
+      ? t("voting.elections.status.estimatedSuffix")
+      : "";
     if (remainingMinutes > 0) {
-      return t("voting.elections.status.closingAtWithMinutes", { hours, minutes: remainingMinutes, time: atTime }) + suffix;
+      return (
+        t("voting.elections.status.closingAtWithMinutes", {
+          hours,
+          minutes: remainingMinutes,
+          time: atTime,
+        }) + suffix
+      );
     }
     return t("voting.elections.status.closingAt", { time: atTime }) + suffix;
   }
@@ -99,7 +127,9 @@ function handleLogout() {
         :closable="false"
         class="welcome-alert"
       >
-        {{ $t("voting.elections.welcome", { voterId: onlineVotingStore.voterId }) }}
+        {{
+          $t("voting.elections.welcome", { voterId: onlineVotingStore.voterId })
+        }}
         <br />
         {{ $t("voting.elections.welcomeHint") }}
       </ElAlert>
@@ -148,7 +178,12 @@ function handleLogout() {
                     </ElTag>
                   </div>
                   <div class="close-info">
-                    {{ timeUntilClose(election.onlineWhenClose, election.onlineCloseIsEstimate) }}
+                    {{
+                      timeUntilClose(
+                        election.onlineWhenClose,
+                        election.onlineCloseIsEstimate,
+                      )
+                    }}
                   </div>
                   <ElButton
                     v-if="!election.hasVoted"
@@ -164,7 +199,11 @@ function handleLogout() {
                   </div>
                 </div>
                 <div v-else class="status-closed">
-                  {{ election.onlineWhenClose ? closedAgo(election.onlineWhenClose) : $t("voting.elections.status.closed") }}
+                  {{
+                    election.onlineWhenClose
+                      ? closedAgo(election.onlineWhenClose)
+                      : $t("voting.elections.status.closed")
+                  }}
                 </div>
               </td>
 
@@ -175,11 +214,20 @@ function handleLogout() {
                 <div class="registration-status">
                   {{ $t("voting.elections.registered") }}
                   <span class="voting-method">
-                    {{ election.hasVoted ? $t("voting.elections.method.online") : "-" }}
+                    {{
+                      election.hasVoted
+                        ? $t("voting.elections.method.online")
+                        : "-"
+                    }}
                   </span>
                 </div>
                 <div v-if="election.ballotStatus" class="ballot-status">
-                  <ElTag :type="election.ballotStatus === 'Submitted' ? 'success' : 'info'" size="small">
+                  <ElTag
+                    :type="
+                      election.ballotStatus === 'Submitted' ? 'success' : 'info'
+                    "
+                    size="small"
+                  >
                     {{ election.ballotStatus }}
                   </ElTag>
                   <span v-if="election.whenBallotStatus" class="ballot-date">
@@ -197,7 +245,9 @@ function handleLogout() {
       </div>
 
       <div class="action-bar">
-        <ElButton @click="handleLogout">{{ $t("voting.elections.logout") }}</ElButton>
+        <ElButton @click="handleLogout">{{
+          $t("voting.elections.logout")
+        }}</ElButton>
       </div>
     </div>
   </div>

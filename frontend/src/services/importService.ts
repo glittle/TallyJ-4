@@ -18,7 +18,10 @@ export const importService = {
   },
 
   async importBallots(request: ImportBallotRequest): Promise<ImportResult> {
-    const response = await api.post<ImportResult>("/api/Import/importBallots", request);
+    const response = await api.post<ImportResult>(
+      "/api/Import/importBallots",
+      request,
+    );
     return response.data;
   },
 };

@@ -91,7 +91,9 @@ function getBestLocale(): SupportedLocale {
       navigator.languages || (navigator.language ? [navigator.language] : []);
 
     for (const lang of browserLanguages) {
-      if (!lang) continue;
+      if (!lang) {
+        continue;
+      }
 
       const lowerLang = lang.toLowerCase();
 
@@ -140,7 +142,7 @@ export async function loadLocaleMessages(locale: SupportedLocale) {
         localeModulesAsync[path]().then((mod: any) => {
           const content = mod.default || mod;
           merged = deepMerge(merged, content);
-        })
+        }),
       );
     }
   }

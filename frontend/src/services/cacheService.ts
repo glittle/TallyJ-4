@@ -19,7 +19,9 @@ class CacheService {
   async get<T>(key: string): Promise<T | null> {
     try {
       const entry: CacheEntry | null = await this.store.getItem(key);
-      if (!entry) return null;
+      if (!entry) {
+        return null;
+      }
 
       const now = Date.now();
       if (now - entry.timestamp > entry.ttl) {

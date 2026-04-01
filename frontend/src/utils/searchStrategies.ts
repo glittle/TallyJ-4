@@ -16,8 +16,12 @@ export function normalizeSearchText(text: string): string {
 }
 
 export function calculateLevenshteinDistance(a: string, b: string): number {
-  if (a.length === 0) return b.length;
-  if (b.length === 0) return a.length;
+  if (a.length === 0) {
+    return b.length;
+  }
+  if (b.length === 0) {
+    return a.length;
+  }
 
   const matrix: number[][] = [];
 
@@ -50,7 +54,9 @@ export function compareSoundexCodes(
   codes1: string[],
   codes2: string[],
 ): number {
-  if (codes1.length === 0 || codes2.length === 0) return 0;
+  if (codes1.length === 0 || codes2.length === 0) {
+    return 0;
+  }
 
   let matches = 0;
   const totalCodes = Math.max(codes1.length, codes2.length);
@@ -87,7 +93,9 @@ export function prefixMatch(
 ): number | null {
   const normalizedSearch = normalizeSearchText(searchTerm);
 
-  if (normalizedSearch.length === 0) return null;
+  if (normalizedSearch.length === 0) {
+    return null;
+  }
 
   const normalizedPersonText = normalizeSearchText(person._searchText);
 
@@ -105,7 +113,9 @@ export function wordBoundaryMatch(
   const normalizedSearch = normalizeSearchText(searchTerm);
   const searchWords = normalizedSearch.split(" ").filter((w) => w.length > 0);
 
-  if (searchWords.length === 0) return null;
+  if (searchWords.length === 0) {
+    return null;
+  }
 
   const normalizedPersonText = normalizeSearchText(person._searchText);
   const personWords = normalizedPersonText
@@ -168,22 +178,36 @@ export function phoneticMatch(
   searchTerm: string,
   person: SearchablePersonDto,
 ): number | null {
-  if (searchTerm.length < 3) return null;
-  if (!person._soundexCodes || person._soundexCodes.length === 0) return null;
+  if (searchTerm.length < 3) {
+    return null;
+  }
+  if (!person._soundexCodes || person._soundexCodes.length === 0) {
+    return null;
+  }
 
   const searchWords = normalizeSearchText(searchTerm)
     .split(" ")
     .filter((w) => w.length > 0);
-  if (searchWords.length === 0) return null;
+  if (searchWords.length === 0) {
+    return null;
+  }
 
   const searchSoundex = generateSoundexCodesForWords(searchWords);
-  if (searchSoundex.length === 0) return null;
+  if (searchSoundex.length === 0) {
+    return null;
+  }
 
   const similarity = compareSoundexCodes(searchSoundex, person._soundexCodes);
 
-  if (similarity >= 75) return 75;
-  if (similarity >= 50) return 65;
-  if (similarity >= 25) return 60;
+  if (similarity >= 75) {
+    return 75;
+  }
+  if (similarity >= 50) {
+    return 65;
+  }
+  if (similarity >= 25) {
+    return 60;
+  }
 
   return null;
 }
@@ -192,7 +216,9 @@ export function fuzzyMatch(
   searchTerm: string,
   person: SearchablePersonDto,
 ): number | null {
-  if (searchTerm.length < 3) return null;
+  if (searchTerm.length < 3) {
+    return null;
+  }
 
   const normalizedSearch = normalizeSearchText(searchTerm);
   const normalizedPersonText = normalizeSearchText(person._searchText);
@@ -226,10 +252,14 @@ function generateSoundexCodesForWords(words: string[]): string[] {
 }
 
 function generateSoundex(word: string): string {
-  if (!word || word.length === 0) return "";
+  if (!word || word.length === 0) {
+    return "";
+  }
 
   const cleaned = word.toUpperCase().replace(/[^A-Z]/g, "");
-  if (cleaned.length === 0) return "";
+  if (cleaned.length === 0) {
+    return "";
+  }
 
   const firstLetter = cleaned[0];
 

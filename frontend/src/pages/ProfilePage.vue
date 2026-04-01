@@ -38,7 +38,9 @@ const disableCode = ref("");
 const twoFactorActionLoading = ref(false);
 
 function formatDate(date: any) {
-  if (!date) return "-";
+  if (!date) {
+    return "-";
+  }
   return new Date(date).toLocaleDateString();
 }
 
@@ -76,7 +78,9 @@ async function openSetup2FA() {
 }
 
 async function confirmSetup2FA() {
-  if (!setupCode.value) return;
+  if (!setupCode.value) {
+    return;
+  }
   try {
     twoFactorActionLoading.value = true;
     await authService.enable2FA(setupCode.value);
@@ -93,7 +97,9 @@ async function confirmSetup2FA() {
 }
 
 async function confirmDisable2FA() {
-  if (!disableCode.value) return;
+  if (!disableCode.value) {
+    return;
+  }
   try {
     twoFactorActionLoading.value = true;
     await authService.disable2FA(disablePassword.value, disableCode.value);

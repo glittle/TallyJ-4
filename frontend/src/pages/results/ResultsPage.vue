@@ -153,7 +153,9 @@ function goBack() {
 }
 
 function formatDateTime(date: string) {
-  if (!date) return "-";
+  if (!date) {
+    return "-";
+  }
   return new Date(date).toLocaleString();
 }
 </script>

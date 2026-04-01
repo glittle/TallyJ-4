@@ -72,7 +72,9 @@ const duplicatePersonGuids = computed(() => {
 
 function findNextEmptyPosition(): number {
   for (let i = 1; i <= props.maxVotes; i++) {
-    if (!votes.value[i - 1]) return i;
+    if (!votes.value[i - 1]) {
+      return i;
+    }
   }
   return -1;
 }
@@ -100,7 +102,7 @@ async function handlePersonSelected(person: SearchablePersonDto) {
 
   searchQuery.value = "";
   selectedSearchIndex.value = 0;
-  
+
   await nextTick();
   searchInputRef.value?.focus();
 }
@@ -120,7 +122,11 @@ function handleKeyDown(e: KeyboardEvent) {
     }
   } else if (e.key === "Enter") {
     e.preventDefault();
-    if (searchResults.value.length > 0 && selectedSearchIndex.value >= 0 && selectedSearchIndex.value < searchResults.value.length) {
+    if (
+      searchResults.value.length > 0 &&
+      selectedSearchIndex.value >= 0 &&
+      selectedSearchIndex.value < searchResults.value.length
+    ) {
       handlePersonSelected(searchResults.value[selectedSearchIndex.value]);
     }
   } else if (e.key === "Escape") {
@@ -134,9 +140,9 @@ function scrollToSelected() {
   nextTick(() => {
     const list = searchResultsListRef.value;
     if (list) {
-      const selected = list.querySelector('.is-selected') as HTMLElement;
+      const selected = list.querySelector(".is-selected") as HTMLElement;
       if (selected) {
-        selected.scrollIntoView({ block: 'nearest' });
+        selected.scrollIntoView({ block: "nearest" });
       }
     }
   });
@@ -155,7 +161,8 @@ onMounted(async () => {
   cacheLoading.value = true;
   cacheError.value = false;
 
-  peopleStore.initializeCandidateCache(props.electionGuid)
+  peopleStore
+    .initializeCandidateCache(props.electionGuid)
     .then(() => {
       cacheLoading.value = false;
       nextTick(() => {
@@ -174,47 +181,63 @@ onMounted(async () => {
 <template>
   <div class="inline-ballot-entry">
     <div v-if="cacheError" class="inline-ballot-entry__error">
-      <el-alert type="error" :title="$t('ballots.cacheLoadError')" :closable="false" />
+      <el-alert
+        type="error"
+        :title="$t('ballots.cacheLoadError')"
+        :closable="false"
+      />
     </div>
 
     <div v-else class="ballot-entry-layout">
       <!-- Left Panel: Search -->
       <div class="search-panel">
         <div class="search-panel-header">
-          <h4>{{ $t('ballots.searchPerson', 'Search for a person:') }}</h4>
+          <h4>{{ $t("ballots.searchPerson", "Search for a person:") }}</h4>
         </div>
         <div class="search-input-wrapper">
           <el-input
             ref="searchInputRef"
             v-model="searchQuery"
-            @keydown="handleKeyDown"
             :placeholder="$t('ballots.searchPlaceholder', 'Type to search...')"
             clearable
             class="search-input"
+            @keydown="handleKeyDown"
           />
         </div>
         <div class="search-help">
-          <small>{{ $t('ballots.searchHelp', 'Use ↑ ↓ keys to move in the list. Press Enter to add.') }}</small>
+          <small>{{
+            $t(
+              "ballots.searchHelp",
+              "Use ↑ ↓ keys to move in the list. Press Enter to add.",
+            )
+          }}</small>
         </div>
-        
-        <div class="search-results" ref="searchResultsListRef">
-          <div v-if="searchQuery && searchResults.length === 0" class="no-results">
-            {{ $t('ballots.noMatchesFound') }}
+
+        <div ref="searchResultsListRef" class="search-results">
+          <div
+            v-if="searchQuery && searchResults.length === 0"
+            class="no-results"
+          >
+            {{ $t("ballots.noMatchesFound") }}
           </div>
           <div
             v-for="(person, index) in searchResults"
             :key="person.personGuid"
             class="search-result-item"
-            :class="{ 
+            :class="{
               'is-selected': index === selectedSearchIndex,
-              'is-ineligible': person.canReceiveVotes === false
+              'is-ineligible': person.canReceiveVotes === false,
             }"
             @click="handlePersonSelected(person)"
             @mouseover="selectedSearchIndex = index"
           >
             <div class="person-info">
               <span class="person-name">{{ person.fullName }}</span>
-              <span v-if="person.canReceiveVotes === false" class="ineligible-badge" :title="$t('ballots.ineligible')">
+              <span
+                v-if="person.canReceiveVotes === false"
+                class="ineligible-badge"
+                :title="$t('ballots.ineligible')"
+              >
                 {{ person.ineligibleReasonCode }}
               </span>
             </div>
@@ -228,29 +251,47 @@ onMounted(async () => {
       <!-- Right Panel: Votes -->
       <div class="votes-panel">
         <div class="votes-panel-header">
-          <h4>{{ $t('ballots.namesOnBallot', 'Names on the ballot') }}</h4>
-          <span class="ballot-id">{{ $t('ballots.ballotNum', { code: ballot.ballotCode }) }}</span>
+          <h4>{{ $t("ballots.namesOnBallot", "Names on the ballot") }}</h4>
+          <span class="ballot-id">{{
+            $t("ballots.ballotNum", { code: ballot.ballotCode })
+          }}</span>
         </div>
-        
+
         <div class="votes-list">
           <div
             v-for="(vote, index) in votes"
             :key="index"
             class="vote-row"
-            :class="{ 'has-vote': !!vote, 'is-duplicate': vote && duplicatePersonGuids.includes(vote.personGuid!) }"
+            :class="{
+              'has-vote': !!vote,
+              'is-duplicate':
+                vote && duplicatePersonGuids.includes(vote.personGuid!),
+            }"
           >
             <div class="vote-position">{{ index + 1 }}</div>
             <div class="vote-content">
               <template v-if="vote">
-                <span class="vote-name" :class="{ 'is-spoiled': vote.statusCode && vote.statusCode !== 'ok' }">
+                <span
+                  class="vote-name"
+                  :class="{
+                    'is-spoiled': vote.statusCode && vote.statusCode !== 'ok',
+                  }"
+                >
                   {{ vote.personFullName }}
                 </span>
-                
+
                 <div class="vote-actions">
-                  <span v-if="vote.statusCode && vote.statusCode !== 'ok'" class="status-badge error">
+                  <span
+                    v-if="vote.statusCode && vote.statusCode !== 'ok'"
+                    class="status-badge error"
+                  >
                     {{ vote.statusCode }}
                   </span>
-                  <span v-if="duplicatePersonGuids.includes(vote.personGuid!)" class="status-badge warning" :title="$t('ballots.duplicateWarning')">
+                  <span
+                    v-if="duplicatePersonGuids.includes(vote.personGuid!)"
+                    class="status-badge warning"
+                    :title="$t('ballots.duplicateWarning')"
+                  >
                     <el-icon><WarningFilled /></el-icon>
                   </span>
                   <el-button
@@ -259,8 +300,8 @@ onMounted(async () => {
                     circle
                     plain
                     size="small"
-                    @click="handleVoteRemoved(index + 1)"
                     :aria-label="$t('common.delete')"
+                    @click="handleVoteRemoved(index + 1)"
                   />
                 </div>
               </template>
@@ -278,12 +319,12 @@ onMounted(async () => {
 <style lang="less">
 .inline-ballot-entry {
   width: 100%;
-  
+
   .ballot-entry-layout {
     display: flex;
     gap: var(--spacing-6, 24px);
     align-items: flex-start;
-    
+
     @media (max-width: 768px) {
       flex-direction: column;
     }
@@ -303,7 +344,7 @@ onMounted(async () => {
       padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
       background: var(--el-fill-color-light);
       border-bottom: 1px solid var(--el-border-color-lighter);
-      
+
       h4 {
         margin: 0;
         font-size: var(--el-font-size-base);
@@ -314,7 +355,7 @@ onMounted(async () => {
     .search-input-wrapper {
       padding: var(--spacing-3, 12px);
     }
-    
+
     .search-help {
       padding: 0 var(--spacing-3, 12px) var(--spacing-2, 8px);
       color: var(--el-text-color-secondary);
@@ -326,7 +367,7 @@ onMounted(async () => {
       overflow-y: auto;
       max-height: 400px;
       border-top: 1px solid var(--el-border-color-lighter);
-      
+
       .no-results {
         padding: var(--spacing-4, 16px);
         text-align: center;
@@ -340,7 +381,7 @@ onMounted(async () => {
         padding: var(--spacing-2, 8px) var(--spacing-3, 12px);
         cursor: pointer;
         border-bottom: 1px solid var(--el-border-color-lighter);
-        
+
         &:last-child {
           border-bottom: none;
         }
@@ -361,13 +402,13 @@ onMounted(async () => {
           align-items: center;
           gap: var(--spacing-2, 8px);
           overflow: hidden;
-          
+
           .person-name {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
           }
-          
+
           .ineligible-badge {
             background: var(--el-color-danger-light-9);
             color: var(--el-color-danger);
@@ -404,13 +445,13 @@ onMounted(async () => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      
+
       h4 {
         margin: 0;
         font-size: var(--el-font-size-base);
         color: var(--el-text-color-regular);
       }
-      
+
       .ballot-id {
         font-weight: bold;
       }
@@ -427,7 +468,7 @@ onMounted(async () => {
       padding: var(--spacing-1, 4px) var(--spacing-2, 8px);
       margin-bottom: var(--spacing-1, 4px);
       border-radius: var(--el-border-radius-base);
-      
+
       &.has-vote {
         background-color: var(--el-color-success-light-9);
         border: 1px solid var(--el-color-success-light-5);
@@ -451,7 +492,7 @@ onMounted(async () => {
         justify-content: space-between;
         align-items: center;
         min-height: 32px;
-        
+
         .empty-slot {
           flex: 1;
           height: 1px;
@@ -461,13 +502,13 @@ onMounted(async () => {
 
         .vote-name {
           font-weight: 500;
-          
+
           &.is-spoiled {
             color: var(--el-color-danger);
             text-decoration: line-through;
           }
         }
-        
+
         .vote-actions {
           display: flex;
           align-items: center;
@@ -478,13 +519,13 @@ onMounted(async () => {
             padding: 2px 6px;
             border-radius: 4px;
             font-weight: bold;
-            
+
             &.error {
               background: var(--el-color-danger-light-9);
               color: var(--el-color-danger);
               border: 1px solid var(--el-color-danger-light-5);
             }
-            
+
             &.warning {
               color: var(--el-color-warning);
             }

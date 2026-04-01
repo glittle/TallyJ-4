@@ -64,10 +64,14 @@ async function fetchAvailableElections() {
 
 const handleJoin = async () => {
   console.log("Joining election...", joinFormRef.value);
-  if (!joinFormRef.value) return;
+  if (!joinFormRef.value) {
+    return;
+  }
 
   await joinFormRef.value.validate(async (valid) => {
-    if (!valid) return;
+    if (!valid) {
+      return;
+    }
 
     loading.value = true;
     try {
@@ -89,7 +93,9 @@ const handleJoin = async () => {
 };
 
 function formatDate(date?: string) {
-  if (!date) return "";
+  if (!date) {
+    return "";
+  }
   return new Date(date).toLocaleDateString();
 }
 

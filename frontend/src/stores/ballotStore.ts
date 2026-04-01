@@ -183,7 +183,9 @@ export const useBallotStore = defineStore("ballot", () => {
   }
 
   async function initializeSignalR() {
-    if (signalrInitialized.value) return;
+    if (signalrInitialized.value) {
+      return;
+    }
 
     try {
       const connection = await signalrService.connectToFrontDeskHub();

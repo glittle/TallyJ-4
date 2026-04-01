@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import LanguageFlagsSelector from "../components/common/LanguageFlagsSelector.vue";
 import LanguageSelector from "../components/common/LanguageSelector.vue";
@@ -8,7 +7,7 @@ import ThemeSelector from "../components/common/ThemeSelector.vue";
 import { BUILD_DATE, VERSION } from "../components/version";
 
 const router = useRouter();
-const { t } = useI18n();
+// const { t } = useI18n();
 
 // Version tooltip - dynamically localized
 const versionName = computed(() => VERSION);
@@ -112,4 +111,5 @@ const handleLogoClick = () => {
   .public-content {
     padding: 20px;
   }
+}
 </style>

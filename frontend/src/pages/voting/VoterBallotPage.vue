@@ -45,9 +45,7 @@ const selectionMode = computed(
 const isModeList = computed(() => selectionMode.value === "A");
 const isModeRandom = computed(() => selectionMode.value === "B");
 const isModeBoth = computed(() => selectionMode.value === "C");
-const showCandidateList = computed(
-  () => isModeList.value || isModeBoth.value,
-);
+const showCandidateList = computed(() => isModeList.value || isModeBoth.value);
 
 onMounted(async () => {
   if (!onlineVotingStore.voterId) {
@@ -110,9 +108,14 @@ const candidateOptions = computed(() =>
   })),
 );
 
-function handleCandidateSelect(position: number, item: { value: string; candidate: OnlineCandidate }) {
+function handleCandidateSelect(
+  position: number,
+  item: { value: string; candidate: OnlineCandidate },
+) {
   const slot = votes.value.find((v) => v.position === position);
-  if (!slot) return;
+  if (!slot) {
+    return;
+  }
   slot.candidate = item.candidate;
   slot.searchText = item.value;
   slot.freeText = "";
@@ -120,7 +123,9 @@ function handleCandidateSelect(position: number, item: { value: string; candidat
 
 function handleSearchInput(position: number, value: string) {
   const slot = votes.value.find((v) => v.position === position);
-  if (!slot) return;
+  if (!slot) {
+    return;
+  }
   if (slot.candidate && slot.candidate.fullName !== value) {
     slot.candidate = null;
   }
@@ -144,17 +149,21 @@ const duplicateVotes = computed(() => {
 });
 
 const hasAnyVote = computed(() =>
-  votes.value.some(
-    (v) => v.candidate !== null || v.freeText.trim().length > 0,
-  ),
+  votes.value.some((v) => v.candidate !== null || v.freeText.trim().length > 0),
 );
 
 const canSubmit = computed(() => hasAnyVote.value && !duplicateVotes.value);
 
 function getEffectiveName(slot: VoteSlot): string {
-  if (slot.candidate) return slot.candidate.fullName;
-  if (isModeRandom.value) return slot.freeText;
-  if (isModeBoth.value) return slot.searchText || slot.freeText;
+  if (slot.candidate) {
+    return slot.candidate.fullName;
+  }
+  if (isModeRandom.value) {
+    return slot.freeText;
+  }
+  if (isModeBoth.value) {
+    return slot.searchText || slot.freeText;
+  }
   return "";
 }
 
@@ -168,7 +177,12 @@ async function handleSubmit() {
     submitting.value = true;
 
     const onlineVotes: OnlineVote[] = votes.value
-      .filter((v) => v.candidate !== null || (isModeRandom.value && v.freeText.trim()) || (isModeBoth.value && (v.searchText.trim() || v.freeText.trim())))
+      .filter(
+        (v) =>
+          v.candidate !== null ||
+          (isModeRandom.value && v.freeText.trim()) ||
+          (isModeBoth.value && (v.searchText.trim() || v.freeText.trim())),
+      )
       .map((v) => ({
         personGuid: v.candidate?.personGuid,
         voteName: getEffectiveName(v) || undefined,
@@ -237,15 +251,21 @@ function backToElections() {
         </ElAlert>
 
         <div class="ballot-body">
-          <div class="left-panel" v-if="isModeBoth">
+          <div v-if="isModeBoth" class="left-panel">
             <h3>{{ $t("voting.ballot.addToPool") }}</h3>
-            <p class="panel-description">{{ $t("voting.ballot.addToPoolDescription") }}</p>
+            <p class="panel-description">
+              {{ $t("voting.ballot.addToPoolDescription") }}
+            </p>
             <ElForm>
               <ElFormItem :label="$t('voting.ballot.firstName')">
-                <ElInput :placeholder="$t('voting.ballot.firstNamePlaceholder')" />
+                <ElInput
+                  :placeholder="$t('voting.ballot.firstNamePlaceholder')"
+                />
               </ElFormItem>
               <ElFormItem :label="$t('voting.ballot.lastName')">
-                <ElInput :placeholder="$t('voting.ballot.lastNamePlaceholder')" />
+                <ElInput
+                  :placeholder="$t('voting.ballot.lastNamePlaceholder')"
+                />
               </ElFormItem>
               <ElFormItem :label="$t('voting.ballot.extraInfo')">
                 <ElInput
@@ -254,7 +274,9 @@ function backToElections() {
                   :rows="2"
                 />
               </ElFormItem>
-              <ElButton type="default">{{ $t("voting.ballot.addPersonToPool") }}</ElButton>
+              <ElButton type="default">{{
+                $t("voting.ballot.addPersonToPool")
+              }}</ElButton>
             </ElForm>
 
             <ElDivider />
@@ -293,14 +315,21 @@ function backToElections() {
 
             <p class="ballot-note">{{ $t("voting.ballot.orderNote") }}</p>
 
-            <div class="my-ballot-label">{{ $t("voting.ballot.myBallot") }}</div>
+            <div class="my-ballot-label">
+              {{ $t("voting.ballot.myBallot") }}
+            </div>
 
             <ElForm @submit.prevent="handleSubmit">
               <div
                 v-for="vote in votes"
                 :key="vote.position"
                 class="vote-item"
-                :class="{ 'vote-filled': vote.candidate || (isModeRandom && vote.freeText) || (isModeBoth && (vote.searchText || vote.freeText)) }"
+                :class="{
+                  'vote-filled':
+                    vote.candidate ||
+                    (isModeRandom && vote.freeText) ||
+                    (isModeBoth && (vote.searchText || vote.freeText)),
+                }"
               >
                 <span class="vote-number">{{ vote.position }}.</span>
 
@@ -323,8 +352,12 @@ function backToElections() {
                   clearable
                   class="vote-input"
                   size="default"
-                  @select="(item: any) => handleCandidateSelect(vote.position, item)"
-                  @input="(val: string) => handleSearchInput(vote.position, val)"
+                  @select="
+                    (item: any) => handleCandidateSelect(vote.position, item)
+                  "
+                  @input="
+                    (val: string) => handleSearchInput(vote.position, val)
+                  "
                 />
 
                 <ElInput
@@ -341,18 +374,21 @@ function backToElections() {
                     text
                     size="small"
                     :icon="Delete"
-                    @click="clearVote(vote.position)"
                     class="clear-btn"
+                    @click="clearVote(vote.position)"
                   />
                 </span>
-                <span v-else-if="isModeRandom && vote.freeText" class="random-tag">
+                <span
+                  v-else-if="isModeRandom && vote.freeText"
+                  class="random-tag"
+                >
                   {{ vote.freeText }}
                   <ElButton
                     text
                     size="small"
                     :icon="Delete"
-                    @click="clearVote(vote.position)"
                     class="clear-btn"
+                    @click="clearVote(vote.position)"
                   />
                 </span>
               </div>

@@ -140,7 +140,9 @@ async function confirmDelete() {
 }
 
 function formatDate(date?: string) {
-  if (!date) return "-";
+  if (!date) {
+    return "-";
+  }
   return new Date(date).toLocaleDateString();
 }
 
@@ -155,7 +157,9 @@ function getStatusType(status?: string) {
 }
 
 async function toggleTellerAccess() {
-  if (!election.value) return;
+  if (!election.value) {
+    return;
+  }
 
   try {
     const newState = !election.value.isTellerAccessOpen;
@@ -171,7 +175,9 @@ async function toggleTellerAccess() {
 }
 
 async function copyUrl() {
-  if (!shareableUrl.value) return;
+  if (!shareableUrl.value) {
+    return;
+  }
 
   try {
     await navigator.clipboard.writeText(await shareableUrl.value);
@@ -182,7 +188,9 @@ async function copyUrl() {
 }
 
 async function generateQrCode() {
-  if (!shareableUrl.value) return;
+  if (!shareableUrl.value) {
+    return;
+  }
 
   try {
     qrCodeUrl.value = await QRCode.toDataURL(await shareableUrl.value, {
@@ -199,12 +207,14 @@ async function generateQrCode() {
 }
 
 async function exportElection() {
-  if (!electionGuid) return;
+  if (!electionGuid) {
+    return;
+  }
 
   try {
     const blob = await electionService.exportElectionToJson(electionGuid);
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `Election_${electionGuid}.json`;
     document.body.appendChild(a);
@@ -217,7 +227,6 @@ async function exportElection() {
     showErrorMessage(t("elections.exportElectionError"));
   }
 }
-
 </script>
 
 <template>

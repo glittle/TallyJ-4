@@ -50,18 +50,24 @@ function handleImportCdn() {
 }
 
 function handleEnterVotes(ballot: BallotDto) {
-  if (!ballot?.ballotGuid) return;
+  if (!ballot?.ballotGuid) {
+    return;
+  }
   router.push(`/elections/${electionGuid}/ballots/${ballot.ballotGuid}/entry`);
 }
 
 function handleViewVotes(ballot: BallotDto) {
-  if (!ballot) return;
+  if (!ballot) {
+    return;
+  }
   selectedBallot.value = ballot;
   showVotesDialog.value = true;
 }
 
 async function handleDelete(ballot: BallotDto) {
-  if (!ballot?.ballotGuid) return;
+  if (!ballot?.ballotGuid) {
+    return;
+  }
   try {
     await ElMessageBox.confirm(
       t("ballots.deleteConfirm"),

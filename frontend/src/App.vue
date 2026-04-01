@@ -3,12 +3,9 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { RouterView } from "vue-router";
 import ErrorBoundary from "./components/common/ErrorBoundary.vue";
-import { BUILD_DATE, VERSION } from "./components/version";
-const versionTooltip = computed(() =>
-  t("common.versionTooltip", { version: VERSION, date: BUILD_DATE }),
-);
+import { i18n } from "./locales";
 
-const { t, locale } = useI18n();
+const { t } = useI18n();
 const nameVisible = ref(true);
 const branchName = computed(() => {
   const name = process.env.BRANCH_NAME;
@@ -29,9 +26,12 @@ onMounted(() => {
 });
 
 // Watch for locale changes to update the title
-watch(locale, () => {
-  updateDocumentTitle();
-});
+watch(
+  () => i18n.global.locale,
+  () => {
+    updateDocumentTitle();
+  },
+);
 </script>
 
 <template>

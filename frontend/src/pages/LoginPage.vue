@@ -322,7 +322,9 @@ watch(googleButtonRef, (el) => {
 let isInitializingGis = false;
 
 const initGoogleOneTap = async () => {
-  if (googleReady.value || isInitializingGis) return;
+  if (googleReady.value || isInitializingGis) {
+    return;
+  }
   isInitializingGis = true;
   try {
     // Lazy load the GIS script only when needed

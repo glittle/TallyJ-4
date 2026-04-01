@@ -29,19 +29,27 @@ onMounted(() => {
 
 async function loadAuditLogs() {
   const filterParams: AuditLogFilter = {};
-  if (filters.value.electionGuid)
+  if (filters.value.electionGuid) {
     filterParams.electionGuid = filters.value.electionGuid;
-  if (filters.value.locationGuid)
+  }
+  if (filters.value.locationGuid) {
     filterParams.locationGuid = filters.value.locationGuid;
-  if (filters.value.voterId) filterParams.voterId = filters.value.voterId;
-  if (filters.value.computerCode)
+  }
+  if (filters.value.voterId) {
+    filterParams.voterId = filters.value.voterId;
+  }
+  if (filters.value.computerCode) {
     filterParams.computerCode = filters.value.computerCode;
-  if (filters.value.startDate)
+  }
+  if (filters.value.startDate) {
     filterParams.startDate = new Date(filters.value.startDate).toISOString();
-  if (filters.value.endDate)
+  }
+  if (filters.value.endDate) {
     filterParams.endDate = new Date(filters.value.endDate).toISOString();
-  if (filters.value.searchTerm)
+  }
+  if (filters.value.searchTerm) {
     filterParams.searchTerm = filters.value.searchTerm;
+  }
 
   await auditLogStore.fetchAuditLogs(
     filterParams,
@@ -76,7 +84,9 @@ function viewDetails(log: AuditLog) {
 }
 
 function formatDate(dateString: string) {
-  if (!dateString) return "-";
+  if (!dateString) {
+    return "-";
+  }
   const date = new Date(dateString);
   return date.toLocaleString("en-US", {
     year: "numeric",

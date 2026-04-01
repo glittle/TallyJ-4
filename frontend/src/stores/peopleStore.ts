@@ -172,7 +172,9 @@ export const usePeopleStore = defineStore("people", () => {
   }
 
   async function initializeCandidateCache(electionGuid: string) {
-    if (isCacheInitialized.value) return;
+    if (isCacheInitialized.value) {
+      return;
+    }
 
     try {
       const allPeople = await peopleService.getAllForBallotEntry(electionGuid);
@@ -199,7 +201,9 @@ export const usePeopleStore = defineStore("people", () => {
   }
 
   async function initializeSignalR() {
-    if (signalrInitialized.value) return;
+    if (signalrInitialized.value) {
+      return;
+    }
 
     try {
       const connection = await signalrService.connectToFrontDeskHub();

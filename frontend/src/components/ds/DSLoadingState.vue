@@ -74,8 +74,12 @@ const iconSize = computed(() => {
 });
 
 const progressStatus = computed(() => {
-  if (props.percentage === 100) return "success";
-  if (props.percentage < 0) return "exception";
+  if (props.percentage === 100) {
+    return "success";
+  }
+  if (props.percentage < 0) {
+    return "exception";
+  }
   return undefined;
 });
 </script>

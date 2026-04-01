@@ -23,7 +23,9 @@ function goBack() {
 
 async function handleFileChange(uploadFile: UploadFile) {
   const file = uploadFile.raw as UploadRawFile | undefined;
-  if (!file) return;
+  if (!file) {
+    return;
+  }
 
   importing.value = true;
   importResult.value = null;
@@ -110,16 +112,24 @@ function beforeUpload(file: UploadRawFile) {
           >
             <template #extra>
               <el-descriptions :column="2" border class="result-descriptions">
-                <el-descriptions-item :label="$t('ballots.cdnImport.ballotsCreated')">
+                <el-descriptions-item
+                  :label="$t('ballots.cdnImport.ballotsCreated')"
+                >
                   {{ importResult.ballotsCreated }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('ballots.cdnImport.votesCreated')">
+                <el-descriptions-item
+                  :label="$t('ballots.cdnImport.votesCreated')"
+                >
                   {{ importResult.votesCreated }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('ballots.cdnImport.totalRows')">
+                <el-descriptions-item
+                  :label="$t('ballots.cdnImport.totalRows')"
+                >
                   {{ importResult.totalRows }}
                 </el-descriptions-item>
-                <el-descriptions-item :label="$t('ballots.cdnImport.skippedRows')">
+                <el-descriptions-item
+                  :label="$t('ballots.cdnImport.skippedRows')"
+                >
                   {{ importResult.skippedRows }}
                 </el-descriptions-item>
               </el-descriptions>
@@ -140,7 +150,11 @@ function beforeUpload(file: UploadRawFile) {
                 />
               </div>
 
-              <el-button type="primary" style="margin-top: 16px" @click="goBack">
+              <el-button
+                type="primary"
+                style="margin-top: 16px"
+                @click="goBack"
+              >
                 {{ $t("ballots.management") }}
               </el-button>
             </template>

@@ -22,6 +22,15 @@ else
     echo "⚠ Warning: .env.$ENVIRONMENT not found"
 fi
 
+# Determine frontend build mode and backend wwwroot folder from the environment name
+if [ "$ENVIRONMENT" = "uat" ]; then
+    FRONTEND_BUILD_SCRIPT="build-uat"
+    WWWROOT_FOLDER="wwwroot-uat"
+else
+    FRONTEND_BUILD_SCRIPT="build-production"
+    WWWROOT_FOLDER="wwwroot-prod"
+fi
+
 # Step 1: Build Backend
 echo ""
 echo "Step 1: Building Backend..."
@@ -36,12 +45,21 @@ echo ""
 echo "Step 2: Building Frontend..."
 cd "$PROJECT_ROOT/frontend"
 npm ci
-npm run build
-echo "✓ Frontend build complete"
+npm run $FRONTEND_BUILD_SCRIPT
+echo "✓ Frontend build complete ($FRONTEND_BUILD_SCRIPT)"
 
-# Step 3: Run Database Migrations
+# Step 3: Copy frontend dist into backend publish output
+# The backend serves static files from wwwroot-{env}/ relative to its working directory.
 echo ""
-echo "Step 3: Running Database Migrations..."
+echo "Step 3: Bundling frontend into backend publish output..."
+WWWROOT_TARGET="$PROJECT_ROOT/backend/publish/$WWWROOT_FOLDER"
+mkdir -p "$WWWROOT_TARGET"
+rsync -avz --delete "$PROJECT_ROOT/frontend/dist/" "$WWWROOT_TARGET/"
+echo "✓ Frontend assets copied to $WWWROOT_TARGET"
+
+# Step 4: Run Database Migrations
+echo ""
+echo "Step 4: Running Database Migrations..."
 cd "$PROJECT_ROOT/backend"
 if [ -n "$DB_CONNECTION_STRING" ]; then
     dotnet ef database update --connection "$DB_CONNECTION_STRING"
@@ -50,24 +68,14 @@ else
     echo "⚠ Skipping migrations: DB_CONNECTION_STRING not set"
 fi
 
-# Step 4: Deploy Backend
+# Step 5: Deploy Backend (includes frontend assets in wwwroot-{env}/)
 echo ""
-echo "Step 4: Deploying Backend..."
+echo "Step 5: Deploying Backend..."
 if [ -n "$BACKEND_DEPLOY_PATH" ]; then
     rsync -avz --delete ./publish/ "$BACKEND_DEPLOY_PATH/"
-    echo "✓ Backend deployed to $BACKEND_DEPLOY_PATH"
+    echo "✓ Backend (with frontend assets) deployed to $BACKEND_DEPLOY_PATH"
 else
     echo "⚠ Skipping backend deployment: BACKEND_DEPLOY_PATH not set"
-fi
-
-# Step 5: Deploy Frontend
-echo ""
-echo "Step 5: Deploying Frontend..."
-if [ -n "$FRONTEND_DEPLOY_PATH" ]; then
-    rsync -avz --delete "$PROJECT_ROOT/frontend/dist/" "$FRONTEND_DEPLOY_PATH/"
-    echo "✓ Frontend deployed to $FRONTEND_DEPLOY_PATH"
-else
-    echo "⚠ Skipping frontend deployment: FRONTEND_DEPLOY_PATH not set"
 fi
 
 # Step 6: Restart Services

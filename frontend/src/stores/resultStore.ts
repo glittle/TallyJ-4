@@ -214,7 +214,9 @@ export const useResultStore = defineStore("result", () => {
   }
 
   async function initializeSignalR() {
-    if (signalrInitialized.value) return;
+    if (signalrInitialized.value) {
+      return;
+    }
 
     try {
       const connection = await signalrService.connectToAnalyzeHub();
