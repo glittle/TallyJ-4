@@ -104,7 +104,7 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped lang="less">
+<style lang="less">
 .callback-page {
   display: flex;
   justify-content: center;

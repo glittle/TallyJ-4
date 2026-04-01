@@ -1,3 +1,182 @@
+<script setup lang="ts">
+import { useNotifications } from "@/composables/useNotifications";
+import {
+  DataAnalysis,
+  Loading,
+  Refresh,
+  RefreshRight,
+  Sunny,
+  View,
+  WarningFilled,
+} from "@element-plus/icons-vue";
+import { storeToRefs } from "pinia";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import { signalrService } from "../services/signalrService";
+import { usePublicStore } from "../stores/publicStore";
+import type { PublicDisplayDto } from "../types";
+
+const route = useRoute();
+const publicStore = usePublicStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { displayData, loading, error, displayOptions } =
+  storeToRefs(publicStore);
+
+const showControls = ref(false);
+let refreshTimer: number | null = null;
+
+const electionGuid = computed(() => route.params.electionGuid as string);
+
+const statusClass = computed(() => {
+  if (!displayData.value) {
+    return "";
+  }
+  const status = displayData.value.tallyStatus.toLowerCase();
+  if (status.includes("finalized") || status.includes("complete")) {
+    return "status-finalized";
+  }
+  if (status.includes("progress") || status.includes("processing")) {
+    return "status-in-progress";
+  }
+  return "status-pending";
+});
+
+function formatDate(dateString: string | null): string {
+  if (!dateString) {
+    return "";
+  }
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function formatTime(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
+function toggleTheme() {
+  publicStore.toggleTheme();
+}
+
+function toggleVoteCounts() {
+  publicStore.setDisplayOptions({
+    showVoteCounts: !displayOptions.value.showVoteCounts,
+  });
+}
+
+function toggleStatistics() {
+  publicStore.setDisplayOptions({
+    showStatistics: !displayOptions.value.showStatistics,
+  });
+}
+
+function toggleAutoRefresh() {
+  publicStore.setDisplayOptions({
+    autoRefresh: !displayOptions.value.autoRefresh,
+  });
+  if (displayOptions.value.autoRefresh) {
+    startAutoRefresh();
+  } else {
+    stopAutoRefresh();
+  }
+}
+
+async function refreshNow() {
+  try {
+    await publicStore.fetchPublicDisplay(electionGuid.value);
+    showSuccessMessage("Display refreshed");
+  } catch (_e: any) {
+    showErrorMessage("Failed to refresh display");
+  }
+}
+
+function startAutoRefresh() {
+  if (refreshTimer !== null) {
+    stopAutoRefresh();
+  }
+  refreshTimer = window.setInterval(async () => {
+    try {
+      await publicStore.fetchPublicDisplay(electionGuid.value);
+    } catch (e) {
+      console.error("Auto-refresh failed:", e);
+    }
+  }, displayOptions.value.refreshInterval);
+}
+
+function stopAutoRefresh() {
+  if (refreshTimer !== null) {
+    clearInterval(refreshTimer);
+    refreshTimer = null;
+  }
+}
+
+function handleKeyPress(event: KeyboardEvent) {
+  if (event.key === "c" || event.key === "C") {
+    showControls.value = !showControls.value;
+  }
+  if (event.key === "f" || event.key === "F") {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  }
+}
+
+async function setupSignalR() {
+  try {
+    const connection = await signalrService.connectToPublicHub();
+    await signalrService.joinPublicDisplay(electionGuid.value);
+
+    connection.on("ResultsUpdated", (data: PublicDisplayDto) => {
+      console.log("Results updated via SignalR:", data);
+      publicStore.updateDisplayData(data);
+    });
+
+    console.log("SignalR connected to public display");
+  } catch (e) {
+    console.error("Failed to setup SignalR:", e);
+  }
+}
+
+async function cleanupSignalR() {
+  try {
+    await signalrService.leavePublicDisplay(electionGuid.value);
+    await signalrService.disconnect("/hubs/public");
+  } catch (e) {
+    console.error("Failed to cleanup SignalR:", e);
+  }
+}
+
+onMounted(async () => {
+  try {
+    await publicStore.fetchPublicDisplay(electionGuid.value);
+    await setupSignalR();
+    if (displayOptions.value.autoRefresh) {
+      startAutoRefresh();
+    }
+    document.addEventListener("keypress", handleKeyPress);
+  } catch (e: any) {
+    showErrorMessage(e.message || "Failed to load public display");
+  }
+});
+
+onUnmounted(async () => {
+  stopAutoRefresh();
+  await cleanupSignalR();
+  publicStore.reset();
+  document.removeEventListener("keypress", handleKeyPress);
+});
+</script>
+
 <template>
   <div :class="['public-display-page', displayOptions.theme]">
     <div v-if="loading && !displayData" class="loading-container">
@@ -221,180 +400,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import { useRoute } from "vue-router";
-import { usePublicStore } from "../stores/publicStore";
-import { storeToRefs } from "pinia";
-import { useNotifications } from "@/composables/useNotifications";
-import {
-  Loading,
-  WarningFilled,
-  Refresh,
-  Sunny,
-  View,
-  DataAnalysis,
-  RefreshRight,
-} from "@element-plus/icons-vue";
-import { signalrService } from "../services/signalrService";
-import type { PublicDisplayDto } from "../types";
-
-const route = useRoute();
-const publicStore = usePublicStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
-const { displayData, loading, error, displayOptions } =
-  storeToRefs(publicStore);
-
-const showControls = ref(false);
-let refreshTimer: number | null = null;
-
-const electionGuid = computed(() => route.params.electionGuid as string);
-
-const statusClass = computed(() => {
-  if (!displayData.value) return "";
-  const status = displayData.value.tallyStatus.toLowerCase();
-  if (status.includes("finalized") || status.includes("complete"))
-    return "status-finalized";
-  if (status.includes("progress") || status.includes("processing"))
-    return "status-in-progress";
-  return "status-pending";
-});
-
-function formatDate(dateString: string | null): string {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
-
-function formatTime(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-}
-
-function toggleTheme() {
-  publicStore.toggleTheme();
-}
-
-function toggleVoteCounts() {
-  publicStore.setDisplayOptions({
-    showVoteCounts: !displayOptions.value.showVoteCounts,
-  });
-}
-
-function toggleStatistics() {
-  publicStore.setDisplayOptions({
-    showStatistics: !displayOptions.value.showStatistics,
-  });
-}
-
-function toggleAutoRefresh() {
-  publicStore.setDisplayOptions({
-    autoRefresh: !displayOptions.value.autoRefresh,
-  });
-  if (displayOptions.value.autoRefresh) {
-    startAutoRefresh();
-  } else {
-    stopAutoRefresh();
-  }
-}
-
-async function refreshNow() {
-  try {
-    await publicStore.fetchPublicDisplay(electionGuid.value);
-    showSuccessMessage("Display refreshed");
-  } catch (_e: any) {
-    showErrorMessage("Failed to refresh display");
-  }
-}
-
-function startAutoRefresh() {
-  if (refreshTimer !== null) {
-    stopAutoRefresh();
-  }
-  refreshTimer = window.setInterval(async () => {
-    try {
-      await publicStore.fetchPublicDisplay(electionGuid.value);
-    } catch (e) {
-      console.error("Auto-refresh failed:", e);
-    }
-  }, displayOptions.value.refreshInterval);
-}
-
-function stopAutoRefresh() {
-  if (refreshTimer !== null) {
-    clearInterval(refreshTimer);
-    refreshTimer = null;
-  }
-}
-
-function handleKeyPress(event: KeyboardEvent) {
-  if (event.key === "c" || event.key === "C") {
-    showControls.value = !showControls.value;
-  }
-  if (event.key === "f" || event.key === "F") {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-  }
-}
-
-async function setupSignalR() {
-  try {
-    const connection = await signalrService.connectToPublicHub();
-    await signalrService.joinPublicDisplay(electionGuid.value);
-
-    connection.on("ResultsUpdated", (data: PublicDisplayDto) => {
-      console.log("Results updated via SignalR:", data);
-      publicStore.updateDisplayData(data);
-    });
-
-    console.log("SignalR connected to public display");
-  } catch (e) {
-    console.error("Failed to setup SignalR:", e);
-  }
-}
-
-async function cleanupSignalR() {
-  try {
-    await signalrService.leavePublicDisplay(electionGuid.value);
-    await signalrService.disconnect("/hubs/public");
-  } catch (e) {
-    console.error("Failed to cleanup SignalR:", e);
-  }
-}
-
-onMounted(async () => {
-  try {
-    await publicStore.fetchPublicDisplay(electionGuid.value);
-    await setupSignalR();
-    if (displayOptions.value.autoRefresh) {
-      startAutoRefresh();
-    }
-    document.addEventListener("keypress", handleKeyPress);
-  } catch (e: any) {
-    showErrorMessage(e.message || "Failed to load public display");
-  }
-});
-
-onUnmounted(async () => {
-  stopAutoRefresh();
-  await cleanupSignalR();
-  publicStore.reset();
-  document.removeEventListener("keypress", handleKeyPress);
-});
-</script>
-
-<style scoped>
+<style lang="less">
 .public-display-page {
   min-height: 100vh;
   width: 100vw;
@@ -631,13 +637,17 @@ onUnmounted(async () => {
   gap: 0.5rem;
 }
 
+.last-updated {
+  text-align: right;
+}
+
 .controls-overlay {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
+  background-color: rgba(0, 0, 0, 0.8);
   padding: 1rem;
-  border-radius: 12px;
-  background-color: var(--color-bg-overlay);
+  border-radius: 8px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;
@@ -648,7 +658,75 @@ onUnmounted(async () => {
   pointer-events: auto;
 }
 
-.additional .section-title {
-  opacity: 0.8;
+@media (max-width: 768px) {
+  .public-display-page {
+    padding: 1rem;
+  }
+
+  .election-name {
+    font-size: 2.5rem;
+  }
+
+  .election-meta {
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 1.25rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .candidate-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .rank {
+    min-width: auto;
+  }
+
+  .votes {
+    text-align: left;
+    min-width: auto;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .display-footer {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .controls-overlay {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    right: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .election-name {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .candidate-row {
+    font-size: 1.25rem;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+  }
 }
 </style>

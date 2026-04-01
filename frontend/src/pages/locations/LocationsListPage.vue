@@ -1,3 +1,184 @@
+<script setup lang="ts">
+import { useNotifications } from "@/composables/useNotifications";
+import { Delete, Edit, Monitor, Plus } from "@element-plus/icons-vue";
+import { ElMessageBox } from "element-plus";
+import { computed, onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import ComputerRegistrationDialog from "../../components/locations/ComputerRegistrationDialog.vue";
+import LocationFormDialog from "../../components/locations/LocationFormDialog.vue";
+import { useLocationStore } from "../../stores/locationStore";
+import type { ComputerDto, LocationDto } from "../../types";
+
+const router = useRouter();
+const route = useRoute();
+const locationStore = useLocationStore();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
+
+const electionGuid = route.params.id as string;
+const showCreateDialog = ref(false);
+const showEditDialog = ref(false);
+const editingLocation = ref<LocationDto | null>(null);
+const showComputersDrawer = ref(false);
+const showComputerRegisterDialog = ref(false);
+const selectedLocation = ref<LocationDto | null>(null);
+
+const loading = computed(() => locationStore.loading);
+const sortedLocations = computed(() => locationStore.sortedLocations);
+const pagination = computed(() => locationStore.pagination);
+const computers = computed(() => locationStore.computers);
+const computersLoading = computed(() => locationStore.computersLoading);
+
+const sort = ref({
+  prop: "sortOrder",
+  order: "ascending" as "ascending" | "descending",
+});
+
+onMounted(async () => {
+  await loadLocations();
+});
+
+async function loadLocations() {
+  try {
+    await locationStore.fetchLocations(
+      electionGuid,
+      pagination.value.pageNumber,
+      pagination.value.pageSize,
+    );
+  } catch (error) {
+    showErrorMessage("Failed to load locations");
+  }
+}
+
+function goBack() {
+  router.push(`/elections/${electionGuid}`);
+}
+
+function editLocation(location: LocationDto) {
+  editingLocation.value = location;
+  showEditDialog.value = true;
+}
+
+async function deleteLocation(location: LocationDto) {
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to delete location "${location.name}"?`,
+      "Warning",
+      {
+        confirmButtonText: "Delete",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      },
+    );
+
+    await locationStore.deleteLocation(electionGuid, location.locationGuid);
+    showSuccessMessage("Location deleted successfully");
+  } catch (error: any) {
+    if (error !== "cancel") {
+      showErrorMessage(error.message || "Failed to delete location");
+    }
+  }
+}
+
+function handleFormSuccess() {
+  showCreateDialog.value = false;
+  showEditDialog.value = false;
+  editingLocation.value = null;
+  loadLocations();
+}
+
+function handleSortChange({ prop, order }: any) {
+  sort.value.prop = prop;
+  sort.value.order = order;
+}
+
+async function handleSizeChange() {
+  await loadLocations();
+}
+
+async function handlePageChange() {
+  await loadLocations();
+}
+
+function formatCoordinate(coord: string | undefined): string {
+  if (!coord) {
+    return "";
+  }
+  const num = parseFloat(coord);
+  return isNaN(num) ? coord : num.toFixed(4);
+}
+
+function getStatusType(status: string) {
+  const typeMap: Record<string, any> = {
+    NotStarted: "",
+    InProgress: "warning",
+    Completed: "success",
+    Verified: "info",
+  };
+  return typeMap[status] || "info";
+}
+
+async function viewComputers(location: LocationDto) {
+  selectedLocation.value = location;
+  showComputersDrawer.value = true;
+  try {
+    await locationStore.fetchComputers(electionGuid, location.locationGuid);
+  } catch (error: any) {
+    showErrorMessage("Failed to load computers");
+  }
+}
+
+function openRegisterComputerDialog() {
+  showComputerRegisterDialog.value = true;
+}
+
+function handleComputerRegistered() {
+  showComputerRegisterDialog.value = false;
+  if (selectedLocation.value) {
+    locationStore.fetchComputers(
+      electionGuid,
+      selectedLocation.value.locationGuid,
+    );
+  }
+}
+
+async function deleteComputer(computer: ComputerDto) {
+  if (!selectedLocation.value) {
+    return;
+  }
+
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to delete computer "${computer.computerCode}"?`,
+      "Warning",
+      {
+        confirmButtonText: "Delete",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      },
+    );
+
+    await locationStore.deleteComputer(
+      electionGuid,
+      selectedLocation.value.locationGuid,
+      computer.computerGuid,
+    );
+    showSuccessMessage("Computer deleted successfully");
+  } catch (error: any) {
+    if (error !== "cancel") {
+      showErrorMessage(error.message || "Failed to delete computer");
+    }
+  }
+}
+
+function formatDateTime(dateStr?: string): string {
+  if (!dateStr) {
+    return "-";
+  }
+  const date = new Date(dateStr);
+  return date.toLocaleString();
+}
+</script>
+
 <template>
   <div class="locations-list-page">
     <el-card>
@@ -209,182 +390,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { Plus, Edit, Delete, Monitor } from "@element-plus/icons-vue";
-import { useLocationStore } from "../../stores/locationStore";
-import { ElMessageBox } from "element-plus";
-import { useNotifications } from "@/composables/useNotifications";
-import type { LocationDto, ComputerDto } from "../../types";
-import LocationFormDialog from "../../components/locations/LocationFormDialog.vue";
-import ComputerRegistrationDialog from "../../components/locations/ComputerRegistrationDialog.vue";
-
-const router = useRouter();
-const route = useRoute();
-const locationStore = useLocationStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
-
-const electionGuid = route.params.id as string;
-const showCreateDialog = ref(false);
-const showEditDialog = ref(false);
-const editingLocation = ref<LocationDto | null>(null);
-const showComputersDrawer = ref(false);
-const showComputerRegisterDialog = ref(false);
-const selectedLocation = ref<LocationDto | null>(null);
-
-const loading = computed(() => locationStore.loading);
-const sortedLocations = computed(() => locationStore.sortedLocations);
-const pagination = computed(() => locationStore.pagination);
-const computers = computed(() => locationStore.computers);
-const computersLoading = computed(() => locationStore.computersLoading);
-
-const sort = ref({
-  prop: "sortOrder",
-  order: "ascending" as "ascending" | "descending",
-});
-
-onMounted(async () => {
-  await loadLocations();
-});
-
-async function loadLocations() {
-  try {
-    await locationStore.fetchLocations(
-      electionGuid,
-      pagination.value.pageNumber,
-      pagination.value.pageSize,
-    );
-  } catch (error) {
-    showErrorMessage("Failed to load locations");
-  }
-}
-
-function goBack() {
-  router.push(`/elections/${electionGuid}`);
-}
-
-function editLocation(location: LocationDto) {
-  editingLocation.value = location;
-  showEditDialog.value = true;
-}
-
-async function deleteLocation(location: LocationDto) {
-  try {
-    await ElMessageBox.confirm(
-      `Are you sure you want to delete location "${location.name}"?`,
-      "Warning",
-      {
-        confirmButtonText: "Delete",
-        cancelButtonText: "Cancel",
-        type: "warning",
-      },
-    );
-
-    await locationStore.deleteLocation(electionGuid, location.locationGuid);
-    showSuccessMessage("Location deleted successfully");
-  } catch (error: any) {
-    if (error !== "cancel") {
-      showErrorMessage(error.message || "Failed to delete location");
-    }
-  }
-}
-
-function handleFormSuccess() {
-  showCreateDialog.value = false;
-  showEditDialog.value = false;
-  editingLocation.value = null;
-  loadLocations();
-}
-
-function handleSortChange({ prop, order }: any) {
-  sort.value.prop = prop;
-  sort.value.order = order;
-}
-
-async function handleSizeChange() {
-  await loadLocations();
-}
-
-async function handlePageChange() {
-  await loadLocations();
-}
-
-function formatCoordinate(coord: string | undefined): string {
-  if (!coord) return "";
-  const num = parseFloat(coord);
-  return isNaN(num) ? coord : num.toFixed(4);
-}
-
-function getStatusType(status: string) {
-  const typeMap: Record<string, any> = {
-    NotStarted: "",
-    InProgress: "warning",
-    Completed: "success",
-    Verified: "info",
-  };
-  return typeMap[status] || "info";
-}
-
-async function viewComputers(location: LocationDto) {
-  selectedLocation.value = location;
-  showComputersDrawer.value = true;
-  try {
-    await locationStore.fetchComputers(electionGuid, location.locationGuid);
-  } catch (error: any) {
-    showErrorMessage("Failed to load computers");
-  }
-}
-
-function openRegisterComputerDialog() {
-  showComputerRegisterDialog.value = true;
-}
-
-function handleComputerRegistered() {
-  showComputerRegisterDialog.value = false;
-  if (selectedLocation.value) {
-    locationStore.fetchComputers(
-      electionGuid,
-      selectedLocation.value.locationGuid,
-    );
-  }
-}
-
-async function deleteComputer(computer: ComputerDto) {
-  if (!selectedLocation.value) return;
-
-  try {
-    await ElMessageBox.confirm(
-      `Are you sure you want to delete computer "${computer.computerCode}"?`,
-      "Warning",
-      {
-        confirmButtonText: "Delete",
-        cancelButtonText: "Cancel",
-        type: "warning",
-      },
-    );
-
-    await locationStore.deleteComputer(
-      electionGuid,
-      selectedLocation.value.locationGuid,
-      computer.computerGuid,
-    );
-    showSuccessMessage("Computer deleted successfully");
-  } catch (error: any) {
-    if (error !== "cancel") {
-      showErrorMessage(error.message || "Failed to delete computer");
-    }
-  }
-}
-
-function formatDateTime(dateStr?: string): string {
-  if (!dateStr) return "-";
-  const date = new Date(dateStr);
-  return date.toLocaleString();
-}
-</script>
-
-<style scoped>
+<style lang="less">
 .locations-list-page {
   padding: 20px;
 }

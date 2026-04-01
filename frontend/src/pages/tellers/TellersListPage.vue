@@ -1,3 +1,103 @@
+<script setup lang="ts">
+import TellerFormDialog from "@/components/tellers/TellerFormDialog.vue";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useNotifications } from "@/composables/useNotifications";
+import { useTellerStore } from "@/stores/tellerStore";
+import type { Teller } from "@/types/teller";
+import { Delete, Edit, Plus } from "@element-plus/icons-vue";
+import { ElMessageBox } from "element-plus";
+import { computed, onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+
+const router = useRouter();
+const route = useRoute();
+const tellerStore = useTellerStore();
+const { showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
+
+const electionGuid = route.params.id as string;
+const showCreateDialog = ref(false);
+const showEditDialog = ref(false);
+const editingTeller = ref<Teller | null>(null);
+
+const loading = computed(() => tellerStore.loading);
+const tellers = computed(() => tellerStore.tellers);
+const totalCount = computed(() => tellerStore.totalCount);
+const currentPage = computed({
+  get: () => tellerStore.currentPage,
+  set: (val) => {
+    tellerStore.currentPage = val;
+  },
+});
+const pageSize = computed({
+  get: () => tellerStore.pageSize,
+  set: (val) => {
+    tellerStore.pageSize = val;
+  },
+});
+const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value));
+
+onMounted(async () => {
+  await loadTellers();
+});
+
+async function loadTellers() {
+  try {
+    await tellerStore.fetchTellers(
+      electionGuid,
+      currentPage.value,
+      pageSize.value,
+    );
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
+function goBack() {
+  router.push(`/elections/${electionGuid}`);
+}
+
+function editTeller(teller: Teller) {
+  editingTeller.value = teller;
+  showEditDialog.value = true;
+}
+
+async function deleteTeller(teller: Teller) {
+  try {
+    await ElMessageBox.confirm(
+      `Are you sure you want to delete teller "${teller.name}"?`,
+      "Warning",
+      {
+        confirmButtonText: "Delete",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      },
+    );
+
+    await tellerStore.deleteTeller(electionGuid, teller.rowId);
+  } catch (error: any) {
+    if (error !== "cancel") {
+      showErrorMessage(error.message || "Failed to delete teller");
+    }
+  }
+}
+
+function handleFormSuccess() {
+  showCreateDialog.value = false;
+  showEditDialog.value = false;
+  editingTeller.value = null;
+  loadTellers();
+}
+
+async function handleSizeChange() {
+  await loadTellers();
+}
+
+async function handlePageChange() {
+  await loadTellers();
+}
+</script>
+
 <template>
   <div class="tellers-list-page">
     <el-card>
@@ -93,107 +193,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { Plus, Edit, Delete } from "@element-plus/icons-vue";
-import { useTellerStore } from "@/stores/tellerStore";
-import { ElMessageBox } from "element-plus";
-import { useNotifications } from "@/composables/useNotifications";
-import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
-import type { Teller } from "@/types/teller";
-import TellerFormDialog from "@/components/tellers/TellerFormDialog.vue";
-
-const router = useRouter();
-const route = useRoute();
-const tellerStore = useTellerStore();
-const { showErrorMessage } = useNotifications();
-const { handleApiError } = useApiErrorHandler();
-
-const electionGuid = route.params.id as string;
-const showCreateDialog = ref(false);
-const showEditDialog = ref(false);
-const editingTeller = ref<Teller | null>(null);
-
-const loading = computed(() => tellerStore.loading);
-const tellers = computed(() => tellerStore.tellers);
-const totalCount = computed(() => tellerStore.totalCount);
-const currentPage = computed({
-  get: () => tellerStore.currentPage,
-  set: (val) => {
-    tellerStore.currentPage = val;
-  },
-});
-const pageSize = computed({
-  get: () => tellerStore.pageSize,
-  set: (val) => {
-    tellerStore.pageSize = val;
-  },
-});
-const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value));
-
-onMounted(async () => {
-  await loadTellers();
-});
-
-async function loadTellers() {
-  try {
-    await tellerStore.fetchTellers(
-      electionGuid,
-      currentPage.value,
-      pageSize.value,
-    );
-  } catch (error) {
-    handleApiError(error);
-  }
-}
-
-function goBack() {
-  router.push(`/elections/${electionGuid}`);
-}
-
-function editTeller(teller: Teller) {
-  editingTeller.value = teller;
-  showEditDialog.value = true;
-}
-
-async function deleteTeller(teller: Teller) {
-  try {
-    await ElMessageBox.confirm(
-      `Are you sure you want to delete teller "${teller.name}"?`,
-      "Warning",
-      {
-        confirmButtonText: "Delete",
-        cancelButtonText: "Cancel",
-        type: "warning",
-      },
-    );
-
-    await tellerStore.deleteTeller(electionGuid, teller.rowId);
-  } catch (error: any) {
-    if (error !== "cancel") {
-      showErrorMessage(error.message || "Failed to delete teller");
-    }
-  }
-}
-
-function handleFormSuccess() {
-  showCreateDialog.value = false;
-  showEditDialog.value = false;
-  editingTeller.value = null;
-  loadTellers();
-}
-
-async function handleSizeChange() {
-  await loadTellers();
-}
-
-async function handlePageChange() {
-  await loadTellers();
-}
-</script>
-
-<style scoped>
+<style lang="less">
 .tellers-list-page {
   padding: 20px;
 }

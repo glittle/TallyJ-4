@@ -189,7 +189,7 @@ function handleClose() {
   </el-dialog>
 </template>
 
-<style scoped>
+<style lang="less">
 .form-help-text {
   font-size: 12px;
   color: var(--el-text-color-secondary);
