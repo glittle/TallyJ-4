@@ -46,5 +46,6 @@
   "common.logoAlt": "TallyJ Logo",
   "common.appTitle": "TallyJ v4",
   "common.appName": "TallyJ",
-  "common.versionDisplay": "v4 Beta"
+  "common.versionDisplay": "v4 Beta",
+  "common.versionTooltip": "Version {version} ({date})"
 }

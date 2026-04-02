@@ -56,5 +56,19 @@
   "ballots.votesEntered": "{count} of {max} votes entered",
   "ballots.votesList": "Votes List",
   "ballots.ineligible": "غير مؤهل",
-  "ballots.voteSpoiledSuccess": "Vote added as spoiled ({code} – person is ineligible)"
+  "ballots.voteSpoiledSuccess": "Vote added as spoiled ({code} – person is ineligible)",
+  "ballots.cdnImport.title": "Import CDN Ballots",
+  "ballots.cdnImport.button": "Import CDN Ballots",
+  "ballots.cdnImport.description": "Upload an XML file exported from the CDN (Canadian National Database) to import ballots and their corresponding votes into this election. The file will be parsed and ballots will be created for each valid entry, along with all associated vote records.",
+  "ballots.cdnImport.uploadPrompt": "Click or drag an XML file here to upload",
+  "ballots.cdnImport.xmlOnly": "Only XML files are supported",
+  "ballots.cdnImport.importing": "Importing...",
+  "ballots.cdnImport.success": "Import completed successfully",
+  "ballots.cdnImport.ballotsCreated": "Ballots created",
+  "ballots.cdnImport.votesCreated": "Votes created",
+  "ballots.cdnImport.totalRows": "Total rows processed",
+  "ballots.cdnImport.skippedRows": "Rows skipped",
+  "ballots.cdnImport.warnings": "Warnings",
+  "ballots.cdnImport.errors": "Errors",
+  "ballots.cdnImport.failed": "Import failed"
 }

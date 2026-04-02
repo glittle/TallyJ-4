@@ -1,30 +1,20 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { onMounted } from "vue";
+import { onMounted, computed } from "vue";
 import CountryFlag from "vue-country-flag-next";
-import { setLocale, type SupportedLocale } from "@/locales";
+import { setLocale, supportedLocales, type SupportedLocale } from "@/locales";
 
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
-const languages = [
-  { value: "en", flag: "us", label: "English" },
-  { value: "fr", flag: "fr", label: "Français" },
-  { value: "fi", flag: "fi", label: "Suomi" },
-  { value: "ko", flag: "kr", label: "한국어" },
-  { value: "es", flag: "es", label: "Español" },
-  { value: "pt", flag: "br", label: "Português" },
-  { value: "hi", flag: "in", label: "हिन्दी" },
-  { value: "vi", flag: "vn", label: "Tiếng Việt" },
-  { value: "fa", flag: "ir", label: "فارسی" },
-  { value: "sw", flag: "tz", label: "Kiswahili" },
-  { value: "ar", flag: "sa", label: "العربية" },
-  { value: "zh", flag: "cn", label: "中文" },
-  { value: "ru", flag: "ru", label: "Русский" },
-];
+const languages = computed(() =>
+  supportedLocales.map((lang) => ({
+    ...lang,
+    label: t(lang.name),
+  })),
+);
 
 const changeLanguage = async (lang: string) => {
   await setLocale(lang as SupportedLocale);
-  locale.value = lang;
 };
 
 const isActive = (lang: string) => {

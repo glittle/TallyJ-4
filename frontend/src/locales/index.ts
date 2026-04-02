@@ -61,28 +61,32 @@ function mergeLocaleFiles(modules: Record<string, any>): any {
   return flatToNested(merged);
 }
 
-const supportedLocales = [
-  "en",
-  "fr",
-  "fi",
-  "ko",
-  "es",
-  "pt",
-  "hi",
-  "vi",
-  "fa",
-  "sw",
-  "ar",
-  "zh",
-  "ru",
+export const supportedLocales = [
+  { value: "en", flag: "us", name: "english" },
+  { value: "fr", flag: "fr", name: "french" },
+  { value: "fi", flag: "fi", name: "finnish" },
+  { value: "ko", flag: "kr", name: "korean" },
+  { value: "es", flag: "es", name: "spanish" },
+  { value: "pt", flag: "br", name: "portuguese" },
+  { value: "hi", flag: "in", name: "hindi" },
+  { value: "vi", flag: "vn", name: "vietnamese" },
+  { value: "fa", flag: "ir", name: "persian" },
+  { value: "sw", flag: "tz", name: "swahili" },
+  { value: "ar", flag: "sa", name: "arabic" },
+  { value: "zh", flag: "cn", name: "chinese" },
+  { value: "ru", flag: "ru", name: "russian" },
 ] as const;
 
-export type SupportedLocale = (typeof supportedLocales)[number];
+export type SupportedLocale = (typeof supportedLocales)[number]["value"];
+
+const supportedLocaleValues = supportedLocales.map(
+  (l) => l.value,
+) as readonly string[];
 
 function getBestLocale(): SupportedLocale {
   const saved = localStorage.getItem("preferred-language");
 
-  if (saved && (supportedLocales as readonly string[]).includes(saved)) {
+  if (saved && supportedLocaleValues.includes(saved)) {
     return saved as SupportedLocale;
   }
 
@@ -97,16 +101,13 @@ function getBestLocale(): SupportedLocale {
 
       const lowerLang = lang.toLowerCase();
 
-      if ((supportedLocales as readonly string[]).includes(lowerLang)) {
+      if (supportedLocaleValues.includes(lowerLang)) {
         return lowerLang as SupportedLocale;
       }
 
       const baseLang = lowerLang.split("-")[0];
 
-      if (
-        baseLang &&
-        (supportedLocales as readonly string[]).includes(baseLang)
-      ) {
+      if (baseLang && supportedLocaleValues.includes(baseLang)) {
         return baseLang as SupportedLocale;
       }
     }
@@ -119,6 +120,8 @@ const savedLocale = getBestLocale();
 console.log("Saved locale:", savedLocale);
 
 export const i18n = createI18n({
+  legacy: false,
+  globalInjection: true,
   locale: "en", // Start with English, we will switch it after loading
   fallbackLocale: "en",
   messages: {
@@ -128,7 +131,7 @@ export const i18n = createI18n({
 
 export async function loadLocaleMessages(locale: SupportedLocale) {
   // If the language is already loaded
-  if (i18n.global.availableLocales.includes(locale)) {
+  if ((i18n.global.availableLocales as string[]).includes(locale)) {
     return nextTick();
   }
 
@@ -138,12 +141,15 @@ export async function loadLocaleMessages(locale: SupportedLocale) {
 
   for (const path in localeModulesAsync) {
     if (regex.test(path)) {
-      loadPromises.push(
-        localeModulesAsync[path]().then((mod: any) => {
-          const content = mod.default || mod;
-          merged = deepMerge(merged, content);
-        }),
-      );
+      const loadFn = localeModulesAsync[path];
+      if (loadFn) {
+        loadPromises.push(
+          loadFn().then((mod: any) => {
+            const content = mod.default || mod;
+            merged = deepMerge(merged, content);
+          }),
+        );
+      }
     }
   }
 
@@ -156,7 +162,9 @@ export async function loadLocaleMessages(locale: SupportedLocale) {
 
 export async function setLocale(locale: SupportedLocale) {
   await loadLocaleMessages(locale);
-  i18n.global.locale = locale;
+
+  (i18n.global.locale as any).value = locale;
+
   localStorage.setItem("preferred-language", locale);
   document.querySelector("html")?.setAttribute("lang", locale);
 }

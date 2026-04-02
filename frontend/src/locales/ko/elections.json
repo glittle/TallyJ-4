@@ -137,5 +137,14 @@
   "elections.onlineVotingEnabled": "온라인 투표가 활성화되어 있습니다",
   "elections.onlineVotingDisabled": "온라인 투표가 비활성화되어 있습니다",
   "elections.toggleTellerAccess": "개표원 접근 전환",
-  "elections.copyUrl": "URL 복사"
+  "elections.copyUrl": "URL 복사",
+  "elections.importElection": "Import Election",
+  "elections.exportElection": "Export Election",
+  "elections.importCdnBallots": "Import CDN Ballots",
+  "elections.importElectionSuccess": "Election imported successfully",
+  "elections.exportElectionSuccess": "Election exported successfully",
+  "elections.importCdnBallotsSuccess": "CDN ballots imported successfully",
+  "elections.importElectionError": "Failed to import election",
+  "elections.exportElectionError": "Failed to export election",
+  "elections.importCdnBallotsError": "Failed to import CDN ballots"
 }

@@ -46,5 +46,6 @@
   "common.appTitle": "KiểmJ v4",
   "common.appName": "KiểmJ",
   "common.versionDisplay": "v4 Beta",
-  "common.versionTooltip": "Version {version} ({date})"
+  "common.versionTooltip": "Version {version} ({date})",
+  "common.back": "Back"
 }

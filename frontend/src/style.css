@@ -1480,7 +1480,7 @@ button:focus-visible {
 :lang(ar),
 :lang(fa) {
   direction: rtl;
-  text-align: right;
+  // text-align: right;
 }
 
 /* Arabic Language Support */
