@@ -383,11 +383,11 @@ globalThis.addEventListener("keydown", (event) => {
     transition: all 0.3s ease;
     border: 1px solid var(--el-border-color);
 
-    &:hover {
-      background: var(--el-bg-color-page);
-      transform: translateY(-5px);
-      border-color: var(--el-border-color-darker);
-    }
+    // &:hover {
+    // background: var(--el-bg-color-page);
+    // transform: translateY(-5px);
+    // border-color: var(--el-border-color-darker);
+    // }
 
     .feature-icon {
       margin-bottom: 20px;

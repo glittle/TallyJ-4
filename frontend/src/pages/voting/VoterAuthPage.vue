@@ -34,10 +34,10 @@ import {
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
+import { getApiPublicAuthConfig } from "../../api/gen/configService/sdk.gen";
 import TelegramLoginButton from "../../components/auth/TelegramLoginButton.vue";
 import { useNotifications } from "../../composables/useNotifications";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
-import { getApiPublicAuthConfig } from "../../api/gen/configService/sdk.gen";
 
 declare const FB: any;
 declare const Kakao: any;
@@ -1107,7 +1107,7 @@ onBeforeUnmount(() => {
         padding: 14px 16px;
         background: var(--el-fill-color-light);
         border-radius: 8px;
-        border-left: 3px solid var(--el-color-primary);
+        // border-left: 3px solid var(--el-color-primary);
       }
 
       .delivery-options {
