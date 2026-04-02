@@ -137,5 +137,14 @@
   "elections.onlineVotingEnabled": "ऑनलाइन मतदान सक्षम है",
   "elections.onlineVotingDisabled": "ऑनलाइन मतदान अक्षम है",
   "elections.toggleTellerAccess": "गणनाकर्ता पहुँच टॉगल करें",
-  "elections.copyUrl": "URL कॉपी करें"
+  "elections.copyUrl": "URL कॉपी करें",
+  "elections.importElection": "Import Election",
+  "elections.exportElection": "Export Election",
+  "elections.importCdnBallots": "Import CDN Ballots",
+  "elections.importElectionSuccess": "Election imported successfully",
+  "elections.exportElectionSuccess": "Election exported successfully",
+  "elections.importCdnBallotsSuccess": "CDN ballots imported successfully",
+  "elections.importElectionError": "Failed to import election",
+  "elections.exportElectionError": "Failed to export election",
+  "elections.importCdnBallotsError": "Failed to import CDN ballots"
 }

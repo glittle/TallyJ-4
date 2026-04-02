@@ -1,36 +1,26 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { ElSelect, ElOption } from "element-plus";
-import { onMounted } from "vue";
+import { onMounted, computed } from "vue";
 import CountryFlag from "vue-country-flag-next";
-import { setLocale, type SupportedLocale } from "@/locales";
+import { setLocale, supportedLocales, type SupportedLocale } from "@/locales";
 
 const { locale, t } = useI18n();
 
-const languages = [
-  { value: "en", flag: "us", label: t("english") },
-  { value: "fr", flag: "fr", label: t("french") },
-  { value: "fi", flag: "fi", label: t("finnish") },
-  { value: "ko", flag: "kr", label: t("korean") },
-  { value: "es", flag: "es", label: t("spanish") },
-  { value: "pt", flag: "br", label: t("portuguese") },
-  { value: "hi", flag: "in", label: t("hindi") },
-  { value: "vi", flag: "vn", label: t("vietnamese") },
-  { value: "fa", flag: "ir", label: t("persian") },
-  { value: "sw", flag: "tz", label: t("swahili") },
-  { value: "ar", flag: "sa", label: t("arabic") },
-  { value: "zh", flag: "cn", label: t("chinese") },
-  { value: "ru", flag: "ru", label: t("russian") },
-];
+const languages = computed(() =>
+  supportedLocales.map((lang) => ({
+    ...lang,
+    label: t(lang.name),
+  }))
+);
 
 const getFlag = (lang: string) => {
-  const langObj = languages.find((l) => l.value === lang);
+  const langObj = languages.value.find((l) => l.value === lang);
   return langObj ? langObj.flag : "us";
 };
 
 const changeLanguage = async (lang: string) => {
   await setLocale(lang as SupportedLocale);
-  locale.value = lang;
 };
 
 onMounted(() => {

@@ -4,8 +4,8 @@
   "nav.profile": "الملف الشخصي",
   "nav.superAdmin": "المشرف العام",
   "nav.auditLogs": "سجلات التدقيق",
-  "nav.votingLocations": "Voting Locations",
-  "nav.tellers": "Tellers",
-  "nav.frontDesk": "Front Desk",
-  "nav.publicDisplay": "Election Results Display"
+  "nav.votingLocations": "مواقع التصويت",
+  "nav.tellers": "المحاسبون",
+  "nav.frontDesk": "مكتب الاستقبال",
+  "nav.publicDisplay": "عرض نتائج الانتخابات"
 }

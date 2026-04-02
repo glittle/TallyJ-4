@@ -46,5 +46,6 @@
   "common.appTitle": "ApuraJ v4",
   "common.appName": "ApuraJ",
   "common.versionDisplay": "v4 Beta",
-  "common.versionTooltip": "Version {version} ({date})"
+  "common.versionTooltip": "Version {version} ({date})",
+  "common.back": "Back"
 }

@@ -460,7 +460,7 @@ globalThis.addEventListener("keydown", (event) => {
     border-radius: 10px;
     width: fit-content;
     transform: rotate(-5deg);
-    animation: pulse 3s ease-in-out infinite;
+    animation: pulse-ltr 3s ease-in-out infinite;
   }
 
   // Animations
@@ -474,7 +474,7 @@ globalThis.addEventListener("keydown", (event) => {
     }
   }
 
-  @keyframes pulse {
+  @keyframes pulse-ltr {
     0%,
     100% {
       transform: rotate(-5deg) scale(1);
@@ -531,6 +531,25 @@ globalThis.addEventListener("keydown", (event) => {
 
     .cta-section p {
       font-size: 1rem;
+    }
+  }
+}
+
+@keyframes pulse-rtl {
+  0%,
+  100% {
+    transform: rotate(5deg) scale(1);
+  }
+  50% {
+    transform: rotate(5deg) scale(1.05);
+  }
+}
+
+:lang(ar),
+:lang(fa) {
+  .landing-container {
+    .testOnlyWarning {
+      animation: pulse-rtl 3s ease-in-out infinite;
     }
   }
 }
