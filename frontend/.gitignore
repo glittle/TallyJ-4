@@ -30,6 +30,9 @@ build_rollup_stats.html
 .vite/
 .vite/*
 .eslintcache
+
+# Generated locale bundles
+src/locales/bundled/
 .npm
 bun.lockb
 .eslint.auto-import-globals.js

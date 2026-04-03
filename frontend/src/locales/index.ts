@@ -43,22 +43,62 @@ function flatToNested(flat: any): any {
   return result;
 }
 
-// Load English synchronously as it is the fallback language
-const enModules = import.meta.glob("./en/*.json", { eager: true });
+// Check if we're in production build (bundled files should exist)
+const isProduction = import.meta.env.PROD || import.meta.env.MODE === 'production';
 
-// Load other languages dynamically
-const localeModulesAsync = import.meta.glob("./*/*.json");
+// Load English synchronously, others lazily
+const enBundledModule = import.meta.glob("./bundled/en.json", { eager: true });
+const enModules = isProduction ? {} : import.meta.glob("./en/*.json", { eager: true });
+const localeModulesAsync = import.meta.glob("./bundled/*.json");
 
-// Merge all JSON files for a locale
-function mergeLocaleFiles(modules: Record<string, any>): any {
-  let merged = {};
-
-  for (const path in modules) {
-    const content = modules[path].default || modules[path];
-    merged = deepMerge(merged, content);
+// Get English content synchronously (always available)
+function getEnglishContent(): any {
+  if (isProduction) {
+    // Production: use bundled English file
+    const content = enBundledModule["./bundled/en.json"]?.default || enBundledModule["./bundled/en.json"];
+    return content ? flatToNested(content) : {};
+  } else {
+    // Development: merge individual English files
+    let merged = {};
+    for (const path in enModules) {
+      const content = enModules[path].default || enModules[path];
+      merged = deepMerge(merged, content);
+    }
+    return flatToNested(merged);
   }
+}
 
-  return flatToNested(merged);
+// Get other locale content (async for dynamic loading)
+async function getLocaleContent(locale: string): any {
+  if (isProduction) {
+    // Production: load bundled file dynamically
+    const path = `./bundled/${locale}.json`;
+    const loadFn = localeModulesAsync[path];
+    if (loadFn) {
+      const mod = await loadFn();
+      const content = mod.default || mod;
+      return content ? flatToNested(content) : {};
+    }
+    return {};
+  } else {
+    // Development: dynamically load and merge individual files
+    const individualModules = import.meta.glob("./*/*.json");
+    const localeModules = Object.keys(individualModules)
+      .filter(path => path.startsWith(`./${locale}/`) && path.endsWith('.json'));
+
+    let merged = {};
+    for (const path of localeModules) {
+      const loadFn = individualModules[path];
+      if (loadFn) {
+        const mod = await loadFn();
+        const content = mod.default || mod;
+        if (content) {
+          merged = deepMerge(merged, content);
+        }
+      }
+    }
+    return flatToNested(merged);
+  }
 }
 
 export const supportedLocales = [
@@ -125,7 +165,7 @@ export const i18n = createI18n({
   locale: "en", // Start with English, we will switch it after loading
   fallbackLocale: "en",
   messages: {
-    en: deepMerge(common, mergeLocaleFiles(enModules)),
+    en: deepMerge(common, getEnglishContent()),
   },
 });
 
@@ -135,28 +175,11 @@ export async function loadLocaleMessages(locale: SupportedLocale) {
     return nextTick();
   }
 
-  const regex = new RegExp(`^\\./${locale}/.*\\.json$`);
-  let merged = {};
-  const loadPromises = [];
-
-  for (const path in localeModulesAsync) {
-    if (regex.test(path)) {
-      const loadFn = localeModulesAsync[path];
-      if (loadFn) {
-        loadPromises.push(
-          loadFn().then((mod: any) => {
-            const content = mod.default || mod;
-            merged = deepMerge(merged, content);
-          }),
-        );
-      }
-    }
-  }
-
-  await Promise.all(loadPromises);
-
-  const finalMessages = flatToNested(deepMerge(common, merged));
+  // Load locale content using the unified async function
+  const content = await getLocaleContent(locale);
+  const finalMessages = deepMerge(common, content);
   i18n.global.setLocaleMessage(locale, finalMessages);
+
   return nextTick();
 }
 

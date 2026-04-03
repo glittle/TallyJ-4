@@ -8,7 +8,7 @@ import { defineConfig } from "vite";
 import viteCompression from "vite-plugin-compression";
 
 // https://vite.dev/config/
-export default defineConfig(() => {
+export default defineConfig(({ command }) => {
   const projectRoot = dirname(fileURLToPath(import.meta.url));
   const branchName = execSync("git rev-parse --abbrev-ref HEAD", {
     encoding: "utf-8",
@@ -16,6 +16,11 @@ export default defineConfig(() => {
   const commitHash = execSync("git rev-parse --short HEAD", {
     encoding: "utf-8",
   }).trim();
+
+  // Use bundled locales for production build, individual files for development
+  const localeInclude = command === 'build'
+    ? [resolve(projectRoot, "./src/locales/bundled/*.json")]
+    : [resolve(projectRoot, "./src/locales/**/*.json")];
 
   return {
     resolve: {
@@ -33,10 +38,7 @@ export default defineConfig(() => {
     plugins: [
       vue(),
       VueI18nPlugin({
-        include: [
-          // fileURLToPath(new URL("./src/locales/**/*.json", import.meta.url)),
-          resolve(projectRoot, "./src/locales/**/*.json"),
-        ],
+        include: localeInclude,
       }),
       // Bundle analyzer - generates stats.html
       visualizer({
