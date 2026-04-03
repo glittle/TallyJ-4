@@ -4,7 +4,7 @@ import { setAppConfig } from "../config/appConfig";
 
 setAppConfig({
   apiUrl: "http://localhost:5016",
-  env: "development",
+  env: "test",
   sentryDsn: "",
 });
 

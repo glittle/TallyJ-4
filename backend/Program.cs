@@ -458,7 +458,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     app.MapControllers();
 
     // Add SPA fallback for web history routing - exclude systemhealth and hub routes
-    app.MapFallbackToFile("{*path:regex(^(?!api/|systemhealth$|hubs/|assets/|config.json).*$)}", "index.html").AllowAnonymous();
+    app.MapFallbackToFile("{*path:regex(^(?!api/|systemhealth|hubs/|assets/|config\\.json).*$)}", "index.html").AllowAnonymous();
 
     app.MapHub<Backend.Hubs.MainHub>("/hubs/main");
     app.MapHub<Backend.Hubs.AnalyzeHub>("/hubs/analyze");
