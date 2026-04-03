@@ -47,15 +47,7 @@ export default defineConfig(({ command }) => {
         gzipSize: true,
         brotliSize: true,
       }),
-      // Compression for assets
-      viteCompression({
-        algorithm: "gzip",
-        ext: ".gz",
-      }),
-      viteCompression({
-        algorithm: "brotliCompress",
-        ext: ".br",
-      }),
+
     ],
     build: {
       rollupOptions: {

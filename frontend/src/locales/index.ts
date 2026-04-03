@@ -1,6 +1,7 @@
 import { createI18n } from "vue-i18n";
 import { nextTick } from "vue";
-import common from "./common.json";
+import commonRaw from "./common.json";
+const common = flatToNested(commonRaw);
 
 // Utility function to deep merge objects
 function deepMerge(target: any, source: any): any {
@@ -43,62 +44,99 @@ function flatToNested(flat: any): any {
   return result;
 }
 
-// Check if we're in production build (bundled files should exist)
-const isProduction = import.meta.env.PROD || import.meta.env.MODE === 'production';
-
-// Load English synchronously, others lazily
+// Load bundled files (may not exist in development)
 const enBundledModule = import.meta.glob("./bundled/en.json", { eager: true });
-const enModules = isProduction ? {} : import.meta.glob("./en/*.json", { eager: true });
 const localeModulesAsync = import.meta.glob("./bundled/*.json");
+const useBundled = Object.keys(enBundledModule).length > 0;
+
+// Load individual English files (always available as fallback)
+const enModules = import.meta.glob("./en/*.json", { eager: true });
+
+console.log('Locale initialization:');
+console.log('- useBundled:', useBundled);
 
 // Get English content synchronously (always available)
 function getEnglishContent(): any {
-  if (isProduction) {
+  if (useBundled) {
     // Production: use bundled English file
-    const content = enBundledModule["./bundled/en.json"]?.default || enBundledModule["./bundled/en.json"];
-    return content ? flatToNested(content) : {};
-  } else {
-    // Development: merge individual English files
-    let merged = {};
-    for (const path in enModules) {
-      const content = enModules[path].default || enModules[path];
-      merged = deepMerge(merged, content);
+    console.log('Loading English from bundled file');
+
+    // Get the content from the bundled module
+    const moduleEntry = Object.values(enBundledModule)[0];
+    const content = moduleEntry?.default || moduleEntry;
+
+    if (content) {
+      console.log('English bundled content loaded successfully');
+      return flatToNested(content);
+    } else {
+      console.warn('Bundled English content not found, falling back to individual files');
     }
-    return flatToNested(merged);
   }
+
+  // Fallback: merge individual English files
+  console.log('Loading English from individual files');
+  let merged = {};
+  for (const path in enModules) {
+    const content = enModules[path].default || enModules[path];
+    merged = deepMerge(merged, content);
+  }
+  console.log('English individual content loaded, keys:', Object.keys(merged).length);
+  return flatToNested(merged);
 }
 
 // Get other locale content (async for dynamic loading)
 async function getLocaleContent(locale: string): any {
-  if (isProduction) {
-    // Production: load bundled file dynamically
-    const path = `./bundled/${locale}.json`;
-    const loadFn = localeModulesAsync[path];
-    if (loadFn) {
-      const mod = await loadFn();
-      const content = mod.default || mod;
-      return content ? flatToNested(content) : {};
-    }
-    return {};
-  } else {
-    // Development: dynamically load and merge individual files
-    const individualModules = import.meta.glob("./*/*.json");
-    const localeModules = Object.keys(individualModules)
-      .filter(path => path.startsWith(`./${locale}/`) && path.endsWith('.json'));
+  console.log(`Loading locale content for ${locale}, useBundled:`, useBundled);
 
-    let merged = {};
-    for (const path of localeModules) {
-      const loadFn = individualModules[path];
-      if (loadFn) {
+  if (useBundled) {
+    // Try bundled files first
+    const path = `./bundled/${locale}.json`;
+    console.log(`Attempting to load bundled locale ${locale} from ${path}`);
+    const loadFn = localeModulesAsync[path];
+
+    if (loadFn) {
+      try {
+        console.log(`Found load function for bundled ${locale}, calling it...`);
+        const mod = await loadFn();
+        const content = mod.default || mod;
+        if (content) {
+          console.log(`Successfully loaded bundled content for ${locale}`);
+          return flatToNested(content);
+        }
+      } catch (error) {
+        console.warn(`Failed to load bundled locale ${locale}:`, error);
+      }
+    } else {
+      console.warn(`No bundled load function found for ${locale}`);
+    }
+  }
+
+  // Fallback: load individual files
+  console.log(`Loading individual files for ${locale}`);
+  const individualModules = import.meta.glob("./*/*.json");
+  const localeModules = Object.keys(individualModules)
+    .filter(path => path.startsWith(`./${locale}/`) && path.endsWith('.json'));
+
+  console.log(`Found ${localeModules.length} individual files for ${locale}`);
+
+  let merged = {};
+  for (const path of localeModules) {
+    const loadFn = individualModules[path];
+    if (loadFn) {
+      try {
         const mod = await loadFn();
         const content = mod.default || mod;
         if (content) {
           merged = deepMerge(merged, content);
         }
+      } catch (error) {
+        console.warn(`Failed to load individual file ${path}:`, error);
       }
     }
-    return flatToNested(merged);
   }
+
+  console.log(`Loaded individual content for ${locale}, keys:`, Object.keys(merged).length);
+  return flatToNested(merged);
 }
 
 export const supportedLocales = [
