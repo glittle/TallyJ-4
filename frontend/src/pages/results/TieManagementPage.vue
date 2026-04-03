@@ -126,13 +126,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { ElMessageBox } from "element-plus";
 import { useNotifications } from "@/composables/useNotifications";
+import { ElMessageBox } from "element-plus";
+import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import { useResultStore } from "../../stores/resultStore";
-import type { TieDetailsDto, TieCandidateDto } from "../../types";
+import type { TieCandidateDto, TieDetailsDto } from "../../types";
 
 const router = useRouter();
 const route = useRoute();
@@ -165,7 +165,11 @@ async function loadTieDetails() {
     tieDetails.value = JSON.parse(JSON.stringify(details)); // Deep copy
     originalTieDetails.value = JSON.parse(JSON.stringify(details)); // Store original
   } catch (error) {
-    showErrorMessage(t("tieManagement.loadError"));
+    showErrorMessage(
+      t("tieManagement.loadError") +
+        " " +
+        (error instanceof Error ? error.message : ""),
+    );
   } finally {
     loading.value = false;
   }

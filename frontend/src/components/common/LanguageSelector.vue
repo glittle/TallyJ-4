@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { ElSelect, ElOption } from "element-plus";
-import { onMounted, computed } from "vue";
-import CountryFlag from "vue-country-flag-next";
 import { setLocale, supportedLocales, type SupportedLocale } from "@/locales";
+import { ElOption, ElSelect } from "element-plus";
+import { computed, onMounted } from "vue";
+import CountryFlag from "vue-country-flag-next";
+import { useI18n } from "vue-i18n";
 
 const { locale, t } = useI18n();
 
@@ -11,7 +11,7 @@ const languages = computed(() =>
   supportedLocales.map((lang) => ({
     ...lang,
     label: t(lang.name),
-  }))
+  })),
 );
 
 const getFlag = (lang: string) => {

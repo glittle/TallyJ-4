@@ -45,7 +45,10 @@ async function loadLocations() {
       pagination.value.pageSize,
     );
   } catch (error) {
-    showErrorMessage("Failed to load locations");
+    showErrorMessage(
+      "Failed to load locations. " +
+        (error instanceof Error ? error.message : ""),
+    );
   }
 }
 
@@ -103,8 +106,8 @@ function formatCoordinate(coord: string | undefined): string {
   if (!coord) {
     return "";
   }
-  const num = parseFloat(coord);
-  return isNaN(num) ? coord : num.toFixed(4);
+  const num = Number.parseFloat(coord);
+  return Number.isNaN(num) ? coord : num.toFixed(4);
 }
 
 function getStatusType(status: string) {
@@ -123,7 +126,7 @@ async function viewComputers(location: LocationDto) {
   try {
     await locationStore.fetchComputers(electionGuid, location.locationGuid);
   } catch (error: any) {
-    showErrorMessage("Failed to load computers");
+    showErrorMessage("Failed to load computers. " + (error.message || ""));
   }
 }
 

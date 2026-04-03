@@ -9,6 +9,7 @@ import viteCompression from "vite-plugin-compression";
 
 // https://vite.dev/config/
 export default defineConfig(() => {
+  const projectRoot = dirname(fileURLToPath(import.meta.url));
   const branchName = execSync("git rev-parse --abbrev-ref HEAD", {
     encoding: "utf-8",
   }).trim();
@@ -34,10 +35,7 @@ export default defineConfig(() => {
       VueI18nPlugin({
         include: [
           // fileURLToPath(new URL("./src/locales/**/*.json", import.meta.url)),
-          resolve(
-            dirname(fileURLToPath(import.meta.url)),
-            "./src/locales/**/*.json",
-          ),
+          resolve(projectRoot, "./src/locales/**/*.json"),
         ],
       }),
       // Bundle analyzer - generates stats.html

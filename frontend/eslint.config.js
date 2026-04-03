@@ -59,6 +59,6 @@ export default [
 
   // Ignore unnecessary files
   {
-    ignores: ["public", "dist", "src/api/generated", "*.cjs"],
+    ignores: ["public", "dist", "src/api/generated", "src/api/gen", "*.cjs"],
   },
 ];

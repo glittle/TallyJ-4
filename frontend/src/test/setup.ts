@@ -1,12 +1,13 @@
 import { createPinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
-import { setAppConfig } from "../config/appConfig";
+import { createAppConfig, setAppConfig } from "../config/appConfig";
 
-setAppConfig({
-  apiUrl: "http://localhost:5016",
-  env: "test",
-  sentryDsn: "",
-});
+setAppConfig(
+  createAppConfig({
+    env: "test",
+    sentryDsn: "",
+  }),
+);
 
 const testPinia = createPinia();
 const testRouter = createRouter({

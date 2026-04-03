@@ -1,13 +1,9 @@
 import {
+  deleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputer,
   getApiByElectionGuidLocationsByLocationGuidGetComputers,
   postApiByElectionGuidLocationsByLocationGuidRegisterComputer,
-  deleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputer,
 } from "../api/gen/configService/sdk.gen";
-import type {
-  ComputerDto,
-  RegisterComputerDto,
-  UpdateComputerDto,
-} from "../types";
+import type { ComputerDto, RegisterComputerDto } from "../types";
 
 export const computerService = {
   async getByLocation(

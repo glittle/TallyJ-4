@@ -3,14 +3,14 @@ import { ref } from "vue";
 import { resultService } from "../services/resultService";
 import { signalrService } from "../services/signalrService";
 import type {
+  DetailedStatisticsDto,
+  ElectionReportDto,
+  MonitorInfoDto,
+  PresentationDto,
+  ReportDataResponseDto,
   TallyResultDto,
   TallyStatisticsDto,
-  ElectionReportDto,
-  ReportDataResponseDto,
   TieDetailsDto,
-  PresentationDto,
-  MonitorInfoDto,
-  DetailedStatisticsDto,
 } from "../types";
 import type { TallyProgressEvent } from "../types/SignalREvents";
 
@@ -255,7 +255,7 @@ export const useResultStore = defineStore("result", () => {
 
       connection.on(
         "statusUpdate",
-        (message: string, showProgress: boolean) => {
+        (message: string, _showProgress: boolean) => {
           // Handle status update messages
           console.log("Tally status update:", message);
           // Could update a status message in the UI

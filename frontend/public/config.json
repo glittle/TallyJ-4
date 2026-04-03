@@ -1,6 +1,0 @@
-{
-  "apiUrl": "http://localhost:5016",
-  "env": "development",
-  "sentryDsn": "https://a68bf56cdcf8c9bce38b007f0d6df27b@o4511108941086720.ingest.us.sentry.io/4511108943577088",
-  "googleClientId": "475693566339-2s2hiq1cpeloorvfe5ejhu6gmkbj5la1.apps.googleusercontent.com"
-}

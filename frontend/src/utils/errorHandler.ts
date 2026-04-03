@@ -24,7 +24,7 @@ export function extractApiErrorMessage(error: any): string {
 
   if (apiError.errors && typeof apiError.errors === "object") {
     const validationErrors: string[] = [];
-    for (const [field, messages] of Object.entries(apiError.errors)) {
+    for (const [, messages] of Object.entries(apiError.errors)) {
       if (Array.isArray(messages)) {
         validationErrors.push(...messages);
       }
@@ -51,7 +51,7 @@ export function extractApiErrorMessage(error: any): string {
 
     if (data.errors && typeof data.errors === "object") {
       const validationErrors: string[] = [];
-      for (const [field, messages] of Object.entries(data.errors)) {
+      for (const [, messages] of Object.entries(data.errors)) {
         if (Array.isArray(messages)) {
           validationErrors.push(...messages);
         }

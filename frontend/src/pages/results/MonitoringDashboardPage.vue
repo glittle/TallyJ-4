@@ -239,25 +239,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { useNotifications } from "@/composables/useNotifications";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import {
-  DocumentChecked,
   Check,
-  Monitor,
+  DocumentChecked,
   Location,
+  Monitor,
 } from "@element-plus/icons-vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useResultStore } from "../../stores/resultStore";
 import type { MonitorInfoDto } from "../../types";
 
 const router = useRouter();
 const route = useRoute();
-const { t } = useI18n();
+// const { t } = useI18n();
 const resultStore = useResultStore();
-const { showErrorMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;

@@ -10,6 +10,13 @@ declare module "vue-router" {
   }
 }
 
+interface ImportMetaEnv {
+  readonly VITE_API_URL: string;
+  readonly VITE_ENV?: string;
+  readonly VITE_SENTRY_DSN?: string;
+  readonly VITE_GOOGLE_CLIENT_ID?: string;
+}
+
 declare global {
   var pinia: import("pinia").Pinia;
   var router: import("vue-router").Router;

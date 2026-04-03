@@ -1,24 +1,18 @@
-import * as signalR from "@microsoft/signalr";
 import { getAppConfig } from "@/config/appConfig";
 import { ConnectionState } from "@/types/SignalRConnection";
+import * as signalR from "@microsoft/signalr";
 
 class SignalRService {
-  private connections: Map<string, signalR.HubConnection> = new Map();
-  private connectionStates: Map<string, ConnectionState> = new Map();
+  private readonly connections: Map<string, signalR.HubConnection> = new Map();
+  private readonly connectionStates: Map<string, ConnectionState> = new Map();
 
   private get baseUrl(): string {
     return getAppConfig().apiUrl;
   }
 
-  async connect(
-    hubPath: string,
-    accessToken?: string,
-  ): Promise<signalR.HubConnection> {
+  async connect(hubPath: string): Promise<signalR.HubConnection> {
     const existingConnection = this.connections.get(hubPath);
-    if (
-      existingConnection &&
-      existingConnection.state === signalR.HubConnectionState.Connected
-    ) {
+    if (existingConnection?.state === signalR.HubConnectionState.Connected) {
       return existingConnection;
     }
 
@@ -98,36 +92,28 @@ class SignalRService {
     return this.connectionStates.get(hubPath) || ConnectionState.Disconnected;
   }
 
-  async connectToMainHub(accessToken?: string): Promise<signalR.HubConnection> {
-    return this.connect("/hubs/main", accessToken);
+  async connectToMainHub(): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/main");
   }
 
-  async connectToAnalyzeHub(
-    accessToken?: string,
-  ): Promise<signalR.HubConnection> {
-    return this.connect("/hubs/analyze", accessToken);
+  async connectToAnalyzeHub(): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/analyze");
   }
 
-  async connectToBallotImportHub(
-    accessToken?: string,
-  ): Promise<signalR.HubConnection> {
-    return this.connect("/hubs/ballot-import", accessToken);
+  async connectToBallotImportHub(): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/ballot-import");
   }
 
   async connectToPublicHub(): Promise<signalR.HubConnection> {
     return this.connect("/hubs/public");
   }
 
-  async connectToFrontDeskHub(
-    accessToken?: string,
-  ): Promise<signalR.HubConnection> {
-    return this.connect("/hubs/front-desk", accessToken);
+  async connectToFrontDeskHub(): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/front-desk");
   }
 
-  async connectToPeopleImportHub(
-    accessToken?: string,
-  ): Promise<signalR.HubConnection> {
-    return this.connect("/hubs/people-import", accessToken);
+  async connectToPeopleImportHub(): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/people-import");
   }
 
   async joinElection(electionGuid: string): Promise<void> {

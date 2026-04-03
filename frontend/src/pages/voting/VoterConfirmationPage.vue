@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
-import { ElCard, ElResult, ElButton } from "element-plus";
+import { ElButton, ElCard, ElResult } from "element-plus";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 
 const router = useRouter();
 const onlineVotingStore = useOnlineVotingStore();

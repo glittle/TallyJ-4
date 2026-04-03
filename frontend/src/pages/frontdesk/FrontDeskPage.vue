@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useLocationStore } from "@/stores/locationStore";
-import { useElectionStore } from "@/stores/electionStore";
-import { ElMessageBox } from "element-plus";
 import { useNotifications } from "@/composables/useNotifications";
-import type { ElTable } from "element-plus";
-import {
-  Search,
-  UserFilled,
-  Clock,
-  Warning,
-  Check,
-  User,
-} from "@element-plus/icons-vue";
 import { frontDeskService } from "@/services/frontDeskService";
 import { signalrService } from "@/services/signalrService";
+import { useElectionStore } from "@/stores/electionStore";
+import { useLocationStore } from "@/stores/locationStore";
 import type {
-  FrontDeskVoterDto,
   CheckInVoterDto,
   FrontDeskStatsDto,
+  FrontDeskVoterDto,
   UnregisterVoterDto,
   UpdatePersonFlagsDto,
 } from "@/types/FrontDesk";
+import {
+  Check,
+  Clock,
+  Search,
+  User,
+  UserFilled,
+  Warning,
+} from "@element-plus/icons-vue";
+import type { ElTable } from "element-plus";
+import { ElMessageBox } from "element-plus";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
@@ -40,7 +40,9 @@ const error = ref<string | null>(null);
 const signalrInitialized = ref(false);
 const searchQuery = ref("");
 
-const locations = computed(() => locationStore.locations);
+// will need locations for check-in location dropdown and to display location in voter history
+// const locations = computed(() => locationStore.locations);
+
 const currentElection = computed(() => electionStore.currentElection);
 
 // Parse election flags
@@ -646,21 +648,21 @@ function formatTimeShort(time?: string): string {
   return date.toLocaleTimeString();
 }
 
-function getProgressColor(percentage: number): string {
-  if (percentage < 30) {
-    return "#f56c6c";
-  }
-  if (percentage < 70) {
-    return "#e6a23c";
-  }
-  return "#67c23a";
-}
+// function getProgressColor(percentage: number): string {
+//   if (percentage < 30) {
+//     return "#f56c6c";
+//   }
+//   if (percentage < 70) {
+//     return "#e6a23c";
+//   }
+//   return "#67c23a";
+// }
 
 function getRowClassName({
-  row,
+  _row,
   rowIndex,
 }: {
-  row: FrontDeskVoterDto;
+  _row: FrontDeskVoterDto;
   rowIndex: number;
 }) {
   if (rowIndex === selectedIndex.value) {

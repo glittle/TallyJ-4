@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { ElMessageBox } from "element-plus";
 import { useNotifications } from "@/composables/useNotifications";
 import {
-  Search,
-  Plus,
-  MoreFilled,
   ArrowDown,
   Delete,
+  MoreFilled,
+  Plus,
+  Search,
   Upload,
 } from "@element-plus/icons-vue";
-import { usePeopleStore } from "../../stores/peopleStore";
-import type { PersonListDto } from "../../types";
+import { ElMessageBox } from "element-plus";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import PeopleTable from "../../components/people/PeopleTable.vue";
 import PersonFormDialog from "../../components/people/PersonFormDialog.vue";
+import { usePeopleStore } from "../../stores/peopleStore";
+import type { PersonListDto } from "../../types";
 
 const router = useRouter();
 const route = useRoute();
@@ -25,7 +25,6 @@ const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const searchQuery = ref("");
-const activeTab = ref("all");
 const showAddDialog = ref(false);
 const showEditDialog = ref(false);
 const editingPerson = ref<PersonListDto | null>(null);
@@ -39,8 +38,8 @@ const bulkDeleting = ref(false);
 
 const loading = computed(() => peopleStore.loading);
 const allPeople = computed(() => peopleStore.peopleList);
-const voters = computed(() => peopleStore.voters);
-const candidates = computed(() => peopleStore.candidates);
+//const voters = computed(() => peopleStore.voters);
+//const candidates = computed(() => peopleStore.candidates);
 
 const filteredPeople = computed(() => {
   if (!searchQuery.value) {

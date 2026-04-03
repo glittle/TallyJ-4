@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
-import { ElCard, ElButton, ElEmpty, ElTag, ElAlert } from "element-plus";
-import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
-import { useNotifications } from "../../composables/useNotifications";
+import { ElAlert, ElButton, ElEmpty, ElTag } from "element-plus";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { useNotifications } from "../../composables/useNotifications";
+import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 
 const router = useRouter();
 const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
-const { showError } = useNotifications();
+const { showErrorMessage } = useNotifications();
 
 onMounted(async () => {
   if (!onlineVotingStore.voterId) {
@@ -20,17 +20,17 @@ onMounted(async () => {
   try {
     await onlineVotingStore.loadAvailableElections(onlineVotingStore.voterId);
   } catch {
-    showError(t("voting.elections.loadError"));
+    showErrorMessage(t("voting.elections.loadError"));
   }
 });
 
-const openElections = computed(() =>
-  onlineVotingStore.availableElections.filter((e) => e.isOpen),
-);
+// const  openElections = computed(() =>
+//   onlineVotingStore.availableElections.filter((e) => e.isOpen),
+// );
 
-const otherElections = computed(() =>
-  onlineVotingStore.availableElections.filter((e) => !e.isOpen),
-);
+// const otherElections = computed(() =>
+//   onlineVotingStore.availableElections.filter((e) => !e.isOpen),
+// );
 
 function selectElection(electionGuid: string) {
   router.push(`/vote/${electionGuid}`);

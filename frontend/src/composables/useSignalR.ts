@@ -1,7 +1,7 @@
-import { onUnmounted, ref, computed } from "vue";
 import { signalrService } from "@/services/signalrService";
 import { ConnectionState } from "@/types/SignalRConnection";
 import type { HubConnection } from "@microsoft/signalr";
+import { computed, onUnmounted, ref } from "vue";
 
 export function useSignalR(hubPath: string) {
   const connection = ref<HubConnection | undefined>(
@@ -43,9 +43,9 @@ export function useSignalR(hubPath: string) {
     return connection.value.invoke(methodName, ...args);
   }
 
-  async function connect(accessToken?: string) {
+  async function connect() {
     try {
-      connection.value = await signalrService.connect(hubPath, accessToken);
+      connection.value = await signalrService.connect(hubPath);
       connectionState.value = signalrService.getConnectionState(hubPath);
     } catch (error) {
       console.error(`Failed to connect to ${hubPath}:`, error);

@@ -1,11 +1,12 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 import { electionService } from "../services/electionService";
 import { signalrService } from "../services/signalrService";
 
+import { ElMessage } from "element-plus";
 import type {
-  ElectionDto,
   CreateElectionDto,
+  ElectionDto,
   UpdateElectionDto,
 } from "../types";
 import type { ElectionUpdateEvent } from "../types/SignalREvents";
@@ -246,6 +247,11 @@ export const useElectionStore = defineStore("election", () => {
     newStatus: string,
   ) {
     const message = `${electionName} ${statusType} status changed to: ${newStatus}`;
+    ElMessage({
+      message,
+      type: "info",
+      duration: 5000,
+    });
   }
 
   async function joinElection(electionGuid: string) {

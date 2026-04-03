@@ -10,9 +10,8 @@ declare global {
 declare const FB: any;
 declare const Kakao: any;
 
-import { getAppConfig } from "@/config/appConfig";
-import type { AppConfig } from "@/config/appConfig";
 import { useNotifications } from "@/composables/useNotifications";
+import { getAppConfig } from "@/config/appConfig";
 import type { FormInstance, FormRules } from "element-plus";
 import {
   computed,
@@ -25,9 +24,9 @@ import {
 } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
+import { getApiPublicAuthConfig } from "../api/gen/configService/sdk.gen";
 import TelegramLoginButton from "../components/auth/TelegramLoginButton.vue";
 import { useAuthStore } from "../stores/authStore";
-import { getApiPublicAuthConfig } from "../api/gen/configService/sdk.gen";
 
 const { t, locale } = useI18n();
 const router = useRouter();

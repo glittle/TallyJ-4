@@ -6,7 +6,7 @@ import "element-plus/dist/index.css";
 import "./style.css";
 
 import App from "./App.vue";
-import { type AppConfig, setAppConfig } from "./config/appConfig";
+import { loadAppConfig, setAppConfig } from "./config/appConfig";
 import { TOKEN_REFRESH_CONFIG } from "./config/tokenRefreshConfig";
 import { i18n } from "./locales";
 import { router } from "./router/router";
@@ -17,8 +17,7 @@ import { tokenRefreshService } from "./services/tokenRefreshService";
 import * as Sentry from "@sentry/vue";
 
 async function init() {
-  const response = await fetch("./config.json");
-  const config: AppConfig = await response.json();
+  const config = await loadAppConfig();
   setAppConfig(config);
 
   const { initApiClient } = await import("./api/config");

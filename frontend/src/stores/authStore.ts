@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { getApiAuthMe } from "../api/gen/configService/sdk.gen";
 import { useApiErrorHandler } from "../composables/useApiErrorHandler";
 import { TOKEN_REFRESH_CONFIG } from "../config/tokenRefreshConfig";
-import { getApiAuthMe } from "../api/gen/configService/sdk.gen";
 import {
   authService,
   type LoginRequest,
@@ -312,9 +312,11 @@ export const useAuthStore = defineStore("auth", () => {
 
     try {
       await authService.logout();
-    } catch {}
+    } catch {
+      // Even if logout API call fails, we have already cleared client state and cookies
+    }
 
-    window.location.href = "/";
+    globalThis.location.href = "/";
   }
 
   return {
