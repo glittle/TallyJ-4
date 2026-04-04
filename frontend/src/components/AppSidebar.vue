@@ -60,11 +60,7 @@ function goBackToElections() {
   <nav class="app-sidebar" role="navigation" aria-label="Main navigation">
     <div class="logo">
       <div class="logoTop">
-        <img
-          src="/logo-zoom.png"
-          :alt="$t('common.logoAlt')"
-          style="height: 24px; vertical-align: middle; margin-left: 8px"
-        />
+        <img src="/assets/logo-trans.png" :alt="$t('common.logoAlt')" />
         <h2>{{ $t("common.appTitle") }}</h2>
       </div>
       <div class="version-tooltip" :title="versionDate">
@@ -73,14 +69,6 @@ function goBackToElections() {
     </div>
     <div class="testOnlyWarning">
       {{ $t("common.testOnlyShort") }}
-    </div>
-
-    <div class="statusDocLink">
-      <a
-        href="https://docs.google.com/document/d/1WXrVy2Jl3Lk-Vs1k77t2QnrrdK5zjzSeHMXnOx0Deao/edit?usp=sharing"
-        target="statusDoc"
-        >Status & Feedback Document V4</a
-      >
     </div>
 
     <!-- Election breadcrumb navigation -->
@@ -126,6 +114,14 @@ function goBackToElections() {
         <span>{{ $t("nav.superAdmin") }}</span>
       </el-menu-item>
     </el-menu>
+
+    <div class="statusDocLink">
+      <a
+        href="https://docs.google.com/document/d/1WXrVy2Jl3Lk-Vs1k77t2QnrrdK5zjzSeHMXnOx0Deao/edit?usp=sharing"
+        target="statusDoc"
+        >Status & Feedback Document V4</a
+      >
+    </div>
   </nav>
 </template>
 
@@ -145,6 +141,9 @@ function goBackToElections() {
     justify-content: center;
     align-items: center;
     gap: 10px;
+    img {
+      height: 2.5em;
+    }
   }
 
   .version-tooltip {
@@ -225,10 +224,10 @@ function goBackToElections() {
 
   .testOnlyWarning {
     padding: 0.5em 0.25em;
-    margin: 0 0.5em;
+    margin: -0.5em 0.5em 1em;
     text-align: center;
     background-color: var(--el-color-error);
-    color: var(--color-sidebar-text);
+    color: var(--color-error-50);
     font-size: 1.5em;
     font-weight: bold;
     border-radius: 4px;
@@ -237,7 +236,7 @@ function goBackToElections() {
   .statusDocLink {
     padding: 0 0.5em;
     text-align: center;
-    margin: 2em 0.5em 2em;
+    margin: auto 0.5em 1em;
     border: 2px solid var(--el-color-error);
     border-radius: 4px;
   }

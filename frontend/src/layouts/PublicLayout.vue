@@ -26,11 +26,7 @@ const handleLogoClick = () => {
     <div class="public-header">
       <div class="logo" style="cursor: pointer" @click="handleLogoClick">
         <h2>
-          <img
-            src="/logo-zoom.png"
-            :alt="$t('common.logoAlt')"
-            style="height: 24px; vertical-align: middle; margin-left: 8px"
-          />
+          <img src="/assets/logo-trans.png" :alt="$t('common.logoAlt')" />
           <span>
             <div>{{ $t("common.versionDisplay") }}</div>
             <div class="versionName" :title="versionDate">
@@ -96,9 +92,7 @@ const handleLogoClick = () => {
     font-weight: 600;
 
     img {
-      background-color: rgba(255, 255, 255, 0.4);
-      padding: 4px;
-      border-radius: 4px;
+      height: 2em;
     }
   }
 

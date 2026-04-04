@@ -454,7 +454,7 @@ globalThis.addEventListener("keydown", (event) => {
     text-align: center;
     margin-left: 5%;
     background-color: var(--el-color-error);
-    color: var(--color-sidebar-text);
+    color: var(--color-error-50);
     font-size: 1.3em;
     font-weight: bold;
     border-radius: 10px;
