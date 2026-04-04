@@ -479,40 +479,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     });
 }
 
-string? webRootFolder = null; // dev uses vite directly
-if (siteType != "Dev")
-{
-    string suffix;
-    if (siteType == "UAT")
-    {
-        suffix = "-uat";
-    }
-    else if (siteType == "Prod")
-    {
-        suffix = "-prod";
-    }
-    else
-    {
-        suffix = "-x"; // not known!
-    }
-
-    webRootFolder = "wwwroot" + suffix;
-}
-
-if (webRootFolder == null)
-{
-    Log.Information("Using Vite Development Server - no webRoot folder");
-}
-else
-{
-    Log.Information("Using {WwwRoot} folder: {WebRootPath}", "wwwroot", webRootFolder);
-}
-
-var builder = webRootFolder == null
-  ? WebApplication.CreateBuilder(args)
-  : WebApplication.CreateBuilder(
-    new WebApplicationOptions { Args = args, WebRootPath = webRootFolder }
-  );
+var builder = WebApplication.CreateBuilder(args);
 
 AddLogging(builder);
 ConfigureServices(builder);
