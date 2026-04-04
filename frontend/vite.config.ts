@@ -128,7 +128,7 @@ export default defineConfig(({ command }) => {
       cssCodeSplit: true, // Split CSS into separate chunks
       reportCompressedSize: true, // Report compressed sizes
     },
-    publicDir: "public", // Ensure service worker is copied
+    publicDir: "public",
     define: {
       "process.env.BRANCH_NAME": JSON.stringify(branchName),
       "process.env.COMMIT_HASH": JSON.stringify(commitHash),
