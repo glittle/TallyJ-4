@@ -1,0 +1,81 @@
+name: Frontend Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - frontend/**
+      - "!backend/**"
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Npm Install
+        run: npm install
+        working-directory: frontend
+
+      - name: Vite Build
+        run: npx vite build
+        working-directory: frontend
+
+      - name: Zip Dist
+        shell: pwsh
+        run: >
+          Compress-Archive
+          -Path "${{ github.workspace }}\frontend\dist\*"
+          -DestinationPath "${{ github.workspace }}\artifact_staging\frontend.zip"
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend_pkgs
+          path: "${{ github.workspace }}\\artifact_staging\\"
+
+  deploy:
+    name: Deploy to IIS
+    runs-on: [self-hosted, windows, WIN16A]
+    needs: build
+    environment: Win16a
+    permissions: {}
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend_pkgs
+          path: "${{ github.workspace }}\\frontend_pkgs"
+
+      - name: Deploy to wwwroot-uat
+        shell: pwsh
+        run: |
+          $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          & $msdeploy `
+            -verb:sync `
+            "-source:package=${{ github.workspace }}\frontend_pkgs\frontend.zip" `
+            "-dest:iisApp=TallyJv4-UAT/wwwroot-uat" `
+            -enableRule:AppOffline `
+            -allowUntrusted
+
+      - name: Deploy to wwwroot-prod
+        shell: pwsh
+        run: |
+          $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          & $msdeploy `
+            -verb:sync `
+            "-source:package=${{ github.workspace }}\frontend_pkgs\frontend.zip" `
+            "-dest:iisApp=TallyJv4-UAT/wwwroot-prod" `
+            -allowUntrusted
