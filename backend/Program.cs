@@ -426,6 +426,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
 
     app.UseHttpsRedirection();
     app.UseDefaultFiles();
+    app.UseMiddleware<ConfigMiddleware>();
     app.UseStaticFiles();
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseCors("AllowFrontend");
