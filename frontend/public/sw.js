@@ -5,7 +5,13 @@ const API_CACHE_NAME = 'tallyj-api-v1';
 // Files to cache immediately
 const STATIC_FILES = [
   '/logo.png',
-  '/logo-zoom.png',
+  '/favicon.svg',
+  '/favicon-96x96.png',
+  '/favicon.ico',
+  '/apple-touch-icon.png',
+  '/web-app-manifest-192x192.png',
+  '/web-app-manifest-512x512.png',
+  '/site.webmanifest',
 ];
 
 // Install event - cache static files
