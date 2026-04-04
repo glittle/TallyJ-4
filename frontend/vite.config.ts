@@ -17,11 +17,6 @@ export default defineConfig(({ command }) => {
     encoding: "utf-8",
   }).trim();
 
-  // Use bundled locales for production build, individual files for development
-  const localeInclude = command === 'build'
-    ? [resolve(projectRoot, "./src/locales/bundled/*.json")]
-    : [resolve(projectRoot, "./src/locales/**/*.json")];
-
   return {
     resolve: {
       alias: {
@@ -37,9 +32,7 @@ export default defineConfig(({ command }) => {
     },
     plugins: [
       vue(),
-      VueI18nPlugin({
-        include: localeInclude,
-      }),
+      VueI18nPlugin({}),
       // Bundle analyzer - generates stats.html
       visualizer({
         filename: "dist/stats.html",

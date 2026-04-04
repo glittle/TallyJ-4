@@ -33,6 +33,7 @@ build_rollup_stats.html
 
 # Generated locale bundles
 src/locales/bundled/
+
 .npm
 bun.lockb
 .eslint.auto-import-globals.js
