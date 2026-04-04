@@ -35,6 +35,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { getApiPublicAuthConfig } from "../../api/gen/configService/sdk.gen";
+import { getAppConfig } from "../../config/appConfig";
 import TelegramLoginButton from "../../components/auth/TelegramLoginButton.vue";
 import { useNotifications } from "../../composables/useNotifications";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
@@ -44,7 +45,7 @@ declare const Kakao: any;
 
 const router = useRouter();
 const route = useRoute();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
@@ -55,6 +56,7 @@ const googleButtonContainer = ref<HTMLElement | null>(null);
 const googleReady = ref(false);
 const googleError = ref(false);
 const gisScriptLoaded = ref(false);
+let gisCleanup: (() => void) | null = null;
 
 const fbReady = ref(false);
 const fbError = ref(false);
@@ -279,8 +281,20 @@ const loadGisScript = (): Promise<void> => {
 };
 
 const fetchGoogleClientId = async (): Promise<string | null> => {
+  // First check app config
+  const appConfig = getAppConfig();
+  if (appConfig.googleClientId) {
+    return appConfig.googleClientId;
+  }
+
+  // Then check backend API
   const config = await fetchAuthConfig();
-  return config?.googleClientId ?? null;
+  if (config?.googleClientId) {
+    return config.googleClientId;
+  }
+
+  // Finally fallback to environment variable
+  return import.meta.env.VITE_GOOGLE_CLIENT_ID || null;
 };
 
 let isInitializingGis = false;
@@ -302,7 +316,8 @@ const initGoogleSignIn = async () => {
       client_id: clientId,
       callback: handleGoogleCredentialCallback,
       auto_select: false,
-      cancel_on_tap_outside: false,
+      cancel_on_tap_outside: true,
+      use_fedcm_for_prompt: false,
     });
     await nextTick();
     if (googleButtonContainer.value) {
@@ -312,8 +327,21 @@ const initGoogleSignIn = async () => {
         text: "signin_with",
         shape: "rectangular",
         width: 300,
+        locale: locale.value,
       });
       googleReady.value = true;
+
+      // Store cleanup function
+      gisCleanup = () => {
+        if (typeof window.google !== "undefined" && googleReady.value) {
+          try {
+            window.google.accounts.id.cancel();
+          } catch {
+            // Ignore errors from cancel
+          }
+        }
+        googleReady.value = false;
+      };
     }
   } catch (error) {
     console.error("Failed to initialize Google Sign-In:", error);
@@ -562,14 +590,10 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  if (window.google !== undefined && googleReady.value) {
-    try {
-      window.google.accounts.id.cancel();
-    } catch {
-      /* ignore */
-    }
+  if (gisCleanup) {
+    gisCleanup();
+    gisCleanup = null;
   }
-  googleReady.value = false;
   globalThis.removeEventListener("keydown", handleKeydown);
 });
 </script>
