@@ -9,9 +9,10 @@ on:
       - "!backend/**"
 
 jobs:
-  build:
-    name: Build
-    runs-on: windows-latest
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: [self-hosted, windows, WIN16A]
+    environment: Win16a
     permissions:
       contents: read
 
@@ -32,50 +33,17 @@ jobs:
         run: npx vite build
         working-directory: frontend
 
-      - name: Zip Dist
-        shell: pwsh
-        run: >
-          Compress-Archive
-          -Path "${{ github.workspace }}\frontend\dist\*"
-          -DestinationPath "${{ github.workspace }}\artifact_staging\frontend.zip"
-
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend_pkgs
-          path: "${{ github.workspace }}\\artifact_staging\\"
-
-  deploy:
-    name: Deploy to IIS
-    runs-on: [self-hosted, windows, WIN16A]
-    needs: build
-    environment: Win16a
-    permissions: {}
-
-    steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend_pkgs
-          path: "${{ github.workspace }}\\frontend_pkgs"
-
       - name: Deploy to wwwroot-uat
         shell: pwsh
         run: |
-          $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          & $msdeploy `
-            -verb:sync `
-            "-source:package=${{ github.workspace }}\frontend_pkgs\frontend.zip" `
-            "-dest:iisApp=TallyJv4-UAT/wwwroot-uat" `
-            -enableRule:AppOffline `
-            -allowUntrusted
+          $dest = "${{ vars.IIS_FRONTEND_UAT_PATH }}"
+          Set-Content -Path "$dest\app_offline.htm" -Value "Deploying..."
+          robocopy "${{ github.workspace }}\frontend\dist" "$dest" /MIR /NFL /NDL /NJH /NJS /XF app_offline.htm
+          if ($LASTEXITCODE -le 7) { Remove-Item "$dest\app_offline.htm" -ErrorAction SilentlyContinue; exit 0 }
 
       - name: Deploy to wwwroot-prod
         shell: pwsh
         run: |
-          $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          & $msdeploy `
-            -verb:sync `
-            "-source:package=${{ github.workspace }}\frontend_pkgs\frontend.zip" `
-            "-dest:iisApp=TallyJv4-UAT/wwwroot-prod" `
-            -allowUntrusted
+          $dest = "${{ vars.IIS_FRONTEND_PROD_PATH }}"
+          robocopy "${{ github.workspace }}\frontend\dist" "$dest" /MIR /NFL /NDL /NJH /NJS
+          if ($LASTEXITCODE -le 7) { exit 0 }

@@ -10,9 +10,10 @@ on:
       - "!frontend/**"
 
 jobs:
-  build:
-    name: Build
-    runs-on: windows-latest
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: [self-hosted, windows, WIN16A]
+    environment: Win16a
     permissions:
       contents: read
 
@@ -28,46 +29,30 @@ jobs:
       - name: Run Unit Tests
         run: dotnet test "**/*Tests/*.csproj" --configuration Release --verbosity quiet
 
-      - name: Package Web Project
-        run: >
-          dotnet publish backend/Backend.csproj
-          --configuration Release
-          --output "${{ github.workspace }}\artifact_staging"
-
-      - name: Zip Published Output
-        shell: pwsh
-        run: >
-          Compress-Archive
-          -Path "${{ github.workspace }}\artifact_staging\*"
-          -DestinationPath "${{ github.workspace }}\Backend.zip"
-
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend_pkg
-          path: "${{ github.workspace }}\\Backend.zip"
-
-  deploy:
-    name: Deploy to IIS
-    runs-on: [self-hosted, windows, WIN16A]
-    needs: build
-    environment: Win16a
-    permissions: {}
-
-    steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: backend_pkg
-          path: "${{ github.workspace }}\\backend_pkg"
-
-      - name: Deploy to IIS (TallyJv4-UAT)
+      - name: Publish Web Project
         shell: pwsh
         run: |
-          $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          & $msdeploy `
-            -verb:sync `
-            "-source:package=${{ github.workspace }}\backend_pkg\Backend.zip" `
-            "-dest:iisApp=TallyJv4-UAT" `
-            -enableRule:AppOffline `
-            -allowUntrusted
+          dotnet publish backend/Backend.csproj `
+            --configuration Release `
+            --output "${{ github.workspace }}\publish_output"
+
+      - name: Take App Offline
+        shell: pwsh
+        run: |
+          $appPath = "${{ vars.IIS_BACKEND_PATH }}"
+          Set-Content -Path "$appPath\app_offline.htm" -Value "Deploying..."
+
+      - name: Deploy to IIS
+        shell: pwsh
+        run: |
+          $appPath = "${{ vars.IIS_BACKEND_PATH }}"
+          robocopy "${{ github.workspace }}\publish_output" "$appPath" /MIR /NFL /NDL /NJH /NJS
+          if ($LASTEXITCODE -le 7) { exit 0 }
+
+      - name: Bring App Online
+        if: always()
+        shell: pwsh
+        run: |
+          $appPath = "${{ vars.IIS_BACKEND_PATH }}"
+          $offlineFile = "$appPath\app_offline.htm"
+          if (Test-Path $offlineFile) { Remove-Item $offlineFile }
