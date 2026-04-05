@@ -1,16 +1,146 @@
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import vue from "@vitejs/plugin-vue";
 import { execSync } from "node:child_process";
-import path, { dirname, resolve } from "node:path";
+import path from "node:path";
 import { fileURLToPath, URL } from "node:url";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
-import viteCompression from "vite-plugin-compression";
-import devtoolsJson from 'vite-plugin-devtools-json';
+import devtoolsJson from "vite-plugin-devtools-json";
+
+type ChunkRule = { patterns: string[]; chunk: string };
+
+const vendorChunkRules: ChunkRule[] = [
+  { patterns: ["element-plus"], chunk: "vendor-element-plus" },
+  { patterns: ["@sentry"], chunk: "vendor-sentry" },
+  { patterns: ["vue-i18n", "@intlify"], chunk: "vendor-i18n" },
+  { patterns: ["@microsoft/signalr"], chunk: "vendor-signalr" },
+  { patterns: ["chart.js", "vue-chartjs"], chunk: "vendor-chartjs" },
+  { patterns: ["qrcode"], chunk: "vendor-qrcode" },
+  { patterns: ["axios", "localforage", "@vueuse"], chunk: "vendor-utils" },
+];
+
+const srcChunkRules: ChunkRule[] = [
+  { patterns: ["/src/api/gen/"], chunk: "api-client" },
+  {
+    patterns: [
+      "/src/pages/voting/",
+      "/src/stores/onlineVotingStore",
+      "/src/services/onlineVotingService",
+      "/src/services/voteService",
+      "/src/components/auth/",
+    ],
+    chunk: "voting",
+  },
+  {
+    patterns: [
+      "/src/layouts/MainLayout",
+      "/src/components/AppHeader",
+      "/src/components/AppSidebar",
+    ],
+    chunk: "admin-layout",
+  },
+  {
+    patterns: [
+      "/src/pages/ballots/",
+      "/src/components/ballots/",
+      "/src/stores/ballotStore.",
+      "/src/services/ballotService",
+    ],
+    chunk: "ballots",
+  },
+  {
+    patterns: [
+      "/src/pages/results/",
+      "/src/components/results/",
+      "/src/components/charts/",
+      "/src/stores/resultStore",
+      "/src/services/resultService",
+      "/src/services/reportService",
+    ],
+    chunk: "results",
+  },
+  {
+    patterns: ["/src/pages/elections/", "/src/components/elections/"],
+    chunk: "elections",
+  },
+  {
+    patterns: [
+      "/src/pages/people/",
+      "/src/components/people/",
+      "/src/stores/peopleStore.",
+      "/src/services/peopleService",
+      "/src/services/peopleImportService",
+    ],
+    chunk: "people",
+  },
+  {
+    patterns: ["/src/pages/locations/", "/src/components/locations/"],
+    chunk: "locations",
+  },
+  {
+    patterns: [
+      "/src/pages/tellers/",
+      "/src/components/tellers/",
+      "/src/stores/tellerStore",
+      "/src/services/tellerService",
+    ],
+    chunk: "tellers",
+  },
+  {
+    patterns: ["/src/pages/frontdesk/", "/src/services/frontDeskService"],
+    chunk: "frontdesk",
+  },
+  {
+    patterns: [
+      "/src/pages/SuperAdminDashboardPage",
+      "/src/services/superAdminService",
+    ],
+    chunk: "super-admin",
+  },
+  {
+    patterns: [
+      "/src/pages/AuditLogsPage",
+      "/src/stores/auditLogStore",
+      "/src/services/auditLogService",
+    ],
+    chunk: "audit",
+  },
+  {
+    patterns: [
+      "/src/pages/PublicDisplayPage",
+      "/src/stores/publicStore",
+      "/src/services/publicService",
+    ],
+    chunk: "public-display",
+  },
+];
+
+function matchChunkRule(n: string, rules: ChunkRule[]): string | undefined {
+  return rules.find((r) => r.patterns.some((p) => n.includes(p)))?.chunk;
+}
+
+function getManualChunks(id: string): string | undefined {
+  const n = id.replaceAll("\\", "/");
+
+  if (n.includes("node_modules")) {
+    return matchChunkRule(n, vendorChunkRules) ?? "vendor";
+  }
+
+  const bundledLocale = /\/locales\/bundled\/(\w+)\.json/.exec(n);
+  if (bundledLocale) {
+    return `locale-${bundledLocale[1]}`;
+  }
+
+  const individualLocale = /\/locales\/([a-z]{2})\/\w+\.json/.exec(n);
+  if (individualLocale && individualLocale[1] !== "en") {
+    return `locale-${individualLocale[1]}-dev`;
+  }
+
+  return matchChunkRule(n, srcChunkRules);
+}
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => {
-  const projectRoot = dirname(fileURLToPath(import.meta.url));
+export default defineConfig(() => {
   const branchName = execSync("git rev-parse --abbrev-ref HEAD", {
     encoding: "utf-8",
   }).trim();
@@ -42,7 +172,6 @@ export default defineConfig(({ command }) => {
         gzipSize: true,
         brotliSize: true,
       }),
-
     ],
     build: {
       rollupOptions: {
@@ -56,79 +185,21 @@ export default defineConfig(({ command }) => {
           warn(warning);
         },
         output: {
-          manualChunks: (id) => {
-            // Vendor chunks
-            if (id.includes("node_modules")) {
-              if (id.includes("element-plus")) {
-                return "element-plus";
-              }
-              if (id.includes("vue-i18n") || id.includes("@intlify")) {
-                return "i18n";
-              }
-              if (id.includes("@microsoft/signalr")) {
-                return "signalr";
-              }
-              if (
-                id.includes("axios") ||
-                id.includes("localforage") ||
-                id.includes("@vueuse")
-              ) {
-                return "utils";
-              }
-              // Combine Vue ecosystem packages into vendor to avoid circular dependencies
-              return "vendor";
-            }
-
-            // API client chunk - separate the large generated SDK
-            if (id.includes("/src/api/gen/")) {
-              return "api-client";
-            }
-
-            // Feature chunks
-            if (id.includes("/src/pages/voting/")) {
-              return "voting";
-            }
-            if (
-              id.includes("/src/layouts/MainLayout") ||
-              id.includes("/src/components/AppHeader") ||
-              id.includes("/src/components/AppSidebar")
-            ) {
-              return "admin-layout";
-            }
-            if (id.includes("/src/pages/elections/")) {
-              return "elections";
-            }
-            if (id.includes("/src/pages/results/")) {
-              return "results";
-            }
-            if (id.includes("/src/pages/people/")) {
-              return "people";
-            }
-            if (id.includes("/src/pages/ballots/")) {
-              return "ballots";
-            }
-            if (id.includes("/src/pages/SuperAdminDashboardPage")) {
-              return "super-admin";
-            }
-          },
+          manualChunks: getManualChunks,
           chunkFileNames: "assets/[name]-[hash].js",
           entryFileNames: "assets/[name]-[hash].js",
           assetFileNames: "assets/[name]-[hash].[ext]",
         },
       },
-      chunkSizeWarningLimit: 1500, // Increase warning limit to 1.5MB
-      minify: "terser", // Use terser for better compression
-      sourcemap: true, // Disable sourcemaps in production
-      terserOptions: {
-        compress: {
-          drop_console: true, // Remove console.log in production
-          drop_debugger: true, // Remove debugger statements
-        },
-      },
+      chunkSizeWarningLimit: 1500,
+      sourcemap: true,
       // Optimize assets
       assetsInlineLimit: 4096, // Inline assets smaller than 4kb
       cssCodeSplit: true, // Split CSS into separate chunks
       reportCompressedSize: true, // Report compressed sizes
+    },
+    esbuild: {
+      drop: ["console", "debugger"],
     },
     publicDir: "public",
     define: {

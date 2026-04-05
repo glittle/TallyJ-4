@@ -56,6 +56,9 @@ void ConfigureServices(WebApplicationBuilder builder)
     builder.Configuration.AddJsonFile($"appsettings.{machineName}.json", optional: true, reloadOnChange: true);
     builder.Configuration.AddJsonFile($"appsettings.{siteType}.json", optional: true, reloadOnChange: true);
 
+    // Add version.json from repository root
+    builder.Configuration.AddJsonFile("../version.json", optional: false, reloadOnChange: false);
+
     // look in a folder given by an environment variable, useful for docker and some hosting environments
     var envConfigPath = Environment.GetEnvironmentVariable("TALLYJ_CONFIG_PATH");
     if (!string.IsNullOrEmpty(envConfigPath))
@@ -318,6 +321,7 @@ void RegisterApplicationServices(IServiceCollection services)
     services.AddScoped<TallyJv2ElectionImportService>();
     services.AddScoped<JsonElectionImportExportService>();
     services.AddScoped<ElectionExportImportService>();
+    services.AddSingleton<IRemoteLogService, RemoteLogService>();
 }
 
 void RegisterAuthServices(IServiceCollection services)
@@ -409,6 +413,21 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
 
         await context.Database.MigrateAsync();
         await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
+    }
+
+    // Send startup notification to remote log
+    {
+        using var scope = app.Services.CreateScope();
+        var remoteLogService = scope.ServiceProvider.GetRequiredService<IRemoteLogService>();
+        await remoteLogService.SendLogAsync("TallyJ backend has started up", "Info", $"SiteType: {siteType}, SiteMode: {siteMode}, Machine: {machineName}");
+    }
+
+    // Log version information
+    {
+        var version = configuration["version"];
+        var buildDate = configuration["buildDate"];
+        var buildDateBadi = configuration["buildDateBadi"];
+        Log.Information("Version: {Version}, Build Date: {BuildDate} / {BuildDateBadi}", version, buildDate, buildDateBadi);
     }
 
     app.UseExceptionHandler();

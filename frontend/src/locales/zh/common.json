@@ -40,12 +40,13 @@
   "common.view": "查看",
   "common.warning": "警告",
   "common.yes": "是",
-  "common.testOnlyShort": "仅供测试。不适用于真实选举。",
-  "common.testOnlyLong": "计票J v4 Beta 仅供测试，尚未准备好用于真实选举。",
+  "common.testOnlyShort": "计票J 版本 4 的此预览版仍在开发中。目前不应用于实际选举。",
+  "common.testOnlyLong": "{note} 计票J 版本 4 的此预览版仍在开发中。{br}您可以登录并试用功能，但目前不应用于巴哈伊选举。{br}我们欢迎您对新设计的反馈，因为我们将继续改进系统。",
+  "common.testOnlyLongNote": "请注意：",
   "common.logoAlt": "计票J 标志",
-  "common.appTitle": "计票J v4",
+  "common.appTitle": "计票J 版本 4",
   "common.appName": "计票J",
-  "common.versionDisplay": "v4 Beta",
-  "common.versionTooltip": "Version {version} ({date})",
-  "common.back": "Back"
+  "common.versionDisplay": "版本 4 Beta",
+  "common.back": "返回",
+  "common.badi.monthNames": "阿亚米哈,耀月,辉月,美月,宏月,光月,仁月,言月,完月,名月,能月,意月,知月,力月,语月,问月,尊月,权月,统月,崇月"
 }

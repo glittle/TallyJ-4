@@ -40,12 +40,13 @@
   "common.view": "Tazama",
   "common.warning": "Onyo",
   "common.yes": "Ndiyo",
-  "common.testOnlyShort": "Majaribio tu. Si kwa uchaguzi wa kweli.",
-  "common.testOnlyLong": "HesabuJ v4 Beta ni kwa majaribio tu. Haijawa tayari kutumika katika uchaguzi wa kweli.",
+  "common.testOnlyShort": "Hakikisho hili la HesabuJ Toleo 4 bado linaendelezwa. Lisitumike kwa uchaguzi halisi kwa sasa.",
+  "common.testOnlyLong": "{note} Hakikisho hili la HesabuJ Toleo 4 bado linaendelezwa.{br}Unaweza kuingia na kujaribu vipengele, lakini halistumike kwa uchaguzi wa Kibaha'i kwa sasa.{br}Tunakaribisha maoni yako kuhusu muundo mpya tunapoendelea kuboresha mfumo.",
+  "common.testOnlyLongNote": "Tafadhali zingatia:",
   "common.logoAlt": "Nembo ya HesabuJ",
-  "common.appTitle": "HesabuJ v4",
+  "common.appTitle": "HesabuJ Toleo 4",
   "common.appName": "HesabuJ",
-  "common.versionDisplay": "v4 Beta",
-  "common.versionTooltip": "Version {version} ({date})",
-  "common.back": "Back"
+  "common.versionDisplay": "Toleo 4 Beta",
+  "common.back": "Nyuma",
+  "common.badi.monthNames": "Siku za Kuingizwa,Mng'ao,Utukufu,Uzuri,Ukuu,Nuru,Rehema,Maneno,Ukamilifu,Majina,Nguvu,Utashi,Maarifa,Uwezo,Usemi,Maswali,Heshima,Utawala,Ufalme,Urefu"
 }

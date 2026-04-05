@@ -1,7 +1,10 @@
 ﻿using System.Net;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Backend.Services;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Backend.Middleware;
 
@@ -12,14 +15,17 @@ namespace Backend.Middleware;
 public class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;
+    private readonly IRemoteLogService _remoteLogService;
 
     /// <summary>
     /// Initializes a new instance of the GlobalExceptionHandler.
     /// </summary>
     /// <param name="logger">Logger for recording exception details and error information.</param>
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    /// <param name="remoteLogService">Service for sending logs to remote endpoints.</param>
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IRemoteLogService remoteLogService)
     {
         _logger = logger;
+        _remoteLogService = remoteLogService;
     }
 
     /// <summary>
@@ -40,6 +46,13 @@ public class GlobalExceptionHandler : IExceptionHandler
             "An unhandled exception occurred: {Message}",
             exception.Message
         );
+
+        // Send to remote log asynchronously without blocking the response
+        _ = Task.Run(() => _remoteLogService.SendLogAsync(
+            $"Unhandled exception: {exception.Message}",
+            "Error",
+            exception.StackTrace
+        ));
 
         var problemDetails = new ProblemDetails
         {

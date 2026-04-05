@@ -18,7 +18,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
-import { BUILD_DATE, VERSION } from "./version";
+import { getBuildDate, getBuildDateBadi, VERSION } from "./version";
 const { t } = useI18n();
 
 const emit = defineEmits<{
@@ -37,8 +37,8 @@ const isInElectionContext = computed(() => {
 });
 
 const versionName = computed(() => VERSION);
-const versionDate = computed(() => BUILD_DATE);
-
+const versionDate = computed(() => getBuildDate());
+const versionDateBadi = computed(() => getBuildDateBadi());
 const electionName = computed(() => {
   return electionStore.currentElection?.name || t("common.election");
 });
@@ -76,6 +76,8 @@ function goBackToElections() {
         {{ $t("common.versionDisplay", { version: versionName }) }}
         -
         {{ versionName }}
+        -
+        {{ versionDateBadi }}
       </div>
     </div>
     <div class="testOnlyWarning">
@@ -383,7 +385,7 @@ function goBackToElections() {
 
   .testOnlyWarning {
     padding: 1rem 0.5rem;
-    margin: 0 10px;
+    margin: 0 10px 1em;
     max-width: 920px; /* Comfortable reading width */
     text-align: center;
     background-color: #fff4e5;

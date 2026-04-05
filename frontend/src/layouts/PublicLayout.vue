@@ -4,14 +4,15 @@ import { useRouter } from "vue-router";
 import LanguageFlagsSelector from "../components/common/LanguageFlagsSelector.vue";
 import LanguageSelector from "../components/common/LanguageSelector.vue";
 import ThemeSelector from "../components/common/ThemeSelector.vue";
-import { BUILD_DATE, VERSION } from "../components/version";
+import { getBuildDate, getBuildDateBadi, VERSION } from "../components/version";
 
 const router = useRouter();
 // const { t } = useI18n();
 
 // Version tooltip - dynamically localized
 const versionName = computed(() => VERSION);
-const versionDate = computed(() => BUILD_DATE);
+const versionDate = computed(() => getBuildDate());
+const versionDateBadi = computed(() => getBuildDateBadi());
 
 // Check if we're on the landing page
 const expandLanguageSelector = true; // computed(() => route.path === "/" || route.name === "landing");
@@ -29,7 +30,10 @@ const handleLogoClick = () => {
           <img src="/assets/logo-trans.png" :alt="$t('common.logoAlt')" />
           <span>
             <div>{{ $t("common.versionDisplay") }}</div>
-            <div class="versionName" :title="versionDate">
+            <div
+              class="versionName"
+              :title="versionDate + ' - ' + versionDateBadi"
+            >
               {{ versionName }}
             </div>
           </span>

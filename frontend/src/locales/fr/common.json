@@ -40,12 +40,13 @@
   "common.close": "Fermer",
   "common.refresh": "Actualiser",
   "common.election": "Élection",
-  "common.testOnlyShort": "Réservé aux tests. Pas pour de vraies élections.",
-  "common.testOnlyLong": "Ce ScrutinJ v4 Beta est réservé aux tests. Pas prêt pour des élections réelles.",
+  "common.testOnlyShort": "Cet aperçu de ScrutinJ Version 4 est encore en développement. Ne doit pas être utilisé pour des élections réelles en ce moment.",
+  "common.testOnlyLong": "{note} Cet aperçu de ScrutinJ Version 4 est encore en développement.{br}Vous pouvez vous connecter et essayer les fonctionnalités, mais il ne devrait pas être utilisé pour des élections bahá'ís en ce moment.{br}Nous accueillons vos commentaires sur le nouveau design alors que nous continuons à améliorer le système.",
+  "common.testOnlyLongNote": "Veuillez noter :",
   "common.logoAlt": "Logo ScrutinJ",
-  "common.appTitle": "ScrutinJ v4",
+  "common.appTitle": "ScrutinJ Version 4",
   "common.appName": "ScrutinJ",
-  "common.versionDisplay": "v4 Beta",
-  "common.versionTooltip": "Version {version} ({date})",
-  "common.back": "Back"
+  "common.versionDisplay": "Version 4 Beta",
+  "common.back": "Retour",
+  "common.badi.monthNames": "Jours Intercalaires,Splendeur,Gloire,Beauté,Grandeur,Lumière,Miséricorde,Paroles,Perfection,Noms,Puissance,Volonté,Connaissance,Pouvoir,Discours,Questions,Honneur,Souveraineté,Empire,Élévation"
 }

@@ -2,6 +2,7 @@
   "common.actionIrreversible": "This action cannot be undone.",
   "common.actions": "Actions",
   "common.back": "Back",
+  "common.badi.monthNames": "Intercalary Days,Splendor,Glory,Beauty,Grandeur,Light,Mercy,Words,Perfection,Names,Might,Will,Knowledge,Power,Speech,Questions,Honor,Sovereignty,Dominion,Loftiness",
   "common.cancel": "Cancel",
   "common.clear": "Clear",
   "common.copied": "Copied to clipboard",
@@ -41,12 +42,11 @@
   "common.view": "View",
   "common.warning": "Warning",
   "common.yes": "Yes",
-  "common.testOnlyShort": "This preview of TallyJ v4 is still in development. Not be used for actual elections at this time",
-  "common.testOnlyLong": "{note} This preview of TallyJ v4 is still in development.{br}You can log in and try the features, but it should not be used for actual Bahá'í elections at this time.{br}We welcome your feedback on the new design as we continue to improve the system.",
+  "common.testOnlyShort": "This preview of TallyJ Version 4 is still in development. Not be used for actual elections at this time",
+  "common.testOnlyLong": "{note} This preview of TallyJ Version 4 is still in development.{br}You can log in and try the features, but it should not be used for actual Bahá'í elections at this time.{br}We welcome your feedback on the new design as we continue to improve the system.",
   "common.testOnlyLongNote": "Please Note:",
   "common.logoAlt": "TallyJ Logo",
-  "common.appTitle": "TallyJ v4",
+  "common.appTitle": "TallyJ Version 4",
   "common.appName": "TallyJ",
-  "common.versionDisplay": "v4 Beta",
-  "common.versionTooltip": "Version {version} ({date})"
+  "common.versionDisplay": "Version 4 Beta"
 }
