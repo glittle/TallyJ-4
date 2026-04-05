@@ -8,9 +8,9 @@ public interface IRemoteLogService
     /// <summary>
     /// Sends a log message to the configured remote logging endpoint.
     /// </summary>
-    /// <param name="message">The log message to send.</param>
-    /// <param name="level">The log level (e.g., "Error", "Warning", "Info").</param>
-    /// <param name="details">Additional details about the log event.</param>
+    /// <param name="message">The message for the log.</param>
+    /// <param name="userName">The username of the admin or voter or teller computer.</param>
+    /// <param name="electionName">Election name</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task SendLogAsync(string message, string level, string? details = null);
+    public Task SendLogAsync(string message, string? userName = null, string? electionName = null);
 }

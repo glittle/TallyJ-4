@@ -49,9 +49,7 @@ public class GlobalExceptionHandler : IExceptionHandler
 
         // Send to remote log asynchronously without blocking the response
         _ = Task.Run(() => _remoteLogService.SendLogAsync(
-            $"Unhandled exception: {exception.Message}",
-            "Error",
-            exception.StackTrace
+            $"Unhandled exception: {exception.Message}\n{TrimmedStackTrace(exception.StackTrace)}"
         ));
 
         var problemDetails = new ProblemDetails
@@ -86,6 +84,36 @@ public class GlobalExceptionHandler : IExceptionHandler
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
+    }
+
+    /// <summary>
+    /// Trims the stack trace... stop at the first line from our codebase, or limit to 10 lines total to avoid excessively long logs.
+    /// </summary>
+    /// <param name="stackTrace"></param>
+    /// <returns></returns> 
+    internal static string? TrimmedStackTrace(string? stackTrace)
+    {
+        if (string.IsNullOrWhiteSpace(stackTrace))
+        {
+            return null;
+        }
+
+        var lines = stackTrace.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+
+        // Look for the first line that contains our codebase namespace (e.g., "Backend.")
+        var index = Array.FindIndex(lines, line => line.Contains("Backend."));
+        if (index >= 0)
+        {
+            // Include lines up to and including the first line from our codebase
+            lines = lines[..(index + 1)];
+        }
+        else if (lines.Length > 10)
+        {
+            // If no line from our codebase is found, limit to the first 10 lines to avoid excessively long logs
+            lines = lines[..10];
+        }
+
+        return string.Join(Environment.NewLine, lines);
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.IO;
 using System.Text;
 using Backend.Application.Services.Auth;
 using Backend.Domain.Context;
@@ -57,7 +58,10 @@ void ConfigureServices(WebApplicationBuilder builder)
     builder.Configuration.AddJsonFile($"appsettings.{siteType}.json", optional: true, reloadOnChange: true);
 
     // Add version.json from repository root
-    builder.Configuration.AddJsonFile("../version.json", optional: false, reloadOnChange: false);
+    var versionJsonPath = isDevelopment
+        ? Path.Combine(builder.Environment.ContentRootPath, "..", "version.json")
+        : Path.Combine(builder.Environment.ContentRootPath, "version.json");
+    builder.Configuration.AddJsonFile(versionJsonPath, optional: false, reloadOnChange: true);
 
     // look in a folder given by an environment variable, useful for docker and some hosting environments
     var envConfigPath = Environment.GetEnvironmentVariable("TALLYJ_CONFIG_PATH");
@@ -77,6 +81,8 @@ void ConfigureServices(WebApplicationBuilder builder)
     {
         Log.Information("Applied config from {Path}", fileInfo.PhysicalPath);
     }
+
+    Log.Information("Version: {Version}", builderConfiguration["version"]);
 
     if (!isTesting)
     {
@@ -419,15 +425,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     {
         using var scope = app.Services.CreateScope();
         var remoteLogService = scope.ServiceProvider.GetRequiredService<IRemoteLogService>();
-        await remoteLogService.SendLogAsync("TallyJ backend has started up", "Info", $"SiteType: {siteType}, SiteMode: {siteMode}, Machine: {machineName}");
-    }
-
-    // Log version information
-    {
-        var version = configuration["version"];
-        var buildDate = configuration["buildDate"];
-        var buildDateBadi = configuration["buildDateBadi"];
-        Log.Information("Version: {Version}, Build Date: {BuildDate} / {BuildDateBadi}", version, buildDate, buildDateBadi);
+        await remoteLogService.SendLogAsync($"Started up - SiteType: {siteType} - FrontendBaseUrl: {configuration["Frontend:BaseUrl"]}");
     }
 
     app.UseExceptionHandler();
