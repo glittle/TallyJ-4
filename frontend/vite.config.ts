@@ -6,6 +6,7 @@ import { fileURLToPath, URL } from "node:url";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import viteCompression from "vite-plugin-compression";
+import devtoolsJson from 'vite-plugin-devtools-json';
 
 // https://vite.dev/config/
 export default defineConfig(({ command }) => {
@@ -32,6 +33,7 @@ export default defineConfig(({ command }) => {
     },
     plugins: [
       vue(),
+      devtoolsJson(),
       VueI18nPlugin({}),
       // Bundle analyzer - generates stats.html
       visualizer({

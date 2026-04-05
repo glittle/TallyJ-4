@@ -146,12 +146,6 @@ function toggleMobileMenu() {
       <h2 aria-live="polite">
         {{ currentPageTitle }}
       </h2>
-      <div class="versionName">
-        {{ versionName }}
-      </div>
-      <div class="versionDate">
-        {{ versionDate }}
-      </div>
 
       <!-- Location Selector -->
       <div
