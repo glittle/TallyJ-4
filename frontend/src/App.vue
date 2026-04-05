@@ -9,7 +9,7 @@ const { t } = useI18n();
 const nameVisible = ref(true);
 const branchName = computed(() => {
   const name = process.env.BRANCH_NAME;
-  return name === "main" || !nameVisible.value ? "" : "Branch: " + name;
+  return name === "HEAD" || !nameVisible.value ? "" : "Branch: " + name;
 });
 
 const hideName = () => {
