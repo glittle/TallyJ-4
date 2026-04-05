@@ -174,19 +174,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
 import { useNotifications } from "@/composables/useNotifications";
 import { UploadFilled } from "@element-plus/icons-vue";
 import type { UploadFile } from "element-plus";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
+import ImportProgressDialog from "../../components/common/ImportProgressDialog.vue";
 import { importService } from "../../services/importService";
 import { useImportStore } from "../../stores/importStore";
-import ImportProgressDialog from "../../components/common/ImportProgressDialog.vue";
 import type {
-  ParseCsvHeadersResponse,
   FieldMapping,
   ImportConfiguration,
+  ParseCsvHeadersResponse,
 } from "../../types";
 import { IMPORT_TARGET_FIELDS } from "../../types";
 
@@ -370,7 +370,7 @@ function getDelimiterLabel(delimiter: string): string {
 
 <style lang="less">
 .ballot-import-page {
-  max-width: 1200px;
+  max-width: var(--normal-max-width);
   margin: 0 auto;
 
   .card-header {

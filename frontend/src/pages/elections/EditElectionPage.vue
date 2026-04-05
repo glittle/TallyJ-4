@@ -207,7 +207,7 @@ function cancel() {
 
 <style lang="less">
 .edit-election-page {
-  max-width: 1200px;
+  max-width: var(--normal-max-width);
   margin: 0 auto;
 }
 

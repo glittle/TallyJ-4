@@ -64,7 +64,7 @@ const handleLogoClick = () => {
   .public-header {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
-    gap: 1em;
+    gap: 2em;
     align-items: center;
     padding: 20px 40px;
     backdrop-filter: blur(10px);
@@ -75,10 +75,7 @@ const handleLogoClick = () => {
   }
 
   .header-middle {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+    flex-grow: 1;
   }
 
   .logo h2 {

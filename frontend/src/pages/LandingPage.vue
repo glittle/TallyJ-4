@@ -10,7 +10,9 @@ import {
   Pointer,
   Ticket,
   UserFilled,
+  WarnTriangleFilled,
 } from "@element-plus/icons-vue";
+import { ElIcon } from "element-plus";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
@@ -21,7 +23,8 @@ const options = [
   {
     type: "voter",
     icon: Ticket,
-    color: "#F47920",
+    // color: "#F47920",
+    color: "#E2725B",
     title: "auth.landing.optionVoter",
     description: "auth.landing.optionVoterDesc",
     buttonText: "auth.landing.loginVoter",
@@ -31,7 +34,8 @@ const options = [
   {
     type: "teller",
     icon: Monitor,
-    color: "#8DC63F",
+    // color: "#8DC63F",
+    color: "#006D77",
     title: "auth.landing.optionTeller",
     description: "auth.landing.optionTellerDesc",
     buttonText: "auth.landing.loginTeller",
@@ -40,7 +44,8 @@ const options = [
   {
     type: "officer",
     icon: UserFilled,
-    color: "#2563a8",
+    // color: "#2563a8",
+    color: "#1D3557",
     title: "auth.landing.optionOfficer",
     description: "auth.landing.optionOfficerDesc",
     buttonText: "auth.landing.loginOfficer",
@@ -52,7 +57,8 @@ const options2 = [
   {
     type: "external",
     icon: Connection,
-    color: "#F47920",
+    // color: "#F47920",
+    color: "#DAA520",
     title: "auth.landing.optionExternal",
     description: "auth.landing.optionExternalDesc",
     buttonText: "auth.landing.gotoExternal",
@@ -63,7 +69,8 @@ const options2 = [
 const features = [
   {
     icon: Clock,
-    color: "#2563a8",
+    color: "#8DC63F",
+    // color: "#2563a8",
     title: "auth.landing.features.realtime.title",
     description: "auth.landing.features.realtime.description",
   },
@@ -75,19 +82,22 @@ const features = [
   },
   {
     icon: Pointer,
-    color: "#F47920",
+    color: "#8DC63F",
+    // color: "#F47920",
     title: "auth.landing.features.flexible.title",
     description: "auth.landing.features.flexible.description",
   },
   {
     icon: Document,
-    color: "#1C3A6A",
+    color: "#8DC63F",
+    // color: "#1C3A6A",
     title: "auth.landing.features.transparent.title",
     description: "auth.landing.features.transparent.description",
   },
   {
     icon: Location,
-    color: "#2563a8",
+    color: "#8DC63F",
+    //color: "#2563a8",
     title: "auth.landing.features.multilingual.title",
     description: "auth.landing.features.multilingual.description",
   },
@@ -131,9 +141,16 @@ globalThis.addEventListener("keydown", (event) => {
 
 <template>
   <div class="landing-container">
-    <div class="testOnlyWarning">
-      {{ $t("common.testOnlyLong") }}
-    </div>
+    <i18n-t keypath="common.testOnlyLong" tag="div" class="testOnlyWarning">
+      <template #note>
+        <el-icon>
+          <WarnTriangleFilled />
+        </el-icon>
+        <strong>{{ $t("common.testOnlyLongNote") }}</strong>
+      </template>
+      <template #br><br /></template>
+    </i18n-t>
+
     <div class="welcome-section">
       <h1>{{ t("auth.landing.title") }}</h1>
       <p class="description">{{ t("auth.landing.description") }}</p>
@@ -153,7 +170,7 @@ globalThis.addEventListener("keydown", (event) => {
       >
         <template #header>
           <div class="card-header">
-            <el-icon :size="40" :color="opt.color">
+            <el-icon :size="48" :color="opt.color">
               <component :is="opt.icon" />
             </el-icon>
             <h3>{{ t(opt.title) }}</h3>
@@ -167,35 +184,40 @@ globalThis.addEventListener("keydown", (event) => {
         </div>
       </el-card>
     </div>
-    <div class="options-grid2">
-      <el-card
-        v-for="opt in options2"
-        :key="opt.type"
-        class="option-card"
-        shadow="hover"
-        tabindex="0"
-        :style="{ '--card-accent-color': opt.color }"
-        @click="opt.action"
-        @keydown.enter="opt.action"
-        @keydown.space.prevent="opt.action"
-      >
-        <template #header>
-          <div class="card-header">
-            <el-icon :size="40" :color="opt.color">
-              <component :is="opt.icon" />
-            </el-icon>
-            <h3>{{ t(opt.title) }}</h3>
-          </div>
-        </template>
-        <p>{{ t(opt.description) }}</p>
-        <div class="card-footer">
-          <el-button :color="opt.color">
-            {{ t(opt.buttonText) }}
-          </el-button>
-        </div>
-      </el-card>
+    <div class="secondary-action-row">
+      <div v-for="opt in options2" :key="opt.type">
+        <p>
+          <span>{{ t(opt.description) }}</span>
+          <a
+            href="https://officers.tallyj.com/"
+            class="secondary-link"
+            target="_officers"
+            rel="noopener noreferrer"
+          >
+            <span> {{ t(opt.title) }}</span>
+            <!-- Inline SVG for the 'External Link' icon -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              roke-linecap="round"
+              stroke-linejoin="round"
+              class="icon-external"
+            >
+              <path
+                d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+              ></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+        </p>
+      </div>
     </div>
-
     <!-- Marketing Benefits Section -->
     <div class="benefits-section">
       <div class="benefits-header">
@@ -239,19 +261,17 @@ globalThis.addEventListener("keydown", (event) => {
 
 <style lang="less">
 .landing-container {
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 10px;
+  max-width: var(--normal-max-width);
   color: var(--el-text-color-primary);
 
   .welcome-section {
     text-align: center;
-    margin-bottom: 60px;
-    animation: fadeIn 0.8s ease-in;
   }
 
   .welcome-section h1 {
-    font-size: 3rem;
+    font-family: "Lora", serif;
+    font-size: 3.4rem;
     margin-bottom: 20px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
@@ -264,49 +284,84 @@ globalThis.addEventListener("keydown", (event) => {
     opacity: 0.9;
   }
 
-  .options-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    animation: slideUp 0.8s ease-out 0.2s both;
+  .option-card {
+    flex: 1 1 300px; /* Allows cards to grow/shrink but not get too small */
+    max-width: 400px;
 
-    .option-card {
-      cursor: pointer;
-      transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-      text-align: center;
-      border-radius: 12px;
-      border: none;
-      background: var(--el-bg-color);
-      display: flex;
-      flex-direction: column;
+    cursor: pointer;
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.05),
+      0 1px 8px rgba(0, 0, 0, 0.02);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    text-align: center;
+    border-radius: 24px;
+    border: none;
+    background: var(--el-bg-color);
+    display: flex;
+    flex-direction: column;
+
+    .el-icon {
+      border-radius: 50%;
+      padding: 12px;
+      /* Create a soft "tint" of the brand color */
+      background-color: color-mix(in srgb, var(--color), transparent 90%);
     }
   }
 
-  .options-grid2 {
-    margin: 1.5em auto 0;
-    width: fit-content;
-    animation: slideUp 0.8s ease-out 0.3s both;
+  /* The Container for your 3 core cards */
+  .options-grid {
+    display: flex;
+    justify-content: center; /* Centers the 3 cards horizontally */
+    gap: 32px; /* Adds breathing room between cards */
+    flex-wrap: wrap; /* Ensures responsiveness on smaller screens */
+    padding: 40px 20px;
+    max-width: 1440px; /* As we discussed earlier */
+    margin: 0 auto 3em;
+  }
 
-    .option-card {
-      cursor: pointer;
-      transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-      text-align: center;
-      border-radius: 12px;
-      border: none;
-      background: var(--el-bg-color);
+  /* The Secondary Action Row */
+  .secondary-action-row {
+    justify-content: center; /* Centers the link horizontally */
+    background-color: color-mix(
+      in srgb,
+      var(--color-navy),
+      transparent 95%
+    ); /* Very subtle tint */
+    border-radius: 100px; /* Creates a "pill" or capsule shape */
+    width: fit-content;
+    margin: 0 auto; /* Centers the row itself on the page */
+
+    p {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 2em;
+      padding: 12px 36px;
+      font-size: 1rem;
+      color: var(--el-text-color-primary);
+      border-radius: 30px;
+      background-color: #2562a814; /* 10% opacity of the feature color */
+    }
+
+    .secondary-link {
+      display: flex;
+      gap: 0.25em;
+      align-items: center;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
   .option-card:hover,
   .option-card:focus {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08);
+    .el-button {
+      background-color: var(--el-button-hover-bg-color) !important;
+      box-shadow: 0 6px 16px -2px rgba(226, 114, 91, 0.5);
+    }
   }
 
   .option-card::before {
@@ -323,7 +378,7 @@ globalThis.addEventListener("keydown", (event) => {
   .card-header h3 {
     margin: 0;
     color: var(--el-text-color-primary);
-    font-size: 1.3rem;
+    font-size: 1.6rem;
   }
 
   .option-card p {
@@ -338,8 +393,22 @@ globalThis.addEventListener("keydown", (event) => {
   }
 
   .el-button {
+    border-radius: 30px;
+    padding: 20px 32px;
+    height: auto;
     width: 100%;
     font-weight: 600;
+
+    /* Use the variable as the base, but layer a light linear gradient over it */
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(0, 0, 0, 0.05) 100%
+    ) !important;
+    background-color: var(--el-button-bg-color) !important;
+
+    /* Add depth using the background variable for a tinted shadow */
+    box-shadow: 0 4px 12px -2px rgba(226, 114, 91, 0.4);
   }
 
   // Marketing Benefits Section
@@ -351,13 +420,14 @@ globalThis.addEventListener("keydown", (event) => {
 
   .benefits-header {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 2em;
   }
 
   .benefits-header h2 {
     font-size: 2.5rem;
     margin-bottom: 20px;
-    color: var(--color-public-text);
+    color: #006d77;
+    color: var(--color-public-header-text);
   }
 
   .benefits-subtitle {
@@ -380,14 +450,6 @@ globalThis.addEventListener("keydown", (event) => {
     border-radius: 16px;
     padding: 30px;
     text-align: center;
-    transition: all 0.3s ease;
-    border: 1px solid var(--el-border-color);
-
-    // &:hover {
-    // background: var(--el-bg-color-page);
-    // transform: translateY(-5px);
-    // border-color: var(--el-border-color-darker);
-    // }
 
     .feature-icon {
       margin-bottom: 20px;
@@ -395,10 +457,15 @@ globalThis.addEventListener("keydown", (event) => {
       justify-content: center;
       align-items: center;
       height: 60px;
+      .el-icon {
+        border-radius: 50%;
+        padding: 12px;
+        background-color: #2562a814; /* 10% opacity of the feature color */
+      }
     }
 
     h3 {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       margin-bottom: 15px;
       color: var(--el-text-color-primary);
     }
@@ -415,7 +482,6 @@ globalThis.addEventListener("keydown", (event) => {
     padding: 40px;
     background: var(--el-bg-color);
     border-radius: 20px;
-    border: 1px solid var(--el-border-color);
 
     h3 {
       font-size: 1.8rem;
@@ -448,19 +514,26 @@ globalThis.addEventListener("keydown", (event) => {
       }
     }
   }
-
   .testOnlyWarning {
-    padding: 0.25em 0.5em;
+    padding: 1.25rem 2rem;
+    margin: 1.5rem auto;
+    max-width: 920px; /* Comfortable reading width */
     text-align: center;
-    margin-left: 5%;
-    background-color: var(--el-color-error);
-    color: var(--color-error-50);
-    font-size: 1.3em;
-    font-weight: bold;
+    background-color: #fff4e5;
+    color: #8c4a00;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    border: 2px solid #f5a23d;
     border-radius: 10px;
-    width: fit-content;
-    transform: rotate(-5deg);
-    animation: pulse-ltr 3s ease-in-out infinite;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-weight: 500;
+    i {
+      margin-right: 0.25em;
+      top: 2px;
+    }
+    strong {
+      margin-right: 0.25em;
+    }
   }
 
   // Animations
@@ -474,32 +547,8 @@ globalThis.addEventListener("keydown", (event) => {
     }
   }
 
-  @keyframes pulse-ltr {
-    0%,
-    100% {
-      transform: rotate(-5deg) scale(1);
-    }
-    50% {
-      transform: rotate(-5deg) scale(1.05);
-    }
-  }
-
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
   // Responsive Design
   @media (max-width: 768px) {
-    padding: 20px 15px;
-
     .welcome-section h1 {
       font-size: 2rem;
     }
@@ -534,22 +583,13 @@ globalThis.addEventListener("keydown", (event) => {
     }
   }
 }
-
-@keyframes pulse-rtl {
-  0%,
-  100% {
-    transform: rotate(5deg) scale(1);
-  }
-  50% {
-    transform: rotate(5deg) scale(1.05);
-  }
-}
-
-:lang(ar),
-:lang(fa) {
+:root.dark {
   .landing-container {
     .testOnlyWarning {
-      animation: pulse-rtl 3s ease-in-out infinite;
+      background-color: #3f2a1a;
+      color: #ffd9a8;
+      border-color: #f5a23d;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
   }
 }

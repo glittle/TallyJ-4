@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
 :root {
   /* Typography */
   --font-family-primary:
@@ -22,6 +24,8 @@
   /* 30px */
   --font-size-4xl: 2.25rem;
   /* 36px */
+
+  --normal-max-width: 1440px;
 
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -111,9 +115,11 @@
   --color-sidebar-active: #d4dff0;
 
   /* Colors - Public Layout */
-  --color-public-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  // --color-public-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --color-public-bg-gradient: #FDFCF4;
   --color-public-header-bg: rgba(255, 255, 255, 0.8);
   --color-public-text: var(--color-primary-800);
+  --color-public-header-text: var(--color-primary-700);
 
   /* Colors - Text */
   --color-text-primary: var(--color-gray-900);
@@ -260,7 +266,23 @@
   /* Public layout dark theme */
   --color-public-bg-gradient: linear-gradient(135deg, #0c1830 0%, #14284d 100%);
   --color-public-header-bg: rgba(0, 0, 0, 0.2);
-  --color-public-text: #f1f5f9;
+  --color-public-header-text: var(--color-primary-700);
+  --color-public-text: var(--color-primary-200);
+  --color-bg-overlay: var(--color-gray-700);
+
+  /* Semantic colors dark theme */
+  --color-success-50: #0a1f0f;
+  --color-success-500: #4ade80;
+  --color-success-600: #22c55e;
+  --color-success-700: #16a34a;
+  --color-warning-50: #1f1300;
+  --color-warning-500: #fbbf24;
+  --color-warning-600: #f59e0b;
+  --color-warning-700: #d97706;
+  --color-error-50: #2a0a0a;
+  --color-error-500: #f87171;
+  --color-error-600: #ef4444;
+  --color-error-700: #dc2626;
 
   /* Element Plus dark theme variables */
   --el-color-primary: #2563a8;

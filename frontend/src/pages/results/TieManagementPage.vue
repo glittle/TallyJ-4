@@ -264,7 +264,7 @@ function goBack() {
 
 <style lang="less">
 .tie-management {
-  max-width: 1200px;
+  max-width: var(--normal-max-width);
   margin: 0 auto;
 }
 
