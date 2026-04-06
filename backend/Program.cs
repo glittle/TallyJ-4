@@ -58,7 +58,7 @@ void ConfigureServices(WebApplicationBuilder builder)
     builder.Configuration.AddJsonFile($"appsettings.{siteType}.json", optional: true, reloadOnChange: true);
 
     // Add version.json from repository root
-    var versionJsonPath = isDevelopment
+    var versionJsonPath = isDevelopment || isTesting
         ? Path.Combine(builder.Environment.ContentRootPath, "..", "version.json")
         : Path.Combine(builder.Environment.ContentRootPath, "version.json");
     builder.Configuration.AddJsonFile(versionJsonPath, optional: false, reloadOnChange: true);
