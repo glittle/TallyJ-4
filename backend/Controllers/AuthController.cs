@@ -47,6 +47,7 @@ public class AuthController : ControllerBase
     private readonly IHttpClientFactory _httpClientFactory;
 
     private readonly ISecurityAuditService _securityAuditService;
+    private readonly IRemoteLogService _remoteLogService;
 
     /// <summary>
     /// Initializes a new instance of the AuthController.
@@ -64,6 +65,7 @@ public class AuthController : ControllerBase
     /// <param name="superAdminSettings">Configuration settings for super admin functionality.</param>
     /// <param name="httpClientFactory">HTTP client factory for external API requests.</param>
     /// <param name="securityAuditService">Service for logging security events.</param>
+    /// <param name="remoteLogService">Service for sending remote log messages.</param>
     public AuthController(
         ILocalAuthService localAuthService,
         IPasswordResetService passwordResetService,
@@ -77,7 +79,8 @@ public class AuthController : ControllerBase
         SignInManager<AppUser> signInManager,
         IOptions<SuperAdminSettings> superAdminSettings,
         IHttpClientFactory httpClientFactory,
-        ISecurityAuditService securityAuditService)
+        ISecurityAuditService securityAuditService,
+        IRemoteLogService remoteLogService)
     {
         _localAuthService = localAuthService;
         _passwordResetService = passwordResetService;
@@ -92,6 +95,7 @@ public class AuthController : ControllerBase
         _superAdminSettings = superAdminSettings.Value;
         _httpClientFactory = httpClientFactory;
         _securityAuditService = securityAuditService;
+        _remoteLogService = remoteLogService;
     }
 
     /// <summary>
@@ -1336,6 +1340,8 @@ public class AuthController : ControllerBase
             Severity = SecurityEventSeverity.Info
         });
 
+        await _remoteLogService.SendLogAsync($"Full teller login via {provider}", user.DisplayName ?? user.Email, null);
+
         return (user, isNewUser);
     }
     private async Task<(AppUser user, bool isNewUser)> ProcessGoogleUserAsync(
@@ -1428,6 +1434,8 @@ public class AuthController : ControllerBase
             IsSuspicious = false,
             Severity = SecurityEventSeverity.Info
         });
+
+        await _remoteLogService.SendLogAsync($"Full teller login via Google" + (isNewUser ? " (new user)" : ""), user.DisplayName ?? user.Email, null);
 
         return (user, isNewUser);
     }
@@ -1532,6 +1540,8 @@ public class AuthController : ControllerBase
             IsSuspicious = false,
             Severity = SecurityEventSeverity.Info
         });
+
+        await _remoteLogService.SendLogAsync($"Full teller login via Telegram" + (isNewUser ? " (new user)" : ""), user.DisplayName ?? user.Email, null);
 
         return (user, isNewUser);
     }
