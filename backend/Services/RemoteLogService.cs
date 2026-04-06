@@ -57,7 +57,6 @@ public class RemoteLogService : IRemoteLogService
         {
             return result;
         }
-        result += $" / {httpContext.Request.Host}";
 
         var hostUrl = httpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault()
                       ?? httpContext.Request.Host.ToString();

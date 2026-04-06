@@ -425,7 +425,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     {
         using var scope = app.Services.CreateScope();
         var remoteLogService = scope.ServiceProvider.GetRequiredService<IRemoteLogService>();
-        await remoteLogService.SendLogAsync($"Started up - SiteType: {siteType} - FrontendBaseUrl: {configuration["Frontend:BaseUrl"]}");
+        await remoteLogService.SendLogAsync($"Started up - SiteType: {siteType} - Url: {configuration["Frontend:BaseUrl"]}");
     }
 
     app.UseExceptionHandler();
