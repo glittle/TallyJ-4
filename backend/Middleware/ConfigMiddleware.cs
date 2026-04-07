@@ -57,6 +57,8 @@ public class ConfigMiddleware
 
             if (File.Exists(filePath))
             {
+                // config.json changes infrequently; allow caching for 5 minutes
+                context.Response.Headers["Cache-Control"] = "public, max-age=300";
                 context.Response.ContentType = "application/json";
                 await context.Response.SendFileAsync(filePath);
                 return; // Short-circuit — do not continue to static files or other middleware

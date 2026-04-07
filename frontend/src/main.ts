@@ -68,6 +68,15 @@ async function init() {
   }
 
   app.mount("#app");
+
+  // Dismiss the splash screen after Vue has mounted
+  const splash = document.getElementById("splash");
+  if (splash) {
+    splash.classList.add("fade-out");
+    splash.addEventListener("transitionend", () => splash.remove(), {
+      once: true,
+    });
+  }
 }
 
 init(); // NOSONAR
