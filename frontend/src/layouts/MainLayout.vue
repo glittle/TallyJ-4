@@ -27,7 +27,7 @@ function closeMobileSidebar() {
     ></div>
 
     <el-aside
-      width="200px"
+      width="300px"
       class="sidebar"
       role="complementary"
       aria-label="Main navigation"
@@ -49,6 +49,7 @@ function closeMobileSidebar() {
 <style lang="less">
 .main-layout {
   height: 100vh;
+  background: var(--color-public-bg-gradient);
 
   .skip-link {
     position: absolute;
@@ -88,16 +89,16 @@ function closeMobileSidebar() {
   }
 
   .el-header {
-    background-color: var(--color-bg-primary);
-    border-bottom: 1px solid var(--color-gray-200);
+    background: var(--color-public-header-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     padding: 0 20px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   }
 
   .el-main {
-    background-color: var(--color-bg-secondary);
+    background-color: var(--color-public-bg-gradient);
     padding: 20px;
     overflow-y: auto;
     max-width: none;

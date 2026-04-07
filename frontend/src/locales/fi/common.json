@@ -40,12 +40,13 @@
   "common.view": "Näytä",
   "common.warning": "Varoitus",
   "common.yes": "Kyllä",
-  "common.testOnlyShort": "Vain testiä varten. Ei oikeisiin vaaleihin.",
-  "common.testOnlyLong": "Tämä LaskiJ v4 Beta on vain testiä varten. Ei valmis käytettäväksi oikeissa vaaleissa.",
+  "common.testOnlyShort": "LaskiJ Versio 4:n tämä esikatselu on vielä kehityksessä. Ei saa käyttää todellisiin vaaleihin tällä hetkellä.",
+  "common.testOnlyLong": "{note} LaskiJ Versio 4:n tämä esikatselu on vielä kehityksessä.{br}Voit kirjautua sisään ja kokeilla ominaisuuksia, mutta sitä ei saa käyttää bahá'í-vaaleihin tällä hetkellä.{br}Toivotamme tervetulleeksi palautteesi uudesta suunnittelusta, kun jatkamme järjestelmän parantamista.",
+  "common.testOnlyLongNote": "Huomaa:",
   "common.logoAlt": "LaskiJ-logo",
-  "common.appTitle": "LaskiJ v4",
+  "common.appTitle": "LaskiJ Versio 4",
   "common.appName": "LaskiJ",
-  "common.versionDisplay": "v4 Beta",
-  "common.versionTooltip": "Version {version} ({date})",
-  "common.back": "Back"
+  "common.versionDisplay": "Versio 4 Beta",
+  "common.back": "Takaisin",
+  "common.badi.monthNames": ",Hán päivät,Kirkkaus,Loisto,Kauneus,Suurus,Valo,Armo,Sanat,Täydellisyys,Nimet,Mahti,Tahto,Tieto,Voima,Puhe,Kysymykset,Kunnia,Yliherruus,Valta,Ylevyys"
 }

@@ -2,16 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/assets/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link rel="shortcut icon" href="/assets/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/apple-touch-icon.png"
+    />
     <meta name="apple-mobile-web-app-title" content="TallyJ" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="manifest" href="/assets/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="TallyJ is a modern election management and ballot tallying system designed for Bahá’í communities. Real-time collaboration, secure voting, and transparent results."
+      content="TallyJ is a secure and easy-to-use election management system built specifically for Bahá'í communities. It provides a complete platform to manage elections, people, ballots, and real-time tallying."
     />
     <meta
       name="keywords"
@@ -20,56 +29,117 @@
     <meta name="theme-color" content="#409eff" />
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="TallyJ v4 - Election Management System">
-    <meta property="og:description" content="Modern election management and ballot tallying system for Bahá’í communities with real-time collaboration and secure voting.">
-    <meta property="og:image" content="/og-image.png">
-    <meta property="og:url" content="https://tallyj.app">
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="TallyJ v4 - Election Management System"
+    />
+    <meta
+      property="og:description"
+      content="Modern election management and ballot tallying system for Bahá’í communities with real-time collaboration and secure voting."
+    />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:url" content="https://tallyj.app" />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="TallyJ v4 - Election Management System">
-    <meta name="twitter:description" content="Modern election management and ballot tallying system for Bahá’í communities with real-time collaboration and secure voting.">
-    <meta name="twitter:image" content="/og-image.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="TallyJ v4 - Election Management System"
+    />
+    <meta
+      name="twitter:description"
+      content="Modern election management and ballot tallying system for Bahá’í communities with real-time collaboration and secure voting."
+    />
+    <meta name="twitter:image" content="/og-image.png" />
 
     <!-- Application meta -->
-    <meta name="application-name" content="TallyJ">
-    <meta name="author" content="TallyJ Development Team">
-    <meta name="generator" content="Vue.js">
-    <meta name="robots" content="index, follow">
+    <meta name="application-name" content="TallyJ" />
+    <meta name="author" content="TallyJ Development Team" />
+    <meta name="generator" content="Vue.js" />
+    <meta name="robots" content="index, follow" />
 
     <!-- Structured Data -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "TallyJ",
-      "description": "Modern election management and ballot tallying system designed for Bahá’í communities with real-time collaboration, secure voting, and transparent results.",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web Browser",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "featureList": [
-        "Real-time collaboration",
-        "Secure voting system",
-        "Ballot tallying",
-        "Election management",
-        "Multi-language support"
-      ],
-      "author": {
-        "@type": "Organization",
-        "name": "TallyJ Development Team"
-      },
-      "inLanguage": ["en", "es", "fr", "ar", "fa", "hi", "ko", "pt", "ru", "sw", "vi", "zh"]
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "TallyJ",
+        "description": "Modern election management and ballot tallying system designed for Bahá’í communities with real-time collaboration, secure voting, and transparent results.",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Real-time collaboration",
+          "Secure voting system",
+          "Ballot tallying",
+          "Election management",
+          "Multi-language support"
+        ],
+        "author": {
+          "@type": "Organization",
+          "name": "TallyJ Development Team"
+        },
+        "inLanguage": [
+          "en",
+          "es",
+          "fr",
+          "ar",
+          "fa",
+          "hi",
+          "ko",
+          "pt",
+          "ru",
+          "sw",
+          "vi",
+          "zh"
+        ]
+      }
     </script>
 
     <title>TallyJ v4</title>
+    <!-- Preload config.json so it is fetched as soon as possible -->
+    <link rel="preload" as="fetch" href="./config.json" />
+
+    <!-- Inline splash screen styles — shown before any JS bundles load -->
+    <style>
+      #splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fdfcf4;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+      }
+      #splash.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #splash img {
+        width: 180px;
+        max-width: 50vw;
+        animation: splash-pulse 1.8s ease-in-out infinite;
+      }
+      @keyframes splash-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+      }
+      @media (prefers-color-scheme: dark) {
+        #splash { background-color: #0c1830; }
+      }
+    </style>
   </head>
   <body>
+    <!-- Splash screen: logo only, no text — no locale required -->
+    <div id="splash">
+      <img src="/assets/logo-trans.png" alt="TallyJ" />
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

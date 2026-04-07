@@ -1,12 +1,5 @@
 <template>
   <main class="dashboard-page">
-    <section class="welcome-section" aria-labelledby="welcome-heading">
-      <el-card class="welcome-card">
-        <h1 id="welcome-heading">{{ $t("dashboard.welcome") }}</h1>
-        <p>{{ $t("dashboard.subtitle") }}</p>
-      </el-card>
-    </section>
-
     <section class="stats-section" aria-labelledby="stats-heading">
       <h2 id="stats-heading" class="sr-only">
         {{ $t("dashboard.statistics") }}

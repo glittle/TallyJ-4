@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.IO;
 using System.Text;
 using Backend.Application.Services.Auth;
 using Backend.Domain.Context;
@@ -56,6 +57,12 @@ void ConfigureServices(WebApplicationBuilder builder)
     builder.Configuration.AddJsonFile($"appsettings.{machineName}.json", optional: true, reloadOnChange: true);
     builder.Configuration.AddJsonFile($"appsettings.{siteType}.json", optional: true, reloadOnChange: true);
 
+    // Add version.json from repository root
+    var versionJsonPath = isDevelopment || isTesting
+        ? Path.Combine(builder.Environment.ContentRootPath, "..", "version.json")
+        : Path.Combine(builder.Environment.ContentRootPath, "version.json");
+    builder.Configuration.AddJsonFile(versionJsonPath, optional: false, reloadOnChange: true);
+
     // look in a folder given by an environment variable, useful for docker and some hosting environments
     var envConfigPath = Environment.GetEnvironmentVariable("TALLYJ_CONFIG_PATH");
     if (!string.IsNullOrEmpty(envConfigPath))
@@ -74,6 +81,8 @@ void ConfigureServices(WebApplicationBuilder builder)
     {
         Log.Information("Applied config from {Path}", fileInfo.PhysicalPath);
     }
+
+    Log.Information("Version: {Version}", builderConfiguration["version"]);
 
     if (!isTesting)
     {
@@ -318,6 +327,7 @@ void RegisterApplicationServices(IServiceCollection services)
     services.AddScoped<TallyJv2ElectionImportService>();
     services.AddScoped<JsonElectionImportExportService>();
     services.AddScoped<ElectionExportImportService>();
+    services.AddSingleton<IRemoteLogService, RemoteLogService>();
 }
 
 void RegisterAuthServices(IServiceCollection services)
@@ -411,6 +421,13 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
         await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
     }
 
+    // Send startup notification to remote log
+    {
+        using var scope = app.Services.CreateScope();
+        var remoteLogService = scope.ServiceProvider.GetRequiredService<IRemoteLogService>();
+        await remoteLogService.SendLogAsync($"Started up - SiteType: {siteType} - Url: {configuration["Frontend:BaseUrl"]}");
+    }
+
     app.UseExceptionHandler();
 
     if (isDevelopment)
@@ -427,7 +444,17 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     app.UseHttpsRedirection();
     app.UseDefaultFiles();
     app.UseMiddleware<ConfigMiddleware>();
-    app.UseStaticFiles();
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        OnPrepareResponse = ctx =>
+        {
+            // Content-hashed assets (in /assets/) are immutable — cache for 1 year
+            if (ctx.Context.Request.Path.StartsWithSegments("/assets"))
+            {
+                ctx.Context.Response.Headers["Cache-Control"] = "public, max-age=31536000, immutable";
+            }
+        }
+    });
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseCors("AllowFrontend");
     app.Use(async (context, next) =>

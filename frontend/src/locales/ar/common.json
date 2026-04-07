@@ -40,12 +40,13 @@
   "common.view": "عرض",
   "common.warning": "تحذير",
   "common.yes": "نعم",
-  "common.testOnlyShort": "للاختبار فقط. ليس للانتخابات الحقيقية.",
-  "common.testOnlyLong": "فَرْزَج v4 بيتا للاختبار فقط. غير جاهز للاستخدام في الانتخابات الحقيقية.",
+  "common.testOnlyShort": "معاينة فَرْزَج الإصدار 4 هذه لا تزال قيد التطوير. يجب عدم استخدامها في الانتخابات الحقيقية في الوقت الحالي.",
+  "common.testOnlyLong": "{note} معاينة فَرْزَج الإصدار 4 هذه لا تزال قيد التطوير.{br}يمكنك تسجيل الدخول وتجربة الميزات، لكن يجب عدم استخدامها في الانتخابات البهائية في الوقت الحالي.{br}نرحب بتعليقاتك حول التصميم الجديد بينما نواصل تحسين النظام.",
+  "common.testOnlyLongNote": "يرجى الملاحظة:",
   "common.logoAlt": "شعار فَرْزَج",
-  "common.appTitle": "فَرْزَج v4",
+  "common.appTitle": "فَرْزَج الإصدار 4",
   "common.appName": "فَرْزَج",
-  "common.versionDisplay": "v4 Beta",
-  "common.versionTooltip": "الإصدار {version} ({date})",
-  "common.back": "العودة"
+  "common.versionDisplay": "الإصدار 4 Beta",
+  "common.back": "العودة",
+  "common.badi.monthNames": "أيام هاء,بهاء,جلال,جمال,عظمت,نور,رحمت,كلمات,كمال,أسماء,عزت,مشيت,علم,قدرت,قول,مسائل,شرف,سلطان,ملك,علاء"
 }

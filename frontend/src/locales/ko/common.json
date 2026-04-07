@@ -40,12 +40,13 @@
   "common.view": "보기",
   "common.warning": "경고",
   "common.yes": "예",
-  "common.testOnlyShort": "테스트 전용. 실제 선거에 사용 불가.",
-  "common.testOnlyLong": "이 개표J v4 베타는 테스트 전용입니다. 실제 선거에 사용할 준비가 되어 있지 않습니다.",
+  "common.testOnlyShort": "개표J 버전 4의 이 미리보기는 아직 개발 중입니다. 현재 실제 선거에 사용해서는 안 됩니다.",
+  "common.testOnlyLong": "{note} 개표J 버전 4의 이 미리보기는 아직 개발 중입니다.{br}로그인하여 기능을 시도할 수 있지만, 현재 바하이 선거에 사용해서는 안 됩니다.{br}시스템을 개선하는 동안 새로운 디자인에 대한 귀하의 피드백을 환영합니다.",
+  "common.testOnlyLongNote": "참고:",
   "common.logoAlt": "개표J 로고",
-  "common.appTitle": "개표J v4",
+  "common.appTitle": "개표J 버전 4",
   "common.appName": "개표J",
-  "common.versionDisplay": "v4 Beta",
-  "common.versionTooltip": "Version {version} ({date})",
-  "common.back": "Back"
+  "common.versionDisplay": "버전 4 Beta",
+  "common.back": "뒤로",
+  "common.badi.monthNames": "삽입일,찬란함,영광,아름다움,웅장함,빛,자비,말,완벽,이름,힘,의지,지식,힘,말,질문,명예,주권,지배,고귀함"
 }

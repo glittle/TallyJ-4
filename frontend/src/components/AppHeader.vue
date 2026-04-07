@@ -16,7 +16,6 @@ import { useElectionStore } from "../stores/electionStore";
 import { useLocationStore } from "../stores/locationStore";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
-import { BUILD_DATE, VERSION } from "./version";
 
 const router = useRouter();
 const route = useRoute();
@@ -28,10 +27,6 @@ const { showSuccessMessage, showInfoMessage } = useNotifications();
 
 const mobileMenuOpen = ref(false);
 const isMobile = ref(false);
-
-// Version tooltip - dynamically localized
-const versionName = computed(() => VERSION);
-const versionDate = computed(() => BUILD_DATE);
 
 // Check if we're on mobile
 const checkMobile = () => {
@@ -146,12 +141,6 @@ function toggleMobileMenu() {
       <h2 aria-live="polite">
         {{ currentPageTitle }}
       </h2>
-      <div class="versionName">
-        {{ versionName }}
-      </div>
-      <div class="versionDate">
-        {{ versionDate }}
-      </div>
 
       <!-- Location Selector -->
       <div

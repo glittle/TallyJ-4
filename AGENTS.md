@@ -91,6 +91,8 @@ Run `npm run validate:i18n` when you touch locale files.
 When adding new user-facing strings, **only add them to the English locale** (`src/locales/en/`).
 Other languages are updated separately in periodic review cycles — do not add placeholder or machine-translated strings to non-English locales.
 
+**Never edit files in `src/locales/bundled/`** — these are auto-generated during build by `npm run merge-locales` and will be overwritten. Always edit the source files in individual locale directories (e.g., `src/locales/en/auth.json`).
+
 ## Local development assumptions
 
 - backend default dev URL: `http://localhost:5016`

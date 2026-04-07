@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { onMounted, computed } from "vue";
-import CountryFlag from "vue-country-flag-next";
 import { setLocale, supportedLocales, type SupportedLocale } from "@/locales";
+import { computed, onMounted } from "vue";
+import CountryFlag from "vue-country-flag-next";
+import { useI18n } from "vue-i18n";
 
 const { locale, t } = useI18n();
 
@@ -44,8 +44,9 @@ onMounted(() => {
 <style lang="less">
 .language-flags-selector {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 
   .flag-button {
     background: transparent;

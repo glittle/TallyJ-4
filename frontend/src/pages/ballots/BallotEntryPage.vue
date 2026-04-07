@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import { useNotifications } from "@/composables/useNotifications";
 import { computed, onMounted, onUnmounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
+import InlineBallotEntry from "../../components/ballots/InlineBallotEntry.vue";
 import { useBallotStore } from "../../stores/ballotStore";
 import { useElectionStore } from "../../stores/electionStore";
 import { usePeopleStore } from "../../stores/peopleStore";
-import { useNotifications } from "@/composables/useNotifications";
-import InlineBallotEntry from "../../components/ballots/InlineBallotEntry.vue";
 import type {
-  VoteDto,
   CreateVoteDto,
+  VoteDto,
   VoteWithBallotStatusDto,
 } from "../../types";
 
@@ -182,7 +182,7 @@ function getStatusType(status: string) {
 
 <style lang="less">
 .ballot-entry-page {
-  max-width: 1200px;
+  max-width: var(--normal-max-width);
   margin: 0 auto;
 
   .card-header {

@@ -40,12 +40,13 @@
   "common.view": "Ver",
   "common.warning": "Advertencia",
   "common.yes": "Sí",
-  "common.testOnlyShort": "Solo para pruebas. No para elecciones reales.",
-  "common.testOnlyLong": "Este EscrutiJ v4 Beta es solo para pruebas. No está listo para usar en elecciones reales.",
+  "common.testOnlyShort": "Esta vista previa de EscrutiJ Versión 4 aún está en desarrollo. No debe usarse para elecciones reales en este momento.",
+  "common.testOnlyLong": "{note} Esta vista previa de EscrutiJ Versión 4 aún está en desarrollo.{br}Puedes iniciar sesión y probar las funciones, pero no debe usarse para elecciones bahá'ís en este momento.{br}Agradecemos tus comentarios sobre el nuevo diseño mientras continuamos mejorando el sistema.",
+  "common.testOnlyLongNote": "Por favor, nota:",
   "common.logoAlt": "Logo de EscrutiJ",
-  "common.appTitle": "EscrutiJ v4",
+  "common.appTitle": "EscrutiJ Versión 4",
   "common.appName": "EscrutiJ",
-  "common.versionDisplay": "v4 Beta",
-  "common.versionTooltip": "Version {version} ({date})",
-  "common.back": "Back"
+  "common.versionDisplay": "Versión 4 Beta",
+  "common.back": "Volver",
+  "common.badi.monthNames": "Días Intercalares,Esplendor,Gloria,Belleza,Grandeza,Luz,Misericordia,Palabras,Perfección,Nombres,Fuerza,Voluntad,Conocimiento,Poder,Discurso,Preguntas,Honor,Soberanía,Dominio,Sublimidad"
 }

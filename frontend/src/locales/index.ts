@@ -54,7 +54,8 @@ for (const path in localeModulesAsync) {
     filteredLocaleModulesAsync[path] = localeModulesAsync[path];
   }
 }
-const useBundled = Object.keys(enBundledModule).length > 0;
+const useBundled =
+  Object.keys(enBundledModule).length > 0 && !import.meta.env.DEV;
 
 // Load individual English files (always available as fallback)
 const enModules = import.meta.glob("./en/*.json", { eager: true });
