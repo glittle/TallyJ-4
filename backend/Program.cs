@@ -444,7 +444,17 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     app.UseHttpsRedirection();
     app.UseDefaultFiles();
     app.UseMiddleware<ConfigMiddleware>();
-    app.UseStaticFiles();
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        OnPrepareResponse = ctx =>
+        {
+            // Content-hashed assets (in /assets/) are immutable — cache for 1 year
+            if (ctx.Context.Request.Path.StartsWithSegments("/assets"))
+            {
+                ctx.Context.Response.Headers["Cache-Control"] = "public, max-age=31536000, immutable";
+            }
+        }
+    });
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseCors("AllowFrontend");
     app.Use(async (context, next) =>

@@ -102,8 +102,44 @@
     </script>
 
     <title>TallyJ v4</title>
+    <!-- Preload config.json so it is fetched as soon as possible -->
+    <link rel="preload" as="fetch" href="./config.json" />
+
+    <!-- Inline splash screen styles — shown before any JS bundles load -->
+    <style>
+      #splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fdfcf4;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+      }
+      #splash.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #splash img {
+        width: 180px;
+        max-width: 50vw;
+        animation: splash-pulse 1.8s ease-in-out infinite;
+      }
+      @keyframes splash-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+      }
+      @media (prefers-color-scheme: dark) {
+        #splash { background-color: #0c1830; }
+      }
+    </style>
   </head>
   <body>
+    <!-- Splash screen: logo only, no text — no locale required -->
+    <div id="splash">
+      <img src="/assets/logo-trans.png" alt="TallyJ" />
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

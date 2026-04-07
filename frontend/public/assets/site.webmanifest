@@ -1,6 +1,8 @@
 {
   "name": "TallyJ",
   "short_name": "TallyJ",
+  "description": "Secure election management and ballot tallying for Bahá'í communities.",
+  "start_url": "/",
   "icons": [
     {
       "src": "/assets/web-app-manifest-192x192.png",
@@ -15,7 +17,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#2563a8",
+  "background_color": "#fdfcf4",
   "display": "standalone"
 }
