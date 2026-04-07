@@ -41,14 +41,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // Add SQL Server LocalDB for testing
+            // Use EF Core InMemory database for testing (cross-platform, no SQL Server required)
             // Note: Program.cs skips DbContext registration in Testing environment
             var uniqueDbName = $"BackendTestDb_{Guid.NewGuid()}";
-            var connectionString = $"Server=(localdb)\\MSSQLLocalDB;Database={uniqueDbName};Trusted_Connection=True;";
 
             services.AddDbContext<MainDbContext>(options =>
             {
-                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("Backend"));
+                options.UseInMemoryDatabase(uniqueDbName);
                 options.EnableSensitiveDataLogging();
             });
 
@@ -61,10 +60,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         var host = base.CreateHost(builder);
 
-        // Ensure database is created and migrations are applied
+        // Ensure the InMemory database schema is initialized
         using var scope = host.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-        dbContext.Database.Migrate();
+        dbContext.Database.EnsureCreated();
 
         return host;
     }
