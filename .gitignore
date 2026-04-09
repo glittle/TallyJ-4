@@ -53,12 +53,20 @@ Frontend/build_rollup_stats.html
 Frontend/tests/artifacts/
 Frontend/tests/reports/
 Frontend/tests/screenshots/
-############################### 
-# Generated Files 
-############################### 
-node_modules/ 
-dist/ 
-build/ 
-.cache/ 
+###############################
+# Generated Files
+###############################
+node_modules/
+dist/
+build/
+.cache/
 *.log
 frontend/package-lock.json
+
+###############################
+# Agent/Tooling Artifacts
+###############################
+.zenflow/
+.zencoder/
+.zenflow-attachments/
+.zenflow-images/
