@@ -10,6 +10,11 @@ namespace Backend.Domain.Entities;
 [Index("ElectionGuid", "LocationGuid", Name = "nci_msft_1__Log_154BF30FBBDD3CC74014282844F74DFE")]
 public partial class Log
 {
+    public Log()
+    {
+        AsOf = DateTime.UtcNow;
+    }
+
     [Key]
     [Column("_RowId")]
     public int RowId { get; set; }

@@ -10,6 +10,13 @@ namespace Backend.Domain.Entities;
 [Index("ElectionGuid", "ComputerCode", Name = "IX_Computer_Code", IsUnique = true)]
 public partial class Computer
 {
+    public Computer()
+    {
+        RegisteredAt = DateTime.UtcNow;
+        LastActivity = DateTime.UtcNow;
+        IsActive = true;
+    }
+
     [Key]
     [Column("_RowId")]
     public int RowId { get; set; }

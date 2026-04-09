@@ -60,7 +60,6 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Ballot>(entity =>
         {
-            entity.Property(e => e.BallotCode).HasComputedColumnSql("([ComputerCode]+CONVERT([varchar],[BallotNumAtComputer],(0)))", true);
             entity.Property(e => e.StatusCode).HasConversion<string>().HasMaxLength(10).IsUnicode(false);
             entity.Property(e => e.RowVersion)
                 .IsRowVersion()
@@ -74,9 +73,6 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Computer>(entity =>
         {
-            entity.Property(e => e.RegisteredAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.LastActivity).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
 
             entity.HasOne(d => d.Election).WithMany()
                 .HasPrincipalKey(p => p.ElectionGuid)
@@ -93,7 +89,6 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Election>(entity =>
         {
-            entity.Property(e => e.ElectionGuid).HasDefaultValueSql("(CONVERT([uniqueidentifier],CONVERT([binary](10),newid(),(0))+CONVERT([binary](6),getdate(),(0)),(0)))");
             entity.Property(e => e.OnlineCloseIsEstimate).HasDefaultValue(true);
             entity.Property(e => e.ElectionType).HasConversion<string>();
             entity.Property(e => e.RowVersion)
@@ -103,8 +98,6 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<ImportFile>(entity =>
         {
-            entity.Property(e => e.FileSize).HasComputedColumnSql("(datalength([Contents]))", false);
-            entity.Property(e => e.HasContent).HasComputedColumnSql("(CONVERT([bit],case when [Contents] IS NULL then (0) else (1) end,(0)))", false);
 
             entity.HasOne(d => d.Election).WithMany(p => p.ImportFiles)
                 .HasPrincipalKey(p => p.ElectionGuid)
@@ -133,12 +126,6 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.ElectionGuid)
                 .HasConstraintName("FK_Location_Election");
         });
-
-        modelBuilder.Entity<Log>(entity =>
-        {
-            entity.Property(e => e.AsOf).HasDefaultValueSql("(getdate())");
-        });
-
 
         modelBuilder.Entity<Message>(entity =>
         {
@@ -171,12 +158,9 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
                 .IsUnique()
                 .HasFilter("([BahaiId] IS NOT NULL AND [BahaiId]<>'')");
 
-            entity.Property(e => e.FullName).HasComputedColumnSql("((((([LastName]+coalesce((' ['+nullif([OtherLastNames],''))+']',''))+', ')+coalesce([FirstName],''))+coalesce((' ['+nullif([OtherNames],''))+']',''))+coalesce((' ('+nullif([OtherInfo],''))+')',''))", true);
-            entity.Property(e => e.FullNameFl).HasComputedColumnSql("((((coalesce([FirstName]+' ','')+[LastName])+coalesce((' ['+nullif([OtherNames],''))+']',''))+coalesce((' ['+nullif([OtherLastNames],''))+']',''))+coalesce((' ('+nullif([OtherInfo],''))+')',''))", true);
             entity.Property(e => e.RowVersion)
                 .IsRowVersion()
                 .IsConcurrencyToken();
-            entity.Property(e => e.RowVersionInt).HasComputedColumnSql("(CONVERT([bigint],[_RowVersion],(0)))", false);
 
             entity.HasOne(d => d.Election).WithMany(p => p.People)
                 .HasPrincipalKey(p => p.ElectionGuid)
@@ -234,7 +218,6 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<TwoFactorToken>(entity =>
         {
-            entity.Property(e => e.TokenGuid).HasDefaultValueSql("(CONVERT([uniqueidentifier],CONVERT([binary](10),newid(),(0))+CONVERT([binary](6),getdate(),(0)),(0)))");
             entity.Property(e => e.RowVersion)
                 .IsRowVersion()
                 .IsConcurrencyToken();
@@ -247,7 +230,6 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<RefreshToken>(entity =>
         {
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.RowVersion)
                 .IsRowVersion()
                 .IsConcurrencyToken();
@@ -256,11 +238,6 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
                 .WithMany(u => u.RefreshTokens)
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<SecurityAuditLog>(entity =>
-        {
-            entity.Property(e => e.Timestamp).HasDefaultValueSql("(getdate())");
         });
 
         modelBuilder.Entity<Vote>(entity =>

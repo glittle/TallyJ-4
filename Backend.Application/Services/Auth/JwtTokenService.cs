@@ -102,7 +102,8 @@ public class JwtTokenService : IJwtTokenService
             TokenHash = HashRefreshToken(token),
             ExpiresAt = DateTime.UtcNow.AddDays(refreshTokenExpiryDays),
             CreatedAt = DateTime.UtcNow,
-            IsRevoked = false
+            IsRevoked = false,
+            RowVersion = new byte[8]
         };
     }
 

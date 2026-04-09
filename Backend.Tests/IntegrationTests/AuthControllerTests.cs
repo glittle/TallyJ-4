@@ -534,7 +534,8 @@ public class AuthControllerTests : IntegrationTestBase
                 ElectionPasscode = accessCode,
                 ListedForPublicAsOf = testDate, // Open for teller access
                 OwnerLoginId = "admin@tallyj.test",
-                ShowAsTest = true
+                ShowAsTest = true,
+                RowVersion = new byte[8]
             };
             context.Elections.Add(election);
             await context.SaveChangesAsync();
@@ -602,7 +603,8 @@ public class AuthControllerTests : IntegrationTestBase
                 ElectionPasscode = "CorrectCode",
                 ListedForPublicAsOf = testDate,
                 OwnerLoginId = "admin@tallyj.test",
-                ShowAsTest = true
+                ShowAsTest = true,
+                RowVersion = new byte[8]
             };
             context.Elections.Add(election);
             await context.SaveChangesAsync();
@@ -649,7 +651,8 @@ public class AuthControllerTests : IntegrationTestBase
                 ElectionPasscode = accessCode,
                 ListedForPublicAsOf = null, // Closed for teller access
                 OwnerLoginId = "admin@tallyj.test",
-                ShowAsTest = true
+                ShowAsTest = true,
+                RowVersion = new byte[8]
             };
             context.Elections.Add(election);
             await context.SaveChangesAsync();

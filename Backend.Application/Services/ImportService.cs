@@ -78,7 +78,7 @@ public class ImportService
                 {
                     BallotGuid = ballotGuid,
                     LocationGuid = location.LocationGuid,
-                    BallotCode = ballotCode,
+                    BallotCode = $"IMPORT{i}",
                     StatusCode = BallotStatus.Ok,
                     ComputerCode = "IMPORT",
                     BallotNumAtComputer = i
