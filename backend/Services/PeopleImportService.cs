@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using Backend.Domain.Helpers;
 using Backend.DTOs.Import;
 using Backend.Hubs;
 using Microsoft.AspNetCore.Http;
@@ -1037,8 +1038,8 @@ public class PeopleImportService : IPeopleImportService
         }
 
         // Set computed fields
-        person.FullName = $"{person.FirstName} {person.LastName}".Trim();
-        person.FullNameFl = $"{person.LastName}, {person.FirstName}".Trim();
+        person.FullName = PersonNameHelper.ComputeFullName(person);
+        person.FullNameFl = PersonNameHelper.ComputeFullNameFl(person);
 
         return person;
     }

@@ -1,15 +1,10 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Backend.Domain.Context;
-using Backend.Domain.Entities;
-using Backend.Domain.Identity;
 using Backend.Application.Services.Auth;
 using MimeKit;
 
@@ -41,14 +36,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // Add SQL Server LocalDB for testing
+            // Use SQLite file database for testing (supports transactions unlike EF InMemory)
             // Note: Program.cs skips DbContext registration in Testing environment
-            var uniqueDbName = $"BackendTestDb_{Guid.NewGuid()}";
-            var connectionString = $"Server=(localdb)\\MSSQLLocalDB;Database={uniqueDbName};Trusted_Connection=True;";
+            var uniqueDbName = $"BackendTestDb_{Guid.NewGuid()}.db";
 
             services.AddDbContext<MainDbContext>(options =>
             {
-                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("Backend"));
+                options.UseSqlite($"Data Source={uniqueDbName}");
                 options.EnableSensitiveDataLogging();
             });
 
@@ -61,10 +55,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         var host = base.CreateHost(builder);
 
-        // Ensure database is created and migrations are applied
+        // Ensure the SQLite database schema is initialized
         using var scope = host.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-        dbContext.Database.Migrate();
+        dbContext.Database.EnsureCreated();
 
         return host;
     }

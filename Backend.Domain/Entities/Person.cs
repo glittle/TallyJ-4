@@ -75,14 +75,13 @@ public partial class Person
     public byte[] RowVersion { get; set; } = null!;
 
     [Column("_FullName")]
-    [StringLength(461)]
+    [StringLength(200)]
     public string? FullName { get; set; }
 
-    [Column("_RowVersionInt")]
-    public long? RowVersionInt { get; set; }
+
 
     [Column("_FullNameFL")]
-    [StringLength(460)]
+    [StringLength(200)]
     public string? FullNameFl { get; set; }
 
     [StringLength(25)]

@@ -135,7 +135,6 @@ public class ElectionService : IElectionService
         election.ElectionGuid = Guid.NewGuid();
         election.TallyStatus = "Setup";
         election.RowVersion = new byte[8];
-
         _context.Elections.Add(election);
         await _context.SaveChangesAsync();
 

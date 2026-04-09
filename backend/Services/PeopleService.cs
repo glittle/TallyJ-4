@@ -1,6 +1,7 @@
 ﻿using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using Backend.Domain.Helpers;
 using Backend.DTOs.People;
 using Backend.DTOs.SignalR;
 using Backend.Models;
@@ -149,14 +150,8 @@ public class PeopleService : IPeopleService
         var person = _mapper.Map<Person>(createDto);
         person.PersonGuid = Guid.NewGuid();
         person.RowVersion = new byte[8];
-
-        person.FullName = string.IsNullOrWhiteSpace(person.FirstName)
-            ? person.LastName
-            : $"{person.LastName}, {person.FirstName}";
-
-        person.FullNameFl = string.IsNullOrWhiteSpace(person.FirstName)
-            ? person.LastName
-            : $"{person.FirstName} {person.LastName}";
+        person.FullName = PersonNameHelper.ComputeFullName(person);
+        person.FullNameFl = PersonNameHelper.ComputeFullNameFl(person);
 
         // Sync eligibility based on IneligibleReasonGuid
         SyncEligibility(person);
@@ -223,13 +218,8 @@ public class PeopleService : IPeopleService
 
         _mapper.Map(updateDto, person);
 
-        person.FullName = string.IsNullOrWhiteSpace(person.FirstName)
-            ? person.LastName
-            : $"{person.LastName}, {person.FirstName}";
-
-        person.FullNameFl = string.IsNullOrWhiteSpace(person.FirstName)
-            ? person.LastName
-            : $"{person.FirstName} {person.LastName}";
+        person.FullName = PersonNameHelper.ComputeFullName(person);
+        person.FullNameFl = PersonNameHelper.ComputeFullNameFl(person);
 
         // Sync eligibility based on IneligibleReasonGuid
         SyncEligibility(person);

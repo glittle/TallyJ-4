@@ -1,6 +1,7 @@
 ﻿using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using Backend.Domain.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services.Analyzers;
@@ -262,7 +263,7 @@ public abstract class ElectionAnalyzerBase
             .ThenBy(r =>
             {
                 var person = People.FirstOrDefault(p => p.PersonGuid == r.PersonGuid);
-                return person?.FullNameFl ?? r.RowId.ToString();
+                return person != null ? PersonNameHelper.GetSortKey(person) : r.RowId.ToString();
             }))
         {
             ordinalRank++;
