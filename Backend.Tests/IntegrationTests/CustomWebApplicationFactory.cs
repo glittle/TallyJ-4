@@ -41,13 +41,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // Use EF Core InMemory database for testing (cross-platform, no SQL Server required)
+            // Use SQLite file database for testing (supports transactions unlike EF InMemory)
             // Note: Program.cs skips DbContext registration in Testing environment
-            var uniqueDbName = $"BackendTestDb_{Guid.NewGuid()}";
+            var uniqueDbName = $"BackendTestDb_{Guid.NewGuid()}.db";
 
             services.AddDbContext<MainDbContext>(options =>
             {
-                options.UseInMemoryDatabase(uniqueDbName);
+                options.UseSqlite($"Data Source={uniqueDbName}");
                 options.EnableSensitiveDataLogging();
             });
 
@@ -60,7 +60,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         var host = base.CreateHost(builder);
 
-        // Ensure the InMemory database schema is initialized
+        // Ensure the SQLite database schema is initialized
         using var scope = host.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         dbContext.Database.EnsureCreated();

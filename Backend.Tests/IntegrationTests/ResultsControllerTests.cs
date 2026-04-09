@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.Elections;
 using Backend.DTOs.Results;
 using Backend.Domain.Enumerations;
@@ -25,27 +26,77 @@ public class ResultsControllerTests : IntegrationTestBase
 
         var response = await Client.PostAsync($"/api/results/election/{electionGuid}/calculate", null);
 
-        // InMemory database doesn't support transactions, so tally calculation fails
-        // In production with SQL Server, this should succeed
-        using var scope = Factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-        if (context.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory")
-        {
-            // With InMemory, transactions are not supported, so we expect an error
-            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-        }
-        else
-        {
-            // With relational databases, tally calculation should succeed
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var result = await DeserializeResponseAsync<TallyResultDto>(response);
-            Assert.NotNull(result);
-            Assert.Equal(electionGuid, result.ElectionGuid);
-            Assert.NotNull(result.Statistics);
-            Assert.NotNull(result.Results);
-            Assert.True(result.Results.Count > 0);
+        var result = await DeserializeResponseAsync<TallyResultDto>(response);
+        Assert.NotNull(result);
+        Assert.Equal(electionGuid, result.ElectionGuid);
+        Assert.NotNull(result.Statistics);
+        Assert.NotNull(result.Results);
+        Assert.True(result.Results.Count > 0);
+    }
+
+    [Fact]
+    public async Task RowVersion_ConcurrencyControl_WorksCorrectly()
+    {
+        // This test verifies that RowVersion provides optimistic concurrency control
+        // by attempting concurrent updates to the same entity
+
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var electionGuid = await CreateTestElectionWithBallotsAsync();
+
+        // Get the election entity
+        using var scope = Factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var election = await dbContext.Elections.FirstAsync(e => e.ElectionGuid == electionGuid);
+        var originalName = election.Name;
+        var originalRowVersion = election.RowVersion;
+
+        // Simulate concurrent updates by creating two contexts
+        using var scope1 = Factory.Services.CreateScope();
+        var context1 = scope1.ServiceProvider.GetRequiredService<MainDbContext>();
+        using var scope2 = Factory.Services.CreateScope();
+        var context2 = scope2.ServiceProvider.GetRequiredService<MainDbContext>();
+
+        var election1 = await context1.Elections.FirstAsync(e => e.ElectionGuid == electionGuid);
+        var election2 = await context2.Elections.FirstAsync(e => e.ElectionGuid == electionGuid);
+
+        // Initialize RowVersion if null (for SQLite)
+        if (election1.RowVersion == null)
+        {
+            election1.RowVersion = new byte[8];
+            await context1.SaveChangesAsync();
+            // Refresh the second context
+            await context2.Entry(election2).ReloadAsync();
         }
+
+        // First update succeeds
+        election1.Name = "Updated Name 1";
+        // Manually update RowVersion for SQLite (since it doesn't auto-increment like SQL Server)
+        if (election1.RowVersion != null)
+        {
+            var newVersion = new byte[election1.RowVersion.Length];
+            election1.RowVersion.CopyTo(newVersion, 0);
+            newVersion[newVersion.Length - 1]++; // Increment last byte
+            election1.RowVersion = newVersion;
+        }
+        await context1.SaveChangesAsync();
+
+        // Verify RowVersion changed
+        Assert.NotEqual(originalRowVersion, election1.RowVersion);
+
+        // Second update should fail due to concurrency conflict
+        election2.Name = "Updated Name 2";
+
+        // This should throw DbUpdateConcurrencyException if RowVersion is working
+        var exception = await Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () =>
+        {
+            await context2.SaveChangesAsync();
+        });
+
+        Assert.NotNull(exception);
     }
 
     [Fact]
@@ -93,25 +144,12 @@ public class ResultsControllerTests : IntegrationTestBase
 
         var response = await Client.GetAsync($"/api/results/election/{electionGuid}/summary");
 
-        // In production with SQL Server, this should succeed
-        using var scope = Factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-        if (context.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory")
-        {
-            // With InMemory, calculation fails due to transaction limitations, so summary may not be available
-            // Just verify the endpoint responds (may be empty or error)
-            Assert.True(response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.NotFound);
-        }
-        else
-        {
-            // With relational databases, summary should be available after calculation
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var result = await DeserializeResponseAsync<TallyStatisticsDto>(response);
-            Assert.NotNull(result);
-            Assert.True(result.BallotsReceived > 0);
-            Assert.True(result.TotalVotes > 0);
-        }
+        var result = await DeserializeResponseAsync<TallyStatisticsDto>(response);
+        Assert.NotNull(result);
+        Assert.True(result.BallotsReceived > 0);
+        Assert.True(result.TotalVotes > 0);
     }
 
     [Fact]
@@ -182,11 +220,11 @@ public class ResultsControllerTests : IntegrationTestBase
 
         var people = new List<Person>
         {
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Alice", LastName = "Anderson", ElectionGuid = electionGuid, CanReceiveVotes = true, RowVersion = new byte[] { 1 } },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Bob", LastName = "Brown", ElectionGuid = electionGuid, CanReceiveVotes = true, RowVersion = new byte[] { 1 } },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Carol", LastName = "Clark", ElectionGuid = electionGuid, CanReceiveVotes = true, RowVersion = new byte[] { 1 } },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "David", LastName = "Davis", ElectionGuid = electionGuid, CanReceiveVotes = true, RowVersion = new byte[] { 1 } },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Eve", LastName = "Evans", ElectionGuid = electionGuid, CanReceiveVotes = true, RowVersion = new byte[] { 1 } }
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Alice", LastName = "Anderson", ElectionGuid = electionGuid, CanReceiveVotes = true },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Bob", LastName = "Brown", ElectionGuid = electionGuid, CanReceiveVotes = true },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Carol", LastName = "Clark", ElectionGuid = electionGuid, CanReceiveVotes = true },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "David", LastName = "Davis", ElectionGuid = electionGuid, CanReceiveVotes = true },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Eve", LastName = "Evans", ElectionGuid = electionGuid, CanReceiveVotes = true }
         };
 
         context.People.AddRange(people);
@@ -201,8 +239,7 @@ public class ResultsControllerTests : IntegrationTestBase
                 StatusCode = BallotStatus.Ok,
                 BallotNumAtComputer = i + 1,
                 ComputerCode = "C1",
-                LocationGuid = location.LocationGuid,
-                RowVersion = new byte[] { 1 }
+                LocationGuid = location.LocationGuid
             };
             ballots.Add(ballot);
 
@@ -215,8 +252,7 @@ public class ResultsControllerTests : IntegrationTestBase
                     PersonGuid = people[v % people.Count].PersonGuid,
                     PositionOnBallot = v + 1,
                     VoteStatus = VoteStatus.Ok,
-                    IneligibleReasonCode = null,
-                    RowVersion = new byte[] { 1 }
+                    IneligibleReasonCode = null
                 });
             }
             context.Votes.AddRange(votes);

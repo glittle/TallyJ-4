@@ -150,7 +150,6 @@ public class PeopleService : IPeopleService
         var person = _mapper.Map<Person>(createDto);
         person.PersonGuid = Guid.NewGuid();
         person.RowVersion = new byte[8];
-
         person.FullName = PersonNameHelper.ComputeFullName(person);
         person.FullNameFl = PersonNameHelper.ComputeFullNameFl(person);
 

@@ -133,7 +133,7 @@ public class BallotService : IBallotService
             BallotNumAtComputer = nextBallotNum,
             BallotCode = $"{createDto.ComputerCode}{nextBallotNum}",
             StatusCode = BallotStatus.Raw,
-            RowVersion = new byte[8]
+            RowVersion = new byte[8],
         };
 
         _context.Ballots.Add(ballot);

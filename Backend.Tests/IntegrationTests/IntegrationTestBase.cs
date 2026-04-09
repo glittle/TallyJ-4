@@ -179,6 +179,8 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
+
+
         // Only seed if database doesn't have our test data
         if (await dbContext.Users.AnyAsync(u => u.Email == "admin@tallyj.com"))
         {
@@ -219,8 +221,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             ElectionType = "LSA",
             NumberToElect = 3,
             TallyStatus = "NotStarted",
-            ShowAsTest = true,
-            RowVersion = new byte[8] // Initialize RowVersion for concurrency
+            ShowAsTest = true
         };
 
         var election2 = new Election
@@ -231,8 +232,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             ElectionType = "NSA",
             NumberToElect = 1,
             TallyStatus = "NotStarted",
-            ShowAsTest = true,
-            RowVersion = new byte[8] // Initialize RowVersion for concurrency
+            ShowAsTest = true
         };
 
         dbContext.Elections.AddRange(election1, election2);

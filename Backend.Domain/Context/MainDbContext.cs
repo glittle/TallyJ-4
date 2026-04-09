@@ -58,12 +58,23 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
     {
         base.OnModelCreating(modelBuilder);
 
+        var isSqlServer = Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer";
+
         modelBuilder.Entity<Ballot>(entity =>
         {
             entity.Property(e => e.StatusCode).HasConversion<string>().HasMaxLength(10).IsUnicode(false);
-            entity.Property(e => e.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
+            if (isSqlServer)
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+            }
+            else
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsConcurrencyToken()
+                    .IsRequired(false);
+            }
 
             entity.HasOne(d => d.Location).WithMany(p => p.Ballots)
                 .HasPrincipalKey(p => p.LocationGuid)
@@ -91,9 +102,18 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
         {
             entity.Property(e => e.OnlineCloseIsEstimate).HasDefaultValue(true);
             entity.Property(e => e.ElectionType).HasConversion<string>();
-            entity.Property(e => e.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
+            if (isSqlServer)
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+            }
+            else
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsConcurrencyToken()
+                    .IsRequired(false);
+            }
         });
 
         modelBuilder.Entity<ImportFile>(entity =>
@@ -129,9 +149,18 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Message>(entity =>
         {
-            entity.Property(e => e.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
+            if (isSqlServer)
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+            }
+            else
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsConcurrencyToken()
+                    .IsRequired(false);
+            }
 
             entity.HasOne(d => d.Election).WithMany(p => p.Messages)
                 .HasPrincipalKey(p => p.ElectionGuid)
@@ -158,9 +187,18 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
                 .IsUnique()
                 .HasFilter("([BahaiId] IS NOT NULL AND [BahaiId]<>'')");
 
-            entity.Property(e => e.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
+            if (isSqlServer)
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+            }
+            else
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsConcurrencyToken()
+                    .IsRequired(false);
+            }
 
             entity.HasOne(d => d.Election).WithMany(p => p.People)
                 .HasPrincipalKey(p => p.ElectionGuid)
@@ -205,9 +243,18 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Teller>(entity =>
         {
-            entity.Property(e => e.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
+            if (isSqlServer)
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+            }
+            else
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsConcurrencyToken()
+                    .IsRequired(false);
+            }
 
             entity.HasOne(d => d.Election).WithMany(p => p.Tellers)
                 .HasPrincipalKey(p => p.ElectionGuid)
@@ -218,9 +265,18 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<TwoFactorToken>(entity =>
         {
-            entity.Property(e => e.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
+            if (isSqlServer)
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+            }
+            else
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsConcurrencyToken()
+                    .IsRequired(false);
+            }
 
             entity.HasOne<AppUser>()
                 .WithOne(u => u.TwoFactorToken)
@@ -230,9 +286,18 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<RefreshToken>(entity =>
         {
-            entity.Property(e => e.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
+            if (isSqlServer)
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+            }
+            else
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsConcurrencyToken()
+                    .IsRequired(false);
+            }
 
             entity.HasOne<AppUser>()
                 .WithMany(u => u.RefreshTokens)
@@ -243,9 +308,18 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
         modelBuilder.Entity<Vote>(entity =>
         {
             entity.Property(e => e.VoteStatus).HasConversion<string>().HasMaxLength(10).IsUnicode(false);
-            entity.Property(e => e.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
+            if (isSqlServer)
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+            }
+            else
+            {
+                entity.Property(e => e.RowVersion)
+                    .IsConcurrencyToken()
+                    .IsRequired(false);
+            }
 
             entity.HasOne(d => d.Ballot).WithMany(p => p.Votes)
                 .HasPrincipalKey(p => p.BallotGuid)
