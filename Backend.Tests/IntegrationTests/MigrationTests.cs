@@ -34,18 +34,18 @@ public class MigrationTests : IntegrationTestBase
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
         // Assert
-        // InMemory database does not use migrations; for relational databases verify all migrations are applied
-        if (dbContext.Database.IsInMemory())
-        {
-            // For InMemory, verify the database is accessible
-            Assert.True(await dbContext.Database.CanConnectAsync());
-        }
-        else
+        // SQL Server uses migrations; other providers (SQLite, InMemory) use EnsureCreated
+        if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
         {
             var appliedMigrations = await dbContext.Database.GetAppliedMigrationsAsync();
             var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
             Assert.NotEmpty(appliedMigrations);
             Assert.Empty(pendingMigrations);
+        }
+        else
+        {
+            // For other providers, verify the database is accessible
+            Assert.True(await dbContext.Database.CanConnectAsync());
         }
     }
 
@@ -57,11 +57,11 @@ public class MigrationTests : IntegrationTestBase
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
         // Act & Assert - Test that all expected tables exist by trying to query them
-        await dbContext.Elections.AnyAsync();
-        await dbContext.People.AnyAsync();
-        await dbContext.Locations.AnyAsync();
-        await dbContext.Users.AnyAsync();
-        await dbContext.Roles.AnyAsync();
+        Assert.True(await dbContext.Elections.AnyAsync());
+        Assert.True(await dbContext.People.AnyAsync());
+        Assert.True(await dbContext.Locations.AnyAsync());
+        Assert.True(await dbContext.Users.AnyAsync());
+        Assert.True(await dbContext.Roles.AnyAsync());
     }
 
     [Fact]
@@ -69,7 +69,6 @@ public class MigrationTests : IntegrationTestBase
     {
         // Arrange
         using var scope = Factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
         // Act - Check for seeded users from IntegrationTestBase
@@ -186,9 +185,9 @@ public class MigrationTests : IntegrationTestBase
 
         // Assert
         Assert.NotNull(savedPerson);
-        if (!dbContext.Database.IsInMemory())
+        if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
         {
-            // Computed columns (FullName) only execute in SQL Server, not InMemory
+            // Computed columns (FullName) only execute in SQL Server
             Assert.NotNull(savedPerson!.FullName);
             var fullName = savedPerson.FullName;
             Assert.Contains(savedPerson.FirstName!, fullName);
@@ -196,7 +195,7 @@ public class MigrationTests : IntegrationTestBase
         }
         else
         {
-            // In InMemory mode, verify the saved properties are correct
+            // For other providers, verify the saved properties are correct
             Assert.Equal("John", savedPerson!.FirstName);
             Assert.Equal("Doe", savedPerson.LastName);
         }
