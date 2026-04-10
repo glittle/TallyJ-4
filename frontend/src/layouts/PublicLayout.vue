@@ -68,7 +68,8 @@ const handleLogoClick = () => {
   .public-header {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
-    gap: 2em;
+    grid-template-areas: "logo flags theme";
+    gap: 1em 2em;
     align-items: center;
     padding: 20px 40px;
     backdrop-filter: blur(10px);
@@ -76,10 +77,31 @@ const handleLogoClick = () => {
     background: var(--color-public-header-bg);
     -webkit-backdrop-filter: blur(10px);
     /* Safari support */
+
+    .logo {
+      grid-area: logo;
+    }
+
+    .header-middle {
+      grid-area: flags;
+    }
+
+    .header-right {
+      grid-area: theme;
+    }
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        "logo theme"
+        "flags flags";
+      padding: 12px 16px;
+    }
   }
 
   .header-middle {
-    flex-grow: 1;
+    display: flex;
+    justify-content: center;
   }
 
   .logo h2 {
