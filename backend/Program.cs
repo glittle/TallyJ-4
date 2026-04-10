@@ -511,6 +511,13 @@ var builder = WebApplication.CreateBuilder(args);
 AddLogging(builder);
 ConfigureServices(builder);
 
+builder.WebHost.UseSentry(o =>
+{
+    o.Dsn = builder.Configuration["Sentry"];
+    // When configuring for the first time, to see what the SDK is doing:
+    o.Debug = true;
+});
+
 var app = builder.Build();
 
 // Reconfigure logger with correlation ID enricher now that services are available
