@@ -56,12 +56,12 @@ public class MigrationTests : IntegrationTestBase
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
-        // Act & Assert - Test that all expected tables exist by trying to query them
-        Assert.True(await dbContext.Elections.AnyAsync());
-        Assert.True(await dbContext.People.AnyAsync());
-        Assert.True(await dbContext.Locations.AnyAsync());
-        Assert.True(await dbContext.Users.AnyAsync());
-        Assert.True(await dbContext.Roles.AnyAsync());
+        // These queries will throw an exception if the tables do not exist
+        await dbContext.Elections.AnyAsync();
+        await dbContext.People.AnyAsync();
+        await dbContext.Locations.AnyAsync();
+        await dbContext.Users.AnyAsync();
+        await dbContext.Roles.AnyAsync();
     }
 
     [Fact]
