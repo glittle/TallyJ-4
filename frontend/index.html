@@ -115,7 +115,9 @@
           } else if (t === "light") {
             document.documentElement.classList.remove("dark");
           }
-        } catch () {}
+        } catch {
+          // ignore error
+        }
       })();
     </script>
 
