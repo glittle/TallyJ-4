@@ -15,6 +15,8 @@ using Mapster;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -105,6 +107,11 @@ void ConfigureServices(WebApplicationBuilder builder)
         }
 
         services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
+        services.AddDbContext<DataProtectionDbContext>(options =>
+            options.UseSqlServer(connectionString));
+
+        services.AddDataProtection()
+            .PersistKeysToDbContext<DataProtectionDbContext>();
     }
 
     services.AddCors(options =>
