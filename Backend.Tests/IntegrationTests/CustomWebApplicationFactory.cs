@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Backend.Domain.Context;
+using Backend.EF.Data;
 using Backend.Application.Services.Auth;
 using MimeKit;
 
@@ -39,6 +41,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             // Use SQLite file database for testing (supports transactions unlike EF InMemory)
             // Note: Program.cs skips DbContext registration in Testing environment
             var uniqueDbName = $"BackendTestDb_{Guid.NewGuid()}.db";
+            var uniqueDataProtectionDbName = $"BackendTestDataProtectionDb_{Guid.NewGuid()}.db";
 
             services.AddDbContext<MainDbContext>(options =>
             {

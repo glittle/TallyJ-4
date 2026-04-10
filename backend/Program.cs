@@ -177,7 +177,10 @@ void ConfigureServices(WebApplicationBuilder builder)
     services.AddFluentValidationAutoValidation();
     services.AddValidatorsFromAssemblyContaining<Program>();
 
-    TypeAdapterConfig.GlobalSettings.Scan(typeof(Program).Assembly);
+    if (TypeAdapterConfig.GlobalSettings.RuleMap.Count == 0)
+    {
+        TypeAdapterConfig.GlobalSettings.Scan(typeof(Program).Assembly);
+    }
     services.AddMapster();
 
     RegisterApplicationServices(services);
