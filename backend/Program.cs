@@ -521,12 +521,15 @@ var builder = WebApplication.CreateBuilder(args);
 AddLogging(builder);
 ConfigureServices(builder);
 
-builder.WebHost.UseSentry(o =>
+if (!isDevelopment && !isTesting)
 {
-    o.Dsn = builder.Configuration["Sentry"];
-    // When configuring for the first time, to see what the SDK is doing:
-    o.Debug = true;
-});
+    builder.WebHost.UseSentry(o =>
+    {
+        o.Dsn = builder.Configuration["Sentry"];
+        // When configuring for the first time, to see what the SDK is doing:
+        o.Debug = true;
+    });
+}
 
 var app = builder.Build();
 
