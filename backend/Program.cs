@@ -469,9 +469,11 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     app.UseCors("AllowFrontend");
     app.Use(async (context, next) =>
     {
-        context.Response.Headers["X-Content-Type-Options"] = "nosniff";
-        context.Response.Headers["X-Frame-Options"] = "DENY";
-        context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+        // Only add HSTS if in Production
+        if (!isDevelopment && !isTesting)
+        {
+            context.Response.Headers.Append("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+        }
         await next();
     });
     app.UseMiddleware<RateLimitingMiddleware>();
@@ -523,12 +525,16 @@ ConfigureServices(builder);
 
 if (!isDevelopment && !isTesting)
 {
-    builder.WebHost.UseSentry(o =>
+    var dsn = builder.Configuration["Sentry"];
+    if (dsn.HasContent())
     {
-        o.Dsn = builder.Configuration["Sentry"];
-        // When configuring for the first time, to see what the SDK is doing:
-        o.Debug = true;
-    });
+        builder.WebHost.UseSentry(o =>
+        {
+            o.Dsn = dsn;
+            // When configuring for the first time, to see what the SDK is doing:
+            // o.Debug = true;
+        });
+    }
 }
 
 var app = builder.Build();
