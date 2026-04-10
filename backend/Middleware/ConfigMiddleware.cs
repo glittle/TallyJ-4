@@ -25,7 +25,7 @@ public class ConfigMiddleware
         var siteType = Environment.CommandLine.DetermineSiteType();
 
         // Pre-load config if not in dev environment
-        if (siteType != "Dev")
+        if (siteType != "Dev" && environment.WebRootPath != null)
         {
             string? configFile = null;
             switch (siteType)
