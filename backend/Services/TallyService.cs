@@ -5,6 +5,7 @@ using Backend.DTOs.Results;
 using Backend.DTOs.SignalR;
 using Backend.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace Backend.Services;
 
@@ -17,15 +18,16 @@ public class TallyService : ITallyService
     private readonly MainDbContext _context;
     private readonly ILogger<TallyService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly IStringLocalizer<TallyService> _localizer;
 
     private const string UnknownFallbackValue = "Unknown";
     private const string UnknownElectionName = "Unknown Election";
     private const string UnknownLocationName = "Unknown Location";
 
-    // Section constants - TODO: These should be localized in the future
-    private const string SectionElected = "Elected";
-    private const string SectionExtra = "Extra";
-    private const string SectionOther = "Other";
+    // Section constants - localized
+    private string SectionElected => _localizer["tally.section.elected"];
+    private string SectionExtra => _localizer["tally.section.extra"];
+    private string SectionOther => _localizer["tally.section.other"];
 
     /// <summary>
     /// Initializes a new instance of the TallyService.
@@ -33,11 +35,13 @@ public class TallyService : ITallyService
     /// <param name="context">The main database context for accessing election and tally data.</param>
     /// <param name="logger">Logger for recording tally service operations.</param>
     /// <param name="signalRNotificationService">Service for sending real-time notifications about tally progress.</param>
-    public TallyService(MainDbContext context, ILogger<TallyService> logger, ISignalRNotificationService signalRNotificationService)
+    /// <param name="localizer">Localizer for retrieving localized strings.</param>
+    public TallyService(MainDbContext context, ILogger<TallyService> logger, ISignalRNotificationService signalRNotificationService, IStringLocalizer<TallyService> localizer)
     {
         _context = context;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
+        _localizer = localizer;
     }
 
     /// <summary>

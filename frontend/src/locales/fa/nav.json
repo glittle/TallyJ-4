@@ -4,8 +4,8 @@
   "nav.profile": "پروفایل",
   "nav.superAdmin": "مدیر ارشد",
   "nav.auditLogs": "گزارش‌های حسابرسی",
-  "nav.votingLocations": "Voting Locations",
-  "nav.tellers": "Tellers",
-  "nav.frontDesk": "Front Desk",
-  "nav.publicDisplay": "Election Results Display"
+  "nav.votingLocations": "محل‌های رای‌گیری",
+  "nav.tellers": "صندوق‌دارها",
+  "nav.frontDesk": "میز پذیرش",
+  "nav.publicDisplay": "نمایش نتایج انتخابات"
 }

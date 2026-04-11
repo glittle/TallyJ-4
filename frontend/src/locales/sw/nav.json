@@ -4,8 +4,8 @@
   "nav.profile": "Wasifu",
   "nav.superAdmin": "Msimamizi Mkuu",
   "nav.auditLogs": "Kumbukumbu za Ukaguzi",
-  "nav.votingLocations": "Voting Locations",
-  "nav.tellers": "Tellers",
-  "nav.frontDesk": "Front Desk",
-  "nav.publicDisplay": "Election Results Display"
+  "nav.votingLocations": "Mahali pa Kupiga Kura",
+  "nav.tellers": "Wasimamizi",
+  "nav.frontDesk": "Meza ya Mbele",
+  "nav.publicDisplay": "Onyesho la Matokeo ya Uchaguzi"
 }

@@ -4,8 +4,8 @@
   "nav.profile": "个人资料",
   "nav.superAdmin": "超级管理员",
   "nav.auditLogs": "审计日志",
-  "nav.votingLocations": "Voting Locations",
-  "nav.tellers": "Tellers",
-  "nav.frontDesk": "Front Desk",
-  "nav.publicDisplay": "Election Results Display"
+  "nav.votingLocations": "投票地点",
+  "nav.tellers": "计票员",
+  "nav.frontDesk": "前台",
+  "nav.publicDisplay": "选举结果显示"
 }

@@ -10,5 +10,8 @@
   "tally.calculatingProgress": "Lasketaan edistymistä",
   "tally.processedBallots": "Käsitellyt äänestysliput",
   "tally.resultsPreview": "Tulosten esikatselu (Top 10)",
-  "tally.viewFullResults": "Näytä koko tulokset"
+  "tally.viewFullResults": "Näytä koko tulokset",
+  "tally.section.elected": "Valittu",
+  "tally.section.extra": "Lisä",
+  "tally.section.other": "Muu"
 }

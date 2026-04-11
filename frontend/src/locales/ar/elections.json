@@ -146,5 +146,17 @@
   "elections.importCdnBallotsSuccess": "تم استيراد أصوات CDN بنجاح",
   "elections.importElectionError": "فشل في استيراد الانتخابات",
   "elections.exportElectionError": "فشل في تصدير الانتخابات",
-  "elections.importCdnBallotsError": "فشل في استيراد أصوات CDN"
+  "elections.importCdnBallotsError": "فشل في استيراد أصوات CDN",
+  "elections.stageProgression": "Election Stage",
+  "elections.stage.Setup": "Setup",
+  "elections.stage.Counting": "Counting",
+  "elections.stage.Finalized": "Finalized",
+  "elections.advanceStage": "Advance to Next Stage",
+  "elections.advanceTo": "Advance to {stage}",
+  "elections.revertTo": "Revert to {stage}",
+  "elections.stageAdvanced": "Election advanced to {stage}",
+  "elections.stageReverted": "Election reverted to {stage}",
+  "elections.stageChangeError": "Failed to change election stage",
+  "elections.confirmAdvance": "Are you sure you want to advance this election to {stage}?",
+  "elections.confirmRevert": "Are you sure you want to revert this election to {stage}?"
 }

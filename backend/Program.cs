@@ -269,7 +269,15 @@ void ConfigureAuthentication(IServiceCollection services, IConfiguration configu
     }
     else
     {
-        Log.Warning("Google authentication not configured - ClientId or ClientSecret is missing or using placeholder values. Google login will not be available.");
+        var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+        if (isDevelopment)
+        {
+            Log.Warning("Google authentication not configured - ClientId or ClientSecret is missing or using placeholder values. Google login will not be available.");
+        }
+        else
+        {
+            Log.Information("Google authentication not configured. Google login will not be available.");
+        }
     }
 }
 

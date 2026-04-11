@@ -146,5 +146,17 @@
   "elections.importCdnBallotsSuccess": "CDN ballots imported successfully",
   "elections.importElectionError": "Failed to import election",
   "elections.exportElectionError": "Failed to export election",
-  "elections.importCdnBallotsError": "Failed to import CDN ballots"
+  "elections.importCdnBallotsError": "Failed to import CDN ballots",
+  "elections.stageProgression": "Election Stage",
+  "elections.stage.Setup": "Setup",
+  "elections.stage.Counting": "Counting",
+  "elections.stage.Finalized": "Finalized",
+  "elections.advanceStage": "Advance to Next Stage",
+  "elections.advanceTo": "Advance to {stage}",
+  "elections.revertTo": "Revert to {stage}",
+  "elections.stageAdvanced": "Election advanced to {stage}",
+  "elections.stageReverted": "Election reverted to {stage}",
+  "elections.stageChangeError": "Failed to change election stage",
+  "elections.confirmAdvance": "Are you sure you want to advance this election to {stage}?",
+  "elections.confirmRevert": "Are you sure you want to revert this election to {stage}?"
 }

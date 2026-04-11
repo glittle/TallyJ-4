@@ -10,5 +10,8 @@
   "tally.calculatingProgress": "Calcul en cours",
   "tally.processedBallots": "Bulletins traités",
   "tally.resultsPreview": "Aperçu des résultats (Top 10)",
-  "tally.viewFullResults": "Voir tous les résultats"
+  "tally.viewFullResults": "Voir tous les résultats",
+  "tally.section.elected": "Élu",
+  "tally.section.extra": "Supplémentaire",
+  "tally.section.other": "Autre"
 }

@@ -82,6 +82,8 @@ npm run check
 npm run test:run
 ```
 
+## Locales
+
 Run `npm run validate:i18n` when you touch locale files.
 
 When adding new user-facing strings, **only add them to the English locale** (`src/locales/en/`).
