@@ -15,19 +15,19 @@ namespace Backend.Services;
 public class ElectionExportImportService : ElectionImportExportBase
 {
     private readonly CdnBallotImportService _cdnBallotImportService;
-    private readonly TallyJv3ElectionImportService _tallyJv3ElectionImportService;
+    private readonly TallyJv2ElectionImportService _tallyJv2ElectionImportService;
     private readonly JsonElectionImportExportService _jsonElectionImportExportService;
 
     public ElectionExportImportService(
         MainDbContext context,
         IElectionService electionService,
         CdnBallotImportService cdnBallotImportService,
-        TallyJv3ElectionImportService tallyJv3ElectionImportService,
+        TallyJv2ElectionImportService tallyJv2ElectionImportService,
         JsonElectionImportExportService jsonElectionImportExportService)
         : base(context, electionService)
     {
         _cdnBallotImportService = cdnBallotImportService;
-        _tallyJv3ElectionImportService = tallyJv3ElectionImportService;
+        _tallyJv2ElectionImportService = tallyJv2ElectionImportService;
         _jsonElectionImportExportService = jsonElectionImportExportService;
     }
 
@@ -39,10 +39,10 @@ public class ElectionExportImportService : ElectionImportExportBase
 
 
 
-    // Job 2: Import from TallyJv3-Export.xsd format
-    public async Task<ElectionDto> ImportTallyJv3ElectionAsync(Stream xmlStream, Guid? userId = null)
+    // Job 2: Import from TallyJv2-Export.xsd format
+    public async Task<ElectionDto> ImportTallyJv2ElectionAsync(Stream xmlStream, Guid? userId = null)
     {
-        return await _tallyJv3ElectionImportService.ImportTallyJv3ElectionAsync(xmlStream, userId);
+        return await _tallyJv2ElectionImportService.ImportTallyJv2ElectionAsync(xmlStream, userId);
     }
 
     // Job 3: Export election to new JSON format

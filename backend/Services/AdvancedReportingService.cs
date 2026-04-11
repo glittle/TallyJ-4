@@ -226,7 +226,7 @@ public class AdvancedReportingService : IAdvancedReportingService
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Failed to generate section {SectionType} for report {ReportName}", section.SectionType, config.ReportName);
-                generatedData[$"section_{section.Order}_error"] = $"Failed to generate {section.SectionType}: {ex.Message}";
+                generatedData[$"section_{section.Order}_error"] = $"Failed to generate {section.SectionType} section";
             }
         }
 

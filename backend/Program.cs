@@ -343,7 +343,7 @@ void RegisterApplicationServices(IServiceCollection services)
     services.AddScoped<ImportService>();
     services.AddScoped<IPeopleImportService, PeopleImportService>();
     services.AddScoped<CdnBallotImportService>();
-    services.AddScoped<TallyJv3ElectionImportService>();
+    services.AddScoped<TallyJv2ElectionImportService>();
     services.AddScoped<JsonElectionImportExportService>();
     services.AddScoped<ElectionExportImportService>();
     services.AddSingleton<IRemoteLogService, RemoteLogService>();
@@ -439,6 +439,14 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     var seedOnStartup = configuration.GetValue("Database:SeedOnStartup", false);
     if (seedOnStartup)
     {
+        if (!migrateOnStartup)
+        {
+            Log.Information("Migrating the database before seeding as required");
+            using var migrationScope = app.Services.CreateScope();
+            var migrationContext = migrationScope.ServiceProvider.GetRequiredService<MainDbContext>();
+            await migrationContext.Database.MigrateAsync();
+        }
+
         Log.Information("Seeding the database on startup as configured");
         using var scope = app.Services.CreateScope();
 

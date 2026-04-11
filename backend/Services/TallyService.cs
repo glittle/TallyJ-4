@@ -370,7 +370,7 @@ public class TallyService : ITallyService
         // For now, just log the contact
     }
 
-    private string DetermineComputerStatus(DateTime? lastContact)
+    private string DetermineComputerStatus(DateTimeOffset? lastContact)
     {
         if (!lastContact.HasValue)
             return "Offline";
@@ -979,7 +979,7 @@ public class TallyService : ITallyService
         if (logEntries.Count > 0)
         {
             var grouped = logEntries
-                .GroupBy(d => new DateTime(d.Year, d.Month, d.Day, d.Hour, 0, 0))
+                .GroupBy(d => new DateTimeOffset(d.Year, d.Month, d.Day, d.Hour, 0, 0, d.Offset))
                 .OrderBy(g => g.Key);
 
             var cumulativeBallots = 0;

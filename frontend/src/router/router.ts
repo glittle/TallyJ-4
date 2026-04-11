@@ -333,8 +333,8 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
 
     if (isTeller) {
       const electionMatch = to.path.match(/^\/elections\/([^/]+)/);
-      if (!electionMatch) {
-        return "/";
+      if (!electionMatch && !to.path.startsWith("/teller-join")) {
+        return "/teller-join";
       }
     }
   }

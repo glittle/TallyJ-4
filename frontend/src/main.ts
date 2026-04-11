@@ -73,7 +73,7 @@ async function init() {
   const splash = document.getElementById("splash");
   if (splash) {
     const elapsed = Date.now() - (window as any).startTime;
-    const delay = elapsed > 1000 ? elapsed * 0.5 : 0;
+    const delay = Math.min(elapsed > 1000 ? elapsed * 0.5 : 0, 1500);
     setTimeout(() => {
       splash.classList.add("fade-out");
       splash.addEventListener("transitionend", () => splash.remove(), {

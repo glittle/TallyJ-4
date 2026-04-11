@@ -55,7 +55,7 @@ public class ElectionImportController : ControllerBase
             }
 
             using var stream = file.OpenReadStream();
-            var election = await _electionExportImportService.ImportTallyJv3ElectionAsync(stream, GetCurrentUserId());
+            var election = await _electionExportImportService.ImportTallyJv2ElectionAsync(stream, GetCurrentUserId());
 
             return CreatedAtAction(
                 "GetElection",
