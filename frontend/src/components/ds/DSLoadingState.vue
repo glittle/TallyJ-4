@@ -1,45 +1,3 @@
-<template>
-  <div class="ds-loading-state" :class="sizeClass">
-    <div v-if="type === 'spinner'" class="ds-loading-state__spinner">
-      <el-icon class="is-loading" :size="iconSize">
-        <Loading />
-      </el-icon>
-      <p v-if="text" class="ds-loading-state__text">{{ text }}</p>
-    </div>
-
-    <div v-else-if="type === 'skeleton'" class="ds-loading-state__skeleton">
-      <el-skeleton :rows="rows" animated />
-    </div>
-
-    <div v-else-if="type === 'card'" class="ds-loading-state__card">
-      <el-skeleton :rows="rows" animated>
-        <template #template>
-          <el-skeleton-item
-            variant="image"
-            style="width: 100%; height: 240px"
-          />
-          <div style="padding: 14px">
-            <el-skeleton-item variant="h3" style="width: 50%" />
-            <div style="padding: 14px 0">
-              <el-skeleton-item variant="text" style="margin-right: 16px" />
-              <el-skeleton-item variant="text" style="width: 30%" />
-            </div>
-          </div>
-        </template>
-      </el-skeleton>
-    </div>
-
-    <div v-else-if="type === 'progress'" class="ds-loading-state__progress">
-      <el-progress
-        :percentage="percentage"
-        :status="progressStatus"
-        :stroke-width="strokeWidth"
-      />
-      <p v-if="text" class="ds-loading-state__text">{{ text }}</p>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed } from "vue";
 import { Loading } from "@element-plus/icons-vue";
@@ -83,6 +41,48 @@ const progressStatus = computed(() => {
   return undefined;
 });
 </script>
+
+<template>
+  <div class="ds-loading-state" :class="sizeClass">
+    <div v-if="type === 'spinner'" class="ds-loading-state__spinner">
+      <el-icon class="is-loading" :size="iconSize">
+        <Loading />
+      </el-icon>
+      <p v-if="text" class="ds-loading-state__text">{{ text }}</p>
+    </div>
+
+    <div v-else-if="type === 'skeleton'" class="ds-loading-state__skeleton">
+      <el-skeleton :rows="rows" animated />
+    </div>
+
+    <div v-else-if="type === 'card'" class="ds-loading-state__card">
+      <el-skeleton :rows="rows" animated>
+        <template #template>
+          <el-skeleton-item
+            variant="image"
+            style="width: 100%; height: 240px"
+          />
+          <div style="padding: 14px">
+            <el-skeleton-item variant="h3" style="width: 50%" />
+            <div style="padding: 14px 0">
+              <el-skeleton-item variant="text" style="margin-right: 16px" />
+              <el-skeleton-item variant="text" style="width: 30%" />
+            </div>
+          </div>
+        </template>
+      </el-skeleton>
+    </div>
+
+    <div v-else-if="type === 'progress'" class="ds-loading-state__progress">
+      <el-progress
+        :percentage="percentage"
+        :status="progressStatus"
+        :stroke-width="strokeWidth"
+      />
+      <p v-if="text" class="ds-loading-state__text">{{ text }}</p>
+    </div>
+  </div>
+</template>
 
 <style lang="less">
 .ds-loading-state {

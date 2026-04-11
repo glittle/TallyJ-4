@@ -1,34 +1,3 @@
-<template>
-  <el-card
-    :class="[
-      'ds-card',
-      variantClass,
-      { 'ds-card--hoverable': hoverable, 'ds-card--loading': loading },
-    ]"
-    :shadow="shadowType"
-    :body-style="bodyStyle"
-    v-bind="$attrs"
-  >
-    <template v-if="$slots.header" #header>
-      <div class="ds-card__header">
-        <slot name="header" />
-      </div>
-    </template>
-
-    <div v-if="loading" class="ds-card__loading">
-      <el-skeleton :rows="loadingRows" animated />
-    </div>
-
-    <slot v-else />
-
-    <template v-if="$slots.footer" #footer>
-      <div class="ds-card__footer">
-        <slot name="footer" />
-      </div>
-    </template>
-  </el-card>
-</template>
-
 <script setup lang="ts">
 import { computed, type CSSProperties } from "vue";
 
@@ -62,6 +31,37 @@ const bodyStyle = computed<CSSProperties | undefined>(() => {
   return undefined;
 });
 </script>
+
+<template>
+  <el-card
+    :class="[
+      'ds-card',
+      variantClass,
+      { 'ds-card--hoverable': hoverable, 'ds-card--loading': loading },
+    ]"
+    :shadow="shadowType"
+    :body-style="bodyStyle"
+    v-bind="$attrs"
+  >
+    <template v-if="$slots.header" #header>
+      <div class="ds-card__header">
+        <slot name="header" />
+      </div>
+    </template>
+
+    <div v-if="loading" class="ds-card__loading">
+      <el-skeleton :rows="loadingRows" animated />
+    </div>
+
+    <slot v-else />
+
+    <template v-if="$slots.footer" #footer>
+      <div class="ds-card__footer">
+        <slot name="footer" />
+      </div>
+    </template>
+  </el-card>
+</template>
 
 <style lang="less">
 .ds-card {

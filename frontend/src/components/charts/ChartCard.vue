@@ -1,3 +1,24 @@
+<script setup lang="ts">
+import DSCard from "../ds/DSCard.vue";
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  height?: string;
+  variant?: "default" | "gradient" | "elevated" | "outlined" | "flat";
+  hoverable?: boolean;
+  loading?: boolean;
+}
+
+withDefaults(defineProps<Props>(), {
+  subtitle: undefined,
+  height: "300px",
+  variant: "default",
+  hoverable: false,
+  loading: false,
+});
+</script>
+
 <template>
   <DSCard
     :variant="variant"
@@ -24,27 +45,6 @@
     </template>
   </DSCard>
 </template>
-
-<script setup lang="ts">
-import DSCard from "../ds/DSCard.vue";
-
-interface Props {
-  title: string;
-  subtitle?: string;
-  height?: string;
-  variant?: "default" | "gradient" | "elevated" | "outlined" | "flat";
-  hoverable?: boolean;
-  loading?: boolean;
-}
-
-withDefaults(defineProps<Props>(), {
-  subtitle: undefined,
-  height: "300px",
-  variant: "default",
-  hoverable: false,
-  loading: false,
-});
-</script>
 
 <style lang="less">
 .chart-card {

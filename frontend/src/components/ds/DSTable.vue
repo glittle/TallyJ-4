@@ -1,45 +1,3 @@
-<template>
-  <div class="ds-table" :class="{ 'ds-table--loading': loading }">
-    <div v-if="loading" class="ds-table__loading">
-      <el-skeleton :rows="loadingRows" animated />
-    </div>
-
-    <div v-else-if="!data || data.length === 0" class="ds-table__empty">
-      <slot name="empty">
-        <el-empty :description="emptyText" />
-      </slot>
-    </div>
-
-    <el-table
-      v-else
-      :data="data"
-      :stripe="stripe"
-      :border="border"
-      :size="size"
-      :highlight-current-row="highlightCurrentRow"
-      v-bind="$attrs"
-      @selection-change="handleSelectionChange"
-      @current-change="handleCurrentChange"
-      @sort-change="handleSortChange"
-    >
-      <slot />
-    </el-table>
-
-    <div v-if="pagination && total > 0" class="ds-table__pagination">
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="pageSizes"
-        :total="total"
-        :layout="paginationLayout"
-        :background="true"
-        @size-change="handleSizeChange"
-        @current-change="handlePageChange"
-      />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
@@ -117,6 +75,48 @@ function handleSizeChange(size: number) {
   emit("size-change", size);
 }
 </script>
+
+<template>
+  <div class="ds-table" :class="{ 'ds-table--loading': loading }">
+    <div v-if="loading" class="ds-table__loading">
+      <el-skeleton :rows="loadingRows" animated />
+    </div>
+
+    <div v-else-if="!data || data.length === 0" class="ds-table__empty">
+      <slot name="empty">
+        <el-empty :description="emptyText" />
+      </slot>
+    </div>
+
+    <el-table
+      v-else
+      :data="data"
+      :stripe="stripe"
+      :border="border"
+      :size="size"
+      :highlight-current-row="highlightCurrentRow"
+      v-bind="$attrs"
+      @selection-change="handleSelectionChange"
+      @current-change="handleCurrentChange"
+      @sort-change="handleSortChange"
+    >
+      <slot />
+    </el-table>
+
+    <div v-if="pagination && total > 0" class="ds-table__pagination">
+      <el-pagination
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :page-sizes="pageSizes"
+        :total="total"
+        :layout="paginationLayout"
+        :background="true"
+        @size-change="handleSizeChange"
+        @current-change="handlePageChange"
+      />
+    </div>
+  </div>
+</template>
 
 <style lang="less">
 .ds-table {

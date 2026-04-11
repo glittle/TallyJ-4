@@ -1,27 +1,3 @@
-<template>
-  <div class="ds-empty-state" :class="sizeClass">
-    <div v-if="icon || $slots.icon" class="ds-empty-state__icon">
-      <slot name="icon">
-        <el-icon :size="iconSize">
-          <component :is="icon" />
-        </el-icon>
-      </slot>
-    </div>
-
-    <div class="ds-empty-state__content">
-      <h3 v-if="title" class="ds-empty-state__title">{{ title }}</h3>
-      <p v-if="description" class="ds-empty-state__description">
-        {{ description }}
-      </p>
-      <slot />
-    </div>
-
-    <div v-if="$slots.actions" class="ds-empty-state__actions">
-      <slot name="actions" />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed, type Component } from "vue";
 
@@ -50,6 +26,30 @@ const iconSize = computed(() => {
   return sizes[props.size];
 });
 </script>
+
+<template>
+  <div class="ds-empty-state" :class="sizeClass">
+    <div v-if="icon || $slots.icon" class="ds-empty-state__icon">
+      <slot name="icon">
+        <el-icon :size="iconSize">
+          <component :is="icon" />
+        </el-icon>
+      </slot>
+    </div>
+
+    <div class="ds-empty-state__content">
+      <h3 v-if="title" class="ds-empty-state__title">{{ title }}</h3>
+      <p v-if="description" class="ds-empty-state__description">
+        {{ description }}
+      </p>
+      <slot />
+    </div>
+
+    <div v-if="$slots.actions" class="ds-empty-state__actions">
+      <slot name="actions" />
+    </div>
+  </div>
+</template>
 
 <style lang="less">
 .ds-empty-state {
