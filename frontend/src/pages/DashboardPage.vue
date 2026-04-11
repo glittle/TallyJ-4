@@ -430,7 +430,10 @@ function getStatusType(status: string) {
               sortable="custom"
             >
               <template #default="scope">
-                <div class="election-name">
+                <div
+                  class="election-name clickable"
+                  @click="openElection(scope.row.electionGuid)"
+                >
                   <el-tag
                     v-if="scope.row.showAsTest"
                     type="danger"
@@ -445,15 +448,25 @@ function getStatusType(status: string) {
             <el-table-column
               prop="electionType"
               :label="$t('elections.type')"
-              width="120"
+              min-width="120"
               sortable="custom"
             >
               <template #default="scope">
-                <el-tag size="small">{{
+                {{
                   scope.row.electionType
                     ? $t(`elections.electionTypes.${scope.row.electionType}`)
                     : ""
-                }}</el-tag>
+                }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="tallyStatus"
+              :label="$t('elections.status')"
+              min-width="120"
+              sortable="custom"
+            >
+              <template #default="scope">
+                {{ scope.row.tallyStatus || "-" }}
               </template>
             </el-table-column>
             <el-table-column
@@ -484,33 +497,6 @@ function getStatusType(status: string) {
               min-width="100"
               sortable="custom"
             />
-            <el-table-column
-              prop="tallyStatus"
-              :label="$t('elections.status')"
-              width="120"
-              sortable="custom"
-            >
-              <template #default="scope">
-                <el-tag :type="getStatusType(scope.row.tallyStatus)">
-                  {{ scope.row.tallyStatus || "Draft" }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="$t('common.actions')"
-              width="120"
-              fixed="right"
-            >
-              <template #default="scope">
-                <el-button
-                  type="primary"
-                  size="small"
-                  @click="openElection(scope.row.electionGuid)"
-                >
-                  {{ $t("common.open") }}
-                </el-button>
-              </template>
-            </el-table-column>
           </el-table>
 
           <div v-if="allElections.length > 0" class="pagination-container">
@@ -550,6 +536,17 @@ function getStatusType(status: string) {
 
     .test-badge {
       font-weight: bold;
+    }
+  }
+
+  .clickable {
+    cursor: pointer;
+    color: var(--el-color-primary);
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--el-color-primary-dark-2);
+      text-decoration: underline;
     }
   }
 
