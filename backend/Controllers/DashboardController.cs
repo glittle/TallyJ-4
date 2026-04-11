@@ -137,16 +137,16 @@ public class DashboardController : ControllerBase
     }
 
     /// <summary>
-    /// Imports an election from TallyJ V2 format (legacy migration feature).
+    /// Imports an election from TallyJ V3 format (legacy migration feature).
     /// </summary>
-    /// <param name="v2ElectionData">The V2 election data to import.</param>
+    /// <param name="v3ElectionData">The V3 election data to import.</param>
     /// <returns>An API response indicating the result of the import operation.</returns>
-    [HttpPost("loadV2Election")]
-    public async Task<ActionResult<ApiResponse<object>>> LoadV2Election([FromBody] string v2ElectionData)
+    [HttpPost("loadV3Election")]
+    public async Task<ActionResult<ApiResponse<object>>> LoadV3Election([FromBody] string v3ElectionData)
     {
         // This would be a complex migration operation
         // For now, return not implemented
-        return StatusCode(501, ApiResponse<object>.ErrorResponse("V2 election import not yet implemented"));
+        return StatusCode(501, ApiResponse<object>.ErrorResponse("V3 election import not yet implemented"));
     }
 
     /// <summary>

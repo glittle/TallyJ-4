@@ -12,17 +12,17 @@ using System.Xml.Schema;
 
 namespace Backend.Services;
 
-public class TallyJv2ElectionImportService : ElectionImportExportBase
+public class TallyJv3ElectionImportService : ElectionImportExportBase
 {
     private const string LocationGuidAttribute = "LocationGuid";
     private const string PersonGuidAttribute = "PersonGuid";
 
-    public TallyJv2ElectionImportService(MainDbContext context, IElectionService electionService)
+    public TallyJv3ElectionImportService(MainDbContext context, IElectionService electionService)
         : base(context, electionService)
     {
     }
 
-    private static async Task<XmlDocument> ValidateAndLoadTallyJv2XmlDocumentAsync(Stream xmlStream)
+    private static async Task<XmlDocument> ValidateAndLoadTallyJv3XmlDocumentAsync(Stream xmlStream)
     {
         var schemaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Schemas", "TallyJv2-Export.xsd");
         var xmlDoc = new XmlDocument();
@@ -412,13 +412,13 @@ public class TallyJv2ElectionImportService : ElectionImportExportBase
         }
     }
 
-    // Job 2: Import from TallyJv2-Export.xsd format
-    public async Task<ElectionDto> ImportTallyJv2ElectionAsync(Stream xmlStream, Guid? userId = null)
+    // Job 2: Import from TallyJv3-Export.xsd format
+    public async Task<ElectionDto> ImportTallyJv3ElectionAsync(Stream xmlStream, Guid? userId = null)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            var xmlDoc = await ValidateAndLoadTallyJv2XmlDocumentAsync(xmlStream);
+            var xmlDoc = await ValidateAndLoadTallyJv3XmlDocumentAsync(xmlStream);
 
             // Parse and create new election
             var root = xmlDoc.DocumentElement!;

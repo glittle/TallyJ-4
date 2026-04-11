@@ -2580,21 +2580,21 @@ export type PostApiDashboardByElectionGuidUpdateListingResponses = {
 
 export type PostApiDashboardByElectionGuidUpdateListingResponse = PostApiDashboardByElectionGuidUpdateListingResponses[keyof PostApiDashboardByElectionGuidUpdateListingResponses];
 
-export type PostApiDashboardLoadV2ElectionData = {
+export type PostApiDashboardLoadV3ElectionData = {
     body?: string;
     path?: never;
     query?: never;
-    url: '/api/Dashboard/loadV2Election';
+    url: '/api/Dashboard/loadV3Election';
 };
 
-export type PostApiDashboardLoadV2ElectionResponses = {
+export type PostApiDashboardLoadV3ElectionResponses = {
     /**
      * OK
      */
     200: ApiResponseObject;
 };
 
-export type PostApiDashboardLoadV2ElectionResponse = PostApiDashboardLoadV2ElectionResponses[keyof PostApiDashboardLoadV2ElectionResponses];
+export type PostApiDashboardLoadV3ElectionResponse = PostApiDashboardLoadV3ElectionResponses[keyof PostApiDashboardLoadV3ElectionResponses];
 
 export type PostApiDashboardChooseLocationData = {
     body?: ChooseLocationRequest;
@@ -2644,16 +2644,16 @@ export type PostApiDashboardDeleteTellerResponses = {
 
 export type PostApiDashboardDeleteTellerResponse = PostApiDashboardDeleteTellerResponses[keyof PostApiDashboardDeleteTellerResponses];
 
-export type PostApiImportImportTallyJv2ElectionData = {
+export type PostApiImportImportTallyJv3ElectionData = {
     body?: {
         file?: Blob | File;
     };
     path?: never;
     query?: never;
-    url: '/api/Import/importTallyJv2Election';
+    url: '/api/Import/importTallyJv3Election';
 };
 
-export type PostApiImportImportTallyJv2ElectionResponses = {
+export type PostApiImportImportTallyJv3ElectionResponses = {
     /**
      * OK
      */

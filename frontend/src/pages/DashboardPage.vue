@@ -172,7 +172,7 @@ async function importElection() {
         if (file.name.toLowerCase().endsWith(".json")) {
           election = await electionService.importElectionFromFile(file);
         } else if (file.name.toLowerCase().endsWith(".xml")) {
-          election = await electionService.importTallyJv2ElectionFromFile(file);
+          election = await electionService.importTallyJv3ElectionFromFile(file);
         } else {
           showErrorMessage(t("elections.importElectionError"));
           return;

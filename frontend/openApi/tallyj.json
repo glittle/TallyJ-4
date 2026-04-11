@@ -1552,7 +1552,7 @@
         }
       }
     },
-    "/api/Dashboard/loadV2Election": {
+    "/api/Dashboard/loadV3Election": {
       "post": {
         "tags": [
           "Dashboard"
@@ -1744,7 +1744,7 @@
         }
       }
     },
-    "/api/Import/importTallyJv2Election": {
+    "/api/Import/importTallyJv3Election": {
       "post": {
         "tags": [
           "ElectionImport"
