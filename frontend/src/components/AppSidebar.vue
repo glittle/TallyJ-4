@@ -234,13 +234,6 @@ function goBackToElections() {
         <span>{{ $t("nav.dashboard") }}</span>
       </el-menu-item>
 
-      <el-menu-item index="/elections" role="menuitem">
-        <el-icon aria-hidden="true">
-          <Document />
-        </el-icon>
-        <span>{{ $t("nav.elections") }}</span>
-      </el-menu-item>
-
       <el-menu-item v-if="isSuperAdmin" index="/super-admin" role="menuitem">
         <el-icon aria-hidden="true">
           <Setting />

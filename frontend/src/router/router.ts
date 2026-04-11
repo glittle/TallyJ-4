@@ -130,9 +130,7 @@ const routes = [
       {
         path: "elections",
 
-        component: () => import("../pages/elections/ElectionListPage.vue"),
-
-        meta: { titleKey: "nav.elections" },
+        redirect: "/dashboard",
       },
 
       {
