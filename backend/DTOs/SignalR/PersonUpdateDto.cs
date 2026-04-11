@@ -33,7 +33,7 @@ public class PersonUpdateDto
     /// <summary>
     /// The timestamp when the person was last updated.
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 }
 
 

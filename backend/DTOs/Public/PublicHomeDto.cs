@@ -28,7 +28,7 @@ public class PublicHomeDto
     /// <summary>
     /// The current server time.
     /// </summary>
-    public DateTime ServerTime { get; set; }
+    public DateTimeOffset ServerTime { get; set; }
 }
 
 

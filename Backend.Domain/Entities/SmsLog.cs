@@ -23,7 +23,7 @@ public partial class SmsLog
     public string Phone { get; set; } = null!;
 
     [Precision(0)]
-    public DateTime SentDate { get; set; }
+    public DateTimeOffset SentDate { get; set; }
 
     public Guid? ElectionGuid { get; set; }
 
@@ -33,7 +33,8 @@ public partial class SmsLog
     [Unicode(false)]
     public string? LastStatus { get; set; }
 
-    public DateTime? LastDate { get; set; }
+    [Precision(0)]
+    public DateTimeOffset? LastDate { get; set; }
 
     public int? ErrorCode { get; set; }
 }

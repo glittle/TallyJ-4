@@ -1,7 +1,3 @@
-<template>
-  <Line :data="chartData" :options="chartOptions" />
-</template>
-
 <script setup lang="ts">
 import { computed } from "vue";
 import { Line } from "vue-chartjs";
@@ -105,3 +101,7 @@ const chartOptions = computed<ChartOptions<"line">>(() => ({
   },
 }));
 </script>
+
+<template>
+  <Line :data="chartData" :options="chartOptions" />
+</template>

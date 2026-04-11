@@ -145,6 +145,7 @@ public class VoteService : IVoteService
             RowVersion = new byte[8]
         };
 
+        ballot.DateUpdated = DateTimeOffset.UtcNow;
         _context.Votes.Add(vote);
         await _context.SaveChangesAsync();
 
@@ -217,6 +218,7 @@ public class VoteService : IVoteService
         vote.PositionOnBallot = updateDto.PositionOnBallot;
         vote.VoteStatus = statusCode;
 
+        ballot.DateUpdated = DateTimeOffset.UtcNow;
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Updated vote {VoteId} for ballot {BallotGuid}", id, updateDto.BallotGuid);
@@ -260,6 +262,7 @@ public class VoteService : IVoteService
         var ballotGuid = vote.BallotGuid;
         var ballot = vote.Ballot;
 
+        ballot.DateUpdated = DateTimeOffset.UtcNow;
         _context.Votes.Remove(vote);
         await _context.SaveChangesAsync();
 

@@ -183,7 +183,7 @@ public class ElectionService : IElectionService
             Name = election.Name,
             TallyStatus = election.TallyStatus,
             ElectionStatus = null,
-            UpdatedAt = DateTime.UtcNow
+            UpdatedAt = DateTimeOffset.UtcNow
         });
 
         return await GetElectionByGuidAsync(electionGuid);
@@ -236,7 +236,7 @@ public class ElectionService : IElectionService
             return null;
         }
 
-        election.ListedForPublicAsOf = isOpen ? DateTime.UtcNow : null;
+        election.ListedForPublicAsOf = isOpen ? DateTimeOffset.UtcNow : null;
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Toggled teller access for election {ElectionGuid} to {IsOpen}", electionGuid, isOpen);

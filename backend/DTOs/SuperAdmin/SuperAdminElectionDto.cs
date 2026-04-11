@@ -25,7 +25,7 @@ public class SuperAdminElectionDto
     /// <summary>
     /// The date when the election is scheduled to occur.
     /// </summary>
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
 
     /// <summary>
     /// The current tally status of the election.

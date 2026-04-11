@@ -23,12 +23,12 @@ public class AvailableElectionDto
     /// <summary>
     /// When online voting opens.
     /// </summary>
-    public DateTime? OnlineWhenOpen { get; set; }
+    public DateTimeOffset? OnlineWhenOpen { get; set; }
 
     /// <summary>
     /// When online voting closes.
     /// </summary>
-    public DateTime? OnlineWhenClose { get; set; }
+    public DateTimeOffset? OnlineWhenClose { get; set; }
 
     /// <summary>
     /// Whether the close time is an estimate.
@@ -38,7 +38,7 @@ public class AvailableElectionDto
     /// <summary>
     /// The date of the election.
     /// </summary>
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
 
     /// <summary>
     /// Whether online voting is currently open.
@@ -68,5 +68,5 @@ public class AvailableElectionDto
     /// <summary>
     /// When the ballot was submitted/processed.
     /// </summary>
-    public DateTime? WhenBallotStatus { get; set; }
+    public DateTimeOffset? WhenBallotStatus { get; set; }
 }

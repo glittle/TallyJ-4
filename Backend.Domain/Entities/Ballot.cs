@@ -70,6 +70,12 @@ public partial class Ballot
     [StringLength(25)]
     public string? Teller2 { get; set; }
 
+    [Precision(0)]
+    public DateTimeOffset? DateCreated { get; set; }
+
+    [Precision(0)]
+    public DateTimeOffset? DateUpdated { get; set; }
+
     /// <summary>
     /// The row version for optimistic concurrency control.
     /// </summary>

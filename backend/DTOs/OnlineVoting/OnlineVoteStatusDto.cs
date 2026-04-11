@@ -13,7 +13,7 @@ public class OnlineVoteStatusDto
     /// <summary>
     /// The timestamp when the vote was submitted.
     /// </summary>
-    public DateTime? WhenSubmitted { get; set; }
+    public DateTimeOffset? WhenSubmitted { get; set; }
 
     /// <summary>
     /// A message about the voting status.

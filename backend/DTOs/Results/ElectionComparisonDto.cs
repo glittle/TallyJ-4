@@ -39,7 +39,7 @@ public class ResultsElectionSummaryDto
     /// <summary>
     /// The date when the election was held.
     /// </summary>
-    public DateTime? ElectionDate { get; set; }
+    public DateTimeOffset? ElectionDate { get; set; }
 
     /// <summary>
     /// The total number of registered voters.
@@ -122,7 +122,7 @@ public class TrendPointDto
     /// <summary>
     /// The date of this data point.
     /// </summary>
-    public DateTime Date { get; set; }
+    public DateTimeOffset Date { get; set; }
 
     /// <summary>
     /// The value of the metric at this point in time.

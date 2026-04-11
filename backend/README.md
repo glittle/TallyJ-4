@@ -1,4 +1,4 @@
-# Backend setup guide
+# Backend README
 
 This guide covers the current local-development workflow for the TallyJ 4 backend.
 
@@ -49,6 +49,8 @@ dotnet user-secrets set "ConnectionStrings:TallyJ4" "Server=localhost\\SQLEXPRES
 
 Optional providers such as Google sign-in, email, SMS, WhatsApp, Telegram, and social auth should also be configured through user secrets or environment variables rather than committed settings files.
 
+The system will attempt to read 'c:\AppSettings\TallyJ4.json'. This should be separate from the repo location and will not be overwritten by updates.
+
 ## Start the backend
 
 ```bash
@@ -79,11 +81,11 @@ That means a fresh local database is seeded automatically when the backend start
 
 ## Seeded accounts
 
-| Email | Password | Role |
-| --- | --- | --- |
-| `admin@tallyj.test` | `TestPass123!` | Admin |
+| Email                | Password       | Role   |
+| -------------------- | -------------- | ------ |
+| `admin@tallyj.test`  | `TestPass123!` | Admin  |
 | `teller@tallyj.test` | `TestPass123!` | Teller |
-| `voter@tallyj.test` | `TestPass123!` | Voter |
+| `voter@tallyj.test`  | `TestPass123!` | Voter  |
 
 ## Useful commands
 

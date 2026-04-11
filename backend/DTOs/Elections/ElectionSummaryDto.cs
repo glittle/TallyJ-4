@@ -28,7 +28,7 @@ public class ElectionSummaryDto
     /// <summary>
     /// The date when the election will be held.
     /// </summary>
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
 
     /// <summary>
     /// The current tally status of the election.

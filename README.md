@@ -101,9 +101,10 @@ Use `npm run start` when you need to regenerate the OpenAPI client before starti
 
 These are the canonical docs to keep current:
 
-- `backend/SETUP.md` - backend setup and local configuration
+- `backend/README.md` - backend setup and local configuration
 - `frontend/README.md` - frontend development workflow
 - `docs/DEPLOYMENT.md` - deployment notes and production checklist
+- `DEPLOYING_LOCALLY.md` - local deployment setup (non-development)
 - `E2E_TESTING_GUIDE.md` - smoke testing and validation workflow
 - `AGENTS.md` - repo-specific instructions for AI agents and contributors
 

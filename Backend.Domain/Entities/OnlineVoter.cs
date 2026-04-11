@@ -21,10 +21,10 @@ public partial class OnlineVoter
     public string VoterIdType { get; set; } = null!;
 
     [Precision(0)]
-    public DateTime? WhenRegistered { get; set; }
+    public DateTimeOffset? WhenRegistered { get; set; }
 
     [Precision(0)]
-    public DateTime? WhenLastLogin { get; set; }
+    public DateTimeOffset? WhenLastLogin { get; set; }
 
     [StringLength(25)]
     [Unicode(false)]
@@ -41,12 +41,12 @@ public partial class OnlineVoter
     public string? VerifyCode { get; set; }
 
     [Precision(0)]
-    public DateTime? VerifyCodeDate { get; set; }
+    public DateTimeOffset? VerifyCodeDate { get; set; }
 
     public int? VerifyAttempts { get; set; }
 
     [Precision(0)]
-    public DateTime? VerifyAttemptsStart { get; set; }
+    public DateTimeOffset? VerifyAttemptsStart { get; set; }
 }
 
 

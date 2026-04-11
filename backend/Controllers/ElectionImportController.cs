@@ -32,13 +32,15 @@ public class ElectionImportController : ControllerBase
         return !string.IsNullOrEmpty(userIdString) && Guid.TryParse(userIdString, out var userId) ? userId : null;
     }
 
+
+
     /// <summary>
-    /// Imports an entire election from TallyJ v2 XML format.
+    /// Imports an entire election from TallyJ v3 XML format.
     /// </summary>
     /// <param name="file">The XML file to import.</param>
     /// <returns>The created election information.</returns>
-    [HttpPost("importTallyJv2Election")]
-    public async Task<IActionResult> ImportTallyJv2Election(IFormFile file)
+    [HttpPost("importTallyJv3Election")]
+    public async Task<IActionResult> ImportTallyJv3Election(IFormFile file)
     {
         try
         {

@@ -1,18 +1,3 @@
-<template>
-  <el-button
-    :class="['ds-button', variantClass, sizeClass]"
-    :type="type"
-    :size="size"
-    :loading="loading"
-    :disabled="disabled"
-    :icon="icon"
-    v-bind="$attrs"
-    @click="handleClick"
-  >
-    <slot />
-  </el-button>
-</template>
-
 <script setup lang="ts">
 import { computed } from "vue";
 import type { Component } from "vue";
@@ -48,6 +33,21 @@ function handleClick(event: MouseEvent) {
   }
 }
 </script>
+
+<template>
+  <el-button
+    :class="['ds-button', variantClass, sizeClass]"
+    :type="type"
+    :size="size"
+    :loading="loading"
+    :disabled="disabled"
+    :icon="icon"
+    v-bind="$attrs"
+    @click="handleClick"
+  >
+    <slot />
+  </el-button>
+</template>
 
 <style lang="less">
 .ds-button {

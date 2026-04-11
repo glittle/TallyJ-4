@@ -18,7 +18,7 @@ public class TallyResultDto
     /// <summary>
     /// The date and time when the tally was calculated.
     /// </summary>
-    public DateTime CalculatedAt { get; set; }
+    public DateTimeOffset CalculatedAt { get; set; }
 
     /// <summary>
     /// Statistical information about the tally.

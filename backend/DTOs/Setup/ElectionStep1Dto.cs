@@ -14,7 +14,7 @@ public class ElectionStep1Dto
     /// <summary>
     /// The date when the election will be held.
     /// </summary>
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
 
     /// <summary>
     /// The reason or purpose for holding this election.

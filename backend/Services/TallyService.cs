@@ -5,6 +5,7 @@ using Backend.DTOs.Results;
 using Backend.DTOs.SignalR;
 using Backend.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace Backend.Services;
 
@@ -17,15 +18,16 @@ public class TallyService : ITallyService
     private readonly MainDbContext _context;
     private readonly ILogger<TallyService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly IStringLocalizer<TallyService> _localizer;
 
     private const string UnknownFallbackValue = "Unknown";
     private const string UnknownElectionName = "Unknown Election";
     private const string UnknownLocationName = "Unknown Location";
 
-    // Section constants - TODO: These should be localized in the future
-    private const string SectionElected = "Elected";
-    private const string SectionExtra = "Extra";
-    private const string SectionOther = "Other";
+    // Section constants - localized
+    private string SectionElected => _localizer["tally.section.elected"];
+    private string SectionExtra => _localizer["tally.section.extra"];
+    private string SectionOther => _localizer["tally.section.other"];
 
     /// <summary>
     /// Initializes a new instance of the TallyService.
@@ -33,11 +35,13 @@ public class TallyService : ITallyService
     /// <param name="context">The main database context for accessing election and tally data.</param>
     /// <param name="logger">Logger for recording tally service operations.</param>
     /// <param name="signalRNotificationService">Service for sending real-time notifications about tally progress.</param>
-    public TallyService(MainDbContext context, ILogger<TallyService> logger, ISignalRNotificationService signalRNotificationService)
+    /// <param name="localizer">Localizer for retrieving localized strings.</param>
+    public TallyService(MainDbContext context, ILogger<TallyService> logger, ISignalRNotificationService signalRNotificationService, IStringLocalizer<TallyService> localizer)
     {
         _context = context;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
+        _localizer = localizer;
     }
 
     /// <summary>
@@ -195,7 +199,7 @@ public class TallyService : ITallyService
         {
             ElectionGuid = electionGuid,
             ElectionName = election.Name ?? UnknownElectionName,
-            CalculatedAt = DateTime.UtcNow,
+            CalculatedAt = DateTimeOffset.UtcNow,
             Statistics = statistics,
             Results = results.Select(r => new CandidateResultDto
             {
@@ -294,7 +298,7 @@ public class TallyService : ITallyService
                 ComputerCode = g.Key.ComputerCode ?? UnknownFallbackValue,
                 LocationName = g.Key.Name ?? UnknownLocationName,
                 BallotCount = g.Count(),
-                LastContact = DateTime.MinValue, // No last contact tracking in current model
+                LastContact = DateTimeOffset.MinValue, // No last contact tracking in current model
                 Status = "Active" // Assume active if they have ballots
             })
             .ToListAsync();
@@ -346,7 +350,7 @@ public class TallyService : ITallyService
             OnlineVotingInfo = onlineVotingInfo,
             TotalBallots = totalBallots,
             TotalVotes = totalVotes,
-            LastUpdated = DateTime.UtcNow
+            LastUpdated = DateTimeOffset.UtcNow
         };
     }
 
@@ -366,12 +370,12 @@ public class TallyService : ITallyService
         // For now, just log the contact
     }
 
-    private string DetermineComputerStatus(DateTime? lastContact)
+    private string DetermineComputerStatus(DateTimeOffset? lastContact)
     {
         if (!lastContact.HasValue)
             return "Offline";
 
-        var timeSinceContact = DateTime.UtcNow - lastContact.Value;
+        var timeSinceContact = DateTimeOffset.UtcNow - lastContact.Value;
         return timeSinceContact.TotalMinutes < 5 ? "Active" : "Inactive";
     }
 
@@ -873,7 +877,7 @@ public class TallyService : ITallyService
         await CalculateDemographicAgeBreakdownAsync(electionGuid, demographicBreakdown);
         await CalculateDemographicAreaBreakdownAsync(electionGuid, demographicBreakdown);
 
-        var timeBasedTurnout = CalculateTimeBasedTurnout(totalBallotsCast, totalRegisteredVoters, election);
+        var timeBasedTurnout = await CalculateTimeBasedTurnoutAsync(totalBallotsCast, totalRegisteredVoters, election);
 
         var participationRates = await CalculateParticipationRatesAsync(electionGuid, totalBallotsCast, totalRegisteredVoters);
 
@@ -962,24 +966,47 @@ public class TallyService : ITallyService
         }
     }
 
-    private List<TimeBasedTurnoutDto> CalculateTimeBasedTurnout(int totalBallotsCast, int totalRegisteredVoters, Election election)
+    private async Task<List<TimeBasedTurnoutDto>> CalculateTimeBasedTurnoutAsync(int totalBallotsCast, int totalRegisteredVoters, Election election)
     {
         var timeBasedTurnout = new List<TimeBasedTurnoutDto>();
-        var cumulativeBallots = 0;
-        for (var hour = 8; hour <= 20; hour++) // Assuming 8 AM to 8 PM voting
-        {
-            // This is a placeholder - in real implementation, you'd query actual ballot timestamps
-            var ballotsInHour = (int)(totalBallotsCast * 0.05); // Simplified distribution
-            cumulativeBallots += ballotsInHour;
 
+        var logEntries = await _context.Logs
+            .Where(l => l.ElectionGuid == election.ElectionGuid && l.Details != null && l.Details.Contains("ballot"))
+            .OrderBy(l => l.AsOf)
+            .Select(l => l.AsOf)
+            .ToListAsync();
+
+        if (logEntries.Count > 0)
+        {
+            var grouped = logEntries
+                .GroupBy(d => new DateTimeOffset(d.Year, d.Month, d.Day, d.Hour, 0, 0, d.Offset))
+                .OrderBy(g => g.Key);
+
+            var cumulativeBallots = 0;
+            foreach (var group in grouped)
+            {
+                cumulativeBallots += group.Count();
+                timeBasedTurnout.Add(new TimeBasedTurnoutDto
+                {
+                    TimePeriod = group.Key,
+                    PeriodType = "Hour",
+                    BallotsCast = group.Count(),
+                    CumulativeTurnout = totalRegisteredVoters > 0 ? (decimal)cumulativeBallots / totalRegisteredVoters * 100 : 0
+                });
+            }
+        }
+        else
+        {
+            var electionDate = election.DateOfElection ?? DateTimeOffset.UtcNow;
             timeBasedTurnout.Add(new TimeBasedTurnoutDto
             {
-                TimePeriod = election.DateOfElection?.Date.AddHours(hour) ?? DateTime.Now.Date.AddHours(hour),
-                PeriodType = "Hour",
-                BallotsCast = ballotsInHour,
-                CumulativeTurnout = totalRegisteredVoters > 0 ? (decimal)cumulativeBallots / totalRegisteredVoters * 100 : 0
+                TimePeriod = electionDate,
+                PeriodType = "Total",
+                BallotsCast = totalBallotsCast,
+                CumulativeTurnout = totalRegisteredVoters > 0 ? (decimal)totalBallotsCast / totalRegisteredVoters * 100 : 0
             });
         }
+
         return timeBasedTurnout;
     }
 

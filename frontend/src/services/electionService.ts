@@ -14,7 +14,7 @@ import {
   postApiElectionsCreateElection,
   postApiImportImportCdnBallotsByElectionGuid,
   postApiImportImportElectionFromJson,
-  postApiImportImportTallyJv2Election,
+  postApiImportImportTallyJv3Election,
   putApiElectionsByGuidUpdateElection,
 } from "./../api/gen/configService/sdk.gen";
 import { cacheService } from "./cacheService";
@@ -147,8 +147,8 @@ export const electionService = {
     return response.data.election;
   },
 
-  async importTallyJv2ElectionFromFile(file: File): Promise<ElectionDto> {
-    const response = await postApiImportImportTallyJv2Election({
+  async importTallyJv3ElectionFromFile(file: File): Promise<ElectionDto> {
+    const response = await postApiImportImportTallyJv3Election({
       body: { file },
     });
 

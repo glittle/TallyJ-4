@@ -12,8 +12,8 @@ public partial class Computer
 {
     public Computer()
     {
-        RegisteredAt = DateTime.UtcNow;
-        LastActivity = DateTime.UtcNow;
+        RegisteredAt = DateTimeOffset.UtcNow;
+        LastActivity = DateTimeOffset.UtcNow;
         IsActive = true;
     }
 
@@ -37,9 +37,11 @@ public partial class Computer
     [StringLength(50)]
     public string? IpAddress { get; set; }
 
-    public DateTime? LastActivity { get; set; }
+    [Precision(0)]
+    public DateTimeOffset? LastActivity { get; set; }
 
-    public DateTime? RegisteredAt { get; set; }
+    [Precision(0)]
+    public DateTimeOffset? RegisteredAt { get; set; }
 
     public bool? IsActive { get; set; }
 

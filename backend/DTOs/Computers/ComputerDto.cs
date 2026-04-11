@@ -38,12 +38,12 @@ public class ComputerDto
     /// <summary>
     /// The timestamp of the last activity from this computer.
     /// </summary>
-    public DateTime? LastActivity { get; set; }
+    public DateTimeOffset? LastActivity { get; set; }
 
     /// <summary>
     /// The timestamp when this computer was registered.
     /// </summary>
-    public DateTime? RegisteredAt { get; set; }
+    public DateTimeOffset? RegisteredAt { get; set; }
 
     /// <summary>
     /// Indicates whether this computer is currently active.

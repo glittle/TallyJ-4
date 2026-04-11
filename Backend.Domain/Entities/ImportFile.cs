@@ -14,11 +14,11 @@ public partial class ImportFile
 
     public Guid ElectionGuid { get; set; }
 
-    [Precision(2)]
-    public DateTime? UploadTime { get; set; }
+    [Precision(0)]
+    public DateTimeOffset? UploadTime { get; set; }
 
-    [Precision(2)]
-    public DateTime? ImportTime { get; set; }
+    [Precision(0)]
+    public DateTimeOffset? ImportTime { get; set; }
 
     public int? FileSize { get; set; }
 

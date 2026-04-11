@@ -6,8 +6,9 @@ This file contains the repo-specific guidance that should stay current for AI ag
 
 Use these as the primary sources of current project guidance:
 
+- `AGENTS_REASONING.md`
 - `README.md`
-- `backend/SETUP.md`
+- `backend/README.md`
 - `frontend/README.md`
 - `docs/DEPLOYMENT.md`
 - `E2E_TESTING_GUIDE.md`
@@ -73,11 +74,6 @@ election-{electionGuid}
 
 ## Validation commands
 
-### Backend
-
-If the build fails with a NuGet restore error like `Value cannot be null. (Parameter 'path1')`, know that we are unable to
-run dotnet commands on this computer. Ask the user to run it for us.
-
 ### Frontend
 
 ```bash
@@ -85,6 +81,8 @@ cd frontend
 npm run check
 npm run test:run
 ```
+
+## Locales
 
 Run `npm run validate:i18n` when you touch locale files.
 

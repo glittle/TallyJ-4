@@ -7,6 +7,7 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { electionService } from "../../services/electionService";
+import { secureTokenService } from "../../services/secureTokenService";
 import { useElectionStore } from "../../stores/electionStore";
 
 const router = useRouter();
@@ -18,6 +19,11 @@ const { showSuccessMessage, showErrorMessage } = useNotifications();
 const electionGuid = route.params.id as string;
 const loading = computed(() => electionStore.loading);
 const election = computed(() => electionStore.currentElection);
+
+const isTeller = computed(() => {
+  const authData = secureTokenService.getAuthData();
+  return authData.name === "Teller" && authData.authMethod === "AccessCode";
+});
 
 const qrCodeUrl = ref("");
 
@@ -157,6 +163,81 @@ async function generateQrCode() {
   }
 }
 
+const ELECTION_STAGES = ["Setup", "Counting", "Finalized"] as const;
+
+const currentStageIndex = computed(() => {
+  const status = election.value?.tallyStatus || "Setup";
+  const idx = ELECTION_STAGES.indexOf(
+    status as (typeof ELECTION_STAGES)[number],
+  );
+  return idx >= 0 ? idx : 0;
+});
+
+const canAdvance = computed(
+  () => currentStageIndex.value < ELECTION_STAGES.length - 1,
+);
+const canRevert = computed(() => currentStageIndex.value > 0);
+
+const nextStage = computed(() =>
+  canAdvance.value ? ELECTION_STAGES[currentStageIndex.value + 1] : null,
+);
+
+const previousStage = computed(() =>
+  canRevert.value ? ELECTION_STAGES[currentStageIndex.value - 1] : null,
+);
+
+async function advanceStage() {
+  if (!nextStage.value || !election.value) {
+    return;
+  }
+  const stage = nextStage.value;
+  try {
+    await ElMessageBox.confirm(
+      t("elections.confirmAdvance", { stage: t(`elections.stage.${stage}`) }),
+      t("elections.stageProgression"),
+      {
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      },
+    );
+    await electionStore.updateElection(electionGuid, { tallyStatus: stage });
+    showSuccessMessage(
+      t("elections.stageAdvanced", { stage: t(`elections.stage.${stage}`) }),
+    );
+  } catch (err: any) {
+    if (err !== "cancel") {
+      showErrorMessage(t("elections.stageChangeError"));
+    }
+  }
+}
+
+async function revertStage() {
+  if (!previousStage.value || !election.value) {
+    return;
+  }
+  const stage = previousStage.value;
+  try {
+    await ElMessageBox.confirm(
+      t("elections.confirmRevert", { stage: t(`elections.stage.${stage}`) }),
+      t("elections.stageProgression"),
+      {
+        confirmButtonText: t("common.confirm"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      },
+    );
+    await electionStore.updateElection(electionGuid, { tallyStatus: stage });
+    showSuccessMessage(
+      t("elections.stageReverted", { stage: t(`elections.stage.${stage}`) }),
+    );
+  } catch (err: any) {
+    if (err !== "cancel") {
+      showErrorMessage(t("elections.stageChangeError"));
+    }
+  }
+}
+
 async function exportElection() {
   if (!electionGuid) {
     return;
@@ -240,7 +321,42 @@ async function exportElection() {
         </div>
       </el-card>
 
-      <el-card class="teller-access-card">
+      <el-card v-if="!isTeller" class="stage-card">
+        <template #header>
+          <span>{{ $t("elections.stageProgression") }}</span>
+        </template>
+        <div class="stage-steps">
+          <el-steps
+            :active="currentStageIndex"
+            finish-status="success"
+            align-center
+          >
+            <el-step
+              v-for="stage in ELECTION_STAGES"
+              :key="stage"
+              :title="$t(`elections.stage.${stage}`)"
+            />
+          </el-steps>
+        </div>
+        <div class="stage-actions">
+          <el-button v-if="canRevert" @click="revertStage">
+            {{
+              $t("elections.revertTo", {
+                stage: $t(`elections.stage.${previousStage}`),
+              })
+            }}
+          </el-button>
+          <el-button v-if="canAdvance" type="primary" @click="advanceStage">
+            {{
+              $t("elections.advanceTo", {
+                stage: $t(`elections.stage.${nextStage}`),
+              })
+            }}
+          </el-button>
+        </div>
+      </el-card>
+
+      <el-card v-if="!isTeller" class="teller-access-card">
         <template #header>
           <span>{{ $t("elections.tellerAccess") }}</span>
         </template>
@@ -335,7 +451,7 @@ async function exportElection() {
         </div>
       </el-card>
 
-      <el-row>
+      <el-row v-if="!isTeller">
         <el-card>
           <template #header>
             <span>{{ $t("common.actions") }}</span>
@@ -349,7 +465,7 @@ async function exportElection() {
         </el-card>
       </el-row>
 
-      <el-row>
+      <el-row v-if="!isTeller">
         <el-card class="danger-zone" style="margin-top: 20px">
           <template #header>
             <span style="color: #f56c6c">{{ $t("common.dangerZone") }}</span>
@@ -385,6 +501,7 @@ async function exportElection() {
   .info-card,
   .actions-card,
   .stats-card,
+  .stage-card,
   .danger-zone,
   .teller-access-card {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -411,6 +528,18 @@ async function exportElection() {
     font-size: 28px;
     font-weight: 600;
     color: #303133;
+  }
+
+  .stage-card {
+    .stage-steps {
+      padding: 10px 0 20px;
+    }
+
+    .stage-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
   }
 
   .el-divider {

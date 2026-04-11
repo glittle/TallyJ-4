@@ -13,7 +13,7 @@ public class PresentationDto
     /// <summary>
     /// Date when the election was held.
     /// </summary>
-    public DateTime? ElectionDate { get; set; }
+    public DateTimeOffset? ElectionDate { get; set; }
 
     /// <summary>
     /// Number of candidates to be elected.

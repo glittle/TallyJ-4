@@ -43,7 +43,7 @@ public class PublicService : IPublicService
             Version = "4.0.0",
             Description = "Election management and online voting system",
             AvailableElectionsCount = availableElectionsCount,
-            ServerTime = DateTime.UtcNow
+            ServerTime = DateTimeOffset.UtcNow
         };
     }
 
@@ -55,7 +55,7 @@ public class PublicService : IPublicService
     {
         var elections = (await _context.Elections
             .Where(e => e.ListedForPublicAsOf != null)
-            .OrderByDescending(e => e.DateOfElection ?? DateTime.MinValue)
+            .OrderByDescending(e => e.DateOfElection ?? DateTimeOffset.MinValue)
             .Select(e => new
             {
                 e.ElectionGuid,
@@ -219,7 +219,7 @@ public class PublicService : IPublicService
                 RegisteredVoters = registeredVoters,
                 TurnoutPercentage = Math.Round(turnoutPercentage, 2)
             },
-            LastUpdated = DateTime.UtcNow,
+            LastUpdated = DateTimeOffset.UtcNow,
             IsFinalized = isFinalized
         };
     }

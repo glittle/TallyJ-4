@@ -100,8 +100,8 @@ public class JwtTokenService : IJwtTokenService
             UserId = userId,
             Token = token,
             TokenHash = HashRefreshToken(token),
-            ExpiresAt = DateTime.UtcNow.AddDays(refreshTokenExpiryDays),
-            CreatedAt = DateTime.UtcNow,
+            ExpiresAt = DateTimeOffset.UtcNow.AddDays(refreshTokenExpiryDays),
+            CreatedAt = DateTimeOffset.UtcNow,
             IsRevoked = false,
             RowVersion = new byte[8]
         };

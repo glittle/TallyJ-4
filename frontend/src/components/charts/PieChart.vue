@@ -1,7 +1,3 @@
-<template>
-  <Pie :data="chartData" :options="chartOptions" />
-</template>
-
 <script setup lang="ts">
 import { computed } from "vue";
 import { Pie } from "vue-chartjs";
@@ -72,3 +68,7 @@ const chartOptions = computed<ChartOptions<"pie">>(() => ({
   },
 }));
 </script>
+
+<template>
+  <Pie :data="chartData" :options="chartOptions" />
+</template>

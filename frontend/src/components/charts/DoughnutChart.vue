@@ -1,7 +1,3 @@
-<template>
-  <Doughnut :data="chartData" :options="chartOptions" />
-</template>
-
 <script setup lang="ts">
 import { computed } from "vue";
 import { Doughnut } from "vue-chartjs";
@@ -75,3 +71,7 @@ const chartOptions = computed<ChartOptions<"doughnut">>(() => ({
   },
 }));
 </script>
+
+<template>
+  <Doughnut :data="chartData" :options="chartOptions" />
+</template>

@@ -1,37 +1,3 @@
-<template>
-  <div class="ds-error-display" :class="[typeClass, sizeClass]">
-    <div class="ds-error-display__icon">
-      <el-icon :size="iconSize">
-        <component :is="iconComponent" />
-      </el-icon>
-    </div>
-
-    <div class="ds-error-display__content">
-      <h3 class="ds-error-display__title">{{ title || defaultTitle }}</h3>
-      <p class="ds-error-display__message">
-        {{ message || error?.message || defaultMessage }}
-      </p>
-
-      <details
-        v-if="showDetails && (error || details)"
-        class="ds-error-display__details"
-      >
-        <summary>Technical Details</summary>
-        <pre><code>{{ details || JSON.stringify(error, null, 2) }}</code></pre>
-      </details>
-    </div>
-
-    <div v-if="$slots.actions || retry" class="ds-error-display__actions">
-      <slot name="actions">
-        <el-button v-if="retry" type="primary" @click="handleRetry">
-          <el-icon><RefreshRight /></el-icon>
-          Retry
-        </el-button>
-      </slot>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed, type Component } from "vue";
 import {
@@ -110,6 +76,40 @@ function handleRetry() {
   emit("retry");
 }
 </script>
+
+<template>
+  <div class="ds-error-display" :class="[typeClass, sizeClass]">
+    <div class="ds-error-display__icon">
+      <el-icon :size="iconSize">
+        <component :is="iconComponent" />
+      </el-icon>
+    </div>
+
+    <div class="ds-error-display__content">
+      <h3 class="ds-error-display__title">{{ title || defaultTitle }}</h3>
+      <p class="ds-error-display__message">
+        {{ message || error?.message || defaultMessage }}
+      </p>
+
+      <details
+        v-if="showDetails && (error || details)"
+        class="ds-error-display__details"
+      >
+        <summary>Technical Details</summary>
+        <pre><code>{{ details || JSON.stringify(error, null, 2) }}</code></pre>
+      </details>
+    </div>
+
+    <div v-if="$slots.actions || retry" class="ds-error-display__actions">
+      <slot name="actions">
+        <el-button v-if="retry" type="primary" @click="handleRetry">
+          <el-icon><RefreshRight /></el-icon>
+          Retry
+        </el-button>
+      </slot>
+    </div>
+  </div>
+</template>
 
 <style lang="less">
 .ds-error-display {

@@ -22,7 +22,7 @@ public partial class Election
     public string? Convenor { get; set; }
 
     [Precision(0)]
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
 
     [StringLength(5)]
     [Unicode(false)]
@@ -65,7 +65,8 @@ public partial class Election
     [StringLength(50)]
     public string? ElectionPasscode { get; set; }
 
-    public DateTime? ListedForPublicAsOf { get; set; }
+    [Precision(0)]
+    public DateTimeOffset? ListedForPublicAsOf { get; set; }
 
     [Column("_RowVersion")]
     public byte[] RowVersion { get; set; } = null!;
@@ -81,10 +82,10 @@ public partial class Election
     public bool? MaskVotingMethod { get; set; }
 
     [Precision(0)]
-    public DateTime? OnlineWhenOpen { get; set; }
+    public DateTimeOffset? OnlineWhenOpen { get; set; }
 
     [Precision(0)]
-    public DateTime? OnlineWhenClose { get; set; }
+    public DateTimeOffset? OnlineWhenClose { get; set; }
 
     public bool OnlineCloseIsEstimate { get; set; }
 
@@ -93,7 +94,7 @@ public partial class Election
     public string? OnlineSelectionProcess { get; set; }
 
     [Precision(0)]
-    public DateTime? OnlineAnnounced { get; set; }
+    public DateTimeOffset? OnlineAnnounced { get; set; }
 
     [StringLength(250)]
     public string? EmailFromAddress { get; set; }

@@ -10,5 +10,8 @@
   "tally.calculatingProgress": "गणना प्रगति",
   "tally.processedBallots": "प्रोसेस किए गए मतपत्र",
   "tally.resultsPreview": "परिणाम पूर्वावलोकन (शीर्ष 10)",
-  "tally.viewFullResults": "पूर्ण परिणाम देखें"
+  "tally.viewFullResults": "पूर्ण परिणाम देखें",
+  "tally.section.elected": "निर्वाचित",
+  "tally.section.extra": "अतिरिक्त",
+  "tally.section.other": "अन्य"
 }

@@ -61,7 +61,7 @@ public partial class Person
     public Guid? IneligibleReasonGuid { get; set; }
 
     [Precision(0)]
-    public DateTime? RegistrationTime { get; set; }
+    public DateTimeOffset? RegistrationTime { get; set; }
 
     public Guid? VotingLocationGuid { get; set; }
 

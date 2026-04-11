@@ -13,7 +13,7 @@ public class SecurityAuditLogDto
     /// <summary>
     /// The timestamp when the security event occurred.
     /// </summary>
-    public DateTime Timestamp { get; set; }
+    public DateTimeOffset Timestamp { get; set; }
 
     /// <summary>
     /// The type of security event.

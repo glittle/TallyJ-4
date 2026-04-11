@@ -11,7 +11,7 @@ public class MainReportDto
 {
     public string ElectionName { get; set; } = "";
     public string? Convenor { get; set; }
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public int NumEligibleToVote { get; set; }
     public int SumOfEnvelopesCollected { get; set; }
     public int NumBallotsWithManual { get; set; }
@@ -60,7 +60,7 @@ public class ElectedPersonDto
 public class VotesByNumDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public List<VotePersonDto> People { get; set; } = new();
 }
 
@@ -77,7 +77,7 @@ public class VotePersonDto
 public class VotesByNameDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public List<VotePersonDto> People { get; set; } = new();
 }
 
@@ -107,7 +107,7 @@ public class BallotVoteDto
 public class BallotsReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public bool IsSingleNameElection { get; set; }
     public List<BallotReportItemDto> Ballots { get; set; } = new();
 }
@@ -115,7 +115,7 @@ public class BallotsReportDto
 public class SpoiledVotesReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public List<SpoiledVoteItemDto> People { get; set; } = new();
 }
 
@@ -129,7 +129,7 @@ public class SpoiledVoteItemDto
 public class BallotAlignmentReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public int NumToElect { get; set; }
     public bool IsSingleNameElection { get; set; }
     public List<AlignmentRowDto> Rows { get; set; } = new();
@@ -144,7 +144,7 @@ public class AlignmentRowDto
 public class BallotsSameReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public bool IsSingleNameElection { get; set; }
     public List<DuplicateGroupDto> Groups { get; set; } = new();
 }
@@ -158,7 +158,7 @@ public class DuplicateGroupDto
 public class BallotsSummaryReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public List<BallotSummaryItemDto> Ballots { get; set; } = new();
 }
 
@@ -178,14 +178,14 @@ public class BallotSummaryItemDto
 public class AllCanReceiveReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public List<string> People { get; set; } = new();
 }
 
 public class VotersReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public bool HasMultipleLocations { get; set; }
     public int TotalCount { get; set; }
     public List<VoterItemDto> People { get; set; } = new();
@@ -197,7 +197,7 @@ public class VoterItemDto
     public string VotingMethod { get; set; } = "-";
     public string? BahaiId { get; set; }
     public string? Location { get; set; }
-    public DateTime? RegistrationTime { get; set; }
+    public DateTimeOffset? RegistrationTime { get; set; }
     public string? Teller1 { get; set; }
     public string? Teller2 { get; set; }
     public string? RegistrationLog { get; set; }
@@ -206,7 +206,7 @@ public class VoterItemDto
 public class FlagsReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public bool HasMultipleLocations { get; set; }
     public List<string> FlagNames { get; set; } = new();
     public List<FlagPersonDto> People { get; set; } = new();
@@ -223,7 +223,7 @@ public class FlagPersonDto
 public class VotersOnlineReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public List<OnlineVoterItemDto> People { get; set; } = new();
 }
 
@@ -233,17 +233,17 @@ public class OnlineVoterItemDto
     public string FullName { get; set; } = "";
     public string VotingMethodDisplay { get; set; } = "-";
     public string? Status { get; set; }
-    public DateTime? WhenStatus { get; set; }
+    public DateTimeOffset? WhenStatus { get; set; }
     public string? Email { get; set; }
-    public DateTime? WhenEmail { get; set; }
+    public DateTimeOffset? WhenEmail { get; set; }
     public string? Phone { get; set; }
-    public DateTime? WhenPhone { get; set; }
+    public DateTimeOffset? WhenPhone { get; set; }
 }
 
 public class VotersByAreaReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public string? Custom1Name { get; set; }
     public string? Custom2Name { get; set; }
     public string? Custom3Name { get; set; }
@@ -271,7 +271,7 @@ public class AreaRowDto
 public class VotersByLocationReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public string? Custom1Name { get; set; }
     public string? Custom2Name { get; set; }
     public string? Custom3Name { get; set; }
@@ -298,7 +298,7 @@ public class LocationRowDto
 public class VotersByLocationAreaReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public List<LocationAreaGroupDto> Locations { get; set; } = new();
 }
 
@@ -318,7 +318,7 @@ public class AreaCountDto
 public class ChangedPeopleReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public List<ChangedPersonDto> People { get; set; } = new();
 }
 
@@ -339,7 +339,7 @@ public class ChangedPersonDto
 public class AllNonEligibleReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public List<NonEligiblePersonDto> People { get; set; } = new();
 }
 
@@ -355,7 +355,7 @@ public class NonEligiblePersonDto
 public class VoterEmailsReportDto
 {
     public string ElectionName { get; set; } = "";
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
     public List<VoterEmailItemDto> People { get; set; } = new();
 }
 

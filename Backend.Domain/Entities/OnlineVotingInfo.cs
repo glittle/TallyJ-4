@@ -19,14 +19,14 @@ public partial class OnlineVotingInfo
     public Guid PersonGuid { get; set; }
 
     [Precision(0)]
-    public DateTime? WhenBallotCreated { get; set; }
+    public DateTimeOffset? WhenBallotCreated { get; set; }
 
     [StringLength(10)]
     [Unicode(false)]
     public string Status { get; set; } = null!;
 
     [Precision(0)]
-    public DateTime? WhenStatus { get; set; }
+    public DateTimeOffset? WhenStatus { get; set; }
 
     public string? ListPool { get; set; }
 

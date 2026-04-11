@@ -69,12 +69,12 @@ public class DateRangeFilterDto
     /// <summary>
     /// The start date of the range (inclusive).
     /// </summary>
-    public DateTime? StartDate { get; set; }
+    public DateTimeOffset? StartDate { get; set; }
 
     /// <summary>
     /// The end date of the range (inclusive).
     /// </summary>
-    public DateTime? EndDate { get; set; }
+    public DateTimeOffset? EndDate { get; set; }
 }
 
 /// <summary>

@@ -20,7 +20,7 @@ public class ElectionDto
     /// <summary>
     /// The date when the election will be held.
     /// </summary>
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
 
     /// <summary>
     /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).
@@ -70,12 +70,12 @@ public class ElectionDto
     /// <summary>
     /// The date and time when online voting opens.
     /// </summary>
-    public DateTime? OnlineWhenOpen { get; set; }
+    public DateTimeOffset? OnlineWhenOpen { get; set; }
 
     /// <summary>
     /// The date and time when online voting closes.
     /// </summary>
-    public DateTime? OnlineWhenClose { get; set; }
+    public DateTimeOffset? OnlineWhenClose { get; set; }
 
     /// <summary>
     /// The total number of registered voters.
@@ -145,7 +145,7 @@ public class ElectionDto
     /// <summary>
     /// The date and time when online voting was announced.
     /// </summary>
-    public DateTime? OnlineAnnounced { get; set; }
+    public DateTimeOffset? OnlineAnnounced { get; set; }
 
     /// <summary>
     /// Email from address for voter communications.
@@ -195,7 +195,7 @@ public class ElectionDto
     /// <summary>
     /// The date and time when teller access was opened.
     /// </summary>
-    public DateTime? TellerAccessOpenedAt { get; set; }
+    public DateTimeOffset? TellerAccessOpenedAt { get; set; }
 }
 
 

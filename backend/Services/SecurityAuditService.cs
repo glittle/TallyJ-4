@@ -38,7 +38,7 @@ public class SecurityAuditService : ISecurityAuditService
         {
             var securityLog = new SecurityAuditLog
             {
-                Timestamp = DateTime.UtcNow,
+                Timestamp = DateTimeOffset.UtcNow,
                 EventType = createDto.EventType,
                 UserId = createDto.UserId,
                 Email = createDto.Email,
@@ -220,7 +220,7 @@ public class SecurityAuditService : ISecurityAuditService
     /// <inheritdoc />
     public async Task<SecurityStatisticsDto> GetSecurityStatisticsAsync(int hours = 24)
     {
-        var cutoffTime = DateTime.UtcNow.AddHours(-hours);
+        var cutoffTime = DateTimeOffset.UtcNow.AddHours(-hours);
 
         var logs = await _context.SecurityAuditLogs
             .Where(l => l.Timestamp >= cutoffTime)
@@ -281,7 +281,7 @@ public class SecurityAuditService : ISecurityAuditService
         var recentFailures = await _context.SecurityAuditLogs
             .Where(l => l.IpAddress == ipAddress &&
                        l.EventType == Backend.Domain.SecurityEventType.LoginFailure &&
-                       l.Timestamp >= DateTime.UtcNow.AddMinutes(-15))
+                       l.Timestamp >= DateTimeOffset.UtcNow.AddMinutes(-15))
             .CountAsync();
 
         if (recentFailures >= 5)
@@ -306,7 +306,7 @@ public class SecurityAuditService : ISecurityAuditService
         var recentLogins = await _context.SecurityAuditLogs
             .Where(l => l.UserId == userId &&
                        l.EventType == Backend.Domain.SecurityEventType.LoginSuccess &&
-                       l.Timestamp >= DateTime.UtcNow.AddDays(-30) &&
+                       l.Timestamp >= DateTimeOffset.UtcNow.AddDays(-30) &&
                        l.IpAddress != ipAddress)
             .Select(l => l.IpAddress)
             .Distinct()

@@ -57,7 +57,7 @@ public class OnlineVotingHub : Hub
         {
             electionGuid,
             totalVotes,
-            timestamp = DateTime.UtcNow
+            timestamp = DateTimeOffset.UtcNow
         });
         _logger.LogInformation("Ballot submitted notification broadcast for election {ElectionGuid}", electionGuid);
     }

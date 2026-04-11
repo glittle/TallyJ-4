@@ -10,5 +10,8 @@
   "tally.calculatingProgress": "계산 진행률",
   "tally.processedBallots": "처리된 투표 용지",
   "tally.resultsPreview": "결과 미리보기 (상위 10개)",
-  "tally.viewFullResults": "전체 결과 보기"
+  "tally.viewFullResults": "전체 결과 보기",
+  "tally.section.elected": "선출된",
+  "tally.section.extra": "추가",
+  "tally.section.other": "기타"
 }

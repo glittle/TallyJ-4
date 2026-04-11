@@ -95,7 +95,7 @@ public class CustomReportDto
     /// <summary>
     /// The date and time when this report was generated.
     /// </summary>
-    public DateTime GeneratedAt { get; set; }
+    public DateTimeOffset GeneratedAt { get; set; }
 }
 
 

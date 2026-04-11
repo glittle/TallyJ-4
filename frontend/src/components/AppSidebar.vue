@@ -16,6 +16,7 @@ import {
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
+import { secureTokenService } from "../services/secureTokenService";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
 import { getBuildDate, getBuildDateBadi, VERSION } from "./version";
@@ -31,6 +32,15 @@ const electionStore = useElectionStore();
 const superAdminStore = useSuperAdminStore();
 
 const isSuperAdmin = computed(() => superAdminStore.isSuperAdmin);
+
+const isTeller = computed(() => {
+  const authData = secureTokenService.getAuthData();
+  return authData.name === "Teller" && authData.authMethod === "AccessCode";
+});
+
+const electionStage = computed(() => {
+  return electionStore.currentElection?.tallyStatus || "Setup";
+});
 
 const isInElectionContext = computed(() => {
   return route.path.startsWith("/elections/") && route.params.id;
@@ -87,7 +97,11 @@ function goBackToElections() {
     <!-- Election navigation menu -->
     <div v-if="isInElectionContext" class="election-nav">
       <div class="election-header">
-        <div class="back-to-elections" @click="goBackToElections">
+        <div
+          v-if="!isTeller"
+          class="back-to-elections"
+          @click="goBackToElections"
+        >
           <el-icon>
             <ArrowLeft />
           </el-icon>
@@ -105,7 +119,6 @@ function goBackToElections() {
         class="election-menu"
         @select="handleMenuSelect"
       >
-        <!-- Core Election Management -->
         <el-menu-item :index="`/elections/${route.params.id}`" role="menuitem">
           <el-icon aria-hidden="true">
             <Document />
@@ -114,6 +127,7 @@ function goBackToElections() {
         </el-menu-item>
 
         <el-menu-item
+          v-if="!isTeller"
           :index="`/elections/${route.params.id}/edit`"
           role="menuitem"
         >
@@ -123,8 +137,8 @@ function goBackToElections() {
           <span>{{ $t("elections.edit") }}</span>
         </el-menu-item>
 
-        <!-- People & Voting -->
         <el-menu-item
+          v-if="!isTeller"
           :index="`/elections/${route.params.id}/people`"
           role="menuitem"
         >
@@ -134,8 +148,8 @@ function goBackToElections() {
           <span>{{ $t("people.management") }}</span>
         </el-menu-item>
 
-        <!-- Election Setup -->
         <el-menu-item
+          v-if="!isTeller"
           :index="`/elections/${route.params.id}/locations`"
           role="menuitem"
         >
@@ -146,6 +160,7 @@ function goBackToElections() {
         </el-menu-item>
 
         <el-menu-item
+          v-if="!isTeller"
           :index="`/elections/${route.params.id}/tellers`"
           role="menuitem"
         >
@@ -156,6 +171,7 @@ function goBackToElections() {
         </el-menu-item>
 
         <el-menu-item
+          v-if="!isTeller || electionStage === 'Counting'"
           :index="`/elections/${route.params.id}/frontdesk`"
           role="menuitem"
         >
@@ -165,8 +181,8 @@ function goBackToElections() {
           <span>{{ $t("nav.frontDesk") }}</span>
         </el-menu-item>
 
-        <!-- Ballots -->
         <el-menu-item
+          v-if="!isTeller || electionStage === 'Counting'"
           :index="`/elections/${route.params.id}/ballots`"
           role="menuitem"
         >
@@ -176,8 +192,8 @@ function goBackToElections() {
           <span>{{ $t("ballots.management") }}</span>
         </el-menu-item>
 
-        <!-- Results & Reporting -->
         <el-menu-item
+          v-if="!isTeller || electionStage === 'Finalized'"
           :index="`/elections/${route.params.id}/results`"
           role="menuitem"
         >
@@ -188,6 +204,7 @@ function goBackToElections() {
         </el-menu-item>
 
         <el-menu-item
+          v-if="!isTeller"
           :index="`/elections/${route.params.id}/tally`"
           role="menuitem"
         >
@@ -198,6 +215,11 @@ function goBackToElections() {
         </el-menu-item>
 
         <el-menu-item
+          v-if="
+            !isTeller ||
+            electionStage === 'Counting' ||
+            electionStage === 'Finalized'
+          "
           :index="`/elections/${route.params.id}/monitor`"
           role="menuitem"
         >
@@ -208,6 +230,7 @@ function goBackToElections() {
         </el-menu-item>
 
         <el-menu-item
+          v-if="!isTeller || electionStage === 'Finalized'"
           :index="`/elections/${route.params.id}/reporting`"
           role="menuitem"
         >

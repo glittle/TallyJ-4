@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Domain.Entities;
 
@@ -21,9 +22,11 @@ public class RefreshToken
     [StringLength(64)] // SHA-256 produces 64 character hex string
     public string TokenHash { get; set; } = null!;
 
-    public DateTime ExpiresAt { get; set; }
+    [Precision(0)]
+    public DateTimeOffset ExpiresAt { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    [Precision(0)]
+    public DateTimeOffset CreatedAt { get; set; }
 
     public bool IsRevoked { get; set; }
 
