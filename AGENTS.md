@@ -6,8 +6,9 @@ This file contains the repo-specific guidance that should stay current for AI ag
 
 Use these as the primary sources of current project guidance:
 
+- `AGENTS_REASONING.md`
 - `README.md`
-- `backend/SETUP.md`
+- `backend/README.md`
 - `frontend/README.md`
 - `docs/DEPLOYMENT.md`
 - `E2E_TESTING_GUIDE.md`

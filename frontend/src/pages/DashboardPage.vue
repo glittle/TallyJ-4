@@ -234,16 +234,6 @@ function formatDate(date: string) {
   }
   return new Date(date).toLocaleDateString();
 }
-
-function getStatusType(status: string) {
-  const typeMap: Record<string, any> = {
-    Draft: "info",
-    Voting: "success",
-    Tallying: "warning",
-    Finalized: "info",
-  };
-  return typeMap[status] || "info";
-}
 </script>
 
 <template>
