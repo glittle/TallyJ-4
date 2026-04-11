@@ -313,21 +313,14 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
     return { path: "/login", query: { redirect: to.fullPath } };
   }
 
+  const authData = secureTokenService.getAuthData();
+  const isTeller =
+    authData.name === "Teller" && authData.authMethod === "AccessCode";
+
   if (isAuthenticated) {
-    // Only check super admin status for regular users, not tellers
-
-    // Tellers are identified by authMethod="AccessCode" and name="Teller"
-
-    const authData = secureTokenService.getAuthData();
-
-    const isTeller =
-      authData.name === "Teller" && authData.authMethod === "AccessCode";
-
     if (!isTeller) {
       const { useSuperAdminStore } = await import("../stores/superAdminStore");
       const superAdminStore = useSuperAdminStore();
-
-      // Ensure we have checked super admin status
 
       await superAdminStore.checkSuperAdminStatus();
 
@@ -335,9 +328,14 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
         return "/dashboard";
       }
     } else if (to.meta.requiresSuperAdmin) {
-      // Tellers can never be super admins, redirect them
-
       return "/dashboard";
+    }
+
+    if (isTeller) {
+      const electionMatch = to.path.match(/^\/elections\/([^/]+)/);
+      if (!electionMatch) {
+        return "/";
+      }
     }
   }
 

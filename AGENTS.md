@@ -73,11 +73,6 @@ election-{electionGuid}
 
 ## Validation commands
 
-### Backend
-
-If the build fails with a NuGet restore error like `Value cannot be null. (Parameter 'path1')`, know that we are unable to
-run dotnet commands on this computer. Ask the user to run it for us.
-
 ### Frontend
 
 ```bash

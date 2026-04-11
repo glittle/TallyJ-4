@@ -233,6 +233,7 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
     private void ImportBallotFromXml(XmlElement ballotNode, Guid locationGuid, XmlNamespaceManager nsm, Dictionary<Guid, Guid> guidMap)
     {
         var ballotGuid = Guid.NewGuid();
+        var now = DateTimeOffset.UtcNow;
         var ballot = new Ballot
         {
             BallotGuid = ballotGuid,
@@ -242,6 +243,8 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
             BallotNumAtComputer = ParseInt(ballotNode.GetAttribute("BallotNumAtComputer")) ?? 0,
             Teller1 = ballotNode.GetAttribute("TellerAtKeyboard"),
             Teller2 = ballotNode.GetAttribute("TellerAssisting"),
+            DateCreated = now,
+            DateUpdated = now,
             RowVersion = new byte[8]
         };
         _context.Ballots.Add(ballot);

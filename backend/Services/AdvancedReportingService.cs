@@ -172,23 +172,71 @@ public class AdvancedReportingService : IAdvancedReportingService
     {
         _logger.LogInformation("Generating custom report: {ReportName}", config.ReportName);
 
-        // This is a placeholder implementation
-        // In a real implementation, this would parse the config and generate the report accordingly
-        var report = new CustomReportDto
+        var generatedData = new Dictionary<string, object>
+        {
+            ["title"] = config.ReportName,
+            ["description"] = config.Description,
+            ["generatedAt"] = DateTime.UtcNow
+        };
+
+        foreach (var section in config.Sections.OrderBy(s => s.Order))
+        {
+            var electionId = section.Parameters.TryGetValue("electionGuid", out var egObj) && egObj is string egStr && Guid.TryParse(egStr, out var eg) ? eg : Guid.Empty;
+
+            if (electionId == Guid.Empty)
+                continue;
+
+            try
+            {
+                switch (section.SectionType.ToLower())
+                {
+                    case "summary":
+                        var stats = await _tallyService.GetDetailedStatisticsAsync(electionId);
+                        generatedData[$"section_{section.Order}_summary"] = stats.Overview;
+                        break;
+
+                    case "candidates":
+                        var report = await _tallyService.GetElectionReportAsync(electionId);
+                        var candidates = report.Elected.Concat(report.Extra).Concat(report.Other).ToList();
+                        if (config.DefaultFilters != null)
+                            candidates = ApplyCandidateFilters(candidates, config.DefaultFilters).ToList();
+                        generatedData[$"section_{section.Order}_candidates"] = candidates;
+                        break;
+
+                    case "locations":
+                        var detailedStats = await _tallyService.GetDetailedStatisticsAsync(electionId);
+                        var locations = detailedStats.LocationStatistics.ToList();
+                        if (config.DefaultFilters != null)
+                            locations = ApplyLocationFilters(locations, config.DefaultFilters).ToList();
+                        generatedData[$"section_{section.Order}_locations"] = locations;
+                        break;
+
+                    case "chart":
+                        var chartType = section.Parameters.TryGetValue("chartType", out var ctObj) && ctObj is string ct ? ct : "candidate-votes";
+                        var chartData = await GenerateChartDataAsync(electionId, chartType);
+                        generatedData[$"section_{section.Order}_chart"] = chartData;
+                        break;
+
+                    case "statistics":
+                        var analysis = await GenerateStatisticalAnalysisAsync(electionId);
+                        generatedData[$"section_{section.Order}_statistics"] = analysis;
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to generate section {SectionType} for report {ReportName}", section.SectionType, config.ReportName);
+                generatedData[$"section_{section.Order}_error"] = $"Failed to generate {section.SectionType}: {ex.Message}";
+            }
+        }
+
+        return new CustomReportDto
         {
             ReportGuid = Guid.NewGuid(),
             Config = config,
-            GeneratedData = new Dictionary<string, object>
-            {
-                ["title"] = config.ReportName,
-                ["description"] = config.Description,
-                ["sections"] = config.Sections.Count,
-                ["generatedAt"] = DateTime.UtcNow
-            },
+            GeneratedData = generatedData,
             GeneratedAt = DateTime.UtcNow
         };
-
-        return report;
     }
 
     /// <summary>
@@ -290,18 +338,38 @@ public class AdvancedReportingService : IAdvancedReportingService
 
     private ChartDataDto GenerateTurnoutOverTimeChart(DetailedStatisticsDto stats)
     {
-        // Placeholder - would need time-based data
+        var timeData = stats.TurnoutAnalysis?.TimeBasedTurnout ?? new List<TimeBasedTurnoutDto>();
+
+        if (timeData.Count == 0)
+        {
+            return new ChartDataDto
+            {
+                ChartType = "line",
+                Title = "Turnout Over Time",
+                Labels = new List<string> { "Total" },
+                Datasets = new List<ChartDatasetDto>
+                {
+                    new ChartDatasetDto
+                    {
+                        Label = "Turnout %",
+                        Data = new List<decimal> { stats.Overview.OverallTurnoutPercentage },
+                        BorderColors = new List<string> { "#409eff" }
+                    }
+                }
+            };
+        }
+
         return new ChartDataDto
         {
             ChartType = "line",
             Title = "Turnout Over Time",
-            Labels = new List<string> { "Start", "Mid", "End" },
+            Labels = timeData.Select(t => t.TimePeriod.ToString("HH:mm")).ToList(),
             Datasets = new List<ChartDatasetDto>
             {
                 new ChartDatasetDto
                 {
                     Label = "Turnout %",
-                    Data = new List<decimal> { 0, stats.Overview.OverallTurnoutPercentage / 2, stats.Overview.OverallTurnoutPercentage },
+                    Data = timeData.Select(t => t.CumulativeTurnout).ToList(),
                     BorderColors = new List<string> { "#409eff" }
                 }
             }

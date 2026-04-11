@@ -873,7 +873,7 @@ public class TallyService : ITallyService
         await CalculateDemographicAgeBreakdownAsync(electionGuid, demographicBreakdown);
         await CalculateDemographicAreaBreakdownAsync(electionGuid, demographicBreakdown);
 
-        var timeBasedTurnout = CalculateTimeBasedTurnout(totalBallotsCast, totalRegisteredVoters, election);
+        var timeBasedTurnout = await CalculateTimeBasedTurnoutAsync(totalBallotsCast, totalRegisteredVoters, election);
 
         var participationRates = await CalculateParticipationRatesAsync(electionGuid, totalBallotsCast, totalRegisteredVoters);
 
@@ -962,24 +962,47 @@ public class TallyService : ITallyService
         }
     }
 
-    private List<TimeBasedTurnoutDto> CalculateTimeBasedTurnout(int totalBallotsCast, int totalRegisteredVoters, Election election)
+    private async Task<List<TimeBasedTurnoutDto>> CalculateTimeBasedTurnoutAsync(int totalBallotsCast, int totalRegisteredVoters, Election election)
     {
         var timeBasedTurnout = new List<TimeBasedTurnoutDto>();
-        var cumulativeBallots = 0;
-        for (var hour = 8; hour <= 20; hour++) // Assuming 8 AM to 8 PM voting
-        {
-            // This is a placeholder - in real implementation, you'd query actual ballot timestamps
-            var ballotsInHour = (int)(totalBallotsCast * 0.05); // Simplified distribution
-            cumulativeBallots += ballotsInHour;
 
+        var logEntries = await _context.Logs
+            .Where(l => l.ElectionGuid == election.ElectionGuid && l.Details != null && l.Details.Contains("ballot"))
+            .OrderBy(l => l.AsOf)
+            .Select(l => l.AsOf)
+            .ToListAsync();
+
+        if (logEntries.Count > 0)
+        {
+            var grouped = logEntries
+                .GroupBy(d => new DateTime(d.Year, d.Month, d.Day, d.Hour, 0, 0))
+                .OrderBy(g => g.Key);
+
+            var cumulativeBallots = 0;
+            foreach (var group in grouped)
+            {
+                cumulativeBallots += group.Count();
+                timeBasedTurnout.Add(new TimeBasedTurnoutDto
+                {
+                    TimePeriod = group.Key,
+                    PeriodType = "Hour",
+                    BallotsCast = group.Count(),
+                    CumulativeTurnout = totalRegisteredVoters > 0 ? (decimal)cumulativeBallots / totalRegisteredVoters * 100 : 0
+                });
+            }
+        }
+        else
+        {
+            var electionDate = election.DateOfElection?.Date ?? DateTime.UtcNow.Date;
             timeBasedTurnout.Add(new TimeBasedTurnoutDto
             {
-                TimePeriod = election.DateOfElection?.Date.AddHours(hour) ?? DateTime.Now.Date.AddHours(hour),
-                PeriodType = "Hour",
-                BallotsCast = ballotsInHour,
-                CumulativeTurnout = totalRegisteredVoters > 0 ? (decimal)cumulativeBallots / totalRegisteredVoters * 100 : 0
+                TimePeriod = electionDate,
+                PeriodType = "Total",
+                BallotsCast = totalBallotsCast,
+                CumulativeTurnout = totalRegisteredVoters > 0 ? (decimal)totalBallotsCast / totalRegisteredVoters * 100 : 0
             });
         }
+
         return timeBasedTurnout;
     }
 

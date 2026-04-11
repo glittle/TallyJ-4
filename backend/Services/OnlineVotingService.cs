@@ -248,6 +248,7 @@ public class OnlineVotingService : IOnlineVotingService
     public async Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
+        var now = DateTime.UtcNow;
 
         try
         {
@@ -259,7 +260,6 @@ public class OnlineVotingService : IOnlineVotingService
                 return (false, "voting.submit.electionNotFound");
             }
 
-            var now = DateTime.UtcNow;
             if ((election.OnlineWhenOpen != null && election.OnlineWhenOpen > now) ||
                 (election.OnlineWhenClose != null && election.OnlineWhenClose <= now))
             {
@@ -308,6 +308,8 @@ public class OnlineVotingService : IOnlineVotingService
                 ComputerCode = "WW",
                 BallotNumAtComputer = 0,
                 Teller1 = "Online",
+                DateCreated = now,
+                DateUpdated = now,
                 RowVersion = new byte[8]
             };
 

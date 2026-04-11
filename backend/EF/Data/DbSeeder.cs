@@ -203,6 +203,7 @@ public static class DbSeeder
             var computerCode = i < 8 ? "A" : "B";
             var ballotNum = (i < 8 ? i : i - 8) + 1;
 
+            var now = DateTimeOffset.UtcNow;
             var ballot = new Ballot
             {
                 BallotGuid = ballotGuid,
@@ -211,7 +212,9 @@ public static class DbSeeder
                 ComputerCode = computerCode,
                 BallotNumAtComputer = ballotNum,
                 Teller1 = "Teller A",
-                Teller2 = "Teller B"
+                Teller2 = "Teller B",
+                DateCreated = now,
+                DateUpdated = now
             };
             ballots.Add(ballot);
 
@@ -236,13 +239,16 @@ public static class DbSeeder
         {
             var ballotGuid = CreateGuid($"BallotOL{electionGuid}{i}");
 
+            var nowOl = DateTimeOffset.UtcNow;
             var ballot = new Ballot
             {
                 BallotGuid = ballotGuid,
                 LocationGuid = mainHallGuid,
                 StatusCode = BallotStatus.Ok,
                 ComputerCode = "OL",
-                BallotNumAtComputer = i + 1
+                BallotNumAtComputer = i + 1,
+                DateCreated = nowOl,
+                DateUpdated = nowOl
             };
             ballots.Add(ballot);
 
@@ -442,6 +448,7 @@ public static class DbSeeder
         {
             var ballotGuid = CreateGuid($"BallotConv{electionGuid}{b}");
 
+            var nowConv = DateTimeOffset.UtcNow;
             var ballot = new Ballot
             {
                 BallotGuid = ballotGuid,
@@ -449,7 +456,9 @@ public static class DbSeeder
                 StatusCode = BallotStatus.Ok,
                 ComputerCode = "A",
                 BallotNumAtComputer = b + 1,
-                Teller1 = "Convention Teller"
+                Teller1 = "Convention Teller",
+                DateCreated = nowConv,
+                DateUpdated = nowConv
             };
             ballots.Add(ballot);
 

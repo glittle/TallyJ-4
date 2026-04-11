@@ -53,6 +53,10 @@ public class BallotDto
     /// </summary>
     public string? Teller2 { get; set; }
 
+    public DateTimeOffset? DateCreated { get; set; }
+
+    public DateTimeOffset? DateUpdated { get; set; }
+
     /// <summary>
     /// The number of votes on this ballot.
     /// </summary>

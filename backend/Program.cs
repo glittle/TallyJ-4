@@ -416,10 +416,21 @@ void ConfigureSwagger(IServiceCollection services)
 
 async Task ConfigureApp(WebApplication app, IConfiguration configuration)
 {
+    var migrateOnStartup = configuration.GetValue("Database:MigrateOnStartup", false);
+    if (migrateOnStartup)
+    {
+        Log.Information("Migrating the database on startup as configured");
+        using var scope = app.Services.CreateScope();
+
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+
+        await context.Database.MigrateAsync();
+    }
+
     var seedOnStartup = configuration.GetValue("Database:SeedOnStartup", false);
     if (seedOnStartup)
     {
-        Log.Information("Seeding and updating the database on startup as configured");
+        Log.Information("Seeding the database on startup as configured");
         using var scope = app.Services.CreateScope();
 
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
@@ -427,7 +438,6 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-        await context.Database.MigrateAsync();
         await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
     }
 
