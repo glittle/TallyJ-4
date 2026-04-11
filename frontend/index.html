@@ -156,7 +156,7 @@
       #splash img {
         width: 180px;
         max-width: 50vw;
-        animation: splash-pulse 1.8s ease-in-out infinite;
+        animation: splash-pulse 1.8s ease-in-out infinite, move-right 3.33s linear infinite alternate;
       }
       @keyframes splash-pulse {
         0%,
@@ -167,6 +167,14 @@
           opacity: 0.6;
         }
       }
+      @keyframes move-right {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(50px);
+        }
+      }
       @media (prefers-color-scheme: dark) {
         #splash {
           background-color: #0c1830;
@@ -175,6 +183,9 @@
     </style>
   </head>
   <body>
+    <script>
+      window.startTime = Date.now();
+    </script>
     <!-- Splash screen: logo only, no text — no locale required -->
     <div id="splash">
       <img src="/assets/logo-trans.png" alt="TallyJ" />
