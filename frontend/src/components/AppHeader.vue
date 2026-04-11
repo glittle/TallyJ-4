@@ -25,6 +25,10 @@ const electionStore = useElectionStore();
 const { t } = useI18n();
 const { showSuccessMessage, showInfoMessage } = useNotifications();
 
+const emit = defineEmits<{
+  "toggle-mobile-menu": [];
+}>();
+
 const mobileMenuOpen = ref(false);
 const isMobile = ref(false);
 
@@ -119,8 +123,7 @@ async function handleCommand(command: string) {
 
 function toggleMobileMenu() {
   mobileMenuOpen.value = !mobileMenuOpen.value;
-  // Emit event to parent component to toggle sidebar
-  // This will be handled by MainLayout
+  emit("toggle-mobile-menu");
 }
 </script>
 
