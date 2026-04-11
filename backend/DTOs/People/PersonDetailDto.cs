@@ -94,7 +94,7 @@ public class PersonDetailDto
     /// <summary>
     /// The time when the person was registered (checked in).
     /// </summary>
-    public DateTime? RegistrationTime { get; set; }
+    public DateTimeOffset? RegistrationTime { get; set; }
 
     /// <summary>
     /// The GUID of the voting location where the person is registered.

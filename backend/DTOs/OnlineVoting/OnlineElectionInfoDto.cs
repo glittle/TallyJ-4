@@ -23,7 +23,7 @@ public class OnlineElectionInfoDto
     /// <summary>
     /// The date when the election will be held.
     /// </summary>
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
 
     /// <summary>
     /// The number of positions to be elected.
@@ -33,12 +33,12 @@ public class OnlineElectionInfoDto
     /// <summary>
     /// The timestamp when online voting opens.
     /// </summary>
-    public DateTime? OnlineWhenOpen { get; set; }
+    public DateTimeOffset? OnlineWhenOpen { get; set; }
 
     /// <summary>
     /// The timestamp when online voting closes.
     /// </summary>
-    public DateTime? OnlineWhenClose { get; set; }
+    public DateTimeOffset? OnlineWhenClose { get; set; }
 
     /// <summary>
     /// Indicates whether online voting is currently open.

@@ -38,7 +38,7 @@ public class MonitorInfoDto
     /// <summary>
     /// Timestamp of the last update to this monitoring information.
     /// </summary>
-    public DateTime LastUpdated { get; set; }
+    public DateTimeOffset LastUpdated { get; set; }
 }
 
 /// <summary>
@@ -64,7 +64,7 @@ public class ComputerInfoDto
     /// <summary>
     /// Timestamp of the last contact from this computer.
     /// </summary>
-    public DateTime LastContact { get; set; }
+    public DateTimeOffset LastContact { get; set; }
 
     /// <summary>
     /// Current status of the computer ("Active", "Inactive", "Offline").
@@ -136,12 +136,12 @@ public class OnlineVotingInfoDto
     /// <summary>
     /// Start date and time for online voting period.
     /// </summary>
-    public DateTime? OnlineVotingStart { get; set; }
+    public DateTimeOffset? OnlineVotingStart { get; set; }
 
     /// <summary>
     /// End date and time for online voting period.
     /// </summary>
-    public DateTime? OnlineVotingEnd { get; set; }
+    public DateTimeOffset? OnlineVotingEnd { get; set; }
 }
 
 

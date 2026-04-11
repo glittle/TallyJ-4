@@ -96,7 +96,7 @@ public class DashboardService : IDashboardService
             .Include(e => e.Locations)
                 .ThenInclude(l => l.Ballots)
                     .ThenInclude(b => b.Votes)
-            .OrderByDescending(e => e.DateOfElection ?? DateTime.MinValue)
+            .OrderByDescending(e => e.DateOfElection ?? DateTimeOffset.MinValue)
             .Take(limit)
             .ToListAsync();
 
@@ -213,7 +213,7 @@ public class DashboardService : IDashboardService
             voteCount = votes.Count,
             voterCount = election.People.Count(p => p.CanVote == true),
             locationCount = election.Locations.Count,
-            lastActivity = lastLogEntry != default ? (DateTime?)lastLogEntry : null,
+            lastActivity = lastLogEntry != default ? (DateTimeOffset?)lastLogEntry : null,
             onlineVotingActive = election.OnlineWhenOpen.HasValue,
             passcode = election.ElectionPasscode
         };
@@ -242,7 +242,7 @@ public class DashboardService : IDashboardService
         if (computer != null)
         {
             computer.LocationGuid = locationGuid;
-            computer.LastActivity = DateTime.UtcNow;
+            computer.LastActivity = DateTimeOffset.UtcNow;
         }
         else
         {

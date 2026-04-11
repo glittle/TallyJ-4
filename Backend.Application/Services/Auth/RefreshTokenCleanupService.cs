@@ -32,7 +32,7 @@ public class RefreshTokenCleanupService : BackgroundService
         _logger.LogInformation("RefreshTokenCleanupService is starting.");
 
         // Wait until 2 AM to start the first cleanup
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var nextRun = now.Date.AddHours(2);
         if (now > nextRun)
         {
@@ -68,7 +68,7 @@ public class RefreshTokenCleanupService : BackgroundService
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
-            var cutoffDate = DateTime.UtcNow;
+            var cutoffDate = DateTimeOffset.UtcNow;
 
             // Delete expired tokens that haven't been revoked
             var expiredTokens = await dbContext.RefreshTokens

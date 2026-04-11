@@ -12,15 +12,15 @@ public partial class Log
 {
     public Log()
     {
-        AsOf = DateTime.UtcNow;
+        AsOf = DateTimeOffset.UtcNow;
     }
 
     [Key]
     [Column("_RowId")]
     public int RowId { get; set; }
 
-    [Precision(2)]
-    public DateTime AsOf { get; set; }
+    [Precision(0)]
+    public DateTimeOffset AsOf { get; set; }
 
     public Guid? ElectionGuid { get; set; }
 

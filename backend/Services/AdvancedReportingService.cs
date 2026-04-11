@@ -90,7 +90,7 @@ public class AdvancedReportingService : IAdvancedReportingService
 
                 trend.Points.Add(new TrendPointDto
                 {
-                    Date = election.ElectionDate ?? DateTime.Now,
+                    Date = election.ElectionDate ?? DateTimeOffset.UtcNow,
                     Value = value,
                     ElectionName = election.ElectionName
                 });
@@ -176,7 +176,7 @@ public class AdvancedReportingService : IAdvancedReportingService
         {
             ["title"] = config.ReportName,
             ["description"] = config.Description,
-            ["generatedAt"] = DateTime.UtcNow
+            ["generatedAt"] = DateTimeOffset.UtcNow
         };
 
         foreach (var section in config.Sections.OrderBy(s => s.Order))
@@ -235,7 +235,7 @@ public class AdvancedReportingService : IAdvancedReportingService
             ReportGuid = Guid.NewGuid(),
             Config = config,
             GeneratedData = generatedData,
-            GeneratedAt = DateTime.UtcNow
+            GeneratedAt = DateTimeOffset.UtcNow
         };
     }
 

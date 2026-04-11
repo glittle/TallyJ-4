@@ -58,9 +58,9 @@ public abstract class ElectionImportExportBase
     }
 
     // Helper methods
-    protected static DateTime? ParseDateTime(string? value)
+    protected static DateTimeOffset? ParseDateTime(string? value)
     {
-        return string.IsNullOrEmpty(value) ? null : DateTime.Parse(value, CultureInfo.InvariantCulture);
+        return string.IsNullOrEmpty(value) ? null : DateTimeOffset.Parse(value, CultureInfo.InvariantCulture);
     }
 
     protected static int? ParseInt(string? value)

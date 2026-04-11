@@ -175,7 +175,7 @@ public class CdnBallotImportService : ElectionImportExportBase
 
             person.VotingMethod = "I";
             person.VotingLocationGuid = importedLocationGuid;
-            person.RegistrationTime = DateTime.UtcNow;
+            person.RegistrationTime = DateTimeOffset.UtcNow;
             person.EnvNum = null;
             _context.People.Update(person);
         }

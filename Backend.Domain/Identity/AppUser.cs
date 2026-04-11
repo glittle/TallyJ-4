@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Entities;
 
 namespace Backend.Domain.Identity;
@@ -22,7 +23,8 @@ public class AppUser : IdentityUser
 
     public string? PasswordResetToken { get; set; }
 
-    public DateTime? PasswordResetExpiry { get; set; }
+    [Precision(0)]
+    public DateTimeOffset? PasswordResetExpiry { get; set; }
 
     public virtual TwoFactorToken? TwoFactorToken { get; set; }
 

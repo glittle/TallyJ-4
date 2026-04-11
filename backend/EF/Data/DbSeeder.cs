@@ -125,10 +125,10 @@ public static class DbSeeder
             ElectionType = ElectionTypeEnum.LSA.Code,
             ElectionMode = ElectionModeEnum.Normal.Code,
             NumberToElect = 9,
-            DateOfElection = DateTime.Now.AddDays(-3),
+            DateOfElection = DateTimeOffset.Now.AddDays(-3),
             TallyStatus = "Tallying",
-            OnlineWhenOpen = DateTime.Now.AddDays(-7),
-            OnlineWhenClose = DateTime.Now.AddDays(3),
+            OnlineWhenOpen = DateTimeOffset.Now.AddDays(-7),
+            OnlineWhenClose = DateTimeOffset.Now.AddDays(3),
             OnlineCloseIsEstimate = true,
             VotingMethods = "IP,OL",
             OwnerLoginId = "admin@tallyj.test",
@@ -293,14 +293,14 @@ public static class DbSeeder
                 ElectionGuid = electionGuid,
                 Title = "Welcome",
                 Details = "Welcome to the Springfield LSA Election 2024",
-                AsOf = DateTime.Now.AddDays(-5)
+                AsOf = DateTimeOffset.Now.AddDays(-5)
             },
             new Message
             {
                 ElectionGuid = electionGuid,
                 Title = "Voting Instructions",
                 Details = "Please vote for up to 9 candidates",
-                AsOf = DateTime.Now.AddDays(-4)
+                AsOf = DateTimeOffset.Now.AddDays(-4)
             }
         };
         context.Messages.AddRange(messages);
@@ -313,8 +313,8 @@ public static class DbSeeder
                 ElectionGuid = electionGuid,
                 PersonGuid = person.PersonGuid,
                 Status = i < 3 ? "Used" : "Sent",
-                WhenBallotCreated = i < 3 ? DateTime.Now.AddDays(-rng.Next(1, 5)) : null,
-                WhenStatus = DateTime.Now.AddHours(-rng.Next(1, 48))
+                WhenBallotCreated = i < 3 ? DateTimeOffset.Now.AddDays(-rng.Next(1, 5)) : null,
+                WhenStatus = DateTimeOffset.Now.AddHours(-rng.Next(1, 48))
             });
         }
 
@@ -369,7 +369,7 @@ public static class DbSeeder
             ElectionType = ElectionTypeEnum.Con.Code,
             ElectionMode = ElectionModeEnum.Normal.Code,
             NumberToElect = 9,
-            DateOfElection = DateTime.Now.AddDays(-30),
+            DateOfElection = DateTimeOffset.Now.AddDays(-30),
             TallyStatus = "Finalized",
             ShowFullReport = true,
             VotingMethods = "IP",
@@ -590,31 +590,31 @@ public static class DbSeeder
         {
             new Log
             {
-                AsOf = DateTime.Now.AddDays(-30),
+                AsOf = DateTimeOffset.Now.AddDays(-30),
                 ElectionGuid = electionGuid,
                 Details = "Election created"
             },
             new Log
             {
-                AsOf = DateTime.Now.AddDays(-25),
+                AsOf = DateTimeOffset.Now.AddDays(-25),
                 ElectionGuid = electionGuid,
                 Details = "Voters imported from CSV"
             },
             new Log
             {
-                AsOf = DateTime.Now.AddDays(-20),
+                AsOf = DateTimeOffset.Now.AddDays(-20),
                 ElectionGuid = electionGuid,
                 Details = "Online voting enabled"
             },
             new Log
             {
-                AsOf = DateTime.Now.AddDays(-7),
+                AsOf = DateTimeOffset.Now.AddDays(-7),
                 ElectionGuid = electionGuid,
                 Details = "Voting period started"
             },
             new Log
             {
-                AsOf = DateTime.Now.AddDays(-3),
+                AsOf = DateTimeOffset.Now.AddDays(-3),
                 ElectionGuid = electionGuid,
                 Details = "Ballot entry began"
             }

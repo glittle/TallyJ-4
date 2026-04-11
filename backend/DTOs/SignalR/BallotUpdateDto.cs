@@ -38,7 +38,7 @@ public class BallotUpdateDto
     /// <summary>
     /// The timestamp when the ballot was last updated.
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 }
 
 

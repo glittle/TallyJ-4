@@ -56,7 +56,7 @@ public class OnlineVotingService : IOnlineVotingService
         try
         {
             // 1. Find all open elections where this voter is registered (SMS pumping prevention)
-            var now = DateTime.UtcNow;
+            var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
                 .Where(e => e.OnlineWhenOpen != null && e.OnlineWhenOpen <= now &&
                            (e.OnlineWhenClose == null || e.OnlineWhenClose > now))
@@ -98,7 +98,7 @@ public class OnlineVotingService : IOnlineVotingService
                 {
                     VoterId = dto.VoterId,
                     VoterIdType = dto.VoterIdType,
-                    WhenRegistered = DateTime.UtcNow
+                    WhenRegistered = DateTimeOffset.UtcNow
                 };
                 _context.OnlineVoters.Add(onlineVoter);
             }
@@ -106,9 +106,9 @@ public class OnlineVotingService : IOnlineVotingService
             var verifyCode = GenerateVerificationCode();
 
             onlineVoter.VerifyCode = verifyCode;
-            onlineVoter.VerifyCodeDate = DateTime.UtcNow;
+            onlineVoter.VerifyCodeDate = DateTimeOffset.UtcNow;
             onlineVoter.VerifyAttempts = 0;
-            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
 
             await _context.SaveChangesAsync();
 
@@ -150,7 +150,7 @@ public class OnlineVotingService : IOnlineVotingService
             }
 
             if (onlineVoter.VerifyCodeDate == null ||
-                onlineVoter.VerifyCodeDate.Value.AddMinutes(15) < DateTime.UtcNow)
+                onlineVoter.VerifyCodeDate.Value.AddMinutes(15) < DateTimeOffset.UtcNow)
             {
                 return (false, "voting.auth.verify.codeExpired", null);
             }
@@ -168,13 +168,13 @@ public class OnlineVotingService : IOnlineVotingService
                 return (false, $"voting.auth.verify.invalidCode:{5 - onlineVoter.VerifyAttempts}", null);
             }
 
-            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
             onlineVoter.VerifyCode = null;
             onlineVoter.VerifyAttempts = 0;
             await _context.SaveChangesAsync();
 
             var token = GenerateJwtToken(onlineVoter);
-            var expiresAt = DateTime.UtcNow.AddHours(24);
+            var expiresAt = DateTimeOffset.UtcNow.AddHours(24);
 
             var response = new OnlineVoterAuthResponse
             {
@@ -207,7 +207,7 @@ public class OnlineVotingService : IOnlineVotingService
             return null;
         }
 
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var isOpen = (election.OnlineWhenOpen == null || election.OnlineWhenOpen <= now) &&
                      (election.OnlineWhenClose == null || election.OnlineWhenClose > now);
 
@@ -248,7 +248,7 @@ public class OnlineVotingService : IOnlineVotingService
     public async Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
 
         try
         {
@@ -346,9 +346,9 @@ public class OnlineVotingService : IOnlineVotingService
             {
                 ElectionGuid = dto.ElectionGuid,
                 PersonGuid = person?.PersonGuid ?? Guid.NewGuid(),
-                WhenBallotCreated = DateTime.UtcNow,
+                WhenBallotCreated = DateTimeOffset.UtcNow,
                 Status = "Submitted",
-                WhenStatus = DateTime.UtcNow
+                WhenStatus = DateTimeOffset.UtcNow
             };
 
             _context.OnlineVotingInfos.Add(votingInfo);
@@ -448,7 +448,7 @@ public class OnlineVotingService : IOnlineVotingService
             }
 
             // 3. Find all open elections where this voter is registered
-            var now = DateTime.UtcNow;
+            var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
                 .Where(e => e.OnlineWhenOpen != null &&
                            e.OnlineWhenClose != null &&
@@ -483,17 +483,17 @@ public class OnlineVotingService : IOnlineVotingService
                 {
                     VoterId = email,
                     VoterIdType = "E",
-                    WhenRegistered = DateTime.UtcNow
+                    WhenRegistered = DateTimeOffset.UtcNow
                 };
                 _context.OnlineVoters.Add(onlineVoter);
             }
 
-            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
             await _context.SaveChangesAsync();
 
             // 6. Generate JWT token (same format as code verification)
             var token = GenerateJwtToken(onlineVoter);
-            var expiresAt = DateTime.UtcNow.AddHours(24);
+            var expiresAt = DateTimeOffset.UtcNow.AddHours(24);
 
             var response = new OnlineVoterAuthResponse
             {
@@ -520,7 +520,7 @@ public class OnlineVotingService : IOnlineVotingService
     {
         try
         {
-            var now = DateTime.UtcNow;
+            var now = DateTimeOffset.UtcNow;
 
             // Find all elections where this voter is registered (by email, phone, or kiosk code)
             var personElections = await _context.People
@@ -616,7 +616,7 @@ public class OnlineVotingService : IOnlineVotingService
                 return (false, "voting.auth.facebook.noEmail", null);
             }
 
-            var now = DateTime.UtcNow;
+            var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
                 .Where(e => e.OnlineWhenOpen != null &&
                            e.OnlineWhenClose != null &&
@@ -646,16 +646,16 @@ public class OnlineVotingService : IOnlineVotingService
                 {
                     VoterId = email,
                     VoterIdType = "E",
-                    WhenRegistered = DateTime.UtcNow
+                    WhenRegistered = DateTimeOffset.UtcNow
                 };
                 _context.OnlineVoters.Add(onlineVoter);
             }
 
-            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
             await _context.SaveChangesAsync();
 
             var token = GenerateJwtToken(onlineVoter);
-            var expiresAt = DateTime.UtcNow.AddHours(24);
+            var expiresAt = DateTimeOffset.UtcNow.AddHours(24);
 
             var authResponse = new OnlineVoterAuthResponse
             {
@@ -712,7 +712,7 @@ public class OnlineVotingService : IOnlineVotingService
                 return (false, "voting.auth.kakao.noContact", null);
             }
 
-            var now = DateTime.UtcNow;
+            var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
                 .Where(e => e.OnlineWhenOpen != null &&
                            e.OnlineWhenClose != null &&
@@ -754,16 +754,16 @@ public class OnlineVotingService : IOnlineVotingService
                 {
                     VoterId = matchedVoterId,
                     VoterIdType = matchedVoterIdType!,
-                    WhenRegistered = DateTime.UtcNow
+                    WhenRegistered = DateTimeOffset.UtcNow
                 };
                 _context.OnlineVoters.Add(onlineVoter);
             }
 
-            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
             await _context.SaveChangesAsync();
 
             var token = GenerateJwtToken(onlineVoter);
-            var expiresAt = DateTime.UtcNow.AddHours(24);
+            var expiresAt = DateTimeOffset.UtcNow.AddHours(24);
 
             var authResponse = new OnlineVoterAuthResponse
             {
@@ -805,7 +805,7 @@ public class OnlineVotingService : IOnlineVotingService
             var telegramVoterId = dto.Id.ToString();
 
             // Check if there is an open election where this voter is registered by Telegram ID
-            var now = DateTime.UtcNow;
+            var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
                 .Where(e => e.OnlineWhenOpen != null &&
                            e.OnlineWhenClose != null &&
@@ -829,7 +829,7 @@ public class OnlineVotingService : IOnlineVotingService
                 return (false, "voting.auth.telegram.notRegistered", null);
             }
 
-            onlineVoter.WhenLastLogin = DateTime.UtcNow;
+            onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
             await _context.SaveChangesAsync();
 
             var token = GenerateJwtToken(onlineVoter);
@@ -838,7 +838,7 @@ public class OnlineVotingService : IOnlineVotingService
                 Token = token,
                 VoterId = onlineVoter.VoterId,
                 VoterIdType = onlineVoter.VoterIdType,
-                ExpiresAt = DateTime.UtcNow.AddHours(24)
+                ExpiresAt = DateTimeOffset.UtcNow.AddHours(24)
             };
 
             _logger.LogInformation("Voter {TelegramId} authenticated via Telegram Login Widget", dto.Id);

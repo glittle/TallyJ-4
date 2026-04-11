@@ -18,7 +18,7 @@ public class OAuthStateService
     private class OAuthStateEntry
     {
         public string State { get; set; } = string.Empty;
-        public DateTime ExpiresAt { get; set; }
+        public DateTimeOffset ExpiresAt { get; set; }
         public string? ReturnUrl { get; set; }
     }
 
@@ -39,7 +39,7 @@ public class OAuthStateService
         var entry = new OAuthStateEntry
         {
             State = state,
-            ExpiresAt = DateTime.UtcNow.Add(_stateExpiration),
+            ExpiresAt = DateTimeOffset.UtcNow.Add(_stateExpiration),
             ReturnUrl = returnUrl
         };
 
@@ -63,7 +63,7 @@ public class OAuthStateService
             return null;
         }
 
-        if (_stateStore.TryRemove(state, out var entry) && entry.ExpiresAt > DateTime.UtcNow)
+        if (_stateStore.TryRemove(state, out var entry) && entry.ExpiresAt > DateTimeOffset.UtcNow)
         {
             return entry.ReturnUrl;
         }
@@ -77,7 +77,7 @@ public class OAuthStateService
     private void CleanupExpiredStates()
     {
         var expiredKeys = _stateStore
-            .Where(kvp => kvp.Value.ExpiresAt <= DateTime.UtcNow)
+            .Where(kvp => kvp.Value.ExpiresAt <= DateTimeOffset.UtcNow)
             .Select(kvp => kvp.Key)
             .ToList();
 

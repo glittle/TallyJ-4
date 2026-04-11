@@ -25,8 +25,8 @@ public class SecurityAuditLog
     /// The timestamp when the security event occurred.
     /// </summary>
     [Required]
-    [Precision(2)]
-    public DateTime Timestamp { get; set; }
+    [Precision(0)]
+    public DateTimeOffset Timestamp { get; set; }
 
     /// <summary>
     /// The type of security event.

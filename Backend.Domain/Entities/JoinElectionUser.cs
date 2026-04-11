@@ -26,7 +26,7 @@ public partial class JoinElectionUser
     public string? InviteEmail { get; set; }
 
     [Precision(0)]
-    public DateTime? InviteWhen { get; set; }
+    public DateTimeOffset? InviteWhen { get; set; }
 
     [ForeignKey("ElectionGuid")]
     public virtual Election Election { get; set; } = null!;

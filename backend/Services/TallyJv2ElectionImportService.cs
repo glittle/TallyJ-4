@@ -408,7 +408,7 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
                     VoterId = logNode.GetAttribute("VoterId"),
                     ComputerCode = logNode.GetAttribute("ComputerCode"),
                     Details = logNode.GetAttribute("Details"),
-                    AsOf = ParseDateTime(logNode.GetAttribute("AsOf")) ?? DateTime.UtcNow
+                    AsOf = ParseDateTime(logNode.GetAttribute("AsOf")) ?? DateTimeOffset.UtcNow
                 };
                 _context.Logs.Add(log);
             }

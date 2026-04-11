@@ -21,7 +21,7 @@ public class PublicDisplayDto
     /// <summary>
     /// The date of the election.
     /// </summary>
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
 
     /// <summary>
     /// The name of the convenor/organizer.
@@ -66,7 +66,7 @@ public class PublicDisplayDto
     /// <summary>
     /// Timestamp of when results were last updated.
     /// </summary>
-    public DateTime LastUpdated { get; set; }
+    public DateTimeOffset LastUpdated { get; set; }
 
     /// <summary>
     /// Whether the election results are finalized.

@@ -126,7 +126,7 @@ public class AuditLogService : IAuditLogService
         // _logger.LogInformation("Creating new audit log entry");
 
         var log = _mapper.Map<Log>(createDto);
-        log.AsOf = DateTime.UtcNow;
+        log.AsOf = DateTimeOffset.UtcNow;
 
         _context.Logs.Add(log);
         await _context.SaveChangesAsync();

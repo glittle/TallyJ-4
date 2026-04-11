@@ -8,7 +8,7 @@ public class RegistrationHistoryEntryDto
     /// <summary>
     /// Timestamp of the action (stored in UTC).
     /// </summary>
-    public DateTime Timestamp { get; set; }
+    public DateTimeOffset Timestamp { get; set; }
 
     /// <summary>
     /// Action performed (e.g., "CheckedIn", "Unregistered").
