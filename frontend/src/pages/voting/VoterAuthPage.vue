@@ -36,9 +36,9 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { getApiPublicAuthConfig } from "../../api/gen/configService/sdk.gen";
-import { getAppConfig } from "../../config/appConfig";
 import TelegramLoginButton from "../../components/auth/TelegramLoginButton.vue";
 import { useNotifications } from "../../composables/useNotifications";
+import { getAppConfig } from "../../config/appConfig";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 
 declare const FB: any;
@@ -604,7 +604,7 @@ onBeforeUnmount(() => {
     <div class="auth-container">
       <ElButton link class="back-nav" @click="router.push('/')">
         <ElIcon><ArrowLeft /></ElIcon>
-        {{ $t("common.back") }}
+        {{ $t("common.goHome") }}
       </ElButton>
       <div class="welcome-section">
         <div class="welcome-icon">
