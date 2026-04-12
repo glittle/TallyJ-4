@@ -11,7 +11,7 @@
   "tally.processedBallots": "Kura Zilizosindikishwa",
   "tally.resultsPreview": "Hakikisho la Matokeo (10 Bora)",
   "tally.viewFullResults": "Tazama Matokeo Kamili",
-  "tally.section.elected": "Mteule",
-  "tally.section.extra": "Zaidi",
-  "tally.section.other": "Zingine"
+  "tally.section.E": "Mteule",
+  "tally.section.X": "Zaidi",
+  "tally.section.O": "Zingine"
 }

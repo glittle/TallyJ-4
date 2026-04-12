@@ -24,7 +24,13 @@ public class ResultsControllerTests : IntegrationTestBase
 
         var electionGuid = await CreateTestElectionWithBallotsAsync();
 
-        var response = await Client.PostAsync($"/api/results/election/{electionGuid}/calculate", null);
+        var response = await Client.PostAsync($"/api/results/{electionGuid}/calculate", null);
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -107,8 +113,14 @@ public class ResultsControllerTests : IntegrationTestBase
 
         var invalidGuid = Guid.NewGuid();
 
-        var response = await Client.PostAsync($"/api/results/election/{invalidGuid}/calculate", null);
-        
+        var response = await Client.PostAsync($"/api/results/{invalidGuid}/calculate", null);
+
+        if (response.StatusCode != HttpStatusCode.NotFound)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected NotFound but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
@@ -120,10 +132,16 @@ public class ResultsControllerTests : IntegrationTestBase
 
         var electionGuid = await CreateTestElectionWithBallotsAsync();
 
-        await Client.PostAsync($"/api/results/election/{electionGuid}/calculate", null);
+        await Client.PostAsync($"/api/results/{electionGuid}/calculate", null);
 
-        var response = await GetAsync($"/api/results/election/{electionGuid}");
-        
+        var response = await GetAsync($"/api/results/{electionGuid}/results");
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var result = await DeserializeResponseAsync<TallyResultDto>(response);
@@ -140,9 +158,15 @@ public class ResultsControllerTests : IntegrationTestBase
 
         var electionGuid = await CreateTestElectionWithBallotsAsync();
 
-        await Client.PostAsync($"/api/results/election/{electionGuid}/calculate", null);
+        await Client.PostAsync($"/api/results/{electionGuid}/calculate", null);
 
-        var response = await Client.GetAsync($"/api/results/election/{electionGuid}/summary");
+        var response = await Client.GetAsync($"/api/results/{electionGuid}/summary");
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -160,19 +184,25 @@ public class ResultsControllerTests : IntegrationTestBase
 
         var electionGuid = await CreateTestElectionWithBallotsAsync();
 
-        await Client.PostAsync($"/api/results/election/{electionGuid}/calculate", null);
+        await Client.PostAsync($"/api/results/{electionGuid}/calculate", null);
 
-        var response = await Client.GetAsync($"/api/results/election/{electionGuid}/final");
-        
+        var response = await Client.GetAsync($"/api/results/{electionGuid}/final");
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var result = await DeserializeResponseAsync<TallyResultDto>(response);
         Assert.NotNull(result);
         Assert.NotNull(result.Results);
-        
-        var sections = result.Results.Select(r => r.Section).Distinct().ToList();
-        Assert.All(sections, section => Assert.True(section == "E" || section == "X"));
-        Assert.DoesNotContain("O", sections);
+
+        var sections = result.Results.Select(r => r.SectionCode).Distinct().ToList();
+        Assert.All(sections, section => Assert.True(section == ResultSection.Elected || section == ResultSection.Extra));
+        Assert.DoesNotContain(ResultSection.Other, sections);
     }
 
     [Fact]
@@ -180,8 +210,14 @@ public class ResultsControllerTests : IntegrationTestBase
     {
         var electionGuid = Guid.NewGuid();
 
-        var response = await Client.PostAsync($"/api/results/election/{electionGuid}/calculate", null);
-        
+        var response = await Client.PostAsync($"/api/results/{electionGuid}/calculate", null);
+
+        if (response.StatusCode != HttpStatusCode.Unauthorized)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected Unauthorized but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 

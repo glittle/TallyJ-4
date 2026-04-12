@@ -11,7 +11,7 @@
   "tally.processedBallots": "Phiếu Bầu Đã Xử Lý",
   "tally.resultsPreview": "Xem Trước Kết Quả (Top 10)",
   "tally.viewFullResults": "Xem Kết Quả Đầy Đủ",
-  "tally.section.elected": "Được bầu",
-  "tally.section.extra": "Bổ sung",
-  "tally.section.other": "Khác"
+  "tally.section.E": "Được bầu",
+  "tally.section.X": "Bổ sung",
+  "tally.section.O": "Khác"
 }

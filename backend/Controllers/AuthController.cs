@@ -96,6 +96,8 @@ public class AuthController : ControllerBase
         _httpClientFactory = httpClientFactory;
         _securityAuditService = securityAuditService;
         _remoteLogService = remoteLogService;
+
+        Console.WriteLine("[AUTH CONTROLLER] AuthController instantiated");
     }
 
     /// <summary>

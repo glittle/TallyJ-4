@@ -19,12 +19,7 @@ public class TallyServiceTests : ServiceTestBase
         _loggerMock = new Mock<ILogger<TallyService>>();
         _signalRMock = new Mock<ISignalRNotificationService>();
         _localizerMock = new Mock<IStringLocalizer<TallyService>>();
-        
-        // Setup localizer to return section codes
-        _localizerMock.Setup(l => l["tally.section.elected"]).Returns(new LocalizedString("tally.section.elected", "E"));
-        _localizerMock.Setup(l => l["tally.section.extra"]).Returns(new LocalizedString("tally.section.extra", "X"));
-        _localizerMock.Setup(l => l["tally.section.other"]).Returns(new LocalizedString("tally.section.other", "O"));
-        
+
         _service = new TallyService(Context, _loggerMock.Object, _signalRMock.Object, _localizerMock.Object);
     }
 
@@ -63,7 +58,7 @@ public class TallyServiceTests : ServiceTestBase
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 15);
         var ballots = await CreateTestBallotsAsync(location.LocationGuid, 10);
 
-        await CreateTiedVotesAsync(ballots, people, 9);
+        await CreateTiedVotesAsync(ballots, people);
 
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
@@ -83,9 +78,9 @@ public class TallyServiceTests : ServiceTestBase
 
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
-        var elected = result.Results.Where(r => r.Section == "E").ToList();
-        var extra = result.Results.Where(r => r.Section == "X").ToList();
-        var other = result.Results.Where(r => r.Section == "O").ToList();
+        var elected = result.Results.Where(r => r.SectionCode == ResultSection.Elected).ToList();
+        var extra = result.Results.Where(r => r.SectionCode == ResultSection.Extra).ToList();
+        var other = result.Results.Where(r => r.SectionCode == ResultSection.Other).ToList();
 
         Assert.NotEmpty(elected);
         Assert.Equal(9, elected.Count);
@@ -187,8 +182,6 @@ public class TallyServiceTests : ServiceTestBase
     public async Task CalculateNormalElectionAsync_WithZeroBallots_ReturnsEmptyResults()
     {
         var election = await CreateTestElectionAsync();
-        var location = await CreateTestLocationAsync(election.ElectionGuid);
-        var people = await CreateTestPeopleAsync(election.ElectionGuid, 15);
 
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
@@ -247,7 +240,7 @@ public class TallyServiceTests : ServiceTestBase
         Assert.NotNull(result);
         Assert.Single(result.Results);
         Assert.Equal(5, result.Results[0].VoteCount);
-        Assert.Equal("E", result.Results[0].Section);
+        Assert.Equal(ResultSection.Elected, result.Results[0].SectionCode);
         Assert.Equal(1, result.Results[0].Rank);
     }
 
@@ -350,7 +343,7 @@ public class TallyServiceTests : ServiceTestBase
             Assert.Equal(r1.PersonGuid, r2.PersonGuid);
             Assert.Equal(r1.VoteCount, r2.VoteCount);
             Assert.Equal(r1.Rank, r2.Rank);
-            Assert.Equal(r1.Section, r2.Section);
+            Assert.Equal(r1.SectionCode, r2.SectionCode);
             Assert.Equal(r1.IsTied, r2.IsTied);
             Assert.Equal(r1.TieBreakGroup, r2.TieBreakGroup);
         }
@@ -427,7 +420,7 @@ public class TallyServiceTests : ServiceTestBase
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
         var results = result.Results.OrderBy(r => r.Rank).ToList();
-        var tiedWithinElected = results.Where(r => r.Rank >= 7 && r.Rank <= 8 && r.Section == "E").ToList();
+        var tiedWithinElected = results.Where(r => r.Rank >= 7 && r.Rank <= 8 && r.SectionCode == ResultSection.Elected).ToList();
 
         Assert.True(tiedWithinElected.All(r => !r.TieBreakRequired));
         Assert.True(tiedWithinElected.All(r => r.IsTied));
@@ -571,7 +564,7 @@ public class TallyServiceTests : ServiceTestBase
         await Context.SaveChangesAsync();
     }
 
-    private async Task CreateTiedVotesAsync(List<Ballot> ballots, List<Person> people, int tiePosition)
+    private async Task CreateTiedVotesAsync(List<Ballot> ballots, List<Person> people)
     {
         for (int ballotIndex = 0; ballotIndex < ballots.Count; ballotIndex++)
         {
@@ -853,6 +846,7 @@ public class TallyServiceTests : ServiceTestBase
         await Context.SaveChangesAsync();
     }
 
+    // Is this used for tests??
     private async Task CreateVotesWithTieWithinExtraSectionAsync(List<Ballot> ballots, List<Person> people)
     {
         foreach (var ballot in ballots)

@@ -333,7 +333,7 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
                     PersonGuid = guidMap[ParseGuid(rNode.GetAttribute(PersonGuidAttribute)) ?? Guid.Empty],
                     VoteCount = ParseInt(rNode.GetAttribute("VoteCount")),
                     Rank = ParseInt(rNode.GetAttribute("Rank")) ?? 0,
-                    Section = rNode.GetAttribute("Section") ?? "T",
+                    SectionCode = ResultSectionEnum.ParseCode(rNode.GetAttribute("Section")) ?? ResultSection.Other,
                     IsTied = ParseBool(rNode.GetAttribute("IsTied")),
                     IsTieResolved = ParseBool(rNode.GetAttribute("IsTieResolved")),
                     TieBreakGroup = ParseInt(rNode.GetAttribute("TieBreakGroup")),

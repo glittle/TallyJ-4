@@ -10,7 +10,7 @@
     "build": "npm run merge-locales && vite build",
     "merge-locales": "node merge-locales.js",
     "preview": "vite preview",
-    "tsc": "vue-tsc --noEmit",
+    "tsc": "vue-tsc -b",
     "lint": "eslint src --ext .js,.ts,.tsx,.vue --cache",
     "check": "npm run tsc && npm run lint",
     "test": "vitest",

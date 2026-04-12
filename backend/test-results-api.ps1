@@ -29,9 +29,9 @@ if ($elections.Count -gt 0) {
     Write-Host ""
     
     # Step 3: Calculate Tally
-    Write-Host "=== Step 3: POST /api/results/election/$electionGuid/calculate ===" -ForegroundColor Cyan
+    Write-Host "=== Step 3: POST /api/results/$electionGuid/calculate ===" -ForegroundColor Cyan
     try {
-        $calculateResponse = Invoke-RestMethod -Uri "$baseUrl/api/results/election/$electionGuid/calculate" -Method Post -Headers $headers
+        $calculateResponse = Invoke-RestMethod -Uri "$baseUrl/api/results/$electionGuid/calculate" -Method Post -Headers $headers
         Write-Host "✓ Calculate successful" -ForegroundColor Green
         Write-Host "Results summary:" -ForegroundColor Gray
         Write-Host "  - Total ballots: $($calculateResponse.statistics.totalBallots)" -ForegroundColor Gray
@@ -43,9 +43,9 @@ if ($elections.Count -gt 0) {
     }
     
     # Step 4: Get Results
-    Write-Host "=== Step 4: GET /api/results/election/$electionGuid ===" -ForegroundColor Cyan
+    Write-Host "=== Step 4: GET /api/results/$electionGuid ===" -ForegroundColor Cyan
     try {
-        $results = Invoke-RestMethod -Uri "$baseUrl/api/results/election/$electionGuid" -Method Get -Headers $headers
+        $results = Invoke-RestMethod -Uri "$baseUrl/api/results/$electionGuid" -Method Get -Headers $headers
         Write-Host "✓ Get results successful" -ForegroundColor Green
         Write-Host "Candidates in results: $($results.results.Count)" -ForegroundColor Gray
         Write-Host ""
@@ -54,9 +54,9 @@ if ($elections.Count -gt 0) {
     }
     
     # Step 5: Get Summary
-    Write-Host "=== Step 5: GET /api/results/election/$electionGuid/summary ===" -ForegroundColor Cyan
+    Write-Host "=== Step 5: GET /api/results/$electionGuid/summary ===" -ForegroundColor Cyan
     try {
-        $summary = Invoke-RestMethod -Uri "$baseUrl/api/results/election/$electionGuid/summary" -Method Get -Headers $headers
+        $summary = Invoke-RestMethod -Uri "$baseUrl/api/results/$electionGuid/summary" -Method Get -Headers $headers
         Write-Host "✓ Get summary successful" -ForegroundColor Green
         Write-Host "Statistics:" -ForegroundColor Gray
         Write-Host "  - Total ballots: $($summary.totalBallots)" -ForegroundColor Gray
@@ -68,9 +68,9 @@ if ($elections.Count -gt 0) {
     }
     
     # Step 6: Get Final Results
-    Write-Host "=== Step 6: GET /api/results/election/$electionGuid/final ===" -ForegroundColor Cyan
+    Write-Host "=== Step 6: GET /api/results/$electionGuid/final ===" -ForegroundColor Cyan
     try {
-        $final = Invoke-RestMethod -Uri "$baseUrl/api/results/election/$electionGuid/final" -Method Get -Headers $headers
+        $final = Invoke-RestMethod -Uri "$baseUrl/api/results/$electionGuid/final" -Method Get -Headers $headers
         Write-Host "✓ Get final results successful" -ForegroundColor Green
         Write-Host "Final candidates (Elected + Extra): $($final.results.Count)" -ForegroundColor Gray
         
@@ -103,7 +103,7 @@ if ($elections.Count -gt 0) {
 # Step 8: Test without authentication
 Write-Host "=== Step 8: Test unauthorized access ===" -ForegroundColor Cyan
 try {
-    $unauth = Invoke-RestMethod -Uri "$baseUrl/api/results/election/00000000-0000-0000-0000-000000000000/calculate" -Method Post
+    $unauth = Invoke-RestMethod -Uri "$baseUrl/api/results/00000000-0000-0000-0000-000000000000/calculate" -Method Post
     Write-Host "✗ Should have returned 401, but succeeded" -ForegroundColor Red
 } catch {
     if ($_.Exception.Response.StatusCode -eq 401) {

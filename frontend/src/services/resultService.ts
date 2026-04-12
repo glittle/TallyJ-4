@@ -1,16 +1,16 @@
-import api from "./api";
 import type {
-  TallyResultDto,
-  TallyStatisticsDto,
+  DetailedStatisticsDto,
   ElectionReportDto,
+  MonitorInfoDto,
+  PresentationDto,
   ReportDataResponseDto,
-  TieDetailsDto,
   SaveTieCountsRequestDto,
   SaveTieCountsResponseDto,
-  PresentationDto,
-  MonitorInfoDto,
-  DetailedStatisticsDto,
+  TallyResultDto,
+  TallyStatisticsDto,
+  TieDetailsDto,
 } from "../types";
+import api from "./api";
 
 export const resultService = {
   async calculateTally(
@@ -18,7 +18,7 @@ export const resultService = {
     electionType: "normal" | "singlename" = "normal",
   ): Promise<TallyResultDto> {
     const response = await api.post<TallyResultDto>(
-      `/api/results/election/${electionGuid}/calculate`,
+      `/api/results/${electionGuid}/calculate`,
       null,
       {
         params: { electionType },
@@ -39,28 +39,28 @@ export const resultService = {
 
   async getResults(electionGuid: string): Promise<TallyResultDto> {
     const response = await api.get<TallyResultDto>(
-      `/api/results/election/${electionGuid}`,
+      `/api/results/${electionGuid}`,
     );
     return response.data;
   },
 
   async getStatistics(electionGuid: string): Promise<TallyStatisticsDto> {
     const response = await api.get<TallyStatisticsDto>(
-      `/api/results/election/${electionGuid}/summary`,
+      `/api/results/${electionGuid}/summary`,
     );
     return response.data;
   },
 
   async getMonitorInfo(electionGuid: string): Promise<MonitorInfoDto> {
     const response = await api.get<MonitorInfoDto>(
-      `/api/results/election/${electionGuid}/monitor`,
+      `/api/results/${electionGuid}/monitor`,
     );
     return response.data;
   },
 
   async getElectionReport(electionGuid: string): Promise<ElectionReportDto> {
     const response = await api.get<ElectionReportDto>(
-      `/api/results/election/${electionGuid}/report`,
+      `/api/results/${electionGuid}/report`,
     );
     return response.data;
   },
@@ -70,14 +70,14 @@ export const resultService = {
     reportCode: string,
   ): Promise<ReportDataResponseDto> {
     const response = await api.get<ReportDataResponseDto>(
-      `/api/results/election/${electionGuid}/report/${reportCode}`,
+      `/api/results/${electionGuid}/report/${reportCode}`,
     );
     return response.data;
   },
 
   async getTieDetails(electionGuid: string): Promise<TieDetailsDto[]> {
     const response = await api.get<TieDetailsDto[]>(
-      `/api/results/election/${electionGuid}/ties`,
+      `/api/results/${electionGuid}/ties`,
     );
     return response.data;
   },
@@ -87,7 +87,7 @@ export const resultService = {
     request: SaveTieCountsRequestDto,
   ): Promise<SaveTieCountsResponseDto> {
     const response = await api.post<SaveTieCountsResponseDto>(
-      `/api/results/election/${electionGuid}/ties/save`,
+      `/api/results/${electionGuid}/ties/save`,
       request,
     );
     return response.data;
@@ -95,7 +95,7 @@ export const resultService = {
 
   async getPresentationData(electionGuid: string): Promise<PresentationDto> {
     const response = await api.get<PresentationDto>(
-      `/api/results/election/${electionGuid}/presentation`,
+      `/api/results/${electionGuid}/presentation`,
     );
     return response.data;
   },
@@ -104,7 +104,7 @@ export const resultService = {
     electionGuid: string,
   ): Promise<DetailedStatisticsDto> {
     const response = await api.get<DetailedStatisticsDto>(
-      `/api/results/election/${electionGuid}/detailed-statistics`,
+      `/api/results/${electionGuid}/detailed-statistics`,
     );
     return response.data;
   },

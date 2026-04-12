@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Domain.Enumerations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Domain.Entities;
@@ -21,9 +22,13 @@ public partial class Result
 
     public int Rank { get; set; }
 
+    /// <summary>
+    /// Section code indicating the election section for this result (e.g. "E" for Elected, "X" for Extra, "O" for Other).
+    /// </summary>
     [StringLength(1)]
+    [Column("Section")]
     [Unicode(false)]
-    public string Section { get; set; } = null!;
+    public ResultSection SectionCode { get; set; }
 
     public bool? CloseToPrev { get; set; }
 

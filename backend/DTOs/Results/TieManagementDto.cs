@@ -1,4 +1,6 @@
-﻿namespace Backend.DTOs.Results;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Details about a tie situation that requires manual resolution.
@@ -13,7 +15,7 @@ public class TieDetailsDto
     /// <summary>
     /// The election section or position where the tie occurred.
     /// </summary>
-    public string Section { get; set; } = string.Empty;
+    public ResultSection SectionCode { get; set; }
 
     /// <summary>
     /// List of candidates involved in the tie.

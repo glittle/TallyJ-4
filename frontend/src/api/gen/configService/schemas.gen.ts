@@ -1375,9 +1375,8 @@ export const CandidateReportDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
-        section: {
-            type: 'string',
-            nullable: true
+        sectionCode: {
+            $ref: '#/components/schemas/ResultSection'
         }
     },
     additionalProperties: false
@@ -1402,9 +1401,8 @@ export const CandidateResultDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
-        section: {
-            type: 'string',
-            nullable: true
+        sectionCode: {
+            $ref: '#/components/schemas/ResultSection'
         },
         isTied: {
             type: 'boolean'
@@ -2128,9 +2126,8 @@ export const ElectedPersonDtoSchema = {
             type: 'string',
             nullable: true
         },
-        section: {
-            type: 'string',
-            nullable: true
+        sectionCode: {
+            $ref: '#/components/schemas/ResultSection'
         }
     },
     additionalProperties: false
@@ -4340,9 +4337,8 @@ export const PresentationTieDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
-        section: {
-            type: 'string',
-            nullable: true
+        sectionCode: {
+            $ref: '#/components/schemas/ResultSection'
         },
         candidateNames: {
             type: 'array',
@@ -4688,6 +4684,15 @@ export const ResetPasswordRequestSchema = {
         }
     },
     additionalProperties: false
+} as const;
+
+export const ResultSectionSchema = {
+    enum: [
+        'Elected',
+        'Extra',
+        'Other'
+    ],
+    type: 'string'
 } as const;
 
 export const RollCallDtoSchema = {
@@ -5251,9 +5256,8 @@ export const TieDetailsDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
-        section: {
-            type: 'string',
-            nullable: true
+        sectionCode: {
+            $ref: '#/components/schemas/ResultSection'
         },
         candidates: {
             type: 'array',
@@ -5284,9 +5288,8 @@ export const TieInfoDtoSchema = {
         tieBreakRequired: {
             type: 'boolean'
         },
-        section: {
-            type: 'string',
-            nullable: true
+        sectionCode: {
+            $ref: '#/components/schemas/ResultSection'
         },
         candidateNames: {
             type: 'array',
@@ -5306,9 +5309,8 @@ export const TieReportDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
-        section: {
-            type: 'string',
-            nullable: true
+        sectionCode: {
+            $ref: '#/components/schemas/ResultSection'
         },
         candidateNames: {
             type: 'array',
@@ -5923,9 +5925,8 @@ export const VotePersonDtoSchema = {
         tieBreakRequired: {
             type: 'boolean'
         },
-        section: {
-            type: 'string',
-            nullable: true
+        sectionCode: {
+            $ref: '#/components/schemas/ResultSection'
         },
         showBreak: {
             type: 'boolean'

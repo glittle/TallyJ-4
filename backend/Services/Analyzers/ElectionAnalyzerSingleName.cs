@@ -74,7 +74,7 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
                     PersonGuid = vote.PersonGuid.Value,
                     VoteCount = 0,
                     Rank = 0,
-                    Section = "O",
+                    SectionCode = ResultSection.Other,
                     IsTied = false,
                     TieBreakRequired = false,
                     CloseToNext = false,

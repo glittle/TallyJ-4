@@ -398,7 +398,7 @@ export type CandidateReportDto = {
     rank?: number;
     fullName?: string | null;
     voteCount?: number;
-    section?: string | null;
+    sectionCode?: ResultSection;
 };
 
 export type CandidateResultDto = {
@@ -406,7 +406,7 @@ export type CandidateResultDto = {
     fullName?: string | null;
     voteCount?: number;
     rank?: number;
-    section?: string | null;
+    sectionCode?: ResultSection;
     isTied?: boolean;
     tieBreakGroup?: number | null;
     tieBreakRequired?: boolean;
@@ -610,7 +610,7 @@ export type ElectedPersonDto = {
     name?: string | null;
     bahaiId?: string | null;
     voteCountDisplay?: string | null;
-    section?: string | null;
+    sectionCode?: ResultSection;
 };
 
 export type ElectionCardDto = {
@@ -1225,7 +1225,7 @@ export type PresentationDto = {
 
 export type PresentationTieDto = {
     tieBreakGroup?: number;
-    section?: string | null;
+    sectionCode?: ResultSection;
     candidateNames?: Array<string> | null;
     tieBreakRequired?: boolean;
 };
@@ -1323,6 +1323,14 @@ export type ResetPasswordRequest = {
     newPassword: string;
     confirmPassword: string;
 };
+
+export const ResultSection = {
+    ELECTED: 'Elected',
+    EXTRA: 'Extra',
+    OTHER: 'Other'
+} as const;
+
+export type ResultSection = typeof ResultSection[keyof typeof ResultSection];
 
 export type RollCallDto = {
     voters?: Array<FrontDeskVoterDto> | null;
@@ -1481,7 +1489,7 @@ export type TieCountDto = {
 
 export type TieDetailsDto = {
     tieBreakGroup?: number;
-    section?: string | null;
+    sectionCode?: ResultSection;
     candidates?: Array<TieCandidateDto> | null;
     instructions?: string | null;
 };
@@ -1490,13 +1498,13 @@ export type TieInfoDto = {
     tieBreakGroup?: number;
     voteCount?: number;
     tieBreakRequired?: boolean;
-    section?: string | null;
+    sectionCode?: ResultSection;
     candidateNames?: Array<string> | null;
 };
 
 export type TieReportDto = {
     tieBreakGroup?: number;
-    section?: string | null;
+    sectionCode?: ResultSection;
     candidateNames?: Array<string> | null;
 };
 
@@ -1671,7 +1679,7 @@ export type VotePersonDto = {
     voteCount?: number;
     tieBreakCount?: number | null;
     tieBreakRequired?: boolean;
-    section?: string | null;
+    sectionCode?: ResultSection;
     showBreak?: boolean;
 };
 
@@ -2694,7 +2702,7 @@ export type GetApiImportExportElectionToJsonByElectionGuidResponses = {
     200: unknown;
 };
 
-export type GetApiElectionsGetElectionsData = {
+export type GetApiElectionsGetMyElectionsData = {
     body?: never;
     path?: never;
     query?: {
@@ -2702,35 +2710,35 @@ export type GetApiElectionsGetElectionsData = {
         pageSize?: number;
         status?: string;
     };
-    url: '/api/Elections/getElections';
+    url: '/api/Elections/getMyElections';
 };
 
-export type GetApiElectionsGetElectionsResponses = {
+export type GetApiElectionsGetMyElectionsResponses = {
     /**
      * OK
      */
     200: PaginatedResponseElectionSummaryDto;
 };
 
-export type GetApiElectionsGetElectionsResponse = GetApiElectionsGetElectionsResponses[keyof GetApiElectionsGetElectionsResponses];
+export type GetApiElectionsGetMyElectionsResponse = GetApiElectionsGetMyElectionsResponses[keyof GetApiElectionsGetMyElectionsResponses];
 
-export type GetApiElectionsByGuidElectionData = {
+export type GetApiElectionsByGuidElectionDetailsData = {
     body?: never;
     path: {
         guid: string;
     };
     query?: never;
-    url: '/api/Elections/{guid}/election';
+    url: '/api/Elections/{guid}/electionDetails';
 };
 
-export type GetApiElectionsByGuidElectionResponses = {
+export type GetApiElectionsByGuidElectionDetailsResponses = {
     /**
      * OK
      */
     200: ApiResponseElectionDto;
 };
 
-export type GetApiElectionsByGuidElectionResponse = GetApiElectionsByGuidElectionResponses[keyof GetApiElectionsByGuidElectionResponses];
+export type GetApiElectionsByGuidElectionDetailsResponse = GetApiElectionsByGuidElectionDetailsResponses[keyof GetApiElectionsByGuidElectionDetailsResponses];
 
 export type GetApiElectionsByGuidElectionSummaryData = {
     body?: never;
@@ -4142,7 +4150,7 @@ export type GetApiReportsByElectionGuidVoterEmailsResponses = {
 
 export type GetApiReportsByElectionGuidVoterEmailsResponse = GetApiReportsByElectionGuidVoterEmailsResponses[keyof GetApiReportsByElectionGuidVoterEmailsResponses];
 
-export type PostApiResultsElectionByElectionGuidCalculateData = {
+export type PostApiResultsByElectionGuidCalculateData = {
     body?: never;
     path: {
         electionGuid: string;
@@ -4150,71 +4158,71 @@ export type PostApiResultsElectionByElectionGuidCalculateData = {
     query?: {
         electionType?: string;
     };
-    url: '/api/Results/election/{electionGuid}/calculate';
+    url: '/api/Results/{electionGuid}/calculate';
 };
 
-export type PostApiResultsElectionByElectionGuidCalculateResponses = {
+export type PostApiResultsByElectionGuidCalculateResponses = {
     /**
      * OK
      */
     200: TallyResultDto;
 };
 
-export type PostApiResultsElectionByElectionGuidCalculateResponse = PostApiResultsElectionByElectionGuidCalculateResponses[keyof PostApiResultsElectionByElectionGuidCalculateResponses];
+export type PostApiResultsByElectionGuidCalculateResponse = PostApiResultsByElectionGuidCalculateResponses[keyof PostApiResultsByElectionGuidCalculateResponses];
 
-export type GetApiResultsElectionByElectionGuidData = {
+export type GetApiResultsByElectionGuidResultsData = {
     body?: never;
     path: {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/election/{electionGuid}';
+    url: '/api/Results/{electionGuid}/results';
 };
 
-export type GetApiResultsElectionByElectionGuidResponses = {
+export type GetApiResultsByElectionGuidResultsResponses = {
     /**
      * OK
      */
     200: TallyResultDto;
 };
 
-export type GetApiResultsElectionByElectionGuidResponse = GetApiResultsElectionByElectionGuidResponses[keyof GetApiResultsElectionByElectionGuidResponses];
+export type GetApiResultsByElectionGuidResultsResponse = GetApiResultsByElectionGuidResultsResponses[keyof GetApiResultsByElectionGuidResultsResponses];
 
-export type GetApiResultsElectionByElectionGuidSummaryData = {
+export type GetApiResultsByElectionGuidSummaryData = {
     body?: never;
     path: {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/election/{electionGuid}/summary';
+    url: '/api/Results/{electionGuid}/summary';
 };
 
-export type GetApiResultsElectionByElectionGuidSummaryResponses = {
+export type GetApiResultsByElectionGuidSummaryResponses = {
     /**
      * OK
      */
     200: TallyStatisticsDto;
 };
 
-export type GetApiResultsElectionByElectionGuidSummaryResponse = GetApiResultsElectionByElectionGuidSummaryResponses[keyof GetApiResultsElectionByElectionGuidSummaryResponses];
+export type GetApiResultsByElectionGuidSummaryResponse = GetApiResultsByElectionGuidSummaryResponses[keyof GetApiResultsByElectionGuidSummaryResponses];
 
-export type GetApiResultsElectionByElectionGuidFinalData = {
+export type GetApiResultsByElectionGuidFinalData = {
     body?: never;
     path: {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/election/{electionGuid}/final';
+    url: '/api/Results/{electionGuid}/final';
 };
 
-export type GetApiResultsElectionByElectionGuidFinalResponses = {
+export type GetApiResultsByElectionGuidFinalResponses = {
     /**
      * OK
      */
     200: TallyResultDto;
 };
 
-export type GetApiResultsElectionByElectionGuidFinalResponse = GetApiResultsElectionByElectionGuidFinalResponses[keyof GetApiResultsElectionByElectionGuidFinalResponses];
+export type GetApiResultsByElectionGuidFinalResponse = GetApiResultsByElectionGuidFinalResponses[keyof GetApiResultsByElectionGuidFinalResponses];
 
 export type PostApiResultsByElectionGuidRefreshMonitorData = {
     body?: never;
@@ -4236,23 +4244,23 @@ export type PostApiResultsByElectionGuidRefreshMonitorResponses = {
 
 export type PostApiResultsByElectionGuidRefreshMonitorResponse = PostApiResultsByElectionGuidRefreshMonitorResponses[keyof PostApiResultsByElectionGuidRefreshMonitorResponses];
 
-export type GetApiResultsElectionByElectionGuidMonitorData = {
+export type GetApiResultsByElectionGuidMonitorData = {
     body?: never;
     path: {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/election/{electionGuid}/monitor';
+    url: '/api/Results/{electionGuid}/monitor';
 };
 
-export type GetApiResultsElectionByElectionGuidMonitorResponses = {
+export type GetApiResultsByElectionGuidMonitorResponses = {
     /**
      * OK
      */
     200: MonitorInfoDto;
 };
 
-export type GetApiResultsElectionByElectionGuidMonitorResponse = GetApiResultsElectionByElectionGuidMonitorResponses[keyof GetApiResultsElectionByElectionGuidMonitorResponses];
+export type GetApiResultsByElectionGuidMonitorResponse = GetApiResultsByElectionGuidMonitorResponses[keyof GetApiResultsByElectionGuidMonitorResponses];
 
 export type GetApiResultsByElectionGuidByTieBreakGroupTiesData = {
     body?: never;
@@ -4273,96 +4281,96 @@ export type GetApiResultsByElectionGuidByTieBreakGroupTiesResponses = {
 
 export type GetApiResultsByElectionGuidByTieBreakGroupTiesResponse = GetApiResultsByElectionGuidByTieBreakGroupTiesResponses[keyof GetApiResultsByElectionGuidByTieBreakGroupTiesResponses];
 
-export type PostApiResultsElectionByElectionGuidTiesSaveData = {
+export type PostApiResultsByElectionGuidTiesSaveData = {
     body?: SaveTieCountsRequestDto;
     path: {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/election/{electionGuid}/ties/save';
+    url: '/api/Results/{electionGuid}/ties/save';
 };
 
-export type PostApiResultsElectionByElectionGuidTiesSaveResponses = {
+export type PostApiResultsByElectionGuidTiesSaveResponses = {
     /**
      * OK
      */
     200: SaveTieCountsResponseDto;
 };
 
-export type PostApiResultsElectionByElectionGuidTiesSaveResponse = PostApiResultsElectionByElectionGuidTiesSaveResponses[keyof PostApiResultsElectionByElectionGuidTiesSaveResponses];
+export type PostApiResultsByElectionGuidTiesSaveResponse = PostApiResultsByElectionGuidTiesSaveResponses[keyof PostApiResultsByElectionGuidTiesSaveResponses];
 
-export type GetApiResultsElectionByElectionGuidReportData = {
+export type GetApiResultsByElectionGuidReportData = {
     body?: never;
     path: {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/election/{electionGuid}/report';
+    url: '/api/Results/{electionGuid}/report';
 };
 
-export type GetApiResultsElectionByElectionGuidReportResponses = {
+export type GetApiResultsByElectionGuidReportResponses = {
     /**
      * OK
      */
     200: ElectionReportDto;
 };
 
-export type GetApiResultsElectionByElectionGuidReportResponse = GetApiResultsElectionByElectionGuidReportResponses[keyof GetApiResultsElectionByElectionGuidReportResponses];
+export type GetApiResultsByElectionGuidReportResponse = GetApiResultsByElectionGuidReportResponses[keyof GetApiResultsByElectionGuidReportResponses];
 
-export type GetApiResultsElectionByElectionGuidReportByReportCodeData = {
+export type GetApiResultsByElectionGuidReportByReportCodeData = {
     body?: never;
     path: {
         electionGuid: string;
         reportCode: string;
     };
     query?: never;
-    url: '/api/Results/election/{electionGuid}/report/{reportCode}';
+    url: '/api/Results/{electionGuid}/report/{reportCode}';
 };
 
-export type GetApiResultsElectionByElectionGuidReportByReportCodeResponses = {
+export type GetApiResultsByElectionGuidReportByReportCodeResponses = {
     /**
      * OK
      */
     200: ReportDataResponseDto;
 };
 
-export type GetApiResultsElectionByElectionGuidReportByReportCodeResponse = GetApiResultsElectionByElectionGuidReportByReportCodeResponses[keyof GetApiResultsElectionByElectionGuidReportByReportCodeResponses];
+export type GetApiResultsByElectionGuidReportByReportCodeResponse = GetApiResultsByElectionGuidReportByReportCodeResponses[keyof GetApiResultsByElectionGuidReportByReportCodeResponses];
 
-export type GetApiResultsElectionByElectionGuidPresentationData = {
+export type GetApiResultsByElectionGuidPresentationData = {
     body?: never;
     path: {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/election/{electionGuid}/presentation';
+    url: '/api/Results/{electionGuid}/presentation';
 };
 
-export type GetApiResultsElectionByElectionGuidPresentationResponses = {
+export type GetApiResultsByElectionGuidPresentationResponses = {
     /**
      * OK
      */
     200: PresentationDto;
 };
 
-export type GetApiResultsElectionByElectionGuidPresentationResponse = GetApiResultsElectionByElectionGuidPresentationResponses[keyof GetApiResultsElectionByElectionGuidPresentationResponses];
+export type GetApiResultsByElectionGuidPresentationResponse = GetApiResultsByElectionGuidPresentationResponses[keyof GetApiResultsByElectionGuidPresentationResponses];
 
-export type GetApiResultsElectionByElectionGuidDetailedStatisticsData = {
+export type GetApiResultsByElectionGuidDetailedStatisticsData = {
     body?: never;
     path: {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/Results/election/{electionGuid}/detailed-statistics';
+    url: '/api/Results/{electionGuid}/detailed-statistics';
 };
 
-export type GetApiResultsElectionByElectionGuidDetailedStatisticsResponses = {
+export type GetApiResultsByElectionGuidDetailedStatisticsResponses = {
     /**
      * OK
      */
     200: DetailedStatisticsDto;
 };
 
-export type GetApiResultsElectionByElectionGuidDetailedStatisticsResponse = GetApiResultsElectionByElectionGuidDetailedStatisticsResponses[keyof GetApiResultsElectionByElectionGuidDetailedStatisticsResponses];
+export type GetApiResultsByElectionGuidDetailedStatisticsResponse = GetApiResultsByElectionGuidDetailedStatisticsResponses[keyof GetApiResultsByElectionGuidDetailedStatisticsResponses];
 
 export type PostApiSetupElectionStep1Data = {
     body?: ElectionStep1Dto;

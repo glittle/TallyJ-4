@@ -84,7 +84,7 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
         refreshCookies.Should().ContainKey(SecureCookieMiddleware.RefreshTokenCookieName);
 
         // Act - Access protected endpoint with new cookies
-        var protectedResponse = await Client.GetAsync("/api/elections/getElections");
+        var protectedResponse = await Client.GetAsync("/api/elections/getMyElections");
 
         // Assert - Protected endpoint accessible
         protectedResponse.StatusCode.Should().Be(HttpStatusCode.OK);

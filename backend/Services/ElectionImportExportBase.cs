@@ -4,6 +4,7 @@ using Backend.Models;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Services;
 
@@ -220,7 +221,7 @@ public abstract class ElectionImportExportBase
         public Guid PersonGuid { get; }
         public int? VoteCount { get; }
         public int Rank { get; }
-        public string? Section { get; }
+        public ResultSection? SectionCode { get; }
         public bool? IsTied { get; }
         public bool? IsTieResolved { get; }
         public int? TieBreakGroup { get; }

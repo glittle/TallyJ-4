@@ -9,6 +9,7 @@ using Backend.Domain.Context;
 using Backend.EF.Data;
 using Backend.Application.Services.Auth;
 using MimeKit;
+using Microsoft.AspNetCore.Builder;
 
 namespace Backend.Tests.IntegrationTests;
 
@@ -22,6 +23,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
+                ["Database:MigrateOnStartup"] = "false",
                 ["Database:SeedOnStartup"] = "false",
                 ["Jwt:Key"] = "ThisIsATestKeyThatIsAtLeast32CharactersLongForJWT",
                 ["Jwt:Issuer"] = "BackendTestAPI",
@@ -38,30 +40,41 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
-            // Use SQLite file database for testing (supports transactions unlike EF InMemory)
+            // Use InMemory database for testing - ensures fresh database for each test run
             // Note: Program.cs skips DbContext registration in Testing environment
-            var uniqueDbName = $"BackendTestDb_{Guid.NewGuid()}.db";
-            var uniqueDataProtectionDbName = $"BackendTestDataProtectionDb_{Guid.NewGuid()}.db";
+            var uniqueDbName = $"BackendTestDb_{Guid.NewGuid()}";
 
             services.AddDbContext<MainDbContext>(options =>
             {
-                options.UseSqlite($"Data Source={uniqueDbName}");
+                options.UseInMemoryDatabase(uniqueDbName);
                 options.EnableSensitiveDataLogging();
+                options.ConfigureWarnings(x => x.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.InMemoryEventId.TransactionIgnoredWarning));
+            });
+
+            // Add DataProtection context for testing
+            services.AddDbContext<DataProtectionDbContext>(options =>
+            {
+                options.UseInMemoryDatabase($"{uniqueDbName}_DataProtection");
             });
 
             // Mock external services for testing
             services.AddSingleton<Backend.Application.Services.Auth.IEmailSender, MockEmailSender>();
         });
+
+        // Avoid calling builder.Configure(app => ...) here as it overwrites the pipeline.
     }
 
     protected override IHost CreateHost(IHostBuilder builder)
     {
+        Console.WriteLine("[TEST FACTORY] Creating host...");
         var host = base.CreateHost(builder);
+        Console.WriteLine("[TEST FACTORY] Host created successfully");
 
-        // Ensure the SQLite database schema is initialized
+        // Ensure the InMemory database schema is initialized
         using var scope = host.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         dbContext.Database.EnsureCreated();
+        Console.WriteLine("[TEST FACTORY] Database schema initialized");
 
         return host;
     }

@@ -24,6 +24,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
     {
         Factory = factory;
         Client = factory.CreateClient();
+        Console.WriteLine($"[TEST BASE] Client base address: {Client.BaseAddress}");
         JsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
@@ -46,11 +47,14 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             Encoding.UTF8,
             "application/json");
 
+        Console.WriteLine($"[TEST BASE] Making login request to: {Client.BaseAddress}api/auth/login");
         var response = await Client.PostAsync("/api/auth/login", content);
+        Console.WriteLine($"[TEST BASE] Login response status: {response.StatusCode}");
 
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"[TEST BASE] Login error content: {errorContent}");
             throw new Exception($"Login failed with status {response.StatusCode}: {errorContent}");
         }
 
