@@ -8,6 +8,7 @@ declare global {
 }
 
 import {
+  ArrowLeft,
   ChromeFilled,
   Key,
   Lock,
@@ -601,6 +602,10 @@ onBeforeUnmount(() => {
 <template>
   <div class="voter-auth-page">
     <div class="auth-container">
+      <ElButton link class="back-nav" @click="router.push('/')">
+        <ElIcon><ArrowLeft /></ElIcon>
+        {{ $t("common.back") }}
+      </ElButton>
       <div class="welcome-section">
         <div class="welcome-icon">
           <ElIcon :size="56" color="var(--color-public-text)">
@@ -1037,6 +1042,12 @@ onBeforeUnmount(() => {
   .auth-container {
     width: 100%;
     max-width: 780px;
+  }
+
+  .back-nav {
+    margin-bottom: 8px;
+    font-size: 1rem;
+    padding: 0;
   }
 
   .phone-form {
