@@ -174,7 +174,7 @@ public class ComputerService : IComputerService
             return null;
         }
 
-        computer.LastActivity = DateTime.UtcNow;
+        computer.LastActivity = DateTimeOffset.UtcNow;
         await _context.SaveChangesAsync();
 
         return _mapper.Map<ComputerDto>(computer);

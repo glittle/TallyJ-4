@@ -164,6 +164,7 @@ public class ImportService
                     .ToList();
 
                 var ballotGuid = Guid.NewGuid();
+                var now = DateTimeOffset.UtcNow;
                 var ballot = new Ballot
                 {
                     BallotGuid = ballotGuid,
@@ -173,7 +174,9 @@ public class ImportService
                     ComputerCode = "IMPORT",
                     BallotNumAtComputer = ballotCounter++,
                     Teller1 = teller1,
-                    Teller2 = teller2
+                    Teller2 = teller2,
+                    DateCreated = now,
+                    DateUpdated = now
                 };
 
                 _context.Ballots.Add(ballot);

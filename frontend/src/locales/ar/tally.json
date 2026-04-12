@@ -1,14 +1,17 @@
 {
-  "tally.title": "Calculate Tally",
+  "tally.title": "احسب النتائج",
   "tally.warning": "تحذير",
-  "tally.warningMessage": "Calculating the tally will overwrite any existing results. This action cannot be undone.",
-  "tally.normalElection": "Normal Election",
-  "tally.singleNameElection": "Single Name Election",
-  "tally.calculate": "Calculate Tally",
-  "tally.calculateSuccess": "Tally calculated successfully",
-  "tally.calculateError": "Failed to calculate tally",
-  "tally.calculatingProgress": "Calculating Progress",
-  "tally.processedBallots": "Processed Ballots",
-  "tally.resultsPreview": "Results Preview (Top 10)",
-  "tally.viewFullResults": "View Full Results"
+  "tally.warningMessage": "سيؤدي حساب النتائج إلى الكتابة فوق أي نتائج موجودة. لا يمكن التراجع عن هذا الإجراء.",
+  "tally.normalElection": "انتخابات عادية",
+  "tally.singleNameElection": "انتخابات اسم واحد",
+  "tally.calculate": "احسب النتائج",
+  "tally.calculateSuccess": "تم حساب النتائج بنجاح",
+  "tally.calculateError": "فشل في حساب النتائج",
+  "tally.calculatingProgress": "جاري الحساب",
+  "tally.processedBallots": "الأوراق المعالجة",
+  "tally.resultsPreview": "معاينة النتائج (أفضل 10)",
+  "tally.viewFullResults": "عرض النتائج الكاملة",
+  "tally.section.elected": "منتخب",
+  "tally.section.extra": "إضافي",
+  "tally.section.other": "آخر"
 }

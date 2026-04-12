@@ -50,7 +50,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
         {
             format = "TallyJ4",
             version = "1.0",
-            exportedAt = DateTime.UtcNow.ToString("o"),
+            exportedAt = DateTimeOffset.UtcNow.ToString("o"),
             election = new
             {
                 election.ElectionGuid,
@@ -377,6 +377,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
     {
         foreach (var ballot in importData.ballots)
         {
+            var now = DateTimeOffset.UtcNow;
             var b = new Ballot
             {
                 BallotGuid = Guid.NewGuid(),
@@ -386,6 +387,8 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 BallotNumAtComputer = ballot.BallotNumAtComputer,
                 Teller1 = ballot.Teller1,
                 Teller2 = ballot.Teller2,
+                DateCreated = now,
+                DateUpdated = now,
                 RowVersion = new byte[8]
             };
             _context.Ballots.Add(b);
@@ -533,7 +536,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 VoterId = log.VoterId,
                 ComputerCode = log.ComputerCode,
                 Details = log.Details,
-                AsOf = ParseDateTime(log.AsOf) ?? DateTime.UtcNow
+                AsOf = ParseDateTime(log.AsOf) ?? DateTimeOffset.UtcNow
             };
             _context.Logs.Add(l);
         }

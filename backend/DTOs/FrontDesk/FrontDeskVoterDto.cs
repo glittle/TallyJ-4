@@ -43,7 +43,7 @@ public class FrontDeskVoterDto
     /// <summary>
     /// The timestamp when the voter was registered.
     /// </summary>
-    public DateTime? RegistrationTime { get; set; }
+    public DateTimeOffset? RegistrationTime { get; set; }
 
     /// <summary>
     /// The unique identifier of the voting location.

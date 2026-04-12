@@ -306,6 +306,8 @@ export type BallotDto = {
     statusCode?: BallotStatus;
     teller1?: string | null;
     teller2?: string | null;
+    dateCreated?: Date | null;
+    dateUpdated?: Date | null;
     voteCount?: number;
     votes?: Array<VoteDto> | null;
 };

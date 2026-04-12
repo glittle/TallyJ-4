@@ -1081,6 +1081,16 @@ export const BallotDtoSchema = {
             type: 'string',
             nullable: true
         },
+        dateCreated: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        dateUpdated: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
         voteCount: {
             type: 'integer',
             format: 'int32'

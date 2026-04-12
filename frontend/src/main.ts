@@ -72,10 +72,14 @@ async function init() {
   // Dismiss the splash screen after Vue has mounted
   const splash = document.getElementById("splash");
   if (splash) {
-    splash.classList.add("fade-out");
-    splash.addEventListener("transitionend", () => splash.remove(), {
-      once: true,
-    });
+    const elapsed = Date.now() - (window as any).startTime;
+    const delay = Math.min(elapsed > 1000 ? elapsed * 0.5 : 0, 2000);
+    setTimeout(() => {
+      splash.classList.add("fade-out");
+      splash.addEventListener("transitionend", () => splash.remove(), {
+        once: true,
+      });
+    }, delay);
   }
 }
 

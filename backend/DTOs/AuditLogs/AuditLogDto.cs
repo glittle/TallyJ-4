@@ -13,7 +13,7 @@ public class AuditLogDto
     /// <summary>
     /// The timestamp when the audit log entry was created.
     /// </summary>
-    public DateTime AsOf { get; set; }
+    public DateTimeOffset AsOf { get; set; }
 
     /// <summary>
     /// The unique identifier of the election associated with this audit log entry.

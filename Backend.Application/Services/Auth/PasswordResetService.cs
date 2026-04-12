@@ -47,7 +47,7 @@ public class PasswordResetService : IPasswordResetService
 
             var token = GenerateSecureToken();
             user.PasswordResetToken = token;
-            user.PasswordResetExpiry = DateTime.UtcNow.AddHours(1);
+            user.PasswordResetExpiry = DateTimeOffset.UtcNow.AddHours(1);
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -81,7 +81,7 @@ public class PasswordResetService : IPasswordResetService
                 return (false, _localizer["auth.errors.invalidResetToken"]);
             }
 
-            if (user.PasswordResetExpiry == null || user.PasswordResetExpiry < DateTime.UtcNow)
+            if (user.PasswordResetExpiry == null || user.PasswordResetExpiry < DateTimeOffset.UtcNow)
             {
                 return (false, _localizer["auth.errors.resetTokenExpired"]);
             }

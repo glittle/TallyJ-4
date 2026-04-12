@@ -62,7 +62,7 @@ public class TwoFactorService : ITwoFactorService
                 UserId = user.Id,
                 Secret = encryptedSecret,
                 IsEnabled = false,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTimeOffset.UtcNow
             };
 
             _dbContext.Set<TwoFactorToken>().Add(twoFactorToken);
@@ -110,7 +110,7 @@ public class TwoFactorService : ITwoFactorService
             }
 
             user.TwoFactorToken.IsEnabled = true;
-            user.TwoFactorToken.VerifiedAt = DateTime.UtcNow;
+            user.TwoFactorToken.VerifiedAt = DateTimeOffset.UtcNow;
             user.TwoFactorEnabled = true;
 
             await _dbContext.SaveChangesAsync();

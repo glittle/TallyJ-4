@@ -175,7 +175,7 @@ public class CdnBallotImportService : ElectionImportExportBase
 
             person.VotingMethod = "I";
             person.VotingLocationGuid = importedLocationGuid;
-            person.RegistrationTime = DateTime.UtcNow;
+            person.RegistrationTime = DateTimeOffset.UtcNow;
             person.EnvNum = null;
             _context.People.Update(person);
         }
@@ -186,6 +186,7 @@ public class CdnBallotImportService : ElectionImportExportBase
     {
         foreach (var ballot in ballots)
         {
+            var now = DateTimeOffset.UtcNow;
             var ballotEntity = new Ballot
             {
                 BallotGuid = Guid.NewGuid(),
@@ -193,6 +194,8 @@ public class CdnBallotImportService : ElectionImportExportBase
                 StatusCode = BallotStatus.Ok,
                 ComputerCode = "IM",
                 BallotNumAtComputer = ballotCounter++,
+                DateCreated = now,
+                DateUpdated = now,
                 RowVersion = new byte[8]
             };
 

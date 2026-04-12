@@ -73,9 +73,10 @@ void ConfigureServices(WebApplicationBuilder builder)
     }
 
     // Look in a fixed shared location... easier for some environments to keep it outside of the repo folders
-    builder.Configuration.AddJsonFile($"c:\\AppSettings\\TallyJ4.json", optional: true, reloadOnChange: true);
-    builder.Configuration.AddJsonFile($"c:\\AppSettings\\TallyJ4.{siteType}.json", optional: true, reloadOnChange: true);
+    builder.Configuration.AddJsonFile(Path.Combine("c:", "AppSettings", "TallyJ4.json"), optional: true, reloadOnChange: true);
+    builder.Configuration.AddJsonFile(Path.Combine("c:", "AppSettings", $"TallyJ4.{siteType}.json"), optional: true, reloadOnChange: true);
 
+    // report on which files were actually used
     foreach (var fileInfo in from provider in ((IConfigurationRoot)builder.Configuration).Providers.OfType<JsonConfigurationProvider>()
                              let fileInfo = provider.Source.FileProvider?.GetFileInfo(provider.Source.Path ?? "")
                              where fileInfo?.Exists == true
@@ -268,7 +269,15 @@ void ConfigureAuthentication(IServiceCollection services, IConfiguration configu
     }
     else
     {
-        Log.Warning("Google authentication not configured - ClientId or ClientSecret is missing or using placeholder values. Google login will not be available.");
+        var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+        if (isDevelopment)
+        {
+            Log.Warning("Google authentication not configured - ClientId or ClientSecret is missing or using placeholder values. Google login will not be available.");
+        }
+        else
+        {
+            Log.Information("Google authentication not configured. Google login will not be available.");
+        }
     }
 }
 
@@ -416,10 +425,29 @@ void ConfigureSwagger(IServiceCollection services)
 
 async Task ConfigureApp(WebApplication app, IConfiguration configuration)
 {
+    var migrateOnStartup = configuration.GetValue("Database:MigrateOnStartup", false);
+    if (migrateOnStartup)
+    {
+        Log.Information("Migrating the database on startup as configured");
+        using var scope = app.Services.CreateScope();
+
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+
+        await context.Database.MigrateAsync();
+    }
+
     var seedOnStartup = configuration.GetValue("Database:SeedOnStartup", false);
     if (seedOnStartup)
     {
-        Log.Information("Seeding and updating the database on startup as configured");
+        if (!migrateOnStartup)
+        {
+            Log.Information("Migrating the database before seeding as required");
+            using var migrationScope = app.Services.CreateScope();
+            var migrationContext = migrationScope.ServiceProvider.GetRequiredService<MainDbContext>();
+            await migrationContext.Database.MigrateAsync();
+        }
+
+        Log.Information("Seeding the database on startup as configured");
         using var scope = app.Services.CreateScope();
 
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
@@ -427,7 +455,6 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-        await context.Database.MigrateAsync();
         await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
     }
 

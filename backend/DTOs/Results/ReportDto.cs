@@ -15,7 +15,7 @@ public class ElectionReportDto
     /// <summary>
     /// Date when the election was held.
     /// </summary>
-    public DateTime? ElectionDate { get; set; }
+    public DateTimeOffset? ElectionDate { get; set; }
 
     /// <summary>
     /// Number of candidates to be elected.
@@ -175,7 +175,7 @@ public class VoterReportDto
     /// <summary>
     /// Timestamp when this voter cast their ballot.
     /// </summary>
-    public DateTime? VoteTime { get; set; }
+    public DateTimeOffset? VoteTime { get; set; }
 }
 
 /// <summary>
@@ -269,7 +269,7 @@ public class ElectionOverviewDto
     /// <summary>
     /// Date when the election was held.
     /// </summary>
-    public DateTime? ElectionDate { get; set; }
+    public DateTimeOffset? ElectionDate { get; set; }
 
     /// <summary>
     /// Total number of registered voters.
@@ -494,7 +494,7 @@ public class TimeBasedTurnoutDto
     /// <summary>
     /// The time period for this turnout data.
     /// </summary>
-    public DateTime TimePeriod { get; set; }
+    public DateTimeOffset TimePeriod { get; set; }
 
     /// <summary>
     /// Type of time period (Hour, Day, etc.).

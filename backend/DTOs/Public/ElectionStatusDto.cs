@@ -20,7 +20,7 @@ public class ElectionStatusDto
     /// <summary>
     /// The date when the election will be held.
     /// </summary>
-    public DateTime? DateOfElection { get; set; }
+    public DateTimeOffset? DateOfElection { get; set; }
 
     /// <summary>
     /// The type of election (LSA, LSA1, LSA2, NSA, Con, Reg, Oth).

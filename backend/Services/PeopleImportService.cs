@@ -122,7 +122,7 @@ public class PeopleImportService : IPeopleImportService
         var importFile = new ImportFile
         {
             ElectionGuid = electionGuid,
-            UploadTime = DateTime.UtcNow,
+            UploadTime = DateTimeOffset.UtcNow,
             FileSize = (int)file.Length,
             HasContent = true,
             FirstDataRow = detectedHeaderRow, // Use auto-detected row for XLSX, 1 for others
@@ -344,7 +344,7 @@ public class PeopleImportService : IPeopleImportService
     {
         var result = new ImportPeopleResult();
         var groupName = GetGroupName(electionGuid);
-        var startTime = DateTime.UtcNow;
+        var startTime = DateTimeOffset.UtcNow;
 
         var importFile = await _context.ImportFiles
             .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
@@ -507,14 +507,14 @@ public class PeopleImportService : IPeopleImportService
             {
                 // If no errors, update status to Imported
                 importFile.ProcessingStatus = "Imported";
-                importFile.ImportTime = DateTime.UtcNow;
+                importFile.ImportTime = DateTimeOffset.UtcNow;
                 await _context.SaveChangesAsync();
 
                 // Commit the transaction
                 await transaction.CommitAsync();
 
                 result.Success = true;
-                result.TimeElapsedSeconds = (DateTime.UtcNow - startTime).TotalSeconds;
+                result.TimeElapsedSeconds = (DateTimeOffset.UtcNow - startTime).TotalSeconds;
 
                 await _hubContext.Clients.Group(groupName).SendAsync("importComplete", result);
             }

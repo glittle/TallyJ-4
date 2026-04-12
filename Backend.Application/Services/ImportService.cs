@@ -74,6 +74,7 @@ public class ImportService
 
                 // Create ballot
                 var ballotGuid = Guid.NewGuid();
+                var now = DateTimeOffset.UtcNow;
                 var ballot = new Ballot
                 {
                     BallotGuid = ballotGuid,
@@ -81,7 +82,9 @@ public class ImportService
                     BallotCode = $"IMPORT{i}",
                     StatusCode = BallotStatus.Ok,
                     ComputerCode = "IMPORT",
-                    BallotNumAtComputer = i
+                    BallotNumAtComputer = i,
+                    DateCreated = now,
+                    DateUpdated = now
                 };
 
                 _context.Ballots.Add(ballot);

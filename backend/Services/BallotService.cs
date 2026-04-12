@@ -125,6 +125,7 @@ public class BallotService : IBallotService
 
         nextBallotNum++;
 
+        var now = DateTimeOffset.UtcNow;
         var ballot = new Ballot
         {
             BallotGuid = Guid.NewGuid(),
@@ -133,6 +134,8 @@ public class BallotService : IBallotService
             BallotNumAtComputer = nextBallotNum,
             BallotCode = $"{createDto.ComputerCode}{nextBallotNum}",
             StatusCode = BallotStatus.Raw,
+            DateCreated = now,
+            DateUpdated = now,
             RowVersion = new byte[8],
         };
 

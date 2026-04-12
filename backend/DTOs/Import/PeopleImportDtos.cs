@@ -21,12 +21,12 @@ public class ImportFileDto
     /// <summary>
     /// The time when the file was uploaded.
     /// </summary>
-    public DateTime? UploadTime { get; set; }
+    public DateTimeOffset? UploadTime { get; set; }
 
     /// <summary>
     /// The time when the import was completed.
     /// </summary>
-    public DateTime? ImportTime { get; set; }
+    public DateTimeOffset? ImportTime { get; set; }
 
     /// <summary>
     /// The size of the uploaded file in bytes.

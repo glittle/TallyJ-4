@@ -28,7 +28,7 @@ public class ElectionUpdateDto
     /// <summary>
     /// The timestamp when the election was last updated.
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 }
 
 

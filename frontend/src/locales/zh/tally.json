@@ -1,14 +1,17 @@
 {
-  "tally.title": "Calculate Tally",
+  "tally.title": "计算结果",
   "tally.warning": "警告",
-  "tally.warningMessage": "Calculating the tally will overwrite any existing results. This action cannot be undone.",
-  "tally.normalElection": "Normal Election",
-  "tally.singleNameElection": "Single Name Election",
-  "tally.calculate": "Calculate Tally",
-  "tally.calculateSuccess": "Tally calculated successfully",
-  "tally.calculateError": "Failed to calculate tally",
-  "tally.calculatingProgress": "Calculating Progress",
-  "tally.processedBallots": "Processed Ballots",
-  "tally.resultsPreview": "Results Preview (Top 10)",
-  "tally.viewFullResults": "View Full Results"
+  "tally.warningMessage": "计算结果将覆盖任何现有结果。此操作无法撤销。",
+  "tally.normalElection": "正常选举",
+  "tally.singleNameElection": "单一名称选举",
+  "tally.calculate": "计算结果",
+  "tally.calculateSuccess": "结果计算成功",
+  "tally.calculateError": "计算结果失败",
+  "tally.calculatingProgress": "计算进度",
+  "tally.processedBallots": "已处理的选票",
+  "tally.resultsPreview": "结果预览（前10名）",
+  "tally.viewFullResults": "查看完整结果",
+  "tally.section.elected": "当选",
+  "tally.section.extra": "额外",
+  "tally.section.other": "其他"
 }

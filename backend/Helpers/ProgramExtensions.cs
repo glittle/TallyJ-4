@@ -217,12 +217,12 @@ public static class ProgramExtensions
         {
             File.WriteAllText(path, newContent);
             // use Information and visually highlight to make it stand out more in the logs
-            Log.Information("{Highlight} OpenAPI file generated at {OpenAPIFilePath}.", ">>>>>>", path);
-            Log.Information("{Highlight} Restart Frontend", ">>>>>>"); // to catch the developer's eye... can now start the front end!
+            Log.Information("{Highlight} OpenAPI file updated at {OpenAPIFilePath}.", ">>>>>>", path);
+            Log.Information("{Highlight} The Frontend needs to be restarted to pick up the changes.", ">>>>>>"); // to catch the developer's eye... can now start the front end!
         }
         else
         {
-            Log.Information("OpenAPI file is not changed");
+            Log.Information("OpenAPI file is {Status}", "not changed");
         }
 
         return app;

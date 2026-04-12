@@ -10,6 +10,8 @@ export interface BallotDto {
   statusCode: string;
   teller1?: string;
   teller2?: string;
+  dateCreated?: Date | null;
+  dateUpdated?: Date | null;
   voteCount: number;
   votes: VoteDto[];
 }

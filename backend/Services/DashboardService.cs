@@ -1,4 +1,5 @@
-﻿using Backend.Domain.Context;
+﻿using System.Security.Claims;
+using Backend.Domain.Context;
 using Backend.DTOs.Dashboard;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,16 +13,30 @@ public class DashboardService : IDashboardService
 {
     private readonly MainDbContext _context;
     private readonly ILogger<DashboardService> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     /// <summary>
     /// Initializes a new instance of the DashboardService.
     /// </summary>
     /// <param name="context">The main database context for accessing election and dashboard data.</param>
     /// <param name="logger">Logger for recording dashboard service operations.</param>
-    public DashboardService(MainDbContext context, ILogger<DashboardService> logger)
+    /// <param name="httpContextAccessor">HTTP context accessor for retrieving current user information.</param>
+    public DashboardService(MainDbContext context, ILogger<DashboardService> logger, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
         _logger = logger;
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    private Guid? GetCurrentUserId()
+    {
+        var userIdString = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? _httpContextAccessor.HttpContext?.User.FindFirst("sub")?.Value;
+        if (!string.IsNullOrEmpty(userIdString) && Guid.TryParse(userIdString, out var userId))
+        {
+            return userId;
+        }
+        return null;
     }
 
     /// <summary>
@@ -30,12 +45,21 @@ public class DashboardService : IDashboardService
     /// <returns>A DashboardSummaryDto containing counts of active and completed elections, plus recent elections.</returns>
     public async Task<DashboardSummaryDto> GetDashboardSummaryAsync()
     {
-        var activeCount = await _context.Elections
-            .Where(e => e.TallyStatus != "Complete" && e.TallyStatus != "Archived")
+        var userId = GetCurrentUserId();
+        var baseQuery = _context.Elections.AsQueryable();
+
+        if (userId.HasValue)
+        {
+            baseQuery = baseQuery.Where(e =>
+                _context.JoinElectionUsers.Any(jeu => jeu.ElectionGuid == e.ElectionGuid && jeu.UserId == userId.Value));
+        }
+
+        var activeCount = await baseQuery
+            .Where(e => e.TallyStatus != "Finalized" && e.TallyStatus != "Archived")
             .CountAsync();
 
-        var completedCount = await _context.Elections
-            .Where(e => e.TallyStatus == "Complete")
+        var completedCount = await baseQuery
+            .Where(e => e.TallyStatus == "Finalized")
             .CountAsync();
 
         var recentElections = await GetRecentElectionsAsync(5);
@@ -58,12 +82,21 @@ public class DashboardService : IDashboardService
     /// <returns>A list of ElectionCardDto objects containing election information and statistics.</returns>
     public async Task<List<ElectionCardDto>> GetRecentElectionsAsync(int limit = 10)
     {
-        var elections = await _context.Elections
+        var userId = GetCurrentUserId();
+        var baseQuery = _context.Elections.AsQueryable();
+
+        if (userId.HasValue)
+        {
+            baseQuery = baseQuery.Where(e =>
+                _context.JoinElectionUsers.Any(jeu => jeu.ElectionGuid == e.ElectionGuid && jeu.UserId == userId.Value));
+        }
+
+        var elections = await baseQuery
             .Include(e => e.People)
             .Include(e => e.Locations)
                 .ThenInclude(l => l.Ballots)
                     .ThenInclude(b => b.Votes)
-            .OrderByDescending(e => e.DateOfElection ?? DateTime.MinValue)
+            .OrderByDescending(e => e.DateOfElection ?? DateTimeOffset.MinValue)
             .Take(limit)
             .ToListAsync();
 
@@ -101,14 +134,12 @@ public class DashboardService : IDashboardService
 
     /// <summary>
     /// Retrieves all elections that the current user has access to.
-    /// Currently returns all elections (placeholder for future permission-based filtering).
+    /// Filters elections based on user permissions via JoinElectionUser.
     /// </summary>
     /// <returns>A list of ElectionCardDto objects for all accessible elections.</returns>
     public async Task<List<ElectionCardDto>> GetAllAccessibleElectionsAsync()
     {
-        // For now, return all elections. In a real implementation, this would filter
-        // based on user permissions (admin vs guest teller vs voter)
-        return await GetRecentElectionsAsync(100); // Get more elections
+        return await GetRecentElectionsAsync(100);
     }
 
     /// <summary>
@@ -169,6 +200,12 @@ public class DashboardService : IDashboardService
         var ballots = election.Locations.SelectMany(l => l.Ballots).ToList();
         var votes = ballots.SelectMany(b => b.Votes).ToList();
 
+        var lastLogEntry = await _context.Logs
+            .Where(l => l.ElectionGuid == electionGuid)
+            .OrderByDescending(l => l.AsOf)
+            .Select(l => l.AsOf)
+            .FirstOrDefaultAsync();
+
         return new
         {
             electionGuid = election.ElectionGuid,
@@ -176,7 +213,7 @@ public class DashboardService : IDashboardService
             voteCount = votes.Count,
             voterCount = election.People.Count(p => p.CanVote == true),
             locationCount = election.Locations.Count,
-            lastActivity = (DateTime?)null, // TODO: Add timestamp tracking if needed
+            lastActivity = lastLogEntry != default ? (DateTimeOffset?)lastLogEntry : null,
             onlineVotingActive = election.OnlineWhenOpen.HasValue,
             passcode = election.ElectionPasscode
         };
@@ -191,20 +228,38 @@ public class DashboardService : IDashboardService
     /// <exception cref="ArgumentException">Thrown when the location is not found.</exception>
     public async Task<bool> SetComputerLocationAsync(string computerCode, Guid locationGuid)
     {
-        // This would typically store computer-to-location mapping
-        // For now, just validate that the location exists
-        var locationExists = await _context.Locations
-            .AnyAsync(l => l.LocationGuid == locationGuid);
+        var location = await _context.Locations
+            .FirstOrDefaultAsync(l => l.LocationGuid == locationGuid);
 
-        if (!locationExists)
+        if (location == null)
         {
             throw new ArgumentException($"Location {locationGuid} not found");
         }
 
+        var computer = await _context.Computers
+            .FirstOrDefaultAsync(c => c.ComputerCode == computerCode && c.ElectionGuid == location.ElectionGuid);
+
+        if (computer != null)
+        {
+            computer.LocationGuid = locationGuid;
+            computer.LastActivity = DateTimeOffset.UtcNow;
+        }
+        else
+        {
+            _context.Computers.Add(new Backend.Domain.Entities.Computer
+            {
+                ElectionGuid = location.ElectionGuid,
+                LocationGuid = locationGuid,
+                ComputerGuid = Guid.NewGuid(),
+                ComputerCode = computerCode
+            });
+        }
+
+        await _context.SaveChangesAsync();
+
         _logger.LogInformation("Computer {ComputerCode} assigned to location {LocationGuid}",
             computerCode, locationGuid);
 
-        // In a real implementation, this would persist the mapping
         return true;
     }
 
@@ -217,7 +272,6 @@ public class DashboardService : IDashboardService
     /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<bool> AssignGuestTellerAsync(Guid electionGuid, string tellerName)
     {
-        // Validate election exists
         var electionExists = await _context.Elections
             .AnyAsync(e => e.ElectionGuid == electionGuid);
 
@@ -226,10 +280,23 @@ public class DashboardService : IDashboardService
             throw new ArgumentException($"Election {electionGuid} not found");
         }
 
+        var existingTeller = await _context.Tellers
+            .FirstOrDefaultAsync(t => t.ElectionGuid == electionGuid && t.Name == tellerName);
+
+        if (existingTeller == null)
+        {
+            _context.Tellers.Add(new Backend.Domain.Entities.Teller
+            {
+                ElectionGuid = electionGuid,
+                Name = tellerName,
+                RowVersion = new byte[8]
+            });
+            await _context.SaveChangesAsync();
+        }
+
         _logger.LogInformation("Guest teller {TellerName} assigned to election {ElectionGuid}",
             tellerName, electionGuid);
 
-        // In a real implementation, this would create/update a teller record
         return true;
     }
 
@@ -242,19 +309,20 @@ public class DashboardService : IDashboardService
     /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<bool> RemoveGuestTellerAsync(Guid electionGuid, string tellerName)
     {
-        // Validate election exists
-        var electionExists = await _context.Elections
-            .AnyAsync(e => e.ElectionGuid == electionGuid);
+        var teller = await _context.Tellers
+            .FirstOrDefaultAsync(t => t.ElectionGuid == electionGuid && t.Name == tellerName);
 
-        if (!electionExists)
+        if (teller == null)
         {
-            throw new ArgumentException($"Election {electionGuid} not found");
+            return false;
         }
+
+        _context.Tellers.Remove(teller);
+        await _context.SaveChangesAsync();
 
         _logger.LogInformation("Guest teller {TellerName} removed from election {ElectionGuid}",
             tellerName, electionGuid);
 
-        // In a real implementation, this would remove the teller record
         return true;
     }
 }

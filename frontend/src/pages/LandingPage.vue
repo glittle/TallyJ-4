@@ -141,18 +141,19 @@ globalThis.addEventListener("keydown", (event) => {
 
 <template>
   <div class="landing-container">
-    <i18n-t keypath="common.testOnlyLong" tag="div" class="testOnlyWarning">
-      <template #note>
-        <el-icon>
-          <WarnTriangleFilled />
-        </el-icon>
-        <strong>{{ $t("common.testOnlyLongNote") }}</strong>
-      </template>
-      <template #br><br /></template>
-    </i18n-t>
-
     <div class="welcome-section">
       <h1>{{ t("auth.landing.title") }}</h1>
+
+      <i18n-t keypath="common.testOnlyLong" tag="div" class="testOnlyWarning">
+        <template #note>
+          <el-icon>
+            <WarnTriangleFilled />
+          </el-icon>
+          <strong>{{ $t("common.testOnlyLongNote") }}</strong>
+        </template>
+        <template #br><br /></template>
+      </i18n-t>
+
       <p class="description">{{ t("auth.landing.description") }}</p>
     </div>
 

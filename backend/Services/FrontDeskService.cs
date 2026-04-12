@@ -78,7 +78,7 @@ public class FrontDeskService : IFrontDeskService
             throw new InvalidOperationException("Person has already checked in");
         }
 
-        person.RegistrationTime = DateTime.UtcNow;
+        person.RegistrationTime = DateTimeOffset.UtcNow;
         person.VotingMethod = checkInDto.VotingMethod;
         person.VotingLocationGuid = checkInDto.VotingLocationGuid;
 
@@ -210,7 +210,7 @@ public class FrontDeskService : IFrontDeskService
 
         var entry = new RegistrationHistoryEntryDto
         {
-            Timestamp = DateTime.UtcNow,
+            Timestamp = DateTimeOffset.UtcNow,
             Action = action,
             VotingMethod = person.VotingMethod,
             TellerName = tellerName,

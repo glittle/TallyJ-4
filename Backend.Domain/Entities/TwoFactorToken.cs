@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Domain.Entities;
 
@@ -21,9 +22,11 @@ public class TwoFactorToken
 
     public bool IsEnabled { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    [Precision(0)]
+    public DateTimeOffset CreatedAt { get; set; }
 
-    public DateTime? VerifiedAt { get; set; }
+    [Precision(0)]
+    public DateTimeOffset? VerifiedAt { get; set; }
 
     [Column("_RowVersion")]
     [Timestamp]

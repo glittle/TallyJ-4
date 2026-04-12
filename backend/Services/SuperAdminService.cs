@@ -37,11 +37,11 @@ public class SuperAdminService : ISuperAdminService
             .Where(e => e.TallyStatus != null
                         && e.TallyStatus != "Complete"
                         && e.TallyStatus != "Archived"
-                        && e.DateOfElection <= DateTime.UtcNow)
+                        && e.DateOfElection <= DateTimeOffset.UtcNow)
             .CountAsync();
 
         var upcomingCount = await _context.Elections
-            .Where(e => e.DateOfElection > DateTime.UtcNow
+            .Where(e => e.DateOfElection > DateTimeOffset.UtcNow
                         && (e.TallyStatus == null || (e.TallyStatus != "Complete" && e.TallyStatus != "Archived")))
             .CountAsync();
 
@@ -256,8 +256,8 @@ public class SuperAdminService : ISuperAdminService
                 ? query.OrderByDescending(e => e.Locations.Sum(l => l.Ballots.Count))
                 : query.OrderBy(e => e.Locations.Sum(l => l.Ballots.Count)),
             _ => isDescending
-                ? query.OrderByDescending(e => e.DateOfElection ?? DateTime.MinValue)
-                : query.OrderBy(e => e.DateOfElection ?? DateTime.MinValue)
+                ? query.OrderByDescending(e => e.DateOfElection ?? DateTimeOffset.MinValue)
+                : query.OrderBy(e => e.DateOfElection ?? DateTimeOffset.MinValue)
         };
     }
 }

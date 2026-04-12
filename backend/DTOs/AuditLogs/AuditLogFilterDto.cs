@@ -28,12 +28,12 @@ public class AuditLogFilterDto
     /// <summary>
     /// Filter by start date.
     /// </summary>
-    public DateTime? StartDate { get; set; }
+    public DateTimeOffset? StartDate { get; set; }
 
     /// <summary>
     /// Filter by end date.
     /// </summary>
-    public DateTime? EndDate { get; set; }
+    public DateTimeOffset? EndDate { get; set; }
 
     /// <summary>
     /// Search term to filter audit log details.

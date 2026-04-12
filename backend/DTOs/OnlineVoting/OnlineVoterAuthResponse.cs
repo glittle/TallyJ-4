@@ -23,7 +23,7 @@ public class OnlineVoterAuthResponse
     /// <summary>
     /// The timestamp when the token expires.
     /// </summary>
-    public DateTime ExpiresAt { get; set; }
+    public DateTimeOffset ExpiresAt { get; set; }
 }
 
 

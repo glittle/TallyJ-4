@@ -23,7 +23,7 @@ public partial class Message
     public byte[] RowVersion { get; set; } = null!;
 
     [Precision(0)]
-    public DateTime AsOf { get; set; }
+    public DateTimeOffset AsOf { get; set; }
 
     [ForeignKey("ElectionGuid")]
     public virtual Election Election { get; set; } = null!;

@@ -49,6 +49,14 @@ namespace Backend.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(2)");
 
+                    b.Property<DateTimeOffset?>("DateCreated")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<DateTimeOffset?>("DateUpdated")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
                     b.Property<Guid>("LocationGuid")
                         .HasColumnType("uniqueidentifier");
 
@@ -117,14 +125,16 @@ namespace Backend.Migrations
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("LastActivity")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("LastActivity")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<Guid>("LocationGuid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("RegisteredAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("RegisteredAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.HasKey("RowId");
 
@@ -166,9 +176,9 @@ namespace Backend.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime?>("DateOfElection")
+                    b.Property<DateTimeOffset?>("DateOfElection")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<Guid>("ElectionGuid")
                         .HasColumnType("uniqueidentifier");
@@ -222,8 +232,9 @@ namespace Backend.Migrations
                     b.Property<bool?>("ListForPublic")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("ListedForPublicAsOf")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("ListedForPublicAsOf")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<bool?>("MaskVotingMethod")
                         .HasColumnType("bit");
@@ -239,9 +250,9 @@ namespace Backend.Migrations
                     b.Property<int?>("NumberToElect")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("OnlineAnnounced")
+                    b.Property<DateTimeOffset?>("OnlineAnnounced")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<bool>("OnlineCloseIsEstimate")
                         .ValueGeneratedOnAdd()
@@ -253,13 +264,13 @@ namespace Backend.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(1)");
 
-                    b.Property<DateTime?>("OnlineWhenClose")
+                    b.Property<DateTimeOffset?>("OnlineWhenClose")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
-                    b.Property<DateTime?>("OnlineWhenOpen")
+                    b.Property<DateTimeOffset?>("OnlineWhenOpen")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("OwnerLoginId")
                         .HasMaxLength(50)
@@ -339,9 +350,9 @@ namespace Backend.Migrations
                     b.Property<bool?>("HasContent")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("ImportTime")
-                        .HasPrecision(2)
-                        .HasColumnType("datetime2(2)");
+                    b.Property<DateTimeOffset?>("ImportTime")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("Messages")
                         .IsUnicode(false)
@@ -356,9 +367,9 @@ namespace Backend.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)");
 
-                    b.Property<DateTime?>("UploadTime")
-                        .HasPrecision(2)
-                        .HasColumnType("datetime2(2)");
+                    b.Property<DateTimeOffset?>("UploadTime")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.HasKey("RowId");
 
@@ -383,9 +394,9 @@ namespace Backend.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<DateTime?>("InviteWhen")
+                    b.Property<DateTimeOffset?>("InviteWhen")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("Role")
                         .HasMaxLength(10)
@@ -474,9 +485,9 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowId"));
 
-                    b.Property<DateTime>("AsOf")
-                        .HasPrecision(2)
-                        .HasColumnType("datetime2(2)");
+                    b.Property<DateTimeOffset>("AsOf")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("ComputerCode")
                         .HasMaxLength(2)
@@ -519,9 +530,9 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowId"));
 
-                    b.Property<DateTime>("AsOf")
+                    b.Property<DateTimeOffset>("AsOf")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("Details")
                         .HasColumnType("nvarchar(max)");
@@ -573,18 +584,18 @@ namespace Backend.Migrations
                     b.Property<int?>("VerifyAttempts")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("VerifyAttemptsStart")
+                    b.Property<DateTimeOffset?>("VerifyAttemptsStart")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("VerifyCode")
                         .HasMaxLength(15)
                         .IsUnicode(false)
                         .HasColumnType("varchar(15)");
 
-                    b.Property<DateTime?>("VerifyCodeDate")
+                    b.Property<DateTimeOffset?>("VerifyCodeDate")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("VoterId")
                         .IsRequired()
@@ -599,13 +610,13 @@ namespace Backend.Migrations
                         .HasColumnType("varchar(1)")
                         .HasDefaultValue("E");
 
-                    b.Property<DateTime?>("WhenLastLogin")
+                    b.Property<DateTimeOffset?>("WhenLastLogin")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
-                    b.Property<DateTime?>("WhenRegistered")
+                    b.Property<DateTimeOffset?>("WhenRegistered")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.HasKey("RowId");
 
@@ -649,13 +660,13 @@ namespace Backend.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(10)");
 
-                    b.Property<DateTime?>("WhenBallotCreated")
+                    b.Property<DateTimeOffset?>("WhenBallotCreated")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
-                    b.Property<DateTime?>("WhenStatus")
+                    b.Property<DateTimeOffset?>("WhenStatus")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.HasKey("RowId");
 
@@ -773,9 +784,9 @@ namespace Backend.Migrations
                     b.Property<string>("RegistrationHistory")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("RegistrationTime")
+                    b.Property<DateTimeOffset?>("RegistrationTime")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -842,11 +853,13 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowId"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<bool>("IsRevoked")
                         .HasColumnType("bit");
@@ -1096,9 +1109,9 @@ namespace Backend.Migrations
                     b.Property<int>("Severity")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Timestamp")
-                        .HasPrecision(2)
-                        .HasColumnType("datetime2(2)");
+                    b.Property<DateTimeOffset>("Timestamp")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("UserAgent")
                         .HasMaxLength(500)
@@ -1136,8 +1149,9 @@ namespace Backend.Migrations
                     b.Property<int?>("ErrorCode")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("LastDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("LastDate")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("LastStatus")
                         .HasMaxLength(50)
@@ -1153,9 +1167,9 @@ namespace Backend.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<DateTime>("SentDate")
+                    b.Property<DateTimeOffset>("SentDate")
                         .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("SmsSid")
                         .IsRequired()
@@ -1222,8 +1236,9 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowId"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("bit");
@@ -1247,8 +1262,9 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("VerifiedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("VerifiedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.HasKey("RowId");
 
@@ -1358,8 +1374,9 @@ namespace Backend.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("PasswordResetExpiry")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("PasswordResetExpiry")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<string>("PasswordResetToken")
                         .HasColumnType("nvarchar(max)");
