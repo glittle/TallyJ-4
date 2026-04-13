@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +8,6 @@ using Backend.Domain.Context;
 using Backend.EF.Data;
 using Backend.Application.Services.Auth;
 using MimeKit;
-using Microsoft.AspNetCore.Builder;
 
 namespace Backend.Tests.IntegrationTests;
 

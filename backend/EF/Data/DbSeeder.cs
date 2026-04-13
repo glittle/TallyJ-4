@@ -6,7 +6,6 @@ using Backend.Domain.Enumerations;
 using Backend.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.EF.Data;
 

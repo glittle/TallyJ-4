@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.IO;
 using System.Text;
 using Backend.Application.Services.Auth;
 using Backend.Domain.Context;
@@ -16,7 +15,6 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +23,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
-using Serilog.Settings.Configuration;
 using Serilog.Sinks.SystemConsole.Themes;
 
 Log.Logger = new LoggerConfiguration()
@@ -42,7 +39,6 @@ var siteMode = isTesting ? "TESTING" : nonTestMode;
 
 Log.Information("Starting up in {SiteType} mode ({SiteMode}) on machine {MachineName}", siteType, siteMode, machineName);
 Log.Information("isTesting: {IsTesting}, isDevelopment: {IsDevelopment}", isTesting, isDevelopment);
-Log.Information("Assemblies loaded: {Assemblies}", string.Join(", ", AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetName().Name)));
 
 void AddLogging(WebApplicationBuilder builder)
 {

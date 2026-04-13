@@ -1,11 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.DTOs.OnlineVoting;
-using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
 

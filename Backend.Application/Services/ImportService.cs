@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Text;
+﻿using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;

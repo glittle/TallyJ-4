@@ -1,9 +1,7 @@
 ﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Backend.Domain.Context;
@@ -161,12 +159,12 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
     protected async Task<TResponse?> DeserializeResponseAsync<TResponse>(HttpResponseMessage response)
     {
         var content = await response.Content.ReadAsStringAsync();
-        
+
         if (string.IsNullOrWhiteSpace(content))
         {
             throw new Exception($"Response has empty body. Status: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}");
         }
-        
+
         try
         {
             return JsonSerializer.Deserialize<TResponse>(content, JsonOptions);
@@ -298,7 +296,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             {
                 return;
             }
-            
+
             await userManager.DeleteAsync(existingUser);
         }
 

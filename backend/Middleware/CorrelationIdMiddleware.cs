@@ -1,6 +1,3 @@
-using System.Threading;
-using Backend.Helpers;
-
 namespace Backend.Middleware;
 
 /// <summary>

@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using Backend.Domain.Enumerations;
-using Backend.DTOs.Results;
 using ClosedXML.Excel;
 using CsvHelper;
 using iText.IO.Font.Constants;

@@ -5,7 +5,6 @@ using Backend.Domain.Helpers;
 using Backend.DTOs.Ballots;
 using Backend.DTOs.Votes;
 using Backend.Models;
-using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 

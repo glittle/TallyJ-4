@@ -1,13 +1,10 @@
 ﻿using System.Net;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Backend.Application.DTOs.Auth;
 using Backend.Middleware;
-using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
 
@@ -410,7 +407,7 @@ public class AuthControllerTests : IntegrationTestBase
         // Note: This test assumes the test environment doesn't have a valid Google Client ID configured
         // If the test environment does have a valid Client ID, this test would need to be adjusted
         // or the configuration would need to be mocked differently
-        
+
         // Arrange
         var request = new GoogleOneTapRequest
         {
@@ -481,7 +478,7 @@ public class AuthControllerTests : IntegrationTestBase
 
         // Create request with cookies
         var request = new HttpRequestMessage(HttpMethod.Get, "/api/auth/me");
-        
+
         // Add cookies to request
         foreach (var cookie in cookies)
         {

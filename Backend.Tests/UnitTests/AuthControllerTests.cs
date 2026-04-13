@@ -3,18 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Backend.Application.DTOs.Auth;
 using Backend.Application.Services.Auth;
 using Backend.Controllers;
-using Backend.Domain.Context;
 using Backend.Domain.Identity;
-using Backend.Middleware;
 using Backend.Services;
-using Xunit;
 using Backend.Authorization;
 
 namespace Backend.Tests.UnitTests;

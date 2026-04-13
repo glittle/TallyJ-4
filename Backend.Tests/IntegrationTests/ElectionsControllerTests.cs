@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http.Json;
 using Backend.DTOs.Elections;
 using Backend.Domain.Enumerations;
 using Backend.Models;

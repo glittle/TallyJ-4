@@ -1,5 +1,4 @@
 ﻿using Backend.DTOs.Votes;
-using Backend.Models;
 
 namespace Backend.Services;
 

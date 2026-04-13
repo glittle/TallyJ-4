@@ -5,7 +5,6 @@ using Backend.Domain.Helpers;
 using Backend.DTOs.People;
 using Backend.DTOs.SignalR;
 using Backend.Models;
-using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 

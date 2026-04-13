@@ -1,6 +1,5 @@
 using Backend.Middleware;
 using FluentAssertions;
-using Xunit;
 
 namespace Backend.Tests.UnitTests;
 
