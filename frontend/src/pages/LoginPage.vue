@@ -10,6 +10,7 @@ declare global {
 declare const FB: any;
 declare const Kakao: any;
 
+import { ArrowLeft } from "@element-plus/icons-vue";
 import { useNotifications } from "@/composables/useNotifications";
 import { getAppConfig } from "@/config/appConfig";
 import type { FormInstance, FormRules } from "element-plus";
@@ -599,6 +600,11 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="login-page">
+    <div class="login-wrapper">
+    <el-button link class="back-nav" @click="router.push('/')">
+      <el-icon><ArrowLeft /></el-icon>
+      {{ t("common.back") }}
+    </el-button>
     <el-card class="login-card">
       <template #header>
         <div class="login-header">
@@ -805,12 +811,10 @@ onBeforeUnmount(() => {
           >
             {{ t("auth.noAccount") }}
           </router-link>
-          <router-link to="/">
-            {{ t("common.cancel") }}
-          </router-link>
         </div>
       </el-form>
     </el-card>
+    </div>
   </div>
 </template>
 
@@ -818,12 +822,24 @@ onBeforeUnmount(() => {
 .login-page {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding-top: 40px;
+  padding-top: 20px;
+
+  .login-wrapper {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .back-nav {
+    align-self: flex-start;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    padding: 0;
+  }
 
   .login-card {
     width: 100%;
-    max-width: 400px;
     border-radius: 12px;
   }
 

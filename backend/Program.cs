@@ -343,7 +343,7 @@ void RegisterApplicationServices(IServiceCollection services)
     services.AddScoped<ImportService>();
     services.AddScoped<IPeopleImportService, PeopleImportService>();
     services.AddScoped<CdnBallotImportService>();
-    services.AddScoped<TallyJv2ElectionImportService>();
+    services.AddScoped<TallyJv3ElectionImportService>();
     services.AddScoped<JsonElectionImportExportService>();
     services.AddScoped<ElectionExportImportService>();
     services.AddSingleton<IRemoteLogService, RemoteLogService>();

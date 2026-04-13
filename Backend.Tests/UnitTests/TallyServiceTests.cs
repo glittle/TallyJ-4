@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
@@ -11,12 +12,20 @@ public class TallyServiceTests : ServiceTestBase
     private readonly TallyService _service;
     private readonly Mock<ILogger<TallyService>> _loggerMock;
     private readonly Mock<ISignalRNotificationService> _signalRMock;
+    private readonly Mock<IStringLocalizer<TallyService>> _localizerMock;
 
     public TallyServiceTests()
     {
         _loggerMock = new Mock<ILogger<TallyService>>();
         _signalRMock = new Mock<ISignalRNotificationService>();
-        _service = new TallyService(Context, _loggerMock.Object, _signalRMock.Object);
+        _localizerMock = new Mock<IStringLocalizer<TallyService>>();
+        
+        // Setup localizer to return section codes
+        _localizerMock.Setup(l => l["tally.section.elected"]).Returns(new LocalizedString("tally.section.elected", "E"));
+        _localizerMock.Setup(l => l["tally.section.extra"]).Returns(new LocalizedString("tally.section.extra", "X"));
+        _localizerMock.Setup(l => l["tally.section.other"]).Returns(new LocalizedString("tally.section.other", "O"));
+        
+        _service = new TallyService(Context, _loggerMock.Object, _signalRMock.Object, _localizerMock.Object);
     }
 
     [Fact]
