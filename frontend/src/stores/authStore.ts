@@ -30,8 +30,8 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const meResponse = await getApiAuthMe();
 
-      if (meResponse.ok) {
-        const userData = await meResponse.json();
+      if (!meResponse.error) {
+        const userData = meResponse.data as any;
         email.value = userData.email;
         name.value = userData.name || null;
         authMethod.value = userData.authMethod || null;

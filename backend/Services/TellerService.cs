@@ -2,7 +2,6 @@
 using Backend.Domain.Entities;
 using Backend.DTOs.Tellers;
 using Backend.Models;
-using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 

@@ -160,12 +160,12 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
 
         Assert.Equal(38, results[0].VoteCount);
         Assert.Equal(1, results[0].Rank);
-        Assert.Equal("E", results[0].Section);
+        Assert.Equal(ResultSection.Elected, results[0].SectionCode);
         Assert.Equal(false, results[0].IsTied);
 
         Assert.Equal(2, results[1].VoteCount);
         Assert.Equal(2, results[1].Rank);
-        Assert.Equal("O", results[1].Section);
+        Assert.Equal(ResultSection.Other, results[1].SectionCode);
         Assert.Equal(false, results[1].IsTied);
     }
 
@@ -245,14 +245,14 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
 
         Assert.Equal(10, results[0].VoteCount);
         Assert.Equal(1, results[0].Rank);
-        Assert.Equal("E", results[0].Section);
+        Assert.Equal(ResultSection.Elected, results[0].SectionCode);
         Assert.Equal(true, results[0].IsTied);
         Assert.Equal(1, results[0].TieBreakGroup);
         Assert.Equal(true, results[0].TieBreakRequired);
 
         Assert.Equal(10, results[1].VoteCount);
         Assert.Equal(2, results[1].Rank);
-        Assert.Equal("O", results[1].Section);
+        Assert.Equal(ResultSection.Other, results[1].SectionCode);
         Assert.Equal(true, results[1].IsTied);
         Assert.Equal(1, results[1].TieBreakGroup);
         Assert.Equal(true, results[1].ForceShowInOther);
@@ -260,7 +260,7 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
 
         Assert.Equal(2, results[2].VoteCount);
         Assert.Equal(3, results[2].Rank);
-        Assert.Equal("O", results[2].Section);
+        Assert.Equal(ResultSection.Other, results[2].SectionCode);
         Assert.Equal(false, results[2].IsTied);
         Assert.Null(results[2].TieBreakGroup);
         Assert.Equal(false, results[2].ForceShowInOther);
@@ -288,7 +288,7 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
 
         Assert.Equal(40, results[0].VoteCount);
         Assert.Equal(1, results[0].Rank);
-        Assert.Equal("E", results[0].Section);
+        Assert.Equal(ResultSection.Elected, results[0].SectionCode);
 
         Assert.Equal(false, results[0].CloseToNext);
         Assert.Equal(false, results[0].CloseToPrev);
@@ -405,16 +405,16 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
         Assert.Equal(4, results.Count);
 
         Assert.Equal(33, results[0].VoteCount);
-        Assert.Equal("E", results[0].Section);
+        Assert.Equal(ResultSection.Elected, results[0].SectionCode);
         Assert.Equal(false, results[0].IsTied);
 
         Assert.Equal(5, results[1].VoteCount);
-        Assert.Equal("O", results[1].Section);
+        Assert.Equal(ResultSection.Other, results[1].SectionCode);
         Assert.Equal(true, results[1].IsTied);
         Assert.Equal(false, results[1].TieBreakRequired);
 
         Assert.Equal(5, results[2].VoteCount);
-        Assert.Equal("O", results[2].Section);
+        Assert.Equal(ResultSection.Other, results[2].SectionCode);
         Assert.Equal(true, results[2].IsTied);
         Assert.Equal(false, results[2].TieBreakRequired);
     }
@@ -440,11 +440,11 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
 
         Assert.Equal(33, results[0].VoteCount);
         Assert.Equal(1, results[0].Rank);
-        Assert.Equal("E", results[0].Section);
+        Assert.Equal(ResultSection.Elected, results[0].SectionCode);
 
         Assert.Equal(5, results[1].VoteCount);
         Assert.Equal(2, results[1].Rank);
-        Assert.Equal("O", results[1].Section);
+        Assert.Equal(ResultSection.Other, results[1].SectionCode);
         Assert.Equal(false, results[1].IsTied);
     }
 
@@ -469,13 +469,13 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
 
         Assert.Equal(10, results[0].VoteCount);
         Assert.Equal(1, results[0].Rank);
-        Assert.Equal("E", results[0].Section);
+        Assert.Equal(ResultSection.Elected, results[0].SectionCode);
         Assert.Equal(true, results[0].IsTied);
         Assert.Equal(1, results[0].TieBreakGroup);
 
         Assert.Equal(10, results[1].VoteCount);
         Assert.Equal(2, results[1].Rank);
-        Assert.Equal("O", results[1].Section);
+        Assert.Equal(ResultSection.Other, results[1].SectionCode);
         Assert.Equal(true, results[1].IsTied);
         Assert.Equal(1, results[1].TieBreakGroup);
     }
@@ -501,19 +501,19 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
 
         Assert.Equal(10, results[0].VoteCount);
         Assert.Equal(1, results[0].Rank);
-        Assert.Equal("E", results[0].Section);
+        Assert.Equal(ResultSection.Elected, results[0].SectionCode);
         Assert.Equal(true, results[0].IsTied);
         Assert.Equal(1, results[0].TieBreakGroup);
 
         Assert.Equal(10, results[1].VoteCount);
         Assert.Equal(2, results[1].Rank);
-        Assert.Equal("O", results[1].Section);
+        Assert.Equal(ResultSection.Other, results[1].SectionCode);
         Assert.Equal(true, results[1].IsTied);
         Assert.Equal(1, results[1].TieBreakGroup);
 
         Assert.Equal(10, results[2].VoteCount);
         Assert.Equal(3, results[2].Rank);
-        Assert.Equal("O", results[2].Section);
+        Assert.Equal(ResultSection.Other, results[2].SectionCode);
         Assert.Equal(true, results[2].IsTied);
         Assert.Equal(1, results[2].TieBreakGroup);
     }

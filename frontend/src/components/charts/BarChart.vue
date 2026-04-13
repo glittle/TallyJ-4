@@ -62,7 +62,7 @@ const chartData = computed<ChartData<"bar">>(() => ({
       dataset.backgroundColor || defaultColors[index % defaultColors.length],
     borderColor:
       dataset.borderColor ||
-      defaultColors[index % defaultColors.length].replace("0.8", "1"),
+      defaultColors[index % defaultColors.length]!.replace("0.8", "1"),
     borderWidth: dataset.borderWidth ?? 1,
   })),
 }));

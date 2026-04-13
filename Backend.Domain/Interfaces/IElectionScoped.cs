@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Backend.Domain.Interfaces;
+﻿namespace Backend.Domain.Interfaces;
 
 public interface IElectionScoped
 {

@@ -150,6 +150,7 @@
   "voting.ballot.notOpen": "Online voting is not currently open for this election.",
   "voting.ballot.duplicateError": "You have selected the same candidate multiple times. Please review your ballot.",
   "voting.ballot.electionNotFound": "Election not found",
+  "voting.ballot.namesOnBallot": "Names on the Ballot",
   "voting.ballot.submit": "Submit Ballot",
   "voting.ballot.submitSuccess": "Ballot submitted successfully!",
   "voting.ballot.onceWarning": "You can only vote once! Please review your ballot carefully before submitting.",

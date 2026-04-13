@@ -1,12 +1,9 @@
 ﻿using System.Net;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Backend.Application.DTOs.Auth;
 using Backend.Middleware;
-using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
 
@@ -84,7 +81,7 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
         refreshCookies.Should().ContainKey(SecureCookieMiddleware.RefreshTokenCookieName);
 
         // Act - Access protected endpoint with new cookies
-        var protectedResponse = await Client.GetAsync("/api/elections/getElections");
+        var protectedResponse = await Client.GetAsync("/api/elections/getMyElections");
 
         // Assert - Protected endpoint accessible
         protectedResponse.StatusCode.Should().Be(HttpStatusCode.OK);

@@ -8,6 +8,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { electionService } from "../../services/electionService";
 import { secureTokenService } from "../../services/secureTokenService";
+import { tellerService } from "../../services/tellerService";
 import { useElectionStore } from "../../stores/electionStore";
 
 const router = useRouter();
@@ -120,7 +121,7 @@ async function toggleTellerAccess() {
 
   try {
     const newState = !election.value.isTellerAccessOpen;
-    await electionStore.toggleTellerAccess(electionGuid, newState);
+    await tellerService.toggleTellerAccess(electionGuid, newState);
     showSuccessMessage(
       newState
         ? t("elections.tellerAccessOpen")

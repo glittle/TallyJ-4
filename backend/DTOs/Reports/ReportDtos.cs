@@ -1,3 +1,5 @@
+using Backend.Domain.Enumerations;
+
 namespace Backend.DTOs.Reports;
 
 public class ReportListItemDto
@@ -54,7 +56,7 @@ public class ElectedPersonDto
     public string Name { get; set; } = "";
     public string? BahaiId { get; set; }
     public string VoteCountDisplay { get; set; } = "";
-    public string Section { get; set; } = "";
+    public ResultSection SectionCode { get; set; }
 }
 
 public class VotesByNumDto
@@ -70,7 +72,7 @@ public class VotePersonDto
     public int VoteCount { get; set; }
     public int? TieBreakCount { get; set; }
     public bool TieBreakRequired { get; set; }
-    public string Section { get; set; } = "";
+    public ResultSection SectionCode { get; set; }
     public bool ShowBreak { get; set; }
 }
 

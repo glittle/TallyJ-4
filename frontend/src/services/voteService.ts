@@ -10,7 +10,7 @@ export const voteService = {
     const response = await getApiVotesByBallotGuidGetVotesByBallot({
       path: { ballotGuid },
     });
-    return (response.data?.data?.items ?? []) as VoteDto[];
+    return (response.data?.data ?? []) as VoteDto[];
   },
 
   async create(dto: CreateVoteDto): Promise<VoteWithBallotStatusDto> {

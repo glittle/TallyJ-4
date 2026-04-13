@@ -109,7 +109,7 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
         return person;
     }
 
-    private async Task AddResult(Guid personGuid, int rank, int voteCount, string section = "T",
+    private async Task AddResult(Guid personGuid, int rank, int voteCount, ResultSection sectionCode = ResultSection.Other,
         bool? tieBreakRequired = null, int? tieBreakCount = null, int? rankInExtra = null)
     {
         var result = new Result
@@ -118,7 +118,7 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
             PersonGuid = personGuid,
             Rank = rank,
             VoteCount = voteCount,
-            Section = section,
+            SectionCode = sectionCode,
             TieBreakRequired = tieBreakRequired,
             TieBreakCount = tieBreakCount,
             RankInExtra = rankInExtra
@@ -259,9 +259,9 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
         var p1 = await AddPerson("Alpha", "A", canReceiveVotes: true);
         var p2 = await AddPerson("Beta", "B", canReceiveVotes: true);
         var p3 = await AddPerson("Gamma", "G", canReceiveVotes: true);
-        await AddResult(p1.PersonGuid, 1, 50, "T");
-        await AddResult(p2.PersonGuid, 2, 40, "T");
-        await AddResult(p3.PersonGuid, 3, 30, "T");
+        await AddResult(p1.PersonGuid, 1, 50, ResultSection.Elected);
+        await AddResult(p2.PersonGuid, 2, 40, ResultSection.Elected);
+        await AddResult(p3.PersonGuid, 3, 30, ResultSection.Elected);
 
         var report = await _service.GetMainReportAsync(_electionGuid);
 
@@ -280,8 +280,8 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
         await AddResultSummary();
         var p1 = await AddPerson("Alpha", "A");
         var p2 = await AddPerson("Beta", "B");
-        await AddResult(p1.PersonGuid, 1, 50, "T", tieBreakRequired: true, tieBreakCount: 3);
-        await AddResult(p2.PersonGuid, 2, 40, "T");
+        await AddResult(p1.PersonGuid, 1, 50, ResultSection.Elected, tieBreakRequired: true, tieBreakCount: 3);
+        await AddResult(p2.PersonGuid, 2, 40, ResultSection.Elected);
 
         var report = await _service.GetMainReportAsync(_electionGuid);
 
@@ -298,10 +298,10 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
         var p2 = await AddPerson("Beta", "B");
         var p3 = await AddPerson("Gamma", "G");
         var p4 = await AddPerson("Delta", "D");
-        await AddResult(p1.PersonGuid, 1, 50, "T");
-        await AddResult(p2.PersonGuid, 2, 40, "T");
-        await AddResult(p3.PersonGuid, 3, 30, "T");
-        await AddResult(p4.PersonGuid, 4, 20, "X", rankInExtra: 1);
+        await AddResult(p1.PersonGuid, 1, 50, ResultSection.Elected);
+        await AddResult(p2.PersonGuid, 2, 40, ResultSection.Elected);
+        await AddResult(p3.PersonGuid, 3, 30, ResultSection.Elected);
+        await AddResult(p4.PersonGuid, 4, 20, ResultSection.Extra, rankInExtra: 1);
 
         var report = await _service.GetMainReportAsync(_electionGuid);
 
@@ -340,8 +340,8 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     {
         var p1 = await AddPerson("Zulu", "Z");
         var p2 = await AddPerson("Alpha", "A");
-        await AddResult(p1.PersonGuid, 1, 50, "T");
-        await AddResult(p2.PersonGuid, 2, 30, "T");
+        await AddResult(p1.PersonGuid, 1, 50, ResultSection.Elected);
+        await AddResult(p2.PersonGuid, 2, 30, ResultSection.Elected);
 
         var report = await _service.GetVotesByNumAsync(_electionGuid);
 
@@ -356,9 +356,9 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
         var p1 = await AddPerson("Alpha", "A");
         var p2 = await AddPerson("Beta", "B");
         var p3 = await AddPerson("Gamma", "G");
-        await AddResult(p1.PersonGuid, 1, 50, "T");
-        await AddResult(p2.PersonGuid, 2, 40, "T");
-        await AddResult(p3.PersonGuid, 3, 30, "O");
+        await AddResult(p1.PersonGuid, 1, 50, ResultSection.Elected);
+        await AddResult(p2.PersonGuid, 2, 40, ResultSection.Elected);
+        await AddResult(p3.PersonGuid, 3, 30, ResultSection.Other);
 
         var report = await _service.GetVotesByNumAsync(_electionGuid);
 
@@ -372,8 +372,8 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     {
         var p1 = await AddPerson("Zulu", "Z");
         var p2 = await AddPerson("Alpha", "A");
-        await AddResult(p1.PersonGuid, 1, 50, "T");
-        await AddResult(p2.PersonGuid, 2, 30, "T");
+        await AddResult(p1.PersonGuid, 1, 50, ResultSection.Elected);
+        await AddResult(p2.PersonGuid, 2, 30, ResultSection.Elected);
 
         var report = await _service.GetVotesByNameAsync(_electionGuid);
 
@@ -384,7 +384,7 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     public async Task GetBallotsReport_NoFilter_ReturnsAllBallots()
     {
         var loc = await AddLocation("Hall");
-        var person = await AddPerson("Test", "T");
+        var person = await AddPerson("Test");
         var b1 = await AddBallot(loc.LocationGuid);
         var b2 = await AddBallot(loc.LocationGuid, ballotNum: 2);
         await AddVote(b1.BallotGuid, person.PersonGuid, 1);
@@ -428,10 +428,10 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     public async Task GetBallotsReport_TiedFilter_ReturnsBallotsWithTiedCandidates()
     {
         var loc = await AddLocation("Hall");
-        var tiedPerson = await AddPerson("Tied", "T");
-        var normalPerson = await AddPerson("Normal", "N");
-        await AddResult(tiedPerson.PersonGuid, 1, 50, "T", tieBreakRequired: true);
-        await AddResult(normalPerson.PersonGuid, 2, 30, "T");
+        var tiedPerson = await AddPerson("Tied");
+        var normalPerson = await AddPerson("Normal");
+        await AddResult(tiedPerson.PersonGuid, 1, 50, ResultSection.Elected, tieBreakRequired: true);
+        await AddResult(normalPerson.PersonGuid, 2, 30, ResultSection.Elected);
 
         var b1 = await AddBallot(loc.LocationGuid);
         await AddVote(b1.BallotGuid, tiedPerson.PersonGuid, 1);
@@ -464,9 +464,9 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
         var p1 = await AddPerson("A", "A");
         var p2 = await AddPerson("B", "B");
         var p3 = await AddPerson("C", "C");
-        await AddResult(p1.PersonGuid, 1, 50, "T");
-        await AddResult(p2.PersonGuid, 2, 40, "T");
-        await AddResult(p3.PersonGuid, 3, 30, "T");
+        await AddResult(p1.PersonGuid, 1, 50, ResultSection.Elected);
+        await AddResult(p2.PersonGuid, 2, 40, ResultSection.Elected);
+        await AddResult(p3.PersonGuid, 3, 30, ResultSection.Elected);
 
         var b1 = await AddBallot(loc.LocationGuid);
         await AddVote(b1.BallotGuid, p1.PersonGuid, 1);
@@ -487,7 +487,7 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     public async Task GetBallotsSame_FindsDuplicateBallots()
     {
         var loc = await AddLocation("Hall");
-        var person = await AddPerson("Test", "T");
+        var person = await AddPerson("Test");
 
         var b1 = await AddBallot(loc.LocationGuid);
         await AddVote(b1.BallotGuid, person.PersonGuid, 1);

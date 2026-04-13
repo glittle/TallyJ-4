@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Backend.Middleware;
-using Xunit;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace Backend.Tests.UnitTests;
 

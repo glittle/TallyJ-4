@@ -30,11 +30,9 @@ onMounted(async () => {
     // Since cookies are set on the backend domain, we need to call the backend API to get user info
     const response = await getApiAuthMe();
 
-    if (!response.ok) {
-      const errorData = await response
-        .json()
-        .catch(() => ({ error: "Failed to get user info" }));
-      error.value = errorData.error || "Authentication failed";
+    if (response.error) {
+      const errorData = response.error as any;
+      error.value = errorData?.error || "Authentication failed";
       showErrorMessage(t("auth.googleLoginFailed"));
       setTimeout(() => {
         router.push("/login?mode=officer");
@@ -42,7 +40,7 @@ onMounted(async () => {
       return;
     }
 
-    const userData = await response.json();
+    const userData = response.data as any;
 
     // Update store with user data from API
     authStore.email = userData.email;

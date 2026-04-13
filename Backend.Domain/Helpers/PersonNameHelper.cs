@@ -10,7 +10,7 @@ public static class PersonNameHelper
     /// <summary>
     /// Computes the full name in "LastName, FirstName" format with optional name components.
     /// </summary>
-    public static string? ComputeFullName(Person person)
+    public static string? ComputeFullName(Person? person)
     {
         if (person == null) return null;
 
@@ -46,7 +46,7 @@ public static class PersonNameHelper
     /// Computes the full name in "FirstName LastName" format with optional name components.
     /// Used for sorting and display purposes.
     /// </summary>
-    public static string? ComputeFullNameFl(Person person)
+    public static string? ComputeFullNameFl(Person? person)
     {
         if (person == null) return null;
 

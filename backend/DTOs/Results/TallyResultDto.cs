@@ -1,4 +1,6 @@
-﻿namespace Backend.DTOs.Results;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data transfer object representing the complete results of an election tally.
@@ -64,7 +66,7 @@ public class CandidateResultDto
     /// <summary>
     /// The section this candidate belongs to (e.g., "E" for elected, "X" for extra).
     /// </summary>
-    public string Section { get; set; } = string.Empty;
+    public ResultSection SectionCode { get; set; }
 
     /// <summary>
     /// Whether this candidate is tied with others.

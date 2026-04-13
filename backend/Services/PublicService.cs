@@ -155,7 +155,7 @@ public class PublicService : IPublicService
         var numberExtra = election.NumberExtra ?? 0;
 
         var electedCandidates = results
-            .Where(r => r.Section == "E" && r.Rank > 0 && r.Rank <= numberToElect)
+            .Where(r => r.SectionCode == ResultSection.Elected && r.Rank > 0 && r.Rank <= numberToElect)
             .Select(r => new PublicCandidateDto
             {
                 Rank = r.Rank,
@@ -170,7 +170,7 @@ public class PublicService : IPublicService
             .ToList();
 
         var additionalCandidates = results
-            .Where(r => (r.Section == "X" || (r.Section == "E" && r.Rank > numberToElect))
+            .Where(r => (r.SectionCode == ResultSection.Extra || (r.SectionCode == ResultSection.Elected && r.Rank > numberToElect))
                         && r.Rank > 0 && r.Rank <= numberToElect + numberExtra)
             .Select(r => new PublicCandidateDto
             {

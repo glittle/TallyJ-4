@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Backend.Authorization;

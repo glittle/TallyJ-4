@@ -50,6 +50,21 @@ public class BallotsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{locationGuid}/byLocation")]
+    public async Task<ActionResult<PaginatedResponse<BallotDto>>> GetBallotsByLocation(
+        Guid locationGuid,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 50)
+    {
+        if (pageNumber < 1 || pageSize < 1 || pageSize > 200)
+        {
+            return BadRequest(new { message = "Invalid pagination parameters. PageNumber must be >= 1, PageSize must be between 1 and 200." });
+        }
+
+        var result = await _ballotService.GetBallotsByLocationAsync(locationGuid, pageNumber, pageSize);
+        return Ok(result);
+    }
+
     /// <summary>
     /// Gets a specific ballot by its GUID.
     /// </summary>

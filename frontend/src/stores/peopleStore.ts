@@ -193,7 +193,7 @@ export const usePeopleStore = defineStore("people", () => {
     if (index !== -1) {
       const newCache = [...candidateCache.value];
       newCache[index] = {
-        ...candidateCache.value[index],
+        ...candidateCache.value[index]!,
         voteCount: data.voteCount,
       };
       candidateCache.value = newCache;

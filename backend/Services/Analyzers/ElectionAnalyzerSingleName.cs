@@ -1,7 +1,6 @@
 ﻿using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services.Analyzers;
 
@@ -74,7 +73,7 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
                     PersonGuid = vote.PersonGuid.Value,
                     VoteCount = 0,
                     Rank = 0,
-                    Section = "O",
+                    SectionCode = ResultSection.Other,
                     IsTied = false,
                     TieBreakRequired = false,
                     CloseToNext = false,

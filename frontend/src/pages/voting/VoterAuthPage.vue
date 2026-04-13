@@ -36,9 +36,9 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { getApiPublicAuthConfig } from "../../api/gen/configService/sdk.gen";
-import { getAppConfig } from "../../config/appConfig";
 import TelegramLoginButton from "../../components/auth/TelegramLoginButton.vue";
 import { useNotifications } from "../../composables/useNotifications";
+import { getAppConfig } from "../../config/appConfig";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 
 declare const FB: any;
@@ -150,10 +150,10 @@ const fetchAuthConfig = async () => {
   }
   try {
     const resp = await getApiPublicAuthConfig();
-    if (!resp.ok) {
+    if (resp.error) {
       return null;
     }
-    const json = await resp.json();
+    const json = resp.data as any;
     authConfig.value = json?.data ?? null;
     telegramBotUsername.value = authConfig.value?.telegramBotUsername ?? null;
     telegramReady.value = Boolean(authConfig.value?.telegramBotUsername);
@@ -262,7 +262,10 @@ const handleGoogleCredentialCallback = async (
 
 const loadGisScript = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (gisScriptLoaded.value || typeof google !== "undefined") {
+    if (
+      gisScriptLoaded.value ||
+      typeof (window as any).google !== "undefined"
+    ) {
       gisScriptLoaded.value = true;
       resolve();
       return;
@@ -604,7 +607,7 @@ onBeforeUnmount(() => {
     <div class="auth-container">
       <ElButton link class="back-nav" @click="router.push('/')">
         <ElIcon><ArrowLeft /></ElIcon>
-        {{ $t("common.back") }}
+        {{ $t("common.goHome") }}
       </ElButton>
       <div class="welcome-section">
         <div class="welcome-icon">

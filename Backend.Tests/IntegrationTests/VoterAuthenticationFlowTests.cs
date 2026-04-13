@@ -1,11 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.DTOs.OnlineVoting;
-using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
 
@@ -37,9 +35,15 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         // Act
         var response = await Client.PostAsJsonAsync("/api/online-voting/requestCode", request);
 
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var content = await response.Content.ReadAsStringAsync();
+
+        // Assert
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            Console.WriteLine($"Status: {response.StatusCode}, Content: {content}");
+        }
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Contains("voting.auth.requestCode.", content);
     }
 
@@ -59,10 +63,15 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
 
         // Act
         var response = await Client.PostAsJsonAsync("/api/online-voting/requestCode", request);
+        var content = await response.Content.ReadAsStringAsync();
 
         // Assert
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            Console.WriteLine($"Status: {response.StatusCode}, Content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var content = await response.Content.ReadAsStringAsync();
         Assert.Contains("voting.auth.requestCode.notRegistered", content);
     }
 
@@ -81,10 +90,15 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
 
         // Act
         var response = await Client.PostAsJsonAsync("/api/online-voting/requestCode", request);
+        var content = await response.Content.ReadAsStringAsync();
 
         // Assert - voter is not in any open election (other open elections may exist from prior tests)
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            Console.WriteLine($"Status: {response.StatusCode}, Content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var content = await response.Content.ReadAsStringAsync();
         Assert.True(content.Contains("voting.auth.requestCode.noOpenElections") || content.Contains("voting.auth.requestCode.notRegistered"),
             $"Expected message about no open elections or voter not registered, got: {content}");
     }
@@ -107,6 +121,12 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         var response = await Client.PostAsJsonAsync("/api/online-voting/requestCode", request);
 
         // Assert
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
@@ -129,6 +149,12 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         var response = await Client.PostAsJsonAsync("/api/online-voting/googleAuth", request);
 
         // Assert
+        if (response.StatusCode != HttpStatusCode.BadRequest)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected BadRequest but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         // Will fail because Google Client ID is not configured in test environment
     }
@@ -147,6 +173,12 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
 
         // Assert
         // Should return BadRequest due to validation or Google auth failure
+        if (response.StatusCode != HttpStatusCode.BadRequest)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected BadRequest but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
@@ -166,11 +198,17 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         var response = await Client.GetAsync($"/api/online-voting/availableElections?voterId={email}");
 
         // Assert
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var elections = await response.Content.ReadFromJsonAsync<List<AvailableElectionDto>>();
         Assert.NotNull(elections);
         Assert.Equal(2, elections.Count);
-        
+
         // Verify election 1
         var election1 = elections.FirstOrDefault(e => e.ElectionGuid == electionGuid1);
         Assert.NotNull(election1);
@@ -178,7 +216,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         Assert.NotNull(election1.OnlineWhenOpen);
         Assert.NotNull(election1.OnlineWhenClose);
         Assert.False(election1.HasVoted);
-        
+
         // Verify election 2
         var election2 = elections.FirstOrDefault(e => e.ElectionGuid == electionGuid2);
         Assert.NotNull(election2);
@@ -199,6 +237,12 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         var response = await Client.GetAsync($"/api/online-voting/availableElections?voterId={email}");
 
         // Assert
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var elections = await response.Content.ReadFromJsonAsync<List<AvailableElectionDto>>();
         Assert.NotNull(elections);
@@ -217,6 +261,12 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         var response = await Client.GetAsync($"/api/online-voting/availableElections?voterId={email}");
 
         // Assert
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var elections = await response.Content.ReadFromJsonAsync<List<AvailableElectionDto>>();
         Assert.NotNull(elections);
@@ -232,6 +282,12 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         var response = await Client.GetAsync("/api/online-voting/availableElections");
 
         // Assert
+        if (response.StatusCode != HttpStatusCode.BadRequest)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected BadRequest but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 

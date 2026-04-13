@@ -42,15 +42,18 @@ describe("BallotEntryPage", () => {
 
   const mockBallot: BallotDto = {
     ballotGuid: "test-ballot-guid",
-    electionGuid: "test-election-guid",
+    locationGuid: "test-location-guid",
     ballotCode: "B001",
     locationName: "Test Location",
+    ballotNumAtComputer: 1,
+    computerCode: "C001",
     statusCode: "Ok",
     teller1: "John Doe",
     teller2: "Jane Smith",
     voteCount: 2,
     votes: [
       {
+        rowId: 1,
         ballotGuid: "test-ballot-guid",
         positionOnBallot: 1,
         personGuid: "person-1",
@@ -58,6 +61,7 @@ describe("BallotEntryPage", () => {
         statusCode: "Ok",
       },
       {
+        rowId: 2,
         ballotGuid: "test-ballot-guid",
         positionOnBallot: 2,
         personGuid: "person-2",
@@ -200,6 +204,7 @@ describe("BallotEntryPage", () => {
     expect(inlineEntry.exists()).toBe(true);
 
     const testVote: VoteDto = {
+      rowId: 3,
       ballotGuid: "test-ballot-guid",
       positionOnBallot: 3,
       personGuid: "person-3",

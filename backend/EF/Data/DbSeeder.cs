@@ -6,7 +6,6 @@ using Backend.Domain.Enumerations;
 using Backend.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.EF.Data;
 
@@ -526,7 +525,7 @@ public static class DbSeeder
                 PersonGuid = vc.PersonGuid!.Value,
                 VoteCount = vc.Count,
                 Rank = vc.Rank,
-                Section = vc.Rank <= 9 ? "T" : "F"
+                SectionCode = vc.Rank <= 9 ? ResultSection.Elected : ResultSection.Other
             });
         }
         context.Results.AddRange(results);

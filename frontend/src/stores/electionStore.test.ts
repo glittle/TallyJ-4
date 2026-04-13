@@ -95,7 +95,7 @@ describe("Election Store", () => {
         { electionGuid: "2", name: "Election 2" } as ElectionDto,
       ];
 
-      electionService.getAll.mockResolvedValue(mockElections);
+      vi.mocked(electionService.getAll).mockResolvedValue(mockElections);
 
       await electionStore.fetchElections();
 
@@ -109,7 +109,7 @@ describe("Election Store", () => {
       const { electionService } = await import("../services/electionService");
       const mockError = new Error("Network error");
 
-      electionService.getAll.mockRejectedValue(mockError);
+      vi.mocked(electionService.getAll).mockRejectedValue(mockError);
 
       await expect(electionStore.fetchElections()).rejects.toThrow(
         "Network error",
@@ -132,7 +132,7 @@ describe("Election Store", () => {
       } as ElectionDto;
 
       electionStore.elections = [existingElection];
-      electionService.getById.mockResolvedValue(updatedElection);
+      vi.mocked(electionService.getById).mockResolvedValue(updatedElection);
 
       await electionStore.fetchElectionById("1");
 
@@ -152,7 +152,7 @@ describe("Election Store", () => {
       electionStore.elections = [
         { electionGuid: "1", name: "Existing" } as ElectionDto,
       ];
-      electionService.getById.mockResolvedValue(newElection);
+      vi.mocked(electionService.getById).mockResolvedValue(newElection);
 
       await electionStore.fetchElectionById("2");
 
@@ -166,23 +166,26 @@ describe("Election Store", () => {
       const { electionService } = await import("../services/electionService");
       const createDto: CreateElectionDto = {
         name: "New Election",
-        numberOfWinners: 1,
-        numberOfExtra: 0,
+        numberToElect: 1,
+        numberExtra: 0,
         electionType: "LSA",
         electionMode: "N",
       };
-      const createdElection: ElectionDto = {
+      const createdElection = {
         electionGuid: "new-id",
         name: "New Election",
-        numberOfWinners: 1,
-        numberOfExtra: 0,
+        numberToElect: 1,
+        numberExtra: 0,
         electionType: "LSA",
         electionMode: "N",
         tallyStatus: "NotStarted",
         electionStatus: "NotStarted",
-      } as ElectionDto;
+        voterCount: 0,
+        ballotCount: 0,
+        locationCount: 0,
+      } as unknown as ElectionDto;
 
-      electionService.create.mockResolvedValue(createdElection);
+      vi.mocked(electionService.create).mockResolvedValue(createdElection);
 
       const result = await electionStore.createElection(createDto);
 
@@ -208,7 +211,7 @@ describe("Election Store", () => {
 
       electionStore.elections = [existingElection];
       electionStore.currentElection = existingElection;
-      electionService.update.mockResolvedValue(updatedElection);
+      vi.mocked(electionService.update).mockResolvedValue(updatedElection);
 
       const result = await electionStore.updateElection("1", {
         name: "Updated Name",
@@ -238,7 +241,7 @@ describe("Election Store", () => {
       electionStore.elections = [election1, election2];
       electionStore.currentElection = election1;
 
-      electionService.delete.mockResolvedValue(undefined);
+      vi.mocked(electionService.delete).mockResolvedValue(undefined);
 
       await electionStore.deleteElection("1");
 
@@ -285,7 +288,9 @@ describe("Election Store", () => {
         on: vi.fn(),
       };
 
-      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
+      vi.mocked(signalrService.connectToMainHub).mockResolvedValue(
+        mockConnection as any,
+      );
 
       await electionStore.initializeSignalR();
 
@@ -306,7 +311,7 @@ describe("Election Store", () => {
         .spyOn(console, "error")
         .mockImplementation(() => {});
 
-      signalrService.connectToMainHub.mockRejectedValue(
+      vi.mocked(signalrService.connectToMainHub).mockRejectedValue(
         new Error("Connection failed"),
       );
 

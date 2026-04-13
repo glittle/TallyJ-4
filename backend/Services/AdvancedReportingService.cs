@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Results;
+﻿using Backend.Domain.Enumerations;
+using Backend.DTOs.Results;
 namespace Backend.Services;
 
 /// <summary>
@@ -392,7 +393,7 @@ public class AdvancedReportingService : IAdvancedReportingService
         }
 
         if (filters.OnlyElected == true)
-            query = query.Where(c => c.Section == "E");
+            query = query.Where(c => c.SectionCode == ResultSection.Elected);
 
         // Apply sorting
         if (!string.IsNullOrEmpty(filters.SortBy))

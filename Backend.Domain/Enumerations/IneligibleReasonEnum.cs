@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Backend.Domain.Enumerations;
+﻿namespace Backend.Domain.Enumerations;
 
 /// <summary>
 /// Represents an eligibility reason that determines a person's voting and candidacy rights.

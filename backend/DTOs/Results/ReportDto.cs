@@ -81,7 +81,7 @@ public class CandidateReportDto
     /// <summary>
     /// Section or category this candidate belongs to.
     /// </summary>
-    public string Section { get; set; } = string.Empty;
+    public ResultSection SectionCode { get; set; }
 }
 
 /// <summary>
@@ -97,7 +97,7 @@ public class TieReportDto
     /// <summary>
     /// Section or category where the tie occurred.
     /// </summary>
-    public string Section { get; set; } = string.Empty;
+    public ResultSection SectionCode { get; set; }
 
     /// <summary>
     /// List of candidate names involved in this tie.

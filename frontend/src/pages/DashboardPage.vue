@@ -56,7 +56,7 @@ const filteredElectionsUnpaginated = computed(() => {
     filtered = filtered.filter(
       (election) =>
         election.name.toLowerCase().includes(search) ||
-        election.convenor?.toLowerCase().includes(search),
+        (election as ElectionDto).convenor?.toLowerCase().includes(search),
     );
   }
 

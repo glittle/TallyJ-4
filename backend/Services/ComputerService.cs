@@ -1,7 +1,6 @@
 ﻿using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.DTOs.Computers;
-using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 

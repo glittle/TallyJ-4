@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Results;
+﻿using Backend.Domain.Enumerations;
+using Backend.DTOs.Results;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,8 +41,8 @@ public class ResultsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election to calculate results for.</param>
     /// <param name="electionType">The type of election calculation ("normal" or "singlename").</param>
     /// <returns>The calculated tally results.</returns>
-    [HttpPost("election/{electionGuid:guid}/calculate")]
-    public async Task<ActionResult<TallyResultDto>> CalculateTally(
+    [HttpPost("{electionGuid:guid}/calculate")]
+    public async Task<ActionResult<TallyResultDto>> Calculate(
         Guid electionGuid,
         [FromQuery] string? electionType = "normal")
     {
@@ -81,7 +82,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get results for.</param>
     /// <returns>The tally results for the specified election.</returns>
-    [HttpGet("election/{electionGuid:guid}")]
+    [HttpGet("{electionGuid:guid}/results")]
     public async Task<ActionResult<TallyResultDto>> GetResults(Guid electionGuid)
     {
         try
@@ -106,7 +107,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get statistics for.</param>
     /// <returns>The summary statistics for the specified election.</returns>
-    [HttpGet("election/{electionGuid:guid}/summary")]
+    [HttpGet("{electionGuid:guid}/summary")]
     public async Task<ActionResult<TallyStatisticsDto>> GetSummary(Guid electionGuid)
     {
         try
@@ -131,7 +132,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get final results for.</param>
     /// <returns>The final election results.</returns>
-    [HttpGet("election/{electionGuid:guid}/final")]
+    [HttpGet("{electionGuid:guid}/final")]
     public async Task<ActionResult<TallyResultDto>> GetFinalResults(Guid electionGuid)
     {
         try
@@ -145,10 +146,10 @@ public class ResultsController : ControllerBase
                 CalculatedAt = result.CalculatedAt,
                 Statistics = result.Statistics,
                 Results = result.Results
-                    .Where(r => r.Section == "E" || r.Section == "X")
+                    .Where(r => r.SectionCode == ResultSection.Elected || r.SectionCode == ResultSection.Extra)
                     .ToList(),
                 Ties = result.Ties
-                    .Where(t => t.Section == "E" || t.Section == "X")
+                    .Where(t => t.SectionCode == ResultSection.Elected || t.SectionCode == ResultSection.Extra)
                     .ToList()
             };
 
@@ -205,7 +206,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get monitor info for.</param>
     /// <returns>The monitoring information for the specified election.</returns>
-    [HttpGet("election/{electionGuid:guid}/monitor")]
+    [HttpGet("{electionGuid:guid}/monitor")]
     public async Task<ActionResult<MonitorInfoDto>> GetMonitorInfo(Guid electionGuid)
     {
         try
@@ -259,7 +260,7 @@ public class ResultsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <param name="request">The tie counts request data.</param>
     /// <returns>The response indicating the result of saving tie counts.</returns>
-    [HttpPost("election/{electionGuid:guid}/ties/save")]
+    [HttpPost("{electionGuid:guid}/ties/save")]
     public async Task<ActionResult<SaveTieCountsResponseDto>> SaveTieCounts(Guid electionGuid, [FromBody] SaveTieCountsRequestDto request)
     {
         try
@@ -284,7 +285,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get the report for.</param>
     /// <returns>The complete election report.</returns>
-    [HttpGet("election/{electionGuid:guid}/report")]
+    [HttpGet("{electionGuid:guid}/report")]
     public async Task<ActionResult<ElectionReportDto>> GetElectionReport(Guid electionGuid)
     {
         try
@@ -310,7 +311,7 @@ public class ResultsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <param name="reportCode">The code identifying the specific report.</param>
     /// <returns>The report data for the specified report code.</returns>
-    [HttpGet("election/{electionGuid:guid}/report/{reportCode}")]
+    [HttpGet("{electionGuid:guid}/report/{reportCode}")]
     public async Task<ActionResult<ReportDataResponseDto>> GetReportData(Guid electionGuid, string reportCode)
     {
         try
@@ -337,7 +338,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get presentation data for.</param>
     /// <returns>The presentation data for the specified election.</returns>
-    [HttpGet("election/{electionGuid:guid}/presentation")]
+    [HttpGet("{electionGuid:guid}/presentation")]
     public async Task<ActionResult<PresentationDto>> GetPresentationData(Guid electionGuid)
     {
         try
@@ -362,7 +363,7 @@ public class ResultsController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get detailed statistics for.</param>
     /// <returns>The detailed statistics for the specified election.</returns>
-    [HttpGet("election/{electionGuid:guid}/detailed-statistics")]
+    [HttpGet("{electionGuid:guid}/detailed-statistics")]
     public async Task<ActionResult<DetailedStatisticsDto>> GetDetailedStatistics(Guid electionGuid)
     {
         try

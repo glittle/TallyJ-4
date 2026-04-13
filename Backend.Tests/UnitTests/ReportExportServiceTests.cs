@@ -2,6 +2,7 @@
 using Moq;
 using Backend.DTOs.Results;
 using Backend.Services;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Tests.UnitTests;
 
@@ -33,9 +34,9 @@ public class ReportExportServiceTests : ServiceTestBase
             TotalVotes = 285,
             Elected = new List<CandidateReportDto>
             {
-                new() { Rank = 1, FullName = "John Doe", VoteCount = 95, Section = "A" },
-                new() { Rank = 2, FullName = "Jane Smith", VoteCount = 88, Section = "B" },
-                new() { Rank = 3, FullName = "Bob Johnson", VoteCount = 75, Section = "A" }
+                new() { Rank = 1, FullName = "John Doe", VoteCount = 95, SectionCode = ResultSection.Elected },
+                new() { Rank = 2, FullName = "Jane Smith", VoteCount = 88, SectionCode = ResultSection.Elected },
+                new() { Rank = 3, FullName = "Bob Johnson", VoteCount = 75, SectionCode = ResultSection.Elected }
             }
         };
 
@@ -132,7 +133,7 @@ public class ReportExportServiceTests : ServiceTestBase
             TotalVotes = 285,
             Elected = new List<CandidateReportDto>
             {
-                new() { Rank = 1, FullName = "John Doe", VoteCount = 95, Section = "A" }
+                new() { Rank = 1, FullName = "John Doe", VoteCount = 95, SectionCode = ResultSection.Elected }
             }
         };
 
@@ -278,9 +279,9 @@ public class ReportExportServiceTests : ServiceTestBase
             TotalVotes = 285,
             Elected = new List<CandidateReportDto>
             {
-                new() { Rank = 1, FullName = "John Doe", VoteCount = 95, Section = "A" },
-                new() { Rank = 2, FullName = "Jane Smith", VoteCount = 88, Section = "B" },
-                new() { Rank = 3, FullName = "Bob Johnson", VoteCount = 75, Section = "A" }
+                new() { Rank = 1, FullName = "John Doe", VoteCount = 95, SectionCode = ResultSection.Elected },
+                new() { Rank = 2, FullName = "Jane Smith", VoteCount = 88, SectionCode = ResultSection.Elected },
+                new() { Rank = 3, FullName = "Bob Johnson", VoteCount = 75, SectionCode = ResultSection.Elected }
             }
         };
 
@@ -374,7 +375,7 @@ public class ReportExportServiceTests : ServiceTestBase
             ElectionName = "Test Election",
             Elected = new List<CandidateReportDto>
             {
-                new() { Rank = 1, FullName = "John Doe", VoteCount = 95, Section = "A" }
+                new() { Rank = 1, FullName = "John Doe", VoteCount = 95, SectionCode = ResultSection.Elected }
             }
         };
 

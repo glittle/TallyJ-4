@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
