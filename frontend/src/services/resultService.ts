@@ -11,20 +11,29 @@ import type {
   TieDetailsDto,
 } from "../types";
 import api from "./api";
+import {
+  getApiResultsByElectionGuidResults,
+  getApiResultsByElectionGuidSummary,
+  getApiResultsByElectionGuidMonitor,
+  getApiResultsByElectionGuidReport,
+  getApiResultsByElectionGuidReportByReportCode,
+  getApiResultsByElectionGuidPresentation,
+  getApiResultsByElectionGuidDetailedStatistics,
+  postApiResultsByElectionGuidCalculate,
+  postApiResultsByElectionGuidTiesSave,
+} from "../api/gen/configService/sdk.gen";
 
 export const resultService = {
   async calculateTally(
     electionGuid: string,
     electionType: "normal" | "singlename" = "normal",
   ): Promise<TallyResultDto> {
-    const response = await api.post<TallyResultDto>(
-      `/api/results/${electionGuid}/calculate`,
-      null,
-      {
-        params: { electionType },
-      },
-    );
-    return response.data;
+    const response = await postApiResultsByElectionGuidCalculate({
+      path: { electionGuid },
+      query: { electionType },
+      throwOnError: true,
+    });
+    return response.data as unknown as TallyResultDto;
   },
 
   async calculateNormalElection(electionGuid: string): Promise<TallyResultDto> {
@@ -38,41 +47,46 @@ export const resultService = {
   },
 
   async getResults(electionGuid: string): Promise<TallyResultDto> {
-    const response = await api.get<TallyResultDto>(
-      `/api/results/${electionGuid}`,
-    );
-    return response.data;
+    const response = await getApiResultsByElectionGuidResults({
+      path: { electionGuid },
+      throwOnError: true,
+    });
+    return response.data as unknown as TallyResultDto;
   },
 
   async getStatistics(electionGuid: string): Promise<TallyStatisticsDto> {
-    const response = await api.get<TallyStatisticsDto>(
-      `/api/results/${electionGuid}/summary`,
-    );
-    return response.data;
+    const response = await getApiResultsByElectionGuidSummary({
+      path: { electionGuid },
+      throwOnError: true,
+    });
+    return response.data as unknown as TallyStatisticsDto;
   },
 
   async getMonitorInfo(electionGuid: string): Promise<MonitorInfoDto> {
-    const response = await api.get<MonitorInfoDto>(
-      `/api/results/${electionGuid}/monitor`,
-    );
-    return response.data;
+    const response = await getApiResultsByElectionGuidMonitor({
+      path: { electionGuid },
+      throwOnError: true,
+    });
+    return response.data as unknown as MonitorInfoDto;
   },
 
   async getElectionReport(electionGuid: string): Promise<ElectionReportDto> {
-    const response = await api.get<ElectionReportDto>(
-      `/api/results/${electionGuid}/report`,
-    );
-    return response.data;
+    const response = await getApiResultsByElectionGuidReport({
+      path: { electionGuid },
+      throwOnError: true,
+    });
+    return response.data as unknown as ElectionReportDto;
   },
 
   async getReportData(
     electionGuid: string,
     reportCode: string,
   ): Promise<ReportDataResponseDto> {
-    const response = await api.get<ReportDataResponseDto>(
-      `/api/results/${electionGuid}/report/${reportCode}`,
-    );
-    return response.data;
+    const response = await getApiResultsByElectionGuidReportByReportCode({
+      path: { electionGuid, reportCode },
+      throwOnError: true,
+    });
+    return response.data as unknown as ReportDataResponseDto;
   },
 
   async getTieDetails(electionGuid: string): Promise<TieDetailsDto[]> {
@@ -86,26 +100,29 @@ export const resultService = {
     electionGuid: string,
     request: SaveTieCountsRequestDto,
   ): Promise<SaveTieCountsResponseDto> {
-    const response = await api.post<SaveTieCountsResponseDto>(
-      `/api/results/${electionGuid}/ties/save`,
-      request,
-    );
-    return response.data;
+    const response = await postApiResultsByElectionGuidTiesSave({
+      path: { electionGuid },
+      body: request,
+      throwOnError: true,
+    });
+    return response.data as unknown as SaveTieCountsResponseDto;
   },
 
   async getPresentationData(electionGuid: string): Promise<PresentationDto> {
-    const response = await api.get<PresentationDto>(
-      `/api/results/${electionGuid}/presentation`,
-    );
-    return response.data;
+    const response = await getApiResultsByElectionGuidPresentation({
+      path: { electionGuid },
+      throwOnError: true,
+    });
+    return response.data as unknown as PresentationDto;
   },
 
   async getDetailedStatistics(
     electionGuid: string,
   ): Promise<DetailedStatisticsDto> {
-    const response = await api.get<DetailedStatisticsDto>(
-      `/api/results/${electionGuid}/detailed-statistics`,
-    );
-    return response.data;
+    const response = await getApiResultsByElectionGuidDetailedStatistics({
+      path: { electionGuid },
+      throwOnError: true,
+    });
+    return response.data as unknown as DetailedStatisticsDto;
   },
 };

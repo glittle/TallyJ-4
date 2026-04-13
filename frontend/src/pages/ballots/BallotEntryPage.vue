@@ -96,6 +96,7 @@ async function handleVoteAdded(vote: VoteDto) {
 
     const result: VoteWithBallotStatusDto =
       await ballotStore.createVote(createDto);
+
     const isSpoiled = result.vote.statusCode && result.vote.statusCode !== "ok";
     if (isSpoiled) {
       showWarningMessage(
@@ -128,7 +129,7 @@ function getStatusType(status: string) {
 }
 </script>
 <template>
-  <div class="ballot-entry-page">
+  <div class="ballot-entry-page" :class="{ loading: loading }">
     <el-card>
       <template #header>
         <div class="card-header">
@@ -139,11 +140,7 @@ function getStatusType(status: string) {
         </div>
       </template>
 
-      <div v-if="loading" class="loading-container">
-        <el-skeleton :rows="5" animated />
-      </div>
-
-      <div v-else-if="ballot && election">
+      <div v-if="ballot && election">
         <div class="ballot-info">
           <el-descriptions :column="2" border>
             <el-descriptions-item :label="$t('ballots.location')">
@@ -184,6 +181,10 @@ function getStatusType(status: string) {
 .ballot-entry-page {
   max-width: var(--normal-max-width);
   margin: 0 auto;
+
+  &.loading {
+    background-color: var(--color-warning-50);
+  }
 
   .card-header {
     display: flex;

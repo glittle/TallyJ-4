@@ -2406,6 +2406,27 @@ export type GetApiBallotsByElectionGuidBallotsResponses = {
 
 export type GetApiBallotsByElectionGuidBallotsResponse = GetApiBallotsByElectionGuidBallotsResponses[keyof GetApiBallotsByElectionGuidBallotsResponses];
 
+export type GetApiBallotsByLocationGuidByLocationData = {
+    body?: never;
+    path: {
+        locationGuid: string;
+    };
+    query?: {
+        pageNumber?: number;
+        pageSize?: number;
+    };
+    url: '/api/Ballots/{locationGuid}/byLocation';
+};
+
+export type GetApiBallotsByLocationGuidByLocationResponses = {
+    /**
+     * OK
+     */
+    200: PaginatedResponseBallotDto;
+};
+
+export type GetApiBallotsByLocationGuidByLocationResponse = GetApiBallotsByLocationGuidByLocationResponses[keyof GetApiBallotsByLocationGuidByLocationResponses];
+
 export type GetApiBallotsByGuidBallotData = {
     body?: never;
     path: {

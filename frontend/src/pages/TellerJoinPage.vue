@@ -5,7 +5,7 @@ import type { FormInstance, FormRules } from "element-plus";
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import api from "../services/api";
+import { getApiPublicElections } from "../api/gen/configService/sdk.gen";
 import { useAuthStore } from "../stores/authStore";
 
 interface AvailableElection {
@@ -52,10 +52,11 @@ const rules: FormRules = {
 async function fetchAvailableElections() {
   loadingElections.value = true;
   try {
-    const response = await api.get<{ data: AvailableElection[] }>(
-      "/api/public/elections",
-    );
-    elections.value = response.data?.data ?? [];
+    const response = await getApiPublicElections({
+      throwOnError: true,
+    });
+    elections.value =
+      (response.data as unknown as { data: AvailableElection[] }).data ?? [];
   } catch (error) {
     console.error("Failed to fetch elections:", error);
   } finally {

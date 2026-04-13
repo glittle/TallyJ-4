@@ -1094,6 +1094,64 @@
         }
       }
     },
+    "/api/Ballots/{locationGuid}/byLocation": {
+      "get": {
+        "tags": [
+          "Ballots"
+        ],
+        "parameters": [
+          {
+            "name": "locationGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponseBallotDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponseBallotDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponseBallotDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Ballots/{guid}/ballot": {
       "get": {
         "tags": [

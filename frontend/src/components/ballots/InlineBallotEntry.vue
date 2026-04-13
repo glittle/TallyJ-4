@@ -49,7 +49,7 @@ watch(
     }
     votes.value = voteArray;
   },
-  { immediate: true },
+  { immediate: true, deep: true },
 );
 
 const duplicatePersonGuids = computed(() => {
@@ -100,8 +100,8 @@ async function handlePersonSelected(person: SearchablePersonDto) {
 
   emit("vote-added", vote);
 
-  searchQuery.value = "";
-  selectedSearchIndex.value = 0;
+  // searchQuery.value = "";
+  // selectedSearchIndex.value = 0;
 
   await nextTick();
   searchInputRef.value?.focus();

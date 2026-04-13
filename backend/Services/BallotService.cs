@@ -1,6 +1,7 @@
 ﻿using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
+using Backend.Domain.Helpers;
 using Backend.DTOs.Ballots;
 using Backend.DTOs.Votes;
 using Backend.Models;
@@ -44,6 +45,36 @@ public class BallotService : IBallotService
     {
         var query = _context.Ballots
             .Where(b => b.Location.ElectionGuid == electionGuid)
+            .Include(b => b.Location)
+            .Include(b => b.Votes)
+                .ThenInclude(v => v.Person)
+            .AsQueryable();
+
+        var totalCount = await query.CountAsync();
+
+        var ballots = await query
+            .OrderBy(b => b.ComputerCode)
+            .ThenBy(b => b.BallotNumAtComputer)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var ballotDtos = ballots.Select(b => MapToBallotDto(b)).ToList();
+
+        return PaginatedResponse<BallotDto>.Create(ballotDtos, pageNumber, pageSize, totalCount);
+    }
+
+    /// <summary>
+    /// Retrieves a paginated list of ballots for a specific location.
+    /// </summary>
+    /// <param name="locationGuid">The unique identifier of the location.</param>
+    /// <param name="pageNumber">The page number to retrieve (1-based). Default is 1.</param>
+    /// <param name="pageSize">The number of ballots per page. Default is 50.</param>
+    /// <returns>A paginated response containing ballot DTOs with their associated votes and location information.</returns>
+    public async Task<PaginatedResponse<BallotDto>> GetBallotsByLocationAsync(Guid locationGuid, int pageNumber = 1, int pageSize = 50)
+    {
+        var query = _context.Ballots
+            .Where(b => b.LocationGuid == locationGuid)
             .Include(b => b.Location)
             .Include(b => b.Votes)
                 .ThenInclude(v => v.Person)
@@ -205,7 +236,7 @@ public class BallotService : IBallotService
         dto.Votes = ballot.Votes.Select(v =>
         {
             var voteDto = _mapper.Map<VoteDto>(v);
-            voteDto.PersonFullName = v.Person?.FullName;
+            voteDto.PersonFullName = v.Person?.FullName ?? PersonNameHelper.ComputeFullName(v.Person);
             return voteDto;
         }).ToList();
 
