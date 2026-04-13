@@ -79,16 +79,6 @@ const currentElectionGuid = computed(() => {
   return null;
 });
 
-// Get selected location details
-const _selectedLocation = computed(() => {
-  if (!locationStore.selectedLocationGuid) {
-    return null;
-  }
-  return locationStore.locations.find(
-    (loc) => loc.locationGuid === locationStore.selectedLocationGuid,
-  );
-});
-
 // Load locations when election is available
 watch(
   currentElectionGuid,

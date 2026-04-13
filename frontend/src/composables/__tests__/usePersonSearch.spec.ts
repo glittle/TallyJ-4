@@ -46,8 +46,8 @@ describe("usePersonSearch", () => {
       const { searchResults } = usePersonSearch(searchQuery, candidates);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
-      expect(searchResults.value[0].firstName).toBe("John");
-      expect(searchResults.value[0].lastName).toBe("Doe");
+      expect(searchResults.value[0]!.firstName).toBe("John");
+      expect(searchResults.value[0]!.lastName).toBe("Doe");
     });
 
     it("should match case-insensitively", () => {
@@ -56,7 +56,7 @@ describe("usePersonSearch", () => {
       const { searchResults } = usePersonSearch(searchQuery, candidates);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
-      expect(searchResults.value[0].firstName).toBe("John");
+      expect(searchResults.value[0]!.firstName).toBe("John");
     });
   });
 
@@ -77,7 +77,7 @@ describe("usePersonSearch", () => {
       const { searchResults } = usePersonSearch(searchQuery, candidates);
 
       expect(searchResults.value).toHaveLength(1);
-      expect(searchResults.value[0].firstName).toBe("Charlie");
+      expect(searchResults.value[0]!.firstName).toBe("Charlie");
     });
   });
 
@@ -100,7 +100,7 @@ describe("usePersonSearch", () => {
       const { searchResults } = usePersonSearch(searchQuery, candidates);
 
       expect(searchResults.value).toHaveLength(1);
-      expect(searchResults.value[0].lastName).toBe("Williams");
+      expect(searchResults.value[0]!.lastName).toBe("Williams");
     });
   });
 
@@ -116,7 +116,7 @@ describe("usePersonSearch", () => {
       );
 
       expect(searchResults.value).toHaveLength(1);
-      expect(searchResults.value[0].firstName).toBe("Robert");
+      expect(searchResults.value[0]!.firstName).toBe("Robert");
     });
 
     it("should match against otherLastNames field", () => {
@@ -130,7 +130,7 @@ describe("usePersonSearch", () => {
       );
 
       expect(searchResults.value).toHaveLength(1);
-      expect(searchResults.value[0].firstName).toBe("Jane");
+      expect(searchResults.value[0]!.firstName).toBe("Jane");
     });
   });
 
@@ -193,7 +193,7 @@ describe("usePersonSearch", () => {
       );
 
       expect(searchResults.value.length).toBeGreaterThan(0);
-      expect(searchResults.value[0].lastName).toBe("Smith");
+      expect(searchResults.value[0]!.lastName).toBe("Smith");
     });
 
     it("should NOT activate fuzzy match for queries < 3 characters", () => {
@@ -238,8 +238,8 @@ describe("usePersonSearch", () => {
       );
 
       expect(searchResults.value.length).toBeGreaterThan(0);
-      expect(searchResults.value[0].firstName).toBe("John");
-      expect(searchResults.value[0].lastName).toBe("Doe");
+      expect(searchResults.value[0]!.firstName).toBe("John");
+      expect(searchResults.value[0]!.lastName).toBe("Doe");
     });
 
     it("should break ties by lastName alphabetically", () => {
@@ -255,9 +255,9 @@ describe("usePersonSearch", () => {
       );
 
       expect(searchResults.value).toHaveLength(3);
-      expect(searchResults.value[0].lastName).toBe("Apple");
-      expect(searchResults.value[1].lastName).toBe("Mango");
-      expect(searchResults.value[2].lastName).toBe("Zebra");
+      expect(searchResults.value[0]!.lastName).toBe("Apple");
+      expect(searchResults.value[1]!.lastName).toBe("Mango");
+      expect(searchResults.value[2]!.lastName).toBe("Zebra");
     });
 
     it("should sort results by voteCount descending as primary key", () => {
@@ -294,9 +294,9 @@ describe("usePersonSearch", () => {
       );
 
       expect(searchResults.value).toHaveLength(3);
-      expect(searchResults.value[0].firstName).toBe("Bob");
-      expect(searchResults.value[1].firstName).toBe("Carol");
-      expect(searchResults.value[2].firstName).toBe("Alice");
+      expect(searchResults.value[0]!.firstName).toBe("Bob");
+      expect(searchResults.value[1]!.firstName).toBe("Carol");
+      expect(searchResults.value[2]!.firstName).toBe("Alice");
     });
 
     it("should use weight as secondary sort when voteCount is equal", () => {
@@ -325,8 +325,8 @@ describe("usePersonSearch", () => {
       );
 
       expect(searchResults.value.length).toBeGreaterThan(0);
-      expect(searchResults.value[0].firstName).toBe("John");
-      expect(searchResults.value[0].lastName).toBe("Doe");
+      expect(searchResults.value[0]!.firstName).toBe("John");
+      expect(searchResults.value[0]!.lastName).toBe("Doe");
     });
 
     it("should break lastName ties by firstName alphabetically", () => {
@@ -342,9 +342,9 @@ describe("usePersonSearch", () => {
       );
 
       expect(searchResults.value).toHaveLength(3);
-      expect(searchResults.value[0].firstName).toBe("Alice");
-      expect(searchResults.value[1].firstName).toBe("Bob");
-      expect(searchResults.value[2].firstName).toBe("Zoe");
+      expect(searchResults.value[0]!.firstName).toBe("Alice");
+      expect(searchResults.value[1]!.firstName).toBe("Bob");
+      expect(searchResults.value[2]!.firstName).toBe("Zoe");
     });
   });
 
@@ -528,7 +528,7 @@ describe("usePersonSearch", () => {
       searchQuery.value = "Jane";
       const newResults = searchResults.value;
       expect(newResults.length).toBeGreaterThan(0);
-      expect(newResults[0].firstName).toBe("Jane");
+      expect(newResults[0]!.firstName).toBe("Jane");
     });
 
     it("should allow manual cache clearing", () => {
@@ -555,7 +555,7 @@ describe("usePersonSearch", () => {
       });
 
       expect(searchResults.value.length).toBeGreaterThan(0);
-      expect(searchResults.value[0].firstName).toBe("John");
+      expect(searchResults.value[0]!.firstName).toBe("John");
     });
   });
 
@@ -566,12 +566,12 @@ describe("usePersonSearch", () => {
       const { searchResults } = usePersonSearch(searchQuery, candidates);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
-      expect(searchResults.value[0].firstName).toBe("John");
+      expect(searchResults.value[0]!.firstName).toBe("John");
 
       searchQuery.value = "Jane";
 
       expect(searchResults.value.length).toBeGreaterThan(0);
-      expect(searchResults.value[0].firstName).toBe("Jane");
+      expect(searchResults.value[0]!.firstName).toBe("Jane");
     });
 
     it("should update results when candidates list changes", () => {

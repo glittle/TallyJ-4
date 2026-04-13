@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { nextTick } from "vue";
 import InlineBallotEntry from "../InlineBallotEntry.vue";
-import VoteEntryRow from "../VoteEntryRow.vue";
 import type { BallotDto } from "@/types/Ballot";
 import type { VoteDto } from "@/types/Vote";
 import type { SearchablePersonDto } from "@/types/Person";
@@ -133,7 +132,6 @@ const VoteEntryRowStub = {
 const defaultMountOptions = {
   global: {
     components: {
-      VoteEntryRow,
       ElButton,
       ElSkeleton,
       ElAlert,
@@ -152,7 +150,6 @@ const defaultMountOptions = {
 const unstubMountOptions = {
   global: {
     components: {
-      VoteEntryRow,
       ElButton,
       ElSkeleton,
       ElAlert,
@@ -161,6 +158,9 @@ const unstubMountOptions = {
     },
     mocks: {
       $t: mockT,
+    },
+    stubs: {
+      VoteEntryRow: VoteEntryRowStub,
     },
   },
 };
@@ -299,17 +299,19 @@ describe("InlineBallotEntry", () => {
     it("should display vote status correctly", async () => {
       const votes: VoteDto[] = [
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
+          personGuid: mockCandidates[0]!.personGuid,
+          personFullName: mockCandidates[0]!.fullName,
           statusCode: "Ok",
         },
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 2,
-          personGuid: mockCandidates[1].personGuid,
-          personFullName: mockCandidates[1].fullName,
+          personGuid: mockCandidates[1]!.personGuid,
+          personFullName: mockCandidates[1]!.fullName,
           statusCode: "Ok",
         },
       ];
@@ -365,12 +367,13 @@ describe("InlineBallotEntry", () => {
 
       await flushPromises();
 
-      const voteRow = wrapper.findComponent(VoteEntryRow);
+      const voteRow = wrapper.findComponent(VoteEntryRowStub);
       const vote: VoteDto = {
+        rowId: 0,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockCandidates[0]!.personGuid,
+        personFullName: mockCandidates[0]!.fullName,
         statusCode: "Ok",
       };
 
@@ -379,7 +382,7 @@ describe("InlineBallotEntry", () => {
 
       expect(wrapper.emitted("vote-added")).toBeTruthy();
       const emittedEvents = wrapper.emitted("vote-added") as any[];
-      expect(emittedEvents[0][0]).toMatchObject(vote);
+      expect(emittedEvents[0]![0]).toMatchObject(vote);
     });
 
     it("should emit vote-removed when a vote is cleared", async () => {
@@ -396,7 +399,7 @@ describe("InlineBallotEntry", () => {
 
       await flushPromises();
 
-      const voteRow = wrapper.findComponent(VoteEntryRow);
+      const voteRow = wrapper.findComponent(VoteEntryRowStub);
       await voteRow.vm.$emit("vote-cleared", 1);
       await nextTick();
 
@@ -419,28 +422,30 @@ describe("InlineBallotEntry", () => {
 
       await flushPromises();
 
-      const voteRows = wrapper.findAllComponents(VoteEntryRow);
+      const voteRows = wrapper.findAllComponents(VoteEntryRowStub);
 
       const vote1: VoteDto = {
+        rowId: 0,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockCandidates[0]!.personGuid,
+        personFullName: mockCandidates[0]!.fullName,
         statusCode: "Ok",
       };
 
       const vote2: VoteDto = {
+        rowId: 0,
         ballotGuid: "ballot-123",
         positionOnBallot: 2,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockCandidates[0]!.personGuid,
+        personFullName: mockCandidates[0]!.fullName,
         statusCode: "Ok",
       };
 
-      await voteRows[0].vm.$emit("vote-selected", vote1);
+      await voteRows[0]!.vm.$emit("vote-selected", vote1);
       await nextTick();
 
-      await voteRows[1].vm.$emit("vote-selected", vote2);
+      await voteRows[1]!.vm.$emit("vote-selected", vote2);
       await nextTick();
 
       const { showWarningMessage } = useNotifications();
@@ -452,17 +457,19 @@ describe("InlineBallotEntry", () => {
     it("should clear all votes when Clear All is clicked", async () => {
       const votes: VoteDto[] = [
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
+          personGuid: mockCandidates[0]!.personGuid,
+          personFullName: mockCandidates[0]!.fullName,
           statusCode: "Ok",
         },
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 2,
-          personGuid: mockCandidates[1].personGuid,
-          personFullName: mockCandidates[1].fullName,
+          personGuid: mockCandidates[1]!.personGuid,
+          personFullName: mockCandidates[1]!.fullName,
           statusCode: "Ok",
         },
       ];
@@ -511,10 +518,11 @@ describe("InlineBallotEntry", () => {
     it("should enable Clear All button when votes are entered", async () => {
       const votes: VoteDto[] = [
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
+          personGuid: mockCandidates[0]!.personGuid,
+          personFullName: mockCandidates[0]!.fullName,
           statusCode: "Ok",
         },
       ];
@@ -554,12 +562,13 @@ describe("InlineBallotEntry", () => {
       let statusText = wrapper.find(".inline-ballot-entry__status-text");
       expect(statusText.text()).toContain("0");
 
-      const voteRow = wrapper.findComponent(VoteEntryRow);
+      const voteRow = wrapper.findComponent(VoteEntryRowStub);
       const vote: VoteDto = {
+        rowId: 0,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockCandidates[0]!.personGuid,
+        personFullName: mockCandidates[0]!.fullName,
         statusCode: "Ok",
       };
 
@@ -573,13 +582,15 @@ describe("InlineBallotEntry", () => {
     it("should correctly count only votes with personGuid", async () => {
       const votes: VoteDto[] = [
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
+          personGuid: mockCandidates[0]!.personGuid,
+          personFullName: mockCandidates[0]!.fullName,
           statusCode: "Ok",
         },
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 2,
           statusCode: "Ok",
@@ -607,17 +618,19 @@ describe("InlineBallotEntry", () => {
     it("should detect duplicates across multiple votes", async () => {
       const votes: VoteDto[] = [
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
+          personGuid: mockCandidates[0]!.personGuid,
+          personFullName: mockCandidates[0]!.fullName,
           statusCode: "Ok",
         },
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 3,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
+          personGuid: mockCandidates[0]!.personGuid,
+          personFullName: mockCandidates[0]!.fullName,
           statusCode: "Ok",
         },
       ];
@@ -634,29 +647,31 @@ describe("InlineBallotEntry", () => {
 
       await flushPromises();
 
-      const voteRows = wrapper.findAllComponents(VoteEntryRow);
-      expect(voteRows[0].props("duplicatePersonGuids")).toContain(
-        mockCandidates[0].personGuid,
+      const voteRows = wrapper.findAllComponents(VoteEntryRowStub);
+      expect(voteRows[0]!.props("duplicatePersonGuids")).toContain(
+        mockCandidates[0]!.personGuid,
       );
-      expect(voteRows[2].props("duplicatePersonGuids")).toContain(
-        mockCandidates[0].personGuid,
+      expect(voteRows[2]!.props("duplicatePersonGuids")).toContain(
+        mockCandidates[0]!.personGuid,
       );
     });
 
     it("should not mark non-duplicate votes as duplicates", async () => {
       const votes: VoteDto[] = [
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
+          personGuid: mockCandidates[0]!.personGuid,
+          personFullName: mockCandidates[0]!.fullName,
           statusCode: "Ok",
         },
         {
+          rowId: 0,
           ballotGuid: "ballot-123",
           positionOnBallot: 2,
-          personGuid: mockCandidates[1].personGuid,
-          personFullName: mockCandidates[1].fullName,
+          personGuid: mockCandidates[1]!.personGuid,
+          personFullName: mockCandidates[1]!.fullName,
           statusCode: "Ok",
         },
       ];
@@ -673,9 +688,9 @@ describe("InlineBallotEntry", () => {
 
       await flushPromises();
 
-      const voteRows = wrapper.findAllComponents(VoteEntryRow);
-      expect(voteRows[0].props("duplicatePersonGuids")).toEqual([]);
-      expect(voteRows[1].props("duplicatePersonGuids")).toEqual([]);
+      const voteRows = wrapper.findAllComponents(VoteEntryRowStub);
+      expect(voteRows[0]!.props("duplicatePersonGuids")).toEqual([]);
+      expect(voteRows[1]!.props("duplicatePersonGuids")).toEqual([]);
     });
   });
 });

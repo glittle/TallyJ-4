@@ -150,10 +150,10 @@ const fetchAuthConfig = async () => {
   }
   try {
     const resp = await getApiPublicAuthConfig();
-    if (!resp.ok) {
+    if (resp.error) {
       return null;
     }
-    const json = await resp.json();
+    const json = resp.data as any;
     authConfig.value = json?.data ?? null;
     telegramBotUsername.value = authConfig.value?.telegramBotUsername ?? null;
     telegramReady.value = Boolean(authConfig.value?.telegramBotUsername);
@@ -262,7 +262,10 @@ const handleGoogleCredentialCallback = async (
 
 const loadGisScript = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (gisScriptLoaded.value || typeof google !== "undefined") {
+    if (
+      gisScriptLoaded.value ||
+      typeof (window as any).google !== "undefined"
+    ) {
       gisScriptLoaded.value = true;
       resolve();
       return;

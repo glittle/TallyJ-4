@@ -48,14 +48,14 @@ const columns = computed<Column<any>[]>(() => {
       width: 55,
       cellRenderer: ({ rowData }) => {
         const isSelected = selectedPeople.value.some(
-          (p) => p.id === rowData.id,
+          (p) => p.personGuid === rowData.personGuid,
         );
-        const onChange = (value: boolean) => {
+        const onChange = (value: boolean | string | number) => {
           if (value) {
             selectedPeople.value = [...selectedPeople.value, rowData];
           } else {
             selectedPeople.value = selectedPeople.value.filter(
-              (p) => p.id !== rowData.id,
+              (p) => p.personGuid !== rowData.personGuid,
             );
           }
           emit("selectionChange", selectedPeople.value);
@@ -70,7 +70,7 @@ const columns = computed<Column<any>[]>(() => {
           props.people.length > 0 &&
           selectedPeople.value.length === props.people.length;
         const containsChecked = selectedPeople.value.length > 0;
-        const onChange = (value: boolean) => {
+        const onChange = (value: boolean | string | number) => {
           if (value) {
             selectedPeople.value = [...props.people];
           } else {

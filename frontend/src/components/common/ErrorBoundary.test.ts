@@ -23,7 +23,7 @@ describe("ErrorBoundary", () => {
   beforeEach(() => {
     router = createRouter({
       history: createWebHistory(),
-      routes: [{ path: "/", name: "Home" }],
+      routes: [{ path: "/", name: "Home", component: { template: "<div />" } }],
     });
   });
 
@@ -151,7 +151,7 @@ describe("ErrorBoundary", () => {
     // Find and click go home button (second button)
     const buttons = wrapper.findAll("button");
     if (buttons.length > 1) {
-      await buttons[1].trigger("click");
+      await buttons[1]!.trigger("click");
       expect(mockRouterPush).toHaveBeenCalledWith("/");
     }
   });

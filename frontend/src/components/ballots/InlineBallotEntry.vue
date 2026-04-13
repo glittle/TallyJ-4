@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from "vue";
-import { useI18n } from "vue-i18n";
 import { useNotifications } from "@/composables/useNotifications";
-import { usePeopleStore } from "@/stores/peopleStore";
 import { usePersonSearch } from "@/composables/usePersonSearch";
+import { usePeopleStore } from "@/stores/peopleStore";
 import type { BallotDto } from "@/types/Ballot";
-import type { VoteDto } from "@/types/Vote";
 import type { SearchablePersonDto } from "@/types/Person";
+import type { VoteDto } from "@/types/Vote";
 import { Delete, WarningFilled } from "@element-plus/icons-vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
   electionGuid: string;
@@ -127,7 +127,7 @@ function handleKeyDown(e: KeyboardEvent) {
       selectedSearchIndex.value >= 0 &&
       selectedSearchIndex.value < searchResults.value.length
     ) {
-      handlePersonSelected(searchResults.value[selectedSearchIndex.value]);
+      handlePersonSelected(searchResults.value[selectedSearchIndex.value]!);
     }
   } else if (e.key === "Escape") {
     e.preventDefault();
@@ -192,7 +192,9 @@ onMounted(async () => {
       <!-- Left Panel: Search -->
       <div class="search-panel">
         <div class="search-panel-header">
-          <h4>{{ $t("ballots.searchPerson", "Search for a person:") }}</h4>
+          <h4>
+            {{ $t("ballots.searchPerson", "Search for a person:") }}
+          </h4>
         </div>
         <div class="search-input-wrapper">
           <el-input
@@ -251,7 +253,9 @@ onMounted(async () => {
       <!-- Right Panel: Votes -->
       <div class="votes-panel">
         <div class="votes-panel-header">
-          <h4>{{ $t("ballots.namesOnBallot", "Names on the ballot") }}</h4>
+          <h4>
+            {{ $t("voting.ballot.namesOnBallot", "Names on the ballot") }}
+          </h4>
           <span class="ballot-id">{{
             $t("ballots.ballotNum", { code: ballot.ballotCode })
           }}</span>

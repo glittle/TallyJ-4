@@ -30,24 +30,24 @@ export function calculateLevenshteinDistance(a: string, b: string): number {
   }
 
   for (let j = 0; j <= a.length; j++) {
-    matrix[0][j] = j;
+    matrix[0]![j] = j;
   }
 
   for (let i = 1; i <= b.length; i++) {
     for (let j = 1; j <= a.length; j++) {
       if (b.charAt(i - 1) === a.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
+        matrix[i]![j] = matrix[i - 1]![j - 1]!;
       } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1,
+        matrix[i]![j] = Math.min(
+          matrix[i - 1]![j - 1]! + 1,
+          matrix[i]![j - 1]! + 1,
+          matrix[i - 1]![j]! + 1,
         );
       }
     }
   }
 
-  return matrix[b.length][a.length];
+  return matrix[b.length]![a.length]!;
 }
 
 export function compareSoundexCodes(
@@ -261,7 +261,7 @@ function generateSoundex(word: string): string {
     return "";
   }
 
-  const firstLetter = cleaned[0];
+  const firstLetter = cleaned.charAt(0);
 
   const soundexMap: Record<string, string> = {
     B: "1",
@@ -285,10 +285,10 @@ function generateSoundex(word: string): string {
   };
 
   let code = firstLetter;
-  let prevCode = soundexMap[firstLetter] || "";
+  let prevCode = soundexMap[firstLetter] ?? "";
 
   for (let i = 1; i < cleaned.length && code.length < 4; i++) {
-    const char = cleaned[i];
+    const char = cleaned.charAt(i);
     const currentCode = soundexMap[char];
 
     if (currentCode && currentCode !== prevCode) {

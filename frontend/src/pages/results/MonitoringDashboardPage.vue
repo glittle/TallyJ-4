@@ -289,7 +289,7 @@ async function refreshData() {
 
 function startAutoRefresh() {
   // Refresh every 30 seconds
-  refreshInterval.value = setInterval(() => {
+  refreshInterval.value = window.setInterval(() => {
     loadData();
   }, 30000);
 }

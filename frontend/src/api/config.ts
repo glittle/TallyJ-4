@@ -38,7 +38,7 @@ export function initApiClient() {
       redirectingFor401 = true;
       tokenRefreshService.stopAutoRefresh();
       secureTokenService.clearAuthData();
-      const { t } = i18n.global;
+      const t = (i18n.global as any).t as (key: string) => string;
       showWarningMessage(t("error.sessionExpired"));
       router.push("/");
       setTimeout(() => {

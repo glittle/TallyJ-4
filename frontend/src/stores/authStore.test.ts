@@ -65,14 +65,14 @@ describe("Auth Store", () => {
     it("should initialize with null values when cookies are empty", async () => {
       const { secureTokenService } =
         await import("../services/secureTokenService");
-      secureTokenService.getAuthData.mockReturnValue({
+      vi.mocked(secureTokenService.getAuthData).mockReturnValue({
         token: null,
         refreshToken: null,
         email: null,
         name: null,
         authMethod: null,
       });
-      secureTokenService.isAuthenticated.mockReturnValue(false);
+      vi.mocked(secureTokenService.isAuthenticated).mockReturnValue(false);
 
       authStore = useAuthStore();
 
@@ -87,14 +87,14 @@ describe("Auth Store", () => {
     it("should initialize with cookie values when cookies exist", async () => {
       const { secureTokenService } =
         await import("../services/secureTokenService");
-      secureTokenService.getAuthData.mockReturnValue({
+      vi.mocked(secureTokenService.getAuthData).mockReturnValue({
         token: null, // httpOnly, can't read
         refreshToken: null, // httpOnly, can't read
         email: "stored@example.com",
         name: "Stored User",
         authMethod: "Local",
       });
-      secureTokenService.isAuthenticated.mockReturnValue(true);
+      vi.mocked(secureTokenService.isAuthenticated).mockReturnValue(true);
 
       const freshStore = useAuthStore();
       expect(freshStore.email).toBe("stored@example.com");
@@ -117,8 +117,10 @@ describe("Auth Store", () => {
         requires2FA: false,
       };
 
-      authService.register.mockResolvedValue(mockResponse);
-      secureTokenService.refreshAuthData.mockReturnValue({
+      vi.mocked(authService.register).mockResolvedValue(mockResponse);
+      vi.mocked(secureTokenService.refreshAuthData).mockReturnValue({
+        token: null,
+        refreshToken: null,
         email: "test@example.com",
         name: "Test User",
         authMethod: "Local",
@@ -128,6 +130,7 @@ describe("Auth Store", () => {
 
       const registerData = {
         username: "testuser",
+        displayName: "Test User",
         email: "test@example.com",
         password: "password123",
         confirmPassword: "password123",
@@ -151,7 +154,7 @@ describe("Auth Store", () => {
         await import("../services/secureTokenService");
 
       // Reset to null values for this test
-      secureTokenService.getAuthData.mockReturnValue({
+      vi.mocked(secureTokenService.getAuthData).mockReturnValue({
         token: null,
         refreshToken: null,
         email: null,
@@ -164,11 +167,12 @@ describe("Auth Store", () => {
         requires2FA: true,
       };
 
-      authService.register.mockResolvedValue(mockResponse);
+      vi.mocked(authService.register).mockResolvedValue(mockResponse);
       authStore = useAuthStore();
 
       const registerData = {
         username: "testuser",
+        displayName: "Test User",
         email: "test@example.com",
         password: "password123",
         confirmPassword: "password123",
@@ -185,11 +189,12 @@ describe("Auth Store", () => {
     it("should handle registration errors", async () => {
       const { authService } = await import("../services/authService");
       const mockError = new Error("Registration failed");
-      authService.register.mockRejectedValue(mockError);
+      vi.mocked(authService.register).mockRejectedValue(mockError);
       authStore = useAuthStore();
 
       const registerData = {
         username: "testuser",
+        displayName: "Test User",
         email: "test@example.com",
         password: "password123",
         confirmPassword: "password123",
@@ -214,8 +219,10 @@ describe("Auth Store", () => {
         requires2FA: false,
       };
 
-      authService.login.mockResolvedValue(mockResponse);
-      secureTokenService.refreshAuthData.mockReturnValue({
+      vi.mocked(authService.login).mockResolvedValue(mockResponse);
+      vi.mocked(secureTokenService.refreshAuthData).mockReturnValue({
+        token: null,
+        refreshToken: null,
         email: "login@example.com",
         name: "Login User",
         authMethod: "Local",
@@ -246,7 +253,7 @@ describe("Auth Store", () => {
         await import("../services/secureTokenService");
 
       // Reset to null values for this test
-      secureTokenService.getAuthData.mockReturnValue({
+      vi.mocked(secureTokenService.getAuthData).mockReturnValue({
         token: null,
         refreshToken: null,
         email: null,
@@ -259,7 +266,7 @@ describe("Auth Store", () => {
         requires2FA: true,
       };
 
-      authService.login.mockResolvedValue(mockResponse);
+      vi.mocked(authService.login).mockResolvedValue(mockResponse);
       authStore = useAuthStore();
 
       const loginData = {
@@ -278,7 +285,7 @@ describe("Auth Store", () => {
     it("should handle login errors", async () => {
       const { authService } = await import("../services/authService");
       const mockError = new Error("Login failed");
-      authService.login.mockRejectedValue(mockError);
+      vi.mocked(authService.login).mockRejectedValue(mockError);
       authStore = useAuthStore();
 
       const loginData = {
@@ -296,9 +303,9 @@ describe("Auth Store", () => {
       const { secureTokenService } =
         await import("../services/secureTokenService");
 
-      authService.logout.mockResolvedValue(undefined);
-      secureTokenService.clearAuthData.mockImplementation(() => {});
-      secureTokenService.isAuthenticated.mockReturnValue(false);
+      vi.mocked(authService.logout).mockResolvedValue(undefined);
+      vi.mocked(secureTokenService.clearAuthData).mockImplementation(() => {});
+      vi.mocked(secureTokenService.isAuthenticated).mockReturnValue(false);
 
       authStore = useAuthStore();
       // Set up initial state
@@ -325,7 +332,7 @@ describe("Auth Store", () => {
     it("should return true for isAuthenticated when user has cookies", async () => {
       const { secureTokenService } =
         await import("../services/secureTokenService");
-      secureTokenService.isAuthenticated.mockReturnValue(true);
+      vi.mocked(secureTokenService.isAuthenticated).mockReturnValue(true);
 
       authStore = useAuthStore();
       expect(authStore.isAuthenticated).toBe(true);
@@ -334,7 +341,7 @@ describe("Auth Store", () => {
     it("should return false for isAuthenticated when user has no cookies", async () => {
       const { secureTokenService } =
         await import("../services/secureTokenService");
-      secureTokenService.isAuthenticated.mockReturnValue(false);
+      vi.mocked(secureTokenService.isAuthenticated).mockReturnValue(false);
 
       authStore = useAuthStore();
       expect(authStore.isAuthenticated).toBe(false);

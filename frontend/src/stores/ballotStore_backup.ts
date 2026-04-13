@@ -117,7 +117,7 @@ export const useBallotStore = defineStore("ballot", () => {
       const vote = await voteService.create(dto);
 
       if (currentBallot.value?.ballotGuid === dto.ballotGuid) {
-        currentBallot.value.votes.push(vote);
+        currentBallot.value.votes.push(vote.vote);
         currentBallot.value.voteCount = currentBallot.value.votes.length;
       }
 

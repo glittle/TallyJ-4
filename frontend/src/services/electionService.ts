@@ -1,4 +1,3 @@
-import { getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
 import type {
   CreateElectionDto,
   ElectionDto,
@@ -8,8 +7,8 @@ import type {
 } from "../types";
 import {
   deleteApiElectionsByGuidDeleteElection,
-  getApiElectionsByGuidElection,
-  getApiElectionsByGuidElectionSummary,
+  getApiElectionsByGuidElectionDetails,
+  getApiElectionsGetMyElections,
   getApiImportExportElectionToJsonByElectionGuid,
   postApiElectionsCreateElection,
   postApiImportImportCdnBallotsByElectionGuid,
@@ -17,6 +16,10 @@ import {
   postApiImportImportTallyJv3Election,
   putApiElectionsByGuidUpdateElection,
 } from "./../api/gen/configService/sdk.gen";
+import type {
+  ElectionModeCode,
+  ElectionTypeCode,
+} from "./../api/gen/configService/types.gen";
 import { cacheService } from "./cacheService";
 
 const convertStringToDate = (dateString?: string): Date | null => {
@@ -29,7 +32,7 @@ const convertDateToString = (date?: Date | null): string | undefined => {
 
 export const electionService = {
   async getAll(): Promise<ElectionSummaryDto[]> {
-    const response = await getApiElectionsGetElections();
+    const response = await getApiElectionsGetMyElections();
     return (
       response.data?.items?.map((item) => ({
         ...item,
@@ -45,23 +48,18 @@ export const electionService = {
   },
 
   async getById(electionGuid: string): Promise<ElectionDto> {
-    const response = await getApiElectionsByGuidElection({
+    const response = await getApiElectionsByGuidElectionDetails({
       path: { guid: electionGuid },
     });
     return response.data?.data as ElectionDto;
-  },
-
-  async getSummaries(): Promise<ElectionSummaryDto[]> {
-    const response = await getApiElectionsByGuidElectionSummary({
-      path: { guid: "" },
-    });
-    return (response.data?.data?.items ?? []) as ElectionSummaryDto[];
   },
 
   async create(dto: CreateElectionDto): Promise<ElectionDto> {
     const response = await postApiElectionsCreateElection({
       body: {
         ...dto,
+        electionType: dto.electionType as ElectionTypeCode | undefined,
+        electionMode: dto.electionMode as ElectionModeCode | undefined,
         dateOfElection: convertStringToDate(dto.dateOfElection),
         onlineAnnounced: convertStringToDate(dto.onlineAnnounced),
       },
@@ -86,6 +84,8 @@ export const electionService = {
       path: { guid: electionGuid },
       body: {
         ...dto,
+        electionType: dto.electionType as ElectionTypeCode | undefined,
+        electionMode: dto.electionMode as ElectionModeCode | undefined,
         dateOfElection: convertStringToDate(dto.dateOfElection),
         onlineWhenOpen: convertStringToDate(dto.onlineWhenOpen),
         onlineWhenClose: convertStringToDate(dto.onlineWhenClose),
@@ -126,17 +126,12 @@ export const electionService = {
   },
 
   async exportElectionToJson(electionGuid: string): Promise<Blob> {
-    const blob = await getApiImportExportElectionToJsonByElectionGuid(
-      {
-        path: { electionGuid },
-      },
-      {
-        parseAs: "blob",
-        responseStyle: "data",
-      },
-    );
+    const response = await getApiImportExportElectionToJsonByElectionGuid({
+      path: { electionGuid },
+      parseAs: "blob",
+    });
 
-    return blob;
+    return response.data as unknown as Blob;
   },
 
   async importElectionFromFile(file: File): Promise<ElectionDto> {
@@ -144,7 +139,7 @@ export const electionService = {
       body: { file },
     });
 
-    return response.data.election;
+    return (response.data as any).election as ElectionDto;
   },
 
   async importTallyJv3ElectionFromFile(file: File): Promise<ElectionDto> {
@@ -152,7 +147,7 @@ export const electionService = {
       body: { file },
     });
 
-    return response.data.election;
+    return (response.data as any).election as ElectionDto;
   },
 
   async importCdnBallots(
@@ -164,7 +159,7 @@ export const electionService = {
       body: { file },
     });
 
-    return response.data;
+    return response.data as unknown as ImportResultDto;
   },
 
   // async getCurrentElection(): Promise<ElectionDto | null> {

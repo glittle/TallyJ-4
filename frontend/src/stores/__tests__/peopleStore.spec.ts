@@ -176,7 +176,7 @@ describe("usePeopleStore", () => {
       store.handlePersonVoteCountUpdated(event);
 
       expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].voteCount).toBe(2);
+      expect(store.candidateCache[0]!.voteCount).toBe(2);
     });
 
     it("should call getAllForBallotEntry when initializing candidate cache", async () => {
@@ -198,7 +198,7 @@ describe("usePeopleStore", () => {
         "election-1",
       );
       expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].personGuid).toBe("p1");
+      expect(store.candidateCache[0]!.personGuid).toBe("p1");
       expect(store.isCacheInitialized).toBe(true);
     });
 
