@@ -1,0 +1,17 @@
+{
+  "tally.title": "Izračunaj rezultate",
+  "tally.warning": "Upozorenje",
+  "tally.warningMessage": "Izračunavanje rezultata prepisat će sve postojeće rezultate. Ova se radnja ne može poništiti.",
+  "tally.normalElection": "Redovni izbori",
+  "tally.singleNameElection": "Izbori s jednim imenom",
+  "tally.calculate": "Izračunaj rezultate",
+  "tally.calculateSuccess": "Rezultati uspješno izračunati",
+  "tally.calculateError": "Izračunavanje rezultata nije uspjelo",
+  "tally.calculatingProgress": "Napredak izračunavanja",
+  "tally.processedBallots": "Obrađeni glasački listići",
+  "tally.resultsPreview": "Pregled rezultata (prvih 10)",
+  "tally.viewFullResults": "Pogledaj sve rezultate",
+  "tally.section.elected": "Izabrani",
+  "tally.section.extra": "Dodatni",
+  "tally.section.other": "Ostali"
+}
