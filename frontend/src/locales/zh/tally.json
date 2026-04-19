@@ -11,7 +11,7 @@
   "tally.processedBallots": "已处理的选票",
   "tally.resultsPreview": "结果预览（前10名）",
   "tally.viewFullResults": "查看完整结果",
-  "tally.section.elected": "当选",
-  "tally.section.extra": "额外",
-  "tally.section.other": "其他"
+  "tally.section.E": "当选",
+  "tally.section.X": "额外",
+  "tally.section.O": "其他"
 }

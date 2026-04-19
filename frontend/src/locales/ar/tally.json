@@ -11,7 +11,7 @@
   "tally.processedBallots": "الأوراق المعالجة",
   "tally.resultsPreview": "معاينة النتائج (أفضل 10)",
   "tally.viewFullResults": "عرض النتائج الكاملة",
-  "tally.section.elected": "منتخب",
-  "tally.section.extra": "إضافي",
-  "tally.section.other": "آخر"
+  "tally.section.E": "منتخب",
+  "tally.section.X": "إضافي",
+  "tally.section.O": "آخر"
 }

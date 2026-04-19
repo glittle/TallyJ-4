@@ -11,7 +11,7 @@
   "tally.processedBallots": "آرا پردازش شده",
   "tally.resultsPreview": "پیش نمایش نتایج (10 برتر)",
   "tally.viewFullResults": "مشاهده نتایج کامل",
-  "tally.section.elected": "منتخب",
-  "tally.section.extra": "اضافی",
-  "tally.section.other": "دیگر"
+  "tally.section.E": "منتخب",
+  "tally.section.X": "اضافی",
+  "tally.section.O": "دیگر"
 }

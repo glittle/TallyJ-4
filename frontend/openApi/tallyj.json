@@ -1094,6 +1094,64 @@
         }
       }
     },
+    "/api/Ballots/{locationGuid}/byLocation": {
+      "get": {
+        "tags": [
+          "Ballots"
+        ],
+        "parameters": [
+          {
+            "name": "locationGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponseBallotDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponseBallotDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponseBallotDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Ballots/{guid}/ballot": {
       "get": {
         "tags": [
@@ -1831,7 +1889,7 @@
         }
       }
     },
-    "/api/Elections/getElections": {
+    "/api/Elections/getMyElections": {
       "get": {
         "tags": [
           "Elections"
@@ -1887,7 +1945,7 @@
         }
       }
     },
-    "/api/Elections/{guid}/election": {
+    "/api/Elections/{guid}/electionDetails": {
       "get": {
         "tags": [
           "Elections"
@@ -5354,7 +5412,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/calculate": {
+    "/api/Results/{electionGuid}/calculate": {
       "post": {
         "tags": [
           "Results"
@@ -5402,7 +5460,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}": {
+    "/api/Results/{electionGuid}/results": {
       "get": {
         "tags": [
           "Results"
@@ -5442,7 +5500,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/summary": {
+    "/api/Results/{electionGuid}/summary": {
       "get": {
         "tags": [
           "Results"
@@ -5482,7 +5540,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/final": {
+    "/api/Results/{electionGuid}/final": {
       "get": {
         "tags": [
           "Results"
@@ -5570,7 +5628,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/monitor": {
+    "/api/Results/{electionGuid}/monitor": {
       "get": {
         "tags": [
           "Results"
@@ -5659,7 +5717,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/ties/save": {
+    "/api/Results/{electionGuid}/ties/save": {
       "post": {
         "tags": [
           "Results"
@@ -5718,7 +5776,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/report": {
+    "/api/Results/{electionGuid}/report": {
       "get": {
         "tags": [
           "Results"
@@ -5758,7 +5816,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/report/{reportCode}": {
+    "/api/Results/{electionGuid}/report/{reportCode}": {
       "get": {
         "tags": [
           "Results"
@@ -5806,7 +5864,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/presentation": {
+    "/api/Results/{electionGuid}/presentation": {
       "get": {
         "tags": [
           "Results"
@@ -5846,7 +5904,7 @@
         }
       }
     },
-    "/api/Results/election/{electionGuid}/detailed-statistics": {
+    "/api/Results/{electionGuid}/detailed-statistics": {
       "get": {
         "tags": [
           "Results"
@@ -8062,9 +8120,8 @@
             "type": "integer",
             "format": "int32"
           },
-          "section": {
-            "type": "string",
-            "nullable": true
+          "sectionCode": {
+            "$ref": "#/components/schemas/ResultSection"
           }
         },
         "additionalProperties": false
@@ -8088,9 +8145,8 @@
             "type": "integer",
             "format": "int32"
           },
-          "section": {
-            "type": "string",
-            "nullable": true
+          "sectionCode": {
+            "$ref": "#/components/schemas/ResultSection"
           },
           "isTied": {
             "type": "boolean"
@@ -8790,9 +8846,8 @@
             "type": "string",
             "nullable": true
           },
-          "section": {
-            "type": "string",
-            "nullable": true
+          "sectionCode": {
+            "$ref": "#/components/schemas/ResultSection"
           }
         },
         "additionalProperties": false
@@ -10941,9 +10996,8 @@
             "type": "integer",
             "format": "int32"
           },
-          "section": {
-            "type": "string",
-            "nullable": true
+          "sectionCode": {
+            "$ref": "#/components/schemas/ResultSection"
           },
           "candidateNames": {
             "type": "array",
@@ -11277,6 +11331,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "ResultSection": {
+        "enum": [
+          "Elected",
+          "Extra",
+          "Other"
+        ],
+        "type": "string"
       },
       "RollCallDto": {
         "type": "object",
@@ -11819,9 +11881,8 @@
             "type": "integer",
             "format": "int32"
           },
-          "section": {
-            "type": "string",
-            "nullable": true
+          "sectionCode": {
+            "$ref": "#/components/schemas/ResultSection"
           },
           "candidates": {
             "type": "array",
@@ -11851,9 +11912,8 @@
           "tieBreakRequired": {
             "type": "boolean"
           },
-          "section": {
-            "type": "string",
-            "nullable": true
+          "sectionCode": {
+            "$ref": "#/components/schemas/ResultSection"
           },
           "candidateNames": {
             "type": "array",
@@ -11872,9 +11932,8 @@
             "type": "integer",
             "format": "int32"
           },
-          "section": {
-            "type": "string",
-            "nullable": true
+          "sectionCode": {
+            "$ref": "#/components/schemas/ResultSection"
           },
           "candidateNames": {
             "type": "array",
@@ -12470,9 +12529,8 @@
           "tieBreakRequired": {
             "type": "boolean"
           },
-          "section": {
-            "type": "string",
-            "nullable": true
+          "sectionCode": {
+            "$ref": "#/components/schemas/ResultSection"
           },
           "showBreak": {
             "type": "boolean"

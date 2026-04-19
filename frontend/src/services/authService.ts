@@ -1,20 +1,23 @@
-import api from "./api";
 import {
-  postApiAuthRegisterAccount,
-  postApiAuthLogin,
+  getApiAuth2FaStatus,
+  postApiAuthDisable2Fa,
+  postApiAuthEnable2Fa,
+  postApiAuthFacebook,
   postApiAuthForgotPassword,
+  postApiAuthGoogleOneTap,
+  postApiAuthKakao,
+  postApiAuthLogin,
+  postApiAuthLogout,
+  postApiAuthRegisterAccount,
   postApiAuthResetPassword,
   postApiAuthSetup2Fa,
-  postApiAuthEnable2Fa,
-  postApiAuthDisable2Fa,
-  postApiAuthGoogleOneTap,
-  postApiAuthLogout,
-  // No generated SDK for Telegram; use axios via api
+  postApiAuthTelegram,
+  postApiAuthTellerLogin,
 } from "../api/gen/configService/sdk.gen";
 import type {
-  RegisterRequest,
-  LoginRequest,
   GoogleOneTapRequest,
+  LoginRequest,
+  RegisterRequest,
 } from "../api/gen/configService/types.gen";
 import type { TelegramLoginRequest } from "../types";
 
@@ -93,8 +96,13 @@ export const authService = {
   },
 
   async get2FAStatus(): Promise<{ isEnabled: boolean; method: string | null }> {
-    const response = await api.get("/api/auth/2fa/status");
-    return response.data;
+    const response = await getApiAuth2FaStatus({
+      throwOnError: true,
+    });
+    return response.data as unknown as {
+      isEnabled: boolean;
+      method: string | null;
+    };
   },
 
   async googleOneTap(credential: string): Promise<AuthResponse> {
@@ -107,17 +115,26 @@ export const authService = {
   },
 
   async telegramLogin(data: TelegramLoginRequest): Promise<AuthResponse> {
-    const response = await api.post("/api/auth/telegram", data);
+    const response = await postApiAuthTelegram({
+      body: data as unknown as any,
+      throwOnError: true,
+    });
     return response.data as AuthResponse;
   },
 
   async facebookLogin(accessToken: string): Promise<AuthResponse> {
-    const response = await api.post("/api/auth/facebook", { accessToken });
+    const response = await postApiAuthFacebook({
+      body: { accessToken },
+      throwOnError: true,
+    });
     return response.data as AuthResponse;
   },
 
   async kakaoLogin(accessToken: string): Promise<AuthResponse> {
-    const response = await api.post("/api/auth/kakao", { accessToken });
+    const response = await postApiAuthKakao({
+      body: { accessToken },
+      throwOnError: true,
+    });
     return response.data as AuthResponse;
   },
 
@@ -131,15 +148,21 @@ export const authService = {
     electionGuid: string,
     accessCode: string,
   ): Promise<{ electionGuid: string; electionName: string }> {
-    const response = await api.post("/api/auth/teller-login", {
-      electionGuid,
-      accessCode,
+    const response = await postApiAuthTellerLogin({
+      body: {
+        electionGuid,
+        accessCode,
+      },
+      throwOnError: true,
     });
-    return response.data;
+    return response.data as unknown as {
+      electionGuid: string;
+      electionName: string;
+    };
   },
 };
 
 export {
-  type RegisterRequest,
   type LoginRequest,
+  type RegisterRequest,
 } from "../api/gen/configService/types.gen";

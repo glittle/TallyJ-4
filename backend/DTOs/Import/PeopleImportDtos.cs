@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Backend.DTOs.Import;
+﻿namespace Backend.DTOs.Import;
 
 /// <summary>
 /// Data transfer object for import file information, mapping from ImportFile entity (excluding Contents).

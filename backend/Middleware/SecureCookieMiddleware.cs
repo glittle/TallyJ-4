@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
-
-namespace Backend.Middleware;
+﻿namespace Backend.Middleware;
 
 /// <summary>
 /// Middleware for handling secure cookie-based authentication tokens.

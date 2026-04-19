@@ -681,7 +681,7 @@ async function confirmDeleteAllPeople() {
                   <tr class="mapping-row">
                     <td class="target-cell">{{ $t("people.import.mapTo") }}</td>
                     <td
-                      v-for="(header, index) in parsedResult.headers"
+                      v-for="(_, index) in parsedResult.headers"
                       :key="`mapping-${index}`"
                       class="mapping-cell"
                     >

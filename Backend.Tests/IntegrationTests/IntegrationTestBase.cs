@@ -1,9 +1,7 @@
 ﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Backend.Domain.Context;
@@ -24,6 +22,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
     {
         Factory = factory;
         Client = factory.CreateClient();
+        Console.WriteLine($"[TEST BASE] Client base address: {Client.BaseAddress}");
         JsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
@@ -46,11 +45,14 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             Encoding.UTF8,
             "application/json");
 
+        Console.WriteLine($"[TEST BASE] Making login request to: {Client.BaseAddress}api/auth/login");
         var response = await Client.PostAsync("/api/auth/login", content);
+        Console.WriteLine($"[TEST BASE] Login response status: {response.StatusCode}");
 
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"[TEST BASE] Login error content: {errorContent}");
             throw new Exception($"Login failed with status {response.StatusCode}: {errorContent}");
         }
 
@@ -157,12 +159,12 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
     protected async Task<TResponse?> DeserializeResponseAsync<TResponse>(HttpResponseMessage response)
     {
         var content = await response.Content.ReadAsStringAsync();
-        
+
         if (string.IsNullOrWhiteSpace(content))
         {
             throw new Exception($"Response has empty body. Status: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}");
         }
-        
+
         try
         {
             return JsonSerializer.Deserialize<TResponse>(content, JsonOptions);
@@ -294,7 +296,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             {
                 return;
             }
-            
+
             await userManager.DeleteAsync(existingUser);
         }
 

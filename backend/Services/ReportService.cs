@@ -146,14 +146,14 @@ public class ReportService : IReportService
 
         var elected = results.Select(r => new ElectedPersonDto
         {
-            Rank = r.Section == "X"
+            Rank = r.SectionCode == ResultSection.Extra
                 ? "Next " + r.RankInExtra
                 : r.Rank.ToString(),
             Name = r.Person?.FullName ?? "",
             BahaiId = r.Person?.BahaiId,
             VoteCountDisplay = (r.VoteCount ?? 0).ToString("N0") +
                                (r.TieBreakRequired == true ? " / " + r.TieBreakCount : ""),
-            Section = r.Section
+            SectionCode = r.SectionCode
         }).ToList();
 
         var ballots = await _context.Ballots
@@ -269,8 +269,8 @@ public class ReportService : IReportService
                 VoteCount = r.VoteCount ?? 0,
                 TieBreakCount = r.TieBreakCount,
                 TieBreakRequired = r.TieBreakRequired == true,
-                Section = r.Section,
-                ShowBreak = i == 0 || r.Section != results[i - 1].Section
+                SectionCode = r.SectionCode,
+                ShowBreak = i == 0 || r.SectionCode != results[i - 1].SectionCode
             });
         }
 
@@ -297,7 +297,7 @@ public class ReportService : IReportService
             VoteCount = r.VoteCount ?? 0,
             TieBreakCount = r.TieBreakCount,
             TieBreakRequired = r.TieBreakRequired == true,
-            Section = r.Section
+            SectionCode = r.SectionCode
         }).ToList();
 
         return new VotesByNameDto

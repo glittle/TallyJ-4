@@ -1,8 +1,4 @@
-using System.Reflection;
-using System.Security.Claims;
 using System.Text.Json;
-using Backend.Domain.Identity;
-using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Services;
 

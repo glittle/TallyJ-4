@@ -11,7 +11,7 @@
   "tally.processedBallots": "Bulletins traités",
   "tally.resultsPreview": "Aperçu des résultats (Top 10)",
   "tally.viewFullResults": "Voir tous les résultats",
-  "tally.section.elected": "Élu",
-  "tally.section.extra": "Supplémentaire",
-  "tally.section.other": "Autre"
+  "tally.section.E": "Élu",
+  "tally.section.X": "Supplémentaire",
+  "tally.section.O": "Autre"
 }

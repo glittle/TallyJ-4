@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http.Json;
 using Backend.DTOs.Elections;
 using Backend.Domain.Enumerations;
 using Backend.Models;
@@ -15,7 +14,13 @@ public class ElectionsControllerTests : IntegrationTestBase
     [Fact]
     public async Task GetElections_WithoutAuth_ReturnsUnauthorized()
     {
-        var response = await GetAsync("/api/elections/getElections");
+        var response = await GetAsync("/api/elections/getMyElections");
+
+        if (response.StatusCode != HttpStatusCode.Unauthorized)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected Unauthorized but got {response.StatusCode}. Response content: {content}");
+        }
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -26,7 +31,13 @@ public class ElectionsControllerTests : IntegrationTestBase
         var token = await GetAuthTokenAsync();
         SetAuthToken(token);
 
-        var response = await GetAsync("/api/elections/getElections");
+        var response = await GetAsync("/api/elections/getMyElections");
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
@@ -37,7 +48,7 @@ public class ElectionsControllerTests : IntegrationTestBase
         var token = await GetAuthTokenAsync();
         SetAuthToken(token);
 
-        var response = await GetAsync("/api/elections/getElections?pageNumber=1&pageSize=10");
+        var response = await GetAsync("/api/elections/getMyElections?pageNumber=1&pageSize=10");
         response.EnsureSuccessStatusCode();
 
         var result = await DeserializeResponseAsync<PaginatedResponse<ElectionSummaryDto>>(response);
@@ -62,7 +73,13 @@ public class ElectionsControllerTests : IntegrationTestBase
         };
 
         var response = await PostJsonAsync("/api/elections/createElection", createDto);
-        
+
+        if (response.StatusCode != HttpStatusCode.Created)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected Created but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
         var result = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(response);
@@ -86,7 +103,13 @@ public class ElectionsControllerTests : IntegrationTestBase
         };
 
         var response = await PostJsonAsync("/api/elections/createElection", createDto);
-        
+
+        if (response.StatusCode != HttpStatusCode.BadRequest)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected BadRequest but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
@@ -105,19 +128,25 @@ public class ElectionsControllerTests : IntegrationTestBase
         };
 
         var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
-        
+
         // Add diagnostic info
         if (!createResponse.IsSuccessStatusCode)
         {
             var errorContent = await createResponse.Content.ReadAsStringAsync();
             throw new Exception($"Create election failed: {createResponse.StatusCode}, Content: {errorContent}");
         }
-        
+
         var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
         var electionGuid = createResult!.Data!.ElectionGuid;
 
-        var response = await GetAsync($"/api/elections/{electionGuid}/election");
-        
+        var response = await GetAsync($"/api/elections/{electionGuid}/electionDetails");
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var result = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(response);
@@ -133,8 +162,14 @@ public class ElectionsControllerTests : IntegrationTestBase
         var token = await GetAuthTokenAsync();
         SetAuthToken(token);
 
-        var response = await GetAsync($"/api/elections/{Guid.NewGuid()}/election");
-        
+        var response = await GetAsync($"/api/elections/{Guid.NewGuid()}/electionDetails");
+
+        if (response.StatusCode != HttpStatusCode.NotFound)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected NotFound but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
@@ -165,7 +200,13 @@ public class ElectionsControllerTests : IntegrationTestBase
         };
 
         var response = await PutJsonAsync($"/api/elections/{electionGuid}/updateElection", updateDto);
-        
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected OK but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var result = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(response);
@@ -194,10 +235,23 @@ public class ElectionsControllerTests : IntegrationTestBase
         var electionGuid = createResult!.Data!.ElectionGuid;
 
         var response = await DeleteAsync($"/api/elections/{electionGuid}/deleteElection");
-        
+
+        if (response.StatusCode != HttpStatusCode.NoContent)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected NoContent but got {response.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
         var getResponse = await GetAsync($"/api/elections/{electionGuid}/election");
+
+        if (getResponse.StatusCode != HttpStatusCode.NotFound)
+        {
+            var content = await getResponse.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected NotFound but got {getResponse.StatusCode}. Response content: {content}");
+        }
+
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
 }

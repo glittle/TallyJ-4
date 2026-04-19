@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using Backend.DTOs.Results;
+using Backend.Domain.Enumerations;
 using ClosedXML.Excel;
 using CsvHelper;
 using iText.IO.Font.Constants;
@@ -224,7 +224,7 @@ public class ReportExportService : IReportExportService
                     electedSheet.Cell(row, 1).Value = candidate.Rank;
                     electedSheet.Cell(row, 2).Value = candidate.FullName;
                     electedSheet.Cell(row, 3).Value = candidate.VoteCount;
-                    electedSheet.Cell(row, 4).Value = candidate.Section;
+                    electedSheet.Cell(row, 4).Value = ResultSectionEnum.ToCodeString(candidate.SectionCode);
                     row++;
                 }
 
@@ -389,7 +389,7 @@ public class ReportExportService : IReportExportService
                     csv.WriteField(candidate.Rank.ToString());
                     csv.WriteField(candidate.FullName);
                     csv.WriteField(candidate.VoteCount.ToString());
-                    csv.WriteField(candidate.Section);
+                    csv.WriteField(ResultSectionEnum.ToCodeString(candidate.SectionCode));
                     csv.NextRecord();
                 }
 

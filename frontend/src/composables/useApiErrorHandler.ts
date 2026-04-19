@@ -15,7 +15,7 @@ export interface ApiError {
 
 export function useApiErrorHandler() {
   const { showErrorMessage } = useNotifications();
-  const t = i18n.global.t;
+  const t = (i18n.global as any).t as (key: string) => string;
 
   const isApiError = (error: any): error is ApiError => {
     return (

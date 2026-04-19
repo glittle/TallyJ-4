@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using Backend.Domain.Context;
-using Backend.Domain.Entities;
 using Backend.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

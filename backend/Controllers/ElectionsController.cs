@@ -35,8 +35,8 @@ public class ElectionsController : ControllerBase
     /// <param name="pageSize">The number of items per page (1-100).</param>
     /// <param name="status">Optional status filter for elections.</param>
     /// <returns>A paginated response containing the elections.</returns>
-    [HttpGet("getElections")]
-    public async Task<ActionResult<PaginatedResponse<ElectionSummaryDto>>> GetElections(
+    [HttpGet("getMyElections")]
+    public async Task<ActionResult<PaginatedResponse<ElectionSummaryDto>>> GetMyElections(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? status = null)
@@ -55,7 +55,7 @@ public class ElectionsController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the election.</param>
     /// <returns>The election information.</returns>
-    [HttpGet("{guid}/election")]
+    [HttpGet("{guid}/electionDetails")]
     [Authorize(Policy = "ElectionAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> GetElection(Guid guid)
     {

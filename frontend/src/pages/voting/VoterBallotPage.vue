@@ -23,7 +23,7 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
-const { showSuccess, showError } = useNotifications();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = ref(route.params.electionId as string);
 const loading = ref(false);
@@ -49,7 +49,7 @@ const showCandidateList = computed(() => isModeList.value || isModeBoth.value);
 
 onMounted(async () => {
   if (!onlineVotingStore.voterId) {
-    showError(t("voting.ballot.authRequired"));
+    showErrorMessage(t("voting.ballot.authRequired"));
     router.push({
       name: "voter-auth",
       query: { election: electionGuid.value },
@@ -73,13 +73,13 @@ async function loadElectionData() {
     ]);
 
     if (voteStatus.hasVoted) {
-      showError(voteStatus.message || t("voting.ballot.alreadyVoted"));
+      showErrorMessage(voteStatus.message || t("voting.ballot.alreadyVoted"));
       router.push({ name: "voter-confirmation" });
       return;
     }
 
     if (!electionInfo.isOpen) {
-      showError(t("voting.ballot.notOpen"));
+      showErrorMessage(t("voting.ballot.notOpen"));
       return;
     }
 
@@ -169,7 +169,7 @@ function getEffectiveName(slot: VoteSlot): string {
 
 async function handleSubmit() {
   if (duplicateVotes.value) {
-    showError(t("voting.ballot.duplicateError"));
+    showErrorMessage(t("voting.ballot.duplicateError"));
     return;
   }
 
@@ -195,7 +195,7 @@ async function handleSubmit() {
       votes: onlineVotes,
     });
 
-    showSuccess(t("voting.ballot.submitSuccess"));
+    showSuccessMessage(t("voting.ballot.submitSuccess"));
     router.push({ name: "voter-confirmation" });
   } catch (error) {
     console.error("Error submitting ballot:", error);
@@ -356,7 +356,8 @@ function backToElections() {
                     (item: any) => handleCandidateSelect(vote.position, item)
                   "
                   @input="
-                    (val: string) => handleSearchInput(vote.position, val)
+                    (val: string | number) =>
+                      handleSearchInput(vote.position, String(val))
                   "
                 />
 

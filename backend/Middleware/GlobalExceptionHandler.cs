@@ -1,10 +1,7 @@
 ﻿using System.Net;
-using System.Text.Json;
-using System.Threading.Tasks;
 using Backend.Services;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Backend.Middleware;
 

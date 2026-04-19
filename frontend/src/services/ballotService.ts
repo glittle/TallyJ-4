@@ -5,6 +5,7 @@ import {
   postApiBallotsCreateBallot,
   putApiBallotsByGuidUpdateBallot,
 } from "@/api/gen/configService";
+import type { BallotStatus } from "@/api/gen/configService/types.gen";
 import type { BallotDto, CreateBallotDto, UpdateBallotDto } from "../types";
 
 export const ballotService = {
@@ -30,7 +31,7 @@ export const ballotService = {
   async update(ballotGuid: string, dto: UpdateBallotDto): Promise<BallotDto> {
     const response = await putApiBallotsByGuidUpdateBallot({
       path: { guid: ballotGuid },
-      body: dto,
+      body: { ...dto, statusCode: dto.statusCode as BallotStatus | undefined },
     });
     return response.data?.data as BallotDto;
   },
@@ -43,6 +44,6 @@ export const ballotService = {
     const response = await getApiBallotsByElectionGuidBallots({
       path: { electionGuid: locationGuid },
     });
-    return (response.data?.data?.items ?? []) as BallotDto[];
+    return (response.data?.items ?? []) as BallotDto[];
   },
 };

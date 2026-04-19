@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Localization;
-using Moq;
+﻿using Moq;
 using System.Globalization;
 using Backend.Localization;
 

@@ -124,8 +124,8 @@ describe("People Store - Candidate Cache", () => {
         "election-123",
       );
       expect(store.candidateCache).toHaveLength(2);
-      expect(store.candidateCache[0]._searchText).toBe("john smith");
-      expect(store.candidateCache[1]._searchText).toBe("jane doe janet dough");
+      expect(store.candidateCache[0]!._searchText).toBe("john smith");
+      expect(store.candidateCache[1]!._searchText).toBe("jane doe janet dough");
       expect(store.isCacheInitialized).toBe(true);
     });
 
@@ -168,8 +168,8 @@ describe("People Store - Candidate Cache", () => {
       });
 
       expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].personGuid).toBe(mockPerson.personGuid);
-      expect(store.candidateCache[0]._searchText).toBe("john smith");
+      expect(store.candidateCache[0]!.personGuid).toBe(mockPerson.personGuid);
+      expect(store.candidateCache[0]!._searchText).toBe("john smith");
     });
 
     it("should add ineligible person to cache", async () => {
@@ -193,7 +193,7 @@ describe("People Store - Candidate Cache", () => {
       });
 
       expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].ineligibleReasonCode).toBe("X01");
+      expect(store.candidateCache[0]!.ineligibleReasonCode).toBe("X01");
     });
 
     it("should not add to cache if not initialized", async () => {
@@ -234,8 +234,8 @@ describe("People Store - Candidate Cache", () => {
       });
 
       expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].firstName).toBe("Johnny");
-      expect(store.candidateCache[0]._searchText).toBe("johnny smith");
+      expect(store.candidateCache[0]!.firstName).toBe("Johnny");
+      expect(store.candidateCache[0]!._searchText).toBe("johnny smith");
     });
 
     it("should add person to cache if they become eligible", async () => {
@@ -255,7 +255,7 @@ describe("People Store - Candidate Cache", () => {
       });
 
       expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].personGuid).toBe(mockPerson.personGuid);
+      expect(store.candidateCache[0]!.personGuid).toBe(mockPerson.personGuid);
     });
 
     it("should keep ineligible person in cache when they become ineligible", async () => {
@@ -280,7 +280,7 @@ describe("People Store - Candidate Cache", () => {
       });
 
       expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].ineligibleReasonCode).toBe("X01");
+      expect(store.candidateCache[0]!.ineligibleReasonCode).toBe("X01");
     });
   });
 

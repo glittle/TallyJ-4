@@ -19,6 +19,15 @@ public interface IBallotService
     Task<PaginatedResponse<BallotDto>> GetBallotsByElectionAsync(Guid electionGuid, int pageNumber = 1, int pageSize = 50);
 
     /// <summary>
+    /// Retrieves ballots for a specific location with pagination support.
+    /// </summary>
+    /// <param name="locationGuid">The unique identifier of the location.</param>
+    /// <param name="pageNumber">The page number to retrieve (1-based).</param>
+    /// <param name="pageSize">The number of ballots per page.</param>
+    /// <returns>A paginated response containing ballot data.</returns>
+    Task<PaginatedResponse<BallotDto>> GetBallotsByLocationAsync(Guid locationGuid, int pageNumber = 1, int pageSize = 50);
+
+    /// <summary>
     /// Retrieves a specific ballot by its unique identifier.
     /// </summary>
     /// <param name="ballotGuid">The unique identifier of the ballot.</param>

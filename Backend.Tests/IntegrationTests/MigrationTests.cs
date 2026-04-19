@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Identity;
-using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
 

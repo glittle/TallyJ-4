@@ -11,7 +11,6 @@ using Backend.Application.DTOs.Auth;
 using Backend.Application.Services.Auth;
 using Backend.Domain.Entities;
 using Backend.Domain.Identity;
-using Backend.Services;
 
 namespace Backend.Tests.UnitTests;
 

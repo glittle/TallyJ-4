@@ -1,7 +1,4 @@
 ﻿namespace Backend.DTOs.Dashboard;
-
-using Backend.DTOs.Elections;
-
 /// <summary>
 /// Data transfer object representing a dashboard summary with election counts and recent elections.
 /// </summary>

@@ -7,13 +7,14 @@ import { ElMessage } from "element-plus";
 import type {
   CreateElectionDto,
   ElectionDto,
+  ElectionSummaryDto,
   UpdateElectionDto,
 } from "../types";
 import type { ElectionUpdateEvent } from "../types/SignalREvents";
 import { extractApiErrorMessage } from "../utils/errorHandler";
 
 export const useElectionStore = defineStore("election", () => {
-  const elections = ref<ElectionDto[]>([]);
+  const elections = ref<(ElectionDto | ElectionSummaryDto)[]>([]);
   const currentElection = ref<ElectionDto | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -184,13 +185,15 @@ export const useElectionStore = defineStore("election", () => {
     if (index !== -1) {
       const existingElection = elections.value[index]!;
       const oldTallyStatus = existingElection.tallyStatus;
-      const oldElectionStatus = existingElection.electionStatus;
+      const existingElectionDto = existingElection as ElectionDto;
+      const oldElectionStatus = existingElectionDto.electionStatus;
 
       elections.value[index] = {
         ...existingElection,
         name: data.name ?? existingElection.name,
         tallyStatus: data.tallyStatus ?? existingElection.tallyStatus,
-        electionStatus: data.electionStatus ?? existingElection.electionStatus,
+        electionStatus:
+          data.electionStatus ?? existingElectionDto.electionStatus,
       } as ElectionDto;
 
       // Show notifications for status changes

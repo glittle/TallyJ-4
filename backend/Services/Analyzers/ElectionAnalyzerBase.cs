@@ -271,18 +271,18 @@ public abstract class ElectionAnalyzerBase
 
             if (ordinalRank <= numberToElect)
             {
-                result.Section = "E";
+                result.SectionCode = ResultSection.Elected;
             }
             else if (ordinalRank <= numberToElect + numberExtra)
             {
-                result.Section = "X";
+                result.SectionCode = ResultSection.Extra;
             }
             else
             {
-                result.Section = "O";
+                result.SectionCode = ResultSection.Other;
             }
 
-            if (result.Section == "X")
+            if (result.SectionCode == ResultSection.Extra)
             {
                 ordinalRankInExtra++;
                 result.RankInExtra = ordinalRankInExtra;
@@ -312,7 +312,7 @@ public abstract class ElectionAnalyzerBase
                     aboveResult.IsTied = true;
                     result.IsTied = true;
 
-                    if (!foundFirstOneInOther && result.Section == "O")
+                    if (!foundFirstOneInOther && result.SectionCode == ResultSection.Other)
                     {
                         foundFirstOneInOther = true;
                     }
@@ -379,15 +379,15 @@ public abstract class ElectionAnalyzerBase
 
         foreach (var result in results)
         {
-            switch (result.Section)
+            switch (result.SectionCode)
             {
-                case "E":
+                case ResultSection.Elected:
                     groupInTop = true;
                     break;
-                case "X":
+                case ResultSection.Extra:
                     groupInExtra = true;
                     break;
-                case "O":
+                case ResultSection.Other:
                     groupInOther = true;
                     break;
             }
@@ -403,7 +403,7 @@ public abstract class ElectionAnalyzerBase
 
             var stillTied = results.Any(other => other != r
                 && (other.TieBreakCount ?? 0) == (r.TieBreakCount ?? 0)
-                && (other.Section != r.Section || r.Section == "X"));
+                && (other.SectionCode != r.SectionCode || r.SectionCode == ResultSection.Extra));
 
             if (stillTied)
             {
@@ -419,7 +419,7 @@ public abstract class ElectionAnalyzerBase
 
         if (groupInOther && (groupInTop || groupInExtra))
         {
-            foreach (var r in results.Where(r => r.Section == "O"))
+            foreach (var r in results.Where(r => r.SectionCode == ResultSection.Other))
             {
                 r.ForceShowInOther = true;
             }
@@ -427,7 +427,7 @@ public abstract class ElectionAnalyzerBase
 
         if (groupInTop && !groupOnlyInTop)
         {
-            resultTie.NumToElect += results.Count(r => r.Section == "E");
+            resultTie.NumToElect += results.Count(r => r.SectionCode == ResultSection.Elected);
             resultTie.TieBreakRequired = true;
         }
 
@@ -437,7 +437,7 @@ public abstract class ElectionAnalyzerBase
 
             if (!groupInTop)
             {
-                resultTie.NumToElect += results.Count(r => r.Section == "X");
+                resultTie.NumToElect += results.Count(r => r.SectionCode == ResultSection.Extra);
             }
         }
 

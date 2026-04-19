@@ -14,7 +14,7 @@ export const computerService = {
       await getApiByElectionGuidLocationsByLocationGuidGetComputers({
         path: { electionGuid, locationGuid },
       });
-    return (response.data?.data?.items ?? []) as ComputerDto[];
+    return (response.data?.data ?? []) as ComputerDto[];
   },
 
   async register(

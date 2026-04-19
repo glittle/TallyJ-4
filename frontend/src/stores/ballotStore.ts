@@ -1,14 +1,14 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { ballotService } from "../services/ballotService";
-import { voteService } from "../services/voteService";
 import { signalrService } from "../services/signalrService";
+import { voteService } from "../services/voteService";
 
 import type {
   BallotDto,
   CreateBallotDto,
-  UpdateBallotDto,
   CreateVoteDto,
+  UpdateBallotDto,
   VoteWithBallotStatusDto,
 } from "../types";
 import type { BallotUpdateEvent } from "../types/SignalREvents";
@@ -127,10 +127,10 @@ export const useBallotStore = defineStore("ballot", () => {
         const existingIndex = currentBallot.value.votes.findIndex(
           (v) => v.positionOnBallot === result.vote.positionOnBallot,
         );
-        if (existingIndex !== -1) {
-          currentBallot.value.votes[existingIndex] = result.vote;
-        } else {
+        if (existingIndex === -1) {
           currentBallot.value.votes.push(result.vote);
+        } else {
+          currentBallot.value.votes[existingIndex] = result.vote;
         }
         currentBallot.value.voteCount = currentBallot.value.votes.length;
         currentBallot.value.statusCode = result.ballotStatusCode;

@@ -3,7 +3,6 @@ using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
 using Backend.DTOs.Elections;
 using Backend.DTOs.Setup;
-using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 

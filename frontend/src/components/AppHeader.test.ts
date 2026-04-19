@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { createRouter, createWebHistory } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
 
 import AppHeader from "./AppHeader.vue";
 import { pinia, i18n } from "../test/setup";
@@ -19,13 +20,14 @@ describe("AppHeader", () => {
   let router: any;
 
   beforeEach(() => {
+    const routes: RouteRecordRaw[] = [
+      { path: "/dashboard", name: "Dashboard", component: {} },
+      { path: "/elections", name: "Elections", component: {} },
+      { path: "/profile", name: "Profile", component: {} },
+    ];
     router = createRouter({
       history: createWebHistory(),
-      routes: [
-        { path: "/dashboard", name: "Dashboard" },
-        { path: "/elections", name: "Elections" },
-        { path: "/profile", name: "Profile" },
-      ],
+      routes,
     });
   });
 
@@ -95,8 +97,7 @@ describe("AppHeader", () => {
       },
     });
 
-    // Access the component instance and call handleCommand directly
-    await wrapper.vm.handleCommand("logout");
+    await (wrapper.vm as any).handleCommand("logout");
 
     expect(mockLogout).toHaveBeenCalled();
     expect(mockRouterPush).toHaveBeenCalledWith("/login?mode=officer");
@@ -112,8 +113,7 @@ describe("AppHeader", () => {
       },
     });
 
-    // Access the component instance and call handleCommand directly
-    await wrapper.vm.handleCommand("profile");
+    await (wrapper.vm as any).handleCommand("profile");
 
     expect(mockRouterPush).toHaveBeenCalledWith("/profile");
   });

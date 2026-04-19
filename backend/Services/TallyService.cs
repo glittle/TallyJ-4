@@ -24,11 +24,6 @@ public class TallyService : ITallyService
     private const string UnknownElectionName = "Unknown Election";
     private const string UnknownLocationName = "Unknown Location";
 
-    // Section constants - localized
-    private string SectionElected => _localizer["tally.section.elected"];
-    private string SectionExtra => _localizer["tally.section.extra"];
-    private string SectionOther => _localizer["tally.section.other"];
-
     /// <summary>
     /// Initializes a new instance of the TallyService.
     /// </summary>
@@ -190,7 +185,7 @@ public class TallyService : ITallyService
                 TieBreakGroup = g.Key,
                 VoteCount = g.First().VoteCount ?? 0,
                 TieBreakRequired = g.First().TieBreakRequired == true,
-                Section = g.First().Section ?? string.Empty,
+                SectionCode = g.First().SectionCode,
                 CandidateNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
             })
             .ToList();
@@ -207,7 +202,7 @@ public class TallyService : ITallyService
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
                 VoteCount = r.VoteCount ?? 0,
                 Rank = r.Rank,
-                Section = r.Section ?? SectionOther,
+                SectionCode = r.SectionCode,
                 IsTied = r.IsTied == true,
                 TieBreakGroup = r.TieBreakGroup,
                 TieBreakRequired = r.TieBreakRequired == true,
@@ -406,7 +401,7 @@ public class TallyService : ITallyService
             throw new ArgumentException($"Tie break group {tieBreakGroup} not found in election {electionGuid}");
         }
 
-        var section = tieResults[0].Section ?? SectionOther;
+        var sectionCode = tieResults[0].SectionCode;
 
         var candidates = tieResults.Select(r => new TieCandidateDto
         {
@@ -419,7 +414,7 @@ public class TallyService : ITallyService
         return new TieDetailsDto
         {
             TieBreakGroup = tieBreakGroup,
-            Section = section,
+            SectionCode = sectionCode,
             Candidates = candidates
         };
     }
@@ -514,35 +509,35 @@ public class TallyService : ITallyService
             .FirstOrDefaultAsync(rs => rs.ElectionGuid == electionGuid);
 
         var elected = results
-            .Where(r => r.Section == "E")
+            .Where(r => r.SectionCode == ResultSection.Elected)
             .Select(r => new CandidateReportDto
             {
                 Rank = r.Rank,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
                 VoteCount = r.VoteCount ?? 0,
-                Section = SectionElected
+                SectionCode = ResultSection.Elected
             })
             .ToList();
 
         var extra = results
-            .Where(r => r.Section == "X")
+            .Where(r => r.SectionCode == ResultSection.Extra)
             .Select(r => new CandidateReportDto
             {
                 Rank = r.Rank,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
                 VoteCount = r.VoteCount ?? 0,
-                Section = SectionExtra
+                SectionCode = ResultSection.Extra
             })
             .ToList();
 
         var other = results
-            .Where(r => r.Section == "O")
+            .Where(r => r.SectionCode == ResultSection.Other)
             .Select(r => new CandidateReportDto
             {
                 Rank = r.Rank,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
                 VoteCount = r.VoteCount ?? 0,
-                Section = SectionOther
+                SectionCode = ResultSection.Other
             })
             .ToList();
 
@@ -552,7 +547,7 @@ public class TallyService : ITallyService
             .Select(g => new TieReportDto
             {
                 TieBreakGroup = g.Key,
-                Section = g.First().Section ?? SectionOther,
+                SectionCode = g.First().SectionCode,
                 CandidateNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
             })
             .ToList();
@@ -703,7 +698,7 @@ public class TallyService : ITallyService
             .Select(g => new TieReportDto
             {
                 TieBreakGroup = g.Key,
-                Section = g.First().Section ?? SectionOther,
+                SectionCode = g.First().SectionCode,
                 CandidateNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
             })
             .ToList();
@@ -735,7 +730,7 @@ public class TallyService : ITallyService
             .FirstOrDefaultAsync(rs => rs.ElectionGuid == electionGuid);
 
         var electedCandidates = results
-            .Where(r => r.Section == "E")
+            .Where(r => r.SectionCode == ResultSection.Elected)
             .Select(r => new PresentationCandidateDto
             {
                 Rank = r.Rank,
@@ -747,7 +742,7 @@ public class TallyService : ITallyService
             .ToList();
 
         var extraCandidates = results
-            .Where(r => r.Section == "X")
+            .Where(r => r.SectionCode == ResultSection.Extra)
             .Select(r => new PresentationCandidateDto
             {
                 Rank = r.Rank,
@@ -764,7 +759,7 @@ public class TallyService : ITallyService
             .Select(g => new PresentationTieDto
             {
                 TieBreakGroup = g.Key,
-                Section = g.First().Section ?? SectionOther,
+                SectionCode = g.First().SectionCode,
                 CandidateNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList(),
                 TieBreakRequired = g.First().TieBreakRequired == true
             })
@@ -839,8 +834,8 @@ public class TallyService : ITallyService
                 var person = g.First().Person;
                 var totalVotesForCandidate = g.Sum(r => r.VoteCount ?? 0);
                 var rank = g.Min(r => r.Rank);
-                var isElected = g.Any(r => r.Section == "E");
-                var isEliminated = g.All(r => r.Section == "O");
+                var isElected = g.Any(r => r.SectionCode == ResultSection.Elected);
+                var isEliminated = g.All(r => r.SectionCode == ResultSection.Other);
 
                 var votesByPosition = g
                     .Where(r => r.VoteCount.HasValue)

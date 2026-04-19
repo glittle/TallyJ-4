@@ -1,14 +1,9 @@
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
 using Backend.Domain.Context;
-using Backend.DTOs.Import;
 using Backend.DTOs.Elections;
-using Backend.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 using System.Text.Json;
-using System.Xml;
-using System.Xml.Schema;
 
 namespace Backend.Services;
 
@@ -154,7 +149,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 r.PersonGuid,
                 r.VoteCount,
                 r.Rank,
-                r.Section,
+                SectionCode = ResultSectionEnum.ToCodeString(r.SectionCode),
                 r.IsTied,
                 r.IsTieResolved,
                 r.TieBreakGroup,
@@ -440,7 +435,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 PersonGuid = guidMap[result.PersonGuid],
                 VoteCount = result.VoteCount,
                 Rank = result.Rank,
-                Section = result.Section ?? "T",
+                SectionCode = result.SectionCode ?? ResultSection.Other,
                 IsTied = result.IsTied,
                 IsTieResolved = result.IsTieResolved,
                 TieBreakGroup = result.TieBreakGroup,

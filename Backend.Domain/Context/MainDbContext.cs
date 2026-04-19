@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Backend.Domain.Identity;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 
 namespace Backend.Domain.Context;
 
@@ -209,7 +208,11 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Result>(entity =>
         {
-            entity.Property(e => e.Section).IsFixedLength();
+            entity.Property(e => e.SectionCode)
+                .HasConversion(
+                    v => ResultSectionEnum.ToCodeString(v),
+                    v => ResultSectionEnum.ParseCode(v) ?? ResultSection.Other)
+                .IsFixedLength();
 
             entity.HasOne(d => d.Election).WithMany(p => p.Results)
                 .HasPrincipalKey(p => p.ElectionGuid)

@@ -1,6 +1,4 @@
-﻿using Backend.DTOs.Results;
-
-namespace Backend.Services;
+﻿namespace Backend.Services;
 
 /// <summary>
 /// Service interface for exporting election reports in different formats.

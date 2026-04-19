@@ -11,7 +11,7 @@
   "tally.processedBallots": "Boletas Procesadas",
   "tally.resultsPreview": "Vista Previa de Resultados (Top 10)",
   "tally.viewFullResults": "Ver Resultados Completos",
-  "tally.section.elected": "Elegido",
-  "tally.section.extra": "Extra",
-  "tally.section.other": "Otro"
+  "tally.section.E": "Elegido",
+  "tally.section.X": "Extra",
+  "tally.section.O": "Otro"
 }

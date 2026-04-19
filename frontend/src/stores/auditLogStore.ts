@@ -21,9 +21,9 @@ export const useAuditLogStore = defineStore("auditLog", () => {
     error.value = null;
     try {
       const response = await auditLogService.getAuditLogs(filter, page, size);
-      auditLogs.value = response.data;
+      auditLogs.value = response.items;
       totalCount.value = response.totalCount;
-      currentPage.value = response.pageNumber;
+      currentPage.value = response.page;
       pageSize.value = response.pageSize;
     } catch (err: any) {
       error.value = err.message || "Failed to fetch audit logs";

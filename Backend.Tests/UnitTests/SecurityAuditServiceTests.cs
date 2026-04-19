@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.Domain;
 using Backend.Services;
-using Xunit;
 
 namespace Backend.Tests.UnitTests;
 

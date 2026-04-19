@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.IO;
 using System.Text;
 using Backend.Application.Services.Auth;
 using Backend.Domain.Context;
@@ -16,7 +15,6 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +23,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
-using Serilog.Settings.Configuration;
 using Serilog.Sinks.SystemConsole.Themes;
 
 Log.Logger = new LoggerConfiguration()
@@ -41,6 +38,7 @@ var nonTestMode = isDevelopment ? "DEVELOPMENT" : "PRODUCTION";
 var siteMode = isTesting ? "TESTING" : nonTestMode;
 
 Log.Information("Starting up in {SiteType} mode ({SiteMode}) on machine {MachineName}", siteType, siteMode, machineName);
+Log.Information("isTesting: {IsTesting}, isDevelopment: {IsDevelopment}", isTesting, isDevelopment);
 
 void AddLogging(WebApplicationBuilder builder)
 {
@@ -53,6 +51,7 @@ void AddLogging(WebApplicationBuilder builder)
 
 void ConfigureServices(WebApplicationBuilder builder)
 {
+    Log.Information("ConfigureServices called");
     var services = builder.Services;
     var builderConfiguration = builder.Configuration;
 
@@ -174,7 +173,19 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     services.AddHttpContextAccessor();
 
-    services.AddControllers();
+    Log.Information("Registering controllers");
+    var controllerBuilder = services.AddControllers();
+    if (isTesting)
+    {
+        // In testing environments, explicitly register the controller assembly to ensure
+        // MVC can discover controllers from the Backend.dll assembly. This is needed because
+        // the test WebApplicationFactory may not properly scan all referenced assemblies.
+        Log.Information("Configuring MVC for testing");
+        controllerBuilder.ConfigureApplicationPartManager(manager =>
+        {
+            manager.ApplicationParts.Add(new Microsoft.AspNetCore.Mvc.ApplicationParts.AssemblyPart(typeof(Program).Assembly));
+        });
+    }
     services.AddFluentValidationAutoValidation();
     services.AddValidatorsFromAssemblyContaining<Program>();
 
@@ -523,6 +534,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     app.UseMiddleware<AuditMiddleware>();
 
     app.MapControllers();
+    Log.Information("Controllers mapped");
 
     // Add SPA fallback for web history routing - exclude systemhealth and hub routes
     app.MapFallbackToFile("{*path:regex(^(?!api/|systemhealth|hubs/|assets/|config\\.json).*$)}", "index.html").AllowAnonymous();

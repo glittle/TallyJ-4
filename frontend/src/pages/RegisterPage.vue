@@ -15,6 +15,7 @@ const registerFormRef = ref<FormInstance>();
 const loading = ref(false);
 
 const registerForm = reactive({
+  displayName: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -95,6 +96,7 @@ const handleRegister = async () => {
       loading.value = true;
       try {
         await authStore.register({
+          displayName: registerForm.displayName,
           email: registerForm.email,
           password: registerForm.password,
           confirmPassword: registerForm.confirmPassword,
@@ -128,6 +130,13 @@ const handleRegister = async () => {
         label-position="top"
         @keyup.enter="handleRegister"
       >
+        <el-form-item :label="t('auth.displayName')" prop="displayName">
+          <el-input
+            v-model="registerForm.displayName"
+            :placeholder="t('auth.displayNamePlaceholder')"
+          />
+        </el-form-item>
+
         <el-form-item :label="t('auth.email')" prop="email">
           <el-input
             v-model="registerForm.email"

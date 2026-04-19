@@ -35,7 +35,9 @@ export const getBuildDateBadi = () => {
     return raw; // Fallback to raw string if parsing fails
   }
   // Get localized month names from i18n - the first is the intercalary month, so we skip it for 1-based month indexing
-  const monthNames = i18n.global.t("common.badi.monthNames").split(",");
+  const monthNames = (
+    (i18n.global as any).t("common.badi.monthNames") as string
+  ).split(",");
   const monthName = monthNames[month!] || `Month ${month}`;
   return `${day} ${monthName} ${year}`;
 };

@@ -658,13 +658,7 @@ function formatTimeShort(time?: string): string {
 //   return "#67c23a";
 // }
 
-function getRowClassName({
-  _row,
-  rowIndex,
-}: {
-  _row: FrontDeskVoterDto;
-  rowIndex: number;
-}) {
+function getRowClassName({ rowIndex }: { rowIndex: number }) {
   if (rowIndex === selectedIndex.value) {
     return "selected-row";
   }

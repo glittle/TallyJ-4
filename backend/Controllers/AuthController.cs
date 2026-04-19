@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -96,6 +94,8 @@ public class AuthController : ControllerBase
         _httpClientFactory = httpClientFactory;
         _securityAuditService = securityAuditService;
         _remoteLogService = remoteLogService;
+
+        Console.WriteLine("[AUTH CONTROLLER] AuthController instantiated");
     }
 
     /// <summary>

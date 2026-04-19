@@ -11,7 +11,7 @@
   "tally.processedBallots": "Обработанные бюллетени",
   "tally.resultsPreview": "Предварительный просмотр результатов (Топ 10)",
   "tally.viewFullResults": "Просмотреть полные результаты",
-  "tally.section.elected": "Избранный",
-  "tally.section.extra": "Дополнительный",
-  "tally.section.other": "Другой"
+  "tally.section.E": "Избранный",
+  "tally.section.X": "Дополнительный",
+  "tally.section.O": "Другой"
 }
