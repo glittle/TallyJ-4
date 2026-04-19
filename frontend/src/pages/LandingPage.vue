@@ -13,6 +13,7 @@ import {
   WarnTriangleFilled,
 } from "@element-plus/icons-vue";
 import { ElIcon } from "element-plus";
+import { onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
@@ -119,7 +120,7 @@ const navigateToLogin = (type: string) => {
 
 // add keyboard shortcut: if user presses "v", go to voter login; if "t", teller login; if "o", officer login
 // use the first letter of the type as the shortcut
-globalThis.addEventListener("keydown", (event) => {
+function handleKeydown(event: KeyboardEvent) {
   if (
     event.target instanceof HTMLInputElement ||
     event.target instanceof HTMLTextAreaElement
@@ -136,6 +137,14 @@ globalThis.addEventListener("keydown", (event) => {
   if (matched) {
     matched.action();
   }
+}
+
+onMounted(() => {
+  globalThis.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+  globalThis.removeEventListener("keydown", handleKeydown);
 });
 </script>
 

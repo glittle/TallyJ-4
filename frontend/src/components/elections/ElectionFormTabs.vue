@@ -30,7 +30,9 @@ const formData = ref<CreateElectionDto | UpdateElectionDto>({
 watch(
   () => props.modelValue,
   (newValue) => {
-    formData.value = { ...newValue };
+    // Use Object.assign instead of replacing the entire ref to avoid
+    // re-rendering unchanged inputs (which breaks browser autofill)
+    Object.assign(formData.value, newValue);
   },
   { deep: true },
 );
