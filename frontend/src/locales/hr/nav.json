@@ -1,0 +1,11 @@
+{
+  "nav.dashboard": "Nadzorna ploča",
+  "nav.elections": "Izbori",
+  "nav.profile": "Profil",
+  "nav.superAdmin": "Super administrator",
+  "nav.auditLogs": "Zapisnici revizije",
+  "nav.votingLocations": "Mjesta glasanja",
+  "nav.tellers": "Brojači glasova",
+  "nav.frontDesk": "Recepcija",
+  "nav.publicDisplay": "Prikaz rezultata izbora"
+}
