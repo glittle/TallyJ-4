@@ -1,17 +1,17 @@
 {
-  "tally.title": "Calcular Escrutínio",
-  "tally.warning": "Aviso",
-  "tally.warningMessage": "Calcular o escrutínio irá sobrescrever quaisquer resultados existentes. Esta ação não pode ser desfeita.",
-  "tally.normalElection": "Eleição Normal",
-  "tally.singleNameElection": "Eleição de Nome Único",
   "tally.calculate": "Calcular Escrutínio",
-  "tally.calculateSuccess": "Escrutínio calculado com sucesso",
   "tally.calculateError": "Falha ao calcular o escrutínio",
+  "tally.calculateSuccess": "Escrutínio calculado com sucesso",
   "tally.calculatingProgress": "Calculando Progresso",
+  "tally.normalElection": "Eleição Normal",
   "tally.processedBallots": "Cédulas Processadas",
   "tally.resultsPreview": "Pré-visualização dos Resultados (Top 10)",
-  "tally.viewFullResults": "Ver Resultados Completos",
   "tally.section.elected": "Eleito",
   "tally.section.extra": "Extra",
-  "tally.section.other": "Outro"
+  "tally.section.other": "Outro",
+  "tally.singleNameElection": "Eleição de Nome Único",
+  "tally.title": "Calcular Escrutínio",
+  "tally.viewFullResults": "Ver Resultados Completos",
+  "tally.warning": "Aviso",
+  "tally.warningMessage": "Calcular o escrutínio irá sobrescrever quaisquer resultados existentes. Esta ação não pode ser desfeita."
 }

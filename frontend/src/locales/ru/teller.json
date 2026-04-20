@@ -1,17 +1,17 @@
 {
-  "teller.form.titleEdit": "Редактировать кассира",
-  "teller.form.titleAdd": "Добавить кассира",
-  "teller.form.name": "Имя кассира",
-  "teller.form.namePlaceholder": "Введите имя кассира",
-  "teller.form.nameRequired": "Имя кассира обязательно",
-  "teller.form.nameMaxLength": "Имя кассира не может превышать 50 символов",
+  "teller.form.cancel": "Отмена",
   "teller.form.computerCode": "Код компьютера",
-  "teller.form.computerCodePlaceholder": "например, АА",
-  "teller.form.computerCodeInvalid": "Код компьютера должен быть 2 прописными буквами (АА-ЗЗ)",
   "teller.form.computerCodeHelp": "Две прописные буквы (АА-ЗЗ) или оставьте пустым",
+  "teller.form.computerCodeInvalid": "Код компьютера должен быть 2 прописными буквами (АА-ЗЗ)",
+  "teller.form.computerCodePlaceholder": "например, АА",
+  "teller.form.create": "Создать",
   "teller.form.headTeller": "Старший кассир",
   "teller.form.headTellerHelp": "Старшие кассиры имеют дополнительные разрешения",
-  "teller.form.cancel": "Отмена",
+  "teller.form.name": "Имя кассира",
+  "teller.form.nameMaxLength": "Имя кассира не может превышать 50 символов",
+  "teller.form.namePlaceholder": "Введите имя кассира",
+  "teller.form.nameRequired": "Имя кассира обязательно",
   "teller.form.save": "Сохранить",
-  "teller.form.create": "Создать"
+  "teller.form.titleAdd": "Добавить кассира",
+  "teller.form.titleEdit": "Редактировать кассира"
 }

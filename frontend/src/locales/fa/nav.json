@@ -1,11 +1,11 @@
 {
+  "nav.auditLogs": "گزارش‌های حسابرسی",
   "nav.dashboard": "داشبورد",
   "nav.elections": "انتخابات",
-  "nav.profile": "پروفایل",
-  "nav.superAdmin": "مدیر ارشد",
-  "nav.auditLogs": "گزارش‌های حسابرسی",
-  "nav.votingLocations": "محل‌های رای‌گیری",
-  "nav.tellers": "صندوق‌دارها",
   "nav.frontDesk": "میز پذیرش",
-  "nav.publicDisplay": "نمایش نتایج انتخابات"
+  "nav.profile": "پروفایل",
+  "nav.publicDisplay": "نمایش نتایج انتخابات",
+  "nav.superAdmin": "مدیر ارشد",
+  "nav.tellers": "صندوق‌دارها",
+  "nav.votingLocations": "محل‌های رای‌گیری"
 }

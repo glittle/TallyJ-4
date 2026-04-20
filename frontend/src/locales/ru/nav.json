@@ -1,11 +1,11 @@
 {
+  "nav.auditLogs": "Журнал аудита",
   "nav.dashboard": "Панель управления",
   "nav.elections": "Выборы",
-  "nav.profile": "Профиль",
-  "nav.superAdmin": "Суперадминистратор",
-  "nav.auditLogs": "Журнал аудита",
-  "nav.votingLocations": "Места голосования",
-  "nav.tellers": "Счетчики",
   "nav.frontDesk": "Приемная",
-  "nav.publicDisplay": "Отображение результатов выборов"
+  "nav.profile": "Профиль",
+  "nav.publicDisplay": "Отображение результатов выборов",
+  "nav.superAdmin": "Суперадминистратор",
+  "nav.tellers": "Счетчики",
+  "nav.votingLocations": "Места голосования"
 }

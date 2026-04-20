@@ -1,17 +1,17 @@
 {
-  "teller.form.titleEdit": "تعديل العدّاد",
-  "teller.form.titleAdd": "إضافة عدّاد",
-  "teller.form.name": "اسم العدّاد",
-  "teller.form.namePlaceholder": "أدخل اسم العدّاد",
-  "teller.form.nameRequired": "اسم العدّاد مطلوب",
-  "teller.form.nameMaxLength": "لا يمكن أن يتجاوز اسم العدّاد 50 حرفاً",
+  "teller.form.cancel": "إلغاء",
   "teller.form.computerCode": "رمز الكمبيوتر",
-  "teller.form.computerCodePlaceholder": "مثال: AA",
-  "teller.form.computerCodeInvalid": "يجب أن يتكون رمز الكمبيوتر من حرفين كبيرين (AA-ZZ)",
   "teller.form.computerCodeHelp": "حرفان كبيران (AA-ZZ) أو اتركه فارغاً",
+  "teller.form.computerCodeInvalid": "يجب أن يتكون رمز الكمبيوتر من حرفين كبيرين (AA-ZZ)",
+  "teller.form.computerCodePlaceholder": "مثال: AA",
+  "teller.form.create": "إنشاء",
   "teller.form.headTeller": "كبير العدّادين",
   "teller.form.headTellerHelp": "لكبار العدّادين صلاحيات إضافية",
-  "teller.form.cancel": "إلغاء",
+  "teller.form.name": "اسم العدّاد",
+  "teller.form.nameMaxLength": "لا يمكن أن يتجاوز اسم العدّاد 50 حرفاً",
+  "teller.form.namePlaceholder": "أدخل اسم العدّاد",
+  "teller.form.nameRequired": "اسم العدّاد مطلوب",
   "teller.form.save": "حفظ",
-  "teller.form.create": "إنشاء"
+  "teller.form.titleAdd": "إضافة عدّاد",
+  "teller.form.titleEdit": "تعديل العدّاد"
 }

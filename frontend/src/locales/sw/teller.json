@@ -1,17 +1,17 @@
 {
-  "teller.form.titleEdit": "Hariri Mhesabu",
-  "teller.form.titleAdd": "Ongeza Mhesabu",
-  "teller.form.name": "Jina la Mhesabu",
-  "teller.form.namePlaceholder": "Ingiza jina la mhesabu",
-  "teller.form.nameRequired": "Jina la mhesabu linahitajika",
-  "teller.form.nameMaxLength": "Jina la mhesabu haliwezi kuzidi herufi 50",
+  "teller.form.cancel": "Ghairi",
   "teller.form.computerCode": "Nambari ya Kompyuta",
-  "teller.form.computerCodePlaceholder": "mfano: AA",
-  "teller.form.computerCodeInvalid": "Nambari ya kompyuta lazima iwe herufi 2 kubwa (AA-ZZ)",
   "teller.form.computerCodeHelp": "Herufi mbili kubwa (AA-ZZ) au acha tupu",
+  "teller.form.computerCodeInvalid": "Nambari ya kompyuta lazima iwe herufi 2 kubwa (AA-ZZ)",
+  "teller.form.computerCodePlaceholder": "mfano: AA",
+  "teller.form.create": "Unda",
   "teller.form.headTeller": "Mhesabu Mkuu",
   "teller.form.headTellerHelp": "Wahesabu wakuu wana ruhusa za ziada",
-  "teller.form.cancel": "Ghairi",
+  "teller.form.name": "Jina la Mhesabu",
+  "teller.form.nameMaxLength": "Jina la mhesabu haliwezi kuzidi herufi 50",
+  "teller.form.namePlaceholder": "Ingiza jina la mhesabu",
+  "teller.form.nameRequired": "Jina la mhesabu linahitajika",
   "teller.form.save": "Hifadhi",
-  "teller.form.create": "Unda"
+  "teller.form.titleAdd": "Ongeza Mhesabu",
+  "teller.form.titleEdit": "Hariri Mhesabu"
 }

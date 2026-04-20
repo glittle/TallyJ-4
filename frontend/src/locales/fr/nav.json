@@ -1,11 +1,11 @@
 {
+  "nav.auditLogs": "Journaux d'audit",
   "nav.dashboard": "Tableau de bord",
   "nav.elections": "Élections",
-  "nav.profile": "Profil",
-  "nav.superAdmin": "Super Administrateur",
-  "nav.auditLogs": "Journaux d'audit",
-  "nav.votingLocations": "Lieux de vote",
-  "nav.tellers": "Scrutateurs",
   "nav.frontDesk": "Accueil",
-  "nav.publicDisplay": "Affichage des résultats d'élection"
+  "nav.profile": "Profil",
+  "nav.publicDisplay": "Affichage des résultats d'élection",
+  "nav.superAdmin": "Super Administrateur",
+  "nav.tellers": "Scrutateurs",
+  "nav.votingLocations": "Lieux de vote"
 }

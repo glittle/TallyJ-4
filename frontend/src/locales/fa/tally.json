@@ -1,17 +1,17 @@
 {
-  "tally.title": "محاسبه آرا",
-  "tally.warning": "هشدار",
-  "tally.warningMessage": "محاسبه آرا باعث بازنویسی هر نتیجه موجودی خواهد شد. این عمل قابل برگرداندن نیست.",
-  "tally.normalElection": "انتخابات عادی",
-  "tally.singleNameElection": "انتخابات تک نامی",
   "tally.calculate": "محاسبه آرا",
-  "tally.calculateSuccess": "آرا با موفقیت محاسبه شد",
   "tally.calculateError": "محاسبه آرا ناموفق بود",
+  "tally.calculateSuccess": "آرا با موفقیت محاسبه شد",
   "tally.calculatingProgress": "در حال محاسبه",
+  "tally.normalElection": "انتخابات عادی",
   "tally.processedBallots": "آرا پردازش شده",
   "tally.resultsPreview": "پیش نمایش نتایج (10 برتر)",
-  "tally.viewFullResults": "مشاهده نتایج کامل",
   "tally.section.elected": "منتخب",
   "tally.section.extra": "اضافی",
-  "tally.section.other": "دیگر"
+  "tally.section.other": "دیگر",
+  "tally.singleNameElection": "انتخابات تک نامی",
+  "tally.title": "محاسبه آرا",
+  "tally.viewFullResults": "مشاهده نتایج کامل",
+  "tally.warning": "هشدار",
+  "tally.warningMessage": "محاسبه آرا باعث بازنویسی هر نتیجه موجودی خواهد شد. این عمل قابل برگرداندن نیست."
 }

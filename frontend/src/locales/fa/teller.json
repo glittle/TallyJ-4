@@ -1,17 +1,17 @@
 {
-  "teller.form.titleEdit": "ویرایش شمارشگر",
-  "teller.form.titleAdd": "افزودن شمارشگر",
-  "teller.form.name": "نام شمارشگر",
-  "teller.form.namePlaceholder": "نام شمارشگر را وارد کنید",
-  "teller.form.nameRequired": "نام شمارشگر الزامی است",
-  "teller.form.nameMaxLength": "نام شمارشگر نمی‌تواند بیش از ۵۰ کاراکتر باشد",
+  "teller.form.cancel": "لغو",
   "teller.form.computerCode": "کد رایانه",
-  "teller.form.computerCodePlaceholder": "مثلاً AA",
-  "teller.form.computerCodeInvalid": "کد رایانه باید ۲ حرف بزرگ (AA-ZZ) باشد",
   "teller.form.computerCodeHelp": "دو حرف بزرگ (AA-ZZ) یا خالی بگذارید",
+  "teller.form.computerCodeInvalid": "کد رایانه باید ۲ حرف بزرگ (AA-ZZ) باشد",
+  "teller.form.computerCodePlaceholder": "مثلاً AA",
+  "teller.form.create": "ایجاد",
   "teller.form.headTeller": "شمارشگر ارشد",
   "teller.form.headTellerHelp": "شمارشگران ارشد دسترسی‌های اضافی دارند",
-  "teller.form.cancel": "لغو",
+  "teller.form.name": "نام شمارشگر",
+  "teller.form.nameMaxLength": "نام شمارشگر نمی‌تواند بیش از ۵۰ کاراکتر باشد",
+  "teller.form.namePlaceholder": "نام شمارشگر را وارد کنید",
+  "teller.form.nameRequired": "نام شمارشگر الزامی است",
   "teller.form.save": "ذخیره",
-  "teller.form.create": "ایجاد"
+  "teller.form.titleAdd": "افزودن شمارشگر",
+  "teller.form.titleEdit": "ویرایش شمارشگر"
 }

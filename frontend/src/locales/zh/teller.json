@@ -1,17 +1,17 @@
 {
-  "teller.form.titleEdit": "编辑计票员",
-  "teller.form.titleAdd": "添加计票员",
-  "teller.form.name": "计票员姓名",
-  "teller.form.namePlaceholder": "输入计票员姓名",
-  "teller.form.nameRequired": "计票员姓名为必填项",
-  "teller.form.nameMaxLength": "计票员姓名不能超过 50 个字符",
+  "teller.form.cancel": "取消",
   "teller.form.computerCode": "计算机代码",
-  "teller.form.computerCodePlaceholder": "例如：AA",
-  "teller.form.computerCodeInvalid": "计算机代码必须为 2 个大写字母（AA-ZZ）",
   "teller.form.computerCodeHelp": "两个大写字母（AA-ZZ）或留空",
+  "teller.form.computerCodeInvalid": "计算机代码必须为 2 个大写字母（AA-ZZ）",
+  "teller.form.computerCodePlaceholder": "例如：AA",
+  "teller.form.create": "创建",
   "teller.form.headTeller": "首席计票员",
   "teller.form.headTellerHelp": "首席计票员拥有额外权限",
-  "teller.form.cancel": "取消",
+  "teller.form.name": "计票员姓名",
+  "teller.form.nameMaxLength": "计票员姓名不能超过 50 个字符",
+  "teller.form.namePlaceholder": "输入计票员姓名",
+  "teller.form.nameRequired": "计票员姓名为必填项",
   "teller.form.save": "保存",
-  "teller.form.create": "创建"
+  "teller.form.titleAdd": "添加计票员",
+  "teller.form.titleEdit": "编辑计票员"
 }
