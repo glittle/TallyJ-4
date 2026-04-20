@@ -45,7 +45,7 @@
   "voting.auth.google.notConfigured": "Xác thực Google không được cấu hình trên máy chủ này.",
   "voting.auth.google.notRegistered": "Bạn không được đăng ký để bỏ phiếu trong bất kỳ cuộc bầu cử nào đang mở hiện tại.",
   "voting.auth.google.prompt": "Nhấp vào nút bên dưới để đăng nhập bằng tài khoản Google của bạn.",
-  "voting.auth.kakao.button": "카카오로 로그인 (Login with Kakao)",
+  "voting.auth.kakao.button": "카카오로 로그인 (Đăng nhập bằng Kakao)",
   "voting.auth.kakao.description": "Nếu bạn có tài khoản Kakao (KakaoTalk) và email hoặc số điện thoại đăng ký khớp, bạn có thể đăng nhập bằng Kakao.",
   "voting.auth.kakao.error": "Đã xảy ra lỗi khi xử lý xác thực Kakao của bạn.",
   "voting.auth.kakao.invalidToken": "Mã thông báo truy cập Kakao không hợp lệ.",

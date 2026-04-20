@@ -14,7 +14,7 @@
   "superAdmin.elections.noResults": "Nisu pronađeni izbori",
   "superAdmin.elections.owner": "Vlasnik",
   "superAdmin.elections.search": "Pretraži izbore...",
-  "superAdmin.elections.status": "Status",
+  "superAdmin.elections.status": "Stanje",
   "superAdmin.elections.type": "Vrsta",
   "superAdmin.elections.voters": "Glasači",
   "superAdmin.error.accessDenied": "Nemate pristup super administratora",

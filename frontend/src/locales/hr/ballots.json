@@ -47,7 +47,7 @@
   "ballots.positionRequired": "Pozicija je obavezna",
   "ballots.saveBallot": "Spremi glasački listić",
   "ballots.saveError": "Spremanje glasačkog listića nije uspjelo",
-  "ballots.status": "Status",
+  "ballots.status": "Stanje",
   "ballots.statusValue.Dup": "Duplikat",
   "ballots.statusValue.Empty": "Prazan",
   "ballots.statusValue.New": "Novi",

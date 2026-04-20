@@ -24,6 +24,6 @@
   "profile.twoFactor.setup": "Postavi dvofaktorsku provjeru",
   "profile.twoFactor.setupSuccess": "Dvofaktorska provjera autentičnosti je omogućena.",
   "profile.twoFactor.setupTitle": "Postavi dvofaktorsku provjeru autentičnosti",
-  "profile.twoFactor.status": "Status",
+  "profile.twoFactor.status": "Stanje",
   "profile.twoFactor.title": "Dvofaktorska provjera autentičnosti"
 }
