@@ -17,8 +17,8 @@ public enum ElectionTypeCode
 public static class ElectionTypeEnum
 {
     public static readonly ElectionType LSA = new("LSA", "Local Spiritual Assembly");
-    // public static readonly ElectionType LSA1 = new("LSA1", "Local Spiritual Assembly (Two-Stage) Local Unit");
-    // public static readonly ElectionType LSA2 = new("LSA2", "Local Spiritual Assembly (Two-Stage) Final");
+    public static readonly ElectionType LSA1 = new("LSA1", "Local Spiritual Assembly (Two-Stage) Local Unit");
+    public static readonly ElectionType LSA2 = new("LSA2", "Local Spiritual Assembly (Two-Stage) Final");
     public static readonly ElectionType NSA = new("NSA", "National Spiritual Assembly");
     public static readonly ElectionType Con = new("Con", "Unit Convention");
     public static readonly ElectionType Reg = new("Reg", "Regional Council");
@@ -26,7 +26,7 @@ public static class ElectionTypeEnum
 
     public static readonly IReadOnlyList<ElectionType> All = new List<ElectionType>
     {
-        LSA, /*LSA1, LSA2,*/ NSA, Con, Reg, Oth
+        LSA, LSA1, LSA2, NSA, Con, Reg, Oth
     };
 
     public static readonly IReadOnlyList<string> AllCodes = All.Select(x => x.Code).ToList();
