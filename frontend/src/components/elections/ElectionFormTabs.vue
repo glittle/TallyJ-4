@@ -36,7 +36,7 @@ const activeTab = useStorage<string>("activeTab", "basic");
 // Map tab names to their form fields
 const tabFields: Record<string, string[]> = {
   basic: ["name", "dateOfElection", "convenor", "electionType", "electionMode"],
-  rules: ["numberToElect", "numberExtra", "canVote", "canReceive"],
+  rules: ["numberToElect", "numberExtra"],
   "voting-methods": ["customMethods", "votingMethods"],
   "online-voting": [
     "onlineWhenOpen",
@@ -183,27 +183,6 @@ function tabLabel(tab: string, label: string) {
         <el-input-number v-model="formData.numberExtra" :min="0" :max="20" />
       </el-form-item>
 
-      <el-form-item :label="$t('elections.form.canVote')" prop="canVote">
-        <el-select
-          v-model="formData.canVote"
-          :placeholder="$t('elections.form.canVotePlaceholder')"
-        >
-          <el-option label="Yes" value="Y" />
-          <el-option label="No" value="N" />
-          <el-option label="Unknown" value="?" />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item :label="$t('elections.form.canReceive')" prop="canReceive">
-        <el-select
-          v-model="formData.canReceive"
-          :placeholder="$t('elections.form.canReceivePlaceholder')"
-        >
-          <el-option label="Yes" value="Y" />
-          <el-option label="No" value="N" />
-          <el-option label="Unknown" value="?" />
-        </el-select>
-      </el-form-item>
     </el-tab-pane>
 
     <el-tab-pane

@@ -75,8 +75,6 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
             ElectionMode = electionNode.GetAttribute("ElectionMode"),
             NumberToElect = ParseInt(electionNode.GetAttribute("NumberToElect")),
             NumberExtra = ParseInt(electionNode.GetAttribute("NumberExtra")),
-            CanVote = electionNode.GetAttribute("CanVote"),
-            CanReceive = electionNode.GetAttribute("CanReceive"),
             ElectionPasscode = electionNode.GetAttribute("ElectionPasscode"),
             LastEnvNum = ParseInt(electionNode.GetAttribute("LastEnvNum")),
             ListForPublic = ParseBool(electionNode.GetAttribute("ListForPublic")),

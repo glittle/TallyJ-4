@@ -56,18 +56,6 @@ public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
             .When(x => x.ElectionMode.HasValue)
             .WithMessage($"Election mode must be one of: {string.Join(", ", ElectionModeEnum.All.Select(m => $"{m.Code} ({m.Description})"))}");
 
-        RuleFor(x => x.CanVote)
-            .MaximumLength(1)
-            .WithMessage("CanVote must be a single character (Y/N/?)")
-            .Must(val => string.IsNullOrWhiteSpace(val) || new[] { "Y", "N", "?" }.Contains(val))
-            .WithMessage("CanVote must be Y, N, or ?");
-
-        RuleFor(x => x.CanReceive)
-            .MaximumLength(1)
-            .WithMessage("CanReceive must be a single character (Y/N/?)")
-            .Must(val => string.IsNullOrWhiteSpace(val) || new[] { "Y", "N", "?" }.Contains(val))
-            .WithMessage("CanReceive must be Y, N, or ?");
-
         RuleFor(x => x.ElectionPasscode)
             .MaximumLength(50)
             .WithMessage("Election passcode cannot exceed 50 characters");
