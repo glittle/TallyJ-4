@@ -23,6 +23,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Database:SeedOnStartup"] = "false",
+                ["Database:MigrateOnStartup"] = "false",
                 ["Jwt:Key"] = "ThisIsATestKeyThatIsAtLeast32CharactersLongForJWT",
                 ["Jwt:Issuer"] = "BackendTestAPI",
                 ["Jwt:Audience"] = "BackendTestClient",
