@@ -1,11 +1,11 @@
 {
+  "nav.auditLogs": "감사 로그",
   "nav.dashboard": "대시보드",
   "nav.elections": "선거",
-  "nav.profile": "프로필",
-  "nav.superAdmin": "슈퍼 관리자",
-  "nav.auditLogs": "감사 로그",
-  "nav.votingLocations": "투표 위치",
-  "nav.tellers": "개표원",
   "nav.frontDesk": "안내 데스크",
-  "nav.publicDisplay": "선거 결과 표시"
+  "nav.profile": "프로필",
+  "nav.publicDisplay": "선거 결과 표시",
+  "nav.superAdmin": "슈퍼 관리자",
+  "nav.tellers": "개표원",
+  "nav.votingLocations": "투표 위치"
 }

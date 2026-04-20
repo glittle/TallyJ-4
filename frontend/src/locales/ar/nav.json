@@ -1,11 +1,11 @@
 {
+  "nav.auditLogs": "سجلات التدقيق",
   "nav.dashboard": "لوحة التحكم",
   "nav.elections": "الانتخابات",
-  "nav.profile": "الملف الشخصي",
-  "nav.superAdmin": "المشرف العام",
-  "nav.auditLogs": "سجلات التدقيق",
-  "nav.votingLocations": "مواقع التصويت",
-  "nav.tellers": "المحاسبون",
   "nav.frontDesk": "مكتب الاستقبال",
-  "nav.publicDisplay": "عرض نتائج الانتخابات"
+  "nav.profile": "الملف الشخصي",
+  "nav.publicDisplay": "عرض نتائج الانتخابات",
+  "nav.superAdmin": "المشرف العام",
+  "nav.tellers": "المحاسبون",
+  "nav.votingLocations": "مواقع التصويت"
 }

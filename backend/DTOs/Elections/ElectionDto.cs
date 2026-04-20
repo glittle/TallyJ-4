@@ -93,16 +93,6 @@ public class ElectionDto
     public int LocationCount { get; set; }
 
     /// <summary>
-    /// Default eligibility to vote (Y/N/?).
-    /// </summary>
-    public string? CanVote { get; set; }
-
-    /// <summary>
-    /// Default eligibility to receive votes (Y/N/?).
-    /// </summary>
-    public string? CanReceive { get; set; }
-
-    /// <summary>
     /// The passcode required for teller access.
     /// </summary>
     public string? ElectionPasscode { get; set; }

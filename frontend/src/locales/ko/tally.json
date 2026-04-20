@@ -1,17 +1,17 @@
 {
-  "tally.title": "개표 계산",
-  "tally.warning": "경고",
-  "tally.warningMessage": "개표를 계산하면 기존 결과가 덮어씌워집니다. 이 작업은 취소할 수 없습니다.",
-  "tally.normalElection": "일반 선거",
-  "tally.singleNameElection": "단일 이름 선거",
   "tally.calculate": "개표 계산",
-  "tally.calculateSuccess": "개표가 성공적으로 계산되었습니다",
   "tally.calculateError": "개표 계산에 실패했습니다",
+  "tally.calculateSuccess": "개표가 성공적으로 계산되었습니다",
   "tally.calculatingProgress": "계산 진행률",
+  "tally.normalElection": "일반 선거",
   "tally.processedBallots": "처리된 투표 용지",
   "tally.resultsPreview": "결과 미리보기 (상위 10개)",
-  "tally.viewFullResults": "전체 결과 보기",
   "tally.section.elected": "선출된",
   "tally.section.extra": "추가",
-  "tally.section.other": "기타"
+  "tally.section.other": "기타",
+  "tally.singleNameElection": "단일 이름 선거",
+  "tally.title": "개표 계산",
+  "tally.viewFullResults": "전체 결과 보기",
+  "tally.warning": "경고",
+  "tally.warningMessage": "개표를 계산하면 기존 결과가 덮어씌워집니다. 이 작업은 취소할 수 없습니다."
 }

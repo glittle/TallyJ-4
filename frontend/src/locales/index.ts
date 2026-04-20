@@ -195,6 +195,7 @@ export const supportedLocales = [
   { value: "ar", flag: "sa", name: "arabic" },
   { value: "zh", flag: "cn", name: "chinese" },
   { value: "ru", flag: "ru", name: "russian" },
+  { value: "hr", flag: "hr", name: "croatian" },
 ] as const;
 
 export type SupportedLocale = (typeof supportedLocales)[number]["value"];

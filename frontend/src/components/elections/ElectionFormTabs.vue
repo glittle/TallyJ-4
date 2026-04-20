@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { useStorage } from "@vueuse/core";
+import { computed } from "vue";
 import type {
   CreateElectionDto,
-  UpdateElectionDto,
   ElectionSummaryDto,
+  UpdateElectionDto,
 } from "../../types";
 
 interface Props {
@@ -14,52 +15,28 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit =
-  defineEmits<
-    (
-      e: "update:modelValue",
-      value: CreateElectionDto | UpdateElectionDto,
-    ) => void
-  >();
+defineEmits<
+  (e: "update:modelValue", value: CreateElectionDto | UpdateElectionDto) => void
+>();
 
-const formData = ref<CreateElectionDto | UpdateElectionDto>({
-  ...props.modelValue,
-});
-
-// Watch for external changes to modelValue
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    formData.value = { ...newValue };
-  },
-  { deep: true },
-);
-
-// Watch for changes to formData and emit updates
-watch(
-  () => formData.value,
-  (newValue) => {
-    emit("update:modelValue", { ...newValue });
-  },
-  { deep: true },
-);
-
-onMounted(() => {
-  console.log("ElectionFormTabs mounted with props:", {
-    modelValue: props.modelValue,
-    availableElections: props.availableElections,
-    formRef: props.formRef,
-  });
-});
+// The parent passes a reactive() object via v-model. Binding inputs to a
+// local ref + emitting updates does not propagate, because the parent's
+// reactive const cannot be reassigned by v-model. Validation on the parent's
+// <el-form :model="form"> then runs against stale data and shows "name is
+// required" even after the user has typed. Binding inputs directly to the
+// shared reactive object keeps the parent's model in sync synchronously.
+// Property mutations on a reactive object prop do not trigger Vue's
+// prop-mutation warning (only reassigning the prop itself does).
+const formData = computed(() => props.modelValue);
 
 const hasBallotsEntered = computed(() => (props.ballotCount ?? 0) > 0);
 
-const activeTab = ref("basic");
+const activeTab = useStorage<string>("activeTab", "basic");
 
 // Map tab names to their form fields
 const tabFields: Record<string, string[]> = {
   basic: ["name", "dateOfElection", "convenor", "electionType", "electionMode"],
-  rules: ["numberToElect", "numberExtra", "canVote", "canReceive"],
+  rules: ["numberToElect", "numberExtra"],
   "voting-methods": ["customMethods", "votingMethods"],
   "online-voting": [
     "onlineWhenOpen",
@@ -204,28 +181,6 @@ function tabLabel(tab: string, label: string) {
         prop="numberExtra"
       >
         <el-input-number v-model="formData.numberExtra" :min="0" :max="20" />
-      </el-form-item>
-
-      <el-form-item :label="$t('elections.form.canVote')" prop="canVote">
-        <el-select
-          v-model="formData.canVote"
-          :placeholder="$t('elections.form.canVotePlaceholder')"
-        >
-          <el-option label="Yes" value="Y" />
-          <el-option label="No" value="N" />
-          <el-option label="Unknown" value="?" />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item :label="$t('elections.form.canReceive')" prop="canReceive">
-        <el-select
-          v-model="formData.canReceive"
-          :placeholder="$t('elections.form.canReceivePlaceholder')"
-        >
-          <el-option label="Yes" value="Y" />
-          <el-option label="No" value="N" />
-          <el-option label="Unknown" value="?" />
-        </el-select>
       </el-form-item>
     </el-tab-pane>
 

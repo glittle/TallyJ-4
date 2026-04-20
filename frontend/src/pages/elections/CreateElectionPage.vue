@@ -13,6 +13,7 @@
         :rules="rules"
         label-width="200px"
         label-position="left"
+        :hide-required-asterisk="false"
       >
         <ElectionFormTabs
           v-model="form"
@@ -65,8 +66,6 @@ const form = reactive<CreateElectionDto>({
   showFullReport: true,
   listForPublic: false,
   showAsTest: false,
-  canVote: "Y",
-  canReceive: "Y",
 });
 
 const rules = reactive<FormRules>({
@@ -74,7 +73,14 @@ const rules = reactive<FormRules>({
     {
       required: true,
       message: t("elections.form.nameRequired"),
-      trigger: "blur",
+      trigger: ["blur", "input"],
+    },
+  ],
+  dateOfElection: [
+    {
+      required: true,
+      message: t("elections.form.dateRequired"),
+      trigger: "change",
     },
   ],
   electionType: [
@@ -117,27 +123,46 @@ async function submitForm() {
     return;
   }
 
-  await formRef.value.validate(async (valid) => {
-    if (valid) {
-      submitting.value = true;
-      try {
-        const dto: CreateElectionDto = {
-          ...form,
-          dateOfElection: form.dateOfElection
-            ? new Date(form.dateOfElection).toISOString()
-            : undefined,
-        };
+  try {
+    await formRef.value.validate();
+  } catch {
+    // Validation failed - errors are displayed in the form
+    return;
+  }
 
-        const election = await electionStore.createElection(dto);
-        showSuccessMessage(t("elections.createSuccess"));
-        router.push(`/elections/${election.electionGuid}`);
-      } catch (error) {
-        handleApiError(error);
-      } finally {
-        submitting.value = false;
-      }
+  submitting.value = true;
+  try {
+    const dto: CreateElectionDto = {
+      ...form,
+      dateOfElection: form.dateOfElection
+        ? new Date(form.dateOfElection).toISOString()
+        : undefined,
+    };
+
+    const election = await electionStore.createElection(dto);
+    showSuccessMessage(t("elections.createSuccess"));
+    router.push(`/elections/${election.electionGuid}`);
+  } catch (error: any) {
+    // Handle validation errors by setting them on form fields
+    if (error?.response?.status === 400 && error?.response?.data?.errors) {
+      const validationErrors = error.response.data.errors;
+      const fieldErrors: Record<string, string[]> = {};
+
+      // Convert server field names to camelCase for form fields
+      Object.keys(validationErrors).forEach((serverField) => {
+        const formField =
+          serverField.charAt(0).toLowerCase() + serverField.slice(1);
+        fieldErrors[formField] = validationErrors[serverField];
+      });
+
+      // Set errors on form fields
+      formRef.value?.setFields(fieldErrors);
+    } else {
+      handleApiError(error);
     }
-  });
+  } finally {
+    submitting.value = false;
+  }
 }
 
 function cancel() {

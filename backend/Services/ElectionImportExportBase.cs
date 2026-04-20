@@ -120,8 +120,6 @@ public abstract class ElectionImportExportBase
         public string? ElectionMode { get; set; }
         public int? NumberToElect { get; set; }
         public int? NumberExtra { get; set; }
-        public string? CanVote { get; set; }
-        public string? CanReceive { get; set; }
         public string? ElectionPasscode { get; set; }
         public int? LastEnvNum { get; set; }
         public bool? ListForPublic { get; set; }

@@ -1754,14 +1754,6 @@ export const CreateElectionDtoSchema = {
             type: 'boolean',
             nullable: true
         },
-        canVote: {
-            type: 'string',
-            nullable: true
-        },
-        canReceive: {
-            type: 'string',
-            nullable: true
-        },
         electionPasscode: {
             type: 'string',
             nullable: true
@@ -2249,14 +2241,6 @@ export const ElectionDtoSchema = {
         locationCount: {
             type: 'integer',
             format: 'int32'
-        },
-        canVote: {
-            type: 'string',
-            nullable: true
-        },
-        canReceive: {
-            type: 'string',
-            nullable: true
         },
         electionPasscode: {
             type: 'string',
@@ -5500,14 +5484,6 @@ export const UpdateElectionDtoSchema = {
         },
         electionMode: {
             $ref: '#/components/schemas/ElectionModeCode'
-        },
-        canVote: {
-            type: 'string',
-            nullable: true
-        },
-        canReceive: {
-            type: 'string',
-            nullable: true
         },
         electionPasscode: {
             type: 'string',

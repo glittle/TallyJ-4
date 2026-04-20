@@ -26,7 +26,7 @@ export async function loadAppConfig(): Promise<AppConfig> {
     return createAppConfig();
   }
 
-  const response = await fetch("./config.json");
+  const response = await fetch("/config.json");
   return (await response.json()) as AppConfig;
 }
 

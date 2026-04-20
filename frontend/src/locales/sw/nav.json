@@ -1,11 +1,11 @@
 {
+  "nav.auditLogs": "Kumbukumbu za Ukaguzi",
   "nav.dashboard": "Dashibodi",
   "nav.elections": "Uchaguzi",
-  "nav.profile": "Wasifu",
-  "nav.superAdmin": "Msimamizi Mkuu",
-  "nav.auditLogs": "Kumbukumbu za Ukaguzi",
-  "nav.votingLocations": "Mahali pa Kupiga Kura",
-  "nav.tellers": "Wasimamizi",
   "nav.frontDesk": "Meza ya Mbele",
-  "nav.publicDisplay": "Onyesho la Matokeo ya Uchaguzi"
+  "nav.profile": "Wasifu",
+  "nav.publicDisplay": "Onyesho la Matokeo ya Uchaguzi",
+  "nav.superAdmin": "Msimamizi Mkuu",
+  "nav.tellers": "Wasimamizi",
+  "nav.votingLocations": "Mahali pa Kupiga Kura"
 }

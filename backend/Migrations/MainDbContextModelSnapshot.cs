@@ -158,16 +158,6 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowId"));
 
-                    b.Property<string>("CanReceive")
-                        .HasMaxLength(1)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(1)");
-
-                    b.Property<string>("CanVote")
-                        .HasMaxLength(1)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(1)");
-
                     b.Property<string>("Convenor")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");

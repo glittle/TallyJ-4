@@ -1,11 +1,11 @@
 {
+  "nav.auditLogs": "Audit Logs",
   "nav.dashboard": "Dashboard",
   "nav.elections": "Elections",
-  "nav.profile": "Profile",
-  "nav.superAdmin": "Super Admin",
-  "nav.auditLogs": "Audit Logs",
-  "nav.votingLocations": "Voting Locations",
-  "nav.tellers": "Tellers",
   "nav.frontDesk": "Front Desk",
-  "nav.publicDisplay": "Election Results Display"
+  "nav.profile": "Profile",
+  "nav.publicDisplay": "Election Results Display",
+  "nav.superAdmin": "Super Admin",
+  "nav.tellers": "Tellers",
+  "nav.votingLocations": "Voting Locations"
 }

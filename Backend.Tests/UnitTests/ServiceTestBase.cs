@@ -13,6 +13,15 @@ public abstract class ServiceTestBase : IDisposable
     protected readonly MainDbContext Context;
     protected readonly IMapper Mapper;
 
+    private static readonly TypeAdapterConfig SharedConfig = CreateSharedConfig();
+
+    private static TypeAdapterConfig CreateSharedConfig()
+    {
+        var config = new TypeAdapterConfig();
+        config.Scan(typeof(ElectionProfile).Assembly);
+        return config;
+    }
+
     protected ServiceTestBase()
     {
         var options = new DbContextOptionsBuilder<MainDbContext>()
@@ -22,10 +31,7 @@ public abstract class ServiceTestBase : IDisposable
 
         Context = new TestMainDbContext(options);
 
-        var config = TypeAdapterConfig.GlobalSettings;
-        config.Scan(typeof(ElectionProfile).Assembly);
-
-        Mapper = new Mapper(config);
+        Mapper = new Mapper(SharedConfig);
     }
 
     public void Dispose()

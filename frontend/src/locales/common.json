@@ -1,32 +1,33 @@
 {
-  "title": "TallyJ v4",
-  "english": "English",
-  "finnish": "Suomi",
-  "french": "Français",
-  "korean": "한국어",
-  "spanish": "Español",
-  "portuguese": "Português",
-  "hindi": "हिन्दी",
-  "vietnamese": "Tiếng Việt",
-  "persian": "فارسی",
-  "swahili": "Kiswahili",
+  "api.baseUrl": "/api",
+  "api.timeout": 30000,
   "arabic": "العربية",
   "chinese": "中文",
+  "croatian": "Hrvatski",
+  "english": "English",
+  "features.exportFormats": [
+    "PDF",
+    "Excel",
+    "CSV"
+  ],
+  "features.realTimeUpdates": true,
+  "features.signalR": true,
+  "finnish": "Suomi",
+  "french": "Français",
+  "hindi": "हिन्दी",
+  "korean": "한국어",
+  "persian": "فارسی",
+  "portuguese": "Português",
   "russian": "Русский",
+  "spanish": "Español",
   "supportedUploadPeopleFormats": [
     "CSV",
     "XLS",
     "XLSX"
   ],
-  "api.baseUrl": "/api",
-  "api.timeout": 30000,
+  "swahili": "Kiswahili",
+  "title": "TallyJ v4",
   "validation.emailRegex": "^[a-zA-Z0-9._%+-]+{'@'}[a-zA-Z0-9.-]+\\.[a-zA-Z]{'{'}2,{'}'}$",
   "validation.phoneRegex": "^[+]?[0-9\\s\\-\\(\\)]+$",
-  "features.signalR": true,
-  "features.realTimeUpdates": true,
-  "features.exportFormats": [
-    "PDF",
-    "Excel",
-    "CSV"
-  ]
+  "vietnamese": "Tiếng Việt"
 }

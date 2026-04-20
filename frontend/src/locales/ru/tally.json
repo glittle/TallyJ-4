@@ -1,17 +1,17 @@
 {
-  "tally.title": "Подсчитать результаты",
-  "tally.warning": "Предупреждение",
-  "tally.warningMessage": "Подсчет результатов перезапишет все существующие результаты. Это действие нельзя отменить.",
-  "tally.normalElection": "Обычные выборы",
-  "tally.singleNameElection": "Выборы одного имени",
   "tally.calculate": "Подсчитать результаты",
-  "tally.calculateSuccess": "Результаты успешно подсчитаны",
   "tally.calculateError": "Не удалось подсчитать результаты",
+  "tally.calculateSuccess": "Результаты успешно подсчитаны",
   "tally.calculatingProgress": "Подсчет прогресса",
+  "tally.normalElection": "Обычные выборы",
   "tally.processedBallots": "Обработанные бюллетени",
   "tally.resultsPreview": "Предварительный просмотр результатов (Топ 10)",
-  "tally.viewFullResults": "Просмотреть полные результаты",
   "tally.section.elected": "Избранный",
   "tally.section.extra": "Дополнительный",
-  "tally.section.other": "Другой"
+  "tally.section.other": "Другой",
+  "tally.singleNameElection": "Выборы одного имени",
+  "tally.title": "Подсчитать результаты",
+  "tally.viewFullResults": "Просмотреть полные результаты",
+  "tally.warning": "Предупреждение",
+  "tally.warningMessage": "Подсчет результатов перезапишет все существующие результаты. Это действие нельзя отменить."
 }

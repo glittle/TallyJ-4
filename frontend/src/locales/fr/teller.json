@@ -1,17 +1,17 @@
 {
-  "teller.form.titleEdit": "Modifier le scrutateur",
-  "teller.form.titleAdd": "Ajouter un scrutateur",
-  "teller.form.name": "Nom du scrutateur",
-  "teller.form.namePlaceholder": "Entrer le nom du scrutateur",
-  "teller.form.nameRequired": "Le nom du scrutateur est requis",
-  "teller.form.nameMaxLength": "Le nom du scrutateur ne peut pas dépasser 50 caractères",
+  "teller.form.cancel": "Annuler",
   "teller.form.computerCode": "Code d'ordinateur",
-  "teller.form.computerCodePlaceholder": "par ex., AA",
-  "teller.form.computerCodeInvalid": "Le code d'ordinateur doit être 2 lettres majuscules (AA-ZZ)",
   "teller.form.computerCodeHelp": "Deux lettres majuscules (AA-ZZ) ou laisser vide",
+  "teller.form.computerCodeInvalid": "Le code d'ordinateur doit être 2 lettres majuscules (AA-ZZ)",
+  "teller.form.computerCodePlaceholder": "par ex., AA",
+  "teller.form.create": "Créer",
   "teller.form.headTeller": "Scrutateur en chef",
   "teller.form.headTellerHelp": "Les scrutateurs en chef ont des permissions supplémentaires",
-  "teller.form.cancel": "Annuler",
+  "teller.form.name": "Nom du scrutateur",
+  "teller.form.nameMaxLength": "Le nom du scrutateur ne peut pas dépasser 50 caractères",
+  "teller.form.namePlaceholder": "Entrer le nom du scrutateur",
+  "teller.form.nameRequired": "Le nom du scrutateur est requis",
   "teller.form.save": "Sauvegarder",
-  "teller.form.create": "Créer"
+  "teller.form.titleAdd": "Ajouter un scrutateur",
+  "teller.form.titleEdit": "Modifier le scrutateur"
 }
