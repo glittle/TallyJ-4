@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "هر روش رأی‌گیری سفارشی را توصیف کنید",
   "elections.form.date": "تاریخ انتخابات",
   "elections.form.datePlaceholder": "تاریخ انتخابات را انتخاب کنید",
+  "elections.form.dateRequired": "تاریخ انتخابات الزامی است",
   "elections.form.electionMode": "حالت انتخابات",
   "elections.form.electionPasscode": "رمز انتخابات",
   "elections.form.electionPasscodeHelp": "برای ورود شمارنده رمز لازم است.",

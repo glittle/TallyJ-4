@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "사용자 정의 투표 방법 설명",
   "elections.form.date": "선거 날짜",
   "elections.form.datePlaceholder": "선거 날짜 선택",
+  "elections.form.dateRequired": "선거 날짜는 필수입니다",
   "elections.form.electionMode": "선거 모드",
   "elections.form.electionPasscode": "선거 비밀번호",
   "elections.form.electionPasscodeHelp": "개표원 로그인에 비밀번호가 필요합니다.",

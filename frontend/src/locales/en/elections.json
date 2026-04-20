@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "Describe any custom voting methods",
   "elections.form.date": "Election Date",
   "elections.form.datePlaceholder": "Select election date",
+  "elections.form.dateRequired": "Election Date is required",
   "elections.form.electionMode": "Election Mode",
   "elections.form.electionPasscode": "Election Passcode",
   "elections.form.electionPasscodeHelp": "A passcode is required for teller login.",

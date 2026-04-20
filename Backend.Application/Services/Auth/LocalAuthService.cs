@@ -9,7 +9,6 @@ namespace Backend.Application.Services.Auth;
 public class LocalAuthService : ILocalAuthService
 {
     private readonly UserManager<AppUser> _userManager;
-    private readonly SignInManager<AppUser> _signInManager;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly MainDbContext _context;
     private readonly IStringLocalizer<LocalAuthService> _localizer;
@@ -18,7 +17,6 @@ public class LocalAuthService : ILocalAuthService
 
     public LocalAuthService(
         UserManager<AppUser> userManager,
-        SignInManager<AppUser> signInManager,
         IJwtTokenService jwtTokenService,
         MainDbContext context,
         IStringLocalizer<LocalAuthService> localizer,
@@ -26,7 +24,6 @@ public class LocalAuthService : ILocalAuthService
         ITwoFactorService twoFactorService)
     {
         _userManager = userManager;
-        _signInManager = signInManager;
         _jwtTokenService = jwtTokenService;
         _context = context;
         _localizer = localizer;
@@ -107,15 +104,27 @@ public class LocalAuthService : ILocalAuthService
             return (false, _localizer["auth.errors.accountLocked"], null);
         }
 
-        // Use SignInManager.PasswordSignInAsync to enable lockout tracking
-        var signInResult = await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: false, lockoutOnFailure: true);
+        // Check password and handle lockout manually
+        var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
 
-        if (signInResult.IsLockedOut)
+        if (!passwordValid)
         {
-            return (false, _localizer["auth.errors.accountLocked"], null);
+            // Increment access failed count for lockout tracking
+            await _userManager.AccessFailedAsync(user);
+
+            // Check if account is now locked out
+            if (await _userManager.IsLockedOutAsync(user))
+            {
+                return (false, _localizer["auth.errors.accountLocked"], null);
+            }
+
+            return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
-        if (signInResult.RequiresTwoFactor || user.TwoFactorEnabled)
+        // Reset access failed count on successful password check
+        await _userManager.ResetAccessFailedCountAsync(user);
+
+        if (user.TwoFactorEnabled)
         {
             if (string.IsNullOrEmpty(request.TwoFactorCode))
             {
@@ -135,10 +144,6 @@ public class LocalAuthService : ILocalAuthService
             {
                 return (false, codeError ?? _localizer["auth.errors.invalid2FACode"], null);
             }
-        }
-        else if (!signInResult.Succeeded)
-        {
-            return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
         var token = _jwtTokenService.GenerateToken(user);

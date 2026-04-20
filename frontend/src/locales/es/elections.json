@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "Describa cualquier método de votación personalizado",
   "elections.form.date": "Fecha de la Elección",
   "elections.form.datePlaceholder": "Seleccione la fecha de la elección",
+  "elections.form.dateRequired": "La fecha de la elección es obligatoria",
   "elections.form.electionMode": "Modo de Elección",
   "elections.form.electionPasscode": "Contraseña de la Elección",
   "elections.form.electionPasscodeHelp": "Se requiere una contraseña para el inicio de sesión de escrutadores.",
