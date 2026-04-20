@@ -44,18 +44,6 @@ public class CreateElectionDtoValidator : AbstractValidator<CreateElectionDto>
             .MaximumLength(150)
             .WithMessage("Convenor name cannot exceed 150 characters");
 
-        RuleFor(x => x.CanVote)
-            .MaximumLength(1)
-            .WithMessage("CanVote must be a single character (Y/N/?)")
-            .Must(val => string.IsNullOrWhiteSpace(val) || new[] { "Y", "N", "?" }.Contains(val))
-            .WithMessage("CanVote must be Y, N, or ?");
-
-        RuleFor(x => x.CanReceive)
-            .MaximumLength(1)
-            .WithMessage("CanReceive must be a single character (Y/N/?)")
-            .Must(val => string.IsNullOrWhiteSpace(val) || new[] { "Y", "N", "?" }.Contains(val))
-            .WithMessage("CanReceive must be Y, N, or ?");
-
         RuleFor(x => x.ElectionPasscode)
             .MaximumLength(50)
             .WithMessage("Election passcode cannot exceed 50 characters");

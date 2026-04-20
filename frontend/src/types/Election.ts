@@ -17,8 +17,6 @@ export interface ElectionDto {
   voterCount: number;
   ballotCount: number;
   locationCount: number;
-  canVote?: string;
-  canReceive?: string;
   electionPasscode?: string;
   linkedElectionGuid?: string;
   linkedElectionKind?: string;
@@ -51,8 +49,6 @@ export interface CreateElectionDto {
   showFullReport?: boolean;
   listForPublic?: boolean;
   showAsTest?: boolean;
-  canVote?: string;
-  canReceive?: string;
   electionPasscode?: string;
   linkedElectionGuid?: string;
   linkedElectionKind?: string;
@@ -88,8 +84,6 @@ export interface UpdateElectionDto {
   tallyStatus?: string;
   onlineWhenOpen?: string;
   onlineWhenClose?: string;
-  canVote?: string;
-  canReceive?: string;
   electionPasscode?: string;
   linkedElectionGuid?: string;
   linkedElectionKind?: string;

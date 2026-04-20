@@ -113,6 +113,20 @@ for %f in ("API_DOCUMENTATION.md" "docs\ADMIN_GUIDE.md" "backend\API_EXAMPLES.md
 - verify deletions from the same worktree context with `if exist ...` and `git status --short`
 - if `git status` does not show a tracked file as deleted, the removal did not affect the active worktree
 
+## Windows CMD search and output parsing
+
+When searching command output or files from CMD-based tooling, prefer the Grep tool over `findstr`. If you must use `findstr`:
+
+- `findstr` does not accept multiple space-separated terms inside a single quoted string the way ripgrep does. Use `/c:"phrase"` for literal phrases, or repeat `/c:` for OR-style matching:
+
+```bat
+findstr /i /c:"canvote" /c:"canreceive" /c:"failed" file.txt
+```
+
+- Never chain searches with `&` and reuse quoted patterns containing spaces — CMD will treat trailing tokens as filenames and you get `FINDSTR: Cannot open ...` errors.
+- Do not pipe `type file` into `more +0` as a way to "show all" — `more` paginates and truncates in this tool harness. Read the file directly with the `Read` tool when you want the full contents.
+- For multi-term searches across the repo, the `Grep` tool (ripgrep) is faster and quoting is sane.
+
 ## Frontend workflow note
 
 For routine local development, prefer `npm run dev`. Only use `npm run build` when you explicitly need a production build or are validating production output.

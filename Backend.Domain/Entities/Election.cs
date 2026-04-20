@@ -36,14 +36,6 @@ public partial class Election
 
     public int? NumberExtra { get; set; }
 
-    [StringLength(1)]
-    [Unicode(false)]
-    public string? CanVote { get; set; }
-
-    [StringLength(1)]
-    [Unicode(false)]
-    public string? CanReceive { get; set; }
-
     public int? LastEnvNum { get; set; }
 
     [StringLength(15)]

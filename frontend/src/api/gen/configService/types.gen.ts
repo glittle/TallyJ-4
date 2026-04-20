@@ -506,8 +506,6 @@ export type CreateElectionDto = {
     showFullReport?: boolean | null;
     listForPublic?: boolean | null;
     showAsTest?: boolean | null;
-    canVote?: string | null;
-    canReceive?: string | null;
     electionPasscode?: string | null;
     linkedElectionGuid?: string | null;
     linkedElectionKind?: string | null;
@@ -642,8 +640,6 @@ export type ElectionDto = {
     voterCount?: number;
     ballotCount?: number;
     locationCount?: number;
-    canVote?: string | null;
-    canReceive?: string | null;
     electionPasscode?: string | null;
     linkedElectionGuid?: string | null;
     linkedElectionKind?: string | null;
@@ -1552,8 +1548,6 @@ export type UpdateElectionDto = {
     onlineWhenClose?: Date | null;
     electionType?: ElectionTypeCode;
     electionMode?: ElectionModeCode;
-    canVote?: string | null;
-    canReceive?: string | null;
     electionPasscode?: string | null;
     linkedElectionGuid?: string | null;
     linkedElectionKind?: string | null;
