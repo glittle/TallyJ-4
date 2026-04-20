@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { useStorage } from "@vueuse/core";
+import { computed } from "vue";
 import type {
   CreateElectionDto,
   ElectionSummaryDto,
@@ -18,22 +19,19 @@ defineEmits<
   (e: "update:modelValue", value: CreateElectionDto | UpdateElectionDto) => void
 >();
 
-// Bind directly to the parent's reactive model so mutations propagate
-// synchronously. Using a local ref + watchers caused validation to run
-// against stale parent data on every keystroke.
+// The parent passes a reactive() object via v-model. Binding inputs to a
+// local ref + emitting updates does not propagate, because the parent's
+// reactive const cannot be reassigned by v-model. Validation on the parent's
+// <el-form :model="form"> then runs against stale data and shows "name is
+// required" even after the user has typed. Binding inputs directly to the
+// shared reactive object keeps the parent's model in sync synchronously.
+// Property mutations on a reactive object prop do not trigger Vue's
+// prop-mutation warning (only reassigning the prop itself does).
 const formData = computed(() => props.modelValue);
-
-onMounted(() => {
-  console.log("ElectionFormTabs mounted with props:", {
-    modelValue: props.modelValue,
-    availableElections: props.availableElections,
-    formRef: props.formRef,
-  });
-});
 
 const hasBallotsEntered = computed(() => (props.ballotCount ?? 0) > 0);
 
-const activeTab = ref("basic");
+const activeTab = useStorage<string>("activeTab", "basic");
 
 // Map tab names to their form fields
 const tabFields: Record<string, string[]> = {
