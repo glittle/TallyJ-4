@@ -74,7 +74,7 @@ const rules = reactive<FormRules>({
     {
       required: true,
       message: t("elections.form.nameRequired"),
-      trigger: "blur",
+      trigger: ["blur", "input"],
     },
   ],
   electionType: [

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import type {
   CreateElectionDto,
-  UpdateElectionDto,
   ElectionSummaryDto,
+  UpdateElectionDto,
 } from "../../types";
 
 interface Props {
@@ -14,37 +14,14 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit =
-  defineEmits<
-    (
-      e: "update:modelValue",
-      value: CreateElectionDto | UpdateElectionDto,
-    ) => void
-  >();
+defineEmits<
+  (e: "update:modelValue", value: CreateElectionDto | UpdateElectionDto) => void
+>();
 
-const formData = ref<CreateElectionDto | UpdateElectionDto>({
-  ...props.modelValue,
-});
-
-// Watch for external changes to modelValue
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    // Use Object.assign instead of replacing the entire ref to avoid
-    // re-rendering unchanged inputs (which breaks browser autofill)
-    Object.assign(formData.value, newValue);
-  },
-  { deep: true },
-);
-
-// Watch for changes to formData and emit updates
-watch(
-  () => formData.value,
-  (newValue) => {
-    emit("update:modelValue", { ...newValue });
-  },
-  { deep: true },
-);
+// Bind directly to the parent's reactive model so mutations propagate
+// synchronously. Using a local ref + watchers caused validation to run
+// against stale parent data on every keystroke.
+const formData = computed(() => props.modelValue);
 
 onMounted(() => {
   console.log("ElectionFormTabs mounted with props:", {

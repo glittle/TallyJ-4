@@ -2,17 +2,14 @@
 import type { GoogleCredentialResponse } from "../types/google-one-tap";
 
 declare global {
-  interface Window {
-    google: any;
-  }
+  var google: any;
+  var FB: any;
+  var Kakao: any;
 }
 
-declare const FB: any;
-declare const Kakao: any;
-
-import { ArrowLeft } from "@element-plus/icons-vue";
 import { useNotifications } from "@/composables/useNotifications";
 import { getAppConfig } from "@/config/appConfig";
+import { ArrowLeft } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
 import {
   computed,
@@ -74,10 +71,10 @@ const rules = computed<FormRules>(() => {
         validator: (_rule: any, value: any, callback: any) => {
           if (!value) {
             callback(new Error(t("auth.emailRequired")));
-          } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-            callback(new Error(t("auth.emailInvalid")));
-          } else {
+          } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
             callback();
+          } else {
+            callback(new Error(t("auth.emailInvalid")));
           }
         },
         trigger: "blur",
@@ -90,10 +87,10 @@ const rules = computed<FormRules>(() => {
       {
         required: true,
         validator: (_rule: any, value: any, callback: any) => {
-          if (!value) {
-            callback(new Error(t("auth.passwordRequired")));
-          } else {
+          if (value) {
             callback();
+          } else {
+            callback(new Error(t("auth.passwordRequired")));
           }
         },
         trigger: "blur",
@@ -106,10 +103,10 @@ const rules = computed<FormRules>(() => {
       {
         required: true,
         validator: (_rule: any, value: any, callback: any) => {
-          if (!value) {
-            callback(new Error(t("auth.voterLogin.codeRequired")));
-          } else {
+          if (value) {
             callback();
+          } else {
+            callback(new Error(t("auth.voterLogin.codeRequired")));
           }
         },
         trigger: "blur",
@@ -188,12 +185,14 @@ const kakaoReady = ref(false);
 const kakaoError = ref(false);
 const kakaoScriptLoaded = ref(false);
 
-const authConfig = ref<{
+interface AuthConfig {
   googleClientId?: string;
   facebookAppId?: string;
   kakaoJsKey?: string;
   telegramBotUsername?: string;
-} | null>(null);
+}
+
+const authConfig = ref<AuthConfig | null>(null);
 
 const gisScriptLoaded = ref(false);
 let gisCleanup: (() => void) | null = null;
@@ -238,7 +237,7 @@ const handleTelegramSuccess = async (user: any) => {
 
 const loadGisScript = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (gisScriptLoaded.value || typeof google !== "undefined") {
+    if (gisScriptLoaded.value || globalThis.google !== undefined) {
       gisScriptLoaded.value = true;
       resolve();
       return;
@@ -268,11 +267,10 @@ const fetchAuthConfig = async () => {
   }
   try {
     const resp = await getApiPublicAuthConfig();
-    if (!resp.ok) {
+    if (!resp.response?.ok) {
       return null;
     }
-    const json = await resp.json();
-    authConfig.value = json?.data ?? null;
+    authConfig.value = (resp.data?.data as AuthConfig) ?? null;
     telegramBotUsername.value = authConfig.value?.telegramBotUsername || null;
     telegramReady.value = Boolean(telegramBotUsername.value);
     return authConfig.value;
@@ -300,7 +298,7 @@ const renderGoogleButton = () => {
   nextTick(() => {
     if (googleButtonRef.value && googleClientId.value && googleReady.value) {
       console.log("Rendering Google One Tap button with locale:", locale.value);
-      window.google.accounts.id.renderButton(googleButtonRef.value, {
+      globalThis.google.accounts.id.renderButton(googleButtonRef.value, {
         type: "standard",
         theme: "outline",
         size: "large",
@@ -332,12 +330,12 @@ const initGoogleOneTap = async () => {
     const clientId = await fetchGoogleClientId();
     googleClientId.value = clientId;
 
-    if (!clientId || typeof window.google === "undefined") {
+    if (!clientId || globalThis.google === undefined) {
       googleReady.value = false;
       return;
     }
 
-    window.google.accounts.id.initialize({
+    globalThis.google.accounts.id.initialize({
       client_id: clientId,
       callback: handleGoogleOneTapCallback,
       auto_select: false,
@@ -347,13 +345,12 @@ const initGoogleOneTap = async () => {
 
     googleReady.value = true;
     renderGoogleButton();
-    window.google.accounts.id.prompt();
+    globalThis.google.accounts.id.prompt();
 
-    // Store cleanup function
     gisCleanup = () => {
-      if (typeof window.google !== "undefined" && googleReady.value) {
+      if (globalThis.google !== undefined && googleReady.value) {
         try {
-          window.google.accounts.id.cancel();
+          globalThis.google.accounts.id.cancel();
         } catch {
           // Ignore errors from cancel
         }
@@ -375,10 +372,21 @@ const teardownGoogleOneTap = () => {
   }
 };
 
+const processFacebookLoginResponse = async (res: any) => {
+  if (!res.authResponse?.accessToken) {
+    showErrorMessage(t("voting.auth.facebook.cancelled"));
+    return;
+  }
+  await authStore.facebookLogin(res.authResponse.accessToken);
+  showSuccessMessage(t("auth.loginSuccess"));
+  const redirectPath = (route.query.redirect as string) || "/dashboard";
+  await router.push(redirectPath);
+};
+
 const handleFacebookLogin = async () => {
   try {
     loading.value = true;
-    if (typeof FB === "undefined") {
+    if (globalThis.FB === undefined) {
       console.error("Facebook SDK not loaded");
       showErrorMessage(t("voting.auth.facebook.error"));
       loading.value = false;
@@ -390,19 +398,11 @@ const handleFacebookLogin = async () => {
       showErrorMessage(t("voting.auth.facebook.popupBlocked"));
     }, 10000);
     try {
-      FB.login(
+      globalThis.FB.login(
         async (res: any) => {
           clearTimeout(timeoutId);
           try {
-            if (res.authResponse?.accessToken) {
-              await authStore.facebookLogin(res.authResponse.accessToken);
-              showSuccessMessage(t("auth.loginSuccess"));
-              const redirectPath =
-                (route.query.redirect as string) || "/dashboard";
-              await router.push(redirectPath);
-            } else {
-              showErrorMessage(t("voting.auth.facebook.cancelled"));
-            }
+            await processFacebookLoginResponse(res);
           } catch (callbackError) {
             console.error(
               "Error during Facebook login callback:",
@@ -430,7 +430,7 @@ const handleFacebookLogin = async () => {
 
 const loadFacebookSdk = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (fbScriptLoaded.value || typeof FB !== "undefined") {
+    if (fbScriptLoaded.value || globalThis.FB !== undefined) {
       fbScriptLoaded.value = true;
       resolve();
       return;
@@ -458,7 +458,7 @@ const initFacebookSdk = async () => {
       return;
     }
     await loadFacebookSdk();
-    FB.init({
+    globalThis.FB.init({
       appId: config.facebookAppId,
       cookie: true,
       xfbml: true,
@@ -478,7 +478,7 @@ const handleKakaoLogin = async () => {
       loading.value = false;
       showErrorMessage(t("voting.auth.kakao.popupBlocked"));
     }, 10000);
-    Kakao.Auth.login({
+    globalThis.Kakao.Auth.login({
       success: async (authObj: any) => {
         clearTimeout(timeoutId);
         try {
@@ -509,7 +509,7 @@ const handleKakaoLogin = async () => {
 
 const loadKakaoSdk = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (kakaoScriptLoaded.value || typeof Kakao !== "undefined") {
+    if (kakaoScriptLoaded.value || globalThis.Kakao !== undefined) {
       kakaoScriptLoaded.value = true;
       resolve();
       return;
@@ -535,8 +535,8 @@ const initKakaoSdk = async () => {
       return;
     }
     await loadKakaoSdk();
-    if (!Kakao.isInitialized()) {
-      Kakao.init(config.kakaoJsKey);
+    if (!globalThis.Kakao.isInitialized()) {
+      globalThis.Kakao.init(config.kakaoJsKey);
     }
     kakaoReady.value = true;
   } catch (error) {
@@ -601,219 +601,203 @@ onBeforeUnmount(() => {
 <template>
   <div class="login-page">
     <div class="login-wrapper">
-    <el-button link class="back-nav" @click="router.push('/')">
-      <el-icon><ArrowLeft /></el-icon>
-      {{ t("common.back") }}
-    </el-button>
-    <el-card class="login-card">
-      <template #header>
-        <div class="login-header">
-          <h2 v-if="isStandardLogin">
-            {{
-              t(
-                `auth.landing.login${mode
-                  .replace("-", " ")
-                  .replace(/\b\w/g, (l) => l.toUpperCase())
-                  .replace(" ", "")}`,
-              )
-            }}
-          </h2>
-          <h2 v-else-if="isVoterLogin">{{ t("auth.voterLogin.title") }}</h2>
+      <el-button link class="back-nav" @click="router.push('/')">
+        <el-icon><ArrowLeft /></el-icon>
+        {{ t("common.back") }}
+      </el-button>
+      <el-card class="login-card">
+        <template #header>
+          <div class="login-header">
+            <h2 v-if="isStandardLogin">
+              {{
+                t(
+                  `auth.landing.login${mode
+                    .replace("-", " ")
+                    .replace(/\b\w/g, (l) => l.toUpperCase())
+                    .replace(" ", "")}`,
+                )
+              }}
+            </h2>
+            <h2 v-else-if="isVoterLogin">{{ t("auth.voterLogin.title") }}</h2>
 
-          <p class="mode-hint">
-            {{
-              isStandardLogin
-                ? t("auth.landing.optionOfficerDesc")
-                : t("auth.landing.optionVoterDesc")
-            }}
-          </p>
-        </div>
-      </template>
+            <p class="mode-hint">
+              {{
+                isStandardLogin
+                  ? t("auth.landing.optionOfficerDesc")
+                  : t("auth.landing.optionVoterDesc")
+              }}
+            </p>
+          </div>
+        </template>
 
-      <!-- Social login only for Officers -->
-      <div v-if="mode === 'officer'" class="social-login">
-        <div
-          v-if="googleReady"
-          ref="googleButtonRef"
-          class="google-btn-container"
-        >
-          <!-- filled by Google One Tap -->
-        </div>
-        <el-button
-          v-if="!googleReady"
-          class="google-btn"
-          @click="handleGoogleLogin"
-        >
-          <img
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-            alt="Google"
-          />
-          <span>{{ t("auth.googleLogin") }}</span>
-        </el-button>
-
-        <div v-if="fbReady" class="facebook-btn-container">
-          <el-button
-            class="facebook-btn"
-            :loading="loading"
-            @click="handleFacebookLogin"
+        <!-- Social login only for Officers -->
+        <div v-if="mode === 'officer'" class="social-login">
+          <div
+            v-if="googleReady"
+            ref="googleButtonRef"
+            class="google-btn-container"
           >
-            <svg
-              viewBox="0 0 24 24"
-              width="24"
-              height="24"
-              xmlns="http://www.w3.org/2000/svg"
+            <!-- filled by Google One Tap -->
+          </div>
+          <el-button
+            v-if="!googleReady"
+            class="google-btn"
+            @click="handleGoogleLogin"
+          >
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              alt="Google"
+            />
+            <span>{{ t("auth.googleLogin") }}</span>
+          </el-button>
+
+          <div v-if="fbReady" class="facebook-btn-container">
+            <el-button
+              class="facebook-btn"
+              :loading="loading"
+              @click="handleFacebookLogin"
             >
-              <path
-                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-                fill="#1877F2"
-              />
-            </svg>
-            <span>{{
-              t("voting.auth.facebook.button") || "Login with Facebook"
-            }}</span>
-          </el-button>
-        </div>
-        <!-- <div v-else-if="fbError">
-          <el-alert
-            :title="
-              t('voting.auth.facebook.error') || 'Facebook login unavailable'
-            "
-            type="warning"
-            :closable="false"
-          />
-        </div> -->
+              <svg
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                  fill="#1877F2"
+                />
+              </svg>
+              <span>{{
+                t("voting.auth.facebook.button") || "Login with Facebook"
+              }}</span>
+            </el-button>
+          </div>
 
-        <div v-if="kakaoReady" class="kakao-btn-container">
-          <el-button
-            class="kakao-btn"
-            :loading="loading"
-            @click="handleKakaoLogin"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="24"
-              height="24"
-              xmlns="http://www.w3.org/2000/svg"
+          <div v-if="kakaoReady" class="kakao-btn-container">
+            <el-button
+              class="kakao-btn"
+              :loading="loading"
+              @click="handleKakaoLogin"
             >
-              <path
-                d="M12 3c-5.523 0-10 3.518-10 7.857 0 2.805 1.821 5.253 4.582 6.643-.243.91-1.025 3.861-1.053 4.004-.035.18.118.256.24.167.098-.071 3.253-2.203 4.536-3.111.551.082 1.118.125 1.695.125 5.523 0 10-3.518 10-7.857C22 6.518 17.523 3 12 3z"
-                fill="#3E2723"
-              />
-            </svg>
-            <span>{{
-              t("voting.auth.kakao.button") || "Login with Kakao"
-            }}</span>
-          </el-button>
+              <svg
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 3c-5.523 0-10 3.518-10 7.857 0 2.805 1.821 5.253 4.582 6.643-.243.91-1.025 3.861-1.053 4.004-.035.18.118.256.24.167.098-.071 3.253-2.203 4.536-3.111.551.082 1.118.125 1.695.125 5.523 0 10-3.518 10-7.857C22 6.518 17.523 3 12 3z"
+                  fill="#3E2723"
+                />
+              </svg>
+              <span>{{
+                t("voting.auth.kakao.button") || "Login with Kakao"
+              }}</span>
+            </el-button>
+          </div>
+
+          <div v-if="telegramReady && telegramBotUsername" class="telegram-btn">
+            <TelegramLoginButton
+              :bot-username="telegramBotUsername"
+              @success="handleTelegramSuccess"
+            />
+          </div>
+          <el-divider>{{ t("common.or") }}</el-divider>
         </div>
-        <!-- <div v-else-if="kakaoError">
-          <el-alert
-            :title="t('voting.auth.kakao.error') || 'Kakao login unavailable'"
-            type="warning"
-            :closable="false"
-          />
-        </div> -->
 
-        <div v-if="telegramReady && telegramBotUsername" class="telegram-btn">
-          <TelegramLoginButton
-            :bot-username="telegramBotUsername"
-            @success="handleTelegramSuccess"
-          />
-        </div>
-        <el-divider>{{ t("common.or") }}</el-divider>
-      </div>
-
-      <el-form
-        ref="loginFormRef"
-        :model="loginForm"
-        :rules="rules"
-        label-position="top"
-        @keyup.enter="handleLogin"
-      >
-        <!-- System 1 & 3: Email Field -->
-        <el-form-item :label="t('auth.email')" prop="email">
-          <el-input
-            v-model="loginForm.email"
-            :placeholder="t('auth.emailPlaceholder')"
-            :disabled="isVoterLogin && codeSent"
-            autofocus
-          />
-        </el-form-item>
-
-        <!-- System 1: Password Field -->
-        <el-form-item
-          v-if="isStandardLogin"
-          :label="t('auth.password')"
-          prop="password"
+        <el-form
+          ref="loginFormRef"
+          :model="loginForm"
+          :rules="rules"
+          label-position="top"
+          @keyup.enter="handleLogin"
         >
-          <el-input
-            v-model="loginForm.password"
-            type="password"
-            :placeholder="t('auth.passwordPlaceholder')"
-            show-password
-          />
-        </el-form-item>
+          <!-- System 1 & 3: Email Field -->
+          <el-form-item :label="t('auth.email')" prop="email">
+            <el-input
+              v-model="loginForm.email"
+              :placeholder="t('auth.emailPlaceholder')"
+              :disabled="isVoterLogin && codeSent"
+              autofocus
+            />
+          </el-form-item>
 
-        <!-- System 3: One-Time Code Field -->
-        <el-form-item
-          v-if="isVoterLogin && codeSent"
-          :label="t('auth.voterLogin.codeLabel')"
-          prop="code"
-        >
-          <el-input
-            v-model="loginForm.code"
-            :placeholder="t('auth.voterLogin.codePlaceholder')"
-            maxlength="6"
-          />
-        </el-form-item>
-
-        <div class="login-actions">
-          <!-- System 3: Request Code Button -->
-          <el-button
-            v-if="isVoterLogin && !codeSent"
-            type="primary"
-            :loading="loading"
-            class="submit-btn"
-            @click="requestCode"
+          <!-- System 1: Password Field -->
+          <el-form-item
+            v-if="isStandardLogin"
+            :label="t('auth.password')"
+            prop="password"
           >
-            {{ t("auth.voterLogin.requestButton") }}
-          </el-button>
+            <el-input
+              v-model="loginForm.password"
+              type="password"
+              :placeholder="t('auth.passwordPlaceholder')"
+              show-password
+            />
+          </el-form-item>
 
-          <!-- General Login Button -->
-          <el-button
-            v-else
-            type="primary"
-            :loading="loading"
-            class="submit-btn"
-            @click="handleLogin"
-          >
-            {{
-              isVoterLogin
-                ? t("auth.voterLogin.loginButton")
-                : t("auth.loginButton")
-            }}
-          </el-button>
-
-          <el-button
+          <!-- System 3: One-Time Code Field -->
+          <el-form-item
             v-if="isVoterLogin && codeSent"
-            link
-            class="retry-link"
-            @click="codeSent = false"
+            :label="t('auth.voterLogin.codeLabel')"
+            prop="code"
           >
-            {{ t("common.tryAgain") }}
-          </el-button>
-        </div>
+            <el-input
+              v-model="loginForm.code"
+              :placeholder="t('auth.voterLogin.codePlaceholder')"
+              maxlength="6"
+            />
+          </el-form-item>
 
-        <div class="auth-links">
-          <router-link
-            v-if="mode === 'officer'"
-            to="/register"
-            class="register"
-          >
-            {{ t("auth.noAccount") }}
-          </router-link>
-        </div>
-      </el-form>
-    </el-card>
+          <div class="login-actions">
+            <!-- System 3: Request Code Button -->
+            <el-button
+              v-if="isVoterLogin && !codeSent"
+              type="primary"
+              :loading="loading"
+              class="submit-btn"
+              @click="requestCode"
+            >
+              {{ t("auth.voterLogin.requestButton") }}
+            </el-button>
+
+            <!-- General Login Button -->
+            <el-button
+              v-else
+              type="primary"
+              :loading="loading"
+              class="submit-btn"
+              @click="handleLogin"
+            >
+              {{
+                isVoterLogin
+                  ? t("auth.voterLogin.loginButton")
+                  : t("auth.loginButton")
+              }}
+            </el-button>
+
+            <el-button
+              v-if="isVoterLogin && codeSent"
+              link
+              class="retry-link"
+              @click="codeSent = false"
+            >
+              {{ t("common.tryAgain") }}
+            </el-button>
+          </div>
+
+          <div class="auth-links">
+            <router-link
+              v-if="mode === 'officer'"
+              to="/register"
+              class="register"
+            >
+              {{ t("auth.noAccount") }}
+            </router-link>
+          </div>
+        </el-form>
+      </el-card>
     </div>
   </div>
 </template>
@@ -892,50 +876,6 @@ onBeforeUnmount(() => {
   }
 
   .auth-links a:hover {
-    text-decoration: underline;
-  }
-
-  .social-login {
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .el-divider--horizontal {
-    margin: 2em 0;
-  }
-
-  .google-btn-container {
-    display: flex;
-    justify-content: center;
-  }
-
-  .google-btn {
-    width: 80%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .google-btn img {
-    width: 18px;
-    height: 18px;
-  }
-
-  .facebook-btn-container,
-  .kakao-btn-container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-top: 10px;
-  }
-
-  .facebook-btn,
-  hover {
     text-decoration: underline;
   }
 
