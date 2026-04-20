@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "描述任何自定义投票方式",
   "elections.form.date": "选举日期",
   "elections.form.datePlaceholder": "选择选举日期",
+  "elections.form.dateRequired": "选举日期是必需的",
   "elections.form.electionMode": "选举模式",
   "elections.form.electionPasscode": "选举密码",
   "elections.form.electionPasscodeHelp": "计票员登录需要密码。",

@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "Eleza mbinu zozote maalum za upigaji kura",
   "elections.form.date": "Tarehe ya Uchaguzi",
   "elections.form.datePlaceholder": "Chagua tarehe ya uchaguzi",
+  "elections.form.dateRequired": "Tarehe ya uchaguzi inahitajika",
   "elections.form.electionMode": "Hali ya Uchaguzi",
   "elections.form.electionPasscode": "Nambari ya Siri ya Uchaguzi",
   "elections.form.electionPasscodeHelp": "Nambari ya siri inahitajika kwa kuingia kwa mhesabu.",

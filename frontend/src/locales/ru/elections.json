@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "Опишите пользовательские методы голосования",
   "elections.form.date": "Дата выборов",
   "elections.form.datePlaceholder": "Выберите дату выборов",
+  "elections.form.dateRequired": "Дата выборов обязательна",
   "elections.form.electionMode": "Режим выборов",
   "elections.form.electionPasscode": "Пароль выборов",
   "elections.form.electionPasscodeHelp": "Для входа счётчиков требуется пароль.",

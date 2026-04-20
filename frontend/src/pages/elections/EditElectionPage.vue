@@ -17,11 +17,13 @@
         :rules="rules"
         label-width="200px"
         label-position="left"
+        :hide-required-asterisk="false"
       >
         <ElectionFormTabs
           v-model="form"
           :available-elections="availableElections"
           :ballot-count="election?.ballotCount"
+          :form-ref="formRef"
         />
 
         <el-form-item style="margin-top: 20px">
@@ -192,8 +194,24 @@ async function submitForm() {
     await electionStore.updateElection(electionGuid, form);
     showSuccessMessage(t("elections.updateSuccess"));
     router.push(`/elections/${electionGuid}`);
-  } catch (error) {
-    handleApiError(error);
+  } catch (error: any) {
+    // Handle validation errors by setting them on form fields
+    if (error?.response?.status === 400 && error?.response?.data?.errors) {
+      const validationErrors = error.response.data.errors;
+      const fieldErrors: Record<string, string[]> = {};
+
+      // Convert server field names to camelCase for form fields
+      Object.keys(validationErrors).forEach((serverField) => {
+        const formField =
+          serverField.charAt(0).toLowerCase() + serverField.slice(1);
+        fieldErrors[formField] = validationErrors[serverField];
+      });
+
+      // Set errors on form fields
+      formRef.value?.setFields(fieldErrors);
+    } else {
+      handleApiError(error);
+    }
   } finally {
     submitting.value = false;
   }

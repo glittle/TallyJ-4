@@ -182,7 +182,6 @@ function tabLabel(tab: string, label: string) {
       >
         <el-input-number v-model="formData.numberExtra" :min="0" :max="20" />
       </el-form-item>
-
     </el-tab-pane>
 
     <el-tab-pane

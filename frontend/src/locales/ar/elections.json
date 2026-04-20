@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "صف أي طرق تصويت مخصصة",
   "elections.form.date": "تاريخ الانتخابات",
   "elections.form.datePlaceholder": "حدد تاريخ الانتخابات",
+  "elections.form.dateRequired": "تاريخ الانتخاب مطلوب",
   "elections.form.electionMode": "وضع الانتخابات",
   "elections.form.electionPasscode": "رمز الانتخابات",
   "elections.form.electionPasscodeHelp": "رمز الدخول مطلوب لتسجيل دخول الفارز.",

@@ -13,6 +13,7 @@
         :rules="rules"
         label-width="200px"
         label-position="left"
+        :hide-required-asterisk="false"
       >
         <ElectionFormTabs
           v-model="form"
@@ -75,6 +76,13 @@ const rules = reactive<FormRules>({
       trigger: ["blur", "input"],
     },
   ],
+  dateOfElection: [
+    {
+      required: true,
+      message: t("elections.form.dateRequired"),
+      trigger: "change",
+    },
+  ],
   electionType: [
     {
       required: true,
@@ -134,8 +142,24 @@ async function submitForm() {
     const election = await electionStore.createElection(dto);
     showSuccessMessage(t("elections.createSuccess"));
     router.push(`/elections/${election.electionGuid}`);
-  } catch (error) {
-    handleApiError(error);
+  } catch (error: any) {
+    // Handle validation errors by setting them on form fields
+    if (error?.response?.status === 400 && error?.response?.data?.errors) {
+      const validationErrors = error.response.data.errors;
+      const fieldErrors: Record<string, string[]> = {};
+
+      // Convert server field names to camelCase for form fields
+      Object.keys(validationErrors).forEach((serverField) => {
+        const formField =
+          serverField.charAt(0).toLowerCase() + serverField.slice(1);
+        fieldErrors[formField] = validationErrors[serverField];
+      });
+
+      // Set errors on form fields
+      formRef.value?.setFields(fieldErrors);
+    } else {
+      handleApiError(error);
+    }
   } finally {
     submitting.value = false;
   }

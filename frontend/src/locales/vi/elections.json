@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "Mô tả các phương pháp bỏ phiếu tùy chỉnh",
   "elections.form.date": "Ngày Bầu Cử",
   "elections.form.datePlaceholder": "Chọn ngày bầu cử",
+  "elections.form.dateRequired": "Ngày bầu cử là bắt buộc",
   "elections.form.electionMode": "Chế Độ Bầu Cử",
   "elections.form.electionPasscode": "Mật Khẩu Bầu Cử",
   "elections.form.electionPasscodeHelp": "Cần có mật khẩu để kiểm phiếu viên đăng nhập.",

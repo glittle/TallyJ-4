@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "Décrivez toute méthode de vote personnalisée",
   "elections.form.date": "Date de l'élection",
   "elections.form.datePlaceholder": "Sélectionnez la date de l'élection",
+  "elections.form.dateRequired": "La date de l'élection est requise",
   "elections.form.electionMode": "Mode d'élection",
   "elections.form.electionPasscode": "Code d'accès de l'élection",
   "elections.form.electionPasscodeHelp": "Un code d'accès est requis pour la connexion des scrutateurs.",

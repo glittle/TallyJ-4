@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "Opišite sve prilagođene metode glasanja",
   "elections.form.date": "Datum izbora",
   "elections.form.datePlaceholder": "Odaberite datum izbora",
+  "elections.form.dateRequired": "Datum izbora je obavezan",
   "elections.form.electionMode": "Način izbora",
   "elections.form.electionPasscode": "Zaporka izbora",
   "elections.form.electionPasscodeHelp": "Zaporka je potrebna za prijavu brojača glasova.",

@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "Kuvaile mukautettuja äänestysmenetelmiä",
   "elections.form.date": "Vaalipäivä",
   "elections.form.datePlaceholder": "Valitse vaalipäivä",
+  "elections.form.dateRequired": "Vaalipäivä on pakollinen",
   "elections.form.electionMode": "Vaalitila",
   "elections.form.electionPasscode": "Vaalikoodi",
   "elections.form.electionPasscodeHelp": "Koodi vaaditaan laskijan kirjautumiseen.",

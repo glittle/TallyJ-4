@@ -44,6 +44,7 @@
   "elections.form.customMethodsPlaceholder": "किसी भी कस्टम मतदान तरीकों का वर्णन करें",
   "elections.form.date": "चुनाव तिथि",
   "elections.form.datePlaceholder": "चुनाव तिथि चुनें",
+  "elections.form.dateRequired": "चुनाव की तारीख आवश्यक है",
   "elections.form.electionMode": "चुनाव मोड",
   "elections.form.electionPasscode": "चुनाव पासकोड",
   "elections.form.electionPasscodeHelp": "गणनाकर्ता लॉगिन के लिए पासकोड आवश्यक है।",
