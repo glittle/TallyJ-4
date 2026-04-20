@@ -1,11 +1,11 @@
 {
+  "nav.auditLogs": "审计日志",
   "nav.dashboard": "仪表盘",
   "nav.elections": "选举",
-  "nav.profile": "个人资料",
-  "nav.superAdmin": "超级管理员",
-  "nav.auditLogs": "审计日志",
-  "nav.votingLocations": "投票地点",
-  "nav.tellers": "计票员",
   "nav.frontDesk": "前台",
-  "nav.publicDisplay": "选举结果显示"
+  "nav.profile": "个人资料",
+  "nav.publicDisplay": "选举结果显示",
+  "nav.superAdmin": "超级管理员",
+  "nav.tellers": "计票员",
+  "nav.votingLocations": "投票地点"
 }

@@ -1,17 +1,17 @@
 {
-  "teller.form.titleEdit": "Editar Escrutador",
-  "teller.form.titleAdd": "Agregar Escrutador",
-  "teller.form.name": "Nombre del Escrutador",
-  "teller.form.namePlaceholder": "Ingrese el nombre del escrutador",
-  "teller.form.nameRequired": "El nombre del escrutador es obligatorio",
-  "teller.form.nameMaxLength": "El nombre del escrutador no puede exceder 50 caracteres",
+  "teller.form.cancel": "Cancelar",
   "teller.form.computerCode": "Código de Computadora",
-  "teller.form.computerCodePlaceholder": "p. ej., AA",
-  "teller.form.computerCodeInvalid": "El código de computadora debe ser 2 letras mayúsculas (AA-ZZ)",
   "teller.form.computerCodeHelp": "Dos letras mayúsculas (AA-ZZ) o dejar vacío",
+  "teller.form.computerCodeInvalid": "El código de computadora debe ser 2 letras mayúsculas (AA-ZZ)",
+  "teller.form.computerCodePlaceholder": "p. ej., AA",
+  "teller.form.create": "Crear",
   "teller.form.headTeller": "Escrutador Principal",
   "teller.form.headTellerHelp": "Los escrutadores principales tienen permisos adicionales",
-  "teller.form.cancel": "Cancelar",
+  "teller.form.name": "Nombre del Escrutador",
+  "teller.form.nameMaxLength": "El nombre del escrutador no puede exceder 50 caracteres",
+  "teller.form.namePlaceholder": "Ingrese el nombre del escrutador",
+  "teller.form.nameRequired": "El nombre del escrutador es obligatorio",
   "teller.form.save": "Guardar",
-  "teller.form.create": "Crear"
+  "teller.form.titleAdd": "Agregar Escrutador",
+  "teller.form.titleEdit": "Editar Escrutador"
 }

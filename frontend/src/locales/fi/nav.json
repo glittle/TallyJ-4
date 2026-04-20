@@ -1,11 +1,11 @@
 {
+  "nav.auditLogs": "Tarkastuslokit",
   "nav.dashboard": "Kojelauta",
   "nav.elections": "Vaalit",
-  "nav.profile": "Profiili",
-  "nav.superAdmin": "Pääkäyttäjä",
-  "nav.auditLogs": "Tarkastuslokit",
-  "nav.votingLocations": "Äänestyspaikat",
-  "nav.tellers": "Laskijat",
   "nav.frontDesk": "Etupöytä",
-  "nav.publicDisplay": "Vaalitulosten näyttö"
+  "nav.profile": "Profiili",
+  "nav.publicDisplay": "Vaalitulosten näyttö",
+  "nav.superAdmin": "Pääkäyttäjä",
+  "nav.tellers": "Laskijat",
+  "nav.votingLocations": "Äänestyspaikat"
 }

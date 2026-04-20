@@ -1,17 +1,17 @@
 {
-  "teller.form.titleEdit": "Uredi brojača glasova",
-  "teller.form.titleAdd": "Dodaj brojača glasova",
-  "teller.form.name": "Ime brojača glasova",
-  "teller.form.namePlaceholder": "Unesite ime brojača glasova",
-  "teller.form.nameRequired": "Ime brojača glasova je obavezno",
-  "teller.form.nameMaxLength": "Ime brojača glasova ne smije premašiti 50 znakova",
+  "teller.form.cancel": "Odustani",
   "teller.form.computerCode": "Kôd računala",
-  "teller.form.computerCodePlaceholder": "npr. AA",
-  "teller.form.computerCodeInvalid": "Kôd računala mora biti 2 velika slova (AA-ZZ)",
   "teller.form.computerCodeHelp": "Dva velika slova (AA-ZZ) ili ostavite prazno",
+  "teller.form.computerCodeInvalid": "Kôd računala mora biti 2 velika slova (AA-ZZ)",
+  "teller.form.computerCodePlaceholder": "npr. AA",
+  "teller.form.create": "Stvori",
   "teller.form.headTeller": "Glavni brojač glasova",
   "teller.form.headTellerHelp": "Glavni brojači glasova imaju dodatne ovlasti",
-  "teller.form.cancel": "Odustani",
+  "teller.form.name": "Ime brojača glasova",
+  "teller.form.nameMaxLength": "Ime brojača glasova ne smije premašiti 50 znakova",
+  "teller.form.namePlaceholder": "Unesite ime brojača glasova",
+  "teller.form.nameRequired": "Ime brojača glasova je obavezno",
   "teller.form.save": "Spremi",
-  "teller.form.create": "Stvori"
+  "teller.form.titleAdd": "Dodaj brojača glasova",
+  "teller.form.titleEdit": "Uredi brojača glasova"
 }

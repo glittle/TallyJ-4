@@ -1,17 +1,17 @@
 {
-  "tally.title": "Hesabu Matokeo",
-  "tally.warning": "Onyo",
-  "tally.warningMessage": "Kuhesabu matokeo kutafuta matokeo yoyote yaliyopo. Kitendo hiki hakiwezi kutenduliwa.",
-  "tally.normalElection": "Uchaguzi wa Kawaida",
-  "tally.singleNameElection": "Uchaguzi wa Jina Moja",
   "tally.calculate": "Hesabu Matokeo",
-  "tally.calculateSuccess": "Matokeo yamehesabiwa kwa mafanikio",
   "tally.calculateError": "Imeshindwa kuhesabu matokeo",
+  "tally.calculateSuccess": "Matokeo yamehesabiwa kwa mafanikio",
   "tally.calculatingProgress": "Inahesabu Maendeleo",
+  "tally.normalElection": "Uchaguzi wa Kawaida",
   "tally.processedBallots": "Kura Zilizosindikishwa",
   "tally.resultsPreview": "Hakikisho la Matokeo (10 Bora)",
-  "tally.viewFullResults": "Tazama Matokeo Kamili",
   "tally.section.elected": "Mteule",
   "tally.section.extra": "Zaidi",
-  "tally.section.other": "Zingine"
+  "tally.section.other": "Zingine",
+  "tally.singleNameElection": "Uchaguzi wa Jina Moja",
+  "tally.title": "Hesabu Matokeo",
+  "tally.viewFullResults": "Tazama Matokeo Kamili",
+  "tally.warning": "Onyo",
+  "tally.warningMessage": "Kuhesabu matokeo kutafuta matokeo yoyote yaliyopo. Kitendo hiki hakiwezi kutenduliwa."
 }

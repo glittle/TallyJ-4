@@ -104,7 +104,7 @@ const rules = reactive<FormRules>({
     {
       required: true,
       message: t("elections.form.nameRequired"),
-      trigger: "blur",
+      trigger: ["blur", "input"],
     },
   ],
   numberToElect: [
@@ -184,20 +184,23 @@ async function submitForm() {
     return;
   }
 
-  await formRef.value.validate(async (valid) => {
-    if (valid) {
-      submitting.value = true;
-      try {
-        await electionStore.updateElection(electionGuid, form);
-        showSuccessMessage(t("elections.updateSuccess"));
-        router.push(`/elections/${electionGuid}`);
-      } catch (error) {
-        handleApiError(error);
-      } finally {
-        submitting.value = false;
-      }
-    }
-  });
+  try {
+    await formRef.value.validate();
+  } catch {
+    // Validation failed - errors are displayed in the form
+    return;
+  }
+
+  submitting.value = true;
+  try {
+    await electionStore.updateElection(electionGuid, form);
+    showSuccessMessage(t("elections.updateSuccess"));
+    router.push(`/elections/${electionGuid}`);
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    submitting.value = false;
+  }
 }
 
 function cancel() {

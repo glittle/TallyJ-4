@@ -74,7 +74,7 @@ const rules = reactive<FormRules>({
     {
       required: true,
       message: t("elections.form.nameRequired"),
-      trigger: "blur",
+      trigger: ["blur", "input"],
     },
   ],
   electionType: [
@@ -117,27 +117,30 @@ async function submitForm() {
     return;
   }
 
-  await formRef.value.validate(async (valid) => {
-    if (valid) {
-      submitting.value = true;
-      try {
-        const dto: CreateElectionDto = {
-          ...form,
-          dateOfElection: form.dateOfElection
-            ? new Date(form.dateOfElection).toISOString()
-            : undefined,
-        };
+  try {
+    await formRef.value.validate();
+  } catch {
+    // Validation failed - errors are displayed in the form
+    return;
+  }
 
-        const election = await electionStore.createElection(dto);
-        showSuccessMessage(t("elections.createSuccess"));
-        router.push(`/elections/${election.electionGuid}`);
-      } catch (error) {
-        handleApiError(error);
-      } finally {
-        submitting.value = false;
-      }
-    }
-  });
+  submitting.value = true;
+  try {
+    const dto: CreateElectionDto = {
+      ...form,
+      dateOfElection: form.dateOfElection
+        ? new Date(form.dateOfElection).toISOString()
+        : undefined,
+    };
+
+    const election = await electionStore.createElection(dto);
+    showSuccessMessage(t("elections.createSuccess"));
+    router.push(`/elections/${election.electionGuid}`);
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    submitting.value = false;
+  }
 }
 
 function cancel() {

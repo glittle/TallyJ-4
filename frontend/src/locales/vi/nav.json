@@ -1,11 +1,11 @@
 {
+  "nav.auditLogs": "Nhật Ký Kiểm Tra",
   "nav.dashboard": "Bảng Điều Khiển",
   "nav.elections": "Cuộc Bầu Cử",
-  "nav.profile": "Hồ Sơ",
-  "nav.superAdmin": "Quản Trị Viên Cấp Cao",
-  "nav.auditLogs": "Nhật Ký Kiểm Tra",
-  "nav.votingLocations": "Địa Điểm Bỏ Phiếu",
-  "nav.tellers": "Kiểm Phiếu Viên",
   "nav.frontDesk": "Bàn Tiếp Tân",
-  "nav.publicDisplay": "Hiển Thị Kết Quả Bầu Cử"
+  "nav.profile": "Hồ Sơ",
+  "nav.publicDisplay": "Hiển Thị Kết Quả Bầu Cử",
+  "nav.superAdmin": "Quản Trị Viên Cấp Cao",
+  "nav.tellers": "Kiểm Phiếu Viên",
+  "nav.votingLocations": "Địa Điểm Bỏ Phiếu"
 }

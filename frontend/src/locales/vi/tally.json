@@ -1,17 +1,17 @@
 {
-  "tally.title": "Tính Toán Kết Quả",
-  "tally.warning": "Cảnh Báo",
-  "tally.warningMessage": "Việc tính toán kết quả sẽ ghi đè lên bất kỳ kết quả hiện có nào. Hành động này không thể hoàn tác.",
-  "tally.normalElection": "Bầu Cử Thông Thường",
-  "tally.singleNameElection": "Bầu Cử Một Tên",
   "tally.calculate": "Tính Toán Kết Quả",
-  "tally.calculateSuccess": "Đã tính toán kết quả thành công",
   "tally.calculateError": "Không thể tính toán kết quả",
+  "tally.calculateSuccess": "Đã tính toán kết quả thành công",
   "tally.calculatingProgress": "Đang Tính Toán Tiến Trình",
+  "tally.normalElection": "Bầu Cử Thông Thường",
   "tally.processedBallots": "Phiếu Bầu Đã Xử Lý",
   "tally.resultsPreview": "Xem Trước Kết Quả (Top 10)",
-  "tally.viewFullResults": "Xem Kết Quả Đầy Đủ",
   "tally.section.elected": "Được bầu",
   "tally.section.extra": "Bổ sung",
-  "tally.section.other": "Khác"
+  "tally.section.other": "Khác",
+  "tally.singleNameElection": "Bầu Cử Một Tên",
+  "tally.title": "Tính Toán Kết Quả",
+  "tally.viewFullResults": "Xem Kết Quả Đầy Đủ",
+  "tally.warning": "Cảnh Báo",
+  "tally.warningMessage": "Việc tính toán kết quả sẽ ghi đè lên bất kỳ kết quả hiện có nào. Hành động này không thể hoàn tác."
 }

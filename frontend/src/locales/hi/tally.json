@@ -1,17 +1,17 @@
 {
-  "tally.title": "गणना करें",
-  "tally.warning": "चेतावनी",
-  "tally.warningMessage": "गणना करने से मौजूदा परिणाम अधिलेखित हो जाएंगे। यह क्रिया पूर्ववत नहीं की जा सकती।",
-  "tally.normalElection": "सामान्य चुनाव",
-  "tally.singleNameElection": "एकल नाम चुनाव",
   "tally.calculate": "गणना करें",
-  "tally.calculateSuccess": "गणना सफलतापूर्वक की गई",
   "tally.calculateError": "गणना करने में विफल",
+  "tally.calculateSuccess": "गणना सफलतापूर्वक की गई",
   "tally.calculatingProgress": "गणना प्रगति",
+  "tally.normalElection": "सामान्य चुनाव",
   "tally.processedBallots": "प्रोसेस किए गए मतपत्र",
   "tally.resultsPreview": "परिणाम पूर्वावलोकन (शीर्ष 10)",
-  "tally.viewFullResults": "पूर्ण परिणाम देखें",
   "tally.section.elected": "निर्वाचित",
   "tally.section.extra": "अतिरिक्त",
-  "tally.section.other": "अन्य"
+  "tally.section.other": "अन्य",
+  "tally.singleNameElection": "एकल नाम चुनाव",
+  "tally.title": "गणना करें",
+  "tally.viewFullResults": "पूर्ण परिणाम देखें",
+  "tally.warning": "चेतावनी",
+  "tally.warningMessage": "गणना करने से मौजूदा परिणाम अधिलेखित हो जाएंगे। यह क्रिया पूर्ववत नहीं की जा सकती।"
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ArrowLeft } from "@element-plus/icons-vue";
 import { useNotifications } from "@/composables/useNotifications";
+import { ArrowLeft } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -146,85 +146,84 @@ onBeforeUnmount(() => {
 <template>
   <div class="login-page">
     <div class="login-wrapper">
-    <el-button link class="back-nav" @click="router.push('/')">
-      <el-icon><ArrowLeft /></el-icon>
-      {{ t("common.back") }}
-    </el-button>
-    <el-card class="login-card">
-      <template #header>
-        <div class="login-header">
-          <h2>{{ t("auth.tellerJoin.title") }}</h2>
-          <p class="mode-hint">{{ t("auth.tellerJoin.description") }}</p>
+      <el-button link class="back-nav" @click="router.push('/')">
+        <el-icon><ArrowLeft /></el-icon>
+        {{ t("common.back") }}
+      </el-button>
+      <el-card class="login-card">
+        <template #header>
+          <div class="login-header">
+            <h2>{{ t("auth.tellerJoin.title") }}</h2>
+            <p class="mode-hint">{{ t("auth.tellerJoin.description") }}</p>
+          </div>
+        </template>
+
+        <div v-if="loadingElections" class="loading-elections">
+          <el-skeleton :rows="3" animated />
         </div>
-      </template>
 
-      <div v-if="loadingElections" class="loading-elections">
-        <el-skeleton :rows="3" animated />
-      </div>
-
-      <div
-        v-else-if="elections.length === 0 && !prefilledFromUrl"
-        class="no-elections"
-      >
-        <el-empty :description="t('auth.tellerJoin.noElections')" />
-      </div>
-
-      <el-form
-        v-else
-        ref="joinFormRef"
-        :model="joinForm"
-        :rules="rules"
-        label-position="top"
-        @keyup.enter="handleJoin"
-      >
-        <el-form-item
-          :label="t('auth.tellerJoin.selectElection')"
-          prop="electionGuid"
+        <div
+          v-else-if="elections.length === 0 && !prefilledFromUrl"
+          class="no-elections"
         >
-          <select
-            v-model="joinForm.electionGuid"
-            size="9"
-            class="electionSelect"
+          <el-empty :description="t('auth.tellerJoin.noElections')" />
+        </div>
+
+        <el-form
+          v-else
+          ref="joinFormRef"
+          :model="joinForm"
+          :rules="rules"
+          label-position="top"
+          @keyup.enter="handleJoin"
+        >
+          <el-form-item
+            :label="t('auth.tellerJoin.selectElection')"
+            prop="electionGuid"
           >
-            <option
-              v-for="election in elections"
-              :key="election.electionGuid"
-              :value="election.electionGuid"
+            <select
+              v-model="joinForm.electionGuid"
+              size="9"
+              class="electionSelect"
             >
-              {{ election.name
-              }}{{
-                election.dateOfElection
-                  ? " - " + formatDate(election.dateOfElection)
-                  : ""
-              }}
-            </option>
-          </select>
-        </el-form-item>
+              <option
+                v-for="election in elections"
+                :key="election.electionGuid"
+                :value="election.electionGuid"
+              >
+                {{ election.name
+                }}{{
+                  election.dateOfElection
+                    ? " - " + formatDate(election.dateOfElection)
+                    : ""
+                }}
+              </option>
+            </select>
+          </el-form-item>
 
-        <el-form-item
-          :label="t('auth.tellerJoin.accessCodeLabel')"
-          prop="accessCode"
-        >
-          <el-input
-            v-model="joinForm.accessCode"
-            :placeholder="t('auth.tellerJoin.accessCodePlaceholder')"
-            type="text"
-          />
-        </el-form-item>
-
-        <div class="login-actions">
-          <el-button
-            type="primary"
-            :loading="loading"
-            class="submit-btn"
-            @click="handleJoin"
+          <el-form-item
+            :label="t('auth.tellerJoin.accessCodeLabel')"
+            prop="accessCode"
           >
-            {{ t("auth.tellerJoin.joinButton") }}
-          </el-button>
-        </div>
+            <el-input
+              v-model="joinForm.accessCode"
+              :placeholder="t('auth.tellerJoin.accessCodePlaceholder')"
+              type="text"
+            />
+          </el-form-item>
 
-      </el-form>
-    </el-card>
+          <div class="login-actions">
+            <el-button
+              type="primary"
+              :loading="loading"
+              class="submit-btn"
+              @click="handleJoin"
+            >
+              {{ t("auth.tellerJoin.joinButton") }}
+            </el-button>
+          </div>
+        </el-form>
+      </el-card>
     </div>
   </div>
 </template>
@@ -296,6 +295,5 @@ onBeforeUnmount(() => {
   .submit-btn {
     width: 100%;
   }
-
 }
 </style>
