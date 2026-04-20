@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Backend.Domain.Identity;
 using Backend.Domain.Entities;
 
@@ -331,6 +332,35 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
                 .HasForeignKey(d => d.PersonGuid)
                 .HasConstraintName("FK_Vote_Person1");
         });
+
+        if (!isSqlServer)
+        {
+            // SQLite (and other non-SqlServer providers) stores DateTimeOffset as TEXT by default,
+            // which breaks LINQ translation for comparisons (<, <=, >, >=) and ORDER BY.
+            // Convert all DateTimeOffset / DateTimeOffset? properties to a long representation
+            // that preserves chronological ordering so queries translate correctly.
+            var dtoConverter = new ValueConverter<DateTimeOffset, long>(
+                v => v.ToUniversalTime().Ticks,
+                v => new DateTimeOffset(v, TimeSpan.Zero));
+            var nullableDtoConverter = new ValueConverter<DateTimeOffset?, long?>(
+                v => v.HasValue ? v.Value.ToUniversalTime().Ticks : (long?)null,
+                v => v.HasValue ? new DateTimeOffset(v.Value, TimeSpan.Zero) : (DateTimeOffset?)null);
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTimeOffset))
+                    {
+                        property.SetValueConverter(dtoConverter);
+                    }
+                    else if (property.ClrType == typeof(DateTimeOffset?))
+                    {
+                        property.SetValueConverter(nullableDtoConverter);
+                    }
+                }
+            }
+        }
 
         OnModelCreatingPartial(modelBuilder);
     }
