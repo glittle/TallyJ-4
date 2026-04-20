@@ -58,7 +58,7 @@
   "people.import.supportedFormats": "Formatos suportados: CSV, TSV, TAB, TXT, XLSX (máx. 10MB)",
   "people.import.filesOnServer": "Arquivos no Servidor",
   "people.import.fileName": "Nome do Arquivo",
-  "people.import.status": "Status",
+  "people.import.status": "Estado",
   "people.import.uploadTime": "Hora de Envio",
   "people.import.headersOnLine": "Cabeçalhos na Linha",
   "people.import.contentEncoding": "Codificação do Conteúdo",

@@ -3,7 +3,7 @@
   "import.processingRows": "Processando linhas {processed} de {total}",
   "import.successCount": "Bem-sucedidos: {count}",
   "import.errorCount": "Erros: {count}",
-  "import.currentStatus": "Status: {status}",
+  "import.currentStatus": "Estado: {status}",
   "import.errorsTitle": "Erros de Importação",
   "import.moreErrors": "e mais {count} erros...",
   "import.completed": "Importação concluída com sucesso",

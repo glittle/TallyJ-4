@@ -10,7 +10,7 @@
   "profile.twoFactor.title": "Autenticação de Dois Fatores",
   "profile.twoFactor.enabled": "Ativada",
   "profile.twoFactor.disabled": "Não ativada",
-  "profile.twoFactor.status": "Status",
+  "profile.twoFactor.status": "Estado",
   "profile.twoFactor.method": "Método",
   "profile.twoFactor.methodTotp": "Aplicativo Autenticador (TOTP)",
   "profile.twoFactor.setup": "Configurar 2FA",

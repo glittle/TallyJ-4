@@ -190,5 +190,5 @@
   "reporting.noEmails": "No se encontraron registros de correo/teléfono.",
   "reporting.hasSignedInEmail": "Registrado (Correo)",
   "reporting.hasSignedInPhone": "Registrado (Teléfono)",
-  "reporting.loading": "Loading report..."
+  "reporting.loading": "Cargando informe..."
 }

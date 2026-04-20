@@ -3,7 +3,7 @@
   "import.processingRows": "Obrađuju se redovi {processed} od {total}",
   "import.successCount": "Uspješno: {count}",
   "import.errorCount": "Pogreške: {count}",
-  "import.currentStatus": "Status: {status}",
+  "import.currentStatus": "Stanje: {status}",
   "import.errorsTitle": "Pogreške uvoza",
   "import.moreErrors": "i još {count} pogrešaka...",
   "import.completed": "Uvoz uspješno završen",

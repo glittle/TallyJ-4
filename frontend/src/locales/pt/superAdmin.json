@@ -8,7 +8,7 @@
   "superAdmin.elections.name": "Nome da Eleição",
   "superAdmin.elections.convenor": "Convocador",
   "superAdmin.elections.date": "Data",
-  "superAdmin.elections.status": "Status",
+  "superAdmin.elections.status": "Estado",
   "superAdmin.elections.type": "Tipo",
   "superAdmin.elections.voters": "Eleitores",
   "superAdmin.elections.ballots": "Cédulas",
