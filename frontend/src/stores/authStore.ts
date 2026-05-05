@@ -30,8 +30,13 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const meResponse = await getApiAuthMe();
 
-      if (meResponse.ok) {
-        const userData = await meResponse.json();
+      if (meResponse.response?.ok && meResponse.data) {
+        const userData = meResponse.data as {
+          email: string;
+          name?: string | null;
+          authMethod?: string | null;
+          isSuperAdmin?: boolean;
+        };
         email.value = userData.email;
         name.value = userData.name || null;
         authMethod.value = userData.authMethod || null;

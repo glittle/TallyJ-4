@@ -4,7 +4,6 @@ import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import { useNotifications } from "@/composables/useNotifications";
 import { useI18n } from "vue-i18n";
-import { getApiAuthMe } from "../api/gen/configService/sdk.gen";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -27,27 +26,18 @@ onMounted(async () => {
       return;
     }
 
-    // Since cookies are set on the backend domain, we need to call the backend API to get user info
-    const response = await getApiAuthMe();
+    // Since cookies are set on the backend domain, we need to call the backend API to get user info.
+    // fetchUserInfo() updates the auth store (including isSuperAdmin) from /api/Auth/me.
+    const userData = await authStore.fetchUserInfo();
 
-    if (!response.ok) {
-      const errorData = await response
-        .json()
-        .catch(() => ({ error: "Failed to get user info" }));
-      error.value = errorData.error || "Authentication failed";
+    if (!userData) {
+      error.value = "Authentication failed";
       showErrorMessage(t("auth.googleLoginFailed"));
       setTimeout(() => {
         router.push("/login?mode=officer");
       }, 2000);
       return;
     }
-
-    const userData = await response.json();
-
-    // Update store with user data from API
-    authStore.email = userData.email;
-    authStore.name = userData.name;
-    authStore.authMethod = userData.authMethod;
 
     // Set user info cookies on frontend domain for router guard
     const secure = window.location.protocol === "https:" ? "; secure" : "";
