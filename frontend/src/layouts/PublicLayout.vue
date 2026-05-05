@@ -40,10 +40,8 @@ const handleLogoClick = () => {
         </h2>
       </div>
       <div class="header-middle">
-        <div>
-          <LanguageFlagsSelector v-if="expandLanguageSelector" />
-          <LanguageSelector v-else />
-        </div>
+        <LanguageFlagsSelector v-if="expandLanguageSelector" />
+        <LanguageSelector v-else />
       </div>
       <div class="header-right">
         <ThemeSelector />
