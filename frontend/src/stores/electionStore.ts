@@ -11,6 +11,11 @@ import type {
 } from "../types";
 import type { ElectionUpdateEvent } from "../types/SignalREvents";
 import { extractApiErrorMessage } from "../utils/errorHandler";
+import {
+  type ElectionStage,
+  stageToTallyStatus,
+  tallyStatusToStage,
+} from "../domain/electionStages";
 
 export const useElectionStore = defineStore("election", () => {
   const elections = ref<ElectionDto[]>([]);
@@ -27,6 +32,10 @@ export const useElectionStore = defineStore("election", () => {
 
   const finalizedElections = computed(() =>
     elections.value.filter((e) => e.tallyStatus === "Finalized"),
+  );
+
+  const currentStage = computed<ElectionStage>(() =>
+    tallyStatusToStage(currentElection.value?.tallyStatus),
   );
 
   async function fetchElections() {
@@ -270,6 +279,11 @@ export const useElectionStore = defineStore("election", () => {
     }
   }
 
+  async function setStage(electionGuid: string, stage: ElectionStage) {
+    const tallyStatus = stageToTallyStatus(stage);
+    return updateElection(electionGuid, { tallyStatus });
+  }
+
   return {
     elections,
     currentElection,
@@ -277,6 +291,7 @@ export const useElectionStore = defineStore("election", () => {
     error,
     activeElections,
     finalizedElections,
+    currentStage,
     fetchElections,
     fetchElectionById,
     createElection,
@@ -287,5 +302,6 @@ export const useElectionStore = defineStore("election", () => {
     initializeSignalR,
     joinElection,
     leaveElection,
+    setStage,
   };
 });

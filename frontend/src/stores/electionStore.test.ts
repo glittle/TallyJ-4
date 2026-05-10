@@ -337,4 +337,102 @@ describe("Election Store", () => {
       expect(signalrService.leaveElection).toHaveBeenCalledWith("election-123");
     });
   });
+
+  describe("currentStage", () => {
+    it("defaults to SettingUp when no current election", () => {
+      electionStore.currentElection = null;
+      expect(electionStore.currentStage).toBe("SettingUp");
+    });
+
+    it("maps Setup tallyStatus to SettingUp", () => {
+      electionStore.currentElection = {
+        electionGuid: "1",
+        tallyStatus: "Setup",
+      } as ElectionDto;
+      expect(electionStore.currentStage).toBe("SettingUp");
+    });
+
+    it("maps Counting tallyStatus to GatheringBallots", () => {
+      electionStore.currentElection = {
+        electionGuid: "1",
+        tallyStatus: "Counting",
+      } as ElectionDto;
+      expect(electionStore.currentStage).toBe("GatheringBallots");
+    });
+
+    it("maps Finalized tallyStatus to ProcessingBallots", () => {
+      electionStore.currentElection = {
+        electionGuid: "1",
+        tallyStatus: "Finalized",
+      } as ElectionDto;
+      expect(electionStore.currentStage).toBe("ProcessingBallots");
+    });
+
+    it("reacts to currentElection changes", () => {
+      electionStore.currentElection = {
+        electionGuid: "1",
+        tallyStatus: "Setup",
+      } as ElectionDto;
+      expect(electionStore.currentStage).toBe("SettingUp");
+
+      electionStore.currentElection = {
+        electionGuid: "1",
+        tallyStatus: "Counting",
+      } as ElectionDto;
+      expect(electionStore.currentStage).toBe("GatheringBallots");
+    });
+  });
+
+  describe("setStage", () => {
+    it("calls electionService.update with the canonical tallyStatus for SettingUp", async () => {
+      const { electionService } = await import("../services/electionService");
+      const updatedElection = {
+        electionGuid: "1",
+        tallyStatus: "Setup",
+      } as ElectionDto;
+      electionStore.elections = [{ electionGuid: "1" } as ElectionDto];
+      electionService.update.mockResolvedValue(updatedElection);
+
+      await electionStore.setStage("1", "SettingUp");
+
+      expect(electionService.update).toHaveBeenCalledWith(
+        "1",
+        expect.objectContaining({ tallyStatus: "Setup" }),
+      );
+    });
+
+    it("calls electionService.update with Counting for GatheringBallots", async () => {
+      const { electionService } = await import("../services/electionService");
+      const updatedElection = {
+        electionGuid: "1",
+        tallyStatus: "Counting",
+      } as ElectionDto;
+      electionStore.elections = [{ electionGuid: "1" } as ElectionDto];
+      electionService.update.mockResolvedValue(updatedElection);
+
+      await electionStore.setStage("1", "GatheringBallots");
+
+      expect(electionService.update).toHaveBeenCalledWith(
+        "1",
+        expect.objectContaining({ tallyStatus: "Counting" }),
+      );
+    });
+
+    it("calls electionService.update with Finalized for ProcessingBallots", async () => {
+      const { electionService } = await import("../services/electionService");
+      const updatedElection = {
+        electionGuid: "1",
+        tallyStatus: "Finalized",
+      } as ElectionDto;
+      electionStore.elections = [{ electionGuid: "1" } as ElectionDto];
+      electionService.update.mockResolvedValue(updatedElection);
+
+      await electionStore.setStage("1", "ProcessingBallots");
+
+      expect(electionService.update).toHaveBeenCalledWith(
+        "1",
+        expect.objectContaining({ tallyStatus: "Finalized" }),
+      );
+    });
+  });
 });
