@@ -147,13 +147,11 @@ describe("StageControl", () => {
         global: { stubs: globalStubs },
       });
 
-      let checkedBefore = wrapper
+      const checkedBefore = wrapper
         .findAll('[role="radio"]')
         .filter((r) => r.attributes("aria-checked") === "true");
       expect(checkedBefore).toHaveLength(1);
-      expect(checkedBefore[0]!.text()).toContain(
-        "elections.stage.SettingUp",
-      );
+      expect(checkedBefore[0]!.text()).toContain("elections.stage.SettingUp");
 
       await wrapper.setProps({ stage: "ProcessingBallots" });
 

@@ -15,6 +15,8 @@ import { electionService } from "../services/electionService";
 import { useElectionStore } from "../stores/electionStore";
 import type { ElectionDto } from "../types";
 import { extractApiErrorMessage } from "../utils/errorHandler";
+import ResumeElectionCard from "@/components/dashboard/ResumeElectionCard.vue";
+import SetupTipsCard from "@/components/dashboard/SetupTipsCard.vue";
 
 const router = useRouter();
 const { t } = useI18n();
@@ -234,10 +236,19 @@ function formatDate(date: string) {
   }
   return new Date(date).toLocaleDateString();
 }
+
+function participationPct(election: ElectionDto): string {
+  if (!election.voterCount) {
+    return "—";
+  }
+  return `${Math.round((election.ballotCount / election.voterCount) * 100)}%`;
+}
 </script>
 
 <template>
   <main class="dashboard-page">
+    <div class="dashboard-layout">
+      <div class="dashboard-main">
     <section class="stats-section" aria-labelledby="stats-heading">
       <h2 id="stats-heading" class="sr-only">
         {{ $t("dashboard.statistics") }}
@@ -487,6 +498,14 @@ function formatDate(date: string) {
               min-width="100"
               sortable="custom"
             />
+            <el-table-column
+              :label="$t('elections.participation')"
+              min-width="120"
+            >
+              <template #default="scope">
+                {{ participationPct(scope.row) }}
+              </template>
+            </el-table-column>
           </el-table>
 
           <div v-if="allElections.length > 0" class="pagination-container">
@@ -503,10 +522,35 @@ function formatDate(date: string) {
         </div>
       </el-card>
     </section>
+      </div>
+      <aside class="dashboard-rail" aria-label="Dashboard right rail">
+        <ResumeElectionCard />
+        <SetupTipsCard />
+      </aside>
+    </div>
   </main>
 </template>
 
 <style lang="less">
+.dashboard-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+}
+
+.dashboard-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.dashboard-rail {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
 .dashboard-page {
   margin: 0 auto;
   padding: var(--spacing-6) var(--spacing-4);
@@ -677,6 +721,22 @@ function formatDate(date: string) {
 
 .elections-section {
   margin-bottom: var(--spacing-8);
+}
+
+@media (max-width: 1279px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
+  .dashboard-rail {
+    width: 100%;
+    order: 1;
+  }
+
+  .dashboard-main {
+    order: 0;
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {

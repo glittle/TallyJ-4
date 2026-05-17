@@ -45,7 +45,7 @@ export const STAGE_META: Record<ElectionStage, StageMeta> = {
   SettingUp: {
     key: "SettingUp",
     i18nKey: "elections.stage.SettingUp",
-    shortI18nKey: "elections.stage.SettingUp.short",
+    shortI18nKey: "elections.stage.SettingUp_short",
     groupI18nKey: "elections.stageNav.group.SettingUp",
     colorVar: "--color-stage-setup",
     bgVar: "--color-stage-setup-bg",
@@ -54,7 +54,7 @@ export const STAGE_META: Record<ElectionStage, StageMeta> = {
   GatheringBallots: {
     key: "GatheringBallots",
     i18nKey: "elections.stage.GatheringBallots",
-    shortI18nKey: "elections.stage.GatheringBallots.short",
+    shortI18nKey: "elections.stage.GatheringBallots_short",
     groupI18nKey: "elections.stageNav.group.GatheringBallots",
     colorVar: "--color-stage-gather",
     bgVar: "--color-stage-gather-bg",
@@ -63,7 +63,7 @@ export const STAGE_META: Record<ElectionStage, StageMeta> = {
   ProcessingBallots: {
     key: "ProcessingBallots",
     i18nKey: "elections.stage.ProcessingBallots",
-    shortI18nKey: "elections.stage.ProcessingBallots.short",
+    shortI18nKey: "elections.stage.ProcessingBallots_short",
     groupI18nKey: "elections.stageNav.group.ProcessingBallots",
     colorVar: "--color-stage-process",
     bgVar: "--color-stage-process-bg",

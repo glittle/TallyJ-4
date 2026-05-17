@@ -2,7 +2,11 @@
 import { useI18n } from "vue-i18n";
 import { ElIcon } from "element-plus";
 import { useElectionStore } from "@/stores/electionStore";
-import { STAGES, STAGE_META, type ElectionStage } from "@/domain/electionStages";
+import {
+  STAGES,
+  STAGE_META,
+  type ElectionStage,
+} from "@/domain/electionStages";
 import { useNotifications } from "@/composables/useNotifications";
 import StageIndicator from "./StageIndicator.vue";
 
@@ -24,7 +28,9 @@ const electionStore = useElectionStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 async function selectStage(newStage: ElectionStage) {
-  if (newStage === props.stage) return;
+  if (newStage === props.stage) {
+    return;
+  }
 
   try {
     await electionStore.setStage(props.electionGuid, newStage);

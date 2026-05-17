@@ -1,18 +1,5 @@
 <script setup lang="ts">
-import {
-  ArrowLeft,
-  DataAnalysis,
-  Document,
-  Files,
-  HomeFilled,
-  Location,
-  Monitor,
-  PieChart,
-  Setting,
-  Tickets,
-  User,
-  UserFilled,
-} from "@element-plus/icons-vue";
+import { ArrowLeft, HomeFilled, Setting } from "@element-plus/icons-vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -20,6 +7,8 @@ import { secureTokenService } from "../services/secureTokenService";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
 import { getBuildDate, getBuildDateBadi, VERSION } from "./version";
+import StageGroupedSidebarMenu from "./nav/StageGroupedSidebarMenu.vue";
+import SidebarStageHeader from "./nav/SidebarStageHeader.vue";
 const { t } = useI18n();
 
 const emit = defineEmits<{
@@ -36,10 +25,6 @@ const isSuperAdmin = computed(() => superAdminStore.isSuperAdmin);
 const isTeller = computed(() => {
   const authData = secureTokenService.getAuthData();
   return authData.name === "Teller" && authData.authMethod === "AccessCode";
-});
-
-const electionStage = computed(() => {
-  return electionStore.currentElection?.tallyStatus || "Setup";
 });
 
 const isInElectionContext = computed(() => {
@@ -112,134 +97,17 @@ function goBackToElections() {
         </div>
       </div>
 
-      <el-menu
-        :default-active="activeRoute"
-        :router="true"
-        aria-label="Election navigation"
-        class="election-menu"
-        @select="handleMenuSelect"
-      >
-        <el-menu-item :index="`/elections/${route.params.id}`" role="menuitem">
-          <el-icon aria-hidden="true">
-            <Document />
-          </el-icon>
-          <span>{{ $t("elections.details") }}</span>
-        </el-menu-item>
-
-        <el-menu-item
-          v-if="!isTeller"
-          :index="`/elections/${route.params.id}/edit`"
-          role="menuitem"
-        >
-          <el-icon aria-hidden="true">
-            <Setting />
-          </el-icon>
-          <span>{{ $t("elections.edit") }}</span>
-        </el-menu-item>
-
-        <el-menu-item
-          v-if="!isTeller"
-          :index="`/elections/${route.params.id}/people`"
-          role="menuitem"
-        >
-          <el-icon aria-hidden="true">
-            <User />
-          </el-icon>
-          <span>{{ $t("people.management") }}</span>
-        </el-menu-item>
-
-        <el-menu-item
-          v-if="!isTeller"
-          :index="`/elections/${route.params.id}/locations`"
-          role="menuitem"
-        >
-          <el-icon aria-hidden="true">
-            <Location />
-          </el-icon>
-          <span>{{ $t("nav.votingLocations") }}</span>
-        </el-menu-item>
-
-        <el-menu-item
-          v-if="!isTeller"
-          :index="`/elections/${route.params.id}/tellers`"
-          role="menuitem"
-        >
-          <el-icon aria-hidden="true">
-            <UserFilled />
-          </el-icon>
-          <span>{{ $t("nav.tellers") }}</span>
-        </el-menu-item>
-
-        <el-menu-item
-          v-if="!isTeller || electionStage === 'Counting'"
-          :index="`/elections/${route.params.id}/frontdesk`"
-          role="menuitem"
-        >
-          <el-icon aria-hidden="true">
-            <Monitor />
-          </el-icon>
-          <span>{{ $t("nav.frontDesk") }}</span>
-        </el-menu-item>
-
-        <el-menu-item
-          v-if="!isTeller || electionStage === 'Counting'"
-          :index="`/elections/${route.params.id}/ballots`"
-          role="menuitem"
-        >
-          <el-icon aria-hidden="true">
-            <Tickets />
-          </el-icon>
-          <span>{{ $t("ballots.management") }}</span>
-        </el-menu-item>
-
-        <el-menu-item
-          v-if="!isTeller || electionStage === 'Finalized'"
-          :index="`/elections/${route.params.id}/results`"
-          role="menuitem"
-        >
-          <el-icon aria-hidden="true">
-            <DataAnalysis />
-          </el-icon>
-          <span>{{ $t("results.title") }}</span>
-        </el-menu-item>
-
-        <el-menu-item
-          v-if="!isTeller"
-          :index="`/elections/${route.params.id}/tally`"
-          role="menuitem"
-        >
-          <el-icon aria-hidden="true">
-            <PieChart />
-          </el-icon>
-          <span>{{ $t("results.calculateTally") }}</span>
-        </el-menu-item>
-
-        <el-menu-item
-          v-if="
-            !isTeller ||
-            electionStage === 'Counting' ||
-            electionStage === 'Finalized'
-          "
-          :index="`/elections/${route.params.id}/monitor`"
-          role="menuitem"
-        >
-          <el-icon aria-hidden="true">
-            <Monitor />
-          </el-icon>
-          <span>{{ $t("results.monitor") }}</span>
-        </el-menu-item>
-
-        <el-menu-item
-          v-if="!isTeller || electionStage === 'Finalized'"
-          :index="`/elections/${route.params.id}/reporting`"
-          role="menuitem"
-        >
-          <el-icon aria-hidden="true">
-            <Files />
-          </el-icon>
-          <span>{{ $t("results.reporting") }}</span>
-        </el-menu-item>
-      </el-menu>
+      <SidebarStageHeader
+        v-if="!isTeller"
+        :election-guid="String(route.params.id)"
+        :stage="electionStore.currentStage"
+      />
+      <StageGroupedSidebarMenu
+        :election-guid="String(route.params.id)"
+        :current-stage="electionStore.currentStage"
+        :is-teller="isTeller"
+        @close-mobile-sidebar="emit('close-mobile-sidebar')"
+      />
     </div>
 
     <!-- Main navigation menu -->
@@ -366,37 +234,6 @@ function goBackToElections() {
     font-size: 16px;
     color: var(--color-sidebar-text-active);
     word-break: break-word;
-  }
-
-  .election-menu {
-    flex: 1;
-    border-right: none;
-    background-color: var(--color-sidebar-bg) !important;
-    color: var(--color-sidebar-text) !important;
-    padding: 10px 0;
-    overflow-y: auto;
-
-    .el-menu-item {
-      height: 44px;
-      line-height: 44px;
-      margin: 2px 10px;
-      border-radius: 6px;
-      font-size: 14px;
-
-      &:hover {
-        background-color: var(--color-sidebar-hover) !important;
-      }
-
-      &.is-active {
-        background-color: var(--color-sidebar-active) !important;
-        color: var(--color-sidebar-text-active) !important;
-      }
-
-      .el-icon {
-        margin-right: 8px;
-        font-size: 16px;
-      }
-    }
   }
 
   .testOnlyWarning {
