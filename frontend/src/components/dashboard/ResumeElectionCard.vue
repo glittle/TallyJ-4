@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import StageIndicator from "@/components/nav/StageIndicator.vue";
+import { tallyStatusToStage } from "@/domain/electionStages";
+import { useElectionStore } from "@/stores/electionStore";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { useElectionStore } from "@/stores/electionStore";
-import { tallyStatusToStage } from "@/domain/electionStages";
-import StageIndicator from "@/components/nav/StageIndicator.vue";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -75,6 +75,7 @@ function open() {
   border: 1px solid var(--color-border-light, #e4e7ed);
   border-radius: 8px;
   padding: 16px;
+  flex-grow: 1;
 
   &__header {
     margin-bottom: 4px;

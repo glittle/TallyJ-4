@@ -190,6 +190,38 @@ public class ElectionService : IElectionService
     }
 
     /// <summary>
+    /// Changes the mode of an existing election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election to update.</param>
+    /// <param name="updateDto">The data transfer object containing updated election mode information.</param>
+    /// <returns>An ElectionDto representing the updated election, or null if the election was not found.</returns>
+    public async Task<ElectionDto?> ChangeElectionModeAsync(Guid electionGuid, ChangeElectionModeDto updateDto)
+    {
+        var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+
+        if (election == null)
+        {
+            return null;
+        }
+
+        // copy any non-null properties from updateDto to election
+        _mapper.Map(updateDto, election);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Updated election {ElectionGuid}", electionGuid);
+
+        await _signalRNotificationService.SendElectionUpdateAsync(new ElectionUpdateDto
+        {
+            ElectionGuid = election.ElectionGuid,
+            Name = election.Name,
+            TallyStatus = election.TallyStatus,
+            UpdatedAt = DateTimeOffset.UtcNow
+        });
+
+        return await GetElectionByGuidAsync(electionGuid);
+    }
+
+    /// <summary>
     /// Deletes an election by its unique identifier.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election to delete.</param>

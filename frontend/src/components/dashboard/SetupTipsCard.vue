@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import TipsPanel from "@/components/nav/TipsPanel.vue";
+import { tallyStatusToStage } from "@/domain/electionStages";
+import { useElectionStore } from "@/stores/electionStore";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useElectionStore } from "@/stores/electionStore";
-import { tallyStatusToStage } from "@/domain/electionStages";
-import TipsPanel from "@/components/nav/TipsPanel.vue";
 
 const { t } = useI18n();
 const electionStore = useElectionStore();

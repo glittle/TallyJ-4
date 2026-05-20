@@ -1,13 +1,9 @@
 <script setup lang="ts">
+import ResumeElectionCard from "@/components/dashboard/ResumeElectionCard.vue";
+import SetupTipsCard from "@/components/dashboard/SetupTipsCard.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
-import {
-  CircleCheck,
-  Document,
-  Plus,
-  Search,
-  Upload,
-} from "@element-plus/icons-vue";
+import { Plus, Search, Upload } from "@element-plus/icons-vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -15,8 +11,6 @@ import { electionService } from "../services/electionService";
 import { useElectionStore } from "../stores/electionStore";
 import type { ElectionDto } from "../types";
 import { extractApiErrorMessage } from "../utils/errorHandler";
-import ResumeElectionCard from "@/components/dashboard/ResumeElectionCard.vue";
-import SetupTipsCard from "@/components/dashboard/SetupTipsCard.vue";
 
 const router = useRouter();
 const { t } = useI18n();
@@ -248,285 +242,251 @@ function participationPct(election: ElectionDto): string {
 <template>
   <main class="dashboard-page">
     <div class="dashboard-layout">
-      <div class="dashboard-main">
-    <section class="stats-section" aria-labelledby="stats-heading">
-      <h2 id="stats-heading" class="sr-only">
-        {{ $t("dashboard.statistics") }}
-      </h2>
-      <el-row
-        :gutter="4"
-        class="stats-row"
-        role="list"
-        aria-label="Election statistics"
-      >
-        <el-col role="listitem">
-          <el-card class="stat-card">
-            <div class="stat-icon elections" aria-hidden="true">
-              <el-icon>
-                <Document />
-              </el-icon>
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">
-                {{ statistics.totalElections }}
-              </div>
-              <div class="stat-label">{{ $t("dashboard.totalElections") }}</div>
-            </div>
-          </el-card>
-        </el-col>
-        <el-col role="listitem">
-          <el-card class="stat-card">
-            <div class="stat-icon active" aria-hidden="true">
-              <el-icon>
-                <CircleCheck />
-              </el-icon>
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">
-                {{ statistics.activeElections }}
-              </div>
-              <div class="stat-label">
-                {{ $t("dashboard.activeElections") }}
-              </div>
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-    </section>
-
-    <section class="elections-section">
-      <el-card>
-        <template #header>
-          <div class="card-header">
-            <el-button
-              :type="allElections.length ? 'info' : 'primary'"
-              @click="createElection"
-            >
-              <el-icon>
-                <Plus />
-              </el-icon>
-              {{ $t("elections.createNew") }}
-            </el-button>
-            <el-button type="info" @click="importElection">
-              <el-icon>
-                <Upload />
-              </el-icon>
-              {{ $t("elections.importElection") }}
-            </el-button>
-          </div>
-        </template>
-
-        <div class="filters-section">
-          <el-row :gutter="20" align="middle">
-            <el-col :span="6">
-              <el-input
-                v-model="filters.search"
-                :placeholder="$t('elections.searchPlaceholder')"
-                clearable
-                @input="handleSearch"
-              >
-                <template #prefix>
-                  <el-icon>
-                    <Search />
-                  </el-icon>
-                </template>
-              </el-input>
-            </el-col>
-            <el-col :span="4">
-              <el-select
-                v-model="filters.status"
-                :placeholder="$t('elections.filterByStatus')"
-                clearable
-                @change="handleFilterChange"
-              >
-                <el-option label="Draft" value="Draft" />
-                <el-option label="Voting" value="Voting" />
-                <el-option label="Tallying" value="Tallying" />
-                <el-option label="Finalized" value="Finalized" />
-              </el-select>
-            </el-col>
-            <el-col :span="4">
-              <el-select
-                v-model="filters.type"
-                :placeholder="$t('elections.filterByType')"
-                clearable
-                @change="handleFilterChange"
-              >
-                <el-option
-                  :label="$t('elections.electionTypes.LSA')"
-                  value="LSA"
-                />
-                <el-option
-                  :label="$t('elections.electionTypes.LSA1')"
-                  value="LSA1"
-                />
-                <el-option
-                  :label="$t('elections.electionTypes.LSA2')"
-                  value="LSA2"
-                />
-                <el-option
-                  :label="$t('elections.electionTypes.NSA')"
-                  value="NSA"
-                />
-                <el-option
-                  :label="$t('elections.electionTypes.Con')"
-                  value="Con"
-                />
-                <el-option
-                  :label="$t('elections.electionTypes.Reg')"
-                  value="Reg"
-                />
-                <el-option
-                  :label="$t('elections.electionTypes.Oth')"
-                  value="Oth"
-                />
-              </el-select>
-            </el-col>
-            <el-col :span="4">
-              <el-date-picker
-                v-model="filters.dateRange"
-                type="daterange"
-                :range-separator="$t('common.to')"
-                :start-placeholder="$t('common.startDate')"
-                :end-placeholder="$t('common.endDate')"
-                @change="handleFilterChange"
-              />
-            </el-col>
-            <el-col :span="6" class="text-right">
-              <el-space>
-                <el-button :disabled="!hasActiveFilters" @click="clearFilters">
-                  {{ $t("common.clearFilters") }}
-                </el-button>
-              </el-space>
-            </el-col>
-          </el-row>
-        </div>
-
-        <div class="table-container">
-          <div v-if="loading" class="loading-container" aria-live="polite">
-            <el-skeleton :rows="3" animated />
-          </div>
-          <div v-else-if="allElections.length === 0" class="empty-state">
-            <el-empty
-              :description="$t('dashboard.noElections')"
-              aria-live="polite"
-            >
-              <el-button type="primary" @click="createElection">
-                {{ $t("elections.createFirst") }}
-              </el-button>
-            </el-empty>
-          </div>
-          <el-table
-            v-else
-            v-loading="loading"
-            :data="filteredElections"
-            style="width: 100%"
-            :default-sort="{ prop: 'dateOfElection', order: 'descending' }"
-            @sort-change="handleSortChange"
-          >
-            <el-table-column
-              prop="name"
-              :label="$t('elections.name')"
-              min-width="250"
-              sortable="custom"
-            >
-              <template #default="scope">
-                <div
-                  class="election-name clickable"
-                  @click="openElection(scope.row.electionGuid)"
-                >
-                  <el-tag
-                    v-if="scope.row.showAsTest"
-                    type="danger"
-                    size="small"
-                    class="test-badge"
-                    >TEST</el-tag
-                  >
-                  {{ scope.row.name }}
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="electionType"
-              :label="$t('elections.type')"
-              min-width="120"
-              sortable="custom"
-            >
-              <template #default="scope">
-                {{
-                  scope.row.electionType
-                    ? $t(`elections.electionTypes.${scope.row.electionType}`)
-                    : ""
-                }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="tallyStatus"
-              :label="$t('elections.status')"
-              min-width="120"
-              sortable="custom"
-            >
-              <template #default="scope">
-                {{ scope.row.tallyStatus || "-" }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="dateOfElection"
-              :label="$t('elections.date')"
-              width="140"
-              sortable="custom"
-            >
-              <template #default="scope">
-                {{ formatDate(scope.row.dateOfElection) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="numberToElect"
-              :label="$t('elections.toElect')"
-              width="100"
-              sortable="custom"
-            />
-            <el-table-column
-              prop="voterCount"
-              :label="$t('elections.people')"
-              min-width="100"
-              sortable="custom"
-            />
-            <el-table-column
-              prop="ballotCount"
-              :label="$t('elections.ballots')"
-              min-width="100"
-              sortable="custom"
-            />
-            <el-table-column
-              :label="$t('elections.participation')"
-              min-width="120"
-            >
-              <template #default="scope">
-                {{ participationPct(scope.row) }}
-              </template>
-            </el-table-column>
-          </el-table>
-
-          <div v-if="allElections.length > 0" class="pagination-container">
-            <el-pagination
-              v-model:current-page="pagination.page"
-              v-model:page-size="pagination.pageSize"
-              :page-sizes="[10, 20, 50, 100]"
-              :total="pagination.total"
-              layout="total, sizes, prev, pager, next"
-              @size-change="handleSizeChange"
-              @current-change="handlePageChange"
-            />
-          </div>
-        </div>
-      </el-card>
-    </section>
-      </div>
-      <aside class="dashboard-rail" aria-label="Dashboard right rail">
+      <div class="dashboard-rail" aria-label="Dashboard right rail">
         <ResumeElectionCard />
         <SetupTipsCard />
-      </aside>
+      </div>
+      <div class="dashboard-main">
+        <section class="elections-section">
+          <el-card>
+            <template #header>
+              <div class="card-header">
+                <div class="stat-content">
+                  <div class="stat-label">
+                    {{ statistics.totalElections }}
+                    {{ $t("dashboard.totalElections") }}
+                  </div>
+                </div>
+                <el-button
+                  :type="allElections.length ? 'info' : 'primary'"
+                  @click="createElection"
+                >
+                  <el-icon>
+                    <Plus />
+                  </el-icon>
+                  {{ $t("elections.createNew") }}
+                </el-button>
+                <el-button type="info" @click="importElection">
+                  <el-icon>
+                    <Upload />
+                  </el-icon>
+                  {{ $t("elections.importElection") }}
+                </el-button>
+              </div>
+            </template>
+
+            <div class="filters-section">
+              <el-row :gutter="20" align="middle">
+                <el-col :span="6">
+                  <el-input
+                    v-model="filters.search"
+                    :placeholder="$t('elections.searchPlaceholder')"
+                    clearable
+                    @input="handleSearch"
+                  >
+                    <template #prefix>
+                      <el-icon>
+                        <Search />
+                      </el-icon>
+                    </template>
+                  </el-input>
+                </el-col>
+                <el-col :span="4">
+                  <el-select
+                    v-model="filters.status"
+                    :placeholder="$t('elections.filterByStatus')"
+                    clearable
+                    @change="handleFilterChange"
+                  >
+                    <el-option label="Draft" value="Draft" />
+                    <el-option label="Voting" value="Voting" />
+                    <el-option label="Tallying" value="Tallying" />
+                    <el-option label="Finalized" value="Finalized" />
+                  </el-select>
+                </el-col>
+                <el-col :span="4">
+                  <el-select
+                    v-model="filters.type"
+                    :placeholder="$t('elections.filterByType')"
+                    clearable
+                    @change="handleFilterChange"
+                  >
+                    <el-option
+                      :label="$t('elections.electionTypes.LSA')"
+                      value="LSA"
+                    />
+                    <el-option
+                      :label="$t('elections.electionTypes.LSA1')"
+                      value="LSA1"
+                    />
+                    <el-option
+                      :label="$t('elections.electionTypes.LSA2')"
+                      value="LSA2"
+                    />
+                    <el-option
+                      :label="$t('elections.electionTypes.NSA')"
+                      value="NSA"
+                    />
+                    <el-option
+                      :label="$t('elections.electionTypes.Con')"
+                      value="Con"
+                    />
+                    <el-option
+                      :label="$t('elections.electionTypes.Reg')"
+                      value="Reg"
+                    />
+                    <el-option
+                      :label="$t('elections.electionTypes.Oth')"
+                      value="Oth"
+                    />
+                  </el-select>
+                </el-col>
+                <el-col :span="4">
+                  <el-date-picker
+                    v-model="filters.dateRange"
+                    type="daterange"
+                    :range-separator="$t('common.to')"
+                    :start-placeholder="$t('common.startDate')"
+                    :end-placeholder="$t('common.endDate')"
+                    @change="handleFilterChange"
+                  />
+                </el-col>
+                <el-col :span="6" class="text-right">
+                  <el-space>
+                    <el-button
+                      :disabled="!hasActiveFilters"
+                      @click="clearFilters"
+                    >
+                      {{ $t("common.clearFilters") }}
+                    </el-button>
+                  </el-space>
+                </el-col>
+              </el-row>
+            </div>
+
+            <div class="table-container">
+              <div v-if="loading" class="loading-container" aria-live="polite">
+                <el-skeleton :rows="3" animated />
+              </div>
+              <div v-else-if="allElections.length === 0" class="empty-state">
+                <el-empty
+                  :description="$t('dashboard.noElections')"
+                  aria-live="polite"
+                >
+                  <el-button type="primary" @click="createElection">
+                    {{ $t("elections.createFirst") }}
+                  </el-button>
+                </el-empty>
+              </div>
+              <el-table
+                v-else
+                v-loading="loading"
+                :data="filteredElections"
+                style="width: 100%"
+                :default-sort="{ prop: 'dateOfElection', order: 'descending' }"
+                @sort-change="handleSortChange"
+              >
+                <el-table-column
+                  prop="name"
+                  :label="$t('elections.name')"
+                  min-width="250"
+                  sortable="custom"
+                >
+                  <template #default="scope">
+                    <div
+                      class="election-name clickable"
+                      @click="openElection(scope.row.electionGuid)"
+                    >
+                      <el-tag
+                        v-if="scope.row.showAsTest"
+                        type="danger"
+                        size="small"
+                        class="test-badge"
+                        >TEST</el-tag
+                      >
+                      {{ scope.row.name }}
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="electionType"
+                  :label="$t('elections.type')"
+                  min-width="120"
+                  sortable="custom"
+                >
+                  <template #default="scope">
+                    {{
+                      scope.row.electionType
+                        ? $t(
+                            `elections.electionTypes.${scope.row.electionType}`,
+                          )
+                        : ""
+                    }}
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="tallyStatus"
+                  :label="$t('elections.status')"
+                  min-width="120"
+                  sortable="custom"
+                >
+                  <template #default="scope">
+                    {{ scope.row.tallyStatus || "-" }}
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="dateOfElection"
+                  :label="$t('elections.date')"
+                  width="140"
+                  sortable="custom"
+                >
+                  <template #default="scope">
+                    {{ formatDate(scope.row.dateOfElection) }}
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="numberToElect"
+                  :label="$t('elections.toElect')"
+                  width="100"
+                  sortable="custom"
+                />
+                <el-table-column
+                  prop="voterCount"
+                  :label="$t('elections.people')"
+                  min-width="100"
+                  sortable="custom"
+                />
+                <el-table-column
+                  prop="ballotCount"
+                  :label="$t('elections.ballots')"
+                  min-width="100"
+                  sortable="custom"
+                />
+                <el-table-column
+                  :label="$t('elections.participation')"
+                  min-width="120"
+                >
+                  <template #default="scope">
+                    {{ participationPct(scope.row) }}
+                  </template>
+                </el-table-column>
+              </el-table>
+
+              <div v-if="allElections.length > 0" class="pagination-container">
+                <el-pagination
+                  v-model:current-page="pagination.page"
+                  v-model:page-size="pagination.pageSize"
+                  :page-sizes="[10, 20, 50, 100]"
+                  :total="pagination.total"
+                  layout="total, sizes, prev, pager, next"
+                  @size-change="handleSizeChange"
+                  @current-change="handlePageChange"
+                />
+              </div>
+            </div>
+          </el-card>
+        </section>
+      </div>
     </div>
   </main>
 </template>
@@ -534,6 +494,7 @@ function participationPct(election: ElectionDto): string {
 <style lang="less">
 .dashboard-layout {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   gap: var(--spacing-6);
 }
@@ -544,10 +505,7 @@ function participationPct(election: ElectionDto): string {
 }
 
 .dashboard-rail {
-  width: 320px;
-  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
   gap: var(--spacing-4);
 }
 
@@ -725,7 +683,7 @@ function participationPct(election: ElectionDto): string {
 
 @media (max-width: 1279px) {
   .dashboard-layout {
-    flex-direction: column;
+    flex-direction: column-reverse; // put Resume election first
   }
 
   .dashboard-rail {
@@ -734,7 +692,6 @@ function participationPct(election: ElectionDto): string {
   }
 
   .dashboard-main {
-    order: 0;
     width: 100%;
   }
 }

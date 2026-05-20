@@ -9,7 +9,6 @@ import { useRoute, useRouter } from "vue-router";
 import { electionService } from "../../services/electionService";
 import { secureTokenService } from "../../services/secureTokenService";
 import { useElectionStore } from "../../stores/electionStore";
-import StageControl from "../../components/nav/StageControl.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -231,19 +230,6 @@ async function exportElection() {
         <div class="stat-item">
           <div class="stat-label">{{ $t("elections.locations") }}</div>
           <div class="stat-value">{{ election.locationCount }}</div>
-        </div>
-      </el-card>
-
-      <el-card v-if="!isTeller" class="stage-card">
-        <template #header>
-          <span>{{ $t("elections.stageProgression") }}</span>
-        </template>
-        <div class="stage-actions">
-          <StageControl
-            :election-guid="electionGuid"
-            :stage="electionStore.currentStage"
-            :readonly="false"
-          />
         </div>
       </el-card>
 

@@ -125,6 +125,26 @@ public class ElectionsController : ControllerBase
     }
 
     /// <summary>
+    /// Changes the mode of an existing election.
+    /// </summary>
+    /// <param name="guid">The GUID of the election to update.</param>
+    /// <param name="updateDto">The updated election mode data.</param>
+    /// <returns>The updated election information.</returns>
+    [HttpPut("{guid}/changeMode")]
+    [Authorize(Policy = "ElectionAccess")]
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> ChangeElectionMode(Guid guid, ChangeElectionModeDto updateDto)
+    {
+        var election = await _electionService.ChangeElectionModeAsync(guid, updateDto);
+
+        if (election == null)
+        {
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
+        }
+
+        return Ok(ApiResponse<ElectionDto>.SuccessResponse(election, "Election mode changed successfully"));
+    }
+
+    /// <summary>
     /// Toggles teller access for an election.
     /// </summary>
     /// <param name="guid">The GUID of the election.</param>
