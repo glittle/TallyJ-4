@@ -85,7 +85,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 l.ContactInfo,
                 l.Long,
                 l.Lat,
-                l.TallyStatus,
+                TallyStatus = l.LocationTallyStatus?.ToString(),
                 l.SortOrder,
                 l.BallotsCollected,
                 l.LocationTypeCode
@@ -313,7 +313,9 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 ContactInfo = loc.ContactInfo,
                 Long = loc.Long,
                 Lat = loc.Lat,
-                TallyStatus = loc.TallyStatus,
+                LocationTallyStatus = Enum.TryParse<LocationTallyStatus>(loc.TallyStatus, out var lts)
+                    ? lts
+                    : LocationTallyStatus.NotStarted,
                 SortOrder = loc.SortOrder,
                 BallotsCollected = loc.BallotsCollected,
                 LocationTypeCode = loc.LocationTypeCode ?? LocationType.Manual.ToString()

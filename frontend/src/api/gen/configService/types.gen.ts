@@ -414,6 +414,10 @@ export type CandidateResultDto = {
     closeToPrev?: boolean;
 };
 
+export type ChangeElectionStageDto = {
+    electionStage?: ElectionStage;
+};
+
 export type ChangePasswordDto = {
     currentPassword?: string | null;
     newPassword?: string | null;
@@ -615,7 +619,7 @@ export type ElectionCardDto = {
     electionGuid?: string;
     name?: string | null;
     dateOfElection?: Date | null;
-    tallyStatus?: string | null;
+    electionStage?: ElectionStage;
     voterCount?: number;
     ballotCount?: number;
     voteCount?: number;
@@ -628,7 +632,7 @@ export type ElectionDto = {
     dateOfElection?: Date | null;
     electionType?: ElectionTypeCode;
     numberToElect?: number | null;
-    tallyStatus?: string | null;
+    electionStage?: ElectionStage;
     convenor?: string | null;
     electionMode?: ElectionModeCode;
     numberExtra?: number | null;
@@ -698,18 +702,26 @@ export type ElectionReportDto = {
 export type ElectionSetupStatusDto = {
     electionGuid?: string;
     name?: string | null;
-    tallyStatus?: string | null;
+    electionStage?: ElectionStage;
     step1Complete?: boolean;
     step2Complete?: boolean;
     progressPercent?: number;
 };
+
+export const ElectionStage = {
+    SETTING_UP: 'SettingUp',
+    GATHERING_BALLOTS: 'GatheringBallots',
+    PROCESSING_BALLOTS: 'ProcessingBallots'
+} as const;
+
+export type ElectionStage = typeof ElectionStage[keyof typeof ElectionStage];
 
 export type ElectionStatusDto = {
     electionGuid?: string;
     name?: string | null;
     dateOfElection?: Date | null;
     electionType?: ElectionTypeCode;
-    tallyStatus?: string | null;
+    electionStage?: ElectionStage;
     isActive?: boolean;
     registeredVoters?: number;
     ballotsSubmitted?: number;
@@ -733,7 +745,7 @@ export type ElectionSummaryDto = {
     name: string;
     electionType?: ElectionTypeCode;
     dateOfElection?: Date | null;
-    tallyStatus?: string | null;
+    electionStage?: ElectionStage;
     voterCount?: number;
     ballotCount?: number;
     electionMode?: ElectionModeCode;
@@ -915,7 +927,7 @@ export type LocationDto = {
     contactInfo?: string | null;
     longitude?: string | null;
     latitude?: string | null;
-    tallyStatus?: string | null;
+    locationTallyStatus?: LocationTallyStatus;
     sortOrder?: number | null;
     ballotsCollected?: number | null;
     locationType?: LocationType;
@@ -957,6 +969,14 @@ export type LocationStatisticsDto = {
         [key: string]: number;
     } | null;
 };
+
+export const LocationTallyStatus = {
+    NOT_STARTED: 'NotStarted',
+    IN_PROGRESS: 'InProgress',
+    COMPLETE: 'Complete'
+} as const;
+
+export type LocationTallyStatus = typeof LocationTallyStatus[keyof typeof LocationTallyStatus];
 
 export const LocationType = {
     MANUAL: 'Manual',
@@ -1240,7 +1260,7 @@ export type PublicDisplayDto = {
     dateOfElection?: Date | null;
     convenor?: string | null;
     electionType?: ElectionTypeCode;
-    tallyStatus?: string | null;
+    electionStage?: ElectionStage;
     numberToElect?: number;
     numberExtra?: number;
     electedCandidates?: Array<PublicCandidateDto> | null;
@@ -1368,7 +1388,7 @@ export type SuperAdminElectionDetailDto = {
     name?: string | null;
     convenor?: string | null;
     dateOfElection?: Date | null;
-    tallyStatus?: string | null;
+    electionStage?: ElectionStage;
     electionType?: ElectionTypeCode;
     voterCount?: number;
     ballotCount?: number;
@@ -1385,7 +1405,7 @@ export type SuperAdminElectionDto = {
     name?: string | null;
     convenor?: string | null;
     dateOfElection?: Date | null;
-    tallyStatus?: string | null;
+    electionStage?: ElectionStage;
     electionType?: ElectionTypeCode;
     voterCount?: number;
     ballotCount?: number;
@@ -1538,7 +1558,7 @@ export type UpdateElectionDto = {
     name?: string | null;
     dateOfElection?: Date | null;
     numberToElect?: number | null;
-    tallyStatus?: string | null;
+    electionStage?: ElectionStage;
     convenor?: string | null;
     numberExtra?: number | null;
     showFullReport?: boolean | null;
@@ -2777,6 +2797,24 @@ export type PutApiElectionsByGuidUpdateElectionResponses = {
 };
 
 export type PutApiElectionsByGuidUpdateElectionResponse = PutApiElectionsByGuidUpdateElectionResponses[keyof PutApiElectionsByGuidUpdateElectionResponses];
+
+export type PutApiElectionsByGuidStageData = {
+    body?: ChangeElectionStageDto;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/stage';
+};
+
+export type PutApiElectionsByGuidStageResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseElectionDto;
+};
+
+export type PutApiElectionsByGuidStageResponse = PutApiElectionsByGuidStageResponses[keyof PutApiElectionsByGuidStageResponses];
 
 export type PutApiElectionsByGuidTellerAccessData = {
     body?: ToggleTellerAccessDto;

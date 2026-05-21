@@ -161,7 +161,7 @@ public class ElectionsControllerTests : IntegrationTestBase
             Name = "Updated Name",
             NumberToElect = 7,
             DateOfElection = DateTime.UtcNow.AddDays(60),
-            TallyStatus = "Processing"
+            ElectionStage = Backend.Domain.Enumerations.ElectionStage.ProcessingBallots
         };
 
         var response = await PutJsonAsync($"/api/elections/{electionGuid}/updateElection", updateDto);

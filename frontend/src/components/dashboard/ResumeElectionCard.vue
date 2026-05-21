@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import StageIndicator from "@/components/nav/StageIndicator.vue";
-import { tallyStatusToStage } from "@/domain/electionStages";
 import { useElectionStore } from "@/stores/electionStore";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -19,11 +18,7 @@ const mostRecent = computed(() => {
   return sorted[0] ?? null;
 });
 
-const stage = computed(() =>
-  mostRecent.value
-    ? tallyStatusToStage(mostRecent.value.tallyStatus)
-    : "SettingUp",
-);
+const stage = computed(() => mostRecent.value?.electionStage ?? "SettingUp");
 
 const participationPct = computed(() => {
   const e = mostRecent.value;

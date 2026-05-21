@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import TipsPanel from "@/components/nav/TipsPanel.vue";
-import { tallyStatusToStage } from "@/domain/electionStages";
 import { useElectionStore } from "@/stores/electionStore";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -9,9 +8,7 @@ const { t } = useI18n();
 const electionStore = useElectionStore();
 
 const hasSetupElection = computed(() =>
-  electionStore.elections.some(
-    (e) => tallyStatusToStage(e.tallyStatus) === "SettingUp",
-  ),
+  electionStore.elections.some((e) => e.electionStage === "SettingUp"),
 );
 
 const TIP_ID = "dashboard.setup.intro";

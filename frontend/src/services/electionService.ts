@@ -6,6 +6,8 @@ import type {
   ImportResultDto,
   UpdateElectionDto,
 } from "../types";
+import type { ElectionStage } from "../domain/electionStages";
+import { client } from "../api/gen/configService/client.gen";
 import {
   deleteApiElectionsByGuidDeleteElection,
   getApiElectionsByGuidElection,
@@ -34,7 +36,6 @@ export const electionService = {
       response.data?.items?.map((item) => ({
         ...item,
         dateOfElection: convertDateToString(item.dateOfElection),
-        tallyStatus: item.tallyStatus ?? undefined,
         voterCount: item.voterCount ?? 0,
         ballotCount: item.ballotCount ?? 0,
         isTellerAccessOpen: item.isTellerAccessOpen ?? false,
@@ -165,6 +166,28 @@ export const electionService = {
     });
 
     return response.data;
+  },
+
+  async changeStage(
+    electionGuid: string,
+    stage: ElectionStage,
+  ): Promise<ElectionDto> {
+    const response = await client.put<{ data: ElectionDto }, unknown, false>({
+      url: "/api/Elections/{guid}/stage",
+      path: { guid: electionGuid },
+      body: { electionStage: stage },
+      headers: { "Content-Type": "application/json" },
+    });
+    await cacheService.remove(
+      cacheService.generateKey({
+        url: `/api/elections/${electionGuid}`,
+        method: "GET",
+      }),
+    );
+    await cacheService.remove(
+      cacheService.generateKey({ url: "/api/elections", method: "GET" }),
+    );
+    return (response as any).data?.data as ElectionDto;
   },
 
   // async getCurrentElection(): Promise<ElectionDto | null> {

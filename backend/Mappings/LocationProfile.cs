@@ -20,6 +20,7 @@ public class LocationProfile : IRegister
         config.NewConfig<Location, LocationDto>()
             .Map(dest => dest.Longitude, src => src.Long)
             .Map(dest => dest.Latitude, src => src.Lat)
+            .Map(dest => dest.LocationTallyStatus, src => src.LocationTallyStatus)
             .Map(dest => dest.LocationType, src => src.LocationTypeCode != null ? (LocationType?)src.LocationTypeEnum : null);
 
         config.NewConfig<CreateLocationDto, Location>()

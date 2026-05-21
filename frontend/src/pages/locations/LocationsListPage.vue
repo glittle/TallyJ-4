@@ -217,13 +217,17 @@ function formatDateTime(dateStr?: string): string {
             label="Contact Info"
             min-width="200"
           />
-          <el-table-column prop="tallyStatus" label="Tally Status" width="150">
+          <el-table-column
+            prop="locationTallyStatus"
+            label="Tally Status"
+            width="150"
+          >
             <template #default="scope">
               <el-tag
-                v-if="scope.row.tallyStatus"
-                :type="getStatusType(scope.row.tallyStatus)"
+                v-if="scope.row.locationTallyStatus"
+                :type="getStatusType(scope.row.locationTallyStatus)"
               >
-                {{ scope.row.tallyStatus }}
+                {{ scope.row.locationTallyStatus }}
               </el-tag>
               <span v-else>-</span>
             </template>

@@ -34,9 +34,9 @@ public class PublicDisplayDto
     public ElectionTypeCode? ElectionType { get; set; }
 
     /// <summary>
-    /// Current status of the tally (e.g., "In Progress", "Finalized").
+    /// The current stage of the election.
     /// </summary>
-    public string TallyStatus { get; set; } = string.Empty;
+    public ElectionStage ElectionStage { get; set; }
 
     /// <summary>
     /// Number of positions to elect.

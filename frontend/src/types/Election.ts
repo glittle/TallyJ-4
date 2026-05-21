@@ -1,11 +1,12 @@
+import type { ElectionStage } from "../domain/electionStages";
+
 export interface ElectionDto {
   electionGuid: string;
   name: string;
   dateOfElection?: string;
   electionType?: string;
   numberToElect?: number;
-  tallyStatus?: string;
-  electionStatus?: string;
+  electionStage: ElectionStage;
   convenor?: string;
   electionMode?: string;
   numberExtra?: number;
@@ -81,7 +82,7 @@ export interface UpdateElectionDto {
   showFullReport?: boolean;
   listForPublic?: boolean;
   showAsTest?: boolean;
-  tallyStatus?: string;
+  electionStage?: ElectionStage;
   onlineWhenOpen?: string;
   onlineWhenClose?: string;
   electionPasscode?: string;
@@ -108,7 +109,7 @@ export interface ElectionSummaryDto {
   name: string;
   dateOfElection?: string;
   electionType?: string;
-  tallyStatus?: string;
+  electionStage?: ElectionStage;
   voterCount: number;
   ballotCount: number;
   isTellerAccessOpen?: boolean;

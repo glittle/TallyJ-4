@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Backend.Domain.Enumerations;
 using Backend.Domain.Identity;
 using Backend.Domain.Entities;
 
@@ -103,6 +104,11 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
         {
             entity.Property(e => e.OnlineCloseIsEstimate).HasDefaultValue(true);
             entity.Property(e => e.ElectionType).HasConversion<string>();
+            entity.Property(e => e.ElectionStage)
+                .HasConversion<string>()
+                .HasColumnName("ElectionStage")
+                .HasMaxLength(20)
+                .IsUnicode(false);
             if (isSqlServer)
             {
                 entity.Property(e => e.RowVersion)
@@ -141,6 +147,12 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
         modelBuilder.Entity<Location>(entity =>
         {
             entity.HasKey(e => e.RowId).HasName("PK_VotingLocation");
+
+            entity.Property(e => e.LocationTallyStatus)
+                .HasConversion<string>()
+                .HasColumnName("LocationTallyStatus")
+                .HasMaxLength(20)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.Election).WithMany(p => p.Locations)
                 .HasPrincipalKey(p => p.ElectionGuid)

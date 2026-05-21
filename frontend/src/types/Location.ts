@@ -7,7 +7,7 @@ export interface LocationDto {
   contactInfo?: string;
   longitude?: string;
   latitude?: string;
-  tallyStatus?: string;
+  locationTallyStatus?: string;
   sortOrder?: number;
   ballotsCollected?: number;
   locationType?: LocationTypeCode;

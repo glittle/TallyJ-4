@@ -33,9 +33,7 @@ public partial class Location
     [Unicode(false)]
     public string? Lat { get; set; }
 
-    [StringLength(15)]
-    [Unicode(false)]
-    public string? TallyStatus { get; set; }
+    public LocationTallyStatus? LocationTallyStatus { get; set; }
 
     public int? SortOrder { get; set; }
 

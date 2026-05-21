@@ -1,58 +1,7 @@
 import { describe, it, expect } from "vitest";
-import {
-  STAGES,
-  STAGE_META,
-  STAGE_PAGES,
-  tallyStatusToStage,
-  stageToTallyStatus,
-  type ElectionStage,
-} from "../electionStages";
+import { STAGES, STAGE_META, STAGE_PAGES } from "../electionStages";
 
 describe("electionStages", () => {
-  describe("tallyStatusToStage", () => {
-    it.each([
-      ["Setup", "SettingUp"],
-      ["Draft", "SettingUp"],
-      ["Voting", "GatheringBallots"],
-      ["Counting", "GatheringBallots"],
-      ["Gathering", "GatheringBallots"],
-      ["Tallying", "ProcessingBallots"],
-      ["Finalized", "ProcessingBallots"],
-      ["Processing", "ProcessingBallots"],
-      ["Archived", "ProcessingBallots"],
-    ] as const)("maps legacy %s to %s", (legacy, expected) => {
-      expect(tallyStatusToStage(legacy)).toBe(expected);
-    });
-
-    it("maps undefined to SettingUp", () => {
-      expect(tallyStatusToStage(undefined)).toBe("SettingUp");
-    });
-
-    it("maps null to SettingUp", () => {
-      expect(tallyStatusToStage(null)).toBe("SettingUp");
-    });
-
-    it("maps unknown values to SettingUp", () => {
-      expect(tallyStatusToStage("Bogus")).toBe("SettingUp");
-    });
-  });
-
-  describe("stageToTallyStatus", () => {
-    it.each([
-      ["SettingUp", "Setup"],
-      ["GatheringBallots", "Counting"],
-      ["ProcessingBallots", "Finalized"],
-    ] as const)("maps stage %s to canonical %s", (stage, expected) => {
-      expect(stageToTallyStatus(stage as ElectionStage)).toBe(expected);
-    });
-
-    it("round-trips canonical persisted values", () => {
-      for (const stage of STAGES) {
-        expect(tallyStatusToStage(stageToTallyStatus(stage))).toBe(stage);
-      }
-    });
-  });
-
   describe("STAGES + STAGE_META", () => {
     it("contains the three canonical stages in order", () => {
       expect(STAGES).toEqual([

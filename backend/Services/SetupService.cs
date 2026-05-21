@@ -44,7 +44,7 @@ public class SetupService : ISetupService
             ElectionGuid = Guid.NewGuid(),
             Name = step1Dto.Name,
             DateOfElection = step1Dto.DateOfElection,
-            TallyStatus = "Setup",
+            ElectionStage = ElectionStage.SettingUp,
             RowVersion = new byte[8],
             NumberToElect = 1,
             ElectionType = ElectionTypeEnum.LSA.Code,
@@ -125,7 +125,7 @@ public class SetupService : ISetupService
         {
             ElectionGuid = election.ElectionGuid,
             Name = election.Name,
-            TallyStatus = election.TallyStatus ?? "Setup",
+            ElectionStage = election.ElectionStage,
             Step1Complete = step1Complete,
             Step2Complete = step2Complete,
             ProgressPercent = progressPercent

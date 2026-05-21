@@ -154,33 +154,3 @@ export const STAGE_PAGES: Record<ElectionStage, NavPageDef[]> = {
     },
   ],
 };
-
-export function tallyStatusToStage(s?: string | null): ElectionStage {
-  switch (s) {
-    case "Setup":
-    case "Draft":
-      return "SettingUp";
-    case "Voting":
-    case "Counting":
-    case "Gathering":
-      return "GatheringBallots";
-    case "Tallying":
-    case "Finalized":
-    case "Processing":
-    case "Archived":
-      return "ProcessingBallots";
-    default:
-      return "SettingUp";
-  }
-}
-
-export function stageToTallyStatus(stage: ElectionStage): string {
-  switch (stage) {
-    case "SettingUp":
-      return "Setup";
-    case "GatheringBallots":
-      return "Counting";
-    case "ProcessingBallots":
-      return "Finalized";
-  }
-}

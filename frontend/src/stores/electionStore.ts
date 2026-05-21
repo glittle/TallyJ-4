@@ -11,11 +11,7 @@ import type {
 } from "../types";
 import type { ElectionUpdateEvent } from "../types/SignalREvents";
 import { extractApiErrorMessage } from "../utils/errorHandler";
-import {
-  type ElectionStage,
-  stageToTallyStatus,
-  tallyStatusToStage,
-} from "../domain/electionStages";
+import { type ElectionStage } from "../domain/electionStages";
 
 export const useElectionStore = defineStore("election", () => {
   const elections = ref<ElectionDto[]>([]);
@@ -25,17 +21,15 @@ export const useElectionStore = defineStore("election", () => {
   const signalrInitialized = ref(false);
 
   const activeElections = computed(() =>
-    elections.value.filter(
-      (e) => e.tallyStatus !== "Finalized" && e.tallyStatus !== "Archived",
-    ),
+    elections.value.filter((e) => e.electionStage !== "ProcessingBallots"),
   );
 
   const finalizedElections = computed(() =>
-    elections.value.filter((e) => e.tallyStatus === "Finalized"),
+    elections.value.filter((e) => e.electionStage === "ProcessingBallots"),
   );
 
-  const currentStage = computed<ElectionStage>(() =>
-    tallyStatusToStage(currentElection.value?.tallyStatus),
+  const currentStage = computed<ElectionStage>(
+    () => currentElection.value?.electionStage ?? "SettingUp",
   );
 
   async function fetchElections() {
@@ -156,14 +150,11 @@ export const useElectionStore = defineStore("election", () => {
       const connection = await signalrService.connectToMainHub();
 
       connection.on("statusChanged", (data: any) => {
-        // MainHub sends statusChanged with infoForKnown and infoForGuest
-        // For now, we'll handle the known user info
         if (data && typeof data === "object") {
           const updateEvent: ElectionUpdateEvent = {
             electionGuid: data.electionGuid || "",
             name: data.name,
-            tallyStatus: data.tallyStatus,
-            electionStatus: data.electionStatus,
+            electionStage: data.electionStage,
             updatedAt: data.updatedAt || new Date().toISOString(),
           };
           handleElectionUpdate(updateEvent);
@@ -171,10 +162,8 @@ export const useElectionStore = defineStore("election", () => {
       });
 
       connection.on("electionClosed", (electionGuid: string) => {
-        // Handle election closed event
         const updateEvent: ElectionUpdateEvent = {
           electionGuid,
-          electionStatus: "Closed",
           updatedAt: new Date().toISOString(),
         };
         handleElectionUpdate(updateEvent);
@@ -192,70 +181,47 @@ export const useElectionStore = defineStore("election", () => {
     );
     if (index !== -1) {
       const existingElection = elections.value[index]!;
-      const oldTallyStatus = existingElection.tallyStatus;
-      const oldElectionStatus = existingElection.electionStatus;
+      const oldStage = existingElection.electionStage;
 
       elections.value[index] = {
         ...existingElection,
         name: data.name ?? existingElection.name,
-        tallyStatus: data.tallyStatus ?? existingElection.tallyStatus,
-        electionStatus: data.electionStatus ?? existingElection.electionStatus,
+        electionStage: data.electionStage ?? existingElection.electionStage,
       } as ElectionDto;
 
-      // Show notifications for status changes
-      if (data.tallyStatus && data.tallyStatus !== oldTallyStatus) {
-        showElectionStatusNotification(
+      if (data.electionStage && data.electionStage !== oldStage) {
+        showElectionStageNotification(
           data.name || "Election",
-          "tally",
-          data.tallyStatus,
-        );
-      }
-      if (data.electionStatus && data.electionStatus !== oldElectionStatus) {
-        showElectionStatusNotification(
-          data.name || "Election",
-          "election",
-          data.electionStatus,
+          data.electionStage,
         );
       }
     }
 
     if (currentElection.value?.electionGuid === data.electionGuid) {
       const existingCurrentElection = currentElection.value!;
-      const oldTallyStatus = existingCurrentElection.tallyStatus;
-      const oldElectionStatus = existingCurrentElection.electionStatus;
+      const oldStage = existingCurrentElection.electionStage;
 
       currentElection.value = {
         ...existingCurrentElection,
         name: data.name ?? existingCurrentElection.name,
-        tallyStatus: data.tallyStatus ?? existingCurrentElection.tallyStatus,
-        electionStatus:
-          data.electionStatus ?? existingCurrentElection.electionStatus,
+        electionStage:
+          data.electionStage ?? existingCurrentElection.electionStage,
       } as ElectionDto;
 
-      // Show notifications for status changes
-      if (data.tallyStatus && data.tallyStatus !== oldTallyStatus) {
-        showElectionStatusNotification(
+      if (data.electionStage && data.electionStage !== oldStage) {
+        showElectionStageNotification(
           data.name || "Election",
-          "tally",
-          data.tallyStatus,
-        );
-      }
-      if (data.electionStatus && data.electionStatus !== oldElectionStatus) {
-        showElectionStatusNotification(
-          data.name || "Election",
-          "election",
-          data.electionStatus,
+          data.electionStage,
         );
       }
     }
   }
 
-  function showElectionStatusNotification(
+  function showElectionStageNotification(
     electionName: string,
-    statusType: "tally" | "election",
-    newStatus: string,
+    newStage: string,
   ) {
-    const message = `${electionName} ${statusType} status changed to: ${newStatus}`;
+    const message = `${electionName} stage changed to: ${newStage}`;
     ElMessage({
       message,
       type: "info",
@@ -280,8 +246,29 @@ export const useElectionStore = defineStore("election", () => {
   }
 
   async function setStage(electionGuid: string, stage: ElectionStage) {
-    const tallyStatus = stageToTallyStatus(stage);
-    return updateElection(electionGuid, { tallyStatus });
+    loading.value = true;
+    error.value = null;
+    try {
+      const election = await electionService.changeStage(electionGuid, stage);
+
+      const index = elections.value.findIndex(
+        (e) => e.electionGuid === electionGuid,
+      );
+      if (index !== -1) {
+        elections.value[index] = election;
+      }
+
+      if (currentElection.value?.electionGuid === electionGuid) {
+        currentElection.value = election;
+      }
+
+      return election;
+    } catch (e: any) {
+      error.value = extractApiErrorMessage(e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
   }
 
   return {

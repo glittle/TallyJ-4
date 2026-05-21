@@ -42,7 +42,9 @@ vi.mock("@/composables/useNotifications", () => ({
 
 const globalConfig = {
   stubs: {
-    ElCard: { template: "<div class='el-card'><slot name='header' /><slot /></div>" },
+    ElCard: {
+      template: "<div class='el-card'><slot name='header' /><slot /></div>",
+    },
     ElRow: { template: "<div><slot /></div>" },
     ElCol: { template: "<div><slot /></div>" },
     ElButton: { template: "<button><slot /></button>" },
@@ -53,7 +55,10 @@ const globalConfig = {
     ElDatePicker: { template: "<input />" },
     ElSpace: { template: "<div><slot /></div>" },
     ElTable: { template: "<table class='el-table'><slot /></table>" },
-    ElTableColumn: { props: ["label"], template: "<th class='table-col'>{{ label }}</th>" },
+    ElTableColumn: {
+      props: ["label"],
+      template: "<th class='table-col'>{{ label }}</th>",
+    },
     ElPagination: { template: "<div />" },
     ElSkeleton: { template: "<div />" },
     ElEmpty: { template: "<div class='el-empty'><slot /></div>" },
