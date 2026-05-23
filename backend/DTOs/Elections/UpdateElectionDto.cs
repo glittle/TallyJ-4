@@ -25,7 +25,7 @@ public class UpdateElectionDto
     /// <summary>
     /// The current stage of the election.
     /// </summary>
-    public ElectionStage ElectionStage { get; set; }
+    public ElectionStage? ElectionStage { get; set; }
 
     /// <summary>
     /// The name of the election convenor.
