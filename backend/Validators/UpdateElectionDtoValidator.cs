@@ -37,6 +37,7 @@ public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
 
         RuleFor(x => x.ElectionStage)
             .IsInEnum()
+            .When(x => x.ElectionStage.HasValue)
             .WithMessage($"Election stage must be one of: {string.Join(", ", Enum.GetNames<ElectionStage>())}");
 
         RuleFor(x => x.Convenor)

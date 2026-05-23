@@ -7,6 +7,7 @@ import { Plus, Search, Upload } from "@element-plus/icons-vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { STAGES } from "../domain/electionStages";
 import { electionService } from "../services/electionService";
 import { useElectionStore } from "../stores/electionStore";
 import type { ElectionDto } from "../types";
@@ -38,6 +39,13 @@ const sort = ref({
   order: "descending" as "ascending" | "descending",
 });
 
+const statusFilterOptions = computed(() =>
+  STAGES.map((stage) => ({
+    label: t(`elections.stage.${stage}`),
+    value: stage,
+  })),
+);
+
 const pagination = ref({
   page: 1,
   pageSize: 20,
@@ -58,7 +66,7 @@ const filteredElectionsUnpaginated = computed(() => {
 
   if (filters.value.status) {
     filtered = filtered.filter(
-      (election) => (election.tallyStatus || "Draft") === filters.value.status,
+      (election) => election.electionStage === filters.value.status,
     );
   }
 
@@ -242,7 +250,7 @@ function participationPct(election: ElectionDto): string {
 <template>
   <main class="dashboard-page">
     <div class="dashboard-layout">
-      <div class="dashboard-rail" aria-label="Dashboard right rail">
+      <div class="dashboard-rail" :aria-label="$t('dashboard.rightRail')">
         <ResumeElectionCard />
         <SetupTipsCard />
       </div>
@@ -298,10 +306,12 @@ function participationPct(election: ElectionDto): string {
                     clearable
                     @change="handleFilterChange"
                   >
-                    <el-option label="Draft" value="Draft" />
-                    <el-option label="Voting" value="Voting" />
-                    <el-option label="Tallying" value="Tallying" />
-                    <el-option label="Finalized" value="Finalized" />
+                    <el-option
+                      v-for="option in statusFilterOptions"
+                      :key="option.value"
+                      :label="option.label"
+                      :value="option.value"
+                    />
                   </el-select>
                 </el-col>
                 <el-col :span="4">
@@ -425,13 +435,17 @@ function participationPct(election: ElectionDto): string {
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="tallyStatus"
+                  prop="electionStage"
                   :label="$t('elections.status')"
                   min-width="120"
                   sortable="custom"
                 >
                   <template #default="scope">
-                    {{ scope.row.tallyStatus || "-" }}
+                    {{
+                      scope.row.electionStage
+                        ? $t(`elections.stage.${scope.row.electionStage}`)
+                        : "-"
+                    }}
                   </template>
                 </el-table-column>
                 <el-table-column

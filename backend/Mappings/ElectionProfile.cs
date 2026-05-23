@@ -36,6 +36,7 @@ public class ElectionProfile : IRegister
             .Map(dest => dest.ElectionMode, src => ElectionModeEnum.ToCodeString(src.ElectionMode));
 
         config.NewConfig<UpdateElectionDto, Election>()
+            .IgnoreNullValues(true)
             .Map(dest => dest.ElectionType, src => ElectionTypeEnum.ToCodeString(src.ElectionType))
             .Map(dest => dest.ElectionMode, src => ElectionModeEnum.ToCodeString(src.ElectionMode));
     }

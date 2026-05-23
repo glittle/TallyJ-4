@@ -32,5 +32,6 @@
   "dashboard.tellersStatus": "Tellers",
   "dashboard.totalBallots": "Total Ballots",
   "dashboard.totalElections": "Total Elections",
-  "dashboard.totalVoters": "Total Voters"
+  "dashboard.totalVoters": "Total Voters",
+  "dashboard.rightRail": "Dashboard right rail"
 }
