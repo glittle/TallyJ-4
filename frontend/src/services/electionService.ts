@@ -7,16 +7,15 @@ import type {
   UpdateElectionDto,
 } from "../types";
 import type { ElectionStage } from "../domain/electionStages";
-import { client } from "../api/gen/configService/client.gen";
 import {
   deleteApiElectionsByGuidDeleteElection,
   getApiElectionsByGuidElection,
-  getApiElectionsByGuidElectionSummary,
   getApiImportExportElectionToJsonByElectionGuid,
   postApiElectionsCreateElection,
   postApiImportImportCdnBallotsByElectionGuid,
   postApiImportImportElectionFromJson,
   postApiImportImportTallyJv3Election,
+  putApiElectionsByGuidStage,
   putApiElectionsByGuidUpdateElection,
 } from "./../api/gen/configService/sdk.gen";
 import { cacheService } from "./cacheService";
@@ -35,6 +34,8 @@ export const electionService = {
     return (
       response.data?.items?.map((item) => ({
         ...item,
+        electionGuid: item.electionGuid || "",
+        name: item.name || "",
         dateOfElection: convertDateToString(item.dateOfElection),
         voterCount: item.voterCount ?? 0,
         ballotCount: item.ballotCount ?? 0,
@@ -49,20 +50,26 @@ export const electionService = {
     const response = await getApiElectionsByGuidElection({
       path: { guid: electionGuid },
     });
-    return response.data?.data as ElectionDto;
-  },
-
-  async getSummaries(): Promise<ElectionSummaryDto[]> {
-    const response = await getApiElectionsByGuidElectionSummary({
-      path: { guid: "" },
-    });
-    return (response.data?.data?.items ?? []) as ElectionSummaryDto[];
+    const data = response.data?.data;
+    if (!data) {
+      throw new Error("Election not found");
+    }
+    return {
+      ...(data as any),
+      dateOfElection: convertDateToString(data.dateOfElection),
+      onlineWhenOpen: convertDateToString(data.onlineWhenOpen),
+      onlineWhenClose: convertDateToString(data.onlineWhenClose),
+      onlineAnnounced: convertDateToString(data.onlineAnnounced),
+      tellerAccessOpenedAt: convertDateToString(data.tellerAccessOpenedAt),
+    } as ElectionDto;
   },
 
   async create(dto: CreateElectionDto): Promise<ElectionDto> {
     const response = await postApiElectionsCreateElection({
       body: {
         ...dto,
+        electionType: dto.electionType as any,
+        electionMode: dto.electionMode as any,
         dateOfElection: convertStringToDate(dto.dateOfElection),
         onlineAnnounced: convertStringToDate(dto.onlineAnnounced),
       },
@@ -76,7 +83,7 @@ export const electionService = {
         method: "GET",
       }),
     );
-    return response.data?.data as ElectionDto;
+    return response.data?.data as unknown as ElectionDto;
   },
 
   async update(
@@ -87,6 +94,8 @@ export const electionService = {
       path: { guid: electionGuid },
       body: {
         ...dto,
+        electionType: dto.electionType as any,
+        electionMode: dto.electionMode as any,
         dateOfElection: convertStringToDate(dto.dateOfElection),
         onlineWhenOpen: convertStringToDate(dto.onlineWhenOpen),
         onlineWhenClose: convertStringToDate(dto.onlineWhenClose),
@@ -108,7 +117,7 @@ export const electionService = {
         method: "GET",
       }),
     );
-    return response.data?.data as ElectionDto;
+    return response.data?.data as unknown as ElectionDto;
   },
 
   async delete(electionGuid: string): Promise<void> {
@@ -127,17 +136,12 @@ export const electionService = {
   },
 
   async exportElectionToJson(electionGuid: string): Promise<Blob> {
-    const blob = await getApiImportExportElectionToJsonByElectionGuid(
-      {
-        path: { electionGuid },
-      },
-      {
-        parseAs: "blob",
-        responseStyle: "data",
-      },
-    );
+    const response = await getApiImportExportElectionToJsonByElectionGuid({
+      path: { electionGuid },
+      parseAs: "blob",
+    });
 
-    return blob;
+    return response.data as Blob;
   },
 
   async importElectionFromFile(file: File): Promise<ElectionDto> {
@@ -145,7 +149,7 @@ export const electionService = {
       body: { file },
     });
 
-    return response.data.election;
+    return (response.data as any).election;
   },
 
   async importTallyJv3ElectionFromFile(file: File): Promise<ElectionDto> {
@@ -153,7 +157,7 @@ export const electionService = {
       body: { file },
     });
 
-    return response.data.election;
+    return (response.data as any).election;
   },
 
   async importCdnBallots(
@@ -165,19 +169,21 @@ export const electionService = {
       body: { file },
     });
 
-    return response.data;
+    return response.data as ImportResultDto;
   },
 
   async changeStage(
     electionGuid: string,
     stage: ElectionStage,
   ): Promise<ElectionDto> {
-    const response = await client.put<{ data: ElectionDto }, unknown, false>({
-      url: "/api/Elections/{guid}/stage",
+    const response = await putApiElectionsByGuidStage({
       path: { guid: electionGuid },
       body: { electionStage: stage },
-      headers: { "Content-Type": "application/json" },
     });
+    const data = response.data?.data;
+    if (!data) {
+      throw new Error("Failed to change election stage");
+    }
     await cacheService.remove(
       cacheService.generateKey({
         url: `/api/elections/${electionGuid}`,
@@ -187,7 +193,14 @@ export const electionService = {
     await cacheService.remove(
       cacheService.generateKey({ url: "/api/elections", method: "GET" }),
     );
-    return (response as any).data?.data as ElectionDto;
+    return {
+      ...(data as any),
+      dateOfElection: convertDateToString(data.dateOfElection),
+      onlineWhenOpen: convertDateToString(data.onlineWhenOpen),
+      onlineWhenClose: convertDateToString(data.onlineWhenClose),
+      onlineAnnounced: convertDateToString(data.onlineAnnounced),
+      tellerAccessOpenedAt: convertDateToString(data.tellerAccessOpenedAt),
+    } as ElectionDto;
   },
 
   // async getCurrentElection(): Promise<ElectionDto | null> {
