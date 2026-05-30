@@ -27,7 +27,7 @@ TallyJ 4 is a .NET 10 + Vue 3 election management system.
 - use Composition API with `<script setup lang="ts">`
 - Vue file order is script, template, style
 - use `<style lang="less">`
-- do not use `<style scoped>`
+- do not use scoped `<style>`
 - all user-facing strings should use `$t()`
 - prefer existing stores and services over ad-hoc API calls in components
 

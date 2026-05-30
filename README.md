@@ -95,7 +95,7 @@ cd frontend
 npm run validate:i18n
 ```
 
-Use `npm run start` when you need to regenerate the OpenAPI client before starting Vite.
+Use `npm run start` when you need to regenerate the OpenAPI client before starting Vite. See `AGENTS.md` ("Regenerating the OpenAPI / TypeScript client") for the full current workflow and verification steps.
 
 ## Documentation map
 

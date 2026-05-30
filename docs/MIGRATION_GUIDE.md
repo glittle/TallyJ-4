@@ -121,20 +121,20 @@ TallyJ v4 is a complete rewrite of the election management system with modern te
 - Additional indexes for performance
 - New tables: `Computer`, `RefreshToken`, `TwoFactorToken`
 
-#### 4. Removed Features (Temporary)
+#### 4. Removed Features (Historical — Many Now Implemented)
 
-The following v3 features are not yet implemented in v4:
+At the time of the initial v4 rewrite, the following areas were incomplete. **Current status (as of 2026)** should be verified in the running application / Swagger rather than this list:
 
-- **Password reset flow** (planned for post-launch)
-- **Email/SMS notifications** (backend ready, UI pending)
-- **Front desk voter check-in** (entity exists, UI pending)
-- **Public kiosk display** (partial implementation)
+- Password reset, 2FA, and various OAuth methods for system users are implemented.
+- Front desk, public display, online voting, import workflows, advanced reporting, and audit logging have substantial implementations.
+- Many v3 features have been rebuilt with improved security and architecture.
 
-**Action Required:**
+**Recommendation for anyone using this guide:**
+- Treat feature-completeness claims here as historical.
+- Check the current `USER_GUIDE.md`, running UI, and Swagger for what exists today.
+- For implementation status of specific areas, see the relevant `*IMPLEMENTATION.md` files in this `docs/` folder and the source code.
 
-- Plan workarounds for missing features
-- Contact support for timeline on missing features
-- Consider staying on v3 if these are critical
+This section is left for context on the scope of the v3→v4 rewrite effort.
 
 ---
 
