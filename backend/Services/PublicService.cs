@@ -101,11 +101,9 @@ public class PublicService : IPublicService
         var ballots = election.Locations.SelectMany(l => l.Ballots).ToList();
         var ballotCount = ballots.Count;
 
-        var isActive = election.TallyStatus != "Complete" &&
-                      election.TallyStatus != "Archived" &&
-                      election.TallyStatus != "Deleted";
+        var isActive = election.ElectionStage != ElectionStage.ProcessingBallots;
 
-        _logger.LogInformation("Election status for {ElectionGuid}: {Status}", electionGuid, election.TallyStatus);
+        _logger.LogInformation("Election status for {ElectionGuid}: {Stage}", electionGuid, election.ElectionStage);
 
         return new ElectionStatusDto
         {
@@ -113,7 +111,7 @@ public class PublicService : IPublicService
             Name = election.Name,
             DateOfElection = election.DateOfElection,
             ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType),
-            TallyStatus = election.TallyStatus ?? "Unknown",
+            ElectionStage = election.ElectionStage,
             IsActive = isActive,
             RegisteredVoters = voterCount,
             BallotsSubmitted = ballotCount
@@ -192,9 +190,7 @@ public class PublicService : IPublicService
         var registeredVoters = resultSummary?.NumEligibleToVote ?? 0;
         var turnoutPercentage = registeredVoters > 0 ? (decimal)totalBallots / registeredVoters * 100 : 0;
 
-        var isFinalized = election.TallyStatus == "Finalized" ||
-                         election.TallyStatus == "Complete" ||
-                         election.TallyStatus == "Archived";
+        var isFinalized = election.ElectionStage == ElectionStage.ProcessingBallots;
 
         _logger.LogInformation("Retrieved public display data for election {ElectionGuid}", electionGuid);
 
@@ -205,7 +201,7 @@ public class PublicService : IPublicService
             DateOfElection = election.DateOfElection,
             Convenor = election.Convenor ?? string.Empty,
             ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType),
-            TallyStatus = election.TallyStatus ?? "Unknown",
+            ElectionStage = election.ElectionStage,
             NumberToElect = numberToElect,
             NumberExtra = numberExtra,
             ElectedCandidates = electedCandidates,

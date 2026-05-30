@@ -35,12 +35,10 @@ public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
             .When(x => x.NumberExtra.HasValue)
             .WithMessage("Number extra must be greater than or equal to 0");
 
-        RuleFor(x => x.TallyStatus)
-            .MaximumLength(15)
-            .WithMessage("Tally status cannot exceed 15 characters")
-            .Must(status => string.IsNullOrWhiteSpace(status) ||
-                           new[] { "Setup", "Ready", "Processing", "Finalized" }.Contains(status))
-            .WithMessage("Tally status must be one of: Setup, Ready, Processing, Finalized");
+        RuleFor(x => x.ElectionStage)
+            .IsInEnum()
+            .When(x => x.ElectionStage.HasValue)
+            .WithMessage($"Election stage must be one of: {string.Join(", ", Enum.GetNames<ElectionStage>())}");
 
         RuleFor(x => x.Convenor)
             .MaximumLength(150)

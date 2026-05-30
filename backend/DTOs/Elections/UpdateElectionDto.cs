@@ -23,9 +23,9 @@ public class UpdateElectionDto
     public int? NumberToElect { get; set; }
 
     /// <summary>
-    /// The current tally status of the election.
+    /// The current stage of the election.
     /// </summary>
-    public string? TallyStatus { get; set; }
+    public ElectionStage? ElectionStage { get; set; }
 
     /// <summary>
     /// The name of the election convenor.

@@ -25,7 +25,7 @@ public class SuperAdminServiceTests : ServiceTestBase
             {
                 ElectionGuid = Guid.NewGuid(),
                 Name = "Open Election",
-                TallyStatus = "Setup",
+                ElectionStage = ElectionStage.SettingUp,
                 DateOfElection = DateTime.UtcNow.AddDays(-1),
                 RowVersion = new byte[8]
             },
@@ -33,7 +33,7 @@ public class SuperAdminServiceTests : ServiceTestBase
             {
                 ElectionGuid = Guid.NewGuid(),
                 Name = "Upcoming Election",
-                TallyStatus = "Setup",
+                ElectionStage = ElectionStage.SettingUp,
                 DateOfElection = DateTime.UtcNow.AddDays(30),
                 RowVersion = new byte[8]
             },
@@ -41,7 +41,7 @@ public class SuperAdminServiceTests : ServiceTestBase
             {
                 ElectionGuid = Guid.NewGuid(),
                 Name = "Completed Election",
-                TallyStatus = "Complete",
+                ElectionStage = ElectionStage.ProcessingBallots,
                 DateOfElection = DateTime.UtcNow.AddDays(-60),
                 RowVersion = new byte[8]
             },
@@ -49,7 +49,7 @@ public class SuperAdminServiceTests : ServiceTestBase
             {
                 ElectionGuid = Guid.NewGuid(),
                 Name = "Archived Election",
-                TallyStatus = "Archived",
+                ElectionStage = ElectionStage.ProcessingBallots,
                 DateOfElection = DateTime.UtcNow.AddDays(-120),
                 RowVersion = new byte[8]
             }
@@ -69,8 +69,8 @@ public class SuperAdminServiceTests : ServiceTestBase
         Assert.Equal(4, summary.TotalElections);
         Assert.Equal(1, summary.OpenElections);
         Assert.Equal(1, summary.UpcomingElections);
-        Assert.Equal(1, summary.CompletedElections);
-        Assert.Equal(1, summary.ArchivedElections);
+        Assert.Equal(2, summary.CompletedElections);
+        Assert.Equal(0, summary.ArchivedElections);
     }
 
     [Fact]
@@ -101,11 +101,10 @@ public class SuperAdminServiceTests : ServiceTestBase
     {
         await SeedElections();
 
-        var filter = new SuperAdminElectionFilterDto { Status = "Complete" };
+        var filter = new SuperAdminElectionFilterDto { Status = "ProcessingBallots" };
         var result = await _service.GetElectionsAsync(filter);
 
-        Assert.Single(result.Items);
-        Assert.Equal("Completed Election", result.Items[0].Name);
+        Assert.Equal(2, result.Items.Count);
     }
 
     [Fact]
@@ -141,7 +140,7 @@ public class SuperAdminServiceTests : ServiceTestBase
             Name = "Detail Test",
             NumberToElect = 9,
             ElectionMode = "N",
-            TallyStatus = "Setup",
+            ElectionStage = ElectionStage.SettingUp,
             RowVersion = new byte[8]
         });
         await Context.SaveChangesAsync();

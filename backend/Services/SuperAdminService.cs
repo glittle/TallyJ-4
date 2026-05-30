@@ -34,24 +34,20 @@ public class SuperAdminService : ISuperAdminService
         var totalCount = await _context.Elections.CountAsync();
 
         var openCount = await _context.Elections
-            .Where(e => e.TallyStatus != null
-                        && e.TallyStatus != "Complete"
-                        && e.TallyStatus != "Archived"
+            .Where(e => e.ElectionStage != ElectionStage.ProcessingBallots
                         && e.DateOfElection <= DateTimeOffset.UtcNow)
             .CountAsync();
 
         var upcomingCount = await _context.Elections
             .Where(e => e.DateOfElection > DateTimeOffset.UtcNow
-                        && (e.TallyStatus == null || (e.TallyStatus != "Complete" && e.TallyStatus != "Archived")))
+                        && e.ElectionStage != ElectionStage.ProcessingBallots)
             .CountAsync();
 
         var completedCount = await _context.Elections
-            .Where(e => e.TallyStatus == "Complete")
+            .Where(e => e.ElectionStage == ElectionStage.ProcessingBallots)
             .CountAsync();
 
-        var archivedCount = await _context.Elections
-            .Where(e => e.TallyStatus == "Archived")
-            .CountAsync();
+        var archivedCount = 0;
 
         _logger.LogInformation(
             "SuperAdmin summary: {Total} total, {Open} open, {Upcoming} upcoming, {Completed} completed, {Archived} archived",
@@ -92,7 +88,15 @@ public class SuperAdminService : ISuperAdminService
 
         if (!string.IsNullOrWhiteSpace(filter.Status))
         {
-            query = query.Where(e => e.TallyStatus == filter.Status);
+            if (Enum.TryParse<ElectionStage>(filter.Status, out var stageFilter))
+            {
+                query = query.Where(e => e.ElectionStage == stageFilter);
+            }
+            else
+            {
+                _logger.LogWarning("GetElectionsAsync: Invalid status filter '{Status}' provided", filter.Status);
+                return PaginatedResponse<SuperAdminElectionDto>.Create([], filter.Page, filter.PageSize, 0);
+            }
         }
 
         if (filter.ElectionType.HasValue)
@@ -139,7 +143,7 @@ public class SuperAdminService : ISuperAdminService
                 Name = e.Name,
                 Convenor = e.Convenor,
                 DateOfElection = e.DateOfElection,
-                TallyStatus = e.TallyStatus,
+                ElectionStage = e.ElectionStage,
                 ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType),
                 VoterCount = e.People.Count(p => p.CanVote == true),
                 BallotCount = e.Locations.SelectMany(l => l.Ballots).Count(),
@@ -215,7 +219,7 @@ public class SuperAdminService : ISuperAdminService
             Name = election.Name,
             Convenor = election.Convenor,
             DateOfElection = election.DateOfElection,
-            TallyStatus = election.TallyStatus,
+            ElectionStage = election.ElectionStage,
             ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType),
             VoterCount = voterCount,
             BallotCount = ballotCount,
@@ -243,9 +247,9 @@ public class SuperAdminService : ISuperAdminService
             "convenor" => isDescending
                 ? query.OrderByDescending(e => e.Convenor)
                 : query.OrderBy(e => e.Convenor),
-            "tallystatus" or "status" => isDescending
-                ? query.OrderByDescending(e => e.TallyStatus)
-                : query.OrderBy(e => e.TallyStatus),
+            "electionstage" or "stage" or "status" => isDescending
+                ? query.OrderByDescending(e => e.ElectionStage)
+                : query.OrderBy(e => e.ElectionStage),
             "electiontype" or "type" => isDescending
                 ? query.OrderByDescending(e => e.ElectionType)
                 : query.OrderBy(e => e.ElectionType),

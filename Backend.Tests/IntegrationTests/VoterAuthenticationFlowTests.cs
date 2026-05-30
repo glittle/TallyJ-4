@@ -252,7 +252,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
             Name = "Test Open Election",
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
-            TallyStatus = "Open",
+            ElectionStage = Backend.Domain.Enumerations.ElectionStage.GatheringBallots,
             RowVersion = new byte[8]
         };
 
@@ -279,7 +279,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
             Name = electionName ?? "Test Open Election with Voter",
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
-            TallyStatus = "Open",
+            ElectionStage = Backend.Domain.Enumerations.ElectionStage.GatheringBallots,
             RowVersion = new byte[8]
         };
 
@@ -320,7 +320,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
             Name = electionName ?? "Test Closed Election",
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-3),
             OnlineWhenClose = DateTime.UtcNow.AddHours(-1),
-            TallyStatus = "Closed",
+            ElectionStage = Backend.Domain.Enumerations.ElectionStage.ProcessingBallots,
             RowVersion = new byte[8]
         };
 

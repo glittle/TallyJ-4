@@ -41,7 +41,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
             NumberToElect = numberToElect,
             NumberExtra = numberExtra,
             ElectionType = electionType,
-            TallyStatus = "Setup",
+            ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
             RowVersion = new byte[8]
         };
         _context.Elections.Add(election);

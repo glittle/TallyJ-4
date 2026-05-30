@@ -2074,6 +2074,65 @@
         }
       }
     },
+    "/api/Elections/{guid}/stage": {
+      "put": {
+        "tags": [
+          "Elections"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeElectionStageDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeElectionStageDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeElectionStageDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElectionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Elections/{guid}/teller-access": {
       "put": {
         "tags": [
@@ -8112,6 +8171,15 @@
         },
         "additionalProperties": false
       },
+      "ChangeElectionStageDto": {
+        "type": "object",
+        "properties": {
+          "electionStage": {
+            "$ref": "#/components/schemas/ElectionStage"
+          }
+        },
+        "additionalProperties": false
+      },
       "ChangePasswordDto": {
         "type": "object",
         "properties": {
@@ -8805,9 +8873,8 @@
             "format": "date-time",
             "nullable": true
           },
-          "tallyStatus": {
-            "type": "string",
-            "nullable": true
+          "electionStage": {
+            "$ref": "#/components/schemas/ElectionStage"
           },
           "voterCount": {
             "type": "integer",
@@ -8852,9 +8919,8 @@
             "format": "int32",
             "nullable": true
           },
-          "tallyStatus": {
-            "type": "string",
-            "nullable": true
+          "electionStage": {
+            "$ref": "#/components/schemas/ElectionStage"
           },
           "convenor": {
             "type": "string",
@@ -9109,9 +9175,8 @@
             "type": "string",
             "nullable": true
           },
-          "tallyStatus": {
-            "type": "string",
-            "nullable": true
+          "electionStage": {
+            "$ref": "#/components/schemas/ElectionStage"
           },
           "step1Complete": {
             "type": "boolean"
@@ -9125,6 +9190,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "ElectionStage": {
+        "enum": [
+          "SettingUp",
+          "GatheringBallots",
+          "ProcessingBallots"
+        ],
+        "type": "string"
       },
       "ElectionStatusDto": {
         "type": "object",
@@ -9145,9 +9218,8 @@
           "electionType": {
             "$ref": "#/components/schemas/ElectionTypeCode"
           },
-          "tallyStatus": {
-            "type": "string",
-            "nullable": true
+          "electionStage": {
+            "$ref": "#/components/schemas/ElectionStage"
           },
           "isActive": {
             "type": "boolean"
@@ -9225,9 +9297,8 @@
             "format": "date-time",
             "nullable": true
           },
-          "tallyStatus": {
-            "type": "string",
-            "nullable": true
+          "electionStage": {
+            "$ref": "#/components/schemas/ElectionStage"
           },
           "voterCount": {
             "type": "integer",
@@ -9814,9 +9885,8 @@
             "type": "string",
             "nullable": true
           },
-          "tallyStatus": {
-            "type": "string",
-            "nullable": true
+          "locationTallyStatus": {
+            "$ref": "#/components/schemas/LocationTallyStatus"
           },
           "sortOrder": {
             "type": "integer",
@@ -9959,6 +10029,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "LocationTallyStatus": {
+        "enum": [
+          "NotStarted",
+          "InProgress",
+          "Complete"
+        ],
+        "type": "string"
       },
       "LocationType": {
         "enum": [
@@ -10989,9 +11067,8 @@
           "electionType": {
             "$ref": "#/components/schemas/ElectionTypeCode"
           },
-          "tallyStatus": {
-            "type": "string",
-            "nullable": true
+          "electionStage": {
+            "$ref": "#/components/schemas/ElectionStage"
           },
           "numberToElect": {
             "type": "integer",
@@ -11416,9 +11493,8 @@
             "format": "date-time",
             "nullable": true
           },
-          "tallyStatus": {
-            "type": "string",
-            "nullable": true
+          "electionStage": {
+            "$ref": "#/components/schemas/ElectionStage"
           },
           "electionType": {
             "$ref": "#/components/schemas/ElectionTypeCode"
@@ -11481,9 +11557,8 @@
             "format": "date-time",
             "nullable": true
           },
-          "tallyStatus": {
-            "type": "string",
-            "nullable": true
+          "electionStage": {
+            "$ref": "#/components/schemas/ElectionStage"
           },
           "electionType": {
             "$ref": "#/components/schemas/ElectionTypeCode"
@@ -12004,9 +12079,8 @@
             "format": "int32",
             "nullable": true
           },
-          "tallyStatus": {
-            "type": "string",
-            "nullable": true
+          "electionStage": {
+            "$ref": "#/components/schemas/ElectionStage"
           },
           "convenor": {
             "type": "string",

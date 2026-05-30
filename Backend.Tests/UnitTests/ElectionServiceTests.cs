@@ -55,7 +55,7 @@ public class ElectionServiceTests : ServiceTestBase
         Assert.NotNull(result);
         Assert.Equal("Test Election", result.Name);
         Assert.Equal(5, result.NumberToElect);
-        Assert.Equal("Setup", result.TallyStatus);
+        Assert.Equal(ElectionStage.SettingUp, result.ElectionStage);
         Assert.NotEqual(Guid.Empty, result.ElectionGuid);
 
         var electionInDb = Context.Elections.FirstOrDefault(e => e.ElectionGuid == result.ElectionGuid);
@@ -72,7 +72,7 @@ public class ElectionServiceTests : ServiceTestBase
             Name = "Test Election",
             ElectionType = "LSA",
             NumberToElect = 3,
-            TallyStatus = "Setup",
+            ElectionStage = ElectionStage.SettingUp,
             DateOfElection = DateTime.UtcNow.AddDays(10),
             RowVersion = new byte[8]
         };
@@ -105,7 +105,7 @@ public class ElectionServiceTests : ServiceTestBase
             Name = "Original Name",
             ElectionType = "LSA",
             NumberToElect = 3,
-            TallyStatus = "Setup",
+            ElectionStage = ElectionStage.SettingUp,
             DateOfElection = DateTime.UtcNow.AddDays(10),
             RowVersion = new byte[8]
         };
@@ -118,7 +118,7 @@ public class ElectionServiceTests : ServiceTestBase
             Name = "Updated Name",
             NumberToElect = 7,
             DateOfElection = DateTime.UtcNow.AddDays(20),
-            TallyStatus = "InProgress"
+            ElectionStage = ElectionStage.GatheringBallots
         };
 
         var result = await _service.UpdateElectionAsync(election.ElectionGuid, updateDto);
@@ -126,7 +126,7 @@ public class ElectionServiceTests : ServiceTestBase
         Assert.NotNull(result);
         Assert.Equal("Updated Name", result.Name);
         Assert.Equal(7, result.NumberToElect);
-        Assert.Equal("InProgress", result.TallyStatus);
+        Assert.Equal(ElectionStage.GatheringBallots, result.ElectionStage);
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public class ElectionServiceTests : ServiceTestBase
             Name = "Election to Delete",
             ElectionType = "LSA",
             NumberToElect = 3,
-            TallyStatus = "Setup",
+            ElectionStage = ElectionStage.SettingUp,
             DateOfElection = DateTime.UtcNow.AddDays(10),
             RowVersion = new byte[8]
         };
@@ -188,7 +188,7 @@ public class ElectionServiceTests : ServiceTestBase
                 Name = $"Election {i}",
                 ElectionType = "LSA",
                 NumberToElect = 3,
-                TallyStatus = i % 2 == 0 ? "Setup" : "InProgress",
+                ElectionStage = i % 2 == 0 ? ElectionStage.SettingUp : ElectionStage.GatheringBallots,
                 DateOfElection = DateTime.UtcNow.AddDays(i),
                 RowVersion = new byte[8]
             };
@@ -223,7 +223,7 @@ public class ElectionServiceTests : ServiceTestBase
                 Name = $"Election {i}",
                 ElectionType = "LSA",
                 NumberToElect = 3,
-                TallyStatus = i % 2 == 0 ? "Setup" : "InProgress",
+                ElectionStage = i % 2 == 0 ? ElectionStage.SettingUp : ElectionStage.GatheringBallots,
                 DateOfElection = DateTime.UtcNow.AddDays(i),
                 RowVersion = new byte[8]
             };
@@ -236,11 +236,11 @@ public class ElectionServiceTests : ServiceTestBase
         }
         await Context.SaveChangesAsync();
 
-        var result = await _service.GetElectionsAsync(pageNumber: 1, pageSize: 10, status: "Setup");
+        var result = await _service.GetElectionsAsync(pageNumber: 1, pageSize: 10, status: "SettingUp");
 
         Assert.NotNull(result);
         Assert.Equal(5, result.TotalCount);
-        Assert.All(result.Items, e => Assert.Equal("Setup", e.TallyStatus));
+        Assert.All(result.Items, e => Assert.Equal(ElectionStage.SettingUp, e.ElectionStage));
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using Backend.Domain.Context;
 using Backend.Domain.Entities;
+using Backend.Domain.Enumerations;
 using Backend.DTOs.Locations;
 using Backend.Models;
 using Mapster;
@@ -103,7 +104,7 @@ public class LocationService : ILocationService
 
         var location = _mapper.Map<Location>(createDto);
         location.LocationGuid = Guid.NewGuid();
-        location.TallyStatus = "NotStarted";
+        location.LocationTallyStatus = LocationTallyStatus.NotStarted;
         location.BallotsCollected = 0;
 
         _context.Locations.Add(location);

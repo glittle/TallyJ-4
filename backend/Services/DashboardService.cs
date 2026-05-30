@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Backend.Domain.Context;
+using Backend.Domain.Enumerations;
 using Backend.DTOs.Dashboard;
 using Microsoft.EntityFrameworkCore;
 
@@ -55,11 +56,11 @@ public class DashboardService : IDashboardService
         }
 
         var activeCount = await baseQuery
-            .Where(e => e.TallyStatus != "Finalized" && e.TallyStatus != "Archived")
+            .Where(e => e.ElectionStage != ElectionStage.ProcessingBallots)
             .CountAsync();
 
         var completedCount = await baseQuery
-            .Where(e => e.TallyStatus == "Finalized")
+            .Where(e => e.ElectionStage == ElectionStage.ProcessingBallots)
             .CountAsync();
 
         var recentElections = await GetRecentElectionsAsync(5);
@@ -119,7 +120,7 @@ public class DashboardService : IDashboardService
                 ElectionGuid = e.ElectionGuid,
                 Name = e.Name,
                 DateOfElection = e.DateOfElection,
-                TallyStatus = e.TallyStatus ?? "Unknown",
+                ElectionStage = e.ElectionStage,
                 VoterCount = voterCount,
                 BallotCount = ballotCount,
                 VoteCount = voteCount,
@@ -168,7 +169,7 @@ public class DashboardService : IDashboardService
             electionMode = election.ElectionMode,
             numberToElect = election.NumberToElect,
             dateOfElection = election.DateOfElection,
-            tallyStatus = election.TallyStatus,
+            electionStage = election.ElectionStage,
             ownerLoginId = election.OwnerLoginId,
             listForPublic = election.ListForPublic,
             showAsTest = election.ShowAsTest,

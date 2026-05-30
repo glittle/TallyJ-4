@@ -1,5 +1,11 @@
 # Google OAuth Implementation for Online Voters
 
+> **Status**: Historical / Pre-final-design document.
+>
+> The design described here (requiring `electionGuid` at authentication time) was **superseded** by the final zero-knowledge architecture. See the authoritative implementation details in `VOTER_AUTHENTICATION_IMPLEMENTATION.md` (voters authenticate first without an election GUID; the system then reveals only the elections they are eligible for). This file is retained for historical context on the security requirements and early Google integration approach.
+>
+> Current voter Google (and Facebook) auth lives in `OnlineVotingController.googleAuth` / `facebookAuth` (no electionGuid) and the corresponding service methods.
+
 ## Overview
 
 This document outlines the requirements and implementation approach for adding Google OAuth as an alternative authentication method for online voters, as part of the SMS pumping prevention strategy.

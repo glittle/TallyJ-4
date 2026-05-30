@@ -220,7 +220,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             DateOfElection = DateTime.UtcNow.AddDays(30),
             ElectionType = "LSA",
             NumberToElect = 3,
-            TallyStatus = "NotStarted",
+            ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
             ShowAsTest = true
         };
 
@@ -231,7 +231,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             DateOfElection = DateTime.UtcNow.AddDays(60),
             ElectionType = "NSA",
             NumberToElect = 1,
-            TallyStatus = "NotStarted",
+            ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
             ShowAsTest = true
         };
 

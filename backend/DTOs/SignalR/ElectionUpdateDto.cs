@@ -1,4 +1,6 @@
-﻿namespace Backend.DTOs.SignalR;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.SignalR;
 
 /// <summary>
 /// Data transfer object for election update notifications via SignalR.
@@ -16,14 +18,9 @@ public class ElectionUpdateDto
     public string? Name { get; set; }
 
     /// <summary>
-    /// The tally status of the election.
+    /// The current stage of the election.
     /// </summary>
-    public string? TallyStatus { get; set; }
-
-    /// <summary>
-    /// The overall status of the election.
-    /// </summary>
-    public string? ElectionStatus { get; set; }
+    public ElectionStage ElectionStage { get; set; }
 
     /// <summary>
     /// The timestamp when the election was last updated.

@@ -1,4 +1,6 @@
-﻿namespace Backend.DTOs.Dashboard;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Dashboard;
 
 /// <summary>
 /// Data transfer object representing an election card for dashboard display.
@@ -21,9 +23,9 @@ public class ElectionCardDto
     public DateTimeOffset? DateOfElection { get; set; }
 
     /// <summary>
-    /// The current tally status of the election.
+    /// The current stage of the election.
     /// </summary>
-    public string? TallyStatus { get; set; }
+    public ElectionStage ElectionStage { get; set; }
 
     /// <summary>
     /// The total number of registered voters.

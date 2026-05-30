@@ -17,7 +17,7 @@ namespace Backend.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "10.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -182,6 +182,13 @@ namespace Backend.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("ElectionStage")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("ElectionStage");
+
                     b.Property<string>("ElectionType")
                         .HasMaxLength(5)
                         .IsUnicode(false)
@@ -283,11 +290,6 @@ namespace Backend.Migrations
                     b.Property<string>("SmsText")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("TallyStatus")
-                        .HasMaxLength(15)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(15)");
 
                     b.Property<bool?>("UseCallInButton")
                         .HasColumnType("bit");
@@ -432,6 +434,12 @@ namespace Backend.Migrations
                     b.Property<Guid>("LocationGuid")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("LocationTallyStatus")
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("LocationTallyStatus");
+
                     b.Property<string>("LocationTypeCode")
                         .HasMaxLength(15)
                         .IsUnicode(false)
@@ -449,11 +457,6 @@ namespace Backend.Migrations
 
                     b.Property<int?>("SortOrder")
                         .HasColumnType("int");
-
-                    b.Property<string>("TallyStatus")
-                        .HasMaxLength(15)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(15)");
 
                     b.HasKey("RowId")
                         .HasName("PK_VotingLocation");

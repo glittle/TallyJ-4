@@ -20,12 +20,14 @@ public class ElectionProfile : IRegister
         config.NewConfig<Election, ElectionDto>()
             .Map(dest => dest.ElectionType, src => ElectionTypeEnum.ParseCode(src.ElectionType))
             .Map(dest => dest.ElectionMode, src => ElectionModeEnum.ParseCode(src.ElectionMode))
+            .Map(dest => dest.ElectionStage, src => src.ElectionStage)
             .Map(dest => dest.IsTellerAccessOpen, src => src.ListedForPublicAsOf != null)
             .Map(dest => dest.TellerAccessOpenedAt, src => src.ListedForPublicAsOf);
 
         config.NewConfig<Election, ElectionSummaryDto>()
             .Map(dest => dest.ElectionType, src => ElectionTypeEnum.ParseCode(src.ElectionType))
             .Map(dest => dest.ElectionMode, src => ElectionModeEnum.ParseCode(src.ElectionMode))
+            .Map(dest => dest.ElectionStage, src => src.ElectionStage)
             .Map(dest => dest.IsTellerAccessOpen, src => src.ListedForPublicAsOf != null)
             .Map(dest => dest.IsOnlineVotingEnabled, src => src.OnlineWhenOpen != null && src.OnlineWhenClose != null);
 
@@ -34,6 +36,7 @@ public class ElectionProfile : IRegister
             .Map(dest => dest.ElectionMode, src => ElectionModeEnum.ToCodeString(src.ElectionMode));
 
         config.NewConfig<UpdateElectionDto, Election>()
+            .IgnoreNullValues(true)
             .Map(dest => dest.ElectionType, src => ElectionTypeEnum.ToCodeString(src.ElectionType))
             .Map(dest => dest.ElectionMode, src => ElectionModeEnum.ToCodeString(src.ElectionMode));
     }

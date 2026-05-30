@@ -1427,6 +1427,16 @@ export const CandidateResultDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ChangeElectionStageDtoSchema = {
+    type: 'object',
+    properties: {
+        electionStage: {
+            $ref: '#/components/schemas/ElectionStage'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ChangePasswordDtoSchema = {
     type: 'object',
     properties: {
@@ -2144,9 +2154,8 @@ export const ElectionCardDtoSchema = {
             format: 'date-time',
             nullable: true
         },
-        tallyStatus: {
-            type: 'string',
-            nullable: true
+        electionStage: {
+            $ref: '#/components/schemas/ElectionStage'
         },
         voterCount: {
             type: 'integer',
@@ -2192,9 +2201,8 @@ export const ElectionDtoSchema = {
             format: 'int32',
             nullable: true
         },
-        tallyStatus: {
-            type: 'string',
-            nullable: true
+        electionStage: {
+            $ref: '#/components/schemas/ElectionStage'
         },
         convenor: {
             type: 'string',
@@ -2453,9 +2461,8 @@ export const ElectionSetupStatusDtoSchema = {
             type: 'string',
             nullable: true
         },
-        tallyStatus: {
-            type: 'string',
-            nullable: true
+        electionStage: {
+            $ref: '#/components/schemas/ElectionStage'
         },
         step1Complete: {
             type: 'boolean'
@@ -2469,6 +2476,15 @@ export const ElectionSetupStatusDtoSchema = {
         }
     },
     additionalProperties: false
+} as const;
+
+export const ElectionStageSchema = {
+    enum: [
+        'SettingUp',
+        'GatheringBallots',
+        'ProcessingBallots'
+    ],
+    type: 'string'
 } as const;
 
 export const ElectionStatusDtoSchema = {
@@ -2490,9 +2506,8 @@ export const ElectionStatusDtoSchema = {
         electionType: {
             $ref: '#/components/schemas/ElectionTypeCode'
         },
-        tallyStatus: {
-            type: 'string',
-            nullable: true
+        electionStage: {
+            $ref: '#/components/schemas/ElectionStage'
         },
         isActive: {
             type: 'boolean'
@@ -2573,9 +2588,8 @@ export const ElectionSummaryDtoSchema = {
             format: 'date-time',
             nullable: true
         },
-        tallyStatus: {
-            type: 'string',
-            nullable: true
+        electionStage: {
+            $ref: '#/components/schemas/ElectionStage'
         },
         voterCount: {
             type: 'integer',
@@ -3186,9 +3200,8 @@ export const LocationDtoSchema = {
             type: 'string',
             nullable: true
         },
-        tallyStatus: {
-            type: 'string',
-            nullable: true
+        locationTallyStatus: {
+            $ref: '#/components/schemas/LocationTallyStatus'
         },
         sortOrder: {
             type: 'integer',
@@ -3334,6 +3347,15 @@ export const LocationStatisticsDtoSchema = {
         }
     },
     additionalProperties: false
+} as const;
+
+export const LocationTallyStatusSchema = {
+    enum: [
+        'NotStarted',
+        'InProgress',
+        'Complete'
+    ],
+    type: 'string'
 } as const;
 
 export const LocationTypeSchema = {
@@ -4390,9 +4412,8 @@ export const PublicDisplayDtoSchema = {
         electionType: {
             $ref: '#/components/schemas/ElectionTypeCode'
         },
-        tallyStatus: {
-            type: 'string',
-            nullable: true
+        electionStage: {
+            $ref: '#/components/schemas/ElectionStage'
         },
         numberToElect: {
             type: 'integer',
@@ -4836,9 +4857,8 @@ export const SuperAdminElectionDetailDtoSchema = {
             format: 'date-time',
             nullable: true
         },
-        tallyStatus: {
-            type: 'string',
-            nullable: true
+        electionStage: {
+            $ref: '#/components/schemas/ElectionStage'
         },
         electionType: {
             $ref: '#/components/schemas/ElectionTypeCode'
@@ -4902,9 +4922,8 @@ export const SuperAdminElectionDtoSchema = {
             format: 'date-time',
             nullable: true
         },
-        tallyStatus: {
-            type: 'string',
-            nullable: true
+        electionStage: {
+            $ref: '#/components/schemas/ElectionStage'
         },
         electionType: {
             $ref: '#/components/schemas/ElectionTypeCode'
@@ -5444,9 +5463,8 @@ export const UpdateElectionDtoSchema = {
             format: 'int32',
             nullable: true
         },
-        tallyStatus: {
-            type: 'string',
-            nullable: true
+        electionStage: {
+            $ref: '#/components/schemas/ElectionStage'
         },
         convenor: {
             type: 'string',

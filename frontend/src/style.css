@@ -144,6 +144,13 @@
   --color-bg-secondary: #f8fafc;
   --color-bg-tertiary: #f1f5f9;
   --color-bg-overlay: #efeeef;
+  /* Colors - Election Stage */
+  --color-stage-setup: #2563a8;
+  --color-stage-setup-bg: #eaf1fa;
+  --color-stage-gather: #d97706;
+  --color-stage-gather-bg: #fff4e6;
+  --color-stage-process: #8a3a1f;
+  --color-stage-process-bg: #f6ece6;
   /* Colors - Sidebar */
   --color-sidebar-bg: #eef2f9;
   --color-sidebar-text: #374151;
@@ -268,6 +275,13 @@
   --color-text-primary: var(--color-gray-50);
   --color-text-secondary: var(--color-gray-300);
   --color-text-tertiary: var(--color-gray-400);
+  /* Election stage dark theme */
+  --color-stage-setup: #4f8fcc;
+  --color-stage-setup-bg: #142a44;
+  --color-stage-gather: #f59e0b;
+  --color-stage-gather-bg: #3a2706;
+  --color-stage-process: #c2643c;
+  --color-stage-process-bg: #3a1f12;
   /* Sidebar dark theme */
   --color-sidebar-bg: #0e2040;
   --color-sidebar-text: #a8bfe1;

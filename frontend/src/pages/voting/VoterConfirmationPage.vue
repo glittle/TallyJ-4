@@ -49,45 +49,45 @@ function handleLogout() {
   </div>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .voter-confirmation-page {
   min-height: calc(100vh - 100px);
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
-}
 
-.confirmation-container {
-  width: 100%;
-  max-width: 600px;
-}
-
-.confirmation-card {
-  text-align: center;
-}
-
-.confirmation-details {
-  margin-top: 20px;
-
-  p {
-    margin: 10px 0;
-    color: var(--el-text-color-regular);
-
-    strong {
-      color: var(--el-text-color-primary);
-    }
+  .confirmation-container {
+    width: 100%;
+    max-width: 600px;
   }
 
-  .info-message {
-    margin: 20px 0;
-    padding: 15px;
-    background-color: var(--el-fill-color-light);
-    border-radius: 4px;
+  .confirmation-card {
+    text-align: center;
+  }
+
+  .confirmation-details {
+    margin-top: 20px;
 
     p {
-      margin: 5px 0;
-      font-size: 14px;
+      margin: 10px 0;
+      color: var(--el-text-color-regular);
+
+      strong {
+        color: var(--el-text-color-primary);
+      }
+    }
+
+    .info-message {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: var(--el-fill-color-light);
+      border-radius: 4px;
+
+      p {
+        margin: 5px 0;
+        font-size: 14px;
+      }
     }
   }
 }

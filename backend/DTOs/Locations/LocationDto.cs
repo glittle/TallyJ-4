@@ -40,7 +40,7 @@ public class LocationDto
     /// <summary>
     /// The current tally status at this location.
     /// </summary>
-    public string? TallyStatus { get; set; }
+    public LocationTallyStatus? LocationTallyStatus { get; set; }
 
     /// <summary>
     /// The sort order for displaying locations.

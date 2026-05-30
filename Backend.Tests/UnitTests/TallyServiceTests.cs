@@ -469,7 +469,7 @@ public class TallyServiceTests : ServiceTestBase
             ElectionType = electionType,
             NumberToElect = numberToElect,
             NumberExtra = numberExtra,
-            TallyStatus = "Setup",
+            ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
             DateOfElection = DateTime.UtcNow.AddDays(7),
             RowVersion = new byte[8]
         };
