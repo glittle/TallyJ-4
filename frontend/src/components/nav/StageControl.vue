@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { ElIcon } from "element-plus";
-import { useElectionStore } from "@/stores/electionStore";
+import { useNotifications } from "@/composables/useNotifications";
 import {
   STAGES,
   STAGE_META,
   type ElectionStage,
 } from "@/domain/electionStages";
-import { useNotifications } from "@/composables/useNotifications";
+import { useElectionStore } from "@/stores/electionStore";
+import { ElIcon } from "element-plus";
+import { useI18n } from "vue-i18n";
 import StageIndicator from "./StageIndicator.vue";
 
 const props = withDefaults(
@@ -81,7 +81,7 @@ async function selectStage(newStage: ElectionStage) {
   </div>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .stage-control {
   display: inline-flex;
   align-items: stretch;

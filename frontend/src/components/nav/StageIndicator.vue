@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
-import { ElIcon } from "element-plus";
 import type { ElectionStage } from "@/domain/electionStages";
 import { STAGE_META, STAGES } from "@/domain/electionStages";
+import { ElIcon } from "element-plus";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 const props = withDefaults(
   defineProps<{
@@ -43,7 +43,7 @@ const stepNumber = computed(() => STAGES.indexOf(props.stage) + 1);
   </span>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .stage-indicator {
   display: inline-flex;
   align-items: center;

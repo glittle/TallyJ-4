@@ -3,6 +3,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { Delete, Edit, Monitor, Plus } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import ComputerRegistrationDialog from "../../components/locations/ComputerRegistrationDialog.vue";
 import LocationFormDialog from "../../components/locations/LocationFormDialog.vue";
@@ -13,6 +14,7 @@ const router = useRouter();
 const route = useRoute();
 const locationStore = useLocationStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { t } = useI18n();
 
 const electionGuid = route.params.id as string;
 const showCreateDialog = ref(false);
@@ -46,7 +48,7 @@ async function loadLocations() {
     );
   } catch (error) {
     showErrorMessage(
-      "Failed to load locations. " +
+      t("locations.error.failedToLoadLocations") +
         (error instanceof Error ? error.message : ""),
     );
   }
@@ -64,20 +66,22 @@ function editLocation(location: LocationDto) {
 async function deleteLocation(location: LocationDto) {
   try {
     await ElMessageBox.confirm(
-      `Are you sure you want to delete location "${location.name}"?`,
-      "Warning",
+      t("locations.confirm.deleteLocationMessage", { name: location.name }),
+      t("locations.confirm.deleteLocationTitle"),
       {
-        confirmButtonText: "Delete",
-        cancelButtonText: "Cancel",
+        confirmButtonText: t("locations.confirm.delete"),
+        cancelButtonText: t("locations.confirm.cancel"),
         type: "warning",
       },
     );
 
     await locationStore.deleteLocation(electionGuid, location.locationGuid);
-    showSuccessMessage("Location deleted successfully");
+    showSuccessMessage(t("locations.success.locationDeleted"));
   } catch (error: any) {
     if (error !== "cancel") {
-      showErrorMessage(error.message || "Failed to delete location");
+      showErrorMessage(
+        error.message || t("locations.error.failedToDeleteLocation"),
+      );
     }
   }
 }
@@ -114,7 +118,7 @@ function getStatusType(status: string) {
   const typeMap: Record<string, any> = {
     NotStarted: "",
     InProgress: "warning",
-    Completed: "success",
+    Complete: "success",
     Verified: "info",
   };
   return typeMap[status] || "info";
@@ -126,7 +130,9 @@ async function viewComputers(location: LocationDto) {
   try {
     await locationStore.fetchComputers(electionGuid, location.locationGuid);
   } catch (error: any) {
-    showErrorMessage("Failed to load computers. " + (error.message || ""));
+    showErrorMessage(
+      t("locations.error.failedToLoadComputers") + (error.message || ""),
+    );
   }
 }
 
@@ -151,11 +157,13 @@ async function deleteComputer(computer: ComputerDto) {
 
   try {
     await ElMessageBox.confirm(
-      `Are you sure you want to delete computer "${computer.computerCode}"?`,
-      "Warning",
+      t("locations.confirm.deleteComputerMessage", {
+        code: computer.computerCode,
+      }),
+      t("locations.confirm.deleteComputerTitle"),
       {
-        confirmButtonText: "Delete",
-        cancelButtonText: "Cancel",
+        confirmButtonText: t("locations.confirm.delete"),
+        cancelButtonText: t("locations.confirm.cancel"),
         type: "warning",
       },
     );
@@ -165,10 +173,12 @@ async function deleteComputer(computer: ComputerDto) {
       selectedLocation.value.locationGuid,
       computer.computerGuid,
     );
-    showSuccessMessage("Computer deleted successfully");
+    showSuccessMessage(t("locations.success.computerDeleted"));
   } catch (error: any) {
     if (error !== "cancel") {
-      showErrorMessage(error.message || "Failed to delete computer");
+      showErrorMessage(
+        error.message || t("locations.error.failedToDeleteComputer"),
+      );
     }
   }
 }
@@ -188,12 +198,15 @@ function formatDateTime(dateStr?: string): string {
       <template #header>
         <div class="card-header">
           <div class="header-left">
-            <el-page-header content="Voting Locations" @back="goBack" />
+            <el-page-header
+              :content="t('locations.page.title')"
+              @back="goBack"
+            />
           </div>
           <div class="header-actions">
             <el-button type="primary" @click="showCreateDialog = true">
               <el-icon><Plus /></el-icon>
-              Add Location
+              {{ t("locations.button.addLocation") }}
             </el-button>
           </div>
         </div>
@@ -208,18 +221,18 @@ function formatDateTime(dateStr?: string): string {
         >
           <el-table-column
             prop="name"
-            label="Location Name"
+            :label="$t('locations.form.name')"
             min-width="200"
             sortable="custom"
           />
           <el-table-column
             prop="contactInfo"
-            label="Contact Info"
+            :label="$t('locations.form.contactInfo')"
             min-width="200"
           />
           <el-table-column
             prop="locationTallyStatus"
-            label="Tally Status"
+            :label="$t('locations.tallyStatus')"
             width="150"
           >
             <template #default="scope">
@@ -227,14 +240,14 @@ function formatDateTime(dateStr?: string): string {
                 v-if="scope.row.locationTallyStatus"
                 :type="getStatusType(scope.row.locationTallyStatus)"
               >
-                {{ scope.row.locationTallyStatus }}
+                {{ t(`locations.status.${scope.row.locationTallyStatus}`) }}
               </el-tag>
               <span v-else>-</span>
             </template>
           </el-table-column>
           <el-table-column
             prop="ballotsCollected"
-            label="Ballots"
+            :label="$t('locations.form.ballots')"
             width="100"
             align="center"
             sortable="custom"
@@ -245,7 +258,7 @@ function formatDateTime(dateStr?: string): string {
           </el-table-column>
           <el-table-column
             prop="sortOrder"
-            label="Sort Order"
+            :label="$t('locations.form.sortOrder')"
             width="120"
             align="center"
             sortable="custom"
@@ -254,7 +267,10 @@ function formatDateTime(dateStr?: string): string {
               {{ scope.row.sortOrder ?? "-" }}
             </template>
           </el-table-column>
-          <el-table-column label="Coordinates" width="180">
+          <el-table-column
+            :label="$t('locations.form.coordinates')"
+            width="180"
+          >
             <template #default="scope">
               <span
                 v-if="scope.row.longitude && scope.row.latitude"
@@ -266,16 +282,20 @@ function formatDateTime(dateStr?: string): string {
               <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column label="Actions" width="280" fixed="right">
+          <el-table-column
+            :label="$t('locations.form.actions')"
+            width="280"
+            fixed="right"
+          >
             <template #default="scope">
               <el-button-group>
                 <el-button size="small" @click="viewComputers(scope.row)">
                   <el-icon><Monitor /></el-icon>
-                  Computers
+                  {{ $t("locations.form.computers") }}
                 </el-button>
                 <el-button size="small" @click="editLocation(scope.row)">
                   <el-icon><Edit /></el-icon>
-                  Edit
+                  {{ $t("locations.form.edit") }}
                 </el-button>
                 <el-button
                   size="small"
@@ -283,7 +303,7 @@ function formatDateTime(dateStr?: string): string {
                   @click="deleteLocation(scope.row)"
                 >
                   <el-icon><Delete /></el-icon>
-                  Delete
+                  {{ $t("locations.form.delete") }}
                 </el-button>
               </el-button-group>
             </template>
@@ -320,7 +340,7 @@ function formatDateTime(dateStr?: string): string {
 
     <el-drawer
       v-model="showComputersDrawer"
-      :title="`Computers - ${selectedLocation?.name}`"
+      :title="`${t('locations.form.computers')} - ${selectedLocation?.name}`"
       size="50%"
       direction="rtl"
     >
@@ -328,7 +348,7 @@ function formatDateTime(dateStr?: string): string {
         <div class="drawer-header">
           <el-button type="primary" @click="openRegisterComputerDialog">
             <el-icon><Plus /></el-icon>
-            Register Computer
+            {{ $t("locations.form.registerComputer") }}
           </el-button>
         </div>
 
@@ -338,36 +358,56 @@ function formatDateTime(dateStr?: string): string {
           style="width: 100%"
           class="computers-table"
         >
-          <el-table-column prop="computerCode" label="Code" width="80" />
-          <el-table-column prop="browserInfo" label="Browser" min-width="200">
+          <el-table-column
+            :label="$t('locations.form.computerCode')"
+            prop="computerCode"
+            width="80"
+          />
+          <el-table-column
+            :label="$t('locations.form.browserInfo')"
+            prop="browserInfo"
+            min-width="200"
+          >
             <template #default="scope">
               <span class="browser-info">{{
                 scope.row.browserInfo || "-"
               }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="ipAddress" label="IP Address" width="150">
+          <el-table-column
+            :label="$t('locations.form.ipAddress')"
+            prop="ipAddress"
+            width="150"
+          >
             <template #default="scope">
               {{ scope.row.ipAddress || "-" }}
             </template>
           </el-table-column>
           <el-table-column
+            :label="$t('locations.form.lastActivity')"
             prop="lastActivity"
-            label="Last Activity"
             width="180"
           >
             <template #default="scope">
               {{ formatDateTime(scope.row.lastActivity) }}
             </template>
           </el-table-column>
-          <el-table-column label="Status" width="100">
+          <el-table-column :label="$t('locations.form.status')" width="100">
             <template #default="scope">
               <el-tag :type="scope.row.isActive ? 'success' : 'info'">
-                {{ scope.row.isActive ? "Active" : "Inactive" }}
+                {{
+                  scope.row.isActive
+                    ? $t("locations.form.active")
+                    : $t("locations.form.inactive")
+                }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="Actions" width="100" fixed="right">
+          <el-table-column
+            :label="$t('locations.form.actions')"
+            width="100"
+            fixed="right"
+          >
             <template #default="scope">
               <el-button
                 size="small"
@@ -382,7 +422,7 @@ function formatDateTime(dateStr?: string): string {
 
         <el-empty
           v-if="!computersLoading && computers.length === 0"
-          description="No computers registered"
+          :description="$t('locations.form.noComputersRegistered')"
         />
       </div>
     </el-drawer>

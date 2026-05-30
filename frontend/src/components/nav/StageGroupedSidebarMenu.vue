@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { ElIcon } from "element-plus";
-import { useRoute, useRouter } from "vue-router";
 import {
   type ElectionStage,
   type NavPageDef,
@@ -11,6 +7,10 @@ import {
   STAGE_PAGES,
 } from "@/domain/electionStages";
 import { useNavUiStore } from "@/stores/navUiStore";
+import { ElIcon } from "element-plus";
+import { onMounted, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 
 const props = defineProps<{
   electionGuid: string;
@@ -176,95 +176,95 @@ watch(
   </div>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .stage-grouped-menu {
   flex: 1;
   overflow-y: auto;
   padding: 8px 0;
-}
 
-.stage-group {
-  margin-bottom: 4px;
+  .stage-group {
+    margin-bottom: 4px;
 
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px 8px 16px;
-    cursor: pointer;
-    border-left: 3px solid transparent;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--color-sidebar-text);
-    transition: background-color 0.15s;
-    user-select: none;
-
-    &:hover {
-      background-color: var(--color-sidebar-hover);
-    }
-
-    &--teller {
-      cursor: default;
-      justify-content: flex-start;
-      gap: 8px;
-
-      &:hover {
-        background-color: inherit;
-      }
-    }
-
-    &-chip {
+    &__header {
       display: flex;
       align-items: center;
-      gap: 6px;
-    }
+      justify-content: space-between;
+      padding: 8px 12px 8px 16px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-sidebar-text);
+      transition: background-color 0.15s;
+      user-select: none;
 
-    &-icon {
-      font-size: 15px;
-      flex-shrink: 0;
-    }
+      &:hover {
+        background-color: var(--color-sidebar-hover);
+      }
 
-    &-chevron {
-      font-size: 16px;
-      transition: transform 0.2s;
-      transform: rotate(90deg);
+      &--teller {
+        cursor: default;
+        justify-content: flex-start;
+        gap: 8px;
 
-      &.is-expanded {
-        transform: rotate(-90deg);
+        &:hover {
+          background-color: inherit;
+        }
+      }
+
+      &-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      &-icon {
+        font-size: 15px;
+        flex-shrink: 0;
+      }
+
+      &-chevron {
+        font-size: 16px;
+        transition: transform 0.2s;
+        transform: rotate(90deg);
+
+        &.is-expanded {
+          transform: rotate(-90deg);
+        }
       }
     }
-  }
 
-  &__pages {
-    overflow: hidden;
-  }
-
-  &__page {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px 10px 32px;
-    cursor: pointer;
-    font-size: 14px;
-    color: var(--color-sidebar-text);
-    border-radius: 6px;
-    margin: 2px 10px;
-    height: 44px;
-    box-sizing: border-box;
-    transition: background-color 0.15s;
-
-    &:hover {
-      background-color: var(--color-sidebar-hover) !important;
+    &__pages {
+      overflow: hidden;
     }
 
-    &.is-active {
-      background-color: var(--color-sidebar-active) !important;
-      color: var(--color-sidebar-text-active) !important;
-    }
+    &__page {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px 10px 32px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--color-sidebar-text);
+      border-radius: 6px;
+      margin: 2px 10px;
+      height: 44px;
+      box-sizing: border-box;
+      transition: background-color 0.15s;
 
-    &-icon {
-      font-size: 16px;
-      flex-shrink: 0;
+      &:hover {
+        background-color: var(--color-sidebar-hover) !important;
+      }
+
+      &.is-active {
+        background-color: var(--color-sidebar-active) !important;
+        color: var(--color-sidebar-text-active) !important;
+      }
+
+      &-icon {
+        font-size: 16px;
+        flex-shrink: 0;
+      }
     }
   }
 }

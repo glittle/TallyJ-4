@@ -62,9 +62,17 @@ public class ElectionService : IElectionService
         var query = _context.Elections
             .Where(e => _context.JoinElectionUsers.Any(jeu => jeu.ElectionGuid == e.ElectionGuid && jeu.UserId == userId));
 
-        if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<ElectionStage>(status, out var stageFilter))
+        if (!string.IsNullOrWhiteSpace(status))
         {
-            query = query.Where(e => e.ElectionStage == stageFilter);
+            if (Enum.TryParse<ElectionStage>(status, out var stageFilter))
+            {
+                query = query.Where(e => e.ElectionStage == stageFilter);
+            }
+            else
+            {
+                _logger.LogWarning("GetElectionsAsync: Invalid status filter '{Status}' provided", status);
+                return PaginatedResponse<ElectionSummaryDto>.Create([], pageNumber, pageSize, 0);
+            }
         }
 
         var totalCount = await query.CountAsync();

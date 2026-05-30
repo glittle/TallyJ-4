@@ -15,7 +15,7 @@ const TIP_ID = "dashboard.setup.intro";
 </script>
 
 <template>
-  <TipsPanel v-if="hasSetupElection" :tip-id="TIP_ID">
+  <TipsPanel v-if="hasSetupElection" :tip-id="TIP_ID" class="setup-tips-card">
     <template #header>
       <span
         class="setup-tips-card__eyebrow"
@@ -36,7 +36,7 @@ const TIP_ID = "dashboard.setup.intro";
   </TipsPanel>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .setup-tips-card {
   &__eyebrow {
     font-size: 10px;

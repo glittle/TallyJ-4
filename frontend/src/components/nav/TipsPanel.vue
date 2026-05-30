@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { useNavUiStore } from "@/stores/navUiStore";
+import { Close } from "@element-plus/icons-vue";
+import { ElIcon } from "element-plus";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { ElIcon } from "element-plus";
-import { Close } from "@element-plus/icons-vue";
-import { useNavUiStore } from "@/stores/navUiStore";
 
 const props = defineProps<{
   tipId: string;
@@ -37,7 +37,7 @@ function dismiss() {
   </div>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .tips-panel {
   background: var(--color-bg-secondary, #f5f7fa);
   border: 1px solid var(--color-border-light, #e4e7ed);

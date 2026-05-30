@@ -1,3 +1,5 @@
+import type { LocationTallyStatus } from "@/api/gen/configService";
+
 export type LocationTypeCode = "Manual" | "Online" | "Imported";
 
 export interface LocationDto {
@@ -7,7 +9,7 @@ export interface LocationDto {
   contactInfo?: string;
   longitude?: string;
   latitude?: string;
-  locationTallyStatus?: string;
+  locationTallyStatus?: LocationTallyStatus;
   sortOrder?: number;
   ballotsCollected?: number;
   locationType?: LocationTypeCode;

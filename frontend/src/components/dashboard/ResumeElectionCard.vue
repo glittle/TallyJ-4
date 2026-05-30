@@ -64,7 +64,7 @@ function open() {
   </section>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .resume-card {
   background: var(--el-bg-color, #fff);
   border: 1px solid var(--color-border-light, #e4e7ed);

@@ -86,9 +86,17 @@ public class SuperAdminService : ISuperAdminService
                 (e.Convenor != null && e.Convenor.Contains(search)));
         }
 
-        if (!string.IsNullOrWhiteSpace(filter.Status) && Enum.TryParse<ElectionStage>(filter.Status, out var stageFilter))
+        if (!string.IsNullOrWhiteSpace(filter.Status))
         {
-            query = query.Where(e => e.ElectionStage == stageFilter);
+            if (Enum.TryParse<ElectionStage>(filter.Status, out var stageFilter))
+            {
+                query = query.Where(e => e.ElectionStage == stageFilter);
+            }
+            else
+            {
+                _logger.LogWarning("GetElectionsAsync: Invalid status filter '{Status}' provided", filter.Status);
+                return PaginatedResponse<SuperAdminElectionDto>.Create([], filter.Page, filter.PageSize, 0);
+            }
         }
 
         if (filter.ElectionType.HasValue)
