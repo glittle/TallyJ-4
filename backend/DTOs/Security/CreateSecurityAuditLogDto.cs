@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend.DTOs.Security;
 
@@ -11,7 +11,7 @@ public class CreateSecurityAuditLogDto
     /// The type of security event being logged.
     /// </summary>
     [Required]
-    public Backend.Domain.SecurityEventType EventType { get; set; }
+    public Backend.SecurityEventType EventType { get; set; }
 
     /// <summary>
     /// The user ID associated with the event (if applicable).
@@ -46,7 +46,7 @@ public class CreateSecurityAuditLogDto
     /// <summary>
     /// Severity level of the security event.
     /// </summary>
-    public Backend.Domain.SecurityEventSeverity Severity { get; set; } = Backend.Domain.SecurityEventSeverity.Info;
+    public Backend.SecurityEventSeverity Severity { get; set; } = Backend.SecurityEventSeverity.Info;
 
     /// <summary>
     /// Additional metadata as key-value pairs (JSON serialized).

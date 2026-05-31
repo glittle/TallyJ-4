@@ -1,9 +1,8 @@
-﻿using Backend.Domain.Context;
-using Backend.Domain.Entities;
+using Backend.Context;
+using Backend.Entities;
 using Backend.DTOs.Tellers;
+using Backend.Helpers;
 using Backend.Models;
-using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -14,19 +13,14 @@ namespace Backend.Services;
 public class TellerService : ITellerService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<TellerService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TellerService"/> class.
     /// </summary>
-    /// <param name="context">The database context.</param>
-    /// <param name="mapper">The Mapster instance.</param>
-    /// <param name="logger">The logger instance.</param>
-    public TellerService(MainDbContext context, IMapper mapper, ILogger<TellerService> logger)
+    public TellerService(MainDbContext context, ILogger<TellerService> logger)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -48,7 +42,12 @@ public class TellerService : ITellerService
             .Take(pageSize)
             .ToListAsync();
 
-        var tellerDtos = _mapper.Map<List<TellerDto>>(tellers);
+        var tellerDtos = tellers.Select(t =>
+        {
+            var dto = t.CopyMatchingPropertiesToNew<TellerDto>();
+            dto.IsHeadTeller = t.IsHeadTeller ?? false;
+            return dto;
+        }).ToList();
 
         _logger.LogInformation(
             "Retrieved {Count} tellers for election {ElectionGuid} (page {PageNumber} of {TotalPages})",
@@ -73,7 +72,8 @@ public class TellerService : ITellerService
             return null;
         }
 
-        var tellerDto = _mapper.Map<TellerDto>(teller);
+        var tellerDto = teller.CopyMatchingPropertiesToNew<TellerDto>();
+        tellerDto.IsHeadTeller = teller.IsHeadTeller ?? false;
 
         _logger.LogInformation("Retrieved teller {RowId}: {TellerName}", rowId, teller.Name);
 
@@ -90,12 +90,13 @@ public class TellerService : ITellerService
             throw new InvalidOperationException($"A teller with the name '{createDto.Name}' already exists for this election");
         }
 
-        var teller = _mapper.Map<Teller>(createDto);
+        var teller = createDto.CopyMatchingPropertiesToNew<Teller>();
 
         _context.Tellers.Add(teller);
         await _context.SaveChangesAsync();
 
-        var tellerDto = _mapper.Map<TellerDto>(teller);
+        var tellerDto = teller.CopyMatchingPropertiesToNew<TellerDto>();
+        tellerDto.IsHeadTeller = teller.IsHeadTeller ?? false;
 
         _logger.LogInformation("Successfully created teller {RowId}: {TellerName}", teller.RowId, teller.Name);
 
@@ -122,10 +123,11 @@ public class TellerService : ITellerService
             throw new InvalidOperationException($"A teller with the name '{updateDto.Name}' already exists for this election");
         }
 
-        _mapper.Map(updateDto, teller);
+        updateDto.CopyMatchingPropertiesTo(teller);
         await _context.SaveChangesAsync();
 
-        var tellerDto = _mapper.Map<TellerDto>(teller);
+        var tellerDto = teller.CopyMatchingPropertiesToNew<TellerDto>();
+        tellerDto.IsHeadTeller = teller.IsHeadTeller ?? false;
 
         _logger.LogInformation("Successfully updated teller {RowId}: {TellerName}", teller.RowId, teller.Name);
 

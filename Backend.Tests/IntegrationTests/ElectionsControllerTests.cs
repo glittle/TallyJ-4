@@ -1,7 +1,7 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
 using Backend.DTOs.Elections;
-using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 using Backend.Models;
 
 namespace Backend.Tests.IntegrationTests;
@@ -161,7 +161,7 @@ public class ElectionsControllerTests : IntegrationTestBase
             Name = "Updated Name",
             NumberToElect = 7,
             DateOfElection = DateTime.UtcNow.AddDays(60),
-            ElectionStage = Backend.Domain.Enumerations.ElectionStage.ProcessingBallots
+            ElectionStage = Backend.Enumerations.ElectionStage.ProcessingBallots
         };
 
         var response = await PutJsonAsync($"/api/elections/{electionGuid}/updateElection", updateDto);

@@ -20,7 +20,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="TallyJ is a secure and easy-to-use election management system built specifically for Bahá'í communities. It provides a complete platform to manage elections, people, ballots, and real-time tallying."
+      content="TallyJ is a secure and easy-to-use election management system built primarily for Bahá'í communities. It provides a complete platform to manage elections, people, ballots, and real-time tallying."
     />
     <meta
       name="keywords"
@@ -103,7 +103,12 @@
 
     <title>TallyJ v4</title>
     <!-- Preload config.json so it is fetched as soon as possible -->
-    <link rel="preload" as="fetch" href="/config.json" crossorigin="anonymous" />
+    <link
+      rel="preload"
+      as="fetch"
+      href="/config.json"
+      crossorigin="anonymous"
+    />
 
     <!-- Resolve stored theme before first paint to avoid flash -->
     <script>
@@ -156,7 +161,9 @@
       #splash img {
         width: 180px;
         max-width: 50vw;
-        animation: splash-pulse 1.8s ease-in-out infinite, move-right 3.33s linear infinite alternate;
+        animation:
+          splash-pulse 1.8s ease-in-out infinite,
+          move-right 3.33s linear infinite alternate;
       }
       @keyframes splash-pulse {
         0%,

@@ -9,8 +9,8 @@ using Moq;
 using OtpNet;
 using Backend.DTOs.Auth;
 using Backend.Services.Auth;
-using Backend.Domain.Entities;
-using Backend.Domain.Identity;
+using Backend.Entities;
+using Backend.Identity;
 using Backend.Services;
 
 namespace Backend.Tests.UnitTests;

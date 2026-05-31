@@ -1,13 +1,11 @@
-﻿using System.Security.Claims;
-using Backend.Domain.Context;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using System.Security.Claims;
+using Backend.Context;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.DTOs.Elections;
 using Backend.DTOs.SignalR;
 using Backend.Helpers;
 using Backend.Models;
-using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -19,7 +17,6 @@ namespace Backend.Services;
 public class ElectionService : IElectionService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<ElectionService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -27,15 +24,9 @@ public class ElectionService : IElectionService
     /// <summary>
     /// Initializes a new instance of the ElectionService.
     /// </summary>
-    /// <param name="context">The main database context for accessing election data.</param>
-    /// <param name="mapper">Mapster instance for object mapping operations.</param>
-    /// <param name="logger">Logger for recording election service operations.</param>
-    /// <param name="signalRNotificationService">Service for sending real-time notifications about election updates.</param>
-    /// <param name="httpContextAccessor">HTTP context accessor for retrieving current user information.</param>
-    public ElectionService(MainDbContext context, IMapper mapper, ILogger<ElectionService> logger, ISignalRNotificationService signalRNotificationService, IHttpContextAccessor httpContextAccessor)
+    public ElectionService(MainDbContext context, ILogger<ElectionService> logger, ISignalRNotificationService signalRNotificationService, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
         _httpContextAccessor = httpContextAccessor;
@@ -121,7 +112,7 @@ public class ElectionService : IElectionService
             return null;
         }
 
-        var dto = _mapper.Map<ElectionDto>(election);
+        var dto = MapToElectionDto(election);
         dto.VoterCount = election.People.Count(p => p.CanVote == true);
         dto.BallotCount = election.Locations.SelectMany(l => l.Ballots).Count();
         dto.LocationCount = election.Locations.Count;
@@ -139,7 +130,7 @@ public class ElectionService : IElectionService
     /// <returns>An ElectionDto representing the created election.</returns>
     public async Task<ElectionDto> CreateElectionAsync(CreateElectionDto createDto)
     {
-        var election = _mapper.Map<Election>(createDto);
+        var election = MapFromCreateElectionDto(createDto);
         election.ElectionGuid = Guid.NewGuid();
         election.ElectionStage = ElectionStage.SettingUp;
         election.RowVersion = new byte[8];
@@ -162,7 +153,7 @@ public class ElectionService : IElectionService
 
         _logger.LogInformation("Created election {ElectionGuid} - {Name}", election.ElectionGuid, election.Name);
 
-        return await GetElectionByGuidAsync(election.ElectionGuid) ?? _mapper.Map<ElectionDto>(election);
+        return await GetElectionByGuidAsync(election.ElectionGuid) ?? MapToElectionDto(election);
     }
 
     /// <summary>
@@ -180,7 +171,7 @@ public class ElectionService : IElectionService
             return null;
         }
 
-        _mapper.Map(updateDto, election);
+        updateDto.CopyMatchingPropertiesTo(election, ignoreNulls: true);
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Updated election {ElectionGuid}", electionGuid);
@@ -303,6 +294,40 @@ public class ElectionService : IElectionService
         _logger.LogInformation("Updated election {ElectionGuid} listing to {IsListed}", electionGuid, isListed);
 
         return true;
+    }
+
+    // =====================================================================
+    // Explicit mapping helpers (replaces hidden Mapster profile logic).
+    // All transformations are now visible and easy to understand.
+    // =====================================================================
+
+    private static ElectionDto MapToElectionDto(Election election)
+    {
+        var dto = election.CopyMatchingPropertiesToNew<ElectionDto>();
+
+        // Enum conversions (were previously hidden in Mapster .Map expressions)
+        dto.ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType);
+        dto.ElectionMode = ElectionModeEnum.ParseCode(election.ElectionMode);
+
+        // Derived/computed fields
+        dto.IsTellerAccessOpen = election.ListedForPublicAsOf != null;
+        dto.TellerAccessOpenedAt = election.ListedForPublicAsOf;
+
+        // Note: VoterCount, BallotCount, and LocationCount are set by the caller
+        // after loading the necessary navigation properties (kept explicit for clarity).
+
+        return dto;
+    }
+
+    private static Election MapFromCreateElectionDto(CreateElectionDto dto)
+    {
+        var election = dto.CopyMatchingPropertiesToNew<Election>();
+
+        // Enum conversions on create
+        election.ElectionType = ElectionTypeEnum.ToCodeString(dto.ElectionType);
+        election.ElectionMode = ElectionModeEnum.ToCodeString(dto.ElectionMode);
+
+        return election;
     }
 }
 

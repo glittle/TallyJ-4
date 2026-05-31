@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Security;
+namespace Backend.DTOs.Security;
 
 /// <summary>
 /// Data transfer object for security audit log entries.
@@ -18,7 +18,7 @@ public class SecurityAuditLogDto
     /// <summary>
     /// The type of security event.
     /// </summary>
-    public Backend.Domain.SecurityEventType EventType { get; set; }
+    public Backend.SecurityEventType EventType { get; set; }
 
     /// <summary>
     /// The user ID associated with the event (if applicable).
@@ -53,7 +53,7 @@ public class SecurityAuditLogDto
     /// <summary>
     /// The severity level of the security event.
     /// </summary>
-    public Backend.Domain.SecurityEventSeverity Severity { get; set; }
+    public Backend.SecurityEventSeverity Severity { get; set; }
 
     /// <summary>
     /// Additional metadata as key-value pairs.

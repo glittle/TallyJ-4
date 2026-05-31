@@ -1,4 +1,4 @@
-﻿using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 using Backend.DTOs.Ballots;
 using FluentValidation;
 

@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
-using Backend.Domain.Context;
-using Backend.Domain.Enumerations;
+using System.Security.Claims;
+using Backend.Context;
+using Backend.Enumerations;
 using Backend.DTOs.Dashboard;
 using Microsoft.EntityFrameworkCore;
 
@@ -247,7 +247,7 @@ public class DashboardService : IDashboardService
         }
         else
         {
-            _context.Computers.Add(new Backend.Domain.Entities.Computer
+            _context.Computers.Add(new Backend.Entities.Computer
             {
                 ElectionGuid = location.ElectionGuid,
                 LocationGuid = locationGuid,
@@ -286,7 +286,7 @@ public class DashboardService : IDashboardService
 
         if (existingTeller == null)
         {
-            _context.Tellers.Add(new Backend.Domain.Entities.Teller
+            _context.Tellers.Add(new Backend.Entities.Teller
             {
                 ElectionGuid = electionGuid,
                 Name = tellerName,

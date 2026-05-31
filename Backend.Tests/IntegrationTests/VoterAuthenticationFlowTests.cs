@@ -2,8 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Backend.Domain.Context;
-using Backend.Domain.Entities;
+using Backend.Context;
+using Backend.Entities;
 using Backend.DTOs.OnlineVoting;
 using Xunit;
 
@@ -252,7 +252,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
             Name = "Test Open Election",
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
-            ElectionStage = Backend.Domain.Enumerations.ElectionStage.GatheringBallots,
+            ElectionStage = Backend.Enumerations.ElectionStage.GatheringBallots,
             RowVersion = new byte[8]
         };
 
@@ -279,7 +279,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
             Name = electionName ?? "Test Open Election with Voter",
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
-            ElectionStage = Backend.Domain.Enumerations.ElectionStage.GatheringBallots,
+            ElectionStage = Backend.Enumerations.ElectionStage.GatheringBallots,
             RowVersion = new byte[8]
         };
 
@@ -320,7 +320,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
             Name = electionName ?? "Test Closed Election",
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-3),
             OnlineWhenClose = DateTime.UtcNow.AddHours(-1),
-            ElectionStage = Backend.Domain.Enumerations.ElectionStage.ProcessingBallots,
+            ElectionStage = Backend.Enumerations.ElectionStage.ProcessingBallots,
             RowVersion = new byte[8]
         };
 

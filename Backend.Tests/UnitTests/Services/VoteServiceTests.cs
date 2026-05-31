@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Moq;
-using Backend.Domain.Entities;
+using Backend.Entities;
 using Backend.DTOs.Votes;
 using Backend.Services;
-using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 
 namespace Backend.Tests.UnitTests.Services;
 

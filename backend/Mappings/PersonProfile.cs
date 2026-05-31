@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.DTOs.FrontDesk;
 using Backend.DTOs.People;
 using Mapster;

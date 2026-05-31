@@ -1,4 +1,4 @@
-﻿using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 using Backend.DTOs.Elections;
 using Backend.Models;
 using Backend.Services;

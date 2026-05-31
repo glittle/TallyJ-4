@@ -1,6 +1,6 @@
-using Backend.Domain.Context;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using Backend.Context;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -41,7 +41,7 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
             NumberToElect = numberToElect,
             NumberExtra = numberExtra,
             ElectionType = "Oth",
-            ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
+            ElectionStage = Backend.Enumerations.ElectionStage.SettingUp,
             RowVersion = new byte[8]
         };
         _context.Elections.Add(election);

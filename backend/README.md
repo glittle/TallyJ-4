@@ -6,9 +6,9 @@ This guide covers the current local-development workflow for the TallyJ 4 backen
 
 The backend project is the ASP.NET Core API host in `backend/`. It references:
 
-- `Backend.Application/` (thin layer — mostly auth DTOs and services plus one import helper)
-- `Backend.Domain/` for entities, DbContext, and identity models
 - `Backend.Tests/` for xUnit tests
+
+All domain entities, enumerations, the EF Core `MainDbContext`, identity models (`AppUser`), and interfaces now live directly inside this project (under `Entities/`, `Enumerations/`, `Context/`, `Identity/`, and `Interfaces/`).
 
 **Note for contributors / AI agents**: The large majority of controllers, DTOs (outside Auth), business services (~60 files), validators, Mapster profiles, and SignalR hubs live directly inside this `backend/` host project under `Controllers/`, `DTOs/`, `Services/`, `Validators/`, `Mappings/`, and `Hubs/`. See `AGENTS.md` ("Project layering reality") for the precise breakdown.
 

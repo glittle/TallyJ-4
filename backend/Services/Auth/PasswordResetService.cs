@@ -1,10 +1,10 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Backend.DTOs.Auth;
-using Backend.Domain.Identity;
+using Backend.Identity;
 
 namespace Backend.Services.Auth;
 

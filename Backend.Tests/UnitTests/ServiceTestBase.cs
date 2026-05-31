@@ -1,9 +1,9 @@
-﻿using Mapster;
+using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Backend.Domain.Context;
+using Backend.Context;
 using Backend.Mappings;
 
 namespace Backend.Tests.UnitTests;

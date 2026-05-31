@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.Services.Auth;
-using Backend.Domain.Entities;
-using Backend.Domain.Identity;
+using Backend.Entities;
+using Backend.Identity;
 
 namespace Backend.Tests.UnitTests;
 

@@ -1,9 +1,9 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Backend.Services.Auth;
-using Backend.Domain.Context;
-using Backend.Domain.Identity;
+using Backend.Context;
+using Backend.Identity;
 using Backend.EF.Data;
 using Backend.Helpers;
 using Backend.Localization;

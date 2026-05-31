@@ -1,10 +1,9 @@
-﻿using Backend.Domain.Context;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using Backend.Context;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.DTOs.Locations;
+using Backend.Helpers;
 using Backend.Models;
-using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -16,19 +15,14 @@ namespace Backend.Services;
 public class LocationService : ILocationService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<LocationService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the LocationService.
     /// </summary>
-    /// <param name="context">The main database context for accessing location data.</param>
-    /// <param name="mapper">Mapster instance for object mapping operations.</param>
-    /// <param name="logger">Logger for recording location service operations.</param>
-    public LocationService(MainDbContext context, IMapper mapper, ILogger<LocationService> logger)
+    public LocationService(MainDbContext context, ILogger<LocationService> logger)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -57,7 +51,7 @@ public class LocationService : ILocationService
             .Take(pageSize)
             .ToListAsync();
 
-        var locationDtos = _mapper.Map<List<LocationDto>>(locations);
+        var locationDtos = locations.Select(l => MapToLocationDto(l)).ToList();
 
         _logger.LogInformation(
             "Retrieved {Count} locations for election {ElectionGuid} (page {PageNumber} of {TotalPages})",
@@ -86,7 +80,7 @@ public class LocationService : ILocationService
             return null;
         }
 
-        var locationDto = _mapper.Map<LocationDto>(location);
+        var locationDto = MapToLocationDto(location);
 
         _logger.LogInformation("Retrieved location {LocationGuid}: {LocationName}", locationGuid, location.Name);
 
@@ -102,7 +96,7 @@ public class LocationService : ILocationService
     {
         _logger.LogInformation("Creating new location: {LocationName} for election {ElectionGuid}", createDto.Name, createDto.ElectionGuid);
 
-        var location = _mapper.Map<Location>(createDto);
+        var location = MapFromCreateLocationDto(createDto);
         location.LocationGuid = Guid.NewGuid();
         location.LocationTallyStatus = LocationTallyStatus.NotStarted;
         location.BallotsCollected = 0;
@@ -110,7 +104,7 @@ public class LocationService : ILocationService
         _context.Locations.Add(location);
         await _context.SaveChangesAsync();
 
-        var locationDto = _mapper.Map<LocationDto>(location);
+        var locationDto = MapToLocationDto(location);
 
         _logger.LogInformation("Successfully created location {LocationGuid}: {LocationName}", location.LocationGuid, location.Name);
 
@@ -137,10 +131,10 @@ public class LocationService : ILocationService
             return null;
         }
 
-        _mapper.Map(updateDto, location);
+        updateDto.CopyMatchingPropertiesTo(location, ignoreNulls: false);
         await _context.SaveChangesAsync();
 
-        var locationDto = _mapper.Map<LocationDto>(location);
+        var locationDto = MapToLocationDto(location);
 
         _logger.LogInformation("Successfully updated location {LocationGuid}: {LocationName}", location.LocationGuid, location.Name);
 
@@ -172,6 +166,36 @@ public class LocationService : ILocationService
         _logger.LogInformation("Successfully deleted location {LocationGuid}: {LocationName}", locationGuid, location.Name);
 
         return true;
+    }
+
+    // Explicit mapping helpers (replaces what was previously hidden in Mapster profiles).
+    // These make the field renames and type conversions completely visible.
+
+    private static LocationDto MapToLocationDto(Location location)
+    {
+        var dto = location.CopyMatchingPropertiesToNew<LocationDto>();
+
+        // Renamed fields from entity (Long/Lat) to DTO (Longitude/Latitude)
+        dto.Longitude = location.Long;
+        dto.Latitude = location.Lat;
+
+        // LocationType handling
+        dto.LocationType = location.LocationTypeCode != null
+            ? (LocationType?)location.LocationTypeEnum
+            : null;
+
+        return dto;
+    }
+
+    private static Location MapFromCreateLocationDto(CreateLocationDto dto)
+    {
+        var location = dto.CopyMatchingPropertiesToNew<Location>();
+
+        // Renamed fields
+        location.Long = dto.Longitude;
+        location.Lat = dto.Latitude;
+
+        return location;
     }
 }
 

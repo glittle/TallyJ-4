@@ -1,12 +1,12 @@
-﻿using System.Text;
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Backend.Domain.Entities;
+using Backend.Entities;
 using Backend.DTOs.Import;
 using Backend.Services;
-using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 using Backend.Hubs;
 using Microsoft.EntityFrameworkCore;
 

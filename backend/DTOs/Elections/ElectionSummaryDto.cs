@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Backend.Domain.Enumerations;
+using System.ComponentModel.DataAnnotations;
+using Backend.Enumerations;
 
 namespace Backend.DTOs.Elections;
 

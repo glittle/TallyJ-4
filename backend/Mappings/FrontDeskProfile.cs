@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Backend.Domain.Entities;
+using Backend.Entities;
 using Backend.DTOs.FrontDesk;
 using Mapster;
 

@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.Services;
 
 namespace Backend.Tests.UnitTests;
@@ -469,7 +469,7 @@ public class TallyServiceTests : ServiceTestBase
             ElectionType = electionType,
             NumberToElect = numberToElect,
             NumberExtra = numberExtra,
-            ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
+            ElectionStage = Backend.Enumerations.ElectionStage.SettingUp,
             DateOfElection = DateTime.UtcNow.AddDays(7),
             RowVersion = new byte[8]
         };

@@ -1,8 +1,7 @@
-﻿using Backend.Domain.Context;
-using Backend.Domain.Entities;
+using Backend.Context;
+using Backend.Entities;
 using Backend.DTOs.Computers;
-using Mapster;
-using MapsterMapper;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -13,19 +12,14 @@ namespace Backend.Services;
 public class ComputerService : IComputerService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<ComputerService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ComputerService"/> class.
     /// </summary>
-    /// <param name="context">The database context.</param>
-    /// <param name="mapper">The Mapster instance.</param>
-    /// <param name="logger">The logger instance.</param>
-    public ComputerService(MainDbContext context, IMapper mapper, ILogger<ComputerService> logger)
+    public ComputerService(MainDbContext context, ILogger<ComputerService> logger)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -37,7 +31,7 @@ public class ComputerService : IComputerService
             .OrderBy(c => c.ComputerCode)
             .ToListAsync();
 
-        return _mapper.Map<List<ComputerDto>>(computers);
+        return computers.Select(c => c.CopyMatchingPropertiesToNew<ComputerDto>()).ToList();
     }
 
     /// <inheritdoc />
@@ -48,7 +42,7 @@ public class ComputerService : IComputerService
             .OrderBy(c => c.ComputerCode)
             .ToListAsync();
 
-        return _mapper.Map<List<ComputerDto>>(computers);
+        return computers.Select(c => c.CopyMatchingPropertiesToNew<ComputerDto>()).ToList();
     }
 
     /// <inheritdoc />
@@ -64,7 +58,7 @@ public class ComputerService : IComputerService
             return null;
         }
 
-        return _mapper.Map<ComputerDto>(computer);
+        return computer.CopyMatchingPropertiesToNew<ComputerDto>();
     }
 
     /// <inheritdoc />
@@ -79,7 +73,7 @@ public class ComputerService : IComputerService
             return null;
         }
 
-        return _mapper.Map<ComputerDto>(computer);
+        return computer.CopyMatchingPropertiesToNew<ComputerDto>();
     }
 
     /// <inheritdoc />
@@ -99,7 +93,7 @@ public class ComputerService : IComputerService
             throw new InvalidOperationException($"Computer code '{computerCode}' is already in use for this election");
         }
 
-        var computer = _mapper.Map<Computer>(dto);
+        var computer = dto.CopyMatchingPropertiesToNew<Computer>();
         computer.ComputerGuid = Guid.NewGuid();
         computer.ComputerCode = computerCode;
         computer.IsActive = true;
@@ -107,7 +101,7 @@ public class ComputerService : IComputerService
         _context.Computers.Add(computer);
         await _context.SaveChangesAsync();
 
-        var computerDto = _mapper.Map<ComputerDto>(computer);
+        var computerDto = computer.CopyMatchingPropertiesToNew<ComputerDto>();
 
         _logger.LogInformation("Successfully registered computer {ComputerCode} ({ComputerGuid})", computerCode, computer.ComputerGuid);
 
@@ -129,10 +123,10 @@ public class ComputerService : IComputerService
             return null;
         }
 
-        _mapper.Map(dto, computer);
+        dto.CopyMatchingPropertiesTo(computer);
         await _context.SaveChangesAsync();
 
-        var computerDto = _mapper.Map<ComputerDto>(computer);
+        var computerDto = computer.CopyMatchingPropertiesToNew<ComputerDto>();
 
         _logger.LogInformation("Successfully updated computer {ComputerGuid}", computerGuid);
 
@@ -177,7 +171,7 @@ public class ComputerService : IComputerService
         computer.LastActivity = DateTimeOffset.UtcNow;
         await _context.SaveChangesAsync();
 
-        return _mapper.Map<ComputerDto>(computer);
+        return computer.CopyMatchingPropertiesToNew<ComputerDto>();
     }
 
     /// <inheritdoc />

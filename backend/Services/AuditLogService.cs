@@ -1,9 +1,8 @@
-﻿using Backend.Domain.Context;
-using Backend.Domain.Entities;
+using Backend.Context;
+using Backend.Entities;
 using Backend.DTOs.AuditLogs;
+using Backend.Helpers;
 using Backend.Models;
-using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -14,19 +13,14 @@ namespace Backend.Services;
 public class AuditLogService : IAuditLogService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<AuditLogService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AuditLogService"/> class.
     /// </summary>
-    /// <param name="context">The database context.</param>
-    /// <param name="mapper">The Mapster instance.</param>
-    /// <param name="logger">The logger instance.</param>
-    public AuditLogService(MainDbContext context, IMapper mapper, ILogger<AuditLogService> logger)
+    public AuditLogService(MainDbContext context, ILogger<AuditLogService> logger)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -89,7 +83,7 @@ public class AuditLogService : IAuditLogService
             .Take(pageSize)
             .ToListAsync();
 
-        var logDtos = _mapper.Map<List<AuditLogDto>>(logs);
+        var logDtos = logs.Select(l => l.CopyMatchingPropertiesToNew<AuditLogDto>()).ToList();
 
         _logger.LogInformation(
             "Retrieved {Count} audit logs (page {PageNumber} of {TotalPages})",
@@ -113,7 +107,7 @@ public class AuditLogService : IAuditLogService
             return null;
         }
 
-        var logDto = _mapper.Map<AuditLogDto>(log);
+        var logDto = log.CopyMatchingPropertiesToNew<AuditLogDto>();
 
         _logger.LogInformation("Retrieved audit log {RowId}", rowId);
 
@@ -125,13 +119,13 @@ public class AuditLogService : IAuditLogService
     {
         // _logger.LogInformation("Creating new audit log entry");
 
-        var log = _mapper.Map<Log>(createDto);
+        var log = createDto.CopyMatchingPropertiesToNew<Log>();
         log.AsOf = DateTimeOffset.UtcNow;
 
         _context.Logs.Add(log);
         await _context.SaveChangesAsync();
 
-        var logDto = _mapper.Map<AuditLogDto>(log);
+        var logDto = log.CopyMatchingPropertiesToNew<AuditLogDto>();
 
         // _logger.LogInformation("Successfully created audit log {RowId}", log.RowId);
 

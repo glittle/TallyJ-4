@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Security.Claims;
 using Backend.DTOs.Elections;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.Services;
 
 namespace Backend.Tests.UnitTests;
@@ -193,7 +193,7 @@ public class ElectionServiceTests : ServiceTestBase
                 RowVersion = new byte[8]
             };
             Context.Elections.Add(election);
-            Context.JoinElectionUsers.Add(new Backend.Domain.Entities.JoinElectionUser
+            Context.JoinElectionUsers.Add(new Backend.Entities.JoinElectionUser
             {
                 ElectionGuid = electionGuid,
                 UserId = _testUserId
@@ -228,7 +228,7 @@ public class ElectionServiceTests : ServiceTestBase
                 RowVersion = new byte[8]
             };
             Context.Elections.Add(election);
-            Context.JoinElectionUsers.Add(new Backend.Domain.Entities.JoinElectionUser
+            Context.JoinElectionUsers.Add(new Backend.Entities.JoinElectionUser
             {
                 ElectionGuid = electionGuid,
                 UserId = _testUserId

@@ -1,4 +1,4 @@
-﻿using Backend.DTOs.Security;
+using Backend.DTOs.Security;
 using Backend.Models;
 
 namespace Backend.Services;
@@ -50,7 +50,7 @@ public class SecurityAuditLogFilterDto
     /// <summary>
     /// Filter by specific event type.
     /// </summary>
-    public global::Backend.Domain.SecurityEventType? EventType { get; set; }
+    public global::Backend.SecurityEventType? EventType { get; set; }
 
     /// <summary>
     /// Filter by user ID.
@@ -75,7 +75,7 @@ public class SecurityAuditLogFilterDto
     /// <summary>
     /// Filter by severity level.
     /// </summary>
-    public global::Backend.Domain.SecurityEventSeverity? Severity { get; set; }
+    public global::Backend.SecurityEventSeverity? Severity { get; set; }
 
     /// <summary>
     /// Start date for filtering.
@@ -136,5 +136,5 @@ public class SecurityStatisticsDto
     /// <summary>
     /// Events grouped by type.
     /// </summary>
-    public Dictionary<global::Backend.Domain.SecurityEventType, int> EventsByType { get; set; } = new();
+    public Dictionary<global::Backend.SecurityEventType, int> EventsByType { get; set; } = new();
 }

@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Headers;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Backend.Domain.Context;
-using Backend.Domain.Entities;
-using Backend.Domain.Identity;
+using Backend.Context;
+using Backend.Entities;
+using Backend.Identity;
 using Backend.Middleware;
 
 namespace Backend.Tests.IntegrationTests;
@@ -220,7 +220,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             DateOfElection = DateTime.UtcNow.AddDays(30),
             ElectionType = "LSA",
             NumberToElect = 3,
-            ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
+            ElectionStage = Backend.Enumerations.ElectionStage.SettingUp,
             ShowAsTest = true
         };
 
@@ -231,7 +231,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
             DateOfElection = DateTime.UtcNow.AddDays(60),
             ElectionType = "NSA",
             NumberToElect = 1,
-            ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
+            ElectionStage = Backend.Enumerations.ElectionStage.SettingUp,
             ShowAsTest = true
         };
 

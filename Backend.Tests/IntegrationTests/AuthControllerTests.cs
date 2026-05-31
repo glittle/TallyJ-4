@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -521,16 +521,16 @@ public class AuthControllerTests : IntegrationTestBase
 
         using (var scope = Factory.Services.CreateScope())
         {
-            var context = scope.ServiceProvider.GetRequiredService<Backend.Domain.Context.MainDbContext>();
-            var election = new Backend.Domain.Entities.Election
+            var context = scope.ServiceProvider.GetRequiredService<Backend.Context.MainDbContext>();
+            var election = new Backend.Entities.Election
             {
                 ElectionGuid = electionGuid,
                 Name = "Test Teller Login Election",
-                ElectionType = Backend.Domain.Enumerations.ElectionTypeEnum.LSA.Code,
-                ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
+                ElectionType = Backend.Enumerations.ElectionTypeEnum.LSA.Code,
+                ElectionMode = Backend.Enumerations.ElectionModeEnum.Normal.Code,
                 NumberToElect = 9,
                 DateOfElection = testDate.AddDays(1),
-                ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
+                ElectionStage = Backend.Enumerations.ElectionStage.SettingUp,
                 ElectionPasscode = accessCode,
                 ListedForPublicAsOf = testDate, // Open for teller access
                 OwnerLoginId = "admin@tallyj.test",
@@ -590,16 +590,16 @@ public class AuthControllerTests : IntegrationTestBase
 
         using (var scope = Factory.Services.CreateScope())
         {
-            var context = scope.ServiceProvider.GetRequiredService<Backend.Domain.Context.MainDbContext>();
-            var election = new Backend.Domain.Entities.Election
+            var context = scope.ServiceProvider.GetRequiredService<Backend.Context.MainDbContext>();
+            var election = new Backend.Entities.Election
             {
                 ElectionGuid = electionGuid,
                 Name = "Test Election Invalid Code",
-                ElectionType = Backend.Domain.Enumerations.ElectionTypeEnum.LSA.Code,
-                ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
+                ElectionType = Backend.Enumerations.ElectionTypeEnum.LSA.Code,
+                ElectionMode = Backend.Enumerations.ElectionModeEnum.Normal.Code,
                 NumberToElect = 9,
                 DateOfElection = testDate.AddDays(1),
-                ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
+                ElectionStage = Backend.Enumerations.ElectionStage.SettingUp,
                 ElectionPasscode = "CorrectCode",
                 ListedForPublicAsOf = testDate,
                 OwnerLoginId = "admin@tallyj.test",
@@ -638,16 +638,16 @@ public class AuthControllerTests : IntegrationTestBase
 
         using (var scope = Factory.Services.CreateScope())
         {
-            var context = scope.ServiceProvider.GetRequiredService<Backend.Domain.Context.MainDbContext>();
-            var election = new Backend.Domain.Entities.Election
+            var context = scope.ServiceProvider.GetRequiredService<Backend.Context.MainDbContext>();
+            var election = new Backend.Entities.Election
             {
                 ElectionGuid = electionGuid,
                 Name = "Closed Election",
-                ElectionType = Backend.Domain.Enumerations.ElectionTypeEnum.LSA.Code,
-                ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
+                ElectionType = Backend.Enumerations.ElectionTypeEnum.LSA.Code,
+                ElectionMode = Backend.Enumerations.ElectionModeEnum.Normal.Code,
                 NumberToElect = 9,
                 DateOfElection = testDate.AddDays(1),
-                ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
+                ElectionStage = Backend.Enumerations.ElectionStage.SettingUp,
                 ElectionPasscode = accessCode,
                 ListedForPublicAsOf = null, // Closed for teller access
                 OwnerLoginId = "admin@tallyj.test",

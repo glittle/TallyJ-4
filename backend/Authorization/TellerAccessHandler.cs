@@ -1,4 +1,4 @@
-﻿using Backend.Domain.Context;
+using Backend.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 

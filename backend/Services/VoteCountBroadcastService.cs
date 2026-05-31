@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using Backend.Domain.Context;
+using Backend.Context;
 using Backend.DTOs.SignalR;
 using Microsoft.EntityFrameworkCore;
 

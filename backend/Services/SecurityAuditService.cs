@@ -1,6 +1,6 @@
-﻿using Backend.Domain;
-using Backend.Domain.Context;
-using Backend.Domain.Entities;
+using Backend;
+using Backend.Context;
+using Backend.Entities;
 using Backend.DTOs.Security;
 using Backend.Models;
 using Mapster;
@@ -230,10 +230,10 @@ public class SecurityAuditService : ISecurityAuditService
         {
             TotalEvents = logs.Count,
             SuspiciousEvents = logs.Count(l => l.IsSuspicious),
-            FailedLoginAttempts = logs.Count(l => l.EventType == Backend.Domain.SecurityEventType.LoginFailure),
-            SuccessfulLogins = logs.Count(l => l.EventType == Backend.Domain.SecurityEventType.LoginSuccess),
-            AccountLockouts = logs.Count(l => l.EventType == Backend.Domain.SecurityEventType.AccountLocked),
-            RateLimitViolations = logs.Count(l => l.EventType == Backend.Domain.SecurityEventType.RateLimitExceeded)
+            FailedLoginAttempts = logs.Count(l => l.EventType == Backend.SecurityEventType.LoginFailure),
+            SuccessfulLogins = logs.Count(l => l.EventType == Backend.SecurityEventType.LoginSuccess),
+            AccountLockouts = logs.Count(l => l.EventType == Backend.SecurityEventType.AccountLocked),
+            RateLimitViolations = logs.Count(l => l.EventType == Backend.SecurityEventType.RateLimitExceeded)
         };
 
         // Top suspicious IPs
@@ -264,13 +264,13 @@ public class SecurityAuditService : ISecurityAuditService
     public async Task DetectSuspiciousPatternsAsync(DTOs.Security.CreateSecurityAuditLogDto createDto)
     {
         // Check for brute force patterns
-        if (createDto.EventType == Backend.Domain.SecurityEventType.LoginFailure && !string.IsNullOrEmpty(createDto.IpAddress))
+        if (createDto.EventType == Backend.SecurityEventType.LoginFailure && !string.IsNullOrEmpty(createDto.IpAddress))
         {
             await CheckForBruteForceAttackAsync(createDto.IpAddress, createDto.Email);
         }
 
         // Check for unusual login locations (simplified - in production would use geo-IP)
-        if (createDto.EventType == Backend.Domain.SecurityEventType.LoginSuccess && !string.IsNullOrEmpty(createDto.IpAddress))
+        if (createDto.EventType == Backend.SecurityEventType.LoginSuccess && !string.IsNullOrEmpty(createDto.IpAddress))
         {
             await CheckForUnusualLoginLocationAsync(createDto.UserId, createDto.IpAddress);
         }
@@ -280,7 +280,7 @@ public class SecurityAuditService : ISecurityAuditService
     {
         var recentFailures = await _context.SecurityAuditLogs
             .Where(l => l.IpAddress == ipAddress &&
-                       l.EventType == Backend.Domain.SecurityEventType.LoginFailure &&
+                       l.EventType == Backend.SecurityEventType.LoginFailure &&
                        l.Timestamp >= DateTimeOffset.UtcNow.AddMinutes(-15))
             .CountAsync();
 
@@ -288,12 +288,12 @@ public class SecurityAuditService : ISecurityAuditService
         {
             await LogSecurityEventAsync(new DTOs.Security.CreateSecurityAuditLogDto
             {
-                EventType = Backend.Domain.SecurityEventType.BruteForceAttemptDetected,
+                EventType = Backend.SecurityEventType.BruteForceAttemptDetected,
                 IpAddress = ipAddress,
                 Email = email,
                 Details = $"Brute force attack detected: {recentFailures} failed login attempts from {ipAddress} in the last 15 minutes",
                 IsSuspicious = true,
-                Severity = Backend.Domain.SecurityEventSeverity.Critical
+                Severity = Backend.SecurityEventSeverity.Critical
             });
         }
     }
@@ -305,7 +305,7 @@ public class SecurityAuditService : ISecurityAuditService
         // Get user's recent successful logins from different IPs
         var recentLogins = await _context.SecurityAuditLogs
             .Where(l => l.UserId == userId &&
-                       l.EventType == Backend.Domain.SecurityEventType.LoginSuccess &&
+                       l.EventType == Backend.SecurityEventType.LoginSuccess &&
                        l.Timestamp >= DateTimeOffset.UtcNow.AddDays(-30) &&
                        l.IpAddress != ipAddress)
             .Select(l => l.IpAddress)
@@ -317,12 +317,12 @@ public class SecurityAuditService : ISecurityAuditService
         {
             await LogSecurityEventAsync(new DTOs.Security.CreateSecurityAuditLogDto
             {
-                EventType = Backend.Domain.SecurityEventType.UnusualLoginLocation,
+                EventType = Backend.SecurityEventType.UnusualLoginLocation,
                 UserId = userId,
                 IpAddress = ipAddress,
                 Details = $"Unusual login location detected: user logged in from {ipAddress} after logging from {recentLogins.Count} different IPs in the last 30 days",
                 IsSuspicious = true,
-                Severity = Backend.Domain.SecurityEventSeverity.Warning
+                Severity = Backend.SecurityEventSeverity.Warning
             });
         }
     }

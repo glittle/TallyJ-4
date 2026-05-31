@@ -1,10 +1,10 @@
-using Backend.Domain.Context;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using Backend.Context;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.DTOs.Reports;
 using Microsoft.EntityFrameworkCore;
 
-using LocationTypeEnum = Backend.Domain.Enumerations.LocationType;
+using LocationTypeEnum = Backend.Enumerations.LocationType;
 
 namespace Backend.Services;
 

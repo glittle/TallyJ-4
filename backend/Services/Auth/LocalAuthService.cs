@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Backend.DTOs.Auth;
-using Backend.Domain.Context;
-using Backend.Domain.Identity;
+using Backend.Context;
+using Backend.Identity;
 
 namespace Backend.Services.Auth;
 

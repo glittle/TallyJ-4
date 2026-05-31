@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Backend.Domain.Context;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using Backend.Context;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.DTOs.OnlineVoting;
 using Backend.Services.Auth;
 using Google.Apis.Auth;
@@ -284,7 +284,7 @@ public class OnlineVotingService : IOnlineVotingService
             }
 
             var location = await _context.Locations
-                .FirstOrDefaultAsync(l => l.ElectionGuid == dto.ElectionGuid && l.LocationTypeCode == nameof(Domain.Enumerations.LocationType.Online));
+                .FirstOrDefaultAsync(l => l.ElectionGuid == dto.ElectionGuid && l.LocationTypeCode == nameof(LocationType.Online));
 
             if (location == null)
             {
@@ -294,7 +294,7 @@ public class OnlineVotingService : IOnlineVotingService
                     Name = "Online",
                     ContactInfo = "Online voting",
                     SortOrder = 999,
-                    LocationTypeCode = nameof(Domain.Enumerations.LocationType.Online)
+                    LocationTypeCode = nameof(LocationType.Online)
                 };
                 _context.Locations.Add(location);
                 await _context.SaveChangesAsync();
