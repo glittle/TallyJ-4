@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.OpenApi;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -202,9 +201,9 @@ public static class ProgramExtensions
             var existingContent = File.ReadAllText(path);
             try
             {
-                var existingJson = JToken.Parse(existingContent);
-                var newJson = JToken.Parse(newContent);
-                shouldWrite = !JToken.DeepEquals(existingJson, newJson);
+                using var existingDoc = JsonDocument.Parse(existingContent);
+                using var newDoc = JsonDocument.Parse(newContent);
+                shouldWrite = !JsonDeepEquals(existingDoc.RootElement, newDoc.RootElement);
             }
             catch (JsonException)
             {
@@ -226,6 +225,63 @@ public static class ProgramExtensions
         }
 
         return app;
+    }
+
+    /// <summary>
+    /// Recursive deep equality comparison for JsonElement (replacement for Newtonsoft JToken.DeepEquals).
+    /// </summary>
+    private static bool JsonDeepEquals(JsonElement a, JsonElement b)
+    {
+        if (a.ValueKind != b.ValueKind)
+            return false;
+
+        switch (a.ValueKind)
+        {
+            case JsonValueKind.Object:
+                var aProps = a.EnumerateObject().ToDictionary(p => p.Name, p => p.Value);
+                var bProps = b.EnumerateObject().ToDictionary(p => p.Name, p => p.Value);
+
+                if (aProps.Count != bProps.Count)
+                    return false;
+
+                foreach (var kvp in aProps)
+                {
+                    if (!bProps.TryGetValue(kvp.Key, out var bValue) || !JsonDeepEquals(kvp.Value, bValue))
+                        return false;
+                }
+                return true;
+
+            case JsonValueKind.Array:
+                var aArray = a.EnumerateArray().ToArray();
+                var bArray = b.EnumerateArray().ToArray();
+
+                if (aArray.Length != bArray.Length)
+                    return false;
+
+                for (int i = 0; i < aArray.Length; i++)
+                {
+                    if (!JsonDeepEquals(aArray[i], bArray[i]))
+                        return false;
+                }
+                return true;
+
+            case JsonValueKind.String:
+                return a.GetString() == b.GetString();
+
+            case JsonValueKind.Number:
+                // Compare as decimal to handle integers/floats consistently
+                return a.GetRawText() == b.GetRawText();
+
+            case JsonValueKind.True:
+            case JsonValueKind.False:
+                return a.GetBoolean() == b.GetBoolean();
+
+            case JsonValueKind.Null:
+                return true;
+
+            default:
+                return a.GetRawText() == b.GetRawText();
+        }
     }
 }
 
