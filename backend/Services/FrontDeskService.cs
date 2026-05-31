@@ -3,8 +3,7 @@ using Backend.Context;
 using Backend.Entities;
 using Backend.DTOs.FrontDesk;
 using Backend.DTOs.SignalR;
-using Mapster;
-using MapsterMapper;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -15,25 +14,18 @@ namespace Backend.Services;
 public class FrontDeskService : IFrontDeskService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<FrontDeskService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FrontDeskService"/> class.
     /// </summary>
-    /// <param name="context">The database context.</param>
-    /// <param name="mapper">The Mapster instance.</param>
-    /// <param name="logger">The logger instance.</param>
-    /// <param name="signalRNotificationService">The SignalR notification service.</param>
     public FrontDeskService(
         MainDbContext context,
-        IMapper mapper,
         ILogger<FrontDeskService> logger,
         ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
     }
@@ -54,7 +46,7 @@ public class FrontDeskService : IFrontDeskService
                 voter.PersonGuid, voter.RegistrationHistory ?? "null");
         }
 
-        return _mapper.Map<List<FrontDeskVoterDto>>(voters);
+        return voters.Select(MapToFrontDeskVoterDto).ToList();
     }
 
     /// <inheritdoc />
@@ -107,7 +99,7 @@ public class FrontDeskService : IFrontDeskService
         _logger.LogInformation("Voter {PersonGuid} checked in for election {ElectionGuid} with envelope {EnvNum}",
             person.PersonGuid, electionGuid, person.EnvNum);
 
-        var voterDto = _mapper.Map<FrontDeskVoterDto>(person);
+        var voterDto = MapToFrontDeskVoterDto(person);
 
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
 
@@ -182,7 +174,7 @@ public class FrontDeskService : IFrontDeskService
         _logger.LogInformation("Voter {PersonGuid} unregistered from election {ElectionGuid}. Former envelope: {EnvNum}",
             person.PersonGuid, electionGuid, envNum);
 
-        var voterDto = _mapper.Map<FrontDeskVoterDto>(person);
+        var voterDto = MapToFrontDeskVoterDto(person);
 
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
 
@@ -240,12 +232,38 @@ public class FrontDeskService : IFrontDeskService
         _logger.LogInformation("Updated flags for person {PersonGuid} in election {ElectionGuid}",
             person.PersonGuid, electionGuid);
 
-        var voterDto = _mapper.Map<FrontDeskVoterDto>(person);
+        var voterDto = MapToFrontDeskVoterDto(person);
 
         // Send SignalR notification to update all connected clients
         await _signalRNotificationService.SendPersonFlagsUpdatedAsync(electionGuid, voterDto);
 
         return voterDto;
+    }
+
+    // Explicit mapping for FrontDeskVoterDto (replaces logic that was in Mapster profiles).
+    // Handles the JSON deserialization of RegistrationHistory with good error context.
+    private static FrontDeskVoterDto MapToFrontDeskVoterDto(Person person)
+    {
+        var dto = person.CopyMatchingPropertiesToNew<FrontDeskVoterDto>();
+
+        dto.RegistrationHistory = DeserializeRegistrationHistory(person.RegistrationHistory, person.PersonGuid);
+
+        return dto;
+    }
+
+    private static List<RegistrationHistoryEntryDto>? DeserializeRegistrationHistory(string? json, Guid personGuid)
+    {
+        if (string.IsNullOrEmpty(json))
+            return null;
+
+        try
+        {
+            return JsonSerializer.Deserialize<List<RegistrationHistoryEntryDto>>(json);
+        }
+        catch (JsonException ex)
+        {
+            throw new InvalidOperationException($"Failed to deserialize RegistrationHistory for Person {personGuid}: {ex.Message}. JSON: {json}", ex);
+        }
     }
 }
 

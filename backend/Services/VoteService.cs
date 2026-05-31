@@ -2,8 +2,7 @@ using Backend.Context;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.Votes;
-using Mapster;
-using MapsterMapper;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -15,21 +14,15 @@ namespace Backend.Services;
 public class VoteService : IVoteService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<VoteService> _logger;
     private readonly IVoteCountBroadcastService _voteCountBroadcastService;
 
     /// <summary>
     /// Initializes a new instance of the VoteService.
     /// </summary>
-    /// <param name="context">The main database context for accessing vote data.</param>
-    /// <param name="mapper">Mapster instance for object mapping operations.</param>
-    /// <param name="logger">Logger for recording vote service operations.</param>
-    /// <param name="voteCountBroadcastService">Service for batching and broadcasting vote count updates.</param>
-    public VoteService(MainDbContext context, IMapper mapper, ILogger<VoteService> logger, IVoteCountBroadcastService voteCountBroadcastService)
+    public VoteService(MainDbContext context, ILogger<VoteService> logger, IVoteCountBroadcastService voteCountBroadcastService)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
         _voteCountBroadcastService = voteCountBroadcastService;
     }
@@ -157,7 +150,7 @@ public class VoteService : IVoteService
             QueueVoteCountBroadcast(createDto.PersonGuid.Value, electionGuid);
         }
 
-        var voteDto = await GetVoteByIdAsync(vote.RowId) ?? _mapper.Map<VoteDto>(vote);
+        var voteDto = await GetVoteByIdAsync(vote.RowId) ?? MapToVoteDto(vote);
         return new VoteWithBallotStatusDto { Vote = voteDto, BallotStatusCode = ballot.StatusCode };
     }
 
@@ -302,9 +295,9 @@ public class VoteService : IVoteService
             personGuid, electionGuid);
     }
 
-    private VoteDto MapToVoteDto(Vote vote)
+    private static VoteDto MapToVoteDto(Vote vote)
     {
-        var dto = _mapper.Map<VoteDto>(vote);
+        var dto = vote.CopyMatchingPropertiesToNew<VoteDto>();
         dto.PersonFullName = vote.Person?.FullName;
         return dto;
     }

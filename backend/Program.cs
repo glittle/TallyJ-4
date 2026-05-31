@@ -11,7 +11,6 @@ using Backend.Middleware;
 using Backend.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Mapster;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -177,12 +176,6 @@ void ConfigureServices(WebApplicationBuilder builder)
     services.AddControllers();
     services.AddFluentValidationAutoValidation();
     services.AddValidatorsFromAssemblyContaining<Program>();
-
-    if (TypeAdapterConfig.GlobalSettings.RuleMap.Count == 0)
-    {
-        TypeAdapterConfig.GlobalSettings.Scan(typeof(Program).Assembly);
-    }
-    services.AddMapster();
 
     RegisterApplicationServices(services);
     RegisterAuthServices(services);

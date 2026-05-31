@@ -15,7 +15,7 @@ public class SecurityAuditServiceTests : ServiceTestBase
     public SecurityAuditServiceTests()
     {
         _loggerMock = new Mock<ILogger<SecurityAuditService>>();
-        _service = new SecurityAuditService(Context, Mapper, _loggerMock.Object);
+        _service = new SecurityAuditService(Context, _loggerMock.Object);
     }
 
     [Fact]

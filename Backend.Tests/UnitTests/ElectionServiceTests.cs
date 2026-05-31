@@ -36,7 +36,7 @@ public class ElectionServiceTests : ServiceTestBase
         var httpContext = new DefaultHttpContext { User = claimsPrincipal };
         _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
         
-        _service = new ElectionService(Context, Mapper, _loggerMock.Object, _signalRMock.Object, _httpContextAccessorMock.Object);
+        _service = new ElectionService(Context, _loggerMock.Object, _signalRMock.Object, _httpContextAccessorMock.Object);
     }
 
     [Fact]

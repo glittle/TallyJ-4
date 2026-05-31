@@ -3,8 +3,7 @@ using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.Elections;
 using Backend.DTOs.Setup;
-using Mapster;
-using MapsterMapper;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -16,19 +15,14 @@ namespace Backend.Services;
 public class SetupService : ISetupService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<SetupService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the SetupService.
     /// </summary>
-    /// <param name="context">The main database context for accessing election data.</param>
-    /// <param name="mapper">Mapster instance for object mapping operations.</param>
-    /// <param name="logger">Logger for recording setup service operations.</param>
-    public SetupService(MainDbContext context, IMapper mapper, ILogger<SetupService> logger)
+    public SetupService(MainDbContext context, ILogger<SetupService> logger)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -56,7 +50,7 @@ public class SetupService : ISetupService
 
         _logger.LogInformation("Created election (Step 1) {ElectionGuid} - {Name}", election.ElectionGuid, election.Name);
 
-        var electionDto = _mapper.Map<ElectionDto>(election);
+        var electionDto = election.CopyMatchingPropertiesToNew<ElectionDto>();
         electionDto.VoterCount = 0;
         electionDto.BallotCount = 0;
         electionDto.LocationCount = 0;
@@ -88,7 +82,7 @@ public class SetupService : ISetupService
 
         _logger.LogInformation("Configured election (Step 2) {ElectionGuid}", electionGuid);
 
-        var electionDto = _mapper.Map<ElectionDto>(election);
+        var electionDto = election.CopyMatchingPropertiesToNew<ElectionDto>();
         electionDto.VoterCount = 0;
         electionDto.BallotCount = 0;
         electionDto.LocationCount = 0;

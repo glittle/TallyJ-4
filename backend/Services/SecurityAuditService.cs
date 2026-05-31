@@ -3,8 +3,6 @@ using Backend.Context;
 using Backend.Entities;
 using Backend.DTOs.Security;
 using Backend.Models;
-using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -15,19 +13,14 @@ namespace Backend.Services;
 public class SecurityAuditService : ISecurityAuditService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<SecurityAuditService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SecurityAuditService"/> class.
     /// </summary>
-    /// <param name="context">The database context.</param>
-    /// <param name="mapper">The Mapster instance.</param>
-    /// <param name="logger">The logger instance.</param>
-    public SecurityAuditService(MainDbContext context, IMapper mapper, ILogger<SecurityAuditService> logger)
+    public SecurityAuditService(MainDbContext context, ILogger<SecurityAuditService> logger)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
     }
 

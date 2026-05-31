@@ -21,7 +21,7 @@ public class VoteServiceTests : ServiceTestBase
     {
         _loggerMock = new Mock<ILogger<VoteService>>();
         _voteCountBroadcastMock = new Mock<IVoteCountBroadcastService>();
-        _service = new VoteService(Context, Mapper, _loggerMock.Object, _voteCountBroadcastMock.Object);
+        _service = new VoteService(Context, _loggerMock.Object, _voteCountBroadcastMock.Object);
 
         SeedElectionGraph();
     }

@@ -17,7 +17,7 @@ public class PeopleServiceTests : ServiceTestBase
     {
         _loggerMock = new Mock<ILogger<PeopleService>>();
         _signalRMock = new Mock<ISignalRNotificationService>();
-        _service = new PeopleService(Context, Mapper, _loggerMock.Object, _signalRMock.Object);
+        _service = new PeopleService(Context, _loggerMock.Object, _signalRMock.Object);
     }
 
     [Fact]
