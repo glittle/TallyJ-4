@@ -426,6 +426,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
 
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
 
+        await EnsureConsistentMigrationHistoryAsync(context, Log.Logger);
         await context.Database.MigrateAsync();
     }
 
@@ -437,6 +438,8 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
             Log.Information("Migrating the database before seeding as required");
             using var migrationScope = app.Services.CreateScope();
             var migrationContext = migrationScope.ServiceProvider.GetRequiredService<MainDbContext>();
+
+            await EnsureConsistentMigrationHistoryAsync(migrationContext, Log.Logger);
             await migrationContext.Database.MigrateAsync();
         }
 
@@ -536,6 +539,114 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
         Log.Information("Application Stopping...");
         await Log.CloseAndFlushAsync();
     });
+}
+
+/// <summary>
+/// Detects a common problematic state after migration squashing:
+/// The new "Initial" migration is still pending according to EF, but the database
+/// already contains TallyJ tables. This typically means an existing production/client
+/// database is missing the required row in the custom migrations history table
+/// (__EFMigrations_TallyJ4).
+///
+/// Instead of letting EF fail with a cryptic "object already exists" error,
+/// we fail fast with a clear, actionable message.
+/// </summary>
+static async Task EnsureConsistentMigrationHistoryAsync(MainDbContext context, Serilog.ILogger logger)
+{
+    try
+    {
+        var pendingMigrations = (await context.Database.GetPendingMigrationsAsync()).ToList();
+
+        const string initialMigrationId = "20260531185953_Initial";
+
+        if (pendingMigrations.Contains(initialMigrationId))
+        {
+            // Probe the database to see if this looks like an existing TallyJ installation
+            // rather than a brand new empty database.
+            var connection = context.Database.GetDbConnection();
+            var openedHere = false;
+
+            if (connection.State != System.Data.ConnectionState.Open)
+            {
+                await connection.OpenAsync();
+                openedHere = true;
+            }
+
+            try
+            {
+                using var cmd = connection.CreateCommand();
+                // Elections is a core domain table created very early in the Initial migration.
+                cmd.CommandText = "SELECT CASE WHEN OBJECT_ID(N'[Elections]', N'U') IS NOT NULL THEN 1 ELSE 0 END";
+                var result = await cmd.ExecuteScalarAsync();
+                var hasExistingElectionsTable = result is not null && Convert.ToInt32(result) == 1;
+
+                if (hasExistingElectionsTable)
+                {
+                    const string historyTable = "__EFMigrations_TallyJ4";
+
+                    var diagnosticMessage =
+                        $"""
+                        ╔══════════════════════════════════════════════════════════════════════════════╗
+                        ║  CRITICAL: DATABASE MIGRATION STATE INCONSISTENT                             ║
+                        ╠══════════════════════════════════════════════════════════════════════════════╣
+                        ║                                                                              ║
+                        ║  EF Core reports that migration '{initialMigrationId}' is still pending.     ║
+                        ║  However, the database already contains core TallyJ tables (e.g. Elections). ║
+                        ║                                                                              ║
+                        ║  This almost always means the migration history row is missing from the      ║
+                        ║  custom history table used by MainDbContext.                                   ║
+                        ║                                                                              ║
+                        ║  History table actually used by this application: [{historyTable}]           ║
+                        ║                                                                              ║
+                        ║  TO FIX:                                                                     ║
+                        ║  1. Connect to the SQL Server database with a tool that can run SQL.         ║
+                        ║  2. Execute the following statement:                                         ║
+                        ║                                                                              ║
+                        ║     INSERT INTO [{historyTable}] ([MigrationId], [ProductVersion])           ║
+                        ║     VALUES ('{initialMigrationId}', '10.0.6');                               ║
+                        ║                                                                              ║
+                        ║  3. Verify the row was added:                                                ║
+                        ║     SELECT * FROM [{historyTable}];                                          ║
+                        ║                                                                              ║
+                        ║  4. Restart the application.                                                 ║
+                        ║                                                                              ║
+                        ║  If you are unsure, or this is a production system, take a backup first.     ║
+                        ║  After applying the fix, migrations will proceed normally on future updates. ║
+                        ║                                                                              ║
+                        ╚══════════════════════════════════════════════════════════════════════════════╝
+                        """;
+
+                    logger.Fatal(diagnosticMessage);
+
+                    // Also log the full pending list for support diagnostics
+                    logger.Fatal("Pending migrations detected: {PendingMigrations}", string.Join(", ", pendingMigrations));
+
+                    throw new InvalidOperationException(
+                        $"Database migration blocked. The row for migration '{initialMigrationId}' is missing from [{historyTable}]. " +
+                        "See the Fatal log message above for the exact SQL command to run.");
+                }
+            }
+            finally
+            {
+                if (openedHere && connection.State == System.Data.ConnectionState.Open)
+                {
+                    await connection.CloseAsync();
+                }
+            }
+        }
+    }
+    catch (InvalidOperationException)
+    {
+        // Re-throw our intentional blocking exception
+        throw;
+    }
+    catch (Exception ex)
+    {
+        // If the guard itself fails (e.g. permission issues on the history table or schema probe),
+        // log it but do not block startup. Let the normal EF MigrateAsync() run and fail
+        // with whatever error it would have produced. This avoids making things worse.
+        logger.Warning(ex, "Migration history consistency check encountered an unexpected error and was skipped");
+    }
 }
 
 var builder = WebApplication.CreateBuilder(args);
