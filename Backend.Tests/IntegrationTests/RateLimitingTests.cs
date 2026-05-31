@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Backend.Application.DTOs.Auth;
+using Backend.DTOs.Auth;
 using Xunit;
 
 namespace Backend.Tests.IntegrationTests;

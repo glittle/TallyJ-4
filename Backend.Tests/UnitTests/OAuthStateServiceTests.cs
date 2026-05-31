@@ -1,4 +1,4 @@
-﻿using Backend.Application.Services.Auth;
+﻿using Backend.Services.Auth;
 
 namespace Backend.Tests.UnitTests;
 

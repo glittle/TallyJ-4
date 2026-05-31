@@ -1428,6 +1428,9 @@ export const CandidateResultDtoSchema = {
 } as const;
 
 export const ChangeElectionStageDtoSchema = {
+    required: [
+        'electionStage'
+    ],
     type: 'object',
     properties: {
         electionStage: {

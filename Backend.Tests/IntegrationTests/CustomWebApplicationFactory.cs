@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Backend.Domain.Context;
 using Backend.EF.Data;
-using Backend.Application.Services.Auth;
+using Backend.Services.Auth;
 using MimeKit;
 
 namespace Backend.Tests.IntegrationTests;
@@ -51,7 +51,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             });
 
             // Mock external services for testing
-            services.AddSingleton<Backend.Application.Services.Auth.IEmailSender, MockEmailSender>();
+            services.AddSingleton<Backend.Services.Auth.IEmailSender, MockEmailSender>();
         });
     }
 

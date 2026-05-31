@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Backend.Application.Services.Auth;
+using Backend.Services.Auth;
 using Backend.Domain.Entities;
 using Backend.Domain.Identity;
 

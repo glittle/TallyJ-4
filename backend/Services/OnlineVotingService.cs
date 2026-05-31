@@ -9,7 +9,7 @@ using Backend.Domain.Context;
 using Backend.Domain.Entities;
 using Backend.Domain.Enumerations;
 using Backend.DTOs.OnlineVoting;
-using Backend.Application.Services.Auth;
+using Backend.Services.Auth;
 using Google.Apis.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
