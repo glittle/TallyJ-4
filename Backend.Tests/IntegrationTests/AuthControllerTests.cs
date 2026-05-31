@@ -5,7 +5,7 @@ using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Backend.Application.DTOs.Auth;
+using Backend.DTOs.Auth;
 using Backend.Middleware;
 using Xunit;
 
@@ -530,7 +530,7 @@ public class AuthControllerTests : IntegrationTestBase
                 ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
                 NumberToElect = 9,
                 DateOfElection = testDate.AddDays(1),
-                TallyStatus = "NotStarted",
+                ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
                 ElectionPasscode = accessCode,
                 ListedForPublicAsOf = testDate, // Open for teller access
                 OwnerLoginId = "admin@tallyj.test",
@@ -599,7 +599,7 @@ public class AuthControllerTests : IntegrationTestBase
                 ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
                 NumberToElect = 9,
                 DateOfElection = testDate.AddDays(1),
-                TallyStatus = "NotStarted",
+                ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
                 ElectionPasscode = "CorrectCode",
                 ListedForPublicAsOf = testDate,
                 OwnerLoginId = "admin@tallyj.test",
@@ -647,7 +647,7 @@ public class AuthControllerTests : IntegrationTestBase
                 ElectionMode = Backend.Domain.Enumerations.ElectionModeEnum.Normal.Code,
                 NumberToElect = 9,
                 DateOfElection = testDate.AddDays(1),
-                TallyStatus = "NotStarted",
+                ElectionStage = Backend.Domain.Enumerations.ElectionStage.SettingUp,
                 ElectionPasscode = accessCode,
                 ListedForPublicAsOf = null, // Closed for teller access
                 OwnerLoginId = "admin@tallyj.test",

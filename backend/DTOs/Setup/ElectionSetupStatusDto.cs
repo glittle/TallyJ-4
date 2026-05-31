@@ -1,4 +1,6 @@
-﻿namespace Backend.DTOs.Setup;
+﻿using Backend.Domain.Enumerations;
+
+namespace Backend.DTOs.Setup;
 
 /// <summary>
 /// Data transfer object representing the current status of election setup.
@@ -17,9 +19,9 @@ public class ElectionSetupStatusDto
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// The current tally status of the election.
+    /// The current stage of the election.
     /// </summary>
-    public string TallyStatus { get; set; } = string.Empty;
+    public ElectionStage ElectionStage { get; set; }
 
     /// <summary>
     /// Indicates whether election setup step 1 is complete.

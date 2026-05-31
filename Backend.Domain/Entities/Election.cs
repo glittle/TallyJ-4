@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Domain.Enumerations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Domain.Entities;
@@ -38,9 +39,7 @@ public partial class Election
 
     public int? LastEnvNum { get; set; }
 
-    [StringLength(15)]
-    [Unicode(false)]
-    public string? TallyStatus { get; set; }
+    public ElectionStage ElectionStage { get; set; }
 
     public bool? ShowFullReport { get; set; }
 

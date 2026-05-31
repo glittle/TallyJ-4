@@ -64,7 +64,15 @@ public class ElectionService : IElectionService
 
         if (!string.IsNullOrWhiteSpace(status))
         {
-            query = query.Where(e => e.TallyStatus == status);
+            if (Enum.TryParse<ElectionStage>(status, out var stageFilter))
+            {
+                query = query.Where(e => e.ElectionStage == stageFilter);
+            }
+            else
+            {
+                _logger.LogWarning("GetElectionsAsync: Invalid status filter '{Status}' provided", status);
+                return PaginatedResponse<ElectionSummaryDto>.Create([], pageNumber, pageSize, 0);
+            }
         }
 
         var totalCount = await query.CountAsync();
@@ -83,7 +91,7 @@ public class ElectionService : IElectionService
             ElectionGuid = e.ElectionGuid,
             Name = e.Name,
             DateOfElection = e.DateOfElection,
-            TallyStatus = e.TallyStatus,
+            ElectionStage = e.ElectionStage,
             VoterCount = e.People.Count(p => p.CanVote == true),
             BallotCount = e.Locations.SelectMany(l => l.Ballots).Count(),
             ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType),
@@ -133,7 +141,7 @@ public class ElectionService : IElectionService
     {
         var election = _mapper.Map<Election>(createDto);
         election.ElectionGuid = Guid.NewGuid();
-        election.TallyStatus = "Setup";
+        election.ElectionStage = ElectionStage.SettingUp;
         election.RowVersion = new byte[8];
         _context.Elections.Add(election);
         await _context.SaveChangesAsync();
@@ -181,8 +189,38 @@ public class ElectionService : IElectionService
         {
             ElectionGuid = election.ElectionGuid,
             Name = election.Name,
-            TallyStatus = election.TallyStatus,
-            ElectionStatus = null,
+            ElectionStage = election.ElectionStage,
+            UpdatedAt = DateTimeOffset.UtcNow
+        });
+
+        return await GetElectionByGuidAsync(electionGuid);
+    }
+
+    /// <summary>
+    /// Changes the stage of an existing election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election to update.</param>
+    /// <param name="newStage">The new election stage.</param>
+    /// <returns>An ElectionDto representing the updated election, or null if the election was not found.</returns>
+    public async Task<ElectionDto?> ChangeElectionStageAsync(Guid electionGuid, ElectionStage newStage)
+    {
+        var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+
+        if (election == null)
+        {
+            return null;
+        }
+
+        election.ElectionStage = newStage;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Changed election {ElectionGuid} stage to {NewStage}", electionGuid, newStage);
+
+        await _signalRNotificationService.SendElectionUpdateAsync(new ElectionUpdateDto
+        {
+            ElectionGuid = election.ElectionGuid,
+            Name = election.Name,
+            ElectionStage = election.ElectionStage,
             UpdatedAt = DateTimeOffset.UtcNow
         });
 

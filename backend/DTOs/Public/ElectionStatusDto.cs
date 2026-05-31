@@ -28,9 +28,9 @@ public class ElectionStatusDto
     public ElectionTypeCode? ElectionType { get; set; }
 
     /// <summary>
-    /// The current tally status of the election.
+    /// The current stage of the election.
     /// </summary>
-    public string TallyStatus { get; set; } = string.Empty;
+    public ElectionStage ElectionStage { get; set; }
 
     /// <summary>
     /// Whether the election is currently active.

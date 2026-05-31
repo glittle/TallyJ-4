@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Elections;
+﻿using Backend.Domain.Enumerations;
+using Backend.DTOs.Elections;
 using Backend.Models;
 
 namespace Backend.Services;
@@ -39,6 +40,14 @@ public interface IElectionService
     /// <param name="updateDto">The updated election data.</param>
     /// <returns>The updated election data, or null if the election was not found.</returns>
     Task<ElectionDto?> UpdateElectionAsync(Guid electionGuid, UpdateElectionDto updateDto);
+
+    /// <summary>
+    /// Changes the stage of an existing election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election to update.</param>
+    /// <param name="newStage">The new election stage.</param>
+    /// <returns>The updated election data, or null if the election was not found.</returns>
+    Task<ElectionDto?> ChangeElectionStageAsync(Guid electionGuid, ElectionStage newStage);
 
     /// <summary>
     /// Deletes an election by its unique identifier.

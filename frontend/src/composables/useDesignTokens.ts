@@ -28,6 +28,11 @@ export interface DesignTokens {
   shadow: Record<string, string>;
   transition: Record<string, string>;
   zIndex: Record<string, number>;
+  stage: {
+    setup: { color: string; bg: string };
+    gather: { color: string; bg: string };
+    process: { color: string; bg: string };
+  };
 }
 
 export function useDesignTokens() {
@@ -352,6 +357,32 @@ export function useDesignTokens() {
           .getPropertyValue("--z-tooltip")
           .trim(),
       ),
+    },
+    stage: {
+      setup: {
+        color: getComputedStyle(document.documentElement)
+          .getPropertyValue("--color-stage-setup")
+          .trim(),
+        bg: getComputedStyle(document.documentElement)
+          .getPropertyValue("--color-stage-setup-bg")
+          .trim(),
+      },
+      gather: {
+        color: getComputedStyle(document.documentElement)
+          .getPropertyValue("--color-stage-gather")
+          .trim(),
+        bg: getComputedStyle(document.documentElement)
+          .getPropertyValue("--color-stage-gather-bg")
+          .trim(),
+      },
+      process: {
+        color: getComputedStyle(document.documentElement)
+          .getPropertyValue("--color-stage-process")
+          .trim(),
+        bg: getComputedStyle(document.documentElement)
+          .getPropertyValue("--color-stage-process-bg")
+          .trim(),
+      },
     },
   }));
 

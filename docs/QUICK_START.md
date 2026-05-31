@@ -1,5 +1,7 @@
 # TallyJ 4 - Quick Start Guide
 
+> **Note for developers / AI agents**: This is primarily end-user documentation. API paths and commands here may lag behind the current implementation. For the live contract, always consult the running Swagger UI (`/swagger`). See `AGENTS.md` and the implementation notes in this `docs/` folder for accurate technical details.
+
 Get up and running with TallyJ in 15 minutes!
 
 ---
@@ -44,7 +46,7 @@ npm run dev
 
 1. **Create Admin Account**
    ```bash
-   curl -X POST http://localhost:5016/auth/register \
+   curl -X POST http://localhost:5016/api/Auth/registerAccount \
      -H "Content-Type: application/json" \
      -d '{
        "email": "admin@example.com",

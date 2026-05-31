@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.IO;
 using System.Text;
-using Backend.Application.Services.Auth;
+using Backend.Services.Auth;
 using Backend.Domain.Context;
 using Backend.Domain.Identity;
 using Backend.EF.Data;

@@ -1,9 +1,36 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch, onUnmounted } from "vue";
+import { useRoute } from "vue-router";
 import AppHeader from "../components/AppHeader.vue";
 import AppSidebar from "../components/AppSidebar.vue";
+import { useElectionStore } from "../stores/electionStore";
 
 const mobileSidebarOpen = ref(false);
+const route = useRoute();
+const electionStore = useElectionStore();
+
+let previousElectionGuid: string | undefined;
+
+watch(
+  () => route.params.id as string | undefined,
+  async (newId, oldId) => {
+    if (oldId && oldId !== newId) {
+      await electionStore.leaveElection(oldId);
+    }
+    if (newId) {
+      await electionStore.initializeSignalR();
+      await electionStore.joinElection(newId);
+    }
+    previousElectionGuid = newId;
+  },
+  { immediate: true },
+);
+
+onUnmounted(async () => {
+  if (previousElectionGuid) {
+    await electionStore.leaveElection(previousElectionGuid);
+  }
+});
 
 function toggleMobileSidebar() {
   mobileSidebarOpen.value = !mobileSidebarOpen.value;

@@ -139,7 +139,9 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
                     ContactInfo = locationNode.GetAttribute("ContactInfo"),
                     Long = locationNode.GetAttribute("Long"),
                     Lat = locationNode.GetAttribute("Lat"),
-                    TallyStatus = locationNode.GetAttribute("TallyStatus"),
+                    LocationTallyStatus = Enum.TryParse<LocationTallyStatus>(locationNode.GetAttribute("TallyStatus"), out var lts2)
+                        ? lts2
+                        : LocationTallyStatus.NotStarted,
                     SortOrder = ParseInt(locationNode.GetAttribute("SortOrder")),
                     BallotsCollected = ParseInt(locationNode.GetAttribute("BallotsCollected")),
                     LocationTypeCode = locationNode.GetAttribute("LocationTypeCode") ?? LocationType.Manual.ToString()

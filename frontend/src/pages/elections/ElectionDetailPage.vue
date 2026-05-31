@@ -3,7 +3,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { CopyDocument, Delete, Download, Link } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import QRCode from "qrcode";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { electionService } from "../../services/electionService";
@@ -57,20 +57,7 @@ const onlineVotingStatus = computed(() => {
 
 onMounted(async () => {
   await electionStore.fetchElectionById(electionGuid);
-
-  electionStore.initializeSignalR().then(() => {
-    electionStore.joinElection(electionGuid);
-  });
-
   updateShareableUrl();
-});
-
-onUnmounted(async () => {
-  try {
-    await electionStore.leaveElection(electionGuid);
-  } catch (_error) {
-    console.error("Failed to leave election:", _error);
-  }
 });
 
 async function confirmDelete() {
@@ -163,81 +150,6 @@ async function generateQrCode() {
   }
 }
 
-const ELECTION_STAGES = ["Setup", "Counting", "Finalized"] as const;
-
-const currentStageIndex = computed(() => {
-  const status = election.value?.tallyStatus || "Setup";
-  const idx = ELECTION_STAGES.indexOf(
-    status as (typeof ELECTION_STAGES)[number],
-  );
-  return idx >= 0 ? idx : 0;
-});
-
-const canAdvance = computed(
-  () => currentStageIndex.value < ELECTION_STAGES.length - 1,
-);
-const canRevert = computed(() => currentStageIndex.value > 0);
-
-const nextStage = computed(() =>
-  canAdvance.value ? ELECTION_STAGES[currentStageIndex.value + 1] : null,
-);
-
-const previousStage = computed(() =>
-  canRevert.value ? ELECTION_STAGES[currentStageIndex.value - 1] : null,
-);
-
-async function advanceStage() {
-  if (!nextStage.value || !election.value) {
-    return;
-  }
-  const stage = nextStage.value;
-  try {
-    await ElMessageBox.confirm(
-      t("elections.confirmAdvance", { stage: t(`elections.stage.${stage}`) }),
-      t("elections.stageProgression"),
-      {
-        confirmButtonText: t("common.confirm"),
-        cancelButtonText: t("common.cancel"),
-        type: "warning",
-      },
-    );
-    await electionStore.updateElection(electionGuid, { tallyStatus: stage });
-    showSuccessMessage(
-      t("elections.stageAdvanced", { stage: t(`elections.stage.${stage}`) }),
-    );
-  } catch (err: any) {
-    if (err !== "cancel") {
-      showErrorMessage(t("elections.stageChangeError"));
-    }
-  }
-}
-
-async function revertStage() {
-  if (!previousStage.value || !election.value) {
-    return;
-  }
-  const stage = previousStage.value;
-  try {
-    await ElMessageBox.confirm(
-      t("elections.confirmRevert", { stage: t(`elections.stage.${stage}`) }),
-      t("elections.stageProgression"),
-      {
-        confirmButtonText: t("common.confirm"),
-        cancelButtonText: t("common.cancel"),
-        type: "warning",
-      },
-    );
-    await electionStore.updateElection(electionGuid, { tallyStatus: stage });
-    showSuccessMessage(
-      t("elections.stageReverted", { stage: t(`elections.stage.${stage}`) }),
-    );
-  } catch (err: any) {
-    if (err !== "cancel") {
-      showErrorMessage(t("elections.stageChangeError"));
-    }
-  }
-}
-
 async function exportElection() {
   if (!electionGuid) {
     return;
@@ -318,41 +230,6 @@ async function exportElection() {
         <div class="stat-item">
           <div class="stat-label">{{ $t("elections.locations") }}</div>
           <div class="stat-value">{{ election.locationCount }}</div>
-        </div>
-      </el-card>
-
-      <el-card v-if="!isTeller" class="stage-card">
-        <template #header>
-          <span>{{ $t("elections.stageProgression") }}</span>
-        </template>
-        <div class="stage-steps">
-          <el-steps
-            :active="currentStageIndex"
-            finish-status="success"
-            align-center
-          >
-            <el-step
-              v-for="stage in ELECTION_STAGES"
-              :key="stage"
-              :title="$t(`elections.stage.${stage}`)"
-            />
-          </el-steps>
-        </div>
-        <div class="stage-actions">
-          <el-button v-if="canRevert" @click="revertStage">
-            {{
-              $t("elections.revertTo", {
-                stage: $t(`elections.stage.${previousStage}`),
-              })
-            }}
-          </el-button>
-          <el-button v-if="canAdvance" type="primary" @click="advanceStage">
-            {{
-              $t("elections.advanceTo", {
-                stage: $t(`elections.stage.${nextStage}`),
-              })
-            }}
-          </el-button>
         </div>
       </el-card>
 
@@ -531,14 +408,10 @@ async function exportElection() {
   }
 
   .stage-card {
-    .stage-steps {
-      padding: 10px 0 20px;
-    }
-
     .stage-actions {
       display: flex;
       justify-content: center;
-      gap: 10px;
+      padding: 10px 0;
     }
   }
 

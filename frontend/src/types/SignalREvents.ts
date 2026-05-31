@@ -1,8 +1,9 @@
+import type { ElectionStage } from "../domain/electionStages";
+
 export interface ElectionUpdateEvent {
   electionGuid: string;
   name?: string;
-  tallyStatus?: string;
-  electionStatus?: string;
+  electionStage?: ElectionStage;
   updatedAt: string;
 }
 

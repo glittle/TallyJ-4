@@ -1,5 +1,7 @@
 # Voter Authentication Implementation - Final Summary
 
+> **For AI agents and contributors**: This is one of the best implementation deep-dives in the repo. It explains the security model (zero-knowledge auth, SMS pumping prevention) that affects `OnlineVotingController`, `OnlineVotingService`, related DTOs, and the voter JWT flow. Cross-reference with current `backend/Controllers/OnlineVotingController.cs` and `AGENTS.md` (response wrappers, claims lookup) when working in this area. Some response examples below are illustrative and may vary slightly from live behavior (many endpoints return lightweight objects rather than full `ApiResponse<T>` wrappers).
+
 ## Overview
 
 This implementation provides a **security-first voter authentication system** for online voting with SMS pumping prevention and Google OAuth support. The key innovation is that voters never need to know election GUIDs upfront - they authenticate first, then the system shows them which elections they're eligible for.
@@ -60,14 +62,16 @@ Content-Type: application/json
 }
 ```
 
-**Response:**
+**Response (current behavior):**
 ```json
 {
-  "message": "Verification code sent successfully."
+  "messageKey": "some.key.for.i18n"
 }
 ```
 
-**Security:** Only sends codes if voter is registered in at least one open election.
+(The exact shape can vary; the controller intentionally does not reveal success/failure details to prevent enumeration.)
+
+**Security:** Only sends codes if voter is registered in at least one open election. The service validates before sending.
 
 #### 2. Verify Code
 ```http
@@ -80,17 +84,10 @@ Content-Type: application/json
 }
 ```
 
-**Response:**
-```json
-{
-  "token": "jwt-token-here",
-  "voterId": "voter@example.com",
-  "voterIdType": "E",
-  "expiresAt": "2024-01-02T00:00:00Z"
-}
-```
+**Response (illustrative):**
+The service returns a payload containing the JWT and session info (exact fields are in the corresponding DTO / generated client). On success the controller returns the payload directly (not wrapped in `ApiResponse<T>` in all cases).
 
-**Security:** 15-minute expiration, 5-attempt lockout.
+**Security:** 15-minute code expiration, 5-attempt lockout per voterId. See `OnlineVotingService` for the precise lockout and token generation logic.
 
 #### 3. Google OAuth Authentication
 ```http
@@ -103,19 +100,14 @@ Content-Type: application/json
 ```
 
 **Response:**
-```json
-{
-  "token": "jwt-token-here",
-  "voterId": "voter@example.com",
-  "voterIdType": "E",
-  "expiresAt": "2024-01-02T00:00:00Z"
-}
-```
+Similar session payload to the code-based flow (JWT + voter info). Controller returns it directly on success.
 
 **Security:** 
 - Validates Google JWT token
-- Requires verified email
-- Only accepts if voter is in an open election
+- Requires verified email (`EmailVerified`)
+- Only accepts if voter is registered in at least one currently open election
+
+**Note:** Facebook OAuth support was added later using a similar pattern (`facebookAuth` endpoint + `FacebookAuthForVoterDto`). See the controller for the current set of providers.
 
 ### Election Discovery Endpoint
 

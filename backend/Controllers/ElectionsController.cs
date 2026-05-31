@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Elections;
+﻿using Backend.Domain.Enumerations;
+using Backend.DTOs.Elections;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -122,6 +123,31 @@ public class ElectionsController : ControllerBase
         }
 
         return Ok(ApiResponse<ElectionDto>.SuccessResponse(election, "Election updated successfully"));
+    }
+
+    /// <summary>
+    /// Changes the stage of an existing election.
+    /// </summary>
+    /// <param name="guid">The GUID of the election to update.</param>
+    /// <param name="dto">The new election stage.</param>
+    /// <returns>The updated election information.</returns>
+    [HttpPut("{guid}/stage")]
+    [Authorize(Policy = "ElectionAccess")]
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> ChangeElectionStage(Guid guid, ChangeElectionStageDto dto)
+    {
+        if (!Enum.IsDefined(typeof(ElectionStage), dto.ElectionStage))
+        {
+            return BadRequest(ApiResponse<ElectionDto>.ErrorResponse("Invalid election stage"));
+        }
+
+        var election = await _electionService.ChangeElectionStageAsync(guid, dto.ElectionStage);
+
+        if (election == null)
+        {
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
+        }
+
+        return Ok(ApiResponse<ElectionDto>.SuccessResponse(election, "Election stage changed successfully"));
     }
 
     /// <summary>

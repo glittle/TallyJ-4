@@ -5,8 +5,6 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend", "backend\Backend.csproj", "{C47F666B-4605-4D5A-98F7-4650CC3E6997}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Application", "Backend.Application\Backend.Application.csproj", "{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Domain", "Backend.Domain\Backend.Domain.csproj", "{32E1F593-2347-423C-8C7E-C29C3B8A37C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Tests", "Backend.Tests\Backend.Tests.csproj", "{71CD1BD0-25A2-4384-A103-FABB3859166E}"
@@ -33,18 +31,6 @@ Global
 		{C47F666B-4605-4D5A-98F7-4650CC3E6997}.Release|x64.Build.0 = Release|Any CPU
 		{C47F666B-4605-4D5A-98F7-4650CC3E6997}.Release|x86.ActiveCfg = Release|Any CPU
 		{C47F666B-4605-4D5A-98F7-4650CC3E6997}.Release|x86.Build.0 = Release|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Debug|x64.Build.0 = Debug|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Debug|x86.Build.0 = Debug|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Release|x64.ActiveCfg = Release|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Release|x64.Build.0 = Release|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Release|x86.ActiveCfg = Release|Any CPU
-		{0A3CE4B5-DD93-4275-9D2A-DC9C744EC35C}.Release|x86.Build.0 = Release|Any CPU
 		{32E1F593-2347-423C-8C7E-C29C3B8A37C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{32E1F593-2347-423C-8C7E-C29C3B8A37C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32E1F593-2347-423C-8C7E-C29C3B8A37C9}.Debug|x64.ActiveCfg = Debug|Any CPU
