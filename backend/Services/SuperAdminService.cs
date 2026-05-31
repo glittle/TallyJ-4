@@ -1,5 +1,6 @@
-﻿using Backend.Domain.Context;
-using Backend.Domain.Enumerations;
+using Backend.Context;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.DTOs.SuperAdmin;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -232,8 +233,8 @@ public class SuperAdminService : ISuperAdminService
         };
     }
 
-    private static IQueryable<Domain.Entities.Election> ApplySort(
-        IQueryable<Domain.Entities.Election> query,
+    private static IQueryable<Election> ApplySort(
+        IQueryable<Election> query,
         string sortBy,
         string sortDirection)
     {

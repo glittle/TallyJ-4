@@ -4,9 +4,7 @@ TallyJ 4 is a full-stack election management and ballot tallying system for Bah√
 
 ## Repository layout
 
-- `backend/` - ASP.NET Core Web API and web host
-- `Backend.Application/` - application services and shared business logic
-- `Backend.Domain/` - entities, DbContext, identity models, and domain contracts
+- `backend/` - ASP.NET Core Web API host (contains all controllers, services, DTOs, entities, MainDbContext, identity models, enumerations, and most business logic)
 - `Backend.Tests/` - xUnit unit and integration tests
 - `frontend/` - Vue 3 + TypeScript SPA
 - `docs/` - deployment documentation only

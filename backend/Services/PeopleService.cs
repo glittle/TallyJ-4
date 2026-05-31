@@ -1,12 +1,10 @@
-﻿using Backend.Domain.Context;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
-using Backend.Domain.Helpers;
+using Backend.Context;
+using Backend.Entities;
+using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.DTOs.People;
 using Backend.DTOs.SignalR;
 using Backend.Models;
-using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -18,21 +16,15 @@ namespace Backend.Services;
 public class PeopleService : IPeopleService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<PeopleService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
 
     /// <summary>
     /// Initializes a new instance of the PeopleService.
     /// </summary>
-    /// <param name="context">The main database context for accessing people data.</param>
-    /// <param name="mapper">Mapster instance for object mapping operations.</param>
-    /// <param name="logger">Logger for recording people service operations.</param>
-    /// <param name="signalRNotificationService">Service for sending real-time notifications about people updates.</param>
-    public PeopleService(MainDbContext context, IMapper mapper, ILogger<PeopleService> logger, ISignalRNotificationService signalRNotificationService)
+    public PeopleService(MainDbContext context, ILogger<PeopleService> logger, ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
     }
@@ -92,7 +84,7 @@ public class PeopleService : IPeopleService
 
         var peopleDtos = people.Select(p =>
         {
-            var dto = _mapper.Map<PersonDto>(p);
+            var dto = MapToPersonDto(p);
             dto.VoteCount = p.Results.FirstOrDefault()?.VoteCount ?? 0;
             return dto;
         }).ToList();
@@ -116,7 +108,7 @@ public class PeopleService : IPeopleService
             return null;
         }
 
-        var dto = _mapper.Map<PersonDto>(person);
+        var dto = MapToPersonDto(person);
         dto.VoteCount = person.Results.FirstOrDefault()?.VoteCount ?? 0;
 
         return dto;
@@ -147,7 +139,7 @@ public class PeopleService : IPeopleService
             }
         }
 
-        var person = _mapper.Map<Person>(createDto);
+        var person = createDto.CopyMatchingPropertiesToNew<Person>();
         person.PersonGuid = Guid.NewGuid();
         person.RowVersion = new byte[8];
         person.FullName = PersonNameHelper.ComputeFullName(person);
@@ -171,7 +163,7 @@ public class PeopleService : IPeopleService
             UpdatedAt = DateTime.UtcNow
         });
 
-        return await GetPersonByGuidAsync(person.PersonGuid) ?? _mapper.Map<PersonDto>(person);
+        return await GetPersonByGuidAsync(person.PersonGuid) ?? MapToPersonDto(person);
     }
 
     /// <summary>
@@ -216,7 +208,7 @@ public class PeopleService : IPeopleService
             }
         }
 
-        _mapper.Map(updateDto, person);
+        updateDto.CopyMatchingPropertiesTo(person);
 
         person.FullName = PersonNameHelper.ComputeFullName(person);
         person.FullNameFl = PersonNameHelper.ComputeFullNameFl(person);
@@ -302,7 +294,7 @@ public class PeopleService : IPeopleService
 
         return people.Select(p =>
         {
-            var dto = _mapper.Map<PersonDto>(p);
+            var dto = MapToPersonDto(p);
             dto.VoteCount = p.Results.FirstOrDefault()?.VoteCount ?? 0;
             return dto;
         }).ToList();
@@ -324,7 +316,7 @@ public class PeopleService : IPeopleService
 
         return candidates.Select(p =>
         {
-            var dto = _mapper.Map<PersonDto>(p);
+            var dto = MapToPersonDto(p);
             dto.VoteCount = p.Results.FirstOrDefault()?.VoteCount ?? 0;
             return dto;
         }).ToList();
@@ -352,7 +344,7 @@ public class PeopleService : IPeopleService
 
         return people.Select(p =>
         {
-            var dto = _mapper.Map<PersonDto>(p);
+            var dto = MapToPersonDto(p);
             dto.VoteCount = liveVoteCounts.TryGetValue(p.PersonGuid, out var count) ? count : 0;
             return dto;
         }).ToList();
@@ -403,7 +395,7 @@ public class PeopleService : IPeopleService
             .ThenBy(p => p.FirstName)
             .ToListAsync();
 
-        return _mapper.Map<List<PersonListDto>>(people);
+        return people.Select(MapToPersonListDto).ToList();
     }
 
     /// <summary>
@@ -423,12 +415,43 @@ public class PeopleService : IPeopleService
             return null;
         }
 
-        var dto = _mapper.Map<PersonDetailDto>(person);
+        var dto = MapToPersonDetailDto(person);
 
         // Get vote count (how many votes this person has received)
         dto.VoteCount = person.Results.FirstOrDefault()?.VoteCount ?? 0;
 
         return dto;
+    }
+
+    // =====================================================================
+    // Explicit mapping helpers (replaces logic previously hidden in Mapster profiles).
+    // IneligibleReasonCode is derived from the Guid via the enumeration.
+    // =====================================================================
+
+    private static PersonDto MapToPersonDto(Person person)
+    {
+        var dto = person.CopyMatchingPropertiesToNew<PersonDto>();
+        dto.IneligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
+        return dto;
+    }
+
+    private static PersonListDto MapToPersonListDto(Person person)
+    {
+        var dto = person.CopyMatchingPropertiesToNew<PersonListDto>();
+        dto.IneligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
+        return dto;
+    }
+
+    private static PersonDetailDto MapToPersonDetailDto(Person person)
+    {
+        var dto = person.CopyMatchingPropertiesToNew<PersonDetailDto>();
+        dto.IneligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
+        return dto;
+    }
+
+    private static string? GetIneligibleReasonCode(Guid? guid)
+    {
+        return guid.HasValue ? IneligibleReasonEnum.GetByGuid(guid.Value)?.Code : null;
     }
 }
 

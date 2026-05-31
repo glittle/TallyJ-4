@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -10,8 +10,8 @@ using Moq;
 using Backend.DTOs.Auth;
 using Backend.Services.Auth;
 using Backend.Controllers;
-using Backend.Domain.Context;
-using Backend.Domain.Identity;
+using Backend.Context;
+using Backend.Identity;
 using Backend.Middleware;
 using Backend.Services;
 using Xunit;

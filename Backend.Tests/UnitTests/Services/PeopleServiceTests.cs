@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Moq;
-using Backend.Domain.Entities;
+using Backend.Entities;
 using Backend.DTOs.People;
 using Backend.Services;
-using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 
 namespace Backend.Tests.UnitTests.Services;
 
@@ -17,7 +17,7 @@ public class PeopleServiceTests : ServiceTestBase
     {
         _loggerMock = new Mock<ILogger<PeopleService>>();
         _signalRMock = new Mock<ISignalRNotificationService>();
-        _service = new PeopleService(Context, Mapper, _loggerMock.Object, _signalRMock.Object);
+        _service = new PeopleService(Context, _loggerMock.Object, _signalRMock.Object);
     }
 
     [Fact]
@@ -417,14 +417,14 @@ public class PeopleServiceTests : ServiceTestBase
         var locationGuid = Guid.NewGuid();
         var ballotGuid = Guid.NewGuid();
 
-        var location = new Backend.Domain.Entities.Location
+        var location = new Backend.Entities.Location
         {
             RowId = 900,
             LocationGuid = locationGuid,
             ElectionGuid = electionGuid,
             Name = "Test Location"
         };
-        var ballot = new Backend.Domain.Entities.Ballot
+        var ballot = new Backend.Entities.Ballot
         {
             RowId = 900,
             BallotGuid = ballotGuid,
@@ -450,7 +450,7 @@ public class PeopleServiceTests : ServiceTestBase
         Context.People.Add(person);
         await Context.SaveChangesAsync();
 
-        var vote = new Backend.Domain.Entities.Vote
+        var vote = new Backend.Entities.Vote
         {
             BallotGuid = ballotGuid,
             PersonGuid = person.PersonGuid,

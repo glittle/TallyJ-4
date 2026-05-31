@@ -1,4 +1,4 @@
-using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 using Backend.Services.Analyzers;
 
 namespace Backend.Tests.UnitTests;

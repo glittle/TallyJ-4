@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using Backend.Domain.Entities;
-using Backend.Domain.Identity;
+using Backend.Entities;
+using Backend.Identity;
 
 namespace Backend.Services.Auth;
 

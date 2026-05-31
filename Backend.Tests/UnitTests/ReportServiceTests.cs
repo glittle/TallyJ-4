@@ -1,8 +1,8 @@
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.Services;
 
-using LocationTypeEnum = Backend.Domain.Enumerations.LocationType;
+using LocationTypeEnum = Backend.Enumerations.LocationType;
 
 namespace Backend.Tests.UnitTests;
 

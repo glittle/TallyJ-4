@@ -17,36 +17,31 @@ Treat `.zenflow/tasks/**` and `.zencoder/**` as historical planning and research
 
 ## Repository shape
 
-- `backend/` - ASP.NET Core API host
-- `Backend.Application/` - application services
-- `Backend.Domain/` - domain and persistence layer
+- `backend/` - ASP.NET Core API host (contains the complete application: all controllers, services, DTOs, entities, MainDbContext, identity models, enumerations, validators, mappings, hubs, etc.)
 - `Backend.Tests/` - xUnit tests
 - `frontend/` - Vue 3 SPA
 
 ## Project layering reality (important for AI agents)
 
-The high-level shape described above and in the READMEs is accurate at a distance, but the actual distribution of code is important to know so you edit the right places on the first try.
+After the domain consolidation (May 2025), the previous `Backend.Domain` and `Backend.Application` projects have been fully merged into the `backend/` host project. There is now effectively a single C# application project.
 
-- `Backend.Domain/`: Pure data layer — entities (`Entities/`), `MainDbContext`, enumerations, `Identity/AppUser`, `Interfaces/`, a few helpers, `SecurityEnums.cs`. Referenced by both other backend projects. No business logic or DTOs here.
-- `Backend.Application/`: **Intentionally thin** (mostly auth surface). Contains:
-  - `DTOs/Auth/*` (all the Login/Register/2FA/OAuth/Telegram/etc. request and response types)
-  - `Services/Auth/*` (JwtTokenService, LocalAuthService, TwoFactorService, PasswordResetService, EncryptionService, OAuthStateService, email abstractions + SmtpEmailSender, RefreshTokenCleanupService, etc.)
-  - One non-auth outlier: `ImportService.cs` (ballot import logic)
-- `backend/` (the ASP.NET Core host project): **Where the vast majority of new work happens**. Contains:
-  - Every controller
-  - The bulk of the DTOs (`DTOs/Elections/`, `People/`, `Ballots/`, `Results/`, `OnlineVoting/`, `FrontDesk/`, `Import/`, `SignalR/`, `SuperAdmin/`, etc.)
-  - ~60 concrete services + interfaces under `Services/` (ElectionService, TallyService, BallotService, PeopleService, DashboardService, ReportService, ... plus analyzers and import/export helpers)
+All code lives under `backend/`:
+
+- **Data / Persistence**: `Context/MainDbContext.cs`, `Entities/`, `Enumerations/`, `Identity/AppUser.cs`, `Interfaces/`, `SecurityEnums.cs`
+- **Auth layer** (previously the bulk of Backend.Application): `DTOs/Auth/`, `Services/Auth/` (JwtTokenService, LocalAuthService, TwoFactorService, etc.), plus related controllers and validators
+- **Domain functionality** (the vast majority of the system): 
+  - All controllers under `Controllers/`
+  - DTOs under `DTOs/` (Elections, People, Ballots, Results, OnlineVoting, FrontDesk, etc.)
+  - ~60+ services under `Services/` (ElectionService, TallyService, BallotService, PeopleService, DashboardService, ReportService, import/export services, analyzers, etc.)
   - All FluentValidation validators (`Validators/`)
   - All Mapster mapping profiles (`Mappings/`)
   - All SignalR hubs (`Hubs/`)
-  - Authorization handlers & requirements, custom middleware, the custom JSON localization provider, EF seeder, etc.
+  - Authorization handlers, custom middleware, JSON localization provider, EF migrations and seeder, etc.
 
 **Practical rule of thumb**:
-When you are asked to add or modify election-scoped functionality (people, ballots, locations, front-desk, results, tally, reports, etc.), plan on 95% of the C# changes living under the `backend/` host project. Changes to `Backend.Application/` are rare and almost always authentication-related.
+Virtually all C# changes for features (election-scoped or otherwise) now happen inside the single `backend/` project. The test project is `Backend.Tests/`. Update DI registration lists in `backend/Program.cs` (`RegisterApplicationServices`, `RegisterAuthServices`, `RegisterBackgroundServices`) when adding new services.
 
-There is a known dead duplicate: `Backend.Application/Services/ImportService.cs` (different namespace) vs the active `backend/Services/ImportService.cs`. The host version is the one that gets registered and injected. Do not attempt to "clean up" the layering unless the task explicitly asks for it.
-
-You will need to update the manual DI registration lists in `backend/Program.cs` (`RegisterApplicationServices`, `RegisterAuthServices`, `RegisterBackgroundServices`) whenever you introduce a new service or move one.
+The previous "dead duplicate ImportService" note no longer applies (the old Backend.Application project has been removed).
 
 ## Core conventions
 

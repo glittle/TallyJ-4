@@ -1,12 +1,12 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs.Elections;
 using Backend.DTOs.Results;
-using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 using Backend.Models;
-using Backend.Domain.Entities;
-using Backend.Domain.Context;
+using Backend.Entities;
+using Backend.Context;
 
 namespace Backend.Tests.IntegrationTests;
 

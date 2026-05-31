@@ -6,11 +6,11 @@ This guide covers the current local-development workflow for the TallyJ 4 backen
 
 The backend project is the ASP.NET Core API host in `backend/`. It references:
 
-- `Backend.Application/` (thin layer — mostly auth DTOs and services plus one import helper)
-- `Backend.Domain/` for entities, DbContext, and identity models
 - `Backend.Tests/` for xUnit tests
 
-**Note for contributors / AI agents**: The large majority of controllers, DTOs (outside Auth), business services (~60 files), validators, Mapster profiles, and SignalR hubs live directly inside this `backend/` host project under `Controllers/`, `DTOs/`, `Services/`, `Validators/`, `Mappings/`, and `Hubs/`. See `AGENTS.md` ("Project layering reality") for the precise breakdown.
+All domain entities, enumerations, the EF Core `MainDbContext`, identity models (`AppUser`), and interfaces now live directly inside this project (under `Entities/`, `Enumerations/`, `Context/`, `Identity/`, and `Interfaces/`).
+
+**Note for contributors / AI agents**: The large majority of controllers, DTOs (outside Auth), business services (~60 files), validators, and SignalR hubs live directly inside this `backend/` host project under `Controllers/`, `DTOs/`, `Services/`, `Validators/`, and `Hubs/`. See `AGENTS.md` ("Project layering reality") for the precise breakdown.
 
 ## Prerequisites
 
@@ -143,7 +143,7 @@ JWT user IDs are stored in the `sub` claim. On .NET 10, code that reads the curr
 
 ## Implementation patterns (quick reference)
 
-- **Object mapping**: Mapster (not AutoMapper). Profiles live in `Mappings/*Profile.cs` (implement `IRegister`). See `AGENTS.md` for registration details (`Program.cs:181-185`) and usage examples.
+- **Object mapping**: Custom `CopyMatchingPropertiesTo` / `CopyMatchingPropertiesToNew` in `Helpers/ObjectCopierExtensions.cs` (name-based, cached, transparent). Custom transformations (enum conversions, JSON, derived fields, ignore-nulls on updates) are implemented as explicit, readable helper methods in the services.
 - **Validation**: FluentValidation `AbstractValidator<T>` implementations in `Validators/`. Auto-registered.
 - **Services**: Most business logic lives in `Services/` (thin controllers delegate here). Update the manual DI lists in `Program.cs` (`RegisterApplicationServices` etc.) when you add a service.
 - Full agent-optimized guidance (layering, adding a feature end-to-end, SignalR groups, etc.) is in the root `AGENTS.md`.

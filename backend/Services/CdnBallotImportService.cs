@@ -1,6 +1,6 @@
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
-using Backend.Domain.Context;
+using Backend.Entities;
+using Backend.Enumerations;
+using Backend.Context;
 using Backend.DTOs.Import;
 using Backend.DTOs.Elections;
 using Backend.Models;

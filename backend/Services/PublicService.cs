@@ -1,5 +1,5 @@
-﻿using Backend.Domain.Context;
-using Backend.Domain.Enumerations;
+using Backend.Context;
+using Backend.Enumerations;
 using Backend.DTOs.Public;
 using Microsoft.EntityFrameworkCore;
 

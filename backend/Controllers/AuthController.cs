@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -8,9 +8,9 @@ using System.Text.Json;
 using Backend.DTOs.Auth;
 using Backend.Services.Auth;
 using Backend.Authorization;
-using Backend.Domain;
-using Backend.Domain.Context;
-using Backend.Domain.Identity;
+using Backend;
+using Backend.Context;
+using Backend.Identity;
 using Backend.DTOs.Security;
 using Backend.Middleware;
 using Backend.Services;
@@ -121,7 +121,7 @@ public class AuthController : ControllerBase
                 UserAgent = userAgent,
                 Details = $"Registration failed: {error}",
                 IsSuspicious = false,
-                Severity = Backend.Domain.SecurityEventSeverity.Info
+                Severity = Backend.SecurityEventSeverity.Info
             });
             return BadRequest(new { error });
         }

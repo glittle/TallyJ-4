@@ -1,7 +1,5 @@
-﻿using System.Globalization;
-using Backend.DTOs.Results;
+﻿using Backend.DTOs.Results;
 using ClosedXML.Excel;
-using CsvHelper;
 using iText.IO.Font.Constants;
 using iText.Kernel.Colors;
 using iText.Kernel.Font;
@@ -327,7 +325,7 @@ public class ReportExportService : IReportExportService
 
             using var memoryStream = new MemoryStream();
             using var writer = new StreamWriter(memoryStream);
-            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+            using var csv = new SimpleCsvWriter(writer);
 
             // Write election overview
             csv.WriteField("Election Report");
@@ -439,6 +437,59 @@ public class ReportExportService : IReportExportService
         var valueCell = new Cell().Add(new Paragraph(value).SetFont(normalFont).SetFontSize(10));
         table.AddCell(labelCell);
         table.AddCell(valueCell);
+    }
+
+    /// <summary>
+    /// Minimal CSV writer implementing only the subset of the old CsvHelper API that was used
+    /// in GenerateCsvReportAsync. Provides correct RFC 4180-style escaping.
+    /// </summary>
+    private sealed class SimpleCsvWriter : IDisposable
+    {
+        private readonly StreamWriter _writer;
+        private bool _firstFieldInRow = true;
+
+        public SimpleCsvWriter(StreamWriter writer)
+        {
+            _writer = writer;
+        }
+
+        public void WriteField(string? value)
+        {
+            if (!_firstFieldInRow)
+            {
+                _writer.Write(',');
+            }
+            _firstFieldInRow = false;
+
+            if (value is null)
+            {
+                return;
+            }
+
+            // Fields containing comma, quote, or newline must be quoted.
+            bool needsQuoting = value.Contains(',') || value.Contains('"') || value.Contains('\n') || value.Contains('\r');
+            if (needsQuoting)
+            {
+                _writer.Write('"');
+                _writer.Write(value.Replace("\"", "\"\""));
+                _writer.Write('"');
+            }
+            else
+            {
+                _writer.Write(value);
+            }
+        }
+
+        public void NextRecord()
+        {
+            _writer.WriteLine();
+            _firstFieldInRow = true;
+        }
+
+        public void Dispose()
+        {
+            // The caller owns the underlying StreamWriter and is responsible for flushing.
+        }
     }
 }
 

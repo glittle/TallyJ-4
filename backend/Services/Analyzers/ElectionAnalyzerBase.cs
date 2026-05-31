@@ -1,7 +1,7 @@
-﻿using Backend.Domain.Context;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
-using Backend.Domain.Helpers;
+using Backend.Context;
+using Backend.Entities;
+using Backend.Enumerations;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services.Analyzers;

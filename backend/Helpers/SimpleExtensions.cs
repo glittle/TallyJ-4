@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net.Mail;
@@ -7,12 +7,10 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
-using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using static System.Threading.Thread;
-using Formatting = Newtonsoft.Json.Formatting;
 
 namespace Backend.Helpers;
 
@@ -961,16 +959,20 @@ public static partial class ExtensionsSimple
     ///   Converts this object to a JSON string
     /// </summary>
     /// <param name="input"></param>
-    /// <param name="formatting"></param>
-    /// <param name="forHtml">If set and formatting is Indented, use <BR /> tags</param>
+    /// <param name="indented">When true, produces pretty-printed JSON</param>
+    /// <param name="forHtml">If set and indented is true, use &lt;BR /&gt; and &amp;nbsp; for display</param>
     /// <returns></returns>
     public static string ForJson(
       this object input,
-      Formatting formatting = Formatting.None,
+      bool indented = false,
       bool forHtml = false
     )
     {
-        var s = JsonConvert.SerializeObject(input, formatting);
+        var options = indented
+            ? new JsonSerializerOptions { WriteIndented = true }
+            : null;
+
+        var s = JsonSerializer.Serialize(input, options);
         if (forHtml)
         {
             s = s.Replace("\r\n", "<br>").Replace(" ", "&nbsp;");
@@ -982,7 +984,7 @@ public static partial class ExtensionsSimple
     /// <summary>Input:  ["1","2"] --> 1,2</summary>
     public static T? FromJson<T>(this string input)
     {
-        return JsonConvert.DeserializeObject<T>(input);
+        return JsonSerializer.Deserialize<T>(input);
     }
 
     /// <summary>
@@ -1066,16 +1068,26 @@ public static partial class ExtensionsSimple
             return new List<string>();
         }
 
-        var jsonObj = JObject.Parse(json);
-
-        var keys = new List<string>();
-
-        foreach (var keyValuePair in jsonObj)
+        try
         {
-            keys.Add(keyValuePair.Key);
-        }
+            using var doc = JsonDocument.Parse(json);
+            if (doc.RootElement.ValueKind != JsonValueKind.Object)
+            {
+                return new List<string>();
+            }
 
-        return keys;
+            var keys = new List<string>();
+            foreach (var property in doc.RootElement.EnumerateObject())
+            {
+                keys.Add(property.Name);
+            }
+
+            return keys;
+        }
+        catch (JsonException)
+        {
+            return new List<string>();
+        }
     }
 
     /// <summary>

@@ -1,11 +1,10 @@
-﻿using Backend.Domain.Context;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using Backend.Context;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.DTOs.Ballots;
 using Backend.DTOs.Votes;
+using Backend.Helpers;
 using Backend.Models;
-using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -17,19 +16,14 @@ namespace Backend.Services;
 public class BallotService : IBallotService
 {
     private readonly MainDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<BallotService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the BallotService.
     /// </summary>
-    /// <param name="context">The main database context for accessing ballot data.</param>
-    /// <param name="mapper">Mapster instance for object mapping operations.</param>
-    /// <param name="logger">Logger for recording ballot service operations.</param>
-    public BallotService(MainDbContext context, IMapper mapper, ILogger<BallotService> logger)
+    public BallotService(MainDbContext context, ILogger<BallotService> logger)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -145,7 +139,7 @@ public class BallotService : IBallotService
         _logger.LogInformation("Created ballot {BallotGuid} - {BallotCode} at location {LocationGuid}",
             ballot.BallotGuid, ballot.BallotCode, ballot.LocationGuid);
 
-        return await GetBallotByGuidAsync(ballot.BallotGuid) ?? _mapper.Map<BallotDto>(ballot);
+        return await GetBallotByGuidAsync(ballot.BallotGuid) ?? ballot.CopyMatchingPropertiesToNew<BallotDto>();
     }
 
     /// <summary>
@@ -198,13 +192,13 @@ public class BallotService : IBallotService
 
     private BallotDto MapToBallotDto(Ballot ballot)
     {
-        var dto = _mapper.Map<BallotDto>(ballot);
+        var dto = ballot.CopyMatchingPropertiesToNew<BallotDto>();
         dto.LocationName = ballot.Location.Name;
         dto.BallotCode = ballot.BallotCode ?? $"{ballot.ComputerCode}{ballot.BallotNumAtComputer}";
         dto.VoteCount = ballot.Votes.Count;
         dto.Votes = ballot.Votes.Select(v =>
         {
-            var voteDto = _mapper.Map<VoteDto>(v);
+            var voteDto = v.CopyMatchingPropertiesToNew<VoteDto>();
             voteDto.PersonFullName = v.Person?.FullName;
             return voteDto;
         }).ToList();

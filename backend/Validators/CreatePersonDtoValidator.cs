@@ -1,4 +1,4 @@
-﻿using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 using Backend.DTOs.People;
 using FluentValidation;
 

@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Backend.Domain.Context;
-using Backend.Domain.Entities;
+using Backend.Context;
+using Backend.Entities;
 
 namespace Backend.Services.Auth;
 

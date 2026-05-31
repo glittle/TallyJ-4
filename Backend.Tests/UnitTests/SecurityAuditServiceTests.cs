@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Backend.Domain;
+using Backend;
 using Backend.Services;
 using Xunit;
 
@@ -15,7 +15,7 @@ public class SecurityAuditServiceTests : ServiceTestBase
     public SecurityAuditServiceTests()
     {
         _loggerMock = new Mock<ILogger<SecurityAuditService>>();
-        _service = new SecurityAuditService(Context, Mapper, _loggerMock.Object);
+        _service = new SecurityAuditService(Context, _loggerMock.Object);
     }
 
     [Fact]
@@ -24,14 +24,14 @@ public class SecurityAuditServiceTests : ServiceTestBase
         // Arrange
         var createDto = new Backend.DTOs.Security.CreateSecurityAuditLogDto
         {
-            EventType = Backend.Domain.SecurityEventType.LoginSuccess,
+            EventType = Backend.SecurityEventType.LoginSuccess,
             UserId = "user123",
             Email = "test@example.com",
             IpAddress = "192.168.1.1",
             UserAgent = "Test Browser",
             Details = "Test login",
             IsSuspicious = false,
-            Severity = Backend.Domain.SecurityEventSeverity.Info
+            Severity = Backend.SecurityEventSeverity.Info
         };
 
         // Act
@@ -56,12 +56,12 @@ public class SecurityAuditServiceTests : ServiceTestBase
         // Arrange
         var createDto = new Backend.DTOs.Security.CreateSecurityAuditLogDto
         {
-            EventType = Backend.Domain.SecurityEventType.LoginFailure,
+            EventType = Backend.SecurityEventType.LoginFailure,
             Email = "test@example.com",
             IpAddress = "192.168.1.1",
             Details = "Invalid credentials",
             IsSuspicious = true,
-            Severity = Backend.Domain.SecurityEventSeverity.Warning
+            Severity = Backend.SecurityEventSeverity.Warning
         };
 
         // Act
@@ -82,10 +82,10 @@ public class SecurityAuditServiceTests : ServiceTestBase
         {
             await _service.LogSecurityEventAsync(new Backend.DTOs.Security.CreateSecurityAuditLogDto
             {
-                EventType = Backend.Domain.SecurityEventType.LoginSuccess,
+                EventType = Backend.SecurityEventType.LoginSuccess,
                 Details = $"Login {i}",
                 IsSuspicious = false,
-                Severity = Backend.Domain.SecurityEventSeverity.Info
+                Severity = Backend.SecurityEventSeverity.Info
             });
         }
 
@@ -104,27 +104,27 @@ public class SecurityAuditServiceTests : ServiceTestBase
         // Arrange
         await _service.LogSecurityEventAsync(new Backend.DTOs.Security.CreateSecurityAuditLogDto
         {
-            EventType = Backend.Domain.SecurityEventType.LoginSuccess,
+            EventType = Backend.SecurityEventType.LoginSuccess,
             Details = "Success login",
             IsSuspicious = false,
-            Severity = Backend.Domain.SecurityEventSeverity.Info
+            Severity = Backend.SecurityEventSeverity.Info
         });
 
         await _service.LogSecurityEventAsync(new Backend.DTOs.Security.CreateSecurityAuditLogDto
         {
-            EventType = Backend.Domain.SecurityEventType.LoginFailure,
+            EventType = Backend.SecurityEventType.LoginFailure,
             Details = "Failed login",
             IsSuspicious = false,
-            Severity = Backend.Domain.SecurityEventSeverity.Info
+            Severity = Backend.SecurityEventSeverity.Info
         });
 
         // Act
         var result = await _service.GetSecurityAuditLogsAsync(
-            filter: new SecurityAuditLogFilterDto { EventType = Backend.Domain.SecurityEventType.LoginFailure });
+            filter: new SecurityAuditLogFilterDto { EventType = Backend.SecurityEventType.LoginFailure });
 
         // Assert
         Assert.Single(result.Items);
-        Assert.Equal(Backend.Domain.SecurityEventType.LoginFailure, result.Items[0].EventType);
+        Assert.Equal(Backend.SecurityEventType.LoginFailure, result.Items[0].EventType);
     }
 
     [Fact]
@@ -133,23 +133,23 @@ public class SecurityAuditServiceTests : ServiceTestBase
         // Arrange
         await _service.LogSecurityEventAsync(new Backend.DTOs.Security.CreateSecurityAuditLogDto
         {
-            EventType = Backend.Domain.SecurityEventType.LoginSuccess,
+            EventType = Backend.SecurityEventType.LoginSuccess,
             IsSuspicious = false,
-            Severity = Backend.Domain.SecurityEventSeverity.Info
+            Severity = Backend.SecurityEventSeverity.Info
         });
 
         await _service.LogSecurityEventAsync(new Backend.DTOs.Security.CreateSecurityAuditLogDto
         {
-            EventType = Backend.Domain.SecurityEventType.LoginFailure,
+            EventType = Backend.SecurityEventType.LoginFailure,
             IsSuspicious = true,
-            Severity = Backend.Domain.SecurityEventSeverity.Warning
+            Severity = Backend.SecurityEventSeverity.Warning
         });
 
         await _service.LogSecurityEventAsync(new Backend.DTOs.Security.CreateSecurityAuditLogDto
         {
-            EventType = Backend.Domain.SecurityEventType.RateLimitExceeded,
+            EventType = Backend.SecurityEventType.RateLimitExceeded,
             IsSuspicious = true,
-            Severity = Backend.Domain.SecurityEventSeverity.Warning
+            Severity = Backend.SecurityEventSeverity.Warning
         });
 
         // Act
@@ -172,34 +172,34 @@ public class SecurityAuditServiceTests : ServiceTestBase
         {
             await _service.LogSecurityEventAsync(new Backend.DTOs.Security.CreateSecurityAuditLogDto
             {
-                EventType = Backend.Domain.SecurityEventType.LoginFailure,
+                EventType = Backend.SecurityEventType.LoginFailure,
                 IpAddress = ipAddress,
                 Email = $"user{i}@example.com",
                 IsSuspicious = false,
-                Severity = Backend.Domain.SecurityEventSeverity.Info
+                Severity = Backend.SecurityEventSeverity.Info
             });
         }
 
         // Act - Trigger pattern detection with another failure
         await _service.LogSecurityEventAsync(new Backend.DTOs.Security.CreateSecurityAuditLogDto
         {
-            EventType = Backend.Domain.SecurityEventType.LoginFailure,
+            EventType = Backend.SecurityEventType.LoginFailure,
             IpAddress = ipAddress,
             Email = "test@example.com",
             IsSuspicious = false,
-            Severity = Backend.Domain.SecurityEventSeverity.Info
+            Severity = Backend.SecurityEventSeverity.Info
         });
 
         // Assert - Should have detected brute force attack
         var bruteForceLogs = await Context.SecurityAuditLogs
-            .Where(l => l.EventType == Backend.Domain.SecurityEventType.BruteForceAttemptDetected)
+            .Where(l => l.EventType == Backend.SecurityEventType.BruteForceAttemptDetected)
             .ToListAsync();
 
         Assert.NotEmpty(bruteForceLogs);
         var bruteForceLog = bruteForceLogs.First();
         Assert.Equal(ipAddress, bruteForceLog.IpAddress);
         Assert.True(bruteForceLog.IsSuspicious);
-        Assert.Equal(Backend.Domain.SecurityEventSeverity.Critical, bruteForceLog.Severity);
+        Assert.Equal(Backend.SecurityEventSeverity.Critical, bruteForceLog.Severity);
     }
 }
 

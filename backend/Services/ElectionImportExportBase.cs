@@ -1,5 +1,5 @@
-using Backend.Domain.Entities;
-using Backend.Domain.Context;
+using Backend.Entities;
+using Backend.Context;
 using Backend.Models;
 using System.Globalization;
 using System.Xml;

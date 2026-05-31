@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 using OtpNet;
 using QRCoder;
 using Backend.DTOs.Auth;
-using Backend.Domain.Entities;
-using Backend.Domain.Identity;
-using Backend.Domain.Context;
+using Backend.Entities;
+using Backend.Identity;
+using Backend.Context;
 
 namespace Backend.Services.Auth;
 

@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Moq;
-using Backend.Domain.Entities;
-using Backend.Domain.Enumerations;
+using Backend.Entities;
+using Backend.Enumerations;
 using Backend.DTOs.SuperAdmin;
 using Backend.Services;
 

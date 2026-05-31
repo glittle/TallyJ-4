@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Moq;
-using Backend.Domain.Entities;
+using Backend.Entities;
 using Backend.DTOs.Votes;
 using Backend.Services;
-using Backend.Domain.Enumerations;
+using Backend.Enumerations;
 
 namespace Backend.Tests.UnitTests.Services;
 
@@ -21,7 +21,7 @@ public class VoteServiceTests : ServiceTestBase
     {
         _loggerMock = new Mock<ILogger<VoteService>>();
         _voteCountBroadcastMock = new Mock<IVoteCountBroadcastService>();
-        _service = new VoteService(Context, Mapper, _loggerMock.Object, _voteCountBroadcastMock.Object);
+        _service = new VoteService(Context, _loggerMock.Object, _voteCountBroadcastMock.Object);
 
         SeedElectionGraph();
     }

@@ -1,26 +1,13 @@
-﻿using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Backend.Domain.Context;
-using Backend.Mappings;
+using Backend.Context;
 
 namespace Backend.Tests.UnitTests;
 
 public abstract class ServiceTestBase : IDisposable
 {
     protected readonly MainDbContext Context;
-    protected readonly IMapper Mapper;
-
-    private static readonly TypeAdapterConfig SharedConfig = CreateSharedConfig();
-
-    private static TypeAdapterConfig CreateSharedConfig()
-    {
-        var config = new TypeAdapterConfig();
-        config.Scan(typeof(ElectionProfile).Assembly);
-        return config;
-    }
 
     protected ServiceTestBase()
     {
@@ -30,8 +17,6 @@ public abstract class ServiceTestBase : IDisposable
             .Options;
 
         Context = new TestMainDbContext(options);
-
-        Mapper = new Mapper(SharedConfig);
     }
 
     public void Dispose()
