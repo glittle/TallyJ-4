@@ -84,10 +84,13 @@ async function selectStage(newStage: ElectionStage) {
 <style lang="less">
 .stage-control {
   display: inline-flex;
+  width: 100%;
   align-items: stretch;
   border-radius: 6px;
   overflow: hidden;
   border: 1px solid #dcdfe6;
+  flex-direction: column;
+  gap: 10px;
 
   &--readonly {
     border: none;

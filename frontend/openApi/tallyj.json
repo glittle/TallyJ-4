@@ -8172,6 +8172,9 @@
         "additionalProperties": false
       },
       "ChangeElectionStageDto": {
+        "required": [
+          "electionStage"
+        ],
         "type": "object",
         "properties": {
           "electionStage": {

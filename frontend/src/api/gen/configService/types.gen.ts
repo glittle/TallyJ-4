@@ -415,7 +415,7 @@ export type CandidateResultDto = {
 };
 
 export type ChangeElectionStageDto = {
-    electionStage?: ElectionStage;
+    electionStage: ElectionStage;
 };
 
 export type ChangePasswordDto = {

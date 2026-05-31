@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
-using Backend.Application.Services.Auth;
+using Backend.Services.Auth;
 using Backend.Domain.Identity;
 
 namespace Backend.Tests.UnitTests;

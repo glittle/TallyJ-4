@@ -1,0 +1,10 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Backend.DTOs.Auth;
+
+public class AssignRoleRequest
+{
+    [Required]
+    public string RoleName { get; set; } = null!;
+}
+

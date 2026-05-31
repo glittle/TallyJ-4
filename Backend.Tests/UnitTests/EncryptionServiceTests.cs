@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Backend.Application.Services.Auth;
+using Backend.Services.Auth;
 using System.Security.Cryptography;
 
 namespace Backend.Tests.UnitTests;

@@ -5,7 +5,7 @@ using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Backend.Application.DTOs.Auth;
+using Backend.DTOs.Auth;
 using Backend.Middleware;
 using Xunit;
 
