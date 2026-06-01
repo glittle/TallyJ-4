@@ -26,7 +26,7 @@ const meta = computed(() => STAGE_META[props.stage]);
   </section>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .sidebar-stage-header {
   padding: 10px 12px 10px 16px;
 
@@ -37,22 +37,6 @@ const meta = computed(() => STAGE_META[props.stage]);
     letter-spacing: 0.5px;
     color: var(--color-gray-500);
     margin-bottom: 8px;
-  }
-
-  :deep(.stage-control) {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-
-    .stage-control__seg {
-      border-right: none;
-      border-bottom: 1px solid #dcdfe6;
-      justify-content: flex-start;
-
-      &:last-child {
-        border-bottom: none;
-      }
-    }
   }
 }
 </style>

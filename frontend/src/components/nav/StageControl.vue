@@ -8,20 +8,11 @@ import {
 import { useElectionStore } from "@/stores/electionStore";
 import { ElIcon } from "element-plus";
 import { useI18n } from "vue-i18n";
-import StageIndicator from "./StageIndicator.vue";
 
-const props = withDefaults(
-  defineProps<{
-    electionGuid: string;
-    stage: ElectionStage;
-    readonly?: boolean;
-    confirm?: boolean;
-  }>(),
-  {
-    readonly: false,
-    confirm: false,
-  },
-);
+const props = defineProps<{
+  electionGuid: string;
+  stage: ElectionStage;
+}>();
 
 const { t } = useI18n();
 const electionStore = useElectionStore();
@@ -46,11 +37,7 @@ async function selectStage(newStage: ElectionStage) {
 </script>
 
 <template>
-  <div v-if="readonly" class="stage-control stage-control--readonly">
-    <StageIndicator :stage="stage" />
-  </div>
   <div
-    v-else
     class="stage-control"
     role="radiogroup"
     :aria-label="t('elections.stage.modeLabel')"
@@ -92,11 +79,6 @@ async function selectStage(newStage: ElectionStage) {
   flex-direction: column;
   gap: 10px;
 
-  &--readonly {
-    border: none;
-    overflow: visible;
-  }
-
   &__seg {
     display: inline-flex;
     align-items: center;
@@ -104,7 +86,7 @@ async function selectStage(newStage: ElectionStage) {
     padding: 6px 14px;
     background: #fff;
     border: none;
-    border-right: 1px solid #dcdfe6;
+    border-bottom: 1px solid #dcdfe6;
     cursor: pointer;
     font-size: 13px;
     font-weight: 500;
@@ -114,7 +96,7 @@ async function selectStage(newStage: ElectionStage) {
       color 0.15s;
 
     &:last-child {
-      border-right: none;
+      border-bottom: none;
     }
 
     &:hover:not(.is-selected) {
