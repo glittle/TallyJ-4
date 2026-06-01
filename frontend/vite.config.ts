@@ -54,6 +54,15 @@ const srcChunkRules: ChunkRule[] = [
     chunk: "voting",
   },
   {
+    // Heavy election navigation menu (many icons + full STAGE_PAGES definition).
+    // Even though AppSidebar lazy-loads it via defineAsyncComponent, we must
+    // explicitly assign it to the "elections" chunk here; otherwise the broad
+    // "/src/components/nav/" rule below would force it into the early "auth-nav"
+    // chunk and defeat the lazy-load benefit for tellers/officials.
+    patterns: ["/src/components/nav/StageGroupedSidebarMenu"],
+    chunk: "elections",
+  },
+  {
     // Common authenticated navigation and UI pieces (sidebar menu is lazy-loaded,
     // so this mainly catches the lightweight shell + header bits).
     patterns: [
@@ -218,8 +227,9 @@ export default defineConfig(() => {
     build: {
       rollupOptions: {
         onwarn(warning, warn) {
-          // Suppress harmless annotation warnings from third-party libs (vueuse, signalr, etc.)
-          if (warning.code === "INVALID_ANNOTATION") {
+          // Suppress only for third-party code (harmless annotation issues from vueuse, signalr, etc.).
+          // Keep app-code warnings visible so they can be actioned.
+          if (warning.code === "INVALID_ANNOTATION" && warning.id?.includes("node_modules")) {
             return;
           }
           warn(warning);

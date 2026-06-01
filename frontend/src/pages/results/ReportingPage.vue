@@ -250,7 +250,7 @@ const isBallotReport = computed(() =>
                 "
                 class="warn-row"
               >
-                <td>Ballots received ≠ Voted</td>
+                <td>{{ $t("reporting.ballotsReceivedNotVoted") }}</td>
                 <td class="num">
                   {{ mainData.numBallotsWithManual.toLocaleString() }}
                 </td>
@@ -268,7 +268,7 @@ const isBallotReport = computed(() =>
                 <td colspan="2"></td>
               </tr>
               <tr>
-                <td>Did not vote</td>
+                <td>{{ $t("reporting.didNotVote") }}</td>
                 <td class="num">
                   {{
                     (
@@ -282,55 +282,73 @@ const isBallotReport = computed(() =>
                 <td colspan="2"><div></div></td>
               </tr>
               <tr>
-                <td>Ballots cast in person</td>
+                <td>{{ $t("reporting.ballotsCastInPerson") }}</td>
                 <td class="num">
                   {{ mainData.inPersonBallots.toLocaleString() }}
                 </td>
               </tr>
               <tr>
-                <td>Ballots received by mail</td>
+                <td>{{ $t("reporting.ballotsReceivedByMail") }}</td>
                 <td class="num">
                   {{ mainData.mailedInBallots.toLocaleString() }}
                 </td>
               </tr>
               <tr>
-                <td>Ballots hand-delivered</td>
+                <td>{{ $t("reporting.ballotsHandDelivered") }}</td>
                 <td class="num">
                   {{ mainData.droppedOffBallots.toLocaleString() }}
                 </td>
               </tr>
               <tr v-if="mainData.onlineBallots > 0">
-                <td>Ballots cast online</td>
+                <td>{{ $t("reporting.ballotsCastOnline") }}</td>
                 <td class="num">
                   {{ mainData.onlineBallots.toLocaleString() }}
                 </td>
               </tr>
               <tr v-if="mainData.importedBallots > 0">
-                <td>Ballots imported</td>
+                <td>{{ $t("reporting.ballotsImported") }}</td>
                 <td class="num">
                   {{ mainData.importedBallots.toLocaleString() }}
                 </td>
               </tr>
               <tr v-if="mainData.calledInBallots > 0">
-                <td>Ballots phoned-in</td>
+                <td>{{ $t("reporting.ballotsPhonedIn") }}</td>
                 <td class="num">
                   {{ mainData.calledInBallots.toLocaleString() }}
                 </td>
               </tr>
               <tr v-if="mainData.custom1Ballots > 0">
-                <td>Ballots: {{ mainData.custom1Name }}</td>
+                <td>
+                  {{
+                    $t("reporting.ballotsCustomPrefix", {
+                      name: mainData.custom1Name,
+                    })
+                  }}
+                </td>
                 <td class="num">
                   {{ mainData.custom1Ballots.toLocaleString() }}
                 </td>
               </tr>
               <tr v-if="mainData.custom2Ballots > 0">
-                <td>Ballots: {{ mainData.custom2Name }}</td>
+                <td>
+                  {{
+                    $t("reporting.ballotsCustomPrefix", {
+                      name: mainData.custom2Name,
+                    })
+                  }}
+                </td>
                 <td class="num">
                   {{ mainData.custom2Ballots.toLocaleString() }}
                 </td>
               </tr>
               <tr v-if="mainData.custom3Ballots > 0">
-                <td>Ballots: {{ mainData.custom3Name }}</td>
+                <td>
+                  {{
+                    $t("reporting.ballotsCustomPrefix", {
+                      name: mainData.custom3Name,
+                    })
+                  }}
+                </td>
                 <td class="num">
                   {{ mainData.custom3Ballots.toLocaleString() }}
                 </td>

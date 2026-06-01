@@ -3,7 +3,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import type { RouteLocationNormalized } from "vue-router";
 
 import { secureTokenService } from "../services/secureTokenService";
-import { useSuperAdminStore } from "../stores/superAdminStore";
 
 // PublicLayout is static - needed immediately for all public/voting routes
 import PublicLayout from "../layouts/PublicLayout.vue";
@@ -320,6 +319,7 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
 
   if (isAuthenticated) {
     if (!isTeller) {
+      const { useSuperAdminStore } = await import("../stores/superAdminStore");
       const superAdminStore = useSuperAdminStore();
       await superAdminStore.checkSuperAdminStatus();
 
