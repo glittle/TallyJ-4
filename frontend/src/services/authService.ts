@@ -1,4 +1,4 @@
-import api from "./api";
+import { client } from "../api/config";
 import {
   postApiAuthRegisterAccount,
   postApiAuthLogin,
@@ -9,7 +9,6 @@ import {
   postApiAuthDisable2Fa,
   postApiAuthGoogleOneTap,
   postApiAuthLogout,
-  // No generated SDK for Telegram; use axios via api
 } from "../api/gen/configService/sdk.gen";
 import type {
   RegisterRequest,
@@ -92,8 +91,16 @@ export const authService = {
     });
   },
 
-  async get2FAStatus(): Promise<{ isEnabled: boolean; method: string | null }> {
-    const response = await api.get("/api/auth/2fa/status");
+  async get2FAStatus(): Promise<{
+    isEnabled: boolean;
+    method: string | null;
+  }> {
+    const response = await client.get<{
+      isEnabled: boolean;
+      method: string | null;
+    }>({
+      url: "/api/auth/2fa/status",
+    });
     return response.data;
   },
 
@@ -107,18 +114,27 @@ export const authService = {
   },
 
   async telegramLogin(data: TelegramLoginRequest): Promise<AuthResponse> {
-    const response = await api.post("/api/auth/telegram", data);
-    return response.data as AuthResponse;
+    const response = await client.post<AuthResponse>({
+      url: "/api/auth/telegram",
+      body: data,
+    });
+    return response.data;
   },
 
   async facebookLogin(accessToken: string): Promise<AuthResponse> {
-    const response = await api.post("/api/auth/facebook", { accessToken });
-    return response.data as AuthResponse;
+    const response = await client.post<AuthResponse>({
+      url: "/api/auth/facebook",
+      body: { accessToken },
+    });
+    return response.data;
   },
 
   async kakaoLogin(accessToken: string): Promise<AuthResponse> {
-    const response = await api.post("/api/auth/kakao", { accessToken });
-    return response.data as AuthResponse;
+    const response = await client.post<AuthResponse>({
+      url: "/api/auth/kakao",
+      body: { accessToken },
+    });
+    return response.data;
   },
 
   async logout(): Promise<void> {
@@ -131,9 +147,12 @@ export const authService = {
     electionGuid: string,
     accessCode: string,
   ): Promise<{ electionGuid: string; electionName: string }> {
-    const response = await api.post("/api/auth/teller-login", {
-      electionGuid,
-      accessCode,
+    const response = await client.post<{
+      electionGuid: string;
+      electionName: string;
+    }>({
+      url: "/api/auth/teller-login",
+      body: { electionGuid, accessCode },
     });
     return response.data;
   },

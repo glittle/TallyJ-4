@@ -1,12 +1,12 @@
 import js from "@eslint/js";
-import ts from "typescript-eslint";
+import tseslint from "typescript-eslint";
 import pluginVue from "eslint-plugin-vue";
 import globals from "globals";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default [
   js.configs.recommended,
-  ...ts.configs.recommended,
+  ...tseslint.configs.recommended,
   ...pluginVue.configs["flat/recommended"],
   eslintPluginPrettierRecommended,
 
@@ -27,7 +27,7 @@ export default [
       "vue/multi-word-component-names": "off",
       "vue/require-explicit-emits": "error",
 
-      // TypeScript-specific
+      // TypeScript-specific (use the modern typescript-eslint namespace)
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
@@ -44,7 +44,7 @@ export default [
     },
     languageOptions: {
       parserOptions: {
-        parser: "@typescript-eslint/parser",
+        parser: tseslint.parser,
         ecmaFeatures: {
           jsx: true,
         },

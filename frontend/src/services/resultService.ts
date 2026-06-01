@@ -1,4 +1,4 @@
-import api from "./api";
+import { client } from "../api/config";
 import type {
   TallyResultDto,
   TallyStatisticsDto,
@@ -17,13 +17,10 @@ export const resultService = {
     electionGuid: string,
     electionType: "normal" | "singlename" = "normal",
   ): Promise<TallyResultDto> {
-    const response = await api.post<TallyResultDto>(
-      `/api/results/election/${electionGuid}/calculate`,
-      null,
-      {
-        params: { electionType },
-      },
-    );
+    const response = await client.post<TallyResultDto>({
+      url: `/api/results/election/${electionGuid}/calculate`,
+      query: { electionType } as Record<string, unknown>,
+    });
     return response.data;
   },
 
@@ -38,30 +35,30 @@ export const resultService = {
   },
 
   async getResults(electionGuid: string): Promise<TallyResultDto> {
-    const response = await api.get<TallyResultDto>(
-      `/api/results/election/${electionGuid}`,
-    );
+    const response = await client.get<TallyResultDto>({
+      url: `/api/results/election/${electionGuid}`,
+    });
     return response.data;
   },
 
   async getStatistics(electionGuid: string): Promise<TallyStatisticsDto> {
-    const response = await api.get<TallyStatisticsDto>(
-      `/api/results/election/${electionGuid}/summary`,
-    );
+    const response = await client.get<TallyStatisticsDto>({
+      url: `/api/results/election/${electionGuid}/summary`,
+    });
     return response.data;
   },
 
   async getMonitorInfo(electionGuid: string): Promise<MonitorInfoDto> {
-    const response = await api.get<MonitorInfoDto>(
-      `/api/results/election/${electionGuid}/monitor`,
-    );
+    const response = await client.get<MonitorInfoDto>({
+      url: `/api/results/election/${electionGuid}/monitor`,
+    });
     return response.data;
   },
 
   async getElectionReport(electionGuid: string): Promise<ElectionReportDto> {
-    const response = await api.get<ElectionReportDto>(
-      `/api/results/election/${electionGuid}/report`,
-    );
+    const response = await client.get<ElectionReportDto>({
+      url: `/api/results/election/${electionGuid}/report`,
+    });
     return response.data;
   },
 
@@ -69,16 +66,16 @@ export const resultService = {
     electionGuid: string,
     reportCode: string,
   ): Promise<ReportDataResponseDto> {
-    const response = await api.get<ReportDataResponseDto>(
-      `/api/results/election/${electionGuid}/report/${reportCode}`,
-    );
+    const response = await client.get<ReportDataResponseDto>({
+      url: `/api/results/election/${electionGuid}/report/${reportCode}`,
+    });
     return response.data;
   },
 
   async getTieDetails(electionGuid: string): Promise<TieDetailsDto[]> {
-    const response = await api.get<TieDetailsDto[]>(
-      `/api/results/election/${electionGuid}/ties`,
-    );
+    const response = await client.get<TieDetailsDto[]>({
+      url: `/api/results/election/${electionGuid}/ties`,
+    });
     return response.data;
   },
 
@@ -86,26 +83,26 @@ export const resultService = {
     electionGuid: string,
     request: SaveTieCountsRequestDto,
   ): Promise<SaveTieCountsResponseDto> {
-    const response = await api.post<SaveTieCountsResponseDto>(
-      `/api/results/election/${electionGuid}/ties/save`,
-      request,
-    );
+    const response = await client.post<SaveTieCountsResponseDto>({
+      url: `/api/results/election/${electionGuid}/ties/save`,
+      body: request,
+    });
     return response.data;
   },
 
   async getPresentationData(electionGuid: string): Promise<PresentationDto> {
-    const response = await api.get<PresentationDto>(
-      `/api/results/election/${electionGuid}/presentation`,
-    );
+    const response = await client.get<PresentationDto>({
+      url: `/api/results/election/${electionGuid}/presentation`,
+    });
     return response.data;
   },
 
   async getDetailedStatistics(
     electionGuid: string,
   ): Promise<DetailedStatisticsDto> {
-    const response = await api.get<DetailedStatisticsDto>(
-      `/api/results/election/${electionGuid}/detailed-statistics`,
-    );
+    const response = await client.get<DetailedStatisticsDto>({
+      url: `/api/results/election/${electionGuid}/detailed-statistics`,
+    });
     return response.data;
   },
 };

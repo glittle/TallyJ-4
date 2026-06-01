@@ -16,7 +16,6 @@ const vendorChunkRules: ChunkRule[] = [
   { patterns: ["@microsoft/signalr"], chunk: "vendor-signalr" },
   { patterns: ["chart.js", "vue-chartjs"], chunk: "vendor-chartjs" },
   { patterns: ["qrcode"], chunk: "vendor-qrcode" },
-  { patterns: ["axios", "localforage", "@vueuse"], chunk: "vendor-utils" },
 ];
 
 const srcChunkRules: ChunkRule[] = [

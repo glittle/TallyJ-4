@@ -18,8 +18,6 @@ import {
   putApiElectionsByGuidStage,
   putApiElectionsByGuidUpdateElection,
 } from "./../api/gen/configService/sdk.gen";
-import { cacheService } from "./cacheService";
-
 const convertStringToDate = (dateString?: string): Date | null => {
   return dateString ? new Date(dateString) : null;
 };
@@ -74,15 +72,6 @@ export const electionService = {
         onlineAnnounced: convertStringToDate(dto.onlineAnnounced),
       },
     });
-    await cacheService.remove(
-      cacheService.generateKey({ url: "/api/elections", method: "GET" }),
-    );
-    await cacheService.remove(
-      cacheService.generateKey({
-        url: "/api/elections/summaries",
-        method: "GET",
-      }),
-    );
     return response.data?.data as unknown as ElectionDto;
   },
 
@@ -102,21 +91,6 @@ export const electionService = {
         onlineAnnounced: convertStringToDate(dto.onlineAnnounced),
       },
     });
-    await cacheService.remove(
-      cacheService.generateKey({
-        url: `/api/elections/${electionGuid}`,
-        method: "GET",
-      }),
-    );
-    await cacheService.remove(
-      cacheService.generateKey({ url: "/api/elections", method: "GET" }),
-    );
-    await cacheService.remove(
-      cacheService.generateKey({
-        url: "/api/elections/summaries",
-        method: "GET",
-      }),
-    );
     return response.data?.data as unknown as ElectionDto;
   },
 
@@ -124,15 +98,6 @@ export const electionService = {
     await deleteApiElectionsByGuidDeleteElection({
       path: { guid: electionGuid },
     });
-    await cacheService.remove(
-      cacheService.generateKey({ url: "/api/elections", method: "GET" }),
-    );
-    await cacheService.remove(
-      cacheService.generateKey({
-        url: "/api/elections/summaries",
-        method: "GET",
-      }),
-    );
   },
 
   async exportElectionToJson(electionGuid: string): Promise<Blob> {
@@ -184,15 +149,6 @@ export const electionService = {
     if (!data) {
       throw new Error("Failed to change election stage");
     }
-    await cacheService.remove(
-      cacheService.generateKey({
-        url: `/api/elections/${electionGuid}`,
-        method: "GET",
-      }),
-    );
-    await cacheService.remove(
-      cacheService.generateKey({ url: "/api/elections", method: "GET" }),
-    );
     return {
       ...(data as any),
       dateOfElection: convertDateToString(data.dateOfElection),
