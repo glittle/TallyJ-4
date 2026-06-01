@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useStorage } from "@vueuse/core";
+import { useLocalStorage } from "@/composables/useLocalStorage";
 import { computed } from "vue";
 import type {
   CreateElectionDto,
@@ -31,7 +31,7 @@ const formData = computed(() => props.modelValue);
 
 const hasBallotsEntered = computed(() => (props.ballotCount ?? 0) > 0);
 
-const activeTab = useStorage<string>("activeTab", "basic");
+const activeTab = useLocalStorage<string>("activeTab", "basic");
 
 // Map tab names to their form fields
 const tabFields: Record<string, string[]> = {

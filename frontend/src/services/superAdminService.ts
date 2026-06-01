@@ -1,4 +1,4 @@
-import api from "./api";
+import { client } from "../api/config";
 import type { ApiResponse, PaginatedResponse } from "@/types/ApiResponse";
 
 export interface SuperAdminSummary {
@@ -47,27 +47,28 @@ export interface SuperAdminElectionFilter {
 
 export const superAdminService = {
   async getSummary(): Promise<SuperAdminSummary> {
-    const response = await api.get<ApiResponse<SuperAdminSummary>>(
-      "/api/superadmin/dashboard/summary",
-    );
+    const response = await client.get<ApiResponse<SuperAdminSummary>>({
+      url: "/api/superadmin/dashboard/summary",
+    });
     return response.data.data;
   },
 
   async getElections(
     filter?: SuperAdminElectionFilter,
   ): Promise<PaginatedResponse<SuperAdminElection>> {
-    const response = await api.get<
+    const response = await client.get<
       ApiResponse<PaginatedResponse<SuperAdminElection>>
-    >("/api/superadmin/dashboard/elections", {
-      params: filter,
+    >({
+      url: "/api/superadmin/dashboard/elections",
+      query: filter as Record<string, unknown>,
     });
     return response.data.data;
   },
 
   async getElectionDetail(guid: string): Promise<SuperAdminElectionDetail> {
-    const response = await api.get<ApiResponse<SuperAdminElectionDetail>>(
-      `/api/superadmin/dashboard/elections/${guid}`,
-    );
+    const response = await client.get<ApiResponse<SuperAdminElectionDetail>>({
+      url: `/api/superadmin/dashboard/elections/${guid}`,
+    });
     return response.data.data;
   },
 };

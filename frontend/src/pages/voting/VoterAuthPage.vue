@@ -16,7 +16,7 @@ import {
   Phone,
   QuestionFilled,
 } from "@element-plus/icons-vue";
-import { useStorage } from "@vueuse/core";
+import { useLocalStorage } from "@/composables/useLocalStorage";
 import {
   ElAlert,
   ElButton,
@@ -50,7 +50,7 @@ const { t, locale } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
-const activeTab = useStorage("voterLoginTab", "google");
+const activeTab = useLocalStorage("voterLoginTab", "google");
 const step = ref<"request" | "verify">("request");
 
 const googleButtonContainer = ref<HTMLElement | null>(null);

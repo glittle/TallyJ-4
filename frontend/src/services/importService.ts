@@ -1,4 +1,4 @@
-import api from "./api";
+import { client } from "../api/config";
 import type {
   ParseCsvHeadersRequest,
   ParseCsvHeadersResponse,
@@ -10,18 +10,18 @@ export const importService = {
   async parseCsvHeaders(
     request: ParseCsvHeadersRequest,
   ): Promise<ParseCsvHeadersResponse> {
-    const response = await api.post<ParseCsvHeadersResponse>(
-      "/api/Import/parse-csv-headers",
-      request,
-    );
+    const response = await client.post<ParseCsvHeadersResponse>({
+      url: "/api/Import/parse-csv-headers",
+      body: request,
+    });
     return response.data;
   },
 
   async importBallots(request: ImportBallotRequest): Promise<ImportResult> {
-    const response = await api.post<ImportResult>(
-      "/api/Import/importBallots",
-      request,
-    );
+    const response = await client.post<ImportResult>({
+      url: "/api/Import/importBallots",
+      body: request,
+    });
     return response.data;
   },
 };

@@ -1,5 +1,5 @@
 import { computed, ref, watch, type Ref } from "vue";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn } from "@/utils/debounce";
 import type { SearchablePersonDto } from "@/types/Person";
 import {
   applyAllStrategies,

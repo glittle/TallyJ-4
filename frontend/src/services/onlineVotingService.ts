@@ -10,7 +10,7 @@ import {
   postApiOnlineVotingByElectionGuidSubmitBallot,
   getApiOnlineVotingByElectionGuidByVoterIdVoteStatus,
 } from "../api/gen/configService/sdk.gen";
-import api from "./api";
+import { client } from "../api/config";
 import type {
   RequestCodeDto,
   VerifyCodeDto,
@@ -71,8 +71,11 @@ export const onlineVotingService = {
   async telegramAuth(
     data: TelegramAuthForVoterDto,
   ): Promise<OnlineVoterAuthResponse> {
-    const response = await api.post("/api/online-voting/telegramAuth", data);
-    return response.data as OnlineVoterAuthResponse;
+    const response = await client.post<OnlineVoterAuthResponse>({
+      url: "/api/online-voting/telegramAuth",
+      body: data,
+    });
+    return response.data;
   },
 
   async getAvailableElections(voterId: string): Promise<AvailableElection[]> {

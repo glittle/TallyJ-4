@@ -1,4 +1,4 @@
-import api from "./api";
+import { client } from "../api/config";
 import type {
   AuditLog,
   AuditLogFilter,
@@ -8,31 +8,29 @@ import type { ApiResponse, PaginatedResponse } from "@/types/ApiResponse";
 
 export const auditLogService = {
   async getAuditLogs(filter?: AuditLogFilter, pageNumber = 1, pageSize = 50) {
-    const response = await api.get<PaginatedResponse<AuditLog>>(
-      "/api/audit-logs",
-      {
-        params: {
-          ...filter,
-          pageNumber,
-          pageSize,
-        },
-      },
-    );
+    const response = await client.get<PaginatedResponse<AuditLog>>({
+      url: "/api/audit-logs",
+      query: {
+        ...(filter ?? {}),
+        pageNumber,
+        pageSize,
+      } as Record<string, unknown>,
+    });
     return response.data;
   },
 
   async getAuditLogById(rowId: number) {
-    const response = await api.get<ApiResponse<AuditLog>>(
-      `/api/audit-logs/${rowId}`,
-    );
+    const response = await client.get<ApiResponse<AuditLog>>({
+      url: `/api/audit-logs/${rowId}`,
+    });
     return response.data.data;
   },
 
   async createAuditLog(auditLog: CreateAuditLogDto) {
-    const response = await api.post<ApiResponse<AuditLog>>(
-      "/api/audit-logs",
-      auditLog,
-    );
+    const response = await client.post<ApiResponse<AuditLog>>({
+      url: "/api/audit-logs",
+      body: auditLog,
+    });
     return response.data.data;
   },
 };

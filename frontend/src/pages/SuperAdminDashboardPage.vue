@@ -17,7 +17,7 @@ import type {
   SuperAdminElectionDetail,
 } from "../services/superAdminService";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn } from "@/utils/debounce";
 import { ElectionTypeCode } from "@/api/gen/configService";
 
 import { useI18n } from "vue-i18n";

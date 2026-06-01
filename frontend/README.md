@@ -11,7 +11,6 @@ This package contains the TallyJ 4 Vue 3 single-page application.
 - Vue Router
 - Element Plus
 - Vue I18n
-- Axios
 - SignalR client
 
 ## Getting started
@@ -21,6 +20,13 @@ cd frontend
 npm install
 npm run dev
 ```
+
+> **Note on first install**: You may see a warning about `esbuild` having an install script.
+> This is expected (Vite uses esbuild). Run this command once to approve it:
+> ```bash
+> npm approve-scripts esbuild
+> ```
+> Then re-run `npm install`. The warning should not appear again on this machine.
 
 Default local URL: `http://localhost:8095`
 
