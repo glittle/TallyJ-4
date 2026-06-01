@@ -7,27 +7,15 @@ import type {
   UpdateElectionDto,
 } from "../../types";
 
-interface Props {
-  modelValue: CreateElectionDto | UpdateElectionDto;
+const model = defineModel<CreateElectionDto | UpdateElectionDto>({
+  required: true,
+});
+
+const props = defineProps<{
   availableElections: ElectionSummaryDto[];
   formRef?: any;
   ballotCount?: number;
-}
-
-const props = defineProps<Props>();
-defineEmits<
-  (e: "update:modelValue", value: CreateElectionDto | UpdateElectionDto) => void
->();
-
-// The parent passes a reactive() object via v-model. Binding inputs to a
-// local ref + emitting updates does not propagate, because the parent's
-// reactive const cannot be reassigned by v-model. Validation on the parent's
-// <el-form :model="form"> then runs against stale data and shows "name is
-// required" even after the user has typed. Binding inputs directly to the
-// shared reactive object keeps the parent's model in sync synchronously.
-// Property mutations on a reactive object prop do not trigger Vue's
-// prop-mutation warning (only reassigning the prop itself does).
-const formData = computed(() => props.modelValue);
+}>();
 
 const hasBallotsEntered = computed(() => (props.ballotCount ?? 0) > 0);
 
@@ -98,14 +86,14 @@ function tabLabel(tab: string, label: string) {
     >
       <el-form-item :label="$t('elections.form.name')" prop="name">
         <el-input
-          v-model="formData.name"
+          v-model="model.name"
           :placeholder="$t('elections.form.namePlaceholder')"
         />
       </el-form-item>
 
       <el-form-item :label="$t('elections.form.date')" prop="dateOfElection">
         <el-date-picker
-          v-model="formData.dateOfElection"
+          v-model="model.dateOfElection"
           type="date"
           :placeholder="$t('elections.form.datePlaceholder')"
           style="width: 100%"
@@ -114,14 +102,14 @@ function tabLabel(tab: string, label: string) {
 
       <el-form-item :label="$t('elections.form.convenor')" prop="convenor">
         <el-input
-          v-model="formData.convenor"
+          v-model="model.convenor"
           :placeholder="$t('elections.form.convenorPlaceholder')"
         />
       </el-form-item>
 
       <el-form-item :label="$t('elections.form.type')" prop="electionType">
         <el-select
-          v-model="formData.electionType"
+          v-model="model.electionType"
           :placeholder="$t('elections.form.typePlaceholder')"
           :disabled="hasBallotsEntered"
         >
@@ -143,7 +131,7 @@ function tabLabel(tab: string, label: string) {
         prop="electionMode"
       >
         <el-select
-          v-model="formData.electionMode"
+          v-model="model.electionMode"
           :placeholder="$t('elections.form.modePlaceholder')"
           :disabled="hasBallotsEntered"
         >
@@ -166,7 +154,7 @@ function tabLabel(tab: string, label: string) {
         prop="numberToElect"
       >
         <el-input-number
-          v-model="formData.numberToElect"
+          v-model="model.numberToElect"
           :min="1"
           :max="50"
           :disabled="hasBallotsEntered"
@@ -180,7 +168,7 @@ function tabLabel(tab: string, label: string) {
         :label="$t('elections.form.numberExtra')"
         prop="numberExtra"
       >
-        <el-input-number v-model="formData.numberExtra" :min="0" :max="20" />
+        <el-input-number v-model="model.numberExtra" :min="0" :max="20" />
       </el-form-item>
     </el-tab-pane>
 
@@ -189,7 +177,7 @@ function tabLabel(tab: string, label: string) {
       name="voting-methods"
     >
       <el-form-item :label="$t('elections.form.useCallInButton')">
-        <el-switch v-model="formData.useCallInButton" />
+        <el-switch v-model="model.useCallInButton" />
       </el-form-item>
 
       <el-form-item
@@ -197,7 +185,7 @@ function tabLabel(tab: string, label: string) {
         prop="customMethods"
       >
         <el-input
-          v-model="formData.customMethods"
+          v-model="model.customMethods"
           :placeholder="$t('elections.form.customMethodsPlaceholder')"
         />
         <template #help>
@@ -212,7 +200,7 @@ function tabLabel(tab: string, label: string) {
         prop="votingMethods"
       >
         <el-input
-          v-model="formData.votingMethods"
+          v-model="model.votingMethods"
           :placeholder="$t('elections.form.votingMethodsPlaceholder')"
         />
         <template #help>
@@ -232,7 +220,7 @@ function tabLabel(tab: string, label: string) {
         prop="onlineWhenOpen"
       >
         <el-date-picker
-          v-model="formData.onlineWhenOpen"
+          v-model="model.onlineWhenOpen"
           type="datetime"
           :placeholder="$t('elections.form.onlineWhenOpenPlaceholder')"
           style="width: 100%"
@@ -244,7 +232,7 @@ function tabLabel(tab: string, label: string) {
         prop="onlineWhenClose"
       >
         <el-date-picker
-          v-model="formData.onlineWhenClose"
+          v-model="model.onlineWhenClose"
           type="datetime"
           :placeholder="$t('elections.form.onlineWhenClosePlaceholder')"
           style="width: 100%"
@@ -252,7 +240,7 @@ function tabLabel(tab: string, label: string) {
       </el-form-item>
 
       <el-form-item :label="$t('elections.form.onlineCloseIsEstimate')">
-        <el-switch v-model="formData.onlineCloseIsEstimate" />
+        <el-switch v-model="model.onlineCloseIsEstimate" />
       </el-form-item>
 
       <el-form-item
@@ -260,7 +248,7 @@ function tabLabel(tab: string, label: string) {
         prop="onlineSelectionProcess"
       >
         <el-select
-          v-model="formData.onlineSelectionProcess"
+          v-model="model.onlineSelectionProcess"
           :placeholder="$t('elections.form.onlineSelectionProcessPlaceholder')"
         >
           <el-option label="Simultaneous" value="S" />
@@ -273,7 +261,7 @@ function tabLabel(tab: string, label: string) {
         prop="onlineAnnounced"
       >
         <el-date-picker
-          v-model="formData.onlineAnnounced"
+          v-model="model.onlineAnnounced"
           type="datetime"
           :placeholder="$t('elections.form.onlineAnnouncedPlaceholder')"
           style="width: 100%"
@@ -290,7 +278,7 @@ function tabLabel(tab: string, label: string) {
         prop="emailFromAddress"
       >
         <el-input
-          v-model="formData.emailFromAddress"
+          v-model="model.emailFromAddress"
           :placeholder="$t('elections.form.emailFromAddressPlaceholder')"
         />
       </el-form-item>
@@ -300,7 +288,7 @@ function tabLabel(tab: string, label: string) {
         prop="emailFromName"
       >
         <el-input
-          v-model="formData.emailFromName"
+          v-model="model.emailFromName"
           :placeholder="$t('elections.form.emailFromNamePlaceholder')"
         />
       </el-form-item>
@@ -310,14 +298,14 @@ function tabLabel(tab: string, label: string) {
         prop="emailSubject"
       >
         <el-input
-          v-model="formData.emailSubject"
+          v-model="model.emailSubject"
           :placeholder="$t('elections.form.emailSubjectPlaceholder')"
         />
       </el-form-item>
 
       <el-form-item :label="$t('elections.form.emailText')" prop="emailText">
         <el-input
-          v-model="formData.emailText"
+          v-model="model.emailText"
           type="textarea"
           :rows="6"
           :placeholder="$t('elections.form.emailTextPlaceholder')"
@@ -326,7 +314,7 @@ function tabLabel(tab: string, label: string) {
 
       <el-form-item :label="$t('elections.form.smsText')" prop="smsText">
         <el-input
-          v-model="formData.smsText"
+          v-model="model.smsText"
           type="textarea"
           :rows="3"
           :placeholder="$t('elections.form.smsTextPlaceholder')"
@@ -339,23 +327,23 @@ function tabLabel(tab: string, label: string) {
       name="display-privacy"
     >
       <el-form-item :label="$t('elections.form.showFullReport')">
-        <el-switch v-model="formData.showFullReport" />
+        <el-switch v-model="model.showFullReport" />
       </el-form-item>
 
       <el-form-item :label="$t('elections.form.listForPublic')">
-        <el-switch v-model="formData.listForPublic" />
+        <el-switch v-model="model.listForPublic" />
       </el-form-item>
 
       <el-form-item :label="$t('elections.form.showAsTest')">
-        <el-switch v-model="formData.showAsTest" />
+        <el-switch v-model="model.showAsTest" />
       </el-form-item>
 
       <el-form-item :label="$t('elections.form.hidePreBallotPages')">
-        <el-switch v-model="formData.hidePreBallotPages" />
+        <el-switch v-model="model.hidePreBallotPages" />
       </el-form-item>
 
       <el-form-item :label="$t('elections.form.maskVotingMethod')">
-        <el-switch v-model="formData.maskVotingMethod" />
+        <el-switch v-model="model.maskVotingMethod" />
       </el-form-item>
     </el-tab-pane>
 
@@ -368,7 +356,7 @@ function tabLabel(tab: string, label: string) {
         prop="electionPasscode"
       >
         <el-input
-          v-model="formData.electionPasscode"
+          v-model="model.electionPasscode"
           type="password"
           show-password
           :placeholder="$t('elections.form.electionPasscodePlaceholder')"
@@ -391,7 +379,7 @@ function tabLabel(tab: string, label: string) {
           })
         }}
         <el-select
-          v-model="formData.linkedElectionGuid"
+          v-model="model.linkedElectionGuid"
           :placeholder="$t('elections.form.linkedElectionPlaceholder')"
           clearable
           filterable
@@ -415,7 +403,7 @@ function tabLabel(tab: string, label: string) {
         prop="linkedElectionKind"
       >
         <el-select
-          v-model="formData.linkedElectionKind"
+          v-model="model.linkedElectionKind"
           :placeholder="$t('elections.form.linkedElectionKindPlaceholder')"
         >
           <el-option label="Tie-break" value="TB" />
@@ -425,7 +413,7 @@ function tabLabel(tab: string, label: string) {
 
       <el-form-item :label="$t('elections.form.flags')" prop="flags">
         <el-input
-          v-model="formData.flags"
+          v-model="model.flags"
           type="textarea"
           :rows="4"
           :placeholder="$t('elections.form.flagsPlaceholder')"

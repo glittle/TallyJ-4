@@ -66,7 +66,10 @@ const loading = computed(() => electionStore.loading);
 const election = computed(() => electionStore.currentElection);
 const availableElections = ref<ElectionSummaryDto[]>([]);
 
-const form = reactive<UpdateElectionDto>({
+// `let` is required here so the Vue compiler does not emit
+// "`v-model` cannot update a `const` reactive binding" for <ElectionFormTabs v-model="form">
+// eslint-disable-next-line prefer-const
+let form = reactive<UpdateElectionDto>({
   name: "",
   dateOfElection: undefined,
   electionType: undefined,

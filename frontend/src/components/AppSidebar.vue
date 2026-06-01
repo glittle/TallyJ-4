@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { ArrowLeft, HomeFilled, Setting } from "@element-plus/icons-vue";
-import { computed } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { secureTokenService } from "../services/secureTokenService";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
 import { getBuildDate, getBuildDateBadi, VERSION } from "./version";
-import StageGroupedSidebarMenu from "./nav/StageGroupedSidebarMenu.vue";
 import SidebarStageHeader from "./nav/SidebarStageHeader.vue";
+
+// Lazy load the heavy election navigation menu (many Element Plus icons + large STAGE_PAGES definition).
+// This keeps the base authenticated shell smaller for tellers and admins until they actually open an election.
+const StageGroupedSidebarMenu = defineAsyncComponent(
+  () => import("./nav/StageGroupedSidebarMenu.vue"),
+);
 const { t } = useI18n();
 
 const emit = defineEmits<{
