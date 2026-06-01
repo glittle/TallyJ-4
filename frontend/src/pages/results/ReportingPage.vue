@@ -230,138 +230,144 @@ const isBallotReport = computed(() =>
           </div>
 
           <table class="info-table">
-            <tr>
-              <td>{{ $t("reporting.numEligibleToVote") }}</td>
-              <td class="num">
-                {{ mainData.numEligibleToVote.toLocaleString() }}
-              </td>
-            </tr>
-            <tr>
-              <td>{{ $t("reporting.voted") }}</td>
-              <td class="num">
-                {{ mainData.sumOfEnvelopesCollected.toLocaleString() }}
-              </td>
-            </tr>
-            <tr
-              v-if="
-                mainData.sumOfEnvelopesCollected !==
-                mainData.numBallotsWithManual
-              "
-              class="warn-row"
-            >
-              <td>Ballots received ≠ Voted</td>
-              <td class="num">
-                {{ mainData.numBallotsWithManual.toLocaleString() }}
-              </td>
-            </tr>
-            <tr class="spacer">
-              <td colspan="2"></td>
-            </tr>
-            <tr>
-              <td>{{ $t("reporting.percentParticipation") }}</td>
-              <td class="num">
-                {{ formatPercent(mainData.percentParticipation) }}
-              </td>
-            </tr>
-            <tr class="spacer">
-              <td colspan="2"></td>
-            </tr>
-            <tr>
-              <td>Did not vote</td>
-              <td class="num">
-                {{
-                  (
-                    mainData.numEligibleToVote -
-                    mainData.sumOfEnvelopesCollected
-                  ).toLocaleString()
-                }}
-              </td>
-            </tr>
-            <tr class="divider">
-              <td colspan="2"><div></div></td>
-            </tr>
-            <tr>
-              <td>Ballots cast in person</td>
-              <td class="num">
-                {{ mainData.inPersonBallots.toLocaleString() }}
-              </td>
-            </tr>
-            <tr>
-              <td>Ballots received by mail</td>
-              <td class="num">
-                {{ mainData.mailedInBallots.toLocaleString() }}
-              </td>
-            </tr>
-            <tr>
-              <td>Ballots hand-delivered</td>
-              <td class="num">
-                {{ mainData.droppedOffBallots.toLocaleString() }}
-              </td>
-            </tr>
-            <tr v-if="mainData.onlineBallots > 0">
-              <td>Ballots cast online</td>
-              <td class="num">{{ mainData.onlineBallots.toLocaleString() }}</td>
-            </tr>
-            <tr v-if="mainData.importedBallots > 0">
-              <td>Ballots imported</td>
-              <td class="num">
-                {{ mainData.importedBallots.toLocaleString() }}
-              </td>
-            </tr>
-            <tr v-if="mainData.calledInBallots > 0">
-              <td>Ballots phoned-in</td>
-              <td class="num">
-                {{ mainData.calledInBallots.toLocaleString() }}
-              </td>
-            </tr>
-            <tr v-if="mainData.custom1Ballots > 0">
-              <td>Ballots: {{ mainData.custom1Name }}</td>
-              <td class="num">
-                {{ mainData.custom1Ballots.toLocaleString() }}
-              </td>
-            </tr>
-            <tr v-if="mainData.custom2Ballots > 0">
-              <td>Ballots: {{ mainData.custom2Name }}</td>
-              <td class="num">
-                {{ mainData.custom2Ballots.toLocaleString() }}
-              </td>
-            </tr>
-            <tr v-if="mainData.custom3Ballots > 0">
-              <td>Ballots: {{ mainData.custom3Name }}</td>
-              <td class="num">
-                {{ mainData.custom3Ballots.toLocaleString() }}
-              </td>
-            </tr>
-            <tr class="divider">
-              <td colspan="2"><div></div></td>
-            </tr>
-            <tr>
-              <td>{{ $t("reporting.spoiledBallots") }}</td>
-              <td class="num">
-                {{ mainData.spoiledBallots.toLocaleString() }}
-              </td>
-            </tr>
-            <tr
-              v-for="sb in mainData.spoiledBallotReasons"
-              :key="sb.reason"
-              class="sub-row"
-            >
-              <td colspan="2">{{ sb.ballotCount }} - {{ sb.reason }}</td>
-            </tr>
-            <tr class="divider">
-              <td colspan="2"><div></div></td>
-            </tr>
-            <tr>
-              <td>{{ $t("reporting.spoiledVotes") }}</td>
-              <td class="num">{{ mainData.spoiledVotes.toLocaleString() }}</td>
-            </tr>
-            <tr
-              v-for="sv in mainData.spoiledVoteReasons"
-              :key="sv.reason"
-              class="sub-row"
-            >
-              <td colspan="2">{{ sv.voteCount }} - {{ sv.reason }}</td>
-            </tr>
+            <tbody>
+              <tr>
+                <td>{{ $t("reporting.numEligibleToVote") }}</td>
+                <td class="num">
+                  {{ mainData.numEligibleToVote.toLocaleString() }}
+                </td>
+              </tr>
+              <tr>
+                <td>{{ $t("reporting.voted") }}</td>
+                <td class="num">
+                  {{ mainData.sumOfEnvelopesCollected.toLocaleString() }}
+                </td>
+              </tr>
+              <tr
+                v-if="
+                  mainData.sumOfEnvelopesCollected !==
+                  mainData.numBallotsWithManual
+                "
+                class="warn-row"
+              >
+                <td>Ballots received ≠ Voted</td>
+                <td class="num">
+                  {{ mainData.numBallotsWithManual.toLocaleString() }}
+                </td>
+              </tr>
+              <tr class="spacer">
+                <td colspan="2"></td>
+              </tr>
+              <tr>
+                <td>{{ $t("reporting.percentParticipation") }}</td>
+                <td class="num">
+                  {{ formatPercent(mainData.percentParticipation) }}
+                </td>
+              </tr>
+              <tr class="spacer">
+                <td colspan="2"></td>
+              </tr>
+              <tr>
+                <td>Did not vote</td>
+                <td class="num">
+                  {{
+                    (
+                      mainData.numEligibleToVote -
+                      mainData.sumOfEnvelopesCollected
+                    ).toLocaleString()
+                  }}
+                </td>
+              </tr>
+              <tr class="divider">
+                <td colspan="2"><div></div></td>
+              </tr>
+              <tr>
+                <td>Ballots cast in person</td>
+                <td class="num">
+                  {{ mainData.inPersonBallots.toLocaleString() }}
+                </td>
+              </tr>
+              <tr>
+                <td>Ballots received by mail</td>
+                <td class="num">
+                  {{ mainData.mailedInBallots.toLocaleString() }}
+                </td>
+              </tr>
+              <tr>
+                <td>Ballots hand-delivered</td>
+                <td class="num">
+                  {{ mainData.droppedOffBallots.toLocaleString() }}
+                </td>
+              </tr>
+              <tr v-if="mainData.onlineBallots > 0">
+                <td>Ballots cast online</td>
+                <td class="num">
+                  {{ mainData.onlineBallots.toLocaleString() }}
+                </td>
+              </tr>
+              <tr v-if="mainData.importedBallots > 0">
+                <td>Ballots imported</td>
+                <td class="num">
+                  {{ mainData.importedBallots.toLocaleString() }}
+                </td>
+              </tr>
+              <tr v-if="mainData.calledInBallots > 0">
+                <td>Ballots phoned-in</td>
+                <td class="num">
+                  {{ mainData.calledInBallots.toLocaleString() }}
+                </td>
+              </tr>
+              <tr v-if="mainData.custom1Ballots > 0">
+                <td>Ballots: {{ mainData.custom1Name }}</td>
+                <td class="num">
+                  {{ mainData.custom1Ballots.toLocaleString() }}
+                </td>
+              </tr>
+              <tr v-if="mainData.custom2Ballots > 0">
+                <td>Ballots: {{ mainData.custom2Name }}</td>
+                <td class="num">
+                  {{ mainData.custom2Ballots.toLocaleString() }}
+                </td>
+              </tr>
+              <tr v-if="mainData.custom3Ballots > 0">
+                <td>Ballots: {{ mainData.custom3Name }}</td>
+                <td class="num">
+                  {{ mainData.custom3Ballots.toLocaleString() }}
+                </td>
+              </tr>
+              <tr class="divider">
+                <td colspan="2"><div></div></td>
+              </tr>
+              <tr>
+                <td>{{ $t("reporting.spoiledBallots") }}</td>
+                <td class="num">
+                  {{ mainData.spoiledBallots.toLocaleString() }}
+                </td>
+              </tr>
+              <tr
+                v-for="sb in mainData.spoiledBallotReasons"
+                :key="sb.reason"
+                class="sub-row"
+              >
+                <td colspan="2">{{ sb.ballotCount }} - {{ sb.reason }}</td>
+              </tr>
+              <tr class="divider">
+                <td colspan="2"><div></div></td>
+              </tr>
+              <tr>
+                <td>{{ $t("reporting.spoiledVotes") }}</td>
+                <td class="num">
+                  {{ mainData.spoiledVotes.toLocaleString() }}
+                </td>
+              </tr>
+              <tr
+                v-for="sv in mainData.spoiledVoteReasons"
+                :key="sv.reason"
+                class="sub-row"
+              >
+                <td colspan="2">{{ sv.voteCount }} - {{ sv.reason }}</td>
+              </tr>
+            </tbody>
           </table>
 
           <div class="page-break"></div>

@@ -26,7 +26,7 @@ const meta = computed(() => STAGE_META[props.stage]);
   </section>
 </template>
 
-<style lang="less">
+<style lang="less" scoped>
 .sidebar-stage-header {
   padding: 10px 12px 10px 16px;
 
@@ -44,7 +44,7 @@ const meta = computed(() => STAGE_META[props.stage]);
     flex-direction: column;
     width: 100%;
 
-    &__seg {
+    .stage-control__seg {
       border-right: none;
       border-bottom: 1px solid #dcdfe6;
       justify-content: flex-start;
