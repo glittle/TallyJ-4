@@ -321,7 +321,6 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
     if (!isTeller) {
       const { useSuperAdminStore } = await import("../stores/superAdminStore");
       const superAdminStore = useSuperAdminStore();
-
       await superAdminStore.checkSuperAdminStatus();
 
       if (to.meta.requiresSuperAdmin && !superAdminStore.isSuperAdmin) {

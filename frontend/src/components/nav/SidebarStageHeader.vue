@@ -38,21 +38,5 @@ const meta = computed(() => STAGE_META[props.stage]);
     color: var(--color-gray-500);
     margin-bottom: 8px;
   }
-
-  :deep(.stage-control) {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-
-    &__seg {
-      border-right: none;
-      border-bottom: 1px solid #dcdfe6;
-      justify-content: flex-start;
-
-      &:last-child {
-        border-bottom: none;
-      }
-    }
-  }
 }
 </style>

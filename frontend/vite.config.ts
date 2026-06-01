@@ -18,6 +18,29 @@ const vendorChunkRules: ChunkRule[] = [
   { patterns: ["qrcode"], chunk: "vendor-qrcode" },
 ];
 
+// ---------------------------------------------------------------------------
+// Manual chunking strategy aligned with the three main user audiences:
+//
+// 1. Online voters / public users
+//    - Only ever load PublicLayout + voting routes + the "voting" chunk.
+//    - Should stay completely isolated from all MainLayout / election management code.
+//
+// 2. Tellers (assistant + full) + election officials
+//    - Load the authenticated shell (MainLayout + auth-nav) + common election features.
+//    - Individual management areas (people, ballots, frontdesk, locations, tellers,
+//      results/tally, reporting, etc.) are loaded dynamically as separate chunks
+//      only when the user navigates into those sections.
+//    - The heavy StageGroupedSidebarMenu (many icons + full STAGE_PAGES definition)
+//      is lazy-loaded via defineAsyncComponent inside AppSidebar so it is not paid
+//      until the user actually enters an election context.
+//
+// 3. Super admins
+//    - Everything from (2) plus the isolated "super-admin" chunk.
+//    - The superAdminStore is now explicitly routed to the super-admin chunk.
+//
+// The goal is a small initial payload for voters, a reasonable base + on-demand
+// feature bundles for tellers/officials, and isolation of the privileged super-admin tools.
+// ---------------------------------------------------------------------------
 const srcChunkRules: ChunkRule[] = [
   { patterns: ["/src/api/gen/"], chunk: "api-client" },
   {
@@ -31,11 +54,30 @@ const srcChunkRules: ChunkRule[] = [
     chunk: "voting",
   },
   {
+    // Heavy election navigation menu (many icons + full STAGE_PAGES definition).
+    // Even though AppSidebar lazy-loads it via defineAsyncComponent, we must
+    // explicitly assign it to the "elections" chunk here; otherwise the broad
+    // "/src/components/nav/" rule below would force it into the early "auth-nav"
+    // chunk and defeat the lazy-load benefit for tellers/officials.
+    patterns: ["/src/components/nav/StageGroupedSidebarMenu"],
+    chunk: "elections",
+  },
+  {
+    // Common authenticated navigation and UI pieces (sidebar menu is lazy-loaded,
+    // so this mainly catches the lightweight shell + header bits).
     patterns: [
-      "/src/layouts/MainLayout",
+      "/src/components/nav/",
       "/src/components/AppHeader",
       "/src/components/AppSidebar",
     ],
+    chunk: "auth-nav",
+  },
+  {
+    // Keep the core layout shell as its own chunk. AppHeader and AppSidebar
+    // (especially the heavy StageGroupedSidebarMenu which is now lazy) are
+    // allowed to be pulled into feature chunks or a lighter auth shell.
+    // This helps keep the base payload smaller for tellers and election managers.
+    patterns: ["/src/layouts/MainLayout"],
     chunk: "admin-layout",
   },
   {
@@ -59,7 +101,12 @@ const srcChunkRules: ChunkRule[] = [
     chunk: "results",
   },
   {
-    patterns: ["/src/pages/elections/", "/src/components/elections/"],
+    patterns: [
+      "/src/pages/elections/",
+      "/src/components/elections/",
+      "/src/pages/DashboardPage",
+      "/src/pages/ProfilePage",
+    ],
     chunk: "elections",
   },
   {
@@ -73,7 +120,11 @@ const srcChunkRules: ChunkRule[] = [
     chunk: "people",
   },
   {
-    patterns: ["/src/pages/locations/", "/src/components/locations/"],
+    patterns: [
+      "/src/pages/locations/",
+      "/src/components/locations/",
+      "/src/stores/locationStore",
+    ],
     chunk: "locations",
   },
   {
@@ -93,6 +144,7 @@ const srcChunkRules: ChunkRule[] = [
     patterns: [
       "/src/pages/SuperAdminDashboardPage",
       "/src/services/superAdminService",
+      "/src/stores/superAdminStore",
     ],
     chunk: "super-admin",
   },
@@ -175,10 +227,9 @@ export default defineConfig(() => {
     build: {
       rollupOptions: {
         onwarn(warning, warn) {
-          if (
-            warning.code === "INVALID_ANNOTATION" &&
-            warning.id?.includes("@microsoft/signalr")
-          ) {
+          // Suppress only for third-party code (harmless annotation issues from vueuse, signalr, etc.).
+          // Keep app-code warnings visible so they can be actioned.
+          if (warning.code === "INVALID_ANNOTATION" && warning.id?.includes("node_modules")) {
             return;
           }
           warn(warning);
