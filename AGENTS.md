@@ -268,6 +268,35 @@ Windows-only caveat:
 
 For routine local development, prefer `npm run dev`. Only use `npm run build` when you explicitly need a production build or are validating production output.
 
+## Reviewing and actioning external PR feedback (Copilot, human reviewers)
+
+When a task is "review the Copilot suggestions on PR N and fix them here" (or equivalent for human review comments):
+
+**Preferred extraction flow (use this pattern):**
+1. Use the available `gh` CLI (it is usually logged in). Avoid web scraping PR pages.
+2. Get structured metadata: `gh pr view N -R owner/repo --json files,baseRefName,headRefName`
+3. Extract **only** the actionable comments with projection (critical for low context noise):
+   ```bash
+   gh api repos/owner/repo/pulls/N/comments \
+     --jq 'map(select(.user.login | contains("copilot"))) | map({path, line, body, diff_hunk: (.diff_hunk | gsub("\n"; " | "))})' \
+     > copilot-comments.json
+   ```
+4. Also save a clean diff for reference: `gh pr diff N -R owner/repo > pr.diff`
+5. Use `read_file` on the small clean `.json`, not the raw full API response.
+6. Read **only the files mentioned** in the comments (use `offset`/`limit` for large Vue or .ts files).
+
+**During the work:**
+- Track the set of comments + files with `todo_write`.
+- For any frontend user-facing string changes, **strictly** obey the "Locales" section above (only edit `src/locales/en/`, run `npm run validate:i18n`).
+- Correlate comments to code using the saved `diff_hunk` + the actual source (or the saved `pr.diff`).
+- After edits, run the documented validation commands for the area changed (`npm run check` in frontend, relevant tests in backend).
+
+**Environment notes:**
+- This harness has shell quirks with complex pipes (`head`, `tail`, `Select-String`, `Out-String`). Prefer writing output to a file then using the `Read` or `Grep` tools on it.
+- Consider invoking the available `code-review` or `review` skills (see system skills) to analyze the suggestions before you start editing — especially when there are >5 comments or the intent is ambiguous.
+
+**Goal:** Minimal context bloat, fast comment → root cause → minimal correct fix, while respecting all project conventions.
+
 ## Documentation hygiene
 
 When features change, update the canonical docs above instead of adding one-off summary files.
