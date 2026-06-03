@@ -1048,8 +1048,8 @@ public class AuthController : ControllerBase
         var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
-        var botToken = _configuration["ClientEnv:telegramBotToken"];
-        if (string.IsNullOrWhiteSpace(botToken) || botToken.StartsWith("<"))
+        var botToken = _configuration["Telegram:BotToken"];
+        if (string.IsNullOrWhiteSpace(botToken))
         {
             _logger.LogWarning("Telegram login attempted but Telegram bot token is not configured");
             return BadRequest(new { error = "Telegram authentication is not configured on this server." });

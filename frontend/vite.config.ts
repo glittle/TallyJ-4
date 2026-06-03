@@ -211,8 +211,7 @@ export default defineConfig(() => {
       hmr: {
         port: 8095,
       },
-      // Proxy /clientEnv.json during `npm run dev` so the real backend
-      // (ConfigMiddleware) can serve the dynamic environment-specific config.
+      // Proxy /clientEnv.json during `npm run dev` to the real backend
       proxy: {
         "/clientEnv.json": {
           target: process.env.VITE_API_TARGET || "http://localhost:5016",
@@ -220,14 +219,12 @@ export default defineConfig(() => {
         },
       },
     },
-
-    // Same proxy for `npm run preview` (production build preview server).
-    // Without this, /clientEnv.json falls through to the SPA fallback and returns index.html.
     preview: {
       port: 4173,
+      // Proxy /clientEnv.json during `npm run preview` to the real backend
       proxy: {
         "/clientEnv.json": {
-          target: "http://localhost:5016",
+          target: process.env.VITE_API_TARGET || "http://localhost:5016",
           changeOrigin: true,
         },
       },

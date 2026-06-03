@@ -129,17 +129,6 @@ void ConfigureServices(WebApplicationBuilder builder)
             allowedOrigins = allowedOrigins.Append(frontendBaseUrl).ToArray();
         }
 
-        // Always allow common local Vite dev + preview ports so that `npm run dev` and
-        // `npm run preview` (with proxy to the backend) work out of the box during local development.
-        var localDevOrigins = new[]
-        {
-            "http://localhost:8095",
-            "http://localhost:4173",
-            "http://127.0.0.1:8095",
-            "http://127.0.0.1:4173",
-        };
-        allowedOrigins = allowedOrigins.Concat(localDevOrigins).ToArray();
-
         allowedOrigins = allowedOrigins.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 
         Log.Information("CORS allowed origins: {AllowedOrigins}", allowedOrigins);

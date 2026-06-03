@@ -4,10 +4,9 @@ export interface AppConfig {
   sentryDsn?: string;
   googleClientId?: string;
   facebookAppId?: string;
-  googleClientSecret?: string;
-  telegramBotUsername?: string;
-  kakaoApiAdminKey?: string;
   kakaoApiJsKey?: string;
+  enableTelegramLogin?: boolean;
+  telegramBotUsername?: string;
 }
 
 export function createAppConfig(overrides: Partial<AppConfig> = {}): AppConfig {
@@ -34,6 +33,11 @@ export async function loadAppConfig(): Promise<AppConfig> {
       "Cache-Control": "no-cache",
     },
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to load /clientEnv.json (${response.status})`);
+  }
+
   return (await response.json()) as AppConfig;
 }
 
