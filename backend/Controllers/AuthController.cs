@@ -799,8 +799,8 @@ public class AuthController : ControllerBase
 
         _logger.LogInformation("Google login attempt from {ClientIp} with returnUrl: {ReturnUrl}", clientIp, returnUrl);
 
-        var googleClientId = _configuration["Google:ClientId"];
-        var googleClientSecret = _configuration["Google:ClientSecret"];
+        var googleClientSecret = _configuration["GoogleClientSecret"]; // server only
+        var googleClientId = _configuration["ClientEnv:googleClientId"]; // client as well
 
         _logger.LogInformation("Google ClientId configured: {!string.IsNullOrWhiteSpace(googleClientId)}, ClientSecret configured: {!string.IsNullOrWhiteSpace(googleClientSecret)}", !string.IsNullOrWhiteSpace(googleClientId), !string.IsNullOrWhiteSpace(googleClientSecret));
 
@@ -969,7 +969,7 @@ public class AuthController : ControllerBase
         var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
-        var googleClientId = _configuration["Google:ClientId"];
+        var googleClientId = _configuration["ClientEnv:googleClientId"];
         if (string.IsNullOrWhiteSpace(googleClientId) || googleClientId.StartsWith("<"))
         {
             _logger.LogWarning("Google One Tap attempted but Google Client ID is not configured");
@@ -1049,7 +1049,7 @@ public class AuthController : ControllerBase
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var botToken = _configuration["Telegram:BotToken"];
-        if (string.IsNullOrWhiteSpace(botToken) || botToken.StartsWith("<"))
+        if (string.IsNullOrWhiteSpace(botToken))
         {
             _logger.LogWarning("Telegram login attempted but Telegram bot token is not configured");
             return BadRequest(new { error = "Telegram authentication is not configured on this server." });

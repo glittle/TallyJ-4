@@ -3730,22 +3730,6 @@ export type GetApiPublicByElectionGuidPublicDisplayResponses = {
 
 export type GetApiPublicByElectionGuidPublicDisplayResponse = GetApiPublicByElectionGuidPublicDisplayResponses[keyof GetApiPublicByElectionGuidPublicDisplayResponses];
 
-export type GetApiPublicAuthConfigData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/Public/auth-config';
-};
-
-export type GetApiPublicAuthConfigResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseObject;
-};
-
-export type GetApiPublicAuthConfigResponse = GetApiPublicAuthConfigResponses[keyof GetApiPublicAuthConfigResponses];
-
 export type GetApiPublicHealthData = {
     body?: never;
     path?: never;

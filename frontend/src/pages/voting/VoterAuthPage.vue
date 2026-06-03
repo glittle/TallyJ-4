@@ -7,6 +7,7 @@ declare global {
   }
 }
 
+import { useLocalStorage } from "@/composables/useLocalStorage";
 import {
   ArrowLeft,
   ChromeFilled,
@@ -16,7 +17,6 @@ import {
   Phone,
   QuestionFilled,
 } from "@element-plus/icons-vue";
-import { useLocalStorage } from "@/composables/useLocalStorage";
 import {
   ElAlert,
   ElButton,
@@ -35,10 +35,9 @@ import {
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { getApiPublicAuthConfig } from "../../api/gen/configService/sdk.gen";
-import { getAppConfig } from "../../config/appConfig";
 import TelegramLoginButton from "../../components/auth/TelegramLoginButton.vue";
 import { useNotifications } from "../../composables/useNotifications";
+import { getAppConfig } from "../../config/appConfig";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 
 declare const FB: any;
@@ -141,25 +140,6 @@ const codeRules = {
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === "Escape") {
     router.push("/");
-  }
-};
-
-const fetchAuthConfig = async () => {
-  if (authConfig.value) {
-    return authConfig.value;
-  }
-  try {
-    const resp = await getApiPublicAuthConfig();
-    if (!resp.ok) {
-      return null;
-    }
-    const json = await resp.json();
-    authConfig.value = json?.data ?? null;
-    telegramBotUsername.value = authConfig.value?.telegramBotUsername ?? null;
-    telegramReady.value = Boolean(authConfig.value?.telegramBotUsername);
-    return authConfig.value;
-  } catch {
-    return null;
   }
 };
 
@@ -284,18 +264,7 @@ const loadGisScript = (): Promise<void> => {
 const fetchGoogleClientId = async (): Promise<string | null> => {
   // First check app config
   const appConfig = getAppConfig();
-  if (appConfig.googleClientId) {
-    return appConfig.googleClientId;
-  }
-
-  // Then check backend API
-  const config = await fetchAuthConfig();
-  if (config?.googleClientId) {
-    return config.googleClientId;
-  }
-
-  // Finally fallback to environment variable
-  return import.meta.env.VITE_GOOGLE_CLIENT_ID || null;
+  return appConfig.googleClientId ?? null;
 };
 
 let isInitializingGis = false;
@@ -429,10 +398,9 @@ const loadFacebookSdk = (): Promise<void> => {
 
 const initFacebookSdk = async () => {
   try {
+    const config = getAppConfig();
     fbError.value = false;
     console.log("Initializing Facebook SDK...");
-    const config = await fetchAuthConfig();
-    console.log("Auth config:", config);
     if (!config?.facebookAppId) {
       console.error("No Facebook App ID in config");
       fbError.value = true;
@@ -548,15 +516,15 @@ const loadKakaoSdk = (): Promise<void> => {
 
 const initKakaoSdk = async () => {
   try {
+    const config = getAppConfig();
     kakaoError.value = false;
-    const config = await fetchAuthConfig();
-    if (!config?.kakaoJsKey) {
+    if (!config?.kakaoApiJsKey) {
       kakaoError.value = true;
       return;
     }
     await loadKakaoSdk();
     if (!Kakao.isInitialized()) {
-      Kakao.init(config.kakaoJsKey);
+      Kakao.init(config.kakaoApiJsKey);
     }
     kakaoReady.value = true;
   } catch (error) {
@@ -579,7 +547,6 @@ watch(activeTab, async (newTab) => {
 });
 
 onMounted(() => {
-  fetchAuthConfig();
   if (activeTab.value === "google") {
     initGoogleSignIn();
   } else if (activeTab.value === "facebook") {

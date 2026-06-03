@@ -22,9 +22,10 @@ import {
 } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { getApiPublicAuthConfig } from "../api/gen/configService/sdk.gen";
 import TelegramLoginButton from "../components/auth/TelegramLoginButton.vue";
 import { useAuthStore } from "../stores/authStore";
+
+const appConfig = getAppConfig();
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -174,8 +175,8 @@ const handleLogin = async () => {
 const googleButtonRef = ref<HTMLElement>();
 const googleClientId = ref<string | null>(null);
 const googleReady = ref(false);
-const telegramBotUsername = ref<string | null>(null);
-const telegramReady = ref(false);
+const telegramReady = appConfig.enableTelegramLogin ?? false;
+const telegramBotUsername = appConfig.telegramBotUsername ?? "";
 
 const fbReady = ref(false);
 const fbError = ref(false);
@@ -184,15 +185,6 @@ const fbScriptLoaded = ref(false);
 const kakaoReady = ref(false);
 const kakaoError = ref(false);
 const kakaoScriptLoaded = ref(false);
-
-interface AuthConfig {
-  googleClientId?: string;
-  facebookAppId?: string;
-  kakaoJsKey?: string;
-  telegramBotUsername?: string;
-}
-
-const authConfig = ref<AuthConfig | null>(null);
 
 const gisScriptLoaded = ref(false);
 let gisCleanup: (() => void) | null = null;
@@ -261,38 +253,9 @@ const loadGisScript = (): Promise<void> => {
   });
 };
 
-const fetchAuthConfig = async () => {
-  if (authConfig.value) {
-    return authConfig.value;
-  }
-  try {
-    const resp = await getApiPublicAuthConfig();
-    if (!resp.response?.ok) {
-      return null;
-    }
-    authConfig.value = (resp.data?.data as AuthConfig) ?? null;
-    telegramBotUsername.value = authConfig.value?.telegramBotUsername || null;
-    telegramReady.value = Boolean(telegramBotUsername.value);
-    return authConfig.value;
-  } catch {
-    return null;
-  }
-};
 const fetchGoogleClientId = async (): Promise<string | null> => {
   // First check app config
-  const appConfig = getAppConfig();
-  if (appConfig.googleClientId) {
-    return appConfig.googleClientId;
-  }
-
-  // Then check backend API
-  const config = await fetchAuthConfig();
-  if (config?.googleClientId) {
-    return config.googleClientId;
-  }
-
-  // Finally fallback to environment variable
-  return import.meta.env.VITE_GOOGLE_CLIENT_ID || null;
+  return appConfig.googleClientId ?? null;
 };
 const renderGoogleButton = () => {
   nextTick(() => {
@@ -452,14 +415,13 @@ const loadFacebookSdk = (): Promise<void> => {
 const initFacebookSdk = async () => {
   try {
     fbError.value = false;
-    const config = await fetchAuthConfig();
-    if (!config?.facebookAppId) {
+    if (!appConfig?.facebookAppId) {
       fbError.value = true;
       return;
     }
     await loadFacebookSdk();
     globalThis.FB.init({
-      appId: config.facebookAppId,
+      appId: appConfig.facebookAppId,
       cookie: true,
       xfbml: true,
       version: "v18.0",
@@ -529,14 +491,13 @@ const loadKakaoSdk = (): Promise<void> => {
 const initKakaoSdk = async () => {
   try {
     kakaoError.value = false;
-    const config = await fetchAuthConfig();
-    if (!config?.kakaoJsKey) {
+    if (!appConfig?.kakaoApiJsKey) {
       kakaoError.value = true;
       return;
     }
     await loadKakaoSdk();
     if (!globalThis.Kakao.isInitialized()) {
-      globalThis.Kakao.init(config.kakaoJsKey);
+      globalThis.Kakao.init(appConfig.kakaoApiJsKey);
     }
     kakaoReady.value = true;
   } catch (error) {
@@ -546,7 +507,7 @@ const initKakaoSdk = async () => {
 };
 
 const handleGoogleLogin = () => {
-  const apiUrl = getAppConfig().apiUrl;
+  const apiUrl = appConfig.apiUrl;
   const redirectParam = route.query.redirect
     ? `?redirect=${encodeURIComponent(route.query.redirect as string)}`
     : "";
@@ -697,7 +658,7 @@ onBeforeUnmount(() => {
             </el-button>
           </div>
 
-          <div v-if="telegramReady && telegramBotUsername" class="telegram-btn">
+          <div v-if="telegramReady" class="telegram-btn">
             <TelegramLoginButton
               :bot-username="telegramBotUsername"
               @success="handleTelegramSuccess"

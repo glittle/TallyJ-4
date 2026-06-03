@@ -116,7 +116,12 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     services.AddCors(options =>
     {
-        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+        // Support the documented structure in appsettings.json ("Cors": { "AllowedOrigins": [...] })
+        // as well as top-level for backward compat / machine-specific overrides.
+        var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+            ?? builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
+            ?? Array.Empty<string>();
+
         var frontendBaseUrl = builderConfiguration["Frontend:BaseUrl"];
 
         if (!string.IsNullOrEmpty(frontendBaseUrl))
@@ -124,7 +129,7 @@ void ConfigureServices(WebApplicationBuilder builder)
             allowedOrigins = allowedOrigins.Append(frontendBaseUrl).ToArray();
         }
 
-        allowedOrigins = allowedOrigins.Distinct().ToArray();
+        allowedOrigins = allowedOrigins.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 
         Log.Information("CORS allowed origins: {AllowedOrigins}", allowedOrigins);
 
@@ -237,8 +242,8 @@ void ConfigureAuthentication(IServiceCollection services, IConfiguration configu
         };
     });
 
-    var googleClientId = configuration["Google:ClientId"];
-    var googleClientSecret = configuration["Google:ClientSecret"];
+    var googleClientSecret = configuration["GoogleClientSecret"]; // server only
+    var googleClientId = configuration["ClientEnv:googleClientId"]; // client as well
 
     if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret)
         && !googleClientId.StartsWith('<') && !googleClientSecret.StartsWith('<'))
@@ -476,7 +481,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
 
     app.UseHttpsRedirection();
     app.UseDefaultFiles();
-    app.UseMiddleware<ConfigMiddleware>();
+    app.UseMiddleware<ClientEnvMiddleware>();
     app.UseStaticFiles(new StaticFileOptions
     {
         OnPrepareResponse = ctx =>
@@ -490,6 +495,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     });
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseCors("AllowFrontend");
+    app.UseMiddleware<HardeningMiddleware>();
     app.Use(async (context, next) =>
     {
         // Only add HSTS if in Production

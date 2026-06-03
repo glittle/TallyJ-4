@@ -211,6 +211,23 @@ export default defineConfig(() => {
       hmr: {
         port: 8095,
       },
+      // Proxy /clientEnv.json during `npm run dev` to the real backend
+      proxy: {
+        "/clientEnv.json": {
+          target: process.env.VITE_API_TARGET || "http://localhost:5016",
+          changeOrigin: true,
+        },
+      },
+    },
+    preview: {
+      port: 4173,
+      // Proxy /clientEnv.json during `npm run preview` to the real backend
+      proxy: {
+        "/clientEnv.json": {
+          target: process.env.VITE_API_TARGET || "http://localhost:5016",
+          changeOrigin: true,
+        },
+      },
     },
     plugins: [
       vue(),
@@ -229,7 +246,10 @@ export default defineConfig(() => {
         onwarn(warning, warn) {
           // Suppress only for third-party code (harmless annotation issues from vueuse, signalr, etc.).
           // Keep app-code warnings visible so they can be actioned.
-          if (warning.code === "INVALID_ANNOTATION" && warning.id?.includes("node_modules")) {
+          if (
+            warning.code === "INVALID_ANNOTATION" &&
+            warning.id?.includes("node_modules")
+          ) {
             return;
           }
           warn(warning);

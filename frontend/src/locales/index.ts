@@ -44,6 +44,19 @@ function flatToNested(flat: any): any {
   return result;
 }
 
+// Helper to extract the actual JSON data object from a module loaded via
+// import() or import.meta.glob. Handles:
+// - Standard Vite JSON modules: { default: data }
+// - Chunks produced by @intlify/unplugin-vue-i18n transforms in prod builds: { t: data }
+// - Direct data objects (some eager globs or dev server)
+function extractJsonModule(mod: any): any {
+  if (!mod) return null;
+  if (mod.default && typeof mod.default === "object") return mod.default;
+  if (mod.t && typeof mod.t === "object") return mod.t;
+  if (typeof mod === "object") return mod;
+  return null;
+}
+
 // Load bundled files (may not exist in development)
 const enBundledModule = import.meta.glob("./bundled/en.json", { eager: true });
 
@@ -74,7 +87,7 @@ if (import.meta.env.DEV) {
 function getEnglishContent(): any {
   if (useBundled) {
     const moduleEntry = Object.values(enBundledModule)[0] as any;
-    const content = moduleEntry?.default || moduleEntry;
+    const content = extractJsonModule(moduleEntry);
 
     if (content) {
       return flatToNested(content);
@@ -85,8 +98,7 @@ function getEnglishContent(): any {
   // Merge individual English files (dev or bundled-missing fallback)
   let merged = {};
   for (const path in enModules) {
-    const content =
-      (enModules[path] as any).default || (enModules[path] as any);
+    const content = extractJsonModule(enModules[path]);
     merged = deepMerge(merged, content);
   }
   return flatToNested(merged);
@@ -109,7 +121,7 @@ async function loadBundledLocale(locale: string): Promise<any> {
 
   try {
     const mod = await loadFn();
-    const content = mod.default || mod;
+    const content = extractJsonModule(mod);
     if (content) {
       if (import.meta.env.DEV) {
         console.log(`Loaded bundled content for ${locale}`);
@@ -146,7 +158,7 @@ async function loadIndividualLocaleFiles(locale: string): Promise<any> {
 
     try {
       const mod = await loadFn();
-      const content = mod.default || mod;
+      const content = extractJsonModule(mod);
       if (content) {
         merged = deepMerge(merged, content);
       }
