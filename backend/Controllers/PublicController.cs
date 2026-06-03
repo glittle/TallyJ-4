@@ -83,33 +83,33 @@ public class PublicController(IPublicService publicService, ILogger<PublicContro
         return Ok(ApiResponse<PublicDisplayDto>.SuccessResponse(displayData));
     }
 
-    /// <summary>
-    /// Gets the authentication configuration for the frontend, such as available OAuth providers and their client IDs. This allows the frontend to dynamically adjust its authentication options based on the backend configuration.
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet("auth-config")]
-    public ActionResult<ApiResponse<object>> GetAuthConfig()
-    {
-        var googleClientId = _configuration["Google:ClientId"];
-        var hasGoogle = !string.IsNullOrWhiteSpace(googleClientId) && !googleClientId.StartsWith("<");
+    // /// <summary>
+    // /// Gets the authentication configuration for the frontend, such as available OAuth providers and their client IDs. This allows the frontend to dynamically adjust its authentication options based on the backend configuration.
+    // /// </summary>
+    // /// <returns></returns>
+    // [HttpGet("auth-config")]
+    // public ActionResult<ApiResponse<object>> GetAuthConfig()
+    // {
+    //     var googleClientId = _configuration["ClientEnv:googleClientSecret"];
+    //     var hasGoogle = !string.IsNullOrWhiteSpace(googleClientId) && !googleClientId.StartsWith("<");
 
-        var facebookAppId = _configuration["Facebook:AppId"];
-        var hasFacebook = !string.IsNullOrWhiteSpace(facebookAppId) && !facebookAppId.StartsWith("<");
+    //     var facebookAppId = _configuration["ClientEnv:facebookAppId"];
+    //     var hasFacebook = !string.IsNullOrWhiteSpace(facebookAppId) && !facebookAppId.StartsWith("<");
 
-        var kakaoJsKey = _configuration["KakaoApi:JsKey"];
-        var hasKakao = !string.IsNullOrWhiteSpace(kakaoJsKey) && !kakaoJsKey.StartsWith("<");
+    //     var kakaoJsKey = _configuration["ClientEnv:kakaoJsKey"];
+    //     var hasKakao = !string.IsNullOrWhiteSpace(kakaoJsKey) && !kakaoJsKey.StartsWith("<");
 
-        var telegramBotUsername = _configuration["Telegram:BotUsername"];
-        var hasTelegram = !string.IsNullOrWhiteSpace(telegramBotUsername) && !telegramBotUsername.StartsWith("<");
+    //     var telegramBotUsername = _configuration["ClientEnv:telegramBotUsername"];
+    //     var hasTelegram = !string.IsNullOrWhiteSpace(telegramBotUsername) && !telegramBotUsername.StartsWith("<");
 
-        return Ok(ApiResponse<object>.SuccessResponse(new
-        {
-            googleClientId = hasGoogle ? googleClientId : null,
-            facebookAppId = hasFacebook ? facebookAppId : null,
-            kakaoJsKey = hasKakao ? kakaoJsKey : null,
-            telegramBotUsername = hasTelegram ? telegramBotUsername : null
-        }));
-    }
+    //     return Ok(ApiResponse<object>.SuccessResponse(new
+    //     {
+    //         googleClientId = hasGoogle ? googleClientId : null,
+    //         facebookAppId = hasFacebook ? facebookAppId : null,
+    //         kakaoJsKey = hasKakao ? kakaoJsKey : null,
+    //         telegramBotUsername = hasTelegram ? telegramBotUsername : null
+    //     }));
+    // }
 
     /// <summary>
     /// Health check endpoint to verify that the API is running and responsive. This can be used by monitoring tools or load balancers to check the health of the service. It returns a simple status message along with a timestamp and service name to confirm that the API is operational.

@@ -2,6 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- Preload clientEnv so it is fetched as soon as possible -->
+    <link
+      rel="preload"
+      as="fetch"
+      href="/clientEnv.json"
+      crossorigin="anonymous"
+    />
+
     <link
       rel="icon"
       type="image/png"
@@ -102,13 +111,6 @@
     </script>
 
     <title>TallyJ v4</title>
-    <!-- Preload config.json so it is fetched as soon as possible -->
-    <link
-      rel="preload"
-      as="fetch"
-      href="/config.json"
-      crossorigin="anonymous"
-    />
 
     <!-- Resolve stored theme before first paint to avoid flash -->
     <script>

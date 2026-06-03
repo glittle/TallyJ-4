@@ -1,16 +1,19 @@
 export interface AppConfig {
   apiUrl: string;
   env: string;
-  sentryDsn: string;
+  sentryDsn?: string;
   googleClientId?: string;
+  facebookAppId?: string;
+  googleClientSecret?: string;
+  telegramBotUsername?: string;
+  kakaoApiAdminKey?: string;
+  kakaoApiJsKey?: string;
 }
 
 export function createAppConfig(overrides: Partial<AppConfig> = {}): AppConfig {
   return {
     apiUrl: import.meta.env.VITE_API_URL || "http://localhost:5016",
     env: import.meta.env.VITE_ENV || "development",
-    sentryDsn: import.meta.env.VITE_SENTRY_DSN || "",
-    googleClientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || undefined,
     ...overrides,
   };
 }
@@ -26,7 +29,11 @@ export async function loadAppConfig(): Promise<AppConfig> {
     return createAppConfig();
   }
 
-  const response = await fetch("/config.json");
+  const response = await fetch("/clientEnv.json", {
+    headers: {
+      "Cache-Control": "no-cache",
+    },
+  });
   return (await response.json()) as AppConfig;
 }
 

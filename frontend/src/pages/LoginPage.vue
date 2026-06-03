@@ -22,7 +22,6 @@ import {
 } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { getApiPublicAuthConfig } from "../api/gen/configService/sdk.gen";
 import TelegramLoginButton from "../components/auth/TelegramLoginButton.vue";
 import { useAuthStore } from "../stores/authStore";
 
@@ -266,12 +265,8 @@ const fetchAuthConfig = async () => {
     return authConfig.value;
   }
   try {
-    const resp = await getApiPublicAuthConfig();
-    if (!resp.response?.ok) {
-      return null;
-    }
-    authConfig.value = (resp.data?.data as AuthConfig) ?? null;
-    telegramBotUsername.value = authConfig.value?.telegramBotUsername || null;
+    const config = getAppConfig();
+    telegramBotUsername.value = config.telegramBotUsername || null;
     telegramReady.value = Boolean(telegramBotUsername.value);
     return authConfig.value;
   } catch {
