@@ -70,7 +70,7 @@ const telegramReady = ref(false);
 const telegramError = ref(false);
 const telegramBotUsername = ref<string | null>(null);
 
-const authConfig = ref<{
+const _authConfig = ref<{
   googleClientId?: string;
   facebookAppId?: string;
   kakaoJsKey?: string;

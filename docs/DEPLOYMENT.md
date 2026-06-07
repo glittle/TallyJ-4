@@ -104,11 +104,8 @@ Use the npm script that matches the target environment:
 cd frontend
 npm ci
 
-# UAT
-npm run build-uat
-
-# Production
-npm run build-production
+# Build (includes merging per-locale JSONs into bundled/ for production language support)
+npm run build
 ```
 
 ### Copy assets into the backend publish output
