@@ -13,5 +13,8 @@
   "tally.title": "Izračunaj rezultate",
   "tally.viewFullResults": "Pogledaj sve rezultate",
   "tally.warning": "Upozorenje",
-  "tally.warningMessage": "Izračunavanje rezultata prepisat će sve postojeće rezultate. Ova se radnja ne može poništiti."
+  "tally.warningMessage": "Izračunavanje rezultata prepisat će sve postojeće rezultate. Ova se radnja ne može poništiti.",
+  "tally.section.E": "Izabrani",
+  "tally.section.X": "Dodatni",
+  "tally.section.O": "Ostali"
 }

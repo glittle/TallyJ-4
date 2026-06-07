@@ -13,5 +13,8 @@
   "tally.title": "개표 계산",
   "tally.viewFullResults": "전체 결과 보기",
   "tally.warning": "경고",
-  "tally.warningMessage": "개표를 계산하면 기존 결과가 덮어씌워집니다. 이 작업은 취소할 수 없습니다."
+  "tally.warningMessage": "개표를 계산하면 기존 결과가 덮어씌워집니다. 이 작업은 취소할 수 없습니다.",
+  "tally.section.E": "선출된",
+  "tally.section.X": "추가",
+  "tally.section.O": "기타"
 }

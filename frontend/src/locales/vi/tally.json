@@ -13,5 +13,8 @@
   "tally.title": "Tính Toán Kết Quả",
   "tally.viewFullResults": "Xem Kết Quả Đầy Đủ",
   "tally.warning": "Cảnh Báo",
-  "tally.warningMessage": "Việc tính toán kết quả sẽ ghi đè lên bất kỳ kết quả hiện có nào. Hành động này không thể hoàn tác."
+  "tally.warningMessage": "Việc tính toán kết quả sẽ ghi đè lên bất kỳ kết quả hiện có nào. Hành động này không thể hoàn tác.",
+  "tally.section.E": "Được bầu",
+  "tally.section.X": "Bổ sung",
+  "tally.section.O": "Khác"
 }

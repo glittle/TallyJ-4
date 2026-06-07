@@ -13,5 +13,8 @@
   "tally.title": "Calcular Escrutinio",
   "tally.viewFullResults": "Ver Resultados Completos",
   "tally.warning": "Advertencia",
-  "tally.warningMessage": "Calcular el escrutinio sobreescribirá cualquier resultado existente. Esta acción no se puede deshacer."
+  "tally.warningMessage": "Calcular el escrutinio sobreescribirá cualquier resultado existente. Esta acción no se puede deshacer.",
+  "tally.section.E": "Elegido",
+  "tally.section.X": "Extra",
+  "tally.section.O": "Otro"
 }

@@ -48,5 +48,6 @@
   "common.versionDisplay": "Версия 4 Beta",
   "common.view": "Просмотр",
   "common.warning": "Предупреждение",
-  "common.yes": "Да"
+  "common.yes": "Да",
+  "common.goHome": "Главная"
 }

@@ -13,5 +13,8 @@
   "tally.title": "احسب النتائج",
   "tally.viewFullResults": "عرض النتائج الكاملة",
   "tally.warning": "تحذير",
-  "tally.warningMessage": "سيؤدي حساب النتائج إلى الكتابة فوق أي نتائج موجودة. لا يمكن التراجع عن هذا الإجراء."
+  "tally.warningMessage": "سيؤدي حساب النتائج إلى الكتابة فوق أي نتائج موجودة. لا يمكن التراجع عن هذا الإجراء.",
+  "tally.section.E": "منتخب",
+  "tally.section.X": "إضافي",
+  "tally.section.O": "آخر"
 }
