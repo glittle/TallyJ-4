@@ -1,11 +1,46 @@
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import vue from "@vitejs/plugin-vue";
 import { execSync } from "node:child_process";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, URL } from "node:url";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import devtoolsJson from "vite-plugin-devtools-json";
+
+// ---------------------------------------------------------------------------
+// Build-time guard for language support
+//
+// `npm run build` (and the Azure front-end pipeline) must run merge-locales
+// first. The resulting src/locales/bundled/*.json files (gitignored) are
+// required so that:
+//   - Vite's manualChunks produces locale-*.js chunks
+//   - locales/index.ts sets useBundled=true and the import.meta.glob maps
+//     have entries for dynamic loading via setLocale()
+//   - LanguageFlagsSelector on the landing page (and LanguageSelector elsewhere)
+//     can actually fetch and apply non-English translations.
+//
+// Without the bundled files a bare `npx vite build` produces a dist where
+// clicking any flag makes *no* network request (no chunk exists) and the
+// UI stays in English (only "common" strings are present).
+//
+// This guard makes the mistake fail fast and loudly in CI or manual deploys.
+// ---------------------------------------------------------------------------
+const __dirnameForConfig = path.dirname(fileURLToPath(import.meta.url));
+const bundledDir = path.join(__dirnameForConfig, "src", "locales", "bundled");
+const enBundledPath = path.join(bundledDir, "en.json");
+
+const isViteBuild =
+  process.argv.some((arg) => arg.includes("build")) ||
+  process.env.NODE_ENV === "production";
+
+if (isViteBuild && !fs.existsSync(enBundledPath)) {
+  throw new Error(
+    "[TallyJ] Production `vite build` requires src/locales/bundled/*.json (produced by `npm run merge-locales`).\n" +
+      'Run "npm run build" (not bare "npx vite build").\n' +
+      "bundled/ is .gitignored. This is why language flags worked in dev + local preview but not on the UAT pipeline build.",
+  );
+}
 
 type ChunkRule = { patterns: string[]; chunk: string };
 

@@ -50,10 +50,18 @@ function flatToNested(flat: any): any {
 // - Chunks produced by @intlify/unplugin-vue-i18n transforms in prod builds: { t: data }
 // - Direct data objects (some eager globs or dev server)
 function extractJsonModule(mod: any): any {
-  if (!mod) return null;
-  if (mod.default && typeof mod.default === "object") return mod.default;
-  if (mod.t && typeof mod.t === "object") return mod.t;
-  if (typeof mod === "object") return mod;
+  if (!mod) {
+    return null;
+  }
+  if (mod.default && typeof mod.default === "object") {
+    return mod.default;
+  }
+  if (mod.t && typeof mod.t === "object") {
+    return mod.t;
+  }
+  if (typeof mod === "object") {
+    return mod;
+  }
   return null;
 }
 
@@ -75,6 +83,10 @@ const individualLocaleModules = import.meta.env.DEV
 
 const useBundled =
   Object.keys(enBundledModule).length > 0 && !import.meta.env.DEV;
+
+// Note: a hard failure for missing bundled/ now lives in vite.config.ts (executed
+// in Node during `vite build`). We intentionally do not throw here so that a
+// mis-built prod bundle at least mounts (English-only) instead of white-screening.
 
 // Load individual English files (always available as fallback + merged into initial i18n messages)
 const enModules = import.meta.glob("./en/*.json", { eager: true });
