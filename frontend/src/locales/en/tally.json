@@ -13,5 +13,8 @@
   "tally.title": "Calculate Tally",
   "tally.viewFullResults": "View Full Results",
   "tally.warning": "Warning",
-  "tally.warningMessage": "Calculating the tally will overwrite any existing results. This action cannot be undone."
+  "tally.warningMessage": "Calculating the tally will overwrite any existing results. This action cannot be undone.",
+  "tally.section.E": "Elected",
+  "tally.section.X": "Extra",
+  "tally.section.O": "Other"
 }

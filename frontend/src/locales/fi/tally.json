@@ -13,5 +13,8 @@
   "tally.title": "Laske ääntenlasku",
   "tally.viewFullResults": "Näytä koko tulokset",
   "tally.warning": "Varoitus",
-  "tally.warningMessage": "Ääntenlaskun laskeminen korvaa kaikki olemassa olevat tulokset. Tätä toimintoa ei voi peruuttaa."
+  "tally.warningMessage": "Ääntenlaskun laskeminen korvaa kaikki olemassa olevat tulokset. Tätä toimintoa ei voi peruuttaa.",
+  "tally.section.E": "Valittu",
+  "tally.section.X": "Lisä",
+  "tally.section.O": "Muu"
 }

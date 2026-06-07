@@ -13,5 +13,8 @@
   "tally.title": "计算结果",
   "tally.viewFullResults": "查看完整结果",
   "tally.warning": "警告",
-  "tally.warningMessage": "计算结果将覆盖任何现有结果。此操作无法撤销。"
+  "tally.warningMessage": "计算结果将覆盖任何现有结果。此操作无法撤销。",
+  "tally.section.E": "当选",
+  "tally.section.X": "额外",
+  "tally.section.O": "其他"
 }

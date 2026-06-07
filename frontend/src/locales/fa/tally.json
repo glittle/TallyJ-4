@@ -13,5 +13,8 @@
   "tally.title": "محاسبه آرا",
   "tally.viewFullResults": "مشاهده نتایج کامل",
   "tally.warning": "هشدار",
-  "tally.warningMessage": "محاسبه آرا باعث بازنویسی هر نتیجه موجودی خواهد شد. این عمل قابل برگرداندن نیست."
+  "tally.warningMessage": "محاسبه آرا باعث بازنویسی هر نتیجه موجودی خواهد شد. این عمل قابل برگرداندن نیست.",
+  "tally.section.E": "منتخب",
+  "tally.section.X": "اضافی",
+  "tally.section.O": "دیگر"
 }
