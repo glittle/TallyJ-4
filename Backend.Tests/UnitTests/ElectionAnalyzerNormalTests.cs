@@ -964,6 +964,64 @@ public class ElectionAnalyzerNormalTests : IDisposable
     }
 
     [Fact]
+    public async Task UnresolvedTies_BlockUseOnReports_ThenResolvedAllowsReports()
+    {
+        var election = CreateElection(numberToElect: 1, numberExtra: 1);
+        _samplePeople = new List<Person>
+        {
+            MakePerson("a0", votingMethod: "P"),
+            MakePerson("a1", votingMethod: "P"),
+            MakePerson("a2", votingMethod: "P"),
+        };
+        _context.SaveChanges();
+
+        var ballots = new[] { MakeBallot(), MakeBallot(), MakeBallot() };
+        MakeVote(ballots[0], _samplePeople[0]);
+        MakeVote(ballots[1], _samplePeople[1]);
+        MakeVote(ballots[2], _samplePeople[2]);
+
+        await RunAnalysis(election);
+
+        var summaryAfterTally = _context.ResultSummaries
+            .First(rs => rs.ElectionGuid == _electionGuid && rs.ResultType == "F");
+        var resultTies = _context.ResultTies
+            .Where(rt => rt.ElectionGuid == _electionGuid)
+            .ToList();
+
+        Assert.Equal(0, summaryAfterTally.BallotsNeedingReview);
+        Assert.Equal(3, summaryAfterTally.BallotsReceived);
+        Assert.Equal(3, summaryAfterTally.InPersonBallots);
+        Assert.Single(resultTies);
+        Assert.Equal(false, resultTies[0].IsResolved);
+        Assert.Equal(false, summaryAfterTally.UseOnReports);
+
+        var results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .ToList();
+        var resultByPerson = results.ToDictionary(r => r.PersonGuid);
+        resultByPerson[_samplePeople[0].PersonGuid].TieBreakCount = 2;
+        resultByPerson[_samplePeople[1].PersonGuid].TieBreakCount = 1;
+        resultByPerson[_samplePeople[2].PersonGuid].TieBreakCount = 5;
+        _context.SaveChanges();
+
+        await RunAnalysis(election);
+
+        summaryAfterTally = _context.ResultSummaries
+            .First(rs => rs.ElectionGuid == _electionGuid && rs.ResultType == "F");
+        resultTies = _context.ResultTies
+            .Where(rt => rt.ElectionGuid == _electionGuid)
+            .ToList();
+        results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .ToList();
+
+        Assert.Single(resultTies);
+        Assert.Equal(true, resultTies[0].IsResolved);
+        Assert.True(results.All(r => r.IsTieResolved == true));
+        Assert.Equal(true, summaryAfterTally.UseOnReports);
+    }
+
+    [Fact]
     public async Task Extras_AssignRankInExtraSequentially()
     {
         var election = CreateElection(numberToElect: 2, numberExtra: 3);

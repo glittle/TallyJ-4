@@ -2,9 +2,9 @@
 
 ## Summary
 
-- **Added 6 new tests** addressing the highest-severity gaps from the coverage review: tie-break reordering, `SaveTieCountsAsync` end-to-end workflow, `RankInExtra` sequencing, and ties confined to the extra (`"X"`) section.
+- **Added 7 new tests** addressing the highest-severity gaps from the coverage review: tie-break reordering, `SaveTieCountsAsync` end-to-end workflow, `RankInExtra` sequencing, ties confined to the extra (`"X"`) section, and the `UseOnReports` gate for unresolved ties.
 - **Fixed `TallyService.SaveTieCountsAsync`** to automatically re-run the analyzer when all tied candidates in a group have tie-break counts — this was required for meaningful service-level tests and completes the broken production workflow.
-- **All 6 new tests pass**, along with the full `ElectionAnalyzerNormalTests` (18) and `TallyServiceTests` (19) suites (37 total).
+- **All 7 new tests pass**, along with the full `ElectionAnalyzerNormalTests` (19) and `TallyServiceTests` (19) suites (38 total).
 - Tests use realistic fixtures: 3-way equal-vote ties with `numberToElect: 1, numberExtra: 1`, and descending vote distributions with spoiled second ballot slots when `numberToElect: 2`.
 
 ---
@@ -161,14 +161,47 @@ if (reAnalysisNeeded)
 
 ---
 
+## UseOnReports Gate Test Added
+
+### `ElectionAnalyzerNormalTests.UnresolvedTies_BlockUseOnReports_ThenResolvedAllowsReports`
+
+**Purpose:** Verify that `ResultSummaryFinal.UseOnReports` is gated on tie resolution — the flag must be `false` while ties are unresolved and `true` once tie-break counts fully resolve the group.
+
+**Scenario:** Reuses the 3-way equal-vote tie fixture (`numberToElect: 1`, `numberExtra: 1`) with three voters marked `VotingMethod: "P"` so envelope counts reconcile (`BallotsReceived + SpoiledBallots == InPersonBallots == 3`), isolating the tie gate from other `UseOnReports` conditions.
+
+**Phase 1 — unresolved tie (after initial tally):**
+
+| Assertion | Expected |
+|-----------|----------|
+| `ResultTie.IsResolved` | `false` |
+| `ResultSummaryFinal.UseOnReports` (type `"F"`) | `false` |
+| `BallotsNeedingReview` | `0` (other gates satisfied) |
+
+**Phase 2 — resolved tie (after tie-break counts + re-analysis):**
+
+- Set `TieBreakCount` values: `a2=5`, `a0=2`, `a1=1` (same resolution pattern as `TieBreakCounts_ReorderCandidatesAndSections`)
+- Re-run analyzer
+
+| Assertion | Expected |
+|-----------|----------|
+| `ResultTie.IsResolved` | `true` |
+| All `Result.IsTieResolved` | `true` |
+| `ResultSummaryFinal.UseOnReports` | `true` |
+
+**Where `UseOnReports` is set:** `ElectionAnalyzerBase.FinalizeSummaries()` — requires `BallotsNeedingReview == 0`, all `ResultTie.IsResolved == true`, and envelope reconciliation.
+
+**File:** `Backend.Tests/UnitTests/ElectionAnalyzerNormalTests.cs`
+
+---
+
 ## Test Results
 
 ```
-Filter: TieBreakCounts_Reorder | Extras_AssignRankInExtra | SaveTieCountsAsync | ExtrasAssignRankInExtra | TieWithinExtraSectionOnly
-Passed: 6/6
+Filter: TieBreakCounts_Reorder | Extras_AssignRankInExtra | SaveTieCountsAsync | ExtrasAssignRankInExtra | TieWithinExtraSectionOnly | UnresolvedTies_BlockUseOnReports
+Passed: 7/7
 
 Filter: ElectionAnalyzerNormalTests | TallyServiceTests
-Passed: 37/37
+Passed: 38/38
 ```
 
 ---
@@ -179,11 +212,12 @@ Passed: 37/37
 
 1. ~~**Tie within extra section only**~~ — **Done** (`CalculateNormalElectionAsync_TieWithinExtraSectionOnly_RequiresTieBreak`).
 2. **`GetTiesAsync` smoke test** — verify tie retrieval API returns correct candidates and counts for a tie group.
-3. **`UseOnReports` gate** — assert `ResultSummaryFinal.UseOnReports` is `false` with unresolved ties and `true` after resolving tie-break + re-analysis.
+3. ~~**`UseOnReports` gate**~~ — **Done** (`UnresolvedTies_BlockUseOnReports_ThenResolvedAllowsReports`).
 4. **Single-name parity** — add tie-break reorder test in `ElectionAnalyzerSingleNameTests` using `SaveTieCountsAsync` with `ElectionType: "Oth"`.
 5. **`NumberExtra = 0`** — explicit test that no `"X"` sections are assigned.
 6. **Analyzer-level X-only tie test** — mirror the service test in `ElectionAnalyzerNormalTests` for consistency across layers.
 7. **LSA-scale X-only tie** (`numberToElect: 9`, `numberExtra: 2`) — extend helper or add variant for convention-sized elections.
+8. **`UseOnReports` via `TallyService`** — service-level test confirming the flag surfaces correctly after `SaveTieCountsAsync` + auto re-analysis.
 
 ### Recommended code changes (not done in this pass)
 
@@ -199,5 +233,5 @@ Passed: 37/37
 | File | Change |
 |------|--------|
 | `backend/Services/TallyService.cs` | Save → re-analyze wiring |
-| `Backend.Tests/UnitTests/ElectionAnalyzerNormalTests.cs` | +2 tests, helper signature updates |
+| `Backend.Tests/UnitTests/ElectionAnalyzerNormalTests.cs` | +3 tests, helper signature updates |
 | `Backend.Tests/UnitTests/TallyServiceTests.cs` | +4 tests, +2 helpers, rewrote `CreateVotesWithTieWithinExtraSectionAsync` |
