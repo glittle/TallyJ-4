@@ -416,6 +416,49 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CalculateNormalElectionAsync_TieWithinExtraSectionOnly_RequiresTieBreak()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 3);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 3);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 10);
+
+        await CreateVotesWithTieWithinExtraSectionAsync(ballots, people.Take(3).ToList());
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var results = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .OrderBy(r => r.Rank)
+            .ToList();
+
+        Assert.Equal(3, results.Count);
+
+        Assert.Equal(people[0].PersonGuid, results[0].PersonGuid);
+        Assert.Equal(1, results[0].Rank);
+        Assert.Equal("E", results[0].Section);
+        Assert.False(results[0].IsTied);
+
+        var tiedInExtra = results.Where(r => r.Section == "X" && r.IsTied == true).ToList();
+        Assert.Equal(2, tiedInExtra.Count);
+        Assert.All(tiedInExtra, r => Assert.True(r.TieBreakRequired));
+        Assert.All(tiedInExtra, r => Assert.Equal(tiedInExtra[0].TieBreakGroup, r.TieBreakGroup));
+        Assert.Contains(people[1].PersonGuid, tiedInExtra.Select(r => r.PersonGuid));
+        Assert.Contains(people[2].PersonGuid, tiedInExtra.Select(r => r.PersonGuid));
+        Assert.Equal(1, tiedInExtra[0].RankInExtra);
+        Assert.Equal(2, tiedInExtra[1].RankInExtra);
+
+        var resultTies = Context.ResultTies
+            .Where(rt => rt.ElectionGuid == election.ElectionGuid)
+            .ToList();
+        Assert.Single(resultTies);
+        Assert.True(resultTies[0].TieBreakRequired);
+        Assert.Equal(2, resultTies[0].NumInTie);
+        Assert.Equal(1, resultTies[0].NumToElect);
+        Assert.Equal(false, resultTies[0].IsResolved);
+    }
+
+    [Fact]
     public async Task CalculateNormalElectionAsync_TieWithinSection_DoesNotRequireTieBreak()
     {
         var election = await CreateTestElectionAsync(numberToElect: 9, numberExtra: 2);
@@ -1044,73 +1087,48 @@ public class TallyServiceTests : ServiceTestBase
         await Context.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// Builds a tie confined to the extra section: person0 is elected, persons 1 and 2 tie within X.
+    /// Requires numberToElect=1, single-vote ballots, and at least 10 ballots.
+    /// Vote totals: person0=4, person1=3, person2=3 (ballot ranges do not overlap).
+    /// </summary>
     private async Task CreateVotesWithTieWithinExtraSectionAsync(List<Ballot> ballots, List<Person> people)
     {
-        foreach (var ballot in ballots)
-        {
-            for (int i = 0; i < 9; i++)
-            {
-                Context.Votes.Add(new Vote
-                {
-                    BallotGuid = ballot.BallotGuid,
-                    PersonGuid = people[i].PersonGuid,
-                    PositionOnBallot = i + 1,
-                    VoteStatus = VoteStatus.Ok,
-                    PersonCombinedInfo = people[i].CombinedInfo,
-                    RowVersion = new byte[8]
-                });
-            }
-        }
-
-        foreach (var ballot in ballots)
-        {
-            Context.Votes.Add(new Vote
-            {
-                BallotGuid = ballot.BallotGuid,
-                PersonGuid = people[9].PersonGuid,
-                PositionOnBallot = 10,
-                VoteStatus = VoteStatus.Ok,
-                PersonCombinedInfo = people[9].CombinedInfo,
-                RowVersion = new byte[8]
-            });
-        }
-
-        var halfBallots = ballots.Count / 2;
-        for (int ballotIndex = 0; ballotIndex < halfBallots; ballotIndex++)
+        for (var ballotIndex = 0; ballotIndex < 4; ballotIndex++)
         {
             Context.Votes.Add(new Vote
             {
                 BallotGuid = ballots[ballotIndex].BallotGuid,
-                PersonGuid = people[10].PersonGuid,
-                PositionOnBallot = 11,
+                PersonGuid = people[0].PersonGuid,
+                PositionOnBallot = 1,
                 VoteStatus = VoteStatus.Ok,
-                PersonCombinedInfo = people[10].CombinedInfo,
+                PersonCombinedInfo = people[0].CombinedInfo,
                 RowVersion = new byte[8]
             });
         }
 
-        for (int ballotIndex = halfBallots; ballotIndex < ballots.Count; ballotIndex++)
+        for (var ballotIndex = 4; ballotIndex < 7; ballotIndex++)
         {
             Context.Votes.Add(new Vote
             {
                 BallotGuid = ballots[ballotIndex].BallotGuid,
-                PersonGuid = people[11].PersonGuid,
-                PositionOnBallot = 11,
+                PersonGuid = people[1].PersonGuid,
+                PositionOnBallot = 1,
                 VoteStatus = VoteStatus.Ok,
-                PersonCombinedInfo = people[11].CombinedInfo,
+                PersonCombinedInfo = people[1].CombinedInfo,
                 RowVersion = new byte[8]
             });
         }
 
-        for (int ballotIndex = 0; ballotIndex < ballots.Count - 2; ballotIndex++)
+        for (var ballotIndex = 7; ballotIndex < 10; ballotIndex++)
         {
             Context.Votes.Add(new Vote
             {
                 BallotGuid = ballots[ballotIndex].BallotGuid,
-                PersonGuid = people[12].PersonGuid,
-                PositionOnBallot = 12,
+                PersonGuid = people[2].PersonGuid,
+                PositionOnBallot = 1,
                 VoteStatus = VoteStatus.Ok,
-                PersonCombinedInfo = people[12].CombinedInfo,
+                PersonCombinedInfo = people[2].CombinedInfo,
                 RowVersion = new byte[8]
             });
         }

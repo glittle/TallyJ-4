@@ -2,9 +2,9 @@
 
 ## Summary
 
-- **Added 5 new tests** addressing the highest-severity gaps from the coverage review: tie-break reordering, `SaveTieCountsAsync` end-to-end workflow, and `RankInExtra` sequencing.
+- **Added 6 new tests** addressing the highest-severity gaps from the coverage review: tie-break reordering, `SaveTieCountsAsync` end-to-end workflow, `RankInExtra` sequencing, and ties confined to the extra (`"X"`) section.
 - **Fixed `TallyService.SaveTieCountsAsync`** to automatically re-run the analyzer when all tied candidates in a group have tie-break counts — this was required for meaningful service-level tests and completes the broken production workflow.
-- **All 5 new tests pass**, along with the full `ElectionAnalyzerNormalTests` (18) and `TallyServiceTests` (18) suites (36 total).
+- **All 6 new tests pass**, along with the full `ElectionAnalyzerNormalTests` (18) and `TallyServiceTests` (19) suites (37 total).
 - Tests use realistic fixtures: 3-way equal-vote ties with `numberToElect: 1, numberExtra: 1`, and descending vote distributions with spoiled second ballot slots when `numberToElect: 2`.
 
 ---
@@ -132,14 +132,43 @@ if (reAnalysisNeeded)
 
 ---
 
+## Additional Test Added
+
+### `TallyServiceTests.CalculateNormalElectionAsync_TieWithinExtraSectionOnly_RequiresTieBreak`
+
+**Purpose:** Cover a tie that exists **only within the `"X"` (extra) section** — not spanning E/X/O boundaries.
+
+**Helper change:** Replaced the unused `CreateVotesWithTieWithinExtraSectionAsync` implementation with a focused, non-overlapping ballot fixture:
+
+| Candidate | Ballots used | Vote count | Expected section |
+|-----------|--------------|------------|------------------|
+| person0 | 0–3 | 4 | E (rank 1) |
+| person1 | 4–6 | 3 | X (rank 2, `RankInExtra: 1`) |
+| person2 | 7–9 | 3 | X (rank 3, `RankInExtra: 2`) |
+
+**Configuration:** `numberToElect: 1`, `numberExtra: 3`, 10 single-vote ballots.
+
+**Assertions:**
+
+- person0 elected, not tied
+- persons 1 and 2 tied, both `Section == "X"`, both `TieBreakRequired == true`, same `TieBreakGroup`
+- `RankInExtra` assigned as 1 and 2 within the extra block
+- Single `ResultTie` record: `NumInTie = 2`, `NumToElect = 1` (decremented from 2 because all tied members are in X), `TieBreakRequired = true`, `IsResolved = false`
+
+**`NumToElect` behavior:** For an X-only group, the analyzer adds the count of X-section members (`2`), then decrements because `NumInTie == NumToElect` — yielding `1` contested extra slot.
+
+**File:** `Backend.Tests/UnitTests/TallyServiceTests.cs`
+
+---
+
 ## Test Results
 
 ```
-Filter: TieBreakCounts_Reorder | Extras_AssignRankInExtra | SaveTieCountsAsync | ExtrasAssignRankInExtra
-Passed: 5/5
+Filter: TieBreakCounts_Reorder | Extras_AssignRankInExtra | SaveTieCountsAsync | ExtrasAssignRankInExtra | TieWithinExtraSectionOnly
+Passed: 6/6
 
 Filter: ElectionAnalyzerNormalTests | TallyServiceTests
-Passed: 36/36
+Passed: 37/37
 ```
 
 ---
@@ -148,11 +177,13 @@ Passed: 36/36
 
 ### Recommended follow-up tests
 
-1. **Tie within extra section only** — wire `CreateVotesWithTieWithinExtraSectionAsync` (already exists, unused) to a `[Fact]` asserting `TieBreakRequired` for X-only groups.
+1. ~~**Tie within extra section only**~~ — **Done** (`CalculateNormalElectionAsync_TieWithinExtraSectionOnly_RequiresTieBreak`).
 2. **`GetTiesAsync` smoke test** — verify tie retrieval API returns correct candidates and counts for a tie group.
 3. **`UseOnReports` gate** — assert `ResultSummaryFinal.UseOnReports` is `false` with unresolved ties and `true` after resolving tie-break + re-analysis.
 4. **Single-name parity** — add tie-break reorder test in `ElectionAnalyzerSingleNameTests` using `SaveTieCountsAsync` with `ElectionType: "Oth"`.
 5. **`NumberExtra = 0`** — explicit test that no `"X"` sections are assigned.
+6. **Analyzer-level X-only tie test** — mirror the service test in `ElectionAnalyzerNormalTests` for consistency across layers.
+7. **LSA-scale X-only tie** (`numberToElect: 9`, `numberExtra: 2`) — extend helper or add variant for convention-sized elections.
 
 ### Recommended code changes (not done in this pass)
 
@@ -169,4 +200,4 @@ Passed: 36/36
 |------|--------|
 | `backend/Services/TallyService.cs` | Save → re-analyze wiring |
 | `Backend.Tests/UnitTests/ElectionAnalyzerNormalTests.cs` | +2 tests, helper signature updates |
-| `Backend.Tests/UnitTests/TallyServiceTests.cs` | +3 tests, +2 helpers |
+| `Backend.Tests/UnitTests/TallyServiceTests.cs` | +4 tests, +2 helpers, rewrote `CreateVotesWithTieWithinExtraSectionAsync` |
