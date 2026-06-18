@@ -473,7 +473,7 @@ public class TallyService : ITallyService
 
             if (reAnalysisNeeded)
             {
-                _logger.LogInformation("All tie-break counts entered for a group, re-analyzing election {ElectionGuid}", electionGuid);
+                _logger.LogInformation("Tie-break counts updated for a tied group, re-analyzing election {ElectionGuid}", electionGuid);
                 if (election.ElectionType == "Oth")
                 {
                     await CalculateSingleNameElectionAsync(electionGuid);
