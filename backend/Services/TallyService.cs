@@ -471,12 +471,17 @@ public class TallyService : ITallyService
             await _context.SaveChangesAsync();
             _logger.LogInformation("Saved {Count} tie break counts for election {ElectionGuid}", updatedCount, electionGuid);
 
-            // If all ties in a group are resolved, trigger re-analysis
             if (reAnalysisNeeded)
             {
-                _logger.LogInformation("All ties resolved, triggering re-analysis for election {ElectionGuid}", electionGuid);
-                // Note: In a real implementation, you might want to call CalculateNormalElectionAsync here
-                // But for now, we'll just log it
+                _logger.LogInformation("All tie-break counts entered for a group, re-analyzing election {ElectionGuid}", electionGuid);
+                if (election.ElectionType == "Oth")
+                {
+                    await CalculateSingleNameElectionAsync(electionGuid);
+                }
+                else
+                {
+                    await CalculateNormalElectionAsync(electionGuid);
+                }
             }
         }
 

@@ -111,7 +111,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
         return ballot;
     }
 
-    private Vote MakeVote(Ballot ballot, Person person)
+    private Vote MakeVote(Ballot ballot, Person person, int positionOnBallot = 1)
     {
         var vote = new Vote
         {
@@ -121,7 +121,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
             IneligibleReasonCode = person.IneligibleReasonGuid.HasValue
                 ? IneligibleReasonEnum.GetByGuid(person.IneligibleReasonGuid)?.Code
                 : null,
-            PositionOnBallot = 1,
+            PositionOnBallot = positionOnBallot,
             VoteStatus = VoteStatus.Ok,
             RowVersion = new byte[8]
         };
@@ -129,7 +129,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
         return vote;
     }
 
-    private Vote MakeVoteForIneligible(Ballot ballot, Guid ineligibleReasonGuid)
+    private Vote MakeVoteForIneligible(Ballot ballot, Guid ineligibleReasonGuid, int positionOnBallot = 1)
     {
         var reason = IneligibleReasonEnum.GetByGuid(ineligibleReasonGuid);
         var vote = new Vote
@@ -137,7 +137,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
             BallotGuid = ballot.BallotGuid,
             PersonGuid = null,
             IneligibleReasonCode = reason?.Code,
-            PositionOnBallot = 1,
+            PositionOnBallot = positionOnBallot,
             VoteStatus = VoteStatus.Ok,
             RowVersion = new byte[8]
         };
@@ -880,6 +880,147 @@ public class ElectionAnalyzerNormalTests : IDisposable
         Assert.Equal(true, results[3].IsTied);
         Assert.Equal("X", results[3].Section);
         Assert.Equal(true, results[3].TieBreakRequired);
+    }
+
+    [Fact]
+    public async Task TieBreakCounts_ReorderCandidatesAndSections()
+    {
+        var election = CreateElection(numberToElect: 1, numberExtra: 1);
+        _samplePeople = new List<Person>
+        {
+            MakePerson("a0"),
+            MakePerson("a1"),
+            MakePerson("a2"),
+        };
+        _context.SaveChanges();
+
+        var ballots = new[] { MakeBallot(), MakeBallot(), MakeBallot() };
+        MakeVote(ballots[0], _samplePeople[0]);
+        MakeVote(ballots[1], _samplePeople[1]);
+        MakeVote(ballots[2], _samplePeople[2]);
+
+        await RunAnalysis(election);
+
+        var results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .OrderBy(r => r.Rank)
+            .ToList();
+
+        Assert.Equal(3, results.Count);
+        Assert.True(results.All(r => r.TieBreakRequired == true));
+
+        Assert.Equal(_samplePeople[0].PersonGuid, results[0].PersonGuid);
+        Assert.Equal(1, results[0].Rank);
+        Assert.Equal("E", results[0].Section);
+        Assert.Null(results[0].RankInExtra);
+
+        Assert.Equal(_samplePeople[1].PersonGuid, results[1].PersonGuid);
+        Assert.Equal(2, results[1].Rank);
+        Assert.Equal("X", results[1].Section);
+        Assert.Equal(1, results[1].RankInExtra);
+
+        Assert.Equal(_samplePeople[2].PersonGuid, results[2].PersonGuid);
+        Assert.Equal(3, results[2].Rank);
+        Assert.Equal("O", results[2].Section);
+        Assert.Null(results[2].RankInExtra);
+
+        var resultByPerson = results.ToDictionary(r => r.PersonGuid);
+        resultByPerson[_samplePeople[0].PersonGuid].TieBreakCount = 2;
+        resultByPerson[_samplePeople[1].PersonGuid].TieBreakCount = 1;
+        resultByPerson[_samplePeople[2].PersonGuid].TieBreakCount = 5;
+        _context.SaveChanges();
+
+        await RunAnalysis(election);
+
+        results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .OrderBy(r => r.Rank)
+            .ToList();
+
+        Assert.Equal(_samplePeople[2].PersonGuid, results[0].PersonGuid);
+        Assert.Equal(1, results[0].Rank);
+        Assert.Equal("E", results[0].Section);
+        Assert.Null(results[0].RankInExtra);
+        Assert.Equal(5, results[0].TieBreakCount);
+
+        Assert.Equal(_samplePeople[0].PersonGuid, results[1].PersonGuid);
+        Assert.Equal(2, results[1].Rank);
+        Assert.Equal("X", results[1].Section);
+        Assert.Equal(1, results[1].RankInExtra);
+        Assert.Equal(2, results[1].TieBreakCount);
+
+        Assert.Equal(_samplePeople[1].PersonGuid, results[2].PersonGuid);
+        Assert.Equal(3, results[2].Rank);
+        Assert.Equal("O", results[2].Section);
+        Assert.Null(results[2].RankInExtra);
+        Assert.Equal(1, results[2].TieBreakCount);
+
+        var resultTies = _context.ResultTies
+            .Where(rt => rt.ElectionGuid == _electionGuid)
+            .ToList();
+        Assert.Single(resultTies);
+        Assert.Equal(true, resultTies[0].IsResolved);
+        Assert.True(results.All(r => r.IsTieResolved == true));
+    }
+
+    [Fact]
+    public async Task Extras_AssignRankInExtraSequentially()
+    {
+        var election = CreateElection(numberToElect: 2, numberExtra: 3);
+        var people = new[]
+        {
+            MakePerson("rank01"),
+            MakePerson("rank02"),
+            MakePerson("rank03"),
+            MakePerson("rank04"),
+            MakePerson("rank05"),
+        };
+        _context.SaveChanges();
+
+        var voteCounts = new[] { 5, 4, 3, 2, 1 };
+        for (var p = 0; p < people.Length; p++)
+        {
+            for (var v = 0; v < voteCounts[p]; v++)
+            {
+                var ballot = MakeBallot();
+                MakeVote(ballot, people[p], 1);
+                MakeVoteForIneligible(ballot, IneligibleReasonEnum.U01_Unidentifiable.ReasonGuid, 2);
+            }
+        }
+
+        await RunAnalysis(election);
+
+        var results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .OrderBy(r => r.Rank)
+            .ToList();
+
+        Assert.Equal(5, results.Count);
+
+        Assert.Equal(people[0].PersonGuid, results[0].PersonGuid);
+        Assert.Equal(1, results[0].Rank);
+        Assert.Equal("E", results[0].Section);
+        Assert.Null(results[0].RankInExtra);
+
+        Assert.Equal(people[1].PersonGuid, results[1].PersonGuid);
+        Assert.Equal(2, results[1].Rank);
+        Assert.Equal("E", results[1].Section);
+        Assert.Null(results[1].RankInExtra);
+
+        Assert.Equal(people[2].PersonGuid, results[2].PersonGuid);
+        Assert.Equal(3, results[2].Rank);
+        Assert.Equal("X", results[2].Section);
+        Assert.Equal(1, results[2].RankInExtra);
+
+        Assert.Equal(people[3].PersonGuid, results[3].PersonGuid);
+        Assert.Equal(4, results[3].Rank);
+        Assert.Equal("X", results[3].Section);
+        Assert.Equal(2, results[3].RankInExtra);
+
+        Assert.Equal(people[4].PersonGuid, results[4].PersonGuid);
+        Assert.Equal(5, results[4].Rank);
+        Assert.Equal("X", results[4].Section);
+        Assert.Equal(3, results[4].RankInExtra);
     }
 
     [Fact]
