@@ -483,6 +483,42 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task GetTiesAsync_ReturnsTiedCandidatesAndCounts()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 3);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 3);
+        await CreateThreeWayEqualVoteAsync(ballots, people);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var tiedResults = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid && r.IsTied == true)
+            .ToList();
+        Assert.Equal(3, tiedResults.Count);
+
+        var tieBreakGroup = tiedResults[0].TieBreakGroup!.Value;
+        tiedResults.First(r => r.PersonGuid == people[0].PersonGuid).TieBreakCount = 2;
+        tiedResults.First(r => r.PersonGuid == people[1].PersonGuid).TieBreakCount = 1;
+        tiedResults.First(r => r.PersonGuid == people[2].PersonGuid).TieBreakCount = 5;
+        await Context.SaveChangesAsync();
+
+        var tieDetails = await _service.GetTiesAsync(election.ElectionGuid, tieBreakGroup);
+
+        Assert.Equal(tieBreakGroup, tieDetails.TieBreakGroup);
+        Assert.Equal(3, tieDetails.Candidates.Count);
+
+        foreach (var candidate in tieDetails.Candidates)
+        {
+            var dbResult = tiedResults.First(r => r.PersonGuid == candidate.PersonGuid);
+            Assert.Equal(people.First(p => p.PersonGuid == candidate.PersonGuid).FullNameFl, candidate.FullName);
+            Assert.Equal(dbResult.VoteCount ?? 0, candidate.VoteCount);
+            Assert.Equal(dbResult.TieBreakCount, candidate.TieBreakCount);
+        }
+    }
+
+    [Fact]
     public async Task SaveTieCountsAsync_TriggersReanalysisAndReordersCandidates()
     {
         var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);

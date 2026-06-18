@@ -2,9 +2,9 @@
 
 ## Summary
 
-- **Added 7 new tests** addressing the highest-severity gaps from the coverage review: tie-break reordering, `SaveTieCountsAsync` end-to-end workflow, `RankInExtra` sequencing, ties confined to the extra (`"X"`) section, and the `UseOnReports` gate for unresolved ties.
+- **Added 9 new tests** addressing the highest-severity gaps from the coverage review: tie-break reordering (normal and single-name), `SaveTieCountsAsync` end-to-end workflow, `GetTiesAsync` retrieval, `RankInExtra` sequencing, ties confined to the extra (`"X"`) section, and the `UseOnReports` gate for unresolved ties.
 - **Fixed `TallyService.SaveTieCountsAsync`** to automatically re-run the analyzer when all tied candidates in a group have tie-break counts — this was required for meaningful service-level tests and completes the broken production workflow.
-- **All 7 new tests pass**, along with the full `ElectionAnalyzerNormalTests` (19) and `TallyServiceTests` (19) suites (38 total).
+- **All 9 new tests pass**, along with the full `ElectionAnalyzerNormalTests` (17), `TallyServiceTests` (22), and `ElectionAnalyzerSingleNameTests` (10) suites (49 total).
 - Tests use realistic fixtures: 3-way equal-vote ties with `numberToElect: 1, numberExtra: 1`, and descending vote distributions with spoiled second ballot slots when `numberToElect: 2`.
 
 ---
@@ -194,14 +194,63 @@ if (reAnalysisNeeded)
 
 ---
 
+## Additional Tests Added
+
+### `TallyServiceTests.GetTiesAsync_ReturnsTiedCandidatesAndCounts`
+
+**Purpose:** Smoke test for the tie-retrieval API — confirm `GetTiesAsync` returns the correct tied candidates with vote and tie-break counts for an active tie group.
+
+**Scenario:**
+
+- Reuses the 3-way equal-vote fixture (`numberToElect: 1`, `numberExtra: 1`)
+- Runs `CalculateNormalElectionAsync` to create an unresolved 3-way tie
+- Sets tie-break counts on DB entities: `person0=2`, `person1=1`, `person2=5`
+- Calls `GetTiesAsync(electionGuid, tieBreakGroup)`
+
+**Assertions:**
+
+| Field | Expected |
+|-------|----------|
+| `TieBreakGroup` | Matches the active group from DB |
+| `Candidates.Count` | 3 |
+| Per candidate `FullName` | Matches `Person.FullNameFl` |
+| Per candidate `VoteCount` | Matches `Result.VoteCount` |
+| Per candidate `TieBreakCount` | Matches persisted `Result.TieBreakCount` |
+
+**File:** `Backend.Tests/UnitTests/TallyServiceTests.cs`
+
+### `ElectionAnalyzerSingleNameTests.TieBreakCounts_ReorderCandidatesAndSections`
+
+**Purpose:** Verify tie-break counts reorder candidates and sections for `ElectionType == "Oth"` elections — parity with the normal-election reorder test.
+
+**Scenario:**
+
+- `ElectionType: "Oth"`, `numberToElect: 1`, `numberExtra: 1`
+- Single ballot with three votes, each `SingleNameElectionCount = 10` (3-way tie)
+- Initial name-sort order: `a0` → E, `a1` → X (`RankInExtra: 1`), `a2` → O
+- Tie-break counts: `a2=5`, `a0=2`, `a1=1`
+- After re-analysis: `a2` → E, `a0` → X, `a1` → O; tie group marked resolved
+
+**Key assertions:**
+
+| Candidate | Before rank/section | After rank/section |
+|-----------|--------------------|--------------------|
+| a0 | 1 / E | 2 / X (`RankInExtra: 1`) |
+| a1 | 2 / X | 3 / O |
+| a2 | 3 / O | 1 / E |
+
+**File:** `Backend.Tests/UnitTests/ElectionAnalyzerSingleNameTests.cs`
+
+---
+
 ## Test Results
 
 ```
-Filter: TieBreakCounts_Reorder | Extras_AssignRankInExtra | SaveTieCountsAsync | ExtrasAssignRankInExtra | TieWithinExtraSectionOnly | UnresolvedTies_BlockUseOnReports
-Passed: 7/7
+Filter: GetTiesAsync_ReturnsTiedCandidatesAndCounts | ElectionAnalyzerSingleNameTests.TieBreakCounts_ReorderCandidatesAndSections
+Passed: 2/2
 
-Filter: ElectionAnalyzerNormalTests | TallyServiceTests
-Passed: 38/38
+Filter: ElectionAnalyzerNormalTests | TallyServiceTests | ElectionAnalyzerSingleNameTests
+Passed: 49/49
 ```
 
 ---
@@ -211,13 +260,14 @@ Passed: 38/38
 ### Recommended follow-up tests
 
 1. ~~**Tie within extra section only**~~ — **Done** (`CalculateNormalElectionAsync_TieWithinExtraSectionOnly_RequiresTieBreak`).
-2. **`GetTiesAsync` smoke test** — verify tie retrieval API returns correct candidates and counts for a tie group.
+2. ~~**`GetTiesAsync` smoke test**~~ — **Done** (`GetTiesAsync_ReturnsTiedCandidatesAndCounts`).
 3. ~~**`UseOnReports` gate**~~ — **Done** (`UnresolvedTies_BlockUseOnReports_ThenResolvedAllowsReports`).
-4. **Single-name parity** — add tie-break reorder test in `ElectionAnalyzerSingleNameTests` using `SaveTieCountsAsync` with `ElectionType: "Oth"`.
+4. ~~**Single-name parity**~~ — **Done** (`ElectionAnalyzerSingleNameTests.TieBreakCounts_ReorderCandidatesAndSections`).
 5. **`NumberExtra = 0`** — explicit test that no `"X"` sections are assigned.
 6. **Analyzer-level X-only tie test** — mirror the service test in `ElectionAnalyzerNormalTests` for consistency across layers.
 7. **LSA-scale X-only tie** (`numberToElect: 9`, `numberExtra: 2`) — extend helper or add variant for convention-sized elections.
 8. **`UseOnReports` via `TallyService`** — service-level test confirming the flag surfaces correctly after `SaveTieCountsAsync` + auto re-analysis.
+9. **Single-name `SaveTieCountsAsync` end-to-end** — optional service-level parity test for `ElectionType: "Oth"` (analyzer-level reorder is now covered).
 
 ### Recommended code changes (not done in this pass)
 
@@ -234,4 +284,5 @@ Passed: 38/38
 |------|--------|
 | `backend/Services/TallyService.cs` | Save → re-analyze wiring |
 | `Backend.Tests/UnitTests/ElectionAnalyzerNormalTests.cs` | +3 tests, helper signature updates |
-| `Backend.Tests/UnitTests/TallyServiceTests.cs` | +4 tests, +2 helpers, rewrote `CreateVotesWithTieWithinExtraSectionAsync` |
+| `Backend.Tests/UnitTests/ElectionAnalyzerSingleNameTests.cs` | +1 test (`TieBreakCounts_ReorderCandidatesAndSections`) |
+| `Backend.Tests/UnitTests/TallyServiceTests.cs` | +5 tests, +2 helpers, rewrote `CreateVotesWithTieWithinExtraSectionAsync` |
