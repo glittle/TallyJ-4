@@ -15,6 +15,56 @@ export function normalizeSearchText(text: string): string {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+export function splitSearchTerms(query: string): string[] {
+  return normalizeSearchText(query)
+    .split(" ")
+    .filter((term) => term.length > 0);
+}
+
+export function tokenizeNameForSearch(name: string): string[] {
+  return normalizeSearchText(name)
+    .split(/[\s,[\]()]+/)
+    .filter((part) => part.length > 0);
+}
+
+export interface FrontDeskSearchableVoter {
+  fullName: string;
+  bahaiId?: string | null;
+  area?: string | null;
+}
+
+export function matchesFrontDeskVoterSearch(
+  voter: FrontDeskSearchableVoter,
+  query: string,
+): boolean {
+  const terms = splitSearchTerms(query);
+  if (terms.length === 0) {
+    return true;
+  }
+
+  const normalizedName = normalizeSearchText(voter.fullName);
+  const nameParts = tokenizeNameForSearch(voter.fullName);
+  const bahaiId = voter.bahaiId ? normalizeSearchText(voter.bahaiId) : "";
+  const area = voter.area ? normalizeSearchText(voter.area) : "";
+
+  const termMatchesVoter = (term: string): boolean =>
+    nameParts.some((part) => part.startsWith(term)) ||
+    normalizedName.includes(term) ||
+    (bahaiId.length > 0 && bahaiId.includes(term)) ||
+    (area.length > 0 && area.includes(term));
+
+  if (terms.length === 1) {
+    return termMatchesVoter(terms[0]);
+  }
+
+  return terms.every(
+    (term) =>
+      nameParts.some((part) => part.startsWith(term)) ||
+      (bahaiId.length > 0 && bahaiId.includes(term)) ||
+      (area.length > 0 && area.includes(term)),
+  );
+}
+
 export function calculateLevenshteinDistance(a: string, b: string): number {
   if (a.length === 0) {
     return b.length;

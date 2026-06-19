@@ -1,4 +1,7 @@
-import { client } from "../api/config";
+import {
+  postApiImportParseCsvHeaders,
+  postApiImportImportBallots,
+} from "@/api/gen/configService";
 import type {
   ParseCsvHeadersRequest,
   ParseCsvHeadersResponse,
@@ -10,18 +13,12 @@ export const importService = {
   async parseCsvHeaders(
     request: ParseCsvHeadersRequest,
   ): Promise<ParseCsvHeadersResponse> {
-    const response = await client.post<ParseCsvHeadersResponse>({
-      url: "/api/Import/parse-csv-headers",
-      body: request,
-    });
-    return response.data;
+    const response = await postApiImportParseCsvHeaders({ body: request });
+    return response.data as ParseCsvHeadersResponse;
   },
 
   async importBallots(request: ImportBallotRequest): Promise<ImportResult> {
-    const response = await client.post<ImportResult>({
-      url: "/api/Import/importBallots",
-      body: request,
-    });
-    return response.data;
+    const response = await postApiImportImportBallots({ body: request });
+    return response.data as ImportResult;
   },
 };

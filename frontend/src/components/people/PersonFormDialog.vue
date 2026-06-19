@@ -13,6 +13,12 @@ import type {
   CreatePersonDto,
   UpdatePersonDto,
 } from "../../types";
+import type { RegistrationHistoryEntryDto } from "@/types/FrontDesk";
+import {
+  formatRegistrationHistoryDetails,
+  formatRegistrationHistoryTime,
+  sortRegistrationHistoryNewestFirst,
+} from "@/utils/formatRegistrationHistory";
 
 const props = defineProps<{
   modelValue: boolean;
@@ -58,16 +64,23 @@ const rules = reactive<FormRules>({
   ],
 });
 
-const registrationHistory = computed(() => {
+const registrationHistory = computed((): RegistrationHistoryEntryDto[] => {
   if (!personDetails.value?.registrationHistory) {
     return [];
   }
   try {
-    return JSON.parse(personDetails.value.registrationHistory);
+    const entries = JSON.parse(
+      personDetails.value.registrationHistory,
+    ) as RegistrationHistoryEntryDto[];
+    return sortRegistrationHistoryNewestFirst(entries);
   } catch {
     return [];
   }
 });
+
+function formatHistoryDetails(entry: RegistrationHistoryEntryDto): string {
+  return formatRegistrationHistoryDetails(entry, { t });
+}
 
 onMounted(async () => {
   await eligibilityStore.fetchReasons();
@@ -275,9 +288,9 @@ function handleClose() {
             <el-timeline-item
               v-for="(entry, index) in registrationHistory"
               :key="index"
-              :timestamp="entry.timestamp"
+              :timestamp="formatHistoryDetails(entry)"
             >
-              {{ entry.action }}
+              {{ formatRegistrationHistoryTime(entry.timestamp) }}
             </el-timeline-item>
           </el-timeline>
         </div>

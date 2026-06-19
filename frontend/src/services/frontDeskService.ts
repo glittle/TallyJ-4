@@ -4,7 +4,9 @@ import {
   getApiByElectionGuidFrontdeskRollCall,
   getApiByElectionGuidFrontdeskStats,
   postApiByElectionGuidFrontdeskUnregisterVoter,
-} from "../api/gen/configService";
+  postApiByElectionGuidFrontdeskUpdatePersonFlags,
+  postApiByElectionGuidFrontdeskUpdateEnvelopeNumber,
+} from "@/api/gen/configService";
 import type {
   FrontDeskVoterDto,
   CheckInVoterDto,
@@ -14,11 +16,9 @@ import type {
   UpdatePersonFlagsDto,
   UpdateEnvelopeNumberDto,
 } from "../types/FrontDesk";
-import { client } from "../api/config";
 
 export const frontDeskService = {
   async getEligibleVoters(electionGuid: string): Promise<FrontDeskVoterDto[]> {
-    console.log(`Fetching eligible voters for election ${electionGuid}`);
     const response = await getApiByElectionGuidFrontdeskEligibleVoters({
       path: { electionGuid },
     });
@@ -65,8 +65,8 @@ export const frontDeskService = {
     electionGuid: string,
     updateFlagsDto: UpdatePersonFlagsDto,
   ): Promise<FrontDeskVoterDto> {
-    const response = await client.post<{ data: FrontDeskVoterDto }>({
-      url: `/api/${electionGuid}/frontdesk/updatePersonFlags`,
+    const response = await postApiByElectionGuidFrontdeskUpdatePersonFlags({
+      path: { electionGuid },
       body: updateFlagsDto,
     });
     return response.data?.data as FrontDeskVoterDto;
@@ -76,8 +76,8 @@ export const frontDeskService = {
     electionGuid: string,
     updateDto: UpdateEnvelopeNumberDto,
   ): Promise<FrontDeskVoterDto> {
-    const response = await client.post<{ data: FrontDeskVoterDto }>({
-      url: `/api/${electionGuid}/frontdesk/updateEnvelopeNumber`,
+    const response = await postApiByElectionGuidFrontdeskUpdateEnvelopeNumber({
+      path: { electionGuid },
       body: updateDto,
     });
     return response.data?.data as FrontDeskVoterDto;

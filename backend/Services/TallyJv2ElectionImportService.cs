@@ -108,7 +108,6 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
                 {
                     ElectionGuid = electionGuid,
                     Name = tellerNode.GetAttribute("Name") ?? "",
-                    IsHeadTeller = ParseBool(tellerNode.GetAttribute("IsHeadTeller")),
                     RowVersion = new byte[8]
                 };
                 _context.Tellers.Add(teller);

@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
 import { useNotifications } from "@/composables/useNotifications";
+import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
 import { computed, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -49,6 +51,14 @@ onMounted(async () => {
       ballotStore.fetchBallotById(ballotGuid),
       electionStore.fetchElectionById(electionGuid),
     ]);
+
+    const loadedBallot = ballotStore.currentBallot;
+    if (loadedBallot) {
+      await ballotStore.updateBallot(ballotGuid, {
+        ...getActiveTellerPayload(),
+        statusCode: loadedBallot.statusCode,
+      });
+    }
 
     setupPersonUpdateHandler();
   } catch (_error) {
@@ -136,6 +146,7 @@ function getStatusType(status: string) {
             :content="$t('ballots.entry', { code: ballot?.ballotCode })"
             @back="goBack"
           />
+          <ActiveTellerSelector :election-guid="electionGuid" />
         </div>
       </template>
 

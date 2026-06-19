@@ -21,9 +21,14 @@ public class RegistrationHistoryEntryDto
     public string? VotingMethod { get; set; }
 
     /// <summary>
-    /// Teller name (if applicable).
+    /// Primary teller name at the time of the action.
     /// </summary>
-    public string? TellerName { get; set; }
+    public string? Teller1 { get; set; }
+
+    /// <summary>
+    /// Second teller name at the time of the action, if any.
+    /// </summary>
+    public string? Teller2 { get; set; }
 
     /// <summary>
     /// Location name (if applicable).
@@ -36,7 +41,7 @@ public class RegistrationHistoryEntryDto
     public int? EnvNum { get; set; }
 
     /// <summary>
-    /// User who performed the action.
+    /// Additional context for the action (e.g. unregister reason).
     /// </summary>
     public string? PerformedBy { get; set; }
 }

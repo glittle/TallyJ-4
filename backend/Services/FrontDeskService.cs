@@ -74,20 +74,11 @@ public class FrontDeskService : IFrontDeskService
         person.VotingMethod = checkInDto.VotingMethod;
         person.VotingLocationGuid = checkInDto.VotingLocationGuid;
 
-        if (!string.IsNullOrWhiteSpace(checkInDto.TellerName))
-        {
-            if (string.IsNullOrWhiteSpace(person.Teller1))
-            {
-                person.Teller1 = checkInDto.TellerName;
-            }
-            else
-            {
-                person.Teller2 = checkInDto.TellerName;
-            }
-        }
+        person.Teller1 = NormalizeTellerName(checkInDto.Teller1);
+        person.Teller2 = NormalizeTellerName(checkInDto.Teller2);
 
         // Add history entry
-        await AddRegistrationHistoryEntry(person, "CheckedIn", checkInDto.TellerName);
+        await AddRegistrationHistoryEntry(person, "CheckedIn", person.Teller1, person.Teller2);
 
         await _context.SaveChangesAsync();
 
@@ -150,8 +141,10 @@ public class FrontDeskService : IFrontDeskService
             throw new InvalidOperationException("Person is not currently checked in");
         }
 
-        // Store the envelope number for history
+        // Store the envelope number and tellers for history
         var envNum = person.EnvNum;
+        var teller1 = person.Teller1;
+        var teller2 = person.Teller2;
 
         // Clear check-in data
         person.RegistrationTime = null;
@@ -161,8 +154,12 @@ public class FrontDeskService : IFrontDeskService
         person.Teller1 = null;
         person.Teller2 = null;
 
-        // Add history entry with reason
-        await AddRegistrationHistoryEntry(person, "Unregistered", null, unregisterDto.Reason);
+        await AddRegistrationHistoryEntry(
+            person,
+            "Unregistered",
+            teller1,
+            teller2,
+            unregisterDto.Reason);
 
         await _context.SaveChangesAsync();
 
@@ -182,7 +179,12 @@ public class FrontDeskService : IFrontDeskService
     /// <summary>
     /// Adds a registration history entry to the person's history log.
     /// </summary>
-    private async Task AddRegistrationHistoryEntry(Person person, string action, string? tellerName, string? reason = null)
+    private async Task AddRegistrationHistoryEntry(
+        Person person,
+        string action,
+        string? teller1,
+        string? teller2,
+        string? performedBy = null)
     {
         var historyEntries = string.IsNullOrEmpty(person.RegistrationHistory)
             ? new List<RegistrationHistoryEntryDto>()
@@ -200,10 +202,11 @@ public class FrontDeskService : IFrontDeskService
             Timestamp = DateTimeOffset.UtcNow,
             Action = action,
             VotingMethod = person.VotingMethod,
-            TellerName = tellerName,
+            Teller1 = teller1,
+            Teller2 = teller2,
             LocationName = locationName,
             EnvNum = person.EnvNum,
-            PerformedBy = reason ?? tellerName // For unregister, reason describes why; for checkin, teller name
+            PerformedBy = performedBy
         };
 
         historyEntries.Add(entry);
@@ -285,6 +288,11 @@ public class FrontDeskService : IFrontDeskService
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
 
         return voterDto;
+    }
+
+    private static string? NormalizeTellerName(string? tellerName)
+    {
+        return string.IsNullOrWhiteSpace(tellerName) ? null : tellerName.Trim();
     }
 
     // Explicit mapping for FrontDeskVoterDto (replaces logic that was in Mapster profiles).

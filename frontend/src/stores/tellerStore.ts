@@ -21,7 +21,7 @@ export const useTellerStore = defineStore("teller", () => {
         page,
         size,
       );
-      tellers.value = response.data;
+      tellers.value = response.items;
       totalCount.value = response.totalCount;
       currentPage.value = response.pageNumber;
       pageSize.value = response.pageSize;

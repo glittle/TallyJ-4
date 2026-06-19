@@ -7,6 +7,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { Plus, Upload } from "@element-plus/icons-vue";
 import { useBallotStore } from "../../stores/ballotStore";
 import type { BallotDto } from "../../types";
+import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
 import BallotFormDialog from "../../components/ballots/BallotFormDialog.vue";
 import BallotVotesDialog from "../../components/ballots/BallotVotesDialog.vue";
 
@@ -123,6 +124,10 @@ function getStatusType(status: string | undefined) {
             </el-button>
           </div>
         </div>
+        <ActiveTellerSelector
+          :election-guid="electionGuid"
+          class="header-tellers"
+        />
       </template>
 
       <div v-if="loading" class="loading-container">
@@ -232,6 +237,10 @@ function getStatusType(status: string | undefined) {
   .header-actions {
     display: flex;
     gap: 10px;
+  }
+
+  .header-tellers {
+    margin-top: 12px;
   }
 
   .loading-container {

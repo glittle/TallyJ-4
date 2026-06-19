@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
+import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useNotifications } from "@/composables/useNotifications";
 import { frontDeskService } from "@/services/frontDeskService";
 import { signalrService } from "@/services/signalrService";
@@ -12,6 +14,16 @@ import type {
   UnregisterVoterDto,
   UpdatePersonFlagsDto,
 } from "@/types/FrontDesk";
+import {
+  getActiveTellerPayload,
+  getActiveTellers,
+  type ActiveTellers,
+} from "@/utils/activeTellerStorage";
+import {
+  formatRegistrationHistoryDetails,
+  sortRegistrationHistoryNewestFirst,
+} from "@/utils/formatRegistrationHistory";
+import { matchesFrontDeskVoterSearch } from "@/utils/searchStrategies";
 import {
   Check,
   Close,
@@ -33,6 +45,15 @@ const electionStore = useElectionStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = ref(route.params.id as string);
+
+const activeTellers = ref<ActiveTellers>(getActiveTellers());
+const hasActiveTeller = computed(() =>
+  Boolean(activeTellers.value.teller1.trim()),
+);
+
+function onTellersChanged(tellers: ActiveTellers) {
+  activeTellers.value = tellers;
+}
 
 /** Placeholder until election setup exposes "Enable Envelope Numbers". */
 const ENABLE_ENVELOPE_NUMBERS = true;
@@ -71,6 +92,11 @@ const searchInputRef = ref<HTMLInputElement | null>(null);
 const voterTableRef = ref<InstanceType<typeof ElTable> | null>(null);
 const selectedIndex = ref(0);
 const selectedVoter = ref<FrontDeskVoterDto | null>(null);
+const selectedVoterRegistrationHistory = computed(() =>
+  sortRegistrationHistoryNewestFirst(
+    selectedVoter.value?.registrationHistory ?? [],
+  ),
+);
 const showRegistrationButtons = ref(false);
 const selectedButtonIndex = ref(0);
 const pendingVotingMethod = ref<string | null>(null);
@@ -85,22 +111,42 @@ const highlightedPersonGuids = ref(new Set<string>());
 const highlightTimers = new Map<string, number>();
 const rowHighlightVersion = ref(0);
 
+type RegistrationFilter = "all" | "notRegistered" | "registered";
+
+const REGISTRATION_FILTER_STORAGE_KEY = "tallyj.frontDesk.registrationFilters";
+const DEFAULT_REGISTRATION_FILTER: RegistrationFilter = "notRegistered";
+
+function isRegistrationFilter(value: unknown): value is RegistrationFilter {
+  return value === "all" || value === "notRegistered" || value === "registered";
+}
+
+const registrationFiltersByElection = useLocalStorage<
+  Partial<Record<string, RegistrationFilter>>
+>(REGISTRATION_FILTER_STORAGE_KEY, {});
+
 // Filters
 const selectedMethodFilters = ref<string[]>([]);
 const selectedFlagFilters = ref<string[]>([]);
-const showAllRegistered = ref(false);
+const registrationFilter = computed({
+  get(): RegistrationFilter {
+    const stored = registrationFiltersByElection.value[electionGuid.value];
+    return isRegistrationFilter(stored) ? stored : DEFAULT_REGISTRATION_FILTER;
+  },
+  set(value: RegistrationFilter) {
+    registrationFiltersByElection.value = {
+      ...registrationFiltersByElection.value,
+      [electionGuid.value]: value,
+    };
+  },
+});
 
 // Voter filtering
 const filteredVoters = computed(() => {
   if (!searchQuery.value.trim()) {
     return voters.value;
   }
-  const query = searchQuery.value.toLowerCase();
-  return voters.value.filter(
-    (voter) =>
-      voter.fullName.toLowerCase().includes(query) ||
-      voter.bahaiId?.toLowerCase().includes(query) ||
-      voter.area?.toLowerCase().includes(query),
+  return voters.value.filter((voter) =>
+    matchesFrontDeskVoterSearch(voter, searchQuery.value),
   );
 });
 
@@ -111,11 +157,20 @@ const notCheckedInVoters = computed(() =>
   filteredVoters.value.filter((v) => !v.isCheckedIn),
 );
 
-// Filter voters based on selected filters
+const filteredByRegistration = computed(() => {
+  switch (registrationFilter.value) {
+    case "registered":
+      return checkedInVoters.value;
+    case "notRegistered":
+      return notCheckedInVoters.value;
+    case "all":
+    default:
+      return filteredVoters.value;
+  }
+});
+
 const filteredByConditions = computed(() => {
-  let result = showAllRegistered.value
-    ? filteredVoters.value
-    : notCheckedInVoters.value;
+  let result = filteredByRegistration.value;
 
   if (selectedMethodFilters.value.length > 0) {
     result = result.filter(
@@ -139,18 +194,14 @@ const filteredByConditions = computed(() => {
   return result;
 });
 
-// Merge not-checked-in and checked-in voters into one list
-const allVoters = computed(() => {
-  if (
-    selectedMethodFilters.value.length > 0 ||
-    selectedFlagFilters.value.length > 0 ||
-    showAllRegistered.value
-  ) {
-    return filteredByConditions.value;
-  }
+const allVoters = computed(() => filteredByConditions.value);
 
-  return filteredVoters.value;
-});
+const hasActiveFilters = computed(
+  () =>
+    registrationFilter.value !== DEFAULT_REGISTRATION_FILTER ||
+    selectedMethodFilters.value.length > 0 ||
+    selectedFlagFilters.value.length > 0,
+);
 
 const tableVoters = computed(() => {
   void rowHighlightVersion.value;
@@ -328,13 +379,23 @@ function focusRegistrationOverlay() {
 }
 
 function getInitialDialogButtonIndex(): number {
-  if (selectedVoter.value?.isCheckedIn && electionFlags.value.length === 0) {
+  if (
+    !hasActiveTeller.value ||
+    (selectedVoter.value?.isCheckedIn && electionFlags.value.length === 0)
+  ) {
     const closeIndex = dialogButtons.value.findIndex(
       (button) => button.isClose,
     );
     return closeIndex >= 0 ? closeIndex : 0;
   }
   return 0;
+}
+
+function isDialogButtonActionable(button: DialogButton): boolean {
+  if (button.isClose) {
+    return true;
+  }
+  return hasActiveTeller.value;
 }
 
 function openRegistrationDialog() {
@@ -516,6 +577,13 @@ onUnmounted(async () => {
   await leaveElection(electionGuid.value);
 });
 
+watch(hasActiveTeller, (active) => {
+  if (!active && showRegistrationButtons.value) {
+    selectedButtonIndex.value = getInitialDialogButtonIndex();
+    focusRegistrationButton();
+  }
+});
+
 // Watch search query and update selection
 watch(searchQuery, () => {
   selectedIndex.value = 0;
@@ -600,6 +668,9 @@ function isDialogButtonKeyboardFocused(value: string): boolean {
 }
 
 function isDialogButtonFocusable(button: DialogButton): boolean {
+  if (!isDialogButtonActionable(button)) {
+    return false;
+  }
   return !(button.isClose && checkInInProgress.value);
 }
 
@@ -679,7 +750,7 @@ function handleRegistrationKeydown(event: KeyboardEvent) {
       return;
     }
     const selectedButton = buttons[selectedButtonIndex.value];
-    if (selectedButton) {
+    if (selectedButton && isDialogButtonActionable(selectedButton)) {
       handleButtonClick(selectedButton);
     }
   } else if (event.key === "Escape") {
@@ -696,6 +767,9 @@ function handleRegistrationKeydown(event: KeyboardEvent) {
         showErrorMessage(
           t("frontDesk.messages.invalidButton", { index: index + 1 }),
         );
+        return;
+      }
+      if (!isDialogButtonActionable(button)) {
         return;
       }
       handleButtonClick(button);
@@ -805,7 +879,11 @@ function handleRowClick(row: FrontDeskVoterDto) {
 }
 
 async function confirmCheckIn(votingMethod: string) {
-  if (!selectedVoter.value || checkInInProgress.value) {
+  if (
+    !selectedVoter.value ||
+    checkInInProgress.value ||
+    !hasActiveTeller.value
+  ) {
     return;
   }
 
@@ -819,7 +897,7 @@ async function confirmCheckIn(votingMethod: string) {
     await checkInVoter(electionGuid.value, {
       personGuid,
       votingMethod,
-      tellerName: undefined,
+      ...getActiveTellerPayload(),
       votingLocationGuid: undefined,
     });
   } catch (err: any) {
@@ -832,6 +910,9 @@ async function confirmCheckIn(votingMethod: string) {
 
 async function handleButtonClick(button: DialogButton) {
   if (!selectedVoter.value || checkInInProgress.value) {
+    return;
+  }
+  if (!isDialogButtonActionable(button)) {
     return;
   }
 
@@ -858,7 +939,7 @@ function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
 }
 
 async function toggleFlag(flag: string) {
-  if (!selectedVoter.value) {
+  if (!selectedVoter.value || !hasActiveTeller.value) {
     return;
   }
 
@@ -942,7 +1023,7 @@ async function handleUnregister(voter: FrontDeskVoterDto) {
 }
 
 async function handleUnregisterSelected() {
-  if (!selectedVoter.value) {
+  if (!selectedVoter.value || !hasActiveTeller.value) {
     return;
   }
 
@@ -997,27 +1078,10 @@ function getRowClassName({
 }
 
 function formatTimeline(entry: RegistrationHistoryEntryDto): string {
-  const items = [];
-  if (entry.action === "CheckedIn") {
-    items.push(
-      t("frontDesk.history.checkedIn", {
-        method: getVotingMethodLabel(entry.votingMethod),
-      }),
-    );
-  }
-  if (entry.tellerName) {
-    items.push(t("frontDesk.history.teller", { name: entry.tellerName }));
-  }
-  if (entry.locationName) {
-    items.push(t("frontDesk.history.location", { name: entry.locationName }));
-  }
-  if (entry.envNum) {
-    items.push(t("frontDesk.history.envelope", { num: entry.envNum }));
-  }
-  if (entry.performedBy) {
-    items.push(entry.performedBy);
-  }
-  return items.join(", ");
+  return formatRegistrationHistoryDetails(entry, {
+    t,
+    getVotingMethodLabel,
+  });
 }
 
 function goBack() {
@@ -1045,10 +1109,13 @@ function toggleFlagFilter(flag: string) {
 function clearFilters() {
   selectedMethodFilters.value = [];
   selectedFlagFilters.value = [];
-  showAllRegistered.value = false;
+  registrationFilter.value = DEFAULT_REGISTRATION_FILTER;
 }
 
 function openEnvelopeDialog(voter: FrontDeskVoterDto) {
+  if (!hasActiveTeller.value) {
+    return;
+  }
   envelopeEditVoter.value = voter;
   envelopeEditValue.value = voter.envNum ?? undefined;
   showEnvelopeDialog.value = true;
@@ -1061,7 +1128,11 @@ function resetEnvelopeDialog() {
 }
 
 async function saveEnvelopeNumber(clear = false) {
-  if (!envelopeEditVoter.value || envelopeSaving.value) {
+  if (
+    !envelopeEditVoter.value ||
+    envelopeSaving.value ||
+    !hasActiveTeller.value
+  ) {
     return;
   }
 
@@ -1126,6 +1197,20 @@ async function saveEnvelopeNumber(clear = false) {
             </el-statistic>
           </div>
         </div>
+        <ActiveTellerSelector
+          :election-guid="electionGuid"
+          class="header-tellers"
+          @tellers-changed="onTellersChanged"
+        />
+        <el-alert
+          v-if="!hasActiveTeller"
+          type="warning"
+          :title="$t('frontDesk.tellerRequired.title')"
+          :description="$t('frontDesk.tellerRequired.message')"
+          show-icon
+          :closable="false"
+          class="teller-required-alert"
+        />
       </template>
 
       <el-row :gutter="20">
@@ -1133,41 +1218,56 @@ async function saveEnvelopeNumber(clear = false) {
           <el-card shadow="never">
             <template #header>
               <div class="section-header">
-                <h3>{{ $t("frontDesk.section.quickCheckIn") }}</h3>
-                <el-input
-                  ref="searchInputRef"
-                  v-model="searchQuery"
-                  :placeholder="$t('frontDesk.search.placeholder')"
-                  style="width: 450px"
-                  clearable
-                  @keydown="handleSearchKeydown"
+                <div class="section-header-start">
+                  <h3>{{ $t("frontDesk.section.quickCheckIn") }}</h3>
+                  <el-input
+                    ref="searchInputRef"
+                    v-model="searchQuery"
+                    class="search-input"
+                    :placeholder="$t('frontDesk.search.placeholder')"
+                    clearable
+                    @keydown="handleSearchKeydown"
+                  >
+                    <template #prefix>
+                      <el-icon>
+                        <Search />
+                      </el-icon>
+                    </template>
+                  </el-input>
+                </div>
+                <el-radio-group
+                  v-model="registrationFilter"
+                  size="small"
+                  class="registration-filter"
                 >
-                  <template #prefix>
-                    <el-icon>
-                      <Search />
-                    </el-icon>
-                  </template>
-                </el-input>
+                  <el-radio-button value="all">
+                    {{
+                      $t("frontDesk.filters.registrationAll", {
+                        count: filteredVoters.length,
+                      })
+                    }}
+                  </el-radio-button>
+                  <el-radio-button value="notRegistered">
+                    {{
+                      $t("frontDesk.filters.registrationNotRegistered", {
+                        count: notCheckedInVoters.length,
+                      })
+                    }}
+                  </el-radio-button>
+                  <el-radio-button value="registered">
+                    {{
+                      $t("frontDesk.filters.registrationRegistered", {
+                        count: checkedInVoters.length,
+                      })
+                    }}
+                  </el-radio-button>
+                </el-radio-group>
               </div>
             </template>
 
             <!-- Filters -->
             <div class="filters-section">
               <div class="filter-group">
-                <el-button
-                  :type="showAllRegistered ? 'primary' : 'default'"
-                  size="small"
-                  @click="showAllRegistered = !showAllRegistered"
-                >
-                  {{
-                    $t("frontDesk.filters.showAllRegistered", {
-                      count: checkedInVoters.length,
-                    })
-                  }}
-                </el-button>
-
-                <el-divider direction="vertical" />
-
                 <span class="filter-label">{{
                   $t("frontDesk.filters.votingMethods")
                 }}</span>
@@ -1215,11 +1315,7 @@ async function saveEnvelopeNumber(clear = false) {
                 </template>
 
                 <el-button
-                  v-if="
-                    selectedMethodFilters.length > 0 ||
-                    selectedFlagFilters.length > 0 ||
-                    showAllRegistered
-                  "
+                  v-if="hasActiveFilters"
                   type="info"
                   size="small"
                   @click="clearFilters"
@@ -1262,6 +1358,21 @@ async function saveEnvelopeNumber(clear = false) {
                   width="350"
                 />
                 <el-table-column
+                  :label="$t('frontDesk.table.method')"
+                  width="150"
+                >
+                  <template #default="{ row }">
+                    <el-tag
+                      v-if="row.votingMethod"
+                      :type="getVotingMethodTagType(row.votingMethod)"
+                      size="small"
+                    >
+                      {{ getVotingMethodLabel(row.votingMethod) }}
+                    </el-tag>
+                    <span v-else>{{ $t("frontDesk.common.dash") }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   prop="bahaiId"
                   :label="$t('frontDesk.table.bahaiId')"
                   width="120"
@@ -1283,6 +1394,7 @@ async function saveEnvelopeNumber(clear = false) {
                       link
                       type="primary"
                       size="small"
+                      :disabled="!hasActiveTeller"
                       @click.stop="openEnvelopeDialog(row)"
                     >
                       {{ row.envNum }}
@@ -1292,27 +1404,14 @@ async function saveEnvelopeNumber(clear = false) {
                       link
                       type="primary"
                       size="small"
+                      :disabled="!hasActiveTeller"
                       @click.stop="openEnvelopeDialog(row)"
                     >
                       {{ $t("frontDesk.envelope.set") }}
                     </el-button>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  :label="$t('frontDesk.table.method')"
-                  width="150"
-                >
-                  <template #default="{ row }">
-                    <el-tag
-                      v-if="row.votingMethod"
-                      :type="getVotingMethodTagType(row.votingMethod)"
-                      size="small"
-                    >
-                      {{ getVotingMethodLabel(row.votingMethod) }}
-                    </el-tag>
-                    <span v-else>{{ $t("frontDesk.common.dash") }}</span>
-                  </template>
-                </el-table-column>
+
                 <el-table-column
                   v-if="electionFlags.length > 0"
                   :label="$t('frontDesk.table.flags')"
@@ -1363,6 +1462,15 @@ async function saveEnvelopeNumber(clear = false) {
                 @keydown.capture="handleRegistrationKeydown"
               >
                 <div class="registration-buttons">
+                  <el-alert
+                    v-if="!hasActiveTeller"
+                    type="warning"
+                    :title="$t('frontDesk.tellerRequired.title')"
+                    :description="$t('frontDesk.tellerRequired.message')"
+                    show-icon
+                    :closable="false"
+                    class="teller-required-alert"
+                  />
                   <div class="registration-header">
                     <div class="selected-voter-info">
                       <strong>
@@ -1389,6 +1497,7 @@ async function saveEnvelopeNumber(clear = false) {
                         size="large"
                         data-dialog-button="__unregister__"
                         class="unregister-button dialog-option-button"
+                        :disabled="!hasActiveTeller"
                         :class="{
                           'keyboard-focused-button':
                             isDialogButtonKeyboardFocused('__unregister__'),
@@ -1467,8 +1576,9 @@ async function saveEnvelopeNumber(clear = false) {
                         size="large"
                         class="dialog-option-button"
                         :disabled="
-                          checkInInProgress &&
-                          pendingVotingMethod !== type.value
+                          !hasActiveTeller ||
+                          (checkInInProgress &&
+                            pendingVotingMethod !== type.value)
                         "
                         :class="{
                           'keyboard-focused-button':
@@ -1496,7 +1606,7 @@ async function saveEnvelopeNumber(clear = false) {
                         "
                         size="large"
                         class="dialog-option-button"
-                        :disabled="checkInInProgress"
+                        :disabled="!hasActiveTeller || checkInInProgress"
                         :class="{
                           'keyboard-focused-button':
                             isDialogButtonKeyboardFocused(flag),
@@ -1517,7 +1627,7 @@ async function saveEnvelopeNumber(clear = false) {
 
                   <!-- Registration history -->
                   <div
-                    v-if="selectedVoter.registrationHistory?.length"
+                    v-if="selectedVoterRegistrationHistory.length"
                     class="dialog-history-section"
                   >
                     <h4>{{ $t("frontDesk.dialog.registrationHistory") }}</h4>
@@ -1525,7 +1635,7 @@ async function saveEnvelopeNumber(clear = false) {
                       <el-timeline-item
                         v-for="(
                           entry, index
-                        ) in selectedVoter.registrationHistory"
+                        ) in selectedVoterRegistrationHistory"
                         :key="index"
                         :timestamp="formatTimeline(entry)"
                       >
@@ -1613,6 +1723,14 @@ async function saveEnvelopeNumber(clear = false) {
     gap: 20px;
   }
 
+  .header-tellers {
+    margin-top: 12px;
+  }
+
+  .teller-required-alert {
+    margin-top: 12px;
+  }
+
   .filters-section {
     margin-bottom: 20px;
     padding: 15px;
@@ -1660,11 +1778,32 @@ async function saveEnvelopeNumber(clear = false) {
   .section-header {
     display: flex;
     align-items: center;
-    gap: 3em;
-  }
+    width: 100%;
+    gap: 1rem;
+    flex-wrap: wrap;
 
-  .section-header h3 {
-    margin: 0;
+    .section-header-start {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      min-width: 0;
+
+      h3 {
+        margin: 0;
+        white-space: nowrap;
+      }
+    }
+
+    .search-input {
+      width: 200px;
+      flex-shrink: 0;
+    }
+
+    .registration-filter {
+      margin-left: auto;
+      flex-wrap: wrap;
+    }
   }
 
   .voter-list-container {

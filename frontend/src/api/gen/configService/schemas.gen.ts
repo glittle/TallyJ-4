@@ -1543,15 +1543,21 @@ export const CheckInVoterDtoSchema = {
             minLength: 0,
             type: 'string'
         },
-        tellerName: {
+        votingLocationGuid: {
+            type: 'string',
+            format: 'uuid',
+            nullable: true
+        },
+        teller1: {
             maxLength: 25,
             minLength: 0,
             type: 'string',
             nullable: true
         },
-        votingLocationGuid: {
+        teller2: {
+            maxLength: 25,
+            minLength: 0,
             type: 'string',
-            format: 'uuid',
             nullable: true
         }
     },
@@ -1716,6 +1722,18 @@ export const CreateBallotDtoSchema = {
             format: 'uuid'
         },
         computerCode: {
+            type: 'string',
+            nullable: true
+        },
+        teller1: {
+            maxLength: 25,
+            minLength: 0,
+            type: 'string',
+            nullable: true
+        },
+        teller2: {
+            maxLength: 25,
+            minLength: 0,
             type: 'string',
             nullable: true
         }
@@ -1939,13 +1957,6 @@ export const CreateTellerDtoSchema = {
         name: {
             type: 'string',
             nullable: true
-        },
-        usingComputerCode: {
-            type: 'string',
-            nullable: true
-        },
-        isHeadTeller: {
-            type: 'boolean'
         }
     },
     additionalProperties: false
@@ -4595,7 +4606,11 @@ export const RegistrationHistoryEntryDtoSchema = {
             type: 'string',
             nullable: true
         },
-        tellerName: {
+        teller1: {
+            type: 'string',
+            nullable: true
+        },
+        teller2: {
             type: 'string',
             nullable: true
         },
@@ -5180,13 +5195,6 @@ export const TellerDtoSchema = {
         name: {
             type: 'string',
             nullable: true
-        },
-        usingComputerCode: {
-            type: 'string',
-            nullable: true
-        },
-        isHeadTeller: {
-            type: 'boolean'
         }
     },
     additionalProperties: false
@@ -5719,13 +5727,6 @@ export const UpdateTellerDtoSchema = {
         name: {
             type: 'string',
             nullable: true
-        },
-        usingComputerCode: {
-            type: 'string',
-            nullable: true
-        },
-        isHeadTeller: {
-            type: 'boolean'
         }
     },
     additionalProperties: false

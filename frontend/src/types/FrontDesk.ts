@@ -2,7 +2,8 @@ export interface RegistrationHistoryEntryDto {
   timestamp: string;
   action: string;
   votingMethod?: string;
-  tellerName?: string;
+  teller1?: string;
+  teller2?: string;
   locationName?: string;
   envNum?: number;
   performedBy?: string;
@@ -28,7 +29,8 @@ export interface FrontDeskVoterDto {
 export interface CheckInVoterDto {
   personGuid: string;
   votingMethod: string;
-  tellerName?: string;
+  teller1?: string;
+  teller2?: string;
   votingLocationGuid?: string;
 }
 

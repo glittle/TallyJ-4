@@ -18,17 +18,9 @@ public partial class Teller
     [StringLength(50)]
     public string Name { get; set; } = null!;
 
-    [StringLength(2)]
-    [Unicode(false)]
-    public string? UsingComputerCode { get; set; }
-
-    public bool? IsHeadTeller { get; set; }
-
     [Column("_RowVersion")]
     public byte[] RowVersion { get; set; } = null!;
 
     [ForeignKey("ElectionGuid")]
     public virtual Election Election { get; set; } = null!;
 }
-
-

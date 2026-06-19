@@ -144,8 +144,6 @@ public class JsonElectionImportExportService : ElectionImportExportBase
             tellers = election.Tellers.Select(t => new
             {
                 t.Name,
-                t.IsHeadTeller,
-                t.UsingComputerCode
             }),
             results = election.Results.Select(r => new
             {
@@ -420,8 +418,6 @@ public class JsonElectionImportExportService : ElectionImportExportBase
             {
                 ElectionGuid = electionGuid,
                 Name = teller.Name ?? "",
-                IsHeadTeller = teller.IsHeadTeller,
-                UsingComputerCode = teller.UsingComputerCode,
                 RowVersion = new byte[8]
             };
             _context.Tellers.Add(t);

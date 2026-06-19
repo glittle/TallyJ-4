@@ -118,31 +118,6 @@ async function handlePageChange() {
       <div class="table-container">
         <el-table v-loading="loading" :data="tellers" style="width: 100%">
           <el-table-column prop="name" label="Teller Name" min-width="200" />
-          <el-table-column
-            prop="usingComputerCode"
-            label="Computer Code"
-            width="150"
-            align="center"
-          >
-            <template #default="scope">
-              <el-tag v-if="scope.row.usingComputerCode" type="info">
-                {{ scope.row.usingComputerCode }}
-              </el-tag>
-              <span v-else>-</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="isHeadTeller"
-            label="Head Teller"
-            width="150"
-            align="center"
-          >
-            <template #default="scope">
-              <el-tag :type="scope.row.isHeadTeller ? 'success' : 'info'">
-                {{ scope.row.isHeadTeller ? "Yes" : "No" }}
-              </el-tag>
-            </template>
-          </el-table-column>
           <el-table-column label="Actions" width="200" fixed="right">
             <template #default="scope">
               <el-button-group>

@@ -11,6 +11,8 @@ import {
   phoneticMatch,
   fuzzyMatch,
   applyAllStrategies,
+  matchesFrontDeskVoterSearch,
+  tokenizeNameForSearch,
 } from "../searchStrategies";
 import type { SearchablePersonDto } from "@/types/Person";
 
@@ -35,6 +37,38 @@ function createMockPerson(
     _soundexCodes: soundexCodes,
   };
 }
+
+describe("matchesFrontDeskVoterSearch", () => {
+  const smithAnthony = {
+    fullName: "Smith, Anthony",
+    bahaiId: "12345",
+    area: "North",
+  };
+
+  it("matches a single substring within the full name", () => {
+    expect(matchesFrontDeskVoterSearch(smithAnthony, "mit")).toBe(true);
+  });
+
+  it("matches multiple name terms against separate name parts", () => {
+    expect(matchesFrontDeskVoterSearch(smithAnthony, "sm an")).toBe(true);
+  });
+
+  it("requires every term to match", () => {
+    expect(matchesFrontDeskVoterSearch(smithAnthony, "sm he")).toBe(false);
+  });
+
+  it("matches bahai id and area for single-term searches", () => {
+    expect(matchesFrontDeskVoterSearch(smithAnthony, "12345")).toBe(true);
+    expect(matchesFrontDeskVoterSearch(smithAnthony, "north")).toBe(true);
+  });
+
+  it("tokenizes comma-separated names for multi-term search", () => {
+    expect(tokenizeNameForSearch("Smith, Anthony")).toEqual([
+      "smith",
+      "anthony",
+    ]);
+  });
+});
 
 describe("normalizeSearchText", () => {
   it("should convert to lowercase", () => {
