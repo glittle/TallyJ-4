@@ -51,6 +51,14 @@ public interface IFrontDeskService
     /// <param name="updateFlagsDto">The flags update data.</param>
     /// <returns>The updated voter DTO.</returns>
     Task<FrontDeskVoterDto> UpdatePersonFlagsAsync(Guid electionGuid, UpdatePersonFlagsDto updateFlagsDto);
+
+    /// <summary>
+    /// Sets or clears the envelope number for a voter.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="updateDto">The envelope number update data.</param>
+    /// <returns>The updated voter DTO.</returns>
+    Task<FrontDeskVoterDto> UpdateEnvelopeNumberAsync(Guid electionGuid, UpdateEnvelopeNumberDto updateDto);
 }
 
 

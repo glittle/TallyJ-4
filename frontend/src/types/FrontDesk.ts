@@ -32,6 +32,11 @@ export interface CheckInVoterDto {
   votingLocationGuid?: string;
 }
 
+export interface UpdateEnvelopeNumberDto {
+  personGuid: string;
+  envNum?: number | null;
+}
+
 export interface UnregisterVoterDto {
   personGuid: string;
   reason?: string;

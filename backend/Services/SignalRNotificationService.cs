@@ -242,7 +242,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"election-{electionGuid}";
+            var groupName = FrontDeskHub.GetGroupName(electionGuid);
             await _frontDeskHubContext.Clients.Group(groupName).SendAsync("PersonFlagsUpdated", voter);
             _logger.LogInformation("Sent PersonFlagsUpdated notification to group {GroupName} for person {PersonGuid}", groupName, voter.PersonGuid);
         }

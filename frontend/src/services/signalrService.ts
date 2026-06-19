@@ -5,6 +5,7 @@ import * as signalR from "@microsoft/signalr";
 class SignalRService {
   private readonly connections: Map<string, signalR.HubConnection> = new Map();
   private readonly connectionStates: Map<string, ConnectionState> = new Map();
+  private frontDeskElectionGuid: string | null = null;
 
   private get baseUrl(): string {
     return getAppConfig().apiUrl;
@@ -38,11 +39,24 @@ class SignalRService {
       this.connectionStates.set(hubPath, ConnectionState.Reconnecting);
     });
 
-    connection.onreconnected((connectionId) => {
+    connection.onreconnected(async (connectionId) => {
       console.log(
         `SignalR reconnected for ${hubPath}. Connection ID: ${connectionId}`,
       );
       this.connectionStates.set(hubPath, ConnectionState.Connected);
+      if (hubPath === "/hubs/front-desk" && this.frontDeskElectionGuid) {
+        try {
+          await connection.invoke("JoinElection", this.frontDeskElectionGuid);
+          console.log(
+            `Rejoined front desk election ${this.frontDeskElectionGuid} after reconnect`,
+          );
+        } catch (error) {
+          console.error(
+            "Failed to rejoin front desk election after reconnect:",
+            error,
+          );
+        }
+      }
     });
 
     this.connectionStates.set(hubPath, ConnectionState.Connecting);
@@ -183,13 +197,23 @@ class SignalRService {
   }
 
   async joinFrontDeskElection(electionGuid: string): Promise<void> {
+    this.frontDeskElectionGuid = electionGuid;
     const frontDeskConnection = this.getConnection("/hubs/front-desk");
-    if (frontDeskConnection) {
-      await frontDeskConnection.invoke("JoinElection", electionGuid);
+    if (!frontDeskConnection) {
+      throw new Error("Front desk hub is not connected");
     }
+    if (frontDeskConnection.state !== signalR.HubConnectionState.Connected) {
+      throw new Error(
+        `Front desk hub is not ready (state: ${frontDeskConnection.state})`,
+      );
+    }
+    await frontDeskConnection.invoke("JoinElection", electionGuid);
   }
 
   async leaveFrontDeskElection(electionGuid: string): Promise<void> {
+    if (this.frontDeskElectionGuid === electionGuid) {
+      this.frontDeskElectionGuid = null;
+    }
     const frontDeskConnection = this.getConnection("/hubs/front-desk");
     if (frontDeskConnection) {
       await frontDeskConnection.invoke("LeaveElection", electionGuid);

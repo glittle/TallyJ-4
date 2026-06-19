@@ -1587,6 +1587,11 @@ export type UpdateElectionDto = {
     flags?: string | null;
 };
 
+export type UpdateEnvelopeNumberDto = {
+    personGuid: string;
+    envNum?: number | null;
+};
+
 export type UpdateFileSettingsDto = {
     firstDataRow?: number | null;
     codePage?: number | null;
@@ -2973,6 +2978,24 @@ export type PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses = {
 };
 
 export type PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponse = PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses[keyof PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses];
+
+export type PostApiByElectionGuidFrontdeskUpdateEnvelopeNumberData = {
+    body?: UpdateEnvelopeNumberDto;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/{electionGuid}/frontdesk/updateEnvelopeNumber';
+};
+
+export type PostApiByElectionGuidFrontdeskUpdateEnvelopeNumberResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseFrontDeskVoterDto;
+};
+
+export type PostApiByElectionGuidFrontdeskUpdateEnvelopeNumberResponse = PostApiByElectionGuidFrontdeskUpdateEnvelopeNumberResponses[keyof PostApiByElectionGuidFrontdeskUpdateEnvelopeNumberResponses];
 
 export type GetApiByElectionGuidLocationsGetLocationsData = {
     body?: never;

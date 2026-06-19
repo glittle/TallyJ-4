@@ -86,11 +86,6 @@ public class FrontDeskService : IFrontDeskService
             }
         }
 
-        var nextEnvNum = await _context.People
-            .Where(p => p.ElectionGuid == electionGuid && p.EnvNum.HasValue)
-            .MaxAsync(p => (int?)p.EnvNum) ?? 0;
-        person.EnvNum = nextEnvNum + 1;
-
         // Add history entry
         await AddRegistrationHistoryEntry(person, "CheckedIn", checkInDto.TellerName);
 
@@ -236,6 +231,58 @@ public class FrontDeskService : IFrontDeskService
 
         // Send SignalR notification to update all connected clients
         await _signalRNotificationService.SendPersonFlagsUpdatedAsync(electionGuid, voterDto);
+
+        return voterDto;
+    }
+
+    /// <inheritdoc />
+    public async Task<FrontDeskVoterDto> UpdateEnvelopeNumberAsync(
+        Guid electionGuid,
+        UpdateEnvelopeNumberDto updateDto)
+    {
+        var person = await _context.People
+            .FirstOrDefaultAsync(p =>
+                p.PersonGuid == updateDto.PersonGuid && p.ElectionGuid == electionGuid);
+
+        if (person == null)
+        {
+            throw new InvalidOperationException("Person not found");
+        }
+
+        if (updateDto.EnvNum.HasValue)
+        {
+            if (updateDto.EnvNum.Value <= 0)
+            {
+                throw new InvalidOperationException("Envelope number must be greater than zero");
+            }
+
+            var envelopeInUse = await _context.People.AnyAsync(p =>
+                p.ElectionGuid == electionGuid &&
+                p.EnvNum == updateDto.EnvNum.Value &&
+                p.PersonGuid != updateDto.PersonGuid);
+
+            if (envelopeInUse)
+            {
+                throw new InvalidOperationException("Envelope number is already in use");
+            }
+
+            person.EnvNum = updateDto.EnvNum.Value;
+        }
+        else
+        {
+            person.EnvNum = null;
+        }
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation(
+            "Updated envelope number for person {PersonGuid} in election {ElectionGuid} to {EnvNum}",
+            person.PersonGuid,
+            electionGuid,
+            person.EnvNum);
+
+        var voterDto = MapToFrontDeskVoterDto(person);
+        await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
 
         return voterDto;
     }

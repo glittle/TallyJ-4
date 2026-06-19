@@ -115,7 +115,10 @@ public class FrontDeskHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
-    private static string GetGroupName(Guid electionGuid) => $"FrontDesk{electionGuid}";
+    /// <summary>
+    /// Gets the SignalR group name for front desk clients in the specified election.
+    /// </summary>
+    public static string GetGroupName(Guid electionGuid) => $"FrontDesk{electionGuid}";
 }
 
 

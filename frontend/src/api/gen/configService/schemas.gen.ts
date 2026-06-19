@@ -5580,6 +5580,27 @@ export const UpdateElectionDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const UpdateEnvelopeNumberDtoSchema = {
+    required: [
+        'personGuid'
+    ],
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        envNum: {
+            maximum: 2147483647,
+            minimum: 1,
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const UpdateFileSettingsDtoSchema = {
     type: 'object',
     properties: {

@@ -12,6 +12,7 @@ import type {
   FrontDeskStatsDto,
   UnregisterVoterDto,
   UpdatePersonFlagsDto,
+  UpdateEnvelopeNumberDto,
 } from "../types/FrontDesk";
 import { client } from "../api/config";
 
@@ -67,6 +68,17 @@ export const frontDeskService = {
     const response = await client.post<{ data: FrontDeskVoterDto }>({
       url: `/api/${electionGuid}/frontdesk/updatePersonFlags`,
       body: updateFlagsDto,
+    });
+    return response.data?.data as FrontDeskVoterDto;
+  },
+
+  async updateEnvelopeNumber(
+    electionGuid: string,
+    updateDto: UpdateEnvelopeNumberDto,
+  ): Promise<FrontDeskVoterDto> {
+    const response = await client.post<{ data: FrontDeskVoterDto }>({
+      url: `/api/${electionGuid}/frontdesk/updateEnvelopeNumber`,
+      body: updateDto,
     });
     return response.data?.data as FrontDeskVoterDto;
   },
