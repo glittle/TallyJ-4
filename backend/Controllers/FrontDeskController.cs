@@ -11,7 +11,7 @@ namespace Backend.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/{electionGuid}/frontdesk")]
-[Authorize]
+[Authorize(Policy = "ElectionAccess")]
 public class FrontDeskController : ControllerBase
 {
     private readonly IFrontDeskService _frontDeskService;

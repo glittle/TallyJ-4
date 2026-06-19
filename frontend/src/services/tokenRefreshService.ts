@@ -34,7 +34,7 @@ class TokenRefreshService {
       ...config,
     };
 
-    if (this.config.enabled && secureTokenService.isAuthenticated()) {
+    if (this.config.enabled && this.canAutoRefresh()) {
       this.startAutoRefresh();
     }
   }
@@ -48,8 +48,11 @@ class TokenRefreshService {
       return; // Already running
     }
 
-    // Calculate refresh interval: tokenExpiry * threshold
-    // For 60-minute tokens with 0.75 threshold: 60 * 0.75 = 45 minutes
+    if (!this.canAutoRefresh()) {
+      return;
+    }
+
+    // Refresh before the access-token cookie expires (75% of configured JWT lifetime).
     const refreshIntervalMs =
       this.config.tokenExpiryMinutes * this.config.refreshThreshold * 60 * 1000;
 
@@ -94,8 +97,8 @@ class TokenRefreshService {
       return this.refreshPromise;
     }
 
-    if (!secureTokenService.isAuthenticated()) {
-      console.log("[TokenRefresh] User not authenticated, skipping refresh");
+    if (!this.canAutoRefresh()) {
+      console.log("[TokenRefresh] Session cannot be refreshed, skipping");
       this.stopAutoRefresh();
       return false;
     }
@@ -161,6 +164,19 @@ class TokenRefreshService {
    */
   getConfig(): Required<TokenRefreshConfig> {
     return { ...this.config };
+  }
+
+  /**
+   * Teller access-code sessions have no refresh token; they rely on the
+   * longer-lived teller JWT cookie instead.
+   */
+  private canAutoRefresh(): boolean {
+    if (!secureTokenService.isAuthenticated()) {
+      return false;
+    }
+
+    const authData = secureTokenService.getAuthData();
+    return authData.authMethod !== "AccessCode";
   }
 }
 
