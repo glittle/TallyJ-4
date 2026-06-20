@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onErrorCaptured } from "vue";
+import { onErrorCaptured, ref } from "vue";
 
 const hasError = ref(false);
 const errorMessage = ref("");
@@ -58,7 +58,7 @@ function goHome() {
 
 onErrorCaptured((error, instance, info) => {
   hasError.value = true;
-  errorMessage.value = `${error}\n\nComponent: ${
+  errorMessage.value = `${error}\n\nInstance: ${
     instance?.$?.type?.name || "Unknown"
   }\nInfo: ${info}`;
 
