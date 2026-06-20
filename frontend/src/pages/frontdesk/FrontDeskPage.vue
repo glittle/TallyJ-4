@@ -2,6 +2,7 @@
 import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
 import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useNotifications } from "@/composables/useNotifications";
+import { useViewportTableHeight } from "@/composables/useViewportTableHeight";
 import { frontDeskService } from "@/services/frontDeskService";
 import { signalrService } from "@/services/signalrService";
 import { useElectionStore } from "@/stores/electionStore";
@@ -90,6 +91,15 @@ const electionFlags = computed(() => {
 // Keyboard navigation
 const searchInputRef = ref<HTMLInputElement | null>(null);
 const voterTableRef = ref<InstanceType<typeof ElTable> | null>(null);
+const tableWrapperRef = ref<HTMLElement | null>(null);
+const voterListContainerRef = ref<HTMLElement | null>(null);
+const keyboardHintRef = ref<HTMLElement | null>(null);
+const { height: tableHeight, remeasure: remeasureTableHeight } =
+  useViewportTableHeight(tableWrapperRef, {
+    paddingRootRef: voterListContainerRef,
+    bottomRef: keyboardHintRef,
+    min: 200,
+  });
 const selectedIndex = ref(0);
 const selectedVoter = ref<FrontDeskVoterDto | null>(null);
 const selectedVoterRegistrationHistory = computed(() =>
@@ -567,6 +577,8 @@ onMounted(async () => {
   await initializeSignalR();
   await joinElection(electionGuid.value);
 
+  await nextTick();
+  remeasureTableHeight();
   focusSearchInput();
 });
 
@@ -582,6 +594,13 @@ watch(hasActiveTeller, (active) => {
     selectedButtonIndex.value = getInitialDialogButtonIndex();
     focusRegistrationButton();
   }
+  nextTick(remeasureTableHeight);
+});
+
+watch(tableHeight, () => {
+  nextTick(() => {
+    voterTableRef.value?.doLayout();
+  });
 });
 
 // Watch search query and update selection
@@ -1340,112 +1359,114 @@ async function saveEnvelopeNumber(clear = false) {
               </div>
             </div>
 
-            <div class="voter-list-container">
-              <el-table
-                ref="voterTableRef"
-                :data="tableVoters"
-                :loading="loading"
-                :row-key="(row: FrontDeskVoterDto) => row.personGuid"
-                style="width: 100%"
-                height="600"
-                :row-class-name="getRowClassName"
-                @row-click="handleRowClick"
-              >
-                <el-table-column
-                  prop="fullName"
-                  :label="$t('frontDesk.table.name')"
-                  sortable
-                  width="350"
-                />
-                <el-table-column
-                  :label="$t('frontDesk.table.method')"
-                  width="150"
+            <div ref="voterListContainerRef" class="voter-list-container">
+              <div ref="tableWrapperRef" class="table-wrapper">
+                <el-table
+                  ref="voterTableRef"
+                  :data="tableVoters"
+                  :loading="loading"
+                  :row-key="(row: FrontDeskVoterDto) => row.personGuid"
+                  style="width: 100%"
+                  :height="tableHeight"
+                  :row-class-name="getRowClassName"
+                  @row-click="handleRowClick"
                 >
-                  <template #default="{ row }">
-                    <el-tag
-                      v-if="row.votingMethod"
-                      :type="getVotingMethodTagType(row.votingMethod)"
-                      size="small"
-                    >
-                      {{ getVotingMethodLabel(row.votingMethod) }}
-                    </el-tag>
-                    <span v-else>{{ $t("frontDesk.common.dash") }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  prop="bahaiId"
-                  :label="$t('frontDesk.table.bahaiId')"
-                  width="120"
-                />
-                <el-table-column
-                  prop="area"
-                  :label="$t('frontDesk.table.area')"
-                  width="100"
-                />
-                <el-table-column
-                  v-if="ENABLE_ENVELOPE_NUMBERS"
-                  :label="$t('frontDesk.table.envNum')"
-                  width="90"
-                  align="center"
-                >
-                  <template #default="{ row }">
-                    <el-button
-                      v-if="row.envNum"
-                      link
-                      type="primary"
-                      size="small"
-                      :disabled="!hasActiveTeller"
-                      @click.stop="openEnvelopeDialog(row)"
-                    >
-                      {{ row.envNum }}
-                    </el-button>
-                    <el-button
-                      v-else
-                      link
-                      type="primary"
-                      size="small"
-                      :disabled="!hasActiveTeller"
-                      @click.stop="openEnvelopeDialog(row)"
-                    >
-                      {{ $t("frontDesk.envelope.set") }}
-                    </el-button>
-                  </template>
-                </el-table-column>
-
-                <el-table-column
-                  v-if="electionFlags.length > 0"
-                  :label="$t('frontDesk.table.flags')"
-                >
-                  <template #default="{ row }">
-                    <template v-if="row.flags">
+                  <el-table-column
+                    prop="fullName"
+                    :label="$t('frontDesk.table.name')"
+                    sortable
+                    width="350"
+                  />
+                  <el-table-column
+                    :label="$t('frontDesk.table.method')"
+                    width="150"
+                  >
+                    <template #default="{ row }">
                       <el-tag
-                        v-for="flag in electionFlags.filter((f) =>
-                          hasFlag(row, f),
-                        )"
-                        :key="flag"
+                        v-if="row.votingMethod"
+                        :type="getVotingMethodTagType(row.votingMethod)"
                         size="small"
-                        type="success"
-                        class="flag-tag"
                       >
-                        {{ getFlagAbbr(flag) }}
+                        {{ getVotingMethodLabel(row.votingMethod) }}
                       </el-tag>
+                      <span v-else>{{ $t("frontDesk.common.dash") }}</span>
                     </template>
-                    <span v-else>{{ $t("frontDesk.common.dash") }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  :label="$t('frontDesk.table.time')"
-                  width="130"
-                >
-                  <template #default="{ row }">
-                    <span v-if="row.registrationTime">{{
-                      formatTimeShort(row.registrationTime)
-                    }}</span>
-                    <span v-else>{{ $t("frontDesk.common.dash") }}</span>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <div class="keyboard-hint">
+                  </el-table-column>
+                  <el-table-column
+                    prop="bahaiId"
+                    :label="$t('frontDesk.table.bahaiId')"
+                    width="120"
+                  />
+                  <el-table-column
+                    prop="area"
+                    :label="$t('frontDesk.table.area')"
+                    width="100"
+                  />
+                  <el-table-column
+                    v-if="ENABLE_ENVELOPE_NUMBERS"
+                    :label="$t('frontDesk.table.envNum')"
+                    width="90"
+                    align="center"
+                  >
+                    <template #default="{ row }">
+                      <el-button
+                        v-if="row.envNum"
+                        link
+                        type="primary"
+                        size="small"
+                        :disabled="!hasActiveTeller"
+                        @click.stop="openEnvelopeDialog(row)"
+                      >
+                        {{ row.envNum }}
+                      </el-button>
+                      <el-button
+                        v-else
+                        link
+                        type="primary"
+                        size="small"
+                        :disabled="!hasActiveTeller"
+                        @click.stop="openEnvelopeDialog(row)"
+                      >
+                        {{ $t("frontDesk.envelope.set") }}
+                      </el-button>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column
+                    v-if="electionFlags.length > 0"
+                    :label="$t('frontDesk.table.flags')"
+                  >
+                    <template #default="{ row }">
+                      <template v-if="row.flags">
+                        <el-tag
+                          v-for="flag in electionFlags.filter((f) =>
+                            hasFlag(row, f),
+                          )"
+                          :key="flag"
+                          size="small"
+                          type="success"
+                          class="flag-tag"
+                        >
+                          {{ getFlagAbbr(flag) }}
+                        </el-tag>
+                      </template>
+                      <span v-else>{{ $t("frontDesk.common.dash") }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    :label="$t('frontDesk.table.time')"
+                    width="130"
+                  >
+                    <template #default="{ row }">
+                      <span v-if="row.registrationTime">{{
+                        formatTimeShort(row.registrationTime)
+                      }}</span>
+                      <span v-else>{{ $t("frontDesk.common.dash") }}</span>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+              <div ref="keyboardHintRef" class="keyboard-hint">
                 {{
                   $t("frontDesk.keyboardHint", {
                     notCheckedIn: notCheckedInVoters.length,
@@ -1808,7 +1829,10 @@ async function saveEnvelopeNumber(clear = false) {
 
   .voter-list-container {
     position: relative;
-    min-height: 600px;
+  }
+
+  .table-wrapper {
+    width: 100%;
   }
 
   .el-timeline-item__timestamp {
