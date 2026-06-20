@@ -61,10 +61,6 @@ function viewFullResults() {
   router.push(`/elections/${electionGuid}/results`);
 }
 
-function goBack() {
-  router.push(`/elections/${electionGuid}`);
-}
-
 function getSectionType(section: string) {
   const typeMap: Record<string, any> = {
     E: "success",
@@ -87,12 +83,6 @@ function getSectionLabel(section: string) {
 <template>
   <div class="tally-calculation-page">
     <el-card>
-      <template #header>
-        <div class="card-header">
-          <el-page-header :content="$t('tally.title')" @back="goBack" />
-        </div>
-      </template>
-
       <el-alert
         :title="$t('tally.warning')"
         type="warning"

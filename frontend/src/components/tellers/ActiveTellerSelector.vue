@@ -6,11 +6,19 @@ import {
   setActiveTeller2,
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
-import { computed, onMounted, ref, watch } from "vue";
+import { User } from "@element-plus/icons-vue";
+import { computed, onMounted, ref, watch, withDefaults } from "vue";
 
-const props = defineProps<{
-  electionGuid: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    electionGuid: string;
+    /** Hides the hint text for compact toolbar layouts (e.g. Front Desk). */
+    compact?: boolean;
+  }>(),
+  {
+    compact: false,
+  },
+);
 
 const emit = defineEmits<{
   tellersChanged: [tellers: ActiveTellers];
@@ -100,7 +108,10 @@ watch(
 </script>
 
 <template>
-  <div class="active-teller-selector">
+  <div class="active-teller-selector" :class="{ compact }">
+    <el-icon v-if="compact" class="teller-icon" aria-hidden="true">
+      <User />
+    </el-icon>
     <el-select
       v-model="teller1"
       filterable
@@ -135,7 +146,9 @@ watch(
         :value="name"
       />
     </el-select>
-    <span class="teller-hint">{{ $t("teller.active.hint") }}</span>
+    <span v-if="!compact" class="teller-hint">{{
+      $t("teller.active.hint")
+    }}</span>
   </div>
 </template>
 
@@ -148,6 +161,15 @@ watch(
 
   .teller-select {
     width: 200px;
+  }
+
+  &.compact {
+    gap: 8px;
+
+    .teller-icon {
+      color: var(--el-color-primary);
+      font-size: 16px;
+    }
   }
 
   .teller-hint {

@@ -8,7 +8,7 @@
   "frontDesk.filters.registrationAll": "All ({count})",
   "frontDesk.filters.registrationNotRegistered": "Not registered ({count})",
   "frontDesk.filters.registrationRegistered": "Registered ({count})",
-  "frontDesk.filters.votingMethods": "Voting Methods:",
+  "frontDesk.filters.votingMethods": "Voting method filters:",
   "frontDesk.filters.flags": "Flags:",
   "frontDesk.filters.flagLegend": "Flag Abbreviations:",
   "frontDesk.filters.methodWithCount": "{label} ({count})",
@@ -20,7 +20,7 @@
   "frontDesk.table.method": "Method",
   "frontDesk.table.flags": "Flags",
   "frontDesk.table.time": "Time",
-  "frontDesk.keyboardHint": "{notCheckedIn} not checked in, {checkedIn} checked in. Use keyboard to navigate and check in.",
+  "frontDesk.keyboardHint": "Use keyboard to navigate ↑ ↓ and check in.",
   "frontDesk.dialog.checkIn": "Check in:",
   "frontDesk.dialog.update": "Update:",
   "frontDesk.dialog.id": "ID:",
@@ -69,5 +69,5 @@
   "frontDesk.confirm.unregister.confirm": "Unregister",
   "frontDesk.unregisterReason": "Unregistered by front desk",
   "frontDesk.tellerRequired.title": "Teller name required",
-  "frontDesk.tellerRequired.message": "Enter your name in the Teller 1 field above before checking in voters, updating flags, or changing envelope numbers."
+  "frontDesk.tellerRequired.message": "Enter your name in for 'Teller at keyboard' above before checking in voters, updating flags, or changing envelope numbers."
 }

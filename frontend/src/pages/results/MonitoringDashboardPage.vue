@@ -3,7 +3,6 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-page-header :content="$t('monitoring.title')" @back="goBack" />
           <div class="header-actions">
             <el-button
               type="primary"
@@ -247,11 +246,10 @@ import {
   Monitor,
 } from "@element-plus/icons-vue";
 import { onMounted, onUnmounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useResultStore } from "../../stores/resultStore";
 import type { MonitorInfoDto } from "../../types";
 
-const router = useRouter();
 const route = useRoute();
 // const { t } = useI18n();
 const resultStore = useResultStore();
@@ -301,9 +299,7 @@ function stopAutoRefresh() {
   }
 }
 
-function goBack() {
-  router.push(`/elections/${electionGuid}`);
-}
+
 
 function formatDateTime(date: string) {
   if (!date) {

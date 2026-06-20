@@ -123,10 +123,6 @@ onMounted(() => {
 <template>
   <div class="profile-page">
     <el-card>
-      <template #header>
-        <h2>{{ $t("common.profile") }}</h2>
-      </template>
-
       <div class="profile-content">
         <el-descriptions :column="1" border>
           <el-descriptions-item :label="$t('profile.name')">

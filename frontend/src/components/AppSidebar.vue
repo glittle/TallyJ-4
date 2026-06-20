@@ -6,8 +6,8 @@ import { useRoute, useRouter } from "vue-router";
 import { secureTokenService } from "../services/secureTokenService";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
-import { getBuildDate, getBuildDateBadi, VERSION } from "./version";
 import SidebarStageHeader from "./nav/SidebarStageHeader.vue";
+import { getBuildDate, getBuildDateBadi, VERSION } from "./version";
 
 // Lazy load the heavy election navigation menu (many Element Plus icons + large STAGE_PAGES definition).
 // This keeps the base authenticated shell smaller for tellers and admins until they actually open an election.
@@ -179,8 +179,8 @@ function goBackToElections() {
   .logo h2 {
     color: var(--color-text-primary);
     margin: 0;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: var(--font-size-app-title);
+    font-weight: var(--font-weight-app-title);
   }
 
   .el-menu {
@@ -243,17 +243,17 @@ function goBackToElections() {
 
   .testOnlyWarning {
     padding: 1rem 0.5rem;
-    margin: 0 10px 1em;
+    margin: 0 10px;
     max-width: 920px; /* Comfortable reading width */
     text-align: center;
     background-color: #fff4e5;
     color: #8c4a00;
-    font-size: 1.05rem;
+    font-size: 1rem;
     line-height: 1.5;
     border: 2px solid #f5a23d;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    font-weight: 500;
+    font-weight: normal;
   }
 
   .statusDocLink {

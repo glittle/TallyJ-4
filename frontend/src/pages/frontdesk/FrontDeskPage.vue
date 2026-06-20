@@ -9,7 +9,6 @@ import { useElectionStore } from "@/stores/electionStore";
 import { useLocationStore } from "@/stores/locationStore";
 import type {
   CheckInVoterDto,
-  FrontDeskStatsDto,
   FrontDeskVoterDto,
   RegistrationHistoryEntryDto,
   UnregisterVoterDto,
@@ -25,21 +24,14 @@ import {
   sortRegistrationHistoryNewestFirst,
 } from "@/utils/formatRegistrationHistory";
 import { matchesFrontDeskVoterSearch } from "@/utils/searchStrategies";
-import {
-  Check,
-  Close,
-  Search,
-  User,
-  UserFilled,
-} from "@element-plus/icons-vue";
+import { Check, Close, Location, Search } from "@element-plus/icons-vue";
 import type { ElTable } from "element-plus";
 import { ElMessageBox } from "element-plus";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
-const router = useRouter();
 const { t } = useI18n();
 const locationStore = useLocationStore();
 const electionStore = useElectionStore();
@@ -57,18 +49,14 @@ function onTellersChanged(tellers: ActiveTellers) {
 }
 
 /** Placeholder until election setup exposes "Enable Envelope Numbers". */
-const ENABLE_ENVELOPE_NUMBERS = true;
+const ENABLE_ENVELOPE_NUMBERS = false;
 
 // State
 const voters = ref<FrontDeskVoterDto[]>([]);
-const stats = ref<FrontDeskStatsDto | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const signalrInitialized = ref(false);
 const searchQuery = ref("");
-
-// will need locations for check-in location dropdown and to display location in voter history
-// const locations = computed(() => locationStore.locations);
 
 const currentElection = computed(() => electionStore.currentElection);
 
@@ -86,6 +74,35 @@ const electionFlags = computed(() => {
       .map((f: string) => f.trim())
       .filter(Boolean);
   }
+});
+
+/** Matches --front-desk-table-max-width in style.less */
+const FRONT_DESK_TABLE_WIDTH = 900;
+
+const frontDeskTableColumnWidths = computed(() => {
+  const hasFlags = electionFlags.value.length > 0;
+  const base = {
+    fullName: 250,
+    method: 150,
+    bahaiId: 120,
+    area: 200,
+    flags: 90,
+    time: 130,
+    envNum: 90,
+  };
+  const fixedSum =
+    base.fullName +
+    base.method +
+    base.bahaiId +
+    base.area +
+    base.time +
+    (ENABLE_ENVELOPE_NUMBERS ? base.envNum : 0) +
+    (hasFlags ? base.flags : 0);
+  return {
+    ...base,
+    fullName: base.fullName + (FRONT_DESK_TABLE_WIDTH - fixedSum),
+    flags: hasFlags ? base.flags : 0,
+  };
 });
 
 // Keyboard navigation
@@ -208,7 +225,6 @@ const allVoters = computed(() => filteredByConditions.value);
 
 const hasActiveFilters = computed(
   () =>
-    registrationFilter.value !== DEFAULT_REGISTRATION_FILTER ||
     selectedMethodFilters.value.length > 0 ||
     selectedFlagFilters.value.length > 0,
 );
@@ -346,14 +362,6 @@ function getFlagAbbr(flag: string): string {
     .slice(0, 3);
 }
 
-async function fetchStats(guid: string) {
-  try {
-    stats.value = await frontDeskService.getStats(guid);
-  } catch (e: any) {
-    console.error("Failed to fetch stats:", e);
-  }
-}
-
 async function fetchEligibleVoters(guid: string) {
   loading.value = true;
   error.value = null;
@@ -361,7 +369,6 @@ async function fetchEligibleVoters(guid: string) {
     voters.value = (await frontDeskService.getEligibleVoters(guid)).sort(
       (a, b) => a.fullName.localeCompare(b.fullName),
     );
-    await fetchStats(guid);
   } catch (e: any) {
     error.value = e.message || t("frontDesk.errors.fetchVoters");
     throw e;
@@ -538,10 +545,6 @@ async function initializeSignalR() {
         );
         closeRegistrationDialog();
       }
-    });
-
-    connection.on("VoterCountUpdated", (updatedStats: FrontDeskStatsDto) => {
-      stats.value = updatedStats;
     });
 
     connection.on("PersonFlagsUpdated", (voter: FrontDeskVoterDto) => {
@@ -1103,8 +1106,11 @@ function formatTimeline(entry: RegistrationHistoryEntryDto): string {
   });
 }
 
-function goBack() {
-  router.push(`/elections/${electionGuid.value}`);
+function handleLocationChange(locationGuid: string | undefined) {
+  locationStore.selectLocation(locationGuid ?? null);
+  if (locationGuid) {
+    showSuccessMessage(t("locations.locationSelected"));
+  }
 }
 
 function toggleMethodFilter(method: string) {
@@ -1128,7 +1134,6 @@ function toggleFlagFilter(flag: string) {
 function clearFilters() {
   selectedMethodFilters.value = [];
   selectedFlagFilters.value = [];
-  registrationFilter.value = DEFAULT_REGISTRATION_FILTER;
 }
 
 function openEnvelopeDialog(voter: FrontDeskVoterDto) {
@@ -1184,502 +1189,493 @@ async function saveEnvelopeNumber(clear = false) {
 </script>
 <template>
   <div class="front-desk-page">
-    <el-card>
-      <template #header>
-        <div class="card-header">
-          <el-page-header
-            :content="$t('frontDesk.page.title')"
-            @back="goBack"
-          />
-          <div v-if="stats" class="header-stats">
-            <el-statistic
-              :value="stats.checkedIn"
-              :title="$t('frontDesk.stats.checkedIn')"
-              align="center"
+    <div class="front-desk-content-column">
+      <header class="front-desk-toolbar">
+        <div class="toolbar-primary">
+          <div
+            v-if="locationStore.locations.length > 1"
+            class="toolbar-location"
+          >
+            <el-icon class="location-icon" aria-hidden="true">
+              <Location />
+            </el-icon>
+            <el-select
+              :model-value="locationStore.selectedLocationGuid"
+              :placeholder="$t('locations.selectLocation')"
+              clearable
+              class="location-select"
+              :aria-label="$t('locations.currentLocation')"
+              @update:model-value="handleLocationChange"
             >
-              <template #prefix>
-                <el-icon>
-                  <UserFilled />
-                </el-icon>
-              </template>
-            </el-statistic>
-            <el-statistic
-              :value="stats.notYetCheckedIn"
-              :title="$t('frontDesk.stats.notCheckedIn')"
-              align="center"
-            >
-              <template #prefix>
-                <el-icon>
-                  <User />
-                </el-icon>
-              </template>
-            </el-statistic>
+              <el-option
+                v-for="location in locationStore.sortedLocations"
+                :key="location.locationGuid"
+                :label="location.name"
+                :value="location.locationGuid"
+              />
+            </el-select>
+          </div>
+          <div class="toolbar-tellers">
+            <ActiveTellerSelector
+              :election-guid="electionGuid"
+              compact
+              @tellers-changed="onTellersChanged"
+            />
           </div>
         </div>
-        <ActiveTellerSelector
-          :election-guid="electionGuid"
-          class="header-tellers"
-          @tellers-changed="onTellersChanged"
-        />
-        <el-alert
-          v-if="!hasActiveTeller"
-          type="warning"
-          :title="$t('frontDesk.tellerRequired.title')"
-          :description="$t('frontDesk.tellerRequired.message')"
-          show-icon
-          :closable="false"
-          class="teller-required-alert"
-        />
-      </template>
+      </header>
 
-      <el-row :gutter="20">
-        <el-col :span="24">
-          <el-card shadow="never">
-            <template #header>
-              <div class="section-header">
-                <div class="section-header-start">
-                  <h3>{{ $t("frontDesk.section.quickCheckIn") }}</h3>
-                  <el-input
-                    ref="searchInputRef"
-                    v-model="searchQuery"
-                    class="search-input"
-                    :placeholder="$t('frontDesk.search.placeholder')"
-                    clearable
-                    @keydown="handleSearchKeydown"
-                  >
-                    <template #prefix>
-                      <el-icon>
-                        <Search />
-                      </el-icon>
-                    </template>
-                  </el-input>
-                </div>
-                <el-radio-group
-                  v-model="registrationFilter"
-                  size="small"
-                  class="registration-filter"
-                >
-                  <el-radio-button value="all">
-                    {{
-                      $t("frontDesk.filters.registrationAll", {
-                        count: filteredVoters.length,
-                      })
-                    }}
-                  </el-radio-button>
-                  <el-radio-button value="notRegistered">
-                    {{
-                      $t("frontDesk.filters.registrationNotRegistered", {
-                        count: notCheckedInVoters.length,
-                      })
-                    }}
-                  </el-radio-button>
-                  <el-radio-button value="registered">
-                    {{
-                      $t("frontDesk.filters.registrationRegistered", {
-                        count: checkedInVoters.length,
-                      })
-                    }}
-                  </el-radio-button>
-                </el-radio-group>
-              </div>
+      <el-alert
+        v-if="!hasActiveTeller"
+        type="warning"
+        :title="$t('frontDesk.tellerRequired.title')"
+        :description="$t('frontDesk.tellerRequired.message')"
+        show-icon
+        :closable="false"
+        class="teller-required-alert"
+      />
+
+      <section class="front-desk-workspace">
+        <div class="search-zone">
+          <div class="search-row">
+            <label class="search-label" for="front-desk-search-input">{{
+              $t("frontDesk.section.quickCheckIn")
+            }}</label>
+            <el-input
+              id="front-desk-search-input"
+              ref="searchInputRef"
+              v-model="searchQuery"
+              class="search-input"
+              :placeholder="$t('frontDesk.search.placeholder')"
+              clearable
+              @keydown="handleSearchKeydown"
+            >
+              <template #prefix>
+                <el-icon>
+                  <Search />
+                </el-icon>
+              </template>
+            </el-input>
+            <el-radio-group
+              v-model="registrationFilter"
+              class="registration-filter"
+            >
+              <el-radio-button value="all">
+                {{
+                  $t("frontDesk.filters.registrationAll", {
+                    count: filteredVoters.length,
+                  })
+                }}
+              </el-radio-button>
+              <el-radio-button value="notRegistered">
+                {{
+                  $t("frontDesk.filters.registrationNotRegistered", {
+                    count: notCheckedInVoters.length,
+                  })
+                }}
+              </el-radio-button>
+              <el-radio-button value="registered">
+                {{
+                  $t("frontDesk.filters.registrationRegistered", {
+                    count: checkedInVoters.length,
+                  })
+                }}
+              </el-radio-button>
+            </el-radio-group>
+          </div>
+        </div>
+
+        <div
+          v-if="registrationTypes.length > 0 || electionFlags.length > 0"
+          class="filters-bar"
+        >
+          <div class="filter-group">
+            <span class="filter-label">{{
+              $t("frontDesk.filters.votingMethods")
+            }}</span>
+            <el-button
+              v-for="method in registrationTypes"
+              :key="method.value"
+              :type="
+                selectedMethodFilters.includes(method.value)
+                  ? 'primary'
+                  : 'default'
+              "
+              text
+              size="small"
+              class="filter-chip"
+              @click="toggleMethodFilter(method.value)"
+            >
+              {{
+                $t("frontDesk.filters.methodWithCount", {
+                  label: method.label,
+                  count: methodCounts[method.value] || 0,
+                })
+              }}
+            </el-button>
+
+            <template v-if="electionFlags.length > 0">
+              <span class="filter-divider" aria-hidden="true" />
+
+              <span class="filter-label">{{
+                $t("frontDesk.filters.flags")
+              }}</span>
+              <el-button
+                v-for="flag in electionFlags"
+                :key="flag"
+                :type="
+                  selectedFlagFilters.includes(flag) ? 'primary' : 'default'
+                "
+                text
+                size="small"
+                class="filter-chip"
+                @click="toggleFlagFilter(flag)"
+              >
+                {{
+                  $t("frontDesk.filters.flagWithCount", {
+                    flag,
+                    count: flagCounts[flag] || 0,
+                  })
+                }}
+              </el-button>
             </template>
 
-            <!-- Filters -->
-            <div class="filters-section">
-              <div class="filter-group">
-                <span class="filter-label">{{
-                  $t("frontDesk.filters.votingMethods")
-                }}</span>
-                <el-button
-                  v-for="method in registrationTypes"
-                  :key="method.value"
-                  :type="
-                    selectedMethodFilters.includes(method.value)
-                      ? 'primary'
-                      : 'default'
-                  "
-                  size="small"
-                  @click="toggleMethodFilter(method.value)"
-                >
-                  {{
-                    $t("frontDesk.filters.methodWithCount", {
-                      label: method.label,
-                      count: methodCounts[method.value] || 0,
-                    })
-                  }}
-                </el-button>
+            <el-button
+              v-if="hasActiveFilters"
+              type="info"
+              text
+              size="small"
+              @click="clearFilters"
+            >
+              {{ $t("common.clearFilters") }}
+            </el-button>
+          </div>
 
-                <template v-if="electionFlags.length > 0">
-                  <el-divider direction="vertical" />
+          <div v-if="electionFlags.length > 0" class="flag-legend">
+            <span class="legend-label">{{
+              $t("frontDesk.filters.flagLegend")
+            }}</span>
+            <el-tag
+              v-for="flag in electionFlags"
+              :key="flag"
+              size="small"
+              type="info"
+              class="legend-tag"
+            >
+              {{ getFlagAbbr(flag) }} = {{ flag }}
+            </el-tag>
+          </div>
+        </div>
 
-                  <span class="filter-label">{{
-                    $t("frontDesk.filters.flags")
+        <div ref="voterListContainerRef" class="voter-list-container">
+          <div ref="tableWrapperRef" class="table-wrapper">
+            <el-table
+              ref="voterTableRef"
+              :data="tableVoters"
+              :loading="loading"
+              :row-key="(row: FrontDeskVoterDto) => row.personGuid"
+              :height="tableHeight"
+              :row-class-name="getRowClassName"
+              style="width: 100%"
+              scrollbar-always-on
+              @row-click="handleRowClick"
+            >
+              <el-table-column
+                prop="fullName"
+                :label="$t('frontDesk.table.name')"
+                sortable
+                :width="frontDeskTableColumnWidths.fullName"
+              />
+              <el-table-column
+                :label="$t('frontDesk.table.method')"
+                :width="frontDeskTableColumnWidths.method"
+              >
+                <template #default="{ row }">
+                  <el-tag
+                    v-if="row.votingMethod"
+                    :type="getVotingMethodTagType(row.votingMethod)"
+                  >
+                    {{ getVotingMethodLabel(row.votingMethod) }}
+                  </el-tag>
+                  <span v-else>{{ $t("frontDesk.common.dash") }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="bahaiId"
+                :label="$t('frontDesk.table.bahaiId')"
+                :width="frontDeskTableColumnWidths.bahaiId"
+              />
+              <el-table-column
+                prop="area"
+                :label="$t('frontDesk.table.area')"
+                :width="frontDeskTableColumnWidths.area"
+              />
+              <el-table-column
+                v-if="ENABLE_ENVELOPE_NUMBERS"
+                :label="$t('frontDesk.table.envNum')"
+                :width="frontDeskTableColumnWidths.envNum"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <el-button
+                    v-if="row.envNum"
+                    link
+                    type="primary"
+                    size="small"
+                    :disabled="!hasActiveTeller"
+                    @click.stop="openEnvelopeDialog(row)"
+                  >
+                    {{ row.envNum }}
+                  </el-button>
+                  <el-button
+                    v-else
+                    link
+                    type="primary"
+                    :disabled="!hasActiveTeller"
+                    @click.stop="openEnvelopeDialog(row)"
+                  >
+                    {{ $t("frontDesk.envelope.set") }}
+                  </el-button>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                v-if="electionFlags.length > 0"
+                :label="$t('frontDesk.table.flags')"
+                :width="frontDeskTableColumnWidths.flags"
+              >
+                <template #default="{ row }">
+                  <template v-if="row.flags">
+                    <el-tag
+                      v-for="flag in electionFlags.filter((f) =>
+                        hasFlag(row, f),
+                      )"
+                      :key="flag"
+                      type="success"
+                      class="flag-tag"
+                    >
+                      {{ getFlagAbbr(flag) }}
+                    </el-tag>
+                  </template>
+                  <span v-else>{{ $t("frontDesk.common.dash") }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('frontDesk.table.time')"
+                :width="frontDeskTableColumnWidths.time"
+              >
+                <template #default="{ row }">
+                  <span v-if="row.registrationTime">{{
+                    formatTimeShort(row.registrationTime)
                   }}</span>
+                  <span v-else>{{ $t("frontDesk.common.dash") }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <div ref="keyboardHintRef" class="keyboard-hint">
+            {{
+              $t("frontDesk.keyboardHint", {
+                notCheckedIn: notCheckedInVoters.length,
+                checkedIn: checkedInVoters.length,
+              })
+            }}
+          </div>
+
+          <div
+            v-if="showRegistrationButtons && selectedVoter"
+            ref="registrationOverlayRef"
+            class="registration-overlay"
+            tabindex="-1"
+            @keydown.capture="handleRegistrationKeydown"
+          >
+            <div class="registration-buttons">
+              <el-alert
+                v-if="!hasActiveTeller"
+                type="warning"
+                :title="$t('frontDesk.tellerRequired.title')"
+                :description="$t('frontDesk.tellerRequired.message')"
+                show-icon
+                :closable="false"
+                class="teller-required-alert"
+              />
+              <div class="registration-header">
+                <div class="selected-voter-info">
+                  <strong>
+                    {{
+                      selectedVoter.isCheckedIn
+                        ? $t("frontDesk.dialog.update")
+                        : $t("frontDesk.dialog.checkIn")
+                    }}
+                    {{ selectedVoter.fullName }}
+                  </strong>
+                  <span v-if="selectedVoter.bahaiId" class="voter-detail">
+                    {{ $t("frontDesk.dialog.id") }}
+                    {{ selectedVoter.bahaiId }}
+                  </span>
+                  <span v-if="selectedVoter.area" class="voter-detail">
+                    {{ $t("frontDesk.dialog.area") }}
+                    {{ selectedVoter.area }}
+                  </span>
+                </div>
+                <div class="registration-header-actions">
+                  <el-button
+                    v-if="selectedVoter.isCheckedIn"
+                    type="default"
+                    size="large"
+                    data-dialog-button="__unregister__"
+                    class="unregister-button dialog-option-button"
+                    :disabled="!hasActiveTeller"
+                    :class="{
+                      'keyboard-focused-button':
+                        isDialogButtonKeyboardFocused('__unregister__'),
+                    }"
+                    @click="handleUnregisterSelected"
+                  >
+                    {{ $t("frontDesk.dialog.unregister") }}
+                    <kbd>{{ getDialogButtonKey("__unregister__") }}</kbd>
+                  </el-button>
+                  <el-button
+                    type="default"
+                    size="large"
+                    data-dialog-button="__close__"
+                    class="close-dialog-button"
+                    :class="{
+                      'keyboard-focused-button':
+                        isDialogButtonKeyboardFocused('__close__'),
+                    }"
+                    :disabled="checkInInProgress"
+                    :title="$t('common.close')"
+                    @click="closeRegistrationDialog"
+                  >
+                    <el-icon>
+                      <Close />
+                    </el-icon>
+                    {{ $t("common.close") }}
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- Checked-in status -->
+              <div
+                v-if="selectedVoter.isCheckedIn"
+                class="button-section checked-in-section"
+              >
+                <h4>{{ $t("frontDesk.dialog.currentRegistration") }}</h4>
+                <div class="checked-in-details">
+                  <el-tag type="success" size="large">
+                    {{ getVotingMethodLabel(selectedVoter.votingMethod) }}
+                  </el-tag>
+                  <span v-if="selectedVoter.envNum" class="checked-in-detail">
+                    {{
+                      $t("frontDesk.dialog.envelope", {
+                        num: selectedVoter.envNum,
+                      })
+                    }}
+                  </span>
+                  <span
+                    v-if="selectedVoter.registrationTime"
+                    class="checked-in-detail"
+                  >
+                    {{ formatTime(selectedVoter.registrationTime) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Voting Methods -->
+              <div v-if="!selectedVoter.isCheckedIn" class="button-section">
+                <h4>{{ $t("frontDesk.dialog.votingMethod") }}</h4>
+                <div
+                  class="button-group"
+                  :class="{ 'check-in-pending': checkInInProgress }"
+                >
+                  <el-button
+                    v-for="type in registrationTypes"
+                    :key="type.value"
+                    :data-dialog-button="type.value"
+                    :type="
+                      pendingVotingMethod === type.value ? 'primary' : 'default'
+                    "
+                    size="large"
+                    class="dialog-option-button"
+                    :disabled="
+                      !hasActiveTeller ||
+                      (checkInInProgress && pendingVotingMethod !== type.value)
+                    "
+                    :class="{
+                      'keyboard-focused-button': isDialogButtonKeyboardFocused(
+                        type.value,
+                      ),
+                      'pending-button': pendingVotingMethod === type.value,
+                    }"
+                    @click="clickDialogButton(type.value)"
+                  >
+                    {{ type.label }}
+                    <kbd>{{ getDialogButtonKey(type.value) }}</kbd>
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- Flags -->
+              <div v-if="electionFlags.length > 0" class="button-section">
+                <h4>{{ $t("frontDesk.dialog.flags") }}</h4>
+                <div class="button-group">
                   <el-button
                     v-for="flag in electionFlags"
                     :key="flag"
-                    :type="
-                      selectedFlagFilters.includes(flag) ? 'primary' : 'default'
-                    "
-                    size="small"
-                    @click="toggleFlagFilter(flag)"
+                    :data-dialog-button="flag"
+                    :type="hasFlag(selectedVoter, flag) ? 'success' : 'default'"
+                    size="large"
+                    class="dialog-option-button"
+                    :disabled="!hasActiveTeller || checkInInProgress"
+                    :class="{
+                      'keyboard-focused-button':
+                        isDialogButtonKeyboardFocused(flag),
+                    }"
+                    @click="clickDialogButton(flag)"
                   >
-                    {{
-                      $t("frontDesk.filters.flagWithCount", {
-                        flag,
-                        count: flagCounts[flag] || 0,
-                      })
-                    }}
-                  </el-button>
-                </template>
-
-                <el-button
-                  v-if="hasActiveFilters"
-                  type="info"
-                  size="small"
-                  @click="clearFilters"
-                >
-                  {{ $t("common.clearFilters") }}
-                </el-button>
-              </div>
-
-              <!-- Flag Legend -->
-              <div v-if="electionFlags.length > 0" class="flag-legend">
-                <span class="legend-label">{{
-                  $t("frontDesk.filters.flagLegend")
-                }}</span>
-                <el-tag
-                  v-for="flag in electionFlags"
-                  :key="flag"
-                  size="small"
-                  class="legend-tag"
-                >
-                  {{ getFlagAbbr(flag) }} = {{ flag }}
-                </el-tag>
-              </div>
-            </div>
-
-            <div ref="voterListContainerRef" class="voter-list-container">
-              <div ref="tableWrapperRef" class="table-wrapper">
-                <el-table
-                  ref="voterTableRef"
-                  :data="tableVoters"
-                  :loading="loading"
-                  :row-key="(row: FrontDeskVoterDto) => row.personGuid"
-                  style="width: 100%"
-                  :height="tableHeight"
-                  :row-class-name="getRowClassName"
-                  @row-click="handleRowClick"
-                >
-                  <el-table-column
-                    prop="fullName"
-                    :label="$t('frontDesk.table.name')"
-                    sortable
-                    width="350"
-                  />
-                  <el-table-column
-                    :label="$t('frontDesk.table.method')"
-                    width="150"
-                  >
-                    <template #default="{ row }">
-                      <el-tag
-                        v-if="row.votingMethod"
-                        :type="getVotingMethodTagType(row.votingMethod)"
-                        size="small"
-                      >
-                        {{ getVotingMethodLabel(row.votingMethod) }}
-                      </el-tag>
-                      <span v-else>{{ $t("frontDesk.common.dash") }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="bahaiId"
-                    :label="$t('frontDesk.table.bahaiId')"
-                    width="120"
-                  />
-                  <el-table-column
-                    prop="area"
-                    :label="$t('frontDesk.table.area')"
-                    width="100"
-                  />
-                  <el-table-column
-                    v-if="ENABLE_ENVELOPE_NUMBERS"
-                    :label="$t('frontDesk.table.envNum')"
-                    width="90"
-                    align="center"
-                  >
-                    <template #default="{ row }">
-                      <el-button
-                        v-if="row.envNum"
-                        link
-                        type="primary"
-                        size="small"
-                        :disabled="!hasActiveTeller"
-                        @click.stop="openEnvelopeDialog(row)"
-                      >
-                        {{ row.envNum }}
-                      </el-button>
-                      <el-button
-                        v-else
-                        link
-                        type="primary"
-                        size="small"
-                        :disabled="!hasActiveTeller"
-                        @click.stop="openEnvelopeDialog(row)"
-                      >
-                        {{ $t("frontDesk.envelope.set") }}
-                      </el-button>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column
-                    v-if="electionFlags.length > 0"
-                    :label="$t('frontDesk.table.flags')"
-                  >
-                    <template #default="{ row }">
-                      <template v-if="row.flags">
-                        <el-tag
-                          v-for="flag in electionFlags.filter((f) =>
-                            hasFlag(row, f),
-                          )"
-                          :key="flag"
-                          size="small"
-                          type="success"
-                          class="flag-tag"
-                        >
-                          {{ getFlagAbbr(flag) }}
-                        </el-tag>
-                      </template>
-                      <span v-else>{{ $t("frontDesk.common.dash") }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    :label="$t('frontDesk.table.time')"
-                    width="130"
-                  >
-                    <template #default="{ row }">
-                      <span v-if="row.registrationTime">{{
-                        formatTimeShort(row.registrationTime)
-                      }}</span>
-                      <span v-else>{{ $t("frontDesk.common.dash") }}</span>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-              <div ref="keyboardHintRef" class="keyboard-hint">
-                {{
-                  $t("frontDesk.keyboardHint", {
-                    notCheckedIn: notCheckedInVoters.length,
-                    checkedIn: checkedInVoters.length,
-                  })
-                }}
-              </div>
-
-              <div
-                v-if="showRegistrationButtons && selectedVoter"
-                ref="registrationOverlayRef"
-                class="registration-overlay"
-                tabindex="-1"
-                @keydown.capture="handleRegistrationKeydown"
-              >
-                <div class="registration-buttons">
-                  <el-alert
-                    v-if="!hasActiveTeller"
-                    type="warning"
-                    :title="$t('frontDesk.tellerRequired.title')"
-                    :description="$t('frontDesk.tellerRequired.message')"
-                    show-icon
-                    :closable="false"
-                    class="teller-required-alert"
-                  />
-                  <div class="registration-header">
-                    <div class="selected-voter-info">
-                      <strong>
-                        {{
-                          selectedVoter.isCheckedIn
-                            ? $t("frontDesk.dialog.update")
-                            : $t("frontDesk.dialog.checkIn")
-                        }}
-                        {{ selectedVoter.fullName }}
-                      </strong>
-                      <span v-if="selectedVoter.bahaiId" class="voter-detail">
-                        {{ $t("frontDesk.dialog.id") }}
-                        {{ selectedVoter.bahaiId }}
-                      </span>
-                      <span v-if="selectedVoter.area" class="voter-detail">
-                        {{ $t("frontDesk.dialog.area") }}
-                        {{ selectedVoter.area }}
-                      </span>
-                    </div>
-                    <div class="registration-header-actions">
-                      <el-button
-                        v-if="selectedVoter.isCheckedIn"
-                        type="default"
-                        size="large"
-                        data-dialog-button="__unregister__"
-                        class="unregister-button dialog-option-button"
-                        :disabled="!hasActiveTeller"
-                        :class="{
-                          'keyboard-focused-button':
-                            isDialogButtonKeyboardFocused('__unregister__'),
-                        }"
-                        @click="handleUnregisterSelected"
-                      >
-                        {{ $t("frontDesk.dialog.unregister") }}
-                        <kbd>{{ getDialogButtonKey("__unregister__") }}</kbd>
-                      </el-button>
-                      <el-button
-                        type="default"
-                        size="large"
-                        data-dialog-button="__close__"
-                        class="close-dialog-button"
-                        :class="{
-                          'keyboard-focused-button':
-                            isDialogButtonKeyboardFocused('__close__'),
-                        }"
-                        :disabled="checkInInProgress"
-                        :title="$t('common.close')"
-                        @click="closeRegistrationDialog"
-                      >
-                        <el-icon>
-                          <Close />
-                        </el-icon>
-                        {{ $t("common.close") }}
-                      </el-button>
-                    </div>
-                  </div>
-
-                  <!-- Checked-in status -->
-                  <div
-                    v-if="selectedVoter.isCheckedIn"
-                    class="button-section checked-in-section"
-                  >
-                    <h4>{{ $t("frontDesk.dialog.currentRegistration") }}</h4>
-                    <div class="checked-in-details">
-                      <el-tag type="success" size="large">
-                        {{ getVotingMethodLabel(selectedVoter.votingMethod) }}
-                      </el-tag>
-                      <span
-                        v-if="selectedVoter.envNum"
-                        class="checked-in-detail"
-                      >
-                        {{
-                          $t("frontDesk.dialog.envelope", {
-                            num: selectedVoter.envNum,
-                          })
-                        }}
-                      </span>
-                      <span
-                        v-if="selectedVoter.registrationTime"
-                        class="checked-in-detail"
-                      >
-                        {{ formatTime(selectedVoter.registrationTime) }}
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Voting Methods -->
-                  <div v-if="!selectedVoter.isCheckedIn" class="button-section">
-                    <h4>{{ $t("frontDesk.dialog.votingMethod") }}</h4>
-                    <div
-                      class="button-group"
-                      :class="{ 'check-in-pending': checkInInProgress }"
+                    {{ flag }}
+                    <kbd>{{ getDialogButtonKey(flag) }}</kbd>
+                    <el-icon
+                      v-if="hasFlag(selectedVoter, flag)"
+                      style="margin-left: 5px"
                     >
-                      <el-button
-                        v-for="type in registrationTypes"
-                        :key="type.value"
-                        :data-dialog-button="type.value"
-                        :type="
-                          pendingVotingMethod === type.value
-                            ? 'primary'
-                            : 'default'
-                        "
-                        size="large"
-                        class="dialog-option-button"
-                        :disabled="
-                          !hasActiveTeller ||
-                          (checkInInProgress &&
-                            pendingVotingMethod !== type.value)
-                        "
-                        :class="{
-                          'keyboard-focused-button':
-                            isDialogButtonKeyboardFocused(type.value),
-                          'pending-button': pendingVotingMethod === type.value,
-                        }"
-                        @click="clickDialogButton(type.value)"
-                      >
-                        {{ type.label }}
-                        <kbd>{{ getDialogButtonKey(type.value) }}</kbd>
-                      </el-button>
-                    </div>
-                  </div>
-
-                  <!-- Flags -->
-                  <div v-if="electionFlags.length > 0" class="button-section">
-                    <h4>{{ $t("frontDesk.dialog.flags") }}</h4>
-                    <div class="button-group">
-                      <el-button
-                        v-for="flag in electionFlags"
-                        :key="flag"
-                        :data-dialog-button="flag"
-                        :type="
-                          hasFlag(selectedVoter, flag) ? 'success' : 'default'
-                        "
-                        size="large"
-                        class="dialog-option-button"
-                        :disabled="!hasActiveTeller || checkInInProgress"
-                        :class="{
-                          'keyboard-focused-button':
-                            isDialogButtonKeyboardFocused(flag),
-                        }"
-                        @click="clickDialogButton(flag)"
-                      >
-                        {{ flag }}
-                        <kbd>{{ getDialogButtonKey(flag) }}</kbd>
-                        <el-icon
-                          v-if="hasFlag(selectedVoter, flag)"
-                          style="margin-left: 5px"
-                        >
-                          <Check />
-                        </el-icon>
-                      </el-button>
-                    </div>
-                  </div>
-
-                  <!-- Registration history -->
-                  <div
-                    v-if="selectedVoterRegistrationHistory.length"
-                    class="dialog-history-section"
-                  >
-                    <h4>{{ $t("frontDesk.dialog.registrationHistory") }}</h4>
-                    <el-timeline>
-                      <el-timeline-item
-                        v-for="(
-                          entry, index
-                        ) in selectedVoterRegistrationHistory"
-                        :key="index"
-                        :timestamp="formatTimeline(entry)"
-                      >
-                        {{ formatTime(entry.timestamp) }}
-                      </el-timeline-item>
-                    </el-timeline>
-                  </div>
-
-                  <div class="instruction-text">
-                    <template v-if="checkInInProgress">
-                      {{ $t("frontDesk.dialog.checkingIn") }}
-                    </template>
-                    <template v-else>
-                      {{ $t("frontDesk.dialog.instructions") }}
-                    </template>
-                  </div>
+                      <Check />
+                    </el-icon>
+                  </el-button>
                 </div>
               </div>
+
+              <!-- Registration history -->
+              <div
+                v-if="selectedVoterRegistrationHistory.length"
+                class="dialog-history-section"
+              >
+                <h4>{{ $t("frontDesk.dialog.registrationHistory") }}</h4>
+                <el-timeline>
+                  <el-timeline-item
+                    v-for="(entry, index) in selectedVoterRegistrationHistory"
+                    :key="index"
+                    :timestamp="formatTimeline(entry)"
+                  >
+                    {{ formatTime(entry.timestamp) }}
+                  </el-timeline-item>
+                </el-timeline>
+              </div>
+
+              <div class="instruction-text">
+                <template v-if="checkInInProgress">
+                  {{ $t("frontDesk.dialog.checkingIn") }}
+                </template>
+                <template v-else>
+                  {{ $t("frontDesk.dialog.instructions") }}
+                </template>
+              </div>
             </div>
-          </el-card>
-        </el-col>
-      </el-row>
-    </el-card>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <el-dialog
       v-if="ENABLE_ENVELOPE_NUMBERS"
@@ -1730,60 +1726,198 @@ async function saveEnvelopeNumber(clear = false) {
 
 <style lang="less">
 .front-desk-page {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
 
-  .card-header {
+  .front-desk-content-column {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    width: 100%;
+    max-width: var(--front-desk-content-max-width);
+    margin-inline: auto;
+    flex: 1;
+    min-height: 0;
   }
 
-  .header-stats {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
-  .header-tellers {
-    margin-top: 12px;
+  .front-desk-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-4);
+    flex-wrap: wrap;
+    padding: var(--spacing-2) var(--spacing-3);
+    background: var(--color-frontdesk-toolbar-bg);
+    color: var(--el-text-color-secondary);
+    font-size: var(--el-font-size-base);
+  }
+
+  .toolbar-primary {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    min-width: 0;
+  }
+
+  .toolbar-location {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+
+    .location-icon {
+      color: var(--el-color-primary);
+      font-size: 16px;
+    }
+
+    .location-select {
+      width: 200px;
+    }
+  }
+
+  .toolbar-tellers {
+    margin-left: var(--spacing-4);
   }
 
   .teller-required-alert {
-    margin-top: 12px;
+    margin: 0;
   }
 
-  .filters-section {
-    margin-bottom: 20px;
-    padding: 15px;
-    background: var(--el-fill-color-light);
-    border-radius: 8px;
+  .front-desk-workspace {
+    --front-desk-content-padding-x: var(--spacing-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    flex: 1;
+    min-height: 0;
+  }
+
+  .search-zone {
+    padding: 0 var(--front-desk-content-padding-x) var(--spacing-1);
+  }
+
+  .search-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-3);
+    flex-wrap: wrap;
+  }
+
+  .search-label {
+    font-size: var(--el-font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--el-text-color-regular);
+    white-space: nowrap;
+  }
+
+  .search-input {
+    width: 300px;
+    flex-shrink: 0;
+
+    .el-input__wrapper {
+      background: var(--color-frontdesk-search-bg);
+      border: 1px solid var(--color-frontdesk-search-border);
+      box-shadow: var(--color-frontdesk-search-shadow);
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .el-input__wrapper.is-focus {
+      border-color: var(--el-color-primary);
+      box-shadow: 0 0 0 2px var(--el-color-primary-light-8);
+    }
+
+    .el-input__inner {
+      font-size: var(--el-font-size-base);
+    }
+
+    .el-input__prefix .el-icon {
+      font-size: 1em;
+      color: var(--el-color-primary);
+    }
+  }
+
+  .el-radio-button__inner {
+    font-weight: normal;
+  }
+
+  .registration-filter {
+    flex-wrap: wrap;
+  }
+
+  .filters-bar {
+    padding: 0 var(--front-desk-content-padding-x);
+    border-bottom: 1px solid var(--el-border-color-lighter);
 
     .filter-group {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: var(--spacing-2);
     }
 
     .filter-label {
-      font-weight: bold;
-      color: var(--el-text-color-regular);
-      margin: 0 5px;
+      font-weight: var(--font-weight-medium);
+      color: var(--el-text-color-secondary);
+      font-size: var(--font-size-sm);
+      margin-right: 4px;
+    }
+
+    .filter-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--el-border-color-lighter);
+      margin: 0 4px;
+    }
+
+    .filter-chip {
+      padding: 2px 8px;
+
+      &.el-button--primary.is-text {
+        color: var(--color-frontdesk-filter-active-text) !important;
+        background-color: var(--color-frontdesk-filter-active-bg) !important;
+        border-color: var(--color-frontdesk-filter-active-bg) !important;
+      }
+
+      &.el-button--primary.is-text:hover,
+      &.el-button--primary.is-text:focus {
+        color: var(--color-frontdesk-filter-active-text) !important;
+        background-color: var(--color-frontdesk-filter-active-bg) !important;
+        border-color: var(--color-frontdesk-filter-active-bg) !important;
+        opacity: 0.92;
+      }
     }
 
     .flag-legend {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--el-border-color);
+      justify-content: center;
+      gap: 8px;
+      padding-bottom: var(--spacing-2);
 
       .legend-label {
-        font-weight: bold;
+        font-weight: var(--font-weight-medium);
         color: var(--el-text-color-secondary);
-        font-size: 12px;
+        font-size: var(--font-size-sm);
       }
 
       .legend-tag {
@@ -1796,43 +1930,35 @@ async function saveEnvelopeNumber(clear = false) {
     margin-right: 4px;
   }
 
-  .section-header {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    gap: 1rem;
-    flex-wrap: wrap;
-
-    .section-header-start {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      min-width: 0;
-
-      h3 {
-        margin: 0;
-        white-space: nowrap;
-      }
-    }
-
-    .search-input {
-      width: 200px;
-      flex-shrink: 0;
-    }
-
-    .registration-filter {
-      margin-left: auto;
-      flex-wrap: wrap;
-    }
-  }
-
   .voter-list-container {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    padding: 0 var(--front-desk-content-padding-x);
   }
 
   .table-wrapper {
-    width: 100%;
+    width: var(--front-desk-table-max-width);
+    max-width: 100%;
+    margin-inline: auto;
+
+    .el-table {
+      --el-table-border-color: var(--el-border-color-lighter);
+      --el-table-header-bg-color: var(--el-fill-color-blank);
+      --el-table-header-text-color: var(--el-text-color-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .el-table th.el-table__cell {
+      font-weight: var(--font-weight-medium);
+      font-size: var(--font-size-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
   }
 
   .el-timeline-item__timestamp {
@@ -1852,7 +1978,7 @@ async function saveEnvelopeNumber(clear = false) {
     align-items: flex-start;
     justify-content: center;
     padding: 24px 16px;
-    background: rgba(255, 255, 255, 0.88);
+    background: color-mix(in srgb, var(--el-bg-color) 88%, transparent);
     backdrop-filter: blur(2px);
     overflow-y: auto;
     outline: none;
@@ -1988,7 +2114,10 @@ async function saveEnvelopeNumber(clear = false) {
   }
 
   .keyboard-hint {
+    width: var(--front-desk-table-max-width);
+    max-width: 100%;
     margin-top: 10px;
+    margin-inline: auto;
     text-align: center;
     color: var(--el-text-color-secondary);
     font-size: 12px;
@@ -2016,7 +2145,12 @@ async function saveEnvelopeNumber(clear = false) {
   }
 
   .selected-row > td.el-table__cell {
-    background-color: var(--el-color-primary-light-9) !important;
+    background-color: var(--color-frontdesk-row-selected-bg) !important;
+    color: var(--color-frontdesk-row-selected-text) !important;
+
+    .cell {
+      color: inherit;
+    }
   }
 
   .el-table__body tr.recently-updated-row > td.el-table__cell {
@@ -2030,7 +2164,11 @@ async function saveEnvelopeNumber(clear = false) {
   @keyframes row-highlight-fade {
     0%,
     70% {
-      background-color: #fef08a !important;
+      background-color: color-mix(
+        in srgb,
+        var(--color-frontdesk-row-highlight) 35%,
+        var(--el-bg-color)
+      ) !important;
     }
     100% {
       background-color: transparent !important;
@@ -2040,10 +2178,14 @@ async function saveEnvelopeNumber(clear = false) {
   @keyframes row-highlight-fade-selected {
     0%,
     70% {
-      background-color: #fef08a !important;
+      background-color: color-mix(
+        in srgb,
+        var(--color-frontdesk-row-highlight) 35%,
+        var(--el-bg-color)
+      ) !important;
     }
     100% {
-      background-color: var(--el-color-primary-light-9) !important;
+      background-color: var(--color-frontdesk-row-selected-bg) !important;
     }
   }
 

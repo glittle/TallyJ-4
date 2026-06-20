@@ -25,6 +25,10 @@
   --font-size-4xl: 2.25rem;
   /* 36px */
 
+  /* Shared app chrome titles (sidebar logo + global header page title) */
+  --font-size-app-title: var(--font-size-xl);
+  --font-weight-app-title: var(--font-weight-semibold);
+
   --normal-max-width: 1440px;
 
   --font-weight-normal: 400;
@@ -121,6 +125,23 @@
   --color-sidebar-border: #d4dff0;
   --color-sidebar-hover: #e0e8f4;
   --color-sidebar-active: #d4dff0;
+
+  /* Front Desk layout — sidebar subdued, main content elevated */
+  --front-desk-content-max-width: 1200px;
+  --front-desk-table-max-width: 900px;
+  --color-frontdesk-sidebar-bg: #e8ecf2;
+  --color-frontdesk-sidebar-border: var(--color-gray-200);
+  --color-frontdesk-main-bg: var(--color-bg-primary);
+  --color-frontdesk-toolbar-bg: var(--color-bg-primary);
+  --color-frontdesk-toolbar-border: var(--color-gray-200);
+  --color-frontdesk-search-bg: var(--color-bg-primary);
+  --color-frontdesk-search-border: var(--color-primary-200);
+  --color-frontdesk-search-shadow: 0 2px 8px rgba(28, 58, 106, 0.08);
+  --color-frontdesk-row-highlight: var(--color-warning-500);
+  --color-frontdesk-filter-active-bg: var(--el-color-primary);
+  --color-frontdesk-filter-active-text: var(--color-text-inverse);
+  --color-frontdesk-row-selected-bg: var(--el-color-primary-light-9);
+  --color-frontdesk-row-selected-text: var(--el-text-color-primary);
 
   /* Colors - Public Layout */
   // --color-public-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -278,6 +299,23 @@
   --color-sidebar-border: #14284d;
   --color-sidebar-hover: #1c3a6a;
   --color-sidebar-active: #14284d;
+
+  /* Front Desk layout dark theme */
+  --color-frontdesk-sidebar-bg: #0a1528;
+  --color-frontdesk-sidebar-border: var(--color-gray-800);
+  --color-frontdesk-main-bg: var(--color-gray-900);
+  --color-frontdesk-toolbar-bg: var(--color-gray-900);
+  --color-frontdesk-toolbar-border: var(--color-gray-700);
+  --color-frontdesk-search-bg: var(--color-gray-800);
+  --color-frontdesk-search-border: var(--color-gray-600);
+  --color-frontdesk-search-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  --color-frontdesk-row-highlight: var(--color-warning-500);
+  --color-frontdesk-filter-active-bg: var(--el-color-primary);
+  --color-frontdesk-filter-active-text: #ffffff;
+  --color-frontdesk-row-selected-bg: color-mix(in srgb,
+      var(--el-color-primary) 36%,
+      var(--el-bg-color));
+  --color-frontdesk-row-selected-text: var(--el-text-color-primary);
 
   /* Public layout dark theme */
   --color-public-bg-gradient: linear-gradient(135deg, #0c1830 0%, #14284d 100%);
@@ -1412,8 +1450,8 @@ button {
 
 /* Visual Hierarchy Enhancements */
 .page-title {
-  font-size: var(--font-size-4xl);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-app-title);
+  font-weight: var(--font-weight-app-title);
   color: var(--color-text-primary);
   margin-bottom: var(--spacing-6);
   line-height: var(--line-height-tight);
@@ -1650,6 +1688,62 @@ button {
 :lang(fa) {
   direction: rtl;
   text-align: right;
+}
+
+/*
+ * App header menu controls (theme, language, user).
+ * User menu styles live in AppHeader.vue; theme + language here so each
+ * component keeps working without scoped :deep() fights.
+ */
+.app-header .header-right {
+  .theme-toggle-btn.el-button {
+    border: 1px solid transparent;
+    background-color: transparent;
+    box-shadow: none;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--el-border-color);
+      background-color: var(--color-bg-secondary);
+      outline: none;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .language-selector .el-select__wrapper {
+    border: 1px solid transparent;
+    background-color: transparent;
+    box-shadow: none !important;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+
+    &:hover,
+    &.is-hovering {
+      border-color: var(--el-border-color);
+      background-color: var(--color-bg-secondary);
+      box-shadow: none !important;
+    }
+
+    &.is-focused {
+      border-color: var(--el-border-color);
+      background-color: var(--color-bg-secondary);
+      box-shadow: none !important;
+    }
+  }
+
+  .language-selector .el-select__selected-item,
+  .language-selector .el-select__placeholder {
+    font-size: inherit;
+    font-weight: var(--font-weight-normal);
+    color: var(--el-text-color-regular);
+  }
 }
 
 /* Arabic Language Support */

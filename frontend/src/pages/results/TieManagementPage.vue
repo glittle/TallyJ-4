@@ -3,7 +3,6 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-page-header :content="$t('tieManagement.title')" @back="goBack" />
           <div class="header-actions">
             <el-button
               type="primary"
@@ -130,11 +129,10 @@ import { useNotifications } from "@/composables/useNotifications";
 import { ElMessageBox } from "element-plus";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useResultStore } from "../../stores/resultStore";
 import type { TieCandidateDto, TieDetailsDto } from "../../types";
 
-const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
@@ -257,9 +255,6 @@ function getTieValidation(tie: TieDetailsDto): string | null {
   return null;
 }
 
-function goBack() {
-  router.push(`/elections/${electionGuid}/results`);
-}
 </script>
 
 <style lang="less">

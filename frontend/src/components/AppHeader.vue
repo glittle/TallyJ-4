@@ -45,24 +45,16 @@ const currentUser = computed(() => ({
   email: authStore.email,
 }));
 
+const isFrontDeskPage = computed(() => route.path.includes("/frontdesk"));
+
 const currentPageTitle = computed(() => {
-  const titleMap: Record<string, string> = {
-    "/dashboard": t("nav.dashboard"),
-    "/elections": t("nav.elections"),
-    "/profile": t("nav.profile"),
-  };
-
-  // Check if there's a mapped title first
-  if (titleMap[route.path]) {
-    return titleMap[route.path];
+  const records = [...route.matched].reverse();
+  for (const record of records) {
+    const titleKey = record.meta.titleKey;
+    if (typeof titleKey === "string") {
+      return t(titleKey);
+    }
   }
-
-  // Handle dynamic title from route meta using titleKey
-  const titleKey = route.meta.titleKey;
-  if (typeof titleKey === "string") {
-    return t(titleKey);
-  }
-
   return "";
 });
 
@@ -141,13 +133,17 @@ function toggleMobileMenu() {
           <Menu />
         </el-icon>
       </button>
-      <h2 aria-live="polite">
+      <h2 v-if="currentPageTitle" class="page-title" aria-live="polite">
         {{ currentPageTitle }}
       </h2>
 
       <!-- Location Selector -->
       <div
-        v-if="currentElectionGuid && locationStore.locations?.length > 0"
+        v-if="
+          currentElectionGuid &&
+          locationStore.locations?.length > 0 &&
+          !isFrontDeskPage
+        "
         class="location-selector"
       >
         <el-icon class="location-icon">
@@ -158,7 +154,6 @@ function toggleMobileMenu() {
           :placeholder="$t('locations.selectLocation')"
           clearable
           :aria-label="$t('locations.currentLocation')"
-          size="small"
           class="location-select"
           @update:model-value="handleLocationChange"
         >
@@ -181,7 +176,6 @@ function toggleMobileMenu() {
           :aria-expanded="false"
           :aria-label="t('common.userMenu')"
         >
-          <el-avatar :size="32" icon="UserFilled" aria-hidden="true" />
           <span class="username">{{
             currentUser?.name || currentUser?.email || "User"
           }}</span>
@@ -222,6 +216,7 @@ function toggleMobileMenu() {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: var(--el-font-size-base);
 
   .versionName {
     font-size: 0.9em;
@@ -241,13 +236,14 @@ function toggleMobileMenu() {
     flex: 1;
   }
 
-  .header-left h3 {
+  .page-title {
     margin: 0;
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--color-text-primary);
-    cursor: help;
+    font-size: var(--font-size-app-title);
+    font-weight: var(--font-weight-app-title);
+    color: var(--el-text-color-primary);
     white-space: nowrap;
+    line-height: var(--line-height-tight);
+    flex-shrink: 0;
   }
 
   .location-selector {
@@ -272,7 +268,7 @@ function toggleMobileMenu() {
   .header-right {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 12px;
   }
 
   .user-dropdown {
@@ -281,23 +277,27 @@ function toggleMobileMenu() {
     gap: 8px;
     cursor: pointer;
     padding: 5px 10px;
-    border-radius: 4px;
-    border: none;
+    border-radius: var(--el-border-radius-base);
+    border: 1px solid transparent;
     background: transparent;
-    transition: background-color 0.3s;
     font-size: inherit;
+    font-weight: var(--font-weight-normal);
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
   }
 
   .user-dropdown:hover,
-  .user-dropdown:focus {
+  .user-dropdown:focus-visible {
+    border-color: var(--el-border-color);
     background-color: var(--color-bg-secondary);
-    outline: 2px solid var(--color-primary-700);
-    outline-offset: 2px;
+    outline: none;
   }
 
   .username {
-    font-size: 14px;
-    color: var(--color-text-secondary);
+    font-size: inherit;
+    font-weight: var(--font-weight-normal);
+    color: var(--el-text-color-regular);
   }
 
   .mobile-menu-btn {
@@ -329,10 +329,6 @@ function toggleMobileMenu() {
       gap: 8px;
     }
 
-    .header-left h3 {
-      font-size: 16px;
-    }
-
     .location-selector {
       margin-left: 8px;
       padding-left: 8px;
@@ -354,8 +350,10 @@ function toggleMobileMenu() {
   }
 
   @media (max-width: 480px) {
-    .header-left h3 {
-      font-size: 14px;
+    .page-title {
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .location-selector {

@@ -1,15 +1,6 @@
 <template>
   <div class="ballot-import-page">
     <el-card>
-      <template #header>
-        <div class="card-header">
-          <el-page-header
-            :content="$t('ballots.import.title')"
-            @back="goBack"
-          />
-        </div>
-      </template>
-
       <el-steps :active="currentStep" finish-status="success" align-center>
         <el-step :title="$t('ballots.import.step1')" />
         <el-step :title="$t('ballots.import.step2')" />
@@ -254,9 +245,7 @@ onBeforeUnmount(async () => {
   await importStore.leaveImportSession(electionGuid);
 });
 
-function goBack() {
-  router.push(`/elections/${electionGuid}/ballots`);
-}
+
 
 async function handleFileChange(file: UploadFile) {
   if (file.raw) {

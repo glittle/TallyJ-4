@@ -9,8 +9,8 @@
   "teller.form.saved": "Teller saved",
   "teller.form.titleAdd": "Add Teller",
   "teller.form.titleEdit": "Edit Teller",
-  "teller.active.typeToAdd": "Type to add your name",
-  "teller.active.teller1Placeholder": "Type to add your name",
+  "teller.active.typeToAdd": "Type to add your name if not listed",
+  "teller.active.teller1Placeholder": "Teller at keyboard",
   "teller.active.teller2Placeholder": "Second teller (optional)",
   "teller.active.hint": "Type a new name or pick from the list."
 }

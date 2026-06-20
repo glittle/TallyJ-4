@@ -4,7 +4,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
 import { computed, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import InlineBallotEntry from "../../components/ballots/InlineBallotEntry.vue";
 import { useBallotStore } from "../../stores/ballotStore";
 import { useElectionStore } from "../../stores/electionStore";
@@ -15,7 +15,6 @@ import type {
   VoteWithBallotStatusDto,
 } from "../../types";
 
-const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const ballotStore = useBallotStore();
@@ -92,9 +91,7 @@ function setupPersonUpdateHandler() {
   };
 }
 
-function goBack() {
-  router.push(`/elections/${electionGuid}/ballots`);
-}
+
 
 async function handleVoteAdded(vote: VoteDto) {
   try {
@@ -142,10 +139,6 @@ function getStatusType(status: string) {
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-page-header
-            :content="$t('ballots.entry', { code: ballot?.ballotCode })"
-            @back="goBack"
-          />
           <ActiveTellerSelector :election-guid="electionGuid" />
         </div>
       </template>

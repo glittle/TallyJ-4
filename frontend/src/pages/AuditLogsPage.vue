@@ -102,12 +102,6 @@ function formatDate(dateString: string) {
 <template>
   <div class="audit-logs-page">
     <el-card>
-      <template #header>
-        <div class="card-header">
-          <h2>{{ $t("audit.title") }}</h2>
-        </div>
-      </template>
-
       <div class="filters-container">
         <el-form :inline="true" :model="filters" class="filter-form">
           <el-form-item :label="$t('audit.filters.electionGuid')">
