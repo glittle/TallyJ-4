@@ -742,7 +742,7 @@ function participationPct(election: ElectionDto): string {
     }
 
     .stat-label {
-      font-size: var(--font-size-sm;
+      font-size: var(--font-size-sm);
     }
   }
 }
