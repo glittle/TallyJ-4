@@ -127,7 +127,7 @@ public class SecureCookieMiddleware
 
     private static int ResolveAccessTokenExpiryMinutes(HttpContext context)
     {
-        var configuration = context.RequestServices.GetService<IConfiguration>();
+        var configuration = context.RequestServices?.GetService<IConfiguration>();
         return int.Parse(configuration?["Jwt:ExpiryMinutes"] ?? "60");
     }
 
