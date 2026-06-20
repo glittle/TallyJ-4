@@ -404,7 +404,7 @@ async function exportElection() {
   .stat-value {
     font-size: 28px;
     font-weight: 600;
-    color: #303133;
+    color: #303132;
   }
 
   .stage-card {
@@ -472,6 +472,5 @@ async function exportElection() {
   .no-passcode {
     margin-top: 15px;
   }
-  // 2026-06-20 touch css to force a new build output
 }
 </style>
