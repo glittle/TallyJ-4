@@ -12,6 +12,7 @@ vi.mock("../services/electionService", () => ({
     update: vi.fn(),
     delete: vi.fn(),
     changeStage: vi.fn(),
+    toggleTellerAccess: vi.fn(),
   },
 }));
 
@@ -444,6 +445,31 @@ describe("Election Store", () => {
         "1",
         "ProcessingBallots",
       );
+    });
+  });
+
+  describe("toggleTellerAccess", () => {
+    it("calls electionService.toggleTellerAccess and updates current election", async () => {
+      const { electionService } = await import("../services/electionService");
+      const updatedElection = {
+        electionGuid: "1",
+        isTellerAccessOpen: true,
+      } as ElectionDto;
+      electionStore.elections = [
+        { electionGuid: "1", isTellerAccessOpen: false } as ElectionDto,
+      ];
+      electionStore.currentElection = electionStore.elections[0]!;
+      electionService.toggleTellerAccess.mockResolvedValue(updatedElection);
+
+      const result = await electionStore.toggleTellerAccess("1", true);
+
+      expect(electionService.toggleTellerAccess).toHaveBeenCalledWith(
+        "1",
+        true,
+      );
+      expect(result).toEqual(updatedElection);
+      expect(electionStore.currentElection).toEqual(updatedElection);
+      expect(electionStore.elections[0]).toEqual(updatedElection);
     });
   });
 });

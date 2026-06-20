@@ -16,6 +16,7 @@ import {
   postApiImportImportElectionFromJson,
   postApiImportImportTallyJv3Election,
   putApiElectionsByGuidStage,
+  putApiElectionsByGuidTellerAccess,
   putApiElectionsByGuidUpdateElection,
 } from "./../api/gen/configService/sdk.gen";
 const convertStringToDate = (dateString?: string): Date | null => {
@@ -148,6 +149,28 @@ export const electionService = {
     const data = response.data?.data;
     if (!data) {
       throw new Error("Failed to change election stage");
+    }
+    return {
+      ...(data as any),
+      dateOfElection: convertDateToString(data.dateOfElection),
+      onlineWhenOpen: convertDateToString(data.onlineWhenOpen),
+      onlineWhenClose: convertDateToString(data.onlineWhenClose),
+      onlineAnnounced: convertDateToString(data.onlineAnnounced),
+      tellerAccessOpenedAt: convertDateToString(data.tellerAccessOpenedAt),
+    } as ElectionDto;
+  },
+
+  async toggleTellerAccess(
+    electionGuid: string,
+    isOpen: boolean,
+  ): Promise<ElectionDto> {
+    const response = await putApiElectionsByGuidTellerAccess({
+      path: { guid: electionGuid },
+      body: { isOpen },
+    });
+    const data = response.data?.data;
+    if (!data) {
+      throw new Error("Failed to toggle teller access");
     }
     return {
       ...(data as any),
