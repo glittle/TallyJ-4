@@ -42,12 +42,7 @@ public class TellerService : ITellerService
             .Take(pageSize)
             .ToListAsync();
 
-        var tellerDtos = tellers.Select(t =>
-        {
-            var dto = t.CopyMatchingPropertiesToNew<TellerDto>();
-            dto.IsHeadTeller = t.IsHeadTeller ?? false;
-            return dto;
-        }).ToList();
+        var tellerDtos = tellers.Select(t => t.CopyMatchingPropertiesToNew<TellerDto>()).ToList();
 
         _logger.LogInformation(
             "Retrieved {Count} tellers for election {ElectionGuid} (page {PageNumber} of {TotalPages})",
@@ -73,7 +68,6 @@ public class TellerService : ITellerService
         }
 
         var tellerDto = teller.CopyMatchingPropertiesToNew<TellerDto>();
-        tellerDto.IsHeadTeller = teller.IsHeadTeller ?? false;
 
         _logger.LogInformation("Retrieved teller {RowId}: {TellerName}", rowId, teller.Name);
 
@@ -96,7 +90,6 @@ public class TellerService : ITellerService
         await _context.SaveChangesAsync();
 
         var tellerDto = teller.CopyMatchingPropertiesToNew<TellerDto>();
-        tellerDto.IsHeadTeller = teller.IsHeadTeller ?? false;
 
         _logger.LogInformation("Successfully created teller {RowId}: {TellerName}", teller.RowId, teller.Name);
 
@@ -127,7 +120,6 @@ public class TellerService : ITellerService
         await _context.SaveChangesAsync();
 
         var tellerDto = teller.CopyMatchingPropertiesToNew<TellerDto>();
-        tellerDto.IsHeadTeller = teller.IsHeadTeller ?? false;
 
         _logger.LogInformation("Successfully updated teller {RowId}: {TellerName}", teller.RowId, teller.Name);
 
@@ -171,6 +163,3 @@ public class TellerService : ITellerService
         return !await query.AnyAsync();
     }
 }
-
-
-

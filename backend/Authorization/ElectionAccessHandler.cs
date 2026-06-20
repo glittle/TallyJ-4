@@ -1,7 +1,7 @@
+using System.Security.Claims;
 using Backend.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -49,17 +49,6 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
             return;
         }
 
-        var userIdString = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                         ?? user.FindFirst("sub")?.Value;
-        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
-        {
-            _logger.LogWarning("ElectionAccess: Could not parse user ID from claims");
-            context.Fail();
-            return;
-        }
-
-        _logger.LogInformation("ElectionAccess: Checking access for user {UserId}", userId);
-
         // Extract election GUID from route parameters
         // In ASP.NET Core, the resource can be HttpContext, RouteData, or ControllerActionDescriptor
         var httpContext = context.Resource as HttpContext;
@@ -75,12 +64,26 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
             return;
         }
 
-        // Try to get election GUID from route
-        if (!routeData.Values.TryGetValue("guid", out var guidValue) ||
-            !Guid.TryParse(guidValue?.ToString(), out var electionGuid))
+        if (!TryGetElectionGuidFromRoute(routeData, out var electionGuid))
         {
             _logger.LogWarning("ElectionAccess: Could not parse election GUID from route. Available route values: {RouteValues}",
                 string.Join(", ", routeData.Values.Select(kvp => $"{kvp.Key}={kvp.Value}")));
+            context.Fail();
+            return;
+        }
+
+        if (IsGuestTellerForElection(user, electionGuid))
+        {
+            _logger.LogInformation("ElectionAccess: Guest teller authenticated for election {ElectionGuid}", electionGuid);
+            context.Succeed(requirement);
+            return;
+        }
+
+        var userIdString = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? user.FindFirst("sub")?.Value;
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+        {
+            _logger.LogWarning("ElectionAccess: Could not parse user ID from claims");
             context.Fail();
             return;
         }
@@ -114,6 +117,34 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
             _logger.LogWarning("ElectionAccess: User {UserId} denied access to election {ElectionGuid}", userId, electionGuid);
             context.Fail();
         }
+    }
+
+    private static bool TryGetElectionGuidFromRoute(RouteData routeData, out Guid electionGuid)
+    {
+        electionGuid = Guid.Empty;
+
+        foreach (var key in new[] { "guid", "electionGuid", "id" })
+        {
+            if (routeData.Values.TryGetValue(key, out var guidValue) &&
+                Guid.TryParse(guidValue?.ToString(), out electionGuid))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsGuestTellerForElection(ClaimsPrincipal user, Guid electionGuid)
+    {
+        var isTellerClaim = user.FindFirst("isTeller")?.Value;
+        var electionGuidClaim = user.FindFirst("electionGuid")?.Value;
+        var authMethod = user.FindFirst("authMethod")?.Value;
+
+        return bool.TryParse(isTellerClaim, out var isGuestTeller) && isGuestTeller &&
+               string.Equals(authMethod, "AccessCode", StringComparison.OrdinalIgnoreCase) &&
+               Guid.TryParse(electionGuidClaim, out var tokenElectionGuid) &&
+               tokenElectionGuid == electionGuid;
     }
 }
 

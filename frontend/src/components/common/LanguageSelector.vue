@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import { setLocale, supportedLocales, type SupportedLocale } from "@/locales";
 import { ElOption, ElSelect } from "element-plus";
-import { computed, onMounted } from "vue";
+import type { ComponentSize } from "element-plus";
+import { computed, onMounted, withDefaults } from "vue";
 import CountryFlag from "vue-country-flag-next";
 import { useI18n } from "vue-i18n";
+
+withDefaults(
+  defineProps<{
+    size?: ComponentSize;
+  }>(),
+  {
+    size: "default",
+  },
+);
 
 const { locale, t } = useI18n();
 
@@ -36,7 +46,7 @@ onMounted(() => {
     <el-select
       id="language-select"
       :model-value="locale"
-      size="small"
+      :size="size"
       filterable
       aria-label="Select language"
       popper-class="language-select-dropdown"

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend.DTOs.FrontDesk;
 
@@ -21,16 +21,19 @@ public class CheckInVoterDto
     public string VotingMethod { get; set; } = null!;
 
     /// <summary>
-    /// The name of the teller checking in the voter.
+    /// The name of the primary teller checking in the voter.
     /// </summary>
     [StringLength(25)]
-    public string? TellerName { get; set; }
+    public string? Teller1 { get; set; }
+
+    /// <summary>
+    /// The name of the second teller, if any.
+    /// </summary>
+    [StringLength(25)]
+    public string? Teller2 { get; set; }
 
     /// <summary>
     /// The unique identifier of the voting location.
     /// </summary>
     public Guid? VotingLocationGuid { get; set; }
 }
-
-
-

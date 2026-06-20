@@ -289,7 +289,8 @@ public class AuthController : ControllerBase
             "",
             "Teller",
             "AccessCode",
-            HttpContext.Request.IsHttps
+            HttpContext.Request.IsHttps,
+            accessTokenExpiryMinutes: JwtTokenService.TellerTokenExpiryHours * 60
         );
 
         await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto

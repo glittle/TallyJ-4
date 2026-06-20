@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.Middleware;
 
@@ -65,6 +67,7 @@ public class SecureCookieMiddleware
     /// <param name="name">The user's display name.</param>
     /// <param name="authMethod">The authentication method.</param>
     /// <param name="isHttps">Whether the request is over HTTPS.</param>
+    /// <param name="accessTokenExpiryMinutes">Optional override for access-token cookie lifetime (defaults to Jwt:ExpiryMinutes).</param>
     public static void SetAuthCookies(
         HttpContext context,
         string accessToken,
@@ -72,14 +75,18 @@ public class SecureCookieMiddleware
         string email,
         string? name,
         string authMethod,
-        bool isHttps = true)
+        bool isHttps = true,
+        int? accessTokenExpiryMinutes = null)
     {
+        var accessTokenLifetimeMinutes = accessTokenExpiryMinutes
+            ?? ResolveAccessTokenExpiryMinutes(context);
+
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
             Secure = isHttps,
             SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(15), // Access token expiry
+            Expires = DateTimeOffset.UtcNow.AddMinutes(accessTokenLifetimeMinutes),
             Path = "/",
             Domain = isHttps ? null : "localhost" // Share cookies across localhost ports in dev
         };
@@ -116,6 +123,12 @@ public class SecureCookieMiddleware
             context.Response.Cookies.Append(UserNameCookieName, name, userCookieOptions);
         }
         context.Response.Cookies.Append(AuthMethodCookieName, authMethod, userCookieOptions);
+    }
+
+    private static int ResolveAccessTokenExpiryMinutes(HttpContext context)
+    {
+        var configuration = context.RequestServices.GetService<IConfiguration>();
+        return int.Parse(configuration?["Jwt:ExpiryMinutes"] ?? "60");
     }
 
     /// <summary>

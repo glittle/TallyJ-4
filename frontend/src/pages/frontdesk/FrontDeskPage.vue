@@ -1,47 +1,62 @@
 <script setup lang="ts">
+import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
+import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useNotifications } from "@/composables/useNotifications";
+import { useViewportTableHeight } from "@/composables/useViewportTableHeight";
 import { frontDeskService } from "@/services/frontDeskService";
 import { signalrService } from "@/services/signalrService";
 import { useElectionStore } from "@/stores/electionStore";
 import { useLocationStore } from "@/stores/locationStore";
 import type {
   CheckInVoterDto,
-  FrontDeskStatsDto,
   FrontDeskVoterDto,
+  RegistrationHistoryEntryDto,
   UnregisterVoterDto,
   UpdatePersonFlagsDto,
 } from "@/types/FrontDesk";
 import {
-  Check,
-  Clock,
-  Search,
-  User,
-  UserFilled,
-  Warning,
-} from "@element-plus/icons-vue";
+  getActiveTellerPayload,
+  getActiveTellers,
+  type ActiveTellers,
+} from "@/utils/activeTellerStorage";
+import {
+  formatRegistrationHistoryDetails,
+  sortRegistrationHistoryNewestFirst,
+} from "@/utils/formatRegistrationHistory";
+import { matchesFrontDeskVoterSearch } from "@/utils/searchStrategies";
+import { Check, Close, Location, Search } from "@element-plus/icons-vue";
 import type { ElTable } from "element-plus";
 import { ElMessageBox } from "element-plus";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
-const router = useRouter();
+const { t } = useI18n();
 const locationStore = useLocationStore();
 const electionStore = useElectionStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = ref(route.params.id as string);
 
+const activeTellers = ref<ActiveTellers>(getActiveTellers());
+const hasActiveTeller = computed(() =>
+  Boolean(activeTellers.value.teller1.trim()),
+);
+
+function onTellersChanged(tellers: ActiveTellers) {
+  activeTellers.value = tellers;
+}
+
+/** Placeholder until election setup exposes "Enable Envelope Numbers". */
+const ENABLE_ENVELOPE_NUMBERS = false;
+
 // State
 const voters = ref<FrontDeskVoterDto[]>([]);
-const stats = ref<FrontDeskStatsDto | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const signalrInitialized = ref(false);
 const searchQuery = ref("");
-
-// will need locations for check-in location dropdown and to display location in voter history
-// const locations = computed(() => locationStore.locations);
 
 const currentElection = computed(() => electionStore.currentElection);
 
@@ -61,34 +76,104 @@ const electionFlags = computed(() => {
   }
 });
 
+/** Matches --front-desk-table-max-width in style.less */
+const FRONT_DESK_TABLE_WIDTH = 900;
+
+const frontDeskTableColumnWidths = computed(() => {
+  const hasFlags = electionFlags.value.length > 0;
+  const base = {
+    fullName: 250,
+    method: 150,
+    bahaiId: 120,
+    area: 200,
+    flags: 90,
+    time: 130,
+    envNum: 90,
+  };
+  const fixedSum =
+    base.fullName +
+    base.method +
+    base.bahaiId +
+    base.area +
+    base.time +
+    (ENABLE_ENVELOPE_NUMBERS ? base.envNum : 0) +
+    (hasFlags ? base.flags : 0);
+  return {
+    ...base,
+    fullName: base.fullName + (FRONT_DESK_TABLE_WIDTH - fixedSum),
+    flags: hasFlags ? base.flags : 0,
+  };
+});
+
 // Keyboard navigation
 const searchInputRef = ref<HTMLInputElement | null>(null);
 const voterTableRef = ref<InstanceType<typeof ElTable> | null>(null);
+const tableWrapperRef = ref<HTMLElement | null>(null);
+const voterListContainerRef = ref<HTMLElement | null>(null);
+const keyboardHintRef = ref<HTMLElement | null>(null);
+const { height: tableHeight, remeasure: remeasureTableHeight } =
+  useViewportTableHeight(tableWrapperRef, {
+    paddingRootRef: voterListContainerRef,
+    bottomRef: keyboardHintRef,
+    min: 200,
+  });
 const selectedIndex = ref(0);
 const selectedVoter = ref<FrontDeskVoterDto | null>(null);
+const selectedVoterRegistrationHistory = computed(() =>
+  sortRegistrationHistoryNewestFirst(
+    selectedVoter.value?.registrationHistory ?? [],
+  ),
+);
 const showRegistrationButtons = ref(false);
 const selectedButtonIndex = ref(0);
+const pendingVotingMethod = ref<string | null>(null);
+const checkInInProgress = ref(false);
+const pendingCheckInPersonGuid = ref<string | null>(null);
+const registrationOverlayRef = ref<HTMLDivElement | null>(null);
+const showEnvelopeDialog = ref(false);
+const envelopeEditVoter = ref<FrontDeskVoterDto | null>(null);
+const envelopeEditValue = ref<number | undefined>(undefined);
+const envelopeSaving = ref(false);
+const highlightedPersonGuids = ref(new Set<string>());
+const highlightTimers = new Map<string, number>();
+const rowHighlightVersion = ref(0);
 
-// History dialog
-const showHistoryDialog = ref(false);
-const historyVoter = ref<FrontDeskVoterDto | null>(null);
+type RegistrationFilter = "all" | "notRegistered" | "registered";
+
+const REGISTRATION_FILTER_STORAGE_KEY = "tallyj.frontDesk.registrationFilters";
+const DEFAULT_REGISTRATION_FILTER: RegistrationFilter = "notRegistered";
+
+function isRegistrationFilter(value: unknown): value is RegistrationFilter {
+  return value === "all" || value === "notRegistered" || value === "registered";
+}
+
+const registrationFiltersByElection = useLocalStorage<
+  Partial<Record<string, RegistrationFilter>>
+>(REGISTRATION_FILTER_STORAGE_KEY, {});
 
 // Filters
 const selectedMethodFilters = ref<string[]>([]);
 const selectedFlagFilters = ref<string[]>([]);
-const showAllRegistered = ref(false);
+const registrationFilter = computed({
+  get(): RegistrationFilter {
+    const stored = registrationFiltersByElection.value[electionGuid.value];
+    return isRegistrationFilter(stored) ? stored : DEFAULT_REGISTRATION_FILTER;
+  },
+  set(value: RegistrationFilter) {
+    registrationFiltersByElection.value = {
+      ...registrationFiltersByElection.value,
+      [electionGuid.value]: value,
+    };
+  },
+});
 
 // Voter filtering
 const filteredVoters = computed(() => {
   if (!searchQuery.value.trim()) {
     return voters.value;
   }
-  const query = searchQuery.value.toLowerCase();
-  return voters.value.filter(
-    (voter) =>
-      voter.fullName.toLowerCase().includes(query) ||
-      voter.bahaiId?.toLowerCase().includes(query) ||
-      voter.area?.toLowerCase().includes(query),
+  return voters.value.filter((voter) =>
+    matchesFrontDeskVoterSearch(voter, searchQuery.value),
   );
 });
 
@@ -99,11 +184,20 @@ const notCheckedInVoters = computed(() =>
   filteredVoters.value.filter((v) => !v.isCheckedIn),
 );
 
-// Filter voters based on selected filters
+const filteredByRegistration = computed(() => {
+  switch (registrationFilter.value) {
+    case "registered":
+      return checkedInVoters.value;
+    case "notRegistered":
+      return notCheckedInVoters.value;
+    case "all":
+    default:
+      return filteredVoters.value;
+  }
+});
+
 const filteredByConditions = computed(() => {
-  let result = showAllRegistered.value
-    ? filteredVoters.value
-    : notCheckedInVoters.value;
+  let result = filteredByRegistration.value;
 
   if (selectedMethodFilters.value.length > 0) {
     result = result.filter(
@@ -127,45 +221,115 @@ const filteredByConditions = computed(() => {
   return result;
 });
 
-// Merge not-checked-in and checked-in voters into one list
-const allVoters = computed(() => {
-  if (
-    selectedMethodFilters.value.length > 0 ||
-    selectedFlagFilters.value.length > 0 ||
-    showAllRegistered.value
-  ) {
-    return filteredByConditions.value;
-  }
+const allVoters = computed(() => filteredByConditions.value);
 
-  return filteredVoters.value;
+const hasActiveFilters = computed(
+  () =>
+    selectedMethodFilters.value.length > 0 ||
+    selectedFlagFilters.value.length > 0,
+);
+
+const tableVoters = computed(() => {
+  void rowHighlightVersion.value;
+  void highlightedPersonGuids.value.size;
+  return [...allVoters.value];
 });
 
 // Registration type options
-const registrationTypes = [
-  { value: "I", label: "In Person", key: "1", isVotingMethod: true },
-  { value: "M", label: "Mail", key: "2", isVotingMethod: true },
-  { value: "O", label: "Online", key: "3", isVotingMethod: true },
-  { value: "C", label: "Call-In", key: "4", isVotingMethod: true },
-];
+const registrationTypes = computed(() => [
+  {
+    value: "I",
+    label: t("frontDesk.votingMethod.inPerson"),
+    key: "1",
+    isVotingMethod: true,
+  },
+  {
+    value: "M",
+    label: t("frontDesk.votingMethod.mail"),
+    key: "2",
+    isVotingMethod: true,
+  },
+  {
+    value: "O",
+    label: t("frontDesk.votingMethod.online"),
+    key: "3",
+    isVotingMethod: true,
+  },
+  {
+    value: "C",
+    label: t("frontDesk.votingMethod.callIn"),
+    key: "4",
+    isVotingMethod: true,
+  },
+]);
 
-// All buttons including voting methods and flags
-const allButtons = computed(() => {
-  const buttons = [...registrationTypes];
-  electionFlags.value.forEach((flag: string, index: number) => {
+type DialogButton = {
+  value: string;
+  label: string;
+  key: string;
+  isVotingMethod: boolean;
+  isUnregister: boolean;
+  isClose: boolean;
+};
+
+const dialogButtons = computed((): DialogButton[] => {
+  const buttons: DialogButton[] = [];
+
+  if (!selectedVoter.value?.isCheckedIn) {
+    registrationTypes.value.forEach((type) => {
+      buttons.push({
+        value: type.value,
+        label: type.label,
+        key: "",
+        isVotingMethod: true,
+        isUnregister: false,
+        isClose: false,
+      });
+    });
+  }
+
+  electionFlags.value.forEach((flag: string) => {
     buttons.push({
       value: flag,
       label: flag,
-      key: String(5 + index),
+      key: "",
       isVotingMethod: false,
+      isUnregister: false,
+      isClose: false,
     });
   });
+
+  if (selectedVoter.value?.isCheckedIn) {
+    buttons.push({
+      value: "__unregister__",
+      label: t("frontDesk.dialog.unregister"),
+      key: "",
+      isVotingMethod: false,
+      isUnregister: true,
+      isClose: false,
+    });
+  }
+
+  buttons.push({
+    value: "__close__",
+    label: t("common.close"),
+    key: "",
+    isVotingMethod: false,
+    isUnregister: false,
+    isClose: true,
+  });
+
+  buttons.forEach((button, index) => {
+    button.key = String(index + 1);
+  });
+
   return buttons;
 });
 
 // Compute counts for each voting method
 const methodCounts = computed(() => {
   const counts: Record<string, number> = {};
-  registrationTypes.forEach((method) => {
+  registrationTypes.value.forEach((method) => {
     counts[method.value] = checkedInVoters.value.filter(
       (v) => v.votingMethod === method.value,
     ).length;
@@ -198,14 +362,6 @@ function getFlagAbbr(flag: string): string {
     .slice(0, 3);
 }
 
-async function fetchStats(guid: string) {
-  try {
-    stats.value = await frontDeskService.getStats(guid);
-  } catch (e: any) {
-    console.error("Failed to fetch stats:", e);
-  }
-}
-
 async function fetchEligibleVoters(guid: string) {
   loading.value = true;
   error.value = null;
@@ -213,32 +369,114 @@ async function fetchEligibleVoters(guid: string) {
     voters.value = (await frontDeskService.getEligibleVoters(guid)).sort(
       (a, b) => a.fullName.localeCompare(b.fullName),
     );
-    await fetchStats(guid);
   } catch (e: any) {
-    error.value = e.message || "Failed to fetch eligible voters";
+    error.value = e.message || t("frontDesk.errors.fetchVoters");
     throw e;
   } finally {
     loading.value = false;
   }
 }
 
+function updateVoterInList(updatedVoter: FrontDeskVoterDto) {
+  const index = voters.value.findIndex(
+    (v) => v.personGuid === updatedVoter.personGuid,
+  );
+  if (index !== -1) {
+    voters.value[index] = updatedVoter;
+  }
+  if (selectedVoter.value?.personGuid === updatedVoter.personGuid) {
+    selectedVoter.value = updatedVoter;
+  }
+}
+
+function focusRegistrationOverlay() {
+  nextTick(() => {
+    registrationOverlayRef.value?.focus();
+  });
+}
+
+function getInitialDialogButtonIndex(): number {
+  if (
+    !hasActiveTeller.value ||
+    (selectedVoter.value?.isCheckedIn && electionFlags.value.length === 0)
+  ) {
+    const closeIndex = dialogButtons.value.findIndex(
+      (button) => button.isClose,
+    );
+    return closeIndex >= 0 ? closeIndex : 0;
+  }
+  return 0;
+}
+
+function isDialogButtonActionable(button: DialogButton): boolean {
+  if (button.isClose) {
+    return true;
+  }
+  return hasActiveTeller.value;
+}
+
+function openRegistrationDialog() {
+  showRegistrationButtons.value = true;
+  selectedButtonIndex.value = getInitialDialogButtonIndex();
+  focusRegistrationOverlay();
+  focusRegistrationButton();
+}
+
+function closeRegistrationDialog() {
+  showRegistrationButtons.value = false;
+  selectedButtonIndex.value = 0;
+  pendingVotingMethod.value = null;
+  checkInInProgress.value = false;
+  pendingCheckInPersonGuid.value = null;
+
+  nextTick(() => {
+    searchInputRef.value?.focus();
+  });
+}
+
+function flashUpdatedRow(personGuid: string) {
+  const existing = highlightTimers.get(personGuid);
+  if (existing) {
+    window.clearTimeout(existing);
+  }
+
+  const applyHighlight = () => {
+    const next = new Set(highlightedPersonGuids.value);
+    next.add(personGuid);
+    highlightedPersonGuids.value = next;
+  };
+
+  if (highlightedPersonGuids.value.has(personGuid)) {
+    const without = new Set(highlightedPersonGuids.value);
+    without.delete(personGuid);
+    highlightedPersonGuids.value = without;
+    nextTick(applyHighlight);
+  } else {
+    applyHighlight();
+  }
+
+  rowHighlightVersion.value++;
+
+  const timer = window.setTimeout(() => {
+    const updated = new Set(highlightedPersonGuids.value);
+    updated.delete(personGuid);
+    highlightedPersonGuids.value = updated;
+    highlightTimers.delete(personGuid);
+    rowHighlightVersion.value++;
+  }, 2000);
+
+  highlightTimers.set(personGuid, timer);
+}
+
 async function checkInVoter(guid: string, checkInDto: CheckInVoterDto) {
-  loading.value = true;
   error.value = null;
   try {
     const updatedVoter = await frontDeskService.checkInVoter(guid, checkInDto);
-    const index = voters.value.findIndex(
-      (v) => v.personGuid === updatedVoter.personGuid,
-    );
-    if (index !== -1) {
-      voters.value[index] = updatedVoter;
-    }
+    updateVoterInList(updatedVoter);
     return updatedVoter;
   } catch (e: any) {
-    error.value = e.message || "Failed to check in voter";
+    error.value = e.message || t("frontDesk.errors.checkIn");
     throw e;
-  } finally {
-    loading.value = false;
   }
 }
 
@@ -253,15 +491,10 @@ async function unregisterVoter(
       guid,
       unregisterDto,
     );
-    const index = voters.value.findIndex(
-      (v) => v.personGuid === updatedVoter.personGuid,
-    );
-    if (index !== -1) {
-      voters.value[index] = updatedVoter;
-    }
+    updateVoterInList(updatedVoter);
     return updatedVoter;
   } catch (e: any) {
-    error.value = e.message || "Failed to unregister voter";
+    error.value = e.message || t("frontDesk.errors.unregister");
     throw e;
   } finally {
     loading.value = false;
@@ -287,7 +520,7 @@ async function savePersonFlags(
     }
     return updatedVoter;
   } catch (e: any) {
-    error.value = e.message || "Failed to update person flags";
+    error.value = e.message || t("frontDesk.errors.updatePersonFlags");
     throw e;
   } finally {
     loading.value = false;
@@ -303,25 +536,19 @@ async function initializeSignalR() {
     const connection = await signalrService.connectToFrontDeskHub();
 
     connection.on("PersonCheckedIn", (voter: FrontDeskVoterDto) => {
-      const index = voters.value.findIndex(
-        (v) => v.personGuid === voter.personGuid,
-      );
-      if (index !== -1) {
-        voters.value[index] = voter;
-      }
-    });
+      updateVoterInList(voter);
+      flashUpdatedRow(voter.personGuid);
 
-    connection.on("VoterCountUpdated", (updatedStats: FrontDeskStatsDto) => {
-      stats.value = updatedStats;
+      if (pendingCheckInPersonGuid.value === voter.personGuid) {
+        showSuccessMessage(
+          t("frontDesk.messages.checkInSuccess", { name: voter.fullName }),
+        );
+        closeRegistrationDialog();
+      }
     });
 
     connection.on("PersonFlagsUpdated", (voter: FrontDeskVoterDto) => {
-      const index = voters.value.findIndex(
-        (v) => v.personGuid === voter.personGuid,
-      );
-      if (index !== -1) {
-        voters.value[index] = voter;
-      }
+      updateVoterInList(voter);
     });
 
     signalrInitialized.value = true;
@@ -347,25 +574,45 @@ async function leaveElection(guid: string) {
 }
 
 onMounted(async () => {
+  window.addEventListener("keydown", handlePageKeydown);
   await loadData();
   await electionStore.fetchElectionById(electionGuid.value);
   await initializeSignalR();
   await joinElection(electionGuid.value);
 
-  nextTick(() => {
-    searchInputRef.value?.focus();
-  });
+  await nextTick();
+  remeasureTableHeight();
+  focusSearchInput();
 });
 
 onUnmounted(async () => {
+  window.removeEventListener("keydown", handlePageKeydown);
+  highlightTimers.forEach((timer) => window.clearTimeout(timer));
+  highlightTimers.clear();
   await leaveElection(electionGuid.value);
+});
+
+watch(hasActiveTeller, (active) => {
+  if (!active && showRegistrationButtons.value) {
+    selectedButtonIndex.value = getInitialDialogButtonIndex();
+    focusRegistrationButton();
+  }
+  nextTick(remeasureTableHeight);
+});
+
+watch(tableHeight, () => {
+  nextTick(() => {
+    voterTableRef.value?.doLayout();
+  });
 });
 
 // Watch search query and update selection
 watch(searchQuery, () => {
   selectedIndex.value = 0;
   updateSelectedVoter();
-  showRegistrationButtons.value = false;
+  if (!checkInInProgress.value) {
+    closeRegistrationDialog();
+  }
 });
 
 // Watch filtered voters and update selection
@@ -381,7 +628,7 @@ async function loadData() {
       updateSelectedVoter();
     });
   } catch (err: any) {
-    showErrorMessage(err.message || "Failed to load data");
+    showErrorMessage(err.message || t("frontDesk.errors.loadData"));
   }
 }
 
@@ -416,73 +663,231 @@ function scrollToSelectedRow() {
   });
 }
 
-function handleSearchKeydown(event: KeyboardEvent) {
-  // console.log('handleSearchKeydown called with key:', event.key);
-  // console.log('Key pressed:', event.key, 'showRegistrationButtons:', showRegistrationButtons.value);
-  const voterList = allVoters.value;
-  // console.log('Voters count:', voterList.length);
+function getDialogButtonIndex(value: string): number {
+  return dialogButtons.value.findIndex((button) => button.value === value);
+}
 
-  if (showRegistrationButtons.value) {
-    const buttons = allButtons.value;
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      selectedButtonIndex.value = Math.max(0, selectedButtonIndex.value - 1);
-    } else if (event.key === "ArrowRight") {
-      event.preventDefault();
-      selectedButtonIndex.value = Math.min(
-        buttons.length - 1,
-        selectedButtonIndex.value + 1,
-      );
-    } else if (event.key === "Enter") {
-      event.preventDefault();
-      const selectedButton = buttons[selectedButtonIndex.value];
-      if (selectedButton) {
-        handleButtonClick(selectedButton);
-      }
-    } else if (event.key === "Escape") {
-      event.preventDefault();
-      showRegistrationButtons.value = false;
-      selectedButtonIndex.value = 0;
-    } else if (event.key >= "1" && event.key <= "9") {
-      event.preventDefault();
-      const index = parseInt(event.key) - 1;
-      if (index >= 0 && index < buttons.length) {
-        const button = buttons[index];
-        if (!button) {
-          showErrorMessage(`Invalid button selected: ${index}`);
-          return;
-        }
-        handleButtonClick(button);
-      }
+function getDialogButtonKey(value: string): string {
+  return (
+    dialogButtons.value.find((button) => button.value === value)?.key ?? ""
+  );
+}
+
+function clickDialogButton(value: string) {
+  const button = dialogButtons.value.find(
+    (dialogButton) => dialogButton.value === value,
+  );
+  if (button) {
+    handleButtonClick(button);
+  }
+}
+
+function isDialogButtonKeyboardFocused(value: string): boolean {
+  if (pendingVotingMethod.value === value) {
+    return false;
+  }
+  return getDialogButtonIndex(value) === selectedButtonIndex.value;
+}
+
+function isDialogButtonFocusable(button: DialogButton): boolean {
+  if (!isDialogButtonActionable(button)) {
+    return false;
+  }
+  return !(button.isClose && checkInInProgress.value);
+}
+
+function getNextDialogButtonIndex(
+  currentIndex: number,
+  direction: 1 | -1,
+): number {
+  const buttons = dialogButtons.value;
+  if (buttons.length === 0) {
+    return 0;
+  }
+
+  let nextIndex = currentIndex;
+  for (let step = 0; step < buttons.length; step++) {
+    nextIndex =
+      direction === 1
+        ? (nextIndex + 1) % buttons.length
+        : (nextIndex - 1 + buttons.length) % buttons.length;
+    const button = buttons[nextIndex];
+    if (button && isDialogButtonFocusable(button)) {
+      return nextIndex;
     }
-  } else {
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      console.log(
-        "ArrowDown pressed, current index:",
-        selectedIndex.value,
-        "voters length:",
-        voterList.length,
-      );
-      selectedIndex.value = Math.min(
-        voterList.length - 1,
-        selectedIndex.value + 1,
-      );
-      console.log("New index:", selectedIndex.value);
-      updateSelectedVoter();
-    } else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      console.log("ArrowUp pressed, current index:", selectedIndex.value);
-      selectedIndex.value = Math.max(0, selectedIndex.value - 1);
-      console.log("New index:", selectedIndex.value);
-      updateSelectedVoter();
-    } else if (event.key === "Enter") {
-      event.preventDefault();
-      console.log("Enter pressed, selectedVoter:", selectedVoter.value);
-      if (selectedVoter.value) {
-        showRegistrationButtons.value = true;
-        selectedButtonIndex.value = 0;
+  }
+
+  return currentIndex;
+}
+
+function getVotingMethodLabel(method?: string): string {
+  const match = registrationTypes.value.find((type) => type.value === method);
+  return match?.label ?? method ?? t("frontDesk.common.dash");
+}
+
+function getVotingMethodTagType(
+  method: string,
+): "success" | "info" | "primary" | "warning" {
+  switch (method) {
+    case "I":
+      return "success";
+    case "M":
+      return "info";
+    case "O":
+      return "primary";
+    case "C":
+      return "warning";
+    default:
+      return "info";
+  }
+}
+
+function handleRegistrationKeydown(event: KeyboardEvent) {
+  const buttons = dialogButtons.value;
+
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    selectedButtonIndex.value = getNextDialogButtonIndex(
+      selectedButtonIndex.value,
+      -1,
+    );
+    focusRegistrationButton();
+  } else if (event.key === "ArrowRight") {
+    event.preventDefault();
+    selectedButtonIndex.value = getNextDialogButtonIndex(
+      selectedButtonIndex.value,
+      1,
+    );
+    focusRegistrationButton();
+  } else if (event.key === "Tab") {
+    event.preventDefault();
+    selectedButtonIndex.value = getNextDialogButtonIndex(
+      selectedButtonIndex.value,
+      event.shiftKey ? -1 : 1,
+    );
+    focusRegistrationButton();
+  } else if (event.key === "Enter") {
+    event.preventDefault();
+    if (checkInInProgress.value) {
+      return;
+    }
+    const selectedButton = buttons[selectedButtonIndex.value];
+    if (selectedButton && isDialogButtonActionable(selectedButton)) {
+      handleButtonClick(selectedButton);
+    }
+  } else if (event.key === "Escape") {
+    event.preventDefault();
+    if (!checkInInProgress.value) {
+      closeRegistrationDialog();
+    }
+  } else if (event.key >= "1" && event.key <= "9") {
+    event.preventDefault();
+    const index = parseInt(event.key) - 1;
+    if (index >= 0 && index < buttons.length) {
+      const button = buttons[index];
+      if (!button) {
+        showErrorMessage(
+          t("frontDesk.messages.invalidButton", { index: index + 1 }),
+        );
+        return;
       }
+      if (!isDialogButtonActionable(button)) {
+        return;
+      }
+      handleButtonClick(button);
+    }
+  }
+}
+
+function focusRegistrationButton() {
+  nextTick(() => {
+    const overlay = registrationOverlayRef.value;
+    const selectedButton = dialogButtons.value[selectedButtonIndex.value];
+    if (
+      !overlay ||
+      !selectedButton ||
+      !isDialogButtonFocusable(selectedButton)
+    ) {
+      return;
+    }
+
+    const target = overlay.querySelector<HTMLButtonElement>(
+      `[data-dialog-button="${selectedButton.value}"]`,
+    );
+    target?.focus();
+  });
+}
+
+function isSearchInputFocused(): boolean {
+  const inputComponent = searchInputRef.value as { $el?: HTMLElement } | null;
+  const wrapper = inputComponent?.$el;
+  if (!wrapper) {
+    return false;
+  }
+  return wrapper.contains(document.activeElement);
+}
+
+function focusSearchInput() {
+  nextTick(() => {
+    searchInputRef.value?.focus();
+  });
+}
+
+function hasBlockingElementPlusOverlay(): boolean {
+  return Array.from(document.querySelectorAll(".el-overlay")).some(
+    (overlay) =>
+      overlay instanceof HTMLElement &&
+      overlay.style.display !== "none" &&
+      getComputedStyle(overlay).display !== "none",
+  );
+}
+
+function handlePageKeydown(event: KeyboardEvent) {
+  if (event.key !== "Escape") {
+    return;
+  }
+  if (showRegistrationButtons.value) {
+    return;
+  }
+  if (hasBlockingElementPlusOverlay()) {
+    return;
+  }
+
+  if (isSearchInputFocused()) {
+    if (searchQuery.value) {
+      event.preventDefault();
+      searchQuery.value = "";
+    }
+    return;
+  }
+
+  event.preventDefault();
+  focusSearchInput();
+}
+
+function handleSearchKeydown(event: KeyboardEvent) {
+  if (showRegistrationButtons.value) {
+    handleRegistrationKeydown(event);
+    return;
+  }
+
+  const voterList = allVoters.value;
+
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+    selectedIndex.value = Math.min(
+      voterList.length - 1,
+      selectedIndex.value + 1,
+    );
+    updateSelectedVoter();
+  } else if (event.key === "ArrowUp") {
+    event.preventDefault();
+    selectedIndex.value = Math.max(0, selectedIndex.value - 1);
+    updateSelectedVoter();
+  } else if (event.key === "Enter") {
+    event.preventDefault();
+    if (selectedVoter.value) {
+      openRegistrationDialog();
     }
   }
 }
@@ -492,48 +897,55 @@ function handleRowClick(row: FrontDeskVoterDto) {
   selectedIndex.value = allVoters.value.findIndex(
     (v) => v.personGuid === row.personGuid,
   );
-  showRegistrationButtons.value = true;
-  selectedButtonIndex.value = 0;
+  openRegistrationDialog();
 }
 
 async function confirmCheckIn(votingMethod: string) {
-  if (!selectedVoter.value) {
+  if (
+    !selectedVoter.value ||
+    checkInInProgress.value ||
+    !hasActiveTeller.value
+  ) {
     return;
   }
+
+  const personGuid = selectedVoter.value.personGuid;
+
+  pendingVotingMethod.value = votingMethod;
+  checkInInProgress.value = true;
+  pendingCheckInPersonGuid.value = personGuid;
 
   try {
     await checkInVoter(electionGuid.value, {
-      personGuid: selectedVoter.value.personGuid,
+      personGuid,
       votingMethod,
-      tellerName: undefined,
+      ...getActiveTellerPayload(),
       votingLocationGuid: undefined,
     });
-
-    showSuccessMessage(
-      `${selectedVoter.value.fullName} checked in successfully`,
-    );
-    showRegistrationButtons.value = false;
-
-    const voterList = allVoters.value;
-    if (selectedIndex.value >= voterList.length) {
-      selectedIndex.value = Math.max(0, voterList.length - 1);
-    }
-    updateSelectedVoter();
-
-    nextTick(() => {
-      searchInputRef.value?.focus();
-    });
   } catch (err: any) {
-    showErrorMessage(err.message || "Failed to check in voter");
+    pendingVotingMethod.value = null;
+    checkInInProgress.value = false;
+    pendingCheckInPersonGuid.value = null;
+    showErrorMessage(err.message || t("frontDesk.errors.checkIn"));
   }
 }
 
-async function handleButtonClick(button: any) {
-  if (!selectedVoter.value) {
+async function handleButtonClick(button: DialogButton) {
+  if (!selectedVoter.value || checkInInProgress.value) {
+    return;
+  }
+  if (!isDialogButtonActionable(button)) {
     return;
   }
 
-  if (button.isVotingMethod) {
+  if (button.isClose) {
+    if (!checkInInProgress.value) {
+      closeRegistrationDialog();
+    }
+  } else if (button.isUnregister) {
+    await handleUnregisterSelected();
+  } else if (button.isVotingMethod) {
+    pendingVotingMethod.value = button.value;
     await confirmCheckIn(button.value);
   } else {
     await toggleFlag(button.value);
@@ -549,7 +961,7 @@ function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
 }
 
 async function toggleFlag(flag: string) {
-  if (!selectedVoter.value) {
+  if (!selectedVoter.value || !hasActiveTeller.value) {
     return;
   }
 
@@ -565,11 +977,14 @@ async function toggleFlag(flag: string) {
   if (hasCurrentFlag) {
     try {
       await ElMessageBox.confirm(
-        `Remove flag "${flag}" from ${selectedVoter.value.fullName}?`,
-        "Confirm Remove Flag",
+        t("frontDesk.confirm.removeFlag.message", {
+          flag,
+          name: selectedVoter.value.fullName,
+        }),
+        t("frontDesk.confirm.removeFlag.title"),
         {
-          confirmButtonText: "Remove",
-          cancelButtonText: "Cancel",
+          confirmButtonText: t("frontDesk.confirm.removeFlag.confirm"),
+          cancelButtonText: t("common.cancel"),
           type: "warning",
         },
       );
@@ -596,40 +1011,49 @@ async function updatePersonFlags(flags: string[]) {
       flags: flags.join(", "),
     });
 
-    showSuccessMessage("Flags updated successfully");
+    showSuccessMessage(t("frontDesk.messages.flagsUpdated"));
   } catch (err: any) {
-    showErrorMessage(err.message || "Failed to update flags");
+    showErrorMessage(err.message || t("frontDesk.errors.updateFlags"));
   }
 }
 
 async function handleUnregister(voter: FrontDeskVoterDto) {
   try {
     await ElMessageBox.confirm(
-      `Are you sure you want to unregister ${voter.fullName}? This will clear their check-in status.`,
-      "Confirm Unregister",
+      t("frontDesk.confirm.unregister.message", { name: voter.fullName }),
+      t("frontDesk.confirm.unregister.title"),
       {
-        confirmButtonText: "Unregister",
-        cancelButtonText: "Cancel",
+        confirmButtonText: t("frontDesk.confirm.unregister.confirm"),
+        cancelButtonText: t("common.cancel"),
         type: "warning",
       },
     );
 
     await unregisterVoter(electionGuid.value, {
       personGuid: voter.personGuid,
-      reason: "Unregistered by front desk",
+      reason: t("frontDesk.unregisterReason"),
     });
 
-    showSuccessMessage("Voter unregistered successfully");
+    showSuccessMessage(t("frontDesk.messages.unregistered"));
+    return true;
   } catch (err: any) {
     if (err !== "cancel") {
-      showErrorMessage(err.message || "Failed to unregister voter");
+      showErrorMessage(err.message || t("frontDesk.errors.unregister"));
     }
+    return false;
   }
 }
 
-function showHistory(voter: FrontDeskVoterDto) {
-  historyVoter.value = voter;
-  showHistoryDialog.value = true;
+async function handleUnregisterSelected() {
+  if (!selectedVoter.value || !hasActiveTeller.value) {
+    return;
+  }
+
+  const unregistered = await handleUnregister(selectedVoter.value);
+  if (unregistered) {
+    selectedButtonIndex.value = 0;
+    focusRegistrationOverlay();
+  }
 }
 
 function formatTime(time?: string): string {
@@ -659,42 +1083,34 @@ function formatTimeShort(time?: string): string {
 // }
 
 function getRowClassName({
-  _row,
+  row,
   rowIndex,
 }: {
-  _row: FrontDeskVoterDto;
+  row: FrontDeskVoterDto;
   rowIndex: number;
 }) {
+  const classes: string[] = [];
   if (rowIndex === selectedIndex.value) {
-    return "selected-row";
+    classes.push("selected-row");
   }
-  return "";
+  if (highlightedPersonGuids.value.has(row.personGuid)) {
+    classes.push("recently-updated-row");
+  }
+  return classes.join(" ");
 }
 
-function formatTimeline(entry: any): string {
-  const items = [];
-  if (entry.action === "CheckedIn") {
-    items.push(
-      `Checked in - ${entry.votingMethod === "I" ? "In Person" : entry.votingMethod === "M" ? "Mail" : entry.votingMethod === "O" ? "Online" : entry.votingMethod === "C" ? "Call-In" : entry.votingMethod}`,
-    );
-  }
-  if (entry.tellerName) {
-    items.push(`Teller: ${entry.tellerName}`);
-  }
-  if (entry.locationName) {
-    items.push(`Location: ${entry.locationName}`);
-  }
-  if (entry.envNum) {
-    items.push(`Envelope: #${entry.envNum}`);
-  }
-  if (entry.performedBy) {
-    items.push(entry.performedBy);
-  }
-  return items.join(", ");
+function formatTimeline(entry: RegistrationHistoryEntryDto): string {
+  return formatRegistrationHistoryDetails(entry, {
+    t,
+    getVotingMethodLabel,
+  });
 }
 
-function goBack() {
-  router.push(`/elections/${electionGuid.value}`);
+function handleLocationChange(locationGuid: string | undefined) {
+  locationStore.selectLocation(locationGuid ?? null);
+  if (locationGuid) {
+    showSuccessMessage(t("locations.locationSelected"));
+  }
 }
 
 function toggleMethodFilter(method: string) {
@@ -718,201 +1134,508 @@ function toggleFlagFilter(flag: string) {
 function clearFilters() {
   selectedMethodFilters.value = [];
   selectedFlagFilters.value = [];
-  showAllRegistered.value = false;
+}
+
+function openEnvelopeDialog(voter: FrontDeskVoterDto) {
+  if (!hasActiveTeller.value) {
+    return;
+  }
+  envelopeEditVoter.value = voter;
+  envelopeEditValue.value = voter.envNum ?? undefined;
+  showEnvelopeDialog.value = true;
+}
+
+function resetEnvelopeDialog() {
+  envelopeEditVoter.value = null;
+  envelopeEditValue.value = undefined;
+  envelopeSaving.value = false;
+}
+
+async function saveEnvelopeNumber(clear = false) {
+  if (
+    !envelopeEditVoter.value ||
+    envelopeSaving.value ||
+    !hasActiveTeller.value
+  ) {
+    return;
+  }
+
+  const personGuid = envelopeEditVoter.value.personGuid;
+  const envNum = clear
+    ? null
+    : typeof envelopeEditValue.value === "number" && envelopeEditValue.value > 0
+      ? envelopeEditValue.value
+      : null;
+
+  envelopeSaving.value = true;
+  try {
+    const updatedVoter = await frontDeskService.updateEnvelopeNumber(
+      electionGuid.value,
+      { personGuid, envNum },
+    );
+    updateVoterInList(updatedVoter);
+    showSuccessMessage(
+      clear || envNum === null
+        ? t("frontDesk.envelope.cleared")
+        : t("frontDesk.envelope.saved"),
+    );
+    showEnvelopeDialog.value = false;
+  } catch (err: any) {
+    showErrorMessage(err.message || t("frontDesk.errors.updateEnvelope"));
+  } finally {
+    envelopeSaving.value = false;
+  }
 }
 </script>
 <template>
   <div class="front-desk-page">
-    <el-card>
-      <template #header>
-        <div class="card-header">
-          <el-page-header
-            content="Front Desk - Voter Check-In"
-            @back="goBack"
-          />
-          <div v-if="stats" class="header-stats">
-            <el-statistic
-              :value="stats.checkedIn"
-              title="Checked In"
-              align="center"
+    <div class="front-desk-content-column">
+      <header class="front-desk-toolbar">
+        <div class="toolbar-primary">
+          <div
+            v-if="locationStore.locations.length > 1"
+            class="toolbar-location"
+          >
+            <el-icon class="location-icon" aria-hidden="true">
+              <Location />
+            </el-icon>
+            <el-select
+              :model-value="locationStore.selectedLocationGuid"
+              :placeholder="$t('locations.selectLocation')"
+              clearable
+              class="location-select"
+              :aria-label="$t('locations.currentLocation')"
+              @update:model-value="handleLocationChange"
             >
-              <template #prefix>
-                <el-icon>
-                  <UserFilled />
-                </el-icon>
-              </template>
-            </el-statistic>
-            <el-statistic
-              :value="stats.notYetCheckedIn"
-              title="Not Checked In"
-              align="center"
-            >
-              <template #prefix>
-                <el-icon>
-                  <User />
-                </el-icon>
-              </template>
-            </el-statistic>
+              <el-option
+                v-for="location in locationStore.sortedLocations"
+                :key="location.locationGuid"
+                :label="location.name"
+                :value="location.locationGuid"
+              />
+            </el-select>
+          </div>
+          <div class="toolbar-tellers">
+            <ActiveTellerSelector
+              :election-guid="electionGuid"
+              compact
+              @tellers-changed="onTellersChanged"
+            />
           </div>
         </div>
-      </template>
+      </header>
 
-      <el-row :gutter="20">
-        <el-col :span="24">
-          <el-card shadow="never">
-            <template #header>
-              <div class="section-header">
-                <h3>Quick Check-In</h3>
-                <el-input
-                  ref="searchInputRef"
-                  v-model="searchQuery"
-                  placeholder="Type name to search (↑↓ arrows, Enter to select)"
-                  style="width: 450px"
-                  clearable
-                  @keydown="handleSearchKeydown"
-                >
-                  <template #prefix>
-                    <el-icon>
-                      <Search />
-                    </el-icon>
-                  </template>
-                </el-input>
-              </div>
+      <el-alert
+        v-if="!hasActiveTeller"
+        type="warning"
+        :title="$t('frontDesk.tellerRequired.title')"
+        :description="$t('frontDesk.tellerRequired.message')"
+        show-icon
+        :closable="false"
+        class="teller-required-alert"
+      />
+
+      <section class="front-desk-workspace">
+        <div class="search-zone">
+          <div class="search-row">
+            <label class="search-label" for="front-desk-search-input">{{
+              $t("frontDesk.section.quickCheckIn")
+            }}</label>
+            <el-input
+              id="front-desk-search-input"
+              ref="searchInputRef"
+              v-model="searchQuery"
+              class="search-input"
+              :placeholder="$t('frontDesk.search.placeholder')"
+              clearable
+              @keydown="handleSearchKeydown"
+            >
+              <template #prefix>
+                <el-icon>
+                  <Search />
+                </el-icon>
+              </template>
+            </el-input>
+            <el-radio-group
+              v-model="registrationFilter"
+              class="registration-filter"
+            >
+              <el-radio-button value="all">
+                {{
+                  $t("frontDesk.filters.registrationAll", {
+                    count: filteredVoters.length,
+                  })
+                }}
+              </el-radio-button>
+              <el-radio-button value="notRegistered">
+                {{
+                  $t("frontDesk.filters.registrationNotRegistered", {
+                    count: notCheckedInVoters.length,
+                  })
+                }}
+              </el-radio-button>
+              <el-radio-button value="registered">
+                {{
+                  $t("frontDesk.filters.registrationRegistered", {
+                    count: checkedInVoters.length,
+                  })
+                }}
+              </el-radio-button>
+            </el-radio-group>
+          </div>
+        </div>
+
+        <div
+          v-if="registrationTypes.length > 0 || electionFlags.length > 0"
+          class="filters-bar"
+        >
+          <div class="filter-group">
+            <span class="filter-label">{{
+              $t("frontDesk.filters.votingMethods")
+            }}</span>
+            <el-button
+              v-for="method in registrationTypes"
+              :key="method.value"
+              :type="
+                selectedMethodFilters.includes(method.value)
+                  ? 'primary'
+                  : 'default'
+              "
+              text
+              size="small"
+              class="filter-chip"
+              @click="toggleMethodFilter(method.value)"
+            >
+              {{
+                $t("frontDesk.filters.methodWithCount", {
+                  label: method.label,
+                  count: methodCounts[method.value] || 0,
+                })
+              }}
+            </el-button>
+
+            <template v-if="electionFlags.length > 0">
+              <span class="filter-divider" aria-hidden="true" />
+
+              <span class="filter-label">{{
+                $t("frontDesk.filters.flags")
+              }}</span>
+              <el-button
+                v-for="flag in electionFlags"
+                :key="flag"
+                :type="
+                  selectedFlagFilters.includes(flag) ? 'primary' : 'default'
+                "
+                text
+                size="small"
+                class="filter-chip"
+                @click="toggleFlagFilter(flag)"
+              >
+                {{
+                  $t("frontDesk.filters.flagWithCount", {
+                    flag,
+                    count: flagCounts[flag] || 0,
+                  })
+                }}
+              </el-button>
             </template>
 
-            <!-- Filters -->
-            <div class="filters-section">
-              <div class="filter-group">
-                <el-button
-                  :type="showAllRegistered ? 'primary' : 'default'"
-                  size="small"
-                  @click="showAllRegistered = !showAllRegistered"
-                >
-                  Show All Registered ({{ checkedInVoters.length }})
-                </el-button>
+            <el-button
+              v-if="hasActiveFilters"
+              type="info"
+              text
+              size="small"
+              @click="clearFilters"
+            >
+              {{ $t("common.clearFilters") }}
+            </el-button>
+          </div>
 
-                <el-divider direction="vertical" />
+          <div v-if="electionFlags.length > 0" class="flag-legend">
+            <span class="legend-label">{{
+              $t("frontDesk.filters.flagLegend")
+            }}</span>
+            <el-tag
+              v-for="flag in electionFlags"
+              :key="flag"
+              size="small"
+              type="info"
+              class="legend-tag"
+            >
+              {{ getFlagAbbr(flag) }} = {{ flag }}
+            </el-tag>
+          </div>
+        </div>
 
-                <span class="filter-label">Voting Methods:</span>
-                <el-button
-                  v-for="method in registrationTypes"
-                  :key="method.value"
-                  :type="
-                    selectedMethodFilters.includes(method.value)
-                      ? 'primary'
-                      : 'default'
-                  "
-                  size="small"
-                  @click="toggleMethodFilter(method.value)"
-                >
-                  {{ method.label }} ({{ methodCounts[method.value] || 0 }})
-                </el-button>
-
-                <template v-if="electionFlags.length > 0">
-                  <el-divider direction="vertical" />
-
-                  <span class="filter-label">Flags:</span>
-                  <el-button
-                    v-for="flag in electionFlags"
-                    :key="flag"
-                    :type="
-                      selectedFlagFilters.includes(flag) ? 'primary' : 'default'
-                    "
-                    size="small"
-                    @click="toggleFlagFilter(flag)"
+        <div ref="voterListContainerRef" class="voter-list-container">
+          <div ref="tableWrapperRef" class="table-wrapper">
+            <el-table
+              ref="voterTableRef"
+              :data="tableVoters"
+              :loading="loading"
+              :row-key="(row: FrontDeskVoterDto) => row.personGuid"
+              :height="tableHeight"
+              :row-class-name="getRowClassName"
+              style="width: 100%"
+              scrollbar-always-on
+              @row-click="handleRowClick"
+            >
+              <el-table-column
+                prop="fullName"
+                :label="$t('frontDesk.table.name')"
+                sortable
+                :width="frontDeskTableColumnWidths.fullName"
+              />
+              <el-table-column
+                :label="$t('frontDesk.table.method')"
+                :width="frontDeskTableColumnWidths.method"
+              >
+                <template #default="{ row }">
+                  <el-tag
+                    v-if="row.votingMethod"
+                    :type="getVotingMethodTagType(row.votingMethod)"
                   >
-                    {{ flag }} ({{ flagCounts[flag] || 0 }})
+                    {{ getVotingMethodLabel(row.votingMethod) }}
+                  </el-tag>
+                  <span v-else>{{ $t("frontDesk.common.dash") }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="bahaiId"
+                :label="$t('frontDesk.table.bahaiId')"
+                :width="frontDeskTableColumnWidths.bahaiId"
+              />
+              <el-table-column
+                prop="area"
+                :label="$t('frontDesk.table.area')"
+                :width="frontDeskTableColumnWidths.area"
+              />
+              <el-table-column
+                v-if="ENABLE_ENVELOPE_NUMBERS"
+                :label="$t('frontDesk.table.envNum')"
+                :width="frontDeskTableColumnWidths.envNum"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <el-button
+                    v-if="row.envNum"
+                    link
+                    type="primary"
+                    size="small"
+                    :disabled="!hasActiveTeller"
+                    @click.stop="openEnvelopeDialog(row)"
+                  >
+                    {{ row.envNum }}
+                  </el-button>
+                  <el-button
+                    v-else
+                    link
+                    type="primary"
+                    :disabled="!hasActiveTeller"
+                    @click.stop="openEnvelopeDialog(row)"
+                  >
+                    {{ $t("frontDesk.envelope.set") }}
                   </el-button>
                 </template>
+              </el-table-column>
 
-                <el-button
-                  v-if="
-                    selectedMethodFilters.length > 0 ||
-                    selectedFlagFilters.length > 0 ||
-                    showAllRegistered
-                  "
-                  type="info"
-                  size="small"
-                  @click="clearFilters"
-                >
-                  Clear Filters
-                </el-button>
+              <el-table-column
+                v-if="electionFlags.length > 0"
+                :label="$t('frontDesk.table.flags')"
+                :width="frontDeskTableColumnWidths.flags"
+              >
+                <template #default="{ row }">
+                  <template v-if="row.flags">
+                    <el-tag
+                      v-for="flag in electionFlags.filter((f) =>
+                        hasFlag(row, f),
+                      )"
+                      :key="flag"
+                      type="success"
+                      class="flag-tag"
+                    >
+                      {{ getFlagAbbr(flag) }}
+                    </el-tag>
+                  </template>
+                  <span v-else>{{ $t("frontDesk.common.dash") }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('frontDesk.table.time')"
+                :width="frontDeskTableColumnWidths.time"
+              >
+                <template #default="{ row }">
+                  <span v-if="row.registrationTime">{{
+                    formatTimeShort(row.registrationTime)
+                  }}</span>
+                  <span v-else>{{ $t("frontDesk.common.dash") }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <div ref="keyboardHintRef" class="keyboard-hint">
+            {{
+              $t("frontDesk.keyboardHint", {
+                notCheckedIn: notCheckedInVoters.length,
+                checkedIn: checkedInVoters.length,
+              })
+            }}
+          </div>
+
+          <div
+            v-if="showRegistrationButtons && selectedVoter"
+            ref="registrationOverlayRef"
+            class="registration-overlay"
+            tabindex="-1"
+            @keydown.capture="handleRegistrationKeydown"
+          >
+            <div class="registration-buttons">
+              <el-alert
+                v-if="!hasActiveTeller"
+                type="warning"
+                :title="$t('frontDesk.tellerRequired.title')"
+                :description="$t('frontDesk.tellerRequired.message')"
+                show-icon
+                :closable="false"
+                class="teller-required-alert"
+              />
+              <div class="registration-header">
+                <div class="selected-voter-info">
+                  <strong>
+                    {{
+                      selectedVoter.isCheckedIn
+                        ? $t("frontDesk.dialog.update")
+                        : $t("frontDesk.dialog.checkIn")
+                    }}
+                    {{ selectedVoter.fullName }}
+                  </strong>
+                  <span v-if="selectedVoter.bahaiId" class="voter-detail">
+                    {{ $t("frontDesk.dialog.id") }}
+                    {{ selectedVoter.bahaiId }}
+                  </span>
+                  <span v-if="selectedVoter.area" class="voter-detail">
+                    {{ $t("frontDesk.dialog.area") }}
+                    {{ selectedVoter.area }}
+                  </span>
+                </div>
+                <div class="registration-header-actions">
+                  <el-button
+                    v-if="selectedVoter.isCheckedIn"
+                    type="default"
+                    size="large"
+                    data-dialog-button="__unregister__"
+                    class="unregister-button dialog-option-button"
+                    :disabled="!hasActiveTeller"
+                    :class="{
+                      'keyboard-focused-button':
+                        isDialogButtonKeyboardFocused('__unregister__'),
+                    }"
+                    @click="handleUnregisterSelected"
+                  >
+                    {{ $t("frontDesk.dialog.unregister") }}
+                    <kbd>{{ getDialogButtonKey("__unregister__") }}</kbd>
+                  </el-button>
+                  <el-button
+                    type="default"
+                    size="large"
+                    data-dialog-button="__close__"
+                    class="close-dialog-button"
+                    :class="{
+                      'keyboard-focused-button':
+                        isDialogButtonKeyboardFocused('__close__'),
+                    }"
+                    :disabled="checkInInProgress"
+                    :title="$t('common.close')"
+                    @click="closeRegistrationDialog"
+                  >
+                    <el-icon>
+                      <Close />
+                    </el-icon>
+                    {{ $t("common.close") }}
+                  </el-button>
+                </div>
               </div>
 
-              <!-- Flag Legend -->
-              <div v-if="electionFlags.length > 0" class="flag-legend">
-                <span class="legend-label">Flag Abbreviations:</span>
-                <el-tag
-                  v-for="flag in electionFlags"
-                  :key="flag"
-                  size="small"
-                  class="legend-tag"
-                >
-                  {{ getFlagAbbr(flag) }} = {{ flag }}
-                </el-tag>
-              </div>
-            </div>
-
-            <!-- Registration type selection (shown after pressing Enter) -->
-            <div
-              v-if="showRegistrationButtons && selectedVoter"
-              class="registration-buttons"
-            >
-              <div class="selected-voter-info">
-                <strong
-                  >{{ selectedVoter.isCheckedIn ? "Update: " : "Check in: "
-                  }}{{ selectedVoter.fullName }}</strong
-                >
-                <span v-if="selectedVoter.bahaiId" class="voter-detail"
-                  >ID: {{ selectedVoter.bahaiId }}</span
-                >
-                <span v-if="selectedVoter.area" class="voter-detail"
-                  >Area: {{ selectedVoter.area }}</span
-                >
+              <!-- Checked-in status -->
+              <div
+                v-if="selectedVoter.isCheckedIn"
+                class="button-section checked-in-section"
+              >
+                <h4>{{ $t("frontDesk.dialog.currentRegistration") }}</h4>
+                <div class="checked-in-details">
+                  <el-tag type="success" size="large">
+                    {{ getVotingMethodLabel(selectedVoter.votingMethod) }}
+                  </el-tag>
+                  <span v-if="selectedVoter.envNum" class="checked-in-detail">
+                    {{
+                      $t("frontDesk.dialog.envelope", {
+                        num: selectedVoter.envNum,
+                      })
+                    }}
+                  </span>
+                  <span
+                    v-if="selectedVoter.registrationTime"
+                    class="checked-in-detail"
+                  >
+                    {{ formatTime(selectedVoter.registrationTime) }}
+                  </span>
+                </div>
               </div>
 
               <!-- Voting Methods -->
               <div v-if="!selectedVoter.isCheckedIn" class="button-section">
-                <h4>Voting Method</h4>
-                <div class="button-group">
+                <h4>{{ $t("frontDesk.dialog.votingMethod") }}</h4>
+                <div
+                  class="button-group"
+                  :class="{ 'check-in-pending': checkInInProgress }"
+                >
                   <el-button
-                    v-for="(type, index) in registrationTypes"
+                    v-for="type in registrationTypes"
                     :key="type.value"
+                    :data-dialog-button="type.value"
                     :type="
-                      index === selectedButtonIndex ? 'primary' : 'default'
+                      pendingVotingMethod === type.value ? 'primary' : 'default'
                     "
                     size="large"
+                    class="dialog-option-button"
+                    :disabled="
+                      !hasActiveTeller ||
+                      (checkInInProgress && pendingVotingMethod !== type.value)
+                    "
                     :class="{
-                      'selected-button': index === selectedButtonIndex,
+                      'keyboard-focused-button': isDialogButtonKeyboardFocused(
+                        type.value,
+                      ),
+                      'pending-button': pendingVotingMethod === type.value,
                     }"
-                    @click="handleButtonClick(type)"
+                    @click="clickDialogButton(type.value)"
                   >
-                    {{ type.label }} <kbd>{{ type.key }}</kbd>
+                    {{ type.label }}
+                    <kbd>{{ getDialogButtonKey(type.value) }}</kbd>
                   </el-button>
                 </div>
               </div>
 
               <!-- Flags -->
               <div v-if="electionFlags.length > 0" class="button-section">
-                <h4>Flags</h4>
+                <h4>{{ $t("frontDesk.dialog.flags") }}</h4>
                 <div class="button-group">
                   <el-button
-                    v-for="(flag, index) in electionFlags"
+                    v-for="flag in electionFlags"
                     :key="flag"
-                    :type="
-                      4 + index === selectedButtonIndex
-                        ? 'primary'
-                        : hasFlag(selectedVoter, flag)
-                          ? 'success'
-                          : 'default'
-                    "
+                    :data-dialog-button="flag"
+                    :type="hasFlag(selectedVoter, flag) ? 'success' : 'default'"
                     size="large"
+                    class="dialog-option-button"
+                    :disabled="!hasActiveTeller || checkInInProgress"
                     :class="{
-                      'selected-button': 4 + index === selectedButtonIndex,
+                      'keyboard-focused-button':
+                        isDialogButtonKeyboardFocused(flag),
                     }"
-                    @click="toggleFlag(flag)"
+                    @click="clickDialogButton(flag)"
                   >
-                    {{ flag }} <kbd>{{ 5 + index }}</kbd>
+                    {{ flag }}
+                    <kbd>{{ getDialogButtonKey(flag) }}</kbd>
                     <el-icon
                       v-if="hasFlag(selectedVoter, flag)"
                       style="margin-left: 5px"
@@ -923,164 +1646,79 @@ function clearFilters() {
                 </div>
               </div>
 
-              <div class="instruction-text">
-                Use ← → arrows or number keys, press Enter to confirm, Esc to
-                cancel
-              </div>
-            </div>
-
-            <!-- All voters list (merged not-checked-in and checked-in) -->
-            <div v-else>
-              <el-table
-                ref="voterTableRef"
-                :data="allVoters"
-                :loading="loading"
-                style="width: 100%"
-                max-height="600px"
-                :row-class-name="getRowClassName"
-                @row-click="handleRowClick"
+              <!-- Registration history -->
+              <div
+                v-if="selectedVoterRegistrationHistory.length"
+                class="dialog-history-section"
               >
-                <el-table-column
-                  prop="fullName"
-                  label="Name"
-                  sortable
-                  width="350"
-                />
-                <el-table-column prop="bahaiId" label="Bahá'í ID" width="120" />
-                <el-table-column prop="area" label="Area" width="100" />
-                <el-table-column prop="envNum" label="Env #" width="80" />
-                <el-table-column label="Method" width="100">
-                  <template #default="{ row }">
-                    <el-tag
-                      v-if="row.votingMethod === 'I'"
-                      type="success"
-                      size="small"
-                      >In Person</el-tag
-                    >
-                    <el-tag
-                      v-else-if="row.votingMethod === 'M'"
-                      type="info"
-                      size="small"
-                      >Mail</el-tag
-                    >
-                    <el-tag
-                      v-else-if="row.votingMethod === 'O'"
-                      type="primary"
-                      size="small"
-                      >Online</el-tag
-                    >
-                    <el-tag
-                      v-else-if="row.votingMethod === 'C'"
-                      type="warning"
-                      size="small"
-                      >Call-In</el-tag
-                    >
-                    <span v-else>-</span>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  v-if="electionFlags.length > 0"
-                  label="Flags"
-                  width="100"
-                >
-                  <template #default="{ row }">
-                    <template v-if="row.flags">
-                      <el-tag
-                        v-for="flag in electionFlags.filter((f) =>
-                          hasFlag(row, f),
-                        )"
-                        :key="flag"
-                        size="small"
-                        type="success"
-                        class="flag-tag"
-                      >
-                        {{ getFlagAbbr(flag) }}
-                      </el-tag>
-                    </template>
-                    <span v-else>-</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="Time" width="100">
-                  <template #default="{ row }">
-                    <span v-if="row.registrationTime">{{
-                      formatTimeShort(row.registrationTime)
-                    }}</span>
-                    <span v-else>-</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="Actions" width="120" fixed="right">
-                  <template #default="{ row }">
-                    <template v-if="row.isCheckedIn">
-                      <el-button
-                        type="default"
-                        size="small"
-                        :icon="Clock"
-                        circle
-                        title="View History"
-                        @click.stop="showHistory(row)"
-                      />
-                      <el-button
-                        type="warning"
-                        size="small"
-                        :icon="Warning"
-                        circle
-                        title="Unregister"
-                        @click.stop="handleUnregister(row)"
-                      />
-                    </template>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <div class="keyboard-hint">
-                {{ notCheckedInVoters.length }} not checked in,
-                {{ checkedInVoters.length }} checked in. Use keyboard to
-                navigate and check in.
+                <h4>{{ $t("frontDesk.dialog.registrationHistory") }}</h4>
+                <el-timeline>
+                  <el-timeline-item
+                    v-for="(entry, index) in selectedVoterRegistrationHistory"
+                    :key="index"
+                    :timestamp="formatTimeline(entry)"
+                  >
+                    {{ formatTime(entry.timestamp) }}
+                  </el-timeline-item>
+                </el-timeline>
+              </div>
+
+              <div class="instruction-text">
+                <template v-if="checkInInProgress">
+                  {{ $t("frontDesk.dialog.checkingIn") }}
+                </template>
+                <template v-else>
+                  {{ $t("frontDesk.dialog.instructions") }}
+                </template>
               </div>
             </div>
-          </el-card>
-        </el-col>
-      </el-row>
-    </el-card>
+          </div>
+        </div>
+      </section>
+    </div>
 
-    <!-- History dialog -->
     <el-dialog
-      v-model="showHistoryDialog"
-      title="Registration History"
-      width="760px"
-      class="history-detail"
+      v-if="ENABLE_ENVELOPE_NUMBERS"
+      v-model="showEnvelopeDialog"
+      :title="$t('frontDesk.envelope.editTitle')"
+      width="400px"
+      destroy-on-close
+      @closed="resetEnvelopeDialog"
     >
-      <div v-if="historyVoter">
-        <h4>
-          {{ historyVoter.fullName }}
-          <span v-if="historyVoter.bahaiId"
-            >Bahá'í ID: {{ historyVoter.bahaiId }}</span
-          >
-        </h4>
-        <el-divider />
-
-        <div
-          v-if="
-            historyVoter.registrationHistory &&
-            historyVoter.registrationHistory.length > 0
-          "
-        >
-          <el-timeline>
-            <el-timeline-item
-              v-for="(entry, index) in historyVoter.registrationHistory"
-              :key="index"
-              :timestamp="formatTimeline(entry)"
-            >
-              {{ formatTime(entry.timestamp) }}
-            </el-timeline-item>
-          </el-timeline>
-        </div>
-        <div v-else>
-          <el-empty description="No history available" />
-        </div>
-      </div>
-
+      <p v-if="envelopeEditVoter" class="envelope-dialog-prompt">
+        {{
+          $t("frontDesk.envelope.editPrompt", {
+            name: envelopeEditVoter.fullName,
+          })
+        }}
+      </p>
+      <el-input-number
+        v-model="envelopeEditValue"
+        :min="1"
+        :step="1"
+        :precision="0"
+        :controls="false"
+        style="width: 100%"
+        @keyup.enter="saveEnvelopeNumber()"
+      />
       <template #footer>
-        <el-button @click="showHistoryDialog = false">Close</el-button>
+        <el-button @click="showEnvelopeDialog = false">
+          {{ $t("common.cancel") }}
+        </el-button>
+        <el-button
+          v-if="envelopeEditVoter?.envNum"
+          :disabled="envelopeSaving"
+          @click="saveEnvelopeNumber(true)"
+        >
+          {{ $t("frontDesk.envelope.clear") }}
+        </el-button>
+        <el-button
+          type="primary"
+          :loading="envelopeSaving"
+          @click="saveEnvelopeNumber()"
+        >
+          {{ $t("common.save") }}
+        </el-button>
       </template>
     </el-dialog>
   </div>
@@ -1088,52 +1726,198 @@ function clearFilters() {
 
 <style lang="less">
 .front-desk-page {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
 
-  .card-header {
+  .front-desk-content-column {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    width: 100%;
+    max-width: var(--front-desk-content-max-width);
+    margin-inline: auto;
+    flex: 1;
+    min-height: 0;
   }
 
-  .header-stats {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
-  .filters-section {
-    margin-bottom: 20px;
-    padding: 15px;
-    background: var(--el-fill-color-light);
-    border-radius: 8px;
+  .front-desk-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-4);
+    flex-wrap: wrap;
+    padding: var(--spacing-2) var(--spacing-3);
+    background: var(--color-frontdesk-toolbar-bg);
+    color: var(--el-text-color-secondary);
+    font-size: var(--el-font-size-base);
+  }
+
+  .toolbar-primary {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    min-width: 0;
+  }
+
+  .toolbar-location {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+
+    .location-icon {
+      color: var(--el-color-primary);
+      font-size: 16px;
+    }
+
+    .location-select {
+      width: 200px;
+    }
+  }
+
+  .toolbar-tellers {
+    margin-left: var(--spacing-4);
+  }
+
+  .teller-required-alert {
+    margin: 0;
+  }
+
+  .front-desk-workspace {
+    --front-desk-content-padding-x: var(--spacing-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    flex: 1;
+    min-height: 0;
+  }
+
+  .search-zone {
+    padding: 0 var(--front-desk-content-padding-x) var(--spacing-1);
+  }
+
+  .search-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-3);
+    flex-wrap: wrap;
+  }
+
+  .search-label {
+    font-size: var(--el-font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--el-text-color-regular);
+    white-space: nowrap;
+  }
+
+  .search-input {
+    width: 300px;
+    flex-shrink: 0;
+
+    .el-input__wrapper {
+      background: var(--color-frontdesk-search-bg);
+      border: 1px solid var(--color-frontdesk-search-border);
+      box-shadow: var(--color-frontdesk-search-shadow);
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .el-input__wrapper.is-focus {
+      border-color: var(--el-color-primary);
+      box-shadow: 0 0 0 2px var(--el-color-primary-light-8);
+    }
+
+    .el-input__inner {
+      font-size: var(--el-font-size-base);
+    }
+
+    .el-input__prefix .el-icon {
+      font-size: 1em;
+      color: var(--el-color-primary);
+    }
+  }
+
+  .el-radio-button__inner {
+    font-weight: normal;
+  }
+
+  .registration-filter {
+    flex-wrap: wrap;
+  }
+
+  .filters-bar {
+    padding: 0 var(--front-desk-content-padding-x);
+    border-bottom: 1px solid var(--el-border-color-lighter);
 
     .filter-group {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: var(--spacing-2);
     }
 
     .filter-label {
-      font-weight: bold;
-      color: var(--el-text-color-regular);
-      margin: 0 5px;
+      font-weight: var(--font-weight-medium);
+      color: var(--el-text-color-secondary);
+      font-size: var(--font-size-sm);
+      margin-right: 4px;
+    }
+
+    .filter-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--el-border-color-lighter);
+      margin: 0 4px;
+    }
+
+    .filter-chip {
+      padding: 2px 8px;
+
+      &.el-button--primary.is-text {
+        color: var(--color-frontdesk-filter-active-text) !important;
+        background-color: var(--color-frontdesk-filter-active-bg) !important;
+        border-color: var(--color-frontdesk-filter-active-bg) !important;
+      }
+
+      &.el-button--primary.is-text:hover,
+      &.el-button--primary.is-text:focus {
+        color: var(--color-frontdesk-filter-active-text) !important;
+        background-color: var(--color-frontdesk-filter-active-bg) !important;
+        border-color: var(--color-frontdesk-filter-active-bg) !important;
+        opacity: 0.92;
+      }
     }
 
     .flag-legend {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--el-border-color);
+      justify-content: center;
+      gap: 8px;
+      padding-bottom: var(--spacing-2);
 
       .legend-label {
-        font-weight: bold;
+        font-weight: var(--font-weight-medium);
         color: var(--el-text-color-secondary);
-        font-size: 12px;
+        font-size: var(--font-size-sm);
       }
 
       .legend-tag {
@@ -1146,21 +1930,67 @@ function clearFilters() {
     margin-right: 4px;
   }
 
-  .section-header {
+  .voter-list-container {
+    position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 3em;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    padding: 0 var(--front-desk-content-padding-x);
   }
 
-  .section-header h3 {
-    margin: 0;
+  .table-wrapper {
+    width: var(--front-desk-table-max-width);
+    max-width: 100%;
+    margin-inline: auto;
+
+    .el-table {
+      --el-table-border-color: var(--el-border-color-lighter);
+      --el-table-header-bg-color: var(--el-fill-color-blank);
+      --el-table-header-text-color: var(--el-text-color-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .el-table th.el-table__cell {
+      font-weight: var(--font-weight-medium);
+      font-size: var(--font-size-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+  }
+
+  .el-timeline-item__timestamp {
+    font-size: 1.1em;
+    color: var(--el-text-color-regular);
+  }
+  .el-timeline-item__content {
+    font-size: 0.85em;
+    color: var(--el-text-color-secondary);
+  }
+
+  .registration-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px;
+    background: color-mix(in srgb, var(--el-bg-color) 88%, transparent);
+    backdrop-filter: blur(2px);
+    overflow-y: auto;
+    outline: none;
   }
 
   .registration-buttons {
+    width: 100%;
+    max-width: 900px;
     padding: 20px;
     background: var(--el-color-primary-light-9);
     border-radius: 8px;
-    margin-bottom: 20px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   }
 
   .button-section {
@@ -1173,11 +2003,21 @@ function clearFilters() {
     }
   }
 
+  .registration-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
   .selected-voter-info {
     display: flex;
+    flex: 1;
+    flex-wrap: wrap;
     align-items: center;
     gap: 20px;
-    margin-bottom: 20px;
+    min-width: 0;
     font-size: 18px;
   }
 
@@ -1186,30 +2026,84 @@ function clearFilters() {
     font-size: 14px;
   }
 
+  .registration-header-actions {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+
+  .unregister-button,
+  .dialog-option-button {
+    flex: 0 0 auto;
+    width: auto;
+    position: relative;
+    white-space: nowrap;
+    padding-right: 2.25rem;
+  }
+
+  .close-dialog-button {
+    flex: 0 0 auto;
+    position: relative;
+  }
+
+  .envelope-dialog-prompt {
+    margin: 0 0 16px;
+    color: var(--el-text-color-regular);
+  }
+
   .button-group {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 10px;
     margin-bottom: 10px;
   }
 
-  .button-group .el-button {
-    flex: 1;
-    position: relative;
-  }
-
-  .button-group kbd {
+  .registration-buttons .el-button kbd {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
     font-size: 10px;
     padding: 2px 4px;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 3px;
+    line-height: 1;
   }
 
-  .selected-button {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px var(--el-color-primary);
+  .keyboard-focused-button.el-button:not(.unregister-button) {
+    border: 2px solid var(--el-color-primary) !important;
+    box-shadow: 0 0 0 1px var(--el-color-primary-light-5);
+  }
+
+  .keyboard-focused-button.el-button--success:not(.unregister-button) {
+    border-color: var(--el-color-success) !important;
+    box-shadow: 0 0 0 1px var(--el-color-success-light-5);
+  }
+
+  .unregister-button.keyboard-focused-button.el-button {
+    border: 2px solid var(--el-text-color-secondary) !important;
+    box-shadow: 0 0 0 1px var(--el-border-color);
+  }
+
+  .pending-button.el-button {
+    background-color: var(--el-color-primary) !important;
+    border-color: var(--el-color-primary) !important;
+    color: #fff !important;
+    box-shadow: 0 0 0 2px var(--el-color-primary-light-5);
+  }
+
+  .pending-button.el-button:hover,
+  .pending-button.el-button:focus {
+    background-color: var(--el-color-primary-dark-2) !important;
+    border-color: var(--el-color-primary-dark-2) !important;
+    color: #fff !important;
+  }
+
+  .check-in-pending .el-button:not(.pending-button) {
+    opacity: 0.55;
   }
 
   .instruction-text {
@@ -1220,7 +2114,10 @@ function clearFilters() {
   }
 
   .keyboard-hint {
+    width: var(--front-desk-table-max-width);
+    max-width: 100%;
     margin-top: 10px;
+    margin-inline: auto;
     text-align: center;
     color: var(--el-text-color-secondary);
     font-size: 12px;
@@ -1247,23 +2144,84 @@ function clearFilters() {
     color: var(--el-color-primary);
   }
 
-  .selected-row {
-    background-color: var(--el-color-primary-light-9) !important;
+  .selected-row > td.el-table__cell {
+    background-color: var(--color-frontdesk-row-selected-bg) !important;
+    color: var(--color-frontdesk-row-selected-text) !important;
+
+    .cell {
+      color: inherit;
+    }
+  }
+
+  .el-table__body tr.recently-updated-row > td.el-table__cell {
+    animation: row-highlight-fade 2s ease-out forwards;
+  }
+
+  .el-table__body tr.selected-row.recently-updated-row > td.el-table__cell {
+    animation: row-highlight-fade-selected 2s ease-out forwards;
+  }
+
+  @keyframes row-highlight-fade {
+    0%,
+    70% {
+      background-color: color-mix(
+        in srgb,
+        var(--color-frontdesk-row-highlight) 35%,
+        var(--el-bg-color)
+      ) !important;
+    }
+    100% {
+      background-color: transparent !important;
+    }
+  }
+
+  @keyframes row-highlight-fade-selected {
+    0%,
+    70% {
+      background-color: color-mix(
+        in srgb,
+        var(--color-frontdesk-row-highlight) 35%,
+        var(--el-bg-color)
+      ) !important;
+    }
+    100% {
+      background-color: var(--color-frontdesk-row-selected-bg) !important;
+    }
+  }
+
+  .checked-in-section {
+    .checked-in-details {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .checked-in-detail {
+      color: var(--el-text-color-secondary);
+      font-size: 14px;
+    }
+  }
+
+  .dialog-history-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    max-height: 300px;
+    overflow-y: auto;
+    border-top: 1px solid var(--el-border-color);
+
+    h4 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      color: var(--el-text-color-regular);
+    }
   }
 
   .performed-by {
     color: var(--el-text-color-secondary);
     font-size: 12px;
     font-style: italic;
-  }
-
-  .history-detail {
-    h4 {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      justify-content: space-between;
-    }
   }
 }
 </style>

@@ -1,17 +1,16 @@
 {
   "teller.form.cancel": "Cancel",
-  "teller.form.computerCode": "Computer Code",
-  "teller.form.computerCodeHelp": "Two uppercase letters (AA-ZZ) or leave empty",
-  "teller.form.computerCodeInvalid": "Computer code must be 2 uppercase letters (AA-ZZ)",
-  "teller.form.computerCodePlaceholder": "e.g., AA",
   "teller.form.create": "Create",
-  "teller.form.headTeller": "Head Teller",
-  "teller.form.headTellerHelp": "Head tellers have additional permissions",
   "teller.form.name": "Teller Name",
   "teller.form.nameMaxLength": "Teller name cannot exceed 50 characters",
   "teller.form.namePlaceholder": "Enter teller name",
   "teller.form.nameRequired": "Teller name is required",
   "teller.form.save": "Save",
+  "teller.form.saved": "Teller saved",
   "teller.form.titleAdd": "Add Teller",
-  "teller.form.titleEdit": "Edit Teller"
+  "teller.form.titleEdit": "Edit Teller",
+  "teller.active.typeToAdd": "Type to add your name if not listed",
+  "teller.active.teller1Placeholder": "Teller at keyboard",
+  "teller.active.teller2Placeholder": "Second teller (optional)",
+  "teller.active.hint": "Type a new name or pick from the list."
 }

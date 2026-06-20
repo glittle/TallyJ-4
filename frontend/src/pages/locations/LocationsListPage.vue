@@ -4,13 +4,12 @@ import { Delete, Edit, Monitor, Plus } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import ComputerRegistrationDialog from "../../components/locations/ComputerRegistrationDialog.vue";
 import LocationFormDialog from "../../components/locations/LocationFormDialog.vue";
 import { useLocationStore } from "../../stores/locationStore";
 import type { ComputerDto, LocationDto } from "../../types";
 
-const router = useRouter();
 const route = useRoute();
 const locationStore = useLocationStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
@@ -54,9 +53,7 @@ async function loadLocations() {
   }
 }
 
-function goBack() {
-  router.push(`/elections/${electionGuid}`);
-}
+
 
 function editLocation(location: LocationDto) {
   editingLocation.value = location;
@@ -197,12 +194,6 @@ function formatDateTime(dateStr?: string): string {
     <el-card>
       <template #header>
         <div class="card-header">
-          <div class="header-left">
-            <el-page-header
-              :content="t('locations.page.title')"
-              @back="goBack"
-            />
-          </div>
           <div class="header-actions">
             <el-button type="primary" @click="showCreateDialog = true">
               <el-icon><Plus /></el-icon>

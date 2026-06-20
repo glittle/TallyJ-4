@@ -1,4 +1,15 @@
-import { client } from "../api/config";
+import {
+  postApiPeopleImportByElectionGuidUpload,
+  getApiPeopleImportByElectionGuidFiles,
+  getApiPeopleImportByElectionGuidFilesByRowIdParse,
+  putApiPeopleImportByElectionGuidFilesByRowIdMapping,
+  getApiPeopleImportByElectionGuidFilesByRowIdMapping,
+  putApiPeopleImportByElectionGuidFilesByRowIdSettings,
+  postApiPeopleImportByElectionGuidFilesByRowIdImport,
+  deleteApiPeopleImportByElectionGuidFilesByRowId,
+  deleteApiPeopleImportByElectionGuidPeople,
+  getApiPeopleImportByElectionGuidPeopleCount,
+} from "@/api/gen/configService";
 import type {
   ImportFileInfo,
   ParseFileResult,
@@ -10,21 +21,18 @@ import type {
 
 export const peopleImportService = {
   async uploadFile(electionGuid: string, file: File): Promise<ImportFileInfo> {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await client.post<ImportFileInfo>({
-      url: `/api/PeopleImport/${electionGuid}/upload`,
-      body: formData,
+    const response = await postApiPeopleImportByElectionGuidUpload({
+      path: { electionGuid },
+      body: { file },
     });
-    return response.data;
+    return response.data as ImportFileInfo;
   },
 
   async getFiles(electionGuid: string): Promise<ImportFileInfo[]> {
-    const response = await client.get<ImportFileInfo[]>({
-      url: `/api/PeopleImport/${electionGuid}/files`,
+    const response = await getApiPeopleImportByElectionGuidFiles({
+      path: { electionGuid },
     });
-    return response.data;
+    return (response.data ?? []) as ImportFileInfo[];
   },
 
   async parseFile(
@@ -33,19 +41,14 @@ export const peopleImportService = {
     codePage?: number,
     firstDataRow?: number,
   ): Promise<ParseFileResult> {
-    const query: Record<string, unknown> = {};
-    if (codePage !== undefined) {
-      query.codePage = codePage;
-    }
-    if (firstDataRow !== undefined) {
-      query.firstDataRow = firstDataRow;
-    }
-
-    const response = await client.get<ParseFileResult>({
-      url: `/api/PeopleImport/${electionGuid}/files/${rowId}/parse`,
-      query,
+    const response = await getApiPeopleImportByElectionGuidFilesByRowIdParse({
+      path: { electionGuid, rowId },
+      query: {
+        codePage,
+        firstDataRow,
+      },
     });
-    return response.data;
+    return response.data as ParseFileResult;
   },
 
   async saveMapping(
@@ -53,21 +56,21 @@ export const peopleImportService = {
     rowId: number,
     mappings: ColumnMapping[],
   ): Promise<ImportFileInfo> {
-    const response = await client.put<ImportFileInfo>({
-      url: `/api/PeopleImport/${electionGuid}/files/${rowId}/mapping`,
+    const response = await putApiPeopleImportByElectionGuidFilesByRowIdMapping({
+      path: { electionGuid, rowId },
       body: mappings,
     });
-    return response.data;
+    return response.data as ImportFileInfo;
   },
 
   async getMapping(
     electionGuid: string,
     rowId: number,
   ): Promise<ColumnMapping[] | null> {
-    const response = await client.get<ColumnMapping[]>({
-      url: `/api/PeopleImport/${electionGuid}/files/${rowId}/mapping`,
+    const response = await getApiPeopleImportByElectionGuidFilesByRowIdMapping({
+      path: { electionGuid, rowId },
     });
-    return response.data;
+    return (response.data ?? null) as ColumnMapping[] | null;
   },
 
   async updateSettings(
@@ -75,40 +78,42 @@ export const peopleImportService = {
     rowId: number,
     settings: UpdateFileSettingsDto,
   ): Promise<ImportFileInfo> {
-    const response = await client.put<ImportFileInfo>({
-      url: `/api/PeopleImport/${electionGuid}/files/${rowId}/settings`,
-      body: settings,
-    });
-    return response.data;
+    const response = await putApiPeopleImportByElectionGuidFilesByRowIdSettings(
+      {
+        path: { electionGuid, rowId },
+        body: settings,
+      },
+    );
+    return response.data as ImportFileInfo;
   },
 
   async executeImport(
     electionGuid: string,
     rowId: number,
   ): Promise<ImportPeopleResult> {
-    const response = await client.post<ImportPeopleResult>({
-      url: `/api/PeopleImport/${electionGuid}/files/${rowId}/import`,
+    const response = await postApiPeopleImportByElectionGuidFilesByRowIdImport({
+      path: { electionGuid, rowId },
     });
-    return response.data;
+    return response.data as ImportPeopleResult;
   },
 
   async deleteFile(electionGuid: string, rowId: number): Promise<void> {
-    await client.delete({
-      url: `/api/PeopleImport/${electionGuid}/files/${rowId}`,
+    await deleteApiPeopleImportByElectionGuidFilesByRowId({
+      path: { electionGuid, rowId },
     });
   },
 
   async deleteAllPeople(electionGuid: string): Promise<DeleteAllPeopleResult> {
-    const response = await client.delete<DeleteAllPeopleResult>({
-      url: `/api/PeopleImport/${electionGuid}/people`,
+    const response = await deleteApiPeopleImportByElectionGuidPeople({
+      path: { electionGuid },
     });
-    return response.data;
+    return response.data as DeleteAllPeopleResult;
   },
 
   async getPeopleCount(electionGuid: string): Promise<{ count: number }> {
-    const response = await client.get<{ count: number }>({
-      url: `/api/PeopleImport/${electionGuid}/people-count`,
+    const response = await getApiPeopleImportByElectionGuidPeopleCount({
+      path: { electionGuid },
     });
-    return response.data;
+    return response.data as { count: number };
   },
 };

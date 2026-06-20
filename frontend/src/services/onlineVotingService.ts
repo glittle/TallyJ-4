@@ -4,13 +4,13 @@ import {
   postApiOnlineVotingGoogleAuth,
   postApiOnlineVotingFacebookAuth,
   postApiOnlineVotingKakaoAuth,
+  postApiOnlineVotingTelegramAuth,
   getApiOnlineVotingAvailableElections,
   getApiOnlineVotingByElectionGuidElectionInfo,
   getApiOnlineVotingByElectionGuidCandidates,
   postApiOnlineVotingByElectionGuidSubmitBallot,
   getApiOnlineVotingByElectionGuidByVoterIdVoteStatus,
-} from "../api/gen/configService/sdk.gen";
-import { client } from "../api/config";
+} from "@/api/gen/configService";
 import type {
   RequestCodeDto,
   VerifyCodeDto,
@@ -71,11 +71,10 @@ export const onlineVotingService = {
   async telegramAuth(
     data: TelegramAuthForVoterDto,
   ): Promise<OnlineVoterAuthResponse> {
-    const response = await client.post<OnlineVoterAuthResponse>({
-      url: "/api/online-voting/telegramAuth",
+    const response = await postApiOnlineVotingTelegramAuth({
       body: data,
     });
-    return response.data;
+    return response.data as OnlineVoterAuthResponse;
   },
 
   async getAvailableElections(voterId: string): Promise<AvailableElection[]> {

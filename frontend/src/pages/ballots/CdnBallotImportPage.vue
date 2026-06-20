@@ -56,15 +56,6 @@ function beforeUpload(file: UploadRawFile) {
 <template>
   <div class="cdn-ballot-import-page">
     <el-card>
-      <template #header>
-        <div class="card-header">
-          <el-page-header
-            :content="$t('ballots.cdnImport.title')"
-            @back="goBack"
-          />
-        </div>
-      </template>
-
       <el-alert
         type="info"
         :closable="false"

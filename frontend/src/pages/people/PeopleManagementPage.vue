@@ -72,10 +72,6 @@ onUnmounted(async () => {
   }
 });
 
-function goBack() {
-  router.push(`/elections/${electionGuid}`);
-}
-
 function handleSearch() {
   selectedPeople.value = []; // Clear selection when searching
 }
@@ -156,9 +152,6 @@ async function confirmBulkDelete() {
     <el-card>
       <template #header>
         <div class="card-header">
-          <div class="header-left">
-            <el-page-header :content="$t('people.management')" @back="goBack" />
-          </div>
           <div class="header-actions">
             <el-space>
               <el-input

@@ -2541,6 +2541,65 @@
         }
       }
     },
+    "/api/{electionGuid}/frontdesk/updateEnvelopeNumber": {
+      "post": {
+        "tags": [
+          "FrontDesk"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEnvelopeNumberDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEnvelopeNumberDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEnvelopeNumberDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFrontDeskVoterDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFrontDeskVoterDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFrontDeskVoterDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/{electionGuid}/locations/getLocations": {
       "get": {
         "tags": [
@@ -8254,15 +8313,21 @@
             "minLength": 0,
             "type": "string"
           },
-          "tellerName": {
+          "votingLocationGuid": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "teller1": {
             "maxLength": 25,
             "minLength": 0,
             "type": "string",
             "nullable": true
           },
-          "votingLocationGuid": {
+          "teller2": {
+            "maxLength": 25,
+            "minLength": 0,
             "type": "string",
-            "format": "uuid",
             "nullable": true
           }
         },
@@ -8420,6 +8485,18 @@
             "format": "uuid"
           },
           "computerCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "teller1": {
+            "maxLength": 25,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "teller2": {
+            "maxLength": 25,
+            "minLength": 0,
             "type": "string",
             "nullable": true
           }
@@ -8639,13 +8716,6 @@
           "name": {
             "type": "string",
             "nullable": true
-          },
-          "usingComputerCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "isHeadTeller": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -11215,7 +11285,11 @@
             "type": "string",
             "nullable": true
           },
-          "tellerName": {
+          "teller1": {
+            "type": "string",
+            "nullable": true
+          },
+          "teller2": {
             "type": "string",
             "nullable": true
           },
@@ -11779,13 +11853,6 @@
           "name": {
             "type": "string",
             "nullable": true
-          },
-          "usingComputerCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "isHeadTeller": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -12166,6 +12233,26 @@
         },
         "additionalProperties": false
       },
+      "UpdateEnvelopeNumberDto": {
+        "required": [
+          "personGuid"
+        ],
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "envNum": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateFileSettingsDto": {
         "type": "object",
         "properties": {
@@ -12280,13 +12367,6 @@
           "name": {
             "type": "string",
             "nullable": true
-          },
-          "usingComputerCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "isHeadTeller": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false

@@ -56,6 +56,7 @@ The previous "dead duplicate ImportService" note no longer applies (the old Back
 - Use Pinia stores for state management
 - Use `$t()` for all user-facing strings
 - Standard flow: `component -> store -> service -> generated API client -> backend`
+- **Viewport-filling `el-table` height:** use `useViewportTableHeight` from `src/composables/useViewportTableHeight.ts` instead of hard-coded `height="600"` when a table should fill remaining main-layout space without page scrollbars. Options, examples, and the Front Desk reference implementation are documented in `frontend/README.md` (Composables section).
 
 ### Backend
 

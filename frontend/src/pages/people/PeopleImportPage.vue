@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { ElMessageBox } from "element-plus";
 import {
@@ -28,7 +28,6 @@ import type {
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 const { handleApiError } = useApiErrorHandler();
 
-const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const { showErrorMessage, showSuccessMessage } = useNotifications();
@@ -173,9 +172,7 @@ onBeforeUnmount(async () => {
   }
 });
 
-function goBack() {
-  router.push(`/elections/${electionGuid}/people`);
-}
+
 
 async function handleFileChange(file: UploadFile) {
   if (file.raw) {
@@ -479,12 +476,6 @@ async function confirmDeleteAllPeople() {
 <template>
   <div class="people-import-page">
     <el-card>
-      <template #header>
-        <div class="card-header">
-          <el-page-header :content="$t('people.import.title')" @back="goBack" />
-        </div>
-      </template>
-
       <el-steps :active="currentStep" finish-status="success" align-center>
         <el-step :title="$t('people.import.step1')" />
         <el-step :title="$t('people.import.step2')" />

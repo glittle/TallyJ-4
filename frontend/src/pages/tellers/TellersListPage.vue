@@ -7,9 +7,8 @@ import type { Teller } from "@/types/teller";
 import { Delete, Edit, Plus } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { computed, onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
-const router = useRouter();
 const route = useRoute();
 const tellerStore = useTellerStore();
 const { showErrorMessage } = useNotifications();
@@ -53,9 +52,7 @@ async function loadTellers() {
   }
 }
 
-function goBack() {
-  router.push(`/elections/${electionGuid}`);
-}
+
 
 function editTeller(teller: Teller) {
   editingTeller.value = teller;
@@ -103,9 +100,6 @@ async function handlePageChange() {
     <el-card>
       <template #header>
         <div class="card-header">
-          <div class="header-left">
-            <el-page-header content="Tellers" @back="goBack" />
-          </div>
           <div class="header-actions">
             <el-button type="primary" @click="showCreateDialog = true">
               <el-icon><Plus /></el-icon>
@@ -118,31 +112,6 @@ async function handlePageChange() {
       <div class="table-container">
         <el-table v-loading="loading" :data="tellers" style="width: 100%">
           <el-table-column prop="name" label="Teller Name" min-width="200" />
-          <el-table-column
-            prop="usingComputerCode"
-            label="Computer Code"
-            width="150"
-            align="center"
-          >
-            <template #default="scope">
-              <el-tag v-if="scope.row.usingComputerCode" type="info">
-                {{ scope.row.usingComputerCode }}
-              </el-tag>
-              <span v-else>-</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="isHeadTeller"
-            label="Head Teller"
-            width="150"
-            align="center"
-          >
-            <template #default="scope">
-              <el-tag :type="scope.row.isHeadTeller ? 'success' : 'info'">
-                {{ scope.row.isHeadTeller ? "Yes" : "No" }}
-              </el-tag>
-            </template>
-          </el-table-column>
           <el-table-column label="Actions" width="200" fixed="right">
             <template #default="scope">
               <el-button-group>

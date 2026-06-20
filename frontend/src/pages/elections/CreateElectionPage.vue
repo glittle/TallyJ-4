@@ -1,12 +1,6 @@
 <template>
   <div class="create-election-page">
     <el-card>
-      <template #header>
-        <div class="card-header">
-          <h2>{{ $t("elections.createNew") }}</h2>
-        </div>
-      </template>
-
       <el-form
         ref="formRef"
         :model="form"

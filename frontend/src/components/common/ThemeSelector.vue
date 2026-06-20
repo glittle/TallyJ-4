@@ -1,8 +1,19 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { ElButton, ElIcon } from "element-plus";
+import type { ComponentSize } from "element-plus";
 import { Sunny, Moon } from "@element-plus/icons-vue";
 import { useThemeStore } from "../../stores/themeStore";
+import { withDefaults } from "vue";
+
+withDefaults(
+  defineProps<{
+    size?: ComponentSize;
+  }>(),
+  {
+    size: "default",
+  },
+);
 
 useI18n();
 const themeStore = useThemeStore();
@@ -16,7 +27,8 @@ const toggleTheme = () => {
   <div class="theme-selector">
     <ElButton
       :aria-label="$t('common.toggleTheme', 'Toggle Theme')"
-      size="small"
+      :size="size"
+      text
       class="theme-toggle-btn"
       @click="toggleTheme"
     >
@@ -35,17 +47,10 @@ const toggleTheme = () => {
 
 .theme-toggle-btn {
   padding: 8px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: var(--el-color-info-light-9);
-  }
-
-  &:focus {
-    outline: 2px solid var(--el-color-primary);
-    outline-offset: 2px;
-  }
+  border-radius: var(--el-border-radius-base);
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 
   .el-icon {
     color: var(--el-text-color-primary);

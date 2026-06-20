@@ -113,6 +113,8 @@
   "people.loadError": "Failed to load people",
   "people.management": "People Management",
   "people.phone": "Phone",
+  "people.registrationHistory": "Registration History",
+  "people.votesReceived": "Votes Received",
   "people.saveError": "Failed to save person",
   "people.search": "Search by name, email, or ID",
   "people.searchError": "Failed to search people",

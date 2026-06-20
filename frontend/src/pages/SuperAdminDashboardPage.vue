@@ -187,7 +187,6 @@ onMounted(() => {
   <main class="sa-dashboard-page">
     <section class="sa-header-section">
       <div class="sa-header-content">
-        <h1>{{ $t("superAdmin.title") }}</h1>
         <el-button type="primary" :loading="loading" @click="loadData">
           <el-icon>
             <Refresh />
@@ -489,7 +488,7 @@ onMounted(() => {
 
     .sa-header-content {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
 
       h1 {

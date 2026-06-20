@@ -5,12 +5,6 @@
     </div>
 
     <el-card v-else-if="election">
-      <template #header>
-        <div class="card-header">
-          <h2>{{ $t("elections.edit") }}</h2>
-        </div>
-      </template>
-
       <el-form
         ref="formRef"
         :model="form"

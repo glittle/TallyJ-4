@@ -81,10 +81,95 @@ Full details, common pitfalls, and verification guidance are in `AGENTS.md`. Alw
 
 - `src/pages/` - route-level pages
 - `src/components/` - reusable UI components
+- `src/composables/` - reusable Vue composition functions
 - `src/stores/` - Pinia state containers
 - `src/services/` - service wrappers around API calls
 - `src/api/gen/configService/` - generated API client
 - `src/locales/` - shared translation files used by frontend and backend
+
+## Composables
+
+### `useViewportTableHeight` — viewport-filling `el-table` height
+
+**File:** `src/composables/useViewportTableHeight.ts`
+
+Use this when a page has an Element Plus table (or similar fixed-height scroll region) that should fill the remaining visible area inside the main layout **without** introducing a page-level scrollbar.
+
+The composable measures from an **anchor** element (top of the table wrapper) down to the bottom of a layout **container** (default `#main-content`, i.e. the scrollport below the 60px app header). It subtracts:
+
+- footer element(s) below the table (hints, toolbars, pagination bars, etc.)
+- `padding-bottom` on ancestors between the padding root and the container
+- an optional `bottomMargin` safety gap
+
+It re-measures on window resize, `ResizeObserver` layout changes, and when observed refs attach. Call `remeasure()` after async layout shifts (e.g. alerts or filter panels appearing).
+
+**Reference implementation:** `src/pages/frontdesk/FrontDeskPage.vue`
+
+#### Typical DOM shape
+
+```html
+<div ref="sectionRef" class="my-list-section">
+  <div ref="tableWrapperRef" class="table-wrapper">
+    <el-table :height="tableHeight" ... />
+  </div>
+  <div ref="footerRef" class="list-footer">...</div>
+</div>
+```
+
+#### Script usage
+
+```typescript
+import { useViewportTableHeight } from "@/composables/useViewportTableHeight";
+
+const tableWrapperRef = ref<HTMLElement | null>(null);
+const sectionRef = ref<HTMLElement | null>(null);
+const footerRef = ref<HTMLElement | null>(null);
+
+const { height: tableHeight, remeasure } = useViewportTableHeight(
+  tableWrapperRef,
+  {
+    paddingRootRef: sectionRef, // wrapper around table + footer siblings
+    bottomRef: footerRef,         // content directly below the table
+    min: 200,
+  },
+);
+
+// Bind to el-table
+// :height="tableHeight"
+
+// After layout-affecting changes (optional)
+watch(someLayoutFlag, () => nextTick(remeasure));
+```
+
+If the table component exposes `doLayout()`, re-run it when `tableHeight` changes (see Front Desk page).
+
+#### Options
+
+| Option | Default | Purpose |
+| ------ | ------- | ------- |
+| `anchorRef` | (required) | Top of the scroll region; usually the element wrapping `el-table` |
+| `paddingRootRef` | anchor parent | Element wrapping anchor + footer siblings; ancestor padding is subtracted from here up to the container |
+| `bottomRef` | — | Single footer element below the anchor |
+| `bottomRefs` | — | Multiple footer elements below the anchor |
+| `containerRef` / `containerSelector` | `#main-content` | Scrollport whose bottom edge caps available height |
+| `observeSelectors` | `[".main-layout .el-header"]` | Extra nodes to watch for layout changes |
+| `min` | `200` | Minimum table height in pixels |
+| `bottomMargin` | `8` | Extra pixels left below footer content |
+
+#### When to use
+
+- Long data tables on election-scoped pages inside `MainLayout`
+- Any page where a fixed `height="600"` (or similar) causes overflow or wasted space
+
+#### When not to use
+
+- Short tables that should grow with content and let the page scroll normally
+- Tables inside dialogs, drawers, or nested scroll areas — pass a closer `containerRef` / `containerSelector` if needed
+- Public layout pages without `#main-content` — set `containerRef` or `containerSelector` explicitly
+
+#### Related composables
+
+- `useLocalStorage` (`src/composables/useLocalStorage.ts`) — minimal `useStorage` replacement for persisting UI prefs (e.g. Front Desk registration filter)
 
 ## Conventions
 

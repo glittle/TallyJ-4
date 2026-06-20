@@ -11,7 +11,7 @@ namespace Backend.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/{electionGuid}/frontdesk")]
-[Authorize]
+[Authorize(Policy = "ElectionAccess")]
 public class FrontDeskController : ControllerBase
 {
     private readonly IFrontDeskService _frontDeskService;
@@ -169,6 +169,34 @@ public class FrontDeskController : ControllerBase
             _logger.LogError(ex, "Error updating person flags {PersonGuid} for election {ElectionGuid}",
                 updateFlagsDto.PersonGuid, electionGuid);
             return StatusCode(500, ApiResponse<FrontDeskVoterDto>.ErrorResponse("Failed to update person flags"));
+        }
+    }
+
+    /// <summary>
+    /// Sets or clears the envelope number for a voter.
+    /// </summary>
+    /// <param name="electionGuid">The election GUID.</param>
+    /// <param name="updateDto">The envelope number update data.</param>
+    /// <returns>The updated voter information.</returns>
+    [HttpPost("updateEnvelopeNumber")]
+    public async Task<ActionResult<ApiResponse<FrontDeskVoterDto>>> UpdateEnvelopeNumber(
+        Guid electionGuid,
+        [FromBody] UpdateEnvelopeNumberDto updateDto)
+    {
+        try
+        {
+            var voter = await _frontDeskService.UpdateEnvelopeNumberAsync(electionGuid, updateDto);
+            return Ok(ApiResponse<FrontDeskVoterDto>.SuccessResponse(voter, "Envelope number updated successfully"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<FrontDeskVoterDto>.ErrorResponse(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating envelope number for person {PersonGuid} in election {ElectionGuid}",
+                updateDto.PersonGuid, electionGuid);
+            return StatusCode(500, ApiResponse<FrontDeskVoterDto>.ErrorResponse("Failed to update envelope number"));
         }
     }
 }

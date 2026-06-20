@@ -2,6 +2,7 @@
 import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { type FormInstance, type FormRules } from "element-plus";
+import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
 import { useBallotStore } from "../../stores/ballotStore";
 import type { CreateBallotDto } from "../../types";
 
@@ -30,8 +31,6 @@ const submitting = ref(false);
 const form = reactive({
   locationGuid: "",
   computerCode: "A",
-  teller1: "",
-  teller2: "",
 });
 
 const locations = ref([
@@ -71,8 +70,7 @@ async function handleSubmit() {
           electionGuid: props.electionGuid,
           locationGuid: form.locationGuid,
           computerCode: form.computerCode,
-          teller1: form.teller1 || undefined,
-          teller2: form.teller2 || undefined,
+          ...getActiveTellerPayload(),
           statusCode: "Ok",
         };
         await ballotStore.createBallot(dto);
@@ -121,14 +119,6 @@ function handleClose() {
 
       <el-form-item :label="$t('ballots.computer')" prop="computerCode">
         <el-input v-model="form.computerCode" />
-      </el-form-item>
-
-      <el-form-item :label="$t('ballots.teller1')" prop="teller1">
-        <el-input v-model="form.teller1" />
-      </el-form-item>
-
-      <el-form-item :label="$t('ballots.teller2')" prop="teller2">
-        <el-input v-model="form.teller2" />
       </el-form-item>
     </el-form>
 

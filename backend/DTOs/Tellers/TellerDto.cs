@@ -1,12 +1,12 @@
-﻿namespace Backend.DTOs.Tellers;
+namespace Backend.DTOs.Tellers;
 
 /// <summary>
-/// Data transfer object representing a teller in an election.
+/// Data transfer object representing a teller.
 /// </summary>
 public class TellerDto
 {
     /// <summary>
-    /// The unique row identifier for the teller.
+    /// The unique row identifier of the teller.
     /// </summary>
     public int RowId { get; set; }
 
@@ -19,17 +19,4 @@ public class TellerDto
     /// The name of the teller.
     /// </summary>
     public string Name { get; set; } = null!;
-
-    /// <summary>
-    /// The code of the computer the teller is using.
-    /// </summary>
-    public string? UsingComputerCode { get; set; }
-
-    /// <summary>
-    /// Indicates whether this teller is the head teller.
-    /// </summary>
-    public bool IsHeadTeller { get; set; }
 }
-
-
-

@@ -1,5 +1,9 @@
-import { client } from "../api/config";
-import type { ApiResponse, PaginatedResponse } from "@/types/ApiResponse";
+import {
+  getApiSuperadminDashboardSummary,
+  getApiSuperadminDashboardElections,
+  getApiSuperadminDashboardElectionsByGuid,
+} from "@/api/gen/configService";
+import type { PaginatedResponse } from "@/types/ApiResponse";
 
 export interface SuperAdminSummary {
   totalElections: number;
@@ -47,28 +51,39 @@ export interface SuperAdminElectionFilter {
 
 export const superAdminService = {
   async getSummary(): Promise<SuperAdminSummary> {
-    const response = await client.get<ApiResponse<SuperAdminSummary>>({
-      url: "/api/superadmin/dashboard/summary",
-    });
-    return response.data.data;
+    const response = await getApiSuperadminDashboardSummary();
+    return response.data?.data as SuperAdminSummary;
   },
 
   async getElections(
     filter?: SuperAdminElectionFilter,
   ): Promise<PaginatedResponse<SuperAdminElection>> {
-    const response = await client.get<
-      ApiResponse<PaginatedResponse<SuperAdminElection>>
-    >({
-      url: "/api/superadmin/dashboard/elections",
-      query: filter as Record<string, unknown>,
+    const response = await getApiSuperadminDashboardElections({
+      query: {
+        Search: filter?.search,
+        Status: filter?.status,
+        ElectionType: filter?.electionType as never,
+        SortBy: filter?.sortBy,
+        SortDirection: filter?.sortDirection,
+        Page: filter?.page,
+        PageSize: filter?.pageSize,
+      },
     });
-    return response.data.data;
+
+    const data = response.data?.data;
+    return {
+      items: (data?.items ?? []) as SuperAdminElection[],
+      totalCount: data?.totalCount ?? 0,
+      page: data?.pageNumber ?? 1,
+      pageSize: data?.pageSize ?? 50,
+      totalPages: data?.totalPages ?? 0,
+    };
   },
 
   async getElectionDetail(guid: string): Promise<SuperAdminElectionDetail> {
-    const response = await client.get<ApiResponse<SuperAdminElectionDetail>>({
-      url: `/api/superadmin/dashboard/elections/${guid}`,
+    const response = await getApiSuperadminDashboardElectionsByGuid({
+      path: { guid },
     });
-    return response.data.data;
+    return response.data?.data as SuperAdminElectionDetail;
   },
 };

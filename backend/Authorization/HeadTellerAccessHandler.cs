@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Authorization;
 
 /// <summary>
-/// Authorization handler that verifies if a user is a head teller for an election.
+/// Authorization handler that verifies if a user has election administration access.
 /// </summary>
 public class HeadTellerAccessHandler : AuthorizationHandler<HeadTellerAccessRequirement>
 {
@@ -24,7 +24,7 @@ public class HeadTellerAccessHandler : AuthorizationHandler<HeadTellerAccessRequ
     }
 
     /// <summary>
-    /// Handles the authorization requirement by checking if the user is a head teller for the specified election.
+    /// Handles the authorization requirement by checking if the user is linked to the election.
     /// </summary>
     /// <param name="context">The authorization handler context.</param>
     /// <param name="requirement">The head teller access requirement.</param>
@@ -68,27 +68,24 @@ public class HeadTellerAccessHandler : AuthorizationHandler<HeadTellerAccessRequ
             return;
         }
 
-        var isHeadTeller = await _context.Tellers
-            .Join(_context.JoinElectionUsers,
-                t => t.ElectionGuid,
-                jeu => jeu.ElectionGuid,
-                (t, jeu) => new { Teller = t, JoinElectionUser = jeu })
-            .AnyAsync(x => x.Teller.ElectionGuid == electionGuid &&
-                          x.JoinElectionUser.UserId == userId &&
-                          x.Teller.IsHeadTeller == true);
+        var hasElectionAccess = await _context.JoinElectionUsers
+            .AnyAsync(j => j.ElectionGuid == electionGuid && j.UserId == userId);
 
-        if (isHeadTeller)
+        if (hasElectionAccess)
         {
-            _logger.LogInformation("HeadTellerAccess: User {UserId} is a head teller for election {ElectionGuid}", userId, electionGuid);
+            _logger.LogInformation(
+                "HeadTellerAccess: User {UserId} has election access for {ElectionGuid}",
+                userId,
+                electionGuid);
             context.Succeed(requirement);
         }
         else
         {
-            _logger.LogWarning("HeadTellerAccess: User {UserId} is not a head teller for election {ElectionGuid}", userId, electionGuid);
+            _logger.LogWarning(
+                "HeadTellerAccess: User {UserId} does not have election access for {ElectionGuid}",
+                userId,
+                electionGuid);
             context.Fail();
         }
     }
 }
-
-
-

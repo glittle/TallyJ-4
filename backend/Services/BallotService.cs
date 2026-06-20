@@ -128,6 +128,8 @@ public class BallotService : IBallotService
             BallotNumAtComputer = nextBallotNum,
             BallotCode = $"{createDto.ComputerCode}{nextBallotNum}",
             StatusCode = BallotStatus.Raw,
+            Teller1 = NormalizeTellerName(createDto.Teller1),
+            Teller2 = NormalizeTellerName(createDto.Teller2),
             DateCreated = now,
             DateUpdated = now,
             RowVersion = new byte[8],
@@ -158,14 +160,19 @@ public class BallotService : IBallotService
         }
 
         ballot.StatusCode = updateDto.StatusCode;
-        ballot.Teller1 = updateDto.Teller1;
-        ballot.Teller2 = updateDto.Teller2;
+        ballot.Teller1 = NormalizeTellerName(updateDto.Teller1);
+        ballot.Teller2 = NormalizeTellerName(updateDto.Teller2);
 
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Updated ballot {BallotGuid}", ballotGuid);
 
         return await GetBallotByGuidAsync(ballotGuid);
+    }
+
+    private static string? NormalizeTellerName(string? tellerName)
+    {
+        return string.IsNullOrWhiteSpace(tellerName) ? null : tellerName.Trim();
     }
 
     /// <summary>

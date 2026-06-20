@@ -7,6 +7,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { Plus, Upload } from "@element-plus/icons-vue";
 import { useBallotStore } from "../../stores/ballotStore";
 import type { BallotDto } from "../../types";
+import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
 import BallotFormDialog from "../../components/ballots/BallotFormDialog.vue";
 import BallotVotesDialog from "../../components/ballots/BallotVotesDialog.vue";
 
@@ -41,9 +42,7 @@ onBeforeUnmount(async () => {
   }
 });
 
-function goBack() {
-  router.push(`/elections/${electionGuid}`);
-}
+
 
 function handleImportCdn() {
   router.push(`/elections/${electionGuid}/ballots/cdn-import`);
@@ -107,7 +106,6 @@ function getStatusType(status: string | undefined) {
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-page-header :content="$t('ballots.management')" @back="goBack" />
           <div class="header-actions">
             <el-button @click="handleImportCdn">
               <el-icon>
@@ -123,6 +121,10 @@ function getStatusType(status: string | undefined) {
             </el-button>
           </div>
         </div>
+        <ActiveTellerSelector
+          :election-guid="electionGuid"
+          class="header-tellers"
+        />
       </template>
 
       <div v-if="loading" class="loading-container">
@@ -232,6 +234,10 @@ function getStatusType(status: string | undefined) {
   .header-actions {
     display: flex;
     gap: 10px;
+  }
+
+  .header-tellers {
+    margin-top: 12px;
   }
 
   .loading-container {

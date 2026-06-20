@@ -1,12 +1,6 @@
 <template>
   <div class="results-page">
     <el-card>
-      <template #header>
-        <div class="card-header">
-          <el-page-header :content="$t('results.title')" @back="goBack" />
-        </div>
-      </template>
-
       <div v-if="loading" class="loading-container">
         <el-skeleton :rows="5" animated />
       </div>
@@ -103,13 +97,12 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useResultStore } from "../../stores/resultStore";
 import ResultsTable from "../../components/results/ResultsTable.vue";
 import TiesDisplay from "../../components/results/TiesDisplay.vue";
 
-const router = useRouter();
 const route = useRoute();
 const resultStore = useResultStore();
 const { handleApiError } = useApiErrorHandler();
@@ -148,9 +141,7 @@ onBeforeUnmount(async () => {
   }
 });
 
-function goBack() {
-  router.push(`/elections/${electionGuid}`);
-}
+
 
 function formatDateTime(date: string) {
   if (!date) {

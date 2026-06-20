@@ -6,8 +6,10 @@ import {
   deleteApiPeopleByGuidDeletePerson,
   getApiPeopleByElectionGuidSearchPeople,
   getApiPeopleByElectionGuidGetCandidates,
-} from "../api/gen/configService/sdk.gen";
-import { client } from "../api/config";
+  getApiPeopleByElectionGuidGetAllPeople,
+  getApiPeopleByGuidGetPersonDetails,
+  getApiPeopleByElectionGuidGetAllForBallotEntry,
+} from "@/api/gen/configService";
 import type {
   PersonDto,
   PersonListDto,
@@ -25,12 +27,10 @@ export const peopleService = {
   },
 
   async getAllPeople(electionGuid: string): Promise<PersonListDto[]> {
-    const response = await client.get<{ data: PersonListDto[] }>({
-      url: "/api/People/{electionGuid}/getAllPeople",
+    const response = await getApiPeopleByElectionGuidGetAllPeople({
       path: { electionGuid },
-      security: [{ scheme: "bearer", type: "http" }],
     });
-    return response.data?.data ?? [];
+    return (response.data?.data ?? []) as PersonListDto[];
   },
 
   async getById(personGuid: string): Promise<PersonDto> {
@@ -41,10 +41,8 @@ export const peopleService = {
   },
 
   async getDetails(personGuid: string): Promise<PersonDetailDto> {
-    const response = await client.get<{ data: PersonDetailDto }>({
-      url: "/api/People/{guid}/getPersonDetails",
+    const response = await getApiPeopleByGuidGetPersonDetails({
       path: { guid: personGuid },
-      security: [{ scheme: "bearer", type: "http" }],
     });
     return response.data?.data as PersonDetailDto;
   },
@@ -89,11 +87,9 @@ export const peopleService = {
   },
 
   async getAllForBallotEntry(electionGuid: string): Promise<PersonDto[]> {
-    const response = await client.get<{ data: PersonDto[] }>({
-      url: "/api/People/{electionGuid}/getAllForBallotEntry",
+    const response = await getApiPeopleByElectionGuidGetAllForBallotEntry({
       path: { electionGuid },
-      security: [{ scheme: "bearer", type: "http" }],
     });
-    return response.data?.data ?? [];
+    return (response.data?.data ?? []) as PersonDto[];
   },
 };

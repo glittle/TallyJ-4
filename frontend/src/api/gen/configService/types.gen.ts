@@ -446,8 +446,9 @@ export type ChangedPersonDto = {
 export type CheckInVoterDto = {
     personGuid: string;
     votingMethod: string;
-    tellerName?: string | null;
     votingLocationGuid?: string | null;
+    teller1?: string | null;
+    teller2?: string | null;
 };
 
 export type ChooseLocationRequest = {
@@ -497,6 +498,8 @@ export type CreateAuditLogDto = {
 export type CreateBallotDto = {
     electionGuid?: string;
     computerCode?: string | null;
+    teller1?: string | null;
+    teller2?: string | null;
 };
 
 export type CreateElectionDto = {
@@ -556,8 +559,6 @@ export type CreatePersonDto = {
 export type CreateTellerDto = {
     electionGuid?: string;
     name?: string | null;
-    usingComputerCode?: string | null;
-    isHeadTeller?: boolean;
 };
 
 export type CreateVoteDto = {
@@ -1310,7 +1311,8 @@ export type RegistrationHistoryEntryDto = {
     timestamp?: Date;
     action?: string | null;
     votingMethod?: string | null;
-    tellerName?: string | null;
+    teller1?: string | null;
+    teller2?: string | null;
     locationName?: string | null;
     envNum?: number | null;
     performedBy?: string | null;
@@ -1474,8 +1476,6 @@ export type TellerDto = {
     rowId?: number;
     electionGuid?: string;
     name?: string | null;
-    usingComputerCode?: string | null;
-    isHeadTeller?: boolean;
 };
 
 export type TellerLoginRequest = {
@@ -1587,6 +1587,11 @@ export type UpdateElectionDto = {
     flags?: string | null;
 };
 
+export type UpdateEnvelopeNumberDto = {
+    personGuid: string;
+    envNum?: number | null;
+};
+
 export type UpdateFileSettingsDto = {
     firstDataRow?: number | null;
     codePage?: number | null;
@@ -1621,8 +1626,6 @@ export type UpdatePersonFlagsDto = {
 
 export type UpdateTellerDto = {
     name?: string | null;
-    usingComputerCode?: string | null;
-    isHeadTeller?: boolean;
 };
 
 export type UpdateUserProfileDto = {
@@ -2973,6 +2976,24 @@ export type PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses = {
 };
 
 export type PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponse = PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses[keyof PostApiByElectionGuidFrontdeskUpdatePersonFlagsResponses];
+
+export type PostApiByElectionGuidFrontdeskUpdateEnvelopeNumberData = {
+    body?: UpdateEnvelopeNumberDto;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/{electionGuid}/frontdesk/updateEnvelopeNumber';
+};
+
+export type PostApiByElectionGuidFrontdeskUpdateEnvelopeNumberResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseFrontDeskVoterDto;
+};
+
+export type PostApiByElectionGuidFrontdeskUpdateEnvelopeNumberResponse = PostApiByElectionGuidFrontdeskUpdateEnvelopeNumberResponses[keyof PostApiByElectionGuidFrontdeskUpdateEnvelopeNumberResponses];
 
 export type GetApiByElectionGuidLocationsGetLocationsData = {
     body?: never;

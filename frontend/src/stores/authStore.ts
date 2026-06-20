@@ -11,7 +11,17 @@ import {
 import { secureTokenService } from "../services/secureTokenService";
 import { tokenRefreshService } from "../services/tokenRefreshService";
 import type { TelegramLoginRequest } from "../types";
+import { clearActiveTellers } from "@/utils/activeTellerStorage";
 import { SELECTED_LOCATION_KEY } from "./locationStore";
+
+function clearClientSessionSelections() {
+  try {
+    localStorage.removeItem(SELECTED_LOCATION_KEY);
+    clearActiveTellers();
+  } catch (e) {
+    console.error("Failed to clear client session selections:", e);
+  }
+}
 
 export const useAuthStore = defineStore("auth", () => {
   // Initialize from cookies instead of localStorage
@@ -50,6 +60,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function register(data: RegisterRequest) {
+    clearClientSessionSelections();
     try {
       const response = await authService.register(data);
 
@@ -79,6 +90,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function login(data: LoginRequest) {
+    clearClientSessionSelections();
     try {
       const response = await authService.login(data);
 
@@ -111,6 +123,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function googleOneTapLogin(credential: string) {
+    clearClientSessionSelections();
     try {
       const response = await authService.googleOneTap(credential);
 
@@ -150,6 +163,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function telegramLogin(data: TelegramLoginRequest) {
+    clearClientSessionSelections();
     try {
       const response = await authService.telegramLogin(data);
 
@@ -184,6 +198,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function facebookLogin(accessToken: string) {
+    clearClientSessionSelections();
     try {
       const response = await authService.facebookLogin(accessToken);
 
@@ -222,6 +237,7 @@ export const useAuthStore = defineStore("auth", () => {
     accessToken: string,
     fallbackAuthMethod: string,
   ) {
+    clearClientSessionSelections();
     try {
       const response = await serviceFn(accessToken);
 
@@ -260,6 +276,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function tellerLogin(electionGuid: string, accessCode: string) {
+    clearClientSessionSelections();
     try {
       const response = await authService.tellerLogin(electionGuid, accessCode);
 
@@ -308,12 +325,7 @@ export const useAuthStore = defineStore("auth", () => {
     // Clear cookies (readable ones)
     secureTokenService.clearAuthData();
 
-    // Clear selected location from localStorage
-    try {
-      localStorage.removeItem(SELECTED_LOCATION_KEY);
-    } catch (e) {
-      console.error("Failed to clear selected location on logout:", e);
-    }
+    clearClientSessionSelections();
 
     try {
       await authService.logout();

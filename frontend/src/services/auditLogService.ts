@@ -1,36 +1,54 @@
-import { client } from "../api/config";
+import {
+  getApiAuditLogsGetAuditLogs,
+  getApiAuditLogsByRowIdGetAuditLog,
+  postApiAuditLogsCreateAuditLog,
+} from "@/api/gen/configService";
 import type {
   AuditLog,
   AuditLogFilter,
   CreateAuditLogDto,
 } from "@/types/AuditLog";
-import type { ApiResponse, PaginatedResponse } from "@/types/ApiResponse";
+import type { PaginatedResponse } from "@/types/ApiResponse";
 
 export const auditLogService = {
-  async getAuditLogs(filter?: AuditLogFilter, pageNumber = 1, pageSize = 50) {
-    const response = await client.get<PaginatedResponse<AuditLog>>({
-      url: "/api/audit-logs",
+  async getAuditLogs(
+    filter?: AuditLogFilter,
+    pageNumber = 1,
+    pageSize = 50,
+  ): Promise<PaginatedResponse<AuditLog>> {
+    const response = await getApiAuditLogsGetAuditLogs({
       query: {
-        ...(filter ?? {}),
+        electionGuid: filter?.electionGuid,
+        locationGuid: filter?.locationGuid,
+        voterId: filter?.voterId,
+        computerCode: filter?.computerCode,
+        startDate: filter?.startDate ? new Date(filter.startDate) : undefined,
+        endDate: filter?.endDate ? new Date(filter.endDate) : undefined,
+        searchTerm: filter?.searchTerm,
         pageNumber,
         pageSize,
-      } as Record<string, unknown>,
+      },
     });
-    return response.data;
+
+    const data = response.data;
+    return {
+      items: (data?.items ?? []) as AuditLog[],
+      totalCount: data?.totalCount ?? 0,
+      page: data?.pageNumber ?? pageNumber,
+      pageSize: data?.pageSize ?? pageSize,
+      totalPages: data?.totalPages ?? 0,
+    };
   },
 
   async getAuditLogById(rowId: number) {
-    const response = await client.get<ApiResponse<AuditLog>>({
-      url: `/api/audit-logs/${rowId}`,
+    const response = await getApiAuditLogsByRowIdGetAuditLog({
+      path: { rowId },
     });
-    return response.data.data;
+    return response.data?.data as AuditLog;
   },
 
   async createAuditLog(auditLog: CreateAuditLogDto) {
-    const response = await client.post<ApiResponse<AuditLog>>({
-      url: "/api/audit-logs",
-      body: auditLog,
-    });
-    return response.data.data;
+    const response = await postApiAuditLogsCreateAuditLog({ body: auditLog });
+    return response.data?.data as AuditLog;
   },
 };

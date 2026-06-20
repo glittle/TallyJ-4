@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onUnmounted } from "vue";
+import { computed, ref, watch, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import AppHeader from "../components/AppHeader.vue";
 import AppSidebar from "../components/AppSidebar.vue";
@@ -8,6 +8,8 @@ import { useElectionStore } from "../stores/electionStore";
 const mobileSidebarOpen = ref(false);
 const route = useRoute();
 const electionStore = useElectionStore();
+
+const isFrontDeskLayout = computed(() => route.path.includes("/frontdesk"));
 
 let previousElectionGuid: string | undefined;
 
@@ -42,7 +44,10 @@ function closeMobileSidebar() {
 </script>
 
 <template>
-  <el-container class="main-layout">
+  <el-container
+    class="main-layout"
+    :class="{ 'front-desk-layout': isFrontDeskLayout }"
+  >
     <!-- Skip link for keyboard navigation -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
@@ -129,6 +134,26 @@ function closeMobileSidebar() {
     padding: 20px;
     overflow-y: auto;
     max-width: none;
+  }
+
+  &.front-desk-layout {
+    .sidebar {
+      background-color: var(--color-frontdesk-sidebar-bg);
+      box-shadow: none;
+      border-right: 1px solid var(--color-frontdesk-sidebar-border);
+    }
+
+    .el-header {
+      min-height: 48px;
+      height: 48px !important;
+      background: var(--color-frontdesk-toolbar-bg);
+      border-bottom: 1px solid var(--color-frontdesk-toolbar-border);
+    }
+
+    .el-main {
+      background-color: var(--color-frontdesk-main-bg);
+      padding: 12px 16px;
+    }
   }
 }
 

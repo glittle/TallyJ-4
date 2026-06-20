@@ -1,4 +1,3 @@
-import { client } from "../api/config";
 import {
   postApiAuthRegisterAccount,
   postApiAuthLogin,
@@ -7,14 +6,19 @@ import {
   postApiAuthSetup2Fa,
   postApiAuthEnable2Fa,
   postApiAuthDisable2Fa,
+  getApiAuth2FaStatus,
   postApiAuthGoogleOneTap,
+  postApiAuthTelegram,
+  postApiAuthFacebook,
+  postApiAuthKakao,
   postApiAuthLogout,
-} from "../api/gen/configService/sdk.gen";
+  postApiAuthTellerLogin,
+} from "@/api/gen/configService";
 import type {
   RegisterRequest,
   LoginRequest,
   GoogleOneTapRequest,
-} from "../api/gen/configService/types.gen";
+} from "@/api/gen/configService/types.gen";
 import type { TelegramLoginRequest } from "../types";
 
 export interface AuthResponse {
@@ -95,13 +99,8 @@ export const authService = {
     isEnabled: boolean;
     method: string | null;
   }> {
-    const response = await client.get<{
-      isEnabled: boolean;
-      method: string | null;
-    }>({
-      url: "/api/auth/2fa/status",
-    });
-    return response.data;
+    const response = await getApiAuth2FaStatus();
+    return response.data as { isEnabled: boolean; method: string | null };
   },
 
   async googleOneTap(credential: string): Promise<AuthResponse> {
@@ -114,27 +113,27 @@ export const authService = {
   },
 
   async telegramLogin(data: TelegramLoginRequest): Promise<AuthResponse> {
-    const response = await client.post<AuthResponse>({
-      url: "/api/auth/telegram",
+    const response = await postApiAuthTelegram({
       body: data,
+      throwOnError: true,
     });
-    return response.data;
+    return response.data as AuthResponse;
   },
 
   async facebookLogin(accessToken: string): Promise<AuthResponse> {
-    const response = await client.post<AuthResponse>({
-      url: "/api/auth/facebook",
+    const response = await postApiAuthFacebook({
       body: { accessToken },
+      throwOnError: true,
     });
-    return response.data;
+    return response.data as AuthResponse;
   },
 
   async kakaoLogin(accessToken: string): Promise<AuthResponse> {
-    const response = await client.post<AuthResponse>({
-      url: "/api/auth/kakao",
+    const response = await postApiAuthKakao({
       body: { accessToken },
+      throwOnError: true,
     });
-    return response.data;
+    return response.data as AuthResponse;
   },
 
   async logout(): Promise<void> {
@@ -147,18 +146,15 @@ export const authService = {
     electionGuid: string,
     accessCode: string,
   ): Promise<{ electionGuid: string; electionName: string }> {
-    const response = await client.post<{
-      electionGuid: string;
-      electionName: string;
-    }>({
-      url: "/api/auth/teller-login",
+    const response = await postApiAuthTellerLogin({
       body: { electionGuid, accessCode },
+      throwOnError: true,
     });
-    return response.data;
+    return response.data as { electionGuid: string; electionName: string };
   },
 };
 
 export {
   type RegisterRequest,
   type LoginRequest,
-} from "../api/gen/configService/types.gen";
+} from "@/api/gen/configService/types.gen";

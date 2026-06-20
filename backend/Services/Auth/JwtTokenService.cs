@@ -11,6 +11,8 @@ namespace Backend.Services.Auth;
 
 public class JwtTokenService : IJwtTokenService
 {
+    public const int TellerTokenExpiryHours = 8;
+
     private readonly IConfiguration _configuration;
 
     public JwtTokenService(IConfiguration configuration)
@@ -69,7 +71,7 @@ public class JwtTokenService : IJwtTokenService
             issuer: issuer,
             audience: audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(8),
+            expires: DateTime.UtcNow.AddHours(TellerTokenExpiryHours),
             signingCredentials: credentials
         );
 

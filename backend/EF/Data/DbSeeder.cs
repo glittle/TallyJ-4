@@ -269,23 +269,6 @@ public static class DbSeeder
         context.Ballots.AddRange(ballots);
         context.Votes.AddRange(votes);
 
-        var tellers = new[]
-        {
-            new Teller
-            {
-                ElectionGuid = electionGuid,
-                Name = "Admin User",
-                IsHeadTeller = true
-            },
-            new Teller
-            {
-                ElectionGuid = electionGuid,
-                Name = "Teller User",
-                IsHeadTeller = false
-            }
-        };
-        context.Tellers.AddRange(tellers);
-
         var messages = new[]
         {
             new Message

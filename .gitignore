@@ -71,3 +71,4 @@ frontend/package-lock.json
 .zenflow-attachments/
 .zenflow-images/
 mcps/
+terminals/.next-id
