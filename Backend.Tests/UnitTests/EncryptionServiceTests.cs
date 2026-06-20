@@ -119,8 +119,10 @@ public class EncryptionServiceTests
         var originalText = "Test data";
         var encrypted = service.Encrypt(originalText);
 
-        // Tamper with the encrypted data
-        var tampered = encrypted.Replace(encrypted[10], 'X');
+        // Tamper with the authentication tag byte (deterministic; avoids flaky base64 char replacement)
+        var encryptedBytes = Convert.FromBase64String(encrypted);
+        encryptedBytes[AesGcm.NonceByteSizes.MaxSize] ^= 0xFF;
+        var tampered = Convert.ToBase64String(encryptedBytes);
 
         // Act & Assert
         Assert.ThrowsAny<CryptographicException>(() => service.Decrypt(tampered));
