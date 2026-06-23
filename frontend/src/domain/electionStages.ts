@@ -1,5 +1,6 @@
 import type { Component } from "vue";
 import {
+  CircleCheck,
   DataAnalysis,
   Document,
   Files,
@@ -18,8 +19,7 @@ export type ElectionStage =
   | "ProcessingBallots"
   | "Finalized";
 
-/** Stages surfaced in navigation UI (Finalized is API-only in Phase 1). */
-export type NavElectionStage = Exclude<ElectionStage, "Finalized">;
+export type NavElectionStage = ElectionStage;
 
 export interface NavPageDef {
   key: string;
@@ -43,6 +43,7 @@ export const STAGES: readonly NavElectionStage[] = [
   "SettingUp",
   "GatheringBallots",
   "ProcessingBallots",
+  "Finalized",
 ] as const;
 
 export const STAGE_META: Record<NavElectionStage, StageMeta> = {
@@ -72,6 +73,15 @@ export const STAGE_META: Record<NavElectionStage, StageMeta> = {
     colorVar: "--color-stage-process",
     bgVar: "--color-stage-process-bg",
     icon: PieChart,
+  },
+  Finalized: {
+    key: "Finalized",
+    i18nKey: "elections.stage.Finalized",
+    shortI18nKey: "elections.stage.Finalized_short",
+    groupI18nKey: "elections.stageNav.group.Finalized",
+    colorVar: "--color-stage-process",
+    bgVar: "--color-stage-process-bg",
+    icon: CircleCheck,
   },
 };
 
@@ -127,6 +137,7 @@ export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
       i18nKey: "ballots.management",
       icon: Tickets,
       routePath: (g) => `/elections/${g}/ballots`,
+      adminOnly: true,
     },
     {
       key: "tally",
@@ -155,6 +166,32 @@ export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
       icon: Files,
       routePath: (g) => `/elections/${g}/reporting`,
       adminOnly: true,
+    },
+  ],
+  Finalized: [
+    {
+      key: "details",
+      i18nKey: "elections.details",
+      icon: Document,
+      routePath: (g) => `/elections/${g}`,
+    },
+    {
+      key: "results",
+      i18nKey: "results.title",
+      icon: DataAnalysis,
+      routePath: (g) => `/elections/${g}/results`,
+    },
+    {
+      key: "presentation",
+      i18nKey: "results.presentation",
+      icon: Monitor,
+      routePath: (g) => `/elections/${g}/presentation`,
+    },
+    {
+      key: "reporting",
+      i18nKey: "results.reporting",
+      icon: Files,
+      routePath: (g) => `/elections/${g}/reporting`,
     },
   ],
 };

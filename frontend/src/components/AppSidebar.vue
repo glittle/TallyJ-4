@@ -3,7 +3,7 @@ import { ArrowLeft, HomeFilled, Setting } from "@element-plus/icons-vue";
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { secureTokenService } from "../services/secureTokenService";
+import { isAssistantTeller } from "@/domain/assistantTellerAccess";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
 import SidebarStageHeader from "./nav/SidebarStageHeader.vue";
@@ -27,10 +27,7 @@ const superAdminStore = useSuperAdminStore();
 
 const isSuperAdmin = computed(() => superAdminStore.isSuperAdmin);
 
-const isTeller = computed(() => {
-  const authData = secureTokenService.getAuthData();
-  return authData.name === "Teller" && authData.authMethod === "AccessCode";
-});
+const isTeller = computed(() => isAssistantTeller());
 
 const isInElectionContext = computed(() => {
   return route.path.startsWith("/elections/") && route.params.id;
