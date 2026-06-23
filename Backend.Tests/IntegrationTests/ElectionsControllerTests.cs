@@ -211,14 +211,14 @@ public class ElectionsControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task ChangeElectionStage_FullTellerCanFinalizeWithoutReadiness_ReturnsOk()
+    public async Task ChangeElectionStage_ToFinalizedWithoutReadiness_ReturnsBadRequest()
     {
         var token = await GetAuthTokenAsync();
         SetAuthToken(token);
 
         var createDto = new CreateElectionDto
         {
-            Name = "Full Teller Finalize Election",
+            Name = "Finalize Without Readiness Election",
             DateOfElection = DateTime.UtcNow.AddDays(30),
             ElectionType = ElectionTypeCode.LSA,
             NumberToElect = 3
@@ -228,17 +228,18 @@ public class ElectionsControllerTests : IntegrationTestBase
         var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
         var electionGuid = createResult!.Data!.ElectionGuid;
 
-        foreach (var stage in new[]
-                 {
-                     ElectionStage.GatheringBallots,
-                     ElectionStage.ProcessingBallots,
-                     ElectionStage.Finalized
-                 })
+        foreach (var stage in new[] { ElectionStage.GatheringBallots, ElectionStage.ProcessingBallots })
         {
             var stageDto = new ChangeElectionStageDto { ElectionStage = stage };
             var response = await PutJsonAsync($"/api/elections/{electionGuid}/stage", stageDto);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
+
+        var finalizeResponse = await PutJsonAsync(
+            $"/api/elections/{electionGuid}/stage",
+            new ChangeElectionStageDto { ElectionStage = ElectionStage.Finalized });
+
+        Assert.Equal(HttpStatusCode.BadRequest, finalizeResponse.StatusCode);
     }
 
     [Fact]

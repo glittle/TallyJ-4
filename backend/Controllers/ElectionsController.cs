@@ -132,7 +132,7 @@ public class ElectionsController : ControllerBase
     /// <param name="dto">The new election stage.</param>
     /// <returns>The updated election information.</returns>
     [HttpPut("{guid}/stage")]
-    [Authorize(Policy = "ElectionAccess")]
+    [Authorize(Policy = "FullTellerAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> ChangeElectionStage(Guid guid, ChangeElectionStageDto dto)
     {
         if (!Enum.IsDefined(typeof(ElectionStage), dto.ElectionStage))

@@ -206,46 +206,39 @@ public class ElectionService : IElectionService
         }
 
         var currentStage = election.ElectionStage;
-        var isFullTeller = await IsFullTellerForElectionAsync(electionGuid);
 
-        if (!isFullTeller)
+        if (!ElectionStageTransitions.CanTransition(currentStage, newStage, out var reason))
         {
-            if (!ElectionStageTransitions.CanTransition(currentStage, newStage, out var reason))
+            _logger.LogWarning(
+                "Rejected stage change for election {ElectionGuid}: {CurrentStage} -> {NewStage}. {Reason}",
+                electionGuid,
+                currentStage,
+                newStage,
+                reason);
+            return ChangeElectionStageResult.InvalidTransition(reason);
+        }
+
+        if (currentStage == ElectionStage.Finalized && newStage != ElectionStage.Finalized && !dto.ConfirmLeavingFinalized)
+        {
+            _logger.LogInformation(
+                "Stage change for election {ElectionGuid} from Finalized to {NewStage} requires confirmation",
+                electionGuid,
+                newStage);
+            return ChangeElectionStageResult.ConfirmationRequired(
+                "Reverting from Finalized requires confirmation");
+        }
+
+        if (newStage == ElectionStage.Finalized && currentStage != ElectionStage.Finalized)
+        {
+            var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(_context, electionGuid);
+            if (!readiness.IsReady)
             {
+                var blockerSummary = string.Join("; ", readiness.Blockers);
                 _logger.LogWarning(
-                    "Rejected stage change for election {ElectionGuid}: {CurrentStage} -> {NewStage}. {Reason}",
+                    "Rejected finalization for election {ElectionGuid}: {Blockers}",
                     electionGuid,
-                    currentStage,
-                    newStage,
-                    reason);
-                return ChangeElectionStageResult.InvalidTransition(reason);
-            }
-
-            if (currentStage == ElectionStage.Finalized && newStage != ElectionStage.Finalized)
-            {
-                if (!dto.ConfirmLeavingFinalized)
-                {
-                    _logger.LogInformation(
-                        "Stage change for election {ElectionGuid} from Finalized to {NewStage} requires confirmation",
-                        electionGuid,
-                        newStage);
-                    return ChangeElectionStageResult.ConfirmationRequired(
-                        "Reverting from Finalized requires confirmation");
-                }
-            }
-
-            if (newStage == ElectionStage.Finalized && currentStage != ElectionStage.Finalized)
-            {
-                var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(_context, electionGuid);
-                if (!readiness.IsReady)
-                {
-                    var blockerSummary = string.Join("; ", readiness.Blockers);
-                    _logger.LogWarning(
-                        "Rejected finalization for election {ElectionGuid}: {Blockers}",
-                        electionGuid,
-                        blockerSummary);
-                    return ChangeElectionStageResult.InvalidTransition(blockerSummary);
-                }
+                    blockerSummary);
+                return ChangeElectionStageResult.InvalidTransition(blockerSummary);
             }
         }
 
@@ -253,11 +246,10 @@ public class ElectionService : IElectionService
         await _context.SaveChangesAsync();
 
         _logger.LogInformation(
-            "Changed election {ElectionGuid} stage from {PreviousStage} to {NewStage}. FullTeller={IsFullTeller}, ConfirmLeavingFinalized={ConfirmLeavingFinalized}",
+            "Changed election {ElectionGuid} stage from {PreviousStage} to {NewStage}. ConfirmLeavingFinalized={ConfirmLeavingFinalized}",
             electionGuid,
             currentStage,
             newStage,
-            isFullTeller,
             dto.ConfirmLeavingFinalized);
 
         await _signalRNotificationService.SendElectionUpdateAsync(new ElectionUpdateDto
@@ -272,46 +264,6 @@ public class ElectionService : IElectionService
         return updated == null
             ? ChangeElectionStageResult.NotFound()
             : ChangeElectionStageResult.Success(updated);
-    }
-
-    private async Task<bool> IsFullTellerForElectionAsync(Guid electionGuid)
-    {
-        var user = _httpContextAccessor.HttpContext?.User;
-        if (user?.Identity?.IsAuthenticated != true)
-        {
-            return false;
-        }
-
-        if (user.IsInRole("Admin"))
-        {
-            return true;
-        }
-
-        if (IsGuestTeller(user))
-        {
-            return false;
-        }
-
-        var userIdString = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                         ?? user.FindFirst("sub")?.Value;
-        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
-        {
-            return false;
-        }
-
-        var joinRecord = await _context.JoinElectionUsers
-            .FirstOrDefaultAsync(j => j.ElectionGuid == electionGuid && j.UserId == userId);
-
-        return joinRecord is { Role: "Owner" or "Admin" };
-    }
-
-    private static bool IsGuestTeller(ClaimsPrincipal user)
-    {
-        var isTellerClaim = user.FindFirst("isTeller")?.Value;
-        var authMethod = user.FindFirst("authMethod")?.Value;
-
-        return bool.TryParse(isTellerClaim, out var isGuestTeller) && isGuestTeller
-               && string.Equals(authMethod, "AccessCode", StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

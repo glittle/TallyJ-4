@@ -327,7 +327,7 @@ public class ElectionServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task ChangeElectionStageAsync_FromFinalized_SucceedsForFullTellerWithoutConfirmation()
+    public async Task ChangeElectionStageAsync_FromFinalized_SucceedsWithConfirmation()
     {
         var electionGuid = Guid.NewGuid();
         var election = new Election
@@ -342,17 +342,12 @@ public class ElectionServiceTests : ServiceTestBase
         };
 
         Context.Elections.Add(election);
-        Context.JoinElectionUsers.Add(new JoinElectionUser
-        {
-            ElectionGuid = electionGuid,
-            UserId = _testUserId,
-            Role = "Owner"
-        });
         await Context.SaveChangesAsync();
 
         var result = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
         {
-            ElectionStage = ElectionStage.ProcessingBallots
+            ElectionStage = ElectionStage.ProcessingBallots,
+            ConfirmLeavingFinalized = true
         });
 
         Assert.True(result.IsSuccess);
