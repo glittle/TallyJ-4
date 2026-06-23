@@ -15,7 +15,11 @@ import {
 export type ElectionStage =
   | "SettingUp"
   | "GatheringBallots"
-  | "ProcessingBallots";
+  | "ProcessingBallots"
+  | "Finalized";
+
+/** Stages surfaced in navigation UI (Finalized is API-only in Phase 1). */
+export type NavElectionStage = Exclude<ElectionStage, "Finalized">;
 
 export interface NavPageDef {
   key: string;
@@ -26,7 +30,7 @@ export interface NavPageDef {
 }
 
 export interface StageMeta {
-  key: ElectionStage;
+  key: NavElectionStage;
   i18nKey: string;
   shortI18nKey: string;
   groupI18nKey: string;
@@ -35,13 +39,13 @@ export interface StageMeta {
   icon: Component;
 }
 
-export const STAGES: readonly ElectionStage[] = [
+export const STAGES: readonly NavElectionStage[] = [
   "SettingUp",
   "GatheringBallots",
   "ProcessingBallots",
 ] as const;
 
-export const STAGE_META: Record<ElectionStage, StageMeta> = {
+export const STAGE_META: Record<NavElectionStage, StageMeta> = {
   SettingUp: {
     key: "SettingUp",
     i18nKey: "elections.stage.SettingUp",
@@ -71,7 +75,7 @@ export const STAGE_META: Record<ElectionStage, StageMeta> = {
   },
 };
 
-export const STAGE_PAGES: Record<ElectionStage, NavPageDef[]> = {
+export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
   SettingUp: [
     {
       key: "details",

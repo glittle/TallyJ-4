@@ -7,5 +7,6 @@ public enum ElectionStage
 {
     SettingUp,
     GatheringBallots,
-    ProcessingBallots
+    ProcessingBallots,
+    Finalized
 }

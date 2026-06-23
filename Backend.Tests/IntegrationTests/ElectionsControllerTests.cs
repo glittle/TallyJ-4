@@ -176,6 +176,99 @@ public class ElectionsControllerTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task ChangeElectionStage_SequentialAdvancement_ReturnsOk()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Stage Change Election",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3
+        };
+
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        foreach (var stage in new[]
+                 {
+                     ElectionStage.GatheringBallots,
+                     ElectionStage.ProcessingBallots
+                 })
+        {
+            var stageDto = new ChangeElectionStageDto { ElectionStage = stage };
+            var response = await PutJsonAsync($"/api/elections/{electionGuid}/stage", stageDto);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var result = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(response);
+            Assert.NotNull(result);
+            Assert.True(result.Success);
+            Assert.Equal(stage, result.Data!.ElectionStage);
+        }
+    }
+
+    [Fact]
+    public async Task ChangeElectionStage_FullTellerCanFinalizeWithoutReadiness_ReturnsOk()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Full Teller Finalize Election",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3
+        };
+
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        foreach (var stage in new[]
+                 {
+                     ElectionStage.GatheringBallots,
+                     ElectionStage.ProcessingBallots,
+                     ElectionStage.Finalized
+                 })
+        {
+            var stageDto = new ChangeElectionStageDto { ElectionStage = stage };
+            var response = await PutJsonAsync($"/api/elections/{electionGuid}/stage", stageDto);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+    }
+
+    [Fact]
+    public async Task ChangeElectionStage_WithInvalidEnum_ReturnsBadRequest()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Invalid Stage Election",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3
+        };
+
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        var content = new StringContent(
+            """{"electionStage":"NotARealStage"}""",
+            System.Text.Encoding.UTF8,
+            "application/json");
+        var response = await Client.PutAsync($"/api/elections/{electionGuid}/stage", content);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
     public async Task DeleteElection_WithValidGuid_ReturnsNoContent()
     {
         var token = await GetAuthTokenAsync();
