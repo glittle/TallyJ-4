@@ -8209,6 +8209,9 @@
         "properties": {
           "electionStage": {
             "$ref": "#/components/schemas/ElectionStage"
+          },
+          "confirmLeavingFinalized": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -8313,11 +8316,6 @@
             "minLength": 0,
             "type": "string"
           },
-          "votingLocationGuid": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
           "teller1": {
             "maxLength": 25,
             "minLength": 0,
@@ -8328,6 +8326,11 @@
             "maxLength": 25,
             "minLength": 0,
             "type": "string",
+            "nullable": true
+          },
+          "votingLocationGuid": {
+            "type": "string",
+            "format": "uuid",
             "nullable": true
           }
         },
@@ -9239,7 +9242,8 @@
         "enum": [
           "SettingUp",
           "GatheringBallots",
-          "ProcessingBallots"
+          "ProcessingBallots",
+          "Finalized"
         ],
         "type": "string"
       },

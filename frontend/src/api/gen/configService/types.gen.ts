@@ -416,6 +416,7 @@ export type CandidateResultDto = {
 
 export type ChangeElectionStageDto = {
     electionStage: ElectionStage;
+    confirmLeavingFinalized?: boolean;
 };
 
 export type ChangePasswordDto = {
@@ -446,9 +447,9 @@ export type ChangedPersonDto = {
 export type CheckInVoterDto = {
     personGuid: string;
     votingMethod: string;
-    votingLocationGuid?: string | null;
     teller1?: string | null;
     teller2?: string | null;
+    votingLocationGuid?: string | null;
 };
 
 export type ChooseLocationRequest = {
@@ -712,7 +713,8 @@ export type ElectionSetupStatusDto = {
 export const ElectionStage = {
     SETTING_UP: 'SettingUp',
     GATHERING_BALLOTS: 'GatheringBallots',
-    PROCESSING_BALLOTS: 'ProcessingBallots'
+    PROCESSING_BALLOTS: 'ProcessingBallots',
+    FINALIZED: 'Finalized'
 } as const;
 
 export type ElectionStage = typeof ElectionStage[keyof typeof ElectionStage];

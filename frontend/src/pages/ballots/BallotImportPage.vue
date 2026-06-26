@@ -245,8 +245,6 @@ onBeforeUnmount(async () => {
   await importStore.leaveImportSession(electionGuid);
 });
 
-
-
 async function handleFileChange(file: UploadFile) {
   if (file.raw) {
     const reader = new FileReader();

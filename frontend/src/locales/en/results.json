@@ -18,6 +18,7 @@
   "results.rank": "Rank",
   "results.reporting": "Reports",
   "results.section": "Section",
+  "results.showFinalResults": "Show Final Results",
   "results.spoiledBallots": "Spoiled Ballots",
   "results.tieBreakAlert": "Attention: Some ties require manual tie-breaking",
   "results.tieBreakMessage": "A tie-break is required for this group as it spans section boundaries",

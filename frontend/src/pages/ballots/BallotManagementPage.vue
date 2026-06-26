@@ -42,8 +42,6 @@ onBeforeUnmount(async () => {
   }
 });
 
-
-
 function handleImportCdn() {
   router.push(`/elections/${electionGuid}/ballots/cdn-import`);
 }

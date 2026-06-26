@@ -45,9 +45,9 @@ public interface IElectionService
     /// Changes the stage of an existing election.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election to update.</param>
-    /// <param name="newStage">The new election stage.</param>
-    /// <returns>The updated election data, or null if the election was not found.</returns>
-    Task<ElectionDto?> ChangeElectionStageAsync(Guid electionGuid, ElectionStage newStage);
+    /// <param name="dto">The requested stage and optional confirmation flags.</param>
+    /// <returns>The stage change result (success, not found, invalid transition, or confirmation required).</returns>
+    Task<ChangeElectionStageResult> ChangeElectionStageAsync(Guid electionGuid, ChangeElectionStageDto dto);
 
     /// <summary>
     /// Deletes an election by its unique identifier.

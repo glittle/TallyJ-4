@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import {
+  getAssistantTellerMenuPages,
+  getAssistantTellerRedirectPath,
+  isAssistantTellerRouteAllowed,
+} from "@/domain/assistantTellerAccess";
+import {
   type ElectionStage,
   type NavPageDef,
   STAGES,
@@ -27,8 +32,8 @@ const route = useRoute();
 const router = useRouter();
 const navUiStore = useNavUiStore();
 
-function visiblePages(stage: ElectionStage): NavPageDef[] {
-  return STAGE_PAGES[stage].filter((p) => !p.adminOnly);
+function assistantTellerPages(): NavPageDef[] {
+  return getAssistantTellerMenuPages(props.currentStage, props.electionGuid);
 }
 
 function isExpanded(stage: ElectionStage): boolean {
@@ -74,18 +79,16 @@ watch(
       return;
     }
 
-    const tellerPages = STAGE_PAGES[props.currentStage].filter(
-      (p) => !p.adminOnly,
-    );
-    if (tellerPages.length === 0) {
-      return;
-    }
-
-    const stagePagePaths = tellerPages.map((p) =>
-      p.routePath(props.electionGuid),
-    );
-    if (!stagePagePaths.includes(route.path)) {
-      router.push(stagePagePaths[0]!);
+    if (
+      !isAssistantTellerRouteAllowed(
+        route.path,
+        props.electionGuid,
+        props.currentStage,
+      )
+    ) {
+      router.push(
+        getAssistantTellerRedirectPath(props.electionGuid, props.currentStage),
+      );
     }
   },
   { immediate: true },
@@ -102,7 +105,7 @@ watch(
     <template v-if="isTeller">
       <div class="stage-group__pages">
         <div
-          v-for="page in visiblePages(currentStage)"
+          v-for="page in assistantTellerPages()"
           :key="page.key"
           class="stage-group__page"
           :class="{ 'is-active': isActivePage(page) }"

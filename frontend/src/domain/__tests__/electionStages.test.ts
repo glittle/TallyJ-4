@@ -3,11 +3,12 @@ import { STAGES, STAGE_META, STAGE_PAGES } from "../electionStages";
 
 describe("electionStages", () => {
   describe("STAGES + STAGE_META", () => {
-    it("contains the three canonical stages in order", () => {
+    it("contains the four canonical stages in order", () => {
       expect(STAGES).toEqual([
         "SettingUp",
         "GatheringBallots",
         "ProcessingBallots",
+        "Finalized",
       ]);
     });
 
@@ -55,12 +56,18 @@ describe("electionStages", () => {
       expect(frontdesk?.adminOnly).toBeFalsy();
     });
 
-    it("does not mark Ballot Management as admin-only (teller-visible)", () => {
+    it("marks Ballot Management as admin-only (full-teller only)", () => {
       const ballots = STAGE_PAGES.ProcessingBallots.find(
         (p) => p.key === "ballots",
       );
       expect(ballots).toBeDefined();
-      expect(ballots?.adminOnly).toBeFalsy();
+      expect(ballots?.adminOnly).toBe(true);
+    });
+
+    it("has Finalized stage pages for full tellers", () => {
+      expect(STAGE_PAGES.Finalized.length).toBeGreaterThan(0);
+      const results = STAGE_PAGES.Finalized.find((p) => p.key === "results");
+      expect(results).toBeDefined();
     });
   });
 });

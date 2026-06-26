@@ -1435,6 +1435,9 @@ export const ChangeElectionStageDtoSchema = {
     properties: {
         electionStage: {
             $ref: '#/components/schemas/ElectionStage'
+        },
+        confirmLeavingFinalized: {
+            type: 'boolean'
         }
     },
     additionalProperties: false
@@ -1543,11 +1546,6 @@ export const CheckInVoterDtoSchema = {
             minLength: 0,
             type: 'string'
         },
-        votingLocationGuid: {
-            type: 'string',
-            format: 'uuid',
-            nullable: true
-        },
         teller1: {
             maxLength: 25,
             minLength: 0,
@@ -1558,6 +1556,11 @@ export const CheckInVoterDtoSchema = {
             maxLength: 25,
             minLength: 0,
             type: 'string',
+            nullable: true
+        },
+        votingLocationGuid: {
+            type: 'string',
+            format: 'uuid',
             nullable: true
         }
     },
@@ -2496,7 +2499,8 @@ export const ElectionStageSchema = {
     enum: [
         'SettingUp',
         'GatheringBallots',
-        'ProcessingBallots'
+        'ProcessingBallots',
+        'Finalized'
     ],
     type: 'string'
 } as const;

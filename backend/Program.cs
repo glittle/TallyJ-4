@@ -309,6 +309,9 @@ void ConfigureAuthorization(IServiceCollection services)
         options.AddPolicy("HeadTellerAccess", policy =>
             policy.Requirements.Add(new Backend.Authorization.HeadTellerAccessRequirement()));
 
+        options.AddPolicy("FullTellerAccess", policy =>
+            policy.Requirements.Add(new Backend.Authorization.FullTellerAccessRequirement()));
+
         options.AddPolicy("SuperAdmin", policy =>
             policy.Requirements.Add(new Backend.Authorization.SuperAdminRequirement()));
     });
@@ -316,6 +319,7 @@ void ConfigureAuthorization(IServiceCollection services)
     services.AddScoped<IAuthorizationHandler, Backend.Authorization.ElectionAccessHandler>();
     services.AddScoped<IAuthorizationHandler, Backend.Authorization.TellerAccessHandler>();
     services.AddScoped<IAuthorizationHandler, Backend.Authorization.HeadTellerAccessHandler>();
+    services.AddScoped<IAuthorizationHandler, Backend.Authorization.FullTellerAccessHandler>();
     services.AddScoped<IAuthorizationHandler, Backend.Authorization.SuperAdminHandler>();
 }
 

@@ -132,7 +132,7 @@ public class ElectionsController : ControllerBase
     /// <param name="dto">The new election stage.</param>
     /// <returns>The updated election information.</returns>
     [HttpPut("{guid}/stage")]
-    [Authorize(Policy = "ElectionAccess")]
+    [Authorize(Policy = "FullTellerAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> ChangeElectionStage(Guid guid, ChangeElectionStageDto dto)
     {
         if (!Enum.IsDefined(typeof(ElectionStage), dto.ElectionStage))
@@ -140,14 +140,30 @@ public class ElectionsController : ControllerBase
             return BadRequest(ApiResponse<ElectionDto>.ErrorResponse("Invalid election stage"));
         }
 
-        var election = await _electionService.ChangeElectionStageAsync(guid, dto.ElectionStage);
+        var result = await _electionService.ChangeElectionStageAsync(guid, dto);
 
-        if (election == null)
+        if (result.IsNotFound)
         {
             return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
         }
 
-        return Ok(ApiResponse<ElectionDto>.SuccessResponse(election, "Election stage changed successfully"));
+        if (result.RequiresConfirmation)
+        {
+            return Conflict(ApiResponse<ElectionDto>.ErrorResponse(
+                result.ConfirmationReason ?? "Confirmation required to leave Finalized stage"));
+        }
+
+        if (result.ErrorMessage != null)
+        {
+            return BadRequest(ApiResponse<ElectionDto>.ErrorResponse(result.ErrorMessage));
+        }
+
+        _logger.LogInformation(
+            "Election {ElectionGuid} stage changed to {Stage} via API",
+            guid,
+            dto.ElectionStage);
+
+        return Ok(ApiResponse<ElectionDto>.SuccessResponse(result.Election!, "Election stage changed successfully"));
     }
 
     /// <summary>

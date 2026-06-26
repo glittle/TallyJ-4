@@ -1,5 +1,6 @@
 import type { Component } from "vue";
 import {
+  CircleCheck,
   DataAnalysis,
   Document,
   Files,
@@ -15,7 +16,10 @@ import {
 export type ElectionStage =
   | "SettingUp"
   | "GatheringBallots"
-  | "ProcessingBallots";
+  | "ProcessingBallots"
+  | "Finalized";
+
+export type NavElectionStage = ElectionStage;
 
 export interface NavPageDef {
   key: string;
@@ -26,7 +30,7 @@ export interface NavPageDef {
 }
 
 export interface StageMeta {
-  key: ElectionStage;
+  key: NavElectionStage;
   i18nKey: string;
   shortI18nKey: string;
   groupI18nKey: string;
@@ -35,13 +39,14 @@ export interface StageMeta {
   icon: Component;
 }
 
-export const STAGES: readonly ElectionStage[] = [
+export const STAGES: readonly NavElectionStage[] = [
   "SettingUp",
   "GatheringBallots",
   "ProcessingBallots",
+  "Finalized",
 ] as const;
 
-export const STAGE_META: Record<ElectionStage, StageMeta> = {
+export const STAGE_META: Record<NavElectionStage, StageMeta> = {
   SettingUp: {
     key: "SettingUp",
     i18nKey: "elections.stage.SettingUp",
@@ -69,9 +74,18 @@ export const STAGE_META: Record<ElectionStage, StageMeta> = {
     bgVar: "--color-stage-process-bg",
     icon: PieChart,
   },
+  Finalized: {
+    key: "Finalized",
+    i18nKey: "elections.stage.Finalized",
+    shortI18nKey: "elections.stage.Finalized_short",
+    groupI18nKey: "elections.stageNav.group.Finalized",
+    colorVar: "--color-stage-process",
+    bgVar: "--color-stage-process-bg",
+    icon: CircleCheck,
+  },
 };
 
-export const STAGE_PAGES: Record<ElectionStage, NavPageDef[]> = {
+export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
   SettingUp: [
     {
       key: "details",
@@ -123,6 +137,7 @@ export const STAGE_PAGES: Record<ElectionStage, NavPageDef[]> = {
       i18nKey: "ballots.management",
       icon: Tickets,
       routePath: (g) => `/elections/${g}/ballots`,
+      adminOnly: true,
     },
     {
       key: "tally",
@@ -151,6 +166,32 @@ export const STAGE_PAGES: Record<ElectionStage, NavPageDef[]> = {
       icon: Files,
       routePath: (g) => `/elections/${g}/reporting`,
       adminOnly: true,
+    },
+  ],
+  Finalized: [
+    {
+      key: "details",
+      i18nKey: "elections.details",
+      icon: Document,
+      routePath: (g) => `/elections/${g}`,
+    },
+    {
+      key: "results",
+      i18nKey: "results.title",
+      icon: DataAnalysis,
+      routePath: (g) => `/elections/${g}/results`,
+    },
+    {
+      key: "presentation",
+      i18nKey: "results.presentation",
+      icon: Monitor,
+      routePath: (g) => `/elections/${g}/presentation`,
+    },
+    {
+      key: "reporting",
+      i18nKey: "results.reporting",
+      icon: Files,
+      routePath: (g) => `/elections/${g}/reporting`,
     },
   ],
 };

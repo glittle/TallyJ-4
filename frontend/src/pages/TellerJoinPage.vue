@@ -6,6 +6,9 @@ import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { getApiPublicElections } from "@/api/gen/configService";
+import { getAssistantTellerRedirectPath } from "@/domain/assistantTellerAccess";
+import type { ElectionStage } from "@/domain/electionStages";
+import { electionService } from "../services/electionService";
 import { useAuthStore } from "../stores/authStore";
 
 interface AvailableElection {
@@ -81,7 +84,18 @@ const handleJoin = async () => {
 
       showSuccessMessage(t("auth.tellerJoin.joinSuccess"));
 
-      router.push(`/elections/${result.electionGuid}`);
+      let redirectPath = `/elections/${result.electionGuid}`;
+      try {
+        const election = await electionService.getById(result.electionGuid);
+        const stage = (election.electionStage ?? "SettingUp") as ElectionStage;
+        redirectPath = getAssistantTellerRedirectPath(
+          result.electionGuid,
+          stage,
+        );
+      } catch {
+        // Ignore stage lookup failures; router guard will redirect if needed.
+      }
+      router.push(redirectPath);
     } catch (error) {
       console.error("Teller join failed:", error);
       showErrorMessage(t("auth.tellerJoin.invalidElection"));

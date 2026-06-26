@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { setActivePinia, createPinia } from "pinia";
 import StageGroupedSidebarMenu from "../StageGroupedSidebarMenu.vue";
+import { getAssistantTellerRedirectPath } from "@/domain/assistantTellerAccess";
 import { STAGE_PAGES, STAGES } from "@/domain/electionStages";
 import type { ElectionStage } from "@/domain/electionStages";
 
@@ -78,7 +79,7 @@ describe("StageGroupedSidebarMenu", () => {
   });
 
   describe("admin mode (isTeller=false)", () => {
-    it("renders all 3 stage groups", () => {
+    it("renders all 4 stage groups", () => {
       const wrapper = mountMenu({ isTeller: false, currentStage: "SettingUp" });
       const groups = wrapper.findAll(".stage-group");
       expect(groups).toHaveLength(STAGES.length);
@@ -151,16 +152,22 @@ describe("StageGroupedSidebarMenu", () => {
       expect(pages).toHaveLength(expectedPages.length);
     });
 
-    it("renders ProcessingBallots teller-accessible pages when in that stage", () => {
+    it("renders no menu pages during ProcessingBallots (ballot entry uses per-ballot URLs)", () => {
       const wrapper = mountMenu({
         isTeller: true,
         currentStage: "ProcessingBallots",
       });
       const pages = wrapper.findAll(".stage-group__page");
-      const expectedPages = STAGE_PAGES["ProcessingBallots"].filter(
-        (p) => !p.adminOnly,
-      );
-      expect(pages).toHaveLength(expectedPages.length);
+      expect(pages).toHaveLength(0);
+    });
+
+    it("renders landing and final results during Finalized", () => {
+      const wrapper = mountMenu({
+        isTeller: true,
+        currentStage: "Finalized",
+      });
+      const pages = wrapper.findAll(".stage-group__page");
+      expect(pages).toHaveLength(2);
     });
 
     it("renders no pages when SettingUp (all admin-only)", () => {
@@ -186,14 +193,9 @@ describe("StageGroupedSidebarMenu", () => {
         electionGuid: "test-id",
       });
 
-      const tellerPages = STAGE_PAGES["GatheringBallots"].filter(
-        (p) => !p.adminOnly,
+      expect(mockRouterPush).toHaveBeenCalledWith(
+        getAssistantTellerRedirectPath("test-id", "GatheringBallots"),
       );
-      if (tellerPages.length > 0) {
-        expect(mockRouterPush).toHaveBeenCalledWith(
-          tellerPages[0]!.routePath("test-id"),
-        );
-      }
     });
 
     it("does not redirect teller when already on a valid stage page", () => {

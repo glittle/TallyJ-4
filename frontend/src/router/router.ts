@@ -2,6 +2,11 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import type { RouteLocationNormalized } from "vue-router";
 
+import {
+  getAssistantTellerRedirectPath,
+  isAssistantTeller,
+  isAssistantTellerRouteAllowed,
+} from "@/domain/assistantTellerAccess";
 import { secureTokenService } from "../services/secureTokenService";
 
 // PublicLayout is static - needed immediately for all public/voting routes
@@ -313,9 +318,7 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
     return { path: "/login", query: { redirect: to.fullPath } };
   }
 
-  const authData = secureTokenService.getAuthData();
-  const isTeller =
-    authData.name === "Teller" && authData.authMethod === "AccessCode";
+  const isTeller = isAssistantTeller();
 
   if (isAuthenticated) {
     if (!isTeller) {
@@ -334,6 +337,33 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
       const electionMatch = to.path.match(/^\/elections\/([^/]+)/);
       if (!electionMatch && !to.path.startsWith("/teller-join")) {
         return "/teller-join";
+      }
+
+      if (electionMatch) {
+        const electionGuid = electionMatch[1]!;
+        const { useElectionStore } = await import("../stores/electionStore");
+        const electionStore = useElectionStore();
+
+        if (electionStore.currentElection?.electionGuid !== electionGuid) {
+          try {
+            await electionStore.fetchElectionById(electionGuid);
+          } catch {
+            return "/teller-join";
+          }
+        }
+
+        if (
+          !isAssistantTellerRouteAllowed(
+            to.path,
+            electionGuid,
+            electionStore.currentStage,
+          )
+        ) {
+          return getAssistantTellerRedirectPath(
+            electionGuid,
+            electionStore.currentStage,
+          );
+        }
       }
     }
   }

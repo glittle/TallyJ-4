@@ -212,6 +212,179 @@ public class ElectionServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task ChangeElectionStageAsync_FromProcessingBallotsToFinalized_SucceedsWhenReady()
+    {
+        var electionGuid = Guid.NewGuid();
+        var election = new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Stage Test Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.ProcessingBallots,
+            DateOfElection = DateTime.UtcNow.AddDays(10),
+            RowVersion = new byte[8]
+        };
+
+        var personGuid = Guid.NewGuid();
+        Context.Elections.Add(election);
+        Context.People.Add(new Person
+        {
+            PersonGuid = personGuid,
+            ElectionGuid = electionGuid,
+            FirstName = "Test",
+            LastName = "Candidate",
+            RowVersion = new byte[8]
+        });
+        Context.Results.Add(new Result
+        {
+            ElectionGuid = electionGuid,
+            PersonGuid = personGuid,
+            Rank = 1,
+            Section = "E",
+            VoteCount = 10
+        });
+        Context.ResultSummaries.Add(new ResultSummary
+        {
+            ElectionGuid = electionGuid,
+            ResultType = "F",
+            UseOnReports = true,
+            BallotsNeedingReview = 0
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
+        {
+            ElectionStage = ElectionStage.Finalized
+        });
+
+        Assert.True(result.IsSuccess);
+        Assert.NotNull(result.Election);
+        Assert.Equal(ElectionStage.Finalized, result.Election.ElectionStage);
+
+        var inDb = Context.Elections.Single(e => e.ElectionGuid == electionGuid);
+        Assert.Equal(ElectionStage.Finalized, inDb.ElectionStage);
+    }
+
+    [Fact]
+    public async Task ChangeElectionStageAsync_ToFinalized_IsRejectedWhenNotReady()
+    {
+        var electionGuid = Guid.NewGuid();
+        var election = new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Not Ready Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.ProcessingBallots,
+            DateOfElection = DateTime.UtcNow.AddDays(10),
+            RowVersion = new byte[8]
+        };
+
+        Context.Elections.Add(election);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
+        {
+            ElectionStage = ElectionStage.Finalized
+        });
+
+        Assert.False(result.IsSuccess);
+        Assert.NotNull(result.ErrorMessage);
+
+        var inDb = Context.Elections.Single(e => e.ElectionGuid == electionGuid);
+        Assert.Equal(ElectionStage.ProcessingBallots, inDb.ElectionStage);
+    }
+
+    [Fact]
+    public async Task ChangeElectionStageAsync_FromFinalized_RequiresConfirmation()
+    {
+        var electionGuid = Guid.NewGuid();
+        var election = new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Finalized Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.Finalized,
+            DateOfElection = DateTime.UtcNow.AddDays(10),
+            RowVersion = new byte[8]
+        };
+
+        Context.Elections.Add(election);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
+        {
+            ElectionStage = ElectionStage.ProcessingBallots
+        });
+
+        Assert.True(result.RequiresConfirmation);
+        Assert.NotNull(result.ConfirmationReason);
+
+        var inDb = Context.Elections.Single(e => e.ElectionGuid == electionGuid);
+        Assert.Equal(ElectionStage.Finalized, inDb.ElectionStage);
+    }
+
+    [Fact]
+    public async Task ChangeElectionStageAsync_FromFinalized_SucceedsWithConfirmation()
+    {
+        var electionGuid = Guid.NewGuid();
+        var election = new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Finalized Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.Finalized,
+            DateOfElection = DateTime.UtcNow.AddDays(10),
+            RowVersion = new byte[8]
+        };
+
+        Context.Elections.Add(election);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
+        {
+            ElectionStage = ElectionStage.ProcessingBallots,
+            ConfirmLeavingFinalized = true
+        });
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(ElectionStage.ProcessingBallots, result.Election!.ElectionStage);
+    }
+
+    [Fact]
+    public async Task ChangeElectionStageAsync_SkipStage_IsRejectedAndStageUnchanged()
+    {
+        var electionGuid = Guid.NewGuid();
+        var election = new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Skip Stage Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.SettingUp,
+            DateOfElection = DateTime.UtcNow.AddDays(10),
+            RowVersion = new byte[8]
+        };
+
+        Context.Elections.Add(election);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
+        {
+            ElectionStage = ElectionStage.ProcessingBallots
+        });
+
+        Assert.False(result.IsSuccess);
+        Assert.NotNull(result.ErrorMessage);
+
+        var inDb = Context.Elections.Single(e => e.ElectionGuid == electionGuid);
+        Assert.Equal(ElectionStage.SettingUp, inDb.ElectionStage);
+    }
+
+    [Fact]
     public async Task GetElectionsAsync_WithStatusFilter_ReturnsFilteredResults()
     {
         for (int i = 0; i < 10; i++)
