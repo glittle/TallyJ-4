@@ -57,6 +57,7 @@ public static class ElectionStageFinalizationReadiness
             else
             {
                 var ballotStatuses = await context.Ballots
+                    .AsNoTracking()
                     .Where(b => b.Location.ElectionGuid == electionGuid)
                     .Select(b => b.StatusCode)
                     .ToListAsync();
