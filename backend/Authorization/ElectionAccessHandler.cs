@@ -74,7 +74,7 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
 
         if (IsGuestTellerForElection(user, electionGuid))
         {
-            _logger.LogInformation("ElectionAccess: Guest teller authenticated for election {ElectionGuid}", electionGuid);
+            _logger.LogInformation("ElectionAccess: GuestTeller authenticated for election {ElectionGuid}", electionGuid);
             context.Succeed(requirement);
             return;
         }

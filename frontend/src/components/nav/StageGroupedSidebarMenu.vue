@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {
-  getAssistantTellerMenuPages,
-  getAssistantTellerRedirectPath,
-  isAssistantTellerRouteAllowed,
-} from "@/domain/assistantTellerAccess";
+  getGuestTellerMenuPages,
+  getGuestTellerRedirectPath,
+  isGuestTellerRouteAllowed,
+} from "@/domain/guestTellerAccess";
 import {
   type ElectionStage,
   type NavPageDef,
@@ -20,7 +20,7 @@ import { useRoute, useRouter } from "vue-router";
 const props = defineProps<{
   electionGuid: string;
   currentStage: ElectionStage;
-  isTeller: boolean;
+  isGuestTeller: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -32,8 +32,8 @@ const route = useRoute();
 const router = useRouter();
 const navUiStore = useNavUiStore();
 
-function assistantTellerPages(): NavPageDef[] {
-  return getAssistantTellerMenuPages(props.currentStage, props.electionGuid);
+function guestTellerPages(): NavPageDef[] {
+  return getGuestTellerMenuPages(props.currentStage, props.electionGuid);
 }
 
 function isExpanded(stage: ElectionStage): boolean {
@@ -75,19 +75,19 @@ watch(
 watch(
   [() => props.currentStage, () => route.path],
   () => {
-    if (!props.isTeller) {
+    if (!props.isGuestTeller) {
       return;
     }
 
     if (
-      !isAssistantTellerRouteAllowed(
+      !isGuestTellerRouteAllowed(
         route.path,
         props.electionGuid,
         props.currentStage,
       )
     ) {
       router.push(
-        getAssistantTellerRedirectPath(props.electionGuid, props.currentStage),
+        getGuestTellerRedirectPath(props.electionGuid, props.currentStage),
       );
     }
   },
@@ -101,11 +101,11 @@ watch(
     role="navigation"
     aria-label="Election navigation"
   >
-    <!-- Teller view: no group headers, just the filtered page list for current stage -->
-    <template v-if="isTeller">
+    <!-- Guest view: no group headers, just the filtered page list for current stage -->
+    <template v-if="isGuestTeller">
       <div class="stage-group__pages">
         <div
-          v-for="page in assistantTellerPages()"
+          v-for="page in guestTellerPages()"
           :key="page.key"
           class="stage-group__page"
           :class="{ 'is-active': isActivePage(page) }"

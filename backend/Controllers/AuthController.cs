@@ -223,7 +223,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Authenticates an assistant teller using an election access code.
+    /// Authenticates a GuestTeller using an election access code.
     /// </summary>
     /// <param name="request">The teller login request containing election GUID and access code.</param>
     /// <returns>A teller authentication response with a limited JWT if successful.</returns>
@@ -1341,7 +1341,7 @@ public class AuthController : ControllerBase
             Severity = SecurityEventSeverity.Info
         });
 
-        await _remoteLogService.SendLogAsync($"Full teller login via {provider}", user.DisplayName ?? user.Email, null);
+        await _remoteLogService.SendLogAsync($"FullTeller login via {provider}", user.DisplayName ?? user.Email, null);
 
         return (user, isNewUser);
     }
@@ -1436,7 +1436,7 @@ public class AuthController : ControllerBase
             Severity = SecurityEventSeverity.Info
         });
 
-        await _remoteLogService.SendLogAsync($"Full teller login via Google" + (isNewUser ? " (new user)" : ""), user.DisplayName ?? user.Email, null);
+        await _remoteLogService.SendLogAsync($"FullTeller login via Google" + (isNewUser ? " (new user)" : ""), user.DisplayName ?? user.Email, null);
 
         return (user, isNewUser);
     }
@@ -1542,7 +1542,7 @@ public class AuthController : ControllerBase
             Severity = SecurityEventSeverity.Info
         });
 
-        await _remoteLogService.SendLogAsync($"Full teller login via Telegram" + (isNewUser ? " (new user)" : ""), user.DisplayName ?? user.Email, null);
+        await _remoteLogService.SendLogAsync($"FullTeller login via Telegram" + (isNewUser ? " (new user)" : ""), user.DisplayName ?? user.Email, null);
 
         return (user, isNewUser);
     }

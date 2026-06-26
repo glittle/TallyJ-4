@@ -9,7 +9,7 @@ namespace Backend.Authorization;
 
 /// <summary>
 /// Authorization handler that restricts access to election administration actions
-/// to Full Tellers only.
+/// to FullTellers only.
 /// </summary>
 public class FullTellerAccessHandler : AuthorizationHandler<FullTellerAccessRequirement>
 {
@@ -41,7 +41,7 @@ public class FullTellerAccessHandler : AuthorizationHandler<FullTellerAccessRequ
 
         if (IsGuestTeller(user))
         {
-            _logger.LogWarning("FullTellerAccess: Guest teller denied");
+            _logger.LogWarning("FullTellerAccess: GuestTeller denied");
             context.Fail();
             return;
         }

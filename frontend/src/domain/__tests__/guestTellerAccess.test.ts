@@ -1,56 +1,72 @@
 import { describe, it, expect } from "vitest";
 import {
-  getAssistantTellerMenuPages,
-  getAssistantTellerRedirectPath,
-  isAssistantTeller,
-  isAssistantTellerRouteAllowed,
-} from "../assistantTellerAccess";
+  getGuestTellerMenuPages,
+  getGuestTellerRedirectPath,
+  isFullTeller,
+  isGuestTeller,
+  isGuestTellerRouteAllowed,
+} from "../guestTellerAccess";
 import type { ElectionStage } from "../electionStages";
 
 const GUID = "abc-123";
 
-describe("assistantTellerAccess", () => {
-  describe("isAssistantTeller", () => {
-    it("returns true for passcode teller auth", () => {
+describe("guestTellerAccess", () => {
+  describe("isGuestTeller", () => {
+    it("returns true for passcode GuestTeller auth", () => {
       expect(
-        isAssistantTeller({ name: "Teller", authMethod: "AccessCode" } as any),
+        isGuestTeller({ name: "Teller", authMethod: "AccessCode" } as any),
       ).toBe(true);
     });
 
-    it("returns false for full tellers and regular users", () => {
+    it("returns false for FullTellers and regular users", () => {
+      expect(isGuestTeller({ name: "Alice", authMethod: "Local" } as any)).toBe(
+        false,
+      );
       expect(
-        isAssistantTeller({ name: "Alice", authMethod: "Local" } as any),
-      ).toBe(false);
-      expect(
-        isAssistantTeller({ email: "a@b.com", authMethod: "Google" } as any),
+        isGuestTeller({ email: "a@b.com", authMethod: "Google" } as any),
       ).toBe(false);
     });
   });
 
-  describe("getAssistantTellerMenuPages", () => {
+  describe("isFullTeller", () => {
+    it("returns false for GuestTeller auth", () => {
+      expect(
+        isFullTeller({ name: "Teller", authMethod: "AccessCode" } as any),
+      ).toBe(false);
+    });
+
+    it("returns true for FullTeller and officer auth", () => {
+      expect(isFullTeller({ name: "Alice", authMethod: "Local" } as any)).toBe(
+        true,
+      );
+      expect(
+        isFullTeller({ email: "a@b.com", authMethod: "Google" } as any),
+      ).toBe(true);
+    });
+  });
+
+  describe("getGuestTellerMenuPages", () => {
     it("returns no menu items during SettingUp", () => {
-      expect(getAssistantTellerMenuPages("SettingUp", GUID)).toEqual([]);
+      expect(getGuestTellerMenuPages("SettingUp", GUID)).toEqual([]);
     });
 
     it("returns Front Desk during GatheringBallots", () => {
-      const pages = getAssistantTellerMenuPages("GatheringBallots", GUID);
+      const pages = getGuestTellerMenuPages("GatheringBallots", GUID);
       expect(pages).toHaveLength(1);
       expect(pages[0]!.key).toBe("frontdesk");
     });
 
     it("returns no menu items during ProcessingBallots (entry uses per-ballot URLs)", () => {
-      expect(getAssistantTellerMenuPages("ProcessingBallots", GUID)).toEqual(
-        [],
-      );
+      expect(getGuestTellerMenuPages("ProcessingBallots", GUID)).toEqual([]);
     });
 
     it("returns landing and final results during Finalized", () => {
-      const pages = getAssistantTellerMenuPages("Finalized", GUID);
+      const pages = getGuestTellerMenuPages("Finalized", GUID);
       expect(pages.map((p) => p.key)).toEqual(["landing", "final-results"]);
     });
   });
 
-  describe("isAssistantTellerRouteAllowed", () => {
+  describe("isGuestTellerRouteAllowed", () => {
     const cases: Array<{
       stage: ElectionStage;
       path: string;
@@ -106,26 +122,26 @@ describe("assistantTellerAccess", () => {
     it.each(cases)(
       "$stage allows $path = $allowed",
       ({ stage, path, allowed }) => {
-        expect(isAssistantTellerRouteAllowed(path, GUID, stage)).toBe(allowed);
+        expect(isGuestTellerRouteAllowed(path, GUID, stage)).toBe(allowed);
       },
     );
   });
 
-  describe("getAssistantTellerRedirectPath", () => {
+  describe("getGuestTellerRedirectPath", () => {
     it("redirects GatheringBallots to Front Desk", () => {
-      expect(getAssistantTellerRedirectPath(GUID, "GatheringBallots")).toBe(
+      expect(getGuestTellerRedirectPath(GUID, "GatheringBallots")).toBe(
         `/elections/${GUID}/frontdesk`,
       );
     });
 
     it("redirects SettingUp to election landing", () => {
-      expect(getAssistantTellerRedirectPath(GUID, "SettingUp")).toBe(
+      expect(getGuestTellerRedirectPath(GUID, "SettingUp")).toBe(
         `/elections/${GUID}`,
       );
     });
 
     it("redirects Finalized to election landing first", () => {
-      expect(getAssistantTellerRedirectPath(GUID, "Finalized")).toBe(
+      expect(getGuestTellerRedirectPath(GUID, "Finalized")).toBe(
         `/elections/${GUID}`,
       );
     });

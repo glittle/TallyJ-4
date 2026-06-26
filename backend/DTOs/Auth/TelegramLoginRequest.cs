@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Backend.DTOs.Auth;
 
 /// <summary>
-/// Request model for Telegram Login Widget authentication for officers and full tellers.
+/// Request model for Telegram Login Widget authentication for officers and FullTellers.
 /// Contains the fields returned by the Telegram Login Widget callback.
 /// </summary>
 public class TelegramLoginRequest

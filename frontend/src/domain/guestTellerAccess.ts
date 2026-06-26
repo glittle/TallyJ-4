@@ -7,16 +7,24 @@ import type { ElectionStage, NavPageDef } from "./electionStages";
 import { STAGE_PAGES } from "./electionStages";
 
 /**
- * Assistant tellers authenticate via election passcode (AccessCode), not as full
- * election officials. Full tellers and admins are unaffected by these rules.
+ * GuestTellers authenticate via election passcode (AccessCode), not as FullTellers
+ * or election officials. FullTellers and admins are unaffected by these rules.
  */
-export function isAssistantTeller(authData?: AuthCookieData): boolean {
+export function isGuestTeller(authData?: AuthCookieData): boolean {
   const data = authData ?? secureTokenService.getAuthData();
   return data.name === "Teller" && data.authMethod === "AccessCode";
 }
 
+/** Authenticated users with full logged-in access (not GuestTellers). */
+export function isFullTeller(authData?: AuthCookieData): boolean {
+  if (authData === undefined && !secureTokenService.isAuthenticated()) {
+    return false;
+  }
+  return !isGuestTeller(authData);
+}
+
 /** Route patterns allowed per stage (in addition to menu page paths). */
-const ASSISTANT_TELLER_ROUTE_PATTERNS: Record<ElectionStage, RegExp[]> = {
+const GUEST_TELLER_ROUTE_PATTERNS: Record<ElectionStage, RegExp[]> = {
   SettingUp: [/^\/elections\/[^/]+$/],
   GatheringBallots: [/^\/elections\/[^/]+\/frontdesk$/],
   ProcessingBallots: [
@@ -50,9 +58,9 @@ function showFinalResultsPage(): NavPageDef {
 }
 
 /**
- * Sidebar menu pages visible to assistant tellers for the current election stage.
+ * Sidebar menu pages visible to GuestTellers for the current election stage.
  */
-export function getAssistantTellerMenuPages(
+export function getGuestTellerMenuPages(
   stage: ElectionStage,
   _electionGuid: string,
 ): NavPageDef[] {
@@ -69,7 +77,7 @@ export function getAssistantTellerMenuPages(
   }
 }
 
-export function isAssistantTellerRouteAllowed(
+export function isGuestTellerRouteAllowed(
   path: string,
   electionGuid: string,
   stage: ElectionStage,
@@ -79,24 +87,24 @@ export function isAssistantTellerRouteAllowed(
     return false;
   }
 
-  const menuPaths = getAssistantTellerMenuPages(stage, electionGuid).map((p) =>
+  const menuPaths = getGuestTellerMenuPages(stage, electionGuid).map((p) =>
     p.routePath(electionGuid),
   );
   if (menuPaths.includes(path)) {
     return true;
   }
 
-  return ASSISTANT_TELLER_ROUTE_PATTERNS[stage].some((pattern) =>
+  return GUEST_TELLER_ROUTE_PATTERNS[stage].some((pattern) =>
     pattern.test(path),
   );
 }
 
-/** First safe destination when an assistant teller hits a restricted route. */
-export function getAssistantTellerRedirectPath(
+/** First safe destination when a GuestTeller hits a restricted route. */
+export function getGuestTellerRedirectPath(
   electionGuid: string,
   stage: ElectionStage,
 ): string {
-  const menuPages = getAssistantTellerMenuPages(stage, electionGuid);
+  const menuPages = getGuestTellerMenuPages(stage, electionGuid);
   if (menuPages.length > 0) {
     return menuPages[0]!.routePath(electionGuid);
   }

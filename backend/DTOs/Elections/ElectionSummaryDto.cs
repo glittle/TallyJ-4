@@ -51,7 +51,7 @@ public class ElectionSummaryDto
     public ElectionModeCode? ElectionMode { get; set; }
 
     /// <summary>
-    /// Whether the election is currently open for assistant tellers to join.
+    /// Whether the election is currently open for GuestTellers to join.
     /// </summary>
     public bool IsTellerAccessOpen { get; set; }
 

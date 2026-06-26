@@ -289,13 +289,13 @@ export const useAuthStore = defineStore("auth", () => {
       requires2FA.value = false;
       pending2FAEmail.value = null;
 
-      // For tellers, skip fetchUserInfo since they don't have user accounts
-      // Tellers are identified by name="Teller" and authMethod="AccessCode"
+      // GuestTellers skip fetchUserInfo since they don't have user accounts.
+      // GuestTellers are identified by name="Teller" and authMethod="AccessCode".
       if (name.value !== "Teller" || authMethod.value !== "AccessCode") {
-        // Fetch user info including isSuperAdmin for regular users
+        // Fetch user info including isSuperAdmin for FullTellers and officers
         await fetchUserInfo();
       } else {
-        // For tellers, set default values
+        // GuestTeller session defaults
         isSuperAdmin.value = false;
       }
 

@@ -59,7 +59,7 @@ public class TellerAccessHandler : AuthorizationHandler<TellerAccessRequirement>
             return;
         }
 
-        // Check for guest teller (authenticated via access code)
+        // Check for GuestTeller (authenticated via access code)
         var isTellerClaim = user.FindFirst("isTeller")?.Value;
         var electionGuidClaim = user.FindFirst("electionGuid")?.Value;
         var authMethod = user.FindFirst("authMethod")?.Value;
@@ -67,16 +67,16 @@ public class TellerAccessHandler : AuthorizationHandler<TellerAccessRequirement>
         if (bool.TryParse(isTellerClaim, out var isGuestTeller) && isGuestTeller &&
             string.Equals(authMethod, "AccessCode", StringComparison.OrdinalIgnoreCase))
         {
-            // Guest teller authenticated with access code
+            // GuestTeller authenticated with access code
             if (Guid.TryParse(electionGuidClaim, out var tokenElectionGuid) && tokenElectionGuid == electionGuid)
             {
-                _logger.LogInformation("TellerAccess: Guest teller authenticated for election {ElectionGuid}", electionGuid);
+                _logger.LogInformation("TellerAccess: GuestTeller authenticated for election {ElectionGuid}", electionGuid);
                 context.Succeed(requirement);
                 return;
             }
             else
             {
-                _logger.LogWarning("TellerAccess: Guest teller token election GUID mismatch. Token: {TokenGuid}, Route: {RouteGuid}", electionGuidClaim, electionGuid);
+                _logger.LogWarning("TellerAccess: GuestTeller token election GUID mismatch. Token: {TokenGuid}, Route: {RouteGuid}", electionGuidClaim, electionGuid);
                 context.Fail();
                 return;
             }
@@ -87,7 +87,7 @@ public class TellerAccessHandler : AuthorizationHandler<TellerAccessRequirement>
                          ?? user.FindFirst("sub")?.Value;
         if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
         {
-            _logger.LogWarning("TellerAccess: Could not parse user ID from claims and not a guest teller");
+            _logger.LogWarning("TellerAccess: Could not parse user ID from claims and not a GuestTeller");
             context.Fail();
             return;
         }

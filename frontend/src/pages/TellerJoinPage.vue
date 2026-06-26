@@ -6,7 +6,7 @@ import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { getApiPublicElections } from "@/api/gen/configService";
-import { getAssistantTellerRedirectPath } from "@/domain/assistantTellerAccess";
+import { getGuestTellerRedirectPath } from "@/domain/guestTellerAccess";
 import type { ElectionStage } from "@/domain/electionStages";
 import { electionService } from "../services/electionService";
 import { useAuthStore } from "../stores/authStore";
@@ -88,10 +88,7 @@ const handleJoin = async () => {
       try {
         const election = await electionService.getById(result.electionGuid);
         const stage = (election.electionStage ?? "SettingUp") as ElectionStage;
-        redirectPath = getAssistantTellerRedirectPath(
-          result.electionGuid,
-          stage,
-        );
+        redirectPath = getGuestTellerRedirectPath(result.electionGuid, stage);
       } catch {
         // Ignore stage lookup failures; router guard will redirect if needed.
       }

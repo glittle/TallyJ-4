@@ -2,7 +2,7 @@
 import { setLocale, supportedLocales, type SupportedLocale } from "@/locales";
 import { ElOption, ElSelect } from "element-plus";
 import type { ComponentSize } from "element-plus";
-import { computed, onMounted, withDefaults } from "vue";
+import { computed, onMounted } from "vue";
 import CountryFlag from "vue-country-flag-next";
 import { useI18n } from "vue-i18n";
 

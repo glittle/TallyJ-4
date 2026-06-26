@@ -50,19 +50,19 @@ public interface IDashboardService
     Task<bool> SetComputerLocationAsync(string computerCode, Guid locationGuid);
 
     /// <summary>
-    /// Assigns a guest teller to an election.
+    /// Assigns a GuestTeller to an election.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="tellerName">The name of the guest teller.</param>
-    /// <returns>True if the guest teller was successfully assigned, false otherwise.</returns>
+    /// <param name="tellerName">The name of the GuestTeller.</param>
+    /// <returns>True if the GuestTeller was successfully assigned, false otherwise.</returns>
     Task<bool> AssignGuestTellerAsync(Guid electionGuid, string tellerName);
 
     /// <summary>
-    /// Removes a guest teller from an election.
+    /// Removes a GuestTeller from an election.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="tellerName">The name of the guest teller to remove.</param>
-    /// <returns>True if the guest teller was successfully removed, false otherwise.</returns>
+    /// <param name="tellerName">The name of the GuestTeller to remove.</param>
+    /// <returns>True if the GuestTeller was successfully removed, false otherwise.</returns>
     Task<bool> RemoveGuestTellerAsync(Guid electionGuid, string tellerName);
 }
 

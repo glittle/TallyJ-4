@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { setActivePinia, createPinia } from "pinia";
 import StageGroupedSidebarMenu from "../StageGroupedSidebarMenu.vue";
-import { getAssistantTellerRedirectPath } from "@/domain/assistantTellerAccess";
+import { getGuestTellerRedirectPath } from "@/domain/guestTellerAccess";
 import { STAGE_PAGES, STAGES } from "@/domain/electionStages";
 import type { ElectionStage } from "@/domain/electionStages";
 
@@ -58,13 +58,13 @@ const globalStubs = {
 function mountMenu(props: {
   electionGuid?: string;
   currentStage?: ElectionStage;
-  isTeller?: boolean;
+  isGuestTeller?: boolean;
 }) {
   return mount(StageGroupedSidebarMenu, {
     props: {
       electionGuid: "test-id",
       currentStage: "SettingUp",
-      isTeller: false,
+      isGuestTeller: false,
       ...props,
     },
     global: { stubs: globalStubs },
@@ -78,16 +78,19 @@ describe("StageGroupedSidebarMenu", () => {
     mockRoutePath.mockReturnValue("/elections/test-id");
   });
 
-  describe("admin mode (isTeller=false)", () => {
+  describe("admin mode (isGuestTeller=false)", () => {
     it("renders all 4 stage groups", () => {
-      const wrapper = mountMenu({ isTeller: false, currentStage: "SettingUp" });
+      const wrapper = mountMenu({
+        isGuestTeller: false,
+        currentStage: "SettingUp",
+      });
       const groups = wrapper.findAll(".stage-group");
       expect(groups).toHaveLength(STAGES.length);
     });
 
     it("marks the active stage group with is-active-stage class", () => {
       const wrapper = mountMenu({
-        isTeller: false,
+        isGuestTeller: false,
         currentStage: "GatheringBallots",
       });
       const groups = wrapper.findAll(".stage-group");
@@ -102,7 +105,7 @@ describe("StageGroupedSidebarMenu", () => {
 
     it("active stage group header has aria-current=true", () => {
       const wrapper = mountMenu({
-        isTeller: false,
+        isGuestTeller: false,
         currentStage: "ProcessingBallots",
       });
       const headers = wrapper.findAll(".stage-group__header");
@@ -113,7 +116,10 @@ describe("StageGroupedSidebarMenu", () => {
     });
 
     it("reflects updated currentStage when prop changes", async () => {
-      const wrapper = mountMenu({ isTeller: false, currentStage: "SettingUp" });
+      const wrapper = mountMenu({
+        isGuestTeller: false,
+        currentStage: "SettingUp",
+      });
       let groups = wrapper.findAll(".stage-group");
       expect(groups[0]!.classes().includes("is-active-stage")).toBe(true);
 
@@ -125,15 +131,18 @@ describe("StageGroupedSidebarMenu", () => {
     });
 
     it("does not render the teller page list directly (no teller branch)", () => {
-      const wrapper = mountMenu({ isTeller: false, currentStage: "SettingUp" });
+      const wrapper = mountMenu({
+        isGuestTeller: false,
+        currentStage: "SettingUp",
+      });
       expect(wrapper.findAll(".stage-group").length).toBeGreaterThan(0);
     });
   });
 
-  describe("teller mode (isTeller=true)", () => {
+  describe("GuestTeller mode (isGuestTeller=true)", () => {
     it("does not render stage group headers", () => {
       const wrapper = mountMenu({
-        isTeller: true,
+        isGuestTeller: true,
         currentStage: "GatheringBallots",
       });
       expect(wrapper.find(".stage-group__header").exists()).toBe(false);
@@ -142,7 +151,7 @@ describe("StageGroupedSidebarMenu", () => {
 
     it("renders only the current stage's non-admin pages", () => {
       const wrapper = mountMenu({
-        isTeller: true,
+        isGuestTeller: true,
         currentStage: "GatheringBallots",
       });
       const pages = wrapper.findAll(".stage-group__page");
@@ -154,7 +163,7 @@ describe("StageGroupedSidebarMenu", () => {
 
     it("renders no menu pages during ProcessingBallots (ballot entry uses per-ballot URLs)", () => {
       const wrapper = mountMenu({
-        isTeller: true,
+        isGuestTeller: true,
         currentStage: "ProcessingBallots",
       });
       const pages = wrapper.findAll(".stage-group__page");
@@ -163,7 +172,7 @@ describe("StageGroupedSidebarMenu", () => {
 
     it("renders landing and final results during Finalized", () => {
       const wrapper = mountMenu({
-        isTeller: true,
+        isGuestTeller: true,
         currentStage: "Finalized",
       });
       const pages = wrapper.findAll(".stage-group__page");
@@ -172,7 +181,7 @@ describe("StageGroupedSidebarMenu", () => {
 
     it("renders no pages when SettingUp (all admin-only)", () => {
       const wrapper = mountMenu({
-        isTeller: true,
+        isGuestTeller: true,
         currentStage: "SettingUp",
       });
       const pages = wrapper.findAll(".stage-group__page");
@@ -188,13 +197,13 @@ describe("StageGroupedSidebarMenu", () => {
       mockRoutePath.mockReturnValue("/elections/test-id/tally");
 
       mountMenu({
-        isTeller: true,
+        isGuestTeller: true,
         currentStage: "GatheringBallots",
         electionGuid: "test-id",
       });
 
       expect(mockRouterPush).toHaveBeenCalledWith(
-        getAssistantTellerRedirectPath("test-id", "GatheringBallots"),
+        getGuestTellerRedirectPath("test-id", "GatheringBallots"),
       );
     });
 
@@ -205,7 +214,7 @@ describe("StageGroupedSidebarMenu", () => {
       if (tellerPages.length > 0) {
         mockRoutePath.mockReturnValue(tellerPages[0]!.routePath("test-id"));
         mountMenu({
-          isTeller: true,
+          isGuestTeller: true,
           currentStage: "GatheringBallots",
           electionGuid: "test-id",
         });
@@ -215,7 +224,7 @@ describe("StageGroupedSidebarMenu", () => {
 
     it("does not redirect admins regardless of route", () => {
       mockRoutePath.mockReturnValue("/elections/test-id/some-other-page");
-      mountMenu({ isTeller: false, currentStage: "GatheringBallots" });
+      mountMenu({ isGuestTeller: false, currentStage: "GatheringBallots" });
       expect(mockRouterPush).not.toHaveBeenCalled();
     });
   });
@@ -223,7 +232,7 @@ describe("StageGroupedSidebarMenu", () => {
   describe("page navigation", () => {
     it("calls router.push when a page item is clicked (admin)", async () => {
       const wrapper = mountMenu({
-        isTeller: false,
+        isGuestTeller: false,
         currentStage: "SettingUp",
         electionGuid: "test-id",
       });
@@ -238,7 +247,7 @@ describe("StageGroupedSidebarMenu", () => {
 
     it("emits close-mobile-sidebar when a page is clicked", async () => {
       const wrapper = mountMenu({
-        isTeller: false,
+        isGuestTeller: false,
         currentStage: "SettingUp",
         electionGuid: "test-id",
       });
