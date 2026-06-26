@@ -60,7 +60,7 @@ const vendorChunkRules: ChunkRule[] = [
 //    - Only ever load PublicLayout + voting routes + the "voting" chunk.
 //    - Should stay completely isolated from all MainLayout / election management code.
 //
-// 2. Tellers (assistant + full) + election officials
+// 2. Tellers (Guest + Full) + election officials
 //    - Load the authenticated shell (MainLayout + auth-nav) + common election features.
 //    - Individual management areas (people, ballots, frontdesk, locations, tellers,
 //      results/tally, reporting, etc.) are loaded dynamically as separate chunks

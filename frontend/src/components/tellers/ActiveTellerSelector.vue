@@ -7,7 +7,7 @@ import {
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
 import { User } from "@element-plus/icons-vue";
-import { computed, onMounted, ref, watch, withDefaults } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 const props = withDefaults(
   defineProps<{

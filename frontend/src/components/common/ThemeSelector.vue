@@ -4,7 +4,6 @@ import { ElButton, ElIcon } from "element-plus";
 import type { ComponentSize } from "element-plus";
 import { Sunny, Moon } from "@element-plus/icons-vue";
 import { useThemeStore } from "../../stores/themeStore";
-import { withDefaults } from "vue";
 
 withDefaults(
   defineProps<{

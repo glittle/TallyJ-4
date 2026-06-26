@@ -122,7 +122,7 @@ public class DashboardController : ControllerBase
     }
 
     /// <summary>
-    /// Updates the public listing status of an election for guest tellers.
+    /// Updates the public listing status of an election for GuestTellers.
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to update.</param>
     /// <param name="isListed">Whether the election should be publicly listed.</param>
@@ -163,7 +163,7 @@ public class DashboardController : ControllerBase
     }
 
     /// <summary>
-    /// Assigns a guest teller to an election.
+    /// Assigns a GuestTeller to an election.
     /// </summary>
     /// <param name="request">The request containing election GUID and teller name.</param>
     /// <returns>An API response indicating success or failure of the teller assignment.</returns>
@@ -176,7 +176,7 @@ public class DashboardController : ControllerBase
     }
 
     /// <summary>
-    /// Removes a guest teller from an election.
+    /// Removes a GuestTeller from an election.
     /// </summary>
     /// <param name="request">The request containing election GUID and teller name to remove.</param>
     /// <returns>An API response indicating success or failure of the teller removal.</returns>
@@ -208,7 +208,7 @@ public class ChooseLocationRequest
 }
 
 /// <summary>
-/// Request model for assigning a guest teller to an election.
+/// Request model for assigning a GuestTeller to an election.
 /// </summary>
 public class ChooseTellerRequest
 {
@@ -224,7 +224,7 @@ public class ChooseTellerRequest
 }
 
 /// <summary>
-/// Request model for removing a guest teller from an election.
+/// Request model for removing a GuestTeller from an election.
 /// </summary>
 public class DeleteTellerRequest
 {

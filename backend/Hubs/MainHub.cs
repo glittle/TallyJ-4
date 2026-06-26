@@ -80,16 +80,16 @@ public class MainHub : Hub
     }
 
     /// <summary>
-    /// Notifies guest tellers that they should be closed out from the election.
+    /// Notifies GuestTellers that they should be closed out from the election.
     /// This is typically called when an election is being finalized or when guest access needs to be restricted.
     /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election where guest tellers should be closed out.</param>
+    /// <param name="electionGuid">The unique identifier of the election where GuestTellers should be closed out.</param>
     public async Task CloseOutGuestTellers(Guid electionGuid)
     {
         var guestGroup = GetGroupName(electionGuid) + "Guest";
         await Clients.Group(guestGroup).SendAsync("electionClosed");
 
-        _logger.LogInformation("Guest tellers closed out for election {ElectionGuid}", electionGuid);
+        _logger.LogInformation("GuestTellers closed out for election {ElectionGuid}", electionGuid);
     }
 
     /// <summary>

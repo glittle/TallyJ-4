@@ -52,7 +52,7 @@ watch(
 );
 
 const isStandardLogin = computed(
-  () => mode.value === "officer" || mode.value === "full-teller",
+  () => mode.value === "officer" || mode.value === "full",
 );
 const isVoterLogin = computed(() => mode.value === "voter");
 

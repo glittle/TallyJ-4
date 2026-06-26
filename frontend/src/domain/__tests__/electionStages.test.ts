@@ -48,7 +48,7 @@ describe("electionStages", () => {
       }
     });
 
-    it("does not mark Front Desk as admin-only (teller-visible)", () => {
+    it("does not mark Front Desk as admin-only (Guest-visible)", () => {
       const frontdesk = STAGE_PAGES.GatheringBallots.find(
         (p) => p.key === "frontdesk",
       );
@@ -56,7 +56,7 @@ describe("electionStages", () => {
       expect(frontdesk?.adminOnly).toBeFalsy();
     });
 
-    it("marks Ballot Management as admin-only (full-teller only)", () => {
+    it("marks Ballot Management as admin-only (FullTeller only)", () => {
       const ballots = STAGE_PAGES.ProcessingBallots.find(
         (p) => p.key === "ballots",
       );
@@ -64,7 +64,7 @@ describe("electionStages", () => {
       expect(ballots?.adminOnly).toBe(true);
     });
 
-    it("has Finalized stage pages for full tellers", () => {
+    it("has Finalized stage pages for FullTellers", () => {
       expect(STAGE_PAGES.Finalized.length).toBeGreaterThan(0);
       const results = STAGE_PAGES.Finalized.find((p) => p.key === "results");
       expect(results).toBeDefined();

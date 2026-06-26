@@ -265,10 +265,10 @@ public class DashboardService : IDashboardService
     }
 
     /// <summary>
-    /// Assigns a guest teller to an election.
+    /// Assigns a GuestTeller to an election.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="tellerName">The name of the guest teller to assign.</param>
+    /// <param name="tellerName">The name of the GuestTeller to assign.</param>
     /// <returns>True if the assignment was successful.</returns>
     /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<bool> AssignGuestTellerAsync(Guid electionGuid, string tellerName)
@@ -295,17 +295,17 @@ public class DashboardService : IDashboardService
             await _context.SaveChangesAsync();
         }
 
-        _logger.LogInformation("Guest teller {TellerName} assigned to election {ElectionGuid}",
+        _logger.LogInformation("GuestTeller {TellerName} assigned to election {ElectionGuid}",
             tellerName, electionGuid);
 
         return true;
     }
 
     /// <summary>
-    /// Removes a guest teller from an election.
+    /// Removes a GuestTeller from an election.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="tellerName">The name of the guest teller to remove.</param>
+    /// <param name="tellerName">The name of the GuestTeller to remove.</param>
     /// <returns>True if the removal was successful.</returns>
     /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<bool> RemoveGuestTellerAsync(Guid electionGuid, string tellerName)
@@ -321,7 +321,7 @@ public class DashboardService : IDashboardService
         _context.Tellers.Remove(teller);
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("Guest teller {TellerName} removed from election {ElectionGuid}",
+        _logger.LogInformation("GuestTeller {TellerName} removed from election {ElectionGuid}",
             tellerName, electionGuid);
 
         return true;

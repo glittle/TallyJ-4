@@ -3,10 +3,10 @@ import { createRouter, createWebHistory } from "vue-router";
 import type { RouteLocationNormalized } from "vue-router";
 
 import {
-  getAssistantTellerRedirectPath,
-  isAssistantTeller,
-  isAssistantTellerRouteAllowed,
-} from "@/domain/assistantTellerAccess";
+  getGuestTellerRedirectPath,
+  isGuestTeller,
+  isGuestTellerRouteAllowed,
+} from "@/domain/guestTellerAccess";
 import { secureTokenService } from "../services/secureTokenService";
 
 // PublicLayout is static - needed immediately for all public/voting routes
@@ -318,10 +318,10 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
     return { path: "/login", query: { redirect: to.fullPath } };
   }
 
-  const isTeller = isAssistantTeller();
+  const isGuest = isGuestTeller();
 
   if (isAuthenticated) {
-    if (!isTeller) {
+    if (!isGuest) {
       const { useSuperAdminStore } = await import("../stores/superAdminStore");
       const superAdminStore = useSuperAdminStore();
       await superAdminStore.checkSuperAdminStatus();
@@ -333,7 +333,7 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
       return "/dashboard";
     }
 
-    if (isTeller) {
+    if (isGuest) {
       const electionMatch = to.path.match(/^\/elections\/([^/]+)/);
       if (!electionMatch && !to.path.startsWith("/teller-join")) {
         return "/teller-join";
@@ -353,13 +353,13 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
         }
 
         if (
-          !isAssistantTellerRouteAllowed(
+          !isGuestTellerRouteAllowed(
             to.path,
             electionGuid,
             electionStore.currentStage,
           )
         ) {
-          return getAssistantTellerRedirectPath(
+          return getGuestTellerRedirectPath(
             electionGuid,
             electionStore.currentStage,
           );

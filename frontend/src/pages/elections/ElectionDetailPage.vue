@@ -7,7 +7,7 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { electionService } from "../../services/electionService";
-import { secureTokenService } from "../../services/secureTokenService";
+import { isGuestTeller } from "@/domain/guestTellerAccess";
 import { useElectionStore } from "../../stores/electionStore";
 
 const router = useRouter();
@@ -20,10 +20,7 @@ const electionGuid = route.params.id as string;
 const loading = computed(() => electionStore.loading);
 const election = computed(() => electionStore.currentElection);
 
-const isTeller = computed(() => {
-  const authData = secureTokenService.getAuthData();
-  return authData.name === "Teller" && authData.authMethod === "AccessCode";
-});
+const isGuest = computed(() => isGuestTeller());
 
 const qrCodeUrl = ref("");
 
@@ -233,7 +230,7 @@ async function exportElection() {
         </div>
       </el-card>
 
-      <el-card v-if="!isTeller" class="teller-access-card">
+      <el-card v-if="!isGuest" class="teller-access-card">
         <template #header>
           <span>{{ $t("elections.tellerAccess") }}</span>
         </template>
@@ -328,7 +325,7 @@ async function exportElection() {
         </div>
       </el-card>
 
-      <el-row v-if="!isTeller">
+      <el-row v-if="!isGuest">
         <el-card>
           <template #header>
             <span>{{ $t("common.actions") }}</span>
@@ -342,7 +339,7 @@ async function exportElection() {
         </el-card>
       </el-row>
 
-      <el-row v-if="!isTeller">
+      <el-row v-if="!isGuest">
         <el-card class="danger-zone" style="margin-top: 20px">
           <template #header>
             <span style="color: #f56c6c">{{ $t("common.dangerZone") }}</span>

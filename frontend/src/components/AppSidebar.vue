@@ -3,7 +3,7 @@ import { ArrowLeft, HomeFilled, Setting } from "@element-plus/icons-vue";
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { isAssistantTeller } from "@/domain/assistantTellerAccess";
+import { isGuestTeller } from "@/domain/guestTellerAccess";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
 import SidebarStageHeader from "./nav/SidebarStageHeader.vue";
@@ -27,7 +27,7 @@ const superAdminStore = useSuperAdminStore();
 
 const isSuperAdmin = computed(() => superAdminStore.isSuperAdmin);
 
-const isTeller = computed(() => isAssistantTeller());
+const isGuest = computed(() => isGuestTeller());
 
 const isInElectionContext = computed(() => {
   return route.path.startsWith("/elections/") && route.params.id;
@@ -85,7 +85,7 @@ function goBackToElections() {
     <div v-if="isInElectionContext" class="election-nav">
       <div class="election-header">
         <div
-          v-if="!isTeller"
+          v-if="!isGuest"
           class="back-to-elections"
           @click="goBackToElections"
         >
@@ -100,14 +100,14 @@ function goBackToElections() {
       </div>
 
       <SidebarStageHeader
-        v-if="!isTeller"
+        v-if="!isGuest"
         :election-guid="String(route.params.id)"
         :stage="electionStore.currentStage"
       />
       <StageGroupedSidebarMenu
         :election-guid="String(route.params.id)"
         :current-stage="electionStore.currentStage"
-        :is-teller="isTeller"
+        :is-guest-teller="isGuest"
         @close-mobile-sidebar="emit('close-mobile-sidebar')"
       />
     </div>
