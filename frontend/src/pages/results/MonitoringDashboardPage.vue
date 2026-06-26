@@ -299,8 +299,6 @@ function stopAutoRefresh() {
   }
 }
 
-
-
 function formatDateTime(date: string) {
   if (!date) {
     return "-";

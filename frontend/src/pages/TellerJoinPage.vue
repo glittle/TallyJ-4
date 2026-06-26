@@ -88,7 +88,10 @@ const handleJoin = async () => {
       try {
         const election = await electionService.getById(result.electionGuid);
         const stage = (election.electionStage ?? "SettingUp") as ElectionStage;
-        redirectPath = getAssistantTellerRedirectPath(result.electionGuid, stage);
+        redirectPath = getAssistantTellerRedirectPath(
+          result.electionGuid,
+          stage,
+        );
       } catch {
         // Ignore stage lookup failures; router guard will redirect if needed.
       }

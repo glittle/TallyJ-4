@@ -254,7 +254,6 @@ function getTieValidation(tie: TieDetailsDto): string | null {
   }
   return null;
 }
-
 </script>
 
 <style lang="less">

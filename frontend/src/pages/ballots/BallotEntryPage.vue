@@ -91,8 +91,6 @@ function setupPersonUpdateHandler() {
   };
 }
 
-
-
 async function handleVoteAdded(vote: VoteDto) {
   try {
     const createDto: CreateVoteDto = {

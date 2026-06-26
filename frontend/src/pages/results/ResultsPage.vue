@@ -141,8 +141,6 @@ onBeforeUnmount(async () => {
   }
 });
 
-
-
 function formatDateTime(date: string) {
   if (!date) {
     return "-";

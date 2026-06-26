@@ -172,8 +172,6 @@ onBeforeUnmount(async () => {
   }
 });
 
-
-
 async function handleFileChange(file: UploadFile) {
   if (file.raw) {
     uploading.value = true;

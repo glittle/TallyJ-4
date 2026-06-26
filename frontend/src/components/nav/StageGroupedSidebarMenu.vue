@@ -33,10 +33,7 @@ const router = useRouter();
 const navUiStore = useNavUiStore();
 
 function assistantTellerPages(): NavPageDef[] {
-  return getAssistantTellerMenuPages(
-    props.currentStage,
-    props.electionGuid,
-  );
+  return getAssistantTellerMenuPages(props.currentStage, props.electionGuid);
 }
 
 function isExpanded(stage: ElectionStage): boolean {
@@ -90,10 +87,7 @@ watch(
       )
     ) {
       router.push(
-        getAssistantTellerRedirectPath(
-          props.electionGuid,
-          props.currentStage,
-        ),
+        getAssistantTellerRedirectPath(props.electionGuid, props.currentStage),
       );
     }
   },

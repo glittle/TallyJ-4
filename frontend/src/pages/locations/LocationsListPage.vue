@@ -53,8 +53,6 @@ async function loadLocations() {
   }
 }
 
-
-
 function editLocation(location: LocationDto) {
   editingLocation.value = location;
   showEditDialog.value = true;

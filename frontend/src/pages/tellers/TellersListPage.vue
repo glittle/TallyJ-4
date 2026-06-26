@@ -52,8 +52,6 @@ async function loadTellers() {
   }
 }
 
-
-
 function editTeller(teller: Teller) {
   editingTeller.value = teller;
   showEditDialog.value = true;
