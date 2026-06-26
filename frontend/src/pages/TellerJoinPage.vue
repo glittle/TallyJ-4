@@ -84,11 +84,15 @@ const handleJoin = async () => {
 
       showSuccessMessage(t("auth.tellerJoin.joinSuccess"));
 
-      const election = await electionService.getById(result.electionGuid);
-      const stage = (election.electionStage ?? "SettingUp") as ElectionStage;
-      router.push(
-        getAssistantTellerRedirectPath(result.electionGuid, stage),
-      );
+      let redirectPath = `/elections/${result.electionGuid}`;
+      try {
+        const election = await electionService.getById(result.electionGuid);
+        const stage = (election.electionStage ?? "SettingUp") as ElectionStage;
+        redirectPath = getAssistantTellerRedirectPath(result.electionGuid, stage);
+      } catch {
+        // Ignore stage lookup failures; router guard will redirect if needed.
+      }
+      router.push(redirectPath);
     } catch (error) {
       console.error("Teller join failed:", error);
       showErrorMessage(t("auth.tellerJoin.invalidElection"));
