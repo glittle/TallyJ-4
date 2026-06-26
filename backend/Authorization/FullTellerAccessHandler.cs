@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Backend.Context;
+using Backend.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Authorization;
@@ -14,11 +14,16 @@ namespace Backend.Authorization;
 public class FullTellerAccessHandler : AuthorizationHandler<FullTellerAccessRequirement>
 {
     private readonly MainDbContext _context;
+    private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<FullTellerAccessHandler> _logger;
 
-    public FullTellerAccessHandler(MainDbContext context, ILogger<FullTellerAccessHandler> logger)
+    public FullTellerAccessHandler(
+        MainDbContext context,
+        UserManager<AppUser> userManager,
+        ILogger<FullTellerAccessHandler> logger)
     {
         _context = context;
+        _userManager = userManager;
         _logger = logger;
     }
 
@@ -41,18 +46,20 @@ public class FullTellerAccessHandler : AuthorizationHandler<FullTellerAccessRequ
             return;
         }
 
-        if (user.IsInRole("Admin"))
-        {
-            context.Succeed(requirement);
-            return;
-        }
-
         var userIdString = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
                          ?? user.FindFirst("sub")?.Value;
         if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
         {
             _logger.LogWarning("FullTellerAccess: Could not parse user ID from claims");
             context.Fail();
+            return;
+        }
+
+        var appUser = await _userManager.FindByIdAsync(userIdString);
+        if (appUser != null && await _userManager.IsInRoleAsync(appUser, "Admin"))
+        {
+            _logger.LogInformation("FullTellerAccess: Global Admin {UserId} authorized", userId);
+            context.Succeed(requirement);
             return;
         }
 
