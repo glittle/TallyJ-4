@@ -146,9 +146,12 @@ export const electionService = {
       path: { guid: electionGuid },
       body: { electionStage: stage },
     });
-    const data = response.data?.data;
-    if (!data) {
-      throw new Error("Failed to change election stage");
+    const envelope = response.data;
+    const data = envelope?.data;
+    if (!envelope?.success || !data) {
+      throw {
+        message: envelope?.message || "Failed to change election stage",
+      };
     }
     return {
       ...(data as any),

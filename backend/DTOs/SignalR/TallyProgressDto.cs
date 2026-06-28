@@ -27,7 +27,7 @@ public class TallyProgressDto
     public int TotalVotes { get; set; }
 
     /// <summary>
-    /// A status message describing the current tally operation.
+    /// i18n phrase key for the current tally operation (translated on the client).
     /// </summary>
     public string Message { get; set; } = string.Empty;
 

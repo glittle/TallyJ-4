@@ -225,7 +225,7 @@ public class ElectionService : IElectionService
                 electionGuid,
                 newStage);
             return ChangeElectionStageResult.ConfirmationRequired(
-                "Reverting from Finalized requires confirmation");
+                ElectionStageMessageKeys.ConfirmLeaveFinalized);
         }
 
         if (newStage == ElectionStage.Finalized && currentStage != ElectionStage.Finalized)

@@ -118,22 +118,17 @@ public class VoteService : IVoteService
                     person.FullName);
             }
 
-            var duplicateVote = await _context.Votes
-                .AnyAsync(v => v.BallotGuid == createDto.BallotGuid && v.PersonGuid == createDto.PersonGuid);
-
-            if (duplicateVote)
-            {
-                ballot.StatusCode = BallotStatus.Dup;
-                _logger.LogInformation("Duplicate vote detected for person '{FullName}' on ballot {BallotGuid}; ballot status set to Dup",
-                    person.FullName, createDto.BallotGuid);
-            }
         }
+
+        await CompactVotePositionsAsync(createDto.BallotGuid);
+        await _context.SaveChangesAsync();
+        var assignedPosition = await GetNextVotePositionAsync(createDto.BallotGuid);
 
         var vote = new Vote
         {
             BallotGuid = createDto.BallotGuid,
             PersonGuid = createDto.PersonGuid,
-            PositionOnBallot = createDto.PositionOnBallot,
+            PositionOnBallot = assignedPosition,
             VoteStatus = statusCode,
             RowVersion = new byte[8]
         };
@@ -145,13 +140,15 @@ public class VoteService : IVoteService
         _logger.LogInformation("Created vote {VoteId} for ballot {BallotGuid} at position {Position}",
             vote.RowId, vote.BallotGuid, vote.PositionOnBallot);
 
+        await RefreshBallotStatusAsync(ballot);
+        await _context.SaveChangesAsync();
+
         if (createDto.PersonGuid.HasValue)
         {
             QueueVoteCountBroadcast(createDto.PersonGuid.Value, electionGuid);
         }
 
-        var voteDto = await GetVoteByIdAsync(vote.RowId) ?? MapToVoteDto(vote);
-        return new VoteWithBallotStatusDto { Vote = voteDto, BallotStatusCode = ballot.StatusCode };
+        return await BuildVoteMutationResponseAsync(ballot, vote.RowId);
     }
 
     /// <summary>
@@ -170,14 +167,15 @@ public class VoteService : IVoteService
             return null;
         }
 
-        var ballot = await _context.Ballots.FirstOrDefaultAsync(b => b.BallotGuid == updateDto.BallotGuid);
+        var ballot = await _context.Ballots
+            .Include(b => b.Location)
+            .FirstOrDefaultAsync(b => b.BallotGuid == updateDto.BallotGuid);
         if (ballot == null)
         {
             throw new InvalidOperationException($"Ballot with GUID '{updateDto.BallotGuid}' not found");
         }
 
         var statusCode = VoteStatus.Ok;
-        var duplicateFound = false;
 
         if (updateDto.PersonGuid.HasValue)
         {
@@ -193,42 +191,24 @@ public class VoteService : IVoteService
                 _logger.LogInformation("Person '{FullName}' is ineligible; vote updated as spoiled",
                     person.FullName);
             }
-
-            var duplicateVote = await _context.Votes
-                .AnyAsync(v => v.BallotGuid == updateDto.BallotGuid && v.PersonGuid == updateDto.PersonGuid && v.RowId != id);
-
-            if (duplicateVote)
-            {
-                duplicateFound = true;
-                ballot.StatusCode = BallotStatus.Dup;
-                _logger.LogInformation("Duplicate vote detected for person '{FullName}' on ballot {BallotGuid}; ballot status set to Dup",
-                    person.FullName, updateDto.BallotGuid);
-            }
         }
 
         vote.BallotGuid = updateDto.BallotGuid;
         vote.PersonGuid = updateDto.PersonGuid;
-        vote.PositionOnBallot = updateDto.PositionOnBallot;
         vote.VoteStatus = statusCode;
 
         ballot.DateUpdated = DateTimeOffset.UtcNow;
         await _context.SaveChangesAsync();
 
+        await CompactVotePositionsAsync(updateDto.BallotGuid);
+        await _context.SaveChangesAsync();
+
         _logger.LogInformation("Updated vote {VoteId} for ballot {BallotGuid}", id, updateDto.BallotGuid);
 
-        if (!duplicateFound && ballot.StatusCode == BallotStatus.Dup)
-        {
-            var hasDuplicates = await HasBallotDuplicatesAsync(ballot.BallotGuid);
-            if (!hasDuplicates)
-            {
-                ballot.StatusCode = BallotStatus.Ok;
-                await _context.SaveChangesAsync();
-            }
-        }
+        await RefreshBallotStatusAsync(ballot);
+        await _context.SaveChangesAsync();
 
-        var voteDto = await GetVoteByIdAsync(id);
-        if (voteDto == null) return null;
-        return new VoteWithBallotStatusDto { Vote = voteDto, BallotStatusCode = ballot.StatusCode };
+        return await BuildVoteMutationResponseAsync(ballot, id);
     }
 
     /// <summary>
@@ -236,8 +216,8 @@ public class VoteService : IVoteService
     /// Broadcasts the updated live vote count for the affected person via SignalR.
     /// </summary>
     /// <param name="id">The database row identifier of the vote to delete.</param>
-    /// <returns>True if the vote was successfully deleted, false if the vote was not found.</returns>
-    public async Task<bool> DeleteVoteAsync(int id)
+    /// <returns>The updated ballot status, or null if the vote was not found.</returns>
+    public async Task<VoteWithBallotStatusDto?> DeleteVoteAsync(int id)
     {
         var vote = await _context.Votes
             .Include(v => v.Ballot)
@@ -246,14 +226,13 @@ public class VoteService : IVoteService
 
         if (vote == null)
         {
-            return false;
+            return null;
         }
 
         var personGuid = vote.PersonGuid;
         var electionGuid = vote.Ballot.Location.ElectionGuid;
-
-        var ballotGuid = vote.BallotGuid;
         var ballot = vote.Ballot;
+        var ballotGuid = vote.BallotGuid;
 
         ballot.DateUpdated = DateTimeOffset.UtcNow;
         _context.Votes.Remove(vote);
@@ -261,32 +240,88 @@ public class VoteService : IVoteService
 
         _logger.LogInformation("Deleted vote {VoteId}", id);
 
+        await CompactVotePositionsAsync(ballotGuid);
+        await _context.SaveChangesAsync();
+
         if (personGuid.HasValue)
         {
             QueueVoteCountBroadcast(personGuid.Value, electionGuid);
         }
 
-        if (ballot?.StatusCode == BallotStatus.Dup)
+        if (ballot != null)
         {
-            var hasDuplicates = await HasBallotDuplicatesAsync(ballotGuid);
-            if (!hasDuplicates)
-            {
-                ballot.StatusCode = BallotStatus.Ok;
-                await _context.SaveChangesAsync();
-            }
+            await RefreshBallotStatusAsync(ballot);
+            await _context.SaveChangesAsync();
         }
 
-        return true;
+        return ballot == null
+            ? null
+            : await BuildVoteMutationResponseAsync(ballot, highlightedVoteId: null);
     }
 
-    private async Task<bool> HasBallotDuplicatesAsync(Guid ballotGuid)
+    private async Task<int> GetNextVotePositionAsync(Guid ballotGuid)
     {
-        var personGuids = await _context.Votes
-            .Where(v => v.BallotGuid == ballotGuid && v.PersonGuid != null)
-            .Select(v => v.PersonGuid!.Value)
+        var occupiedPositions = await _context.Votes
+            .Where(v => v.BallotGuid == ballotGuid)
+            .Select(v => v.PositionOnBallot)
             .ToListAsync();
-        return personGuids.GroupBy(g => g).Any(g => g.Count() > 1);
+
+        var position = 1;
+        while (occupiedPositions.Contains(position))
+        {
+            position++;
+        }
+
+        return position;
     }
+
+    private async Task CompactVotePositionsAsync(Guid ballotGuid)
+    {
+        var votes = await _context.Votes
+            .Where(v => v.BallotGuid == ballotGuid)
+            .OrderBy(v => v.PositionOnBallot)
+            .ThenBy(v => v.RowId)
+            .ToListAsync();
+
+        for (var i = 0; i < votes.Count; i++)
+        {
+            votes[i].PositionOnBallot = i + 1;
+        }
+    }
+
+    private async Task<VoteWithBallotStatusDto> BuildVoteMutationResponseAsync(
+        Ballot ballot,
+        int? highlightedVoteId)
+    {
+        var voteDtos = await GetBallotVoteDtosAsync(ballot.BallotGuid);
+        VoteDto? highlightedVote = null;
+        if (highlightedVoteId.HasValue)
+        {
+            highlightedVote = voteDtos.FirstOrDefault(v => v.RowId == highlightedVoteId.Value);
+        }
+
+        return new VoteWithBallotStatusDto
+        {
+            Vote = highlightedVote,
+            BallotStatusCode = ballot.StatusCode,
+            Votes = voteDtos
+        };
+    }
+
+    private async Task<List<VoteDto>> GetBallotVoteDtosAsync(Guid ballotGuid)
+    {
+        var votes = await _context.Votes
+            .Where(v => v.BallotGuid == ballotGuid)
+            .Include(v => v.Person)
+            .OrderBy(v => v.PositionOnBallot)
+            .ThenBy(v => v.RowId)
+            .ToListAsync();
+
+        return votes.Select(MapToVoteDto).ToList();
+    }
+
+    private Task RefreshBallotStatusAsync(Ballot ballot) =>
+        BallotStatusRefresher.RefreshAsync(_context, ballot, _logger);
 
     private void QueueVoteCountBroadcast(Guid personGuid, Guid electionGuid)
     {

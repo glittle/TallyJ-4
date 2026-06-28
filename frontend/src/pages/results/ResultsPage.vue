@@ -37,7 +37,7 @@
               status="warning"
             />
             <div style="margin-top: 10px; font-size: 14px">
-              {{ tallyProgress.message }}
+              {{ tallyProgressMessage }}
               <br />
               {{
                 $t("results.processedBallots", {
@@ -97,13 +97,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { translateTallyProgressMessage } from "@/utils/tallyProgressMessages";
 import { useResultStore } from "../../stores/resultStore";
 import ResultsTable from "../../components/results/ResultsTable.vue";
 import TiesDisplay from "../../components/results/TiesDisplay.vue";
 
 const route = useRoute();
+const { t } = useI18n();
 const resultStore = useResultStore();
 const { handleApiError } = useApiErrorHandler();
 
@@ -114,6 +117,18 @@ const loading = computed(() => resultStore.loading);
 const results = computed(() => resultStore.results);
 const calculating = computed(() => resultStore.calculating);
 const tallyProgress = computed(() => resultStore.tallyProgress);
+
+const tallyProgressMessage = computed(() => {
+  if (!tallyProgress.value) {
+    return "";
+  }
+
+  return translateTallyProgressMessage(
+    tallyProgress.value.message,
+    tallyProgress.value,
+    t,
+  );
+});
 
 const electedCandidates = computed(
   () => results.value?.results.filter((r) => r.section === "E") || [],

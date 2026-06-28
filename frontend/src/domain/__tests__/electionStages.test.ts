@@ -56,7 +56,7 @@ describe("electionStages", () => {
       expect(frontdesk?.adminOnly).toBeFalsy();
     });
 
-    it("marks Ballot Management as admin-only (FullTeller only)", () => {
+    it("marks Enter Ballots as admin-only (FullTeller only)", () => {
       const ballots = STAGE_PAGES.ProcessingBallots.find(
         (p) => p.key === "ballots",
       );

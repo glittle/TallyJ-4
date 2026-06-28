@@ -127,7 +127,7 @@ public class BallotService : IBallotService
             ComputerCode = createDto.ComputerCode,
             BallotNumAtComputer = nextBallotNum,
             BallotCode = $"{createDto.ComputerCode}{nextBallotNum}",
-            StatusCode = BallotStatus.Raw,
+            StatusCode = BallotStatus.Empty,
             Teller1 = NormalizeTellerName(createDto.Teller1),
             Teller2 = NormalizeTellerName(createDto.Teller2),
             DateCreated = now,
@@ -159,10 +159,35 @@ public class BallotService : IBallotService
             return null;
         }
 
-        ballot.StatusCode = updateDto.StatusCode;
         ballot.Teller1 = NormalizeTellerName(updateDto.Teller1);
         ballot.Teller2 = NormalizeTellerName(updateDto.Teller2);
 
+        if (updateDto.ClearNeedsReview)
+        {
+            if (ballot.StatusCode != BallotStatus.Review)
+            {
+                throw new InvalidOperationException(
+                    "Needs Review can only be cleared for ballots currently in Review status.");
+            }
+
+            // Review is sticky in BallotAnalyzer; seed a neutral status before re-evaluating.
+            ballot.StatusCode = BallotStatus.Empty;
+            await BallotStatusRefresher.RefreshAsync(_context, ballot, _logger);
+        }
+        else if (ballot.StatusCode == BallotStatus.Review)
+        {
+            // Review is manual and sticky — teller updates cannot change it.
+        }
+        else if (updateDto.StatusCode == BallotStatus.Review)
+        {
+            ballot.StatusCode = BallotStatus.Review;
+        }
+        else
+        {
+            ballot.StatusCode = updateDto.StatusCode;
+        }
+
+        ballot.DateUpdated = DateTimeOffset.UtcNow;
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Updated ballot {BallotGuid}", ballotGuid);

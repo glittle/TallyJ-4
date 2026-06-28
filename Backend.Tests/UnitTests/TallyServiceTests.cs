@@ -48,6 +48,21 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CalculateNormalElectionAsync_WithReviewBallot_ThrowsInvalidOperationException()
+    {
+        var election = await CreateTestElectionAsync();
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 1);
+        ballots[0].StatusCode = BallotStatus.Review;
+        await Context.SaveChangesAsync();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CalculateNormalElectionAsync(election.ElectionGuid));
+
+        Assert.Contains("elections.stageChangeError.ballotsOutstanding", exception.Message);
+    }
+
+    [Fact]
     public async Task CalculateNormalElectionAsync_WithInvalidElectionGuid_ThrowsArgumentException()
     {
         var invalidGuid = Guid.NewGuid();

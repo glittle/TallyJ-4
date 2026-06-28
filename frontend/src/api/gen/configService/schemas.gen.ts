@@ -1158,8 +1158,7 @@ export const BallotStatusSchema = {
         'TooFew',
         'Dup',
         'Empty',
-        'Raw',
-        'New'
+        'Raw'
     ],
     type: 'string'
 } as const;
@@ -5448,6 +5447,9 @@ export const UpdateBallotDtoSchema = {
     properties: {
         statusCode: {
             $ref: '#/components/schemas/BallotStatus'
+        },
+        clearNeedsReview: {
+            type: 'boolean'
         },
         teller1: {
             type: 'string',

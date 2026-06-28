@@ -6805,17 +6805,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseObject"
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseObject"
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseObject"
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
                 }
               }
             }
@@ -7941,8 +7941,7 @@
           "TooFew",
           "Dup",
           "Empty",
-          "Raw",
-          "New"
+          "Raw"
         ],
         "type": "string"
       },
@@ -12096,6 +12095,9 @@
           "statusCode": {
             "$ref": "#/components/schemas/BallotStatus"
           },
+          "clearNeedsReview": {
+            "type": "boolean"
+          },
           "teller1": {
             "type": "string",
             "nullable": true
@@ -12605,6 +12607,13 @@
           },
           "ballotStatusCode": {
             "$ref": "#/components/schemas/BallotStatus"
+          },
+          "votes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoteDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

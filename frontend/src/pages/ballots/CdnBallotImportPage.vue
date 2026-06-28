@@ -18,7 +18,7 @@ const importing = ref(false);
 const importResult = ref<ImportResultDto | null>(null);
 
 function goBack() {
-  router.push(`/elections/${electionGuid}/ballots`);
+  router.push(`/elections/${electionGuid}/monitor`);
 }
 
 async function handleFileChange(uploadFile: UploadFile) {
@@ -146,7 +146,7 @@ function beforeUpload(file: UploadRawFile) {
                 style="margin-top: 16px"
                 @click="goBack"
               >
-                {{ $t("ballots.management") }}
+                {{ $t("results.monitor") }}
               </el-button>
             </template>
           </el-result>

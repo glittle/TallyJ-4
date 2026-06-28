@@ -14,8 +14,7 @@ public static class ElectionStageTransitions
     ];
 
     /// <summary>
-    /// Validates whether a stage change is allowed. Reverts to any earlier stage are permitted;
-    /// forward moves must advance exactly one step.
+    /// Validates whether a stage change is allowed. Any move to a different known stage is permitted.
     /// </summary>
     public static bool CanTransition(ElectionStage current, ElectionStage target, out string reason)
     {
@@ -23,7 +22,7 @@ public static class ElectionStageTransitions
 
         if (current == target)
         {
-            reason = "Election is already in the requested stage";
+            reason = ElectionStageMessageKeys.AlreadyInStage;
             return false;
         }
 
@@ -32,21 +31,10 @@ public static class ElectionStageTransitions
 
         if (currentIndex < 0 || targetIndex < 0)
         {
-            reason = "Invalid election stage";
+            reason = ElectionStageMessageKeys.InvalidStage;
             return false;
         }
 
-        if (targetIndex < currentIndex)
-        {
-            return true;
-        }
-
-        if (targetIndex == currentIndex + 1)
-        {
-            return true;
-        }
-
-        reason = $"Cannot skip from {current} directly to {target}";
-        return false;
+        return true;
     }
 }

@@ -137,20 +137,22 @@ public class ElectionsController : ControllerBase
     {
         if (!Enum.IsDefined(typeof(ElectionStage), dto.ElectionStage))
         {
-            return BadRequest(ApiResponse<ElectionDto>.ErrorResponse("Invalid election stage"));
+            return BadRequest(ApiResponse<ElectionDto>.ErrorResponse(
+                ElectionStageMessageKeys.InvalidStage));
         }
 
         var result = await _electionService.ChangeElectionStageAsync(guid, dto);
 
         if (result.IsNotFound)
         {
-            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse(
+                ElectionStageMessageKeys.NotFound));
         }
 
         if (result.RequiresConfirmation)
         {
             return Conflict(ApiResponse<ElectionDto>.ErrorResponse(
-                result.ConfirmationReason ?? "Confirmation required to leave Finalized stage"));
+                result.ConfirmationReason ?? ElectionStageMessageKeys.ConfirmLeaveFinalized));
         }
 
         if (result.ErrorMessage != null)

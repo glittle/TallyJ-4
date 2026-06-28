@@ -1,6 +1,7 @@
 using Backend.Context;
 using Backend.Entities;
 using Backend.Enumerations;
+using static Backend.Enumerations.ElectionStageMessageKeys;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -102,6 +103,6 @@ public class ElectionStageFinalizationReadinessTests : ServiceTestBase
         var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, electionGuid);
 
         Assert.False(readiness.IsReady);
-        Assert.Contains(readiness.Blockers, b => b.Contains("analysis", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(readiness.Blockers, b => b == AnalysisNotCompleted);
     }
 }

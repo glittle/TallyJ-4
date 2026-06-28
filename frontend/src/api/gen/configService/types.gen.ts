@@ -332,8 +332,7 @@ export const BallotStatus = {
     TOO_FEW: 'TooFew',
     DUP: 'Dup',
     EMPTY: 'Empty',
-    RAW: 'Raw',
-    NEW: 'New'
+    RAW: 'Raw'
 } as const;
 
 export type BallotStatus = typeof BallotStatus[keyof typeof BallotStatus];
@@ -1552,6 +1551,7 @@ export type UnregisterVoterDto = {
 
 export type UpdateBallotDto = {
     statusCode?: BallotStatus;
+    clearNeedsReview?: boolean;
     teller1?: string | null;
     teller2?: string | null;
 };
@@ -4710,7 +4710,7 @@ export type DeleteApiVotesByIdDeleteVoteResponses = {
     /**
      * OK
      */
-    200: ApiResponseObject;
+    200: ApiResponseVoteWithBallotStatusDto;
 };
 
 export type DeleteApiVotesByIdDeleteVoteResponse = DeleteApiVotesByIdDeleteVoteResponses[keyof DeleteApiVotesByIdDeleteVoteResponses];

@@ -27,6 +27,7 @@ export interface CreateBallotDto {
 
 export interface UpdateBallotDto {
   statusCode?: string;
+  clearNeedsReview?: boolean;
   teller1?: string;
   teller2?: string;
 }

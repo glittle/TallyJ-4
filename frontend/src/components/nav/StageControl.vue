@@ -6,6 +6,8 @@ import {
   type ElectionStage,
 } from "@/domain/electionStages";
 import { useElectionStore } from "@/stores/electionStore";
+import { extractApiErrorMessage } from "@/utils/errorHandler";
+import { translateElectionStageChangeError } from "@/utils/electionStageErrorMessages";
 import { ElIcon } from "element-plus";
 import { useI18n } from "vue-i18n";
 
@@ -30,8 +32,9 @@ async function selectStage(newStage: ElectionStage) {
         stage: t(STAGE_META[newStage].i18nKey),
       }),
     );
-  } catch {
-    showErrorMessage(t("elections.stageChangeError"));
+  } catch (error) {
+    const serverMessage = extractApiErrorMessage(error);
+    showErrorMessage(translateElectionStageChangeError(serverMessage, t));
   }
 }
 </script>

@@ -1,6 +1,6 @@
 using Backend.Context;
 using Backend.Enumerations;
-using Backend.Services.Analyzers;
+using static Backend.Enumerations.ElectionStageMessageKeys;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -22,13 +22,6 @@ public sealed class FinalizationReadinessResult
 
 public static class ElectionStageFinalizationReadiness
 {
-    private static readonly BallotStatus[] OutstandingBallotStatuses =
-    [
-        BallotStatus.Review,
-        BallotStatus.Verify,
-        BallotStatus.Raw
-    ];
-
     public static async Task<FinalizationReadinessResult> EvaluateAsync(
         MainDbContext context,
         Guid electionGuid)
@@ -41,36 +34,27 @@ public static class ElectionStageFinalizationReadiness
 
         if (!hasResults || finalSummary == null)
         {
-            blockers.Add("Election analysis has not been completed");
+            blockers.Add(AnalysisNotCompleted);
         }
         else if (finalSummary.UseOnReports != true)
         {
-            blockers.Add("Election analysis is not complete or ready for finalization");
+            blockers.Add(AnalysisNotReady);
         }
 
-        if (finalSummary is { UseOnReports: true })
+        var blockingBallotCount = await ElectionBallotBlocking.CountBlockingBallotsAsync(
+            context,
+            electionGuid);
+
+        if (blockingBallotCount > 0)
         {
-            if (finalSummary.BallotsNeedingReview is > 0)
-            {
-                blockers.Add($"{finalSummary.BallotsNeedingReview} ballot(s) still need review");
-            }
-            else
-            {
-                var ballotStatuses = await context.Ballots
-                    .AsNoTracking()
-                    .Where(b => b.Location.ElectionGuid == electionGuid)
-                    .Select(b => b.StatusCode)
-                    .ToListAsync();
-
-                var liveOutstanding = ballotStatuses.Count(status =>
-                    OutstandingBallotStatuses.Contains(status)
-                    || BallotAnalyzer.BallotNeedsReview(status));
-
-                if (liveOutstanding > 0)
-                {
-                    blockers.Add($"{liveOutstanding} ballot(s) have outstanding issues");
-                }
-            }
+            blockers.Add(WithParam(BallotsOutstanding, "count", blockingBallotCount));
+        }
+        else if (finalSummary is { UseOnReports: true, BallotsNeedingReview: > 0 })
+        {
+            blockers.Add(WithParam(
+                BallotsNeedReview,
+                "count",
+                finalSummary.BallotsNeedingReview.Value));
         }
 
         var hasUnresolvedTies = await context.ResultTies
@@ -84,7 +68,7 @@ public static class ElectionStageFinalizationReadiness
 
         if (hasUnresolvedTies)
         {
-            blockers.Add("Unresolved ties must be broken before finalizing");
+            blockers.Add(UnresolvedTies);
         }
 
         return blockers.Count == 0

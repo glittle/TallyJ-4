@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { isGuestTeller } from "@/domain/guestTellerAccess";
 import { ArrowLeft, HomeFilled, Setting } from "@element-plus/icons-vue";
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { isGuestTeller } from "@/domain/guestTellerAccess";
 import { useElectionStore } from "../stores/electionStore";
 import { useSuperAdminStore } from "../stores/superAdminStore";
 import SidebarStageHeader from "./nav/SidebarStageHeader.vue";
@@ -203,7 +203,6 @@ function goBackToElections() {
   .election-nav {
     display: flex;
     flex-direction: column;
-    height: calc(100% - 120px); // Account for logo and warning
   }
 
   .election-header {

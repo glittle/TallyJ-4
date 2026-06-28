@@ -4,6 +4,10 @@
       <template #header>
         <div class="card-header">
           <div class="header-actions">
+            <el-button @click="handleImportCdn">
+              <el-icon><Upload /></el-icon>
+              {{ $t("ballots.cdnImport.button") }}
+            </el-button>
             <el-button
               type="primary"
               :loading="loading"
@@ -244,14 +248,15 @@ import {
   DocumentChecked,
   Location,
   Monitor,
+  Upload,
 } from "@element-plus/icons-vue";
 import { onMounted, onUnmounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useResultStore } from "../../stores/resultStore";
 import type { MonitorInfoDto } from "../../types";
 
 const route = useRoute();
-// const { t } = useI18n();
+const router = useRouter();
 const resultStore = useResultStore();
 const { handleApiError } = useApiErrorHandler();
 
@@ -283,6 +288,10 @@ async function loadData() {
 
 async function refreshData() {
   await loadData();
+}
+
+function handleImportCdn() {
+  router.push(`/elections/${electionGuid}/ballots/cdn-import`);
 }
 
 function startAutoRefresh() {
