@@ -64,7 +64,14 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Ballot>(entity =>
         {
-            entity.Property(e => e.StatusCode).HasConversion<string>().HasMaxLength(10).IsUnicode(false);
+            entity.Property(e => e.StatusCode)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => string.Equals(v, BallotStatusEnum.LegacyNewCode, StringComparison.OrdinalIgnoreCase)
+                        ? BallotStatus.Empty
+                        : Enum.Parse<BallotStatus>(v))
+                .HasMaxLength(10)
+                .IsUnicode(false);
             if (isSqlServer)
             {
                 entity.Property(e => e.RowVersion)

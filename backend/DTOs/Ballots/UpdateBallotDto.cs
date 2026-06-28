@@ -8,9 +8,15 @@ namespace Backend.DTOs.Ballots;
 public class UpdateBallotDto
 {
     /// <summary>
-    /// The status of the ballot.
+    /// The status of the ballot. Ignored while a ballot is in Review unless setting Review.
     /// </summary>
     public BallotStatus StatusCode { get; set; }
+
+    /// <summary>
+    /// When true, clears a manual Needs Review flag and re-evaluates status from votes.
+    /// This is the only supported way to exit Review.
+    /// </summary>
+    public bool ClearNeedsReview { get; set; }
 
     /// <summary>
     /// The name of the first teller who processed the ballot.

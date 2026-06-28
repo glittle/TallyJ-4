@@ -12,6 +12,7 @@ export interface TallyProgressEvent {
   totalBallots: number;
   processedBallots: number;
   totalVotes: number;
+  /** i18n phrase key; translated on the client via translateTallyProgressMessage */
   message: string;
   percentComplete: number;
   isComplete: boolean;

@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import {
-  getGuestTellerMenuPages,
-  getGuestTellerRedirectPath,
-  isGuestTellerRouteAllowed,
-} from "@/domain/guestTellerAccess";
-import {
   type ElectionStage,
   type NavPageDef,
   STAGES,
   STAGE_META,
   STAGE_PAGES,
 } from "@/domain/electionStages";
+import {
+  getGuestTellerMenuPages,
+  getGuestTellerRedirectPath,
+  isGuestTellerRouteAllowed,
+} from "@/domain/guestTellerAccess";
 import { useNavUiStore } from "@/stores/navUiStore";
 import { ElIcon } from "element-plus";
 import { onMounted, watch } from "vue";
@@ -182,7 +182,6 @@ watch(
 <style lang="less">
 .stage-grouped-menu {
   flex: 1;
-  overflow-y: auto;
   padding: 8px 0;
 
   .stage-group {

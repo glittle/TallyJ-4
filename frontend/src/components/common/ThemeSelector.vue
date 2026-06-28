@@ -25,7 +25,7 @@ const toggleTheme = () => {
 <template>
   <div class="theme-selector">
     <ElButton
-      :aria-label="$t('common.toggleTheme', 'Toggle Theme')"
+      :aria-label="$t('common.toggleTheme')"
       :size="size"
       text
       class="theme-toggle-btn"

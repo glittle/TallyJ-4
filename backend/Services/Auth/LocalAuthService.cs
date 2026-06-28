@@ -95,7 +95,7 @@ public class LocalAuthService : ILocalAuthService
         // Check if email is verified
         if (!user.EmailConfirmed)
         {
-            return (false, "Email not verified. Please check your email and verify your account before logging in.", null);
+            return (false, _localizer["auth.errors.emailNotVerified"], null);
         }
 
         // Check if account is locked out

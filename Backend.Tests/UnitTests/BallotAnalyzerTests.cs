@@ -341,6 +341,13 @@ public class BallotAnalyzerTests
     }
 
     [Fact]
+    public void ParseCode_LegacyNew_MapsToEmpty()
+    {
+        Assert.Equal(BallotStatus.Empty, BallotStatusEnum.ParseCode("New"));
+        Assert.Equal(BallotStatus.Empty, BallotStatusEnum.ParseCode("new"));
+    }
+
+    [Fact]
     public void BallotNeedsReview_ReviewStatus()
     {
         Assert.True(BallotAnalyzer.BallotNeedsReview(BallotStatus.Review));

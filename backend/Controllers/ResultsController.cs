@@ -69,6 +69,15 @@ public class ResultsController : ControllerBase
             _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
             return NotFound(new { message = ex.Message });
         }
+        catch (InvalidOperationException ex) when (ex.Message.StartsWith("elections.", StringComparison.Ordinal))
+        {
+            _logger.LogWarning(
+                ex,
+                "Tally blocked for election {ElectionGuid}: {Message}",
+                electionGuid,
+                ex.Message);
+            return BadRequest(new { message = ex.Message });
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error calculating tally for election {ElectionGuid}", electionGuid);

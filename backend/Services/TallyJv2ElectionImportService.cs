@@ -237,7 +237,7 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
         {
             BallotGuid = ballotGuid,
             LocationGuid = locationGuid,
-            StatusCode = Enum.Parse<BallotStatus>(ballotNode.GetAttribute("StatusCode") ?? "Ok"),
+            StatusCode = BallotStatusEnum.ParseCode(ballotNode.GetAttribute("StatusCode")) ?? BallotStatus.Ok,
             ComputerCode = ballotNode.GetAttribute("ComputerCode"),
             BallotNumAtComputer = ParseInt(ballotNode.GetAttribute("BallotNumAtComputer")) ?? 0,
             Teller1 = ballotNode.GetAttribute("TellerAtKeyboard"),

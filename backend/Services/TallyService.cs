@@ -62,6 +62,8 @@ public class TallyService : ITallyService
             throw new ArgumentException($"Election {electionGuid} not found");
         }
 
+        await ElectionBallotBlocking.EnsureAnalysisCanProceedAsync(_context, electionGuid);
+
         var totalBallots = await _context.Ballots
             .Where(b => b.Location.ElectionGuid == electionGuid)
             .CountAsync();
@@ -72,7 +74,7 @@ public class TallyService : ITallyService
             TotalBallots = totalBallots,
             ProcessedBallots = 0,
             TotalVotes = 0,
-            Message = "Starting tally calculation...",
+            Message = "tally.progress.starting",
             PercentComplete = 0,
             IsComplete = false
         });
@@ -90,7 +92,7 @@ public class TallyService : ITallyService
             TotalBallots = totalBallots,
             ProcessedBallots = totalBallots,
             TotalVotes = totalVotes,
-            Message = "Tally calculation complete!",
+            Message = "tally.progress.complete",
             PercentComplete = 100,
             IsComplete = true
         });
@@ -119,6 +121,8 @@ public class TallyService : ITallyService
             throw new ArgumentException($"Election {electionGuid} not found");
         }
 
+        await ElectionBallotBlocking.EnsureAnalysisCanProceedAsync(_context, electionGuid);
+
         var totalBallots = await _context.Ballots
             .Where(b => b.Location.ElectionGuid == electionGuid)
             .CountAsync();
@@ -129,7 +133,7 @@ public class TallyService : ITallyService
             TotalBallots = totalBallots,
             ProcessedBallots = 0,
             TotalVotes = 0,
-            Message = "Starting single-name tally calculation...",
+            Message = "tally.progress.startingSingleName",
             PercentComplete = 0,
             IsComplete = false
         });
@@ -147,7 +151,7 @@ public class TallyService : ITallyService
             TotalBallots = totalBallots,
             ProcessedBallots = totalBallots,
             TotalVotes = totalVotes,
-            Message = "Single-name tally calculation complete!",
+            Message = "tally.progress.completeSingleName",
             PercentComplete = 100,
             IsComplete = true
         });

@@ -355,7 +355,7 @@ public class ElectionServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task ChangeElectionStageAsync_SkipStage_IsRejectedAndStageUnchanged()
+    public async Task ChangeElectionStageAsync_SkipStage_IsAllowed()
     {
         var electionGuid = Guid.NewGuid();
         var election = new Election
@@ -377,11 +377,11 @@ public class ElectionServiceTests : ServiceTestBase
             ElectionStage = ElectionStage.ProcessingBallots
         });
 
-        Assert.False(result.IsSuccess);
-        Assert.NotNull(result.ErrorMessage);
+        Assert.True(result.IsSuccess);
+        Assert.NotNull(result.Election);
 
         var inDb = Context.Elections.Single(e => e.ElectionGuid == electionGuid);
-        Assert.Equal(ElectionStage.SettingUp, inDb.ElectionStage);
+        Assert.Equal(ElectionStage.ProcessingBallots, inDb.ElectionStage);
     }
 
     [Fact]

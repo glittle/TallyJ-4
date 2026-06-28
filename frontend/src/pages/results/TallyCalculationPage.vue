@@ -5,6 +5,8 @@ import { Operation } from "@element-plus/icons-vue";
 import { computed, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
+import { translateElectionStageChangeError } from "@/utils/electionStageErrorMessages";
+import { translateTallyProgressMessage } from "@/utils/tallyProgressMessages";
 import { useResultStore } from "../../stores/resultStore";
 import { useElectionStore } from "../../stores/electionStore";
 
@@ -13,7 +15,7 @@ const route = useRoute();
 const { t } = useI18n();
 const resultStore = useResultStore();
 const electionStore = useElectionStore();
-const { showSuccessMessage } = useNotifications();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
@@ -28,6 +30,18 @@ const electionType = computed<"normal" | "singlename">(() =>
 );
 
 const topResults = computed(() => results.value?.results.slice(0, 10) || []);
+
+const tallyProgressMessage = computed(() => {
+  if (!tallyProgress.value) {
+    return "";
+  }
+
+  return translateTallyProgressMessage(
+    tallyProgress.value.message,
+    tallyProgress.value,
+    t,
+  );
+});
 
 onMounted(async () => {
   try {
@@ -52,7 +66,17 @@ async function handleCalculate() {
   try {
     await resultStore.calculateTally(electionGuid, electionType.value);
     showSuccessMessage(t("tally.calculateSuccess"));
-  } catch (error) {
+  } catch (error: any) {
+    const serverMessage =
+      error?.response?.data?.message || error?.response?.data?.error;
+    if (
+      typeof serverMessage === "string" &&
+      serverMessage.startsWith("elections.stageChangeError")
+    ) {
+      showErrorMessage(translateElectionStageChangeError(serverMessage, t));
+      return;
+    }
+
     handleApiError(error);
   }
 }
@@ -119,7 +143,7 @@ function getSectionLabel(section: string) {
           style="margin: 10px 0"
         />
         <div class="progress-details">
-          <p>{{ tallyProgress.message }}</p>
+          <p>{{ tallyProgressMessage }}</p>
           <p class="progress-stats">
             {{ $t("tally.processedBallots") }}:
             {{ tallyProgress.processedBallots }} /

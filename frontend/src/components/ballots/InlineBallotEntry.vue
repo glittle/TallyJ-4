@@ -1,18 +1,29 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from "vue";
-import { useI18n } from "vue-i18n";
 import { useNotifications } from "@/composables/useNotifications";
-import { usePeopleStore } from "@/stores/peopleStore";
 import { usePersonSearch } from "@/composables/usePersonSearch";
+import { useBallotStore } from "@/stores/ballotStore";
+import { usePeopleStore } from "@/stores/peopleStore";
 import type { BallotDto } from "@/types/Ballot";
-import type { VoteDto } from "@/types/Vote";
 import type { SearchablePersonDto } from "@/types/Person";
+import type { VoteDto } from "@/types/Vote";
+import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
+import {
+  isVoteDtoSpoiled,
+  resolveVoteStatus,
+} from "@/utils/voteDtoNormalization";
 import { Delete, WarningFilled } from "@element-plus/icons-vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+
+const MAX_BALLOT_SLOTS = 50;
 
 const props = defineProps<{
   electionGuid: string;
   ballot: BallotDto;
-  maxVotes: number;
+  /** Minimum rows to show (election numberToElect). Extra rows appear when over-filled. */
+  requiredVotes: number;
+  /** Increment to discard optimistic rows after a failed save. */
+  resyncKey?: number;
 }>();
 
 const emit = defineEmits<{
@@ -22,8 +33,10 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const ballotStore = useBallotStore();
 const peopleStore = usePeopleStore();
-const { showWarningMessage, showErrorMessage } = useNotifications();
+const { showWarningMessage, showErrorMessage, showSuccessMessage } =
+  useNotifications();
 
 const votes = ref<(VoteDto | null)[]>([]);
 const cacheLoading = ref(false);
@@ -33,23 +46,62 @@ const searchQuery = ref("");
 const searchInputRef = ref();
 const selectedSearchIndex = ref(0);
 const searchResultsListRef = ref<HTMLElement | null>(null);
+const reviewToggleLoading = ref(false);
+
+const isNeedsReview = computed(() => props.ballot.statusCode === "Review");
 
 const candidatesRef = computed(() => peopleStore.candidateCache);
 const { searchResults } = usePersonSearch(searchQuery, candidatesRef, {
   maxResults: 20,
 });
 
+function buildVoteMap(includeOptimistic: boolean): Map<number, VoteDto> {
+  const merged = new Map<number, VoteDto>();
+  for (const vote of props.ballot.votes) {
+    merged.set(vote.positionOnBallot, vote);
+  }
+
+  if (includeOptimistic) {
+    for (const localVote of votes.value) {
+      if (localVote?.rowId === 0) {
+        merged.set(localVote.positionOnBallot, localVote);
+      }
+    }
+  }
+
+  return merged;
+}
+
+function computeSlotCount(merged: Map<number, VoteDto>): number {
+  const highestFilled = merged.size > 0 ? Math.max(...merged.keys()) : 0;
+  // Show requiredVotes rows by default; extra rows appear only when over-filled.
+  return Math.min(
+    MAX_BALLOT_SLOTS,
+    Math.max(props.requiredVotes, highestFilled),
+  );
+}
+
+function rebuildVoteSlots(includeOptimistic = true) {
+  const merged = buildVoteMap(includeOptimistic);
+  const slots = computeSlotCount(merged);
+  const voteArray: (VoteDto | null)[] = [];
+
+  for (let i = 1; i <= slots; i++) {
+    voteArray.push(merged.get(i) ?? null);
+  }
+
+  votes.value = voteArray;
+}
+
 watch(
   () => props.ballot.votes,
-  (newVotes) => {
-    const voteArray: (VoteDto | null)[] = [];
-    for (let i = 1; i <= props.maxVotes; i++) {
-      const existingVote = newVotes.find((v) => v.positionOnBallot === i);
-      voteArray.push(existingVote || null);
-    }
-    votes.value = voteArray;
-  },
-  { immediate: true },
+  () => rebuildVoteSlots(true),
+  { immediate: true, deep: true },
+);
+
+watch(
+  () => props.resyncKey,
+  () => rebuildVoteSlots(false),
 );
 
 const duplicatePersonGuids = computed(() => {
@@ -71,18 +123,27 @@ const duplicatePersonGuids = computed(() => {
 });
 
 function findNextEmptyPosition(): number {
-  for (let i = 1; i <= props.maxVotes; i++) {
-    if (!votes.value[i - 1]) {
-      return i;
+  for (let i = 0; i < votes.value.length; i++) {
+    if (!votes.value[i]) {
+      return i + 1;
     }
   }
+
+  const merged = buildVoteMap(true);
+  const highestFilled = merged.size > 0 ? Math.max(...merged.keys()) : 0;
+  if (highestFilled < MAX_BALLOT_SLOTS) {
+    return highestFilled + 1;
+  }
+
   return -1;
 }
 
 async function handlePersonSelected(person: SearchablePersonDto) {
   const emptyPos = findNextEmptyPosition();
   if (emptyPos === -1) {
-    showWarningMessage(t("ballots.ballotFull", "Ballot is full"));
+    if (votes.value.length >= MAX_BALLOT_SLOTS) {
+      showWarningMessage(t("ballots.ballotFull"));
+    }
     return;
   }
 
@@ -97,6 +158,15 @@ async function handlePersonSelected(person: SearchablePersonDto) {
     personFullName: person.fullName,
     statusCode,
   };
+
+  const merged = buildVoteMap(true);
+  merged.set(emptyPos, vote);
+  const slots = computeSlotCount(merged);
+  const voteArray: (VoteDto | null)[] = [];
+  for (let i = 1; i <= slots; i++) {
+    voteArray.push(merged.get(i) ?? null);
+  }
+  votes.value = voteArray;
 
   emit("vote-added", vote);
 
@@ -157,6 +227,29 @@ function handleVoteRemoved(positionOnBallot: number) {
   searchInputRef.value?.focus();
 }
 
+async function toggleNeedsReview() {
+  reviewToggleLoading.value = true;
+  try {
+    if (isNeedsReview.value) {
+      await ballotStore.updateBallot(props.ballot.ballotGuid, {
+        ...getActiveTellerPayload(),
+        statusCode: "Review",
+        clearNeedsReview: true,
+      });
+    } else {
+      await ballotStore.updateBallot(props.ballot.ballotGuid, {
+        ...getActiveTellerPayload(),
+        statusCode: "Review",
+      });
+    }
+    showSuccessMessage(t("ballots.needsReviewUpdated"));
+  } catch (error: any) {
+    showErrorMessage(error.message || t("ballots.needsReviewError"));
+  } finally {
+    reviewToggleLoading.value = false;
+  }
+}
+
 onMounted(async () => {
   cacheLoading.value = true;
   cacheError.value = false;
@@ -182,7 +275,7 @@ onMounted(async () => {
   <div class="inline-ballot-entry">
     <div v-if="cacheError" class="inline-ballot-entry__error">
       <el-alert
-        type="error"
+        type="danger"
         :title="$t('ballots.cacheLoadError')"
         :closable="false"
       />
@@ -190,68 +283,80 @@ onMounted(async () => {
 
     <div v-else class="ballot-entry-layout">
       <!-- Left Panel: Search -->
-      <div class="search-panel">
-        <div class="search-panel-header">
-          <h4>{{ $t("ballots.searchPerson", "Search for a person:") }}</h4>
-        </div>
-        <div class="search-input-wrapper">
-          <el-input
-            ref="searchInputRef"
-            v-model="searchQuery"
-            :placeholder="$t('ballots.searchPlaceholder', 'Type to search...')"
-            clearable
-            class="search-input"
-            @keydown="handleKeyDown"
-          />
-        </div>
-        <div class="search-help">
-          <small>{{
-            $t(
-              "ballots.searchHelp",
-              "Use ↑ ↓ keys to move in the list. Press Enter to add.",
-            )
-          }}</small>
-        </div>
-
-        <div ref="searchResultsListRef" class="search-results">
-          <div
-            v-if="searchQuery && searchResults.length === 0"
-            class="no-results"
-          >
-            {{ $t("ballots.noMatchesFound") }}
+      <div>
+        <div class="search-panel">
+          <div class="search-panel-header">
+            <h4>{{ $t("ballots.searchPerson") }}</h4>
           </div>
-          <div
-            v-for="(person, index) in searchResults"
-            :key="person.personGuid"
-            class="search-result-item"
-            :class="{
-              'is-selected': index === selectedSearchIndex,
-              'is-ineligible': person.canReceiveVotes === false,
-            }"
-            @click="handlePersonSelected(person)"
-            @mouseover="selectedSearchIndex = index"
-          >
-            <div class="person-info">
-              <span class="person-name">{{ person.fullName }}</span>
-              <span
-                v-if="person.canReceiveVotes === false"
-                class="ineligible-badge"
-                :title="$t('ballots.ineligible')"
-              >
-                {{ person.ineligibleReasonCode }}
+          <div class="search-input-wrapper">
+            <el-input
+              ref="searchInputRef"
+              v-model="searchQuery"
+              :placeholder="$t('ballots.searchPlaceholder')"
+              clearable
+              class="search-input"
+              @keydown="handleKeyDown"
+            />
+          </div>
+
+          <div class="search-help">
+            <small>{{ $t("ballots.searchHelp") }}</small>
+          </div>
+
+          <div ref="searchResultsListRef" class="search-results">
+            <div
+              v-if="searchQuery && searchResults.length === 0"
+              class="no-results"
+            >
+              {{ $t("ballots.noMatchesFound") }}
+            </div>
+            <div
+              v-for="(person, index) in searchResults"
+              :key="person.personGuid"
+              class="search-result-item"
+              :class="{
+                'is-selected': index === selectedSearchIndex,
+                'is-ineligible': person.canReceiveVotes === false,
+              }"
+              @click="handlePersonSelected(person)"
+              @mouseover="selectedSearchIndex = index"
+            >
+              <div class="person-info">
+                <span class="person-name">{{ person.fullName }}</span>
+                <span
+                  v-if="person.canReceiveVotes === false"
+                  class="ineligible-badge"
+                  :title="$t('ballots.ineligible')"
+                >
+                  {{ person.ineligibleReasonCode }}
+                </span>
+              </div>
+              <span v-if="person.voteCount > 0" class="vote-count-badge">
+                {{ person.voteCount }}
               </span>
             </div>
-            <span v-if="person.voteCount > 0" class="vote-count-badge">
-              {{ person.voteCount }}
-            </span>
           </div>
+        </div>
+        <div class="needs-review-toggle">
+          <el-button
+            :type="isNeedsReview ? 'danger' : 'default'"
+            :plain="!isNeedsReview"
+            :loading="reviewToggleLoading"
+            @click="toggleNeedsReview"
+          >
+            {{
+              isNeedsReview
+                ? $t("ballots.clearNeedsReview")
+                : $t("ballots.markNeedsReview")
+            }}
+          </el-button>
         </div>
       </div>
 
       <!-- Right Panel: Votes -->
       <div class="votes-panel">
         <div class="votes-panel-header">
-          <h4>{{ $t("ballots.namesOnBallot", "Names on the ballot") }}</h4>
+          <h4>{{ $t("ballots.namesOnBallot") }}</h4>
           <span class="ballot-id">{{
             $t("ballots.ballotNum", { code: ballot.ballotCode })
           }}</span>
@@ -274,7 +379,7 @@ onMounted(async () => {
                 <span
                   class="vote-name"
                   :class="{
-                    'is-spoiled': vote.statusCode && vote.statusCode !== 'ok',
+                    'is-spoiled': isVoteDtoSpoiled(vote),
                   }"
                 >
                   {{ vote.personFullName }}
@@ -282,10 +387,10 @@ onMounted(async () => {
 
                 <div class="vote-actions">
                   <span
-                    v-if="vote.statusCode && vote.statusCode !== 'ok'"
+                    v-if="isVoteDtoSpoiled(vote)"
                     class="status-badge error"
                   >
-                    {{ vote.statusCode }}
+                    {{ resolveVoteStatus(vote) }}
                   </span>
                   <span
                     v-if="duplicatePersonGuids.includes(vote.personGuid!)"
@@ -332,8 +437,8 @@ onMounted(async () => {
 
   .search-panel {
     flex: 1;
-    min-width: 300px;
-    max-width: 400px;
+    min-width: 200px;
+    max-width: 300px;
     background: var(--el-bg-color);
     border: 1px solid var(--el-border-color);
     border-radius: var(--el-border-radius-base);
@@ -432,8 +537,18 @@ onMounted(async () => {
     }
   }
 
+  .needs-review-toggle {
+    margin: 1em 0;
+    padding: 0 var(--spacing-3, 12px) var(--spacing-3, 12px);
+
+    //.el-button {
+    //  width: 100%;
+    //}
+  }
+
   .votes-panel {
     flex: 1.5;
+    max-width: 500px;
     background: var(--el-bg-color);
     border: 1px solid var(--el-border-color);
     border-radius: var(--el-border-radius-base);

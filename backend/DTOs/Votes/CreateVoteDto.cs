@@ -18,7 +18,8 @@ public class CreateVoteDto
     public Guid? PersonGuid { get; set; }
 
     /// <summary>
-    /// The position of this vote on the ballot (1-based indexing).
+    /// Legacy client hint for ballot position. The server assigns the first available slot
+    /// and ignores this value on create.
     /// </summary>
     public int PositionOnBallot { get; set; }
 }

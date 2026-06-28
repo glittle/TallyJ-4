@@ -222,30 +222,12 @@ export const useResultStore = defineStore("result", () => {
       const connection = await signalrService.connectToAnalyzeHub();
 
       connection.on("tallyProgress", (data: any) => {
-        // AnalyzeHub sends tallyProgress with processedBallots, totalBallots, processedVotes, totalVotes, percentage
-        const progressEvent: TallyProgressEvent = {
-          electionGuid: currentElectionGuid.value,
-          totalBallots: data.totalBallots || 0,
-          processedBallots: data.processedBallots || 0,
-          totalVotes: data.totalVotes || 0,
-          message: `Processing ballots: ${data.processedBallots}/${data.totalBallots}`,
-          percentComplete: data.percentage || 0,
-          isComplete: data.processedBallots >= data.totalBallots,
-        };
+        const progressEvent = mapTallyProgressPayload(data, false);
         handleTallyProgress(progressEvent);
       });
 
       connection.on("tallyComplete", (data: any) => {
-        // AnalyzeHub sends tallyComplete with results
-        const completeEvent: TallyProgressEvent = {
-          electionGuid: currentElectionGuid.value,
-          totalBallots: 0,
-          processedBallots: 0,
-          totalVotes: 0,
-          message: "Tally calculation completed",
-          percentComplete: 100,
-          isComplete: true,
-        };
+        const completeEvent = mapTallyProgressPayload(data, true);
         handleTallyComplete(completeEvent);
         // Optionally update results if data contains them
         if (data && results.value) {
@@ -266,6 +248,31 @@ export const useResultStore = defineStore("result", () => {
     } catch (e) {
       console.error("Failed to initialize SignalR for result store:", e);
     }
+  }
+
+  function mapTallyProgressPayload(
+    data: any,
+    isComplete: boolean,
+  ): TallyProgressEvent {
+    const totalBallots = data?.totalBallots ?? 0;
+    const processedBallots = data?.processedBallots ?? 0;
+
+    return {
+      electionGuid: data?.electionGuid || currentElectionGuid.value,
+      totalBallots,
+      processedBallots,
+      totalVotes: data?.totalVotes ?? 0,
+      message:
+        data?.message ||
+        (isComplete
+          ? "tally.progress.complete"
+          : "tally.progress.processingBallots"),
+      percentComplete:
+        data?.percentComplete ??
+        data?.percentage ??
+        (isComplete ? 100 : 0),
+      isComplete: data?.isComplete ?? isComplete,
+    };
   }
 
   function handleTallyProgress(data: TallyProgressEvent) {

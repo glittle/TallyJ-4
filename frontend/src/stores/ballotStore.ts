@@ -12,6 +12,7 @@ import type {
   VoteWithBallotStatusDto,
 } from "../types";
 import type { BallotUpdateEvent } from "../types/SignalREvents";
+import { normalizeVoteList } from "../utils/voteDtoNormalization";
 
 export const useBallotStore = defineStore("ballot", () => {
   const ballots = ref<BallotDto[]>([]);
@@ -115,6 +116,57 @@ export const useBallotStore = defineStore("ballot", () => {
     }
   }
 
+  function applyVoteMutationResult(
+    ballotGuid: string,
+    result: VoteWithBallotStatusDto,
+    options?: { removedPosition?: number },
+  ) {
+    if (currentBallot.value?.ballotGuid !== ballotGuid) {
+      return;
+    }
+
+    let updatedVotes = result.votes;
+    if (updatedVotes == null) {
+      if (result.vote) {
+        const existingIndex = currentBallot.value.votes.findIndex(
+          (v) => v.positionOnBallot === result.vote!.positionOnBallot,
+        );
+        updatedVotes =
+          existingIndex !== -1
+            ? currentBallot.value.votes.map((v, i) =>
+                i === existingIndex ? result.vote! : v,
+              )
+            : [...currentBallot.value.votes, result.vote!];
+      } else if (options?.removedPosition != null) {
+        updatedVotes = currentBallot.value.votes.filter(
+          (v) => v.positionOnBallot !== options.removedPosition,
+        );
+      } else {
+        return;
+      }
+    }
+
+    const normalizedVotes = normalizeVoteList(updatedVotes);
+
+    const updatedBallot: BallotDto = {
+      ...currentBallot.value,
+      votes: normalizedVotes,
+      voteCount: normalizedVotes.length,
+      statusCode: String(
+        result.ballotStatusCode ?? currentBallot.value.statusCode,
+      ),
+    };
+
+    currentBallot.value = updatedBallot;
+
+    const ballotIndex = ballots.value.findIndex(
+      (b) => b.ballotGuid === ballotGuid,
+    );
+    if (ballotIndex !== -1) {
+      ballots.value[ballotIndex] = updatedBallot;
+    }
+  }
+
   async function createVote(
     dto: CreateVoteDto,
   ): Promise<VoteWithBallotStatusDto> {
@@ -122,19 +174,7 @@ export const useBallotStore = defineStore("ballot", () => {
     error.value = null;
     try {
       const result = await voteService.create(dto);
-
-      if (currentBallot.value?.ballotGuid === dto.ballotGuid) {
-        const existingIndex = currentBallot.value.votes.findIndex(
-          (v) => v.positionOnBallot === result.vote.positionOnBallot,
-        );
-        if (existingIndex !== -1) {
-          currentBallot.value.votes[existingIndex] = result.vote;
-        } else {
-          currentBallot.value.votes.push(result.vote);
-        }
-        currentBallot.value.voteCount = currentBallot.value.votes.length;
-        currentBallot.value.statusCode = result.ballotStatusCode;
-      }
+      applyVoteMutationResult(dto.ballotGuid, result);
 
       return result;
     } catch (e: any) {
@@ -158,14 +198,10 @@ export const useBallotStore = defineStore("ballot", () => {
         throw new Error("Vote not found");
       }
 
-      await voteService.delete(vote.rowId);
-
-      if (currentBallot.value?.ballotGuid === ballotGuid) {
-        currentBallot.value.votes = currentBallot.value.votes.filter(
-          (v) => v.positionOnBallot !== positionOnBallot,
-        );
-        currentBallot.value.voteCount = currentBallot.value.votes.length;
-      }
+      const result = await voteService.delete(vote.rowId);
+      applyVoteMutationResult(ballotGuid, result, {
+        removedPosition: positionOnBallot,
+      });
     } catch (e: any) {
       error.value = e.message || "Failed to delete vote";
       throw e;

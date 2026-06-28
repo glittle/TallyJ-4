@@ -81,7 +81,8 @@ public class AnalyzeHub : Hub
             totalBallots,
             processedVotes,
             totalVotes,
-            percentage = totalBallots > 0 ? (processedBallots * 100.0 / totalBallots) : 0
+            percentage = totalBallots > 0 ? (processedBallots * 100.0 / totalBallots) : 0,
+            message = "tally.progress.processingBallots"
         };
 
         await Clients.Group(groupName).SendAsync("tallyProgress", progress);

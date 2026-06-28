@@ -121,16 +121,16 @@ public class VotesController : ControllerBase
     /// <param name="id">The ID of the vote to delete.</param>
     /// <returns>A success response if the vote was deleted, or not found if the vote doesn't exist.</returns>
     [HttpDelete("{id}/deleteVote")]
-    public async Task<ActionResult<ApiResponse<object?>>> DeleteVote(int id)
+    public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> DeleteVote(int id)
     {
-        var success = await _voteService.DeleteVoteAsync(id);
+        var result = await _voteService.DeleteVoteAsync(id);
 
-        if (!success)
+        if (result == null)
         {
-            return NotFound(ApiResponse<object?>.ErrorResponse($"Vote with ID '{id}' not found"));
+            return NotFound(ApiResponse<VoteWithBallotStatusDto>.ErrorResponse($"Vote with ID '{id}' not found"));
         }
 
-        return Ok(ApiResponse<object?>.SuccessResponse(null, "Vote deleted successfully"));
+        return Ok(ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result, "Vote deleted successfully"));
     }
 }
 

@@ -48,11 +48,11 @@ public interface IVoteService
     Task<VoteWithBallotStatusDto?> UpdateVoteAsync(int id, CreateVoteDto updateDto);
 
     /// <summary>
-    /// Deletes a vote by its unique identifier.
+    /// Deletes a vote by its unique identifier and re-evaluates the ballot status.
     /// </summary>
     /// <param name="id">The unique identifier of the vote to delete.</param>
-    /// <returns>True if the vote was successfully deleted, false otherwise.</returns>
-    Task<bool> DeleteVoteAsync(int id);
+    /// <returns>The updated ballot status, or null if the vote was not found.</returns>
+    Task<VoteWithBallotStatusDto?> DeleteVoteAsync(int id);
 }
 
 

@@ -26,8 +26,17 @@ public class VoteServiceTests : ServiceTestBase
         SeedElectionGraph();
     }
 
-    private void SeedElectionGraph()
+    private void SeedElectionGraph(int numberToElect = 9)
     {
+        var election = new Election
+        {
+            RowId = 1,
+            ElectionGuid = ElectionGuid,
+            Name = "Test Election",
+            NumberToElect = numberToElect,
+            ElectionType = "Loc",
+            RowVersion = new byte[8]
+        };
         var location = new Location
         {
             RowId = 1,
@@ -40,11 +49,12 @@ public class VoteServiceTests : ServiceTestBase
             RowId = 1,
             BallotGuid = BallotGuid,
             LocationGuid = LocationGuid,
-            StatusCode = BallotStatus.Ok,
+            StatusCode = BallotStatus.Empty,
             ComputerCode = "A",
             BallotNumAtComputer = 1,
             RowVersion = new byte[8]
         };
+        Context.Elections.Add(election);
         Context.Locations.Add(location);
         Context.Ballots.Add(ballot);
         Context.SaveChanges();
@@ -207,11 +217,35 @@ public class VoteServiceTests : ServiceTestBase
 
         var result = await _service.DeleteVoteAsync(vote.RowId);
 
-        Assert.True(result);
+        Assert.NotNull(result);
+        Assert.Equal(BallotStatus.Empty, result.BallotStatusCode);
         _voteCountBroadcastMock.Verify(s => s.QueueVoteCountUpdate(
             person.PersonGuid,
             ElectionGuid),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteVoteAsync_FromTooMany_ReEvaluatesBallotStatus()
+    {
+        var people = Enumerable.Range(0, 10).Select(_ => CreatePerson()).ToList();
+
+        for (var i = 0; i < people.Count; i++)
+        {
+            await _service.CreateVoteAsync(new CreateVoteDto
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+            });
+        }
+
+        var extraVote = Context.Votes.OrderBy(v => v.PositionOnBallot).Last();
+        var result = await _service.DeleteVoteAsync(extraVote.RowId);
+
+        Assert.NotNull(result);
+        Assert.Equal(BallotStatus.Ok, result.BallotStatusCode);
+        Assert.Equal(BallotStatus.Ok, Context.Ballots.Single(b => b.BallotGuid == BallotGuid).StatusCode);
     }
 
     [Fact]
@@ -230,7 +264,8 @@ public class VoteServiceTests : ServiceTestBase
 
         var result = await _service.DeleteVoteAsync(vote.RowId);
 
-        Assert.True(result);
+        Assert.NotNull(result);
+        Assert.Equal(BallotStatus.Empty, result.BallotStatusCode);
         _voteCountBroadcastMock.Verify(s => s.QueueVoteCountUpdate(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
     }
 
@@ -248,8 +283,61 @@ public class VoteServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CreateVoteAsync_FewerThanRequiredVotes_SetsBallotStatusTooFew()
+    {
+        var person = CreatePerson();
+
+        var dto = new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PersonGuid = person.PersonGuid,
+            PositionOnBallot = 1,
+        };
+
+        var result = await _service.CreateVoteAsync(dto);
+
+        Assert.Equal(BallotStatus.TooFew, result.BallotStatusCode);
+        Assert.Equal(BallotStatus.TooFew, Context.Ballots.First(b => b.BallotGuid == BallotGuid).StatusCode);
+    }
+
+    [Fact]
+    public async Task CreateVoteAsync_MoreThanRequiredVotes_SetsBallotStatusTooMany()
+    {
+        var people = Enumerable.Range(0, 10).Select(_ => CreatePerson()).ToList();
+
+        for (var i = 0; i < people.Count; i++)
+        {
+            var dto = new CreateVoteDto
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+            };
+
+            var result = await _service.CreateVoteAsync(dto);
+
+            if (i < 8)
+            {
+                Assert.Equal(BallotStatus.TooFew, result.BallotStatusCode);
+            }
+            else if (i == 8)
+            {
+                Assert.Equal(BallotStatus.Ok, result.BallotStatusCode);
+            }
+            else
+            {
+                Assert.Equal(BallotStatus.TooMany, result.BallotStatusCode);
+            }
+        }
+    }
+
+    [Fact]
     public async Task CreateVoteAsync_DuplicatePersonOnBallot_CreatesVoteAndSetsBallotStatusToDup()
     {
+        var election = Context.Elections.Single(e => e.ElectionGuid == ElectionGuid);
+        election.NumberToElect = 2;
+        await Context.SaveChangesAsync();
+
         var person = CreatePerson();
 
         var existingVote = new Vote
@@ -280,5 +368,166 @@ public class VoteServiceTests : ServiceTestBase
         Assert.Equal(BallotStatus.Dup, ballotInDb.StatusCode);
 
         Assert.Equal(2, Context.Votes.Count(v => v.BallotGuid == BallotGuid));
+    }
+
+    [Fact]
+    public async Task CreateVoteAsync_IgnoresClientPosition_AssignsFirstAvailableSlot()
+    {
+        var first = CreatePerson();
+        var second = CreatePerson();
+
+        await _service.CreateVoteAsync(new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PersonGuid = first.PersonGuid,
+            PositionOnBallot = 1,
+        });
+
+        var result = await _service.CreateVoteAsync(new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PersonGuid = second.PersonGuid,
+            PositionOnBallot = 1,
+        });
+
+        Assert.Equal(2, result.Vote!.PositionOnBallot);
+        Assert.Equal(2, result.Votes.Count);
+        AssertUniqueContiguousPositions(result.Votes);
+        Assert.DoesNotContain(result.Votes, v => v.PositionOnBallot == 1 && v.PersonGuid == second.PersonGuid);
+        Assert.Contains(result.Votes, v => v.PositionOnBallot == 2 && v.PersonGuid == second.PersonGuid);
+    }
+
+    [Fact]
+    public async Task CreateVoteAsync_WithExistingGap_AssignsLowestAvailableSlot()
+    {
+        var people = Enumerable.Range(0, 3).Select(_ => CreatePerson()).ToList();
+
+        Context.Votes.AddRange(new[]
+        {
+            new Vote
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = people[0].PersonGuid,
+                PositionOnBallot = 1,
+                VoteStatus = VoteStatus.Ok,
+                RowVersion = new byte[8]
+            },
+            new Vote
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = people[1].PersonGuid,
+                PositionOnBallot = 2,
+                VoteStatus = VoteStatus.Ok,
+                RowVersion = new byte[8]
+            },
+            new Vote
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = people[2].PersonGuid,
+                PositionOnBallot = 5,
+                VoteStatus = VoteStatus.Ok,
+                RowVersion = new byte[8]
+            },
+        });
+        await Context.SaveChangesAsync();
+
+        var newPerson = CreatePerson();
+        var result = await _service.CreateVoteAsync(new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PersonGuid = newPerson.PersonGuid,
+            PositionOnBallot = 9,
+        });
+
+        Assert.Equal(4, result.Vote!.PositionOnBallot);
+        Assert.Equal(4, result.Votes.Count);
+        AssertUniqueContiguousPositions(result.Votes);
+        Assert.Contains(result.Votes, v => v.PersonGuid == newPerson.PersonGuid && v.PositionOnBallot == 4);
+    }
+
+    [Fact]
+    public async Task CreateVoteAsync_WithDuplicateStoredPositions_CompactsBeforeAssigning()
+    {
+        var people = Enumerable.Range(0, 3).Select(_ => CreatePerson()).ToList();
+
+        Context.Votes.AddRange(new[]
+        {
+            new Vote
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = people[0].PersonGuid,
+                PositionOnBallot = 1,
+                VoteStatus = VoteStatus.Ok,
+                RowVersion = new byte[8]
+            },
+            new Vote
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = people[1].PersonGuid,
+                PositionOnBallot = 2,
+                VoteStatus = VoteStatus.Ok,
+                RowVersion = new byte[8]
+            },
+            new Vote
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = people[2].PersonGuid,
+                PositionOnBallot = 2,
+                VoteStatus = VoteStatus.Ok,
+                RowVersion = new byte[8]
+            },
+        });
+        await Context.SaveChangesAsync();
+
+        var newPerson = CreatePerson();
+        var result = await _service.CreateVoteAsync(new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PersonGuid = newPerson.PersonGuid,
+            PositionOnBallot = 2,
+        });
+
+        Assert.Equal(4, result.Votes.Count);
+        AssertUniqueContiguousPositions(result.Votes);
+        Assert.Equal(4, result.Vote!.PositionOnBallot);
+    }
+
+    [Fact]
+    public async Task DeleteVoteAsync_RenumbersRemainingVotesAndReturnsUpdatedList()
+    {
+        var people = Enumerable.Range(0, 4).Select(_ => CreatePerson()).ToList();
+
+        for (var i = 0; i < people.Count; i++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+                VoteStatus = VoteStatus.Ok,
+                RowVersion = new byte[8]
+            });
+        }
+        await Context.SaveChangesAsync();
+
+        var voteToDelete = Context.Votes.Single(v => v.PositionOnBallot == 2);
+        var result = await _service.DeleteVoteAsync(voteToDelete.RowId);
+
+        Assert.NotNull(result);
+        Assert.Equal(3, result!.Votes.Count);
+        AssertUniqueContiguousPositions(result.Votes);
+        Assert.Equal(people[0].PersonGuid, result.Votes[0].PersonGuid);
+        Assert.Equal(people[2].PersonGuid, result.Votes[1].PersonGuid);
+        Assert.Equal(people[3].PersonGuid, result.Votes[2].PersonGuid);
+        Assert.Equal(1, result.Votes[0].PositionOnBallot);
+        Assert.Equal(2, result.Votes[1].PositionOnBallot);
+        Assert.Equal(3, result.Votes[2].PositionOnBallot);
+    }
+
+    private static void AssertUniqueContiguousPositions(IReadOnlyList<VoteDto> votes)
+    {
+        var positions = votes.Select(v => v.PositionOnBallot).ToList();
+        Assert.Equal(positions.Count, positions.Distinct().Count());
+        Assert.Equal(Enumerable.Range(1, votes.Count), positions.OrderBy(p => p));
     }
 }

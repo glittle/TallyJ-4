@@ -12,6 +12,7 @@ import {
   ElAlert,
   ElAutocomplete,
   ElIcon,
+  ElInput,
 } from "element-plus";
 import { useNotifications } from "@/composables/useNotifications";
 
@@ -25,6 +26,12 @@ const mockT = (key: string, values?: any) => {
     "ballots.votesEntered": "{count} of {max} votes entered",
     "ballots.cacheLoading": "Loading candidates...",
     "ballots.cacheLoadError": "Failed to load candidates",
+    "ballots.searchPlaceholder": "Search",
+    "ballots.ballotFull": "Ballot is full",
+    "ballots.markNeedsReview": "Mark as Needs Review",
+    "ballots.clearNeedsReview": "Clear Needs Review",
+    "ballots.needsReviewUpdated": "Needs Review status updated",
+    "ballots.needsReviewError": "Failed to update Needs Review status",
     "common.clear": "Clear",
   };
 
@@ -63,6 +70,21 @@ const mockPeopleStore = {
 
 vi.mock("@/stores/peopleStore", () => ({
   usePeopleStore: () => mockPeopleStore,
+}));
+
+const mockUpdateBallot = vi.fn();
+
+vi.mock("@/stores/ballotStore", () => ({
+  useBallotStore: () => ({
+    updateBallot: mockUpdateBallot,
+  }),
+}));
+
+vi.mock("@/utils/activeTellerStorage", () => ({
+  getActiveTellerPayload: () => ({
+    teller1: "Alice",
+    teller2: "Bob",
+  }),
 }));
 
 vi.mock("@/composables/usePersonSearch", () => ({
@@ -109,7 +131,7 @@ function createMockBallot(votes: VoteDto[] = []): BallotDto {
     locationName: "Main Hall",
     ballotNumAtComputer: 1,
     computerCode: "C01",
-    statusCode: "Review",
+    statusCode: "Ok",
     voteCount: votes.length,
     votes,
   };
@@ -192,7 +214,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -218,7 +240,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -239,7 +261,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -263,7 +285,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -278,14 +300,14 @@ describe("InlineBallotEntry", () => {
   });
 
   describe("rendering", () => {
-    it("should render correct number of vote rows based on maxVotes", async () => {
+    it("should render correct number of vote rows based on requiredVotes", async () => {
       const ballot = createMockBallot();
 
       const wrapper = mount(InlineBallotEntry, {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -319,7 +341,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -338,7 +360,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -358,7 +380,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...unstubMountOptions,
       });
@@ -389,7 +411,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...unstubMountOptions,
       });
@@ -412,7 +434,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...unstubMountOptions,
       });
@@ -472,7 +494,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -497,7 +519,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -524,7 +546,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -544,7 +566,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...unstubMountOptions,
       });
@@ -591,7 +613,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...defaultMountOptions,
       });
@@ -627,7 +649,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...unstubMountOptions,
       });
@@ -666,7 +688,7 @@ describe("InlineBallotEntry", () => {
         props: {
           electionGuid: "election-123",
           ballot,
-          maxVotes: 9,
+          requiredVotes: 9,
         },
         ...unstubMountOptions,
       });
@@ -676,6 +698,133 @@ describe("InlineBallotEntry", () => {
       const voteRows = wrapper.findAllComponents(VoteEntryRow);
       expect(voteRows[0].props("duplicatePersonGuids")).toEqual([]);
       expect(voteRows[1].props("duplicatePersonGuids")).toEqual([]);
+    });
+
+    it("allows adding a vote beyond requiredVotes without blocking as full", async () => {
+      const { showWarningMessage } = useNotifications();
+      const votes: VoteDto[] = Array.from({ length: 9 }, (_, index) => ({
+        rowId: index + 1,
+        ballotGuid: "ballot-123",
+        positionOnBallot: index + 1,
+        personGuid: `guid-${index}`,
+        personFullName: `Person ${index + 1}`,
+        statusCode: "Ok",
+      }));
+      const ballot = createMockBallot(votes);
+
+      const wrapper = mount(InlineBallotEntry, {
+        props: {
+          electionGuid: "election-123",
+          ballot,
+          requiredVotes: 9,
+        },
+        global: {
+          components: {
+            ElButton,
+            ElSkeleton,
+            ElAlert,
+            ElInput,
+            ElIcon,
+          },
+          mocks: {
+            $t: mockT,
+          },
+        },
+      });
+
+      await flushPromises();
+
+      expect(wrapper.findAll(".vote-row").length).toBe(9);
+
+      const searchInput = wrapper.find(".search-input input");
+      await searchInput.setValue("John");
+      await nextTick();
+
+      await wrapper.find(".search-result-item").trigger("click");
+      await nextTick();
+
+      expect(wrapper.emitted("vote-added")).toBeTruthy();
+      const emitted = wrapper.emitted("vote-added") as VoteDto[][];
+      expect(emitted[0][0].positionOnBallot).toBe(10);
+      expect(wrapper.findAll(".vote-row").length).toBe(10);
+      expect(showWarningMessage).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("needs review toggle", () => {
+    const reviewMountOptions = {
+      global: {
+        components: {
+          ElButton,
+          ElSkeleton,
+          ElAlert,
+          ElInput,
+          ElIcon,
+        },
+        mocks: {
+          $t: mockT,
+        },
+      },
+    };
+
+    it("marks a ballot as Needs Review", async () => {
+      mockUpdateBallot.mockResolvedValue({
+        ...createMockBallot(),
+        statusCode: "Review",
+      });
+
+      const wrapper = mount(InlineBallotEntry, {
+        props: {
+          electionGuid: "election-123",
+          ballot: createMockBallot(),
+          requiredVotes: 9,
+        },
+        ...reviewMountOptions,
+      });
+
+      await flushPromises();
+      await wrapper.get(".needs-review-toggle .el-button").trigger("click");
+      await flushPromises();
+
+      expect(mockUpdateBallot).toHaveBeenCalledWith("ballot-123", {
+        teller1: "Alice",
+        teller2: "Bob",
+        statusCode: "Review",
+      });
+    });
+
+    it("clears Needs Review by recalculating status", async () => {
+      mockUpdateBallot.mockResolvedValue({
+        ...createMockBallot(),
+        statusCode: "Empty",
+      });
+
+      const ballot = createMockBallot();
+      ballot.statusCode = "Review";
+
+      const wrapper = mount(InlineBallotEntry, {
+        props: {
+          electionGuid: "election-123",
+          ballot,
+          requiredVotes: 9,
+        },
+        ...reviewMountOptions,
+      });
+
+      await flushPromises();
+      expect(wrapper.get(".needs-review-toggle .el-button").text()).toContain(
+        "Clear Needs Review",
+      );
+
+      await wrapper.get(".needs-review-toggle .el-button").trigger("click");
+      await flushPromises();
+
+      expect(mockUpdateBallot).toHaveBeenCalledWith("ballot-123", {
+        teller1: "Alice",
+        teller2: "Bob",
+        statusCode: "Review",
+        clearNeedsReview: true,
+      });
     });
   });
 });

@@ -164,6 +164,7 @@ Other languages are updated separately in periodic review cycles — do not add 
 - frontend default dev URL: `http://localhost:8095`
 - backend development config seeds the database on startup
 - Swagger is the source of truth for current routes and schemas
+- **Contributor workflow:** the repo owner usually keeps their own backend dev instance running (`dotnet run` / IDE). Before running `dotnet build` on `backend/` (or any command that rebuilds the backend and may fail with a file-lock error on `Backend.exe`), **ask them to stop their copy first**. Prefer `dotnet test --no-build` when a recent build already exists.
 
 ### Configuration sources (Program.cs)
 
@@ -248,6 +249,7 @@ with normal POSIX quoting._
 
 These apply on both Windows and Linux:
 
+- If a backend rebuild is needed, confirm the contributor has stopped their locally running backend first (see **Local development assumptions**). A running `Backend.exe` locks the output and causes MSB3026 copy failures.
 - For targeted test runs, `dotnet test --filter "FullyQualifiedName~ClassName.MethodPrefix"` works
   well. Multiple filters can be OR-combined with `|`:
   `--filter "FullyQualifiedName~A|FullyQualifiedName~B"`.
