@@ -12,14 +12,11 @@ namespace Backend.Services;
 public static class VoteStatusRefresher
 {
     /// <summary>
-    /// Re-evaluates all votes for a person and refreshes affected ballot statuses.
-    /// </summary>
-    /// <param name="context">The database context.</param>
-    /// <param name="person">The person whose votes should be re-evaluated.</param>
-    /// <param name="logger">Optional logger for diagnostic output.</param>
-    /// <summary>
     /// Re-evaluates all votes in an election against current person eligibility.
     /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="electionGuid">The election whose votes should be re-evaluated.</param>
+    /// <param name="logger">Optional logger for diagnostic output.</param>
     /// <returns>The number of vote fields whose status or ineligible reason changed.</returns>
     public static async Task<int> RefreshVotesForElectionAsync(
         MainDbContext context,
