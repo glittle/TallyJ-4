@@ -39,7 +39,12 @@ export function parseBallotViewFilter(value: string): BallotViewFilter {
   }
 
   if (value.startsWith("computer|")) {
-    const [, locationGuid, computerCode] = value.split("|");
+    const parts = value.split("|");
+    if (parts.length !== 3 || !parts[2]) {
+      return { type: "all" };
+    }
+
+    const [, locationGuid, computerCode] = parts;
     return {
       type: "computer",
       locationGuid: locationGuid === "*" ? null : locationGuid,
