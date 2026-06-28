@@ -245,6 +245,10 @@ export const useBallotStore = defineStore("ballot", () => {
       (ballotMutationGeneration.get(ballotGuid) ?? 0) + 1,
     );
 
+    const isCurrentBallot = currentBallot.value?.ballotGuid === ballotGuid;
+    const hasAuthoritativeVotes =
+      result.votes !== null && result.votes !== undefined;
+
     const normalizedVotes = resolveVoteMutationVotes(
       ballotGuid,
       result,
@@ -254,15 +258,18 @@ export const useBallotStore = defineStore("ballot", () => {
       return;
     }
 
-    const summaryPatch: Partial<BallotSummaryDto> = {
-      voteCount: normalizedVotes.length,
-    };
+    const summaryPatch: Partial<BallotSummaryDto> = {};
+    if (hasAuthoritativeVotes || isCurrentBallot) {
+      summaryPatch.voteCount = normalizedVotes.length;
+    }
     if (result.ballotStatusCode) {
       summaryPatch.statusCode = String(result.ballotStatusCode);
     }
-    patchBallotSummaryByGuid(ballotGuid, summaryPatch);
+    if (Object.keys(summaryPatch).length > 0) {
+      patchBallotSummaryByGuid(ballotGuid, summaryPatch);
+    }
 
-    if (currentBallot.value?.ballotGuid !== ballotGuid) {
+    if (!isCurrentBallot) {
       return;
     }
 

@@ -164,10 +164,5 @@ watch(
     color: var(--el-color-primary);
     font-size: 16px;
   }
-
-  .teller-hint {
-    color: var(--el-text-color-secondary);
-    font-size: 12px;
-  }
 }
 </style>

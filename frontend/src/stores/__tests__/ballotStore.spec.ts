@@ -145,6 +145,43 @@ describe("useBallotStore deleteVote", () => {
     expect(store.currentBallot?.votes).toHaveLength(1);
   });
 
+  it("does not patch list voteCount from a single vote when the ballot is not current", async () => {
+    const store = useBallotStore();
+    const otherBallot = createBallot([createVote(1, 1, "Alice")]);
+    otherBallot.ballotGuid = "ballot-2";
+    otherBallot.voteCount = 3;
+
+    store.currentBallot = createBallot([
+      createVote(10, 1, "Dave"),
+      createVote(11, 2, "Eve"),
+    ]);
+    store.ballots = [
+      toBallotSummary(store.currentBallot),
+      toBallotSummary(otherBallot),
+    ];
+
+    vi.mocked(voteService.create).mockResolvedValue({
+      ballotStatusCode: "TooFew",
+      vote: {
+        ...createVote(20, 4, "Frank"),
+        ballotGuid: "ballot-2",
+        positionOnBallot: 4,
+      },
+    });
+
+    await store.createVote({
+      ballotGuid: "ballot-2",
+      personGuid: "person-20",
+      positionOnBallot: 4,
+    });
+
+    expect(
+      store.ballots.find((b) => b.ballotGuid === "ballot-2")?.voteCount,
+    ).toBe(3);
+    expect(store.currentBallot?.ballotGuid).toBe("ballot-1");
+    expect(store.currentBallot?.votes).toHaveLength(2);
+  });
+
   it("does not let a stale fetchBallotById overwrite a newer delete mutation", async () => {
     const store = useBallotStore();
     const initialVotes = [createVote(1, 1, "Alice"), createVote(2, 2, "Bob")];
