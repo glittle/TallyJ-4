@@ -99,9 +99,11 @@ public static class VoteStatusRefresher
     {
         var changedCount = 0;
         var newStatus = BallotAnalyzer.DetermineVoteStatus(CreateBallotVoteInfo(vote, person));
-        var newReasonCode = person?.CanReceiveVotes != true
-            ? GetIneligibleReasonCode(person?.IneligibleReasonGuid)
-            : null;
+        var newReasonCode = person == null
+            ? vote.IneligibleReasonCode
+            : person.CanReceiveVotes != true
+                ? GetIneligibleReasonCode(person.IneligibleReasonGuid)
+                : null;
 
         if (vote.VoteStatus != newStatus)
         {

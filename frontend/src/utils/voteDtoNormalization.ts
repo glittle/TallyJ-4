@@ -33,17 +33,7 @@ export function isVoteDtoSpoiled(vote: ApiVoteLike): boolean {
   }
 
   const status = resolveVoteStatus(vote);
-  if (status === "ok") {
-    return false;
-  }
-
-  const normalized = status.toLowerCase();
-  if (normalized === "spoiled" || normalized === "changed") {
-    return true;
-  }
-
   return status !== "ok";
-}
 
 export function normalizeVoteDto(vote: ApiVoteDto): VoteDto {
   const rawStatus = vote.statusCode ?? vote.voteStatus;
