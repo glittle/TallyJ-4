@@ -296,9 +296,7 @@ function handleDragStart(index: number) {
 
 function handleDragOver(event: DragEvent, index: number) {
   if (!canDropOnIndex(index)) {
-    if (dragOverIndex.value === index) {
-      dragOverIndex.value = null;
-    }
+    dragOverIndex.value = null;
     return;
   }
 
