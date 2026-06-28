@@ -44,8 +44,11 @@ public static class BallotStatusRefresher
         {
             var voteInfos = ballot.Votes.Select(CreateBallotVoteInfo).ToList();
             analyzer.DetermineStatusFromVotes(ballot.StatusCode, voteInfos, out var newStatus, out _);
-            ballot.StatusCode = newStatus;
-            ballot.DateUpdated = DateTimeOffset.UtcNow;
+            if (ballot.StatusCode != newStatus)
+            {
+                ballot.StatusCode = newStatus;
+                ballot.DateUpdated = DateTimeOffset.UtcNow;
+            }
         }
     }
 

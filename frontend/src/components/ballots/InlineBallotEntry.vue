@@ -117,6 +117,12 @@ watch(
   () => rebuildVoteSlots(false),
 );
 
+const hasUnpersistedVote = computed(() =>
+  votes.value.some((vote) => vote !== null && vote.rowId === 0),
+);
+
+const canReorderVotes = computed(() => !hasUnpersistedVote.value);
+
 const duplicatePersonGuids = computed(() => {
   const personGuids = votes.value
     .filter((v): v is VoteDto => v !== null && !!v.personGuid)
@@ -151,12 +157,8 @@ function findNextEmptyPosition(): number {
   return -1;
 }
 
-function getFilledVotes(): VoteDto[] {
-  return votes.value.filter((vote): vote is VoteDto => vote !== null);
-}
-
-function getPersistedVoteRowIds(voteList: VoteDto[]): number[] {
-  return voteList.map((vote) => vote.rowId).filter((rowId) => rowId > 0);
+function getPersistedVotes(): VoteDto[] {
+  return votes.value.filter(isPersistedVote);
 }
 
 function isPersistedVote(vote: VoteDto | null | undefined): vote is VoteDto {
@@ -164,7 +166,11 @@ function isPersistedVote(vote: VoteDto | null | undefined): vote is VoteDto {
 }
 
 function canDropOnIndex(targetIndex: number): boolean {
-  if (dragSourceIndex.value === null || dragSourceIndex.value === targetIndex) {
+  if (
+    !canReorderVotes.value ||
+    dragSourceIndex.value === null ||
+    dragSourceIndex.value === targetIndex
+  ) {
     return false;
   }
 
@@ -281,7 +287,7 @@ function handleVoteRemoved(positionOnBallot: number) {
 
 function handleDragStart(index: number) {
   const vote = votes.value[index];
-  if (!isPersistedVote(vote) || reorderingVotes.value) {
+  if (!canReorderVotes.value || !isPersistedVote(vote) || reorderingVotes.value) {
     return;
   }
   dragSourceIndex.value = index;
@@ -313,11 +319,11 @@ function handleDrop(targetIndex: number) {
     return;
   }
 
-  const filledVotes = getFilledVotes();
-  const sourceFilledIndex = filledVotes.findIndex(
+  const persistedVotes = getPersistedVotes();
+  const sourceFilledIndex = persistedVotes.findIndex(
     (vote) => vote.rowId === sourceVote.rowId,
   );
-  const targetFilledIndex = filledVotes.findIndex(
+  const targetFilledIndex = persistedVotes.findIndex(
     (vote) => vote.rowId === targetVote.rowId,
   );
 
@@ -326,15 +332,11 @@ function handleDrop(targetIndex: number) {
     return;
   }
 
-  const reordered = [...filledVotes];
+  const reordered = [...persistedVotes];
   const [movedVote] = reordered.splice(sourceFilledIndex, 1);
   reordered.splice(targetFilledIndex, 0, movedVote);
 
-  const voteRowIds = getPersistedVoteRowIds(reordered);
-  if (voteRowIds.length !== reordered.length) {
-    dragSourceIndex.value = null;
-    return;
-  }
+  const voteRowIds = reordered.map((vote) => vote.rowId);
 
   reorderingVotes.value = true;
   emit("votes-reordered", voteRowIds);
@@ -492,7 +494,9 @@ onMounted(async () => {
           }}</span>
         </div>
 
-        <p class="votes-drag-hint">{{ $t("ballots.dragToReorder") }}</p>
+        <p v-if="canReorderVotes" class="votes-drag-hint">
+          {{ $t("ballots.dragToReorder") }}
+        </p>
 
         <div class="votes-list">
           <div
@@ -512,9 +516,11 @@ onMounted(async () => {
                 dragOverIndex === index &&
                 dragSourceIndex !== null &&
                 index > dragSourceIndex,
-              'is-draggable': isPersistedVote(vote),
+              'is-draggable': canReorderVotes && isPersistedVote(vote),
             }"
-            :draggable="isPersistedVote(vote) && !reorderingVotes"
+            :draggable="
+              canReorderVotes && isPersistedVote(vote) && !reorderingVotes
+            "
             @dragstart="handleDragStart(index)"
             @dragover="handleDragOver($event, index)"
             @drop="handleDrop(index)"
@@ -524,7 +530,7 @@ onMounted(async () => {
             <div class="vote-content">
               <template v-if="vote">
                 <span
-                  v-if="isPersistedVote(vote)"
+                  v-if="canReorderVotes && isPersistedVote(vote)"
                   class="drag-handle"
                   :title="$t('ballots.dragToReorder')"
                 >

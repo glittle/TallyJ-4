@@ -405,6 +405,54 @@ describe("InlineBallotEntry", () => {
     expect(wrapper.find(".vote-row").classes()).toContain("is-draggable");
   });
 
+  it("disables reordering while an optimistic vote is still saving", async () => {
+    const persistedVotes: VoteDto[] = [
+      {
+        rowId: 10,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        personGuid: mockCandidates[0].personGuid,
+        personFullName: mockCandidates[0].fullName,
+        statusCode: "ok",
+      },
+      {
+        rowId: 11,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 2,
+        personGuid: mockCandidates[1].personGuid,
+        personFullName: mockCandidates[1].fullName,
+        statusCode: "ok",
+      },
+    ];
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(persistedVotes),
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+    await wrapper.find(".search-input input").setValue("Bob");
+    await nextTick();
+    await wrapper.find(".search-result-item").trigger("click");
+    await nextTick();
+
+    expect(wrapper.find(".drag-handle").exists()).toBe(false);
+    expect(wrapper.find(".votes-drag-hint").exists()).toBe(false);
+    expect(wrapper.findAll(".vote-row.is-draggable")).toHaveLength(0);
+
+    const rows = wrapper.findAll(".vote-row");
+    await rows[1].trigger("dragstart");
+    await rows[0].trigger("dragover");
+    await rows[0].trigger("drop");
+
+    expect(wrapper.emitted("votes-reordered")).toBeUndefined();
+  });
+
   it("emits votes-reordered when a persisted vote is dropped on another vote", async () => {
     const votes: VoteDto[] = [
       {

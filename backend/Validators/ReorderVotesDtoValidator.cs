@@ -12,9 +12,10 @@ public class ReorderVotesDtoValidator : AbstractValidator<ReorderVotesDto>
             .WithMessage("Ballot GUID is required");
 
         RuleFor(x => x.VoteRowIds)
+            .Cascade(CascadeMode.Stop)
             .NotNull()
             .WithMessage("Vote row IDs are required")
-            .Must(ids => ids.Count > 0)
+            .NotEmpty()
             .WithMessage("At least one vote row ID is required")
             .Must(ids => ids.Distinct().Count() == ids.Count)
             .WithMessage("Vote row IDs must be unique");
