@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
 import BallotViewFilterSelect from "@/components/ballots/BallotViewFilterSelect.vue";
-import { useComputerCode } from "@/composables/useComputerCode";
+import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useComputerCode } from "@/composables/useComputerCode";
 import { useNotifications } from "@/composables/useNotifications";
 import { computerService } from "@/services/computerService";
+import type { ComputerDto } from "@/types/Computer";
 import {
   getActiveTellerPayload,
   getActiveTellers,
@@ -17,7 +18,6 @@ import {
   defaultBallotViewFilter,
   filterBallotsByView,
 } from "@/utils/ballotViewFilter";
-import type { ComputerDto } from "@/types/Computer";
 import { Location, Plus, Refresh } from "@element-plus/icons-vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -92,12 +92,10 @@ const drawerTitle = computed(() => {
 });
 
 watch(computerCode, (code) => {
-  if (code) {
-    selectedViewFilter.value = defaultBallotViewFilter(
-      code,
-      locationStore.selectedLocationGuid,
-    );
-  }
+  selectedViewFilter.value = defaultBallotViewFilter(
+    code,
+    locationStore.selectedLocationGuid,
+  );
 });
 
 function onTellersChanged(tellers: ActiveTellers) {
@@ -236,7 +234,7 @@ function getStatusType(status: string | undefined) {
   }
 }
 
-function handleLocationChange(locationGuid: string) {
+function handleLocationChange(locationGuid: string | null) {
   locationStore.selectLocation(locationGuid);
   if (computerCode.value) {
     selectedViewFilter.value = defaultBallotViewFilter(

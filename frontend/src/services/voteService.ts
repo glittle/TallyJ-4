@@ -24,12 +24,23 @@ function normalizeVoteResult(
     ? normalizeVoteList(result.votes as ApiVoteDto[])
     : undefined;
 
-  return {
+  const normalized: VoteWithBallotStatusDto = {
     ...result,
     vote: result.vote ? normalizeVoteDto(result.vote as ApiVoteDto) : undefined,
     votes,
-    ballotStatusCode: String(result.ballotStatusCode ?? ""),
   };
+
+  if (
+    result.ballotStatusCode !== null &&
+    result.ballotStatusCode !== undefined &&
+    result.ballotStatusCode !== ""
+  ) {
+    normalized.ballotStatusCode = String(result.ballotStatusCode);
+  } else {
+    delete (normalized as any).ballotStatusCode;
+  }
+
+  return normalized;
 }
 
 export const voteService = {

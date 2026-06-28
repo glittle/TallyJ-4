@@ -18,7 +18,7 @@ export interface CreateVoteDto {
 
 export interface VoteWithBallotStatusDto {
   vote?: VoteDto;
-  ballotStatusCode: string;
+  ballotStatusCode?: string;
   votes?: VoteDto[];
 }
 

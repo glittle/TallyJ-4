@@ -256,8 +256,10 @@ export const useBallotStore = defineStore("ballot", () => {
 
     const summaryPatch: Partial<BallotSummaryDto> = {
       voteCount: normalizedVotes.length,
-      statusCode: String(result.ballotStatusCode ?? ""),
     };
+    if (result.ballotStatusCode) {
+      summaryPatch.statusCode = String(result.ballotStatusCode);
+    }
     patchBallotSummaryByGuid(ballotGuid, summaryPatch);
 
     if (currentBallot.value?.ballotGuid !== ballotGuid) {
@@ -272,7 +274,9 @@ export const useBallotStore = defineStore("ballot", () => {
       ...existingSummary,
       votes: normalizedVotes,
       voteCount: normalizedVotes.length,
-      statusCode: String(result.ballotStatusCode ?? existingSummary.statusCode),
+      ...(result.ballotStatusCode
+        ? { statusCode: String(result.ballotStatusCode) }
+        : {}),
     };
   }
 

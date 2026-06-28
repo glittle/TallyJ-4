@@ -19,7 +19,7 @@ function resolveIneligibleReasonCode(vote: VoteDto): string | undefined {
 }
 
 export function getVoteSpoiledLabel(t: TranslateFn, vote: VoteDto): string {
-  const code = resolveIneligibleReasonCode(vote);
+  const code = resolveIneligibleReasonCode(vote)?.trim().toUpperCase();
   if (!code) {
     return t("ballots.spoiled");
   }
