@@ -9,23 +9,67 @@ import type {
   CreateBallotDto,
   UpdateBallotDto,
   CreateVoteDto,
+  ReorderVotesDto,
+  VoteDto,
   VoteWithBallotStatusDto,
 } from "../types";
 import type { BallotUpdateEvent } from "../types/SignalREvents";
+import {
+  patchBallotSummary,
+  summaryFromFullBallot,
+  toBallotSummary,
+  type BallotSummaryDto,
+} from "../utils/ballotSummary";
 import { normalizeVoteList } from "../utils/voteDtoNormalization";
 
+function compactVotePositions(votes: VoteDto[]): VoteDto[] {
+  return votes
+    .slice()
+    .sort((a, b) => a.positionOnBallot - b.positionOnBallot)
+    .map((vote, index) => ({
+      ...vote,
+      positionOnBallot: index + 1,
+    }));
+}
+
 export const useBallotStore = defineStore("ballot", () => {
-  const ballots = ref<BallotDto[]>([]);
+  const ballots = ref<BallotSummaryDto[]>([]);
   const currentBallot = ref<BallotDto | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
   const signalrInitialized = ref(false);
+  const ballotFetchGeneration = new Map<string, number>();
+  const ballotMutationGeneration = new Map<string, number>();
+
+  function upsertBallotSummary(summary: BallotSummaryDto) {
+    const index = ballots.value.findIndex(
+      (b) => b.ballotGuid === summary.ballotGuid,
+    );
+    if (index !== -1) {
+      ballots.value[index] = summary;
+    } else {
+      ballots.value.push(summary);
+    }
+  }
+
+  function patchBallotSummaryByGuid(
+    ballotGuid: string,
+    patch: Partial<BallotSummaryDto>,
+  ) {
+    const index = ballots.value.findIndex((b) => b.ballotGuid === ballotGuid);
+    if (index === -1) {
+      return;
+    }
+
+    ballots.value[index] = patchBallotSummary(ballots.value[index], patch);
+  }
 
   async function fetchBallots(electionGuid: string) {
     loading.value = true;
     error.value = null;
     try {
-      ballots.value = (await ballotService.getAll(electionGuid)) ?? [];
+      const fetched = (await ballotService.getAll(electionGuid)) ?? [];
+      ballots.value = fetched.map(toBallotSummary);
     } catch (e: any) {
       error.value = e.message || "Failed to fetch ballots";
       throw e;
@@ -34,26 +78,66 @@ export const useBallotStore = defineStore("ballot", () => {
     }
   }
 
-  async function fetchBallotById(ballotGuid: string) {
+  function applyFetchedBallot(
+    ballotGuid: string,
+    ballot: BallotDto,
+    mutationGenerationBeforeFetch: number,
+    adoptAsCurrent = true,
+  ) {
+    let resolvedBallot = ballot;
+
+    if (
+      currentBallot.value?.ballotGuid === ballotGuid &&
+      (ballotMutationGeneration.get(ballotGuid) ?? 0) >
+        mutationGenerationBeforeFetch
+    ) {
+      resolvedBallot = {
+        ...ballot,
+        votes: currentBallot.value.votes,
+        voteCount: currentBallot.value.voteCount,
+      };
+    }
+
+    const isViewingBallot = currentBallot.value?.ballotGuid === ballotGuid;
+    if (adoptAsCurrent || isViewingBallot) {
+      currentBallot.value = resolvedBallot;
+    }
+
+    upsertBallotSummary(summaryFromFullBallot(resolvedBallot));
+    return resolvedBallot;
+  }
+
+  async function fetchBallotById(
+    ballotGuid: string,
+    options?: { adoptAsCurrent?: boolean },
+  ) {
+    const fetchGeneration = (ballotFetchGeneration.get(ballotGuid) ?? 0) + 1;
+    ballotFetchGeneration.set(ballotGuid, fetchGeneration);
+    const mutationGenerationBeforeFetch =
+      ballotMutationGeneration.get(ballotGuid) ?? 0;
+
     loading.value = true;
     error.value = null;
     try {
       const ballot = await ballotService.getById(ballotGuid);
-      currentBallot.value = ballot;
 
-      const index = ballots.value.findIndex((b) => b.ballotGuid === ballotGuid);
-      if (index !== -1) {
-        ballots.value[index] = ballot;
-      } else {
-        ballots.value.push(ballot);
+      if (ballotFetchGeneration.get(ballotGuid) !== fetchGeneration) {
+        return ballot;
       }
 
-      return ballot;
+      return applyFetchedBallot(
+        ballotGuid,
+        ballot,
+        mutationGenerationBeforeFetch,
+        options?.adoptAsCurrent ?? true,
+      );
     } catch (e: any) {
       error.value = e.message || "Failed to fetch ballot";
       throw e;
     } finally {
-      loading.value = false;
+      if (ballotFetchGeneration.get(ballotGuid) === fetchGeneration) {
+        loading.value = false;
+      }
     }
   }
 
@@ -62,7 +146,7 @@ export const useBallotStore = defineStore("ballot", () => {
     error.value = null;
     try {
       const ballot = await ballotService.create(dto);
-      ballots.value.push(ballot);
+      upsertBallotSummary(summaryFromFullBallot(ballot));
       currentBallot.value = ballot;
       return ballot;
     } catch (e: any) {
@@ -78,14 +162,13 @@ export const useBallotStore = defineStore("ballot", () => {
     error.value = null;
     try {
       const ballot = await ballotService.update(ballotGuid, dto);
-
-      const index = ballots.value.findIndex((b) => b.ballotGuid === ballotGuid);
-      if (index !== -1) {
-        ballots.value[index] = ballot;
-      }
+      upsertBallotSummary(summaryFromFullBallot(ballot));
 
       if (currentBallot.value?.ballotGuid === ballotGuid) {
-        currentBallot.value = ballot;
+        currentBallot.value = {
+          ...ballot,
+          votes: currentBallot.value.votes,
+        };
       }
 
       return ballot;
@@ -116,55 +199,81 @@ export const useBallotStore = defineStore("ballot", () => {
     }
   }
 
+  function resolveVoteMutationVotes(
+    ballotGuid: string,
+    result: VoteWithBallotStatusDto,
+    options?: { removedPosition?: number },
+  ): VoteDto[] | null {
+    const existingVotes =
+      currentBallot.value?.ballotGuid === ballotGuid
+        ? currentBallot.value.votes
+        : [];
+
+    let updatedVotes = result.votes;
+    if (updatedVotes === null || updatedVotes === undefined) {
+      if (result.vote) {
+        const existingIndex = existingVotes.findIndex(
+          (v) => v.positionOnBallot === result.vote!.positionOnBallot,
+        );
+        updatedVotes =
+          existingIndex !== -1
+            ? existingVotes.map((v, i) =>
+                i === existingIndex ? result.vote! : v,
+              )
+            : [...existingVotes, result.vote!];
+      } else if (options?.removedPosition !== undefined) {
+        updatedVotes = compactVotePositions(
+          existingVotes.filter(
+            (v) => v.positionOnBallot !== options.removedPosition,
+          ),
+        );
+      } else {
+        return null;
+      }
+    }
+
+    return normalizeVoteList(updatedVotes);
+  }
+
   function applyVoteMutationResult(
     ballotGuid: string,
     result: VoteWithBallotStatusDto,
     options?: { removedPosition?: number },
   ) {
+    ballotMutationGeneration.set(
+      ballotGuid,
+      (ballotMutationGeneration.get(ballotGuid) ?? 0) + 1,
+    );
+
+    const normalizedVotes = resolveVoteMutationVotes(
+      ballotGuid,
+      result,
+      options,
+    );
+    if (!normalizedVotes) {
+      return;
+    }
+
+    const summaryPatch: Partial<BallotSummaryDto> = {
+      voteCount: normalizedVotes.length,
+      statusCode: String(result.ballotStatusCode ?? ""),
+    };
+    patchBallotSummaryByGuid(ballotGuid, summaryPatch);
+
     if (currentBallot.value?.ballotGuid !== ballotGuid) {
       return;
     }
 
-    let updatedVotes = result.votes;
-    if (updatedVotes == null) {
-      if (result.vote) {
-        const existingIndex = currentBallot.value.votes.findIndex(
-          (v) => v.positionOnBallot === result.vote!.positionOnBallot,
-        );
-        updatedVotes =
-          existingIndex !== -1
-            ? currentBallot.value.votes.map((v, i) =>
-                i === existingIndex ? result.vote! : v,
-              )
-            : [...currentBallot.value.votes, result.vote!];
-      } else if (options?.removedPosition != null) {
-        updatedVotes = currentBallot.value.votes.filter(
-          (v) => v.positionOnBallot !== options.removedPosition,
-        );
-      } else {
-        return;
-      }
-    }
+    const existingSummary =
+      ballots.value.find((b) => b.ballotGuid === ballotGuid) ??
+      summaryFromFullBallot(currentBallot.value);
 
-    const normalizedVotes = normalizeVoteList(updatedVotes);
-
-    const updatedBallot: BallotDto = {
-      ...currentBallot.value,
+    currentBallot.value = {
+      ...existingSummary,
       votes: normalizedVotes,
       voteCount: normalizedVotes.length,
-      statusCode: String(
-        result.ballotStatusCode ?? currentBallot.value.statusCode,
-      ),
+      statusCode: String(result.ballotStatusCode ?? existingSummary.statusCode),
     };
-
-    currentBallot.value = updatedBallot;
-
-    const ballotIndex = ballots.value.findIndex(
-      (b) => b.ballotGuid === ballotGuid,
-    );
-    if (ballotIndex !== -1) {
-      ballots.value[ballotIndex] = updatedBallot;
-    }
   }
 
   async function createVote(
@@ -210,8 +319,27 @@ export const useBallotStore = defineStore("ballot", () => {
     }
   }
 
+  async function reorderVotes(dto: ReorderVotesDto) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const result = await voteService.reorder(dto);
+      applyVoteMutationResult(dto.ballotGuid, result);
+      return result;
+    } catch (e: any) {
+      error.value = e.message || "Failed to reorder votes";
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   function setCurrentBallot(ballot: BallotDto | null) {
     currentBallot.value = ballot;
+  }
+
+  function clearCurrentBallot() {
+    currentBallot.value = null;
   }
 
   function clearError() {
@@ -253,9 +381,7 @@ export const useBallotStore = defineStore("ballot", () => {
       });
 
       connection.on("reloadPage", () => {
-        // Handle page reload command from server
         console.log("Server requested page reload for ballots");
-        // Could trigger a data reload instead of full page refresh
       });
 
       signalrInitialized.value = true;
@@ -267,14 +393,21 @@ export const useBallotStore = defineStore("ballot", () => {
   function handleBallotAdded(data: BallotUpdateEvent) {
     const exists = ballots.value.some((b) => b.ballotGuid === data.ballotGuid);
     if (!exists) {
-      // Fetch the new ballot to get full details
-      fetchBallotById(data.ballotGuid).catch(console.error);
+      fetchBallotById(data.ballotGuid, { adoptAsCurrent: false }).catch(
+        console.error,
+      );
     }
   }
 
   function handleBallotUpdated(data: BallotUpdateEvent) {
-    // Refresh the ballot data
-    fetchBallotById(data.ballotGuid).catch(console.error);
+    patchBallotSummaryByGuid(data.ballotGuid, {
+      statusCode: data.statusCode,
+      voteCount: data.voteCount,
+    });
+
+    if (currentBallot.value?.ballotGuid === data.ballotGuid) {
+      fetchBallotById(data.ballotGuid).catch(console.error);
+    }
   }
 
   function handleBallotDeleted(data: BallotUpdateEvent) {
@@ -315,7 +448,9 @@ export const useBallotStore = defineStore("ballot", () => {
     deleteBallot,
     createVote,
     deleteVote,
+    reorderVotes,
     setCurrentBallot,
+    clearCurrentBallot,
     clearError,
     initializeSignalR,
     joinElection,

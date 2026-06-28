@@ -22,6 +22,7 @@ export const usePeopleStore = defineStore("people", () => {
   const signalrInitialized = ref(false);
   const candidateCache = ref<SearchablePersonDto[]>([]);
   const isCacheInitialized = ref(false);
+  const personUpdatedListeners = new Set<(data: PersonUpdateEvent) => void>();
 
   const voters = computed(() =>
     peopleList.value.filter((p) => p.canVote === true),
@@ -270,6 +271,25 @@ export const usePeopleStore = defineStore("people", () => {
     }
   }
 
+  function onPersonUpdated(
+    listener: (data: PersonUpdateEvent) => void,
+  ): () => void {
+    personUpdatedListeners.add(listener);
+    return () => {
+      personUpdatedListeners.delete(listener);
+    };
+  }
+
+  function notifyPersonUpdatedListeners(data: PersonUpdateEvent) {
+    for (const listener of personUpdatedListeners) {
+      try {
+        listener(data);
+      } catch (e) {
+        console.error("Person updated listener failed:", e);
+      }
+    }
+  }
+
   async function handlePersonUpdated(data: PersonUpdateEvent) {
     try {
       const person = await fetchPersonById(data.personGuid);
@@ -287,6 +307,8 @@ export const usePeopleStore = defineStore("people", () => {
       }
     } catch (e) {
       console.error("Failed to handle person updated:", e);
+    } finally {
+      notifyPersonUpdatedListeners(data);
     }
   }
 
@@ -340,6 +362,7 @@ export const usePeopleStore = defineStore("people", () => {
     leaveElection,
     handlePersonAdded,
     handlePersonUpdated,
+    onPersonUpdated,
     handlePersonDeleted,
     handlePersonVoteCountUpdated,
   };

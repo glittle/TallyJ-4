@@ -116,6 +116,32 @@ public class VotesController : ControllerBase
     }
 
     /// <summary>
+    /// Reorders votes on a ballot.
+    /// </summary>
+    /// <param name="reorderDto">The ballot GUID and ordered vote row IDs.</param>
+    /// <returns>The updated ballot votes and status.</returns>
+    [HttpPut("reorderVotes")]
+    public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> ReorderVotes(ReorderVotesDto reorderDto)
+    {
+        try
+        {
+            var result = await _voteService.ReorderVotesAsync(reorderDto);
+
+            if (result == null)
+            {
+                return NotFound(ApiResponse<VoteWithBallotStatusDto>.ErrorResponse(
+                    $"Ballot with GUID '{reorderDto.BallotGuid}' not found"));
+            }
+
+            return Ok(ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<VoteWithBallotStatusDto>.ErrorResponse(ex.Message));
+        }
+    }
+
+    /// <summary>
     /// Deletes a vote by its ID.
     /// </summary>
     /// <param name="id">The ID of the vote to delete.</param>

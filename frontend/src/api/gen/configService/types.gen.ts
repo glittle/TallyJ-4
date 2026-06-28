@@ -1319,6 +1319,11 @@ export type RegistrationHistoryEntryDto = {
     performedBy?: string | null;
 };
 
+export type ReorderVotesDto = {
+    ballotGuid?: string;
+    voteRowIds?: Array<number> | null;
+};
+
 export type ReportDataResponseDto = {
     reportType?: string | null;
     data?: unknown;
@@ -1681,6 +1686,7 @@ export type VoteDto = {
     personGuid?: string | null;
     personFullName?: string | null;
     voteStatus?: VoteStatus;
+    ineligibleReasonCode?: string | null;
     personCombinedInfo?: string | null;
     onlineVoteRaw?: string | null;
 };
@@ -1706,6 +1712,7 @@ export type VoteStatus = typeof VoteStatus[keyof typeof VoteStatus];
 export type VoteWithBallotStatusDto = {
     vote?: VoteDto;
     ballotStatusCode?: BallotStatus;
+    votes?: Array<VoteDto> | null;
 };
 
 export type VoterEmailItemDto = {
@@ -4696,6 +4703,22 @@ export type PutApiVotesByIdUpdateVoteResponses = {
 };
 
 export type PutApiVotesByIdUpdateVoteResponse = PutApiVotesByIdUpdateVoteResponses[keyof PutApiVotesByIdUpdateVoteResponses];
+
+export type PutApiVotesReorderVotesData = {
+    body?: ReorderVotesDto;
+    path?: never;
+    query?: never;
+    url: '/api/Votes/reorderVotes';
+};
+
+export type PutApiVotesReorderVotesResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseVoteWithBallotStatusDto;
+};
+
+export type PutApiVotesReorderVotesResponse = PutApiVotesReorderVotesResponses[keyof PutApiVotesReorderVotesResponses];
 
 export type DeleteApiVotesByIdDeleteVoteData = {
     body?: never;

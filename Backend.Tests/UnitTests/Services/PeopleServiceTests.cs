@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.Entities;
@@ -335,6 +336,159 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.False(result.CanVote);
         Assert.False(result.CanReceiveVotes);
         Assert.Equal("X01", result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_ChangingIneligibleReasonGuid_SpoilsExistingVotes()
+    {
+        var electionGuid = Guid.NewGuid();
+        var locationGuid = Guid.NewGuid();
+        var ballotGuid = Guid.NewGuid();
+
+        Context.Elections.Add(new Election
+        {
+            RowId = 1,
+            ElectionGuid = electionGuid,
+            Name = "Test Election",
+            NumberToElect = 3,
+            ElectionType = "Loc",
+            RowVersion = new byte[8]
+        });
+        Context.Locations.Add(new Location
+        {
+            RowId = 1,
+            LocationGuid = locationGuid,
+            ElectionGuid = electionGuid,
+            Name = "Test Location"
+        });
+        Context.Ballots.Add(new Ballot
+        {
+            RowId = 1,
+            BallotGuid = ballotGuid,
+            LocationGuid = locationGuid,
+            StatusCode = BallotStatus.Ok,
+            ComputerCode = "A",
+            BallotNumAtComputer = 1,
+            RowVersion = new byte[8]
+        });
+
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "John",
+            FullName = "Smith, John",
+            FullNameFl = "John Smith",
+            CanVote = true,
+            CanReceiveVotes = true,
+            RowVersion = new byte[8]
+        };
+
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var vote = new Vote
+        {
+            BallotGuid = ballotGuid,
+            PersonGuid = person.PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Ok,
+            RowVersion = new byte[8]
+        };
+        Context.Votes.Add(vote);
+        await Context.SaveChangesAsync();
+
+        var updateDto = new UpdatePersonDto
+        {
+            IneligibleReasonGuid = IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid
+        };
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, updateDto);
+
+        Assert.NotNull(result);
+        Assert.False(result.CanReceiveVotes);
+
+        var updatedVote = await Context.Votes.SingleAsync(v => v.RowId == vote.RowId);
+        Assert.Equal(VoteStatus.Spoiled, updatedVote.VoteStatus);
+        Assert.Equal("V01", updatedVote.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_ClearingIneligibleReasonGuid_UnspoilsExistingVotes()
+    {
+        var electionGuid = Guid.NewGuid();
+        var locationGuid = Guid.NewGuid();
+        var ballotGuid = Guid.NewGuid();
+
+        Context.Elections.Add(new Election
+        {
+            RowId = 1,
+            ElectionGuid = electionGuid,
+            Name = "Test Election",
+            NumberToElect = 3,
+            ElectionType = "Loc",
+            RowVersion = new byte[8]
+        });
+        Context.Locations.Add(new Location
+        {
+            RowId = 1,
+            LocationGuid = locationGuid,
+            ElectionGuid = electionGuid,
+            Name = "Test Location"
+        });
+        Context.Ballots.Add(new Ballot
+        {
+            RowId = 1,
+            BallotGuid = ballotGuid,
+            LocationGuid = locationGuid,
+            StatusCode = BallotStatus.TooFew,
+            ComputerCode = "A",
+            BallotNumAtComputer = 1,
+            RowVersion = new byte[8]
+        });
+
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "John",
+            FullName = "Smith, John",
+            FullNameFl = "John Smith",
+            CanVote = true,
+            CanReceiveVotes = false,
+            IneligibleReasonGuid = IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid,
+            RowVersion = new byte[8]
+        };
+
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var vote = new Vote
+        {
+            BallotGuid = ballotGuid,
+            PersonGuid = person.PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Spoiled,
+            RowVersion = new byte[8]
+        };
+        Context.Votes.Add(vote);
+        await Context.SaveChangesAsync();
+
+        var updateDto = new UpdatePersonDto
+        {
+            IneligibleReasonGuid = null
+        };
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, updateDto);
+
+        Assert.NotNull(result);
+        Assert.True(result.CanReceiveVotes);
+
+        var updatedVote = await Context.Votes.SingleAsync(v => v.RowId == vote.RowId);
+        Assert.Equal(VoteStatus.Ok, updatedVote.VoteStatus);
+        Assert.Null(updatedVote.IneligibleReasonCode);
     }
 
     [Fact]

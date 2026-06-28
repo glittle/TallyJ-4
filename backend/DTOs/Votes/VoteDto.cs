@@ -40,6 +40,11 @@ public class VoteDto
     public VoteStatus VoteStatus { get; set; }
 
     /// <summary>
+    /// The <see cref="IneligibleReasonEnum"/> code (e.g., "X01") explaining why this vote is spoiled.
+    /// </summary>
+    public string? IneligibleReasonCode { get; set; }
+
+    /// <summary>
     /// Combined information about the person for display purposes.
     /// </summary>
     public string? PersonCombinedInfo { get; set; }

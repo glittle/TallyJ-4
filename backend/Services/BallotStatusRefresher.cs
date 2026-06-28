@@ -11,6 +11,44 @@ namespace Backend.Services;
 /// </summary>
 public static class BallotStatusRefresher
 {
+    /// <summary>
+    /// Re-evaluates every ballot status in an election from current votes.
+    /// </summary>
+    public static async Task RefreshForElectionAsync(
+        MainDbContext context,
+        Guid electionGuid,
+        ILogger? logger = null)
+    {
+        var election = await context.Elections
+            .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+
+        if (election?.NumberToElect is not int votesNeeded)
+        {
+            logger?.LogWarning(
+                "Unable to refresh ballot statuses for election {ElectionGuid}: NumberToElect not configured",
+                electionGuid);
+            return;
+        }
+
+        var ballots = await context.Ballots
+            .Include(b => b.Location)
+            .Include(b => b.Votes)
+                .ThenInclude(v => v.Person)
+            .Where(b => b.Location.ElectionGuid == electionGuid)
+            .ToListAsync();
+
+        var isSingleName = election.ElectionType == "Oth";
+        var analyzer = new BallotAnalyzer(votesNeeded, isSingleName);
+
+        foreach (var ballot in ballots)
+        {
+            var voteInfos = ballot.Votes.Select(CreateBallotVoteInfo).ToList();
+            analyzer.DetermineStatusFromVotes(ballot.StatusCode, voteInfos, out var newStatus, out _);
+            ballot.StatusCode = newStatus;
+            ballot.DateUpdated = DateTimeOffset.UtcNow;
+        }
+    }
+
     public static async Task RefreshAsync(
         MainDbContext context,
         Ballot ballot,

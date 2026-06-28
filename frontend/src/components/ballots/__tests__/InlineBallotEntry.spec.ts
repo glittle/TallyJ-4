@@ -2,47 +2,42 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { nextTick } from "vue";
 import InlineBallotEntry from "../InlineBallotEntry.vue";
-import VoteEntryRow from "../VoteEntryRow.vue";
 import type { BallotDto } from "@/types/Ballot";
 import type { VoteDto } from "@/types/Vote";
 import type { SearchablePersonDto } from "@/types/Person";
-import {
-  ElButton,
-  ElSkeleton,
-  ElAlert,
-  ElAutocomplete,
-  ElIcon,
-  ElInput,
-} from "element-plus";
+import { ElAlert, ElButton, ElIcon, ElInput } from "element-plus";
 import { useNotifications } from "@/composables/useNotifications";
 
-const mockT = (key: string, values?: any) => {
+const mockT = (key: string, values?: Record<string, string | number>) => {
   const translations: Record<string, string> = {
-    "ballots.position": "Position",
-    "ballots.candidate": "Candidate",
-    "ballots.duplicateWarning": "Duplicate: This person is already selected",
-    "ballots.clearAll": "Clear All",
-    "ballots.saveBallot": "Save Ballot",
-    "ballots.votesEntered": "{count} of {max} votes entered",
-    "ballots.cacheLoading": "Loading candidates...",
     "ballots.cacheLoadError": "Failed to load candidates",
     "ballots.searchPlaceholder": "Search",
+    "ballots.searchHelp": "Use arrow keys",
+    "ballots.searchPerson": "Add a name",
+    "ballots.namesOnBallot": "Names on the ballot",
+    "ballots.ballotNum": "{code}",
+    "ballots.noMatchesFound": "No matches found",
     "ballots.ballotFull": "Ballot is full",
+    "ballots.keyboardTellerRequired":
+      "Select the teller at keyboard before adding votes",
+    "ballots.dragToReorder": "Drag votes to change their order",
     "ballots.markNeedsReview": "Mark as Needs Review",
     "ballots.clearNeedsReview": "Clear Needs Review",
     "ballots.needsReviewUpdated": "Needs Review status updated",
     "ballots.needsReviewError": "Failed to update Needs Review status",
-    "common.clear": "Clear",
+    "ballots.duplicateWarning": "Duplicate warning",
+    "ballots.ineligible": "Ineligible",
+    "common.delete": "Delete",
+    "eligibility.X01": "Deceased",
+    "eligibility.V04": "Rights removed (cannot be voted for)",
   };
 
   let result = translations[key] || key;
-
   if (values) {
-    Object.keys(values).forEach((k) => {
-      result = result.replace(`{${k}}`, String(values[k]));
+    Object.entries(values).forEach(([name, value]) => {
+      result = result.replace(`{${name}}`, String(value));
     });
   }
-
   return result;
 };
 
@@ -64,7 +59,6 @@ vi.mock("@/composables/useNotifications", () => ({
 
 const mockPeopleStore = {
   candidateCache: [] as SearchablePersonDto[],
-  isCacheInitialized: false,
   initializeCandidateCache: vi.fn(),
 };
 
@@ -87,39 +81,42 @@ vi.mock("@/utils/activeTellerStorage", () => ({
   }),
 }));
 
-vi.mock("@/composables/usePersonSearch", () => ({
-  usePersonSearch: (searchQuery: any, candidates: any) => {
-    return {
-      searchResults: {
-        get value() {
-          const query = searchQuery.value?.toLowerCase() || "";
-          if (!query) {
-            return [];
-          }
-
-          return candidates.value.filter((c: SearchablePersonDto) =>
-            c.fullName.toLowerCase().includes(query),
-          );
-        },
-      },
-    };
-  },
-}));
+vi.mock("@/composables/usePersonSearch", async () => {
+  const { computed } = await import("vue");
+  return {
+    usePersonSearch: (
+      searchQuery: { value: string },
+      candidates: { value: SearchablePersonDto[] },
+    ) => ({
+      searchResults: computed(() => {
+        const query = searchQuery.value?.toLowerCase() || "";
+        if (!query) {
+          return [];
+        }
+        return candidates.value.filter((candidate) =>
+          candidate.fullName.toLowerCase().includes(query),
+        );
+      }),
+    }),
+  };
+});
 
 function createMockPerson(
   firstName: string,
   lastName: string,
-  personGuid: string = `guid-${firstName}-${lastName}`,
+  options: Partial<SearchablePersonDto> = {},
 ): SearchablePersonDto {
   const fullName = `${firstName} ${lastName}`;
   return {
-    personGuid,
+    personGuid: `guid-${firstName}-${lastName}`,
     firstName,
     lastName,
     fullName,
     _searchText: fullName.toLowerCase(),
     _soundexCodes: [],
     voteCount: 0,
+    canReceiveVotes: true,
+    ...options,
   };
 }
 
@@ -137,48 +134,12 @@ function createMockBallot(votes: VoteDto[] = []): BallotDto {
   };
 }
 
-const VoteEntryRowStub = {
-  name: "VoteEntryRow",
-  template: '<div class="vote-entry-row-stub"></div>',
-  props: [
-    "positionOnBallot",
-    "modelValue",
-    "candidates",
-    "duplicatePersonGuids",
-  ],
-  emits: ["vote-selected", "vote-cleared", "update:modelValue"],
-  methods: {
-    focusInput() {},
-  },
-};
-
-const defaultMountOptions = {
+const mountOptions = {
   global: {
     components: {
-      VoteEntryRow,
       ElButton,
-      ElSkeleton,
       ElAlert,
-      ElAutocomplete,
-      ElIcon,
-    },
-    mocks: {
-      $t: mockT,
-    },
-    stubs: {
-      VoteEntryRow: VoteEntryRowStub,
-    },
-  },
-};
-
-const unstubMountOptions = {
-  global: {
-    components: {
-      VoteEntryRow,
-      ElButton,
-      ElSkeleton,
-      ElAlert,
-      ElAutocomplete,
+      ElInput,
       ElIcon,
     },
     mocks: {
@@ -192,639 +153,294 @@ describe("InlineBallotEntry", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-
     mockCandidates = [
       createMockPerson("John", "Doe"),
       createMockPerson("Jane", "Smith"),
-      createMockPerson("Bob", "Johnson"),
-      createMockPerson("Alice", "Williams"),
-      createMockPerson("Charlie", "Brown"),
+      createMockPerson("Bob", "Johnson", {
+        canReceiveVotes: false,
+        ineligibleReasonCode: "X01",
+      }),
     ];
-
     mockPeopleStore.candidateCache = mockCandidates;
-    mockPeopleStore.isCacheInitialized = true;
     mockPeopleStore.initializeCandidateCache.mockResolvedValue(undefined);
   });
 
-  describe("initialization", () => {
-    it("should initialize candidate cache on mount", async () => {
-      const ballot = createMockBallot();
-
-      mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
-
-      await flushPromises();
-
-      expect(mockPeopleStore.initializeCandidateCache).toHaveBeenCalledWith(
-        "election-123",
-      );
+  it("initializes candidate cache on mount", async () => {
+    mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
     });
 
-    it("should show loading skeleton during cache initialization", async () => {
-      const ballot = createMockBallot();
-
-      let resolveInit: () => void;
-      const initPromise = new Promise<void>((resolve) => {
-        resolveInit = resolve;
-      });
-
-      mockPeopleStore.initializeCandidateCache.mockReturnValue(initPromise);
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
-
-      await nextTick();
-
-      expect(wrapper.find(".inline-ballot-entry__loading").exists()).toBe(true);
-      expect(wrapper.findComponent(ElSkeleton).exists()).toBe(true);
-
-      resolveInit!();
-      await flushPromises();
-    });
-
-    it("should hide loading skeleton after cache loads", async () => {
-      const ballot = createMockBallot();
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
-
-      await flushPromises();
-
-      expect(wrapper.find(".inline-ballot-entry__loading").exists()).toBe(
-        false,
-      );
-      expect(wrapper.find(".inline-ballot-entry__content").exists()).toBe(true);
-    });
-
-    it("should show error message if cache initialization fails", async () => {
-      const ballot = createMockBallot();
-
-      mockPeopleStore.initializeCandidateCache.mockRejectedValue(
-        new Error("Network error"),
-      );
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
-
-      await flushPromises();
-
-      expect(wrapper.find(".inline-ballot-entry__error").exists()).toBe(true);
-      expect(wrapper.findComponent(ElAlert).exists()).toBe(true);
-      const { showErrorMessage } = useNotifications();
-      expect(showErrorMessage).toHaveBeenCalled();
-    });
+    await flushPromises();
+    expect(mockPeopleStore.initializeCandidateCache).toHaveBeenCalledWith(
+      "election-123",
+    );
   });
 
-  describe("rendering", () => {
-    it("should render correct number of vote rows based on requiredVotes", async () => {
-      const ballot = createMockBallot();
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
-
-      await flushPromises();
-
-      const rows = wrapper.findAllComponents({ name: "VoteEntryRow" });
-      expect(rows.length).toBe(9);
-    });
-
-    it("should display vote status correctly", async () => {
-      const votes: VoteDto[] = [
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
-          statusCode: "Ok",
-        },
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 2,
-          personGuid: mockCandidates[1].personGuid,
-          personFullName: mockCandidates[1].fullName,
-          statusCode: "Ok",
-        },
-      ];
-      const ballot = createMockBallot(votes);
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
-
-      await flushPromises();
-
-      const statusText = wrapper.find(".inline-ballot-entry__status-text");
-      expect(statusText.text()).toContain("2");
-      expect(statusText.text()).toContain("9");
-    });
-
-    it("should show Clear All button", async () => {
-      const ballot = createMockBallot();
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
-
-      await flushPromises();
-
-      const clearButton = wrapper.find("button");
-      expect(clearButton.text()).toContain("Clear All");
-    });
-  });
-
-  describe("vote management", () => {
-    it("should emit vote-added when a vote is selected", async () => {
-      const ballot = createMockBallot();
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...unstubMountOptions,
-      });
-
-      await flushPromises();
-
-      const voteRow = wrapper.findComponent(VoteEntryRow);
-      const vote: VoteDto = {
+  it("renders vote rows for required votes and existing votes", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 1,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
         personGuid: mockCandidates[0].personGuid,
         personFullName: mockCandidates[0].fullName,
-        statusCode: "Ok",
-      };
+        statusCode: "ok",
+      },
+    ];
 
-      await voteRow.vm.$emit("vote-selected", vote);
-      await nextTick();
-
-      expect(wrapper.emitted("vote-added")).toBeTruthy();
-      const emittedEvents = wrapper.emitted("vote-added") as any[];
-      expect(emittedEvents[0][0]).toMatchObject(vote);
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(votes),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
     });
 
-    it("should emit vote-removed when a vote is cleared", async () => {
-      const ballot = createMockBallot();
+    await flushPromises();
+    expect(wrapper.findAll(".vote-row").length).toBe(9);
+    expect(wrapper.text()).toContain("John Doe");
+  });
 
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...unstubMountOptions,
-      });
-
-      await flushPromises();
-
-      const voteRow = wrapper.findComponent(VoteEntryRow);
-      await voteRow.vm.$emit("vote-cleared", 1);
-      await nextTick();
-
-      expect(wrapper.emitted("vote-removed")).toBeTruthy();
-      const emittedEvents = wrapper.emitted("vote-removed") as any[];
-      expect(emittedEvents[0][0]).toBe(1);
+  it("emits vote-added when a person is selected from search", async () => {
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
     });
 
-    it("should show duplicate warning when same person is selected twice", async () => {
-      const ballot = createMockBallot();
+    await flushPromises();
+    await wrapper.find(".search-input input").setValue("John");
+    await nextTick();
+    await wrapper.find(".search-result-item").trigger("click");
+    await nextTick();
 
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...unstubMountOptions,
-      });
+    expect(wrapper.emitted("vote-added")).toBeTruthy();
+    const emitted = wrapper.emitted("vote-added") as VoteDto[][];
+    expect(emitted[0][0].personFullName).toBe("John Doe");
+    expect(emitted[0][0].positionOnBallot).toBe(1);
+  });
 
-      await flushPromises();
+  it("blocks vote additions when teller at keyboard is not set", async () => {
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+        hasKeyboardTeller: false,
+      },
+      ...mountOptions,
+    });
 
-      const voteRows = wrapper.findAllComponents(VoteEntryRow);
+    await flushPromises();
+    expect(wrapper.find(".keyboard-teller-alert").exists()).toBe(true);
+    expect(
+      wrapper.find(".search-input input").attributes("disabled"),
+    ).toBeDefined();
+    expect(wrapper.findAll(".search-result-item").length).toBe(0);
+    expect(wrapper.emitted("vote-added")).toBeFalsy();
+  });
 
-      const vote1: VoteDto = {
+  it("shows spoiled vote icon and eligibility label under the name", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 2,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        personGuid: mockCandidates[2].personGuid,
+        personFullName: mockCandidates[2].fullName,
+        statusCode: "Spoiled",
+        ineligibleReasonCode: "X01",
+      },
+    ];
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(votes),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+    expect(wrapper.find(".spoiled-indicator").exists()).toBe(true);
+    expect(wrapper.find(".vote-ineligible-reason").text()).toBe("Deceased");
+  });
+
+  it("adds ineligible search results as spoiled votes", async () => {
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+    await wrapper.find(".search-input input").setValue("Bob");
+    await nextTick();
+    await wrapper.find(".search-result-item").trigger("click");
+    await nextTick();
+
+    const emitted = wrapper.emitted("vote-added") as VoteDto[][];
+    expect(emitted[0][0].statusCode).toBe("Spoiled");
+    expect(emitted[0][0].ineligibleReasonCode).toBe("X01");
+    expect(emitted[0][0].personFullName).toBe("Bob Johnson");
+  });
+
+  it("emits vote-removed when delete is clicked", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 3,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
         personGuid: mockCandidates[0].personGuid,
         personFullName: mockCandidates[0].fullName,
-        statusCode: "Ok",
-      };
+        statusCode: "ok",
+      },
+    ];
 
-      const vote2: VoteDto = {
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(votes),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+    await wrapper.find(".vote-actions .el-button").trigger("click");
+    expect(wrapper.emitted("vote-removed")).toEqual([[1]]);
+    expect(wrapper.text()).not.toContain(mockCandidates[0].fullName);
+  });
+
+  it("rebuilds vote rows when the ballot prop updates after a delete", async () => {
+    const initialVotes: VoteDto[] = [
+      {
+        rowId: 1,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        personGuid: mockCandidates[0].personGuid,
+        personFullName: mockCandidates[0].fullName,
+        statusCode: "ok",
+      },
+      {
+        rowId: 2,
         ballotGuid: "ballot-123",
         positionOnBallot: 2,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
-        statusCode: "Ok",
-      };
+        personGuid: mockCandidates[1].personGuid,
+        personFullName: mockCandidates[1].fullName,
+        statusCode: "ok",
+      },
+    ];
 
-      await voteRows[0].vm.$emit("vote-selected", vote1);
-      await nextTick();
-
-      await voteRows[1].vm.$emit("vote-selected", vote2);
-      await nextTick();
-
-      const { showWarningMessage } = useNotifications();
-      expect(showWarningMessage).toHaveBeenCalled();
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(initialVotes),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
     });
+
+    await flushPromises();
+    expect(wrapper.text()).toContain(mockCandidates[1].fullName);
+
+    await wrapper.setProps({
+      ballot: createMockBallot([initialVotes[0]]),
+    });
+    await nextTick();
+
+    expect(wrapper.text()).toContain(mockCandidates[0].fullName);
+    expect(wrapper.text()).not.toContain(mockCandidates[1].fullName);
   });
 
-  describe("Clear All functionality", () => {
-    it("should clear all votes when Clear All is clicked", async () => {
-      const votes: VoteDto[] = [
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
-          statusCode: "Ok",
-        },
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 2,
-          personGuid: mockCandidates[1].personGuid,
-          personFullName: mockCandidates[1].fullName,
-          statusCode: "Ok",
-        },
-      ];
-      const ballot = createMockBallot(votes);
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
-
-      await flushPromises();
-
-      const clearButton = wrapper.findComponent(ElButton);
-      await clearButton.trigger("click");
-      await nextTick();
-
-      expect(wrapper.emitted("vote-removed")).toBeTruthy();
-      const emittedEvents = wrapper.emitted("vote-removed") as any[];
-      expect(emittedEvents.length).toBe(2);
-      expect(emittedEvents[0][0]).toBe(1);
-      expect(emittedEvents[1][0]).toBe(2);
+  it("shows drag handle after an optimistic vote is saved on the ballot prop", async () => {
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
     });
 
-    it("should disable Clear All button when no votes are entered", async () => {
-      const ballot = createMockBallot();
+    await flushPromises();
+    await wrapper.find(".search-input input").setValue("John");
+    await nextTick();
+    await wrapper.find(".search-result-item").trigger("click");
+    await nextTick();
 
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
+    expect(wrapper.find(".drag-handle").exists()).toBe(false);
 
-      await flushPromises();
+    const optimisticVote: VoteDto = {
+      rowId: 42,
+      ballotGuid: "ballot-123",
+      positionOnBallot: 1,
+      personGuid: mockCandidates[0].personGuid,
+      personFullName: mockCandidates[0].fullName,
+      statusCode: "ok",
+    };
 
-      const clearButton = wrapper.findComponent(ElButton);
-      expect(clearButton.attributes("disabled")).toBeDefined();
+    await wrapper.setProps({
+      ballot: createMockBallot([optimisticVote]),
     });
+    await nextTick();
 
-    it("should enable Clear All button when votes are entered", async () => {
-      const votes: VoteDto[] = [
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
-          statusCode: "Ok",
-        },
-      ];
-      const ballot = createMockBallot(votes);
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
-
-      await flushPromises();
-
-      const clearButton = wrapper.findComponent(ElButton);
-      expect(clearButton.attributes("disabled")).toBeUndefined();
-    });
+    expect(wrapper.find(".drag-handle").exists()).toBe(true);
+    expect(wrapper.find(".vote-row").classes()).toContain("is-draggable");
   });
 
-  describe("status indicator", () => {
-    it("should update status when votes change", async () => {
-      const ballot = createMockBallot();
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...unstubMountOptions,
-      });
-
-      await flushPromises();
-
-      let statusText = wrapper.find(".inline-ballot-entry__status-text");
-      expect(statusText.text()).toContain("0");
-
-      const voteRow = wrapper.findComponent(VoteEntryRow);
-      const vote: VoteDto = {
+  it("emits votes-reordered when a persisted vote is dropped on another vote", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 10,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
         personGuid: mockCandidates[0].personGuid,
         personFullName: mockCandidates[0].fullName,
-        statusCode: "Ok",
-      };
-
-      await voteRow.vm.$emit("vote-selected", vote);
-      await nextTick();
-
-      statusText = wrapper.find(".inline-ballot-entry__status-text");
-      expect(statusText.text()).toContain("1");
-    });
-
-    it("should correctly count only votes with personGuid", async () => {
-      const votes: VoteDto[] = [
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
-          statusCode: "Ok",
-        },
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 2,
-          statusCode: "Ok",
-        },
-      ];
-      const ballot = createMockBallot(votes);
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...defaultMountOptions,
-      });
-
-      await flushPromises();
-
-      const statusText = wrapper.find(".inline-ballot-entry__status-text");
-      expect(statusText.text()).toContain("1");
-    });
-  });
-
-  describe("duplicate detection", () => {
-    it("should detect duplicates across multiple votes", async () => {
-      const votes: VoteDto[] = [
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
-          statusCode: "Ok",
-        },
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 3,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
-          statusCode: "Ok",
-        },
-      ];
-      const ballot = createMockBallot(votes);
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...unstubMountOptions,
-      });
-
-      await flushPromises();
-
-      const voteRows = wrapper.findAllComponents(VoteEntryRow);
-      expect(voteRows[0].props("duplicatePersonGuids")).toContain(
-        mockCandidates[0].personGuid,
-      );
-      expect(voteRows[2].props("duplicatePersonGuids")).toContain(
-        mockCandidates[0].personGuid,
-      );
-    });
-
-    it("should not mark non-duplicate votes as duplicates", async () => {
-      const votes: VoteDto[] = [
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 1,
-          personGuid: mockCandidates[0].personGuid,
-          personFullName: mockCandidates[0].fullName,
-          statusCode: "Ok",
-        },
-        {
-          ballotGuid: "ballot-123",
-          positionOnBallot: 2,
-          personGuid: mockCandidates[1].personGuid,
-          personFullName: mockCandidates[1].fullName,
-          statusCode: "Ok",
-        },
-      ];
-      const ballot = createMockBallot(votes);
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...unstubMountOptions,
-      });
-
-      await flushPromises();
-
-      const voteRows = wrapper.findAllComponents(VoteEntryRow);
-      expect(voteRows[0].props("duplicatePersonGuids")).toEqual([]);
-      expect(voteRows[1].props("duplicatePersonGuids")).toEqual([]);
-    });
-
-    it("allows adding a vote beyond requiredVotes without blocking as full", async () => {
-      const { showWarningMessage } = useNotifications();
-      const votes: VoteDto[] = Array.from({ length: 9 }, (_, index) => ({
-        rowId: index + 1,
-        ballotGuid: "ballot-123",
-        positionOnBallot: index + 1,
-        personGuid: `guid-${index}`,
-        personFullName: `Person ${index + 1}`,
-        statusCode: "Ok",
-      }));
-      const ballot = createMockBallot(votes);
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        global: {
-          components: {
-            ElButton,
-            ElSkeleton,
-            ElAlert,
-            ElInput,
-            ElIcon,
-          },
-          mocks: {
-            $t: mockT,
-          },
-        },
-      });
-
-      await flushPromises();
-
-      expect(wrapper.findAll(".vote-row").length).toBe(9);
-
-      const searchInput = wrapper.find(".search-input input");
-      await searchInput.setValue("John");
-      await nextTick();
-
-      await wrapper.find(".search-result-item").trigger("click");
-      await nextTick();
-
-      expect(wrapper.emitted("vote-added")).toBeTruthy();
-      const emitted = wrapper.emitted("vote-added") as VoteDto[][];
-      expect(emitted[0][0].positionOnBallot).toBe(10);
-      expect(wrapper.findAll(".vote-row").length).toBe(10);
-      expect(showWarningMessage).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("needs review toggle", () => {
-    const reviewMountOptions = {
-      global: {
-        components: {
-          ElButton,
-          ElSkeleton,
-          ElAlert,
-          ElInput,
-          ElIcon,
-        },
-        mocks: {
-          $t: mockT,
-        },
+        statusCode: "ok",
       },
-    };
+      {
+        rowId: 11,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 2,
+        personGuid: mockCandidates[1].personGuid,
+        personFullName: mockCandidates[1].fullName,
+        statusCode: "ok",
+      },
+    ];
 
-    it("marks a ballot as Needs Review", async () => {
-      mockUpdateBallot.mockResolvedValue({
-        ...createMockBallot(),
-        statusCode: "Review",
-      });
-
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot: createMockBallot(),
-          requiredVotes: 9,
-        },
-        ...reviewMountOptions,
-      });
-
-      await flushPromises();
-      await wrapper.get(".needs-review-toggle .el-button").trigger("click");
-      await flushPromises();
-
-      expect(mockUpdateBallot).toHaveBeenCalledWith("ballot-123", {
-        teller1: "Alice",
-        teller2: "Bob",
-        statusCode: "Review",
-      });
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(votes),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
     });
 
-    it("clears Needs Review by recalculating status", async () => {
-      mockUpdateBallot.mockResolvedValue({
-        ...createMockBallot(),
-        statusCode: "Empty",
-      });
+    await flushPromises();
 
-      const ballot = createMockBallot();
-      ballot.statusCode = "Review";
+    const rows = wrapper.findAll(".vote-row");
+    await rows[1].trigger("dragstart");
+    await rows[0].trigger("dragover");
+    await rows[0].trigger("drop");
 
-      const wrapper = mount(InlineBallotEntry, {
-        props: {
-          electionGuid: "election-123",
-          ballot,
-          requiredVotes: 9,
-        },
-        ...reviewMountOptions,
-      });
-
-      await flushPromises();
-      expect(wrapper.get(".needs-review-toggle .el-button").text()).toContain(
-        "Clear Needs Review",
-      );
-
-      await wrapper.get(".needs-review-toggle .el-button").trigger("click");
-      await flushPromises();
-
-      expect(mockUpdateBallot).toHaveBeenCalledWith("ballot-123", {
-        teller1: "Alice",
-        teller2: "Bob",
-        statusCode: "Review",
-        clearNeedsReview: true,
-      });
-    });
+    expect(wrapper.emitted("votes-reordered")).toEqual([[[11, 10]]]);
   });
 });

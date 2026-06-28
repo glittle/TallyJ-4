@@ -5,6 +5,7 @@ type ApiVoteDto = VoteDto & { voteStatus?: string };
 export type ApiVoteLike = {
   statusCode?: string;
   voteStatus?: string;
+  ineligibleReasonCode?: string;
 };
 
 /** Canonical UI vote status for a valid vote. */
@@ -27,7 +28,21 @@ export function isVoteSpoiled(statusCode?: string): boolean {
 }
 
 export function isVoteDtoSpoiled(vote: ApiVoteLike): boolean {
-  return resolveVoteStatus(vote) !== "ok";
+  if (vote.ineligibleReasonCode) {
+    return true;
+  }
+
+  const status = resolveVoteStatus(vote);
+  if (status === "ok") {
+    return false;
+  }
+
+  const normalized = status.toLowerCase();
+  if (normalized === "spoiled" || normalized === "changed") {
+    return true;
+  }
+
+  return status !== "ok";
 }
 
 export function normalizeVoteDto(vote: ApiVoteDto): VoteDto {

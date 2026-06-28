@@ -7,11 +7,9 @@ import type { BallotDto } from "@/types/Ballot";
 import type { SearchablePersonDto } from "@/types/Person";
 import type { VoteDto } from "@/types/Vote";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
-import {
-  isVoteDtoSpoiled,
-  resolveVoteStatus,
-} from "@/utils/voteDtoNormalization";
-import { Delete, WarningFilled } from "@element-plus/icons-vue";
+import { isVoteDtoSpoiled } from "@/utils/voteDtoNormalization";
+import { getVoteSpoiledLabel } from "@/utils/voteSpoiledLabel";
+import { Delete, Rank, WarningFilled } from "@element-plus/icons-vue";
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -24,11 +22,14 @@ const props = defineProps<{
   requiredVotes: number;
   /** Increment to discard optimistic rows after a failed save. */
   resyncKey?: number;
+  /** True when the teller at keyboard is selected. */
+  hasKeyboardTeller?: boolean;
 }>();
 
 const emit = defineEmits<{
   "vote-added": [vote: VoteDto];
   "vote-removed": [positionOnBallot: number];
+  "votes-reordered": [voteRowIds: number[]];
   "ballot-saved": [];
 }>();
 
@@ -47,6 +48,11 @@ const searchInputRef = ref();
 const selectedSearchIndex = ref(0);
 const searchResultsListRef = ref<HTMLElement | null>(null);
 const reviewToggleLoading = ref(false);
+const dragSourceIndex = ref<number | null>(null);
+const dragOverIndex = ref<number | null>(null);
+const reorderingVotes = ref(false);
+
+const canAddVotes = computed(() => props.hasKeyboardTeller !== false);
 
 const isNeedsReview = computed(() => props.ballot.statusCode === "Review");
 
@@ -63,9 +69,16 @@ function buildVoteMap(includeOptimistic: boolean): Map<number, VoteDto> {
 
   if (includeOptimistic) {
     for (const localVote of votes.value) {
-      if (localVote?.rowId === 0) {
-        merged.set(localVote.positionOnBallot, localVote);
+      if (!localVote || localVote.rowId !== 0) {
+        continue;
       }
+
+      const persistedVote = merged.get(localVote.positionOnBallot);
+      if (persistedVote && persistedVote.rowId > 0) {
+        continue;
+      }
+
+      merged.set(localVote.positionOnBallot, localVote);
     }
   }
 
@@ -94,7 +107,7 @@ function rebuildVoteSlots(includeOptimistic = true) {
 }
 
 watch(
-  () => props.ballot.votes,
+  () => props.ballot,
   () => rebuildVoteSlots(true),
   { immediate: true, deep: true },
 );
@@ -138,7 +151,35 @@ function findNextEmptyPosition(): number {
   return -1;
 }
 
+function getFilledVotes(): VoteDto[] {
+  return votes.value.filter((vote): vote is VoteDto => vote !== null);
+}
+
+function getPersistedVoteRowIds(voteList: VoteDto[]): number[] {
+  return voteList.map((vote) => vote.rowId).filter((rowId) => rowId > 0);
+}
+
+function isPersistedVote(vote: VoteDto | null | undefined): vote is VoteDto {
+  return !!vote && vote.rowId > 0;
+}
+
+function canDropOnIndex(targetIndex: number): boolean {
+  if (dragSourceIndex.value === null || dragSourceIndex.value === targetIndex) {
+    return false;
+  }
+
+  return (
+    isPersistedVote(votes.value[dragSourceIndex.value]) &&
+    isPersistedVote(votes.value[targetIndex])
+  );
+}
+
 async function handlePersonSelected(person: SearchablePersonDto) {
+  if (!canAddVotes.value) {
+    showWarningMessage(t("ballots.keyboardTellerRequired"));
+    return;
+  }
+
   const emptyPos = findNextEmptyPosition();
   if (emptyPos === -1) {
     if (votes.value.length >= MAX_BALLOT_SLOTS) {
@@ -148,7 +189,6 @@ async function handlePersonSelected(person: SearchablePersonDto) {
   }
 
   const isSpoiled = person.canReceiveVotes === false;
-  const statusCode = isSpoiled ? person.ineligibleReasonCode || "X01" : "ok";
 
   const vote: VoteDto = {
     rowId: 0,
@@ -156,7 +196,10 @@ async function handlePersonSelected(person: SearchablePersonDto) {
     positionOnBallot: emptyPos,
     personGuid: person.personGuid,
     personFullName: person.fullName,
-    statusCode,
+    statusCode: isSpoiled ? "Spoiled" : "ok",
+    ineligibleReasonCode: isSpoiled
+      ? person.ineligibleReasonCode || "X01"
+      : undefined,
   };
 
   const merged = buildVoteMap(true);
@@ -223,8 +266,86 @@ watch(searchResults, () => {
 });
 
 function handleVoteRemoved(positionOnBallot: number) {
+  const merged = buildVoteMap(true);
+  merged.delete(positionOnBallot);
+  const slots = computeSlotCount(merged);
+  const voteArray: (VoteDto | null)[] = [];
+  for (let i = 1; i <= slots; i++) {
+    voteArray.push(merged.get(i) ?? null);
+  }
+  votes.value = voteArray;
+
   emit("vote-removed", positionOnBallot);
   searchInputRef.value?.focus();
+}
+
+function handleDragStart(index: number) {
+  const vote = votes.value[index];
+  if (!isPersistedVote(vote) || reorderingVotes.value) {
+    return;
+  }
+  dragSourceIndex.value = index;
+  dragOverIndex.value = null;
+}
+
+function handleDragOver(event: DragEvent, index: number) {
+  if (!canDropOnIndex(index)) {
+    if (dragOverIndex.value === index) {
+      dragOverIndex.value = null;
+    }
+    return;
+  }
+
+  event.preventDefault();
+  dragOverIndex.value = index;
+}
+
+function handleDrop(targetIndex: number) {
+  if (dragSourceIndex.value === null || dragSourceIndex.value === targetIndex) {
+    dragSourceIndex.value = null;
+    return;
+  }
+
+  const sourceVote = votes.value[dragSourceIndex.value];
+  const targetVote = votes.value[targetIndex];
+  if (!isPersistedVote(sourceVote) || !isPersistedVote(targetVote)) {
+    dragSourceIndex.value = null;
+    return;
+  }
+
+  const filledVotes = getFilledVotes();
+  const sourceFilledIndex = filledVotes.findIndex(
+    (vote) => vote.rowId === sourceVote.rowId,
+  );
+  const targetFilledIndex = filledVotes.findIndex(
+    (vote) => vote.rowId === targetVote.rowId,
+  );
+
+  if (sourceFilledIndex === -1 || targetFilledIndex === -1) {
+    dragSourceIndex.value = null;
+    return;
+  }
+
+  const reordered = [...filledVotes];
+  const [movedVote] = reordered.splice(sourceFilledIndex, 1);
+  reordered.splice(targetFilledIndex, 0, movedVote);
+
+  const voteRowIds = getPersistedVoteRowIds(reordered);
+  if (voteRowIds.length !== reordered.length) {
+    dragSourceIndex.value = null;
+    return;
+  }
+
+  reorderingVotes.value = true;
+  emit("votes-reordered", voteRowIds);
+  dragSourceIndex.value = null;
+  dragOverIndex.value = null;
+}
+
+function handleDragEnd() {
+  dragSourceIndex.value = null;
+  dragOverIndex.value = null;
+  reorderingVotes.value = false;
 }
 
 async function toggleNeedsReview() {
@@ -273,6 +394,14 @@ onMounted(async () => {
 
 <template>
   <div class="inline-ballot-entry">
+    <el-alert
+      v-if="!canAddVotes"
+      type="warning"
+      :title="$t('ballots.keyboardTellerRequired')"
+      :closable="false"
+      class="keyboard-teller-alert"
+    />
+
     <div v-if="cacheError" class="inline-ballot-entry__error">
       <el-alert
         type="danger"
@@ -281,7 +410,7 @@ onMounted(async () => {
       />
     </div>
 
-    <div v-else class="ballot-entry-layout">
+    <div v-else class="inline-ballot-entry__content ballot-entry-layout">
       <!-- Left Panel: Search -->
       <div>
         <div class="search-panel">
@@ -293,6 +422,7 @@ onMounted(async () => {
               ref="searchInputRef"
               v-model="searchQuery"
               :placeholder="$t('ballots.searchPlaceholder')"
+              :disabled="!canAddVotes"
               clearable
               class="search-input"
               @keydown="handleKeyDown"
@@ -362,35 +492,68 @@ onMounted(async () => {
           }}</span>
         </div>
 
+        <p class="votes-drag-hint">{{ $t("ballots.dragToReorder") }}</p>
+
         <div class="votes-list">
           <div
             v-for="(vote, index) in votes"
-            :key="index"
+            :key="vote?.rowId ? `vote-${vote.rowId}` : `slot-${index}`"
             class="vote-row"
             :class="{
               'has-vote': !!vote,
               'is-duplicate':
                 vote && duplicatePersonGuids.includes(vote.personGuid!),
+              'is-dragging': dragSourceIndex === index,
+              'is-drop-target-top':
+                dragOverIndex === index &&
+                dragSourceIndex !== null &&
+                index < dragSourceIndex,
+              'is-drop-target-bottom':
+                dragOverIndex === index &&
+                dragSourceIndex !== null &&
+                index > dragSourceIndex,
+              'is-draggable': isPersistedVote(vote),
             }"
+            :draggable="isPersistedVote(vote) && !reorderingVotes"
+            @dragstart="handleDragStart(index)"
+            @dragover="handleDragOver($event, index)"
+            @drop="handleDrop(index)"
+            @dragend="handleDragEnd"
           >
             <div class="vote-position">{{ index + 1 }}</div>
             <div class="vote-content">
               <template v-if="vote">
                 <span
-                  class="vote-name"
-                  :class="{
-                    'is-spoiled': isVoteDtoSpoiled(vote),
-                  }"
+                  v-if="isPersistedVote(vote)"
+                  class="drag-handle"
+                  :title="$t('ballots.dragToReorder')"
                 >
-                  {{ vote.personFullName }}
+                  <el-icon><Rank /></el-icon>
                 </span>
+                <div class="vote-name-block">
+                  <span
+                    class="vote-name"
+                    :class="{
+                      'is-spoiled': isVoteDtoSpoiled(vote),
+                    }"
+                  >
+                    {{ vote.personFullName }}
+                  </span>
+                  <span
+                    v-if="isVoteDtoSpoiled(vote)"
+                    class="vote-ineligible-reason"
+                  >
+                    {{ getVoteSpoiledLabel($t, vote) }}
+                  </span>
+                </div>
 
                 <div class="vote-actions">
                   <span
                     v-if="isVoteDtoSpoiled(vote)"
-                    class="status-badge error"
+                    class="status-badge error spoiled-indicator"
+                    :title="getVoteSpoiledLabel($t, vote)"
                   >
-                    {{ resolveVoteStatus(vote) }}
+                    <el-icon><WarningFilled /></el-icon>
                   </span>
                   <span
                     v-if="duplicatePersonGuids.includes(vote.personGuid!)"
@@ -424,6 +587,10 @@ onMounted(async () => {
 <style lang="less">
 .inline-ballot-entry {
   width: 100%;
+
+  .keyboard-teller-alert {
+    margin-bottom: var(--spacing-3, 12px);
+  }
 
   .ballot-entry-layout {
     display: flex;
@@ -572,6 +739,13 @@ onMounted(async () => {
       }
     }
 
+    .votes-drag-hint {
+      margin: 0;
+      padding: var(--spacing-2, 8px) var(--spacing-4, 16px);
+      color: var(--el-text-color-secondary);
+      font-size: var(--el-font-size-small);
+    }
+
     .votes-list {
       padding: var(--spacing-2, 8px);
     }
@@ -587,6 +761,22 @@ onMounted(async () => {
       &.has-vote {
         background-color: var(--el-color-success-light-9);
         border: 1px solid var(--el-color-success-light-5);
+      }
+
+      &.is-draggable {
+        cursor: grab;
+      }
+
+      &.is-dragging {
+        opacity: 0.55;
+      }
+
+      &.is-drop-target-top .vote-content {
+        border-top: 2px dashed var(--el-color-primary);
+      }
+
+      &.is-drop-target-bottom .vote-content {
+        border-bottom: 2px dashed var(--el-color-primary);
       }
 
       &.is-duplicate {
@@ -615,6 +805,22 @@ onMounted(async () => {
           margin: auto 0;
         }
 
+        .drag-handle {
+          display: inline-flex;
+          align-items: center;
+          color: var(--el-text-color-secondary);
+          margin-right: var(--spacing-1, 4px);
+        }
+
+        .vote-name-block {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          margin-right: auto;
+          margin-left: 10px;
+          min-width: 0;
+        }
+
         .vote-name {
           font-weight: 500;
 
@@ -624,12 +830,21 @@ onMounted(async () => {
           }
         }
 
+        .vote-ineligible-reason {
+          color: var(--el-color-danger);
+          font-size: var(--el-font-size-small);
+          line-height: 1.2;
+        }
+
         .vote-actions {
           display: flex;
           align-items: center;
           gap: var(--spacing-2, 8px);
 
           .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             font-size: 11px;
             padding: 2px 6px;
             border-radius: 4px;

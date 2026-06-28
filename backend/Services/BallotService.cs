@@ -228,14 +228,29 @@ public class BallotService : IBallotService
         dto.LocationName = ballot.Location.Name;
         dto.BallotCode = ballot.BallotCode ?? $"{ballot.ComputerCode}{ballot.BallotNumAtComputer}";
         dto.VoteCount = ballot.Votes.Count;
-        dto.Votes = ballot.Votes.Select(v =>
-        {
-            var voteDto = v.CopyMatchingPropertiesToNew<VoteDto>();
-            voteDto.PersonFullName = v.Person?.FullName;
-            return voteDto;
-        }).ToList();
+        dto.Votes = ballot.Votes.Select(MapToVoteDto).ToList();
 
         return dto;
+    }
+
+    private static VoteDto MapToVoteDto(Vote vote)
+    {
+        var voteDto = vote.CopyMatchingPropertiesToNew<VoteDto>();
+        voteDto.PersonFullName = vote.Person?.FullName;
+
+        if (string.IsNullOrEmpty(voteDto.IneligibleReasonCode)
+            && vote.VoteStatus == VoteStatus.Spoiled
+            && vote.Person?.CanReceiveVotes != true)
+        {
+            voteDto.IneligibleReasonCode = GetIneligibleReasonCode(vote.Person.IneligibleReasonGuid);
+        }
+
+        return voteDto;
+    }
+
+    private static string? GetIneligibleReasonCode(Guid? guid)
+    {
+        return guid.HasValue ? IneligibleReasonEnum.GetByGuid(guid.Value)?.Code : null;
     }
 }
 

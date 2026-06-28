@@ -4634,6 +4634,25 @@ export const RegistrationHistoryEntryDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ReorderVotesDtoSchema = {
+    type: 'object',
+    properties: {
+        ballotGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        voteRowIds: {
+            type: 'array',
+            items: {
+                type: 'integer',
+                format: 'int32'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ReportDataResponseDtoSchema = {
     type: 'object',
     properties: {
@@ -5917,6 +5936,10 @@ export const VoteDtoSchema = {
         voteStatus: {
             $ref: '#/components/schemas/VoteStatus'
         },
+        ineligibleReasonCode: {
+            type: 'string',
+            nullable: true
+        },
         personCombinedInfo: {
             type: 'string',
             nullable: true
@@ -5977,6 +6000,13 @@ export const VoteWithBallotStatusDtoSchema = {
         },
         ballotStatusCode: {
             $ref: '#/components/schemas/BallotStatus'
+        },
+        votes: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/VoteDto'
+            },
+            nullable: true
         }
     },
     additionalProperties: false

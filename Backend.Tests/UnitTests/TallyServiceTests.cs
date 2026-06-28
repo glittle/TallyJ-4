@@ -63,6 +63,67 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CalculateNormalElectionAsync_WithStaleVerifyStatus_RefreshesAndProceeds()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 3);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 3);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 1);
+        ballots[0].StatusCode = BallotStatus.Verify;
+        await Context.SaveChangesAsync();
+
+        for (var i = 0; i < 3; i++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballots[0].BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+                VoteStatus = VoteStatus.Ok,
+                PersonCombinedInfo = people[i].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        await Context.SaveChangesAsync();
+
+        var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        Assert.NotNull(result);
+        Assert.Equal(1, result.Statistics.BallotsReceived);
+        Assert.Equal(0, result.Statistics.SpoiledBallots);
+        Assert.Equal(BallotStatus.Ok, Context.Ballots.Single().StatusCode);
+    }
+
+    [Fact]
+    public async Task CalculateNormalElectionAsync_WithStaleSpoiledVote_RefreshesEligibilityBeforeAnalysis()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 1);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 1);
+
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballots[0].BallotGuid,
+            PersonGuid = people[0].PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Spoiled,
+            IneligibleReasonCode = IneligibleReasonEnum.U01_Unidentifiable.Code,
+            PersonCombinedInfo = people[0].CombinedInfo,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        Assert.NotNull(result);
+        Assert.Equal(VoteStatus.Ok, Context.Votes.Single().VoteStatus);
+        Assert.Null(Context.Votes.Single().IneligibleReasonCode);
+        Assert.Equal(1, result.Results.Single().VoteCount);
+    }
+
+    [Fact]
     public async Task CalculateNormalElectionAsync_WithInvalidElectionGuid_ThrowsArgumentException()
     {
         var invalidGuid = Guid.NewGuid();
@@ -278,7 +339,7 @@ public class TallyServiceTests : ServiceTestBase
         {
             LocationGuid = location.LocationGuid,
             BallotGuid = Guid.NewGuid(),
-            StatusCode = BallotStatus.Review,
+            StatusCode = BallotStatus.TooFew,
             ComputerCode = "A",
             BallotNumAtComputer = 1,
             RowVersion = new byte[8]
@@ -297,7 +358,7 @@ public class TallyServiceTests : ServiceTestBase
         Context.Ballots.Add(ballot2);
         await Context.SaveChangesAsync();
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
             var vote = new Vote
             {

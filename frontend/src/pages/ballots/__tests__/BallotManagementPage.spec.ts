@@ -4,12 +4,21 @@ import { createPinia, setActivePinia } from "pinia";
 import { createI18n } from "vue-i18n";
 import BallotManagementPage from "../BallotManagementPage.vue";
 import { useBallotStore } from "@/stores/ballotStore";
-import type { BallotDto } from "@/types";
+import { useLocationStore } from "@/stores/locationStore";
+import type { BallotSummaryDto } from "@/utils/ballotSummary";
+import { computerFilterValue } from "@/utils/ballotViewFilter";
+import { setComputerCode } from "@/utils/computerCodeStorage";
 
 vi.mock("vue-router", () => ({
   useRoute: () => ({
     params: { id: "test-election-guid" },
   }),
+}));
+
+vi.mock("@/services/computerService", () => ({
+  computerService: {
+    getByLocation: vi.fn().mockResolvedValue([]),
+  },
 }));
 
 vi.mock("@/components/ballots/BallotEntryPanel.vue", () => ({
@@ -22,6 +31,7 @@ vi.mock("@/components/ballots/BallotEntryPanel.vue", () => ({
       "showMetadata",
       "manageBallotSignalR",
       "managePeopleSignalR",
+      "hasKeyboardTeller",
     ],
   },
 }));
@@ -36,21 +46,32 @@ vi.mock("@/components/tellers/ActiveTellerSelector.vue", () => ({
 
 describe("BallotManagementPage", () => {
   let ballotStore: ReturnType<typeof useBallotStore>;
+  let locationStore: ReturnType<typeof useLocationStore>;
 
-  const mockBallots: BallotDto[] = [
+  const mockBallots: BallotSummaryDto[] = [
     {
       ballotGuid: "ballot-1",
-      electionGuid: "test-election-guid",
       ballotCode: "A1",
       locationGuid: "loc-1",
       locationName: "Main Hall",
       ballotNumAtComputer: 1,
-      computerCode: "A",
+      computerCode: "AA",
       statusCode: "Ok",
       teller1: "Alice",
       teller2: "Bob",
       voteCount: 3,
-      votes: [],
+    },
+    {
+      ballotGuid: "ballot-2",
+      ballotCode: "B1",
+      locationGuid: "loc-2",
+      locationName: "Side Room",
+      ballotNumAtComputer: 1,
+      computerCode: "BB",
+      statusCode: "Ok",
+      teller1: "Alice",
+      teller2: "Bob",
+      voteCount: 1,
     },
   ];
 
@@ -73,10 +94,21 @@ describe("BallotManagementPage", () => {
           entry: "Ballot Entry - {code}",
           entryPage: "Ballot Entry",
           loadError: "Failed to load ballots",
+          allBallots: "All ballots",
+          allAtLocation: "All at {name}",
+          viewFilterLabel: "Ballots to show",
+          viewFilterPlaceholder: "Search computers or locations",
+          computerCodeRequired:
+            "Set this computer's code before creating a ballot",
           "statusValue.Ok": "Ok",
         },
         common: {
-          actions: "Actions",
+          refresh: "Refresh",
+        },
+        locations: {
+          locationSelected: "Location selected",
+          selectLocation: "Select location",
+          currentLocation: "Current location",
         },
       },
     },
@@ -91,7 +123,11 @@ describe("BallotManagementPage", () => {
             template:
               '<div class="el-card"><slot name="header"></slot><slot></slot></div>',
           },
-          ElTable: true,
+          ElTable: {
+            props: ["data"],
+            template:
+              '<div class="el-table"><div v-for="row in data" :key="row.ballotGuid"><span class="ballot-code">{{ row.ballotCode }}</span><span class="location-name">{{ row.locationName }}</span></div></div>',
+          },
           ElTableColumn: true,
           ElButton: {
             template:
@@ -109,30 +145,70 @@ describe("BallotManagementPage", () => {
               '<div v-if="modelValue" class="el-drawer"><slot></slot></div>',
           },
           ElIcon: true,
+          ElSelect: {
+            props: ["modelValue"],
+            emits: ["update:modelValue"],
+            template:
+              '<div class="el-select" @click="$emit(\'update:modelValue\', modelValue)">{{ modelValue }}</div>',
+          },
+          ElOption: true,
+          ElOptionGroup: true,
         },
       },
     });
   }
 
   beforeEach(() => {
+    localStorage.clear();
+    setComputerCode("AA");
     setActivePinia(createPinia());
     ballotStore = useBallotStore();
+    locationStore = useLocationStore();
+    locationStore.locations = [
+      {
+        locationGuid: "loc-1",
+        name: "Main Hall",
+        electionGuid: "test-election-guid",
+        sortOrder: 1,
+      },
+      {
+        locationGuid: "loc-2",
+        name: "Side Room",
+        electionGuid: "test-election-guid",
+        sortOrder: 2,
+      },
+    ];
+    locationStore.selectedLocationGuid = "loc-1";
     ballotStore.ballots = mockBallots;
     ballotStore.loading = false;
 
-    vi.spyOn(ballotStore, "fetchBallots").mockResolvedValue(mockBallots);
+    vi.spyOn(ballotStore, "fetchBallots").mockResolvedValue(undefined);
+    vi.spyOn(locationStore, "fetchLocations").mockResolvedValue(undefined);
     vi.spyOn(ballotStore, "initializeSignalR").mockResolvedValue(undefined);
     vi.spyOn(ballotStore, "joinElection").mockResolvedValue(undefined);
     vi.spyOn(ballotStore, "leaveElection").mockResolvedValue(undefined);
     vi.spyOn(ballotStore, "createBallot").mockImplementation(async () => {
-      const created: BallotDto = {
+      const created = {
         ...mockBallots[0],
         ballotGuid: "new-ballot-guid",
         ballotCode: "A2",
         ballotNumAtComputer: 2,
         voteCount: 0,
+        votes: [],
       };
-      ballotStore.ballots.push(created);
+      ballotStore.ballots.push({
+        ballotGuid: created.ballotGuid,
+        ballotCode: created.ballotCode,
+        locationGuid: created.locationGuid,
+        locationName: created.locationName,
+        ballotNumAtComputer: created.ballotNumAtComputer,
+        computerCode: created.computerCode,
+        statusCode: created.statusCode,
+        teller1: created.teller1,
+        teller2: created.teller2,
+        voteCount: created.voteCount,
+      });
+      ballotStore.currentBallot = created;
       return created;
     });
   });
@@ -169,5 +245,35 @@ describe("BallotManagementPage", () => {
     expect(wrapper.text()).not.toContain("Enter Votes");
     expect(wrapper.text()).not.toContain("View Votes");
     expect(wrapper.text()).not.toContain("Import CDN Ballots");
+  });
+
+  it("defaults the ballot list to the current computer at the selected location", async () => {
+    const wrapper = mountPage();
+    await flushPromises();
+
+    expect(wrapper.text()).toContain(computerFilterValue("loc-1", "AA"));
+    expect(wrapper.text()).toContain("A1");
+    expect(wrapper.text()).not.toContain("B1");
+  });
+
+  it("shows location names when the election has multiple locations", async () => {
+    const wrapper = mountPage();
+    await flushPromises();
+
+    expect(wrapper.text()).toContain("Main Hall");
+  });
+
+  it("passes keyboard teller state to the entry panel", async () => {
+    const wrapper = mountPage();
+    await flushPromises();
+
+    const addButton = wrapper
+      .findAll(".el-button")
+      .find((button) => button.text().includes("Add Ballot"));
+    await addButton!.trigger("click");
+    await flushPromises();
+
+    const panel = wrapper.findComponent({ name: "BallotEntryPanel" });
+    expect(panel.props("hasKeyboardTeller")).toBe(false);
   });
 });

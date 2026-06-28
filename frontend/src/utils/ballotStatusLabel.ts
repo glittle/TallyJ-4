@@ -20,5 +20,5 @@ export function getBallotStatusLabel(
     return t("ballots.statusValue.New");
   }
 
-  return t(`ballots.statusValue.${statusCode}`) || statusCode;
+  return t(`ballots.statusValue.${statusCode}`);
 }

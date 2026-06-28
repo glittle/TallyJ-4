@@ -102,6 +102,7 @@ public class VoteService : IVoteService
 
         var electionGuid = ballot.Location.ElectionGuid;
         var statusCode = VoteStatus.Ok;
+        string? ineligibleReasonCode = null;
 
         if (createDto.PersonGuid.HasValue)
         {
@@ -114,8 +115,9 @@ public class VoteService : IVoteService
             if (person.CanReceiveVotes != true)
             {
                 statusCode = VoteStatus.Spoiled;
-                _logger.LogInformation("Person '{FullName}' is ineligible; vote created as spoiled",
-                    person.FullName);
+                ineligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
+                _logger.LogInformation("Person '{FullName}' is ineligible; vote created as spoiled with reason {ReasonCode}",
+                    person.FullName, ineligibleReasonCode);
             }
 
         }
@@ -130,6 +132,7 @@ public class VoteService : IVoteService
             PersonGuid = createDto.PersonGuid,
             PositionOnBallot = assignedPosition,
             VoteStatus = statusCode,
+            IneligibleReasonCode = ineligibleReasonCode,
             RowVersion = new byte[8]
         };
 
@@ -176,6 +179,7 @@ public class VoteService : IVoteService
         }
 
         var statusCode = VoteStatus.Ok;
+        string? ineligibleReasonCode = null;
 
         if (updateDto.PersonGuid.HasValue)
         {
@@ -188,14 +192,16 @@ public class VoteService : IVoteService
             if (person.CanReceiveVotes != true)
             {
                 statusCode = VoteStatus.Spoiled;
-                _logger.LogInformation("Person '{FullName}' is ineligible; vote updated as spoiled",
-                    person.FullName);
+                ineligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
+                _logger.LogInformation("Person '{FullName}' is ineligible; vote updated as spoiled with reason {ReasonCode}",
+                    person.FullName, ineligibleReasonCode);
             }
         }
 
         vote.BallotGuid = updateDto.BallotGuid;
         vote.PersonGuid = updateDto.PersonGuid;
         vote.VoteStatus = statusCode;
+        vote.IneligibleReasonCode = ineligibleReasonCode;
 
         ballot.DateUpdated = DateTimeOffset.UtcNow;
         await _context.SaveChangesAsync();
@@ -257,6 +263,53 @@ public class VoteService : IVoteService
         return ballot == null
             ? null
             : await BuildVoteMutationResponseAsync(ballot, highlightedVoteId: null);
+    }
+
+    /// <summary>
+    /// Reorders votes on a ballot to match the supplied row ID sequence.
+    /// </summary>
+    public async Task<VoteWithBallotStatusDto?> ReorderVotesAsync(ReorderVotesDto reorderDto)
+    {
+        var ballot = await _context.Ballots
+            .Include(b => b.Location)
+            .FirstOrDefaultAsync(b => b.BallotGuid == reorderDto.BallotGuid);
+
+        if (ballot == null)
+        {
+            return null;
+        }
+
+        var votes = await _context.Votes
+            .Where(v => v.BallotGuid == reorderDto.BallotGuid)
+            .ToListAsync();
+
+        if (votes.Count != reorderDto.VoteRowIds.Count)
+        {
+            throw new InvalidOperationException(
+                "Vote row ID count does not match the number of votes on this ballot");
+        }
+
+        var voteById = votes.ToDictionary(v => v.RowId);
+        if (reorderDto.VoteRowIds.Any(id => !voteById.ContainsKey(id)))
+        {
+            throw new InvalidOperationException("One or more vote row IDs do not belong to this ballot");
+        }
+
+        for (var i = 0; i < reorderDto.VoteRowIds.Count; i++)
+        {
+            voteById[reorderDto.VoteRowIds[i]].PositionOnBallot = i + 1;
+        }
+
+        ballot.DateUpdated = DateTimeOffset.UtcNow;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Reordered {VoteCount} votes for ballot {BallotGuid}",
+            votes.Count, reorderDto.BallotGuid);
+
+        await RefreshBallotStatusAsync(ballot);
+        await _context.SaveChangesAsync();
+
+        return await BuildVoteMutationResponseAsync(ballot, highlightedVoteId: null);
     }
 
     private async Task<int> GetNextVotePositionAsync(Guid ballotGuid)
@@ -334,6 +387,19 @@ public class VoteService : IVoteService
     {
         var dto = vote.CopyMatchingPropertiesToNew<VoteDto>();
         dto.PersonFullName = vote.Person?.FullName;
+
+        if (string.IsNullOrEmpty(dto.IneligibleReasonCode)
+            && vote.VoteStatus == VoteStatus.Spoiled
+            && vote.Person?.CanReceiveVotes != true)
+        {
+            dto.IneligibleReasonCode = GetIneligibleReasonCode(vote.Person.IneligibleReasonGuid);
+        }
+
         return dto;
+    }
+
+    private static string? GetIneligibleReasonCode(Guid? guid)
+    {
+        return guid.HasValue ? IneligibleReasonEnum.GetByGuid(guid.Value)?.Code : null;
     }
 }
