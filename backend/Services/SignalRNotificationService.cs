@@ -128,16 +128,37 @@ public class SignalRNotificationService : ISignalRNotificationService
     /// <summary>
     /// Sends a notification that the public election list has been updated.
     /// </summary>
-    public async Task SendPublicElectionListUpdateAsync()
+    public async Task SendPublicElectionListUpdateAsync(Guid? electionGuid = null, bool? guestAccessOpen = null)
     {
         try
         {
-            await _publicHubContext.Clients.Group("Public").SendAsync("ElectionListUpdated");
-            _logger.LogInformation("Sent ElectionListUpdated notification to Public group");
+            await _publicHubContext.Clients.Group("Public")
+                .SendAsync("ElectionListUpdated", electionGuid, guestAccessOpen);
+            _logger.LogInformation(
+                "Sent ElectionListUpdated notification to Public group (election={ElectionGuid}, open={GuestAccessOpen})",
+                electionGuid,
+                guestAccessOpen);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error sending PublicElectionListUpdate notification");
+        }
+    }
+
+    /// <summary>
+    /// Notifies connected guest tellers that they must leave the election immediately.
+    /// </summary>
+    public async Task CloseOutGuestTellersAsync(Guid electionGuid)
+    {
+        try
+        {
+            var guestGroup = $"Main{electionGuid}Guest";
+            await _mainHubContext.Clients.Group(guestGroup).SendAsync("electionClosed");
+            _logger.LogInformation("Sent electionClosed notification to guest group {GroupName}", guestGroup);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error closing out guest tellers for election {ElectionGuid}", electionGuid);
         }
     }
 

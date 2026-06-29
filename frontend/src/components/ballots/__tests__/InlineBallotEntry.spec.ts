@@ -6,7 +6,6 @@ import type { BallotDto } from "@/types/Ballot";
 import type { VoteDto } from "@/types/Vote";
 import type { SearchablePersonDto } from "@/types/Person";
 import { ElAlert, ElButton, ElIcon, ElInput } from "element-plus";
-import { useNotifications } from "@/composables/useNotifications";
 
 const mockT = (key: string, values?: Record<string, string | number>) => {
   const translations: Record<string, string> = {

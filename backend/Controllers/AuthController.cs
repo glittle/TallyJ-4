@@ -12,6 +12,7 @@ using Backend;
 using Backend.Context;
 using Backend.Identity;
 using Backend.DTOs.Security;
+using Backend.Helpers;
 using Backend.Middleware;
 using Backend.Services;
 using Google.Apis.Auth;
@@ -48,6 +49,7 @@ public class AuthController : ControllerBase
 
     private readonly ISecurityAuditService _securityAuditService;
     private readonly IRemoteLogService _remoteLogService;
+    private readonly IComputerAssignmentService _assignmentService;
 
     /// <summary>
     /// Initializes a new instance of the AuthController.
@@ -66,6 +68,7 @@ public class AuthController : ControllerBase
     /// <param name="httpClientFactory">HTTP client factory for external API requests.</param>
     /// <param name="securityAuditService">Service for logging security events.</param>
     /// <param name="remoteLogService">Service for sending remote log messages.</param>
+    /// <param name="assignmentService">Tracks active main teller connections for guest login eligibility.</param>
     public AuthController(
         ILocalAuthService localAuthService,
         IPasswordResetService passwordResetService,
@@ -80,7 +83,8 @@ public class AuthController : ControllerBase
         IOptions<SuperAdminSettings> superAdminSettings,
         IHttpClientFactory httpClientFactory,
         ISecurityAuditService securityAuditService,
-        IRemoteLogService remoteLogService)
+        IRemoteLogService remoteLogService,
+        IComputerAssignmentService assignmentService)
     {
         _localAuthService = localAuthService;
         _passwordResetService = passwordResetService;
@@ -96,6 +100,7 @@ public class AuthController : ControllerBase
         _httpClientFactory = httpClientFactory;
         _securityAuditService = securityAuditService;
         _remoteLogService = remoteLogService;
+        _assignmentService = assignmentService;
     }
 
     /// <summary>
@@ -251,7 +256,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { error = "Invalid election or access code" });
         }
 
-        if (election.ListedForPublicAsOf == null)
+        if (!ElectionTellerAccessHelper.IsGuestTellerAccessOpen(election.ListedForPublicAsOf))
         {
             await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
@@ -263,6 +268,20 @@ public class AuthController : ControllerBase
                 Severity = SecurityEventSeverity.Info
             });
             return BadRequest(new { error = "This election is not currently open for teller access" });
+        }
+
+        if (!_assignmentService.HasActiveMainTeller(request.ElectionGuid))
+        {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.TellerLoginFailure,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"Teller login failed: no main teller connected ({request.ElectionGuid})",
+                IsSuspicious = false,
+                Severity = SecurityEventSeverity.Info
+            });
+            return BadRequest(new { error = "No main teller is currently connected to this election" });
         }
 
         if (string.IsNullOrEmpty(election.ElectionPasscode) ||

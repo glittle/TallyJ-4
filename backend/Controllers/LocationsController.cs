@@ -1,5 +1,4 @@
-﻿using Backend.DTOs.Computers;
-using Backend.DTOs.Locations;
+﻿using Backend.DTOs.Locations;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -16,19 +15,16 @@ namespace Backend.Controllers;
 public class LocationsController : ControllerBase
 {
     private readonly ILocationService _locationService;
-    private readonly IComputerService _computerService;
     private readonly ILogger<LocationsController> _logger;
 
     /// <summary>
     /// Initializes a new instance of the LocationsController.
     /// </summary>
     /// <param name="locationService">The location service for location operations.</param>
-    /// <param name="computerService">The computer service for computer registration operations.</param>
     /// <param name="logger">The logger for recording operations.</param>
-    public LocationsController(ILocationService locationService, IComputerService computerService, ILogger<LocationsController> logger)
+    public LocationsController(ILocationService locationService, ILogger<LocationsController> logger)
     {
         _locationService = locationService;
-        _computerService = computerService;
         _logger = logger;
     }
 
@@ -173,81 +169,6 @@ public class LocationsController : ControllerBase
         return Ok(ApiResponse<bool>.SuccessResponse(true, "Location deleted successfully"));
     }
 
-    /// <summary>
-    /// Registers a computer at a specific location.
-    /// </summary>
-    /// <param name="electionGuid">The GUID of the election (for route binding).</param>
-    /// <param name="locationGuid">The GUID of the location.</param>
-    /// <param name="registerDto">The computer registration data.</param>
-    /// <returns>The registered computer information.</returns>
-    [HttpPost("{locationGuid}/registerComputer")]
-    public async Task<ActionResult<ApiResponse<ComputerDto>>> RegisterComputer(
-        Guid electionGuid,
-        Guid locationGuid,
-        RegisterComputerDto registerDto)
-    {
-        if (registerDto.ElectionGuid != electionGuid)
-        {
-            return BadRequest(ApiResponse<ComputerDto>.ErrorResponse("Election GUID in the route must match the one in the request body"));
-        }
-
-        if (registerDto.LocationGuid != locationGuid)
-        {
-            return BadRequest(ApiResponse<ComputerDto>.ErrorResponse("Location GUID in the route must match the one in the request body"));
-        }
-
-        try
-        {
-            var computer = await _computerService.RegisterComputerAsync(registerDto);
-
-            return CreatedAtAction(
-                nameof(GetComputersByLocation),
-                new { electionGuid, locationGuid },
-                ApiResponse<ComputerDto>.SuccessResponse(computer, "Computer registered successfully"));
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ApiResponse<ComputerDto>.ErrorResponse(ex.Message));
-        }
-    }
-
-    /// <summary>
-    /// Gets all computers registered at a specific location.
-    /// </summary>
-    /// <param name="electionGuid">The GUID of the election (for route binding).</param>
-    /// <param name="locationGuid">The GUID of the location.</param>
-    /// <returns>A list of registered computers.</returns>
-    [HttpGet("{locationGuid}/getComputers")]
-    public async Task<ActionResult<ApiResponse<List<ComputerDto>>>> GetComputersByLocation(
-        Guid electionGuid,
-        Guid locationGuid)
-    {
-        var computers = await _computerService.GetComputersByLocationAsync(locationGuid);
-        return Ok(ApiResponse<List<ComputerDto>>.SuccessResponse(computers));
-    }
-
-    /// <summary>
-    /// Deletes a computer registration.
-    /// </summary>
-    /// <param name="electionGuid">The GUID of the election (for route binding).</param>
-    /// <param name="locationGuid">The GUID of the location (for route binding).</param>
-    /// <param name="computerGuid">The GUID of the computer to delete.</param>
-    /// <returns>A response indicating success or failure.</returns>
-    [HttpDelete("{locationGuid}/{computerGuid}/deleteComputer")]
-    public async Task<ActionResult<ApiResponse<bool>>> DeleteComputer(
-        Guid electionGuid,
-        Guid locationGuid,
-        Guid computerGuid)
-    {
-        var result = await _computerService.DeleteComputerAsync(computerGuid);
-
-        if (!result)
-        {
-            return NotFound(ApiResponse<bool>.ErrorResponse("Computer not found"));
-        }
-
-        return Ok(ApiResponse<bool>.SuccessResponse(true, "Computer deleted successfully"));
-    }
 }
 
 

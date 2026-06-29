@@ -392,7 +392,7 @@ public class VoteService : IVoteService
             && vote.VoteStatus == VoteStatus.Spoiled
             && vote.Person?.CanReceiveVotes != true)
         {
-            dto.IneligibleReasonCode = GetIneligibleReasonCode(vote.Person.IneligibleReasonGuid);
+            dto.IneligibleReasonCode = GetIneligibleReasonCode(vote.Person?.IneligibleReasonGuid);
         }
 
         return dto;

@@ -109,6 +109,7 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<Election>(entity =>
         {
+            entity.Ignore(e => e.ListForPublic);
             entity.Property(e => e.OnlineCloseIsEstimate).HasDefaultValue(true);
             entity.Property(e => e.ElectionType).HasConversion<string>();
             entity.Property(e => e.ElectionStage)

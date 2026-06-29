@@ -226,9 +226,6 @@ namespace Backend.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(2)");
 
-                    b.Property<bool?>("ListForPublic")
-                        .HasColumnType("bit");
-
                     b.Property<DateTimeOffset?>("ListedForPublicAsOf")
                         .HasPrecision(0)
                         .HasColumnType("datetimeoffset(0)");

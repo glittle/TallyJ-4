@@ -18,6 +18,7 @@ public class TallyService : ITallyService
     private readonly MainDbContext _context;
     private readonly ILogger<TallyService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly IComputerAssignmentService _computerAssignmentService;
     private readonly IStringLocalizer<TallyService> _localizer;
 
     private const string UnknownFallbackValue = "Unknown";
@@ -36,11 +37,17 @@ public class TallyService : ITallyService
     /// <param name="logger">Logger for recording tally service operations.</param>
     /// <param name="signalRNotificationService">Service for sending real-time notifications about tally progress.</param>
     /// <param name="localizer">Localizer for retrieving localized strings.</param>
-    public TallyService(MainDbContext context, ILogger<TallyService> logger, ISignalRNotificationService signalRNotificationService, IStringLocalizer<TallyService> localizer)
+    public TallyService(
+        MainDbContext context,
+        ILogger<TallyService> logger,
+        ISignalRNotificationService signalRNotificationService,
+        IComputerAssignmentService computerAssignmentService,
+        IStringLocalizer<TallyService> localizer)
     {
         _context = context;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
+        _computerAssignmentService = computerAssignmentService;
         _localizer = localizer;
     }
 
@@ -294,20 +301,23 @@ public class TallyService : ITallyService
             throw new ArgumentException($"Election {electionGuid} not found");
         }
 
-        // Get computer information from ballots (computers are tracked via ComputerCode in ballots)
-        var computers = await _context.Ballots
+        var ballotCountsByCode = await _context.Ballots
             .Include(b => b.Location)
-            .Where(b => b.Location.ElectionGuid == electionGuid)
-            .GroupBy(b => new { b.ComputerCode, b.Location.Name })
-            .Select(g => new ComputerInfoDto
+            .Where(b => b.Location.ElectionGuid == electionGuid && b.ComputerCode != null)
+            .GroupBy(b => b.ComputerCode!)
+            .Select(g => new { ComputerCode = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.ComputerCode, x => x.Count);
+
+        var computers = _computerAssignmentService.GetActiveComputers(electionGuid)
+            .Select(active => new ComputerInfoDto
             {
-                ComputerCode = g.Key.ComputerCode ?? UnknownFallbackValue,
-                LocationName = g.Key.Name ?? UnknownLocationName,
-                BallotCount = g.Count(),
-                LastContact = DateTimeOffset.MinValue, // No last contact tracking in current model
-                Status = "Active" // Assume active if they have ballots
+                ComputerCode = active.ComputerCode,
+                LocationName = string.Empty,
+                BallotCount = ballotCountsByCode.GetValueOrDefault(active.ComputerCode, 0),
+                LastContact = active.ConnectedAt,
+                Status = "Active",
             })
-            .ToListAsync();
+            .ToList();
 
         // Get location information
         var locations = await _context.Locations

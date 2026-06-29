@@ -64,6 +64,10 @@ public class AuthControllerTests : ServiceTestBase
         _oauthStateServiceMock = new Mock<OAuthStateService>();
         _securityAuditServiceMock = new Mock<ISecurityAuditService>();
         _remoteLogServiceMock = new Mock<IRemoteLogService>();
+        var assignmentServiceMock = new Mock<IComputerAssignmentService>();
+        assignmentServiceMock
+            .Setup(s => s.HasActiveMainTeller(It.IsAny<Guid>()))
+            .Returns(true);
 
         _controller = new AuthController(
             _localAuthServiceMock.Object,
@@ -79,7 +83,8 @@ public class AuthControllerTests : ServiceTestBase
             _superAdminSettingsMock.Object,
             _httpClientFactoryMock.Object,
             _securityAuditServiceMock.Object,
-            _remoteLogServiceMock.Object);
+            _remoteLogServiceMock.Object,
+            assignmentServiceMock.Object);
 
         // Setup HttpContext for cookie middleware
         var httpContext = new DefaultHttpContext();

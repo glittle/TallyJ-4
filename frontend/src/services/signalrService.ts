@@ -1,11 +1,15 @@
 import { getAppConfig } from "@/config/appConfig";
 import { ConnectionState } from "@/types/SignalRConnection";
+import { getOrCreateClientId } from "@/utils/clientIdStorage";
+import { setComputerCode } from "@/utils/computerCodeStorage";
 import * as signalR from "@microsoft/signalr";
 
 class SignalRService {
   private readonly connections: Map<string, signalR.HubConnection> = new Map();
   private readonly connectionStates: Map<string, ConnectionState> = new Map();
   private frontDeskElectionGuid: string | null = null;
+  private mainElectionGuid: string | null = null;
+  private publicGroupJoined = false;
 
   private get baseUrl(): string {
     return getAppConfig().apiUrl;
@@ -44,6 +48,27 @@ class SignalRService {
         `SignalR reconnected for ${hubPath}. Connection ID: ${connectionId}`,
       );
       this.connectionStates.set(hubPath, ConnectionState.Connected);
+      if (hubPath === "/hubs/main" && this.mainElectionGuid) {
+        try {
+          const assignedCode = (await connection.invoke(
+            "JoinElection",
+            this.mainElectionGuid,
+            getOrCreateClientId(),
+          )) as string;
+          if (assignedCode) {
+            setComputerCode(this.mainElectionGuid, assignedCode);
+          }
+          console.log(
+            `Rejoined main election ${this.mainElectionGuid} after reconnect with code ${assignedCode}`,
+          );
+        } catch (error) {
+          console.error(
+            "Failed to rejoin main election after reconnect:",
+            error,
+          );
+        }
+      }
+
       if (hubPath === "/hubs/front-desk" && this.frontDeskElectionGuid) {
         try {
           await connection.invoke("JoinElection", this.frontDeskElectionGuid);
@@ -55,6 +80,15 @@ class SignalRService {
             "Failed to rejoin front desk election after reconnect:",
             error,
           );
+        }
+      }
+
+      if (hubPath === "/hubs/public" && this.publicGroupJoined) {
+        try {
+          await connection.invoke("JoinPublicGroup");
+          console.log("Rejoined public group after reconnect");
+        } catch (error) {
+          console.error("Failed to rejoin public group after reconnect:", error);
         }
       }
     });
@@ -130,19 +164,42 @@ class SignalRService {
     return this.connect("/hubs/people-import");
   }
 
-  async joinElection(electionGuid: string): Promise<void> {
+  async joinElection(electionGuid: string): Promise<string | null> {
+    const previousGuid = this.mainElectionGuid;
+    if (previousGuid && previousGuid !== electionGuid) {
+      await this.leaveElection(previousGuid);
+    }
+
+    this.mainElectionGuid = electionGuid;
+    const clientId = getOrCreateClientId();
+    let assignedCode: string | null = null;
+
     const mainConnection = this.getConnection("/hubs/main");
     if (mainConnection) {
-      await mainConnection.invoke("JoinElection", electionGuid);
+      assignedCode = (await mainConnection.invoke(
+        "JoinElection",
+        electionGuid,
+        clientId,
+      )) as string;
     }
 
     const frontDeskConnection = this.getConnection("/hubs/front-desk");
     if (frontDeskConnection) {
       await frontDeskConnection.invoke("JoinElection", electionGuid);
     }
+
+    if (assignedCode) {
+      setComputerCode(electionGuid, assignedCode);
+    }
+
+    return assignedCode;
   }
 
   async leaveElection(electionGuid: string): Promise<void> {
+    if (this.mainElectionGuid === electionGuid) {
+      this.mainElectionGuid = null;
+    }
+
     const mainConnection = this.getConnection("/hubs/main");
     if (mainConnection) {
       await mainConnection.invoke("LeaveElection", electionGuid);
@@ -217,6 +274,22 @@ class SignalRService {
     const frontDeskConnection = this.getConnection("/hubs/front-desk");
     if (frontDeskConnection) {
       await frontDeskConnection.invoke("LeaveElection", electionGuid);
+    }
+  }
+
+  async joinPublicGroup(): Promise<void> {
+    this.publicGroupJoined = true;
+    const publicConnection = this.getConnection("/hubs/public");
+    if (publicConnection) {
+      await publicConnection.invoke("JoinPublicGroup");
+    }
+  }
+
+  async leavePublicGroup(): Promise<void> {
+    this.publicGroupJoined = false;
+    const publicConnection = this.getConnection("/hubs/public");
+    if (publicConnection) {
+      await publicConnection.invoke("LeavePublicGroup");
     }
   }
 

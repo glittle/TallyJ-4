@@ -1,6 +1,7 @@
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Context;
+using Backend.Helpers;
 using Backend.DTOs.Import;
 using Backend.DTOs.Elections;
 using Backend.Models;
@@ -64,6 +65,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 election.ElectionPasscode,
                 election.LastEnvNum,
                 election.ListForPublic,
+                ListedForPublicAsOf = election.ListedForPublicAsOf?.ToString("o"),
                 election.ShowFullReport,
                 OnlineWhenOpen = election.OnlineWhenOpen?.ToString("o"),
                 OnlineWhenClose = election.OnlineWhenClose?.ToString("o"),
@@ -248,7 +250,6 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 NumberExtra = importData.election.NumberExtra,
                 ElectionPasscode = importData.election.ElectionPasscode,
                 LastEnvNum = importData.election.LastEnvNum,
-                ListForPublic = importData.election.ListForPublic,
                 ShowFullReport = importData.election.ShowFullReport,
                 OnlineWhenOpen = ParseDateTime(importData.election.OnlineWhenOpen),
                 OnlineWhenClose = ParseDateTime(importData.election.OnlineWhenClose),
@@ -264,6 +265,11 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 Flags = importData.election.Flags,
                 RowVersion = new byte[8]
             };
+
+            ElectionTellerAccessHelper.ApplyImportedGuestAccess(
+                election,
+                importData.election.ListForPublic,
+                ParseDateTime(importData.election.ListedForPublicAsOf));
 
             _context.Elections.Add(election);
 

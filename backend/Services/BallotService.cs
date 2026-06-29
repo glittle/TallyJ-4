@@ -242,7 +242,7 @@ public class BallotService : IBallotService
             && vote.VoteStatus == VoteStatus.Spoiled
             && vote.Person?.CanReceiveVotes != true)
         {
-            voteDto.IneligibleReasonCode = GetIneligibleReasonCode(vote.Person.IneligibleReasonGuid);
+            voteDto.IneligibleReasonCode = GetIneligibleReasonCode(vote.Person?.IneligibleReasonGuid);
         }
 
         return voteDto;

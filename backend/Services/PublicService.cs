@@ -1,6 +1,7 @@
 using Backend.Context;
 using Backend.Enumerations;
 using Backend.DTOs.Public;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -12,16 +13,22 @@ namespace Backend.Services;
 public class PublicService : IPublicService
 {
     private readonly MainDbContext _context;
+    private readonly IComputerAssignmentService _assignmentService;
     private readonly ILogger<PublicService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the PublicService.
     /// </summary>
     /// <param name="context">The main database context for accessing election data.</param>
+    /// <param name="assignmentService">Tracks active main teller connections for guest login eligibility.</param>
     /// <param name="logger">Logger for recording public service operations.</param>
-    public PublicService(MainDbContext context, ILogger<PublicService> logger)
+    public PublicService(
+        MainDbContext context,
+        IComputerAssignmentService assignmentService,
+        ILogger<PublicService> logger)
     {
         _context = context;
+        _assignmentService = assignmentService;
         _logger = logger;
     }
 
@@ -31,8 +38,9 @@ public class PublicService : IPublicService
     /// <returns>A PublicHomeDto containing application information and available elections count.</returns>
     public async Task<PublicHomeDto> GetPublicHomeDataAsync()
     {
+        var now = DateTimeOffset.UtcNow;
         var availableElectionsCount = await _context.Elections
-            .Where(e => e.ListedForPublicAsOf != null)
+            .Where(e => e.ListedForPublicAsOf != null && e.ListedForPublicAsOf <= now)
             .CountAsync();
 
         _logger.LogInformation("Public home data requested. Available elections: {Count}", availableElectionsCount);
@@ -53,8 +61,9 @@ public class PublicService : IPublicService
     /// <returns>A list of AvailableElectionDto objects representing elections with passcodes.</returns>
     public async Task<List<AvailableElectionDto>> GetAvailableElectionsAsync()
     {
-        var elections = (await _context.Elections
-            .Where(e => e.ListedForPublicAsOf != null)
+        var now = DateTimeOffset.UtcNow;
+        var listedElections = await _context.Elections
+            .Where(e => e.ListedForPublicAsOf != null && e.ListedForPublicAsOf <= now)
             .OrderByDescending(e => e.DateOfElection ?? DateTimeOffset.MinValue)
             .Select(e => new
             {
@@ -63,7 +72,10 @@ public class PublicService : IPublicService
                 e.DateOfElection,
                 e.ElectionType
             })
-            .ToListAsync())
+            .ToListAsync();
+
+        var elections = listedElections
+            .Where(e => _assignmentService.HasActiveMainTeller(e.ElectionGuid))
             .Select(e => new AvailableElectionDto
             {
                 ElectionGuid = e.ElectionGuid,
@@ -73,7 +85,10 @@ public class PublicService : IPublicService
             })
             .ToList();
 
-        _logger.LogInformation("Retrieved {Count} available elections", elections.Count);
+        _logger.LogInformation(
+            "Retrieved {Count} guest-joinable elections ({ListedCount} listed, filtered by active main teller)",
+            elections.Count,
+            listedElections.Count);
 
         return elections;
     }
@@ -134,7 +149,7 @@ public class PublicService : IPublicService
             return null;
         }
 
-        if (election.ListForPublic != true)
+        if (!ElectionTellerAccessHelper.IsGuestTellerAccessOpen(election.ListedForPublicAsOf))
         {
             _logger.LogWarning("Election {ElectionGuid} is not listed for public display", electionGuid);
             return null;

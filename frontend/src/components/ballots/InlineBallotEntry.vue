@@ -293,7 +293,11 @@ function handleVoteRemoved(positionOnBallot: number) {
 
 function handleDragStart(index: number) {
   const vote = votes.value[index];
-  if (!canReorderVotes.value || !isPersistedVote(vote) || reorderingVotes.value) {
+  if (
+    !canReorderVotes.value ||
+    !isPersistedVote(vote) ||
+    reorderingVotes.value
+  ) {
     return;
   }
   dragSourceIndex.value = index;
@@ -501,10 +505,6 @@ onMounted(async () => {
           }}</span>
         </div>
 
-        <p v-if="canReorderVotes" class="votes-drag-hint">
-          {{ $t("ballots.dragToReorder") }}
-        </p>
-
         <div class="votes-list">
           <div
             v-for="(vote, index) in votes"
@@ -562,13 +562,6 @@ onMounted(async () => {
 
                 <div class="vote-actions">
                   <span
-                    v-if="isVoteDtoSpoiled(vote)"
-                    class="status-badge error spoiled-indicator"
-                    :title="getVoteSpoiledLabel($t, vote)"
-                  >
-                    <el-icon><WarningFilled /></el-icon>
-                  </span>
-                  <span
                     v-if="duplicatePersonGuids.includes(vote.personGuid!)"
                     class="status-badge warning"
                     :title="$t('ballots.duplicateWarning')"
@@ -591,6 +584,10 @@ onMounted(async () => {
               </template>
             </div>
           </div>
+
+          <p v-if="canReorderVotes" class="votes-drag-hint">
+            {{ $t("ballots.dragToReorder") }}
+          </p>
         </div>
       </div>
     </div>

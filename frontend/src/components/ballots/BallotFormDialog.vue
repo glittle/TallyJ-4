@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-import { useI18n } from "vue-i18n";
-import { type FormInstance, type FormRules } from "element-plus";
+import { useComputerCode } from "@/composables/useComputerCode";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useNotifications } from "@/composables/useNotifications";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
+import { type FormInstance, type FormRules } from "element-plus";
+import { reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useBallotStore } from "../../stores/ballotStore";
 import type { CreateBallotDto } from "../../types";
 
-import { useNotifications } from "../../composables/useNotifications";
 const { showSuccessMessage } = useNotifications();
-
-import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 const { handleApiError } = useApiErrorHandler();
 
 const props = defineProps<{
@@ -24,13 +24,13 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const ballotStore = useBallotStore();
+const { computerCode } = useComputerCode(props.electionGuid);
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
 
 const form = reactive({
   locationGuid: "",
-  computerCode: "A",
 });
 
 const locations = ref([
@@ -47,18 +47,15 @@ const rules = reactive<FormRules>({
       trigger: "change",
     },
   ],
-  computerCode: [
-    { required: true, message: t("ballots.computerRequired"), trigger: "blur" },
-    {
-      pattern: /^[A-Z]{1,2}$/,
-      message: "Computer code must be 1-2 uppercase letters",
-      trigger: "blur",
-    },
-  ],
 });
 
 async function handleSubmit() {
   if (!formRef.value) {
+    return;
+  }
+
+  if (!computerCode.value) {
+    handleApiError(new Error(t("ballots.computerCodeRequired")));
     return;
   }
 
@@ -69,7 +66,7 @@ async function handleSubmit() {
         const dto: CreateBallotDto = {
           electionGuid: props.electionGuid,
           locationGuid: form.locationGuid,
-          computerCode: form.computerCode,
+          computerCode: computerCode.value,
           ...getActiveTellerPayload(),
           statusCode: "Ok",
         };
@@ -117,8 +114,14 @@ function handleClose() {
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="$t('ballots.computer')" prop="computerCode">
-        <el-input v-model="form.computerCode" />
+      <el-form-item :label="$t('ballots.computer')">
+        <span class="assigned-computer-code">
+          {{
+            computerCode
+              ? $t("ballots.computerCodeShort", { code: computerCode })
+              : $t("ballots.computerCodeUnset")
+          }}
+        </span>
       </el-form-item>
     </el-form>
 
@@ -130,3 +133,10 @@ function handleClose() {
     </template>
   </el-dialog>
 </template>
+
+<style lang="less">
+.assigned-computer-code {
+  font-weight: var(--font-weight-medium, 500);
+  letter-spacing: 0.04em;
+}
+</style>

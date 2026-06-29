@@ -166,6 +166,7 @@
   "elections.tabs.results": "Results",
   "elections.tabs.tellers": "Tellers",
   "elections.tabs.votingMethods": "Voting Methods",
+  "elections.guestTellerAccess": "Guest tellers",
   "elections.tellerAccess": "Teller Access",
   "elections.tellerAccessClosed": "Teller access is closed",
   "elections.tellerAccessCode": "Access Code",

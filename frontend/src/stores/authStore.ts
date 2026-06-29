@@ -12,6 +12,11 @@ import { secureTokenService } from "../services/secureTokenService";
 import { tokenRefreshService } from "../services/tokenRefreshService";
 import type { TelegramLoginRequest } from "../types";
 import { clearActiveTellers } from "@/utils/activeTellerStorage";
+import {
+  getActiveElectionHubGuid,
+  setActiveElectionHubGuid,
+} from "@/utils/activeElectionHubStorage";
+import { signalrService } from "@/services/signalrService";
 import { SELECTED_LOCATION_KEY } from "./locationStore";
 
 function clearClientSessionSelections() {
@@ -310,7 +315,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  async function logout() {
+  async function logout(redirectPath = "/") {
     // Stop automatic token refresh
     tokenRefreshService.stopAutoRefresh();
 
@@ -327,13 +332,23 @@ export const useAuthStore = defineStore("auth", () => {
 
     clearClientSessionSelections();
 
+    const activeElectionHubGuid = getActiveElectionHubGuid();
+    if (activeElectionHubGuid) {
+      try {
+        await signalrService.leaveElection(activeElectionHubGuid);
+      } catch {
+        // Best-effort hub cleanup before redirect.
+      }
+      setActiveElectionHubGuid(null);
+    }
+
     try {
       await authService.logout();
     } catch {
       // Even if logout API call fails, we have already cleared client state and cookies
     }
 
-    globalThis.location.href = "/";
+    globalThis.location.href = redirectPath;
   }
 
   return {

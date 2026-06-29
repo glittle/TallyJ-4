@@ -37,13 +37,6 @@ public interface IComputerService
     Task<ComputerDto?> GetComputerByCodeAsync(Guid electionGuid, string computerCode);
 
     /// <summary>
-    /// Registers a new computer for online voting.
-    /// </summary>
-    /// <param name="dto">The computer registration data.</param>
-    /// <returns>The registered computer DTO.</returns>
-    Task<ComputerDto> RegisterComputerAsync(RegisterComputerDto dto);
-
-    /// <summary>
     /// Updates an existing computer's information.
     /// </summary>
     /// <param name="computerGuid">The unique identifier of the computer to update.</param>

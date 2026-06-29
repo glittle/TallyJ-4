@@ -175,7 +175,7 @@ public class ElectionsController : ControllerBase
     /// <param name="dto">The toggle request containing the desired open/closed state.</param>
     /// <returns>The updated election information.</returns>
     [HttpPut("{guid}/teller-access")]
-    [Authorize(Policy = "ElectionAccess")]
+    [Authorize(Policy = "FullTellerAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> ToggleTellerAccess(Guid guid, ToggleTellerAccessDto dto)
     {
         var election = await _electionService.ToggleTellerAccessAsync(guid, dto.IsOpen);

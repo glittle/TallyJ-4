@@ -30,6 +30,7 @@ export function useNotifications() {
       type,
       duration,
       showClose,
+      grouping: true, // Group messages to avoid clutter
     });
   };
 

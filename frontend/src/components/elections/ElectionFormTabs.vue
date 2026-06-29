@@ -42,7 +42,6 @@ const tabFields: Record<string, string[]> = {
   ],
   "display-privacy": [
     "showFullReport",
-    "listForPublic",
     "showAsTest",
     "hidePreBallotPages",
     "maskVotingMethod",
@@ -328,10 +327,6 @@ function tabLabel(tab: string, label: string) {
     >
       <el-form-item :label="$t('elections.form.showFullReport')">
         <el-switch v-model="model.showFullReport" />
-      </el-form-item>
-
-      <el-form-item :label="$t('elections.form.listForPublic')">
-        <el-switch v-model="model.listForPublic" />
       </el-form-item>
 
       <el-form-item :label="$t('elections.form.showAsTest')">

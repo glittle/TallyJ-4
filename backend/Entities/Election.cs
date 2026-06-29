@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Entities;
@@ -62,7 +63,11 @@ public partial class Election
     [Column("_RowVersion")]
     public byte[] RowVersion { get; set; } = null!;
 
-    public bool? ListForPublic { get; set; }
+    /// <summary>
+    /// Derived from <see cref="ListedForPublicAsOf"/>; not persisted (legacy column removed).
+    /// </summary>
+    [NotMapped]
+    public bool ListForPublic => ElectionTellerAccessHelper.IsGuestTellerAccessOpen(ListedForPublicAsOf);
 
     public bool? ShowAsTest { get; set; }
 

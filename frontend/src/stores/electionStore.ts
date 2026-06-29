@@ -1,7 +1,9 @@
+import { isGuestTeller } from "@/domain/guestTellerAccess";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { electionService } from "../services/electionService";
 import { signalrService } from "../services/signalrService";
+import { useAuthStore } from "./authStore";
 
 import { ElMessage } from "element-plus";
 import type {
@@ -10,7 +12,12 @@ import type {
   UpdateElectionDto,
 } from "../types";
 import type { ElectionUpdateEvent } from "../types/SignalREvents";
+import { setComputerCode } from "../utils/computerCodeStorage";
 import { extractApiErrorMessage } from "../utils/errorHandler";
+import {
+  getActiveElectionHubGuid,
+  setActiveElectionHubGuid,
+} from "../utils/activeElectionHubStorage";
 import { type ElectionStage } from "../domain/electionStages";
 
 export const useElectionStore = defineStore("election", () => {
@@ -161,7 +168,13 @@ export const useElectionStore = defineStore("election", () => {
         }
       });
 
-      connection.on("electionClosed", (electionGuid: string) => {
+      connection.on("electionClosed", () => {
+        if (isGuestTeller()) {
+          void handleGuestTellerClosedOut();
+          return;
+        }
+
+        const electionGuid = currentElection.value?.electionGuid ?? "";
         const updateEvent: ElectionUpdateEvent = {
           electionGuid,
           updatedAt: new Date().toISOString(),
@@ -173,6 +186,11 @@ export const useElectionStore = defineStore("election", () => {
     } catch (e) {
       console.error("Failed to initialize SignalR for election store:", e);
     }
+  }
+
+  async function handleGuestTellerClosedOut() {
+    const authStore = useAuthStore();
+    await authStore.logout("/teller-join?electionClosed=1");
   }
 
   function handleElectionUpdate(data: ElectionUpdateEvent) {
@@ -231,7 +249,10 @@ export const useElectionStore = defineStore("election", () => {
 
   async function joinElection(electionGuid: string) {
     try {
-      await signalrService.joinElection(electionGuid);
+      const assignedCode = await signalrService.joinElection(electionGuid);
+      if (assignedCode) {
+        setComputerCode(electionGuid, assignedCode);
+      }
     } catch (e) {
       console.error("Failed to join election group:", e);
     }
@@ -243,6 +264,37 @@ export const useElectionStore = defineStore("election", () => {
     } catch (e) {
       console.error("Failed to leave election group:", e);
     }
+  }
+
+  async function setActiveElectionHub(electionGuid: string) {
+    const previousGuid = getActiveElectionHubGuid();
+    if (previousGuid && previousGuid !== electionGuid) {
+      await leaveElection(previousGuid);
+    }
+
+    setActiveElectionHubGuid(electionGuid);
+    await initializeSignalR();
+    await joinElection(electionGuid);
+  }
+
+  async function ensureActiveElectionHubConnection() {
+    const electionGuid = getActiveElectionHubGuid();
+    if (!electionGuid) {
+      return;
+    }
+
+    await initializeSignalR();
+    await joinElection(electionGuid);
+  }
+
+  async function clearActiveElectionHubConnection() {
+    const electionGuid = getActiveElectionHubGuid();
+    if (!electionGuid) {
+      return;
+    }
+
+    setActiveElectionHubGuid(null);
+    await leaveElection(electionGuid);
   }
 
   async function setStage(electionGuid: string, stage: ElectionStage) {
@@ -318,6 +370,9 @@ export const useElectionStore = defineStore("election", () => {
     initializeSignalR,
     joinElection,
     leaveElection,
+    setActiveElectionHub,
+    ensureActiveElectionHubConnection,
+    clearActiveElectionHubConnection,
     setStage,
     toggleTellerAccess,
   };

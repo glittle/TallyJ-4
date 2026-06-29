@@ -409,8 +409,12 @@ export const useBallotStore = defineStore("ballot", () => {
 
   function handleBallotUpdated(data: BallotUpdateEvent) {
     const patch: Partial<BallotSummaryDto> = {};
-    if (data.statusCode !== undefined) patch.statusCode = data.statusCode;
-    if (data.voteCount !== undefined) patch.voteCount = data.voteCount;
+    if (data.statusCode !== undefined) {
+      patch.statusCode = data.statusCode;
+    }
+    if (data.voteCount !== undefined) {
+      patch.voteCount = data.voteCount;
+    }
     patchBallotSummaryByGuid(data.ballotGuid, patch);
 
     if (currentBallot.value?.ballotGuid === data.ballotGuid) {

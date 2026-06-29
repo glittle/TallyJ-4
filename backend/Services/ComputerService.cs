@@ -1,6 +1,6 @@
 using Backend.Context;
-using Backend.Entities;
 using Backend.DTOs.Computers;
+using Backend.Entities;
 using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,38 +77,6 @@ public class ComputerService : IComputerService
     }
 
     /// <inheritdoc />
-    public async Task<ComputerDto> RegisterComputerAsync(RegisterComputerDto dto)
-    {
-        _logger.LogInformation("Registering computer for location {LocationGuid}", dto.LocationGuid);
-
-        var computerCode = dto.ComputerCode;
-        if (string.IsNullOrWhiteSpace(computerCode))
-        {
-            computerCode = await GenerateComputerCodeAsync(dto.ElectionGuid);
-        }
-
-        var existingComputer = await GetComputerByCodeAsync(dto.ElectionGuid, computerCode);
-        if (existingComputer != null)
-        {
-            throw new InvalidOperationException($"Computer code '{computerCode}' is already in use for this election");
-        }
-
-        var computer = dto.CopyMatchingPropertiesToNew<Computer>();
-        computer.ComputerGuid = Guid.NewGuid();
-        computer.ComputerCode = computerCode;
-        computer.IsActive = true;
-
-        _context.Computers.Add(computer);
-        await _context.SaveChangesAsync();
-
-        var computerDto = computer.CopyMatchingPropertiesToNew<ComputerDto>();
-
-        _logger.LogInformation("Successfully registered computer {ComputerCode} ({ComputerGuid})", computerCode, computer.ComputerGuid);
-
-        return computerDto;
-    }
-
-    /// <inheritdoc />
     public async Task<ComputerDto?> UpdateComputerAsync(Guid computerGuid, UpdateComputerDto dto)
     {
         _logger.LogInformation("Updating computer {ComputerGuid}", computerGuid);
@@ -182,17 +150,12 @@ public class ComputerService : IComputerService
             .Select(c => c.ComputerCode)
             .ToListAsync();
 
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-        for (int i = 0; i < chars.Length; i++)
+        for (var index = 0; index <= ComputerCodeHelper.CodeToIndex("ZZ"); index++)
         {
-            for (int j = 0; j < chars.Length; j++)
+            var code = ComputerCodeHelper.IndexToCode(index);
+            if (!existingCodes.Contains(code))
             {
-                var code = $"{chars[i]}{chars[j]}";
-                if (!existingCodes.Contains(code))
-                {
-                    return code;
-                }
+                return code;
             }
         }
 

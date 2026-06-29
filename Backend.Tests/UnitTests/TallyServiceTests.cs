@@ -13,12 +13,17 @@ public class TallyServiceTests : ServiceTestBase
     private readonly TallyService _service;
     private readonly Mock<ILogger<TallyService>> _loggerMock;
     private readonly Mock<ISignalRNotificationService> _signalRMock;
+    private readonly Mock<IComputerAssignmentService> _computerAssignmentMock;
     private readonly Mock<IStringLocalizer<TallyService>> _localizerMock;
 
     public TallyServiceTests()
     {
         _loggerMock = new Mock<ILogger<TallyService>>();
         _signalRMock = new Mock<ISignalRNotificationService>();
+        _computerAssignmentMock = new Mock<IComputerAssignmentService>();
+        _computerAssignmentMock
+            .Setup(s => s.GetActiveComputers(It.IsAny<Guid>()))
+            .Returns(Array.Empty<Backend.DTOs.Computers.ActiveComputerDto>());
         _localizerMock = new Mock<IStringLocalizer<TallyService>>();
         
         // Setup localizer to return section codes
@@ -26,7 +31,12 @@ public class TallyServiceTests : ServiceTestBase
         _localizerMock.Setup(l => l["tally.section.extra"]).Returns(new LocalizedString("tally.section.extra", "X"));
         _localizerMock.Setup(l => l["tally.section.other"]).Returns(new LocalizedString("tally.section.other", "O"));
         
-        _service = new TallyService(Context, _loggerMock.Object, _signalRMock.Object, _localizerMock.Object);
+        _service = new TallyService(
+            Context,
+            _loggerMock.Object,
+            _signalRMock.Object,
+            _computerAssignmentMock.Object,
+            _localizerMock.Object);
     }
 
     [Fact]

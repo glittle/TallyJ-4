@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onUnmounted } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import AppHeader from "../components/AppHeader.vue";
 import AppSidebar from "../components/AppSidebar.vue";
@@ -11,26 +11,22 @@ const electionStore = useElectionStore();
 
 const isFrontDeskLayout = computed(() => route.path.includes("/frontdesk"));
 
-let previousElectionGuid: string | undefined;
-
 watch(
   () => route.params.id as string | undefined,
-  async (newId, oldId) => {
-    if (oldId && oldId !== newId) {
-      await electionStore.leaveElection(oldId);
-    }
+  async (newId) => {
     if (newId) {
-      await electionStore.initializeSignalR();
-      await electionStore.joinElection(newId);
+      await electionStore.setActiveElectionHub(newId);
+      return;
     }
-    previousElectionGuid = newId;
+
+    await electionStore.ensureActiveElectionHubConnection();
   },
   { immediate: true },
 );
 
-onUnmounted(async () => {
-  if (previousElectionGuid) {
-    await electionStore.leaveElection(previousElectionGuid);
+onMounted(async () => {
+  if (!route.params.id) {
+    await electionStore.ensureActiveElectionHubConnection();
   }
 });
 
