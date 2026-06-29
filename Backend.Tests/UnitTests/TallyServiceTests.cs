@@ -1257,6 +1257,106 @@ public class TallyServiceTests : ServiceTestBase
 
         await Context.SaveChangesAsync();
     }
+
+    [Fact]
+    public async Task GetMonitorInfoAsync_DerivesLocationAndBallotCountFromLatestBallotPerComputer()
+    {
+        var election = await CreateTestElectionAsync();
+        var locationA = new Location
+        {
+            ElectionGuid = election.ElectionGuid,
+            LocationGuid = Guid.NewGuid(),
+            Name = "Hall A",
+        };
+        var locationB = new Location
+        {
+            ElectionGuid = election.ElectionGuid,
+            LocationGuid = Guid.NewGuid(),
+            Name = "Hall B",
+        };
+        Context.Locations.AddRange(locationA, locationB);
+        await Context.SaveChangesAsync();
+
+        var olderBallot = new Ballot
+        {
+            LocationGuid = locationA.LocationGuid,
+            BallotGuid = Guid.NewGuid(),
+            StatusCode = BallotStatus.Ok,
+            ComputerCode = "A",
+            BallotNumAtComputer = 1,
+            DateCreated = DateTimeOffset.UtcNow.AddHours(-2),
+            RowVersion = new byte[8],
+        };
+        var newerBallot = new Ballot
+        {
+            LocationGuid = locationB.LocationGuid,
+            BallotGuid = Guid.NewGuid(),
+            StatusCode = BallotStatus.Ok,
+            ComputerCode = "A",
+            BallotNumAtComputer = 2,
+            DateCreated = DateTimeOffset.UtcNow.AddMinutes(-10),
+            RowVersion = new byte[8],
+        };
+        Context.Ballots.AddRange(olderBallot, newerBallot);
+        await Context.SaveChangesAsync();
+
+        var connectedAt = DateTimeOffset.UtcNow.AddMinutes(-1);
+        _computerAssignmentMock
+            .Setup(s => s.GetActiveComputers(election.ElectionGuid))
+            .Returns(new[]
+            {
+                new Backend.DTOs.Computers.ActiveComputerDto
+                {
+                    ComputerCode = "A",
+                    ConnectedAt = connectedAt,
+                },
+            });
+
+        var result = await _service.GetMonitorInfoAsync(election.ElectionGuid);
+
+        Assert.Single(result.Computers);
+        var computer = result.Computers[0];
+        Assert.Equal("A", computer.ComputerCode);
+        Assert.Equal("Hall B", computer.LocationName);
+        Assert.Equal(2, computer.BallotCount);
+        Assert.Equal(connectedAt, computer.LastContact);
+        Assert.Equal("Active", computer.Status);
+    }
+
+    [Fact]
+    public async Task GetMonitorInfoAsync_UsesAssignedLocationWhenComputerHasNoBallots()
+    {
+        var election = await CreateTestElectionAsync();
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        location.Name = "Assigned Hall";
+        await Context.SaveChangesAsync();
+        Context.Computers.Add(new Computer
+        {
+            ElectionGuid = election.ElectionGuid,
+            LocationGuid = location.LocationGuid,
+            ComputerGuid = Guid.NewGuid(),
+            ComputerCode = "B",
+        });
+        await Context.SaveChangesAsync();
+
+        _computerAssignmentMock
+            .Setup(s => s.GetActiveComputers(election.ElectionGuid))
+            .Returns(new[]
+            {
+                new Backend.DTOs.Computers.ActiveComputerDto
+                {
+                    ComputerCode = "B",
+                    ConnectedAt = DateTimeOffset.UtcNow.AddMinutes(-10),
+                },
+            });
+
+        var result = await _service.GetMonitorInfoAsync(election.ElectionGuid);
+
+        Assert.Single(result.Computers);
+        Assert.Equal("Assigned Hall", result.Computers[0].LocationName);
+        Assert.Equal(0, result.Computers[0].BallotCount);
+        Assert.Equal("Inactive", result.Computers[0].Status);
+    }
 }
 
 

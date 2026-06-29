@@ -11,6 +11,7 @@ import {
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
 import { getBallotStatusLabel } from "@/utils/ballotStatusLabel";
+import type { ComputerDto } from "@/types/Computer";
 import type { BallotSummaryDto } from "@/utils/ballotSummary";
 import {
   computerFilterValue,
@@ -44,7 +45,7 @@ const activeTellers = ref<ActiveTellers>(getActiveTellers());
 const selectedViewFilter = ref(
   defaultBallotViewFilter("", locationStore.selectedLocationGuid),
 );
-const computersByLocation = ref<Record<string, never>>({});
+const computersByLocation = ref<Record<string, ComputerDto[]>>({});
 
 const hasKeyboardTeller = computed(() =>
   Boolean(activeTellers.value.teller1.trim()),

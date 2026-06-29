@@ -301,21 +301,52 @@ public class TallyService : ITallyService
             throw new ArgumentException($"Election {electionGuid} not found");
         }
 
-        var ballotCountsByCode = await _context.Ballots
-            .Include(b => b.Location)
+        var ballotRows = await _context.Ballots
+            .AsNoTracking()
             .Where(b => b.Location.ElectionGuid == electionGuid && b.ComputerCode != null)
+            .Select(b => new
+            {
+                b.ComputerCode,
+                b.DateUpdated,
+                b.DateCreated,
+                LocationName = b.Location.Name,
+            })
+            .ToListAsync();
+
+        var ballotStatsByCode = ballotRows
             .GroupBy(b => b.ComputerCode!)
-            .Select(g => new { ComputerCode = g.Key, Count = g.Count() })
-            .ToDictionaryAsync(x => x.ComputerCode, x => x.Count);
+            .ToDictionary(
+                g => g.Key,
+                g =>
+                {
+                    var latest = g
+                        .OrderByDescending(b => b.DateUpdated ?? b.DateCreated ?? DateTimeOffset.MinValue)
+                        .First();
+                    return (Count: g.Count(), LastKnownLocationName: latest.LocationName ?? UnknownLocationName);
+                });
+
+        var assignedLocationsByCode = await _context.Computers
+            .AsNoTracking()
+            .Where(c => c.ElectionGuid == electionGuid)
+            .Select(c => new { c.ComputerCode, LocationName = c.Location.Name })
+            .ToDictionaryAsync(c => c.ComputerCode, c => c.LocationName ?? UnknownLocationName);
 
         var computers = _computerAssignmentService.GetActiveComputers(electionGuid)
-            .Select(active => new ComputerInfoDto
+            .Select(active =>
             {
-                ComputerCode = active.ComputerCode,
-                LocationName = string.Empty,
-                BallotCount = ballotCountsByCode.GetValueOrDefault(active.ComputerCode, 0),
-                LastContact = active.ConnectedAt,
-                Status = "Active",
+                var hasBallotStats = ballotStatsByCode.TryGetValue(active.ComputerCode, out var stats);
+                var locationName = hasBallotStats
+                    ? stats.LastKnownLocationName
+                    : assignedLocationsByCode.GetValueOrDefault(active.ComputerCode, string.Empty);
+
+                return new ComputerInfoDto
+                {
+                    ComputerCode = active.ComputerCode,
+                    LocationName = locationName,
+                    BallotCount = hasBallotStats ? stats.Count : 0,
+                    LastContact = active.ConnectedAt,
+                    Status = DetermineComputerStatus(active.ConnectedAt),
+                };
             })
             .ToList();
 
