@@ -182,6 +182,34 @@ describe("useBallotStore deleteVote", () => {
     expect(store.currentBallot?.votes).toHaveLength(2);
   });
 
+  it("adopts authoritative votes from updateBallot response", async () => {
+    const store = useBallotStore();
+    const staleVotes = [createVote(1, 1, "Alice"), createVote(2, 2, "Bob")];
+    store.currentBallot = createBallot(staleVotes);
+    store.ballots = [toBallotSummary(store.currentBallot)];
+
+    const authoritativeVotes = [
+      createVote(1, 1, "Alice"),
+      { ...createVote(3, 2, "Carol"), statusCode: "ok" },
+    ];
+    const updatedBallot = {
+      ...createBallot(authoritativeVotes),
+      statusCode: "Ok",
+    };
+
+    vi.mocked(ballotService.update).mockResolvedValue(updatedBallot);
+
+    await store.updateBallot("ballot-1", { ballotCode: "A2" });
+
+    expect(store.currentBallot?.votes).toHaveLength(2);
+    expect(
+      store.currentBallot?.votes.map((vote) => vote.personFullName),
+    ).toEqual(["Alice", "Carol"]);
+    expect(store.currentBallot?.votes[1].positionOnBallot).toBe(2);
+    expect(store.currentBallot?.statusCode).toBe("Ok");
+    expect(store.ballots[0].voteCount).toBe(2);
+  });
+
   it("does not let a stale fetchBallotById overwrite a newer delete mutation", async () => {
     const store = useBallotStore();
     const initialVotes = [createVote(1, 1, "Alice"), createVote(2, 2, "Bob")];

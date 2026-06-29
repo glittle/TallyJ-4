@@ -165,10 +165,7 @@ export const useBallotStore = defineStore("ballot", () => {
       upsertBallotSummary(summaryFromFullBallot(ballot));
 
       if (currentBallot.value?.ballotGuid === ballotGuid) {
-        currentBallot.value = {
-          ...ballot,
-          votes: currentBallot.value.votes,
-        };
+        currentBallot.value = ballot;
       }
 
       return ballot;
