@@ -1,6 +1,7 @@
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Context;
+using Backend.Helpers;
 using Backend.DTOs.Import;
 using Backend.DTOs.Elections;
 using Backend.Models;
@@ -77,7 +78,6 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
             NumberExtra = ParseInt(electionNode.GetAttribute("NumberExtra")),
             ElectionPasscode = electionNode.GetAttribute("ElectionPasscode"),
             LastEnvNum = ParseInt(electionNode.GetAttribute("LastEnvNum")),
-            ListForPublic = ParseBool(electionNode.GetAttribute("ListForPublic")),
             ShowFullReport = ParseBool(electionNode.GetAttribute("ShowFullReport")),
             OnlineWhenOpen = ParseDateTime(electionNode.GetAttribute("OnlineWhenOpen")),
             OnlineWhenClose = ParseDateTime(electionNode.GetAttribute("OnlineWhenClose")),
@@ -93,6 +93,11 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
             Flags = electionNode.GetAttribute("Flags"),
             RowVersion = new byte[8]
         };
+
+        ElectionTellerAccessHelper.ApplyImportedGuestAccess(
+            election,
+            ParseBool(electionNode.GetAttribute("ListForPublic")),
+            ParseDateTime(electionNode.GetAttribute("ListedForPublicAsOf")));
 
         return (election, guidMap);
     }

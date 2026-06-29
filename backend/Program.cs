@@ -328,6 +328,7 @@ void RegisterApplicationServices(IServiceCollection services)
     services.AddScoped<IElectionService, ElectionService>();
     services.AddScoped<ILocationService, LocationService>();
     services.AddScoped<IComputerService, ComputerService>();
+    services.AddSingleton<IComputerAssignmentService, ComputerAssignmentService>();
     services.AddScoped<ITellerService, TellerService>();
     services.AddScoped<IPeopleService, PeopleService>();
     services.AddScoped<IBallotService, BallotService>();

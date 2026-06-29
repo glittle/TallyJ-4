@@ -15,12 +15,6 @@ vi.mock("vue-router", () => ({
   }),
 }));
 
-vi.mock("@/services/computerService", () => ({
-  computerService: {
-    getByLocation: vi.fn().mockResolvedValue([]),
-  },
-}));
-
 vi.mock("@/components/ballots/BallotEntryPanel.vue", () => ({
   default: {
     name: "BallotEntryPanel",
@@ -160,7 +154,7 @@ describe("BallotManagementPage", () => {
 
   beforeEach(() => {
     localStorage.clear();
-    setComputerCode("AA");
+    setComputerCode("test-election-guid", "AA");
     setActivePinia(createPinia());
     ballotStore = useBallotStore();
     locationStore = useLocationStore();

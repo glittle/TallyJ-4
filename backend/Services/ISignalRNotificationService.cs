@@ -37,7 +37,15 @@ public interface ISignalRNotificationService
     /// <summary>
     /// Sends an update notification for the public election list.
     /// </summary>
-    Task SendPublicElectionListUpdateAsync();
+    /// <param name="electionGuid">Optional election whose guest-access state changed.</param>
+    /// <param name="guestAccessOpen">When set with <paramref name="electionGuid"/>, indicates whether guest tellers may join.</param>
+    Task SendPublicElectionListUpdateAsync(Guid? electionGuid = null, bool? guestAccessOpen = null);
+
+    /// <summary>
+    /// Notifies connected guest tellers that they must leave the election immediately.
+    /// </summary>
+    /// <param name="electionGuid">The election where guest tellers should be closed out.</param>
+    Task CloseOutGuestTellersAsync(Guid electionGuid);
 
     /// <summary>
     /// Sends monitor information updates to monitoring clients.

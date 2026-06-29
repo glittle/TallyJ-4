@@ -1,12 +1,9 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { computerService } from "../services/computerService";
 import { locationService } from "../services/locationService";
 import type {
-  ComputerDto,
   CreateLocationDto,
   LocationDto,
-  RegisterComputerDto,
   UpdateLocationDto,
 } from "../types";
 
@@ -15,9 +12,7 @@ export const SELECTED_LOCATION_KEY = "tallyj_selected_location";
 export const useLocationStore = defineStore("location", () => {
   const locations = ref<LocationDto[]>([]);
   const currentLocation = ref<LocationDto | null>(null);
-  const computers = ref<ComputerDto[]>([]);
   const loading = ref(false);
-  const computersLoading = ref(false);
   const error = ref<string | null>(null);
   const pagination = ref({
     pageNumber: 1,
@@ -229,7 +224,6 @@ export const useLocationStore = defineStore("location", () => {
   function clearLocations() {
     locations.value = [];
     currentLocation.value = null;
-    computers.value = [];
     pagination.value = {
       pageNumber: 1,
       pageSize: 50,
@@ -238,71 +232,10 @@ export const useLocationStore = defineStore("location", () => {
     };
   }
 
-  async function fetchComputers(electionGuid: string, locationGuid: string) {
-    computersLoading.value = true;
-    error.value = null;
-    try {
-      computers.value = await computerService.getByLocation(
-        electionGuid,
-        locationGuid,
-      );
-    } catch (e: any) {
-      error.value = e.message || "Failed to fetch computers";
-      throw e;
-    } finally {
-      computersLoading.value = false;
-    }
-  }
-
-  async function registerComputer(
-    electionGuid: string,
-    locationGuid: string,
-    dto: RegisterComputerDto,
-  ) {
-    computersLoading.value = true;
-    error.value = null;
-    try {
-      const computer = await computerService.register(
-        electionGuid,
-        locationGuid,
-        dto,
-      );
-      computers.value.push(computer);
-      return computer;
-    } catch (e: any) {
-      error.value = e.message || "Failed to register computer";
-      throw e;
-    } finally {
-      computersLoading.value = false;
-    }
-  }
-
-  async function deleteComputer(
-    electionGuid: string,
-    locationGuid: string,
-    computerGuid: string,
-  ) {
-    computersLoading.value = true;
-    error.value = null;
-    try {
-      await computerService.delete(electionGuid, locationGuid, computerGuid);
-      computers.value = computers.value.filter(
-        (c) => c.computerGuid !== computerGuid,
-      );
-    } catch (e: any) {
-      error.value = e.message || "Failed to delete computer";
-      throw e;
-    } finally {
-      computersLoading.value = false;
-    }
-  }
-
   return {
     locations,
     currentLocation,
-    computers,
     loading,
-    computersLoading,
     error,
     pagination,
     sortedLocations,
@@ -317,8 +250,5 @@ export const useLocationStore = defineStore("location", () => {
     clearSelectedLocation,
     clearError,
     clearLocations,
-    fetchComputers,
-    registerComputer,
-    deleteComputer,
   };
 });

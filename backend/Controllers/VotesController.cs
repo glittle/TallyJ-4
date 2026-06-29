@@ -81,7 +81,12 @@ public class VotesController : ControllerBase
         try
         {
             var result = await _voteService.CreateVoteAsync(createDto);
-            return CreatedAtAction(nameof(GetVote), new { id = result.Vote.RowId }, ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result));
+            var createdVote = result.Vote
+                ?? throw new InvalidOperationException("Created vote was not returned in the response.");
+            return CreatedAtAction(
+                nameof(GetVote),
+                new { id = createdVote.RowId },
+                ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result));
         }
         catch (InvalidOperationException ex)
         {

@@ -9,6 +9,7 @@ import { getApiPublicElections } from "@/api/gen/configService";
 import { getGuestTellerRedirectPath } from "@/domain/guestTellerAccess";
 import type { ElectionStage } from "@/domain/electionStages";
 import { electionService } from "../services/electionService";
+import { signalrService } from "../services/signalrService";
 import { useAuthStore } from "../stores/authStore";
 
 interface AvailableElection {
@@ -52,15 +53,72 @@ const rules: FormRules = {
   ],
 };
 
+function normalizeGuid(guid: string): string {
+  return guid.toLowerCase();
+}
+
+function removeElectionFromList(electionGuid: string) {
+  const normalized = normalizeGuid(electionGuid);
+  elections.value = elections.value.filter(
+    (e) => normalizeGuid(e.electionGuid) !== normalized,
+  );
+
+  if (
+    joinForm.electionGuid &&
+    normalizeGuid(joinForm.electionGuid) === normalized
+  ) {
+    joinForm.electionGuid = "";
+  }
+}
+
 async function fetchAvailableElections() {
   loadingElections.value = true;
   try {
     const response = await getApiPublicElections();
+    const previousSelection = joinForm.electionGuid;
     elections.value = (response.data?.data ?? []) as AvailableElection[];
+
+    if (
+      previousSelection &&
+      !elections.value.some(
+        (e) => normalizeGuid(e.electionGuid) === normalizeGuid(previousSelection),
+      )
+    ) {
+      joinForm.electionGuid = "";
+    }
+
+    selectIfSingleElection();
   } catch (error) {
     console.error("Failed to fetch elections:", error);
   } finally {
     loadingElections.value = false;
+  }
+}
+
+async function setupPublicHub() {
+  try {
+    const connection = await signalrService.connectToPublicHub();
+    await signalrService.joinPublicGroup();
+    connection.on(
+      "ElectionListUpdated",
+      (electionGuid?: string, guestAccessOpen?: boolean) => {
+        if (electionGuid && guestAccessOpen === false) {
+          removeElectionFromList(electionGuid);
+        }
+        void fetchAvailableElections();
+      },
+    );
+  } catch (error) {
+    console.error("Failed to connect to public hub for teller join:", error);
+  }
+}
+
+async function cleanupPublicHub() {
+  try {
+    await signalrService.leavePublicGroup();
+    await signalrService.disconnect("/hubs/public");
+  } catch (error) {
+    console.error("Failed to disconnect public hub:", error);
   }
 }
 
@@ -123,6 +181,11 @@ const selectIfSingleElection = () => {
 };
 
 onMounted(async () => {
+  if (route.query.electionClosed === "1") {
+    showSuccessMessage(t("auth.tellerJoin.electionClosed"));
+    void router.replace({ query: {} });
+  }
+
   const electionGuid = route.params.electionGuid as string;
 
   if (electionGuid) {
@@ -134,9 +197,7 @@ onMounted(async () => {
     }
   }
 
-  await fetchAvailableElections();
-
-  selectIfSingleElection();
+  await Promise.all([fetchAvailableElections(), setupPublicHub()]);
 
   if (prefilledFromUrl.value) {
     // if we prefilled the form from the URL, immediately try to join
@@ -149,6 +210,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   globalThis.removeEventListener("keydown", handleKeydown);
+  void cleanupPublicHub();
 });
 </script>
 

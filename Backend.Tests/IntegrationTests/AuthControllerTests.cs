@@ -541,6 +541,9 @@ public class AuthControllerTests : IntegrationTestBase
             await context.SaveChangesAsync();
         }
 
+        var assignmentService = Factory.Services.GetRequiredService<Backend.Services.IComputerAssignmentService>();
+        assignmentService.AssignCode(electionGuid, "main-client", "main-conn", isMainTeller: true);
+
         var tellerLoginRequest = new TellerLoginRequest
         {
             ElectionGuid = electionGuid,
@@ -625,6 +628,51 @@ public class AuthControllerTests : IntegrationTestBase
         var response = await Client.PostAsync("/api/auth/teller-login", content);
 
         // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task TellerLogin_WithoutActiveMainTeller_ReturnsBadRequest()
+    {
+        var electionGuid = Guid.NewGuid();
+        var accessCode = "TestCode";
+        var testDate = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<Backend.Context.MainDbContext>();
+            var election = new Backend.Entities.Election
+            {
+                ElectionGuid = electionGuid,
+                Name = "No Main Teller Election",
+                ElectionType = Backend.Enumerations.ElectionTypeEnum.LSA.Code,
+                ElectionMode = Backend.Enumerations.ElectionModeEnum.Normal.Code,
+                NumberToElect = 9,
+                DateOfElection = testDate.AddDays(1),
+                ElectionStage = Backend.Enumerations.ElectionStage.SettingUp,
+                ElectionPasscode = accessCode,
+                ListedForPublicAsOf = testDate,
+                OwnerLoginId = "admin@tallyj.test",
+                ShowAsTest = true,
+                RowVersion = new byte[8]
+            };
+            context.Elections.Add(election);
+            await context.SaveChangesAsync();
+        }
+
+        var tellerLoginRequest = new TellerLoginRequest
+        {
+            ElectionGuid = electionGuid,
+            AccessCode = accessCode
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(tellerLoginRequest),
+            Encoding.UTF8,
+            "application/json");
+
+        var response = await Client.PostAsync("/api/auth/teller-login", content);
+
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 

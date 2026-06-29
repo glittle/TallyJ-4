@@ -10,7 +10,6 @@ import {
 import type { ComputerDto } from "@/types/Computer";
 import type { LocationDto } from "@/types/Location";
 import { computed } from "vue";
-import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
   modelValue: string;
@@ -22,8 +21,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   "update:modelValue": [value: string];
 }>();
-
-const { t } = useI18n();
 
 const filterGroups = computed<BallotViewFilterGroup[]>(() =>
   buildBallotViewFilterGroups(

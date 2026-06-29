@@ -1,10 +1,10 @@
 using System.Security.Claims;
 using Backend.Context;
+using Backend.Helpers;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.Elections;
 using Backend.DTOs.SignalR;
-using Backend.Helpers;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -86,7 +86,7 @@ public class ElectionService : IElectionService
             VoterCount = e.People.Count(p => p.CanVote == true),
             BallotCount = e.Locations.SelectMany(l => l.Ballots).Count(),
             ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType),
-            IsTellerAccessOpen = e.ListedForPublicAsOf != null,
+            IsTellerAccessOpen = ElectionTellerAccessHelper.IsGuestTellerAccessOpen(e.ListedForPublicAsOf),
             IsOnlineVotingEnabled = e.OnlineWhenOpen != null && e.OnlineWhenClose != null,
             ShowAsTest = e.ShowAsTest
         }).ToList();
@@ -117,9 +117,6 @@ public class ElectionService : IElectionService
         dto.BallotCount = election.Locations.SelectMany(l => l.Ballots).Count();
         dto.LocationCount = election.Locations.Count;
         dto.ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType);
-        dto.IsTellerAccessOpen = election.ListedForPublicAsOf != null;
-        dto.TellerAccessOpenedAt = election.ListedForPublicAsOf;
-
         return dto;
     }
 
@@ -171,7 +168,9 @@ public class ElectionService : IElectionService
             return null;
         }
 
+        var listForPublic = updateDto.ListForPublic;
         updateDto.CopyMatchingPropertiesTo(election, ignoreNulls: true);
+        ElectionTellerAccessHelper.ApplyListForPublicFlag(election, listForPublic);
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Updated election {ElectionGuid}", electionGuid);
@@ -318,6 +317,13 @@ public class ElectionService : IElectionService
 
         _logger.LogInformation("Toggled teller access for election {ElectionGuid} to {IsOpen}", electionGuid, isOpen);
 
+        await _signalRNotificationService.SendPublicElectionListUpdateAsync(electionGuid, isOpen);
+
+        if (!isOpen)
+        {
+            await _signalRNotificationService.CloseOutGuestTellersAsync(electionGuid);
+        }
+
         return await GetElectionByGuidAsync(electionGuid);
     }
 
@@ -329,19 +335,8 @@ public class ElectionService : IElectionService
     /// <returns>True if the listing status was updated successfully, false if the election was not found.</returns>
     public async Task<bool> UpdateElectionListingAsync(Guid electionGuid, bool isListed)
     {
-        var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
-
-        if (election == null)
-        {
-            return false;
-        }
-
-        election.ListForPublic = isListed;
-        await _context.SaveChangesAsync();
-
-        _logger.LogInformation("Updated election {ElectionGuid} listing to {IsListed}", electionGuid, isListed);
-
-        return true;
+        var updated = await ToggleTellerAccessAsync(electionGuid, isListed);
+        return updated != null;
     }
 
     // =====================================================================
@@ -358,8 +353,9 @@ public class ElectionService : IElectionService
         dto.ElectionMode = ElectionModeEnum.ParseCode(election.ElectionMode);
 
         // Derived/computed fields
-        dto.IsTellerAccessOpen = election.ListedForPublicAsOf != null;
+        dto.IsTellerAccessOpen = ElectionTellerAccessHelper.IsGuestTellerAccessOpen(election.ListedForPublicAsOf);
         dto.TellerAccessOpenedAt = election.ListedForPublicAsOf;
+        dto.ListForPublic = dto.IsTellerAccessOpen;
 
         // Note: VoterCount, BallotCount, and LocationCount are set by the caller
         // after loading the necessary navigation properties (kept explicit for clarity).
@@ -374,6 +370,7 @@ public class ElectionService : IElectionService
         // Enum conversions on create
         election.ElectionType = ElectionTypeEnum.ToCodeString(dto.ElectionType);
         election.ElectionMode = ElectionModeEnum.ToCodeString(dto.ElectionMode);
+        ElectionTellerAccessHelper.ApplyListForPublicFlag(election, dto.ListForPublic);
 
         return election;
     }

@@ -157,7 +157,7 @@ watch(
   gap: 10px;
 
   .teller-select {
-    width: 100px;
+    width: 150px;
   }
 
   .teller-icon {

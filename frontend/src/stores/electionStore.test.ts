@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 import { useElectionStore } from "./electionStore";
 import type { ElectionDto, CreateElectionDto } from "../types";
+import {
+  getActiveElectionHubGuid,
+  setActiveElectionHubGuid,
+} from "../utils/activeElectionHubStorage";
 
 // Mock the election service
 vi.mock("../services/electionService", () => ({
@@ -43,6 +47,7 @@ describe("Election Store", () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    setActiveElectionHubGuid(null);
   });
 
   describe("initial state", () => {
@@ -470,6 +475,44 @@ describe("Election Store", () => {
       expect(result).toEqual(updatedElection);
       expect(electionStore.currentElection).toEqual(updatedElection);
       expect(electionStore.elections[0]).toEqual(updatedElection);
+    });
+  });
+
+  describe("setActiveElectionHub", () => {
+    it("stores the election guid and joins the main hub", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      signalrService.connectToMainHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.joinElection.mockResolvedValue("A");
+
+      await electionStore.setActiveElectionHub("1");
+
+      expect(getActiveElectionHubGuid()).toBe("1");
+      expect(signalrService.joinElection).toHaveBeenCalledWith("1");
+    });
+
+    it("leaves the previous election before joining a new one", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      signalrService.connectToMainHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.joinElection.mockResolvedValue("A");
+      setActiveElectionHubGuid("1");
+
+      await electionStore.setActiveElectionHub("2");
+
+      expect(signalrService.leaveElection).toHaveBeenCalledWith("1");
+      expect(getActiveElectionHubGuid()).toBe("2");
+      expect(signalrService.joinElection).toHaveBeenCalledWith("2");
+    });
+  });
+
+  describe("clearActiveElectionHubConnection", () => {
+    it("leaves the hub and clears stored guid", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      setActiveElectionHubGuid("1");
+
+      await electionStore.clearActiveElectionHubConnection();
+
+      expect(getActiveElectionHubGuid()).toBeNull();
+      expect(signalrService.leaveElection).toHaveBeenCalledWith("1");
     });
   });
 });

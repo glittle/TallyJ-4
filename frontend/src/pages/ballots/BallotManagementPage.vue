@@ -4,14 +4,14 @@ import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue"
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useComputerCode } from "@/composables/useComputerCode";
 import { useNotifications } from "@/composables/useNotifications";
-import { computerService } from "@/services/computerService";
-import type { ComputerDto } from "@/types/Computer";
+
 import {
   getActiveTellerPayload,
   getActiveTellers,
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
 import { getBallotStatusLabel } from "@/utils/ballotStatusLabel";
+import type { ComputerDto } from "@/types/Computer";
 import type { BallotSummaryDto } from "@/utils/ballotSummary";
 import {
   computerFilterValue,
@@ -102,29 +102,6 @@ function onTellersChanged(tellers: ActiveTellers) {
   activeTellers.value = tellers;
 }
 
-async function loadComputersByLocation() {
-  if (locationStore.locations.length === 0) {
-    computersByLocation.value = {};
-    return;
-  }
-
-  const entries = await Promise.all(
-    locationStore.sortedLocations.map(async (location) => {
-      try {
-        const computers = await computerService.getByLocation(
-          electionGuid,
-          location.locationGuid,
-        );
-        return [location.locationGuid, computers] as const;
-      } catch {
-        return [location.locationGuid, []] as const;
-      }
-    }),
-  );
-
-  computersByLocation.value = Object.fromEntries(entries);
-}
-
 onMounted(async () => {
   refreshComputerCode();
   selectedViewFilter.value = defaultBallotViewFilter(
@@ -138,7 +115,6 @@ onMounted(async () => {
     await locationStore.fetchLocations(electionGuid);
     await Promise.all([
       ballotStore.fetchBallots(electionGuid),
-      loadComputersByLocation(),
       ballotStore.joinElection(electionGuid),
     ]);
   } catch (error) {
@@ -173,10 +149,7 @@ function handleDrawerClosed() {
 async function handleRefresh() {
   refreshing.value = true;
   try {
-    await Promise.all([
-      ballotStore.fetchBallots(electionGuid),
-      loadComputersByLocation(),
-    ]);
+    await ballotStore.fetchBallots(electionGuid);
   } catch (error) {
     showErrorMessage(t("ballots.loadError") + ": " + (error as Error).message);
   } finally {

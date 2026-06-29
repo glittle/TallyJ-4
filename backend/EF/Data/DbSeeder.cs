@@ -132,7 +132,6 @@ public static class DbSeeder
             OnlineCloseIsEstimate = true,
             VotingMethods = "IP,OL",
             OwnerLoginId = "admin@tallyj.test",
-            ListForPublic = false,
             ShowAsTest = true
         };
         context.Elections.Add(election);
@@ -357,7 +356,6 @@ public static class DbSeeder
             ShowFullReport = true,
             VotingMethods = "IP",
             OwnerLoginId = "admin@tallyj.test",
-            ListForPublic = false,
             ShowAsTest = true
         };
         context.Elections.Add(election);

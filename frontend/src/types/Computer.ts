@@ -10,16 +10,9 @@ export interface ComputerDto {
   isActive?: boolean;
 }
 
-export interface RegisterComputerDto {
-  electionGuid: string;
-  locationGuid: string;
-  computerCode?: string;
-  browserInfo?: string;
-  ipAddress?: string;
-}
-
-export interface UpdateComputerDto {
-  browserInfo?: string;
-  ipAddress?: string;
-  isActive?: boolean;
+export interface ActiveComputerDto {
+  computerCode: string;
+  clientId: string;
+  isMainTeller: boolean;
+  connectedAt: string;
 }

@@ -415,6 +415,63 @@ public class ElectionServiceTests : ServiceTestBase
         Assert.Equal(5, result.TotalCount);
         Assert.All(result.Items, e => Assert.Equal(ElectionStage.SettingUp, e.ElectionStage));
     }
+
+    [Fact]
+    public async Task ToggleTellerAccessAsync_broadcastsPublicElectionListUpdate()
+    {
+        var electionGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Guest Access Election",
+            ElectionType = ElectionTypeEnum.LSA.Code,
+            ElectionMode = ElectionModeEnum.Normal.Code,
+            NumberToElect = 3,
+            OwnerLoginId = "owner@test",
+            RowVersion = new byte[8],
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ToggleTellerAccessAsync(electionGuid, isOpen: true);
+
+        Assert.NotNull(result);
+        Assert.True(result!.IsTellerAccessOpen);
+        _signalRMock.Verify(
+            s => s.SendPublicElectionListUpdateAsync(electionGuid, true),
+            Times.Once);
+        _signalRMock.Verify(
+            s => s.CloseOutGuestTellersAsync(It.IsAny<Guid>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task ToggleTellerAccessAsync_close_broadcastsGuestCloseoutAndListUpdate()
+    {
+        var electionGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Closing Guest Access",
+            ElectionType = ElectionTypeEnum.LSA.Code,
+            ElectionMode = ElectionModeEnum.Normal.Code,
+            NumberToElect = 3,
+            OwnerLoginId = "owner@test",
+            ListedForPublicAsOf = DateTimeOffset.UtcNow.AddHours(-1),
+            RowVersion = new byte[8],
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ToggleTellerAccessAsync(electionGuid, isOpen: false);
+
+        Assert.NotNull(result);
+        Assert.False(result!.IsTellerAccessOpen);
+        _signalRMock.Verify(
+            s => s.SendPublicElectionListUpdateAsync(electionGuid, false),
+            Times.Once);
+        _signalRMock.Verify(
+            s => s.CloseOutGuestTellersAsync(electionGuid),
+            Times.Once);
+    }
 }
 
 

@@ -123,6 +123,7 @@ public abstract class ElectionImportExportBase
         public string? ElectionPasscode { get; set; }
         public int? LastEnvNum { get; set; }
         public bool? ListForPublic { get; set; }
+        public string? ListedForPublicAsOf { get; set; }
         public bool? ShowFullReport { get; set; }
         public string? OnlineWhenOpen { get; set; }
         public string? OnlineWhenClose { get; set; }

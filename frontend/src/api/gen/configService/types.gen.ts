@@ -4,6 +4,13 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
+export type ActiveComputerDto = {
+    computerCode?: string | null;
+    clientId?: string | null;
+    isMainTeller?: boolean;
+    connectedAt?: Date;
+};
+
 export type AlignmentRowDto = {
     matchingNames?: number;
     ballotCount?: number;
@@ -38,13 +45,6 @@ export type ApiResponseBallotDto = {
 export type ApiResponseBoolean = {
     success?: boolean;
     data?: boolean;
-    message?: string | null;
-    errors?: Array<string> | null;
-};
-
-export type ApiResponseComputerDto = {
-    success?: boolean;
-    data?: ComputerDto;
     message?: string | null;
     errors?: Array<string> | null;
 };
@@ -91,16 +91,16 @@ export type ApiResponseFrontDeskVoterDto = {
     errors?: Array<string> | null;
 };
 
-export type ApiResponseListAvailableElectionDto = {
+export type ApiResponseListActiveComputerDto = {
     success?: boolean;
-    data?: Array<AvailableElectionDto> | null;
+    data?: Array<ActiveComputerDto> | null;
     message?: string | null;
     errors?: Array<string> | null;
 };
 
-export type ApiResponseListComputerDto = {
+export type ApiResponseListAvailableElectionDto = {
     success?: boolean;
-    data?: Array<ComputerDto> | null;
+    data?: Array<AvailableElectionDto> | null;
     message?: string | null;
     errors?: Array<string> | null;
 };
@@ -464,18 +464,6 @@ export type ChooseTellerRequest = {
 export type ColumnMappingDto = {
     fileColumn?: string | null;
     targetField?: string | null;
-};
-
-export type ComputerDto = {
-    computerGuid?: string;
-    electionGuid?: string;
-    locationGuid?: string;
-    computerCode?: string | null;
-    browserInfo?: string | null;
-    ipAddress?: string | null;
-    lastActivity?: Date | null;
-    registeredAt?: Date | null;
-    isActive?: boolean | null;
 };
 
 export type ComputerInfoDto = {
@@ -1293,14 +1281,6 @@ export type RefreshTokenRequest = {
     refreshToken?: string | null;
 };
 
-export type RegisterComputerDto = {
-    electionGuid?: string;
-    locationGuid?: string;
-    computerCode?: string | null;
-    browserInfo?: string | null;
-    ipAddress?: string | null;
-};
-
 export type RegisterRequest = {
     email: string;
     displayName: string;
@@ -1320,8 +1300,8 @@ export type RegistrationHistoryEntryDto = {
 };
 
 export type ReorderVotesDto = {
-    ballotGuid?: string;
-    voteRowIds?: Array<number> | null;
+    ballotGuid: string;
+    voteRowIds: Array<number>;
 };
 
 export type ReportDataResponseDto = {
@@ -2492,6 +2472,24 @@ export type DeleteApiBallotsByGuidDeleteBallotResponses = {
     200: unknown;
 };
 
+export type GetApiByElectionGuidComputersActiveData = {
+    body?: never;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/{electionGuid}/computers/active';
+};
+
+export type GetApiByElectionGuidComputersActiveResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListActiveComputerDto;
+};
+
+export type GetApiByElectionGuidComputersActiveResponse = GetApiByElectionGuidComputersActiveResponses[keyof GetApiByElectionGuidComputersActiveResponses];
+
 export type GetApiDashboardSummaryData = {
     body?: never;
     path?: never;
@@ -3099,64 +3097,6 @@ export type DeleteApiByElectionGuidLocationsByLocationGuidDeleteLocationResponse
 };
 
 export type DeleteApiByElectionGuidLocationsByLocationGuidDeleteLocationResponse = DeleteApiByElectionGuidLocationsByLocationGuidDeleteLocationResponses[keyof DeleteApiByElectionGuidLocationsByLocationGuidDeleteLocationResponses];
-
-export type PostApiByElectionGuidLocationsByLocationGuidRegisterComputerData = {
-    body?: RegisterComputerDto;
-    path: {
-        electionGuid: string;
-        locationGuid: string;
-    };
-    query?: never;
-    url: '/api/{electionGuid}/locations/{locationGuid}/registerComputer';
-};
-
-export type PostApiByElectionGuidLocationsByLocationGuidRegisterComputerResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseComputerDto;
-};
-
-export type PostApiByElectionGuidLocationsByLocationGuidRegisterComputerResponse = PostApiByElectionGuidLocationsByLocationGuidRegisterComputerResponses[keyof PostApiByElectionGuidLocationsByLocationGuidRegisterComputerResponses];
-
-export type GetApiByElectionGuidLocationsByLocationGuidGetComputersData = {
-    body?: never;
-    path: {
-        electionGuid: string;
-        locationGuid: string;
-    };
-    query?: never;
-    url: '/api/{electionGuid}/locations/{locationGuid}/getComputers';
-};
-
-export type GetApiByElectionGuidLocationsByLocationGuidGetComputersResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseListComputerDto;
-};
-
-export type GetApiByElectionGuidLocationsByLocationGuidGetComputersResponse = GetApiByElectionGuidLocationsByLocationGuidGetComputersResponses[keyof GetApiByElectionGuidLocationsByLocationGuidGetComputersResponses];
-
-export type DeleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputerData = {
-    body?: never;
-    path: {
-        electionGuid: string;
-        locationGuid: string;
-        computerGuid: string;
-    };
-    query?: never;
-    url: '/api/{electionGuid}/locations/{locationGuid}/{computerGuid}/deleteComputer';
-};
-
-export type DeleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputerResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseBoolean;
-};
-
-export type DeleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputerResponse = DeleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputerResponses[keyof DeleteApiByElectionGuidLocationsByLocationGuidByComputerGuidDeleteComputerResponses];
 
 export type PostApiOnlineVotingRequestCodeData = {
     body?: RequestCodeDto;

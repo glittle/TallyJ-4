@@ -11,15 +11,14 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
-import { useElectionStore } from "../stores/electionStore";
 import ComputerCodeBadge from "./common/ComputerCodeBadge.vue";
+import GuestTellerAccessToggle from "./common/GuestTellerAccessToggle.vue";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
 
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
-const electionStore = useElectionStore();
 const { t } = useI18n();
 const { showSuccessMessage, showInfoMessage } = useNotifications();
 
@@ -54,20 +53,7 @@ const currentPageTitle = computed(() => {
   return "";
 });
 
-// Get current election GUID from route
 const showComputerCode = computed(() => route.path.includes("/ballots"));
-
-const currentElectionGuid = computed(() => {
-  // Try to get from route params
-  if (route.params.id) {
-    return route.params.id as string;
-  }
-  // Try to get from current election in store
-  if (electionStore.currentElection?.electionGuid) {
-    return electionStore.currentElection.electionGuid;
-  }
-  return null;
-});
 
 async function handleCommand(command: string) {
   if (command === "logout") {
@@ -107,6 +93,7 @@ function toggleMobileMenu() {
     </div>
     <nav class="header-right" role="navigation" aria-label="User menu">
       <ComputerCodeBadge v-if="showComputerCode" />
+      <GuestTellerAccessToggle />
       <ThemeSelector />
       <LanguageSelector />
       <el-dropdown trigger="click" @command="handleCommand">

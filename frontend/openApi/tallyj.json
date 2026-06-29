@@ -1264,6 +1264,46 @@
         }
       }
     },
+    "/api/{electionGuid}/computers/active": {
+      "get": {
+        "tags": [
+          "Computers"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListActiveComputerDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListActiveComputerDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListActiveComputerDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Dashboard/summary": {
       "get": {
         "tags": [
@@ -2851,181 +2891,6 @@
           },
           {
             "name": "locationGuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseBoolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseBoolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseBoolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/{electionGuid}/locations/{locationGuid}/registerComputer": {
-      "post": {
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "electionGuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "locationGuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterComputerDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterComputerDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterComputerDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseComputerDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseComputerDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseComputerDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/{electionGuid}/locations/{locationGuid}/getComputers": {
-      "get": {
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "electionGuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "locationGuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseListComputerDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseListComputerDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseListComputerDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/{electionGuid}/locations/{locationGuid}/{computerGuid}/deleteComputer": {
-      "delete": {
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "electionGuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "locationGuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "computerGuid",
             "in": "path",
             "required": true,
             "schema": {
@@ -6874,6 +6739,27 @@
   },
   "components": {
     "schemas": {
+      "ActiveComputerDto": {
+        "type": "object",
+        "properties": {
+          "computerCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "clientId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isMainTeller": {
+            "type": "boolean"
+          },
+          "connectedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "AlignmentRowDto": {
         "type": "object",
         "properties": {
@@ -6986,29 +6872,6 @@
           },
           "data": {
             "type": "boolean"
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ApiResponseComputerDto": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "data": {
-            "$ref": "#/components/schemas/ComputerDto"
           },
           "message": {
             "type": "string",
@@ -7162,7 +7025,7 @@
         },
         "additionalProperties": false
       },
-      "ApiResponseListAvailableElectionDto": {
+      "ApiResponseListActiveComputerDto": {
         "type": "object",
         "properties": {
           "success": {
@@ -7171,7 +7034,7 @@
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AvailableElectionDto"
+              "$ref": "#/components/schemas/ActiveComputerDto"
             },
             "nullable": true
           },
@@ -7189,7 +7052,7 @@
         },
         "additionalProperties": false
       },
-      "ApiResponseListComputerDto": {
+      "ApiResponseListAvailableElectionDto": {
         "type": "object",
         "properties": {
           "success": {
@@ -7198,7 +7061,7 @@
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ComputerDto"
+              "$ref": "#/components/schemas/AvailableElectionDto"
             },
             "nullable": true
           },
@@ -8420,50 +8283,6 @@
           },
           "targetField": {
             "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ComputerDto": {
-        "type": "object",
-        "properties": {
-          "computerGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "electionGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "locationGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "computerCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "browserInfo": {
-            "type": "string",
-            "nullable": true
-          },
-          "ipAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "lastActivity": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "registeredAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "isActive": {
-            "type": "boolean",
             "nullable": true
           }
         },
@@ -11266,32 +11085,6 @@
         },
         "additionalProperties": false
       },
-      "RegisterComputerDto": {
-        "type": "object",
-        "properties": {
-          "electionGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "locationGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "computerCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "browserInfo": {
-            "type": "string",
-            "nullable": true
-          },
-          "ipAddress": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "RegisterRequest": {
         "required": [
           "confirmPassword",
@@ -11361,6 +11154,10 @@
         "additionalProperties": false
       },
       "ReorderVotesDto": {
+        "required": [
+          "ballotGuid",
+          "voteRowIds"
+        ],
         "type": "object",
         "properties": {
           "ballotGuid": {
@@ -11372,8 +11169,7 @@
             "items": {
               "type": "integer",
               "format": "int32"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
@@ -13000,6 +12796,9 @@
     },
     {
       "name": "Ballots"
+    },
+    {
+      "name": "Computers"
     },
     {
       "name": "Dashboard"

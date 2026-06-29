@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Backend.Hubs;
@@ -11,27 +13,51 @@ namespace Backend.Hubs;
 public class MainHub : Hub
 {
     private readonly ILogger<MainHub> _logger;
+    private readonly IComputerAssignmentService _assignmentService;
 
     /// <summary>
     /// Initializes a new instance of the MainHub.
     /// </summary>
-    /// <param name="logger">Logger for recording hub operations and client connections.</param>
-    public MainHub(ILogger<MainHub> logger)
+    public MainHub(ILogger<MainHub> logger, IComputerAssignmentService assignmentService)
     {
         _logger = logger;
+        _assignmentService = assignmentService;
     }
 
     /// <summary>
-    /// Adds the current client to the SignalR group for the specified election.
-    /// Clients in this group will receive real-time updates about the election.
+    /// Adds the current client to the SignalR group for the specified election and assigns a computer code.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election to join.</param>
-    public async Task JoinElection(Guid electionGuid)
+    /// <param name="clientId">Persistent client identifier for code re-assignment.</param>
+    /// <returns>The assigned computer code for this workstation.</returns>
+    public async Task<string> JoinElection(Guid electionGuid, string clientId)
     {
+        var isMainTeller = IsMainTeller(Context.User);
+        if (!isMainTeller && !_assignmentService.CanGuestJoin(electionGuid))
+        {
+            throw new HubException("No main teller is currently connected to this election.");
+        }
+
+        var computerCode = _assignmentService.AssignCode(
+            electionGuid,
+            clientId,
+            Context.ConnectionId,
+            isMainTeller);
+
         var groupName = GetGroupName(electionGuid);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("Client {ConnectionId} joined election {ElectionGuid}",
-            Context.ConnectionId, electionGuid);
+
+        var roleSuffix = isMainTeller ? "Known" : "Guest";
+        await Groups.AddToGroupAsync(Context.ConnectionId, groupName + roleSuffix);
+
+        _logger.LogInformation(
+            "Client {ConnectionId} joined election {ElectionGuid} as {Role} with code {ComputerCode}",
+            Context.ConnectionId,
+            electionGuid,
+            roleSuffix,
+            computerCode);
+
+        return computerCode;
     }
 
     /// <summary>
@@ -43,6 +69,9 @@ public class MainHub : Hub
     {
         var groupName = GetGroupName(electionGuid);
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName + "Known");
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName + "Guest");
+        _assignmentService.ReleaseConnection(Context.ConnectionId);
         _logger.LogInformation("Client {ConnectionId} left election {ElectionGuid}",
             Context.ConnectionId, electionGuid);
     }
@@ -100,12 +129,21 @@ public class MainHub : Hub
     /// <returns>A task representing the asynchronous operation.</returns>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
+        _assignmentService.ReleaseConnection(Context.ConnectionId);
         _logger.LogInformation("Client {ConnectionId} disconnected", Context.ConnectionId);
         await base.OnDisconnectedAsync(exception);
     }
 
+    private static bool IsMainTeller(ClaimsPrincipal? user)
+    {
+        if (user == null)
+        {
+            return false;
+        }
+
+        var isTellerClaim = user.FindFirst("isTeller")?.Value;
+        return !bool.TryParse(isTellerClaim, out var isGuestTeller) || !isGuestTeller;
+    }
+
     private static string GetGroupName(Guid electionGuid) => $"Main{electionGuid}";
 }
-
-
-
