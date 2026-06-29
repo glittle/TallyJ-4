@@ -12,7 +12,7 @@ namespace Backend.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/{electionGuid}/computers")]
-[Authorize]
+[Authorize(Policy = "ElectionAccess")]
 public class ComputersController : ControllerBase
 {
     private readonly IComputerAssignmentService _assignmentService;
