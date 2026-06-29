@@ -32,10 +32,8 @@ export function parseBallotViewFilter(value: string): BallotViewFilter {
   }
 
   if (value.startsWith("location|")) {
-    return {
-      type: "location",
-      locationGuid: value.slice("location|".length),
-    };
+    const locationGuid = value.slice("location|".length);
+    return locationGuid ? { type: "location", locationGuid } : { type: "all" };
   }
 
   if (value.startsWith("computer|")) {
