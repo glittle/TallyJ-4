@@ -62,6 +62,7 @@ public class TallyService : ITallyService
             throw new ArgumentException($"Election {electionGuid} not found");
         }
 
+        await ElectionAnalysisPreparation.PrepareAsync(_context, electionGuid, _logger);
         await ElectionBallotBlocking.EnsureAnalysisCanProceedAsync(_context, electionGuid);
 
         var totalBallots = await _context.Ballots
@@ -121,6 +122,7 @@ public class TallyService : ITallyService
             throw new ArgumentException($"Election {electionGuid} not found");
         }
 
+        await ElectionAnalysisPreparation.PrepareAsync(_context, electionGuid, _logger);
         await ElectionBallotBlocking.EnsureAnalysisCanProceedAsync(_context, electionGuid);
 
         var totalBallots = await _context.Ballots

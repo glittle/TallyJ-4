@@ -6783,6 +6783,54 @@
         }
       }
     },
+    "/api/Votes/reorderVotes": {
+      "put": {
+        "tags": [
+          "Votes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderVotesDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderVotesDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderVotesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoteWithBallotStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Votes/{id}/deleteVote": {
       "delete": {
         "tags": [
@@ -11312,6 +11360,24 @@
         },
         "additionalProperties": false
       },
+      "ReorderVotesDto": {
+        "type": "object",
+        "properties": {
+          "ballotGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "voteRowIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ReportDataResponseDto": {
         "type": "object",
         "properties": {
@@ -12549,6 +12615,10 @@
           },
           "voteStatus": {
             "$ref": "#/components/schemas/VoteStatus"
+          },
+          "ineligibleReasonCode": {
+            "type": "string",
+            "nullable": true
           },
           "personCombinedInfo": {
             "type": "string",

@@ -20,5 +20,7 @@ export function getBallotStatusLabel(
     return t("ballots.statusValue.New");
   }
 
-  return t(`ballots.statusValue.${statusCode}`) || statusCode;
+  const key = `ballots.statusValue.${statusCode}`;
+  const translated = t(key);
+  return translated === key ? statusCode : translated;
 }

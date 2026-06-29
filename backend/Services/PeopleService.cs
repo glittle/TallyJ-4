@@ -182,6 +182,8 @@ public class PeopleService : IPeopleService
             return null;
         }
 
+        var previousIneligibleReasonGuid = person.IneligibleReasonGuid;
+
         if (!string.IsNullOrWhiteSpace(updateDto.Email) && updateDto.Email != person.Email)
         {
             var emailExists = await _context.People
@@ -215,6 +217,11 @@ public class PeopleService : IPeopleService
 
         // Sync eligibility based on IneligibleReasonGuid
         SyncEligibility(person);
+
+        if (person.IneligibleReasonGuid != previousIneligibleReasonGuid)
+        {
+            await VoteStatusRefresher.RefreshVotesForPersonAsync(_context, person, _logger);
+        }
 
         await _context.SaveChangesAsync();
 

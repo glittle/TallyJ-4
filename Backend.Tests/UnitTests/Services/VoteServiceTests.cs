@@ -118,6 +118,7 @@ public class VoteServiceTests : ServiceTestBase
 
         Assert.NotNull(result);
         Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
+        Assert.Equal("V06", result.Vote.IneligibleReasonCode);
         Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
     }
 
@@ -138,6 +139,7 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
+        Assert.Equal("X01", result.Vote.IneligibleReasonCode);
     }
 
     [Fact]
@@ -155,6 +157,7 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
+        Assert.Null(result.Vote.IneligibleReasonCode);
     }
 
     [Fact]
@@ -522,6 +525,78 @@ public class VoteServiceTests : ServiceTestBase
         Assert.Equal(1, result.Votes[0].PositionOnBallot);
         Assert.Equal(2, result.Votes[1].PositionOnBallot);
         Assert.Equal(3, result.Votes[2].PositionOnBallot);
+    }
+
+    [Fact]
+    public async Task ReorderVotesAsync_ReordersVotesToMatchSuppliedSequence()
+    {
+        var people = Enumerable.Range(0, 3).Select(_ => CreatePerson()).ToList();
+        var voteIds = new List<int>();
+
+        for (var i = 0; i < people.Count; i++)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = people[i].PersonGuid,
+                PositionOnBallot = i + 1,
+                VoteStatus = VoteStatus.Ok,
+                RowVersion = new byte[8]
+            });
+        }
+        await Context.SaveChangesAsync();
+
+        voteIds.AddRange(Context.Votes
+            .Where(v => v.BallotGuid == BallotGuid)
+            .OrderBy(v => v.PositionOnBallot)
+            .Select(v => v.RowId));
+
+        var result = await _service.ReorderVotesAsync(new ReorderVotesDto
+        {
+            BallotGuid = BallotGuid,
+            VoteRowIds = [voteIds[2], voteIds[0], voteIds[1]],
+        });
+
+        Assert.NotNull(result);
+        Assert.Equal(3, result!.Votes.Count);
+        Assert.Equal(people[2].PersonGuid, result.Votes[0].PersonGuid);
+        Assert.Equal(people[0].PersonGuid, result.Votes[1].PersonGuid);
+        Assert.Equal(people[1].PersonGuid, result.Votes[2].PersonGuid);
+        AssertUniqueContiguousPositions(result.Votes);
+    }
+
+    [Fact]
+    public async Task ReorderVotesAsync_BallotNotFound_ReturnsNull()
+    {
+        var result = await _service.ReorderVotesAsync(new ReorderVotesDto
+        {
+            BallotGuid = Guid.NewGuid(),
+            VoteRowIds = [1],
+        });
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task ReorderVotesAsync_MismatchedVoteCount_ThrowsInvalidOperationException()
+    {
+        var person = CreatePerson();
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = BallotGuid,
+            PersonGuid = person.PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Ok,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.ReorderVotesAsync(new ReorderVotesDto
+            {
+                BallotGuid = BallotGuid,
+                VoteRowIds = [1, 2],
+            }));
     }
 
     private static void AssertUniqueContiguousPositions(IReadOnlyList<VoteDto> votes)

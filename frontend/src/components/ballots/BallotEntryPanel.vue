@@ -12,7 +12,7 @@ import type {
   VoteDto,
   VoteWithBallotStatusDto,
 } from "../../types";
-import { isVoteSpoiled } from "@/utils/voteDtoNormalization";
+import { isVoteDtoSpoiled } from "@/utils/voteDtoNormalization";
 
 const props = withDefaults(
   defineProps<{
@@ -21,11 +21,13 @@ const props = withDefaults(
     showMetadata?: boolean;
     manageBallotSignalR?: boolean;
     managePeopleSignalR?: boolean;
+    hasKeyboardTeller?: boolean;
   }>(),
   {
     showMetadata: true,
     manageBallotSignalR: true,
     managePeopleSignalR: true,
+    hasKeyboardTeller: true,
   },
 );
 
@@ -77,19 +79,17 @@ async function loadBallotData() {
   }
 }
 
-function setupPersonUpdateHandler() {
-  const originalHandler = peopleStore.handlePersonUpdated.bind(peopleStore);
+let unsubscribePersonUpdated: (() => void) | undefined;
 
-  peopleStore.handlePersonUpdated = async (data) => {
-    await originalHandler(data);
-
+function subscribeToPersonUpdates() {
+  unsubscribePersonUpdated = peopleStore.onPersonUpdated((data) => {
     if (data.firstName || data.lastName) {
       const fullName = [data.firstName, data.lastName]
         .filter(Boolean)
         .join(" ");
       showInfoMessage(t("ballots.personUpdated", { name: fullName }));
     }
-  };
+  });
 }
 
 onMounted(async () => {
@@ -113,13 +113,16 @@ onMounted(async () => {
     await Promise.all(joinTasks);
 
     await loadBallotData();
-    setupPersonUpdateHandler();
+    subscribeToPersonUpdates();
   } catch (_error) {
     showErrorMessage(t("ballots.loadError"));
   }
 });
 
 onUnmounted(async () => {
+  unsubscribePersonUpdated?.();
+  unsubscribePersonUpdated = undefined;
+
   try {
     const leaveTasks = [];
     if (props.manageBallotSignalR) {
@@ -153,10 +156,12 @@ async function handleVoteAdded(vote: VoteDto) {
 
     const result: VoteWithBallotStatusDto =
       await ballotStore.createVote(createDto);
-    const isSpoiled = result.vote && isVoteSpoiled(result.vote.statusCode);
+    const isSpoiled = result.vote && isVoteDtoSpoiled(result.vote);
     if (isSpoiled) {
+      const reasonCode =
+        result.vote.ineligibleReasonCode || result.vote.statusCode;
       showWarningMessage(
-        t("ballots.voteSpoiledSuccess", { code: result.vote.statusCode }),
+        t("ballots.voteSpoiledSuccess", { code: reasonCode }),
       );
     } else {
       showSuccessMessage(t("ballots.voteAddedSuccess"));
@@ -170,12 +175,26 @@ async function handleVoteAdded(vote: VoteDto) {
 async function handleVoteRemoved(positionOnBallot: number) {
   try {
     await ballotStore.deleteVote(props.ballotGuid, positionOnBallot);
+    voteResyncKey.value++;
     showSuccessMessage(t("ballots.voteRemovedSuccess"));
   } catch (error: any) {
+    voteResyncKey.value++;
     showErrorMessage(error.message || t("ballots.voteRemovedError"));
   }
 }
 
+async function handleVotesReordered(voteRowIds: number[]) {
+  try {
+    await ballotStore.reorderVotes({
+      ballotGuid: props.ballotGuid,
+      voteRowIds,
+    });
+    showSuccessMessage(t("ballots.votesReorderedSuccess"));
+  } catch (error: any) {
+    voteResyncKey.value++;
+    showErrorMessage(error.message || t("ballots.votesReorderedError"));
+  }
+}
 </script>
 
 <template>
@@ -208,8 +227,10 @@ async function handleVoteRemoved(positionOnBallot: number) {
           :ballot="ballot"
           :required-votes="election.numberToElect || 9"
           :resync-key="voteResyncKey"
+          :has-keyboard-teller="hasKeyboardTeller"
           @vote-added="handleVoteAdded"
           @vote-removed="handleVoteRemoved"
+          @votes-reordered="handleVotesReordered"
         />
       </div>
     </div>

@@ -2,25 +2,23 @@
 import { useNotifications } from "@/composables/useNotifications";
 import {
   ArrowDown,
-  Location,
   Menu,
   Setting,
   SwitchButton,
   User,
 } from "@element-plus/icons-vue";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import { useElectionStore } from "../stores/electionStore";
-import { useLocationStore } from "../stores/locationStore";
+import ComputerCodeBadge from "./common/ComputerCodeBadge.vue";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
 
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
-const locationStore = useLocationStore();
 const electionStore = useElectionStore();
 const { t } = useI18n();
 const { showSuccessMessage, showInfoMessage } = useNotifications();
@@ -45,8 +43,6 @@ const currentUser = computed(() => ({
   email: authStore.email,
 }));
 
-const isFrontDeskPage = computed(() => route.path.includes("/frontdesk"));
-
 const currentPageTitle = computed(() => {
   const records = [...route.matched].reverse();
   for (const record of records) {
@@ -59,6 +55,8 @@ const currentPageTitle = computed(() => {
 });
 
 // Get current election GUID from route
+const showComputerCode = computed(() => route.path.includes("/ballots"));
+
 const currentElectionGuid = computed(() => {
   // Try to get from route params
   if (route.params.id) {
@@ -70,36 +68,6 @@ const currentElectionGuid = computed(() => {
   }
   return null;
 });
-
-// Get selected location details
-const _selectedLocation = computed(() => {
-  if (!locationStore.selectedLocationGuid) {
-    return null;
-  }
-  return locationStore.locations.find(
-    (loc) => loc.locationGuid === locationStore.selectedLocationGuid,
-  );
-});
-
-// Load locations when election is available
-watch(
-  currentElectionGuid,
-  async (electionGuid) => {
-    if (electionGuid && locationStore.locations.length === 0) {
-      try {
-        await locationStore.fetchLocations(electionGuid);
-      } catch (error) {
-        console.error("Failed to load locations:", error);
-      }
-    }
-  },
-  { immediate: true },
-);
-
-function handleLocationChange(locationGuid: string) {
-  locationStore.selectLocation(locationGuid);
-  showSuccessMessage(t("locations.locationSelected"));
-}
 
 async function handleCommand(command: string) {
   if (command === "logout") {
@@ -136,37 +104,9 @@ function toggleMobileMenu() {
       <h2 v-if="currentPageTitle" class="page-title" aria-live="polite">
         {{ currentPageTitle }}
       </h2>
-
-      <!-- Location Selector -->
-      <div
-        v-if="
-          currentElectionGuid &&
-          locationStore.locations?.length > 0 &&
-          !isFrontDeskPage
-        "
-        class="location-selector"
-      >
-        <el-icon class="location-icon">
-          <Location />
-        </el-icon>
-        <el-select
-          :model-value="locationStore.selectedLocationGuid"
-          :placeholder="$t('locations.selectLocation')"
-          clearable
-          :aria-label="$t('locations.currentLocation')"
-          class="location-select"
-          @update:model-value="handleLocationChange"
-        >
-          <el-option
-            v-for="location in locationStore.sortedLocations"
-            :key="location.locationGuid"
-            :label="location.name"
-            :value="location.locationGuid"
-          />
-        </el-select>
-      </div>
     </div>
     <nav class="header-right" role="navigation" aria-label="User menu">
+      <ComputerCodeBadge v-if="showComputerCode" />
       <ThemeSelector />
       <LanguageSelector />
       <el-dropdown trigger="click" @command="handleCommand">
@@ -244,25 +184,6 @@ function toggleMobileMenu() {
     white-space: nowrap;
     line-height: var(--line-height-tight);
     flex-shrink: 0;
-  }
-
-  .location-selector {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 16px;
-    padding-left: 16px;
-    border-left: 1px solid var(--el-border-color-lighter);
-
-    .location-icon {
-      color: var(--el-color-primary);
-      font-size: 16px;
-    }
-
-    .location-select {
-      min-width: 180px;
-      max-width: 250px;
-    }
   }
 
   .header-right {

@@ -4,26 +4,48 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import AppHeader from "./AppHeader.vue";
 import { pinia, i18n } from "../test/setup";
-import { VERSION } from "./version";
 
-// Mock the auth store
 const mockLogout = vi.fn();
+
 vi.mock("../stores/authStore", () => ({
   useAuthStore: () => ({
     email: "test@example.com",
+    name: null,
     logout: mockLogout,
   }),
 }));
 
+vi.mock("../stores/electionStore", () => ({
+  useElectionStore: () => ({
+    currentElection: null,
+  }),
+}));
+
+vi.mock("@/composables/useNotifications", () => ({
+  useNotifications: () => ({
+    showSuccessMessage: vi.fn(),
+    showInfoMessage: vi.fn(),
+  }),
+}));
+
 describe("AppHeader", () => {
-  let router: any;
+  let router: ReturnType<typeof createRouter>;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     router = createRouter({
       history: createWebHistory(),
       routes: [
-        { path: "/dashboard", name: "Dashboard" },
-        { path: "/elections", name: "Elections" },
+        {
+          path: "/dashboard",
+          name: "Dashboard",
+          meta: { titleKey: "nav.dashboard" },
+        },
+        {
+          path: "/elections",
+          name: "Elections",
+          meta: { titleKey: "nav.elections" },
+        },
         { path: "/profile", name: "Profile" },
       ],
     });
@@ -36,15 +58,6 @@ describe("AppHeader", () => {
       },
     });
     expect(wrapper.exists()).toBe(true);
-  });
-
-  it("displays the application title", () => {
-    const wrapper = mount(AppHeader, {
-      global: {
-        plugins: [pinia, router, i18n],
-      },
-    });
-    expect(wrapper.text()).toContain("v4 Beta (Version 4.0.1)");
   });
 
   it("displays user email in dropdown", () => {
@@ -89,17 +102,13 @@ describe("AppHeader", () => {
     const wrapper = mount(AppHeader, {
       global: {
         plugins: [pinia, router, i18n],
-        mocks: {
-          $message: { success: vi.fn() },
-        },
       },
     });
 
-    // Access the component instance and call handleCommand directly
     await wrapper.vm.handleCommand("logout");
 
     expect(mockLogout).toHaveBeenCalled();
-    expect(mockRouterPush).toHaveBeenCalledWith("/login?mode=officer");
+    expect(mockRouterPush).toHaveBeenCalledWith("/");
   });
 
   it("handles profile command correctly", async () => {
@@ -112,21 +121,8 @@ describe("AppHeader", () => {
       },
     });
 
-    // Access the component instance and call handleCommand directly
     await wrapper.vm.handleCommand("profile");
 
     expect(mockRouterPush).toHaveBeenCalledWith("/profile");
-  });
-
-  it("displays version tooltip on TallyJ 4 header", () => {
-    const wrapper = mount(AppHeader, {
-      global: {
-        plugins: [pinia, router, i18n],
-      },
-    });
-    const headerH3 = wrapper.find(".header-left h3");
-    expect(headerH3.exists()).toBe(true);
-    expect(headerH3.attributes("title")).toContain("Version");
-    expect(headerH3.attributes("title")).toContain(VERSION);
   });
 });

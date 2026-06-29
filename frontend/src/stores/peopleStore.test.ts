@@ -282,6 +282,31 @@ describe("People Store - Candidate Cache", () => {
       expect(store.candidateCache).toHaveLength(1);
       expect(store.candidateCache[0].ineligibleReasonCode).toBe("X01");
     });
+
+    it("should notify onPersonUpdated listeners", async () => {
+      const listener = vi.fn();
+      const unsubscribe = store.onPersonUpdated(listener);
+      const updateEvent = {
+        electionGuid: "election-123",
+        personGuid: mockPerson.personGuid,
+        action: "updated" as const,
+        firstName: "Johnny",
+        lastName: mockPerson.lastName,
+        updatedAt: new Date().toISOString(),
+      };
+
+      vi.mocked(peopleService.getById).mockResolvedValue(mockPerson);
+
+      await store.handlePersonUpdated(updateEvent);
+
+      expect(listener).toHaveBeenCalledWith(updateEvent);
+
+      listener.mockClear();
+      unsubscribe();
+      await store.handlePersonUpdated(updateEvent);
+
+      expect(listener).not.toHaveBeenCalled();
+    });
   });
 
   describe("SignalR handlePersonDeleted", () => {

@@ -15,6 +15,7 @@
     "check": "npm run tsc && npm run lint",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:failures": "vitest run --reporter=verbose --hideSkippedTests",
     "test:coverage": "vitest run --coverage",
     "validate:i18n": "node src/locales/validate-translations.js"
   },

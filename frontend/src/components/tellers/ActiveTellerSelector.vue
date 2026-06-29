@@ -12,12 +12,8 @@ import { computed, onMounted, ref, watch } from "vue";
 const props = withDefaults(
   defineProps<{
     electionGuid: string;
-    /** Hides the hint text for compact toolbar layouts (e.g. Front Desk). */
-    compact?: boolean;
   }>(),
-  {
-    compact: false,
-  },
+  {},
 );
 
 const emit = defineEmits<{
@@ -108,8 +104,12 @@ watch(
 </script>
 
 <template>
-  <div class="active-teller-selector" :class="{ compact }">
-    <el-icon v-if="compact" class="teller-icon" aria-hidden="true">
+  <div class="active-teller-selector">
+    <el-icon
+      class="teller-icon"
+      aria-hidden="true"
+      :title="$t('teller.active.hint')"
+    >
       <User />
     </el-icon>
     <el-select
@@ -146,36 +146,23 @@ watch(
         :value="name"
       />
     </el-select>
-    <span v-if="!compact" class="teller-hint">{{
-      $t("teller.active.hint")
-    }}</span>
   </div>
 </template>
 
 <style lang="less">
 .active-teller-selector {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
 
   .teller-select {
-    width: 200px;
+    width: 100px;
   }
 
-  &.compact {
-    gap: 8px;
-
-    .teller-icon {
-      color: var(--el-color-primary);
-      font-size: 16px;
-    }
-  }
-
-  .teller-hint {
-    color: var(--el-text-color-secondary);
-    font-size: 12px;
-    flex: 1 1 220px;
+  .teller-icon {
+    color: var(--el-color-primary);
+    font-size: 16px;
   }
 }
 </style>

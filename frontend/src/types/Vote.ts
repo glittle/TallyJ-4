@@ -5,6 +5,7 @@ export interface VoteDto {
   personGuid?: string;
   personFullName?: string;
   statusCode: string;
+  ineligibleReasonCode?: string;
   personCombinedInfo?: string;
   onlineVoteRaw?: string;
 }
@@ -17,6 +18,11 @@ export interface CreateVoteDto {
 
 export interface VoteWithBallotStatusDto {
   vote?: VoteDto;
-  ballotStatusCode: string;
+  ballotStatusCode?: string;
   votes?: VoteDto[];
+}
+
+export interface ReorderVotesDto {
+  ballotGuid: string;
+  voteRowIds: number[];
 }

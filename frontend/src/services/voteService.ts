@@ -1,9 +1,15 @@
 import {
+  deleteApiVotesByIdDeleteVote,
   getApiVotesByBallotGuidGetVotesByBallot,
   postApiVotesCreateVote,
-  deleteApiVotesByIdDeleteVote,
+  putApiVotesReorderVotes,
 } from "../api/gen/configService/sdk.gen";
-import type { CreateVoteDto, VoteWithBallotStatusDto } from "../types";
+import type {
+  CreateVoteDto,
+  ReorderVotesDto,
+  VoteDto,
+  VoteWithBallotStatusDto,
+} from "../types";
 import {
   normalizeVoteDto,
   normalizeVoteList,
@@ -18,14 +24,23 @@ function normalizeVoteResult(
     ? normalizeVoteList(result.votes as ApiVoteDto[])
     : undefined;
 
-  return {
+  const normalized: VoteWithBallotStatusDto = {
     ...result,
-    vote: result.vote
-      ? normalizeVoteDto(result.vote as ApiVoteDto)
-      : undefined,
+    vote: result.vote ? normalizeVoteDto(result.vote as ApiVoteDto) : undefined,
     votes,
-    ballotStatusCode: String(result.ballotStatusCode ?? ""),
   };
+
+  if (
+    result.ballotStatusCode !== null &&
+    result.ballotStatusCode !== undefined &&
+    result.ballotStatusCode !== ""
+  ) {
+    normalized.ballotStatusCode = String(result.ballotStatusCode);
+  } else {
+    delete (normalized as any).ballotStatusCode;
+  }
+
+  return normalized;
 }
 
 export const voteService = {
@@ -33,7 +48,7 @@ export const voteService = {
     const response = await getApiVotesByBallotGuidGetVotesByBallot({
       path: { ballotGuid },
     });
-    return (response.data?.data?.items ?? []) as VoteDto[];
+    return normalizeVoteList(response.data?.data as ApiVoteDto[] | undefined);
   },
 
   async create(dto: CreateVoteDto): Promise<VoteWithBallotStatusDto> {
@@ -42,7 +57,14 @@ export const voteService = {
   },
 
   async delete(voteId: number): Promise<VoteWithBallotStatusDto> {
-    const response = await deleteApiVotesByIdDeleteVote({ path: { id: voteId } });
+    const response = await deleteApiVotesByIdDeleteVote({
+      path: { id: voteId },
+    });
+    return normalizeVoteResult(response.data?.data as VoteWithBallotStatusDto);
+  },
+
+  async reorder(dto: ReorderVotesDto): Promise<VoteWithBallotStatusDto> {
+    const response = await putApiVotesReorderVotes({ body: dto });
     return normalizeVoteResult(response.data?.data as VoteWithBallotStatusDto);
   },
 };

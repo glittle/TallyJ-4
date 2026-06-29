@@ -1218,7 +1218,6 @@ async function saveEnvelopeNumber(clear = false) {
           <div class="toolbar-tellers">
             <ActiveTellerSelector
               :election-guid="electionGuid"
-              compact
               @tellers-changed="onTellersChanged"
             />
           </div>
