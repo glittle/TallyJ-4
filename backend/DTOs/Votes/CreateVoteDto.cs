@@ -22,6 +22,12 @@ public class CreateVoteDto
     /// and ignores this value on create.
     /// </summary>
     public int PositionOnBallot { get; set; }
+
+    /// <summary>
+    /// Ineligible reason code (U01 or U02) for person-less spoiled votes when the ballot
+    /// name is unidentifiable or unreadable.
+    /// </summary>
+    public string? IneligibleReasonCode { get; set; }
 }
 
 

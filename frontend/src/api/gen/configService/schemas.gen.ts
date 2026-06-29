@@ -1932,6 +1932,10 @@ export const CreateVoteDtoSchema = {
         positionOnBallot: {
             type: 'integer',
             format: 'int32'
+        },
+        ineligibleReasonCode: {
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false

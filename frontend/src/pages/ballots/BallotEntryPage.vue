@@ -5,12 +5,21 @@ import {
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
 import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import BallotEntryPanel from "../../components/ballots/BallotEntryPanel.vue";
 
 const route = useRoute();
+const router = useRouter();
 const electionGuid = route.params.id as string;
 const ballotGuid = route.params.ballotId as string;
+
+function handleBallotCreated(newBallotGuid: string) {
+  router.push(`/elections/${electionGuid}/ballots/${newBallotGuid}/entry`);
+}
+
+function handleBallotDeleted() {
+  router.push(`/elections/${electionGuid}/ballots`);
+}
 
 const activeTellers = ref<ActiveTellers>(getActiveTellers());
 const hasKeyboardTeller = computed(() =>
@@ -35,9 +44,12 @@ function onTellersChanged(tellers: ActiveTellers) {
       </template>
 
       <BallotEntryPanel
+        :key="ballotGuid"
         :election-guid="electionGuid"
         :ballot-guid="ballotGuid"
         :has-keyboard-teller="hasKeyboardTeller"
+        @ballot-created="handleBallotCreated"
+        @ballot-deleted="handleBallotDeleted"
       />
     </el-card>
   </div>

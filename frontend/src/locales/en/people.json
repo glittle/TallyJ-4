@@ -21,6 +21,7 @@
   "people.deleteSuccess": "Person deleted successfully",
   "people.dropFileHere": "Drop file here or click to upload",
   "people.editPerson": "Edit Person",
+  "people.editDrawerTitle": "Edit {name}",
   "people.email": "Email",
   "people.emailInvalid": "Please enter a valid email",
   "people.exportError": "Failed to export people",

@@ -273,6 +273,45 @@ public class VoteServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CreateVoteAsync_PersonLessU01_CreatesSpoiledVoteWithoutPerson()
+    {
+        var dto = new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PositionOnBallot = 1,
+            IneligibleReasonCode = "U01",
+        };
+
+        var result = await _service.CreateVoteAsync(dto);
+
+        Assert.NotNull(result);
+        Assert.Null(result.Vote.PersonGuid);
+        Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
+        Assert.Equal("U01", result.Vote.IneligibleReasonCode);
+        _voteCountBroadcastMock.Verify(
+            s => s.QueueVoteCountUpdate(It.IsAny<Guid>(), It.IsAny<Guid>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task CreateVoteAsync_PersonLessU02_CreatesSpoiledVoteWithoutPerson()
+    {
+        var dto = new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PositionOnBallot = 1,
+            IneligibleReasonCode = "U02",
+        };
+
+        var result = await _service.CreateVoteAsync(dto);
+
+        Assert.NotNull(result);
+        Assert.Null(result.Vote.PersonGuid);
+        Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
+        Assert.Equal("U02", result.Vote.IneligibleReasonCode);
+    }
+
+    [Fact]
     public async Task CreateVoteAsync_BallotNotFound_ThrowsInvalidOperationException()
     {
         var dto = new CreateVoteDto

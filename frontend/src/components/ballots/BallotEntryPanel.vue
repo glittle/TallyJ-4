@@ -14,6 +14,11 @@ import type {
 } from "../../types";
 import { isVoteDtoSpoiled } from "@/utils/voteDtoNormalization";
 
+const emit = defineEmits<{
+  "ballot-created": [ballotGuid: string];
+  "ballot-deleted": [ballotGuid: string];
+}>();
+
 const props = withDefaults(
   defineProps<{
     electionGuid: string;
@@ -152,6 +157,9 @@ async function handleVoteAdded(vote: VoteDto) {
       ballotGuid: vote.ballotGuid,
       positionOnBallot: vote.positionOnBallot,
       personGuid: vote.personGuid || undefined,
+      ineligibleReasonCode: vote.personGuid
+        ? undefined
+        : vote.ineligibleReasonCode,
     };
 
     const result: VoteWithBallotStatusDto =
@@ -160,9 +168,7 @@ async function handleVoteAdded(vote: VoteDto) {
     if (isSpoiled) {
       const reasonCode =
         result.vote.ineligibleReasonCode || result.vote.statusCode;
-      showWarningMessage(
-        t("ballots.voteSpoiledSuccess", { code: reasonCode }),
-      );
+      showWarningMessage(t("ballots.voteSpoiledSuccess", { code: reasonCode }));
     } else {
       showSuccessMessage(t("ballots.voteAddedSuccess"));
     }
@@ -193,6 +199,16 @@ async function handleVotesReordered(voteRowIds: number[]) {
   } catch (error: any) {
     voteResyncKey.value++;
     showErrorMessage(error.message || t("ballots.votesReorderedError"));
+  }
+}
+
+async function handleDeleteBallot(ballotGuid: string) {
+  try {
+    await ballotStore.deleteBallot(ballotGuid);
+    showSuccessMessage(t("ballots.deleteSuccess"));
+    emit("ballot-deleted", ballotGuid);
+  } catch (error: any) {
+    showErrorMessage(error.message || t("ballots.deleteError"));
   }
 }
 </script>
@@ -231,6 +247,8 @@ async function handleVotesReordered(voteRowIds: number[]) {
           @vote-added="handleVoteAdded"
           @vote-removed="handleVoteRemoved"
           @votes-reordered="handleVotesReordered"
+          @ballot-created="emit('ballot-created', $event)"
+          @delete-ballot="handleDeleteBallot"
         />
       </div>
     </div>

@@ -121,6 +121,9 @@ export const usePeopleStore = defineStore("people", () => {
     try {
       await peopleService.delete(personGuid);
       people.value = people.value.filter((p) => p.personGuid !== personGuid);
+      peopleList.value = peopleList.value.filter(
+        (p) => p.personGuid !== personGuid,
+      );
     } catch (e: any) {
       error.value = e.message || "Failed to delete person";
       throw e;
@@ -314,6 +317,9 @@ export const usePeopleStore = defineStore("people", () => {
 
   function handlePersonDeleted(data: PersonUpdateEvent) {
     people.value = people.value.filter((p) => p.personGuid !== data.personGuid);
+    peopleList.value = peopleList.value.filter(
+      (p) => p.personGuid !== data.personGuid,
+    );
 
     if (isCacheInitialized.value) {
       candidateCache.value = candidateCache.value.filter(

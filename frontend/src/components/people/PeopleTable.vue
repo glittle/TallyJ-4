@@ -6,7 +6,6 @@ import {
   ElCheckbox,
   ElButton,
   ElIcon,
-  ElButtonGroup,
 } from "element-plus";
 import { useI18n } from "vue-i18n";
 import { computed, ref, watch, h } from "vue";
@@ -18,19 +17,18 @@ const { t } = useI18n();
 const props = defineProps<{
   people: PersonListDto[];
   loading: boolean;
+  tableHeight: number;
   showSelection?: boolean;
   selected?: PersonListDto[];
 }>();
 
 const emit = defineEmits<{
   edit: [person: PersonListDto];
-  delete: [person: PersonListDto];
   selectionChange: [selection: PersonListDto[]];
 }>();
 
 const selectedPeople = ref<PersonListDto[]>(props.selected || []);
 
-// Watch for changes in props.selected to sync the internal state
 watch(
   () => props.selected,
   (newSelected) => {
@@ -48,14 +46,14 @@ const columns = computed<Column<any>[]>(() => {
       width: 55,
       cellRenderer: ({ rowData }) => {
         const isSelected = selectedPeople.value.some(
-          (p) => p.id === rowData.id,
+          (p) => p.personGuid === rowData.personGuid,
         );
         const onChange = (value: boolean) => {
           if (value) {
             selectedPeople.value = [...selectedPeople.value, rowData];
           } else {
             selectedPeople.value = selectedPeople.value.filter(
-              (p) => p.id !== rowData.id,
+              (p) => p.personGuid !== rowData.personGuid,
             );
           }
           emit("selectionChange", selectedPeople.value);
@@ -92,20 +90,18 @@ const columns = computed<Column<any>[]>(() => {
       key: "fullName",
       dataKey: "fullName",
       title: t("people.fullName"),
-      width: 200,
+      width: 220,
       sortable: true,
-    },
-    {
-      key: "email",
-      dataKey: "email",
-      title: t("people.email"),
-      width: 200,
-    },
-    {
-      key: "phone",
-      dataKey: "phone",
-      title: t("people.phone"),
-      width: 130,
+      cellRenderer: ({ rowData }) =>
+        h(
+          ElButton,
+          {
+            type: "primary",
+            link: true,
+            onClick: () => emit("edit", rowData),
+          },
+          { default: () => rowData.fullName },
+        ),
     },
     {
       key: "eligibility",
@@ -131,42 +127,22 @@ const columns = computed<Column<any>[]>(() => {
       },
     },
     {
+      key: "email",
+      dataKey: "email",
+      title: t("people.email"),
+      width: 200,
+    },
+    {
+      key: "phone",
+      dataKey: "phone",
+      title: t("people.phone"),
+      width: 130,
+    },
+    {
       key: "area",
       dataKey: "area",
       title: t("people.area"),
       width: 120,
-    },
-    {
-      key: "actions",
-      title: t("common.actions"),
-      width: 150,
-      align: "right",
-      cellRenderer: ({ rowData }) =>
-        h(
-          ElButtonGroup,
-          {},
-          {
-            default: () => [
-              h(
-                ElButton,
-                {
-                  size: "small",
-                  onClick: () => emit("edit", rowData),
-                },
-                { default: () => t("common.edit") },
-              ),
-              h(
-                ElButton,
-                {
-                  size: "small",
-                  type: "danger",
-                  onClick: () => emit("delete", rowData),
-                },
-                { default: () => t("common.delete") },
-              ),
-            ],
-          },
-        ),
     },
   );
 
@@ -175,7 +151,7 @@ const columns = computed<Column<any>[]>(() => {
 </script>
 
 <template>
-  <div style="height: 600px">
+  <div class="people-table" :style="{ height: `${tableHeight}px` }">
     <el-auto-resizer>
       <template #default="{ height, width }">
         <el-table-v2
@@ -193,7 +169,7 @@ const columns = computed<Column<any>[]>(() => {
 
 <style lang="less">
 .people-table {
-  height: 100%;
   width: 100%;
+  min-height: 200px;
 }
 </style>

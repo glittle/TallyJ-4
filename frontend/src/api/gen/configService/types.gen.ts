@@ -553,6 +553,7 @@ export type CreateVoteDto = {
     ballotGuid?: string;
     personGuid?: string | null;
     positionOnBallot?: number;
+    ineligibleReasonCode?: string | null;
 };
 
 export type DashboardSummaryDto = {

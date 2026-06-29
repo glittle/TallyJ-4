@@ -14,6 +14,7 @@ export interface CreateVoteDto {
   ballotGuid: string;
   positionOnBallot: number;
   personGuid?: string;
+  ineligibleReasonCode?: string;
 }
 
 export interface VoteWithBallotStatusDto {

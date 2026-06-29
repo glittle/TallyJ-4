@@ -21,7 +21,24 @@ public class CreateVoteDtoValidator : AbstractValidator<CreateVoteDto>
         RuleFor(x => x.PositionOnBallot)
             .GreaterThan(0)
             .WithMessage("Position on ballot must be greater than 0");
+
+        RuleFor(x => x)
+            .Must(dto => dto.PersonGuid.HasValue || IsPersonLessVoteReason(dto.IneligibleReasonCode))
+            .WithMessage("Either a person or an U01/U02 ineligible reason is required");
+
+        RuleFor(x => x.IneligibleReasonCode)
+            .Must(code => IsPersonLessVoteReason(code))
+            .When(x => !x.PersonGuid.HasValue)
+            .WithMessage("Ineligible reason must be U01 or U02 when no person is specified");
+
+        RuleFor(x => x.IneligibleReasonCode)
+            .Empty()
+            .When(x => x.PersonGuid.HasValue)
+            .WithMessage("Ineligible reason cannot be set when a person is specified");
     }
+
+    private static bool IsPersonLessVoteReason(string? code) =>
+        code is "U01" or "U02";
 }
 
 

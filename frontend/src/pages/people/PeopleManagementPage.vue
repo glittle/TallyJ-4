@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
+import { useViewportTableHeight } from "@/composables/useViewportTableHeight";
 import {
   ArrowDown,
   Delete,
@@ -8,12 +9,11 @@ import {
   Search,
   Upload,
 } from "@element-plus/icons-vue";
-import { ElMessageBox } from "element-plus";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import PeopleTable from "../../components/people/PeopleTable.vue";
-import PersonFormDialog from "../../components/people/PersonFormDialog.vue";
+import PersonForm from "../../components/people/PersonForm.vue";
 import { usePeopleStore } from "../../stores/peopleStore";
 import type { PersonListDto } from "../../types";
 
@@ -25,21 +25,23 @@ const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const searchQuery = ref("");
-const showAddDialog = ref(false);
-const showEditDialog = ref(false);
+const showPersonDrawer = ref(false);
+const drawerMode = ref<"add" | "edit">("edit");
 const editingPerson = ref<PersonListDto | null>(null);
 
-// Bulk operations
 const selectedPeople = ref<PersonListDto[]>([]);
 const showBulkDeleteConfirm = ref(false);
 const bulkDeleting = ref(false);
 
-// Export
+const peoplePageRef = ref<HTMLElement | null>(null);
+const tableWrapperRef = ref<HTMLElement | null>(null);
+const { height: tableHeight } = useViewportTableHeight(tableWrapperRef, {
+  paddingRootRef: peoplePageRef,
+  min: 200,
+});
 
 const loading = computed(() => peopleStore.loading);
 const allPeople = computed(() => peopleStore.peopleList);
-//const voters = computed(() => peopleStore.voters);
-//const candidates = computed(() => peopleStore.candidates);
 
 const filteredPeople = computed(() => {
   if (!searchQuery.value) {
@@ -50,8 +52,17 @@ const filteredPeople = computed(() => {
     (p) =>
       p.fullName.toLowerCase().includes(query) ||
       p.email?.toLowerCase().includes(query),
-    // p.bahaiId?.toLowerCase().includes(query)
   );
+});
+
+const personDrawerTitle = computed(() => {
+  if (drawerMode.value === "add") {
+    return t("people.addPerson");
+  }
+  if (!editingPerson.value) {
+    return t("people.editPerson");
+  }
+  return t("people.editDrawerTitle", { name: editingPerson.value.fullName });
 });
 
 onMounted(async () => {
@@ -73,38 +84,32 @@ onUnmounted(async () => {
 });
 
 function handleSearch() {
-  selectedPeople.value = []; // Clear selection when searching
+  selectedPeople.value = [];
+}
+
+function handleAdd() {
+  drawerMode.value = "add";
+  editingPerson.value = null;
+  showPersonDrawer.value = true;
 }
 
 function handleEdit(person: PersonListDto) {
+  drawerMode.value = "edit";
   editingPerson.value = person;
-  showEditDialog.value = true;
+  showPersonDrawer.value = true;
 }
 
-async function handleDelete(person: PersonListDto) {
-  try {
-    await ElMessageBox.confirm(
-      t("people.deleteConfirm", { name: person.fullName }),
-      t("common.warning"),
-      {
-        confirmButtonText: t("common.delete"),
-        cancelButtonText: t("common.cancel"),
-        type: "warning",
-      },
-    );
-
-    await peopleStore.deletePerson(person.personGuid);
-    showSuccessMessage(t("people.deleteSuccess"));
-  } catch (error: any) {
-    if (error !== "cancel") {
-      showErrorMessage(error.message || t("people.deleteError"));
-    }
-  }
+function handlePersonDrawerClosed() {
+  editingPerson.value = null;
 }
 
 function handleFormSuccess() {
-  showAddDialog.value = false;
-  showEditDialog.value = false;
+  showPersonDrawer.value = false;
+  editingPerson.value = null;
+}
+
+function handlePersonDeleted() {
+  showPersonDrawer.value = false;
   editingPerson.value = null;
 }
 
@@ -148,8 +153,8 @@ async function confirmBulkDelete() {
 </script>
 
 <template>
-  <div class="people-management-page">
-    <el-card>
+  <div ref="peoplePageRef" class="people-management-page">
+    <el-card class="people-management-card">
       <template #header>
         <div class="card-header">
           <div class="header-actions">
@@ -167,7 +172,7 @@ async function confirmBulkDelete() {
                   </el-icon>
                 </template>
               </el-input>
-              <el-button type="primary" @click="showAddDialog = true">
+              <el-button type="primary" @click="handleAdd">
                 <el-icon>
                   <Plus />
                 </el-icon>
@@ -213,31 +218,45 @@ async function confirmBulkDelete() {
         </div>
       </template>
 
-      <PeopleTable
-        :people="filteredPeople"
-        :loading="loading"
-        :show-selection="true"
-        :selected="selectedPeople"
-        @edit="handleEdit"
-        @delete="handleDelete"
-      />
+      <div ref="tableWrapperRef" class="people-table-wrapper">
+        <PeopleTable
+          :people="filteredPeople"
+          :loading="loading"
+          :table-height="tableHeight"
+          :show-selection="true"
+          :selected="selectedPeople"
+          @edit="handleEdit"
+          @selection-change="selectedPeople = $event"
+        />
+      </div>
     </el-card>
 
-    <PersonFormDialog
-      v-model="showAddDialog"
-      :election-guid="electionGuid"
-      @success="handleFormSuccess"
-    />
+    <el-drawer
+      v-model="showPersonDrawer"
+      :title="personDrawerTitle"
+      direction="rtl"
+      size="50%"
+      :lock-scroll="false"
+      modal-class="person-form-drawer"
+      @closed="handlePersonDrawerClosed"
+    >
+      <PersonForm
+        v-if="showPersonDrawer && (drawerMode === 'add' || editingPerson)"
+        :key="
+          drawerMode === 'add'
+            ? 'add-person'
+            : (editingPerson?.personGuid ?? 'edit')
+        "
+        :election-guid="electionGuid"
+        :person="drawerMode === 'edit' ? editingPerson : null"
+        :is-edit="drawerMode === 'edit'"
+        :show-delete="drawerMode === 'edit'"
+        @success="handleFormSuccess"
+        @deleted="handlePersonDeleted"
+        @cancel="showPersonDrawer = false"
+      />
+    </el-drawer>
 
-    <PersonFormDialog
-      v-model="showEditDialog"
-      :election-guid="electionGuid"
-      :person="editingPerson"
-      :is-edit="true"
-      @success="handleFormSuccess"
-    />
-
-    <!-- Bulk Delete Confirmation -->
     <el-dialog
       v-model="showBulkDeleteConfirm"
       :title="$t('people.confirmBulkDelete')"
@@ -264,19 +283,37 @@ async function confirmBulkDelete() {
   </div>
 </template>
 
-<style type="less">
+<style lang="less">
 .people-management-page {
   max-width: 1400px;
   margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .people-management-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    .el-card__body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+  }
+
+  .people-table-wrapper {
+    flex: 1;
+    min-height: 0;
+  }
 
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-
-  .header-left {
-    flex: 1;
   }
 
   .header-actions {
@@ -296,6 +333,12 @@ async function confirmBulkDelete() {
 
   .danger-item:hover {
     background-color: var(--color-error-50);
+  }
+}
+
+.person-form-drawer {
+  .el-drawer {
+    transition: none;
   }
 }
 </style>

@@ -1655,9 +1655,9 @@ async function saveEnvelopeNumber(clear = false) {
                   <el-timeline-item
                     v-for="(entry, index) in selectedVoterRegistrationHistory"
                     :key="index"
-                    :timestamp="formatTimeline(entry)"
+                    :timestamp="formatTime(entry.timestamp)"
                   >
-                    {{ formatTime(entry.timestamp) }}
+                    {{ formatTimeline(entry) }}
                   </el-timeline-item>
                 </el-timeline>
               </div>
@@ -1958,15 +1958,6 @@ async function saveEnvelopeNumber(clear = false) {
       text-transform: uppercase;
       letter-spacing: 0.02em;
     }
-  }
-
-  .el-timeline-item__timestamp {
-    font-size: 1.1em;
-    color: var(--el-text-color-regular);
-  }
-  .el-timeline-item__content {
-    font-size: 0.85em;
-    color: var(--el-text-color-secondary);
   }
 
   .registration-overlay {
