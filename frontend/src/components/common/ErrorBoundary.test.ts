@@ -1,11 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
-import { mount } from "@vue/test-utils";
-import { createRouter, createWebHistory } from "vue-router";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { mount, flushPromises } from "@vue/test-utils";
 import { createTestingPinia } from "@pinia/testing";
+import { nextTick } from "vue";
+import ElementPlus from "element-plus";
 import ErrorBoundary from "./ErrorBoundary.vue";
 import { i18n } from "../../test/setup";
 
-// Mock child component that throws an error
 const ErrorComponent = {
   template: "<div>Error Component</div>",
   mounted() {
@@ -17,20 +17,30 @@ const NormalComponent = {
   template: "<div>Normal Component</div>",
 };
 
-describe("ErrorBoundary", () => {
-  let router: any;
+async function mountWithError() {
+  const wrapper = mount(ErrorBoundary, {
+    global: {
+      plugins: [createTestingPinia(), i18n, ElementPlus],
+    },
+    slots: {
+      default: ErrorComponent,
+    },
+  });
 
+  await flushPromises();
+  await nextTick();
+  return wrapper;
+}
+
+describe("ErrorBoundary", () => {
   beforeEach(() => {
-    router = createRouter({
-      history: createWebHistory(),
-      routes: [{ path: "/", name: "Home" }],
-    });
+    vi.restoreAllMocks();
   });
 
   it("renders slot content when no error occurs", () => {
     const wrapper = mount(ErrorBoundary, {
       global: {
-        plugins: [router, i18n, createTestingPinia()],
+        plugins: [createTestingPinia(), i18n, ElementPlus],
       },
       slots: {
         default: NormalComponent,
@@ -42,117 +52,68 @@ describe("ErrorBoundary", () => {
   });
 
   it("catches and displays error when child component throws", async () => {
-    const wrapper = mount(ErrorBoundary, {
-      global: {
-        plugins: [router, i18n, createTestingPinia()],
-      },
-      slots: {
-        default: ErrorComponent,
-      },
-    });
-
-    // Wait for error to be caught
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    const wrapper = await mountWithError();
 
     expect(wrapper.find(".error-boundary").exists()).toBe(true);
     expect(wrapper.text()).toContain("Something went wrong");
   });
 
   it("shows error details in development mode", async () => {
-    // Mock import.meta.env.DEV
     const originalDev = import.meta.env.DEV;
     (import.meta.env as any).DEV = true;
 
-    const wrapper = mount(ErrorBoundary, {
-      global: {
-        plugins: [router, i18n, createTestingPinia()],
-      },
-      slots: {
-        default: ErrorComponent,
-      },
-    });
-
-    // Wait for error to be caught
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    const wrapper = await mountWithError();
 
     expect(wrapper.find(".error-details").exists()).toBe(true);
     expect(wrapper.text()).toContain("Test error");
 
-    // Restore original value
     (import.meta.env as any).DEV = originalDev;
   });
 
   it("hides error details in production mode", async () => {
-    // Mock import.meta.env.DEV
     const originalDev = import.meta.env.DEV;
     (import.meta.env as any).DEV = false;
 
-    const wrapper = mount(ErrorBoundary, {
-      global: {
-        plugins: [router, i18n, createTestingPinia()],
-      },
-      slots: {
-        default: ErrorComponent,
-      },
-    });
-
-    // Wait for error to be caught
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    const wrapper = await mountWithError();
 
     expect(wrapper.find(".error-details").exists()).toBe(false);
 
-    // Restore original value
     (import.meta.env as any).DEV = originalDev;
   });
 
   it("retries by reloading page", async () => {
     const mockReload = vi.fn();
     Object.defineProperty(window, "location", {
-      value: { reload: mockReload },
+      value: { reload: mockReload, href: "" },
       writable: true,
+      configurable: true,
     });
 
-    const wrapper = mount(ErrorBoundary, {
-      global: {
-        plugins: [router, i18n, createTestingPinia()],
-      },
-      slots: {
-        default: ErrorComponent,
-      },
-    });
+    const wrapper = await mountWithError();
 
-    // Wait for error to be caught
-    await new Promise((resolve) => setTimeout(resolve, 0));
-
-    // Click retry button
-    const retryButton = wrapper.find("button");
-    if (retryButton.exists()) {
-      await retryButton.trigger("click");
-      expect(mockReload).toHaveBeenCalled();
-    }
+    const retryButton = wrapper
+      .findAll("button")
+      .find((button) => button.text().includes("Try Again"));
+    expect(retryButton).toBeDefined();
+    await retryButton!.trigger("click");
+    expect(mockReload).toHaveBeenCalled();
   });
 
   it("navigates home when go home is clicked", async () => {
-    const mockRouterPush = vi.fn();
-    router.push = mockRouterPush;
-
-    const wrapper = mount(ErrorBoundary, {
-      global: {
-        plugins: [router, i18n, createTestingPinia()],
-      },
-      slots: {
-        default: ErrorComponent,
-      },
+    const location = { reload: vi.fn(), href: "" };
+    Object.defineProperty(window, "location", {
+      value: location,
+      writable: true,
+      configurable: true,
     });
 
-    // Wait for error to be caught
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    const wrapper = await mountWithError();
 
-    // Find and click go home button (second button)
-    const buttons = wrapper.findAll("button");
-    if (buttons.length > 1) {
-      await buttons[1].trigger("click");
-      expect(mockRouterPush).toHaveBeenCalledWith("/");
-    }
+    const goHomeButton = wrapper
+      .findAll("button")
+      .find((button) => button.text().includes("Go Home"));
+    expect(goHomeButton).toBeDefined();
+    await goHomeButton!.trigger("click");
+    expect(location.href).toBe("/");
   });
 });

@@ -1,9 +1,8 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import App from "./App.vue";
-import { pinia, router } from "./test/setup";
+import { pinia, router, i18n } from "./test/setup";
 
-// Mock ErrorBoundary component
 vi.mock("./components/common/ErrorBoundary.vue", () => ({
   default: {
     name: "ErrorBoundary",
@@ -11,106 +10,67 @@ vi.mock("./components/common/ErrorBoundary.vue", () => ({
   },
 }));
 
+const globalMountOptions = {
+  global: {
+    plugins: [pinia, router, i18n],
+    stubs: ["RouterView"],
+  },
+};
+
 describe("App", () => {
+  const originalBranchName = process.env.BRANCH_NAME;
+
+  afterEach(() => {
+    process.env.BRANCH_NAME = originalBranchName;
+  });
+
   it("renders properly", () => {
-    const wrapper = mount(App, {
-      global: {
-        plugins: [pinia, router],
-        stubs: ["RouterView"],
-      },
-    });
+    const wrapper = mount(App, globalMountOptions);
     expect(wrapper.exists()).toBe(true);
   });
 
   it("displays branch name when not on main branch", async () => {
-    // Mock process.env.BRANCH_NAME to a non-main branch
-    const originalBranchName = process.env.BRANCH_NAME;
     process.env.BRANCH_NAME = "feature/test-branch";
 
-    const wrapper = mount(App, {
-      global: {
-        plugins: [pinia, router],
-        stubs: ["RouterView"],
-      },
-    });
-
+    const wrapper = mount(App, globalMountOptions);
     await wrapper.vm.$nextTick();
 
-    const branchElement = wrapper.find(".devBranchName");
+    const branchElement = wrapper.find(".bottomCorner");
     expect(branchElement.exists()).toBe(true);
     expect(branchElement.text()).toContain("Branch: feature/test-branch");
-
-    // Restore original value
-    process.env.BRANCH_NAME = originalBranchName;
   });
 
-  it("does not display branch name when on main branch", async () => {
-    // Mock process.env.BRANCH_NAME to main
-    const originalBranchName = process.env.BRANCH_NAME;
-    process.env.BRANCH_NAME = "main";
+  it("does not display branch name when on HEAD", async () => {
+    process.env.BRANCH_NAME = "HEAD";
 
-    const wrapper = mount(App, {
-      global: {
-        plugins: [pinia, router],
-        stubs: ["RouterView"],
-      },
-    });
-
+    const wrapper = mount(App, globalMountOptions);
     await wrapper.vm.$nextTick();
 
-    const branchElement = wrapper.find(".devBranchName");
-    expect(branchElement.exists()).toBe(false);
-
-    // Restore original value
-    process.env.BRANCH_NAME = originalBranchName;
+    expect(wrapper.find(".bottomCorner").exists()).toBe(false);
   });
 
   it("hides branch name when clicked", async () => {
-    // Mock process.env.BRANCH_NAME to a non-main branch
-    const originalBranchName = process.env.BRANCH_NAME;
     process.env.BRANCH_NAME = "feature/test-branch";
 
-    const wrapper = mount(App, {
-      global: {
-        plugins: [pinia, router],
-        stubs: ["RouterView"],
-      },
-    });
-
+    const wrapper = mount(App, globalMountOptions);
     await wrapper.vm.$nextTick();
 
-    let branchElement = wrapper.find(".devBranchName");
+    const branchElement = wrapper.find(".bottomCorner");
     expect(branchElement.exists()).toBe(true);
 
-    // Click on the branch element
     await branchElement.trigger("click");
     await wrapper.vm.$nextTick();
 
-    branchElement = wrapper.find(".devBranchName");
-    expect(branchElement.exists()).toBe(false);
-
-    // Restore original value
-    process.env.BRANCH_NAME = originalBranchName;
+    expect(wrapper.find(".bottomCorner").exists()).toBe(false);
   });
 
   it("has correct title attribute on branch display", async () => {
-    // Mock process.env.BRANCH_NAME to a non-main branch
-    const originalBranchName = process.env.BRANCH_NAME;
     process.env.BRANCH_NAME = "feature/test-branch";
 
-    const wrapper = mount(App, {
-      global: {
-        plugins: [pinia, router],
-        stubs: ["RouterView"],
-      },
-    });
-
+    const wrapper = mount(App, globalMountOptions);
     await wrapper.vm.$nextTick();
 
-    const branchElement = wrapper.find(".devBranchName");
+    const branchElement = wrapper.find(".bottomCorner");
     expect(branchElement.attributes("title")).toBe("Click to remove");
-
-    // Restore original value
-    process.env.BRANCH_NAME = originalBranchName;
   });
 });

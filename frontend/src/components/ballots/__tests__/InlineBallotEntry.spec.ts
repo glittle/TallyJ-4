@@ -491,4 +491,125 @@ describe("InlineBallotEntry", () => {
 
     expect(wrapper.emitted("votes-reordered")).toEqual([[[11, 10]]]);
   });
+
+  it("keeps reordering disabled after drop until ballot updates", async () => {
+    const initialVotes: VoteDto[] = [
+      {
+        rowId: 10,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        personGuid: mockCandidates[0].personGuid,
+        personFullName: mockCandidates[0].fullName,
+        statusCode: "ok",
+      },
+      {
+        rowId: 11,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 2,
+        personGuid: mockCandidates[1].personGuid,
+        personFullName: mockCandidates[1].fullName,
+        statusCode: "ok",
+      },
+    ];
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(initialVotes),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+
+    const rows = wrapper.findAll(".vote-row");
+    await rows[1].trigger("dragstart");
+    await rows[0].trigger("dragover");
+    await rows[0].trigger("drop");
+    await rows[1].trigger("dragend");
+    await nextTick();
+
+    expect(wrapper.emitted("votes-reordered")).toEqual([[[11, 10]]]);
+    expect((wrapper.vm as { reorderingVotes: boolean }).reorderingVotes).toBe(
+      true,
+    );
+
+    const reorderedVotes: VoteDto[] = [
+      {
+        rowId: 11,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        personGuid: mockCandidates[1].personGuid,
+        personFullName: mockCandidates[1].fullName,
+        statusCode: "ok",
+      },
+      {
+        rowId: 10,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 2,
+        personGuid: mockCandidates[0].personGuid,
+        personFullName: mockCandidates[0].fullName,
+        statusCode: "ok",
+      },
+    ];
+
+    await wrapper.setProps({ ballot: createMockBallot(reorderedVotes) });
+    await nextTick();
+
+    expect((wrapper.vm as { reorderingVotes: boolean }).reorderingVotes).toBe(
+      false,
+    );
+  });
+
+  it("re-enables reordering when resyncKey bumps after a failed reorder", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 10,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        personGuid: mockCandidates[0].personGuid,
+        personFullName: mockCandidates[0].fullName,
+        statusCode: "ok",
+      },
+      {
+        rowId: 11,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 2,
+        personGuid: mockCandidates[1].personGuid,
+        personFullName: mockCandidates[1].fullName,
+        statusCode: "ok",
+      },
+    ];
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(votes),
+        requiredVotes: 9,
+        resyncKey: 0,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+
+    const rows = wrapper.findAll(".vote-row");
+    await rows[1].trigger("dragstart");
+    await rows[0].trigger("dragover");
+    await rows[0].trigger("drop");
+    await rows[1].trigger("dragend");
+    await nextTick();
+
+    expect((wrapper.vm as { reorderingVotes: boolean }).reorderingVotes).toBe(
+      true,
+    );
+
+    await wrapper.setProps({ resyncKey: 1 });
+    await nextTick();
+
+    expect((wrapper.vm as { reorderingVotes: boolean }).reorderingVotes).toBe(
+      false,
+    );
+  });
 });

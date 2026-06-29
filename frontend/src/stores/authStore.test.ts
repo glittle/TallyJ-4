@@ -28,6 +28,20 @@ vi.mock("../composables/useApiErrorHandler", () => ({
   }),
 }));
 
+vi.mock("../services/tokenRefreshService", () => ({
+  tokenRefreshService: {
+    initialize: vi.fn(),
+    stopAutoRefresh: vi.fn(),
+  },
+}));
+
+vi.mock("../api/gen/configService/sdk.gen", () => ({
+  getApiAuthMe: vi.fn().mockResolvedValue({
+    response: { ok: false },
+    data: null,
+  }),
+}));
+
 // Mock localStorage (still needed for some legacy behavior)
 const localStorageMock = {
   getItem: vi.fn(),

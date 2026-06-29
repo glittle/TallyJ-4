@@ -40,11 +40,11 @@
 </template>
 
 <script setup lang="ts">
-import { onErrorCaptured, ref } from "vue";
+import { computed, onErrorCaptured, ref } from "vue";
 
 const hasError = ref(false);
 const errorMessage = ref("");
-const showDetails = ref(import.meta.env.DEV);
+const showDetails = computed(() => import.meta.env.DEV);
 
 function retry() {
   hasError.value = false;

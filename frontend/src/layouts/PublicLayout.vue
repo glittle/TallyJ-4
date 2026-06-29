@@ -17,6 +17,8 @@ const versionDateBadi = computed(() => getBuildDateBadi());
 // Check if we're on the landing page
 const expandLanguageSelector = true; // computed(() => route.path === "/" || route.name === "landing");
 
+const logoSrc = "/assets/logo-trans.png";
+
 const handleLogoClick = () => {
   router.push("/");
 };
@@ -27,7 +29,7 @@ const handleLogoClick = () => {
     <div class="public-header">
       <div class="logo" style="cursor: pointer" @click="handleLogoClick">
         <h2>
-          <img src="/assets/logo-trans.png" :alt="$t('common.logoAlt')" />
+          <img :src="logoSrc" :alt="$t('common.logoAlt')" />
           <span>
             <div>{{ $t("common.versionDisplay") }}</div>
             <div

@@ -110,6 +110,14 @@ const handleRegister = async () => {
     }
   });
 };
+
+defineExpose({
+  validatePassword,
+  validatePass2,
+  registerForm,
+  registerFormRef,
+  handleRegister,
+});
 </script>
 
 <template>

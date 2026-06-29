@@ -108,13 +108,19 @@ function rebuildVoteSlots(includeOptimistic = true) {
 
 watch(
   () => props.ballot,
-  () => rebuildVoteSlots(true),
+  () => {
+    rebuildVoteSlots(true);
+    reorderingVotes.value = false;
+  },
   { immediate: true, deep: true },
 );
 
 watch(
   () => props.resyncKey,
-  () => rebuildVoteSlots(false),
+  () => {
+    rebuildVoteSlots(false);
+    reorderingVotes.value = false;
+  },
 );
 
 const hasUnpersistedVote = computed(() =>
@@ -345,8 +351,11 @@ function handleDrop(targetIndex: number) {
 function handleDragEnd() {
   dragSourceIndex.value = null;
   dragOverIndex.value = null;
-  reorderingVotes.value = false;
 }
+
+defineExpose({
+  reorderingVotes,
+});
 
 async function toggleNeedsReview() {
   reviewToggleLoading.value = true;

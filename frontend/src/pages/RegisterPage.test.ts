@@ -5,6 +5,15 @@ import { pinia, router, i18n } from "@/test/setup";
 import ElementPlus from "element-plus";
 import { useAuthStore } from "@/stores/authStore";
 
+vi.mock("@/composables/useNotifications", () => ({
+  useNotifications: () => ({
+    showSuccessMessage: vi.fn(),
+    showErrorMessage: vi.fn(),
+    showWarningMessage: vi.fn(),
+    showInfoMessage: vi.fn(),
+  }),
+}));
+
 describe("RegisterPage", () => {
   it("renders register title", () => {
     const wrapper = mount(RegisterPage, {

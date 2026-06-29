@@ -34,6 +34,7 @@ export function isVoteDtoSpoiled(vote: ApiVoteLike): boolean {
 
   const status = resolveVoteStatus(vote);
   return status !== "ok";
+}
 
 export function normalizeVoteDto(vote: ApiVoteDto): VoteDto {
   const rawStatus = vote.statusCode ?? vote.voteStatus;
