@@ -60,7 +60,6 @@ async function handleSubmit() {
   if (isPersonLessVote.value) {
     submitting.value = true;
     try {
-      showSuccessMessage(t("ballots.addNameSuccess"));
       emit("person-added", buildPersonLessVote());
     } finally {
       submitting.value = false;
