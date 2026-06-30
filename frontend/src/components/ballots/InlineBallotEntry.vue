@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useComputerCode } from "@/composables/useComputerCode";
 import { useNotifications } from "@/composables/useNotifications";
 import { usePersonSearch } from "@/composables/usePersonSearch";
 import { useBallotStore } from "@/stores/ballotStore";
+import { useLocationStore } from "@/stores/locationStore";
 import { usePeopleStore } from "@/stores/peopleStore";
 import type { BallotDto } from "@/types/Ballot";
 import type { SearchablePersonDto } from "@/types/Person";
@@ -9,11 +12,17 @@ import type { VoteDto } from "@/types/Vote";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
 import { isVoteDtoSpoiled } from "@/utils/voteDtoNormalization";
 import { getVoteSpoiledLabel } from "@/utils/voteSpoiledLabel";
-import { Delete, Rank, WarningFilled } from "@element-plus/icons-vue";
+import { Delete, Plus, Rank, WarningFilled } from "@element-plus/icons-vue";
+import { ElMessageBox } from "element-plus";
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import BallotAddPersonPanel from "./BallotAddPersonPanel.vue";
 
 const MAX_BALLOT_SLOTS = 50;
+
+export type VoteAddedOptions = {
+  fromNewPerson?: boolean;
+};
 
 const props = defineProps<{
   electionGuid: string;
@@ -27,17 +36,22 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  "vote-added": [vote: VoteDto];
+  "vote-added": [vote: VoteDto, options?: VoteAddedOptions];
   "vote-removed": [positionOnBallot: number];
   "votes-reordered": [voteRowIds: number[]];
   "ballot-saved": [];
+  "ballot-created": [ballotGuid: string];
+  "ballot-deleted": [ballotGuid: string];
 }>();
 
 const { t } = useI18n();
 const ballotStore = useBallotStore();
 const peopleStore = usePeopleStore();
+const locationStore = useLocationStore();
+const { computerCode } = useComputerCode(props.electionGuid);
 const { showWarningMessage, showErrorMessage, showSuccessMessage } =
   useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const votes = ref<(VoteDto | null)[]>([]);
 const cacheLoading = ref(false);
@@ -48,6 +62,9 @@ const searchInputRef = ref();
 const selectedSearchIndex = ref(0);
 const searchResultsListRef = ref<HTMLElement | null>(null);
 const reviewToggleLoading = ref(false);
+const creatingNewBallot = ref(false);
+const deletingBallot = ref(false);
+const showAddPersonDrawer = ref(false);
 const dragSourceIndex = ref<number | null>(null);
 const dragOverIndex = ref<number | null>(null);
 const reorderingVotes = ref(false);
@@ -113,6 +130,15 @@ watch(
     reorderingVotes.value = false;
   },
   { immediate: true, deep: true },
+);
+
+watch(
+  () => props.ballot.ballotGuid,
+  () => {
+    searchQuery.value = "";
+    selectedSearchIndex.value = 0;
+    void focusSearchInput();
+  },
 );
 
 watch(
@@ -186,17 +212,36 @@ function canDropOnIndex(targetIndex: number): boolean {
   );
 }
 
-async function handlePersonSelected(person: SearchablePersonDto) {
-  if (!canAddVotes.value) {
-    showWarningMessage(t("ballots.keyboardTellerRequired"));
-    return;
-  }
-
+function addVoteToBallot(vote: VoteDto, options?: VoteAddedOptions) {
   const emptyPos = findNextEmptyPosition();
   if (emptyPos === -1) {
     if (votes.value.length >= MAX_BALLOT_SLOTS) {
       showWarningMessage(t("ballots.ballotFull"));
     }
+    return false;
+  }
+
+  const voteWithPosition: VoteDto = {
+    ...vote,
+    positionOnBallot: emptyPos,
+  };
+
+  const merged = buildVoteMap(true);
+  merged.set(emptyPos, voteWithPosition);
+  const slots = computeSlotCount(merged);
+  const voteArray: (VoteDto | null)[] = [];
+  for (let i = 1; i <= slots; i++) {
+    voteArray.push(merged.get(i) ?? null);
+  }
+  votes.value = voteArray;
+
+  emit("vote-added", voteWithPosition, options);
+  return true;
+}
+
+async function handlePersonSelected(person: SearchablePersonDto) {
+  if (!canAddVotes.value) {
+    showWarningMessage(t("ballots.keyboardTellerRequired"));
     return;
   }
 
@@ -205,7 +250,7 @@ async function handlePersonSelected(person: SearchablePersonDto) {
   const vote: VoteDto = {
     rowId: 0,
     ballotGuid: props.ballot.ballotGuid,
-    positionOnBallot: emptyPos,
+    positionOnBallot: 0,
     personGuid: person.personGuid,
     personFullName: person.fullName,
     statusCode: isSpoiled ? "Spoiled" : "ok",
@@ -214,22 +259,28 @@ async function handlePersonSelected(person: SearchablePersonDto) {
       : undefined,
   };
 
-  const merged = buildVoteMap(true);
-  merged.set(emptyPos, vote);
-  const slots = computeSlotCount(merged);
-  const voteArray: (VoteDto | null)[] = [];
-  for (let i = 1; i <= slots; i++) {
-    voteArray.push(merged.get(i) ?? null);
+  if (!addVoteToBallot(vote)) {
+    return;
   }
-  votes.value = voteArray;
-
-  emit("vote-added", vote);
 
   searchQuery.value = "";
   selectedSearchIndex.value = 0;
 
   await nextTick();
   searchInputRef.value?.focus();
+}
+
+async function handleNewPersonAdded(vote: VoteDto) {
+  if (!canAddVotes.value) {
+    showWarningMessage(t("ballots.keyboardTellerRequired"));
+    return;
+  }
+
+  if (addVoteToBallot(vote, { fromNewPerson: !!vote.personGuid })) {
+    showAddPersonDrawer.value = false;
+    await nextTick();
+    searchInputRef.value?.focus();
+  }
 }
 
 function handleKeyDown(e: KeyboardEvent) {
@@ -357,8 +408,72 @@ function handleDragEnd() {
   dragOverIndex.value = null;
 }
 
+async function focusSearchInput() {
+  await nextTick();
+  searchInputRef.value?.focus();
+}
+
+async function handleDeleteBallot() {
+  try {
+    await ElMessageBox.confirm(
+      t("ballots.deleteConfirm", { code: props.ballot.ballotCode }),
+      t("common.warning"),
+      {
+        confirmButtonText: t("common.delete"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      },
+    );
+  } catch (error) {
+    if (error !== "cancel") {
+      handleApiError(error);
+    }
+    return;
+  }
+
+  deletingBallot.value = true;
+  try {
+    await ballotStore.deleteBallot(props.ballot.ballotGuid);
+    showSuccessMessage(t("ballots.deleteSuccess"));
+    emit("ballot-deleted", props.ballot.ballotGuid);
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    deletingBallot.value = false;
+  }
+}
+
+async function handleNewBallot() {
+  if (!computerCode.value) {
+    showErrorMessage(t("ballots.computerCodeRequired"));
+    return;
+  }
+
+  if (!locationStore.selectedLocationGuid) {
+    showErrorMessage(t("ballots.locationRequired"));
+    return;
+  }
+
+  creatingNewBallot.value = true;
+  try {
+    const ballot = await ballotStore.createBallot({
+      electionGuid: props.electionGuid,
+      computerCode: computerCode.value,
+      locationGuid: locationStore.selectedLocationGuid!,
+      ...getActiveTellerPayload(),
+    });
+    showSuccessMessage(t("ballots.createSuccess"));
+    emit("ballot-created", ballot.ballotGuid);
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    creatingNewBallot.value = false;
+  }
+}
+
 defineExpose({
   reorderingVotes,
+  focusSearchInput,
 });
 
 async function toggleNeedsReview() {
@@ -392,9 +507,7 @@ onMounted(async () => {
     .initializeCandidateCache(props.electionGuid)
     .then(() => {
       cacheLoading.value = false;
-      nextTick(() => {
-        searchInputRef.value?.focus();
-      });
+      void focusSearchInput();
     })
     .catch((e) => {
       console.error("Failed to initialize candidate cache:", e);
@@ -480,9 +593,36 @@ onMounted(async () => {
             </div>
           </div>
         </div>
+
+        <div class="new-ballot-action">
+          <el-button
+            type="primary"
+            :loading="creatingNewBallot"
+            @click="handleNewBallot"
+          >
+            <el-icon>
+              <Plus />
+            </el-icon>
+            {{ $t("ballots.addNextBallot") }}
+          </el-button>
+        </div>
+
+        <div class="add-name-action">
+          <el-button
+            type="default"
+            :disabled="!canAddVotes"
+            @click="showAddPersonDrawer = true"
+          >
+            <el-icon>
+              <Plus />
+            </el-icon>
+            {{ $t("ballots.addName") }}
+          </el-button>
+        </div>
+
         <div class="needs-review-toggle">
           <el-button
-            :type="isNeedsReview ? 'danger' : 'default'"
+            :type="isNeedsReview ? 'danger' : 'warning'"
             :plain="!isNeedsReview"
             :loading="reviewToggleLoading"
             @click="toggleNeedsReview"
@@ -492,6 +632,20 @@ onMounted(async () => {
                 ? $t("ballots.clearNeedsReview")
                 : $t("ballots.markNeedsReview")
             }}
+          </el-button>
+        </div>
+
+        <div class="delete-ballot-action">
+          <el-button
+            type="danger"
+            plain
+            :loading="deletingBallot"
+            @click="handleDeleteBallot"
+          >
+            <el-icon>
+              <Delete />
+            </el-icon>
+            {{ $t("ballots.deleteBallot") }}
           </el-button>
         </div>
       </div>
@@ -550,10 +704,10 @@ onMounted(async () => {
                       'is-spoiled': isVoteDtoSpoiled(vote),
                     }"
                   >
-                    {{ vote.personFullName }}
+                    {{ vote.personFullName || getVoteSpoiledLabel($t, vote) }}
                   </span>
                   <span
-                    v-if="isVoteDtoSpoiled(vote)"
+                    v-if="isVoteDtoSpoiled(vote) && vote.personFullName"
                     class="vote-ineligible-reason"
                   >
                     {{ getVoteSpoiledLabel($t, vote) }}
@@ -591,6 +745,23 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+
+    <el-drawer
+      v-model="showAddPersonDrawer"
+      :title="$t('ballots.addNameDrawerTitle')"
+      direction="rtl"
+      size="700px"
+      :lock-scroll="false"
+      modal-class="ballot-add-person-drawer"
+    >
+      <BallotAddPersonPanel
+        v-if="showAddPersonDrawer"
+        :election-guid="electionGuid"
+        :ballot-guid="ballot.ballotGuid"
+        @person-added="handleNewPersonAdded"
+        @cancel="showAddPersonDrawer = false"
+      />
+    </el-drawer>
   </div>
 </template>
 
@@ -714,13 +885,12 @@ onMounted(async () => {
     }
   }
 
-  .needs-review-toggle {
-    margin: 1em 0;
+  .new-ballot-action,
+  .needs-review-toggle,
+  .delete-ballot-action,
+  .add-name-action {
+    margin: 1em 0 0;
     padding: 0 var(--spacing-3, 12px) var(--spacing-3, 12px);
-
-    //.el-button {
-    //  width: 100%;
-    //}
   }
 
   .votes-panel {

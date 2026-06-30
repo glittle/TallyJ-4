@@ -203,6 +203,13 @@ export type ApiResponseRollCallDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponseString = {
+    success?: boolean;
+    data?: string | null;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponseSuperAdminElectionDetailDto = {
     success?: boolean;
     data?: SuperAdminElectionDetailDto;
@@ -553,6 +560,7 @@ export type CreateVoteDto = {
     ballotGuid?: string;
     personGuid?: string | null;
     positionOnBallot?: number;
+    ineligibleReasonCode?: string | null;
 };
 
 export type DashboardSummaryDto = {
@@ -652,6 +660,7 @@ export type ElectionDto = {
     flags?: string | null;
     isTellerAccessOpen?: boolean;
     tellerAccessOpenedAt?: Date | null;
+    hasUnits?: boolean;
 };
 
 export const ElectionModeCode = {
@@ -1173,7 +1182,10 @@ export type PersonDetailDto = {
     teller2?: string | null;
     hasOnlineBallot?: boolean | null;
     registrationHistory?: string | null;
+    kioskCode?: string | null;
+    unitName?: string | null;
     voteCount?: number;
+    canDelete?: boolean;
 };
 
 export type PersonDto = {
@@ -3446,6 +3458,24 @@ export type DeleteApiPeopleByGuidDeletePersonResponses = {
      */
     200: unknown;
 };
+
+export type PostApiPeopleByGuidGenerateKioskCodeData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/People/{guid}/generateKioskCode';
+};
+
+export type PostApiPeopleByGuidGenerateKioskCodeResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseString;
+};
+
+export type PostApiPeopleByGuidGenerateKioskCodeResponse = PostApiPeopleByGuidGenerateKioskCodeResponses[keyof PostApiPeopleByGuidGenerateKioskCodeResponses];
 
 export type PostApiPeopleImportByElectionGuidUploadData = {
     body?: {

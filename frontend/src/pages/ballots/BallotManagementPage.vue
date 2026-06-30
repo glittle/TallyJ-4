@@ -157,6 +157,23 @@ async function handleRefresh() {
   }
 }
 
+function handleBallotDeletedFromEntry() {
+  showDrawer.value = false;
+  drawerBallotGuid.value = null;
+  isNewBallot.value = false;
+  ballotStore.clearCurrentBallot();
+}
+
+function handleBallotCreatedFromEntry(ballotGuid: string) {
+  isNewBallot.value = true;
+  drawerBallotGuid.value = ballotGuid;
+  showDrawer.value = true;
+  selectedViewFilter.value = computerFilterValue(
+    locationStore.selectedLocationGuid,
+    computerCode.value,
+  );
+}
+
 async function handleAddBallot() {
   if (!computerCode.value) {
     showErrorMessage(t("ballots.computerCodeRequired"));
@@ -355,6 +372,8 @@ function handleLocationChange(locationGuid: string | null) {
         :show-metadata="!isNewBallot"
         :manage-ballot-signal-r="false"
         :has-keyboard-teller="hasKeyboardTeller"
+        @ballot-created="handleBallotCreatedFromEntry"
+        @ballot-deleted="handleBallotDeletedFromEntry"
       />
     </el-drawer>
   </div>

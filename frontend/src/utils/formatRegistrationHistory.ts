@@ -1,5 +1,52 @@
 import type { RegistrationHistoryEntryDto } from "@/types/FrontDesk";
 
+interface RawRegistrationHistoryEntry {
+  timestamp?: string;
+  Timestamp?: string;
+  action?: string;
+  Action?: string;
+  votingMethod?: string;
+  VotingMethod?: string;
+  teller1?: string;
+  Teller1?: string;
+  teller2?: string;
+  Teller2?: string;
+  locationName?: string;
+  LocationName?: string;
+  envNum?: number;
+  EnvNum?: number;
+  performedBy?: string;
+  PerformedBy?: string;
+}
+
+export function parseRegistrationHistory(
+  json?: string | null,
+): RegistrationHistoryEntryDto[] {
+  if (!json?.trim()) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(json) as RawRegistrationHistoryEntry[];
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.map((entry) => ({
+      timestamp: entry.timestamp ?? entry.Timestamp ?? "",
+      action: entry.action ?? entry.Action ?? "",
+      votingMethod: entry.votingMethod ?? entry.VotingMethod,
+      teller1: entry.teller1 ?? entry.Teller1,
+      teller2: entry.teller2 ?? entry.Teller2,
+      locationName: entry.locationName ?? entry.LocationName,
+      envNum: entry.envNum ?? entry.EnvNum,
+      performedBy: entry.performedBy ?? entry.PerformedBy,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export interface FormatRegistrationHistoryOptions {
   t: (key: string, params?: Record<string, unknown>) => string;
   getVotingMethodLabel?: (method?: string) => string;

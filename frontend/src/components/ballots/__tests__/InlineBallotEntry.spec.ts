@@ -20,6 +20,15 @@ const mockT = (key: string, values?: Record<string, string | number>) => {
     "ballots.keyboardTellerRequired":
       "Select the teller at keyboard before adding votes",
     "ballots.dragToReorder": "Drag votes to change their order",
+    "ballots.addBallot": "Add Ballot",
+    "ballots.deleteBallot": "Delete Ballot",
+    "ballots.deleteConfirm": "Delete ballot {code}? All votes on it will be permanently removed.",
+    "ballots.deleteSuccess": "Ballot deleted successfully",
+    "ballots.createSuccess": "Ballot created successfully",
+    "common.warning": "Warning",
+    "common.cancel": "Cancel",
+    "ballots.computerCodeRequired": "Computer code required",
+    "ballots.locationRequired": "Location required",
     "ballots.markNeedsReview": "Mark as Needs Review",
     "ballots.clearNeedsReview": "Clear Needs Review",
     "ballots.needsReviewUpdated": "Needs Review status updated",
@@ -66,10 +75,46 @@ vi.mock("@/stores/peopleStore", () => ({
 }));
 
 const mockUpdateBallot = vi.fn();
+const mockCreateBallot = vi.fn();
+const mockDeleteBallot = vi.fn();
 
 vi.mock("@/stores/ballotStore", () => ({
   useBallotStore: () => ({
     updateBallot: mockUpdateBallot,
+    createBallot: mockCreateBallot,
+    deleteBallot: mockDeleteBallot,
+  }),
+}));
+
+const { mockMessageBoxConfirm } = vi.hoisted(() => ({
+  mockMessageBoxConfirm: vi.fn(),
+}));
+
+vi.mock("element-plus", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("element-plus")>();
+  return {
+    ...actual,
+    ElMessageBox: {
+      confirm: mockMessageBoxConfirm,
+    },
+  };
+});
+
+vi.mock("@/composables/useComputerCode", () => ({
+  useComputerCode: () => ({
+    computerCode: { value: "WS01" },
+  }),
+}));
+
+vi.mock("@/stores/locationStore", () => ({
+  useLocationStore: () => ({
+    selectedLocationGuid: "location-1",
+  }),
+}));
+
+vi.mock("@/composables/useApiErrorHandler", () => ({
+  useApiErrorHandler: () => ({
+    handleApiError: vi.fn(),
   }),
 }));
 
@@ -140,6 +185,11 @@ const mountOptions = {
       ElAlert,
       ElInput,
       ElIcon,
+      ElDrawer: {
+        template:
+          '<div v-if="modelValue" class="el-drawer"><slot></slot></div>',
+        props: ["modelValue"],
+      },
     },
     mocks: {
       $t: mockT,
@@ -178,6 +228,99 @@ describe("InlineBallotEntry", () => {
     expect(mockPeopleStore.initializeCandidateCache).toHaveBeenCalledWith(
       "election-123",
     );
+  });
+
+  it("creates a new ballot and emits ballot-created", async () => {
+    mockCreateBallot.mockResolvedValue({
+      ballotGuid: "ballot-new",
+      ballotCode: "B002",
+    });
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+
+    const addBallotButton = wrapper
+      .findAllComponents(ElButton)
+      .find((button) => button.text().includes("Add Ballot"));
+    expect(addBallotButton).toBeDefined();
+    await addBallotButton!.trigger("click");
+    await flushPromises();
+
+    expect(mockCreateBallot).toHaveBeenCalledWith({
+      electionGuid: "election-123",
+      computerCode: "WS01",
+      locationGuid: "location-1",
+      teller1: "Alice",
+      teller2: "Bob",
+    });
+    expect(wrapper.emitted("ballot-created")?.[0]).toEqual(["ballot-new"]);
+  });
+
+  it("deletes ballot and emits ballot-deleted after confirmation", async () => {
+    mockMessageBoxConfirm.mockResolvedValue(undefined);
+    mockDeleteBallot.mockResolvedValue(undefined);
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+
+    const deleteButton = wrapper
+      .findAllComponents(ElButton)
+      .find((button) => button.text().includes("Delete Ballot"));
+    expect(deleteButton).toBeDefined();
+    await deleteButton!.trigger("click");
+    await flushPromises();
+
+    expect(mockMessageBoxConfirm).toHaveBeenCalledWith(
+      "Delete ballot B001? All votes on it will be permanently removed.",
+      "Warning",
+      expect.objectContaining({
+        confirmButtonText: "Delete",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      }),
+    );
+    expect(mockDeleteBallot).toHaveBeenCalledWith("ballot-123");
+    expect(wrapper.emitted("ballot-deleted")?.[0]).toEqual(["ballot-123"]);
+  });
+
+  it("does not delete ballot when confirmation is cancelled", async () => {
+    mockMessageBoxConfirm.mockRejectedValue("cancel");
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+
+    const deleteButton = wrapper
+      .findAllComponents(ElButton)
+      .find((button) => button.text().includes("Delete Ballot"));
+    await deleteButton!.trigger("click");
+    await flushPromises();
+
+    expect(mockDeleteBallot).not.toHaveBeenCalled();
+    expect(wrapper.emitted("ballot-deleted")).toBeUndefined();
   });
 
   it("renders vote rows for required votes and existing votes", async () => {
@@ -272,7 +415,7 @@ describe("InlineBallotEntry", () => {
     });
 
     await flushPromises();
-    expect(wrapper.find(".spoiled-indicator").exists()).toBe(true);
+    expect(wrapper.find(".vote-name.is-spoiled").exists()).toBe(true);
     expect(wrapper.find(".vote-ineligible-reason").text()).toBe("Deceased");
   });
 

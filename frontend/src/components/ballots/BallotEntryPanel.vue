@@ -3,7 +3,9 @@ import { useNotifications } from "@/composables/useNotifications";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import InlineBallotEntry from "./InlineBallotEntry.vue";
+import InlineBallotEntry, {
+  type VoteAddedOptions,
+} from "./InlineBallotEntry.vue";
 import { useBallotStore } from "../../stores/ballotStore";
 import { useElectionStore } from "../../stores/electionStore";
 import { usePeopleStore } from "../../stores/peopleStore";
@@ -13,6 +15,11 @@ import type {
   VoteWithBallotStatusDto,
 } from "../../types";
 import { isVoteDtoSpoiled } from "@/utils/voteDtoNormalization";
+
+const emit = defineEmits<{
+  "ballot-created": [ballotGuid: string];
+  "ballot-deleted": [ballotGuid: string];
+}>();
 
 const props = withDefaults(
   defineProps<{
@@ -146,12 +153,15 @@ watch(
   },
 );
 
-async function handleVoteAdded(vote: VoteDto) {
+async function handleVoteAdded(vote: VoteDto, options?: VoteAddedOptions) {
   try {
     const createDto: CreateVoteDto = {
       ballotGuid: vote.ballotGuid,
       positionOnBallot: vote.positionOnBallot,
       personGuid: vote.personGuid || undefined,
+      ineligibleReasonCode: vote.personGuid
+        ? undefined
+        : vote.ineligibleReasonCode,
     };
 
     const result: VoteWithBallotStatusDto =
@@ -160,9 +170,9 @@ async function handleVoteAdded(vote: VoteDto) {
     if (isSpoiled) {
       const reasonCode =
         result.vote.ineligibleReasonCode || result.vote.statusCode;
-      showWarningMessage(
-        t("ballots.voteSpoiledSuccess", { code: reasonCode }),
-      );
+      showWarningMessage(t("ballots.voteSpoiledSuccess", { code: reasonCode }));
+    } else if (options?.fromNewPerson) {
+      showSuccessMessage(t("ballots.addNameSuccess"));
     } else {
       showSuccessMessage(t("ballots.voteAddedSuccess"));
     }
@@ -231,6 +241,8 @@ async function handleVotesReordered(voteRowIds: number[]) {
           @vote-added="handleVoteAdded"
           @vote-removed="handleVoteRemoved"
           @votes-reordered="handleVotesReordered"
+          @ballot-created="emit('ballot-created', $event)"
+          @ballot-deleted="emit('ballot-deleted', $event)"
         />
       </div>
     </div>

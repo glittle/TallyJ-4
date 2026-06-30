@@ -3705,46 +3705,6 @@
         }
       }
     },
-    "/api/People/{guid}/generateKioskCode": {
-      "post": {
-        "tags": [
-          "People"
-        ],
-        "parameters": [
-          {
-            "name": "guid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseString"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseString"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseString"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/PeopleImport/{electionGuid}/upload": {
       "post": {
         "tags": [
@@ -7465,30 +7425,6 @@
         },
         "additionalProperties": false
       },
-      "ApiResponseString": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "data": {
-            "type": "string",
-            "nullable": true
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "ApiResponseSuperAdminElectionDetailDto": {
         "type": "object",
         "properties": {
@@ -10778,6 +10714,10 @@
             "type": "string",
             "nullable": true
           },
+          "voteCount": {
+            "type": "integer",
+            "format": "int32"
+          },
           "kioskCode": {
             "type": "string",
             "nullable": true
@@ -10785,13 +10725,6 @@
           "unitName": {
             "type": "string",
             "nullable": true
-          },
-          "voteCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "canDelete": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false

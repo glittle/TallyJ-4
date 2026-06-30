@@ -17,6 +17,8 @@
   "eligibility.X07": "Rights removed (entirely)",
   "eligibility.X08": "Not a delegate and on other Institution",
   "eligibility.X09": "Other (cannot vote or be voted for)",
+  "eligibility.U01": "Unidentifiable",
+  "eligibility.U02": "Unreadable",
   "eligibility.eligible": "Eligible",
   "eligibility.groupR": "Can receive votes only (cannot vote)",
   "eligibility.groupV": "Can vote only (cannot receive votes)",

@@ -119,7 +119,14 @@ public class VoteService : IVoteService
                 _logger.LogInformation("Person '{FullName}' is ineligible; vote created as spoiled with reason {ReasonCode}",
                     person.FullName, ineligibleReasonCode);
             }
-
+        }
+        else
+        {
+            ineligibleReasonCode = createDto.IneligibleReasonCode;
+            statusCode = VoteStatus.Spoiled;
+            _logger.LogInformation(
+                "Created person-less spoiled vote with reason {ReasonCode}",
+                ineligibleReasonCode);
         }
 
         await CompactVotePositionsAsync(createDto.BallotGuid);

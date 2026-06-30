@@ -715,6 +715,31 @@ export const ApiResponseRollCallDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponseStringSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            type: 'string',
+            nullable: true
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponseSuperAdminElectionDetailDtoSchema = {
     type: 'object',
     properties: {
@@ -1932,6 +1957,10 @@ export const CreateVoteDtoSchema = {
         positionOnBallot: {
             type: 'integer',
             format: 'int32'
+        },
+        ineligibleReasonCode: {
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false
@@ -2296,6 +2325,9 @@ export const ElectionDtoSchema = {
             type: 'string',
             format: 'date-time',
             nullable: true
+        },
+        hasUnits: {
+            type: 'boolean'
         }
     },
     additionalProperties: false
@@ -4101,9 +4133,20 @@ export const PersonDetailDtoSchema = {
             type: 'string',
             nullable: true
         },
+        kioskCode: {
+            type: 'string',
+            nullable: true
+        },
+        unitName: {
+            type: 'string',
+            nullable: true
+        },
         voteCount: {
             type: 'integer',
             format: 'int32'
+        },
+        canDelete: {
+            type: 'boolean'
         }
     },
     additionalProperties: false

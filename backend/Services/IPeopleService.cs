@@ -86,6 +86,13 @@ public interface IPeopleService
     /// <param name="personGuid">The unique identifier of the person.</param>
     /// <returns>Detailed person data with history, or null if not found.</returns>
     Task<PersonDetailDto?> GetPersonDetailsAsync(Guid personGuid);
+
+    /// <summary>
+    /// Generates or returns the kiosk code for an unregistered person.
+    /// </summary>
+    /// <param name="personGuid">The unique identifier of the person.</param>
+    /// <returns>The kiosk code, or null if the person was not found.</returns>
+    Task<string?> GenerateKioskCodeAsync(Guid personGuid);
 }
 
 

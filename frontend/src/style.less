@@ -393,6 +393,22 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+
+  // put in body to override Element Plus defaults
+  .el-timeline-item__timestamp {
+    font-size: 0.85em;
+    color: var(--el-text-color-secondary);
+  }
+
+  .el-timeline-item__content {
+    margin-top: -0.25em;
+    font-size: 1em;
+    color: var(--el-text-color-regular);
+  }
+
+  .el-timeline-item__wrapper {
+    top: -7px;
+  }
 }
 
 h1 {
@@ -1491,6 +1507,7 @@ button {
     font-weight: var(--font-weight-semibold);
   }
 }
+
 
 /* Enhanced Button Styles */
 .el-button {

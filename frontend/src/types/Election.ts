@@ -37,6 +37,7 @@ export interface ElectionDto {
   flags?: string;
   isTellerAccessOpen?: boolean;
   tellerAccessOpenedAt?: string;
+  hasUnits?: boolean;
 }
 
 export interface CreateElectionDto {

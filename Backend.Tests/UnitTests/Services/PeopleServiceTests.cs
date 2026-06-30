@@ -663,6 +663,121 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Single(result);
         Assert.Equal("InElection1", result[0].LastName);
     }
+
+    [Fact]
+    public async Task DeletePersonAsync_ThrowsWhenPersonHasVotingMethod()
+    {
+        var electionGuid = Guid.NewGuid();
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Voter",
+            FullName = "Voter",
+            FullNameFl = "Voter",
+            VotingMethod = "I",
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.DeletePersonAsync(person.PersonGuid));
+    }
+
+    [Fact]
+    public async Task DeletePersonAsync_ThrowsWhenPersonHasBeenVotedFor()
+    {
+        var electionGuid = Guid.NewGuid();
+        var locationGuid = Guid.NewGuid();
+        var ballotGuid = Guid.NewGuid();
+
+        Context.Elections.Add(new Election
+        {
+            RowId = 1,
+            ElectionGuid = electionGuid,
+            Name = "Test Election",
+            NumberToElect = 3,
+            ElectionType = "Loc",
+            RowVersion = new byte[8]
+        });
+        Context.Locations.Add(new Location
+        {
+            RowId = 1,
+            LocationGuid = locationGuid,
+            ElectionGuid = electionGuid,
+            Name = "Main"
+        });
+        Context.Ballots.Add(new Ballot
+        {
+            RowId = 1,
+            BallotGuid = ballotGuid,
+            LocationGuid = locationGuid,
+            StatusCode = BallotStatus.Ok,
+            ComputerCode = "A",
+            BallotNumAtComputer = 1,
+            RowVersion = new byte[8]
+        });
+
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Candidate",
+            FullName = "Candidate",
+            FullNameFl = "Candidate",
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballotGuid,
+            PersonGuid = person.PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Ok,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.DeletePersonAsync(person.PersonGuid));
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_GeneratesKioskCodeForUnregisteredPerson()
+    {
+        var electionGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            RowId = 1,
+            ElectionGuid = electionGuid,
+            Name = "Kiosk Election",
+            NumberToElect = 3,
+            ElectionType = "Loc",
+            VotingMethods = "K",
+            RowVersion = new byte[8]
+        });
+
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Nguyen",
+            FullName = "Nguyen",
+            FullNameFl = "Nguyen",
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.NotNull(details.KioskCode);
+        Assert.Equal(5, details.KioskCode.Length);
+        Assert.StartsWith("N", details.KioskCode);
+        Assert.True(details.CanDelete);
+    }
 }
 
 

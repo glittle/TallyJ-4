@@ -254,6 +254,8 @@ public class PeopleService : IPeopleService
             return false;
         }
 
+        await ValidateCanDeletePersonAsync(person);
+
         var electionGuid = person.ElectionGuid;
         var firstName = person.FirstName;
         var lastName = person.LastName;
@@ -426,8 +428,36 @@ public class PeopleService : IPeopleService
 
         // Get vote count (how many votes this person has received)
         dto.VoteCount = person.Results.FirstOrDefault()?.VoteCount ?? 0;
+        dto.CanDelete = await CanDeletePersonAsync(person);
+
+        if (await ShouldEnsureKioskCodeAsync(person))
+        {
+            dto.KioskCode = await EnsureKioskCodeAsync(person);
+        }
 
         return dto;
+    }
+
+    /// <inheritdoc />
+    public async Task<string?> GenerateKioskCodeAsync(Guid personGuid)
+    {
+        var person = await _context.People.FirstOrDefaultAsync(p => p.PersonGuid == personGuid);
+        if (person == null)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(person.VotingMethod))
+        {
+            throw new InvalidOperationException("Cannot generate a kiosk code for a person who has already registered.");
+        }
+
+        if (!await ElectionSupportsKioskAsync(person.ElectionGuid))
+        {
+            throw new InvalidOperationException("This election does not support kiosk voting.");
+        }
+
+        return await EnsureKioskCodeAsync(person);
     }
 
     // =====================================================================
@@ -459,6 +489,108 @@ public class PeopleService : IPeopleService
     private static string? GetIneligibleReasonCode(Guid? guid)
     {
         return guid.HasValue ? IneligibleReasonEnum.GetByGuid(guid.Value)?.Code : null;
+    }
+
+    private async Task<bool> CanDeletePersonAsync(Person person)
+    {
+        try
+        {
+            await ValidateCanDeletePersonAsync(person);
+            return true;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+    }
+
+    private async Task ValidateCanDeletePersonAsync(Person person)
+    {
+        if (!string.IsNullOrWhiteSpace(person.VotingMethod))
+        {
+            throw new InvalidOperationException("Cannot delete a person who has already voted.");
+        }
+
+        if (person.HasOnlineBallot == true)
+        {
+            throw new InvalidOperationException("Cannot delete a person who has voted online.");
+        }
+
+        var votedFor = await _context.Votes.AnyAsync(v => v.PersonGuid == person.PersonGuid);
+        if (votedFor)
+        {
+            throw new InvalidOperationException("Cannot delete a person who has been voted for.");
+        }
+    }
+
+    private async Task<bool> ShouldEnsureKioskCodeAsync(Person person)
+    {
+        if (!string.IsNullOrWhiteSpace(person.KioskCode))
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(person.VotingMethod))
+        {
+            return false;
+        }
+
+        return await ElectionSupportsKioskAsync(person.ElectionGuid);
+    }
+
+    private async Task<bool> ElectionSupportsKioskAsync(Guid electionGuid)
+    {
+        var votingMethods = await _context.Elections
+            .Where(e => e.ElectionGuid == electionGuid)
+            .Select(e => e.VotingMethods)
+            .FirstOrDefaultAsync();
+
+        return votingMethods?.Contains('K', StringComparison.OrdinalIgnoreCase) == true;
+    }
+
+    private const int MaxKioskCodeSaveAttempts = 20;
+
+    private async Task<string> EnsureKioskCodeAsync(Person person)
+    {
+        for (var attempt = 0; attempt < MaxKioskCodeSaveAttempts; attempt++)
+        {
+            await _context.Entry(person).ReloadAsync();
+
+            if (!string.IsNullOrWhiteSpace(person.KioskCode))
+            {
+                return person.KioskCode;
+            }
+
+            var existingCodes = await _context.People
+                .AsNoTracking()
+                .Where(p => p.ElectionGuid == person.ElectionGuid && p.KioskCode != null)
+                .Select(p => p.KioskCode)
+                .ToListAsync();
+
+            person.KioskCode = KioskCodeHelper.GenerateUniqueCode(person.LastName, existingCodes);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Generated kiosk code for person {PersonGuid} in election {ElectionGuid}",
+                    person.PersonGuid,
+                    person.ElectionGuid);
+
+                return person.KioskCode;
+            }
+            catch (DbUpdateException ex) when (DbUpdateExceptionHelper.IsUniqueConstraintViolation(ex))
+            {
+                _logger.LogDebug(
+                    "Kiosk code collision for person {PersonGuid} in election {ElectionGuid} on attempt {Attempt}",
+                    person.PersonGuid,
+                    person.ElectionGuid,
+                    attempt + 1);
+            }
+        }
+
+        throw new InvalidOperationException("Unable to generate a unique kiosk code for this election.");
     }
 }
 
