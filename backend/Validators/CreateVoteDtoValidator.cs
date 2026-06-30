@@ -24,7 +24,7 @@ public class CreateVoteDtoValidator : AbstractValidator<CreateVoteDto>
 
         RuleFor(x => x)
             .Must(dto => dto.PersonGuid.HasValue || IsPersonLessVoteReason(dto.IneligibleReasonCode))
-            .WithMessage("Either a person or an U01/U02 ineligible reason is required");
+            .WithMessage("Either a person must be specified, or the ineligible reason must be U01 or U02");
 
         RuleFor(x => x.IneligibleReasonCode)
             .Must(code => IsPersonLessVoteReason(code))
