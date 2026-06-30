@@ -186,6 +186,11 @@ public class ElectionDto
     /// The date and time when teller access was opened.
     /// </summary>
     public DateTimeOffset? TellerAccessOpenedAt { get; set; }
+
+    /// <summary>
+    /// Whether any people in this election have a unit name assigned.
+    /// </summary>
+    public bool HasUnits { get; set; }
 }
 
 

@@ -133,7 +133,22 @@ public class PersonDetailDto
     public string? RegistrationHistory { get; set; }
 
     /// <summary>
+    /// The kiosk code assigned to this person for online voting.
+    /// </summary>
+    public string? KioskCode { get; set; }
+
+    /// <summary>
+    /// The local unit name for this person (convention/regional elections).
+    /// </summary>
+    public string? UnitName { get; set; }
+
+    /// <summary>
     /// The number of votes this person has received.
     /// </summary>
     public int VoteCount { get; set; }
+
+    /// <summary>
+    /// Whether this person can be deleted (has not voted and has not received votes).
+    /// </summary>
+    public bool CanDelete { get; set; }
 }

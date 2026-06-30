@@ -56,7 +56,10 @@ export interface PersonDetailDto {
   teller2?: string;
   hasOnlineBallot?: boolean;
   registrationHistory?: string;
+  kioskCode?: string;
+  unitName?: string;
   voteCount: number;
+  canDelete?: boolean;
 }
 
 export interface SearchablePersonDto extends PersonDto {

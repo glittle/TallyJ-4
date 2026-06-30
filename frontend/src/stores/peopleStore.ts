@@ -86,6 +86,7 @@ export const usePeopleStore = defineStore("people", () => {
     try {
       const person = await peopleService.create(dto);
       people.value.push(person);
+      upsertPersonListEntry(person);
       return person;
     } catch (e: any) {
       error.value = e.message || "Failed to create person";
@@ -105,6 +106,8 @@ export const usePeopleStore = defineStore("people", () => {
       if (index !== -1) {
         people.value[index] = person;
       }
+
+      upsertPersonListEntry(person);
 
       return person;
     } catch (e: any) {
@@ -147,6 +150,32 @@ export const usePeopleStore = defineStore("people", () => {
 
   function clearError() {
     error.value = null;
+  }
+
+  function toPersonListDto(person: PersonDto): PersonListDto {
+    return {
+      personGuid: person.personGuid,
+      fullName: person.fullName,
+      email: person.email,
+      phone: person.phone,
+      area: person.area,
+      canVote: person.canVote,
+      canReceiveVotes: person.canReceiveVotes,
+      ineligibleReasonCode: person.ineligibleReasonCode,
+    };
+  }
+
+  function upsertPersonListEntry(person: PersonDto) {
+    const listEntry = toPersonListDto(person);
+    const index = peopleList.value.findIndex(
+      (p) => p.personGuid === person.personGuid,
+    );
+
+    if (index !== -1) {
+      peopleList.value[index] = listEntry;
+    } else {
+      peopleList.value.push(listEntry);
+    }
   }
 
   function enrichPersonForSearch(person: PersonDto): SearchablePersonDto {
@@ -264,9 +293,11 @@ export const usePeopleStore = defineStore("people", () => {
     if (!exists) {
       try {
         const person = await fetchPersonById(data.personGuid);
-        if (isCacheInitialized.value && person) {
-          const searchablePerson = enrichPersonForSearch(person);
-          candidateCache.value.push(searchablePerson);
+        if (person) {
+          upsertPersonListEntry(person);
+          if (isCacheInitialized.value) {
+            candidateCache.value.push(enrichPersonForSearch(person));
+          }
         }
       } catch (e) {
         console.error("Failed to handle person added:", e);
@@ -297,15 +328,19 @@ export const usePeopleStore = defineStore("people", () => {
     try {
       const person = await fetchPersonById(data.personGuid);
 
-      if (isCacheInitialized.value && person) {
-        const index = candidateCache.value.findIndex(
-          (p) => p.personGuid === data.personGuid,
-        );
-        const searchablePerson = enrichPersonForSearch(person);
-        if (index !== -1) {
-          candidateCache.value[index] = searchablePerson;
-        } else {
-          candidateCache.value.push(searchablePerson);
+      if (person) {
+        upsertPersonListEntry(person);
+
+        if (isCacheInitialized.value) {
+          const index = candidateCache.value.findIndex(
+            (p) => p.personGuid === data.personGuid,
+          );
+          const searchablePerson = enrichPersonForSearch(person);
+          if (index !== -1) {
+            candidateCache.value[index] = searchablePerson;
+          } else {
+            candidateCache.value.push(searchablePerson);
+          }
         }
       }
     } catch (e) {
@@ -361,6 +396,8 @@ export const usePeopleStore = defineStore("people", () => {
     deletePerson,
     searchPeople,
     clearError,
+    toPersonListDto,
+    upsertPersonListEntry,
     enrichPersonForSearch,
     initializeCandidateCache,
     initializeSignalR,

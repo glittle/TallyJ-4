@@ -1,153 +1,79 @@
 <script setup lang="ts">
 import { CircleCheck } from "@element-plus/icons-vue";
-import {
-  ElAutoResizer,
-  ElTableV2,
-  ElCheckbox,
-  ElButton,
-  ElIcon,
-} from "element-plus";
+import { ElAutoResizer, ElTableV2, ElButton, ElIcon } from "element-plus";
 import { useI18n } from "vue-i18n";
-import { computed, ref, watch, h } from "vue";
+import { computed, h } from "vue";
 import type { PersonListDto } from "../../types";
 import type { Column } from "element-plus";
 
 const { t } = useI18n();
 
-const props = defineProps<{
+defineProps<{
   people: PersonListDto[];
   loading: boolean;
   tableHeight: number;
-  showSelection?: boolean;
-  selected?: PersonListDto[];
 }>();
 
 const emit = defineEmits<{
   edit: [person: PersonListDto];
-  selectionChange: [selection: PersonListDto[]];
 }>();
 
-const selectedPeople = ref<PersonListDto[]>(props.selected || []);
-
-watch(
-  () => props.selected,
-  (newSelected) => {
-    selectedPeople.value = newSelected || [];
+const columns = computed<Column<any>[]>(() => [
+  {
+    key: "fullName",
+    dataKey: "fullName",
+    title: t("people.fullName"),
+    width: 220,
+    sortable: true,
+    cellRenderer: ({ rowData }) =>
+      h(
+        ElButton,
+        {
+          type: "primary",
+          link: true,
+          onClick: () => emit("edit", rowData),
+        },
+        { default: () => rowData.fullName },
+      ),
   },
-  { immediate: true },
-);
-
-const columns = computed<Column<any>[]>(() => {
-  const cols: Column<any>[] = [];
-
-  if (props.showSelection) {
-    cols.push({
-      key: "selection",
-      width: 55,
-      cellRenderer: ({ rowData }) => {
-        const isSelected = selectedPeople.value.some(
-          (p) => p.personGuid === rowData.personGuid,
-        );
-        const onChange = (value: boolean) => {
-          if (value) {
-            selectedPeople.value = [...selectedPeople.value, rowData];
-          } else {
-            selectedPeople.value = selectedPeople.value.filter(
-              (p) => p.personGuid !== rowData.personGuid,
-            );
-          }
-          emit("selectionChange", selectedPeople.value);
-        };
-        return h(ElCheckbox, {
-          modelValue: isSelected,
-          onChange: onChange,
-        });
-      },
-      headerCellRenderer: () => {
-        const allSelected =
-          props.people.length > 0 &&
-          selectedPeople.value.length === props.people.length;
-        const containsChecked = selectedPeople.value.length > 0;
-        const onChange = (value: boolean) => {
-          if (value) {
-            selectedPeople.value = [...props.people];
-          } else {
-            selectedPeople.value = [];
-          }
-          emit("selectionChange", selectedPeople.value);
-        };
-        return h(ElCheckbox, {
-          modelValue: allSelected,
-          indeterminate: containsChecked && !allSelected,
-          onChange: onChange,
-        });
-      },
-    });
-  }
-
-  cols.push(
-    {
-      key: "fullName",
-      dataKey: "fullName",
-      title: t("people.fullName"),
-      width: 220,
-      sortable: true,
-      cellRenderer: ({ rowData }) =>
-        h(
-          ElButton,
+  {
+    key: "eligibility",
+    title: t("eligibility.label"),
+    width: 200,
+    align: "center",
+    cellRenderer: ({ rowData }) => {
+      if (!rowData.ineligibleReasonCode) {
+        return h(
+          ElIcon,
+          { color: "#67c23a", size: 18 },
           {
-            type: "primary",
-            link: true,
-            onClick: () => emit("edit", rowData),
+            default: () => h(CircleCheck),
           },
-          { default: () => rowData.fullName },
-        ),
+        );
+      } else {
+        return h("span", {}, t(`eligibility.${rowData.ineligibleReasonCode}`));
+      }
     },
-    {
-      key: "eligibility",
-      title: t("eligibility.label"),
-      width: 200,
-      align: "center",
-      cellRenderer: ({ rowData }) => {
-        if (!rowData.ineligibleReasonCode) {
-          return h(
-            ElIcon,
-            { color: "#67c23a", size: 18 },
-            {
-              default: () => h(CircleCheck),
-            },
-          );
-        } else {
-          return h(
-            "span",
-            {},
-            t(`eligibility.${rowData.ineligibleReasonCode}`),
-          );
-        }
-      },
-    },
-    {
-      key: "email",
-      dataKey: "email",
-      title: t("people.email"),
-      width: 200,
-    },
-    {
-      key: "phone",
-      dataKey: "phone",
-      title: t("people.phone"),
-      width: 130,
-    },
-    {
-      key: "area",
-      dataKey: "area",
-      title: t("people.area"),
-      width: 120,
-    },
-  );
-
-  return cols;
-});
+  },
+  {
+    key: "email",
+    dataKey: "email",
+    title: t("people.email"),
+    width: 200,
+  },
+  {
+    key: "phone",
+    dataKey: "phone",
+    title: t("people.phone"),
+    width: 130,
+  },
+  {
+    key: "area",
+    dataKey: "area",
+    title: t("people.area"),
+    width: 120,
+  },
+]);
 </script>
 
 <template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { toApiEligibility } from "@/utils/eligibilityForm";
 import PersonForm from "../people/PersonForm.vue";
 import { usePeopleStore } from "../../stores/peopleStore";
 import type { CreatePersonDto } from "../../types";
@@ -84,12 +85,15 @@ async function handleSubmit() {
         electionGuid: props.electionGuid,
         firstName: form.firstName || undefined,
         lastName: form.lastName,
+        otherNames: form.otherNames || undefined,
+        otherLastNames: form.otherLastNames || undefined,
+        otherInfo: form.otherInfo || undefined,
         email: form.email || undefined,
         phone: form.phone || undefined,
         area: form.area || undefined,
         bahaiId: form.bahaiId || undefined,
         ageGroup: form.ageGroup || undefined,
-        ineligibleReasonGuid: form.ineligibleReasonGuid || undefined,
+        ineligibleReasonGuid: toApiEligibility(form.ineligibleReasonGuid),
       };
 
       const person = await peopleStore.createPerson(dto);

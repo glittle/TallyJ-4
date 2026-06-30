@@ -1,14 +1,7 @@
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
 import { useViewportTableHeight } from "@/composables/useViewportTableHeight";
-import {
-  ArrowDown,
-  Delete,
-  MoreFilled,
-  Plus,
-  Search,
-  Upload,
-} from "@element-plus/icons-vue";
+import { Plus, Search, Upload } from "@element-plus/icons-vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -21,17 +14,13 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const peopleStore = usePeopleStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
 const searchQuery = ref("");
 const showPersonDrawer = ref(false);
 const drawerMode = ref<"add" | "edit">("edit");
 const editingPerson = ref<PersonListDto | null>(null);
-
-const selectedPeople = ref<PersonListDto[]>([]);
-const showBulkDeleteConfirm = ref(false);
-const bulkDeleting = ref(false);
 
 const peoplePageRef = ref<HTMLElement | null>(null);
 const tableWrapperRef = ref<HTMLElement | null>(null);
@@ -83,10 +72,6 @@ onUnmounted(async () => {
   }
 });
 
-function handleSearch() {
-  selectedPeople.value = [];
-}
-
 function handleAdd() {
   drawerMode.value = "add";
   editingPerson.value = null;
@@ -116,40 +101,6 @@ function handlePersonDeleted() {
 function handleImport() {
   router.push(`/elections/${electionGuid}/people/import`);
 }
-
-function handleBulkAction(command: string) {
-  switch (command) {
-    case "delete":
-      if (selectedPeople.value.length > 0) {
-        showBulkDeleteConfirm.value = true;
-      }
-      break;
-  }
-}
-
-async function confirmBulkDelete() {
-  if (selectedPeople.value.length === 0) {
-    return;
-  }
-
-  bulkDeleting.value = true;
-  try {
-    const deletePromises = selectedPeople.value.map((person) =>
-      peopleStore.deletePerson(person.personGuid),
-    );
-
-    await Promise.all(deletePromises);
-    showSuccessMessage(
-      t("people.bulkDeleteSuccess", { count: selectedPeople.value.length }),
-    );
-    selectedPeople.value = [];
-    showBulkDeleteConfirm.value = false;
-  } catch (error: any) {
-    showErrorMessage(error.message || t("people.bulkDeleteError"));
-  } finally {
-    bulkDeleting.value = false;
-  }
-}
 </script>
 
 <template>
@@ -164,7 +115,6 @@ async function confirmBulkDelete() {
                 :placeholder="$t('people.search')"
                 style="width: 250px"
                 clearable
-                @input="handleSearch"
               >
                 <template #prefix>
                   <el-icon>
@@ -184,35 +134,6 @@ async function confirmBulkDelete() {
                 </el-icon>
                 {{ $t("people.importPeople") }}
               </el-button>
-              <el-dropdown @command="handleBulkAction">
-                <el-button type="default">
-                  <el-icon>
-                    <MoreFilled />
-                  </el-icon>
-                  {{ $t("people.bulkActions") }}
-                  <el-icon class="el-icon--right">
-                    <ArrowDown />
-                  </el-icon>
-                </el-button>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item
-                      command="delete"
-                      :disabled="selectedPeople.length === 0"
-                      class="danger-item"
-                    >
-                      <el-icon>
-                        <Delete />
-                      </el-icon>
-                      {{
-                        $t("people.deleteSelected", {
-                          count: selectedPeople.length,
-                        })
-                      }}
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
             </el-space>
           </div>
         </div>
@@ -223,10 +144,7 @@ async function confirmBulkDelete() {
           :people="filteredPeople"
           :loading="loading"
           :table-height="tableHeight"
-          :show-selection="true"
-          :selected="selectedPeople"
           @edit="handleEdit"
-          @selection-change="selectedPeople = $event"
         />
       </div>
     </el-card>
@@ -256,30 +174,6 @@ async function confirmBulkDelete() {
         @cancel="showPersonDrawer = false"
       />
     </el-drawer>
-
-    <el-dialog
-      v-model="showBulkDeleteConfirm"
-      :title="$t('people.confirmBulkDelete')"
-      width="500px"
-    >
-      <p>
-        {{ $t("people.bulkDeleteMessage", { count: selectedPeople.length }) }}
-      </p>
-      <p class="warning-text">{{ $t("common.actionIrreversible") }}</p>
-
-      <template #footer>
-        <el-button @click="showBulkDeleteConfirm = false">
-          {{ $t("common.cancel") }}
-        </el-button>
-        <el-button
-          type="danger"
-          :loading="bulkDeleting"
-          @click="confirmBulkDelete"
-        >
-          {{ $t("common.delete") }}
-        </el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -319,20 +213,6 @@ async function confirmBulkDelete() {
   .header-actions {
     display: flex;
     align-items: center;
-  }
-
-  .warning-text {
-    color: var(--color-error-600);
-    font-weight: var(--font-weight-medium);
-    margin: var(--spacing-2) 0 0 0;
-  }
-
-  .danger-item {
-    color: var(--color-error-600);
-  }
-
-  .danger-item:hover {
-    background-color: var(--color-error-50);
   }
 }
 

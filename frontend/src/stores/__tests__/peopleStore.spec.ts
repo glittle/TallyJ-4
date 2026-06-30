@@ -14,6 +14,7 @@ vi.mock("@/services/peopleService", () => ({
     search: vi.fn(),
     getCandidates: vi.fn().mockResolvedValue([]),
     getAllForBallotEntry: vi.fn().mockResolvedValue([]),
+    getAllPeople: vi.fn().mockResolvedValue([]),
   },
 }));
 
@@ -231,6 +232,52 @@ describe("usePeopleStore", () => {
       );
       expect(ineligibleCached).toBeDefined();
       expect(ineligibleCached?.ineligibleReasonCode).toBe("X01");
+    });
+  });
+
+  describe("updatePerson", () => {
+    it("updates the matching entry in peopleList", async () => {
+      const { peopleService } = await import("@/services/peopleService");
+      const store = usePeopleStore();
+
+      store.peopleList = [
+        {
+          personGuid: "person-1",
+          fullName: "Smith, Alice",
+          email: "alice@example.com",
+          canVote: true,
+          canReceiveVotes: true,
+        },
+      ];
+
+      const updatedPerson = createPersonDto({
+        personGuid: "person-1",
+        firstName: "Alice",
+        lastName: "Smith",
+        fullName: "Smith, Alicia",
+        email: "alicia@example.com",
+        phone: "+15551234567",
+        area: "North",
+        ineligibleReasonCode: "V01",
+        canVote: true,
+        canReceiveVotes: false,
+      });
+
+      vi.mocked(peopleService.update).mockResolvedValue(updatedPerson);
+
+      await store.updatePerson("person-1", { lastName: "Smith" });
+
+      expect(store.peopleList).toHaveLength(1);
+      expect(store.peopleList[0]).toEqual({
+        personGuid: "person-1",
+        fullName: "Smith, Alicia",
+        email: "alicia@example.com",
+        phone: "+15551234567",
+        area: "North",
+        canVote: true,
+        canReceiveVotes: false,
+        ineligibleReasonCode: "V01",
+      });
     });
   });
 });

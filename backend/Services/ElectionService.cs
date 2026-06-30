@@ -117,6 +117,7 @@ public class ElectionService : IElectionService
         dto.BallotCount = election.Locations.SelectMany(l => l.Ballots).Count();
         dto.LocationCount = election.Locations.Count;
         dto.ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType);
+        dto.HasUnits = election.People.Any(p => !string.IsNullOrWhiteSpace(p.UnitName));
         return dto;
     }
 

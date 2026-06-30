@@ -208,14 +208,46 @@ public class PeopleController : ControllerBase
     [HttpDelete("{guid}/deletePerson")]
     public async Task<IActionResult> DeletePerson(Guid guid)
     {
-        var success = await _peopleService.DeletePersonAsync(guid);
-
-        if (!success)
+        try
         {
-            return NotFound(ApiResponse<object>.ErrorResponse("Person not found"));
-        }
+            var success = await _peopleService.DeletePersonAsync(guid);
 
-        return NoContent();
+            if (!success)
+            {
+                return NotFound(ApiResponse<object>.ErrorResponse("Person not found"));
+            }
+
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<object>.ErrorResponse(ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Generates or returns the kiosk code for an unregistered person.
+    /// </summary>
+    /// <param name="guid">The GUID of the person.</param>
+    /// <returns>The kiosk code.</returns>
+    [HttpPost("{guid}/generateKioskCode")]
+    public async Task<ActionResult<ApiResponse<string>>> GenerateKioskCode(Guid guid)
+    {
+        try
+        {
+            var code = await _peopleService.GenerateKioskCodeAsync(guid);
+
+            if (code == null)
+            {
+                return NotFound(ApiResponse<string>.ErrorResponse("Person not found"));
+            }
+
+            return Ok(ApiResponse<string>.SuccessResponse(code));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message));
+        }
     }
 }
 
