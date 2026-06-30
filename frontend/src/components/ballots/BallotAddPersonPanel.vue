@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useNotifications } from "@/composables/useNotifications";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { toApiEligibility } from "@/utils/eligibilityForm";
 import PersonForm from "../people/PersonForm.vue";
@@ -8,7 +7,6 @@ import type { CreatePersonDto } from "../../types";
 import type { SearchablePersonDto } from "../../types/Person";
 import type { VoteDto } from "../../types/Vote";
 import { computed, ref } from "vue";
-import { useI18n } from "vue-i18n";
 
 export type BallotVoteEntryType = "normal" | "U01" | "U02";
 
@@ -22,9 +20,7 @@ const emit = defineEmits<{
   cancel: [];
 }>();
 
-const { t } = useI18n();
 const peopleStore = usePeopleStore();
-const { showSuccessMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const personFormRef = ref<InstanceType<typeof PersonForm>>();
@@ -60,7 +56,6 @@ async function handleSubmit() {
   if (isPersonLessVote.value) {
     submitting.value = true;
     try {
-      showSuccessMessage(t("ballots.addNameSuccess"));
       emit("person-added", buildPersonLessVote());
     } finally {
       submitting.value = false;
@@ -118,7 +113,6 @@ async function handleSubmit() {
           : undefined,
       };
 
-      showSuccessMessage(t("ballots.addNameSuccess"));
       emit("person-added", vote);
     } catch (error) {
       handleApiError(error);

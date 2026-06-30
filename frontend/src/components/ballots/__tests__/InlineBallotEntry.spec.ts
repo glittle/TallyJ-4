@@ -76,11 +76,13 @@ vi.mock("@/stores/peopleStore", () => ({
 
 const mockUpdateBallot = vi.fn();
 const mockCreateBallot = vi.fn();
+const mockDeleteBallot = vi.fn();
 
 vi.mock("@/stores/ballotStore", () => ({
   useBallotStore: () => ({
     updateBallot: mockUpdateBallot,
     createBallot: mockCreateBallot,
+    deleteBallot: mockDeleteBallot,
   }),
 }));
 
@@ -262,8 +264,9 @@ describe("InlineBallotEntry", () => {
     expect(wrapper.emitted("ballot-created")?.[0]).toEqual(["ballot-new"]);
   });
 
-  it("emits delete-ballot after confirmation", async () => {
+  it("deletes ballot and emits ballot-deleted after confirmation", async () => {
     mockMessageBoxConfirm.mockResolvedValue(undefined);
+    mockDeleteBallot.mockResolvedValue(undefined);
 
     const wrapper = mount(InlineBallotEntry, {
       props: {
@@ -292,10 +295,11 @@ describe("InlineBallotEntry", () => {
         type: "warning",
       }),
     );
-    expect(wrapper.emitted("delete-ballot")?.[0]).toEqual(["ballot-123"]);
+    expect(mockDeleteBallot).toHaveBeenCalledWith("ballot-123");
+    expect(wrapper.emitted("ballot-deleted")?.[0]).toEqual(["ballot-123"]);
   });
 
-  it("does not emit delete-ballot when confirmation is cancelled", async () => {
+  it("does not delete ballot when confirmation is cancelled", async () => {
     mockMessageBoxConfirm.mockRejectedValue("cancel");
 
     const wrapper = mount(InlineBallotEntry, {
@@ -315,7 +319,8 @@ describe("InlineBallotEntry", () => {
     await deleteButton!.trigger("click");
     await flushPromises();
 
-    expect(wrapper.emitted("delete-ballot")).toBeUndefined();
+    expect(mockDeleteBallot).not.toHaveBeenCalled();
+    expect(wrapper.emitted("ballot-deleted")).toBeUndefined();
   });
 
   it("renders vote rows for required votes and existing votes", async () => {

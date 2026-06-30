@@ -20,6 +20,10 @@ import BallotAddPersonPanel from "./BallotAddPersonPanel.vue";
 
 const MAX_BALLOT_SLOTS = 50;
 
+export type VoteAddedOptions = {
+  fromNewPerson?: boolean;
+};
+
 const props = defineProps<{
   electionGuid: string;
   ballot: BallotDto;
@@ -32,12 +36,12 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  "vote-added": [vote: VoteDto];
+  "vote-added": [vote: VoteDto, options?: VoteAddedOptions];
   "vote-removed": [positionOnBallot: number];
   "votes-reordered": [voteRowIds: number[]];
   "ballot-saved": [];
   "ballot-created": [ballotGuid: string];
-  "delete-ballot": [ballotGuid: string];
+  "ballot-deleted": [ballotGuid: string];
 }>();
 
 const { t } = useI18n();
@@ -208,7 +212,7 @@ function canDropOnIndex(targetIndex: number): boolean {
   );
 }
 
-function addVoteToBallot(vote: VoteDto) {
+function addVoteToBallot(vote: VoteDto, options?: VoteAddedOptions) {
   const emptyPos = findNextEmptyPosition();
   if (emptyPos === -1) {
     if (votes.value.length >= MAX_BALLOT_SLOTS) {
@@ -231,7 +235,7 @@ function addVoteToBallot(vote: VoteDto) {
   }
   votes.value = voteArray;
 
-  emit("vote-added", voteWithPosition);
+  emit("vote-added", voteWithPosition, options);
   return true;
 }
 
@@ -272,7 +276,7 @@ async function handleNewPersonAdded(vote: VoteDto) {
     return;
   }
 
-  if (addVoteToBallot(vote)) {
+  if (addVoteToBallot(vote, { fromNewPerson: !!vote.personGuid })) {
     showAddPersonDrawer.value = false;
     await nextTick();
     searchInputRef.value?.focus();
@@ -420,13 +424,20 @@ async function handleDeleteBallot() {
         type: "warning",
       },
     );
-
-    deletingBallot.value = true;
-    emit("delete-ballot", props.ballot.ballotGuid);
   } catch (error) {
     if (error !== "cancel") {
       handleApiError(error);
     }
+    return;
+  }
+
+  deletingBallot.value = true;
+  try {
+    await ballotStore.deleteBallot(props.ballot.ballotGuid);
+    showSuccessMessage(t("ballots.deleteSuccess"));
+    emit("ballot-deleted", props.ballot.ballotGuid);
+  } catch (error) {
+    handleApiError(error);
   } finally {
     deletingBallot.value = false;
   }

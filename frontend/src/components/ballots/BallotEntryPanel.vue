@@ -3,7 +3,9 @@ import { useNotifications } from "@/composables/useNotifications";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import InlineBallotEntry from "./InlineBallotEntry.vue";
+import InlineBallotEntry, {
+  type VoteAddedOptions,
+} from "./InlineBallotEntry.vue";
 import { useBallotStore } from "../../stores/ballotStore";
 import { useElectionStore } from "../../stores/electionStore";
 import { usePeopleStore } from "../../stores/peopleStore";
@@ -151,7 +153,7 @@ watch(
   },
 );
 
-async function handleVoteAdded(vote: VoteDto) {
+async function handleVoteAdded(vote: VoteDto, options?: VoteAddedOptions) {
   try {
     const createDto: CreateVoteDto = {
       ballotGuid: vote.ballotGuid,
@@ -169,6 +171,8 @@ async function handleVoteAdded(vote: VoteDto) {
       const reasonCode =
         result.vote.ineligibleReasonCode || result.vote.statusCode;
       showWarningMessage(t("ballots.voteSpoiledSuccess", { code: reasonCode }));
+    } else if (options?.fromNewPerson) {
+      showSuccessMessage(t("ballots.addNameSuccess"));
     } else {
       showSuccessMessage(t("ballots.voteAddedSuccess"));
     }
@@ -199,16 +203,6 @@ async function handleVotesReordered(voteRowIds: number[]) {
   } catch (error: any) {
     voteResyncKey.value++;
     showErrorMessage(error.message || t("ballots.votesReorderedError"));
-  }
-}
-
-async function handleDeleteBallot(ballotGuid: string) {
-  try {
-    await ballotStore.deleteBallot(ballotGuid);
-    showSuccessMessage(t("ballots.deleteSuccess"));
-    emit("ballot-deleted", ballotGuid);
-  } catch (error: any) {
-    showErrorMessage(error.message || t("ballots.deleteError"));
   }
 }
 </script>
@@ -248,7 +242,7 @@ async function handleDeleteBallot(ballotGuid: string) {
           @vote-removed="handleVoteRemoved"
           @votes-reordered="handleVotesReordered"
           @ballot-created="emit('ballot-created', $event)"
-          @delete-ballot="handleDeleteBallot"
+          @ballot-deleted="emit('ballot-deleted', $event)"
         />
       </div>
     </div>

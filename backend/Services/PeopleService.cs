@@ -548,27 +548,49 @@ public class PeopleService : IPeopleService
         return votingMethods?.Contains('K', StringComparison.OrdinalIgnoreCase) == true;
     }
 
+    private const int MaxKioskCodeSaveAttempts = 20;
+
     private async Task<string> EnsureKioskCodeAsync(Person person)
     {
-        if (!string.IsNullOrWhiteSpace(person.KioskCode))
+        for (var attempt = 0; attempt < MaxKioskCodeSaveAttempts; attempt++)
         {
-            return person.KioskCode;
+            await _context.Entry(person).ReloadAsync();
+
+            if (!string.IsNullOrWhiteSpace(person.KioskCode))
+            {
+                return person.KioskCode;
+            }
+
+            var existingCodes = await _context.People
+                .AsNoTracking()
+                .Where(p => p.ElectionGuid == person.ElectionGuid && p.KioskCode != null)
+                .Select(p => p.KioskCode)
+                .ToListAsync();
+
+            person.KioskCode = KioskCodeHelper.GenerateUniqueCode(person.LastName, existingCodes);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Generated kiosk code for person {PersonGuid} in election {ElectionGuid}",
+                    person.PersonGuid,
+                    person.ElectionGuid);
+
+                return person.KioskCode;
+            }
+            catch (DbUpdateException ex) when (DbUpdateExceptionHelper.IsUniqueConstraintViolation(ex))
+            {
+                _logger.LogDebug(
+                    "Kiosk code collision for person {PersonGuid} in election {ElectionGuid} on attempt {Attempt}",
+                    person.PersonGuid,
+                    person.ElectionGuid,
+                    attempt + 1);
+            }
         }
 
-        var existingCodes = await _context.People
-            .Where(p => p.ElectionGuid == person.ElectionGuid && p.KioskCode != null)
-            .Select(p => p.KioskCode)
-            .ToListAsync();
-
-        person.KioskCode = KioskCodeHelper.GenerateUniqueCode(person.LastName, existingCodes);
-        await _context.SaveChangesAsync();
-
-        _logger.LogInformation(
-            "Generated kiosk code for person {PersonGuid} in election {ElectionGuid}",
-            person.PersonGuid,
-            person.ElectionGuid);
-
-        return person.KioskCode;
+        throw new InvalidOperationException("Unable to generate a unique kiosk code for this election.");
     }
 }
 

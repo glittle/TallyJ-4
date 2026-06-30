@@ -208,6 +208,10 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
                 .IsUnique()
                 .HasFilter("([BahaiId] IS NOT NULL AND [BahaiId]<>'')");
 
+            entity.HasIndex(e => new { e.ElectionGuid, e.KioskCode }, "IX_PersonKioskCode")
+                .IsUnique()
+                .HasFilter("([KioskCode] IS NOT NULL AND [KioskCode]<>'')");
+
             if (isSqlServer)
             {
                 entity.Property(e => e.RowVersion)
