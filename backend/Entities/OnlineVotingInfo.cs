@@ -21,6 +21,8 @@ public partial class OnlineVotingInfo
     [Precision(0)]
     public DateTimeOffset? WhenBallotCreated { get; set; }
 
+    public Guid? BallotGuid { get; set; }
+
     [StringLength(10)]
     [Unicode(false)]
     public string Status { get; set; } = null!;

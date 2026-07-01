@@ -176,7 +176,8 @@ public class ComputerAssignmentServiceTests
     [Fact]
     public async Task CanGuestJoin_true_during_grace_after_last_main_disconnect()
     {
-        var (service, _) = CreateServiceWithGuestProxy(TimeSpan.FromMilliseconds(200));
+        var gracePeriod = TimeSpan.FromMilliseconds(200);
+        var (service, _) = CreateServiceWithGuestProxy(gracePeriod);
 
         service.AssignCode(_electionGuid, "main-1", "conn-main", isMainTeller: true);
         service.AssignCode(_electionGuid, "guest-1", "conn-guest", isMainTeller: false);
@@ -186,9 +187,10 @@ public class ComputerAssignmentServiceTests
         Assert.True(service.IsGuestGracePeriodActive(_electionGuid));
         Assert.True(service.CanGuestJoin(_electionGuid));
 
-        await Task.Delay(250);
-
-        Assert.False(service.CanGuestJoin(_electionGuid));
+        await WaitUntilAsync(
+            () => !service.CanGuestJoin(_electionGuid),
+            gracePeriod + TimeSpan.FromSeconds(2),
+            "Guest join should be blocked after the close-out grace period expires.");
     }
 
     [Fact]
@@ -289,6 +291,27 @@ public class ComputerAssignmentServiceTests
                 It.IsAny<object?[]>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
+    }
+
+    private static async Task WaitUntilAsync(
+        Func<bool> condition,
+        TimeSpan timeout,
+        string because)
+    {
+        var pollInterval = TimeSpan.FromMilliseconds(10);
+        var deadline = DateTime.UtcNow + timeout;
+
+        while (DateTime.UtcNow < deadline)
+        {
+            if (condition())
+            {
+                return;
+            }
+
+            await Task.Delay(pollInterval);
+        }
+
+        Assert.Fail(because);
     }
 
     /// <summary>

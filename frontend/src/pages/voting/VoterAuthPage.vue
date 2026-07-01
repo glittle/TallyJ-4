@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import type { GoogleCredentialResponse } from "../../types/google-one-tap";
-
-declare global {
-  interface Window {
-    google: any;
-  }
-}
-
+import { useGoogleOneTap } from "../../composables/useGoogleOneTap";
 import { useLocalStorage } from "@/composables/useLocalStorage";
 import {
   ArrowLeft,
@@ -36,6 +30,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import TelegramLoginButton from "../../components/auth/TelegramLoginButton.vue";
+import { useApiErrorHandler } from "../../composables/useApiErrorHandler";
 import { useNotifications } from "../../composables/useNotifications";
 import { getAppConfig } from "../../config/appConfig";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
@@ -45,18 +40,15 @@ declare const Kakao: any;
 
 const router = useRouter();
 const route = useRoute();
-const { t, locale } = useI18n();
+const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
 
 const activeTab = useLocalStorage("voterLoginTab", "google");
 const step = ref<"request" | "verify">("request");
 
-const googleButtonContainer = ref<HTMLElement | null>(null);
-const googleReady = ref(false);
-const googleError = ref(false);
-const gisScriptLoaded = ref(false);
-let gisCleanup: (() => void) | null = null;
+const googleButtonContainer = ref<HTMLElement>();
 
 const fbReady = ref(false);
 const fbError = ref(false);
@@ -155,7 +147,7 @@ async function handleRequestEmailCode() {
     step.value = "verify";
     showSuccessMessage(t(messageKey));
   } catch (error) {
-    console.error("Error requesting email code:", error);
+    handleApiError(error, t("voting.auth.email.sendFailed"));
   } finally {
     loading.value = false;
   }
@@ -173,7 +165,7 @@ async function handleRequestPhoneCode() {
     step.value = "verify";
     showSuccessMessage(t(messageKey));
   } catch (error) {
-    console.error("Error requesting phone code:", error);
+    handleApiError(error, t("voting.auth.phone.sendFailed"));
   } finally {
     loading.value = false;
   }
@@ -193,7 +185,7 @@ async function handleDirectCodeLogin() {
       router.push({ name: "voter-elections" });
     }
   } catch (error) {
-    console.error("Error with direct code:", error);
+    handleApiError(error, t("voting.auth.code.failed"));
   } finally {
     loading.value = false;
   }
@@ -210,7 +202,7 @@ async function handleVerifyCode() {
       router.push({ name: "voter-elections" });
     }
   } catch (error) {
-    console.error("Error verifying code:", error);
+    handleApiError(error, t("voting.auth.verify.failed"));
   } finally {
     loading.value = false;
   }
@@ -221,105 +213,34 @@ function backToRequest() {
   verificationForm.value.verifyCode = "";
 }
 
+async function redirectAfterAuth() {
+  const electionGuid = route.query.election as string;
+  if (electionGuid) {
+    await router.push(`/vote/${electionGuid}`);
+  } else {
+    await router.push({ name: "voter-elections" });
+  }
+}
+
 const handleGoogleCredentialCallback = async (
   response: GoogleCredentialResponse,
 ) => {
   try {
     loading.value = true;
     await onlineVotingStore.googleAuth({ credential: response.credential });
-    const electionGuid = route.query.election as string;
-    if (electionGuid) {
-      router.push(`/vote/${electionGuid}`);
-    } else {
-      router.push({ name: "voter-elections" });
-    }
+    await redirectAfterAuth();
   } catch (error) {
-    console.error("Error with Google authentication:", error);
+    handleApiError(error, t("voting.auth.google.error"));
   } finally {
     loading.value = false;
   }
 };
 
-const loadGisScript = (): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    if (gisScriptLoaded.value || typeof google !== "undefined") {
-      gisScriptLoaded.value = true;
-      resolve();
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      gisScriptLoaded.value = true;
-      resolve();
-    };
-    script.onerror = () =>
-      reject(new Error("Failed to load Google Identity Services script"));
-    document.head.appendChild(script);
-  });
-};
-
-const fetchGoogleClientId = async (): Promise<string | null> => {
-  // First check app config
-  const appConfig = getAppConfig();
-  return appConfig.googleClientId ?? null;
-};
-
-let isInitializingGis = false;
-
-const initGoogleSignIn = async () => {
-  if (googleReady.value || isInitializingGis) {
-    return;
-  }
-  isInitializingGis = true;
-  try {
-    googleError.value = false;
-    await loadGisScript();
-    const clientId = await fetchGoogleClientId();
-    if (!clientId || typeof window.google === "undefined") {
-      googleError.value = true;
-      return;
-    }
-    window.google.accounts.id.initialize({
-      client_id: clientId,
-      callback: handleGoogleCredentialCallback,
-      auto_select: false,
-      cancel_on_tap_outside: true,
-      use_fedcm_for_prompt: false,
-    });
-    await nextTick();
-    if (googleButtonContainer.value) {
-      window.google.accounts.id.renderButton(googleButtonContainer.value, {
-        theme: "outline",
-        size: "large",
-        text: "signin_with",
-        shape: "rectangular",
-        width: 300,
-        locale: locale.value,
-      });
-      googleReady.value = true;
-
-      // Store cleanup function
-      gisCleanup = () => {
-        if (typeof window.google !== "undefined" && googleReady.value) {
-          try {
-            window.google.accounts.id.cancel();
-          } catch {
-            // Ignore errors from cancel
-          }
-        }
-        googleReady.value = false;
-      };
-    }
-  } catch (error) {
-    console.error("Failed to initialize Google Sign-In:", error);
-    googleError.value = true;
-  } finally {
-    isInitializingGis = false;
-  }
-};
+const { googleReady, googleError, initGoogleOneTap } = useGoogleOneTap({
+  buttonRef: googleButtonContainer,
+  onCredential: handleGoogleCredentialCallback,
+  promptOnInit: true,
+});
 
 const handleFacebookLogin = async () => {
   try {
@@ -536,7 +457,7 @@ const initKakaoSdk = async () => {
 watch(activeTab, async (newTab) => {
   if (newTab === "google") {
     await nextTick();
-    await initGoogleSignIn();
+    await initGoogleOneTap();
   } else if (newTab === "facebook") {
     await nextTick();
     await initFacebookSdk();
@@ -548,7 +469,7 @@ watch(activeTab, async (newTab) => {
 
 onMounted(() => {
   if (activeTab.value === "google") {
-    initGoogleSignIn();
+    initGoogleOneTap();
   } else if (activeTab.value === "facebook") {
     initFacebookSdk();
   } else if (activeTab.value === "kakao") {
@@ -558,10 +479,6 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  if (gisCleanup) {
-    gisCleanup();
-    gisCleanup = null;
-  }
   globalThis.removeEventListener("keydown", handleKeydown);
 });
 </script>

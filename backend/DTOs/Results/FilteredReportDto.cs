@@ -26,7 +26,7 @@ public class FilteredReportDto
     public ElectionReportDto? Summary { get; set; }
 
     /// <summary>
-    /// Filtered list of candidate results.
+    /// Filtered list of results.
     /// </summary>
     public List<CandidateReportDto> Candidates { get; set; } = new();
 

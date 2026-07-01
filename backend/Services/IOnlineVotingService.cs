@@ -11,8 +11,8 @@ public interface IOnlineVotingService
     /// Requests a verification code for a voter.
     /// </summary>
     /// <param name="dto">The request containing voter identification details.</param>
-    /// <returns>A task containing the response message.</returns>
-    Task<string> RequestVerificationCodeAsync(RequestCodeDto dto);
+    /// <returns>A task containing the response message and optional dev verification code.</returns>
+    Task<RequestCodeResponseDto> RequestVerificationCodeAsync(RequestCodeDto dto);
 
     /// <summary>
     /// Verifies a voter's verification code.

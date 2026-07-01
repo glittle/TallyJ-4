@@ -39,7 +39,7 @@ const filteredPeople = computed(() => {
   const query = searchQuery.value.toLowerCase();
   return allPeople.value.filter(
     (p) =>
-      p.fullName.toLowerCase().includes(query) ||
+      p.fullName?.toLowerCase().includes(query) ||
       p.email?.toLowerCase().includes(query),
   );
 });

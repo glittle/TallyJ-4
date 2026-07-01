@@ -354,6 +354,18 @@ void RegisterApplicationServices(IServiceCollection services)
 
 void RegisterAuthServices(IServiceCollection services)
 {
+    services.AddSingleton<ProductionGoogleIdTokenValidator>();
+    services.AddSingleton<IGoogleIdTokenValidator>(sp =>
+    {
+        var env = sp.GetRequiredService<IWebHostEnvironment>();
+        if (env.IsDevelopment() || env.IsEnvironment("Testing"))
+        {
+            return new DevelopmentGoogleIdTokenValidator(sp.GetRequiredService<ProductionGoogleIdTokenValidator>());
+        }
+
+        return sp.GetRequiredService<ProductionGoogleIdTokenValidator>();
+    });
+
     services.AddScoped<IEmailSender, SmtpEmailSender>();
     services.AddScoped<IJwtTokenService, JwtTokenService>();
     services.AddScoped<EmailService>();
@@ -392,7 +404,10 @@ void ConfigureSwagger(IServiceCollection services)
             static string GetSchemaId(Type t)
             {
                 if (!t.IsGenericType)
-                    return t.Name;
+                {
+                    var ns = t.Namespace?.Split('.').LastOrDefault();
+                    return string.IsNullOrEmpty(ns) ? t.Name : $"{ns}_{t.Name}";
+                }
 
                 var typeName = t.Name.Substring(0, t.Name.IndexOf('`'));
                 var genericArgs = string.Join("", t.GetGenericArguments().Select(GetSchemaId));

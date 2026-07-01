@@ -16,7 +16,7 @@ public class AdvancedFilterDto
     public List<string>? Locations { get; set; }
 
     /// <summary>
-    /// List of candidate names to filter by.
+    /// List of names to filter by.
     /// </summary>
     public List<string>? CandidateNames { get; set; }
 

@@ -10,8 +10,8 @@ using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.OnlineVoting;
 using Backend.Services.Auth;
-using Google.Apis.Auth;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 
@@ -22,36 +22,46 @@ namespace Backend.Services;
 /// </summary>
 public class OnlineVotingService : IOnlineVotingService
 {
+    private const string NotifyProcessedCode = "P";
+
     private readonly MainDbContext _context;
     private readonly IConfiguration _configuration;
+    private readonly IHostEnvironment _hostEnvironment;
     private readonly ILogger<OnlineVotingService> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IEmailSender _emailSender;
+    private readonly IGoogleIdTokenValidator _googleIdTokenValidator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineVotingService"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
     /// <param name="configuration">The application configuration.</param>
+    /// <param name="hostEnvironment">The hosting environment.</param>
     /// <param name="logger">The logger instance.</param>
     /// <param name="httpClientFactory">The HTTP client factory.</param>
     /// <param name="emailSender">The email sender service.</param>
+    /// <param name="googleIdTokenValidator">The Google ID token validator.</param>
     public OnlineVotingService(
         MainDbContext context,
         IConfiguration configuration,
+        IHostEnvironment hostEnvironment,
         ILogger<OnlineVotingService> logger,
         IHttpClientFactory httpClientFactory,
-        IEmailSender emailSender)
+        IEmailSender emailSender,
+        IGoogleIdTokenValidator googleIdTokenValidator)
     {
         _context = context;
         _configuration = configuration;
+        _hostEnvironment = hostEnvironment;
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _emailSender = emailSender;
+        _googleIdTokenValidator = googleIdTokenValidator;
     }
 
     /// <inheritdoc/>
-    public async Task<string> RequestVerificationCodeAsync(RequestCodeDto dto)
+    public async Task<RequestCodeResponseDto> RequestVerificationCodeAsync(RequestCodeDto dto)
     {
         try
         {
@@ -66,7 +76,7 @@ public class OnlineVotingService : IOnlineVotingService
             if (!openElections.Any())
             {
                 _logger.LogWarning("Login code request rejected: No elections currently open for online voting");
-                return "voting.auth.requestCode.noOpenElections";
+                return BuildRequestCodeResponse("voting.auth.requestCode.noOpenElections");
             }
 
             // 2. Check if voter is registered in ANY of the open elections
@@ -85,7 +95,7 @@ public class OnlineVotingService : IOnlineVotingService
             {
                 _logger.LogWarning("Login code request rejected: VoterId {VoterId} (type: {VoterIdType}) not found in any open election",
                     dto.VoterId, dto.VoterIdType);
-                return "voting.auth.requestCode.notRegistered";
+                return BuildRequestCodeResponse("voting.auth.requestCode.notRegistered");
             }
 
             // 3. Create or update OnlineVoter record for tracking
@@ -114,20 +124,19 @@ public class OnlineVotingService : IOnlineVotingService
 
             var sent = await SendVerificationCodeAsync(dto.VoterId, dto.DeliveryMethod, verifyCode);
 
-            if (!sent)
-            {
-                return "voting.auth.requestCode.sendFailed";
-            }
+            var messageKey = sent
+                ? "voting.auth.requestCode.sent"
+                : "voting.auth.requestCode.sendFailed";
 
             _logger.LogInformation("Verification code sent to {VoterId} via {Method} (registered in {Count} open election(s))",
                 dto.VoterId, dto.DeliveryMethod, openElections.Count);
 
-            return "voting.auth.requestCode.sent";
+            return BuildRequestCodeResponse(messageKey, verifyCode);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error requesting verification code for {VoterId}", dto.VoterId);
-            return "voting.auth.requestCode.error";
+            return BuildRequestCodeResponse("voting.auth.requestCode.error");
         }
     }
 
@@ -136,6 +145,15 @@ public class OnlineVotingService : IOnlineVotingService
     {
         try
         {
+            if (string.Equals(dto.VoterId, dto.VerifyCode, StringComparison.OrdinalIgnoreCase))
+            {
+                var kioskResult = await TryAuthenticateWithDirectCodeAsync(dto.VoterId);
+                if (kioskResult.Success)
+                {
+                    return kioskResult;
+                }
+            }
+
             var onlineVoter = await _context.OnlineVoters
                 .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId);
 
@@ -278,9 +296,31 @@ public class OnlineVotingService : IOnlineVotingService
                 .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid &&
                                         (p.Email == dto.VoterId || p.Phone == dto.VoterId || p.KioskCode == dto.VoterId));
 
-            if (person != null && person.HasOnlineBallot == true)
+            var isResubmit = person != null && person.HasOnlineBallot == true;
+            OnlineVotingInfo? existingVotingInfo = null;
+
+            if (isResubmit && person != null)
             {
-                return (false, "voting.submit.alreadyVoted");
+                existingVotingInfo = await _context.OnlineVotingInfos
+                    .Where(ovi => ovi.ElectionGuid == dto.ElectionGuid && ovi.PersonGuid == person.PersonGuid)
+                    .OrderByDescending(ovi => ovi.WhenBallotCreated)
+                    .FirstOrDefaultAsync();
+
+                if (existingVotingInfo?.BallotGuid != null)
+                {
+                    var oldBallot = await _context.Ballots
+                        .FirstOrDefaultAsync(b => b.BallotGuid == existingVotingInfo.BallotGuid);
+
+                    if (oldBallot != null)
+                    {
+                        oldBallot.StatusCode = BallotStatus.Review;
+                        oldBallot.DateUpdated = now;
+                        existingVotingInfo.HistoryStatus = AppendBallotHistory(
+                            existingVotingInfo.HistoryStatus,
+                            existingVotingInfo.BallotGuid.Value,
+                            existingVotingInfo.WhenBallotCreated);
+                    }
+                }
             }
 
             var location = await _context.Locations
@@ -290,6 +330,7 @@ public class OnlineVotingService : IOnlineVotingService
             {
                 location = new Location
                 {
+                    LocationGuid = Guid.NewGuid(),
                     ElectionGuid = dto.ElectionGuid,
                     Name = "Online",
                     ContactInfo = "Online voting",
@@ -318,17 +359,23 @@ public class OnlineVotingService : IOnlineVotingService
 
             foreach (var voteDto in dto.Votes.OrderBy(v => v.PositionOnBallot))
             {
+                var hasPerson = voteDto.PersonGuid.HasValue;
+                var hasFreeText = !string.IsNullOrWhiteSpace(voteDto.VoteName);
                 var vote = new Vote
                 {
                     BallotGuid = ballot.BallotGuid,
                     PositionOnBallot = voteDto.PositionOnBallot,
                     PersonGuid = voteDto.PersonGuid,
-                    VoteStatus = voteDto.PersonGuid.HasValue ? VoteStatus.Ok : VoteStatus.Spoiled,
+                    VoteStatus = hasPerson
+                        ? VoteStatus.Ok
+                        : hasFreeText
+                            ? VoteStatus.Raw
+                            : VoteStatus.Spoiled,
                     OnlineVoteRaw = voteDto.VoteName,
                     RowVersion = new byte[8]
                 };
 
-                if (voteDto.PersonGuid.HasValue)
+                if (hasPerson)
                 {
                     var votedPerson = await _context.People
                         .FirstOrDefaultAsync(p => p.PersonGuid == voteDto.PersonGuid.Value);
@@ -338,25 +385,44 @@ public class OnlineVotingService : IOnlineVotingService
                         vote.PersonCombinedInfo = votedPerson.CombinedInfo;
                     }
                 }
+                else if (hasFreeText)
+                {
+                    vote.PersonCombinedInfo = voteDto.VoteName!.Trim();
+                }
 
                 _context.Votes.Add(vote);
             }
 
-            var votingInfo = new OnlineVotingInfo
+            if (existingVotingInfo != null)
             {
-                ElectionGuid = dto.ElectionGuid,
-                PersonGuid = person?.PersonGuid ?? Guid.NewGuid(),
-                WhenBallotCreated = DateTimeOffset.UtcNow,
-                Status = "Submitted",
-                WhenStatus = DateTimeOffset.UtcNow
-            };
+                existingVotingInfo.BallotGuid = ballot.BallotGuid;
+                existingVotingInfo.WhenBallotCreated = now;
+                existingVotingInfo.WhenStatus = now;
+                existingVotingInfo.Status = "Submitted";
+                existingVotingInfo.ListPool = SerializeListPool(dto.ListPool);
+            }
+            else
+            {
+                var votingInfo = new OnlineVotingInfo
+                {
+                    ElectionGuid = dto.ElectionGuid,
+                    PersonGuid = person?.PersonGuid ?? Guid.NewGuid(),
+                    BallotGuid = ballot.BallotGuid,
+                    WhenBallotCreated = now,
+                    Status = "Submitted",
+                    WhenStatus = now,
+                    ListPool = SerializeListPool(dto.ListPool)
+                };
 
-            _context.OnlineVotingInfos.Add(votingInfo);
+                _context.OnlineVotingInfos.Add(votingInfo);
+            }
 
             if (person != null)
             {
                 person.HasOnlineBallot = true;
             }
+
+            await ApplyNotifyPreferenceAsync(onlineVoter, dto.NotifyWhenProcessed);
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
@@ -395,13 +461,34 @@ public class OnlineVotingService : IOnlineVotingService
             .OrderByDescending(ov => ov.WhenBallotCreated)
             .FirstOrDefaultAsync();
 
+        var priorVotes = new List<OnlineVoteDto>();
+        if (votingInfo?.BallotGuid != null)
+        {
+            priorVotes = await _context.Votes
+                .Where(v => v.BallotGuid == votingInfo.BallotGuid)
+                .OrderBy(v => v.PositionOnBallot)
+                .Select(v => new OnlineVoteDto
+                {
+                    PersonGuid = v.PersonGuid,
+                    VoteName = v.OnlineVoteRaw ?? v.PersonCombinedInfo,
+                    PositionOnBallot = v.PositionOnBallot
+                })
+                .ToListAsync();
+        }
+
+        var onlineVoter = await _context.OnlineVoters
+            .FirstOrDefaultAsync(ov => ov.VoterId == voterId);
+
         return new OnlineVoteStatusDto
         {
             HasVoted = person.HasOnlineBallot == true,
             WhenSubmitted = votingInfo?.WhenBallotCreated,
             Message = person.HasOnlineBallot == true
                 ? "voting.status.alreadyVoted"
-                : "voting.status.notVoted"
+                : "voting.status.notVoted",
+            PriorVotes = priorVotes,
+            ListPool = ParseListPool(votingInfo?.ListPool),
+            NotifyWhenProcessed = HasNotifyProcessedPreference(onlineVoter?.EmailCodes)
         };
     }
 
@@ -410,38 +497,27 @@ public class OnlineVotingService : IOnlineVotingService
     {
         try
         {
-            // 1. Get Google Client ID from configuration
-            var googleClientId = _configuration["Google:ClientId"];
-            if (string.IsNullOrWhiteSpace(googleClientId) || googleClientId.StartsWith("<"))
+            var validation = await _googleIdTokenValidator.ValidateAsync(dto.Credential);
+            if (validation == null)
             {
-                _logger.LogWarning("Google OAuth attempted but Google Client ID is not configured");
-                return (false, "voting.auth.google.notConfigured", null);
-            }
-
-            // 2. Validate Google JWT token
-            GoogleJsonWebSignature.Payload payload;
-            try
-            {
-                var settings = new GoogleJsonWebSignature.ValidationSettings
+                var googleClientId = _configuration["Google:ClientId"];
+                if (string.IsNullOrWhiteSpace(googleClientId) || googleClientId.StartsWith('<'))
                 {
-                    Audience = new[] { googleClientId }
-                };
-                payload = await GoogleJsonWebSignature.ValidateAsync(dto.Credential, settings);
-            }
-            catch (InvalidJwtException ex)
-            {
-                _logger.LogWarning(ex, "Google OAuth for voter: Invalid Google ID token");
+                    _logger.LogWarning("Google OAuth attempted but Google Client ID is not configured");
+                    return (false, "voting.auth.google.notConfigured", null);
+                }
+
+                _logger.LogWarning("Google OAuth for voter: Invalid Google ID token");
                 return (false, "voting.auth.google.invalidCredential", null);
             }
 
-            var email = payload.Email;
+            var email = validation.Email;
             if (string.IsNullOrEmpty(email))
             {
                 return (false, "voting.auth.google.noEmail", null);
             }
 
-            // Only accept verified emails
-            if (!payload.EmailVerified)
+            if (!validation.EmailVerified)
             {
                 _logger.LogWarning("Google OAuth for voter: Email {Email} not verified by Google", email);
                 return (false, "voting.auth.google.emailNotVerified", null);
@@ -1149,6 +1225,163 @@ public class OnlineVotingService : IOnlineVotingService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> TryAuthenticateWithDirectCodeAsync(string code)
+    {
+        var normalizedCode = NormalizeVoterCode(code);
+        var now = DateTimeOffset.UtcNow;
+
+        var openElectionGuids = await _context.Elections
+            .Where(e => e.OnlineWhenOpen != null && e.OnlineWhenOpen <= now &&
+                        (e.OnlineWhenClose == null || e.OnlineWhenClose > now))
+            .Select(e => e.ElectionGuid)
+            .ToListAsync();
+
+        if (!openElectionGuids.Any())
+        {
+            return (false, "voting.auth.verify.voterNotFound", null);
+        }
+
+        var person = await _context.People
+            .FirstOrDefaultAsync(p => openElectionGuids.Contains(p.ElectionGuid) &&
+                                      p.KioskCode != null &&
+                                      p.KioskCode.ToUpper() == normalizedCode);
+
+        if (person == null)
+        {
+            return (false, "voting.auth.verify.voterNotFound", null);
+        }
+
+        var onlineVoter = await _context.OnlineVoters
+            .FirstOrDefaultAsync(ov => ov.VoterId == normalizedCode);
+
+        if (onlineVoter == null)
+        {
+            onlineVoter = new OnlineVoter
+            {
+                VoterId = normalizedCode,
+                VoterIdType = "C",
+                WhenRegistered = DateTimeOffset.UtcNow
+            };
+            _context.OnlineVoters.Add(onlineVoter);
+        }
+        else
+        {
+            onlineVoter.VoterIdType = "C";
+        }
+
+        onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
+        onlineVoter.VerifyCode = null;
+        onlineVoter.VerifyAttempts = 0;
+        await _context.SaveChangesAsync();
+
+        var token = GenerateJwtToken(onlineVoter);
+        var response = new OnlineVoterAuthResponse
+        {
+            Token = token,
+            VoterId = onlineVoter.VoterId,
+            VoterIdType = onlineVoter.VoterIdType,
+            ExpiresAt = DateTimeOffset.UtcNow.AddHours(24)
+        };
+
+        _logger.LogInformation("Voter {VoterId} authenticated via direct kiosk/personal code", normalizedCode);
+        return (true, null, response);
+    }
+
+    private RequestCodeResponseDto BuildRequestCodeResponse(string messageKey, string? verifyCode = null)
+    {
+        var echoDevCode = (_hostEnvironment.IsDevelopment() || _hostEnvironment.IsEnvironment("Testing"))
+                          && !string.IsNullOrEmpty(verifyCode);
+
+        return new RequestCodeResponseDto
+        {
+            MessageKey = messageKey,
+            DevVerificationCode = echoDevCode ? verifyCode : null
+        };
+    }
+
+    private static string NormalizeVoterCode(string code)
+    {
+        var trimmed = code.Trim();
+        if (trimmed.StartsWith("K_", StringComparison.OrdinalIgnoreCase))
+        {
+            trimmed = trimmed[2..];
+        }
+
+        return trimmed.ToUpperInvariant();
+    }
+
+    private async Task ApplyNotifyPreferenceAsync(OnlineVoter? onlineVoter, bool notifyWhenProcessed)
+    {
+        if (onlineVoter == null)
+        {
+            return;
+        }
+
+        var codes = ParseEmailCodes(onlineVoter.EmailCodes);
+        if (notifyWhenProcessed)
+        {
+            codes.Add(NotifyProcessedCode);
+        }
+        else
+        {
+            codes.Remove(NotifyProcessedCode);
+        }
+
+        onlineVoter.EmailCodes = codes.Count == 0 ? null : string.Join("|", codes);
+        await Task.CompletedTask;
+    }
+
+    private static bool HasNotifyProcessedPreference(string? emailCodes)
+    {
+        return ParseEmailCodes(emailCodes).Contains(NotifyProcessedCode);
+    }
+
+    private static HashSet<string> ParseEmailCodes(string? emailCodes)
+    {
+        if (string.IsNullOrWhiteSpace(emailCodes))
+        {
+            return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        return emailCodes
+            .Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static string? SerializeListPool(List<OnlinePoolEntryDto> pool)
+    {
+        if (pool == null || pool.Count == 0)
+        {
+            return null;
+        }
+
+        return JsonSerializer.Serialize(pool);
+    }
+
+    private static List<OnlinePoolEntryDto> ParseListPool(string? listPool)
+    {
+        if (string.IsNullOrWhiteSpace(listPool))
+        {
+            return new List<OnlinePoolEntryDto>();
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<List<OnlinePoolEntryDto>>(listPool)
+                   ?? new List<OnlinePoolEntryDto>();
+        }
+        catch
+        {
+            return new List<OnlinePoolEntryDto>();
+        }
+    }
+
+    private static string AppendBallotHistory(string? existing, Guid ballotGuid, DateTimeOffset? when)
+    {
+        var entry = $"{ballotGuid}|{when:O}";
+        return string.IsNullOrEmpty(existing) ? entry : $"{existing};{entry}";
     }
 }
 

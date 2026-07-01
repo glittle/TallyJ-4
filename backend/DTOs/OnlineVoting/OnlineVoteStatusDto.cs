@@ -19,6 +19,21 @@ public class OnlineVoteStatusDto
     /// A message about the voting status.
     /// </summary>
     public string? Message { get; set; }
+
+    /// <summary>
+    /// Prior votes on the submitted ballot (for editing).
+    /// </summary>
+    public List<OnlineVoteDto> PriorVotes { get; set; } = new();
+
+    /// <summary>
+    /// Names the voter added to their personal pool.
+    /// </summary>
+    public List<OnlinePoolEntryDto> ListPool { get; set; } = new();
+
+    /// <summary>
+    /// Whether the voter opted in to a ballot-processed notification.
+    /// </summary>
+    public bool NotifyWhenProcessed { get; set; }
 }
 
 

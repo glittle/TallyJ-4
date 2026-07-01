@@ -19,6 +19,16 @@ public class SubmitOnlineBallotDto
     /// The list of votes on the ballot.
     /// </summary>
     public List<OnlineVoteDto> Votes { get; set; } = new();
+
+    /// <summary>
+    /// Names added to the voter's personal pool (list + random mode).
+    /// </summary>
+    public List<OnlinePoolEntryDto> ListPool { get; set; } = new();
+
+    /// <summary>
+    /// Whether the voter wants to be notified when their ballot is processed.
+    /// </summary>
+    public bool NotifyWhenProcessed { get; set; }
 }
 
 /// <summary>
@@ -32,7 +42,7 @@ public class OnlineVoteDto
     public Guid? PersonGuid { get; set; }
 
     /// <summary>
-    /// The name of the person being voted for (if not a predefined candidate).
+    /// The name of the person being voted for.
     /// </summary>
     public string? VoteName { get; set; }
 

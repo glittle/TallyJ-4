@@ -1,93 +1,16 @@
-export interface RequestCodeDto {
-  voterId: string;
-  voterIdType: "E" | "P" | "C";
-  deliveryMethod: "email" | "sms" | "voice" | "whatsapp";
-}
-
-export interface VerifyCodeDto {
-  voterId: string;
-  verifyCode: string;
-}
-
-export interface OnlineVoterAuthResponse {
-  token: string;
-  voterId: string;
-  voterIdType: string;
-  expiresAt: string;
-}
-
-export interface OnlineElectionInfo {
-  electionGuid: string;
-  name: string;
-  convenor?: string;
-  dateOfElection?: string;
-  numberToElect?: number;
-  onlineWhenOpen?: string;
-  onlineWhenClose?: string;
-  isOpen: boolean;
-  instructions?: string;
-  onlineSelectionProcess?: string;
-}
-
-export interface AvailableElection {
-  electionGuid: string;
-  name: string;
-  convenor?: string;
-  onlineWhenOpen?: string;
-  onlineWhenClose?: string;
-  onlineCloseIsEstimate: boolean;
-  dateOfElection?: string;
-  isOpen: boolean;
-  hasOnlineVoting: boolean;
-  hasVoted: boolean;
-  voterName?: string;
-  ballotStatus?: string;
-  whenBallotStatus?: string;
-}
-
-export interface OnlineCandidate {
-  personGuid: string;
-  fullName: string;
-  area?: string;
-  otherInfo?: string;
-}
-
-export interface OnlineVote {
-  personGuid?: string;
-  voteName?: string;
-  positionOnBallot: number;
-}
-
-export interface SubmitOnlineBallotDto {
-  electionGuid: string;
-  voterId: string;
-  votes: OnlineVote[];
-}
-
-export interface OnlineVoteStatus {
-  hasVoted: boolean;
-  whenSubmitted?: string;
-  message?: string;
-}
-
-export interface GoogleAuthForVoterDto {
-  credential: string;
-}
-
-export interface FacebookAuthForVoterDto {
-  accessToken: string;
-}
-
-export interface KakaoAuthForVoterDto {
-  accessToken: string;
-}
-
-export interface TelegramAuthForVoterDto {
-  id: number;
-  firstName: string;
-  lastName?: string;
-  username?: string;
-  photoUrl?: string;
-  authDate: number;
-  hash: string;
-}
+export type {
+  OnlineVotingAvailableElectionDto as AvailableElection,
+  OnlineVotingFacebookAuthForVoterDto as FacebookAuthForVoterDto,
+  OnlineVotingGoogleAuthForVoterDto as GoogleAuthForVoterDto,
+  OnlineVotingKakaoAuthForVoterDto as KakaoAuthForVoterDto,
+  OnlineVotingOnlineCandidateDto as OnlineCandidate,
+  OnlineVotingOnlineElectionInfoDto as OnlineElectionInfo,
+  OnlineVotingOnlinePoolEntryDto as OnlinePoolEntry,
+  OnlineVotingOnlineVoteDto as OnlineVote,
+  OnlineVotingOnlineVoteStatusDto as OnlineVoteStatus,
+  OnlineVotingOnlineVoterAuthResponse as OnlineVoterAuthResponse,
+  OnlineVotingRequestCodeDto as RequestCodeDto,
+  OnlineVotingSubmitOnlineBallotDto as SubmitOnlineBallotDto,
+  OnlineVotingTelegramAuthForVoterDto as TelegramAuthForVoterDto,
+  OnlineVotingVerifyCodeDto as VerifyCodeDto,
+} from "@/api/gen/configService/types.gen";

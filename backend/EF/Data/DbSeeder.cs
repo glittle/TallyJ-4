@@ -34,6 +34,9 @@ public static class DbSeeder
         if (await context.Elections.AnyAsync())
         {
             logger.LogInformation("Database already seeded");
+            await SeedElection1OnlineVotingAsync(context, logger);
+            await SeedOnlineVotingTestElectionsAsync(context, logger);
+            await context.SaveChangesAsync();
             return;
         }
 
@@ -43,6 +46,7 @@ public static class DbSeeder
         await SeedUsersAsync(userManager, logger);
         await SeedElection1Async(context, userManager, logger);
         await SeedElection2Async(context, userManager, logger);
+        await SeedOnlineVotingTestElectionsAsync(context, logger);
         await SeedLogsAsync(context, logger);
 
         await context.SaveChangesAsync();
@@ -130,6 +134,7 @@ public static class DbSeeder
             OnlineWhenOpen = DateTimeOffset.Now.AddDays(-7),
             OnlineWhenClose = DateTimeOffset.Now.AddDays(3),
             OnlineCloseIsEstimate = true,
+            OnlineSelectionProcess = "A",
             VotingMethods = "IP,OL",
             OwnerLoginId = "admin@tallyj.test",
             ShowAsTest = true
@@ -190,6 +195,20 @@ public static class DbSeeder
             };
             people.Add(person);
         }
+        people.Add(new Person
+        {
+            PersonGuid = CreateGuid($"Person{electionGuid}VoterTest"),
+            ElectionGuid = electionGuid,
+            FirstName = "Test",
+            LastName = "Voter",
+            CanVote = true,
+            CanReceiveVotes = false,
+            Email = "voter@tallyj.test",
+            KioskCode = "VTEST",
+            VotingMethod = "O",
+            VotingLocationGuid = mainHallGuid
+        });
+
         context.People.AddRange(people);
 
         var ballots = new List<Ballot>();
@@ -560,6 +579,195 @@ public static class DbSeeder
 
         logger.LogInformation("Seeded Election 2 with {PeopleCount} delegates, {BallotCount} ballots, {VoteCount} votes, {ResultCount} results",
             people.Count, ballots.Count, votes.Count, results.Count);
+    }
+
+    private static async Task SeedElection1OnlineVotingAsync(MainDbContext context, ILogger logger)
+    {
+        var electionGuid = CreateGuid("SpringfieldLSA2024");
+        var election = await context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+        if (election == null)
+        {
+            return;
+        }
+
+        var now = DateTimeOffset.Now;
+        if (election.OnlineWhenOpen == null || election.OnlineWhenOpen > now)
+        {
+            election.OnlineWhenOpen = now.AddDays(-7);
+        }
+
+        if (election.OnlineWhenClose == null || election.OnlineWhenClose <= now)
+        {
+            election.OnlineWhenClose = now.AddDays(3);
+        }
+
+        if (string.IsNullOrEmpty(election.OnlineSelectionProcess))
+        {
+            election.OnlineSelectionProcess = "A";
+        }
+
+        if (election.VotingMethods == null || !election.VotingMethods.Contains("OL", StringComparison.OrdinalIgnoreCase))
+        {
+            election.VotingMethods = string.IsNullOrWhiteSpace(election.VotingMethods)
+                ? "OL"
+                : $"{election.VotingMethods},OL";
+        }
+
+        var mainHallGuid = CreateGuid("MainHall");
+        if (!await context.Locations.AnyAsync(l => l.LocationGuid == mainHallGuid))
+        {
+            context.Locations.Add(new Location
+            {
+                LocationGuid = mainHallGuid,
+                ElectionGuid = electionGuid,
+                Name = "Main Hall",
+                ContactInfo = "123 Main Street"
+            });
+        }
+
+        var voterPersonGuid = CreateGuid($"Person{electionGuid}VoterTest");
+        var existingVoter = await context.People
+            .FirstOrDefaultAsync(p => p.ElectionGuid == electionGuid &&
+                                      (p.Email == "voter@tallyj.test" || p.KioskCode == "VTEST"));
+
+        if (existingVoter == null)
+        {
+            logger.LogInformation("Adding Election 1 online test voter (voter@tallyj.test / VTEST)...");
+            context.People.Add(new Person
+            {
+                PersonGuid = voterPersonGuid,
+                ElectionGuid = electionGuid,
+                FirstName = "Test",
+                LastName = "Voter",
+                CanVote = true,
+                CanReceiveVotes = false,
+                Email = "voter@tallyj.test",
+                KioskCode = "VTEST",
+                VotingMethod = "O",
+                VotingLocationGuid = mainHallGuid
+            });
+        }
+        else
+        {
+            existingVoter.Email ??= "voter@tallyj.test";
+            existingVoter.KioskCode ??= "VTEST";
+            existingVoter.CanVote = true;
+            existingVoter.VotingMethod = "O";
+        }
+
+        var phoneVoter = await context.People
+            .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true && p.Phone != null)
+            .OrderBy(p => p.RowId)
+            .FirstOrDefaultAsync();
+        if (phoneVoter != null)
+        {
+            phoneVoter.Phone = "+15551000";
+        }
+    }
+
+    private static async Task SeedOnlineVotingTestElectionsAsync(MainDbContext context, ILogger logger)
+    {
+        var randomGuid = CreateGuid("OnlineVotingRandom2024");
+        var bothGuid = CreateGuid("OnlineVotingBoth2024");
+
+        if (!await context.Elections.AnyAsync(e => e.ElectionGuid == randomGuid))
+        {
+            logger.LogInformation("Seeding online voting test election (random mode B)...");
+
+            context.Elections.Add(new Election
+            {
+                ElectionGuid = randomGuid,
+                Name = "Online Voting Test — Random Names (B)",
+                ElectionType = ElectionTypeEnum.LSA.Code,
+                ElectionMode = ElectionModeEnum.Normal.Code,
+                NumberToElect = 9,
+                DateOfElection = DateTimeOffset.Now.AddDays(7),
+                ElectionStage = ElectionStage.GatheringBallots,
+                OnlineWhenOpen = DateTimeOffset.Now.AddDays(-1),
+                OnlineWhenClose = DateTimeOffset.Now.AddDays(14),
+                OnlineCloseIsEstimate = true,
+                OnlineSelectionProcess = "B",
+                VotingMethods = "OL",
+                OwnerLoginId = "admin@tallyj.test",
+                ShowAsTest = true
+            });
+
+            var voterPersonGuid = CreateGuid($"Person{randomGuid}VoterTest");
+            context.People.Add(new Person
+            {
+                PersonGuid = voterPersonGuid,
+                ElectionGuid = randomGuid,
+                FirstName = "Test",
+                LastName = "Voter",
+                CanVote = true,
+                CanReceiveVotes = true,
+                Email = "voter-random@tallyj.test",
+                VotingMethod = "O"
+            });
+
+            for (var i = 0; i < 12; i++)
+            {
+                context.People.Add(new Person
+                {
+                    PersonGuid = CreateGuid($"Candidate{randomGuid}{i}"),
+                    ElectionGuid = randomGuid,
+                    FirstName = $"Candidate{i}",
+                    LastName = "Random",
+                    CanVote = false,
+                    CanReceiveVotes = true,
+                    VotingMethod = "O"
+                });
+            }
+        }
+
+        if (!await context.Elections.AnyAsync(e => e.ElectionGuid == bothGuid))
+        {
+            logger.LogInformation("Seeding online voting test election (list + random mode C)...");
+
+            context.Elections.Add(new Election
+            {
+                ElectionGuid = bothGuid,
+                Name = "Online Voting Test — List + Pool (C)",
+                ElectionType = ElectionTypeEnum.LSA.Code,
+                ElectionMode = ElectionModeEnum.Normal.Code,
+                NumberToElect = 9,
+                DateOfElection = DateTimeOffset.Now.AddDays(7),
+                ElectionStage = ElectionStage.GatheringBallots,
+                OnlineWhenOpen = DateTimeOffset.Now.AddDays(-1),
+                OnlineWhenClose = DateTimeOffset.Now.AddDays(14),
+                OnlineCloseIsEstimate = true,
+                OnlineSelectionProcess = "C",
+                VotingMethods = "OL",
+                OwnerLoginId = "admin@tallyj.test",
+                ShowAsTest = true
+            });
+
+            context.People.Add(new Person
+            {
+                PersonGuid = CreateGuid($"Person{bothGuid}VoterTest"),
+                ElectionGuid = bothGuid,
+                FirstName = "Test",
+                LastName = "Voter",
+                CanVote = true,
+                CanReceiveVotes = true,
+                Email = "voter-both@tallyj.test",
+                VotingMethod = "O"
+            });
+
+            for (var i = 0; i < 12; i++)
+            {
+                context.People.Add(new Person
+                {
+                    PersonGuid = CreateGuid($"Candidate{bothGuid}{i}"),
+                    ElectionGuid = bothGuid,
+                    FirstName = $"Candidate{i}",
+                    LastName = "Both",
+                    CanVote = false,
+                    CanReceiveVotes = true,
+                    VotingMethod = "O"
+                });
+            }
+        }
     }
 
     private static async Task SeedLogsAsync(MainDbContext context, ILogger logger)

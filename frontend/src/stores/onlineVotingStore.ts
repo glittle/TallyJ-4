@@ -32,9 +32,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       loading.value = true;
       const response = await onlineVotingService.requestCode(data);
       return response.messageKey;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -49,9 +46,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       localStorage.setItem("voter_token", response.token);
       localStorage.setItem("voter_id", response.voterId);
       return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -66,9 +60,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       localStorage.setItem("voter_token", response.token);
       localStorage.setItem("voter_id", response.voterId);
       return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -83,9 +74,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       localStorage.setItem("voter_token", response.token);
       localStorage.setItem("voter_id", response.voterId);
       return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -100,9 +88,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       localStorage.setItem("voter_token", response.token);
       localStorage.setItem("voter_id", response.voterId);
       return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -117,9 +102,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       localStorage.setItem("voter_token", response.token);
       localStorage.setItem("voter_id", response.voterId);
       return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }

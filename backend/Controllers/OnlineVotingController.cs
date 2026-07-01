@@ -35,12 +35,10 @@ public class OnlineVotingController : ControllerBase
     /// <returns>A success message regardless of whether the code was sent.</returns>
     [HttpPost("requestCode")]
     [AllowAnonymous]
-    public async Task<IActionResult> RequestCode([FromBody] RequestCodeDto dto)
+    public async Task<ActionResult<RequestCodeResponseDto>> RequestCode([FromBody] RequestCodeDto dto)
     {
-        // Always attempt to send the code but don't reveal success/failure to prevent enumeration attacks
-        var messageKey = await _onlineVotingService.RequestVerificationCodeAsync(dto);
-
-        return Ok(new { messageKey });
+        var result = await _onlineVotingService.RequestVerificationCodeAsync(dto);
+        return Ok(result);
     }
 
     /// <summary>
@@ -50,7 +48,7 @@ public class OnlineVotingController : ControllerBase
     /// <returns>The voter session information if successful.</returns>
     [HttpPost("verifyCode")]
     [AllowAnonymous]
-    public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeDto dto)
+    public async Task<ActionResult<OnlineVoterAuthResponse>> VerifyCode([FromBody] VerifyCodeDto dto)
     {
         var (success, error, response) = await _onlineVotingService.VerifyCodeAsync(dto);
 
@@ -69,7 +67,7 @@ public class OnlineVotingController : ControllerBase
     /// <returns>The voter session information if successful.</returns>
     [HttpPost("googleAuth")]
     [AllowAnonymous]
-    public async Task<IActionResult> GoogleAuth([FromBody] GoogleAuthForVoterDto dto)
+    public async Task<ActionResult<OnlineVoterAuthResponse>> GoogleAuth([FromBody] GoogleAuthForVoterDto dto)
     {
         var (success, error, response) = await _onlineVotingService.AuthenticateVoterWithGoogleAsync(dto);
 
@@ -88,7 +86,7 @@ public class OnlineVotingController : ControllerBase
     /// <returns>The voter session information if successful.</returns>
     [HttpPost("facebookAuth")]
     [AllowAnonymous]
-    public async Task<IActionResult> FacebookAuth([FromBody] FacebookAuthForVoterDto dto)
+    public async Task<ActionResult<OnlineVoterAuthResponse>> FacebookAuth([FromBody] FacebookAuthForVoterDto dto)
     {
         var (success, error, response) = await _onlineVotingService.FacebookAuthAsync(dto);
 
@@ -107,7 +105,7 @@ public class OnlineVotingController : ControllerBase
     /// <returns>The voter session information if successful.</returns>
     [HttpPost("kakaoAuth")]
     [AllowAnonymous]
-    public async Task<IActionResult> KakaoAuth([FromBody] KakaoAuthForVoterDto dto)
+    public async Task<ActionResult<OnlineVoterAuthResponse>> KakaoAuth([FromBody] KakaoAuthForVoterDto dto)
     {
         var (success, error, response) = await _onlineVotingService.KakaoAuthAsync(dto);
 
@@ -126,7 +124,7 @@ public class OnlineVotingController : ControllerBase
     /// <returns>The voter session information if successful.</returns>
     [HttpPost("telegramAuth")]
     [AllowAnonymous]
-    public async Task<IActionResult> TelegramAuth([FromBody] TelegramAuthForVoterDto dto)
+    public async Task<ActionResult<OnlineVoterAuthResponse>> TelegramAuth([FromBody] TelegramAuthForVoterDto dto)
     {
         var (success, error, response) = await _onlineVotingService.TelegramAuthAsync(dto);
 
@@ -144,8 +142,8 @@ public class OnlineVotingController : ControllerBase
     /// <param name="voterId">The voter's identifier (from JWT token).</param>
     /// <returns>The list of elections the voter can participate in.</returns>
     [HttpGet("availableElections")]
-    [AllowAnonymous] // Token validation done in service layer based on voterId
-    public async Task<IActionResult> GetAvailableElections([FromQuery] string voterId)
+    [AllowAnonymous]
+    public async Task<ActionResult<List<AvailableElectionDto>>> GetAvailableElections([FromQuery] string voterId)
     {
         if (string.IsNullOrWhiteSpace(voterId))
         {
@@ -163,7 +161,7 @@ public class OnlineVotingController : ControllerBase
     /// <returns>The election information.</returns>
     [HttpGet("{electionGuid}/electionInfo")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetElectionInfo(Guid electionGuid)
+    public async Task<ActionResult<OnlineElectionInfoDto>> GetElectionInfo(Guid electionGuid)
     {
         var electionInfo = await _onlineVotingService.GetElectionInfoAsync(electionGuid);
 
@@ -182,7 +180,7 @@ public class OnlineVotingController : ControllerBase
     /// <returns>The list of candidates.</returns>
     [HttpGet("{electionGuid}/candidates")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetCandidates(Guid electionGuid)
+    public async Task<ActionResult<List<OnlineCandidateDto>>> GetCandidates(Guid electionGuid)
     {
         var candidates = await _onlineVotingService.GetCandidatesAsync(electionGuid);
         return Ok(candidates);
@@ -196,7 +194,7 @@ public class OnlineVotingController : ControllerBase
     /// <returns>A success message if the ballot was submitted.</returns>
     [HttpPost("{electionGuid}/submitBallot")]
     [AllowAnonymous]
-    public async Task<IActionResult> SubmitBallot(Guid electionGuid, [FromBody] SubmitOnlineBallotDto dto)
+    public async Task<ActionResult<SubmitBallotResponseDto>> SubmitBallot(Guid electionGuid, [FromBody] SubmitOnlineBallotDto dto)
     {
         if (dto.ElectionGuid != electionGuid)
         {
@@ -210,7 +208,7 @@ public class OnlineVotingController : ControllerBase
             return BadRequest(new { error });
         }
 
-        return Ok(new { message = "Ballot submitted successfully." });
+        return Ok(new SubmitBallotResponseDto { Message = "Ballot submitted successfully." });
     }
 
     /// <summary>
@@ -221,7 +219,7 @@ public class OnlineVotingController : ControllerBase
     /// <returns>The vote status information.</returns>
     [HttpGet("{electionGuid}/{voterId}/voteStatus")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetVoteStatus(Guid electionGuid, string voterId)
+    public async Task<ActionResult<OnlineVoteStatusDto>> GetVoteStatus(Guid electionGuid, string voterId)
     {
         if (string.IsNullOrWhiteSpace(voterId))
         {
@@ -232,5 +230,3 @@ public class OnlineVotingController : ControllerBase
         return Ok(status);
     }
 }
-
-

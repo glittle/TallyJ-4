@@ -31,12 +31,12 @@ public class PresentationDto
     public int TotalVotes { get; set; }
 
     /// <summary>
-    /// List of candidates who have been elected.
+    /// List of people who have been elected.
     /// </summary>
     public List<PresentationCandidateDto> ElectedCandidates { get; set; } = new();
 
     /// <summary>
-    /// List of additional candidates who received votes but were not elected.
+    /// List of additional people who received votes but were not elected.
     /// </summary>
     public List<PresentationCandidateDto> ExtraCandidates { get; set; } = new();
 
@@ -57,32 +57,32 @@ public class PresentationDto
 }
 
 /// <summary>
-/// Data transfer object containing information about a candidate for presentation purposes.
+/// Data transfer object containing information about a person for presentation purposes.
 /// </summary>
 public class PresentationCandidateDto
 {
     /// <summary>
-    /// The ranking position of this candidate in the election results.
+    /// The ranking position of this person in the election results.
     /// </summary>
     public int Rank { get; set; }
 
     /// <summary>
-    /// Full name of the candidate.
+    /// Full name of the person.
     /// </summary>
     public string FullName { get; set; } = string.Empty;
 
     /// <summary>
-    /// Number of votes received by this candidate.
+    /// Number of votes received by this person.
     /// </summary>
     public int VoteCount { get; set; }
 
     /// <summary>
-    /// Indicates whether this candidate is tied with others.
+    /// Indicates whether this person is tied with others.
     /// </summary>
     public bool IsTied { get; set; }
 
     /// <summary>
-    /// Indicates whether this candidate has been elected.
+    /// Indicates whether this person has been elected.
     /// </summary>
     public bool IsWinner { get; set; }
 }
