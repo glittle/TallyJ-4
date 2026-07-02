@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { toApiEligibility } from "@/utils/eligibilityForm";
-import PersonForm from "../people/PersonForm.vue";
+import { computed, ref } from "vue";
 import { usePeopleStore } from "../../stores/peopleStore";
 import type { CreatePersonDto } from "../../types";
 import type { SearchablePersonDto } from "../../types/Person";
 import type { VoteDto } from "../../types/Vote";
-import { computed, ref } from "vue";
+import PersonForm from "../people/PersonForm.vue";
 
 export type BallotVoteEntryType = "normal" | "U01" | "U02";
 
@@ -96,7 +96,7 @@ async function handleSubmit() {
         peopleStore.enrichPersonForSearch(person);
 
       if (peopleStore.isCacheInitialized) {
-        peopleStore.candidateCache.push(searchablePerson);
+        peopleStore.peopleCache.push(searchablePerson);
       }
 
       const isSpoiled = person.canReceiveVotes === false;

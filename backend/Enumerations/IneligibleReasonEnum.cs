@@ -14,8 +14,8 @@ public class IneligibleReason
     /// <param name="code">The short code identifier (e.g., "X01", "V01").</param>
     /// <param name="description">The English human-readable description of the reason.</param>
     /// <param name="canVote">Whether a person with this reason can vote.</param>
-    /// <param name="canReceiveVotes">Whether a person with this reason can receive votes (be a candidate).</param>
-    /// <param name="internalOnly">Whether this reason is for internal use only (not for person forms).</param>
+    /// <param name="canReceiveVotes">Whether a person with this reason can receive votes.</param>
+    /// <param name="internalOnly">Whether this reason is for internal use only (not for ballot forms).</param>
     public IneligibleReason(Guid reasonGuid, string code, string description, bool canVote, bool canReceiveVotes, bool internalOnly)
     {
         ReasonGuid = reasonGuid;
@@ -47,7 +47,7 @@ public class IneligibleReason
     public bool CanVote { get; }
 
     /// <summary>
-    /// Whether a person with this reason can receive votes (be a candidate).
+    /// Whether a person with this reason can receive votes.
     /// </summary>
     public bool CanReceiveVotes { get; }
 

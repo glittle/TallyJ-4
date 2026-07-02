@@ -8,7 +8,8 @@ const i18n = createI18n({
   messages: {
     en: {
       "tally.progress.complete": "Tally calculation complete!",
-      "tally.progress.processingBallots": "Processing ballots: {processed}/{total}",
+      "tally.progress.processingBallots":
+        "Processing ballots: {processed}/{total}",
       "tally.progress.starting": "Starting tally calculation...",
     },
   },

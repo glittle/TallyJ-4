@@ -211,7 +211,7 @@ onUnmounted(async () => {
 
       <main class="display-content">
         <section
-          v-if="displayData.electedCandidates.length > 0"
+          v-if="displayData.electedPeople.length > 0"
           class="results-section"
         >
           <h2 class="section-title">
@@ -222,25 +222,25 @@ onUnmounted(async () => {
                 : $t("public.display.positions")
             }})
           </h2>
-          <div class="candidates-list">
+          <div class="people-list">
             <div
-              v-for="candidate in displayData.electedCandidates"
-              :key="candidate.rank"
-              class="candidate-row"
-              :class="{ tied: candidate.isTied }"
+              v-for="person in displayData.electedPeople"
+              :key="person.rank"
+              class="person-row"
+              :class="{ tied: person.isTied }"
             >
-              <span class="rank">{{ candidate.rank }}.</span>
-              <span class="name">{{ candidate.fullName }}</span>
+              <span class="rank">{{ person.rank }}.</span>
+              <span class="name">{{ person.fullName }}</span>
               <span v-if="displayOptions.showVoteCounts" class="votes">
-                {{ candidate.voteCount }}
+                {{ person.voteCount }}
                 {{
-                  candidate.voteCount === 1
+                  person.voteCount === 1
                     ? $t("public.display.vote")
                     : $t("public.display.votes")
                 }}
               </span>
               <el-tag
-                v-if="candidate.tieBreakRequired"
+                v-if="person.tieBreakRequired"
                 type="warning"
                 size="large"
                 class="tie-tag"
@@ -254,7 +254,7 @@ onUnmounted(async () => {
         <section
           v-if="
             displayOptions.showAdditionalNames &&
-            displayData.additionalCandidates.length > 0
+            displayData.additionalPeople.length > 0
           "
           class="results-section additional"
         >
@@ -268,19 +268,19 @@ onUnmounted(async () => {
                 : $t("public.display.positions")
             }})
           </h2>
-          <div class="candidates-list">
+          <div class="people-list">
             <div
-              v-for="candidate in displayData.additionalCandidates"
-              :key="candidate.rank"
-              class="candidate-row"
-              :class="{ tied: candidate.isTied }"
+              v-for="person in displayData.additionalPeople"
+              :key="person.rank"
+              class="person-row"
+              :class="{ tied: person.isTied }"
             >
-              <span class="rank">{{ candidate.rank }}.</span>
-              <span class="name">{{ candidate.fullName }}</span>
+              <span class="rank">{{ person.rank }}.</span>
+              <span class="name">{{ person.fullName }}</span>
               <span v-if="displayOptions.showVoteCounts" class="votes">
-                {{ candidate.voteCount }}
+                {{ person.voteCount }}
                 {{
-                  candidate.voteCount === 1
+                  person.voteCount === 1
                     ? $t("public.display.vote")
                     : $t("public.display.votes")
                 }}
@@ -524,13 +524,13 @@ onUnmounted(async () => {
   color: var(--color-text-primary);
 }
 
-.candidates-list {
+.people-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.candidate-row {
+.person-row {
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -541,15 +541,15 @@ onUnmounted(async () => {
   transition: background-color 0.2s;
 }
 
-.light .candidate-row {
+.light .person-row {
   background-color: var(--color-bg-secondary);
 }
 
-.dark .candidate-row {
+.dark .person-row {
   background-color: var(--color-gray-800);
 }
 
-.candidate-row.tied {
+.person-row.tied {
   border-left: 6px solid var(--color-warning-500);
 }
 
@@ -677,7 +677,7 @@ onUnmounted(async () => {
     font-size: 2rem;
   }
 
-  .candidate-row {
+  .person-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
@@ -721,7 +721,7 @@ onUnmounted(async () => {
     font-size: 1.5rem;
   }
 
-  .candidate-row {
+  .person-row {
     font-size: 1.25rem;
   }
 

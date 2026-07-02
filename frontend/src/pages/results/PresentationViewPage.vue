@@ -51,30 +51,30 @@
         }}</span>
       </div>
 
-      <!-- Elected Candidates -->
+      <!-- Elected -->
       <div class="results-section">
         <h2 class="section-title elected-title">
-          {{ $t("presentation.electedCandidates") }}
+          {{ $t("presentation.electedPeople") }}
         </h2>
-        <div class="candidates-grid">
+        <div class="people-grid">
           <div
-            v-for="candidate in presentationData.electedCandidates"
-            :key="candidate.rank"
-            class="candidate-card elected-card"
-            :class="{ 'tied-candidate': candidate.isTied }"
+            v-for="person in presentationData.electedPeople"
+            :key="person.rank"
+            class="person-card elected-card"
+            :class="{ 'tied-person': person.isTied }"
           >
-            <div class="candidate-rank">{{ candidate.rank }}</div>
-            <div class="candidate-info">
-              <div class="candidate-name">{{ candidate.fullName }}</div>
-              <div class="candidate-votes">
-                {{ $t("presentation.votes", { count: candidate.voteCount }) }}
+            <div class="person-rank">{{ person.rank }}</div>
+            <div class="person-info">
+              <div class="person-name">{{ person.fullName }}</div>
+              <div class="person-votes">
+                {{ $t("presentation.votes", { count: person.voteCount }) }}
               </div>
             </div>
-            <div class="candidate-status">
-              <el-icon v-if="candidate.isWinner" size="24" class="icon-success"
+            <div class="person-status">
+              <el-icon v-if="person.isWinner" size="24" class="icon-success"
                 ><Check
               /></el-icon>
-              <el-icon v-if="candidate.isTied" size="24" class="icon-warning"
+              <el-icon v-if="person.isTied" size="24" class="icon-warning"
                 ><Warning
               /></el-icon>
             </div>
@@ -82,30 +82,30 @@
         </div>
       </div>
 
-      <!-- Extra Candidates -->
+      <!-- Extra -->
       <div
-        v-if="presentationData.extraCandidates.length > 0"
+        v-if="presentationData.extraPeople.length > 0"
         class="results-section"
       >
         <h2 class="section-title extra-title">
-          {{ $t("presentation.extraCandidates") }}
+          {{ $t("presentation.extraPeople") }}
         </h2>
-        <div class="candidates-grid">
+        <div class="people-grid">
           <div
-            v-for="candidate in presentationData.extraCandidates"
-            :key="candidate.rank"
-            class="candidate-card extra-card"
-            :class="{ 'tied-candidate': candidate.isTied }"
+            v-for="person in presentationData.extraPeople"
+            :key="person.rank"
+            class="person-card extra-card"
+            :class="{ 'tied-person': person.isTied }"
           >
-            <div class="candidate-rank">{{ candidate.rank }}</div>
-            <div class="candidate-info">
-              <div class="candidate-name">{{ candidate.fullName }}</div>
-              <div class="candidate-votes">
-                {{ $t("presentation.votes", { count: candidate.voteCount }) }}
+            <div class="person-rank">{{ person.rank }}</div>
+            <div class="person-info">
+              <div class="person-name">{{ person.fullName }}</div>
+              <div class="person-votes">
+                {{ $t("presentation.votes", { count: person.voteCount }) }}
               </div>
             </div>
-            <div class="candidate-status">
-              <el-icon v-if="candidate.isTied" size="24" class="icon-warning"
+            <div class="person-status">
+              <el-icon v-if="person.isTied" size="24" class="icon-warning"
                 ><Warning
               /></el-icon>
             </div>
@@ -134,11 +134,11 @@
                 getSectionLabel(tie.section)
               }}</span>
             </div>
-            <div class="tie-candidates">
+            <div class="tie-people">
               <div
-                v-for="name in tie.candidateNames"
+                v-for="name in tie.personNames"
                 :key="name"
-                class="tie-candidate-name"
+                class="tie-person-name"
               >
                 {{ name }}
               </div>
@@ -412,13 +412,13 @@ function getSectionLabel(section: string) {
   color: var(--color-error-500);
 }
 
-.candidates-grid {
+.people-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
 }
 
-.candidate-card {
+.person-card {
   background: var(--color-bg-secondary);
   border: 2px solid var(--el-border-color);
   border-radius: 10px;
@@ -429,7 +429,7 @@ function getSectionLabel(section: string) {
   transition: transform 0.3s ease;
 }
 
-.candidate-card:hover {
+.person-card:hover {
   transform: translateY(-5px);
 }
 
@@ -451,16 +451,16 @@ function getSectionLabel(section: string) {
   background: rgba(245, 158, 11, 0.1);
 }
 
-.tied-candidate {
+.tied-person {
   border-color: var(--color-error-500) !important;
   background: var(--color-error-50) !important;
 }
 
-.dark .tied-candidate {
+.dark .tied-person {
   background: rgba(239, 68, 68, 0.1) !important;
 }
 
-.candidate-rank {
+.person-rank {
   font-size: 2rem;
   font-weight: bold;
   color: var(--color-primary-500);
@@ -468,24 +468,24 @@ function getSectionLabel(section: string) {
   text-align: center;
 }
 
-.candidate-info {
+.person-info {
   flex: 1;
 }
 
-.candidate-name {
+.person-name {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 5px;
   color: var(--color-text-primary);
 }
 
-.candidate-votes {
+.person-votes {
   font-size: 1.2rem;
   opacity: 0.8;
   color: var(--color-text-secondary);
 }
 
-.candidate-status {
+.person-status {
   font-size: 1.5rem;
 
   .icon-success {
@@ -541,11 +541,11 @@ function getSectionLabel(section: string) {
   color: var(--color-text-primary);
 }
 
-.tie-candidates {
+.tie-people {
   margin-bottom: 10px;
 }
 
-.tie-candidate-name {
+.tie-person-name {
   font-size: 1.2rem;
   margin-bottom: 5px;
   padding: 5px 0;
@@ -553,7 +553,7 @@ function getSectionLabel(section: string) {
   color: var(--color-text-primary);
 }
 
-.tie-candidate-name:last-child {
+.tie-person-name:last-child {
   border-bottom: none;
 }
 
@@ -604,7 +604,7 @@ function getSectionLabel(section: string) {
     font-size: 2rem;
   }
 
-  .candidates-grid {
+  .people-grid {
     grid-template-columns: 1fr;
   }
 

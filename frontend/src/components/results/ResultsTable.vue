@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import type { CandidateResultDto } from "../../types";
+import type { PersonResultDto } from "../../types";
 
 defineProps<{
-  results: CandidateResultDto[];
+  results: PersonResultDto[];
 }>();
 
 const { t } = useI18n();
@@ -37,7 +37,7 @@ function getSectionLabel(section: string) {
     />
     <el-table-column
       prop="fullName"
-      :label="$t('results.candidate')"
+      :label="$t('results.person')"
       min-width="250"
     />
     <el-table-column

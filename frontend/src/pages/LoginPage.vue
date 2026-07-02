@@ -13,7 +13,6 @@ import { ArrowLeft } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
 import {
   computed,
-  nextTick,
   onBeforeUnmount,
   onMounted,
   reactive,
@@ -23,11 +22,12 @@ import {
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import TelegramLoginButton from "../components/auth/TelegramLoginButton.vue";
+import { useGoogleOneTap } from "../composables/useGoogleOneTap";
 import { useAuthStore } from "../stores/authStore";
 
 const appConfig = getAppConfig();
 
-const { t, locale } = useI18n();
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
@@ -173,8 +173,6 @@ const handleLogin = async () => {
 };
 
 const googleButtonRef = ref<HTMLElement>();
-const googleClientId = ref<string | null>(null);
-const googleReady = ref(false);
 const telegramReady = appConfig.enableTelegramLogin ?? false;
 const telegramBotUsername = appConfig.telegramBotUsername ?? "";
 
@@ -185,9 +183,6 @@ const fbScriptLoaded = ref(false);
 const kakaoReady = ref(false);
 const kakaoError = ref(false);
 const kakaoScriptLoaded = ref(false);
-
-const gisScriptLoaded = ref(false);
-let gisCleanup: (() => void) | null = null;
 
 const handleGoogleOneTapCallback = async (
   response: GoogleCredentialResponse,
@@ -204,6 +199,14 @@ const handleGoogleOneTapCallback = async (
     loading.value = false;
   }
 };
+
+const { googleReady, initGoogleOneTap, teardownGoogleOneTap } = useGoogleOneTap(
+  {
+    buttonRef: googleButtonRef,
+    onCredential: handleGoogleOneTapCallback,
+    promptOnInit: true,
+  },
+);
 
 const handleTelegramSuccess = async (user: any) => {
   loading.value = true;
@@ -224,114 +227,6 @@ const handleTelegramSuccess = async (user: any) => {
     showErrorMessage(t("auth.googleLoginFailed"));
   } finally {
     loading.value = false;
-  }
-};
-
-const loadGisScript = (): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    if (gisScriptLoaded.value || globalThis.google !== undefined) {
-      gisScriptLoaded.value = true;
-      resolve();
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-
-    script.onload = () => {
-      gisScriptLoaded.value = true;
-      resolve();
-    };
-
-    script.onerror = () => {
-      reject(new Error("Failed to load Google Identity Services script"));
-    };
-
-    document.head.appendChild(script);
-  });
-};
-
-const fetchGoogleClientId = async (): Promise<string | null> => {
-  // First check app config
-  return appConfig.googleClientId ?? null;
-};
-const renderGoogleButton = () => {
-  nextTick(() => {
-    if (googleButtonRef.value && googleClientId.value && googleReady.value) {
-      console.log("Rendering Google One Tap button with locale:", locale.value);
-      globalThis.google.accounts.id.renderButton(googleButtonRef.value, {
-        type: "standard",
-        theme: "outline",
-        size: "large",
-        text: "signin_with",
-        shape: "rectangular",
-        width: "300",
-        locale: locale.value,
-      });
-    }
-  });
-};
-
-watch(googleButtonRef, (el) => {
-  if (el && googleReady.value) {
-    renderGoogleButton();
-  }
-});
-
-let isInitializingGis = false;
-
-const initGoogleOneTap = async () => {
-  if (googleReady.value || isInitializingGis) {
-    return;
-  }
-  isInitializingGis = true;
-  try {
-    // Lazy load the GIS script only when needed
-    await loadGisScript();
-    const clientId = await fetchGoogleClientId();
-    googleClientId.value = clientId;
-
-    if (!clientId || globalThis.google === undefined) {
-      googleReady.value = false;
-      return;
-    }
-
-    globalThis.google.accounts.id.initialize({
-      client_id: clientId,
-      callback: handleGoogleOneTapCallback,
-      auto_select: false,
-      cancel_on_tap_outside: true,
-      use_fedcm_for_prompt: false,
-    });
-
-    googleReady.value = true;
-    renderGoogleButton();
-    globalThis.google.accounts.id.prompt();
-
-    gisCleanup = () => {
-      if (globalThis.google !== undefined && googleReady.value) {
-        try {
-          globalThis.google.accounts.id.cancel();
-        } catch {
-          // Ignore errors from cancel
-        }
-      }
-      googleReady.value = false;
-    };
-  } catch (error) {
-    console.error("Failed to initialize Google One Tap:", error);
-    googleReady.value = false;
-  } finally {
-    isInitializingGis = false;
-  }
-};
-
-const teardownGoogleOneTap = () => {
-  if (gisCleanup) {
-    gisCleanup();
-    gisCleanup = null;
   }
 };
 

@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Advanced filtering options for reports
@@ -16,9 +16,9 @@ public class AdvancedFilterDto
     public List<string>? Locations { get; set; }
 
     /// <summary>
-    /// List of candidate names to filter by.
+    /// List of names to filter by.
     /// </summary>
-    public List<string>? CandidateNames { get; set; }
+    public List<string>? PersonNames { get; set; }
 
     /// <summary>
     /// Vote count range filter.
@@ -36,7 +36,7 @@ public class AdvancedFilterDto
     public List<string>? BallotStatuses { get; set; }
 
     /// <summary>
-    /// Filter to show only elected candidates.
+    /// Filter to show only elected people.
     /// </summary>
     public bool? OnlyElected { get; set; }
 

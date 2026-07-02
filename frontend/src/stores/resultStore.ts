@@ -268,9 +268,7 @@ export const useResultStore = defineStore("result", () => {
           ? "tally.progress.complete"
           : "tally.progress.processingBallots"),
       percentComplete:
-        data?.percentComplete ??
-        data?.percentage ??
-        (isComplete ? 100 : 0),
+        data?.percentComplete ?? data?.percentage ?? (isComplete ? 100 : 0),
       isComplete: data?.isComplete ?? isComplete,
     };
   }

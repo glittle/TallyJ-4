@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Request DTO for comparing multiple elections
@@ -13,7 +13,7 @@ public class ElectionComparisonRequestDto
     /// <summary>
     /// List of metrics to include in the comparison.
     /// </summary>
-    public List<string> Metrics { get; set; } = new() { "turnout", "votes", "candidates" };
+    public List<string> Metrics { get; set; } = new() { "turnout", "votes", "people" };
 }
 
 

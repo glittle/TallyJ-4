@@ -179,7 +179,7 @@ function getSectionLabel(section: string) {
           <el-table-column prop="rank" :label="$t('results.rank')" width="80" />
           <el-table-column
             prop="fullName"
-            :label="$t('results.candidate')"
+            :label="$t('results.person')"
             min-width="200"
           />
           <el-table-column

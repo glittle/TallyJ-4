@@ -18,7 +18,7 @@ public class ElectionReportDto
     public DateTimeOffset? ElectionDate { get; set; }
 
     /// <summary>
-    /// Number of candidates to be elected.
+    /// Number of people to be elected.
     /// </summary>
     public int NumToElect { get; set; }
 
@@ -38,19 +38,19 @@ public class ElectionReportDto
     public int TotalVotes { get; set; }
 
     /// <summary>
-    /// List of candidates who have been elected.
+    /// List of people who have been elected.
     /// </summary>
-    public List<CandidateReportDto> Elected { get; set; } = new();
+    public List<PersonReportDto> Elected { get; set; } = new();
 
     /// <summary>
-    /// List of additional candidates who received votes but were not elected.
+    /// List of additional people who received votes but were not elected.
     /// </summary>
-    public List<CandidateReportDto> Extra { get; set; } = new();
+    public List<PersonReportDto> Extra { get; set; } = new();
 
     /// <summary>
-    /// List of other candidates who participated but received no votes.
+    /// List of other people who participated but received no votes.
     /// </summary>
-    public List<CandidateReportDto> Other { get; set; } = new();
+    public List<PersonReportDto> Other { get; set; } = new();
 
     /// <summary>
     /// List of tie situations in the election results.
@@ -59,27 +59,27 @@ public class ElectionReportDto
 }
 
 /// <summary>
-/// Data transfer object containing information about a candidate in election reports.
+/// Data transfer object containing information about a person in election reports.
 /// </summary>
-public class CandidateReportDto
+public class PersonReportDto
 {
     /// <summary>
-    /// The ranking position of this candidate in the election results.
+    /// The ranking position of this person in the election results.
     /// </summary>
     public int Rank { get; set; }
 
     /// <summary>
-    /// Full name of the candidate.
+    /// Full name of the person.
     /// </summary>
     public string FullName { get; set; } = string.Empty;
 
     /// <summary>
-    /// Number of votes received by this candidate.
+    /// Number of votes received by this person.
     /// </summary>
     public int VoteCount { get; set; }
 
     /// <summary>
-    /// Section or category this candidate belongs to.
+    /// Section or category this person belongs to.
     /// </summary>
     public string Section { get; set; } = string.Empty;
 }
@@ -100,9 +100,9 @@ public class TieReportDto
     public string Section { get; set; } = string.Empty;
 
     /// <summary>
-    /// List of candidate names involved in this tie.
+    /// List of person names involved in this tie.
     /// </summary>
-    public List<string> CandidateNames { get; set; } = new();
+    public List<string> PersonNames { get; set; } = new();
 }
 
 /// <summary>
@@ -137,7 +137,7 @@ public class BallotReportDto
 public class VoteReportDto
 {
     /// <summary>
-    /// Full name of the candidate who received this vote.
+    /// Full name of the person who received this vote.
     /// </summary>
     public string FullName { get; set; } = string.Empty;
 
@@ -241,9 +241,9 @@ public class DetailedStatisticsDto
     public VoteDistributionDto VoteDistribution { get; set; } = new();
 
     /// <summary>
-    /// Performance metrics for each candidate.
+    /// Performance metrics for each person.
     /// </summary>
-    public CandidatePerformanceDto[] CandidatePerformance { get; set; } = Array.Empty<CandidatePerformanceDto>();
+    public PersonPerformanceDto[] PersonPerformance { get; set; } = Array.Empty<PersonPerformanceDto>();
 
     /// <summary>
     /// Analysis of voter turnout patterns.
@@ -349,9 +349,9 @@ public class VoteDistributionDto
 }
 
 /// <summary>
-/// Data transfer object containing performance metrics for a candidate.
+/// Data transfer object containing performance metrics for a person.
 /// </summary>
-public class CandidatePerformanceDto
+public class PersonPerformanceDto
 {
     /// <summary>
     /// Unique identifier of the person.
@@ -359,32 +359,32 @@ public class CandidatePerformanceDto
     public Guid PersonGuid { get; set; }
 
     /// <summary>
-    /// Full name of the candidate.
+    /// Full name of the person.
     /// </summary>
     public string FullName { get; set; } = string.Empty;
 
     /// <summary>
-    /// Total number of votes received by this candidate.
+    /// Total number of votes received by this person.
     /// </summary>
     public int TotalVotes { get; set; }
 
     /// <summary>
-    /// Percentage of total votes received by this candidate.
+    /// Percentage of total votes received by this person.
     /// </summary>
     public decimal VotePercentage { get; set; }
 
     /// <summary>
-    /// Final ranking position of this candidate.
+    /// Final ranking position of this person.
     /// </summary>
     public int Rank { get; set; }
 
     /// <summary>
-    /// Indicates whether this candidate has been elected.
+    /// Indicates whether this person has been elected.
     /// </summary>
     public bool IsElected { get; set; }
 
     /// <summary>
-    /// Indicates whether this candidate has been eliminated from the race.
+    /// Indicates whether this person has been eliminated from the race.
     /// </summary>
     public bool IsEliminated { get; set; }
 
@@ -394,12 +394,12 @@ public class CandidatePerformanceDto
     public Dictionary<int, int> VotesByPosition { get; set; } = new();
 
     /// <summary>
-    /// Percentage of ballots where this candidate was the first choice.
+    /// Percentage of ballots where this person was the first choice.
     /// </summary>
     public decimal FirstChoicePercentage { get; set; }
 
     /// <summary>
-    /// Percentage of ballots where this candidate was the last choice.
+    /// Percentage of ballots where this person was the last choice.
     /// </summary>
     public decimal LastChoicePercentage { get; set; }
 }
@@ -584,9 +584,9 @@ public class LocationStatisticsDto
     public int TotalVotes { get; set; }
 
     /// <summary>
-    /// Top candidates and their vote counts at this location.
+    /// Top people and their vote counts at this location.
     /// </summary>
-    public Dictionary<string, int> TopCandidates { get; set; } = new();
+    public Dictionary<string, int> TopPeople { get; set; } = new();
 }
 
 

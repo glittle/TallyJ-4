@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElButton, ElCard, ElResult } from "element-plus";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 
@@ -8,6 +8,19 @@ const router = useRouter();
 const onlineVotingStore = useOnlineVotingStore();
 
 const voteStatus = ref(onlineVotingStore.voteStatus);
+
+onMounted(async () => {
+  if (onlineVotingStore.voterId && onlineVotingStore.electionInfo) {
+    voteStatus.value = await onlineVotingStore.checkVoteStatus(
+      onlineVotingStore.electionInfo.electionGuid,
+      onlineVotingStore.voterId,
+    );
+  }
+});
+
+function handleBackToElections() {
+  router.push({ name: "voter-elections" });
+}
 
 function handleLogout() {
   onlineVotingStore.logout();
@@ -36,11 +49,20 @@ function handleLogout() {
               </p>
               <div class="info-message">
                 <p>{{ $t("voting.confirmation.recorded") }}</p>
-                <p>{{ $t("voting.confirmation.noChange") }}</p>
+                <p>{{ $t("voting.confirmation.canEdit") }}</p>
               </div>
-              <ElButton type="primary" size="large" @click="handleLogout">
-                {{ $t("voting.confirmation.close") }}
-              </ElButton>
+              <div class="action-buttons">
+                <ElButton
+                  type="primary"
+                  size="large"
+                  @click="handleBackToElections"
+                >
+                  {{ $t("voting.confirmation.backToElections") }}
+                </ElButton>
+                <ElButton size="large" @click="handleLogout">
+                  {{ $t("voting.confirmation.close") }}
+                </ElButton>
+              </div>
             </div>
           </template>
         </ElResult>
@@ -88,6 +110,13 @@ function handleLogout() {
         margin: 5px 0;
         font-size: 14px;
       }
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
     }
   }
 }

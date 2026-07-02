@@ -155,8 +155,8 @@ public class TallyServiceTests : ServiceTestBase
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
         Assert.NotEmpty(result.Ties);
-        var tiedCandidates = result.Results.Where(r => r.IsTied).ToList();
-        Assert.NotEmpty(tiedCandidates);
+        var tiedPeople = result.Results.Where(r => r.IsTied).ToList();
+        Assert.NotEmpty(tiedPeople);
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public class TallyServiceTests : ServiceTestBase
         Assert.NotNull(statistics);
         Assert.Equal(10, statistics.BallotsReceived);
         Assert.Equal(9, statistics.NumberToElect);
-        Assert.True(statistics.NumEligibleCandidates > 0);
+        Assert.True(statistics.NumEligiblePeople > 0);
     }
 
     [Fact]
@@ -288,14 +288,14 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task CalculateNormalElectionAsync_WithAllCandidatesTied_MarksAllAsTied()
+    public async Task CalculateNormalElectionAsync_WithAllPeopleTied_MarksAllAsTied()
     {
         var election = await CreateTestElectionAsync(numberToElect: 10);
         var location = await CreateTestLocationAsync(election.ElectionGuid);
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 10);
         var ballots = await CreateTestBallotsAsync(location.LocationGuid, 2);
 
-        await CreateAllCandidatesTiedVotesAsync(ballots, people);
+        await CreateAllPeopleTiedVotesAsync(ballots, people);
 
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
@@ -307,7 +307,7 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task CalculateNormalElectionAsync_WithSingleCandidate_CompletesSuccessfully()
+    public async Task CalculateNormalElectionAsync_WithSinglePerson_CompletesSuccessfully()
     {
         var election = await CreateTestElectionAsync(numberToElect: 1);
         var location = await CreateTestLocationAsync(election.ElectionGuid);
@@ -404,9 +404,9 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Equal(1, result.Statistics.SpoiledBallots);
         Assert.Equal(2, result.Statistics.TotalBallots);
 
-        var candidatesWithVotes = result.Results.Where(r => r.VoteCount > 0).ToList();
-        Assert.Equal(3, candidatesWithVotes.Count);
-        Assert.All(candidatesWithVotes, c => Assert.Equal(1, c.VoteCount));
+        var peopleWithVotes = result.Results.Where(r => r.VoteCount > 0).ToList();
+        Assert.Equal(3, peopleWithVotes.Count);
+        Assert.All(peopleWithVotes, c => Assert.Equal(1, c.VoteCount));
     }
 
     [Fact]
@@ -569,7 +569,7 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task GetTiesAsync_ReturnsTiedCandidatesAndCounts()
+    public async Task GetTiesAsync_ReturnsTiedPeopleAndCounts()
     {
         var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);
         var location = await CreateTestLocationAsync(election.ElectionGuid);
@@ -593,19 +593,19 @@ public class TallyServiceTests : ServiceTestBase
         var tieDetails = await _service.GetTiesAsync(election.ElectionGuid, tieBreakGroup);
 
         Assert.Equal(tieBreakGroup, tieDetails.TieBreakGroup);
-        Assert.Equal(3, tieDetails.Candidates.Count);
+        Assert.Equal(3, tieDetails.People.Count);
 
-        foreach (var candidate in tieDetails.Candidates)
+        foreach (var person in tieDetails.People)
         {
-            var dbResult = tiedResults.First(r => r.PersonGuid == candidate.PersonGuid);
-            Assert.Equal(people.First(p => p.PersonGuid == candidate.PersonGuid).FullNameFl, candidate.FullName);
-            Assert.Equal(dbResult.VoteCount ?? 0, candidate.VoteCount);
-            Assert.Equal(dbResult.TieBreakCount, candidate.TieBreakCount);
+            var dbResult = tiedResults.First(r => r.PersonGuid == person.PersonGuid);
+            Assert.Equal(people.First(p => p.PersonGuid == person.PersonGuid).FullNameFl, person.FullName);
+            Assert.Equal(dbResult.VoteCount ?? 0, person.VoteCount);
+            Assert.Equal(dbResult.TieBreakCount, person.TieBreakCount);
         }
     }
 
     [Fact]
-    public async Task SaveTieCountsAsync_TriggersReanalysisAndReordersCandidates()
+    public async Task SaveTieCountsAsync_TriggersReanalysisAndReordersPeople()
     {
         var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);
         var location = await CreateTestLocationAsync(election.ElectionGuid);
@@ -969,7 +969,7 @@ public class TallyServiceTests : ServiceTestBase
         await Context.SaveChangesAsync();
     }
 
-    private async Task CreateAllCandidatesTiedVotesAsync(List<Ballot> ballots, List<Person> people)
+    private async Task CreateAllPeopleTiedVotesAsync(List<Ballot> ballots, List<Person> people)
     {
         foreach (var ballot in ballots)
         {

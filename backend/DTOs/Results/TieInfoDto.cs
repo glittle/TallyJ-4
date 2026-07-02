@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Information about a tie situation in election results.
@@ -11,7 +11,7 @@ public class TieInfoDto
     public int TieBreakGroup { get; set; }
 
     /// <summary>
-    /// The vote count that all tied candidates received.
+    /// The vote count that all tied people received.
     /// </summary>
     public int VoteCount { get; set; }
 
@@ -26,9 +26,9 @@ public class TieInfoDto
     public string Section { get; set; } = string.Empty;
 
     /// <summary>
-    /// List of candidate names involved in the tie.
+    /// List of person names involved in the tie.
     /// </summary>
-    public List<string> CandidateNames { get; set; } = new();
+    public List<string> PersonNames { get; set; } = new();
 }
 
 

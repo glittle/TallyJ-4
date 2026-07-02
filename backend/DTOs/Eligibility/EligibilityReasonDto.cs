@@ -26,7 +26,7 @@ public class EligibilityReasonDto
     public bool CanVote { get; set; }
 
     /// <summary>
-    /// Whether a person with this reason can receive votes (be a candidate).
+    /// Whether a person with this reason can receive votes.
     /// </summary>
     public bool CanReceiveVotes { get; set; }
 

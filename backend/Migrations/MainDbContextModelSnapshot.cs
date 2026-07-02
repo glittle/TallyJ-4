@@ -625,6 +625,9 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowId"));
 
+                    b.Property<Guid?>("BallotGuid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("ElectionGuid")
                         .HasColumnType("uniqueidentifier");
 
@@ -820,13 +823,13 @@ namespace Backend.Migrations
                         .IsUnique()
                         .HasFilter("([Email] IS NOT NULL AND [Email]<>'')");
 
-                    b.HasIndex(new[] { "ElectionGuid", "Phone" }, "IX_PersonPhone")
-                        .IsUnique()
-                        .HasFilter("([Phone] IS NOT NULL AND [Phone]<>'')");
-
                     b.HasIndex(new[] { "ElectionGuid", "KioskCode" }, "IX_PersonKioskCode")
                         .IsUnique()
                         .HasFilter("([KioskCode] IS NOT NULL AND [KioskCode]<>'')");
+
+                    b.HasIndex(new[] { "ElectionGuid", "Phone" }, "IX_PersonPhone")
+                        .IsUnique()
+                        .HasFilter("([Phone] IS NOT NULL AND [Phone]<>'')");
 
                     b.HasIndex(new[] { "PersonGuid" }, "IX_Person_1")
                         .IsUnique();

@@ -11,6 +11,7 @@ Get up and running with TallyJ in 15 minutes!
 ### 1. Installation (5 minutes)
 
 **Option A: Docker (Recommended)**
+
 ```bash
 # Clone repository
 git clone https://github.com/your-org/tallyj4.git
@@ -29,6 +30,7 @@ docker-compose up -d
 ```
 
 **Option B: Local Development**
+
 ```bash
 # Backend
 cd backend
@@ -45,6 +47,7 @@ npm run dev
 ### 2. Initial Setup (3 minutes)
 
 1. **Create Admin Account**
+
    ```bash
    curl -X POST http://localhost:5016/api/Auth/registerAccount \
      -H "Content-Type: application/json" \
@@ -95,6 +98,7 @@ npm run dev
 #### Step 2: Add Voters (3 minutes)
 
 **Option A: Manual Entry**
+
 1. Go to **People** → **Add New Person**
 2. Enter:
    - First Name: Jane
@@ -105,6 +109,7 @@ npm run dev
 4. Repeat for all voters
 
 **Option B: Import CSV (Faster!)**
+
 1. Go to **People** → **Import**
 2. Download template
 3. Fill in Excel:
@@ -139,8 +144,8 @@ npm run dev
 
 1. Go to **Results**
 2. See ranked list:
-   - **Elected**: Top 9 candidates
-   - **Other**: Remaining candidates
+   - **Elected**: Top 9 people elected
+   - **Other**: Remaining people elected
 3. Click **Export** → **PDF** to save results
 
 🎉 **Congratulations!** You've completed your first election in TallyJ!
@@ -151,17 +156,17 @@ npm run dev
 
 ### Quick Reference
 
-| Task                    | Navigation                           | Time     |
-| ----------------------- | ------------------------------------ | -------- |
-| Create election         | Elections → Create New Election      | 2 min    |
-| Add voter               | People → Add New Person              | 30 sec   |
-| Import voters           | People → Import                      | 2 min    |
-| Enter ballot            | Ballots → New Ballot                 | 1 min    |
-| Run tally               | Tally → Start Tally                  | 30 sec   |
-| View results            | Results → Select Election            | 10 sec   |
-| Export results          | Results → Export → PDF/Excel/CSV     | 30 sec   |
-| Add teller              | Tellers → Add Teller                 | 1 min    |
-| Create location         | Locations → Add Location             | 1 min    |
+| Task            | Navigation                       | Time   |
+| --------------- | -------------------------------- | ------ |
+| Create election | Elections → Create New Election  | 2 min  |
+| Add voter       | People → Add New Person          | 30 sec |
+| Import voters   | People → Import                  | 2 min  |
+| Enter ballot    | Ballots → New Ballot             | 1 min  |
+| Run tally       | Tally → Start Tally              | 30 sec |
+| View results    | Results → Select Election        | 10 sec |
+| Export results  | Results → Export → PDF/Excel/CSV | 30 sec |
+| Add teller      | Tellers → Add Teller             | 1 min  |
+| Create location | Locations → Add Location         | 1 min  |
 
 ---
 
@@ -183,6 +188,7 @@ Speed up your workflow with these shortcuts:
 ### Before Voting Starts
 
 ✅ **Pre-Election Checklist**
+
 - [ ] Create election in TallyJ
 - [ ] Import all eligible voters
 - [ ] Create voting locations (if multiple sites)
@@ -194,6 +200,7 @@ Speed up your workflow with these shortcuts:
 ### During Voting
 
 ✅ **Best Practices**
+
 - Enter ballots regularly (don't wait until end)
 - Use consistent computer codes
 - Flag unclear ballots for head teller review
@@ -203,6 +210,7 @@ Speed up your workflow with these shortcuts:
 ### After Voting
 
 ✅ **Post-Vote Tasks**
+
 - [ ] Enter all remaining ballots
 - [ ] Review flagged ballots
 - [ ] Run tally
@@ -218,6 +226,7 @@ Speed up your workflow with these shortcuts:
 ### Problem: Can't find person to vote for
 
 **Solution:**
+
 1. Go to **People**
 2. Check if person exists
 3. If missing, click **Add New Person**
@@ -226,6 +235,7 @@ Speed up your workflow with these shortcuts:
 ### Problem: Ballot won't save (vote count error)
 
 **Solution:**
+
 - Check election's "Number to Elect" (e.g., 9 for LSA)
 - Ensure ballot has exactly that many votes
 - No more, no less
@@ -233,6 +243,7 @@ Speed up your workflow with these shortcuts:
 ### Problem: Tally fails
 
 **Solution:**
+
 1. Go to **Ballots**
 2. Filter by status: **Review** or **Spoiled**
 3. Resolve all flagged ballots
@@ -241,6 +252,7 @@ Speed up your workflow with these shortcuts:
 ### Problem: Results don't match manual count
 
 **Solution:**
+
 1. Check for duplicate ballots (same ballot code)
 2. Verify all ballots are marked **OK** status
 3. Re-run tally
@@ -251,16 +263,19 @@ Speed up your workflow with these shortcuts:
 ## Getting Help
 
 ### Documentation
+
 - **User Guide**: [USER_GUIDE.md](USER_GUIDE.md) - Full feature documentation
 - **Admin Guide**: [ADMIN_GUIDE.md](ADMIN_GUIDE.md) - System administration
 - **Migration Guide**: [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) - Upgrading from v3
 
 ### Support Channels
+
 - **Email**: support@tallyj.com (if available)
 - **GitHub Issues**: Report bugs or request features
 - **Community Forum**: Ask questions and share tips
 
 ### Training Resources
+
 - **Video Tutorials**: [Link to videos] (if available)
 - **Interactive Demo**: Try features without real data
 - **Sample Elections**: Pre-loaded examples to explore
@@ -324,7 +339,7 @@ Print this section for election day reference:
 | admin@tallyj.test  | TestPass123! | Admin  |
 | teller@tallyj.test | TestPass123! | Teller |
 
-*Change these immediately in production!*
+_Change these immediately in production!_
 
 ---
 

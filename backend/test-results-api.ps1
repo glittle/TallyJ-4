@@ -36,7 +36,7 @@ if ($elections.Count -gt 0) {
         Write-Host "Results summary:" -ForegroundColor Gray
         Write-Host "  - Total ballots: $($calculateResponse.statistics.totalBallots)" -ForegroundColor Gray
         Write-Host "  - Total votes: $($calculateResponse.statistics.totalVotes)" -ForegroundColor Gray
-        Write-Host "  - Candidates: $($calculateResponse.results.Count)" -ForegroundColor Gray
+        Write-Host "  - Names: $($calculateResponse.results.Count)" -ForegroundColor Gray
         Write-Host ""
     } catch {
         Write-Host "✗ Calculate failed: $_" -ForegroundColor Red
@@ -47,7 +47,7 @@ if ($elections.Count -gt 0) {
     try {
         $results = Invoke-RestMethod -Uri "$baseUrl/api/results/election/$electionGuid" -Method Get -Headers $headers
         Write-Host "✓ Get results successful" -ForegroundColor Green
-        Write-Host "Candidates in results: $($results.results.Count)" -ForegroundColor Gray
+        Write-Host "People in results: $($results.results.Count)" -ForegroundColor Gray
         Write-Host ""
     } catch {
         Write-Host "✗ Get results failed: $_" -ForegroundColor Red
@@ -72,7 +72,7 @@ if ($elections.Count -gt 0) {
     try {
         $final = Invoke-RestMethod -Uri "$baseUrl/api/results/election/$electionGuid/final" -Method Get -Headers $headers
         Write-Host "✓ Get final results successful" -ForegroundColor Green
-        Write-Host "Final candidates (Elected + Extra): $($final.results.Count)" -ForegroundColor Gray
+        Write-Host "Final number elected (Elected + Extra): $($final.results.Count)" -ForegroundColor Gray
         
         # Show section breakdown
         $elected = ($final.results | Where-Object { $_.section -eq 'E' }).Count
@@ -89,7 +89,7 @@ if ($elections.Count -gt 0) {
     if ($calculateResponse.ties -and $calculateResponse.ties.Count -gt 0) {
         Write-Host "✓ Ties detected: $($calculateResponse.ties.Count)" -ForegroundColor Green
         foreach ($tie in $calculateResponse.ties) {
-            Write-Host "  - Group $($tie.tieBreakGroup): $($tie.numInTie) candidates tied, TieBreakRequired=$($tie.tieBreakRequired)" -ForegroundColor Gray
+            Write-Host "  - Group $($tie.tieBreakGroup): $($tie.numInTie) people tied, TieBreakRequired=$($tie.tieBreakRequired)" -ForegroundColor Gray
         }
     } else {
         Write-Host "No ties detected in this election" -ForegroundColor Yellow

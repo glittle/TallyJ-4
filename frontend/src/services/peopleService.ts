@@ -5,7 +5,6 @@ import {
   putApiPeopleByGuidUpdatePerson,
   deleteApiPeopleByGuidDeletePerson,
   getApiPeopleByElectionGuidSearchPeople,
-  getApiPeopleByElectionGuidGetCandidates,
   getApiPeopleByElectionGuidGetAllPeople,
   getApiPeopleByGuidGetPersonDetails,
   getApiPeopleByElectionGuidGetAllForBallotEntry,
@@ -18,12 +17,44 @@ import type {
   UpdatePersonDto,
 } from "../types";
 
-export const peopleService = {
-  async getAll(electionGuid: string): Promise<PersonDto[]> {
+const MAX_PAGE_SIZE = 200;
+
+type PeopleQueryFilters = {
+  search?: string;
+  canVote?: boolean;
+  canReceiveVotes?: boolean;
+};
+
+async function fetchAllPeoplePages(
+  electionGuid: string,
+  filters: PeopleQueryFilters = {},
+): Promise<PersonDto[]> {
+  const allPeople: PersonDto[] = [];
+  let pageNumber = 1;
+  let hasNextPage = true;
+
+  while (hasNextPage) {
     const response = await getApiPeopleByElectionGuidGetPeople({
       path: { electionGuid },
+      query: {
+        pageNumber,
+        pageSize: MAX_PAGE_SIZE,
+        ...filters,
+      },
     });
-    return (response.data?.items ?? []) as PersonDto[];
+
+    const page = response.data;
+    allPeople.push(...((page?.items ?? []) as PersonDto[]));
+    hasNextPage = page?.hasNextPage ?? false;
+    pageNumber++;
+  }
+
+  return allPeople;
+}
+
+export const peopleService = {
+  async getAll(electionGuid: string): Promise<PersonDto[]> {
+    return fetchAllPeoplePages(electionGuid);
   },
 
   async getAllPeople(electionGuid: string): Promise<PersonListDto[]> {
@@ -72,18 +103,8 @@ export const peopleService = {
     return response.data?.data ?? [];
   },
 
-  async getVoters(electionGuid: string): Promise<PersonDto[]> {
-    const response = await getApiPeopleByElectionGuidGetPeople({
-      path: { electionGuid },
-    });
-    return (response.data?.items ?? []) as PersonDto[];
-  },
-
-  async getCandidates(electionGuid: string): Promise<PersonDto[]> {
-    const response = await getApiPeopleByElectionGuidGetCandidates({
-      path: { electionGuid },
-    });
-    return response.data?.data ?? [];
+  async getVotablePeople(electionGuid: string): Promise<PersonDto[]> {
+    return fetchAllPeoplePages(electionGuid, { canReceiveVotes: true });
   },
 
   async getAllForBallotEntry(electionGuid: string): Promise<PersonDto[]> {

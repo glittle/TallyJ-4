@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data structure for comparing multiple elections
@@ -67,7 +67,7 @@ public class ResultsElectionSummaryDto
     public int PositionsToElect { get; set; }
 
     /// <summary>
-    /// The number of candidates who were elected.
+    /// The number of people who were elected.
     /// </summary>
     public int ElectedCount { get; set; }
 }

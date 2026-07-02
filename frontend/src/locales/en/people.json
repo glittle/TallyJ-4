@@ -12,7 +12,7 @@
   "people.bulkDeleteSuccess": "{count} people deleted successfully",
   "people.canReceiveVotes": "Can Receive Votes",
   "people.canVote": "Can Vote",
-  "people.candidates": "Eligible Candidates",
+  "people.votablePeople": "Eligible People",
   "people.confirmBulkDelete": "Confirm Bulk Delete",
   "people.createSuccess": "Person added successfully",
   "people.deleteConfirm": "Are you sure you want to delete {name}?",

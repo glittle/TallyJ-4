@@ -12,13 +12,13 @@ const onlineVotingStore = useOnlineVotingStore();
 const { showErrorMessage } = useNotifications();
 
 onMounted(async () => {
-  if (!onlineVotingStore.voterId) {
+  if (!onlineVotingStore.voterToken) {
     router.push({ name: "voter-auth" });
     return;
   }
 
   try {
-    await onlineVotingStore.loadAvailableElections(onlineVotingStore.voterId);
+    await onlineVotingStore.loadAvailableElections();
   } catch {
     showErrorMessage(t("voting.elections.loadError"));
   }
@@ -194,8 +194,18 @@ function handleLogout() {
                   >
                     {{ $t("voting.elections.prepareBallot") }}
                   </ElButton>
-                  <div v-else class="already-voted-note">
-                    {{ $t("voting.elections.alreadyVoted") }}
+                  <div v-else class="already-voted-section">
+                    <p class="already-voted-note">
+                      {{ $t("voting.elections.alreadyVoted") }}
+                    </p>
+                    <ElButton
+                      type="primary"
+                      size="default"
+                      class="vote-button"
+                      @click="selectElection(election.electionGuid)"
+                    >
+                      {{ $t("voting.elections.editBallot") }}
+                    </ElButton>
                   </div>
                 </div>
                 <div v-else class="status-closed">
@@ -346,10 +356,13 @@ function handleLogout() {
             width: 100%;
           }
 
-          .already-voted-note {
-            font-size: 12px;
-            color: var(--el-text-color-secondary);
-            font-style: italic;
+          .already-voted-section {
+            .already-voted-note {
+              font-size: 12px;
+              color: var(--el-text-color-secondary);
+              font-style: italic;
+              margin-bottom: 8px;
+            }
           }
         }
 

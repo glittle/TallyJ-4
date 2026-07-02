@@ -61,11 +61,11 @@
                 />
               </div>
 
-              <div class="candidates-table">
-                <el-table :data="tie.candidates" stripe style="width: 100%">
+              <div class="people-table">
+                <el-table :data="tie.people" stripe style="width: 100%">
                   <el-table-column
                     prop="fullName"
-                    :label="$t('tieManagement.candidate')"
+                    :label="$t('tieManagement.person')"
                     width="300"
                   />
                   <el-table-column
@@ -131,7 +131,7 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useResultStore } from "../../stores/resultStore";
-import type { TieCandidateDto, TieDetailsDto } from "../../types";
+import type { TiePersonDto, TieDetailsDto } from "../../types";
 
 const route = useRoute();
 const { t } = useI18n();
@@ -191,14 +191,11 @@ async function saveTieCounts() {
     const counts: { personGuid: string; tieBreakCount: number }[] = [];
 
     tieDetails.value.forEach((tie) => {
-      tie.candidates.forEach((candidate) => {
-        if (
-          candidate.tieBreakCount !== undefined &&
-          candidate.tieBreakCount > 0
-        ) {
+      tie.people.forEach((person) => {
+        if (person.tieBreakCount !== undefined && person.tieBreakCount > 0) {
           counts.push({
-            personGuid: candidate.personGuid,
-            tieBreakCount: candidate.tieBreakCount,
+            personGuid: person.personGuid,
+            tieBreakCount: person.tieBreakCount,
           });
         }
       });
@@ -229,8 +226,8 @@ function onTieBreakCountChange() {
   // Validation could be added here
 }
 
-function clearTieBreakCount(candidate: TieCandidateDto) {
-  candidate.tieBreakCount = 0;
+function clearTieBreakCount(person: TiePersonDto) {
+  person.tieBreakCount = 0;
 }
 
 function getSectionLabel(section: string) {
@@ -243,12 +240,12 @@ function getSectionLabel(section: string) {
 }
 
 function getTieValidation(tie: TieDetailsDto): string | null {
-  // Check if all candidates in elected ties have tie break counts
+  // Check if all people in elected ties have tie break counts
   if (tie.section === "E") {
-    const candidatesWithoutCount = tie.candidates.filter(
-      (c) => !c.tieBreakCount || c.tieBreakCount === 0,
+    const peopleWithoutCount = tie.people.filter(
+      (p) => !p.tieBreakCount || p.tieBreakCount === 0,
     );
-    if (candidatesWithoutCount.length > 0) {
+    if (peopleWithoutCount.length > 0) {
       return t("tieManagement.validationRequired");
     }
   }
@@ -302,7 +299,7 @@ function getTieValidation(tie: TieDetailsDto): string | null {
   margin-bottom: 10px;
 }
 
-.candidates-table {
+.people-table {
   margin: 15px 0;
 }
 

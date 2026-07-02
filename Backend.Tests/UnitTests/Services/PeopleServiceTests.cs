@@ -22,7 +22,7 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task GetCandidatesAsync_ReturnsOnlyEligiblePeople()
+    public async Task GetPeopleByElectionAsync_ReturnsOnlyEligiblePeopleWhenFiltered()
     {
         var electionGuid = Guid.NewGuid();
 
@@ -68,17 +68,17 @@ public class PeopleServiceTests : ServiceTestBase
         Context.People.AddRange(eligiblePerson1, eligiblePerson2, ineligiblePerson);
         await Context.SaveChangesAsync();
 
-        var result = await _service.GetCandidatesAsync(electionGuid);
+        var result = await _service.GetPeopleByElectionAsync(electionGuid, canReceiveVotes: true, pageSize: 200);
 
         Assert.NotNull(result);
-        Assert.Equal(2, result.Count);
-        Assert.Contains(result, p => p.PersonGuid == eligiblePerson1.PersonGuid);
-        Assert.Contains(result, p => p.PersonGuid == eligiblePerson2.PersonGuid);
-        Assert.DoesNotContain(result, p => p.PersonGuid == ineligiblePerson.PersonGuid);
+        Assert.Equal(2, result.Items.Count);
+        Assert.Contains(result.Items, p => p.PersonGuid == eligiblePerson1.PersonGuid);
+        Assert.Contains(result.Items, p => p.PersonGuid == eligiblePerson2.PersonGuid);
+        Assert.DoesNotContain(result.Items, p => p.PersonGuid == ineligiblePerson.PersonGuid);
     }
 
     [Fact]
-    public async Task GetCandidatesAsync_IncludesSoundCodes()
+    public async Task GetPeopleByElectionAsync_IncludesSoundCodes()
     {
         var electionGuid = Guid.NewGuid();
 
@@ -99,15 +99,15 @@ public class PeopleServiceTests : ServiceTestBase
         Context.People.Add(person);
         await Context.SaveChangesAsync();
 
-        var result = await _service.GetCandidatesAsync(electionGuid);
+        var result = await _service.GetPeopleByElectionAsync(electionGuid, canReceiveVotes: true, pageSize: 200);
 
         Assert.NotNull(result);
-        Assert.Single(result);
-        Assert.Equal("W425|D130", result[0].CombinedSoundCodes);
+        Assert.Single(result.Items);
+        Assert.Equal("W425|D130", result.Items[0].CombinedSoundCodes);
     }
 
     [Fact]
-    public async Task GetCandidatesAsync_OrdersByLastNameFirstName()
+    public async Task GetPeopleByElectionAsync_OrdersByLastNameFirstName()
     {
         var electionGuid = Guid.NewGuid();
 
@@ -150,17 +150,17 @@ public class PeopleServiceTests : ServiceTestBase
         Context.People.AddRange(person1, person2, person3);
         await Context.SaveChangesAsync();
 
-        var result = await _service.GetCandidatesAsync(electionGuid);
+        var result = await _service.GetPeopleByElectionAsync(electionGuid, canReceiveVotes: true, pageSize: 200);
 
         Assert.NotNull(result);
-        Assert.Equal(3, result.Count);
-        Assert.Equal(person2.PersonGuid, result[0].PersonGuid);
-        Assert.Equal(person1.PersonGuid, result[1].PersonGuid);
-        Assert.Equal(person3.PersonGuid, result[2].PersonGuid);
+        Assert.Equal(3, result.Items.Count);
+        Assert.Equal(person2.PersonGuid, result.Items[0].PersonGuid);
+        Assert.Equal(person1.PersonGuid, result.Items[1].PersonGuid);
+        Assert.Equal(person3.PersonGuid, result.Items[2].PersonGuid);
     }
 
     [Fact]
-    public async Task GetCandidatesAsync_FiltersMultipleElections()
+    public async Task GetPeopleByElectionAsync_FiltersMultipleElections()
     {
         var electionGuid1 = Guid.NewGuid();
         var electionGuid2 = Guid.NewGuid();
@@ -192,37 +192,11 @@ public class PeopleServiceTests : ServiceTestBase
         Context.People.AddRange(person1, person2);
         await Context.SaveChangesAsync();
 
-        var result = await _service.GetCandidatesAsync(electionGuid1);
+        var result = await _service.GetPeopleByElectionAsync(electionGuid1, canReceiveVotes: true, pageSize: 200);
 
         Assert.NotNull(result);
-        Assert.Single(result);
-        Assert.Equal(person1.PersonGuid, result[0].PersonGuid);
-    }
-
-    [Fact]
-    public async Task GetCandidatesAsync_ReturnsEmptyListWhenNoCandidates()
-    {
-        var electionGuid = Guid.NewGuid();
-
-        var person = new Person
-        {
-            PersonGuid = Guid.NewGuid(),
-            ElectionGuid = electionGuid,
-            FirstName = "Test",
-            LastName = "Person",
-            FullName = "Person, Test",
-            FullNameFl = "Test Person",
-            CanReceiveVotes = false,
-            RowVersion = new byte[8]
-        };
-
-        Context.People.Add(person);
-        await Context.SaveChangesAsync();
-
-        var result = await _service.GetCandidatesAsync(electionGuid);
-
-        Assert.NotNull(result);
-        Assert.Empty(result);
+        Assert.Single(result.Items);
+        Assert.Equal(person1.PersonGuid, result.Items[0].PersonGuid);
     }
 
     [Fact]
@@ -723,9 +697,9 @@ public class PeopleServiceTests : ServiceTestBase
         {
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
-            LastName = "Candidate",
-            FullName = "Candidate",
-            FullNameFl = "Candidate",
+            LastName = "Person",
+            FullName = "Person",
+            FullNameFl = "Person",
             RowVersion = new byte[8]
         };
         Context.People.Add(person);

@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data transfer object representing the complete results of an election tally.
@@ -26,9 +26,9 @@ public class TallyResultDto
     public TallyStatisticsDto Statistics { get; set; } = new();
 
     /// <summary>
-    /// The list of candidate results.
+    /// The list of person results.
     /// </summary>
-    public List<CandidateResultDto> Results { get; set; } = new();
+    public List<PersonResultDto> Results { get; set; } = new();
 
     /// <summary>
     /// Information about any ties in the election.
@@ -37,57 +37,57 @@ public class TallyResultDto
 }
 
 /// <summary>
-/// Data transfer object representing the result for a single candidate.
+/// Data transfer object representing the result for a single person.
 /// </summary>
-public class CandidateResultDto
+public class PersonResultDto
 {
     /// <summary>
-    /// The unique identifier for the person (candidate).
+    /// The unique identifier for the person.
     /// </summary>
     public Guid PersonGuid { get; set; }
 
     /// <summary>
-    /// The full name of the candidate.
+    /// The full name of the person.
     /// </summary>
     public string FullName { get; set; } = string.Empty;
 
     /// <summary>
-    /// The number of votes received by this candidate.
+    /// The number of votes received by this person.
     /// </summary>
     public int VoteCount { get; set; }
 
     /// <summary>
-    /// The rank/position of this candidate in the results.
+    /// The rank/position of this person in the results.
     /// </summary>
     public int Rank { get; set; }
 
     /// <summary>
-    /// The section this candidate belongs to (e.g., "E" for elected, "X" for extra).
+    /// The section this person belongs to (e.g., "E" for elected, "X" for extra).
     /// </summary>
     public string Section { get; set; } = string.Empty;
 
     /// <summary>
-    /// Whether this candidate is tied with others.
+    /// Whether this person is tied with others.
     /// </summary>
     public bool IsTied { get; set; }
 
     /// <summary>
-    /// The tie break group number if this candidate is tied.
+    /// The tie break group number if this person is tied.
     /// </summary>
     public int? TieBreakGroup { get; set; }
 
     /// <summary>
-    /// Whether tie breaking is required for this candidate.
+    /// Whether tie breaking is required for this person.
     /// </summary>
     public bool TieBreakRequired { get; set; }
 
     /// <summary>
-    /// Whether this candidate's vote count is close to the next candidate's count.
+    /// Whether this person's vote count is close to the next person's count.
     /// </summary>
     public bool CloseToNext { get; set; }
 
     /// <summary>
-    /// Whether this candidate's vote count is close to the previous candidate's count.
+    /// Whether this person's vote count is close to the previous person's count.
     /// </summary>
     public bool CloseToPrev { get; set; }
 }

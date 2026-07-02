@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data transfer object representing statistical information about an election tally.
@@ -46,9 +46,9 @@ public class TallyStatisticsDto
     public int NumVoters { get; set; }
 
     /// <summary>
-    /// The number of eligible candidates.
+    /// The number of eligible people.
     /// </summary>
-    public int NumEligibleCandidates { get; set; }
+    public int NumEligiblePeople { get; set; }
 
     /// <summary>
     /// The number of positions to be elected.

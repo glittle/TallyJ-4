@@ -94,7 +94,10 @@ describe("useBallotStore deleteVote", () => {
 
     vi.mocked(voteService.delete).mockResolvedValue({
       ballotStatusCode: "TooFew",
-      votes: [createVote(1, 1, "Alice"), createVote(3, 2, "Carol")],
+      votePositions: [
+        { rowId: 1, positionOnBallot: 1 },
+        { rowId: 3, positionOnBallot: 2 },
+      ],
     });
 
     await store.deleteVote("ballot-1", 2);
@@ -108,7 +111,7 @@ describe("useBallotStore deleteVote", () => {
     expect("votes" in store.ballots[0]).toBe(false);
   });
 
-  it("compacts vote positions when the API omits the updated vote list", async () => {
+  it("compacts vote positions when the API omits vote positions", async () => {
     const store = useBallotStore();
     const initialVotes = [
       createVote(1, 1, "Alice"),
@@ -224,7 +227,7 @@ describe("useBallotStore deleteVote", () => {
     vi.mocked(ballotService.getById).mockReturnValue(fetchPromise);
     vi.mocked(voteService.delete).mockResolvedValue({
       ballotStatusCode: "TooFew",
-      votes: [createVote(1, 1, "Alice")],
+      votePositions: [{ rowId: 1, positionOnBallot: 1 }],
     });
 
     const inFlightFetch = store.fetchBallotById("ballot-1");

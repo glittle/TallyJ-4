@@ -4,7 +4,7 @@ namespace Backend.DTOs.Votes;
 
 /// <summary>
 /// Data transfer object representing a vote in an election.
-/// Contains vote details including candidate information and ballot context.
+/// Contains vote details including person information and ballot context.
 /// </summary>
 public class VoteDto
 {
@@ -24,7 +24,7 @@ public class VoteDto
     public int PositionOnBallot { get; set; }
 
     /// <summary>
-    /// The unique identifier of the person (candidate) being voted for.
+    /// The unique identifier of the person being voted for.
     /// Can be null for certain types of votes.
     /// </summary>
     public Guid? PersonGuid { get; set; }

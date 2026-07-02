@@ -161,9 +161,11 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         var email = $"voter_{Guid.NewGuid():N}@example.com";
         var electionGuid1 = await SetupOpenElectionWithVoter(email, electionName: "Election 1");
         var electionGuid2 = await SetupOpenElectionWithVoter(email, electionName: "Election 2");
+        var token = await AuthenticateVoterAsync(email);
 
         // Act
-        var response = await Client.GetAsync($"/api/online-voting/availableElections?voterId={email}");
+        SetAuthToken(token);
+        var response = await GetAsync("/api/online-voting/availableElections");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -189,14 +191,16 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task GetAvailableElections_WithVoterNotInAnyElection_ReturnsEmptyList()
+    public async Task GetAvailableElections_WithAuthenticatedVoterNotInAnyElection_ReturnsEmptyList()
     {
         // Arrange
-        await SetupOpenElection(); // Election exists but voter not registered
-        var email = "notregistered@example.com";
+        await SetupOpenElection();
+        var email = $"notregistered_{Guid.NewGuid():N}@example.com";
+        var token = GenerateVoterToken(email);
 
         // Act
-        var response = await Client.GetAsync($"/api/online-voting/availableElections?voterId={email}");
+        SetAuthToken(token);
+        var response = await GetAsync("/api/online-voting/availableElections");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -212,9 +216,11 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         var email = $"voter_{Guid.NewGuid():N}@example.com";
         var openElectionGuid = await SetupOpenElectionWithVoter(email, electionName: "Open Election");
         await SetupClosedElectionWithVoter(email, electionName: "Closed Election");
+        var token = await AuthenticateVoterAsync(email);
 
         // Act
-        var response = await Client.GetAsync($"/api/online-voting/availableElections?voterId={email}");
+        SetAuthToken(token);
+        var response = await GetAsync("/api/online-voting/availableElections");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -226,18 +232,32 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task GetAvailableElections_WithoutVoterId_ShouldFail()
+    public async Task GetAvailableElections_WithoutAuth_ShouldReturnUnauthorized()
     {
         // Act
         var response = await Client.GetAsync("/api/online-voting/availableElections");
 
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     #endregion
 
     // Helper methods
+
+    private async Task<string> AuthenticateVoterAsync(string email)
+    {
+        var response = await Client.PostAsJsonAsync("/api/online-voting/googleAuth", new GoogleAuthForVoterDto
+        {
+            Credential = $"dev-google:{email}"
+        });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var auth = await response.Content.ReadFromJsonAsync<OnlineVoterAuthResponse>();
+        Assert.NotNull(auth);
+        Assert.False(string.IsNullOrWhiteSpace(auth.Token));
+        return auth.Token;
+    }
 
     private async Task<Guid> SetupOpenElection()
     {

@@ -12,12 +12,19 @@ import {
   ElEmpty,
   ElTag,
   ElDivider,
+  ElCheckbox,
 } from "element-plus";
 import { Delete } from "@element-plus/icons-vue";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 import { useNotifications } from "../../composables/useNotifications";
 import { useI18n } from "vue-i18n";
-import type { OnlineCandidate, OnlineVote } from "../../types";
+import type { OnlinePerson } from "../../types";
+import {
+  createEmptyVoteSlots,
+  buildOnlineVotes,
+  useVoterBallotHelpers,
+  type VoteSlot,
+} from "../../composables/useVoterBallot";
 
 const router = useRouter();
 const route = useRoute();
@@ -29,13 +36,6 @@ const electionGuid = ref(route.params.electionId as string);
 const loading = ref(false);
 const submitting = ref(false);
 
-interface VoteSlot {
-  position: number;
-  candidate: OnlineCandidate | null;
-  freeText: string;
-  searchText: string;
-}
-
 const votes = ref<VoteSlot[]>([]);
 
 const selectionMode = computed(
@@ -45,7 +45,33 @@ const selectionMode = computed(
 const isModeList = computed(() => selectionMode.value === "A");
 const isModeRandom = computed(() => selectionMode.value === "B");
 const isModeBoth = computed(() => selectionMode.value === "C");
-const showCandidateList = computed(() => isModeList.value || isModeBoth.value);
+const showVotablePeopleList = computed(
+  () => isModeList.value || isModeBoth.value,
+);
+
+const {
+  poolForm,
+  notifyWhenProcessed,
+  isEditing,
+  duplicateVotes,
+  canSubmit,
+  submitPoolForm,
+  poolAsVotablePeople,
+  applyPriorVotes,
+  poolEntries,
+} = useVoterBallotHelpers(() => selectionMode.value);
+
+const allVotablePersonOptions = computed(() => {
+  const official = onlineVotingStore.votablePeople.map((p) => ({
+    value: p.fullName,
+    person: p,
+  }));
+  const pool = poolAsVotablePeople().map((p) => ({
+    value: p.fullName,
+    person: p,
+  }));
+  return [...official, ...pool];
+});
 
 onMounted(async () => {
   if (!onlineVotingStore.voterId) {
@@ -72,28 +98,21 @@ async function loadElectionData() {
       ),
     ]);
 
-    if (voteStatus.hasVoted) {
-      showError(voteStatus.message || t("voting.ballot.alreadyVoted"));
-      router.push({ name: "voter-confirmation" });
-      return;
-    }
-
     if (!electionInfo.isOpen) {
       showError(t("voting.ballot.notOpen"));
       return;
     }
 
-    if (showCandidateList.value) {
-      await onlineVotingStore.loadCandidates(electionGuid.value);
+    if (showVotablePeopleList.value) {
+      await onlineVotingStore.loadVotablePeople(electionGuid.value);
     }
 
     const numToElect = electionInfo.numberToElect || 9;
-    votes.value = Array.from({ length: numToElect }, (_, i) => ({
-      position: i + 1,
-      candidate: null,
-      freeText: "",
-      searchText: "",
-    }));
+    votes.value = createEmptyVoteSlots(numToElect);
+
+    if (voteStatus.hasVoted) {
+      applyPriorVotes(votes.value, voteStatus, onlineVotingStore.votablePeople);
+    }
   } catch (error) {
     console.error("Error loading election data:", error);
   } finally {
@@ -101,22 +120,15 @@ async function loadElectionData() {
   }
 }
 
-const candidateOptions = computed(() =>
-  onlineVotingStore.candidates.map((c) => ({
-    value: c.fullName,
-    candidate: c,
-  })),
-);
-
-function handleCandidateSelect(
+function handlePersonSelect(
   position: number,
-  item: { value: string; candidate: OnlineCandidate },
+  item: { value: string; person: OnlinePerson },
 ) {
   const slot = votes.value.find((v) => v.position === position);
   if (!slot) {
     return;
   }
-  slot.candidate = item.candidate;
+  slot.person = item.person;
   slot.searchText = item.value;
   slot.freeText = "";
 }
@@ -126,8 +138,8 @@ function handleSearchInput(position: number, value: string) {
   if (!slot) {
     return;
   }
-  if (slot.candidate && slot.candidate.fullName !== value) {
-    slot.candidate = null;
+  if (slot.person && slot.person.fullName !== value) {
+    slot.person = null;
   }
   slot.searchText = value;
 }
@@ -135,40 +147,20 @@ function handleSearchInput(position: number, value: string) {
 function clearVote(position: number) {
   const slot = votes.value.find((v) => v.position === position);
   if (slot) {
-    slot.candidate = null;
+    slot.person = null;
     slot.freeText = "";
     slot.searchText = "";
   }
 }
 
-const duplicateVotes = computed(() => {
-  const guids = votes.value
-    .filter((v) => v.candidate !== null)
-    .map((v) => v.candidate!.personGuid);
-  return guids.some((g, i) => guids.indexOf(g) !== i);
-});
-
-const hasAnyVote = computed(() =>
-  votes.value.some((v) => v.candidate !== null || v.freeText.trim().length > 0),
-);
-
-const canSubmit = computed(() => hasAnyVote.value && !duplicateVotes.value);
-
-function getEffectiveName(slot: VoteSlot): string {
-  if (slot.candidate) {
-    return slot.candidate.fullName;
+function handleAddToPool() {
+  if (!submitPoolForm()) {
+    showError(t("voting.ballot.poolNameRequired"));
   }
-  if (isModeRandom.value) {
-    return slot.freeText;
-  }
-  if (isModeBoth.value) {
-    return slot.searchText || slot.freeText;
-  }
-  return "";
 }
 
 async function handleSubmit() {
-  if (duplicateVotes.value) {
+  if (duplicateVotes(votes.value)) {
     showError(t("voting.ballot.duplicateError"));
     return;
   }
@@ -176,26 +168,29 @@ async function handleSubmit() {
   try {
     submitting.value = true;
 
-    const onlineVotes: OnlineVote[] = votes.value
-      .filter(
-        (v) =>
-          v.candidate !== null ||
-          (isModeRandom.value && v.freeText.trim()) ||
-          (isModeBoth.value && (v.searchText.trim() || v.freeText.trim())),
-      )
-      .map((v) => ({
-        personGuid: v.candidate?.personGuid,
-        voteName: getEffectiveName(v) || undefined,
-        positionOnBallot: v.position,
-      }));
+    const onlineVotes = buildOnlineVotes(votes.value, selectionMode.value).map(
+      (v) => ({
+        ...v,
+        personGuid:
+          v.personGuid && !String(v.personGuid).startsWith("pool-")
+            ? v.personGuid
+            : undefined,
+      }),
+    );
 
     await onlineVotingStore.submitBallot(electionGuid.value, {
       electionGuid: electionGuid.value,
       voterId: onlineVotingStore.voterId!,
       votes: onlineVotes,
+      listPool: poolEntries.value,
+      notifyWhenProcessed: notifyWhenProcessed.value,
     });
 
-    showSuccess(t("voting.ballot.submitSuccess"));
+    showSuccess(
+      isEditing.value
+        ? t("voting.ballot.resubmitSuccess")
+        : t("voting.ballot.submitSuccess"),
+    );
     router.push({ name: "voter-confirmation" });
   } catch (error) {
     console.error("Error submitting ballot:", error);
@@ -237,12 +232,24 @@ function backToElections() {
             </div>
             <div class="header-right">
               <ElTag type="success">{{ $t("voting.ballot.openNow") }}</ElTag>
+              <ElTag v-if="isEditing" type="warning" class="editing-tag">
+                {{ $t("voting.ballot.editing") }}
+              </ElTag>
             </div>
           </div>
         </template>
 
         <ElAlert
-          v-if="duplicateVotes"
+          v-if="isEditing"
+          type="info"
+          :closable="false"
+          class="ballot-alert"
+        >
+          {{ $t("voting.ballot.editHint") }}
+        </ElAlert>
+
+        <ElAlert
+          v-if="duplicateVotes(votes)"
           type="error"
           :closable="false"
           class="ballot-alert"
@@ -256,28 +263,40 @@ function backToElections() {
             <p class="panel-description">
               {{ $t("voting.ballot.addToPoolDescription") }}
             </p>
-            <ElForm>
+            <ElForm @submit.prevent="handleAddToPool">
               <ElFormItem :label="$t('voting.ballot.firstName')">
                 <ElInput
+                  v-model="poolForm.firstName"
                   :placeholder="$t('voting.ballot.firstNamePlaceholder')"
                 />
               </ElFormItem>
               <ElFormItem :label="$t('voting.ballot.lastName')">
                 <ElInput
+                  v-model="poolForm.lastName"
                   :placeholder="$t('voting.ballot.lastNamePlaceholder')"
                 />
               </ElFormItem>
               <ElFormItem :label="$t('voting.ballot.extraInfo')">
                 <ElInput
+                  v-model="poolForm.otherInfo"
                   type="textarea"
                   :placeholder="$t('voting.ballot.extraInfoPlaceholder')"
                   :rows="2"
                 />
               </ElFormItem>
-              <ElButton type="default">{{
+              <ElButton type="default" native-type="submit">{{
                 $t("voting.ballot.addPersonToPool")
               }}</ElButton>
             </ElForm>
+
+            <div v-if="poolEntries.length > 0" class="pool-list">
+              <h4>{{ $t("voting.ballot.yourPool") }}</h4>
+              <ul>
+                <li v-for="entry in poolEntries" :key="entry.fullName">
+                  {{ entry.fullName }}
+                </li>
+              </ul>
+            </div>
 
             <ElDivider />
 
@@ -326,25 +345,26 @@ function backToElections() {
                 class="vote-item"
                 :class="{
                   'vote-filled':
-                    vote.candidate ||
+                    vote.person ||
                     (isModeRandom && vote.freeText) ||
-                    (isModeBoth && (vote.searchText || vote.freeText)),
+                    (isModeBoth && (vote.searchText || vote.freeText)) ||
+                    (isModeList && vote.searchText),
                 }"
               >
                 <span class="vote-number">{{ vote.position }}.</span>
 
                 <ElAutocomplete
-                  v-if="showCandidateList"
+                  v-if="showVotablePeopleList"
                   v-model="vote.searchText"
                   :fetch-suggestions="
                     (queryString: string, cb: Function) => {
                       const results = queryString
-                        ? candidateOptions.filter((opt) =>
+                        ? allVotablePersonOptions.filter((opt) =>
                             opt.value
                               .toLowerCase()
                               .includes(queryString.toLowerCase()),
                           )
-                        : candidateOptions;
+                        : allVotablePersonOptions;
                       cb(results);
                     }
                   "
@@ -353,7 +373,7 @@ function backToElections() {
                   class="vote-input"
                   size="default"
                   @select="
-                    (item: any) => handleCandidateSelect(vote.position, item)
+                    (item: any) => handlePersonSelect(vote.position, item)
                   "
                   @input="
                     (val: string) => handleSearchInput(vote.position, val)
@@ -368,8 +388,8 @@ function backToElections() {
                   size="default"
                 />
 
-                <span v-if="vote.candidate" class="candidate-tag">
-                  {{ vote.candidate.fullName }}
+                <span v-if="vote.person" class="person-tag">
+                  {{ vote.person.fullName }}
                   <ElButton
                     text
                     size="small"
@@ -393,7 +413,18 @@ function backToElections() {
                 </span>
               </div>
 
-              <ElAlert type="warning" :closable="false" class="ballot-warning">
+              <div class="notify-preference">
+                <ElCheckbox v-model="notifyWhenProcessed">
+                  {{ $t("voting.ballot.notifyWhenProcessed") }}
+                </ElCheckbox>
+              </div>
+
+              <ElAlert
+                v-if="!isEditing"
+                type="warning"
+                :closable="false"
+                class="ballot-warning"
+              >
                 {{ $t("voting.ballot.onceWarning") }}
               </ElAlert>
 
@@ -402,11 +433,15 @@ function backToElections() {
                   type="primary"
                   native-type="submit"
                   :loading="submitting"
-                  :disabled="!canSubmit"
+                  :disabled="!canSubmit(votes)"
                   size="large"
                   class="submit-btn"
                 >
-                  {{ $t("voting.ballot.submit") }}
+                  {{
+                    isEditing
+                      ? $t("voting.ballot.resubmit")
+                      : $t("voting.ballot.submit")
+                  }}
                 </ElButton>
               </div>
             </ElForm>
@@ -453,6 +488,10 @@ function backToElections() {
             font-size: 13px;
           }
         }
+
+        .editing-tag {
+          margin-top: 8px;
+        }
       }
 
       .ballot-alert {
@@ -476,6 +515,21 @@ function backToElections() {
             font-size: 13px;
             color: var(--el-text-color-secondary);
             margin-bottom: 16px;
+          }
+
+          .pool-list {
+            margin-top: 16px;
+
+            h4 {
+              margin: 0 0 8px 0;
+              font-size: 13px;
+            }
+
+            ul {
+              margin: 0;
+              padding-left: 18px;
+              font-size: 13px;
+            }
           }
 
           .guidelines {
@@ -514,6 +568,10 @@ function backToElections() {
             border-bottom: 1px solid var(--el-border-color-lighter);
             padding-bottom: 4px;
           }
+
+          .notify-preference {
+            margin: 12px 0;
+          }
         }
       }
 
@@ -542,7 +600,7 @@ function backToElections() {
           flex: 1;
         }
 
-        .candidate-tag,
+        .person-tag,
         .random-tag {
           flex: 1;
           display: flex;

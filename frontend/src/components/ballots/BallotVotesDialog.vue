@@ -126,7 +126,7 @@ function getVoteStatusType(status: string) {
           />
           <el-table-column
             prop="personFullName"
-            :label="$t('ballots.candidate')"
+            :label="$t('ballots.person')"
             min-width="200"
           />
           <el-table-column

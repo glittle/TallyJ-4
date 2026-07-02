@@ -233,7 +233,7 @@ public class ElectionServiceTests : ServiceTestBase
             PersonGuid = personGuid,
             ElectionGuid = electionGuid,
             FirstName = "Test",
-            LastName = "Candidate",
+            LastName = "Person",
             RowVersion = new byte[8]
         });
         Context.Results.Add(new Result

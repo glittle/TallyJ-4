@@ -14,8 +14,10 @@ export function translateTallyProgressMessage(
     total: progress.totalBallots,
   });
 
-  return translated !== key ? translated : t(FALLBACK_KEY, {
-    processed: progress.processedBallots,
-    total: progress.totalBallots,
-  });
+  return translated !== key
+    ? translated
+    : t(FALLBACK_KEY, {
+        processed: progress.processedBallots,
+        total: progress.totalBallots,
+      });
 }

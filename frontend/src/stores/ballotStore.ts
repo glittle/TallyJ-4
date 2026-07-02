@@ -11,6 +11,7 @@ import type {
   CreateVoteDto,
   ReorderVotesDto,
   VoteDto,
+  VotePositionDto,
   VoteWithBallotStatusDto,
 } from "../types";
 import type { BallotUpdateEvent } from "../types/SignalREvents";
@@ -30,6 +31,26 @@ function compactVotePositions(votes: VoteDto[]): VoteDto[] {
       ...vote,
       positionOnBallot: index + 1,
     }));
+}
+
+function applyVotePositions(
+  votes: VoteDto[],
+  votePositions: VotePositionDto[],
+): VoteDto[] {
+  const positionByRowId = new Map(
+    votePositions.map((position) => [
+      position.rowId,
+      position.positionOnBallot,
+    ]),
+  );
+
+  return votes
+    .filter((vote) => positionByRowId.has(vote.rowId))
+    .map((vote) => ({
+      ...vote,
+      positionOnBallot: positionByRowId.get(vote.rowId)!,
+    }))
+    .sort((a, b) => a.positionOnBallot - b.positionOnBallot);
 }
 
 export const useBallotStore = defineStore("ballot", () => {
@@ -199,43 +220,62 @@ export const useBallotStore = defineStore("ballot", () => {
   function resolveVoteMutationVotes(
     ballotGuid: string,
     result: VoteWithBallotStatusDto,
-    options?: { removedPosition?: number },
+    options?: { deletedRowId?: number },
   ): VoteDto[] | null {
     const existingVotes =
       currentBallot.value?.ballotGuid === ballotGuid
         ? currentBallot.value.votes
         : [];
 
-    let updatedVotes = result.votes;
-    if (updatedVotes === null || updatedVotes === undefined) {
-      if (result.vote) {
-        const existingIndex = existingVotes.findIndex(
-          (v) => v.positionOnBallot === result.vote!.positionOnBallot,
-        );
-        updatedVotes =
-          existingIndex !== -1
-            ? existingVotes.map((v, i) =>
-                i === existingIndex ? result.vote! : v,
-              )
-            : [...existingVotes, result.vote!];
-      } else if (options?.removedPosition !== undefined) {
-        updatedVotes = compactVotePositions(
-          existingVotes.filter(
-            (v) => v.positionOnBallot !== options.removedPosition,
-          ),
-        );
-      } else {
-        return null;
+    if (result.vote) {
+      let updatedVotes = existingVotes;
+      if (result.votePositions?.length) {
+        updatedVotes = applyVotePositions(updatedVotes, result.votePositions);
       }
+
+      const existingIndex = updatedVotes.findIndex(
+        (vote) => vote.rowId === result.vote!.rowId,
+      );
+      updatedVotes =
+        existingIndex !== -1
+          ? updatedVotes.map((vote, index) =>
+              index === existingIndex ? result.vote! : vote,
+            )
+          : [...updatedVotes, result.vote!];
+
+      return normalizeVoteList(
+        updatedVotes.sort((a, b) => a.positionOnBallot - b.positionOnBallot),
+      );
     }
 
-    return normalizeVoteList(updatedVotes);
+    if (result.votePositions?.length) {
+      let updatedVotes = existingVotes;
+      if (options?.deletedRowId !== undefined) {
+        updatedVotes = updatedVotes.filter(
+          (vote) => vote.rowId !== options.deletedRowId,
+        );
+      }
+
+      return normalizeVoteList(
+        applyVotePositions(updatedVotes, result.votePositions),
+      );
+    }
+
+    if (options?.deletedRowId !== undefined) {
+      return normalizeVoteList(
+        compactVotePositions(
+          existingVotes.filter((vote) => vote.rowId !== options.deletedRowId),
+        ),
+      );
+    }
+
+    return null;
   }
 
   function applyVoteMutationResult(
     ballotGuid: string,
     result: VoteWithBallotStatusDto,
-    options?: { removedPosition?: number },
+    options?: { deletedRowId?: number },
   ) {
     ballotMutationGeneration.set(
       ballotGuid,
@@ -243,8 +283,8 @@ export const useBallotStore = defineStore("ballot", () => {
     );
 
     const isCurrentBallot = currentBallot.value?.ballotGuid === ballotGuid;
-    const hasAuthoritativeVotes =
-      result.votes !== null && result.votes !== undefined;
+    const hasAuthoritativePositions =
+      (result.votePositions?.length ?? 0) > 0 || !!result.vote;
 
     const normalizedVotes = resolveVoteMutationVotes(
       ballotGuid,
@@ -256,7 +296,7 @@ export const useBallotStore = defineStore("ballot", () => {
     }
 
     const summaryPatch: Partial<BallotSummaryDto> = {};
-    if (hasAuthoritativeVotes || isCurrentBallot) {
+    if (hasAuthoritativePositions || isCurrentBallot) {
       summaryPatch.voteCount = normalizedVotes.length;
     }
     if (result.ballotStatusCode) {
@@ -317,7 +357,7 @@ export const useBallotStore = defineStore("ballot", () => {
 
       const result = await voteService.delete(vote.rowId);
       applyVoteMutationResult(ballotGuid, result, {
-        removedPosition: positionOnBallot,
+        deletedRowId: vote.rowId,
       });
     } catch (e: any) {
       error.value = e.message || "Failed to delete vote";

@@ -1,15 +1,15 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { mount, flushPromises } from "@vue/test-utils";
+import type { BallotDto } from "@/types/Ballot";
+import type { SearchablePersonDto } from "@/types/Person";
+import type { VoteDto } from "@/types/Vote";
+import { flushPromises, mount } from "@vue/test-utils";
+import { ElAlert, ElButton, ElIcon, ElInput } from "element-plus";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import InlineBallotEntry from "../InlineBallotEntry.vue";
-import type { BallotDto } from "@/types/Ballot";
-import type { VoteDto } from "@/types/Vote";
-import type { SearchablePersonDto } from "@/types/Person";
-import { ElAlert, ElButton, ElIcon, ElInput } from "element-plus";
 
 const mockT = (key: string, values?: Record<string, string | number>) => {
   const translations: Record<string, string> = {
-    "ballots.cacheLoadError": "Failed to load candidates",
+    "ballots.cacheLoadError": "Failed to load names",
     "ballots.searchPlaceholder": "Search",
     "ballots.searchHelp": "Use arrow keys",
     "ballots.searchPerson": "Add a name",
@@ -22,7 +22,8 @@ const mockT = (key: string, values?: Record<string, string | number>) => {
     "ballots.dragToReorder": "Drag votes to change their order",
     "ballots.addBallot": "Add Ballot",
     "ballots.deleteBallot": "Delete Ballot",
-    "ballots.deleteConfirm": "Delete ballot {code}? All votes on it will be permanently removed.",
+    "ballots.deleteConfirm":
+      "Delete ballot {code}? All votes on it will be permanently removed.",
     "ballots.deleteSuccess": "Ballot deleted successfully",
     "ballots.createSuccess": "Ballot created successfully",
     "common.warning": "Warning",
@@ -66,8 +67,8 @@ vi.mock("@/composables/useNotifications", () => ({
 }));
 
 const mockPeopleStore = {
-  candidateCache: [] as SearchablePersonDto[],
-  initializeCandidateCache: vi.fn(),
+  peopleCache: [] as SearchablePersonDto[],
+  initializePeopleCache: vi.fn(),
 };
 
 vi.mock("@/stores/peopleStore", () => ({
@@ -130,15 +131,15 @@ vi.mock("@/composables/usePersonSearch", async () => {
   return {
     usePersonSearch: (
       searchQuery: { value: string },
-      candidates: { value: SearchablePersonDto[] },
+      searchablePeople: { value: SearchablePersonDto[] },
     ) => ({
       searchResults: computed(() => {
         const query = searchQuery.value?.toLowerCase() || "";
         if (!query) {
           return [];
         }
-        return candidates.value.filter((candidate) =>
-          candidate.fullName.toLowerCase().includes(query),
+        return searchablePeople.value.filter((person) =>
+          person.fullName.toLowerCase().includes(query),
         );
       }),
     }),
@@ -198,11 +199,11 @@ const mountOptions = {
 };
 
 describe("InlineBallotEntry", () => {
-  let mockCandidates: SearchablePersonDto[];
+  let mockSearchablePeople: SearchablePersonDto[];
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockCandidates = [
+    mockSearchablePeople = [
       createMockPerson("John", "Doe"),
       createMockPerson("Jane", "Smith"),
       createMockPerson("Bob", "Johnson", {
@@ -210,11 +211,11 @@ describe("InlineBallotEntry", () => {
         ineligibleReasonCode: "X01",
       }),
     ];
-    mockPeopleStore.candidateCache = mockCandidates;
-    mockPeopleStore.initializeCandidateCache.mockResolvedValue(undefined);
+    mockPeopleStore.peopleCache = mockSearchablePeople;
+    mockPeopleStore.initializePeopleCache.mockResolvedValue(undefined);
   });
 
-  it("initializes candidate cache on mount", async () => {
+  it("initializes people cache on mount", async () => {
     mount(InlineBallotEntry, {
       props: {
         electionGuid: "election-123",
@@ -225,7 +226,7 @@ describe("InlineBallotEntry", () => {
     });
 
     await flushPromises();
-    expect(mockPeopleStore.initializeCandidateCache).toHaveBeenCalledWith(
+    expect(mockPeopleStore.initializePeopleCache).toHaveBeenCalledWith(
       "election-123",
     );
   });
@@ -329,8 +330,8 @@ describe("InlineBallotEntry", () => {
         rowId: 1,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: mockSearchablePeople[0].fullName,
         statusCode: "ok",
       },
     ];
@@ -398,8 +399,8 @@ describe("InlineBallotEntry", () => {
         rowId: 2,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[2].personGuid,
-        personFullName: mockCandidates[2].fullName,
+        personGuid: mockSearchablePeople[2].personGuid,
+        personFullName: mockSearchablePeople[2].fullName,
         statusCode: "Spoiled",
         ineligibleReasonCode: "X01",
       },
@@ -448,8 +449,8 @@ describe("InlineBallotEntry", () => {
         rowId: 3,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: mockSearchablePeople[0].fullName,
         statusCode: "ok",
       },
     ];
@@ -466,7 +467,7 @@ describe("InlineBallotEntry", () => {
     await flushPromises();
     await wrapper.find(".vote-actions .el-button").trigger("click");
     expect(wrapper.emitted("vote-removed")).toEqual([[1]]);
-    expect(wrapper.text()).not.toContain(mockCandidates[0].fullName);
+    expect(wrapper.text()).not.toContain(mockSearchablePeople[0].fullName);
   });
 
   it("rebuilds vote rows when the ballot prop updates after a delete", async () => {
@@ -475,16 +476,16 @@ describe("InlineBallotEntry", () => {
         rowId: 1,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: mockSearchablePeople[0].fullName,
         statusCode: "ok",
       },
       {
         rowId: 2,
         ballotGuid: "ballot-123",
         positionOnBallot: 2,
-        personGuid: mockCandidates[1].personGuid,
-        personFullName: mockCandidates[1].fullName,
+        personGuid: mockSearchablePeople[1].personGuid,
+        personFullName: mockSearchablePeople[1].fullName,
         statusCode: "ok",
       },
     ];
@@ -499,15 +500,15 @@ describe("InlineBallotEntry", () => {
     });
 
     await flushPromises();
-    expect(wrapper.text()).toContain(mockCandidates[1].fullName);
+    expect(wrapper.text()).toContain(mockSearchablePeople[1].fullName);
 
     await wrapper.setProps({
       ballot: createMockBallot([initialVotes[0]]),
     });
     await nextTick();
 
-    expect(wrapper.text()).toContain(mockCandidates[0].fullName);
-    expect(wrapper.text()).not.toContain(mockCandidates[1].fullName);
+    expect(wrapper.text()).toContain(mockSearchablePeople[0].fullName);
+    expect(wrapper.text()).not.toContain(mockSearchablePeople[1].fullName);
   });
 
   it("shows drag handle after an optimistic vote is saved on the ballot prop", async () => {
@@ -533,8 +534,8 @@ describe("InlineBallotEntry", () => {
       rowId: 42,
       ballotGuid: "ballot-123",
       positionOnBallot: 1,
-      personGuid: mockCandidates[0].personGuid,
-      personFullName: mockCandidates[0].fullName,
+      personGuid: mockSearchablePeople[0].personGuid,
+      personFullName: mockSearchablePeople[0].fullName,
       statusCode: "ok",
     };
 
@@ -553,16 +554,16 @@ describe("InlineBallotEntry", () => {
         rowId: 10,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: mockSearchablePeople[0].fullName,
         statusCode: "ok",
       },
       {
         rowId: 11,
         ballotGuid: "ballot-123",
         positionOnBallot: 2,
-        personGuid: mockCandidates[1].personGuid,
-        personFullName: mockCandidates[1].fullName,
+        personGuid: mockSearchablePeople[1].personGuid,
+        personFullName: mockSearchablePeople[1].fullName,
         statusCode: "ok",
       },
     ];
@@ -601,16 +602,16 @@ describe("InlineBallotEntry", () => {
         rowId: 10,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: mockSearchablePeople[0].fullName,
         statusCode: "ok",
       },
       {
         rowId: 11,
         ballotGuid: "ballot-123",
         positionOnBallot: 2,
-        personGuid: mockCandidates[1].personGuid,
-        personFullName: mockCandidates[1].fullName,
+        personGuid: mockSearchablePeople[1].personGuid,
+        personFullName: mockSearchablePeople[1].fullName,
         statusCode: "ok",
       },
     ];
@@ -640,16 +641,16 @@ describe("InlineBallotEntry", () => {
         rowId: 10,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: mockSearchablePeople[0].fullName,
         statusCode: "ok",
       },
       {
         rowId: 11,
         ballotGuid: "ballot-123",
         positionOnBallot: 2,
-        personGuid: mockCandidates[1].personGuid,
-        personFullName: mockCandidates[1].fullName,
+        personGuid: mockSearchablePeople[1].personGuid,
+        personFullName: mockSearchablePeople[1].fullName,
         statusCode: "ok",
       },
     ];
@@ -682,16 +683,16 @@ describe("InlineBallotEntry", () => {
         rowId: 11,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[1].personGuid,
-        personFullName: mockCandidates[1].fullName,
+        personGuid: mockSearchablePeople[1].personGuid,
+        personFullName: mockSearchablePeople[1].fullName,
         statusCode: "ok",
       },
       {
         rowId: 10,
         ballotGuid: "ballot-123",
         positionOnBallot: 2,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: mockSearchablePeople[0].fullName,
         statusCode: "ok",
       },
     ];
@@ -710,16 +711,16 @@ describe("InlineBallotEntry", () => {
         rowId: 10,
         ballotGuid: "ballot-123",
         positionOnBallot: 1,
-        personGuid: mockCandidates[0].personGuid,
-        personFullName: mockCandidates[0].fullName,
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: mockSearchablePeople[0].fullName,
         statusCode: "ok",
       },
       {
         rowId: 11,
         ballotGuid: "ballot-123",
         positionOnBallot: 2,
-        personGuid: mockCandidates[1].personGuid,
-        personFullName: mockCandidates[1].fullName,
+        personGuid: mockSearchablePeople[1].personGuid,
+        personFullName: mockSearchablePeople[1].fullName,
         statusCode: "ok",
       },
     ];

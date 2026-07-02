@@ -1,4 +1,4 @@
-﻿using Backend.DTOs.OnlineVoting;
+using Backend.DTOs.OnlineVoting;
 
 namespace Backend.Services;
 
@@ -11,8 +11,8 @@ public interface IOnlineVotingService
     /// Requests a verification code for a voter.
     /// </summary>
     /// <param name="dto">The request containing voter identification details.</param>
-    /// <returns>A task containing the response message.</returns>
-    Task<string> RequestVerificationCodeAsync(RequestCodeDto dto);
+    /// <returns>A task containing the response message and optional dev verification code.</returns>
+    Task<RequestCodeResponseDto> RequestVerificationCodeAsync(RequestCodeDto dto);
 
     /// <summary>
     /// Verifies a voter's verification code.
@@ -29,11 +29,11 @@ public interface IOnlineVotingService
     Task<OnlineElectionInfoDto?> GetElectionInfoAsync(Guid electionGuid);
 
     /// <summary>
-    /// Retrieves the list of candidates for an election.
+    /// Retrieves the list of people for an election.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <returns>A task containing the list of candidates.</returns>
-    Task<List<OnlineCandidateDto>> GetCandidatesAsync(Guid electionGuid);
+    /// <returns>A task containing the list of people.</returns>
+    Task<List<OnlinePersonDto>> GetPeopleAsync(Guid electionGuid);
 
     /// <summary>
     /// Submits an online ballot for an election.

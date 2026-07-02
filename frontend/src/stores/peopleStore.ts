@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 import { peopleService } from "../services/peopleService";
 import { signalrService } from "../services/signalrService";
 import type {
+  CreatePersonDto,
   PersonDto,
   PersonListDto,
-  CreatePersonDto,
-  UpdatePersonDto,
   SearchablePersonDto,
+  UpdatePersonDto,
 } from "../types";
 import type {
   PersonUpdateEvent,
@@ -20,7 +20,7 @@ export const usePeopleStore = defineStore("people", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
   const signalrInitialized = ref(false);
-  const candidateCache = ref<SearchablePersonDto[]>([]);
+  const peopleCache = ref<SearchablePersonDto[]>([]);
   const isCacheInitialized = ref(false);
   const personUpdatedListeners = new Set<(data: PersonUpdateEvent) => void>();
 
@@ -28,7 +28,7 @@ export const usePeopleStore = defineStore("people", () => {
     peopleList.value.filter((p) => p.canVote === true),
   );
 
-  const candidates = computed(() =>
+  const votablePeople = computed(() =>
     peopleList.value.filter((p) => p.canReceiveVotes === true),
   );
 
@@ -204,32 +204,32 @@ export const usePeopleStore = defineStore("people", () => {
     };
   }
 
-  async function initializeCandidateCache(electionGuid: string) {
+  async function initializePeopleCache(electionGuid: string) {
     if (isCacheInitialized.value) {
       return;
     }
 
     try {
       const allPeople = await peopleService.getAllForBallotEntry(electionGuid);
-      candidateCache.value = allPeople.map(enrichPersonForSearch);
+      peopleCache.value = allPeople.map(enrichPersonForSearch);
       isCacheInitialized.value = true;
     } catch (e) {
-      console.error("Failed to initialize candidate cache:", e);
+      console.error("Failed to initialize people cache:", e);
       throw e;
     }
   }
 
   function handlePersonVoteCountUpdated(data: PersonVoteCountUpdateEvent) {
-    const index = candidateCache.value.findIndex(
+    const index = peopleCache.value.findIndex(
       (p) => p.personGuid === data.personGuid,
     );
     if (index !== -1) {
-      const newCache = [...candidateCache.value];
+      const newCache = [...peopleCache.value];
       newCache[index] = {
-        ...candidateCache.value[index],
+        ...peopleCache.value[index],
         voteCount: data.voteCount,
       };
-      candidateCache.value = newCache;
+      peopleCache.value = newCache;
     }
   }
 
@@ -296,7 +296,7 @@ export const usePeopleStore = defineStore("people", () => {
         if (person) {
           upsertPersonListEntry(person);
           if (isCacheInitialized.value) {
-            candidateCache.value.push(enrichPersonForSearch(person));
+            peopleCache.value.push(enrichPersonForSearch(person));
           }
         }
       } catch (e) {
@@ -332,14 +332,14 @@ export const usePeopleStore = defineStore("people", () => {
         upsertPersonListEntry(person);
 
         if (isCacheInitialized.value) {
-          const index = candidateCache.value.findIndex(
+          const index = peopleCache.value.findIndex(
             (p) => p.personGuid === data.personGuid,
           );
           const searchablePerson = enrichPersonForSearch(person);
           if (index !== -1) {
-            candidateCache.value[index] = searchablePerson;
+            peopleCache.value[index] = searchablePerson;
           } else {
-            candidateCache.value.push(searchablePerson);
+            peopleCache.value.push(searchablePerson);
           }
         }
       }
@@ -357,7 +357,7 @@ export const usePeopleStore = defineStore("people", () => {
     );
 
     if (isCacheInitialized.value) {
-      candidateCache.value = candidateCache.value.filter(
+      peopleCache.value = peopleCache.value.filter(
         (p) => p.personGuid !== data.personGuid,
       );
     }
@@ -385,8 +385,8 @@ export const usePeopleStore = defineStore("people", () => {
     loading,
     error,
     voters,
-    candidates,
-    candidateCache,
+    votablePeople,
+    peopleCache,
     isCacheInitialized,
     fetchPeople,
     fetchPeopleList,
@@ -399,7 +399,7 @@ export const usePeopleStore = defineStore("people", () => {
     toPersonListDto,
     upsertPersonListEntry,
     enrichPersonForSearch,
-    initializeCandidateCache,
+    initializePeopleCache,
     initializeSignalR,
     joinElection,
     leaveElection,

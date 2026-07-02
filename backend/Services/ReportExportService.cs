@@ -1,4 +1,4 @@
-﻿using Backend.DTOs.Results;
+using Backend.DTOs.Results;
 using ClosedXML.Excel;
 using iText.IO.Font.Constants;
 using iText.Kernel.Colors;
@@ -85,10 +85,10 @@ public class ReportExportService : IReportExportService
             document.Add(overviewTable);
             document.Add(new Paragraph("\n"));
 
-            // Elected Candidates
+            // Elected People
             if (electionReport.Elected.Any())
             {
-                var electedTitle = new Paragraph("Elected Candidates")
+                var electedTitle = new Paragraph("Elected People")
                     .SetFont(boldFont)
                     .SetFontSize(14)
                     .SetMarginBottom(10);
@@ -102,11 +102,11 @@ public class ReportExportService : IReportExportService
                 electedTable.AddHeaderCell(new Cell().Add(new Paragraph("Name").SetFont(headerFont).SetFontSize(12)).SetBackgroundColor(ColorConstants.LIGHT_GRAY));
                 electedTable.AddHeaderCell(new Cell().Add(new Paragraph("Votes").SetFont(headerFont).SetFontSize(12)).SetBackgroundColor(ColorConstants.LIGHT_GRAY));
 
-                foreach (var candidate in electionReport.Elected.OrderBy(c => c.Rank))
+                foreach (var person in electionReport.Elected.OrderBy(c => c.Rank))
                 {
-                    electedTable.AddCell(new Cell().Add(new Paragraph(candidate.Rank.ToString()).SetFont(normalFont).SetFontSize(10)));
-                    electedTable.AddCell(new Cell().Add(new Paragraph(candidate.FullName).SetFont(normalFont).SetFontSize(10)));
-                    electedTable.AddCell(new Cell().Add(new Paragraph(candidate.VoteCount.ToString()).SetFont(normalFont).SetFontSize(10)));
+                    electedTable.AddCell(new Cell().Add(new Paragraph(person.Rank.ToString()).SetFont(normalFont).SetFontSize(10)));
+                    electedTable.AddCell(new Cell().Add(new Paragraph(person.FullName).SetFont(normalFont).SetFontSize(10)));
+                    electedTable.AddCell(new Cell().Add(new Paragraph(person.VoteCount.ToString()).SetFont(normalFont).SetFontSize(10)));
                 }
 
                 document.Add(electedTable);
@@ -200,11 +200,11 @@ public class ReportExportService : IReportExportService
                 overviewSheet.Cell(5 + i, 2).Value = overviewData[i].Value;
             }
 
-            // Elected Candidates Sheet
+            // Elected People Sheet
             if (electionReport.Elected.Any())
             {
-                var electedSheet = workbook.Worksheets.Add("Elected Candidates");
-                electedSheet.Cell(1, 1).Value = "Elected Candidates";
+                var electedSheet = workbook.Worksheets.Add("Elected People");
+                electedSheet.Cell(1, 1).Value = "Elected People";
                 electedSheet.Cell(1, 1).Style.Font.Bold = true;
 
                 electedSheet.Cell(3, 1).Value = "Rank";
@@ -217,12 +217,12 @@ public class ReportExportService : IReportExportService
                 headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
 
                 int row = 4;
-                foreach (var candidate in electionReport.Elected.OrderBy(c => c.Rank))
+                foreach (var person in electionReport.Elected.OrderBy(c => c.Rank))
                 {
-                    electedSheet.Cell(row, 1).Value = candidate.Rank;
-                    electedSheet.Cell(row, 2).Value = candidate.FullName;
-                    electedSheet.Cell(row, 3).Value = candidate.VoteCount;
-                    electedSheet.Cell(row, 4).Value = candidate.Section;
+                    electedSheet.Cell(row, 1).Value = person.Rank;
+                    electedSheet.Cell(row, 2).Value = person.FullName;
+                    electedSheet.Cell(row, 3).Value = person.VoteCount;
+                    electedSheet.Cell(row, 4).Value = person.Section;
                     row++;
                 }
 
@@ -264,35 +264,35 @@ public class ReportExportService : IReportExportService
                 locationSheet.Columns().AdjustToContents();
             }
 
-            // Candidate Performance Sheet
-            if (detailedStats.CandidatePerformance.Any())
+            // Person Performance Sheet
+            if (detailedStats.PersonPerformance.Any())
             {
-                var candidateSheet = workbook.Worksheets.Add("Candidate Performance");
-                candidateSheet.Cell(1, 1).Value = "Candidate Performance";
-                candidateSheet.Cell(1, 1).Style.Font.Bold = true;
+                var personSheet = workbook.Worksheets.Add("Person Performance");
+                personSheet.Cell(1, 1).Value = "Person Performance";
+                personSheet.Cell(1, 1).Style.Font.Bold = true;
 
-                candidateSheet.Cell(3, 1).Value = "Name";
-                candidateSheet.Cell(3, 2).Value = "Total Votes";
-                candidateSheet.Cell(3, 3).Value = "Vote %";
-                candidateSheet.Cell(3, 4).Value = "Rank";
-                candidateSheet.Cell(3, 5).Value = "Status";
+                personSheet.Cell(3, 1).Value = "Name";
+                personSheet.Cell(3, 2).Value = "Total Votes";
+                personSheet.Cell(3, 3).Value = "Vote %";
+                personSheet.Cell(3, 4).Value = "Rank";
+                personSheet.Cell(3, 5).Value = "Status";
 
-                var headerRange = candidateSheet.Range("A3:E3");
+                var headerRange = personSheet.Range("A3:E3");
                 headerRange.Style.Font.Bold = true;
                 headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
 
                 int row = 4;
-                foreach (var candidate in detailedStats.CandidatePerformance.OrderBy(c => c.Rank))
+                foreach (var person in detailedStats.PersonPerformance.OrderBy(c => c.Rank))
                 {
-                    candidateSheet.Cell(row, 1).Value = candidate.FullName;
-                    candidateSheet.Cell(row, 2).Value = candidate.TotalVotes;
-                    candidateSheet.Cell(row, 3).Value = candidate.VotePercentage;
-                    candidateSheet.Cell(row, 4).Value = candidate.Rank;
-                    candidateSheet.Cell(row, 5).Value = candidate.IsElected ? "Elected" : candidate.IsEliminated ? "Eliminated" : "Other";
+                    personSheet.Cell(row, 1).Value = person.FullName;
+                    personSheet.Cell(row, 2).Value = person.TotalVotes;
+                    personSheet.Cell(row, 3).Value = person.VotePercentage;
+                    personSheet.Cell(row, 4).Value = person.Rank;
+                    personSheet.Cell(row, 5).Value = person.IsElected ? "Elected" : person.IsEliminated ? "Eliminated" : "Other";
                     row++;
                 }
 
-                candidateSheet.Columns().AdjustToContents();
+                personSheet.Columns().AdjustToContents();
             }
 
             using var memoryStream = new MemoryStream();
@@ -371,10 +371,10 @@ public class ReportExportService : IReportExportService
 
             csv.NextRecord();
 
-            // Elected candidates
+            // Elected People
             if (electionReport.Elected.Any())
             {
-                csv.WriteField("Elected Candidates");
+                csv.WriteField("Elected People");
                 csv.NextRecord();
                 csv.WriteField("Rank");
                 csv.WriteField("Name");
@@ -382,12 +382,12 @@ public class ReportExportService : IReportExportService
                 csv.WriteField("Section");
                 csv.NextRecord();
 
-                foreach (var candidate in electionReport.Elected.OrderBy(c => c.Rank))
+                foreach (var person in electionReport.Elected.OrderBy(c => c.Rank))
                 {
-                    csv.WriteField(candidate.Rank.ToString());
-                    csv.WriteField(candidate.FullName);
-                    csv.WriteField(candidate.VoteCount.ToString());
-                    csv.WriteField(candidate.Section);
+                    csv.WriteField(person.Rank.ToString());
+                    csv.WriteField(person.FullName);
+                    csv.WriteField(person.VoteCount.ToString());
+                    csv.WriteField(person.Section);
                     csv.NextRecord();
                 }
 

@@ -8,10 +8,7 @@ const { computerCode } = useComputerCode();
 </script>
 
 <template>
-  <div
-    class="computer-code-badge"
-    :aria-label="t('ballots.computerCodeBadge')"
-  >
+  <div class="computer-code-badge" :aria-label="t('ballots.computerCodeBadge')">
     <el-icon aria-hidden="true">
       <Monitor />
     </el-icon>

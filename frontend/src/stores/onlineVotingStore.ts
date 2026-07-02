@@ -6,7 +6,7 @@ import type {
   RequestCodeDto,
   VerifyCodeDto,
   OnlineElectionInfo,
-  OnlineCandidate,
+  OnlinePerson,
   SubmitOnlineBallotDto,
   OnlineVoteStatus,
   GoogleAuthForVoterDto,
@@ -22,7 +22,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   const voterToken = ref<string | null>(localStorage.getItem("voter_token"));
   const voterId = ref<string | null>(localStorage.getItem("voter_id"));
   const electionInfo = ref<OnlineElectionInfo | null>(null);
-  const candidates = ref<OnlineCandidate[]>([]);
+  const votablePeople = ref<OnlinePerson[]>([]);
   const voteStatus = ref<OnlineVoteStatus | null>(null);
   const availableElections = ref<AvailableElection[]>([]);
   const loading = ref(false);
@@ -32,9 +32,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       loading.value = true;
       const response = await onlineVotingService.requestCode(data);
       return response.messageKey;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -49,9 +46,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       localStorage.setItem("voter_token", response.token);
       localStorage.setItem("voter_id", response.voterId);
       return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -66,9 +60,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       localStorage.setItem("voter_token", response.token);
       localStorage.setItem("voter_id", response.voterId);
       return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -83,9 +74,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       localStorage.setItem("voter_token", response.token);
       localStorage.setItem("voter_id", response.voterId);
       return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -100,9 +88,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       localStorage.setItem("voter_token", response.token);
       localStorage.setItem("voter_id", response.voterId);
       return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -117,9 +102,6 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       localStorage.setItem("voter_token", response.token);
       localStorage.setItem("voter_id", response.voterId);
       return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
     } finally {
       loading.value = false;
     }
@@ -139,11 +121,11 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     }
   }
 
-  async function loadCandidates(electionGuid: string) {
+  async function loadVotablePeople(electionGuid: string) {
     try {
       loading.value = true;
-      const data = await onlineVotingService.getCandidates(electionGuid);
-      candidates.value = data;
+      const data = await onlineVotingService.getVotablePeople(electionGuid);
+      votablePeople.value = data;
       return data;
     } catch (error) {
       handleApiError(error as any);
@@ -172,11 +154,16 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     }
   }
 
-  async function loadAvailableElections(voterIdToLoad: string) {
+  async function loadAvailableElections() {
+    if (!voterToken.value) {
+      throw new Error("Voter is not authenticated.");
+    }
+
     try {
       loading.value = true;
-      const data =
-        await onlineVotingService.getAvailableElections(voterIdToLoad);
+      const data = await onlineVotingService.getAvailableElections(
+        voterToken.value,
+      );
       availableElections.value = data;
       return data;
     } catch (error) {
@@ -208,7 +195,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     voterToken.value = null;
     voterId.value = null;
     electionInfo.value = null;
-    candidates.value = [];
+    votablePeople.value = [];
     voteStatus.value = null;
     availableElections.value = [];
     localStorage.removeItem("voter_token");
@@ -219,7 +206,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     voterToken,
     voterId,
     electionInfo,
-    candidates,
+    votablePeople,
     voteStatus,
     availableElections,
     loading,
@@ -231,7 +218,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     telegramAuth,
     loadAvailableElections,
     loadElectionInfo,
-    loadCandidates,
+    loadVotablePeople,
     submitBallot,
     checkVoteStatus,
     logout,

@@ -18,7 +18,7 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
     /// Calculates ballot statistics specific to single-name elections, including total votes, spoiled ballots, and ballots needing review.
     /// </summary>
     /// <remarks>
-    /// For single-name elections, each ballot can contribute multiple votes if the voter selected multiple candidates.
+    /// For single-name elections, each ballot can contribute multiple votes if the voter selected multiple people.
     /// The ballots status is ignored, since each vote is a ballot on it own.
     /// </remarks>
     protected override void CalculateBallotStatistics()

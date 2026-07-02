@@ -42,7 +42,7 @@ public class PersonDetailDto
     public string? Phone { get; set; }
 
     /// <summary>
-    /// Whether the person can receive votes (be a candidate).
+    /// Whether the person can receive votes.
     /// </summary>
     public bool? CanReceiveVotes { get; set; }
 
