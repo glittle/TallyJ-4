@@ -144,7 +144,7 @@ describe("People Store - People Cache", () => {
       const error = new Error("Network error");
       vi.mocked(peopleService.getAllForBallotEntry).mockRejectedValue(error);
 
-      await expect(store.initializeCache("election-123")).rejects.toThrow(
+      await expect(store.initializePeopleCache("election-123")).rejects.toThrow(
         "Network error",
       );
       expect(store.isCacheInitialized).toBe(false);
