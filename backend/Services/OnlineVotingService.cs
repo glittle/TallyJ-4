@@ -244,6 +244,16 @@ public class OnlineVotingService : IOnlineVotingService
         };
     }
 
+    private static string SanitizeForLog(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return string.Empty;
+        }
+
+        return input.Replace("\r", "").Replace("\n", "");
+    }
+
     /// <inheritdoc/>
     public async Task<List<OnlinePersonDto>> GetPeopleAsync(Guid electionGuid)
     {
@@ -267,6 +277,7 @@ public class OnlineVotingService : IOnlineVotingService
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
         var now = DateTimeOffset.UtcNow;
+        var safeVoterId = SanitizeForLog(dto.VoterId);
 
         try
         {
@@ -428,14 +439,14 @@ public class OnlineVotingService : IOnlineVotingService
             await transaction.CommitAsync();
 
             _logger.LogInformation("Online ballot submitted for voter {VoterId} in election {ElectionGuid}",
-                dto.VoterId, dto.ElectionGuid);
+                safeVoterId, dto.ElectionGuid);
 
             return (true, null);
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            _logger.LogError(ex, "Error submitting online ballot for voter {VoterId}", dto.VoterId);
+            _logger.LogError(ex, "Error submitting online ballot for voter {VoterId}", safeVoterId);
             return (false, "voting.submit.error");
         }
     }
