@@ -18,7 +18,7 @@ import type {
 } from "../services/superAdminService";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
 import { useDebounceFn } from "@/utils/debounce";
-import { ElectionTypeCode } from "@/api/gen/configService";
+import { EnumerationsElectionTypeCode } from "@/api/gen/configService";
 
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
@@ -55,7 +55,7 @@ const statusOptions = [
 ];
 
 const typeOptions = computed(() => {
-  const types = Object.values(ElectionTypeCode);
+  const types = Object.values(EnumerationsElectionTypeCode);
   return [
     { label: "All", value: "" },
     ...types.map((type) => ({

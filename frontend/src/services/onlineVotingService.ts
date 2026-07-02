@@ -1,7 +1,7 @@
 import {
   getApiOnlineVotingAvailableElections,
   getApiOnlineVotingByElectionGuidByVoterIdVoteStatus,
-  getApiOnlineVotingByElectionGuidVotablePeople,
+  getApiOnlineVotingByElectionGuidPeople,
   getApiOnlineVotingByElectionGuidElectionInfo,
   postApiOnlineVotingByElectionGuidSubmitBallot,
   postApiOnlineVotingFacebookAuth,
@@ -100,7 +100,7 @@ export const onlineVotingService = {
   async getVotablePeople(
     electionGuid: string,
   ): Promise<OnlineVotingOnlinePersonDto[]> {
-    const response = await getApiOnlineVotingByElectionGuidVotablePeople({
+    const response = await getApiOnlineVotingByElectionGuidPeople({
       path: { electionGuid },
     });
     return requireData(response.data, "getVotablePeople");
