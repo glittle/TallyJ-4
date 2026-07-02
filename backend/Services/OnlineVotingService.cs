@@ -1285,7 +1285,8 @@ public class OnlineVotingService : IOnlineVotingService
             ExpiresAt = DateTimeOffset.UtcNow.AddHours(24)
         };
 
-        _logger.LogInformation("Voter {VoterId} authenticated via direct kiosk/personal code", normalizedCode);
+        var safeVoterIdForLog = SanitizeForLog(normalizedCode);
+        _logger.LogInformation("Voter {VoterId} authenticated via direct kiosk/personal code", safeVoterIdForLog);
         return (true, null, response);
     }
 
@@ -1310,6 +1311,11 @@ public class OnlineVotingService : IOnlineVotingService
         }
 
         return trimmed.ToUpperInvariant();
+    }
+
+    private static string SanitizeForLog(string value)
+    {
+        return value.Replace("\r", string.Empty).Replace("\n", string.Empty);
     }
 
     private async Task ApplyNotifyPreferenceAsync(OnlineVoter? onlineVoter, bool notifyWhenProcessed)
