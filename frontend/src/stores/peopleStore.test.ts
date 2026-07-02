@@ -118,7 +118,7 @@ describe("People Store - People Cache", () => {
         mockPerson2,
       ]);
 
-      await store.initializeCache("election-123");
+      await store.initializePeopleCache("election-123");
 
       expect(peopleService.getAllForBallotEntry).toHaveBeenCalledWith(
         "election-123",
