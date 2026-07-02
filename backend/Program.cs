@@ -222,21 +222,29 @@ void ConfigureAuthentication(IServiceCollection services, IConfiguration configu
         {
             OnMessageReceived = context =>
             {
-                var accessToken = context.Request.Query["access_token"];
                 var path = context.HttpContext.Request.Path;
+                var accessToken = context.Request.Query["access_token"];
 
                 if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
                 {
                     context.Token = accessToken;
+                    return Task.CompletedTask;
                 }
-                else
+
+                var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
+                if (!string.IsNullOrEmpty(authHeader) &&
+                    authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 {
-                    var tokenCookie = context.Request.Cookies["auth_token"];
-                    if (!string.IsNullOrEmpty(tokenCookie))
-                    {
-                        context.Token = tokenCookie;
-                    }
+                    context.Token = authHeader["Bearer ".Length..].Trim();
+                    return Task.CompletedTask;
                 }
+
+                var tokenCookie = context.Request.Cookies["auth_token"];
+                if (!string.IsNullOrEmpty(tokenCookie))
+                {
+                    context.Token = tokenCookie;
+                }
+
                 return Task.CompletedTask;
             }
         };
@@ -314,6 +322,11 @@ void ConfigureAuthorization(IServiceCollection services)
 
         options.AddPolicy("SuperAdmin", policy =>
             policy.Requirements.Add(new Backend.Authorization.SuperAdminRequirement()));
+
+        options.AddPolicy("OnlineVoter", policy =>
+            policy.RequireAuthenticatedUser()
+                  .RequireClaim("voterType", "online")
+                  .RequireClaim("voterId"));
     });
 
     services.AddScoped<IAuthorizationHandler, Backend.Authorization.ElectionAccessHandler>();

@@ -78,10 +78,12 @@ export const onlineVotingService = {
   },
 
   async getAvailableElections(
-    voterId: string,
+    voterToken: string,
   ): Promise<OnlineVotingAvailableElectionDto[]> {
     const response = await getApiOnlineVotingAvailableElections({
-      query: { voterId },
+      headers: {
+        Authorization: `Bearer ${voterToken}`,
+      },
     });
     return requireData(response.data, "getAvailableElections");
   },

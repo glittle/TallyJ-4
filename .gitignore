@@ -75,3 +75,4 @@ _test_out/*
 mcps/
 terminals/*
 **/_build_out/*
+_agent_out/*

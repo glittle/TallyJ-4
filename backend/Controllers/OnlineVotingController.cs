@@ -138,16 +138,17 @@ public class OnlineVotingController : ControllerBase
 
     /// <summary>
     /// Gets the list of elections available to an authenticated voter.
+    /// Voter identity is derived from the JWT issued during voter authentication.
     /// </summary>
-    /// <param name="voterId">The voter's identifier (from JWT token).</param>
     /// <returns>The list of elections the voter can participate in.</returns>
     [HttpGet("availableElections")]
-    [AllowAnonymous]
-    public async Task<ActionResult<List<AvailableElectionDto>>> GetAvailableElections([FromQuery] string voterId)
+    [Authorize(Policy = "OnlineVoter")]
+    public async Task<ActionResult<List<AvailableElectionDto>>> GetAvailableElections()
     {
+        var voterId = User.FindFirst("voterId")?.Value;
         if (string.IsNullOrWhiteSpace(voterId))
         {
-            return BadRequest(new { error = "Voter ID is required." });
+            return Unauthorized(new { error = "Invalid voter token." });
         }
 
         var elections = await _onlineVotingService.GetAvailableElectionsAsync(voterId);

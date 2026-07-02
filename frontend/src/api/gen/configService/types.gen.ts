@@ -3284,9 +3284,7 @@ export type PostApiOnlineVotingTelegramAuthResponse = PostApiOnlineVotingTelegra
 export type GetApiOnlineVotingAvailableElectionsData = {
     body?: never;
     path?: never;
-    query?: {
-        voterId?: string;
-    };
+    query?: never;
     url: '/api/online-voting/availableElections';
 };
 

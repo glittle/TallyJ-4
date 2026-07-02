@@ -1,8 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -87,6 +90,29 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         Console.WriteLine($"[TEST] SetAuthToken called with token length: {token?.Length ?? 0}, starts with 'eyJ': {token?.StartsWith("eyJ")}");
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         Console.WriteLine($"[TEST] Client.DefaultRequestHeaders.Authorization set to: {Client.DefaultRequestHeaders.Authorization?.ToString() ?? "NULL"}");
+    }
+
+    protected static string GenerateVoterToken(string voterId, string voterIdType = "E")
+    {
+        var key = "ThisIsATestKeyThatIsAtLeast32CharactersLongForJWT";
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim("voterId", voterId),
+            new Claim("voterIdType", voterIdType),
+            new Claim("voterType", "online")
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: "BackendTestAPI",
+            audience: "BackendTestClient",
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(24),
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     protected async Task<HttpResponseMessage> PostJsonAsync<T>(string url, T data)

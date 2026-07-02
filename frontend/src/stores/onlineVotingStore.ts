@@ -154,11 +154,16 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     }
   }
 
-  async function loadAvailableElections(voterIdToLoad: string) {
+  async function loadAvailableElections() {
+    if (!voterToken.value) {
+      throw new Error("Voter is not authenticated.");
+    }
+
     try {
       loading.value = true;
-      const data =
-        await onlineVotingService.getAvailableElections(voterIdToLoad);
+      const data = await onlineVotingService.getAvailableElections(
+        voterToken.value,
+      );
       availableElections.value = data;
       return data;
     } catch (error) {

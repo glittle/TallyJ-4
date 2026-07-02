@@ -3216,15 +3216,6 @@
         "tags": [
           "OnlineVoting"
         ],
-        "parameters": [
-          {
-            "name": "voterId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",

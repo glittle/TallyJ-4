@@ -12,13 +12,13 @@ const onlineVotingStore = useOnlineVotingStore();
 const { showErrorMessage } = useNotifications();
 
 onMounted(async () => {
-  if (!onlineVotingStore.voterId) {
+  if (!onlineVotingStore.voterToken) {
     router.push({ name: "voter-auth" });
     return;
   }
 
   try {
-    await onlineVotingStore.loadAvailableElections(onlineVotingStore.voterId);
+    await onlineVotingStore.loadAvailableElections();
   } catch {
     showErrorMessage(t("voting.elections.loadError"));
   }

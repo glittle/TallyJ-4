@@ -1324,11 +1324,6 @@ public class OnlineVotingService : IOnlineVotingService
         return trimmed.ToUpperInvariant();
     }
 
-    private static string SanitizeForLog(string value)
-    {
-        return value.Replace("\r", string.Empty).Replace("\n", string.Empty);
-    }
-
     private async Task ApplyNotifyPreferenceAsync(OnlineVoter? onlineVoter, bool notifyWhenProcessed)
     {
         if (onlineVoter == null)
