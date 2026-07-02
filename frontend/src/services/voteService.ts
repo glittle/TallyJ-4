@@ -8,6 +8,7 @@ import type {
   CreateVoteDto,
   ReorderVotesDto,
   VoteDto,
+  VotePositionDto,
   VoteWithBallotStatusDto,
 } from "../types";
 import {
@@ -17,17 +18,22 @@ import {
 
 type ApiVoteDto = Parameters<typeof normalizeVoteDto>[0];
 
+function normalizeVotePositions(
+  votePositions: VotePositionDto[] | undefined,
+): VotePositionDto[] | undefined {
+  return votePositions?.map((position) => ({
+    rowId: position.rowId,
+    positionOnBallot: position.positionOnBallot,
+  }));
+}
+
 function normalizeVoteResult(
   result: VoteWithBallotStatusDto,
 ): VoteWithBallotStatusDto {
-  const votes = result.votes
-    ? normalizeVoteList(result.votes as ApiVoteDto[])
-    : undefined;
-
   const normalized: VoteWithBallotStatusDto = {
     ...result,
     vote: result.vote ? normalizeVoteDto(result.vote as ApiVoteDto) : undefined,
-    votes,
+    votePositions: normalizeVotePositions(result.votePositions),
   };
 
   if (

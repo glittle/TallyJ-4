@@ -826,13 +826,6 @@ export type OnlineVotingKakaoAuthForVoterDto = {
     accessToken: string;
 };
 
-export type OnlineVotingOnlineCandidateDto = {
-    personGuid?: string;
-    fullName?: string | null;
-    area?: string | null;
-    otherInfo?: string | null;
-};
-
 export type OnlineVotingOnlineElectionInfoDto = {
     electionGuid?: string;
     name?: string | null;
@@ -844,6 +837,13 @@ export type OnlineVotingOnlineElectionInfoDto = {
     isOpen?: boolean;
     instructions?: string | null;
     onlineSelectionProcess?: string | null;
+};
+
+export type OnlineVotingOnlinePersonDto = {
+    personGuid?: string;
+    fullName?: string | null;
+    area?: string | null;
+    otherInfo?: string | null;
 };
 
 export type OnlineVotingOnlinePoolEntryDto = {
@@ -883,6 +883,7 @@ export type OnlineVotingRequestCodeDto = {
 
 export type OnlineVotingRequestCodeResponseDto = {
     messageKey?: string | null;
+    devVerificationCode?: string | null;
 };
 
 export type OnlineVotingSubmitBallotResponseDto = {
@@ -1093,14 +1094,6 @@ export type PublicElectionStatusDto = {
     ballotsSubmitted?: number;
 };
 
-export type PublicPublicCandidateDto = {
-    rank?: number;
-    fullName?: string | null;
-    voteCount?: number;
-    isTied?: boolean;
-    tieBreakRequired?: boolean;
-};
-
 export type PublicPublicDisplayDto = {
     electionGuid?: string;
     electionName?: string | null;
@@ -1110,8 +1103,8 @@ export type PublicPublicDisplayDto = {
     electionStage?: EnumerationsElectionStage;
     numberToElect?: number;
     numberExtra?: number;
-    electedCandidates?: Array<PublicPublicCandidateDto> | null;
-    additionalCandidates?: Array<PublicPublicCandidateDto> | null;
+    electedPeople?: Array<PublicPublicPersonDto> | null;
+    additionalPeople?: Array<PublicPublicPersonDto> | null;
     statistics?: PublicPublicDisplayStatsDto;
     lastUpdated?: Date;
     isFinalized?: boolean;
@@ -1132,6 +1125,14 @@ export type PublicPublicHomeDto = {
     description?: string | null;
     availableElectionsCount?: number;
     serverTime?: Date;
+};
+
+export type PublicPublicPersonDto = {
+    rank?: number;
+    fullName?: string | null;
+    voteCount?: number;
+    isTied?: boolean;
+    tieBreakRequired?: boolean;
 };
 
 export type ReportsAlignmentRowDto = {
@@ -1466,41 +1467,6 @@ export type ReportsVotesByNumDto = {
     people?: Array<ReportsVotePersonDto> | null;
 };
 
-export type ResultsCandidatePerformanceDto = {
-    personGuid?: string;
-    fullName?: string | null;
-    totalVotes?: number;
-    votePercentage?: number;
-    rank?: number;
-    isElected?: boolean;
-    isEliminated?: boolean;
-    votesByPosition?: {
-        [key: string]: number;
-    } | null;
-    firstChoicePercentage?: number;
-    lastChoicePercentage?: number;
-};
-
-export type ResultsCandidateReportDto = {
-    rank?: number;
-    fullName?: string | null;
-    voteCount?: number;
-    section?: string | null;
-};
-
-export type ResultsCandidateResultDto = {
-    personGuid?: string;
-    fullName?: string | null;
-    voteCount?: number;
-    rank?: number;
-    section?: string | null;
-    isTied?: boolean;
-    tieBreakGroup?: number | null;
-    tieBreakRequired?: boolean;
-    closeToNext?: boolean;
-    closeToPrev?: boolean;
-};
-
 export type ResultsComputerInfoDto = {
     computerCode?: string | null;
     locationName?: string | null;
@@ -1520,7 +1486,7 @@ export type ResultsDemographicTurnoutDto = {
 export type ResultsDetailedStatisticsDto = {
     overview?: ResultsElectionOverviewDto;
     voteDistribution?: ResultsVoteDistributionDto;
-    candidatePerformance?: Array<ResultsCandidatePerformanceDto> | null;
+    personPerformance?: Array<ResultsPersonPerformanceDto> | null;
     turnoutAnalysis?: ResultsTurnoutAnalysisDto;
     locationStatistics?: Array<ResultsLocationStatisticsDto> | null;
 };
@@ -1545,9 +1511,9 @@ export type ResultsElectionReportDto = {
     totalBallots?: number;
     spoiledBallots?: number;
     totalVotes?: number;
-    elected?: Array<ResultsCandidateReportDto> | null;
-    extra?: Array<ResultsCandidateReportDto> | null;
-    other?: Array<ResultsCandidateReportDto> | null;
+    elected?: Array<ResultsPersonReportDto> | null;
+    extra?: Array<ResultsPersonReportDto> | null;
+    other?: Array<ResultsPersonReportDto> | null;
     ties?: Array<ResultsTieReportDto> | null;
 };
 
@@ -1576,7 +1542,7 @@ export type ResultsLocationStatisticsDto = {
     spoiledBallots?: number;
     turnoutPercentage?: number;
     totalVotes?: number;
-    topCandidates?: {
+    topPeople?: {
         [key: string]: number;
     } | null;
 };
@@ -1610,12 +1576,39 @@ export type ResultsParticipationRateDto = {
     } | null;
 };
 
-export type ResultsPresentationCandidateDto = {
+export type ResultsPersonPerformanceDto = {
+    personGuid?: string;
+    fullName?: string | null;
+    totalVotes?: number;
+    votePercentage?: number;
+    rank?: number;
+    isElected?: boolean;
+    isEliminated?: boolean;
+    votesByPosition?: {
+        [key: string]: number;
+    } | null;
+    firstChoicePercentage?: number;
+    lastChoicePercentage?: number;
+};
+
+export type ResultsPersonReportDto = {
     rank?: number;
     fullName?: string | null;
     voteCount?: number;
+    section?: string | null;
+};
+
+export type ResultsPersonResultDto = {
+    personGuid?: string;
+    fullName?: string | null;
+    voteCount?: number;
+    rank?: number;
+    section?: string | null;
     isTied?: boolean;
-    isWinner?: boolean;
+    tieBreakGroup?: number | null;
+    tieBreakRequired?: boolean;
+    closeToNext?: boolean;
+    closeToPrev?: boolean;
 };
 
 export type ResultsPresentationDto = {
@@ -1624,17 +1617,25 @@ export type ResultsPresentationDto = {
     numToElect?: number;
     totalBallots?: number;
     totalVotes?: number;
-    electedCandidates?: Array<ResultsPresentationCandidateDto> | null;
-    extraCandidates?: Array<ResultsPresentationCandidateDto> | null;
+    electedPeople?: Array<ResultsPresentationPersonDto> | null;
+    extraPeople?: Array<ResultsPresentationPersonDto> | null;
     hasTies?: boolean;
     ties?: Array<ResultsPresentationTieDto> | null;
     status?: string | null;
 };
 
+export type ResultsPresentationPersonDto = {
+    rank?: number;
+    fullName?: string | null;
+    voteCount?: number;
+    isTied?: boolean;
+    isWinner?: boolean;
+};
+
 export type ResultsPresentationTieDto = {
     tieBreakGroup?: number;
     section?: string | null;
-    candidateNames?: Array<string> | null;
+    personNames?: Array<string> | null;
     tieBreakRequired?: boolean;
 };
 
@@ -1658,7 +1659,7 @@ export type ResultsTallyResultDto = {
     electionName?: string | null;
     calculatedAt?: Date;
     statistics?: ResultsTallyStatisticsDto;
-    results?: Array<ResultsCandidateResultDto> | null;
+    results?: Array<ResultsPersonResultDto> | null;
     ties?: Array<ResultsTieInfoDto> | null;
 };
 
@@ -1671,16 +1672,9 @@ export type ResultsTallyStatisticsDto = {
     validVotes?: number;
     invalidVotes?: number;
     numVoters?: number;
-    numEligibleCandidates?: number;
+    numEligiblePeople?: number;
     numberToElect?: number;
     numberExtra?: number;
-};
-
-export type ResultsTieCandidateDto = {
-    personGuid?: string;
-    fullName?: string | null;
-    voteCount?: number;
-    tieBreakCount?: number | null;
 };
 
 export type ResultsTieCountDto = {
@@ -1691,7 +1685,7 @@ export type ResultsTieCountDto = {
 export type ResultsTieDetailsDto = {
     tieBreakGroup?: number;
     section?: string | null;
-    candidates?: Array<ResultsTieCandidateDto> | null;
+    people?: Array<ResultsTiePersonDto> | null;
     instructions?: string | null;
 };
 
@@ -1700,13 +1694,20 @@ export type ResultsTieInfoDto = {
     voteCount?: number;
     tieBreakRequired?: boolean;
     section?: string | null;
-    candidateNames?: Array<string> | null;
+    personNames?: Array<string> | null;
+};
+
+export type ResultsTiePersonDto = {
+    personGuid?: string;
+    fullName?: string | null;
+    voteCount?: number;
+    tieBreakCount?: number | null;
 };
 
 export type ResultsTieReportDto = {
     tieBreakGroup?: number;
     section?: string | null;
-    candidateNames?: Array<string> | null;
+    personNames?: Array<string> | null;
 };
 
 export type ResultsTimeBasedTurnoutDto = {
@@ -1850,10 +1851,15 @@ export type VotesVoteDto = {
     onlineVoteRaw?: string | null;
 };
 
+export type VotesVotePositionDto = {
+    rowId?: number;
+    positionOnBallot?: number;
+};
+
 export type VotesVoteWithBallotStatusDto = {
     vote?: VotesVoteDto;
     ballotStatusCode?: EnumerationsBallotStatus;
-    votes?: Array<VotesVoteDto> | null;
+    votePositions?: Array<VotesVotePositionDto> | null;
 };
 
 export type ApiResponseFrontDeskFrontDeskStatsDtoWritable = {
@@ -3311,23 +3317,23 @@ export type GetApiOnlineVotingByElectionGuidElectionInfoResponses = {
 
 export type GetApiOnlineVotingByElectionGuidElectionInfoResponse = GetApiOnlineVotingByElectionGuidElectionInfoResponses[keyof GetApiOnlineVotingByElectionGuidElectionInfoResponses];
 
-export type GetApiOnlineVotingByElectionGuidCandidatesData = {
+export type GetApiOnlineVotingByElectionGuidPeopleData = {
     body?: never;
     path: {
         electionGuid: string;
     };
     query?: never;
-    url: '/api/online-voting/{electionGuid}/candidates';
+    url: '/api/online-voting/{electionGuid}/people';
 };
 
-export type GetApiOnlineVotingByElectionGuidCandidatesResponses = {
+export type GetApiOnlineVotingByElectionGuidPeopleResponses = {
     /**
      * OK
      */
-    200: Array<OnlineVotingOnlineCandidateDto>;
+    200: Array<OnlineVotingOnlinePersonDto>;
 };
 
-export type GetApiOnlineVotingByElectionGuidCandidatesResponse = GetApiOnlineVotingByElectionGuidCandidatesResponses[keyof GetApiOnlineVotingByElectionGuidCandidatesResponses];
+export type GetApiOnlineVotingByElectionGuidPeopleResponse = GetApiOnlineVotingByElectionGuidPeopleResponses[keyof GetApiOnlineVotingByElectionGuidPeopleResponses];
 
 export type PostApiOnlineVotingByElectionGuidSubmitBallotData = {
     body?: OnlineVotingSubmitOnlineBallotDto;
@@ -3409,24 +3415,6 @@ export type GetApiPeopleByElectionGuidSearchPeopleResponses = {
 };
 
 export type GetApiPeopleByElectionGuidSearchPeopleResponse = GetApiPeopleByElectionGuidSearchPeopleResponses[keyof GetApiPeopleByElectionGuidSearchPeopleResponses];
-
-export type GetApiPeopleByElectionGuidGetCandidatesData = {
-    body?: never;
-    path: {
-        electionGuid: string;
-    };
-    query?: never;
-    url: '/api/People/{electionGuid}/getCandidates';
-};
-
-export type GetApiPeopleByElectionGuidGetCandidatesResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseListPeoplePersonDto;
-};
-
-export type GetApiPeopleByElectionGuidGetCandidatesResponse = GetApiPeopleByElectionGuidGetCandidatesResponses[keyof GetApiPeopleByElectionGuidGetCandidatesResponses];
 
 export type GetApiPeopleByElectionGuidGetAllForBallotEntryData = {
     body?: never;

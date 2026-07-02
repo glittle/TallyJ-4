@@ -3298,7 +3298,7 @@
         }
       }
     },
-    "/api/online-voting/{electionGuid}/candidates": {
+    "/api/online-voting/{electionGuid}/people": {
       "get": {
         "tags": [
           "OnlineVoting"
@@ -3322,7 +3322,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OnlineVoting_OnlineCandidateDto"
+                    "$ref": "#/components/schemas/OnlineVoting_OnlinePersonDto"
                   }
                 }
               },
@@ -3330,7 +3330,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OnlineVoting_OnlineCandidateDto"
+                    "$ref": "#/components/schemas/OnlineVoting_OnlinePersonDto"
                   }
                 }
               },
@@ -3338,7 +3338,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OnlineVoting_OnlineCandidateDto"
+                    "$ref": "#/components/schemas/OnlineVoting_OnlinePersonDto"
                   }
                 }
               }
@@ -3553,46 +3553,6 @@
             "in": "query",
             "schema": {
               "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseListPeople_PersonDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseListPeople_PersonDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseListPeople_PersonDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/People/{electionGuid}/getCandidates": {
-      "get": {
-        "tags": [
-          "People"
-        ],
-        "parameters": [
-          {
-            "name": "electionGuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
             }
           }
         ],
@@ -9701,28 +9661,6 @@
         },
         "additionalProperties": false
       },
-      "OnlineVoting_OnlineCandidateDto": {
-        "type": "object",
-        "properties": {
-          "personGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "fullName": {
-            "type": "string",
-            "nullable": true
-          },
-          "area": {
-            "type": "string",
-            "nullable": true
-          },
-          "otherInfo": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "OnlineVoting_OnlineElectionInfoDto": {
         "type": "object",
         "properties": {
@@ -9766,6 +9704,28 @@
             "nullable": true
           },
           "onlineSelectionProcess": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OnlineVoting_OnlinePersonDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "area": {
+            "type": "string",
+            "nullable": true
+          },
+          "otherInfo": {
             "type": "string",
             "nullable": true
           }
@@ -10669,30 +10629,6 @@
         },
         "additionalProperties": false
       },
-      "Public_PublicCandidateDto": {
-        "type": "object",
-        "properties": {
-          "rank": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "fullName": {
-            "type": "string",
-            "nullable": true
-          },
-          "voteCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "isTied": {
-            "type": "boolean"
-          },
-          "tieBreakRequired": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
       "Public_PublicDisplayDto": {
         "type": "object",
         "properties": {
@@ -10727,17 +10663,17 @@
             "type": "integer",
             "format": "int32"
           },
-          "electedCandidates": {
+          "electedPeople": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Public_PublicCandidateDto"
+              "$ref": "#/components/schemas/Public_PublicPersonDto"
             },
             "nullable": true
           },
-          "additionalCandidates": {
+          "additionalPeople": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Public_PublicCandidateDto"
+              "$ref": "#/components/schemas/Public_PublicPersonDto"
             },
             "nullable": true
           },
@@ -10806,6 +10742,30 @@
           "serverTime": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Public_PublicPersonDto": {
+        "type": "object",
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "voteCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isTied": {
+            "type": "boolean"
+          },
+          "tieBreakRequired": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -11980,119 +11940,6 @@
         },
         "additionalProperties": false
       },
-      "Results_CandidatePerformanceDto": {
-        "type": "object",
-        "properties": {
-          "personGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "fullName": {
-            "type": "string",
-            "nullable": true
-          },
-          "totalVotes": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "votePercentage": {
-            "type": "number",
-            "format": "double"
-          },
-          "rank": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "isElected": {
-            "type": "boolean"
-          },
-          "isEliminated": {
-            "type": "boolean"
-          },
-          "votesByPosition": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
-          "firstChoicePercentage": {
-            "type": "number",
-            "format": "double"
-          },
-          "lastChoicePercentage": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "additionalProperties": false
-      },
-      "Results_CandidateReportDto": {
-        "type": "object",
-        "properties": {
-          "rank": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "fullName": {
-            "type": "string",
-            "nullable": true
-          },
-          "voteCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "section": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Results_CandidateResultDto": {
-        "type": "object",
-        "properties": {
-          "personGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "fullName": {
-            "type": "string",
-            "nullable": true
-          },
-          "voteCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "rank": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "section": {
-            "type": "string",
-            "nullable": true
-          },
-          "isTied": {
-            "type": "boolean"
-          },
-          "tieBreakGroup": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "tieBreakRequired": {
-            "type": "boolean"
-          },
-          "closeToNext": {
-            "type": "boolean"
-          },
-          "closeToPrev": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
       "Results_ComputerInfoDto": {
         "type": "object",
         "properties": {
@@ -12154,10 +12001,10 @@
           "voteDistribution": {
             "$ref": "#/components/schemas/Results_VoteDistributionDto"
           },
-          "candidatePerformance": {
+          "personPerformance": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Results_CandidatePerformanceDto"
+              "$ref": "#/components/schemas/Results_PersonPerformanceDto"
             },
             "nullable": true
           },
@@ -12253,21 +12100,21 @@
           "elected": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Results_CandidateReportDto"
+              "$ref": "#/components/schemas/Results_PersonReportDto"
             },
             "nullable": true
           },
           "extra": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Results_CandidateReportDto"
+              "$ref": "#/components/schemas/Results_PersonReportDto"
             },
             "nullable": true
           },
           "other": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Results_CandidateReportDto"
+              "$ref": "#/components/schemas/Results_PersonReportDto"
             },
             "nullable": true
           },
@@ -12363,7 +12210,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "topCandidates": {
+          "topPeople": {
             "type": "object",
             "additionalProperties": {
               "type": "integer",
@@ -12474,7 +12321,55 @@
         },
         "additionalProperties": false
       },
-      "Results_PresentationCandidateDto": {
+      "Results_PersonPerformanceDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalVotes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "votePercentage": {
+            "type": "number",
+            "format": "double"
+          },
+          "rank": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isElected": {
+            "type": "boolean"
+          },
+          "isEliminated": {
+            "type": "boolean"
+          },
+          "votesByPosition": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "firstChoicePercentage": {
+            "type": "number",
+            "format": "double"
+          },
+          "lastChoicePercentage": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Results_PersonReportDto": {
         "type": "object",
         "properties": {
           "rank": {
@@ -12489,10 +12384,51 @@
             "type": "integer",
             "format": "int32"
           },
+          "section": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Results_PersonResultDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "voteCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rank": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "section": {
+            "type": "string",
+            "nullable": true
+          },
           "isTied": {
             "type": "boolean"
           },
-          "isWinner": {
+          "tieBreakGroup": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tieBreakRequired": {
+            "type": "boolean"
+          },
+          "closeToNext": {
+            "type": "boolean"
+          },
+          "closeToPrev": {
             "type": "boolean"
           }
         },
@@ -12522,17 +12458,17 @@
             "type": "integer",
             "format": "int32"
           },
-          "electedCandidates": {
+          "electedPeople": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Results_PresentationCandidateDto"
+              "$ref": "#/components/schemas/Results_PresentationPersonDto"
             },
             "nullable": true
           },
-          "extraCandidates": {
+          "extraPeople": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Results_PresentationCandidateDto"
+              "$ref": "#/components/schemas/Results_PresentationPersonDto"
             },
             "nullable": true
           },
@@ -12553,6 +12489,30 @@
         },
         "additionalProperties": false
       },
+      "Results_PresentationPersonDto": {
+        "type": "object",
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "voteCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isTied": {
+            "type": "boolean"
+          },
+          "isWinner": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "Results_PresentationTieDto": {
         "type": "object",
         "properties": {
@@ -12564,7 +12524,7 @@
             "type": "string",
             "nullable": true
           },
-          "candidateNames": {
+          "personNames": {
             "type": "array",
             "items": {
               "type": "string"
@@ -12640,7 +12600,7 @@
           "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Results_CandidateResultDto"
+              "$ref": "#/components/schemas/Results_PersonResultDto"
             },
             "nullable": true
           },
@@ -12689,7 +12649,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "numEligibleCandidates": {
+          "numEligiblePeople": {
             "type": "integer",
             "format": "int32"
           },
@@ -12700,29 +12660,6 @@
           "numberExtra": {
             "type": "integer",
             "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "Results_TieCandidateDto": {
-        "type": "object",
-        "properties": {
-          "personGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "fullName": {
-            "type": "string",
-            "nullable": true
-          },
-          "voteCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "tieBreakCount": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -12752,10 +12689,10 @@
             "type": "string",
             "nullable": true
           },
-          "candidates": {
+          "people": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Results_TieCandidateDto"
+              "$ref": "#/components/schemas/Results_TiePersonDto"
             },
             "nullable": true
           },
@@ -12784,11 +12721,34 @@
             "type": "string",
             "nullable": true
           },
-          "candidateNames": {
+          "personNames": {
             "type": "array",
             "items": {
               "type": "string"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Results_TiePersonDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "voteCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tieBreakCount": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },
@@ -12805,7 +12765,7 @@
             "type": "string",
             "nullable": true
           },
-          "candidateNames": {
+          "personNames": {
             "type": "array",
             "items": {
               "type": "string"
@@ -13281,6 +13241,20 @@
         },
         "additionalProperties": false
       },
+      "Votes_VotePositionDto": {
+        "type": "object",
+        "properties": {
+          "rowId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "positionOnBallot": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "Votes_VoteWithBallotStatusDto": {
         "type": "object",
         "properties": {
@@ -13290,10 +13264,10 @@
           "ballotStatusCode": {
             "$ref": "#/components/schemas/Enumerations_BallotStatus"
           },
-          "votes": {
+          "votePositions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Votes_VoteDto"
+              "$ref": "#/components/schemas/Votes_VotePositionDto"
             },
             "nullable": true
           }

@@ -1,0 +1,21 @@
+{
+  "presentation.electionResults": "Election Results",
+  "presentation.positionsToFill": "{count} positions to fill",
+  "presentation.totalBallots": "{count} ballots",
+  "presentation.totalVotes": "{count} votes",
+  "presentation.electedPeople": "Elected",
+  "presentation.extraPeople": "Extra",
+  "presentation.votes": "{count} votes | {count} vote | {count} votes",
+  "presentation.ties": "Ties",
+  "presentation.tieGroup": "Tie Group #{group}",
+  "presentation.tieBreakRequired": "Tie-break required",
+  "presentation.noData": "No presentation data available",
+  "presentation.generatedAt": "Generated at {time}",
+  "presentation.statusComplete": "Complete",
+  "presentation.statusInProgress": "In Progress",
+  "presentation.statusPaused": "Paused",
+  "presentation.statusError": "Error",
+  "presentation.elected": "Elected",
+  "presentation.extra": "Extra",
+  "presentation.other": "Other"
+}

@@ -15,9 +15,9 @@ describe("useVoterBallot", () => {
     expect(slots[2].position).toBe(3);
   });
 
-  it("getEffectiveVoteName returns candidate name in list mode", () => {
+  it("getEffectiveVoteName returns person name in list mode", () => {
     const slot = createEmptyVoteSlots(1)[0];
-    slot.candidate = {
+    slot.person = {
       personGuid: "abc",
       fullName: "Jane Doe",
     };
@@ -65,7 +65,7 @@ describe("useVoterBallot", () => {
   it("applyPriorVotes prefills slots from status", () => {
     const { applyPriorVotes } = useVoterBallotHelpers(() => "A");
     const slots = createEmptyVoteSlots(2);
-    const candidates = [
+    const votablePeople = [
       { personGuid: "p1", fullName: "Alice Smith" },
       { personGuid: "p2", fullName: "Bob Jones" },
     ];
@@ -79,10 +79,10 @@ describe("useVoterBallot", () => {
           { voteName: "Free Name", positionOnBallot: 2 },
         ],
       },
-      candidates,
+      votablePeople,
     );
 
-    expect(slots[0].candidate?.fullName).toBe("Alice Smith");
+    expect(slots[0].person?.fullName).toBe("Alice Smith");
     expect(slots[1].searchText).toBe("Free Name");
   });
 });

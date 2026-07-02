@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Data transfer object containing election results formatted for presentation.
@@ -16,7 +16,7 @@ public class PresentationDto
     public DateTimeOffset? ElectionDate { get; set; }
 
     /// <summary>
-    /// Number of candidates to be elected.
+    /// Number of people to be elected.
     /// </summary>
     public int NumToElect { get; set; }
 
@@ -33,12 +33,12 @@ public class PresentationDto
     /// <summary>
     /// List of people who have been elected.
     /// </summary>
-    public List<PresentationCandidateDto> ElectedCandidates { get; set; } = new();
+    public List<PresentationPersonDto> ElectedPeople { get; set; } = new();
 
     /// <summary>
     /// List of additional people who received votes but were not elected.
     /// </summary>
-    public List<PresentationCandidateDto> ExtraCandidates { get; set; } = new();
+    public List<PresentationPersonDto> ExtraPeople { get; set; } = new();
 
     /// <summary>
     /// Indicates whether there are any ties in the election results.
@@ -59,7 +59,7 @@ public class PresentationDto
 /// <summary>
 /// Data transfer object containing information about a person for presentation purposes.
 /// </summary>
-public class PresentationCandidateDto
+public class PresentationPersonDto
 {
     /// <summary>
     /// The ranking position of this person in the election results.
@@ -103,14 +103,12 @@ public class PresentationTieDto
     public string Section { get; set; } = string.Empty;
 
     /// <summary>
-    /// List of candidate names involved in this tie.
+    /// List of person names involved in this tie.
     /// </summary>
-    public List<string> CandidateNames { get; set; } = new();
+    public List<string> PersonNames { get; set; } = new();
 
     /// <summary>
     /// Indicates whether manual tie-breaking is required.
     /// </summary>
     public bool TieBreakRequired { get; set; }
 }
-
-

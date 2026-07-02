@@ -3,7 +3,7 @@ export type {
   OnlineVotingFacebookAuthForVoterDto as FacebookAuthForVoterDto,
   OnlineVotingGoogleAuthForVoterDto as GoogleAuthForVoterDto,
   OnlineVotingKakaoAuthForVoterDto as KakaoAuthForVoterDto,
-  OnlineVotingOnlineCandidateDto as OnlineCandidate,
+  OnlineVotingOnlinePersonDto as OnlinePerson,
   OnlineVotingOnlineElectionInfoDto as OnlineElectionInfo,
   OnlineVotingOnlinePoolEntryDto as OnlinePoolEntry,
   OnlineVotingOnlineVoteDto as OnlineVote,

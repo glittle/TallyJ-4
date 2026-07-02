@@ -425,7 +425,7 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetBallotsReport_TiedFilter_ReturnsBallotsWithTiedCandidates()
+    public async Task GetBallotsReport_TiedFilter_ReturnsBallotsWithTiedPeople()
     {
         var loc = await AddLocation("Hall");
         var tiedPerson = await AddPerson("Tied", "T");

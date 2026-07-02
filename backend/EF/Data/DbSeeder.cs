@@ -300,7 +300,7 @@ public static class DbSeeder
             {
                 ElectionGuid = electionGuid,
                 Title = "Voting Instructions",
-                Details = "Please vote for up to 9 candidates",
+                Details = "Please vote for up to 9 people",
                 AsOf = DateTimeOffset.Now.AddDays(-4)
             }
         };
@@ -462,47 +462,47 @@ public static class DbSeeder
             };
             ballots.Add(ballot);
 
-            var selectedCandidates = new HashSet<int>();
-            while (selectedCandidates.Count < 9)
+            var selectedPersonIndices = new HashSet<int>();
+            while (selectedPersonIndices.Count < 9)
             {
-                int candidateIndex = -1;
-                var rand = new Random(b * 1000 + selectedCandidates.Count).Next(100);
+                int personIndex = -1;
+                var rand = new Random(b * 1000 + selectedPersonIndices.Count).Next(100);
 
-                if (rand < 60 && !selectedCandidates.Contains(0)) candidateIndex = 0;
-                else if (rand < 75 && !selectedCandidates.Contains(1)) candidateIndex = 1;
-                else if (rand < 85 && !selectedCandidates.Contains(2)) candidateIndex = 2;
-                else if (rand < 90 && !selectedCandidates.Contains(3)) candidateIndex = 3;
-                else if (rand < 93 && !selectedCandidates.Contains(4)) candidateIndex = 4;
-                else if (rand < 95 && !selectedCandidates.Contains(5)) candidateIndex = 5;
-                else if (rand < 96 && !selectedCandidates.Contains(6)) candidateIndex = 6;
-                else if (rand < 97 && !selectedCandidates.Contains(7)) candidateIndex = 7;
-                else if (rand < 98 && !selectedCandidates.Contains(8)) candidateIndex = 8;
+                if (rand < 60 && !selectedPersonIndices.Contains(0)) personIndex = 0;
+                else if (rand < 75 && !selectedPersonIndices.Contains(1)) personIndex = 1;
+                else if (rand < 85 && !selectedPersonIndices.Contains(2)) personIndex = 2;
+                else if (rand < 90 && !selectedPersonIndices.Contains(3)) personIndex = 3;
+                else if (rand < 93 && !selectedPersonIndices.Contains(4)) personIndex = 4;
+                else if (rand < 95 && !selectedPersonIndices.Contains(5)) personIndex = 5;
+                else if (rand < 96 && !selectedPersonIndices.Contains(6)) personIndex = 6;
+                else if (rand < 97 && !selectedPersonIndices.Contains(7)) personIndex = 7;
+                else if (rand < 98 && !selectedPersonIndices.Contains(8)) personIndex = 8;
                 else
                 {
                     for (int i = 9; i < 15; i++)
                     {
-                        if (!selectedCandidates.Contains(i))
+                        if (!selectedPersonIndices.Contains(i))
                         {
-                            candidateIndex = i;
+                            personIndex = i;
                             break;
                         }
                     }
                 }
 
-                if (candidateIndex >= 0)
+                if (personIndex >= 0)
                 {
-                    selectedCandidates.Add(candidateIndex);
+                    selectedPersonIndices.Add(personIndex);
                 }
             }
 
             int position = 1;
-            foreach (var candidateIndex in selectedCandidates)
+            foreach (var personIndex in selectedPersonIndices)
             {
                 votes.Add(new Vote
                 {
                     BallotGuid = ballotGuid,
                     PositionOnBallot = position++,
-                    PersonGuid = people[candidateIndex].PersonGuid,
+                    PersonGuid = people[personIndex].PersonGuid,
                     VoteStatus = VoteStatus.Ok
                 });
             }
@@ -709,9 +709,9 @@ public static class DbSeeder
             {
                 context.People.Add(new Person
                 {
-                    PersonGuid = CreateGuid($"Candidate{randomGuid}{i}"),
+                    PersonGuid = CreateGuid($"Person{randomGuid}{i}"),
                     ElectionGuid = randomGuid,
-                    FirstName = $"Candidate{i}",
+                    FirstName = $"Person{i}",
                     LastName = "Random",
                     CanVote = false,
                     CanReceiveVotes = true,
@@ -758,9 +758,9 @@ public static class DbSeeder
             {
                 context.People.Add(new Person
                 {
-                    PersonGuid = CreateGuid($"Candidate{bothGuid}{i}"),
+                    PersonGuid = CreateGuid($"Person{bothGuid}{i}"),
                     ElectionGuid = bothGuid,
-                    FirstName = $"Candidate{i}",
+                    FirstName = $"Person{i}",
                     LastName = "Both",
                     CanVote = false,
                     CanReceiveVotes = true,

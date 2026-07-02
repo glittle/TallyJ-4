@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Filtered report data with applied filters
@@ -28,7 +28,7 @@ public class FilteredReportDto
     /// <summary>
     /// Filtered list of results.
     /// </summary>
-    public List<CandidateReportDto> Candidates { get; set; } = new();
+    public List<PersonReportDto> People { get; set; } = new();
 
     /// <summary>
     /// Filtered list of location results.

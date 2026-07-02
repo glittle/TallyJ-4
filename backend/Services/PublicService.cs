@@ -167,9 +167,9 @@ public class PublicService : IPublicService
         var numberToElect = election.NumberToElect ?? 0;
         var numberExtra = election.NumberExtra ?? 0;
 
-        var electedCandidates = results
+        var electedPeople = results
             .Where(r => r.Section == "E" && r.Rank > 0 && r.Rank <= numberToElect)
-            .Select(r => new PublicCandidateDto
+            .Select(r => new PublicPersonDto
             {
                 Rank = r.Rank,
                 FullName = r.Person != null
@@ -182,10 +182,10 @@ public class PublicService : IPublicService
             .OrderBy(c => c.Rank)
             .ToList();
 
-        var additionalCandidates = results
+        var additionalPeople = results
             .Where(r => (r.Section == "X" || (r.Section == "E" && r.Rank > numberToElect))
                         && r.Rank > 0 && r.Rank <= numberToElect + numberExtra)
-            .Select(r => new PublicCandidateDto
+            .Select(r => new PublicPersonDto
             {
                 Rank = r.Rank,
                 FullName = r.Person != null
@@ -219,8 +219,8 @@ public class PublicService : IPublicService
             ElectionStage = election.ElectionStage,
             NumberToElect = numberToElect,
             NumberExtra = numberExtra,
-            ElectedCandidates = electedCandidates,
-            AdditionalCandidates = additionalCandidates,
+            ElectedPeople = electedPeople,
+            AdditionalPeople = additionalPeople,
             Statistics = new PublicDisplayStatsDto
             {
                 TotalBallots = totalBallots,

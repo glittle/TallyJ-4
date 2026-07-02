@@ -96,6 +96,8 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
+        Assert.NotNull(result.Vote);
+        Assert.Null(result.VotePositions);
         Assert.Equal(VoteStatus.Ok, result.Vote.VoteStatus);
         Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
     }
@@ -117,6 +119,7 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
+        Assert.NotNull(result.Vote);
         Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
         Assert.Equal("V06", result.Vote.IneligibleReasonCode);
         Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
@@ -432,11 +435,14 @@ public class VoteServiceTests : ServiceTestBase
             PositionOnBallot = 1,
         });
 
-        Assert.Equal(2, result.Vote!.PositionOnBallot);
-        Assert.Equal(2, result.Votes.Count);
-        AssertUniqueContiguousPositions(result.Votes);
-        Assert.DoesNotContain(result.Votes, v => v.PositionOnBallot == 1 && v.PersonGuid == second.PersonGuid);
-        Assert.Contains(result.Votes, v => v.PositionOnBallot == 2 && v.PersonGuid == second.PersonGuid);
+        Assert.NotNull(result.Vote);
+        Assert.Equal(2, result.Vote.PositionOnBallot);
+        Assert.Equal(second.PersonGuid, result.Vote.PersonGuid);
+        Assert.NotNull(result.VotePositions);
+        Assert.Equal(2, result.VotePositions.Count);
+        AssertUniqueContiguousPositions(result.VotePositions);
+        Assert.DoesNotContain(result.VotePositions, v => v.PositionOnBallot == 1 && v.RowId == result.Vote.RowId);
+        Assert.Contains(result.VotePositions, v => v.PositionOnBallot == 2 && v.RowId == result.Vote.RowId);
     }
 
     [Fact]
@@ -481,10 +487,13 @@ public class VoteServiceTests : ServiceTestBase
             PositionOnBallot = 9,
         });
 
-        Assert.Equal(4, result.Vote!.PositionOnBallot);
-        Assert.Equal(4, result.Votes.Count);
-        AssertUniqueContiguousPositions(result.Votes);
-        Assert.Contains(result.Votes, v => v.PersonGuid == newPerson.PersonGuid && v.PositionOnBallot == 4);
+        Assert.NotNull(result.Vote);
+        Assert.Equal(4, result.Vote.PositionOnBallot);
+        Assert.Equal(newPerson.PersonGuid, result.Vote.PersonGuid);
+        Assert.NotNull(result.VotePositions);
+        Assert.Equal(4, result.VotePositions.Count);
+        AssertUniqueContiguousPositions(result.VotePositions);
+        Assert.Contains(result.VotePositions, v => v.RowId == result.Vote.RowId && v.PositionOnBallot == 4);
     }
 
     [Fact]
@@ -529,9 +538,11 @@ public class VoteServiceTests : ServiceTestBase
             PositionOnBallot = 2,
         });
 
-        Assert.Equal(4, result.Votes.Count);
-        AssertUniqueContiguousPositions(result.Votes);
-        Assert.Equal(4, result.Vote!.PositionOnBallot);
+        Assert.NotNull(result.Vote);
+        Assert.Equal(4, result.Vote.PositionOnBallot);
+        Assert.NotNull(result.VotePositions);
+        Assert.Equal(4, result.VotePositions.Count);
+        AssertUniqueContiguousPositions(result.VotePositions);
     }
 
     [Fact]
@@ -556,14 +567,21 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.DeleteVoteAsync(voteToDelete.RowId);
 
         Assert.NotNull(result);
-        Assert.Equal(3, result!.Votes.Count);
-        AssertUniqueContiguousPositions(result.Votes);
-        Assert.Equal(people[0].PersonGuid, result.Votes[0].PersonGuid);
-        Assert.Equal(people[2].PersonGuid, result.Votes[1].PersonGuid);
-        Assert.Equal(people[3].PersonGuid, result.Votes[2].PersonGuid);
-        Assert.Equal(1, result.Votes[0].PositionOnBallot);
-        Assert.Equal(2, result.Votes[1].PositionOnBallot);
-        Assert.Equal(3, result.Votes[2].PositionOnBallot);
+        Assert.Null(result.Vote);
+        Assert.NotNull(result.VotePositions);
+        Assert.Equal(3, result.VotePositions.Count);
+        AssertUniqueContiguousPositions(result.VotePositions);
+
+        var remainingVotes = Context.Votes
+            .Where(v => v.BallotGuid == BallotGuid)
+            .OrderBy(v => v.PositionOnBallot)
+            .ToList();
+        Assert.Equal(people[0].PersonGuid, remainingVotes[0].PersonGuid);
+        Assert.Equal(people[2].PersonGuid, remainingVotes[1].PersonGuid);
+        Assert.Equal(people[3].PersonGuid, remainingVotes[2].PersonGuid);
+        Assert.Equal(remainingVotes[0].RowId, result.VotePositions[0].RowId);
+        Assert.Equal(remainingVotes[1].RowId, result.VotePositions[1].RowId);
+        Assert.Equal(remainingVotes[2].RowId, result.VotePositions[2].RowId);
     }
 
     [Fact]
@@ -597,11 +615,19 @@ public class VoteServiceTests : ServiceTestBase
         });
 
         Assert.NotNull(result);
-        Assert.Equal(3, result!.Votes.Count);
-        Assert.Equal(people[2].PersonGuid, result.Votes[0].PersonGuid);
-        Assert.Equal(people[0].PersonGuid, result.Votes[1].PersonGuid);
-        Assert.Equal(people[1].PersonGuid, result.Votes[2].PersonGuid);
-        AssertUniqueContiguousPositions(result.Votes);
+        Assert.Null(result.Vote);
+        Assert.NotNull(result.VotePositions);
+        Assert.Equal(3, result.VotePositions.Count);
+        AssertUniqueContiguousPositions(result.VotePositions);
+
+        var reorderedVotes = Context.Votes
+            .Where(v => v.BallotGuid == BallotGuid)
+            .OrderBy(v => v.PositionOnBallot)
+            .ToList();
+        Assert.Equal(people[2].PersonGuid, reorderedVotes[0].PersonGuid);
+        Assert.Equal(people[0].PersonGuid, reorderedVotes[1].PersonGuid);
+        Assert.Equal(people[1].PersonGuid, reorderedVotes[2].PersonGuid);
+        Assert.Equal(reorderedVotes.Select(v => v.RowId), result.VotePositions.Select(vp => vp.RowId));
     }
 
     [Fact]
@@ -643,5 +669,12 @@ public class VoteServiceTests : ServiceTestBase
         var positions = votes.Select(v => v.PositionOnBallot).ToList();
         Assert.Equal(positions.Count, positions.Distinct().Count());
         Assert.Equal(Enumerable.Range(1, votes.Count), positions.OrderBy(p => p));
+    }
+
+    private static void AssertUniqueContiguousPositions(IReadOnlyList<VotePositionDto> votePositions)
+    {
+        var positions = votePositions.Select(v => v.PositionOnBallot).ToList();
+        Assert.Equal(positions.Count, positions.Distinct().Count());
+        Assert.Equal(Enumerable.Range(1, votePositions.Count), positions.OrderBy(p => p));
     }
 }

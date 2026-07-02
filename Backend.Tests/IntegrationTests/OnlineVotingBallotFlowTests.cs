@@ -88,7 +88,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         var electionGuid = await SetupOpenElectionWithVoter(email, selectionProcess: "C");
         await EnsureOnlineVoterAsync(email, "E");
 
-        var candidates = await SetupCandidatesAsync(electionGuid, 9);
+        var people = await SetupPeopleAsync(electionGuid, 9);
         var pool = new List<OnlinePoolEntryDto>
         {
             new() { FullName = "Pool Person One", FirstName = "Pool", LastName = "One" },
@@ -100,7 +100,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         {
             votes.Add(new OnlineVoteDto
             {
-                PersonGuid = candidates[i],
+                PersonGuid = people[i],
                 PositionOnBallot = i + 1
             });
         }
@@ -162,7 +162,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         var email = $"twice_{Guid.NewGuid():N}@example.com";
         var electionGuid = await SetupOpenElectionWithVoter(email);
         await EnsureOnlineVoterAsync(email, "E");
-        var candidates = await SetupCandidatesAsync(electionGuid, 2);
+        var people = await SetupPeopleAsync(electionGuid, 2);
 
         async Task<DateTimeOffset?> SubmitAndGetTimestamp(int voteCount)
         {
@@ -170,7 +170,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
             {
                 ElectionGuid = electionGuid,
                 VoterId = email,
-                Votes = candidates.Take(voteCount).Select((c, i) => new OnlineVoteDto
+                Votes = people.Take(voteCount).Select((c, i) => new OnlineVoteDto
                 {
                     PersonGuid = c,
                     PositionOnBallot = i + 1
@@ -220,13 +220,13 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         var electionGuid = await SetupOpenElectionWithVoter(email);
         await EnsureOnlineVoterAsync(email, "E");
 
-        var candidates = await SetupCandidatesAsync(electionGuid, 3);
+        var people = await SetupPeopleAsync(electionGuid, 3);
         var submitDto = new SubmitOnlineBallotDto
         {
             ElectionGuid = electionGuid,
             VoterId = email,
             NotifyWhenProcessed = true,
-            Votes = candidates.Select((c, i) => new OnlineVoteDto
+            Votes = people.Select((c, i) => new OnlineVoteDto
             {
                 PersonGuid = c,
                 PositionOnBallot = i + 1
@@ -251,7 +251,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
             ElectionGuid = electionGuid,
             VoterId = email,
             NotifyWhenProcessed = false,
-            Votes = candidates.Take(2).Select((c, i) => new OnlineVoteDto
+            Votes = people.Take(2).Select((c, i) => new OnlineVoteDto
             {
                 PersonGuid = c,
                 PositionOnBallot = i + 1
@@ -287,7 +287,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         }
     }
 
-    private async Task<List<Guid>> SetupCandidatesAsync(Guid electionGuid, int count)
+    private async Task<List<Guid>> SetupPeopleAsync(Guid electionGuid, int count)
     {
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
@@ -301,7 +301,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
             {
                 ElectionGuid = electionGuid,
                 PersonGuid = guid,
-                FirstName = $"Candidate{i}",
+                FirstName = $"Person{i}",
                 LastName = "Test",
                 CanReceiveVotes = true,
                 CanVote = true,

@@ -75,10 +75,10 @@ function getSectionLabel(section: string) {
             </el-tag>
           </div>
 
-          <div class="candidates-list">
-            <strong>{{ $t("results.tiedCandidates") }}:</strong>
+          <div class="people-list">
+            <strong>{{ $t("results.tiedPeople") }}:</strong>
             <ul>
-              <li v-for="(name, index) in tie.candidateNames" :key="index">
+              <li v-for="(name, index) in tie.personNames" :key="index">
                 {{ name }}
               </li>
             </ul>
@@ -126,12 +126,12 @@ function getSectionLabel(section: string) {
     align-items: center;
   }
 
-  .candidates-list ul {
+  .people-list ul {
     margin: 10px 0 0 0;
     padding-left: 20px;
   }
 
-  .candidates-list li {
+  .people-list li {
     margin: 5px 0;
     color: #606266;
   }

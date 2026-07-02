@@ -1,27 +1,27 @@
-﻿namespace Backend.DTOs.OnlineVoting;
+namespace Backend.DTOs.OnlineVoting;
 
 /// <summary>
-/// Data transfer object representing a candidate in an online election.
+/// Data transfer object representing a person in an online election.
 /// </summary>
-public class OnlineCandidateDto
+public class OnlinePersonDto
 {
     /// <summary>
-    /// The unique identifier of the person/candidate.
+    /// The unique identifier of the person.
     /// </summary>
     public Guid PersonGuid { get; set; }
 
     /// <summary>
-    /// The full name of the candidate.
+    /// The full name of the person.
     /// </summary>
     public string FullName { get; set; } = null!;
 
     /// <summary>
-    /// The geographical area of the candidate.
+    /// The geographical area of the person.
     /// </summary>
     public string? Area { get; set; }
 
     /// <summary>
-    /// Additional information about the candidate.
+    /// Additional information about the person.
     /// </summary>
     public string? OtherInfo { get; set; }
 }

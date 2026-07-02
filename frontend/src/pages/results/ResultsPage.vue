@@ -75,10 +75,10 @@
             <ResultsTable :results="results.results" />
           </el-tab-pane>
           <el-tab-pane :label="$t('results.elected')" name="elected">
-            <ResultsTable :results="electedCandidates" />
+            <ResultsTable :results="electedPeople" />
           </el-tab-pane>
           <el-tab-pane :label="$t('results.extra')" name="extra">
-            <ResultsTable :results="extraCandidates" />
+            <ResultsTable :results="extraPeople" />
           </el-tab-pane>
           <el-tab-pane
             :label="$t('results.ties')"
@@ -130,11 +130,11 @@ const tallyProgressMessage = computed(() => {
   );
 });
 
-const electedCandidates = computed(
+const electedPeople = computed(
   () => results.value?.results.filter((r) => r.section === "E") || [],
 );
 
-const extraCandidates = computed(
+const extraPeople = computed(
   () => results.value?.results.filter((r) => r.section === "X") || [],
 );
 

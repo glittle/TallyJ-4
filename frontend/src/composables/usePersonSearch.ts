@@ -23,7 +23,7 @@ const CACHE_TTL = 60000; // 1 minute
 
 export function usePersonSearch(
   searchQuery: Ref<string>,
-  candidates: Ref<SearchablePersonDto[]>,
+  searchablePeople: Ref<SearchablePersonDto[]>,
   options: UsePersonSearchOptions = {},
 ) {
   const { debounceDelay = 150, maxResults = 20, enableCache = true } = options;
@@ -129,10 +129,10 @@ export function usePersonSearch(
   );
 
   const searchResults = computed(() => {
-    return performSearch(searchQuery.value, candidates.value);
+    return performSearch(searchQuery.value, searchablePeople.value);
   });
 
-  watch(candidates, () => {
+  watch(searchablePeople, () => {
     cache.value.clear();
   });
 

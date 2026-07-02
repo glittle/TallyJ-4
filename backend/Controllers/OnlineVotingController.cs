@@ -1,4 +1,4 @@
-﻿using Backend.DTOs.OnlineVoting;
+using Backend.DTOs.OnlineVoting;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -174,16 +174,16 @@ public class OnlineVotingController : ControllerBase
     }
 
     /// <summary>
-    /// Gets the list of candidates for an election.
+    /// Gets the list of people for an election.
     /// </summary>
     /// <param name="electionGuid">The election GUID.</param>
-    /// <returns>The list of candidates.</returns>
-    [HttpGet("{electionGuid}/candidates")]
+    /// <returns>The list of people.</returns>
+    [HttpGet("{electionGuid}/people")]
     [AllowAnonymous]
-    public async Task<ActionResult<List<OnlineCandidateDto>>> GetCandidates(Guid electionGuid)
+    public async Task<ActionResult<List<OnlinePersonDto>>> GetPeople(Guid electionGuid)
     {
-        var candidates = await _onlineVotingService.GetCandidatesAsync(electionGuid);
-        return Ok(candidates);
+        var people = await _onlineVotingService.GetPeopleAsync(electionGuid);
+        return Ok(people);
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Comprehensive statistical analysis of election data
@@ -16,9 +16,9 @@ public class StatisticalAnalysisDto
     public VotingPatternAnalysisDto VotingPatterns { get; set; } = new();
 
     /// <summary>
-    /// Analysis of candidate performance and clustering.
+    /// Analysis of person performance and clustering.
     /// </summary>
-    public CandidateAnalysisDto CandidateAnalysis { get; set; } = new();
+    public PersonAnalysisDto PersonAnalysis { get; set; } = new();
 
     /// <summary>
     /// Analysis of voting patterns by location.
@@ -89,35 +89,35 @@ public class VotingPatternDto
 }
 
 /// <summary>
-/// Analysis of candidate performance and clustering.
+/// Analysis of person performance and clustering.
 /// </summary>
-public class CandidateAnalysisDto
+public class PersonAnalysisDto
 {
     /// <summary>
-    /// The average vote percentage across all candidates.
+    /// The average vote percentage across all people.
     /// </summary>
     public decimal AverageVotePercentage { get; set; }
 
     /// <summary>
-    /// The variance in vote percentages among candidates.
+    /// The variance in vote percentages among people.
     /// </summary>
     public decimal VotePercentageVariance { get; set; }
 
     /// <summary>
-    /// Clusters of candidates with similar performance characteristics.
+    /// Clusters of people with similar performance characteristics.
     /// </summary>
-    public List<CandidateClusterDto> Clusters { get; set; } = new();
+    public List<PersonClusterDto> Clusters { get; set; } = new();
 
     /// <summary>
-    /// Various performance metrics for candidates.
+    /// Various performance metrics for people.
     /// </summary>
     public Dictionary<string, decimal> PerformanceMetrics { get; set; } = new();
 }
 
 /// <summary>
-/// A cluster of candidates with similar performance characteristics.
+/// A cluster of people with similar performance characteristics.
 /// </summary>
-public class CandidateClusterDto
+public class PersonClusterDto
 {
     /// <summary>
     /// The name or identifier of this cluster.
@@ -125,12 +125,12 @@ public class CandidateClusterDto
     public string ClusterName { get; set; } = string.Empty;
 
     /// <summary>
-    /// List of candidate names in this cluster.
+    /// List of person names in this cluster.
     /// </summary>
-    public List<string> CandidateNames { get; set; } = new();
+    public List<string> PersonNames { get; set; } = new();
 
     /// <summary>
-    /// The average performance metric for candidates in this cluster.
+    /// The average performance metric for people in this cluster.
     /// </summary>
     public decimal AveragePerformance { get; set; }
 }

@@ -49,14 +49,14 @@ public class PublicDisplayDto
     public int NumberExtra { get; set; }
 
     /// <summary>
-    /// List of elected candidates.
+    /// List of elected people.
     /// </summary>
-    public List<PublicCandidateDto> ElectedCandidates { get; set; } = new();
+    public List<PublicPersonDto> ElectedPeople { get; set; } = new();
 
     /// <summary>
-    /// List of additional candidates (next highest).
+    /// List of additional people (next highest).
     /// </summary>
-    public List<PublicCandidateDto> AdditionalCandidates { get; set; } = new();
+    public List<PublicPersonDto> AdditionalPeople { get; set; } = new();
 
     /// <summary>
     /// Summary statistics about the election.
@@ -75,17 +75,17 @@ public class PublicDisplayDto
 }
 
 /// <summary>
-/// Data transfer object for a candidate in the public display.
+/// Data transfer object for a person in the public display.
 /// </summary>
-public class PublicCandidateDto
+public class PublicPersonDto
 {
     /// <summary>
-    /// The rank/position of this candidate.
+    /// The rank/position of this person.
     /// </summary>
     public int Rank { get; set; }
 
     /// <summary>
-    /// The full name of the candidate.
+    /// The full name of the person.
     /// </summary>
     public string FullName { get; set; } = string.Empty;
 
@@ -95,12 +95,12 @@ public class PublicCandidateDto
     public int VoteCount { get; set; }
 
     /// <summary>
-    /// Whether this candidate is tied with others.
+    /// Whether this person is tied with others.
     /// </summary>
     public bool IsTied { get; set; }
 
     /// <summary>
-    /// Whether tie breaking is required for this candidate.
+    /// Whether tie breaking is required for this person.
     /// </summary>
     public bool TieBreakRequired { get; set; }
 }

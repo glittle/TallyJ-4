@@ -51,6 +51,7 @@ This implementation provides a **security-first voter authentication system** fo
 ### Authentication Endpoints (No Election GUID Required)
 
 #### 1. Request Verification Code
+
 ```http
 POST /api/online-voting/requestCode
 Content-Type: application/json
@@ -63,6 +64,7 @@ Content-Type: application/json
 ```
 
 **Response (current behavior):**
+
 ```json
 {
   "messageKey": "some.key.for.i18n"
@@ -74,6 +76,7 @@ Content-Type: application/json
 **Security:** Only sends codes if voter is registered in at least one open election. The service validates before sending.
 
 #### 2. Verify Code
+
 ```http
 POST /api/online-voting/verifyCode
 Content-Type: application/json
@@ -90,6 +93,7 @@ The service returns a payload containing the JWT and session info (exact fields 
 **Security:** 15-minute code expiration, 5-attempt lockout per voterId. See `OnlineVotingService` for the precise lockout and token generation logic.
 
 #### 3. Google OAuth Authentication
+
 ```http
 POST /api/online-voting/googleAuth
 Content-Type: application/json
@@ -102,7 +106,8 @@ Content-Type: application/json
 **Response:**
 Similar session payload to the code-based flow (JWT + voter info). Controller returns it directly on success.
 
-**Security:** 
+**Security:**
+
 - Validates Google JWT token
 - Requires verified email (`EmailVerified`)
 - Only accepts if voter is registered in at least one currently open election
@@ -112,12 +117,14 @@ Similar session payload to the code-based flow (JWT + voter info). Controller re
 ### Election Discovery Endpoint
 
 #### 4. Get Available Elections
+
 ```http
 GET /api/online-voting/availableElections?voterId=voter@example.com
 Authorization: Bearer {jwt-token}
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -146,16 +153,19 @@ Authorization: Bearer {jwt-token}
 After voter selects an election:
 
 #### 5. Get Election Info
+
 ```http
 GET /api/online-voting/{electionGuid}/electionInfo
 ```
 
-#### 6. Get Candidates
+#### 6. Get People
+
 ```http
-GET /api/online-voting/{electionGuid}/candidates
+GET /api/online-voting/{electionGuid}/people
 ```
 
 #### 7. Submit Ballot
+
 ```http
 POST /api/online-voting/{electionGuid}/submitBallot
 ```
@@ -235,6 +245,7 @@ POST /api/online-voting/{electionGuid}/submitBallot
 ## Configuration
 
 ### Backend (appsettings.json)
+
 ```json
 {
   "Google": {
@@ -250,6 +261,7 @@ POST /api/online-voting/{electionGuid}/submitBallot
 ```
 
 ### Frontend (.env)
+
 ```env
 VITE_GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
 VITE_API_URL=http://localhost:5020
@@ -267,7 +279,7 @@ VITE_API_URL=http://localhost:5020
 // Initialize Google One Tap
 google.accounts.id.initialize({
   client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-  callback: handleGoogleCallback
+  callback: handleGoogleCallback,
 });
 
 // Show One Tap prompt
@@ -276,20 +288,18 @@ google.accounts.id.prompt();
 // Handle callback
 async function handleGoogleCallback(response) {
   try {
-    const result = await axios.post(
-      `${API_URL}/api/online-voting/googleAuth`,
-      { credential: response.credential }
-    );
-    
+    const result = await axios.post(`${API_URL}/api/online-voting/googleAuth`, {
+      credential: response.credential,
+    });
+
     // Store JWT token
-    localStorage.setItem('voterToken', result.data.token);
-    localStorage.setItem('voterId', result.data.voterId);
-    
+    localStorage.setItem("voterToken", result.data.token);
+    localStorage.setItem("voterId", result.data.voterId);
+
     // Get available elections
     await showAvailableElections(result.data.voterId);
-    
   } catch (error) {
-    console.error('Authentication failed:', error.response?.data?.error);
+    console.error("Authentication failed:", error.response?.data?.error);
   }
 }
 ```
@@ -302,37 +312,32 @@ async function requestCode(email) {
   try {
     await axios.post(`${API_URL}/api/online-voting/requestCode`, {
       voterId: email,
-      voterIdType: 'E',
-      deliveryMethod: 'email'
+      voterIdType: "E",
+      deliveryMethod: "email",
     });
-    
-    alert('Verification code sent to your email');
-    
+
+    alert("Verification code sent to your email");
   } catch (error) {
-    alert(error.response?.data?.error || 'Failed to send code');
+    alert(error.response?.data?.error || "Failed to send code");
   }
 }
 
 // Step 2: Verify code
 async function verifyCode(email, code) {
   try {
-    const result = await axios.post(
-      `${API_URL}/api/online-voting/verifyCode`,
-      {
-        voterId: email,
-        verifyCode: code
-      }
-    );
-    
+    const result = await axios.post(`${API_URL}/api/online-voting/verifyCode`, {
+      voterId: email,
+      verifyCode: code,
+    });
+
     // Store JWT token
-    localStorage.setItem('voterToken', result.data.token);
-    localStorage.setItem('voterId', result.data.voterId);
-    
+    localStorage.setItem("voterToken", result.data.token);
+    localStorage.setItem("voterId", result.data.voterId);
+
     // Get available elections
     await showAvailableElections(result.data.voterId);
-    
   } catch (error) {
-    alert(error.response?.data?.error || 'Invalid code');
+    alert(error.response?.data?.error || "Invalid code");
   }
 }
 ```
@@ -342,34 +347,35 @@ async function verifyCode(email, code) {
 ```javascript
 async function showAvailableElections(voterId) {
   try {
-    const token = localStorage.getItem('voterToken');
+    const token = localStorage.getItem("voterToken");
     const result = await axios.get(
       `${API_URL}/api/online-voting/availableElections`,
       {
         params: { voterId },
-        headers: { Authorization: `Bearer ${token}` }
-      }
+        headers: { Authorization: `Bearer ${token}` },
+      },
     );
-    
+
     const elections = result.data;
-    
+
     if (elections.length === 0) {
-      alert('You are not registered in any currently open elections');
+      alert("You are not registered in any currently open elections");
       return;
     }
-    
+
     // Show election selection UI
     displayElectionList(elections);
-    
   } catch (error) {
-    console.error('Failed to get elections:', error);
+    console.error("Failed to get elections:", error);
   }
 }
 
 function displayElectionList(elections) {
   // Show UI with election list
-  elections.forEach(election => {
-    console.log(`${election.name} - ${election.hasVoted ? 'Already voted' : 'Not voted yet'}`);
+  elections.forEach((election) => {
+    console.log(
+      `${election.name} - ${election.hasVoted ? "Already voted" : "Not voted yet"}`,
+    );
   });
 }
 ```
@@ -388,6 +394,7 @@ async function selectElection(electionGuid) {
 ### For Clients Using Old API
 
 **Old Flow (BEFORE):**
+
 ```javascript
 // Had to know election GUID upfront
 POST /api/online-voting/requestCode
@@ -400,6 +407,7 @@ POST /api/online-voting/requestCode
 ```
 
 **New Flow (AFTER):**
+
 ```javascript
 // No election GUID needed
 POST /api/online-voting/requestCode
@@ -447,6 +455,7 @@ Found 3 available elections for voter {VoterId}
 ```
 
 Monitor these logs for:
+
 - Unusual authentication patterns
 - Failed authentication spikes
 - SMS pumping attempts
@@ -481,6 +490,7 @@ Monitor these logs for:
 ## Conclusion
 
 This implementation provides enterprise-grade security for online voting with:
+
 - ✅ SMS pumping prevention
 - ✅ Google OAuth integration
 - ✅ Zero-knowledge architecture

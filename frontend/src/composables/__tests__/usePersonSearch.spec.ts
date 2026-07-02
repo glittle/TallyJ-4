@@ -27,10 +27,10 @@ function createMockPerson(
 }
 
 describe("usePersonSearch", () => {
-  let mockCandidates: SearchablePersonDto[];
+  let mockSearchablePeople: SearchablePersonDto[];
 
   beforeEach(() => {
-    mockCandidates = [
+    mockSearchablePeople = [
       createMockPerson("John", "Doe", ["J500", "D000"]),
       createMockPerson("Jane", "Smith", ["J500", "S530"]),
       createMockPerson("Bob", "Johnson", ["B100", "J525"]),
@@ -42,8 +42,8 @@ describe("usePersonSearch", () => {
   describe("exact match", () => {
     it("should return exact match with highest weight", () => {
       const searchQuery = ref("John Doe");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
       expect(searchResults.value[0].firstName).toBe("John");
@@ -52,8 +52,8 @@ describe("usePersonSearch", () => {
 
     it("should match case-insensitively", () => {
       const searchQuery = ref("john doe");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
       expect(searchResults.value[0].firstName).toBe("John");
@@ -63,8 +63,8 @@ describe("usePersonSearch", () => {
   describe("prefix match", () => {
     it("should find partial name matches", () => {
       const searchQuery = ref("Jo");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
       const names = searchResults.value.map((p) => p.firstName);
@@ -73,8 +73,8 @@ describe("usePersonSearch", () => {
 
     it("should match prefix at start of name", () => {
       const searchQuery = ref("Cha");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value).toHaveLength(1);
       expect(searchResults.value[0].firstName).toBe("Charlie");
@@ -84,8 +84,8 @@ describe("usePersonSearch", () => {
   describe("word boundary match", () => {
     it("should find matches where search words start name parts", () => {
       const searchQuery = ref("J D");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
       const fullNames = searchResults.value.map((p) => p.fullName);
@@ -96,8 +96,8 @@ describe("usePersonSearch", () => {
   describe("substring match", () => {
     it("should find substring anywhere in name", () => {
       const searchQuery = ref("illi");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value).toHaveLength(1);
       expect(searchResults.value[0].lastName).toBe("Williams");
@@ -106,13 +106,13 @@ describe("usePersonSearch", () => {
 
   describe("other names match", () => {
     it("should match against otherNames field", () => {
-      const candidatesWithOtherNames = ref([
+      const peopleWithOtherNames = ref([
         createMockPerson("Robert", "Smith", ["R163", "S530"], "Bob", undefined),
       ]);
       const searchQuery = ref("Bob");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesWithOtherNames,
+        peopleWithOtherNames,
       );
 
       expect(searchResults.value).toHaveLength(1);
@@ -120,13 +120,13 @@ describe("usePersonSearch", () => {
     });
 
     it("should match against otherLastNames field", () => {
-      const candidatesWithOtherNames = ref([
+      const peopleWithOtherNames = ref([
         createMockPerson("Jane", "Doe", ["J500", "D000"], undefined, "Smith"),
       ]);
       const searchQuery = ref("Smith");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesWithOtherNames,
+        peopleWithOtherNames,
       );
 
       expect(searchResults.value).toHaveLength(1);
@@ -136,28 +136,28 @@ describe("usePersonSearch", () => {
 
   describe("phonetic match", () => {
     it("should find similar-sounding names using Soundex", () => {
-      const candidatesWithPhonetic = ref([
+      const peopleWithPhonetic = ref([
         createMockPerson("John", "MacFarland", ["J500", "M216"]),
         createMockPerson("Jane", "McFarland", ["J500", "M216"]),
       ]);
       const searchQuery = ref("Macfarland");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesWithPhonetic,
+        peopleWithPhonetic,
       );
 
       expect(searchResults.value.length).toBeGreaterThan(0);
     });
 
     it("should NOT activate phonetic match for queries < 3 characters", () => {
-      const candidatesWithPhonetic = ref([
+      const peopleWithPhonetic = ref([
         createMockPerson("John", "Doe", ["J500", "D000"]),
         createMockPerson("Jane", "Dough", ["J500", "D200"]),
       ]);
       const searchQuery = ref("Do");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesWithPhonetic,
+        peopleWithPhonetic,
       );
 
       const exactOrPrefixMatch = searchResults.value.some(
@@ -167,14 +167,14 @@ describe("usePersonSearch", () => {
     });
 
     it("should activate phonetic match for queries >= 3 characters", () => {
-      const candidatesWithPhonetic = ref([
+      const peopleWithPhonetic = ref([
         createMockPerson("Steven", "Smith", ["S315", "S530"]),
         createMockPerson("Stephen", "Smyth", ["S315", "S530"]),
       ]);
       const searchQuery = ref("Stephen");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesWithPhonetic,
+        peopleWithPhonetic,
       );
 
       expect(searchResults.value.length).toBeGreaterThan(0);
@@ -183,13 +183,13 @@ describe("usePersonSearch", () => {
 
   describe("fuzzy match", () => {
     it("should find typos with Levenshtein distance <= 2", () => {
-      const candidatesWithTypo = ref([
+      const peopleWithTypo = ref([
         createMockPerson("John", "Smith", ["J500", "S530"]),
       ]);
       const searchQuery = ref("Smth");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesWithTypo,
+        peopleWithTypo,
       );
 
       expect(searchResults.value.length).toBeGreaterThan(0);
@@ -197,24 +197,24 @@ describe("usePersonSearch", () => {
     });
 
     it("should NOT activate fuzzy match for queries < 3 characters", () => {
-      const candidatesWithTypo = ref([
+      const peopleWithTypo = ref([
         createMockPerson("John", "Doe", ["J500", "D000"]),
       ]);
-      const { performSearch } = usePersonSearch(ref(""), candidatesWithTypo);
-      const results = performSearch("De", candidatesWithTypo.value);
+      const { performSearch } = usePersonSearch(ref(""), peopleWithTypo);
+      const results = performSearch("De", peopleWithTypo.value);
 
       const fuzzyMatch = results.some((p) => p.lastName === "Doe");
       expect(fuzzyMatch).toBe(false);
     });
 
     it("should NOT match if distance > 2", () => {
-      const candidatesWithTypo = ref([
+      const peopleWithTypo = ref([
         createMockPerson("John", "Smith", ["J500", "S530"]),
       ]);
       const searchQuery = ref("Wxyz");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesWithTypo,
+        peopleWithTypo,
       );
 
       const smithMatch = searchResults.value.some(
@@ -226,7 +226,7 @@ describe("usePersonSearch", () => {
 
   describe("ranking and sorting", () => {
     it("should order results by weight (highest first)", () => {
-      const candidatesForRanking = ref([
+      const peopleForRanking = ref([
         createMockPerson("John", "Doe", ["J500", "D000"]),
         createMockPerson("Jonathan", "Smith", ["J535", "S530"]),
         createMockPerson("Robert", "Brown", ["R163", "B650"]),
@@ -234,7 +234,7 @@ describe("usePersonSearch", () => {
       const searchQuery = ref("John Doe");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesForRanking,
+        peopleForRanking,
       );
 
       expect(searchResults.value.length).toBeGreaterThan(0);
@@ -243,7 +243,7 @@ describe("usePersonSearch", () => {
     });
 
     it("should break ties by lastName alphabetically", () => {
-      const candidatesForTieBreak = ref([
+      const peopleForTieBreak = ref([
         createMockPerson("John", "Zebra", ["J500", "Z160"]),
         createMockPerson("John", "Apple", ["J500", "A140"]),
         createMockPerson("John", "Mango", ["J500", "M520"]),
@@ -251,7 +251,7 @@ describe("usePersonSearch", () => {
       const searchQuery = ref("John");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesForTieBreak,
+        peopleForTieBreak,
       );
 
       expect(searchResults.value).toHaveLength(3);
@@ -261,7 +261,7 @@ describe("usePersonSearch", () => {
     });
 
     it("should sort results by voteCount descending as primary key", () => {
-      const candidatesWithVoteCounts = ref([
+      const peopleWithVoteCounts = ref([
         createMockPerson(
           "Alice",
           "Brown",
@@ -290,7 +290,7 @@ describe("usePersonSearch", () => {
       const searchQuery = ref("Brown");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesWithVoteCounts,
+        peopleWithVoteCounts,
       );
 
       expect(searchResults.value).toHaveLength(3);
@@ -300,7 +300,7 @@ describe("usePersonSearch", () => {
     });
 
     it("should use weight as secondary sort when voteCount is equal", () => {
-      const candidatesEqualVoteCount = ref([
+      const peopleEqualVoteCount = ref([
         createMockPerson(
           "John",
           "Doe",
@@ -321,7 +321,7 @@ describe("usePersonSearch", () => {
       const searchQuery = ref("John Doe");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesEqualVoteCount,
+        peopleEqualVoteCount,
       );
 
       expect(searchResults.value.length).toBeGreaterThan(0);
@@ -330,7 +330,7 @@ describe("usePersonSearch", () => {
     });
 
     it("should break lastName ties by firstName alphabetically", () => {
-      const candidatesForTieBreak = ref([
+      const peopleForTieBreak = ref([
         createMockPerson("Zoe", "Smith", ["Z000", "S530"]),
         createMockPerson("Alice", "Smith", ["A420", "S530"]),
         createMockPerson("Bob", "Smith", ["B100", "S530"]),
@@ -338,7 +338,7 @@ describe("usePersonSearch", () => {
       const searchQuery = ref("Smith");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesForTieBreak,
+        peopleForTieBreak,
       );
 
       expect(searchResults.value).toHaveLength(3);
@@ -350,25 +350,25 @@ describe("usePersonSearch", () => {
 
   describe("result capping", () => {
     it("should cap results at 20 by default", () => {
-      const manyCandidates = ref(
+      const manySearchablePeople = ref(
         Array.from({ length: 50 }, (_, i) =>
           createMockPerson(`Person${i}`, "Smith", ["P625", "S530"]),
         ),
       );
       const searchQuery = ref("Smith");
-      const { searchResults } = usePersonSearch(searchQuery, manyCandidates);
+      const { searchResults } = usePersonSearch(searchQuery, manySearchablePeople);
 
       expect(searchResults.value).toHaveLength(20);
     });
 
     it("should respect custom maxResults option", () => {
-      const manyCandidates = ref(
+      const manySearchablePeople = ref(
         Array.from({ length: 50 }, (_, i) =>
           createMockPerson(`Person${i}`, "Smith", ["P625", "S530"]),
         ),
       );
       const searchQuery = ref("Smith");
-      const { searchResults } = usePersonSearch(searchQuery, manyCandidates, {
+      const { searchResults } = usePersonSearch(searchQuery, manySearchablePeople, {
         maxResults: 5,
       });
 
@@ -379,8 +379,8 @@ describe("usePersonSearch", () => {
   describe("debouncing", () => {
     it("should debounce search with default 150ms delay", async () => {
       const searchQuery = ref("");
-      const candidates = ref(mockCandidates);
-      const { debouncedSearch } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { debouncedSearch } = usePersonSearch(searchQuery, searchablePeople);
 
       const searchSpy = vi.fn();
       const wrappedSearch = vi.fn(
@@ -390,9 +390,9 @@ describe("usePersonSearch", () => {
         },
       );
 
-      wrappedSearch("J", mockCandidates);
-      wrappedSearch("Jo", mockCandidates);
-      wrappedSearch("Joh", mockCandidates);
+      wrappedSearch("J", mockSearchablePeople);
+      wrappedSearch("Jo", mockSearchablePeople);
+      wrappedSearch("Joh", mockSearchablePeople);
 
       expect(searchSpy).toHaveBeenCalledTimes(3);
 
@@ -401,8 +401,8 @@ describe("usePersonSearch", () => {
 
     it("should respect custom debounce delay", () => {
       const searchQuery = ref("");
-      const candidates = ref(mockCandidates);
-      const { debouncedSearch } = usePersonSearch(searchQuery, candidates, {
+      const searchablePeople = ref(mockSearchablePeople);
+      const { debouncedSearch } = usePersonSearch(searchQuery, searchablePeople, {
         debounceDelay: 300,
       });
 
@@ -413,34 +413,34 @@ describe("usePersonSearch", () => {
   describe("edge cases", () => {
     it("should return empty array for empty search query", () => {
       const searchQuery = ref("");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value).toEqual([]);
     });
 
     it("should return empty array for whitespace-only search query", () => {
       const searchQuery = ref("   ");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value).toEqual([]);
     });
 
-    it("should return empty array when candidates list is empty", () => {
+    it("should return empty array when searchable people list is empty", () => {
       const searchQuery = ref("John");
-      const candidates = ref<SearchablePersonDto[]>([]);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref<SearchablePersonDto[]>([]);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value).toEqual([]);
     });
 
-    it("should handle candidates without soundex codes", () => {
-      const candidatesNoSoundex = ref([createMockPerson("John", "Doe", [])]);
+    it("should handle people without soundex codes", () => {
+      const peopleNoSoundex = ref([createMockPerson("John", "Doe", [])]);
       const searchQuery = ref("John");
       const { searchResults } = usePersonSearch(
         searchQuery,
-        candidatesNoSoundex,
+        peopleNoSoundex,
       );
 
       expect(searchResults.value).toHaveLength(1);
@@ -449,7 +449,7 @@ describe("usePersonSearch", () => {
 
   describe("performance", () => {
     it("should search 1000 people in less than 50ms", () => {
-      const largeCandidates = ref(
+      const largeSearchablePeople = ref(
         Array.from({ length: 1000 }, (_, i) =>
           createMockPerson(`FirstName${i}`, `LastName${i % 100}`, [
             `F000`,
@@ -460,7 +460,7 @@ describe("usePersonSearch", () => {
       const searchQuery = ref("LastName50");
 
       const startTime = performance.now();
-      const { searchResults } = usePersonSearch(searchQuery, largeCandidates);
+      const { searchResults } = usePersonSearch(searchQuery, largeSearchablePeople);
       const results = searchResults.value;
       const endTime = performance.now();
       const duration = endTime - startTime;
@@ -470,7 +470,7 @@ describe("usePersonSearch", () => {
     });
 
     it("should handle complex searches efficiently", () => {
-      const largeCandidates = ref(
+      const largeSearchablePeople = ref(
         Array.from({ length: 500 }, (_, i) =>
           createMockPerson(
             `FirstName${i}`,
@@ -483,7 +483,7 @@ describe("usePersonSearch", () => {
       const searchQuery = ref("AliasName");
 
       const startTime = performance.now();
-      const { searchResults } = usePersonSearch(searchQuery, largeCandidates);
+      const { searchResults } = usePersonSearch(searchQuery, largeSearchablePeople);
       const results = searchResults.value;
       const endTime = performance.now();
       const duration = endTime - startTime;
@@ -496,34 +496,34 @@ describe("usePersonSearch", () => {
   describe("caching", () => {
     it("should cache search results", () => {
       const searchQuery = ref("John");
-      const candidates = ref(mockCandidates);
-      const { performSearch } = usePersonSearch(searchQuery, candidates, {
+      const searchablePeople = ref(mockSearchablePeople);
+      const { performSearch } = usePersonSearch(searchQuery, searchablePeople, {
         enableCache: true,
       });
 
       const startTime1 = performance.now();
-      const results1 = performSearch("John", candidates.value);
+      const results1 = performSearch("John", searchablePeople.value);
       const duration1 = performance.now() - startTime1;
 
       const startTime2 = performance.now();
-      const results2 = performSearch("John", candidates.value);
+      const results2 = performSearch("John", searchablePeople.value);
       const duration2 = performance.now() - startTime2;
 
       expect(results1).toEqual(results2);
       expect(duration2).toBeLessThan(duration1);
     });
 
-    it("should clear cache when candidates change", () => {
+    it("should clear cache when searchable people change", () => {
       const searchQuery = ref("John");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates, {
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople, {
         enableCache: true,
       });
 
       const initialResults = searchResults.value;
       expect(initialResults.length).toBeGreaterThan(0);
 
-      candidates.value = [createMockPerson("Jane", "Doe", ["J500", "D000"])];
+      searchablePeople.value = [createMockPerson("Jane", "Doe", ["J500", "D000"])];
 
       searchQuery.value = "Jane";
       const newResults = searchResults.value;
@@ -533,24 +533,24 @@ describe("usePersonSearch", () => {
 
     it("should allow manual cache clearing", () => {
       const searchQuery = ref("John");
-      const candidates = ref(mockCandidates);
+      const searchablePeople = ref(mockSearchablePeople);
       const { performSearch, clearCache } = usePersonSearch(
         searchQuery,
-        candidates,
+        searchablePeople,
         { enableCache: true },
       );
 
-      performSearch("John", candidates.value);
+      performSearch("John", searchablePeople.value);
       clearCache();
 
-      const results = performSearch("John", candidates.value);
+      const results = performSearch("John", searchablePeople.value);
       expect(results.length).toBeGreaterThan(0);
     });
 
     it("should work with cache disabled", () => {
       const searchQuery = ref("John");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates, {
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople, {
         enableCache: false,
       });
 
@@ -562,8 +562,8 @@ describe("usePersonSearch", () => {
   describe("reactive updates", () => {
     it("should update results when search query changes", () => {
       const searchQuery = ref("John");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
       expect(searchResults.value[0].firstName).toBe("John");
@@ -574,14 +574,14 @@ describe("usePersonSearch", () => {
       expect(searchResults.value[0].firstName).toBe("Jane");
     });
 
-    it("should update results when candidates list changes", () => {
+    it("should update results when searchable people list changes", () => {
       const searchQuery = ref("John");
-      const candidates = ref(mockCandidates);
-      const { searchResults } = usePersonSearch(searchQuery, candidates);
+      const searchablePeople = ref(mockSearchablePeople);
+      const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
 
-      candidates.value = [
+      searchablePeople.value = [
         createMockPerson("Johnny", "Walker", ["J500", "W460"]),
         createMockPerson("Jonathan", "Davis", ["J535", "D120"]),
       ];

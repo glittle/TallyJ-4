@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Details about a tie situation that requires manual resolution.
@@ -16,20 +16,20 @@ public class TieDetailsDto
     public string Section { get; set; } = string.Empty;
 
     /// <summary>
-    /// List of candidates involved in the tie.
+    /// List of people involved in the tie.
     /// </summary>
-    public List<TieCandidateDto> Candidates { get; set; } = new();
+    public List<TiePersonDto> People { get; set; } = new();
 
     /// <summary>
     /// Instructions for resolving the tie.
     /// </summary>
-    public string Instructions { get; set; } = "Enter tie-break vote counts for these candidates";
+    public string Instructions { get; set; } = "Enter tie-break vote counts for these people";
 }
 
 /// <summary>
-/// Information about a candidate involved in a tie.
+/// Information about a person involved in a tie.
 /// </summary>
-public class TieCandidateDto
+public class TiePersonDto
 {
     /// <summary>
     /// The unique identifier of the person.
@@ -37,17 +37,17 @@ public class TieCandidateDto
     public Guid PersonGuid { get; set; }
 
     /// <summary>
-    /// The full name of the candidate.
+    /// The full name of the person.
     /// </summary>
     public string FullName { get; set; } = string.Empty;
 
     /// <summary>
-    /// The number of votes the candidate received.
+    /// The number of votes the person received.
     /// </summary>
     public int VoteCount { get; set; }
 
     /// <summary>
-    /// The tie-break vote count for this candidate.
+    /// The tie-break vote count for this person.
     /// </summary>
     public int? TieBreakCount { get; set; }
 }
@@ -58,13 +58,13 @@ public class TieCandidateDto
 public class SaveTieCountsRequestDto
 {
     /// <summary>
-    /// List of tie-break counts for candidates.
+    /// List of tie-break counts for people.
     /// </summary>
     public List<TieCountDto> Counts { get; set; } = new();
 }
 
 /// <summary>
-/// Tie-break count for a specific candidate.
+/// Tie-break count for a specific person.
 /// </summary>
 public class TieCountDto
 {
@@ -74,7 +74,7 @@ public class TieCountDto
     public Guid PersonGuid { get; set; }
 
     /// <summary>
-    /// The tie-break vote count for this candidate.
+    /// The tie-break vote count for this person.
     /// </summary>
     public int TieBreakCount { get; set; }
 }

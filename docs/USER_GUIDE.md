@@ -5,7 +5,7 @@
 1. [Getting Started](#getting-started)
 2. [Dashboard](#dashboard)
 3. [Managing Elections](#managing-elections)
-4. [Managing People (Voters & Candidates)](#managing-people)
+4. [Managing People](#managing-people)
 5. [Ballot Entry](#ballot-entry)
 6. [Tallying Votes](#tallying-votes)
 7. [Viewing Results](#viewing-results)
@@ -40,20 +40,23 @@ TallyJ has three main user roles:
 The dashboard is your home screen after logging in. It displays:
 
 ### Key Metrics
+
 - **Total Elections**: Number of elections in the system
 - **Active Elections**: Elections currently in progress
 - **Total Voters**: Number of registered voters across all elections
 - **Total Ballots**: Number of ballots entered in the system
 
 ### Recent Activity
+
 - Latest elections created
 - Recent ballot entries
 - System notifications
 
 ### Quick Actions
+
 - **Create New Election**: Start a new election
 - **View Elections**: See all elections
-- **Manage People**: Add or edit voters and candidates
+- **Manage People**: Add or edit people
 
 ---
 
@@ -104,7 +107,7 @@ The dashboard is your home screen after logging in. It displays:
 
 ## Managing People
 
-### Adding Voters/Candidates
+### Adding People
 
 1. Go to **People**
 2. Select the election from the dropdown
@@ -123,13 +126,14 @@ The dashboard is your home screen after logging in. It displays:
 1. Go to **People**
 2. Click **Import**
 3. Download the CSV template
-4. Fill in the template with voter/candidate data
+4. Fill in the template with people data
 5. Upload the completed CSV file
 6. Map the columns to the correct fields
 7. Review the preview
 8. Click **Import**
 
 **CSV Format Example:**
+
 ```csv
 FirstName,LastName,CanVote,CanReceiveVotes,AgeGroup
 Jane,Smith,true,true,Adult
@@ -150,7 +154,7 @@ John,Doe,true,true,Adult
 - Use the **Filter** dropdown to show:
   - All people
   - Voters only
-  - Candidates only
+  - Eligible to be elected only
   - By location
 
 ---
@@ -244,26 +248,24 @@ If you add or edit ballots after tallying:
 2. Select the election
 3. View the results table showing:
    - **Rank**: Position in the election
-   - **Name**: Candidate name
+   - **Name**: Elected name
    - **Vote Count**: Number of votes received
    - **Section**: Elected, Extra, or Other
-   - **Tied**: Whether the candidate is in a tie
+   - **Tied**: Whether the person is in a tie
 
 ### Result Sections
 
-- **Elected**: Candidates who won a seat
-- **Extra**: Candidates elected to extra positions (if configured)
-- **Other**: Candidates who received votes but were not elected
+- **Elected**: People elected
+- **Extra**: Those with the next highest number of votes (if configured)
+- **Other**: People who received votes but were not elected
 
 ### Handling Ties
 
-If there are tied candidates:
+If there are ties:
 
-1. Review the tied candidates (marked with 🔗)
-2. Use traditional tie-breaking methods:
-   - Re-vote among tied candidates
-   - Drawing names from a container
-3. Manually adjust the final ranking if needed
+1. Review the tied people (marked with 🔗)
+2. Re-vote among tied people
+3. Manually adjust the final ranking in the main election
 
 ### Exporting Results
 
@@ -292,6 +294,7 @@ If there are tied candidates:
 ### Teller Responsibilities
 
 **Head Teller:**
+
 - Oversee the entire election process
 - Assign computer codes to tellers
 - Review flagged ballots
@@ -299,6 +302,7 @@ If there are tied candidates:
 - Certify final results
 
 **Regular Teller:**
+
 - Enter ballots at assigned location
 - Flag unclear ballots for review
 - Assist with voter check-in
@@ -327,6 +331,7 @@ If there are tied candidates:
 6. Assign the computer to a teller
 
 **Computer Code Format**: Two letters (AA-ZZ)
+
 - First computer: AA
 - Second computer: AB
 - Etc.
@@ -339,6 +344,7 @@ If there are tied candidates:
 4. Click **Save**
 
 This helps with:
+
 - Front desk check-in
 - Location-based ballot entry
 - Voter roll management
@@ -381,7 +387,8 @@ This helps with:
 ### Chart Visualizations
 
 Available charts:
-- **Vote Distribution**: Bar chart showing votes per candidate
+
+- **Vote Distribution**: Bar chart showing votes per person
 - **Participation Rate**: Pie chart of ballots entered vs. registered voters
 - **Voting Trends**: Line chart for historical elections
 - **Location Breakdown**: Votes by voting location
@@ -393,13 +400,15 @@ Available charts:
 ### Before the Election
 
 ✅ **Do:**
+
 - Create the election well in advance
-- Import or enter all voters/candidates
+- Import or enter all people
 - Assign tellers and locations
 - Test the system with sample ballots
 - Train all tellers on the system
 
 ❌ **Don't:**
+
 - Wait until election day to set up
 - Forget to assign computer codes
 - Skip the test run
@@ -407,6 +416,7 @@ Available charts:
 ### During the Election
 
 ✅ **Do:**
+
 - Enter ballots regularly (don't wait until the end)
 - Flag unclear ballots immediately for head teller review
 - Use consistent computer codes
@@ -414,6 +424,7 @@ Available charts:
 - Save frequently
 
 ❌ **Don't:**
+
 - Enter ballots from multiple locations on one computer without changing the code
 - Guess at unclear names (flag for review instead)
 - Delete ballots without head teller approval
@@ -421,6 +432,7 @@ Available charts:
 ### After the Election
 
 ✅ **Do:**
+
 - Run the tally multiple times to verify results
 - Export results for records
 - Keep paper ballots for audit purposes
@@ -428,6 +440,7 @@ Available charts:
 - Generate and archive reports
 
 ❌ **Don't:**
+
 - Delete the election immediately
 - Forget to export results
 - Lose the paper ballots
@@ -435,16 +448,19 @@ Available charts:
 ### Data Entry Tips
 
 **Speed up ballot entry:**
+
 - Learn keyboard shortcuts
 - Use the search autocomplete
 - Enter ballots in batches by location
 
 **Reduce errors:**
+
 - Double-check each vote before saving
 - Have a second person verify unclear ballots
 - Use consistent name formats
 
 **Handle common issues:**
+
 - **Person not found**: Check spelling, add them to People first
 - **Invalid vote count**: Must match "number to elect"
 - **Ballot won't save**: Check for duplicate ballot number
@@ -456,18 +472,23 @@ Available charts:
 ### Common Issues
 
 **Issue**: "Cannot find person to vote for"
+
 - **Solution**: Go to People, add the person, mark "Can Receive Votes"
 
 **Issue**: "Ballot has too many/too few votes"
+
 - **Solution**: Check the election's "Number to Elect" setting, ensure ballot matches
 
 **Issue**: "Tally fails to run"
+
 - **Solution**: Check for ballots in "Review" status, resolve all issues first
 
 **Issue**: "Results don't match manual count"
+
 - **Solution**: Re-run tally, verify all ballots entered correctly, check for duplicates
 
 **Issue**: "Cannot delete election"
+
 - **Solution**: You may not have permission, contact administrator
 
 ---
@@ -485,6 +506,7 @@ Available charts:
 ## Support
 
 For assistance:
+
 - Contact your election administrator
 - Check the online help documentation
 - Email support (if provided)

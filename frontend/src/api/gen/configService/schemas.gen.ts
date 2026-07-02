@@ -2819,29 +2819,6 @@ export const OnlineVoting_KakaoAuthForVoterDtoSchema = {
     additionalProperties: false
 } as const;
 
-export const OnlineVoting_OnlineCandidateDtoSchema = {
-    type: 'object',
-    properties: {
-        personGuid: {
-            type: 'string',
-            format: 'uuid'
-        },
-        fullName: {
-            type: 'string',
-            nullable: true
-        },
-        area: {
-            type: 'string',
-            nullable: true
-        },
-        otherInfo: {
-            type: 'string',
-            nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
 export const OnlineVoting_OnlineElectionInfoDtoSchema = {
     type: 'object',
     properties: {
@@ -2885,6 +2862,29 @@ export const OnlineVoting_OnlineElectionInfoDtoSchema = {
             nullable: true
         },
         onlineSelectionProcess: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const OnlineVoting_OnlinePersonDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        fullName: {
+            type: 'string',
+            nullable: true
+        },
+        area: {
+            type: 'string',
+            nullable: true
+        },
+        otherInfo: {
             type: 'string',
             nullable: true
         }
@@ -3017,6 +3017,10 @@ export const OnlineVoting_RequestCodeResponseDtoSchema = {
     type: 'object',
     properties: {
         messageKey: {
+            type: 'string',
+            nullable: true
+        },
+        devVerificationCode: {
             type: 'string',
             nullable: true
         }
@@ -3809,31 +3813,6 @@ export const Public_ElectionStatusDtoSchema = {
     additionalProperties: false
 } as const;
 
-export const Public_PublicCandidateDtoSchema = {
-    type: 'object',
-    properties: {
-        rank: {
-            type: 'integer',
-            format: 'int32'
-        },
-        fullName: {
-            type: 'string',
-            nullable: true
-        },
-        voteCount: {
-            type: 'integer',
-            format: 'int32'
-        },
-        isTied: {
-            type: 'boolean'
-        },
-        tieBreakRequired: {
-            type: 'boolean'
-        }
-    },
-    additionalProperties: false
-} as const;
-
 export const Public_PublicDisplayDtoSchema = {
     type: 'object',
     properties: {
@@ -3868,17 +3847,17 @@ export const Public_PublicDisplayDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
-        electedCandidates: {
+        electedPeople: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Public_PublicCandidateDto'
+                $ref: '#/components/schemas/Public_PublicPersonDto'
             },
             nullable: true
         },
-        additionalCandidates: {
+        additionalPeople: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Public_PublicCandidateDto'
+                $ref: '#/components/schemas/Public_PublicPersonDto'
             },
             nullable: true
         },
@@ -3949,6 +3928,31 @@ export const Public_PublicHomeDtoSchema = {
         serverTime: {
             type: 'string',
             format: 'date-time'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Public_PublicPersonDtoSchema = {
+    type: 'object',
+    properties: {
+        rank: {
+            type: 'integer',
+            format: 'int32'
+        },
+        fullName: {
+            type: 'string',
+            nullable: true
+        },
+        voteCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        isTied: {
+            type: 'boolean'
+        },
+        tieBreakRequired: {
+            type: 'boolean'
         }
     },
     additionalProperties: false
@@ -5163,122 +5167,6 @@ export const Reports_VotesByNumDtoSchema = {
     additionalProperties: false
 } as const;
 
-export const Results_CandidatePerformanceDtoSchema = {
-    type: 'object',
-    properties: {
-        personGuid: {
-            type: 'string',
-            format: 'uuid'
-        },
-        fullName: {
-            type: 'string',
-            nullable: true
-        },
-        totalVotes: {
-            type: 'integer',
-            format: 'int32'
-        },
-        votePercentage: {
-            type: 'number',
-            format: 'double'
-        },
-        rank: {
-            type: 'integer',
-            format: 'int32'
-        },
-        isElected: {
-            type: 'boolean'
-        },
-        isEliminated: {
-            type: 'boolean'
-        },
-        votesByPosition: {
-            type: 'object',
-            additionalProperties: {
-                type: 'integer',
-                format: 'int32'
-            },
-            nullable: true
-        },
-        firstChoicePercentage: {
-            type: 'number',
-            format: 'double'
-        },
-        lastChoicePercentage: {
-            type: 'number',
-            format: 'double'
-        }
-    },
-    additionalProperties: false
-} as const;
-
-export const Results_CandidateReportDtoSchema = {
-    type: 'object',
-    properties: {
-        rank: {
-            type: 'integer',
-            format: 'int32'
-        },
-        fullName: {
-            type: 'string',
-            nullable: true
-        },
-        voteCount: {
-            type: 'integer',
-            format: 'int32'
-        },
-        section: {
-            type: 'string',
-            nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
-export const Results_CandidateResultDtoSchema = {
-    type: 'object',
-    properties: {
-        personGuid: {
-            type: 'string',
-            format: 'uuid'
-        },
-        fullName: {
-            type: 'string',
-            nullable: true
-        },
-        voteCount: {
-            type: 'integer',
-            format: 'int32'
-        },
-        rank: {
-            type: 'integer',
-            format: 'int32'
-        },
-        section: {
-            type: 'string',
-            nullable: true
-        },
-        isTied: {
-            type: 'boolean'
-        },
-        tieBreakGroup: {
-            type: 'integer',
-            format: 'int32',
-            nullable: true
-        },
-        tieBreakRequired: {
-            type: 'boolean'
-        },
-        closeToNext: {
-            type: 'boolean'
-        },
-        closeToPrev: {
-            type: 'boolean'
-        }
-    },
-    additionalProperties: false
-} as const;
-
 export const Results_ComputerInfoDtoSchema = {
     type: 'object',
     properties: {
@@ -5342,10 +5230,10 @@ export const Results_DetailedStatisticsDtoSchema = {
         voteDistribution: {
             $ref: '#/components/schemas/Results_VoteDistributionDto'
         },
-        candidatePerformance: {
+        personPerformance: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Results_CandidatePerformanceDto'
+                $ref: '#/components/schemas/Results_PersonPerformanceDto'
             },
             nullable: true
         },
@@ -5443,21 +5331,21 @@ export const Results_ElectionReportDtoSchema = {
         elected: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Results_CandidateReportDto'
+                $ref: '#/components/schemas/Results_PersonReportDto'
             },
             nullable: true
         },
         extra: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Results_CandidateReportDto'
+                $ref: '#/components/schemas/Results_PersonReportDto'
             },
             nullable: true
         },
         other: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Results_CandidateReportDto'
+                $ref: '#/components/schemas/Results_PersonReportDto'
             },
             nullable: true
         },
@@ -5556,7 +5444,7 @@ export const Results_LocationStatisticsDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
-        topCandidates: {
+        topPeople: {
             type: 'object',
             additionalProperties: {
                 type: 'integer',
@@ -5671,7 +5559,56 @@ export const Results_ParticipationRateDtoSchema = {
     additionalProperties: false
 } as const;
 
-export const Results_PresentationCandidateDtoSchema = {
+export const Results_PersonPerformanceDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        fullName: {
+            type: 'string',
+            nullable: true
+        },
+        totalVotes: {
+            type: 'integer',
+            format: 'int32'
+        },
+        votePercentage: {
+            type: 'number',
+            format: 'double'
+        },
+        rank: {
+            type: 'integer',
+            format: 'int32'
+        },
+        isElected: {
+            type: 'boolean'
+        },
+        isEliminated: {
+            type: 'boolean'
+        },
+        votesByPosition: {
+            type: 'object',
+            additionalProperties: {
+                type: 'integer',
+                format: 'int32'
+            },
+            nullable: true
+        },
+        firstChoicePercentage: {
+            type: 'number',
+            format: 'double'
+        },
+        lastChoicePercentage: {
+            type: 'number',
+            format: 'double'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Results_PersonReportDtoSchema = {
     type: 'object',
     properties: {
         rank: {
@@ -5686,10 +5623,52 @@ export const Results_PresentationCandidateDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
+        section: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Results_PersonResultDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        fullName: {
+            type: 'string',
+            nullable: true
+        },
+        voteCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        rank: {
+            type: 'integer',
+            format: 'int32'
+        },
+        section: {
+            type: 'string',
+            nullable: true
+        },
         isTied: {
             type: 'boolean'
         },
-        isWinner: {
+        tieBreakGroup: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        tieBreakRequired: {
+            type: 'boolean'
+        },
+        closeToNext: {
+            type: 'boolean'
+        },
+        closeToPrev: {
             type: 'boolean'
         }
     },
@@ -5720,17 +5699,17 @@ export const Results_PresentationDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
-        electedCandidates: {
+        electedPeople: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Results_PresentationCandidateDto'
+                $ref: '#/components/schemas/Results_PresentationPersonDto'
             },
             nullable: true
         },
-        extraCandidates: {
+        extraPeople: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Results_PresentationCandidateDto'
+                $ref: '#/components/schemas/Results_PresentationPersonDto'
             },
             nullable: true
         },
@@ -5752,6 +5731,31 @@ export const Results_PresentationDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const Results_PresentationPersonDtoSchema = {
+    type: 'object',
+    properties: {
+        rank: {
+            type: 'integer',
+            format: 'int32'
+        },
+        fullName: {
+            type: 'string',
+            nullable: true
+        },
+        voteCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        isTied: {
+            type: 'boolean'
+        },
+        isWinner: {
+            type: 'boolean'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const Results_PresentationTieDtoSchema = {
     type: 'object',
     properties: {
@@ -5763,7 +5767,7 @@ export const Results_PresentationTieDtoSchema = {
             type: 'string',
             nullable: true
         },
-        candidateNames: {
+        personNames: {
             type: 'array',
             items: {
                 type: 'string'
@@ -5843,7 +5847,7 @@ export const Results_TallyResultDtoSchema = {
         results: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Results_CandidateResultDto'
+                $ref: '#/components/schemas/Results_PersonResultDto'
             },
             nullable: true
         },
@@ -5893,7 +5897,7 @@ export const Results_TallyStatisticsDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
-        numEligibleCandidates: {
+        numEligiblePeople: {
             type: 'integer',
             format: 'int32'
         },
@@ -5904,30 +5908,6 @@ export const Results_TallyStatisticsDtoSchema = {
         numberExtra: {
             type: 'integer',
             format: 'int32'
-        }
-    },
-    additionalProperties: false
-} as const;
-
-export const Results_TieCandidateDtoSchema = {
-    type: 'object',
-    properties: {
-        personGuid: {
-            type: 'string',
-            format: 'uuid'
-        },
-        fullName: {
-            type: 'string',
-            nullable: true
-        },
-        voteCount: {
-            type: 'integer',
-            format: 'int32'
-        },
-        tieBreakCount: {
-            type: 'integer',
-            format: 'int32',
-            nullable: true
         }
     },
     additionalProperties: false
@@ -5959,10 +5939,10 @@ export const Results_TieDetailsDtoSchema = {
             type: 'string',
             nullable: true
         },
-        candidates: {
+        people: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Results_TieCandidateDto'
+                $ref: '#/components/schemas/Results_TiePersonDto'
             },
             nullable: true
         },
@@ -5992,11 +5972,35 @@ export const Results_TieInfoDtoSchema = {
             type: 'string',
             nullable: true
         },
-        candidateNames: {
+        personNames: {
             type: 'array',
             items: {
                 type: 'string'
             },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Results_TiePersonDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        fullName: {
+            type: 'string',
+            nullable: true
+        },
+        voteCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        tieBreakCount: {
+            type: 'integer',
+            format: 'int32',
             nullable: true
         }
     },
@@ -6014,7 +6018,7 @@ export const Results_TieReportDtoSchema = {
             type: 'string',
             nullable: true
         },
-        candidateNames: {
+        personNames: {
             type: 'array',
             items: {
                 type: 'string'
@@ -6507,6 +6511,21 @@ export const Votes_VoteDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const Votes_VotePositionDtoSchema = {
+    type: 'object',
+    properties: {
+        rowId: {
+            type: 'integer',
+            format: 'int32'
+        },
+        positionOnBallot: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const Votes_VoteWithBallotStatusDtoSchema = {
     type: 'object',
     properties: {
@@ -6516,10 +6535,10 @@ export const Votes_VoteWithBallotStatusDtoSchema = {
         ballotStatusCode: {
             $ref: '#/components/schemas/Enumerations_BallotStatus'
         },
-        votes: {
+        votePositions: {
             type: 'array',
             items: {
-                $ref: '#/components/schemas/Votes_VoteDto'
+                $ref: '#/components/schemas/Votes_VotePositionDto'
             },
             nullable: true
         }

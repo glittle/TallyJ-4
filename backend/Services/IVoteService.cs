@@ -51,14 +51,14 @@ public interface IVoteService
     /// Deletes a vote by its unique identifier and re-evaluates the ballot status.
     /// </summary>
     /// <param name="id">The unique identifier of the vote to delete.</param>
-    /// <returns>The updated ballot status, or null if the vote was not found.</returns>
+    /// <returns>The updated ballot status and vote positions, or null if the vote was not found.</returns>
     Task<VoteWithBallotStatusDto?> DeleteVoteAsync(int id);
 
     /// <summary>
     /// Reorders votes on a ballot to match the supplied row ID sequence.
     /// </summary>
     /// <param name="reorderDto">The ballot GUID and ordered vote row IDs.</param>
-    /// <returns>The updated ballot votes and status, or null if the ballot was not found.</returns>
+    /// <returns>The updated ballot status and vote positions, or null if the ballot was not found.</returns>
     Task<VoteWithBallotStatusDto?> ReorderVotesAsync(ReorderVotesDto reorderDto);
 }
 

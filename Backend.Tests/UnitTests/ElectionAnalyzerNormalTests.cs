@@ -883,7 +883,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
     }
 
     [Fact]
-    public async Task TieBreakCounts_ReorderCandidatesAndSections()
+    public async Task TieBreakCounts_ReorderPeopleAndSections()
     {
         var election = CreateElection(numberToElect: 1, numberExtra: 1);
         _samplePeople = new List<Person>

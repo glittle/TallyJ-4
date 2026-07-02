@@ -17,10 +17,15 @@ export interface CreateVoteDto {
   ineligibleReasonCode?: string;
 }
 
+export interface VotePositionDto {
+  rowId: number;
+  positionOnBallot: number;
+}
+
 export interface VoteWithBallotStatusDto {
   vote?: VoteDto;
   ballotStatusCode?: string;
-  votes?: VoteDto[];
+  votePositions?: VotePositionDto[];
 }
 
 export interface ReorderVotesDto {

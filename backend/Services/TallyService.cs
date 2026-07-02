@@ -204,7 +204,7 @@ public class TallyService : ITallyService
                 VoteCount = g.First().VoteCount ?? 0,
                 TieBreakRequired = g.First().TieBreakRequired == true,
                 Section = g.First().Section ?? string.Empty,
-                CandidateNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
+                PersonNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
             })
             .ToList();
 
@@ -214,7 +214,7 @@ public class TallyService : ITallyService
             ElectionName = election.Name ?? UnknownElectionName,
             CalculatedAt = DateTimeOffset.UtcNow,
             Statistics = statistics,
-            Results = results.Select(r => new CandidateResultDto
+            Results = results.Select(r => new PersonResultDto
             {
                 PersonGuid = r.PersonGuid,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
@@ -254,7 +254,7 @@ public class TallyService : ITallyService
             .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true)
             .CountAsync();
 
-        var numEligibleCandidates = await _context.People
+        var numEligiblePeople = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.CanReceiveVotes == true)
             .CountAsync();
 
@@ -263,7 +263,7 @@ public class TallyService : ITallyService
             return new TallyStatisticsDto
             {
                 NumVoters = numVoters,
-                NumEligibleCandidates = numEligibleCandidates,
+                NumEligiblePeople = numEligiblePeople,
                 NumberToElect = election.NumberToElect ?? 9,
                 NumberExtra = election.NumberExtra ?? 0
             };
@@ -279,7 +279,7 @@ public class TallyService : ITallyService
             ValidVotes = (summary.TotalVotes ?? 0) - (summary.SpoiledVotes ?? 0),
             InvalidVotes = summary.SpoiledVotes ?? 0,
             NumVoters = numVoters,
-            NumEligibleCandidates = numEligibleCandidates,
+            NumEligiblePeople = numEligiblePeople,
             NumberToElect = election.NumberToElect ?? 9,
             NumberExtra = election.NumberExtra ?? 0
         };
@@ -455,7 +455,7 @@ public class TallyService : ITallyService
 
         var section = tieResults[0].Section ?? SectionOther;
 
-        var candidates = tieResults.Select(r => new TieCandidateDto
+        var people = tieResults.Select(r => new TiePersonDto
         {
             PersonGuid = r.PersonGuid,
             FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
@@ -467,7 +467,7 @@ public class TallyService : ITallyService
         {
             TieBreakGroup = tieBreakGroup,
             Section = section,
-            Candidates = candidates
+            People = people
         };
     }
 
@@ -567,7 +567,7 @@ public class TallyService : ITallyService
 
         var elected = results
             .Where(r => r.Section == "E")
-            .Select(r => new CandidateReportDto
+            .Select(r => new PersonReportDto
             {
                 Rank = r.Rank,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
@@ -578,7 +578,7 @@ public class TallyService : ITallyService
 
         var extra = results
             .Where(r => r.Section == "X")
-            .Select(r => new CandidateReportDto
+            .Select(r => new PersonReportDto
             {
                 Rank = r.Rank,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
@@ -589,7 +589,7 @@ public class TallyService : ITallyService
 
         var other = results
             .Where(r => r.Section == "O")
-            .Select(r => new CandidateReportDto
+            .Select(r => new PersonReportDto
             {
                 Rank = r.Rank,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
@@ -605,7 +605,7 @@ public class TallyService : ITallyService
             {
                 TieBreakGroup = g.Key,
                 Section = g.First().Section ?? SectionOther,
-                CandidateNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
+                PersonNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
             })
             .ToList();
 
@@ -756,7 +756,7 @@ public class TallyService : ITallyService
             {
                 TieBreakGroup = g.Key,
                 Section = g.First().Section ?? SectionOther,
-                CandidateNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
+                PersonNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
             })
             .ToList();
     }
@@ -786,9 +786,9 @@ public class TallyService : ITallyService
         var summary = await _context.ResultSummaries
             .FirstOrDefaultAsync(rs => rs.ElectionGuid == electionGuid);
 
-        var electedCandidates = results
+        var electedPeople = results
             .Where(r => r.Section == "E")
-            .Select(r => new PresentationCandidateDto
+            .Select(r => new PresentationPersonDto
             {
                 Rank = r.Rank,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
@@ -798,9 +798,9 @@ public class TallyService : ITallyService
             })
             .ToList();
 
-        var extraCandidates = results
+        var extraPeople = results
             .Where(r => r.Section == "X")
-            .Select(r => new PresentationCandidateDto
+            .Select(r => new PresentationPersonDto
             {
                 Rank = r.Rank,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
@@ -817,7 +817,7 @@ public class TallyService : ITallyService
             {
                 TieBreakGroup = g.Key,
                 Section = g.First().Section ?? SectionOther,
-                CandidateNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList(),
+                PersonNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList(),
                 TieBreakRequired = g.First().TieBreakRequired == true
             })
             .ToList();
@@ -829,8 +829,8 @@ public class TallyService : ITallyService
             NumToElect = election.NumberToElect ?? 9,
             TotalBallots = summary?.BallotsReceived ?? 0,
             TotalVotes = summary?.TotalVotes ?? 0,
-            ElectedCandidates = electedCandidates,
-            ExtraCandidates = extraCandidates,
+            ElectedPeople = electedPeople,
+            ExtraPeople = extraPeople,
             HasTies = ties.Any(),
             Ties = ties,
             Status = summary != null ? "Final" : "In Progress"
@@ -882,14 +882,14 @@ public class TallyService : ITallyService
         };
     }
 
-    private CandidatePerformanceDto[] CalculateCandidatePerformance(List<Result> results, int totalVotes)
+    private PersonPerformanceDto[] CalculatePersonPerformance(List<Result> results, int totalVotes)
     {
-        var candidatePerformance = results
+        var personPerformance = results
             .GroupBy(r => r.PersonGuid)
             .Select(g =>
             {
                 var person = g.First().Person;
-                var totalVotesForCandidate = g.Sum(r => r.VoteCount ?? 0);
+                var totalVotesForPerson = g.Sum(r => r.VoteCount ?? 0);
                 var rank = g.Min(r => r.Rank);
                 var isElected = g.Any(r => r.Section == "E");
                 var isEliminated = g.All(r => r.Section == "O");
@@ -901,24 +901,24 @@ public class TallyService : ITallyService
                 var firstChoiceVotes = g.FirstOrDefault(r => r.Rank == 1)?.VoteCount ?? 0;
                 var lastChoiceVotes = g.OrderByDescending(r => r.Rank).FirstOrDefault()?.VoteCount ?? 0;
 
-                return new CandidatePerformanceDto
+                return new PersonPerformanceDto
                 {
                     PersonGuid = g.Key,
                     FullName = person?.FullNameFl ?? UnknownFallbackValue,
-                    TotalVotes = totalVotesForCandidate,
-                    VotePercentage = totalVotes > 0 ? (decimal)totalVotesForCandidate / totalVotes * 100 : 0,
+                    TotalVotes = totalVotesForPerson,
+                    VotePercentage = totalVotes > 0 ? (decimal)totalVotesForPerson / totalVotes * 100 : 0,
                     Rank = rank,
                     IsElected = isElected,
                     IsEliminated = isEliminated,
                     VotesByPosition = votesByPosition,
-                    FirstChoicePercentage = totalVotesForCandidate > 0 ? (decimal)firstChoiceVotes / totalVotesForCandidate * 100 : 0,
-                    LastChoicePercentage = totalVotesForCandidate > 0 ? (decimal)lastChoiceVotes / totalVotesForCandidate * 100 : 0
+                    FirstChoicePercentage = totalVotesForPerson > 0 ? (decimal)firstChoiceVotes / totalVotesForPerson * 100 : 0,
+                    LastChoicePercentage = totalVotesForPerson > 0 ? (decimal)lastChoiceVotes / totalVotesForPerson * 100 : 0
                 };
             })
             .OrderBy(c => c.Rank)
             .ToArray();
 
-        return candidatePerformance;
+        return personPerformance;
     }
 
     private async Task<TurnoutAnalysisDto> CalculateTurnoutAnalysisAsync(Guid electionGuid, List<Location> locations, int totalRegisteredVoters, int totalBallotsCast, Election election)
@@ -1096,8 +1096,8 @@ public class TallyService : ITallyService
             var locationBallots = location.Ballots.Count(b => b.StatusCode == BallotStatus.Ok);
             var locationVotes = location.Ballots.Sum(b => b.Votes.Count);
 
-            // Get top candidates for this location
-            var locationCandidateVotes = location.Ballots
+            // Get top People for this location
+            var locationPersonVotes = location.Ballots
                 .Where(b => b.StatusCode == BallotStatus.Ok)
                 .SelectMany(b => b.Votes)
                 .GroupBy(v => v.Person?.FullNameFl ?? UnknownFallbackValue)
@@ -1114,7 +1114,7 @@ public class TallyService : ITallyService
                 SpoiledBallots = location.Ballots.Count(b => b.StatusCode != BallotStatus.Ok),
                 TurnoutPercentage = locationVoters > 0 ? (decimal)locationBallots / locationVoters * 100 : 0,
                 TotalVotes = locationVotes,
-                TopCandidates = locationCandidateVotes
+                TopPeople = locationPersonVotes
             });
         }
 
@@ -1170,8 +1170,8 @@ public class TallyService : ITallyService
         // Calculate vote distribution
         var voteDistribution = CalculateVoteDistribution(election, allBallots);
 
-        // Calculate candidate performance
-        var candidatePerformance = CalculateCandidatePerformance(results, totalVotes);
+        // Calculate person performance
+        var personPerformance = CalculatePersonPerformance(results, totalVotes);
 
         // Calculate turnout analysis
         var turnoutAnalysis = await CalculateTurnoutAnalysisAsync(electionGuid, locations, totalRegisteredVoters, totalBallotsCast, election);
@@ -1183,7 +1183,7 @@ public class TallyService : ITallyService
         {
             Overview = overview,
             VoteDistribution = voteDistribution,
-            CandidatePerformance = candidatePerformance,
+            PersonPerformance = personPerformance,
             TurnoutAnalysis = turnoutAnalysis,
             LocationStatistics = locationStatistics
         };

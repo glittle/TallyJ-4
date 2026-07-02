@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import type {
-  OnlineCandidate,
+  OnlinePerson,
   OnlinePoolEntry,
   OnlineVote,
   OnlineVoteStatus,
@@ -8,7 +8,7 @@ import type {
 
 export interface VoteSlot {
   position: number;
-  candidate: OnlineCandidate | null;
+  person: OnlinePerson | null;
   freeText: string;
   searchText: string;
 }
@@ -16,7 +16,7 @@ export interface VoteSlot {
 export function createEmptyVoteSlots(count: number): VoteSlot[] {
   return Array.from({ length: count }, (_, i) => ({
     position: i + 1,
-    candidate: null,
+    person: null,
     freeText: "",
     searchText: "",
   }));
@@ -26,8 +26,8 @@ export function getEffectiveVoteName(
   slot: VoteSlot,
   selectionMode: string,
 ): string {
-  if (slot.candidate) {
-    return slot.candidate.fullName;
+  if (slot.person) {
+    return slot.person.fullName;
   }
   if (selectionMode === "B") {
     return slot.freeText;
@@ -38,7 +38,7 @@ export function getEffectiveVoteName(
   return slot.searchText;
 }
 
-/** Returns true when the same candidate or name appears on multiple slots. */
+/** Returns true when the same person or name appears on multiple slots. */
 export function hasDuplicateVotes(
   votes: VoteSlot[],
   selectionMode: string,
@@ -46,7 +46,7 @@ export function hasDuplicateVotes(
   const seen = new Set<string>();
 
   for (const slot of votes) {
-    const guid = slot.candidate?.personGuid;
+    const guid = slot.person?.personGuid;
     if (guid && !String(guid).startsWith("pool-")) {
       const key = `guid:${guid}`;
       if (seen.has(key)) {
@@ -74,7 +74,7 @@ export function buildOnlineVotes(
 ): OnlineVote[] {
   return votes
     .filter((v) => {
-      if (v.candidate) {
+      if (v.person) {
         return true;
       }
       if (selectionMode === "B") {
@@ -86,7 +86,7 @@ export function buildOnlineVotes(
       return v.searchText.trim().length > 0;
     })
     .map((v) => ({
-      personGuid: v.candidate?.personGuid,
+      personGuid: v.person?.personGuid,
       voteName: getEffectiveVoteName(v, selectionMode) || undefined,
       positionOnBallot: v.position,
     }));
@@ -104,7 +104,7 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
     votes.some((v) => {
       const mode = selectionMode();
       return (
-        v.candidate !== null ||
+        v.person !== null ||
         (mode === "B" && v.freeText.trim().length > 0) ||
         (mode === "C" &&
           (v.searchText.trim().length > 0 || v.freeText.trim().length > 0)) ||
@@ -124,7 +124,7 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
     }
   }
 
-  function poolAsCandidates(): OnlineCandidate[] {
+  function poolAsVotablePeople(): OnlinePerson[] {
     return poolEntries.value.map((p, index) => ({
       personGuid: `pool-${index}`,
       fullName: p.fullName,
@@ -135,7 +135,7 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
   function applyPriorVotes(
     votes: VoteSlot[],
     status: OnlineVoteStatus,
-    candidates: OnlineCandidate[],
+    votablePeople: OnlinePerson[],
   ) {
     isEditing.value = status.hasVoted;
     notifyWhenProcessed.value = status.notifyWhenProcessed ?? false;
@@ -147,9 +147,11 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
         continue;
       }
 
-      const matched = candidates.find((c) => c.personGuid === prior.personGuid);
+      const matched = votablePeople.find(
+        (p) => p.personGuid === prior.personGuid,
+      );
       if (matched) {
-        slot.candidate = matched;
+        slot.person = matched;
         slot.searchText = matched.fullName;
       } else if (prior.voteName) {
         slot.freeText = prior.voteName;
@@ -191,7 +193,7 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
     canSubmit,
     addPoolEntry,
     submitPoolForm,
-    poolAsCandidates,
+    poolAsVotablePeople,
     applyPriorVotes,
   };
 }

@@ -130,6 +130,7 @@ At the time of the initial v4 rewrite, the following areas were incomplete. **Cu
 - Many v3 features have been rebuilt with improved security and architecture.
 
 **Recommendation for anyone using this guide:**
+
 - Treat feature-completeness claims here as historical.
 - Check the current `USER_GUIDE.md`, running UI, and Swagger for what exists today.
 - For implementation status of specific areas, see the relevant `*IMPLEMENTATION.md` files in this `docs/` folder and the source code.
@@ -150,7 +151,7 @@ This section is left for context on the scope of the v3→v4 rewrite effort.
 
 **Steps:**
 
-1. Export active voters/candidates from v3 to CSV
+1. Export active people from v3 to CSV
 2. Install TallyJ v4
 3. Create new elections
 4. Import people from CSV
@@ -367,7 +368,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 
 2. **Export Current Data**
    - Elections list (CSV)
-   - Voters/candidates (CSV)
+   - People (CSV)
    - Completed election results (PDF)
 
 3. **Document Custom Configurations**

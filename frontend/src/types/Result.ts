@@ -3,11 +3,11 @@ export interface TallyResultDto {
   electionName: string;
   calculatedAt: string;
   statistics: TallyStatisticsDto;
-  results: CandidateResultDto[];
+  results: PersonResultDto[];
   ties: TieInfoDto[];
 }
 
-export interface CandidateResultDto {
+export interface PersonResultDto {
   personGuid: string;
   fullName: string;
   voteCount: number;
@@ -25,7 +25,7 @@ export interface TieInfoDto {
   voteCount: number;
   tieBreakRequired: boolean;
   section: string;
-  candidateNames: string[];
+  personNames: string[];
 }
 
 export interface TallyStatisticsDto {
@@ -37,7 +37,7 @@ export interface TallyStatisticsDto {
   validVotes: number;
   invalidVotes: number;
   numVoters: number;
-  numEligibleCandidates: number;
+  numEligiblePeople: number;
   numberToElect: number;
   numberExtra: number;
 }
@@ -50,13 +50,13 @@ export interface ElectionReportDto {
   totalBallots: number;
   spoiledBallots: number;
   totalVotes: number;
-  elected: CandidateReportDto[];
-  extra: CandidateReportDto[];
-  other: CandidateReportDto[];
+  elected: PersonReportDto[];
+  extra: PersonReportDto[];
+  other: PersonReportDto[];
   ties: TieReportDto[];
 }
 
-export interface CandidateReportDto {
+export interface PersonReportDto {
   rank: number;
   fullName: string;
   voteCount: number;
@@ -66,7 +66,7 @@ export interface CandidateReportDto {
 export interface TieReportDto {
   tieBreakGroup: number;
   section: string;
-  candidateNames: string[];
+  personNames: string[];
 }
 
 // Report Data DTOs
@@ -107,11 +107,11 @@ export interface ReportDataResponseDto {
 export interface TieDetailsDto {
   tieBreakGroup: number;
   section: string;
-  candidates: TieCandidateDto[];
+  people: TiePersonDto[];
   instructions: string;
 }
 
-export interface TieCandidateDto {
+export interface TiePersonDto {
   personGuid: string;
   fullName: string;
   voteCount: number;
@@ -140,14 +140,14 @@ export interface PresentationDto {
   numToElect: number;
   totalBallots: number;
   totalVotes: number;
-  electedCandidates: PresentationCandidateDto[];
-  extraCandidates: PresentationCandidateDto[];
+  electedPeople: PresentationPersonDto[];
+  extraPeople: PresentationPersonDto[];
   hasTies: boolean;
   ties: PresentationTieDto[];
   status: string;
 }
 
-export interface PresentationCandidateDto {
+export interface PresentationPersonDto {
   rank: number;
   fullName: string;
   voteCount: number;
@@ -158,7 +158,7 @@ export interface PresentationCandidateDto {
 export interface PresentationTieDto {
   tieBreakGroup: number;
   section: string;
-  candidateNames: string[];
+  personNames: string[];
   tieBreakRequired: boolean;
 }
 
@@ -201,7 +201,7 @@ export interface OnlineVotingInfoDto {
 export interface DetailedStatisticsDto {
   overview: ElectionOverviewDto;
   voteDistribution: VoteDistributionDto;
-  candidatePerformance: CandidatePerformanceDto[];
+  personPerformance: PersonPerformanceDto[];
   turnoutAnalysis: TurnoutAnalysisDto;
   locationStatistics: LocationStatisticsDto[];
 }
@@ -228,7 +228,7 @@ export interface VoteDistributionDto {
   ballotLengthDistribution: Record<number, number>;
 }
 
-export interface CandidatePerformanceDto {
+export interface PersonPerformanceDto {
   personGuid: string;
   fullName: string;
   totalVotes: number;
@@ -284,5 +284,5 @@ export interface LocationStatisticsDto {
   spoiledBallots: number;
   turnoutPercentage: number;
   totalVotes: number;
-  topCandidates: Record<string, number>;
+  topPeople: Record<string, number>;
 }

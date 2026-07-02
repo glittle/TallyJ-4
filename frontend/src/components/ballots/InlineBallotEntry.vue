@@ -73,8 +73,8 @@ const canAddVotes = computed(() => props.hasKeyboardTeller !== false);
 
 const isNeedsReview = computed(() => props.ballot.statusCode === "Review");
 
-const candidatesRef = computed(() => peopleStore.candidateCache);
-const { searchResults } = usePersonSearch(searchQuery, candidatesRef, {
+const peopleRef = computed(() => peopleStore.peopleCache);
+const { searchResults } = usePersonSearch(searchQuery, peopleRef, {
   maxResults: 20,
 });
 
@@ -504,13 +504,13 @@ onMounted(async () => {
   cacheError.value = false;
 
   peopleStore
-    .initializeCandidateCache(props.electionGuid)
+    .initializePeopleCache(props.electionGuid)
     .then(() => {
       cacheLoading.value = false;
       void focusSearchInput();
     })
     .catch((e) => {
-      console.error("Failed to initialize candidate cache:", e);
+      console.error("Failed to initialize cache:", e);
       cacheError.value = true;
       cacheLoading.value = false;
       showErrorMessage(t("ballots.cacheLoadError"));

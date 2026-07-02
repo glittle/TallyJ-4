@@ -29,7 +29,7 @@ const { handleApiError } = useApiErrorHandler();
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
 const searching = ref(false);
-const candidates = ref<PersonDto[]>([]);
+const votablePeople = ref<PersonDto[]>([]);
 
 const form = reactive({
   positionOnBallot: props.nextPosition,
@@ -43,7 +43,7 @@ const rules = reactive<FormRules>({
   personGuid: [
     {
       required: true,
-      message: t("ballots.candidateRequired"),
+      message: t("ballots.personRequired"),
       trigger: "change",
     },
   ],
@@ -51,8 +51,8 @@ const rules = reactive<FormRules>({
 
 onMounted(async () => {
   try {
-    await peopleStore.fetchPeople(props.electionGuid);
-    candidates.value = peopleStore.candidates;
+    await peopleStore.fetchPeopleList(props.electionGuid);
+    votablePeople.value = peopleStore.votablePeople;
   } catch (error) {
     handleApiError(error);
   }
@@ -60,14 +60,14 @@ onMounted(async () => {
 
 async function searchPeople(query: string) {
   if (!query) {
-    candidates.value = peopleStore.candidates;
+    votablePeople.value = peopleStore.votablePeople;
     return;
   }
 
   searching.value = true;
   try {
     const results = await peopleStore.searchPeople(props.electionGuid, query);
-    candidates.value = results.filter((p) => p.canReceiveVotes);
+    votablePeople.value = results.filter((p) => p.canReceiveVotes);
   } catch (error) {
     handleApiError(error);
   } finally {
@@ -127,7 +127,7 @@ function handleClose() {
         <el-input-number v-model="form.positionOnBallot" :min="1" :max="50" />
       </el-form-item>
 
-      <el-form-item :label="$t('ballots.candidate')" prop="personGuid">
+      <el-form-item :label="$t('ballots.person')" prop="personGuid">
         <el-select
           v-model="form.personGuid"
           filterable
@@ -137,7 +137,7 @@ function handleClose() {
           style="width: 100%"
         >
           <el-option
-            v-for="person in candidates"
+            v-for="person in votablePeople"
             :key="person.personGuid"
             :label="person.fullName"
             :value="person.personGuid"

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.DTOs.Results;
 using Backend.Services;
@@ -31,7 +31,7 @@ public class ReportExportServiceTests : ServiceTestBase
             TotalBallots = 100,
             SpoiledBallots = 5,
             TotalVotes = 285,
-            Elected = new List<CandidateReportDto>
+            Elected = new List<PersonReportDto>
             {
                 new() { Rank = 1, FullName = "John Doe", VoteCount = 95, Section = "A" },
                 new() { Rank = 2, FullName = "Jane Smith", VoteCount = 88, Section = "B" },
@@ -74,7 +74,7 @@ public class ReportExportServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task GeneratePdfReportAsync_WithNoElectedCandidates_ReturnsPdfBytes()
+    public async Task GeneratePdfReportAsync_WithNoElectedPeople_ReturnsPdfBytes()
     {
         // Arrange
         var electionId = Guid.NewGuid();
@@ -86,7 +86,7 @@ public class ReportExportServiceTests : ServiceTestBase
             TotalBallots = 100,
             SpoiledBallots = 5,
             TotalVotes = 285,
-            Elected = new List<CandidateReportDto>() // Empty list
+            Elected = new List<PersonReportDto>() // Empty list
         };
 
         var detailedStats = new DetailedStatisticsDto
@@ -130,7 +130,7 @@ public class ReportExportServiceTests : ServiceTestBase
             TotalBallots = 100,
             SpoiledBallots = 5,
             TotalVotes = 285,
-            Elected = new List<CandidateReportDto>
+            Elected = new List<PersonReportDto>
             {
                 new() { Rank = 1, FullName = "John Doe", VoteCount = 95, Section = "A" }
             }
@@ -177,7 +177,7 @@ public class ReportExportServiceTests : ServiceTestBase
             TotalBallots = 100,
             SpoiledBallots = 5,
             TotalVotes = 285,
-            Elected = new List<CandidateReportDto>()
+            Elected = new List<PersonReportDto>()
         };
 
         var detailedStats = new DetailedStatisticsDto
@@ -217,7 +217,7 @@ public class ReportExportServiceTests : ServiceTestBase
         var electionReport = new ElectionReportDto
         {
             ElectionName = "Test Election",
-            Elected = new List<CandidateReportDto>()
+            Elected = new List<PersonReportDto>()
         };
 
         var detailedStats = new DetailedStatisticsDto
@@ -276,7 +276,7 @@ public class ReportExportServiceTests : ServiceTestBase
             TotalBallots = 100,
             SpoiledBallots = 5,
             TotalVotes = 285,
-            Elected = new List<CandidateReportDto>
+            Elected = new List<PersonReportDto>
             {
                 new() { Rank = 1, FullName = "John Doe", VoteCount = 95, Section = "A" },
                 new() { Rank = 2, FullName = "Jane Smith", VoteCount = 88, Section = "B" },
@@ -303,12 +303,12 @@ public class ReportExportServiceTests : ServiceTestBase
                 new() { LocationName = "Location A", RegisteredVoters = 75, BallotsCast = 50, ValidBallots = 48, SpoiledBallots = 2, TurnoutPercentage = 66.67m, TotalVotes = 144 },
                 new() { LocationName = "Location B", RegisteredVoters = 75, BallotsCast = 50, ValidBallots = 47, SpoiledBallots = 3, TurnoutPercentage = 66.67m, TotalVotes = 141 }
             },
-            CandidatePerformance = new[]
+            PersonPerformance = new[]
             {
-                new CandidatePerformanceDto { FullName = "John Doe", TotalVotes = 95, VotePercentage = 33.33m, Rank = 1, IsElected = true, IsEliminated = false },
-                new CandidatePerformanceDto { FullName = "Jane Smith", TotalVotes = 88, VotePercentage = 30.88m, Rank = 2, IsElected = true, IsEliminated = false },
-                new CandidatePerformanceDto { FullName = "Bob Johnson", TotalVotes = 75, VotePercentage = 26.32m, Rank = 3, IsElected = true, IsEliminated = false },
-                new CandidatePerformanceDto { FullName = "Alice Brown", TotalVotes = 27, VotePercentage = 9.47m, Rank = 4, IsElected = false, IsEliminated = true }
+                new PersonPerformanceDto { FullName = "John Doe", TotalVotes = 95, VotePercentage = 33.33m, Rank = 1, IsElected = true, IsEliminated = false },
+                new PersonPerformanceDto { FullName = "Jane Smith", TotalVotes = 88, VotePercentage = 30.88m, Rank = 2, IsElected = true, IsEliminated = false },
+                new PersonPerformanceDto { FullName = "Bob Johnson", TotalVotes = 75, VotePercentage = 26.32m, Rank = 3, IsElected = true, IsEliminated = false },
+                new PersonPerformanceDto { FullName = "Alice Brown", TotalVotes = 27, VotePercentage = 9.47m, Rank = 4, IsElected = false, IsEliminated = true }
             }
         };
 
@@ -326,14 +326,14 @@ public class ReportExportServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task GenerateExcelReportAsync_WithNoElectedCandidates_SkipsElectedSheet()
+    public async Task GenerateExcelReportAsync_WithNoElectedPeople_SkipsElectedSheet()
     {
         // Arrange
         var electionId = Guid.NewGuid();
         var electionReport = new ElectionReportDto
         {
             ElectionName = "Test Election",
-            Elected = new List<CandidateReportDto>() // Empty
+            Elected = new List<PersonReportDto>() // Empty
         };
 
         var detailedStats = new DetailedStatisticsDto
@@ -350,7 +350,7 @@ public class ReportExportServiceTests : ServiceTestBase
                 OverallTurnoutPercentage = 80.0m
             },
             LocationStatistics = new List<LocationStatisticsDto>(),
-            CandidatePerformance = Array.Empty<CandidatePerformanceDto>()
+            PersonPerformance = Array.Empty<PersonPerformanceDto>()
         };
 
         _tallyServiceMock.Setup(x => x.GetElectionReportAsync(electionId)).ReturnsAsync(electionReport);
@@ -372,7 +372,7 @@ public class ReportExportServiceTests : ServiceTestBase
         var electionReport = new ElectionReportDto
         {
             ElectionName = "Test Election",
-            Elected = new List<CandidateReportDto>
+            Elected = new List<PersonReportDto>
             {
                 new() { Rank = 1, FullName = "John Doe", VoteCount = 95, Section = "A" }
             }
@@ -392,7 +392,7 @@ public class ReportExportServiceTests : ServiceTestBase
                 OverallTurnoutPercentage = 80.0m
             },
             LocationStatistics = new List<LocationStatisticsDto>(), // Empty
-            CandidatePerformance = Array.Empty<CandidatePerformanceDto>()
+            PersonPerformance = Array.Empty<PersonPerformanceDto>()
         };
 
         _tallyServiceMock.Setup(x => x.GetElectionReportAsync(electionId)).ReturnsAsync(electionReport);
@@ -407,14 +407,14 @@ public class ReportExportServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task GenerateExcelReportAsync_WithNoCandidatePerformance_SkipsCandidateSheet()
+    public async Task GenerateExcelReportAsync_WithNoPersonPerformance_SkipsPersonSheet()
     {
         // Arrange
         var electionId = Guid.NewGuid();
         var electionReport = new ElectionReportDto
         {
             ElectionName = "Test Election",
-            Elected = new List<CandidateReportDto>()
+            Elected = new List<PersonReportDto>()
         };
 
         var detailedStats = new DetailedStatisticsDto
@@ -431,7 +431,7 @@ public class ReportExportServiceTests : ServiceTestBase
                 OverallTurnoutPercentage = 80.0m
             },
             LocationStatistics = new List<LocationStatisticsDto>(),
-            CandidatePerformance = Array.Empty<CandidatePerformanceDto>() // Empty
+            PersonPerformance = Array.Empty<PersonPerformanceDto>() // Empty
         };
 
         _tallyServiceMock.Setup(x => x.GetElectionReportAsync(electionId)).ReturnsAsync(electionReport);
@@ -454,7 +454,7 @@ public class ReportExportServiceTests : ServiceTestBase
         var electionReport = new ElectionReportDto
         {
             ElectionName = "Test Election",
-            Elected = new List<CandidateReportDto>()
+            Elected = new List<PersonReportDto>()
         };
 
         var detailedStats = new DetailedStatisticsDto
@@ -471,7 +471,7 @@ public class ReportExportServiceTests : ServiceTestBase
                 OverallTurnoutPercentage = 80.0m
             },
             LocationStatistics = new List<LocationStatisticsDto>(),
-            CandidatePerformance = Array.Empty<CandidatePerformanceDto>()
+            PersonPerformance = Array.Empty<PersonPerformanceDto>()
         };
 
         _tallyServiceMock.Setup(x => x.GetElectionReportAsync(electionId)).ReturnsAsync(electionReport);

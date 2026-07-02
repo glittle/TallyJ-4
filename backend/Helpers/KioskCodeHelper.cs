@@ -71,10 +71,10 @@ public static class KioskCodeHelper
 
         for (var attempt = 0; attempt < 500; attempt++)
         {
-            var candidate = GenerateCode(lastName, random);
-            if (used.Add(candidate))
+            var possibleCode = GenerateCode(lastName, random);
+            if (used.Add(possibleCode))
             {
-                return candidate;
+                return possibleCode;
             }
         }
 

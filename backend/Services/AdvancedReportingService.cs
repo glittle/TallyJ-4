@@ -1,4 +1,4 @@
-﻿using Backend.DTOs.Results;
+using Backend.DTOs.Results;
 namespace Backend.Services;
 
 /// <summary>
@@ -24,7 +24,7 @@ public class AdvancedReportingService : IAdvancedReportingService
     /// Generates chart data for various election statistics visualizations.
     /// </summary>
     /// <param name="electionId">The unique identifier of the election.</param>
-    /// <param name="chartType">The type of chart to generate (e.g., "turnout-by-location", "candidate-votes").</param>
+    /// <param name="chartType">The type of chart to generate (e.g., "turnout-by-location", "person-votes").</param>
     /// <returns>The chart data for the specified election and chart type.</returns>
     public async Task<ChartDataDto> GenerateChartDataAsync(Guid electionId, string chartType)
     {
@@ -35,7 +35,7 @@ public class AdvancedReportingService : IAdvancedReportingService
         return chartType.ToLower() switch
         {
             "turnout-by-location" => GenerateTurnoutByLocationChart(detailedStats),
-            "candidate-votes" => await GenerateCandidateVotesChartAsync(electionId),
+            "person-votes" => await GeneratePersonVotesChartAsync(electionId),
             "vote-distribution" => GenerateVoteDistributionChart(detailedStats),
             "turnout-over-time" => GenerateTurnoutOverTimeChart(detailedStats),
             _ => throw new ArgumentException($"Unsupported chart type: {chartType}")
@@ -142,16 +142,16 @@ public class AdvancedReportingService : IAdvancedReportingService
         var detailedStats = await _tallyService.GetDetailedStatisticsAsync(electionId);
 
         // Apply filters (simplified implementation)
-        var filteredCandidates = ApplyCandidateFilters(report.Elected.Concat(report.Other).Concat(report.Extra), filters);
+        var filteredPeople = ApplyPersonFilters(report.Elected.Concat(report.Other).Concat(report.Extra), filters);
         var filteredLocations = ApplyLocationFilters(detailedStats.LocationStatistics, filters);
 
         return new FilteredReportDto
         {
             AppliedFilters = filters,
             TotalRecords = report.Elected.Count + report.Other.Count + report.Extra.Count,
-            FilteredRecords = filteredCandidates.Count(),
+            FilteredRecords = filteredPeople.Count(),
             Summary = report,
-            Candidates = filteredCandidates.ToList(),
+            People = filteredPeople.ToList(),
             Locations = filteredLocations.Select(l => new LocationReportDto
             {
                 LocationName = l.LocationName,
@@ -195,12 +195,12 @@ public class AdvancedReportingService : IAdvancedReportingService
                         generatedData[$"section_{section.Order}_summary"] = stats.Overview;
                         break;
 
-                    case "candidates":
+                    case "people":
                         var report = await _tallyService.GetElectionReportAsync(electionId);
-                        var candidates = report.Elected.Concat(report.Extra).Concat(report.Other).ToList();
+                        var people = report.Elected.Concat(report.Extra).Concat(report.Other).ToList();
                         if (config.DefaultFilters != null)
-                            candidates = ApplyCandidateFilters(candidates, config.DefaultFilters).ToList();
-                        generatedData[$"section_{section.Order}_candidates"] = candidates;
+                            people = ApplyPersonFilters(people, config.DefaultFilters).ToList();
+                        generatedData[$"section_{section.Order}_people"] = people;
                         break;
 
                     case "locations":
@@ -212,7 +212,7 @@ public class AdvancedReportingService : IAdvancedReportingService
                         break;
 
                     case "chart":
-                        var chartType = section.Parameters.TryGetValue("chartType", out var ctObj) && ctObj is string ct ? ct : "candidate-votes";
+                        var chartType = section.Parameters.TryGetValue("chartType", out var ctObj) && ctObj is string ct ? ct : "person-votes";
                         var chartData = await GenerateChartDataAsync(electionId, chartType);
                         generatedData[$"section_{section.Order}_chart"] = chartData;
                         break;
@@ -259,7 +259,7 @@ public class AdvancedReportingService : IAdvancedReportingService
                 VoteDistribution = detailedStats.VoteDistribution.BallotLengthDistribution,
                 BallotCompletenessRate = detailedStats.Overview.ValidBallots / (decimal)detailedStats.Overview.TotalBallotsCast * 100
             },
-            CandidateAnalysis = GenerateCandidateAnalysis(detailedStats),
+            PersonAnalysis = GeneratePersonAnalysis(detailedStats),
             LocationAnalysis = GenerateLocationAnalysis(detailedStats),
             TimeBasedAnalysis = new TimeBasedAnalysisDto
             {
@@ -293,25 +293,25 @@ public class AdvancedReportingService : IAdvancedReportingService
         };
     }
 
-    private async Task<ChartDataDto> GenerateCandidateVotesChartAsync(Guid electionId)
+    private async Task<ChartDataDto> GeneratePersonVotesChartAsync(Guid electionId)
     {
         var report = await _tallyService.GetElectionReportAsync(electionId);
-        var candidates = report.Elected.Concat(report.Other).Concat(report.Extra)
+        var people = report.Elected.Concat(report.Other).Concat(report.Extra)
             .OrderByDescending(c => c.VoteCount)
             .Take(10); // Top 10
 
         return new ChartDataDto
         {
             ChartType = "horizontalBar",
-            Title = "Candidate Votes",
-            Labels = candidates.Select(c => c.FullName).ToList(),
+            Title = "Person Votes",
+            Labels = people.Select(c => c.FullName).ToList(),
             Datasets = new List<ChartDatasetDto>
             {
                 new ChartDatasetDto
                 {
                     Label = "Votes",
-                    Data = candidates.Select(c => (decimal)c.VoteCount).ToList(),
-                    BackgroundColors = GenerateColors(candidates.Count())
+                    Data = people.Select(c => (decimal)c.VoteCount).ToList(),
+                    BackgroundColors = GenerateColors(people.Count())
                 }
             }
         };
@@ -376,12 +376,12 @@ public class AdvancedReportingService : IAdvancedReportingService
         };
     }
 
-    private IEnumerable<CandidateReportDto> ApplyCandidateFilters(IEnumerable<CandidateReportDto> candidates, AdvancedFilterDto filters)
+    private IEnumerable<PersonReportDto> ApplyPersonFilters(IEnumerable<PersonReportDto> people, AdvancedFilterDto filters)
     {
-        var query = candidates.AsQueryable();
+        var query = people.AsQueryable();
 
-        if (filters.CandidateNames?.Any() == true)
-            query = query.Where(c => filters.CandidateNames.Contains(c.FullName));
+        if (filters.PersonNames?.Any() == true)
+            query = query.Where(c => filters.PersonNames.Contains(c.FullName));
 
         if (filters.VoteCountRange != null)
         {
@@ -426,14 +426,14 @@ public class AdvancedReportingService : IAdvancedReportingService
         return query;
     }
 
-    private CandidateAnalysisDto GenerateCandidateAnalysis(DetailedStatisticsDto stats)
+    private PersonAnalysisDto GeneratePersonAnalysis(DetailedStatisticsDto stats)
     {
-        var performances = stats.CandidatePerformance;
-        return new CandidateAnalysisDto
+        var performances = stats.PersonPerformance;
+        return new PersonAnalysisDto
         {
             AverageVotePercentage = performances.Average(p => p.VotePercentage),
             VotePercentageVariance = CalculateVariance(performances.Select(p => p.VotePercentage)),
-            Clusters = new List<CandidateClusterDto>() // Placeholder
+            Clusters = new List<PersonClusterDto>() // Placeholder
         };
     }
 

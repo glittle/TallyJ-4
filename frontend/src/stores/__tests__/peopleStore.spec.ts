@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { setActivePinia, createPinia } from "pinia";
-import { usePeopleStore } from "../peopleStore";
 import type { PersonDto } from "@/types/Person";
 import type { PersonVoteCountUpdateEvent } from "@/types/SignalREvents";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { usePeopleStore } from "../peopleStore";
 
 vi.mock("@/services/peopleService", () => ({
   peopleService: {
@@ -12,7 +12,7 @@ vi.mock("@/services/peopleService", () => ({
     update: vi.fn(),
     delete: vi.fn(),
     search: vi.fn(),
-    getCandidates: vi.fn().mockResolvedValue([]),
+    getVotablePeople: vi.fn().mockResolvedValue([]),
     getAllForBallotEntry: vi.fn().mockResolvedValue([]),
     getAllPeople: vi.fn().mockResolvedValue([]),
   },
@@ -47,7 +47,7 @@ describe("usePeopleStore", () => {
     it("should update voteCount for a matching person in the cache", () => {
       const store = usePeopleStore();
 
-      store.candidateCache = [
+      store.peopleCache = [
         {
           ...createPersonDto({
             personGuid: "person-1",
@@ -78,7 +78,7 @@ describe("usePeopleStore", () => {
 
       store.handlePersonVoteCountUpdated(event);
 
-      const updated = store.candidateCache.find(
+      const updated = store.peopleCache.find(
         (p) => p.personGuid === "person-1",
       );
       expect(updated?.voteCount).toBe(5);
@@ -87,7 +87,7 @@ describe("usePeopleStore", () => {
     it("should not modify other people in the cache", () => {
       const store = usePeopleStore();
 
-      store.candidateCache = [
+      store.peopleCache = [
         {
           ...createPersonDto({
             personGuid: "person-1",
@@ -118,7 +118,7 @@ describe("usePeopleStore", () => {
 
       store.handlePersonVoteCountUpdated(event);
 
-      const unchanged = store.candidateCache.find(
+      const unchanged = store.peopleCache.find(
         (p) => p.personGuid === "person-2",
       );
       expect(unchanged?.voteCount).toBe(3);
@@ -139,7 +139,7 @@ describe("usePeopleStore", () => {
           _soundexCodes: [],
         },
       ] as any;
-      store.candidateCache = initialCache;
+      store.peopleCache = initialCache;
 
       const event: PersonVoteCountUpdateEvent = {
         electionGuid: "election-1",
@@ -149,13 +149,13 @@ describe("usePeopleStore", () => {
 
       store.handlePersonVoteCountUpdated(event);
 
-      expect(store.candidateCache).not.toBe(initialCache);
+      expect(store.peopleCache).not.toBe(initialCache);
     });
 
     it("should do nothing when person is not found in cache", () => {
       const store = usePeopleStore();
 
-      store.candidateCache = [
+      store.peopleCache = [
         {
           ...createPersonDto({
             personGuid: "person-1",
@@ -176,11 +176,11 @@ describe("usePeopleStore", () => {
 
       store.handlePersonVoteCountUpdated(event);
 
-      expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].voteCount).toBe(2);
+      expect(store.peopleCache).toHaveLength(1);
+      expect(store.peopleCache[0].voteCount).toBe(2);
     });
 
-    it("should call getAllForBallotEntry when initializing candidate cache", async () => {
+    it("should call getAllForBallotEntry when initializing people cache", async () => {
       const { peopleService } = await import("@/services/peopleService");
       const mockPerson = createPersonDto({
         personGuid: "p1",
@@ -193,17 +193,17 @@ describe("usePeopleStore", () => {
       ]);
 
       const store = usePeopleStore();
-      await store.initializeCandidateCache("election-1");
+      await store.initializePeopleCache("election-1");
 
       expect(peopleService.getAllForBallotEntry).toHaveBeenCalledWith(
         "election-1",
       );
-      expect(store.candidateCache).toHaveLength(1);
-      expect(store.candidateCache[0].personGuid).toBe("p1");
+      expect(store.peopleCache).toHaveLength(1);
+      expect(store.peopleCache[0].personGuid).toBe("p1");
       expect(store.isCacheInitialized).toBe(true);
     });
 
-    it("should include ineligible people in candidate cache", async () => {
+    it("should include ineligible people in people cache", async () => {
       const { peopleService } = await import("@/services/peopleService");
       const eligible = createPersonDto({
         personGuid: "p1",
@@ -224,10 +224,10 @@ describe("usePeopleStore", () => {
       ]);
 
       const store = usePeopleStore();
-      await store.initializeCandidateCache("election-1");
+      await store.initializePeopleCache("election-1");
 
-      expect(store.candidateCache).toHaveLength(2);
-      const ineligibleCached = store.candidateCache.find(
+      expect(store.peopleCache).toHaveLength(2);
+      const ineligibleCached = store.peopleCache.find(
         (p) => p.personGuid === "p2",
       );
       expect(ineligibleCached).toBeDefined();

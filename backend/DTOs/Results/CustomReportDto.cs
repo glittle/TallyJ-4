@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Results;
+namespace Backend.DTOs.Results;
 
 /// <summary>
 /// Configuration for custom reports
@@ -52,9 +52,9 @@ public class CustomReportConfigDto
 public class ReportSectionDto
 {
     /// <summary>
-    /// The type of section (summary, candidates, locations, chart, statistics).
+    /// The type of section (summary, people, locations, chart, statistics).
     /// </summary>
-    public string SectionType { get; set; } = string.Empty; // "summary", "candidates", "locations", "chart", "statistics"
+    public string SectionType { get; set; } = string.Empty; // "summary", "people", "locations", "chart", "statistics"
 
     /// <summary>
     /// The title of the report section.

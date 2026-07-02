@@ -39,25 +39,17 @@ describe("voteService.create", () => {
     expect(result.vote?.statusCode).toBe("ok");
     expect(result.vote?.personFullName).toBe("Jane Doe");
     expect(result.ballotStatusCode).toBe("Ok");
+    expect(result.votePositions).toBeUndefined();
   });
 });
 
 describe("voteService.delete", () => {
-  it("returns the re-evaluated ballot status and vote list from the API", async () => {
+  it("returns the re-evaluated ballot status and vote positions from the API", async () => {
     vi.mocked(deleteApiVotesByIdDeleteVote).mockResolvedValue({
       data: {
         data: {
           ballotStatusCode: "TooFew",
-          votes: [
-            {
-              rowId: 1,
-              ballotGuid: "cab56d1c-c0c1-8243-25f5-f0fe09023b46",
-              positionOnBallot: 1,
-              personGuid: "266e4637-9305-e857-f69d-cefc54b94746",
-              personFullName: "Walker, Charles",
-              voteStatus: "Ok",
-            },
-          ],
+          votePositions: [{ rowId: 1, positionOnBallot: 1 }],
         },
       },
     } as any);
@@ -65,8 +57,9 @@ describe("voteService.delete", () => {
     const result = await voteService.delete(99);
 
     expect(result.ballotStatusCode).toBe("TooFew");
-    expect(result.votes).toHaveLength(1);
-    expect(result.votes?.[0].positionOnBallot).toBe(1);
-    expect(result.votes?.[0].statusCode).toBe("ok");
+    expect(result.votePositions).toHaveLength(1);
+    expect(result.votePositions?.[0].positionOnBallot).toBe(1);
+    expect(result.votePositions?.[0].rowId).toBe(1);
+    expect(result.vote).toBeUndefined();
   });
 });

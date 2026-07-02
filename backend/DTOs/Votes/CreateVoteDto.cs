@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs.Votes;
+namespace Backend.DTOs.Votes;
 
 /// <summary>
 /// Data transfer object for creating a new vote.
@@ -12,7 +12,7 @@ public class CreateVoteDto
     public Guid BallotGuid { get; set; }
 
     /// <summary>
-    /// The unique identifier of the person (candidate) being voted for.
+    /// The unique identifier of the person being voted for.
     /// Can be null for certain types of votes.
     /// </summary>
     public Guid? PersonGuid { get; set; }

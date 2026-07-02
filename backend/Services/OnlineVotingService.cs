@@ -245,12 +245,12 @@ public class OnlineVotingService : IOnlineVotingService
     }
 
     /// <inheritdoc/>
-    public async Task<List<OnlineCandidateDto>> GetCandidatesAsync(Guid electionGuid)
+    public async Task<List<OnlinePersonDto>> GetPeopleAsync(Guid electionGuid)
     {
-        var candidates = await _context.People
+        var people = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.CanReceiveVotes == true)
             .OrderBy(p => p.FullName)
-            .Select(p => new OnlineCandidateDto
+            .Select(p => new OnlinePersonDto
             {
                 PersonGuid = p.PersonGuid,
                 FullName = p.FullName ?? "",
@@ -259,7 +259,7 @@ public class OnlineVotingService : IOnlineVotingService
             })
             .ToListAsync();
 
-        return candidates;
+        return people;
     }
 
     /// <inheritdoc/>
@@ -375,10 +375,10 @@ public class OnlineVotingService : IOnlineVotingService
                     RowVersion = new byte[8]
                 };
 
-                if (hasPerson)
+                if (voteDto.PersonGuid is Guid personGuid)
                 {
                     var votedPerson = await _context.People
-                        .FirstOrDefaultAsync(p => p.PersonGuid == voteDto.PersonGuid.Value);
+                        .FirstOrDefaultAsync(p => p.PersonGuid == personGuid);
 
                     if (votedPerson != null)
                     {

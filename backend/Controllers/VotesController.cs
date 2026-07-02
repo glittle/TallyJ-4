@@ -74,18 +74,16 @@ public class VotesController : ControllerBase
     /// Creates a new vote. The vote status is determined server-side based on the person's eligibility.
     /// </summary>
     /// <param name="createDto">The vote creation data.</param>
-    /// <returns>The created vote information and the ballot's current status.</returns>
+    /// <returns>The created vote and the ballot's current status.</returns>
     [HttpPost("createVote")]
     public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> CreateVote(CreateVoteDto createDto)
     {
         try
         {
             var result = await _voteService.CreateVoteAsync(createDto);
-            var createdVote = result.Vote
-                ?? throw new InvalidOperationException("Created vote was not returned in the response.");
             return CreatedAtAction(
                 nameof(GetVote),
-                new { id = createdVote.RowId },
+                new { id = result.Vote!.RowId },
                 ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result));
         }
         catch (InvalidOperationException ex)

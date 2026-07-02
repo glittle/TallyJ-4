@@ -18,7 +18,7 @@ import { Delete } from "@element-plus/icons-vue";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 import { useNotifications } from "../../composables/useNotifications";
 import { useI18n } from "vue-i18n";
-import type { OnlineCandidate } from "../../types";
+import type { OnlinePerson } from "../../types";
 import {
   createEmptyVoteSlots,
   buildOnlineVotes,
@@ -45,7 +45,9 @@ const selectionMode = computed(
 const isModeList = computed(() => selectionMode.value === "A");
 const isModeRandom = computed(() => selectionMode.value === "B");
 const isModeBoth = computed(() => selectionMode.value === "C");
-const showCandidateList = computed(() => isModeList.value || isModeBoth.value);
+const showVotablePeopleList = computed(
+  () => isModeList.value || isModeBoth.value,
+);
 
 const {
   poolForm,
@@ -54,19 +56,19 @@ const {
   duplicateVotes,
   canSubmit,
   submitPoolForm,
-  poolAsCandidates,
+  poolAsVotablePeople,
   applyPriorVotes,
   poolEntries,
 } = useVoterBallotHelpers(() => selectionMode.value);
 
-const allCandidateOptions = computed(() => {
-  const official = onlineVotingStore.candidates.map((c) => ({
-    value: c.fullName,
-    candidate: c,
+const allVotablePersonOptions = computed(() => {
+  const official = onlineVotingStore.votablePeople.map((p) => ({
+    value: p.fullName,
+    person: p,
   }));
-  const pool = poolAsCandidates().map((c) => ({
-    value: c.fullName,
-    candidate: c,
+  const pool = poolAsVotablePeople().map((p) => ({
+    value: p.fullName,
+    person: p,
   }));
   return [...official, ...pool];
 });
@@ -101,8 +103,8 @@ async function loadElectionData() {
       return;
     }
 
-    if (showCandidateList.value) {
-      await onlineVotingStore.loadCandidates(electionGuid.value);
+    if (showVotablePeopleList.value) {
+      await onlineVotingStore.loadVotablePeople(electionGuid.value);
     }
 
     const numToElect = electionInfo.numberToElect || 9;
@@ -112,7 +114,7 @@ async function loadElectionData() {
       applyPriorVotes(
         votes.value,
         voteStatus,
-        onlineVotingStore.candidates,
+        onlineVotingStore.votablePeople,
       );
     }
   } catch (error) {
@@ -122,15 +124,15 @@ async function loadElectionData() {
   }
 }
 
-function handleCandidateSelect(
+function handlePersonSelect(
   position: number,
-  item: { value: string; candidate: OnlineCandidate },
+  item: { value: string; person: OnlinePerson },
 ) {
   const slot = votes.value.find((v) => v.position === position);
   if (!slot) {
     return;
   }
-  slot.candidate = item.candidate;
+  slot.person = item.person;
   slot.searchText = item.value;
   slot.freeText = "";
 }
@@ -140,8 +142,8 @@ function handleSearchInput(position: number, value: string) {
   if (!slot) {
     return;
   }
-  if (slot.candidate && slot.candidate.fullName !== value) {
-    slot.candidate = null;
+  if (slot.person && slot.person.fullName !== value) {
+    slot.person = null;
   }
   slot.searchText = value;
 }
@@ -149,7 +151,7 @@ function handleSearchInput(position: number, value: string) {
 function clearVote(position: number) {
   const slot = votes.value.find((v) => v.position === position);
   if (slot) {
-    slot.candidate = null;
+    slot.person = null;
     slot.freeText = "";
     slot.searchText = "";
   }
@@ -347,7 +349,7 @@ function backToElections() {
                 class="vote-item"
                 :class="{
                   'vote-filled':
-                    vote.candidate ||
+                    vote.person ||
                     (isModeRandom && vote.freeText) ||
                     (isModeBoth && (vote.searchText || vote.freeText)) ||
                     (isModeList && vote.searchText),
@@ -356,17 +358,17 @@ function backToElections() {
                 <span class="vote-number">{{ vote.position }}.</span>
 
                 <ElAutocomplete
-                  v-if="showCandidateList"
+                  v-if="showVotablePeopleList"
                   v-model="vote.searchText"
                   :fetch-suggestions="
                     (queryString: string, cb: Function) => {
                       const results = queryString
-                        ? allCandidateOptions.filter((opt) =>
+                        ? allVotablePersonOptions.filter((opt) =>
                             opt.value
                               .toLowerCase()
                               .includes(queryString.toLowerCase()),
                           )
-                        : allCandidateOptions;
+                        : allVotablePersonOptions;
                       cb(results);
                     }
                   "
@@ -375,7 +377,7 @@ function backToElections() {
                   class="vote-input"
                   size="default"
                   @select="
-                    (item: any) => handleCandidateSelect(vote.position, item)
+                    (item: any) => handlePersonSelect(vote.position, item)
                   "
                   @input="
                     (val: string) => handleSearchInput(vote.position, val)
@@ -390,8 +392,8 @@ function backToElections() {
                   size="default"
                 />
 
-                <span v-if="vote.candidate" class="candidate-tag">
-                  {{ vote.candidate.fullName }}
+                <span v-if="vote.person" class="person-tag">
+                  {{ vote.person.fullName }}
                   <ElButton
                     text
                     size="small"
@@ -602,7 +604,7 @@ function backToElections() {
           flex: 1;
         }
 
-        .candidate-tag,
+        .person-tag,
         .random-tag {
           flex: 1;
           display: flex;

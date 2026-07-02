@@ -129,6 +129,9 @@ public class VoteService : IVoteService
                 ineligibleReasonCode);
         }
 
+        var existingVoteCount = await _context.Votes
+            .CountAsync(v => v.BallotGuid == createDto.BallotGuid);
+
         await CompactVotePositionsAsync(createDto.BallotGuid);
         await _context.SaveChangesAsync();
         var assignedPosition = await GetNextVotePositionAsync(createDto.BallotGuid);
@@ -158,7 +161,7 @@ public class VoteService : IVoteService
             QueueVoteCountBroadcast(createDto.PersonGuid.Value, electionGuid);
         }
 
-        return await BuildVoteMutationResponseAsync(ballot, vote.RowId);
+        return await BuildCreateUpdateResponseAsync(ballot, vote.RowId, includeVotePositions: existingVoteCount > 0);
     }
 
     /// <summary>
@@ -213,6 +216,9 @@ public class VoteService : IVoteService
         ballot.DateUpdated = DateTimeOffset.UtcNow;
         await _context.SaveChangesAsync();
 
+        var hadMultipleVotes = await _context.Votes
+            .CountAsync(v => v.BallotGuid == updateDto.BallotGuid) > 1;
+
         await CompactVotePositionsAsync(updateDto.BallotGuid);
         await _context.SaveChangesAsync();
 
@@ -221,7 +227,7 @@ public class VoteService : IVoteService
         await RefreshBallotStatusAsync(ballot);
         await _context.SaveChangesAsync();
 
-        return await BuildVoteMutationResponseAsync(ballot, id);
+        return await BuildCreateUpdateResponseAsync(ballot, id, includeVotePositions: hadMultipleVotes);
     }
 
     /// <summary>
@@ -269,7 +275,7 @@ public class VoteService : IVoteService
 
         return ballot == null
             ? null
-            : await BuildVoteMutationResponseAsync(ballot, highlightedVoteId: null);
+            : await BuildPositionMutationResponseAsync(ballot);
     }
 
     /// <summary>
@@ -316,7 +322,7 @@ public class VoteService : IVoteService
         await RefreshBallotStatusAsync(ballot);
         await _context.SaveChangesAsync();
 
-        return await BuildVoteMutationResponseAsync(ballot, highlightedVoteId: null);
+        return await BuildPositionMutationResponseAsync(ballot);
     }
 
     private async Task<int> GetNextVotePositionAsync(Guid ballotGuid)
@@ -349,35 +355,51 @@ public class VoteService : IVoteService
         }
     }
 
-    private async Task<VoteWithBallotStatusDto> BuildVoteMutationResponseAsync(
+    private async Task<VoteWithBallotStatusDto> BuildCreateUpdateResponseAsync(
         Ballot ballot,
-        int? highlightedVoteId)
+        int affectedVoteId,
+        bool includeVotePositions)
     {
-        var voteDtos = await GetBallotVoteDtosAsync(ballot.BallotGuid);
-        VoteDto? highlightedVote = null;
-        if (highlightedVoteId.HasValue)
+        var affectedVote = await _context.Votes
+            .Include(v => v.Person)
+            .FirstOrDefaultAsync(v => v.RowId == affectedVoteId);
+
+        if (affectedVote == null)
         {
-            highlightedVote = voteDtos.FirstOrDefault(v => v.RowId == highlightedVoteId.Value);
+            throw new InvalidOperationException($"Vote with ID '{affectedVoteId}' was not found after mutation");
         }
 
         return new VoteWithBallotStatusDto
         {
-            Vote = highlightedVote,
+            Vote = MapToVoteDto(affectedVote),
             BallotStatusCode = ballot.StatusCode,
-            Votes = voteDtos
+            VotePositions = includeVotePositions
+                ? await GetBallotVotePositionsAsync(ballot.BallotGuid)
+                : null
         };
     }
 
-    private async Task<List<VoteDto>> GetBallotVoteDtosAsync(Guid ballotGuid)
+    private async Task<VoteWithBallotStatusDto> BuildPositionMutationResponseAsync(Ballot ballot)
     {
-        var votes = await _context.Votes
+        return new VoteWithBallotStatusDto
+        {
+            BallotStatusCode = ballot.StatusCode,
+            VotePositions = await GetBallotVotePositionsAsync(ballot.BallotGuid)
+        };
+    }
+
+    private async Task<List<VotePositionDto>> GetBallotVotePositionsAsync(Guid ballotGuid)
+    {
+        return await _context.Votes
             .Where(v => v.BallotGuid == ballotGuid)
-            .Include(v => v.Person)
             .OrderBy(v => v.PositionOnBallot)
             .ThenBy(v => v.RowId)
+            .Select(v => new VotePositionDto
+            {
+                RowId = v.RowId,
+                PositionOnBallot = v.PositionOnBallot
+            })
             .ToListAsync();
-
-        return votes.Select(MapToVoteDto).ToList();
     }
 
     private Task RefreshBallotStatusAsync(Ballot ballot) =>

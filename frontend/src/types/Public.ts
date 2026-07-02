@@ -7,14 +7,14 @@ export interface PublicDisplayDto {
   tallyStatus: string;
   numberToElect: number;
   numberExtra: number;
-  electedCandidates: PublicCandidateDto[];
-  additionalCandidates: PublicCandidateDto[];
+  electedPeople: PublicPersonDto[];
+  additionalPeople: PublicPersonDto[];
   statistics: PublicDisplayStatsDto;
   lastUpdated: string;
   isFinalized: boolean;
 }
 
-export interface PublicCandidateDto {
+export interface PublicPersonDto {
   rank: number;
   fullName: string;
   voteCount: number;
