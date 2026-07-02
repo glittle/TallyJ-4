@@ -1,7 +1,4 @@
-import {
-  getComputerCode,
-  setComputerCode,
-} from "@/utils/computerCodeStorage";
+import { getComputerCode, setComputerCode } from "@/utils/computerCodeStorage";
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 

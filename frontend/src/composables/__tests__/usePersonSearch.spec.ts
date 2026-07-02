@@ -187,10 +187,7 @@ describe("usePersonSearch", () => {
         createMockPerson("John", "Smith", ["J500", "S530"]),
       ]);
       const searchQuery = ref("Smth");
-      const { searchResults } = usePersonSearch(
-        searchQuery,
-        peopleWithTypo,
-      );
+      const { searchResults } = usePersonSearch(searchQuery, peopleWithTypo);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
       expect(searchResults.value[0].lastName).toBe("Smith");
@@ -212,10 +209,7 @@ describe("usePersonSearch", () => {
         createMockPerson("John", "Smith", ["J500", "S530"]),
       ]);
       const searchQuery = ref("Wxyz");
-      const { searchResults } = usePersonSearch(
-        searchQuery,
-        peopleWithTypo,
-      );
+      const { searchResults } = usePersonSearch(searchQuery, peopleWithTypo);
 
       const smithMatch = searchResults.value.some(
         (p) => p.lastName === "Smith",
@@ -232,10 +226,7 @@ describe("usePersonSearch", () => {
         createMockPerson("Robert", "Brown", ["R163", "B650"]),
       ]);
       const searchQuery = ref("John Doe");
-      const { searchResults } = usePersonSearch(
-        searchQuery,
-        peopleForRanking,
-      );
+      const { searchResults } = usePersonSearch(searchQuery, peopleForRanking);
 
       expect(searchResults.value.length).toBeGreaterThan(0);
       expect(searchResults.value[0].firstName).toBe("John");
@@ -249,10 +240,7 @@ describe("usePersonSearch", () => {
         createMockPerson("John", "Mango", ["J500", "M520"]),
       ]);
       const searchQuery = ref("John");
-      const { searchResults } = usePersonSearch(
-        searchQuery,
-        peopleForTieBreak,
-      );
+      const { searchResults } = usePersonSearch(searchQuery, peopleForTieBreak);
 
       expect(searchResults.value).toHaveLength(3);
       expect(searchResults.value[0].lastName).toBe("Apple");
@@ -336,10 +324,7 @@ describe("usePersonSearch", () => {
         createMockPerson("Bob", "Smith", ["B100", "S530"]),
       ]);
       const searchQuery = ref("Smith");
-      const { searchResults } = usePersonSearch(
-        searchQuery,
-        peopleForTieBreak,
-      );
+      const { searchResults } = usePersonSearch(searchQuery, peopleForTieBreak);
 
       expect(searchResults.value).toHaveLength(3);
       expect(searchResults.value[0].firstName).toBe("Alice");
@@ -356,7 +341,10 @@ describe("usePersonSearch", () => {
         ),
       );
       const searchQuery = ref("Smith");
-      const { searchResults } = usePersonSearch(searchQuery, manySearchablePeople);
+      const { searchResults } = usePersonSearch(
+        searchQuery,
+        manySearchablePeople,
+      );
 
       expect(searchResults.value).toHaveLength(20);
     });
@@ -368,9 +356,13 @@ describe("usePersonSearch", () => {
         ),
       );
       const searchQuery = ref("Smith");
-      const { searchResults } = usePersonSearch(searchQuery, manySearchablePeople, {
-        maxResults: 5,
-      });
+      const { searchResults } = usePersonSearch(
+        searchQuery,
+        manySearchablePeople,
+        {
+          maxResults: 5,
+        },
+      );
 
       expect(searchResults.value).toHaveLength(5);
     });
@@ -380,7 +372,10 @@ describe("usePersonSearch", () => {
     it("should debounce search with default 150ms delay", async () => {
       const searchQuery = ref("");
       const searchablePeople = ref(mockSearchablePeople);
-      const { debouncedSearch } = usePersonSearch(searchQuery, searchablePeople);
+      const { debouncedSearch } = usePersonSearch(
+        searchQuery,
+        searchablePeople,
+      );
 
       const searchSpy = vi.fn();
       const wrappedSearch = vi.fn(
@@ -402,9 +397,13 @@ describe("usePersonSearch", () => {
     it("should respect custom debounce delay", () => {
       const searchQuery = ref("");
       const searchablePeople = ref(mockSearchablePeople);
-      const { debouncedSearch } = usePersonSearch(searchQuery, searchablePeople, {
-        debounceDelay: 300,
-      });
+      const { debouncedSearch } = usePersonSearch(
+        searchQuery,
+        searchablePeople,
+        {
+          debounceDelay: 300,
+        },
+      );
 
       expect(debouncedSearch).toBeDefined();
     });
@@ -438,10 +437,7 @@ describe("usePersonSearch", () => {
     it("should handle people without soundex codes", () => {
       const peopleNoSoundex = ref([createMockPerson("John", "Doe", [])]);
       const searchQuery = ref("John");
-      const { searchResults } = usePersonSearch(
-        searchQuery,
-        peopleNoSoundex,
-      );
+      const { searchResults } = usePersonSearch(searchQuery, peopleNoSoundex);
 
       expect(searchResults.value).toHaveLength(1);
     });
@@ -460,7 +456,10 @@ describe("usePersonSearch", () => {
       const searchQuery = ref("LastName50");
 
       const startTime = performance.now();
-      const { searchResults } = usePersonSearch(searchQuery, largeSearchablePeople);
+      const { searchResults } = usePersonSearch(
+        searchQuery,
+        largeSearchablePeople,
+      );
       const results = searchResults.value;
       const endTime = performance.now();
       const duration = endTime - startTime;
@@ -483,7 +482,10 @@ describe("usePersonSearch", () => {
       const searchQuery = ref("AliasName");
 
       const startTime = performance.now();
-      const { searchResults } = usePersonSearch(searchQuery, largeSearchablePeople);
+      const { searchResults } = usePersonSearch(
+        searchQuery,
+        largeSearchablePeople,
+      );
       const results = searchResults.value;
       const endTime = performance.now();
       const duration = endTime - startTime;
@@ -523,7 +525,9 @@ describe("usePersonSearch", () => {
       const initialResults = searchResults.value;
       expect(initialResults.length).toBeGreaterThan(0);
 
-      searchablePeople.value = [createMockPerson("Jane", "Doe", ["J500", "D000"])];
+      searchablePeople.value = [
+        createMockPerson("Jane", "Doe", ["J500", "D000"]),
+      ];
 
       searchQuery.value = "Jane";
       const newResults = searchResults.value;

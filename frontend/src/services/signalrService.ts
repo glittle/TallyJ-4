@@ -88,7 +88,10 @@ class SignalRService {
           await connection.invoke("JoinPublicGroup");
           console.log("Rejoined public group after reconnect");
         } catch (error) {
-          console.error("Failed to rejoin public group after reconnect:", error);
+          console.error(
+            "Failed to rejoin public group after reconnect:",
+            error,
+          );
         }
       }
     });

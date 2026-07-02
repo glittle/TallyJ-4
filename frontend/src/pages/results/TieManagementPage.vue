@@ -192,10 +192,7 @@ async function saveTieCounts() {
 
     tieDetails.value.forEach((tie) => {
       tie.people.forEach((person) => {
-        if (
-          person.tieBreakCount !== undefined &&
-          person.tieBreakCount > 0
-        ) {
+        if (person.tieBreakCount !== undefined && person.tieBreakCount > 0) {
           counts.push({
             personGuid: person.personGuid,
             tieBreakCount: person.tieBreakCount,

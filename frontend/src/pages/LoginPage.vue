@@ -200,11 +200,13 @@ const handleGoogleOneTapCallback = async (
   }
 };
 
-const { googleReady, initGoogleOneTap, teardownGoogleOneTap } = useGoogleOneTap({
-  buttonRef: googleButtonRef,
-  onCredential: handleGoogleOneTapCallback,
-  promptOnInit: true,
-});
+const { googleReady, initGoogleOneTap, teardownGoogleOneTap } = useGoogleOneTap(
+  {
+    buttonRef: googleButtonRef,
+    onCredential: handleGoogleOneTapCallback,
+    promptOnInit: true,
+  },
+);
 
 const handleTelegramSuccess = async (user: any) => {
   loading.value = true;

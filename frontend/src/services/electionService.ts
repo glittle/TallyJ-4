@@ -149,9 +149,7 @@ export const electionService = {
     const envelope = response.data;
     const data = envelope?.data;
     if (!envelope?.success || !data) {
-      throw new Error(
-        envelope?.message || "Failed to change election stage",
-      );
+      throw new Error(envelope?.message || "Failed to change election stage");
     }
     return {
       ...(data as any),

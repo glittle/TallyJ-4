@@ -25,8 +25,6 @@ export function getVotingMethodLabel(
   return key ? t(key) : method;
 }
 
-export function electionSupportsKiosk(
-  votingMethods?: string | null,
-): boolean {
+export function electionSupportsKiosk(votingMethods?: string | null): boolean {
   return votingMethods?.toUpperCase().includes("K") ?? false;
 }

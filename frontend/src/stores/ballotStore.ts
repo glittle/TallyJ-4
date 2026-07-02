@@ -38,7 +38,10 @@ function applyVotePositions(
   votePositions: VotePositionDto[],
 ): VoteDto[] {
   const positionByRowId = new Map(
-    votePositions.map((position) => [position.rowId, position.positionOnBallot]),
+    votePositions.map((position) => [
+      position.rowId,
+      position.positionOnBallot,
+    ]),
   );
 
   return votes
@@ -261,9 +264,7 @@ export const useBallotStore = defineStore("ballot", () => {
     if (options?.deletedRowId !== undefined) {
       return normalizeVoteList(
         compactVotePositions(
-          existingVotes.filter(
-            (vote) => vote.rowId !== options.deletedRowId,
-          ),
+          existingVotes.filter((vote) => vote.rowId !== options.deletedRowId),
         ),
       );
     }

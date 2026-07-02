@@ -81,7 +81,8 @@ async function fetchAvailableElections() {
     if (
       previousSelection &&
       !elections.value.some(
-        (e) => normalizeGuid(e.electionGuid) === normalizeGuid(previousSelection),
+        (e) =>
+          normalizeGuid(e.electionGuid) === normalizeGuid(previousSelection),
       )
     ) {
       joinForm.electionGuid = "";

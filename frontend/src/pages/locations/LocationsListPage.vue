@@ -111,7 +111,6 @@ function getStatusType(status: string) {
   };
   return typeMap[status] || "info";
 }
-
 </script>
 
 <template>
@@ -249,7 +248,6 @@ function getStatusType(status: string) {
       :is-edit="true"
       @success="handleFormSuccess"
     />
-
   </div>
 </template>
 
@@ -287,5 +285,4 @@ function getStatusType(status: string) {
   font-family: monospace;
   font-size: 0.9em;
 }
-
 </style>

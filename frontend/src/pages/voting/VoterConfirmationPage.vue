@@ -52,7 +52,11 @@ function handleLogout() {
                 <p>{{ $t("voting.confirmation.canEdit") }}</p>
               </div>
               <div class="action-buttons">
-                <ElButton type="primary" size="large" @click="handleBackToElections">
+                <ElButton
+                  type="primary"
+                  size="large"
+                  @click="handleBackToElections"
+                >
                   {{ $t("voting.confirmation.backToElections") }}
                 </ElButton>
                 <ElButton size="large" @click="handleLogout">

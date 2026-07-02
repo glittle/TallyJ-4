@@ -111,11 +111,7 @@ async function loadElectionData() {
     votes.value = createEmptyVoteSlots(numToElect);
 
     if (voteStatus.hasVoted) {
-      applyPriorVotes(
-        votes.value,
-        voteStatus,
-        onlineVotingStore.votablePeople,
-      );
+      applyPriorVotes(votes.value, voteStatus, onlineVotingStore.votablePeople);
     }
   } catch (error) {
     console.error("Error loading election data:", error);
