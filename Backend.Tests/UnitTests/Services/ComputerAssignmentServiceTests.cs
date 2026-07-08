@@ -217,7 +217,10 @@ public class ComputerAssignmentServiceTests
         service.AssignCode(_electionGuid, "guest-1", "conn-guest", isMainTeller: false);
         service.ReleaseConnection("conn-main");
 
-        await Task.Delay(200);
+        await WaitForElectionClosedNotificationAsync(
+            guestProxy,
+            TimeSpan.FromSeconds(5),
+            "Guest close-out should notify after the last main teller disconnects.");
 
         guestProxy.Verify(
             p => p.SendCoreAsync(
@@ -239,7 +242,10 @@ public class ComputerAssignmentServiceTests
         // Guest reconnect must not cancel the close-out timer started when the last main left.
         service.AssignCode(_electionGuid, "guest-1", "conn-guest-2", isMainTeller: false);
 
-        await Task.Delay(500);
+        await WaitForElectionClosedNotificationAsync(
+            guestProxy,
+            TimeSpan.FromSeconds(5),
+            "Guest close-out should still fire after guest reconnect churn.");
 
         guestProxy.Verify(
             p => p.SendCoreAsync(
@@ -283,7 +289,13 @@ public class ComputerAssignmentServiceTests
         await Task.Delay(15);
         service.ReleaseConnection("conn-guest-1");
 
-        await Task.Delay(120);
+        Assert.True(service.IsGuestGracePeriodActive(_electionGuid));
+        Assert.Single(service.GetActiveComputers(_electionGuid));
+
+        await WaitForElectionClosedNotificationAsync(
+            guestProxy,
+            TimeSpan.FromSeconds(5),
+            "Guest close-out timer should not restart when guests disconnect during grace.");
 
         guestProxy.Verify(
             p => p.SendCoreAsync(
@@ -291,6 +303,19 @@ public class ComputerAssignmentServiceTests
                 It.IsAny<object?[]>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
+    }
+
+    private static async Task WaitForElectionClosedNotificationAsync(
+        Mock<IClientProxy> guestProxy,
+        TimeSpan timeout,
+        string because)
+    {
+        await WaitUntilAsync(
+            () => guestProxy.Invocations.Any(inv =>
+                inv.Method.Name == "SendCoreAsync"
+                && inv.Arguments[0] as string == "electionClosed"),
+            timeout,
+            because);
     }
 
     private static async Task WaitUntilAsync(

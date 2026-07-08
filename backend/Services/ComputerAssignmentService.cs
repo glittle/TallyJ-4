@@ -155,14 +155,23 @@ public class ComputerAssignmentService : IComputerAssignmentService, IDisposable
 
             if (state.Connections.IsEmpty)
             {
-                CancelGuestCloseoutTimer(state, electionGuid.Value);
                 refreshGuestJoinList = removed.IsMainTeller;
                 state.ClientIdToLastCode.Clear();
                 state.HighestAssignedIndex = -1;
-                _elections.TryRemove(electionGuid.Value, out _);
-                _logger.LogInformation(
-                    "All workstations disconnected from election {ElectionGuid}; code assignment will restart at A",
-                    electionGuid);
+
+                if (state.GuestCloseoutTimerCts == null)
+                {
+                    _elections.TryRemove(electionGuid.Value, out _);
+                    _logger.LogInformation(
+                        "All workstations disconnected from election {ElectionGuid}; code assignment will restart at A",
+                        electionGuid);
+                }
+                else
+                {
+                    _logger.LogInformation(
+                        "All workstations disconnected from election {ElectionGuid} during guest close-out grace; timer will complete",
+                        electionGuid);
+                }
             }
             else
             {
@@ -302,38 +311,43 @@ public class ComputerAssignmentService : IComputerAssignmentService, IDisposable
         var cts = new CancellationTokenSource();
         state.GuestCloseoutTimerCts = cts;
 
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(_guestCloseoutDelay, cts.Token);
-                await CloseOutGuestTellersAsync(electionGuid);
-            }
-            catch (OperationCanceledException)
-            {
-                // Timer cancelled because a main teller reconnected.
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Guest teller close-out timer failed for election {ElectionGuid}", electionGuid);
-            }
-            finally
-            {
-                lock (_stateLock)
-                {
-                    if (state.GuestCloseoutTimerCts == cts)
-                    {
-                        cts.Dispose();
-                        state.GuestCloseoutTimerCts = null;
-                    }
-                }
-            }
-        }, CancellationToken.None);
+        _ = RunGuestCloseoutTimerAsync(state, electionGuid, cts);
 
         _logger.LogInformation(
             "Started {Minutes}-minute guest teller close-out timer for election {ElectionGuid}",
             _guestCloseoutDelay.TotalMinutes,
             electionGuid);
+    }
+
+    private async Task RunGuestCloseoutTimerAsync(
+        ElectionAssignmentState state,
+        Guid electionGuid,
+        CancellationTokenSource cts)
+    {
+        try
+        {
+            await Task.Delay(_guestCloseoutDelay, cts.Token);
+            await CloseOutGuestTellersAsync(electionGuid);
+        }
+        catch (OperationCanceledException)
+        {
+            // Timer cancelled because a main teller reconnected.
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Guest teller close-out timer failed for election {ElectionGuid}", electionGuid);
+        }
+        finally
+        {
+            lock (_stateLock)
+            {
+                if (state.GuestCloseoutTimerCts == cts)
+                {
+                    cts.Dispose();
+                    state.GuestCloseoutTimerCts = null;
+                }
+            }
+        }
     }
 
     private void CancelGuestCloseoutTimer(ElectionAssignmentState state, Guid electionGuid)
@@ -369,6 +383,17 @@ public class ComputerAssignmentService : IComputerAssignmentService, IDisposable
 
         var guestGroup = $"Main{electionGuid}Guest";
         await _mainHubContext.Clients.Group(guestGroup).SendAsync("electionClosed");
+
+        lock (_stateLock)
+        {
+            if (_elections.TryGetValue(electionGuid, out var state) && state.Connections.IsEmpty)
+            {
+                _elections.TryRemove(electionGuid, out _);
+                _logger.LogInformation(
+                    "All workstations disconnected from election {ElectionGuid}; code assignment will restart at A",
+                    electionGuid);
+            }
+        }
 
         _logger.LogInformation(
             "Guest tellers closed out for election {ElectionGuid} after main teller absence timeout",
