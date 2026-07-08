@@ -21,6 +21,7 @@ const mockT = (key: string, values?: Record<string, string | number>) => {
       "Select the teller at keyboard before adding votes",
     "ballots.dragToReorder": "Drag votes to change their order",
     "ballots.addBallot": "Add Ballot",
+    "ballots.addNextBallot": "Start another ballot",
     "ballots.deleteBallot": "Delete Ballot",
     "ballots.deleteConfirm":
       "Delete ballot {code}? All votes on it will be permanently removed.",
@@ -250,7 +251,7 @@ describe("InlineBallotEntry", () => {
 
     const addBallotButton = wrapper
       .findAllComponents(ElButton)
-      .find((button) => button.text().includes("Add Ballot"));
+      .find((button) => button.text().includes("Start another ballot"));
     expect(addBallotButton).toBeDefined();
     await addBallotButton!.trigger("click");
     await flushPromises();

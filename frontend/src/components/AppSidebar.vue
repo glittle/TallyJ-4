@@ -33,6 +33,12 @@ const isInElectionContext = computed(() => {
   return route.path.startsWith("/elections/") && route.params.id;
 });
 
+const electionGuid = computed(() => String(route.params.id ?? ""));
+
+const isElectionLoaded = computed(
+  () => electionStore.currentElection?.electionGuid === electionGuid.value,
+);
+
 const versionName = computed(() => VERSION);
 const versionDate = computed(() => getBuildDate());
 const versionDateBadi = computed(() => getBuildDateBadi());
@@ -94,22 +100,28 @@ function goBackToElections() {
           </el-icon>
           <span>{{ $t("nav.elections") }}</span>
         </div>
-        <div class="election-title">
+        <div v-if="isElectionLoaded" class="election-title">
           <span>{{ electionName }}</span>
         </div>
       </div>
 
-      <SidebarStageHeader
-        v-if="!isGuest"
-        :election-guid="String(route.params.id)"
-        :stage="electionStore.currentStage"
-      />
-      <StageGroupedSidebarMenu
-        :election-guid="String(route.params.id)"
-        :current-stage="electionStore.currentStage"
-        :is-guest-teller="isGuest"
-        @close-mobile-sidebar="emit('close-mobile-sidebar')"
-      />
+      <div v-if="!isElectionLoaded" class="election-nav-loading">
+        <el-skeleton :rows="6" animated />
+      </div>
+
+      <template v-else>
+        <SidebarStageHeader
+          v-if="!isGuest"
+          :election-guid="electionGuid"
+          :stage="electionStore.currentStage"
+        />
+        <StageGroupedSidebarMenu
+          :election-guid="electionGuid"
+          :current-stage="electionStore.currentStage"
+          :is-guest-teller="isGuest"
+          @close-mobile-sidebar="emit('close-mobile-sidebar')"
+        />
+      </template>
     </div>
 
     <!-- Main navigation menu -->
@@ -205,6 +217,10 @@ function goBackToElections() {
     flex-direction: column;
   }
 
+  .election-nav-loading {
+    padding: 16px 20px;
+  }
+
   .election-header {
     padding: 20px;
     border-bottom: 1px solid var(--color-sidebar-border);
@@ -238,8 +254,8 @@ function goBackToElections() {
   }
 
   .testOnlyWarning {
-    padding: 1rem 0.5rem;
-    margin: 0 10px;
+    padding: 0.25rem 0.5rem;
+    margin: 0;
     max-width: 920px; /* Comfortable reading width */
     text-align: center;
     background-color: #fff4e5;

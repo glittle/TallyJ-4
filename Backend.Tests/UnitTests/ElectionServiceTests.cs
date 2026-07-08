@@ -97,6 +97,167 @@ public class ElectionServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task GetElectionByGuidAsync_WithAggregateData_ReturnsElectionWithoutRunningStatsQuery()
+    {
+        var electionGuid = Guid.NewGuid();
+        var locationGuid = Guid.NewGuid();
+
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Slim Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.ProcessingBallots,
+            DateOfElection = DateTime.UtcNow.AddDays(10),
+            RowVersion = new byte[8]
+        });
+        Context.Locations.Add(new Location
+        {
+            LocationGuid = locationGuid,
+            ElectionGuid = electionGuid,
+            Name = "Main Hall",
+            RowVersion = new byte[8]
+        });
+        Context.People.Add(new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            FirstName = "Voter",
+            LastName = "One",
+            CanVote = true,
+            RowVersion = new byte[8]
+        });
+        Context.Ballots.Add(new Ballot
+        {
+            BallotGuid = Guid.NewGuid(),
+            LocationGuid = locationGuid,
+            StatusCode = BallotStatus.Ok,
+            ComputerCode = "A1",
+            BallotNumAtComputer = 1,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var election = await _service.GetElectionByGuidAsync(electionGuid);
+        var stats = await _service.GetElectionStatsAsync(electionGuid);
+
+        Assert.NotNull(election);
+        Assert.Equal("Slim Election", election.Name);
+        Assert.NotNull(stats);
+        Assert.Equal(1, stats.VoterCount);
+        Assert.Equal(1, stats.BallotCount);
+        Assert.Equal(1, stats.LocationCount);
+    }
+
+    [Fact]
+    public async Task GetElectionStatsAsync_ComputesAggregateCounts()
+    {
+        var electionGuid = Guid.NewGuid();
+        var locationGuid = Guid.NewGuid();
+
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Count Test Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.ProcessingBallots,
+            DateOfElection = DateTime.UtcNow.AddDays(10),
+            RowVersion = new byte[8]
+        });
+        Context.Locations.Add(new Location
+        {
+            LocationGuid = locationGuid,
+            ElectionGuid = electionGuid,
+            Name = "Main Hall",
+            RowVersion = new byte[8]
+        });
+        Context.People.AddRange(
+            new Person
+            {
+                PersonGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                FirstName = "Voter",
+                LastName = "One",
+                CanVote = true,
+                RowVersion = new byte[8]
+            },
+            new Person
+            {
+                PersonGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                FirstName = "Voter",
+                LastName = "Two",
+                CanVote = true,
+                RowVersion = new byte[8]
+            },
+            new Person
+            {
+                PersonGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                FirstName = "Non",
+                LastName = "Voter",
+                CanVote = false,
+                RowVersion = new byte[8]
+            },
+            new Person
+            {
+                PersonGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                FirstName = "Unit",
+                LastName = "Member",
+                CanVote = true,
+                UnitName = "Area 1",
+                RowVersion = new byte[8]
+            });
+        Context.Ballots.AddRange(
+            new Ballot
+            {
+                BallotGuid = Guid.NewGuid(),
+                LocationGuid = locationGuid,
+                StatusCode = BallotStatus.Ok,
+                ComputerCode = "A1",
+                BallotNumAtComputer = 1,
+                RowVersion = new byte[8]
+            },
+            new Ballot
+            {
+                BallotGuid = Guid.NewGuid(),
+                LocationGuid = locationGuid,
+                StatusCode = BallotStatus.Ok,
+                ComputerCode = "A1",
+                BallotNumAtComputer = 2,
+                RowVersion = new byte[8]
+            },
+            new Ballot
+            {
+                BallotGuid = Guid.NewGuid(),
+                LocationGuid = locationGuid,
+                StatusCode = BallotStatus.Ok,
+                ComputerCode = "A1",
+                BallotNumAtComputer = 3,
+                RowVersion = new byte[8]
+            });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetElectionStatsAsync(electionGuid);
+
+        Assert.NotNull(result);
+        Assert.Equal(3, result.VoterCount);
+        Assert.Equal(3, result.BallotCount);
+        Assert.Equal(1, result.LocationCount);
+    }
+
+    [Fact]
+    public async Task GetElectionStatsAsync_WithInvalidGuid_ReturnsNull()
+    {
+        var result = await _service.GetElectionStatsAsync(Guid.NewGuid());
+
+        Assert.Null(result);
+    }
+
+    [Fact]
     public async Task UpdateElectionAsync_WithValidGuid_UpdatesElection()
     {
         var election = new Election

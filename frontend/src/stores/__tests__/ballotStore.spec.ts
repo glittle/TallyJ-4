@@ -3,6 +3,8 @@ import { createPinia, setActivePinia } from "pinia";
 import type { BallotDto, VoteDto } from "@/types";
 import { toBallotSummary } from "@/utils/ballotSummary";
 
+const mockInvalidateElectionStats = vi.fn();
+
 vi.mock("@/services/ballotService", () => ({
   ballotService: {
     getAll: vi.fn(),
@@ -28,6 +30,12 @@ vi.mock("@/services/signalrService", () => ({
     joinElection: vi.fn(),
     leaveElection: vi.fn(),
   },
+}));
+
+vi.mock("@/stores/electionStatsStore", () => ({
+  useElectionStatsStore: vi.fn(() => ({
+    invalidate: mockInvalidateElectionStats,
+  })),
 }));
 
 import { ballotService } from "@/services/ballotService";
@@ -67,6 +75,7 @@ describe("useBallotStore deleteVote", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.clearAllMocks();
+    mockInvalidateElectionStats.mockClear();
   });
 
   it("stores ballot summaries without vote rows in the list", async () => {
@@ -239,5 +248,42 @@ describe("useBallotStore deleteVote", () => {
     expect(store.currentBallot?.votes).toHaveLength(1);
     expect(store.currentBallot?.votes[0].personFullName).toBe("Alice");
     expect(store.currentBallot?.voteCount).toBe(1);
+  });
+});
+
+describe("useBallotStore election stats invalidation", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    vi.clearAllMocks();
+    mockInvalidateElectionStats.mockClear();
+  });
+
+  it("invalidates cached stats after creating a ballot", async () => {
+    const store = useBallotStore();
+    const ballot = createBallot([createVote(1, 1, "Alice")]);
+
+    vi.mocked(ballotService.create).mockResolvedValue(ballot);
+    await store.fetchBallots("election-1");
+
+    await store.createBallot({
+      electionGuid: "election-1",
+      locationGuid: "location-1",
+      computerCode: "A",
+    });
+
+    expect(mockInvalidateElectionStats).toHaveBeenCalledWith("election-1");
+  });
+
+  it("invalidates cached stats after deleting a ballot", async () => {
+    const store = useBallotStore();
+    const ballot = createBallot([createVote(1, 1, "Alice")]);
+
+    vi.mocked(ballotService.delete).mockResolvedValue(undefined);
+    await store.fetchBallots("election-1");
+    store.ballots = [toBallotSummary(ballot)];
+
+    await store.deleteBallot("ballot-1");
+
+    expect(mockInvalidateElectionStats).toHaveBeenCalledWith("election-1");
   });
 });

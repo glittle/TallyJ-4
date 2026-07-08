@@ -8,17 +8,24 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { electionService } from "../../services/electionService";
 import { isGuestTeller } from "@/domain/guestTellerAccess";
+import { useElectionStatsStore } from "../../stores/electionStatsStore";
 import { useElectionStore } from "../../stores/electionStore";
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const electionStore = useElectionStore();
+const electionStatsStore = useElectionStatsStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
-const loading = computed(() => electionStore.loading);
+const loading = computed(
+  () => electionStore.loading || electionStatsStore.loading,
+);
 const election = computed(() => electionStore.currentElection);
+const electionStats = computed(() =>
+  electionStatsStore.getCached(electionGuid),
+);
 
 const isGuest = computed(() => isGuestTeller());
 
@@ -53,7 +60,10 @@ const onlineVotingStatus = computed(() => {
 });
 
 onMounted(async () => {
-  await electionStore.fetchElectionById(electionGuid);
+  await Promise.all([
+    electionStore.fetchElectionById(electionGuid),
+    electionStatsStore.fetchStats(electionGuid),
+  ]);
   updateShareableUrl();
 });
 
@@ -218,15 +228,15 @@ async function exportElection() {
         </template>
         <div class="stat-item">
           <div class="stat-label">{{ $t("dashboard.totalVoters") }}</div>
-          <div class="stat-value">{{ election.voterCount }}</div>
+          <div class="stat-value">{{ electionStats?.voterCount ?? "—" }}</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">{{ $t("dashboard.totalBallots") }}</div>
-          <div class="stat-value">{{ election.ballotCount }}</div>
+          <div class="stat-value">{{ electionStats?.ballotCount ?? "—" }}</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">{{ $t("elections.locations") }}</div>
-          <div class="stat-value">{{ election.locationCount }}</div>
+          <div class="stat-value">{{ electionStats?.locationCount ?? "—" }}</div>
         </div>
       </el-card>
 

@@ -28,6 +28,7 @@ export interface PersonListDto {
   canVote?: boolean;
   canReceiveVotes?: boolean;
   ineligibleReasonCode?: string;
+  unitName?: string;
 }
 
 export interface PersonDetailDto {

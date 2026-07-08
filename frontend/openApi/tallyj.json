@@ -1967,6 +1967,46 @@
         }
       }
     },
+    "/api/Elections/{guid}/stats": {
+      "get": {
+        "tags": [
+          "Elections"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElections_ElectionStatsDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElections_ElectionStatsDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElections_ElectionStatsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Elections/{guid}/electionSummary": {
       "get": {
         "tags": [
@@ -7114,6 +7154,29 @@
         },
         "additionalProperties": false
       },
+      "ApiResponseElections_ElectionStatsDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Elections_ElectionStatsDto"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApiResponseFrontDesk_FrontDeskStatsDto": {
         "type": "object",
         "properties": {
@@ -8569,18 +8632,6 @@
             "format": "date-time",
             "nullable": true
           },
-          "voterCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ballotCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "locationCount": {
-            "type": "integer",
-            "format": "int32"
-          },
           "electionPasscode": {
             "type": "string",
             "nullable": true
@@ -8658,9 +8709,24 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Elections_ElectionStatsDto": {
+        "type": "object",
+        "properties": {
+          "voterCount": {
+            "type": "integer",
+            "format": "int32"
           },
-          "hasUnits": {
-            "type": "boolean"
+          "ballotCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "locationCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -10505,6 +10571,10 @@
             "nullable": true
           },
           "ineligibleReasonCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitName": {
             "type": "string",
             "nullable": true
           }

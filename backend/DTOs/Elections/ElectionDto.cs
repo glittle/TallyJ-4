@@ -78,21 +78,6 @@ public class ElectionDto
     public DateTimeOffset? OnlineWhenClose { get; set; }
 
     /// <summary>
-    /// The total number of registered voters.
-    /// </summary>
-    public int VoterCount { get; set; }
-
-    /// <summary>
-    /// The total number of ballots cast.
-    /// </summary>
-    public int BallotCount { get; set; }
-
-    /// <summary>
-    /// The number of voting locations.
-    /// </summary>
-    public int LocationCount { get; set; }
-
-    /// <summary>
     /// The passcode required for teller access.
     /// </summary>
     public string? ElectionPasscode { get; set; }
@@ -187,10 +172,6 @@ public class ElectionDto
     /// </summary>
     public DateTimeOffset? TellerAccessOpenedAt { get; set; }
 
-    /// <summary>
-    /// Whether any people in this election have a unit name assigned.
-    /// </summary>
-    public bool HasUnits { get; set; }
 }
 
 

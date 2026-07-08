@@ -1,7 +1,9 @@
 import { getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
+import { client } from "../api/gen/configService/client.gen";
 import type {
   CreateElectionDto,
   ElectionDto,
+  ElectionStats,
   ElectionSummaryDto,
   ImportResultDto,
   UpdateElectionDto,
@@ -43,6 +45,22 @@ export const electionService = {
         showAsTest: item.showAsTest ?? false,
       })) || []
     );
+  },
+
+  async getStats(electionGuid: string): Promise<ElectionStats> {
+    const response = await client.get({
+      url: "/api/Elections/{guid}/stats",
+      path: { guid: electionGuid },
+    });
+    const data = (response.data as { data?: ElectionStats } | undefined)?.data;
+    if (!data) {
+      throw new Error("Election stats not found");
+    }
+    return {
+      voterCount: data.voterCount ?? 0,
+      ballotCount: data.ballotCount ?? 0,
+      locationCount: data.locationCount ?? 0,
+    };
   },
 
   async getById(electionGuid: string): Promise<ElectionDto> {

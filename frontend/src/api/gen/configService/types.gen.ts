@@ -60,6 +60,13 @@ export type ApiResponseElectionsElectionDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponseElectionsElectionStatsDto = {
+    success?: boolean;
+    data?: ElectionsElectionStatsDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponseFrontDeskFrontDeskStatsDto = {
     success?: boolean;
     data?: FrontDeskFrontDeskStatsDto;
@@ -472,9 +479,6 @@ export type ElectionsElectionDto = {
     showAsTest?: boolean | null;
     onlineWhenOpen?: Date | null;
     onlineWhenClose?: Date | null;
-    voterCount?: number;
-    ballotCount?: number;
-    locationCount?: number;
     electionPasscode?: string | null;
     linkedElectionGuid?: string | null;
     linkedElectionKind?: string | null;
@@ -494,7 +498,12 @@ export type ElectionsElectionDto = {
     flags?: string | null;
     isTellerAccessOpen?: boolean;
     tellerAccessOpenedAt?: Date | null;
-    hasUnits?: boolean;
+};
+
+export type ElectionsElectionStatsDto = {
+    voterCount?: number;
+    ballotCount?: number;
+    locationCount?: number;
 };
 
 export type ElectionsElectionSummaryDto = {
@@ -1060,6 +1069,7 @@ export type PeoplePersonListDto = {
     canVote?: boolean | null;
     canReceiveVotes?: boolean | null;
     ineligibleReasonCode?: string | null;
+    unitName?: string | null;
 };
 
 export type PeopleUpdatePersonDto = {
@@ -2842,6 +2852,24 @@ export type GetApiElectionsByGuidElectionResponses = {
 };
 
 export type GetApiElectionsByGuidElectionResponse = GetApiElectionsByGuidElectionResponses[keyof GetApiElectionsByGuidElectionResponses];
+
+export type GetApiElectionsByGuidStatsData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/stats';
+};
+
+export type GetApiElectionsByGuidStatsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseElectionsElectionStatsDto;
+};
+
+export type GetApiElectionsByGuidStatsResponse = GetApiElectionsByGuidStatsResponses[keyof GetApiElectionsByGuidStatsResponses];
 
 export type GetApiElectionsByGuidElectionSummaryData = {
     body?: never;

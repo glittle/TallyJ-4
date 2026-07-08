@@ -73,8 +73,8 @@ const form = reactive({
   ineligibleReasonGuid: ELIGIBLE_REASON_VALUE,
 });
 
-const electionHasUnits = computed(
-  () => electionStore.currentElection?.hasUnits === true,
+const electionHasUnits = computed(() =>
+  peopleStore.peopleList.some((person) => Boolean(person.unitName?.trim())),
 );
 
 const electionHasKiosk = computed(() =>

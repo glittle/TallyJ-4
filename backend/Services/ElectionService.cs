@@ -72,10 +72,11 @@ public class ElectionService : IElectionService
             .OrderByDescending(e => e.DateOfElection)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .Include(e => e.People)
-            .Include(e => e.Locations)
-                .ThenInclude(l => l.Ballots)
             .ToListAsync();
+
+        var electionGuids = elections.Select(e => e.ElectionGuid).ToList();
+        var voterCounts = await GetVoterCountsByElectionAsync(electionGuids);
+        var ballotCounts = await GetBallotCountsByElectionAsync(electionGuids);
 
         var electionDtos = elections.Select(e => new ElectionSummaryDto
         {
@@ -83,8 +84,8 @@ public class ElectionService : IElectionService
             Name = e.Name,
             DateOfElection = e.DateOfElection,
             ElectionStage = e.ElectionStage,
-            VoterCount = e.People.Count(p => p.CanVote == true),
-            BallotCount = e.Locations.SelectMany(l => l.Ballots).Count(),
+            VoterCount = voterCounts.TryGetValue(e.ElectionGuid, out var voterCount) ? voterCount : 0,
+            BallotCount = ballotCounts.TryGetValue(e.ElectionGuid, out var ballotCount) ? ballotCount : 0,
             ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType),
             IsTellerAccessOpen = ElectionTellerAccessHelper.IsGuestTellerAccessOpen(e.ListedForPublicAsOf),
             IsOnlineVotingEnabled = e.OnlineWhenOpen != null && e.OnlineWhenClose != null,
@@ -102,9 +103,6 @@ public class ElectionService : IElectionService
     public async Task<ElectionDto?> GetElectionByGuidAsync(Guid electionGuid)
     {
         var election = await _context.Elections
-            .Include(e => e.People)
-            .Include(e => e.Locations)
-                .ThenInclude(l => l.Ballots)
             .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
 
         if (election == null)
@@ -112,13 +110,31 @@ public class ElectionService : IElectionService
             return null;
         }
 
-        var dto = MapToElectionDto(election);
-        dto.VoterCount = election.People.Count(p => p.CanVote == true);
-        dto.BallotCount = election.Locations.SelectMany(l => l.Ballots).Count();
-        dto.LocationCount = election.Locations.Count;
-        dto.ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType);
-        dto.HasUnits = election.People.Any(p => !string.IsNullOrWhiteSpace(p.UnitName));
-        return dto;
+        return MapToElectionDto(election);
+    }
+
+    /// <summary>
+    /// Retrieves aggregate voter, ballot, and location counts for an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>An ElectionStatsDto, or null if the election was not found.</returns>
+    public async Task<ElectionStatsDto?> GetElectionStatsAsync(Guid electionGuid)
+    {
+        var exists = await _context.Elections
+            .AnyAsync(e => e.ElectionGuid == electionGuid);
+
+        if (!exists)
+        {
+            return null;
+        }
+
+        var counts = await GetElectionCountsAsync(electionGuid);
+        return new ElectionStatsDto
+        {
+            VoterCount = counts.VoterCount,
+            BallotCount = counts.BallotCount,
+            LocationCount = counts.LocationCount,
+        };
     }
 
     /// <summary>
@@ -341,6 +357,53 @@ public class ElectionService : IElectionService
     }
 
     // =====================================================================
+    // Aggregate count helpers — use indexed COUNT/ANY queries instead of
+    // eager-loading entire People / Location / Ballot graphs.
+    // =====================================================================
+
+    private sealed record ElectionCounts(int VoterCount, int BallotCount, int LocationCount);
+
+    private async Task<ElectionCounts> GetElectionCountsAsync(Guid electionGuid)
+    {
+        var voterCount = await _context.People
+            .CountAsync(p => p.ElectionGuid == electionGuid && p.CanVote == true);
+        var locationCount = await _context.Locations
+            .CountAsync(l => l.ElectionGuid == electionGuid);
+        var ballotCount = await _context.Ballots
+            .CountAsync(b => b.Location.ElectionGuid == electionGuid);
+
+        return new ElectionCounts(voterCount, ballotCount, locationCount);
+    }
+
+    private async Task<Dictionary<Guid, int>> GetVoterCountsByElectionAsync(IReadOnlyCollection<Guid> electionGuids)
+    {
+        if (electionGuids.Count == 0)
+        {
+            return [];
+        }
+
+        return await _context.People
+            .Where(p => electionGuids.Contains(p.ElectionGuid) && p.CanVote == true)
+            .GroupBy(p => p.ElectionGuid)
+            .Select(g => new { g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Key, x => x.Count);
+    }
+
+    private async Task<Dictionary<Guid, int>> GetBallotCountsByElectionAsync(IReadOnlyCollection<Guid> electionGuids)
+    {
+        if (electionGuids.Count == 0)
+        {
+            return [];
+        }
+
+        return await _context.Ballots
+            .Where(b => electionGuids.Contains(b.Location.ElectionGuid))
+            .GroupBy(b => b.Location.ElectionGuid)
+            .Select(g => new { g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Key, x => x.Count);
+    }
+
+    // =====================================================================
     // Explicit mapping helpers (replaces hidden Mapster profile logic).
     // All transformations are now visible and easy to understand.
     // =====================================================================
@@ -357,9 +420,6 @@ public class ElectionService : IElectionService
         dto.IsTellerAccessOpen = ElectionTellerAccessHelper.IsGuestTellerAccessOpen(election.ListedForPublicAsOf);
         dto.TellerAccessOpenedAt = election.ListedForPublicAsOf;
         dto.ListForPublic = dto.IsTellerAccessOpen;
-
-        // Note: VoterCount, BallotCount, and LocationCount are set by the caller
-        // after loading the necessary navigation properties (kept explicit for clarity).
 
         return dto;
     }

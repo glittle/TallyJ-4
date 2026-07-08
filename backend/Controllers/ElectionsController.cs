@@ -75,6 +75,25 @@ public class ElectionsController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the election.</param>
     /// <returns>The election summary information.</returns>
+    [HttpGet("{guid}/stats")]
+    [Authorize(Policy = "ElectionAccess")]
+    public async Task<ActionResult<ApiResponse<ElectionStatsDto>>> GetElectionStats(Guid guid)
+    {
+        var stats = await _electionService.GetElectionStatsAsync(guid);
+
+        if (stats == null)
+        {
+            return NotFound(ApiResponse<ElectionStatsDto>.ErrorResponse("Election not found"));
+        }
+
+        return Ok(ApiResponse<ElectionStatsDto>.SuccessResponse(stats));
+    }
+
+    /// <summary>
+    /// Gets a summary of a specific election by its GUID.
+    /// </summary>
+    /// <param name="guid">The GUID of the election.</param>
+    /// <returns>The election summary information.</returns>
     [HttpGet("{guid}/electionSummary")]
     [Authorize(Policy = "ElectionAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> GetElectionSummary(Guid guid)

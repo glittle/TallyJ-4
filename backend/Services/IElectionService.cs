@@ -27,6 +27,13 @@ public interface IElectionService
     Task<ElectionDto?> GetElectionByGuidAsync(Guid electionGuid);
 
     /// <summary>
+    /// Retrieves aggregate voter, ballot, and location counts for an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>The election stats, or null if the election was not found.</returns>
+    Task<ElectionStatsDto?> GetElectionStatsAsync(Guid electionGuid);
+
+    /// <summary>
     /// Creates a new election with the provided data.
     /// </summary>
     /// <param name="createDto">The election creation data.</param>

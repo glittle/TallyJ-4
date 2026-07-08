@@ -22,6 +22,7 @@ import {
   type BallotSummaryDto,
 } from "../utils/ballotSummary";
 import { normalizeVoteList } from "../utils/voteDtoNormalization";
+import { useElectionStatsStore } from "./electionStatsStore";
 
 function compactVotePositions(votes: VoteDto[]): VoteDto[] {
   return votes
@@ -61,6 +62,7 @@ export const useBallotStore = defineStore("ballot", () => {
   const signalrInitialized = ref(false);
   const ballotFetchGeneration = new Map<string, number>();
   const ballotMutationGeneration = new Map<string, number>();
+  const activeElectionGuid = ref<string | null>(null);
 
   function upsertBallotSummary(summary: BallotSummaryDto) {
     const index = ballots.value.findIndex(
@@ -85,7 +87,15 @@ export const useBallotStore = defineStore("ballot", () => {
     ballots.value[index] = patchBallotSummary(ballots.value[index], patch);
   }
 
+  function invalidateElectionStats(electionGuid?: string | null) {
+    const guid = electionGuid ?? activeElectionGuid.value;
+    if (guid) {
+      useElectionStatsStore().invalidate(guid);
+    }
+  }
+
   async function fetchBallots(electionGuid: string) {
+    activeElectionGuid.value = electionGuid;
     loading.value = true;
     error.value = null;
     try {
@@ -169,6 +179,7 @@ export const useBallotStore = defineStore("ballot", () => {
       const ballot = await ballotService.create(dto);
       upsertBallotSummary(summaryFromFullBallot(ballot));
       currentBallot.value = ballot;
+      invalidateElectionStats(dto.electionGuid);
       return ballot;
     } catch (e: any) {
       error.value = e.message || "Failed to create ballot";
@@ -209,6 +220,8 @@ export const useBallotStore = defineStore("ballot", () => {
       if (currentBallot.value?.ballotGuid === ballotGuid) {
         currentBallot.value = null;
       }
+
+      invalidateElectionStats();
     } catch (e: any) {
       error.value = e.message || "Failed to delete ballot";
       throw e;
@@ -283,8 +296,7 @@ export const useBallotStore = defineStore("ballot", () => {
     );
 
     const isCurrentBallot = currentBallot.value?.ballotGuid === ballotGuid;
-    const hasAuthoritativePositions =
-      (result.votePositions?.length ?? 0) > 0 || !!result.vote;
+    const hasAuthoritativePositions = (result.votePositions?.length ?? 0) > 0;
 
     const normalizedVotes = resolveVoteMutationVotes(
       ballotGuid,
@@ -296,7 +308,7 @@ export const useBallotStore = defineStore("ballot", () => {
     }
 
     const summaryPatch: Partial<BallotSummaryDto> = {};
-    if (hasAuthoritativePositions || isCurrentBallot) {
+    if (isCurrentBallot || hasAuthoritativePositions) {
       summaryPatch.voteCount = normalizedVotes.length;
     }
     if (result.ballotStatusCode) {
