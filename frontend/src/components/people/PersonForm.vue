@@ -73,9 +73,12 @@ const form = reactive({
   ineligibleReasonGuid: ELIGIBLE_REASON_VALUE,
 });
 
-const electionHasUnits = computed(() =>
-  peopleStore.peopleList.some((person) => Boolean(person.unitName?.trim())),
-);
+const electionHasUnits = computed(() => {
+  if (personDetails.value?.unitName?.trim()) {
+    return true;
+  }
+  return peopleStore.peopleList.some((p) => Boolean(p.unitName?.trim()));
+});
 
 const electionHasKiosk = computed(() =>
   electionSupportsKiosk(electionStore.currentElection?.votingMethods),
