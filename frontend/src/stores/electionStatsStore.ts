@@ -6,6 +6,7 @@ import { extractApiErrorMessage } from "../utils/errorHandler";
 
 export const useElectionStatsStore = defineStore("electionStats", () => {
   const statsByElection = ref<Record<string, ElectionStats>>({});
+  const pendingRequests = ref(0);
   const loading = ref(false);
   const error = ref<string | null>(null);
 
