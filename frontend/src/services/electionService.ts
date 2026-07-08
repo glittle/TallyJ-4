@@ -47,11 +47,10 @@ export const electionService = {
   },
 
   async getStats(electionGuid: string): Promise<ElectionStats> {
-    const response = await client.get({
-      url: "/api/Elections/{guid}/stats",
+    const response = await getApiElectionsByGuidStats({
       path: { guid: electionGuid },
     });
-    const data = (response.data as { data?: ElectionStats } | undefined)?.data;
+    const data = response.data?.data;
     if (!data) {
       throw new Error("Election stats not found");
     }
