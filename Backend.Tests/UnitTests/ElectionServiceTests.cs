@@ -116,8 +116,7 @@ public class ElectionServiceTests : ServiceTestBase
         {
             LocationGuid = locationGuid,
             ElectionGuid = electionGuid,
-            Name = "Main Hall",
-            RowVersion = new byte[8]
+            Name = "Main Hall"
         });
         Context.People.Add(new Person
         {
@@ -170,8 +169,7 @@ public class ElectionServiceTests : ServiceTestBase
         {
             LocationGuid = locationGuid,
             ElectionGuid = electionGuid,
-            Name = "Main Hall",
-            RowVersion = new byte[8]
+            Name = "Main Hall"
         });
         Context.People.AddRange(
             new Person

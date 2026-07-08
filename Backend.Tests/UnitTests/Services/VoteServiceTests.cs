@@ -141,6 +141,8 @@ public class VoteServiceTests : ServiceTestBase
 
         var result = await _service.CreateVoteAsync(dto);
 
+        Assert.NotNull(result);
+        Assert.NotNull(result.Vote);
         Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
         Assert.Equal("X01", result.Vote.IneligibleReasonCode);
     }
@@ -159,6 +161,8 @@ public class VoteServiceTests : ServiceTestBase
 
         var result = await _service.CreateVoteAsync(dto);
 
+        Assert.NotNull(result);
+        Assert.NotNull(result.Vote);
         Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
         Assert.Null(result.Vote.IneligibleReasonCode);
     }
@@ -288,6 +292,7 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
+        Assert.NotNull(result.Vote);
         Assert.Null(result.Vote.PersonGuid);
         Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
         Assert.Equal("U01", result.Vote.IneligibleReasonCode);
@@ -309,6 +314,7 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
+        Assert.NotNull(result.Vote);
         Assert.Null(result.Vote.PersonGuid);
         Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
         Assert.Equal("U02", result.Vote.IneligibleReasonCode);
@@ -406,6 +412,7 @@ public class VoteServiceTests : ServiceTestBase
         var result = await _service.CreateVoteAsync(dto);
 
         Assert.NotNull(result);
+        Assert.NotNull(result.Vote);
         Assert.Equal(BallotStatus.Dup, result.BallotStatusCode);
         Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
 
