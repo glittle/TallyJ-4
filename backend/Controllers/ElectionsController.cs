@@ -71,10 +71,10 @@ public class ElectionsController : ControllerBase
     }
 
     /// <summary>
-    /// Gets a summary of a specific election by its GUID.
+    /// Gets aggregate statistics (voters, ballots, locations) for a specific election by its GUID.
     /// </summary>
     /// <param name="guid">The GUID of the election.</param>
-    /// <returns>The election summary information.</returns>
+    /// <returns>The election statistics.</returns>
     [HttpGet("{guid}/stats")]
     [Authorize(Policy = "ElectionAccess")]
     public async Task<ActionResult<ApiResponse<ElectionStatsDto>>> GetElectionStats(Guid guid)
