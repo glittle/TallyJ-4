@@ -68,6 +68,15 @@ describe("matchesFrontDeskVoterSearch", () => {
       "anthony",
     ]);
   });
+
+  it("handles voters with a missing full name", () => {
+    expect(
+      matchesFrontDeskVoterSearch({ fullName: undefined }, "smith"),
+    ).toBe(false);
+    expect(matchesFrontDeskVoterSearch({ fullName: undefined }, "")).toBe(
+      true,
+    );
+  });
 });
 
 describe("normalizeSearchText", () => {
