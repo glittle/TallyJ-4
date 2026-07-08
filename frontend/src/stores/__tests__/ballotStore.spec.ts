@@ -157,7 +157,7 @@ describe("useBallotStore deleteVote", () => {
     expect(store.currentBallot?.votes).toHaveLength(1);
   });
 
-  it("does not patch list voteCount from a single vote when the ballot is not current", async () => {
+  it("patches list voteCount from authoritative positions when the ballot is not current", async () => {
     const store = useBallotStore();
     const otherBallot = createBallot([createVote(1, 1, "Alice")]);
     otherBallot.ballotGuid = "ballot-2";
@@ -179,6 +179,12 @@ describe("useBallotStore deleteVote", () => {
         ballotGuid: "ballot-2",
         positionOnBallot: 4,
       },
+      votePositions: [
+        { rowId: 1, positionOnBallot: 1 },
+        { rowId: 2, positionOnBallot: 2 },
+        { rowId: 3, positionOnBallot: 3 },
+        { rowId: 20, positionOnBallot: 4 },
+      ],
     });
 
     await store.createVote({
@@ -189,7 +195,44 @@ describe("useBallotStore deleteVote", () => {
 
     expect(
       store.ballots.find((b) => b.ballotGuid === "ballot-2")?.voteCount,
-    ).toBe(3);
+    ).toBe(4);
+    expect(store.currentBallot?.ballotGuid).toBe("ballot-1");
+    expect(store.currentBallot?.votes).toHaveLength(2);
+  });
+
+  it("increments list voteCount when the first vote is created on a non-current ballot", async () => {
+    const store = useBallotStore();
+    const otherBallot = createBallot([]);
+    otherBallot.ballotGuid = "ballot-2";
+    otherBallot.voteCount = 0;
+
+    store.currentBallot = createBallot([
+      createVote(10, 1, "Dave"),
+      createVote(11, 2, "Eve"),
+    ]);
+    store.ballots = [
+      toBallotSummary(store.currentBallot),
+      toBallotSummary(otherBallot),
+    ];
+
+    vi.mocked(voteService.create).mockResolvedValue({
+      ballotStatusCode: "TooFew",
+      vote: {
+        ...createVote(20, 1, "Frank"),
+        ballotGuid: "ballot-2",
+        positionOnBallot: 1,
+      },
+    });
+
+    await store.createVote({
+      ballotGuid: "ballot-2",
+      personGuid: "person-20",
+      positionOnBallot: 1,
+    });
+
+    expect(
+      store.ballots.find((b) => b.ballotGuid === "ballot-2")?.voteCount,
+    ).toBe(1);
     expect(store.currentBallot?.ballotGuid).toBe("ballot-1");
     expect(store.currentBallot?.votes).toHaveLength(2);
   });

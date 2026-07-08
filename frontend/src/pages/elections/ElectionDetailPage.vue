@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
+import { isGuestTeller } from "@/domain/guestTellerAccess";
 import { CopyDocument, Delete, Download, Link } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import QRCode from "qrcode";
@@ -7,7 +8,6 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { electionService } from "../../services/electionService";
-import { isGuestTeller } from "@/domain/guestTellerAccess";
 import { useElectionStatsStore } from "../../stores/electionStatsStore";
 import { useElectionStore } from "../../stores/electionStore";
 
@@ -30,6 +30,7 @@ const electionStats = computed(() =>
 const isGuest = computed(() => isGuestTeller());
 
 const qrCodeUrl = ref("");
+const loadFailed = ref(false);
 
 const hashPassphrase = async (passphrase: string) => {
   const msgUint8 = new TextEncoder().encode(passphrase); // encode as (UTF-8)
@@ -60,11 +61,17 @@ const onlineVotingStatus = computed(() => {
 });
 
 onMounted(async () => {
-  await Promise.all([
-    electionStore.fetchElectionById(electionGuid),
-    electionStatsStore.fetchStats(electionGuid),
-  ]);
-  updateShareableUrl();
+  loadFailed.value = false;
+  try {
+    await Promise.all([
+      electionStore.fetchElectionById(electionGuid),
+      electionStatsStore.fetchStats(electionGuid),
+    ]);
+    updateShareableUrl();
+  } catch (_error) {
+    loadFailed.value = true;
+    showErrorMessage(t("elections.loadError"));
+  }
 });
 
 async function confirmDelete() {
@@ -236,7 +243,9 @@ async function exportElection() {
         </div>
         <div class="stat-item">
           <div class="stat-label">{{ $t("elections.locations") }}</div>
-          <div class="stat-value">{{ electionStats?.locationCount ?? "—" }}</div>
+          <div class="stat-value">
+            {{ electionStats?.locationCount ?? "—" }}
+          </div>
         </div>
       </el-card>
 
