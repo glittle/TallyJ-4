@@ -28,7 +28,7 @@ export function tokenizeNameForSearch(name: string): string[] {
 }
 
 export interface FrontDeskSearchableVoter {
-  fullName: string;
+  fullName?: string | null;
   bahaiId?: string | null;
   area?: string | null;
 }
@@ -42,8 +42,9 @@ export function matchesFrontDeskVoterSearch(
     return true;
   }
 
-  const normalizedName = normalizeSearchText(voter.fullName);
-  const nameParts = tokenizeNameForSearch(voter.fullName);
+  const fullName = voter.fullName ?? "";
+  const normalizedName = normalizeSearchText(fullName);
+  const nameParts = tokenizeNameForSearch(fullName);
   const bahaiId = voter.bahaiId ? normalizeSearchText(voter.bahaiId) : "";
   const area = voter.area ? normalizeSearchText(voter.area) : "";
 

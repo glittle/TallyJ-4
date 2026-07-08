@@ -367,7 +367,8 @@ async function fetchEligibleVoters(guid: string) {
   error.value = null;
   try {
     voters.value = (await frontDeskService.getEligibleVoters(guid)).sort(
-      (a, b) => a.fullName.localeCompare(b.fullName),
+      (a, b) =>
+        (a.fullName ?? "").localeCompare(b.fullName ?? ""),
     );
   } catch (e: any) {
     error.value = e.message || t("frontDesk.errors.fetchVoters");

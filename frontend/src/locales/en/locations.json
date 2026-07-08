@@ -27,6 +27,7 @@
   "locations.form.sortOrderInvalid": "Sort order must be a number",
   "locations.form.titleAdd": "Add Location",
   "locations.form.titleEdit": "Edit Location",
+  "locations.editDrawerTitle": "Edit {name}",
   "locations.form.updated": "Location updated successfully",
   "locations.locationSelected": "Location selected successfully",
   "locations.selectLocation": "Select Location",

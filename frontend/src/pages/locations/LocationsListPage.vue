@@ -1,22 +1,21 @@
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
-import { Delete, Edit, Plus } from "@element-plus/icons-vue";
-import { ElMessageBox } from "element-plus";
+import { Plus } from "@element-plus/icons-vue";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import LocationFormDialog from "../../components/locations/LocationFormDialog.vue";
+import LocationForm from "../../components/locations/LocationForm.vue";
 import { useLocationStore } from "../../stores/locationStore";
 import type { LocationDto } from "../../types";
 
 const route = useRoute();
 const locationStore = useLocationStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showErrorMessage } = useNotifications();
 const { t } = useI18n();
 
 const electionGuid = route.params.id as string;
-const showCreateDialog = ref(false);
-const showEditDialog = ref(false);
+const showLocationDrawer = ref(false);
+const drawerMode = ref<"add" | "edit">("edit");
 const editingLocation = ref<LocationDto | null>(null);
 const loading = computed(() => locationStore.loading);
 const sortedLocations = computed(() => locationStore.sortedLocations);
@@ -25,6 +24,16 @@ const pagination = computed(() => locationStore.pagination);
 const sort = ref({
   prop: "sortOrder",
   order: "ascending" as "ascending" | "descending",
+});
+
+const locationDrawerTitle = computed(() => {
+  if (drawerMode.value === "add") {
+    return t("locations.form.titleAdd");
+  }
+  if (!editingLocation.value) {
+    return t("locations.form.titleEdit");
+  }
+  return t("locations.editDrawerTitle", { name: editingLocation.value.name });
 });
 
 onMounted(async () => {
@@ -46,37 +55,30 @@ async function loadLocations() {
   }
 }
 
-function editLocation(location: LocationDto) {
-  editingLocation.value = location;
-  showEditDialog.value = true;
+function handleAdd() {
+  drawerMode.value = "add";
+  editingLocation.value = null;
+  showLocationDrawer.value = true;
 }
 
-async function deleteLocation(location: LocationDto) {
-  try {
-    await ElMessageBox.confirm(
-      t("locations.confirm.deleteLocationMessage", { name: location.name }),
-      t("locations.confirm.deleteLocationTitle"),
-      {
-        confirmButtonText: t("locations.confirm.delete"),
-        cancelButtonText: t("locations.confirm.cancel"),
-        type: "warning",
-      },
-    );
+function handleEdit(location: LocationDto) {
+  drawerMode.value = "edit";
+  editingLocation.value = location;
+  showLocationDrawer.value = true;
+}
 
-    await locationStore.deleteLocation(electionGuid, location.locationGuid);
-    showSuccessMessage(t("locations.success.locationDeleted"));
-  } catch (error: any) {
-    if (error !== "cancel") {
-      showErrorMessage(
-        error.message || t("locations.error.failedToDeleteLocation"),
-      );
-    }
-  }
+function handleLocationDrawerClosed() {
+  editingLocation.value = null;
 }
 
 function handleFormSuccess() {
-  showCreateDialog.value = false;
-  showEditDialog.value = false;
+  showLocationDrawer.value = false;
+  editingLocation.value = null;
+  loadLocations();
+}
+
+function handleLocationDeleted() {
+  showLocationDrawer.value = false;
   editingLocation.value = null;
   loadLocations();
 }
@@ -119,7 +121,7 @@ function getStatusType(status: string) {
       <template #header>
         <div class="card-header">
           <div class="header-actions">
-            <el-button type="primary" @click="showCreateDialog = true">
+            <el-button type="primary" @click="handleAdd">
               <el-icon><Plus /></el-icon>
               {{ t("locations.button.addLocation") }}
             </el-button>
@@ -139,7 +141,13 @@ function getStatusType(status: string) {
             :label="$t('locations.form.name')"
             min-width="200"
             sortable="custom"
-          />
+          >
+            <template #default="scope">
+              <el-button type="primary" link @click="handleEdit(scope.row)">
+                {{ scope.row.name }}
+              </el-button>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="contactInfo"
             :label="$t('locations.form.contactInfo')"
@@ -197,28 +205,6 @@ function getStatusType(status: string) {
               <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column
-            :label="$t('locations.form.actions')"
-            width="200"
-            fixed="right"
-          >
-            <template #default="scope">
-              <el-button-group>
-                <el-button size="small" @click="editLocation(scope.row)">
-                  <el-icon><Edit /></el-icon>
-                  {{ $t("locations.form.edit") }}
-                </el-button>
-                <el-button
-                  size="small"
-                  type="danger"
-                  @click="deleteLocation(scope.row)"
-                >
-                  <el-icon><Delete /></el-icon>
-                  {{ $t("locations.form.delete") }}
-                </el-button>
-              </el-button-group>
-            </template>
-          </el-table-column>
         </el-table>
 
         <div v-if="pagination.totalPages > 1" class="pagination-container">
@@ -235,19 +221,31 @@ function getStatusType(status: string) {
       </div>
     </el-card>
 
-    <LocationFormDialog
-      v-model="showCreateDialog"
-      :election-guid="electionGuid"
-      @success="handleFormSuccess"
-    />
-
-    <LocationFormDialog
-      v-model="showEditDialog"
-      :election-guid="electionGuid"
-      :location="editingLocation"
-      :is-edit="true"
-      @success="handleFormSuccess"
-    />
+    <el-drawer
+      v-model="showLocationDrawer"
+      :title="locationDrawerTitle"
+      direction="rtl"
+      size="50%"
+      :lock-scroll="false"
+      modal-class="location-form-drawer"
+      @closed="handleLocationDrawerClosed"
+    >
+      <LocationForm
+        v-if="showLocationDrawer && (drawerMode === 'add' || editingLocation)"
+        :key="
+          drawerMode === 'add'
+            ? 'add-location'
+            : (editingLocation?.locationGuid ?? 'edit')
+        "
+        :election-guid="electionGuid"
+        :location="drawerMode === 'edit' ? editingLocation : null"
+        :is-edit="drawerMode === 'edit'"
+        :show-delete="drawerMode === 'edit'"
+        @success="handleFormSuccess"
+        @deleted="handleLocationDeleted"
+        @cancel="showLocationDrawer = false"
+      />
+    </el-drawer>
   </div>
 </template>
 
@@ -284,5 +282,11 @@ function getStatusType(status: string) {
 .coordinates {
   font-family: monospace;
   font-size: 0.9em;
+}
+
+.location-form-drawer {
+  .el-drawer {
+    transition: none;
+  }
 }
 </style>

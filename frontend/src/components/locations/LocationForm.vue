@@ -1,36 +1,37 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from "vue";
-import { type FormInstance, type FormRules } from "element-plus";
-import { useI18n } from "vue-i18n";
-import { useNotifications } from "@/composables/useNotifications";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useNotifications } from "@/composables/useNotifications";
+import { type FormInstance, type FormRules, ElMessageBox } from "element-plus";
+import { reactive, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useLocationStore } from "../../stores/locationStore";
 import type {
-  LocationDto,
   CreateLocationDto,
+  LocationDto,
   UpdateLocationDto,
 } from "../../types";
 
 const props = defineProps<{
-  modelValue: boolean;
   electionGuid: string;
   location?: LocationDto | null;
   isEdit?: boolean;
+  showDelete?: boolean;
 }>();
 
 const emit = defineEmits<{
-  "update:modelValue": [value: boolean];
   success: [];
+  deleted: [];
+  cancel: [];
 }>();
 
 const { t } = useI18n();
 const locationStore = useLocationStore();
-const { showSuccessMessage, showErrorMessage: _showErrorMessage } =
-  useNotifications();
+const { showSuccessMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
+const deleting = ref(false);
 
 const form = reactive({
   name: "",
@@ -79,6 +80,8 @@ const rules = reactive<FormRules>({
   ],
 });
 
+const isEditMode = () => props.isEdit === true;
+
 watch(
   () => props.location,
   (location) => {
@@ -88,30 +91,19 @@ watch(
       form.longitude = location.longitude || "";
       form.latitude = location.latitude || "";
       form.sortOrder = location.sortOrder ?? 0;
+    } else if (!props.isEdit) {
+      resetForm();
     }
   },
   { immediate: true },
 );
 
-watch(
-  () => props.modelValue,
-  (value) => {
-    if (!value) {
-      resetForm();
-    } else if (!props.isEdit) {
-      resetForm();
-    }
-  },
-);
-
 function resetForm() {
-  if (!props.isEdit) {
-    form.name = "";
-    form.contactInfo = "";
-    form.longitude = "";
-    form.latitude = "";
-    form.sortOrder = 0;
-  }
+  form.name = "";
+  form.contactInfo = "";
+  form.longitude = "";
+  form.latitude = "";
+  form.sortOrder = 0;
 }
 
 async function handleSubmit() {
@@ -120,61 +112,89 @@ async function handleSubmit() {
   }
 
   await formRef.value.validate(async (valid) => {
-    if (valid) {
-      submitting.value = true;
-      try {
-        if (props.isEdit && props.location) {
-          const dto: UpdateLocationDto = {
-            name: form.name,
-            contactInfo: form.contactInfo || undefined,
-            longitude: form.longitude || undefined,
-            latitude: form.latitude || undefined,
-            sortOrder: form.sortOrder,
-          };
-          await locationStore.updateLocation(
-            props.electionGuid,
-            props.location.locationGuid,
-            dto,
-          );
-          showSuccessMessage(t("locations.form.updated"));
-        } else {
-          const dto: CreateLocationDto = {
-            electionGuid: props.electionGuid,
-            name: form.name,
-            contactInfo: form.contactInfo || undefined,
-            longitude: form.longitude || undefined,
-            latitude: form.latitude || undefined,
-            sortOrder: form.sortOrder,
-          };
-          await locationStore.createLocation(props.electionGuid, dto);
-          showSuccessMessage(t("locations.form.created"));
-        }
-        emit("success");
-      } catch (error) {
-        handleApiError(error);
-      } finally {
-        submitting.value = false;
+    if (!valid) {
+      return;
+    }
+
+    submitting.value = true;
+    try {
+      if (props.isEdit && props.location) {
+        const dto: UpdateLocationDto = {
+          name: form.name,
+          contactInfo: form.contactInfo || undefined,
+          longitude: form.longitude || undefined,
+          latitude: form.latitude || undefined,
+          sortOrder: form.sortOrder,
+        };
+        await locationStore.updateLocation(
+          props.electionGuid,
+          props.location.locationGuid,
+          dto,
+        );
+        showSuccessMessage(t("locations.form.updated"));
+      } else {
+        const dto: CreateLocationDto = {
+          electionGuid: props.electionGuid,
+          name: form.name,
+          contactInfo: form.contactInfo || undefined,
+          longitude: form.longitude || undefined,
+          latitude: form.latitude || undefined,
+          sortOrder: form.sortOrder,
+        };
+        await locationStore.createLocation(props.electionGuid, dto);
+        showSuccessMessage(t("locations.form.created"));
       }
+      emit("success");
+    } catch (error) {
+      handleApiError(error);
+    } finally {
+      submitting.value = false;
     }
   });
 }
 
-function handleClose() {
+async function handleDelete() {
+  if (!props.location) {
+    return;
+  }
+
+  try {
+    await ElMessageBox.confirm(
+      t("locations.confirm.deleteLocationMessage", {
+        name: props.location.name,
+      }),
+      t("locations.confirm.deleteLocationTitle"),
+      {
+        confirmButtonText: t("locations.confirm.delete"),
+        cancelButtonText: t("locations.confirm.cancel"),
+        type: "warning",
+      },
+    );
+
+    deleting.value = true;
+    await locationStore.deleteLocation(
+      props.electionGuid,
+      props.location.locationGuid,
+    );
+    showSuccessMessage(t("locations.success.locationDeleted"));
+    emit("deleted");
+  } catch (error: unknown) {
+    if (error !== "cancel") {
+      handleApiError(error);
+    }
+  } finally {
+    deleting.value = false;
+  }
+}
+
+function handleCancel() {
   formRef.value?.resetFields();
-  emit("update:modelValue", false);
+  emit("cancel");
 }
 </script>
 
 <template>
-  <el-dialog
-    :model-value="modelValue"
-    :title="
-      isEdit ? $t('locations.form.titleEdit') : $t('locations.form.titleAdd')
-    "
-    width="600px"
-    @update:model-value="$emit('update:modelValue', $event)"
-    @close="handleClose"
-  >
+  <div class="location-form">
     <el-form
       ref="formRef"
       :model="form"
@@ -238,21 +258,47 @@ function handleClose() {
       </el-form-item>
     </el-form>
 
-    <template #footer>
-      <el-button @click="handleClose">{{
+    <div class="location-form-actions">
+      <el-button type="primary" :loading="submitting" @click="handleSubmit">
+        {{
+          isEditMode() ? $t("locations.form.save") : $t("locations.form.create")
+        }}
+      </el-button>
+      <el-button @click="handleCancel">{{
         $t("locations.form.cancel")
       }}</el-button>
-      <el-button type="primary" :loading="submitting" @click="handleSubmit">
-        {{ isEdit ? $t("locations.form.save") : $t("locations.form.create") }}
+    </div>
+
+    <div v-if="isEditMode() && showDelete" class="location-form-delete">
+      <el-button type="danger" :loading="deleting" @click="handleDelete">
+        {{ $t("locations.form.delete") }}
       </el-button>
-    </template>
-  </el-dialog>
+    </div>
+  </div>
 </template>
 
 <style lang="less">
-.form-help-text {
-  font-size: 12px;
-  color: var(--el-text-color-secondary);
-  margin-top: 4px;
+.location-form {
+  .form-help-text {
+    font-size: 12px;
+    color: var(--el-text-color-secondary);
+    margin-top: 4px;
+  }
+
+  .location-form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-4);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--el-border-color-lighter);
+  }
+
+  .location-form-delete {
+    margin-top: var(--spacing-6);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--el-border-color-lighter);
+    text-align: right;
+  }
 }
 </style>
