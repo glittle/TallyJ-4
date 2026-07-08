@@ -1,5 +1,4 @@
-import { getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
-import { client } from "../api/gen/configService/client.gen";
+import { getApiElectionsByGuidStats, getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
 import type {
   CreateElectionDto,
   ElectionDto,
