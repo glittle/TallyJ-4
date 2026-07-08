@@ -29,6 +29,7 @@ export const useElectionStatsStore = defineStore("electionStats", () => {
       }
     }
 
+    pendingRequests.value += 1;
     loading.value = true;
     error.value = null;
     try {
@@ -42,7 +43,8 @@ export const useElectionStatsStore = defineStore("electionStats", () => {
       error.value = extractApiErrorMessage(e);
       throw e;
     } finally {
-      loading.value = false;
+      pendingRequests.value = Math.max(0, pendingRequests.value - 1);
+      loading.value = pendingRequests.value > 0;
     }
   }
 
