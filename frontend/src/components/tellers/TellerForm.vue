@@ -2,21 +2,22 @@
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
 import { useTellerStore } from "@/stores/tellerStore";
-import type { Teller, CreateTellerDto, UpdateTellerDto } from "@/types/teller";
-import type { FormInstance, FormRules } from "element-plus";
+import type { CreateTellerDto, Teller, UpdateTellerDto } from "@/types/teller";
+import { type FormInstance, type FormRules, ElMessageBox } from "element-plus";
 import { reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
-  modelValue: boolean;
   electionGuid: string;
   teller?: Teller | null;
   isEdit?: boolean;
+  showDelete?: boolean;
 }>();
 
 const emit = defineEmits<{
-  "update:modelValue": [value: boolean];
   success: [];
+  deleted: [];
+  cancel: [];
 }>();
 
 const { t } = useI18n();
@@ -26,6 +27,7 @@ const tellerStore = useTellerStore();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
+const deleting = ref(false);
 
 const form = reactive({
   name: "",
@@ -38,11 +40,15 @@ const rules: FormRules = {
   ],
 };
 
+const isEditMode = () => props.isEdit === true;
+
 watch(
   () => props.teller,
   (teller) => {
     if (teller) {
       form.name = teller.name;
+    } else if (!props.isEdit) {
+      resetForm();
     }
   },
   { immediate: true },
@@ -50,11 +56,6 @@ watch(
 
 function resetForm() {
   form.name = "";
-}
-
-function handleClose() {
-  emit("update:modelValue", false);
-  resetForm();
 }
 
 async function handleSubmit() {
@@ -87,7 +88,6 @@ async function handleSubmit() {
       }
       showSuccessMessage(t("teller.form.saved"));
       emit("success");
-      handleClose();
     } catch (error) {
       handleApiError(error);
     } finally {
@@ -95,16 +95,44 @@ async function handleSubmit() {
     }
   });
 }
+
+async function handleDelete() {
+  if (!props.teller) {
+    return;
+  }
+
+  try {
+    await ElMessageBox.confirm(
+      t("teller.confirm.deleteTellerMessage", { name: props.teller.name }),
+      t("teller.confirm.deleteTellerTitle"),
+      {
+        confirmButtonText: t("teller.confirm.delete"),
+        cancelButtonText: t("teller.confirm.cancel"),
+        type: "warning",
+      },
+    );
+
+    deleting.value = true;
+    await tellerStore.deleteTeller(props.electionGuid, props.teller.rowId);
+    showSuccessMessage(t("teller.success.tellerDeleted"));
+    emit("deleted");
+  } catch (error: unknown) {
+    if (error !== "cancel") {
+      handleApiError(error);
+    }
+  } finally {
+    deleting.value = false;
+  }
+}
+
+function handleCancel() {
+  formRef.value?.resetFields();
+  emit("cancel");
+}
 </script>
 
 <template>
-  <el-dialog
-    :model-value="modelValue"
-    :title="isEdit ? $t('teller.form.titleEdit') : $t('teller.form.titleAdd')"
-    width="420px"
-    @update:model-value="emit('update:modelValue', $event)"
-    @closed="resetForm"
-  >
+  <div class="teller-form">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
       <el-form-item :label="$t('teller.form.name')" prop="name">
         <el-input
@@ -114,11 +142,39 @@ async function handleSubmit() {
       </el-form-item>
     </el-form>
 
-    <template #footer>
-      <el-button @click="handleClose">{{ $t("teller.form.cancel") }}</el-button>
+    <div class="teller-form-actions">
       <el-button type="primary" :loading="submitting" @click="handleSubmit">
-        {{ isEdit ? $t("teller.form.save") : $t("teller.form.create") }}
+        {{ isEditMode() ? $t("teller.form.save") : $t("teller.form.create") }}
       </el-button>
-    </template>
-  </el-dialog>
+      <el-button @click="handleCancel">{{
+        $t("teller.form.cancel")
+      }}</el-button>
+    </div>
+
+    <div v-if="isEditMode() && showDelete" class="teller-form-delete">
+      <el-button type="danger" :loading="deleting" @click="handleDelete">
+        {{ $t("teller.form.delete") }}
+      </el-button>
+    </div>
+  </div>
 </template>
+
+<style lang="less">
+.teller-form {
+  .teller-form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-4);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--el-border-color-lighter);
+  }
+
+  .teller-form-delete {
+    margin-top: var(--spacing-6);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--el-border-color-lighter);
+    text-align: right;
+  }
+}
+</style>

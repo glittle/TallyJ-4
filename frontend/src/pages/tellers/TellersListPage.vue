@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import TellerFormDialog from "@/components/tellers/TellerFormDialog.vue";
+import TellerForm from "@/components/tellers/TellerForm.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
-import { useNotifications } from "@/composables/useNotifications";
 import { useTellerStore } from "@/stores/tellerStore";
 import type { Teller } from "@/types/teller";
-import { Delete, Edit, Plus } from "@element-plus/icons-vue";
-import { ElMessageBox } from "element-plus";
+import { Plus } from "@element-plus/icons-vue";
 import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 const tellerStore = useTellerStore();
-const { showErrorMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
+const { t } = useI18n();
 
 const electionGuid = route.params.id as string;
-const showCreateDialog = ref(false);
-const showEditDialog = ref(false);
+const showTellerDrawer = ref(false);
+const drawerMode = ref<"add" | "edit">("edit");
 const editingTeller = ref<Teller | null>(null);
 
 const loading = computed(() => tellerStore.loading);
@@ -36,6 +35,16 @@ const pageSize = computed({
 });
 const totalPages = computed(() => Math.ceil(totalCount.value / pageSize.value));
 
+const tellerDrawerTitle = computed(() => {
+  if (drawerMode.value === "add") {
+    return t("teller.form.titleAdd");
+  }
+  if (!editingTeller.value) {
+    return t("teller.form.titleEdit");
+  }
+  return t("teller.editDrawerTitle", { name: editingTeller.value.name });
+});
+
 onMounted(async () => {
   await loadTellers();
 });
@@ -52,34 +61,30 @@ async function loadTellers() {
   }
 }
 
-function editTeller(teller: Teller) {
-  editingTeller.value = teller;
-  showEditDialog.value = true;
+function handleAdd() {
+  drawerMode.value = "add";
+  editingTeller.value = null;
+  showTellerDrawer.value = true;
 }
 
-async function deleteTeller(teller: Teller) {
-  try {
-    await ElMessageBox.confirm(
-      `Are you sure you want to delete teller "${teller.name}"?`,
-      "Warning",
-      {
-        confirmButtonText: "Delete",
-        cancelButtonText: "Cancel",
-        type: "warning",
-      },
-    );
+function handleEdit(teller: Teller) {
+  drawerMode.value = "edit";
+  editingTeller.value = teller;
+  showTellerDrawer.value = true;
+}
 
-    await tellerStore.deleteTeller(electionGuid, teller.rowId);
-  } catch (error: any) {
-    if (error !== "cancel") {
-      showErrorMessage(error.message || "Failed to delete teller");
-    }
-  }
+function handleTellerDrawerClosed() {
+  editingTeller.value = null;
 }
 
 function handleFormSuccess() {
-  showCreateDialog.value = false;
-  showEditDialog.value = false;
+  showTellerDrawer.value = false;
+  editingTeller.value = null;
+  loadTellers();
+}
+
+function handleTellerDeleted() {
+  showTellerDrawer.value = false;
   editingTeller.value = null;
   loadTellers();
 }
@@ -99,9 +104,9 @@ async function handlePageChange() {
       <template #header>
         <div class="card-header">
           <div class="header-actions">
-            <el-button type="primary" @click="showCreateDialog = true">
+            <el-button type="primary" @click="handleAdd">
               <el-icon><Plus /></el-icon>
-              Add Teller
+              {{ $t("teller.form.titleAdd") }}
             </el-button>
           </div>
         </div>
@@ -109,23 +114,15 @@ async function handlePageChange() {
 
       <div class="table-container">
         <el-table v-loading="loading" :data="tellers" style="width: 100%">
-          <el-table-column prop="name" label="Teller Name" min-width="200" />
-          <el-table-column label="Actions" width="200" fixed="right">
+          <el-table-column
+            prop="name"
+            :label="$t('teller.form.name')"
+            min-width="200"
+          >
             <template #default="scope">
-              <el-button-group>
-                <el-button size="small" @click="editTeller(scope.row)">
-                  <el-icon><Edit /></el-icon>
-                  Edit
-                </el-button>
-                <el-button
-                  size="small"
-                  type="danger"
-                  @click="deleteTeller(scope.row)"
-                >
-                  <el-icon><Delete /></el-icon>
-                  Delete
-                </el-button>
-              </el-button-group>
+              <el-button type="primary" link @click="handleEdit(scope.row)">
+                {{ scope.row.name }}
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -144,19 +141,29 @@ async function handlePageChange() {
       </div>
     </el-card>
 
-    <TellerFormDialog
-      v-model="showCreateDialog"
-      :election-guid="electionGuid"
-      @success="handleFormSuccess"
-    />
-
-    <TellerFormDialog
-      v-model="showEditDialog"
-      :election-guid="electionGuid"
-      :teller="editingTeller"
-      :is-edit="true"
-      @success="handleFormSuccess"
-    />
+    <el-drawer
+      v-model="showTellerDrawer"
+      :title="tellerDrawerTitle"
+      direction="rtl"
+      size="50%"
+      :lock-scroll="false"
+      modal-class="teller-form-drawer"
+      @closed="handleTellerDrawerClosed"
+    >
+      <TellerForm
+        v-if="showTellerDrawer && (drawerMode === 'add' || editingTeller)"
+        :key="
+          drawerMode === 'add' ? 'add-teller' : (editingTeller?.rowId ?? 'edit')
+        "
+        :election-guid="electionGuid"
+        :teller="drawerMode === 'edit' ? editingTeller : null"
+        :is-edit="drawerMode === 'edit'"
+        :show-delete="drawerMode === 'edit'"
+        @success="handleFormSuccess"
+        @deleted="handleTellerDeleted"
+        @cancel="showTellerDrawer = false"
+      />
+    </el-drawer>
   </div>
 </template>
 
@@ -188,5 +195,11 @@ async function handlePageChange() {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.teller-form-drawer {
+  .el-drawer {
+    transition: none;
+  }
 }
 </style>

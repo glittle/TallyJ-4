@@ -7,12 +7,14 @@ export interface SearchResult {
 }
 
 export function normalizeSearchText(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, " ")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+  return (
+    text
+      ?.toLowerCase()
+      .trim()
+      .replace(/\s+/g, " ")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") ?? ""
+  );
 }
 
 export function splitSearchTerms(query: string): string[] {
