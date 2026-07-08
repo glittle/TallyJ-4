@@ -2,7 +2,8 @@ import type { PersonDto } from "@/types/Person";
 import type { PersonVoteCountUpdateEvent } from "@/types/SignalREvents";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { usePeopleStore } from "../peopleStore";
+
+const mockInvalidateElectionStats = vi.fn();
 
 vi.mock("@/services/peopleService", () => ({
   peopleService: {
@@ -28,6 +29,14 @@ vi.mock("@/services/signalrService", () => ({
   },
 }));
 
+vi.mock("../electionStatsStore", () => ({
+  useElectionStatsStore: vi.fn(() => ({
+    invalidate: mockInvalidateElectionStats,
+  })),
+}));
+
+import { usePeopleStore } from "../peopleStore";
+
 function createPersonDto(overrides: Partial<PersonDto> = {}): PersonDto {
   return {
     personGuid: "test-guid",
@@ -41,6 +50,7 @@ function createPersonDto(overrides: Partial<PersonDto> = {}): PersonDto {
 describe("usePeopleStore", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    mockInvalidateElectionStats.mockClear();
   });
 
   describe("handlePersonVoteCountUpdated", () => {
@@ -240,6 +250,8 @@ describe("usePeopleStore", () => {
       const { peopleService } = await import("@/services/peopleService");
       const store = usePeopleStore();
 
+      await store.fetchPeopleList("election-1");
+
       store.peopleList = [
         {
           personGuid: "person-1",
@@ -268,6 +280,8 @@ describe("usePeopleStore", () => {
       await store.updatePerson("person-1", { lastName: "Smith" });
 
       expect(store.peopleList).toHaveLength(1);
+      expect(mockInvalidateElectionStats).toHaveBeenCalledTimes(1);
+
       expect(store.peopleList[0]).toEqual({
         personGuid: "person-1",
         fullName: "Smith, Alicia",
@@ -278,6 +292,28 @@ describe("usePeopleStore", () => {
         canReceiveVotes: false,
         ineligibleReasonCode: "V01",
       });
+    });
+  });
+
+  describe("election stats invalidation", () => {
+    it("invalidates cached stats after creating a person", async () => {
+      const { peopleService } = await import("@/services/peopleService");
+      const store = usePeopleStore();
+
+      const createdPerson = createPersonDto({
+        personGuid: "person-new",
+        lastName: "Nguyen",
+        fullName: "Nguyen, Pat",
+      });
+
+      vi.mocked(peopleService.create).mockResolvedValue(createdPerson);
+
+      await store.createPerson({
+        electionGuid: "election-1",
+        lastName: "Nguyen",
+      });
+
+      expect(mockInvalidateElectionStats).toHaveBeenCalledWith("election-1");
     });
   });
 });

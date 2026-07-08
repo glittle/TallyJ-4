@@ -164,7 +164,8 @@ Other languages are updated separately in periodic review cycles — do not add 
 - frontend default dev URL: `http://localhost:8095`
 - backend development config seeds the database on startup
 - Swagger is the source of truth for current routes and schemas
-- **Contributor workflow:** the repo owner usually keeps their own backend dev instance running (`dotnet run` / IDE). Before running `dotnet build` on `backend/` (or any command that rebuilds the backend and may fail with a file-lock error on `Backend.exe`), **ask them to stop their copy first**. Prefer `dotnet test --no-build` when a recent build already exists.
+- **Contributor workflow:** the repo owner usually keeps their own backend dev instance running (`dotnet watch` / `dotnet run` / IDE) and the Vite dev server (`npm run dev`) for hot reload. **Do not rebuild backend or frontend for routine code changes** — `dotnet watch` recompiles C# on save and Vite hot-reloads Vue/TS. Avoid `dotnet build`, `dotnet run`, `npm run build`, and `npm run dev` unless the task explicitly requires it or the contributor asks you to verify a build. If you must rebuild, ask them to stop their running backend first (file-lock on `Backend.exe` causes MSB3026 copy failures). Prefer `dotnet test --no-build` when a recent build already exists.
+- **OpenAPI regen:** only mention `frontend/openApi/tallyj.json` / `npm run gen` when backend DTOs, controllers, or routes changed. Frontend-only edits do not need OpenAPI regeneration.
 
 ### Configuration sources (Program.cs)
 
@@ -249,6 +250,7 @@ with normal POSIX quoting._
 
 These apply on both Windows and Linux:
 
+- **Default:** do not run `dotnet build` or restart the backend — the contributor's `dotnet watch` picks up C# changes automatically.
 - If a backend rebuild is needed, confirm the contributor has stopped their locally running backend first (see **Local development assumptions**). A running `Backend.exe` locks the output and causes MSB3026 copy failures.
 - For targeted test runs, `dotnet test --filter "FullyQualifiedName~ClassName.MethodPrefix"` works
   well. Multiple filters can be OR-combined with `|`:
@@ -269,7 +271,7 @@ Windows-only caveat:
 
 ## Frontend workflow note
 
-For routine local development, prefer `npm run dev`. Only use `npm run build` when you explicitly need a production build or are validating production output.
+The contributor typically already has `npm run dev` running with Vite HMR. **Do not start or rebuild the frontend** (`npm run dev`, `npm run build`) for routine Vue/TS edits — save the file and let hot reload apply changes. Only use `npm run build` when you explicitly need a production build or are validating production output.
 
 ## Reviewing and actioning external PR feedback (Copilot, human reviewers)
 

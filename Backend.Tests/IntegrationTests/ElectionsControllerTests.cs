@@ -139,6 +139,48 @@ public class ElectionsControllerTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task GetElectionStats_WithValidElection_ReturnsZeroCounts()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Stats Test Election",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3
+        };
+
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        var response = await GetAsync($"/api/elections/{electionGuid}/stats");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var result = await DeserializeResponseAsync<ApiResponse<ElectionStatsDto>>(response);
+        Assert.NotNull(result);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Data);
+        Assert.Equal(0, result.Data.VoterCount);
+        Assert.Equal(0, result.Data.BallotCount);
+        Assert.Equal(0, result.Data.LocationCount);
+    }
+
+    [Fact]
+    public async Task GetElectionStats_WithInvalidGuid_ReturnsNotFound()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var response = await GetAsync($"/api/elections/{Guid.NewGuid()}/stats");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
     public async Task UpdateElection_WithValidData_ReturnsOk()
     {
         var token = await GetAuthTokenAsync();

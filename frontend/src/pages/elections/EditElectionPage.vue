@@ -16,7 +16,7 @@
         <ElectionFormTabs
           v-model="form"
           :available-elections="availableElections"
-          :ballot-count="election?.ballotCount"
+          :ballot-count="ballotCount"
           :form-ref="formRef"
         />
 
@@ -43,6 +43,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
+import { useElectionStatsStore } from "../../stores/electionStatsStore";
 import { useElectionStore } from "../../stores/electionStore";
 import type { ElectionSummaryDto, UpdateElectionDto } from "../../types";
 
@@ -50,14 +51,20 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const electionStore = useElectionStore();
+const electionStatsStore = useElectionStatsStore();
 const { showSuccessMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
 const electionGuid = route.params.id as string;
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
-const loading = computed(() => electionStore.loading);
+const loading = computed(
+  () => electionStore.loading || electionStatsStore.loading,
+);
 const election = computed(() => electionStore.currentElection);
+const ballotCount = computed(
+  () => electionStatsStore.getCached(electionGuid)?.ballotCount,
+);
 const availableElections = ref<ElectionSummaryDto[]>([]);
 
 // `let` is required here so the Vue compiler does not emit
@@ -129,8 +136,11 @@ const rules = reactive<FormRules>({
 
 onMounted(async () => {
   try {
-    await electionStore.fetchElectionById(electionGuid);
-    await electionStore.fetchElections();
+    await Promise.all([
+      electionStore.fetchElectionById(electionGuid),
+      electionStatsStore.fetchStats(electionGuid),
+      electionStore.fetchElections(),
+    ]);
     availableElections.value =
       electionStore.elections?.filter((e) => e.electionGuid !== electionGuid) ||
       [];

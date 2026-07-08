@@ -50,12 +50,7 @@ public class SetupService : ISetupService
 
         _logger.LogInformation("Created election (Step 1) {ElectionGuid} - {Name}", election.ElectionGuid, election.Name);
 
-        var electionDto = election.CopyMatchingPropertiesToNew<ElectionDto>();
-        electionDto.VoterCount = 0;
-        electionDto.BallotCount = 0;
-        electionDto.LocationCount = 0;
-
-        return electionDto;
+        return election.CopyMatchingPropertiesToNew<ElectionDto>();
     }
 
     /// <summary>
@@ -82,12 +77,7 @@ public class SetupService : ISetupService
 
         _logger.LogInformation("Configured election (Step 2) {ElectionGuid}", electionGuid);
 
-        var electionDto = election.CopyMatchingPropertiesToNew<ElectionDto>();
-        electionDto.VoterCount = 0;
-        electionDto.BallotCount = 0;
-        electionDto.LocationCount = 0;
-
-        return electionDto;
+        return election.CopyMatchingPropertiesToNew<ElectionDto>();
     }
 
     /// <summary>
