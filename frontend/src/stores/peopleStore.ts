@@ -13,10 +13,12 @@ import type {
   PersonUpdateEvent,
   PersonVoteCountUpdateEvent,
 } from "../types/SignalREvents";
+import { useElectionStatsStore } from "./electionStatsStore";
 
 export const usePeopleStore = defineStore("people", () => {
   const people = ref<PersonDto[]>([]);
   const peopleList = ref<PersonListDto[]>([]);
+  const activeElectionGuid = ref<string | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
   const signalrInitialized = ref(false);
@@ -32,7 +34,15 @@ export const usePeopleStore = defineStore("people", () => {
     peopleList.value.filter((p) => p.canReceiveVotes === true),
   );
 
+  function invalidateElectionStats(electionGuid?: string | null) {
+    const guid = electionGuid ?? activeElectionGuid.value;
+    if (guid) {
+      useElectionStatsStore().invalidate(guid);
+    }
+  }
+
   async function fetchPeople(electionGuid: string) {
+    activeElectionGuid.value = electionGuid;
     loading.value = true;
     error.value = null;
     try {
@@ -46,6 +56,7 @@ export const usePeopleStore = defineStore("people", () => {
   }
 
   async function fetchPeopleList(electionGuid: string) {
+    activeElectionGuid.value = electionGuid;
     loading.value = true;
     error.value = null;
     try {
@@ -87,6 +98,7 @@ export const usePeopleStore = defineStore("people", () => {
       const person = await peopleService.create(dto);
       people.value.push(person);
       upsertPersonListEntry(person);
+      invalidateElectionStats(dto.electionGuid);
       return person;
     } catch (e: any) {
       error.value = e.message || "Failed to create person";
@@ -108,6 +120,7 @@ export const usePeopleStore = defineStore("people", () => {
       }
 
       upsertPersonListEntry(person);
+      invalidateElectionStats();
 
       return person;
     } catch (e: any) {
@@ -127,6 +140,7 @@ export const usePeopleStore = defineStore("people", () => {
       peopleList.value = peopleList.value.filter(
         (p) => p.personGuid !== personGuid,
       );
+      invalidateElectionStats();
     } catch (e: any) {
       error.value = e.message || "Failed to delete person";
       throw e;

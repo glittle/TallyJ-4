@@ -1,7 +1,8 @@
-import { getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
+import { getApiElectionsByGuidStats, getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
 import type {
   CreateElectionDto,
   ElectionDto,
+  ElectionStats,
   ElectionSummaryDto,
   ImportResultDto,
   UpdateElectionDto,
@@ -43,6 +44,21 @@ export const electionService = {
         showAsTest: item.showAsTest ?? false,
       })) || []
     );
+  },
+
+  async getStats(electionGuid: string): Promise<ElectionStats> {
+    const response = await getApiElectionsByGuidStats({
+      path: { guid: electionGuid },
+    });
+    const data = response.data?.data;
+    if (!data) {
+      throw new Error("Election stats not found");
+    }
+    return {
+      voterCount: data.voterCount ?? 0,
+      ballotCount: data.ballotCount ?? 0,
+      locationCount: data.locationCount ?? 0,
+    };
   },
 
   async getById(electionGuid: string): Promise<ElectionDto> {

@@ -45,4 +45,9 @@ public class PersonListDto
     /// The code of the reason why the person is ineligible (if applicable).
     /// </summary>
     public string? IneligibleReasonCode { get; set; }
+
+    /// <summary>
+    /// The unit name assigned to this person (when unit-based voting is in use).
+    /// </summary>
+    public string? UnitName { get; set; }
 }

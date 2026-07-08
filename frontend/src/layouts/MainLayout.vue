@@ -16,6 +16,13 @@ watch(
   async (newId) => {
     if (newId) {
       await electionStore.setActiveElectionHub(newId);
+      if (electionStore.currentElection?.electionGuid !== newId) {
+        try {
+          await electionStore.fetchElectionById(newId);
+        } catch {
+          // Individual pages may surface errors; sidebar stays in loading state.
+        }
+      }
       return;
     }
 

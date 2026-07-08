@@ -12,6 +12,7 @@ vi.mock("../services/electionService", () => ({
   electionService: {
     getAll: vi.fn(),
     getById: vi.fn(),
+    getStats: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),

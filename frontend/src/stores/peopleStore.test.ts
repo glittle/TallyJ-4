@@ -1,7 +1,8 @@
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PersonDto } from "../types";
-import { usePeopleStore } from "./peopleStore";
+
+const mockInvalidateElectionStats = vi.fn();
 
 vi.mock("../services/peopleService", () => ({
   peopleService: {
@@ -25,7 +26,14 @@ vi.mock("../services/signalrService", () => ({
   },
 }));
 
+vi.mock("./electionStatsStore", () => ({
+  useElectionStatsStore: vi.fn(() => ({
+    invalidate: mockInvalidateElectionStats,
+  })),
+}));
+
 import { peopleService } from "../services/peopleService";
+import { usePeopleStore } from "./peopleStore";
 
 describe("People Store - People Cache", () => {
   let store: ReturnType<typeof usePeopleStore>;
@@ -58,6 +66,7 @@ describe("People Store - People Cache", () => {
     setActivePinia(createPinia());
     store = usePeopleStore();
     vi.clearAllMocks();
+    mockInvalidateElectionStats.mockClear();
   });
 
   afterEach(() => {

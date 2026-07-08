@@ -15,9 +15,6 @@ export interface ElectionDto {
   showAsTest?: boolean;
   onlineWhenOpen?: string;
   onlineWhenClose?: string;
-  voterCount: number;
-  ballotCount: number;
-  locationCount: number;
   electionPasscode?: string;
   linkedElectionGuid?: string;
   linkedElectionKind?: string;
@@ -37,7 +34,6 @@ export interface ElectionDto {
   flags?: string;
   isTellerAccessOpen?: boolean;
   tellerAccessOpenedAt?: string;
-  hasUnits?: boolean;
 }
 
 export interface CreateElectionDto {
@@ -103,6 +99,12 @@ export interface UpdateElectionDto {
   customMethods?: string;
   votingMethods?: string;
   flags?: string;
+}
+
+export interface ElectionStats {
+  voterCount: number;
+  ballotCount: number;
+  locationCount: number;
 }
 
 export interface ElectionSummaryDto {

@@ -187,6 +187,30 @@ export const ApiResponseElections_ElectionDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponseElections_ElectionStatsDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/Elections_ElectionStatsDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponseFrontDesk_FrontDeskStatsDtoSchema = {
     type: 'object',
     properties: {
@@ -1698,18 +1722,6 @@ export const Elections_ElectionDtoSchema = {
             format: 'date-time',
             nullable: true
         },
-        voterCount: {
-            type: 'integer',
-            format: 'int32'
-        },
-        ballotCount: {
-            type: 'integer',
-            format: 'int32'
-        },
-        locationCount: {
-            type: 'integer',
-            format: 'int32'
-        },
         electionPasscode: {
             type: 'string',
             nullable: true
@@ -1787,9 +1799,25 @@ export const Elections_ElectionDtoSchema = {
             type: 'string',
             format: 'date-time',
             nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Elections_ElectionStatsDtoSchema = {
+    type: 'object',
+    properties: {
+        voterCount: {
+            type: 'integer',
+            format: 'int32'
         },
-        hasUnits: {
-            type: 'boolean'
+        ballotCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        locationCount: {
+            type: 'integer',
+            format: 'int32'
         }
     },
     additionalProperties: false
@@ -3694,6 +3722,10 @@ export const People_PersonListDtoSchema = {
             nullable: true
         },
         ineligibleReasonCode: {
+            type: 'string',
+            nullable: true
+        },
+        unitName: {
             type: 'string',
             nullable: true
         }

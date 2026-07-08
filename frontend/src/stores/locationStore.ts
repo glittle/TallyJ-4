@@ -6,6 +6,7 @@ import type {
   LocationDto,
   UpdateLocationDto,
 } from "../types";
+import { useElectionStatsStore } from "./electionStatsStore";
 
 export const SELECTED_LOCATION_KEY = "tallyj_selected_location";
 
@@ -125,6 +126,7 @@ export const useLocationStore = defineStore("location", () => {
       locations.value.push(location);
       currentLocation.value = location;
       pagination.value.totalCount++;
+      useElectionStatsStore().invalidate(electionGuid);
       return location;
     } catch (e: any) {
       error.value = e.message || "Failed to create location";
@@ -177,6 +179,7 @@ export const useLocationStore = defineStore("location", () => {
       locations.value = locations.value.filter(
         (l) => l.locationGuid !== locationGuid,
       );
+      useElectionStatsStore().invalidate(electionGuid);
 
       if (currentLocation.value?.locationGuid === locationGuid) {
         currentLocation.value = null;
