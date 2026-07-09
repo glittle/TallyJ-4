@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FrontDeskVotersTable from "@/components/frontdesk/FrontDeskVotersTable.vue";
 import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
 import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useNotifications } from "@/composables/useNotifications";
@@ -23,9 +24,9 @@ import {
   formatRegistrationHistoryDetails,
   sortRegistrationHistoryNewestFirst,
 } from "@/utils/formatRegistrationHistory";
+import { formatNumber } from "@/utils/formatNumber";
 import { matchesFrontDeskVoterSearch } from "@/utils/searchStrategies";
 import { Check, Close, Location, Search } from "@element-plus/icons-vue";
-import type { ElTable } from "element-plus";
 import { ElMessageBox } from "element-plus";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -107,7 +108,9 @@ const frontDeskTableColumnWidths = computed(() => {
 
 // Keyboard navigation
 const searchInputRef = ref<HTMLInputElement | null>(null);
-const voterTableRef = ref<InstanceType<typeof ElTable> | null>(null);
+const voterTableRef = ref<InstanceType<typeof FrontDeskVotersTable> | null>(
+  null,
+);
 const tableWrapperRef = ref<HTMLElement | null>(null);
 const voterListContainerRef = ref<HTMLElement | null>(null);
 const keyboardHintRef = ref<HTMLElement | null>(null);
@@ -228,12 +231,6 @@ const hasActiveFilters = computed(
     selectedMethodFilters.value.length > 0 ||
     selectedFlagFilters.value.length > 0,
 );
-
-const tableVoters = computed(() => {
-  void rowHighlightVersion.value;
-  void highlightedPersonGuids.value.size;
-  return [...allVoters.value];
-});
 
 // Registration type options
 const registrationTypes = computed(() => [
@@ -367,8 +364,7 @@ async function fetchEligibleVoters(guid: string) {
   error.value = null;
   try {
     voters.value = (await frontDeskService.getEligibleVoters(guid)).sort(
-      (a, b) =>
-        (a.fullName ?? "").localeCompare(b.fullName ?? ""),
+      (a, b) => (a.fullName ?? "").localeCompare(b.fullName ?? ""),
     );
   } catch (e: any) {
     error.value = e.message || t("frontDesk.errors.fetchVoters");
@@ -601,12 +597,6 @@ watch(hasActiveTeller, (active) => {
   nextTick(remeasureTableHeight);
 });
 
-watch(tableHeight, () => {
-  nextTick(() => {
-    voterTableRef.value?.doLayout();
-  });
-});
-
 // Watch search query and update selection
 watch(searchQuery, () => {
   selectedIndex.value = 0;
@@ -648,20 +638,7 @@ function updateSelectedVoter() {
 }
 
 function scrollToSelectedRow() {
-  nextTick(() => {
-    if (voterTableRef.value && selectedIndex.value >= 0) {
-      const tableWrapper = voterTableRef.value.$el.querySelector(
-        ".el-table__body-wrapper",
-      );
-      if (tableWrapper) {
-        const rows = tableWrapper.querySelectorAll(".el-table__row");
-        const selectedRow = rows[selectedIndex.value];
-        if (selectedRow) {
-          selectedRow.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        }
-      }
-    }
-  });
+  voterTableRef.value?.scrollToSelectedRow(selectedIndex.value);
 }
 
 function getDialogButtonIndex(value: string): number {
@@ -726,23 +703,6 @@ function getVotingMethodLabel(method?: string): string {
   return match?.label ?? method ?? t("frontDesk.common.dash");
 }
 
-function getVotingMethodTagType(
-  method: string,
-): "success" | "info" | "primary" | "warning" {
-  switch (method) {
-    case "I":
-      return "success";
-    case "M":
-      return "info";
-    case "O":
-      return "primary";
-    case "C":
-      return "warning";
-    default:
-      return "info";
-  }
-}
-
 function handleRegistrationKeydown(event: KeyboardEvent) {
   const buttons = dialogButtons.value;
 
@@ -775,11 +735,6 @@ function handleRegistrationKeydown(event: KeyboardEvent) {
     const selectedButton = buttons[selectedButtonIndex.value];
     if (selectedButton && isDialogButtonActionable(selectedButton)) {
       handleButtonClick(selectedButton);
-    }
-  } else if (event.key === "Escape") {
-    event.preventDefault();
-    if (!checkInInProgress.value) {
-      closeRegistrationDialog();
     }
   } else if (event.key >= "1" && event.key <= "9") {
     event.preventDefault();
@@ -847,10 +802,16 @@ function handlePageKeydown(event: KeyboardEvent) {
   if (event.key !== "Escape") {
     return;
   }
-  if (showRegistrationButtons.value) {
+  if (hasBlockingElementPlusOverlay()) {
     return;
   }
-  if (hasBlockingElementPlusOverlay()) {
+
+  // Layered Escape: (1) close registration panel, (2) clear search, (3) focus search
+  if (showRegistrationButtons.value) {
+    event.preventDefault();
+    if (!checkInInProgress.value) {
+      closeRegistrationDialog();
+    }
     return;
   }
 
@@ -868,6 +829,11 @@ function handlePageKeydown(event: KeyboardEvent) {
 
 function handleSearchKeydown(event: KeyboardEvent) {
   if (showRegistrationButtons.value) {
+    // Escape is handled only by handlePageKeydown so the first press closes
+    // the registration panel without also clearing the search on the same event.
+    if (event.key === "Escape") {
+      return;
+    }
     handleRegistrationKeydown(event);
     return;
   }
@@ -1065,41 +1031,6 @@ function formatTime(time?: string): string {
   return date.toLocaleString();
 }
 
-function formatTimeShort(time?: string): string {
-  if (!time) {
-    return "";
-  }
-  const date = new Date(time);
-  return date.toLocaleTimeString();
-}
-
-// function getProgressColor(percentage: number): string {
-//   if (percentage < 30) {
-//     return "#f56c6c";
-//   }
-//   if (percentage < 70) {
-//     return "#e6a23c";
-//   }
-//   return "#67c23a";
-// }
-
-function getRowClassName({
-  row,
-  rowIndex,
-}: {
-  row: FrontDeskVoterDto;
-  rowIndex: number;
-}) {
-  const classes: string[] = [];
-  if (rowIndex === selectedIndex.value) {
-    classes.push("selected-row");
-  }
-  if (highlightedPersonGuids.value.has(row.personGuid)) {
-    classes.push("recently-updated-row");
-  }
-  return classes.join(" ");
-}
-
 function formatTimeline(entry: RegistrationHistoryEntryDto): string {
   return formatRegistrationHistoryDetails(entry, {
     t,
@@ -1238,24 +1169,26 @@ async function saveEnvelopeNumber(clear = false) {
       <section class="front-desk-workspace">
         <div class="search-zone">
           <div class="search-row">
-            <label class="search-label" for="front-desk-search-input">{{
-              $t("frontDesk.section.quickCheckIn")
-            }}</label>
-            <el-input
-              id="front-desk-search-input"
-              ref="searchInputRef"
-              v-model="searchQuery"
-              class="search-input"
-              :placeholder="$t('frontDesk.search.placeholder')"
-              clearable
-              @keydown="handleSearchKeydown"
-            >
-              <template #prefix>
-                <el-icon>
-                  <Search />
-                </el-icon>
-              </template>
-            </el-input>
+            <div class="search">
+              <label class="search-label" for="front-desk-search-input">{{
+                $t("frontDesk.section.quickCheckIn")
+              }}</label>
+              <el-input
+                id="front-desk-search-input"
+                ref="searchInputRef"
+                v-model="searchQuery"
+                class="search-input"
+                :placeholder="$t('frontDesk.search.placeholder')"
+                clearable
+                @keydown="handleSearchKeydown"
+              >
+                <template #prefix>
+                  <el-icon>
+                    <Search />
+                  </el-icon>
+                </template>
+              </el-input>
+            </div>
             <el-radio-group
               v-model="registrationFilter"
               class="registration-filter"
@@ -1263,21 +1196,21 @@ async function saveEnvelopeNumber(clear = false) {
               <el-radio-button value="all">
                 {{
                   $t("frontDesk.filters.registrationAll", {
-                    count: filteredVoters.length,
+                    count: formatNumber(filteredVoters.length),
                   })
                 }}
               </el-radio-button>
               <el-radio-button value="notRegistered">
                 {{
                   $t("frontDesk.filters.registrationNotRegistered", {
-                    count: notCheckedInVoters.length,
+                    count: formatNumber(notCheckedInVoters.length),
                   })
                 }}
               </el-radio-button>
               <el-radio-button value="registered">
                 {{
                   $t("frontDesk.filters.registrationRegistered", {
-                    count: checkedInVoters.length,
+                    count: formatNumber(checkedInVoters.length),
                   })
                 }}
               </el-radio-button>
@@ -1301,7 +1234,6 @@ async function saveEnvelopeNumber(clear = false) {
                   ? 'primary'
                   : 'default'
               "
-              text
               size="small"
               class="filter-chip"
               @click="toggleMethodFilter(method.value)"
@@ -1309,7 +1241,7 @@ async function saveEnvelopeNumber(clear = false) {
               {{
                 $t("frontDesk.filters.methodWithCount", {
                   label: method.label,
-                  count: methodCounts[method.value] || 0,
+                  count: formatNumber(methodCounts[method.value] || 0),
                 })
               }}
             </el-button>
@@ -1334,7 +1266,7 @@ async function saveEnvelopeNumber(clear = false) {
                 {{
                   $t("frontDesk.filters.flagWithCount", {
                     flag,
-                    count: flagCounts[flag] || 0,
+                    count: formatNumber(flagCounts[flag] || 0),
                   })
                 }}
               </el-button>
@@ -1369,109 +1301,21 @@ async function saveEnvelopeNumber(clear = false) {
 
         <div ref="voterListContainerRef" class="voter-list-container">
           <div ref="tableWrapperRef" class="table-wrapper">
-            <el-table
+            <FrontDeskVotersTable
               ref="voterTableRef"
-              :data="tableVoters"
+              :voters="allVoters"
               :loading="loading"
-              :row-key="(row: FrontDeskVoterDto) => row.personGuid"
-              :height="tableHeight"
-              :row-class-name="getRowClassName"
-              style="width: 100%"
-              scrollbar-always-on
+              :table-height="tableHeight"
+              :selected-index="selectedIndex"
+              :row-highlight-version="rowHighlightVersion"
+              :highlighted-person-guids="highlightedPersonGuids"
+              :election-flags="electionFlags"
+              :enable-envelope-numbers="ENABLE_ENVELOPE_NUMBERS"
+              :has-active-teller="hasActiveTeller"
+              :column-widths="frontDeskTableColumnWidths"
               @row-click="handleRowClick"
-            >
-              <el-table-column
-                prop="fullName"
-                :label="$t('frontDesk.table.name')"
-                sortable
-                :width="frontDeskTableColumnWidths.fullName"
-              />
-              <el-table-column
-                :label="$t('frontDesk.table.method')"
-                :width="frontDeskTableColumnWidths.method"
-              >
-                <template #default="{ row }">
-                  <el-tag
-                    v-if="row.votingMethod"
-                    :type="getVotingMethodTagType(row.votingMethod)"
-                  >
-                    {{ getVotingMethodLabel(row.votingMethod) }}
-                  </el-tag>
-                  <span v-else>{{ $t("frontDesk.common.dash") }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="bahaiId"
-                :label="$t('frontDesk.table.bahaiId')"
-                :width="frontDeskTableColumnWidths.bahaiId"
-              />
-              <el-table-column
-                prop="area"
-                :label="$t('frontDesk.table.area')"
-                :width="frontDeskTableColumnWidths.area"
-              />
-              <el-table-column
-                v-if="ENABLE_ENVELOPE_NUMBERS"
-                :label="$t('frontDesk.table.envNum')"
-                :width="frontDeskTableColumnWidths.envNum"
-                align="center"
-              >
-                <template #default="{ row }">
-                  <el-button
-                    v-if="row.envNum"
-                    link
-                    type="primary"
-                    size="small"
-                    :disabled="!hasActiveTeller"
-                    @click.stop="openEnvelopeDialog(row)"
-                  >
-                    {{ row.envNum }}
-                  </el-button>
-                  <el-button
-                    v-else
-                    link
-                    type="primary"
-                    :disabled="!hasActiveTeller"
-                    @click.stop="openEnvelopeDialog(row)"
-                  >
-                    {{ $t("frontDesk.envelope.set") }}
-                  </el-button>
-                </template>
-              </el-table-column>
-
-              <el-table-column
-                v-if="electionFlags.length > 0"
-                :label="$t('frontDesk.table.flags')"
-                :width="frontDeskTableColumnWidths.flags"
-              >
-                <template #default="{ row }">
-                  <template v-if="row.flags">
-                    <el-tag
-                      v-for="flag in electionFlags.filter((f) =>
-                        hasFlag(row, f),
-                      )"
-                      :key="flag"
-                      type="success"
-                      class="flag-tag"
-                    >
-                      {{ getFlagAbbr(flag) }}
-                    </el-tag>
-                  </template>
-                  <span v-else>{{ $t("frontDesk.common.dash") }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                :label="$t('frontDesk.table.time')"
-                :width="frontDeskTableColumnWidths.time"
-              >
-                <template #default="{ row }">
-                  <span v-if="row.registrationTime">{{
-                    formatTimeShort(row.registrationTime)
-                  }}</span>
-                  <span v-else>{{ $t("frontDesk.common.dash") }}</span>
-                </template>
-              </el-table-column>
-            </el-table>
+              @open-envelope="openEnvelopeDialog"
+            />
           </div>
           <div ref="keyboardHintRef" class="keyboard-hint">
             {{
@@ -1499,24 +1343,26 @@ async function saveEnvelopeNumber(clear = false) {
                 :closable="false"
                 class="teller-required-alert"
               />
+              <div class="registration-mode">
+                {{
+                  selectedVoter.isCheckedIn
+                    ? $t("frontDesk.dialog.update")
+                    : $t("frontDesk.dialog.checkIn")
+                }}
+              </div>
               <div class="registration-header">
                 <div class="selected-voter-info">
                   <strong>
-                    {{
-                      selectedVoter.isCheckedIn
-                        ? $t("frontDesk.dialog.update")
-                        : $t("frontDesk.dialog.checkIn")
-                    }}
                     {{ selectedVoter.fullName }}
                   </strong>
-                  <span v-if="selectedVoter.bahaiId" class="voter-detail">
-                    {{ $t("frontDesk.dialog.id") }}
-                    {{ selectedVoter.bahaiId }}
-                  </span>
-                  <span v-if="selectedVoter.area" class="voter-detail">
-                    {{ $t("frontDesk.dialog.area") }}
-                    {{ selectedVoter.area }}
-                  </span>
+                  <dl v-if="selectedVoter.bahaiId" class="voter-detail">
+                    <dt>{{ $t("frontDesk.dialog.id") }}</dt>
+                    <dd>{{ selectedVoter.bahaiId }}</dd>
+                  </dl>
+                  <dl v-if="selectedVoter.area" class="voter-detail">
+                    <dt>{{ $t("frontDesk.dialog.area") }}</dt>
+                    <dd>{{ selectedVoter.area }}</dd>
+                  </dl>
                 </div>
                 <div class="registration-header-actions">
                   <el-button
@@ -1813,9 +1659,15 @@ async function saveEnvelopeNumber(clear = false) {
   .search-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: var(--spacing-3);
+    justify-content: space-between;
     flex-wrap: wrap;
+    width: 90%;
+    margin: 0 auto;
+    .search {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
   }
 
   .search-label {
@@ -1864,6 +1716,7 @@ async function saveEnvelopeNumber(clear = false) {
   .filters-bar {
     padding: 0 var(--front-desk-content-padding-x);
     border-bottom: 1px solid var(--el-border-color-lighter);
+    font-size: var(--font-size-sm);
 
     .filter-group {
       display: flex;
@@ -1875,9 +1728,7 @@ async function saveEnvelopeNumber(clear = false) {
     }
 
     .filter-label {
-      font-weight: var(--font-weight-medium);
       color: var(--el-text-color-secondary);
-      font-size: var(--font-size-sm);
       margin-right: 4px;
     }
 
@@ -1890,6 +1741,8 @@ async function saveEnvelopeNumber(clear = false) {
 
     .filter-chip {
       padding: 2px 8px;
+      font-weight: normal;
+      font-size: var(--font-size-sm);
 
       &.el-button--primary.is-text {
         color: var(--color-frontdesk-filter-active-text) !important;
@@ -1926,10 +1779,6 @@ async function saveEnvelopeNumber(clear = false) {
     }
   }
 
-  .flag-tag {
-    margin-right: 4px;
-  }
-
   .voter-list-container {
     position: relative;
     display: flex;
@@ -1945,20 +1794,6 @@ async function saveEnvelopeNumber(clear = false) {
     width: var(--front-desk-table-max-width);
     max-width: 100%;
     margin-inline: auto;
-
-    .el-table {
-      --el-table-border-color: var(--el-border-color-lighter);
-      --el-table-header-bg-color: var(--el-fill-color-blank);
-      --el-table-header-text-color: var(--el-text-color-secondary);
-      font-size: var(--font-size-sm);
-    }
-
-    .el-table th.el-table__cell {
-      font-weight: var(--font-weight-medium);
-      font-size: var(--font-size-sm);
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-    }
   }
 
   .registration-overlay {
@@ -1977,11 +1812,21 @@ async function saveEnvelopeNumber(clear = false) {
 
   .registration-buttons {
     width: 100%;
+    position: relative;
     max-width: 900px;
     padding: 20px;
     background: var(--el-color-primary-light-9);
     border-radius: 8px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--el-border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .registration-mode {
+    position: absolute;
+    top: -12px;
+    font-size: 16px;
+    font-weight: var(--font-weight-medium);
+    color: var(--el-text-color-regular);
   }
 
   .button-section {
@@ -2006,15 +1851,28 @@ async function saveEnvelopeNumber(clear = false) {
     display: flex;
     flex: 1;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 20px;
+    align-items: flex-end;
+    gap: 0 4em;
     min-width: 0;
     font-size: 18px;
+
+    strong {
+      font-size: 1.4em;
+    }
   }
 
   .voter-detail {
-    color: var(--el-text-color-secondary);
-    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    dt {
+      font-size: 0.8rem;
+      color: var(--el-text-color-secondary);
+    }
+    dd {
+      margin: 0;
+      color: var(--el-text-color-regular);
+    }
   }
 
   .registration-header-actions {
@@ -2135,51 +1993,6 @@ async function saveEnvelopeNumber(clear = false) {
     color: var(--el-color-primary);
   }
 
-  .selected-row > td.el-table__cell {
-    background-color: var(--color-frontdesk-row-selected-bg) !important;
-    color: var(--color-frontdesk-row-selected-text) !important;
-
-    .cell {
-      color: inherit;
-    }
-  }
-
-  .el-table__body tr.recently-updated-row > td.el-table__cell {
-    animation: row-highlight-fade 2s ease-out forwards;
-  }
-
-  .el-table__body tr.selected-row.recently-updated-row > td.el-table__cell {
-    animation: row-highlight-fade-selected 2s ease-out forwards;
-  }
-
-  @keyframes row-highlight-fade {
-    0%,
-    70% {
-      background-color: color-mix(
-        in srgb,
-        var(--color-frontdesk-row-highlight) 35%,
-        var(--el-bg-color)
-      ) !important;
-    }
-    100% {
-      background-color: transparent !important;
-    }
-  }
-
-  @keyframes row-highlight-fade-selected {
-    0%,
-    70% {
-      background-color: color-mix(
-        in srgb,
-        var(--color-frontdesk-row-highlight) 35%,
-        var(--el-bg-color)
-      ) !important;
-    }
-    100% {
-      background-color: var(--color-frontdesk-row-selected-bg) !important;
-    }
-  }
-
   .checked-in-section {
     .checked-in-details {
       display: flex;
@@ -2187,6 +2000,9 @@ async function saveEnvelopeNumber(clear = false) {
       align-items: center;
       gap: 16px;
       margin-bottom: 16px;
+      .el-tag {
+        --el-tag-font-size: 16px;
+      }
     }
 
     .checked-in-detail {

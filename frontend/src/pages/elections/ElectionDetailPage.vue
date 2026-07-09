@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
 import { isGuestTeller } from "@/domain/guestTellerAccess";
+import { formatNumber } from "@/utils/formatNumber";
 import { CopyDocument, Delete, Download, Link } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import QRCode from "qrcode";
@@ -216,10 +217,10 @@ async function exportElection() {
             </el-tag>
           </el-descriptions-item>
           <el-descriptions-item :label="$t('elections.form.numberToElect')">
-            {{ election.numberToElect }}
+            {{ formatNumber(election.numberToElect) }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('elections.form.numberExtra')">
-            {{ election.numberExtra }}
+            {{ formatNumber(election.numberExtra) }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('elections.form.convenor')">
             {{ election.convenor || "-" }}
@@ -235,16 +236,20 @@ async function exportElection() {
         </template>
         <div class="stat-item">
           <div class="stat-label">{{ $t("dashboard.totalVoters") }}</div>
-          <div class="stat-value">{{ electionStats?.voterCount ?? "—" }}</div>
+          <div class="stat-value">
+            {{ formatNumber(electionStats?.voterCount) }}
+          </div>
         </div>
         <div class="stat-item">
           <div class="stat-label">{{ $t("dashboard.totalBallots") }}</div>
-          <div class="stat-value">{{ electionStats?.ballotCount ?? "—" }}</div>
+          <div class="stat-value">
+            {{ formatNumber(electionStats?.ballotCount) }}
+          </div>
         </div>
         <div class="stat-item">
           <div class="stat-label">{{ $t("elections.locations") }}</div>
           <div class="stat-value">
-            {{ electionStats?.locationCount ?? "—" }}
+            {{ formatNumber(electionStats?.locationCount) }}
           </div>
         </div>
       </el-card>

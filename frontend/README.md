@@ -103,14 +103,19 @@ The composable measures from an **anchor** element (top of the table wrapper) do
 
 It re-measures on window resize, `ResizeObserver` layout changes, and when observed refs attach. Call `remeasure()` after async layout shifts (e.g. alerts or filter panels appearing).
 
-**Reference implementation:** `src/pages/frontdesk/FrontDeskPage.vue`
+**Reference implementations:**
+
+- Front Desk (virtualized): `src/pages/frontdesk/FrontDeskPage.vue` + `src/components/frontdesk/FrontDeskVotersTable.vue` (`el-table-v2`)
+- People Management (virtualized): `src/components/people/PeopleTable.vue` (`el-table-v2`)
+
+For large lists (thousands of rows), prefer `el-table-v2` with `el-auto-resizer` over plain `el-table`.
 
 #### Typical DOM shape
 
 ```html
 <div ref="sectionRef" class="my-list-section">
-  <div ref="tableWrapperRef" class="table-wrapper">
-    <el-table :height="tableHeight" ... />
+  <div ref="tableWrapperRef" class="table-wrapper" :style="{ height: `${tableHeight}px` }">
+    <!-- el-table-v2 + el-auto-resizer, or el-table :height="tableHeight" -->
   </div>
   <div ref="footerRef" class="list-footer">...</div>
 </div>
@@ -134,14 +139,12 @@ const { height: tableHeight, remeasure } = useViewportTableHeight(
   },
 );
 
-// Bind to el-table
-// :height="tableHeight"
+// el-table-v2: set height on the wrapper; el-auto-resizer fills it
+// el-table: :height="tableHeight"
 
 // After layout-affecting changes (optional)
 watch(someLayoutFlag, () => nextTick(remeasure));
 ```
-
-If the table component exposes `doLayout()`, re-run it when `tableHeight` changes (see Front Desk page).
 
 #### Options
 
