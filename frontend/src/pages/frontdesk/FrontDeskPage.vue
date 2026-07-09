@@ -20,11 +20,11 @@ import {
   getActiveTellers,
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
+import { formatNumber } from "@/utils/formatNumber";
 import {
   formatRegistrationHistoryDetails,
   sortRegistrationHistoryNewestFirst,
 } from "@/utils/formatRegistrationHistory";
-import { formatNumber } from "@/utils/formatNumber";
 import { matchesFrontDeskVoterSearch } from "@/utils/searchStrategies";
 import { Check, Close, Location, Search } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
@@ -1815,7 +1815,7 @@ async function saveEnvelopeNumber(clear = false) {
     position: relative;
     max-width: 900px;
     padding: 20px;
-    background: var(--el-color-primary-light-9);
+    background: var(--color-orange-50);
     border-radius: 8px;
     border: 1px solid var(--el-border-color);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
