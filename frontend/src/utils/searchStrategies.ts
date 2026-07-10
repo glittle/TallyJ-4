@@ -46,13 +46,11 @@ export function matchesFrontDeskVoterSearch(
   const normalizedName = normalizeSearchText(fullName);
   const nameParts = tokenizeNameForSearch(fullName);
   const bahaiId = voter.bahaiId ? normalizeSearchText(voter.bahaiId) : "";
-  const area = voter.area ? normalizeSearchText(voter.area) : "";
 
   const termMatchesVoter = (term: string): boolean =>
     nameParts.some((part) => part.startsWith(term)) ||
     normalizedName.includes(term) ||
-    (bahaiId.length > 0 && bahaiId.includes(term)) ||
-    (area.length > 0 && area.includes(term));
+    (bahaiId.length > 0 && bahaiId.includes(term));
 
   if (terms.length === 1) {
     return termMatchesVoter(terms[0]);
@@ -61,8 +59,7 @@ export function matchesFrontDeskVoterSearch(
   return terms.every(
     (term) =>
       nameParts.some((part) => part.startsWith(term)) ||
-      (bahaiId.length > 0 && bahaiId.includes(term)) ||
-      (area.length > 0 && area.includes(term)),
+      (bahaiId.length > 0 && bahaiId.includes(term)),
   );
 }
 
