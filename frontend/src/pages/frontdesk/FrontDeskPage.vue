@@ -1273,7 +1273,8 @@ async function saveEnvelopeNumber(clear = false) {
             </template>
 
             <el-button
-              v-if="hasActiveFilters"
+              class="clearFilters"
+              :class="{ 'has-active-filters': hasActiveFilters }"
               type="info"
               text
               size="small"
@@ -1845,6 +1846,13 @@ async function saveEnvelopeNumber(clear = false) {
     justify-content: space-between;
     gap: 16px;
     margin-bottom: 20px;
+  }
+
+  .clearFilters {
+    visibility: hidden;
+    &.has-active-filters {
+      visibility: visible;
+    }
   }
 
   .selected-voter-info {
