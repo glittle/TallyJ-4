@@ -270,8 +270,8 @@ defineExpose({
           row-key="personGuid"
           :row-class="getRowClassName"
           :row-event-handlers="rowEventHandlers"
-          :header-height="40"
-          :row-height="48"
+          :header-height="30"
+          :row-height="30"
           scrollbar-always-on
           fixed
         />
@@ -289,7 +289,7 @@ defineExpose({
     --el-table-border-color: var(--el-border-color-lighter);
     --el-table-header-bg-color: var(--el-fill-color-blank);
     --el-table-header-text-color: var(--el-text-color-secondary);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
 
     .el-table-v2__header-cell {
       font-weight: var(--font-weight-medium);
