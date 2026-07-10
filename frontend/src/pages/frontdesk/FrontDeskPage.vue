@@ -72,12 +72,12 @@ const flagColorPalette = [
 
 function getFlagColor(flag: string, electionFlags: any[]): string {
   if (!electionFlags || electionFlags.length === 0) return "#64748b";
-  const index = electionFlags.findIndex((f: any) => f.name === flag);
+  const index = electionFlags.findIndex((f: any) => f === flag);
   return flagColorPalette[index % flagColorPalette.length] || "#64748b";
 }
 
 function getFlagAbbr(flag: string, electionFlags: any[]): string {
-  const found = electionFlags?.find((f: any) => f.name === flag);
+  const found = electionFlags?.find((f: any) => f === flag);
   return found?.abbr || flag.substring(0, 1).toUpperCase();
 }
 
@@ -1180,6 +1180,12 @@ async function saveEnvelopeNumber(clear = false) {
     <div class="front-desk-content-column">
       <header class="front-desk-toolbar">
         <div class="toolbar-primary">
+          <div class="toolbar-tellers">
+            <ActiveTellerSelector
+              :election-guid="electionGuid"
+              @tellers-changed="onTellersChanged"
+            />
+          </div>
           <div
             v-if="locationStore.locations.length > 1"
             class="toolbar-location"
@@ -1202,12 +1208,6 @@ async function saveEnvelopeNumber(clear = false) {
                 :value="location.locationGuid"
               />
             </el-select>
-          </div>
-          <div class="toolbar-tellers">
-            <ActiveTellerSelector
-              :election-guid="electionGuid"
-              @tellers-changed="onTellersChanged"
-            />
           </div>
         </div>
       </header>
@@ -1279,57 +1279,59 @@ async function saveEnvelopeNumber(clear = false) {
           v-if="registrationTypes.length > 0 || electionFlags.length > 0"
           class="filters-bar"
         >
-          <div class="filter-group">
-            <span class="filter-label">{{
-              $t("frontDesk.filters.votingMethods")
-            }}</span>
+          <div>
+            <div class="filter-group">
+              <span class="filter-label">{{
+                $t("frontDesk.filters.votingMethods")
+              }}</span>
 
-            <el-button
-              v-for="method in registrationTypes"
-              :key="method.value"
-              size="small"
-              :style="
-                getMethodFilterStyle(
-                  method.label,
-                  selectedMethodFilters.includes(method.value),
-                )
-              "
-              :class="{
-                'filter-active': selectedMethodFilters.includes(method.value),
-              }"
-              @click="toggleMethodFilter(method.value)"
-            >
-              {{ method.label }} ({{ methodCounts[method.value] || 0 }})
-            </el-button>
-          </div>
+              <el-button
+                v-for="method in registrationTypes"
+                :key="method.value"
+                size="small"
+                :style="
+                  getMethodFilterStyle(
+                    method.label,
+                    selectedMethodFilters.includes(method.value),
+                  )
+                "
+                :class="{
+                  'filter-active': selectedMethodFilters.includes(method.value),
+                }"
+                @click="toggleMethodFilter(method.value)"
+              >
+                {{ method.label }} ({{ methodCounts[method.value] || 0 }})
+              </el-button>
+            </div>
 
-          <div class="filter-group" v-if="electionFlags.length > 0">
-            <span class="filter-label">{{
-              $t("frontDesk.filters.flags")
-            }}</span>
+            <div class="filter-group" v-if="electionFlags.length > 0">
+              <span class="filter-label">{{
+                $t("frontDesk.filters.flags")
+              }}</span>
 
-            <el-button
-              v-for="flag in electionFlags"
-              :key="flag"
-              size="small"
-              :style="
-                getFlagFilterStyle(
-                  flag,
-                  electionFlags,
-                  selectedFlagFilters.includes(flag),
-                )
-              "
-              :class="{ 'filter-active': selectedFlagFilters.includes(flag) }"
-              @click="toggleFlagFilter(flag)"
-            >
-              {{ flag }} - {{ getFlagAbbr(flag, electionFlags) }} ({{
-                flagCounts[flag] || 0
-              }})
-            </el-button>
+              <el-button
+                v-for="flag in electionFlags"
+                :key="flag"
+                size="small"
+                :style="
+                  getFlagFilterStyle(
+                    flag,
+                    electionFlags,
+                    selectedFlagFilters.includes(flag),
+                  )
+                "
+                :class="{ 'filter-active': selectedFlagFilters.includes(flag) }"
+                @click="toggleFlagFilter(flag)"
+              >
+                {{ flag }} - {{ getFlagAbbr(flag, electionFlags) }} ({{
+                  flagCounts[flag] || 0
+                }})
+              </el-button>
+            </div>
           </div>
 
           <el-button
-            v-if="hasActiveFilters"
+            :class="{ hasActive: hasActiveFilters }"
             size="small"
             class="clear-btn"
             @click="clearFilters"
@@ -1419,7 +1421,7 @@ async function saveEnvelopeNumber(clear = false) {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--spacing-3);
+    gap: 50px;
     min-width: 0;
   }
 
@@ -1462,11 +1464,11 @@ async function saveEnvelopeNumber(clear = false) {
   .search-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     flex-wrap: wrap;
     width: 90%;
     margin: 0 auto;
     .search {
+      flex: 1;
       display: flex;
       align-items: center;
       gap: var(--spacing-2);
@@ -1481,7 +1483,7 @@ async function saveEnvelopeNumber(clear = false) {
   }
 
   .search-input {
-    width: 300px;
+    width: 350px;
     flex-shrink: 0;
 
     .el-input__wrapper {
@@ -1493,9 +1495,8 @@ async function saveEnvelopeNumber(clear = false) {
         box-shadow 0.2s ease;
     }
 
-    .el-input__wrapper.is-focus {
-      border-color: var(--el-color-primary);
-      box-shadow: 0 0 0 2px var(--el-color-primary-light-8);
+    .el-input__inner:focus {
+      box-shadow: none;
     }
 
     .el-input__inner {
@@ -1517,9 +1518,14 @@ async function saveEnvelopeNumber(clear = false) {
   }
 
   .filters-bar {
+    display: flex;
     padding: 0 var(--front-desk-content-padding-x);
     border-bottom: 1px solid var(--el-border-color-lighter);
     font-size: var(--font-size-sm);
+
+    > div {
+      flex: 1;
+    }
 
     .filter-group {
       display: flex;
@@ -1763,6 +1769,13 @@ async function saveEnvelopeNumber(clear = false) {
 
   .check-in-pending .el-button:not(.pending-button) {
     opacity: 0.55;
+  }
+
+  .clear-btn {
+    opacity: 0.25;
+    &.hasActive {
+      opacity: 1;
+    }
   }
 
   .instruction-text {

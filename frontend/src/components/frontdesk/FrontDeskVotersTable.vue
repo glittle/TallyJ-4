@@ -90,12 +90,12 @@ const flagColorPalette = [
 
 function getFlagColor(flag: string, electionFlags: any[]): string {
   if (!electionFlags || electionFlags.length === 0) return "#64748b";
-  const index = electionFlags.findIndex((f: any) => f.name === flag);
+  const index = electionFlags.findIndex((f: any) => f === flag);
   return flagColorPalette[index % flagColorPalette.length] || "#64748b";
 }
 
 function getFlagAbbr(flag: string, electionFlags: any[]): string {
-  const found = electionFlags?.find((f: any) => f.name === flag);
+  const found = electionFlags?.find((f: any) => f === flag);
   return found?.abbr || flag.substring(0, 1).toUpperCase();
 }
 
@@ -200,12 +200,15 @@ const columns = computed<Column<FrontDeskVoterDto>[]>(() => {
       title: t("frontDesk.table.flags"),
       width: widths.flags,
       cellRenderer: ({ rowData }) => {
-        if (!rowData.flags) return h("span", t("frontDesk.common.dash"));
+        if (!rowData.flags) {
+          return h("span", t("frontDesk.common.dash"));
+        }
         const activeFlags = props.electionFlags.filter((flag: any) =>
           hasFlag(rowData, flag.name || flag),
         );
-        if (activeFlags.length === 0)
+        if (activeFlags.length === 0) {
           return h("span", t("frontDesk.common.dash"));
+        }
         return h(
           "div",
           { class: "front-desk-flag-tags" },
@@ -311,6 +314,11 @@ defineExpose({ scrollToSelectedRow });
     .el-table-v2__row.recently-updated-row {
       animation: front-desk-row-highlight-fade 2s ease-out forwards;
     }
+  }
+
+  .el-tag {
+    --el-tag-font-size: var(--font-size-sm);
+    font-weight: normal;
   }
 
   .front-desk-flag-tags {

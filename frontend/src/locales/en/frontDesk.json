@@ -3,7 +3,7 @@
   "frontDesk.stats.checkedIn": "Checked In",
   "frontDesk.stats.notCheckedIn": "Not Checked In",
   "frontDesk.section.quickCheckIn": "Voter",
-  "frontDesk.search.placeholder": "Type name(s)",
+  "frontDesk.search.placeholder": "Enter partial name or Bahá'í ID",
   "frontDesk.filters.registrationStatus": "Show:",
   "frontDesk.filters.registrationAll": "All ({count})",
   "frontDesk.filters.registrationNotRegistered": "Not registered ({count})",
