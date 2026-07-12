@@ -7,9 +7,14 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 const electionStore = useElectionStore();
 
-const hasSetupElection = computed(() =>
-  electionStore.elections.some((e) => e.electionStage === "SettingUp"),
-);
+// Prefer current election (Election Details page) so tips match the open
+// election; fall back to any SettingUp election for list contexts.
+const hasSetupElection = computed(() => {
+  if (electionStore.currentElection) {
+    return electionStore.currentElection.electionStage === "SettingUp";
+  }
+  return electionStore.elections.some((e) => e.electionStage === "SettingUp");
+});
 
 const TIP_ID = "dashboard.setup.intro";
 </script>

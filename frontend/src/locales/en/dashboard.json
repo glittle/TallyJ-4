@@ -1,9 +1,4 @@
 {
-  "dashboard.resumeCard.eyebrow": "Resume",
-  "dashboard.resumeCard.people": "People",
-  "dashboard.resumeCard.ballots": "Ballots",
-  "dashboard.resumeCard.participation": "Participation",
-  "dashboard.resumeCard.open": "Open election ›",
   "dashboard.setupTipsCard.eyebrow": "Setup Tips",
   "dashboard.setupTipsCard.title": "Getting started",
   "dashboard.setupTipsCard.tip1": "Edit the election to set the date, type, and number to elect.",
@@ -32,6 +27,5 @@
   "dashboard.tellersStatus": "Tellers",
   "dashboard.totalBallots": "Total Ballots",
   "dashboard.totalElections": "Total Elections",
-  "dashboard.totalVoters": "Total Voters",
-  "dashboard.rightRail": "Dashboard right rail"
+  "dashboard.totalVoters": "Total Voters"
 }
