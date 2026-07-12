@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from "vitest";
-import { mount, flushPromises } from "@vue/test-utils";
 import { createTestingPinia } from "@pinia/testing";
+import { flushPromises, mount } from "@vue/test-utils";
+import { describe, expect, it, vi } from "vitest";
 import { createRouter, createWebHistory } from "vue-router";
-import DashboardPage from "./DashboardPage.vue";
 import { i18n } from "../test/setup";
+import DashboardPage from "./DashboardPage.vue";
 
 vi.mock("@/composables/useNotifications", () => ({
   useNotifications: () => ({
@@ -61,6 +61,6 @@ describe("DashboardPage", () => {
 
   it("displays total elections label in the header", async () => {
     const wrapper = await mountDashboard();
-    expect(wrapper.find(".stat-label").text()).toContain("Total Elections");
+    expect(wrapper.find(".stat-label").text()).toContain("Elections");
   });
 });

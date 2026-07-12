@@ -89,7 +89,8 @@ public class ElectionService : IElectionService
             ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType),
             IsTellerAccessOpen = ElectionTellerAccessHelper.IsGuestTellerAccessOpen(e.ListedForPublicAsOf),
             IsOnlineVotingEnabled = e.OnlineWhenOpen != null && e.OnlineWhenClose != null,
-            ShowAsTest = e.ShowAsTest
+            ShowAsTest = e.ShowAsTest,
+            ToElect = e.NumberToElect,
         }).ToList();
 
         return PaginatedResponse<ElectionSummaryDto>.Create(electionDtos, pageNumber, pageSize, totalCount);

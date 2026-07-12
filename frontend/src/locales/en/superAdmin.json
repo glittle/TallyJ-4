@@ -22,7 +22,7 @@
   "superAdmin.summary.archivedElections": "Archived",
   "superAdmin.summary.completedElections": "Completed",
   "superAdmin.summary.openElections": "Open",
-  "superAdmin.summary.totalElections": "Total Elections",
+  "superAdmin.summary.totalElections": "Elections",
   "superAdmin.summary.upcomingElections": "Upcoming",
   "superAdmin.title": "Super Admin Dashboard"
 }

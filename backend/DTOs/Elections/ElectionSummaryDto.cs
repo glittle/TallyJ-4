@@ -64,6 +64,10 @@ public class ElectionSummaryDto
     /// Whether this election is marked as a test election.
     /// </summary>
     public bool? ShowAsTest { get; set; }
+    /// <summary>
+    /// The number of positions to be elected in this election.
+    /// </summary>
+    public int? ToElect { get; internal set; }
 }
 
 

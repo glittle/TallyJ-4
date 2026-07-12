@@ -5,7 +5,8 @@
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
 import { getActiveElectionHubGuid } from "@/utils/activeElectionHubStorage";
-import { Plus, Search, Upload } from "@element-plus/icons-vue";
+import { formatNumber } from "@/utils/formatNumber";
+import { Plus, RefreshRight, Search, Upload } from "@element-plus/icons-vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -87,7 +88,10 @@ function applyDefaultElectionOrder(list: ElectionDto[]): ElectionDto[] {
   const lastOpenedGuid = getActiveElectionHubGuid();
   let pinGuid: string | null = null;
 
-  if (lastOpenedGuid && byDateDesc.some((e) => e.electionGuid === lastOpenedGuid)) {
+  if (
+    lastOpenedGuid &&
+    byDateDesc.some((e) => e.electionGuid === lastOpenedGuid)
+  ) {
     // Prefer true last-opened when the user has opened an election this session.
     pinGuid = lastOpenedGuid;
   } else if (byDateDesc[0]) {
@@ -308,13 +312,6 @@ function formatDate(date: string) {
   }
   return new Date(date).toLocaleDateString();
 }
-
-function participationPct(election: ElectionDto): string {
-  if (!election.voterCount) {
-    return "—";
-  }
-  return `${Math.round((election.ballotCount / election.voterCount) * 100)}%`;
-}
 </script>
 
 <template>
@@ -323,12 +320,12 @@ function participationPct(election: ElectionDto): string {
       <el-card>
         <template #header>
           <div class="card-header">
-            <div class="stat-content">
-              <div class="stat-label">
-                {{ statistics.totalElections }}
-                {{ $t("dashboard.totalElections") }}
-              </div>
-            </div>
+            <el-button text :loading="loading" @click="loadData">
+              <el-icon>
+                <RefreshRight />
+              </el-icon>
+              {{ $t("common.refresh") }}
+            </el-button>
             <el-button
               :type="allElections.length ? 'info' : 'primary'"
               @click="createElection"
@@ -427,10 +424,7 @@ function participationPct(election: ElectionDto): string {
             </el-col>
             <el-col :span="6" class="text-right">
               <el-space>
-                <el-button
-                  :disabled="!hasActiveFilters"
-                  @click="clearFilters"
-                >
+                <el-button :disabled="!hasActiveFilters" @click="clearFilters">
                   {{ $t("common.clearFilters") }}
                 </el-button>
               </el-space>
@@ -463,7 +457,7 @@ function participationPct(election: ElectionDto): string {
             <el-table-column
               prop="name"
               :label="$t('elections.name')"
-              min-width="250"
+              min-width="350"
               sortable="custom"
             >
               <template #default="scope">
@@ -482,26 +476,11 @@ function participationPct(election: ElectionDto): string {
                 </div>
               </template>
             </el-table-column>
-            <el-table-column
-              prop="electionType"
-              :label="$t('elections.type')"
-              min-width="120"
-              sortable="custom"
-            >
-              <template #default="scope">
-                {{
-                  scope.row.electionType
-                    ? $t(
-                        `elections.electionTypes.${scope.row.electionType}`,
-                      )
-                    : ""
-                }}
-              </template>
-            </el-table-column>
+
             <el-table-column
               prop="electionStage"
               :label="$t('elections.status')"
-              min-width="120"
+              min-width="100"
               sortable="custom"
             >
               <template #default="scope">
@@ -513,10 +492,25 @@ function participationPct(election: ElectionDto): string {
               </template>
             </el-table-column>
             <el-table-column
+              prop="electionType"
+              :label="$t('elections.type')"
+              min-width="150"
+              sortable="custom"
+            >
+              <template #default="scope">
+                {{
+                  scope.row.electionType
+                    ? $t(`elections.electionTypes.${scope.row.electionType}`)
+                    : ""
+                }}
+              </template>
+            </el-table-column>
+            <el-table-column
               prop="dateOfElection"
               :label="$t('elections.date')"
               width="140"
               sortable="custom"
+              align="center"
             >
               <template #default="scope">
                 {{ formatDate(scope.row.dateOfElection) }}
@@ -527,25 +521,28 @@ function participationPct(election: ElectionDto): string {
               :label="$t('elections.toElect')"
               width="100"
               sortable="custom"
+              align="center"
             />
             <el-table-column
               prop="voterCount"
               :label="$t('elections.people')"
               min-width="100"
               sortable="custom"
-            />
+              align="center"
+            >
+              <template #default="scope">
+                {{ formatNumber(scope.row.voterCount) ?? "—" }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="ballotCount"
               :label="$t('elections.ballots')"
               min-width="100"
               sortable="custom"
-            />
-            <el-table-column
-              :label="$t('elections.participation')"
-              min-width="120"
+              align="center"
             >
               <template #default="scope">
-                {{ participationPct(scope.row) }}
+                {{ formatNumber(scope.row.ballotCount) ?? "—" }}
               </template>
             </el-table-column>
           </el-table>
@@ -554,9 +551,9 @@ function participationPct(election: ElectionDto): string {
             <el-pagination
               v-model:current-page="pagination.page"
               v-model:page-size="pagination.pageSize"
-              :page-sizes="[10, 20, 50, 100]"
               :total="pagination.total"
-              layout="total, sizes, prev, pager, next"
+              :default-page-size="20"
+              layout="total, prev, pager, next"
               @size-change="handleSizeChange"
               @current-change="handlePageChange"
             />
@@ -574,7 +571,7 @@ function participationPct(election: ElectionDto): string {
 
   .card-header {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     gap: 20px;
     align-items: center;
     margin: 0;
@@ -618,8 +615,14 @@ function participationPct(election: ElectionDto): string {
 
   .pagination-container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     margin-top: var(--spacing-6);
+    padding: 0 var(--spacing-4);
+  }
+
+  .el-pagination__total {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
   }
 
   .loading-container {
