@@ -15,11 +15,16 @@ const props = defineProps<{
   availableElections: ElectionSummaryDto[];
   formRef?: any;
   ballotCount?: number;
+  /** When true (create flow), always open on the basic tab instead of the remembered one. */
+  forceBasicTab?: boolean;
 }>();
 
 const hasBallotsEntered = computed(() => (props.ballotCount ?? 0) > 0);
 
 const activeTab = useLocalStorage<string>("activeTab", "basic");
+if (props.forceBasicTab) {
+  activeTab.value = "basic";
+}
 
 // Map tab names to their form fields
 const tabFields: Record<string, string[]> = {
