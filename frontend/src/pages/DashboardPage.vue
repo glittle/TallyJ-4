@@ -552,7 +552,8 @@ function formatDate(date: string) {
               v-model:current-page="pagination.page"
               v-model:page-size="pagination.pageSize"
               :total="pagination.total"
-              :default-page-size="20"
+              :default-page-size="10"
+              hide-on-single-page
               layout="total, prev, pager, next"
               @size-change="handleSizeChange"
               @current-change="handlePageChange"

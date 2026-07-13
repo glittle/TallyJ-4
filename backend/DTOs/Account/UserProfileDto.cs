@@ -16,6 +16,11 @@ public class UserProfileDto
     public string? UserName { get; set; }
 
     /// <summary>
+    /// The display name shown in the UI.
+    /// </summary>
+    public string? DisplayName { get; set; }
+
+    /// <summary>
     /// The email address of the user.
     /// </summary>
     public string? Email { get; set; }
@@ -34,6 +39,21 @@ public class UserProfileDto
     /// Indicates whether the user's phone number has been confirmed.
     /// </summary>
     public bool PhoneNumberConfirmed { get; set; }
+
+    /// <summary>
+    /// New email awaiting confirmation (current Email remains active until confirmed).
+    /// </summary>
+    public string? PendingEmail { get; set; }
+
+    /// <summary>
+    /// Login methods for this account (e.g. Local).
+    /// </summary>
+    public string? AuthMethod { get; set; }
+
+    /// <summary>
+    /// Whether this user may start a self-service email change (Local-only).
+    /// </summary>
+    public bool CanChangeEmail { get; set; }
 }
 
 

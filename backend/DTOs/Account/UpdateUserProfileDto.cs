@@ -6,6 +6,11 @@
 public class UpdateUserProfileDto
 {
     /// <summary>
+    /// The new display name shown in the UI.
+    /// </summary>
+    public string? DisplayName { get; set; }
+
+    /// <summary>
     /// The new username for the user.
     /// </summary>
     public string? UserName { get; set; }

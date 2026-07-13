@@ -54,6 +54,8 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<SecurityAuditLog> SecurityAuditLogs { get; set; }
 
+    public virtual DbSet<UserEmailChangeLog> UserEmailChangeLogs { get; set; }
+
     public virtual DbSet<Vote> Votes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

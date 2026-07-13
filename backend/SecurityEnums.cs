@@ -35,6 +35,8 @@ public enum SecurityEventType
     AccountDeleted,
     EmailVerificationSent,
     EmailVerified,
+    EmailChangeRequested,
+    EmailChanged,
 
     // OAuth Events
     OAuthLoginInitiated,

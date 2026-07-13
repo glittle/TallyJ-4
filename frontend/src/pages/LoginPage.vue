@@ -160,12 +160,11 @@ const handleLogin = async () => {
         return;
       }
 
-      showSuccessMessage(t("auth.loginSuccess"));
       const redirectPath = (route.query.redirect as string) || "/dashboard";
       router.push(redirectPath);
     } catch (error) {
       console.error("Login failed:", error);
-      showErrorMessage(t("auth.loginFailed"));
+      // authStore.login already surfaces the API error (e.g. email not verified)
     } finally {
       loading.value = false;
     }
@@ -190,7 +189,6 @@ const handleGoogleOneTapCallback = async (
   loading.value = true;
   try {
     await authStore.googleOneTapLogin(response.credential);
-    showSuccessMessage(t("auth.loginSuccess"));
     const redirectPath = (route.query.redirect as string) || "/dashboard";
     router.push(redirectPath);
   } catch {
@@ -220,7 +218,6 @@ const handleTelegramSuccess = async (user: any) => {
       authDate: user.auth_date,
       hash: user.hash,
     });
-    showSuccessMessage(t("auth.loginSuccess"));
     const redirectPath = (route.query.redirect as string) || "/dashboard";
     router.push(redirectPath);
   } catch {
@@ -236,7 +233,6 @@ const processFacebookLoginResponse = async (res: any) => {
     return;
   }
   await authStore.facebookLogin(res.authResponse.accessToken);
-  showSuccessMessage(t("auth.loginSuccess"));
   const redirectPath = (route.query.redirect as string) || "/dashboard";
   await router.push(redirectPath);
 };
@@ -340,7 +336,6 @@ const handleKakaoLogin = async () => {
         clearTimeout(timeoutId);
         try {
           await authStore.kakaoLogin(authObj.access_token);
-          showSuccessMessage(t("auth.loginSuccess"));
           const redirectPath = (route.query.redirect as string) || "/dashboard";
           router.push(redirectPath);
         } catch (error) {

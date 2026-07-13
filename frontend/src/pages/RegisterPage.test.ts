@@ -181,6 +181,7 @@ describe("RegisterPage", () => {
       // Set form data directly on the component
       const vm = wrapper.vm as any;
       vm.registerForm.email = "test@example.com";
+      vm.registerForm.displayName = "Test User";
       vm.registerForm.password = "ValidPassword123!";
       vm.registerForm.confirmPassword = "ValidPassword123!";
 
@@ -190,6 +191,7 @@ describe("RegisterPage", () => {
       // Check that register was called with correct data
       expect(registerSpy).toHaveBeenCalledWith({
         email: "test@example.com",
+        displayName: "Test User",
         password: "ValidPassword123!",
         confirmPassword: "ValidPassword123!",
       });

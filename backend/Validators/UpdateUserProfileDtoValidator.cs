@@ -14,6 +14,12 @@ public class UpdateUserProfileDtoValidator : AbstractValidator<UpdateUserProfile
     /// </summary>
     public UpdateUserProfileDtoValidator()
     {
+        RuleFor(x => x.DisplayName)
+            .MaximumLength(200)
+            .WithMessage("Display name cannot exceed 200 characters")
+            .Must(name => name == null || name.Trim().Length > 0)
+            .WithMessage("Display name cannot be empty or whitespace only");
+
         RuleFor(x => x.UserName)
             .MaximumLength(256)
             .WithMessage("Username cannot exceed 256 characters")

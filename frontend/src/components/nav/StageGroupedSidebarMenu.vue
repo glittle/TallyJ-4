@@ -13,7 +13,7 @@ import {
 } from "@/domain/guestTellerAccess";
 import { useNavUiStore } from "@/stores/navUiStore";
 import { ElIcon } from "element-plus";
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
@@ -55,13 +55,13 @@ function navigateTo(page: NavPageDef) {
   emit("close-mobile-sidebar");
 }
 
-onMounted(() => {
-  for (const stage of STAGES) {
-    if (navUiStore.sidebarGroupExpansion[stage] === undefined) {
-      navUiStore.setGroupExpanded(stage, stage === props.currentStage);
-    }
-  }
-});
+watch(
+  () => props.electionGuid,
+  (guid) => {
+    navUiStore.syncExpansionForElection(guid, props.currentStage);
+  },
+  { immediate: true },
+);
 
 watch(
   () => props.currentStage,
@@ -99,7 +99,7 @@ watch(
   <div
     class="stage-grouped-menu"
     role="navigation"
-    aria-label="Election navigation"
+    :aria-label="$t('common.electionNavigation')"
   >
     <!-- Guest view: no group headers, just the filtered page list for current stage -->
     <template v-if="isGuestTeller">

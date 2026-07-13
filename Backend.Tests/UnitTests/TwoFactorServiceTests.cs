@@ -48,6 +48,9 @@ public class TwoFactorServiceTests : ServiceTestBase
             NullLogger<UserManager<AppUser>>.Instance);
 
         _localizerMock = new Mock<IStringLocalizer<TwoFactorService>>();
+        // Return the key as the value so unconfigured keys still surface a readable error.
+        _localizerMock.Setup(x => x[It.IsAny<string>()])
+            .Returns((string key) => new LocalizedString(key, key, resourceNotFound: false));
 
         var emailConfig = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>())
@@ -74,7 +77,7 @@ public class TwoFactorServiceTests : ServiceTestBase
     }
 
     private async Task<AppUser> CreateUserAsync(string id, string email = "test@example.com",
-        bool twoFactorEnabled = false)
+        bool twoFactorEnabled = false, string authMethod = "Local")
     {
         var user = new AppUser
         {
@@ -82,9 +85,22 @@ public class TwoFactorServiceTests : ServiceTestBase
             UserName = email,
             Email = email,
             TwoFactorEnabled = twoFactorEnabled,
-            AuthMethod = "Local"
+            AuthMethod = authMethod
         };
-        var result = await _userManager.CreateAsync(user, "password123");
+
+        IdentityResult result;
+        if (string.Equals(authMethod, "Local", StringComparison.OrdinalIgnoreCase)
+            || authMethod.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                .Any(m => string.Equals(m, "Local", StringComparison.OrdinalIgnoreCase)))
+        {
+            result = await _userManager.CreateAsync(user, "password123");
+        }
+        else
+        {
+            // OAuth-only accounts typically have no password.
+            result = await _userManager.CreateAsync(user);
+        }
+
         Assert.True(result.Succeeded, string.Join(", ", result.Errors.Select(e => e.Description)));
         return user;
     }
@@ -137,6 +153,125 @@ public class TwoFactorServiceTests : ServiceTestBase
 
         var decryptedSecret = _encryptionService.Decrypt(token.Secret);
         Assert.Equal(result.Response.Secret, decryptedSecret);
+    }
+
+    [Fact]
+    public async Task SetupAsync_IncompletePriorSetup_ReplacesTokenWithNewSecret()
+    {
+        await CreateUserAsync("user1");
+
+        var oldSecret = "JBSWY3DPEHPK3PXP";
+        var oldGuid = Guid.NewGuid();
+        Context.Set<TwoFactorToken>().Add(new TwoFactorToken
+        {
+            TokenGuid = oldGuid,
+            UserId = "user1",
+            Secret = _encryptionService.Encrypt(oldSecret),
+            IsEnabled = false,
+            CreatedAt = DateTimeOffset.UtcNow.AddMinutes(-10)
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.SetupAsync("user1");
+
+        Assert.True(result.Success);
+        Assert.Null(result.Error);
+        Assert.NotNull(result.Response);
+        Assert.NotEqual(oldSecret, result.Response.Secret);
+
+        var tokens = await Context.Set<TwoFactorToken>().Where(t => t.UserId == "user1").ToListAsync();
+        Assert.Single(tokens);
+        Assert.False(tokens[0].IsEnabled);
+        Assert.NotEqual(oldGuid, tokens[0].TokenGuid);
+        Assert.Null(tokens[0].VerifiedAt);
+
+        var decryptedSecret = _encryptionService.Decrypt(tokens[0].Secret);
+        Assert.Equal(result.Response.Secret, decryptedSecret);
+        Assert.NotEqual(oldSecret, decryptedSecret);
+    }
+
+    [Fact]
+    public async Task SetupAsync_GoogleOnlyUser_ReturnsError()
+    {
+        await CreateUserAsync("google1", email: "google@example.com", authMethod: "Google");
+
+        _localizerMock.Setup(x => x["auth.errors.twoFactorOnlyForLocal"])
+            .Returns(new LocalizedString("auth.errors.twoFactorOnlyForLocal", "2FA only for local"));
+
+        var result = await _service.SetupAsync("google1");
+
+        Assert.False(result.Success);
+        Assert.Contains("2FA only for local", result.Error);
+        Assert.Null(result.Response);
+        Assert.Empty(Context.Set<TwoFactorToken>().Where(t => t.UserId == "google1"));
+    }
+
+    [Fact]
+    public async Task SetupAsync_LocalAndGoogleUser_AllowsSetup()
+    {
+        await CreateUserAsync("hybrid1", email: "hybrid@example.com", authMethod: "Local,Google");
+
+        var result = await _service.SetupAsync("hybrid1");
+
+        Assert.True(result.Success);
+        Assert.NotNull(result.Response);
+        Assert.NotNull(result.Response.Secret);
+    }
+
+    [Fact]
+    public async Task GetStatusAsync_GoogleOnlyWithOrphaned2FA_ClearsAndReportsDisabled()
+    {
+        var user = await CreateUserAsync(
+            "google2",
+            email: "google2@example.com",
+            twoFactorEnabled: true,
+            authMethod: "Google");
+
+        Context.Set<TwoFactorToken>().Add(new TwoFactorToken
+        {
+            TokenGuid = Guid.NewGuid(),
+            UserId = user.Id,
+            Secret = _encryptionService.Encrypt("JBSWY3DPEHPK3PXP"),
+            IsEnabled = true,
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetStatusAsync(user.Id);
+
+        Assert.True(result.Success);
+        Assert.False(result.IsEnabled);
+        Assert.Null(result.Method);
+
+        var updated = await _userManager.FindByIdAsync(user.Id);
+        Assert.False(updated!.TwoFactorEnabled);
+        Assert.Empty(Context.Set<TwoFactorToken>().Where(t => t.UserId == user.Id));
+    }
+
+    [Fact]
+    public async Task GetStatusAsync_LocalEnabled_ReturnsTotp()
+    {
+        await CreateUserAsync("user1", twoFactorEnabled: true);
+
+        var result = await _service.GetStatusAsync("user1");
+
+        Assert.True(result.Success);
+        Assert.True(result.IsEnabled);
+        Assert.Equal("totp", result.Method);
+    }
+
+    [Theory]
+    [InlineData("Local", true)]
+    [InlineData("local", true)]
+    [InlineData("Local,Google", true)]
+    [InlineData("Google,Local", true)]
+    [InlineData("Google", false)]
+    [InlineData("Telegram", false)]
+    [InlineData("", false)]
+    public void IsLocalCapable_ParsesAuthMethod(string authMethod, bool expected)
+    {
+        var user = new AppUser { AuthMethod = authMethod };
+        Assert.Equal(expected, TwoFactorService.IsLocalCapable(user));
     }
 
     [Fact]

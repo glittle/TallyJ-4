@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.SuperAdmin;
+using Backend.Identity;
 using Backend.Services;
 
 namespace Backend.Tests.UnitTests;
@@ -14,7 +16,15 @@ public class SuperAdminServiceTests : ServiceTestBase
     public SuperAdminServiceTests()
     {
         var logger = new Mock<ILogger<SuperAdminService>>();
-        _service = new SuperAdminService(Context, logger.Object);
+        var userManager = new Mock<UserManager<AppUser>>(
+            Mock.Of<IUserStore<AppUser>>(),
+            null!, null!, null!, null!, null!, null!, null!, null!);
+        var securityAudit = new Mock<ISecurityAuditService>();
+        _service = new SuperAdminService(
+            Context,
+            userManager.Object,
+            securityAudit.Object,
+            logger.Object);
     }
 
     private async Task SeedElections()

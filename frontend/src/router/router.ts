@@ -45,6 +45,26 @@ const routes = [
       },
 
       {
+        path: "verify-email",
+
+        name: "verify-email",
+
+        component: () => import("../pages/VerifyEmailPage.vue"),
+
+        meta: { titleKey: "auth.verifyEmail.title" },
+      },
+
+      {
+        path: "confirm-email-change",
+
+        name: "confirm-email-change",
+
+        component: () => import("../pages/ConfirmEmailChangePage.vue"),
+
+        meta: { titleKey: "auth.confirmEmailChange.title" },
+      },
+
+      {
         path: "auth/google/callback",
 
         name: "google-callback",
@@ -299,6 +319,16 @@ const routes = [
 
         meta: { titleKey: "nav.superAdmin", requiresSuperAdmin: true },
       },
+
+      {
+        path: "super-admin/users",
+
+        name: "super-admin-users",
+
+        component: () => import("../pages/SuperAdminUsersPage.vue"),
+
+        meta: { titleKey: "nav.superAdminUsers", requiresSuperAdmin: true },
+      },
     ],
   },
 ];
@@ -322,11 +352,13 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
 
   if (isAuthenticated) {
     if (!isGuest) {
-      const { useSuperAdminStore } = await import("../stores/superAdminStore");
-      const superAdminStore = useSuperAdminStore();
-      await superAdminStore.checkSuperAdminStatus();
+      // Use auth store only — do not import superAdminStore here (keeps super-admin chunk
+      // out of the session for non–super-admin FullTellers / officers).
+      const { useAuthStore } = await import("../stores/authStore");
+      const authStore = useAuthStore();
+      await authStore.ensureUserInfoLoaded();
 
-      if (to.meta.requiresSuperAdmin && !superAdminStore.isSuperAdmin) {
+      if (to.meta.requiresSuperAdmin && !authStore.isSuperAdmin) {
         return "/dashboard";
       }
     } else if (to.meta.requiresSuperAdmin) {

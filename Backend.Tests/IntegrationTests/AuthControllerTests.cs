@@ -504,11 +504,47 @@ public class AuthControllerTests : IntegrationTestBase
         userInfo.TryGetProperty("authMethod", out var authMethodProp).Should().BeTrue();
         authMethodProp.GetString().Should().Be("Local");
 
+        // SuperAdmin is advertised only when true (admin@tallyj.test is in SuperAdmin:Emails).
         userInfo.TryGetProperty("isSuperAdmin", out var isSuperAdminProp).Should().BeTrue();
-        // Note: The value depends on whether admin@tallyj.test is in SuperAdmin:Emails config
-        // This test just verifies the field exists and is a boolean
-        var isSuperAdminValue = isSuperAdminProp.ValueKind;
-        (isSuperAdminValue == JsonValueKind.True || isSuperAdminValue == JsonValueKind.False).Should().BeTrue();
+        isSuperAdminProp.ValueKind.Should().Be(JsonValueKind.True);
+    }
+
+    [Fact]
+    public async Task GetMe_OmitsSuperAdminFlag_WhenUserIsNotSuperAdmin()
+    {
+        var loginRequest = new LoginRequest
+        {
+            Email = "test@tallyj.com",
+            Password = "Tester1234!X"
+        };
+
+        var loginContent = new StringContent(
+            JsonSerializer.Serialize(loginRequest),
+            Encoding.UTF8,
+            "application/json");
+
+        var loginResponse = await Client.PostAsync("/api/auth/login", loginContent);
+        loginResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var cookies = GetCookiesFromResponse(loginResponse);
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/auth/me");
+        foreach (var cookie in cookies)
+        {
+            var cookieValue = ExtractCookieValue(cookie.Value);
+            request.Headers.Add("Cookie", $"{cookie.Key}={cookieValue}");
+        }
+
+        var response = await Client.SendAsync(request);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var userInfo = JsonSerializer.Deserialize<JsonElement>(responseContent, JsonOptions);
+
+        userInfo.TryGetProperty("email", out var emailProp).Should().BeTrue();
+        emailProp.GetString().Should().Be("test@tallyj.com");
+
+        // Capability must not appear for non–super-admin users
+        userInfo.TryGetProperty("isSuperAdmin", out _).Should().BeFalse();
     }
 
     [Fact]

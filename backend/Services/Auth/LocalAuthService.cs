@@ -43,6 +43,9 @@ public class LocalAuthService : ILocalAuthService
         {
             UserName = request.Email,
             Email = request.Email,
+            DisplayName = string.IsNullOrWhiteSpace(request.DisplayName)
+                ? null
+                : request.DisplayName.Trim(),
             EmailConfirmed = false,
             AuthMethod = "Local"
         };

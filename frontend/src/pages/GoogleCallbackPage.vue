@@ -9,7 +9,7 @@ const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showErrorMessage } = useNotifications();
 const error = ref<string | null>(null);
 
 onMounted(async () => {
@@ -46,8 +46,6 @@ onMounted(async () => {
       document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
     }
     document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
-
-    showSuccessMessage(t("auth.loginSuccess"));
 
     const redirectPath = route.query.redirect
       ? decodeURIComponent(route.query.redirect as string)

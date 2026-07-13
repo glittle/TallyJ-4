@@ -4,13 +4,28 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
+export type AccountChangeDisplayNameDto = {
+    displayName?: string | null;
+};
+
 export type AccountChangePasswordDto = {
     currentPassword?: string | null;
     newPassword?: string | null;
     confirmPassword?: string | null;
 };
 
+export type AccountConfirmEmailChangeDto = {
+    token?: string | null;
+    code?: string | null;
+};
+
+export type AccountRequestEmailChangeDto = {
+    newEmail?: string | null;
+    currentPassword?: string | null;
+};
+
 export type AccountUpdateUserProfileDto = {
+    displayName?: string | null;
     userName?: string | null;
     email?: string | null;
     phoneNumber?: string | null;
@@ -19,10 +34,14 @@ export type AccountUpdateUserProfileDto = {
 export type AccountUserProfileDto = {
     id?: string | null;
     userName?: string | null;
+    displayName?: string | null;
     email?: string | null;
     phoneNumber?: string | null;
     emailConfirmed?: boolean;
     phoneNumberConfirmed?: boolean;
+    pendingEmail?: string | null;
+    authMethod?: string | null;
+    canChangeEmail?: boolean;
 };
 
 export type ApiResponseAccountUserProfileDto = {
@@ -158,6 +177,13 @@ export type ApiResponsePaginatedResponseSuperAdminSuperAdminElectionDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponsePaginatedResponseSuperAdminSuperAdminUserDto = {
+    success?: boolean;
+    data?: PaginatedResponseSuperAdminSuperAdminUserDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponsePeoplePersonDetailDto = {
     success?: boolean;
     data?: PeoplePersonDetailDto;
@@ -210,6 +236,13 @@ export type ApiResponseSuperAdminSuperAdminElectionDetailDto = {
 export type ApiResponseSuperAdminSuperAdminSummaryDto = {
     success?: boolean;
     data?: SuperAdminSuperAdminSummaryDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
+export type ApiResponseSuperAdminSuperAdminUserDetailDto = {
+    success?: boolean;
+    data?: SuperAdminSuperAdminUserDetailDto;
     message?: string | null;
     errors?: Array<string> | null;
 };
@@ -518,6 +551,7 @@ export type ElectionsElectionSummaryDto = {
     isTellerAccessOpen?: boolean;
     isOnlineVotingEnabled?: boolean;
     showAsTest?: boolean | null;
+    readonly toElect?: number | null;
 };
 
 export type ElectionsToggleTellerAccessDto = {
@@ -974,6 +1008,16 @@ export type PaginatedResponsePeoplePersonDto = {
 
 export type PaginatedResponseSuperAdminSuperAdminElectionDto = {
     items?: Array<SuperAdminSuperAdminElectionDto> | null;
+    pageNumber?: number;
+    pageSize?: number;
+    totalCount?: number;
+    readonly totalPages?: number;
+    readonly hasPreviousPage?: boolean;
+    readonly hasNextPage?: boolean;
+};
+
+export type PaginatedResponseSuperAdminSuperAdminUserDto = {
+    items?: Array<SuperAdminSuperAdminUserDto> | null;
     pageNumber?: number;
     pageSize?: number;
     totalCount?: number;
@@ -1814,12 +1858,39 @@ export type SuperAdminSuperAdminElectionOwnerDto = {
     role?: string | null;
 };
 
+export type SuperAdminSuperAdminEmailChangeEntryDto = {
+    oldEmail?: string | null;
+    newEmail?: string | null;
+    changedAt?: Date;
+    source?: string | null;
+    changedByUserId?: string | null;
+};
+
 export type SuperAdminSuperAdminSummaryDto = {
     totalElections?: number;
     openElections?: number;
     upcomingElections?: number;
     completedElections?: number;
     archivedElections?: number;
+};
+
+export type SuperAdminSuperAdminUpdateUserDto = {
+    displayName?: string | null;
+    email?: string | null;
+};
+
+export type SuperAdminSuperAdminUserDetailDto = SuperAdminSuperAdminUserDto & {
+    emailHistory?: Array<SuperAdminSuperAdminEmailChangeEntryDto> | null;
+};
+
+export type SuperAdminSuperAdminUserDto = {
+    id?: string | null;
+    email?: string | null;
+    displayName?: string | null;
+    authMethod?: string | null;
+    emailConfirmed?: boolean;
+    pendingEmail?: string | null;
+    lockoutEnd?: Date | null;
 };
 
 export type TellersCreateTellerDto = {
@@ -1907,6 +1978,27 @@ export type ApiResponsePaginatedResponseSuperAdminSuperAdminElectionDtoWritable 
     errors?: Array<string> | null;
 };
 
+export type ApiResponsePaginatedResponseSuperAdminSuperAdminUserDtoWritable = {
+    success?: boolean;
+    data?: PaginatedResponseSuperAdminSuperAdminUserDtoWritable;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
+export type ElectionsElectionSummaryDtoWritable = {
+    electionGuid: string;
+    name: string;
+    electionType?: EnumerationsElectionTypeCode;
+    dateOfElection?: Date | null;
+    electionStage?: EnumerationsElectionStage;
+    voterCount?: number;
+    ballotCount?: number;
+    electionMode?: EnumerationsElectionModeCode;
+    isTellerAccessOpen?: boolean;
+    isOnlineVotingEnabled?: boolean;
+    showAsTest?: boolean | null;
+};
+
 export type FrontDeskFrontDeskStatsDtoWritable = {
     totalEligible?: number;
     checkedIn?: number;
@@ -1949,7 +2041,7 @@ export type PaginatedResponseBallotsBallotDtoWritable = {
 };
 
 export type PaginatedResponseElectionsElectionSummaryDtoWritable = {
-    items?: Array<ElectionsElectionSummaryDto> | null;
+    items?: Array<ElectionsElectionSummaryDtoWritable> | null;
     pageNumber?: number;
     pageSize?: number;
     totalCount?: number;
@@ -1971,6 +2063,13 @@ export type PaginatedResponsePeoplePersonDtoWritable = {
 
 export type PaginatedResponseSuperAdminSuperAdminElectionDtoWritable = {
     items?: Array<SuperAdminSuperAdminElectionDto> | null;
+    pageNumber?: number;
+    pageSize?: number;
+    totalCount?: number;
+};
+
+export type PaginatedResponseSuperAdminSuperAdminUserDtoWritable = {
+    items?: Array<SuperAdminSuperAdminUserDto> | null;
     pageNumber?: number;
     pageSize?: number;
     totalCount?: number;
@@ -2014,6 +2113,54 @@ export type PutApiAccountUpdateProfileResponses = {
 };
 
 export type PutApiAccountUpdateProfileResponse = PutApiAccountUpdateProfileResponses[keyof PutApiAccountUpdateProfileResponses];
+
+export type PostApiAccountChangeDisplayNameData = {
+    body?: AccountChangeDisplayNameDto;
+    path?: never;
+    query?: never;
+    url: '/api/Account/changeDisplayName';
+};
+
+export type PostApiAccountChangeDisplayNameResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseAccountUserProfileDto;
+};
+
+export type PostApiAccountChangeDisplayNameResponse = PostApiAccountChangeDisplayNameResponses[keyof PostApiAccountChangeDisplayNameResponses];
+
+export type PostApiAccountRequestEmailChangeData = {
+    body?: AccountRequestEmailChangeDto;
+    path?: never;
+    query?: never;
+    url: '/api/Account/requestEmailChange';
+};
+
+export type PostApiAccountRequestEmailChangeResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemObject;
+};
+
+export type PostApiAccountRequestEmailChangeResponse = PostApiAccountRequestEmailChangeResponses[keyof PostApiAccountRequestEmailChangeResponses];
+
+export type PostApiAccountConfirmEmailChangeData = {
+    body?: AccountConfirmEmailChangeDto;
+    path?: never;
+    query?: never;
+    url: '/api/Account/confirmEmailChange';
+};
+
+export type PostApiAccountConfirmEmailChangeResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemObject;
+};
+
+export type PostApiAccountConfirmEmailChangeResponse = PostApiAccountConfirmEmailChangeResponses[keyof PostApiAccountConfirmEmailChangeResponses];
 
 export type PostApiAccountChangePasswordData = {
     body?: AccountChangePasswordDto;
@@ -2169,6 +2316,20 @@ export type PostApiAuthVerifyEmailData = {
 };
 
 export type PostApiAuthVerifyEmailResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthConfirmEmailChangeData = {
+    body?: AccountConfirmEmailChangeDto;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/confirmEmailChange';
+};
+
+export type PostApiAuthConfirmEmailChangeResponses = {
     /**
      * OK
      */
@@ -4594,6 +4755,62 @@ export type GetApiSuperadminDashboardElectionsByGuidResponses = {
 };
 
 export type GetApiSuperadminDashboardElectionsByGuidResponse = GetApiSuperadminDashboardElectionsByGuidResponses[keyof GetApiSuperadminDashboardElectionsByGuidResponses];
+
+export type GetApiSuperadminUsersData = {
+    body?: never;
+    path?: never;
+    query?: {
+        Search?: string;
+        Page?: number;
+        PageSize?: number;
+    };
+    url: '/api/superadmin/users';
+};
+
+export type GetApiSuperadminUsersResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePaginatedResponseSuperAdminSuperAdminUserDto;
+};
+
+export type GetApiSuperadminUsersResponse = GetApiSuperadminUsersResponses[keyof GetApiSuperadminUsersResponses];
+
+export type GetApiSuperadminUsersByUserIdData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/users/{userId}';
+};
+
+export type GetApiSuperadminUsersByUserIdResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSuperAdminSuperAdminUserDetailDto;
+};
+
+export type GetApiSuperadminUsersByUserIdResponse = GetApiSuperadminUsersByUserIdResponses[keyof GetApiSuperadminUsersByUserIdResponses];
+
+export type PutApiSuperadminUsersByUserIdData = {
+    body?: SuperAdminSuperAdminUpdateUserDto;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/users/{userId}';
+};
+
+export type PutApiSuperadminUsersByUserIdResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSuperAdminSuperAdminUserDetailDto;
+};
+
+export type PutApiSuperadminUsersByUserIdResponse = PutApiSuperadminUsersByUserIdResponses[keyof PutApiSuperadminUsersByUserIdResponses];
 
 export type GetApiByElectionGuidTellersData = {
     body?: never;

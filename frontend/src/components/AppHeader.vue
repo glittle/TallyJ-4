@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
-import {
-  ArrowDown,
-  Menu,
-  Setting,
-  SwitchButton,
-  User,
-} from "@element-plus/icons-vue";
-import { computed, ref } from "vue";
+import { ArrowDown, Menu, SwitchButton, User } from "@element-plus/icons-vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
@@ -16,26 +10,28 @@ import GuestTellerAccessToggle from "./common/GuestTellerAccessToggle.vue";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
 
-const router = useRouter();
-const route = useRoute();
-const authStore = useAuthStore();
-const { t } = useI18n();
-const { showSuccessMessage, showInfoMessage } = useNotifications();
+const props = withDefaults(
+  defineProps<{
+    /** Show hamburger (overlay / mobile layout). */
+    showMenuButton?: boolean;
+    /** Whether the overlay sidebar is currently open. */
+    menuOpen?: boolean;
+  }>(),
+  {
+    showMenuButton: false,
+    menuOpen: false,
+  },
+);
 
 const emit = defineEmits<{
   "toggle-mobile-menu": [];
 }>();
 
-const mobileMenuOpen = ref(false);
-const isMobile = ref(false);
-
-// Check if we're on mobile
-const checkMobile = () => {
-  isMobile.value = window.innerWidth <= 768;
-};
-
-checkMobile();
-window.addEventListener("resize", checkMobile);
+const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
+const { t } = useI18n();
+const { showSuccessMessage } = useNotifications();
 
 const currentUser = computed(() => ({
   name: authStore.name,
@@ -62,13 +58,10 @@ async function handleCommand(command: string) {
     router.push("/");
   } else if (command === "profile") {
     router.push("/profile");
-  } else if (command === "settings") {
-    showInfoMessage("Settings page coming soon");
   }
 }
 
 function toggleMobileMenu() {
-  mobileMenuOpen.value = !mobileMenuOpen.value;
   emit("toggle-mobile-menu");
 }
 </script>
@@ -77,10 +70,11 @@ function toggleMobileMenu() {
   <header class="app-header" role="banner">
     <div class="header-left">
       <button
-        v-if="isMobile"
+        v-if="props.showMenuButton"
         class="mobile-menu-btn"
-        aria-label="Toggle navigation menu"
-        :aria-expanded="mobileMenuOpen"
+        type="button"
+        :aria-label="t('common.toggleNavigation')"
+        :aria-expanded="props.menuOpen"
         @click="toggleMobileMenu"
       >
         <el-icon>
@@ -91,7 +85,11 @@ function toggleMobileMenu() {
         {{ currentPageTitle }}
       </h2>
     </div>
-    <nav class="header-right" role="navigation" aria-label="User menu">
+    <nav
+      class="header-right"
+      role="navigation"
+      :aria-label="t('common.userMenu')"
+    >
       <ComputerCodeBadge v-if="showComputerCode" />
       <GuestTellerAccessToggle />
       <ThemeSelector />
@@ -104,7 +102,7 @@ function toggleMobileMenu() {
           :aria-label="t('common.userMenu')"
         >
           <span class="username">{{
-            currentUser?.name || currentUser?.email || "User"
+            currentUser?.name || currentUser?.email || t("common.user")
           }}</span>
           <el-icon aria-hidden="true">
             <ArrowDown />
@@ -117,12 +115,6 @@ function toggleMobileMenu() {
                 <User />
               </el-icon>
               {{ $t("common.profile") }}
-            </el-dropdown-item>
-            <el-dropdown-item command="settings">
-              <el-icon>
-                <Setting />
-              </el-icon>
-              {{ $t("common.settings") }}
             </el-dropdown-item>
             <el-dropdown-item divided command="logout">
               <el-icon>
@@ -215,6 +207,7 @@ function toggleMobileMenu() {
     margin-right: 10px;
     cursor: pointer;
     border-radius: 4px;
+    color: var(--el-text-color-primary);
     transition: background-color 0.3s;
   }
 

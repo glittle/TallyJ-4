@@ -35,39 +35,85 @@ export const useAuthStore = defineStore("auth", () => {
   const name = ref<string | null>(authData.name);
   const authMethod = ref<string | null>(authData.authMethod);
   const isSuperAdmin = ref<boolean>(false);
+  /** True after a successful `/api/Auth/me` (or explicit guest default). Not derived from cookies. */
+  const userInfoLoaded = ref(false);
   const requires2FA = ref(false);
   const pending2FAEmail = ref<string | null>(null);
 
   // Check authentication based on cookie presence (not in-memory token)
   const isAuthenticated = computed(() => secureTokenService.isAuthenticated());
 
-  async function fetchUserInfo() {
-    try {
-      const meResponse = await getApiAuthMe();
+  /** In-flight dedupe so concurrent router guards share one /me request. */
+  let fetchUserInfoPromise: Promise<{
+    email: string;
+    name?: string | null;
+    authMethod?: string | null;
+    isSuperAdmin?: boolean;
+  } | null> | null = null;
 
-      if (meResponse.response?.ok && meResponse.data) {
-        const userData = meResponse.data as {
-          email: string;
-          name?: string | null;
-          authMethod?: string | null;
-          isSuperAdmin?: boolean;
-        };
-        email.value = userData.email;
-        name.value = userData.name || null;
-        authMethod.value = userData.authMethod || null;
-        isSuperAdmin.value = userData.isSuperAdmin || false;
-        return userData;
-      }
-    } catch (error) {
-      console.error("Failed to fetch user info:", error);
+  async function fetchUserInfo() {
+    if (fetchUserInfoPromise) {
+      return fetchUserInfoPromise;
     }
-    return null;
+
+    fetchUserInfoPromise = (async () => {
+      try {
+        const meResponse = await getApiAuthMe();
+
+        if (meResponse.response?.ok && meResponse.data) {
+          const userData = meResponse.data as {
+            email: string;
+            name?: string | null;
+            authMethod?: string | null;
+            isSuperAdmin?: boolean;
+          };
+          email.value = userData.email;
+          name.value = userData.name || null;
+          authMethod.value = userData.authMethod || null;
+          // API omits isSuperAdmin for non–super-admins; only explicit true grants the flag.
+          isSuperAdmin.value = userData.isSuperAdmin === true;
+          userInfoLoaded.value = true;
+          return userData;
+        }
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+      }
+      return null;
+    })();
+
+    try {
+      return await fetchUserInfoPromise;
+    } finally {
+      fetchUserInfoPromise = null;
+    }
+  }
+
+  /**
+   * Ensures /me has been loaded for non-guest sessions (isSuperAdmin is not in cookies).
+   * Safe to call from the router on every navigation; no-ops once loaded.
+   */
+  async function ensureUserInfoLoaded(): Promise<boolean> {
+    if (
+      isAuthenticated.value &&
+      !userInfoLoaded.value &&
+      authMethod.value !== "AccessCode"
+    ) {
+      await fetchUserInfo();
+    }
+    return isSuperAdmin.value;
   }
 
   async function register(data: RegisterRequest) {
     clearClientSessionSelections();
     try {
       const response = await authService.register(data);
+
+      if (response.requiresEmailVerification) {
+        // No session until email is verified — do not start token refresh.
+        requires2FA.value = false;
+        pending2FAEmail.value = null;
+        return response;
+      }
 
       if (response.requires2FA) {
         requires2FA.value = true;
@@ -79,10 +125,7 @@ export const useAuthStore = defineStore("auth", () => {
         authMethod.value =
           cookieData.authMethod || response.authMethod || "Local";
 
-        // Fetch user info including isSuperAdmin
         await fetchUserInfo();
-
-        // Start automatic token refresh
         tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
       }
 
@@ -300,14 +343,72 @@ export const useAuthStore = defineStore("auth", () => {
         // Fetch user info including isSuperAdmin for FullTellers and officers
         await fetchUserInfo();
       } else {
-        // GuestTeller session defaults
+        // GuestTeller session defaults (no user account /me)
         isSuperAdmin.value = false;
+        userInfoLoaded.value = true;
       }
 
       // Start automatic token refresh
       tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
 
       return response;
+    } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
+      handleApiError(error as any);
+      throw error;
+    }
+  }
+
+  function setDisplayName(newName: string | null) {
+    name.value = newName;
+    const secure = window.location.protocol === "https:" ? "; secure" : "";
+    if (newName) {
+      document.cookie = `user_name=${encodeURIComponent(newName)}; path=/; samesite=strict${secure}; max-age=2592000`;
+    } else {
+      document.cookie = `user_name=; path=/; samesite=strict${secure}; max-age=0`;
+    }
+  }
+
+  function setEmail(newEmail: string | null) {
+    email.value = newEmail;
+    const secure = window.location.protocol === "https:" ? "; secure" : "";
+    if (newEmail) {
+      document.cookie = `user_email=${encodeURIComponent(newEmail)}; path=/; samesite=strict${secure}; max-age=2592000`;
+    } else {
+      document.cookie = `user_email=; path=/; samesite=strict${secure}; max-age=0`;
+    }
+  }
+
+  async function updateDisplayName(displayName: string) {
+    try {
+      const profile = await authService.updateDisplayName(displayName);
+      setDisplayName(profile.displayName ?? displayName.trim());
+      return profile;
+    } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
+      handleApiError(error as any);
+      throw error;
+    }
+  }
+
+  async function requestEmailChange(newEmail: string, currentPassword: string) {
+    try {
+      await authService.requestEmailChange(newEmail, currentPassword);
+    } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
+      handleApiError(error as any);
+      throw error;
+    }
+  }
+
+  async function confirmEmailChange(params: { token?: string; code?: string }) {
+    try {
+      await authService.confirmEmailChange(params);
+      // Refresh session identity after successful change
+      await fetchUserInfo();
+      if (email.value) {
+        setEmail(email.value);
+      }
     } catch (error) {
       const { handleApiError } = useApiErrorHandler();
       handleApiError(error as any);
@@ -324,6 +425,7 @@ export const useAuthStore = defineStore("auth", () => {
     name.value = null;
     authMethod.value = null;
     isSuperAdmin.value = false;
+    userInfoLoaded.value = false;
     requires2FA.value = false;
     pending2FAEmail.value = null;
 
@@ -356,10 +458,12 @@ export const useAuthStore = defineStore("auth", () => {
     name,
     authMethod,
     isSuperAdmin,
+    userInfoLoaded,
     requires2FA,
     pending2FAEmail,
     isAuthenticated,
     fetchUserInfo,
+    ensureUserInfoLoaded,
     register,
     login,
     googleOneTapLogin,
@@ -367,6 +471,10 @@ export const useAuthStore = defineStore("auth", () => {
     facebookLogin,
     kakaoLogin,
     tellerLogin,
+    updateDisplayName,
+    requestEmailChange,
+    confirmEmailChange,
+    setEmail,
     logout,
   };
 });
