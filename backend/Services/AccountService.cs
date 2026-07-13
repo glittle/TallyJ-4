@@ -199,25 +199,20 @@ public class AccountService : IAccountService
             throw new InvalidOperationException($"Failed to start email change: {errors}");
         }
 
-        await _emailService.SendEmailChangeConfirmationAsync(newEmail, token, code);
+        await _emailService.SendEmailChangeConfirmationAsync(userId, newEmail, token, code);
 
         await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
             EventType = SecurityEventType.EmailChangeRequested,
             UserId = userId,
-            Email = user.Email,
             IpAddress = ipAddress,
             UserAgent = userAgent,
-            Details = $"Email change requested to {newEmail}",
+            Details = "Email change requested",
             Severity = SecurityEventSeverity.Info,
-            Metadata = new Dictionary<string, string>
-            {
-                ["oldEmail"] = user.Email ?? "",
-                ["pendingEmail"] = newEmail
-            }
+            Metadata = new Dictionary<string, string> { ["source"] = "Self" }
         });
 
-        _logger.LogInformation("Email change requested for {UserId} to {NewEmail}", userId, newEmail);
+        _logger.LogInformation("Email change requested for user {UserId}", userId);
     }
 
     public async Task ConfirmEmailChangeAsync(
@@ -307,20 +302,17 @@ public class AccountService : IAccountService
         {
             EventType = SecurityEventType.EmailChanged,
             UserId = user.Id,
-            Email = newEmail,
             IpAddress = ipAddress,
             UserAgent = userAgent,
-            Details = $"Email changed from {oldEmail} to {newEmail}",
+            Details = "Email change confirmed",
             Severity = SecurityEventSeverity.Info,
             Metadata = new Dictionary<string, string>
             {
-                ["oldEmail"] = oldEmail,
-                ["newEmail"] = newEmail,
                 ["source"] = "Self"
             }
         });
 
-        _logger.LogInformation("Email changed for {UserId} from {OldEmail} to {NewEmail}", user.Id, oldEmail, newEmail);
+        _logger.LogInformation("Email change confirmed for user {UserId}", user.Id);
     }
 
     public async Task<bool> ChangePasswordAsync(string userId, ChangePasswordDto changePasswordDto)

@@ -166,6 +166,7 @@ If you did not create this account, please ignore this email.
     /// Sends confirmation to the new address for an in-progress email change.
     /// </summary>
     public virtual async Task SendEmailChangeConfirmationAsync(
+        string userId,
         string newEmail,
         string confirmationToken,
         string shortCode)
@@ -216,11 +217,11 @@ This confirmation expires in 24 hours. If you did not request this change, ignor
         try
         {
             await _emailSender.SendAsync(message);
-            _logger.LogInformation("Email change confirmation sent to {Email}", newEmail);
+            _logger.LogInformation("Email change confirmation sent for user {UserId}", userId);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email change confirmation to {Email}", newEmail);
+            _logger.LogError(ex, "Failed to send email change confirmation for user {UserId}", userId);
             throw;
         }
     }

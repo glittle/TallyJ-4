@@ -51,13 +51,6 @@ export type ApiResponseAccountUserProfileDto = {
     errors?: Array<string> | null;
 };
 
-export type ApiResponseAuditLogsAuditLogDto = {
-    success?: boolean;
-    data?: AuditLogsAuditLogDto;
-    message?: string | null;
-    errors?: Array<string> | null;
-};
-
 export type ApiResponseBallotsBallotDto = {
     success?: boolean;
     data?: BallotsBallotDto;
@@ -287,26 +280,6 @@ export type ApiResponseVotesVoteWithBallotStatusDto = {
     data?: VotesVoteWithBallotStatusDto;
     message?: string | null;
     errors?: Array<string> | null;
-};
-
-export type AuditLogsAuditLogDto = {
-    rowId?: number;
-    asOf?: Date;
-    electionGuid?: string | null;
-    locationGuid?: string | null;
-    voterId?: string | null;
-    computerCode?: string | null;
-    details?: string | null;
-    hostAndVersion?: string | null;
-};
-
-export type AuditLogsCreateAuditLogDto = {
-    electionGuid?: string | null;
-    locationGuid?: string | null;
-    voterId?: string | null;
-    computerCode?: string | null;
-    details?: string | null;
-    hostAndVersion?: string | null;
 };
 
 export type AuthAssignRoleRequest = {
@@ -954,16 +927,6 @@ export type OnlineVotingTelegramAuthForVoterDto = {
 export type OnlineVotingVerifyCodeDto = {
     voterId?: string | null;
     verifyCode?: string | null;
-};
-
-export type PaginatedResponseAuditLogsAuditLogDto = {
-    items?: Array<AuditLogsAuditLogDto> | null;
-    pageNumber?: number;
-    pageSize?: number;
-    totalCount?: number;
-    readonly totalPages?: number;
-    readonly hasPreviousPage?: boolean;
-    readonly hasNextPage?: boolean;
 };
 
 export type PaginatedResponseBallotsBallotDto = {
@@ -2026,13 +1989,6 @@ export type FrontDeskRollCallDtoWritable = {
     stats?: FrontDeskFrontDeskStatsDtoWritable;
 };
 
-export type PaginatedResponseAuditLogsAuditLogDtoWritable = {
-    items?: Array<AuditLogsAuditLogDto> | null;
-    pageNumber?: number;
-    pageSize?: number;
-    totalCount?: number;
-};
-
 export type PaginatedResponseBallotsBallotDtoWritable = {
     items?: Array<BallotsBallotDto> | null;
     pageNumber?: number;
@@ -2177,66 +2133,6 @@ export type PostApiAccountChangePasswordResponses = {
 };
 
 export type PostApiAccountChangePasswordResponse = PostApiAccountChangePasswordResponses[keyof PostApiAccountChangePasswordResponses];
-
-export type GetApiAuditLogsGetAuditLogsData = {
-    body?: never;
-    path?: never;
-    query?: {
-        electionGuid?: string;
-        locationGuid?: string;
-        voterId?: string;
-        computerCode?: string;
-        startDate?: Date;
-        endDate?: Date;
-        searchTerm?: string;
-        pageNumber?: number;
-        pageSize?: number;
-    };
-    url: '/api/audit-logs/getAuditLogs';
-};
-
-export type GetApiAuditLogsGetAuditLogsResponses = {
-    /**
-     * OK
-     */
-    200: PaginatedResponseAuditLogsAuditLogDto;
-};
-
-export type GetApiAuditLogsGetAuditLogsResponse = GetApiAuditLogsGetAuditLogsResponses[keyof GetApiAuditLogsGetAuditLogsResponses];
-
-export type GetApiAuditLogsByRowIdGetAuditLogData = {
-    body?: never;
-    path: {
-        rowId: number;
-    };
-    query?: never;
-    url: '/api/audit-logs/{rowId}/getAuditLog';
-};
-
-export type GetApiAuditLogsByRowIdGetAuditLogResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseAuditLogsAuditLogDto;
-};
-
-export type GetApiAuditLogsByRowIdGetAuditLogResponse = GetApiAuditLogsByRowIdGetAuditLogResponses[keyof GetApiAuditLogsByRowIdGetAuditLogResponses];
-
-export type PostApiAuditLogsCreateAuditLogData = {
-    body?: AuditLogsCreateAuditLogDto;
-    path?: never;
-    query?: never;
-    url: '/api/audit-logs/createAuditLog';
-};
-
-export type PostApiAuditLogsCreateAuditLogResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseAuditLogsAuditLogDto;
-};
-
-export type PostApiAuditLogsCreateAuditLogResponse = PostApiAuditLogsCreateAuditLogResponses[keyof PostApiAuditLogsCreateAuditLogResponses];
 
 export type PostApiAuthRegisterAccountData = {
     body?: AuthRegisterRequest;

@@ -58,6 +58,16 @@ public class SecurityAuditLogFilterDto
     public string? UserId { get; set; }
 
     /// <summary>
+    /// Filter by online voter identifier.
+    /// </summary>
+    public string? OnlineVoterId { get; set; }
+
+    /// <summary>
+    /// Filter by election GUID.
+    /// </summary>
+    public Guid? ElectionGuid { get; set; }
+
+    /// <summary>
     /// Filter by email address.
     /// </summary>
     public string? Email { get; set; }

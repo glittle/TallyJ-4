@@ -151,30 +151,6 @@ export const ApiResponseAccount_UserProfileDtoSchema = {
     additionalProperties: false
 } as const;
 
-export const ApiResponseAuditLogs_AuditLogDtoSchema = {
-    type: 'object',
-    properties: {
-        success: {
-            type: 'boolean'
-        },
-        data: {
-            $ref: '#/components/schemas/AuditLogs_AuditLogDto'
-        },
-        message: {
-            type: 'string',
-            nullable: true
-        },
-        errors: {
-            type: 'array',
-            items: {
-                type: 'string'
-            },
-            nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
 export const ApiResponseBallots_BallotDtoSchema = {
     type: 'object',
     properties: {
@@ -994,80 +970,6 @@ export const ApiResponseVotes_VoteWithBallotStatusDtoSchema = {
             items: {
                 type: 'string'
             },
-            nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
-export const AuditLogs_AuditLogDtoSchema = {
-    type: 'object',
-    properties: {
-        rowId: {
-            type: 'integer',
-            format: 'int32'
-        },
-        asOf: {
-            type: 'string',
-            format: 'date-time'
-        },
-        electionGuid: {
-            type: 'string',
-            format: 'uuid',
-            nullable: true
-        },
-        locationGuid: {
-            type: 'string',
-            format: 'uuid',
-            nullable: true
-        },
-        voterId: {
-            type: 'string',
-            nullable: true
-        },
-        computerCode: {
-            type: 'string',
-            nullable: true
-        },
-        details: {
-            type: 'string',
-            nullable: true
-        },
-        hostAndVersion: {
-            type: 'string',
-            nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
-export const AuditLogs_CreateAuditLogDtoSchema = {
-    type: 'object',
-    properties: {
-        electionGuid: {
-            type: 'string',
-            format: 'uuid',
-            nullable: true
-        },
-        locationGuid: {
-            type: 'string',
-            format: 'uuid',
-            nullable: true
-        },
-        voterId: {
-            type: 'string',
-            nullable: true
-        },
-        computerCode: {
-            type: 'string',
-            nullable: true
-        },
-        details: {
-            type: 'string',
-            nullable: true
-        },
-        hostAndVersion: {
-            type: 'string',
             nullable: true
         }
     },
@@ -3264,45 +3166,6 @@ export const OnlineVoting_VerifyCodeDtoSchema = {
         verifyCode: {
             type: 'string',
             nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
-export const PaginatedResponseAuditLogs_AuditLogDtoSchema = {
-    type: 'object',
-    properties: {
-        items: {
-            type: 'array',
-            items: {
-                $ref: '#/components/schemas/AuditLogs_AuditLogDto'
-            },
-            nullable: true
-        },
-        pageNumber: {
-            type: 'integer',
-            format: 'int32'
-        },
-        pageSize: {
-            type: 'integer',
-            format: 'int32'
-        },
-        totalCount: {
-            type: 'integer',
-            format: 'int32'
-        },
-        totalPages: {
-            type: 'integer',
-            format: 'int32',
-            readOnly: true
-        },
-        hasPreviousPage: {
-            type: 'boolean',
-            readOnly: true
-        },
-        hasNextPage: {
-            type: 'boolean',
-            readOnly: true
         }
     },
     additionalProperties: false
@@ -7124,32 +6987,6 @@ export const FrontDesk_RollCallDtoWritableSchema = {
         },
         stats: {
             $ref: '#/components/schemas/FrontDesk_FrontDeskStatsDtoWritable'
-        }
-    },
-    additionalProperties: false
-} as const;
-
-export const PaginatedResponseAuditLogs_AuditLogDtoWritableSchema = {
-    type: 'object',
-    properties: {
-        items: {
-            type: 'array',
-            items: {
-                $ref: '#/components/schemas/AuditLogs_AuditLogDto'
-            },
-            nullable: true
-        },
-        pageNumber: {
-            type: 'integer',
-            format: 'int32'
-        },
-        pageSize: {
-            type: 'integer',
-            format: 'int32'
-        },
-        totalCount: {
-            type: 'integer',
-            format: 'int32'
         }
     },
     additionalProperties: false

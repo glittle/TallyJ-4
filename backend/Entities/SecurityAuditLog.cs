@@ -12,6 +12,8 @@ namespace Backend.Entities;
 [Index("EventType", Name = "IX_SecurityAuditLogs_EventType")]
 [Index("UserId", Name = "IX_SecurityAuditLogs_UserId")]
 [Index("IsSuspicious", Name = "IX_SecurityAuditLogs_IsSuspicious")]
+[Index("ElectionGuid", Name = "IX_SecurityAuditLogs_ElectionGuid")]
+[Index("OnlineVoterId", Name = "IX_SecurityAuditLogs_OnlineVoterId")]
 public class SecurityAuditLog
 {
     /// <summary>
@@ -39,6 +41,17 @@ public class SecurityAuditLog
     /// </summary>
     [StringLength(450)] // Matches ASP.NET Identity User.Id length
     public string? UserId { get; set; }
+
+    /// <summary>
+    /// Online voter identifier (OnlineVoter.VoterId) when the actor is a voter, not an AppUser.
+    /// </summary>
+    [StringLength(250)]
+    public string? OnlineVoterId { get; set; }
+
+    /// <summary>
+    /// Election scope for operational / election activity events.
+    /// </summary>
+    public Guid? ElectionGuid { get; set; }
 
     /// <summary>
     /// The email address associated with the event (if applicable).

@@ -201,10 +201,10 @@ public class DashboardService : IDashboardService
         var ballots = election.Locations.SelectMany(l => l.Ballots).ToList();
         var votes = ballots.SelectMany(b => b.Votes).ToList();
 
-        var lastLogEntry = await _context.Logs
+        var lastLogEntry = await _context.SecurityAuditLogs
             .Where(l => l.ElectionGuid == electionGuid)
-            .OrderByDescending(l => l.AsOf)
-            .Select(l => l.AsOf)
+            .OrderByDescending(l => l.Timestamp)
+            .Select(l => l.Timestamp)
             .FirstOrDefaultAsync();
 
         return new

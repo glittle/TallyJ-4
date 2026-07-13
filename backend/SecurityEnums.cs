@@ -64,7 +64,12 @@ public enum SecurityEventType
 
     // Security Configuration Events
     SecuritySettingsChanged,
-    EncryptionKeyRotated
+    EncryptionKeyRotated,
+
+    /// <summary>
+    /// General application / election operational activity (replaces the former Logs table).
+    /// </summary>
+    OperationalActivity
 }
 
 /// <summary>

@@ -26,6 +26,16 @@ public class SecurityAuditLogDto
     public string? UserId { get; set; }
 
     /// <summary>
+    /// Online voter identifier when the actor is a voter (not an AppUser).
+    /// </summary>
+    public string? OnlineVoterId { get; set; }
+
+    /// <summary>
+    /// Election scope for operational / election activity events.
+    /// </summary>
+    public Guid? ElectionGuid { get; set; }
+
+    /// <summary>
     /// The email address associated with the event (if applicable).
     /// </summary>
     public string? Email { get; set; }

@@ -1022,10 +1022,10 @@ public class TallyService : ITallyService
     {
         var timeBasedTurnout = new List<TimeBasedTurnoutDto>();
 
-        var logEntries = await _context.Logs
+        var logEntries = await _context.SecurityAuditLogs
             .Where(l => l.ElectionGuid == election.ElectionGuid && l.Details != null && l.Details.Contains("ballot"))
-            .OrderBy(l => l.AsOf)
-            .Select(l => l.AsOf)
+            .OrderBy(l => l.Timestamp)
+            .Select(l => l.Timestamp)
             .ToListAsync();
 
         if (logEntries.Count > 0)

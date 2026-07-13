@@ -34,6 +34,8 @@ public class SecurityAuditService : ISecurityAuditService
                 Timestamp = DateTimeOffset.UtcNow,
                 EventType = createDto.EventType,
                 UserId = createDto.UserId,
+                OnlineVoterId = createDto.OnlineVoterId,
+                ElectionGuid = createDto.ElectionGuid,
                 Email = createDto.Email,
                 IpAddress = createDto.IpAddress,
                 UserAgent = createDto.UserAgent,
@@ -102,6 +104,16 @@ public class SecurityAuditService : ISecurityAuditService
                 query = query.Where(l => l.UserId == filter.UserId);
             }
 
+            if (!string.IsNullOrWhiteSpace(filter.OnlineVoterId))
+            {
+                query = query.Where(l => l.OnlineVoterId == filter.OnlineVoterId);
+            }
+
+            if (filter.ElectionGuid.HasValue)
+            {
+                query = query.Where(l => l.ElectionGuid == filter.ElectionGuid.Value);
+            }
+
             if (!string.IsNullOrWhiteSpace(filter.Email))
             {
                 query = query.Where(l => l.Email!.ToLower().Contains(filter.Email.ToLower()));
@@ -149,22 +161,7 @@ public class SecurityAuditService : ISecurityAuditService
             .Take(pageSize)
             .ToListAsync();
 
-        var logDtos = logs.Select(log => new SecurityAuditLogDto
-        {
-            Id = log.Id,
-            Timestamp = log.Timestamp,
-            EventType = log.EventType,
-            UserId = log.UserId,
-            Email = log.Email,
-            IpAddress = log.IpAddress,
-            UserAgent = log.UserAgent,
-            Details = log.Details,
-            IsSuspicious = log.IsSuspicious,
-            Severity = log.Severity,
-            Metadata = !string.IsNullOrEmpty(log.MetadataJson)
-                ? System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(log.MetadataJson)
-                : null
-        }).ToList();
+        var logDtos = logs.Select(MapToDto).ToList();
 
         _logger.LogInformation(
             "Retrieved {Count} security audit logs (page {PageNumber} of {TotalPages})",
@@ -188,22 +185,7 @@ public class SecurityAuditService : ISecurityAuditService
             return null;
         }
 
-        var logDto = new SecurityAuditLogDto
-        {
-            Id = log.Id,
-            Timestamp = log.Timestamp,
-            EventType = log.EventType,
-            UserId = log.UserId,
-            Email = log.Email,
-            IpAddress = log.IpAddress,
-            UserAgent = log.UserAgent,
-            Details = log.Details,
-            IsSuspicious = log.IsSuspicious,
-            Severity = log.Severity,
-            Metadata = !string.IsNullOrEmpty(log.MetadataJson)
-                ? System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(log.MetadataJson)
-                : null
-        };
+        var logDto = MapToDto(log);
 
         _logger.LogInformation("Retrieved security audit log {Id}", id);
 
@@ -248,6 +230,25 @@ public class SecurityAuditService : ISecurityAuditService
 
         return stats;
     }
+
+    private static SecurityAuditLogDto MapToDto(SecurityAuditLog log) => new()
+    {
+        Id = log.Id,
+        Timestamp = log.Timestamp,
+        EventType = log.EventType,
+        UserId = log.UserId,
+        OnlineVoterId = log.OnlineVoterId,
+        ElectionGuid = log.ElectionGuid,
+        Email = log.Email,
+        IpAddress = log.IpAddress,
+        UserAgent = log.UserAgent,
+        Details = log.Details,
+        IsSuspicious = log.IsSuspicious,
+        Severity = log.Severity,
+        Metadata = !string.IsNullOrEmpty(log.MetadataJson)
+            ? System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(log.MetadataJson)
+            : null
+    };
 
     /// <summary>
     /// Detects and logs suspicious patterns in security events.

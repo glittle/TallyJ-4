@@ -374,13 +374,10 @@ public class SuperAdminService : ISuperAdminService
             {
                 EventType = SecurityEventType.EmailChanged,
                 UserId = user.Id,
-                Email = newEmail,
-                Details = $"SuperAdmin changed email from {oldEmail} to {newEmail}",
+                Details = "SuperAdmin changed user email",
                 Severity = SecurityEventSeverity.Warning,
                 Metadata = new Dictionary<string, string>
                 {
-                    ["oldEmail"] = oldEmail,
-                    ["newEmail"] = newEmail,
                     ["source"] = "SuperAdmin",
                     ["adminUserId"] = adminUserId
                 }
