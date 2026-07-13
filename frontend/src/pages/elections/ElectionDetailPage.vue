@@ -245,9 +245,15 @@ async function exportElection() {
           <div class="stat-value">
             {{ formatNumber(electionStats?.voterCount) }}
           </div>
+          <div class="stat-value">
+            {{ formatNumber(electionStats?.voterCount) }}
+          </div>
         </div>
         <div class="stat-item">
           <div class="stat-label">{{ $t("dashboard.totalBallots") }}</div>
+          <div class="stat-value">
+            {{ formatNumber(electionStats?.ballotCount) }}
+          </div>
           <div class="stat-value">
             {{ formatNumber(electionStats?.ballotCount) }}
           </div>
@@ -255,6 +261,7 @@ async function exportElection() {
         <div class="stat-item">
           <div class="stat-label">{{ $t("elections.locations") }}</div>
           <div class="stat-value">
+            {{ formatNumber(electionStats?.locationCount) }}
             {{ formatNumber(electionStats?.locationCount) }}
           </div>
         </div>
