@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { isGuestTeller } from "@/domain/guestTellerAccess";
-import { ArrowLeft, HomeFilled, Setting } from "@element-plus/icons-vue";
+import {
+  ArrowLeft,
+  Expand,
+  Fold,
+  HomeFilled,
+  Setting,
+  User,
+} from "@element-plus/icons-vue";
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "../stores/authStore";
 import { useElectionStore } from "../stores/electionStore";
-import { useSuperAdminStore } from "../stores/superAdminStore";
 import SidebarStageHeader from "./nav/SidebarStageHeader.vue";
 import { getBuildDate, getBuildDateBadi, VERSION } from "./version";
 
@@ -16,16 +23,31 @@ const StageGroupedSidebarMenu = defineAsyncComponent(
 );
 const { t } = useI18n();
 
+const props = withDefaults(
+  defineProps<{
+    /** Docked desktop layout; show control to collapse into overlay mode. */
+    canHideSidebar?: boolean;
+    /** Desktop user collapsed the sidebar; show control to dock it again. */
+    canDockSidebar?: boolean;
+  }>(),
+  {
+    canHideSidebar: false,
+    canDockSidebar: false,
+  },
+);
+
 const emit = defineEmits<{
   "close-mobile-sidebar": [];
+  "hide-sidebar": [];
+  "dock-sidebar": [];
 }>();
 
 const route = useRoute();
 const router = useRouter();
 const electionStore = useElectionStore();
-const superAdminStore = useSuperAdminStore();
+const authStore = useAuthStore();
 
-const isSuperAdmin = computed(() => superAdminStore.isSuperAdmin);
+const isSuperAdmin = computed(() => authStore.isSuperAdmin);
 
 const isGuest = computed(() => isGuestTeller());
 
@@ -67,20 +89,57 @@ function goBackToElections() {
   router.push("/elections");
   emit("close-mobile-sidebar");
 }
+
+function hideSidebar() {
+  emit("hide-sidebar");
+}
+
+function dockSidebar() {
+  emit("dock-sidebar");
+}
 </script>
 <template>
-  <nav class="app-sidebar" role="navigation" aria-label="Main navigation">
+  <nav
+    class="app-sidebar"
+    role="navigation"
+    :aria-label="t('common.mainNavigation')"
+  >
     <div class="logo">
       <div class="logoTop">
         <img src="/assets/logo-trans.png" :alt="$t('common.logoAlt')" />
         <h2>{{ $t("common.appTitle") }}</h2>
+        <button
+          v-if="props.canHideSidebar"
+          type="button"
+          class="sidebar-layout-btn"
+          :aria-label="t('common.hideSidebar')"
+          :title="t('common.hideSidebar')"
+          @click="hideSidebar"
+        >
+          <el-icon>
+            <Fold />
+          </el-icon>
+        </button>
+        <button
+          v-else-if="props.canDockSidebar"
+          type="button"
+          class="sidebar-layout-btn"
+          :aria-label="t('common.dockSidebar')"
+          :title="t('common.dockSidebar')"
+          @click="dockSidebar"
+        >
+          <el-icon>
+            <Expand />
+          </el-icon>
+        </button>
       </div>
-      <div class="version-tooltip" :title="versionDate">
+      <div
+        class="version-tooltip"
+        :title="versionDate + ' / ' + versionDateBadi"
+      >
         {{ $t("common.versionDisplay", { version: versionName }) }}
         -
         {{ versionName }}
-        -
-        {{ versionDateBadi }}
       </div>
     </div>
     <div class="testOnlyWarning">
@@ -129,7 +188,7 @@ function goBackToElections() {
       v-else
       :default-active="activeRoute"
       :router="true"
-      aria-label="Main menu"
+      :aria-label="t('common.mainMenu')"
       @select="handleMenuSelect"
     >
       <el-menu-item index="/dashboard" role="menuitem">
@@ -145,13 +204,23 @@ function goBackToElections() {
         </el-icon>
         <span>{{ $t("nav.superAdmin") }}</span>
       </el-menu-item>
+      <el-menu-item
+        v-if="isSuperAdmin"
+        index="/super-admin/users"
+        role="menuitem"
+      >
+        <el-icon aria-hidden="true">
+          <User />
+        </el-icon>
+        <span>{{ $t("nav.superAdminUsers") }}</span>
+      </el-menu-item>
     </el-menu>
 
     <div class="statusDocLink">
       <a
         href="https://docs.google.com/document/d/1WXrVy2Jl3Lk-Vs1k77t2QnrrdK5zjzSeHMXnOx0Deao/edit?usp=sharing"
         target="statusDoc"
-        >Status & Feedback Document V4</a
+        >{{ $t("common.statusFeedbackDoc") }}</a
       >
     </div>
   </nav>
@@ -173,8 +242,31 @@ function goBackToElections() {
     justify-content: center;
     align-items: center;
     gap: 10px;
+    position: relative;
     img {
       height: 2.5em;
+    }
+  }
+
+  .sidebar-layout-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: var(--color-sidebar-text);
+    line-height: 1;
+
+    &:hover,
+    &:focus {
+      background-color: var(--color-sidebar-hover);
+      color: var(--color-sidebar-text-active);
+      outline: 2px solid var(--color-primary-700);
+      outline-offset: 2px;
     }
   }
 

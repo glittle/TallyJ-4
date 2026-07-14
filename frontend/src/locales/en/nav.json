@@ -6,6 +6,7 @@
   "nav.profile": "Profile",
   "nav.publicDisplay": "Election Results Display",
   "nav.superAdmin": "Super Admin",
+  "nav.superAdminUsers": "Login Accounts",
   "nav.tellers": "Tellers",
   "nav.votingLocations": "Voting Locations"
 }

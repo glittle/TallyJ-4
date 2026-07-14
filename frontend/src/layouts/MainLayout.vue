@@ -1,15 +1,35 @@
 <script setup lang="ts">
+import { useResponsive } from "@/composables/useResponsive";
 import { computed, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import AppHeader from "../components/AppHeader.vue";
 import AppSidebar from "../components/AppSidebar.vue";
 import { useElectionStore } from "../stores/electionStore";
+import { useNavUiStore } from "../stores/navUiStore";
+
+const { t } = useI18n();
+
+/** Docked aside width; Element Plus sets --el-aside-width from the width prop. */
+const SIDEBAR_DOCKED_WIDTH = "300px";
 
 const mobileSidebarOpen = ref(false);
 const route = useRoute();
 const electionStore = useElectionStore();
+const navUiStore = useNavUiStore();
+const { isMobile } = useResponsive();
 
 const isFrontDeskLayout = computed(() => route.path.includes("/frontdesk"));
+
+/** Overlay (hamburger) layout: narrow viewport or user chose to hide the docked sidebar. */
+const sidebarOverlayMode = computed(
+  () => isMobile.value || navUiStore.sidebarCollapsed,
+);
+
+/** Layout width for el-aside: 0 in overlay mode so main content fills; docked otherwise. */
+const asideWidth = computed(() =>
+  sidebarOverlayMode.value ? "0px" : SIDEBAR_DOCKED_WIDTH,
+);
 
 watch(
   () => route.params.id as string | undefined,
@@ -31,6 +51,13 @@ watch(
   { immediate: true },
 );
 
+// Close the temporary drawer when leaving overlay mode (e.g. docking sidebar).
+watch(sidebarOverlayMode, (overlay) => {
+  if (!overlay) {
+    mobileSidebarOpen.value = false;
+  }
+});
+
 onMounted(async () => {
   if (!route.params.id) {
     await electionStore.ensureActiveElectionHubConnection();
@@ -44,35 +71,60 @@ function toggleMobileSidebar() {
 function closeMobileSidebar() {
   mobileSidebarOpen.value = false;
 }
+
+function hideSidebar() {
+  navUiStore.setSidebarCollapsed(true);
+  mobileSidebarOpen.value = false;
+}
+
+function dockSidebar() {
+  navUiStore.setSidebarCollapsed(false);
+  mobileSidebarOpen.value = false;
+}
 </script>
 
 <template>
   <el-container
     class="main-layout"
-    :class="{ 'front-desk-layout': isFrontDeskLayout }"
+    :class="{
+      'front-desk-layout': isFrontDeskLayout,
+      'sidebar-overlay-mode': sidebarOverlayMode,
+    }"
   >
     <!-- Skip link for keyboard navigation -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#main-content" class="skip-link">{{
+      t("common.skipToMainContent")
+    }}</a>
 
-    <!-- Mobile sidebar overlay -->
+    <!-- Sidebar overlay (mobile or user-collapsed desktop) -->
     <div
-      v-if="mobileSidebarOpen"
+      v-if="sidebarOverlayMode && mobileSidebarOpen"
       class="mobile-sidebar-overlay"
       @click="closeMobileSidebar"
     ></div>
 
     <el-aside
-      width="300px"
+      :width="asideWidth"
       class="sidebar"
       role="complementary"
-      aria-label="Main navigation"
+      :aria-label="t('common.mainNavigation')"
       :class="{ 'mobile-sidebar-open': mobileSidebarOpen }"
     >
-      <AppSidebar @close-mobile-sidebar="closeMobileSidebar" />
+      <AppSidebar
+        :can-hide-sidebar="!sidebarOverlayMode"
+        :can-dock-sidebar="!isMobile && navUiStore.sidebarCollapsed"
+        @close-mobile-sidebar="closeMobileSidebar"
+        @hide-sidebar="hideSidebar"
+        @dock-sidebar="dockSidebar"
+      />
     </el-aside>
     <el-container>
       <el-header height="60px" role="banner">
-        <AppHeader @toggle-mobile-menu="toggleMobileSidebar" />
+        <AppHeader
+          :show-menu-button="sidebarOverlayMode"
+          :menu-open="mobileSidebarOpen"
+          @toggle-mobile-menu="toggleMobileSidebar"
+        />
       </el-header>
       <el-main id="main-content" role="main" tabindex="-1">
         <router-view />
@@ -85,6 +137,8 @@ function closeMobileSidebar() {
 .main-layout {
   height: 100vh;
   background: var(--color-public-bg-gradient);
+  /* Drawer width when sidebar is open in overlay mode (not the docked el-aside width). */
+  --sidebar-drawer-width: 300px;
 
   .skip-link {
     position: absolute;
@@ -107,7 +161,7 @@ function closeMobileSidebar() {
     overflow-x: hidden;
   }
 
-  /* Mobile sidebar overlay */
+  /* Mobile / collapsed sidebar overlay */
   .mobile-sidebar-overlay {
     position: fixed;
     top: 0;
@@ -139,6 +193,24 @@ function closeMobileSidebar() {
     max-width: none;
   }
 
+  /* Overlay layout: same behavior for narrow viewports and user-collapsed desktop. */
+  &.sidebar-overlay-mode {
+    .sidebar {
+      width: var(--sidebar-drawer-width) !important;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      height: calc(100vh - 60px);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1001;
+    }
+
+    .sidebar.mobile-sidebar-open {
+      transform: translateX(0);
+    }
+  }
+
   &.front-desk-layout {
     .sidebar {
       background-color: var(--color-frontdesk-sidebar-bg);
@@ -157,25 +229,17 @@ function closeMobileSidebar() {
       background-color: var(--color-frontdesk-main-bg);
       padding: 12px 16px;
     }
+
+    &.sidebar-overlay-mode .sidebar {
+      top: 48px;
+      height: calc(100vh - 48px);
+    }
   }
 }
 
 @media (max-width: 768px) {
   .main-layout {
-    .sidebar {
-      width: 180px !important;
-      position: fixed;
-      top: 60px;
-      left: 0;
-      height: calc(100vh - 60px);
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1001;
-    }
-
-    .sidebar.mobile-sidebar-open {
-      transform: translateX(0);
-    }
+    --sidebar-drawer-width: 180px;
 
     .el-main {
       padding: 10px;
@@ -185,9 +249,7 @@ function closeMobileSidebar() {
 
 @media (max-width: 480px) {
   .main-layout {
-    .sidebar {
-      width: 250px !important;
-    }
+    --sidebar-drawer-width: 250px;
   }
 }
 

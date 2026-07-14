@@ -1,35 +1,26 @@
-﻿using System.Security.Claims;
-using Backend.DTOs.AuditLogs;
+using System.Security.Claims;
+using Backend;
+using Backend.DTOs.Security;
 using Backend.Services;
 
 namespace Backend.Middleware;
 
 /// <summary>
-/// Middleware for logging audit entries for HTTP requests.
+/// Middleware that records successful mutating API calls into <see cref="ISecurityAuditService"/>.
+/// Auth paths that already emit typed security events are skipped to avoid duplicates.
 /// </summary>
 public class AuditMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<AuditMiddleware> _logger;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AuditMiddleware"/> class.
-    /// </summary>
-    /// <param name="next">The next middleware in the pipeline.</param>
-    /// <param name="logger">The logger instance.</param>
     public AuditMiddleware(RequestDelegate next, ILogger<AuditMiddleware> logger)
     {
         _next = next;
         _logger = logger;
     }
 
-    /// <summary>
-    /// Invokes the middleware to process HTTP requests and log audit entries.
-    /// </summary>
-    /// <param name="context">The HTTP context.</param>
-    /// <param name="auditLogService">The audit log service for creating audit entries.</param>
-    /// <returns>A task that represents the asynchronous operation.</returns>
-    public async Task InvokeAsync(HttpContext context, IAuditLogService auditLogService)
+    public async Task InvokeAsync(HttpContext context, ISecurityAuditService securityAuditService)
     {
         var shouldLog = ShouldLogRequest(context);
 
@@ -39,7 +30,7 @@ public class AuditMiddleware
 
             if (context.Response.StatusCode >= 200 && context.Response.StatusCode < 300)
             {
-                await LogAuditEntry(context, auditLogService);
+                await LogAuditEntry(context, securityAuditService);
             }
         }
         else
@@ -48,17 +39,15 @@ public class AuditMiddleware
         }
     }
 
-    /// <summary>
-    /// Determines whether the given HTTP request should be logged for auditing purposes based on its path and method.
-    /// </summary>
-    /// <param name="context"></param>
-    /// <returns></returns>
-    private bool ShouldLogRequest(HttpContext context)
+    private static bool ShouldLogRequest(HttpContext context)
     {
-        var path = context.Request.Path.Value?.ToLower() ?? "";
-        var method = context.Request.Method.ToUpper();
+        var path = context.Request.Path.Value?.ToLowerInvariant() ?? "";
+        var method = context.Request.Method.ToUpperInvariant();
 
-        if (path.StartsWith("/api/audit-logs") ||
+        // Skip infra, hubs, and routes that already write typed SecurityAuditLogs.
+        if (path.StartsWith("/api/auth") ||
+            path.StartsWith("/api/account") ||
+            path.StartsWith("/api/audit-logs") ||
             path.StartsWith("/swagger") ||
             path.StartsWith("/hubs") ||
             path.StartsWith("/health"))
@@ -66,56 +55,62 @@ public class AuditMiddleware
             return false;
         }
 
-        return method is "POST" or "PUT" or "DELETE";
+        return method is "POST" or "PUT" or "DELETE" or "PATCH";
     }
 
-    /// <summary>
-    /// Logs an audit entry for the given HTTP context using the provided audit log service.
-    /// </summary>
-    /// <param name="context">The HTTP context.</param>
-    /// <param name="auditLogService">The audit log service for creating audit entries.</param>
-    /// <returns>A task that represents the asynchronous operation.</returns>
-    private async Task LogAuditEntry(HttpContext context, IAuditLogService auditLogService)
+    private async Task LogAuditEntry(HttpContext context, ISecurityAuditService securityAuditService)
     {
         try
         {
             var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                         ?? context.User.FindFirst("sub")?.Value;
 
+            Guid? electionGuid = null;
             var electionGuidClaim = context.User.FindFirst("ElectionGuid")?.Value;
-            Guid? electionGuid = electionGuidClaim != null && Guid.TryParse(electionGuidClaim, out var eg) ? eg : null;
-
-            if (!electionGuid.HasValue && context.Request.RouteValues.TryGetValue("electionGuid", out var routeElectionGuid))
+            if (electionGuidClaim != null && Guid.TryParse(electionGuidClaim, out var eg))
             {
-                if (Guid.TryParse(routeElectionGuid?.ToString(), out var parsedElectionGuid))
-                {
-                    electionGuid = parsedElectionGuid;
-                }
+                electionGuid = eg;
+            }
+
+            if (!electionGuid.HasValue &&
+                context.Request.RouteValues.TryGetValue("electionGuid", out var routeElectionGuid) &&
+                Guid.TryParse(routeElectionGuid?.ToString(), out var parsedElectionGuid))
+            {
+                electionGuid = parsedElectionGuid;
             }
 
             var computerCode = context.Request.Headers["X-Computer-Code"].FirstOrDefault();
+            var metadata = new Dictionary<string, string>();
+            if (!string.IsNullOrWhiteSpace(computerCode))
+            {
+                metadata["computerCode"] = computerCode;
+            }
+
+            if (context.Request.RouteValues.TryGetValue("locationGuid", out var routeLocationGuid) &&
+                Guid.TryParse(routeLocationGuid?.ToString(), out var locationGuid))
+            {
+                metadata["locationGuid"] = locationGuid.ToString();
+            }
 
             var details = $"{context.Request.Method} {context.Request.Path}{context.Request.QueryString}";
+            var ipAddress = context.Connection.RemoteIpAddress?.ToString();
+            var userAgent = context.Request.Headers.UserAgent.FirstOrDefault();
 
-            var hostAndVersion = $"{context.Request.Host} | {context.Request.Headers.UserAgent.FirstOrDefault()}";
-
-            var createDto = new CreateAuditLogDto
+            await securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
             {
+                EventType = SecurityEventType.OperationalActivity,
+                UserId = userId,
                 ElectionGuid = electionGuid,
-                VoterId = userId,
-                ComputerCode = computerCode,
+                IpAddress = ipAddress,
+                UserAgent = userAgent,
                 Details = details,
-                HostAndVersion = hostAndVersion
-            };
-
-            await auditLogService.CreateAuditLogAsync(createDto);
+                Severity = SecurityEventSeverity.Info,
+                Metadata = metadata.Count > 0 ? metadata : null
+            });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to create audit log entry");
+            _logger.LogError(ex, "Failed to create operational audit log entry");
         }
     }
 }
-
-
-

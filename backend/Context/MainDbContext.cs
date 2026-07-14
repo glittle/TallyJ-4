@@ -28,8 +28,6 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<Location> Locations { get; set; }
 
-    public virtual DbSet<Log> Logs { get; set; }
-
     public virtual DbSet<Message> Messages { get; set; }
 
     public virtual DbSet<OnlineVoter> OnlineVoters { get; set; }
@@ -53,6 +51,8 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public virtual DbSet<SecurityAuditLog> SecurityAuditLogs { get; set; }
+
+    public virtual DbSet<UserEmailChangeLog> UserEmailChangeLogs { get; set; }
 
     public virtual DbSet<Vote> Votes { get; set; }
 

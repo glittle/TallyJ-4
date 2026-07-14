@@ -69,6 +69,8 @@ public class AuthControllerTests : ServiceTestBase
             .Setup(s => s.HasActiveMainTeller(It.IsAny<Guid>()))
             .Returns(true);
 
+        var accountServiceMock = new Mock<IAccountService>();
+
         _controller = new AuthController(
             _localAuthServiceMock.Object,
             _passwordResetServiceMock.Object,
@@ -84,7 +86,8 @@ public class AuthControllerTests : ServiceTestBase
             _httpClientFactoryMock.Object,
             _securityAuditServiceMock.Object,
             _remoteLogServiceMock.Object,
-            assignmentServiceMock.Object);
+            assignmentServiceMock.Object,
+            accountServiceMock.Object);
 
         // Setup HttpContext for cookie middleware
         var httpContext = new DefaultHttpContext();
@@ -714,10 +717,10 @@ public class AuthControllerTests : ServiceTestBase
     {
         // Arrange
         var userId = "test-user-id";
-        var user = new AppUser { Id = userId, Email = "test@example.com", TwoFactorEnabled = true };
-
         SetupAuthenticatedUser(userId);
-        _userManagerMock.Setup(um => um.FindByIdAsync(userId)).ReturnsAsync(user);
+        _twoFactorServiceMock
+            .Setup(s => s.GetStatusAsync(userId))
+            .ReturnsAsync((true, null, true, "totp"));
 
         // Act
         var result = await _controller.Get2FAStatus();
@@ -739,10 +742,10 @@ public class AuthControllerTests : ServiceTestBase
     {
         // Arrange
         var userId = "test-user-id";
-        var user = new AppUser { Id = userId, Email = "test@example.com", TwoFactorEnabled = false };
-
         SetupAuthenticatedUser(userId);
-        _userManagerMock.Setup(um => um.FindByIdAsync(userId)).ReturnsAsync(user);
+        _twoFactorServiceMock
+            .Setup(s => s.GetStatusAsync(userId))
+            .ReturnsAsync((true, null, false, null));
 
         // Act
         var result = await _controller.Get2FAStatus();

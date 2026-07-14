@@ -1,8 +1,11 @@
 using Backend.Context;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.DTOs.Security;
 using Backend.DTOs.SuperAdmin;
+using Backend.Identity;
 using Backend.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -13,16 +16,19 @@ namespace Backend.Services;
 public class SuperAdminService : ISuperAdminService
 {
     private readonly MainDbContext _context;
+    private readonly UserManager<AppUser> _userManager;
+    private readonly ISecurityAuditService _securityAuditService;
     private readonly ILogger<SuperAdminService> _logger;
 
-    /// <summary>
-    /// Initializes a new instance of the SuperAdminService.
-    /// </summary>
-    /// <param name="context">The main database context for accessing election data.</param>
-    /// <param name="logger">The logger for diagnostic output.</param>
-    public SuperAdminService(MainDbContext context, ILogger<SuperAdminService> logger)
+    public SuperAdminService(
+        MainDbContext context,
+        UserManager<AppUser> userManager,
+        ISecurityAuditService securityAuditService,
+        ILogger<SuperAdminService> logger)
     {
         _context = context;
+        _userManager = userManager;
+        _securityAuditService = securityAuditService;
         _logger = logger;
     }
 
@@ -231,6 +237,162 @@ public class SuperAdminService : ISuperAdminService
             PercentComplete = percentComplete,
             Owners = owners
         };
+    }
+
+    public async Task<PaginatedResponse<SuperAdminUserDto>> GetUsersAsync(SuperAdminUserFilterDto filter)
+    {
+        var page = filter.Page < 1 ? 1 : filter.Page;
+        var pageSize = filter.PageSize < 1 ? 25 : Math.Min(filter.PageSize, 100);
+
+        var query = _context.Users.AsQueryable();
+        if (!string.IsNullOrWhiteSpace(filter.Search))
+        {
+            var term = filter.Search.Trim().ToLower();
+            query = query.Where(u =>
+                (u.Email != null && u.Email.ToLower().Contains(term)) ||
+                (u.DisplayName != null && u.DisplayName.ToLower().Contains(term)) ||
+                (u.UserName != null && u.UserName.ToLower().Contains(term)));
+        }
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .OrderBy(u => u.Email)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(u => new SuperAdminUserDto
+            {
+                Id = u.Id,
+                Email = u.Email,
+                DisplayName = u.DisplayName,
+                AuthMethod = u.AuthMethod,
+                EmailConfirmed = u.EmailConfirmed,
+                PendingEmail = u.PendingEmail,
+                LockoutEnd = u.LockoutEnd
+            })
+            .ToListAsync();
+
+        return new PaginatedResponse<SuperAdminUserDto>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = page,
+            PageSize = pageSize
+        };
+    }
+
+    public async Task<SuperAdminUserDetailDto?> GetUserDetailAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return null;
+        }
+
+        var history = await _context.UserEmailChangeLogs
+            .Where(l => l.UserId == userId)
+            .OrderByDescending(l => l.ChangedAt)
+            .Select(l => new SuperAdminEmailChangeEntryDto
+            {
+                OldEmail = l.OldEmail,
+                NewEmail = l.NewEmail,
+                ChangedAt = l.ChangedAt,
+                Source = l.Source,
+                ChangedByUserId = l.ChangedByUserId
+            })
+            .ToListAsync();
+
+        return new SuperAdminUserDetailDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            DisplayName = user.DisplayName,
+            AuthMethod = user.AuthMethod,
+            EmailConfirmed = user.EmailConfirmed,
+            PendingEmail = user.PendingEmail,
+            LockoutEnd = user.LockoutEnd,
+            EmailHistory = history
+        };
+    }
+
+    public async Task<SuperAdminUserDetailDto?> UpdateUserAsync(
+        string userId,
+        SuperAdminUpdateUserDto dto,
+        string adminUserId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return null;
+        }
+
+        if (dto.DisplayName != null)
+        {
+            var trimmed = dto.DisplayName.Trim();
+            user.DisplayName = string.IsNullOrEmpty(trimmed) ? null : trimmed;
+        }
+
+        if (!string.IsNullOrWhiteSpace(dto.Email) &&
+            !string.Equals(dto.Email.Trim(), user.Email, StringComparison.OrdinalIgnoreCase))
+        {
+            var newEmail = dto.Email.Trim();
+            var existing = await _userManager.FindByEmailAsync(newEmail);
+            if (existing != null && existing.Id != userId)
+            {
+                throw new InvalidOperationException("Email already in use");
+            }
+
+            var oldEmail = user.Email ?? "";
+            var syncUserName = string.Equals(user.UserName, oldEmail, StringComparison.OrdinalIgnoreCase)
+                || string.IsNullOrEmpty(user.UserName);
+
+            user.Email = newEmail;
+            user.NormalizedEmail = _userManager.NormalizeEmail(newEmail);
+            user.EmailConfirmed = true;
+            if (syncUserName)
+            {
+                user.UserName = newEmail;
+                user.NormalizedUserName = _userManager.NormalizeName(newEmail);
+            }
+
+            // Clear any pending self-service change
+            user.PendingEmail = null;
+            user.PendingEmailCode = null;
+            user.PendingEmailToken = null;
+            user.PendingEmailExpiry = null;
+
+            _context.UserEmailChangeLogs.Add(new UserEmailChangeLog
+            {
+                UserId = user.Id,
+                OldEmail = oldEmail,
+                NewEmail = newEmail,
+                ChangedAt = DateTimeOffset.UtcNow,
+                ChangedByUserId = adminUserId,
+                Source = "SuperAdmin"
+            });
+
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.EmailChanged,
+                UserId = user.Id,
+                Details = "SuperAdmin changed user email",
+                Severity = SecurityEventSeverity.Warning,
+                Metadata = new Dictionary<string, string>
+                {
+                    ["source"] = "SuperAdmin",
+                    ["adminUserId"] = adminUserId
+                }
+            });
+        }
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Failed to update user: {errors}");
+        }
+
+        await _context.SaveChangesAsync();
+        return await GetUserDetailAsync(userId);
     }
 
     private static IQueryable<Election> ApplySort(

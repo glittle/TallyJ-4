@@ -187,6 +187,9 @@ onMounted(() => {
   <main class="sa-dashboard-page">
     <section class="sa-header-section">
       <div class="sa-header-content">
+        <el-button @click="router.push({ name: 'super-admin-users' })">
+          {{ $t("superAdmin.users.manageAccounts") }}
+        </el-button>
         <el-button type="primary" :loading="loading" @click="loadData">
           <el-icon>
             <Refresh />

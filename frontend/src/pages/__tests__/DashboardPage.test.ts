@@ -40,6 +40,10 @@ vi.mock("@/composables/useNotifications", () => ({
   }),
 }));
 
+vi.mock("@/utils/activeElectionHubStorage", () => ({
+  getActiveElectionHubGuid: vi.fn(() => null),
+}));
+
 const globalConfig = {
   stubs: {
     ElCard: {
@@ -68,8 +72,6 @@ const globalConfig = {
     Document: { template: "<span />" },
     CircleCheck: { template: "<span />" },
     Search: { template: "<span />" },
-    ResumeElectionCard: { template: "<div class='resume-election-card' />" },
-    SetupTipsCard: { template: "<div class='setup-tips-card' />" },
   },
   mocks: {
     $t: (key: string) => key,
@@ -87,7 +89,7 @@ describe("DashboardPage", () => {
     mockActiveElections.mockReturnValue([]);
   });
 
-  it("renders ResumeElectionCard in the right rail when elections exist", () => {
+  it("does not render the removed Resume or Setup Tips dashboard rail", () => {
     mockElections.mockReturnValue([
       {
         electionGuid: "abc",
@@ -99,18 +101,15 @@ describe("DashboardPage", () => {
       },
     ]);
     const wrapper = mount(DashboardPage, { global: globalConfig });
-    expect(wrapper.find(".resume-election-card").exists()).toBe(true);
+    expect(wrapper.find(".dashboard-rail").exists()).toBe(false);
+    expect(wrapper.find(".resume-election-card").exists()).toBe(false);
+    expect(wrapper.find(".setup-tips-card").exists()).toBe(false);
   });
 
-  it("always renders the right-rail aside element", () => {
+  it("renders the elections list section", () => {
     const wrapper = mount(DashboardPage, { global: globalConfig });
-    expect(wrapper.find(".dashboard-rail").exists()).toBe(true);
-  });
-
-  it("renders the two-column layout wrapper", () => {
-    const wrapper = mount(DashboardPage, { global: globalConfig });
-    expect(wrapper.find(".dashboard-layout").exists()).toBe(true);
-    expect(wrapper.find(".dashboard-main").exists()).toBe(true);
+    expect(wrapper.find(".dashboard-page").exists()).toBe(true);
+    expect(wrapper.find(".elections-section").exists()).toBe(true);
   });
 
   it("renders the participation column when elections exist", () => {

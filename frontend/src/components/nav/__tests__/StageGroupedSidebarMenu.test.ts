@@ -26,6 +26,8 @@ vi.mock("vue-router", () => ({
   }),
 }));
 
+const mockSyncExpansionForElection = vi.fn();
+
 vi.mock("@/stores/navUiStore", () => {
   const expansion: Record<string, boolean> = {};
   return {
@@ -37,6 +39,7 @@ vi.mock("@/stores/navUiStore", () => {
       toggleGroup: vi.fn((stage: string) => {
         expansion[stage] = !expansion[stage];
       }),
+      syncExpansionForElection: mockSyncExpansionForElection,
     }),
   };
 });
@@ -75,7 +78,39 @@ describe("StageGroupedSidebarMenu", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     mockRouterPush.mockReset();
+    mockSyncExpansionForElection.mockReset();
     mockRoutePath.mockReturnValue("/elections/test-id");
+  });
+
+  describe("expansion sync on election context", () => {
+    it("syncs expansion for the election on mount (immediate watch)", () => {
+      mountMenu({
+        electionGuid: "election-a",
+        currentStage: "GatheringBallots",
+      });
+      expect(mockSyncExpansionForElection).toHaveBeenCalledWith(
+        "election-a",
+        "GatheringBallots",
+      );
+    });
+
+    it("syncs expansion when electionGuid prop changes", async () => {
+      const wrapper = mountMenu({
+        electionGuid: "election-a",
+        currentStage: "SettingUp",
+      });
+      mockSyncExpansionForElection.mockClear();
+
+      await wrapper.setProps({
+        electionGuid: "election-b",
+        currentStage: "Finalized",
+      });
+
+      expect(mockSyncExpansionForElection).toHaveBeenCalledWith(
+        "election-b",
+        "Finalized",
+      );
+    });
   });
 
   describe("admin mode (isGuestTeller=false)", () => {

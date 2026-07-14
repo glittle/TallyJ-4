@@ -9,13 +9,14 @@ import type { FormInstance, FormRules } from "element-plus";
 const { t } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showSuccessMessage } = useNotifications();
 
 const registerFormRef = ref<FormInstance>();
 const loading = ref(false);
 
 const registerForm = reactive({
   email: "",
+  displayName: "",
   password: "",
   confirmPassword: "",
 });
@@ -81,6 +82,21 @@ const rules = reactive<FormRules>({
       trigger: "blur",
     },
   ],
+  displayName: [
+    {
+      required: true,
+      validator: (_rule: any, value: any, callback: any) => {
+        if (!value || !String(value).trim()) {
+          callback(new Error(t("auth.displayNameRequired")));
+        } else if (String(value).trim().length > 200) {
+          callback(new Error(t("auth.displayNameMaxLength")));
+        } else {
+          callback();
+        }
+      },
+      trigger: "blur",
+    },
+  ],
   password: [{ validator: validatePassword, trigger: "blur" }],
   confirmPassword: [{ validator: validatePass2, trigger: "blur" }],
 });
@@ -94,16 +110,22 @@ const handleRegister = async () => {
     if (valid) {
       loading.value = true;
       try {
-        await authStore.register({
+        const response = await authStore.register({
           email: registerForm.email,
+          displayName: registerForm.displayName.trim(),
           password: registerForm.password,
           confirmPassword: registerForm.confirmPassword,
         });
-        showSuccessMessage(t("auth.registerSuccess"));
-        router.push("/dashboard");
+        if (response?.requiresEmailVerification) {
+          showSuccessMessage(t("auth.registerCheckEmail"));
+          router.push("/login");
+        } else {
+          showSuccessMessage(t("auth.registerSuccess"));
+          router.push("/dashboard");
+        }
       } catch (error) {
         console.error("Registration failed:", error);
-        showErrorMessage(t("auth.registerFailed"));
+        // authStore already shows the API error via handleApiError
       } finally {
         loading.value = false;
       }
@@ -140,6 +162,14 @@ defineExpose({
           <el-input
             v-model="registerForm.email"
             :placeholder="t('auth.emailPlaceholder')"
+          />
+        </el-form-item>
+
+        <el-form-item :label="t('auth.displayName')" prop="displayName">
+          <el-input
+            v-model="registerForm.displayName"
+            :placeholder="t('auth.displayNamePlaceholder')"
+            maxlength="200"
           />
         </el-form-item>
 

@@ -50,6 +50,7 @@ public class AuthController : ControllerBase
     private readonly ISecurityAuditService _securityAuditService;
     private readonly IRemoteLogService _remoteLogService;
     private readonly IComputerAssignmentService _assignmentService;
+    private readonly IAccountService _accountService;
 
     /// <summary>
     /// Initializes a new instance of the AuthController.
@@ -84,7 +85,8 @@ public class AuthController : ControllerBase
         IHttpClientFactory httpClientFactory,
         ISecurityAuditService securityAuditService,
         IRemoteLogService remoteLogService,
-        IComputerAssignmentService assignmentService)
+        IComputerAssignmentService assignmentService,
+        IAccountService accountService)
     {
         _localAuthService = localAuthService;
         _passwordResetService = passwordResetService;
@@ -98,6 +100,7 @@ public class AuthController : ControllerBase
         _signInManager = signInManager;
         _superAdminSettings = superAdminSettings.Value;
         _httpClientFactory = httpClientFactory;
+        _accountService = accountService;
         _securityAuditService = securityAuditService;
         _remoteLogService = remoteLogService;
         _assignmentService = assignmentService;
@@ -395,6 +398,27 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
+    /// Confirms a pending email change using the token from the confirmation email (anonymous).
+    /// </summary>
+    [HttpPost("confirmEmailChange")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ConfirmEmailChange([FromBody] Backend.DTOs.Account.ConfirmEmailChangeDto dto)
+    {
+        try
+        {
+            var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
+            await _accountService.ConfirmEmailChangeAsync(userId, dto, clientIp, userAgent);
+            return Ok(new { message = "Email address updated successfully" });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
     /// Sets up two-factor authentication for the authenticated user.
     /// </summary>
     /// <returns>The 2FA setup information including QR code and secret key.</returns>
@@ -554,16 +578,16 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
+        var (success, error, isEnabled, method) = await _twoFactorService.GetStatusAsync(userId);
+        if (!success)
         {
-            return NotFound(new { error = "User not found" });
+            return NotFound(new { error });
         }
 
         return Ok(new
         {
-            isEnabled = user.TwoFactorEnabled,
-            method = user.TwoFactorEnabled ? "totp" : (string?)null
+            isEnabled,
+            method
         });
     }
 
@@ -888,16 +912,16 @@ public class AuthController : ControllerBase
             return NotFound(new { error = "User not found" });
         }
 
-        // Check if user is a super admin by comparing email with configured super admin emails
+        // Advertise super-admin only when true (omit property otherwise — reduces client exposure).
         var isSuperAdmin = !string.IsNullOrEmpty(user.Email)
             && _superAdminSettings.Emails.Any(e => string.Equals(e, user.Email, StringComparison.OrdinalIgnoreCase));
 
-        return Ok(new
+        return Ok(new CurrentUserDto
         {
-            email = user.Email,
-            name = user.DisplayName,
-            authMethod = user.AuthMethod,
-            isSuperAdmin
+            Email = user.Email,
+            Name = user.DisplayName,
+            AuthMethod = user.AuthMethod,
+            IsSuperAdmin = isSuperAdmin
         });
     }
 

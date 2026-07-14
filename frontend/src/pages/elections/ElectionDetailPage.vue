@@ -1,4 +1,7 @@
 <script setup lang="ts">
+// SetupTipsCard moved here from Dashboard: tips apply while configuring a
+// specific election, next to the Election Details block.
+import SetupTipsCard from "@/components/dashboard/SetupTipsCard.vue";
 import { useNotifications } from "@/composables/useNotifications";
 import { isGuestTeller } from "@/domain/guestTellerAccess";
 import { formatNumber } from "@/utils/formatNumber";
@@ -197,39 +200,42 @@ async function exportElection() {
     </div>
 
     <div v-else-if="election">
-      <el-card class="info-card">
-        <template #header>
-          <span>{{ $t("elections.details") }}</span>
-        </template>
-        <el-descriptions :column="2" border>
-          <el-descriptions-item :label="$t('elections.form.name')">
-            {{ election.name }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('elections.form.type')">
-            {{ election.electionType || "-" }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('elections.form.date')">
-            {{ formatDate(election.dateOfElection) }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('elections.status')">
-            <el-tag :type="getStatusType(election.tallyStatus)">
-              {{ election.tallyStatus || "Draft" }}
-            </el-tag>
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('elections.form.numberToElect')">
-            {{ formatNumber(election.numberToElect) }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('elections.form.numberExtra')">
-            {{ formatNumber(election.numberExtra) }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('elections.form.convenor')">
-            {{ election.convenor || "-" }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('elections.form.electionMode')">
-            {{ election.electionMode || "-" }}
-          </el-descriptions-item>
-        </el-descriptions>
-      </el-card>
+      <div class="detail-top-row">
+        <el-card class="info-card">
+          <template #header>
+            <span>{{ $t("elections.details") }}</span>
+          </template>
+          <el-descriptions :column="2" border>
+            <el-descriptions-item :label="$t('elections.form.name')">
+              {{ election.name }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('elections.form.type')">
+              {{ election.electionType || "-" }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('elections.form.date')">
+              {{ formatDate(election.dateOfElection) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('elections.status')">
+              <el-tag :type="getStatusType(election.electionStage)">
+                {{ election.electionStage || "Draft" }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('elections.form.numberToElect')">
+              {{ formatNumber(election.numberToElect) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('elections.form.numberExtra')">
+              {{ formatNumber(election.numberExtra) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('elections.form.convenor')">
+              {{ election.convenor || "-" }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="$t('elections.form.electionMode')">
+              {{ election.electionMode || "-" }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-card>
+        <SetupTipsCard />
+      </div>
       <el-card class="stats-card">
         <template #header>
           <span>{{ $t("elections.statistics") }}</span>
@@ -394,6 +400,38 @@ async function exportElection() {
 
   .loading-container {
     padding: 40px;
+  }
+
+  // Setup Tips sits beside Election Details (moved from Dashboard).
+  .detail-top-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 15px;
+
+    .info-card {
+      flex: 1;
+      min-width: 0;
+      margin-top: 0;
+    }
+
+    .setup-tips-card,
+    .tips-panel {
+      flex: 0 1 320px;
+      max-width: 360px;
+      margin-top: 0;
+    }
+
+    @media (max-width: 900px) {
+      flex-direction: column;
+
+      .setup-tips-card,
+      .tips-panel {
+        flex: 1 1 auto;
+        max-width: none;
+        width: 100%;
+      }
+    }
   }
 
   .info-card,

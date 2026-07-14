@@ -178,6 +178,7 @@ const srcChunkRules: ChunkRule[] = [
   {
     patterns: [
       "/src/pages/SuperAdminDashboardPage",
+      "/src/pages/SuperAdminUsersPage",
       "/src/services/superAdminService",
       "/src/stores/superAdminStore",
     ],

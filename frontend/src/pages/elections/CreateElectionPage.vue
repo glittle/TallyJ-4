@@ -13,6 +13,7 @@
           v-model="form"
           :available-elections="availableElections"
           :form-ref="formRef"
+          force-basic-tab
         />
 
         <el-form-item style="margin-top: 20px">

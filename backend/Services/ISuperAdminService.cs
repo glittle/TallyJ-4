@@ -27,6 +27,12 @@ public interface ISuperAdminService
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <returns>A task containing detailed election information, or null if not found.</returns>
     Task<SuperAdminElectionDetailDto?> GetElectionDetailAsync(Guid electionGuid);
+
+    Task<PaginatedResponse<SuperAdminUserDto>> GetUsersAsync(SuperAdminUserFilterDto filter);
+
+    Task<SuperAdminUserDetailDto?> GetUserDetailAsync(string userId);
+
+    Task<SuperAdminUserDetailDto?> UpdateUserAsync(string userId, SuperAdminUpdateUserDto dto, string adminUserId);
 }
 
 

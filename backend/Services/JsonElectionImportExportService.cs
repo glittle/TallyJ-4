@@ -1,3 +1,4 @@
+using Backend;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Context;
@@ -43,7 +44,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
             .Where(ovi => ovi.ElectionGuid == electionGuid)
             .ToListAsync();
 
-        var logs = await _context.Logs
+        var logs = await _context.SecurityAuditLogs
             .Where(l => l.ElectionGuid == electionGuid)
             .ToListAsync();
 
@@ -204,13 +205,27 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 ovi.HistoryStatus,
                 ovi.NotifiedAboutOpening
             }),
-            logs = logs.Select(l => new
+            logs = logs.Select(l =>
             {
-                AsOf = l.AsOf.ToString("o"),
-                l.LocationGuid,
-                l.VoterId,
-                l.ComputerCode,
-                l.Details
+                var meta = !string.IsNullOrEmpty(l.MetadataJson)
+                    ? JsonSerializer.Deserialize<Dictionary<string, string>>(l.MetadataJson)
+                    : null;
+                Guid? locationGuid = null;
+                if (meta != null &&
+                    meta.TryGetValue("locationGuid", out var loc) &&
+                    Guid.TryParse(loc, out var parsedLoc))
+                {
+                    locationGuid = parsedLoc;
+                }
+
+                return new
+                {
+                    AsOf = l.Timestamp.ToString("o"),
+                    LocationGuid = locationGuid,
+                    VoterId = l.OnlineVoterId,
+                    ComputerCode = meta != null && meta.TryGetValue("computerCode", out var code) ? code : null,
+                    l.Details
+                };
             })
         };
 
@@ -527,18 +542,31 @@ public class JsonElectionImportExportService : ElectionImportExportBase
     {
         foreach (var log in importData.logs)
         {
-            var l = new Log
+            var metadata = new Dictionary<string, string>();
+            if (log.LocationGuid.HasValue)
+            {
+                var mappedLocation = guidMap.ContainsKey(log.LocationGuid.Value)
+                    ? guidMap[log.LocationGuid.Value]
+                    : log.LocationGuid.Value;
+                metadata["locationGuid"] = mappedLocation.ToString();
+            }
+
+            if (!string.IsNullOrWhiteSpace(log.ComputerCode))
+            {
+                metadata["computerCode"] = log.ComputerCode;
+            }
+
+            var l = new SecurityAuditLog
             {
                 ElectionGuid = electionGuid,
-                LocationGuid = log.LocationGuid.HasValue && guidMap.ContainsKey(log.LocationGuid.Value)
-                    ? guidMap[log.LocationGuid.Value]
-                    : null,
-                VoterId = log.VoterId,
-                ComputerCode = log.ComputerCode,
+                OnlineVoterId = log.VoterId,
                 Details = log.Details,
-                AsOf = ParseDateTime(log.AsOf) ?? DateTimeOffset.UtcNow
+                Timestamp = ParseDateTime(log.AsOf) ?? DateTimeOffset.UtcNow,
+                EventType = SecurityEventType.OperationalActivity,
+                Severity = SecurityEventSeverity.Info,
+                MetadataJson = metadata.Count > 0 ? JsonSerializer.Serialize(metadata) : null
             };
-            _context.Logs.Add(l);
+            _context.SecurityAuditLogs.Add(l);
         }
     }
 }

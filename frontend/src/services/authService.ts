@@ -13,11 +13,15 @@ import {
   postApiAuthKakao,
   postApiAuthLogout,
   postApiAuthTellerLogin,
+  postApiAuthVerifyEmail,
+  putApiAccountUpdateProfile,
 } from "@/api/gen/configService";
+import { client } from "@/api/gen/configService/client.gen";
 import type {
   RegisterRequest,
   LoginRequest,
   GoogleOneTapRequest,
+  AccountUserProfileDto,
 } from "@/api/gen/configService/types.gen";
 import type { TelegramLoginRequest } from "../types";
 
@@ -26,11 +30,33 @@ export interface AuthResponse {
   name?: string;
   authMethod?: string;
   requires2FA: boolean;
+  requiresEmailVerification?: boolean;
 }
 
 export interface TwoFactorSetupResponse {
   secret: string;
   qrCodeDataUrl: string;
+}
+
+export interface UserProfile {
+  id?: string | null;
+  userName?: string | null;
+  displayName?: string | null;
+  email?: string | null;
+  emailConfirmed?: boolean;
+  pendingEmail?: string | null;
+  authMethod?: string | null;
+  canChangeEmail?: boolean;
+}
+
+function unwrapProfile(response: {
+  data?: { data?: AccountUserProfileDto } | AccountUserProfileDto | null;
+}): UserProfile {
+  const outer = response.data as { data?: UserProfile } | UserProfile | null;
+  if (outer && typeof outer === "object" && "data" in outer && outer.data) {
+    return outer.data as UserProfile;
+  }
+  return (outer ?? {}) as UserProfile;
 }
 
 export const authService = {
@@ -74,6 +100,13 @@ export const authService = {
     });
   },
 
+  async verifyEmail(email: string, token: string): Promise<void> {
+    await postApiAuthVerifyEmail({
+      body: { email, token },
+      throwOnError: true,
+    });
+  },
+
   async setup2FA(): Promise<TwoFactorSetupResponse> {
     const response = await postApiAuthSetup2Fa({
       throwOnError: true,
@@ -91,6 +124,55 @@ export const authService = {
   async disable2FA(password: string, code: string): Promise<void> {
     await postApiAuthDisable2Fa({
       body: { password, code },
+      throwOnError: true,
+    });
+  },
+
+  async updateDisplayName(displayName: string): Promise<UserProfile> {
+    // Prefer dedicated endpoint when backend is updated; fall back to updateProfile body.
+    try {
+      const response = await client.post({
+        url: "/api/Account/changeDisplayName",
+        body: { displayName },
+        throwOnError: true,
+      });
+      return unwrapProfile(response as { data?: unknown });
+    } catch {
+      const response = await putApiAccountUpdateProfile({
+        body: { displayName } as never,
+        throwOnError: true,
+      });
+      return unwrapProfile(response);
+    }
+  },
+
+  async getMyProfile(): Promise<UserProfile> {
+    const response = await client.get({
+      url: "/api/Account/getMyProfile",
+      throwOnError: true,
+    });
+    return unwrapProfile(response as { data?: unknown });
+  },
+
+  async requestEmailChange(
+    newEmail: string,
+    currentPassword: string,
+  ): Promise<void> {
+    await client.post({
+      url: "/api/Account/requestEmailChange",
+      body: { newEmail, currentPassword },
+      throwOnError: true,
+    });
+  },
+
+  async confirmEmailChange(params: {
+    token?: string;
+    code?: string;
+  }): Promise<void> {
+    // Prefer anonymous Auth endpoint so link confirmation works without session.
+    await client.post({
+      url: "/api/Auth/confirmEmailChange",
+      body: params,
       throwOnError: true,
     });
   },

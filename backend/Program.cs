@@ -301,6 +301,8 @@ void ConfigureIdentityOptions(IServiceCollection services)
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
         options.Lockout.MaxFailedAccessAttempts = 5;
         options.Lockout.AllowedForNewUsers = true;
+
+        options.User.RequireUniqueEmail = true;
     });
 }
 
@@ -354,7 +356,6 @@ void RegisterApplicationServices(IServiceCollection services)
     services.AddScoped<IReportService, ReportService>();
     services.AddScoped<IFrontDeskService, FrontDeskService>();
     services.AddScoped<IOnlineVotingService, OnlineVotingService>();
-    services.AddScoped<IAuditLogService, AuditLogService>();
     services.AddScoped<ISuperAdminService, SuperAdminService>();
     services.AddScoped<ImportService>();
     services.AddScoped<IPeopleImportService, PeopleImportService>();

@@ -3,6 +3,7 @@ import {
   getApiSuperadminDashboardElections,
   getApiSuperadminDashboardElectionsByGuid,
 } from "@/api/gen/configService";
+import { client } from "@/api/gen/configService/client.gen";
 import type { PaginatedResponse } from "@/types/ApiResponse";
 
 export interface SuperAdminSummary {
@@ -86,4 +87,81 @@ export const superAdminService = {
     });
     return response.data?.data as SuperAdminElectionDetail;
   },
+
+  async getUsers(filter?: {
+    search?: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<PaginatedResponse<SuperAdminUser>> {
+    const response = await client.get({
+      url: "/api/superadmin/users",
+      query: {
+        Search: filter?.search,
+        Page: filter?.page,
+        PageSize: filter?.pageSize,
+      },
+      throwOnError: true,
+    });
+    const outer = response.data as {
+      data?: {
+        items?: SuperAdminUser[];
+        totalCount?: number;
+        pageNumber?: number;
+        pageSize?: number;
+        totalPages?: number;
+      };
+    };
+    const data = outer?.data;
+    return {
+      items: data?.items ?? [],
+      totalCount: data?.totalCount ?? 0,
+      page: data?.pageNumber ?? 1,
+      pageSize: data?.pageSize ?? 25,
+      totalPages: data?.totalPages ?? 0,
+    };
+  },
+
+  async getUserDetail(userId: string): Promise<SuperAdminUserDetail> {
+    const response = await client.get({
+      url: `/api/superadmin/users/${userId}`,
+      throwOnError: true,
+    });
+    const outer = response.data as { data?: SuperAdminUserDetail };
+    return outer?.data as SuperAdminUserDetail;
+  },
+
+  async updateUser(
+    userId: string,
+    body: { displayName?: string; email?: string },
+  ): Promise<SuperAdminUserDetail> {
+    const response = await client.put({
+      url: `/api/superadmin/users/${userId}`,
+      body,
+      throwOnError: true,
+    });
+    const outer = response.data as { data?: SuperAdminUserDetail };
+    return outer?.data as SuperAdminUserDetail;
+  },
 };
+
+export interface SuperAdminUser {
+  id: string;
+  email?: string;
+  displayName?: string;
+  authMethod?: string;
+  emailConfirmed?: boolean;
+  pendingEmail?: string | null;
+  lockoutEnd?: string | null;
+}
+
+export interface SuperAdminEmailChangeEntry {
+  oldEmail: string;
+  newEmail: string;
+  changedAt: string;
+  source: string;
+  changedByUserId?: string | null;
+}
+
+export interface SuperAdminUserDetail extends SuperAdminUser {
+  emailHistory: SuperAdminEmailChangeEntry[];
+}

@@ -17,7 +17,7 @@ namespace Backend.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.8")
+                .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -464,51 +464,6 @@ namespace Backend.Migrations
                     b.HasIndex(new[] { "ElectionGuid" }, "IX_Location_Election");
 
                     b.ToTable("Locations");
-                });
-
-            modelBuilder.Entity("Backend.Entities.Log", b =>
-                {
-                    b.Property<int>("RowId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("_RowId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowId"));
-
-                    b.Property<DateTimeOffset>("AsOf")
-                        .HasPrecision(0)
-                        .HasColumnType("datetimeoffset(0)");
-
-                    b.Property<string>("ComputerCode")
-                        .HasMaxLength(2)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(2)");
-
-                    b.Property<string>("Details")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<Guid?>("ElectionGuid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("HostAndVersion")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<Guid?>("LocationGuid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("VoterId")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.HasKey("RowId");
-
-                    b.HasIndex(new[] { "AsOf" }, "IX__Log");
-
-                    b.HasIndex(new[] { "ElectionGuid", "LocationGuid" }, "nci_msft_1__Log_154BF30FBBDD3CC74014282844F74DFE");
-
-                    b.ToTable("Logs");
                 });
 
             modelBuilder.Entity("Backend.Entities.Message", b =>
@@ -1086,6 +1041,9 @@ namespace Backend.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
+                    b.Property<Guid?>("ElectionGuid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -1102,6 +1060,10 @@ namespace Backend.Migrations
 
                     b.Property<string>("MetadataJson")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OnlineVoterId")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<int>("Severity")
                         .HasColumnType("int");
@@ -1120,9 +1082,13 @@ namespace Backend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex(new[] { "ElectionGuid" }, "IX_SecurityAuditLogs_ElectionGuid");
+
                     b.HasIndex(new[] { "EventType" }, "IX_SecurityAuditLogs_EventType");
 
                     b.HasIndex(new[] { "IsSuspicious" }, "IX_SecurityAuditLogs_IsSuspicious");
+
+                    b.HasIndex(new[] { "OnlineVoterId" }, "IX_SecurityAuditLogs_OnlineVoterId");
 
                     b.HasIndex(new[] { "Timestamp" }, "IX_SecurityAuditLogs_Timestamp");
 
@@ -1263,6 +1229,49 @@ namespace Backend.Migrations
                     b.ToTable("TwoFactorToken");
                 });
 
+            modelBuilder.Entity("Backend.Entities.UserEmailChangeLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("ChangedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<string>("ChangedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NewEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("OldEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "UserId", "ChangedAt" }, "IX_UserEmailChangeLogs_UserId_ChangedAt");
+
+                    b.ToTable("UserEmailChangeLogs");
+                });
+
             modelBuilder.Entity("Backend.Entities.Vote", b =>
                 {
                     b.Property<int>("RowId")
@@ -1369,6 +1378,22 @@ namespace Backend.Migrations
 
                     b.Property<string>("PasswordResetToken")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PendingEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PendingEmailCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTimeOffset?>("PendingEmailExpiry")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<string>("PendingEmailToken")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");

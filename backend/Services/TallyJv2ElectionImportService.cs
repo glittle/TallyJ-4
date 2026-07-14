@@ -1,3 +1,4 @@
+using Backend;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Context;
@@ -403,18 +404,37 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
         {
             foreach (XmlElement logNode in logNodes)
             {
-                var log = new Log
+                var locationGuidRaw = ParseGuid(logNode.GetAttribute(LocationGuidAttribute));
+                Guid? locationGuid = locationGuidRaw.HasValue && guidMap.ContainsKey(locationGuidRaw.Value)
+                    ? guidMap[locationGuidRaw.Value]
+                    : null;
+                var computerCode = logNode.GetAttribute("ComputerCode");
+                var metadata = new Dictionary<string, string>();
+                if (locationGuid.HasValue)
+                {
+                    metadata["locationGuid"] = locationGuid.Value.ToString();
+                }
+
+                if (!string.IsNullOrWhiteSpace(computerCode))
+                {
+                    metadata["computerCode"] = computerCode;
+                }
+
+                var log = new SecurityAuditLog
                 {
                     ElectionGuid = electionGuid,
-                    LocationGuid = guidMap.ContainsKey(ParseGuid(logNode.GetAttribute(LocationGuidAttribute)) ?? Guid.Empty)
-                        ? guidMap[ParseGuid(logNode.GetAttribute(LocationGuidAttribute)) ?? Guid.Empty]
-                        : null,
-                    VoterId = logNode.GetAttribute("VoterId"),
-                    ComputerCode = logNode.GetAttribute("ComputerCode"),
+                    OnlineVoterId = string.IsNullOrWhiteSpace(logNode.GetAttribute("VoterId"))
+                        ? null
+                        : logNode.GetAttribute("VoterId"),
                     Details = logNode.GetAttribute("Details"),
-                    AsOf = ParseDateTime(logNode.GetAttribute("AsOf")) ?? DateTimeOffset.UtcNow
+                    Timestamp = ParseDateTime(logNode.GetAttribute("AsOf")) ?? DateTimeOffset.UtcNow,
+                    EventType = SecurityEventType.OperationalActivity,
+                    Severity = SecurityEventSeverity.Info,
+                    MetadataJson = metadata.Count > 0
+                        ? System.Text.Json.JsonSerializer.Serialize(metadata)
+                        : null
                 };
-                _context.Logs.Add(log);
+                _context.SecurityAuditLogs.Add(log);
             }
         }
     }
