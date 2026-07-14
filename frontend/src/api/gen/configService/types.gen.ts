@@ -212,6 +212,13 @@ export type ApiResponsePublicPublicHomeDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponseSecuritySecurityAuditLogDto = {
+    success?: boolean;
+    data?: SecuritySecurityAuditLogDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponseSetupElectionSetupStatusDto = {
     success?: boolean;
     data?: SetupElectionSetupStatusDto;
@@ -360,6 +367,61 @@ export type AuthVerifyEmailRequest = {
     email: string;
     token: string;
 };
+
+export const BackendSecurityEventSeverity = {
+    0: 0,
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4
+} as const;
+
+export type BackendSecurityEventSeverity = typeof BackendSecurityEventSeverity[keyof typeof BackendSecurityEventSeverity];
+
+export const BackendSecurityEventType = {
+    0: 0,
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5,
+    6: 6,
+    7: 7,
+    8: 8,
+    9: 9,
+    10: 10,
+    11: 11,
+    12: 12,
+    13: 13,
+    14: 14,
+    15: 15,
+    16: 16,
+    17: 17,
+    18: 18,
+    19: 19,
+    20: 20,
+    21: 21,
+    22: 22,
+    23: 23,
+    24: 24,
+    25: 25,
+    26: 26,
+    27: 27,
+    28: 28,
+    29: 29,
+    30: 30,
+    31: 31,
+    32: 32,
+    33: 33,
+    34: 34,
+    35: 35,
+    36: 36,
+    37: 37,
+    38: 38,
+    39: 39
+} as const;
+
+export type BackendSecurityEventType = typeof BackendSecurityEventType[keyof typeof BackendSecurityEventType];
 
 export type BallotsBallotDto = {
     ballotGuid?: string;
@@ -961,6 +1023,16 @@ export type PaginatedResponseLocationsLocationDto = {
 
 export type PaginatedResponsePeoplePersonDto = {
     items?: Array<PeoplePersonDto> | null;
+    pageNumber?: number;
+    pageSize?: number;
+    totalCount?: number;
+    readonly totalPages?: number;
+    readonly hasPreviousPage?: boolean;
+    readonly hasNextPage?: boolean;
+};
+
+export type PaginatedResponseSecuritySecurityAuditLogDto = {
+    items?: Array<SecuritySecurityAuditLogDto> | null;
     pageNumber?: number;
     pageSize?: number;
     totalCount?: number;
@@ -1763,6 +1835,24 @@ export type ResultsVoteDistributionDto = {
     } | null;
 };
 
+export type SecuritySecurityAuditLogDto = {
+    id?: number;
+    timestamp?: Date;
+    eventType?: BackendSecurityEventType;
+    userId?: string | null;
+    onlineVoterId?: string | null;
+    electionGuid?: string | null;
+    email?: string | null;
+    ipAddress?: string | null;
+    userAgent?: string | null;
+    details?: string | null;
+    isSuspicious?: boolean;
+    severity?: BackendSecurityEventSeverity;
+    metadata?: {
+        [key: string]: string;
+    } | null;
+};
+
 export type SetupElectionSetupStatusDto = {
     electionGuid?: string;
     name?: string | null;
@@ -2012,6 +2102,13 @@ export type PaginatedResponseLocationsLocationDtoWritable = {
 
 export type PaginatedResponsePeoplePersonDtoWritable = {
     items?: Array<PeoplePersonDto> | null;
+    pageNumber?: number;
+    pageSize?: number;
+    totalCount?: number;
+};
+
+export type PaginatedResponseSecuritySecurityAuditLogDtoWritable = {
+    items?: Array<SecuritySecurityAuditLogDto> | null;
     pageNumber?: number;
     pageSize?: number;
     totalCount?: number;
@@ -4541,6 +4638,54 @@ export type GetApiResultsElectionByElectionGuidDetailedStatisticsResponses = {
 };
 
 export type GetApiResultsElectionByElectionGuidDetailedStatisticsResponse = GetApiResultsElectionByElectionGuidDetailedStatisticsResponses[keyof GetApiResultsElectionByElectionGuidDetailedStatisticsResponses];
+
+export type GetApiSecurityAuditLogsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        eventType?: BackendSecurityEventType;
+        userId?: string;
+        onlineVoterId?: string;
+        electionGuid?: string;
+        email?: string;
+        ipAddress?: string;
+        isSuspicious?: boolean;
+        severity?: BackendSecurityEventSeverity;
+        startDate?: Date;
+        endDate?: Date;
+        searchTerm?: string;
+        pageNumber?: number;
+        pageSize?: number;
+    };
+    url: '/api/security-audit-logs';
+};
+
+export type GetApiSecurityAuditLogsResponses = {
+    /**
+     * OK
+     */
+    200: PaginatedResponseSecuritySecurityAuditLogDto;
+};
+
+export type GetApiSecurityAuditLogsResponse = GetApiSecurityAuditLogsResponses[keyof GetApiSecurityAuditLogsResponses];
+
+export type GetApiSecurityAuditLogsByIdData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/security-audit-logs/{id}';
+};
+
+export type GetApiSecurityAuditLogsByIdResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSecuritySecurityAuditLogDto;
+};
+
+export type GetApiSecurityAuditLogsByIdResponse = GetApiSecurityAuditLogsByIdResponses[keyof GetApiSecurityAuditLogsByIdResponses];
 
 export type PostApiSetupElectionStep1Data = {
     body?: SetupElectionStep1Dto;

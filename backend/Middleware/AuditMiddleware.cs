@@ -48,6 +48,7 @@ public class AuditMiddleware
         if (path.StartsWith("/api/auth") ||
             path.StartsWith("/api/account") ||
             path.StartsWith("/api/audit-logs") ||
+            path.StartsWith("/api/security-audit-logs") ||
             path.StartsWith("/swagger") ||
             path.StartsWith("/hubs") ||
             path.StartsWith("/health"))

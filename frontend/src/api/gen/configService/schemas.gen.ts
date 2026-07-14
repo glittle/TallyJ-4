@@ -735,6 +735,30 @@ export const ApiResponsePublic_PublicHomeDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponseSecurity_SecurityAuditLogDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/Security_SecurityAuditLogDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponseSetup_ElectionSetupStatusDtoSchema = {
     type: 'object',
     properties: {
@@ -1281,6 +1305,65 @@ export const Auth_VerifyEmailRequestSchema = {
         }
     },
     additionalProperties: false
+} as const;
+
+export const Backend_SecurityEventSeveritySchema = {
+    enum: [
+        0,
+        1,
+        2,
+        3,
+        4
+    ],
+    type: 'integer',
+    format: 'int32'
+} as const;
+
+export const Backend_SecurityEventTypeSchema = {
+    enum: [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+    ],
+    type: 'integer',
+    format: 'int32'
 } as const;
 
 export const Ballots_BallotDtoSchema = {
@@ -3295,6 +3378,45 @@ export const PaginatedResponsePeople_PersonDtoSchema = {
             type: 'array',
             items: {
                 $ref: '#/components/schemas/People_PersonDto'
+            },
+            nullable: true
+        },
+        pageNumber: {
+            type: 'integer',
+            format: 'int32'
+        },
+        pageSize: {
+            type: 'integer',
+            format: 'int32'
+        },
+        totalCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        totalPages: {
+            type: 'integer',
+            format: 'int32',
+            readOnly: true
+        },
+        hasPreviousPage: {
+            type: 'boolean',
+            readOnly: true
+        },
+        hasNextPage: {
+            type: 'boolean',
+            readOnly: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const PaginatedResponseSecurity_SecurityAuditLogDtoSchema = {
+    type: 'object',
+    properties: {
+        items: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/Security_SecurityAuditLogDto'
             },
             nullable: true
         },
@@ -6199,6 +6321,66 @@ export const Results_VoteDistributionDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const Security_SecurityAuditLogDtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'integer',
+            format: 'int32'
+        },
+        timestamp: {
+            type: 'string',
+            format: 'date-time'
+        },
+        eventType: {
+            $ref: '#/components/schemas/Backend_SecurityEventType'
+        },
+        userId: {
+            type: 'string',
+            nullable: true
+        },
+        onlineVoterId: {
+            type: 'string',
+            nullable: true
+        },
+        electionGuid: {
+            type: 'string',
+            format: 'uuid',
+            nullable: true
+        },
+        email: {
+            type: 'string',
+            nullable: true
+        },
+        ipAddress: {
+            type: 'string',
+            nullable: true
+        },
+        userAgent: {
+            type: 'string',
+            nullable: true
+        },
+        details: {
+            type: 'string',
+            nullable: true
+        },
+        isSuspicious: {
+            type: 'boolean'
+        },
+        severity: {
+            $ref: '#/components/schemas/Backend_SecurityEventSeverity'
+        },
+        metadata: {
+            type: 'object',
+            additionalProperties: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const Setup_ElectionSetupStatusDtoSchema = {
     type: 'object',
     properties: {
@@ -7077,6 +7259,32 @@ export const PaginatedResponsePeople_PersonDtoWritableSchema = {
             type: 'array',
             items: {
                 $ref: '#/components/schemas/People_PersonDto'
+            },
+            nullable: true
+        },
+        pageNumber: {
+            type: 'integer',
+            format: 'int32'
+        },
+        pageSize: {
+            type: 'integer',
+            format: 'int32'
+        },
+        totalCount: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const PaginatedResponseSecurity_SecurityAuditLogDtoWritableSchema = {
+    type: 'object',
+    properties: {
+        items: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/Security_SecurityAuditLogDto'
             },
             nullable: true
         },

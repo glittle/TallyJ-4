@@ -1,11 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { auditLogService } from "@/services/auditLogService";
-import type {
-  AuditLog,
-  AuditLogFilter,
-  CreateAuditLogDto,
-} from "@/types/AuditLog";
+import type { AuditLog, AuditLogFilter } from "@/types/AuditLog";
 
 export const useAuditLogStore = defineStore("auditLog", () => {
   const auditLogs = ref<AuditLog[]>([]);
@@ -21,43 +17,29 @@ export const useAuditLogStore = defineStore("auditLog", () => {
     error.value = null;
     try {
       const response = await auditLogService.getAuditLogs(filter, page, size);
-      auditLogs.value = response.data;
+      auditLogs.value = response.items;
       totalCount.value = response.totalCount;
-      currentPage.value = response.pageNumber;
+      currentPage.value = response.page;
       pageSize.value = response.pageSize;
-    } catch (err: any) {
-      error.value = err.message || "Failed to fetch audit logs";
+    } catch (err: unknown) {
+      error.value =
+        err instanceof Error ? err.message : "Failed to fetch audit logs";
       throw err;
     } finally {
       loading.value = false;
     }
   }
 
-  async function fetchAuditLogById(rowId: number) {
+  async function fetchAuditLogById(id: number) {
     loading.value = true;
     error.value = null;
     try {
-      const auditLog = await auditLogService.getAuditLogById(rowId);
+      const auditLog = await auditLogService.getAuditLogById(id);
       currentAuditLog.value = auditLog;
       return auditLog;
-    } catch (err: any) {
-      error.value = err.message || "Failed to fetch audit log";
-      throw err;
-    } finally {
-      loading.value = false;
-    }
-  }
-
-  async function createAuditLog(auditLogData: CreateAuditLogDto) {
-    loading.value = true;
-    error.value = null;
-    try {
-      const newAuditLog = await auditLogService.createAuditLog(auditLogData);
-      auditLogs.value.unshift(newAuditLog);
-      totalCount.value++;
-      return newAuditLog;
-    } catch (err: any) {
-      error.value = err.message || "Failed to create audit log";
+    } catch (err: unknown) {
+      error.value =
+        err instanceof Error ? err.message : "Failed to fetch audit log";
       throw err;
     } finally {
       loading.value = false;
@@ -88,7 +70,6 @@ export const useAuditLogStore = defineStore("auditLog", () => {
     pageSize,
     fetchAuditLogs,
     fetchAuditLogById,
-    createAuditLog,
     clearError,
     $reset,
   };

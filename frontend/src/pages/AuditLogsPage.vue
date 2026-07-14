@@ -32,14 +32,20 @@ async function loadAuditLogs() {
   if (filters.value.electionGuid) {
     filterParams.electionGuid = filters.value.electionGuid;
   }
-  if (filters.value.locationGuid) {
-    filterParams.locationGuid = filters.value.locationGuid;
+  if (filters.value.userId) {
+    filterParams.userId = filters.value.userId;
   }
-  if (filters.value.voterId) {
-    filterParams.voterId = filters.value.voterId;
+  if (filters.value.onlineVoterId) {
+    filterParams.onlineVoterId = filters.value.onlineVoterId;
   }
-  if (filters.value.computerCode) {
-    filterParams.computerCode = filters.value.computerCode;
+  if (filters.value.email) {
+    filterParams.email = filters.value.email;
+  }
+  if (filters.value.ipAddress) {
+    filterParams.ipAddress = filters.value.ipAddress;
+  }
+  if (filters.value.isSuspicious !== undefined && filters.value.isSuspicious !== null) {
+    filterParams.isSuspicious = filters.value.isSuspicious;
   }
   if (filters.value.startDate) {
     filterParams.startDate = new Date(filters.value.startDate).toISOString();
@@ -97,6 +103,13 @@ function formatDate(dateString: string) {
     second: "2-digit",
   });
 }
+
+function formatValue(value: unknown) {
+  if (value === null || value === undefined || value === "") {
+    return "-";
+  }
+  return String(value);
+}
 </script>
 
 <template>
@@ -112,29 +125,48 @@ function formatDate(dateString: string) {
               @change="applyFilters"
             />
           </el-form-item>
-          <el-form-item :label="$t('audit.filters.locationGuid')">
+          <el-form-item :label="$t('audit.filters.userId')">
             <el-input
-              v-model="filters.locationGuid"
-              :placeholder="$t('audit.filters.locationGuidPlaceholder')"
+              v-model="filters.userId"
+              :placeholder="$t('audit.filters.userIdPlaceholder')"
               clearable
               @change="applyFilters"
             />
           </el-form-item>
-          <el-form-item :label="$t('audit.filters.voterId')">
+          <el-form-item :label="$t('audit.filters.onlineVoterId')">
             <el-input
-              v-model="filters.voterId"
-              :placeholder="$t('audit.filters.voterIdPlaceholder')"
+              v-model="filters.onlineVoterId"
+              :placeholder="$t('audit.filters.onlineVoterIdPlaceholder')"
               clearable
               @change="applyFilters"
             />
           </el-form-item>
-          <el-form-item :label="$t('audit.filters.computerCode')">
+          <el-form-item :label="$t('audit.filters.email')">
             <el-input
-              v-model="filters.computerCode"
-              :placeholder="$t('audit.filters.computerCodePlaceholder')"
+              v-model="filters.email"
+              :placeholder="$t('audit.filters.emailPlaceholder')"
               clearable
               @change="applyFilters"
             />
+          </el-form-item>
+          <el-form-item :label="$t('audit.filters.ipAddress')">
+            <el-input
+              v-model="filters.ipAddress"
+              :placeholder="$t('audit.filters.ipAddressPlaceholder')"
+              clearable
+              @change="applyFilters"
+            />
+          </el-form-item>
+          <el-form-item :label="$t('audit.filters.suspicious')">
+            <el-select
+              v-model="filters.isSuspicious"
+              :placeholder="$t('audit.filters.suspiciousPlaceholder')"
+              clearable
+              @change="applyFilters"
+            >
+              <el-option :label="$t('audit.filters.suspiciousYes')" :value="true" />
+              <el-option :label="$t('audit.filters.suspiciousNo')" :value="false" />
+            </el-select>
           </el-form-item>
           <el-form-item :label="$t('audit.filters.startDate')">
             <el-date-picker
@@ -176,38 +208,67 @@ function formatDate(dateString: string) {
       <div class="table-container">
         <el-table v-loading="loading" :data="auditLogs" style="width: 100%">
           <el-table-column
-            prop="asOf"
+            prop="timestamp"
             :label="$t('audit.table.dateTime')"
             width="180"
           >
             <template #default="scope">
-              {{ formatDate(scope.row.asOf) }}
+              {{ formatDate(scope.row.timestamp) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="eventType"
+            :label="$t('audit.table.eventType')"
+            width="160"
+          >
+            <template #default="scope">
+              {{ formatValue(scope.row.eventType) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="severity"
+            :label="$t('audit.table.severity')"
+            width="100"
+            align="center"
+          >
+            <template #default="scope">
+              {{ formatValue(scope.row.severity) }}
             </template>
           </el-table-column>
           <el-table-column
             prop="details"
             :label="$t('audit.table.details')"
-            min-width="300"
+            min-width="280"
           />
           <el-table-column
-            prop="voterId"
+            prop="userId"
             :label="$t('audit.table.userId')"
-            width="150"
+            width="140"
           >
             <template #default="scope">
-              <span v-if="scope.row.voterId">{{ scope.row.voterId }}</span>
+              <span v-if="scope.row.userId">{{ scope.row.userId }}</span>
               <span v-else class="text-muted">-</span>
             </template>
           </el-table-column>
           <el-table-column
-            prop="computerCode"
-            :label="$t('audit.table.computer')"
-            width="120"
+            prop="email"
+            :label="$t('audit.table.email')"
+            width="180"
+          >
+            <template #default="scope">
+              <span v-if="scope.row.email">{{ scope.row.email }}</span>
+              <span v-else class="text-muted">-</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="isSuspicious"
+            :label="$t('audit.table.suspicious')"
+            width="110"
             align="center"
           >
             <template #default="scope">
-              <el-tag v-if="scope.row.computerCode" type="info">
-                {{ scope.row.computerCode }}
+              <el-tag v-if="scope.row.isSuspicious" type="danger" size="small">
+                {{ $t("audit.table.yes") }}
               </el-tag>
               <span v-else class="text-muted">-</span>
             </template>
@@ -256,33 +317,49 @@ function formatDate(dateString: string) {
     <el-dialog
       v-model="detailsDialogVisible"
       :title="$t('audit.dialog.title')"
-      width="600px"
+      width="640px"
     >
       <div v-if="selectedLog" class="log-details">
         <el-descriptions :column="1" border>
-          <el-descriptions-item :label="$t('audit.dialog.rowId')">
-            {{ selectedLog.rowId }}
+          <el-descriptions-item :label="$t('audit.dialog.id')">
+            {{ selectedLog.id }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('audit.dialog.dateTime')">
-            {{ formatDate(selectedLog.asOf) }}
+            {{ formatDate(selectedLog.timestamp) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="$t('audit.dialog.eventType')">
+            {{ formatValue(selectedLog.eventType) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="$t('audit.dialog.severity')">
+            {{ formatValue(selectedLog.severity) }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('audit.dialog.details')">
             {{ selectedLog.details || "-" }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('audit.dialog.userId')">
-            {{ selectedLog.voterId || "-" }}
+            {{ selectedLog.userId || "-" }}
           </el-descriptions-item>
-          <el-descriptions-item :label="$t('audit.dialog.computerCode')">
-            {{ selectedLog.computerCode || "-" }}
+          <el-descriptions-item :label="$t('audit.dialog.onlineVoterId')">
+            {{ selectedLog.onlineVoterId || "-" }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="$t('audit.dialog.email')">
+            {{ selectedLog.email || "-" }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="$t('audit.dialog.ipAddress')">
+            {{ selectedLog.ipAddress || "-" }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="$t('audit.dialog.userAgent')">
+            {{ selectedLog.userAgent || "-" }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('audit.dialog.electionGuid')">
             {{ selectedLog.electionGuid || "-" }}
           </el-descriptions-item>
-          <el-descriptions-item :label="$t('audit.dialog.locationGuid')">
-            {{ selectedLog.locationGuid || "-" }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="$t('audit.dialog.hostAndVersion')">
-            {{ selectedLog.hostAndVersion || "-" }}
+          <el-descriptions-item :label="$t('audit.dialog.suspicious')">
+            {{
+              selectedLog.isSuspicious
+                ? $t("audit.table.yes")
+                : $t("audit.filters.suspiciousNo")
+            }}
           </el-descriptions-item>
         </el-descriptions>
       </div>
@@ -293,48 +370,48 @@ function formatDate(dateString: string) {
 <style lang="less">
 .audit-logs-page {
   padding: 20px;
-}
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-.card-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+  }
 
-.filters-container {
-  margin-bottom: 20px;
-  padding: 20px;
-  background-color: #f5f7fa;
-  border-radius: 4px;
-}
+  .filters-container {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f5f7fa;
+    border-radius: 4px;
+  }
 
-.filter-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
+  .filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 
-.table-container {
-  margin-top: 20px;
-}
+  .table-container {
+    margin-top: 20px;
+  }
 
-.pagination-container {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-}
+  .pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
 
-.text-muted {
-  color: #909399;
-}
+  .text-muted {
+    color: #909399;
+  }
 
-.log-details {
-  padding: 10px 0;
+  .log-details {
+    padding: 10px 0;
+  }
 }
 </style>
