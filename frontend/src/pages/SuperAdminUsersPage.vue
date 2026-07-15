@@ -136,7 +136,7 @@ onMounted(fetchUsers);
               :type="row.emailConfirmed ? 'success' : 'info'"
               size="small"
             >
-              {{ row.emailConfirmed ? "Yes" : "No" }}
+              {{ row.emailConfirmed ? $t("common.yes") : $t("common.no") }}
             </el-tag>
           </template>
         </el-table-column>

@@ -219,7 +219,8 @@ export const useNavUiStore = defineStore("navUi", () => {
     sidebarGroupExpansion: readonly(sidebarGroupExpansion),
     expansionElectionGuid: readonly(expansionElectionGuid),
     dismissedTips: readonly(dismissedTips),
-    sidebarCollapsed,
+    // Read-only so consumers must use set/toggle helpers (which persist).
+    sidebarCollapsed: readonly(sidebarCollapsed),
     toggleGroup,
     setGroupExpanded,
     syncExpansionForElection,

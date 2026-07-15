@@ -45,6 +45,8 @@ export const electionService = {
         isTellerAccessOpen: item.isTellerAccessOpen ?? false,
         isOnlineVotingEnabled: item.isOnlineVotingEnabled ?? false,
         showAsTest: item.showAsTest ?? false,
+        // Summary API exposes `toElect`; rest of the app uses `numberToElect`.
+        numberToElect: item.toElect ?? undefined,
       })) || []
     );
   },

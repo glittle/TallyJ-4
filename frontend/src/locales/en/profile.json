@@ -25,6 +25,7 @@
   "profile.newEmail": "New Email",
   "profile.newName": "New Name",
   "profile.newPassword": "New Password",
+  "profile.passwordChangeComingSoon": "Password change functionality coming soon",
   "profile.passwordsDoNotMatch": "Passwords do not match",
   "profile.pendingEmailNote": "Pending confirmation: {email}",
   "profile.sendEmailVerification": "Send verification",
