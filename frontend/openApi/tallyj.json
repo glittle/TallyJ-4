@@ -35,54 +35,6 @@
         }
       }
     },
-    "/api/Account/updateProfile": {
-      "put": {
-        "tags": [
-          "Account"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Account_UpdateUserProfileDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Account_UpdateUserProfileDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Account_UpdateUserProfileDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAccount_UserProfileDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAccount_UserProfileDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseAccount_UserProfileDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Account/changeDisplayName": {
       "post": {
         "tags": [
@@ -151,54 +103,6 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/Account_RequestEmailChangeDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseSystem_Object"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseSystem_Object"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseSystem_Object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Account/confirmEmailChange": {
-      "post": {
-        "tags": [
-          "Account"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Account_ConfirmEmailChangeDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Account_ConfirmEmailChangeDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Account_ConfirmEmailChangeDto"
               }
             }
           }
@@ -7328,28 +7232,6 @@
             "nullable": true
           },
           "currentPassword": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Account_UpdateUserProfileDto": {
-        "type": "object",
-        "properties": {
-          "displayName": {
-            "type": "string",
-            "nullable": true
-          },
-          "userName": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
             "type": "string",
             "nullable": true
           }

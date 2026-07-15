@@ -60,29 +60,6 @@ export const Account_RequestEmailChangeDtoSchema = {
     additionalProperties: false
 } as const;
 
-export const Account_UpdateUserProfileDtoSchema = {
-    type: 'object',
-    properties: {
-        displayName: {
-            type: 'string',
-            nullable: true
-        },
-        userName: {
-            type: 'string',
-            nullable: true
-        },
-        email: {
-            type: 'string',
-            nullable: true
-        },
-        phoneNumber: {
-            type: 'string',
-            nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
 export const Account_UserProfileDtoSchema = {
     type: 'object',
     properties: {

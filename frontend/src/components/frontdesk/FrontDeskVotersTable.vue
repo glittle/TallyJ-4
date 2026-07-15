@@ -89,7 +89,9 @@ const flagColorPalette = [
 ];
 
 function getFlagColor(flag: string, electionFlags: any[]): string {
-  if (!electionFlags || electionFlags.length === 0) return "#64748b";
+  if (!electionFlags || electionFlags.length === 0) {
+    return "#64748b";
+  }
   const index = electionFlags.findIndex((f: any) => f === flag);
   return flagColorPalette[index % flagColorPalette.length] || "#64748b";
 }
@@ -100,7 +102,9 @@ function getFlagAbbr(flag: string, electionFlags: any[]): string {
 }
 
 function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
-  if (!voter.flags) return false;
+  if (!voter.flags) {
+    return false;
+  }
   return voter.flags
     .split(",")
     .map((f) => f.trim())
@@ -108,7 +112,9 @@ function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
 }
 
 function formatTimeShort(time?: string): string {
-  if (!time) return "";
+  if (!time) {
+    return "";
+  }
   return new Date(time).toLocaleTimeString();
 }
 
@@ -120,9 +126,12 @@ function getRowClassName({
   rowIndex: number;
 }) {
   const classes: string[] = [];
-  if (rowIndex === props.selectedIndex) classes.push("selected-row");
-  if (props.highlightedPersonGuids.has(rowData.personGuid))
+  if (rowIndex === props.selectedIndex) {
+    classes.push("selected-row");
+  }
+  if (props.highlightedPersonGuids.has(rowData.personGuid)) {
     classes.push("recently-updated-row");
+  }
   return classes.join(" ");
 }
 
@@ -145,7 +154,9 @@ const columns = computed<Column<FrontDeskVoterDto>[]>(() => {
       title: t("frontDesk.table.method"),
       width: widths.method,
       cellRenderer: ({ rowData }) => {
-        if (!rowData.votingMethod) return h("span", t("frontDesk.common.dash"));
+        if (!rowData.votingMethod) {
+          return h("span", t("frontDesk.common.dash"));
+        }
         return h(
           ElTag,
           { type: getVotingMethodTagType(rowData.votingMethod) },
@@ -187,7 +198,7 @@ const columns = computed<Column<FrontDeskVoterDto>[]>(() => {
             },
           },
           () =>
-            rowData.envNum != null
+            rowData.envNum !== null && rowData.envNum !== undefined
               ? String(rowData.envNum)
               : t("frontDesk.envelope.set"),
         ),
@@ -251,8 +262,9 @@ const columns = computed<Column<FrontDeskVoterDto>[]>(() => {
 
 function scrollToSelectedRow(rowIndex: number) {
   nextTick(() => {
-    if (rowIndex >= 0 && tableRef.value)
+    if (rowIndex >= 0 && tableRef.value) {
       tableRef.value.scrollToRow(rowIndex, "smart");
+    }
   });
 }
 

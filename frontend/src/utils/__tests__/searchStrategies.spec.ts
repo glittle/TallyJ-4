@@ -1,20 +1,20 @@
-import { describe, it, expect } from "vitest";
+import type { SearchablePersonDto } from "@/types/Person";
+import { describe, expect, it } from "vitest";
 import {
-  normalizeSearchText,
+  applyAllStrategies,
   calculateLevenshteinDistance,
   compareSoundexCodes,
   exactMatch,
-  prefixMatch,
-  wordBoundaryMatch,
-  substringMatch,
+  fuzzyMatch,
+  matchesFrontDeskVoterSearch,
+  normalizeSearchText,
   otherNamesMatch,
   phoneticMatch,
-  fuzzyMatch,
-  applyAllStrategies,
-  matchesFrontDeskVoterSearch,
+  prefixMatch,
+  substringMatch,
   tokenizeNameForSearch,
+  wordBoundaryMatch,
 } from "../searchStrategies";
-import type { SearchablePersonDto } from "@/types/Person";
 
 function createMockPerson(
   firstName: string,
@@ -70,12 +70,10 @@ describe("matchesFrontDeskVoterSearch", () => {
   });
 
   it("handles voters with a missing full name", () => {
-    expect(
-      matchesFrontDeskVoterSearch({ fullName: undefined }, "smith"),
-    ).toBe(false);
-    expect(matchesFrontDeskVoterSearch({ fullName: undefined }, "")).toBe(
-      true,
+    expect(matchesFrontDeskVoterSearch({ fullName: undefined }, "smith")).toBe(
+      false,
     );
+    expect(matchesFrontDeskVoterSearch({ fullName: undefined }, "")).toBe(true);
   });
 });
 

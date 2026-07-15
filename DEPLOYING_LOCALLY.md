@@ -66,8 +66,9 @@ Create `appsettings.Production.json` in `publish/backend/`:
     "Issuer": "https://your-domain.com",
     "Audience": "https://your-domain.com"
   },
-  "Frontend": {
-    "BaseUrl": "https://your-domain.com"
+  "ClientEnv": {
+    "frontendUrl": "https://your-domain.com",
+    "apiUrl": "https://your-domain.com"
   }
 }
 ```

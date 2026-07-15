@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { View } from "@element-plus/icons-vue";
 import { useAuditLogStore } from "@/stores/auditLogStore";
 import type { AuditLog, AuditLogFilter } from "@/types/AuditLog";
+import { View } from "@element-plus/icons-vue";
+import { computed, onMounted, ref } from "vue";
 
 const auditLogStore = useAuditLogStore();
 
@@ -44,7 +44,10 @@ async function loadAuditLogs() {
   if (filters.value.ipAddress) {
     filterParams.ipAddress = filters.value.ipAddress;
   }
-  if (filters.value.isSuspicious !== undefined && filters.value.isSuspicious !== null) {
+  if (
+    filters.value.isSuspicious !== undefined &&
+    filters.value.isSuspicious !== null
+  ) {
     filterParams.isSuspicious = filters.value.isSuspicious;
   }
   if (filters.value.startDate) {
@@ -164,8 +167,14 @@ function formatValue(value: unknown) {
               clearable
               @change="applyFilters"
             >
-              <el-option :label="$t('audit.filters.suspiciousYes')" :value="true" />
-              <el-option :label="$t('audit.filters.suspiciousNo')" :value="false" />
+              <el-option
+                :label="$t('audit.filters.suspiciousYes')"
+                :value="true"
+              />
+              <el-option
+                :label="$t('audit.filters.suspiciousNo')"
+                :value="false"
+              />
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('audit.filters.startDate')">

@@ -2,8 +2,10 @@ import {
   getApiSuperadminDashboardSummary,
   getApiSuperadminDashboardElections,
   getApiSuperadminDashboardElectionsByGuid,
+  getApiSuperadminUsers,
+  getApiSuperadminUsersByUserId,
+  putApiSuperadminUsersByUserId,
 } from "@/api/gen/configService";
-import { client } from "@/api/gen/configService/client.gen";
 import type { PaginatedResponse } from "@/types/ApiResponse";
 
 export interface SuperAdminSummary {
@@ -93,8 +95,7 @@ export const superAdminService = {
     page?: number;
     pageSize?: number;
   }): Promise<PaginatedResponse<SuperAdminUser>> {
-    const response = await client.get({
-      url: "/api/superadmin/users",
+    const response = await getApiSuperadminUsers({
       query: {
         Search: filter?.search,
         Page: filter?.page,
@@ -102,18 +103,9 @@ export const superAdminService = {
       },
       throwOnError: true,
     });
-    const outer = response.data as {
-      data?: {
-        items?: SuperAdminUser[];
-        totalCount?: number;
-        pageNumber?: number;
-        pageSize?: number;
-        totalPages?: number;
-      };
-    };
-    const data = outer?.data;
+    const data = response.data?.data;
     return {
-      items: data?.items ?? [],
+      items: (data?.items ?? []) as SuperAdminUser[],
       totalCount: data?.totalCount ?? 0,
       page: data?.pageNumber ?? 1,
       pageSize: data?.pageSize ?? 25,
@@ -122,25 +114,23 @@ export const superAdminService = {
   },
 
   async getUserDetail(userId: string): Promise<SuperAdminUserDetail> {
-    const response = await client.get({
-      url: `/api/superadmin/users/${userId}`,
+    const response = await getApiSuperadminUsersByUserId({
+      path: { userId },
       throwOnError: true,
     });
-    const outer = response.data as { data?: SuperAdminUserDetail };
-    return outer?.data as SuperAdminUserDetail;
+    return response.data?.data as SuperAdminUserDetail;
   },
 
   async updateUser(
     userId: string,
     body: { displayName?: string; email?: string },
   ): Promise<SuperAdminUserDetail> {
-    const response = await client.put({
-      url: `/api/superadmin/users/${userId}`,
+    const response = await putApiSuperadminUsersByUserId({
+      path: { userId },
       body,
       throwOnError: true,
     });
-    const outer = response.data as { data?: SuperAdminUserDetail };
-    return outer?.data as SuperAdminUserDetail;
+    return response.data?.data as SuperAdminUserDetail;
   },
 };
 

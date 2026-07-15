@@ -17,10 +17,9 @@ export default [
       "no-var": "error",
       "prefer-const": "warn",
       eqeqeq: "error",
+      // Require braces on if/else/for/while (matches npm run check / CLI)
       curly: "error",
-      singleQuote: "off",
-      semicolon: "off",
-      eolLast: "off",
+      // Formatting is owned by Prettier (eslint-plugin-prettier below)
       "prettier/prettier": "warn",
 
       // Vue-specific

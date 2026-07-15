@@ -24,13 +24,6 @@ export type AccountRequestEmailChangeDto = {
     currentPassword?: string | null;
 };
 
-export type AccountUpdateUserProfileDto = {
-    displayName?: string | null;
-    userName?: string | null;
-    email?: string | null;
-    phoneNumber?: string | null;
-};
-
 export type AccountUserProfileDto = {
     id?: string | null;
     userName?: string | null;
@@ -2151,22 +2144,6 @@ export type GetApiAccountGetMyProfileResponses = {
 
 export type GetApiAccountGetMyProfileResponse = GetApiAccountGetMyProfileResponses[keyof GetApiAccountGetMyProfileResponses];
 
-export type PutApiAccountUpdateProfileData = {
-    body?: AccountUpdateUserProfileDto;
-    path?: never;
-    query?: never;
-    url: '/api/Account/updateProfile';
-};
-
-export type PutApiAccountUpdateProfileResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseAccountUserProfileDto;
-};
-
-export type PutApiAccountUpdateProfileResponse = PutApiAccountUpdateProfileResponses[keyof PutApiAccountUpdateProfileResponses];
-
 export type PostApiAccountChangeDisplayNameData = {
     body?: AccountChangeDisplayNameDto;
     path?: never;
@@ -2198,22 +2175,6 @@ export type PostApiAccountRequestEmailChangeResponses = {
 };
 
 export type PostApiAccountRequestEmailChangeResponse = PostApiAccountRequestEmailChangeResponses[keyof PostApiAccountRequestEmailChangeResponses];
-
-export type PostApiAccountConfirmEmailChangeData = {
-    body?: AccountConfirmEmailChangeDto;
-    path?: never;
-    query?: never;
-    url: '/api/Account/confirmEmailChange';
-};
-
-export type PostApiAccountConfirmEmailChangeResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponseSystemObject;
-};
-
-export type PostApiAccountConfirmEmailChangeResponse = PostApiAccountConfirmEmailChangeResponses[keyof PostApiAccountConfirmEmailChangeResponses];
 
 export type PostApiAccountChangePasswordData = {
     body?: AccountChangePasswordDto;

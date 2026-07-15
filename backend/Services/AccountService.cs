@@ -47,69 +47,6 @@ public class AccountService : IAccountService
         return MapProfile(user);
     }
 
-    public async Task<UserProfileDto?> UpdateUserProfileAsync(string userId, UpdateUserProfileDto updateDto)
-    {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            _logger.LogWarning("User not found for update: {UserId}", userId);
-            return null;
-        }
-
-        var needsUpdate = false;
-
-        if (updateDto.DisplayName != null)
-        {
-            var trimmedDisplayName = updateDto.DisplayName.Trim();
-            if (trimmedDisplayName != (user.DisplayName ?? string.Empty))
-            {
-                user.DisplayName = string.IsNullOrEmpty(trimmedDisplayName) ? null : trimmedDisplayName;
-                needsUpdate = true;
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(updateDto.UserName) && updateDto.UserName != user.UserName)
-        {
-            var existingUser = await _userManager.FindByNameAsync(updateDto.UserName);
-            if (existingUser != null && existingUser.Id != userId)
-            {
-                throw new InvalidOperationException("Username already taken");
-            }
-            user.UserName = updateDto.UserName;
-            needsUpdate = true;
-        }
-
-        // Email changes are not applied here — use RequestEmailChangeAsync (pending verification).
-        if (!string.IsNullOrWhiteSpace(updateDto.Email) &&
-            !string.Equals(updateDto.Email, user.Email, StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException(
-                "Email cannot be changed via profile update. Use the email change flow to verify the new address first.");
-        }
-
-        if (updateDto.PhoneNumber != user.PhoneNumber)
-        {
-            user.PhoneNumber = updateDto.PhoneNumber;
-            if (!string.IsNullOrWhiteSpace(updateDto.PhoneNumber))
-            {
-                user.PhoneNumberConfirmed = false;
-            }
-            needsUpdate = true;
-        }
-
-        if (needsUpdate)
-        {
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                throw new InvalidOperationException($"Failed to update profile: {errors}");
-            }
-        }
-
-        return await GetUserProfileAsync(userId);
-    }
-
     public async Task<UserProfileDto?> ChangeDisplayNameAsync(string userId, string displayName)
     {
         var user = await _userManager.FindByIdAsync(userId);

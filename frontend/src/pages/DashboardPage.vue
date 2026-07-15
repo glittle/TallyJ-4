@@ -25,11 +25,6 @@ const { showSuccessMessage, showErrorMessage } = useNotifications();
 const loading = computed(() => electionStore.loading);
 const allElections = computed(() => electionStore.elections);
 
-const statistics = computed(() => ({
-  totalElections: electionStore.elections.length,
-  activeElections: electionStore.activeElections.length,
-}));
-
 const filters = ref({
   search: "",
   status: "",

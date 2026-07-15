@@ -11,5 +11,22 @@
   },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+
+  // Frontend ESLint flat config + node_modules live under frontend/ (monorepo root has no eslint.config.js).
+  // Without this, the ESLint extension often fails to load project rules (e.g. curly: error) that npm run check reports.
+  "eslint.workingDirectories": [
+    {
+      "directory": "frontend",
+      "changeProcessCWD": true
+    }
+  ],
+  "eslint.useFlatConfig": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue"
+  ]
 }

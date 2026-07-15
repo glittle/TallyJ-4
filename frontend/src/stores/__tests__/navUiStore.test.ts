@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { setActivePinia, createPinia } from "pinia";
-import { useNavUiStore } from "../navUiStore";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
 import type { StorageAdapter } from "../navUiStore";
+import { useNavUiStore } from "../navUiStore";
 
 function makeMemoryAdapter(): StorageAdapter & {
   _store: Record<string, string>;
@@ -174,10 +174,7 @@ describe("navUiStore", () => {
           Finalized: false,
         }),
       );
-      prePopulated.setItem(
-        "navUi:sidebarGroupExpansionElection",
-        "election-a",
-      );
+      prePopulated.setItem("navUi:sidebarGroupExpansionElection", "election-a");
 
       setActivePinia(createPinia());
       const freshStore = useNavUiStore();
@@ -199,10 +196,7 @@ describe("navUiStore", () => {
           Finalized: false,
         }),
       );
-      prePopulated.setItem(
-        "navUi:sidebarGroupExpansionElection",
-        "election-a",
-      );
+      prePopulated.setItem("navUi:sidebarGroupExpansionElection", "election-a");
 
       setActivePinia(createPinia());
       const freshStore = useNavUiStore();
