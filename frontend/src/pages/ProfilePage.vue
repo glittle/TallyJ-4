@@ -95,7 +95,7 @@ function handleChangePassword() {
     showErrorMessage(t("profile.passwordsDoNotMatch"));
     return;
   }
-  showInfoMessage("Password change functionality coming soon");
+  showInfoMessage(t("profile.passwordChangeComingSoon"));
   showChangePassword.value = false;
 }
 
