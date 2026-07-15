@@ -198,7 +198,7 @@ const columns = computed<Column<FrontDeskVoterDto>[]>(() => {
             },
           },
           () =>
-            rowData.envNum !== null
+            rowData.envNum !== null && rowData.envNum !== undefined
               ? String(rowData.envNum)
               : t("frontDesk.envelope.set"),
         ),
