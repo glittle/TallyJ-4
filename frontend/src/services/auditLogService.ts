@@ -25,7 +25,7 @@ export const auditLogService = {
         email: filter?.email,
         ipAddress: filter?.ipAddress,
         isSuspicious: filter?.isSuspicious,
-        severity: filter?.severity as never,
+        severity: filter?.severity as unknown as BackendSecurityEventSeverity | undefined,
         startDate: filter?.startDate ? new Date(filter.startDate) : undefined,
         endDate: filter?.endDate ? new Date(filter.endDate) : undefined,
         searchTerm: filter?.searchTerm,
