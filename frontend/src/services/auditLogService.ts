@@ -18,7 +18,7 @@ export const auditLogService = {
   ): Promise<PaginatedResponse<AuditLog>> {
     const response = await getApiSecurityAuditLogs({
       query: {
-        eventType: filter?.eventType as never,
+        eventType: filter?.eventType as unknown as BackendSecurityEventType | undefined,
         userId: filter?.userId,
         onlineVoterId: filter?.onlineVoterId,
         electionGuid: filter?.electionGuid,
