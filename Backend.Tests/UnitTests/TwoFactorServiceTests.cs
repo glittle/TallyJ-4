@@ -56,7 +56,13 @@ public class TwoFactorServiceTests : ServiceTestBase
             .AddInMemoryCollection(new Dictionary<string, string?>())
             .Build();
         var emailSenderMock = new Mock<IEmailSender>();
-        _emailServiceMock = new Mock<EmailService>(emailConfig, NullLogger<EmailService>.Instance, emailSenderMock.Object);
+        var hostEnvironment = new Mock<Microsoft.Extensions.Hosting.IHostEnvironment>();
+        hostEnvironment.Setup(e => e.EnvironmentName).Returns(Microsoft.Extensions.Hosting.Environments.Development);
+        _emailServiceMock = new Mock<EmailService>(
+            emailConfig,
+            hostEnvironment.Object,
+            NullLogger<EmailService>.Instance,
+            emailSenderMock.Object);
 
         var config = new Dictionary<string, string?>
         {

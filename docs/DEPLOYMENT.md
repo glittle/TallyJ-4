@@ -41,7 +41,7 @@ The backend reads standard ASP.NET Core configuration sources. At minimum, set:
 - `Jwt__Key`
 - `Jwt__Issuer`
 - `Jwt__Audience`
-- `Frontend__BaseUrl`
+- `ClientEnv__frontendUrl` (public SPA origin used in emails, OAuth redirects, and CORS)
 
 Common optional settings:
 

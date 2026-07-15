@@ -9,6 +9,7 @@ using Backend.DTOs.Auth;
 using Backend.Services.Auth;
 using Backend.Authorization;
 using Backend;
+using Backend.Configuration;
 using Backend.Context;
 using Backend.Identity;
 using Backend.DTOs.Security;
@@ -43,6 +44,7 @@ public class AuthController : ControllerBase
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ILogger<AuthController> _logger;
     private readonly IConfiguration _configuration;
+    private readonly IHostEnvironment _hostEnvironment;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly SuperAdminSettings _superAdminSettings;
     private readonly IHttpClientFactory _httpClientFactory;
@@ -80,6 +82,7 @@ public class AuthController : ControllerBase
         RoleManager<IdentityRole> roleManager,
         ILogger<AuthController> logger,
         IConfiguration configuration,
+        IHostEnvironment hostEnvironment,
         SignInManager<AppUser> signInManager,
         IOptions<SuperAdminSettings> superAdminSettings,
         IHttpClientFactory httpClientFactory,
@@ -97,6 +100,7 @@ public class AuthController : ControllerBase
         _roleManager = roleManager;
         _logger = logger;
         _configuration = configuration;
+        _hostEnvironment = hostEnvironment;
         _signInManager = signInManager;
         _superAdminSettings = superAdminSettings.Value;
         _httpClientFactory = httpClientFactory;
@@ -1625,19 +1629,12 @@ public class AuthController : ControllerBase
 
     private string GetFrontendUrl(string? returnUrl)
     {
-        if (!string.IsNullOrEmpty(returnUrl) && Uri.TryCreate(returnUrl, UriKind.Absolute, out var uri))
+        if (!string.IsNullOrEmpty(returnUrl) && Uri.TryCreate(returnUrl, UriKind.Absolute, out _))
         {
             return returnUrl;
         }
 
-        var frontendBaseUrl = _configuration["Frontend:BaseUrl"]?.Trim();
-        if (!string.IsNullOrEmpty(frontendBaseUrl))
-        {
-            return frontendBaseUrl + "/auth/google/callback";
-        }
-
-        // Fallback to localhost for development if not configured
-        return "https://localhost:8095/auth/google/callback";
+        return FrontendUrlResolver.Build(_configuration, _hostEnvironment, "/auth/google/callback");
     }
 
     /// <summary>

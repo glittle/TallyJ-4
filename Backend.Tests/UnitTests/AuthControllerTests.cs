@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,6 +34,7 @@ public class AuthControllerTests : ServiceTestBase
     private readonly Mock<RoleManager<IdentityRole>> _roleManagerMock;
     private readonly Mock<ILogger<AuthController>> _loggerMock;
     private readonly Mock<IConfiguration> _configurationMock;
+    private readonly Mock<IHostEnvironment> _hostEnvironmentMock;
     private readonly Mock<SignInManager<AppUser>> _signInManagerMock;
     private readonly Mock<IOptions<SuperAdminSettings>> _superAdminSettingsMock;
     private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
@@ -54,6 +56,8 @@ public class AuthControllerTests : ServiceTestBase
             null!, null!, null!, null!);
         _loggerMock = new Mock<ILogger<AuthController>>();
         _configurationMock = new Mock<IConfiguration>();
+        _hostEnvironmentMock = new Mock<IHostEnvironment>();
+        _hostEnvironmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Development);
         _signInManagerMock = new Mock<SignInManager<AppUser>>(
             _userManagerMock.Object,
             Mock.Of<IHttpContextAccessor>(),
@@ -81,6 +85,7 @@ public class AuthControllerTests : ServiceTestBase
             _roleManagerMock.Object,
             _loggerMock.Object,
             _configurationMock.Object,
+            _hostEnvironmentMock.Object,
             _signInManagerMock.Object,
             _superAdminSettingsMock.Object,
             _httpClientFactoryMock.Object,
@@ -260,7 +265,7 @@ public class AuthControllerTests : ServiceTestBase
     {
         // Arrange
         var returnUrl = "https://example.com/auth/callback";
-        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns("http://localhost:8095");
+        _configurationMock.Setup(c => c["ClientEnv:frontendUrl"]).Returns("http://localhost:8095");
 
         // Act
         var result = InvokeGetFrontendUrl(returnUrl);
@@ -274,7 +279,7 @@ public class AuthControllerTests : ServiceTestBase
     {
         // Arrange
         var configuredUrl = "https://myapp.com";
-        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns(configuredUrl);
+        _configurationMock.Setup(c => c["ClientEnv:frontendUrl"]).Returns(configuredUrl);
 
         // Act
         var result = InvokeGetFrontendUrl(null);
@@ -287,7 +292,7 @@ public class AuthControllerTests : ServiceTestBase
     public void GetFrontendUrl_WithNullConfiguration_ReturnsFallbackUrl()
     {
         // Arrange
-        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns((string?)null);
+        _configurationMock.Setup(c => c["ClientEnv:frontendUrl"]).Returns((string?)null);
 
         // Act
         var result = InvokeGetFrontendUrl(null);
@@ -300,7 +305,7 @@ public class AuthControllerTests : ServiceTestBase
     public void GetFrontendUrl_WithEmptyConfiguration_ReturnsFallbackUrl()
     {
         // Arrange
-        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns("");
+        _configurationMock.Setup(c => c["ClientEnv:frontendUrl"]).Returns("");
 
         // Act
         var result = InvokeGetFrontendUrl(null);
@@ -313,7 +318,7 @@ public class AuthControllerTests : ServiceTestBase
     public void GetFrontendUrl_WithWhitespaceConfiguration_ReturnsFallbackUrl()
     {
         // Arrange
-        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns("   ");
+        _configurationMock.Setup(c => c["ClientEnv:frontendUrl"]).Returns("   ");
 
         // Act
         var result = InvokeGetFrontendUrl(null);
@@ -401,7 +406,7 @@ public class AuthControllerTests : ServiceTestBase
         // Arrange
         var invalidReturnUrl = "not-a-valid-url";
         var configuredUrl = "https://myapp.com";
-        _configurationMock.Setup(c => c["Frontend:BaseUrl"]).Returns(configuredUrl);
+        _configurationMock.Setup(c => c["ClientEnv:frontendUrl"]).Returns(configuredUrl);
 
         // Act
         var result = InvokeGetFrontendUrl(invalidReturnUrl);

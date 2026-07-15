@@ -2,6 +2,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Backend.Services.Auth;
+using Backend.Configuration;
 using Backend.Context;
 using Backend.Identity;
 using Backend.EF.Data;
@@ -122,12 +123,9 @@ void ConfigureServices(WebApplicationBuilder builder)
             ?? builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
             ?? Array.Empty<string>();
 
-        var frontendBaseUrl = builderConfiguration["Frontend:BaseUrl"];
-
-        if (!string.IsNullOrEmpty(frontendBaseUrl))
-        {
-            allowedOrigins = allowedOrigins.Append(frontendBaseUrl).ToArray();
-        }
+        // ClientEnv:frontendUrl is the public SPA origin (required outside Development/Testing).
+        var frontendOrigin = FrontendUrlResolver.GetOrigin(builderConfiguration, builder.Environment);
+        allowedOrigins = allowedOrigins.Append(frontendOrigin).ToArray();
 
         allowedOrigins = allowedOrigins.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 
@@ -497,7 +495,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     {
         using var scope = app.Services.CreateScope();
         var remoteLogService = scope.ServiceProvider.GetRequiredService<IRemoteLogService>();
-        await remoteLogService.SendLogAsync($"Started up - SiteType: {siteType} - Url: {configuration["Frontend:BaseUrl"]} at {DateTime.Now}");
+        await remoteLogService.SendLogAsync($"Started up - SiteType: {siteType} - Url: {configuration["ClientEnv:frontendUrl"]} at {DateTime.Now}");
     }
 
     app.UseExceptionHandler();

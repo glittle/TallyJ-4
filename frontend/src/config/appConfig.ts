@@ -1,5 +1,7 @@
 export interface AppConfig {
   apiUrl: string;
+  /** Public SPA origin from server ClientEnv (optional; browser usually uses location.origin). */
+  frontendUrl?: string;
   env: string;
   sentryDsn?: string;
   googleClientId?: string;

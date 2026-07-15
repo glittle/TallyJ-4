@@ -1,4 +1,6 @@
+using Backend.Configuration;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MimeKit;
 
@@ -8,12 +10,18 @@ public class EmailService
 {
     private const string defaultReplyFromEmail = "noreply@tallyj.com";
     private readonly IConfiguration _configuration;
+    private readonly IHostEnvironment _hostEnvironment;
     private readonly ILogger<EmailService> _logger;
     private readonly IEmailSender _emailSender;
 
-    public EmailService(IConfiguration configuration, ILogger<EmailService> logger, IEmailSender emailSender)
+    public EmailService(
+        IConfiguration configuration,
+        IHostEnvironment hostEnvironment,
+        ILogger<EmailService> logger,
+        IEmailSender emailSender)
     {
         _configuration = configuration;
+        _hostEnvironment = hostEnvironment;
         _logger = logger;
         _emailSender = emailSender;
     }
@@ -227,11 +235,5 @@ This confirmation expires in 24 hours. If you did not request this change, ignor
     }
 
     private string BuildFrontendUrl(string path, params (string Key, string Value)[] query)
-    {
-        var baseUrl = (_configuration["Frontend:BaseUrl"] ?? "https://localhost:8095").TrimEnd('/');
-        var qs = string.Join("&", query.Select(q =>
-            $"{Uri.EscapeDataString(q.Key)}={Uri.EscapeDataString(q.Value)}"));
-        var normalizedPath = path.StartsWith('/') ? path : "/" + path;
-        return string.IsNullOrEmpty(qs) ? $"{baseUrl}{normalizedPath}" : $"{baseUrl}{normalizedPath}?{qs}";
-    }
+        => FrontendUrlResolver.Build(_configuration, _hostEnvironment, path, query);
 }
