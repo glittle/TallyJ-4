@@ -7,6 +7,7 @@ import { fileURLToPath, URL } from "node:url";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import devtoolsJson from "vite-plugin-devtools-json";
+import mkcert from "vite-plugin-mkcert";
 
 // ---------------------------------------------------------------------------
 // Build-time guard for language support
@@ -243,30 +244,57 @@ export default defineConfig(() => {
       },
     },
     server: {
+      // HTTPS so Secure identity cookies work in local dev.
+      // Certs come from vite-plugin-mkcert (local CA trusted by Chrome/OS).
+      https: true,
       port: 8095,
       hmr: {
+        protocol: "wss",
         port: 8095,
       },
-      // Proxy /clientEnv.json during `npm run dev` to the real backend
+      // Proxy API/SignalR to the HTTP backend so the browser stays on HTTPS (no mixed content).
       proxy: {
         "/clientEnv.json": {
           target: process.env.VITE_API_TARGET || "http://localhost:5016",
           changeOrigin: true,
         },
+        "/api": {
+          target: process.env.VITE_API_TARGET || "http://localhost:5016",
+          changeOrigin: true,
+        },
+        "/hubs": {
+          target: process.env.VITE_API_TARGET || "http://localhost:5016",
+          changeOrigin: true,
+          ws: true,
+        },
       },
     },
     preview: {
+      https: true,
       port: 4173,
-      // Proxy /clientEnv.json during `npm run preview` to the real backend
       proxy: {
         "/clientEnv.json": {
           target: process.env.VITE_API_TARGET || "http://localhost:5016",
           changeOrigin: true,
+        },
+        "/api": {
+          target: process.env.VITE_API_TARGET || "http://localhost:5016",
+          changeOrigin: true,
+        },
+        "/hubs": {
+          target: process.env.VITE_API_TARGET || "http://localhost:5016",
+          changeOrigin: true,
+          ws: true,
         },
       },
     },
     plugins: [
       vue(),
+      // Locally-trusted HTTPS certs (installs a dev CA into the OS trust store on first run).
+      // First start may prompt for admin elevation on Windows so Chrome trusts the cert.
+      mkcert({
+        hosts: ["localhost", "127.0.0.1"],
+      }),
       devtoolsJson(),
       VueI18nPlugin({}),
       // Bundle analyzer - generates stats.html

@@ -9,6 +9,9 @@ vi.mock("../services/secureTokenService", () => ({
     clearAuthData: vi.fn(),
     refreshAuthData: vi.fn(),
     isAuthenticated: vi.fn(),
+    setUserInfoCookies: vi.fn(),
+    setUserNameCookie: vi.fn(),
+    setUserEmailCookie: vi.fn(),
   },
 }));
 

@@ -181,12 +181,11 @@ export const useAuthStore = defineStore("auth", () => {
 
       if (userData) {
         // Set readable cookies on the SPA origin for router guards
-        const secure = window.location.protocol === "https:" ? "; secure" : "";
-        document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
-        if (userData.name) {
-          document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
-        }
-        document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
+        secureTokenService.setUserInfoCookies({
+          email: userData.email,
+          name: userData.name,
+          authMethod: userData.authMethod,
+        });
       } else {
         // Fallback to response data and refresh cookies
         const cookieData = secureTokenService.refreshAuthData();
@@ -218,12 +217,11 @@ export const useAuthStore = defineStore("auth", () => {
       const userData = await fetchUserInfo();
 
       if (userData) {
-        const secure = window.location.protocol === "https:" ? "; secure" : "";
-        document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
-        if (userData.name) {
-          document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
-        }
-        document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
+        secureTokenService.setUserInfoCookies({
+          email: userData.email,
+          name: userData.name,
+          authMethod: userData.authMethod,
+        });
       } else {
         const cookieData = secureTokenService.refreshAuthData();
         email.value = cookieData.email || response.email;
@@ -253,12 +251,11 @@ export const useAuthStore = defineStore("auth", () => {
       const userData = await fetchUserInfo();
 
       if (userData) {
-        const secure = window.location.protocol === "https:" ? "; secure" : "";
-        document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
-        if (userData.name) {
-          document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
-        }
-        document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
+        secureTokenService.setUserInfoCookies({
+          email: userData.email,
+          name: userData.name,
+          authMethod: userData.authMethod,
+        });
       } else {
         const cookieData = secureTokenService.refreshAuthData();
         email.value = cookieData.email || response.email;
@@ -292,12 +289,11 @@ export const useAuthStore = defineStore("auth", () => {
       const userData = await fetchUserInfo();
 
       if (userData) {
-        const secure = window.location.protocol === "https:" ? "; secure" : "";
-        document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
-        if (userData.name) {
-          document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
-        }
-        document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
+        secureTokenService.setUserInfoCookies({
+          email: userData.email,
+          name: userData.name,
+          authMethod: userData.authMethod,
+        });
       } else {
         const cookieData = secureTokenService.refreshAuthData();
         email.value = cookieData.email || response.email;
@@ -361,22 +357,12 @@ export const useAuthStore = defineStore("auth", () => {
 
   function setDisplayName(newName: string | null) {
     name.value = newName;
-    const secure = window.location.protocol === "https:" ? "; secure" : "";
-    if (newName) {
-      document.cookie = `user_name=${encodeURIComponent(newName)}; path=/; samesite=strict${secure}; max-age=2592000`;
-    } else {
-      document.cookie = `user_name=; path=/; samesite=strict${secure}; max-age=0`;
-    }
+    secureTokenService.setUserNameCookie(newName);
   }
 
   function setEmail(newEmail: string | null) {
     email.value = newEmail;
-    const secure = window.location.protocol === "https:" ? "; secure" : "";
-    if (newEmail) {
-      document.cookie = `user_email=${encodeURIComponent(newEmail)}; path=/; samesite=strict${secure}; max-age=2592000`;
-    } else {
-      document.cookie = `user_email=; path=/; samesite=strict${secure}; max-age=0`;
-    }
+    secureTokenService.setUserEmailCookie(newEmail);
   }
 
   async function updateDisplayName(displayName: string) {

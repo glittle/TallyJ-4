@@ -15,7 +15,7 @@ TallyJ 4 is a full-stack election management and ballot tallying system for Bah√
 ### Prerequisites
 
 - .NET SDK 10
-- Node.js 20+
+- Node.js **22.19+** (required by current frontend tooling: Vite, OpenAPI client generator, and `vite-plugin-mkcert`; Node 20 is not sufficient)
 - SQL Server Express, SQL Server Developer Edition, or Docker SQL Server
 
 ### Start the backend
@@ -43,9 +43,9 @@ npm run dev
 
 Default frontend URL:
 
-- App: `http://localhost:8095`
+- App: `https://localhost:8095` (trusted local cert via mkcert; first `npm run dev` may prompt for admin to install the CA)
 
-The frontend reads `VITE_API_URL` from `.env.development` or falls back to `http://localhost:5016`.
+Requires Node.js 22.19+ (see Prerequisites). The frontend reads `VITE_API_URL` from `.env.development` (default `https://localhost:8095`). Vite proxies `/api` and `/hubs` to the backend at `http://localhost:5016`.
 
 ## Seeded development accounts
 

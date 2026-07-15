@@ -958,11 +958,11 @@ public class AuthController : ControllerBase
             string redirectUrl;
             if (authenticateResult.Properties?.Items.TryGetValue("redirect", out var redirectValue) == true && !string.IsNullOrEmpty(redirectValue))
             {
-                redirectUrl = redirectValue.StartsWith("http") ? redirectValue : $"http://localhost:8095{redirectValue}";
+                redirectUrl = redirectValue.StartsWith("http") ? redirectValue : $"https://localhost:8095{redirectValue}";
             }
             else
             {
-                redirectUrl = "http://localhost:8095/elections";
+                redirectUrl = "https://localhost:8095/elections";
             }
 
             // Extract claims directly from the authenticated principal
@@ -1637,7 +1637,7 @@ public class AuthController : ControllerBase
         }
 
         // Fallback to localhost for development if not configured
-        return "http://localhost:8095/auth/google/callback";
+        return "https://localhost:8095/auth/google/callback";
     }
 
     /// <summary>

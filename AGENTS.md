@@ -161,7 +161,7 @@ Other languages are updated separately in periodic review cycles — do not add 
 ## Local development assumptions
 
 - backend default dev URL: `http://localhost:5016`
-- frontend default dev URL: `http://localhost:8095`
+- frontend default dev URL: `https://localhost:8095` (Vite HTTPS via mkcert-trusted certs; `/api` and `/hubs` proxied to the backend)
 - backend development config seeds the database on startup
 - Swagger is the source of truth for current routes and schemas
 - **Contributor workflow:** the repo owner usually keeps their own backend dev instance running (`dotnet watch` / `dotnet run` / IDE) and the Vite dev server (`npm run dev`) for hot reload. **Do not rebuild backend or frontend for routine code changes** — `dotnet watch` recompiles C# on save and Vite hot-reloads Vue/TS. Avoid `dotnet build`, `dotnet run`, `npm run build`, and `npm run dev` unless the task explicitly requires it or the contributor asks you to verify a build. If you must rebuild, ask them to stop their running backend first (file-lock on `Backend.exe` causes MSB3026 copy failures). Prefer `dotnet test --no-build` when a recent build already exists.
