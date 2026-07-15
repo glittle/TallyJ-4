@@ -14,9 +14,11 @@ import {
   postApiAuthLogout,
   postApiAuthTellerLogin,
   postApiAuthVerifyEmail,
-  putApiAccountUpdateProfile,
+  postApiAccountChangeDisplayName,
+  getApiAccountGetMyProfile,
+  postApiAccountRequestEmailChange,
+  postApiAuthConfirmEmailChange,
 } from "@/api/gen/configService";
-import { client } from "@/api/gen/configService/client.gen";
 import type {
   RegisterRequest,
   LoginRequest,
@@ -129,37 +131,25 @@ export const authService = {
   },
 
   async updateDisplayName(displayName: string): Promise<UserProfile> {
-    // Prefer dedicated endpoint when backend is updated; fall back to updateProfile body.
-    try {
-      const response = await client.post({
-        url: "/api/Account/changeDisplayName",
-        body: { displayName },
-        throwOnError: true,
-      });
-      return unwrapProfile(response as { data?: unknown });
-    } catch {
-      const response = await putApiAccountUpdateProfile({
-        body: { displayName } as never,
-        throwOnError: true,
-      });
-      return unwrapProfile(response);
-    }
+    const response = await postApiAccountChangeDisplayName({
+      body: { displayName },
+      throwOnError: true,
+    });
+    return unwrapProfile(response);
   },
 
   async getMyProfile(): Promise<UserProfile> {
-    const response = await client.get({
-      url: "/api/Account/getMyProfile",
+    const response = await getApiAccountGetMyProfile({
       throwOnError: true,
     });
-    return unwrapProfile(response as { data?: unknown });
+    return unwrapProfile(response);
   },
 
   async requestEmailChange(
     newEmail: string,
     currentPassword: string,
   ): Promise<void> {
-    await client.post({
-      url: "/api/Account/requestEmailChange",
+    await postApiAccountRequestEmailChange({
       body: { newEmail, currentPassword },
       throwOnError: true,
     });
@@ -169,9 +159,8 @@ export const authService = {
     token?: string;
     code?: string;
   }): Promise<void> {
-    // Prefer anonymous Auth endpoint so link confirmation works without session.
-    await client.post({
-      url: "/api/Auth/confirmEmailChange",
+    // Auth endpoint is [AllowAnonymous] so email-link confirmation works without a session.
+    await postApiAuthConfirmEmailChange({
       body: params,
       throwOnError: true,
     });

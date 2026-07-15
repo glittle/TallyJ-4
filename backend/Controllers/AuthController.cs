@@ -402,7 +402,8 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Confirms a pending email change using the token from the confirmation email (anonymous).
+    /// Confirms a pending email change via email-link token and/or short code.
+    /// Anonymous so confirmation links work without a session; when authenticated, claims user id is also passed.
     /// </summary>
     [HttpPost("confirmEmailChange")]
     [AllowAnonymous]

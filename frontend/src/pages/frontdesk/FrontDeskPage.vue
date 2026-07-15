@@ -11,7 +11,6 @@ import { useLocationStore } from "@/stores/locationStore";
 import type {
   CheckInVoterDto,
   FrontDeskVoterDto,
-  RegistrationHistoryEntryDto,
   UnregisterVoterDto,
   UpdatePersonFlagsDto,
 } from "@/types/FrontDesk";
@@ -21,10 +20,6 @@ import {
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
 import { formatNumber } from "@/utils/formatNumber";
-import {
-  formatRegistrationHistoryDetails,
-  sortRegistrationHistoryNewestFirst,
-} from "@/utils/formatRegistrationHistory";
 import { matchesFrontDeskVoterSearch } from "@/utils/searchStrategies";
 import { Location, Search } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
@@ -71,7 +66,9 @@ const flagColorPalette = [
 ];
 
 function getFlagColor(flag: string, electionFlags: any[]): string {
-  if (!electionFlags || electionFlags.length === 0) return "#64748b";
+  if (!electionFlags || electionFlags.length === 0) {
+    return "#64748b";
+  }
   const index = electionFlags.findIndex((f: any) => f === flag);
   return flagColorPalette[index % flagColorPalette.length] || "#64748b";
 }
@@ -189,11 +186,11 @@ const { height: tableHeight, remeasure: remeasureTableHeight } =
   });
 const selectedIndex = ref(0);
 const selectedVoter = ref<FrontDeskVoterDto | null>(null);
-const selectedVoterRegistrationHistory = computed(() =>
-  sortRegistrationHistoryNewestFirst(
-    selectedVoter.value?.registrationHistory ?? [],
-  ),
-);
+// const selectedVoterRegistrationHistory = computed(() =>
+//   sortRegistrationHistoryNewestFirst(
+//     selectedVoter.value?.registrationHistory ?? [],
+//   ),
+// );
 const showRegistrationButtons = ref(false);
 const selectedButtonIndex = ref(0);
 const pendingVotingMethod = ref<string | null>(null);
@@ -203,7 +200,6 @@ const registrationOverlayRef = ref<HTMLDivElement | null>(null);
 const showEnvelopeDialog = ref(false);
 const envelopeEditVoter = ref<FrontDeskVoterDto | null>(null);
 const envelopeEditValue = ref<number | undefined>(undefined);
-const envelopeSaving = ref(false);
 const highlightedPersonGuids = ref(new Set<string>());
 const highlightTimers = new Map<string, number>();
 const rowHighlightVersion = ref(0);
@@ -698,32 +694,6 @@ function scrollToSelectedRow() {
   voterTableRef.value?.scrollToSelectedRow(selectedIndex.value);
 }
 
-function getDialogButtonIndex(value: string): number {
-  return dialogButtons.value.findIndex((button) => button.value === value);
-}
-
-function getDialogButtonKey(value: string): string {
-  return (
-    dialogButtons.value.find((button) => button.value === value)?.key ?? ""
-  );
-}
-
-function clickDialogButton(value: string) {
-  const button = dialogButtons.value.find(
-    (dialogButton) => dialogButton.value === value,
-  );
-  if (button) {
-    handleButtonClick(button);
-  }
-}
-
-function isDialogButtonKeyboardFocused(value: string): boolean {
-  if (pendingVotingMethod.value === value) {
-    return false;
-  }
-  return getDialogButtonIndex(value) === selectedButtonIndex.value;
-}
-
 function isDialogButtonFocusable(button: DialogButton): boolean {
   if (!isDialogButtonActionable(button)) {
     return false;
@@ -755,10 +725,10 @@ function getNextDialogButtonIndex(
   return currentIndex;
 }
 
-function getVotingMethodLabel(method?: string): string {
-  const match = registrationTypes.value.find((type) => type.value === method);
-  return match?.label ?? method ?? t("frontDesk.common.dash");
-}
+// function getVotingMethodLabel(method?: string): string {
+//   const match = registrationTypes.value.find((type) => type.value === method);
+//   return match?.label ?? method ?? t("frontDesk.common.dash");
+// }
 
 function handleRegistrationKeydown(event: KeyboardEvent) {
   const buttons = dialogButtons.value;
@@ -974,13 +944,13 @@ async function handleButtonClick(button: DialogButton) {
   }
 }
 
-function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
-  if (!voter.flags) {
-    return false;
-  }
-  const flags = voter.flags.split(",").map((f) => f.trim());
-  return flags.includes(flag);
-}
+// function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
+//   if (!voter.flags) {
+//     return false;
+//   }
+//   const flags = voter.flags.split(",").map((f) => f.trim());
+//   return flags.includes(flag);
+// }
 
 async function toggleFlag(flag: string) {
   if (!selectedVoter.value || !hasActiveTeller.value) {
@@ -1078,20 +1048,20 @@ async function handleUnregisterSelected() {
   }
 }
 
-function formatTime(time?: string): string {
-  if (!time) {
-    return "";
-  }
-  const date = new Date(time);
-  return date.toLocaleString();
-}
+// function formatTime(time?: string): string {
+//   if (!time) {
+//     return "";
+//   }
+//   const date = new Date(time);
+//   return date.toLocaleString();
+// }
 
-function formatTimeline(entry: RegistrationHistoryEntryDto): string {
-  return formatRegistrationHistoryDetails(entry, {
-    t,
-    getVotingMethodLabel,
-  });
-}
+// function formatTimeline(entry: RegistrationHistoryEntryDto): string {
+//   return formatRegistrationHistoryDetails(entry, {
+//     t,
+//     getVotingMethodLabel,
+//   });
+// }
 
 function handleLocationChange(locationGuid: string | undefined) {
   locationStore.selectLocation(locationGuid ?? null);
@@ -1132,47 +1102,47 @@ function openEnvelopeDialog(voter: FrontDeskVoterDto) {
   showEnvelopeDialog.value = true;
 }
 
-function resetEnvelopeDialog() {
-  envelopeEditVoter.value = null;
-  envelopeEditValue.value = undefined;
-  envelopeSaving.value = false;
-}
+// function resetEnvelopeDialog() {
+//   envelopeEditVoter.value = null;
+//   envelopeEditValue.value = undefined;
+//   envelopeSaving.value = false;
+// }
 
-async function saveEnvelopeNumber(clear = false) {
-  if (
-    !envelopeEditVoter.value ||
-    envelopeSaving.value ||
-    !hasActiveTeller.value
-  ) {
-    return;
-  }
+// async function saveEnvelopeNumber(clear = false) {
+//   if (
+//     !envelopeEditVoter.value ||
+//     envelopeSaving.value ||
+//     !hasActiveTeller.value
+//   ) {
+//     return;
+//   }
 
-  const personGuid = envelopeEditVoter.value.personGuid;
-  const envNum = clear
-    ? null
-    : typeof envelopeEditValue.value === "number" && envelopeEditValue.value > 0
-      ? envelopeEditValue.value
-      : null;
+//   const personGuid = envelopeEditVoter.value.personGuid;
+//   const envNum = clear
+//     ? null
+//     : typeof envelopeEditValue.value === "number" && envelopeEditValue.value > 0
+//       ? envelopeEditValue.value
+//       : null;
 
-  envelopeSaving.value = true;
-  try {
-    const updatedVoter = await frontDeskService.updateEnvelopeNumber(
-      electionGuid.value,
-      { personGuid, envNum },
-    );
-    updateVoterInList(updatedVoter);
-    showSuccessMessage(
-      clear || envNum === null
-        ? t("frontDesk.envelope.cleared")
-        : t("frontDesk.envelope.saved"),
-    );
-    showEnvelopeDialog.value = false;
-  } catch (err: any) {
-    showErrorMessage(err.message || t("frontDesk.errors.updateEnvelope"));
-  } finally {
-    envelopeSaving.value = false;
-  }
-}
+//   envelopeSaving.value = true;
+//   try {
+//     const updatedVoter = await frontDeskService.updateEnvelopeNumber(
+//       electionGuid.value,
+//       { personGuid, envNum },
+//     );
+//     updateVoterInList(updatedVoter);
+//     showSuccessMessage(
+//       clear || envNum === null
+//         ? t("frontDesk.envelope.cleared")
+//         : t("frontDesk.envelope.saved"),
+//     );
+//     showEnvelopeDialog.value = false;
+//   } catch (err: any) {
+//     showErrorMessage(err.message || t("frontDesk.errors.updateEnvelope"));
+//   } finally {
+//     envelopeSaving.value = false;
+//   }
+// }
 </script>
 
 <template>
@@ -1304,7 +1274,7 @@ async function saveEnvelopeNumber(clear = false) {
               </el-button>
             </div>
 
-            <div class="filter-group" v-if="electionFlags.length > 0">
+            <div v-if="electionFlags.length > 0" class="filter-group">
               <span class="filter-label">{{
                 $t("frontDesk.filters.flags")
               }}</span>

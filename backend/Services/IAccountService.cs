@@ -9,8 +9,6 @@ public interface IAccountService
 {
     Task<UserProfileDto?> GetUserProfileAsync(string userId);
 
-    Task<UserProfileDto?> UpdateUserProfileAsync(string userId, UpdateUserProfileDto updateDto);
-
     Task<UserProfileDto?> ChangeDisplayNameAsync(string userId, string displayName);
 
     /// <summary>

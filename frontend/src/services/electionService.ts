@@ -1,4 +1,8 @@
-import { getApiElectionsByGuidStats, getApiElectionsGetElections } from "../api/gen/configService/sdk.gen";
+import {
+  getApiElectionsByGuidStats,
+  getApiElectionsGetElections,
+} from "../api/gen/configService/sdk.gen";
+import type { ElectionStage } from "../domain/electionStages";
 import type {
   CreateElectionDto,
   ElectionDto,
@@ -7,7 +11,6 @@ import type {
   ImportResultDto,
   UpdateElectionDto,
 } from "../types";
-import type { ElectionStage } from "../domain/electionStages";
 import {
   deleteApiElectionsByGuidDeleteElection,
   getApiElectionsByGuidElection,
