@@ -1,6 +1,8 @@
 import {
   getApiSecurityAuditLogs,
   getApiSecurityAuditLogsById,
+  type BackendSecurityEventSeverity,
+  type BackendSecurityEventType,
 } from "@/api/gen/configService";
 import type { AuditLog, AuditLogFilter } from "@/types/AuditLog";
 import type { PaginatedResponse } from "@/types/ApiResponse";
