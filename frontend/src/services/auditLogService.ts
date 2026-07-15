@@ -4,8 +4,8 @@ import {
   type BackendSecurityEventSeverity,
   type BackendSecurityEventType,
 } from "@/api/gen/configService";
-import type { AuditLog, AuditLogFilter } from "@/types/AuditLog";
 import type { PaginatedResponse } from "@/types/ApiResponse";
+import type { AuditLog, AuditLogFilter } from "@/types/AuditLog";
 
 /**
  * Client for security/operational audit logs.
@@ -18,14 +18,18 @@ export const auditLogService = {
   ): Promise<PaginatedResponse<AuditLog>> {
     const response = await getApiSecurityAuditLogs({
       query: {
-        eventType: filter?.eventType as unknown as BackendSecurityEventType | undefined,
+        eventType: filter?.eventType as unknown as
+          | BackendSecurityEventType
+          | undefined,
         userId: filter?.userId,
         onlineVoterId: filter?.onlineVoterId,
         electionGuid: filter?.electionGuid,
         email: filter?.email,
         ipAddress: filter?.ipAddress,
         isSuspicious: filter?.isSuspicious,
-        severity: filter?.severity as unknown as BackendSecurityEventSeverity | undefined,
+        severity: filter?.severity as unknown as
+          | BackendSecurityEventSeverity
+          | undefined,
         startDate: filter?.startDate ? new Date(filter.startDate) : undefined,
         endDate: filter?.endDate ? new Date(filter.endDate) : undefined,
         searchTerm: filter?.searchTerm,
