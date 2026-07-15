@@ -16,6 +16,8 @@ describe("secureTokenService", () => {
   });
 
   afterEach(() => {
+    // Restore jsdom's default cookie implementation so this suite does not leak.
+    Reflect.deleteProperty(document, "cookie");
     vi.restoreAllMocks();
   });
 
@@ -97,13 +99,11 @@ describe("secureTokenService", () => {
   });
 
   it("getCookie decodes URI-encoded values", () => {
-    // Simulate a previously set encoded cookie via jar get
+    // Simulate a browser cookie store string (name=value pairs only; no attributes).
+    // Use the shared mock jar so we do not reassign document.cookie without Secure
+    // (which triggers CodeQL js/clear-text-cookie on sensitive names).
     cookieJar.length = 0;
-    Object.defineProperty(document, "cookie", {
-      configurable: true,
-      get: () => `user_name=${encodeURIComponent("Ada Lovelace")}`,
-      set: () => {},
-    });
+    cookieJar.push(`user_name=${encodeURIComponent("Ada Lovelace")}`);
 
     expect(secureTokenService.getCookie("user_name")).toBe("Ada Lovelace");
   });
