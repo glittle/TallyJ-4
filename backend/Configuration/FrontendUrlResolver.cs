@@ -37,7 +37,7 @@ internal static class FrontendUrlResolver
             else
             {
                 throw new InvalidOperationException(
-                    "ClientEnv:frontendUrl is required outside Development. " +
+                    "ClientEnv:frontendUrl is required outside Development/Testing. " +
                     "Set ClientEnv:frontendUrl (or env ClientEnv__frontendUrl) to the public SPA origin.");
             }
         }
