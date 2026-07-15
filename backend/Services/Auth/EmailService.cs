@@ -228,7 +228,7 @@ This confirmation expires in 24 hours. If you did not request this change, ignor
 
     private string BuildFrontendUrl(string path, params (string Key, string Value)[] query)
     {
-        var baseUrl = (_configuration["Frontend:BaseUrl"] ?? "http://localhost:8095").TrimEnd('/');
+        var baseUrl = (_configuration["Frontend:BaseUrl"] ?? "https://localhost:8095").TrimEnd('/');
         var qs = string.Join("&", query.Select(q =>
             $"{Uri.EscapeDataString(q.Key)}={Uri.EscapeDataString(q.Value)}"));
         var normalizedPath = path.StartsWith('/') ? path : "/" + path;

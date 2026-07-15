@@ -293,7 +293,7 @@ public class AuthControllerTests : ServiceTestBase
         var result = InvokeGetFrontendUrl(null);
 
         // Assert
-        Assert.Equal("http://localhost:8095/auth/google/callback", result);
+        Assert.Equal("https://localhost:8095/auth/google/callback", result);
     }
 
     [Fact]
@@ -306,7 +306,7 @@ public class AuthControllerTests : ServiceTestBase
         var result = InvokeGetFrontendUrl(null);
 
         // Assert
-        Assert.Equal("http://localhost:8095/auth/google/callback", result);
+        Assert.Equal("https://localhost:8095/auth/google/callback", result);
     }
 
     [Fact]
@@ -319,7 +319,7 @@ public class AuthControllerTests : ServiceTestBase
         var result = InvokeGetFrontendUrl(null);
 
         // Assert
-        Assert.Equal("http://localhost:8095/auth/google/callback", result);
+        Assert.Equal("https://localhost:8095/auth/google/callback", result);
     }
 
     [Fact]

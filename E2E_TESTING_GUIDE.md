@@ -20,7 +20,7 @@ cd frontend
 npm run dev
 ```
 
-Expected local app URL: `http://localhost:8095`
+Expected local app URL: `https://localhost:8095`
 
 ## Automated checks
 

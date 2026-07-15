@@ -1,7 +1,16 @@
 /**
  * Service for managing secure authentication cookies.
- * Provides methods to read authentication data from httpOnly cookies set by the backend.
+ * Provides methods to read authentication data from httpOnly cookies set by the backend,
+ * and to set/clear client-readable identity cookies on the SPA origin.
+ *
+ * Identity cookies (`user_email`, `user_name`, `auth_method`) are intentionally NOT HttpOnly
+ * so the SPA can read them for router guards and initial store state. Access/refresh tokens
+ * are HttpOnly and are only set by the backend.
+ *
+ * All client-written cookies always include Secure + SameSite=Strict (production is HTTPS;
+ * local HTTPS / modern localhost Secure exceptions are assumed for development).
  */
+
 export interface AuthCookieData {
   token: string | null;
   refreshToken: string | null;
@@ -9,6 +18,15 @@ export interface AuthCookieData {
   name: string | null;
   authMethod: string | null;
 }
+
+export interface UserInfoCookieData {
+  email?: string | null;
+  name?: string | null;
+  authMethod?: string | null;
+}
+
+/** Default lifetime for identity cookies (30 days), matching backend user cookie expiry. */
+const DEFAULT_MAX_AGE_DAYS = 30;
 
 export const secureTokenService = {
   /**
@@ -60,10 +78,47 @@ export const secureTokenService = {
    * HttpOnly cookies are cleared by the backend logout endpoint.
    */
   clearAuthData(): void {
-    // Clear readable cookies by setting them to expire
     this.setCookie(this.cookieNames.userEmail, "", -1);
     this.setCookie(this.cookieNames.userName, "", -1);
     this.setCookie(this.cookieNames.authMethod, "", -1);
+  },
+
+  /**
+   * Sets SPA-origin identity cookies after OAuth /me (or similar) when backend cookies
+   * may be on a different host. Only non-empty string fields are written.
+   */
+  setUserInfoCookies(data: UserInfoCookieData): void {
+    if (data.email) {
+      this.setCookie(this.cookieNames.userEmail, data.email);
+    }
+    if (data.name) {
+      this.setCookie(this.cookieNames.userName, data.name);
+    }
+    if (data.authMethod) {
+      this.setCookie(this.cookieNames.authMethod, data.authMethod);
+    }
+  },
+
+  /**
+   * Sets or clears the user_name identity cookie (profile display-name updates).
+   */
+  setUserNameCookie(name: string | null): void {
+    if (name) {
+      this.setCookie(this.cookieNames.userName, name);
+    } else {
+      this.setCookie(this.cookieNames.userName, "", -1);
+    }
+  },
+
+  /**
+   * Sets or clears the user_email identity cookie (email-change confirmation).
+   */
+  setUserEmailCookie(email: string | null): void {
+    if (email) {
+      this.setCookie(this.cookieNames.userEmail, email);
+    } else {
+      this.setCookie(this.cookieNames.userEmail, "", -1);
+    }
   },
 
   /**
@@ -80,13 +135,20 @@ export const secureTokenService = {
   },
 
   /**
-   * Sets a cookie with the given name, value, and max age in days.
+   * Sets a cookie with Secure + SameSite=Strict always applied.
+   * @param maxAgeDays Positive days for lifetime; use 0 or negative to expire immediately.
    */
-  setCookie(name: string, value: string, maxAgeDays: number = 30): void {
-    const maxAge =
-      maxAgeDays > 0 ? `; max-age=${maxAgeDays * 24 * 60 * 60}` : "; max-age=0";
-    const secure = window.location.protocol === "https:" ? "; secure" : "";
-    document.cookie = `${name}=${value}; path=/; samesite=strict${secure}${maxAge}`;
+  setCookie(
+    name: string,
+    value: string,
+    maxAgeDays: number = DEFAULT_MAX_AGE_DAYS,
+  ): void {
+    const maxAgeSeconds =
+      maxAgeDays > 0 ? Math.floor(maxAgeDays * 24 * 60 * 60) : 0;
+    const encoded = encodeURIComponent(value);
+    // Always Secure + SameSite=Strict so sensitive identity cookies are never sent over cleartext.
+    // Local HTTP on non-localhost is unsupported; prefer HTTPS for local development.
+    document.cookie = `${name}=${encoded}; path=/; samesite=strict; secure; max-age=${maxAgeSeconds}`;
   },
 
   /**

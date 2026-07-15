@@ -25,7 +25,7 @@ cp .env.docker.example .env.docker
 docker-compose up -d
 
 # Access the application
-# Frontend: http://localhost:8095
+# Frontend: https://localhost:8095
 # Backend API: http://localhost:5016
 ```
 
@@ -62,7 +62,7 @@ npm run dev
 2. **Assign Admin Role** (via database or admin panel)
 
 3. **Log In**
-   - Navigate to http://localhost:8095
+   - Navigate to https://localhost:8095
    - Enter credentials
 
 ### 3. Test with Sample Data (2 minutes)

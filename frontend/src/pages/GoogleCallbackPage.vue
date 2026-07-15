@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
+import { secureTokenService } from "../services/secureTokenService";
 import { useNotifications } from "@/composables/useNotifications";
 import { useI18n } from "vue-i18n";
 
@@ -40,12 +41,11 @@ onMounted(async () => {
     }
 
     // Set user info cookies on frontend domain for router guard
-    const secure = window.location.protocol === "https:" ? "; secure" : "";
-    document.cookie = `user_email=${encodeURIComponent(userData.email)}; path=/; samesite=strict${secure}; max-age=2592000`;
-    if (userData.name) {
-      document.cookie = `user_name=${encodeURIComponent(userData.name)}; path=/; samesite=strict${secure}; max-age=2592000`;
-    }
-    document.cookie = `auth_method=${encodeURIComponent(userData.authMethod)}; path=/; samesite=strict${secure}; max-age=2592000`;
+    secureTokenService.setUserInfoCookies({
+      email: userData.email,
+      name: userData.name,
+      authMethod: userData.authMethod,
+    });
 
     const redirectPath = route.query.redirect
       ? decodeURIComponent(route.query.redirect as string)

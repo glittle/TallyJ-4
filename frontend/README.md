@@ -28,7 +28,11 @@ npm run dev
 > ```
 > Then re-run `npm install`. The warning should not appear again on this machine.
 
-Default local URL: `http://localhost:8095`
+Default local URL: **`https://localhost:8095`**.
+
+HTTPS uses **`vite-plugin-mkcert`**, which creates a local certificate authority and installs it into the OS trust store so Chrome trusts the cert (no “Not secure” interstitial). The **first** `npm run dev` may prompt for administrator elevation on Windows to install that CA; after that, restarts are normal.
+
+The Vite dev server proxies `/api`, `/hubs`, and `/clientEnv.json` to the backend at `http://localhost:5016` (override with `VITE_API_TARGET`) so the browser stays on HTTPS with no mixed content. Identity cookies are always set with the `Secure` flag.
 
 ## Environment
 
@@ -37,12 +41,13 @@ Copy `.env.example` to `.env.development` or `.env.production` and adjust values
 Minimum useful local setup:
 
 ```env
-VITE_API_URL=http://localhost:5016
+VITE_API_URL=https://localhost:8095
 ```
 
 Common variables:
 
-- `VITE_API_URL` - backend base URL
+- `VITE_API_URL` - API base URL used by the SPA (local default is the Vite HTTPS origin; requests are proxied)
+- `VITE_API_TARGET` - optional real backend origin for the Vite proxy (default `http://localhost:5016`)
 - `VITE_APP_NAME` - app title shown by the frontend
 - `VITE_ENV` - environment label
 - `VITE_ENABLE_ANALYTICS` - analytics toggle

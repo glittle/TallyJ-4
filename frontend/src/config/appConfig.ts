@@ -11,7 +11,8 @@ export interface AppConfig {
 
 export function createAppConfig(overrides: Partial<AppConfig> = {}): AppConfig {
   return {
-    apiUrl: import.meta.env.VITE_API_URL || "http://localhost:5016",
+    // Dev defaults to the Vite HTTPS origin so /api and /hubs are same-origin (proxied).
+    apiUrl: import.meta.env.VITE_API_URL || "https://localhost:8095",
     env: import.meta.env.VITE_ENV || "development",
     ...overrides,
   };

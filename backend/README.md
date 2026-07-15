@@ -76,7 +76,7 @@ Swagger is available at:
 The checked-in development settings currently assume:
 
 - `Database:SeedOnStartup = true`
-- frontend base URL at `http://localhost:8095`
+- frontend base URL at `https://localhost:8095`
 - localization resources loaded from `../frontend/src/locales`
 
 That means a fresh local database is seeded automatically when the backend starts in the Development environment.

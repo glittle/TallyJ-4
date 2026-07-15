@@ -43,9 +43,9 @@ npm run dev
 
 Default frontend URL:
 
-- App: `http://localhost:8095`
+- App: `https://localhost:8095` (trusted local cert via mkcert; first `npm run dev` may prompt for admin to install the CA)
 
-The frontend reads `VITE_API_URL` from `.env.development` or falls back to `http://localhost:5016`.
+The frontend reads `VITE_API_URL` from `.env.development` (default `https://localhost:8095`). Vite proxies `/api` and `/hubs` to the backend at `http://localhost:5016`.
 
 ## Seeded development accounts
 
