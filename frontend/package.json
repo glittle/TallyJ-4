@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@hey-api/openapi-ts": "^0.97.3",
+    "@hey-api/openapi-ts": "^0.99.0",
     "@pinia/testing": "^1.0.3",
     "@types/node": "^25.9.1",
     "@vitejs/plugin-vue": "^6.0.7",
