@@ -118,6 +118,8 @@ export interface ElectionSummaryDto {
   isTellerAccessOpen?: boolean;
   isOnlineVotingEnabled?: boolean;
   showAsTest?: boolean;
+  /** Positions to elect; mapped from API summary field `toElect`. */
+  numberToElect?: number;
 }
 
 export interface ImportResultDto {

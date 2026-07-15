@@ -16,7 +16,10 @@ const currentUser = computed(() => ({
   authMethod: authStore.authMethod,
   createdAt: null,
 }));
-const canChangePassword = computed(() => authStore.authMethod === "Local");
+/** Local (or multi-method including Local) can change password. */
+const canChangePassword = computed(() =>
+  hasLocalAuthMethod(authStore.authMethod),
+);
 /** Local (or multi-method including Local) can set/update display name. */
 const canChangeName = computed(() => hasLocalAuthMethod(authStore.authMethod));
 /** Email change is Local-only accounts. */

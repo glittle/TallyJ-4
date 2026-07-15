@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useLocalStorage } from "@/composables/useLocalStorage";
-import { computed } from "vue";
+import { computed, ref, type Ref } from "vue";
 import type {
   CreateElectionDto,
   ElectionSummaryDto,
@@ -21,10 +21,10 @@ const props = defineProps<{
 
 const hasBallotsEntered = computed(() => (props.ballotCount ?? 0) > 0);
 
-const activeTab = useLocalStorage<string>("activeTab", "basic");
-if (props.forceBasicTab) {
-  activeTab.value = "basic";
-}
+// Create flow must open on "basic" without writing the shared edit-flow preference.
+const activeTab: Ref<string> = props.forceBasicTab
+  ? ref("basic")
+  : useLocalStorage<string>("activeTab", "basic");
 
 // Map tab names to their form fields
 const tabFields: Record<string, string[]> = {
