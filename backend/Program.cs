@@ -567,7 +567,6 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     app.MapHub<Backend.Hubs.PeopleImportHub>("/hubs/people-import");
     app.MapHub<Backend.Hubs.FrontDeskHub>("/hubs/front-desk");
     app.MapHub<Backend.Hubs.PublicHub>("/hubs/public");
-    app.MapHub<Backend.Hubs.OnlineVotingHub>("/hubs/online-voting");
 
     app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
 

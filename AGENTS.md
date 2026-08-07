@@ -103,7 +103,7 @@ Do not assume every backend response uses the same wrapper.
 
 ### SignalR group naming and hubs
 
-There are 7 hubs under `backend/Hubs/`. **Do not assume a single `election-{guid}` convention** (the previous short recommendation is not present in code).
+There are 6 hubs under `backend/Hubs/`. **Do not assume a single `election-{guid}` convention** (the previous short recommendation is not present in code).
 
 Group name patterns (constructed via `GetGroupName` statics in each hub + used for broadcasts in `SignalRNotificationService.cs`):
 
@@ -112,7 +112,6 @@ Group name patterns (constructed via `GetGroupName` statics in each hub + used f
 - `FrontDesk{electionGuid}` — FrontDeskHub (updatePeople, reloadPage, updateBallots, updateOnlineElection, etc.).
 - `BallotImport{electionGuid}` — BallotImportHub (importProgress, importError, importComplete).
 - `PeopleImport{electionGuid}` — PeopleImportHub (same import events).
-- `online-election-{electionGuid}` — OnlineVotingHub.
 - `Public` (static group) — PublicHub for guest-teller joinable elections list updates.
 
 **Frontend side**: `src/services/signalrService.ts` provides `connectToMainHub()`, `connectToAnalyzeHub()`, `connectToFrontDeskHub()`, etc. + `joinElection(guid)`, `joinTallySession(guid)`, etc. Stores (electionStore, ballotStore, peopleStore, etc.) call these and wire `connection.on("eventName", handler)`.

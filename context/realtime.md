@@ -15,15 +15,26 @@ Do **not** assume a single `election-{guid}` convention for all realtime traffic
 | `Analyze{electionGuid}` | AnalyzeHub — tally progress/complete |
 | `FrontDesk{electionGuid}` | FrontDeskHub — people, ballots, online election, reload |
 | `BallotImport{electionGuid}` / `PeopleImport{electionGuid}` | import hubs |
-| `online-election-{electionGuid}` | OnlineVotingHub |
 | `Public` | PublicHub — guest-teller joinable elections list |
 
 Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElection`, etc.) and store subscriptions.
 
 **Reason:** different surfaces need different fan-out and sometimes different membership (known vs guest). One flat `election-{guid}` group would over-notify or under-notify and couple unrelated UI areas.
 
-**Rejected alternative:** one shared election group for every event type. Rejected because Main, Front Desk, Analyze, Online, and Public have different listeners and update cadences.
+**Rejected alternative:** one shared election group for every event type. Rejected because Main, Front Desk, Analyze, and Public have different listeners and update cadences.
 
+## No OnlineVotingHub (election-scoped online voting SignalR)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** maintainer review of unused scaffold vs v3 `AllVotersHub` / `VoterPersonalHub`  
+**Revisit when:** online voters need live list refresh or personal status push
+
+There is no `/hubs/online-voting` hub and no `online-election-{guid}` group. Online voting remains HTTP (`/api/online-voting/*`). Operator-facing online window updates use FrontDeskHub (`updateOnlineElection`). Ballot submit confirmation is the HTTP response.
+
+**Rejected alternative:** keep scaffolded `OnlineVotingHub` with `online-election-{electionGuid}` and client-callable `BallotSubmitted` (payload including `totalVotes`). Rejected — unused (no server `IHubContext` producers, no frontend client), mismatched v3 voter model (global all-voters + personal `Voter{id}`, not per-election ballot events), and would push vote totals rather than a thin “refetch” signal.
+
+**Preferred shape if restored later:** authenticated voter channel; thin “changed” (or `electionGuid` only) event so clients re-call `GET availableElections` / vote status APIs — avoid disclosing election detail or tallies on the hub.
 ## No anonymous public results display
 
 **Status:** active  
