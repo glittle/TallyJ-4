@@ -1,10 +1,9 @@
-﻿using Backend.DTOs.Public;
+using Backend.DTOs.Public;
 
 namespace Backend.Services;
 
 /// <summary>
-/// Service interface for public-facing operations that don't require authentication.
-/// Provides functionality to access public election information and status.
+/// Service interface for anonymous public operations (guest teller discovery and system info).
 /// </summary>
 public interface IPublicService
 {
@@ -15,25 +14,16 @@ public interface IPublicService
     Task<PublicHomeDto> GetPublicHomeDataAsync();
 
     /// <summary>
-    /// Retrieves a list of elections that are available for public viewing.
+    /// Retrieves elections currently open for guest teller join.
     /// </summary>
     /// <returns>A list of available election data.</returns>
     Task<List<AvailableElectionDto>> GetAvailableElectionsAsync();
 
     /// <summary>
-    /// Retrieves the current status of a specific election for public viewing.
+    /// Retrieves the current status of a specific election.
+    /// Callers must already be authorized as a joined full or guest teller for the election.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <returns>The election status data, or null if the election is not found or not public.</returns>
+    /// <returns>The election status data, or null if the election is not found.</returns>
     Task<ElectionStatusDto?> GetElectionStatusAsync(Guid electionGuid);
-
-    /// <summary>
-    /// Retrieves election results formatted for public display.
-    /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <returns>The public display data with results, or null if the election is not found or not public.</returns>
-    Task<PublicDisplayDto?> GetPublicDisplayDataAsync(Guid electionGuid);
 }
-
-
-

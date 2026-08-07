@@ -191,13 +191,6 @@ export type ApiResponsePublicElectionStatusDto = {
     errors?: Array<string> | null;
 };
 
-export type ApiResponsePublicPublicDisplayDto = {
-    success?: boolean;
-    data?: PublicPublicDisplayDto;
-    message?: string | null;
-    errors?: Array<string> | null;
-};
-
 export type ApiResponsePublicPublicHomeDto = {
     success?: boolean;
     data?: PublicPublicHomeDto;
@@ -1176,45 +1169,12 @@ export type PublicElectionStatusDto = {
     ballotsSubmitted?: number;
 };
 
-export type PublicPublicDisplayDto = {
-    electionGuid?: string;
-    electionName?: string | null;
-    dateOfElection?: Date | null;
-    convenor?: string | null;
-    electionType?: EnumerationsElectionTypeCode;
-    electionStage?: EnumerationsElectionStage;
-    numberToElect?: number;
-    numberExtra?: number;
-    electedPeople?: Array<PublicPublicPersonDto> | null;
-    additionalPeople?: Array<PublicPublicPersonDto> | null;
-    statistics?: PublicPublicDisplayStatsDto;
-    lastUpdated?: Date;
-    isFinalized?: boolean;
-};
-
-export type PublicPublicDisplayStatsDto = {
-    totalBallots?: number;
-    validBallots?: number;
-    spoiledBallots?: number;
-    totalVotes?: number;
-    registeredVoters?: number;
-    turnoutPercentage?: number;
-};
-
 export type PublicPublicHomeDto = {
     applicationName?: string | null;
     version?: string | null;
     description?: string | null;
     availableElectionsCount?: number;
     serverTime?: Date;
-};
-
-export type PublicPublicPersonDto = {
-    rank?: number;
-    fullName?: string | null;
-    voteCount?: number;
-    isTied?: boolean;
-    tieBreakRequired?: boolean;
 };
 
 export type ReportsAlignmentRowDto = {
@@ -3931,24 +3891,6 @@ export type GetApiPublicByElectionGuidElectionStatusResponses = {
 };
 
 export type GetApiPublicByElectionGuidElectionStatusResponse = GetApiPublicByElectionGuidElectionStatusResponses[keyof GetApiPublicByElectionGuidElectionStatusResponses];
-
-export type GetApiPublicByElectionGuidPublicDisplayData = {
-    body?: never;
-    path: {
-        electionGuid: string;
-    };
-    query?: never;
-    url: '/api/Public/{electionGuid}/publicDisplay';
-};
-
-export type GetApiPublicByElectionGuidPublicDisplayResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponsePublicPublicDisplayDto;
-};
-
-export type GetApiPublicByElectionGuidPublicDisplayResponse = GetApiPublicByElectionGuidPublicDisplayResponses[keyof GetApiPublicByElectionGuidPublicDisplayResponses];
 
 export type GetApiPublicHealthData = {
     body?: never;

@@ -295,20 +295,6 @@ class SignalRService {
       await publicConnection.invoke("LeavePublicGroup");
     }
   }
-
-  async joinPublicDisplay(electionGuid: string): Promise<void> {
-    const publicConnection = this.getConnection("/hubs/public");
-    if (publicConnection) {
-      await publicConnection.invoke("JoinPublicDisplay", electionGuid);
-    }
-  }
-
-  async leavePublicDisplay(electionGuid: string): Promise<void> {
-    const publicConnection = this.getConnection("/hubs/public");
-    if (publicConnection) {
-      await publicConnection.invoke("LeavePublicDisplay", electionGuid);
-    }
-  }
 }
 
 export const signalrService = new SignalRService();

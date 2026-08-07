@@ -4433,46 +4433,6 @@
         }
       }
     },
-    "/api/Public/{electionGuid}/publicDisplay": {
-      "get": {
-        "tags": [
-          "Public"
-        ],
-        "parameters": [
-          {
-            "name": "electionGuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponsePublic_PublicDisplayDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponsePublic_PublicDisplayDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponsePublic_PublicDisplayDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Public/health": {
       "get": {
         "tags": [
@@ -7819,29 +7779,6 @@
         },
         "additionalProperties": false
       },
-      "ApiResponsePublic_PublicDisplayDto": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "data": {
-            "$ref": "#/components/schemas/Public_PublicDisplayDto"
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "ApiResponsePublic_PublicHomeDto": {
         "type": "object",
         "properties": {
@@ -11007,97 +10944,6 @@
         },
         "additionalProperties": false
       },
-      "Public_PublicDisplayDto": {
-        "type": "object",
-        "properties": {
-          "electionGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "electionName": {
-            "type": "string",
-            "nullable": true
-          },
-          "dateOfElection": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "convenor": {
-            "type": "string",
-            "nullable": true
-          },
-          "electionType": {
-            "$ref": "#/components/schemas/Enumerations_ElectionTypeCode"
-          },
-          "electionStage": {
-            "$ref": "#/components/schemas/Enumerations_ElectionStage"
-          },
-          "numberToElect": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "numberExtra": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "electedPeople": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Public_PublicPersonDto"
-            },
-            "nullable": true
-          },
-          "additionalPeople": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Public_PublicPersonDto"
-            },
-            "nullable": true
-          },
-          "statistics": {
-            "$ref": "#/components/schemas/Public_PublicDisplayStatsDto"
-          },
-          "lastUpdated": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "isFinalized": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "Public_PublicDisplayStatsDto": {
-        "type": "object",
-        "properties": {
-          "totalBallots": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "validBallots": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "spoiledBallots": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalVotes": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "registeredVoters": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "turnoutPercentage": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "additionalProperties": false
-      },
       "Public_PublicHomeDto": {
         "type": "object",
         "properties": {
@@ -11120,30 +10966,6 @@
           "serverTime": {
             "type": "string",
             "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "Public_PublicPersonDto": {
-        "type": "object",
-        "properties": {
-          "rank": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "fullName": {
-            "type": "string",
-            "nullable": true
-          },
-          "voteCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "isTied": {
-            "type": "boolean"
-          },
-          "tieBreakRequired": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false

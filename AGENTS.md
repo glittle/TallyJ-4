@@ -113,8 +113,7 @@ Group name patterns (constructed via `GetGroupName` statics in each hub + used f
 - `BallotImport{electionGuid}` — BallotImportHub (importProgress, importError, importComplete).
 - `PeopleImport{electionGuid}` — PeopleImportHub (same import events).
 - `online-election-{electionGuid}` — OnlineVotingHub.
-- `public-display-{electionGuid}` — PublicHub (per-election public display pages).
-- `Public` (static group) — PublicHub for global elections list / status broadcasts.
+- `Public` (static group) — PublicHub for guest-teller joinable elections list updates.
 
 **Frontend side**: `src/services/signalrService.ts` provides `connectToMainHub()`, `connectToAnalyzeHub()`, `connectToFrontDeskHub()`, etc. + `joinElection(guid)`, `joinTallySession(guid)`, etc. Stores (electionStore, ballotStore, peopleStore, etc.) call these and wire `connection.on("eventName", handler)`.
 

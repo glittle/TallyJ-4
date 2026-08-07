@@ -89,7 +89,6 @@ Test these only when relevant to your change:
 - teller assignment and teller join flow
 - location management
 - online voting authentication and ballot submission
-- public display pages
 - audit log views
 
 ## Seeded development accounts
