@@ -66,6 +66,7 @@ frontend/package-lock.json
 ###############################
 # Agent/Tooling Artifacts
 ###############################
+AGENTS.local.md
 .zenflow/
 .zencoder/
 .zenflow-attachments/

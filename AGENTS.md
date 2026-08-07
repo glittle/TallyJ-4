@@ -2,10 +2,29 @@
 
 This file contains the repo-specific guidance that should stay current for AI agents and human contributors.
 
+## Keep the Why
+
+This project uses [Keep the Why](https://keepthewhy.com) to preserve the reasoning behind the code.
+
+- **Why things are the way they are:** start at `context/index.md`, then open only the topic files relevant to the task.
+- Read `context/` before non-trivial changes that touch architecture, auth, realtime, or API contracts — avoid re-litigating or accidentally reverting settled decisions.
+- Continuous capture is active (see personal preferences in `AGENTS.local.md` when present). Record non-obvious decisions, rejected alternatives, and workarounds in the matching topic file under `context/`.
+- Do not invent rationale; mark Evidence as confirmed / inferred / unknown.
+- If `AGENTS.local.md` exists in this checkout, read it for personal capture preferences.
+
+<!-- keep-the-why:config -->
+- context: `context/`
+- init: complete
+- context-schema: 0.6.4
+- capture-confirmation: confirm-when-unsure
+- source-reference: never
+<!-- /keep-the-why:config -->
+
 ## Canonical docs
 
 Use these as the primary sources of current project guidance:
 
+- `context/index.md` — why the project is built the way it is (Keep the Why)
 - `AGENTS_REASONING.md`
 - `README.md`
 - `backend/README.md`
