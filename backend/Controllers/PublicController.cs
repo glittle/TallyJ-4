@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers;
 
 /// <summary>
-/// Controller for anonymous discovery (guest teller join list) plus election status for joined tellers.
+/// Controller for anonymous public discovery (guest teller join list) and system health.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -39,28 +39,6 @@ public class PublicController(IPublicService publicService) : ControllerBase
         return Ok(ApiResponse<List<AvailableElectionDto>>.SuccessResponse(
             elections,
             $"Found {elections.Count} available election(s)"));
-    }
-
-    /// <summary>
-    /// Gets the current status of a specific election.
-    /// Restricted to authenticated full and guest tellers joined to that election.
-    /// </summary>
-    /// <param name="electionGuid">The GUID of the election to check.</param>
-    /// <returns>The election status information.</returns>
-    [HttpGet("{electionGuid}/electionStatus")]
-    [Authorize(Policy = "ElectionAccess")]
-    public async Task<ActionResult<ApiResponse<ElectionStatusDto>>> GetElectionStatus(Guid electionGuid)
-    {
-        var status = await _publicService.GetElectionStatusAsync(electionGuid);
-
-        if (status == null)
-        {
-            return NotFound(ApiResponse<ElectionStatusDto>.ErrorResponse(
-                "Election not found",
-                new List<string> { $"No election found with GUID: {electionGuid}" }));
-        }
-
-        return Ok(ApiResponse<ElectionStatusDto>.SuccessResponse(status));
     }
 
     /// <summary>

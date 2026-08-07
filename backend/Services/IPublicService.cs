@@ -18,12 +18,4 @@ public interface IPublicService
     /// </summary>
     /// <returns>A list of available election data.</returns>
     Task<List<AvailableElectionDto>> GetAvailableElectionsAsync();
-
-    /// <summary>
-    /// Retrieves the current status of a specific election.
-    /// Callers must already be authorized as a joined full or guest teller for the election.
-    /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <returns>The election status data, or null if the election is not found.</returns>
-    Task<ElectionStatusDto?> GetElectionStatusAsync(Guid electionGuid);
 }

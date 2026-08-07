@@ -72,6 +72,13 @@ export type ApiResponseElectionsElectionStatsDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponseElectionsElectionStatusDto = {
+    success?: boolean;
+    data?: ElectionsElectionStatusDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponseFrontDeskFrontDeskStatsDto = {
     success?: boolean;
     data?: FrontDeskFrontDeskStatsDto;
@@ -180,13 +187,6 @@ export type ApiResponsePeoplePersonDetailDto = {
 export type ApiResponsePeoplePersonDto = {
     success?: boolean;
     data?: PeoplePersonDto;
-    message?: string | null;
-    errors?: Array<string> | null;
-};
-
-export type ApiResponsePublicElectionStatusDto = {
-    success?: boolean;
-    data?: PublicElectionStatusDto;
     message?: string | null;
     errors?: Array<string> | null;
 };
@@ -558,6 +558,17 @@ export type ElectionsElectionStatsDto = {
     voterCount?: number;
     ballotCount?: number;
     locationCount?: number;
+};
+
+export type ElectionsElectionStatusDto = {
+    electionGuid?: string;
+    name?: string | null;
+    dateOfElection?: Date | null;
+    electionType?: EnumerationsElectionTypeCode;
+    electionStage?: EnumerationsElectionStage;
+    isActive?: boolean;
+    registeredVoters?: number;
+    ballotsSubmitted?: number;
 };
 
 export type ElectionsElectionSummaryDto = {
@@ -1156,17 +1167,6 @@ export type PublicAvailableElectionDto = {
     name?: string | null;
     dateOfElection?: Date | null;
     electionType?: EnumerationsElectionTypeCode;
-};
-
-export type PublicElectionStatusDto = {
-    electionGuid?: string;
-    name?: string | null;
-    dateOfElection?: Date | null;
-    electionType?: EnumerationsElectionTypeCode;
-    electionStage?: EnumerationsElectionStage;
-    isActive?: boolean;
-    registeredVoters?: number;
-    ballotsSubmitted?: number;
 };
 
 export type PublicPublicHomeDto = {
@@ -2946,6 +2946,24 @@ export type GetApiElectionsByGuidStatsResponses = {
 
 export type GetApiElectionsByGuidStatsResponse = GetApiElectionsByGuidStatsResponses[keyof GetApiElectionsByGuidStatsResponses];
 
+export type GetApiElectionsByGuidStatusData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/status';
+};
+
+export type GetApiElectionsByGuidStatusResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseElectionsElectionStatusDto;
+};
+
+export type GetApiElectionsByGuidStatusResponse = GetApiElectionsByGuidStatusResponses[keyof GetApiElectionsByGuidStatusResponses];
+
 export type GetApiElectionsByGuidElectionSummaryData = {
     body?: never;
     path: {
@@ -3873,24 +3891,6 @@ export type GetApiPublicElectionsResponses = {
 };
 
 export type GetApiPublicElectionsResponse = GetApiPublicElectionsResponses[keyof GetApiPublicElectionsResponses];
-
-export type GetApiPublicByElectionGuidElectionStatusData = {
-    body?: never;
-    path: {
-        electionGuid: string;
-    };
-    query?: never;
-    url: '/api/Public/{electionGuid}/electionStatus';
-};
-
-export type GetApiPublicByElectionGuidElectionStatusResponses = {
-    /**
-     * OK
-     */
-    200: ApiResponsePublicElectionStatusDto;
-};
-
-export type GetApiPublicByElectionGuidElectionStatusResponse = GetApiPublicByElectionGuidElectionStatusResponses[keyof GetApiPublicByElectionGuidElectionStatusResponses];
 
 export type GetApiPublicHealthData = {
     body?: never;

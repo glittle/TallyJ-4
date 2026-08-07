@@ -224,6 +224,30 @@ export const ApiResponseElections_ElectionStatsDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponseElections_ElectionStatusDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/Elections_ElectionStatusDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponseFrontDesk_FrontDeskStatsDtoSchema = {
     type: 'object',
     properties: {
@@ -624,30 +648,6 @@ export const ApiResponsePeople_PersonDtoSchema = {
         },
         data: {
             $ref: '#/components/schemas/People_PersonDto'
-        },
-        message: {
-            type: 'string',
-            nullable: true
-        },
-        errors: {
-            type: 'array',
-            items: {
-                type: 'string'
-            },
-            nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
-export const ApiResponsePublic_ElectionStatusDtoSchema = {
-    type: 'object',
-    properties: {
-        success: {
-            type: 'boolean'
-        },
-        data: {
-            $ref: '#/components/schemas/Public_ElectionStatusDto'
         },
         message: {
             type: 'string',
@@ -1862,6 +1862,43 @@ export const Elections_ElectionStatsDtoSchema = {
             format: 'int32'
         },
         locationCount: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Elections_ElectionStatusDtoSchema = {
+    type: 'object',
+    properties: {
+        electionGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        name: {
+            type: 'string',
+            nullable: true
+        },
+        dateOfElection: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        electionType: {
+            $ref: '#/components/schemas/Enumerations_ElectionTypeCode'
+        },
+        electionStage: {
+            $ref: '#/components/schemas/Enumerations_ElectionStage'
+        },
+        isActive: {
+            type: 'boolean'
+        },
+        registeredVoters: {
+            type: 'integer',
+            format: 'int32'
+        },
+        ballotsSubmitted: {
             type: 'integer',
             format: 'int32'
         }
@@ -3894,43 +3931,6 @@ export const Public_AvailableElectionDtoSchema = {
         },
         electionType: {
             $ref: '#/components/schemas/Enumerations_ElectionTypeCode'
-        }
-    },
-    additionalProperties: false
-} as const;
-
-export const Public_ElectionStatusDtoSchema = {
-    type: 'object',
-    properties: {
-        electionGuid: {
-            type: 'string',
-            format: 'uuid'
-        },
-        name: {
-            type: 'string',
-            nullable: true
-        },
-        dateOfElection: {
-            type: 'string',
-            format: 'date-time',
-            nullable: true
-        },
-        electionType: {
-            $ref: '#/components/schemas/Enumerations_ElectionTypeCode'
-        },
-        electionStage: {
-            $ref: '#/components/schemas/Enumerations_ElectionStage'
-        },
-        isActive: {
-            type: 'boolean'
-        },
-        registeredVoters: {
-            type: 'integer',
-            format: 'int32'
-        },
-        ballotsSubmitted: {
-            type: 'integer',
-            format: 'int32'
         }
     },
     additionalProperties: false

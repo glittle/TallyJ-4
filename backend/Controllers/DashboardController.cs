@@ -122,10 +122,10 @@ public class DashboardController : ControllerBase
     }
 
     /// <summary>
-    /// Updates the public listing status of an election for GuestTellers.
+    /// Updates whether an election appears in the guest-teller join list.
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to update.</param>
-    /// <param name="isListed">Whether the election should be publicly listed.</param>
+    /// <param name="isListed">Whether guest tellers may discover and join the election.</param>
     /// <returns>An API response indicating success or failure of the update.</returns>
     [HttpPost("{electionGuid:guid}/updateListing")]
     public async Task<ActionResult<ApiResponse<bool>>> UpdateElectionListing(

@@ -3,7 +3,7 @@ using Backend.Enumerations;
 namespace Backend.DTOs.Public;
 
 /// <summary>
-/// Data transfer object representing an election available for public access.
+/// Data transfer object representing an election currently open for guest-teller join.
 /// </summary>
 public class AvailableElectionDto
 {

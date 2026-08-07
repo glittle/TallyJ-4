@@ -21,7 +21,8 @@ public class PublicHomeDto
     public string Description { get; set; } = "Election management and online voting system";
 
     /// <summary>
-    /// The number of elections available for public access.
+    /// The number of elections listed for guest-teller discovery
+    /// (<see cref="Backend.Entities.Election.ListedForPublicAsOf"/> is set).
     /// </summary>
     public int AvailableElectionsCount { get; set; }
 

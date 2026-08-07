@@ -35,4 +35,4 @@ Anonymous clients must not learn election results (or other election detail) jus
 
 **Rejected alternative:** per-election `public-display-{guid}` groups + `GET /api/Public/{guid}/publicDisplay` + full-screen public results page. Removed — no business need for random users to view election data; authenticated results presentation (e.g. in-app results/presentation views) covers operator needs.
 
-Election detail over HTTP follows the same rule: `GET /api/Public/{electionGuid}/electionStatus` requires `ElectionAccess` (full or guest teller joined to that election). Anonymous public endpoints stay limited to guest-join discovery (`/elections`, hub `Public` group) and non-sensitive health/home.
+Election detail over HTTP follows the same rule: `GET /api/Elections/{guid}/status` (and other election-scoped routes) require `ElectionAccess` (full or guest teller joined to that election). Anonymous public endpoints stay limited to guest-join discovery (`/api/Public/elections`, hub `Public` group) and non-sensitive health/home.

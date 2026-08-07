@@ -35,7 +35,7 @@ public interface ISignalRNotificationService
     Task SendPersonUpdateAsync(PersonUpdateDto update);
 
     /// <summary>
-    /// Sends an update notification for the public election list.
+    /// Notifies the Public hub group that the guest-joinable elections list has changed.
     /// </summary>
     /// <param name="electionGuid">Optional election whose guest-access state changed.</param>
     /// <param name="guestAccessOpen">When set with <paramref name="electionGuid"/>, indicates whether guest tellers may join.</param>

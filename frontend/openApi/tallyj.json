@@ -1896,6 +1896,46 @@
         }
       }
     },
+    "/api/Elections/{guid}/status": {
+      "get": {
+        "tags": [
+          "Elections"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElections_ElectionStatusDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElections_ElectionStatusDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElections_ElectionStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Elections/{guid}/electionSummary": {
       "get": {
         "tags": [
@@ -4386,46 +4426,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseListPublic_AvailableElectionDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Public/{electionGuid}/electionStatus": {
-      "get": {
-        "tags": [
-          "Public"
-        ],
-        "parameters": [
-          {
-            "name": "electionGuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponsePublic_ElectionStatusDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponsePublic_ElectionStatusDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponsePublic_ElectionStatusDto"
                 }
               }
             }
@@ -7356,6 +7356,29 @@
         },
         "additionalProperties": false
       },
+      "ApiResponseElections_ElectionStatusDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Elections_ElectionStatusDto"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApiResponseFrontDesk_FrontDeskStatsDto": {
         "type": "object",
         "properties": {
@@ -7741,29 +7764,6 @@
           },
           "data": {
             "$ref": "#/components/schemas/People_PersonDto"
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ApiResponsePublic_ElectionStatusDto": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "data": {
-            "$ref": "#/components/schemas/Public_ElectionStatusDto"
           },
           "message": {
             "type": "string",
@@ -8935,6 +8935,42 @@
             "format": "int32"
           },
           "locationCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Elections_ElectionStatusDto": {
+        "type": "object",
+        "properties": {
+          "electionGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfElection": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "electionType": {
+            "$ref": "#/components/schemas/Enumerations_ElectionTypeCode"
+          },
+          "electionStage": {
+            "$ref": "#/components/schemas/Enumerations_ElectionStage"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "registeredVoters": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ballotsSubmitted": {
             "type": "integer",
             "format": "int32"
           }
@@ -10904,42 +10940,6 @@
           },
           "electionType": {
             "$ref": "#/components/schemas/Enumerations_ElectionTypeCode"
-          }
-        },
-        "additionalProperties": false
-      },
-      "Public_ElectionStatusDto": {
-        "type": "object",
-        "properties": {
-          "electionGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "dateOfElection": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "electionType": {
-            "$ref": "#/components/schemas/Enumerations_ElectionTypeCode"
-          },
-          "electionStage": {
-            "$ref": "#/components/schemas/Enumerations_ElectionStage"
-          },
-          "isActive": {
-            "type": "boolean"
-          },
-          "registeredVoters": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ballotsSubmitted": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false

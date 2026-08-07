@@ -1,9 +1,10 @@
 using Backend.Enumerations;
 
-namespace Backend.DTOs.Public;
+namespace Backend.DTOs.Elections;
 
 /// <summary>
-/// Data transfer object representing election status for joined full/guest tellers.
+/// Lightweight election status for joined full or guest tellers
+/// (identity, stage, and aggregate counts).
 /// </summary>
 public class ElectionStatusDto
 {
@@ -33,7 +34,7 @@ public class ElectionStatusDto
     public ElectionStage ElectionStage { get; set; }
 
     /// <summary>
-    /// Whether the election is currently active.
+    /// Whether the election is currently active (not in processing-ballots stage).
     /// </summary>
     public bool IsActive { get; set; }
 
@@ -47,6 +48,3 @@ public class ElectionStatusDto
     /// </summary>
     public int BallotsSubmitted { get; set; }
 }
-
-
-

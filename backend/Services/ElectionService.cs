@@ -139,6 +139,47 @@ public class ElectionService : IElectionService
     }
 
     /// <summary>
+    /// Retrieves lightweight election status (identity, stage, and aggregate counts).
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>An ElectionStatusDto, or null if the election was not found.</returns>
+    public async Task<ElectionStatusDto?> GetElectionStatusAsync(Guid electionGuid)
+    {
+        var election = await _context.Elections
+            .AsNoTracking()
+            .Where(e => e.ElectionGuid == electionGuid)
+            .Select(e => new
+            {
+                e.ElectionGuid,
+                e.Name,
+                e.DateOfElection,
+                e.ElectionType,
+                e.ElectionStage
+            })
+            .FirstOrDefaultAsync();
+
+        if (election == null)
+        {
+            _logger.LogWarning("Election {ElectionGuid} not found", electionGuid);
+            return null;
+        }
+
+        var counts = await GetElectionCountsAsync(electionGuid);
+
+        return new ElectionStatusDto
+        {
+            ElectionGuid = election.ElectionGuid,
+            Name = election.Name,
+            DateOfElection = election.DateOfElection,
+            ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType),
+            ElectionStage = election.ElectionStage,
+            IsActive = election.ElectionStage != ElectionStage.ProcessingBallots,
+            RegisteredVoters = counts.VoterCount,
+            BallotsSubmitted = counts.BallotCount
+        };
+    }
+
+    /// <summary>
     /// Creates a new election.
     /// </summary>
     /// <param name="createDto">The data transfer object containing election creation information.</param>
@@ -346,10 +387,10 @@ public class ElectionService : IElectionService
     }
 
     /// <summary>
-    /// Updates the public listing status of an election.
+    /// Updates whether the election appears in the guest-teller join list.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="isListed">Whether the election should be listed for public access.</param>
+    /// <param name="isListed">Whether guest tellers may discover and join the election.</param>
     /// <returns>True if the listing status was updated successfully, false if the election was not found.</returns>
     public async Task<bool> UpdateElectionListingAsync(Guid electionGuid, bool isListed)
     {

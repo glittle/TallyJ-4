@@ -90,6 +90,25 @@ public class ElectionsController : ControllerBase
     }
 
     /// <summary>
+    /// Gets lightweight status (identity, stage, voter/ballot counts) for a joined teller.
+    /// </summary>
+    /// <param name="guid">The GUID of the election.</param>
+    /// <returns>The election status information.</returns>
+    [HttpGet("{guid}/status")]
+    [Authorize(Policy = "ElectionAccess")]
+    public async Task<ActionResult<ApiResponse<ElectionStatusDto>>> GetElectionStatus(Guid guid)
+    {
+        var status = await _electionService.GetElectionStatusAsync(guid);
+
+        if (status == null)
+        {
+            return NotFound(ApiResponse<ElectionStatusDto>.ErrorResponse("Election not found"));
+        }
+
+        return Ok(ApiResponse<ElectionStatusDto>.SuccessResponse(status));
+    }
+
+    /// <summary>
     /// Gets a summary of a specific election by its GUID.
     /// </summary>
     /// <param name="guid">The GUID of the election.</param>

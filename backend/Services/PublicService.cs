@@ -54,9 +54,10 @@ public class PublicService : IPublicService
     }
 
     /// <summary>
-    /// Retrieves a list of elections that are available for public access.
+    /// Retrieves elections currently open for guest-teller join
+    /// (listed for public discovery and with an active main teller).
     /// </summary>
-    /// <returns>A list of AvailableElectionDto objects representing elections with passcodes.</returns>
+    /// <returns>A list of guest-joinable election summaries.</returns>
     public async Task<List<AvailableElectionDto>> GetAvailableElectionsAsync()
     {
         var now = DateTimeOffset.UtcNow;
@@ -89,46 +90,6 @@ public class PublicService : IPublicService
             listedElections.Count);
 
         return elections;
-    }
-
-    /// <summary>
-    /// Retrieves the current status of a specific election (for authorized joined tellers).
-    /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <returns>An ElectionStatusDto containing election status information, or null if the election is not found.</returns>
-    public async Task<ElectionStatusDto?> GetElectionStatusAsync(Guid electionGuid)
-    {
-        var election = await _context.Elections
-            .Include(e => e.People)
-            .Include(e => e.Locations)
-                .ThenInclude(l => l.Ballots)
-            .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
-
-        if (election == null)
-        {
-            _logger.LogWarning("Election {ElectionGuid} not found", electionGuid);
-            return null;
-        }
-
-        var voterCount = election.People.Count(p => p.CanVote == true);
-        var ballots = election.Locations.SelectMany(l => l.Ballots).ToList();
-        var ballotCount = ballots.Count;
-
-        var isActive = election.ElectionStage != ElectionStage.ProcessingBallots;
-
-        _logger.LogInformation("Election status for {ElectionGuid}: {Stage}", electionGuid, election.ElectionStage);
-
-        return new ElectionStatusDto
-        {
-            ElectionGuid = election.ElectionGuid,
-            Name = election.Name,
-            DateOfElection = election.DateOfElection,
-            ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType),
-            ElectionStage = election.ElectionStage,
-            IsActive = isActive,
-            RegisteredVoters = voterCount,
-            BallotsSubmitted = ballotCount
-        };
     }
 }
 

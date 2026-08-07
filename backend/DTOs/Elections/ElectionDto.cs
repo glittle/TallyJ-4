@@ -58,7 +58,8 @@ public class ElectionDto
     public bool? ShowFullReport { get; set; }
 
     /// <summary>
-    /// Whether to list this election for public access.
+    /// Whether this election is listed for guest-teller discovery (legacy flag;
+    /// prefer <see cref="IsTellerAccessOpen"/>).
     /// </summary>
     public bool? ListForPublic { get; set; }
 
