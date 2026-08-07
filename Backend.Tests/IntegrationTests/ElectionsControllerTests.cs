@@ -181,6 +181,50 @@ public class ElectionsControllerTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task GetElectionStatus_WithValidElection_ReturnsStatus()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Status Test Election",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3
+        };
+
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        var response = await GetAsync($"/api/elections/{electionGuid}/status");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var result = await DeserializeResponseAsync<ApiResponse<ElectionStatusDto>>(response);
+        Assert.NotNull(result);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Data);
+        Assert.Equal(electionGuid, result.Data.ElectionGuid);
+        Assert.Equal("Status Test Election", result.Data.Name);
+        Assert.Equal(0, result.Data.RegisteredVoters);
+        Assert.Equal(0, result.Data.BallotsSubmitted);
+        Assert.True(result.Data.IsActive);
+    }
+
+    [Fact]
+    public async Task GetElectionStatus_WithInvalidGuid_ReturnsNotFound()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var response = await GetAsync($"/api/elections/{Guid.NewGuid()}/status");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
     public async Task UpdateElection_WithValidData_ReturnsOk()
     {
         var token = await GetAuthTokenAsync();

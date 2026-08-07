@@ -1,12 +1,9 @@
-import {
-  getApiElectionsByGuidStats,
-  getApiElectionsGetElections,
-} from "../api/gen/configService/sdk.gen";
 import type { ElectionStage } from "../domain/electionStages";
 import type {
   CreateElectionDto,
   ElectionDto,
   ElectionStats,
+  ElectionStatus,
   ElectionSummaryDto,
   ImportResultDto,
   UpdateElectionDto,
@@ -14,6 +11,9 @@ import type {
 import {
   deleteApiElectionsByGuidDeleteElection,
   getApiElectionsByGuidElection,
+  getApiElectionsByGuidStats,
+  getApiElectionsByGuidStatus,
+  getApiElectionsGetElections,
   getApiImportExportElectionToJsonByElectionGuid,
   postApiElectionsCreateElection,
   postApiImportImportCdnBallotsByElectionGuid,
@@ -22,7 +22,7 @@ import {
   putApiElectionsByGuidStage,
   putApiElectionsByGuidTellerAccess,
   putApiElectionsByGuidUpdateElection,
-} from "./../api/gen/configService/sdk.gen";
+} from "../api/gen/configService/sdk.gen";
 const convertStringToDate = (dateString?: string): Date | null => {
   return dateString ? new Date(dateString) : null;
 };
@@ -63,6 +63,26 @@ export const electionService = {
       voterCount: data.voterCount ?? 0,
       ballotCount: data.ballotCount ?? 0,
       locationCount: data.locationCount ?? 0,
+    };
+  },
+
+  async getStatus(electionGuid: string): Promise<ElectionStatus> {
+    const response = await getApiElectionsByGuidStatus({
+      path: { guid: electionGuid },
+    });
+    const data = response.data?.data;
+    if (!data) {
+      throw new Error("Election status not found");
+    }
+    return {
+      electionGuid: data.electionGuid || electionGuid,
+      name: data.name || "",
+      dateOfElection: convertDateToString(data.dateOfElection),
+      electionType: data.electionType,
+      electionStage: data.electionStage as ElectionStage | undefined,
+      isActive: data.isActive ?? false,
+      registeredVoters: data.registeredVoters ?? 0,
+      ballotsSubmitted: data.ballotsSubmitted ?? 0,
     };
   },
 

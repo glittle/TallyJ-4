@@ -126,7 +126,7 @@ TallyJ v4 is a complete rewrite of the election management system with modern te
 At the time of the initial v4 rewrite, the following areas were incomplete. **Current status (as of 2026)** should be verified in the running application / Swagger rather than this list:
 
 - Password reset, 2FA, and various OAuth methods for system users are implemented.
-- Front desk, public display, online voting, import workflows, advanced reporting, and audit logging have substantial implementations.
+- Front desk, online voting, import workflows, advanced reporting, and audit logging have substantial implementations.
 - Many v3 features have been rebuilt with improved security and architecture.
 
 **Recommendation for anyone using this guide:**

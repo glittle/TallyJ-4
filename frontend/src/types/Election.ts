@@ -107,6 +107,18 @@ export interface ElectionStats {
   locationCount: number;
 }
 
+/** Lightweight status for a joined full or guest teller. */
+export interface ElectionStatus {
+  electionGuid: string;
+  name: string;
+  dateOfElection?: string | null;
+  electionType?: string;
+  electionStage?: ElectionStage;
+  isActive: boolean;
+  registeredVoters: number;
+  ballotsSubmitted: number;
+}
+
 export interface ElectionSummaryDto {
   electionGuid: string;
   name: string;

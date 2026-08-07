@@ -34,6 +34,14 @@ public interface IElectionService
     Task<ElectionStatsDto?> GetElectionStatsAsync(Guid electionGuid);
 
     /// <summary>
+    /// Retrieves lightweight election status (identity, stage, and aggregate counts)
+    /// for joined full or guest tellers.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <returns>The election status, or null if the election was not found.</returns>
+    Task<ElectionStatusDto?> GetElectionStatusAsync(Guid electionGuid);
+
+    /// <summary>
     /// Creates a new election with the provided data.
     /// </summary>
     /// <param name="createDto">The election creation data.</param>
@@ -79,10 +87,10 @@ public interface IElectionService
     Task<ElectionDto?> ToggleTellerAccessAsync(Guid electionGuid, bool isOpen);
 
     /// <summary>
-    /// Updates the listing status of an election (whether it appears in public listings).
+    /// Updates whether the election appears in the guest-teller join list.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="isListed">Whether the election should be listed publicly.</param>
+    /// <param name="isListed">Whether guest tellers may discover and join the election.</param>
     /// <returns>True if the listing status was successfully updated, false otherwise.</returns>
     Task<bool> UpdateElectionListingAsync(Guid electionGuid, bool isListed);
 }

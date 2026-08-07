@@ -1,4 +1,4 @@
-﻿using Backend.DTOs.Public;
+using Backend.DTOs.Public;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -7,23 +7,20 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers;
 
 /// <summary>
-/// Controller for public operations that don't require authentication.
-/// Provides information about available elections and system status.
+/// Controller for anonymous public discovery (guest teller join list) and system health.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-[AllowAnonymous]
-public class PublicController(IPublicService publicService, ILogger<PublicController> logger, IConfiguration configuration) : ControllerBase
+public class PublicController(IPublicService publicService) : ControllerBase
 {
     private readonly IPublicService _publicService = publicService;
-    private readonly ILogger<PublicController> _logger = logger;
-    private readonly IConfiguration _configuration = configuration;
 
     /// <summary>
     /// Gets public home page data including system information.
     /// </summary>
     /// <returns>Public home page information.</returns>
     [HttpGet("home")]
+    [AllowAnonymous]
     public async Task<ActionResult<ApiResponse<PublicHomeDto>>> GetPublicHome()
     {
         var homeData = await _publicService.GetPublicHomeDataAsync();
@@ -31,10 +28,11 @@ public class PublicController(IPublicService publicService, ILogger<PublicContro
     }
 
     /// <summary>
-    /// Gets a list of all available elections that are open for public access.
+    /// Gets elections currently open for guest teller join.
     /// </summary>
     /// <returns>A list of available elections.</returns>
     [HttpGet("elections")]
+    [AllowAnonymous]
     public async Task<ActionResult<ApiResponse<List<AvailableElectionDto>>>> GetAvailableElections()
     {
         var elections = await _publicService.GetAvailableElectionsAsync();
@@ -44,50 +42,10 @@ public class PublicController(IPublicService publicService, ILogger<PublicContro
     }
 
     /// <summary>
-    /// Gets the current status of a specific election.
+    /// Health check endpoint to verify that the API is running and responsive.
     /// </summary>
-    /// <param name="electionGuid">The GUID of the election to check.</param>
-    /// <returns>The election status information.</returns>
-    [HttpGet("{electionGuid}/electionStatus")]
-    public async Task<ActionResult<ApiResponse<ElectionStatusDto>>> GetElectionStatus(Guid electionGuid)
-    {
-        var status = await _publicService.GetElectionStatusAsync(electionGuid);
-
-        if (status == null)
-        {
-            return NotFound(ApiResponse<ElectionStatusDto>.ErrorResponse(
-                "Election not found",
-                new List<string> { $"No election found with GUID: {electionGuid}" }));
-        }
-
-        return Ok(ApiResponse<ElectionStatusDto>.SuccessResponse(status));
-    }
-
-    /// <summary>
-    /// Gets public display data for a specific election, including results formatted for full-screen presentation.
-    /// </summary>
-    /// <param name="electionGuid">The GUID of the election to display.</param>
-    /// <returns>The public display data with election results.</returns>
-    [HttpGet("{electionGuid}/publicDisplay")]
-    public async Task<ActionResult<ApiResponse<PublicDisplayDto>>> GetPublicDisplay(Guid electionGuid)
-    {
-        var displayData = await _publicService.GetPublicDisplayDataAsync(electionGuid);
-
-        if (displayData == null)
-        {
-            return NotFound(ApiResponse<PublicDisplayDto>.ErrorResponse(
-                "Election not found or not available for public display",
-                new List<string> { $"No public display available for election: {electionGuid}" }));
-        }
-
-        return Ok(ApiResponse<PublicDisplayDto>.SuccessResponse(displayData));
-    }
-
-    /// <summary>
-    /// Health check endpoint to verify that the API is running and responsive. This can be used by monitoring tools or load balancers to check the health of the service. It returns a simple status message along with a timestamp and service name to confirm that the API is operational.
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("health")]
+    [AllowAnonymous]
     public ActionResult<ApiResponse<object>> HealthCheck()
     {
         return Ok(ApiResponse<object>.SuccessResponse(
@@ -100,5 +58,3 @@ public class PublicController(IPublicService publicService, ILogger<PublicContro
             "Service is running"));
     }
 }
-
-

@@ -115,16 +115,6 @@ const routes = [
       },
 
       {
-        path: "public/display/:electionGuid",
-
-        name: "public-display",
-
-        component: () => import("../pages/PublicDisplayPage.vue"),
-
-        meta: { titleKey: "nav.publicDisplay" },
-      },
-
-      {
         path: "teller-join/:accessCode?/:electionGuid?",
 
         name: "teller-join",

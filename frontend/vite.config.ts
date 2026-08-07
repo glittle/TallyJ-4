@@ -193,14 +193,6 @@ const srcChunkRules: ChunkRule[] = [
     ],
     chunk: "audit",
   },
-  {
-    patterns: [
-      "/src/pages/PublicDisplayPage",
-      "/src/stores/publicStore",
-      "/src/services/publicService",
-    ],
-    chunk: "public-display",
-  },
 ];
 
 function matchChunkRule(n: string, rules: ChunkRule[]): string | undefined {

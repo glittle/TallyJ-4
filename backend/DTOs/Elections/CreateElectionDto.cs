@@ -48,7 +48,7 @@ public class CreateElectionDto
     public bool? ShowFullReport { get; set; }
 
     /// <summary>
-    /// Whether to list this election for public access.
+    /// Whether to list this election for guest-teller discovery on create.
     /// </summary>
     public bool? ListForPublic { get; set; }
 

@@ -26,7 +26,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     /// <param name="analyzeHubContext">Hub context for the analysis SignalR hub.</param>
     /// <param name="ballotImportHubContext">Hub context for the ballot import SignalR hub.</param>
     /// <param name="frontDeskHubContext">Hub context for the front desk SignalR hub.</param>
-    /// <param name="publicHubContext">Hub context for the public SignalR hub.</param>
+    /// <param name="publicHubContext">Hub context for PublicHub (guest-teller join list).</param>
     /// <param name="logger">Logger for recording notification service operations.</param>
     public SignalRNotificationService(
         IHubContext<MainHub> mainHubContext,
@@ -126,7 +126,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     }
 
     /// <summary>
-    /// Sends a notification that the public election list has been updated.
+    /// Notifies the Public hub group that the guest-joinable elections list has changed.
     /// </summary>
     public async Task SendPublicElectionListUpdateAsync(Guid? electionGuid = null, bool? guestAccessOpen = null)
     {
