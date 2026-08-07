@@ -13,6 +13,7 @@ This project uses [Keep the Why](https://keepthewhy.com) to preserve the reasoni
 - If `AGENTS.local.md` exists in this checkout, read it for personal capture preferences.
 
 <!-- keep-the-why:config -->
+
 - context: `context/`
 - init: complete
 - context-schema: 0.6.4
@@ -42,13 +43,11 @@ Treat `.zenflow/tasks/**` and `.zencoder/**` as historical planning and research
 
 ## Project layering reality (important for AI agents)
 
-After the domain consolidation (May 2025), the previous `Backend.Domain` and `Backend.Application` projects have been fully merged into the `backend/` host project. There is now effectively a single C# application project.
-
-All code lives under `backend/`:
+All server code lives under `backend/`:
 
 - **Data / Persistence**: `Context/MainDbContext.cs`, `Entities/`, `Enumerations/`, `Identity/AppUser.cs`, `Interfaces/`, `SecurityEnums.cs`
-- **Auth layer** (previously the bulk of Backend.Application): `DTOs/Auth/`, `Services/Auth/` (JwtTokenService, LocalAuthService, TwoFactorService, etc.), plus related controllers and validators
-- **Domain functionality** (the vast majority of the system): 
+- **Auth layer**: `DTOs/Auth/`, `Services/Auth/` (JwtTokenService, LocalAuthService, TwoFactorService, etc.), plus related controllers and validators
+- **Domain functionality** (the vast majority of the system):
   - All controllers under `Controllers/`
   - DTOs under `DTOs/` (Elections, People, Ballots, Results, OnlineVoting, FrontDesk, etc.)
   - ~60+ services under `Services/` (ElectionService, TallyService, BallotService, PeopleService, DashboardService, ReportService, import/export services, analyzers, etc.)
@@ -58,9 +57,7 @@ All code lives under `backend/`:
   - Authorization handlers, custom middleware, JSON localization provider, EF migrations and seeder, etc.
 
 **Practical rule of thumb**:
-Virtually all C# changes for features (election-scoped or otherwise) now happen inside the single `backend/` project. The test project is `Backend.Tests/`. Update DI registration lists in `backend/Program.cs` (`RegisterApplicationServices`, `RegisterAuthServices`, `RegisterBackgroundServices`) when adding new services.
-
-The previous "dead duplicate ImportService" note no longer applies (the old Backend.Application project has been removed).
+Virtually all C# changes for features (election-scoped or otherwise) happen inside the single `backend/` project. The test project is `Backend.Tests/`. Update DI registration lists in `backend/Program.cs` (`RegisterApplicationServices`, `RegisterAuthServices`, `RegisterBackgroundServices`) when adding new services.
 
 ## Core conventions
 
@@ -72,7 +69,7 @@ The previous "dead duplicate ImportService" note no longer applies (the old Back
   3. `<style lang="less">`
 - Do not use scoped `<style>`
 - Nest style rules under the component root selector
-- Use Pinia stores for state management
+- Use Pinia stores for state management but avoid putting much logic in the store.
 - Use `$t()` for all user-facing strings
 - Standard flow: `component -> store -> service -> generated API client -> backend`
 - **Viewport-filling `el-table` height:** use `useViewportTableHeight` from `src/composables/useViewportTableHeight.ts` instead of hard-coded `height="600"` when a table should fill remaining main-layout space without page scrollbars. Options, examples, and the Front Desk reference implementation are documented in `frontend/README.md` (Composables section).
@@ -297,6 +294,7 @@ The contributor typically already has `npm run dev` running with Vite HMR. **Do 
 When a task is "review the Copilot suggestions on PR N and fix them here" (or equivalent for human review comments):
 
 **Preferred extraction flow (use this pattern):**
+
 1. Use the available `gh` CLI (it is usually logged in). Avoid web scraping PR pages.
 2. Get structured metadata: `gh pr view N -R owner/repo --json files,baseRefName,headRefName`
 3. Extract **only** the actionable comments with projection (critical for low context noise):
@@ -310,12 +308,14 @@ When a task is "review the Copilot suggestions on PR N and fix them here" (or eq
 6. Read **only the files mentioned** in the comments (use `offset`/`limit` for large Vue or .ts files).
 
 **During the work:**
+
 - Track the set of comments + files with `todo_write`.
 - For any frontend user-facing string changes, **strictly** obey the "Locales" section above (only edit `src/locales/en/`, run `npm run validate:i18n`).
 - Correlate comments to code using the saved `diff_hunk` + the actual source (or the saved `pr.diff`).
 - After edits, run the documented validation commands for the area changed (`npm run check` in frontend, relevant tests in backend).
 
 **Environment notes:**
+
 - This harness has shell quirks with complex pipes (`head`, `tail`, `Select-String`, `Out-String`). Prefer writing output to a file then using the `Read` or `Grep` tools on it.
 - Consider invoking the available `code-review` or `review` skills (see system skills) to analyze the suggestions before you start editing — especially when there are >5 comments or the intent is ambiguous.
 
