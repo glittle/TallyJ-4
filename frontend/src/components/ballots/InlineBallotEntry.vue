@@ -58,6 +58,8 @@ const searchQuery = ref("");
 const searchInputRef = ref();
 const selectedSearchIndex = ref(0);
 const searchResultsListRef = ref<HTMLElement | null>(null);
+/** After results change, ignore hover until the mouse actually moves. */
+const ignoreMouseHover = ref(false);
 const reviewToggleLoading = ref(false);
 const creatingNewBallot = ref(false);
 const deletingBallot = ref(false);
@@ -243,7 +245,20 @@ function scrollToSelected() {
   });
 }
 
-watch(searchResults, () => { selectedSearchIndex.value = 0; });
+watch(searchResults, () => {
+  selectedSearchIndex.value = 0;
+  // Stationary mouse over the list must not steal selection after re-render
+  ignoreMouseHover.value = true;
+});
+
+function handleSearchListMouseMove() {
+  ignoreMouseHover.value = false;
+}
+
+function handleSearchItemMouseOver(index: number) {
+  if (ignoreMouseHover.value) return;
+  selectedSearchIndex.value = index;
+}
 
 function handleVoteRemoved(positionOnBallot: number) {
   const merged = buildVoteMap(true);
@@ -431,7 +446,11 @@ onMounted(async () => {
             <small>{{ $t("ballots.searchHelp") }}</small>
           </div>
 
-          <div ref="searchResultsListRef" class="search-results">
+          <div
+            ref="searchResultsListRef"
+            class="search-results"
+            @mousemove="handleSearchListMouseMove"
+          >
             <div v-if="searchQuery && searchResults.length === 0" class="no-results">
               {{ $t("ballots.noMatchesFound") }}
             </div>
@@ -444,7 +463,7 @@ onMounted(async () => {
                 'is-ineligible': person.canReceiveVotes === false,
               }"
               @click="handlePersonSelected(person)"
-              @mouseover="selectedSearchIndex = index"
+              @mouseover="handleSearchItemMouseOver(index)"
             >
               <div class="person-info">
                 <div class="person-row">
