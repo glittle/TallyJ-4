@@ -24,6 +24,7 @@ public class PeopleImportService : IPeopleImportService
 {
     private readonly MainDbContext _context;
     private readonly IHubContext<PeopleImportHub> _hubContext;
+    private readonly ISignalRNotificationService _signalRNotificationService;
 
     // Scoring weights for header detection
     private const int TextCellScore = 2;
@@ -50,10 +51,15 @@ public class PeopleImportService : IPeopleImportService
     /// </summary>
     /// <param name="context">The database context.</param>
     /// <param name="hubContext">The SignalR hub context for people import notifications.</param>
-    public PeopleImportService(MainDbContext context, IHubContext<PeopleImportHub> hubContext)
+    /// <param name="signalRNotificationService">Broadcasts post-import FrontDesk refresh (same as ballot import).</param>
+    public PeopleImportService(
+        MainDbContext context,
+        IHubContext<PeopleImportHub> hubContext,
+        ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
         _hubContext = hubContext;
+        _signalRNotificationService = signalRNotificationService;
     }
 
     /// <summary>
@@ -517,6 +523,10 @@ public class PeopleImportService : IPeopleImportService
                 result.TimeElapsedSeconds = (DateTimeOffset.UtcNow - startTime).TotalSeconds;
 
                 await _hubContext.Clients.Group(groupName).SendAsync("importComplete", result);
+
+                // Open front desk / people / ballot-entry sessions re-fetch lists
+                // (parity with single-person PersonAdded/Updated from People Management).
+                await _signalRNotificationService.RequestFrontDeskReloadAsync(electionGuid);
             }
             else
             {
@@ -614,6 +624,11 @@ public class PeopleImportService : IPeopleImportService
 
         _context.People.RemoveRange(peopleToDelete);
         await _context.SaveChangesAsync();
+
+        if (result.DeletedCount > 0)
+        {
+            await _signalRNotificationService.RequestFrontDeskReloadAsync(electionGuid);
+        }
 
         return result;
     }

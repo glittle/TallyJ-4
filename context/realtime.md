@@ -84,7 +84,7 @@ Group: `FrontDesk{electionGuid}`.
 | `VoterCountUpdated` | `FrontDeskStatsDto` | `NotifyVoterCountUpdatedAsync` ← after check-in / unregister | Front Desk page (`frontDeskStats`) |
 | `PersonVoteCountUpdated` | `PersonVoteCountUpdateDto` | `SendPersonVoteCountUpdateAsync` | `peopleStore` ballot cache |
 | `updateBallots` | `BallotUpdateDto` | `SendBallotUpdateAsync` | `ballotStore` |
-| `reloadPage` | (none) | `RequestFrontDeskReloadAsync` ← CSV / CDN ballot import success | Front Desk page, `peopleStore`, `ballotStore` (soft re-fetch, not `location.reload`) |
+| `reloadPage` | (none) | `RequestFrontDeskReloadAsync` ← CSV / CDN ballot import success; people import success; delete-all-people | Front Desk page, `peopleStore`, `ballotStore` (soft re-fetch, not `location.reload`) |
 | `updateOnlineElection` | `OnlineElectionUpdateDto` | `SendOnlineElectionUpdateAsync` ← `ElectionService.UpdateElectionAsync` when online fields change | `electionStore` (patch online fields); Monitoring dashboard re-fetches monitor info |
 
 **Person list contract:** v4 uses fine-grained `PersonAdded` / `PersonUpdated` / `PersonDeleted`, not v3’s single `updatePeople` stream. Handlers refetch the affected person (or drop the row on delete) rather than applying a partial patch from the thin DTO.
@@ -104,3 +104,4 @@ Group: `FrontDesk{electionGuid}`.
 - **Why:** full reload is disruptive on multi-station front desk and ballot entry; re-fetch keeps SignalR connections and dialog state.
 - **Rejected alternative:** keep `location.reload()` for exact v3 parity. Rejected as unnecessary disruption when list/stats APIs already return authoritative post-import state.
 - **Also wired:** `updateOnlineElection` with open/close/estimate/selection process when election online settings change (not on every unrelated election field update).
+- **People import:** bulk people CSV/XLSX import does **not** emit per-row `PersonAdded` (would flood the hub). After successful import (or delete-all-people), the server fires the same `reloadPage` signal so open front desks re-fetch eligible voters — same end result as single-person CRUD, without N SignalR events.
