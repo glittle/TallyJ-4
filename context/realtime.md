@@ -17,8 +17,10 @@ Do **not** assume a single `election-{guid}` convention for all realtime traffic
 | `BallotImport{electionGuid}` / `PeopleImport{electionGuid}` | import hubs (election-scoped)                           |
 | `ElectionPackageImport{userId}`                             | ElectionPackageImportHub — dashboard package load log   |
 | `Public`                                                    | PublicHub — guest-teller joinable elections list        |
+| `AllVoters` (global)                                        | AllVotersHub — online voter list/window refresh         |
+| `Voter{voterId}`                                            | VoterPersonalHub — registration + multi-device login     |
 
-Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElection`, `joinDashboardElections`, etc.) and store subscriptions.
+Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElection`, `joinDashboardElections`, `connectVoterHubs`, etc.) and store subscriptions.
 
 ## MainHub status vs role groups
 
@@ -68,18 +70,44 @@ Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElect
 
 **Rejected alternative:** one shared election group for every event type. Rejected because Main, Front Desk, Analyze, and Public have different listeners and update cadences.
 
-## No OnlineVotingHub (election-scoped online voting SignalR)
+## No election-scoped OnlineVotingHub (ballot totals)
 
 **Status:** active  
 **Evidence:** confirmed  
-**Source:** maintainer review of unused scaffold vs v3 `AllVotersHub` / `VoterPersonalHub`  
-**Revisit when:** online voters need live list refresh or personal status push
+**Source:** maintainer review of unused scaffold vs v3 `AllVotersHub` / `VoterPersonalHub`; issue #233  
+**Revisit when:** product wants per-election voter groups or ballot-submit live counts
 
-There is no `/hubs/online-voting` hub and no `online-election-{guid}` group. Online voting remains HTTP (`/api/online-voting/*`). Operator-facing online window updates use FrontDeskHub (`updateOnlineElection`). Ballot submit confirmation is the HTTP response.
+There is still no `/hubs/online-voting` hub and no `online-election-{guid}` group that pushes vote totals. Ballot submit confirmation remains the HTTP response.
 
-**Rejected alternative:** keep scaffolded `OnlineVotingHub` with `online-election-{electionGuid}` and client-callable `BallotSubmitted` (payload including `totalVotes`). Rejected — unused (no server `IHubContext` producers, no frontend client), mismatched v3 voter model (global all-voters + personal `Voter{id}`, not per-election ballot events), and would push vote totals rather than a thin “refetch” signal.
+**Rejected alternative:** scaffolded `OnlineVotingHub` with `online-election-{electionGuid}` and client-callable `BallotSubmitted` (payload including `totalVotes`). Rejected — mismatched v3 voter model, would push vote totals rather than thin “refetch” signals.
 
-**Preferred shape if restored later:** authenticated voter channel; thin “changed” (or `electionGuid` only) event so clients re-call `GET availableElections` / vote status APIs — avoid disclosing election detail or tallies on the hub.
+## Online voter hubs (AllVoters + VoterPersonal) — issue #233
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #233; v3 `AllVotersHub` / `VoterPersonalHub`; preferred thin-signal shape above  
+**Revisit when:** global `AllVoters` becomes too chatty, or kiosk multi-login needs different UX
+
+Online voters use two authenticated hubs (policy `OnlineVoter` — JWT claims `voterType=online` + `voterId`). FE connects with the voter Bearer token (`accessTokenFactory` + existing query `access_token` support).
+
+| Hub | Path | Group | Join | Events |
+| --- | ---- | ----- | ---- | ------ |
+| AllVotersHub | `/hubs/all-voters` | `AllVoters` (global) | `Join` / `Leave` | `updateVoters` — thin `OnlineElectionUpdateDto` (same fields as FrontDesk `updateOnlineElection`) |
+| VoterPersonalHub | `/hubs/voter-personal` | `Voter{voterId}` | `Join` / `Leave` (group from JWT only) | `updateVoter` — thin `VoterPersonalUpdateDto` (`updateRegistration` / `login`) |
+
+**Producers** (via `ISignalRNotificationService` only — hubs are join/leave):
+
+- Online window/process change (`ElectionService` → `SendOnlineElectionUpdateAsync`) → FrontDesk **and** AllVoters.
+- Front desk check-in / unregister / envelope (`FrontDeskService`) → personal `updateVoter` with `updateRegistration` to email, phone, and kiosk groups when present.
+- Successful online voter auth (`OnlineVotingService`) → personal `updateVoter` with `login: true` (other browsers for that id).
+
+**Client behavior:** thin signal → re-call `GET availableElections` / vote status. Do not treat hub payloads as authoritative election detail or tallies. Login-elsewhere shows a dismissible notice.
+
+**Why global AllVoters (not per-election):** one join after auth covers list refresh for any election whose online window changes; eligibility filtering stays on `GET availableElections`. Per-election groups would miss elections the voter has not joined yet.
+
+**Rejected alternative:** per-election voter groups only. Rejected for MVP — discovery of newly opened elections for an already-connected voter would require a second discovery channel.
+
+**Security:** personal join never accepts a client-supplied voter id (server uses JWT `voterId`). Personal updates target only groups for that person's contact identifiers; voter A does not receive voter B events.
 
 ## No anonymous public results display
 

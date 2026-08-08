@@ -12,12 +12,23 @@ class SignalRService {
   /** Known-teller dashboard multi-election listen set (MainHub JoinElections). */
   private dashboardElectionGuids: string[] = [];
   private publicGroupJoined = false;
+  /** Online voter hubs (Bearer voter JWT from localStorage). */
+  private allVotersJoined = false;
+  private voterPersonalJoined = false;
+  private voterAccessTokenFactory: (() => string | null) | null = null;
 
   private get baseUrl(): string {
     return getAppConfig().apiUrl;
   }
 
-  async connect(hubPath: string): Promise<signalR.HubConnection> {
+  /**
+   * Connect to a hub. Optional accessTokenFactory is used for online-voter hubs
+   * (Bearer JWT in localStorage); teller hubs rely on cookies / default auth.
+   */
+  async connect(
+    hubPath: string,
+    accessTokenFactory?: () => string | null,
+  ): Promise<signalR.HubConnection> {
     const existingConnection = this.connections.get(hubPath);
     if (existingConnection?.state === signalR.HubConnectionState.Connected) {
       return existingConnection;
@@ -27,9 +38,12 @@ class SignalRService {
 
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(hubUrl, {
-        // Cookies are sent automatically by the browser with the initial HTTP request
-        // No need to provide accessTokenFactory when using httpOnly cookies
+        // Cookies are sent automatically by the browser with the initial HTTP request.
+        // Online-voter hubs also send the voter JWT via access_token / Authorization.
         withCredentials: true,
+        accessTokenFactory: accessTokenFactory
+          ? () => accessTokenFactory() ?? ""
+          : undefined,
       })
       .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
       .configureLogging(signalR.LogLevel.Warning)
@@ -111,6 +125,30 @@ class SignalRService {
         } catch (error) {
           console.error(
             "Failed to rejoin public group after reconnect:",
+            error,
+          );
+        }
+      }
+
+      if (hubPath === "/hubs/all-voters" && this.allVotersJoined) {
+        try {
+          await connection.invoke("Join");
+          console.log("Rejoined AllVoters group after reconnect");
+        } catch (error) {
+          console.error(
+            "Failed to rejoin AllVoters group after reconnect:",
+            error,
+          );
+        }
+      }
+
+      if (hubPath === "/hubs/voter-personal" && this.voterPersonalJoined) {
+        try {
+          await connection.invoke("Join");
+          console.log("Rejoined VoterPersonal group after reconnect");
+        } catch (error) {
+          console.error(
+            "Failed to rejoin VoterPersonal group after reconnect:",
             error,
           );
         }
@@ -411,6 +449,88 @@ class SignalRService {
     const publicConnection = this.getConnection("/hubs/public");
     if (publicConnection) {
       await publicConnection.invoke("LeavePublicGroup");
+    }
+  }
+
+  /**
+   * Connect + join online-voter hubs (AllVoters + VoterPersonal).
+   * Requires a factory that returns the current voter JWT (localStorage).
+   */
+  async connectVoterHubs(
+    accessTokenFactory: () => string | null,
+  ): Promise<void> {
+    this.voterAccessTokenFactory = accessTokenFactory;
+    await this.connectToAllVotersHub();
+    await this.joinAllVoters();
+    await this.connectToVoterPersonalHub();
+    await this.joinVoterPersonal();
+  }
+
+  async disconnectVoterHubs(): Promise<void> {
+    await this.leaveAllVoters();
+    await this.leaveVoterPersonal();
+    await this.disconnect("/hubs/all-voters");
+    await this.disconnect("/hubs/voter-personal");
+    this.voterAccessTokenFactory = null;
+  }
+
+  async connectToAllVotersHub(): Promise<signalR.HubConnection> {
+    const factory =
+      this.voterAccessTokenFactory ??
+      (() => localStorage.getItem("voter_token"));
+    return this.connect("/hubs/all-voters", factory);
+  }
+
+  async connectToVoterPersonalHub(): Promise<signalR.HubConnection> {
+    const factory =
+      this.voterAccessTokenFactory ??
+      (() => localStorage.getItem("voter_token"));
+    return this.connect("/hubs/voter-personal", factory);
+  }
+
+  async joinAllVoters(): Promise<void> {
+    this.allVotersJoined = true;
+    const connection = await this.connectToAllVotersHub();
+    if (connection.state !== signalR.HubConnectionState.Connected) {
+      throw new Error(
+        `AllVoters hub is not ready (state: ${connection.state})`,
+      );
+    }
+    await connection.invoke("Join");
+  }
+
+  async leaveAllVoters(): Promise<void> {
+    this.allVotersJoined = false;
+    const connection = this.getConnection("/hubs/all-voters");
+    if (connection?.state === signalR.HubConnectionState.Connected) {
+      try {
+        await connection.invoke("Leave");
+      } catch (error) {
+        console.warn("Failed to leave AllVoters group:", error);
+      }
+    }
+  }
+
+  async joinVoterPersonal(): Promise<void> {
+    this.voterPersonalJoined = true;
+    const connection = await this.connectToVoterPersonalHub();
+    if (connection.state !== signalR.HubConnectionState.Connected) {
+      throw new Error(
+        `VoterPersonal hub is not ready (state: ${connection.state})`,
+      );
+    }
+    await connection.invoke("Join");
+  }
+
+  async leaveVoterPersonal(): Promise<void> {
+    this.voterPersonalJoined = false;
+    const connection = this.getConnection("/hubs/voter-personal");
+    if (connection?.state === signalR.HubConnectionState.Connected) {
+      try {
+        await connection.invoke("Leave");
+      } catch (error) {
+        console.warn("Failed to leave VoterPersonal group:", error);
+      }
     }
   }
 }

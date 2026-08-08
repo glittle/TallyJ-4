@@ -22,12 +22,12 @@ Companion to [Hubs-in-v3.md](./Hubs-in-v3.md). Summarizes how TallyJ 4’s realt
 | ImportHub (election package load) | `ElectionPackageImportHub` (`/hubs/election-package-import`) | User-scoped `loaderStatus` (#231) |
 | BallotImportHub | `BallotImportHub` (`/hubs/ballot-import`) | Present; election-scoped groups |
 | RollCallHub | — | Deferred |
-| AllVotersHub | — | Not implemented (online voting HTTP-only for now) |
-| VoterPersonalHub | — | Not implemented |
+| AllVotersHub | `AllVotersHub` (`/hubs/all-voters`) | Global `AllVoters`; thin `updateVoters` (#233) |
+| VoterPersonalHub | `VoterPersonalHub` (`/hubs/voter-personal`) | `Voter{voterId}` from JWT; thin `updateVoter` (#233) |
 | VoterCodeHub | — | Not implemented |
 | *(scaffold)* OnlineVotingHub | — | Removed on purpose; see `context/realtime.md` |
 
-Mapped in `backend/Program.cs` as `/hubs/main`, `/analyze`, `/ballot-import`, `/people-import`, `/election-package-import`, `/front-desk`, `/public`.
+Mapped in `backend/Program.cs` as `/hubs/main`, `/hubs/analyze`, `/hubs/ballot-import`, `/hubs/people-import`, `/hubs/election-package-import`, `/hubs/front-desk`, `/hubs/public`, `/hubs/all-voters`, `/hubs/voter-personal`.
 
 ---
 
@@ -63,8 +63,8 @@ Mapped in `backend/Program.cs` as `/hubs/main`, `/analyze`, `/ballot-import`, `/
 | People import | `Import{loginId}` (shared name pattern with ballot import, different hub type) | `PeopleImport{electionGuid}` |
 | Ballot import | `Import{loginId}` | `BallotImport{electionGuid}` |
 | Roll call | `RollCall{electionGuid}` | — |
-| All voters | `AllVoters` (global) | — |
-| Voter personal | `Voter{voterId}` | — |
+| All voters | `AllVoters` (global) | Same |
+| Voter personal | `Voter{voterId}` | Same (server-derived from JWT) |
 | Voter code | Client opaque key | — |
 
 **Import scope change:** v3 scoped progress to the **login**; v4 scopes people/ballot import to the **election**. Concurrent tellers on the same election share the stream.
@@ -84,9 +84,9 @@ Mapped in `backend/Program.cs` as `/hubs/main`, `/analyze`, `/ballot-import`, `/
 
 Documented in `context/realtime.md`:
 
-- No election-scoped OnlineVotingHub; online voting is HTTP (`/api/online-voting/*`).
+- No election-scoped OnlineVotingHub that pushes ballot totals; submit remains HTTP.
+- Online voters: AllVotersHub + VoterPersonalHub with thin refetch signals (#233).
 - PublicHub is **only** for guest-teller joinable elections — not anonymous results display.
-- Preferred restore shape for voter realtime: thin “refetch” signals, not tallies or rich private data on the wire.
 
 ---
 
@@ -164,8 +164,8 @@ Catalog: `context/realtime.md` § Import hub event catalog.
 
 | Gap | v3 | v4 | Issue |
 |-----|----|----|-------|
-| All voters online window / process | AllVotersHub | HTTP only | [#233](https://github.com/glittle/TallyJ-4/issues/233) |
-| Personal registration / multi-login | VoterPersonalHub | — | [#233](https://github.com/glittle/TallyJ-4/issues/233) |
+| All voters online window / process | AllVotersHub | **Fixed** — `/hubs/all-voters` + `updateVoters` | [#233](https://github.com/glittle/TallyJ-4/issues/233) |
+| Personal registration / multi-login | VoterPersonalHub | **Fixed** — `/hubs/voter-personal` + `updateVoter` | [#233](https://github.com/glittle/TallyJ-4/issues/233) |
 | Code delivery live status | VoterCodeHub | `requestCode` / `verifyCode` only | [#229](https://github.com/glittle/TallyJ-4/issues/229) |
 
 If restored: prefer server-derived groups, high-entropy channel tokens for code status (not short client keys), and thin refetch signals — see `context/realtime.md`.
@@ -188,8 +188,8 @@ If restored: prefer server-derived groups, high-entropy channel tokens for code 
 | Front desk registration live | FrontDeskHub | **Mostly** — check-in/flags/counts; person CRUD event mismatch |
 | Roll call live | RollCallHub | **Deferred** |
 | Monitor online window | FrontDeskHub | **No** (no producer/listener) |
-| Voters online open/close | AllVotersHub | **No** |
-| Voter personal / multi-login | VoterPersonalHub | **No** |
+| Voters online open/close | AllVotersHub | **Yes** — thin `updateVoters` → refetch |
+| Voter personal / multi-login | VoterPersonalHub | **Yes** — thin `updateVoter` → refetch / notice |
 | Voter code delivery status | VoterCodeHub | **No** |
 | CSV import progress | ImportHub | **Yes** (PeopleImportHub) |
 | Election-load progress | ImportHub | **Yes** (ElectionPackageImportHub, user-scoped) |

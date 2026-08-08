@@ -19,18 +19,11 @@ onMounted(async () => {
 
   try {
     await onlineVotingStore.loadAvailableElections();
+    await onlineVotingStore.ensureVoterHubsConnected();
   } catch {
     showErrorMessage(t("voting.elections.loadError"));
   }
 });
-
-// const  openElections = computed(() =>
-//   onlineVotingStore.availableElections.filter((e) => e.isOpen),
-// );
-
-// const otherElections = computed(() =>
-//   onlineVotingStore.availableElections.filter((e) => !e.isOpen),
-// );
 
 function selectElection(electionGuid: string) {
   router.push(`/vote/${electionGuid}`);
@@ -121,6 +114,16 @@ function handleLogout() {
 <template>
   <div class="voter-elections-page">
     <div class="elections-container">
+      <ElAlert
+        v-if="onlineVotingStore.loginElsewhereNotice"
+        type="warning"
+        :closable="true"
+        class="login-elsewhere-alert"
+        @close="onlineVotingStore.dismissLoginElsewhereNotice()"
+      >
+        {{ $t("voting.elections.loginElsewhere") }}
+      </ElAlert>
+
       <ElAlert
         v-if="onlineVotingStore.voterId"
         type="info"

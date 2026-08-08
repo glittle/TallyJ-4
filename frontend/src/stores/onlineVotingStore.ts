@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { onlineVotingService } from "../services/onlineVotingService";
+import { signalrService } from "../services/signalrService";
 import { useApiErrorHandler } from "../composables/useApiErrorHandler";
 import type {
   RequestCodeDto,
@@ -15,6 +16,10 @@ import type {
   TelegramAuthForVoterDto,
   AvailableElection,
 } from "../types";
+import type {
+  UpdateVoterEvent,
+  UpdateVotersEvent,
+} from "../types/SignalREvents";
 
 export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   const { handleApiError } = useApiErrorHandler();
@@ -26,6 +31,19 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   const voteStatus = ref<OnlineVoteStatus | null>(null);
   const availableElections = ref<AvailableElection[]>([]);
   const loading = ref(false);
+  /** True while AllVoters + VoterPersonal hubs are connected for this session. */
+  const voterHubsConnected = ref(false);
+  /** Multi-device login notice for the UI (cleared when dismissed or on logout). */
+  const loginElsewhereNotice = ref(false);
+
+  let voterHubHandlersBound = false;
+
+  function persistAuth(token: string, id: string) {
+    voterToken.value = token;
+    voterId.value = id;
+    localStorage.setItem("voter_token", token);
+    localStorage.setItem("voter_id", id);
+  }
 
   async function requestVerificationCode(data: RequestCodeDto) {
     try {
@@ -41,10 +59,9 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.verifyCode(data);
-      voterToken.value = response.token;
-      voterId.value = response.voterId;
-      localStorage.setItem("voter_token", response.token);
-      localStorage.setItem("voter_id", response.voterId);
+      if (response.token && response.voterId) {
+        persistAuth(response.token, response.voterId);
+      }
       return response;
     } finally {
       loading.value = false;
@@ -55,10 +72,9 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.googleAuth(data);
-      voterToken.value = response.token;
-      voterId.value = response.voterId;
-      localStorage.setItem("voter_token", response.token);
-      localStorage.setItem("voter_id", response.voterId);
+      if (response.token && response.voterId) {
+        persistAuth(response.token, response.voterId);
+      }
       return response;
     } finally {
       loading.value = false;
@@ -69,10 +85,9 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.facebookAuth(data);
-      voterToken.value = response.token;
-      voterId.value = response.voterId;
-      localStorage.setItem("voter_token", response.token);
-      localStorage.setItem("voter_id", response.voterId);
+      if (response.token && response.voterId) {
+        persistAuth(response.token, response.voterId);
+      }
       return response;
     } finally {
       loading.value = false;
@@ -83,10 +98,9 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.kakaoAuth(data);
-      voterToken.value = response.token;
-      voterId.value = response.voterId;
-      localStorage.setItem("voter_token", response.token);
-      localStorage.setItem("voter_id", response.voterId);
+      if (response.token && response.voterId) {
+        persistAuth(response.token, response.voterId);
+      }
       return response;
     } finally {
       loading.value = false;
@@ -97,10 +111,9 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.telegramAuth(data);
-      voterToken.value = response.token;
-      voterId.value = response.voterId;
-      localStorage.setItem("voter_token", response.token);
-      localStorage.setItem("voter_id", response.voterId);
+      if (response.token && response.voterId) {
+        persistAuth(response.token, response.voterId);
+      }
       return response;
     } finally {
       loading.value = false;
@@ -191,13 +204,98 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     }
   }
 
-  function logout() {
+  function dismissLoginElsewhereNotice() {
+    loginElsewhereNotice.value = false;
+  }
+
+  async function handleUpdateVoters(_payload: UpdateVotersEvent) {
+    // Thin signal: re-fetch authoritative list (eligibility is server-side).
+    if (!voterToken.value) {
+      return;
+    }
+    try {
+      await loadAvailableElections();
+    } catch {
+      // Errors already handled in loadAvailableElections; avoid tearing down hubs.
+    }
+  }
+
+  async function handleUpdateVoter(payload: UpdateVoterEvent) {
+    if (payload.login) {
+      loginElsewhereNotice.value = true;
+    }
+
+    if (payload.updateRegistration && voterToken.value) {
+      try {
+        await loadAvailableElections();
+        if (payload.electionGuid && voterId.value) {
+          await checkVoteStatus(payload.electionGuid, voterId.value);
+        }
+      } catch {
+        // Errors already handled; keep hub session alive.
+      }
+    }
+  }
+
+  /**
+   * Connect AllVoters + VoterPersonal hubs for the authenticated voter session.
+   * Safe to call multiple times (idempotent).
+   */
+  async function ensureVoterHubsConnected(): Promise<void> {
+    if (!voterToken.value) {
+      return;
+    }
+
+    if (voterHubsConnected.value && voterHubHandlersBound) {
+      return;
+    }
+
+    try {
+      await signalrService.connectVoterHubs(
+        () => voterToken.value ?? localStorage.getItem("voter_token"),
+      );
+
+      if (!voterHubHandlersBound) {
+        const allVoters = signalrService.getConnection("/hubs/all-voters");
+        const personal = signalrService.getConnection("/hubs/voter-personal");
+
+        allVoters?.on("updateVoters", (payload: UpdateVotersEvent) => {
+          void handleUpdateVoters(payload);
+        });
+
+        personal?.on("updateVoter", (payload: UpdateVoterEvent) => {
+          void handleUpdateVoter(payload);
+        });
+
+        voterHubHandlersBound = true;
+      }
+
+      voterHubsConnected.value = true;
+    } catch (error) {
+      console.warn("Failed to connect online voter SignalR hubs:", error);
+      voterHubsConnected.value = false;
+    }
+  }
+
+  async function disconnectVoterHubs(): Promise<void> {
+    voterHubHandlersBound = false;
+    voterHubsConnected.value = false;
+    try {
+      await signalrService.disconnectVoterHubs();
+    } catch (error) {
+      console.warn("Failed to disconnect online voter SignalR hubs:", error);
+    }
+  }
+
+  async function logout() {
+    await disconnectVoterHubs();
     voterToken.value = null;
     voterId.value = null;
     electionInfo.value = null;
     votablePeople.value = [];
     voteStatus.value = null;
     availableElections.value = [];
+    loginElsewhereNotice.value = false;
     localStorage.removeItem("voter_token");
     localStorage.removeItem("voter_id");
   }
@@ -210,6 +308,8 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     voteStatus,
     availableElections,
     loading,
+    voterHubsConnected,
+    loginElsewhereNotice,
     requestVerificationCode,
     verifyCode,
     googleAuth,
@@ -221,6 +321,9 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     loadVotablePeople,
     submitBallot,
     checkVoteStatus,
+    ensureVoterHubsConnected,
+    disconnectVoterHubs,
+    dismissLoginElsewhereNotice,
     logout,
   };
 });

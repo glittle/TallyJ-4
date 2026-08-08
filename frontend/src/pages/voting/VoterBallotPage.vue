@@ -83,6 +83,7 @@ onMounted(async () => {
     return;
   }
 
+  await onlineVotingStore.ensureVoterHubsConnected();
   await loadElectionData();
 });
 
@@ -238,6 +239,16 @@ function backToElections() {
             </div>
           </div>
         </template>
+
+        <ElAlert
+          v-if="onlineVotingStore.loginElsewhereNotice"
+          type="warning"
+          :closable="true"
+          class="ballot-alert"
+          @close="onlineVotingStore.dismissLoginElsewhereNotice()"
+        >
+          {{ $t("voting.elections.loginElsewhere") }}
+        </ElAlert>
 
         <ElAlert
           v-if="isEditing"

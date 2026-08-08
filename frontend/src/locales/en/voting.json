@@ -53,6 +53,7 @@
   "voting.elections.footerNote": "If something looks wrong, please stop using TallyJ and send details to your head teller and/or to global technical support.",
   "voting.elections.loadError": "Failed to load elections. Please try again.",
   "voting.elections.loading": "Loading your elections...",
+  "voting.elections.loginElsewhere": "You signed in on another browser or device. This session is still active; only one session may vote at a time depending on your election settings.",
   "voting.elections.logout": "Log Out",
   "voting.elections.method.online": "Online",
   "voting.elections.noElections": "No elections found for your account.",
