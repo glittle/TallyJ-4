@@ -1,13 +1,11 @@
 using System.Text;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.Entities;
 using Backend.DTOs.Import;
 using Backend.Services;
 using Backend.Enumerations;
-using Backend.Hubs;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Tests.UnitTests.Services;
@@ -15,16 +13,14 @@ namespace Backend.Tests.UnitTests.Services;
 public class PeopleImportServiceTests : ServiceTestBase
 {
     private readonly PeopleImportService _service;
-    private readonly Mock<IHubContext<PeopleImportHub>> _hubContextMock;
     private readonly Mock<ISignalRNotificationService> _signalRMock;
     private readonly Mock<ILogger<PeopleImportService>> _loggerMock;
 
     public PeopleImportServiceTests()
     {
-        _hubContextMock = new Mock<IHubContext<PeopleImportHub>>();
         _signalRMock = new Mock<ISignalRNotificationService>();
         _loggerMock = new Mock<ILogger<PeopleImportService>>();
-        _service = new PeopleImportService(Context, _hubContextMock.Object, _signalRMock.Object);
+        _service = new PeopleImportService(Context, _signalRMock.Object);
     }
 
     [Fact]
@@ -362,12 +358,6 @@ public class PeopleImportServiceTests : ServiceTestBase
         Context.ImportFiles.Add(importFile);
         await Context.SaveChangesAsync();
 
-        // Setup SignalR mock
-        var mockClients = new Mock<IHubClients>();
-        var mockClientProxy = new Mock<IClientProxy>();
-        _hubContextMock.Setup(h => h.Clients).Returns(mockClients.Object);
-        mockClients.Setup(c => c.Group(It.IsAny<string>())).Returns(mockClientProxy.Object);
-
         // Act
         var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
 
@@ -382,7 +372,10 @@ public class PeopleImportServiceTests : ServiceTestBase
         Assert.Contains(people, p => p.FirstName == "John" && p.LastName == "Doe");
         Assert.Contains(people, p => p.FirstName == "Jane" && p.LastName == "Smith");
 
-        // Front desk (and related open screens) soft-refresh after bulk people import.
+        // Import complete + front desk soft-refresh after bulk people import.
+        _signalRMock.Verify(
+            s => s.SendPeopleImportCompleteAsync(electionGuid, It.IsAny<object>()),
+            Times.Once);
         _signalRMock.Verify(
             s => s.RequestFrontDeskReloadAsync(electionGuid),
             Times.Once);
@@ -413,12 +406,6 @@ public class PeopleImportServiceTests : ServiceTestBase
         };
         Context.ImportFiles.Add(importFile);
         await Context.SaveChangesAsync();
-
-        // Setup SignalR mock
-        var mockClients = new Mock<IHubClients>();
-        var mockClientProxy = new Mock<IClientProxy>();
-        _hubContextMock.Setup(h => h.Clients).Returns(mockClients.Object);
-        mockClients.Setup(c => c.Group(It.IsAny<string>())).Returns(mockClientProxy.Object);
 
         // Act
         var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
@@ -458,12 +445,6 @@ public class PeopleImportServiceTests : ServiceTestBase
         };
         Context.ImportFiles.Add(importFile);
         await Context.SaveChangesAsync();
-
-        // Setup SignalR mock
-        var mockClients = new Mock<IHubClients>();
-        var mockClientProxy = new Mock<IClientProxy>();
-        _hubContextMock.Setup(h => h.Clients).Returns(mockClients.Object);
-        mockClients.Setup(c => c.Group(It.IsAny<string>())).Returns(mockClientProxy.Object);
 
         // Act
         var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);

@@ -10,9 +10,7 @@ using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Helpers;
 using Backend.DTOs.Import;
-using Backend.Hubs;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -23,7 +21,6 @@ namespace Backend.Services;
 public class PeopleImportService : IPeopleImportService
 {
     private readonly MainDbContext _context;
-    private readonly IHubContext<PeopleImportHub> _hubContext;
     private readonly ISignalRNotificationService _signalRNotificationService;
 
     // Scoring weights for header detection
@@ -50,15 +47,12 @@ public class PeopleImportService : IPeopleImportService
     /// Initializes a new instance of the <see cref="PeopleImportService"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
-    /// <param name="hubContext">The SignalR hub context for people import notifications.</param>
-    /// <param name="signalRNotificationService">Broadcasts post-import FrontDesk refresh (same as ballot import).</param>
+    /// <param name="signalRNotificationService">Import progress and FrontDesk reload broadcasts.</param>
     public PeopleImportService(
         MainDbContext context,
-        IHubContext<PeopleImportHub> hubContext,
         ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
-        _hubContext = hubContext;
         _signalRNotificationService = signalRNotificationService;
     }
 
@@ -349,7 +343,6 @@ public class PeopleImportService : IPeopleImportService
     public async Task<ImportPeopleResult> ImportPeopleAsync(Guid electionGuid, int rowId)
     {
         var result = new ImportPeopleResult();
-        var groupName = GetGroupName(electionGuid);
         var startTime = DateTimeOffset.UtcNow;
 
         var importFile = await _context.ImportFiles
@@ -453,7 +446,7 @@ public class PeopleImportService : IPeopleImportService
                 var row = dataRows[i];
                 rowNumber = i + firstRowNum + 1; // Calculate actual row number in the file for error reporting
 
-                await ReportProgress(groupName, i + 1, dataRows.Count, $"Processing row {rowNumber}");
+                await ReportProgress(electionGuid, i + 1, dataRows.Count, $"Processing row {rowNumber}");
 
                 try
                 {
@@ -522,7 +515,7 @@ public class PeopleImportService : IPeopleImportService
                 result.Success = true;
                 result.TimeElapsedSeconds = (DateTimeOffset.UtcNow - startTime).TotalSeconds;
 
-                await _hubContext.Clients.Group(groupName).SendAsync("importComplete", result);
+                await _signalRNotificationService.SendPeopleImportCompleteAsync(electionGuid, result);
 
                 // Open front desk / people / ballot-entry sessions re-fetch lists
                 // (parity with single-person PersonAdded/Updated from People Management).
@@ -563,7 +556,7 @@ public class PeopleImportService : IPeopleImportService
                     }
                 });
             }
-            await _hubContext.Clients.Group(groupName).SendAsync("importError", ex.Message);
+            await _signalRNotificationService.SendPeopleImportErrorAsync(electionGuid, ex.Message);
         }
 
         return result;
@@ -1132,10 +1125,8 @@ public class PeopleImportService : IPeopleImportService
         }
     }
 
-    private async Task ReportProgress(string groupName, int processed, int total, string status)
+    private async Task ReportProgress(Guid electionGuid, int processed, int total, string status)
     {
-        await _hubContext.Clients.Group(groupName).SendAsync("importProgress", processed, total, status);
+        await _signalRNotificationService.SendPeopleImportProgressAsync(electionGuid, processed, total, status);
     }
-
-    private static string GetGroupName(Guid electionGuid) => $"PeopleImport{electionGuid}";
 }

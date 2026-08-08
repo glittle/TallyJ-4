@@ -15,6 +15,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     private readonly IHubContext<MainHub> _mainHubContext;
     private readonly IHubContext<AnalyzeHub> _analyzeHubContext;
     private readonly IHubContext<BallotImportHub> _ballotImportHubContext;
+    private readonly IHubContext<PeopleImportHub> _peopleImportHubContext;
     private readonly IHubContext<FrontDeskHub> _frontDeskHubContext;
     private readonly IHubContext<PublicHub> _publicHubContext;
     private readonly ILogger<SignalRNotificationService> _logger;
@@ -25,6 +26,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     /// <param name="mainHubContext">Hub context for the main SignalR hub.</param>
     /// <param name="analyzeHubContext">Hub context for the analysis SignalR hub.</param>
     /// <param name="ballotImportHubContext">Hub context for the ballot import SignalR hub.</param>
+    /// <param name="peopleImportHubContext">Hub context for the people import SignalR hub.</param>
     /// <param name="frontDeskHubContext">Hub context for the front desk SignalR hub.</param>
     /// <param name="publicHubContext">Hub context for PublicHub (guest-teller join list).</param>
     /// <param name="logger">Logger for recording notification service operations.</param>
@@ -32,6 +34,7 @@ public class SignalRNotificationService : ISignalRNotificationService
         IHubContext<MainHub> mainHubContext,
         IHubContext<AnalyzeHub> analyzeHubContext,
         IHubContext<BallotImportHub> ballotImportHubContext,
+        IHubContext<PeopleImportHub> peopleImportHubContext,
         IHubContext<FrontDeskHub> frontDeskHubContext,
         IHubContext<PublicHub> publicHubContext,
         ILogger<SignalRNotificationService> logger)
@@ -39,6 +42,7 @@ public class SignalRNotificationService : ISignalRNotificationService
         _mainHubContext = mainHubContext;
         _analyzeHubContext = analyzeHubContext;
         _ballotImportHubContext = ballotImportHubContext;
+        _peopleImportHubContext = peopleImportHubContext;
         _frontDeskHubContext = frontDeskHubContext;
         _publicHubContext = publicHubContext;
         _logger = logger;
@@ -84,21 +88,110 @@ public class SignalRNotificationService : ISignalRNotificationService
     }
 
     /// <summary>
-    /// Sends import progress notifications to connected clients.
+    /// Sends ballot import progress (camelCase event names matching SPA importStore).
     /// </summary>
     /// <param name="progress">The import progress data to send.</param>
     public async Task SendImportProgressAsync(ImportProgressDto progress)
     {
         try
         {
-            var groupName = $"BallotImport{progress.ElectionGuid}";
-            var eventName = progress.IsComplete ? "ImportComplete" : "ImportProgress";
-            await _ballotImportHubContext.Clients.Group(groupName).SendAsync(eventName, progress);
-            _logger.LogInformation("Sent {EventName} notification to group {GroupName}", eventName, groupName);
+            var groupName = BallotImportHub.GetGroupName(progress.ElectionGuid);
+            // SPA listens for camelCase; ASP.NET Core SignalR event names are case-sensitive.
+            await _ballotImportHubContext.Clients.Group(groupName).SendAsync("importProgress", progress);
+            _logger.LogInformation("Sent importProgress notification to group {GroupName}", groupName);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error sending ImportProgress notification for election {ElectionGuid}", progress.ElectionGuid);
+            _logger.LogError(ex, "Error sending importProgress notification for election {ElectionGuid}", progress.ElectionGuid);
+        }
+    }
+
+    /// <summary>
+    /// Sends a ballot import error (event <c>importError</c>, message + row number args).
+    /// </summary>
+    public async Task SendImportErrorAsync(Guid electionGuid, string errorMessage, int rowNumber)
+    {
+        try
+        {
+            var groupName = BallotImportHub.GetGroupName(electionGuid);
+            await _ballotImportHubContext.Clients.Group(groupName)
+                .SendAsync("importError", errorMessage, rowNumber);
+            _logger.LogInformation("Sent importError notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending importError notification for election {ElectionGuid}", electionGuid);
+        }
+    }
+
+    /// <summary>
+    /// Sends ballot import completion (event <c>importComplete</c>).
+    /// </summary>
+    public async Task SendImportCompleteAsync(Guid electionGuid, object summary)
+    {
+        try
+        {
+            var groupName = BallotImportHub.GetGroupName(electionGuid);
+            await _ballotImportHubContext.Clients.Group(groupName).SendAsync("importComplete", summary);
+            _logger.LogInformation("Sent importComplete notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending importComplete notification for election {ElectionGuid}", electionGuid);
+        }
+    }
+
+    /// <summary>
+    /// Sends people import progress (event <c>importProgress</c>, thin progress payload).
+    /// </summary>
+    public async Task SendPeopleImportProgressAsync(Guid electionGuid, int processed, int total, string status)
+    {
+        try
+        {
+            var groupName = PeopleImportHub.GetGroupName(electionGuid);
+            // SPA PeopleImportPage expects { processed, total, status } (not multi-arg).
+            var progress = new { processed, total, status };
+            await _peopleImportHubContext.Clients.Group(groupName).SendAsync("importProgress", progress);
+            _logger.LogInformation("Sent people importProgress notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending people importProgress for election {ElectionGuid}", electionGuid);
+        }
+    }
+
+    /// <summary>
+    /// Sends a people import error (event <c>importError</c>).
+    /// </summary>
+    public async Task SendPeopleImportErrorAsync(Guid electionGuid, string errorMessage, int rowNumber = 0)
+    {
+        try
+        {
+            var groupName = PeopleImportHub.GetGroupName(electionGuid);
+            await _peopleImportHubContext.Clients.Group(groupName)
+                .SendAsync("importError", errorMessage, rowNumber);
+            _logger.LogInformation("Sent people importError notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending people importError for election {ElectionGuid}", electionGuid);
+        }
+    }
+
+    /// <summary>
+    /// Sends people import completion (event <c>importComplete</c>).
+    /// </summary>
+    public async Task SendPeopleImportCompleteAsync(Guid electionGuid, object summary)
+    {
+        try
+        {
+            var groupName = PeopleImportHub.GetGroupName(electionGuid);
+            await _peopleImportHubContext.Clients.Group(groupName).SendAsync("importComplete", summary);
+            _logger.LogInformation("Sent people importComplete notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending people importComplete for election {ElectionGuid}", electionGuid);
         }
     }
 

@@ -110,8 +110,8 @@ Group name patterns (constructed via `GetGroupName` statics in each hub + used f
 - `Main{electionGuid}` — MainHub (election updates, statusChanged, electionClosed). Also creates `Main{ guid }Known` / `Main{ guid }Guest` variants.
 - `Analyze{electionGuid}` — AnalyzeHub (tallyProgress / tallyComplete).
 - `FrontDesk{electionGuid}` — FrontDeskHub (PersonAdded/Updated/Deleted, PersonCheckedIn, PersonFlagsUpdated, VoterCountUpdated, PersonVoteCountUpdated, updateBallots, reloadPage, updateOnlineElection). See `context/realtime.md`.
-- `BallotImport{electionGuid}` — BallotImportHub (importProgress, importError, importComplete).
-- `PeopleImport{electionGuid}` — PeopleImportHub (same import events).
+- `BallotImport{electionGuid}` — BallotImportHub (importProgress, importError, importComplete; camelCase; via SignalRNotificationService).
+- `PeopleImport{electionGuid}` — PeopleImportHub (same event names; progress payload `{ processed, total, status }`).
 - `Public` (static group) — PublicHub for guest-teller joinable elections list updates.
 
 **Frontend side**: `src/services/signalrService.ts` provides `connectToMainHub()`, `connectToAnalyzeHub()`, `connectToFrontDeskHub()`, etc. + `joinElection(guid)`, `joinTallySession(guid)`, etc. Stores (electionStore, ballotStore, peopleStore, etc.) call these and wire `connection.on("eventName", handler)`.

@@ -140,9 +140,9 @@ async function initializeSignalR() {
     connection.on("importComplete", (data: PeopleImportCompleteEvent) => {
       importing.value = false;
       importProgress.value = null;
-      if (data.result.success) {
+      if (data.success) {
         showSuccessMessage(
-          `Import completed: ${data.result.peopleAdded} people added, ${data.result.peopleSkipped} skipped`,
+          `Import completed: ${data.peopleAdded} people added, ${data.peopleSkipped} skipped`,
         );
       } else {
         showErrorMessage(

@@ -2,8 +2,7 @@ using Backend.Context;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.Import;
-using Backend.Hubs;
-using Microsoft.AspNetCore.SignalR;
+using Backend.DTOs.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -14,22 +13,18 @@ namespace Backend.Services;
 public class ImportService
 {
     private readonly MainDbContext _context;
-    private readonly IHubContext<BallotImportHub> _hubContext;
     private readonly ISignalRNotificationService _signalRNotificationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ImportService"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
-    /// <param name="hubContext">The SignalR hub context for ballot import notifications.</param>
-    /// <param name="signalRNotificationService">Broadcasts post-import refresh to FrontDesk clients.</param>
+    /// <param name="signalRNotificationService">Import progress and FrontDesk reload broadcasts.</param>
     public ImportService(
         MainDbContext context,
-        IHubContext<BallotImportHub> hubContext,
         ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
-        _hubContext = hubContext;
         _signalRNotificationService = signalRNotificationService;
     }
 
@@ -73,7 +68,7 @@ public class ImportService
     public async Task<ImportResultDto> ImportBallotDataAsync(ImportBallotRequestDto request)
     {
         var result = new ImportResultDto();
-        var groupName = GetGroupName(request.ElectionGuid);
+        var electionGuid = request.ElectionGuid;
 
         try
         {
@@ -139,10 +134,11 @@ public class ImportService
                 int rowNumber = i + 1;
                 var values = ParseCsvLine(lines[i], request.Configuration.Delimiter);
 
-                await ReportProgress(groupName, i - request.Configuration.FirstDataRow + 2, result.TotalRows,
-                    $"Processing row {rowNumber}");
+                var processed = i - request.Configuration.FirstDataRow + 2;
+                await ReportProgress(electionGuid, processed, result);
 
-                if (!ValidateRow(values, ballotCodeIndex, votesIndex, rowNumber, result, request.Configuration.SkipInvalidRows))
+                if (!ValidateRow(values, ballotCodeIndex, votesIndex, rowNumber, result,
+                        request.Configuration.SkipInvalidRows, electionGuid))
                 {
                     result.SkippedRows++;
                     continue;
@@ -156,7 +152,7 @@ public class ImportService
                 if (string.IsNullOrEmpty(ballotCode) || string.IsNullOrEmpty(votesText))
                 {
                     HandleRowError($"Row {rowNumber}: Missing ballot code or votes", result,
-                        request.Configuration.SkipInvalidRows, rowNumber);
+                        request.Configuration.SkipInvalidRows, rowNumber, electionGuid);
                     if (request.Configuration.SkipInvalidRows)
                     {
                         result.SkippedRows++;
@@ -219,7 +215,7 @@ public class ImportService
             await _context.SaveChangesAsync();
             result.Success = true;
 
-            await _hubContext.Clients.Group(groupName).SendAsync("importComplete", new
+            await _signalRNotificationService.SendImportCompleteAsync(electionGuid, new
             {
                 ballotsCreated = result.BallotsCreated,
                 votesCreated = result.VotesCreated,
@@ -234,24 +230,25 @@ public class ImportService
         catch (Exception ex)
         {
             result.Errors.Add($"Ballot Import failed: {ex.Message}");
-            await _hubContext.Clients.Group(groupName).SendAsync("importError", ex.Message, 0);
+            await _signalRNotificationService.SendImportErrorAsync(electionGuid, ex.Message, 0);
         }
 
         return result;
     }
 
     private bool ValidateRow(string[] values, int ballotCodeIndex, int votesIndex, int rowNumber,
-        ImportResultDto result, bool skipInvalidRows)
+        ImportResultDto result, bool skipInvalidRows, Guid electionGuid)
     {
         if (values.Length <= Math.Max(ballotCodeIndex, votesIndex))
         {
-            HandleRowError($"Row {rowNumber}: Insufficient columns", result, skipInvalidRows, rowNumber);
+            HandleRowError($"Row {rowNumber}: Insufficient columns", result, skipInvalidRows, rowNumber, electionGuid);
             return false;
         }
         return true;
     }
 
-    private void HandleRowError(string error, ImportResultDto result, bool skipInvalidRows, int rowNumber)
+    private void HandleRowError(string error, ImportResultDto result, bool skipInvalidRows, int rowNumber,
+        Guid electionGuid)
     {
         if (skipInvalidRows)
         {
@@ -261,12 +258,26 @@ public class ImportService
         {
             result.Errors.Add(error);
         }
-        _ = _hubContext.Clients.Group(GetGroupName(Guid.Empty)).SendAsync("importError", error, rowNumber);
+
+        _ = _signalRNotificationService.SendImportErrorAsync(electionGuid, error, rowNumber);
     }
 
-    private async Task ReportProgress(string groupName, int processed, int total, string status)
+    private async Task ReportProgress(Guid electionGuid, int processed, ImportResultDto result)
     {
-        await _hubContext.Clients.Group(groupName).SendAsync("importProgress", processed, total, status);
+        var total = result.TotalRows;
+        var percent = total > 0 ? (int)(processed * 100.0 / total) : 0;
+        await _signalRNotificationService.SendImportProgressAsync(new ImportProgressDto
+        {
+            ElectionGuid = electionGuid,
+            TotalRows = total,
+            ProcessedRows = processed,
+            SuccessCount = result.BallotsCreated,
+            ErrorCount = result.Errors.Count,
+            CurrentStatus = $"Processing row {processed}",
+            PercentComplete = Math.Clamp(percent, 0, 100),
+            IsComplete = false,
+            Errors = result.Errors.ToList()
+        });
     }
 
     private int GetColumnIndex(string[] headers, string columnName)
@@ -328,9 +339,4 @@ public class ImportService
         result.Add(current);
         return result.ToArray();
     }
-
-    private static string GetGroupName(Guid electionGuid) => $"BallotImport{electionGuid}";
 }
-
-
-
