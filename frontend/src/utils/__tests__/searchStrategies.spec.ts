@@ -7,6 +7,7 @@ import {
   exactMatch,
   fuzzyMatch,
   matchesFrontDeskVoterSearch,
+  multiTokenCoverageMatch,
   normalizeSearchText,
   otherNamesMatch,
   otherInfoMatch,
@@ -419,6 +420,40 @@ describe("area bonus", () => {
     expect(withoutArea).not.toBeNull();
     expect(withArea).not.toBeNull();
     expect(withArea!.weight).toBeGreaterThanOrEqual(withoutArea!.weight);
+  });
+});
+
+describe("multiTokenCoverageMatch", () => {
+  it("should rank full coverage above partial coverage (glenn li)", () => {
+    const littleGlen = createMockPerson("Glen", "Little");
+    const leeLinda = createMockPerson("Linda", "Lee");
+
+    const littleScore = multiTokenCoverageMatch("glenn li", littleGlen);
+    const leeScore = multiTokenCoverageMatch("glenn li", leeLinda);
+
+    expect(littleScore).not.toBeNull();
+    expect(leeScore).not.toBeNull();
+    // Both terms match Little/Glen; only "li" matches Lee/Linda
+    expect(littleScore!).toBeGreaterThan(leeScore!);
+  });
+
+  it("should assign each search term to at most one name token", () => {
+    const person = createMockPerson("Linda", "Lee");
+    const score = multiTokenCoverageMatch("li li", person);
+    expect(score).not.toBeNull();
+  });
+
+  it("should return null for single-term queries", () => {
+    const person = createMockPerson("Glen", "Little");
+    expect(multiTokenCoverageMatch("glen", person)).toBeNull();
+  });
+
+  it("should surface via applyAllStrategies for glenn li", () => {
+    const littleGlen = createMockPerson("Glen", "Little");
+    const result = applyAllStrategies("glenn li", littleGlen);
+    expect(result).not.toBeNull();
+    expect(result!.matchedStrategy).toBe("multiToken");
+    expect(result!.weight).toBeGreaterThanOrEqual(80);
   });
 });
 
