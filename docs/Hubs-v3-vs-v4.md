@@ -157,7 +157,7 @@ Catalog: `context/realtime.md` § Import hub event catalog.
 
 | Gap | v3 | v4 | Issue |
 |-----|----|----|-------|
-| Multi-election dashboard listen | MainHub `JoinAll` (known tellers) | Only current election | [#230](https://github.com/glittle/TallyJ-4/issues/230) |
+| Multi-election dashboard listen | MainHub `JoinAll` (known tellers) | **Fixed** — `JoinElections` / dashboard multi-join | [#230](https://github.com/glittle/TallyJ-4/issues/230) |
 | Election package load progress | ImportHub `loaderStatus` | No SignalR on load path | [#231](https://github.com/glittle/TallyJ-4/issues/231) |
 
 ### C. Online voter realtime (product-gated)
@@ -182,7 +182,7 @@ If restored: prefer server-derived groups, high-entropy channel tokens for code 
 
 | Capability | Hub(s) in v3 | v4 status |
 |------------|--------------|-----------|
-| Teller UI live election status | MainHub | **Partial** — guest close OK; status event mismatch |
+| Teller UI live election status | MainHub | **Yes** — status + multi-election dashboard listen |
 | Guest kick on close/unlist | MainHub | **Yes** |
 | Public landing joinable list | PublicHub | **Yes** |
 | Front desk registration live | FrontDeskHub | **Mostly** — check-in/flags/counts; person CRUD event mismatch |

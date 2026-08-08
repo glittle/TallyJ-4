@@ -7,7 +7,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { getActiveElectionHubGuid } from "@/utils/activeElectionHubStorage";
 import { formatNumber } from "@/utils/formatNumber";
 import { Plus, RefreshRight, Search, Upload } from "@element-plus/icons-vue";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { STAGES } from "../domain/electionStages";
@@ -204,10 +204,20 @@ onMounted(async () => {
   await loadData();
 });
 
+onUnmounted(() => {
+  void electionStore.leaveDashboardElections();
+});
+
 async function loadData() {
   try {
     await electionStore.fetchElections();
     await electionStore.initializeSignalR();
+    // Known tellers: multi-join MainHub so statusChanged updates all list cards
+    // (v3 JoinAll). Guest tellers skip; store enforces isFullTeller.
+    const guids = electionStore.elections
+      .map((e) => e.electionGuid)
+      .filter((g): g is string => !!g);
+    await electionStore.joinDashboardElections(guids);
   } catch (error) {
     handleApiError(error);
   }

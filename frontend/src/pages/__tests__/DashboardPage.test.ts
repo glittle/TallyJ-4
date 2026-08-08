@@ -26,6 +26,8 @@ vi.mock("@/stores/electionStore", () => ({
     loading: false,
     fetchElections: vi.fn().mockResolvedValue(undefined),
     initializeSignalR: vi.fn().mockResolvedValue(undefined),
+    joinDashboardElections: vi.fn().mockResolvedValue(undefined),
+    leaveDashboardElections: vi.fn().mockResolvedValue(undefined),
   }),
 }));
 

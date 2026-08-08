@@ -420,6 +420,12 @@ export const useAuthStore = defineStore("auth", () => {
 
     clearClientSessionSelections();
 
+    try {
+      await signalrService.leaveDashboardElections();
+    } catch {
+      // Best-effort hub cleanup before redirect.
+    }
+
     const activeElectionHubGuid = getActiveElectionHubGuid();
     if (activeElectionHubGuid) {
       try {

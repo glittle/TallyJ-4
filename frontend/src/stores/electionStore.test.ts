@@ -28,8 +28,20 @@ vi.mock("../services/signalrService", () => ({
     connectToFrontDeskHub: vi.fn(),
     joinElection: vi.fn(),
     leaveElection: vi.fn(),
+    joinDashboardElections: vi.fn(),
+    leaveDashboardElections: vi.fn(),
   },
 }));
+
+vi.mock("@/domain/guestTellerAccess", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/domain/guestTellerAccess")>();
+  return {
+    ...actual,
+    isFullTeller: vi.fn(() => true),
+    isGuestTeller: vi.fn(() => false),
+  };
+});
 
 const elMessageMock = vi.fn();
 
@@ -560,6 +572,43 @@ describe("Election Store", () => {
       await electionStore.leaveElection("election-123");
 
       expect(signalrService.leaveElection).toHaveBeenCalledWith("election-123");
+    });
+  });
+
+  describe("joinDashboardElections and leaveDashboardElections", () => {
+    it("joins dashboard elections for known tellers after initializing SignalR", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const { isFullTeller } = await import("@/domain/guestTellerAccess");
+      vi.mocked(isFullTeller).mockReturnValue(true);
+      signalrService.connectToMainHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.joinDashboardElections.mockResolvedValue(undefined);
+
+      await electionStore.joinDashboardElections(["e1", "e2"]);
+
+      expect(signalrService.connectToMainHub).toHaveBeenCalled();
+      expect(signalrService.joinDashboardElections).toHaveBeenCalledWith([
+        "e1",
+        "e2",
+      ]);
+    });
+
+    it("skips multi-join for guest tellers", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const { isFullTeller } = await import("@/domain/guestTellerAccess");
+      vi.mocked(isFullTeller).mockReturnValue(false);
+
+      await electionStore.joinDashboardElections(["e1"]);
+
+      expect(signalrService.joinDashboardElections).not.toHaveBeenCalled();
+    });
+
+    it("leaves dashboard election groups", async () => {
+      const { signalrService } = await import("../services/signalrService");
+
+      await electionStore.leaveDashboardElections();
+
+      expect(signalrService.leaveDashboardElections).toHaveBeenCalled();
     });
   });
 

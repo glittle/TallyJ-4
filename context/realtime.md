@@ -12,6 +12,12 @@ Do **not** assume a single `election-{guid}` convention for all realtime traffic
 | Pattern                                                     | Hub / use                                               |
 | ----------------------------------------------------------- | ------------------------------------------------------- |
 | `Main{electionGuid}` (+ `…Known` / `…Guest`)                | MainHub — shared status on **base**; role events on suffix |
+| `Analyze{electionGuid}`                                     | AnalyzeHub — tally progress/complete                    |
+| `FrontDesk{electionGuid}`                                   | FrontDeskHub — people, ballots, online election, reload |
+| `BallotImport{electionGuid}` / `PeopleImport{electionGuid}` | import hubs                                             |
+| `Public`                                                    | PublicHub — guest-teller joinable elections list        |
+
+Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElection`, `joinDashboardElections`, etc.) and store subscriptions.
 
 ## MainHub status vs role groups
 
@@ -26,12 +32,24 @@ Do **not** assume a single `election-{guid}` convention for all realtime traffic
 - Server producers use `IHubContext<MainHub>` via `SignalRNotificationService` (and computer-assignment close-out), not client-callable hub methods.
 
 **Rejected alternative:** leave server event as `ElectionUpdated` while FE listens for `statusChanged` (broken live updates). **Rejected alternative:** keep unused hub methods `StatusChanged` / `ElectionClosed` / `CloseOutGuestTellers` as the documented push path — they were never called by services and were client-invokable.
-| `Analyze{electionGuid}`                                     | AnalyzeHub — tally progress/complete                    |
-| `FrontDesk{electionGuid}`                                   | FrontDeskHub — people, ballots, online election, reload |
-| `BallotImport{electionGuid}` / `PeopleImport{electionGuid}` | import hubs                                             |
-| `Public`                                                    | PublicHub — guest-teller joinable elections list        |
 
-Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElection`, etc.) and store subscriptions.
+## MainHub multi-election dashboard listen (JoinElections)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #230; v3 `JoinAll` / `Public/JoinMainHubAll`; `MainHub.JoinElections` / `LeaveElections`  
+**Revisit when:** dashboard needs different events per role, or multi-join is needed outside the elections list
+
+- **Who:** known (full) tellers only — guests must not multi-join (v3 parity).
+- **When:** elections dashboard load joins all managed election GUIDs; unmount and logout leave the multi-join set.
+- **Groups:** each allowed GUID → base `Main{guid}` + `Main{guid}Known` (status is on **base** after #227). No computer-code assignment.
+- **Auth:** per-GUID membership via `JoinElectionUsers`; unauthorized GUIDs are skipped (not a hard fail of the whole batch).
+- **FE:** `signalrService.joinDashboardElections` / `leaveDashboardElections`; reconnect re-invokes `JoinElections` for the tracked set. Leaving multi-join **excludes** the active workstation election (`mainElectionGuid`) so SignalR group membership is not dropped for the session open election (groups are not refcounted).
+- **UI effect:** existing `statusChanged` → `electionStore.handleElectionUpdate` already patches list cards; multi-join only expands who receives the event.
+
+**Rejected alternative:** loop `JoinElection` for every dashboard card. Rejected — that assigns computer codes and runs guest-join gates unsuitable for listen-only multi-election status.
+
+**Rejected alternative:** leave multi-join membership for the whole SPA session without leave-on-navigate. Rejected — would keep clients in many groups after leaving the list; v3 scoped multi-listen to the elections list.
 
 ### Who owns Main vs FrontDesk membership
 
@@ -39,6 +57,7 @@ Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElect
 **Evidence:** confirmed (issue #242 — guest stage redirects stopped after leaving ballots)
 
 - **Main hub** (`joinElection` / `leaveElection`): owned by `electionStore` / `MainLayout` for the active election session (`statusChanged`, computer code, guest close-out).
+- **Main hub multi-listen** (`joinDashboardElections` / `leaveDashboardElections`): owned by `DashboardPage` for known tellers only (issue #230).
 - **FrontDesk hub** (`joinFrontDeskElection` / `leaveFrontDeskElection`): owned by page stores that listen for FD events (`ballotStore`, `peopleStore`, Front Desk page).
 - **Do not** call full `leaveElection` from ballots/people unmount — that drops Main group membership and stops stage updates for the rest of the session.
 
