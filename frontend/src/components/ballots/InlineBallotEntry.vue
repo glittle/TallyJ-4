@@ -78,6 +78,24 @@ const { searchResults } = usePersonSearch(searchQuery, peopleRef, {
   maxResults: 20,
 });
 
+/** Max voteCount among current search results — used for relative popularity bar. */
+const maxResultVoteCount = computed(() => {
+  let max = 0;
+  for (const person of searchResults.value) {
+    const count = person.voteCount ?? 0;
+    if (count > max) max = count;
+  }
+  return max;
+});
+
+function relativePopularityWidth(person: SearchablePersonDto): number {
+  const count = person.voteCount ?? 0;
+  if (count <= 0 || maxResultVoteCount.value <= 0) return 0;
+  // Ensure a small visible bar even for the lowest non-zero count
+  const pct = (count / maxResultVoteCount.value) * 100;
+  return Math.max(pct, 8);
+}
+
 function buildVoteMap(includeOptimistic: boolean): Map<number, VoteDto> {
   const merged = new Map<number, VoteDto>();
   for (const vote of props.ballot.votes) {
@@ -586,10 +604,13 @@ onMounted(async () => {
                 >
                   {{ person.ineligibleReasonCode }}
                 </span>
+                <!-- Relative popularity bar (no numeric count). Width is relative to the max voteCount in the current result set. -->
+                <div
+                  v-if="(person.voteCount ?? 0) > 0"
+                  class="popularity-bar"
+                  :style="{ width: relativePopularityWidth(person) + '%' }"
+                />
               </div>
-              <span v-if="person.voteCount > 0" class="vote-count-badge">
-                {{ person.voteCount }}
-              </span>
             </div>
           </div>
         </div>
@@ -852,14 +873,18 @@ onMounted(async () => {
 
         .person-info {
           display: flex;
-          align-items: center;
-          gap: var(--spacing-2, 8px);
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 2px;
           overflow: hidden;
+          min-width: 0;
+          width: 100%;
 
           .person-name {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            max-width: 100%;
           }
 
           .ineligible-badge {
@@ -871,15 +896,15 @@ onMounted(async () => {
             border: 1px solid var(--el-color-danger-light-5);
             font-family: monospace;
           }
-        }
 
-        .vote-count-badge {
-          background: var(--el-color-success-light-9);
-          color: var(--el-color-success);
-          font-size: 12px;
-          padding: 2px 8px;
-          border-radius: 12px;
-          font-weight: bold;
+          .popularity-bar {
+            height: 3px;
+            border-radius: 1px;
+            background: var(--el-color-primary);
+            opacity: 0.55;
+            transition: width 0.15s ease;
+            max-width: 100%;
+          }
         }
       }
     }

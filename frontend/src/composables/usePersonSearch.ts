@@ -21,6 +21,18 @@ interface SearchCache {
 
 const CACHE_TTL = 60000; // 1 minute
 
+/**
+ * Groups strategy weights into bands so that "similar ranking" is explicit.
+ * Within a band, popularity (voteCount) decides order; then alphabetical.
+ */
+function getMatchBand(weight: number): number {
+  if (weight >= 90) return 4; // exact / strong prefix
+  if (weight >= 80) return 3; // wordBoundary / substring
+  if (weight >= 60) return 2; // otherNames / phonetic
+  if (weight >= 40) return 1; // fuzzy
+  return 0;
+}
+
 export function usePersonSearch(
   searchQuery: Ref<string>,
   searchablePeople: Ref<SearchablePersonDto[]>,
@@ -82,13 +94,22 @@ export function usePersonSearch(
       }
     }
 
+    // 1. Match-quality band (primary)
+    // 2. Popularity within the same band (secondary)
+    // 3. Alphabetical (tertiary)
     results.sort((a, b) => {
+      const bandDiff = getMatchBand(b.weight) - getMatchBand(a.weight);
+      if (bandDiff !== 0) {
+        return bandDiff;
+      }
+
       const voteCountDiff =
         (b.person.voteCount ?? 0) - (a.person.voteCount ?? 0);
       if (voteCountDiff !== 0) {
         return voteCountDiff;
       }
 
+      // Prefer higher weight inside the same band when popularity is equal
       if (b.weight !== a.weight) {
         return b.weight - a.weight;
       }
