@@ -24,6 +24,8 @@ public class SignalRNotificationServiceTests
         Mock<IHubClients> BallotImportClients,
         Mock<IHubClients> PeopleImportClients,
         Mock<IHubClients> ElectionPackageImportClients,
+        Mock<IHubClients> AllVotersClients,
+        Mock<IHubClients> VoterPersonalClients,
         Dictionary<string, Mock<IClientProxy>> GroupProxies) CreateService()
     {
         var mainHub = new Mock<IHubContext<MainHub>>();
@@ -33,11 +35,15 @@ public class SignalRNotificationServiceTests
         var electionPackageImportHub = new Mock<IHubContext<ElectionPackageImportHub>>();
         var frontDeskHub = new Mock<IHubContext<FrontDeskHub>>();
         var publicHub = new Mock<IHubContext<PublicHub>>();
+        var allVotersHub = new Mock<IHubContext<AllVotersHub>>();
+        var voterPersonalHub = new Mock<IHubContext<VoterPersonalHub>>();
         var mainClients = new Mock<IHubClients>();
         var frontDeskClients = new Mock<IHubClients>();
         var ballotImportClients = new Mock<IHubClients>();
         var peopleImportClients = new Mock<IHubClients>();
         var electionPackageImportClients = new Mock<IHubClients>();
+        var allVotersClients = new Mock<IHubClients>();
+        var voterPersonalClients = new Mock<IHubClients>();
         var groupProxies = new Dictionary<string, Mock<IClientProxy>>();
 
         Mock<IClientProxy> GetOrCreateProxy(string groupName)
@@ -62,6 +68,8 @@ public class SignalRNotificationServiceTests
         ballotImportHub.Setup(h => h.Clients).Returns(ballotImportClients.Object);
         peopleImportHub.Setup(h => h.Clients).Returns(peopleImportClients.Object);
         electionPackageImportHub.Setup(h => h.Clients).Returns(electionPackageImportClients.Object);
+        allVotersHub.Setup(h => h.Clients).Returns(allVotersClients.Object);
+        voterPersonalHub.Setup(h => h.Clients).Returns(voterPersonalClients.Object);
         mainClients
             .Setup(c => c.Group(It.IsAny<string>()))
             .Returns((string groupName) => GetOrCreateProxy(groupName).Object);
@@ -77,6 +85,12 @@ public class SignalRNotificationServiceTests
         electionPackageImportClients
             .Setup(c => c.Group(It.IsAny<string>()))
             .Returns((string groupName) => GetOrCreateProxy(groupName).Object);
+        allVotersClients
+            .Setup(c => c.Group(It.IsAny<string>()))
+            .Returns((string groupName) => GetOrCreateProxy(groupName).Object);
+        voterPersonalClients
+            .Setup(c => c.Group(It.IsAny<string>()))
+            .Returns((string groupName) => GetOrCreateProxy(groupName).Object);
 
         var service = new SignalRNotificationService(
             mainHub.Object,
@@ -86,15 +100,26 @@ public class SignalRNotificationServiceTests
             electionPackageImportHub.Object,
             frontDeskHub.Object,
             publicHub.Object,
+            allVotersHub.Object,
+            voterPersonalHub.Object,
             NullLogger<SignalRNotificationService>.Instance);
 
-        return (service, mainClients, frontDeskClients, ballotImportClients, peopleImportClients, electionPackageImportClients, groupProxies);
+        return (
+            service,
+            mainClients,
+            frontDeskClients,
+            ballotImportClients,
+            peopleImportClients,
+            electionPackageImportClients,
+            allVotersClients,
+            voterPersonalClients,
+            groupProxies);
     }
 
     [Fact]
     public async Task SendElectionUpdateAsync_sends_statusChanged_to_base_Main_group()
     {
-        var (service, mainClients, _, _, _, _, groupProxies) = CreateService();
+        var (service, mainClients, _, _, _, _, _, _, groupProxies) = CreateService();
         var update = new ElectionUpdateDto
         {
             ElectionGuid = _electionGuid,
@@ -132,7 +157,7 @@ public class SignalRNotificationServiceTests
     [Fact]
     public async Task CloseOutGuestTellersAsync_sends_electionClosed_to_Guest_group_only()
     {
-        var (service, mainClients, _, _, _, _, groupProxies) = CreateService();
+        var (service, mainClients, _, _, _, _, _, _, groupProxies) = CreateService();
         var baseGroup = MainHub.GetGroupName(_electionGuid);
         var guestGroup = baseGroup + "Guest";
 
@@ -160,7 +185,7 @@ public class SignalRNotificationServiceTests
         string action,
         string expectedEvent)
     {
-        var (service, _, frontDeskClients, _, _, _, groupProxies) = CreateService();
+        var (service, _, frontDeskClients, _, _, _, _, _, groupProxies) = CreateService();
         var personGuid = Guid.Parse("33333333-3333-3333-3333-333333333333");
         var update = new PersonUpdateDto
         {
@@ -197,7 +222,7 @@ public class SignalRNotificationServiceTests
     [Fact]
     public async Task NotifyVoterCountUpdatedAsync_sends_VoterCountUpdated_to_FrontDesk_group()
     {
-        var (service, _, frontDeskClients, _, _, _, groupProxies) = CreateService();
+        var (service, _, frontDeskClients, _, _, _, _, _, groupProxies) = CreateService();
         var stats = new FrontDeskStatsDto
         {
             TotalEligible = 100,
@@ -229,9 +254,9 @@ public class SignalRNotificationServiceTests
     }
 
     [Fact]
-    public async Task SendOnlineElectionUpdateAsync_sends_updateOnlineElection_to_FrontDesk_group()
+    public async Task SendOnlineElectionUpdateAsync_sends_updateOnlineElection_to_FrontDesk_and_updateVoters_to_AllVoters()
     {
-        var (service, _, frontDeskClients, _, _, _, groupProxies) = CreateService();
+        var (service, _, frontDeskClients, _, _, _, allVotersClients, _, groupProxies) = CreateService();
         var open = DateTimeOffset.Parse("2026-04-01T12:00:00Z");
         var close = DateTimeOffset.Parse("2026-04-02T12:00:00Z");
         var update = new OnlineElectionUpdateDto
@@ -242,20 +267,30 @@ public class SignalRNotificationServiceTests
             OnlineCloseIsEstimate = true,
             OnlineSelectionProcess = "A"
         };
-        var expectedGroup = FrontDeskHub.GetGroupName(_electionGuid);
+        var frontDeskGroup = FrontDeskHub.GetGroupName(_electionGuid);
+        var allVotersGroup = AllVotersHub.GetGroupName();
 
         await service.SendOnlineElectionUpdateAsync(update);
 
-        frontDeskClients.Verify(c => c.Group(expectedGroup), Times.Once);
-        Assert.True(groupProxies.TryGetValue(expectedGroup, out var proxy));
-        proxy!.Verify(
+        frontDeskClients.Verify(c => c.Group(frontDeskGroup), Times.Once);
+        allVotersClients.Verify(c => c.Group(allVotersGroup), Times.Once);
+        Assert.True(groupProxies.TryGetValue(frontDeskGroup, out var frontDeskProxy));
+        frontDeskProxy!.Verify(
             p => p.SendCoreAsync(
                 "updateOnlineElection",
                 It.IsAny<object?[]>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
-        var invocation = proxy.Invocations.Single(i =>
+        Assert.True(groupProxies.TryGetValue(allVotersGroup, out var allVotersProxy));
+        allVotersProxy!.Verify(
+            p => p.SendCoreAsync(
+                "updateVoters",
+                It.IsAny<object?[]>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        var invocation = frontDeskProxy.Invocations.Single(i =>
             i.Method.Name == nameof(IClientProxy.SendCoreAsync)
             && Equals(i.Arguments[0], "updateOnlineElection"));
         var capturedArgs = Assert.IsType<object?[]>(invocation.Arguments[1]);
@@ -269,9 +304,72 @@ public class SignalRNotificationServiceTests
     }
 
     [Fact]
+    public async Task NotifyVoterPersonalUpdateAsync_sends_updateVoter_only_to_person_identity_groups()
+    {
+        var (service, _, _, _, _, _, _, voterPersonalClients, groupProxies) = CreateService();
+        var update = new VoterPersonalUpdateDto
+        {
+            UpdateRegistration = true,
+            ElectionGuid = _electionGuid,
+            VotingMethod = "P",
+            RegistrationTime = DateTimeOffset.Parse("2026-04-01T12:00:00Z")
+        };
+
+        await service.NotifyVoterPersonalUpdateAsync(
+            "alice@example.com",
+            "+15551212",
+            null,
+            update);
+
+        var emailGroup = VoterPersonalHub.GetGroupName("alice@example.com");
+        var phoneGroup = VoterPersonalHub.GetGroupName("+15551212");
+        var otherGroup = VoterPersonalHub.GetGroupName("bob@example.com");
+
+        voterPersonalClients.Verify(c => c.Group(emailGroup), Times.Once);
+        voterPersonalClients.Verify(c => c.Group(phoneGroup), Times.Once);
+        voterPersonalClients.Verify(c => c.Group(otherGroup), Times.Never);
+
+        Assert.True(groupProxies.TryGetValue(emailGroup, out var emailProxy));
+        emailProxy!.Verify(
+            p => p.SendCoreAsync(
+                "updateVoter",
+                It.IsAny<object?[]>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+        Assert.False(groupProxies.ContainsKey(otherGroup));
+    }
+
+    [Fact]
+    public async Task NotifyVoterLoginElsewhereAsync_sends_login_updateVoter_to_voter_group()
+    {
+        var (service, _, _, _, _, _, _, voterPersonalClients, groupProxies) = CreateService();
+        const string voterId = "alice@example.com";
+        var expectedGroup = VoterPersonalHub.GetGroupName(voterId);
+
+        await service.NotifyVoterLoginElsewhereAsync(voterId);
+
+        voterPersonalClients.Verify(c => c.Group(expectedGroup), Times.Once);
+        Assert.True(groupProxies.TryGetValue(expectedGroup, out var proxy));
+        proxy!.Verify(
+            p => p.SendCoreAsync(
+                "updateVoter",
+                It.IsAny<object?[]>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        var invocation = proxy.Invocations.Single(i =>
+            i.Method.Name == nameof(IClientProxy.SendCoreAsync)
+            && Equals(i.Arguments[0], "updateVoter"));
+        var capturedArgs = Assert.IsType<object?[]>(invocation.Arguments[1]);
+        var dto = Assert.IsType<VoterPersonalUpdateDto>(capturedArgs[0]);
+        Assert.True(dto.Login);
+        Assert.False(dto.UpdateRegistration);
+    }
+
+    [Fact]
     public async Task RequestFrontDeskReloadAsync_sends_reloadPage_to_FrontDesk_group()
     {
-        var (service, _, frontDeskClients, _, _, _, groupProxies) = CreateService();
+        var (service, _, frontDeskClients, _, _, _, _, _, groupProxies) = CreateService();
         var expectedGroup = FrontDeskHub.GetGroupName(_electionGuid);
 
         await service.RequestFrontDeskReloadAsync(_electionGuid);
@@ -289,7 +387,7 @@ public class SignalRNotificationServiceTests
     [Fact]
     public async Task SendImportProgressAsync_sends_camelCase_importProgress_to_BallotImport_group()
     {
-        var (service, _, _, ballotImportClients, _, _, groupProxies) = CreateService();
+        var (service, _, _, ballotImportClients, _, _, _, _, groupProxies) = CreateService();
         var progress = new ImportProgressDto
         {
             ElectionGuid = _electionGuid,
@@ -335,7 +433,7 @@ public class SignalRNotificationServiceTests
     [Fact]
     public async Task SendImportCompleteAsync_sends_camelCase_importComplete_to_BallotImport_group()
     {
-        var (service, _, _, ballotImportClients, _, _, groupProxies) = CreateService();
+        var (service, _, _, ballotImportClients, _, _, _, _, groupProxies) = CreateService();
         var expectedGroup = BallotImportHub.GetGroupName(_electionGuid);
         var summary = new { ballotsCreated = 5 };
 
@@ -360,7 +458,7 @@ public class SignalRNotificationServiceTests
     [Fact]
     public async Task SendImportErrorAsync_sends_importError_with_message_and_row()
     {
-        var (service, _, _, ballotImportClients, _, _, groupProxies) = CreateService();
+        var (service, _, _, ballotImportClients, _, _, _, _, groupProxies) = CreateService();
         var expectedGroup = BallotImportHub.GetGroupName(_electionGuid);
 
         await service.SendImportErrorAsync(_electionGuid, "bad row", 12);
@@ -379,7 +477,7 @@ public class SignalRNotificationServiceTests
     [Fact]
     public async Task SendPeopleImportProgressAsync_sends_object_payload_to_PeopleImport_group()
     {
-        var (service, _, _, _, peopleImportClients, _, groupProxies) = CreateService();
+        var (service, _, _, _, peopleImportClients, _, _, _, groupProxies) = CreateService();
         var expectedGroup = PeopleImportHub.GetGroupName(_electionGuid);
 
         await service.SendPeopleImportProgressAsync(_electionGuid, 3, 10, "Processing row 3");
@@ -411,7 +509,7 @@ public class SignalRNotificationServiceTests
     [Fact]
     public async Task SendElectionPackageLoaderStatusAsync_sends_loaderStatus_to_user_group()
     {
-        var (service, _, _, _, _, packageClients, groupProxies) = CreateService();
+        var (service, _, _, _, _, packageClients, _, _, groupProxies) = CreateService();
         var userId = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var expectedGroup = ElectionPackageImportHub.GetGroupName(userId);
 

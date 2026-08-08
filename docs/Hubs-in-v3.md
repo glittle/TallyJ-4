@@ -392,8 +392,8 @@ Example payloads from `ElectionHelper`:
 
 ### Rewrite checklist
 
-- [ ] Push online open/close / process changes to connected voters  
-- [ ] Re-evaluate global vs per-election groups  
+- [x] Push online open/close / process changes to connected voters (v4 AllVotersHub + `updateVoters`, #233)
+- [x] Re-evaluate global vs per-election groups — kept global for list discovery; see `context/realtime.md`
 
 ---
 
@@ -445,9 +445,9 @@ Same as AllVotersHub: `Vote/JoinVoterHubs` under `[AllowVoter]`.
 
 ### Rewrite checklist
 
-- [ ] Per-voter registration push when tellers/process change their status  
-- [ ] Multi-device login notification  
-- [ ] Decide kiosk identity parity for personal updates  
+- [x] Per-voter registration push when tellers/process change their status (v4 FrontDesk → `updateVoter`, #233)
+- [x] Multi-device login notification (auth success → `login: true`)
+- [x] Kiosk identity: personal updates target email, phone, **and** kiosk code groups when present
 
 ---
 

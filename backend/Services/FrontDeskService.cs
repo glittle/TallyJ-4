@@ -88,6 +88,7 @@ public class FrontDeskService : IFrontDeskService
         var voterDto = MapToFrontDeskVoterDto(person);
 
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
+        await NotifyVoterPersonalRegistrationAsync(person);
 
         var stats = await GetStatsAsync(electionGuid);
         await _signalRNotificationService.NotifyVoterCountUpdatedAsync(electionGuid, stats);
@@ -169,6 +170,7 @@ public class FrontDeskService : IFrontDeskService
         var voterDto = MapToFrontDeskVoterDto(person);
 
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
+        await NotifyVoterPersonalRegistrationAsync(person);
 
         var stats = await GetStatsAsync(electionGuid);
         await _signalRNotificationService.NotifyVoterCountUpdatedAsync(electionGuid, stats);
@@ -286,8 +288,28 @@ public class FrontDeskService : IFrontDeskService
 
         var voterDto = MapToFrontDeskVoterDto(person);
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
+        await NotifyVoterPersonalRegistrationAsync(person);
 
         return voterDto;
+    }
+
+    /// <summary>
+    /// Thin personal push so a connected online voter re-fetches status when front desk
+    /// changes their registration (v3 VoterPersonalHub parity).
+    /// </summary>
+    private Task NotifyVoterPersonalRegistrationAsync(Person person)
+    {
+        return _signalRNotificationService.NotifyVoterPersonalUpdateAsync(
+            person.Email,
+            person.Phone,
+            person.KioskCode,
+            new VoterPersonalUpdateDto
+            {
+                UpdateRegistration = true,
+                ElectionGuid = person.ElectionGuid,
+                VotingMethod = person.VotingMethod,
+                RegistrationTime = person.RegistrationTime
+            });
     }
 
     private static string? NormalizeTellerName(string? tellerName)

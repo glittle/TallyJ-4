@@ -31,6 +31,7 @@ public class OnlineVotingService : IOnlineVotingService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IEmailSender _emailSender;
     private readonly IGoogleIdTokenValidator _googleIdTokenValidator;
+    private readonly ISignalRNotificationService _signalRNotificationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineVotingService"/> class.
@@ -42,6 +43,7 @@ public class OnlineVotingService : IOnlineVotingService
     /// <param name="httpClientFactory">The HTTP client factory.</param>
     /// <param name="emailSender">The email sender service.</param>
     /// <param name="googleIdTokenValidator">The Google ID token validator.</param>
+    /// <param name="signalRNotificationService">Realtime notifications for connected voter sessions.</param>
     public OnlineVotingService(
         MainDbContext context,
         IConfiguration configuration,
@@ -49,7 +51,8 @@ public class OnlineVotingService : IOnlineVotingService
         ILogger<OnlineVotingService> logger,
         IHttpClientFactory httpClientFactory,
         IEmailSender emailSender,
-        IGoogleIdTokenValidator googleIdTokenValidator)
+        IGoogleIdTokenValidator googleIdTokenValidator,
+        ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
         _configuration = configuration;
@@ -58,6 +61,7 @@ public class OnlineVotingService : IOnlineVotingService
         _httpClientFactory = httpClientFactory;
         _emailSender = emailSender;
         _googleIdTokenValidator = googleIdTokenValidator;
+        _signalRNotificationService = signalRNotificationService;
     }
 
     /// <inheritdoc/>
@@ -202,6 +206,7 @@ public class OnlineVotingService : IOnlineVotingService
                 ExpiresAt = expiresAt
             };
 
+            await NotifyLoginElsewhereAsync(onlineVoter.VoterId);
             _logger.LogInformation("Voter {VoterId} authenticated successfully", dto.VoterId);
 
             return (true, null, response);
@@ -590,6 +595,7 @@ public class OnlineVotingService : IOnlineVotingService
                 ExpiresAt = expiresAt
             };
 
+            await NotifyLoginElsewhereAsync(onlineVoter.VoterId);
             _logger.LogInformation("Voter {Email} authenticated successfully via Google OAuth (registered in {Count} open election(s))",
                 email, openElections.Count);
 
@@ -752,6 +758,8 @@ public class OnlineVotingService : IOnlineVotingService
                 ExpiresAt = expiresAt
             };
 
+            await NotifyLoginElsewhereAsync(onlineVoter.VoterId);
+
             _logger.LogInformation("Voter {Email} authenticated via Facebook OAuth (in {Count} open election(s))", email, openElections.Count);
             return (true, null, authResponse);
         }
@@ -860,6 +868,7 @@ public class OnlineVotingService : IOnlineVotingService
                 ExpiresAt = expiresAt
             };
 
+            await NotifyLoginElsewhereAsync(onlineVoter.VoterId);
             _logger.LogInformation("Voter {VoterId} authenticated via Kakao OAuth (in {Count} open election(s))", matchedVoterId, openElections.Count);
             return (true, null, authResponse);
         }
@@ -928,6 +937,7 @@ public class OnlineVotingService : IOnlineVotingService
                 ExpiresAt = DateTimeOffset.UtcNow.AddHours(24)
             };
 
+            await NotifyLoginElsewhereAsync(onlineVoter.VoterId);
             _logger.LogInformation("Voter {TelegramId} authenticated via Telegram Login Widget", dto.Id);
             return (true, null, authResponse);
         }
@@ -1296,9 +1306,19 @@ public class OnlineVotingService : IOnlineVotingService
             ExpiresAt = DateTimeOffset.UtcNow.AddHours(24)
         };
 
+        await NotifyLoginElsewhereAsync(onlineVoter.VoterId);
         var safeVoterIdForLog = SanitizeForLog(normalizedCode);
         _logger.LogInformation("Voter {VoterId} authenticated via direct kiosk/personal code", safeVoterIdForLog);
         return (true, null, response);
+    }
+
+    /// <summary>
+    /// Notifies existing browser sessions for this voter id that another device just logged in
+    /// (v3 VoterPersonalHub Login parity). Failures are logged inside the notification service.
+    /// </summary>
+    private Task NotifyLoginElsewhereAsync(string voterId)
+    {
+        return _signalRNotificationService.NotifyVoterLoginElsewhereAsync(voterId);
     }
 
     private RequestCodeResponseDto BuildRequestCodeResponse(string messageKey, string? verifyCode = null)

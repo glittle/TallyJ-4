@@ -19,6 +19,8 @@ public class SignalRNotificationService : ISignalRNotificationService
     private readonly IHubContext<ElectionPackageImportHub> _electionPackageImportHubContext;
     private readonly IHubContext<FrontDeskHub> _frontDeskHubContext;
     private readonly IHubContext<PublicHub> _publicHubContext;
+    private readonly IHubContext<AllVotersHub> _allVotersHubContext;
+    private readonly IHubContext<VoterPersonalHub> _voterPersonalHubContext;
     private readonly ILogger<SignalRNotificationService> _logger;
 
     /// <summary>
@@ -31,6 +33,8 @@ public class SignalRNotificationService : ISignalRNotificationService
     /// <param name="electionPackageImportHubContext">Hub context for election package load progress.</param>
     /// <param name="frontDeskHubContext">Hub context for the front desk SignalR hub.</param>
     /// <param name="publicHubContext">Hub context for PublicHub (guest-teller join list).</param>
+    /// <param name="allVotersHubContext">Hub context for online voters (global list refresh).</param>
+    /// <param name="voterPersonalHubContext">Hub context for per-voter personal updates.</param>
     /// <param name="logger">Logger for recording notification service operations.</param>
     public SignalRNotificationService(
         IHubContext<MainHub> mainHubContext,
@@ -40,6 +44,8 @@ public class SignalRNotificationService : ISignalRNotificationService
         IHubContext<ElectionPackageImportHub> electionPackageImportHubContext,
         IHubContext<FrontDeskHub> frontDeskHubContext,
         IHubContext<PublicHub> publicHubContext,
+        IHubContext<AllVotersHub> allVotersHubContext,
+        IHubContext<VoterPersonalHub> voterPersonalHubContext,
         ILogger<SignalRNotificationService> logger)
     {
         _mainHubContext = mainHubContext;
@@ -49,6 +55,8 @@ public class SignalRNotificationService : ISignalRNotificationService
         _electionPackageImportHubContext = electionPackageImportHubContext;
         _frontDeskHubContext = frontDeskHubContext;
         _publicHubContext = publicHubContext;
+        _allVotersHubContext = allVotersHubContext;
+        _voterPersonalHubContext = voterPersonalHubContext;
         _logger = logger;
     }
 
@@ -398,20 +406,86 @@ public class SignalRNotificationService : ISignalRNotificationService
     }
 
     /// <summary>
-    /// Notifies front desk / monitor clients that online open/close settings changed.
-    /// Event name matches SPA: <c>updateOnlineElection</c> (v3 parity).
+    /// Notifies front desk / monitor clients and connected online voters that online open/close
+    /// settings changed. FrontDesk: <c>updateOnlineElection</c>; AllVoters: <c>updateVoters</c>.
     /// </summary>
     public async Task SendOnlineElectionUpdateAsync(OnlineElectionUpdateDto update)
     {
         try
         {
-            var groupName = FrontDeskHub.GetGroupName(update.ElectionGuid);
-            await _frontDeskHubContext.Clients.Group(groupName).SendAsync("updateOnlineElection", update);
-            _logger.LogInformation("Sent updateOnlineElection notification to group {GroupName}", groupName);
+            var frontDeskGroup = FrontDeskHub.GetGroupName(update.ElectionGuid);
+            await _frontDeskHubContext.Clients.Group(frontDeskGroup).SendAsync("updateOnlineElection", update);
+            _logger.LogInformation("Sent updateOnlineElection notification to group {GroupName}", frontDeskGroup);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error sending updateOnlineElection for election {ElectionGuid}", update.ElectionGuid);
+        }
+
+        try
+        {
+            // Thin same payload on global AllVoters — clients re-fetch availableElections.
+            var allVotersGroup = AllVotersHub.GetGroupName();
+            await _allVotersHubContext.Clients.Group(allVotersGroup).SendAsync("updateVoters", update);
+            _logger.LogInformation("Sent updateVoters notification to group {GroupName}", allVotersGroup);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending updateVoters for election {ElectionGuid}", update.ElectionGuid);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task NotifyVoterPersonalUpdateAsync(
+        string? email,
+        string? phone,
+        string? kioskCode,
+        VoterPersonalUpdateDto update)
+    {
+        var groupKeys = DistinctNonEmpty(email, phone, kioskCode);
+        if (groupKeys.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var voterId in groupKeys)
+        {
+            try
+            {
+                var groupName = VoterPersonalHub.GetGroupName(voterId);
+                await _voterPersonalHubContext.Clients.Group(groupName).SendAsync("updateVoter", update);
+                _logger.LogInformation(
+                    "Sent updateVoter (registration) to group for election {ElectionGuid}",
+                    update.ElectionGuid);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error sending updateVoter registration for election {ElectionGuid}",
+                    update.ElectionGuid);
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task NotifyVoterLoginElsewhereAsync(string voterId)
+    {
+        if (string.IsNullOrWhiteSpace(voterId))
+        {
+            return;
+        }
+
+        try
+        {
+            var groupName = VoterPersonalHub.GetGroupName(voterId);
+            var update = new VoterPersonalUpdateDto { Login = true };
+            await _voterPersonalHubContext.Clients.Group(groupName).SendAsync("updateVoter", update);
+            _logger.LogInformation("Sent updateVoter (login) to personal voter group");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending updateVoter login notification");
         }
     }
 
@@ -430,6 +504,27 @@ public class SignalRNotificationService : ISignalRNotificationService
         {
             _logger.LogError(ex, "Error sending reloadPage for election {ElectionGuid}", electionGuid);
         }
+    }
+
+    private static List<string> DistinctNonEmpty(params string?[] values)
+    {
+        var result = new List<string>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var value in values)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            var trimmed = value.Trim();
+            if (seen.Add(trimmed))
+            {
+                result.Add(trimmed);
+            }
+        }
+
+        return result;
     }
 }
 

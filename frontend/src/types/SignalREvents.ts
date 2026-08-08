@@ -16,6 +16,24 @@ export interface OnlineElectionUpdateEvent {
   onlineSelectionProcess?: string | null;
 }
 
+/**
+ * AllVotersHub updateVoters — same thin online-window fields as FrontDesk.
+ * Clients re-fetch GET availableElections (do not trust as full election detail).
+ */
+export type UpdateVotersEvent = OnlineElectionUpdateEvent;
+
+/**
+ * VoterPersonalHub updateVoter — registration change and/or multi-device login.
+ * Clients re-fetch status / election list; login:true shows a notice.
+ */
+export interface UpdateVoterEvent {
+  updateRegistration?: boolean;
+  electionGuid?: string | null;
+  votingMethod?: string | null;
+  registrationTime?: string | null;
+  login?: boolean;
+}
+
 export interface TallyProgressEvent {
   electionGuid: string;
   totalBallots: number;
