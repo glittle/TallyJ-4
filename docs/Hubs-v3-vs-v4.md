@@ -130,16 +130,17 @@ Unused hub instance methods (`StatusChanged` / `ElectionClosed` / `CloseOutGuest
 
 Catalog: `context/realtime.md` § FrontDeskHub event catalog.
 
-#### 3. `updateOnlineElection` and post-import `reloadPage`
+#### 3. `updateOnlineElection` and post-import `reloadPage` — **fixed** ([#228](https://github.com/glittle/TallyJ-4/issues/228))
 
 | Piece | Status |
 |-------|--------|
-| Hub methods | Exist on FrontDeskHub |
-| Server producers | **None** for online window or post-import reload |
-| FE `reloadPage` | Handled in some stores; never triggered after import |
-| FE `updateOnlineElection` | No listener |
+| Producers | `SendOnlineElectionUpdateAsync` / `RequestFrontDeskReloadAsync` on notification service |
+| Online settings | `ElectionService.UpdateElectionAsync` when online window/process fields change |
+| Ballot import | CSV `ImportService` + CDN import path call `RequestFrontDeskReloadAsync` on success |
+| FE `reloadPage` | Soft re-fetch in front desk, `peopleStore`, `ballotStore` (not full page reload) |
+| FE `updateOnlineElection` | `electionStore` patches online fields; monitor page re-fetches |
 
-→ Issue [#228](https://github.com/glittle/TallyJ-4/issues/228)
+Catalog: `context/realtime.md` § FrontDeskHub event catalog.
 
 #### 4. Ballot import progress dual path
 

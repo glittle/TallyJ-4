@@ -25,6 +25,7 @@ vi.mock("../services/electionService", () => ({
 vi.mock("../services/signalrService", () => ({
   signalrService: {
     connectToMainHub: vi.fn(),
+    connectToFrontDeskHub: vi.fn(),
     joinElection: vi.fn(),
     leaveElection: vi.fn(),
   },
@@ -325,23 +326,38 @@ describe("Election Store", () => {
   });
 
   describe("initializeSignalR", () => {
+    function mockHubConnections(signalrService: {
+      connectToMainHub: ReturnType<typeof vi.fn>;
+      connectToFrontDeskHub: ReturnType<typeof vi.fn>;
+    }) {
+      const mainConnection = { on: vi.fn() };
+      const frontDeskConnection = { on: vi.fn() };
+      signalrService.connectToMainHub.mockResolvedValue(mainConnection);
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        frontDeskConnection,
+      );
+      return { mainConnection, frontDeskConnection };
+    }
+
     it("should initialize SignalR connection and set up event handlers", async () => {
       const { signalrService } = await import("../services/signalrService");
-      const mockConnection = {
-        on: vi.fn(),
-      };
-
-      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
+      const { mainConnection, frontDeskConnection } =
+        mockHubConnections(signalrService);
 
       await electionStore.initializeSignalR();
 
       expect(signalrService.connectToMainHub).toHaveBeenCalled();
-      expect(mockConnection.on).toHaveBeenCalledWith(
+      expect(signalrService.connectToFrontDeskHub).toHaveBeenCalled();
+      expect(mainConnection.on).toHaveBeenCalledWith(
         "statusChanged",
         expect.any(Function),
       );
-      expect(mockConnection.on).toHaveBeenCalledWith(
+      expect(mainConnection.on).toHaveBeenCalledWith(
         "electionClosed",
+        expect.any(Function),
+      );
+      expect(frontDeskConnection.on).toHaveBeenCalledWith(
+        "updateOnlineElection",
         expect.any(Function),
       );
     });
@@ -365,6 +381,46 @@ describe("Election Store", () => {
       consoleSpy.mockRestore();
     });
 
+    it("updateOnlineElection patches current election online window fields", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const handlers = new Map<string, (data: unknown) => void>();
+      const frontDeskConnection = {
+        on: vi.fn((event: string, handler: (data: unknown) => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      signalrService.connectToMainHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        frontDeskConnection,
+      );
+
+      electionStore.currentElection = {
+        electionGuid: "election-1",
+        name: "Test",
+        electionStage: "GatheringBallots",
+        onlineWhenOpen: "2026-01-01T00:00:00Z",
+        onlineWhenClose: "2026-01-02T00:00:00Z",
+      } as ElectionDto;
+
+      await electionStore.initializeSignalR();
+      handlers.get("updateOnlineElection")!({
+        electionGuid: "election-1",
+        onlineWhenOpen: "2026-04-01T12:00:00Z",
+        onlineWhenClose: "2026-04-02T12:00:00Z",
+        onlineCloseIsEstimate: false,
+        onlineSelectionProcess: "B",
+      });
+
+      expect(electionStore.currentElection?.onlineWhenOpen).toBe(
+        "2026-04-01T12:00:00Z",
+      );
+      expect(electionStore.currentElection?.onlineWhenClose).toBe(
+        "2026-04-02T12:00:00Z",
+      );
+      expect(electionStore.currentElection?.onlineCloseIsEstimate).toBe(false);
+      expect(electionStore.currentElection?.onlineSelectionProcess).toBe("B");
+    });
+
     it("statusChanged notifies once with i18n stage label when list and current both match", async () => {
       const { signalrService } = await import("../services/signalrService");
       const handlers = new Map<string, (data: unknown) => void>();
@@ -374,6 +430,7 @@ describe("Election Store", () => {
         }),
       };
       signalrService.connectToMainHub.mockResolvedValue(mockConnection);
+      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
 
       electionStore.elections = [
         {
@@ -421,6 +478,7 @@ describe("Election Store", () => {
         }),
       };
       signalrService.connectToMainHub.mockResolvedValue(mockConnection);
+      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
 
       electionStore.elections = [
         {
@@ -601,6 +659,7 @@ describe("Election Store", () => {
     it("stores the election guid and joins the main hub", async () => {
       const { signalrService } = await import("../services/signalrService");
       signalrService.connectToMainHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
       signalrService.joinElection.mockResolvedValue("A");
 
       await electionStore.setActiveElectionHub("1");
@@ -612,6 +671,7 @@ describe("Election Store", () => {
     it("leaves the previous election before joining a new one", async () => {
       const { signalrService } = await import("../services/signalrService");
       signalrService.connectToMainHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
       signalrService.joinElection.mockResolvedValue("A");
       setActiveElectionHubGuid("1");
 

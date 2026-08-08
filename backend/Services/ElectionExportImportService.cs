@@ -17,24 +17,34 @@ public class ElectionExportImportService : ElectionImportExportBase
     private readonly CdnBallotImportService _cdnBallotImportService;
     private readonly TallyJv3ElectionImportService _tallyJv3ElectionImportService;
     private readonly JsonElectionImportExportService _jsonElectionImportExportService;
+    private readonly ISignalRNotificationService _signalRNotificationService;
 
     public ElectionExportImportService(
         MainDbContext context,
         IElectionService electionService,
         CdnBallotImportService cdnBallotImportService,
         TallyJv3ElectionImportService tallyJv3ElectionImportService,
-        JsonElectionImportExportService jsonElectionImportExportService)
+        JsonElectionImportExportService jsonElectionImportExportService,
+        ISignalRNotificationService signalRNotificationService)
         : base(context, electionService)
     {
         _cdnBallotImportService = cdnBallotImportService;
         _tallyJv3ElectionImportService = tallyJv3ElectionImportService;
         _jsonElectionImportExportService = jsonElectionImportExportService;
+        _signalRNotificationService = signalRNotificationService;
     }
 
     // Job 1: Import from CdnBallotImport.xsd format
     public async Task<ImportResultDto> ImportCdnBallotsAsync(Guid electionGuid, Stream xmlStream)
     {
-        return await _cdnBallotImportService.ImportCdnBallotsAsync(electionGuid, xmlStream);
+        var result = await _cdnBallotImportService.ImportCdnBallotsAsync(electionGuid, xmlStream);
+        if (result.Success)
+        {
+            // Same post-import FrontDesk refresh as CSV import (v3 ReloadPage).
+            await _signalRNotificationService.RequestFrontDeskReloadAsync(electionGuid);
+        }
+
+        return result;
     }
 
 

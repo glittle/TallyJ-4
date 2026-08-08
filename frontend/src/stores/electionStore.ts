@@ -11,7 +11,10 @@ import type {
   ElectionDto,
   UpdateElectionDto,
 } from "../types";
-import type { ElectionUpdateEvent } from "../types/SignalREvents";
+import type {
+  ElectionUpdateEvent,
+  OnlineElectionUpdateEvent,
+} from "../types/SignalREvents";
 import { setComputerCode } from "../utils/computerCodeStorage";
 import { extractApiErrorMessage } from "../utils/errorHandler";
 import {
@@ -161,6 +164,9 @@ export const useElectionStore = defineStore("election", () => {
 
     try {
       const connection = await signalrService.connectToMainHub();
+      // FrontDesk join path only runs when this hub is already connected
+      // (signalrService.joinElection); monitor needs updateOnlineElection.
+      const frontDeskConnection = await signalrService.connectToFrontDeskHub();
 
       connection.on("statusChanged", (data: any) => {
         if (data && typeof data === "object") {
@@ -188,9 +194,52 @@ export const useElectionStore = defineStore("election", () => {
         handleElectionUpdate(updateEvent);
       });
 
+      frontDeskConnection.on("updateOnlineElection", (data: any) => {
+        if (data && typeof data === "object") {
+          const updateEvent: OnlineElectionUpdateEvent = {
+            electionGuid: data.electionGuid || "",
+            onlineWhenOpen: data.onlineWhenOpen ?? null,
+            onlineWhenClose: data.onlineWhenClose ?? null,
+            onlineCloseIsEstimate: data.onlineCloseIsEstimate,
+            onlineSelectionProcess: data.onlineSelectionProcess ?? null,
+          };
+          handleOnlineElectionUpdate(updateEvent);
+        }
+      });
+
       signalrInitialized.value = true;
     } catch (e) {
       console.error("Failed to initialize SignalR for election store:", e);
+    }
+  }
+
+  function handleOnlineElectionUpdate(data: OnlineElectionUpdateEvent) {
+    if (!data.electionGuid) {
+      return;
+    }
+
+    const patch = {
+      onlineWhenOpen: data.onlineWhenOpen ?? undefined,
+      onlineWhenClose: data.onlineWhenClose ?? undefined,
+      onlineCloseIsEstimate: data.onlineCloseIsEstimate,
+      onlineSelectionProcess: data.onlineSelectionProcess ?? undefined,
+    };
+
+    if (currentElection.value?.electionGuid === data.electionGuid) {
+      currentElection.value = {
+        ...currentElection.value,
+        ...patch,
+      };
+    }
+
+    const index = elections.value.findIndex(
+      (e) => e.electionGuid === data.electionGuid,
+    );
+    if (index !== -1) {
+      elections.value[index] = {
+        ...elections.value[index],
+        ...patch,
+      };
     }
   }
 

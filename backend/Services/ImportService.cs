@@ -15,16 +15,22 @@ public class ImportService
 {
     private readonly MainDbContext _context;
     private readonly IHubContext<BallotImportHub> _hubContext;
+    private readonly ISignalRNotificationService _signalRNotificationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ImportService"/> class.
     /// </summary>
     /// <param name="context">The database context.</param>
     /// <param name="hubContext">The SignalR hub context for ballot import notifications.</param>
-    public ImportService(MainDbContext context, IHubContext<BallotImportHub> hubContext)
+    /// <param name="signalRNotificationService">Broadcasts post-import refresh to FrontDesk clients.</param>
+    public ImportService(
+        MainDbContext context,
+        IHubContext<BallotImportHub> hubContext,
+        ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
         _hubContext = hubContext;
+        _signalRNotificationService = signalRNotificationService;
     }
 
     /// <summary>
@@ -221,6 +227,9 @@ public class ImportService
                 errors = result.Errors,
                 warnings = result.Warnings
             });
+
+            // Open front desk / ballot entry sessions re-fetch registration and ballot state (v3 ReloadPage).
+            await _signalRNotificationService.RequestFrontDeskReloadAsync(request.ElectionGuid);
         }
         catch (Exception ex)
         {

@@ -286,6 +286,57 @@ public class ElectionServiceTests : ServiceTestBase
         Assert.Equal("Updated Name", result.Name);
         Assert.Equal(7, result.NumberToElect);
         Assert.Equal(ElectionStage.GatheringBallots, result.ElectionStage);
+        _signalRMock.Verify(
+            s => s.SendOnlineElectionUpdateAsync(It.IsAny<Backend.DTOs.SignalR.OnlineElectionUpdateDto>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task UpdateElectionAsync_WhenOnlineWindowChanges_SendsOnlineElectionUpdate()
+    {
+        var election = new Election
+        {
+            ElectionGuid = Guid.NewGuid(),
+            Name = "Online Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.GatheringBallots,
+            DateOfElection = DateTime.UtcNow.AddDays(10),
+            OnlineWhenOpen = DateTimeOffset.UtcNow.AddDays(-1),
+            OnlineWhenClose = DateTimeOffset.UtcNow.AddDays(1),
+            OnlineCloseIsEstimate = true,
+            OnlineSelectionProcess = "A",
+            RowVersion = new byte[8]
+        };
+
+        Context.Elections.Add(election);
+        await Context.SaveChangesAsync();
+
+        var originalClose = election.OnlineWhenClose;
+        var newClose = DateTimeOffset.UtcNow.AddDays(2);
+        var updateDto = new UpdateElectionDto
+        {
+            Name = election.Name,
+            OnlineWhenClose = newClose
+        };
+
+        Backend.DTOs.SignalR.OnlineElectionUpdateDto? captured = null;
+        _signalRMock
+            .Setup(s => s.SendOnlineElectionUpdateAsync(It.IsAny<Backend.DTOs.SignalR.OnlineElectionUpdateDto>()))
+            .Callback<Backend.DTOs.SignalR.OnlineElectionUpdateDto>(u => captured = u)
+            .Returns(Task.CompletedTask);
+
+        var result = await _service.UpdateElectionAsync(election.ElectionGuid, updateDto);
+
+        Assert.NotNull(result);
+        Assert.NotNull(captured);
+        Assert.Equal(election.ElectionGuid, captured!.ElectionGuid);
+        Assert.True(captured.OnlineWhenClose.HasValue);
+        Assert.True(captured.OnlineWhenClose > originalClose);
+        Assert.Equal("A", captured.OnlineSelectionProcess);
+        _signalRMock.Verify(
+            s => s.SendOnlineElectionUpdateAsync(It.IsAny<Backend.DTOs.SignalR.OnlineElectionUpdateDto>()),
+            Times.Once);
     }
 
     [Fact]

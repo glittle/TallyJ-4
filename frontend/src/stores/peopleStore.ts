@@ -304,8 +304,8 @@ export const usePeopleStore = defineStore("people", () => {
       });
 
       connection.on("reloadPage", () => {
-        // Thin signal from server (e.g. post-import); full client reload.
-        window.location.reload();
+        // Thin post-import (or bulk) signal: soft re-fetch instead of full page reload.
+        void handleReloadPage();
       });
 
       connection.on(
@@ -393,6 +393,23 @@ export const usePeopleStore = defineStore("people", () => {
       peopleCache.value = peopleCache.value.filter(
         (p) => p.personGuid !== data.personGuid,
       );
+    }
+  }
+
+  async function handleReloadPage() {
+    const guid = activeElectionGuid.value;
+    if (!guid) {
+      return;
+    }
+    try {
+      await Promise.all([fetchPeopleList(guid), fetchPeople(guid)]);
+      if (isCacheInitialized.value) {
+        // Force cache rebuild so ballot-entry search matches post-import state.
+        isCacheInitialized.value = false;
+        await initializePeopleCache(guid);
+      }
+    } catch (e) {
+      console.error("Failed to re-fetch people after reloadPage:", e);
     }
   }
 

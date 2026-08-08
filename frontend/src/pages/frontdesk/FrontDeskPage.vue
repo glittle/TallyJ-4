@@ -653,6 +653,20 @@ async function initializeSignalR() {
     connection.on("PersonUpdated", refreshEligibleVoters);
     connection.on("PersonDeleted", refreshEligibleVoters);
 
+    // Post-import (and similar bulk ops): soft re-fetch eligible list + stats.
+    connection.on("reloadPage", () => {
+      void (async () => {
+        try {
+          await fetchEligibleVoters(electionGuid.value, { silent: true });
+          frontDeskStats.value = await frontDeskService.getStats(
+            electionGuid.value,
+          );
+        } catch (e) {
+          console.error("Failed to refresh front desk after reloadPage:", e);
+        }
+      })();
+    });
+
     signalrInitialized.value = true;
   } catch (e) {
     console.error("Failed to initialize SignalR for front desk:", e);

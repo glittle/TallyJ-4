@@ -7,6 +7,15 @@ export interface ElectionUpdateEvent {
   updatedAt: string;
 }
 
+/** FrontDeskHub updateOnlineElection — online window / process thin payload. */
+export interface OnlineElectionUpdateEvent {
+  electionGuid: string;
+  onlineWhenOpen?: string | null;
+  onlineWhenClose?: string | null;
+  onlineCloseIsEstimate?: boolean;
+  onlineSelectionProcess?: string | null;
+}
+
 export interface TallyProgressEvent {
   electionGuid: string;
   totalBallots: number;

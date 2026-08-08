@@ -188,6 +188,8 @@ class SignalRService {
 
     const frontDeskConnection = this.getConnection("/hubs/front-desk");
     if (frontDeskConnection) {
+      // Track for auto-rejoin after reconnect (same as joinFrontDeskElection).
+      this.frontDeskElectionGuid = electionGuid;
       await frontDeskConnection.invoke("JoinElection", electionGuid);
     }
 
@@ -201,6 +203,9 @@ class SignalRService {
   async leaveElection(electionGuid: string): Promise<void> {
     if (this.mainElectionGuid === electionGuid) {
       this.mainElectionGuid = null;
+    }
+    if (this.frontDeskElectionGuid === electionGuid) {
+      this.frontDeskElectionGuid = null;
     }
 
     const mainConnection = this.getConnection("/hubs/main");

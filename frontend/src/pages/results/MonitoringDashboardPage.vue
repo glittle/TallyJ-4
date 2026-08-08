@@ -252,6 +252,7 @@ import {
 } from "@element-plus/icons-vue";
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { signalrService } from "../../services/signalrService";
 import { useResultStore } from "../../stores/resultStore";
 import type { MonitorInfoDto } from "../../types";
 
@@ -264,14 +265,20 @@ const electionGuid = route.params.id as string;
 const monitorInfo = ref<MonitorInfoDto | null>(null);
 const loading = ref(false);
 const refreshInterval = ref<number | null>(null);
+let frontDeskConnection: Awaited<
+  ReturnType<typeof signalrService.connectToFrontDeskHub>
+> | null = null;
+let onlineElectionHandler: ((data: unknown) => void) | null = null;
 
 onMounted(async () => {
   await loadData();
   startAutoRefresh();
+  await initializeOnlineElectionListener();
 });
 
-onUnmounted(() => {
+onUnmounted(async () => {
   stopAutoRefresh();
+  await teardownOnlineElectionListener();
 });
 
 async function loadData() {
@@ -288,6 +295,43 @@ async function loadData() {
 
 async function refreshData() {
   await loadData();
+}
+
+/** Soft refresh when operator changes online open/close (FrontDesk updateOnlineElection). */
+async function initializeOnlineElectionListener() {
+  try {
+    frontDeskConnection = await signalrService.connectToFrontDeskHub();
+    onlineElectionHandler = (data: unknown) => {
+      const payload = data as { electionGuid?: string } | null;
+      if (
+        payload?.electionGuid &&
+        String(payload.electionGuid).toLowerCase() !==
+          electionGuid.toLowerCase()
+      ) {
+        return;
+      }
+      void loadData();
+    };
+    frontDeskConnection.on("updateOnlineElection", onlineElectionHandler);
+    await signalrService.joinFrontDeskElection(electionGuid);
+  } catch (e) {
+    console.error("Failed to listen for updateOnlineElection on monitor:", e);
+  }
+}
+
+async function teardownOnlineElectionListener() {
+  // Only drop this page's handler. Group membership is owned by
+  // electionStore.setActiveElectionHub (joinElection joins FrontDesk too).
+  try {
+    if (frontDeskConnection && onlineElectionHandler) {
+      frontDeskConnection.off("updateOnlineElection", onlineElectionHandler);
+    }
+  } catch (e) {
+    console.error("Failed to remove updateOnlineElection handler:", e);
+  } finally {
+    onlineElectionHandler = null;
+    frontDeskConnection = null;
+  }
 }
 
 function handleImportCdn() {

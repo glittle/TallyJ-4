@@ -68,7 +68,7 @@ Election detail over HTTP follows the same rule: `GET /api/Elections/{guid}/stat
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #232 fix; `SignalRNotificationService` FrontDesk methods; `peopleStore` / `FrontDeskPage` listeners  
-**Revisit when:** adding online-window / post-import producers (#228), or changing person payload shape
+**Revisit when:** changing person payload shape, or adding more FrontDesk producers
 
 Server pushes only via `IHubContext<FrontDeskHub>` in `SignalRNotificationService` (and future service producers). The hub exposes **join/leave only** — no client-callable broadcast methods (same pattern as MainHub after #227).
 
@@ -84,11 +84,23 @@ Group: `FrontDesk{electionGuid}`.
 | `VoterCountUpdated` | `FrontDeskStatsDto` | `NotifyVoterCountUpdatedAsync` ← after check-in / unregister | Front Desk page (`frontDeskStats`) |
 | `PersonVoteCountUpdated` | `PersonVoteCountUpdateDto` | `SendPersonVoteCountUpdateAsync` | `peopleStore` ballot cache |
 | `updateBallots` | `BallotUpdateDto` | `SendBallotUpdateAsync` | `ballotStore` |
-| `reloadPage` | (none) | **none yet** (#228) | `peopleStore` (full reload when produced) |
-| `updateOnlineElection` | online window info | **none yet** (#228) | **none yet** |
+| `reloadPage` | (none) | `RequestFrontDeskReloadAsync` ← CSV / CDN ballot import success | Front Desk page, `peopleStore`, `ballotStore` (soft re-fetch, not `location.reload`) |
+| `updateOnlineElection` | `OnlineElectionUpdateDto` | `SendOnlineElectionUpdateAsync` ← `ElectionService.UpdateElectionAsync` when online fields change | `electionStore` (patch online fields); Monitoring dashboard re-fetches monitor info |
 
 **Person list contract:** v4 uses fine-grained `PersonAdded` / `PersonUpdated` / `PersonDeleted`, not v3’s single `updatePeople` stream. Handlers refetch the affected person (or drop the row on delete) rather than applying a partial patch from the thin DTO.
 
 **Rejected alternative:** re-emit v3 `updatePeople` from the notification service to match an old `peopleStore` listener. Rejected — other Front Desk events already use PascalCase names; handlers for add/update/delete already existed; dual event names would keep the contract ambiguous.
 
 **Rejected alternative:** leave unused hub instance methods (`UpdatePeople`, `ReloadPage`, …) as the “documented” push path. Rejected — they were client-invokable, never called by services, and misled readers (same lesson as MainHub #227).
+
+## FrontDesk `reloadPage` vs full browser reload (#228)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #228; v3 used `location.reload()` after ballot import; v4 prefers soft re-fetch  
+**Revisit when:** a bulk op leaves client state that soft re-fetch cannot repair
+
+- **Chosen:** server still emits the v3 event name `reloadPage` (no payload). Clients re-fetch people lists, ballots, and front-desk eligible voters/stats instead of forcing `window.location.reload()`.
+- **Why:** full reload is disruptive on multi-station front desk and ballot entry; re-fetch keeps SignalR connections and dialog state.
+- **Rejected alternative:** keep `location.reload()` for exact v3 parity. Rejected as unnecessary disruption when list/stats APIs already return authoritative post-import state.
+- **Also wired:** `updateOnlineElection` with open/close/estimate/selection process when election online settings change (not on every unrelated election field update).
