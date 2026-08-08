@@ -565,6 +565,7 @@ async Task ConfigureApp(WebApplication app, IConfiguration configuration)
     app.MapHub<Backend.Hubs.AnalyzeHub>("/hubs/analyze");
     app.MapHub<Backend.Hubs.BallotImportHub>("/hubs/ballot-import");
     app.MapHub<Backend.Hubs.PeopleImportHub>("/hubs/people-import");
+    app.MapHub<Backend.Hubs.ElectionPackageImportHub>("/hubs/election-package-import");
     app.MapHub<Backend.Hubs.FrontDeskHub>("/hubs/front-desk");
     app.MapHub<Backend.Hubs.PublicHub>("/hubs/public");
 

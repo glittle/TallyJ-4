@@ -79,3 +79,19 @@ export interface PeopleImportCompleteEvent {
   errors?: unknown[];
   timeElapsedSeconds: number;
 }
+
+/**
+ * Election package load log line (v3 ImportHub loaderStatus).
+ * Server sends two args: message, isTemporary.
+ */
+export interface ElectionPackageLoaderStatusEvent {
+  message: string;
+  isTemporary: boolean;
+}
+
+export interface ElectionPackageLoaderLogLine {
+  id: number;
+  message: string;
+  /** When true, the next temporary line may replace this one. */
+  isTemporary: boolean;
+}
