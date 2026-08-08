@@ -18,7 +18,14 @@ import {
   getActiveElectionHubGuid,
   setActiveElectionHubGuid,
 } from "../utils/activeElectionHubStorage";
-import { type ElectionStage } from "../domain/electionStages";
+import {
+  STAGE_META,
+  type ElectionStage,
+} from "../domain/electionStages";
+import { i18n } from "../locales";
+
+/** How long to suppress remote stage toasts after a local setStage (covers SignalR racing HTTP). */
+const LOCAL_STAGE_NOTIFY_SUPPRESS_MS = 5000;
 
 export const useElectionStore = defineStore("election", () => {
   const elections = ref<ElectionDto[]>([]);
@@ -26,6 +33,8 @@ export const useElectionStore = defineStore("election", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
   const signalrInitialized = ref(false);
+  /** electionGuid → suppress remote stage toast until this timestamp (ms). */
+  const suppressRemoteStageNotifyUntil = new Map<string, number>();
 
   const activeElections = computed(() =>
     elections.value.filter((e) => e.electionStage !== "ProcessingBallots"),
@@ -193,53 +202,71 @@ export const useElectionStore = defineStore("election", () => {
     await authStore.logout("/teller-join?electionClosed=1");
   }
 
+  function isRemoteStageNotifySuppressed(electionGuid: string): boolean {
+    const until = suppressRemoteStageNotifyUntil.get(electionGuid);
+    if (until == null) {
+      return false;
+    }
+    if (Date.now() >= until) {
+      suppressRemoteStageNotifyUntil.delete(electionGuid);
+      return false;
+    }
+    return true;
+  }
+
   function handleElectionUpdate(data: ElectionUpdateEvent) {
     const index = elections.value.findIndex(
       (e) => e.electionGuid === data.electionGuid,
     );
-    if (index !== -1) {
-      const existingElection = elections.value[index]!;
-      const oldStage = existingElection.electionStage;
+    const listMatch = index !== -1 ? elections.value[index] : undefined;
+    const currentMatch =
+      currentElection.value?.electionGuid === data.electionGuid
+        ? currentElection.value
+        : undefined;
 
+    // Prefer list stage when both exist (they should match); fall back to current.
+    const previousStage =
+      listMatch?.electionStage ?? currentMatch?.electionStage;
+
+    if (listMatch && index !== -1) {
       elections.value[index] = {
-        ...existingElection,
-        name: data.name ?? existingElection.name,
-        electionStage: data.electionStage ?? existingElection.electionStage,
+        ...listMatch,
+        name: data.name ?? listMatch.name,
+        electionStage: data.electionStage ?? listMatch.electionStage,
       } as ElectionDto;
-
-      if (data.electionStage && data.electionStage !== oldStage) {
-        showElectionStageNotification(
-          data.name || "Election",
-          data.electionStage,
-        );
-      }
     }
 
-    if (currentElection.value?.electionGuid === data.electionGuid) {
-      const existingCurrentElection = currentElection.value!;
-      const oldStage = existingCurrentElection.electionStage;
-
+    if (currentMatch) {
       currentElection.value = {
-        ...existingCurrentElection,
-        name: data.name ?? existingCurrentElection.name,
-        electionStage:
-          data.electionStage ?? existingCurrentElection.electionStage,
+        ...currentMatch,
+        name: data.name ?? currentMatch.name,
+        electionStage: data.electionStage ?? currentMatch.electionStage,
       } as ElectionDto;
+    }
 
-      if (data.electionStage && data.electionStage !== oldStage) {
-        showElectionStageNotification(
-          data.name || "Election",
-          data.electionStage,
-        );
-      }
+    const stageChanged =
+      !!data.electionStage &&
+      previousStage !== undefined &&
+      data.electionStage !== previousStage;
+
+    if (
+      stageChanged &&
+      data.electionStage &&
+      !isRemoteStageNotifySuppressed(data.electionGuid)
+    ) {
+      showElectionStageNotification(data.electionStage);
     }
   }
 
-  function showElectionStageNotification(
-    electionName: string,
-    newStage: string,
-  ) {
-    const message = `${electionName} stage changed to: ${newStage}`;
+  function showElectionStageNotification(newStage: string) {
+    const stageKey =
+      Object.hasOwn(STAGE_META, newStage)
+        ? STAGE_META[newStage as ElectionStage].i18nKey
+        : `elections.stage.${newStage}`;
+    const stageLabel = i18n.global.t(stageKey);
+    const message = i18n.global.t("elections.stageAdvanced", {
+      stage: stageLabel,
+    });
     ElMessage({
       message,
       type: "info",
@@ -300,6 +327,12 @@ export const useElectionStore = defineStore("election", () => {
   async function setStage(electionGuid: string, stage: ElectionStage) {
     loading.value = true;
     error.value = null;
+    // StageControl shows the success toast; suppress the echo from statusChanged
+    // (SignalR often arrives before the HTTP response updates local state).
+    suppressRemoteStageNotifyUntil.set(
+      electionGuid,
+      Date.now() + LOCAL_STAGE_NOTIFY_SUPPRESS_MS,
+    );
     try {
       const election = await electionService.changeStage(electionGuid, stage);
 
@@ -316,6 +349,7 @@ export const useElectionStore = defineStore("election", () => {
 
       return election;
     } catch (e: any) {
+      suppressRemoteStageNotifyUntil.delete(electionGuid);
       error.value = extractApiErrorMessage(e);
       throw e;
     } finally {

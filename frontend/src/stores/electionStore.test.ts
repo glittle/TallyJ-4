@@ -30,11 +30,38 @@ vi.mock("../services/signalrService", () => ({
   },
 }));
 
-// Mock Element Plus
+const elMessageMock = vi.fn();
+
+// Mock Element Plus (store calls ElMessage as a function)
 vi.mock("element-plus", () => ({
-  ElMessage: {
+  ElMessage: Object.assign((opts: unknown) => elMessageMock(opts), {
     success: vi.fn(),
     info: vi.fn(),
+  }),
+}));
+
+vi.mock("../locales", () => ({
+  i18n: {
+    global: {
+      t: (key: string, opts?: Record<string, string>) => {
+        if (key === "elections.stageAdvanced" && opts?.stage) {
+          return `Election changed to ${opts.stage}`;
+        }
+        if (key === "elections.stage.GatheringBallots") {
+          return "Gathering Ballots";
+        }
+        if (key === "elections.stage.ProcessingBallots") {
+          return "Processing Ballots";
+        }
+        if (key === "elections.stage.SettingUp") {
+          return "Setting Up";
+        }
+        if (key === "elections.stage.Finalized") {
+          return "Finalized";
+        }
+        return key;
+      },
+    },
   },
 }));
 
@@ -44,6 +71,7 @@ describe("Election Store", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     electionStore = useElectionStore();
+    elMessageMock.mockClear();
   });
 
   afterEach(() => {
@@ -335,6 +363,96 @@ describe("Election Store", () => {
         expect.any(Error),
       );
       consoleSpy.mockRestore();
+    });
+
+    it("statusChanged notifies once with i18n stage label when list and current both match", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const handlers = new Map<string, (data: unknown) => void>();
+      const mockConnection = {
+        on: vi.fn((event: string, handler: (data: unknown) => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
+
+      electionStore.elections = [
+        {
+          electionGuid: "election-1",
+          name: "Springfield LSA",
+          electionStage: "SettingUp",
+        } as ElectionDto,
+      ];
+      electionStore.currentElection = {
+        electionGuid: "election-1",
+        name: "Springfield LSA",
+        electionStage: "SettingUp",
+      } as ElectionDto;
+
+      await electionStore.initializeSignalR();
+      handlers.get("statusChanged")!({
+        electionGuid: "election-1",
+        name: "Springfield LSA",
+        electionStage: "GatheringBallots",
+        updatedAt: new Date().toISOString(),
+      });
+
+      expect(electionStore.currentElection?.electionStage).toBe(
+        "GatheringBallots",
+      );
+      expect(electionStore.elections[0]?.electionStage).toBe(
+        "GatheringBallots",
+      );
+      expect(elMessageMock).toHaveBeenCalledTimes(1);
+      expect(elMessageMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Election changed to Gathering Ballots",
+          type: "info",
+        }),
+      );
+    });
+
+    it("statusChanged does not toast when local setStage already suppressed echo", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const { electionService } = await import("../services/electionService");
+      const handlers = new Map<string, (data: unknown) => void>();
+      const mockConnection = {
+        on: vi.fn((event: string, handler: (data: unknown) => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
+
+      electionStore.elections = [
+        {
+          electionGuid: "election-1",
+          name: "Springfield LSA",
+          electionStage: "SettingUp",
+        } as ElectionDto,
+      ];
+      electionStore.currentElection = electionStore.elections[0]!;
+
+      electionService.changeStage.mockImplementation(async () => {
+        // Simulate SignalR arriving before HTTP response updates store
+        handlers.get("statusChanged")!({
+          electionGuid: "election-1",
+          name: "Springfield LSA",
+          electionStage: "ProcessingBallots",
+          updatedAt: new Date().toISOString(),
+        });
+        return {
+          electionGuid: "election-1",
+          name: "Springfield LSA",
+          electionStage: "ProcessingBallots",
+        } as ElectionDto;
+      });
+
+      await electionStore.initializeSignalR();
+      await electionStore.setStage("election-1", "ProcessingBallots");
+
+      expect(elMessageMock).not.toHaveBeenCalled();
+      expect(electionStore.currentElection?.electionStage).toBe(
+        "ProcessingBallots",
+      );
     });
   });
 

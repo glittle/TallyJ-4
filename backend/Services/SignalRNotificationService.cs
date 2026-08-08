@@ -52,13 +52,15 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"Main{update.ElectionGuid}";
-            await _mainHubContext.Clients.Group(groupName).SendAsync("ElectionUpdated", update);
-            _logger.LogInformation("Sent ElectionUpdated notification to group {GroupName}", groupName);
+            // Base group: every joined client is in Main{guid} plus Known or Guest.
+            // FE electionStore listens for "statusChanged" (v3 parity); not "ElectionUpdated".
+            var groupName = MainHub.GetGroupName(update.ElectionGuid);
+            await _mainHubContext.Clients.Group(groupName).SendAsync("statusChanged", update);
+            _logger.LogInformation("Sent statusChanged notification to group {GroupName}", groupName);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error sending ElectionUpdated notification for election {ElectionGuid}", update.ElectionGuid);
+            _logger.LogError(ex, "Error sending statusChanged notification for election {ElectionGuid}", update.ElectionGuid);
         }
     }
 
@@ -152,7 +154,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var guestGroup = $"Main{electionGuid}Guest";
+            var guestGroup = MainHub.GetGroupName(electionGuid) + "Guest";
             await _mainHubContext.Clients.Group(guestGroup).SendAsync("electionClosed");
             _logger.LogInformation("Sent electionClosed notification to guest group {GroupName}", guestGroup);
         }
@@ -170,7 +172,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"Main{monitorInfo.ElectionGuid}";
+            var groupName = MainHub.GetGroupName(monitorInfo.ElectionGuid);
             await _mainHubContext.Clients.Group(groupName).SendAsync("MonitorUpdated", monitorInfo);
             _logger.LogInformation("Sent MonitorUpdated notification to group {GroupName}", groupName);
         }

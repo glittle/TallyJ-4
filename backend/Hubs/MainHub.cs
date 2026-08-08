@@ -7,7 +7,9 @@ namespace Backend.Hubs;
 
 /// <summary>
 /// Main SignalR hub for election-related real-time communication.
-/// Handles client connections, group management, and broadcasting election status updates.
+/// Handles client join/leave and Known/Guest group membership.
+/// Server-to-client broadcasts (status, guest close-out) go through
+/// <see cref="ISignalRNotificationService"/> / <c>IHubContext&lt;MainHub&gt;</c>, not hub instance methods.
 /// </summary>
 [Authorize]
 public class MainHub : Hub
@@ -76,51 +78,6 @@ public class MainHub : Hub
             Context.ConnectionId, electionGuid);
     }
 
-    // Server-to-client methods (called by business logic)
-    /// <summary>
-    /// Broadcasts election status changes to all clients in the election groups.
-    /// Sends different information to known users and guest users for security purposes.
-    /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election whose status changed.</param>
-    /// <param name="infoForKnown">Status information to send to authenticated/known users.</param>
-    /// <param name="infoForGuest">Status information to send to guest users (potentially filtered for security).</param>
-    public async Task StatusChanged(Guid electionGuid, object infoForKnown, object infoForGuest)
-    {
-        var knownGroup = GetGroupName(electionGuid) + "Known";
-        var guestGroup = GetGroupName(electionGuid) + "Guest";
-
-        await Clients.Group(knownGroup).SendAsync("statusChanged", infoForKnown);
-        await Clients.Group(guestGroup).SendAsync("statusChanged", infoForGuest);
-
-        _logger.LogInformation("Status changed broadcast for election {ElectionGuid}", electionGuid);
-    }
-
-    /// <summary>
-    /// Broadcasts that an election has been closed to all clients in the election group.
-    /// This notifies all connected clients that voting is no longer possible.
-    /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election that was closed.</param>
-    public async Task ElectionClosed(Guid electionGuid)
-    {
-        var groupName = GetGroupName(electionGuid);
-        await Clients.Group(groupName).SendAsync("electionClosed");
-
-        _logger.LogInformation("Election closed broadcast for election {ElectionGuid}", electionGuid);
-    }
-
-    /// <summary>
-    /// Notifies GuestTellers that they should be closed out from the election.
-    /// This is typically called when an election is being finalized or when guest access needs to be restricted.
-    /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election where GuestTellers should be closed out.</param>
-    public async Task CloseOutGuestTellers(Guid electionGuid)
-    {
-        var guestGroup = GetGroupName(electionGuid) + "Guest";
-        await Clients.Group(guestGroup).SendAsync("electionClosed");
-
-        _logger.LogInformation("GuestTellers closed out for election {ElectionGuid}", electionGuid);
-    }
-
     /// <summary>
     /// Called when a client disconnects from the hub.
     /// Logs the disconnection event for monitoring purposes.
@@ -145,5 +102,10 @@ public class MainHub : Hub
         return !bool.TryParse(isTellerClaim, out var isGuestTeller) || !isGuestTeller;
     }
 
-    private static string GetGroupName(Guid electionGuid) => $"Main{electionGuid}";
+    /// <summary>
+    /// Base MainHub group for an election. Clients also join <c>{base}Known</c> or <c>{base}Guest</c>.
+    /// Server pushes shared status to the base group via <see cref="ISignalRNotificationService"/>;
+    /// role-specific events (e.g. guest <c>electionClosed</c>) use the Known/Guest suffix groups.
+    /// </summary>
+    public static string GetGroupName(Guid electionGuid) => $"Main{electionGuid}";
 }
