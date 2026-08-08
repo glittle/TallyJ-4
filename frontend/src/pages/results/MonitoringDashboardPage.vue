@@ -307,7 +307,8 @@ async function initializeOnlineElectionListener() {
         return;
       }
       if (
-        String(payload.electionGuid).toLowerCase() !== electionGuid.toLowerCase()
+        String(payload.electionGuid).toLowerCase() !==
+        electionGuid.toLowerCase()
       ) {
         return;
       }
@@ -320,10 +321,14 @@ async function initializeOnlineElectionListener() {
   }
 }
 
-  // Only drop this page's handler. This page joins the FrontDesk election group
-  // so it can receive updateOnlineElection events; we intentionally do not leave
-  // the group here because the FrontDesk connection/group membership may be
-  // shared with other parts of the app in the same tab.
+/**
+ * Drop this page's handler only. This page joins the FrontDesk election group
+ * so it can receive updateOnlineElection events; we intentionally do not leave
+ * the group here because FrontDesk connection/group membership may be shared
+ * with other parts of the app in the same tab.
+ */
+async function teardownOnlineElectionListener() {
+  try {
     if (frontDeskConnection && onlineElectionHandler) {
       frontDeskConnection.off("updateOnlineElection", onlineElectionHandler);
     }
