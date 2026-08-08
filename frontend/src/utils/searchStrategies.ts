@@ -506,6 +506,147 @@ function generateSoundex(word: string): string {
   return code.substring(0, 4);
 }
 
+/**
+ * Name tokens used for multi-term coverage matching.
+ */
+function getPersonNameTokens(person: SearchablePersonDto): string[] {
+  const raw = [
+    person.firstName || "",
+    person.lastName || "",
+    person.otherNames || "",
+    person.otherLastNames || "",
+  ]
+    .join(" ")
+    .split(/[\s,;/]+/)
+    .map((w) => normalizeSearchText(w))
+    .filter((w) => w.length > 0);
+
+  // Dedupe while preserving order
+  const seen = new Set<string>();
+  const tokens: string[] = [];
+  for (const t of raw) {
+    if (!seen.has(t)) {
+      seen.add(t);
+      tokens.push(t);
+    }
+  }
+  return tokens;
+}
+
+/**
+ * Score how well one search token matches one person-name token.
+ * Returns 0 if there is no useful match.
+ */
+function scoreTokenPair(searchToken: string, personToken: string): number {
+  if (!searchToken || !personToken) {
+    return 0;
+  }
+
+  // Prefix either direction (handles "li"→"little" and "glenn"↔"glen")
+  if (personToken.startsWith(searchToken) || searchToken.startsWith(personToken)) {
+    const shorter = Math.min(searchToken.length, personToken.length);
+    const longer = Math.max(searchToken.length, personToken.length);
+    // Stronger when the shared prefix is a large fraction of the longer word
+    if (shorter >= 3 || (shorter >= 2 && longer <= shorter + 3)) {
+      return 90;
+    }
+    if (shorter >= 2) {
+      return 70;
+    }
+  }
+
+  // Phonetic
+  const sCode = generateSoundex(searchToken);
+  const pCode = generateSoundex(personToken);
+  if (sCode && pCode && sCode === pCode && searchToken.length >= 3) {
+    return 80;
+  }
+
+  // Fuzzy (Damerau–Levenshtein)
+  if (searchToken.length >= 3 && personToken.length >= 3) {
+    const dist = calculateLevenshteinDistance(searchToken, personToken);
+    const maxDist = Math.min(searchToken.length, personToken.length) >= 5 ? 3 : 2;
+    if (dist <= maxDist) {
+      return dist === 0 ? 95 : dist === 1 ? 75 : 55;
+    }
+  }
+
+  return 0;
+}
+
+/**
+ * Multi-term coverage: each search term is paired with at most one person-name
+ * token (greedy). Prefer people where more terms are covered.
+ *
+ * Example: "glenn li" vs "Little, Glen" covers both terms (glenn↔glen, li→little)
+ * while "Lee, Linda" only covers "li" — so Little ranks higher.
+ */
+export function multiTokenCoverageMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
+  const searchWords = normalizeSearchText(searchTerm)
+    .split(" ")
+    .filter((w) => w.length > 0);
+
+  if (searchWords.length < 2) {
+    return null;
+  }
+
+  const personTokens = getPersonNameTokens(person);
+  if (personTokens.length === 0) {
+    return null;
+  }
+
+  // Greedy one-to-one assignment: strongest pairs first
+  type Pair = { si: number; pi: number; score: number };
+  const pairs: Pair[] = [];
+  for (let si = 0; si < searchWords.length; si++) {
+    for (let pi = 0; pi < personTokens.length; pi++) {
+      const score = scoreTokenPair(searchWords[si], personTokens[pi]);
+      if (score > 0) {
+        pairs.push({ si, pi, score });
+      }
+    }
+  }
+  pairs.sort((a, b) => b.score - a.score);
+
+  const usedSearch = new Set<number>();
+  const usedPerson = new Set<number>();
+  let sumScores = 0;
+  let matched = 0;
+
+  for (const pair of pairs) {
+    if (usedSearch.has(pair.si) || usedPerson.has(pair.pi)) {
+      continue;
+    }
+    usedSearch.add(pair.si);
+    usedPerson.add(pair.pi);
+    sumScores += pair.score;
+    matched++;
+  }
+
+  if (matched === 0) {
+    return null;
+  }
+
+  const coverage = matched / searchWords.length;
+  const avgQuality = sumScores / matched;
+
+  // Full coverage of every search term → high band (above plain substring)
+  if (coverage === 1) {
+    // 82–88 depending on match quality
+    return Math.min(88, Math.round(80 + avgQuality / 20));
+  }
+
+  // Partial coverage (e.g. only 1 of 2 terms) → lower than full coverage
+  if (coverage >= 0.5 && matched >= 1) {
+    return Math.min(72, Math.round(55 + avgQuality / 15));
+  }
+
+  return null;
+}
+
 export function applyAllStrategies(
   searchTerm: string,
   person: SearchablePersonDto,
@@ -514,6 +655,7 @@ export function applyAllStrategies(
     { name: "exact", fn: exactMatch },
     { name: "prefix", fn: prefixMatch },
     { name: "wordBoundary", fn: wordBoundaryMatch },
+    { name: "multiToken", fn: multiTokenCoverageMatch },
     { name: "substring", fn: substringMatch },
     { name: "otherNames", fn: otherNamesMatch },
     { name: "otherInfo", fn: otherInfoMatch },
