@@ -12,10 +12,16 @@ export interface UsePersonSearchOptions {
   enableCache?: boolean;
 }
 
+/** Person plus the strategy weight from the last search (debug / ranking). */
+export type RankedSearchPerson = SearchablePersonDto & {
+  _searchWeight: number;
+  _matchedStrategy?: string;
+};
+
 interface SearchCache {
   query: string;
   peopleHash: string;
-  results: SearchablePersonDto[];
+  results: RankedSearchPerson[];
   timestamp: number;
 }
 
@@ -27,7 +33,7 @@ const CACHE_TTL = 60000; // 1 minute
  */
 function getMatchBand(weight: number): number {
   if (weight >= 90) return 4; // exact / strong prefix
-  if (weight >= 80) return 3; // wordBoundary / substring
+  if (weight >= 80) return 3; // wordBoundary / multiToken / substring
   if (weight >= 60) return 2; // otherNames / phonetic
   if (weight >= 40) return 1; // fuzzy
   return 0;
@@ -43,7 +49,12 @@ export function usePersonSearch(
   const cache = ref<Map<string, SearchCache>>(new Map());
 
   const getPeopleHash = (people: SearchablePersonDto[]): string => {
-    return `${people.length}-${people[0]?.personGuid || ""}-${people[people.length - 1]?.personGuid || ""}`;
+    // Include a cheap popularity fingerprint so voteCount updates invalidate cache order
+    let voteSum = 0;
+    for (const p of people) {
+      voteSum += p.voteCount ?? 0;
+    }
+    return `${people.length}-${people[0]?.personGuid || ""}-${people[people.length - 1]?.personGuid || ""}-v${voteSum}`;
   };
 
   const getCacheKey = (query: string, peopleHash: string): string => {
@@ -66,7 +77,7 @@ export function usePersonSearch(
   const performSearch = (
     query: string,
     people: SearchablePersonDto[],
-  ): SearchablePersonDto[] => {
+  ): RankedSearchPerson[] => {
     const trimmedQuery = query.trim();
 
     if (!trimmedQuery || people.length === 0) {
@@ -96,7 +107,8 @@ export function usePersonSearch(
 
     // 1. Match-quality band (primary)
     // 2. Popularity within the same band (secondary)
-    // 3. Alphabetical (tertiary)
+    // 3. Higher exact weight within band
+    // 4. Alphabetical (tertiary)
     results.sort((a, b) => {
       const bandDiff = getMatchBand(b.weight) - getMatchBand(a.weight);
       if (bandDiff !== 0) {
@@ -109,7 +121,6 @@ export function usePersonSearch(
         return voteCountDiff;
       }
 
-      // Prefer higher weight inside the same band when popularity is equal
       if (b.weight !== a.weight) {
         return b.weight - a.weight;
       }
@@ -126,7 +137,13 @@ export function usePersonSearch(
       return firstNameA.localeCompare(firstNameB);
     });
 
-    const finalResults = results.slice(0, maxResults).map((r) => r.person);
+    const finalResults: RankedSearchPerson[] = results
+      .slice(0, maxResults)
+      .map((r) => ({
+        ...r.person,
+        _searchWeight: r.weight,
+        _matchedStrategy: r.matchedStrategy,
+      }));
 
     if (enableCache) {
       const peopleHash = getPeopleHash(people);
