@@ -275,6 +275,41 @@ public class SignalRNotificationService : ISignalRNotificationService
             _logger.LogError(ex, "Error sending PersonFlagsUpdated notification for election {ElectionGuid}", electionGuid);
         }
     }
+
+    /// <summary>
+    /// Notifies front desk / monitor clients that online open/close settings changed.
+    /// Event name matches SPA: <c>updateOnlineElection</c> (v3 parity).
+    /// </summary>
+    public async Task SendOnlineElectionUpdateAsync(OnlineElectionUpdateDto update)
+    {
+        try
+        {
+            var groupName = FrontDeskHub.GetGroupName(update.ElectionGuid);
+            await _frontDeskHubContext.Clients.Group(groupName).SendAsync("updateOnlineElection", update);
+            _logger.LogInformation("Sent updateOnlineElection notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending updateOnlineElection for election {ElectionGuid}", update.ElectionGuid);
+        }
+    }
+
+    /// <summary>
+    /// Asks FrontDeskHub clients to re-fetch after bulk ballot import (event <c>reloadPage</c>).
+    /// </summary>
+    public async Task RequestFrontDeskReloadAsync(Guid electionGuid)
+    {
+        try
+        {
+            var groupName = FrontDeskHub.GetGroupName(electionGuid);
+            await _frontDeskHubContext.Clients.Group(groupName).SendAsync("reloadPage");
+            _logger.LogInformation("Sent reloadPage notification to group {GroupName}", groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending reloadPage for election {ElectionGuid}", electionGuid);
+        }
+    }
 }
 
 

@@ -436,5 +436,69 @@ describe("People Store - People Cache", () => {
 
       expect(store.peopleCache).toHaveLength(0);
     });
+
+    it("reloadPage soft re-fetches lists and rebuilds ballot cache", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const handlers = new Map<string, () => void>();
+      const mockConnection = {
+        on: vi.fn((event: string, handler: () => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      vi.mocked(signalrService.connectToFrontDeskHub).mockResolvedValue(
+        mockConnection as never,
+      );
+
+      const refreshedList = [
+        {
+          personGuid: mockPerson.personGuid,
+          firstName: mockPerson.firstName,
+          lastName: mockPerson.lastName,
+          fullName: mockPerson.fullName,
+          canVote: true,
+          canReceiveVotes: true,
+        },
+      ];
+      const refreshedBallotEntry = [
+        {
+          ...mockPerson,
+          voteCount: 2,
+        },
+        mockPerson2,
+      ];
+      vi.mocked(peopleService.getAllPeople).mockResolvedValue(
+        refreshedList as never,
+      );
+      vi.mocked(peopleService.getAll).mockResolvedValue([mockPerson]);
+      vi.mocked(peopleService.getAllForBallotEntry).mockResolvedValue(
+        refreshedBallotEntry as never,
+      );
+
+      // activeElectionGuid is set by list fetches; seed via fetchPeopleList.
+      await store.fetchPeopleList("election-123");
+      store.isCacheInitialized = true;
+      store.peopleCache = [store.enrichPersonForSearch(mockPerson)];
+
+      await store.initializeSignalR();
+      expect(handlers.has("reloadPage")).toBe(true);
+
+      handlers.get("reloadPage")!();
+
+      await vi.waitFor(() => {
+        expect(peopleService.getAllPeople).toHaveBeenCalledWith("election-123");
+        expect(peopleService.getAll).toHaveBeenCalledWith("election-123");
+        expect(peopleService.getAllForBallotEntry).toHaveBeenCalledWith(
+          "election-123",
+        );
+      });
+
+      // Cache rebuilt from ballot-entry payload (not left with stale pre-import data).
+      expect(store.isCacheInitialized).toBe(true);
+      expect(store.peopleCache).toHaveLength(2);
+      expect(store.peopleCache.map((p) => p.personGuid)).toEqual([
+        mockPerson.personGuid,
+        mockPerson2.personGuid,
+      ]);
+    });
   });
 });

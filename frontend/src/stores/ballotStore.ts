@@ -483,7 +483,8 @@ export const useBallotStore = defineStore("ballot", () => {
       });
 
       connection.on("reloadPage", () => {
-        console.log("Server requested page reload for ballots");
+        // Soft re-fetch after bulk ballot import (prefer over location.reload).
+        void handleReloadPage();
       });
 
       signalrInitialized.value = true;
@@ -523,6 +524,18 @@ export const useBallotStore = defineStore("ballot", () => {
 
     if (currentBallot.value?.ballotGuid === data.ballotGuid) {
       currentBallot.value = null;
+    }
+  }
+
+  async function handleReloadPage() {
+    const guid = activeElectionGuid.value;
+    if (!guid) {
+      return;
+    }
+    try {
+      await fetchBallots(guid);
+    } catch (e) {
+      console.error("Failed to re-fetch ballots after reloadPage:", e);
     }
   }
 

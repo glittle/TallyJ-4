@@ -16,13 +16,15 @@ public class PeopleImportServiceTests : ServiceTestBase
 {
     private readonly PeopleImportService _service;
     private readonly Mock<IHubContext<PeopleImportHub>> _hubContextMock;
+    private readonly Mock<ISignalRNotificationService> _signalRMock;
     private readonly Mock<ILogger<PeopleImportService>> _loggerMock;
 
     public PeopleImportServiceTests()
     {
         _hubContextMock = new Mock<IHubContext<PeopleImportHub>>();
+        _signalRMock = new Mock<ISignalRNotificationService>();
         _loggerMock = new Mock<ILogger<PeopleImportService>>();
-        _service = new PeopleImportService(Context, _hubContextMock.Object);
+        _service = new PeopleImportService(Context, _hubContextMock.Object, _signalRMock.Object);
     }
 
     [Fact]
@@ -379,6 +381,11 @@ public class PeopleImportServiceTests : ServiceTestBase
         Assert.Equal(2, people.Count);
         Assert.Contains(people, p => p.FirstName == "John" && p.LastName == "Doe");
         Assert.Contains(people, p => p.FirstName == "Jane" && p.LastName == "Smith");
+
+        // Front desk (and related open screens) soft-refresh after bulk people import.
+        _signalRMock.Verify(
+            s => s.RequestFrontDeskReloadAsync(electionGuid),
+            Times.Once);
     }
 
     [Fact]
@@ -497,6 +504,9 @@ public class PeopleImportServiceTests : ServiceTestBase
         Assert.Equal(2, result.DeletedCount);
         var remainingPeople = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>();
         Assert.Empty(remainingPeople);
+        _signalRMock.Verify(
+            s => s.RequestFrontDeskReloadAsync(electionGuid),
+            Times.Once);
     }
 
     [Fact]

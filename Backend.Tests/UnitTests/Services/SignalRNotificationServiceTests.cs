@@ -205,4 +205,62 @@ public class SignalRNotificationServiceTests
         Assert.Equal(40, dto.CheckedIn);
         Assert.Equal(60, dto.NotYetCheckedIn);
     }
+
+    [Fact]
+    public async Task SendOnlineElectionUpdateAsync_sends_updateOnlineElection_to_FrontDesk_group()
+    {
+        var (service, _, frontDeskClients, groupProxies) = CreateService();
+        var open = DateTimeOffset.Parse("2026-04-01T12:00:00Z");
+        var close = DateTimeOffset.Parse("2026-04-02T12:00:00Z");
+        var update = new OnlineElectionUpdateDto
+        {
+            ElectionGuid = _electionGuid,
+            OnlineWhenOpen = open,
+            OnlineWhenClose = close,
+            OnlineCloseIsEstimate = true,
+            OnlineSelectionProcess = "A"
+        };
+        var expectedGroup = FrontDeskHub.GetGroupName(_electionGuid);
+
+        await service.SendOnlineElectionUpdateAsync(update);
+
+        frontDeskClients.Verify(c => c.Group(expectedGroup), Times.Once);
+        Assert.True(groupProxies.TryGetValue(expectedGroup, out var proxy));
+        proxy!.Verify(
+            p => p.SendCoreAsync(
+                "updateOnlineElection",
+                It.IsAny<object?[]>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        var invocation = proxy.Invocations.Single(i =>
+            i.Method.Name == nameof(IClientProxy.SendCoreAsync)
+            && Equals(i.Arguments[0], "updateOnlineElection"));
+        var capturedArgs = Assert.IsType<object?[]>(invocation.Arguments[1]);
+        Assert.Single(capturedArgs);
+        var dto = Assert.IsType<OnlineElectionUpdateDto>(capturedArgs[0]);
+        Assert.Equal(_electionGuid, dto.ElectionGuid);
+        Assert.Equal(open, dto.OnlineWhenOpen);
+        Assert.Equal(close, dto.OnlineWhenClose);
+        Assert.True(dto.OnlineCloseIsEstimate);
+        Assert.Equal("A", dto.OnlineSelectionProcess);
+    }
+
+    [Fact]
+    public async Task RequestFrontDeskReloadAsync_sends_reloadPage_to_FrontDesk_group()
+    {
+        var (service, _, frontDeskClients, groupProxies) = CreateService();
+        var expectedGroup = FrontDeskHub.GetGroupName(_electionGuid);
+
+        await service.RequestFrontDeskReloadAsync(_electionGuid);
+
+        frontDeskClients.Verify(c => c.Group(expectedGroup), Times.Once);
+        Assert.True(groupProxies.TryGetValue(expectedGroup, out var proxy));
+        proxy!.Verify(
+            p => p.SendCoreAsync(
+                "reloadPage",
+                It.IsAny<object?[]>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
 }

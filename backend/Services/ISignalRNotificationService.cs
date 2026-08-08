@@ -79,6 +79,18 @@ public interface ISignalRNotificationService
     /// <param name="electionGuid">The election GUID.</param>
     /// <param name="voter">The voter with updated flags.</param>
     Task SendPersonFlagsUpdatedAsync(Guid electionGuid, FrontDeskVoterDto voter);
+
+    /// <summary>
+    /// Notifies front desk / monitor clients that online open/close (or related) settings changed.
+    /// </summary>
+    /// <param name="update">Thin online-window payload for the election.</param>
+    Task SendOnlineElectionUpdateAsync(OnlineElectionUpdateDto update);
+
+    /// <summary>
+    /// Asks front desk (and other FrontDeskHub clients) to re-fetch state after bulk ballot import.
+    /// </summary>
+    /// <param name="electionGuid">The election whose open sessions should refresh.</param>
+    Task RequestFrontDeskReloadAsync(Guid electionGuid);
 }
 
 

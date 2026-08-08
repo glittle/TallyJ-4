@@ -279,9 +279,9 @@ All via `BeforeController.JoinFrontDeskHub` (class: `[AllowTellersInActiveElecti
 
 ### Rewrite checklist
 
-- [ ] Live person registration updates across front desk, ballot entry, sort, reconcile, monitor  
-- [ ] Online window time updates on monitor  
-- [ ] Force front-desk reload after bulk ballot import  
+- [x] Live person registration updates across front desk, ballot entry, sort, reconcile, monitor  
+- [x] Online window time updates on monitor (#228)  
+- [x] Force front-desk reload after bulk ballot import (#228; soft re-fetch, not full page reload)  
 
 ---
 

@@ -227,6 +227,11 @@ public class ElectionService : IElectionService
             return null;
         }
 
+        var previousOnlineWhenOpen = election.OnlineWhenOpen;
+        var previousOnlineWhenClose = election.OnlineWhenClose;
+        var previousOnlineCloseIsEstimate = election.OnlineCloseIsEstimate;
+        var previousOnlineSelectionProcess = election.OnlineSelectionProcess;
+
         var listForPublic = updateDto.ListForPublic;
         updateDto.CopyMatchingPropertiesTo(election, ignoreNulls: true);
         ElectionTellerAccessHelper.ApplyListForPublicFlag(election, listForPublic);
@@ -241,6 +246,26 @@ public class ElectionService : IElectionService
             ElectionStage = election.ElectionStage,
             UpdatedAt = DateTimeOffset.UtcNow
         });
+
+        // Operator monitor / front desk need a live push when the online window or process changes
+        // (FrontDeskHub updateOnlineElection — v3 ElectionHelper parity).
+        var onlineSettingsChanged =
+            previousOnlineWhenOpen != election.OnlineWhenOpen
+            || previousOnlineWhenClose != election.OnlineWhenClose
+            || previousOnlineCloseIsEstimate != election.OnlineCloseIsEstimate
+            || !string.Equals(previousOnlineSelectionProcess, election.OnlineSelectionProcess, StringComparison.Ordinal);
+
+        if (onlineSettingsChanged)
+        {
+            await _signalRNotificationService.SendOnlineElectionUpdateAsync(new OnlineElectionUpdateDto
+            {
+                ElectionGuid = election.ElectionGuid,
+                OnlineWhenOpen = election.OnlineWhenOpen,
+                OnlineWhenClose = election.OnlineWhenClose,
+                OnlineCloseIsEstimate = election.OnlineCloseIsEstimate,
+                OnlineSelectionProcess = election.OnlineSelectionProcess
+            });
+        }
 
         return await GetElectionByGuidAsync(electionGuid);
     }
