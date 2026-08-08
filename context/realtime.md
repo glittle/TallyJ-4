@@ -62,3 +62,33 @@ Anonymous clients must not learn election results (or other election detail) jus
 **Rejected alternative:** per-election `public-display-{guid}` groups + `GET /api/Public/{guid}/publicDisplay` + full-screen public results page. Removed — no business need for random users to view election data; authenticated results presentation (e.g. in-app results/presentation views) covers operator needs.
 
 Election detail over HTTP follows the same rule: `GET /api/Elections/{guid}/status` (and other election-scoped routes) require `ElectionAccess` (full or guest teller joined to that election). Anonymous public endpoints stay limited to guest-join discovery (`/api/Public/elections`, hub `Public` group) and non-sensitive health/home.
+
+## FrontDeskHub event catalog
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #232 fix; `SignalRNotificationService` FrontDesk methods; `peopleStore` / `FrontDeskPage` listeners  
+**Revisit when:** adding online-window / post-import producers (#228), or changing person payload shape
+
+Server pushes only via `IHubContext<FrontDeskHub>` in `SignalRNotificationService` (and future service producers). The hub exposes **join/leave only** — no client-callable broadcast methods (same pattern as MainHub after #227).
+
+Group: `FrontDesk{electionGuid}`.
+
+| Event | Payload | Producer | Primary listeners |
+| ----- | ------- | -------- | ----------------- |
+| `PersonAdded` | `PersonUpdateDto` (`action: "added"`) | `SendPersonUpdateAsync` ← PeopleService create | `peopleStore` (list + ballot cache); Front Desk refreshes eligible list |
+| `PersonUpdated` | `PersonUpdateDto` (`action: "updated"`) | `SendPersonUpdateAsync` ← PeopleService update | same |
+| `PersonDeleted` | `PersonUpdateDto` (`action: "deleted"`) | `SendPersonUpdateAsync` ← PeopleService delete | same |
+| `PersonCheckedIn` | `FrontDeskVoterDto` | `NotifyPersonCheckedInAsync` ← check-in / unregister / envelope | Front Desk page (row patch) |
+| `PersonFlagsUpdated` | `FrontDeskVoterDto` | `SendPersonFlagsUpdatedAsync` | Front Desk page |
+| `VoterCountUpdated` | `FrontDeskStatsDto` | `NotifyVoterCountUpdatedAsync` ← after check-in / unregister | Front Desk page (`frontDeskStats`) |
+| `PersonVoteCountUpdated` | `PersonVoteCountUpdateDto` | `SendPersonVoteCountUpdateAsync` | `peopleStore` ballot cache |
+| `updateBallots` | `BallotUpdateDto` | `SendBallotUpdateAsync` | `ballotStore` |
+| `reloadPage` | (none) | **none yet** (#228) | `peopleStore` (full reload when produced) |
+| `updateOnlineElection` | online window info | **none yet** (#228) | **none yet** |
+
+**Person list contract:** v4 uses fine-grained `PersonAdded` / `PersonUpdated` / `PersonDeleted`, not v3’s single `updatePeople` stream. Handlers refetch the affected person (or drop the row on delete) rather than applying a partial patch from the thin DTO.
+
+**Rejected alternative:** re-emit v3 `updatePeople` from the notification service to match an old `peopleStore` listener. Rejected — other Front Desk events already use PascalCase names; handlers for add/update/delete already existed; dual event names would keep the contract ambiguous.
+
+**Rejected alternative:** leave unused hub instance methods (`UpdatePeople`, `ReloadPage`, …) as the “documented” push path. Rejected — they were client-invokable, never called by services, and misled readers (same lesson as MainHub #227).

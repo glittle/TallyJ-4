@@ -110,7 +110,8 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"FrontDesk{update.ElectionGuid}";
+            var groupName = FrontDeskHub.GetGroupName(update.ElectionGuid);
+            // FE peopleStore + FrontDeskPage listen for these exact event names (not v3 updatePeople).
             var eventName = update.Action switch
             {
                 "added" => "PersonAdded",
@@ -190,7 +191,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"FrontDesk{update.ElectionGuid}";
+            var groupName = FrontDeskHub.GetGroupName(update.ElectionGuid);
             await _frontDeskHubContext.Clients.Group(groupName).SendAsync("updateBallots", update);
             _logger.LogInformation("Sent ballot update notification to group {GroupName}", groupName);
         }
@@ -209,7 +210,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"FrontDesk{electionGuid}";
+            var groupName = FrontDeskHub.GetGroupName(electionGuid);
             await _frontDeskHubContext.Clients.Group(groupName).SendAsync("PersonCheckedIn", voter);
             _logger.LogInformation("Sent PersonCheckedIn notification to group {GroupName}", groupName);
         }
@@ -228,7 +229,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"FrontDesk{electionGuid}";
+            var groupName = FrontDeskHub.GetGroupName(electionGuid);
             await _frontDeskHubContext.Clients.Group(groupName).SendAsync("VoterCountUpdated", stats);
             _logger.LogInformation("Sent VoterCountUpdated notification to group {GroupName}", groupName);
         }
@@ -246,7 +247,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
-            var groupName = $"FrontDesk{update.ElectionGuid}";
+            var groupName = FrontDeskHub.GetGroupName(update.ElectionGuid);
             await _frontDeskHubContext.Clients.Group(groupName).SendAsync("PersonVoteCountUpdated", update);
             _logger.LogInformation("Sent PersonVoteCountUpdated notification to group {GroupName}", groupName);
         }

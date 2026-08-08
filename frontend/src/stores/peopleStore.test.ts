@@ -352,4 +352,89 @@ describe("People Store - People Cache", () => {
       }).not.toThrow();
     });
   });
+
+  describe("initializeSignalR person-update wiring", () => {
+    it("registers PersonAdded/Updated/Deleted (not updatePeople)", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const handlers = new Map<string, (data: unknown) => void>();
+      const mockConnection = {
+        on: vi.fn((event: string, handler: (data: unknown) => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      vi.mocked(signalrService.connectToFrontDeskHub).mockResolvedValue(
+        mockConnection as never,
+      );
+
+      await store.initializeSignalR();
+
+      expect(handlers.has("PersonAdded")).toBe(true);
+      expect(handlers.has("PersonUpdated")).toBe(true);
+      expect(handlers.has("PersonDeleted")).toBe(true);
+      expect(handlers.has("PersonVoteCountUpdated")).toBe(true);
+      expect(handlers.has("updatePeople")).toBe(false);
+    });
+
+    it("PersonAdded event fetches person into cache", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const handlers = new Map<string, (data: unknown) => void>();
+      const mockConnection = {
+        on: vi.fn((event: string, handler: (data: unknown) => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      vi.mocked(signalrService.connectToFrontDeskHub).mockResolvedValue(
+        mockConnection as never,
+      );
+      vi.mocked(peopleService.getById).mockResolvedValue(mockPerson);
+
+      store.isCacheInitialized = true;
+      store.peopleCache = [];
+
+      await store.initializeSignalR();
+      await handlers.get("PersonAdded")!({
+        electionGuid: "election-123",
+        personGuid: mockPerson.personGuid,
+        action: "added",
+        firstName: mockPerson.firstName,
+        lastName: mockPerson.lastName,
+        updatedAt: new Date().toISOString(),
+      });
+
+      // Handler is async; wait a tick for fetchPersonById
+      await vi.waitFor(() => {
+        expect(store.peopleCache).toHaveLength(1);
+      });
+      expect(store.peopleCache[0]?.personGuid).toBe(mockPerson.personGuid);
+    });
+
+    it("PersonDeleted event removes person from cache", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const handlers = new Map<string, (data: unknown) => void>();
+      const mockConnection = {
+        on: vi.fn((event: string, handler: (data: unknown) => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      vi.mocked(signalrService.connectToFrontDeskHub).mockResolvedValue(
+        mockConnection as never,
+      );
+
+      const enriched = store.enrichPersonForSearch(mockPerson);
+      store.isCacheInitialized = true;
+      store.peopleCache = [enriched];
+
+      await store.initializeSignalR();
+      handlers.get("PersonDeleted")!({
+        electionGuid: "election-123",
+        personGuid: mockPerson.personGuid,
+        action: "deleted",
+        firstName: mockPerson.firstName,
+        lastName: mockPerson.lastName,
+        updatedAt: new Date().toISOString(),
+      });
+
+      expect(store.peopleCache).toHaveLength(0);
+    });
+  });
 });

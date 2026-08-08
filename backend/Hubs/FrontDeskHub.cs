@@ -5,7 +5,10 @@ namespace Backend.Hubs;
 
 /// <summary>
 /// SignalR hub for front desk operations in election management.
-/// Handles real-time communication for voter registration, people updates, and election status changes.
+/// Handles client join/leave for the election front-desk group.
+/// Server-to-client broadcasts go through
+/// <see cref="Services.ISignalRNotificationService"/> / <c>IHubContext&lt;FrontDeskHub&gt;</c>,
+/// not hub instance methods.
 /// </summary>
 [Authorize]
 public class FrontDeskHub : Hub
@@ -47,62 +50,6 @@ public class FrontDeskHub : Hub
             Context.ConnectionId, electionGuid);
     }
 
-    // Server-to-client methods for voter registration updates
-    /// <summary>
-    /// Broadcasts updates about people/voters to all front desk clients.
-    /// Used to notify clients when voter information has been added, updated, or changed.
-    /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election where people were updated.</param>
-    /// <param name="message">The update message containing information about the people changes.</param>
-    public async Task UpdatePeople(Guid electionGuid, object message)
-    {
-        var groupName = GetGroupName(electionGuid);
-        await Clients.Group(groupName).SendAsync("updatePeople", message);
-
-        _logger.LogInformation("People update broadcast for election {ElectionGuid}", electionGuid);
-    }
-
-    /// <summary>
-    /// Broadcasts a page reload command to all front desk clients for the specified election.
-    /// Used to force clients to refresh their interface when critical data has changed.
-    /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election where clients should reload their pages.</param>
-    public async Task ReloadPage(Guid electionGuid)
-    {
-        var groupName = GetGroupName(electionGuid);
-        await Clients.Group(groupName).SendAsync("reloadPage");
-
-        _logger.LogInformation("Page reload broadcast for election {ElectionGuid}", electionGuid);
-    }
-
-    /// <summary>
-    /// Broadcasts updates about online election status to all front desk clients.
-    /// Used to notify clients when online voting settings or election parameters have changed.
-    /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election where online settings were updated.</param>
-    /// <param name="message">The update message containing information about the online election changes.</param>
-    public async Task UpdateOnlineElection(Guid electionGuid, object message)
-    {
-        var groupName = GetGroupName(electionGuid);
-        await Clients.Group(groupName).SendAsync("updateOnlineElection", message);
-
-        _logger.LogInformation("Online election update broadcast for election {ElectionGuid}", electionGuid);
-    }
-
-    /// <summary>
-    /// Broadcasts updates about ballot status changes to all front desk clients.
-    /// Used to notify clients when ballot information has been added, updated, or changed.
-    /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election where ballots were updated.</param>
-    /// <param name="message">The update message containing information about the ballot changes.</param>
-    public async Task UpdateBallots(Guid electionGuid, object message)
-    {
-        var groupName = GetGroupName(electionGuid);
-        await Clients.Group(groupName).SendAsync("updateBallots", message);
-
-        _logger.LogInformation("Ballot update broadcast for election {ElectionGuid}", electionGuid);
-    }
-
     /// <summary>
     /// Called when a client disconnects from the FrontDeskHub.
     /// Logs the disconnection event for monitoring purposes.
@@ -116,7 +63,8 @@ public class FrontDeskHub : Hub
     }
 
     /// <summary>
-    /// Gets the SignalR group name for front desk clients in the specified election.
+    /// FrontDeskHub group for an election. Server pushes person, check-in, ballot, and
+    /// related events via <see cref="Services.ISignalRNotificationService"/>.
     /// </summary>
     public static string GetGroupName(Guid electionGuid) => $"FrontDesk{electionGuid}";
 }

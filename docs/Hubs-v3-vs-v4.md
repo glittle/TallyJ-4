@@ -119,16 +119,16 @@ These look “implemented” until exercised.
 
 Unused hub instance methods (`StatusChanged` / `ElectionClosed` / `CloseOutGuestTellers`) were removed; producers use `IHubContext` via `SignalRNotificationService` (and computer-assignment timeout for guest kick).
 
-#### 2. Person list updates
+#### 2. Person list updates — **fixed** ([#232](https://github.com/glittle/TallyJ-4/issues/232))
 
 | Layer | Actual |
 |-------|--------|
-| Notification service | `PersonAdded` / `PersonUpdated` / `PersonDeleted` |
-| `peopleStore` | Listens for **`updatePeople`** |
-| Front desk page | `PersonCheckedIn`, `PersonFlagsUpdated` (good) |
-| `VoterCountUpdated` | Server sends; front desk UI does **not** subscribe |
+| Notification service | `PersonAdded` / `PersonUpdated` / `PersonDeleted` to `FrontDesk{guid}` |
+| `peopleStore` | Listens for those three events (+ `PersonVoteCountUpdated`, `reloadPage`) |
+| Front desk page | `PersonCheckedIn`, `PersonFlagsUpdated`, `VoterCountUpdated`, and Person\* (silent eligible-list refresh) |
+| Unused hub methods | Removed (`UpdatePeople` / `ReloadPage` / …); producers use `IHubContext` |
 
-→ Issue [#232](https://github.com/glittle/TallyJ-4/issues/232)
+Catalog: `context/realtime.md` § FrontDeskHub event catalog.
 
 #### 3. `updateOnlineElection` and post-import `reloadPage`
 
