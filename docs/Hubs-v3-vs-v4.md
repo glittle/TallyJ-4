@@ -142,14 +142,16 @@ Catalog: `context/realtime.md` § FrontDeskHub event catalog.
 
 Catalog: `context/realtime.md` § FrontDeskHub event catalog.
 
-#### 4. Ballot import progress dual path
+#### 4. Ballot import progress dual path — **fixed** ([#226](https://github.com/glittle/TallyJ-4/issues/226))
 
-| Path | Event names |
-|------|-------------|
-| `ImportService` → hub | camelCase `importProgress` / `importComplete` (matches FE) |
-| `SendImportProgressAsync` | PascalCase `ImportProgress` / `ImportComplete` (would miss FE) |
+| Piece | Status |
+|-------|--------|
+| Event names | camelCase only: `importProgress` / `importError` / `importComplete` |
+| Producer | `ISignalRNotificationService` (ballot + people methods) |
+| Hubs | join/leave only; no client-callable broadcast methods |
+| FE | `importStore` (ballot) and `PeopleImportPage` (people) |
 
-→ Issue [#226](https://github.com/glittle/TallyJ-4/issues/226)
+Catalog: `context/realtime.md` § Import hub event catalog.
 
 ### B. Operator feature gaps
 

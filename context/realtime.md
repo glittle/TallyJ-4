@@ -105,3 +105,32 @@ Group: `FrontDesk{electionGuid}`.
 - **Rejected alternative:** keep `location.reload()` for exact v3 parity. Rejected as unnecessary disruption when list/stats APIs already return authoritative post-import state.
 - **Also wired:** `updateOnlineElection` with open/close/estimate/selection process when election online settings change (not on every unrelated election field update).
 - **People import:** bulk people CSV/XLSX import does **not** emit per-row `PersonAdded` (would flood the hub). After successful import (or delete-all-people), the server fires the same `reloadPage` signal so open front desks re-fetch eligible voters — same end result as single-person CRUD, without N SignalR events.
+
+## Import hub event catalog (#226)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #226; `SignalRNotificationService` import methods; `importStore` / `PeopleImportPage` listeners  
+**Revisit when:** changing progress payload shape, or adding election-package load progress (#231)
+
+Server pushes only via `IHubContext` in `SignalRNotificationService`. Both import hubs expose **join/leave only** — no client-callable broadcast methods (same pattern as MainHub / FrontDeskHub after #227 / #232).
+
+ASP.NET Core SignalR **event names are case-sensitive**. SPA listeners use **camelCase** only.
+
+### BallotImportHub — group `BallotImport{electionGuid}`
+
+| Event | Payload | Producer | Primary listeners |
+| ----- | ------- | -------- | ----------------- |
+| `importProgress` | `ImportProgressDto` (object: processedRows, totalRows, successCount, errorCount, currentStatus, percentComplete, …) | `SendImportProgressAsync` ← `ImportService` | `importStore` → `ImportProgressDialog` |
+| `importError` | `(errorMessage, rowNumber)` two args | `SendImportErrorAsync` ← `ImportService` | `importStore` |
+| `importComplete` | summary object (ballotsCreated, votesCreated, …) | `SendImportCompleteAsync` ← `ImportService` | `importStore` |
+
+### PeopleImportHub — group `PeopleImport{electionGuid}`
+
+| Event | Payload | Producer | Primary listeners |
+| ----- | ------- | -------- | ----------------- |
+| `importProgress` | `{ processed, total, status }` | `SendPeopleImportProgressAsync` ← `PeopleImportService` | `PeopleImportPage` |
+| `importError` | `(errorMessage, rowNumber)` | `SendPeopleImportErrorAsync` ← `PeopleImportService` | `PeopleImportPage` |
+| `importComplete` | `ImportPeopleResult` (success, peopleAdded, …) | `SendPeopleImportCompleteAsync` ← `PeopleImportService` | `PeopleImportPage` |
+
+**Rejected alternative:** dual path — `ImportService` / `PeopleImportService` calling `IHubContext` directly while `SendImportProgressAsync` used different PascalCase names (`ImportProgress` / `ImportComplete`). Rejected — case-sensitive mismatch would miss SPA listeners; two producers drift. **Chosen:** one producer (`ISignalRNotificationService`) with camelCase event names matching the SPA.

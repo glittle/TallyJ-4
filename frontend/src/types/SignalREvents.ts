@@ -69,14 +69,13 @@ export interface PeopleImportProgressEvent {
   status: string;
 }
 
+/** Matches backend ImportPeopleResult pushed on importComplete. */
 export interface PeopleImportCompleteEvent {
-  result: {
-    success: boolean;
-    peopleAdded: number;
-    peopleSkipped: number;
-    totalRows: number;
-    warnings: string[];
-    errors: string[];
-    timeElapsedSeconds: number;
-  };
+  success: boolean;
+  peopleAdded: number;
+  peopleSkipped: number;
+  totalRows: number;
+  warnings?: unknown[];
+  errors?: unknown[];
+  timeElapsedSeconds: number;
 }

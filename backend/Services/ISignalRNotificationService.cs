@@ -23,10 +23,41 @@ public interface ISignalRNotificationService
     Task SendTallyProgressAsync(TallyProgressDto progress);
 
     /// <summary>
-    /// Sends ballot import progress updates to monitoring clients.
+    /// Sends ballot import progress to BallotImportHub clients (event <c>importProgress</c>).
     /// </summary>
     /// <param name="progress">The import progress information to broadcast.</param>
     Task SendImportProgressAsync(ImportProgressDto progress);
+
+    /// <summary>
+    /// Sends a ballot import row/fatal error to BallotImportHub clients (event <c>importError</c>).
+    /// </summary>
+    /// <param name="electionGuid">Election whose import session to notify.</param>
+    /// <param name="errorMessage">Error description.</param>
+    /// <param name="rowNumber">Source row number (0 when not row-specific).</param>
+    Task SendImportErrorAsync(Guid electionGuid, string errorMessage, int rowNumber);
+
+    /// <summary>
+    /// Sends ballot import completion to BallotImportHub clients (event <c>importComplete</c>).
+    /// </summary>
+    /// <param name="electionGuid">Election whose import session to notify.</param>
+    /// <param name="summary">Import summary payload for the SPA.</param>
+    Task SendImportCompleteAsync(Guid electionGuid, object summary);
+
+    /// <summary>
+    /// Sends people import progress to PeopleImportHub clients (event <c>importProgress</c>).
+    /// Payload shape: <c>{ processed, total, status }</c> (matches SPA PeopleImportProgressEvent).
+    /// </summary>
+    Task SendPeopleImportProgressAsync(Guid electionGuid, int processed, int total, string status);
+
+    /// <summary>
+    /// Sends a people import error to PeopleImportHub clients (event <c>importError</c>).
+    /// </summary>
+    Task SendPeopleImportErrorAsync(Guid electionGuid, string errorMessage, int rowNumber = 0);
+
+    /// <summary>
+    /// Sends people import completion to PeopleImportHub clients (event <c>importComplete</c>).
+    /// </summary>
+    Task SendPeopleImportCompleteAsync(Guid electionGuid, object summary);
 
     /// <summary>
     /// Sends person/voter update notifications to relevant clients.
