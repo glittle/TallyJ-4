@@ -605,7 +605,11 @@ onMounted(async () => {
                   :title="$t('ballots.ineligible')"
                 >
                   {{
-                    getIneligibleReasonLabel($t, person.ineligibleReasonCode)
+                    getIneligibleReasonLabel(
+                      $t,
+                      person.ineligibleReasonCode,
+                      "ballots.ineligible",
+                    )
                   }}
                 </span>
                 <div

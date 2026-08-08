@@ -18,14 +18,20 @@ function resolveIneligibleReasonCode(vote: VoteDto): string | undefined {
   return undefined;
 }
 
-/** Resolve eligibility reason code to localized text (falls back to the code). */
+/**
+ * Resolve eligibility reason code to localized text.
+ * When code is missing, uses `emptyFallbackKey` (default: ballots.spoiled for votes;
+ * pass ballots.ineligible for person search badges).
+ * When a code has no translation, falls back to the code itself.
+ */
 export function getIneligibleReasonLabel(
   t: TranslateFn,
   code: string | null | undefined,
+  emptyFallbackKey = "ballots.spoiled",
 ): string {
   const normalized = code?.trim().toUpperCase();
   if (!normalized) {
-    return t("ballots.spoiled");
+    return t(emptyFallbackKey);
   }
 
   const key = `eligibility.${normalized}`;

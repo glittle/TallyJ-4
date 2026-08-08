@@ -2,18 +2,11 @@ import type { SearchablePersonDto } from "@/types/Person";
 import { describe, expect, it } from "vitest";
 import {
   applyAllStrategies,
-  calculateLevenshteinDistance,
-  compareSoundexCodes,
   exactMatch,
-  fuzzyMatch,
   matchesFrontDeskVoterSearch,
   multiTokenCoverageMatch,
   normalizeSearchText,
-  otherNamesMatch,
-  otherInfoMatch,
   phoneticMatch,
-  prefixMatch,
-  substringMatch,
   tokenizeNameForSearch,
   wordBoundaryMatch,
 } from "../searchStrategies";
@@ -105,6 +98,7 @@ describe("matchesFrontDeskVoterSearch", () => {
 
 describe("area is not used in ballot ranking", () => {
   it("should not match on area alone via applyAllStrategies", () => {
+    // Use an area token that will not fuzzy-match name tokens (e.g. "North" ≈ "Smith").
     const person = createMockPerson(
       "John",
       "Smith",
@@ -115,7 +109,7 @@ describe("area is not used in ballot ranking", () => {
       "North District",
     );
     person._searchText = "John Smith";
-    expect(applyAllStrategies("North", person)).toBeNull();
+    expect(applyAllStrategies("District", person)).toBeNull();
   });
 
   it("should not change weight when area matches a search term", () => {

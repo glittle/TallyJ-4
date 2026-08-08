@@ -1,14 +1,38 @@
 import { describe, it, expect } from "vitest";
-import { getVoteSpoiledLabel } from "../voteSpoiledLabel";
+import {
+  getIneligibleReasonLabel,
+  getVoteSpoiledLabel,
+} from "../voteSpoiledLabel";
 import type { VoteDto } from "@/types/Vote";
 
-describe("getVoteSpoiledLabel", () => {
-  const t = (key: string) => {
-    const labels: Record<string, string> = {
-      "eligibility.X01": "Deceased",
-    };
-    return labels[key] || key;
+const t = (key: string) => {
+  const labels: Record<string, string> = {
+    "eligibility.X01": "Deceased",
+    "ballots.spoiled": "Spoiled",
+    "ballots.ineligible": "Ineligible",
   };
+  return labels[key] || key;
+};
+
+describe("getIneligibleReasonLabel", () => {
+  it("defaults empty code to spoiled label (vote context)", () => {
+    expect(getIneligibleReasonLabel(t, null)).toBe("Spoiled");
+    expect(getIneligibleReasonLabel(t, undefined)).toBe("Spoiled");
+    expect(getIneligibleReasonLabel(t, "  ")).toBe("Spoiled");
+  });
+
+  it("accepts a custom empty fallback for person search badges", () => {
+    expect(
+      getIneligibleReasonLabel(t, null, "ballots.ineligible"),
+    ).toBe("Ineligible");
+  });
+
+  it("returns translated eligibility label when code is present", () => {
+    expect(getIneligibleReasonLabel(t, "X01")).toBe("Deceased");
+  });
+});
+
+describe("getVoteSpoiledLabel", () => {
 
   it("returns translated eligibility label from ineligibleReasonCode", () => {
     const vote: VoteDto = {
