@@ -91,6 +91,17 @@ function relativePopularityWidth(person: SearchablePersonDto): number {
   return Math.max((count / maxResultVoteCount.value) * 100, 8);
 }
 
+/** Person guids already on this ballot (including optimistic local votes). */
+const personGuidsOnBallot = computed(() => {
+  const set = new Set<string>();
+  for (const vote of votes.value) {
+    if (vote?.personGuid) {
+      set.add(vote.personGuid);
+    }
+  }
+  return set;
+});
+
 function buildVoteMap(includeOptimistic: boolean): Map<number, VoteDto> {
   const merged = new Map<number, VoteDto>();
   for (const vote of props.ballot.votes) {
@@ -247,7 +258,6 @@ function scrollToSelected() {
 
 watch(searchResults, () => {
   selectedSearchIndex.value = 0;
-  // Stationary mouse over the list must not steal selection after re-render
   ignoreMouseHover.value = true;
 });
 
@@ -461,6 +471,7 @@ onMounted(async () => {
               :class="{
                 'is-selected': index === selectedSearchIndex,
                 'is-ineligible': person.canReceiveVotes === false,
+                'is-on-ballot': personGuidsOnBallot.has(person.personGuid),
               }"
               @click="handlePersonSelected(person)"
               @mouseover="handleSearchItemMouseOver(index)"
@@ -682,6 +693,12 @@ onMounted(async () => {
 
         &.is-selected {
           background-color: var(--el-color-primary-light-9);
+        }
+
+        &.is-on-ballot:not(.is-ineligible) {
+          .person-name {
+            color: var(--el-color-warning);
+          }
         }
 
         &.is-ineligible {
