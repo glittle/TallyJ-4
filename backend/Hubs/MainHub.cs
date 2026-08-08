@@ -104,7 +104,7 @@ public class MainHub : Hub
 
     /// <summary>
     /// Base MainHub group for an election. Clients also join <c>{base}Known</c> or <c>{base}Guest</c>.
-    /// Server pushes shared status to the base group via <see cref="Services.ISignalRNotificationService"/>;
+    /// Server pushes shared status to the base group via <see cref="ISignalRNotificationService"/>;
     /// role-specific events (e.g. guest <c>electionClosed</c>) use the Known/Guest suffix groups.
     /// </summary>
     public static string GetGroupName(Guid electionGuid) => $"Main{electionGuid}";
