@@ -73,8 +73,8 @@ public class VoterPersonalHub : Hub
     /// </summary>
     public static string GetGroupName(string voterId) => $"Voter{voterId}";
 
-    private static string? GetVoterId(ClaimsPrincipal? user)
-    {
-        return user?.FindFirst("voterId")?.Value;
-    }
+private static string? GetVoterId(ClaimsPrincipal? user)
+{
+    var voterId = user?.FindFirst("voterId")?.Value;
+    return string.IsNullOrWhiteSpace(voterId) ? null : voterId.Trim();
 }
