@@ -137,7 +137,7 @@ export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
       i18nKey: "ballots.management",
       icon: Tickets,
       routePath: (g) => `/elections/${g}/ballots`,
-      adminOnly: true,
+      // Guest-visible: counterpart to Front Desk during GatheringBallots (#242)
     },
     {
       key: "tally",

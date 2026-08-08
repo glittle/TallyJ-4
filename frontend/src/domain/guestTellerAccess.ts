@@ -28,9 +28,9 @@ const GUEST_TELLER_ROUTE_PATTERNS: Record<ElectionStage, RegExp[]> = {
   SettingUp: [/^\/elections\/[^/]+$/],
   GatheringBallots: [/^\/elections\/[^/]+\/frontdesk$/],
   ProcessingBallots: [
+    // Enter Ballots list (menu destination) plus per-ballot entry deep links
+    /^\/elections\/[^/]+\/ballots$/,
     /^\/elections\/[^/]+\/ballots\/[^/]+\/entry$/,
-    // Fallback landing while awaiting a ballot entry URL from coordinators
-    /^\/elections\/[^/]+$/,
   ],
   Finalized: [
     /^\/elections\/[^/]+$/,
@@ -70,8 +70,8 @@ export function getGuestTellerMenuPages(
     case "GatheringBallots":
       return STAGE_PAGES.GatheringBallots.filter((p) => !p.adminOnly);
     case "ProcessingBallots":
-      // Ballot entry uses per-ballot URLs; no fixed menu destination.
-      return [];
+      // Enter Ballots is Guest-visible; tally/monitor/results remain admin-only.
+      return STAGE_PAGES.ProcessingBallots.filter((p) => !p.adminOnly);
     case "Finalized":
       return [landingPage(), showFinalResultsPage()];
   }
@@ -82,20 +82,26 @@ export function isGuestTellerRouteAllowed(
   electionGuid: string,
   stage: ElectionStage,
 ): boolean {
-  const prefix = `/elections/${electionGuid}`;
-  if (!path.startsWith(prefix)) {
+  const electionPathMatch = path.match(/^\/elections\/([^/]+)(.*)$/i);
+  if (
+    !electionPathMatch ||
+    electionPathMatch[1]!.toLowerCase() !== electionGuid.toLowerCase()
+  ) {
     return false;
   }
+
+  // Canonicalize GUID casing so menu paths and route patterns match the URL.
+  const canonicalPath = `/elections/${electionGuid}${electionPathMatch[2] ?? ""}`;
 
   const menuPaths = getGuestTellerMenuPages(stage, electionGuid).map((p) =>
     p.routePath(electionGuid),
   );
-  if (menuPaths.includes(path)) {
+  if (menuPaths.includes(canonicalPath)) {
     return true;
   }
 
   return GUEST_TELLER_ROUTE_PATTERNS[stage].some((pattern) =>
-    pattern.test(path),
+    pattern.test(canonicalPath),
   );
 }
 

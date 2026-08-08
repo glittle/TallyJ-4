@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGuestTellerStageRedirect } from "@/composables/useGuestTellerStageRedirect";
 import { useResponsive } from "@/composables/useResponsive";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -18,6 +19,9 @@ const route = useRoute();
 const electionStore = useElectionStore();
 const navUiStore = useNavUiStore();
 const { isMobile } = useResponsive();
+
+// GuestTeller stage→page moves must not depend on the lazy sidebar menu.
+useGuestTellerStageRedirect();
 
 const isFrontDeskLayout = computed(() => route.path.includes("/frontdesk"));
 

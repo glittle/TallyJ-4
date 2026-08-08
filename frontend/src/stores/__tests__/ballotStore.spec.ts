@@ -27,6 +27,8 @@ vi.mock("@/services/voteService", () => ({
 vi.mock("@/services/signalrService", () => ({
   signalrService: {
     connectToFrontDeskHub: vi.fn(),
+    joinFrontDeskElection: vi.fn(),
+    leaveFrontDeskElection: vi.fn(),
     joinElection: vi.fn(),
     leaveElection: vi.fn(),
   },

@@ -468,6 +468,37 @@ describe("Election Store", () => {
       );
     });
 
+    it("statusChanged accepts PascalCase payload and case-insensitive electionGuid", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const handlers = new Map<string, (data: unknown) => void>();
+      const mockConnection = {
+        on: vi.fn((event: string, handler: (data: unknown) => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
+      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+
+      electionStore.currentElection = {
+        electionGuid: "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        name: "Case Test",
+        electionStage: "GatheringBallots",
+      } as ElectionDto;
+
+      await electionStore.initializeSignalR();
+      handlers.get("statusChanged")!({
+        ElectionGuid: "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE",
+        Name: "Case Test",
+        ElectionStage: "ProcessingBallots",
+        UpdatedAt: new Date().toISOString(),
+      });
+
+      expect(electionStore.currentElection?.electionStage).toBe(
+        "ProcessingBallots",
+      );
+      expect(elMessageMock).toHaveBeenCalledTimes(1);
+    });
+
     it("statusChanged does not toast when local setStage already suppressed echo", async () => {
       const { signalrService } = await import("../services/signalrService");
       const { electionService } = await import("../services/electionService");

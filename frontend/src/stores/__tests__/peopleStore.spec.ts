@@ -24,6 +24,8 @@ vi.mock("@/services/signalrService", () => ({
     connectToFrontDeskHub: vi.fn().mockResolvedValue({
       on: vi.fn(),
     }),
+    joinFrontDeskElection: vi.fn().mockResolvedValue(undefined),
+    leaveFrontDeskElection: vi.fn().mockResolvedValue(undefined),
     joinElection: vi.fn().mockResolvedValue(undefined),
     leaveElection: vi.fn().mockResolvedValue(undefined),
   },

@@ -56,8 +56,10 @@ describe("guestTellerAccess", () => {
       expect(pages[0]!.key).toBe("frontdesk");
     });
 
-    it("returns no menu items during ProcessingBallots (entry uses per-ballot URLs)", () => {
-      expect(getGuestTellerMenuPages("ProcessingBallots", GUID)).toEqual([]);
+    it("returns Enter Ballots during ProcessingBallots", () => {
+      const pages = getGuestTellerMenuPages("ProcessingBallots", GUID);
+      expect(pages).toHaveLength(1);
+      expect(pages[0]!.key).toBe("ballots");
     });
 
     it("returns landing and final results during Finalized", () => {
@@ -100,6 +102,11 @@ describe("guestTellerAccess", () => {
       {
         stage: "ProcessingBallots",
         path: `/elections/${GUID}/ballots`,
+        allowed: true,
+      },
+      {
+        stage: "ProcessingBallots",
+        path: `/elections/${GUID}/frontdesk`,
         allowed: false,
       },
       {
@@ -131,6 +138,12 @@ describe("guestTellerAccess", () => {
     it("redirects GatheringBallots to Front Desk", () => {
       expect(getGuestTellerRedirectPath(GUID, "GatheringBallots")).toBe(
         `/elections/${GUID}/frontdesk`,
+      );
+    });
+
+    it("redirects ProcessingBallots to Enter Ballots", () => {
+      expect(getGuestTellerRedirectPath(GUID, "ProcessingBallots")).toBe(
+        `/elections/${GUID}/ballots`,
       );
     });
 

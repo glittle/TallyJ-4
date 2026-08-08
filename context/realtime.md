@@ -33,6 +33,17 @@ Do **not** assume a single `election-{guid}` convention for all realtime traffic
 
 Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElection`, etc.) and store subscriptions.
 
+### Who owns Main vs FrontDesk membership
+
+**Status:** active  
+**Evidence:** confirmed (issue #242 — guest stage redirects stopped after leaving ballots)
+
+- **Main hub** (`joinElection` / `leaveElection`): owned by `electionStore` / `MainLayout` for the active election session (`statusChanged`, computer code, guest close-out).
+- **FrontDesk hub** (`joinFrontDeskElection` / `leaveFrontDeskElection`): owned by page stores that listen for FD events (`ballotStore`, `peopleStore`, Front Desk page).
+- **Do not** call full `leaveElection` from ballots/people unmount — that drops Main group membership and stops stage updates for the rest of the session.
+
+**Rejected alternative:** page-level stores share `joinElection`/`leaveElection` for convenience. Rejected — unmount of one page tears down session-level Main membership.
+
 **Reason:** different surfaces need different fan-out and sometimes different membership (known vs guest). One flat `election-{guid}` group would over-notify or under-notify and couple unrelated UI areas.
 
 **Rejected alternative:** one shared election group for every event type. Rejected because Main, Front Desk, Analyze, and Public have different listeners and update cadences.

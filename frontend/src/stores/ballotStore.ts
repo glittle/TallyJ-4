@@ -539,9 +539,14 @@ export const useBallotStore = defineStore("ballot", () => {
     }
   }
 
+  /**
+   * FrontDesk hub only. Main hub membership is owned by electionStore /
+   * MainLayout — leaving Main here would stop statusChanged for the session
+   * after navigating away from ballots (guest stage redirects #242).
+   */
   async function joinElection(electionGuid: string) {
     try {
-      await signalrService.joinElection(electionGuid);
+      await signalrService.joinFrontDeskElection(electionGuid);
     } catch (e) {
       console.error("Failed to join election group for ballot updates:", e);
     }
@@ -549,7 +554,7 @@ export const useBallotStore = defineStore("ballot", () => {
 
   async function leaveElection(electionGuid: string) {
     try {
-      await signalrService.leaveElection(electionGuid);
+      await signalrService.leaveFrontDeskElection(electionGuid);
     } catch (e) {
       console.error("Failed to leave election group for ballot updates:", e);
     }

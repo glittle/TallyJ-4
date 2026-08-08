@@ -99,7 +99,7 @@ watch(
   <div
     class="stage-grouped-menu"
     role="navigation"
-    :aria-label="$t('common.electionNavigation')"
+    :aria-label="t('common.electionNavigation')"
   >
     <!-- Guest view: no group headers, just the filtered page list for current stage -->
     <template v-if="isGuestTeller">
