@@ -32,7 +32,14 @@ const importLoaderLoading = ref(false);
 const importLoaderSucceeded = ref(false);
 const importLoaderError = ref<string | null>(null);
 let importLoaderLineId = 0;
-let packageImportHubHandlersBound = false;
+
+/** Stable handler so off()/on() can de-dupe after reconnect or new HubConnection. */
+function onPackageLoaderStatus(message: string, isTemporary: boolean) {
+  appendLoaderStatus(
+    typeof message === "string" ? message : String(message ?? ""),
+    Boolean(isTemporary),
+  );
+}
 
 function clearImportLoaderState() {
   importLoaderLines.value = [];
@@ -62,19 +69,20 @@ function appendLoaderStatus(message: string, isTemporary: boolean) {
 
 async function setupPackageImportHub() {
   const connection = await signalrService.connectToElectionPackageImportHub();
-  if (!packageImportHubHandlersBound) {
-    connection.on("loaderStatus", (message: string, isTemporary: boolean) => {
-      appendLoaderStatus(
-        typeof message === "string" ? message : String(message ?? ""),
-        Boolean(isTemporary),
-      );
-    });
-    packageImportHubHandlersBound = true;
-  }
+  // Rebind every setup: connect() may replace a dropped HubConnection, and a
+  // one-shot "already bound" flag would leave the new connection silent.
+  connection.off("loaderStatus", onPackageLoaderStatus);
+  connection.on("loaderStatus", onPackageLoaderStatus);
   await signalrService.joinElectionPackageImportSession();
 }
 
 async function teardownPackageImportHub() {
+  const connection = signalrService.getConnection(
+    "/hubs/election-package-import",
+  );
+  if (connection) {
+    connection.off("loaderStatus", onPackageLoaderStatus);
+  }
   try {
     await signalrService.leaveElectionPackageImportSession();
   } catch {

@@ -81,14 +81,10 @@ export interface PeopleImportCompleteEvent {
 }
 
 /**
- * Election package load log line (v3 ImportHub loaderStatus).
- * Server sends two args: message, isTemporary.
+ * Hub event `loaderStatus` is two positional args (not an object payload):
+ * `(message: string, isTemporary: boolean)`.
+ * Client UI log lines after processing those args:
  */
-export interface ElectionPackageLoaderStatusEvent {
-  message: string;
-  isTemporary: boolean;
-}
-
 export interface ElectionPackageLoaderLogLine {
   id: number;
   message: string;
