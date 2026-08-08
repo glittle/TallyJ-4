@@ -193,11 +193,15 @@ export const usePeopleStore = defineStore("people", () => {
   }
 
   function enrichPersonForSearch(person: PersonDto): SearchablePersonDto {
+    // Primary searchable text: names + otherInfo.
+    // Area is intentionally omitted so it cannot match on its own;
+    // applyAllStrategies may still apply a small area bonus when a primary match exists.
     const searchText = [
       person.firstName || "",
       person.lastName || "",
       person.otherNames || "",
       person.otherLastNames || "",
+      person.otherInfo || "",
     ]
       .filter(Boolean)
       .join(" ")
