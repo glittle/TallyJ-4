@@ -260,7 +260,7 @@ export const useElectionStore = defineStore("election", () => {
 
   function showElectionStageNotification(newStage: string) {
     const stageKey =
-      newStage in STAGE_META
+      Object.hasOwn(STAGE_META, newStage)
         ? STAGE_META[newStage as ElectionStage].i18nKey
         : `elections.stage.${newStage}`;
     const stageLabel = i18n.global.t(stageKey);
