@@ -18,13 +18,21 @@ function resolveIneligibleReasonCode(vote: VoteDto): string | undefined {
   return undefined;
 }
 
-export function getVoteSpoiledLabel(t: TranslateFn, vote: VoteDto): string {
-  const code = resolveIneligibleReasonCode(vote)?.trim().toUpperCase();
-  if (!code) {
+/** Resolve eligibility reason code to localized text (falls back to the code). */
+export function getIneligibleReasonLabel(
+  t: TranslateFn,
+  code: string | null | undefined,
+): string {
+  const normalized = code?.trim().toUpperCase();
+  if (!normalized) {
     return t("ballots.spoiled");
   }
 
-  const key = `eligibility.${code}`;
+  const key = `eligibility.${normalized}`;
   const translated = t(key);
-  return translated === key ? code : translated;
+  return translated === key ? normalized : translated;
+}
+
+export function getVoteSpoiledLabel(t: TranslateFn, vote: VoteDto): string {
+  return getIneligibleReasonLabel(t, resolveIneligibleReasonCode(vote));
 }
