@@ -7,7 +7,7 @@ import * as signalR from "@microsoft/signalr";
 export class SignalRConnectionCore {
   protected readonly connections: Map<string, signalR.HubConnection> =
     new Map();
-  protected readonly connectionstates: Map<string, ConnectionState> = new Map();
+  protected readonly connectionStates: Map<string, ConnectionState> = new Map();
   protected frontDeskElectionGuid: string | null = null;
   protected mainElectionGuid: string | null = null;
   /** Known-teller dashboard multi-election listen set (MainHub JoinElections). */

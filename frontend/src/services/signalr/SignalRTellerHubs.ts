@@ -1,4 +1,4 @@
-import type * as signalR from "@microsoft/signalr";
+import * as signalR from "@microsoft/signalr";
 import { getOrCreateClientId } from "@/utils/clientIdStorage";
 import { setComputerCode } from "@/utils/computerCodeStorage";
 import { SignalRConnectionCore } from "./SignalRConnectionCore";

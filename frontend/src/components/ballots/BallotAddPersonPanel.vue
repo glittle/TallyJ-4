@@ -8,7 +8,7 @@ import type { SearchablePersonDto } from "../../types/Person";
 import type { VoteDto } from "../../types/Vote";
 import PersonForm from "../people/PersonForm.vue";
 
-export type BallotVoteEntryType = "normal" | "U01" | "U02";
+export type BallotVoteEntryType = "U01" | "U02" | "normal";
 
 const props = defineProps<{
   electionGuid: string;
@@ -24,7 +24,7 @@ const peopleStore = usePeopleStore();
 const { handleApiError } = useApiErrorHandler();
 
 const personFormRef = ref<InstanceType<typeof PersonForm>>();
-const voteEntryType = ref<BallotVoteEntryType>("normal");
+const voteEntryType = ref<BallotVoteEntryType>("U01");
 const submitting = ref(false);
 
 const isPersonLessVote = computed(
@@ -128,14 +128,14 @@ async function handleSubmit() {
     <el-form label-width="150px" label-position="left">
       <el-form-item :label="$t('ballots.voteEntryType')">
         <el-radio-group v-model="voteEntryType">
-          <el-radio value="normal">
-            {{ $t("ballots.voteEntryNormal") }}
-          </el-radio>
           <el-radio value="U01">
             {{ $t("ballots.voteEntryUnidentifiable") }}
           </el-radio>
           <el-radio value="U02">
             {{ $t("ballots.voteEntryUnreadable") }}
+          </el-radio>
+          <el-radio value="normal">
+            {{ $t("ballots.voteEntryNormal") }}
           </el-radio>
         </el-radio-group>
       </el-form-item>

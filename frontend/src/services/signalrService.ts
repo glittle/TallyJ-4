@@ -1,4 +1,4 @@
-import type * as signalR from "@microsoft/signalr";
+import * as signalR from "@microsoft/signalr";
 import { SignalRTellerHubs } from "./signalr/SignalRTellerHubs";
 
 /**
