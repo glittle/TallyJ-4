@@ -109,17 +109,15 @@ Documented in `context/realtime.md`:
 
 These look “implemented” until exercised.
 
-#### 1. MainHub election status
+#### 1. MainHub election status — **fixed** ([#227](https://github.com/glittle/TallyJ-4/issues/227))
 
 | Layer | Actual |
 |-------|--------|
-| Notification service | Sends **`ElectionUpdated`** to base `Main{guid}` |
-| Hub method `StatusChanged` | Would send **`statusChanged`** to Known/Guest; **unused** |
-| Frontend `electionStore` | Listens for **`statusChanged` only** |
+| Notification service | Sends **`statusChanged`** to base `Main{guid}` (`ElectionUpdateDto`: name, stage, …) |
+| Frontend `electionStore` | Listens for **`statusChanged`** |
+| Guest close-out | **`electionClosed`** to `Main{guid}Guest` only (unchanged) |
 
-Guest close-out works; routine status/stage updates likely do not reach the SPA.
-
-→ Issue [#227](https://github.com/glittle/TallyJ-4/issues/227)
+Unused hub instance methods (`StatusChanged` / `ElectionClosed` / `CloseOutGuestTellers`) were removed; producers use `IHubContext` via `SignalRNotificationService` (and computer-assignment timeout for guest kick).
 
 #### 2. Person list updates
 
@@ -199,7 +197,7 @@ If restored: prefer server-derived groups, high-entropy channel tokens for code 
 
 ## Suggested fix order
 
-1. [#227](https://github.com/glittle/TallyJ-4/issues/227) Main status wiring  
+1. ~~[#227](https://github.com/glittle/TallyJ-4/issues/227) Main status wiring~~ **fixed**  
 2. [#232](https://github.com/glittle/TallyJ-4/issues/232) Person event alignment  
 3. [#228](https://github.com/glittle/TallyJ-4/issues/228) Online window + import reload  
 4. [#226](https://github.com/glittle/TallyJ-4/issues/226) Import event name cleanup  

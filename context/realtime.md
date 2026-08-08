@@ -11,7 +11,21 @@ Do **not** assume a single `election-{guid}` convention for all realtime traffic
 
 | Pattern                                                     | Hub / use                                               |
 | ----------------------------------------------------------- | ------------------------------------------------------- |
-| `Main{electionGuid}` (+ `…Known` / `…Guest`)                | MainHub — election updates, status, closed              |
+| `Main{electionGuid}` (+ `…Known` / `…Guest`)                | MainHub — shared status on **base**; role events on suffix |
+
+## MainHub status vs role groups
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #227 fix; `SignalRNotificationService.SendElectionUpdateAsync`; `MainHub.JoinElection`  
+**Revisit when:** Known vs Guest need different status payloads (v3 `infoForKnown` / `infoForGuest`)
+
+- Every client that joins an election is added to **base** `Main{electionGuid}` **and** either `…Known` or `…Guest`.
+- Shared election status (name, stage) is broadcast as **`statusChanged`** to the **base** group only — one payload, no double delivery.
+- Role-specific events use suffix groups (guest **`electionClosed`** → `Main{guid}Guest` only).
+- Server producers use `IHubContext<MainHub>` via `SignalRNotificationService` (and computer-assignment close-out), not client-callable hub methods.
+
+**Rejected alternative:** leave server event as `ElectionUpdated` while FE listens for `statusChanged` (broken live updates). **Rejected alternative:** keep unused hub methods `StatusChanged` / `ElectionClosed` / `CloseOutGuestTellers` as the documented push path — they were never called by services and were client-invokable.
 | `Analyze{electionGuid}`                                     | AnalyzeHub — tally progress/complete                    |
 | `FrontDesk{electionGuid}`                                   | FrontDeskHub — people, ballots, online election, reload |
 | `BallotImport{electionGuid}` / `PeopleImport{electionGuid}` | import hubs                                             |

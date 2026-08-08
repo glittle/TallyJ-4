@@ -381,7 +381,7 @@ public class ComputerAssignmentService : IComputerAssignmentService, IDisposable
             }
         }
 
-        var guestGroup = $"Main{electionGuid}Guest";
+        var guestGroup = MainHub.GetGroupName(electionGuid) + "Guest";
         await _mainHubContext.Clients.Group(guestGroup).SendAsync("electionClosed");
 
         lock (_stateLock)
