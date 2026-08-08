@@ -83,14 +83,18 @@ const maxResultVoteCount = computed(() => {
   let max = 0;
   for (const person of searchResults.value) {
     const count = person.voteCount ?? 0;
-    if (count > max) max = count;
+    if (count > max) {
+      max = count;
+    }
   }
   return max;
 });
 
 function relativePopularityWidth(person: SearchablePersonDto): number {
   const count = person.voteCount ?? 0;
-  if (count <= 0 || maxResultVoteCount.value <= 0) return 0;
+  if (count <= 0 || maxResultVoteCount.value <= 0) {
+    return 0;
+  }
   // Ensure a small visible bar even for the lowest non-zero count
   const pct = (count / maxResultVoteCount.value) * 100;
   return Math.max(pct, 8);
@@ -805,9 +809,8 @@ onMounted(async () => {
   }
 
   .search-panel {
-    flex: 1;
-    min-width: 200px;
-    max-width: 300px;
+    width: 400px;
+    height: 500px; /* need to make responsive */
     background: var(--el-bg-color);
     border: 1px solid var(--el-border-color);
     border-radius: var(--el-border-radius-base);
