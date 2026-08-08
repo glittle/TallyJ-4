@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { isGuestTeller } from "@/domain/guestTellerAccess";
 import {
   ArrowLeft,
   Expand,
@@ -49,7 +48,12 @@ const authStore = useAuthStore();
 
 const isSuperAdmin = computed(() => authStore.isSuperAdmin);
 
-const isGuest = computed(() => isGuestTeller());
+// Prefer reactive authStore fields over cookie reads so guest detection updates
+// with the session and stays correct for the whole layout tree.
+const isGuest = computed(
+  () =>
+    authStore.name === "Teller" && authStore.authMethod === "AccessCode",
+);
 
 const isInElectionContext = computed(() => {
   return route.path.startsWith("/elections/") && route.params.id;

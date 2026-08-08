@@ -27,6 +27,46 @@ import { i18n } from "../locales";
 /** How long to suppress remote stage toasts after a local setStage (covers SignalR racing HTTP). */
 const LOCAL_STAGE_NOTIFY_SUPPRESS_MS = 5000;
 
+function sameElectionGuid(a?: string | null, b?: string | null): boolean {
+  return !!a && !!b && a.toLowerCase() === b.toLowerCase();
+}
+
+function parseStage(value: unknown): ElectionStage | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+  return Object.hasOwn(STAGE_META, value)
+    ? (value as ElectionStage)
+    : undefined;
+}
+
+/** Accept camelCase or PascalCase payloads from SignalR JSON. */
+function parseElectionUpdatePayload(data: unknown): ElectionUpdateEvent | null {
+  if (!data || typeof data !== "object") {
+    return null;
+  }
+  const record = data as Record<string, unknown>;
+  const electionGuid = String(
+    record.electionGuid ?? record.ElectionGuid ?? "",
+  ).trim();
+  if (!electionGuid) {
+    return null;
+  }
+  return {
+    electionGuid,
+    name:
+      typeof record.name === "string"
+        ? record.name
+        : typeof record.Name === "string"
+          ? record.Name
+          : undefined,
+    electionStage: parseStage(record.electionStage ?? record.ElectionStage),
+    updatedAt: String(
+      record.updatedAt ?? record.UpdatedAt ?? new Date().toISOString(),
+    ),
+  };
+}
+
 export const useElectionStore = defineStore("election", () => {
   const elections = ref<ElectionDto[]>([]);
   const currentElection = ref<ElectionDto | null>(null);
@@ -168,14 +208,9 @@ export const useElectionStore = defineStore("election", () => {
       // (signalrService.joinElection); monitor needs updateOnlineElection.
       const frontDeskConnection = await signalrService.connectToFrontDeskHub();
 
-      connection.on("statusChanged", (data: any) => {
-        if (data && typeof data === "object") {
-          const updateEvent: ElectionUpdateEvent = {
-            electionGuid: data.electionGuid || "",
-            name: data.name,
-            electionStage: data.electionStage,
-            updatedAt: data.updatedAt || new Date().toISOString(),
-          };
+      connection.on("statusChanged", (data: unknown) => {
+        const updateEvent = parseElectionUpdatePayload(data);
+        if (updateEvent) {
           handleElectionUpdate(updateEvent);
         }
       });
@@ -261,14 +296,16 @@ export const useElectionStore = defineStore("election", () => {
   }
 
   function handleElectionUpdate(data: ElectionUpdateEvent) {
-    const index = elections.value.findIndex(
-      (e) => e.electionGuid === data.electionGuid,
+    const index = elections.value.findIndex((e) =>
+      sameElectionGuid(e.electionGuid, data.electionGuid),
     );
     const listMatch = index !== -1 ? elections.value[index] : undefined;
-    const currentMatch =
-      currentElection.value?.electionGuid === data.electionGuid
-        ? currentElection.value
-        : undefined;
+    const currentMatch = sameElectionGuid(
+      currentElection.value?.electionGuid,
+      data.electionGuid,
+    )
+      ? currentElection.value
+      : undefined;
 
     // Prefer list stage when both exist (they should match); fall back to current.
     const previousStage =

@@ -196,13 +196,17 @@ describe("StageGroupedSidebarMenu", () => {
       expect(pages).toHaveLength(expectedPages.length);
     });
 
-    it("renders no menu pages during ProcessingBallots (ballot entry uses per-ballot URLs)", () => {
+    it("renders Enter Ballots during ProcessingBallots", () => {
       const wrapper = mountMenu({
         isGuestTeller: true,
         currentStage: "ProcessingBallots",
       });
       const pages = wrapper.findAll(".stage-group__page");
-      expect(pages).toHaveLength(0);
+      const expectedPages = STAGE_PAGES["ProcessingBallots"].filter(
+        (p) => !p.adminOnly,
+      );
+      expect(pages).toHaveLength(expectedPages.length);
+      expect(expectedPages.map((p) => p.key)).toEqual(["ballots"]);
     });
 
     it("renders landing and final results during Finalized", () => {
@@ -242,6 +246,21 @@ describe("StageGroupedSidebarMenu", () => {
       );
     });
 
+    it("redirects teller from Front Desk to Enter Ballots when stage is ProcessingBallots", () => {
+      mockRoutePath.mockReturnValue("/elections/test-id/frontdesk");
+
+      mountMenu({
+        isGuestTeller: true,
+        currentStage: "ProcessingBallots",
+        electionGuid: "test-id",
+      });
+
+      expect(mockRouterPush).toHaveBeenCalledWith(
+        getGuestTellerRedirectPath("test-id", "ProcessingBallots"),
+      );
+      expect(mockRouterPush).toHaveBeenCalledWith("/elections/test-id/ballots");
+    });
+
     it("does not redirect teller when already on a valid stage page", () => {
       const tellerPages = STAGE_PAGES["GatheringBallots"].filter(
         (p) => !p.adminOnly,
@@ -255,6 +274,16 @@ describe("StageGroupedSidebarMenu", () => {
         });
         expect(mockRouterPush).not.toHaveBeenCalled();
       }
+    });
+
+    it("does not redirect teller already on Enter Ballots during ProcessingBallots", () => {
+      mockRoutePath.mockReturnValue("/elections/test-id/ballots");
+      mountMenu({
+        isGuestTeller: true,
+        currentStage: "ProcessingBallots",
+        electionGuid: "test-id",
+      });
+      expect(mockRouterPush).not.toHaveBeenCalled();
     });
 
     it("does not redirect admins regardless of route", () => {

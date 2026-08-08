@@ -56,12 +56,12 @@ describe("electionStages", () => {
       expect(frontdesk?.adminOnly).toBeFalsy();
     });
 
-    it("marks Enter Ballots as admin-only (FullTeller only)", () => {
+    it("does not mark Enter Ballots as admin-only (Guest-visible)", () => {
       const ballots = STAGE_PAGES.ProcessingBallots.find(
         (p) => p.key === "ballots",
       );
       expect(ballots).toBeDefined();
-      expect(ballots?.adminOnly).toBe(true);
+      expect(ballots?.adminOnly).toBeFalsy();
     });
 
     it("has Finalized stage pages for FullTellers", () => {

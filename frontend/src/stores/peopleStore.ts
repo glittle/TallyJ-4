@@ -413,9 +413,14 @@ export const usePeopleStore = defineStore("people", () => {
     }
   }
 
+  /**
+   * FrontDesk hub only. Main hub membership is owned by electionStore /
+   * MainLayout — do not call leaveElection (Main+FrontDesk) or stage
+   * statusChanged stops after leaving people/ballots pages.
+   */
   async function joinElection(electionGuid: string) {
     try {
-      await signalrService.joinElection(electionGuid);
+      await signalrService.joinFrontDeskElection(electionGuid);
     } catch (e) {
       console.error("Failed to join election group for people updates:", e);
     }
@@ -423,7 +428,7 @@ export const usePeopleStore = defineStore("people", () => {
 
   async function leaveElection(electionGuid: string) {
     try {
-      await signalrService.leaveElection(electionGuid);
+      await signalrService.leaveFrontDeskElection(electionGuid);
     } catch (e) {
       console.error("Failed to leave election group for people updates:", e);
     }
