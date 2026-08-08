@@ -70,11 +70,17 @@ public class VoterPersonalHub : Hub
 
     /// <summary>
     /// Personal group for one online voter identity (email, phone, or kiosk code).
+    /// Always trims so join paths and server fan-out use the same group key.
     /// </summary>
-    public static string GetGroupName(string voterId) => $"Voter{voterId}";
+    public static string GetGroupName(string voterId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(voterId);
+        return $"Voter{voterId.Trim()}";
+    }
 
-private static string? GetVoterId(ClaimsPrincipal? user)
-{
-    var voterId = user?.FindFirst("voterId")?.Value;
-    return string.IsNullOrWhiteSpace(voterId) ? null : voterId.Trim();
+    private static string? GetVoterId(ClaimsPrincipal? user)
+    {
+        var voterId = user?.FindFirst("voterId")?.Value;
+        return string.IsNullOrWhiteSpace(voterId) ? null : voterId.Trim();
+    }
 }

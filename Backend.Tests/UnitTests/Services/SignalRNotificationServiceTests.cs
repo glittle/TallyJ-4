@@ -367,6 +367,24 @@ public class SignalRNotificationServiceTests
     }
 
     [Fact]
+    public async Task NotifyVoterLoginElsewhereAsync_trims_voterId_for_group_name()
+    {
+        var (service, _, _, _, _, _, _, voterPersonalClients, groupProxies) = CreateService();
+        var expectedGroup = VoterPersonalHub.GetGroupName("alice@example.com");
+
+        await service.NotifyVoterLoginElsewhereAsync("  alice@example.com  ");
+
+        voterPersonalClients.Verify(c => c.Group(expectedGroup), Times.Once);
+        Assert.True(groupProxies.TryGetValue(expectedGroup, out var proxy));
+        proxy!.Verify(
+            p => p.SendCoreAsync(
+                "updateVoter",
+                It.IsAny<object?[]>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task RequestFrontDeskReloadAsync_sends_reloadPage_to_FrontDesk_group()
     {
         var (service, _, frontDeskClients, _, _, _, _, _, groupProxies) = CreateService();

@@ -27,7 +27,7 @@ Companion to [Hubs-in-v3.md](./Hubs-in-v3.md). Summarizes how TallyJ 4’s realt
 | VoterCodeHub | — | Not implemented |
 | *(scaffold)* OnlineVotingHub | — | Removed on purpose; see `context/realtime.md` |
 
-Mapped in `backend/Program.cs` as `/hubs/main`, `/analyze`, `/ballot-import`, `/people-import`, `/election-package-import`, `/front-desk`, `/public`, `/all-voters`, `/voter-personal`.
+Mapped in `backend/Program.cs` as `/hubs/main`, `/hubs/analyze`, `/hubs/ballot-import`, `/hubs/people-import`, `/hubs/election-package-import`, `/hubs/front-desk`, `/hubs/public`, `/hubs/all-voters`, `/hubs/voter-personal`.
 
 ---
 

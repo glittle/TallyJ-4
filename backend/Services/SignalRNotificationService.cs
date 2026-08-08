@@ -448,11 +448,12 @@ public class SignalRNotificationService : ISignalRNotificationService
             return;
         }
 
-        foreach (var voterId in groupKeys)
+        foreach (var identityKey in groupKeys)
         {
             try
             {
-                var groupName = VoterPersonalHub.GetGroupName(voterId);
+                // GetGroupName trims; identityKey is already trimmed by DistinctNonEmpty.
+                var groupName = VoterPersonalHub.GetGroupName(identityKey);
                 await _voterPersonalHubContext.Clients.Group(groupName).SendAsync("updateVoter", update);
                 _logger.LogInformation(
                     "Sent updateVoter (registration) to group for election {ElectionGuid}",
@@ -478,6 +479,7 @@ public class SignalRNotificationService : ISignalRNotificationService
 
         try
         {
+            // Same normalization as Join / registration fan-out (trim via GetGroupName).
             var groupName = VoterPersonalHub.GetGroupName(voterId);
             var update = new VoterPersonalUpdateDto { Login = true };
             await _voterPersonalHubContext.Clients.Group(groupName).SendAsync("updateVoter", update);

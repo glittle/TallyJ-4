@@ -88,4 +88,27 @@ public class VoterPersonalHubTests
     {
         Assert.Equal("Voteralice@example.com", VoterPersonalHub.GetGroupName("alice@example.com"));
     }
+
+    [Fact]
+    public void GetGroupName_trims_whitespace()
+    {
+        Assert.Equal(
+            "Voteralice@example.com",
+            VoterPersonalHub.GetGroupName("  alice@example.com  "));
+    }
+
+    [Fact]
+    public async Task Join_trims_voterId_claim_for_group()
+    {
+        var (hub, groups) = CreateHub(OnlineVoterPrincipal("  alice@example.com  "));
+
+        await hub.Join();
+
+        groups.Verify(
+            g => g.AddToGroupAsync(
+                "conn-voter",
+                "Voteralice@example.com",
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
 }
