@@ -319,10 +319,10 @@ async function initializeOnlineElectionListener() {
   }
 }
 
-async function teardownOnlineElectionListener() {
-  // Only drop this page's handler. Group membership is owned by
-  // electionStore.setActiveElectionHub (joinElection joins FrontDesk too).
-  try {
+  // Only drop this page's handler. This page joins the FrontDesk election group
+  // so it can receive updateOnlineElection events; we intentionally do not leave
+  // the group here because the FrontDesk connection/group membership may be
+  // shared with other parts of the app in the same tab.
     if (frontDeskConnection && onlineElectionHandler) {
       frontDeskConnection.off("updateOnlineElection", onlineElectionHandler);
     }
