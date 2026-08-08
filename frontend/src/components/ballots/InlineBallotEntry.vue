@@ -11,7 +11,10 @@ import type { SearchablePersonDto } from "@/types/Person";
 import type { VoteDto } from "@/types/Vote";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
 import { isVoteDtoSpoiled } from "@/utils/voteDtoNormalization";
-import { getVoteSpoiledLabel } from "@/utils/voteSpoiledLabel";
+import {
+  getIneligibleReasonLabel,
+  getVoteSpoiledLabel,
+} from "@/utils/voteSpoiledLabel";
 import { Delete, Plus, Rank, WarningFilled } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { computed, nextTick, onMounted, ref, watch } from "vue";
@@ -20,6 +23,9 @@ import BallotAddPersonPanel from "./BallotAddPersonPanel.vue";
 
 const MAX_BALLOT_SLOTS = 50;
 
+/** Temporary: show strategy weight next to search results. Flip to true when debugging ranking. */
+const SHOW_SEARCH_MATCH_DEBUG = false;
+
 export type VoteAddedOptions = {
   fromNewPerson?: boolean;
 };
@@ -27,11 +33,8 @@ export type VoteAddedOptions = {
 const props = defineProps<{
   electionGuid: string;
   ballot: BallotDto;
-  /** Minimum rows to show (election numberToElect). Extra rows appear when over-filled. */
   requiredVotes: number;
-  /** Increment to discard optimistic rows after a failed save. */
   resyncKey?: number;
-  /** True when the teller at keyboard is selected. */
   hasKeyboardTeller?: boolean;
 }>();
 
@@ -61,6 +64,7 @@ const searchQuery = ref("");
 const searchInputRef = ref();
 const selectedSearchIndex = ref(0);
 const searchResultsListRef = ref<HTMLElement | null>(null);
+const ignoreMouseHover = ref(false);
 const reviewToggleLoading = ref(false);
 const creatingNewBallot = ref(false);
 const deletingBallot = ref(false);
@@ -70,7 +74,6 @@ const dragOverIndex = ref<number | null>(null);
 const reorderingVotes = ref(false);
 
 const canAddVotes = computed(() => props.hasKeyboardTeller !== false);
-
 const isNeedsReview = computed(() => props.ballot.statusCode === "Review");
 
 const peopleRef = computed(() => peopleStore.peopleCache);
@@ -78,33 +81,57 @@ const { searchResults } = usePersonSearch(searchQuery, peopleRef, {
   maxResults: 20,
 });
 
+const maxResultVoteCount = computed(() => {
+  let max = 0;
+  for (const person of searchResults.value) {
+    const count = person.voteCount ?? 0;
+    if (count > max) {
+      max = count;
+    }
+  }
+  return max;
+});
+
+function relativePopularityWidth(person: SearchablePersonDto): number {
+  const count = person.voteCount ?? 0;
+  if (count <= 0 || maxResultVoteCount.value <= 0) {
+    return 0;
+  }
+  return Math.max((count / maxResultVoteCount.value) * 100, 8);
+}
+
+const personGuidsOnBallot = computed(() => {
+  const set = new Set<string>();
+  for (const vote of votes.value) {
+    if (vote?.personGuid) {
+      set.add(vote.personGuid);
+    }
+  }
+  return set;
+});
+
 function buildVoteMap(includeOptimistic: boolean): Map<number, VoteDto> {
   const merged = new Map<number, VoteDto>();
   for (const vote of props.ballot.votes) {
     merged.set(vote.positionOnBallot, vote);
   }
-
   if (includeOptimistic) {
     for (const localVote of votes.value) {
       if (!localVote || localVote.rowId !== 0) {
         continue;
       }
-
       const persistedVote = merged.get(localVote.positionOnBallot);
       if (persistedVote && persistedVote.rowId > 0) {
         continue;
       }
-
       merged.set(localVote.positionOnBallot, localVote);
     }
   }
-
   return merged;
 }
 
 function computeSlotCount(merged: Map<number, VoteDto>): number {
   const highestFilled = merged.size > 0 ? Math.max(...merged.keys()) : 0;
-  // Show requiredVotes rows by default; extra rows appear only when over-filled.
   return Math.min(
     MAX_BALLOT_SLOTS,
     Math.max(props.requiredVotes, highestFilled),
@@ -115,11 +142,9 @@ function rebuildVoteSlots(includeOptimistic = true) {
   const merged = buildVoteMap(includeOptimistic);
   const slots = computeSlotCount(merged);
   const voteArray: (VoteDto | null)[] = [];
-
   for (let i = 1; i <= slots; i++) {
     voteArray.push(merged.get(i) ?? null);
   }
-
   votes.value = voteArray;
 }
 
@@ -131,7 +156,6 @@ watch(
   },
   { immediate: true, deep: true },
 );
-
 watch(
   () => props.ballot.ballotGuid,
   () => {
@@ -140,7 +164,6 @@ watch(
     void focusSearchInput();
   },
 );
-
 watch(
   () => props.resyncKey,
   () => {
@@ -152,17 +175,14 @@ watch(
 const hasUnpersistedVote = computed(() =>
   votes.value.some((vote) => vote !== null && vote.rowId === 0),
 );
-
 const canReorderVotes = computed(() => !hasUnpersistedVote.value);
 
 const duplicatePersonGuids = computed(() => {
   const personGuids = votes.value
     .filter((v): v is VoteDto => v !== null && !!v.personGuid)
     .map((v) => v.personGuid!);
-
   const duplicates: string[] = [];
   const seen = new Set<string>();
-
   for (const guid of personGuids) {
     if (seen.has(guid)) {
       duplicates.push(guid);
@@ -179,24 +199,20 @@ function findNextEmptyPosition(): number {
       return i + 1;
     }
   }
-
   const merged = buildVoteMap(true);
   const highestFilled = merged.size > 0 ? Math.max(...merged.keys()) : 0;
   if (highestFilled < MAX_BALLOT_SLOTS) {
     return highestFilled + 1;
   }
-
   return -1;
 }
 
 function getPersistedVotes(): VoteDto[] {
   return votes.value.filter(isPersistedVote);
 }
-
 function isPersistedVote(vote: VoteDto | null | undefined): vote is VoteDto {
   return !!vote && vote.rowId > 0;
 }
-
 function canDropOnIndex(targetIndex: number): boolean {
   if (
     !canReorderVotes.value ||
@@ -205,7 +221,6 @@ function canDropOnIndex(targetIndex: number): boolean {
   ) {
     return false;
   }
-
   return (
     isPersistedVote(votes.value[dragSourceIndex.value]) &&
     isPersistedVote(votes.value[targetIndex])
@@ -220,12 +235,7 @@ function addVoteToBallot(vote: VoteDto, options?: VoteAddedOptions) {
     }
     return false;
   }
-
-  const voteWithPosition: VoteDto = {
-    ...vote,
-    positionOnBallot: emptyPos,
-  };
-
+  const voteWithPosition: VoteDto = { ...vote, positionOnBallot: emptyPos };
   const merged = buildVoteMap(true);
   merged.set(emptyPos, voteWithPosition);
   const slots = computeSlotCount(merged);
@@ -234,7 +244,6 @@ function addVoteToBallot(vote: VoteDto, options?: VoteAddedOptions) {
     voteArray.push(merged.get(i) ?? null);
   }
   votes.value = voteArray;
-
   emit("vote-added", voteWithPosition, options);
   return true;
 }
@@ -244,9 +253,7 @@ async function handlePersonSelected(person: SearchablePersonDto) {
     showWarningMessage(t("ballots.keyboardTellerRequired"));
     return;
   }
-
   const isSpoiled = person.canReceiveVotes === false;
-
   const vote: VoteDto = {
     rowId: 0,
     ballotGuid: props.ballot.ballotGuid,
@@ -258,14 +265,11 @@ async function handlePersonSelected(person: SearchablePersonDto) {
       ? person.ineligibleReasonCode || "X01"
       : undefined,
   };
-
   if (!addVoteToBallot(vote)) {
     return;
   }
-
   searchQuery.value = "";
   selectedSearchIndex.value = 0;
-
   await nextTick();
   searchInputRef.value?.focus();
 }
@@ -275,7 +279,6 @@ async function handleNewPersonAdded(vote: VoteDto) {
     showWarningMessage(t("ballots.keyboardTellerRequired"));
     return;
   }
-
   if (addVoteToBallot(vote, { fromNewPerson: !!vote.personGuid })) {
     showAddPersonDrawer.value = false;
     await nextTick();
@@ -326,7 +329,19 @@ function scrollToSelected() {
 
 watch(searchResults, () => {
   selectedSearchIndex.value = 0;
+  ignoreMouseHover.value = true;
 });
+
+function handleSearchListMouseMove() {
+  ignoreMouseHover.value = false;
+}
+
+function handleSearchItemMouseOver(index: number) {
+  if (ignoreMouseHover.value) {
+    return;
+  }
+  selectedSearchIndex.value = index;
+}
 
 function handleVoteRemoved(positionOnBallot: number) {
   const merged = buildVoteMap(true);
@@ -337,7 +352,6 @@ function handleVoteRemoved(positionOnBallot: number) {
     voteArray.push(merged.get(i) ?? null);
   }
   votes.value = voteArray;
-
   emit("vote-removed", positionOnBallot);
   searchInputRef.value?.focus();
 }
@@ -354,30 +368,25 @@ function handleDragStart(index: number) {
   dragSourceIndex.value = index;
   dragOverIndex.value = null;
 }
-
 function handleDragOver(event: DragEvent, index: number) {
   if (!canDropOnIndex(index)) {
     dragOverIndex.value = null;
     return;
   }
-
   event.preventDefault();
   dragOverIndex.value = index;
 }
-
 function handleDrop(targetIndex: number) {
   if (dragSourceIndex.value === null || dragSourceIndex.value === targetIndex) {
     dragSourceIndex.value = null;
     return;
   }
-
   const sourceVote = votes.value[dragSourceIndex.value];
   const targetVote = votes.value[targetIndex];
   if (!isPersistedVote(sourceVote) || !isPersistedVote(targetVote)) {
     dragSourceIndex.value = null;
     return;
   }
-
   const persistedVotes = getPersistedVotes();
   const sourceFilledIndex = persistedVotes.findIndex(
     (vote) => vote.rowId === sourceVote.rowId,
@@ -385,24 +394,21 @@ function handleDrop(targetIndex: number) {
   const targetFilledIndex = persistedVotes.findIndex(
     (vote) => vote.rowId === targetVote.rowId,
   );
-
   if (sourceFilledIndex === -1 || targetFilledIndex === -1) {
     dragSourceIndex.value = null;
     return;
   }
-
   const reordered = [...persistedVotes];
   const [movedVote] = reordered.splice(sourceFilledIndex, 1);
   reordered.splice(targetFilledIndex, 0, movedVote);
-
-  const voteRowIds = reordered.map((vote) => vote.rowId);
-
   reorderingVotes.value = true;
-  emit("votes-reordered", voteRowIds);
+  emit(
+    "votes-reordered",
+    reordered.map((vote) => vote.rowId),
+  );
   dragSourceIndex.value = null;
   dragOverIndex.value = null;
 }
-
 function handleDragEnd() {
   dragSourceIndex.value = null;
   dragOverIndex.value = null;
@@ -430,7 +436,6 @@ async function handleDeleteBallot() {
     }
     return;
   }
-
   deletingBallot.value = true;
   try {
     await ballotStore.deleteBallot(props.ballot.ballotGuid);
@@ -448,12 +453,10 @@ async function handleNewBallot() {
     showErrorMessage(t("ballots.computerCodeRequired"));
     return;
   }
-
   if (!locationStore.selectedLocationGuid) {
     showErrorMessage(t("ballots.locationRequired"));
     return;
   }
-
   creatingNewBallot.value = true;
   try {
     const ballot = await ballotStore.createBallot({
@@ -471,10 +474,7 @@ async function handleNewBallot() {
   }
 }
 
-defineExpose({
-  reorderingVotes,
-  focusSearchInput,
-});
+defineExpose({ reorderingVotes, focusSearchInput });
 
 async function toggleNeedsReview() {
   reviewToggleLoading.value = true;
@@ -502,7 +502,6 @@ async function toggleNeedsReview() {
 onMounted(async () => {
   cacheLoading.value = true;
   cacheError.value = false;
-
   peopleStore
     .initializePeopleCache(props.electionGuid)
     .then(() => {
@@ -537,7 +536,6 @@ onMounted(async () => {
     </div>
 
     <div v-else class="inline-ballot-entry__content ballot-entry-layout">
-      <!-- Left Panel: Search -->
       <div>
         <div class="search-panel">
           <div class="search-panel-header">
@@ -559,7 +557,11 @@ onMounted(async () => {
             <small>{{ $t("ballots.searchHelp") }}</small>
           </div>
 
-          <div ref="searchResultsListRef" class="search-results">
+          <div
+            ref="searchResultsListRef"
+            class="search-results"
+            @mousemove="handleSearchListMouseMove"
+          >
             <div
               v-if="searchQuery && searchResults.length === 0"
               class="no-results"
@@ -573,23 +575,49 @@ onMounted(async () => {
               :class="{
                 'is-selected': index === selectedSearchIndex,
                 'is-ineligible': person.canReceiveVotes === false,
+                'is-on-ballot': personGuidsOnBallot.has(person.personGuid),
               }"
               @click="handlePersonSelected(person)"
-              @mouseover="selectedSearchIndex = index"
+              @mouseover="handleSearchItemMouseOver(index)"
             >
               <div class="person-info">
-                <span class="person-name">{{ person.fullName }}</span>
+                <div class="person-row">
+                  <span class="person-name"
+                    >{{ person.fullName }}
+                    <span
+                      v-if="SHOW_SEARCH_MATCH_DEBUG"
+                      class="match-weight"
+                      >({{ person._searchWeight ?? "?"
+                      }}{{
+                        person._matchedStrategy
+                          ? " " + person._matchedStrategy
+                          : ""
+                      }})</span
+                    ></span
+                  >
+                  <span v-if="person.area" class="person-area">{{
+                    person.area
+                  }}</span>
+                </div>
                 <span
                   v-if="person.canReceiveVotes === false"
                   class="ineligible-badge"
                   :title="$t('ballots.ineligible')"
                 >
-                  {{ person.ineligibleReasonCode }}
+                  {{
+                    getIneligibleReasonLabel(
+                      $t,
+                      person.ineligibleReasonCode,
+                      "ballots.ineligible",
+                    )
+                  }}
                 </span>
+                <div
+                  v-if="(person.voteCount ?? 0) > 0"
+                  class="popularity-bar"
+                  :style="{ width: relativePopularityWidth(person) + '%' }"
+                />
               </div>
-              <span v-if="person.voteCount > 0" class="vote-count-badge">
-                {{ person.voteCount }}
-              </span>
             </div>
           </div>
         </div>
@@ -600,9 +628,7 @@ onMounted(async () => {
             :loading="creatingNewBallot"
             @click="handleNewBallot"
           >
-            <el-icon>
-              <Plus />
-            </el-icon>
+            <el-icon><Plus /></el-icon>
             {{ $t("ballots.addNextBallot") }}
           </el-button>
         </div>
@@ -613,9 +639,7 @@ onMounted(async () => {
             :disabled="!canAddVotes"
             @click="showAddPersonDrawer = true"
           >
-            <el-icon>
-              <Plus />
-            </el-icon>
+            <el-icon><Plus /></el-icon>
             {{ $t("ballots.addName") }}
           </el-button>
         </div>
@@ -642,15 +666,12 @@ onMounted(async () => {
             :loading="deletingBallot"
             @click="handleDeleteBallot"
           >
-            <el-icon>
-              <Delete />
-            </el-icon>
+            <el-icon><Delete /></el-icon>
             {{ $t("ballots.deleteBallot") }}
           </el-button>
         </div>
       </div>
 
-      <!-- Right Panel: Votes -->
       <div class="votes-panel">
         <div class="votes-panel-header">
           <h4>{{ $t("ballots.namesOnBallot") }}</h4>
@@ -700,9 +721,7 @@ onMounted(async () => {
                 <div class="vote-name-block">
                   <span
                     class="vote-name"
-                    :class="{
-                      'is-spoiled': isVoteDtoSpoiled(vote),
-                    }"
+                    :class="{ 'is-spoiled': isVoteDtoSpoiled(vote) }"
                   >
                     {{ vote.personFullName || getVoteSpoiledLabel($t, vote) }}
                   </span>
@@ -713,7 +732,6 @@ onMounted(async () => {
                     {{ getVoteSpoiledLabel($t, vote) }}
                   </span>
                 </div>
-
                 <div class="vote-actions">
                   <span
                     v-if="duplicatePersonGuids.includes(vote.personGuid!)"
@@ -723,7 +741,6 @@ onMounted(async () => {
                     <el-icon><WarningFilled /></el-icon>
                   </span>
                   <el-button
-                    type="danger"
                     :icon="Delete"
                     circle
                     plain
@@ -738,7 +755,6 @@ onMounted(async () => {
               </template>
             </div>
           </div>
-
           <p v-if="canReorderVotes" class="votes-drag-hint">
             {{ $t("ballots.dragToReorder") }}
           </p>
@@ -784,9 +800,8 @@ onMounted(async () => {
   }
 
   .search-panel {
-    flex: 1;
-    min-width: 200px;
-    max-width: 300px;
+    width: 400px;
+    height: 500px;
     background: var(--el-bg-color);
     border: 1px solid var(--el-border-color);
     border-radius: var(--el-border-radius-base);
@@ -850,36 +865,77 @@ onMounted(async () => {
           }
         }
 
-        .person-info {
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-2, 8px);
-          overflow: hidden;
-
+        &.is-on-ballot {
           .person-name {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-
-          .ineligible-badge {
-            background: var(--el-color-danger-light-9);
-            color: var(--el-color-danger);
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: 1px solid var(--el-color-danger-light-5);
-            font-family: monospace;
+            color: var(--el-color-warning);
           }
         }
 
-        .vote-count-badge {
-          background: var(--el-color-success-light-9);
-          color: var(--el-color-success);
-          font-size: 12px;
-          padding: 2px 8px;
-          border-radius: 12px;
-          font-weight: bold;
+        .person-info {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 2px;
+          overflow: hidden;
+          min-width: 0;
+          width: 100%;
+
+          .person-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 2px 12px;
+            width: 100%;
+          }
+
+          .person-name {
+            flex: 1 1 auto;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            .match-weight {
+              margin-left: 6px;
+              font-size: 11px;
+              font-weight: normal;
+              color: var(--el-text-color-secondary);
+              font-family: monospace;
+            }
+          }
+
+          .person-area {
+            flex: 0 0 auto;
+            margin-left: auto;
+            text-align: right;
+            font-size: 11px;
+            line-height: 1.3;
+            color: var(--el-text-color-secondary);
+            opacity: 0.55;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .ineligible-badge {
+            color: var(--el-color-danger);
+            font-size: 13px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            line-height: 1.3;
+            max-width: 100%;
+          }
+
+          .popularity-bar {
+            height: 3px;
+            border-radius: 1px;
+            background: var(--el-color-primary);
+            opacity: 0.55;
+            transition: width 0.15s ease;
+            max-width: 100%;
+          }
         }
       }
     }
@@ -1020,6 +1076,17 @@ onMounted(async () => {
           display: flex;
           align-items: center;
           gap: var(--spacing-2, 8px);
+
+          .el-button {
+            opacity: 0.65;
+          }
+
+          .el-button:hover {
+            opacity: 1;
+            background-color: var(--el-color-danger-light-9);
+            color: var(--el-color-danger);
+            border-color: var(--el-color-danger);
+          }
 
           .status-badge {
             display: inline-flex;

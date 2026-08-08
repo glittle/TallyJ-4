@@ -6,6 +6,11 @@ export interface SearchResult {
   matchedStrategy: string;
 }
 
+/**
+ * Normalize for language-agnostic matching:
+ * lowercase, collapse whitespace, NFD + strip combining marks (diacritics).
+ * Works for Latin accented names (José↔Jose) and leaves non-Latin scripts intact.
+ */
 export function normalizeSearchText(text: string): string {
   return text
     .toLowerCase()
@@ -31,8 +36,16 @@ export interface FrontDeskSearchableVoter {
   fullName?: string | null;
   bahaiId?: string | null;
   area?: string | null;
+  /** Optional; when present, searchable as a primary field. */
+  otherInfo?: string | null;
 }
 
+/**
+ * Front-desk filter.
+ * Primary fields: fullName, bahaiId, otherInfo.
+ * Area may satisfy a term only when at least one other term matched a primary field
+ * (area alone never matches).
+ */
 export function matchesFrontDeskVoterSearch(
   voter: FrontDeskSearchableVoter,
   query: string,
@@ -46,23 +59,41 @@ export function matchesFrontDeskVoterSearch(
   const normalizedName = normalizeSearchText(fullName);
   const nameParts = tokenizeNameForSearch(fullName);
   const bahaiId = voter.bahaiId ? normalizeSearchText(voter.bahaiId) : "";
+  const otherInfo = voter.otherInfo
+    ? normalizeSearchText(voter.otherInfo)
+    : "";
+  const area = voter.area ? normalizeSearchText(voter.area) : "";
 
-  const termMatchesVoter = (term: string): boolean =>
+  const termMatchesPrimary = (term: string): boolean =>
     nameParts.some((part) => part.startsWith(term)) ||
     normalizedName.includes(term) ||
-    (bahaiId.length > 0 && bahaiId.includes(term));
+    (bahaiId.length > 0 && bahaiId.includes(term)) ||
+    (otherInfo.length > 0 && otherInfo.includes(term));
+
+  const termMatchesArea = (term: string): boolean =>
+    area.length > 0 && area.includes(term);
 
   if (terms.length === 1) {
-    return termMatchesVoter(terms[0]);
+    return termMatchesPrimary(terms[0]);
   }
 
-  return terms.every(
-    (term) =>
-      nameParts.some((part) => part.startsWith(term)) ||
-      (bahaiId.length > 0 && bahaiId.includes(term)),
-  );
+  let anyPrimary = false;
+  for (const term of terms) {
+    const primary = termMatchesPrimary(term);
+    if (primary) {
+      anyPrimary = true;
+      continue;
+    }
+    if (!termMatchesArea(term)) {
+      return false;
+    }
+  }
+  return anyPrimary;
 }
 
+/**
+ * Damerau–Levenshtein distance (includes adjacent transpositions).
+ */
 export function calculateLevenshteinDistance(a: string, b: string): number {
   if (a.length === 0) {
     return b.length;
@@ -83,14 +114,20 @@ export function calculateLevenshteinDistance(a: string, b: string): number {
 
   for (let i = 1; i <= b.length; i++) {
     for (let j = 1; j <= a.length; j++) {
-      if (b.charAt(i - 1) === a.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1,
-        );
+      const cost = b.charAt(i - 1) === a.charAt(j - 1) ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j - 1] + cost,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j] + 1,
+      );
+
+      if (
+        i > 1 &&
+        j > 1 &&
+        b.charAt(i - 1) === a.charAt(j - 2) &&
+        b.charAt(i - 2) === a.charAt(j - 1)
+      ) {
+        matrix[i][j] = Math.min(matrix[i][j], matrix[i - 2][j - 2] + cost);
       }
     }
   }
@@ -135,6 +172,11 @@ export function exactMatch(
   return null;
 }
 
+/**
+ * Prefix of any name token (first, last, other names) — not only the start of
+ * the concatenated _searchText. Otherwise "ze" ranks Zeinab (first name first
+ * in _searchText) higher than Zebarjadi (last name) for no good reason.
+ */
 export function prefixMatch(
   searchTerm: string,
   person: SearchablePersonDto,
@@ -145,8 +187,13 @@ export function prefixMatch(
     return null;
   }
 
-  const normalizedPersonText = normalizeSearchText(person._searchText);
+  const tokens = getPersonNameTokens(person);
+  if (tokens.some((token) => token.startsWith(normalizedSearch))) {
+    return 90;
+  }
 
+  // Fallback: full combined text (covers unusual tokenizations)
+  const normalizedPersonText = normalizeSearchText(person._searchText);
   if (normalizedPersonText.startsWith(normalizedSearch)) {
     return 90;
   }
@@ -222,14 +269,64 @@ export function otherNamesMatch(
   return null;
 }
 
+export function otherInfoMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
+  const normalizedSearch = normalizeSearchText(searchTerm);
+  if (normalizedSearch.length === 0) {
+    return null;
+  }
+
+  const otherInfo = normalizeSearchText(person.otherInfo || "");
+  if (!otherInfo) {
+    return null;
+  }
+
+  if (otherInfo.includes(normalizedSearch)) {
+    return 68;
+  }
+
+  const searchWords = normalizedSearch.split(" ").filter((w) => w.length > 0);
+  if (
+    searchWords.length > 1 &&
+    searchWords.every((w) => otherInfo.includes(w))
+  ) {
+    return 68;
+  }
+
+  return null;
+}
+
+function getPersonSoundexCodes(person: SearchablePersonDto): string[] {
+  const codes = new Set<string>();
+
+  for (const code of person._soundexCodes || []) {
+    if (code) codes.add(code);
+  }
+
+  const nameParts = [
+    person.firstName || "",
+    person.lastName || "",
+    person.otherNames || "",
+    person.otherLastNames || "",
+  ]
+    .join(" ")
+    .split(/[\s,;/]+/)
+    .filter((w) => w.length > 0);
+
+  for (const code of generateSoundexCodesForWords(nameParts)) {
+    codes.add(code);
+  }
+
+  return [...codes];
+}
+
 export function phoneticMatch(
   searchTerm: string,
   person: SearchablePersonDto,
 ): number | null {
   if (searchTerm.length < 3) {
-    return null;
-  }
-  if (!person._soundexCodes || person._soundexCodes.length === 0) {
     return null;
   }
 
@@ -245,19 +342,30 @@ export function phoneticMatch(
     return null;
   }
 
-  const similarity = compareSoundexCodes(searchSoundex, person._soundexCodes);
+  const personSoundex = getPersonSoundexCodes(person);
+  if (personSoundex.length === 0) {
+    return null;
+  }
 
-  if (similarity >= 75) {
+  let matchedSearchTokens = 0;
+  for (const sCode of searchSoundex) {
+    if (personSoundex.includes(sCode)) {
+      matchedSearchTokens++;
+    }
+  }
+
+  if (matchedSearchTokens === 0) {
+    const similarity = compareSoundexCodes(searchSoundex, personSoundex);
+    if (similarity >= 50) {
+      return 60;
+    }
+    return null;
+  }
+
+  if (matchedSearchTokens === searchSoundex.length) {
     return 75;
   }
-  if (similarity >= 50) {
-    return 65;
-  }
-  if (similarity >= 25) {
-    return 60;
-  }
-
-  return null;
+  return 65;
 }
 
 export function fuzzyMatch(
@@ -283,10 +391,19 @@ export function fuzzyMatch(
   const personWords = normalizedPersonText
     .split(" ")
     .filter((w) => w.length > 0);
-  for (const word of personWords) {
-    const wordDistance = calculateLevenshteinDistance(normalizedSearch, word);
-    if (wordDistance <= 2) {
-      return 50;
+
+  const searchWords = normalizedSearch.split(" ").filter((w) => w.length > 0);
+  const wordsToCheck =
+    searchWords.length > 0 ? searchWords : [normalizedSearch];
+
+  for (const searchWord of wordsToCheck) {
+    for (const word of personWords) {
+      const wordDistance = calculateLevenshteinDistance(searchWord, word);
+      const maxDist =
+        Math.min(searchWord.length, word.length) >= 5 ? 3 : 2;
+      if (wordDistance <= maxDist) {
+        return 50;
+      }
     }
   }
 
@@ -354,6 +471,130 @@ function generateSoundex(word: string): string {
   return code.substring(0, 4);
 }
 
+function getPersonNameTokens(person: SearchablePersonDto): string[] {
+  const raw = [
+    person.firstName || "",
+    person.lastName || "",
+    person.otherNames || "",
+    person.otherLastNames || "",
+  ]
+    .join(" ")
+    .split(/[\s,;/]+/)
+    .map((w) => normalizeSearchText(w))
+    .filter((w) => w.length > 0);
+
+  const seen = new Set<string>();
+  const tokens: string[] = [];
+  for (const t of raw) {
+    if (!seen.has(t)) {
+      seen.add(t);
+      tokens.push(t);
+    }
+  }
+  return tokens;
+}
+
+function scoreTokenPair(searchToken: string, personToken: string): number {
+  if (!searchToken || !personToken) {
+    return 0;
+  }
+
+  if (personToken.startsWith(searchToken) || searchToken.startsWith(personToken)) {
+    const shorter = Math.min(searchToken.length, personToken.length);
+    const longer = Math.max(searchToken.length, personToken.length);
+    if (shorter >= 3 || (shorter >= 2 && longer <= shorter + 3)) {
+      return 90;
+    }
+    if (shorter >= 2) {
+      return 70;
+    }
+    if (shorter === 1 && personToken.startsWith(searchToken)) {
+      return 55;
+    }
+  }
+
+  const sCode = generateSoundex(searchToken);
+  const pCode = generateSoundex(personToken);
+  if (sCode && pCode && sCode === pCode && searchToken.length >= 3) {
+    return 80;
+  }
+
+  if (searchToken.length >= 3 && personToken.length >= 3) {
+    const dist = calculateLevenshteinDistance(searchToken, personToken);
+    const maxDist = Math.min(searchToken.length, personToken.length) >= 5 ? 3 : 2;
+    if (dist <= maxDist) {
+      return dist === 0 ? 95 : dist === 1 ? 75 : 55;
+    }
+  }
+
+  return 0;
+}
+
+/**
+ * Multi-term coverage: each search term pairs with at most one person-name token.
+ */
+export function multiTokenCoverageMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
+  const searchWords = normalizeSearchText(searchTerm)
+    .split(" ")
+    .filter((w) => w.length > 0);
+
+  if (searchWords.length < 2) {
+    return null;
+  }
+
+  const personTokens = getPersonNameTokens(person);
+  if (personTokens.length === 0) {
+    return null;
+  }
+
+  type Pair = { si: number; pi: number; score: number };
+  const pairs: Pair[] = [];
+  for (let si = 0; si < searchWords.length; si++) {
+    for (let pi = 0; pi < personTokens.length; pi++) {
+      const score = scoreTokenPair(searchWords[si], personTokens[pi]);
+      if (score > 0) {
+        pairs.push({ si, pi, score });
+      }
+    }
+  }
+  pairs.sort((a, b) => b.score - a.score);
+
+  const usedSearch = new Set<number>();
+  const usedPerson = new Set<number>();
+  let sumScores = 0;
+  let matched = 0;
+
+  for (const pair of pairs) {
+    if (usedSearch.has(pair.si) || usedPerson.has(pair.pi)) {
+      continue;
+    }
+    usedSearch.add(pair.si);
+    usedPerson.add(pair.pi);
+    sumScores += pair.score;
+    matched++;
+  }
+
+  if (matched === 0) {
+    return null;
+  }
+
+  const coverage = matched / searchWords.length;
+  const avgQuality = sumScores / matched;
+
+  if (coverage === 1) {
+    return Math.min(88, Math.round(80 + avgQuality / 20));
+  }
+
+  if (coverage >= 0.5 && matched >= 1) {
+    return Math.min(72, Math.round(55 + avgQuality / 15));
+  }
+
+  return null;
+}
+
 export function applyAllStrategies(
   searchTerm: string,
   person: SearchablePersonDto,
@@ -362,8 +603,10 @@ export function applyAllStrategies(
     { name: "exact", fn: exactMatch },
     { name: "prefix", fn: prefixMatch },
     { name: "wordBoundary", fn: wordBoundaryMatch },
+    { name: "multiToken", fn: multiTokenCoverageMatch },
     { name: "substring", fn: substringMatch },
     { name: "otherNames", fn: otherNamesMatch },
+    { name: "otherInfo", fn: otherInfoMatch },
     { name: "phonetic", fn: phoneticMatch },
     { name: "fuzzy", fn: fuzzyMatch },
   ];

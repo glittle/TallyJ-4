@@ -248,7 +248,9 @@ describe("usePersonSearch", () => {
       expect(searchResults.value[2].lastName).toBe("Zebra");
     });
 
-    it("should sort results by voteCount descending as primary key", () => {
+    it("should sort by popularity within the same match-quality band", () => {
+      // All three match "Brown" with the same strategy weight (substring / wordBoundary).
+      // Within that band, higher voteCount should come first.
       const peopleWithVoteCounts = ref([
         createMockPerson(
           "Alice",
@@ -285,6 +287,34 @@ describe("usePersonSearch", () => {
       expect(searchResults.value[0].firstName).toBe("Bob");
       expect(searchResults.value[1].firstName).toBe("Carol");
       expect(searchResults.value[2].firstName).toBe("Alice");
+    });
+
+    it("should prefer higher match quality over higher popularity", () => {
+      // Exact match for "John Doe" must beat a popular weaker match.
+      const people = ref([
+        createMockPerson(
+          "John",
+          "Doe",
+          ["J500", "D000"],
+          undefined,
+          undefined,
+          1,
+        ),
+        createMockPerson(
+          "Jonathan",
+          "Smith",
+          ["J535", "S530"],
+          undefined,
+          undefined,
+          99,
+        ),
+      ]);
+      const searchQuery = ref("John Doe");
+      const { searchResults } = usePersonSearch(searchQuery, people);
+
+      expect(searchResults.value.length).toBeGreaterThan(0);
+      expect(searchResults.value[0].firstName).toBe("John");
+      expect(searchResults.value[0].lastName).toBe("Doe");
     });
 
     it("should use weight as secondary sort when voteCount is equal", () => {
