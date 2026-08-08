@@ -19,9 +19,28 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
     private const string LocationGuidAttribute = "LocationGuid";
     private const string PersonGuidAttribute = "PersonGuid";
 
-    public TallyJv3ElectionImportService(MainDbContext context, IElectionService electionService)
+    private readonly ISignalRNotificationService _signalRNotificationService;
+
+    public TallyJv3ElectionImportService(
+        MainDbContext context,
+        IElectionService electionService,
+        ISignalRNotificationService signalRNotificationService)
         : base(context, electionService)
     {
+        _signalRNotificationService = signalRNotificationService;
+    }
+
+    private Task ReportStatusAsync(Guid? userId, string message, bool isTemporary = false)
+    {
+        if (!userId.HasValue)
+        {
+            return Task.CompletedTask;
+        }
+
+        return _signalRNotificationService.SendElectionPackageLoaderStatusAsync(
+            userId.Value,
+            message,
+            isTemporary);
     }
 
     private static async Task<XmlDocument> ValidateAndLoadTallyJv3XmlDocumentAsync(Stream xmlStream)
@@ -445,7 +464,9 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
+            await ReportStatusAsync(userId, "Reading TallyJ v3 package…", isTemporary: true);
             var xmlDoc = await ValidateAndLoadTallyJv3XmlDocumentAsync(xmlStream);
+            await ReportStatusAsync(userId, "Package validated (TallyJ v3 XML)");
 
             // Parse and create new election
             var root = xmlDoc.DocumentElement!;
@@ -454,22 +475,28 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
 
             var (election, guidMap) = CreateElectionFromXml(root, nsm);
             _context.Elections.Add(election);
+            await ReportStatusAsync(userId, $"Creating election \"{election.Name}\"…");
 
             ImportTellersFromXml(root, nsm, election.ElectionGuid);
+            await ReportStatusAsync(userId, "Imported tellers");
 
             ImportLocationsFromXml(root, nsm, election.ElectionGuid, guidMap);
+            await ReportStatusAsync(userId, "Imported locations");
 
             ImportPeopleFromXml(root, nsm, election.ElectionGuid, guidMap);
+            await ReportStatusAsync(userId, "Imported people");
 
             var locationNodes = root.SelectNodes("t:location", nsm);
             ImportBallotsAndVotesFromXml(locationNodes!, nsm, guidMap);
+            await ReportStatusAsync(userId, "Imported ballots and votes");
 
             ImportResultsFromXml(root, nsm, election.ElectionGuid, guidMap);
+            await ReportStatusAsync(userId, "Imported results");
 
             ImportOnlineVotingInfoFromXml(root, nsm, election.ElectionGuid, guidMap);
-
             ImportLogsFromXml(root, nsm, election.ElectionGuid, guidMap);
 
+            await ReportStatusAsync(userId, "Saving to database…", isTemporary: true);
             await _context.SaveChangesAsync();
 
             if (userId.HasValue)
@@ -478,12 +505,14 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
             }
 
             await transaction.CommitAsync();
+            await ReportStatusAsync(userId, "Election package loaded successfully");
 
             return await _electionService.GetElectionByGuidAsync(election.ElectionGuid) ?? throw new InvalidOperationException("Failed to create election");
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
+            await ReportStatusAsync(userId, $"Import failed: {ex.Message}");
             throw new InvalidOperationException($"Import failed: {ex.Message}", ex);
         }
     }

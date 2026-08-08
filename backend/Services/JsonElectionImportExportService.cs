@@ -16,9 +16,28 @@ namespace Backend.Services;
 
 public class JsonElectionImportExportService : ElectionImportExportBase
 {
-    public JsonElectionImportExportService(MainDbContext context, IElectionService electionService)
+    private readonly ISignalRNotificationService _signalRNotificationService;
+
+    public JsonElectionImportExportService(
+        MainDbContext context,
+        IElectionService electionService,
+        ISignalRNotificationService signalRNotificationService)
         : base(context, electionService)
     {
+        _signalRNotificationService = signalRNotificationService;
+    }
+
+    private Task ReportStatusAsync(Guid? userId, string message, bool isTemporary = false)
+    {
+        if (!userId.HasValue)
+        {
+            return Task.CompletedTask;
+        }
+
+        return _signalRNotificationService.SendElectionPackageLoaderStatusAsync(
+            userId.Value,
+            message,
+            isTemporary);
     }
 
     // Job 3: Export election to new JSON format
@@ -238,6 +257,8 @@ public class JsonElectionImportExportService : ElectionImportExportBase
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
+            await ReportStatusAsync(userId, "Reading election package…", isTemporary: true);
+
             using var reader = new StreamReader(jsonStream, System.Text.Encoding.UTF8, true, 1024, leaveOpen: true);
             var jsonContent = await reader.ReadToEndAsync();
 
@@ -248,6 +269,8 @@ public class JsonElectionImportExportService : ElectionImportExportBase
 
             if (importData?.format != "TallyJ4")
                 throw new InvalidOperationException("Invalid format - expected TallyJ4");
+
+            await ReportStatusAsync(userId, "Package validated (TallyJ4 JSON)");
 
             // Create new election with remapped GUIDs
             var guidMap = new Dictionary<Guid, Guid>();
@@ -287,17 +310,31 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 ParseDateTime(importData.election.ListedForPublicAsOf));
 
             _context.Elections.Add(election);
+            await ReportStatusAsync(userId, $"Creating election \"{election.Name}\"…");
 
             ImportLocations(importData, newElectionGuid, guidMap);
+            await ReportStatusAsync(userId, $"Imported {importData.locations.Count} location(s)");
+
             ImportPeople(importData, newElectionGuid, guidMap);
+            await ReportStatusAsync(userId, $"Imported {importData.people.Count} person(s)");
+
             ImportBallotsAndVotes(importData, guidMap);
+            var ballotCount = importData.ballots.Count;
+            var voteCount = importData.ballots.Sum(b => b.votes.Count);
+            await ReportStatusAsync(userId, $"Imported {ballotCount} ballot(s), {voteCount} vote(s)");
+
             ImportTellers(importData, newElectionGuid);
+            await ReportStatusAsync(userId, $"Imported {importData.tellers.Count} teller(s)");
+
             ImportResults(importData, newElectionGuid, guidMap);
             ImportResultSummaries(importData, newElectionGuid);
             ImportResultTies(importData, newElectionGuid);
+            await ReportStatusAsync(userId, $"Imported {importData.results.Count} result row(s)");
+
             ImportOnlineVotingInfos(importData, newElectionGuid, guidMap);
             ImportLogs(importData, newElectionGuid, guidMap);
 
+            await ReportStatusAsync(userId, "Saving to database…", isTemporary: true);
             await _context.SaveChangesAsync();
 
             if (userId.HasValue)
@@ -306,12 +343,14 @@ public class JsonElectionImportExportService : ElectionImportExportBase
             }
 
             await transaction.CommitAsync();
+            await ReportStatusAsync(userId, "Election package loaded successfully");
 
             return await _electionService.GetElectionByGuidAsync(election.ElectionGuid) ?? throw new InvalidOperationException("Failed to create election");
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
+            await ReportStatusAsync(userId, $"Import failed: {ex.Message}");
             throw new InvalidOperationException($"Import failed: {ex.Message}", ex);
         }
     }

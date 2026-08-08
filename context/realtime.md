@@ -14,7 +14,8 @@ Do **not** assume a single `election-{guid}` convention for all realtime traffic
 | `Main{electionGuid}` (+ `…Known` / `…Guest`)                | MainHub — shared status on **base**; role events on suffix |
 | `Analyze{electionGuid}`                                     | AnalyzeHub — tally progress/complete                    |
 | `FrontDesk{electionGuid}`                                   | FrontDeskHub — people, ballots, online election, reload |
-| `BallotImport{electionGuid}` / `PeopleImport{electionGuid}` | import hubs                                             |
+| `BallotImport{electionGuid}` / `PeopleImport{electionGuid}` | import hubs (election-scoped)                           |
+| `ElectionPackageImport{userId}`                             | ElectionPackageImportHub — dashboard package load log   |
 | `Public`                                                    | PublicHub — guest-teller joinable elections list        |
 
 Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElection`, `joinDashboardElections`, etc.) and store subscriptions.
@@ -141,9 +142,9 @@ Group: `FrontDesk{electionGuid}`.
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #226; `SignalRNotificationService` import methods; `importStore` / `PeopleImportPage` listeners  
-**Revisit when:** changing progress payload shape, or adding election-package load progress (#231)
+**Revisit when:** changing progress payload shape, or package-load group key model
 
-Server pushes only via `IHubContext` in `SignalRNotificationService`. Both import hubs expose **join/leave only** — no client-callable broadcast methods (same pattern as MainHub / FrontDeskHub after #227 / #232).
+Server pushes only via `IHubContext` in `SignalRNotificationService`. Import hubs expose **join/leave only** — no client-callable broadcast methods (same pattern as MainHub / FrontDeskHub after #227 / #232).
 
 ASP.NET Core SignalR **event names are case-sensitive**. SPA listeners use **camelCase** only.
 
@@ -162,5 +163,20 @@ ASP.NET Core SignalR **event names are case-sensitive**. SPA listeners use **cam
 | `importProgress` | `{ processed, total, status }` | `SendPeopleImportProgressAsync` ← `PeopleImportService` | `PeopleImportPage` |
 | `importError` | `(errorMessage, rowNumber)` | `SendPeopleImportErrorAsync` ← `PeopleImportService` | `PeopleImportPage` |
 | `importComplete` | `ImportPeopleResult` (success, peopleAdded, …) | `SendPeopleImportCompleteAsync` ← `PeopleImportService` | `PeopleImportPage` |
+
+### ElectionPackageImportHub — group `ElectionPackageImport{userId}` (#231)
+
+| Event | Payload | Producer | Primary listeners |
+| ----- | ------- | -------- | ----------------- |
+| `loaderStatus` | `(message, isTemporary)` two args | `SendElectionPackageLoaderStatusAsync` ← JSON / v3 package loaders | `DashboardPage` → `ElectionPackageLoadDialog` |
+
+- **Who:** known tellers only (`JoinSession` rejects guests). Group is **user-scoped** (not election-scoped).
+- **Why user-scoped:** package load creates a new election — no `electionGuid` yet; concurrent known tellers must not steal each other’s stream (v3 `Import{loginId}` parity).
+- **Temp lines:** `isTemporary: true` may replace the last temporary log line on the client (v3 scrolling log behavior).
+- **Hub path:** `/hubs/election-package-import`. FE: `signalrService.connectToElectionPackageImportHub` / `joinElectionPackageImportSession`.
+
+**Rejected alternative:** reuse PeopleImportHub / BallotImportHub with election groups. Rejected — no election exists at start of package load; would require inventing a session GUID or broadcasting to the wrong audience.
+
+**Rejected alternative:** dual path — loaders calling `IHubContext` directly while people/ballot import use the notification service. Rejected — same case-sensitive / producer-drift lesson as #226.
 
 **Rejected alternative:** dual path — `ImportService` / `PeopleImportService` calling `IHubContext` directly while `SendImportProgressAsync` used different PascalCase names (`ImportProgress` / `ImportComplete`). Rejected — case-sensitive mismatch would miss SPA listeners; two producers drift. **Chosen:** one producer (`ISignalRNotificationService`) with camelCase event names matching the SPA.

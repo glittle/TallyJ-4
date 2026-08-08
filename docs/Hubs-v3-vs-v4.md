@@ -19,7 +19,7 @@ Companion to [Hubs-in-v3.md](./Hubs-in-v3.md). Summarizes how TallyJ 4’s realt
 | FrontDeskHub | `FrontDeskHub` (`/hubs/front-desk`) | Present; richer events; some producers/listeners missing |
 | AnalyzeHub | `AnalyzeHub` (`/hubs/analyze`) | Present; structured tally progress |
 | ImportHub (people CSV) | `PeopleImportHub` (`/hubs/people-import`) | Renamed; election-scoped groups |
-| ImportHub (election package load) | — | Not ported |
+| ImportHub (election package load) | `ElectionPackageImportHub` (`/hubs/election-package-import`) | User-scoped `loaderStatus` (#231) |
 | BallotImportHub | `BallotImportHub` (`/hubs/ballot-import`) | Present; election-scoped groups |
 | RollCallHub | — | Deferred |
 | AllVotersHub | — | Not implemented (online voting HTTP-only for now) |
@@ -27,7 +27,7 @@ Companion to [Hubs-in-v3.md](./Hubs-in-v3.md). Summarizes how TallyJ 4’s realt
 | VoterCodeHub | — | Not implemented |
 | *(scaffold)* OnlineVotingHub | — | Removed on purpose; see `context/realtime.md` |
 
-Mapped in `backend/Program.cs` as `/hubs/main`, `/analyze`, `/ballot-import`, `/people-import`, `/front-desk`, `/public`.
+Mapped in `backend/Program.cs` as `/hubs/main`, `/analyze`, `/ballot-import`, `/people-import`, `/election-package-import`, `/front-desk`, `/public`.
 
 ---
 
@@ -158,7 +158,7 @@ Catalog: `context/realtime.md` § Import hub event catalog.
 | Gap | v3 | v4 | Issue |
 |-----|----|----|-------|
 | Multi-election dashboard listen | MainHub `JoinAll` (known tellers) | **Fixed** — `JoinElections` / dashboard multi-join | [#230](https://github.com/glittle/TallyJ-4/issues/230) |
-| Election package load progress | ImportHub `loaderStatus` | No SignalR on load path | [#231](https://github.com/glittle/TallyJ-4/issues/231) |
+| Election package load progress | ImportHub `loaderStatus` | **Fixed** — `ElectionPackageImportHub` user-scoped `loaderStatus` | [#231](https://github.com/glittle/TallyJ-4/issues/231) |
 
 ### C. Online voter realtime (product-gated)
 
@@ -192,7 +192,7 @@ If restored: prefer server-derived groups, high-entropy channel tokens for code 
 | Voter personal / multi-login | VoterPersonalHub | **No** |
 | Voter code delivery status | VoterCodeHub | **No** |
 | CSV import progress | ImportHub | **Yes** (PeopleImportHub) |
-| Election-load progress | ImportHub | **No** |
+| Election-load progress | ImportHub | **Yes** (ElectionPackageImportHub, user-scoped) |
 | Ballot import progress + FD reload | BallotImportHub + FrontDesk | Progress **yes**; FD reload **no** |
 | Results analysis progress | AnalyzeHub | **Yes** |
 

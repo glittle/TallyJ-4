@@ -16,6 +16,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     private readonly IHubContext<AnalyzeHub> _analyzeHubContext;
     private readonly IHubContext<BallotImportHub> _ballotImportHubContext;
     private readonly IHubContext<PeopleImportHub> _peopleImportHubContext;
+    private readonly IHubContext<ElectionPackageImportHub> _electionPackageImportHubContext;
     private readonly IHubContext<FrontDeskHub> _frontDeskHubContext;
     private readonly IHubContext<PublicHub> _publicHubContext;
     private readonly ILogger<SignalRNotificationService> _logger;
@@ -27,6 +28,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     /// <param name="analyzeHubContext">Hub context for the analysis SignalR hub.</param>
     /// <param name="ballotImportHubContext">Hub context for the ballot import SignalR hub.</param>
     /// <param name="peopleImportHubContext">Hub context for the people import SignalR hub.</param>
+    /// <param name="electionPackageImportHubContext">Hub context for election package load progress.</param>
     /// <param name="frontDeskHubContext">Hub context for the front desk SignalR hub.</param>
     /// <param name="publicHubContext">Hub context for PublicHub (guest-teller join list).</param>
     /// <param name="logger">Logger for recording notification service operations.</param>
@@ -35,6 +37,7 @@ public class SignalRNotificationService : ISignalRNotificationService
         IHubContext<AnalyzeHub> analyzeHubContext,
         IHubContext<BallotImportHub> ballotImportHubContext,
         IHubContext<PeopleImportHub> peopleImportHubContext,
+        IHubContext<ElectionPackageImportHub> electionPackageImportHubContext,
         IHubContext<FrontDeskHub> frontDeskHubContext,
         IHubContext<PublicHub> publicHubContext,
         ILogger<SignalRNotificationService> logger)
@@ -43,6 +46,7 @@ public class SignalRNotificationService : ISignalRNotificationService
         _analyzeHubContext = analyzeHubContext;
         _ballotImportHubContext = ballotImportHubContext;
         _peopleImportHubContext = peopleImportHubContext;
+        _electionPackageImportHubContext = electionPackageImportHubContext;
         _frontDeskHubContext = frontDeskHubContext;
         _publicHubContext = publicHubContext;
         _logger = logger;
@@ -192,6 +196,30 @@ public class SignalRNotificationService : ISignalRNotificationService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error sending people importComplete for election {ElectionGuid}", electionGuid);
+        }
+    }
+
+    /// <summary>
+    /// Sends election package load status (event <c>loaderStatus</c>, message + isTemporary args).
+    /// User-scoped group <c>ElectionPackageImport{userId}</c> (v3 ImportHub login-scoped parity).
+    /// </summary>
+    public async Task SendElectionPackageLoaderStatusAsync(Guid userId, string message, bool isTemporary = false)
+    {
+        try
+        {
+            var groupName = ElectionPackageImportHub.GetGroupName(userId);
+            // SPA listens for camelCase; two-arg payload matches v3 loaderStatus(msg, isTemp).
+            await _electionPackageImportHubContext.Clients.Group(groupName)
+                .SendAsync("loaderStatus", message, isTemporary);
+            _logger.LogDebug(
+                "Sent loaderStatus to group {GroupName}: temp={IsTemporary} {Message}",
+                groupName,
+                isTemporary,
+                message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending loaderStatus for user {UserId}", userId);
         }
     }
 

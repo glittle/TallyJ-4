@@ -79,3 +79,15 @@ export interface PeopleImportCompleteEvent {
   errors?: unknown[];
   timeElapsedSeconds: number;
 }
+
+/**
+ * Hub event `loaderStatus` is two positional args (not an object payload):
+ * `(message: string, isTemporary: boolean)`.
+ * Client UI log lines after processing those args:
+ */
+export interface ElectionPackageLoaderLogLine {
+  id: number;
+  message: string;
+  /** When true, the next temporary line may replace this one. */
+  isTemporary: boolean;
+}

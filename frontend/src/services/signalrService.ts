@@ -188,6 +188,30 @@ class SignalRService {
     return this.connect("/hubs/people-import");
   }
 
+  async connectToElectionPackageImportHub(): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/election-package-import");
+  }
+
+  /**
+   * Join user-scoped election package load progress (known teller only).
+   * Group is derived server-side from the auth user id.
+   */
+  async joinElectionPackageImportSession(): Promise<void> {
+    const connection = await this.connectToElectionPackageImportHub();
+    await connection.invoke("JoinSession");
+  }
+
+  async leaveElectionPackageImportSession(): Promise<void> {
+    const connection = this.getConnection("/hubs/election-package-import");
+    if (connection?.state === signalR.HubConnectionState.Connected) {
+      try {
+        await connection.invoke("LeaveSession");
+      } catch (error) {
+        console.warn("Failed to leave election package import session:", error);
+      }
+    }
+  }
+
   async joinElection(electionGuid: string): Promise<string | null> {
     const previousGuid = this.mainElectionGuid;
     if (previousGuid && previousGuid !== electionGuid) {

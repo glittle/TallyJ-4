@@ -2,25 +2,93 @@
 // ResumeElectionCard removed: it duplicated the first list row (same election as
 // the list's top entry after the default sort below). SetupTipsCard moved to
 // ElectionDetailPage beside the details block — more useful during setup.
+import ElectionPackageLoadDialog from "@/components/common/ElectionPackageLoadDialog.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
+import { electionService } from "@/services/electionService";
+import { signalrService } from "@/services/signalrService";
+import { useElectionStore } from "@/stores/electionStore";
+import type { ElectionDto } from "@/types";
+import type { ElectionPackageLoaderLogLine } from "@/types/SignalREvents";
 import { getActiveElectionHubGuid } from "@/utils/activeElectionHubStorage";
+import { extractApiErrorMessage } from "@/utils/errorHandler";
 import { formatNumber } from "@/utils/formatNumber";
 import { Plus, RefreshRight, Search, Upload } from "@element-plus/icons-vue";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { STAGES } from "../domain/electionStages";
-import { electionService } from "../services/electionService";
-import { useElectionStore } from "../stores/electionStore";
-import type { ElectionDto } from "../types";
-import { extractApiErrorMessage } from "../utils/errorHandler";
 
 const router = useRouter();
 const { t } = useI18n();
 const electionStore = useElectionStore();
 const { handleApiError } = useApiErrorHandler();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
+
+/** v3 loaderStatus scrolling log for election package import. */
+const showImportLoader = ref(false);
+const importLoaderLines = ref<ElectionPackageLoaderLogLine[]>([]);
+const importLoaderLoading = ref(false);
+const importLoaderSucceeded = ref(false);
+const importLoaderError = ref<string | null>(null);
+let importLoaderLineId = 0;
+
+/** Stable handler so off()/on() can de-dupe after reconnect or new HubConnection. */
+function onPackageLoaderStatus(message: string, isTemporary: boolean) {
+  appendLoaderStatus(
+    typeof message === "string" ? message : String(message ?? ""),
+    Boolean(isTemporary),
+  );
+}
+
+function clearImportLoaderState() {
+  importLoaderLines.value = [];
+  importLoaderLoading.value = false;
+  importLoaderSucceeded.value = false;
+  importLoaderError.value = null;
+  importLoaderLineId = 0;
+}
+
+function appendLoaderStatus(message: string, isTemporary: boolean) {
+  const lines = importLoaderLines.value;
+  if (isTemporary && lines.length > 0 && lines[lines.length - 1]?.isTemporary) {
+    lines[lines.length - 1] = {
+      id: lines[lines.length - 1]!.id,
+      message,
+      isTemporary: true,
+    };
+    return;
+  }
+
+  lines.push({
+    id: ++importLoaderLineId,
+    message,
+    isTemporary,
+  });
+}
+
+async function setupPackageImportHub() {
+  const connection = await signalrService.connectToElectionPackageImportHub();
+  // Rebind every setup: connect() may replace a dropped HubConnection, and a
+  // one-shot "already bound" flag would leave the new connection silent.
+  connection.off("loaderStatus", onPackageLoaderStatus);
+  connection.on("loaderStatus", onPackageLoaderStatus);
+  await signalrService.joinElectionPackageImportSession();
+}
+
+async function teardownPackageImportHub() {
+  const connection = signalrService.getConnection(
+    "/hubs/election-package-import",
+  );
+  if (connection) {
+    connection.off("loaderStatus", onPackageLoaderStatus);
+  }
+  try {
+    await signalrService.leaveElectionPackageImportSession();
+  } catch {
+    // best-effort leave
+  }
+}
 
 const loading = computed(() => electionStore.loading);
 const allElections = computed(() => electionStore.elections);
@@ -206,6 +274,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   void electionStore.leaveDashboardElections();
+  void teardownPackageImportHub();
 });
 
 async function loadData() {
@@ -238,6 +307,20 @@ async function importElection() {
         return;
       }
 
+      clearImportLoaderState();
+      showImportLoader.value = true;
+      importLoaderLoading.value = true;
+
+      try {
+        // Connect before HTTP so early status lines are not missed.
+        await setupPackageImportHub();
+      } catch (hubError) {
+        console.warn(
+          "Election package import hub unavailable; import will continue without live log",
+          hubError,
+        );
+      }
+
       try {
         let election: ElectionDto;
         if (file.name.toLowerCase().endsWith(".json")) {
@@ -245,17 +328,26 @@ async function importElection() {
         } else if (file.name.toLowerCase().endsWith(".xml")) {
           election = await electionService.importTallyJv3ElectionFromFile(file);
         } else {
+          importLoaderLoading.value = false;
+          importLoaderError.value = t("elections.importElectionError");
           showErrorMessage(t("elections.importElectionError"));
           return;
         }
 
+        importLoaderSucceeded.value = true;
+        importLoaderLoading.value = false;
         showSuccessMessage(t("elections.importElectionSuccess"));
         await loadData();
+        showImportLoader.value = false;
         router.push(`/elections/${election.electionGuid}`);
       } catch (error: any) {
-        showErrorMessage(
-          extractApiErrorMessage(error) || t("elections.importElectionError"),
-        );
+        importLoaderLoading.value = false;
+        const message =
+          extractApiErrorMessage(error) || t("elections.importElectionError");
+        importLoaderError.value = message;
+        showErrorMessage(message);
+      } finally {
+        void teardownPackageImportHub();
       }
     };
     input.click();
@@ -321,6 +413,14 @@ function formatDate(date: string) {
 
 <template>
   <main class="dashboard-page">
+    <ElectionPackageLoadDialog
+      v-model="showImportLoader"
+      :lines="importLoaderLines"
+      :loading="importLoaderLoading"
+      :succeeded="importLoaderSucceeded"
+      :error-message="importLoaderError"
+    />
+
     <section class="elections-section">
       <el-card>
         <template #header>

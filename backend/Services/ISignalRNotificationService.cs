@@ -60,6 +60,16 @@ public interface ISignalRNotificationService
     Task SendPeopleImportCompleteAsync(Guid electionGuid, object summary);
 
     /// <summary>
+    /// Sends election package load status to the initiating known teller's
+    /// ElectionPackageImportHub group (event <c>loaderStatus</c>).
+    /// User-scoped so concurrent tellers do not share streams; election does not exist yet.
+    /// </summary>
+    /// <param name="userId">Known teller user id (group key).</param>
+    /// <param name="message">Status line for the scrolling log.</param>
+    /// <param name="isTemporary">When true, client may replace the last temp line (v3 parity).</param>
+    Task SendElectionPackageLoaderStatusAsync(Guid userId, string message, bool isTemporary = false);
+
+    /// <summary>
     /// Sends person/voter update notifications to relevant clients.
     /// </summary>
     /// <param name="update">The person update data to broadcast.</param>
