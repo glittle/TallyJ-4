@@ -1,4 +1,4 @@
-import { isGuestTeller } from "@/domain/guestTellerAccess";
+import { isFullTeller, isGuestTeller } from "@/domain/guestTellerAccess";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { electionService } from "../services/electionService";
@@ -377,6 +377,31 @@ export const useElectionStore = defineStore("election", () => {
     }
   }
 
+  /**
+   * Known tellers on the elections dashboard: listen to statusChanged for all
+   * managed elections (v3 MainHub JoinAll). No-op for guest tellers.
+   */
+  async function joinDashboardElections(electionGuids: string[]) {
+    if (!isFullTeller()) {
+      return;
+    }
+
+    try {
+      await initializeSignalR();
+      await signalrService.joinDashboardElections(electionGuids);
+    } catch (e) {
+      console.error("Failed to join dashboard election groups:", e);
+    }
+  }
+
+  async function leaveDashboardElections() {
+    try {
+      await signalrService.leaveDashboardElections();
+    } catch (e) {
+      console.error("Failed to leave dashboard election groups:", e);
+    }
+  }
+
   async function setActiveElectionHub(electionGuid: string) {
     const previousGuid = getActiveElectionHubGuid();
     if (previousGuid && previousGuid !== electionGuid) {
@@ -488,6 +513,8 @@ export const useElectionStore = defineStore("election", () => {
     initializeSignalR,
     joinElection,
     leaveElection,
+    joinDashboardElections,
+    leaveDashboardElections,
     setActiveElectionHub,
     ensureActiveElectionHubConnection,
     clearActiveElectionHubConnection,

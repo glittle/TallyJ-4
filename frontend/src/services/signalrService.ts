@@ -9,6 +9,8 @@ class SignalRService {
   private readonly connectionStates: Map<string, ConnectionState> = new Map();
   private frontDeskElectionGuid: string | null = null;
   private mainElectionGuid: string | null = null;
+  /** Known-teller dashboard multi-election listen set (MainHub JoinElections). */
+  private dashboardElectionGuids: string[] = [];
   private publicGroupJoined = false;
 
   private get baseUrl(): string {
@@ -48,24 +50,43 @@ class SignalRService {
         `SignalR reconnected for ${hubPath}. Connection ID: ${connectionId}`,
       );
       this.connectionStates.set(hubPath, ConnectionState.Connected);
-      if (hubPath === "/hubs/main" && this.mainElectionGuid) {
-        try {
-          const assignedCode = (await connection.invoke(
-            "JoinElection",
-            this.mainElectionGuid,
-            getOrCreateClientId(),
-          )) as string;
-          if (assignedCode) {
-            setComputerCode(this.mainElectionGuid, assignedCode);
+      if (hubPath === "/hubs/main") {
+        if (this.mainElectionGuid) {
+          try {
+            const assignedCode = (await connection.invoke(
+              "JoinElection",
+              this.mainElectionGuid,
+              getOrCreateClientId(),
+            )) as string;
+            if (assignedCode) {
+              setComputerCode(this.mainElectionGuid, assignedCode);
+            }
+            console.log(
+              `Rejoined main election ${this.mainElectionGuid} after reconnect with code ${assignedCode}`,
+            );
+          } catch (error) {
+            console.error(
+              "Failed to rejoin main election after reconnect:",
+              error,
+            );
           }
-          console.log(
-            `Rejoined main election ${this.mainElectionGuid} after reconnect with code ${assignedCode}`,
-          );
-        } catch (error) {
-          console.error(
-            "Failed to rejoin main election after reconnect:",
-            error,
-          );
+        }
+
+        if (this.dashboardElectionGuids.length > 0) {
+          try {
+            await connection.invoke(
+              "JoinElections",
+              this.dashboardElectionGuids,
+            );
+            console.log(
+              `Rejoined ${this.dashboardElectionGuids.length} dashboard elections after reconnect`,
+            );
+          } catch (error) {
+            console.error(
+              "Failed to rejoin dashboard elections after reconnect:",
+              error,
+            );
+          }
         }
       }
 
@@ -216,6 +237,74 @@ class SignalRService {
     const frontDeskConnection = this.getConnection("/hubs/front-desk");
     if (frontDeskConnection) {
       await frontDeskConnection.invoke("LeaveElection", electionGuid);
+    }
+  }
+
+  /**
+   * Known-teller dashboard: join MainHub groups for many elections (listen-only).
+   * Replaces any previous dashboard multi-join set. Does not assign computer codes.
+   */
+  async joinDashboardElections(electionGuids: string[]): Promise<void> {
+    const unique = [
+      ...new Set(
+        electionGuids.map((g) => g.trim()).filter((g) => g.length > 0),
+      ),
+    ];
+
+    const previous = this.dashboardElectionGuids;
+    const toLeave = previous.filter((g) => !unique.includes(g));
+    // Keep active workstation membership if it is in the leave set — SignalR
+    // groups are not refcounted; leaving would drop the active JoinElection.
+    const leaveGuids = this.mainElectionGuid
+      ? toLeave.filter((g) => g !== this.mainElectionGuid)
+      : toLeave;
+
+    if (leaveGuids.length > 0) {
+      const mainConnection = this.getConnection("/hubs/main");
+      if (mainConnection) {
+        await mainConnection.invoke("LeaveElections", leaveGuids);
+      }
+    }
+
+    this.dashboardElectionGuids = unique;
+    if (unique.length === 0) {
+      return;
+    }
+
+    const mainConnection = this.getConnection("/hubs/main");
+    if (!mainConnection) {
+      throw new Error("Main hub is not connected");
+    }
+    if (mainConnection.state !== signalR.HubConnectionState.Connected) {
+      throw new Error(
+        `Main hub is not ready (state: ${mainConnection.state})`,
+      );
+    }
+
+    await mainConnection.invoke("JoinElections", unique);
+  }
+
+  /**
+   * Leave dashboard multi-election groups. Preserves active workstation
+   * MainHub membership when that election is still the main session election.
+   */
+  async leaveDashboardElections(): Promise<void> {
+    const guids = this.dashboardElectionGuids;
+    this.dashboardElectionGuids = [];
+    if (guids.length === 0) {
+      return;
+    }
+
+    const leaveGuids = this.mainElectionGuid
+      ? guids.filter((g) => g !== this.mainElectionGuid)
+      : guids;
+    if (leaveGuids.length === 0) {
+      return;
+    }
+
+    const mainConnection = this.getConnection("/hubs/main");
+    if (mainConnection) {
+      await mainConnection.invoke("LeaveElections", leaveGuids);
     }
   }
 

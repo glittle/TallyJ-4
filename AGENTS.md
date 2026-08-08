@@ -114,7 +114,7 @@ Group name patterns (constructed via `GetGroupName` statics in each hub + used f
 - `PeopleImport{electionGuid}` — PeopleImportHub (same event names; progress payload `{ processed, total, status }`).
 - `Public` (static group) — PublicHub for guest-teller joinable elections list updates.
 
-**Frontend side**: `src/services/signalrService.ts` provides `connectToMainHub()`, `connectToAnalyzeHub()`, `connectToFrontDeskHub()`, etc. + `joinElection(guid)`, `joinTallySession(guid)`, etc. Stores (electionStore, ballotStore, peopleStore, etc.) call these and wire `connection.on("eventName", handler)`.
+**Frontend side**: `src/services/signalrService.ts` provides `connectToMainHub()`, `connectToAnalyzeHub()`, `connectToFrontDeskHub()`, etc. + `joinElection(guid)`, `joinDashboardElections(guids)` (known-teller multi-listen), `joinTallySession(guid)`, etc. Stores (electionStore, ballotStore, peopleStore, etc.) call these and wire `connection.on("eventName", handler)`.
 
 When adding or touching real-time features, update the matching hub + the corresponding method in `SignalRNotificationService.cs` (see examples at lines 55, 73, 92, 111, 135, 152, 170, 189) + the frontend service + any store subscriptions together.
 
