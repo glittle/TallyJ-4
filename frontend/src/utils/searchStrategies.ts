@@ -400,21 +400,6 @@ export function fuzzyMatch(
   return null;
 }
 
-function areaBonus(searchTerm: string, person: SearchablePersonDto): number {
-  const area = normalizeSearchText(person.area || "");
-  if (!area) {
-    return 0;
-  }
-
-  // Require a meaningful term length. Single letters like "g" / "l" match almost
-  // any area string and unfairly push some names to a higher weight band.
-  const terms = splitSearchTerms(searchTerm).filter((term) => term.length >= 3);
-  if (terms.some((term) => area.includes(term) || area.startsWith(term))) {
-    return 5;
-  }
-  return 0;
-}
-
 function generateSoundexCodesForWords(words: string[]): string[] {
   return words
     .map((word) => generateSoundex(word))
@@ -513,7 +498,6 @@ function scoreTokenPair(searchToken: string, personToken: string): number {
     if (shorter >= 2) {
       return 70;
     }
-    // Single-character prefix (e.g. "g" → "Glen", "l" → "Little")
     if (shorter === 1 && personToken.startsWith(searchToken)) {
       return 55;
     }
@@ -629,7 +613,6 @@ export function applyAllStrategies(
   }
 
   if (bestWeight > 0) {
-    bestWeight = Math.min(100, bestWeight + areaBonus(searchTerm, person));
     return {
       person,
       weight: bestWeight,
