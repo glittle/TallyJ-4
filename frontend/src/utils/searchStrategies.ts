@@ -59,9 +59,7 @@ export function matchesFrontDeskVoterSearch(
   const normalizedName = normalizeSearchText(fullName);
   const nameParts = tokenizeNameForSearch(fullName);
   const bahaiId = voter.bahaiId ? normalizeSearchText(voter.bahaiId) : "";
-  const otherInfo = voter.otherInfo
-    ? normalizeSearchText(voter.otherInfo)
-    : "";
+  const otherInfo = voter.otherInfo ? normalizeSearchText(voter.otherInfo) : "";
   const area = voter.area ? normalizeSearchText(voter.area) : "";
 
   const termMatchesPrimary = (term: string): boolean =>
@@ -302,7 +300,9 @@ function getPersonSoundexCodes(person: SearchablePersonDto): string[] {
   const codes = new Set<string>();
 
   for (const code of person._soundexCodes || []) {
-    if (code) codes.add(code);
+    if (code) {
+      codes.add(code);
+    }
   }
 
   const nameParts = [
@@ -399,8 +399,7 @@ export function fuzzyMatch(
   for (const searchWord of wordsToCheck) {
     for (const word of personWords) {
       const wordDistance = calculateLevenshteinDistance(searchWord, word);
-      const maxDist =
-        Math.min(searchWord.length, word.length) >= 5 ? 3 : 2;
+      const maxDist = Math.min(searchWord.length, word.length) >= 5 ? 3 : 2;
       if (wordDistance <= maxDist) {
         return 50;
       }
@@ -499,7 +498,10 @@ function scoreTokenPair(searchToken: string, personToken: string): number {
     return 0;
   }
 
-  if (personToken.startsWith(searchToken) || searchToken.startsWith(personToken)) {
+  if (
+    personToken.startsWith(searchToken) ||
+    searchToken.startsWith(personToken)
+  ) {
     const shorter = Math.min(searchToken.length, personToken.length);
     const longer = Math.max(searchToken.length, personToken.length);
     if (shorter >= 3 || (shorter >= 2 && longer <= shorter + 3)) {
@@ -521,7 +523,8 @@ function scoreTokenPair(searchToken: string, personToken: string): number {
 
   if (searchToken.length >= 3 && personToken.length >= 3) {
     const dist = calculateLevenshteinDistance(searchToken, personToken);
-    const maxDist = Math.min(searchToken.length, personToken.length) >= 5 ? 3 : 2;
+    const maxDist =
+      Math.min(searchToken.length, personToken.length) >= 5 ? 3 : 2;
     if (dist <= maxDist) {
       return dist === 0 ? 95 : dist === 1 ? 75 : 55;
     }

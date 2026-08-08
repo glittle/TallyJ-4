@@ -5,13 +5,13 @@ import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useComputerCode } from "@/composables/useComputerCode";
 import { useNotifications } from "@/composables/useNotifications";
 
+import type { ComputerDto } from "@/types/Computer";
 import {
   getActiveTellerPayload,
   getActiveTellers,
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
 import { getBallotStatusLabel } from "@/utils/ballotStatusLabel";
-import type { ComputerDto } from "@/types/Computer";
 import type { BallotSummaryDto } from "@/utils/ballotSummary";
 import {
   computerFilterValue,
@@ -358,7 +358,7 @@ function handleLocationChange(locationGuid: string | null) {
       v-model="showDrawer"
       :title="drawerTitle"
       direction="rtl"
-      size="1200px"
+      size="80%"
       :lock-scroll="false"
       modal-class="ballot-entry-drawer"
       @closed="handleDrawerClosed"
@@ -455,8 +455,12 @@ function handleLocationChange(locationGuid: string | null) {
 }
 
 .ballot-entry-drawer {
+  .el-drawer__title {
+    text-align: center;
+    font-size: 1.5em;
+  }
   .el-drawer {
-    transition: none;
+    // transition: none;
   }
 }
 </style>

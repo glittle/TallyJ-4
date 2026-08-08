@@ -22,9 +22,9 @@ describe("getIneligibleReasonLabel", () => {
   });
 
   it("accepts a custom empty fallback for person search badges", () => {
-    expect(
-      getIneligibleReasonLabel(t, null, "ballots.ineligible"),
-    ).toBe("Ineligible");
+    expect(getIneligibleReasonLabel(t, null, "ballots.ineligible")).toBe(
+      "Ineligible",
+    );
   });
 
   it("returns translated eligibility label when code is present", () => {
@@ -33,7 +33,6 @@ describe("getIneligibleReasonLabel", () => {
 });
 
 describe("getVoteSpoiledLabel", () => {
-
   it("returns translated eligibility label from ineligibleReasonCode", () => {
     const vote: VoteDto = {
       rowId: 1,

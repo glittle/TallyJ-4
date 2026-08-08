@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import {
+  useBallotEntryVotes,
+  type VoteAddedOptions,
+} from "@/composables/useBallotEntryVotes";
 import { useComputerCode } from "@/composables/useComputerCode";
 import { useNotifications } from "@/composables/useNotifications";
-import { usePersonSearch } from "@/composables/usePersonSearch";
 import { useBallotStore } from "@/stores/ballotStore";
 import { useLocationStore } from "@/stores/locationStore";
 import { usePeopleStore } from "@/stores/peopleStore";
@@ -10,25 +13,15 @@ import type { BallotDto } from "@/types/Ballot";
 import type { SearchablePersonDto } from "@/types/Person";
 import type { VoteDto } from "@/types/Vote";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
-import { isVoteDtoSpoiled } from "@/utils/voteDtoNormalization";
-import {
-  getIneligibleReasonLabel,
-  getVoteSpoiledLabel,
-} from "@/utils/voteSpoiledLabel";
-import { Delete, Plus, Rank, WarningFilled } from "@element-plus/icons-vue";
+import { Delete, Plus } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
-import { computed, nextTick, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import BallotAddPersonPanel from "./BallotAddPersonPanel.vue";
+import BallotPersonSearchPanel from "./BallotPersonSearchPanel.vue";
+import BallotVotesPanel from "./BallotVotesPanel.vue";
 
-const MAX_BALLOT_SLOTS = 50;
-
-/** Temporary: show strategy weight next to search results. Flip to true when debugging ranking. */
-const SHOW_SEARCH_MATCH_DEBUG = false;
-
-export type VoteAddedOptions = {
-  fromNewPerson?: boolean;
-};
+export type { VoteAddedOptions };
 
 const props = defineProps<{
   electionGuid: string;
@@ -56,196 +49,55 @@ const { showWarningMessage, showErrorMessage, showSuccessMessage } =
   useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
-const votes = ref<(VoteDto | null)[]>([]);
 const cacheLoading = ref(false);
 const cacheError = ref(false);
-
-const searchQuery = ref("");
-const searchInputRef = ref();
-const selectedSearchIndex = ref(0);
-const searchResultsListRef = ref<HTMLElement | null>(null);
-const ignoreMouseHover = ref(false);
 const reviewToggleLoading = ref(false);
 const creatingNewBallot = ref(false);
 const deletingBallot = ref(false);
 const showAddPersonDrawer = ref(false);
-const dragSourceIndex = ref<number | null>(null);
-const dragOverIndex = ref<number | null>(null);
-const reorderingVotes = ref(false);
+const searchPanelRef = ref<InstanceType<typeof BallotPersonSearchPanel> | null>(
+  null,
+);
 
 const canAddVotes = computed(() => props.hasKeyboardTeller !== false);
 const isNeedsReview = computed(() => props.ballot.statusCode === "Review");
+const people = computed(() => peopleStore.peopleCache);
 
-const peopleRef = computed(() => peopleStore.peopleCache);
-const { searchResults } = usePersonSearch(searchQuery, peopleRef, {
-  maxResults: 20,
+const {
+  votes,
+  dragSourceIndex,
+  dragOverIndex,
+  reorderingVotes,
+  canReorderVotes,
+  personGuidsOnBallot,
+  duplicatePersonGuids,
+  isPersistedVote,
+  addVoteToBallot,
+  removeVote,
+  handleDragStart,
+  handleDragOver,
+  handleDrop,
+  handleDragEnd,
+} = useBallotEntryVotes({
+  ballot: toRef(props, "ballot"),
+  requiredVotes: toRef(props, "requiredVotes"),
+  resyncKey: toRef(props, "resyncKey"),
+  onVoteAdded: (vote, options) => emit("vote-added", vote, options),
+  onVoteRemoved: (position) => emit("vote-removed", position),
+  onVotesReordered: (rowIds) => emit("votes-reordered", rowIds),
+  onBallotFull: () => showWarningMessage(t("ballots.ballotFull")),
 });
 
-const maxResultVoteCount = computed(() => {
-  let max = 0;
-  for (const person of searchResults.value) {
-    const count = person.voteCount ?? 0;
-    if (count > max) {
-      max = count;
-    }
-  }
-  return max;
-});
-
-function relativePopularityWidth(person: SearchablePersonDto): number {
-  const count = person.voteCount ?? 0;
-  if (count <= 0 || maxResultVoteCount.value <= 0) {
-    return 0;
-  }
-  return Math.max((count / maxResultVoteCount.value) * 100, 8);
-}
-
-const personGuidsOnBallot = computed(() => {
-  const set = new Set<string>();
-  for (const vote of votes.value) {
-    if (vote?.personGuid) {
-      set.add(vote.personGuid);
-    }
-  }
-  return set;
-});
-
-function buildVoteMap(includeOptimistic: boolean): Map<number, VoteDto> {
-  const merged = new Map<number, VoteDto>();
-  for (const vote of props.ballot.votes) {
-    merged.set(vote.positionOnBallot, vote);
-  }
-  if (includeOptimistic) {
-    for (const localVote of votes.value) {
-      if (!localVote || localVote.rowId !== 0) {
-        continue;
-      }
-      const persistedVote = merged.get(localVote.positionOnBallot);
-      if (persistedVote && persistedVote.rowId > 0) {
-        continue;
-      }
-      merged.set(localVote.positionOnBallot, localVote);
-    }
-  }
-  return merged;
-}
-
-function computeSlotCount(merged: Map<number, VoteDto>): number {
-  const highestFilled = merged.size > 0 ? Math.max(...merged.keys()) : 0;
-  return Math.min(
-    MAX_BALLOT_SLOTS,
-    Math.max(props.requiredVotes, highestFilled),
-  );
-}
-
-function rebuildVoteSlots(includeOptimistic = true) {
-  const merged = buildVoteMap(includeOptimistic);
-  const slots = computeSlotCount(merged);
-  const voteArray: (VoteDto | null)[] = [];
-  for (let i = 1; i <= slots; i++) {
-    voteArray.push(merged.get(i) ?? null);
-  }
-  votes.value = voteArray;
-}
-
-watch(
-  () => props.ballot,
-  () => {
-    rebuildVoteSlots(true);
-    reorderingVotes.value = false;
-  },
-  { immediate: true, deep: true },
-);
 watch(
   () => props.ballot.ballotGuid,
   () => {
-    searchQuery.value = "";
-    selectedSearchIndex.value = 0;
+    searchPanelRef.value?.clearSearch();
     void focusSearchInput();
   },
 );
-watch(
-  () => props.resyncKey,
-  () => {
-    rebuildVoteSlots(false);
-    reorderingVotes.value = false;
-  },
-);
 
-const hasUnpersistedVote = computed(() =>
-  votes.value.some((vote) => vote !== null && vote.rowId === 0),
-);
-const canReorderVotes = computed(() => !hasUnpersistedVote.value);
-
-const duplicatePersonGuids = computed(() => {
-  const personGuids = votes.value
-    .filter((v): v is VoteDto => v !== null && !!v.personGuid)
-    .map((v) => v.personGuid!);
-  const duplicates: string[] = [];
-  const seen = new Set<string>();
-  for (const guid of personGuids) {
-    if (seen.has(guid)) {
-      duplicates.push(guid);
-    } else {
-      seen.add(guid);
-    }
-  }
-  return duplicates;
-});
-
-function findNextEmptyPosition(): number {
-  for (let i = 0; i < votes.value.length; i++) {
-    if (!votes.value[i]) {
-      return i + 1;
-    }
-  }
-  const merged = buildVoteMap(true);
-  const highestFilled = merged.size > 0 ? Math.max(...merged.keys()) : 0;
-  if (highestFilled < MAX_BALLOT_SLOTS) {
-    return highestFilled + 1;
-  }
-  return -1;
-}
-
-function getPersistedVotes(): VoteDto[] {
-  return votes.value.filter(isPersistedVote);
-}
-function isPersistedVote(vote: VoteDto | null | undefined): vote is VoteDto {
-  return !!vote && vote.rowId > 0;
-}
-function canDropOnIndex(targetIndex: number): boolean {
-  if (
-    !canReorderVotes.value ||
-    dragSourceIndex.value === null ||
-    dragSourceIndex.value === targetIndex
-  ) {
-    return false;
-  }
-  return (
-    isPersistedVote(votes.value[dragSourceIndex.value]) &&
-    isPersistedVote(votes.value[targetIndex])
-  );
-}
-
-function addVoteToBallot(vote: VoteDto, options?: VoteAddedOptions) {
-  const emptyPos = findNextEmptyPosition();
-  if (emptyPos === -1) {
-    if (votes.value.length >= MAX_BALLOT_SLOTS) {
-      showWarningMessage(t("ballots.ballotFull"));
-    }
-    return false;
-  }
-  const voteWithPosition: VoteDto = { ...vote, positionOnBallot: emptyPos };
-  const merged = buildVoteMap(true);
-  merged.set(emptyPos, voteWithPosition);
-  const slots = computeSlotCount(merged);
-  const voteArray: (VoteDto | null)[] = [];
-  for (let i = 1; i <= slots; i++) {
-    voteArray.push(merged.get(i) ?? null);
-  }
-  votes.value = voteArray;
-  emit("vote-added", voteWithPosition, options);
-  return true;
+async function focusSearchInput() {
+  await searchPanelRef.value?.focus();
 }
 
 async function handlePersonSelected(person: SearchablePersonDto) {
@@ -268,10 +120,8 @@ async function handlePersonSelected(person: SearchablePersonDto) {
   if (!addVoteToBallot(vote)) {
     return;
   }
-  searchQuery.value = "";
-  selectedSearchIndex.value = 0;
-  await nextTick();
-  searchInputRef.value?.focus();
+  searchPanelRef.value?.clearSearch();
+  await focusSearchInput();
 }
 
 async function handleNewPersonAdded(vote: VoteDto) {
@@ -281,142 +131,13 @@ async function handleNewPersonAdded(vote: VoteDto) {
   }
   if (addVoteToBallot(vote, { fromNewPerson: !!vote.personGuid })) {
     showAddPersonDrawer.value = false;
-    await nextTick();
-    searchInputRef.value?.focus();
+    await focusSearchInput();
   }
-}
-
-function handleKeyDown(e: KeyboardEvent) {
-  if (e.key === "ArrowDown") {
-    e.preventDefault();
-    if (selectedSearchIndex.value < searchResults.value.length - 1) {
-      selectedSearchIndex.value++;
-      scrollToSelected();
-    }
-  } else if (e.key === "ArrowUp") {
-    e.preventDefault();
-    if (selectedSearchIndex.value > 0) {
-      selectedSearchIndex.value--;
-      scrollToSelected();
-    }
-  } else if (e.key === "Enter") {
-    e.preventDefault();
-    if (
-      searchResults.value.length > 0 &&
-      selectedSearchIndex.value >= 0 &&
-      selectedSearchIndex.value < searchResults.value.length
-    ) {
-      handlePersonSelected(searchResults.value[selectedSearchIndex.value]);
-    }
-  } else if (e.key === "Escape") {
-    e.preventDefault();
-    searchQuery.value = "";
-    selectedSearchIndex.value = 0;
-  }
-}
-
-function scrollToSelected() {
-  nextTick(() => {
-    const list = searchResultsListRef.value;
-    if (list) {
-      const selected = list.querySelector(".is-selected") as HTMLElement;
-      if (selected) {
-        selected.scrollIntoView({ block: "nearest" });
-      }
-    }
-  });
-}
-
-watch(searchResults, () => {
-  selectedSearchIndex.value = 0;
-  ignoreMouseHover.value = true;
-});
-
-function handleSearchListMouseMove() {
-  ignoreMouseHover.value = false;
-}
-
-function handleSearchItemMouseOver(index: number) {
-  if (ignoreMouseHover.value) {
-    return;
-  }
-  selectedSearchIndex.value = index;
 }
 
 function handleVoteRemoved(positionOnBallot: number) {
-  const merged = buildVoteMap(true);
-  merged.delete(positionOnBallot);
-  const slots = computeSlotCount(merged);
-  const voteArray: (VoteDto | null)[] = [];
-  for (let i = 1; i <= slots; i++) {
-    voteArray.push(merged.get(i) ?? null);
-  }
-  votes.value = voteArray;
-  emit("vote-removed", positionOnBallot);
-  searchInputRef.value?.focus();
-}
-
-function handleDragStart(index: number) {
-  const vote = votes.value[index];
-  if (
-    !canReorderVotes.value ||
-    !isPersistedVote(vote) ||
-    reorderingVotes.value
-  ) {
-    return;
-  }
-  dragSourceIndex.value = index;
-  dragOverIndex.value = null;
-}
-function handleDragOver(event: DragEvent, index: number) {
-  if (!canDropOnIndex(index)) {
-    dragOverIndex.value = null;
-    return;
-  }
-  event.preventDefault();
-  dragOverIndex.value = index;
-}
-function handleDrop(targetIndex: number) {
-  if (dragSourceIndex.value === null || dragSourceIndex.value === targetIndex) {
-    dragSourceIndex.value = null;
-    return;
-  }
-  const sourceVote = votes.value[dragSourceIndex.value];
-  const targetVote = votes.value[targetIndex];
-  if (!isPersistedVote(sourceVote) || !isPersistedVote(targetVote)) {
-    dragSourceIndex.value = null;
-    return;
-  }
-  const persistedVotes = getPersistedVotes();
-  const sourceFilledIndex = persistedVotes.findIndex(
-    (vote) => vote.rowId === sourceVote.rowId,
-  );
-  const targetFilledIndex = persistedVotes.findIndex(
-    (vote) => vote.rowId === targetVote.rowId,
-  );
-  if (sourceFilledIndex === -1 || targetFilledIndex === -1) {
-    dragSourceIndex.value = null;
-    return;
-  }
-  const reordered = [...persistedVotes];
-  const [movedVote] = reordered.splice(sourceFilledIndex, 1);
-  reordered.splice(targetFilledIndex, 0, movedVote);
-  reorderingVotes.value = true;
-  emit(
-    "votes-reordered",
-    reordered.map((vote) => vote.rowId),
-  );
-  dragSourceIndex.value = null;
-  dragOverIndex.value = null;
-}
-function handleDragEnd() {
-  dragSourceIndex.value = null;
-  dragOverIndex.value = null;
-}
-
-async function focusSearchInput() {
-  await nextTick();
-  searchInputRef.value?.focus();
+  removeVote(positionOnBallot);
+  void focusSearchInput();
 }
 
 async function handleDeleteBallot() {
@@ -474,8 +195,6 @@ async function handleNewBallot() {
   }
 }
 
-defineExpose({ reorderingVotes, focusSearchInput });
-
 async function toggleNeedsReview() {
   reviewToggleLoading.value = true;
   try {
@@ -498,6 +217,8 @@ async function toggleNeedsReview() {
     reviewToggleLoading.value = false;
   }
 }
+
+defineExpose({ reorderingVotes, focusSearchInput });
 
 onMounted(async () => {
   cacheLoading.value = true;
@@ -537,90 +258,13 @@ onMounted(async () => {
 
     <div v-else class="inline-ballot-entry__content ballot-entry-layout">
       <div>
-        <div class="search-panel">
-          <div class="search-panel-header">
-            <h4>{{ $t("ballots.searchPerson") }}</h4>
-          </div>
-          <div class="search-input-wrapper">
-            <el-input
-              ref="searchInputRef"
-              v-model="searchQuery"
-              :placeholder="$t('ballots.searchPlaceholder')"
-              :disabled="!canAddVotes"
-              clearable
-              class="search-input"
-              @keydown="handleKeyDown"
-            />
-          </div>
-
-          <div class="search-help">
-            <small>{{ $t("ballots.searchHelp") }}</small>
-          </div>
-
-          <div
-            ref="searchResultsListRef"
-            class="search-results"
-            @mousemove="handleSearchListMouseMove"
-          >
-            <div
-              v-if="searchQuery && searchResults.length === 0"
-              class="no-results"
-            >
-              {{ $t("ballots.noMatchesFound") }}
-            </div>
-            <div
-              v-for="(person, index) in searchResults"
-              :key="person.personGuid"
-              class="search-result-item"
-              :class="{
-                'is-selected': index === selectedSearchIndex,
-                'is-ineligible': person.canReceiveVotes === false,
-                'is-on-ballot': personGuidsOnBallot.has(person.personGuid),
-              }"
-              @click="handlePersonSelected(person)"
-              @mouseover="handleSearchItemMouseOver(index)"
-            >
-              <div class="person-info">
-                <div class="person-row">
-                  <span class="person-name"
-                    >{{ person.fullName }}
-                    <span
-                      v-if="SHOW_SEARCH_MATCH_DEBUG"
-                      class="match-weight"
-                      >({{ person._searchWeight ?? "?"
-                      }}{{
-                        person._matchedStrategy
-                          ? " " + person._matchedStrategy
-                          : ""
-                      }})</span
-                    ></span
-                  >
-                  <span v-if="person.area" class="person-area">{{
-                    person.area
-                  }}</span>
-                </div>
-                <span
-                  v-if="person.canReceiveVotes === false"
-                  class="ineligible-badge"
-                  :title="$t('ballots.ineligible')"
-                >
-                  {{
-                    getIneligibleReasonLabel(
-                      $t,
-                      person.ineligibleReasonCode,
-                      "ballots.ineligible",
-                    )
-                  }}
-                </span>
-                <div
-                  v-if="(person.voteCount ?? 0) > 0"
-                  class="popularity-bar"
-                  :style="{ width: relativePopularityWidth(person) + '%' }"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <BallotPersonSearchPanel
+          ref="searchPanelRef"
+          :can-add-votes="canAddVotes"
+          :people="people"
+          :person-guids-on-ballot="personGuidsOnBallot"
+          @select="handlePersonSelected"
+        />
 
         <div class="new-ballot-action">
           <el-button
@@ -672,94 +316,21 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div class="votes-panel">
-        <div class="votes-panel-header">
-          <h4>{{ $t("ballots.namesOnBallot") }}</h4>
-          <span class="ballot-id">{{
-            $t("ballots.ballotNum", { code: ballot.ballotCode })
-          }}</span>
-        </div>
-
-        <div class="votes-list">
-          <div
-            v-for="(vote, index) in votes"
-            :key="vote?.rowId ? `vote-${vote.rowId}` : `slot-${index}`"
-            class="vote-row"
-            :class="{
-              'has-vote': !!vote,
-              'is-duplicate':
-                vote && duplicatePersonGuids.includes(vote.personGuid!),
-              'is-dragging': dragSourceIndex === index,
-              'is-drop-target-top':
-                dragOverIndex === index &&
-                dragSourceIndex !== null &&
-                index < dragSourceIndex,
-              'is-drop-target-bottom':
-                dragOverIndex === index &&
-                dragSourceIndex !== null &&
-                index > dragSourceIndex,
-              'is-draggable': canReorderVotes && isPersistedVote(vote),
-            }"
-            :draggable="
-              canReorderVotes && isPersistedVote(vote) && !reorderingVotes
-            "
-            @dragstart="handleDragStart(index)"
-            @dragover="handleDragOver($event, index)"
-            @drop="handleDrop(index)"
-            @dragend="handleDragEnd"
-          >
-            <div class="vote-position">{{ index + 1 }}</div>
-            <div class="vote-content">
-              <template v-if="vote">
-                <span
-                  v-if="canReorderVotes && isPersistedVote(vote)"
-                  class="drag-handle"
-                  :title="$t('ballots.dragToReorder')"
-                >
-                  <el-icon><Rank /></el-icon>
-                </span>
-                <div class="vote-name-block">
-                  <span
-                    class="vote-name"
-                    :class="{ 'is-spoiled': isVoteDtoSpoiled(vote) }"
-                  >
-                    {{ vote.personFullName || getVoteSpoiledLabel($t, vote) }}
-                  </span>
-                  <span
-                    v-if="isVoteDtoSpoiled(vote) && vote.personFullName"
-                    class="vote-ineligible-reason"
-                  >
-                    {{ getVoteSpoiledLabel($t, vote) }}
-                  </span>
-                </div>
-                <div class="vote-actions">
-                  <span
-                    v-if="duplicatePersonGuids.includes(vote.personGuid!)"
-                    class="status-badge warning"
-                    :title="$t('ballots.duplicateWarning')"
-                  >
-                    <el-icon><WarningFilled /></el-icon>
-                  </span>
-                  <el-button
-                    :icon="Delete"
-                    circle
-                    plain
-                    size="small"
-                    :aria-label="$t('common.delete')"
-                    @click="handleVoteRemoved(index + 1)"
-                  />
-                </div>
-              </template>
-              <template v-else>
-                <div class="empty-slot"></div>
-              </template>
-            </div>
-          </div>
-          <p v-if="canReorderVotes" class="votes-drag-hint">
-            {{ $t("ballots.dragToReorder") }}
-          </p>
-        </div>
-      </div>
+      <BallotVotesPanel
+        :votes="votes"
+        :ballot-code="ballot.ballotCode"
+        :can-reorder-votes="canReorderVotes"
+        :reordering-votes="reorderingVotes"
+        :drag-source-index="dragSourceIndex"
+        :drag-over-index="dragOverIndex"
+        :duplicate-person-guids="duplicatePersonGuids"
+        :is-persisted-vote="isPersistedVote"
+        @remove="handleVoteRemoved"
+        @drag-start="handleDragStart"
+        @drag-over="handleDragOver"
+        @drop="handleDrop"
+        @drag-end="handleDragEnd"
+      />
     </div>
 
     <el-drawer
@@ -799,317 +370,12 @@ onMounted(async () => {
     }
   }
 
-  .search-panel {
-    width: 400px;
-    height: 500px;
-    background: var(--el-bg-color);
-    border: 1px solid var(--el-border-color);
-    border-radius: var(--el-border-radius-base);
-    display: flex;
-    flex-direction: column;
-
-    .search-panel-header {
-      padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
-      background: var(--el-fill-color-light);
-      border-bottom: 1px solid var(--el-border-color-lighter);
-
-      h4 {
-        margin: 0;
-        font-size: var(--el-font-size-base);
-        color: var(--el-text-color-regular);
-      }
-    }
-
-    .search-input-wrapper {
-      padding: var(--spacing-3, 12px);
-    }
-
-    .search-help {
-      padding: 0 var(--spacing-3, 12px) var(--spacing-2, 8px);
-      color: var(--el-text-color-secondary);
-      font-size: var(--el-font-size-small);
-    }
-
-    .search-results {
-      flex: 1;
-      overflow-y: auto;
-      max-height: 400px;
-      border-top: 1px solid var(--el-border-color-lighter);
-
-      .no-results {
-        padding: var(--spacing-4, 16px);
-        text-align: center;
-        color: var(--el-text-color-secondary);
-      }
-
-      .search-result-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--spacing-2, 8px) var(--spacing-3, 12px);
-        cursor: pointer;
-        border-bottom: 1px solid var(--el-border-color-lighter);
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        &.is-selected {
-          background-color: var(--el-color-primary-light-9);
-        }
-
-        &.is-ineligible {
-          .person-name {
-            color: var(--el-text-color-secondary);
-            text-decoration: line-through;
-          }
-        }
-
-        &.is-on-ballot {
-          .person-name {
-            color: var(--el-color-warning);
-          }
-        }
-
-        .person-info {
-          display: flex;
-          flex-direction: column;
-          align-items: stretch;
-          gap: 2px;
-          overflow: hidden;
-          min-width: 0;
-          width: 100%;
-
-          .person-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 2px 12px;
-            width: 100%;
-          }
-
-          .person-name {
-            flex: 1 1 auto;
-            min-width: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-
-            .match-weight {
-              margin-left: 6px;
-              font-size: 11px;
-              font-weight: normal;
-              color: var(--el-text-color-secondary);
-              font-family: monospace;
-            }
-          }
-
-          .person-area {
-            flex: 0 0 auto;
-            margin-left: auto;
-            text-align: right;
-            font-size: 11px;
-            line-height: 1.3;
-            color: var(--el-text-color-secondary);
-            opacity: 0.55;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-
-          .ineligible-badge {
-            color: var(--el-color-danger);
-            font-size: 13px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            line-height: 1.3;
-            max-width: 100%;
-          }
-
-          .popularity-bar {
-            height: 3px;
-            border-radius: 1px;
-            background: var(--el-color-primary);
-            opacity: 0.55;
-            transition: width 0.15s ease;
-            max-width: 100%;
-          }
-        }
-      }
-    }
-  }
-
   .new-ballot-action,
   .needs-review-toggle,
   .delete-ballot-action,
   .add-name-action {
     margin: 1em 0 0;
     padding: 0 var(--spacing-3, 12px) var(--spacing-3, 12px);
-  }
-
-  .votes-panel {
-    flex: 1.5;
-    max-width: 500px;
-    background: var(--el-bg-color);
-    border: 1px solid var(--el-border-color);
-    border-radius: var(--el-border-radius-base);
-
-    .votes-panel-header {
-      padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
-      background: var(--el-fill-color-light);
-      border-bottom: 1px solid var(--el-border-color-lighter);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      h4 {
-        margin: 0;
-        font-size: var(--el-font-size-base);
-        color: var(--el-text-color-regular);
-      }
-
-      .ballot-id {
-        font-weight: bold;
-      }
-    }
-
-    .votes-drag-hint {
-      margin: 0;
-      padding: var(--spacing-2, 8px) var(--spacing-4, 16px);
-      color: var(--el-text-color-secondary);
-      font-size: var(--el-font-size-small);
-    }
-
-    .votes-list {
-      padding: var(--spacing-2, 8px);
-    }
-
-    .vote-row {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-3, 12px);
-      padding: var(--spacing-1, 4px) var(--spacing-2, 8px);
-      margin-bottom: var(--spacing-1, 4px);
-      border-radius: var(--el-border-radius-base);
-
-      &.has-vote {
-        background-color: var(--el-color-success-light-9);
-        border: 1px solid var(--el-color-success-light-5);
-      }
-
-      &.is-draggable {
-        cursor: grab;
-      }
-
-      &.is-dragging {
-        opacity: 0.55;
-      }
-
-      &.is-drop-target-top .vote-content {
-        border-top: 2px dashed var(--el-color-primary);
-      }
-
-      &.is-drop-target-bottom .vote-content {
-        border-bottom: 2px dashed var(--el-color-primary);
-      }
-
-      &.is-duplicate {
-        background-color: var(--el-color-warning-light-9);
-        border: 1px solid var(--el-color-warning-light-5);
-      }
-
-      .vote-position {
-        width: 24px;
-        text-align: right;
-        color: var(--el-text-color-secondary);
-        font-size: var(--el-font-size-small);
-      }
-
-      .vote-content {
-        flex: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        min-height: 32px;
-
-        .empty-slot {
-          flex: 1;
-          height: 1px;
-          background-color: var(--el-border-color-lighter);
-          margin: auto 0;
-        }
-
-        .drag-handle {
-          display: inline-flex;
-          align-items: center;
-          color: var(--el-text-color-secondary);
-          margin-right: var(--spacing-1, 4px);
-        }
-
-        .vote-name-block {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-          margin-right: auto;
-          margin-left: 10px;
-          min-width: 0;
-        }
-
-        .vote-name {
-          font-weight: 500;
-
-          &.is-spoiled {
-            color: var(--el-color-danger);
-            text-decoration: line-through;
-          }
-        }
-
-        .vote-ineligible-reason {
-          color: var(--el-color-danger);
-          font-size: var(--el-font-size-small);
-          line-height: 1.2;
-        }
-
-        .vote-actions {
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-2, 8px);
-
-          .el-button {
-            opacity: 0.65;
-          }
-
-          .el-button:hover {
-            opacity: 1;
-            background-color: var(--el-color-danger-light-9);
-            color: var(--el-color-danger);
-            border-color: var(--el-color-danger);
-          }
-
-          .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-
-            &.error {
-              background: var(--el-color-danger-light-9);
-              color: var(--el-color-danger);
-              border: 1px solid var(--el-color-danger-light-5);
-            }
-
-            &.warning {
-              color: var(--el-color-warning);
-            }
-          }
-        }
-      }
-    }
   }
 }
 </style>

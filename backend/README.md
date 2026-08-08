@@ -145,7 +145,7 @@ JWT user IDs are stored in the `sub` claim. On .NET 10, code that reads the curr
 
 - **Object mapping**: Custom `CopyMatchingPropertiesTo` / `CopyMatchingPropertiesToNew` in `Helpers/ObjectCopierExtensions.cs` (name-based, cached, transparent). Custom transformations (enum conversions, JSON, derived fields, ignore-nulls on updates) are implemented as explicit, readable helper methods in the services.
 - **Validation**: FluentValidation `AbstractValidator<T>` implementations in `Validators/`. Auto-registered.
-- **Services**: Most business logic lives in `Services/` (thin controllers delegate here). Update the manual DI lists in `Program.cs` (`RegisterApplicationServices` etc.) when you add a service.
+- **Services**: Most business logic lives in `Services/` (thin controllers delegate here). Update the manual DI lists in `Program.ServiceRegistration.cs` (`RegisterApplicationServices` etc.) when you add a service.
 - Full agent-optimized guidance (layering, adding a feature end-to-end, SignalR groups, etc.) is in the root `AGENTS.md`.
 
 ## Troubleshooting

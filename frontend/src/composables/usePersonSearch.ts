@@ -32,10 +32,18 @@ const CACHE_TTL = 60000; // 1 minute
  * Within a band, popularity (voteCount) decides order; then alphabetical.
  */
 function getMatchBand(weight: number): number {
-  if (weight >= 90) return 4; // exact / strong prefix
-  if (weight >= 80) return 3; // wordBoundary / multiToken / substring
-  if (weight >= 60) return 2; // otherNames / phonetic
-  if (weight >= 40) return 1; // fuzzy
+  if (weight >= 90) {
+    return 4;
+  } // exact / strong prefix
+  if (weight >= 80) {
+    return 3;
+  } // wordBoundary / multiToken / substring
+  if (weight >= 60) {
+    return 2;
+  } // otherNames / phonetic
+  if (weight >= 40) {
+    return 1;
+  } // fuzzy
   return 0;
 }
 

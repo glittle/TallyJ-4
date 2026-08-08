@@ -20,7 +20,13 @@ function createMockPerson(
   otherInfo = "",
   area = "",
 ): SearchablePersonDto {
-  const searchText = [firstName, lastName, otherNames, otherLastNames, otherInfo]
+  const searchText = [
+    firstName,
+    lastName,
+    otherNames,
+    otherLastNames,
+    otherInfo,
+  ]
     .filter(Boolean)
     .join(" ");
   return {
@@ -68,7 +74,9 @@ describe("matchesFrontDeskVoterSearch", () => {
 
   it("allows area as a secondary term when a primary field also matches", () => {
     expect(matchesFrontDeskVoterSearch(smithAnthony, "smith north")).toBe(true);
-    expect(matchesFrontDeskVoterSearch(smithAnthony, "north anthony")).toBe(true);
+    expect(matchesFrontDeskVoterSearch(smithAnthony, "north anthony")).toBe(
+      true,
+    );
   });
 
   it("matches otherInfo as a primary field", () => {
