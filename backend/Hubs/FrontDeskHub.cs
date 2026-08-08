@@ -7,7 +7,7 @@ namespace Backend.Hubs;
 /// SignalR hub for front desk operations in election management.
 /// Handles client join/leave for the election front-desk group.
 /// Server-to-client broadcasts go through
-/// <see cref="Services.ISignalRNotificationService"/> / <c>IHubContext&lt;FrontDeskHub&gt;</c>,
+/// <see cref="Backend.Services.ISignalRNotificationService"/> / <c>IHubContext&lt;FrontDeskHub&gt;</c>,
 /// not hub instance methods.
 /// </summary>
 [Authorize]
@@ -64,7 +64,7 @@ public class FrontDeskHub : Hub
 
     /// <summary>
     /// FrontDeskHub group for an election. Server pushes person, check-in, ballot, and
-    /// related events via <see cref="Services.ISignalRNotificationService"/>.
+    /// related events via <see cref="Backend.Services.ISignalRNotificationService"/>.
     /// </summary>
     public static string GetGroupName(Guid electionGuid) => $"FrontDesk{electionGuid}";
 }

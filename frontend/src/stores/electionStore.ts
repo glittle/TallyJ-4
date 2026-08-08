@@ -256,11 +256,10 @@ export const useElectionStore = defineStore("election", () => {
   }
 
   function showElectionStageNotification(newStage: string) {
-    // Prefer `in` over Object.hasOwn so TS can narrow against STAGE_META keys.
-    const meta =
-      newStage in STAGE_META
-        ? STAGE_META[newStage as ElectionStage]
-        : undefined;
+    // Own-property check (not `in`) so prototype keys like "toString" never match.
+    const meta = Object.hasOwn(STAGE_META, newStage)
+      ? STAGE_META[newStage as ElectionStage]
+      : undefined;
     const stageKey = meta ? meta.i18nKey : `elections.stage.${newStage}`;
     const stageLabel = i18n.global.t(stageKey);
     const message = i18n.global.t("elections.stageAdvanced", {
