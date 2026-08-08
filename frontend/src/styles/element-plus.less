@@ -1,0 +1,152 @@
+/* Element Plus CSS variable + component overrides */
+
+/* Element Plus CSS Variable Overrides */
+:root {
+  /* Element Plus Color Variables */
+  --el-color-primary: var(--color-primary-500);
+  --el-color-primary-light-1: var(--color-primary-400);
+  --el-color-primary-light-2: var(--color-primary-300);
+  --el-color-primary-light-3: var(--color-primary-200);
+  --el-color-primary-light-4: var(--color-primary-100);
+  --el-color-primary-light-5: var(--color-primary-50);
+  --el-color-primary-dark-1: var(--color-primary-600);
+  --el-color-primary-dark-2: var(--color-primary-700);
+  --el-color-primary-dark-3: var(--color-primary-800);
+  --el-color-primary-dark-4: var(--color-primary-900);
+
+  --el-color-success: var(--color-success-500);
+  --el-color-success-light: var(--color-success-50);
+  --el-color-success-dark: var(--color-success-600);
+
+  --el-color-warning: var(--color-warning-500);
+  --el-color-warning-light: var(--color-warning-50);
+  --el-color-warning-dark: var(--color-warning-600);
+
+  --el-color-error: var(--color-error-500);
+  --el-color-error-light: var(--color-error-50);
+  --el-color-error-dark: var(--color-error-600);
+
+  --el-color-info: var(--color-primary-300);
+  --el-color-info-light: var(--color-primary-50);
+  --el-color-info-dark: var(--color-primary-600);
+
+  /* Element Plus Text Colors */
+  --el-text-color-primary: var(--color-text-primary);
+  --el-text-color-regular: var(--color-text-secondary);
+  --el-text-color-secondary: var(--color-text-tertiary);
+  --el-text-color-placeholder: var(--color-gray-400);
+  --el-text-color-disabled: var(--color-gray-400);
+  --el-input-text-color: var(--color-text-primary);
+
+  /* Element Plus Background Colors */
+  --el-bg-color: var(--color-bg-primary);
+  --el-bg-color-page: var(--color-bg-primary);
+  --el-bg-color-overlay: var(--color-bg-overlay);
+
+  /* Element Plus Border Colors */
+  --el-border-color: var(--color-gray-300);
+  --el-border-color-light: var(--color-gray-200);
+  --el-border-color-lighter: var(--color-gray-100);
+  --el-border-color-dark: var(--color-gray-400);
+  --el-border-color-darker: var(--color-gray-500);
+
+  /* Element Plus Font */
+  --el-font-family: var(--font-family-primary);
+  --el-font-size-base: var(--font-size-base);
+  --el-font-size-small: var(--font-size-sm);
+  --el-font-size-large: var(--font-size-lg);
+  --el-font-size-extra-large: var(--font-size-xl);
+  --el-font-weight-primary: var(--font-weight-medium);
+
+  /* Element Plus Border Radius */
+  --el-border-radius-base: var(--radius-md);
+  --el-border-radius-small: var(--radius-sm);
+  --el-border-radius-large: var(--radius-lg);
+  --el-border-radius-round: var(--radius-full);
+
+  /* Element Plus Box Shadow */
+  --el-box-shadow: var(--shadow-sm);
+  --el-box-shadow-light: var(--shadow-sm);
+  --el-box-shadow-lighter: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
+  --el-box-shadow-dark: var(--shadow-md);
+
+  /* Element Plus Transitions */
+  --el-transition-duration: 0.25s;
+  --el-transition-duration-fast: 0.15s;
+  --el-transition-duration-slow: 0.35s;
+  --el-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Element Plus Theme Overrides */
+.el-button {
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  transition: var(--transition-normal);
+  padding: 0.5em 0.75em;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &>span {
+    gap: 8px;
+  }
+}
+
+.el-input {
+  border-radius: var(--radius-md);
+
+  &__inner {
+    border-radius: var(--radius-md);
+    transition: var(--transition-normal);
+
+    &:focus {
+      border-color: var(--color-primary-500);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    }
+  }
+}
+
+.el-card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-gray-200);
+  transition: var(--transition-normal);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.el-form-item__label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.el-alert {
+  border-radius: var(--radius-md);
+}
+
+.el-tag {
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.el-table {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  th {
+    background-color: var(--color-gray-50);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+}
+
+.el-loading-mask {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+

@@ -3,13 +3,6 @@ import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { ElMessageBox } from "element-plus";
-import {
-  UploadFilled,
-  Check,
-  Warning,
-  InfoFilled,
-  Clock,
-} from "@element-plus/icons-vue";
 import { useNotifications } from "../../composables/useNotifications";
 import type { UploadFile } from "element-plus";
 import { peopleImportService } from "../../services/peopleImportService";
@@ -25,6 +18,9 @@ import type {
   PeopleImportCompleteEvent,
 } from "../../types/SignalREvents";
 
+import PeopleImportUploadStep from "@/components/people/PeopleImportUploadStep.vue";
+import PeopleImportMappingStep from "@/components/people/PeopleImportMappingStep.vue";
+import PeopleImportExecuteStep from "@/components/people/PeopleImportExecuteStep.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 const { handleApiError } = useApiErrorHandler();
 
@@ -52,13 +48,6 @@ const availableTargetFields = computed(() => [
   { value: null, label: t("people.import.ignore") },
   ...PEOPLE_TARGET_FIELDS,
 ]);
-
-const previewRows = computed(() => {
-  if (!parsedResult.value?.previewRows) {
-    return [];
-  }
-  return parsedResult.value.previewRows.slice(0, 5);
-});
 
 const canProceedToNext = computed(() => {
   if (currentStep.value === 0) {
@@ -360,61 +349,6 @@ async function handleNext() {
   currentStep.value++;
 }
 
-function getStatusType(status: string | null): string {
-  switch (status) {
-    case "Imported":
-      return "success";
-    case "Processing":
-      return "warning";
-    case "Failed":
-      return "danger";
-    default:
-      return "info";
-  }
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes === 0) {
-    return "0 B";
-  }
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return (
-    Number.parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i]
-  );
-}
-
-function getFieldDescription(fieldValue: string): string {
-  const descriptions: Record<string, string> = {
-    FirstName: t("people.import.firstNameDesc"),
-    LastName: t("people.import.lastNameDesc"),
-    BahaiId: t("people.import.bahaiIdDesc"),
-    IneligibleReasonDescription: t("people.import.eligibilityDesc"),
-    Area: t("people.import.areaDesc"),
-    Email: t("people.import.emailDesc"),
-    Phone: t("people.import.phoneDesc"),
-    OtherNames: t("people.import.otherNamesDesc"),
-    OtherLastNames: t("people.import.otherLastNamesDesc"),
-    OtherInfo: t("people.import.otherInfoDesc"),
-  };
-  return descriptions[fieldValue] || "";
-}
-
-function getFieldLabel(fieldValue: string): string {
-  const field = PEOPLE_TARGET_FIELDS.find((f) => f.value === fieldValue);
-  return field ? field.label : fieldValue;
-}
-
-function formatTime(seconds: number): string {
-  if (seconds < 60) {
-    return `${seconds}s`;
-  }
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}m ${remainingSeconds}s`;
-}
-
 async function executeImport() {
   if (!selectedFile.value) {
     return;
@@ -481,478 +415,46 @@ async function confirmDeleteAllPeople() {
       </el-steps>
 
       <div class="step-content">
-        <!-- Step 1: Upload -->
-        <div v-if="currentStep === 0" class="upload-step">
-          <h3>{{ $t("people.import.uploadFile") }}</h3>
-          <el-upload
-            ref="uploadRef"
-            :auto-upload="false"
-            :limit="1"
-            :on-change="handleFileChange"
-            :on-success="handleUploadSuccess"
-            :on-error="handleUploadError"
-            accept=".csv,.tsv,.tab,.txt,.xlsx"
-            drag
-            :disabled="uploading"
-          >
-            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div class="el-upload__text">
-              {{ $t("people.import.dropFile") }}
-              <em>{{ $t("people.import.clickToUpload") }}</em>
-            </div>
-            <template #tip>
-              <div class="el-upload__tip">
-                {{ $t("people.import.supportedFormats") }}
-              </div>
-            </template>
-          </el-upload>
+        <PeopleImportUploadStep
+          v-if="currentStep === 0"
+          :files="files"
+          :selected-file="selectedFile"
+          :uploading="uploading"
+          :reparsing="reparsing"
+          @change="handleFileChange"
+          @success="handleUploadSuccess"
+          @error="handleUploadError"
+          @select="selectFile"
+          @reparse="reparseFile"
+          @delete="deleteFile"
+          @update-settings="updateFileSettings"
+        />
 
-          <div v-if="files.length > 0" class="files-section">
-            <h4>{{ $t("people.import.filesOnServer") }}</h4>
-            <el-table :data="files" stripe style="width: 100%">
-              <el-table-column
-                prop="originalFileName"
-                :label="$t('people.import.fileName')"
-                width="200"
-              />
-              <el-table-column
-                prop="processingStatus"
-                :label="$t('people.import.status')"
-                width="120"
-              >
-                <template #default="scope">
-                  <el-tag :type="getStatusType(scope.row.processingStatus)">
-                    {{ scope.row.processingStatus || "Uploaded" }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="uploadTime"
-                :label="$t('people.import.uploadTime')"
-                width="180"
-              >
-                <template #default="scope">
-                  {{
-                    scope.row.uploadTime
-                      ? new Date(scope.row.uploadTime).toLocaleString()
-                      : "-"
-                  }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="firstDataRow" width="140">
-                <template #header>
-                  <el-tooltip
-                    :content="$t('people.import.headersOnLineTooltip')"
-                    placement="top"
-                  >
-                    <span>
-                      {{ $t("people.import.headersOnLine") }}
-                      <el-icon style="margin-left: 4px; vertical-align: middle">
-                        <InfoFilled />
-                      </el-icon>
-                    </span>
-                  </el-tooltip>
-                </template>
-                <template #default="scope">
-                  <el-input-number
-                    v-model="scope.row.firstDataRow"
-                    :min="1"
-                    :max="10"
-                    size="small"
-                    :disabled="scope.row.processingStatus === 'Imported'"
-                    @change="updateFileSettings(scope.row)"
-                  />
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="codePage"
-                :label="$t('people.import.contentEncoding')"
-                width="150"
-              >
-                <template #default="scope">
-                  <el-select
-                    v-if="scope.row.fileType !== 'xlsx'"
-                    v-model="scope.row.codePage"
-                    size="small"
-                    :disabled="scope.row.processingStatus === 'Imported'"
-                    @change="updateFileSettings(scope.row)"
-                  >
-                    <el-option label="UTF-8" :value="65001" />
-                    <el-option label="Windows-1252" :value="1252" />
-                    <el-option label="ISO-8859-1" :value="28591" />
-                  </el-select>
-                  <span v-else class="encoding-text">UTF-8 (Excel)</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="fileSize"
-                :label="$t('people.import.size')"
-                width="100"
-              >
-                <template #default="scope">
-                  {{
-                    scope.row.fileSize
-                      ? formatFileSize(scope.row.fileSize)
-                      : "-"
-                  }}
-                </template>
-              </el-table-column>
-              <el-table-column :label="$t('people.import.action')" width="120">
-                <template #default="scope">
-                  <el-button
-                    v-if="selectedFile?.rowId !== scope.row.rowId"
-                    type="primary"
-                    size="small"
-                    @click="selectFile(scope.row)"
-                  >
-                    {{ $t("people.import.select") }}
-                  </el-button>
-                  <el-tag v-else type="success">{{
-                    $t("people.import.selected")
-                  }}</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column
-                :label="$t('people.import.otherActions')"
-                width="150"
-              >
-                <template #default="scope">
-                  <el-space>
-                    <el-button
-                      type="default"
-                      size="small"
-                      :loading="reparsing === scope.row.rowId"
-                      @click="reparseFile(scope.row)"
-                    >
-                      {{ $t("people.import.reparse") }}
-                    </el-button>
-                    <el-button
-                      type="danger"
-                      size="small"
-                      @click="deleteFile(scope.row)"
-                    >
-                      {{ $t("common.delete") }}
-                    </el-button>
-                  </el-space>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </div>
+        <PeopleImportMappingStep
+          v-if="currentStep === 1"
+          :parsed-result="parsedResult"
+          :column-mappings="columnMappings"
+          :saving-mapping="savingMapping"
+          :available-target-fields="availableTargetFields"
+          @save="saveMapping"
+        />
 
-        <!-- Step 2: Map Columns -->
-        <div v-if="currentStep === 1" class="mapping-step">
-          <h3>{{ $t("people.import.mapColumns") }}</h3>
-          <p>{{ $t("people.import.mapColumnsDesc") }}</p>
-
-          <div
-            v-if="parsedResult && parsedResult.headers.length > 0"
-            class="column-mapping"
-          >
-            <div class="mapping-table-container">
-              <table class="mapping-table">
-                <thead>
-                  <tr>
-                    <th class="target-header">
-                      {{ $t("people.import.tallyJField") }}
-                    </th>
-                    <th
-                      v-for="header in parsedResult.headers"
-                      :key="header"
-                      class="file-header"
-                    >
-                      {{ header }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Mapping row -->
-                  <tr class="mapping-row">
-                    <td class="target-cell">{{ $t("people.import.mapTo") }}</td>
-                    <td
-                      v-for="(header, index) in parsedResult.headers"
-                      :key="`mapping-${index}`"
-                      class="mapping-cell"
-                    >
-                      <el-select
-                        v-if="columnMappings[index]"
-                        v-model="columnMappings[index].targetField"
-                        size="small"
-                        clearable
-                        :placeholder="$t('people.import.ignore')"
-                      >
-                        <el-option
-                          v-for="field in availableTargetFields"
-                          :key="field.value"
-                          :label="field.label"
-                          :value="field.value"
-                        />
-                      </el-select>
-                    </td>
-                  </tr>
-                  <!-- Preview rows -->
-                  <tr
-                    v-for="(row, rowIndex) in previewRows"
-                    :key="`preview-${rowIndex}`"
-                    class="preview-row"
-                  >
-                    <td class="target-cell preview-label">
-                      {{ $t("people.import.preview") }} {{ rowIndex + 1 }}
-                    </td>
-                    <td
-                      v-for="(cell, cellIndex) in row"
-                      :key="`cell-${rowIndex}-${cellIndex}`"
-                      class="preview-cell"
-                    >
-                      {{ cell }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="mapping-actions">
-              <el-button
-                type="primary"
-                :loading="savingMapping"
-                @click="saveMapping"
-              >
-                {{ $t("people.import.saveMapping") }}
-              </el-button>
-            </div>
-          </div>
-
-          <!-- Reference sections -->
-          <el-collapse class="reference-sections">
-            <el-collapse-item
-              :title="$t('people.import.tallyJFields')"
-              name="fields"
-            >
-              <div class="field-reference">
-                <div
-                  v-for="field in PEOPLE_TARGET_FIELDS"
-                  :key="field.value"
-                  class="field-item"
-                >
-                  <strong>{{ field.label }}</strong>
-                  <span v-if="field.required" class="required-mark">*</span>
-                  <span class="field-desc">{{
-                    getFieldDescription(field.value)
-                  }}</span>
-                </div>
-              </div>
-            </el-collapse-item>
-            <el-collapse-item
-              :title="$t('people.import.eligibilityValues')"
-              name="eligibility"
-            >
-              <div class="eligibility-reference">
-                <p>{{ $t("people.import.eligibilityDesc") }}</p>
-                <ul>
-                  <li>
-                    <strong>Eligible</strong> -
-                    {{ $t("people.import.eligibleDesc") }}
-                  </li>
-                  <li>
-                    <strong>Ineligible</strong> -
-                    {{ $t("people.import.ineligibleDesc") }}
-                  </li>
-                  <li>
-                    <strong>Under Age</strong> -
-                    {{ $t("people.import.underAgeDesc") }}
-                  </li>
-                  <li>
-                    <strong>Duplicate</strong> -
-                    {{ $t("people.import.duplicateDesc") }}
-                  </li>
-                </ul>
-              </div>
-            </el-collapse-item>
-          </el-collapse>
-        </div>
-
-        <!-- Step 3: Import -->
-        <div v-if="currentStep === 2" class="import-step">
-          <h3>{{ $t("people.import.reviewImport") }}</h3>
-          <p>{{ $t("people.import.importStepDesc") }}</p>
-
-          <!-- Import Summary -->
-          <div v-if="parsedResult" class="import-summary">
-            <el-card class="summary-card">
-              <template #header>
-                <h4>{{ $t("people.import.importSummary") }}</h4>
-              </template>
-              <div class="summary-content">
-                <div class="summary-item">
-                  <strong>{{ $t("people.import.dataRows") }}:</strong>
-                  {{ parsedResult.totalDataRows }}
-                </div>
-                <div class="summary-item">
-                  <strong>{{ $t("people.import.mappedFields") }}:</strong>
-                  <ul class="mapped-fields-list">
-                    <template v-if="columnMappings.length > 0">
-                      <li
-                        v-for="mapping in columnMappings"
-                        :key="mapping.fileColumn"
-                      >
-                        {{ mapping.fileColumn }} →
-                        {{
-                          mapping.targetField
-                            ? getFieldLabel(mapping.targetField)
-                            : "?"
-                        }}
-                      </li>
-                    </template>
-                  </ul>
-                </div>
-              </div>
-            </el-card>
-          </div>
-
-          <!-- Validation Warnings -->
-          <el-alert
-            v-if="!isMappingValid"
-            :title="$t('people.import.validationWarning')"
-            :description="$t('people.import.firstNameLastNameRequired')"
-            type="warning"
-            show-icon
-            class="validation-alert"
-          />
-
-          <!-- Import Progress -->
-          <div v-if="importing" class="import-progress">
-            <h4>{{ $t("people.import.importing") }}</h4>
-            <el-progress
-              v-if="importProgress"
-              :percentage="
-                (importProgress.processed / importProgress.total) * 100 || 0
-              "
-              :text-inside="true"
-              :stroke-width="20"
-              status="success"
-            />
-            <p v-if="importProgress?.status" class="progress-message">
-              {{ importProgress.status }}
-            </p>
-          </div>
-
-          <!-- Import Results -->
-          <div v-if="importResult && !importing" class="import-results">
-            <el-card class="results-card">
-              <template #header>
-                <h4>{{ $t("people.import.importResults") }}</h4>
-              </template>
-              <div class="results-content">
-                <div class="result-item success">
-                  <el-icon>
-                    <Check />
-                  </el-icon>
-                  <span
-                    >{{ $t("people.import.peopleAdded") }}:
-                    {{ importResult.peopleAdded }}</span
-                  >
-                </div>
-                <div
-                  v-if="importResult.peopleSkipped > 0"
-                  class="result-item warning"
-                >
-                  <el-icon>
-                    <Warning />
-                  </el-icon>
-                  <span
-                    >{{ $t("people.import.peopleSkipped") }}:
-                    {{ importResult.peopleSkipped }}</span
-                  >
-                </div>
-                <div
-                  v-if="translatedWarnings.length > 0"
-                  class="result-item info"
-                >
-                  <el-icon>
-                    <InfoFilled />
-                  </el-icon>
-                  <span
-                    >{{ $t("people.import.warnings") }}:
-                    {{ translatedWarnings.length }}</span
-                  >
-                </div>
-                <div class="result-item time">
-                  <el-icon>
-                    <Clock />
-                  </el-icon>
-                  <span
-                    >{{ $t("people.import.timeElapsed") }}:
-                    {{ formatTime(importResult.timeElapsedSeconds) }}</span
-                  >
-                </div>
-              </div>
-            </el-card>
-          </div>
-
-          <!-- Detailed Errors and Warnings -->
-          <div
-            v-if="translatedErrors.length > 0 || translatedWarnings.length > 0"
-            class="import-details"
-          >
-            <el-card class="details-card">
-              <template #header>
-                <h4>{{ $t("import.errorsTitle") }}</h4>
-              </template>
-              <div class="details-content">
-                <div
-                  v-for="error in translatedErrors"
-                  :key="`error-${error.key}`"
-                  class="detail-item error"
-                >
-                  <el-icon>
-                    <Warning />
-                  </el-icon>
-                  <span>{{ error.message }}</span>
-                </div>
-                <div
-                  v-for="warning in translatedWarnings"
-                  :key="`warning-${warning.key}`"
-                  class="detail-item warning"
-                >
-                  <el-icon>
-                    <InfoFilled />
-                  </el-icon>
-                  <span>{{ warning.message }}</span>
-                </div>
-              </div>
-            </el-card>
-          </div>
-
-          <!-- Import Actions -->
-          <div class="import-actions">
-            <el-space>
-              <el-button
-                type="primary"
-                :loading="importing"
-                :disabled="!isMappingValid || !selectedFile"
-                @click="executeImport"
-              >
-                {{ $t("people.import.importNow") }}
-              </el-button>
-              <el-button
-                type="danger"
-                :disabled="canDeleteAllPeople === false"
-                @click="showDeleteAllConfirm = true"
-              >
-                {{ $t("people.import.deleteAllPeople") }}
-              </el-button>
-            </el-space>
-          </div>
-
-          <!-- People Count -->
-          <div class="people-count">
-            <el-statistic
-              :title="$t('people.import.currentPeopleCount')"
-              :value="peopleCount"
-              :loading="false"
-            />
-          </div>
-        </div>
+        <PeopleImportExecuteStep
+          v-if="currentStep === 2"
+          :parsed-result="parsedResult"
+          :column-mappings="columnMappings"
+          :is-mapping-valid="isMappingValid"
+          :selected-file="selectedFile"
+          :importing="importing"
+          :import-progress="importProgress"
+          :import-result="importResult"
+          :translated-errors="translatedErrors"
+          :translated-warnings="translatedWarnings"
+          :people-count="peopleCount"
+          :can-delete-all-people="canDeleteAllPeople"
+          @import="executeImport"
+          @delete-all="showDeleteAllConfirm = true"
+        />
       </div>
 
       <div class="step-actions">
@@ -970,7 +472,6 @@ async function confirmDeleteAllPeople() {
       </div>
     </el-card>
 
-    <!-- Delete All People Confirmation -->
     <el-dialog
       v-model="showDeleteAllConfirm"
       :title="$t('people.import.confirmDeleteAllPeople')"
@@ -978,16 +479,11 @@ async function confirmDeleteAllPeople() {
     >
       <p>{{ $t("people.import.deleteAllPeopleMessage") }}</p>
       <p class="warning-text">{{ $t("common.actionIrreversible") }}</p>
-
       <template #footer>
         <el-button @click="showDeleteAllConfirm = false">
           {{ $t("common.cancel") }}
         </el-button>
-        <el-button
-          type="danger"
-          :loading="false"
-          @click="confirmDeleteAllPeople"
-        >
+        <el-button type="danger" @click="confirmDeleteAllPeople">
           {{ $t("common.delete") }}
         </el-button>
       </template>
@@ -1000,12 +496,6 @@ async function confirmDeleteAllPeople() {
   max-width: 1400px;
   margin: 0 auto;
 
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .el-steps {
     margin: 20px 0;
   }
@@ -1015,308 +505,14 @@ async function confirmDeleteAllPeople() {
     margin: 30px 0;
   }
 
-  .upload-step {
-    h3 {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .files-section {
-      margin-top: 40px;
-
-      h4 {
-        margin-bottom: 15px;
-        color: var(--el-text-color-secondary);
-      }
-    }
-
-    .encoding-text {
-      font-size: 12px;
-      color: var(--el-text-color-placeholder);
-    }
-  }
-
-  .mapping-step {
-    h3 {
-      margin-bottom: 10px;
-    }
-
-    p {
-      margin-bottom: 20px;
-      color: var(--el-text-color-secondary);
-    }
-
-    .column-mapping {
-      margin-bottom: 30px;
-    }
-
-    .mapping-table-container {
-      overflow-x: auto;
-      margin-bottom: 20px;
-    }
-
-    .mapping-table {
-      width: 100%;
-      border-collapse: collapse;
-      border: 1px solid #ebeef5;
-
-      th,
-      td {
-        border: 1px solid #ebeef5;
-        padding: 8px 12px;
-        text-align: left;
-      }
-
-      .target-header {
-        background-color: var(--el-color-primary);
-        color: var(--color-text-inverse);
-        font-weight: bold;
-        min-width: 150px;
-      }
-
-      .file-header {
-        background-color: var(--el-color-primary);
-        color: var(--color-text-inverse);
-        font-weight: bold;
-        min-width: 120px;
-      }
-
-      .target-cell {
-        background-color: var(--el-fill-color-light);
-        font-weight: bold;
-      }
-
-      .mapping-row {
-        .target-cell {
-          background-color: var(--el-color-primary);
-          color: var(--color-text-inverse);
-          font-weight: bold;
-        }
-      }
-
-      .mapping-cell {
-        background-color: var(--el-bg-color);
-      }
-
-      .preview-row {
-        background-color: var(--el-fill-color-lighter);
-      }
-
-      .preview-cell {
-        font-size: 12px;
-        color: var(--el-text-color-secondary);
-      }
-
-      .preview-label {
-        font-size: 12px;
-        color: var(--el-text-color-placeholder);
-      }
-
-      .mapping-row .el-select {
-        width: 100%;
-      }
-    }
-
-    .mapping-actions {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .reference-sections {
-      margin-top: 30px;
-    }
-
-    .field-reference {
-      .field-item {
-        margin-bottom: 10px;
-        padding: 8px;
-        background-color: var(--el-fill-color-light);
-        border-radius: 4px;
-
-        strong {
-          display: block;
-          color: var(--el-text-color-primary);
-        }
-
-        .required-mark {
-          color: var(--el-color-error);
-          margin-left: 4px;
-        }
-
-        .field-desc {
-          display: block;
-          font-size: 12px;
-          color: var(--el-text-color-secondary);
-          margin-top: 4px;
-        }
-      }
-    }
-
-    .eligibility-reference {
-      ul {
-        padding-left: 20px;
-
-        li {
-          margin-bottom: 8px;
-        }
-      }
-    }
-  }
-
-  .import-step {
-    h3 {
-      margin-bottom: 20px;
-    }
-
-    p {
-      color: var(--el-text-color-secondary);
-      margin-bottom: 20px;
-    }
-
-    .import-summary {
-      margin-bottom: 20px;
-
-      .summary-card {
-        .summary-content {
-          .summary-item {
-            margin-bottom: 15px;
-
-            strong {
-              display: block;
-              margin-bottom: 5px;
-              color: var(--el-text-color-primary);
-            }
-
-            .mapped-fields-list {
-              margin: 0;
-              padding-left: 20px;
-
-              li {
-                margin-bottom: 5px;
-                color: #606266;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .validation-alert {
-      margin-bottom: 20px;
-    }
-
-    .import-progress {
-      margin-bottom: 20px;
-
-      h4 {
-        margin-bottom: 15px;
-        color: var(--color-text-primary);
-      }
-
-      .progress-message {
-        margin-top: 10px;
-        color: var(--color-text-secondary);
-        font-style: italic;
-      }
-    }
-
-    .import-results {
-      margin-bottom: 20px;
-
-      .results-card {
-        .results-content {
-          .result-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 4px;
-
-            &.success {
-              background-color: var(--color-success-50);
-              color: var(--color-success-600);
-            }
-
-            &.warning {
-              background-color: var(--color-warning-50);
-              color: var(--color-warning-600);
-            }
-
-            &.info {
-              background-color: var(--color-gray-100);
-              color: var(--color-gray-400);
-            }
-
-            &.time {
-              background-color: var(--color-gray-100);
-              color: var(--color-text-secondary);
-            }
-
-            .el-icon {
-              margin-right: 8px;
-            }
-
-            span {
-              font-weight: 500;
-            }
-          }
-        }
-      }
-    }
-
-    .import-details {
-      margin-bottom: 20px;
-
-      .details-card {
-        .details-content {
-          .detail-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 8px;
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 14px;
-
-            &.error {
-              background-color: var(--color-error-50);
-              color: var(--color-error-600);
-              border: 1px solid var(--color-error-500);
-            }
-
-            &.warning {
-              background-color: var(--color-warning-50);
-              color: var(--color-warning-600);
-              border: 1px solid var(--color-warning-500);
-            }
-
-            .el-icon {
-              margin-right: 8px;
-              margin-top: 2px;
-              flex-shrink: 0;
-            }
-
-            span {
-              line-height: 1.4;
-            }
-          }
-        }
-      }
-    }
-
-    .import-actions {
-      text-align: center;
-      margin: 30px 0;
-    }
-
-    .people-count {
-      text-align: center;
-      margin-top: 20px;
-    }
-  }
-
   .step-actions {
     text-align: center;
     margin-top: 30px;
+  }
+
+  .warning-text {
+    color: var(--el-color-danger);
+    font-weight: 500;
   }
 }
 </style>

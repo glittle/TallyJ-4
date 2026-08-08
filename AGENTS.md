@@ -57,7 +57,7 @@ All server code lives under `backend/`:
   - Authorization handlers, custom middleware, JSON localization provider, EF migrations and seeder, etc.
 
 **Practical rule of thumb**:
-Virtually all C# changes for features (election-scoped or otherwise) happen inside the single `backend/` project. The test project is `Backend.Tests/`. Update DI registration lists in `backend/Program.cs` (`RegisterApplicationServices`, `RegisterAuthServices`, `RegisterBackgroundServices`) when adding new services.
+Virtually all C# changes for features (election-scoped or otherwise) happen inside the single `backend/` project. The test project is `Backend.Tests/`. Update DI registration lists in `backend/Program.ServiceRegistration.cs` (`ProgramServiceRegistration.RegisterApplicationServices`, `RegisterAuthServices`, `RegisterBackgroundServices`) when adding new services.
 
 ## Core conventions
 
@@ -140,7 +140,7 @@ Any change to backend DTOs, controllers, or new endpoints requires regenerating 
 **Steps (clean dev environment)**:
 
 1. Start (or restart) the backend in the **Development** environment (`dotnet run` from the `backend/` directory).  
-   On startup it automatically executes `app.WriteOpenApiSpecToFile(...)` which writes the live contract to `frontend/openApi/tallyj.json` (see `backend/Program.cs:470-472`).
+   On startup it automatically executes `app.WriteOpenApiSpecToFile(...)` which writes the live contract to `frontend/openApi/tallyj.json` (see `backend/Program.AppPipeline.cs`).
 
 2. In another terminal: `cd frontend`
 
@@ -197,7 +197,7 @@ The backend merges settings from many locations (later sources override earlier 
 - User secrets and environment variables (the recommended place for all secrets: `ConnectionStrings:TallyJ4`, `Jwt:Key`, `Google:*`, `Twilio:*`, `SuperAdmin:Emails`, etc.)
 - `launchSettings.json` only affects `dotnet run` / `dotnet watch` profiles.
 
-`backend/Program.cs:59-86` (and the startup logging that reports exactly which files were loaded) is the authoritative implementation. For local development work, prefer user secrets or a machine-specific file so you never accidentally commit secrets.
+`backend/Program.cs` `ConfigureServices` (config file loading + the startup logging that reports exactly which files were loaded) is the authoritative implementation. For local development work, prefer user secrets or a machine-specific file so you never accidentally commit secrets.
 
 ## Shell environment — detect before running commands
 

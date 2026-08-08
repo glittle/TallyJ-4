@@ -1,0 +1,274 @@
+/* Design tokens (light theme :root) */
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+:root {
+  /* Typography */
+  --font-family-primary:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --font-family-mono:
+    "JetBrains Mono", "Fira Code", "SF Mono", Monaco, "Cascadia Code", monospace;
+
+  --font-size-xs: 0.75rem;
+  /* 12px */
+  --font-size-sm: 0.875rem;
+  /* 14px */
+  --font-size-base: 1rem;
+  /* 16px */
+  --font-size-lg: 1.125rem;
+  /* 18px */
+  --font-size-xl: 1.25rem;
+  /* 20px */
+  --font-size-2xl: 1.5rem;
+  /* 24px */
+  --font-size-3xl: 1.875rem;
+  /* 30px */
+  --font-size-4xl: 2.25rem;
+  /* 36px */
+
+  /* Shared app chrome titles (sidebar logo + global header page title) */
+  --font-size-app-title: var(--font-size-xl);
+  --font-weight-app-title: var(--font-weight-semibold);
+
+  --normal-max-width: 1440px;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+
+  /* Colors - Primary Palette (Navy Blue, logo-aligned) */
+  --color-primary-50: #eef2f9;
+  --color-primary-100: #d4dff0;
+  --color-primary-200: #a8bfe1;
+  --color-primary-300: #739dcf;
+  --color-primary-400: #3f7abe;
+  --color-primary-500: #2563a8;
+  --color-primary-600: #1e4f8c;
+  --color-primary-700: #1c3a6a;
+  --color-primary-800: #14284d;
+  --color-primary-900: #0c1830;
+
+  /* Colors - Accent Orange (logo-aligned) */
+  --color-orange-50: #fff5eb;
+  --color-orange-100: #fedfba;
+  --color-orange-200: #fdc075;
+  --color-orange-300: #fca044;
+  --color-orange-400: #f88420;
+  --color-orange-500: #f47920;
+  --color-orange-600: #d96510;
+  --color-orange-700: #b74f08;
+  --color-orange-800: #8f3c05;
+  --color-orange-900: #682c03;
+
+  /* Colors - Accent Green (logo-aligned) */
+  --color-green-50: #f4f9e9;
+  --color-green-100: #e4f0c3;
+  --color-green-200: #cde397;
+  --color-green-300: #b3d369;
+  --color-green-400: #9eca50;
+  --color-green-500: #8dc63f;
+  --color-green-600: #74a833;
+  --color-green-700: #5c8a27;
+  --color-green-800: #446c1d;
+  --color-green-900: #2e4e12;
+
+  /* Colors - Neutral Gray */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  /* Colors - Semantic */
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+
+  --color-error-50: #fef2f2;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+
+  /* Colors - Backgrounds */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8fafc;
+  --color-bg-tertiary: #f1f5f9;
+  --color-bg-overlay: #efeeef;
+
+  /* Colors - Election Stage */
+  --color-stage-setup: #2563a8;
+  --color-stage-setup-bg: #eaf1fa;
+  --color-stage-gather: #d97706;
+  --color-stage-gather-bg: #fff4e6;
+  --color-stage-process: #8a3a1f;
+  --color-stage-process-bg: #f6ece6;
+
+  /* Colors - Sidebar */
+  --color-sidebar-bg: #eef2f9;
+  --color-sidebar-text: #374151;
+  --color-sidebar-text-active: #1c3a6a;
+  --color-sidebar-border: #d4dff0;
+  --color-sidebar-hover: #e0e8f4;
+  --color-sidebar-active: #d4dff0;
+
+  /* Front Desk layout — sidebar subdued, main content elevated */
+  --front-desk-content-max-width: 1200px;
+  --front-desk-table-max-width: 900px;
+  --color-frontdesk-sidebar-bg: #e8ecf2;
+  --color-frontdesk-sidebar-border: var(--color-gray-200);
+  --color-frontdesk-main-bg: var(--color-bg-primary);
+  --color-frontdesk-toolbar-bg: var(--color-bg-primary);
+  --color-frontdesk-toolbar-border: var(--color-gray-200);
+  --color-frontdesk-search-bg: var(--color-bg-primary);
+  --color-frontdesk-search-border: var(--color-primary-200);
+  --color-frontdesk-search-shadow: 0 2px 8px rgba(28, 58, 106, 0.08);
+  --color-frontdesk-row-highlight: var(--color-warning-500);
+  --color-frontdesk-filter-active-bg: var(--el-color-primary);
+  --color-frontdesk-filter-active-text: var(--color-text-inverse);
+  --color-frontdesk-row-selected-bg: var(--el-color-primary-light-9);
+  --color-frontdesk-row-selected-text: var(--el-text-color-primary);
+
+  /* Colors - Public Layout */
+  // --color-public-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --color-public-bg-gradient: #FDFCF4;
+  --color-public-header-bg: rgba(255, 255, 255, 0.8);
+  --color-public-text: var(--color-primary-800);
+  --color-public-header-text: var(--color-primary-700);
+
+  /* Colors - Text */
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-tertiary: var(--color-gray-500);
+  --color-text-inverse: #ffffff;
+
+  /* Spacing */
+  --spacing-1: 0.25rem;
+  /* 4px */
+  --spacing-2: 0.5rem;
+  /* 8px */
+  --spacing-3: 0.75rem;
+  /* 12px */
+  --spacing-4: 1rem;
+  /* 16px */
+  --spacing-5: 1.25rem;
+  /* 20px */
+  --spacing-6: 1.5rem;
+  /* 24px */
+  --spacing-8: 2rem;
+  /* 32px */
+  --spacing-10: 2.5rem;
+  /* 40px */
+  --spacing-12: 3rem;
+  /* 48px */
+  --spacing-16: 4rem;
+  /* 64px */
+  --spacing-20: 5rem;
+  /* 80px */
+  --spacing-24: 6rem;
+  /* 96px */
+
+  /* Border Radius */
+  --radius-sm: 0.125rem;
+  /* 2px */
+  --radius-md: 0.375rem;
+  /* 6px */
+  --radius-lg: 0.5rem;
+  /* 8px */
+  --radius-xl: 0.75rem;
+  /* 12px */
+  --radius-2xl: 1rem;
+  /* 16px */
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+
+  /* Legacy support */
+  font-family: var(--font-family-primary);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-normal);
+
+  color-scheme: light;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Element Plus light theme variables */
+  --el-color-primary: #2563a8;
+  --el-color-primary-dark-2: var(--color-primary-600);
+  --el-color-primary-light-3: var(--color-primary-400);
+  --el-color-primary-light-5: var(--color-primary-300);
+  --el-color-primary-light-7: var(--color-primary-200);
+  --el-color-primary-light-8: var(--color-primary-100);
+  --el-color-primary-light-9: var(--color-primary-50);
+
+  --el-bg-color: var(--color-bg-primary);
+  --el-bg-color-page: var(--color-bg-secondary);
+  --el-bg-color-overlay: rgba(0, 0, 0, 0.5);
+
+  --el-text-color-primary: var(--color-gray-900);
+  --el-text-color-regular: var(--color-gray-700);
+  --el-text-color-secondary: var(--color-gray-600);
+  --el-text-color-placeholder: var(--color-gray-400);
+  --el-text-color-disabled: var(--color-gray-300);
+  --el-input-text-color: var(--color-gray-900);
+
+  --el-border-color: var(--color-gray-300);
+  --el-border-color-light: var(--color-gray-200);
+  --el-border-color-lighter: var(--color-gray-200);
+  --el-border-color-extra-light: var(--color-gray-100);
+
+  --el-fill-color-blank: var(--color-bg-primary);
+  --el-fill-color-light: var(--color-gray-50);
+  --el-fill-color-lighter: var(--color-gray-100);
+  --el-fill-color-extra-light: var(--color-gray-50);
+  --el-fill-color-dark: var(--color-gray-100);
+  --el-fill-color-darker: var(--color-gray-200);
+
+  --el-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  --el-box-shadow-light:
+    0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+  --el-box-shadow-lighter: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+  --el-box-shadow-dark: 0 2px 12px 0 rgba(0, 0, 0, 0.15);
+}

@@ -69,12 +69,7 @@ describe("signalrService dashboard multi-join", () => {
     const { signalrService } = await import("../signalrService");
     await signalrService.connectToMainHub();
 
-    await signalrService.joinDashboardElections([
-      "e1",
-      "e2",
-      "e1",
-      "  ",
-    ]);
+    await signalrService.joinDashboardElections(["e1", "e2", "e1", "  "]);
 
     expect(invoke).toHaveBeenCalledWith("JoinElections", ["e1", "e2"]);
 
