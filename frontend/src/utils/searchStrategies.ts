@@ -406,7 +406,9 @@ function areaBonus(searchTerm: string, person: SearchablePersonDto): number {
     return 0;
   }
 
-  const terms = splitSearchTerms(searchTerm);
+  // Require a meaningful term length. Single letters like "g" / "l" match almost
+  // any area string and unfairly push some names to a higher weight band.
+  const terms = splitSearchTerms(searchTerm).filter((term) => term.length >= 3);
   if (terms.some((term) => area.includes(term) || area.startsWith(term))) {
     return 5;
   }
