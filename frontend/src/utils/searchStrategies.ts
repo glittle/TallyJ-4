@@ -6,6 +6,11 @@ export interface SearchResult {
   matchedStrategy: string;
 }
 
+/**
+ * Normalize for language-agnostic matching:
+ * lowercase, collapse whitespace, NFD + strip combining marks (diacritics).
+ * Works for Latin accented names (José↔Jose) and leaves non-Latin scripts intact.
+ */
 export function normalizeSearchText(text: string): string {
   return text
     .toLowerCase()
@@ -31,8 +36,16 @@ export interface FrontDeskSearchableVoter {
   fullName?: string | null;
   bahaiId?: string | null;
   area?: string | null;
+  /** Optional; when present, searchable as a primary field. */
+  otherInfo?: string | null;
 }
 
+/**
+ * Front-desk filter.
+ * Primary fields: fullName, bahaiId, otherInfo.
+ * Area may satisfy a term only when at least one other term matched a primary field
+ * (area alone never matches).
+ */
 export function matchesFrontDeskVoterSearch(
   voter: FrontDeskSearchableVoter,
   query: string,
@@ -46,23 +59,44 @@ export function matchesFrontDeskVoterSearch(
   const normalizedName = normalizeSearchText(fullName);
   const nameParts = tokenizeNameForSearch(fullName);
   const bahaiId = voter.bahaiId ? normalizeSearchText(voter.bahaiId) : "";
+  const otherInfo = voter.otherInfo
+    ? normalizeSearchText(voter.otherInfo)
+    : "";
+  const area = voter.area ? normalizeSearchText(voter.area) : "";
 
-  const termMatchesVoter = (term: string): boolean =>
+  const termMatchesPrimary = (term: string): boolean =>
     nameParts.some((part) => part.startsWith(term)) ||
     normalizedName.includes(term) ||
-    (bahaiId.length > 0 && bahaiId.includes(term));
+    (bahaiId.length > 0 && bahaiId.includes(term)) ||
+    (otherInfo.length > 0 && otherInfo.includes(term));
 
+  const termMatchesArea = (term: string): boolean =>
+    area.length > 0 && area.includes(term);
+
+  // Single term: primary only (area alone is not enough)
   if (terms.length === 1) {
-    return termMatchesVoter(terms[0]);
+    return termMatchesPrimary(terms[0]);
   }
 
-  return terms.every(
-    (term) =>
-      nameParts.some((part) => part.startsWith(term)) ||
-      (bahaiId.length > 0 && bahaiId.includes(term)),
-  );
+  // Multi-term: every term must match primary or area, and at least one primary match
+  let anyPrimary = false;
+  for (const term of terms) {
+    const primary = termMatchesPrimary(term);
+    if (primary) {
+      anyPrimary = true;
+      continue;
+    }
+    if (!termMatchesArea(term)) {
+      return false;
+    }
+  }
+  return anyPrimary;
 }
 
+/**
+ * Damerau–Levenshtein distance (includes adjacent transpositions).
+ * Better for common typos like "Smtih" → "Smith".
+ */
 export function calculateLevenshteinDistance(a: string, b: string): number {
   if (a.length === 0) {
     return b.length;
@@ -83,14 +117,21 @@ export function calculateLevenshteinDistance(a: string, b: string): number {
 
   for (let i = 1; i <= b.length; i++) {
     for (let j = 1; j <= a.length; j++) {
-      if (b.charAt(i - 1) === a.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1,
-        );
+      const cost = b.charAt(i - 1) === a.charAt(j - 1) ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j - 1] + cost, // substitution
+        matrix[i][j - 1] + 1, // insertion
+        matrix[i - 1][j] + 1, // deletion
+      );
+
+      // Transposition of adjacent characters
+      if (
+        i > 1 &&
+        j > 1 &&
+        b.charAt(i - 1) === a.charAt(j - 2) &&
+        b.charAt(i - 2) === a.charAt(j - 1)
+      ) {
+        matrix[i][j] = Math.min(matrix[i][j], matrix[i - 2][j - 2] + cost);
       }
     }
   }
@@ -222,6 +263,40 @@ export function otherNamesMatch(
   return null;
 }
 
+/**
+ * Match against otherInfo (notes / free-text on the person).
+ * Weight slightly below otherNames so true name matches stay preferred.
+ */
+export function otherInfoMatch(
+  searchTerm: string,
+  person: SearchablePersonDto,
+): number | null {
+  const normalizedSearch = normalizeSearchText(searchTerm);
+  if (normalizedSearch.length === 0) {
+    return null;
+  }
+
+  const otherInfo = normalizeSearchText(person.otherInfo || "");
+  if (!otherInfo) {
+    return null;
+  }
+
+  if (otherInfo.includes(normalizedSearch)) {
+    return 68;
+  }
+
+  // Multi-token: every search word appears somewhere in otherInfo
+  const searchWords = normalizedSearch.split(" ").filter((w) => w.length > 0);
+  if (
+    searchWords.length > 1 &&
+    searchWords.every((w) => otherInfo.includes(w))
+  ) {
+    return 68;
+  }
+
+  return null;
+}
+
 export function phoneticMatch(
   searchTerm: string,
   person: SearchablePersonDto,
@@ -240,6 +315,7 @@ export function phoneticMatch(
     return null;
   }
 
+  // Soundex is Latin-oriented; non-Latin words produce empty codes and are skipped
   const searchSoundex = generateSoundexCodesForWords(searchWords);
   if (searchSoundex.length === 0) {
     return null;
@@ -293,6 +369,23 @@ export function fuzzyMatch(
   return null;
 }
 
+/**
+ * Small boost when area matches a search term, but only if a primary strategy
+ * already matched. Area alone never produces a result.
+ */
+function areaBonus(searchTerm: string, person: SearchablePersonDto): number {
+  const area = normalizeSearchText(person.area || "");
+  if (!area) {
+    return 0;
+  }
+
+  const terms = splitSearchTerms(searchTerm);
+  if (terms.some((term) => area.includes(term) || area.startsWith(term))) {
+    return 5;
+  }
+  return 0;
+}
+
 function generateSoundexCodesForWords(words: string[]): string[] {
   return words
     .map((word) => generateSoundex(word))
@@ -304,6 +397,7 @@ function generateSoundex(word: string): string {
     return "";
   }
 
+  // Latin letters only — non-Latin names rely on normalized substring/prefix/token matching
   const cleaned = word.toUpperCase().replace(/[^A-Z]/g, "");
   if (cleaned.length === 0) {
     return "";
@@ -364,6 +458,7 @@ export function applyAllStrategies(
     { name: "wordBoundary", fn: wordBoundaryMatch },
     { name: "substring", fn: substringMatch },
     { name: "otherNames", fn: otherNamesMatch },
+    { name: "otherInfo", fn: otherInfoMatch },
     { name: "phonetic", fn: phoneticMatch },
     { name: "fuzzy", fn: fuzzyMatch },
   ];
@@ -380,6 +475,8 @@ export function applyAllStrategies(
   }
 
   if (bestWeight > 0) {
+    // Area may boost ranking but never create a match by itself
+    bestWeight = Math.min(100, bestWeight + areaBonus(searchTerm, person));
     return {
       person,
       weight: bestWeight,
