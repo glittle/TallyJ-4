@@ -303,10 +303,11 @@ async function initializeOnlineElectionListener() {
     frontDeskConnection = await signalrService.connectToFrontDeskHub();
     onlineElectionHandler = (data: unknown) => {
       const payload = data as { electionGuid?: string } | null;
+      if (!payload?.electionGuid) {
+        return;
+      }
       if (
-        payload?.electionGuid &&
-        String(payload.electionGuid).toLowerCase() !==
-          electionGuid.toLowerCase()
+        String(payload.electionGuid).toLowerCase() !== electionGuid.toLowerCase()
       ) {
         return;
       }
