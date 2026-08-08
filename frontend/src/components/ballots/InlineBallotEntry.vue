@@ -748,7 +748,6 @@ onMounted(async () => {
                     <el-icon><WarningFilled /></el-icon>
                   </span>
                   <el-button
-                    type="danger"
                     :icon="Delete"
                     circle
                     plain
@@ -1048,6 +1047,17 @@ onMounted(async () => {
           display: flex;
           align-items: center;
           gap: var(--spacing-2, 8px);
+
+          .el-button {
+            opacity: 0.65;
+          }
+
+          .el-button:hover {
+            opacity: 1;
+            background-color: var(--el-color-danger-light-9);
+            color: var(--el-color-danger);
+            border-color: var(--el-color-danger);
+          }
 
           .status-badge {
             display: inline-flex;
