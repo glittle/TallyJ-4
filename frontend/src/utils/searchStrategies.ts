@@ -172,6 +172,11 @@ export function exactMatch(
   return null;
 }
 
+/**
+ * Prefix of any name token (first, last, other names) — not only the start of
+ * the concatenated _searchText. Otherwise "ze" ranks Zeinab (first name first
+ * in _searchText) higher than Zebarjadi (last name) for no good reason.
+ */
 export function prefixMatch(
   searchTerm: string,
   person: SearchablePersonDto,
@@ -182,8 +187,13 @@ export function prefixMatch(
     return null;
   }
 
-  const normalizedPersonText = normalizeSearchText(person._searchText);
+  const tokens = getPersonNameTokens(person);
+  if (tokens.some((token) => token.startsWith(normalizedSearch))) {
+    return 90;
+  }
 
+  // Fallback: full combined text (covers unusual tokenizations)
+  const normalizedPersonText = normalizeSearchText(person._searchText);
   if (normalizedPersonText.startsWith(normalizedSearch)) {
     return 90;
   }
