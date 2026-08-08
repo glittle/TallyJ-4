@@ -82,21 +82,27 @@ const maxResultVoteCount = computed(() => {
   let max = 0;
   for (const person of searchResults.value) {
     const count = person.voteCount ?? 0;
-    if (count > max) max = count;
+    if (count > max) {
+      max = count;
+    }
   }
   return max;
 });
 
 function relativePopularityWidth(person: SearchablePersonDto): number {
   const count = person.voteCount ?? 0;
-  if (count <= 0 || maxResultVoteCount.value <= 0) return 0;
+  if (count <= 0 || maxResultVoteCount.value <= 0) {
+    return 0;
+  }
   return Math.max((count / maxResultVoteCount.value) * 100, 8);
 }
 
 const personGuidsOnBallot = computed(() => {
   const set = new Set<string>();
   for (const vote of votes.value) {
-    if (vote?.personGuid) set.add(vote.personGuid);
+    if (vote?.personGuid) {
+      set.add(vote.personGuid);
+    }
   }
   return set;
 });
@@ -108,9 +114,13 @@ function buildVoteMap(includeOptimistic: boolean): Map<number, VoteDto> {
   }
   if (includeOptimistic) {
     for (const localVote of votes.value) {
-      if (!localVote || localVote.rowId !== 0) continue;
+      if (!localVote || localVote.rowId !== 0) {
+        continue;
+      }
       const persistedVote = merged.get(localVote.positionOnBallot);
-      if (persistedVote && persistedVote.rowId > 0) continue;
+      if (persistedVote && persistedVote.rowId > 0) {
+        continue;
+      }
       merged.set(localVote.positionOnBallot, localVote);
     }
   }
@@ -119,42 +129,78 @@ function buildVoteMap(includeOptimistic: boolean): Map<number, VoteDto> {
 
 function computeSlotCount(merged: Map<number, VoteDto>): number {
   const highestFilled = merged.size > 0 ? Math.max(...merged.keys()) : 0;
-  return Math.min(MAX_BALLOT_SLOTS, Math.max(props.requiredVotes, highestFilled));
+  return Math.min(
+    MAX_BALLOT_SLOTS,
+    Math.max(props.requiredVotes, highestFilled),
+  );
 }
 
 function rebuildVoteSlots(includeOptimistic = true) {
   const merged = buildVoteMap(includeOptimistic);
   const slots = computeSlotCount(merged);
   const voteArray: (VoteDto | null)[] = [];
-  for (let i = 1; i <= slots; i++) voteArray.push(merged.get(i) ?? null);
+  for (let i = 1; i <= slots; i++) {
+    voteArray.push(merged.get(i) ?? null);
+  }
   votes.value = voteArray;
 }
 
-watch(() => props.ballot, () => { rebuildVoteSlots(true); reorderingVotes.value = false; }, { immediate: true, deep: true });
-watch(() => props.ballot.ballotGuid, () => { searchQuery.value = ""; selectedSearchIndex.value = 0; void focusSearchInput(); });
-watch(() => props.resyncKey, () => { rebuildVoteSlots(false); reorderingVotes.value = false; });
+watch(
+  () => props.ballot,
+  () => {
+    rebuildVoteSlots(true);
+    reorderingVotes.value = false;
+  },
+  { immediate: true, deep: true },
+);
+watch(
+  () => props.ballot.ballotGuid,
+  () => {
+    searchQuery.value = "";
+    selectedSearchIndex.value = 0;
+    void focusSearchInput();
+  },
+);
+watch(
+  () => props.resyncKey,
+  () => {
+    rebuildVoteSlots(false);
+    reorderingVotes.value = false;
+  },
+);
 
-const hasUnpersistedVote = computed(() => votes.value.some((vote) => vote !== null && vote.rowId === 0));
+const hasUnpersistedVote = computed(() =>
+  votes.value.some((vote) => vote !== null && vote.rowId === 0),
+);
 const canReorderVotes = computed(() => !hasUnpersistedVote.value);
 
 const duplicatePersonGuids = computed(() => {
-  const personGuids = votes.value.filter((v): v is VoteDto => v !== null && !!v.personGuid).map((v) => v.personGuid!);
+  const personGuids = votes.value
+    .filter((v): v is VoteDto => v !== null && !!v.personGuid)
+    .map((v) => v.personGuid!);
   const duplicates: string[] = [];
   const seen = new Set<string>();
   for (const guid of personGuids) {
-    if (seen.has(guid)) duplicates.push(guid);
-    else seen.add(guid);
+    if (seen.has(guid)) {
+      duplicates.push(guid);
+    } else {
+      seen.add(guid);
+    }
   }
   return duplicates;
 });
 
 function findNextEmptyPosition(): number {
   for (let i = 0; i < votes.value.length; i++) {
-    if (!votes.value[i]) return i + 1;
+    if (!votes.value[i]) {
+      return i + 1;
+    }
   }
   const merged = buildVoteMap(true);
   const highestFilled = merged.size > 0 ? Math.max(...merged.keys()) : 0;
-  if (highestFilled < MAX_BALLOT_SLOTS) return highestFilled + 1;
+  if (highestFilled < MAX_BALLOT_SLOTS) {
+    return highestFilled + 1;
+  }
   return -1;
 }
 
@@ -165,14 +211,25 @@ function isPersistedVote(vote: VoteDto | null | undefined): vote is VoteDto {
   return !!vote && vote.rowId > 0;
 }
 function canDropOnIndex(targetIndex: number): boolean {
-  if (!canReorderVotes.value || dragSourceIndex.value === null || dragSourceIndex.value === targetIndex) return false;
-  return isPersistedVote(votes.value[dragSourceIndex.value]) && isPersistedVote(votes.value[targetIndex]);
+  if (
+    !canReorderVotes.value ||
+    dragSourceIndex.value === null ||
+    dragSourceIndex.value === targetIndex
+  ) {
+    return false;
+  }
+  return (
+    isPersistedVote(votes.value[dragSourceIndex.value]) &&
+    isPersistedVote(votes.value[targetIndex])
+  );
 }
 
 function addVoteToBallot(vote: VoteDto, options?: VoteAddedOptions) {
   const emptyPos = findNextEmptyPosition();
   if (emptyPos === -1) {
-    if (votes.value.length >= MAX_BALLOT_SLOTS) showWarningMessage(t("ballots.ballotFull"));
+    if (votes.value.length >= MAX_BALLOT_SLOTS) {
+      showWarningMessage(t("ballots.ballotFull"));
+    }
     return false;
   }
   const voteWithPosition: VoteDto = { ...vote, positionOnBallot: emptyPos };
@@ -180,7 +237,9 @@ function addVoteToBallot(vote: VoteDto, options?: VoteAddedOptions) {
   merged.set(emptyPos, voteWithPosition);
   const slots = computeSlotCount(merged);
   const voteArray: (VoteDto | null)[] = [];
-  for (let i = 1; i <= slots; i++) voteArray.push(merged.get(i) ?? null);
+  for (let i = 1; i <= slots; i++) {
+    voteArray.push(merged.get(i) ?? null);
+  }
   votes.value = voteArray;
   emit("vote-added", voteWithPosition, options);
   return true;
@@ -199,9 +258,13 @@ async function handlePersonSelected(person: SearchablePersonDto) {
     personGuid: person.personGuid,
     personFullName: person.fullName,
     statusCode: isSpoiled ? "Spoiled" : "ok",
-    ineligibleReasonCode: isSpoiled ? person.ineligibleReasonCode || "X01" : undefined,
+    ineligibleReasonCode: isSpoiled
+      ? person.ineligibleReasonCode || "X01"
+      : undefined,
   };
-  if (!addVoteToBallot(vote)) return;
+  if (!addVoteToBallot(vote)) {
+    return;
+  }
   searchQuery.value = "";
   selectedSearchIndex.value = 0;
   await nextTick();
@@ -235,7 +298,11 @@ function handleKeyDown(e: KeyboardEvent) {
     }
   } else if (e.key === "Enter") {
     e.preventDefault();
-    if (searchResults.value.length > 0 && selectedSearchIndex.value >= 0 && selectedSearchIndex.value < searchResults.value.length) {
+    if (
+      searchResults.value.length > 0 &&
+      selectedSearchIndex.value >= 0 &&
+      selectedSearchIndex.value < searchResults.value.length
+    ) {
       handlePersonSelected(searchResults.value[selectedSearchIndex.value]);
     }
   } else if (e.key === "Escape") {
@@ -250,7 +317,9 @@ function scrollToSelected() {
     const list = searchResultsListRef.value;
     if (list) {
       const selected = list.querySelector(".is-selected") as HTMLElement;
-      if (selected) selected.scrollIntoView({ block: "nearest" });
+      if (selected) {
+        selected.scrollIntoView({ block: "nearest" });
+      }
     }
   });
 }
@@ -265,7 +334,9 @@ function handleSearchListMouseMove() {
 }
 
 function handleSearchItemMouseOver(index: number) {
-  if (ignoreMouseHover.value) return;
+  if (ignoreMouseHover.value) {
+    return;
+  }
   selectedSearchIndex.value = index;
 }
 
@@ -274,7 +345,9 @@ function handleVoteRemoved(positionOnBallot: number) {
   merged.delete(positionOnBallot);
   const slots = computeSlotCount(merged);
   const voteArray: (VoteDto | null)[] = [];
-  for (let i = 1; i <= slots; i++) voteArray.push(merged.get(i) ?? null);
+  for (let i = 1; i <= slots; i++) {
+    voteArray.push(merged.get(i) ?? null);
+  }
   votes.value = voteArray;
   emit("vote-removed", positionOnBallot);
   searchInputRef.value?.focus();
@@ -282,12 +355,21 @@ function handleVoteRemoved(positionOnBallot: number) {
 
 function handleDragStart(index: number) {
   const vote = votes.value[index];
-  if (!canReorderVotes.value || !isPersistedVote(vote) || reorderingVotes.value) return;
+  if (
+    !canReorderVotes.value ||
+    !isPersistedVote(vote) ||
+    reorderingVotes.value
+  ) {
+    return;
+  }
   dragSourceIndex.value = index;
   dragOverIndex.value = null;
 }
 function handleDragOver(event: DragEvent, index: number) {
-  if (!canDropOnIndex(index)) { dragOverIndex.value = null; return; }
+  if (!canDropOnIndex(index)) {
+    dragOverIndex.value = null;
+    return;
+  }
   event.preventDefault();
   dragOverIndex.value = index;
 }
@@ -303,8 +385,12 @@ function handleDrop(targetIndex: number) {
     return;
   }
   const persistedVotes = getPersistedVotes();
-  const sourceFilledIndex = persistedVotes.findIndex((vote) => vote.rowId === sourceVote.rowId);
-  const targetFilledIndex = persistedVotes.findIndex((vote) => vote.rowId === targetVote.rowId);
+  const sourceFilledIndex = persistedVotes.findIndex(
+    (vote) => vote.rowId === sourceVote.rowId,
+  );
+  const targetFilledIndex = persistedVotes.findIndex(
+    (vote) => vote.rowId === targetVote.rowId,
+  );
   if (sourceFilledIndex === -1 || targetFilledIndex === -1) {
     dragSourceIndex.value = null;
     return;
@@ -313,7 +399,10 @@ function handleDrop(targetIndex: number) {
   const [movedVote] = reordered.splice(sourceFilledIndex, 1);
   reordered.splice(targetFilledIndex, 0, movedVote);
   reorderingVotes.value = true;
-  emit("votes-reordered", reordered.map((vote) => vote.rowId));
+  emit(
+    "votes-reordered",
+    reordered.map((vote) => vote.rowId),
+  );
   dragSourceIndex.value = null;
   dragOverIndex.value = null;
 }
@@ -332,10 +421,16 @@ async function handleDeleteBallot() {
     await ElMessageBox.confirm(
       t("ballots.deleteConfirm", { code: props.ballot.ballotCode }),
       t("common.warning"),
-      { confirmButtonText: t("common.delete"), cancelButtonText: t("common.cancel"), type: "warning" },
+      {
+        confirmButtonText: t("common.delete"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      },
     );
   } catch (error) {
-    if (error !== "cancel") handleApiError(error);
+    if (error !== "cancel") {
+      handleApiError(error);
+    }
     return;
   }
   deletingBallot.value = true;
@@ -430,7 +525,11 @@ onMounted(async () => {
     />
 
     <div v-if="cacheError" class="inline-ballot-entry__error">
-      <el-alert type="danger" :title="$t('ballots.cacheLoadError')" :closable="false" />
+      <el-alert
+        type="danger"
+        :title="$t('ballots.cacheLoadError')"
+        :closable="false"
+      />
     </div>
 
     <div v-else class="inline-ballot-entry__content ballot-entry-layout">
@@ -460,7 +559,10 @@ onMounted(async () => {
             class="search-results"
             @mousemove="handleSearchListMouseMove"
           >
-            <div v-if="searchQuery && searchResults.length === 0" class="no-results">
+            <div
+              v-if="searchQuery && searchResults.length === 0"
+              class="no-results"
+            >
               {{ $t("ballots.noMatchesFound") }}
             </div>
             <div
@@ -498,10 +600,7 @@ onMounted(async () => {
                   :title="$t('ballots.ineligible')"
                 >
                   {{
-                    getIneligibleReasonLabel(
-                      $t,
-                      person.ineligibleReasonCode,
-                    )
+                    getIneligibleReasonLabel($t, person.ineligibleReasonCode)
                   }}
                 </span>
                 <div
@@ -515,14 +614,22 @@ onMounted(async () => {
         </div>
 
         <div class="new-ballot-action">
-          <el-button type="primary" :loading="creatingNewBallot" @click="handleNewBallot">
+          <el-button
+            type="primary"
+            :loading="creatingNewBallot"
+            @click="handleNewBallot"
+          >
             <el-icon><Plus /></el-icon>
             {{ $t("ballots.addNextBallot") }}
           </el-button>
         </div>
 
         <div class="add-name-action">
-          <el-button type="default" :disabled="!canAddVotes" @click="showAddPersonDrawer = true">
+          <el-button
+            type="default"
+            :disabled="!canAddVotes"
+            @click="showAddPersonDrawer = true"
+          >
             <el-icon><Plus /></el-icon>
             {{ $t("ballots.addName") }}
           </el-button>
@@ -535,12 +642,21 @@ onMounted(async () => {
             :loading="reviewToggleLoading"
             @click="toggleNeedsReview"
           >
-            {{ isNeedsReview ? $t("ballots.clearNeedsReview") : $t("ballots.markNeedsReview") }}
+            {{
+              isNeedsReview
+                ? $t("ballots.clearNeedsReview")
+                : $t("ballots.markNeedsReview")
+            }}
           </el-button>
         </div>
 
         <div class="delete-ballot-action">
-          <el-button type="danger" plain :loading="deletingBallot" @click="handleDeleteBallot">
+          <el-button
+            type="danger"
+            plain
+            :loading="deletingBallot"
+            @click="handleDeleteBallot"
+          >
             <el-icon><Delete /></el-icon>
             {{ $t("ballots.deleteBallot") }}
           </el-button>
@@ -550,7 +666,9 @@ onMounted(async () => {
       <div class="votes-panel">
         <div class="votes-panel-header">
           <h4>{{ $t("ballots.namesOnBallot") }}</h4>
-          <span class="ballot-id">{{ $t("ballots.ballotNum", { code: ballot.ballotCode }) }}</span>
+          <span class="ballot-id">{{
+            $t("ballots.ballotNum", { code: ballot.ballotCode })
+          }}</span>
         </div>
 
         <div class="votes-list">
@@ -560,13 +678,22 @@ onMounted(async () => {
             class="vote-row"
             :class="{
               'has-vote': !!vote,
-              'is-duplicate': vote && duplicatePersonGuids.includes(vote.personGuid!),
+              'is-duplicate':
+                vote && duplicatePersonGuids.includes(vote.personGuid!),
               'is-dragging': dragSourceIndex === index,
-              'is-drop-target-top': dragOverIndex === index && dragSourceIndex !== null && index < dragSourceIndex,
-              'is-drop-target-bottom': dragOverIndex === index && dragSourceIndex !== null && index > dragSourceIndex,
+              'is-drop-target-top':
+                dragOverIndex === index &&
+                dragSourceIndex !== null &&
+                index < dragSourceIndex,
+              'is-drop-target-bottom':
+                dragOverIndex === index &&
+                dragSourceIndex !== null &&
+                index > dragSourceIndex,
               'is-draggable': canReorderVotes && isPersistedVote(vote),
             }"
-            :draggable="canReorderVotes && isPersistedVote(vote) && !reorderingVotes"
+            :draggable="
+              canReorderVotes && isPersistedVote(vote) && !reorderingVotes
+            "
             @dragstart="handleDragStart(index)"
             @dragover="handleDragOver($event, index)"
             @drop="handleDrop(index)"
@@ -575,22 +702,43 @@ onMounted(async () => {
             <div class="vote-position">{{ index + 1 }}</div>
             <div class="vote-content">
               <template v-if="vote">
-                <span v-if="canReorderVotes && isPersistedVote(vote)" class="drag-handle" :title="$t('ballots.dragToReorder')">
+                <span
+                  v-if="canReorderVotes && isPersistedVote(vote)"
+                  class="drag-handle"
+                  :title="$t('ballots.dragToReorder')"
+                >
                   <el-icon><Rank /></el-icon>
                 </span>
                 <div class="vote-name-block">
-                  <span class="vote-name" :class="{ 'is-spoiled': isVoteDtoSpoiled(vote) }">
+                  <span
+                    class="vote-name"
+                    :class="{ 'is-spoiled': isVoteDtoSpoiled(vote) }"
+                  >
                     {{ vote.personFullName || getVoteSpoiledLabel($t, vote) }}
                   </span>
-                  <span v-if="isVoteDtoSpoiled(vote) && vote.personFullName" class="vote-ineligible-reason">
+                  <span
+                    v-if="isVoteDtoSpoiled(vote) && vote.personFullName"
+                    class="vote-ineligible-reason"
+                  >
                     {{ getVoteSpoiledLabel($t, vote) }}
                   </span>
                 </div>
                 <div class="vote-actions">
-                  <span v-if="duplicatePersonGuids.includes(vote.personGuid!)" class="status-badge warning" :title="$t('ballots.duplicateWarning')">
+                  <span
+                    v-if="duplicatePersonGuids.includes(vote.personGuid!)"
+                    class="status-badge warning"
+                    :title="$t('ballots.duplicateWarning')"
+                  >
                     <el-icon><WarningFilled /></el-icon>
                   </span>
-                  <el-button :icon="Delete" circle plain size="small" :aria-label="$t('common.delete')" @click="handleVoteRemoved(index + 1)" />
+                  <el-button
+                    :icon="Delete"
+                    circle
+                    plain
+                    size="small"
+                    :aria-label="$t('common.delete')"
+                    @click="handleVoteRemoved(index + 1)"
+                  />
                 </div>
               </template>
               <template v-else>
@@ -598,7 +746,9 @@ onMounted(async () => {
               </template>
             </div>
           </div>
-          <p v-if="canReorderVotes" class="votes-drag-hint">{{ $t("ballots.dragToReorder") }}</p>
+          <p v-if="canReorderVotes" class="votes-drag-hint">
+            {{ $t("ballots.dragToReorder") }}
+          </p>
         </div>
       </div>
     </div>
@@ -699,16 +849,16 @@ onMounted(async () => {
           background-color: var(--el-color-primary-light-9);
         }
 
-        &.is-on-ballot:not(.is-ineligible) {
-          .person-name {
-            color: var(--el-color-warning);
-          }
-        }
-
         &.is-ineligible {
           .person-name {
             color: var(--el-text-color-secondary);
             text-decoration: line-through;
+          }
+        }
+
+        &.is-on-ballot {
+          .person-name {
+            color: var(--el-color-warning);
           }
         }
 
@@ -761,12 +911,10 @@ onMounted(async () => {
           }
 
           .ineligible-badge {
-            background: var(--el-color-danger-light-9);
             color: var(--el-color-danger);
-            font-size: 11px;
+            font-size: 13px;
             padding: 2px 6px;
             border-radius: 4px;
-            border: 1px solid var(--el-color-danger-light-5);
             line-height: 1.3;
             max-width: 100%;
           }
