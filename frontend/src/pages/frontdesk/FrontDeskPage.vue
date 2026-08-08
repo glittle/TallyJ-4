@@ -11,6 +11,7 @@ import { useLocationStore } from "@/stores/locationStore";
 import type {
   CheckInVoterDto,
   FrontDeskVoterDto,
+  RegistrationHistoryEntryDto,
   UnregisterVoterDto,
   UpdatePersonFlagsDto,
 } from "@/types/FrontDesk";
@@ -20,8 +21,12 @@ import {
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
 import { formatNumber } from "@/utils/formatNumber";
+import {
+  formatRegistrationHistoryDetails,
+  sortRegistrationHistoryNewestFirst,
+} from "@/utils/formatRegistrationHistory";
 import { matchesFrontDeskVoterSearch } from "@/utils/searchStrategies";
-import { Location, Search } from "@element-plus/icons-vue";
+import { Check, Close, Location, Search } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -186,11 +191,11 @@ const { height: tableHeight, remeasure: remeasureTableHeight } =
   });
 const selectedIndex = ref(0);
 const selectedVoter = ref<FrontDeskVoterDto | null>(null);
-// const selectedVoterRegistrationHistory = computed(() =>
-//   sortRegistrationHistoryNewestFirst(
-//     selectedVoter.value?.registrationHistory ?? [],
-//   ),
-// );
+const selectedVoterRegistrationHistory = computed(() =>
+  sortRegistrationHistoryNewestFirst(
+    selectedVoter.value?.registrationHistory ?? [],
+  ),
+);
 const showRegistrationButtons = ref(false);
 const selectedButtonIndex = ref(0);
 const pendingVotingMethod = ref<string | null>(null);
@@ -725,10 +730,36 @@ function getNextDialogButtonIndex(
   return currentIndex;
 }
 
-// function getVotingMethodLabel(method?: string): string {
-//   const match = registrationTypes.value.find((type) => type.value === method);
-//   return match?.label ?? method ?? t("frontDesk.common.dash");
-// }
+function getDialogButtonIndex(value: string): number {
+  return dialogButtons.value.findIndex((button) => button.value === value);
+}
+
+function getDialogButtonKey(value: string): string {
+  return (
+    dialogButtons.value.find((button) => button.value === value)?.key ?? ""
+  );
+}
+
+function clickDialogButton(value: string) {
+  const button = dialogButtons.value.find(
+    (dialogButton) => dialogButton.value === value,
+  );
+  if (button) {
+    handleButtonClick(button);
+  }
+}
+
+function isDialogButtonKeyboardFocused(value: string): boolean {
+  if (pendingVotingMethod.value === value) {
+    return false;
+  }
+  return getDialogButtonIndex(value) === selectedButtonIndex.value;
+}
+
+function getVotingMethodLabel(method?: string): string {
+  const match = registrationTypes.value.find((type) => type.value === method);
+  return match?.label ?? method ?? t("frontDesk.common.dash");
+}
 
 function handleRegistrationKeydown(event: KeyboardEvent) {
   const buttons = dialogButtons.value;
@@ -944,13 +975,13 @@ async function handleButtonClick(button: DialogButton) {
   }
 }
 
-// function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
-//   if (!voter.flags) {
-//     return false;
-//   }
-//   const flags = voter.flags.split(",").map((f) => f.trim());
-//   return flags.includes(flag);
-// }
+function hasFlag(voter: FrontDeskVoterDto, flag: string): boolean {
+  if (!voter.flags) {
+    return false;
+  }
+  const flags = voter.flags.split(",").map((f) => f.trim());
+  return flags.includes(flag);
+}
 
 async function toggleFlag(flag: string) {
   if (!selectedVoter.value || !hasActiveTeller.value) {
@@ -1048,20 +1079,20 @@ async function handleUnregisterSelected() {
   }
 }
 
-// function formatTime(time?: string): string {
-//   if (!time) {
-//     return "";
-//   }
-//   const date = new Date(time);
-//   return date.toLocaleString();
-// }
+function formatTime(time?: string): string {
+  if (!time) {
+    return "";
+  }
+  const date = new Date(time);
+  return date.toLocaleString();
+}
 
-// function formatTimeline(entry: RegistrationHistoryEntryDto): string {
-//   return formatRegistrationHistoryDetails(entry, {
-//     t,
-//     getVotingMethodLabel,
-//   });
-// }
+function formatTimeline(entry: RegistrationHistoryEntryDto): string {
+  return formatRegistrationHistoryDetails(entry, {
+    t,
+    getVotingMethodLabel,
+  });
+}
 
 function handleLocationChange(locationGuid: string | undefined) {
   locationStore.selectLocation(locationGuid ?? null);
@@ -1337,8 +1368,197 @@ function openEnvelopeDialog(voter: FrontDeskVoterDto) {
             }}
           </div>
 
-          <!-- Registration overlay and other template content remains the same as original -->
-          <!-- (truncated here for brevity in this simulation, but full file would include the rest) -->
+          <div
+            v-if="showRegistrationButtons && selectedVoter"
+            ref="registrationOverlayRef"
+            class="registration-overlay"
+            tabindex="-1"
+            @keydown.capture="handleRegistrationKeydown"
+          >
+            <div class="registration-buttons">
+              <el-alert
+                v-if="!hasActiveTeller"
+                type="warning"
+                :title="$t('frontDesk.tellerRequired.title')"
+                :description="$t('frontDesk.tellerRequired.message')"
+                show-icon
+                :closable="false"
+                class="teller-required-alert"
+              />
+              <div class="registration-header">
+                <div class="selected-voter-info">
+                  <strong>
+                    {{
+                      selectedVoter.isCheckedIn
+                        ? $t("frontDesk.dialog.update")
+                        : $t("frontDesk.dialog.checkIn")
+                    }}
+                    {{ selectedVoter.fullName }}
+                  </strong>
+                  <span v-if="selectedVoter.bahaiId" class="voter-detail">
+                    {{ $t("frontDesk.dialog.id") }}
+                    {{ selectedVoter.bahaiId }}
+                  </span>
+                  <span v-if="selectedVoter.area" class="voter-detail">
+                    {{ $t("frontDesk.dialog.area") }}
+                    {{ selectedVoter.area }}
+                  </span>
+                </div>
+                <div class="registration-header-actions">
+                  <el-button
+                    v-if="selectedVoter.isCheckedIn"
+                    type="default"
+                    size="large"
+                    data-dialog-button="__unregister__"
+                    class="unregister-button dialog-option-button"
+                    :disabled="!hasActiveTeller"
+                    :class="{
+                      'keyboard-focused-button':
+                        isDialogButtonKeyboardFocused('__unregister__'),
+                    }"
+                    @click="handleUnregisterSelected"
+                  >
+                    {{ $t("frontDesk.dialog.unregister") }}
+                    <kbd>{{ getDialogButtonKey("__unregister__") }}</kbd>
+                  </el-button>
+                  <el-button
+                    type="default"
+                    size="large"
+                    data-dialog-button="__close__"
+                    class="close-dialog-button"
+                    :class="{
+                      'keyboard-focused-button':
+                        isDialogButtonKeyboardFocused('__close__'),
+                    }"
+                    :disabled="checkInInProgress"
+                    :title="$t('common.close')"
+                    @click="closeRegistrationDialog"
+                  >
+                    <el-icon>
+                      <Close />
+                    </el-icon>
+                    {{ $t("common.close") }}
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- Checked-in status -->
+              <div
+                v-if="selectedVoter.isCheckedIn"
+                class="button-section checked-in-section"
+              >
+                <h4>{{ $t("frontDesk.dialog.currentRegistration") }}</h4>
+                <div class="checked-in-details">
+                  <el-tag type="success" size="large">
+                    {{ getVotingMethodLabel(selectedVoter.votingMethod) }}
+                  </el-tag>
+                  <span v-if="selectedVoter.envNum" class="checked-in-detail">
+                    {{
+                      $t("frontDesk.dialog.envelope", {
+                        num: selectedVoter.envNum,
+                      })
+                    }}
+                  </span>
+                  <span
+                    v-if="selectedVoter.registrationTime"
+                    class="checked-in-detail"
+                  >
+                    {{ formatTime(selectedVoter.registrationTime) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Voting Methods -->
+              <div v-if="!selectedVoter.isCheckedIn" class="button-section">
+                <h4>{{ $t("frontDesk.dialog.votingMethod") }}</h4>
+                <div
+                  class="button-group"
+                  :class="{ 'check-in-pending': checkInInProgress }"
+                >
+                  <el-button
+                    v-for="type in registrationTypes"
+                    :key="type.value"
+                    :data-dialog-button="type.value"
+                    :type="
+                      pendingVotingMethod === type.value ? 'primary' : 'default'
+                    "
+                    size="large"
+                    class="dialog-option-button"
+                    :disabled="
+                      !hasActiveTeller ||
+                      (checkInInProgress && pendingVotingMethod !== type.value)
+                    "
+                    :class="{
+                      'keyboard-focused-button': isDialogButtonKeyboardFocused(
+                        type.value,
+                      ),
+                      'pending-button': pendingVotingMethod === type.value,
+                    }"
+                    @click="clickDialogButton(type.value)"
+                  >
+                    {{ type.label }}
+                    <kbd>{{ getDialogButtonKey(type.value) }}</kbd>
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- Flags -->
+              <div v-if="electionFlags.length > 0" class="button-section">
+                <h4>{{ $t("frontDesk.dialog.flags") }}</h4>
+                <div class="button-group">
+                  <el-button
+                    v-for="flag in electionFlags"
+                    :key="flag"
+                    :data-dialog-button="flag"
+                    :type="hasFlag(selectedVoter, flag) ? 'success' : 'default'"
+                    size="large"
+                    class="dialog-option-button"
+                    :disabled="!hasActiveTeller || checkInInProgress"
+                    :class="{
+                      'keyboard-focused-button':
+                        isDialogButtonKeyboardFocused(flag),
+                    }"
+                    @click="clickDialogButton(flag)"
+                  >
+                    {{ flag }}
+                    <kbd>{{ getDialogButtonKey(flag) }}</kbd>
+                    <el-icon
+                      v-if="hasFlag(selectedVoter, flag)"
+                      style="margin-left: 5px"
+                    >
+                      <Check />
+                    </el-icon>
+                  </el-button>
+                </div>
+              </div>
+
+              <!-- Registration history -->
+              <div
+                v-if="selectedVoterRegistrationHistory.length"
+                class="dialog-history-section"
+              >
+                <h4>{{ $t("frontDesk.dialog.registrationHistory") }}</h4>
+                <el-timeline>
+                  <el-timeline-item
+                    v-for="(entry, index) in selectedVoterRegistrationHistory"
+                    :key="index"
+                    :timestamp="formatTime(entry.timestamp)"
+                  >
+                    {{ formatTimeline(entry) }}
+                  </el-timeline-item>
+                </el-timeline>
+              </div>
+
+              <div class="instruction-text">
+                <template v-if="checkInInProgress">
+                  {{ $t("frontDesk.dialog.checkingIn") }}
+                </template>
+                <template v-else>
+                  {{ $t("frontDesk.dialog.instructions") }}
+                </template>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>
