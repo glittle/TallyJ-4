@@ -247,6 +247,31 @@ export const usePeopleStore = defineStore("people", () => {
     }
   }
 
+  function normalizePersonUpdateEvent(data: unknown): PersonUpdateEvent | null {
+    if (!data || typeof data !== "object") {
+      return null;
+    }
+    const raw = data as Record<string, unknown>;
+    const personGuid = String(raw.personGuid ?? "");
+    if (!personGuid) {
+      return null;
+    }
+    const actionRaw = String(raw.action ?? "updated");
+    const action: PersonUpdateEvent["action"] =
+      actionRaw === "added" || actionRaw === "deleted" ? actionRaw : "updated";
+    return {
+      electionGuid: String(raw.electionGuid ?? ""),
+      personGuid,
+      action,
+      firstName: typeof raw.firstName === "string" ? raw.firstName : undefined,
+      lastName: typeof raw.lastName === "string" ? raw.lastName : undefined,
+      updatedAt:
+        typeof raw.updatedAt === "string"
+          ? raw.updatedAt
+          : new Date().toISOString(),
+    };
+  }
+
   async function initializeSignalR() {
     if (signalrInitialized.value) {
       return;
@@ -255,37 +280,31 @@ export const usePeopleStore = defineStore("people", () => {
     try {
       const connection = await signalrService.connectToFrontDeskHub();
 
-      connection.on("updatePeople", (data: any) => {
-        // FrontDeskHub sends updatePeople with person update information
-        // The data structure should contain action, personGuid, and other person details
-        if (data && typeof data === "object") {
-          const updateEvent: PersonUpdateEvent = {
-            electionGuid: data.electionGuid || "",
-            personGuid: data.personGuid || "",
-            action: data.action || "updated",
-            firstName: data.firstName,
-            lastName: data.lastName,
-            updatedAt: data.updatedAt || new Date().toISOString(),
-          };
+      // Server contract (SignalRNotificationService.SendPersonUpdateAsync):
+      // PersonAdded / PersonUpdated / PersonDeleted with PersonUpdateDto payload.
+      connection.on("PersonAdded", (data: unknown) => {
+        const event = normalizePersonUpdateEvent(data);
+        if (event) {
+          void handlePersonAdded({ ...event, action: "added" });
+        }
+      });
 
-          switch (updateEvent.action) {
-            case "added":
-              handlePersonAdded(updateEvent);
-              break;
-            case "updated":
-              handlePersonUpdated(updateEvent);
-              break;
-            case "deleted":
-              handlePersonDeleted(updateEvent);
-              break;
-          }
+      connection.on("PersonUpdated", (data: unknown) => {
+        const event = normalizePersonUpdateEvent(data);
+        if (event) {
+          void handlePersonUpdated({ ...event, action: "updated" });
+        }
+      });
+
+      connection.on("PersonDeleted", (data: unknown) => {
+        const event = normalizePersonUpdateEvent(data);
+        if (event) {
+          handlePersonDeleted({ ...event, action: "deleted" });
         }
       });
 
       connection.on("reloadPage", () => {
-        // Handle page reload command from server
-        console.log("Server requested page reload");
-        // Could trigger a page refresh or data reload
+        // Thin signal from server (e.g. post-import); full client reload.
         window.location.reload();
       });
 

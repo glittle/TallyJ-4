@@ -10,6 +10,7 @@ import { useElectionStore } from "@/stores/electionStore";
 import { useLocationStore } from "@/stores/locationStore";
 import type {
   CheckInVoterDto,
+  FrontDeskStatsDto,
   FrontDeskVoterDto,
   RegistrationHistoryEntryDto,
   UnregisterVoterDto,
@@ -126,6 +127,8 @@ const voters = ref<FrontDeskVoterDto[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const signalrInitialized = ref(false);
+/** Authoritative check-in totals from `VoterCountUpdated` (not search-filtered). */
+const frontDeskStats = ref<FrontDeskStatsDto | null>(null);
 const searchQuery = ref("");
 
 const currentElection = computed(() => electionStore.currentElection);
@@ -254,6 +257,23 @@ const checkedInVoters = computed(() =>
 const notCheckedInVoters = computed(() =>
   filteredVoters.value.filter((v) => !v.isCheckedIn),
 );
+
+/** Prefer server stats for filter badges when the list is unfiltered (authoritative totals). */
+const registrationFilterCounts = computed(() => {
+  const stats = frontDeskStats.value;
+  if (!searchQuery.value.trim() && stats) {
+    return {
+      all: stats.totalEligible,
+      notRegistered: stats.notYetCheckedIn,
+      registered: stats.checkedIn,
+    };
+  }
+  return {
+    all: filteredVoters.value.length,
+    notRegistered: notCheckedInVoters.value.length,
+    registered: checkedInVoters.value.length,
+  };
+});
 
 const filteredByRegistration = computed(() => {
   switch (registrationFilter.value) {
@@ -417,8 +437,13 @@ const flagCounts = computed(() => {
   return counts;
 });
 
-async function fetchEligibleVoters(guid: string) {
-  loading.value = true;
+async function fetchEligibleVoters(
+  guid: string,
+  options: { silent?: boolean } = {},
+) {
+  if (!options.silent) {
+    loading.value = true;
+  }
   error.value = null;
   try {
     voters.value = (await frontDeskService.getEligibleVoters(guid)).sort(
@@ -428,7 +453,9 @@ async function fetchEligibleVoters(guid: string) {
     error.value = e.message || t("frontDesk.errors.fetchVoters");
     throw e;
   } finally {
-    loading.value = false;
+    if (!options.silent) {
+      loading.value = false;
+    }
   }
 }
 
@@ -605,6 +632,26 @@ async function initializeSignalR() {
     connection.on("PersonFlagsUpdated", (voter: FrontDeskVoterDto) => {
       updateVoterInList(voter);
     });
+
+    // Authoritative eligible/checked-in totals (paired with check-in/unregister).
+    connection.on("VoterCountUpdated", (stats: FrontDeskStatsDto) => {
+      frontDeskStats.value = stats;
+    });
+
+    // Person CRUD uses finer-grained events; refresh the eligible list so
+    // multi-station front desks stay aligned when people are added/edited/removed.
+    // Drop server stats until the next VoterCountUpdated so badges use the list.
+    const refreshEligibleVoters = () => {
+      frontDeskStats.value = null;
+      void fetchEligibleVoters(electionGuid.value, { silent: true }).catch(
+        (e) => {
+          console.error("Failed to refresh voters after person update:", e);
+        },
+      );
+    };
+    connection.on("PersonAdded", refreshEligibleVoters);
+    connection.on("PersonUpdated", refreshEligibleVoters);
+    connection.on("PersonDeleted", refreshEligibleVoters);
 
     signalrInitialized.value = true;
   } catch (e) {
@@ -1253,21 +1300,21 @@ function openEnvelopeDialog(voter: FrontDeskVoterDto) {
               <el-radio-button value="all">
                 {{
                   $t("frontDesk.filters.registrationAll", {
-                    count: formatNumber(filteredVoters.length),
+                    count: formatNumber(registrationFilterCounts.all),
                   })
                 }}
               </el-radio-button>
               <el-radio-button value="notRegistered">
                 {{
                   $t("frontDesk.filters.registrationNotRegistered", {
-                    count: formatNumber(notCheckedInVoters.length),
+                    count: formatNumber(registrationFilterCounts.notRegistered),
                   })
                 }}
               </el-radio-button>
               <el-radio-button value="registered">
                 {{
                   $t("frontDesk.filters.registrationRegistered", {
-                    count: formatNumber(checkedInVoters.length),
+                    count: formatNumber(registrationFilterCounts.registered),
                   })
                 }}
               </el-radio-button>

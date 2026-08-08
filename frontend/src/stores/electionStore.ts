@@ -18,10 +18,7 @@ import {
   getActiveElectionHubGuid,
   setActiveElectionHubGuid,
 } from "../utils/activeElectionHubStorage";
-import {
-  STAGE_META,
-  type ElectionStage,
-} from "../domain/electionStages";
+import { STAGE_META, type ElectionStage } from "../domain/electionStages";
 import { i18n } from "../locales";
 
 /** How long to suppress remote stage toasts after a local setStage (covers SignalR racing HTTP). */
@@ -204,7 +201,7 @@ export const useElectionStore = defineStore("election", () => {
 
   function isRemoteStageNotifySuppressed(electionGuid: string): boolean {
     const until = suppressRemoteStageNotifyUntil.get(electionGuid);
-    if (until == null) {
+    if (until === undefined) {
       return false;
     }
     if (Date.now() >= until) {
@@ -259,10 +256,11 @@ export const useElectionStore = defineStore("election", () => {
   }
 
   function showElectionStageNotification(newStage: string) {
-    const stageKey =
-      Object.hasOwn(STAGE_META, newStage)
-        ? STAGE_META[newStage as ElectionStage].i18nKey
-        : `elections.stage.${newStage}`;
+    // Own-property check (not `in`) so prototype keys like "toString" never match.
+    const meta = Object.hasOwn(STAGE_META, newStage)
+      ? STAGE_META[newStage as ElectionStage]
+      : undefined;
+    const stageKey = meta ? meta.i18nKey : `elections.stage.${newStage}`;
     const stageLabel = i18n.global.t(stageKey);
     const message = i18n.global.t("elections.stageAdvanced", {
       stage: stageLabel,
