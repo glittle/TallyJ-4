@@ -9,7 +9,7 @@ import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const electionStore = useElectionStore();
 const { showErrorMessage } = useNotifications();
@@ -96,6 +96,7 @@ const windowSummary = computed(() =>
     form.onlineWhenClose,
     nowTick.value,
     (key, params) => t(key, params ?? {}),
+    String(locale.value),
   ),
 );
 
@@ -297,39 +298,7 @@ async function saveDates() {
 </template>
 
 <style lang="less">
-.header-status-box {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 8px 4px 10px;
-  border: 1px solid var(--el-border-color);
-  border-radius: var(--el-border-radius-base);
-  background: var(--el-fill-color-blank);
-  color: var(--el-text-color-secondary);
-  font-size: var(--el-font-size-small);
-  line-height: 1;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease;
-
-  &.is-open {
-    border-color: var(--el-color-success);
-    background: var(--el-color-success-light-9);
-    color: var(--el-color-success-dark-2);
-  }
-
-  &.is-closed {
-    border-color: var(--el-color-danger);
-    background: var(--el-color-danger-light-9);
-    color: var(--el-color-danger-dark-2);
-  }
-
-  .header-status-label {
-    white-space: nowrap;
-    font-weight: 500;
-  }
-}
+// Base .header-status-box styles live in styles/utilities/box.less
 
 .online-voting-window-drawer.el-drawer {
   width: min(480px, calc(100vw - 32px)) !important;

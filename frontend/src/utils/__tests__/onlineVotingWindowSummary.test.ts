@@ -45,6 +45,14 @@ describe("onlineVotingWindowSummary", () => {
   it("formatDurationHuman includes hours and minutes under a day", () => {
     const start = DateTime.fromISO("2026-03-10T12:00:00.000Z");
     const end = start.plus({ hours: 1, minutes: 30 });
-    expect(formatDurationHuman(start, end)).toMatch(/1 hour.*30 minutes/i);
+    expect(formatDurationHuman(start, end, "en")).toMatch(
+      /1 hour.*30 minutes/i,
+    );
+  });
+
+  it("formatDurationHuman respects locale for unit names", () => {
+    const start = DateTime.fromISO("2026-03-10T12:00:00.000Z");
+    const end = start.plus({ days: 2 });
+    expect(formatDurationHuman(start, end, "fr")).toMatch(/jours/i);
   });
 });

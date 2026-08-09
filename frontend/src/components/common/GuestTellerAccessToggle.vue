@@ -65,17 +65,18 @@ watch(
   { immediate: true },
 );
 
-watch(
-  shareableUrl,
-  async (url) => {
-    if (!url) {
-      qrCodeUrl.value = "";
-      return;
-    }
-    await generateQrCode(url);
-  },
-  { immediate: true },
-);
+// Only generate QR while the share drawer is open (avoids work on every page load).
+watch([shareableUrl, shareDrawerOpen], async ([url, drawerOpen]) => {
+  if (!drawerOpen) {
+    qrCodeUrl.value = "";
+    return;
+  }
+  if (!url) {
+    qrCodeUrl.value = "";
+    return;
+  }
+  await generateQrCode(url);
+});
 
 async function handleToggle(nextValue: string | number | boolean) {
   const guid = electionGuid.value;
@@ -87,11 +88,6 @@ async function handleToggle(nextValue: string | number | boolean) {
   toggling.value = true;
   try {
     await electionStore.toggleTellerAccess(guid, open);
-    // showSuccessMessage(
-    //   open
-    //     ? t("elections.tellerAccessOpen")
-    //     : t("elections.tellerAccessClosed"),
-    // );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     showErrorMessage(`${t("common.error")} ${message}`);
@@ -186,6 +182,7 @@ function openShareDrawer() {
                 size="small"
                 :icon="CopyDocument"
                 :title="t('elections.copyAccessCode')"
+                :aria-label="t('elections.copyAccessCode')"
                 @click="copyText(passcode)"
               />
             </div>
@@ -242,39 +239,8 @@ function openShareDrawer() {
 </template>
 
 <style lang="less">
+// Base .header-status-box styles live in styles/utilities/box.less
 .guest-teller-access-box {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 8px 4px 10px;
-  border: 1px solid var(--el-border-color);
-  border-radius: var(--el-border-radius-base);
-  background: var(--el-fill-color-blank);
-  color: var(--el-text-color-secondary);
-  font-size: var(--el-font-size-small);
-  line-height: 1;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease;
-
-  &.is-open {
-    border-color: var(--el-color-success);
-    background: var(--el-color-success-light-9);
-    color: var(--el-color-success-dark-2);
-  }
-
-  &.is-closed {
-    border-color: var(--el-color-danger);
-    background: var(--el-color-danger-light-9);
-    color: var(--el-color-danger-dark-2);
-  }
-
-  .guest-teller-access-label {
-    white-space: nowrap;
-    font-weight: 500;
-  }
-
   .guest-teller-share-btn {
     margin-left: 2px;
   }

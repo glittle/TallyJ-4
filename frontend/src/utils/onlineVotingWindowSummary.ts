@@ -26,7 +26,11 @@ function toDateTime(value: Date | string | null | undefined): DateTime | null {
  * Human-readable relative span for durations (e.g. "5 days", "1 hour 30 minutes").
  * Uses the largest useful units without being overly precise.
  */
-export function formatDurationHuman(start: DateTime, end: DateTime): string {
+export function formatDurationHuman(
+  start: DateTime,
+  end: DateTime,
+  locale: string = "en",
+): string {
   if (end <= start) {
     return "";
   }
@@ -52,7 +56,7 @@ export function formatDurationHuman(start: DateTime, end: DateTime): string {
   }
 
   return Duration.fromObject(parts)
-    .reconfigure({ locale: "en" })
+    .reconfigure({ locale })
     .toHuman({ listStyle: "long", unitDisplay: "long" });
 }
 
@@ -67,13 +71,15 @@ export function buildOnlineWindowSummary(
   t: (key: string, params?: Record<string, string>) => string = (key, params) =>
     // Fallback English for unit tests without i18n
     defaultMessage(key, params),
+  locale: string = "en",
 ): OnlineWindowSummaryLines {
   const open = toDateTime(openValue);
   const close = toDateTime(closeValue);
+  const relativeOpts = { base: now, locale };
 
   let openLine: string | null = null;
   if (open) {
-    const relative = open.toRelative({ base: now }) ?? "";
+    const relative = open.toRelative(relativeOpts) ?? "";
     if (open > now) {
       openLine = t("elections.onlineWindow.willOpen", { relative });
     } else {
@@ -84,7 +90,7 @@ export function buildOnlineWindowSummary(
 
   let closeLine: string | null = null;
   if (close) {
-    const relative = close.toRelative({ base: now }) ?? "";
+    const relative = close.toRelative(relativeOpts) ?? "";
     if (close > now) {
       closeLine = t("elections.onlineWindow.willClose", { relative });
     } else {
@@ -94,7 +100,7 @@ export function buildOnlineWindowSummary(
 
   let durationLine: string | null = null;
   if (open && close && close > open) {
-    const duration = formatDurationHuman(open, close);
+    const duration = formatDurationHuman(open, close, locale);
     if (duration) {
       durationLine = t("elections.onlineWindow.duration", { duration });
     }
