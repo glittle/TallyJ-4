@@ -20,7 +20,8 @@ public partial class OnlineVotingService
             // 1. Find all open elections where this voter is registered (SMS pumping prevention)
             var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
-                .Where(e => e.OnlineWhenOpen != null && e.OnlineWhenOpen <= now &&
+                .Where(e => e.UseOnlineVoting &&
+                           e.OnlineWhenOpen != null && e.OnlineWhenOpen <= now &&
                            (e.OnlineWhenClose == null || e.OnlineWhenClose > now))
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
@@ -394,7 +395,8 @@ public partial class OnlineVotingService
         var now = DateTimeOffset.UtcNow;
 
         var openElectionGuids = await _context.Elections
-            .Where(e => e.OnlineWhenOpen != null && e.OnlineWhenOpen <= now &&
+            .Where(e => e.UseOnlineVoting &&
+                        e.OnlineWhenOpen != null && e.OnlineWhenOpen <= now &&
                         (e.OnlineWhenClose == null || e.OnlineWhenClose > now))
             .Select(e => e.ElectionGuid)
             .ToListAsync();

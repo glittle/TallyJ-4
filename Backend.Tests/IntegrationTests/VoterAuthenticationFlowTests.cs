@@ -270,6 +270,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         {
             ElectionGuid = electionGuid,
             Name = "Test Open Election",
+            UseOnlineVoting = true,
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
             ElectionStage = Backend.Enumerations.ElectionStage.GatheringBallots,
@@ -297,6 +298,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         {
             ElectionGuid = electionGuid,
             Name = electionName ?? "Test Open Election with Voter",
+            UseOnlineVoting = true,
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
             ElectionStage = Backend.Enumerations.ElectionStage.GatheringBallots,
@@ -338,6 +340,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         {
             ElectionGuid = electionGuid,
             Name = electionName ?? "Test Closed Election",
+            UseOnlineVoting = true,
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-3),
             OnlineWhenClose = DateTime.UtcNow.AddHours(-1),
             ElectionStage = Backend.Enumerations.ElectionStage.ProcessingBallots,

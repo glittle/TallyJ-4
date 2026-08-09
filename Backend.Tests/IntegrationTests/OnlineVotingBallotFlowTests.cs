@@ -327,6 +327,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         {
             ElectionGuid = electionGuid,
             Name = "Ballot Flow Election",
+            UseOnlineVoting = true,
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
             NumberToElect = 9,

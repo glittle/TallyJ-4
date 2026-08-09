@@ -8,6 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import { getApiPublicElections } from "@/api/gen/configService";
 import { getGuestTellerRedirectPath } from "@/domain/guestTellerAccess";
 import type { ElectionStage } from "@/domain/electionStages";
+import { parseTellerJoinRoute } from "@/utils/tellerJoinUrl";
 import { electionService } from "../services/electionService";
 import { signalrService } from "../services/signalrService";
 import { useAuthStore } from "../stores/authStore";
@@ -187,21 +188,23 @@ onMounted(async () => {
     void router.replace({ query: {} });
   }
 
-  const electionGuid = route.params.electionGuid as string;
+  const { electionGuid, accessCode } = parseTellerJoinRoute(route);
 
-  if (electionGuid) {
-    prefilledFromUrl.value = true;
+  if (electionGuid || accessCode) {
+    prefilledFromUrl.value = Boolean(electionGuid && accessCode);
 
-    const accessCode = route.params.accessCode as string;
     if (accessCode) {
       joinForm.accessCode = accessCode;
+    }
+    if (electionGuid) {
+      joinForm.electionGuid = electionGuid;
     }
   }
 
   await Promise.all([fetchAvailableElections(), setupPublicHub()]);
 
-  if (prefilledFromUrl.value) {
-    // if we prefilled the form from the URL, immediately try to join
+  if (prefilledFromUrl.value && electionGuid) {
+    // Prefill from share link, then join immediately
     joinForm.electionGuid = electionGuid;
     await handleJoin();
   }

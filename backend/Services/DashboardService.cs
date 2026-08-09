@@ -215,7 +215,7 @@ public class DashboardService : IDashboardService
             voterCount = election.People.Count(p => p.CanVote == true),
             locationCount = election.Locations.Count,
             lastActivity = lastLogEntry != default ? (DateTimeOffset?)lastLogEntry : null,
-            onlineVotingActive = election.OnlineWhenOpen.HasValue,
+            onlineVotingActive = election.UseOnlineVoting,
             passcode = election.ElectionPasscode
         };
     }

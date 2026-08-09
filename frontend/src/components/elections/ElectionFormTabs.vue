@@ -31,13 +31,7 @@ const tabFields: Record<string, string[]> = {
   basic: ["name", "dateOfElection", "convenor", "electionType", "electionMode"],
   rules: ["numberToElect", "numberExtra"],
   "voting-methods": ["customMethods", "votingMethods"],
-  "online-voting": [
-    "onlineWhenOpen",
-    "onlineWhenClose",
-    "onlineCloseIsEstimate",
-    "onlineSelectionProcess",
-    "onlineAnnounced",
-  ],
+  "online-voting": ["useOnlineVoting", "onlineSelectionProcess"],
   communication: [
     "emailFromAddress",
     "emailFromName",
@@ -219,32 +213,13 @@ function tabLabel(tab: string, label: string) {
       :label="tabLabel('online-voting', $t('elections.tabs.onlineVoting'))"
       name="online-voting"
     >
-      <el-form-item
-        :label="$t('elections.form.onlineWhenOpen')"
-        prop="onlineWhenOpen"
-      >
-        <el-date-picker
-          v-model="model.onlineWhenOpen"
-          type="datetime"
-          :placeholder="$t('elections.form.onlineWhenOpenPlaceholder')"
-          style="width: 100%"
-        />
-      </el-form-item>
-
-      <el-form-item
-        :label="$t('elections.form.onlineWhenClose')"
-        prop="onlineWhenClose"
-      >
-        <el-date-picker
-          v-model="model.onlineWhenClose"
-          type="datetime"
-          :placeholder="$t('elections.form.onlineWhenClosePlaceholder')"
-          style="width: 100%"
-        />
-      </el-form-item>
-
-      <el-form-item :label="$t('elections.form.onlineCloseIsEstimate')">
-        <el-switch v-model="model.onlineCloseIsEstimate" />
+      <el-form-item :label="$t('elections.form.useOnlineVoting')">
+        <el-switch v-model="model.useOnlineVoting" />
+        <template #help>
+          <span class="form-help">{{
+            $t("elections.form.useOnlineVotingHelp")
+          }}</span>
+        </template>
       </el-form-item>
 
       <el-form-item
@@ -254,22 +229,11 @@ function tabLabel(tab: string, label: string) {
         <el-select
           v-model="model.onlineSelectionProcess"
           :placeholder="$t('elections.form.onlineSelectionProcessPlaceholder')"
+          :disabled="!model.useOnlineVoting"
         >
           <el-option label="Simultaneous" value="S" />
           <el-option label="Sequential" value="Q" />
         </el-select>
-      </el-form-item>
-
-      <el-form-item
-        :label="$t('elections.form.onlineAnnounced')"
-        prop="onlineAnnounced"
-      >
-        <el-date-picker
-          v-model="model.onlineAnnounced"
-          type="datetime"
-          :placeholder="$t('elections.form.onlineAnnouncedPlaceholder')"
-          style="width: 100%"
-        />
       </el-form-item>
     </el-tab-pane>
 

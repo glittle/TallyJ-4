@@ -26,7 +26,8 @@ public partial class OnlineVotingService
                 return (false, "voting.submit.electionNotFound");
             }
 
-            if ((election.OnlineWhenOpen != null && election.OnlineWhenOpen > now) ||
+            if (!election.UseOnlineVoting ||
+                (election.OnlineWhenOpen != null && election.OnlineWhenOpen > now) ||
                 (election.OnlineWhenClose != null && election.OnlineWhenClose <= now))
             {
                 return (false, "voting.submit.notOpen");

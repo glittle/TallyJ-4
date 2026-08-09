@@ -4,6 +4,7 @@ using Backend.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809034032_AddUseOnlineVoting")]
+    partial class AddUseOnlineVoting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,6 +246,10 @@ namespace Backend.Migrations
 
                     b.Property<int?>("NumberToElect")
                         .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("OnlineAnnounced")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
 
                     b.Property<bool>("OnlineCloseIsEstimate")
                         .ValueGeneratedOnAdd()

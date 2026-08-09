@@ -44,7 +44,8 @@ public partial class OnlineVotingService
             // 3. Find all open elections where this voter is registered
             var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
-                .Where(e => e.OnlineWhenOpen != null &&
+                .Where(e => e.UseOnlineVoting &&
+                           e.OnlineWhenOpen != null &&
                            e.OnlineWhenClose != null &&
                            e.OnlineWhenOpen <= now &&
                            e.OnlineWhenClose >= now)
@@ -140,7 +141,8 @@ public partial class OnlineVotingService
 
             var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
-                .Where(e => e.OnlineWhenOpen != null &&
+                .Where(e => e.UseOnlineVoting &&
+                           e.OnlineWhenOpen != null &&
                            e.OnlineWhenClose != null &&
                            e.OnlineWhenOpen <= now &&
                            e.OnlineWhenClose >= now)
@@ -238,7 +240,8 @@ public partial class OnlineVotingService
 
             var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
-                .Where(e => e.OnlineWhenOpen != null &&
+                .Where(e => e.UseOnlineVoting &&
+                           e.OnlineWhenOpen != null &&
                            e.OnlineWhenClose != null &&
                            e.OnlineWhenOpen <= now &&
                            e.OnlineWhenClose >= now)
@@ -332,7 +335,8 @@ public partial class OnlineVotingService
             // Check if there is an open election where this voter is registered by Telegram ID
             var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
-                .Where(e => e.OnlineWhenOpen != null &&
+                .Where(e => e.UseOnlineVoting &&
+                           e.OnlineWhenOpen != null &&
                            e.OnlineWhenClose != null &&
                            e.OnlineWhenOpen <= now &&
                            e.OnlineWhenClose >= now)

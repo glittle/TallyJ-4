@@ -7,6 +7,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
 import ComputerCodeBadge from "./common/ComputerCodeBadge.vue";
 import GuestTellerAccessToggle from "./common/GuestTellerAccessToggle.vue";
+import OnlineVotingHeaderControl from "./common/OnlineVotingHeaderControl.vue";
 import LanguageSelector from "./common/LanguageSelector.vue";
 import ThemeSelector from "./common/ThemeSelector.vue";
 
@@ -91,6 +92,7 @@ function toggleMobileMenu() {
       :aria-label="t('common.userMenu')"
     >
       <ComputerCodeBadge v-if="showComputerCode" />
+      <OnlineVotingHeaderControl />
       <GuestTellerAccessToggle />
       <ThemeSelector />
       <LanguageSelector />

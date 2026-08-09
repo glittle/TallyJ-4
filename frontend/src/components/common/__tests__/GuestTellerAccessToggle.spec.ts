@@ -16,6 +16,7 @@ vi.mock("@/stores/electionStore", () => ({
     currentElection: {
       electionGuid: "election-1",
       isTellerAccessOpen: false,
+      electionPasscode: "secret",
     },
     fetchElectionById: mockFetchElectionById,
     toggleTellerAccess: mockToggleTellerAccess,
@@ -58,7 +59,8 @@ describe("GuestTellerAccessToggle", () => {
 
     await flushPromises();
 
-    expect(wrapper.find(".guest-teller-access-toggle").exists()).toBe(true);
+    expect(wrapper.find(".guest-teller-access-box").exists()).toBe(true);
     expect(wrapper.text()).toContain("Guest tellers");
+    expect(wrapper.text()).toContain("Share");
   });
 });

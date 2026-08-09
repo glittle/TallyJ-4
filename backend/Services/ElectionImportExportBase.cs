@@ -125,6 +125,7 @@ public abstract class ElectionImportExportBase
         public bool? ListForPublic { get; set; }
         public string? ListedForPublicAsOf { get; set; }
         public bool? ShowFullReport { get; set; }
+        public bool UseOnlineVoting { get; set; }
         public string? OnlineWhenOpen { get; set; }
         public string? OnlineWhenClose { get; set; }
         public bool? OnlineCloseIsEstimate { get; set; }

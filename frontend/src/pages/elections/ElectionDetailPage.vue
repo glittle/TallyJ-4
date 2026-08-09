@@ -5,9 +5,8 @@ import SetupTipsCard from "@/components/dashboard/SetupTipsCard.vue";
 import { useNotifications } from "@/composables/useNotifications";
 import { isGuestTeller } from "@/domain/guestTellerAccess";
 import { formatNumber } from "@/utils/formatNumber";
-import { CopyDocument, Delete, Download, Link } from "@element-plus/icons-vue";
+import { Delete, Download } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
-import QRCode from "qrcode";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -32,37 +31,7 @@ const electionStats = computed(() =>
 );
 
 const isGuest = computed(() => isGuestTeller());
-
-const qrCodeUrl = ref("");
 const loadFailed = ref(false);
-
-const hashPassphrase = async (passphrase: string) => {
-  const msgUint8 = new TextEncoder().encode(passphrase); // encode as (UTF-8)
-  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8); // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-  const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join(""); // convert bytes to hex string
-  return hashHex;
-};
-
-const shareableUrl = ref("");
-const updateShareableUrl = async () => {
-  if (!election.value?.electionPasscode) {
-    shareableUrl.value = "";
-    return;
-  }
-
-  const baseUrl = globalThis.location.origin;
-  const code = await hashPassphrase(election.value.electionPasscode);
-  shareableUrl.value = `${baseUrl}/teller-join/${code}/${electionGuid}`;
-  generateQrCode();
-};
-
-const onlineVotingStatus = computed(() => {
-  // Check if online voting is enabled based on onlineWhenOpen and onlineWhenClose
-  return election.value?.onlineWhenOpen && election.value?.onlineWhenClose;
-});
 
 onMounted(async () => {
   loadFailed.value = false;
@@ -71,7 +40,6 @@ onMounted(async () => {
       electionStore.fetchElectionById(electionGuid),
       electionStatsStore.fetchStats(electionGuid),
     ]);
-    updateShareableUrl();
   } catch (_error) {
     loadFailed.value = true;
     showErrorMessage(t("elections.loadError"));
@@ -116,56 +84,6 @@ function getStatusType(status?: string) {
     Finalized: "info",
   };
   return typeMap[status || ""] || "info";
-}
-
-async function toggleTellerAccess() {
-  if (!election.value) {
-    return;
-  }
-
-  try {
-    const newState = !election.value.isTellerAccessOpen;
-    await electionStore.toggleTellerAccess(electionGuid, newState);
-    showSuccessMessage(
-      newState
-        ? t("elections.tellerAccessOpen")
-        : t("elections.tellerAccessClosed"),
-    );
-  } catch (error: any) {
-    showErrorMessage(t("common.error") + " " + (error.message || ""));
-  }
-}
-
-async function copyUrl() {
-  if (!shareableUrl.value) {
-    return;
-  }
-
-  try {
-    await navigator.clipboard.writeText(await shareableUrl.value);
-    showSuccessMessage(t("common.copied"));
-  } catch (error: any) {
-    showErrorMessage(t("common.error") + " " + (error.message || ""));
-  }
-}
-
-async function generateQrCode() {
-  if (!shareableUrl.value) {
-    return;
-  }
-
-  try {
-    qrCodeUrl.value = await QRCode.toDataURL(await shareableUrl.value, {
-      width: 200,
-      margin: 2,
-      color: {
-        dark: "#000000",
-        light: "#FFFFFF",
-      },
-    });
-  } catch (_error) {
-    console.error("Failed to generate QR code:", _error);
-  }
 }
 
 async function exportElection() {
@@ -260,101 +178,6 @@ async function exportElection() {
         </div>
       </el-card>
 
-      <el-card v-if="!isGuest" class="teller-access-card">
-        <template #header>
-          <span>{{ $t("elections.tellerAccess") }}</span>
-        </template>
-
-        <div class="access-status">
-          <el-tag :type="election?.isTellerAccessOpen ? 'success' : 'info'">
-            {{
-              election?.isTellerAccessOpen
-                ? $t("elections.tellerAccessOpen")
-                : $t("elections.tellerAccessClosed")
-            }}
-          </el-tag>
-        </div>
-
-        <div class="access-status" style="margin-top: 10px">
-          <el-tag :type="onlineVotingStatus ? 'success' : 'info'">
-            {{
-              onlineVotingStatus
-                ? $t("elections.onlineVotingEnabled")
-                : $t("elections.onlineVotingDisabled")
-            }}
-          </el-tag>
-        </div>
-
-        <el-divider />
-
-        <el-button
-          type="primary"
-          :loading="loading"
-          style="margin-bottom: 15px"
-          @click="toggleTellerAccess"
-        >
-          {{ $t("elections.toggleTellerAccess") }}
-        </el-button>
-
-        <div v-if="election?.electionPasscode" class="access-details">
-          <div class="access-item">
-            <label>{{ $t("elections.tellerAccessCode") }}:</label>
-            <el-input
-              :model-value="election.electionPasscode"
-              readonly
-              style="margin-top: 5px"
-              @change="updateShareableUrl"
-            />
-          </div>
-
-          <div class="access-item" style="margin-top: 15px">
-            <label>{{ $t("elections.tellerAccessUrl") }}:</label>
-            <div class="url-container">
-              <el-input
-                :model-value="shareableUrl"
-                readonly
-                style="margin-top: 5px"
-              />
-              <el-button
-                type="primary"
-                :icon="CopyDocument"
-                style="margin-left: 10px"
-                @click="copyUrl"
-              >
-                {{ $t("elections.copyUrl") }}
-              </el-button>
-            </div>
-          </div>
-
-          <div class="access-item" style="margin-top: 15px">
-            <label>{{ $t("elections.tellerAccessQrCode") }}:</label>
-            <div class="qr-container" style="margin-top: 10px">
-              <img
-                v-if="qrCodeUrl"
-                :src="qrCodeUrl"
-                alt="QR Code"
-                class="qr-code"
-              />
-              <div v-else class="qr-placeholder">
-                <el-icon size="48">
-                  <Link />
-                </el-icon>
-                <p>{{ $t("common.loading") }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-else class="no-passcode">
-          <el-alert
-            type="warning"
-            :title="$t('common.warning')"
-            :description="$t('elections.form.electionPasscodeHelp')"
-            show-icon
-          />
-        </div>
-      </el-card>
-
       <el-row v-if="!isGuest">
         <el-card>
           <template #header>
@@ -438,8 +261,7 @@ async function exportElection() {
   .actions-card,
   .stats-card,
   .stage-card,
-  .danger-zone,
-  .teller-access-card {
+  .danger-zone {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   }
 
@@ -474,61 +296,7 @@ async function exportElection() {
     }
   }
 
-  .el-divider {
-    margin: 12px 0;
-  }
-
-  .access-status {
-    text-align: center;
-  }
-
-  .access-details {
-    .access-item {
-      label {
-        font-weight: 600;
-        color: #303133;
-        display: block;
-      }
-
-      .url-container {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-
-        .el-input {
-          flex: 1;
-        }
-      }
-
-      .qr-container {
-        text-align: center;
-
-        .qr-code {
-          max-width: 200px;
-          height: auto;
-          border: 1px solid #e4e7ed;
-          border-radius: 4px;
-        }
-
-        .qr-placeholder {
-          padding: 40px;
-          border: 1px dashed #d9d9d9;
-          border-radius: 4px;
-          color: #909399;
-
-          p {
-            margin: 10px 0 0 0;
-            font-size: 14px;
-          }
-        }
-      }
-    }
-  }
   .el-card {
-    margin-top: 15px;
-  }
-
-  .no-passcode {
     margin-top: 15px;
   }
 }
