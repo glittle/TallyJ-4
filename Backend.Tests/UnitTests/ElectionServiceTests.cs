@@ -302,6 +302,7 @@ public class ElectionServiceTests : ServiceTestBase
             NumberToElect = 3,
             ElectionStage = ElectionStage.GatheringBallots,
             DateOfElection = DateTime.UtcNow.AddDays(10),
+            UseOnlineVoting = true,
             OnlineWhenOpen = DateTimeOffset.UtcNow.AddDays(-1),
             OnlineWhenClose = DateTimeOffset.UtcNow.AddDays(1),
             OnlineCloseIsEstimate = true,

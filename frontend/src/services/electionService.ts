@@ -8,6 +8,7 @@ import type {
   ImportResultDto,
   UpdateElectionDto,
 } from "../types";
+import { client } from "../api/gen/configService/client.gen";
 import {
   deleteApiElectionsByGuidDeleteElection,
   getApiElectionsByGuidElection,
@@ -27,9 +28,38 @@ const convertStringToDate = (dateString?: string): Date | null => {
   return dateString ? new Date(dateString) : null;
 };
 
-const convertDateToString = (date?: Date | null): string | undefined => {
-  return date ? date.toISOString() : undefined;
+/** Normalize API date fields that may already be Date or ISO string. */
+const convertDateToString = (
+  date?: Date | string | null,
+): string | undefined => {
+  if (date === null || date === undefined || date === "") {
+    return undefined;
+  }
+  if (typeof date === "string") {
+    const parsed = new Date(date);
+    return Number.isNaN(parsed.getTime()) ? date : parsed.toISOString();
+  }
+  if (date instanceof Date) {
+    return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+  }
+  // Fallback for unexpected shapes (e.g. plain object) — avoid crashing UI.
+  try {
+    const parsed = new Date(date as string | number);
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+  } catch {
+    return undefined;
+  }
 };
+
+function mapElectionDto(data: any): ElectionDto {
+  return {
+    ...(data as object),
+    dateOfElection: convertDateToString(data.dateOfElection),
+    onlineWhenOpen: convertDateToString(data.onlineWhenOpen),
+    onlineWhenClose: convertDateToString(data.onlineWhenClose),
+    tellerAccessOpenedAt: convertDateToString(data.tellerAccessOpenedAt),
+  } as ElectionDto;
+}
 
 export const electionService = {
   async getAll(): Promise<ElectionSummaryDto[]> {
@@ -94,14 +124,7 @@ export const electionService = {
     if (!data) {
       throw new Error("Election not found");
     }
-    return {
-      ...(data as any),
-      dateOfElection: convertDateToString(data.dateOfElection),
-      onlineWhenOpen: convertDateToString(data.onlineWhenOpen),
-      onlineWhenClose: convertDateToString(data.onlineWhenClose),
-      onlineAnnounced: convertDateToString(data.onlineAnnounced),
-      tellerAccessOpenedAt: convertDateToString(data.tellerAccessOpenedAt),
-    } as ElectionDto;
+    return mapElectionDto(data);
   },
 
   async create(dto: CreateElectionDto): Promise<ElectionDto> {
@@ -111,7 +134,6 @@ export const electionService = {
         electionType: dto.electionType as any,
         electionMode: dto.electionMode as any,
         dateOfElection: convertStringToDate(dto.dateOfElection),
-        onlineAnnounced: convertStringToDate(dto.onlineAnnounced),
       },
     });
     return response.data?.data as unknown as ElectionDto;
@@ -130,10 +152,44 @@ export const electionService = {
         dateOfElection: convertStringToDate(dto.dateOfElection),
         onlineWhenOpen: convertStringToDate(dto.onlineWhenOpen),
         onlineWhenClose: convertStringToDate(dto.onlineWhenClose),
-        onlineAnnounced: convertStringToDate(dto.onlineAnnounced),
       },
     });
     return response.data?.data as unknown as ElectionDto;
+  },
+
+  async updateOnlineVotingWindow(
+    electionGuid: string,
+    options: {
+      onlineWhenOpen?: string | null;
+      onlineWhenClose?: string | null;
+      onlineCloseIsEstimate: boolean;
+    },
+  ): Promise<ElectionDto> {
+    const response = await client.put({
+      url: "/api/Elections/{guid}/online-voting-window",
+      path: { guid: electionGuid },
+      // Send null dates explicitly so the server can clear a bound.
+      body: {
+        onlineWhenOpen: options.onlineWhenOpen
+          ? new Date(options.onlineWhenOpen)
+          : null,
+        onlineWhenClose: options.onlineWhenClose
+          ? new Date(options.onlineWhenClose)
+          : null,
+        onlineCloseIsEstimate: options.onlineCloseIsEstimate,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = (response.data as any)?.data;
+    if (!data) {
+      throw new Error(
+        (response.data as any)?.message ||
+          "Failed to update online voting window",
+      );
+    }
+    return mapElectionDto(data);
   },
 
   async delete(electionGuid: string): Promise<void> {
@@ -192,14 +248,7 @@ export const electionService = {
     if (!envelope?.success || !data) {
       throw new Error(envelope?.message || "Failed to change election stage");
     }
-    return {
-      ...(data as any),
-      dateOfElection: convertDateToString(data.dateOfElection),
-      onlineWhenOpen: convertDateToString(data.onlineWhenOpen),
-      onlineWhenClose: convertDateToString(data.onlineWhenClose),
-      onlineAnnounced: convertDateToString(data.onlineAnnounced),
-      tellerAccessOpenedAt: convertDateToString(data.tellerAccessOpenedAt),
-    } as ElectionDto;
+    return mapElectionDto(data);
   },
 
   async toggleTellerAccess(
@@ -214,14 +263,7 @@ export const electionService = {
     if (!data) {
       throw new Error("Failed to toggle teller access");
     }
-    return {
-      ...(data as any),
-      dateOfElection: convertDateToString(data.dateOfElection),
-      onlineWhenOpen: convertDateToString(data.onlineWhenOpen),
-      onlineWhenClose: convertDateToString(data.onlineWhenClose),
-      onlineAnnounced: convertDateToString(data.onlineAnnounced),
-      tellerAccessOpenedAt: convertDateToString(data.tellerAccessOpenedAt),
-    } as ElectionDto;
+    return mapElectionDto(data);
   },
 
   // async getCurrentElection(): Promise<ElectionDto | null> {

@@ -262,6 +262,7 @@ public class SignalRNotificationServiceTests
         var update = new OnlineElectionUpdateDto
         {
             ElectionGuid = _electionGuid,
+            UseOnlineVoting = true,
             OnlineWhenOpen = open,
             OnlineWhenClose = close,
             OnlineCloseIsEstimate = true,

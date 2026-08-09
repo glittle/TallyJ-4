@@ -69,6 +69,11 @@ public class ElectionDto
     public bool? ShowAsTest { get; set; }
 
     /// <summary>
+    /// Whether this election uses online voting (setup flag; dates control the open window).
+    /// </summary>
+    public bool UseOnlineVoting { get; set; }
+
+    /// <summary>
     /// The date and time when online voting opens.
     /// </summary>
     public DateTimeOffset? OnlineWhenOpen { get; set; }
@@ -117,11 +122,6 @@ public class ElectionDto
     /// Online voting selection process (e.g., "S" for simultaneous).
     /// </summary>
     public string? OnlineSelectionProcess { get; set; }
-
-    /// <summary>
-    /// The date and time when online voting was announced.
-    /// </summary>
-    public DateTimeOffset? OnlineAnnounced { get; set; }
 
     /// <summary>
     /// Email from address for voter communications.

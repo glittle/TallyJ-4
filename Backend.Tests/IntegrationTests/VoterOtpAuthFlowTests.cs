@@ -113,6 +113,7 @@ public class VoterOtpAuthFlowTests : IntegrationTestBase
         {
             ElectionGuid = electionGuid,
             Name = "OTP Auth Election",
+            UseOnlineVoting = true,
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
             NumberToElect = 9,

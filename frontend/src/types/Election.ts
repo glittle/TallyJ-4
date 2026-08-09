@@ -13,6 +13,7 @@ export interface ElectionDto {
   showFullReport?: boolean;
   listForPublic?: boolean;
   showAsTest?: boolean;
+  useOnlineVoting?: boolean;
   onlineWhenOpen?: string;
   onlineWhenClose?: string;
   electionPasscode?: string;
@@ -23,7 +24,6 @@ export interface ElectionDto {
   maskVotingMethod?: boolean;
   onlineCloseIsEstimate?: boolean;
   onlineSelectionProcess?: string;
-  onlineAnnounced?: string;
   emailFromAddress?: string;
   emailFromName?: string;
   emailText?: string;
@@ -53,11 +53,11 @@ export interface CreateElectionDto {
   useCallInButton?: boolean;
   hidePreBallotPages?: boolean;
   maskVotingMethod?: boolean;
+  useOnlineVoting?: boolean;
   onlineWhenOpen?: string;
   onlineWhenClose?: string;
   onlineCloseIsEstimate?: boolean;
   onlineSelectionProcess?: string;
-  onlineAnnounced?: string;
   emailFromAddress?: string;
   emailFromName?: string;
   emailText?: string;
@@ -80,6 +80,7 @@ export interface UpdateElectionDto {
   listForPublic?: boolean;
   showAsTest?: boolean;
   electionStage?: ElectionStage;
+  useOnlineVoting?: boolean;
   onlineWhenOpen?: string;
   onlineWhenClose?: string;
   electionPasscode?: string;
@@ -90,7 +91,6 @@ export interface UpdateElectionDto {
   maskVotingMethod?: boolean;
   onlineCloseIsEstimate?: boolean;
   onlineSelectionProcess?: string;
-  onlineAnnounced?: string;
   emailFromAddress?: string;
   emailFromName?: string;
   emailText?: string;

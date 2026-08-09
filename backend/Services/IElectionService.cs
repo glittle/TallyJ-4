@@ -87,6 +87,14 @@ public interface IElectionService
     Task<ElectionDto?> ToggleTellerAccessAsync(Guid electionGuid, bool isOpen);
 
     /// <summary>
+    /// Updates only the online voting open/close window for an election.
+    /// </summary>
+    /// <param name="electionGuid">The unique identifier of the election.</param>
+    /// <param name="dto">The open and close times (null clears a bound).</param>
+    /// <returns>The updated election data, or null if the election was not found.</returns>
+    Task<ElectionDto?> UpdateOnlineVotingWindowAsync(Guid electionGuid, UpdateOnlineVotingWindowDto dto);
+
+    /// <summary>
     /// Updates whether the election appears in the guest-teller join list.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>

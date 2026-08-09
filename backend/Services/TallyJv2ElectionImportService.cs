@@ -114,6 +114,9 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
             RowVersion = new byte[8]
         };
 
+        election.UseOnlineVoting = ParseBool(electionNode.GetAttribute("UseOnlineVoting"))
+            ?? (election.OnlineWhenOpen != null || election.OnlineWhenClose != null);
+
         ElectionTellerAccessHelper.ApplyImportedGuestAccess(
             election,
             ParseBool(electionNode.GetAttribute("ListForPublic")),

@@ -73,6 +73,11 @@ public class CreateElectionDto
     public string? LinkedElectionKind { get; set; }
 
     /// <summary>
+    /// Whether this election uses online voting (setup flag; dates control the open window).
+    /// </summary>
+    public bool? UseOnlineVoting { get; set; }
+
+    /// <summary>
     /// Whether to use the call-in button feature.
     /// </summary>
     public bool? UseCallInButton { get; set; }
@@ -96,11 +101,6 @@ public class CreateElectionDto
     /// Online voting selection process (e.g., "S" for simultaneous).
     /// </summary>
     public string? OnlineSelectionProcess { get; set; }
-
-    /// <summary>
-    /// The date and time when online voting was announced.
-    /// </summary>
-    public DateTimeOffset? OnlineAnnounced { get; set; }
 
     /// <summary>
     /// Email from address for voter communications.

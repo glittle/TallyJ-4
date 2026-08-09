@@ -77,6 +77,11 @@ public partial class Election
 
     public bool? MaskVotingMethod { get; set; }
 
+    /// <summary>
+    /// When false, this election does not use online voting at all (window dates are ignored).
+    /// </summary>
+    public bool UseOnlineVoting { get; set; }
+
     [Precision(0)]
     public DateTimeOffset? OnlineWhenOpen { get; set; }
 
@@ -88,9 +93,6 @@ public partial class Election
     [StringLength(1)]
     [Unicode(false)]
     public string? OnlineSelectionProcess { get; set; }
-
-    [Precision(0)]
-    public DateTimeOffset? OnlineAnnounced { get; set; }
 
     [StringLength(250)]
     public string? EmailFromAddress { get; set; }

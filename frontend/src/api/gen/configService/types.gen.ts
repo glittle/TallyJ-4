@@ -502,12 +502,12 @@ export type ElectionsCreateElectionDto = {
     electionPasscode?: string | null;
     linkedElectionGuid?: string | null;
     linkedElectionKind?: string | null;
+    useOnlineVoting?: boolean | null;
     useCallInButton?: boolean | null;
     hidePreBallotPages?: boolean | null;
     maskVotingMethod?: boolean | null;
     onlineCloseIsEstimate?: boolean | null;
     onlineSelectionProcess?: string | null;
-    onlineAnnounced?: Date | null;
     emailFromAddress?: string | null;
     emailFromName?: string | null;
     emailText?: string | null;
@@ -531,6 +531,7 @@ export type ElectionsElectionDto = {
     showFullReport?: boolean | null;
     listForPublic?: boolean | null;
     showAsTest?: boolean | null;
+    useOnlineVoting?: boolean;
     onlineWhenOpen?: Date | null;
     onlineWhenClose?: Date | null;
     electionPasscode?: string | null;
@@ -541,7 +542,6 @@ export type ElectionsElectionDto = {
     maskVotingMethod?: boolean | null;
     onlineCloseIsEstimate?: boolean | null;
     onlineSelectionProcess?: string | null;
-    onlineAnnounced?: Date | null;
     emailFromAddress?: string | null;
     emailFromName?: string | null;
     emailText?: string | null;
@@ -600,6 +600,7 @@ export type ElectionsUpdateElectionDto = {
     showFullReport?: boolean | null;
     listForPublic?: boolean | null;
     showAsTest?: boolean | null;
+    useOnlineVoting?: boolean | null;
     onlineWhenOpen?: Date | null;
     onlineWhenClose?: Date | null;
     electionType?: EnumerationsElectionTypeCode;
@@ -612,7 +613,6 @@ export type ElectionsUpdateElectionDto = {
     maskVotingMethod?: boolean | null;
     onlineCloseIsEstimate?: boolean | null;
     onlineSelectionProcess?: string | null;
-    onlineAnnounced?: Date | null;
     emailFromAddress?: string | null;
     emailFromName?: string | null;
     emailText?: string | null;
@@ -621,6 +621,12 @@ export type ElectionsUpdateElectionDto = {
     customMethods?: string | null;
     votingMethods?: string | null;
     flags?: string | null;
+};
+
+export type ElectionsUpdateOnlineVotingWindowDto = {
+    onlineWhenOpen?: Date | null;
+    onlineWhenClose?: Date | null;
+    onlineCloseIsEstimate?: boolean;
 };
 
 export type EligibilityEligibilityReasonDto = {
@@ -2152,249 +2158,6 @@ export type PostApiAccountChangePasswordResponses = {
 
 export type PostApiAccountChangePasswordResponse = PostApiAccountChangePasswordResponses[keyof PostApiAccountChangePasswordResponses];
 
-export type PostApiAuthRegisterAccountData = {
-    body?: AuthRegisterRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/registerAccount';
-};
-
-export type PostApiAuthRegisterAccountResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthLoginData = {
-    body?: AuthLoginRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/login';
-};
-
-export type PostApiAuthLoginResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthTellerLoginData = {
-    body?: AuthTellerLoginRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/teller-login';
-};
-
-export type PostApiAuthTellerLoginResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthForgotPasswordData = {
-    body?: AuthForgotPasswordRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/forgotPassword';
-};
-
-export type PostApiAuthForgotPasswordResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthResetPasswordData = {
-    body?: AuthResetPasswordRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/resetPassword';
-};
-
-export type PostApiAuthResetPasswordResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthVerifyEmailData = {
-    body?: AuthVerifyEmailRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/verifyEmail';
-};
-
-export type PostApiAuthVerifyEmailResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthConfirmEmailChangeData = {
-    body?: AccountConfirmEmailChangeDto;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/confirmEmailChange';
-};
-
-export type PostApiAuthConfirmEmailChangeResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthSetup2FaData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/setup2fa';
-};
-
-export type PostApiAuthSetup2FaResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthEnable2FaData = {
-    body?: AuthEnable2FaRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/enable2fa';
-};
-
-export type PostApiAuthEnable2FaResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthDisable2FaData = {
-    body?: AuthDisable2FaRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/disable2fa';
-};
-
-export type PostApiAuthDisable2FaResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type GetApiAuth2FaStatusData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/2fa/status';
-};
-
-export type GetApiAuth2FaStatusResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthVerify2FaData = {
-    body?: AuthVerify2FaRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/verify2fa';
-};
-
-export type PostApiAuthVerify2FaResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthRefreshTokenData = {
-    body?: AuthRefreshTokenRequest;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/refreshToken';
-};
-
-export type PostApiAuthRefreshTokenResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type GetApiAuthGetUserRolesData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/getUserRoles';
-};
-
-export type GetApiAuthGetUserRolesResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type PostApiAuthByUserIdAssignRoleData = {
-    body?: AuthAssignRoleRequest;
-    path: {
-        userId: string;
-    };
-    query?: never;
-    url: '/api/Auth/{userId}/assignRole';
-};
-
-export type PostApiAuthByUserIdAssignRoleResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type DeleteApiAuthByUserIdByRoleNameRemoveRoleData = {
-    body?: never;
-    path: {
-        userId: string;
-        roleName: string;
-    };
-    query?: never;
-    url: '/api/Auth/{userId}/{roleName}/removeRole';
-};
-
-export type DeleteApiAuthByUserIdByRoleNameRemoveRoleResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type GetApiAuthGetAllRolesData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/getAllRoles';
-};
-
-export type GetApiAuthGetAllRolesResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
 export type GetApiAuthGoogleLoginData = {
     body?: never;
     path?: never;
@@ -2405,20 +2168,6 @@ export type GetApiAuthGoogleLoginData = {
 };
 
 export type GetApiAuthGoogleLoginResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type GetApiAuthMeData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/Auth/me';
-};
-
-export type GetApiAuthMeResponses = {
     /**
      * OK
      */
@@ -2495,6 +2244,62 @@ export type PostApiAuthKakaoResponses = {
     200: unknown;
 };
 
+export type PostApiAuthRegisterAccountData = {
+    body?: AuthRegisterRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/registerAccount';
+};
+
+export type PostApiAuthRegisterAccountResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthLoginData = {
+    body?: AuthLoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/login';
+};
+
+export type PostApiAuthLoginResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthTellerLoginData = {
+    body?: AuthTellerLoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/teller-login';
+};
+
+export type PostApiAuthTellerLoginResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiAuthMeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/me';
+};
+
+export type GetApiAuthMeResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type PostApiAuthLogoutData = {
     body?: never;
     path?: never;
@@ -2503,6 +2308,207 @@ export type PostApiAuthLogoutData = {
 };
 
 export type PostApiAuthLogoutResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthForgotPasswordData = {
+    body?: AuthForgotPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/forgotPassword';
+};
+
+export type PostApiAuthForgotPasswordResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthResetPasswordData = {
+    body?: AuthResetPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/resetPassword';
+};
+
+export type PostApiAuthResetPasswordResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthVerifyEmailData = {
+    body?: AuthVerifyEmailRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/verifyEmail';
+};
+
+export type PostApiAuthVerifyEmailResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthConfirmEmailChangeData = {
+    body?: AccountConfirmEmailChangeDto;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/confirmEmailChange';
+};
+
+export type PostApiAuthConfirmEmailChangeResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiAuthGetUserRolesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/getUserRoles';
+};
+
+export type GetApiAuthGetUserRolesResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthByUserIdAssignRoleData = {
+    body?: AuthAssignRoleRequest;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/Auth/{userId}/assignRole';
+};
+
+export type PostApiAuthByUserIdAssignRoleResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type DeleteApiAuthByUserIdByRoleNameRemoveRoleData = {
+    body?: never;
+    path: {
+        userId: string;
+        roleName: string;
+    };
+    query?: never;
+    url: '/api/Auth/{userId}/{roleName}/removeRole';
+};
+
+export type DeleteApiAuthByUserIdByRoleNameRemoveRoleResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiAuthGetAllRolesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/getAllRoles';
+};
+
+export type GetApiAuthGetAllRolesResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthRefreshTokenData = {
+    body?: AuthRefreshTokenRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/refreshToken';
+};
+
+export type PostApiAuthRefreshTokenResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthSetup2FaData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/setup2fa';
+};
+
+export type PostApiAuthSetup2FaResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthEnable2FaData = {
+    body?: AuthEnable2FaRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/enable2fa';
+};
+
+export type PostApiAuthEnable2FaResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthDisable2FaData = {
+    body?: AuthDisable2FaRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/disable2fa';
+};
+
+export type PostApiAuthDisable2FaResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiAuth2FaStatusData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/2fa/status';
+};
+
+export type GetApiAuth2FaStatusResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthVerify2FaData = {
+    body?: AuthVerify2FaRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/verify2fa';
+};
+
+export type PostApiAuthVerify2FaResponses = {
     /**
      * OK
      */
@@ -3051,6 +3057,24 @@ export type PutApiElectionsByGuidTellerAccessResponses = {
 };
 
 export type PutApiElectionsByGuidTellerAccessResponse = PutApiElectionsByGuidTellerAccessResponses[keyof PutApiElectionsByGuidTellerAccessResponses];
+
+export type PutApiElectionsByGuidOnlineVotingWindowData = {
+    body?: ElectionsUpdateOnlineVotingWindowDto;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/online-voting-window';
+};
+
+export type PutApiElectionsByGuidOnlineVotingWindowResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseElectionsElectionDto;
+};
+
+export type PutApiElectionsByGuidOnlineVotingWindowResponse = PutApiElectionsByGuidOnlineVotingWindowResponses[keyof PutApiElectionsByGuidOnlineVotingWindowResponses];
 
 export type DeleteApiElectionsByGuidDeleteElectionData = {
     body?: never;

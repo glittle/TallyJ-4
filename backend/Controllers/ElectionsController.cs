@@ -227,6 +227,28 @@ public class ElectionsController : ControllerBase
     }
 
     /// <summary>
+    /// Updates only the online voting open/close window for an election.
+    /// </summary>
+    /// <param name="guid">The GUID of the election.</param>
+    /// <param name="dto">The open and close times.</param>
+    /// <returns>The updated election information.</returns>
+    [HttpPut("{guid}/online-voting-window")]
+    [Authorize(Policy = "FullTellerAccess")]
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> UpdateOnlineVotingWindow(
+        Guid guid,
+        UpdateOnlineVotingWindowDto dto)
+    {
+        var election = await _electionService.UpdateOnlineVotingWindowAsync(guid, dto);
+
+        if (election == null)
+        {
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
+        }
+
+        return Ok(ApiResponse<ElectionDto>.SuccessResponse(election, "Online voting window updated"));
+    }
+
+    /// <summary>
     /// Deletes an election by its GUID.
     /// </summary>
     /// <param name="guid">The GUID of the election to delete.</param>

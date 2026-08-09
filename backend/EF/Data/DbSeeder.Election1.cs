@@ -24,6 +24,7 @@ public static partial class DbSeeder
             NumberToElect = 9,
             DateOfElection = DateTimeOffset.Now.AddDays(-3),
             ElectionStage = ElectionStage.ProcessingBallots,
+            UseOnlineVoting = true,
             OnlineWhenOpen = DateTimeOffset.Now.AddDays(-7),
             OnlineWhenClose = DateTimeOffset.Now.AddDays(3),
             OnlineCloseIsEstimate = true,
@@ -260,6 +261,7 @@ public static partial class DbSeeder
         }
 
         var now = DateTimeOffset.Now;
+        election.UseOnlineVoting = true;
         if (election.OnlineWhenOpen == null || election.OnlineWhenOpen > now)
         {
             election.OnlineWhenOpen = now.AddDays(-7);

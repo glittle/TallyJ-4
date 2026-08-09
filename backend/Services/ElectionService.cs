@@ -88,7 +88,7 @@ public class ElectionService : IElectionService
             BallotCount = ballotCounts.TryGetValue(e.ElectionGuid, out var ballotCount) ? ballotCount : 0,
             ElectionType = ElectionTypeEnum.ParseCode(e.ElectionType),
             IsTellerAccessOpen = ElectionTellerAccessHelper.IsGuestTellerAccessOpen(e.ListedForPublicAsOf),
-            IsOnlineVotingEnabled = e.OnlineWhenOpen != null && e.OnlineWhenClose != null,
+            IsOnlineVotingEnabled = e.UseOnlineVoting,
             ShowAsTest = e.ShowAsTest,
             ToElect = e.NumberToElect,
         }).ToList();
@@ -406,6 +406,50 @@ public class ElectionService : IElectionService
         if (!isOpen)
         {
             await _signalRNotificationService.CloseOutGuestTellersAsync(electionGuid);
+        }
+
+        return await GetElectionByGuidAsync(electionGuid);
+    }
+
+    /// <inheritdoc />
+    public async Task<ElectionDto?> UpdateOnlineVotingWindowAsync(
+        Guid electionGuid,
+        UpdateOnlineVotingWindowDto dto)
+    {
+        var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+        if (election == null)
+        {
+            return null;
+        }
+
+        var previousOpen = election.OnlineWhenOpen;
+        var previousClose = election.OnlineWhenClose;
+        var previousCloseIsEstimate = election.OnlineCloseIsEstimate;
+
+        election.OnlineWhenOpen = dto.OnlineWhenOpen;
+        election.OnlineWhenClose = dto.OnlineWhenClose;
+        election.OnlineCloseIsEstimate = dto.OnlineCloseIsEstimate;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation(
+            "Updated online voting window for election {ElectionGuid}: open={OnlineWhenOpen}, close={OnlineWhenClose}, closeIsEstimate={OnlineCloseIsEstimate}",
+            electionGuid,
+            election.OnlineWhenOpen,
+            election.OnlineWhenClose,
+            election.OnlineCloseIsEstimate);
+
+        if (previousOpen != election.OnlineWhenOpen
+            || previousClose != election.OnlineWhenClose
+            || previousCloseIsEstimate != election.OnlineCloseIsEstimate)
+        {
+            await _signalRNotificationService.SendOnlineElectionUpdateAsync(new OnlineElectionUpdateDto
+            {
+                ElectionGuid = election.ElectionGuid,
+                OnlineWhenOpen = election.OnlineWhenOpen,
+                OnlineWhenClose = election.OnlineWhenClose,
+                OnlineCloseIsEstimate = election.OnlineCloseIsEstimate,
+                OnlineSelectionProcess = election.OnlineSelectionProcess
+            });
         }
 
         return await GetElectionByGuidAsync(electionGuid);

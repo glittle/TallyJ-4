@@ -168,6 +168,42 @@ export const useElectionStore = defineStore("election", () => {
     }
   }
 
+  async function updateOnlineVotingWindow(
+    electionGuid: string,
+    options: {
+      onlineWhenOpen?: string | null;
+      onlineWhenClose?: string | null;
+      onlineCloseIsEstimate: boolean;
+    },
+  ) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const election = await electionService.updateOnlineVotingWindow(
+        electionGuid,
+        options,
+      );
+
+      const index = elections.value.findIndex(
+        (e) => e.electionGuid === electionGuid,
+      );
+      if (index !== -1) {
+        elections.value[index] = election;
+      }
+
+      if (currentElection.value?.electionGuid === electionGuid) {
+        currentElection.value = election;
+      }
+
+      return election;
+    } catch (e: any) {
+      error.value = extractApiErrorMessage(e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function deleteElection(electionGuid: string) {
     loading.value = true;
     error.value = null;
@@ -507,6 +543,7 @@ export const useElectionStore = defineStore("election", () => {
     fetchElectionById,
     createElection,
     updateElection,
+    updateOnlineVotingWindow,
     deleteElection,
     setCurrentElection,
     clearError,

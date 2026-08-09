@@ -82,7 +82,7 @@ public partial class OnlineVotingService
 
             var result = personElections.Select(x =>
             {
-                var hasOnlineVoting = x.Election.OnlineWhenOpen != null || x.Election.OnlineWhenClose != null;
+                var hasOnlineVoting = x.Election.UseOnlineVoting;
                 var isOpen = hasOnlineVoting &&
                              (x.Election.OnlineWhenOpen == null || x.Election.OnlineWhenOpen <= now) &&
                              (x.Election.OnlineWhenClose == null || x.Election.OnlineWhenClose > now);

@@ -87,6 +87,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 election.ListForPublic,
                 ListedForPublicAsOf = election.ListedForPublicAsOf?.ToString("o"),
                 election.ShowFullReport,
+                election.UseOnlineVoting,
                 OnlineWhenOpen = election.OnlineWhenOpen?.ToString("o"),
                 OnlineWhenClose = election.OnlineWhenClose?.ToString("o"),
                 election.OnlineCloseIsEstimate,
@@ -289,6 +290,9 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 ElectionPasscode = importData.election.ElectionPasscode,
                 LastEnvNum = importData.election.LastEnvNum,
                 ShowFullReport = importData.election.ShowFullReport,
+                UseOnlineVoting = importData.election.UseOnlineVoting
+                    || importData.election.OnlineWhenOpen != null
+                    || importData.election.OnlineWhenClose != null,
                 OnlineWhenOpen = ParseDateTime(importData.election.OnlineWhenOpen),
                 OnlineWhenClose = ParseDateTime(importData.election.OnlineWhenClose),
                 OnlineCloseIsEstimate = importData.election.OnlineCloseIsEstimate ?? true,

@@ -122,21 +122,36 @@ public static class ObjectCopierExtensions
         if (targetType.IsAssignableFrom(sourceType))
             return true;
 
-        // Nullable handling
+        // Unwrap Nullable<T> on either side (e.g. bool? → bool, int → int?).
+        // Must re-check assignability after unwrap — otherwise DTO bool? fields
+        // never map onto non-nullable entity bools (UseOnlineVoting, etc.).
         var underlyingTarget = Nullable.GetUnderlyingType(targetType);
         if (underlyingTarget != null)
+        {
             targetType = underlyingTarget;
+        }
 
         var underlyingSource = Nullable.GetUnderlyingType(sourceType);
         if (underlyingSource != null)
+        {
             sourceType = underlyingSource;
+        }
+
+        if (targetType.IsAssignableFrom(sourceType) || sourceType == targetType)
+        {
+            return true;
+        }
 
         // Allow common conversions that Convert.ChangeType supports
         if (sourceType == typeof(string) || targetType == typeof(string))
+        {
             return true;
+        }
 
         if (sourceType.IsPrimitive || sourceType.IsEnum || IsNumericType(sourceType))
+        {
             return IsNumericType(targetType) || targetType == typeof(string) || targetType.IsEnum;
+        }
 
         return false;
     }

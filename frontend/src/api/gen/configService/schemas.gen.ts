@@ -1646,6 +1646,10 @@ export const Elections_CreateElectionDtoSchema = {
             type: 'string',
             nullable: true
         },
+        useOnlineVoting: {
+            type: 'boolean',
+            nullable: true
+        },
         useCallInButton: {
             type: 'boolean',
             nullable: true
@@ -1664,11 +1668,6 @@ export const Elections_CreateElectionDtoSchema = {
         },
         onlineSelectionProcess: {
             type: 'string',
-            nullable: true
-        },
-        onlineAnnounced: {
-            type: 'string',
-            format: 'date-time',
             nullable: true
         },
         emailFromAddress: {
@@ -1758,6 +1757,9 @@ export const Elections_ElectionDtoSchema = {
             type: 'boolean',
             nullable: true
         },
+        useOnlineVoting: {
+            type: 'boolean'
+        },
         onlineWhenOpen: {
             type: 'string',
             format: 'date-time',
@@ -1799,11 +1801,6 @@ export const Elections_ElectionDtoSchema = {
         },
         onlineSelectionProcess: {
             type: 'string',
-            nullable: true
-        },
-        onlineAnnounced: {
-            type: 'string',
-            format: 'date-time',
             nullable: true
         },
         emailFromAddress: {
@@ -2014,6 +2011,10 @@ export const Elections_UpdateElectionDtoSchema = {
             type: 'boolean',
             nullable: true
         },
+        useOnlineVoting: {
+            type: 'boolean',
+            nullable: true
+        },
         onlineWhenOpen: {
             type: 'string',
             format: 'date-time',
@@ -2063,11 +2064,6 @@ export const Elections_UpdateElectionDtoSchema = {
             type: 'string',
             nullable: true
         },
-        onlineAnnounced: {
-            type: 'string',
-            format: 'date-time',
-            nullable: true
-        },
         emailFromAddress: {
             type: 'string',
             nullable: true
@@ -2099,6 +2095,26 @@ export const Elections_UpdateElectionDtoSchema = {
         flags: {
             type: 'string',
             nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Elections_UpdateOnlineVotingWindowDtoSchema = {
+    type: 'object',
+    properties: {
+        onlineWhenOpen: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        onlineWhenClose: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        onlineCloseIsEstimate: {
+            type: 'boolean'
         }
     },
     additionalProperties: false

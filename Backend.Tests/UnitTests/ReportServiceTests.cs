@@ -47,6 +47,7 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
             NumberToElect = numberToElect,
             NumberExtra = numberExtra,
             DateOfElection = new DateTime(2026, 4, 21, 0, 0, 0, DateTimeKind.Utc),
+            UseOnlineVoting = true,
             OnlineWhenOpen = onlineWhenOpen,
             VotingMethods = votingMethods,
             CustomMethods = customMethods,
