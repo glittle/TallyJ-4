@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Backend.Entities;
 using Backend.Enumerations;
-using Backend.Helpers;
 using Backend.DTOs.Import;
 using Microsoft.EntityFrameworkCore;
 
@@ -407,10 +406,6 @@ public partial class PeopleImportService
         {
             return null; // Skip this person due to validation errors
         }
-
-        // Set computed fields
-        person.FullName = PersonNameHelper.ComputeFullName(person);
-        person.FullNameFl = PersonNameHelper.ComputeFullNameFl(person);
 
         return person;
     }

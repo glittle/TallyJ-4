@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Backend.Context;
 using Backend.Entities;
 using Backend.Enumerations;
@@ -54,12 +55,7 @@ public class PeopleService : IPeopleService
         if (!string.IsNullOrWhiteSpace(search))
         {
             var searchLower = search.ToLower();
-            query = query.Where(p =>
-                (p.FirstName != null && p.FirstName.ToLower().Contains(searchLower)) ||
-                p.LastName.ToLower().Contains(searchLower) ||
-                (p.FullName != null && p.FullName.ToLower().Contains(searchLower)) ||
-                (p.Email != null && p.Email.ToLower().Contains(searchLower)) ||
-                (p.BahaiId != null && p.BahaiId.ToLower().Contains(searchLower)));
+            query = query.Where(PersonSearchPredicate(searchLower));
         }
 
         if (canVote.HasValue)
@@ -142,8 +138,6 @@ public class PeopleService : IPeopleService
         var person = createDto.CopyMatchingPropertiesToNew<Person>();
         person.PersonGuid = Guid.NewGuid();
         person.RowVersion = new byte[8];
-        person.FullName = PersonNameHelper.ComputeFullName(person);
-        person.FullNameFl = PersonNameHelper.ComputeFullNameFl(person);
 
         // Sync eligibility based on IneligibleReasonGuid
         SyncEligibility(person);
@@ -211,9 +205,6 @@ public class PeopleService : IPeopleService
         }
 
         updateDto.CopyMatchingPropertiesTo(person);
-
-        person.FullName = PersonNameHelper.ComputeFullName(person);
-        person.FullNameFl = PersonNameHelper.ComputeFullNameFl(person);
 
         // Sync eligibility based on IneligibleReasonGuid
         SyncEligibility(person);
@@ -289,12 +280,8 @@ public class PeopleService : IPeopleService
         var searchLower = query.ToLower();
 
         var people = await _context.People
-            .Where(p => p.ElectionGuid == electionGuid &&
-                       ((p.FirstName != null && p.FirstName.ToLower().Contains(searchLower)) ||
-                        p.LastName.ToLower().Contains(searchLower) ||
-                        (p.FullName != null && p.FullName.ToLower().Contains(searchLower)) ||
-                        (p.Email != null && p.Email.ToLower().Contains(searchLower)) ||
-                        (p.BahaiId != null && p.BahaiId.ToLower().Contains(searchLower))))
+            .Where(p => p.ElectionGuid == electionGuid)
+            .Where(PersonSearchPredicate(searchLower))
             .OrderBy(p => p.LastName)
             .ThenBy(p => p.FirstName)
             .Take(20)
@@ -443,10 +430,26 @@ public class PeopleService : IPeopleService
     // IneligibleReasonCode is derived from the Guid via the enumeration.
     // =====================================================================
 
+    /// <summary>
+    /// EF-translatable search over name parts and contact fields (not the in-memory FullName).
+    /// </summary>
+    private static Expression<Func<Person, bool>> PersonSearchPredicate(string searchLower) =>
+        p => (p.FirstName != null && p.FirstName.ToLower().Contains(searchLower)) ||
+             p.LastName.ToLower().Contains(searchLower) ||
+             (p.OtherNames != null && p.OtherNames.ToLower().Contains(searchLower)) ||
+             (p.OtherLastNames != null && p.OtherLastNames.ToLower().Contains(searchLower)) ||
+             (p.OtherInfo != null && p.OtherInfo.ToLower().Contains(searchLower)) ||
+             (p.CombinedInfo != null && p.CombinedInfo.ToLower().Contains(searchLower)) ||
+             (p.Email != null && p.Email.ToLower().Contains(searchLower)) ||
+             (p.BahaiId != null && p.BahaiId.ToLower().Contains(searchLower));
+
     private static PersonDto MapToPersonDto(Person person)
     {
         var dto = person.CopyMatchingPropertiesToNew<PersonDto>();
         dto.IneligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
+        // Expose effective flags so null legacy rows match list UI (eligible unless explicitly false).
+        dto.CanVote = PersonEligibilityHelper.CanVote(person);
+        dto.CanReceiveVotes = PersonEligibilityHelper.CanReceiveVotes(person);
         return dto;
     }
 
@@ -454,6 +457,8 @@ public class PeopleService : IPeopleService
     {
         var dto = person.CopyMatchingPropertiesToNew<PersonListDto>();
         dto.IneligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
+        dto.CanVote = PersonEligibilityHelper.CanVote(person);
+        dto.CanReceiveVotes = PersonEligibilityHelper.CanReceiveVotes(person);
         return dto;
     }
 
@@ -461,6 +466,8 @@ public class PeopleService : IPeopleService
     {
         var dto = person.CopyMatchingPropertiesToNew<PersonDetailDto>();
         dto.IneligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
+        dto.CanVote = PersonEligibilityHelper.CanVote(person);
+        dto.CanReceiveVotes = PersonEligibilityHelper.CanReceiveVotes(person);
         return dto;
     }
 

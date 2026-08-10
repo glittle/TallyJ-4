@@ -51,7 +51,9 @@ const emit = defineEmits<{
             dragOverIndex === index &&
             dragSourceIndex !== null &&
             index > dragSourceIndex,
-          'is-draggable': canReorderVotes && isPersistedVote(vote),
+          // Interaction only while reorder is allowed; handle stays visible on persisted votes
+          'is-draggable':
+            canReorderVotes && isPersistedVote(vote) && !reorderingVotes,
         }"
         :draggable="
           canReorderVotes && isPersistedVote(vote) && !reorderingVotes
@@ -65,8 +67,11 @@ const emit = defineEmits<{
         <div class="vote-content">
           <template v-if="vote">
             <span
-              v-if="canReorderVotes && isPersistedVote(vote)"
+              v-if="isPersistedVote(vote)"
               class="drag-handle"
+              :class="{
+                'is-inactive': !canReorderVotes || reorderingVotes,
+              }"
               :title="$t('ballots.dragToReorder')"
             >
               <el-icon><Rank /></el-icon>
@@ -108,7 +113,10 @@ const emit = defineEmits<{
           </template>
         </div>
       </div>
-      <p v-if="canReorderVotes" class="votes-drag-hint">
+      <p
+        v-if="votes.some((vote) => isPersistedVote(vote))"
+        class="votes-drag-hint"
+      >
         {{ $t("ballots.dragToReorder") }}
       </p>
     </div>
@@ -213,6 +221,12 @@ const emit = defineEmits<{
         align-items: center;
         color: var(--el-text-color-secondary);
         margin-right: var(--spacing-1, 4px);
+
+        // Keep layout stable while a new vote is saving (reorder disabled)
+        &.is-inactive {
+          opacity: 0.35;
+          cursor: default;
+        }
       }
 
       .vote-name-block {

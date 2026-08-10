@@ -158,7 +158,7 @@ public class MigrationTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task ComputedColumns_WorkCorrectly()
+    public async Task PersonFullName_IsComputedInMemoryFromNameParts()
     {
         // Arrange
         using var scope = Factory.Services.CreateScope();
@@ -183,22 +183,12 @@ public class MigrationTests : IntegrationTestBase
         // Act
         var savedPerson = await dbContext.People.FindAsync(person.RowId);
 
-        // Assert
+        // Assert — FullName/FullNameFl are NotMapped and derived from name parts
         Assert.NotNull(savedPerson);
-        if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
-        {
-            // Computed columns (FullName) only execute in SQL Server
-            Assert.NotNull(savedPerson!.FullName);
-            var fullName = savedPerson.FullName;
-            Assert.Contains(savedPerson.FirstName!, fullName);
-            Assert.Contains(savedPerson.LastName!, fullName);
-        }
-        else
-        {
-            // For other providers, verify the saved properties are correct
-            Assert.Equal("John", savedPerson!.FirstName);
-            Assert.Equal("Doe", savedPerson.LastName);
-        }
+        Assert.Equal("John", savedPerson!.FirstName);
+        Assert.Equal("Doe", savedPerson.LastName);
+        Assert.Equal("Doe, John", savedPerson.FullName);
+        Assert.Equal("John Doe", savedPerson.FullNameFl);
     }
 }
 

@@ -41,17 +41,17 @@ public partial class OnlineVotingService
     {
         var people = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.CanReceiveVotes == true)
-            .OrderBy(p => p.FullName)
-            .Select(p => new OnlinePersonDto
-            {
-                PersonGuid = p.PersonGuid,
-                FullName = p.FullName ?? "",
-                Area = p.Area,
-                OtherInfo = p.OtherInfo
-            })
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
             .ToListAsync();
 
-        return people;
+        return people.Select(p => new OnlinePersonDto
+        {
+            PersonGuid = p.PersonGuid,
+            FullName = p.FullName ?? "",
+            Area = p.Area,
+            OtherInfo = p.OtherInfo
+        }).ToList();
     }
 
     /// <inheritdoc/>

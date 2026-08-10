@@ -585,8 +585,14 @@ describe("InlineBallotEntry", () => {
     await wrapper.find(".search-result-item").trigger("click");
     await nextTick();
 
-    expect(wrapper.find(".drag-handle").exists()).toBe(false);
-    expect(wrapper.find(".votes-drag-hint").exists()).toBe(false);
+    // Handles stay visible on already-saved votes so the list does not jump;
+    // interaction is disabled until the optimistic vote is persisted.
+    const handles = wrapper.findAll(".drag-handle");
+    expect(handles.length).toBe(2);
+    expect(handles.every((h) => h.classes().includes("is-inactive"))).toBe(
+      true,
+    );
+    expect(wrapper.find(".votes-drag-hint").exists()).toBe(true);
     expect(wrapper.findAll(".vote-row.is-draggable")).toHaveLength(0);
 
     const rows = wrapper.findAll(".vote-row");

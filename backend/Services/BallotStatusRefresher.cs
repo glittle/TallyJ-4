@@ -1,6 +1,7 @@
 using Backend.Context;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
 
@@ -100,7 +101,7 @@ public static class BallotStatusRefresher
         return new BallotVoteInfo
         {
             PersonGuid = vote.PersonGuid,
-            PersonCanReceiveVotes = vote.Person?.CanReceiveVotes ?? false,
+            PersonCanReceiveVotes = PersonEligibilityHelper.CanReceiveVotes(vote.Person),
             PersonCombinedInfo = vote.Person?.CombinedInfo,
             VoteCombinedInfo = vote.PersonCombinedInfo,
             VoteIneligibleReasonCode = vote.IneligibleReasonCode,

@@ -584,7 +584,7 @@ If migration fails or critical issues arise:
 | LastName              | LastName              | Same                |
 | CanVote (bit)         | CanVote (bit)         | Same                |
 | CanReceiveVotes (bit) | CanReceiveVotes (bit) | Same                |
-| \_FullName (computed) | \_FullName (computed) | Both auto-generated |
+| \_FullName (computed) | *(removed)* | v4 computes display names in memory from name parts |
 
 ---
 
