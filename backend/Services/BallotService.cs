@@ -240,7 +240,7 @@ public class BallotService : IBallotService
 
         if (string.IsNullOrEmpty(voteDto.IneligibleReasonCode)
             && vote.VoteStatus == VoteStatus.Spoiled
-            && vote.Person?.CanReceiveVotes != true)
+            && !PersonEligibilityHelper.CanReceiveVotes(vote.Person))
         {
             voteDto.IneligibleReasonCode = GetIneligibleReasonCode(vote.Person?.IneligibleReasonGuid);
         }

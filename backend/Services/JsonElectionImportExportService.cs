@@ -409,8 +409,9 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 CombinedSoundCodes = person.CombinedSoundCodes,
                 CombinedInfoAtStart = person.CombinedInfoAtStart,
                 AgeGroup = person.AgeGroup,
-                CanVote = person.CanVote,
-                CanReceiveVotes = person.CanReceiveVotes,
+                // Match CSV people import and XML package import when flags are omitted.
+                CanVote = person.CanVote ?? true,
+                CanReceiveVotes = person.CanReceiveVotes ?? true,
                 IneligibleReasonGuid = person.IneligibleReasonGuid,
                 RegistrationTime = ParseDateTime(person.RegistrationTime),
                 VotingLocationGuid = person.VotingLocationGuid.HasValue && guidMap.ContainsKey(person.VotingLocationGuid.Value)

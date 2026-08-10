@@ -171,7 +171,7 @@ public abstract class ElectionAnalyzerBase
         return new BallotVoteInfo
         {
             PersonGuid = vote.PersonGuid,
-            PersonCanReceiveVotes = person?.CanReceiveVotes ?? false,
+            PersonCanReceiveVotes = PersonEligibilityHelper.CanReceiveVotes(person),
             PersonCombinedInfo = person?.CombinedInfo,
             VoteCombinedInfo = vote.PersonCombinedInfo,
             VoteIneligibleReasonCode = vote.IneligibleReasonCode,
@@ -552,7 +552,7 @@ public abstract class ElectionAnalyzerBase
             return VoteStatus.Spoiled;
         }
 
-        if (person.CanReceiveVotes != true)
+        if (!PersonEligibilityHelper.CanReceiveVotes(person))
             return VoteStatus.Spoiled;
 
         if (!string.IsNullOrEmpty(person.CombinedInfo) &&

@@ -805,7 +805,6 @@ public class TallyServiceTests : ServiceTestBase
                 CanReceiveVotes = true,
                 CanVote = true,
                 CombinedInfo = $"Test{i}, Person{i}",
-                FullNameFl = $"Person{i} Test{i}",
                 RowVersion = new byte[8]
             };
 

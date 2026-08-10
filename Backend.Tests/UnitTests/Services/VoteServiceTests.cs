@@ -68,10 +68,7 @@ public class VoteServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = ElectionGuid,
             LastName = "Smith",
-            FirstName = "John",
-            FullName = "Smith, John",
-            FullNameFl = "John Smith",
-            CanReceiveVotes = canReceiveVotes,
+            FirstName = "John", CanReceiveVotes = canReceiveVotes,
             CanVote = true,
             IneligibleReasonGuid = ineligibleReasonGuid,
             RowVersion = new byte[8]
@@ -100,6 +97,36 @@ public class VoteServiceTests : ServiceTestBase
         Assert.Null(result.VotePositions);
         Assert.Equal(VoteStatus.Ok, result.Vote.VoteStatus);
         Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
+    }
+
+    [Fact]
+    public async Task CreateVoteAsync_NullCanReceiveVotesWithoutReason_TreatsAsEligible()
+    {
+        // Legacy / import rows often leave CanReceiveVotes null; UI treats that as eligible.
+        var person = new Person
+        {
+            RowId = Context.People.Count() + 1,
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = ElectionGuid,
+            LastName = "NullFlags",
+            FirstName = "Eligible",
+            CanReceiveVotes = null,
+            CanVote = null,
+            IneligibleReasonGuid = null,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.CreateVoteAsync(new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PersonGuid = person.PersonGuid,
+            PositionOnBallot = 1,
+        });
+
+        Assert.Equal(VoteStatus.Ok, result.Vote.VoteStatus);
+        Assert.Null(result.Vote.IneligibleReasonCode);
     }
 
     [Fact]

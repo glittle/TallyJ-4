@@ -12,7 +12,8 @@ public partial class ReportService
             .Include(r => r.Person)
             .Where(r => r.ElectionGuid == electionGuid)
             .OrderBy(r => r.Rank)
-            .ThenBy(r => r.Person!.FullNameFl)
+            .ThenBy(r => r.Person!.LastName)
+            .ThenBy(r => r.Person!.FirstName)
             .ToListAsync();
 
         var people = new List<VotePersonDto>();
@@ -44,7 +45,8 @@ public partial class ReportService
         var results = await _context.Results
             .Include(r => r.Person)
             .Where(r => r.ElectionGuid == electionGuid)
-            .OrderBy(r => r.Person!.FullName)
+            .OrderBy(r => r.Person!.LastName)
+            .ThenBy(r => r.Person!.FirstName)
             .ToListAsync();
 
         var people = results.Select(r => new VotePersonDto

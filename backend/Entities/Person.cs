@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Entities;
 
 [Index("ElectionGuid", Name = "IX_Person")]
-[Index("ElectionGuid", "FullName", Name = "IX_PersonElection")]
 [Index("PersonGuid", Name = "IX_Person_1", IsUnique = true)]
 [Index("CanVote", "IneligibleReasonGuid", Name = "IX_Person_CanVote")]
 [Index("ElectionGuid", Name = "nci_msft_Person_22A77D9DC21D83B4582C43E94A27236D")]
@@ -74,15 +74,19 @@ public partial class Person
     [Column("_RowVersion")]
     public byte[] RowVersion { get; set; } = null!;
 
-    [Column("_FullName")]
-    [StringLength(200)]
-    public string? FullName { get; set; }
+    /// <summary>
+    /// Display name "Last, First [aliases]" — computed in memory from name parts (not stored).
+    /// Do not use in EF LINQ that must translate to SQL; order/filter by name columns instead.
+    /// </summary>
+    [NotMapped]
+    public string? FullName => PersonNameHelper.ComputeFullName(this);
 
-
-
-    [Column("_FullNameFL")]
-    [StringLength(200)]
-    public string? FullNameFl { get; set; }
+    /// <summary>
+    /// Display name "First Last [aliases]" — computed in memory from name parts (not stored).
+    /// Do not use in EF LINQ that must translate to SQL; order/filter by name columns instead.
+    /// </summary>
+    [NotMapped]
+    public string? FullNameFl => PersonNameHelper.ComputeFullNameFl(this);
 
     [StringLength(25)]
     public string? Teller1 { get; set; }

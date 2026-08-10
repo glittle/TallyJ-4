@@ -153,7 +153,7 @@ watch(
   },
 );
 
-async function handleVoteAdded(vote: VoteDto, options?: VoteAddedOptions) {
+async function handleVoteAdded(vote: VoteDto, _options?: VoteAddedOptions) {
   try {
     const createDto: CreateVoteDto = {
       ballotGuid: vote.ballotGuid,
@@ -166,15 +166,13 @@ async function handleVoteAdded(vote: VoteDto, options?: VoteAddedOptions) {
 
     const result: VoteWithBallotStatusDto =
       await ballotStore.createVote(createDto);
+    // Success is visible in the ballot list (name appears; drag handle when saved).
+    // Only toast when the result is non-obvious (spoiled / ineligible).
     const isSpoiled = result.vote && isVoteDtoSpoiled(result.vote);
     if (isSpoiled) {
       const reasonCode =
         result.vote.ineligibleReasonCode || result.vote.statusCode;
       showWarningMessage(t("ballots.voteSpoiledSuccess", { code: reasonCode }));
-    } else if (options?.fromNewPerson) {
-      showSuccessMessage(t("ballots.addNameSuccess"));
-    } else {
-      showSuccessMessage(t("ballots.voteAddedSuccess"));
     }
   } catch (error: any) {
     voteResyncKey.value++;

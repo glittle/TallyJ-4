@@ -31,10 +31,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             FirstName = "Alice",
-            LastName = "Johnson",
-            FullName = "Johnson, Alice",
-            FullNameFl = "Alice Johnson",
-            CanReceiveVotes = true,
+            LastName = "Johnson", CanReceiveVotes = true,
             CanVote = true,
             RowVersion = new byte[8]
         };
@@ -44,10 +41,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             FirstName = "Bob",
-            LastName = "Smith",
-            FullName = "Smith, Bob",
-            FullNameFl = "Bob Smith",
-            CanReceiveVotes = true,
+            LastName = "Smith", CanReceiveVotes = true,
             CanVote = true,
             RowVersion = new byte[8]
         };
@@ -57,10 +51,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             FirstName = "Charlie",
-            LastName = "Brown",
-            FullName = "Brown, Charlie",
-            FullNameFl = "Charlie Brown",
-            CanReceiveVotes = false,
+            LastName = "Brown", CanReceiveVotes = false,
             CanVote = true,
             RowVersion = new byte[8]
         };
@@ -87,10 +78,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             FirstName = "David",
-            LastName = "Wilson",
-            FullName = "Wilson, David",
-            FullNameFl = "David Wilson",
-            CanReceiveVotes = true,
+            LastName = "Wilson", CanReceiveVotes = true,
             CanVote = true,
             CombinedSoundCodes = "W425|D130",
             RowVersion = new byte[8]
@@ -116,10 +104,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             FirstName = "Zoe",
-            LastName = "Anderson",
-            FullName = "Anderson, Zoe",
-            FullNameFl = "Zoe Anderson",
-            CanReceiveVotes = true,
+            LastName = "Anderson", CanReceiveVotes = true,
             RowVersion = new byte[8]
         };
 
@@ -128,10 +113,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             FirstName = "Alice",
-            LastName = "Anderson",
-            FullName = "Anderson, Alice",
-            FullNameFl = "Alice Anderson",
-            CanReceiveVotes = true,
+            LastName = "Anderson", CanReceiveVotes = true,
             RowVersion = new byte[8]
         };
 
@@ -140,10 +122,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             FirstName = "Bob",
-            LastName = "Baker",
-            FullName = "Baker, Bob",
-            FullNameFl = "Bob Baker",
-            CanReceiveVotes = true,
+            LastName = "Baker", CanReceiveVotes = true,
             RowVersion = new byte[8]
         };
 
@@ -170,10 +149,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid1,
             FirstName = "John",
-            LastName = "Doe",
-            FullName = "Doe, John",
-            FullNameFl = "John Doe",
-            CanReceiveVotes = true,
+            LastName = "Doe", CanReceiveVotes = true,
             RowVersion = new byte[8]
         };
 
@@ -182,10 +158,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid2,
             FirstName = "Jane",
-            LastName = "Doe",
-            FullName = "Doe, Jane",
-            FullNameFl = "Jane Doe",
-            CanReceiveVotes = true,
+            LastName = "Doe", CanReceiveVotes = true,
             RowVersion = new byte[8]
         };
 
@@ -288,10 +261,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "Smith",
-            FirstName = "John",
-            FullName = "Smith, John",
-            FullNameFl = "John Smith",
-            CanVote = true,
+            FirstName = "John", CanVote = true,
             CanReceiveVotes = true,
             RowVersion = new byte[8]
         };
@@ -351,10 +321,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "Smith",
-            FirstName = "John",
-            FullName = "Smith, John",
-            FullNameFl = "John Smith",
-            CanVote = true,
+            FirstName = "John", CanVote = true,
             CanReceiveVotes = true,
             RowVersion = new byte[8]
         };
@@ -427,10 +394,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "Smith",
-            FirstName = "John",
-            FullName = "Smith, John",
-            FullNameFl = "John Smith",
-            CanVote = true,
+            FirstName = "John", CanVote = true,
             CanReceiveVotes = false,
             IneligibleReasonGuid = IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid,
             RowVersion = new byte[8]
@@ -474,10 +438,7 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "Smith",
-            FirstName = "John",
-            FullName = "Smith, John",
-            FullNameFl = "John Smith",
-            CanVote = false,
+            FirstName = "John", CanVote = false,
             CanReceiveVotes = false,
             IneligibleReasonGuid = IneligibleReasonEnum.X01_Deceased.ReasonGuid,
             RowVersion = new byte[8]
@@ -509,8 +470,6 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "Alpha",
-            FullName = "Alpha",
-            FullNameFl = "Alpha",
             CanReceiveVotes = true,
             CanVote = true,
             RowVersion = new byte[8]
@@ -520,8 +479,6 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "Beta",
-            FullName = "Beta",
-            FullNameFl = "Beta",
             CanReceiveVotes = false,
             CanVote = true,
             IneligibleReasonGuid = IneligibleReasonEnum.V06_OtherCanVoteButNotBeVotedFor.ReasonGuid,
@@ -567,8 +524,6 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "Voter",
-            FullName = "Voter",
-            FullNameFl = "Voter",
             CanReceiveVotes = true,
             CanVote = true,
             RowVersion = new byte[8]
@@ -605,8 +560,6 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "NoVotes",
-            FullName = "NoVotes",
-            FullNameFl = "NoVotes",
             CanReceiveVotes = true,
             CanVote = true,
             RowVersion = new byte[8]
@@ -627,8 +580,8 @@ public class PeopleServiceTests : ServiceTestBase
         var election2 = Guid.NewGuid();
 
         Context.People.AddRange(
-            new Person { PersonGuid = Guid.NewGuid(), ElectionGuid = election1, LastName = "InElection1", FullName = "InElection1", FullNameFl = "InElection1", RowVersion = new byte[8] },
-            new Person { PersonGuid = Guid.NewGuid(), ElectionGuid = election2, LastName = "InElection2", FullName = "InElection2", FullNameFl = "InElection2", RowVersion = new byte[8] }
+            new Person { PersonGuid = Guid.NewGuid(), ElectionGuid = election1, LastName = "InElection1", RowVersion = new byte[8] },
+            new Person { PersonGuid = Guid.NewGuid(), ElectionGuid = election2, LastName = "InElection2", RowVersion = new byte[8] }
         );
         await Context.SaveChangesAsync();
 
@@ -647,8 +600,6 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "Voter",
-            FullName = "Voter",
-            FullNameFl = "Voter",
             VotingMethod = "I",
             RowVersion = new byte[8]
         };
@@ -698,8 +649,6 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "Person",
-            FullName = "Person",
-            FullNameFl = "Person",
             RowVersion = new byte[8]
         };
         Context.People.Add(person);
@@ -737,8 +686,6 @@ public class PeopleServiceTests : ServiceTestBase
             PersonGuid = Guid.NewGuid(),
             ElectionGuid = electionGuid,
             LastName = "Nguyen",
-            FullName = "Nguyen",
-            FullNameFl = "Nguyen",
             RowVersion = new byte[8]
         };
         Context.People.Add(person);

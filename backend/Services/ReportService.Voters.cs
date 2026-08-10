@@ -11,15 +11,15 @@ public partial class ReportService
         var election = await GetElectionAsync(electionGuid);
         var people = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.CanReceiveVotes == true)
-            .OrderBy(p => p.FullName)
-            .Select(p => p.FullName ?? "")
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
             .ToListAsync();
 
         return new AllCanReceiveReportDto
         {
             ElectionName = election.Name,
             DateOfElection = election.DateOfElection,
-            People = people
+            People = people.Select(p => p.FullName ?? "").ToList()
         };
     }
 
@@ -32,7 +32,8 @@ public partial class ReportService
 
         var people = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true)
-            .OrderBy(p => p.FullName)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
             .ToListAsync();
 
         return new VotersReportDto
@@ -68,7 +69,8 @@ public partial class ReportService
 
         var people = await _context.People
             .Where(p => p.ElectionGuid == electionGuid)
-            .OrderBy(p => p.FullName)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
             .ToListAsync();
 
         return new FlagsReportDto
@@ -96,7 +98,8 @@ public partial class ReportService
             .Join(_context.People.Where(p => p.ElectionGuid == electionGuid),
                 ovi => ovi.PersonGuid, p => p.PersonGuid, (ovi, p) => new { ovi, p })
             .OrderByDescending(j => j.ovi.WhenStatus)
-            .ThenBy(j => j.p.FullName)
+            .ThenBy(j => j.p.LastName)
+            .ThenBy(j => j.p.FirstName)
             .ToListAsync();
 
         return new VotersOnlineReportDto
@@ -274,7 +277,8 @@ public partial class ReportService
         var election = await GetElectionAsync(electionGuid);
         var people = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && (p.CanVote != true || p.CanReceiveVotes != true))
-            .OrderBy(p => p.FullName)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
             .ToListAsync();
 
         return new AllNonEligibleReportDto
@@ -297,7 +301,8 @@ public partial class ReportService
         var election = await GetElectionAsync(electionGuid);
         var people = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && (p.Email != null || p.Phone != null))
-            .OrderBy(p => p.FullName)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
             .ToListAsync();
 
         // Collect the distinct email and phone values for this election's people

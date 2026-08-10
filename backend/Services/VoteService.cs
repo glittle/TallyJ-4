@@ -112,7 +112,7 @@ public class VoteService : IVoteService
                 throw new InvalidOperationException($"Person with GUID '{createDto.PersonGuid}' not found");
             }
 
-            if (person.CanReceiveVotes != true)
+            if (!PersonEligibilityHelper.CanReceiveVotes(person))
             {
                 statusCode = VoteStatus.Spoiled;
                 ineligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
@@ -199,7 +199,7 @@ public class VoteService : IVoteService
                 throw new InvalidOperationException($"Person with GUID '{updateDto.PersonGuid}' not found");
             }
 
-            if (person.CanReceiveVotes != true)
+            if (!PersonEligibilityHelper.CanReceiveVotes(person))
             {
                 statusCode = VoteStatus.Spoiled;
                 ineligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
@@ -419,7 +419,7 @@ public class VoteService : IVoteService
 
         if (string.IsNullOrEmpty(dto.IneligibleReasonCode)
             && vote.VoteStatus == VoteStatus.Spoiled
-            && vote.Person?.CanReceiveVotes != true)
+            && !PersonEligibilityHelper.CanReceiveVotes(vote.Person))
         {
             dto.IneligibleReasonCode = GetIneligibleReasonCode(vote.Person?.IneligibleReasonGuid);
         }
