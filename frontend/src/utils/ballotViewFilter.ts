@@ -89,7 +89,16 @@ export function buildBallotViewFilterGroups(
   locations: LocationDto[],
   ballots: BallotSummaryDto[],
   computersByLocation: Record<string, ComputerDto[]>,
+  /**
+   * Always include this computer code so the default filter remains a valid
+   * select option even when this workstation has not created any ballots yet.
+   */
+  ensureComputerCode?: string,
+  /** Prefer ensuring the code only at this location when provided. */
+  ensureLocationGuid?: string | null,
 ): BallotViewFilterGroup[] {
+  const normalizedEnsureCode = ensureComputerCode?.trim() ?? "";
+
   return [...locations]
     .sort((a, b) => {
       if (a.sortOrder !== b.sortOrder) {
@@ -115,6 +124,13 @@ export function buildBallotViewFilterGroups(
         }
       }
 
+      const shouldEnsureHere =
+        normalizedEnsureCode &&
+        (!ensureLocationGuid || ensureLocationGuid === location.locationGuid);
+      if (shouldEnsureHere) {
+        codes.add(normalizedEnsureCode);
+      }
+
       return {
         locationGuid: location.locationGuid,
         locationName: location.name,
@@ -126,6 +142,35 @@ export function buildBallotViewFilterGroups(
         group.computerCodes.length > 0 ||
         ballots.some((ballot) => ballot.locationGuid === group.locationGuid),
     );
+}
+
+/** True when the select has an option for this filter value. */
+export function isBallotViewFilterInOptions(
+  filterValue: string,
+  groups: BallotViewFilterGroup[],
+): boolean {
+  if (filterValue === ALL_BALLOTS_FILTER) {
+    return true;
+  }
+
+  const filter = parseBallotViewFilter(filterValue);
+  if (filter.type === "location") {
+    return groups.some((group) => group.locationGuid === filter.locationGuid);
+  }
+
+  if (filter.type === "computer") {
+    if (!filter.locationGuid) {
+      // Global computer filter is a top-level option, not in location groups.
+      return false;
+    }
+    return groups.some(
+      (group) =>
+        group.locationGuid === filter.locationGuid &&
+        group.computerCodes.includes(filter.computerCode),
+    );
+  }
+
+  return false;
 }
 
 export function defaultBallotViewFilter(

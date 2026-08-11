@@ -13,6 +13,7 @@
   "common.confirmAction": "Are you sure you want to {action}?",
   "common.confirmActionWithItem": "Are you sure you want to {action} {item}?",
   "common.confirmDelete": "Are you sure you want to delete {item}?",
+  "common.copy": "Copy",
   "common.copied": "Copied to clipboard",
   "common.create": "Create",
   "common.dangerZone": "Danger Zone",

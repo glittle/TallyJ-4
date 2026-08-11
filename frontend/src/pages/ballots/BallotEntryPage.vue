@@ -4,6 +4,10 @@ import {
   getActiveTellers,
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
+import {
+  electionBallotEntryPath,
+  electionBallotsPath,
+} from "@/utils/ballotRoutes";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BallotEntryPanel from "../../components/ballots/BallotEntryPanel.vue";
@@ -14,11 +18,11 @@ const electionGuid = route.params.id as string;
 const ballotGuid = route.params.ballotId as string;
 
 function handleBallotCreated(newBallotGuid: string) {
-  router.push(`/elections/${electionGuid}/ballots/${newBallotGuid}/entry`);
+  router.push(electionBallotEntryPath(electionGuid, newBallotGuid));
 }
 
 function handleBallotDeleted() {
-  router.push(`/elections/${electionGuid}/ballots`);
+  router.push(electionBallotsPath(electionGuid));
 }
 
 const activeTellers = ref<ActiveTellers>(getActiveTellers());

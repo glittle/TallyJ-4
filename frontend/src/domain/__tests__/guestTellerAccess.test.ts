@@ -101,6 +101,11 @@ describe("guestTellerAccess", () => {
       },
       {
         stage: "ProcessingBallots",
+        path: `/elections/${GUID}/ballot/some-ballot`,
+        allowed: true,
+      },
+      {
+        stage: "ProcessingBallots",
         path: `/elections/${GUID}/ballots`,
         allowed: true,
       },
