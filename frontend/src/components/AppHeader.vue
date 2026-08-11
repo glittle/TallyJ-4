@@ -50,7 +50,8 @@ const currentPageTitle = computed(() => {
   return "";
 });
 
-const showComputerCode = computed(() => route.path.includes("/ballots"));
+// List (/ballots), open ballot (/ballot/{guid}), and related ballot routes.
+const showComputerCode = computed(() => /\/ballot(?:s|\/|$)/.test(route.path));
 
 async function handleCommand(command: string) {
   if (command === "logout") {
