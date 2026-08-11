@@ -308,9 +308,32 @@ function openShareDrawer() {
     gap: 8px;
     margin-left: 20px;
 
+    // QR sits in the same field-row pattern as code/URL (no separate side column).
     &.qr {
       margin: 0;
       justify-content: center;
+
+      .qr-code {
+        width: 180px;
+        height: 180px;
+        display: block;
+        background: #fff;
+      }
+
+      .qr-placeholder {
+        width: 180px;
+        height: 180px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--el-text-color-secondary);
+
+        p {
+          margin: 8px 0 0;
+          font-size: 13px;
+        }
+      }
     }
   }
 
@@ -332,53 +355,8 @@ function openShareDrawer() {
     color: var(--el-text-color-secondary);
   }
 
-  .share-qr-block {
-    flex: 0 0 auto;
-    text-align: center;
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      font-size: var(--el-font-size-small);
-    }
-
-    .qr-code {
-      width: 180px;
-      height: 180px;
-      display: block;
-      background: #fff;
-    }
-
-    .qr-placeholder {
-      width: 180px;
-      height: 180px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: var(--el-text-color-secondary);
-
-      p {
-        margin: 8px 0 0;
-        font-size: 13px;
-      }
-    }
-  }
-
   .share-drawer-empty {
     padding: 4px 0 8px;
-  }
-
-  @media (max-width: 560px) {
-    .share-drawer-body {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .share-qr-block {
-      align-self: center;
-    }
   }
 }
 
