@@ -9,9 +9,16 @@ import type { BallotSummaryDto } from "@/utils/ballotSummary";
 import { computerFilterValue } from "@/utils/ballotViewFilter";
 import { setComputerCode } from "@/utils/computerCodeStorage";
 
+const mockReplace = vi.fn();
+const routeState = {
+  params: { id: "test-election-guid" } as Record<string, string | undefined>,
+  path: "/elections/test-election-guid/ballots",
+};
+
 vi.mock("vue-router", () => ({
-  useRoute: () => ({
-    params: { id: "test-election-guid" },
+  useRoute: () => routeState,
+  useRouter: () => ({
+    replace: mockReplace,
   }),
 }));
 
@@ -135,8 +142,9 @@ describe("BallotManagementPage", () => {
           },
           ElDrawer: {
             props: ["modelValue"],
+            emits: ["closed", "update:modelValue"],
             template:
-              '<div v-if="modelValue" class="el-drawer"><slot></slot></div>',
+              '<div v-if="modelValue" class="el-drawer" data-testid="ballot-drawer"><slot></slot><button type="button" class="drawer-close-btn" @click="$emit(\'closed\')">close</button></div>',
           },
           ElIcon: true,
           ElSelect: {
@@ -154,6 +162,9 @@ describe("BallotManagementPage", () => {
 
   beforeEach(() => {
     localStorage.clear();
+    mockReplace.mockReset();
+    routeState.params = { id: "test-election-guid" };
+    routeState.path = "/elections/test-election-guid/ballots";
     setComputerCode("test-election-guid", "AA");
     setActivePinia(createPinia());
     ballotStore = useBallotStore();
@@ -269,5 +280,74 @@ describe("BallotManagementPage", () => {
 
     const panel = wrapper.findComponent({ name: "BallotEntryPanel" });
     expect(panel.props("hasKeyboardTeller")).toBe(false);
+  });
+
+  it("opens a ballot from the ballot route param on load", async () => {
+    routeState.params = {
+      id: "test-election-guid",
+      ballotId: "ballot-1",
+    };
+    routeState.path = "/elections/test-election-guid/ballot/ballot-1";
+    const wrapper = mountPage();
+    await flushPromises();
+
+    const panel = wrapper.findComponent({ name: "BallotEntryPanel" });
+    expect(panel.exists()).toBe(true);
+    expect(panel.props("ballotGuid")).toBe("ballot-1");
+  });
+
+  it("aligns the view filter to the bookmarked ballot location and computer", async () => {
+    // Default workstation filter would be loc-2 / AA; bookmark is ballot-2 at loc-2 / BB
+    // and we start with a different selected location so the default filter would not match.
+    locationStore.selectedLocationGuid = "loc-1";
+    setComputerCode("test-election-guid", "AA");
+
+    routeState.params = {
+      id: "test-election-guid",
+      ballotId: "ballot-2",
+    };
+    routeState.path = "/elections/test-election-guid/ballot/ballot-2";
+
+    const wrapper = mountPage();
+    await flushPromises();
+
+    expect(wrapper.text()).toContain(computerFilterValue("loc-2", "BB"));
+    const panel = wrapper.findComponent({ name: "BallotEntryPanel" });
+    expect(panel.props("ballotGuid")).toBe("ballot-2");
+  });
+
+  it("navigates to the ballot path when a ballot is created", async () => {
+    const wrapper = mountPage();
+    await flushPromises();
+
+    const addButton = wrapper
+      .findAll(".el-button")
+      .find((button) => button.text().includes("Add Ballot"));
+    await addButton!.trigger("click");
+    await flushPromises();
+
+    expect(mockReplace).toHaveBeenCalledWith(
+      "/elections/test-election-guid/ballot/new-ballot-guid",
+    );
+  });
+
+  it("returns to the ballots list path when the drawer is closed", async () => {
+    routeState.params = {
+      id: "test-election-guid",
+      ballotId: "ballot-1",
+    };
+    routeState.path = "/elections/test-election-guid/ballot/ballot-1";
+
+    const wrapper = mountPage();
+    await flushPromises();
+    mockReplace.mockClear();
+
+    // Element Plus emits `closed` before updating v-model to false.
+    await wrapper.find(".drawer-close-btn").trigger("click");
+    await flushPromises();
+
+    expect(mockReplace).toHaveBeenCalledWith(
+      "/elections/test-election-guid/ballots",
+    );
   });
 });

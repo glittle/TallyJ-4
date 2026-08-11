@@ -221,6 +221,15 @@ const routes = [
       },
 
       {
+        // Singular "ballot" deep-link: list page with that ballot open in the drawer
+        path: "elections/:id/ballot/:ballotId",
+
+        component: () => import("../pages/ballots/BallotManagementPage.vue"),
+
+        meta: { titleKey: "ballots.management" },
+      },
+
+      {
         path: "elections/:id/ballots/cdn-import",
 
         component: () => import("../pages/ballots/CdnBallotImportPage.vue"),

@@ -93,6 +93,26 @@ describe("ballotViewFilter", () => {
     expect(groups[1].computerCodes).toEqual(["AA"]);
   });
 
+  it("ensures the workstation computer code appears even with no ballots yet", () => {
+    const groups = buildBallotViewFilterGroups(
+      [
+        {
+          locationGuid: "loc-main",
+          electionGuid: "election-1",
+          name: "Main Hall",
+          sortOrder: 1,
+        },
+      ],
+      [],
+      {},
+      "ZZ",
+      "loc-main",
+    );
+
+    expect(groups).toHaveLength(1);
+    expect(groups[0].computerCodes).toEqual(["ZZ"]);
+  });
+
   it("defaults to the current computer at the selected location", () => {
     expect(defaultBallotViewFilter("AA", "loc-main")).toBe(
       computerFilterValue("loc-main", "AA"),

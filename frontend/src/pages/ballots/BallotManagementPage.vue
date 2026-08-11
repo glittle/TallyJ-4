@@ -11,6 +11,10 @@ import {
   getActiveTellers,
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
+import {
+  ballotGuidFromRouteParams,
+  electionBallotsPath,
+} from "@/utils/ballotRoutes";
 import { getBallotStatusLabel } from "@/utils/ballotStatusLabel";
 import type { BallotSummaryDto } from "@/utils/ballotSummary";
 import {
@@ -21,19 +25,20 @@ import {
 import { Location, Plus, Refresh } from "@element-plus/icons-vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import BallotEntryPanel from "../../components/ballots/BallotEntryPanel.vue";
 import { useBallotStore } from "../../stores/ballotStore";
 import { useLocationStore } from "../../stores/locationStore";
 
 const route = useRoute();
+const router = useRouter();
 const { t } = useI18n();
 const ballotStore = useBallotStore();
 const locationStore = useLocationStore();
 const { computerCode, refreshComputerCode } = useComputerCode();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
-const electionGuid = route.params.id as string;
+const electionGuid = computed(() => route.params.id as string);
 
 const showDrawer = ref(false);
 const drawerBallotGuid = ref<string | null>(null);
@@ -102,6 +107,57 @@ function onTellersChanged(tellers: ActiveTellers) {
   activeTellers.value = tellers;
 }
 
+/** Keep the open ballot bookmarkable and restorable on reload. */
+function syncBallotRoute(ballotGuid: string | null) {
+  const target = electionBallotsPath(electionGuid.value, ballotGuid);
+  if (route.path === target) {
+    return;
+  }
+  void router.replace(target);
+}
+
+/** Align list filter to the ballot's location + computer (e.g. bookmark restore). */
+function applyViewFilterForBallot(ballotGuid: string) {
+  const ballot =
+    ballotStore.ballots.find((b) => b.ballotGuid === ballotGuid) ??
+    (ballotStore.currentBallot?.ballotGuid === ballotGuid
+      ? ballotStore.currentBallot
+      : null);
+
+  if (!ballot?.computerCode) {
+    return;
+  }
+
+  selectedViewFilter.value = computerFilterValue(
+    ballot.locationGuid ?? null,
+    ballot.computerCode,
+  );
+}
+
+function openBallotByGuid(
+  ballotGuid: string,
+  options?: { isNew?: boolean; alignViewFilter?: boolean },
+) {
+  if (!ballotGuid) {
+    return;
+  }
+  isNewBallot.value = options?.isNew ?? false;
+  drawerBallotGuid.value = ballotGuid;
+  showDrawer.value = true;
+  if (options?.alignViewFilter) {
+    applyViewFilterForBallot(ballotGuid);
+  }
+  syncBallotRoute(ballotGuid);
+}
+
+function closeBallotDrawer() {
+  isNewBallot.value = false;
+  drawerBallotGuid.value = null;
+  showDrawer.value = false;
+  ballotStore.clearCurrentBallot();
+  syncBallotRoute(null);
+}
+
 onMounted(async () => {
   refreshComputerCode();
   selectedViewFilter.value = defaultBallotViewFilter(
@@ -112,11 +168,16 @@ onMounted(async () => {
   listLoading.value = true;
   try {
     await ballotStore.initializeSignalR();
-    await locationStore.fetchLocations(electionGuid);
+    await locationStore.fetchLocations(electionGuid.value);
     await Promise.all([
-      ballotStore.fetchBallots(electionGuid),
-      ballotStore.joinElection(electionGuid),
+      ballotStore.fetchBallots(electionGuid.value),
+      ballotStore.joinElection(electionGuid.value),
     ]);
+
+    const ballotFromUrl = ballotGuidFromRouteParams(route.params);
+    if (ballotFromUrl) {
+      openBallotByGuid(ballotFromUrl, { alignViewFilter: true });
+    }
   } catch (error) {
     showErrorMessage(t("ballots.loadError") + ": " + (error as Error).message);
   } finally {
@@ -126,30 +187,55 @@ onMounted(async () => {
 
 onBeforeUnmount(async () => {
   try {
-    await ballotStore.leaveElection(electionGuid);
+    await ballotStore.leaveElection(electionGuid.value);
   } catch (error) {
     console.error("Failed to leave election group for ballot updates:", error);
   }
 });
 
+watch(
+  () => ballotGuidFromRouteParams(route.params),
+  (ballotGuid) => {
+    if (ballotGuid) {
+      if (drawerBallotGuid.value !== ballotGuid || !showDrawer.value) {
+        isNewBallot.value = false;
+        drawerBallotGuid.value = ballotGuid;
+        showDrawer.value = true;
+        applyViewFilterForBallot(ballotGuid);
+      }
+      return;
+    }
+
+    if (showDrawer.value || drawerBallotGuid.value) {
+      isNewBallot.value = false;
+      drawerBallotGuid.value = null;
+      showDrawer.value = false;
+      ballotStore.clearCurrentBallot();
+    }
+  },
+);
+
 function openBallot(ballot: BallotSummaryDto) {
   if (!ballot?.ballotGuid) {
     return;
   }
-  isNewBallot.value = false;
-  drawerBallotGuid.value = ballot.ballotGuid;
-  showDrawer.value = true;
+  openBallotByGuid(ballot.ballotGuid);
 }
 
 function handleDrawerClosed() {
+  // el-drawer emits `closed` *before* `update:modelValue=false` (use-dialog
+  // afterLeave). Do not gate on showDrawer — it is still true at this point.
   isNewBallot.value = false;
+  drawerBallotGuid.value = null;
+  showDrawer.value = false;
   ballotStore.clearCurrentBallot();
+  syncBallotRoute(null);
 }
 
 async function handleRefresh() {
   refreshing.value = true;
   try {
-    await ballotStore.fetchBallots(electionGuid);
+    await ballotStore.fetchBallots(electionGuid.value);
   } catch (error) {
     showErrorMessage(t("ballots.loadError") + ": " + (error as Error).message);
   } finally {
@@ -158,16 +244,11 @@ async function handleRefresh() {
 }
 
 function handleBallotDeletedFromEntry() {
-  showDrawer.value = false;
-  drawerBallotGuid.value = null;
-  isNewBallot.value = false;
-  ballotStore.clearCurrentBallot();
+  closeBallotDrawer();
 }
 
 function handleBallotCreatedFromEntry(ballotGuid: string) {
-  isNewBallot.value = true;
-  drawerBallotGuid.value = ballotGuid;
-  showDrawer.value = true;
+  openBallotByGuid(ballotGuid, { isNew: true });
   selectedViewFilter.value = computerFilterValue(
     locationStore.selectedLocationGuid,
     computerCode.value,
@@ -188,15 +269,13 @@ async function handleAddBallot() {
   creatingBallot.value = true;
   try {
     const ballot = await ballotStore.createBallot({
-      electionGuid,
+      electionGuid: electionGuid.value,
       computerCode: computerCode.value,
       locationGuid: locationStore.selectedLocationGuid!,
       ...getActiveTellerPayload(),
     });
     showSuccessMessage(t("ballots.createSuccess"));
-    isNewBallot.value = true;
-    drawerBallotGuid.value = ballot.ballotGuid;
-    showDrawer.value = true;
+    openBallotByGuid(ballot.ballotGuid, { isNew: true });
     selectedViewFilter.value = computerFilterValue(
       locationStore.selectedLocationGuid,
       computerCode.value,
@@ -297,6 +376,8 @@ function handleLocationChange(locationGuid: string | null) {
             :locations="locationStore.sortedLocations"
             :ballots="ballotStore.ballots"
             :computers-by-location="computersByLocation"
+            :ensure-computer-code="computerCode"
+            :ensure-location-guid="locationStore.selectedLocationGuid"
           />
 
           <el-button

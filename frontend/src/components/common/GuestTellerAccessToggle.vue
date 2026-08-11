@@ -143,6 +143,7 @@ function openShareDrawer() {
       :model-value="isOpen"
       :loading="toggling"
       size="small"
+      :disabled="!passcode"
       :aria-label="t('elections.guestTellerAccess')"
       @change="handleToggle"
     />
@@ -177,51 +178,59 @@ function openShareDrawer() {
           <div class="share-field">
             <label>{{ t("elections.tellerAccessCode") }}</label>
             <div class="share-field-row">
-              <el-input :model-value="passcode" readonly size="small" />
+              <span class="share-value" data-testid="share-access-code">{{
+                passcode
+              }}</span>
               <el-button
+                type="primary"
                 size="small"
                 :icon="CopyDocument"
                 :title="t('elections.copyAccessCode')"
                 :aria-label="t('elections.copyAccessCode')"
                 @click="copyText(passcode)"
-              />
+              >
+                {{ t("common.copy") }}
+              </el-button>
             </div>
           </div>
 
           <div class="share-field">
             <label>{{ t("elections.tellerAccessUrl") }}</label>
             <div class="share-field-row">
-              <el-input :model-value="shareableUrl" readonly size="small" />
+              <span class="share-value" data-testid="share-url">{{
+                shareableUrl
+              }}</span>
               <el-button
                 type="primary"
                 size="small"
                 :icon="CopyDocument"
+                :title="t('elections.copyUrl')"
+                :aria-label="t('elections.copyUrl')"
                 @click="copyText(shareableUrl)"
               >
-                {{ t("elections.copyUrl") }}
+                {{ t("common.copy") }}
               </el-button>
             </div>
           </div>
 
-          <p class="share-hint">{{ t("elections.shareTellerAccessHint") }}</p>
-        </div>
-
-        <div class="share-qr-block">
-          <label>{{ t("elections.tellerAccessQrCode") }}</label>
-          <div class="qr-container">
-            <img
-              v-if="qrCodeUrl"
-              :src="qrCodeUrl"
-              :alt="t('elections.tellerAccessQrCode')"
-              class="qr-code"
-            />
-            <div v-else class="qr-placeholder">
-              <el-icon size="40">
-                <Link />
-              </el-icon>
-              <p>{{ t("common.loading") }}</p>
+          <div class="share-field">
+            <label>{{ t("elections.tellerAccessQrCode") }}</label>
+            <div class="share-field-row qr">
+              <img
+                v-if="qrCodeUrl"
+                :src="qrCodeUrl"
+                :alt="t('elections.tellerAccessQrCode')"
+                class="qr-code"
+              />
+              <div v-else class="qr-placeholder">
+                <el-icon size="40">
+                  <Link />
+                </el-icon>
+                <p>{{ t("common.loading") }}</p>
+              </div>
             </div>
           </div>
+          <p class="share-hint">{{ t("elections.shareTellerAccessHint") }}</p>
         </div>
       </div>
 
@@ -248,8 +257,7 @@ function openShareDrawer() {
 
 // Drawer is append-to-body; keep styles global under these class names.
 .teller-share-drawer.el-drawer {
-  width: min(560px, calc(100vw - 32px)) !important;
-  // Hug content height instead of a fixed tall panel.
+  width: min(450px, calc(100vw - 32px)) !important;
   height: auto !important;
   left: 50% !important;
   right: auto !important;
@@ -274,7 +282,7 @@ function openShareDrawer() {
     display: flex;
     flex-wrap: nowrap;
     align-items: flex-start;
-    gap: 28px;
+    gap: 50px;
   }
 
   .share-fields {
@@ -282,16 +290,15 @@ function openShareDrawer() {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 20px;
   }
 
   .share-field {
     label {
       display: block;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 3px;
       color: var(--el-text-color-primary);
-      font-size: var(--el-font-size-small);
     }
   }
 
@@ -299,70 +306,57 @@ function openShareDrawer() {
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-left: 20px;
 
-    .el-input {
-      flex: 1;
-      min-width: 0;
-    }
-  }
-
-  .share-hint {
-    margin: 0;
-    font-size: 12px;
-    color: var(--el-text-color-secondary);
-    line-height: 1.4;
-  }
-
-  .share-qr-block {
-    flex: 0 0 auto;
-    text-align: center;
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      font-size: var(--el-font-size-small);
-    }
-
-    .qr-code {
-      width: 180px;
-      height: 180px;
-      border: 1px solid var(--el-border-color);
-      border-radius: 4px;
-      background: #fff;
-    }
-
-    .qr-placeholder {
-      width: 180px;
-      height: 180px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    // QR sits in the same field-row pattern as code/URL (no separate side column).
+    &.qr {
+      margin: 0;
       justify-content: center;
-      border: 1px dashed var(--el-border-color);
-      border-radius: 4px;
-      color: var(--el-text-color-secondary);
 
-      p {
-        margin: 8px 0 0;
-        font-size: 13px;
+      .qr-code {
+        width: 180px;
+        height: 180px;
+        display: block;
+        background: #fff;
+      }
+
+      .qr-placeholder {
+        width: 180px;
+        height: 180px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--el-text-color-secondary);
+
+        p {
+          margin: 8px 0 0;
+          font-size: 13px;
+        }
       }
     }
   }
 
-  .share-drawer-empty {
-    padding: 4px 0 8px;
+  // Display-only values — not inputs; no border/chrome.
+  .share-value {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--el-font-family);
+    font-size: var(--el-font-size-base);
+    color: var(--el-text-color-primary);
+    line-height: 1.5;
+    user-select: all;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
-  @media (max-width: 560px) {
-    .share-drawer-body {
-      flex-direction: column;
-      align-items: stretch;
-    }
+  .share-hint {
+    margin: 0;
+    color: var(--el-text-color-secondary);
+  }
 
-    .share-qr-block {
-      align-self: center;
-    }
+  .share-drawer-empty {
+    padding: 4px 0 8px;
   }
 }
 

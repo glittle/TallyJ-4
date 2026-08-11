@@ -28,8 +28,9 @@ const GUEST_TELLER_ROUTE_PATTERNS: Record<ElectionStage, RegExp[]> = {
   SettingUp: [/^\/elections\/[^/]+$/],
   GatheringBallots: [/^\/elections\/[^/]+\/frontdesk$/],
   ProcessingBallots: [
-    // Enter Ballots list (menu destination) plus per-ballot entry deep links
+    // Enter Ballots list, open-ballot deep link, and full-page entry
     /^\/elections\/[^/]+\/ballots$/,
+    /^\/elections\/[^/]+\/ballot\/[^/]+$/,
     /^\/elections\/[^/]+\/ballots\/[^/]+\/entry$/,
   ],
   Finalized: [
