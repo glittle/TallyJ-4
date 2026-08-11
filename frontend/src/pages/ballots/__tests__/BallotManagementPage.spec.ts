@@ -142,8 +142,9 @@ describe("BallotManagementPage", () => {
           },
           ElDrawer: {
             props: ["modelValue"],
+            emits: ["closed", "update:modelValue"],
             template:
-              '<div v-if="modelValue" class="el-drawer"><slot></slot></div>',
+              '<div v-if="modelValue" class="el-drawer" data-testid="ballot-drawer"><slot></slot><button type="button" class="drawer-close-btn" @click="$emit(\'closed\')">close</button></div>',
           },
           ElIcon: true,
           ElSelect: {
@@ -327,6 +328,26 @@ describe("BallotManagementPage", () => {
 
     expect(mockReplace).toHaveBeenCalledWith(
       "/elections/test-election-guid/ballot/new-ballot-guid",
+    );
+  });
+
+  it("returns to the ballots list path when the drawer is closed", async () => {
+    routeState.params = {
+      id: "test-election-guid",
+      ballotId: "ballot-1",
+    };
+    routeState.path = "/elections/test-election-guid/ballot/ballot-1";
+
+    const wrapper = mountPage();
+    await flushPromises();
+    mockReplace.mockClear();
+
+    // Element Plus emits `closed` before updating v-model to false.
+    await wrapper.find(".drawer-close-btn").trigger("click");
+    await flushPromises();
+
+    expect(mockReplace).toHaveBeenCalledWith(
+      "/elections/test-election-guid/ballots",
     );
   });
 });

@@ -223,13 +223,13 @@ function openBallot(ballot: BallotSummaryDto) {
 }
 
 function handleDrawerClosed() {
-  // el-drawer closed (X, overlay, Esc) — clear drawer state and URL.
-  if (!showDrawer.value) {
-    isNewBallot.value = false;
-    drawerBallotGuid.value = null;
-    ballotStore.clearCurrentBallot();
-    syncBallotRoute(null);
-  }
+  // el-drawer emits `closed` *before* `update:modelValue=false` (use-dialog
+  // afterLeave). Do not gate on showDrawer — it is still true at this point.
+  isNewBallot.value = false;
+  drawerBallotGuid.value = null;
+  showDrawer.value = false;
+  ballotStore.clearCurrentBallot();
+  syncBallotRoute(null);
 }
 
 async function handleRefresh() {
