@@ -278,6 +278,13 @@ export const useElectionStore = defineStore("election", () => {
         }
       });
 
+      // Session join also puts this connection in the FrontDesk group (online
+      // window updates). Bulk people/ballot import then sends reloadPage to
+      // that group. People, ballots, and Front Desk register the real refresh;
+      // acknowledge here so Import / settings / monitor do not log
+      // "No client method with the name 'reloadPage' found."
+      frontDeskConnection.on("reloadPage", () => {});
+
       signalrInitialized.value = true;
     } catch (e) {
       console.error("Failed to initialize SignalR for election store:", e);

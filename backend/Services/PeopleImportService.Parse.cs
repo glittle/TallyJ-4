@@ -73,6 +73,12 @@ public partial class PeopleImportService
 
         for (int i = dataRowsStartIndex; i < allRows.Count; i++)
         {
+            if (previewSamplesOnly && AreSamplesComplete(samplesByColumn!))
+            {
+                totalDataRows += allRows.Count - i;
+                break;
+            }
+
             var row = allRows[i];
             var rowData = new List<string>(columnCount);
             for (int colNum = 1; colNum <= columnCount; colNum++)
@@ -221,6 +227,20 @@ public partial class PeopleImportService
                 continue;
             }
 
+            if (previewSamplesOnly && AreSamplesComplete(samplesByColumn!))
+            {
+                totalDataRows++;
+                for (int j = i + 1; j < lines.Length; j++)
+                {
+                    if (!string.IsNullOrWhiteSpace(lines[j]))
+                    {
+                        totalDataRows++;
+                    }
+                }
+
+                break;
+            }
+
             var row = ParseCsvLine(lines[i], delimiter);
             totalDataRows++;
             if (previewSamplesOnly)
@@ -251,6 +271,11 @@ public partial class PeopleImportService
         return Enumerable.Range(0, columnCount)
             .Select(_ => new List<string>(PreviewSamplesPerColumn))
             .ToList();
+    }
+
+    private static bool AreSamplesComplete(List<List<string>> samplesByColumn)
+    {
+        return samplesByColumn.All(samples => samples.Count >= PreviewSamplesPerColumn);
     }
 
     private static void CollectSamplesFromRow(List<List<string>> samplesByColumn, List<string> row)

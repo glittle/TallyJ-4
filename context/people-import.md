@@ -24,7 +24,7 @@ Upload auto-selects the new file and scrolls to mapping. Mapping is **file colum
 **Source:** mapping UI review; `2021-04-22-with units.csv` has empty MiddleName / FormerName / Nickname on the first rows  
 **Revisit when:** preview needs more than three samples, or parse should stream without loading `ImportFile.Contents`
 
-The file bytes are already stored on the import row. The parse endpoint still counts every data row, but it only returns up to three **non-empty** samples **per column**, taken from whichever later rows have values. Those samples are packed into `PreviewRows` as virtual rows (same column index, not the same source row). Import still parses the full file separately.
+The file bytes are already stored on the import row. The parse endpoint still counts every data row, but it only returns up to three **non-empty** samples **per column**, taken from whichever later rows have values. Once every column already has three samples, remaining rows are counted without reading their XLSX cells or splitting their CSV/TSV lines. Those samples are packed into `PreviewRows` as virtual rows (same column index, not the same source row). Import still parses the full file separately.
 
 **Rejected alternative:** send every data row in the parse response. Unnecessary payload, and the first three rows hide sparse columns.
 

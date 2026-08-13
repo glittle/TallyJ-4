@@ -263,6 +263,75 @@ public class PeopleImportServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task ParseFileAsync_CsvFile_CountsAllRowsAfterPreviewSamplesAreFull()
+    {
+        var electionGuid = Guid.NewGuid();
+        var rows = new StringBuilder("First Name,Last Name\n");
+        for (var i = 1; i <= 20; i++)
+        {
+            rows.AppendLine($"Person{i},Last{i}");
+            if (i == 10)
+            {
+                rows.AppendLine();
+            }
+        }
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(rows.ToString()),
+            HasContent = true
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        Assert.Equal(20, result.TotalDataRows);
+        Assert.Equal(3, result.PreviewRows.Count);
+        Assert.Equal("Person1", result.PreviewRows[0][0]);
+        Assert.Equal("Person3", result.PreviewRows[2][0]);
+    }
+
+    [Fact]
+    public async Task ParseFileAsync_XlsxFile_CountsAllRowsAfterPreviewSamplesAreFull()
+    {
+        var electionGuid = Guid.NewGuid();
+        using var workbook = new ClosedXML.Excel.XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Sheet1");
+        worksheet.Cell(1, 1).Value = "FirstName";
+        worksheet.Cell(1, 2).Value = "LastName";
+        for (var i = 1; i <= 15; i++)
+        {
+            worksheet.Cell(i + 1, 1).Value = $"Person{i}";
+            worksheet.Cell(i + 1, 2).Value = $"Last{i}";
+        }
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "xlsx",
+            Contents = stream.ToArray(),
+            HasContent = true
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        Assert.Equal(15, result.TotalDataRows);
+        Assert.Equal(3, result.PreviewRows.Count);
+        Assert.Equal("Person1", result.PreviewRows[0][0]);
+        Assert.Equal("Person3", result.PreviewRows[2][0]);
+    }
+
+    [Fact]
     public async Task ParseFileAsync_XlsxFile_ReturnsParseResponse()
     {
         // Arrange

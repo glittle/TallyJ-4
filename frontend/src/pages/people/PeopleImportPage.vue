@@ -220,20 +220,12 @@ async function selectFile(file: ImportFileInfo, scrollToMapping = true) {
   selectedFile.value = file;
   resetWorkingState();
 
+  let savedMappings: ColumnMapping[] | null = null;
   try {
-    const savedMappings = await peopleImportService.getMapping(
+    savedMappings = await peopleImportService.getMapping(
       electionGuid,
       file.rowId,
     );
-    if (savedMappings && savedMappings.length > 0) {
-      await parseFile();
-      columnMappings.value = savedMappings;
-      mappingSaved.value = isRequiredMappingComplete(savedMappings);
-      if (scrollToMapping) {
-        await scrollToStage(mappingSaved.value ? "load" : "map");
-      }
-      return;
-    }
   } catch (error) {
     console.warn(
       "Failed to load saved mappings, falling back to auto-mapping:",
@@ -241,7 +233,23 @@ async function selectFile(file: ImportFileInfo, scrollToMapping = true) {
     );
   }
 
-  await parseFile();
+  try {
+    await parseFile();
+  } catch {
+    // parseFile already surfaced the error; do not continue or rethrow
+    // (callers such as handleFileChange would otherwise show an upload error)
+    return;
+  }
+
+  if (savedMappings && savedMappings.length > 0) {
+    columnMappings.value = savedMappings;
+    mappingSaved.value = isRequiredMappingComplete(savedMappings);
+    if (scrollToMapping) {
+      await scrollToStage(mappingSaved.value ? "load" : "map");
+    }
+    return;
+  }
+
   if (scrollToMapping) {
     await scrollToStage("map");
   }
