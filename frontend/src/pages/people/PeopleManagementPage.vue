@@ -2,11 +2,14 @@
 import { useNotifications } from "@/composables/useNotifications";
 import { useViewportTableHeight } from "@/composables/useViewportTableHeight";
 import { Plus, Search, Upload } from "@element-plus/icons-vue";
+import { ElMessageBox } from "element-plus";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import PeopleTable from "../../components/people/PeopleTable.vue";
 import PersonForm from "../../components/people/PersonForm.vue";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { peopleImportService } from "@/services/peopleImportService";
 import { usePeopleStore } from "../../stores/peopleStore";
 import type { PersonListDto } from "../../types";
 
@@ -14,7 +17,9 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const peopleStore = usePeopleStore();
-const { showErrorMessage } = useNotifications();
+const { showErrorMessage, showSuccessMessage } = useNotifications();
+const { handleApiError } = useApiErrorHandler();
+const deletingAll = ref(false);
 
 const electionGuid = route.params.id as string;
 const searchQuery = ref("");
@@ -101,6 +106,35 @@ function handlePersonDeleted() {
 function handleImport() {
   router.push(`/elections/${electionGuid}/people/import`);
 }
+
+async function handleDeleteAllPeople() {
+  try {
+    await ElMessageBox.confirm(
+      t("people.import.deleteAllPeopleMessage"),
+      t("people.import.confirmDeleteAllPeople"),
+      {
+        confirmButtonText: t("common.delete"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      },
+    );
+  } catch {
+    return;
+  }
+
+  deletingAll.value = true;
+  try {
+    const result = await peopleImportService.deleteAllPeople(electionGuid);
+    showSuccessMessage(
+      t("people.import.deleteAllSuccess", { count: result.deletedCount }),
+    );
+    await peopleStore.fetchPeopleList(electionGuid);
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    deletingAll.value = false;
+  }
+}
 </script>
 
 <template>
@@ -136,6 +170,15 @@ function handleImport() {
               </el-button>
             </el-space>
           </div>
+          <el-button
+            type="danger"
+            plain
+            :loading="deletingAll"
+            :disabled="allPeople.length === 0"
+            @click="handleDeleteAllPeople"
+          >
+            {{ $t("people.import.deleteAllPeople") }}
+          </el-button>
         </div>
       </template>
 

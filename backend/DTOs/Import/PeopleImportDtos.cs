@@ -85,7 +85,8 @@ public class ParseFileResponse
     public List<string> Headers { get; set; } = new();
 
     /// <summary>
-    /// Preview rows from the file (first few data rows).
+    /// Up to three sample values per column, packed as virtual rows.
+    /// Index [sampleIndex][columnIndex]; samples in the same virtual row may come from different file rows.
     /// </summary>
     public List<List<string>> PreviewRows { get; set; } = new();
 

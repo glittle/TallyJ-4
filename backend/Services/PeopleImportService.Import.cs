@@ -81,25 +81,13 @@ public partial class PeopleImportService
             .Where(p => p.ElectionGuid == electionGuid)
             .ToListAsync();
 
-        var bahaiIdLookup = existingPeople
-            .Where(p => !string.IsNullOrEmpty(p.BahaiId))
-            .Select(p => p.BahaiId!)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        // for voter login, the email and phone must be unique
-        var emailLookup = existingPeople
-        .Where(p => !string.IsNullOrEmpty(p.Email))
-        .Select(p => p.Email!)
-        .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var phoneLookup = existingPeople
-        .Where(p => !string.IsNullOrEmpty(p.Phone))
-        .Select(p => p.Phone!)
-        .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var nameLookup = existingPeople
-            .Select(p => $"{p.FirstName ?? ""} {p.LastName}".Trim().ToLowerInvariant())
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        // Email, phone, and Baha'i ID must be unique. Names may repeat.
+        var bahaiIdLookup = BuildExistingLookup(
+            existingPeople.Where(p => !string.IsNullOrEmpty(p.BahaiId)).Select(p => p.BahaiId!));
+        var emailLookup = BuildExistingLookup(
+            existingPeople.Where(p => !string.IsNullOrEmpty(p.Email)).Select(p => p.Email!));
+        var phoneLookup = BuildExistingLookup(
+            existingPeople.Where(p => !string.IsNullOrEmpty(p.Phone)).Select(p => p.Phone!));
 
         using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -108,9 +96,7 @@ public partial class PeopleImportService
         try
         {
             // Parse file content
-            var (headers, allRows, _) = await ParseFileContentAsync(importFile);
-            var firstRowNum = importFile!.FirstDataRow ?? 0;
-            var dataRows = allRows.Skip(firstRowNum - 1).ToList();
+            var (headers, dataRows, _) = await ParseFileContentAsync(importFile);
 
             result.TotalRows = dataRows.Count;
 
@@ -122,14 +108,14 @@ public partial class PeopleImportService
             for (int i = 0; i < dataRows.Count; i++)
             {
                 var row = dataRows[i];
-                rowNumber = i + firstRowNum + 1; // Calculate actual row number in the file for error reporting
+                rowNumber = row.FileRowNumber;
 
                 await ReportProgress(electionGuid, i + 1, dataRows.Count, $"Processing row {rowNumber}");
 
                 try
                 {
                     var skippedBefore = result.PeopleSkipped;
-                    var person = CreatePersonFromRow(row, headers, mappings, electionGuid, bahaiIdLookup, emailLookup, phoneLookup, nameLookup, rowNumber, result);
+                    var person = CreatePersonFromRow(row.Cells, headers, mappings, electionGuid, bahaiIdLookup, emailLookup, phoneLookup, rowNumber, result);
                     if (person != null)
                     {
                         peopleToAdd.Add(person);
@@ -240,8 +226,51 @@ public partial class PeopleImportService
         return result;
     }
 
+    private static Dictionary<string, int> BuildExistingLookup(IEnumerable<string> values)
+    {
+        var lookup = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        foreach (var value in values)
+        {
+            lookup.TryAdd(value, 0);
+        }
+
+        return lookup;
+    }
+
+    private static bool TryAddUnique(
+        Dictionary<string, int> lookup,
+        string value,
+        int rowNumber,
+        ImportPeopleResult result,
+        string fileDuplicateKey,
+        string existingDuplicateKey,
+        Dictionary<string, string> extraParameters)
+    {
+        if (lookup.TryGetValue(value, out var matchedRow))
+        {
+            result.PeopleSkipped++;
+            extraParameters["rowNumber"] = rowNumber.ToString();
+            var key = matchedRow > 0 ? fileDuplicateKey : existingDuplicateKey;
+            if (matchedRow > 0)
+            {
+                extraParameters["matchedRowNumber"] = matchedRow.ToString();
+            }
+
+            result.Errors.Add(new ImportErrorDto
+            {
+                Key = key,
+                Parameters = extraParameters
+            });
+
+            return false;
+        }
+
+        lookup[value] = rowNumber;
+        return true;
+    }
+
     private Person? CreatePersonFromRow(List<string> cellsInRow, List<string> headers, List<ColumnMappingDto> mappings,
-        Guid electionGuid, HashSet<string> bahaiIdLookup, HashSet<string> emailLookup, HashSet<string> phoneLookup, HashSet<string> nameLookup,
+        Guid electionGuid, Dictionary<string, int> bahaiIdLookup, Dictionary<string, int> emailLookup, Dictionary<string, int> phoneLookup,
         int rowNumber, ImportPeopleResult result)
     {
         var person = new Person
@@ -295,100 +324,44 @@ public partial class PeopleImportService
             foundErrors = true;
         }
 
-        if (!string.IsNullOrEmpty(person.BahaiId))
+        if (!string.IsNullOrEmpty(person.BahaiId)
+            && !TryAddUnique(
+                bahaiIdLookup,
+                person.BahaiId,
+                rowNumber,
+                result,
+                "import.errors.duplicateBahaiId",
+                "import.errors.duplicateBahaiIdExisting",
+                new Dictionary<string, string> { ["bahaiId"] = person.BahaiId }))
         {
-            if (bahaiIdLookup.Contains(person.BahaiId))
-            {
-                result.PeopleSkipped++;
-                result.Errors.Add(new ImportErrorDto
-                {
-                    Key = "import.errors.duplicateBahaiId",
-                    Parameters = new Dictionary<string, string>
-                    {
-                        ["rowNumber"] = rowNumber.ToString(),
-                        ["bahaiId"] = person.BahaiId
-                    }
-                });
-                foundErrors = true;
-            }
-            else
-            {
-                // add it
-                bahaiIdLookup.Add(person.BahaiId);
-            }
-        }
-
-
-        if (!string.IsNullOrEmpty(person.Email))
-        {
-            if (emailLookup.Contains(person.Email))
-            {
-                result.PeopleSkipped++;
-                result.Errors.Add(new ImportErrorDto
-                {
-                    Key = "import.errors.duplicateEmail",
-                    Parameters = new Dictionary<string, string>
-                    {
-                        ["rowNumber"] = rowNumber.ToString(),
-                        ["email"] = person.Email
-                    }
-                });
-                foundErrors = true;
-            }
-            else
-            {
-                // add it
-                emailLookup.Add(person.Email);
-            }
-        }
-
-
-        if (!string.IsNullOrEmpty(person.Phone))
-        {
-            if (phoneLookup.Contains(person.Phone))
-            {
-                result.PeopleSkipped++;
-                result.Errors.Add(new ImportErrorDto
-                {
-                    Key = "import.errors.duplicatePhone",
-                    Parameters = new Dictionary<string, string>
-                    {
-                        ["rowNumber"] = rowNumber.ToString(),
-                        ["phone"] = person.Phone
-                    }
-                });
-                foundErrors = true;
-            }
-            else
-            {
-                // add it
-                phoneLookup.Add(person.Phone);
-            }
-        }
-
-
-        var nameKey = $"{person.FirstName ?? ""} {person.LastName}".Trim().ToLowerInvariant();
-        if (nameLookup.Contains(nameKey))
-        {
-            result.PeopleSkipped++;
-            result.Warnings.Add(new ImportWarningDto
-            {
-                Key = "import.errors.duplicateName",
-                Parameters = new Dictionary<string, string>
-                {
-                    ["rowNumber"] = rowNumber.ToString(),
-                    ["firstName"] = person.FirstName ?? "",
-                    ["lastName"] = person.LastName ?? ""
-                }
-            });
             foundErrors = true;
         }
-        else
+
+        if (!string.IsNullOrEmpty(person.Email)
+            && !TryAddUnique(
+                emailLookup,
+                person.Email,
+                rowNumber,
+                result,
+                "import.errors.duplicateEmail",
+                "import.errors.duplicateEmailExisting",
+                new Dictionary<string, string> { ["email"] = person.Email }))
         {
-            // add it
-            nameLookup.Add(nameKey);
+            foundErrors = true;
         }
 
+        if (!string.IsNullOrEmpty(person.Phone)
+            && !TryAddUnique(
+                phoneLookup,
+                person.Phone,
+                rowNumber,
+                result,
+                "import.errors.duplicatePhone",
+                "import.errors.duplicatePhoneExisting",
+                new Dictionary<string, string> { ["phone"] = person.Phone }))
+        {
+            foundErrors = true;
+        }
 
         // Set eligibility
         var ineligibleReasonMapping = mappings.FirstOrDefault(m => m.TargetField == "IneligibleReasonDescription");

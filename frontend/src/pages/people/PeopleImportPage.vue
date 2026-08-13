@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { ElMessageBox } from "element-plus";
@@ -11,17 +11,23 @@ import type {
   ImportFileInfo,
   ColumnMapping,
   ImportPeopleResult,
+  ParseFileResult,
 } from "../../types";
-import { PEOPLE_TARGET_FIELDS } from "../../types";
 import type {
   PeopleImportProgressEvent,
   PeopleImportCompleteEvent,
 } from "../../types/SignalREvents";
 
+import PeopleImportFileGuide from "@/components/people/PeopleImportFileGuide.vue";
 import PeopleImportUploadStep from "@/components/people/PeopleImportUploadStep.vue";
 import PeopleImportMappingStep from "@/components/people/PeopleImportMappingStep.vue";
 import PeopleImportExecuteStep from "@/components/people/PeopleImportExecuteStep.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import {
+  isRequiredMappingComplete,
+  mappedFieldCount,
+} from "@/utils/peopleImportMapping";
+
 const { handleApiError } = useApiErrorHandler();
 
 const route = useRoute();
@@ -29,53 +35,32 @@ const { t } = useI18n();
 const { showErrorMessage, showSuccessMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
-const currentStep = ref(0);
 const uploading = ref(false);
 const reparsing = ref<number | null>(null);
 const savingMapping = ref(false);
+const parsing = ref(false);
+const uploadKey = ref(0);
+const mappingSaved = ref(false);
 
 const files = ref<ImportFileInfo[]>([]);
 const selectedFile = ref<ImportFileInfo | null>(null);
-const parsedResult = ref<import("../../types").ParseFileResult | null>(null);
+const parsedResult = ref<ParseFileResult | null>(null);
 const columnMappings = ref<ColumnMapping[]>([]);
 const importing = ref(false);
 const importResult = ref<ImportPeopleResult | null>(null);
 const peopleCount = ref(0);
 const importProgress = ref<PeopleImportProgressEvent | null>(null);
-const showDeleteAllConfirm = ref(false);
 
-const availableTargetFields = computed(() => [
-  { value: null, label: t("people.import.ignore") },
-  ...PEOPLE_TARGET_FIELDS,
-]);
+const isMappingValid = computed(() =>
+  isRequiredMappingComplete(columnMappings.value),
+);
 
-const canProceedToNext = computed(() => {
-  if (currentStep.value === 0) {
-    return selectedFile.value !== null;
-  }
-  if (currentStep.value === 1) {
-    const firstNameMapped = columnMappings.value.some(
-      (m) => m?.targetField === "FirstName",
-    );
-    const lastNameMapped = columnMappings.value.some(
-      (m) => m?.targetField === "LastName",
-    );
-    return firstNameMapped && lastNameMapped;
-  }
-  return true;
-});
-
-const isMappingValid = computed(() => {
-  const firstNameMapped = columnMappings.value.some(
-    (m) => m.targetField === "FirstName",
-  );
-  const lastNameMapped = columnMappings.value.some(
-    (m) => m?.targetField === "LastName",
-  );
-  return firstNameMapped && lastNameMapped;
-});
-
-const canDeleteAllPeople = computed(() => true);
+const fileReady = computed(
+  () => selectedFile.value !== null && !!parsedResult.value,
+);
+const mappingReady = computed(
+  () => fileReady.value && mappingSaved.value && isMappingValid.value,
+);
 
 const translatedErrors = computed(() => {
   if (!importResult.value?.errors) {
@@ -95,6 +80,40 @@ const translatedWarnings = computed(() => {
     ...warning,
     message: t(warning.key, warning.parameters),
   }));
+});
+
+const pipelineFileDetail = computed(() => {
+  if (!selectedFile.value) {
+    return t("people.import.pipelineFileHint");
+  }
+  return selectedFile.value.originalFileName ?? "";
+});
+
+const pipelineMapDetail = computed(() => {
+  if (!fileReady.value) {
+    return t("people.import.pipelineMapHint");
+  }
+  if (mappingSaved.value && isMappingValid.value) {
+    return t("people.import.mappedCount", {
+      count: mappedFieldCount(columnMappings.value),
+    });
+  }
+  return t("people.import.mappingNeedsConfirm");
+});
+
+const pipelineLoadDetail = computed(() => {
+  if (importResult.value?.success) {
+    return t("people.import.importComplete", {
+      added: importResult.value.peopleAdded,
+      skipped: importResult.value.peopleSkipped,
+    });
+  }
+  if (!mappingReady.value) {
+    return t("people.import.pipelineLoadHint");
+  }
+  return t("people.import.readyToLoad", {
+    count: parsedResult.value?.totalDataRows ?? 0,
+  });
 });
 
 async function loadFiles() {
@@ -126,18 +145,9 @@ async function initializeSignalR() {
       showErrorMessage(msg);
     });
 
-    connection.on("importComplete", (data: PeopleImportCompleteEvent) => {
+    connection.on("importComplete", (_data: PeopleImportCompleteEvent) => {
       importing.value = false;
       importProgress.value = null;
-      if (data.success) {
-        showSuccessMessage(
-          `Import completed: ${data.peopleAdded} people added, ${data.peopleSkipped} skipped`,
-        );
-      } else {
-        showErrorMessage(
-          "Import failed - " + translatedErrors.value.length + " errors",
-        );
-      }
     });
   } catch (e) {
     handleApiError(e);
@@ -161,46 +171,22 @@ onBeforeUnmount(async () => {
   }
 });
 
-async function handleFileChange(file: UploadFile) {
-  if (file.raw) {
-    uploading.value = true;
-    try {
-      const uploadedFile = await peopleImportService.uploadFile(
-        electionGuid,
-        file.raw,
-      );
-      await loadFiles();
-
-      // Show message if headers were detected at a non-standard row (row 2 or higher)
-      if (
-        uploadedFile.firstDataRow &&
-        uploadedFile.firstDataRow >= 2 &&
-        uploadedFile.fileType === "xlsx"
-      ) {
-        showSuccessMessage(
-          t("people.import.headerAutoDetected", {
-            row: uploadedFile.firstDataRow,
-          }),
-        );
-      } else {
-        showSuccessMessage(t("people.import.fileUploadedSuccessfully"));
-      }
-    } catch (error) {
-      console.error("Upload failed:", error);
-      showErrorMessage(t("people.import.uploadError"));
-    } finally {
-      uploading.value = false;
-    }
+function replaceFileInList(updatedFile: ImportFileInfo) {
+  const index = files.value.findIndex((f) => f.rowId === updatedFile.rowId);
+  if (index !== -1) {
+    files.value[index] = updatedFile;
+  }
+  if (selectedFile.value?.rowId === updatedFile.rowId) {
+    selectedFile.value = updatedFile;
   }
 }
 
-function handleUploadSuccess() {
-  // Handled by handleFileChange
-}
-
-function handleUploadError() {
-  uploading.value = false;
-  showErrorMessage(t("people.import.uploadError"));
+function resetWorkingState() {
+  parsedResult.value = null;
+  columnMappings.value = [];
+  importResult.value = null;
+  importProgress.value = null;
+  mappingSaved.value = false;
 }
 
 async function parseFile(codePage?: number, firstDataRow?: number) {
@@ -208,6 +194,7 @@ async function parseFile(codePage?: number, firstDataRow?: number) {
     return;
   }
 
+  parsing.value = true;
   try {
     const result = await peopleImportService.parseFile(
       electionGuid,
@@ -220,28 +207,25 @@ async function parseFile(codePage?: number, firstDataRow?: number) {
   } catch (error) {
     handleApiError(error);
     throw error;
+  } finally {
+    parsing.value = false;
   }
 }
 
-async function selectFile(file: ImportFileInfo) {
-  selectedFile.value = file;
-  parsedResult.value = null;
-  columnMappings.value = [];
-  importResult.value = null;
-  importProgress.value = null;
+async function selectFile(file: ImportFileInfo, scrollToMapping = true) {
+  if (selectedFile.value?.rowId === file.rowId && parsedResult.value) {
+    return;
+  }
 
-  // First try to load saved mappings
+  selectedFile.value = file;
+  resetWorkingState();
+
+  let savedMappings: ColumnMapping[] | null = null;
   try {
-    const savedMappings = await peopleImportService.getMapping(
+    savedMappings = await peopleImportService.getMapping(
       electionGuid,
       file.rowId,
     );
-    if (savedMappings && savedMappings.length > 0) {
-      // If we have saved mappings, parse the file to get headers and preview, but use saved mappings
-      await parseFile();
-      columnMappings.value = savedMappings;
-      return;
-    }
   } catch (error) {
     console.warn(
       "Failed to load saved mappings, falling back to auto-mapping:",
@@ -249,19 +233,82 @@ async function selectFile(file: ImportFileInfo) {
     );
   }
 
-  // Fall back to parsing file with auto-mappings
-  await parseFile();
+  try {
+    await parseFile();
+  } catch {
+    // parseFile already surfaced the error; do not continue or rethrow
+    // (callers such as handleFileChange would otherwise show an upload error)
+    return;
+  }
+
+  if (savedMappings && savedMappings.length > 0) {
+    columnMappings.value = savedMappings;
+    mappingSaved.value = isRequiredMappingComplete(savedMappings);
+    if (scrollToMapping) {
+      await scrollToStage(mappingSaved.value ? "load" : "map");
+    }
+    return;
+  }
+
+  if (scrollToMapping) {
+    await scrollToStage("map");
+  }
+}
+
+async function scrollToStage(stage: "map" | "load") {
+  await nextTick();
+  document
+    .getElementById(`import-stage-${stage}`)
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function handleFileChange(file: UploadFile) {
+  if (!file.raw) {
+    return;
+  }
+
+  uploading.value = true;
+  try {
+    const uploadedFile = await peopleImportService.uploadFile(
+      electionGuid,
+      file.raw,
+    );
+    await loadFiles();
+    uploadKey.value += 1;
+
+    if (
+      uploadedFile.firstDataRow &&
+      uploadedFile.firstDataRow >= 2 &&
+      uploadedFile.fileType === "xlsx"
+    ) {
+      showSuccessMessage(
+        t("people.import.headerAutoDetected", {
+          row: uploadedFile.firstDataRow,
+        }),
+      );
+    } else {
+      showSuccessMessage(t("people.import.fileUploadedSuccessfully"));
+    }
+
+    const fromList =
+      files.value.find((item) => item.rowId === uploadedFile.rowId) ??
+      uploadedFile;
+    await selectFile(fromList, true);
+  } catch (error) {
+    console.error("Upload failed:", error);
+    showErrorMessage(t("people.import.uploadError"));
+  } finally {
+    uploading.value = false;
+  }
 }
 
 async function reparseFile(file: ImportFileInfo) {
   reparsing.value = file.rowId;
   try {
     selectedFile.value = file;
-    parsedResult.value = null;
-    columnMappings.value = [];
-    importResult.value = null;
-    importProgress.value = null;
+    resetWorkingState();
     await parseFile(file.codePage || undefined, file.firstDataRow || undefined);
+    await scrollToStage("map");
   } catch (error) {
     handleApiError(error);
   } finally {
@@ -271,7 +318,7 @@ async function reparseFile(file: ImportFileInfo) {
 
 async function updateFileSettings(file: ImportFileInfo) {
   try {
-    const updatedFile = await peopleImportService.updateSettings(
+    const responseFile = await peopleImportService.updateSettings(
       electionGuid,
       file.rowId,
       {
@@ -279,16 +326,13 @@ async function updateFileSettings(file: ImportFileInfo) {
         codePage: file.codePage ?? undefined,
       },
     );
-    const index = files.value.findIndex((f) => f.rowId === updatedFile.rowId);
-    if (index !== -1) {
-      files.value[index] = updatedFile;
-    }
-    if (selectedFile.value?.rowId === updatedFile.rowId) {
-      selectedFile.value = updatedFile;
-    }
+    const updatedFile = responseFile?.rowId ? responseFile : file;
+    replaceFileInList(updatedFile);
+    mappingSaved.value = false;
+    importResult.value = null;
     await parseFile(
       updatedFile.codePage || undefined,
-      updatedFile.firstDataRow || undefined,
+      updatedFile.firstDataRow ?? undefined,
     );
   } catch (error) {
     handleApiError(error);
@@ -311,15 +355,24 @@ async function deleteFile(file: ImportFileInfo) {
     files.value = files.value.filter((f) => f.rowId !== file.rowId);
     if (selectedFile.value?.rowId === file.rowId) {
       selectedFile.value = null;
-      parsedResult.value = null;
-      columnMappings.value = [];
+      resetWorkingState();
     }
-    showSuccessMessage("File deleted");
-  } catch (error: any) {
+    showSuccessMessage(t("people.import.fileDeleted"));
+  } catch (error: unknown) {
     if (error !== "cancel") {
-      showErrorMessage(error.message || t("people.import.deleteFileError"));
+      const message =
+        error instanceof Error
+          ? error.message
+          : t("people.import.deleteFileError");
+      showErrorMessage(message);
     }
   }
+}
+
+function onMappingsChanged(next: ColumnMapping[]) {
+  columnMappings.value = next;
+  mappingSaved.value = false;
+  importResult.value = null;
 }
 
 async function saveMapping() {
@@ -329,12 +382,15 @@ async function saveMapping() {
 
   savingMapping.value = true;
   try {
-    await peopleImportService.saveMapping(
+    const updatedFile = await peopleImportService.saveMapping(
       electionGuid,
       selectedFile.value.rowId,
       columnMappings.value,
     );
+    replaceFileInList(updatedFile);
+    mappingSaved.value = true;
     showSuccessMessage(t("people.import.mappingSaved"));
+    await scrollToStage("load");
   } catch (error) {
     handleApiError(error);
   } finally {
@@ -342,15 +398,8 @@ async function saveMapping() {
   }
 }
 
-async function handleNext() {
-  if (currentStep.value === 0 && selectedFile.value) {
-    await parseFile();
-  }
-  currentStep.value++;
-}
-
 async function executeImport() {
-  if (!selectedFile.value) {
+  if (!selectedFile.value || !mappingSaved.value) {
     return;
   }
 
@@ -366,153 +415,291 @@ async function executeImport() {
     importResult.value = result;
     if (result.success) {
       showSuccessMessage(
-        `Import completed: ${result.peopleAdded} people added, ${result.peopleSkipped} skipped`,
+        t("people.import.importComplete", {
+          added: result.peopleAdded,
+          skipped: result.peopleSkipped,
+        }),
       );
       await loadPeopleCount();
+      await loadFiles();
+      const refreshed = files.value.find(
+        (item) => item.rowId === selectedFile.value?.rowId,
+      );
+      if (refreshed) {
+        selectedFile.value = refreshed;
+      }
     } else {
-      showErrorMessage("Import failed: " + result.errors.length);
+      showErrorMessage(
+        t("people.import.importFailed", { count: result.errors.length }),
+      );
     }
   } catch (error) {
     console.error("Import failed:", error);
-    showErrorMessage("Failed to execute import");
+    showErrorMessage(t("people.import.importFailedGeneric"));
   } finally {
     importing.value = false;
-  }
-}
-
-async function confirmDeleteAllPeople() {
-  try {
-    await ElMessageBox.confirm(
-      t("people.import.confirmDeleteAllPeople"),
-      t("common.warning"),
-      {
-        confirmButtonText: t("common.delete"),
-        cancelButtonText: t("common.cancel"),
-        type: "warning",
-      },
-    );
-
-    const result = await peopleImportService.deleteAllPeople(electionGuid);
-    showSuccessMessage(`${result.deletedCount} people deleted`);
-    await loadPeopleCount();
-    showDeleteAllConfirm.value = false;
-  } catch (error) {
-    if (error !== "cancel") {
-      handleApiError(error);
-    }
-    showDeleteAllConfirm.value = false;
   }
 }
 </script>
 
 <template>
   <div class="people-import-page">
-    <el-card>
-      <el-steps :active="currentStep" finish-status="success" align-center>
-        <el-step :title="$t('people.import.step1')" />
-        <el-step :title="$t('people.import.step2')" />
-        <el-step :title="$t('people.import.step3')" />
-      </el-steps>
+    <ol class="import-pipeline" :aria-label="$t('people.import.title')">
+      <li :class="{ done: fileReady, current: !fileReady }">
+        <span class="pipeline-index">1</span>
+        <div class="pipeline-copy">
+          <strong>{{ $t("people.import.step1") }}</strong>
+          <span>{{ pipelineFileDetail }}</span>
+        </div>
+      </li>
+      <li :class="{ done: mappingReady, current: fileReady && !mappingReady }">
+        <span class="pipeline-index">2</span>
+        <div class="pipeline-copy">
+          <strong>{{ $t("people.import.step2") }}</strong>
+          <span>{{ pipelineMapDetail }}</span>
+        </div>
+      </li>
+      <li
+        :class="{
+          done: !!importResult?.success,
+          current: mappingReady && !importResult?.success,
+        }"
+      >
+        <span class="pipeline-index">3</span>
+        <div class="pipeline-copy">
+          <strong>{{ $t("people.import.step3") }}</strong>
+          <span>{{ pipelineLoadDetail }}</span>
+        </div>
+      </li>
+    </ol>
 
-      <div class="step-content">
-        <PeopleImportUploadStep
-          v-if="currentStep === 0"
-          :files="files"
-          :selected-file="selectedFile"
-          :uploading="uploading"
-          :reparsing="reparsing"
-          @change="handleFileChange"
-          @success="handleUploadSuccess"
-          @error="handleUploadError"
-          @select="selectFile"
-          @reparse="reparseFile"
-          @delete="deleteFile"
-          @update-settings="updateFileSettings"
-        />
-
-        <PeopleImportMappingStep
-          v-if="currentStep === 1"
-          :parsed-result="parsedResult"
-          :column-mappings="columnMappings"
-          :saving-mapping="savingMapping"
-          :available-target-fields="availableTargetFields"
-          @save="saveMapping"
-        />
-
-        <PeopleImportExecuteStep
-          v-if="currentStep === 2"
-          :parsed-result="parsedResult"
-          :column-mappings="columnMappings"
-          :is-mapping-valid="isMappingValid"
-          :selected-file="selectedFile"
-          :importing="importing"
-          :import-progress="importProgress"
-          :import-result="importResult"
-          :translated-errors="translatedErrors"
-          :translated-warnings="translatedWarnings"
-          :people-count="peopleCount"
-          :can-delete-all-people="canDeleteAllPeople"
-          @import="executeImport"
-          @delete-all="showDeleteAllConfirm = true"
-        />
-      </div>
-
-      <div class="step-actions">
-        <el-button v-if="currentStep > 0" @click="currentStep--">
-          {{ $t("common.previous") }}
-        </el-button>
-        <el-button
-          v-if="currentStep < 2"
-          type="primary"
-          :disabled="!canProceedToNext"
-          @click="handleNext"
-        >
-          {{ $t("common.next") }}
-        </el-button>
-      </div>
+    <el-card class="import-stage import-guide" shadow="never">
+      <template #header>
+        <h3>{{ $t("people.import.fileGuideTitle") }}</h3>
+      </template>
+      <PeopleImportFileGuide />
     </el-card>
 
-    <el-dialog
-      v-model="showDeleteAllConfirm"
-      :title="$t('people.import.confirmDeleteAllPeople')"
-      width="500px"
-    >
-      <p>{{ $t("people.import.deleteAllPeopleMessage") }}</p>
-      <p class="warning-text">{{ $t("common.actionIrreversible") }}</p>
-      <template #footer>
-        <el-button @click="showDeleteAllConfirm = false">
-          {{ $t("common.cancel") }}
-        </el-button>
-        <el-button type="danger" @click="confirmDeleteAllPeople">
-          {{ $t("common.delete") }}
-        </el-button>
+    <el-card id="import-stage-file" class="import-stage" shadow="never">
+      <template #header>
+        <div class="stage-header">
+          <span class="stage-number">1</span>
+          <div>
+            <h3>{{ $t("people.import.step1") }}</h3>
+            <p>{{ $t("people.import.chooseFileDesc") }}</p>
+          </div>
+        </div>
       </template>
-    </el-dialog>
+      <PeopleImportUploadStep
+        :files="files"
+        :selected-file="selectedFile"
+        :uploading="uploading"
+        :reparsing="reparsing"
+        :upload-key="uploadKey"
+        @change="handleFileChange"
+        @select="(file) => selectFile(file)"
+        @reparse="reparseFile"
+        @delete="deleteFile"
+        @update-settings="updateFileSettings"
+      />
+    </el-card>
+
+    <el-card
+      id="import-stage-map"
+      class="import-stage"
+      :class="{ 'is-inactive': !fileReady }"
+      shadow="never"
+    >
+      <template #header>
+        <div class="stage-header">
+          <span class="stage-number">2</span>
+          <div>
+            <h3>{{ $t("people.import.step2") }}</h3>
+            <p>{{ $t("people.import.mapColumnsDesc") }}</p>
+          </div>
+        </div>
+      </template>
+      <el-skeleton v-if="parsing" :rows="5" animated />
+      <PeopleImportMappingStep
+        v-else
+        :parsed-result="parsedResult"
+        :column-mappings="columnMappings"
+        :saving-mapping="savingMapping"
+        :mapping-saved="mappingSaved"
+        :is-mapping-valid="isMappingValid"
+        @update:column-mappings="onMappingsChanged"
+        @save="saveMapping"
+      />
+    </el-card>
+
+    <el-card
+      id="import-stage-load"
+      class="import-stage"
+      :class="{ 'is-inactive': !mappingReady }"
+      shadow="never"
+    >
+      <template #header>
+        <div class="stage-header">
+          <span class="stage-number">3</span>
+          <div>
+            <h3>{{ $t("people.import.step3") }}</h3>
+            <p>{{ $t("people.import.loadPeopleDesc") }}</p>
+          </div>
+        </div>
+      </template>
+      <PeopleImportExecuteStep
+        :parsed-result="parsedResult"
+        :column-mappings="columnMappings"
+        :is-mapping-valid="isMappingValid"
+        :mapping-saved="mappingSaved"
+        :selected-file="selectedFile"
+        :importing="importing"
+        :import-progress="importProgress"
+        :import-result="importResult"
+        :translated-errors="translatedErrors"
+        :translated-warnings="translatedWarnings"
+        :people-count="peopleCount"
+        @import="executeImport"
+      />
+    </el-card>
   </div>
 </template>
 
 <style lang="less">
 .people-import-page {
-  max-width: 1400px;
+  max-width: 1100px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 40px;
 
-  .el-steps {
-    margin: 20px 0;
+  .import-pipeline {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      border: 1px solid var(--el-border-color-lighter);
+      border-radius: 10px;
+      background: var(--el-bg-color);
+      min-width: 0;
+    }
+
+    .pipeline-index {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      background: var(--el-fill-color);
+      color: var(--el-text-color-regular);
+    }
+
+    .pipeline-copy {
+      min-width: 0;
+
+      strong {
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      span {
+        display: block;
+        font-size: var(--font-size-sm);
+        color: var(--el-text-color-secondary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    li.current {
+      border-color: var(--el-color-primary-light-5);
+      box-shadow: 0 0 0 1px var(--el-color-primary-light-5);
+
+      .pipeline-index {
+        background: var(--el-color-primary);
+        color: var(--color-text-inverse);
+      }
+    }
+
+    li.done {
+      .pipeline-index {
+        background: var(--el-color-success);
+        color: var(--color-text-inverse);
+      }
+    }
   }
 
-  .step-content {
-    min-height: 400px;
-    margin: 30px 0;
+  .import-stage {
+    .el-card__header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--el-border-color-extra-light);
+    }
+
+    .el-card__body {
+      padding: 16px 20px 24px;
+    }
+
+    &.import-guide {
+      h3 {
+        margin: 0;
+        font-size: var(--font-size-lg);
+      }
+    }
+
+    &.is-inactive {
+      opacity: 0.62;
+    }
   }
 
-  .step-actions {
-    text-align: center;
-    margin-top: 30px;
+  .stage-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    h3 {
+      margin: 0 0 2px;
+      font-size: var(--font-size-lg);
+    }
+
+    p {
+      margin: 0;
+      font-size: var(--font-size-sm);
+      color: var(--el-text-color-secondary);
+      font-weight: 400;
+    }
   }
 
-  .warning-text {
-    color: var(--el-color-danger);
-    font-weight: 500;
+  .stage-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--el-color-primary);
+    color: var(--color-text-inverse);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 800px) {
+    .import-pipeline {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>

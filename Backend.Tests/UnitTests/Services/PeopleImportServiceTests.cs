@@ -120,6 +120,217 @@ public class PeopleImportServiceTests : ServiceTestBase
         Assert.NotEmpty(result.AutoMappings);
     }
 
+    [Theory]
+    [InlineData("Baha'i ID")]
+    [InlineData("Bahá'í ID")]
+    [InlineData("Baha’i ID")]
+    [InlineData("Bahai_ID")]
+    public async Task ParseFileAsync_BahaiIdHeaderVariants_AutoMapsToBahaiId(string header)
+    {
+        var electionGuid = Guid.NewGuid();
+        var fileContent = $"First Name,Last Name,{header}\nMinnie,Mouse,T-124";
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        var mapping = result.AutoMappings.Single(m => m.FileColumn == header);
+        Assert.Equal("BahaiId", mapping.TargetField);
+    }
+
+    [Fact]
+    public async Task ParseFileAsync_TwoHeadersMatchSameField_KeepsMoreSpecificMapping()
+    {
+        var electionGuid = Guid.NewGuid();
+        var fileContent = "First Name,Last Name,Baha'i ID,ID\nMinnie,Mouse,T-124,99";
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        Assert.Equal("BahaiId", result.AutoMappings.Single(m => m.FileColumn == "Baha'i ID").TargetField);
+        Assert.Null(result.AutoMappings.Single(m => m.FileColumn == "ID").TargetField);
+        Assert.Equal(1, result.AutoMappings.Count(m => m.TargetField == "BahaiId"));
+    }
+
+    [Fact]
+    public async Task UpdateFileSettingsAsync_PersistsFirstDataRow()
+    {
+        var electionGuid = Guid.NewGuid();
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            FirstDataRow = 1,
+            CodePage = 65001,
+            HasContent = true,
+            Contents = Encoding.UTF8.GetBytes("skip,this\nFirst Name,Last Name\nMinnie,Mouse")
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var updated = await _service.UpdateFileSettingsAsync(
+            electionGuid,
+            importFile.RowId,
+            new UpdateFileSettingsDto { FirstDataRow = 2, CodePage = 65001 });
+
+        Assert.Equal(2, updated.FirstDataRow);
+        var stored = await Context.ImportFiles.FindAsync(importFile.RowId);
+        Assert.Equal(2, stored!.FirstDataRow);
+    }
+
+    [Fact]
+    public async Task ParseFileAsync_CsvHeadersOnLine2_UsesSecondLineAsHeaders()
+    {
+        var electionGuid = Guid.NewGuid();
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 2,
+            HasContent = true,
+            Contents = Encoding.UTF8.GetBytes("Report Title,\nFirst Name,Last Name\nMinnie,Mouse")
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        Assert.Equal("First Name", result.Headers[0]);
+        Assert.Equal("Last Name", result.Headers[1]);
+        Assert.Equal("Minnie", result.PreviewRows[0][0]);
+    }
+
+    [Fact]
+    public async Task ParseFileAsync_SparseColumns_CollectsSamplesFromLaterRows()
+    {
+        // Arrange — like 2021-04-22-with units.csv: some columns are empty on the first rows
+        var electionGuid = Guid.NewGuid();
+        var fileContent =
+            "LastName,FirstName,MiddleName,FormerName,Nickname\n" +
+            "Abdai,Manouchehr,,,\n" +
+            "Adegbesan,Kehinde,,,\n" +
+            "Afshar,Bejan,,,\n" +
+            "Afshar,Nima,,,\n" +
+            "Agahi,Ghazaleh,,Ghazaleh Agahi Najafabadi,Nila Jessa\n" +
+            "Agahi,Heshmatollah,,Hesmatollah,\n" +
+            "Agbor,Sallyanne,M,Ghorbanpoor,\n";
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        // Act
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        // Assert
+        Assert.Equal(7, result.TotalDataRows);
+        Assert.True(result.PreviewRows.Count <= 3);
+        Assert.Equal("Manouchehr", result.PreviewRows[0][1]);
+        Assert.Equal("Kehinde", result.PreviewRows[1][1]);
+        Assert.Equal("Bejan", result.PreviewRows[2][1]);
+        Assert.Equal("M", result.PreviewRows[0][2]);
+        Assert.Equal("Ghazaleh Agahi Najafabadi", result.PreviewRows[0][3]);
+        Assert.Equal("Hesmatollah", result.PreviewRows[1][3]);
+        Assert.Equal("Ghorbanpoor", result.PreviewRows[2][3]);
+        Assert.Equal("Nila Jessa", result.PreviewRows[0][4]);
+    }
+
+    [Fact]
+    public async Task ParseFileAsync_CsvFile_CountsAllRowsAfterPreviewSamplesAreFull()
+    {
+        var electionGuid = Guid.NewGuid();
+        var rows = new StringBuilder("First Name,Last Name\n");
+        for (var i = 1; i <= 20; i++)
+        {
+            rows.AppendLine($"Person{i},Last{i}");
+            if (i == 10)
+            {
+                rows.AppendLine();
+            }
+        }
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(rows.ToString()),
+            HasContent = true
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        Assert.Equal(20, result.TotalDataRows);
+        Assert.Equal(3, result.PreviewRows.Count);
+        Assert.Equal("Person1", result.PreviewRows[0][0]);
+        Assert.Equal("Person3", result.PreviewRows[2][0]);
+    }
+
+    [Fact]
+    public async Task ParseFileAsync_XlsxFile_CountsAllRowsAfterPreviewSamplesAreFull()
+    {
+        var electionGuid = Guid.NewGuid();
+        using var workbook = new ClosedXML.Excel.XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Sheet1");
+        worksheet.Cell(1, 1).Value = "FirstName";
+        worksheet.Cell(1, 2).Value = "LastName";
+        for (var i = 1; i <= 15; i++)
+        {
+            worksheet.Cell(i + 1, 1).Value = $"Person{i}";
+            worksheet.Cell(i + 1, 2).Value = $"Last{i}";
+        }
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "xlsx",
+            Contents = stream.ToArray(),
+            HasContent = true
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        Assert.Equal(15, result.TotalDataRows);
+        Assert.Equal(3, result.PreviewRows.Count);
+        Assert.Equal("Person1", result.PreviewRows[0][0]);
+        Assert.Equal("Person3", result.PreviewRows[2][0]);
+    }
+
     [Fact]
     public async Task ParseFileAsync_XlsxFile_ReturnsParseResponse()
     {
@@ -382,9 +593,43 @@ public class PeopleImportServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task ImportPeopleAsync_DuplicateByBahaiId_SkipsDuplicate()
+    public async Task ImportPeopleAsync_DuplicateName_ImportsBoth()
     {
-        // Arrange
+        var electionGuid = Guid.NewGuid();
+        var fileContent = "FirstName,LastName,Other Info\nJohn,Doe,North\nJohn,Doe,South";
+        var mappings = new List<ColumnMappingDto>
+        {
+            new() { FileColumn = "FirstName", TargetField = "FirstName" },
+            new() { FileColumn = "LastName", TargetField = "LastName" },
+            new() { FileColumn = "Other Info", TargetField = "OtherInfo" }
+        };
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true,
+            ColumnsToRead = System.Text.Json.JsonSerializer.Serialize(mappings)
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.Equal(2, result.PeopleAdded);
+        Assert.Equal(0, result.PeopleSkipped);
+        Assert.Empty(result.Errors);
+        var people = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>();
+        Assert.Equal(2, people.Count);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_DuplicateBahaiId_SkipsAndReportsMatchedLine()
+    {
         var electionGuid = Guid.NewGuid();
         var fileContent = "FirstName,LastName,Bahai ID\nJohn,Doe,123\nJane,Smith,123";
         var mappings = new List<ColumnMappingDto>
@@ -407,17 +652,97 @@ public class PeopleImportServiceTests : ServiceTestBase
         Context.ImportFiles.Add(importFile);
         await Context.SaveChangesAsync();
 
-        // Act
         var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
 
-        // Assert
         Assert.True(result.Success);
-        Assert.Equal(2, result.TotalRows);
         Assert.Equal(1, result.PeopleAdded);
         Assert.Equal(1, result.PeopleSkipped);
+        var duplicate = Assert.Single(result.Errors);
+        Assert.Equal("import.errors.duplicateBahaiId", duplicate.Key);
+        Assert.Equal("3", duplicate.Parameters["rowNumber"]);
+        Assert.Equal("2", duplicate.Parameters["matchedRowNumber"]);
+    }
 
-        var people = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>();
-        Assert.Single(people);
+    [Fact]
+    public async Task ImportPeopleAsync_DuplicatePhone_SkipsAndReportsMatchedLine()
+    {
+        var electionGuid = Guid.NewGuid();
+        var fileContent = "FirstName,LastName,Phone\nJohn,Doe,403-809-1573\nJane,Smith,403-809-1573";
+        var mappings = new List<ColumnMappingDto>
+        {
+            new() { FileColumn = "FirstName", TargetField = "FirstName" },
+            new() { FileColumn = "LastName", TargetField = "LastName" },
+            new() { FileColumn = "Phone", TargetField = "Phone" }
+        };
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true,
+            ColumnsToRead = System.Text.Json.JsonSerializer.Serialize(mappings)
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.Equal(1, result.PeopleAdded);
+        Assert.Equal(1, result.PeopleSkipped);
+        var duplicate = Assert.Single(result.Errors);
+        Assert.Equal("import.errors.duplicatePhone", duplicate.Key);
+        Assert.Equal("3", duplicate.Parameters["rowNumber"]);
+        Assert.Equal("2", duplicate.Parameters["matchedRowNumber"]);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_XlsxHeadersOnRow6_ReportsExcelRowNumbers()
+    {
+        var electionGuid = Guid.NewGuid();
+        using var workbook = new ClosedXML.Excel.XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Sheet1");
+        worksheet.Cell(6, 1).Value = "FirstName";
+        worksheet.Cell(6, 2).Value = "LastName";
+        worksheet.Cell(6, 3).Value = "Phone";
+        worksheet.Cell(7, 1).Value = "John";
+        worksheet.Cell(7, 2).Value = "Doe";
+        worksheet.Cell(7, 3).Value = "403-809-1573";
+        worksheet.Cell(12, 1).Value = "Jane";
+        worksheet.Cell(12, 2).Value = "Smith";
+        worksheet.Cell(12, 3).Value = "403-809-1573";
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        var mappings = new List<ColumnMappingDto>
+        {
+            new() { FileColumn = "FirstName", TargetField = "FirstName" },
+            new() { FileColumn = "LastName", TargetField = "LastName" },
+            new() { FileColumn = "Phone", TargetField = "Phone" }
+        };
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "xlsx",
+            FirstDataRow = 6,
+            Contents = stream.ToArray(),
+            HasContent = true,
+            ColumnsToRead = System.Text.Json.JsonSerializer.Serialize(mappings)
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.Equal(1, result.PeopleAdded);
+        Assert.Equal(1, result.PeopleSkipped);
+        var duplicate = Assert.Single(result.Errors);
+        Assert.Equal("12", duplicate.Parameters["rowNumber"]);
+        Assert.Equal("7", duplicate.Parameters["matchedRowNumber"]);
     }
 
     [Fact]

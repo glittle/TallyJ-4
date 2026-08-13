@@ -95,25 +95,7 @@ public partial class PeopleImportService
         _context.ImportFiles.Add(importFile);
         await _context.SaveChangesAsync();
 
-        // Map to DTO and return
-        var dto = new ImportFileDto
-        {
-            RowId = importFile.RowId,
-            ElectionGuid = importFile.ElectionGuid,
-            UploadTime = importFile.UploadTime,
-            ImportTime = importFile.ImportTime,
-            FileSize = importFile.FileSize,
-            HasContent = importFile.HasContent,
-            FirstDataRow = importFile.FirstDataRow,
-            ColumnsToRead = importFile.ColumnsToRead,
-            OriginalFileName = importFile.OriginalFileName,
-            ProcessingStatus = importFile.ProcessingStatus,
-            FileType = importFile.FileType,
-            CodePage = importFile.CodePage,
-            Messages = importFile.Messages
-        };
-
-        return dto;
+        return ToImportFileDto(importFile);
     }
 
     /// <summary>
@@ -128,22 +110,27 @@ public partial class PeopleImportService
             .OrderByDescending(f => f.UploadTime)
             .ToListAsync();
 
-        return files.Select(f => new ImportFileDto
+        return files.Select(ToImportFileDto).ToList();
+    }
+
+    private static ImportFileDto ToImportFileDto(ImportFile file)
+    {
+        return new ImportFileDto
         {
-            RowId = f.RowId,
-            ElectionGuid = f.ElectionGuid,
-            UploadTime = f.UploadTime,
-            ImportTime = f.ImportTime,
-            FileSize = f.FileSize,
-            HasContent = f.HasContent,
-            FirstDataRow = f.FirstDataRow,
-            ColumnsToRead = f.ColumnsToRead,
-            OriginalFileName = f.OriginalFileName,
-            ProcessingStatus = f.ProcessingStatus,
-            FileType = f.FileType,
-            CodePage = f.CodePage,
-            Messages = f.Messages
-        }).ToList();
+            RowId = file.RowId,
+            ElectionGuid = file.ElectionGuid,
+            UploadTime = file.UploadTime,
+            ImportTime = file.ImportTime,
+            FileSize = file.FileSize,
+            HasContent = file.HasContent,
+            FirstDataRow = file.FirstDataRow,
+            ColumnsToRead = file.ColumnsToRead,
+            OriginalFileName = file.OriginalFileName,
+            ProcessingStatus = file.ProcessingStatus,
+            FileType = file.FileType,
+            CodePage = file.CodePage,
+            Messages = file.Messages
+        };
     }
 
     /// <summary>
@@ -172,8 +159,10 @@ public partial class PeopleImportService
 
         await _context.SaveChangesAsync();
 
-        // Parse the file
-        var (headers, previewRows, totalDataRows) = await ParseFileContentAsync(importFile);
+        // Headers + up to 3 non-empty samples per column (not full file rows)
+        var (headers, previewRows, totalDataRows) = await ParseFileContentAsync(
+            importFile,
+            previewSamplesOnly: true);
 
         // Check for saved mappings first, otherwise generate auto-mappings
         List<ColumnMappingDto> mappings;
@@ -197,7 +186,7 @@ public partial class PeopleImportService
         return new ParseFileResponse
         {
             Headers = headers,
-            PreviewRows = previewRows,
+            PreviewRows = previewRows.Select(row => row.Cells).ToList(),
             TotalDataRows = totalDataRows,
             AutoMappings = mappings
         };
@@ -273,7 +262,7 @@ public partial class PeopleImportService
     /// <param name="rowId">The row ID of the import file.</param>
     /// <param name="settings">The settings to update.</param>
     /// <returns>Task representing the operation.</returns>
-    public async Task UpdateFileSettingsAsync(Guid electionGuid, int rowId, UpdateFileSettingsDto settings)
+    public async Task<ImportFileDto> UpdateFileSettingsAsync(Guid electionGuid, int rowId, UpdateFileSettingsDto settings)
     {
         var importFile = await _context.ImportFiles
             .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
@@ -289,6 +278,7 @@ public partial class PeopleImportService
             importFile.CodePage = settings.CodePage.Value;
 
         await _context.SaveChangesAsync();
+        return ToImportFileDto(importFile);
     }
 
     /// <summary>

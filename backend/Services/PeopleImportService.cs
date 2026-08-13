@@ -18,12 +18,22 @@ public partial class PeopleImportService : IPeopleImportService
     private const int KnownFieldScore = 10;
     private const int HeaderKeywordScore = 5;
 
-    // Auto-mapping aliases for field matching (case-insensitive, spaces/underscores/hyphens ignored)
+    // Auto-mapping aliases (compared after stripping punctuation, spaces, and accents)
     private static readonly IReadOnlyDictionary<string, IReadOnlyList<string>> FieldAliases = new Dictionary<string, IReadOnlyList<string>>
     {
         ["FirstName"] = new[] { "first name", "firstname", "first_name", "given name", "givenname" },
         ["LastName"] = new[] { "last name", "lastname", "last_name", "surname", "family name", "familyname" },
-        ["BahaiId"] = new[] { "bahai id", "bahaiid", "bahai_id", "baha'i id", "id" },
+        ["BahaiId"] = new[]
+        {
+            "bahai id",
+            "bahaiid",
+            "bahai_id",
+            "baha'i id",
+            "bahá'í id",
+            "baha’i id",
+            "membership id",
+            "id",
+        },
         ["IneligibleReasonDescription"] = new[] { "eligibility", "eligibility status", "status", "ineligible reason" },
         ["Area"] = new[] { "area", "region", "locality", "community" },
         ["Email"] = new[] { "email", "email address", "e-mail" },

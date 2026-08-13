@@ -3,17 +3,16 @@ import type { ImportFileInfo } from "@/types";
 import type { UploadFile } from "element-plus";
 import { InfoFilled, UploadFilled } from "@element-plus/icons-vue";
 
-defineProps<{
+const props = defineProps<{
   files: ImportFileInfo[];
   selectedFile: ImportFileInfo | null;
   uploading: boolean;
   reparsing: number | null;
+  uploadKey: number;
 }>();
 
 const emit = defineEmits<{
   change: [file: UploadFile];
-  success: [];
-  error: [];
   select: [file: ImportFileInfo];
   reparse: [file: ImportFileInfo];
   delete: [file: ImportFileInfo];
@@ -24,6 +23,8 @@ function getStatusType(status: string | null): string {
   switch (status) {
     case "Imported":
       return "success";
+    case "Mapped":
+      return "primary";
     case "Processing":
       return "warning";
     case "Failed":
@@ -44,17 +45,43 @@ function formatFileSize(bytes: number): string {
     Number.parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i]
   );
 }
+
+function isSelected(file: ImportFileInfo): boolean {
+  return props.selectedFile?.rowId === file.rowId;
+}
+
+function rowClassName({ row }: { row: ImportFileInfo }): string {
+  return isSelected(row) ? "is-selected-file" : "is-selectable-file";
+}
+
+function updateFirstDataRow(value: number | undefined) {
+  if (!props.selectedFile) {
+    return;
+  }
+  emit("update-settings", {
+    ...props.selectedFile,
+    firstDataRow: value ?? null,
+  });
+}
+
+function updateCodePage(value: number | undefined) {
+  if (!props.selectedFile) {
+    return;
+  }
+  emit("update-settings", {
+    ...props.selectedFile,
+    codePage: value ?? null,
+  });
+}
 </script>
 
 <template>
   <div class="people-import-upload-step">
-    <h3>{{ $t("people.import.uploadFile") }}</h3>
     <el-upload
+      :key="uploadKey"
       :auto-upload="false"
-      :limit="1"
+      :show-file-list="false"
       :on-change="(f: UploadFile) => emit('change', f)"
-      :on-success="() => emit('success')"
-      :on-error="() => emit('error')"
       accept=".csv,.tsv,.tab,.txt,.xlsx"
       drag
       :disabled="uploading"
@@ -72,12 +99,26 @@ function formatFileSize(bytes: number): string {
     </el-upload>
 
     <div v-if="files.length > 0" class="files-section">
-      <h4>{{ $t("people.import.filesOnServer") }}</h4>
-      <el-table :data="files" stripe style="width: 100%">
+      <div class="files-heading">
+        <h4>{{ $t("people.import.filesOnServer") }}</h4>
+        <span class="files-hint">{{
+          $t("people.import.rowClickToSelect")
+        }}</span>
+      </div>
+      <el-table
+        :data="files"
+        stripe
+        row-key="rowId"
+        highlight-current-row
+        :current-row-key="selectedFile?.rowId"
+        :row-class-name="rowClassName"
+        style="width: 100%"
+        @row-click="(row: ImportFileInfo) => emit('select', row)"
+      >
         <el-table-column
           prop="originalFileName"
           :label="$t('people.import.fileName')"
-          width="200"
+          min-width="180"
         />
         <el-table-column
           prop="processingStatus"
@@ -85,8 +126,13 @@ function formatFileSize(bytes: number): string {
           width="120"
         >
           <template #default="scope">
-            <el-tag :type="getStatusType(scope.row.processingStatus)">
-              {{ scope.row.processingStatus || "Uploaded" }}
+            <el-tag
+              :type="getStatusType(scope.row.processingStatus)"
+              size="small"
+            >
+              {{
+                scope.row.processingStatus || $t("people.import.statusUploaded")
+              }}
             </el-tag>
           </template>
         </el-table-column>
@@ -103,119 +149,160 @@ function formatFileSize(bytes: number): string {
             }}
           </template>
         </el-table-column>
-        <el-table-column prop="firstDataRow" width="140">
-          <template #header>
+        <el-table-column
+          prop="fileSize"
+          :label="$t('people.import.size')"
+          width="90"
+        >
+          <template #default="scope">
+            {{ scope.row.fileSize ? formatFileSize(scope.row.fileSize) : "-" }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('common.actions')" width="90" align="right">
+          <template #default="scope">
+            <el-button
+              type="danger"
+              link
+              @click.stop="emit('delete', scope.row)"
+            >
+              {{ $t("common.delete") }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div v-if="selectedFile" class="file-settings">
+        <div class="file-settings-title">
+          {{ $t("people.import.selectedFile") }}:
+          <strong>{{ selectedFile.originalFileName }}</strong>
+        </div>
+        <div class="file-settings-controls">
+          <div class="setting">
             <el-tooltip
               :content="$t('people.import.headersOnLineTooltip')"
               placement="top"
             >
-              <span>
+              <span class="setting-label">
                 {{ $t("people.import.headersOnLine") }}
-                <el-icon style="margin-left: 4px; vertical-align: middle">
-                  <InfoFilled />
-                </el-icon>
+                <el-icon><InfoFilled /></el-icon>
               </span>
             </el-tooltip>
-          </template>
-          <template #default="scope">
             <el-input-number
-              v-model="scope.row.firstDataRow"
+              :model-value="selectedFile.firstDataRow"
               :min="1"
               :max="10"
               size="small"
-              :disabled="scope.row.processingStatus === 'Imported'"
-              @change="emit('update-settings', scope.row)"
+              :disabled="selectedFile.processingStatus === 'Imported'"
+              @update:model-value="updateFirstDataRow"
             />
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="codePage"
-          :label="$t('people.import.contentEncoding')"
-          width="150"
-        >
-          <template #default="scope">
+          </div>
+          <div class="setting">
+            <span class="setting-label">{{
+              $t("people.import.contentEncoding")
+            }}</span>
             <el-select
-              v-if="scope.row.fileType !== 'xlsx'"
-              v-model="scope.row.codePage"
+              v-if="selectedFile.fileType !== 'xlsx'"
+              :model-value="selectedFile.codePage"
               size="small"
-              :disabled="scope.row.processingStatus === 'Imported'"
-              @change="emit('update-settings', scope.row)"
+              :disabled="selectedFile.processingStatus === 'Imported'"
+              style="width: 160px"
+              @update:model-value="updateCodePage"
             >
               <el-option label="UTF-8" :value="65001" />
               <el-option label="Windows-1252" :value="1252" />
               <el-option label="ISO-8859-1" :value="28591" />
             </el-select>
             <span v-else class="encoding-text">UTF-8 (Excel)</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="fileSize"
-          :label="$t('people.import.size')"
-          width="100"
-        >
-          <template #default="scope">
-            {{ scope.row.fileSize ? formatFileSize(scope.row.fileSize) : "-" }}
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('people.import.action')" width="120">
-          <template #default="scope">
-            <el-button
-              v-if="selectedFile?.rowId !== scope.row.rowId"
-              type="primary"
-              size="small"
-              @click="emit('select', scope.row)"
-            >
-              {{ $t("people.import.select") }}
-            </el-button>
-            <el-tag v-else type="success">{{
-              $t("people.import.selected")
-            }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('people.import.otherActions')" width="150">
-          <template #default="scope">
-            <el-space>
-              <el-button
-                type="default"
-                size="small"
-                :loading="reparsing === scope.row.rowId"
-                @click="emit('reparse', scope.row)"
-              >
-                {{ $t("people.import.reparse") }}
-              </el-button>
-              <el-button
-                type="danger"
-                size="small"
-                @click="emit('delete', scope.row)"
-              >
-                {{ $t("common.delete") }}
-              </el-button>
-            </el-space>
-          </template>
-        </el-table-column>
-      </el-table>
+          </div>
+          <el-button
+            size="small"
+            :loading="reparsing === selectedFile.rowId"
+            @click="emit('reparse', selectedFile)"
+          >
+            {{ $t("people.import.reparse") }}
+          </el-button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="less">
 .people-import-upload-step {
-  h3 {
-    margin-bottom: 20px;
-    text-align: center;
+  .el-upload {
+    width: 100%;
+  }
+
+  .el-upload-dragger {
+    padding: 24px 16px;
+    width: 100%;
   }
 
   .files-section {
-    margin-top: 40px;
+    margin-top: 28px;
+  }
+
+  .files-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 12px;
 
     h4 {
-      margin-bottom: 15px;
+      margin: 0;
+      color: var(--el-text-color-primary);
+    }
+
+    .files-hint {
+      font-size: var(--font-size-sm);
       color: var(--el-text-color-secondary);
     }
   }
 
+  .el-table .is-selectable-file {
+    cursor: pointer;
+  }
+
+  .el-table .is-selected-file > td.el-table__cell {
+    background-color: var(--el-color-primary-light-9);
+  }
+
+  .file-settings {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--el-border-color-lighter);
+    border-radius: 8px;
+    background: var(--el-fill-color-blank);
+  }
+
+  .file-settings-title {
+    margin-bottom: 12px;
+    color: var(--el-text-color-regular);
+  }
+
+  .file-settings-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 24px;
+  }
+
+  .setting {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .setting-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-size-sm);
+    color: var(--el-text-color-regular);
+  }
+
   .encoding-text {
-    font-size: 12px;
+    font-size: var(--font-size-sm);
     color: var(--el-text-color-placeholder);
   }
 }

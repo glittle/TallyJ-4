@@ -1,7 +1,7 @@
 @echo off
 
 :: Start an empty tab
-wt -w 0 nt --tabColor "#669966" --title "TallyJ Empty" --suppressApplicationTitle -p "Command Prompt" -d "." ^
+wt -w 0 nt --tabColor "#669966" --title "TallyJ Prompt" --suppressApplicationTitle -p "Command Prompt" -d "." ^
 cmd /k "echo In the root folder."
 
 ::use Timeout to put both commands into the same Terminal window. Comment out to open into separate windows.

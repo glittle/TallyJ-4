@@ -372,6 +372,10 @@ describe("Election Store", () => {
         "updateOnlineElection",
         expect.any(Function),
       );
+      expect(frontDeskConnection.on).toHaveBeenCalledWith(
+        "reloadPage",
+        expect.any(Function),
+      );
     });
 
     it("should handle SignalR initialization errors gracefully", async () => {
