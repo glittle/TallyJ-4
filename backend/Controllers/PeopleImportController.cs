@@ -166,13 +166,13 @@ public class PeopleImportController : ControllerBase
     /// <param name="settings">The settings to update.</param>
     /// <returns>Task representing the operation.</returns>
     [HttpPut("{electionGuid}/files/{rowId}/settings")]
-    public async Task<IActionResult> UpdateFileSettings(Guid electionGuid, int rowId, [FromBody] UpdateFileSettingsDto settings)
+    public async Task<ActionResult<ImportFileDto>> UpdateFileSettings(Guid electionGuid, int rowId, [FromBody] UpdateFileSettingsDto settings)
     {
         try
         {
-            await _peopleImportService.UpdateFileSettingsAsync(electionGuid, rowId, settings);
+            var updated = await _peopleImportService.UpdateFileSettingsAsync(electionGuid, rowId, settings);
             _logger.LogInformation("File settings updated for election {ElectionGuid}, file {RowId}", electionGuid, rowId);
-            return NoContent();
+            return Ok(updated);
         }
         catch (ArgumentException ex)
         {

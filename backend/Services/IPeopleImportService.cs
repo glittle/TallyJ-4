@@ -59,8 +59,8 @@ public interface IPeopleImportService
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <param name="rowId">The row ID of the import file.</param>
     /// <param name="settings">The settings to update.</param>
-    /// <returns>Task representing the operation.</returns>
-    Task UpdateFileSettingsAsync(Guid electionGuid, int rowId, UpdateFileSettingsDto settings);
+    /// <returns>The updated import file information.</returns>
+    Task<ImportFileDto> UpdateFileSettingsAsync(Guid electionGuid, int rowId, UpdateFileSettingsDto settings);
 
     /// <summary>
     /// Executes the import of people from the configured file.

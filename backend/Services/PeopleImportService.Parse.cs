@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,26 +12,37 @@ namespace Backend.Services;
 
 public partial class PeopleImportService
 {
-    private async Task<(List<string> headers, List<List<string>> rows, int totalDataRows)> ParseFileContentAsync(ImportFile importFile)
+    private const int PreviewSamplesPerColumn = 3;
+
+    private sealed record ParsedDataRow(int FileRowNumber, List<string> Cells);
+
+    private async Task<(List<string> headers, List<ParsedDataRow> rows, int totalDataRows)> ParseFileContentAsync(
+        ImportFile importFile,
+        bool previewSamplesOnly = false)
     {
         if (importFile.FileType == "xlsx")
         {
-            return await ParseXlsxFileAsync(importFile.Contents!, importFile.FirstDataRow);
+            return await ParseXlsxFileAsync(importFile.Contents!, importFile.FirstDataRow, previewSamplesOnly);
         }
-        else
-        {
-            return ParseTextFile(importFile.Contents!, importFile.FileType!, importFile.CodePage ?? 65001);
-        }
+
+        return ParseTextFile(
+            importFile.Contents!,
+            importFile.FileType!,
+            importFile.CodePage ?? 65001,
+            previewSamplesOnly,
+            importFile.FirstDataRow);
     }
 
-    private async Task<(List<string> headers, List<List<string>> rows, int totalDataRows)> ParseXlsxFileAsync(byte[] content, int? firstDataRow = null)
+    private async Task<(List<string> headers, List<ParsedDataRow> rows, int totalDataRows)> ParseXlsxFileAsync(
+        byte[] content,
+        int? firstDataRow = null,
+        bool previewSamplesOnly = false)
     {
         using var stream = new MemoryStream(content);
         using var workbook = new ClosedXML.Excel.XLWorkbook(stream);
         var worksheet = workbook.Worksheets.First();
 
         var headers = new List<string>();
-        var rows = new List<List<string>>();
 
         // Determine header row: use provided firstDataRow or auto-detect
         int headerRowNumber;
@@ -51,23 +63,41 @@ public partial class PeopleImportService
             headers.Add(cell.GetValue<string>() ?? "");
         }
 
-        // Read all data rows after the header row
         var allRows = worksheet.RowsUsed().ToList();
         var dataRowsStartIndex = allRows.FindIndex(r => r.RowNumber() == headerRowNumber) + 1;
+        var rows = previewSamplesOnly
+            ? new List<ParsedDataRow>()
+            : new List<ParsedDataRow>(Math.Max(0, allRows.Count - dataRowsStartIndex));
+        var samplesByColumn = previewSamplesOnly ? CreateSampleBuckets(columnCount) : null;
+        var totalDataRows = 0;
 
         for (int i = dataRowsStartIndex; i < allRows.Count; i++)
         {
             var row = allRows[i];
-            var rowData = new List<string>();
+            var rowData = new List<string>(columnCount);
             for (int colNum = 1; colNum <= columnCount; colNum++)
             {
                 var cell = row.Cell(colNum);
                 rowData.Add(cell.GetValue<string>() ?? "");
             }
-            rows.Add(rowData);
+
+            totalDataRows++;
+            if (previewSamplesOnly)
+            {
+                CollectSamplesFromRow(samplesByColumn!, rowData);
+            }
+            else
+            {
+                rows.Add(new ParsedDataRow(row.RowNumber(), rowData));
+            }
         }
 
-        return (headers, rows, rows.Count);
+        if (previewSamplesOnly)
+        {
+            return (headers, ToParsedPreviewRows(BuildPreviewRows(samplesByColumn!)), totalDataRows);
+        }
+
+        return (headers, rows, totalDataRows);
     }
 
     /// <summary>
@@ -150,30 +180,114 @@ public partial class PeopleImportService
         return score;
     }
 
-    private (List<string> headers, List<List<string>> rows, int totalDataRows) ParseTextFile(byte[] content, string fileType, int codePage)
+    private (List<string> headers, List<ParsedDataRow> rows, int totalDataRows) ParseTextFile(
+        byte[] content,
+        string fileType,
+        int codePage,
+        bool previewSamplesOnly = false,
+        int? firstDataRow = null)
     {
         var encoding = Encoding.GetEncoding(codePage);
         var text = encoding.GetString(content);
-        var lines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries)
-            .Select(l => l.Trim('\r', '\n'))
-            .Where(l => !string.IsNullOrWhiteSpace(l))
+        var lines = text.Split('\n')
+            .Select(l => l.Trim('\r'))
             .ToArray();
 
-        if (lines.Length == 0)
+        if (lines.All(string.IsNullOrWhiteSpace))
         {
-            return (new List<string>(), new List<List<string>>(), 0);
+            return (new List<string>(), new List<ParsedDataRow>(), 0);
+        }
+
+        var headerLineNumber = firstDataRow is > 0 ? firstDataRow.Value : 1;
+        var headerIndex = headerLineNumber - 1;
+        if (headerIndex < 0 || headerIndex >= lines.Length)
+        {
+            return (new List<string>(), new List<ParsedDataRow>(), 0);
         }
 
         var delimiter = fileType == "tab" ? '\t' : ',';
-        var headers = ParseCsvLine(lines[0], delimiter).ToList();
-        var rows = new List<List<string>>();
+        var headers = ParseCsvLine(lines[headerIndex], delimiter).ToList();
+        var columnCount = headers.Count;
+        var rows = previewSamplesOnly
+            ? new List<ParsedDataRow>()
+            : new List<ParsedDataRow>(Math.Max(0, lines.Length - headerIndex - 1));
+        var samplesByColumn = previewSamplesOnly ? CreateSampleBuckets(columnCount) : null;
+        var totalDataRows = 0;
 
-        for (int i = 1; i < lines.Length; i++)
+        for (int i = headerIndex + 1; i < lines.Length; i++)
         {
-            rows.Add(ParseCsvLine(lines[i], delimiter));
+            if (string.IsNullOrWhiteSpace(lines[i]))
+            {
+                continue;
+            }
+
+            var row = ParseCsvLine(lines[i], delimiter);
+            totalDataRows++;
+            if (previewSamplesOnly)
+            {
+                CollectSamplesFromRow(samplesByColumn!, row);
+            }
+            else
+            {
+                rows.Add(new ParsedDataRow(i + 1, row));
+            }
         }
 
-        return (headers, rows, rows.Count);
+        if (previewSamplesOnly)
+        {
+            return (headers, ToParsedPreviewRows(BuildPreviewRows(samplesByColumn!)), totalDataRows);
+        }
+
+        return (headers, rows, totalDataRows);
+    }
+
+    private static List<ParsedDataRow> ToParsedPreviewRows(List<List<string>> previewRows)
+    {
+        return previewRows.Select(cells => new ParsedDataRow(0, cells)).ToList();
+    }
+
+    private static List<List<string>> CreateSampleBuckets(int columnCount)
+    {
+        return Enumerable.Range(0, columnCount)
+            .Select(_ => new List<string>(PreviewSamplesPerColumn))
+            .ToList();
+    }
+
+    private static void CollectSamplesFromRow(List<List<string>> samplesByColumn, List<string> row)
+    {
+        for (var col = 0; col < samplesByColumn.Count; col++)
+        {
+            if (samplesByColumn[col].Count >= PreviewSamplesPerColumn)
+            {
+                continue;
+            }
+
+            var value = col < row.Count ? row[col]?.Trim() ?? "" : "";
+            if (value.Length > 0)
+            {
+                samplesByColumn[col].Add(value);
+            }
+        }
+    }
+
+    private static List<List<string>> BuildPreviewRows(List<List<string>> samplesByColumn)
+    {
+        var maxSamples = samplesByColumn.Count == 0
+            ? 0
+            : samplesByColumn.Max(samples => samples.Count);
+        var previewRows = new List<List<string>>(maxSamples);
+        for (var i = 0; i < maxSamples; i++)
+        {
+            var previewRow = new List<string>(samplesByColumn.Count);
+            foreach (var samples in samplesByColumn)
+            {
+                previewRow.Add(i < samples.Count ? samples[i] : "");
+            }
+
+            previewRows.Add(previewRow);
+        }
+
+        return previewRows;
     }
 
     private List<string> ParseCsvLine(string line, char delimiter)
@@ -215,18 +329,27 @@ public partial class PeopleImportService
 
     private List<ColumnMappingDto> GenerateAutoMappings(List<string> headers)
     {
-        var mappings = new List<ColumnMappingDto>();
+        var mappings = headers
+            .Select(header => new ColumnMappingDto { FileColumn = header, TargetField = null })
+            .ToList();
 
-        foreach (var header in headers)
+        var candidates = new List<(int Index, string Field, int Score)>();
+        for (var i = 0; i < headers.Count; i++)
         {
-            var normalizedHeader = NormalizeHeader(header);
-            var targetField = FindMatchingField(normalizedHeader);
-
-            mappings.Add(new ColumnMappingDto
+            var match = FindBestFieldMatch(headers[i]);
+            if (match.HasValue)
             {
-                FileColumn = header,
-                TargetField = targetField
-            });
+                candidates.Add((i, match.Value.Field, match.Value.Score));
+            }
+        }
+
+        foreach (var group in candidates.GroupBy(candidate => candidate.Field))
+        {
+            var winner = group
+                .OrderByDescending(candidate => candidate.Score)
+                .ThenBy(candidate => candidate.Index)
+                .First();
+            mappings[winner.Index].TargetField = winner.Field;
         }
 
         return mappings;
@@ -234,22 +357,71 @@ public partial class PeopleImportService
 
     private string NormalizeHeader(string header)
     {
-        return header
-            .Replace(" ", "")
-            .Replace("_", "")
-            .Replace("-", "")
-            .ToLowerInvariant();
-    }
-
-    private string? FindMatchingField(string normalizedHeader)
-    {
-        foreach (var (field, aliases) in FieldAliases)
+        var builder = new StringBuilder(header.Length);
+        foreach (var character in header.Normalize(NormalizationForm.FormD))
         {
-            if (aliases.Contains(normalizedHeader))
+            if (CharUnicodeInfo.GetUnicodeCategory(character) == UnicodeCategory.NonSpacingMark)
             {
-                return field;
+                continue;
+            }
+
+            if (char.IsLetterOrDigit(character))
+            {
+                builder.Append(char.ToLowerInvariant(character));
             }
         }
-        return null;
+
+        return builder.ToString();
+    }
+
+    private (string Field, int Score)? FindBestFieldMatch(string header)
+    {
+        var normalizedHeader = NormalizeHeader(header);
+        if (normalizedHeader.Length == 0)
+        {
+            return null;
+        }
+
+        string? bestField = null;
+        var bestScore = 0;
+
+        foreach (var (field, aliases) in FieldAliases)
+        {
+            var score = ScoreFieldMatch(normalizedHeader, field, aliases);
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestField = field;
+            }
+        }
+
+        return bestField == null ? null : (bestField, bestScore);
+    }
+
+    private int ScoreFieldMatch(string normalizedHeader, string field, IReadOnlyList<string> aliases)
+    {
+        if (normalizedHeader == NormalizeHeader(field))
+        {
+            return 1000 + normalizedHeader.Length;
+        }
+
+        var bestAliasScore = 0;
+        foreach (var alias in aliases)
+        {
+            var normalizedAlias = NormalizeHeader(alias);
+            if (normalizedAlias != normalizedHeader)
+            {
+                continue;
+            }
+
+            // Longer aliases are more specific ("baha'i id" beats "id")
+            var score = 100 + normalizedAlias.Length;
+            if (score > bestAliasScore)
+            {
+                bestAliasScore = score;
+            }
+        }
+
+        return bestAliasScore;
     }
 }

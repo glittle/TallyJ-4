@@ -10,3 +10,4 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [ballot-validation.md](ballot-validation.md) — pre-finalization integrity; fail explicitly before analysis
 - [election-state.md](election-state.md) — teller coordination and high-consequence state transitions
 - [online-ballots.md](online-ballots.md) — online acceptance and random name resolution
+- [people-import.md](people-import.md) — three-action import pipeline (not a Next/Previous wizard)
