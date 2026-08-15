@@ -166,7 +166,7 @@ onMounted(async () => {
         useCallInButton: election.value.useCallInButton,
         hidePreBallotPages: election.value.hidePreBallotPages,
         maskVotingMethod: election.value.maskVotingMethod,
-        onlineSelectionProcess: election.value.onlineSelectionProcess,
+        onlineSelectionProcess: election.value.onlineSelectionProcess ?? "A",
         emailFromAddress: election.value.emailFromAddress,
         emailFromName: election.value.emailFromName,
         emailText: election.value.emailText,

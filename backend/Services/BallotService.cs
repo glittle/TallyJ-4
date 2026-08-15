@@ -36,6 +36,8 @@ public class BallotService : IBallotService
     /// <returns>A paginated response containing ballot DTOs with their associated votes and location information.</returns>
     public async Task<PaginatedResponse<BallotDto>> GetBallotsByElectionAsync(Guid electionGuid, int pageNumber = 1, int pageSize = 50)
     {
+        await SpecialBallotNumbering.RepairOnlineForElectionAsync(_context, electionGuid);
+
         var query = _context.Ballots
             .Where(b => b.Location.ElectionGuid == electionGuid)
             .Include(b => b.Location)
@@ -73,6 +75,17 @@ public class BallotService : IBallotService
         if (ballot == null)
         {
             return null;
+        }
+
+        if (ComputerCodeHelper.IsOnlineCode(ballot.ComputerCode)
+            && (ballot.BallotNumAtComputer <= 0 || ballot.ComputerCode == "WW"))
+        {
+            await SpecialBallotNumbering.RepairOnlineAndGetNextAsync(_context, ballot.LocationGuid);
+            ballot = await _context.Ballots
+                .Include(b => b.Location)
+                .Include(b => b.Votes)
+                    .ThenInclude(v => v.Person)
+                .FirstAsync(b => b.BallotGuid == ballotGuid);
         }
 
         return MapToBallotDto(ballot);
@@ -212,6 +225,13 @@ public class BallotService : IBallotService
         if (ballot == null)
         {
             return false;
+        }
+
+        if (ComputerCodeHelper.IsOnlineCode(ballot.ComputerCode)
+            || ComputerCodeHelper.IsImportedCode(ballot.ComputerCode))
+        {
+            throw new InvalidOperationException(
+                "Online or imported ballots cannot be deleted");
         }
 
         _context.Ballots.Remove(ballot);

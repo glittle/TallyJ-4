@@ -3,12 +3,15 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("@/api/gen/configService/sdk.gen", () => ({
   getApiVotesByBallotGuidGetVotesByBallot: vi.fn(),
   postApiVotesCreateVote: vi.fn(),
+  putApiVotesByIdUpdateVote: vi.fn(),
+  putApiVotesReorderVotes: vi.fn(),
   deleteApiVotesByIdDeleteVote: vi.fn(),
 }));
 
 import {
   deleteApiVotesByIdDeleteVote,
   postApiVotesCreateVote,
+  putApiVotesByIdUpdateVote,
 } from "@/api/gen/configService/sdk.gen";
 import { voteService } from "../voteService";
 
@@ -40,6 +43,44 @@ describe("voteService.create", () => {
     expect(result.vote?.personFullName).toBe("Jane Doe");
     expect(result.ballotStatusCode).toBe("Ok");
     expect(result.votePositions).toBeUndefined();
+  });
+});
+
+describe("voteService.update", () => {
+  it("maps voteStatus from the API to statusCode for the UI", async () => {
+    vi.mocked(putApiVotesByIdUpdateVote).mockResolvedValue({
+      data: {
+        data: {
+          vote: {
+            rowId: 11,
+            ballotGuid: "ballot-1",
+            positionOnBallot: 1,
+            personGuid: "person-1",
+            personFullName: "John Doe",
+            voteStatus: "Ok",
+            onlineVoteRaw: '{"First":"Jon","Last":"Smyth"}',
+          },
+          ballotStatusCode: "Ok",
+        },
+      },
+    } as any);
+
+    const result = await voteService.update(11, {
+      ballotGuid: "ballot-1",
+      positionOnBallot: 1,
+      personGuid: "person-1",
+    });
+
+    expect(result.vote?.statusCode).toBe("ok");
+    expect(result.vote?.onlineVoteRaw).toContain("Jon");
+    expect(putApiVotesByIdUpdateVote).toHaveBeenCalledWith({
+      path: { id: 11 },
+      body: {
+        ballotGuid: "ballot-1",
+        positionOnBallot: 1,
+        personGuid: "person-1",
+      },
+    });
   });
 });
 

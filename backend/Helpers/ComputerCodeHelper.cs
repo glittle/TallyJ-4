@@ -7,11 +7,28 @@ namespace Backend.Helpers;
 /// </summary>
 public static partial class ComputerCodeHelper
 {
+    /// <summary>Reserved computer code for online ballots (v3 used OL).</summary>
+    public const string Online = "OL";
+
+    /// <summary>Reserved computer code for imported ballots (v3 used IM).</summary>
+    public const string Imported = "IM";
+
     private const int SingleLetterCount = 26;
     private const int MaxIndex = SingleLetterCount + (SingleLetterCount * SingleLetterCount) - 1;
 
     [GeneratedRegex(@"^[A-Z]{1,2}$", RegexOptions.CultureInvariant)]
     private static partial Regex ValidCodeRegex();
+
+    public static bool IsOnlineCode(string? code) =>
+        string.Equals(code, Online, StringComparison.OrdinalIgnoreCase)
+        || string.Equals(code, "WW", StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsImportedCode(string? code) =>
+        string.Equals(code, Imported, StringComparison.OrdinalIgnoreCase)
+        || string.Equals(code, "IMPORT", StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsReservedCode(string? code) =>
+        IsOnlineCode(code) || IsImportedCode(code);
 
     public static bool IsValidCode(string? code)
     {
@@ -66,7 +83,7 @@ public static partial class ComputerCodeHelper
         var maxIndex = -1;
         foreach (var code in activeCodes)
         {
-            if (!IsValidCode(code))
+            if (!IsValidCode(code) || IsReservedCode(code))
             {
                 continue;
             }
@@ -78,6 +95,12 @@ public static partial class ComputerCodeHelper
             }
         }
 
-        return IndexToCode(maxIndex + 1);
+        var nextIndex = maxIndex + 1;
+        while (nextIndex <= MaxIndex && IsReservedCode(IndexToCode(nextIndex)))
+        {
+            nextIndex++;
+        }
+
+        return IndexToCode(nextIndex);
     }
 }

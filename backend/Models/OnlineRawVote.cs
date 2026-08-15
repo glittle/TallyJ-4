@@ -1,10 +1,20 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace Backend.Models;
 
 /// <summary>
-/// Represents a raw vote entry from imported ballot data.
+/// Represents a raw vote entry from online voting or imported ballot data.
+/// Stored as JSON on <c>Vote.OnlineVoteRaw</c> (v3-compatible PascalCase).
 /// </summary>
 public class OnlineRawVote
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineRawVote"/> class.
     /// </summary>
@@ -30,7 +40,7 @@ public class OnlineRawVote
         // Likely   first last
         //     or   last, first
 
-        if (text.Contains(","))
+        if (text.Contains(','))
         {
             var split = text.Split(new[] { ',' }, 2);
             Last = split[0].Trim();
@@ -39,7 +49,6 @@ public class OnlineRawVote
         else
         {
             var split = text.Split(' ');
-            var numWords = split.Length;
 
             // If > 2 words, cannot guess which are for first name or last name. Default to last word --> Last
             Last = split.Last();
@@ -66,4 +75,48 @@ public class OnlineRawVote
     /// Gets or sets the original vote text.
     /// </summary>
     public string OtherInfo { get; set; } = "";
+
+    /// <summary>
+    /// First + last when present, otherwise the original text.
+    /// </summary>
+    public string ToDisplayName()
+    {
+        var name = $"{First} {Last}".Trim();
+        return string.IsNullOrEmpty(name) ? OtherInfo ?? "" : name;
+    }
+
+    public string ToJson() => JsonSerializer.Serialize(this, JsonOptions);
+
+    /// <summary>
+    /// Parses stored <c>OnlineVoteRaw</c>: v3/v4 JSON, or a legacy plain name string.
+    /// </summary>
+    public static OnlineRawVote Parse(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return new OnlineRawVote();
+        }
+
+        var trimmed = text.Trim();
+        if (trimmed.StartsWith('{'))
+        {
+            try
+            {
+                var parsed = JsonSerializer.Deserialize<OnlineRawVote>(trimmed, JsonOptions);
+                if (parsed != null)
+                {
+                    parsed.First ??= "";
+                    parsed.Last ??= "";
+                    parsed.OtherInfo ??= "";
+                    return parsed;
+                }
+            }
+            catch (JsonException)
+            {
+                // Fall through to free-text parsing
+            }
+        }
+
+        return new OnlineRawVote(text);
+    }
 }

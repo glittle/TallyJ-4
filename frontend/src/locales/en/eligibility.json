@@ -20,9 +20,10 @@
   "eligibility.U01": "Unidentifiable",
   "eligibility.U02": "Unreadable",
   "eligibility.eligible": "Eligible",
+  "eligibility.groupEligible": "Can vote and receive votes",
   "eligibility.groupR": "Can receive votes only (cannot vote)",
   "eligibility.groupV": "Can vote only (cannot receive votes)",
   "eligibility.groupX": "Cannot vote, cannot receive votes",
-  "eligibility.label": "Eligibility",
+  "eligibility.label": "Eligibility Status",
   "eligibility.selectReason": "Select eligibility reason"
 }

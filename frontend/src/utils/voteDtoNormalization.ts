@@ -23,11 +23,20 @@ export function resolveVoteStatus(vote: ApiVoteLike): string {
   return normalizeVoteStatusCode(vote.statusCode ?? vote.voteStatus);
 }
 
+export function isVoteRaw(statusCode?: string): boolean {
+  return normalizeVoteStatusCode(statusCode).toLowerCase() === "raw";
+}
+
 export function isVoteSpoiled(statusCode?: string): boolean {
-  return normalizeVoteStatusCode(statusCode) !== "ok";
+  const status = normalizeVoteStatusCode(statusCode);
+  return status !== "ok" && !isVoteRaw(status);
 }
 
 export function isVoteDtoSpoiled(vote: ApiVoteLike): boolean {
+  if (isVoteRaw(vote.statusCode ?? vote.voteStatus)) {
+    return false;
+  }
+
   if (vote.ineligibleReasonCode) {
     return true;
   }

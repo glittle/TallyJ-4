@@ -98,7 +98,7 @@ public class CreateElectionDto
     public bool? OnlineCloseIsEstimate { get; set; }
 
     /// <summary>
-    /// Online voting selection process (e.g., "S" for simultaneous).
+    /// Name selection process for online voters: A = List, B = Random, C = Both.
     /// </summary>
     public string? OnlineSelectionProcess { get; set; }
 

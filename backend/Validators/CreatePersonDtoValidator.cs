@@ -63,10 +63,6 @@ public class CreatePersonDtoValidator : AbstractValidator<CreatePersonDto>
             .When(x => !string.IsNullOrWhiteSpace(x.Phone))
             .WithMessage("Phone can only contain digits, spaces, and characters: - ( ) + .");
 
-        RuleFor(x => x.AgeGroup)
-            .MaximumLength(2)
-            .WithMessage("Age group cannot exceed 2 characters");
-
         RuleFor(x => x.IneligibleReasonGuid)
             .Must(guid => guid == null || IneligibleReasonEnum.GetByGuid(guid) != null)
             .WithMessage("Invalid ineligibility reason GUID")

@@ -74,6 +74,12 @@ function tabLabel(tab: string, label: string) {
     ? `${label} ` + '<span class="tab-error-dot"></span>'
     : label;
 }
+
+function onUseOnlineVotingChange(enabled: string | number | boolean) {
+  if (enabled && !model.value.onlineSelectionProcess) {
+    model.value.onlineSelectionProcess = "A";
+  }
+}
 </script>
 
 <template>
@@ -214,7 +220,10 @@ function tabLabel(tab: string, label: string) {
       name="online-voting"
     >
       <el-form-item :label="$t('elections.form.useOnlineVoting')">
-        <el-switch v-model="model.useOnlineVoting" />
+        <el-switch
+          v-model="model.useOnlineVoting"
+          @change="onUseOnlineVotingChange"
+        />
         <template #help>
           <span class="form-help">{{
             $t("elections.form.useOnlineVotingHelp")
@@ -226,14 +235,36 @@ function tabLabel(tab: string, label: string) {
         :label="$t('elections.form.onlineSelectionProcess')"
         prop="onlineSelectionProcess"
       >
-        <el-select
+        <el-radio-group
           v-model="model.onlineSelectionProcess"
-          :placeholder="$t('elections.form.onlineSelectionProcessPlaceholder')"
+          class="online-selection-process"
           :disabled="!model.useOnlineVoting"
         >
-          <el-option label="Simultaneous" value="S" />
-          <el-option label="Sequential" value="Q" />
-        </el-select>
+          <div class="process-option">
+            <el-radio value="A">
+              {{ $t("elections.form.onlineSelectionProcessList") }}
+            </el-radio>
+            <p class="form-help">
+              {{ $t("elections.form.onlineSelectionProcessListHelp") }}
+            </p>
+          </div>
+          <div class="process-option">
+            <el-radio value="B">
+              {{ $t("elections.form.onlineSelectionProcessRandom") }}
+            </el-radio>
+            <p class="form-help">
+              {{ $t("elections.form.onlineSelectionProcessRandomHelp") }}
+            </p>
+          </div>
+          <div class="process-option">
+            <el-radio value="C">
+              {{ $t("elections.form.onlineSelectionProcessBoth") }}
+            </el-radio>
+            <p class="form-help">
+              {{ $t("elections.form.onlineSelectionProcessBothHelp") }}
+            </p>
+          </div>
+        </el-radio-group>
       </el-form-item>
     </el-tab-pane>
 
@@ -417,6 +448,30 @@ function tabLabel(tab: string, label: string) {
     font-size: 12px;
     color: #909399;
     margin-left: 8px;
+  }
+
+  .online-selection-process {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    .process-option {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+
+      .el-radio {
+        height: auto;
+        align-items: flex-start;
+        white-space: normal;
+      }
+
+      .form-help {
+        margin: 0 0 0 22px;
+      }
+    }
   }
 }
 </style>

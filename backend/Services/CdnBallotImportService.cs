@@ -3,6 +3,7 @@ using Backend.Enumerations;
 using Backend.Context;
 using Backend.DTOs.Import;
 using Backend.DTOs.Elections;
+using Backend.Helpers;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -192,14 +193,16 @@ public class CdnBallotImportService : ElectionImportExportBase
                 BallotGuid = Guid.NewGuid(),
                 LocationGuid = importedLocationGuid,
                 StatusCode = BallotStatus.Ok,
-                ComputerCode = "IM",
-                BallotNumAtComputer = ballotCounter++,
+                ComputerCode = ComputerCodeHelper.Imported,
+                BallotNumAtComputer = ballotCounter,
+                BallotCode = $"{ComputerCodeHelper.Imported}{ballotCounter}",
                 DateCreated = now,
                 DateUpdated = now,
                 RowVersion = new byte[8]
             };
 
             _context.Ballots.Add(ballotEntity);
+            ballotCounter++;
 
             var position = 1;
             foreach (var vote in ballot.Votes)
@@ -214,6 +217,7 @@ public class CdnBallotImportService : ElectionImportExportBase
                         PositionOnBallot = position,
                         VoteStatus = VoteStatus.Ok,
                         PersonCombinedInfo = matchedPerson.CombinedInfo,
+                        OnlineVoteRaw = vote.ToJson(),
                         RowVersion = new byte[8]
                     };
                     _context.Votes.Add(voteEntity);
@@ -221,7 +225,18 @@ public class CdnBallotImportService : ElectionImportExportBase
                 }
                 else
                 {
-                    result.Warnings.Add($"Could not match vote '{vote.First} {vote.Last}' in ballot {ballot.index}");
+                    var voteEntity = new Vote
+                    {
+                        BallotGuid = ballotEntity.BallotGuid,
+                        PositionOnBallot = position,
+                        VoteStatus = VoteStatus.Raw,
+                        PersonCombinedInfo = vote.ToDisplayName(),
+                        OnlineVoteRaw = vote.ToJson(),
+                        RowVersion = new byte[8]
+                    };
+                    _context.Votes.Add(voteEntity);
+                    result.VotesCreated++;
+                    result.Warnings.Add($"Could not match vote '{vote.First} {vote.Last}' in ballot {ballot.index}; stored for teller resolution");
                 }
                 position++;
             }
@@ -278,6 +293,8 @@ public class CdnBallotImportService : ElectionImportExportBase
 
             ProcessBallots(ballots, peopleCache, peopleByName, importedLocation.LocationGuid, ref ballotCounter, result);
 
+            await _context.SaveChangesAsync();
+            await BallotStatusRefresher.RefreshForElectionAsync(_context, electionGuid);
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
             result.Success = result.Errors.Count == 0;

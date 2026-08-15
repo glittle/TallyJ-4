@@ -30,7 +30,7 @@ const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
-const { showSuccess, showError } = useNotifications();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const electionGuid = ref(route.params.electionId as string);
 const loading = ref(false);
@@ -75,7 +75,7 @@ const allVotablePersonOptions = computed(() => {
 
 onMounted(async () => {
   if (!onlineVotingStore.voterId) {
-    showError(t("voting.ballot.authRequired"));
+    showErrorMessage(t("voting.ballot.authRequired"));
     router.push({
       name: "voter-auth",
       query: { election: electionGuid.value },
@@ -100,7 +100,7 @@ async function loadElectionData() {
     ]);
 
     if (!electionInfo.isOpen) {
-      showError(t("voting.ballot.notOpen"));
+      showErrorMessage(t("voting.ballot.notOpen"));
       return;
     }
 
@@ -156,13 +156,13 @@ function clearVote(position: number) {
 
 function handleAddToPool() {
   if (!submitPoolForm()) {
-    showError(t("voting.ballot.poolNameRequired"));
+    showErrorMessage(t("voting.ballot.poolNameRequired"));
   }
 }
 
 async function handleSubmit() {
   if (duplicateVotes(votes.value)) {
-    showError(t("voting.ballot.duplicateError"));
+    showErrorMessage(t("voting.ballot.duplicateError"));
     return;
   }
 
@@ -187,7 +187,7 @@ async function handleSubmit() {
       notifyWhenProcessed: notifyWhenProcessed.value,
     });
 
-    showSuccess(
+    showSuccessMessage(
       isEditing.value
         ? t("voting.ballot.resubmitSuccess")
         : t("voting.ballot.submitSuccess"),
@@ -195,6 +195,7 @@ async function handleSubmit() {
     router.push({ name: "voter-confirmation" });
   } catch (error) {
     console.error("Error submitting ballot:", error);
+    showErrorMessage(t("voting.ballot.submitError"));
   } finally {
     submitting.value = false;
   }

@@ -63,7 +63,6 @@ public static partial class DbSeeder
                 LastName = lastName,
                 CanVote = true,
                 CanReceiveVotes = true,
-                AgeGroup = "A",
                 Email = $"{firstName.ToLower()}.{lastName.ToLower()}@convention.test",
                 Phone = $"555-{2000 + i:D4}",
                 VotingMethod = "I",

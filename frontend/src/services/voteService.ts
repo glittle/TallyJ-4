@@ -2,6 +2,7 @@ import {
   deleteApiVotesByIdDeleteVote,
   getApiVotesByBallotGuidGetVotesByBallot,
   postApiVotesCreateVote,
+  putApiVotesByIdUpdateVote,
   putApiVotesReorderVotes,
 } from "../api/gen/configService/sdk.gen";
 import type {
@@ -59,6 +60,17 @@ export const voteService = {
 
   async create(dto: CreateVoteDto): Promise<VoteWithBallotStatusDto> {
     const response = await postApiVotesCreateVote({ body: dto });
+    return normalizeVoteResult(response.data?.data as VoteWithBallotStatusDto);
+  },
+
+  async update(
+    voteId: number,
+    dto: CreateVoteDto,
+  ): Promise<VoteWithBallotStatusDto> {
+    const response = await putApiVotesByIdUpdateVote({
+      path: { id: voteId },
+      body: dto,
+    });
     return normalizeVoteResult(response.data?.data as VoteWithBallotStatusDto);
   },
 

@@ -45,6 +45,8 @@ describe("resolveVoteStatus", () => {
     expect(isVoteDtoSpoiled({ statusCode: "Ok" })).toBe(false);
     expect(isVoteDtoSpoiled({ statusCode: "X01" })).toBe(true);
     expect(isVoteDtoSpoiled({ voteStatus: "Spoiled" })).toBe(true);
+    expect(isVoteDtoSpoiled({ voteStatus: "Raw" })).toBe(false);
+    expect(isVoteDtoSpoiled({ statusCode: "Raw" })).toBe(false);
     expect(
       isVoteDtoSpoiled({
         voteStatus: "Spoiled",

@@ -9,12 +9,8 @@ import InlineBallotEntry, {
 import { useBallotStore } from "../../stores/ballotStore";
 import { useElectionStore } from "../../stores/electionStore";
 import { usePeopleStore } from "../../stores/peopleStore";
-import type {
-  CreateVoteDto,
-  VoteDto,
-  VoteWithBallotStatusDto,
-} from "../../types";
-import { isVoteDtoSpoiled } from "@/utils/voteDtoNormalization";
+import type { CreateVoteDto, VoteDto } from "../../types";
+import { formatComputerCodeLabel } from "@/utils/ballotDisplayCode";
 
 const emit = defineEmits<{
   "ballot-created": [ballotGuid: string];
@@ -42,12 +38,8 @@ const { t } = useI18n();
 const ballotStore = useBallotStore();
 const electionStore = useElectionStore();
 const peopleStore = usePeopleStore();
-const {
-  showSuccessMessage,
-  showErrorMessage,
-  showWarningMessage,
-  showInfoMessage,
-} = useNotifications();
+const { showSuccessMessage, showErrorMessage, showInfoMessage } =
+  useNotifications();
 
 const panelLoading = ref(false);
 const voteResyncKey = ref(0);
@@ -153,30 +145,32 @@ watch(
   },
 );
 
+function toCreateVoteDto(vote: VoteDto): CreateVoteDto {
+  return {
+    ballotGuid: vote.ballotGuid,
+    positionOnBallot: vote.positionOnBallot,
+    personGuid: vote.personGuid || undefined,
+    ineligibleReasonCode: vote.personGuid
+      ? undefined
+      : vote.ineligibleReasonCode,
+  };
+}
+
 async function handleVoteAdded(vote: VoteDto, _options?: VoteAddedOptions) {
   try {
-    const createDto: CreateVoteDto = {
-      ballotGuid: vote.ballotGuid,
-      positionOnBallot: vote.positionOnBallot,
-      personGuid: vote.personGuid || undefined,
-      ineligibleReasonCode: vote.personGuid
-        ? undefined
-        : vote.ineligibleReasonCode,
-    };
-
-    const result: VoteWithBallotStatusDto =
-      await ballotStore.createVote(createDto);
-    // Success is visible in the ballot list (name appears; drag handle when saved).
-    // Only toast when the result is non-obvious (spoiled / ineligible).
-    const isSpoiled = result.vote && isVoteDtoSpoiled(result.vote);
-    if (isSpoiled) {
-      const reasonCode =
-        result.vote.ineligibleReasonCode || result.vote.statusCode;
-      showWarningMessage(t("ballots.voteSpoiledSuccess", { code: reasonCode }));
-    }
+    await ballotStore.createVote(toCreateVoteDto(vote));
   } catch (error: any) {
     voteResyncKey.value++;
     showErrorMessage(error.message || t("ballots.voteAddedError"));
+  }
+}
+
+async function handleVoteUpdated(vote: VoteDto) {
+  try {
+    await ballotStore.updateVote(vote.rowId, toCreateVoteDto(vote));
+  } catch (error: any) {
+    voteResyncKey.value++;
+    showErrorMessage(error.message || t("ballots.voteSaveError"));
   }
 }
 
@@ -218,7 +212,7 @@ async function handleVotesReordered(voteRowIds: number[]) {
             {{ ballot.locationName }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('ballots.computer')">
-            {{ ballot.computerCode }}
+            {{ formatComputerCodeLabel($t, ballot.computerCode) }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('ballots.teller1')">
             {{ ballot.teller1 || "-" }}
@@ -237,6 +231,7 @@ async function handleVotesReordered(voteRowIds: number[]) {
           :resync-key="voteResyncKey"
           :has-keyboard-teller="hasKeyboardTeller"
           @vote-added="handleVoteAdded"
+          @vote-updated="handleVoteUpdated"
           @vote-removed="handleVoteRemoved"
           @votes-reordered="handleVotesReordered"
           @ballot-created="emit('ballot-created', $event)"

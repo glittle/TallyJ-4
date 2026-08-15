@@ -155,6 +155,15 @@ export function useBallotEntryVotes(options: UseBallotEntryVotesOptions) {
     );
   }
 
+  function replaceVoteAtPosition(positionOnBallot: number, vote: VoteDto) {
+    const merged = buildVoteMap(true);
+    merged.set(positionOnBallot, {
+      ...vote,
+      positionOnBallot,
+    });
+    votes.value = slotsFromMap(merged);
+  }
+
   function addVoteToBallot(
     vote: VoteDto,
     addOptions?: VoteAddedOptions,
@@ -252,6 +261,7 @@ export function useBallotEntryVotes(options: UseBallotEntryVotesOptions) {
     duplicatePersonGuids,
     isPersistedVote,
     addVoteToBallot,
+    replaceVoteAtPosition,
     removeVote,
     handleDragStart,
     handleDragOver,

@@ -166,7 +166,6 @@ public abstract class ElectionImportExportBase
         public string? CombinedInfo { get; set; }
         public string? CombinedSoundCodes { get; set; }
         public string? CombinedInfoAtStart { get; set; }
-        public string? AgeGroup { get; set; }
         public bool? CanVote { get; set; }
         public bool? CanReceiveVotes { get; set; }
         public Guid? IneligibleReasonGuid { get; set; }

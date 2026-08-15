@@ -10704,10 +10704,6 @@
             "type": "string",
             "nullable": true
           },
-          "ageGroup": {
-            "type": "string",
-            "nullable": true
-          },
           "ineligibleReasonGuid": {
             "type": "string",
             "format": "uuid",
@@ -10772,10 +10768,6 @@
             "nullable": true
           },
           "otherInfo": {
-            "type": "string",
-            "nullable": true
-          },
-          "ageGroup": {
             "type": "string",
             "nullable": true
           },
@@ -10900,10 +10892,6 @@
             "type": "string",
             "nullable": true
           },
-          "ageGroup": {
-            "type": "string",
-            "nullable": true
-          },
           "ineligibleReasonGuid": {
             "type": "string",
             "format": "uuid",
@@ -10998,10 +10986,6 @@
             "nullable": true
           },
           "phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "ageGroup": {
             "type": "string",
             "nullable": true
           },

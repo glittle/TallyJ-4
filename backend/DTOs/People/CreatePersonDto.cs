@@ -55,13 +55,6 @@ public class CreatePersonDto
     /// </summary>
     public string? Phone { get; set; }
 
-
-
-    /// <summary>
-    /// The person's age group.
-    /// </summary>
-    public string? AgeGroup { get; set; }
-
     /// <summary>
     /// The GUID of the reason why the person is ineligible (if applicable).
     /// </summary>

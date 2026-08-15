@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import type { VoteDto } from "@/types/Vote";
+import {
+  hasDisplayableRawVote,
+  isUnresolvedRawVote,
+  parseOnlineVoteRaw,
+  rawVoteDisplayName,
+} from "@/utils/onlineVoteRaw";
 import { isVoteDtoSpoiled } from "@/utils/voteDtoNormalization";
 import { getVoteSpoiledLabel } from "@/utils/voteSpoiledLabel";
 import { Delete, Rank, WarningFilled } from "@element-plus/icons-vue";
@@ -12,6 +18,9 @@ defineProps<{
   dragSourceIndex: number | null;
   dragOverIndex: number | null;
   duplicatePersonGuids: string[];
+  targetedVoteRowId: number | null;
+  canRemoveVotes?: boolean;
+  canSelectAnyVote?: boolean;
   isPersistedVote: (vote: VoteDto | null | undefined) => boolean;
 }>();
 
@@ -21,7 +30,27 @@ const emit = defineEmits<{
   "drag-over": [event: DragEvent, index: number];
   drop: [index: number];
   "drag-end": [];
+  "select-target": [vote: VoteDto];
+  "clear-target": [];
+  find: [vote: VoteDto];
 }>();
+
+function rawParts(vote: VoteDto | null) {
+  return parseOnlineVoteRaw(vote?.onlineVoteRaw);
+}
+
+function rawName(vote: VoteDto | null) {
+  const raw = rawParts(vote);
+  if (!raw) {
+    return "";
+  }
+  return raw.otherInfo.trim() || rawVoteDisplayName(raw);
+}
+
+function canFindRawName(vote: VoteDto | null) {
+  const raw = rawParts(vote);
+  return !!(raw?.first || raw?.last);
+}
 </script>
 
 <template>
@@ -54,9 +83,20 @@ const emit = defineEmits<{
           // Interaction only while reorder is allowed; handle stays visible on persisted votes
           'is-draggable':
             canReorderVotes && isPersistedVote(vote) && !reorderingVotes,
+          'is-raw': hasDisplayableRawVote(vote),
+          'is-raw-unresolved': isUnresolvedRawVote(vote),
+          'is-raw-target':
+            vote &&
+            targetedVoteRowId !== null &&
+            vote.rowId === targetedVoteRowId,
         }"
         :draggable="
           canReorderVotes && isPersistedVote(vote) && !reorderingVotes
+        "
+        @click="
+          vote && (hasDisplayableRawVote(vote) || canSelectAnyVote)
+            ? emit('select-target', vote)
+            : emit('clear-target')
         "
         @dragstart="emit('drag-start', index)"
         @dragover="emit('drag-over', $event, index)"
@@ -67,7 +107,7 @@ const emit = defineEmits<{
         <div class="vote-content">
           <template v-if="vote">
             <span
-              v-if="isPersistedVote(vote)"
+              v-if="isPersistedVote(vote) && canRemoveVotes !== false"
               class="drag-handle"
               :class="{
                 'is-inactive': !canReorderVotes || reorderingVotes,
@@ -77,7 +117,24 @@ const emit = defineEmits<{
               <el-icon><Rank /></el-icon>
             </span>
             <div class="vote-name-block">
+              <div v-if="rawName(vote)" class="raw-vote">
+                <el-button
+                  v-if="canFindRawName(vote) && isUnresolvedRawVote(vote)"
+                  class="raw-find-btn"
+                  size="small"
+                  type="primary"
+                  :title="$t('ballots.findRawNameHint')"
+                  @click.stop="emit('find', vote)"
+                >
+                  {{ $t("ballots.findRawName") }}
+                </el-button>
+                <span class="raw-name">{{ rawName(vote) }}</span>
+              </div>
               <span
+                v-if="
+                  !isUnresolvedRawVote(vote) &&
+                  (vote.personFullName || isVoteDtoSpoiled(vote))
+                "
                 class="vote-name"
                 :class="{ 'is-spoiled': isVoteDtoSpoiled(vote) }"
               >
@@ -99,6 +156,16 @@ const emit = defineEmits<{
                 <el-icon><WarningFilled /></el-icon>
               </span>
               <el-button
+                v-if="canFindRawName(vote) && !isUnresolvedRawVote(vote)"
+                class="raw-find-btn"
+                size="small"
+                :title="$t('ballots.findRawNameHint')"
+                @click.stop="emit('find', vote)"
+              >
+                {{ $t("ballots.changeRawName") }}
+              </el-button>
+              <el-button
+                v-if="canRemoveVotes !== false"
                 :icon="Delete"
                 circle
                 plain
@@ -114,7 +181,10 @@ const emit = defineEmits<{
         </div>
       </div>
       <p
-        v-if="votes.some((vote) => isPersistedVote(vote))"
+        v-if="
+          canRemoveVotes !== false &&
+          votes.some((vote) => isPersistedVote(vote))
+        "
         class="votes-drag-hint"
       >
         {{ $t("ballots.dragToReorder") }}
@@ -195,6 +265,24 @@ const emit = defineEmits<{
       border: 1px solid var(--el-color-warning-light-5);
     }
 
+    &.is-raw-unresolved {
+      background-color: var(--el-color-warning-light-8);
+      border: 1px solid var(--el-color-warning-light-5);
+    }
+
+    &.is-raw:not(.is-raw-unresolved) {
+      background-color: var(--el-color-success-light-9);
+    }
+
+    &.is-raw-target {
+      border-color: var(--el-color-success);
+      box-shadow: inset 3px 0 0 var(--el-color-success);
+    }
+
+    &.is-raw-target.is-raw-unresolved {
+      background-color: var(--el-color-warning-light-7);
+    }
+
     .vote-position {
       width: 24px;
       text-align: right;
@@ -238,6 +326,28 @@ const emit = defineEmits<{
         min-width: 0;
       }
 
+      .raw-vote {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 8px;
+      }
+
+      .raw-find-btn {
+        flex: 0 0 auto;
+
+        &.el-button--primary {
+          color: #fff;
+          --el-button-text-color: #fff;
+          --el-button-hover-text-color: #fff;
+          --el-button-active-text-color: #fff;
+        }
+      }
+
+      .raw-name {
+        font-weight: 400;
+      }
+
       .vote-name {
         font-weight: 500;
 
@@ -258,11 +368,11 @@ const emit = defineEmits<{
         align-items: center;
         gap: var(--spacing-2, 8px);
 
-        .el-button {
+        .el-button:not(.raw-find-btn) {
           opacity: 0.65;
         }
 
-        .el-button:hover {
+        .el-button:not(.raw-find-btn):hover {
           opacity: 1;
           background-color: var(--el-color-danger-light-9);
           color: var(--el-color-danger);

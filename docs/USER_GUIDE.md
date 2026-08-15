@@ -117,7 +117,6 @@ The dashboard is your home screen after logging in. It displays:
    - **Last Name**
    - **Can Vote**: Check if person can submit a ballot
    - **Can Receive Votes**: Check if person can be voted for
-   - **Age Group**: Adult, Youth, Child (if applicable)
    - **Location**: Voting location assignment
 5. Click **Save**
 
@@ -135,9 +134,9 @@ The dashboard is your home screen after logging in. It displays:
 **CSV Format Example:**
 
 ```csv
-FirstName,LastName,CanVote,CanReceiveVotes,AgeGroup
-Jane,Smith,true,true,Adult
-John,Doe,true,true,Adult
+FirstName,LastName,Eligibility
+Jane,Smith,
+John,Doe,Youth aged 18/19/20
 ```
 
 ### Editing a Person

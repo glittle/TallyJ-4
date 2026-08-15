@@ -233,7 +233,7 @@ JOIN TallyJ4.dbo.Election e4 ON e3.Name = e4.Name;
 -- Step 5: Migrate People
 INSERT INTO TallyJ4.dbo.Person (
     PersonGuid, ElectionGuid, FirstName, LastName,
-    CanVote, CanReceiveVotes, AgeGroup,
+    CanVote, CanReceiveVotes,
     CreatedDate, LastModifiedDate
 )
 SELECT
@@ -243,7 +243,6 @@ SELECT
     p.LastName,
     CAST(p.CanVote AS BIT),
     CAST(p.CanReceiveVotes AS BIT),
-    ISNULL(p.AgeGroup, 'A'),
     p.CreatedDate,
     GETDATE()
 FROM TallyJ3.dbo.People p

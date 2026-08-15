@@ -3615,10 +3615,6 @@ export const People_CreatePersonDtoSchema = {
             type: 'string',
             nullable: true
         },
-        ageGroup: {
-            type: 'string',
-            nullable: true
-        },
         ineligibleReasonGuid: {
             type: 'string',
             format: 'uuid',
@@ -3684,10 +3680,6 @@ export const People_PersonDetailDtoSchema = {
             nullable: true
         },
         otherInfo: {
-            type: 'string',
-            nullable: true
-        },
-        ageGroup: {
             type: 'string',
             nullable: true
         },
@@ -3813,10 +3805,6 @@ export const People_PersonDtoSchema = {
             type: 'string',
             nullable: true
         },
-        ageGroup: {
-            type: 'string',
-            nullable: true
-        },
         ineligibleReasonGuid: {
             type: 'string',
             format: 'uuid',
@@ -3913,10 +3901,6 @@ export const People_UpdatePersonDtoSchema = {
             nullable: true
         },
         phone: {
-            type: 'string',
-            nullable: true
-        },
-        ageGroup: {
             type: 'string',
             nullable: true
         },
