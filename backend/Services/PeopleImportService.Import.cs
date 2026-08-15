@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -100,6 +101,10 @@ public partial class PeopleImportService
 
             result.TotalRows = dataRows.Count;
 
+            var eligibilityLookup = PeopleImportEligibility.BuildValueLookup(
+                _localizationProvider,
+                CultureInfo.CurrentUICulture);
+
             // Process in batches
             const int batchSize = 100;
             var peopleToAdd = new List<Person>();
@@ -115,7 +120,17 @@ public partial class PeopleImportService
                 try
                 {
                     var skippedBefore = result.PeopleSkipped;
-                    var person = CreatePersonFromRow(row.Cells, headers, mappings, electionGuid, bahaiIdLookup, emailLookup, phoneLookup, rowNumber, result);
+                    var person = CreatePersonFromRow(
+                        row.Cells,
+                        headers,
+                        mappings,
+                        electionGuid,
+                        bahaiIdLookup,
+                        emailLookup,
+                        phoneLookup,
+                        rowNumber,
+                        result,
+                        eligibilityLookup);
                     if (person != null)
                     {
                         peopleToAdd.Add(person);
@@ -271,7 +286,7 @@ public partial class PeopleImportService
 
     private Person? CreatePersonFromRow(List<string> cellsInRow, List<string> headers, List<ColumnMappingDto> mappings,
         Guid electionGuid, Dictionary<string, int> bahaiIdLookup, Dictionary<string, int> emailLookup, Dictionary<string, int> phoneLookup,
-        int rowNumber, ImportPeopleResult result)
+        int rowNumber, ImportPeopleResult result, IReadOnlyDictionary<string, IneligibleReason?> eligibilityLookup)
     {
         var person = new Person
         {
@@ -371,7 +386,10 @@ public partial class PeopleImportService
             if (columnIndex >= 0 && columnIndex < cellsInRow.Count)
             {
                 var eligibilityValue = cellsInRow[columnIndex]?.Trim();
-                SetEligibility(person, eligibilityValue, result, rowNumber);
+                if (!TrySetEligibility(person, eligibilityValue, eligibilityLookup, result, rowNumber))
+                {
+                    foundErrors = true;
+                }
             }
         }
 
@@ -419,41 +437,40 @@ public partial class PeopleImportService
         }
     }
 
-    private void SetEligibility(Person person, string? eligibilityValue, ImportPeopleResult result, int rowNumber)
+    private static bool TrySetEligibility(
+        Person person,
+        string? eligibilityValue,
+        IReadOnlyDictionary<string, IneligibleReason?> eligibilityLookup,
+        ImportPeopleResult result,
+        int rowNumber)
     {
-        if (string.IsNullOrEmpty(eligibilityValue))
+        if (!PeopleImportEligibility.TryResolve(eligibilityValue, eligibilityLookup, out var reason))
         {
-            person.CanVote = true;
-            person.CanReceiveVotes = true;
-            person.IneligibleReasonGuid = null;
-            return;
-        }
-
-        var reason = IneligibleReasonEnum.GetByDescription(eligibilityValue) ??
-                    IneligibleReasonEnum.GetByCode(eligibilityValue);
-
-        if (reason != null)
-        {
-            person.CanVote = reason.CanVote;
-            person.CanReceiveVotes = reason.CanReceiveVotes;
-            person.IneligibleReasonGuid = reason.ReasonGuid;
-        }
-        else
-        {
-            // Unrecognized eligibility value - treat as eligible but warn
-            person.CanVote = true;
-            person.CanReceiveVotes = true;
-            person.IneligibleReasonGuid = null;
-            result.Warnings.Add(new ImportWarningDto
+            result.PeopleSkipped++;
+            result.Errors.Add(new ImportErrorDto
             {
-                Key = "import.warnings.unrecognizedEligibility",
+                Key = "import.errors.unrecognizedEligibility",
                 Parameters = new Dictionary<string, string>
                 {
                     ["rowNumber"] = rowNumber.ToString(),
-                    ["eligibilityValue"] = eligibilityValue
+                    ["eligibilityValue"] = eligibilityValue ?? string.Empty
                 }
             });
+            return false;
         }
+
+        if (reason == null)
+        {
+            person.CanVote = true;
+            person.CanReceiveVotes = true;
+            person.IneligibleReasonGuid = null;
+            return true;
+        }
+
+        person.CanVote = reason.CanVote;
+        person.CanReceiveVotes = reason.CanReceiveVotes;
+        person.IneligibleReasonGuid = reason.ReasonGuid;
+        return true;
     }
 
     private async Task ReportProgress(Guid electionGuid, int processed, int total, string status)

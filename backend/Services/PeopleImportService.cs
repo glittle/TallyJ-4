@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Backend.Context;
+using Backend.Localization;
 
 namespace Backend.Services;
 
@@ -12,6 +13,7 @@ public partial class PeopleImportService : IPeopleImportService
 {
     private readonly MainDbContext _context;
     private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly IJsonLocalizationProvider _localizationProvider;
 
     // Scoring weights for header detection
     private const int TextCellScore = 2;
@@ -48,11 +50,14 @@ public partial class PeopleImportService : IPeopleImportService
     /// </summary>
     /// <param name="context">The database context.</param>
     /// <param name="signalRNotificationService">Import progress and FrontDesk reload broadcasts.</param>
+    /// <param name="localizationProvider">Resolves eligibility descriptions in the current UI language.</param>
     public PeopleImportService(
         MainDbContext context,
-        ISignalRNotificationService signalRNotificationService)
+        ISignalRNotificationService signalRNotificationService,
+        IJsonLocalizationProvider localizationProvider)
     {
         _context = context;
         _signalRNotificationService = signalRNotificationService;
+        _localizationProvider = localizationProvider;
     }
 }

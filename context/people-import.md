@@ -49,3 +49,20 @@ The execute endpoint reads mappings from the file row, not from the browser. Con
 **Email**, **phone**, and **Baha'i ID** must be unique. Duplicate names are allowed so two people with the same name can be told apart with Other Info. A skipped unique-field row reports the file line it matches, or that it matches an existing person.
 
 Skip messages use the spreadsheet's own row number (Excel row 12 after headers on row 6), not a count of data rows. `FirstDataRow` is the header row only; parse already excludes it, so import must not skip that many rows again.
+
+## Eligibility import uses person-form codes, not four invented statuses
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #262  
+**Revisit when:** eligibility reasons gain a new group, or import starts accepting aliases / case-insensitive codes
+
+The Import People guide used to list Eligible / Ineligible / Under Age / Duplicate. Those values are not the person-form reasons and are not stored.
+
+The file may include an eligibility column mapped to Eligibility Status. Accepted values are the same person-form statuses: a code (`V04`, `X02`) or the exact description in the current UI language (English descriptions also match). Empty cells mean fully eligible. Only the reason GUID is stored.
+
+The page shows those statuses in a copyable reference popup (code and description each have a copy icon; text stays selectable). Internal vote-only reasons (`U01`, `U02`) are not listed and are not accepted on a person row.
+
+**Rejected alternative:** treat an unrecognized value as eligible and only warn. That silently imported the wrong rights. Unrecognized text now skips the row and logs it, same as a duplicate unique field.
+
+**Rejected alternative:** match descriptions case-insensitively or accept `v04`. The popup copies the exact code and localized text; fuzzy matching would hide typos.

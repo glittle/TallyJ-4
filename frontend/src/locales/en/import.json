@@ -20,6 +20,7 @@
   "import.errors.missingLastName": "Line {rowNumber}: Missing last name",
   "import.errors.missingRequiredMappings": "FirstName and LastName mappings are required",
   "import.errors.noMappings": "No column mappings configured",
+  "import.errors.unrecognizedEligibility": "Line {rowNumber} skipped: Unrecognized eligibility status '{eligibilityValue}'",
   "import.errorsTitle": "Import Errors",
   "import.moreErrors": "and {count} more errors...",
   "import.processingRows": "Processing rows {processed} of {total}",
