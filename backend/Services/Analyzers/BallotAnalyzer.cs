@@ -75,7 +75,7 @@ public class BallotAnalyzer
     public static VoteStatus DetermineVoteStatus(BallotVoteInfo vote)
     {
         if (!string.IsNullOrEmpty(vote.OnlineVoteRaw)
-            && vote.PersonIneligibleReasonGuid == null
+            && string.IsNullOrEmpty(vote.PersonIneligibleReasonCode)
             && vote.PersonGuid == null
             && string.IsNullOrEmpty(vote.VoteIneligibleReasonCode))
         {
@@ -118,7 +118,7 @@ public record BallotVoteInfo
     public string? PersonCombinedInfo { get; init; }
     public string? VoteCombinedInfo { get; init; }
     public string? VoteIneligibleReasonCode { get; init; }
-    public Guid? PersonIneligibleReasonGuid { get; init; }
+    public string? PersonIneligibleReasonCode { get; init; }
     public string? OnlineVoteRaw { get; init; }
     public int? SingleNameElectionCount { get; init; }
     public VoteStatus VoteStatusCode { get; init; }

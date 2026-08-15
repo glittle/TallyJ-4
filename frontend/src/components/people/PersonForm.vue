@@ -70,7 +70,7 @@ const form = reactive({
   phone: "",
   area: "",
   bahaiId: "",
-  ineligibleReasonGuid: props.requireEligibility ? "" : ELIGIBLE_REASON_VALUE,
+  ineligibleReasonCode: props.requireEligibility ? "" : ELIGIBLE_REASON_VALUE,
 });
 
 const electionHasUnits = computed(() => {
@@ -97,18 +97,18 @@ const showKioskCode = computed(
 const canDeletePerson = computed(() => personDetails.value?.canDelete === true);
 
 const hasEligibilitySelection = computed(() =>
-  Boolean(form.ineligibleReasonGuid),
+  Boolean(form.ineligibleReasonCode),
 );
 
 const selectedEligibility = computed(() => {
-  if (!form.ineligibleReasonGuid) {
+  if (!form.ineligibleReasonCode) {
     return { canVote: false, canReceiveVotes: false };
   }
-  if (form.ineligibleReasonGuid === ELIGIBLE_REASON_VALUE) {
+  if (form.ineligibleReasonCode === ELIGIBLE_REASON_VALUE) {
     return { canVote: true, canReceiveVotes: true };
   }
 
-  const reason = eligibilityStore.getByGuid(form.ineligibleReasonGuid);
+  const reason = eligibilityStore.getByCode(form.ineligibleReasonCode);
   return {
     canVote: reason?.canVote ?? false,
     canReceiveVotes: reason?.canReceiveVotes ?? false,
@@ -144,7 +144,7 @@ const rules = computed<FormRules>(() => {
   };
 
   if (props.requireEligibility) {
-    formRules.ineligibleReasonGuid = [
+    formRules.ineligibleReasonCode = [
       {
         required: true,
         message: t("people.eligibilityRequired"),
@@ -189,7 +189,7 @@ function resetForm() {
   form.phone = "";
   form.area = "";
   form.bahaiId = "";
-  form.ineligibleReasonGuid = props.requireEligibility
+  form.ineligibleReasonCode = props.requireEligibility
     ? ""
     : ELIGIBLE_REASON_VALUE;
 }
@@ -228,8 +228,8 @@ async function loadPersonDetails() {
       form.phone = personDetails.value.phone || "";
       form.area = personDetails.value.area || "";
       form.bahaiId = personDetails.value.bahaiId || "";
-      form.ineligibleReasonGuid = toFormEligibility(
-        personDetails.value.ineligibleReasonGuid,
+      form.ineligibleReasonCode = toFormEligibility(
+        personDetails.value.ineligibleReasonCode,
       );
     }
   } catch (error) {
@@ -259,7 +259,7 @@ async function handleSubmit() {
             phone: form.phone || undefined,
             area: form.area || undefined,
             bahaiId: form.bahaiId || undefined,
-            ineligibleReasonGuid: toApiEligibility(form.ineligibleReasonGuid),
+            ineligibleReasonCode: toApiEligibility(form.ineligibleReasonCode),
           };
           await peopleStore.updatePerson(props.person.personGuid, dto);
           showSuccessMessage(t("people.updateSuccess"));
@@ -275,7 +275,7 @@ async function handleSubmit() {
             phone: form.phone || undefined,
             area: form.area || undefined,
             bahaiId: form.bahaiId || undefined,
-            ineligibleReasonGuid: toApiEligibility(form.ineligibleReasonGuid),
+            ineligibleReasonCode: toApiEligibility(form.ineligibleReasonCode),
           };
           await peopleStore.createPerson(dto);
           showSuccessMessage(t("people.createSuccess"));
@@ -375,11 +375,11 @@ defineExpose({
 
       <el-form-item
         :label="$t('eligibility.label')"
-        prop="ineligibleReasonGuid"
+        prop="ineligibleReasonCode"
       >
         <div class="eligibility-field">
           <el-select
-            v-model="form.ineligibleReasonGuid"
+            v-model="form.ineligibleReasonCode"
             :placeholder="$t('eligibility.selectReason')"
             style="width: 100%"
           >
@@ -396,9 +396,9 @@ defineExpose({
             >
               <el-option
                 v-for="reason in reasons"
-                :key="reason.reasonGuid"
+                :key="reason.code"
                 :label="$t(`eligibility.${reason.code}`)"
-                :value="reason.reasonGuid"
+                :value="reason.code"
               />
             </el-option-group>
           </el-select>

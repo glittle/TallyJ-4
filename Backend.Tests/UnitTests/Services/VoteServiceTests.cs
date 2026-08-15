@@ -60,7 +60,7 @@ public class VoteServiceTests : ServiceTestBase
         Context.SaveChanges();
     }
 
-    private Person CreatePerson(Guid? ineligibleReasonGuid = null, bool canReceiveVotes = true)
+    private Person CreatePerson(string? ineligibleReasonCode = null, bool canReceiveVotes = true)
     {
         var person = new Person
         {
@@ -70,7 +70,7 @@ public class VoteServiceTests : ServiceTestBase
             LastName = "Smith",
             FirstName = "John", CanReceiveVotes = canReceiveVotes,
             CanVote = true,
-            IneligibleReasonGuid = ineligibleReasonGuid,
+            IneligibleReasonCode = ineligibleReasonCode,
             RowVersion = new byte[8]
         };
         Context.People.Add(person);
@@ -112,7 +112,7 @@ public class VoteServiceTests : ServiceTestBase
             FirstName = "Eligible",
             CanReceiveVotes = null,
             CanVote = null,
-            IneligibleReasonGuid = null,
+            IneligibleReasonCode = null,
             RowVersion = new byte[8]
         };
         Context.People.Add(person);
@@ -133,7 +133,7 @@ public class VoteServiceTests : ServiceTestBase
     public async Task CreateVoteAsync_IneligiblePerson_CreatesSpoiledVoteWithReasonCode()
     {
         var person = CreatePerson(
-            ineligibleReasonGuid: IneligibleReasonEnum.V06_OtherCanVoteButNotBeVotedFor.ReasonGuid,
+            ineligibleReasonCode: IneligibleReasonEnum.V06_OtherCanVoteButNotBeVotedFor.Code,
             canReceiveVotes: false);
 
         var dto = new CreateVoteDto
@@ -156,7 +156,7 @@ public class VoteServiceTests : ServiceTestBase
     public async Task CreateVoteAsync_IneligiblePersonX01_CreatesSpoiledWithX01Code()
     {
         var person = CreatePerson(
-            ineligibleReasonGuid: IneligibleReasonEnum.X01_Deceased.ReasonGuid,
+            ineligibleReasonCode: IneligibleReasonEnum.X01_Deceased.Code,
             canReceiveVotes: false);
 
         var dto = new CreateVoteDto
@@ -177,7 +177,7 @@ public class VoteServiceTests : ServiceTestBase
     [Fact]
     public async Task CreateVoteAsync_IneligiblePersonNoReason_CreatesSpoiledWithFallback()
     {
-        var person = CreatePerson(ineligibleReasonGuid: null, canReceiveVotes: false);
+        var person = CreatePerson(ineligibleReasonCode: null, canReceiveVotes: false);
 
         var dto = new CreateVoteDto
         {
@@ -218,7 +218,7 @@ public class VoteServiceTests : ServiceTestBase
     public async Task CreateVoteAsync_IneligiblePerson_QueuesVoteCountUpdate()
     {
         var person = CreatePerson(
-            ineligibleReasonGuid: IneligibleReasonEnum.V03_OnOtherInstitutionCounsellor.ReasonGuid,
+            ineligibleReasonCode: IneligibleReasonEnum.V03_OnOtherInstitutionCounsellor.Code,
             canReceiveVotes: false);
 
         var dto = new CreateVoteDto

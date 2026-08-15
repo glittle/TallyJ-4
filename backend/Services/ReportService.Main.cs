@@ -70,18 +70,18 @@ public partial class ReportService
             .Where(v =>
             {
                 if (v.IneligibleReasonCode != null) return true;
-                if (v.Person != null && v.Person.CanReceiveVotes != true && v.Person.IneligibleReasonGuid != null) return true;
+                if (v.Person != null && v.Person.CanReceiveVotes != true && v.Person.IneligibleReasonCode != null) return true;
                 return false;
             })
             .GroupBy(v =>
             {
                 if (v.IneligibleReasonCode != null) return v.IneligibleReasonCode;
-                return v.Person?.IneligibleReasonGuid?.ToString() ?? "";
+                return v.Person?.IneligibleReasonCode ?? "";
             })
             .Select(g =>
             {
                 var desc = GetIneligibleDescription(g.First().IneligibleReasonCode)
-                           ?? GetIneligibleDescriptionByGuid(g.First().Person?.IneligibleReasonGuid);
+                           ?? GetIneligibleDescription(g.First().Person?.IneligibleReasonCode);
                 return new SpoiledVoteGroupDto
                 {
                     Reason = desc ?? "Unknown",

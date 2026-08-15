@@ -76,12 +76,7 @@ public class PersonDto
     public string? CombinedSoundCodes { get; set; }
 
     /// <summary>
-    /// The GUID of the reason why the person is ineligible (if applicable).
-    /// </summary>
-    public Guid? IneligibleReasonGuid { get; set; }
-
-    /// <summary>
-    /// The code of the reason why the person is ineligible (if applicable).
+    /// The short code of the reason why the person is ineligible (if applicable).
     /// </summary>
     public string? IneligibleReasonCode { get; set; }
 

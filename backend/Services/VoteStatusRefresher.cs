@@ -1,6 +1,5 @@
 using Backend.Context;
 using Backend.Entities;
-using Backend.Enumerations;
 using Backend.Helpers;
 using Backend.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
@@ -103,7 +102,7 @@ public static class VoteStatusRefresher
         var newReasonCode = person == null
             ? vote.IneligibleReasonCode
             : !PersonEligibilityHelper.CanReceiveVotes(person)
-                ? GetIneligibleReasonCode(person.IneligibleReasonGuid)
+                ? person.IneligibleReasonCode
                 : null;
 
         if (vote.VoteStatus != newStatus)
@@ -121,11 +120,6 @@ public static class VoteStatusRefresher
         return changedCount;
     }
 
-    private static string? GetIneligibleReasonCode(Guid? guid)
-    {
-        return guid.HasValue ? IneligibleReasonEnum.GetByGuid(guid.Value)?.Code : null;
-    }
-
     private static BallotVoteInfo CreateBallotVoteInfo(Vote vote, Person? person)
     {
         return new BallotVoteInfo
@@ -135,7 +129,7 @@ public static class VoteStatusRefresher
             PersonCombinedInfo = person?.CombinedInfo,
             VoteCombinedInfo = vote.PersonCombinedInfo,
             VoteIneligibleReasonCode = vote.IneligibleReasonCode,
-            PersonIneligibleReasonGuid = person?.IneligibleReasonGuid,
+            PersonIneligibleReasonCode = person?.IneligibleReasonCode,
             OnlineVoteRaw = vote.OnlineVoteRaw,
             SingleNameElectionCount = vote.SingleNameElectionCount,
             VoteStatusCode = vote.VoteStatus

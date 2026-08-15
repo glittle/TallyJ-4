@@ -173,7 +173,7 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task CreatePersonAsync_WithNullIneligibleReasonGuid_SetsFullEligibility()
+    public async Task CreatePersonAsync_WithNullIneligibleReasonCode_SetsFullEligibility()
     {
         var electionGuid = Guid.NewGuid();
         var createDto = new CreatePersonDto
@@ -181,7 +181,7 @@ public class PeopleServiceTests : ServiceTestBase
             ElectionGuid = electionGuid,
             LastName = "Smith",
             FirstName = "John",
-            IneligibleReasonGuid = null
+            IneligibleReasonCode = null
         };
 
         var result = await _service.CreatePersonAsync(createDto);
@@ -201,7 +201,7 @@ public class PeopleServiceTests : ServiceTestBase
             ElectionGuid = electionGuid,
             LastName = "Smith",
             FirstName = "John",
-            IneligibleReasonGuid = IneligibleReasonEnum.X01_Deceased.ReasonGuid
+            IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code
         };
 
         var result = await _service.CreatePersonAsync(createDto);
@@ -221,7 +221,7 @@ public class PeopleServiceTests : ServiceTestBase
             ElectionGuid = electionGuid,
             LastName = "Smith",
             FirstName = "John",
-            IneligibleReasonGuid = IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid
+            IneligibleReasonCode = IneligibleReasonEnum.V01_YouthAged181920.Code
         };
 
         var result = await _service.CreatePersonAsync(createDto);
@@ -241,7 +241,7 @@ public class PeopleServiceTests : ServiceTestBase
             ElectionGuid = electionGuid,
             LastName = "Smith",
             FirstName = "John",
-            IneligibleReasonGuid = IneligibleReasonEnum.R01_NotADelegateInThisElection.ReasonGuid
+            IneligibleReasonCode = IneligibleReasonEnum.R01_NotADelegateInThisElection.Code
         };
 
         var result = await _service.CreatePersonAsync(createDto);
@@ -253,7 +253,7 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task UpdatePersonAsync_ChangingIneligibleReasonGuid_UpdatesEligibility()
+    public async Task UpdatePersonAsync_ChangingIneligibleReasonCode_UpdatesEligibility()
     {
         var electionGuid = Guid.NewGuid();
         var person = new Person
@@ -271,7 +271,7 @@ public class PeopleServiceTests : ServiceTestBase
 
         var updateDto = new UpdatePersonDto
         {
-            IneligibleReasonGuid = IneligibleReasonEnum.X01_Deceased.ReasonGuid
+            IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code
         };
 
         var result = await _service.UpdatePersonAsync(person.PersonGuid, updateDto);
@@ -283,7 +283,7 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task UpdatePersonAsync_ChangingIneligibleReasonGuid_SpoilsExistingVotes()
+    public async Task UpdatePersonAsync_ChangingIneligibleReasonCode_SpoilsExistingVotes()
     {
         var electionGuid = Guid.NewGuid();
         var locationGuid = Guid.NewGuid();
@@ -342,7 +342,7 @@ public class PeopleServiceTests : ServiceTestBase
 
         var updateDto = new UpdatePersonDto
         {
-            IneligibleReasonGuid = IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid
+            IneligibleReasonCode = IneligibleReasonEnum.V01_YouthAged181920.Code
         };
 
         var result = await _service.UpdatePersonAsync(person.PersonGuid, updateDto);
@@ -356,7 +356,7 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task UpdatePersonAsync_ClearingIneligibleReasonGuid_UnspoilsExistingVotes()
+    public async Task UpdatePersonAsync_ClearingIneligibleReasonCode_UnspoilsExistingVotes()
     {
         var electionGuid = Guid.NewGuid();
         var locationGuid = Guid.NewGuid();
@@ -396,7 +396,7 @@ public class PeopleServiceTests : ServiceTestBase
             LastName = "Smith",
             FirstName = "John", CanVote = true,
             CanReceiveVotes = false,
-            IneligibleReasonGuid = IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid,
+            IneligibleReasonCode = IneligibleReasonEnum.V01_YouthAged181920.Code,
             RowVersion = new byte[8]
         };
 
@@ -416,7 +416,7 @@ public class PeopleServiceTests : ServiceTestBase
 
         var updateDto = new UpdatePersonDto
         {
-            IneligibleReasonGuid = null
+            IneligibleReasonCode = null
         };
 
         var result = await _service.UpdatePersonAsync(person.PersonGuid, updateDto);
@@ -430,7 +430,7 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task UpdatePersonAsync_ClearingIneligibleReasonGuid_RestoresFullEligibility()
+    public async Task UpdatePersonAsync_ClearingIneligibleReasonCode_RestoresFullEligibility()
     {
         var electionGuid = Guid.NewGuid();
         var person = new Person
@@ -440,7 +440,7 @@ public class PeopleServiceTests : ServiceTestBase
             LastName = "Smith",
             FirstName = "John", CanVote = false,
             CanReceiveVotes = false,
-            IneligibleReasonGuid = IneligibleReasonEnum.X01_Deceased.ReasonGuid,
+            IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code,
             RowVersion = new byte[8]
         };
 
@@ -449,7 +449,7 @@ public class PeopleServiceTests : ServiceTestBase
 
         var updateDto = new UpdatePersonDto
         {
-            IneligibleReasonGuid = null
+            IneligibleReasonCode = null
         };
 
         var result = await _service.UpdatePersonAsync(person.PersonGuid, updateDto);
@@ -481,7 +481,7 @@ public class PeopleServiceTests : ServiceTestBase
             LastName = "Beta",
             CanReceiveVotes = false,
             CanVote = true,
-            IneligibleReasonGuid = IneligibleReasonEnum.V06_OtherCanVoteButNotBeVotedFor.ReasonGuid,
+            IneligibleReasonCode = IneligibleReasonEnum.V06_OtherCanVoteButNotBeVotedFor.Code,
             RowVersion = new byte[8]
         };
 

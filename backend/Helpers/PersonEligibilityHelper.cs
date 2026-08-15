@@ -26,9 +26,9 @@ public static class PersonEligibilityHelper
             return person.CanReceiveVotes.Value;
         }
 
-        if (person.IneligibleReasonGuid is Guid reasonGuid)
+        if (!string.IsNullOrEmpty(person.IneligibleReasonCode))
         {
-            return IneligibleReasonEnum.GetByGuid(reasonGuid)?.CanReceiveVotes ?? false;
+            return IneligibleReasonEnum.GetByCode(person.IneligibleReasonCode)?.CanReceiveVotes ?? false;
         }
 
         return true;
@@ -49,9 +49,9 @@ public static class PersonEligibilityHelper
             return person.CanVote.Value;
         }
 
-        if (person.IneligibleReasonGuid is Guid reasonGuid)
+        if (!string.IsNullOrEmpty(person.IneligibleReasonCode))
         {
-            return IneligibleReasonEnum.GetByGuid(reasonGuid)?.CanVote ?? false;
+            return IneligibleReasonEnum.GetByCode(person.IneligibleReasonCode)?.CanVote ?? false;
         }
 
         return true;

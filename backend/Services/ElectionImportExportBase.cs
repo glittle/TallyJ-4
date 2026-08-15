@@ -169,6 +169,7 @@ public abstract class ElectionImportExportBase
         public bool? CanVote { get; set; }
         public bool? CanReceiveVotes { get; set; }
         public Guid? IneligibleReasonGuid { get; set; }
+        public string? IneligibleReasonCode { get; set; }
         public string? RegistrationTime { get; set; }
         public Guid? VotingLocationGuid { get; set; }
         public string? VotingMethod { get; set; }

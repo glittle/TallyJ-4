@@ -463,13 +463,13 @@ public partial class PeopleImportService
         {
             person.CanVote = true;
             person.CanReceiveVotes = true;
-            person.IneligibleReasonGuid = null;
+            person.IneligibleReasonCode = null;
             return true;
         }
 
         person.CanVote = reason.CanVote;
         person.CanReceiveVotes = reason.CanReceiveVotes;
-        person.IneligibleReasonGuid = reason.ReasonGuid;
+        person.IneligibleReasonCode = reason.Code;
         return true;
     }
 

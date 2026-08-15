@@ -9,7 +9,7 @@ public class PersonEligibilityHelperTests
     [Fact]
     public void CanReceiveVotes_NullFlagsNoReason_IsTrue()
     {
-        var person = new Person { LastName = "A", CanReceiveVotes = null, IneligibleReasonGuid = null };
+        var person = new Person { LastName = "A", CanReceiveVotes = null, IneligibleReasonCode = null };
         Assert.True(PersonEligibilityHelper.CanReceiveVotes(person));
     }
 
@@ -29,7 +29,7 @@ public class PersonEligibilityHelperTests
         {
             LastName = "A",
             CanReceiveVotes = null,
-            IneligibleReasonGuid = reason.ReasonGuid
+            IneligibleReasonCode = reason.Code
         };
         Assert.False(PersonEligibilityHelper.CanReceiveVotes(person));
     }
@@ -37,7 +37,7 @@ public class PersonEligibilityHelperTests
     [Fact]
     public void CanVote_NullFlagsNoReason_IsTrue()
     {
-        var person = new Person { LastName = "A", CanVote = null, IneligibleReasonGuid = null };
+        var person = new Person { LastName = "A", CanVote = null, IneligibleReasonCode = null };
         Assert.True(PersonEligibilityHelper.CanVote(person));
     }
 }

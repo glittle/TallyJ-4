@@ -115,7 +115,7 @@ public class VoteService : IVoteService
             if (!PersonEligibilityHelper.CanReceiveVotes(person))
             {
                 statusCode = VoteStatus.Spoiled;
-                ineligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
+                ineligibleReasonCode = person.IneligibleReasonCode;
                 _logger.LogInformation("Person '{FullName}' is ineligible; vote created as spoiled with reason {ReasonCode}",
                     person.FullName, ineligibleReasonCode);
             }
@@ -206,7 +206,7 @@ public class VoteService : IVoteService
             if (!PersonEligibilityHelper.CanReceiveVotes(person))
             {
                 statusCode = VoteStatus.Spoiled;
-                ineligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
+                ineligibleReasonCode = person.IneligibleReasonCode;
                 _logger.LogInformation("Person '{FullName}' is ineligible; vote updated as spoiled with reason {ReasonCode}",
                     person.FullName, ineligibleReasonCode);
             }
@@ -459,14 +459,9 @@ public class VoteService : IVoteService
             && vote.VoteStatus == VoteStatus.Spoiled
             && !PersonEligibilityHelper.CanReceiveVotes(vote.Person))
         {
-            dto.IneligibleReasonCode = GetIneligibleReasonCode(vote.Person?.IneligibleReasonGuid);
+            dto.IneligibleReasonCode = vote.Person?.IneligibleReasonCode;
         }
 
         return dto;
-    }
-
-    private static string? GetIneligibleReasonCode(Guid? guid)
-    {
-        return guid.HasValue ? IneligibleReasonEnum.GetByGuid(guid.Value)?.Code : null;
     }
 }

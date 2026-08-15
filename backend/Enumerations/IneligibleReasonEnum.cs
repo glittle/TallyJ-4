@@ -187,6 +187,35 @@ public static class IneligibleReasonEnum
     }
 
     /// <summary>
+    /// Resolves an incoming eligibility value to the short code stored on a person or vote.
+    /// Accepts a short code or a GUID string (canonical or legacy v3).
+    /// </summary>
+    public static string? ResolveToCode(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        var trimmed = value.Trim();
+        var byCode = GetByCode(trimmed);
+        if (byCode != null) return byCode.Code;
+
+        return Guid.TryParse(trimmed, out var guid) ? GetByGuid(guid)?.Code : null;
+    }
+
+    /// <summary>
+    /// Resolves a GUID (canonical or legacy v3) to the short code stored on a person or vote.
+    /// </summary>
+    public static string? ResolveToCode(Guid? guid) => GetByGuid(guid)?.Code;
+
+    /// <summary>
+    /// Whether <paramref name="code"/> is a person-form reason (not internal-only).
+    /// </summary>
+    public static bool IsPersonReasonCode(string? code)
+    {
+        var reason = GetByCode(code);
+        return reason is { InternalOnly: false };
+    }
+
+    /// <summary>
     /// Gets an eligibility reason by its description (case-insensitive).
     /// Used for backward compatibility with v3 import files.
     /// </summary>

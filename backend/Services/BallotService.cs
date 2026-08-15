@@ -262,15 +262,10 @@ public class BallotService : IBallotService
             && vote.VoteStatus == VoteStatus.Spoiled
             && !PersonEligibilityHelper.CanReceiveVotes(vote.Person))
         {
-            voteDto.IneligibleReasonCode = GetIneligibleReasonCode(vote.Person?.IneligibleReasonGuid);
+            voteDto.IneligibleReasonCode = vote.Person?.IneligibleReasonCode;
         }
 
         return voteDto;
-    }
-
-    private static string? GetIneligibleReasonCode(Guid? guid)
-    {
-        return guid.HasValue ? IneligibleReasonEnum.GetByGuid(guid.Value)?.Code : null;
     }
 }
 

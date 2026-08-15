@@ -56,9 +56,9 @@ public class CreatePersonDto
     public string? Phone { get; set; }
 
     /// <summary>
-    /// The GUID of the reason why the person is ineligible (if applicable).
+    /// The short code of the reason why the person is ineligible (if applicable). Empty means fully eligible.
     /// </summary>
-    public Guid? IneligibleReasonGuid { get; set; }
+    public string? IneligibleReasonCode { get; set; }
 }
 
 

@@ -59,19 +59,10 @@ public class UpdatePersonDtoValidator : AbstractValidator<UpdatePersonDto>
             .When(x => !string.IsNullOrWhiteSpace(x.Phone))
             .WithMessage("Phone can only contain digits, spaces, and characters: - ( ) + .");
 
-        RuleFor(x => x.IneligibleReasonGuid)
-            .Must(guid => guid == null || IneligibleReasonEnum.GetByGuid(guid) != null)
-            .WithMessage("Invalid ineligibility reason GUID")
-            .Must(guid =>
-            {
-                if (guid == null)
-                {
-                    return true;
-                }
-
-                var reason = IneligibleReasonEnum.GetByGuid(guid);
-                return reason?.InternalOnly != true;
-            })
+        RuleFor(x => x.IneligibleReasonCode)
+            .Must(code => string.IsNullOrWhiteSpace(code) || IneligibleReasonEnum.GetByCode(code) != null)
+            .WithMessage("Invalid ineligibility reason code")
+            .Must(code => string.IsNullOrWhiteSpace(code) || IneligibleReasonEnum.IsPersonReasonCode(code))
             .WithMessage("Internal ineligibility reasons cannot be used for person updates");
     }
 }

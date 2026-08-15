@@ -9,7 +9,7 @@ namespace Backend.Entities;
 
 [Index("ElectionGuid", Name = "IX_Person")]
 [Index("PersonGuid", Name = "IX_Person_1", IsUnique = true)]
-[Index("CanVote", "IneligibleReasonGuid", Name = "IX_Person_CanVote")]
+[Index("CanVote", "IneligibleReasonCode", Name = "IX_Person_CanVote")]
 [Index("ElectionGuid", Name = "nci_msft_Person_22A77D9DC21D83B4582C43E94A27236D")]
 public partial class Person
 {
@@ -54,7 +54,12 @@ public partial class Person
 
     public bool? CanReceiveVotes { get; set; }
 
-    public Guid? IneligibleReasonGuid { get; set; }
+    /// <summary>
+    /// The <see cref="IneligibleReasonEnum"/> short code (e.g., "X01"). Null means fully eligible.
+    /// </summary>
+    [StringLength(10)]
+    [Unicode(false)]
+    public string? IneligibleReasonCode { get; set; }
 
     [Precision(0)]
     public DateTimeOffset? RegistrationTime { get; set; }

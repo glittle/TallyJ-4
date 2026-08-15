@@ -1085,7 +1085,7 @@ export type PeopleCreatePersonDto = {
     bahaiId?: string | null;
     email?: string | null;
     phone?: string | null;
-    ineligibleReasonGuid?: string | null;
+    ineligibleReasonCode?: string | null;
 };
 
 export type PeoplePersonDetailDto = {
@@ -1103,7 +1103,6 @@ export type PeoplePersonDetailDto = {
     otherLastNames?: string | null;
     otherNames?: string | null;
     otherInfo?: string | null;
-    ineligibleReasonGuid?: string | null;
     ineligibleReasonCode?: string | null;
     registrationTime?: Date | null;
     votingLocationGuid?: string | null;
@@ -1134,7 +1133,6 @@ export type PeoplePersonDto = {
     otherNames?: string | null;
     otherInfo?: string | null;
     combinedSoundCodes?: string | null;
-    ineligibleReasonGuid?: string | null;
     ineligibleReasonCode?: string | null;
     voteCount?: number;
 };
@@ -1161,7 +1159,7 @@ export type PeopleUpdatePersonDto = {
     bahaiId?: string | null;
     email?: string | null;
     phone?: string | null;
-    ineligibleReasonGuid?: string | null;
+    ineligibleReasonCode?: string | null;
 };
 
 export type PublicAvailableElectionDto = {

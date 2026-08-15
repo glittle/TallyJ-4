@@ -289,7 +289,7 @@ public class BallotAnalyzerTests
         {
             OnlineVoteRaw = "some raw data",
             PersonGuid = null,
-            PersonIneligibleReasonGuid = null,
+            PersonIneligibleReasonCode = null,
             VoteIneligibleReasonCode = null
         };
 
