@@ -144,7 +144,6 @@ public class MigrationTests : IntegrationTestBase
             LastName = "Person",
             CanVote = true,
             CanReceiveVotes = true,
-            AgeGroup = "A",
             RowVersion = new byte[8]
         };
 
@@ -173,7 +172,6 @@ public class MigrationTests : IntegrationTestBase
             LastName = "Doe",
             CanVote = true,
             CanReceiveVotes = true,
-            AgeGroup = "A",
             RowVersion = new byte[8]
         };
 

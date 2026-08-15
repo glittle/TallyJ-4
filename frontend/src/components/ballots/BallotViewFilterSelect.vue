@@ -11,6 +11,7 @@ import {
 } from "@/utils/ballotViewFilter";
 import type { ComputerDto } from "@/types/Computer";
 import type { LocationDto } from "@/types/Location";
+import { formatComputerCodeLabel } from "@/utils/ballotDisplayCode";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -74,9 +75,9 @@ const selectedDisplayLabel = computed(() => {
       });
     case "computer":
       if (!filter.locationGuid) {
-        return filter.computerCode;
+        return formatComputerCodeLabel(t, filter.computerCode);
       }
-      return `${locationNameForGuid(filter.locationGuid)} / ${filter.computerCode}`;
+      return `${locationNameForGuid(filter.locationGuid)} / ${formatComputerCodeLabel(t, filter.computerCode)}`;
     default:
       return t("ballots.allBallots");
   }
@@ -91,7 +92,7 @@ const supplementalComputerOption = computed(() => {
 
   if (!filter.locationGuid) {
     return {
-      label: filter.computerCode,
+      label: formatComputerCodeLabel(t, filter.computerCode),
       value: computerFilterValue(null, filter.computerCode),
     };
   }
@@ -101,7 +102,7 @@ const supplementalComputerOption = computed(() => {
   }
 
   return {
-    label: filter.computerCode,
+    label: formatComputerCodeLabel(t, filter.computerCode),
     value: props.modelValue,
   };
 });
@@ -145,7 +146,7 @@ function updateValue(value: string) {
         <el-option
           v-for="code in group.computerCodes"
           :key="`${group.locationGuid}-${code}`"
-          :label="code"
+          :label="formatComputerCodeLabel(t, code)"
           :value="computerFilterValue(group.locationGuid, code)"
         />
       </el-option-group>

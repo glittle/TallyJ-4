@@ -126,7 +126,6 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 p.CombinedInfo,
                 p.CombinedSoundCodes,
                 p.CombinedInfoAtStart,
-                p.AgeGroup,
                 p.CanVote,
                 p.CanReceiveVotes,
                 p.IneligibleReasonGuid,
@@ -408,7 +407,6 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 CombinedInfo = person.CombinedInfo,
                 CombinedSoundCodes = person.CombinedSoundCodes,
                 CombinedInfoAtStart = person.CombinedInfoAtStart,
-                AgeGroup = person.AgeGroup,
                 // Match CSV people import and XML package import when flags are omitted.
                 CanVote = person.CanVote ?? true,
                 CanReceiveVotes = person.CanReceiveVotes ?? true,

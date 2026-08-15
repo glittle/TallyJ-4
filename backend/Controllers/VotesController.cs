@@ -152,14 +152,21 @@ public class VotesController : ControllerBase
     [HttpDelete("{id}/deleteVote")]
     public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> DeleteVote(int id)
     {
-        var result = await _voteService.DeleteVoteAsync(id);
-
-        if (result == null)
+        try
         {
-            return NotFound(ApiResponse<VoteWithBallotStatusDto>.ErrorResponse($"Vote with ID '{id}' not found"));
-        }
+            var result = await _voteService.DeleteVoteAsync(id);
 
-        return Ok(ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result, "Vote deleted successfully"));
+            if (result == null)
+            {
+                return NotFound(ApiResponse<VoteWithBallotStatusDto>.ErrorResponse($"Vote with ID '{id}' not found"));
+            }
+
+            return Ok(ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result, "Vote deleted successfully"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<VoteWithBallotStatusDto>.ErrorResponse(ex.Message));
+        }
     }
 }
 

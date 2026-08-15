@@ -11,6 +11,7 @@ const props = defineProps<{
   canAddVotes: boolean;
   people: SearchablePersonDto[];
   personGuidsOnBallot: Set<string>;
+  resolvingRaw?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -108,12 +109,19 @@ function clearSearch() {
   selectedSearchIndex.value = 0;
 }
 
+async function setQuery(text: string) {
+  searchQuery.value = text;
+  await focus();
+  const input = searchInputRef.value?.input as HTMLInputElement | undefined;
+  input?.select();
+}
+
 async function focus() {
   await nextTick();
   searchInputRef.value?.focus();
 }
 
-defineExpose({ focus, clearSearch });
+defineExpose({ focus, clearSearch, setQuery });
 </script>
 
 <template>
@@ -134,7 +142,9 @@ defineExpose({ focus, clearSearch });
     </div>
 
     <div class="search-help">
-      <small>{{ $t("ballots.searchHelp") }}</small>
+      <small>{{
+        $t(resolvingRaw ? "ballots.searchHelpRaw" : "ballots.searchHelp")
+      }}</small>
     </div>
 
     <div

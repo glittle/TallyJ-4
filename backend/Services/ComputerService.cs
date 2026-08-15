@@ -153,7 +153,7 @@ public class ComputerService : IComputerService
         for (var index = 0; index <= ComputerCodeHelper.CodeToIndex("ZZ"); index++)
         {
             var code = ComputerCodeHelper.IndexToCode(index);
-            if (!existingCodes.Contains(code))
+            if (!ComputerCodeHelper.IsReservedCode(code) && !existingCodes.Contains(code))
             {
                 return code;
             }

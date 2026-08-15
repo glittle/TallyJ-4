@@ -125,14 +125,21 @@ public class BallotsController : ControllerBase
     [HttpDelete("{guid}/deleteBallot")]
     public async Task<IActionResult> DeleteBallot(Guid guid)
     {
-        var success = await _ballotService.DeleteBallotAsync(guid);
-
-        if (!success)
+        try
         {
-            return NotFound(ApiResponse<object>.ErrorResponse("Ballot not found"));
-        }
+            var success = await _ballotService.DeleteBallotAsync(guid);
 
-        return NoContent();
+            if (!success)
+            {
+                return NotFound(ApiResponse<object>.ErrorResponse("Ballot not found"));
+            }
+
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<object>.ErrorResponse(ex.Message));
+        }
     }
 }
 

@@ -79,6 +79,33 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
             });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+            var votingInfo = await context.OnlineVotingInfos
+                .FirstAsync(ovi => ovi.ElectionGuid == electionGuid);
+            Assert.NotNull(votingInfo.BallotGuid);
+
+            var storedVotes = await context.Votes
+                .Where(v => v.BallotGuid == votingInfo.BallotGuid)
+                .ToListAsync();
+            Assert.Equal(9, storedVotes.Count);
+            Assert.All(storedVotes, v =>
+            {
+                Assert.Equal(VoteStatus.Raw, v.VoteStatus);
+                Assert.False(string.IsNullOrWhiteSpace(v.OnlineVoteRaw));
+                Assert.StartsWith("{", v.OnlineVoteRaw);
+                Assert.Contains("Free Voter", v.OnlineVoteRaw);
+            });
+
+            var ballot = await context.Ballots
+                .FirstAsync(b => b.BallotGuid == votingInfo.BallotGuid);
+            Assert.Equal(BallotStatus.Raw, ballot.StatusCode);
+            Assert.Equal("OL", ballot.ComputerCode);
+            Assert.Equal(1, ballot.BallotNumAtComputer);
+            Assert.Equal("OL1", ballot.BallotCode);
+        }
     }
 
     [Fact]

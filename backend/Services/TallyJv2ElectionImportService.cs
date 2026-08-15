@@ -207,7 +207,6 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
                     CombinedInfo = personNode.GetAttribute("CombinedInfo"),
                     CombinedSoundCodes = personNode.GetAttribute("CombinedSoundCodes"),
                     CombinedInfoAtStart = personNode.GetAttribute("CombinedInfoAtStart"),
-                    AgeGroup = personNode.GetAttribute("AgeGroup"),
                     // XML omits these when true; match CSV people import defaults for eligible people.
                     CanVote = ParseBool(personNode.GetAttribute("CanVote")) ?? true,
                     CanReceiveVotes = ParseBool(personNode.GetAttribute("CanReceiveVotes")) ?? true,

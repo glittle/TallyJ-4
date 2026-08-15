@@ -51,10 +51,11 @@ public partial class ReportService
                 .OrderBy(v => isSingleName ? (v.Person?.FullNameFl ?? "") : v.PositionOnBallot.ToString("0000"))
                 .Select(v => new BallotVoteDto
                 {
-                    PersonName = v.Person?.FullNameFl ?? "",
+                    PersonName = v.Person?.FullNameFl
+                                 ?? Backend.Models.OnlineRawVote.Parse(v.OnlineVoteRaw).ToDisplayName(),
                     SingleNameElectionCount = v.SingleNameElectionCount,
                     OnlineVoteRaw = v.OnlineVoteRaw,
-                    Spoiled = v.VoteStatus != VoteStatus.Ok,
+                    Spoiled = v.VoteStatus == VoteStatus.Spoiled,
                     TieBreakRequired = v.PersonGuid.HasValue && tiedPersonGuids.Contains(v.PersonGuid.Value),
                     InvalidReasonDesc = GetIneligibleDescription(v.IneligibleReasonCode)
                         ?? (v.Person != null && v.Person.CanReceiveVotes != true

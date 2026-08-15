@@ -12,7 +12,17 @@ import { usePeopleStore } from "@/stores/peopleStore";
 import type { BallotDto } from "@/types/Ballot";
 import type { SearchablePersonDto } from "@/types/Person";
 import type { VoteDto } from "@/types/Vote";
+import {
+  formatBallotDisplayCode,
+  isOnlineOrImportedComputerCode,
+} from "@/utils/ballotDisplayCode";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
+import {
+  isUnresolvedRawVote,
+  nextFindQuery,
+  parseOnlineVoteRaw,
+  type FindShortenState,
+} from "@/utils/onlineVoteRaw";
 import { Delete, Plus } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { computed, onMounted, ref, toRef, watch } from "vue";
@@ -33,6 +43,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   "vote-added": [vote: VoteDto, options?: VoteAddedOptions];
+  "vote-updated": [vote: VoteDto];
   "vote-removed": [positionOnBallot: number];
   "votes-reordered": [voteRowIds: number[]];
   "ballot-saved": [];
@@ -60,6 +71,10 @@ const searchPanelRef = ref<InstanceType<typeof BallotPersonSearchPanel> | null>(
 );
 
 const canAddVotes = computed(() => props.hasKeyboardTeller !== false);
+const isOnlineOrImported = computed(() =>
+  isOnlineOrImportedComputerCode(props.ballot.computerCode),
+);
+const canRemoveVotes = computed(() => !isOnlineOrImported.value);
 const isNeedsReview = computed(() => props.ballot.statusCode === "Review");
 const people = computed(() => peopleStore.peopleCache);
 
@@ -68,11 +83,12 @@ const {
   dragSourceIndex,
   dragOverIndex,
   reorderingVotes,
-  canReorderVotes,
+  canReorderVotes: canReorderSavedVotes,
   personGuidsOnBallot,
   duplicatePersonGuids,
   isPersistedVote,
   addVoteToBallot,
+  replaceVoteAtPosition,
   removeVote,
   handleDragStart,
   handleDragOver,
@@ -88,25 +104,115 @@ const {
   onBallotFull: () => showWarningMessage(t("ballots.ballotFull")),
 });
 
+const canReorderVotes = computed(
+  () => canRemoveVotes.value && canReorderSavedVotes.value,
+);
+
+const targetedVoteRowId = ref<number | null>(null);
+const findShortenState = ref<FindShortenState | null>(null);
+const targetClearedByUser = ref(false);
+
+const targetedVote = computed(() =>
+  votes.value.find(
+    (vote) =>
+      vote !== null &&
+      targetedVoteRowId.value !== null &&
+      vote.rowId === targetedVoteRowId.value,
+  ),
+);
+
+const showAddNameForSelectedVote = computed(() => {
+  const target = targetedVote.value;
+  return (
+    isOnlineOrImported.value &&
+    !!target &&
+    isPersistedVote(target) &&
+    findShortenState.value?.voteId === target.rowId
+  );
+});
+
+function firstUnresolvedRawVote(): VoteDto | undefined {
+  return votes.value.find((vote) => isUnresolvedRawVote(vote)) ?? undefined;
+}
+
+function selectTarget(vote: VoteDto) {
+  targetedVoteRowId.value = vote.rowId;
+  targetClearedByUser.value = false;
+}
+
+function clearTarget() {
+  targetedVoteRowId.value = null;
+  targetClearedByUser.value = true;
+}
+
 watch(
   () => props.ballot.ballotGuid,
   () => {
     searchPanelRef.value?.clearSearch();
+    findShortenState.value = null;
+    targetClearedByUser.value = false;
+    targetedVoteRowId.value = firstUnresolvedRawVote()?.rowId ?? null;
     void focusSearchInput();
   },
+);
+
+watch(
+  votes,
+  () => {
+    if (targetClearedByUser.value) {
+      return;
+    }
+    if (
+      targetedVoteRowId.value &&
+      votes.value.some((vote) => vote?.rowId === targetedVoteRowId.value)
+    ) {
+      return;
+    }
+    targetedVoteRowId.value = firstUnresolvedRawVote()?.rowId ?? null;
+  },
+  { immediate: true },
 );
 
 async function focusSearchInput() {
   await searchPanelRef.value?.focus();
 }
 
-async function handlePersonSelected(person: SearchablePersonDto) {
-  if (!canAddVotes.value) {
-    showWarningMessage(t("ballots.keyboardTellerRequired"));
-    return;
+function applyVoteToTarget(incoming: VoteDto): VoteDto | null {
+  const target = targetedVote.value;
+  if (!target || !isPersistedVote(target)) {
+    return null;
   }
+  if (!isOnlineOrImported.value && !hasDisplayableRawOn(target)) {
+    return null;
+  }
+  return {
+    ...target,
+    ...incoming,
+    rowId: target.rowId,
+    positionOnBallot: target.positionOnBallot,
+    onlineVoteRaw: target.onlineVoteRaw,
+    personGuid: incoming.personGuid,
+    personFullName: incoming.personFullName,
+  };
+}
+
+async function finishReplace(updated: VoteDto) {
+  replaceVoteAtPosition(updated.positionOnBallot, updated);
+  emit("vote-updated", updated);
+  searchPanelRef.value?.clearSearch();
+  findShortenState.value = null;
+  targetedVoteRowId.value = firstUnresolvedRawVote()?.rowId ?? null;
+  const next = targetedVote.value;
+  if (next) {
+    await handleFindRawName(next);
+  } else {
+    await focusSearchInput();
+  }
+}
+
+function buildSelectedVote(person: SearchablePersonDto): VoteDto {
   const isSpoiled = person.canReceiveVotes === false;
-  const vote: VoteDto = {
+  return {
     rowId: 0,
     ballotGuid: props.ballot.ballotGuid,
     positionOnBallot: 0,
@@ -117,6 +223,22 @@ async function handlePersonSelected(person: SearchablePersonDto) {
       ? person.ineligibleReasonCode || "X01"
       : undefined,
   };
+}
+
+async function handlePersonSelected(person: SearchablePersonDto) {
+  if (!canAddVotes.value) {
+    showWarningMessage(t("ballots.keyboardTellerRequired"));
+    return;
+  }
+  const vote = buildSelectedVote(person);
+  const updated = applyVoteToTarget(vote);
+  if (updated) {
+    await finishReplace(updated);
+    return;
+  }
+  if (isOnlineOrImported.value) {
+    return;
+  }
   if (!addVoteToBallot(vote)) {
     return;
   }
@@ -124,9 +246,39 @@ async function handlePersonSelected(person: SearchablePersonDto) {
   await focusSearchInput();
 }
 
+function hasDisplayableRawOn(vote: VoteDto): boolean {
+  return !!parseOnlineVoteRaw(vote.onlineVoteRaw);
+}
+
+async function handleFindRawName(vote: VoteDto) {
+  selectTarget(vote);
+  const raw = parseOnlineVoteRaw(vote.onlineVoteRaw);
+  if (!raw) {
+    return;
+  }
+  const { query, state } = nextFindQuery(
+    raw,
+    "FL",
+    vote.rowId,
+    findShortenState.value,
+  );
+  findShortenState.value = state;
+  await searchPanelRef.value?.setQuery(query);
+}
+
 async function handleNewPersonAdded(vote: VoteDto) {
   if (!canAddVotes.value) {
     showWarningMessage(t("ballots.keyboardTellerRequired"));
+    return;
+  }
+  const updated = applyVoteToTarget(vote);
+  if (updated) {
+    showAddPersonDrawer.value = false;
+    await finishReplace(updated);
+    return;
+  }
+  if (isOnlineOrImported.value) {
+    showAddPersonDrawer.value = false;
     return;
   }
   if (addVoteToBallot(vote, { fromNewPerson: !!vote.personGuid })) {
@@ -143,7 +295,9 @@ function handleVoteRemoved(positionOnBallot: number) {
 async function handleDeleteBallot() {
   try {
     await ElMessageBox.confirm(
-      t("ballots.deleteConfirm", { code: props.ballot.ballotCode }),
+      t("ballots.deleteConfirm", {
+        code: formatBallotDisplayCode(t, props.ballot),
+      }),
       t("common.warning"),
       {
         confirmButtonText: t("common.delete"),
@@ -263,8 +417,29 @@ onMounted(async () => {
           :can-add-votes="canAddVotes"
           :people="people"
           :person-guids-on-ballot="personGuidsOnBallot"
+          :resolving-raw="!!findShortenState"
           @select="handlePersonSelected"
         />
+
+        <div v-if="showAddNameForSelectedVote" class="add-name-action">
+          <el-button
+            type="default"
+            :disabled="!canAddVotes"
+            @click="showAddPersonDrawer = true"
+          >
+            {{ $t("ballots.setSpoiledOrNewName") }}
+          </el-button>
+        </div>
+
+        <div v-if="isNeedsReview" class="needs-review-toggle">
+          <el-button
+            type="danger"
+            :loading="reviewToggleLoading"
+            @click="toggleNeedsReview"
+          >
+            {{ $t("ballots.clearNeedsReview") }}
+          </el-button>
+        </div>
 
         <div class="new-ballot-action">
           <el-button
@@ -277,7 +452,7 @@ onMounted(async () => {
           </el-button>
         </div>
 
-        <div class="add-name-action">
+        <div v-if="!isOnlineOrImported" class="add-name-action">
           <el-button
             type="default"
             :disabled="!canAddVotes"
@@ -288,22 +463,18 @@ onMounted(async () => {
           </el-button>
         </div>
 
-        <div class="needs-review-toggle">
+        <div v-if="!isNeedsReview" class="needs-review-toggle">
           <el-button
-            :type="isNeedsReview ? 'danger' : 'warning'"
-            :plain="!isNeedsReview"
+            type="warning"
+            plain
             :loading="reviewToggleLoading"
             @click="toggleNeedsReview"
           >
-            {{
-              isNeedsReview
-                ? $t("ballots.clearNeedsReview")
-                : $t("ballots.markNeedsReview")
-            }}
+            {{ $t("ballots.markNeedsReview") }}
           </el-button>
         </div>
 
-        <div class="delete-ballot-action">
+        <div v-if="canRemoveVotes" class="delete-ballot-action">
           <el-button
             type="danger"
             plain
@@ -318,24 +489,34 @@ onMounted(async () => {
 
       <BallotVotesPanel
         :votes="votes"
-        :ballot-code="ballot.ballotCode"
+        :ballot-code="formatBallotDisplayCode(t, ballot)"
         :can-reorder-votes="canReorderVotes"
         :reordering-votes="reorderingVotes"
         :drag-source-index="dragSourceIndex"
         :drag-over-index="dragOverIndex"
         :duplicate-person-guids="duplicatePersonGuids"
+        :targeted-vote-row-id="targetedVoteRowId"
+        :can-remove-votes="canRemoveVotes"
+        :can-select-any-vote="isOnlineOrImported"
         :is-persisted-vote="isPersistedVote"
         @remove="handleVoteRemoved"
         @drag-start="handleDragStart"
         @drag-over="handleDragOver"
         @drop="handleDrop"
         @drag-end="handleDragEnd"
+        @select-target="selectTarget"
+        @clear-target="clearTarget"
+        @find="handleFindRawName"
       />
     </div>
 
     <el-drawer
       v-model="showAddPersonDrawer"
-      :title="$t('ballots.addNameDrawerTitle')"
+      :title="
+        isOnlineOrImported
+          ? $t('ballots.setSpoiledOrNewName')
+          : $t('ballots.addNameDrawerTitle')
+      "
       direction="rtl"
       size="700px"
       :lock-scroll="false"
@@ -345,6 +526,9 @@ onMounted(async () => {
         v-if="showAddPersonDrawer"
         :election-guid="electionGuid"
         :ballot-guid="ballot.ballotGuid"
+        :raw-vote="
+          targetedVote ? parseOnlineVoteRaw(targetedVote.onlineVoteRaw) : null
+        "
         @person-added="handleNewPersonAdded"
         @cancel="showAddPersonDrawer = false"
       />

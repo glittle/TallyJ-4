@@ -461,7 +461,7 @@ public class TurnoutAnalysisDto
 public class DemographicTurnoutDto
 {
     /// <summary>
-    /// Category of demographic data (AgeGroup, Area, etc.).
+    /// Category of demographic data (Area, etc.).
     /// </summary>
     public string DemographicCategory { get; set; } = string.Empty;
 

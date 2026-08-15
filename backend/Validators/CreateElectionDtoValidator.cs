@@ -58,8 +58,8 @@ public class CreateElectionDtoValidator : AbstractValidator<CreateElectionDto>
             .WithMessage($"Election mode must be one of: {string.Join(", ", ElectionModeEnum.All.Select(m => $"{m.Code} ({m.Description})"))}");
 
         RuleFor(x => x.OnlineSelectionProcess)
-            .MaximumLength(1)
-            .WithMessage("Online selection process must be a single character");
+            .Must(OnlineSelectionProcessEnum.IsValid)
+            .WithMessage($"Online selection process must be one of: {string.Join(", ", OnlineSelectionProcessEnum.All.Select(p => $"{p.Code} ({p.Description})"))}");
 
         RuleFor(x => x.EmailFromAddress)
             .MaximumLength(250)

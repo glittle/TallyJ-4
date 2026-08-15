@@ -40,4 +40,15 @@ public class ComputerCodeHelperTests
         Assert.Equal("E", ComputerCodeHelper.GetNextCodeAfterMax(["A", "D"]));
         Assert.Equal("AA", ComputerCodeHelper.GetNextCodeAfterMax(["Z"]));
     }
+
+    [Theory]
+    [InlineData("OL", true)]
+    [InlineData("WW", true)]
+    [InlineData("IM", true)]
+    [InlineData("IMPORT", true)]
+    [InlineData("A", false)]
+    public void Reserved_codes_are_detected(string code, bool reserved)
+    {
+        Assert.Equal(reserved, ComputerCodeHelper.IsReservedCode(code));
+    }
 }

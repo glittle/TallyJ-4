@@ -698,6 +698,78 @@ public class VoteServiceTests : ServiceTestBase
             }));
     }
 
+    [Fact]
+    public async Task UpdateVoteAsync_AssignsPersonToRawVote_KeepsOnlineVoteRaw()
+    {
+        var person = CreatePerson();
+        person.CombinedInfo = "Smith, John";
+        await Context.SaveChangesAsync();
+
+        var rawVote = new Vote
+        {
+            BallotGuid = BallotGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Raw,
+            OnlineVoteRaw = """{"First":"Jon","Last":"Smyth","OtherInfo":"Jon Smyth"}""",
+            PersonCombinedInfo = "Jon Smyth",
+            RowVersion = new byte[8]
+        };
+        Context.Votes.Add(rawVote);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.UpdateVoteAsync(rawVote.RowId, new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PersonGuid = person.PersonGuid,
+            PositionOnBallot = 1,
+        });
+
+        Assert.NotNull(result?.Vote);
+        Assert.Equal(VoteStatus.Ok, result.Vote.VoteStatus);
+        Assert.Equal(person.PersonGuid, result.Vote.PersonGuid);
+        Assert.Equal(person.FullName, result.Vote.PersonFullName);
+        Assert.Equal("""{"First":"Jon","Last":"Smyth","OtherInfo":"Jon Smyth"}""", result.Vote.OnlineVoteRaw);
+        Assert.Equal("Smith, John", result.Vote.PersonCombinedInfo);
+
+        var stored = Context.Votes.Single(v => v.RowId == rawVote.RowId);
+        Assert.Equal(VoteStatus.Ok, stored.VoteStatus);
+        Assert.NotNull(stored.OnlineVoteRaw);
+    }
+
+    [Fact]
+    public async Task UpdateVoteAsync_PersonLessSpoil_KeepsOnlineVoteRaw()
+    {
+        var rawVote = new Vote
+        {
+            BallotGuid = BallotGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Raw,
+            OnlineVoteRaw = """{"First":"Jon","Last":"Smyth","OtherInfo":"Jon Smyth"}""",
+            PersonCombinedInfo = "Jon Smyth",
+            RowVersion = new byte[8]
+        };
+        Context.Votes.Add(rawVote);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.UpdateVoteAsync(rawVote.RowId, new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PositionOnBallot = 1,
+            IneligibleReasonCode = "U01",
+        });
+
+        Assert.NotNull(result?.Vote);
+        Assert.Equal(VoteStatus.Spoiled, result.Vote.VoteStatus);
+        Assert.Equal("U01", result.Vote.IneligibleReasonCode);
+        Assert.Null(result.Vote.PersonGuid);
+        Assert.Equal("""{"First":"Jon","Last":"Smyth","OtherInfo":"Jon Smyth"}""", result.Vote.OnlineVoteRaw);
+
+        var stored = Context.Votes.Single(v => v.RowId == rawVote.RowId);
+        Assert.Equal(VoteStatus.Spoiled, stored.VoteStatus);
+        Assert.Equal("U01", stored.IneligibleReasonCode);
+        Assert.NotNull(stored.OnlineVoteRaw);
+    }
+
     private static void AssertUniqueContiguousPositions(IReadOnlyList<VoteDto> votes)
     {
         var positions = votes.Select(v => v.PositionOnBallot).ToList();

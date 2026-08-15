@@ -65,6 +65,7 @@ let form = reactive<CreateElectionDto>({
   listForPublic: false,
   showAsTest: false,
   useOnlineVoting: false,
+  onlineSelectionProcess: "A",
 });
 
 const rules = reactive<FormRules>({

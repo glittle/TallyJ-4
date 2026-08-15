@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { toApiEligibility } from "@/utils/eligibilityForm";
-import { computed, ref } from "vue";
+import {
+  namePartsFromRaw,
+  rawVoteReferenceName,
+  type OnlineRawVote,
+} from "@/utils/onlineVoteRaw";
+import { computed, nextTick, ref, watch } from "vue";
 import { usePeopleStore } from "../../stores/peopleStore";
 import type { CreatePersonDto } from "../../types";
 import type { SearchablePersonDto } from "../../types/Person";
@@ -13,6 +18,7 @@ export type BallotVoteEntryType = "U01" | "U02" | "normal";
 const props = defineProps<{
   electionGuid: string;
   ballotGuid: string;
+  rawVote?: OnlineRawVote | null;
 }>();
 
 const emit = defineEmits<{
@@ -24,12 +30,30 @@ const peopleStore = usePeopleStore();
 const { handleApiError } = useApiErrorHandler();
 
 const personFormRef = ref<InstanceType<typeof PersonForm>>();
-const voteEntryType = ref<BallotVoteEntryType>("U01");
+const voteEntryType = ref<BallotVoteEntryType>("U02");
 const submitting = ref(false);
 
 const isPersonLessVote = computed(
   () => voteEntryType.value === "U01" || voteEntryType.value === "U02",
 );
+
+const rawNameReference = computed(() =>
+  props.rawVote ? rawVoteReferenceName(props.rawVote) : "",
+);
+
+watch(voteEntryType, async (type) => {
+  if (type !== "normal" || !props.rawVote) {
+    return;
+  }
+  await nextTick();
+  const form = personFormRef.value?.form;
+  if (!form) {
+    return;
+  }
+  const parts = namePartsFromRaw(props.rawVote);
+  form.firstName = parts.first;
+  form.lastName = parts.last;
+});
 
 function getIneligibleReasonCode(): string | undefined {
   if (voteEntryType.value === "U01") {
@@ -87,7 +111,6 @@ async function handleSubmit() {
         phone: form.phone || undefined,
         area: form.area || undefined,
         bahaiId: form.bahaiId || undefined,
-        ageGroup: form.ageGroup || undefined,
         ineligibleReasonGuid: toApiEligibility(form.ineligibleReasonGuid),
       };
 
@@ -125,14 +148,26 @@ async function handleSubmit() {
 
 <template>
   <div class="ballot-add-person-panel">
+    <div v-if="rawNameReference" class="ballot-add-person-panel__raw-name">
+      <div class="ballot-add-person-panel__raw-label">
+        {{ $t("ballots.rawVoteNameReference") }}
+      </div>
+      <div class="ballot-add-person-panel__raw-value">
+        {{ rawNameReference }}
+      </div>
+    </div>
+
     <el-form label-width="150px" label-position="left">
       <el-form-item :label="$t('ballots.voteEntryType')">
-        <el-radio-group v-model="voteEntryType">
-          <el-radio value="U01">
-            {{ $t("ballots.voteEntryUnidentifiable") }}
-          </el-radio>
+        <el-radio-group
+          v-model="voteEntryType"
+          class="ballot-add-person-panel__vote-entry-type"
+        >
           <el-radio value="U02">
             {{ $t("ballots.voteEntryUnreadable") }}
+          </el-radio>
+          <el-radio value="U01">
+            {{ $t("ballots.voteEntryUnidentifiable") }}
           </el-radio>
           <el-radio value="normal">
             {{ $t("ballots.voteEntryNormal") }}
@@ -151,6 +186,7 @@ async function handleSubmit() {
       :election-guid="electionGuid"
       :is-edit="false"
       :show-delete="false"
+      require-eligibility
       hide-actions
     />
 
@@ -165,6 +201,31 @@ async function handleSubmit() {
 
 <style lang="less">
 .ballot-add-person-panel {
+  .ballot-add-person-panel__raw-name {
+    margin: 0 0 var(--spacing-4);
+    text-align: center;
+    padding: var(--spacing-3);
+    background: var(--el-fill-color-light);
+    border-radius: var(--el-border-radius-base);
+  }
+
+  .ballot-add-person-panel__raw-label {
+    color: var(--el-text-color-secondary);
+    font-size: var(--el-font-size-small);
+    margin-bottom: 2px;
+  }
+
+  .ballot-add-person-panel__raw-value {
+    font-weight: 600;
+    font-size: var(--el-font-size-medium);
+  }
+
+  .ballot-add-person-panel__vote-entry-type {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .ballot-add-person-panel__hint {
     margin: 0 0 var(--spacing-4);
     color: var(--el-text-color-secondary);

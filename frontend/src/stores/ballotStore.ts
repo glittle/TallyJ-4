@@ -290,7 +290,7 @@ export const useBallotStore = defineStore("ballot", () => {
     result: VoteWithBallotStatusDto,
     normalizedVotes: VoteDto[],
     isCurrentBallot: boolean,
-    mutationKind?: "create" | "delete" | "reorder",
+    mutationKind?: "create" | "update" | "delete" | "reorder",
   ): number | undefined {
     const authoritativePositionCount = result.votePositions?.length ?? 0;
     if (authoritativePositionCount > 0) {
@@ -318,7 +318,7 @@ export const useBallotStore = defineStore("ballot", () => {
     result: VoteWithBallotStatusDto,
     options?: {
       deletedRowId?: number;
-      mutationKind?: "create" | "delete" | "reorder";
+      mutationKind?: "create" | "update" | "delete" | "reorder";
     },
   ) {
     ballotMutationGeneration.set(
@@ -387,6 +387,27 @@ export const useBallotStore = defineStore("ballot", () => {
       return result;
     } catch (e: any) {
       error.value = e.message || "Failed to create vote";
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function updateVote(
+    voteId: number,
+    dto: CreateVoteDto,
+  ): Promise<VoteWithBallotStatusDto> {
+    loading.value = true;
+    error.value = null;
+    try {
+      const result = await voteService.update(voteId, dto);
+      applyVoteMutationResult(dto.ballotGuid, result, {
+        mutationKind: "update",
+      });
+
+      return result;
+    } catch (e: any) {
+      error.value = e.message || "Failed to update vote";
       throw e;
     } finally {
       loading.value = false;
@@ -571,6 +592,7 @@ export const useBallotStore = defineStore("ballot", () => {
     updateBallot,
     deleteBallot,
     createVote,
+    updateVote,
     deleteVote,
     reorderVotes,
     setCurrentBallot,

@@ -3,6 +3,8 @@ using System.Text.Json;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.OnlineVoting;
+using Backend.Helpers;
+using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -90,13 +92,17 @@ public partial class OnlineVotingService
                 await _context.SaveChangesAsync();
             }
 
+            var nextBallotNum = await SpecialBallotNumbering.RepairOnlineAndGetNextAsync(
+                _context, location.LocationGuid);
+
             var ballot = new Ballot
             {
                 LocationGuid = location.LocationGuid,
                 BallotGuid = Guid.NewGuid(),
                 StatusCode = BallotStatus.Ok,
-                ComputerCode = "WW",
-                BallotNumAtComputer = 0,
+                ComputerCode = ComputerCodeHelper.Online,
+                BallotNumAtComputer = nextBallotNum,
+                BallotCode = $"{ComputerCodeHelper.Online}{nextBallotNum}",
                 Teller1 = "Online",
                 DateCreated = now,
                 DateUpdated = now,
@@ -110,6 +116,9 @@ public partial class OnlineVotingService
             {
                 var hasPerson = voteDto.PersonGuid.HasValue;
                 var hasFreeText = !string.IsNullOrWhiteSpace(voteDto.VoteName);
+                var rawVote = hasFreeText && !hasPerson
+                    ? OnlineRawVote.Parse(voteDto.VoteName)
+                    : null;
                 var vote = new Vote
                 {
                     BallotGuid = ballot.BallotGuid,
@@ -120,7 +129,7 @@ public partial class OnlineVotingService
                         : hasFreeText
                             ? VoteStatus.Raw
                             : VoteStatus.Spoiled,
-                    OnlineVoteRaw = voteDto.VoteName,
+                    OnlineVoteRaw = rawVote?.ToJson(),
                     RowVersion = new byte[8]
                 };
 
@@ -134,9 +143,9 @@ public partial class OnlineVotingService
                         vote.PersonCombinedInfo = votedPerson.CombinedInfo;
                     }
                 }
-                else if (hasFreeText)
+                else if (rawVote != null)
                 {
-                    vote.PersonCombinedInfo = voteDto.VoteName!.Trim();
+                    vote.PersonCombinedInfo = rawVote.ToDisplayName();
                 }
 
                 _context.Votes.Add(vote);
@@ -173,6 +182,9 @@ public partial class OnlineVotingService
 
             await ApplyNotifyPreferenceAsync(onlineVoter, dto.NotifyWhenProcessed);
 
+            await _context.SaveChangesAsync();
+            ballot.Location = location;
+            await BallotStatusRefresher.RefreshAsync(_context, ballot, _logger);
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
@@ -213,16 +225,30 @@ public partial class OnlineVotingService
         var priorVotes = new List<OnlineVoteDto>();
         if (votingInfo?.BallotGuid != null)
         {
-            priorVotes = await _context.Votes
+            var storedVotes = await _context.Votes
                 .Where(v => v.BallotGuid == votingInfo.BallotGuid)
                 .OrderBy(v => v.PositionOnBallot)
-                .Select(v => new OnlineVoteDto
+                .Select(v => new
                 {
-                    PersonGuid = v.PersonGuid,
-                    VoteName = v.OnlineVoteRaw ?? v.PersonCombinedInfo,
-                    PositionOnBallot = v.PositionOnBallot
+                    v.PersonGuid,
+                    v.OnlineVoteRaw,
+                    v.PersonCombinedInfo,
+                    v.PositionOnBallot
                 })
                 .ToListAsync();
+
+            priorVotes = storedVotes.Select(v =>
+            {
+                var displayName = OnlineRawVote.Parse(v.OnlineVoteRaw).ToDisplayName();
+                return new OnlineVoteDto
+                {
+                    PersonGuid = v.PersonGuid,
+                    VoteName = !string.IsNullOrEmpty(displayName)
+                        ? displayName
+                        : v.PersonCombinedInfo,
+                    PositionOnBallot = v.PositionOnBallot
+                };
+            }).ToList();
         }
 
         var onlineVoter = await _context.OnlineVoters

@@ -15,6 +15,7 @@ import {
   ballotGuidFromRouteParams,
   electionBallotsPath,
 } from "@/utils/ballotRoutes";
+import { formatBallotDisplayCode } from "@/utils/ballotDisplayCode";
 import { getBallotStatusLabel } from "@/utils/ballotStatusLabel";
 import type { BallotSummaryDto } from "@/utils/ballotSummary";
 import {
@@ -91,7 +92,7 @@ const drawerTitle = computed(() => {
   }
 
   return t("ballots.entryDrawerTitle", {
-    code: ballot.ballotCode,
+    code: formatBallotDisplayCode(t, ballot),
     status: statusLabel,
   });
 });
@@ -406,7 +407,7 @@ function handleLocationChange(locationGuid: string | null) {
                 class="ballot-code-link"
                 @click="openBallot(scope.row)"
               >
-                {{ scope.row.ballotCode }}
+                {{ formatBallotDisplayCode($t, scope.row) }}
               </el-button>
             </template>
           </el-table-column>

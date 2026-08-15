@@ -12,6 +12,10 @@ const mockT = (key: string, values?: Record<string, string | number>) => {
     "ballots.cacheLoadError": "Failed to load names",
     "ballots.searchPlaceholder": "Search",
     "ballots.searchHelp": "Use arrow keys",
+    "ballots.searchHelpRaw": "Find copied the name",
+    "ballots.findRawName": "Find",
+    "ballots.findRawNameHint": "Click again to widen the search",
+    "ballots.changeRawName": "Change",
     "ballots.searchPerson": "Add a name",
     "ballots.namesOnBallot": "Names on the ballot",
     "ballots.ballotNum": "{code}",
@@ -22,6 +26,17 @@ const mockT = (key: string, values?: Record<string, string | number>) => {
     "ballots.dragToReorder": "Drag votes to change their order",
     "ballots.addBallot": "Add Ballot",
     "ballots.addNextBallot": "Start another ballot",
+    "ballots.addName": "Add a missing name or spoiled vote",
+    "ballots.addNameDrawerTitle": "Add a name to this ballot",
+    "ballots.setSpoiledOrNewName": "Set as spoiled vote or new name",
+    "ballots.rawVoteNameReference": "Name entered on the ballot",
+    "ballots.voteEntryType": "Vote entry type",
+    "ballots.voteEntryNormal": "Normal vote",
+    "ballots.voteEntryUnidentifiable": "Unidentifiable (U01)",
+    "ballots.voteEntryUnreadable": "Unreadable (U02)",
+    "ballots.personLessVoteHint":
+      "No person record will be created. A spoiled vote will be recorded.",
+    "common.save": "Save",
     "ballots.deleteBallot": "Delete Ballot",
     "ballots.deleteConfirm":
       "Delete ballot {code}? All votes on it will be permanently removed.",
@@ -761,5 +776,316 @@ describe("InlineBallotEntry", () => {
     expect((wrapper.vm as { reorderingVotes: boolean }).reorderingVotes).toBe(
       false,
     );
+  });
+
+  it("shows the voter-entered name and copies it into search on Find", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 11,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        statusCode: "Raw",
+        onlineVoteRaw:
+          '{"First":"Jonathan","Last":"Smythe","OtherInfo":"Jonathan Smythe"}',
+      },
+    ];
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(votes),
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+    expect(wrapper.find(".raw-name").text()).toBe("Jonathan Smythe");
+    expect(wrapper.find(".vote-name").exists()).toBe(false);
+
+    const findButton = wrapper
+      .findAllComponents(ElButton)
+      .find((button) => button.text().includes("Find"));
+    expect(findButton).toBeDefined();
+    await findButton!.trigger("click");
+    await nextTick();
+
+    const searchInput = wrapper.find(".search-input input")
+      .element as HTMLInputElement;
+    expect(searchInput.value).toBe("Jonathan Smythe");
+
+    await findButton!.trigger("click");
+    await nextTick();
+    expect(searchInput.value).toBe("Jonatha Smyth");
+  });
+
+  it("assigns a search match to the targeted raw vote instead of adding a line", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 11,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        statusCode: "Raw",
+        onlineVoteRaw: '{"First":"John","Last":"Doe","OtherInfo":"John Doe"}',
+      },
+    ];
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(votes),
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+    await wrapper.find(".search-input input").setValue("John");
+    await nextTick();
+    await wrapper.find(".search-result-item").trigger("click");
+    await nextTick();
+
+    expect(wrapper.emitted("vote-added")).toBeFalsy();
+    const updated = wrapper.emitted("vote-updated") as VoteDto[][];
+    expect(updated[0][0].rowId).toBe(11);
+    expect(updated[0][0].personFullName).toBe("John Doe");
+    expect(updated[0][0].onlineVoteRaw).toContain("John");
+  });
+
+  it("keeps the raw name in normal weight and shows the matched name after entry", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 12,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        statusCode: "ok",
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: "Abbas, Cyrus",
+        onlineVoteRaw: '{"First":"cyrus","Last":"rus","OtherInfo":"cyrus rus"}',
+      },
+    ];
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(votes),
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+    expect(wrapper.find(".raw-name").text()).toBe("cyrus rus");
+    expect(wrapper.find(".vote-name").text()).toBe("Abbas, Cyrus");
+    const findButton = wrapper.find(".vote-actions .raw-find-btn");
+    expect(findButton.exists()).toBe(true);
+    expect(wrapper.find(".raw-vote .raw-find-btn").exists()).toBe(false);
+  });
+
+  it("hides delete and reorder controls on online ballots", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 12,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        statusCode: "ok",
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: "Abbas, Cyrus",
+        onlineVoteRaw: '{"First":"cyrus","Last":"rus","OtherInfo":"cyrus rus"}',
+      },
+    ];
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: {
+          ...createMockBallot(votes),
+          computerCode: "OL",
+        },
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+    expect(wrapper.find(".delete-ballot-action").exists()).toBe(false);
+    expect(wrapper.find(".vote-actions [aria-label='Delete']").exists()).toBe(
+      false,
+    );
+    expect(wrapper.find(".vote-actions .raw-find-btn").exists()).toBe(true);
+    expect(wrapper.find(".vote-actions .raw-find-btn").text()).toBe("Change");
+    expect(wrapper.find(".drag-handle").exists()).toBe(false);
+    expect(wrapper.find(".votes-drag-hint").exists()).toBe(false);
+    expect(wrapper.find(".add-name-action").exists()).toBe(false);
+  });
+
+  it("hides Add a missing name on online ballots until Find is used", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 20,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        statusCode: "ok",
+        personGuid: mockSearchablePeople[0].personGuid,
+        personFullName: "John Doe",
+        onlineVoteRaw: '{"First":"John","Last":"Doe","OtherInfo":"John Doe"}',
+      },
+    ];
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: {
+          ...createMockBallot(votes),
+          computerCode: "OL",
+        },
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+    expect(wrapper.find(".add-name-action").exists()).toBe(false);
+
+    await wrapper.find(".vote-row.has-vote").trigger("click");
+    await nextTick();
+    expect(wrapper.find(".add-name-action").exists()).toBe(false);
+
+    await wrapper.find(".vote-actions .raw-find-btn").trigger("click");
+    await nextTick();
+
+    expect(wrapper.find(".add-name-action").exists()).toBe(true);
+    expect(wrapper.find(".add-name-action").text()).toBe(
+      "Set as spoiled vote or new name",
+    );
+    expect(wrapper.find(".add-name-action .el-icon").exists()).toBe(false);
+    const actionBlocks = wrapper
+      .findAll(".add-name-action, .new-ballot-action")
+      .map((block) => block.classes());
+    expect(actionBlocks[0]).toContain("add-name-action");
+    expect(actionBlocks[1]).toContain("new-ballot-action");
+  });
+
+  it("applies a spoiled vote to the selected online vote instead of adding a line", async () => {
+    const votes: VoteDto[] = [
+      {
+        rowId: 21,
+        ballotGuid: "ballot-123",
+        positionOnBallot: 1,
+        statusCode: "Raw",
+        onlineVoteRaw: '{"First":"Jon","Last":"Smyth","OtherInfo":"Jon Smyth"}',
+      },
+    ];
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: {
+          ...createMockBallot(votes),
+          computerCode: "IM",
+        },
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+    expect(wrapper.find(".add-name-action").exists()).toBe(false);
+
+    await wrapper.find(".raw-find-btn").trigger("click");
+    await nextTick();
+    expect(wrapper.find(".add-name-action").exists()).toBe(true);
+
+    await wrapper.find(".add-name-action button").trigger("click");
+    await nextTick();
+
+    expect(wrapper.find(".ballot-add-person-panel__raw-value").text()).toBe(
+      "Jon Smyth",
+    );
+
+    const saveButton = wrapper
+      .findAllComponents(ElButton)
+      .find((button) => button.text().includes("Save"));
+    expect(saveButton).toBeDefined();
+    await saveButton!.trigger("click");
+    await flushPromises();
+
+    expect(wrapper.emitted("vote-added")).toBeFalsy();
+    const updated = wrapper.emitted("vote-updated") as VoteDto[][];
+    expect(updated[0][0].rowId).toBe(21);
+    expect(updated[0][0].statusCode).toBe("Spoiled");
+    expect(updated[0][0].ineligibleReasonCode).toBe("U01");
+    expect(updated[0][0].personGuid).toBeUndefined();
+    expect(updated[0][0].onlineVoteRaw).toContain("Jon");
+  });
+
+  it("places Clear Needs Review above Start another ballot", async () => {
+    const reviewBallot = {
+      ...createMockBallot(),
+      statusCode: "Review",
+    };
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: reviewBallot,
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+
+    const actionBlocks = wrapper
+      .findAll(
+        ".needs-review-toggle, .new-ballot-action, .add-name-action, .delete-ballot-action",
+      )
+      .map((block) => block.classes());
+
+    expect(actionBlocks[0]).toContain("needs-review-toggle");
+    expect(actionBlocks[1]).toContain("new-ballot-action");
+    expect(wrapper.find(".needs-review-toggle").text()).toContain(
+      "Clear Needs Review",
+    );
+  });
+
+  it("keeps Mark as Needs Review below Start another ballot", async () => {
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+        hasKeyboardTeller: true,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+
+    const actionBlocks = wrapper
+      .findAll(
+        ".needs-review-toggle, .new-ballot-action, .add-name-action, .delete-ballot-action",
+      )
+      .map((block) => block.classes());
+
+    expect(actionBlocks[0]).toContain("new-ballot-action");
+    expect(actionBlocks).toContainEqual(
+      expect.arrayContaining(["needs-review-toggle"]),
+    );
+    const reviewIndex = actionBlocks.findIndex((classes) =>
+      classes.includes("needs-review-toggle"),
+    );
+    expect(reviewIndex).toBeGreaterThan(0);
+    expect(wrapper.find(".needs-review-toggle").text()).toContain(
+      "Mark as Needs Review",
+    );
+    expect(wrapper.find(".add-name-action").exists()).toBe(true);
   });
 });

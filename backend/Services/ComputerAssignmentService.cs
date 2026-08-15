@@ -77,14 +77,20 @@ public class ComputerAssignmentService : IComputerAssignmentService, IDisposable
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
             if (state.ClientIdToLastCode.TryGetValue(normalizedClientId, out var previousCode)
                 && ComputerCodeHelper.IsValidCode(previousCode)
+                && !ComputerCodeHelper.IsReservedCode(previousCode)
                 && !activeCodes.Contains(previousCode))
             {
                 assignedCode = ComputerCodeHelper.NormalizeCode(previousCode);
             }
             else
             {
-                state.HighestAssignedIndex++;
-                assignedCode = ComputerCodeHelper.IndexToCode(state.HighestAssignedIndex);
+                do
+                {
+                    state.HighestAssignedIndex++;
+                    assignedCode = ComputerCodeHelper.IndexToCode(state.HighestAssignedIndex);
+                }
+                while (ComputerCodeHelper.IsReservedCode(assignedCode)
+                       || activeCodes.Contains(assignedCode));
             }
 
             state.Connections[connectionId] = new ActiveConnection

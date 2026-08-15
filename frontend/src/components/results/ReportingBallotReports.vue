@@ -10,16 +10,28 @@ import type {
   VotesByNameReport,
   VotesByNumReport,
 } from "@/types";
+import { formatBallotDisplayCode } from "@/utils/ballotDisplayCode";
 import {
   formatReportDate,
   formatReportPercent,
 } from "@/utils/reportFormatters";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
   selectedReport: string;
   selectedReportName: string;
   reportData: unknown;
 }>();
+
+const { t } = useI18n();
+
+function reportBallotCode(ballot: {
+  ballotCode: string;
+  isOnline?: boolean;
+  isImported?: boolean;
+}) {
+  return formatBallotDisplayCode(t, ballot);
+}
 
 const formatDate = formatReportDate;
 const formatPercent = formatReportPercent;
@@ -319,7 +331,7 @@ const selectedReportName = computed(() => props.selectedReportName);
             :class="{ spoiled: b.spoiled }"
           >
             <td class="ballot-id">
-              <div class="ballot-code">{{ b.ballotCode }}</div>
+              <div class="ballot-code">{{ reportBallotCode(b) }}</div>
               <div v-if="b.location" class="ballot-loc">
                 {{ b.location }}
               </div>
@@ -434,7 +446,7 @@ const selectedReportName = computed(() => props.selectedReportName);
               :class="{ spoiled: b.spoiled }"
             >
               <td class="ballot-id">
-                <div class="ballot-code">{{ b.ballotCode }}</div>
+                <div class="ballot-code">{{ reportBallotCode(b) }}</div>
                 <div v-if="b.location" class="ballot-loc">
                   {{ b.location }}
                 </div>
@@ -482,7 +494,7 @@ const selectedReportName = computed(() => props.selectedReportName);
             :key="b.ballotId"
             :class="{ spoiled: b.spoiled }"
           >
-            <td>{{ b.ballotCode }}</td>
+            <td>{{ reportBallotCode(b) }}</td>
             <td>{{ b.location }}</td>
             <td>{{ b.statusCode }}</td>
             <td class="num">{{ b.spoiledVotes }}</td>

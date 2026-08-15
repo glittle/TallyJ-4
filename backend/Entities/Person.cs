@@ -50,10 +50,6 @@ public partial class Person
 
     public string? CombinedInfoAtStart { get; set; }
 
-    [StringLength(2)]
-    [Unicode(false)]
-    public string? AgeGroup { get; set; }
-
     public bool? CanVote { get; set; }
 
     public bool? CanReceiveVotes { get; set; }

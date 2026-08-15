@@ -1085,7 +1085,6 @@ export type PeopleCreatePersonDto = {
     bahaiId?: string | null;
     email?: string | null;
     phone?: string | null;
-    ageGroup?: string | null;
     ineligibleReasonGuid?: string | null;
 };
 
@@ -1104,7 +1103,6 @@ export type PeoplePersonDetailDto = {
     otherLastNames?: string | null;
     otherNames?: string | null;
     otherInfo?: string | null;
-    ageGroup?: string | null;
     ineligibleReasonGuid?: string | null;
     ineligibleReasonCode?: string | null;
     registrationTime?: Date | null;
@@ -1136,7 +1134,6 @@ export type PeoplePersonDto = {
     otherNames?: string | null;
     otherInfo?: string | null;
     combinedSoundCodes?: string | null;
-    ageGroup?: string | null;
     ineligibleReasonGuid?: string | null;
     ineligibleReasonCode?: string | null;
     voteCount?: number;
@@ -1164,7 +1161,6 @@ export type PeopleUpdatePersonDto = {
     bahaiId?: string | null;
     email?: string | null;
     phone?: string | null;
-    ageGroup?: string | null;
     ineligibleReasonGuid?: string | null;
 };
 
@@ -3809,8 +3805,10 @@ export type PutApiPeopleImportByElectionGuidFilesByRowIdSettingsResponses = {
     /**
      * OK
      */
-    200: unknown;
+    200: ImportImportFileDto;
 };
+
+export type PutApiPeopleImportByElectionGuidFilesByRowIdSettingsResponse = PutApiPeopleImportByElectionGuidFilesByRowIdSettingsResponses[keyof PutApiPeopleImportByElectionGuidFilesByRowIdSettingsResponses];
 
 export type PostApiPeopleImportByElectionGuidFilesByRowIdImportData = {
     body?: never;

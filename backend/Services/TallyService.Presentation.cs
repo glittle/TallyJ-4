@@ -172,7 +172,6 @@ public partial class TallyService
         var turnoutByLocation = await CalculateTurnoutByLocationAsync(electionGuid, locations);
 
         var demographicBreakdown = new List<DemographicTurnoutDto>();
-        await CalculateDemographicAgeBreakdownAsync(electionGuid, demographicBreakdown);
         await CalculateDemographicAreaBreakdownAsync(electionGuid, demographicBreakdown);
 
         var timeBasedTurnout = await CalculateTimeBasedTurnoutAsync(totalBallotsCast, totalRegisteredVoters, election);
@@ -210,32 +209,6 @@ public partial class TallyService
             turnoutByLocation[location.Name ?? UnknownFallbackValue] = turnout;
         }
         return turnoutByLocation;
-    }
-
-    private async Task CalculateDemographicAgeBreakdownAsync(Guid electionGuid, List<DemographicTurnoutDto> demographicBreakdown)
-    {
-        var ageGroups = await _context.People
-            .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true && p.AgeGroup != null)
-            .GroupBy(p => p.AgeGroup)
-            .Select(g => new
-            {
-                AgeGroup = g.Key,
-                TotalVoters = g.Count(),
-                Voted = g.Count(p => p.HasOnlineBallot == true)
-            })
-            .ToListAsync();
-
-        foreach (var ageGroup in ageGroups)
-        {
-            demographicBreakdown.Add(new DemographicTurnoutDto
-            {
-                DemographicCategory = "AgeGroup",
-                DemographicValue = ageGroup.AgeGroup ?? UnknownFallbackValue,
-                TotalVoters = ageGroup.TotalVoters,
-                Voted = ageGroup.Voted,
-                TurnoutPercentage = ageGroup.TotalVoters > 0 ? (decimal)ageGroup.Voted / ageGroup.TotalVoters * 100 : 0
-            });
-        }
     }
 
     private async Task CalculateDemographicAreaBreakdownAsync(Guid electionGuid, List<DemographicTurnoutDto> demographicBreakdown)

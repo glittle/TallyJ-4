@@ -190,6 +190,8 @@ public class VoteService : IVoteService
 
         var statusCode = VoteStatus.Ok;
         string? ineligibleReasonCode = null;
+        string? personCombinedInfo = vote.PersonCombinedInfo;
+        var previousPersonGuid = vote.PersonGuid;
 
         if (updateDto.PersonGuid.HasValue)
         {
@@ -199,6 +201,8 @@ public class VoteService : IVoteService
                 throw new InvalidOperationException($"Person with GUID '{updateDto.PersonGuid}' not found");
             }
 
+            personCombinedInfo = person.CombinedInfo;
+
             if (!PersonEligibilityHelper.CanReceiveVotes(person))
             {
                 statusCode = VoteStatus.Spoiled;
@@ -207,9 +211,19 @@ public class VoteService : IVoteService
                     person.FullName, ineligibleReasonCode);
             }
         }
+        else
+        {
+            ineligibleReasonCode = updateDto.IneligibleReasonCode;
+            statusCode = VoteStatus.Spoiled;
+            _logger.LogInformation(
+                "Updated vote {VoteId} as person-less spoiled with reason {ReasonCode}",
+                id,
+                ineligibleReasonCode);
+        }
 
         vote.BallotGuid = updateDto.BallotGuid;
         vote.PersonGuid = updateDto.PersonGuid;
+        vote.PersonCombinedInfo = personCombinedInfo;
         vote.VoteStatus = statusCode;
         vote.IneligibleReasonCode = ineligibleReasonCode;
 
@@ -226,6 +240,16 @@ public class VoteService : IVoteService
 
         await RefreshBallotStatusAsync(ballot);
         await _context.SaveChangesAsync();
+
+        if (previousPersonGuid.HasValue)
+        {
+            QueueVoteCountBroadcast(previousPersonGuid.Value, ballot.Location.ElectionGuid);
+        }
+
+        if (updateDto.PersonGuid.HasValue)
+        {
+            QueueVoteCountBroadcast(updateDto.PersonGuid.Value, ballot.Location.ElectionGuid);
+        }
 
         return await BuildCreateUpdateResponseAsync(ballot, id, includeVotePositions: hadMultipleVotes);
     }
@@ -246,6 +270,13 @@ public class VoteService : IVoteService
         if (vote == null)
         {
             return null;
+        }
+
+        if (ComputerCodeHelper.IsOnlineCode(vote.Ballot.ComputerCode)
+            || ComputerCodeHelper.IsImportedCode(vote.Ballot.ComputerCode))
+        {
+            throw new InvalidOperationException(
+                "Votes on online or imported ballots cannot be deleted");
         }
 
         var personGuid = vote.PersonGuid;
@@ -290,6 +321,13 @@ public class VoteService : IVoteService
         if (ballot == null)
         {
             return null;
+        }
+
+        if (ComputerCodeHelper.IsOnlineCode(ballot.ComputerCode)
+            || ComputerCodeHelper.IsImportedCode(ballot.ComputerCode))
+        {
+            throw new InvalidOperationException(
+                "Votes on online or imported ballots cannot be reordered");
         }
 
         var votes = await _context.Votes

@@ -37,6 +37,7 @@ const props = defineProps<{
   isEdit?: boolean;
   showDelete?: boolean;
   hideActions?: boolean;
+  requireEligibility?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -69,8 +70,7 @@ const form = reactive({
   phone: "",
   area: "",
   bahaiId: "",
-  ageGroup: "A",
-  ineligibleReasonGuid: ELIGIBLE_REASON_VALUE,
+  ineligibleReasonGuid: props.requireEligibility ? "" : ELIGIBLE_REASON_VALUE,
 });
 
 const electionHasUnits = computed(() => {
@@ -96,7 +96,14 @@ const showKioskCode = computed(
 
 const canDeletePerson = computed(() => personDetails.value?.canDelete === true);
 
+const hasEligibilitySelection = computed(() =>
+  Boolean(form.ineligibleReasonGuid),
+);
+
 const selectedEligibility = computed(() => {
+  if (!form.ineligibleReasonGuid) {
+    return { canVote: false, canReceiveVotes: false };
+  }
   if (form.ineligibleReasonGuid === ELIGIBLE_REASON_VALUE) {
     return { canVote: true, canReceiveVotes: true };
   }
@@ -122,13 +129,35 @@ const registrationHistoryTitle = computed(() => {
   return t("people.registrationHistory");
 });
 
-const rules = reactive<FormRules>({
-  lastName: [
-    { required: true, message: t("people.lastNameRequired"), trigger: "blur" },
-  ],
-  email: [
-    { type: "email", message: t("people.emailInvalid"), trigger: "blur" },
-  ],
+const rules = computed<FormRules>(() => {
+  const formRules: FormRules = {
+    lastName: [
+      {
+        required: true,
+        message: t("people.lastNameRequired"),
+        trigger: "blur",
+
+        required: true,
+        message: t("people.lastNameRequired"),
+        trigger: "blur",
+      },
+    ],
+    email: [
+      { type: "email", message: t("people.emailInvalid"), trigger: "blur" },
+    ],
+  };
+
+  if (props.requireEligibility) {
+    formRules.ineligibleReasonGuid = [
+      {
+        required: true,
+        message: t("people.eligibilityRequired"),
+        trigger: "change",
+      },
+    ];
+  }
+
+  return formRules;
 });
 
 const registrationHistory = computed((): RegistrationHistoryEntryDto[] => {
@@ -164,8 +193,9 @@ function resetForm() {
   form.phone = "";
   form.area = "";
   form.bahaiId = "";
-  form.ageGroup = "A";
-  form.ineligibleReasonGuid = ELIGIBLE_REASON_VALUE;
+  form.ineligibleReasonGuid = props.requireEligibility
+    ? ""
+    : ELIGIBLE_REASON_VALUE;
 }
 
 watch(
@@ -202,7 +232,6 @@ async function loadPersonDetails() {
       form.phone = personDetails.value.phone || "";
       form.area = personDetails.value.area || "";
       form.bahaiId = personDetails.value.bahaiId || "";
-      form.ageGroup = personDetails.value.ageGroup || "A";
       form.ineligibleReasonGuid = toFormEligibility(
         personDetails.value.ineligibleReasonGuid,
       );
@@ -234,7 +263,6 @@ async function handleSubmit() {
             phone: form.phone || undefined,
             area: form.area || undefined,
             bahaiId: form.bahaiId || undefined,
-            ageGroup: form.ageGroup || undefined,
             ineligibleReasonGuid: toApiEligibility(form.ineligibleReasonGuid),
           };
           await peopleStore.updatePerson(props.person.personGuid, dto);
@@ -251,7 +279,6 @@ async function handleSubmit() {
             phone: form.phone || undefined,
             area: form.area || undefined,
             bahaiId: form.bahaiId || undefined,
-            ageGroup: form.ageGroup || undefined,
             ineligibleReasonGuid: toApiEligibility(form.ineligibleReasonGuid),
           };
           await peopleStore.createPerson(dto);
@@ -296,6 +323,12 @@ async function handleDelete() {
   }
 }
 
+function swapNameFields() {
+  const first = form.firstName;
+  form.firstName = form.lastName;
+  form.lastName = first;
+}
+
 function handleCancel() {
   formRef.value?.resetFields();
   personDetails.value = null;
@@ -325,26 +358,36 @@ defineExpose({
         <el-input v-model="form.firstName" />
       </el-form-item>
 
+      <div class="person-form__name-swap">
+        <el-button
+          link
+          size="small"
+          class="person-form__swap-btn"
+          @click="swapNameFields"
+        >
+          ↑ {{ $t("people.swapFirstLast") }} ↓
+        </el-button>
+      </div>
+
       <el-form-item :label="$t('people.lastName')" prop="lastName">
         <el-input v-model="form.lastName" />
       </el-form-item>
 
-      <el-form-item :label="$t('people.otherNames')" prop="otherNames">
-        <el-input v-model="form.otherNames" />
+      <el-form-item :label="$t('people.bahaiId')" prop="bahaiId">
+        <el-input v-model="form.bahaiId" />
       </el-form-item>
 
-      <el-form-item :label="$t('people.otherLastNames')" prop="otherLastNames">
-        <el-input v-model="form.otherLastNames" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.otherInfo')" prop="otherInfo">
-        <el-input v-model="form.otherInfo" />
-      </el-form-item>
-
-      <el-form-item :label="$t('eligibility.label')">
+      <el-form-item
+        :label="$t('eligibility.label')"
+        prop="ineligibleReasonGuid"
+      >
         <div class="eligibility-field">
-          <el-select v-model="form.ineligibleReasonGuid" style="width: 100%">
-            <el-option-group :label="$t('eligibility.eligible')">
+          <el-select
+            v-model="form.ineligibleReasonGuid"
+            :placeholder="$t('eligibility.selectReason')"
+            style="width: 100%"
+          >
+            <el-option-group :label="$t('eligibility.groupEligible')">
               <el-option
                 :label="$t('eligibility.eligible')"
                 :value="ELIGIBLE_REASON_VALUE"
@@ -364,7 +407,10 @@ defineExpose({
             </el-option-group>
           </el-select>
 
-          <div class="eligibility-interpretation">
+          <div
+            v-if="hasEligibilitySelection"
+            class="eligibility-interpretation"
+          >
             <div
               class="eligibility-interpretation-row"
               :class="{ 'is-no': !selectedEligibility.canVote }"
@@ -391,8 +437,20 @@ defineExpose({
         </div>
       </el-form-item>
 
-      <el-form-item :label="$t('people.bahaiId')" prop="bahaiId">
-        <el-input v-model="form.bahaiId" />
+      <el-form-item :label="$t('people.otherNames')" prop="otherNames">
+        <el-input v-model="form.otherNames" />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.otherLastNames')" prop="otherLastNames">
+        <el-input v-model="form.otherLastNames" />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.otherInfo')" prop="otherInfo">
+        <el-input v-model="form.otherInfo" />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.area')" prop="area">
+        <el-input v-model="form.area" />
       </el-form-item>
 
       <el-form-item :label="$t('people.email')" prop="email">
@@ -401,17 +459,6 @@ defineExpose({
 
       <el-form-item :label="$t('people.phone')" prop="phone">
         <el-input v-model="form.phone" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.area')" prop="area">
-        <el-input v-model="form.area" />
-      </el-form-item>
-
-      <el-form-item :label="$t('people.ageGroupLabel')" prop="ageGroup">
-        <el-select v-model="form.ageGroup" style="width: 100%">
-          <el-option :label="$t('people.ageGroup.adult')" value="A" />
-          <el-option :label="$t('people.ageGroup.youth')" value="Y" />
-        </el-select>
       </el-form-item>
 
       <el-form-item v-if="showKioskCode" :label="$t('people.kioskCode')">
@@ -469,6 +516,22 @@ defineExpose({
 
 <style lang="less">
 .person-form {
+  .person-form__name-swap {
+    margin: calc(var(--spacing-1) * -6) 0 0 160px;
+    opacity: 0.5;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .person-form__swap-btn {
+    padding: 0;
+    height: auto;
+    font-size: var(--el-font-size-extra-small);
+    color: var(--el-text-color-secondary);
+  }
+
   .history-section {
     margin-top: var(--spacing-4);
 
@@ -515,7 +578,7 @@ defineExpose({
     display: flex;
     justify-content: space-between;
     gap: var(--spacing-3);
-    padding: var(--spacing-1) var(--spacing-2);
+    padding: 0 var(--spacing-2);
     border-radius: var(--border-radius-sm);
 
     &.is-no {

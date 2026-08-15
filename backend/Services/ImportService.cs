@@ -3,6 +3,8 @@ using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.Import;
 using Backend.DTOs.SignalR;
+using Backend.Helpers;
+using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -95,6 +97,9 @@ public class ImportService
 
             result.TotalRows = lines.Length - request.Configuration.FirstDataRow + 1;
 
+            var nextImportedNum = await SpecialBallotNumbering.GetNextImportedNumberAsync(
+                _context, location.LocationGuid);
+
             var ballotCodeMapping = request.Configuration.FieldMappings
                 .FirstOrDefault(m => m.TargetField == "BallotCode");
             var votesMapping = request.Configuration.FieldMappings
@@ -124,10 +129,6 @@ public class ImportService
             var peopleCache = await _context.People
                 .Where(p => p.ElectionGuid == request.ElectionGuid)
                 .ToDictionaryAsync(p => $"{p.FirstName} {p.LastName}".ToLower());
-
-            int ballotCounter = await _context.Ballots
-                .Where(b => b.LocationGuid == location.LocationGuid)
-                .CountAsync() + 1;
 
             for (int i = request.Configuration.FirstDataRow - 1; i < lines.Length; i++)
             {
@@ -171,10 +172,10 @@ public class ImportService
                 {
                     BallotGuid = ballotGuid,
                     LocationGuid = location.LocationGuid,
-                    BallotCode = ballotCode,
+                    BallotCode = $"{ComputerCodeHelper.Imported}{nextImportedNum}",
                     StatusCode = BallotStatus.Ok,
-                    ComputerCode = "IMPORT",
-                    BallotNumAtComputer = ballotCounter++,
+                    ComputerCode = ComputerCodeHelper.Imported,
+                    BallotNumAtComputer = nextImportedNum++,
                     Teller1 = teller1,
                     Teller2 = teller2,
                     DateCreated = now,
@@ -200,7 +201,18 @@ public class ImportService
                     }
                     else
                     {
-                        result.Warnings.Add($"Row {rowNumber}: Person '{personNames[pos]}' not found for ballot {ballotCode}");
+                        var rawVote = OnlineRawVote.Parse(personNames[pos]);
+                        var vote = new Vote
+                        {
+                            BallotGuid = ballotGuid,
+                            PositionOnBallot = pos + 1,
+                            VoteStatus = VoteStatus.Raw,
+                            PersonCombinedInfo = rawVote.ToDisplayName(),
+                            OnlineVoteRaw = rawVote.ToJson()
+                        };
+                        _context.Votes.Add(vote);
+                        result.VotesCreated++;
+                        result.Warnings.Add($"Row {rowNumber}: Person '{personNames[pos]}' not found for ballot {ballotCode}; stored for teller resolution");
                     }
                 }
 
@@ -212,6 +224,8 @@ public class ImportService
                 }
             }
 
+            await _context.SaveChangesAsync();
+            await BallotStatusRefresher.RefreshForElectionAsync(_context, electionGuid);
             await _context.SaveChangesAsync();
             result.Success = true;
 

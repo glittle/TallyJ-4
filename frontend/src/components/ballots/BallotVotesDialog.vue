@@ -8,6 +8,7 @@ import { useBallotStore } from "../../stores/ballotStore";
 import type { BallotDto, VoteDto } from "../../types";
 import VoteFormDialog from "./VoteFormDialog.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { formatBallotDisplayCode } from "@/utils/ballotDisplayCode";
 const { handleApiError } = useApiErrorHandler();
 
 const props = defineProps<{
@@ -83,7 +84,11 @@ function getVoteStatusType(status: string) {
 <template>
   <el-dialog
     :model-value="modelValue"
-    :title="$t('ballots.votes', { code: ballot?.ballotCode })"
+    :title="
+      $t('ballots.votes', {
+        code: ballot ? formatBallotDisplayCode($t, ballot) : '',
+      })
+    "
     width="800px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
