@@ -1,9 +1,11 @@
+using System.Globalization;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.Entities;
 using Backend.DTOs.Import;
+using Backend.Localization;
 using Backend.Services;
 using Backend.Enumerations;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +17,14 @@ public class PeopleImportServiceTests : ServiceTestBase
     private readonly PeopleImportService _service;
     private readonly Mock<ISignalRNotificationService> _signalRMock;
     private readonly Mock<ILogger<PeopleImportService>> _loggerMock;
+    private readonly Mock<IJsonLocalizationProvider> _localizationMock;
 
     public PeopleImportServiceTests()
     {
         _signalRMock = new Mock<ISignalRNotificationService>();
         _loggerMock = new Mock<ILogger<PeopleImportService>>();
-        _service = new PeopleImportService(Context, _signalRMock.Object);
+        _localizationMock = new Mock<IJsonLocalizationProvider>();
+        _service = new PeopleImportService(Context, _signalRMock.Object, _localizationMock.Object);
     }
 
     [Fact]
@@ -788,6 +792,119 @@ public class PeopleImportServiceTests : ServiceTestBase
         Assert.True(jane.CanVote);
         Assert.True(jane.CanReceiveVotes);
         Assert.Null(jane.IneligibleReasonGuid);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_IneligibleReasonByCode_SetsEligibility()
+    {
+        var electionGuid = Guid.NewGuid();
+        var fileContent = "FirstName,LastName,Eligibility\nJohn,Doe,V04";
+        var importFile = await AddMappedEligibilityFile(electionGuid, fileContent);
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        var john = Assert.Single(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
+        Assert.True(john.CanVote);
+        Assert.False(john.CanReceiveVotes);
+        Assert.Equal(IneligibleReasonEnum.V04_RightsRemovedCannotBeVotedFor.ReasonGuid, john.IneligibleReasonGuid);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_EligibleText_SetsFullEligibility()
+    {
+        var electionGuid = Guid.NewGuid();
+        var fileContent = "FirstName,LastName,Eligibility\nJohn,Doe,Eligible";
+        var importFile = await AddMappedEligibilityFile(electionGuid, fileContent);
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        var john = Assert.Single(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
+        Assert.True(john.CanVote);
+        Assert.True(john.CanReceiveVotes);
+        Assert.Null(john.IneligibleReasonGuid);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_LocalizedEligibilityText_SetsEligibility()
+    {
+        _localizationMock
+            .Setup(p => p.GetString("eligibility.X01", It.IsAny<CultureInfo>()))
+            .Returns("Décédé");
+
+        var electionGuid = Guid.NewGuid();
+        var fileContent = "FirstName,LastName,Eligibility\nJohn,Doe,Décédé";
+        var importFile = await AddMappedEligibilityFile(electionGuid, fileContent);
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        var john = Assert.Single(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
+        Assert.False(john.CanVote);
+        Assert.False(john.CanReceiveVotes);
+        Assert.Equal(IneligibleReasonEnum.X01_Deceased.ReasonGuid, john.IneligibleReasonGuid);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_UnrecognizedEligibility_SkipsRow()
+    {
+        var electionGuid = Guid.NewGuid();
+        var fileContent = "FirstName,LastName,Eligibility\nJohn,Doe,Not a real status\nJane,Smith,";
+        var importFile = await AddMappedEligibilityFile(electionGuid, fileContent);
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.Equal(1, result.PeopleAdded);
+        Assert.Equal(1, result.PeopleSkipped);
+        var error = Assert.Single(result.Errors);
+        Assert.Equal("import.errors.unrecognizedEligibility", error.Key);
+        Assert.Equal("2", error.Parameters["rowNumber"]);
+        Assert.Equal("Not a real status", error.Parameters["eligibilityValue"]);
+
+        var jane = Assert.Single(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
+        Assert.Equal("Jane", jane.FirstName);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_InternalOnlyEligibilityCode_SkipsRow()
+    {
+        var electionGuid = Guid.NewGuid();
+        var fileContent = "FirstName,LastName,Eligibility\nJohn,Doe,U01";
+        var importFile = await AddMappedEligibilityFile(electionGuid, fileContent);
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.Equal(0, result.PeopleAdded);
+        Assert.Equal(1, result.PeopleSkipped);
+        Assert.Empty(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
+        Assert.Equal("import.errors.unrecognizedEligibility", Assert.Single(result.Errors).Key);
+    }
+
+    private async Task<ImportFile> AddMappedEligibilityFile(Guid electionGuid, string fileContent)
+    {
+        var mappings = new List<ColumnMappingDto>
+        {
+            new() { FileColumn = "FirstName", TargetField = "FirstName" },
+            new() { FileColumn = "LastName", TargetField = "LastName" },
+            new() { FileColumn = "Eligibility", TargetField = "IneligibleReasonDescription" }
+        };
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true,
+            ColumnsToRead = System.Text.Json.JsonSerializer.Serialize(mappings)
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+        return importFile;
     }
 
     [Fact]

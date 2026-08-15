@@ -34,6 +34,14 @@ export function initApiClient() {
     credentials: "include",
   });
 
+  client.interceptors.request.use((request) => {
+    const locale = i18n.global.locale;
+    const language = typeof locale === "string" ? locale : locale.value;
+    const headers = new Headers(request.headers);
+    headers.set("Accept-Language", language);
+    return new Request(request, { headers });
+  });
+
   client.interceptors.response.use(async (response, request) => {
     if (response.status !== 401 || redirectingFor401) {
       return response;
