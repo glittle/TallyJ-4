@@ -136,10 +136,6 @@ const rules = computed<FormRules>(() => {
         required: true,
         message: t("people.lastNameRequired"),
         trigger: "blur",
-
-        required: true,
-        message: t("people.lastNameRequired"),
-        trigger: "blur",
       },
     ],
     email: [
