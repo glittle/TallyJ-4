@@ -75,7 +75,7 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
     }
 
     private Person MakePerson(string firstName, string combinedInfo = "person",
-        string? votingMethod = null, Guid? ineligibleReasonGuid = null,
+        string? votingMethod = null, string? ineligibleReasonCode = null,
         bool canReceiveVotes = true, bool canVote = true)
     {
         var person = new Person
@@ -86,7 +86,7 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
             LastName = firstName,
             CombinedInfo = combinedInfo,
             VotingMethod = votingMethod,
-            IneligibleReasonGuid = ineligibleReasonGuid,
+            IneligibleReasonCode = ineligibleReasonCode,
             CanReceiveVotes = canReceiveVotes,
             CanVote = canVote,
             RowVersion = new byte[8]
@@ -117,9 +117,7 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
             BallotGuid = ballot.BallotGuid,
             PersonGuid = person.PersonGuid,
             PersonCombinedInfo = person.CombinedInfo,
-            IneligibleReasonCode = person.IneligibleReasonGuid.HasValue
-                ? IneligibleReasonEnum.GetByGuid(person.IneligibleReasonGuid)?.Code
-                : null,
+            IneligibleReasonCode = person.IneligibleReasonCode,
             SingleNameElectionCount = count,
             PositionOnBallot = 1,
             VoteStatus = VoteStatus.Ok,
@@ -321,7 +319,7 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
         MakeVote(ballots[0], _samplePeople[4], 27);
 
         var ineligiblePerson = MakePerson("z1",
-            ineligibleReasonGuid: IneligibleReasonEnum.X09_OtherCannotVoteOrBeVotedFor.ReasonGuid,
+            ineligibleReasonCode: IneligibleReasonEnum.X09_OtherCannotVoteOrBeVotedFor.Code,
             canReceiveVotes: false, canVote: false);
         _context.SaveChanges();
 
@@ -359,7 +357,7 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
         var election = CreateElection(numberToElect: 1);
         CreateSamplePeople();
 
-        _samplePeople[5].IneligibleReasonGuid = IneligibleReasonEnum.X01_Deceased.ReasonGuid;
+        _samplePeople[5].IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code;
         _samplePeople[5].CanReceiveVotes = false;
         _samplePeople[5].CanVote = false;
         _context.SaveChanges();
@@ -367,7 +365,7 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
         var ballots = new[] { MakeBallot(), MakeBallot(), MakeBallot() };
 
         var ineligiblePerson2 = MakePerson("z2",
-            ineligibleReasonGuid: IneligibleReasonEnum.X09_OtherCannotVoteOrBeVotedFor.ReasonGuid,
+            ineligibleReasonCode: IneligibleReasonEnum.X09_OtherCannotVoteOrBeVotedFor.Code,
             canReceiveVotes: false, canVote: false);
         _context.SaveChanges();
 

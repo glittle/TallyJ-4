@@ -3615,9 +3615,8 @@ export const People_CreatePersonDtoSchema = {
             type: 'string',
             nullable: true
         },
-        ineligibleReasonGuid: {
+        ineligibleReasonCode: {
             type: 'string',
-            format: 'uuid',
             nullable: true
         }
     },
@@ -3681,11 +3680,6 @@ export const People_PersonDetailDtoSchema = {
         },
         otherInfo: {
             type: 'string',
-            nullable: true
-        },
-        ineligibleReasonGuid: {
-            type: 'string',
-            format: 'uuid',
             nullable: true
         },
         ineligibleReasonCode: {
@@ -3805,11 +3799,6 @@ export const People_PersonDtoSchema = {
             type: 'string',
             nullable: true
         },
-        ineligibleReasonGuid: {
-            type: 'string',
-            format: 'uuid',
-            nullable: true
-        },
         ineligibleReasonCode: {
             type: 'string',
             nullable: true
@@ -3904,9 +3893,8 @@ export const People_UpdatePersonDtoSchema = {
             type: 'string',
             nullable: true
         },
-        ineligibleReasonGuid: {
+        ineligibleReasonCode: {
             type: 'string',
-            format: 'uuid',
             nullable: true
         }
     },

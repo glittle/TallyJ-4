@@ -67,15 +67,15 @@ public class ElectionAnalyzerNormalTests : IDisposable
             MakePerson("a2"),
             MakePerson("a3"),
             MakePerson("a4"),
-            MakePerson("a5", ineligibleReasonGuid: IneligibleReasonEnum.X02_MovedElsewhereRecently.ReasonGuid, canReceiveVotes: false, canVote: false),
-            MakePerson("a6", ineligibleReasonGuid: IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid, canReceiveVotes: false, canVote: true),
-            MakePerson("a7", ineligibleReasonGuid: IneligibleReasonEnum.X06_ResidesElsewhere.ReasonGuid, canReceiveVotes: false, canVote: false),
+            MakePerson("a5", ineligibleReasonCode: IneligibleReasonEnum.X02_MovedElsewhereRecently.Code, canReceiveVotes: false, canVote: false),
+            MakePerson("a6", ineligibleReasonCode: IneligibleReasonEnum.V01_YouthAged181920.Code, canReceiveVotes: false, canVote: true),
+            MakePerson("a7", ineligibleReasonCode: IneligibleReasonEnum.X06_ResidesElsewhere.Code, canReceiveVotes: false, canVote: false),
         };
         _context.SaveChanges();
     }
 
     private Person MakePerson(string firstName, string combinedInfo = "abc",
-        string? votingMethod = null, Guid? ineligibleReasonGuid = null,
+        string? votingMethod = null, string? ineligibleReasonCode = null,
         bool canReceiveVotes = true, bool canVote = true)
     {
         var person = new Person
@@ -87,7 +87,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
             CombinedInfo = combinedInfo,
             CombinedInfoAtStart = combinedInfo,
             VotingMethod = votingMethod,
-            IneligibleReasonGuid = ineligibleReasonGuid,
+            IneligibleReasonCode = ineligibleReasonCode,
             CanReceiveVotes = canReceiveVotes,
             CanVote = canVote,
             RowVersion = new byte[8]
@@ -118,9 +118,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
             BallotGuid = ballot.BallotGuid,
             PersonGuid = person.PersonGuid,
             PersonCombinedInfo = person.CombinedInfo,
-            IneligibleReasonCode = person.IneligibleReasonGuid.HasValue
-                ? IneligibleReasonEnum.GetByGuid(person.IneligibleReasonGuid)?.Code
-                : null,
+            IneligibleReasonCode = person.IneligibleReasonCode,
             PositionOnBallot = positionOnBallot,
             VoteStatus = VoteStatus.Ok,
             RowVersion = new byte[8]
@@ -129,9 +127,9 @@ public class ElectionAnalyzerNormalTests : IDisposable
         return vote;
     }
 
-    private Vote MakeVoteForIneligible(Ballot ballot, Guid ineligibleReasonGuid, int positionOnBallot = 1)
+    private Vote MakeVoteForIneligible(Ballot ballot, string ineligibleReasonCode, int positionOnBallot = 1)
     {
-        var reason = IneligibleReasonEnum.GetByGuid(ineligibleReasonGuid);
+        var reason = IneligibleReasonEnum.GetByCode(ineligibleReasonCode);
         var vote = new Vote
         {
             BallotGuid = ballot.BallotGuid,
@@ -273,8 +271,8 @@ public class ElectionAnalyzerNormalTests : IDisposable
         CreateSamplePeople();
 
         var ballot = MakeBallot();
-        MakeVoteForIneligible(ballot, IneligibleReasonEnum.U01_Unidentifiable.ReasonGuid);
-        MakeVoteForIneligible(ballot, IneligibleReasonEnum.U01_Unidentifiable.ReasonGuid);
+        MakeVoteForIneligible(ballot, IneligibleReasonEnum.U01_Unidentifiable.Code);
+        MakeVoteForIneligible(ballot, IneligibleReasonEnum.U01_Unidentifiable.Code);
 
         await RunAnalysis(election);
 
@@ -300,7 +298,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
         CreateSamplePeople();
 
         var ballot = MakeBallot();
-        MakeVoteForIneligible(ballot, IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid);
+        MakeVoteForIneligible(ballot, IneligibleReasonEnum.V01_YouthAged181920.Code);
         MakeVote(ballot, _samplePeople[6]);
 
         await RunAnalysis(election);
@@ -625,7 +623,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
         MakeVote(ballots[0], _samplePeople[0]);
         MakeVote(ballots[0], _samplePeople[1]);
         MakeVote(ballots[1], _samplePeople[2]);
-        MakeVoteForIneligible(ballots[1], IneligibleReasonEnum.U01_Unidentifiable.ReasonGuid);
+        MakeVoteForIneligible(ballots[1], IneligibleReasonEnum.U01_Unidentifiable.Code);
 
         await RunAnalysis(election);
 
@@ -722,7 +720,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
         MakeVote(ballots[0], _samplePeople[0]);
         MakeVote(ballots[0], _samplePeople[1]);
         MakeVote(ballots[1], _samplePeople[2]);
-        MakeVoteForIneligible(ballots[1], IneligibleReasonEnum.U01_Unidentifiable.ReasonGuid);
+        MakeVoteForIneligible(ballots[1], IneligibleReasonEnum.U01_Unidentifiable.Code);
 
         await RunAnalysis(election);
 
@@ -789,7 +787,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
         MakeVote(ballots[1], _samplePeople[0]);
         MakeVote(ballots[1], _samplePeople[2]);
         MakeVote(ballots[2], _samplePeople[3]);
-        MakeVoteForIneligible(ballots[2], IneligibleReasonEnum.X09_OtherCannotVoteOrBeVotedFor.ReasonGuid);
+        MakeVoteForIneligible(ballots[2], IneligibleReasonEnum.X09_OtherCannotVoteOrBeVotedFor.Code);
 
         await RunAnalysis(election);
 
@@ -1042,7 +1040,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
             {
                 var ballot = MakeBallot();
                 MakeVote(ballot, people[p], 1);
-                MakeVoteForIneligible(ballot, IneligibleReasonEnum.U01_Unidentifiable.ReasonGuid, 2);
+                MakeVoteForIneligible(ballot, IneligibleReasonEnum.U01_Unidentifiable.Code, 2);
             }
         }
 

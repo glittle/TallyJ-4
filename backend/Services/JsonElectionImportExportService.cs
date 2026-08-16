@@ -128,7 +128,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 p.CombinedInfoAtStart,
                 p.CanVote,
                 p.CanReceiveVotes,
-                p.IneligibleReasonGuid,
+                p.IneligibleReasonCode,
                 RegistrationTime = p.RegistrationTime?.ToString("o"),
                 p.VotingLocationGuid,
                 p.VotingMethod,
@@ -410,7 +410,8 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 // Match CSV people import and XML package import when flags are omitted.
                 CanVote = person.CanVote ?? true,
                 CanReceiveVotes = person.CanReceiveVotes ?? true,
-                IneligibleReasonGuid = person.IneligibleReasonGuid,
+                IneligibleReasonCode = IneligibleReasonEnum.ResolveToCode(person.IneligibleReasonCode)
+                    ?? IneligibleReasonEnum.ResolveToCode(person.IneligibleReasonGuid),
                 RegistrationTime = ParseDateTime(person.RegistrationTime),
                 VotingLocationGuid = person.VotingLocationGuid.HasValue && guidMap.ContainsKey(person.VotingLocationGuid.Value)
                     ? guidMap[person.VotingLocationGuid.Value]

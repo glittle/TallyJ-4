@@ -151,6 +151,34 @@ public class IneligibleReasonEnumTests
     }
 
     [Theory]
+    [InlineData("X01", "X01")]
+    [InlineData("V01", "V01")]
+    [InlineData("D227534D-D7E8-E011-A095-002269C41D11", "X01")]
+    [InlineData("e6dd1cdd-5da0-4222-9f17-f02ce6313b0a", "V01")]
+    [InlineData("C927534D-D7E8-E011-A095-002269C41D11", "U01")]
+    public void ResolveToCode_AcceptsCodeOrGuid(string value, string expectedCode)
+    {
+        Assert.Equal(expectedCode, IneligibleReasonEnum.ResolveToCode(value));
+    }
+
+    [Fact]
+    public void ResolveToCode_Guid_ReturnsCanonicalCode()
+    {
+        Assert.Equal("X01", IneligibleReasonEnum.ResolveToCode(IneligibleReasonEnum.X01_Deceased.ReasonGuid));
+        Assert.Null(IneligibleReasonEnum.ResolveToCode((Guid?)null));
+    }
+
+    [Theory]
+    [InlineData("X01", true)]
+    [InlineData("U01", false)]
+    [InlineData(null, false)]
+    [InlineData("ZZ9", false)]
+    public void IsPersonReasonCode_RejectsInternalAndUnknown(string? code, bool expected)
+    {
+        Assert.Equal(expected, IneligibleReasonEnum.IsPersonReasonCode(code));
+    }
+
+    [Theory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]

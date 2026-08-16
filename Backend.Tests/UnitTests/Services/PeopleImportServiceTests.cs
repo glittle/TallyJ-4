@@ -786,12 +786,12 @@ public class PeopleImportServiceTests : ServiceTestBase
         var john = people.First(p => p.FirstName == "John");
         Assert.False(john.CanVote);
         Assert.False(john.CanReceiveVotes);
-        Assert.Equal(IneligibleReasonEnum.X01_Deceased.ReasonGuid, john.IneligibleReasonGuid);
+        Assert.Equal(IneligibleReasonEnum.X01_Deceased.Code, john.IneligibleReasonCode);
 
         var jane = people.First(p => p.FirstName == "Jane");
         Assert.True(jane.CanVote);
         Assert.True(jane.CanReceiveVotes);
-        Assert.Null(jane.IneligibleReasonGuid);
+        Assert.Null(jane.IneligibleReasonCode);
     }
 
     [Fact]
@@ -807,7 +807,7 @@ public class PeopleImportServiceTests : ServiceTestBase
         var john = Assert.Single(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
         Assert.True(john.CanVote);
         Assert.False(john.CanReceiveVotes);
-        Assert.Equal(IneligibleReasonEnum.V04_RightsRemovedCannotBeVotedFor.ReasonGuid, john.IneligibleReasonGuid);
+        Assert.Equal(IneligibleReasonEnum.V04_RightsRemovedCannotBeVotedFor.Code, john.IneligibleReasonCode);
     }
 
     [Fact]
@@ -823,7 +823,7 @@ public class PeopleImportServiceTests : ServiceTestBase
         var john = Assert.Single(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
         Assert.True(john.CanVote);
         Assert.True(john.CanReceiveVotes);
-        Assert.Null(john.IneligibleReasonGuid);
+        Assert.Null(john.IneligibleReasonCode);
     }
 
     [Fact]
@@ -843,7 +843,7 @@ public class PeopleImportServiceTests : ServiceTestBase
         var john = Assert.Single(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
         Assert.False(john.CanVote);
         Assert.False(john.CanReceiveVotes);
-        Assert.Equal(IneligibleReasonEnum.X01_Deceased.ReasonGuid, john.IneligibleReasonGuid);
+        Assert.Equal(IneligibleReasonEnum.X01_Deceased.Code, john.IneligibleReasonCode);
     }
 
     [Fact]

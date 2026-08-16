@@ -53,13 +53,6 @@ public partial class ReportService : IReportService
         return reason?.Description;
     }
 
-    private static string? GetIneligibleDescriptionByGuid(Guid? guid)
-    {
-        if (guid == null) return null;
-        var reason = IneligibleReasonEnum.GetByGuid(guid);
-        return reason?.Description;
-    }
-
     private string? ParseCustomMethodName(string? customMethods, int index)
     {
         if (string.IsNullOrEmpty(customMethods)) return null;

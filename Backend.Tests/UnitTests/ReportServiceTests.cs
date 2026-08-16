@@ -81,7 +81,7 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
         Guid? votingLocationGuid = null,
         string? email = null,
         string? phone = null,
-        Guid? ineligibleReasonGuid = null,
+        string? ineligibleReasonCode = null,
         string? combinedInfo = null,
         string? combinedInfoAtStart = null,
         string? flags = null)
@@ -99,7 +99,7 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
             VotingLocationGuid = votingLocationGuid,
             Email = email,
             Phone = phone,
-            IneligibleReasonGuid = ineligibleReasonGuid,
+            IneligibleReasonCode = ineligibleReasonCode,
             CombinedInfo = combinedInfo,
             CombinedInfoAtStart = combinedInfoAtStart,
             Flags = flags,
@@ -671,9 +671,9 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     {
         await AddPerson("FullEligible", "F", canVote: true, canReceiveVotes: true);
         await AddPerson("CantVote", "C", canVote: false, canReceiveVotes: true,
-            ineligibleReasonGuid: IneligibleReasonEnum.R01_NotADelegateInThisElection.ReasonGuid);
+            ineligibleReasonCode: IneligibleReasonEnum.R01_NotADelegateInThisElection.Code);
         await AddPerson("CantReceive", "R", canVote: true, canReceiveVotes: false,
-            ineligibleReasonGuid: IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid);
+            ineligibleReasonCode: IneligibleReasonEnum.V01_YouthAged181920.Code);
 
         var report = await _service.GetAllNonEligibleAsync(_electionGuid);
 
@@ -720,7 +720,7 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     {
         var loc = await AddLocation("Hall");
         var person = await AddPerson("Ineligible", "I", canReceiveVotes: false,
-            ineligibleReasonGuid: IneligibleReasonEnum.V01_YouthAged181920.ReasonGuid);
+            ineligibleReasonCode: IneligibleReasonEnum.V01_YouthAged181920.Code);
         var ballot = await AddBallot(loc.LocationGuid);
         await AddVote(ballot.BallotGuid, person.PersonGuid, 1, VoteStatus.Ok, ineligibleReasonCode: "V01");
 

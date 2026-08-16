@@ -59,7 +59,7 @@ public partial class ReportService
                     TieBreakRequired = v.PersonGuid.HasValue && tiedPersonGuids.Contains(v.PersonGuid.Value),
                     InvalidReasonDesc = GetIneligibleDescription(v.IneligibleReasonCode)
                         ?? (v.Person != null && v.Person.CanReceiveVotes != true
-                            ? GetIneligibleDescriptionByGuid(v.Person.IneligibleReasonGuid)
+                            ? GetIneligibleDescription(v.Person.IneligibleReasonCode)
                             : null)
                 }).ToList();
 
@@ -105,7 +105,7 @@ public partial class ReportService
                 v.Ballot.Location.ElectionGuid == electionGuid &&
                 v.Ballot.StatusCode == BallotStatus.Ok)
             .Where(v => v.IneligibleReasonCode != null ||
-                        (v.Person != null && v.Person.IneligibleReasonGuid != null))
+                        (v.Person != null && v.Person.IneligibleReasonCode != null))
             .ToListAsync();
 
         var grouped = votes
@@ -114,7 +114,7 @@ public partial class ReportService
             {
                 var firstVote = g.First();
                 var desc = GetIneligibleDescription(firstVote.IneligibleReasonCode)
-                           ?? GetIneligibleDescriptionByGuid(firstVote.Person?.IneligibleReasonGuid);
+                           ?? GetIneligibleDescription(firstVote.Person?.IneligibleReasonCode);
                 return new SpoiledVoteItemDto
                 {
                     PersonName = g.Key,

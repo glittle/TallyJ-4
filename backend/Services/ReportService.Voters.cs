@@ -267,7 +267,7 @@ public partial class ReportService
                 BahaiId = p.BahaiId,
                 CanVote = p.CanVote == true,
                 CanReceiveVotes = p.CanReceiveVotes == true,
-                InvalidReasonDesc = GetIneligibleDescriptionByGuid(p.IneligibleReasonGuid)
+                InvalidReasonDesc = GetIneligibleDescription(p.IneligibleReasonCode)
             }).ToList()
         };
     }
@@ -290,7 +290,7 @@ public partial class ReportService
                 PersonName = p.FullName ?? "",
                 CanReceiveVotes = p.CanReceiveVotes == true,
                 CanVote = p.CanVote == true,
-                InvalidReasonDesc = GetIneligibleDescriptionByGuid(p.IneligibleReasonGuid),
+                InvalidReasonDesc = GetIneligibleDescription(p.IneligibleReasonCode),
                 VotingMethod = GetVotingMethodText(p.VotingMethod)
             }).ToList()
         };

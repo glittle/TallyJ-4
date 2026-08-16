@@ -105,7 +105,7 @@ public static class BallotStatusRefresher
             PersonCombinedInfo = vote.Person?.CombinedInfo,
             VoteCombinedInfo = vote.PersonCombinedInfo,
             VoteIneligibleReasonCode = vote.IneligibleReasonCode,
-            PersonIneligibleReasonGuid = vote.Person?.IneligibleReasonGuid,
+            PersonIneligibleReasonCode = vote.Person?.IneligibleReasonCode,
             OnlineVoteRaw = vote.OnlineVoteRaw,
             SingleNameElectionCount = vote.SingleNameElectionCount,
             VoteStatusCode = vote.VoteStatus

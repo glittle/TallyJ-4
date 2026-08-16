@@ -13,7 +13,6 @@ export interface PersonDto {
   otherNames?: string;
   otherInfo?: string;
   combinedSoundCodes?: string;
-  ineligibleReasonGuid?: string;
   ineligibleReasonCode?: string;
   voteCount: number;
 }
@@ -45,7 +44,6 @@ export interface PersonDetailDto {
   otherLastNames?: string;
   otherNames?: string;
   otherInfo?: string;
-  ineligibleReasonGuid?: string;
   ineligibleReasonCode?: string;
   registrationTime?: string;
   votingLocationGuid?: string;
@@ -77,7 +75,7 @@ export interface CreatePersonDto {
   otherLastNames?: string;
   otherNames?: string;
   otherInfo?: string;
-  ineligibleReasonGuid?: string;
+  ineligibleReasonCode?: string;
 }
 
 export interface UpdatePersonDto {
@@ -90,5 +88,5 @@ export interface UpdatePersonDto {
   otherLastNames?: string;
   otherNames?: string;
   otherInfo?: string;
-  ineligibleReasonGuid?: string;
+  ineligibleReasonCode?: string;
 }

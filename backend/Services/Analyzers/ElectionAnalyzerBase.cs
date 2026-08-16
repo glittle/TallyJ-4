@@ -175,7 +175,7 @@ public abstract class ElectionAnalyzerBase
             PersonCombinedInfo = person?.CombinedInfo,
             VoteCombinedInfo = vote.PersonCombinedInfo,
             VoteIneligibleReasonCode = vote.IneligibleReasonCode,
-            PersonIneligibleReasonGuid = person?.IneligibleReasonGuid,
+            PersonIneligibleReasonCode = person?.IneligibleReasonCode,
             OnlineVoteRaw = vote.OnlineVoteRaw,
             SingleNameElectionCount = vote.SingleNameElectionCount,
             VoteStatusCode = vote.VoteStatus

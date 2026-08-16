@@ -10704,9 +10704,8 @@
             "type": "string",
             "nullable": true
           },
-          "ineligibleReasonGuid": {
+          "ineligibleReasonCode": {
             "type": "string",
-            "format": "uuid",
             "nullable": true
           }
         },
@@ -10769,11 +10768,6 @@
           },
           "otherInfo": {
             "type": "string",
-            "nullable": true
-          },
-          "ineligibleReasonGuid": {
-            "type": "string",
-            "format": "uuid",
             "nullable": true
           },
           "ineligibleReasonCode": {
@@ -10892,11 +10886,6 @@
             "type": "string",
             "nullable": true
           },
-          "ineligibleReasonGuid": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
           "ineligibleReasonCode": {
             "type": "string",
             "nullable": true
@@ -10989,9 +10978,8 @@
             "type": "string",
             "nullable": true
           },
-          "ineligibleReasonGuid": {
+          "ineligibleReasonCode": {
             "type": "string",
-            "format": "uuid",
             "nullable": true
           }
         },

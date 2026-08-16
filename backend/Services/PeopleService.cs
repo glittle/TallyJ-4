@@ -139,7 +139,7 @@ public class PeopleService : IPeopleService
         person.PersonGuid = Guid.NewGuid();
         person.RowVersion = new byte[8];
 
-        // Sync eligibility based on IneligibleReasonGuid
+        // Sync eligibility based on IneligibleReasonCode
         SyncEligibility(person);
 
         _context.People.Add(person);
@@ -176,7 +176,7 @@ public class PeopleService : IPeopleService
             return null;
         }
 
-        var previousIneligibleReasonGuid = person.IneligibleReasonGuid;
+        var previousIneligibleReasonCode = person.IneligibleReasonCode;
 
         if (!string.IsNullOrWhiteSpace(updateDto.Email) && updateDto.Email != person.Email)
         {
@@ -206,10 +206,10 @@ public class PeopleService : IPeopleService
 
         updateDto.CopyMatchingPropertiesTo(person);
 
-        // Sync eligibility based on IneligibleReasonGuid
+        // Sync eligibility based on IneligibleReasonCode
         SyncEligibility(person);
 
-        if (person.IneligibleReasonGuid != previousIneligibleReasonGuid)
+        if (person.IneligibleReasonCode != previousIneligibleReasonCode)
         {
             await VoteStatusRefresher.RefreshVotesForPersonAsync(_context, person, _logger);
         }
@@ -325,14 +325,14 @@ public class PeopleService : IPeopleService
     }
 
     /// <summary>
-    /// Synchronizes the CanVote and CanReceiveVotes properties based on the IneligibleReasonGuid.
+    /// Synchronizes the CanVote and CanReceiveVotes properties based on the IneligibleReasonCode.
     /// </summary>
     /// <param name="person">The person entity to update.</param>
     private void SyncEligibility(Person person)
     {
-        if (person.IneligibleReasonGuid.HasValue)
+        if (!string.IsNullOrWhiteSpace(person.IneligibleReasonCode))
         {
-            var reason = IneligibleReasonEnum.GetByGuid(person.IneligibleReasonGuid.Value);
+            var reason = IneligibleReasonEnum.GetByCode(person.IneligibleReasonCode);
             if (reason != null)
             {
                 person.CanVote = reason.CanVote;
@@ -340,16 +340,15 @@ public class PeopleService : IPeopleService
             }
             else
             {
-                // Unknown GUID - set to ineligible for both
                 person.CanVote = false;
                 person.CanReceiveVotes = false;
-                _logger.LogWarning("Unknown IneligibleReasonGuid {Guid} for person {PersonGuid}, setting CanVote=false, CanReceiveVotes=false",
-                    person.IneligibleReasonGuid, person.PersonGuid);
+                _logger.LogWarning("Unknown IneligibleReasonCode {Code} for person {PersonGuid}, setting CanVote=false, CanReceiveVotes=false",
+                    person.IneligibleReasonCode, person.PersonGuid);
             }
         }
         else
         {
-            // No ineligibility reason - fully eligible
+            person.IneligibleReasonCode = null;
             person.CanVote = true;
             person.CanReceiveVotes = true;
         }
@@ -427,7 +426,6 @@ public class PeopleService : IPeopleService
 
     // =====================================================================
     // Explicit mapping helpers (replaces logic previously hidden in Mapster profiles).
-    // IneligibleReasonCode is derived from the Guid via the enumeration.
     // =====================================================================
 
     /// <summary>
@@ -446,7 +444,6 @@ public class PeopleService : IPeopleService
     private static PersonDto MapToPersonDto(Person person)
     {
         var dto = person.CopyMatchingPropertiesToNew<PersonDto>();
-        dto.IneligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
         // Expose effective flags so null legacy rows match list UI (eligible unless explicitly false).
         dto.CanVote = PersonEligibilityHelper.CanVote(person);
         dto.CanReceiveVotes = PersonEligibilityHelper.CanReceiveVotes(person);
@@ -456,7 +453,6 @@ public class PeopleService : IPeopleService
     private static PersonListDto MapToPersonListDto(Person person)
     {
         var dto = person.CopyMatchingPropertiesToNew<PersonListDto>();
-        dto.IneligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
         dto.CanVote = PersonEligibilityHelper.CanVote(person);
         dto.CanReceiveVotes = PersonEligibilityHelper.CanReceiveVotes(person);
         return dto;
@@ -465,15 +461,9 @@ public class PeopleService : IPeopleService
     private static PersonDetailDto MapToPersonDetailDto(Person person)
     {
         var dto = person.CopyMatchingPropertiesToNew<PersonDetailDto>();
-        dto.IneligibleReasonCode = GetIneligibleReasonCode(person.IneligibleReasonGuid);
         dto.CanVote = PersonEligibilityHelper.CanVote(person);
         dto.CanReceiveVotes = PersonEligibilityHelper.CanReceiveVotes(person);
         return dto;
-    }
-
-    private static string? GetIneligibleReasonCode(Guid? guid)
-    {
-        return guid.HasValue ? IneligibleReasonEnum.GetByGuid(guid.Value)?.Code : null;
     }
 
     private async Task<bool> CanDeletePersonAsync(Person person)

@@ -111,7 +111,7 @@ async function handleSubmit() {
         phone: form.phone || undefined,
         area: form.area || undefined,
         bahaiId: form.bahaiId || undefined,
-        ineligibleReasonGuid: toApiEligibility(form.ineligibleReasonGuid),
+        ineligibleReasonCode: toApiEligibility(form.ineligibleReasonCode),
       };
 
       const person = await peopleStore.createPerson(dto);

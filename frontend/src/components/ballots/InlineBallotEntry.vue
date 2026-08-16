@@ -444,6 +444,7 @@ onMounted(async () => {
         <div class="new-ballot-action">
           <el-button
             type="primary"
+            plain
             :loading="creatingNewBallot"
             @click="handleNewBallot"
           >
@@ -560,6 +561,19 @@ onMounted(async () => {
   .add-name-action {
     margin: 1em 0 0;
     padding: 0 var(--spacing-3, 12px) var(--spacing-3, 12px);
+  }
+
+  .new-ballot-action .el-button--primary {
+    background: var(--el-color-primary-light-9);
+    border: 1px solid var(--el-color-primary-light-3);
+    color: var(--el-color-primary);
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus-visible {
+      background: var(--el-color-primary);
+      border-color: var(--el-color-primary);
+      color: var(--el-color-white);
+    }
   }
 }
 </style>

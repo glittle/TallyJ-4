@@ -210,7 +210,8 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
                     // XML omits these when true; match CSV people import defaults for eligible people.
                     CanVote = ParseBool(personNode.GetAttribute("CanVote")) ?? true,
                     CanReceiveVotes = ParseBool(personNode.GetAttribute("CanReceiveVotes")) ?? true,
-                    IneligibleReasonGuid = ParseGuid(personNode.GetAttribute("IneligibleReasonGuid")),
+                    IneligibleReasonCode = IneligibleReasonEnum.ResolveToCode(
+                        ParseGuid(personNode.GetAttribute("IneligibleReasonGuid"))),
                     RegistrationTime = ParseDateTime(personNode.GetAttribute("RegistrationTime")),
                     VotingLocationGuid = guidMap.ContainsKey(ParseGuid(personNode.GetAttribute("VotingLocationGuid")) ?? Guid.Empty)
                         ? guidMap[ParseGuid(personNode.GetAttribute("VotingLocationGuid")) ?? Guid.Empty]
@@ -248,7 +249,8 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
                         ? guidMap[ParseGuid(voteNode.GetAttribute(PersonGuidAttribute)) ?? Guid.Empty]
                         : null,
                     VoteStatus = Enum.Parse<VoteStatus>(voteNode.GetAttribute("StatusCode") ?? "Ok"),
-                    IneligibleReasonCode = voteNode.GetAttribute("InvalidReasonGuid"),
+                    IneligibleReasonCode = IneligibleReasonEnum.ResolveToCode(
+                        voteNode.GetAttribute("InvalidReasonGuid")),
                     SingleNameElectionCount = ParseInt(voteNode.GetAttribute("SingleNameElectionCount")),
                     RowVersion = new byte[8]
                 };
