@@ -64,6 +64,7 @@ public class CreatePersonDtoValidator : AbstractValidator<CreatePersonDto>
             .WithMessage("Phone can only contain digits, spaces, and characters: - ( ) + .");
 
         RuleFor(x => x.IneligibleReasonCode)
+            .Cascade(CascadeMode.Stop)
             .Must(code => string.IsNullOrWhiteSpace(code) || IneligibleReasonEnum.GetByCode(code) != null)
             .WithMessage("Invalid ineligibility reason code")
             .Must(code => string.IsNullOrWhiteSpace(code) || IneligibleReasonEnum.IsPersonReasonCode(code))
