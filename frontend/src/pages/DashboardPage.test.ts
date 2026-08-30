@@ -104,5 +104,6 @@ describe("DashboardPage", () => {
     const wrapper = await mountDashboard();
     const button = wrapper.find('button[aria-label="Duplicate as test copy"]');
     expect(button.exists()).toBe(true);
+    expect(button.text()).toContain("Copy");
   });
 });

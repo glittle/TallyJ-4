@@ -683,17 +683,18 @@ function formatDate(date: string) {
                 {{ formatNumber(scope.row.ballotCount) ?? "—" }}
               </template>
             </el-table-column>
-            <el-table-column width="72" align="center">
+            <el-table-column min-width="110" align="center">
               <template #default="scope">
                 <el-button
-                  text
-                  type="primary"
+                  type="info"
                   :aria-label="$t('elections.duplicate.action')"
+                  :title="$t('elections.duplicate.action')"
                   @click.stop="duplicateElection(scope.row)"
                 >
                   <el-icon>
                     <CopyDocument />
                   </el-icon>
+                  {{ $t("elections.duplicate.button") }}
                 </el-button>
               </template>
             </el-table-column>

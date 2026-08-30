@@ -139,6 +139,7 @@ describe("DashboardPage", () => {
       },
     ]);
     const wrapper = mount(DashboardPage, { global: globalConfig });
+    expect(wrapper.html()).toContain("elections.duplicate.button");
     expect(wrapper.html()).toContain("elections.duplicate.action");
   });
 });
