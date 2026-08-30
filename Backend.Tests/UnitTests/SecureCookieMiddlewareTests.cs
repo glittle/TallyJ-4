@@ -143,6 +143,60 @@ public class SecureCookieMiddlewareTests
     }
 
     [Fact]
+    public void SetVoterAuthCookies_SetsHttpOnlyTokenAndReadableSessionFlag()
+    {
+        var httpContext = new DefaultHttpContext();
+        var accessToken = "voter_jwt_value";
+
+        SecureCookieMiddleware.SetVoterAuthCookies(httpContext, accessToken, isHttps: true);
+
+        var cookies = httpContext.Response.GetTypedHeaders().SetCookie;
+        Assert.Equal(2, cookies.Count);
+
+        var tokenCookie = cookies.First(c => c.Name == SecureCookieMiddleware.VoterTokenCookieName);
+        Assert.Equal(accessToken, tokenCookie.Value.Value);
+        Assert.True(tokenCookie.HttpOnly);
+        Assert.True(tokenCookie.Secure);
+        Assert.Equal("Strict", tokenCookie.SameSite.ToString());
+
+        var sessionCookie = cookies.First(c => c.Name == SecureCookieMiddleware.VoterSessionCookieName);
+        Assert.Equal("1", sessionCookie.Value.Value);
+        Assert.False(sessionCookie.HttpOnly);
+        Assert.True(sessionCookie.Secure);
+        Assert.Equal("Strict", sessionCookie.SameSite.ToString());
+    }
+
+    [Fact]
+    public void ClearVoterAuthCookies_DoesNotClearTellerCookies()
+    {
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.IsHttps = true;
+
+        SecureCookieMiddleware.ClearVoterAuthCookies(httpContext);
+
+        var cookies = httpContext.Response.GetTypedHeaders().SetCookie;
+        var cookieNames = cookies.Select(c => c.Name.Value).ToList();
+        Assert.Contains(SecureCookieMiddleware.VoterTokenCookieName, cookieNames);
+        Assert.Contains(SecureCookieMiddleware.VoterSessionCookieName, cookieNames);
+        Assert.DoesNotContain(SecureCookieMiddleware.AccessTokenCookieName, cookieNames);
+        Assert.DoesNotContain(SecureCookieMiddleware.RefreshTokenCookieName, cookieNames);
+    }
+
+    [Theory]
+    [InlineData("/api/online-voting/availableElections", true)]
+    [InlineData("/api/online-voting/me", true)]
+    [InlineData("/hubs/all-voters", true)]
+    [InlineData("/hubs/voter-personal", true)]
+    [InlineData("/hubs/all-voters/negotiate", true)]
+    [InlineData("/api/auth/me", false)]
+    [InlineData("/hubs/main", false)]
+    [InlineData("/api/elections", false)]
+    public void IsVoterScopedPath_ClassifiesVoterVsTellerPaths(string path, bool expected)
+    {
+        Assert.Equal(expected, SecureCookieMiddleware.IsVoterScopedPath(path));
+    }
+
+    [Fact]
     public void GetAccessToken_ReturnsTokenFromCookies()
     {
         // Arrange

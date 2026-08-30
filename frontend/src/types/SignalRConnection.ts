@@ -11,5 +11,4 @@ export type ConnectionState =
 export interface SignalRConfig {
   hubUrl: string;
   automaticReconnect?: boolean;
-  accessTokenFactory?: () => string | null;
 }

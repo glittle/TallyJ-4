@@ -69,42 +69,36 @@ describe("signalrService voter hubs", () => {
     onreconnected.mockClear();
   });
 
-  it("connectVoterHubs joins AllVoters then VoterPersonal with token factory", async () => {
+  it("connectVoterHubs joins AllVoters then VoterPersonal with credentials only", async () => {
     const { signalrService } = await import("../signalrService");
-    const tokenFactory = vi.fn(() => "voter-jwt");
 
-    await signalrService.connectVoterHubs(tokenFactory);
+    await signalrService.connectVoterHubs();
 
     expect(withUrl).toHaveBeenCalledWith(
       "http://localhost:5016/hubs/all-voters",
       expect.objectContaining({
         withCredentials: true,
-        accessTokenFactory: expect.any(Function),
       }),
     );
     expect(withUrl).toHaveBeenCalledWith(
       "http://localhost:5016/hubs/voter-personal",
       expect.objectContaining({
         withCredentials: true,
-        accessTokenFactory: expect.any(Function),
       }),
     );
 
-    // Join order: AllVoters then VoterPersonal
+    for (const call of withUrl.mock.calls) {
+      const opts = call[1] as { accessTokenFactory?: unknown };
+      expect(opts.accessTokenFactory).toBeUndefined();
+    }
+
     const joinCalls = invoke.mock.calls.filter((c) => c[0] === "Join");
     expect(joinCalls).toHaveLength(2);
-
-    // accessTokenFactory from connect options should use the provided factory
-    const allVotersOpts = withUrl.mock.calls.find(
-      (c) => c[0] === "http://localhost:5016/hubs/all-voters",
-    )?.[1] as { accessTokenFactory: () => string };
-    expect(allVotersOpts.accessTokenFactory()).toBe("voter-jwt");
-    expect(tokenFactory).toHaveBeenCalled();
   });
 
   it("disconnectVoterHubs leaves then disconnects both hubs", async () => {
     const { signalrService } = await import("../signalrService");
-    await signalrService.connectVoterHubs(() => "voter-jwt");
+    await signalrService.connectVoterHubs();
     invoke.mockClear();
     stop.mockClear();
 
@@ -117,10 +111,9 @@ describe("signalrService voter hubs", () => {
 
   it("re-invokes Join after reconnect when voter groups were joined", async () => {
     const { signalrService } = await import("../signalrService");
-    await signalrService.connectVoterHubs(() => "voter-jwt");
+    await signalrService.connectVoterHubs();
     invoke.mockClear();
 
-    // Capture onreconnected handlers registered during connect
     expect(onreconnected).toHaveBeenCalled();
     const reconnectHandlers = onreconnected.mock.calls.map((c) => c[0]);
     expect(reconnectHandlers.length).toBeGreaterThanOrEqual(2);

@@ -74,7 +74,8 @@ const allVotablePersonOptions = computed(() => {
 });
 
 onMounted(async () => {
-  if (!onlineVotingStore.voterId) {
+  const restored = await onlineVotingStore.restoreSession();
+  if (!restored) {
     showErrorMessage(t("voting.ballot.authRequired"));
     router.push({
       name: "voter-auth",

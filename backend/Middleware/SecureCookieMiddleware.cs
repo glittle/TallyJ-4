@@ -39,6 +39,23 @@ public class SecureCookieMiddleware
     public const string AuthMethodCookieName = "auth_method";
 
     /// <summary>
+    /// HttpOnly cookie holding the online-voter JWT. Distinct from <see cref="AccessTokenCookieName"/>
+    /// so teller and voter sessions can coexist in the same browser.
+    /// </summary>
+    public const string VoterTokenCookieName = "voter_token";
+
+    /// <summary>
+    /// Non-httpOnly flag cookie so the SPA can detect an online-voter session without reading the JWT.
+    /// Value is always <c>1</c> — not a secret and not PII.
+    /// </summary>
+    public const string VoterSessionCookieName = "voter_session";
+
+    /// <summary>
+    /// Default lifetime for voter session cookies, matching the 24-hour online-voter JWT.
+    /// </summary>
+    public const int VoterSessionExpiryMinutes = 24 * 60;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SecureCookieMiddleware"/> class.
     /// </summary>
     /// <param name="next">The next middleware in the pipeline.</param>
@@ -165,6 +182,96 @@ public class SecureCookieMiddleware
         context.Response.Cookies.Append(UserEmailCookieName, "", userCookieOptions);
         context.Response.Cookies.Append(UserNameCookieName, "", userCookieOptions);
         context.Response.Cookies.Append(AuthMethodCookieName, "", userCookieOptions);
+    }
+
+    /// <summary>
+    /// True for HTTP and SignalR paths that must authenticate as an online voter, not a teller.
+    /// Used so <c>voter_token</c> and <c>auth_token</c> can both be present without mix-up.
+    /// </summary>
+    public static bool IsVoterScopedPath(PathString path)
+    {
+        return path.StartsWithSegments("/api/online-voting")
+               || path.StartsWithSegments("/hubs/all-voters")
+               || path.StartsWithSegments("/hubs/voter-personal");
+    }
+
+    /// <summary>
+    /// Sets httpOnly <c>voter_token</c> plus a non-httpOnly <c>voter_session</c> flag.
+    /// Cookie attributes match teller auth (<c>HttpOnly</c>/<c>Secure</c>/<c>SameSite</c>/<c>Path</c>/<c>Domain</c>).
+    /// </summary>
+    public static void SetVoterAuthCookies(
+        HttpContext context,
+        string accessToken,
+        bool isHttps = true,
+        int? accessTokenExpiryMinutes = null)
+    {
+        var lifetimeMinutes = accessTokenExpiryMinutes ?? VoterSessionExpiryMinutes;
+        var expires = DateTimeOffset.UtcNow.AddMinutes(lifetimeMinutes);
+
+        var tokenOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = isHttps,
+            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
+            Expires = expires,
+            Path = "/",
+            Domain = isHttps ? null : "localhost"
+        };
+
+        context.Response.Cookies.Append(VoterTokenCookieName, accessToken, tokenOptions);
+
+        var sessionFlagOptions = new CookieOptions
+        {
+            HttpOnly = false,
+            Secure = isHttps,
+            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
+            Expires = expires,
+            Path = "/",
+            Domain = isHttps ? null : "localhost"
+        };
+
+        context.Response.Cookies.Append(VoterSessionCookieName, "1", sessionFlagOptions);
+    }
+
+    /// <summary>
+    /// Clears online-voter cookies without touching teller auth cookies.
+    /// </summary>
+    public static void ClearVoterAuthCookies(HttpContext context)
+    {
+        var isHttps = context.Request.IsHttps;
+        var expiredTokenOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = isHttps,
+            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddDays(-1),
+            MaxAge = TimeSpan.Zero,
+            Path = "/",
+            Domain = isHttps ? null : "localhost"
+        };
+
+        context.Response.Cookies.Append(VoterTokenCookieName, "", expiredTokenOptions);
+
+        var expiredFlagOptions = new CookieOptions
+        {
+            HttpOnly = false,
+            Secure = isHttps,
+            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddDays(-1),
+            MaxAge = TimeSpan.Zero,
+            Path = "/",
+            Domain = isHttps ? null : "localhost"
+        };
+
+        context.Response.Cookies.Append(VoterSessionCookieName, "", expiredFlagOptions);
+    }
+
+    /// <summary>
+    /// Gets the online-voter JWT from cookies.
+    /// </summary>
+    public static string? GetVoterAccessToken(HttpContext context)
+    {
+        return context.Request.Cookies[VoterTokenCookieName];
     }
 
     /// <summary>

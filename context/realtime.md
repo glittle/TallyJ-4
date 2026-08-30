@@ -88,7 +88,7 @@ There is still no `/hubs/online-voting` hub and no `online-election-{guid}` grou
 **Source:** issue #233; v3 `AllVotersHub` / `VoterPersonalHub`; preferred thin-signal shape above  
 **Revisit when:** global `AllVoters` becomes too chatty, or kiosk multi-login needs different UX
 
-Online voters use two authenticated hubs (policy `OnlineVoter` — JWT claims `voterType=online` + `voterId`). FE connects with the voter Bearer token (`accessTokenFactory` + existing query `access_token` support).
+Online voters use two authenticated hubs (policy `OnlineVoter` — JWT claims `voterType=online` + `voterId`). FE connects with `withCredentials` only; the httpOnly `voter_token` cookie is accepted on `/hubs/all-voters` and `/hubs/voter-personal` by the same JWT `OnMessageReceived` path as HTTP. There is no client `accessTokenFactory` for voters.
 
 | Hub | Path | Group | Join | Events |
 | --- | ---- | ----- | ---- | ------ |

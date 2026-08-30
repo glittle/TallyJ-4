@@ -38,6 +38,10 @@ export const secureTokenService = {
     userEmail: "user_email",
     userName: "user_name",
     authMethod: "auth_method",
+    /** HttpOnly voter JWT — not readable from JavaScript. */
+    voterToken: "voter_token",
+    /** Non-httpOnly flag so the SPA can detect a voter session. */
+    voterSession: "voter_session",
   } as const,
 
   /**
@@ -81,6 +85,21 @@ export const secureTokenService = {
     this.setCookie(this.cookieNames.userEmail, "", -1);
     this.setCookie(this.cookieNames.userName, "", -1);
     this.setCookie(this.cookieNames.authMethod, "", -1);
+  },
+
+  /**
+   * True when the backend set the non-httpOnly voter session flag.
+   * The JWT itself is httpOnly and cannot be read here.
+   */
+  isVoterAuthenticated(): boolean {
+    return this.getCookie(this.cookieNames.voterSession) === "1";
+  },
+
+  /**
+   * Expires the readable voter session flag. HttpOnly voter_token is cleared by the API.
+   */
+  clearVoterSession(): void {
+    this.setCookie(this.cookieNames.voterSession, "", -1);
   },
 
   /**

@@ -8,12 +8,9 @@ import { SignalRTellerHubs } from "./signalr/SignalRTellerHubs";
 export class SignalRService extends SignalRTellerHubs {
   /**
    * Connect + join online-voter hubs (AllVoters + VoterPersonal).
-   * Requires a factory that returns the current voter JWT (localStorage).
+   * Auth is the httpOnly voter_token cookie (withCredentials); no JS-readable JWT.
    */
-  async connectVoterHubs(
-    accessTokenFactory: () => string | null,
-  ): Promise<void> {
-    this.voterAccessTokenFactory = accessTokenFactory;
+  async connectVoterHubs(): Promise<void> {
     await this.connectToAllVotersHub();
     await this.joinAllVoters();
     await this.connectToVoterPersonalHub();
@@ -25,21 +22,14 @@ export class SignalRService extends SignalRTellerHubs {
     await this.leaveVoterPersonal();
     await this.disconnect("/hubs/all-voters");
     await this.disconnect("/hubs/voter-personal");
-    this.voterAccessTokenFactory = null;
   }
 
   async connectToAllVotersHub(): Promise<signalR.HubConnection> {
-    const factory =
-      this.voterAccessTokenFactory ??
-      (() => localStorage.getItem("voter_token"));
-    return this.connect("/hubs/all-voters", factory);
+    return this.connect("/hubs/all-voters");
   }
 
   async connectToVoterPersonalHub(): Promise<signalR.HubConnection> {
-    const factory =
-      this.voterAccessTokenFactory ??
-      (() => localStorage.getItem("voter_token"));
-    return this.connect("/hubs/voter-personal", factory);
+    return this.connect("/hubs/voter-personal");
   }
 
   async joinAllVoters(): Promise<void> {
