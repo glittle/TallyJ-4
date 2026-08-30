@@ -41,8 +41,8 @@ public class PaidVerificationSender : IPaidVerificationSender
         if (!PaidDestinationPhone.TryExplain(phone, out var reason))
         {
             _logger.LogWarning(
-                "Skipping {Channel} send; destination rejected ({Reason}): {Phone}",
-                channel, reason, phone);
+                "Skipping {Channel} send; destination rejected ({Reason})",
+                channel, reason);
             return false;
         }
 
@@ -54,7 +54,7 @@ public class PaidVerificationSender : IPaidVerificationSender
         var accountSid = _configuration["Twilio:AccountSid"];
         if (string.IsNullOrWhiteSpace(accountSid) || accountSid.StartsWith('<'))
         {
-            _logger.LogWarning("Twilio not configured; skipping SMS for {Phone}", phone);
+            _logger.LogWarning("Twilio not configured; skipping SMS");
             return true;
         }
 
@@ -78,12 +78,11 @@ public class PaidVerificationSender : IPaidVerificationSender
 
         if (!response.IsSuccessStatusCode)
         {
-            var body = await response.Content.ReadAsStringAsync();
-            _logger.LogError("Twilio SMS failed for {Phone}: {Status} - {Body}", phone, response.StatusCode, body);
+            _logger.LogError("Twilio SMS failed: {Status}", response.StatusCode);
             return false;
         }
 
-        _logger.LogInformation("SMS verification code sent to {Phone}", phone);
+        _logger.LogInformation("SMS verification code sent");
         return true;
     }
 
@@ -92,7 +91,7 @@ public class PaidVerificationSender : IPaidVerificationSender
         var accountSid = _configuration["Twilio:AccountSid"];
         if (string.IsNullOrWhiteSpace(accountSid) || accountSid.StartsWith('<'))
         {
-            _logger.LogWarning("Twilio not configured; skipping voice call for {Phone}", phone);
+            _logger.LogWarning("Twilio not configured; skipping voice call");
             return true;
         }
 
@@ -122,12 +121,11 @@ public class PaidVerificationSender : IPaidVerificationSender
 
         if (!response.IsSuccessStatusCode)
         {
-            var body = await response.Content.ReadAsStringAsync();
-            _logger.LogError("Twilio voice call failed for {Phone}: {Status} - {Body}", phone, response.StatusCode, body);
+            _logger.LogError("Twilio voice call failed: {Status}", response.StatusCode);
             return false;
         }
 
-        _logger.LogInformation("Voice verification code sent to {Phone}", phone);
+        _logger.LogInformation("Voice verification code sent");
         return true;
     }
 
@@ -139,7 +137,7 @@ public class PaidVerificationSender : IPaidVerificationSender
 
         if (string.IsNullOrWhiteSpace(idInstance) || idInstance.StartsWith('<'))
         {
-            _logger.LogWarning("GreenAPI not configured; skipping WhatsApp for {Phone}", phone);
+            _logger.LogWarning("GreenAPI not configured; skipping WhatsApp");
             return true;
         }
 
@@ -162,12 +160,11 @@ public class PaidVerificationSender : IPaidVerificationSender
 
         if (!response.IsSuccessStatusCode)
         {
-            var body = await response.Content.ReadAsStringAsync();
-            _logger.LogError("GreenAPI WhatsApp failed for {Phone}: {Status} - {Body}", phone, response.StatusCode, body);
+            _logger.LogError("GreenAPI WhatsApp failed: {Status}", response.StatusCode);
             return false;
         }
 
-        _logger.LogInformation("WhatsApp verification code sent to {Phone}", phone);
+        _logger.LogInformation("WhatsApp verification code sent");
         return true;
     }
 
