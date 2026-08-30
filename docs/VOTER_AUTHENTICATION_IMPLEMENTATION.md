@@ -34,7 +34,7 @@ This implementation provides a **security-first voter authentication system** fo
 2. **SMS Pumping Prevention**
    - Paid SMS / voice / WhatsApp: reserved/fictional/malformed destinations (NANP 555, bad E.164) are rejected in code before any provider call — see `context/sms-eligibility.md`
    - `OnlineVoter` also stores global phone SMS eligibility (`SmsStatus`: null / `"OK"` / block reason). For `VoterIdType` `"P"` + paid channel, a non-null status other than `"OK"` skips Twilio and GreenAPI. The lookup is the phone row (`VoterId` + `VoterIdType == "P"`).
-   - Twilio status callbacks (`POST /api/Public/smsStatus`, v3 `Public/SmsStatus`) auto-learn a lasting block on that P row: terminal `undelivered` / `failed` plus a selected error code (`30003`, `30004`, `30005`, `30006`, `21211`, `21614`) writes `twilio-{code}` when current `SmsStatus` is null or `"OK"`. Missing or unlisted codes, and `delivered`/`sent`, do not write. No OnlineVoter is created from a callback. See `context/sms-eligibility.md`.
+   - Twilio status callbacks (`POST /api/Public/smsStatus`, v3 `Public/SmsStatus`) auto-learn a lasting block on that P row: terminal `undelivered` / `failed` plus a selected error code (`30003`, `30004`, `30005`, `30006`, `21211`, `21614`) writes `twilio-{code}` when current `SmsStatus` is null or `"OK"`. Missing or unlisted codes, and `delivered`/`sent`, do not write. No OnlineVoter is created from a callback. The request must present a valid `X-Twilio-Signature` for `Twilio:AuthToken` (403 otherwise). See `context/sms-eligibility.md`.
    - Verification codes only sent to voters registered in open elections
    - Validates voter registration BEFORE sending SMS/email
    - Prevents abuse of communication channels

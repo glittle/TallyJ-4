@@ -114,7 +114,7 @@ public class TwilioSmsStatusServiceTests : ServiceTestBase
     [InlineData("E")]
     [InlineData("C")]
     [InlineData("T")]
-    public async Task NonPOccupantOfSameVoterId_NotUpdated(string voterIdType)
+    public async Task NonPOccupantOfSameVoterId_QueryIsPhoneTypeScoped_NotUpdated(string voterIdType)
     {
         Context.OnlineVoters.Add(new OnlineVoter
         {

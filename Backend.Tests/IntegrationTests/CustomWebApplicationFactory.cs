@@ -14,6 +14,8 @@ namespace Backend.Tests.IntegrationTests;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
+    public const string TwilioAuthToken = "test-twilio-auth-token";
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -33,7 +35,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 ["Email:FromAddress"] = "test@tallyj.com",
                 ["Email:FromName"] = "TallyJ Test",
                 ["Localization:ResourcesPath"] = "../frontend/src/locales",
-                ["Logging:LogLevel:Backend.Services.SecurityAuditService"] = "Error"
+                ["Logging:LogLevel:Backend.Services.SecurityAuditService"] = "Error",
+                ["Twilio:AuthToken"] = TwilioAuthToken
             });
         });
 

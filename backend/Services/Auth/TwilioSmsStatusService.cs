@@ -107,9 +107,11 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
     }
 
     /// <summary>
-    /// Existing <c>VoterIdType == "P"</c> row whose VoterId matches Twilio To
-    /// (exact stored string, or the +/- variant). A non-P occupant of a candidate
-    /// VoterId is skipped; no convert, no wipe, no insert.
+    /// Existing phone row whose VoterId matches Twilio To (exact stored string, then
+    /// the +/- variant). The query is <c>VoterId == key AND VoterIdType == "P"</c>
+    /// (same as paid-send / <see cref="OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync"/>).
+    /// A non-P occupant of a candidate VoterId is not returned; no convert, no wipe, no insert.
+    /// Tracked (not AsNoTracking) so <see cref="OnlineVoter.SmsStatus"/> can be written.
     /// </summary>
     private async Task<OnlineVoter?> FindExistingPhoneOnlineVoterAsync(
         string? twilioTo,
@@ -117,19 +119,12 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
     {
         foreach (var key in TwilioSmsStatusHelper.VoterIdLookupKeys(twilioTo))
         {
-            var row = await _context.OnlineVoters
-                .FirstOrDefaultAsync(ov => ov.VoterId == key, cancellationToken);
-            if (row == null)
+            var row = await OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync(
+                _context, key, cancellationToken);
+            if (row != null)
             {
-                continue;
+                return row;
             }
-
-            if (row.VoterIdType != OnlineVoterPhoneHelper.PhoneVoterIdType)
-            {
-                continue;
-            }
-
-            return row;
         }
 
         return null;

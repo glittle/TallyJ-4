@@ -108,4 +108,28 @@ public static class OnlineVoterPhoneHelper
                 ov => ov.VoterId == phone && ov.VoterIdType == PhoneVoterIdType,
                 cancellationToken);
     }
+
+    /// <summary>
+    /// Tracked phone OnlineVoter row for this <paramref name="phone"/>:
+    /// <see cref="OnlineVoter.VoterId"/> equals the phone and
+    /// <see cref="OnlineVoter.VoterIdType"/> is <see cref="PhoneVoterIdType"/>.
+    /// Same predicate as <see cref="FindPhoneOnlineVoterAsync"/> but not AsNoTracking,
+    /// so callers can write <see cref="OnlineVoter.SmsStatus"/>.
+    /// Does not look up by VoterId alone. A non-P row occupying that VoterId is not returned.
+    /// </summary>
+    public static Task<OnlineVoter?> FindTrackedPhoneOnlineVoterAsync(
+        MainDbContext context,
+        string? phone,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        if (string.IsNullOrWhiteSpace(phone))
+        {
+            return Task.FromResult<OnlineVoter?>(null);
+        }
+
+        return context.OnlineVoters.FirstOrDefaultAsync(
+            ov => ov.VoterId == phone && ov.VoterIdType == PhoneVoterIdType,
+            cancellationToken);
+    }
 }
