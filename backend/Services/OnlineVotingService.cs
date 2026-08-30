@@ -17,6 +17,7 @@ public partial class OnlineVotingService : IOnlineVotingService
     private readonly ILogger<OnlineVotingService> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IEmailSender _emailSender;
+    private readonly IPaidVerificationSender _paidVerificationSender;
     private readonly IGoogleIdTokenValidator _googleIdTokenValidator;
     private readonly ISignalRNotificationService _signalRNotificationService;
 
@@ -29,6 +30,7 @@ public partial class OnlineVotingService : IOnlineVotingService
     /// <param name="logger">The logger instance.</param>
     /// <param name="httpClientFactory">The HTTP client factory.</param>
     /// <param name="emailSender">The email sender service.</param>
+    /// <param name="paidVerificationSender">Paid SMS / voice / WhatsApp delivery.</param>
     /// <param name="googleIdTokenValidator">The Google ID token validator.</param>
     /// <param name="signalRNotificationService">Realtime notifications for connected voter sessions.</param>
     public OnlineVotingService(
@@ -38,6 +40,7 @@ public partial class OnlineVotingService : IOnlineVotingService
         ILogger<OnlineVotingService> logger,
         IHttpClientFactory httpClientFactory,
         IEmailSender emailSender,
+        IPaidVerificationSender paidVerificationSender,
         IGoogleIdTokenValidator googleIdTokenValidator,
         ISignalRNotificationService signalRNotificationService)
     {
@@ -47,6 +50,7 @@ public partial class OnlineVotingService : IOnlineVotingService
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _emailSender = emailSender;
+        _paidVerificationSender = paidVerificationSender;
         _googleIdTokenValidator = googleIdTokenValidator;
         _signalRNotificationService = signalRNotificationService;
     }

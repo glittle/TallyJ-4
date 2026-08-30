@@ -93,7 +93,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
     public async Task RequestCode_WithPhoneNumber_ValidVoter_ShouldSucceed()
     {
         // Arrange
-        var phoneNumber = "+15551234567";
+        var phoneNumber = "+14168972671";
         await SetupOpenElectionWithVoter(null, phoneNumber);
 
         var request = new RequestCodeDto

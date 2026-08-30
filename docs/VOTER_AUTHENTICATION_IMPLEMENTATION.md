@@ -32,6 +32,7 @@ This implementation provides a **security-first voter authentication system** fo
    - Prevents unauthorized election discovery
 
 2. **SMS Pumping Prevention**
+   - Paid SMS / voice / WhatsApp: reserved/fictional/malformed destinations (NANP 555, bad E.164) are rejected in code before any provider call — see `context/sms-eligibility.md`
    - Verification codes only sent to voters registered in open elections
    - Validates voter registration BEFORE sending SMS/email
    - Prevents abuse of communication channels

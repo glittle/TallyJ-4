@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 using Backend.Entities;
 using Backend.DTOs.OnlineVoting;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using MimeKit;
@@ -17,6 +14,18 @@ public partial class OnlineVotingService
     {
         try
         {
+            // Paid channels: reject reserved/fictional/malformed destinations before any DB or provider work.
+            if (dto.VoterIdType == "P" && PaidDestinationPhone.IsPaidChannel(dto.DeliveryMethod))
+            {
+                if (!PaidDestinationPhone.TryExplain(dto.VoterId, out var reason))
+                {
+                    _logger.LogWarning(
+                        "Login code request rejected: paid destination {VoterId} blocked ({Reason})",
+                        dto.VoterId, reason);
+                    return BuildRequestCodeResponse("voting.auth.requestCode.invalidPhone");
+                }
+            }
+
             // 1. Find all open elections where this voter is registered (SMS pumping prevention)
             var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
@@ -195,9 +204,9 @@ public partial class OnlineVotingService
             return method switch
             {
                 "email" => await SendEmailCodeAsync(recipient, code),
-                "sms" => await SendSmsCodeAsync(recipient, code),
-                "voice" => await SendVoiceCodeAsync(recipient, code),
-                "whatsapp" => await SendWhatsAppCodeAsync(recipient, code),
+                "sms" => await _paidVerificationSender.SendSmsAsync(recipient, code),
+                "voice" => await _paidVerificationSender.SendVoiceAsync(recipient, code),
+                "whatsapp" => await _paidVerificationSender.SendWhatsAppAsync(recipient, code),
                 _ => throw new ArgumentException($"Unknown delivery method: {method}")
             };
         }
@@ -236,157 +245,6 @@ public partial class OnlineVotingService
         await _emailSender.SendAsync(message);
         _logger.LogInformation("Email verification code sent to {Email}", email);
         return true;
-    }
-
-    /// <summary>
-    /// Sends a verification code via SMS using Twilio API.
-    /// </summary>
-    /// <param name="phone">The recipient's phone number.</param>
-    /// <param name="code">The verification code to send.</param>
-    /// <returns>True if the SMS was sent successfully, false otherwise.</returns>
-    private async Task<bool> SendSmsCodeAsync(string phone, string code)
-    {
-        var accountSid = _configuration["Twilio:AccountSid"];
-        if (string.IsNullOrWhiteSpace(accountSid) || accountSid.StartsWith("<"))
-        {
-            _logger.LogWarning("Twilio not configured; skipping SMS for {Phone}", phone);
-            return true;
-        }
-
-        var authToken = _configuration["Twilio:AuthToken"];
-        var fromNumber = _configuration["Twilio:FromNumber"];
-
-        var client = _httpClientFactory.CreateClient();
-        var credentials = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{accountSid}:{authToken}"));
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-        var formData = new FormUrlEncodedContent(new[]
-        {
-            new KeyValuePair<string, string>("To", phone),
-            new KeyValuePair<string, string>("From", fromNumber ?? ""),
-            new KeyValuePair<string, string>("Body", $"Your TallyJ voting code is: {code}\n\nThis code expires in 15 minutes.")
-        });
-
-        var response = await client.PostAsync(
-            $"https://api.twilio.com/2010-04-01/Accounts/{accountSid}/Messages.json",
-            formData);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            var body = await response.Content.ReadAsStringAsync();
-            _logger.LogError("Twilio SMS failed for {Phone}: {Status} - {Body}", phone, response.StatusCode, body);
-            return false;
-        }
-
-        _logger.LogInformation("SMS verification code sent to {Phone}", phone);
-        return true;
-    }
-
-    /// <summary>
-    /// Sends a verification code via voice call using Twilio API.
-    /// </summary>
-    /// <param name="phone">The recipient's phone number.</param>
-    /// <param name="code">The verification code to send.</param>
-    /// <returns>True if the voice call was initiated successfully, false otherwise.</returns>
-    private async Task<bool> SendVoiceCodeAsync(string phone, string code)
-    {
-        var accountSid = _configuration["Twilio:AccountSid"];
-        if (string.IsNullOrWhiteSpace(accountSid) || accountSid.StartsWith("<"))
-        {
-            _logger.LogWarning("Twilio not configured; skipping voice call for {Phone}", phone);
-            return true;
-        }
-
-        var authToken = _configuration["Twilio:AuthToken"];
-        var fromNumber = _configuration["Twilio:FromNumber"];
-
-        var spokenCode = string.Join(". ", code.ToCharArray());
-        var twiml = $@"<?xml version=""1.0"" encoding=""UTF-8""?>
-<Response>
-  <Say language=""en-US"">Your TallyJ voting code is: {spokenCode}. I repeat: {spokenCode}. This code expires in 15 minutes.</Say>
-</Response>";
-
-        var client = _httpClientFactory.CreateClient();
-        var credentials = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{accountSid}:{authToken}"));
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-        var formData = new FormUrlEncodedContent(new[]
-        {
-            new KeyValuePair<string, string>("To", phone),
-            new KeyValuePair<string, string>("From", fromNumber ?? ""),
-            new KeyValuePair<string, string>("Twiml", twiml)
-        });
-
-        var response = await client.PostAsync(
-            $"https://api.twilio.com/2010-04-01/Accounts/{accountSid}/Calls.json",
-            formData);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            var body = await response.Content.ReadAsStringAsync();
-            _logger.LogError("Twilio voice call failed for {Phone}: {Status} - {Body}", phone, response.StatusCode, body);
-            return false;
-        }
-
-        _logger.LogInformation("Voice verification code sent to {Phone}", phone);
-        return true;
-    }
-
-    /// <summary>
-    /// Sends a verification code via WhatsApp using GreenAPI.
-    /// </summary>
-    /// <param name="phone">The recipient's phone number.</param>
-    /// <param name="code">The verification code to send.</param>
-    /// <returns>True if the WhatsApp message was sent successfully, false otherwise.</returns>
-    private async Task<bool> SendWhatsAppCodeAsync(string phone, string code)
-    {
-        var idInstance = _configuration["GreenApi:IdInstance"];
-        var apiToken = _configuration["GreenApi:ApiToken"];
-        var baseUrl = _configuration["GreenApi:BaseUrl"] ?? "https://api.green-api.com";
-
-        if (string.IsNullOrWhiteSpace(idInstance) || idInstance.StartsWith("<"))
-        {
-            _logger.LogWarning("GreenAPI not configured; skipping WhatsApp for {Phone}", phone);
-            return true;
-        }
-
-        var normalizedPhone = NormalizePhoneForWhatsApp(phone);
-        var chatId = $"{normalizedPhone}@c.us";
-
-        var client = _httpClientFactory.CreateClient("GreenApi");
-        var url = $"{baseUrl}/waInstance{idInstance}/sendMessage/{apiToken}";
-
-        var payload = new
-        {
-            chatId,
-            message = $"Your TallyJ voting code is: {code}\n\nThis code expires in 15 minutes."
-        };
-
-        var json = JsonSerializer.Serialize(payload);
-        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-        var response = await client.PostAsync(url, content);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            var body = await response.Content.ReadAsStringAsync();
-            _logger.LogError("GreenAPI WhatsApp failed for {Phone}: {Status} - {Body}", phone, response.StatusCode, body);
-            return false;
-        }
-
-        _logger.LogInformation("WhatsApp verification code sent to {Phone}", phone);
-        return true;
-    }
-
-    /// <summary>
-    /// Normalizes a phone number for WhatsApp by extracting only the digits.
-    /// </summary>
-    /// <param name="phone">The phone number to normalize.</param>
-    /// <returns>The normalized phone number containing only digits.</returns>
-    private static string NormalizePhoneForWhatsApp(string phone)
-    {
-        var digits = new string(phone.Where(char.IsDigit).ToArray());
-        return digits;
     }
 
     private async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> TryAuthenticateWithDirectCodeAsync(string code)

@@ -1,4 +1,5 @@
 ﻿using Backend.DTOs.OnlineVoting;
+using Backend.Helpers;
 using FluentValidation;
 
 namespace Backend.Validators;
@@ -37,9 +38,9 @@ public class RequestCodeDtoValidator : AbstractValidator<RequestCodeDto>
             .WithMessage("Invalid email address");
 
         RuleFor(x => x.VoterId)
-            .Matches(@"^\+?[1-9]\d{1,14}$")
+            .Must(PaidDestinationPhone.IsAllowed)
             .When(x => x.VoterIdType == "P")
-            .WithMessage("Invalid phone number format");
+            .WithMessage("Phone number is reserved, fictional, or not a valid E.164 number");
     }
 }
 
