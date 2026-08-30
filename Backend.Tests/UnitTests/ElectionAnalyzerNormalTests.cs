@@ -1093,7 +1093,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
         };
         _context.SaveChanges();
 
-        CreateDescendingVotesWithSpoiledPadding(people, [5, 4, 3, 2, 1], votesNeededOnBallot: 2);
+        CreateDescendingVotesWithIneligiblePadding(people, [5, 4, 3, 2, 1], votesNeededOnBallot: 2);
 
         await RunAnalysis(election);
 
@@ -1183,7 +1183,7 @@ public class ElectionAnalyzerNormalTests : IDisposable
             .ToArray();
         _context.SaveChanges();
 
-        CreateDescendingVotesWithSpoiledPadding(
+        CreateDescendingVotesWithIneligiblePadding(
             people,
             [13, 12, 11, 10, 9, 8, 7, 6, 5, 2, 2, 1],
             votesNeededOnBallot: 9);
@@ -1279,9 +1279,10 @@ public class ElectionAnalyzerNormalTests : IDisposable
     }
 
     /// <summary>
-    /// One ballot per vote, padded with spoiled slots so the ballot stays Ok when NumberToElect &gt; 1.
+    /// One ballot per vote, padded with ineligible placeholder votes
+    /// (null PersonGuid + ineligible reason, VoteStatus.Ok) so the ballot stays Ok when NumberToElect &gt; 1.
     /// </summary>
-    private void CreateDescendingVotesWithSpoiledPadding(
+    private void CreateDescendingVotesWithIneligiblePadding(
         Person[] people,
         int[] voteCounts,
         int votesNeededOnBallot)

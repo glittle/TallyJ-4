@@ -192,7 +192,7 @@ public class TallyServiceTests : ServiceTestBase
             ballots,
             people,
             [5, 4, 3, 2, 1],
-            spoiledFillerCount: 1);
+            ineligiblePaddingCount: 1);
 
         await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
@@ -583,7 +583,7 @@ public class TallyServiceTests : ServiceTestBase
             ballots,
             people,
             voteCounts,
-            spoiledFillerCount: 8);
+            ineligiblePaddingCount: 8);
 
         await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
@@ -912,7 +912,7 @@ public class TallyServiceTests : ServiceTestBase
         var location = await CreateTestLocationAsync(election.ElectionGuid);
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 5);
         var ballots = await CreateTestBallotsAsync(location.LocationGuid, 15);
-        await CreateDescendingVoteDistributionAsync(ballots, people, new[] { 5, 4, 3, 2, 1 }, spoiledFillerCount: 1);
+        await CreateDescendingVoteDistributionAsync(ballots, people, new[] { 5, 4, 3, 2, 1 }, ineligiblePaddingCount: 1);
 
         await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
@@ -1368,11 +1368,16 @@ public class TallyServiceTests : ServiceTestBase
         await Context.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// <paramref name="ineligiblePaddingCount"/> extra ineligible placeholder votes per ballot
+    /// (null PersonGuid + ineligible reason, VoteStatus.Ok) so the ballot stays Ok.
+    /// Default 0 adds no fillers.
+    /// </summary>
     private async Task CreateDescendingVoteDistributionAsync(
         List<Ballot> ballots,
         List<Person> people,
         int[] voteCounts,
-        int spoiledFillerCount = 0)
+        int ineligiblePaddingCount = 0)
     {
         var ballotIndex = 0;
         for (var p = 0; p < voteCounts.Length; p++)
@@ -1389,7 +1394,7 @@ public class TallyServiceTests : ServiceTestBase
                     RowVersion = new byte[8]
                 });
 
-                for (var slot = 0; slot < spoiledFillerCount; slot++)
+                for (var slot = 0; slot < ineligiblePaddingCount; slot++)
                 {
                     Context.Votes.Add(new Vote
                     {
