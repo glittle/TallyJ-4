@@ -193,23 +193,98 @@ public class ElectionService : IElectionService
         _context.Elections.Add(election);
         await _context.SaveChangesAsync();
 
-        var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                         ?? _httpContextAccessor.HttpContext?.User?.FindFirst("sub")?.Value;
-        if (!string.IsNullOrEmpty(userIdString) && Guid.TryParse(userIdString, out var userId))
+        if (TryGetCurrentUserId(out var userId))
         {
-            var joinEntry = new JoinElectionUser
-            {
-                ElectionGuid = election.ElectionGuid,
-                UserId = userId,
-                Role = "Admin"
-            };
-            _context.JoinElectionUsers.Add(joinEntry);
+            AddCurrentUserAsAdmin(election.ElectionGuid, userId);
             await _context.SaveChangesAsync();
         }
 
         _logger.LogInformation("Created election {ElectionGuid} - {Name}", election.ElectionGuid, election.Name);
 
         return await GetElectionByGuidAsync(election.ElectionGuid) ?? MapToElectionDto(election);
+    }
+
+    /// <summary>
+    /// Duplicates an owned election as a new test copy.
+    /// Copies election settings, locations, and people (new PersonGuids).
+    /// Does not copy ballots, results, computers, tellers, online votes, SMS logs, or analysis.
+    /// </summary>
+    public async Task<DuplicateElectionResult> DuplicateElectionAsync(
+        Guid sourceElectionGuid,
+        DuplicateElectionDto dto)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return DuplicateElectionResult.Forbidden();
+        }
+
+        var source = await _context.Elections
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.ElectionGuid == sourceElectionGuid);
+
+        if (source == null)
+        {
+            return DuplicateElectionResult.NotFound();
+        }
+
+        var canDuplicate = await _context.JoinElectionUsers
+            .AnyAsync(j =>
+                j.ElectionGuid == sourceElectionGuid
+                && j.UserId == userId
+                && (j.Role == "Owner" || j.Role == "Admin"));
+
+        if (!canDuplicate)
+        {
+            return DuplicateElectionResult.Forbidden();
+        }
+
+        var sourceLocations = await _context.Locations
+            .AsNoTracking()
+            .Where(l => l.ElectionGuid == sourceElectionGuid)
+            .ToListAsync();
+
+        var sourcePeople = await _context.People
+            .AsNoTracking()
+            .Where(p => p.ElectionGuid == sourceElectionGuid)
+            .ToListAsync();
+
+        var copy = CopyElectionSettings(source);
+        copy.ElectionGuid = Guid.NewGuid();
+        copy.Name = ResolveDuplicateName(dto.Name, source.Name);
+        copy.ShowAsTest = true;
+        copy.ElectionStage = ElectionStage.SettingUp;
+        copy.LastEnvNum = null;
+        copy.ListedForPublicAsOf = null;
+        copy.OwnerLoginId = null;
+        copy.RowVersion = new byte[8];
+
+        _context.Elections.Add(copy);
+        AddCurrentUserAsAdmin(copy.ElectionGuid, userId);
+
+        foreach (var location in sourceLocations)
+        {
+            _context.Locations.Add(CopyLocationForElection(location, copy.ElectionGuid));
+        }
+
+        foreach (var person in sourcePeople)
+        {
+            _context.People.Add(CopyPersonForElection(person, copy.ElectionGuid));
+        }
+
+        await OnlineVoterPhoneHelper.EnsureOnlineVotersForPhonesAsync(
+            _context,
+            sourcePeople.Select(p => p.Phone));
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation(
+            "Duplicated election {SourceElectionGuid} to test copy {ElectionGuid} - {Name}",
+            sourceElectionGuid,
+            copy.ElectionGuid,
+            copy.Name);
+
+        var dtoResult = await GetElectionByGuidAsync(copy.ElectionGuid) ?? MapToElectionDto(copy);
+        return DuplicateElectionResult.Success(dtoResult);
     }
 
     /// <summary>
@@ -545,6 +620,126 @@ public class ElectionService : IElectionService
         ElectionTellerAccessHelper.ApplyListForPublicFlag(election, dto.ListForPublic);
 
         return election;
+    }
+
+    private bool TryGetCurrentUserId(out Guid userId)
+    {
+        userId = Guid.Empty;
+        var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? _httpContextAccessor.HttpContext?.User?.FindFirst("sub")?.Value;
+        return !string.IsNullOrEmpty(userIdString) && Guid.TryParse(userIdString, out userId);
+    }
+
+    /// <summary>
+    /// Same ownership row CreateElectionAsync writes for the current user.
+    /// </summary>
+    private void AddCurrentUserAsAdmin(Guid electionGuid, Guid userId)
+    {
+        _context.JoinElectionUsers.Add(new JoinElectionUser
+        {
+            ElectionGuid = electionGuid,
+            UserId = userId,
+            Role = "Admin"
+        });
+    }
+
+    internal static string ResolveDuplicateName(string? requestedName, string sourceName)
+    {
+        if (!string.IsNullOrWhiteSpace(requestedName))
+        {
+            return requestedName.Trim();
+        }
+
+        const string prefix = "Copy of ";
+        var candidate = prefix + sourceName;
+        return candidate.Length <= 150 ? candidate : candidate[..150];
+    }
+
+    /// <summary>
+    /// Copies persisted election settings only. Identity, stage, teller-access,
+    /// envelope numbering, and ownership are set by the caller.
+    /// </summary>
+    private static Election CopyElectionSettings(Election source)
+    {
+        return new Election
+        {
+            Convenor = source.Convenor,
+            DateOfElection = source.DateOfElection,
+            ElectionType = source.ElectionType,
+            ElectionMode = source.ElectionMode,
+            NumberToElect = source.NumberToElect,
+            NumberExtra = source.NumberExtra,
+            ShowFullReport = source.ShowFullReport,
+            LinkedElectionGuid = source.LinkedElectionGuid,
+            LinkedElectionKind = source.LinkedElectionKind,
+            ElectionPasscode = source.ElectionPasscode,
+            UseCallInButton = source.UseCallInButton,
+            HidePreBallotPages = source.HidePreBallotPages,
+            MaskVotingMethod = source.MaskVotingMethod,
+            UseOnlineVoting = source.UseOnlineVoting,
+            OnlineWhenOpen = source.OnlineWhenOpen,
+            OnlineWhenClose = source.OnlineWhenClose,
+            OnlineCloseIsEstimate = source.OnlineCloseIsEstimate,
+            OnlineSelectionProcess = source.OnlineSelectionProcess,
+            EmailFromAddress = source.EmailFromAddress,
+            EmailFromName = source.EmailFromName,
+            EmailText = source.EmailText,
+            SmsText = source.SmsText,
+            EmailSubject = source.EmailSubject,
+            CustomMethods = source.CustomMethods,
+            VotingMethods = source.VotingMethods,
+            Flags = source.Flags
+        };
+    }
+
+    /// <summary>
+    /// Copies location setup fields. Tally status and ballots-collected stay unset.
+    /// </summary>
+    private static Location CopyLocationForElection(Location source, Guid newElectionGuid)
+    {
+        return new Location
+        {
+            LocationGuid = Guid.NewGuid(),
+            ElectionGuid = newElectionGuid,
+            Name = source.Name,
+            ContactInfo = source.ContactInfo,
+            Long = source.Long,
+            Lat = source.Lat,
+            SortOrder = source.SortOrder,
+            LocationTypeCode = source.LocationTypeCode
+        };
+    }
+
+    /// <summary>
+    /// Copies person identity and eligibility. Check-in, voting method, envelope,
+    /// teller names, online-ballot flag, and registration history are not copied.
+    /// </summary>
+    private static Person CopyPersonForElection(Person source, Guid newElectionGuid)
+    {
+        return new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = newElectionGuid,
+            LastName = source.LastName,
+            FirstName = source.FirstName,
+            OtherLastNames = source.OtherLastNames,
+            OtherNames = source.OtherNames,
+            OtherInfo = source.OtherInfo,
+            Area = source.Area,
+            BahaiId = source.BahaiId,
+            CombinedInfo = source.CombinedInfo,
+            CombinedSoundCodes = source.CombinedSoundCodes,
+            CombinedInfoAtStart = source.CombinedInfoAtStart,
+            CanVote = source.CanVote,
+            CanReceiveVotes = source.CanReceiveVotes,
+            IneligibleReasonCode = source.IneligibleReasonCode,
+            Email = source.Email,
+            Phone = source.Phone,
+            Flags = source.Flags,
+            UnitName = source.UnitName,
+            KioskCode = source.KioskCode,
+            RowVersion = new byte[8]
+        };
     }
 }
 

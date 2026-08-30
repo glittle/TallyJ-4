@@ -35,6 +35,7 @@ const dashboardStubs = {
   ElEmpty: { template: "<div />" },
   ElTag: { template: "<span><slot /></span>" },
   ElDatePicker: { template: "<input />" },
+  CopyDocument: { template: "<span />" },
 };
 
 const router = createRouter({

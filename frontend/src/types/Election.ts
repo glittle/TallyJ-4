@@ -36,6 +36,10 @@ export interface ElectionDto {
   tellerAccessOpenedAt?: string;
 }
 
+export interface DuplicateElectionDto {
+  name?: string;
+}
+
 export interface CreateElectionDto {
   name: string;
   dateOfElection?: string;

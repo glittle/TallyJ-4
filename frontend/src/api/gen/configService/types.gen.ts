@@ -488,6 +488,10 @@ export type ElectionsChangeElectionStageDto = {
     confirmLeavingFinalized?: boolean;
 };
 
+export type ElectionsDuplicateElectionDto = {
+    name?: string | null;
+};
+
 export type ElectionsCreateElectionDto = {
     name?: string | null;
     dateOfElection?: Date | null;
@@ -3005,6 +3009,24 @@ export type PostApiElectionsCreateElectionResponses = {
 };
 
 export type PostApiElectionsCreateElectionResponse = PostApiElectionsCreateElectionResponses[keyof PostApiElectionsCreateElectionResponses];
+
+export type PostApiElectionsByGuidDuplicateElectionData = {
+    body?: ElectionsDuplicateElectionDto;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/duplicateElection';
+};
+
+export type PostApiElectionsByGuidDuplicateElectionResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseElectionsElectionDto;
+};
+
+export type PostApiElectionsByGuidDuplicateElectionResponse = PostApiElectionsByGuidDuplicateElectionResponses[keyof PostApiElectionsByGuidDuplicateElectionResponses];
 
 export type PutApiElectionsByGuidUpdateElectionData = {
     body?: ElectionsUpdateElectionDto;

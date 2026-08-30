@@ -28,6 +28,7 @@ vi.mock("@/stores/electionStore", () => ({
     initializeSignalR: vi.fn().mockResolvedValue(undefined),
     joinDashboardElections: vi.fn().mockResolvedValue(undefined),
     leaveDashboardElections: vi.fn().mockResolvedValue(undefined),
+    duplicateElection: vi.fn().mockResolvedValue(undefined),
   }),
 }));
 
@@ -70,6 +71,7 @@ const globalConfig = {
     ElEmpty: { template: "<div class='el-empty'><slot /></div>" },
     ElTag: { template: "<span><slot /></span>" },
     Plus: { template: "<span />" },
+    CopyDocument: { template: "<span />" },
     Upload: { template: "<span />" },
     Document: { template: "<span />" },
     CircleCheck: { template: "<span />" },

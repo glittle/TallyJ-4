@@ -49,6 +49,15 @@ public interface IElectionService
     Task<ElectionDto> CreateElectionAsync(CreateElectionDto createDto);
 
     /// <summary>
+    /// Duplicates an owned election into a new test copy (people, locations, and settings).
+    /// Does not copy ballots, results, computers, tellers, online votes, SMS logs, or analysis.
+    /// </summary>
+    /// <param name="sourceElectionGuid">The election to copy.</param>
+    /// <param name="dto">Optional name for the copy.</param>
+    /// <returns>The new election, or not-found / forbidden.</returns>
+    Task<DuplicateElectionResult> DuplicateElectionAsync(Guid sourceElectionGuid, DuplicateElectionDto dto);
+
+    /// <summary>
     /// Updates an existing election with the provided data.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election to update.</param>

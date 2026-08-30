@@ -1589,6 +1589,16 @@ export const Elections_ChangeElectionStageDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const Elections_DuplicateElectionDtoSchema = {
+    type: 'object',
+    properties: {
+        name: {
+            type: 'string',
+            nullable: true
+        }
+    }
+} as const;
+
 export const Elections_CreateElectionDtoSchema = {
     type: 'object',
     properties: {

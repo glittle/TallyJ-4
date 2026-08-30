@@ -2024,6 +2024,65 @@
         }
       }
     },
+    "/api/Elections/{guid}/duplicateElection": {
+      "post": {
+        "tags": [
+          "Elections"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Elections_DuplicateElectionDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Elections_DuplicateElectionDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Elections_DuplicateElectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElections_ElectionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElections_ElectionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseElections_ElectionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Elections/{guid}/updateElection": {
       "put": {
         "tags": [
@@ -8739,6 +8798,15 @@
           }
         },
         "additionalProperties": false
+      },
+      "Elections_DuplicateElectionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       },
       "Elections_CreateElectionDto": {
         "type": "object",

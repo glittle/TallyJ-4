@@ -356,6 +356,77 @@ public class ElectionsControllerTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task DuplicateElection_WithOwnedElection_ReturnsCreatedTestCopy()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Original For Duplicate",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 5
+        };
+
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var sourceGuid = createResult!.Data!.ElectionGuid;
+
+        var response = await PostJsonAsync(
+            $"/api/elections/{sourceGuid}/duplicateElection",
+            new DuplicateElectionDto { Name = "API Test Copy" });
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+        var result = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(response);
+        Assert.NotNull(result);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Data);
+        Assert.NotEqual(sourceGuid, result.Data.ElectionGuid);
+        Assert.Equal("API Test Copy", result.Data.Name);
+        Assert.True(result.Data.ShowAsTest);
+        Assert.Equal(ElectionStage.SettingUp, result.Data.ElectionStage);
+    }
+
+    [Fact]
+    public async Task DuplicateElection_WithoutAuth_ReturnsUnauthorized()
+    {
+        var response = await PostJsonAsync(
+            $"/api/elections/{Guid.NewGuid()}/duplicateElection",
+            new DuplicateElectionDto());
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DuplicateElection_WhenUserIsNotOwner_ReturnsForbidden()
+    {
+        var ownerToken = await GetAuthTokenAsync();
+        SetAuthToken(ownerToken);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Owner Only Election",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3
+        };
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var sourceGuid = createResult!.Data!.ElectionGuid;
+
+        var otherToken = await GetAuthTokenAsync("test@tallyj.com", "Tester1234!X");
+        SetAuthToken(otherToken);
+
+        var response = await PostJsonAsync(
+            $"/api/elections/{sourceGuid}/duplicateElection",
+            new DuplicateElectionDto());
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
     public async Task DeleteElection_WithValidGuid_ReturnsNoContent()
     {
         var token = await GetAuthTokenAsync();
