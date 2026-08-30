@@ -29,6 +29,13 @@ export interface PersonListDto {
   unitName?: string;
 }
 
+export interface PersonPhoneOnlineVoterDto {
+  hasPhoneRow: boolean;
+  whenRegistered?: string | Date | null;
+  whenLastLogin?: string | Date | null;
+  smsStatus?: string | null;
+}
+
 export interface PersonDetailDto {
   personGuid: string;
   electionGuid: string;
@@ -57,6 +64,7 @@ export interface PersonDetailDto {
   unitName?: string;
   voteCount: number;
   canDelete?: boolean;
+  phoneOnlineVoter?: PersonPhoneOnlineVoterDto | null;
 }
 
 export interface SearchablePersonDto extends PersonDto {

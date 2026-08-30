@@ -374,7 +374,8 @@ public class PeopleService : IPeopleService
     }
 
     /// <summary>
-    /// Retrieves detailed information about a specific person, including registration history.
+    /// Retrieves detailed information about a specific person, including registration history
+    /// and phone OnlineVoter SMS/auth status when the person has a phone.
     /// Includes all editable fields.
     /// </summary>
     /// <param name="personGuid">The unique identifier of the person.</param>
@@ -395,6 +396,7 @@ public class PeopleService : IPeopleService
         // Get vote count (how many votes this person has received)
         dto.VoteCount = person.Results.FirstOrDefault()?.VoteCount ?? 0;
         dto.CanDelete = await CanDeletePersonAsync(person);
+        dto.PhoneOnlineVoter = await MapPhoneOnlineVoterAsync(person.Phone);
 
         if (await ShouldEnsureKioskCodeAsync(person))
         {
@@ -466,6 +468,32 @@ public class PeopleService : IPeopleService
         dto.CanVote = PersonEligibilityHelper.CanVote(person);
         dto.CanReceiveVotes = PersonEligibilityHelper.CanReceiveVotes(person);
         return dto;
+    }
+
+    /// <summary>
+    /// Phone OnlineVoter SMS/auth for person detail. Null when there is no phone (UI hides the block).
+    /// Lookup is VoterId == phone and VoterIdType == P; a non-P occupant is treated as no phone row.
+    /// </summary>
+    private async Task<PersonPhoneOnlineVoterDto?> MapPhoneOnlineVoterAsync(string? phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone))
+        {
+            return null;
+        }
+
+        var row = await OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync(_context, phone);
+        if (row == null)
+        {
+            return new PersonPhoneOnlineVoterDto { HasPhoneRow = false };
+        }
+
+        return new PersonPhoneOnlineVoterDto
+        {
+            HasPhoneRow = true,
+            WhenRegistered = row.WhenRegistered,
+            WhenLastLogin = row.WhenLastLogin,
+            SmsStatus = row.SmsStatus
+        };
     }
 
     private async Task<bool> CanDeletePersonAsync(Person person)

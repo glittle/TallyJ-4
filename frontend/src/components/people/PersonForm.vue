@@ -14,6 +14,10 @@ import {
   sortRegistrationHistoryNewestFirst,
 } from "@/utils/formatRegistrationHistory";
 import {
+  phoneOnlineVoterAuthState,
+  phoneOnlineVoterSmsState,
+} from "@/utils/phoneOnlineVoterStatus";
+import {
   electionSupportsKiosk,
   getVotingMethodLabel,
 } from "@/utils/votingMethodLabels";
@@ -155,6 +159,50 @@ const rules = computed<FormRules>(() => {
 
   return formRules;
 });
+
+const phoneOnlineVoter = computed(
+  () => personDetails.value?.phoneOnlineVoter ?? null,
+);
+
+const phoneAuthText = computed(() => {
+  const status = phoneOnlineVoter.value;
+  if (!status) {
+    return "";
+  }
+  const state = phoneOnlineVoterAuthState(status);
+  if (state === "neverSeen") {
+    return t("people.phoneOnlineVoter.neverSeen");
+  }
+  if (state === "notYetUsedForAuth") {
+    return t("people.phoneOnlineVoter.notYetUsedForAuth");
+  }
+  return t("people.phoneOnlineVoter.firstRegistered", {
+    time: formatRegistrationHistoryTime(status.whenRegistered),
+  });
+});
+
+const phoneSmsText = computed(() => {
+  const status = phoneOnlineVoter.value;
+  if (!status) {
+    return "";
+  }
+  const state = phoneOnlineVoterSmsState(status.smsStatus);
+  if (state === "unchecked") {
+    return t("people.phoneOnlineVoter.smsUnchecked");
+  }
+  if (state === "ok") {
+    return t("people.phoneOnlineVoter.smsOk");
+  }
+  return t("people.phoneOnlineVoter.smsBlocked", {
+    reason: status.smsStatus,
+  });
+});
+
+const phoneSmsBlocked = computed(
+  () =>
+    phoneOnlineVoter.value != null &&
+    phoneOnlineVoterSmsState(phoneOnlineVoter.value.smsStatus) === "blocked",
+);
 
 const registrationHistory = computed((): RegistrationHistoryEntryDto[] => {
   if (!personDetails.value?.registrationHistory) {
@@ -454,7 +502,34 @@ defineExpose({
       </el-form-item>
 
       <el-form-item :label="$t('people.phone')" prop="phone">
-        <el-input v-model="form.phone" />
+        <div class="phone-field">
+          <el-input v-model="form.phone" />
+          <div
+            v-if="isEditMode && phoneOnlineVoter"
+            class="phone-online-voter"
+          >
+            <div class="phone-online-voter__row">
+              <span>{{ $t("people.phoneOnlineVoter.auth") }}</span>
+              <span>{{ phoneAuthText }}</span>
+            </div>
+            <div
+              v-if="phoneOnlineVoter.whenLastLogin"
+              class="phone-online-voter__row"
+            >
+              <span>{{ $t("people.phoneOnlineVoter.lastLogin") }}</span>
+              <span>{{
+                formatRegistrationHistoryTime(phoneOnlineVoter.whenLastLogin)
+              }}</span>
+            </div>
+            <div
+              class="phone-online-voter__row"
+              :class="{ 'is-blocked': phoneSmsBlocked }"
+            >
+              <span>{{ $t("people.phoneOnlineVoter.smsStatus") }}</span>
+              <span>{{ phoneSmsText }}</span>
+            </div>
+          </div>
+        </div>
       </el-form-item>
 
       <el-form-item v-if="showKioskCode" :label="$t('people.kioskCode')">
@@ -578,6 +653,31 @@ defineExpose({
     border-radius: var(--border-radius-sm);
 
     &.is-no {
+      color: var(--el-color-danger);
+      background-color: var(--el-color-danger-light-9);
+    }
+  }
+
+  .phone-field {
+    width: 100%;
+  }
+
+  .phone-online-voter {
+    margin-top: var(--spacing-2);
+    display: grid;
+    gap: var(--spacing-1);
+    font-size: var(--font-size-sm);
+    color: var(--color-neutral-600);
+  }
+
+  .phone-online-voter__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-3);
+    padding: 0 var(--spacing-2);
+    border-radius: var(--border-radius-sm);
+
+    &.is-blocked {
       color: var(--el-color-danger);
       background-color: var(--el-color-danger-light-9);
     }

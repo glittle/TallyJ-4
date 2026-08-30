@@ -1116,6 +1116,7 @@ export type PeoplePersonDetailDto = {
     unitName?: string | null;
     voteCount?: number;
     canDelete?: boolean;
+    phoneOnlineVoter?: PeoplePersonPhoneOnlineVoterDto | null;
 };
 
 export type PeoplePersonDto = {
@@ -1147,6 +1148,13 @@ export type PeoplePersonListDto = {
     canReceiveVotes?: boolean | null;
     ineligibleReasonCode?: string | null;
     unitName?: string | null;
+};
+
+export type PeoplePersonPhoneOnlineVoterDto = {
+    hasPhoneRow?: boolean;
+    whenRegistered?: Date | null;
+    whenLastLogin?: Date | null;
+    smsStatus?: string | null;
 };
 
 export type PeopleUpdatePersonDto = {

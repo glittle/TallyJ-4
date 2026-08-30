@@ -861,6 +861,191 @@ public class PeopleServiceTests : ServiceTestBase
 
         Assert.False(await Context.OnlineVoters.AnyAsync(ov => ov.VoterIdType == "P"));
     }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_NoPhone_PhoneOnlineVoterIsNull()
+    {
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Email = "pat@example.com",
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.Null(details.PhoneOnlineVoter);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_PhoneWithNoOnlineVoter_HasPhoneRowFalse()
+    {
+        const string phone = "+14168972680";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.NotNull(details.PhoneOnlineVoter);
+        Assert.False(details.PhoneOnlineVoter.HasPhoneRow);
+        Assert.Null(details.PhoneOnlineVoter.WhenRegistered);
+        Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
+        Assert.Null(details.PhoneOnlineVoter.SmsStatus);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_PhoneRow_NullWhenRegistered_NullSmsStatus()
+    {
+        const string phone = "+14168972681";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = null,
+            WhenRegistered = null,
+            WhenLastLogin = null
+        });
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.NotNull(details.PhoneOnlineVoter);
+        Assert.True(details.PhoneOnlineVoter.HasPhoneRow);
+        Assert.Null(details.PhoneOnlineVoter.WhenRegistered);
+        Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
+        Assert.Null(details.PhoneOnlineVoter.SmsStatus);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_PhoneRow_SmsStatusOk()
+    {
+        const string phone = "+14168972682";
+        var registered = DateTimeOffset.Parse("2026-04-01T12:00:00Z");
+        var lastLogin = DateTimeOffset.Parse("2026-04-02T08:00:00Z");
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = "OK",
+            WhenRegistered = registered,
+            WhenLastLogin = lastLogin
+        });
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.NotNull(details.PhoneOnlineVoter);
+        Assert.True(details.PhoneOnlineVoter.HasPhoneRow);
+        Assert.Equal(registered, details.PhoneOnlineVoter.WhenRegistered);
+        Assert.Equal(lastLogin, details.PhoneOnlineVoter.WhenLastLogin);
+        Assert.Equal("OK", details.PhoneOnlineVoter.SmsStatus);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_PhoneRow_SmsStatusBlockReason()
+    {
+        const string phone = "+14168972683";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = "landline",
+            WhenRegistered = DateTimeOffset.Parse("2026-03-01T00:00:00Z")
+        });
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.NotNull(details.PhoneOnlineVoter);
+        Assert.True(details.PhoneOnlineVoter.HasPhoneRow);
+        Assert.Equal("landline", details.PhoneOnlineVoter.SmsStatus);
+    }
+
+    [Theory]
+    [InlineData("E")]
+    [InlineData("C")]
+    [InlineData("T")]
+    public async Task GetPersonDetailsAsync_NonPOccupancy_NotReturnedAsPhoneStatus(string existingType)
+    {
+        const string phone = "+14168972684";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = existingType,
+            SmsStatus = "admin",
+            WhenRegistered = DateTimeOffset.Parse("2026-01-01T00:00:00Z"),
+            WhenLastLogin = DateTimeOffset.Parse("2026-01-02T00:00:00Z")
+        });
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.NotNull(details.PhoneOnlineVoter);
+        Assert.False(details.PhoneOnlineVoter.HasPhoneRow);
+        Assert.Null(details.PhoneOnlineVoter.WhenRegistered);
+        Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
+        Assert.Null(details.PhoneOnlineVoter.SmsStatus);
+    }
 }
 
 

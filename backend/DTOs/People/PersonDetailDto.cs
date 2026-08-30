@@ -141,4 +141,13 @@ public class PersonDetailDto
     /// Whether this person can be deleted (has not voted and has not received votes).
     /// </summary>
     public bool CanDelete { get; set; }
+
+    /// <summary>
+    /// Phone OnlineVoter SMS/auth fields for People Management person detail.
+    /// Null when the person has no phone (the UI hides this block).
+    /// When the person has a phone, this is always set: <see cref="PersonPhoneOnlineVoterDto.HasPhoneRow"/>
+    /// is false if there is no OnlineVoter with VoterId equal to Person.Phone and VoterIdType "P"
+    /// (including when a non-P row occupies that VoterId).
+    /// </summary>
+    public PersonPhoneOnlineVoterDto? PhoneOnlineVoter { get; set; }
 }
