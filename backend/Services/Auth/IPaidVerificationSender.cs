@@ -2,7 +2,7 @@ namespace Backend.Services.Auth;
 
 /// <summary>
 /// Sends a verification code over a paid channel (SMS / voice / WhatsApp).
-/// Implementations must not call a provider when <see cref="Helpers.PaidDestinationPhone"/> rejects the destination.
+/// Implementations must not call a provider when <see cref="Backend.Helpers.PaidDestinationPhone"/> rejects the destination.
 /// </summary>
 public interface IPaidVerificationSender
 {

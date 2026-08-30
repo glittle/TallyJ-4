@@ -29,8 +29,8 @@ public class RequestCodeDtoValidator : AbstractValidator<RequestCodeDto>
         RuleFor(x => x.DeliveryMethod)
             .NotEmpty()
             .WithMessage("Delivery method is required")
-            .Must(x => x == "email" || x == "sms" || x == "voice")
-            .WithMessage("Delivery method must be 'email', 'sms', or 'voice'");
+            .Must(x => x == "email" || PaidDestinationPhone.IsPaidChannel(x))
+            .WithMessage("Delivery method must be 'email', 'sms', 'voice', or 'whatsapp'");
 
         RuleFor(x => x.VoterId)
             .EmailAddress()

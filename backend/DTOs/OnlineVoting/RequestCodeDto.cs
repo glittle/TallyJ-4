@@ -16,7 +16,7 @@ public class RequestCodeDto
     public string VoterIdType { get; set; } = null!;
 
     /// <summary>
-    /// The delivery method for the verification code: 'email', 'sms', or 'voice'.
+    /// The delivery method for the verification code: 'email', 'sms', 'voice', or 'whatsapp'.
     /// </summary>
     public string DeliveryMethod { get; set; } = null!;
 }
