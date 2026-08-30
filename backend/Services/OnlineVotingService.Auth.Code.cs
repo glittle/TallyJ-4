@@ -56,7 +56,7 @@ public partial class OnlineVotingService
             if (!isVoterRegistered)
             {
                 _logger.LogWarning("Login code request rejected: voter not found in any open election (type: {VoterIdType})",
-                    dto.VoterIdType);
+                    KnownVoterIdType(dto.VoterIdType));
                 return BuildRequestCodeResponse("voting.auth.requestCode.notRegistered");
             }
 
@@ -91,7 +91,7 @@ public partial class OnlineVotingService
                 : "voting.auth.requestCode.sendFailed";
 
             _logger.LogInformation("Verification code sent via {Method} (registered in {Count} open election(s))",
-                dto.DeliveryMethod, openElections.Count);
+                KnownDeliveryMethod(dto.DeliveryMethod), openElections.Count);
 
             return BuildRequestCodeResponse(messageKey, verifyCode);
         }
@@ -197,7 +197,7 @@ public partial class OnlineVotingService
     /// <returns>True if the code was sent successfully, false otherwise.</returns>
     private async Task<bool> SendVerificationCodeAsync(string recipient, string method, string code)
     {
-        _logger.LogInformation("Sending verification code via {Method}", method);
+        _logger.LogInformation("Sending verification code via {Method}", KnownDeliveryMethod(method));
 
         try
         {
@@ -212,7 +212,7 @@ public partial class OnlineVotingService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send verification code via {Method}", method);
+            _logger.LogError(ex, "Failed to send verification code via {Method}", KnownDeliveryMethod(method));
             return false;
         }
     }

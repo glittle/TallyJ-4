@@ -55,4 +55,27 @@ public partial class OnlineVotingService
 
         return input.Replace("\r", "").Replace("\n", "");
     }
+
+    /// <summary>
+    /// Maps a request voter-id type to a closed set so logs are not user-controlled.
+    /// </summary>
+    private static string KnownVoterIdType(string? type) => type switch
+    {
+        "E" => "E",
+        "P" => "P",
+        "C" => "C",
+        _ => "unknown"
+    };
+
+    /// <summary>
+    /// Maps a request delivery method to a closed set so logs are not user-controlled.
+    /// </summary>
+    private static string KnownDeliveryMethod(string? method) => method switch
+    {
+        "email" => "email",
+        "sms" => "sms",
+        "voice" => "voice",
+        "whatsapp" => "whatsapp",
+        _ => "unknown"
+    };
 }
