@@ -55,8 +55,8 @@ public partial class OnlineVotingService
 
             if (!isVoterRegistered)
             {
-                _logger.LogWarning("Login code request rejected: VoterId {VoterId} (type: {VoterIdType}) not found in any open election",
-                    SanitizeForLog(dto.VoterId), dto.VoterIdType);
+                _logger.LogWarning("Login code request rejected: voter not found in any open election (type: {VoterIdType})",
+                    dto.VoterIdType);
                 return BuildRequestCodeResponse("voting.auth.requestCode.notRegistered");
             }
 
@@ -90,14 +90,14 @@ public partial class OnlineVotingService
                 ? "voting.auth.requestCode.sent"
                 : "voting.auth.requestCode.sendFailed";
 
-            _logger.LogInformation("Verification code sent to {VoterId} via {Method} (registered in {Count} open election(s))",
-                SanitizeForLog(dto.VoterId), dto.DeliveryMethod, openElections.Count);
+            _logger.LogInformation("Verification code sent via {Method} (registered in {Count} open election(s))",
+                dto.DeliveryMethod, openElections.Count);
 
             return BuildRequestCodeResponse(messageKey, verifyCode);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error requesting verification code for {VoterId}", SanitizeForLog(dto.VoterId));
+            _logger.LogError(ex, "Error requesting verification code");
             return BuildRequestCodeResponse("voting.auth.requestCode.error");
         }
     }
@@ -165,13 +165,13 @@ public partial class OnlineVotingService
             };
 
             await NotifyLoginElsewhereAsync(onlineVoter.VoterId);
-            _logger.LogInformation("Voter {VoterId} authenticated successfully", dto.VoterId);
+            _logger.LogInformation("Voter authenticated successfully");
 
             return (true, null, response);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error verifying code for {VoterId}", dto.VoterId);
+            _logger.LogError(ex, "Error verifying code");
             return (false, "voting.auth.verify.error", null);
         }
     }
@@ -197,7 +197,7 @@ public partial class OnlineVotingService
     /// <returns>True if the code was sent successfully, false otherwise.</returns>
     private async Task<bool> SendVerificationCodeAsync(string recipient, string method, string code)
     {
-        _logger.LogInformation("Sending verification code to {Recipient} via {Method}", SanitizeForLog(recipient), method);
+        _logger.LogInformation("Sending verification code via {Method}", method);
 
         try
         {
@@ -212,7 +212,7 @@ public partial class OnlineVotingService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send verification code to {Recipient} via {Method}", SanitizeForLog(recipient), method);
+            _logger.LogError(ex, "Failed to send verification code via {Method}", method);
             return false;
         }
     }
@@ -243,7 +243,7 @@ public partial class OnlineVotingService
         message.Body = bodyBuilder.ToMessageBody();
 
         await _emailSender.SendAsync(message);
-        _logger.LogInformation("Email verification code sent to {Email}", SanitizeForLog(email));
+        _logger.LogInformation("Email verification code sent");
         return true;
     }
 
@@ -307,8 +307,7 @@ public partial class OnlineVotingService
         };
 
         await NotifyLoginElsewhereAsync(onlineVoter.VoterId);
-        var safeVoterIdForLog = SanitizeForLog(normalizedCode);
-        _logger.LogInformation("Voter {VoterId} authenticated via direct kiosk/personal code", safeVoterIdForLog);
+        _logger.LogInformation("Voter authenticated via direct kiosk/personal code");
         return (true, null, response);
     }
 
