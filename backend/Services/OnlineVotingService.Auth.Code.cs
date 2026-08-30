@@ -64,6 +64,18 @@ public partial class OnlineVotingService
             var onlineVoter = await _context.OnlineVoters
                 .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId);
 
+            // Paid channels: durable SmsStatus on an existing row blocks send (null = not yet checked).
+            if (PaidDestinationPhone.IsPaidChannel(dto.DeliveryMethod)
+                && onlineVoter != null
+                && !OnlineVoterSmsStatus.AllowsPaidSend(onlineVoter.SmsStatus))
+            {
+                _logger.LogWarning(
+                    "Login code request skipped: SmsStatus blocks paid send ({Method}, {SmsStatus})",
+                    KnownDeliveryMethod(dto.DeliveryMethod),
+                    SanitizeForLog(onlineVoter.SmsStatus));
+                return BuildRequestCodeResponse("voting.auth.requestCode.invalidPhone");
+            }
+
             if (onlineVoter == null)
             {
                 onlineVoter = new OnlineVoter
