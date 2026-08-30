@@ -5,7 +5,7 @@
 ## Evidence: confirmed
 
 **Source:** issue #254 (maintainer); July 555-range send incident described there  
-**Revisit when:** later #254 slices land (Person UI, Twilio callback auto-learn), or NANP reserved-range rules change
+**Revisit when:** later #254 slices land (Twilio callback auto-learn), or NANP reserved-range rules change
 
 ## In-code gate before any paid provider
 
@@ -65,7 +65,7 @@ Skip logs method + status only (no raw phone or email). Voter-facing message reu
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 (maintainer)  
-**Revisit when:** Person UI or Twilio auto-learn lands, or email/kiosk rows need the same ensure
+**Revisit when:** Twilio auto-learn lands, or email/kiosk rows need the same ensure
 
 `OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync` (and the batch `EnsureOnlineVotersForPhonesAsync` for import) inserts a `VoterIdType = "P"` row keyed by `VoterId` = the phone as stored on `Person`. Callers: `PeopleService` create/update, `PeopleImportService` load batches, and `DbSeeder` so SeedOnStartup phones are usable locally.
 
@@ -81,7 +81,26 @@ Skip logs method + status only (no raw phone or email). Voter-facing message reu
 
 **Rejected alternative:** set `WhenRegistered` when the Person phone is saved. That would mark import/edit as registration and break “never seen vs imported-only” for the Person UI slice.
 
-**Not in this slice:** Person UI / Front Desk SMS-status display, Twilio status-callback auto-learn, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255).
+**Not in this slice (at the time):** Person UI / Front Desk SMS-status display, Twilio status-callback auto-learn, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255).
+
+## Person detail phone OnlineVoter status (fourth slice)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #254 (maintainer); this slice’s lookup rule  
+**Revisit when:** Front Desk / people list columns, SuperAdmin/teller manual SmsStatus, recent SmsLog, or Twilio auto-learn land
+
+People Management person detail (`GetPersonDetails` / `PersonDetailDto.PhoneOnlineVoter`) shows the global phone OnlineVoter SMS/auth fields. Lookup is both `VoterId == Person.Phone` and `VoterIdType == "P"` (`OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync`). `IX_OnlineVoter_Id` is unique on `VoterId` alone, but paid-send and this UI are type-scoped to `"P"`. A non-P row occupying that `VoterId` is treated as no phone row (never seen); that row’s `SmsStatus` is not shown as the phone’s.
+
+No phone (null/whitespace) → `PhoneOnlineVoter` is null and the UI hides the block. Phone with no matching P row → `HasPhoneRow` false (never seen). P row with `WhenRegistered` null → imported-only / not yet used for auth. `WhenRegistered` and `WhenLastLogin` are the stored values from that P row. `SmsStatus` is unchecked (null) / `OK` / blocked + the reason string.
+
+`VoterId` is the Person phone string as stored, not a normalized E.164. Logs still must not include raw phone/PII. Email / kiosk / Telegram UI is unchanged.
+
+**Rejected alternative:** look up by `VoterId` only. That would surface a non-P occupant’s `SmsStatus` and dates as if they belonged to the phone.
+
+**Rejected alternative:** Front Desk / people list columns in this slice. Optional later; person detail is the required surface.
+
+**Not in this slice:** Front Desk / list columns, SuperAdmin/teller manual set of `SmsStatus`, recent `SmsLog` rows, Twilio status-callback auto-learn, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255).
 
 ## Related
 

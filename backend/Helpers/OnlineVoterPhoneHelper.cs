@@ -84,4 +84,28 @@ public static class OnlineVoterPhoneHelper
             });
         }
     }
+
+    /// <summary>
+    /// The phone OnlineVoter row for this Person phone string:
+    /// <see cref="OnlineVoter.VoterId"/> equals <paramref name="phone"/> and
+    /// <see cref="OnlineVoter.VoterIdType"/> is <see cref="PhoneVoterIdType"/>.
+    /// Does not look up by VoterId alone. A non-P row occupying that VoterId is not returned.
+    /// </summary>
+    public static async Task<OnlineVoter?> FindPhoneOnlineVoterAsync(
+        MainDbContext context,
+        string? phone,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        if (string.IsNullOrWhiteSpace(phone))
+        {
+            return null;
+        }
+
+        return await context.OnlineVoters
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                ov => ov.VoterId == phone && ov.VoterIdType == PhoneVoterIdType,
+                cancellationToken);
+    }
 }

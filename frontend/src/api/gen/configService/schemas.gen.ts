@@ -3735,6 +3735,14 @@ export const People_PersonDetailDtoSchema = {
         },
         canDelete: {
             type: 'boolean'
+        },
+        phoneOnlineVoter: {
+            allOf: [
+                {
+                    $ref: '#/components/schemas/People_PersonPhoneOnlineVoterDto'
+                }
+            ],
+            nullable: true
         }
     },
     additionalProperties: false
@@ -3847,6 +3855,30 @@ export const People_PersonListDtoSchema = {
             nullable: true
         },
         unitName: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const People_PersonPhoneOnlineVoterDtoSchema = {
+    type: 'object',
+    properties: {
+        hasPhoneRow: {
+            type: 'boolean'
+        },
+        whenRegistered: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        whenLastLogin: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        smsStatus: {
             type: 'string',
             nullable: true
         }

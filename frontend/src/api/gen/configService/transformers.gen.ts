@@ -367,9 +367,22 @@ export const getApiOnlineVotingByElectionGuidByVoterIdVoteStatusResponseTransfor
     return data;
 };
 
+const peoplePersonPhoneOnlineVoterDtoSchemaResponseTransformer = (data: any) => {
+    if (data.whenRegistered) {
+        data.whenRegistered = new Date(data.whenRegistered);
+    }
+    if (data.whenLastLogin) {
+        data.whenLastLogin = new Date(data.whenLastLogin);
+    }
+    return data;
+};
+
 const peoplePersonDetailDtoSchemaResponseTransformer = (data: any) => {
     if (data.registrationTime) {
         data.registrationTime = new Date(data.registrationTime);
+    }
+    if (data.phoneOnlineVoter) {
+        data.phoneOnlineVoter = peoplePersonPhoneOnlineVoterDtoSchemaResponseTransformer(data.phoneOnlineVoter);
     }
     return data;
 };

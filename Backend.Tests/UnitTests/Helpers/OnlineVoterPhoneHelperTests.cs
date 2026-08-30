@@ -121,4 +121,53 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
         Assert.Equal("P", newRow.VoterIdType);
         Assert.Null(newRow.WhenRegistered);
     }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task FindPhoneOnlineVoterAsync_NoPhone_ReturnsNull(string? phone)
+    {
+        var row = await OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync(Context, phone);
+        Assert.Null(row);
+    }
+
+    [Fact]
+    public async Task FindPhoneOnlineVoterAsync_PRow_ReturnsRow()
+    {
+        const string phone = "+14168972671";
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = "OK"
+        });
+        await Context.SaveChangesAsync();
+
+        var row = await OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync(Context, phone);
+
+        Assert.NotNull(row);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Equal("OK", row.SmsStatus);
+    }
+
+    [Theory]
+    [InlineData("E")]
+    [InlineData("C")]
+    [InlineData("T")]
+    public async Task FindPhoneOnlineVoterAsync_NonPOccupancy_ReturnsNull(string existingType)
+    {
+        const string phone = "+14168972671";
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = existingType,
+            SmsStatus = "admin"
+        });
+        await Context.SaveChangesAsync();
+
+        var row = await OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync(Context, phone);
+
+        Assert.Null(row);
+    }
 }

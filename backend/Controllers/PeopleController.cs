@@ -103,8 +103,8 @@ public class PeopleController : ControllerBase
     }
 
     /// <summary>
-    /// Gets detailed information about a specific person, including all editable fields
-    /// and registration history.
+    /// Gets detailed information about a specific person, including all editable fields,
+    /// registration history, and phone OnlineVoter SMS/auth status when the person has a phone.
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>
     /// <returns>Detailed person information with history.</returns>
