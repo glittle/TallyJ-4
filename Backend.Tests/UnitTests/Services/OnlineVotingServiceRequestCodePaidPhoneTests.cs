@@ -14,7 +14,8 @@ namespace Backend.Tests.UnitTests.Services;
 
 /// <summary>
 /// Paid-channel requestCode gate: reserved/malformed phones and blocked SmsStatus
-/// never reach the provider; null/"OK" still hits send or the registration check.
+/// never reach the provider (SmsStatus is checked before registration);
+/// null/"OK" still hits send or the registration check.
 /// </summary>
 public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 {
@@ -193,6 +194,22 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         Assert.Equal("voting.auth.requestCode.notRegistered", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RequestCode_SmsStatusBlocked_NotRegistered_ReturnsInvalidPhone()
+    {
+        await SeedOpenElectionWithPerson(email: "other@example.com");
+        await SeedOnlineVoter(ValidPhone, "undeliverable");
+
+        var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
+
+        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.NotEqual("voting.auth.requestCode.notRegistered", result.MessageKey);
+        Assert.Null(result.DevVerificationCode);
+        _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Fact]

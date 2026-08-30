@@ -45,7 +45,14 @@ if SmsStatus is not null AND SmsStatus != "OK" → do not send
 
 Initial reason vocabulary (not a closed enum — short phrases/codes): `555-range`, `undeliverable`, `landline`, `premium`, `admin`, `twilio-30003`, plus in-code `malformed-e164`.
 
-The durable gate runs in `RequestVerificationCodeAsync` after the voter is registered in an open election and an `OnlineVoter` row is loaded, beside the existing `PaidDestinationPhone` check. Skip logs method + status only (no raw phone or email). Voter-facing message reuses `voting.auth.requestCode.invalidPhone`. Email / OAuth / kiosk unchanged. `WhenRegistered` semantics unchanged.
+Pre-Twilio gate order in `RequestVerificationCodeAsync` (issue #254):
+
+1. `PaidDestinationPhone` (in-code; no DB)
+2. `OnlineVoter.SmsStatus` when a row already exists and status is not null / not `"OK"` (paid channels only; do not create a row just to store status)
+3. Existing open-election registration check (unchanged)
+4. Then the provider
+
+Skip logs method + status only (no raw phone or email). Voter-facing message reuses `voting.auth.requestCode.invalidPhone`. Email / OAuth / kiosk unchanged. `WhenRegistered` semantics unchanged.
 
 **Rejected alternative (this slice):** rename the column to `Status` so email/kiosk rows could share it later. The issue field spec and this slice’s contract are `SmsStatus`; a generic rename can be a later migration if other identifier types need a status.
 
