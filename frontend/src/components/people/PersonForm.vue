@@ -200,7 +200,7 @@ const phoneSmsText = computed(() => {
 
 const phoneSmsBlocked = computed(
   () =>
-    phoneOnlineVoter.value != null &&
+    phoneOnlineVoter.value !== null &&
     phoneOnlineVoterSmsState(phoneOnlineVoter.value.smsStatus) === "blocked",
 );
 
@@ -504,10 +504,7 @@ defineExpose({
       <el-form-item :label="$t('people.phone')" prop="phone">
         <div class="phone-field">
           <el-input v-model="form.phone" />
-          <div
-            v-if="isEditMode && phoneOnlineVoter"
-            class="phone-online-voter"
-          >
+          <div v-if="isEditMode && phoneOnlineVoter" class="phone-online-voter">
             <div class="phone-online-voter__row">
               <span>{{ $t("people.phoneOnlineVoter.auth") }}</span>
               <span>{{ phoneAuthText }}</span>

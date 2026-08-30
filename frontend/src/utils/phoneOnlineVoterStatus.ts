@@ -24,7 +24,7 @@ export function phoneOnlineVoterAuthState(
 export function phoneOnlineVoterSmsState(
   smsStatus: string | null | undefined,
 ): PhoneOnlineVoterSmsState {
-  if (smsStatus == null) {
+  if (smsStatus === null || smsStatus === undefined) {
     return "unchecked";
   }
   if (smsStatus === "OK") {
