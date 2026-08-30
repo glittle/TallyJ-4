@@ -143,6 +143,7 @@ public class PeopleService : IPeopleService
         SyncEligibility(person);
 
         _context.People.Add(person);
+        await OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync(_context, person.Phone);
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Created person {PersonGuid} - {FullName}", person.PersonGuid, person.FullName);
@@ -214,6 +215,7 @@ public class PeopleService : IPeopleService
             await VoteStatusRefresher.RefreshVotesForPersonAsync(_context, person, _logger);
         }
 
+        await OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync(_context, person.Phone);
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Updated person {PersonGuid}", personGuid);

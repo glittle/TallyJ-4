@@ -1,4 +1,5 @@
 using Backend.Context;
+using Backend.Helpers;
 using Backend.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,7 @@ public static partial class DbSeeder
             logger.LogInformation("Database already seeded");
             await SeedElection1OnlineVotingAsync(context, logger);
             await SeedOnlineVotingTestElectionsAsync(context, logger);
+            await EnsureOnlineVotersForSeededPhonesAsync(context);
             await context.SaveChangesAsync();
             return;
         }
@@ -43,8 +45,22 @@ public static partial class DbSeeder
         await SeedElection2Async(context, userManager, logger);
         await SeedOnlineVotingTestElectionsAsync(context, logger);
         await SeedLogsAsync(context, logger);
+        await EnsureOnlineVotersForSeededPhonesAsync(context);
 
         await context.SaveChangesAsync();
         logger.LogInformation("Database seeding complete");
+    }
+
+    /// <summary>
+    /// Seed people may have phones without going through PeopleService. Ensure a global
+    /// phone OnlineVoter row so a local SeedOnStartup database is usable for SMS-status work.
+    /// </summary>
+    private static async Task EnsureOnlineVotersForSeededPhonesAsync(MainDbContext context)
+    {
+        var persistedPhones = await context.People
+            .Select(p => p.Phone)
+            .ToListAsync();
+        var phones = context.People.Local.Select(p => p.Phone).Concat(persistedPhones);
+        await OnlineVoterPhoneHelper.EnsureOnlineVotersForPhonesAsync(context, phones);
     }
 }

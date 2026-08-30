@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.Import;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -159,6 +160,9 @@ public partial class PeopleImportService
                 // Save batch
                 if (!errorsFound && (peopleToAdd.Count >= batchSize || i == dataRows.Count - 1))
                 {
+                    await OnlineVoterPhoneHelper.EnsureOnlineVotersForPhonesAsync(
+                        _context,
+                        peopleToAdd.Select(p => p.Phone));
                     _context.People.AddRange(peopleToAdd);
                     try
                     {

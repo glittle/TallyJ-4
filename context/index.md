@@ -12,4 +12,4 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [online-ballots.md](online-ballots.md) — online acceptance and random name resolution
 - [people.md](people.md) — person fields; AgeGroup removed (eligibility is V01/X05)
 - [people-import.md](people-import.md) — three-action import pipeline (not a Next/Previous wizard)
-- [sms-eligibility.md](sms-eligibility.md) — reject reserved/fictional/malformed phones before paid SMS/voice/WhatsApp
+- [sms-eligibility.md](sms-eligibility.md) — reject reserved/fictional/malformed phones before paid SMS/voice/WhatsApp; OnlineVoter.SmsStatus; ensure phone row on Person write
