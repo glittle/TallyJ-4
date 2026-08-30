@@ -3,7 +3,7 @@
 Lean index of project *why* knowledge. Load a topic file only when the work touches that area.
 
 - [architecture.md](architecture.md) — single backend host after domain consolidation; where code lives
-- [auth.md](auth.md) — JWT identity claims (`sub` / `NameIdentifier`) on .NET 10
+- [auth.md](auth.md) — JWT identity claims (`sub` / `NameIdentifier`); teller vs online-voter cookie transport
 - [realtime.md](realtime.md) — SignalR hub group naming (not a single `election-{guid}` pattern)
 - [api-contracts.md](api-contracts.md) — dual API response wrappers and OpenAPI client regeneration
 - [election-analysis.md](election-analysis.md) — core analysis engine; risk-first correctness vs v3

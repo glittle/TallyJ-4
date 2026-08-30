@@ -12,7 +12,8 @@ const onlineVotingStore = useOnlineVotingStore();
 const { showErrorMessage } = useNotifications();
 
 onMounted(async () => {
-  if (!onlineVotingStore.voterToken) {
+  const restored = await onlineVotingStore.restoreSession();
+  if (!restored) {
     router.push({ name: "voter-auth" });
     return;
   }
@@ -105,8 +106,8 @@ function timeUntilClose(
   return t("voting.elections.status.open");
 }
 
-function handleLogout() {
-  onlineVotingStore.logout();
+async function handleLogout() {
+  await onlineVotingStore.logout();
   router.push("/");
 }
 </script>

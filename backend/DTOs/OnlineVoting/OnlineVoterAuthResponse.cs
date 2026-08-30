@@ -6,9 +6,10 @@
 public class OnlineVoterAuthResponse
 {
     /// <summary>
-    /// The authentication token for the voter.
+    /// Deprecated: the JWT is issued in the httpOnly <c>voter_token</c> cookie.
+    /// Left optional so older clients do not break; new responses omit it.
     /// </summary>
-    public string Token { get; set; } = null!;
+    public string? Token { get; set; }
 
     /// <summary>
     /// The voter's unique identifier.

@@ -1,3 +1,4 @@
+import { client } from "@/api/gen/configService/client.gen";
 import {
   getApiOnlineVotingAvailableElections,
   getApiOnlineVotingByElectionGuidByVoterIdVoteStatus,
@@ -77,15 +78,25 @@ export const onlineVotingService = {
     return requireData(response.data, "telegramAuth");
   },
 
-  async getAvailableElections(
-    voterToken: string,
-  ): Promise<OnlineVotingAvailableElectionDto[]> {
-    const response = await getApiOnlineVotingAvailableElections({
-      headers: {
-        Authorization: `Bearer ${voterToken}`,
-      },
-    });
+  async getAvailableElections(): Promise<OnlineVotingAvailableElectionDto[]> {
+    const response = await getApiOnlineVotingAvailableElections();
     return requireData(response.data, "getAvailableElections");
+  },
+
+  async getSession(): Promise<{ voterId: string; voterIdType: string }> {
+    const response = await client.get({ url: "/api/online-voting/me" });
+    const payload = requireData(
+      response.data as { voterId?: string; voterIdType?: string } | undefined,
+      "getSession",
+    );
+    return {
+      voterId: payload.voterId ?? "",
+      voterIdType: payload.voterIdType ?? "",
+    };
+  },
+
+  async logout(): Promise<void> {
+    await client.post({ url: "/api/online-voting/logout" });
   },
 
   async getElectionInfo(

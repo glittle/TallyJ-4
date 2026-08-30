@@ -33,7 +33,8 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         Assert.NotNull(auth);
         Assert.Equal(kioskCode, auth.VoterId);
         Assert.Equal("C", auth.VoterIdType);
-        Assert.False(string.IsNullOrWhiteSpace(auth.Token));
+        Assert.True(string.IsNullOrEmpty(auth.Token));
+        Assert.False(string.IsNullOrWhiteSpace(GetSetCookieValue(response, "voter_token")));
     }
 
     [Fact]

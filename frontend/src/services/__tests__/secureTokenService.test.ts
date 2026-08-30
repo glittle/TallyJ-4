@@ -98,6 +98,22 @@ describe("secureTokenService", () => {
     }
   });
 
+  it("isVoterAuthenticated reads the non-httpOnly voter_session flag", () => {
+    cookieJar.push("voter_session=1");
+    expect(secureTokenService.isVoterAuthenticated()).toBe(true);
+  });
+
+  it("clearVoterSession expires the voter_session flag with secure flags", () => {
+    secureTokenService.clearVoterSession();
+
+    expect(cookieJar).toHaveLength(1);
+    const written = cookieJar[0].toLowerCase();
+    expect(written).toContain("voter_session=");
+    expect(written).toContain("max-age=0");
+    expect(written).toContain("secure");
+    expect(written).toContain("samesite=strict");
+  });
+
   it("getCookie decodes URI-encoded values", () => {
     // Simulate a browser cookie store string (name=value pairs only; no attributes).
     // Use the shared mock jar so we do not reassign document.cookie without Secure

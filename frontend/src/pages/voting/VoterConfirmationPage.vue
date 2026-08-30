@@ -22,8 +22,8 @@ function handleBackToElections() {
   router.push({ name: "voter-elections" });
 }
 
-function handleLogout() {
-  onlineVotingStore.logout();
+async function handleLogout() {
+  await onlineVotingStore.logout();
   router.push("/");
 }
 </script>

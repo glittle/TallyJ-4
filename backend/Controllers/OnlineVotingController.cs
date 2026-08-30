@@ -1,4 +1,5 @@
 using Backend.DTOs.OnlineVoting;
+using Backend.Middleware;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,13 +52,7 @@ public class OnlineVotingController : ControllerBase
     public async Task<ActionResult<OnlineVoterAuthResponse>> VerifyCode([FromBody] VerifyCodeDto dto)
     {
         var (success, error, response) = await _onlineVotingService.VerifyCodeAsync(dto);
-
-        if (!success)
-        {
-            return BadRequest(new { error });
-        }
-
-        return Ok(response);
+        return CompleteVoterAuth(success, error, response);
     }
 
     /// <summary>
@@ -70,13 +65,7 @@ public class OnlineVotingController : ControllerBase
     public async Task<ActionResult<OnlineVoterAuthResponse>> GoogleAuth([FromBody] GoogleAuthForVoterDto dto)
     {
         var (success, error, response) = await _onlineVotingService.AuthenticateVoterWithGoogleAsync(dto);
-
-        if (!success)
-        {
-            return BadRequest(new { error });
-        }
-
-        return Ok(response);
+        return CompleteVoterAuth(success, error, response);
     }
 
     /// <summary>
@@ -89,13 +78,7 @@ public class OnlineVotingController : ControllerBase
     public async Task<ActionResult<OnlineVoterAuthResponse>> FacebookAuth([FromBody] FacebookAuthForVoterDto dto)
     {
         var (success, error, response) = await _onlineVotingService.FacebookAuthAsync(dto);
-
-        if (!success)
-        {
-            return BadRequest(new { error });
-        }
-
-        return Ok(response);
+        return CompleteVoterAuth(success, error, response);
     }
 
     /// <summary>
@@ -108,13 +91,7 @@ public class OnlineVotingController : ControllerBase
     public async Task<ActionResult<OnlineVoterAuthResponse>> KakaoAuth([FromBody] KakaoAuthForVoterDto dto)
     {
         var (success, error, response) = await _onlineVotingService.KakaoAuthAsync(dto);
-
-        if (!success)
-        {
-            return BadRequest(new { error });
-        }
-
-        return Ok(response);
+        return CompleteVoterAuth(success, error, response);
     }
 
     /// <summary>
@@ -127,13 +104,7 @@ public class OnlineVotingController : ControllerBase
     public async Task<ActionResult<OnlineVoterAuthResponse>> TelegramAuth([FromBody] TelegramAuthForVoterDto dto)
     {
         var (success, error, response) = await _onlineVotingService.TelegramAuthAsync(dto);
-
-        if (!success)
-        {
-            return BadRequest(new { error });
-        }
-
-        return Ok(response);
+        return CompleteVoterAuth(success, error, response);
     }
 
     /// <summary>
@@ -153,6 +124,39 @@ public class OnlineVotingController : ControllerBase
 
         var elections = await _onlineVotingService.GetAvailableElectionsAsync(voterId);
         return Ok(elections);
+    }
+
+    /// <summary>
+    /// Returns the authenticated online voter's identity from the session cookie JWT.
+    /// Used by the SPA to restore voterId after refresh without reading the httpOnly token.
+    /// </summary>
+    [HttpGet("me")]
+    [Authorize(Policy = "OnlineVoter")]
+    public ActionResult<OnlineVoterSessionDto> GetSession()
+    {
+        var voterId = User.FindFirst("voterId")?.Value;
+        if (string.IsNullOrWhiteSpace(voterId))
+        {
+            return Unauthorized(new { error = "Invalid voter token." });
+        }
+
+        return Ok(new OnlineVoterSessionDto
+        {
+            VoterId = voterId,
+            VoterIdType = User.FindFirst("voterIdType")?.Value ?? string.Empty
+        });
+    }
+
+    /// <summary>
+    /// Clears online-voter cookies. Anonymous so an expired JWT can still log out.
+    /// Does not clear teller <c>auth_token</c> cookies.
+    /// </summary>
+    [HttpPost("logout")]
+    [AllowAnonymous]
+    public IActionResult Logout()
+    {
+        SecureCookieMiddleware.ClearVoterAuthCookies(HttpContext);
+        return Ok(new { message = "Logged out successfully" });
     }
 
     /// <summary>
@@ -229,5 +233,27 @@ public class OnlineVotingController : ControllerBase
 
         var status = await _onlineVotingService.GetVoteStatusAsync(electionGuid, voterId);
         return Ok(status);
+    }
+
+    /// <summary>
+    /// Issues httpOnly voter cookies and omits the JWT from the JSON body.
+    /// </summary>
+    private ActionResult<OnlineVoterAuthResponse> CompleteVoterAuth(
+        bool success,
+        string? error,
+        OnlineVoterAuthResponse? response)
+    {
+        if (!success || response == null)
+        {
+            return BadRequest(new { error });
+        }
+
+        if (!string.IsNullOrEmpty(response.Token))
+        {
+            SecureCookieMiddleware.SetVoterAuthCookies(HttpContext, response.Token);
+        }
+
+        response.Token = null;
+        return Ok(response);
     }
 }

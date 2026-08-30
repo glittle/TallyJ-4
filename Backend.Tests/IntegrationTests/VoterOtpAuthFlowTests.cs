@@ -49,7 +49,8 @@ public class VoterOtpAuthFlowTests : IntegrationTestBase
         Assert.NotNull(auth);
         Assert.Equal(email, auth.VoterId);
         Assert.Equal("E", auth.VoterIdType);
-        Assert.False(string.IsNullOrWhiteSpace(auth.Token));
+        Assert.True(string.IsNullOrEmpty(auth.Token));
+        Assert.False(string.IsNullOrWhiteSpace(GetSetCookieValue(verifyResponse, "voter_token")));
     }
 
     [Fact]
@@ -81,7 +82,8 @@ public class VoterOtpAuthFlowTests : IntegrationTestBase
         Assert.NotNull(auth);
         Assert.Equal(phone, auth.VoterId);
         Assert.Equal("P", auth.VoterIdType);
-        Assert.False(string.IsNullOrWhiteSpace(auth.Token));
+        Assert.True(string.IsNullOrEmpty(auth.Token));
+        Assert.False(string.IsNullOrWhiteSpace(GetSetCookieValue(verifyResponse, "voter_token")));
     }
 
     [Fact]
@@ -100,7 +102,8 @@ public class VoterOtpAuthFlowTests : IntegrationTestBase
         Assert.NotNull(auth);
         Assert.Equal(email, auth.VoterId);
         Assert.Equal("E", auth.VoterIdType);
-        Assert.False(string.IsNullOrWhiteSpace(auth.Token));
+        Assert.True(string.IsNullOrEmpty(auth.Token));
+        Assert.False(string.IsNullOrWhiteSpace(GetSetCookieValue(response, "voter_token")));
     }
 
     private async Task<Guid> SetupOpenElectionWithVoter(string? email = null, string? phone = null)

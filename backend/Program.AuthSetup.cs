@@ -1,5 +1,6 @@
 using System.Text;
 using Backend.Identity;
+using Backend.Middleware;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -55,7 +56,17 @@ public static class ProgramAuthSetup
                         return Task.CompletedTask;
                     }
 
-                    var tokenCookie = context.Request.Cookies["auth_token"];
+                    if (SecureCookieMiddleware.IsVoterScopedPath(path))
+                    {
+                        var voterCookie = context.Request.Cookies[SecureCookieMiddleware.VoterTokenCookieName];
+                        if (!string.IsNullOrEmpty(voterCookie))
+                        {
+                            context.Token = voterCookie;
+                            return Task.CompletedTask;
+                        }
+                    }
+
+                    var tokenCookie = context.Request.Cookies[SecureCookieMiddleware.AccessTokenCookieName];
                     if (!string.IsNullOrEmpty(tokenCookie))
                     {
                         context.Token = tokenCookie;

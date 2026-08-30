@@ -255,8 +255,9 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var auth = await response.Content.ReadFromJsonAsync<OnlineVoterAuthResponse>();
         Assert.NotNull(auth);
-        Assert.False(string.IsNullOrWhiteSpace(auth.Token));
-        return auth.Token;
+        var token = GetSetCookieValue(response, "voter_token");
+        Assert.False(string.IsNullOrWhiteSpace(token));
+        return token!;
     }
 
     private async Task<Guid> SetupOpenElection()

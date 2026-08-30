@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 using Backend.Middleware;
 using Xunit;
 using System.Collections;
@@ -140,6 +141,78 @@ public class SecureCookieMiddlewareTests
         {
             Assert.True(cookie.Expires < DateTimeOffset.UtcNow || cookie.MaxAge == TimeSpan.Zero);
         }
+    }
+
+    [Fact]
+    public void SetVoterAuthCookies_SetsHttpOnlyTokenAndReadableSessionFlag()
+    {
+        var httpContext = new DefaultHttpContext();
+        var accessToken = "voter_jwt_value";
+
+        SecureCookieMiddleware.SetVoterAuthCookies(httpContext, accessToken);
+
+        var cookies = httpContext.Response.GetTypedHeaders().SetCookie;
+        Assert.Equal(2, cookies.Count);
+
+        var tokenCookie = cookies.First(c => c.Name == SecureCookieMiddleware.VoterTokenCookieName);
+        Assert.Equal(accessToken, tokenCookie.Value.Value);
+        Assert.True(tokenCookie.HttpOnly);
+        AssertAlwaysSecureStrictHostOnly(tokenCookie);
+
+        var sessionCookie = cookies.First(c => c.Name == SecureCookieMiddleware.VoterSessionCookieName);
+        Assert.Equal("1", sessionCookie.Value.Value);
+        Assert.False(sessionCookie.HttpOnly);
+        AssertAlwaysSecureStrictHostOnly(sessionCookie);
+    }
+
+    [Fact]
+    public void SetVoterAuthCookies_IsSecureStrictHostOnly_EvenWhenRequestIsHttp()
+    {
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.IsHttps = false;
+
+        SecureCookieMiddleware.SetVoterAuthCookies(httpContext, "voter_jwt_value");
+
+        var cookies = httpContext.Response.GetTypedHeaders().SetCookie;
+        Assert.All(cookies, AssertAlwaysSecureStrictHostOnly);
+    }
+
+    [Fact]
+    public void ClearVoterAuthCookies_DoesNotClearTellerCookies()
+    {
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.IsHttps = false;
+
+        SecureCookieMiddleware.ClearVoterAuthCookies(httpContext);
+
+        var cookies = httpContext.Response.GetTypedHeaders().SetCookie;
+        var cookieNames = cookies.Select(c => c.Name.Value).ToList();
+        Assert.Contains(SecureCookieMiddleware.VoterTokenCookieName, cookieNames);
+        Assert.Contains(SecureCookieMiddleware.VoterSessionCookieName, cookieNames);
+        Assert.DoesNotContain(SecureCookieMiddleware.AccessTokenCookieName, cookieNames);
+        Assert.DoesNotContain(SecureCookieMiddleware.RefreshTokenCookieName, cookieNames);
+        Assert.All(cookies, AssertAlwaysSecureStrictHostOnly);
+    }
+
+    private static void AssertAlwaysSecureStrictHostOnly(SetCookieHeaderValue cookie)
+    {
+        Assert.True(cookie.Secure);
+        Assert.Equal("Strict", cookie.SameSite.ToString());
+        Assert.True(string.IsNullOrEmpty(cookie.Domain.ToString()));
+    }
+
+    [Theory]
+    [InlineData("/api/online-voting/availableElections", true)]
+    [InlineData("/api/online-voting/me", true)]
+    [InlineData("/hubs/all-voters", true)]
+    [InlineData("/hubs/voter-personal", true)]
+    [InlineData("/hubs/all-voters/negotiate", true)]
+    [InlineData("/api/auth/me", false)]
+    [InlineData("/hubs/main", false)]
+    [InlineData("/api/elections", false)]
+    public void IsVoterScopedPath_ClassifiesVoterVsTellerPaths(string path, bool expected)
+    {
+        Assert.Equal(expected, SecureCookieMiddleware.IsVoterScopedPath(path));
     }
 
     [Fact]

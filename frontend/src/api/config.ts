@@ -47,6 +47,12 @@ export function initApiClient() {
       return response;
     }
 
+    // Online-voter 401s must not run teller refresh or wipe teller cookies.
+    const requestUrl = request.url ?? response.url ?? "";
+    if (requestUrl.includes("/api/online-voting")) {
+      return response;
+    }
+
     if (
       response.url?.includes("/refreshToken") ||
       request.headers.get(AUTH_RETRY_HEADER) === "1"

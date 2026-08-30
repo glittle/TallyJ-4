@@ -117,7 +117,7 @@ Group name patterns (constructed via `GetGroupName` statics in each hub + used f
 - `AllVoters` (global) — AllVotersHub (`/hubs/all-voters`): thin `updateVoters` for online window/process; OnlineVoter JWT.
 - `Voter{voterId}` — VoterPersonalHub (`/hubs/voter-personal`): thin `updateVoter` (registration / login-elsewhere); group from JWT only.
 
-**Frontend side**: `src/services/signalrService.ts` provides `connectToMainHub()`, `connectToAnalyzeHub()`, `connectToFrontDeskHub()`, `connectVoterHubs()`, etc. + `joinElection(guid)`, `joinDashboardElections(guids)` (known-teller multi-listen), `joinTallySession(guid)`, etc. Stores (electionStore, ballotStore, peopleStore, onlineVotingStore, etc.) call these and wire `connection.on("eventName", handler)`.
+**Frontend side**: `src/services/signalrService.ts` provides `connectToMainHub()`, `connectToAnalyzeHub()`, `connectToFrontDeskHub()`, `connectVoterHubs()`, etc. + `joinElection(guid)`, `joinDashboardElections(guids)` (known-teller multi-listen), `joinTallySession(guid)`, etc. Stores (electionStore, ballotStore, peopleStore, onlineVotingStore, etc.) call these and wire `connection.on("eventName", handler)`. Voter hubs authenticate with the httpOnly `voter_token` cookie (`withCredentials`); do not add a client `accessTokenFactory` for voters.
 
 When adding or touching real-time features, update the matching hub + the corresponding method in `SignalRNotificationService.cs` (see examples at lines 55, 73, 92, 111, 135, 152, 170, 189) + the frontend service + any store subscriptions together.
 

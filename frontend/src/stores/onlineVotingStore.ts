@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { onlineVotingService } from "../services/onlineVotingService";
+import { secureTokenService } from "../services/secureTokenService";
 import { signalrService } from "../services/signalrService";
 import { useApiErrorHandler } from "../composables/useApiErrorHandler";
 import type {
@@ -24,8 +25,7 @@ import type {
 export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   const { handleApiError } = useApiErrorHandler();
 
-  const voterToken = ref<string | null>(localStorage.getItem("voter_token"));
-  const voterId = ref<string | null>(localStorage.getItem("voter_id"));
+  const voterId = ref<string | null>(null);
   const electionInfo = ref<OnlineElectionInfo | null>(null);
   const votablePeople = ref<OnlinePerson[]>([]);
   const voteStatus = ref<OnlineVoteStatus | null>(null);
@@ -37,12 +37,64 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   const loginElsewhereNotice = ref(false);
 
   let voterHubHandlersBound = false;
+  let restorePromise: Promise<boolean> | null = null;
 
-  function persistAuth(token: string, id: string) {
-    voterToken.value = token;
+  // Drop pre-#250 JWTs that may still sit in JS-readable storage on this origin.
+  try {
+    localStorage.removeItem("voter_token");
+    localStorage.removeItem("voter_id");
+  } catch {
+    // Ignore quota / private-mode failures.
+  }
+
+  const isAuthenticated = computed(() => !!voterId.value);
+
+  function persistAuth(id: string) {
     voterId.value = id;
-    localStorage.setItem("voter_token", token);
-    localStorage.setItem("voter_id", id);
+  }
+
+  async function applyAuthResponse(response: {
+    voterId?: string | null;
+  }): Promise<void> {
+    if (response.voterId) {
+      persistAuth(response.voterId);
+      return;
+    }
+    await restoreSession();
+  }
+
+  /**
+   * Restores voterId from the httpOnly cookie session via GET /me.
+   * Uses the non-httpOnly voter_session flag to skip the call when logged out.
+   */
+  async function restoreSession(): Promise<boolean> {
+    if (voterId.value) {
+      return true;
+    }
+    if (!secureTokenService.isVoterAuthenticated()) {
+      return false;
+    }
+    if (restorePromise) {
+      return restorePromise;
+    }
+
+    restorePromise = (async () => {
+      try {
+        const session = await onlineVotingService.getSession();
+        if (!session.voterId) {
+          return false;
+        }
+        persistAuth(session.voterId);
+        return true;
+      } catch {
+        secureTokenService.clearVoterSession();
+        return false;
+      } finally {
+        restorePromise = null;
+      }
+    })();
+
+    return restorePromise;
   }
 
   async function requestVerificationCode(data: RequestCodeDto) {
@@ -59,9 +111,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.verifyCode(data);
-      if (response.token && response.voterId) {
-        persistAuth(response.token, response.voterId);
-      }
+      await applyAuthResponse(response);
       return response;
     } finally {
       loading.value = false;
@@ -72,9 +122,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.googleAuth(data);
-      if (response.token && response.voterId) {
-        persistAuth(response.token, response.voterId);
-      }
+      await applyAuthResponse(response);
       return response;
     } finally {
       loading.value = false;
@@ -85,9 +133,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.facebookAuth(data);
-      if (response.token && response.voterId) {
-        persistAuth(response.token, response.voterId);
-      }
+      await applyAuthResponse(response);
       return response;
     } finally {
       loading.value = false;
@@ -98,9 +144,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.kakaoAuth(data);
-      if (response.token && response.voterId) {
-        persistAuth(response.token, response.voterId);
-      }
+      await applyAuthResponse(response);
       return response;
     } finally {
       loading.value = false;
@@ -111,9 +155,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.telegramAuth(data);
-      if (response.token && response.voterId) {
-        persistAuth(response.token, response.voterId);
-      }
+      await applyAuthResponse(response);
       return response;
     } finally {
       loading.value = false;
@@ -168,15 +210,14 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   }
 
   async function loadAvailableElections() {
-    if (!voterToken.value) {
+    const authed = await restoreSession();
+    if (!authed) {
       throw new Error("Voter is not authenticated.");
     }
 
     try {
       loading.value = true;
-      const data = await onlineVotingService.getAvailableElections(
-        voterToken.value,
-      );
+      const data = await onlineVotingService.getAvailableElections();
       availableElections.value = data;
       return data;
     } catch (error) {
@@ -210,7 +251,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
 
   async function handleUpdateVoters(_payload: UpdateVotersEvent) {
     // Thin signal: re-fetch authoritative list (eligibility is server-side).
-    if (!voterToken.value) {
+    if (!(await restoreSession())) {
       return;
     }
     try {
@@ -225,7 +266,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
       loginElsewhereNotice.value = true;
     }
 
-    if (payload.updateRegistration && voterToken.value) {
+    if (payload.updateRegistration && (await restoreSession())) {
       try {
         await loadAvailableElections();
         if (payload.electionGuid && voterId.value) {
@@ -239,10 +280,10 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
 
   /**
    * Connect AllVoters + VoterPersonal hubs for the authenticated voter session.
-   * Safe to call multiple times (idempotent).
+   * Auth is the httpOnly voter cookie (withCredentials). Safe to call multiple times.
    */
   async function ensureVoterHubsConnected(): Promise<void> {
-    if (!voterToken.value) {
+    if (!(await restoreSession())) {
       return;
     }
 
@@ -251,9 +292,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     }
 
     try {
-      await signalrService.connectVoterHubs(
-        () => voterToken.value ?? localStorage.getItem("voter_token"),
-      );
+      await signalrService.connectVoterHubs();
 
       if (!voterHubHandlersBound) {
         const allVoters = signalrService.getConnection("/hubs/all-voters");
@@ -289,20 +328,23 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
 
   async function logout() {
     await disconnectVoterHubs();
-    voterToken.value = null;
+    try {
+      await onlineVotingService.logout();
+    } catch {
+      // Still clear local UI state if the logout request fails.
+    }
+    secureTokenService.clearVoterSession();
     voterId.value = null;
     electionInfo.value = null;
     votablePeople.value = [];
     voteStatus.value = null;
     availableElections.value = [];
     loginElsewhereNotice.value = false;
-    localStorage.removeItem("voter_token");
-    localStorage.removeItem("voter_id");
   }
 
   return {
-    voterToken,
     voterId,
+    isAuthenticated,
     electionInfo,
     votablePeople,
     voteStatus,
@@ -310,6 +352,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     loading,
     voterHubsConnected,
     loginElsewhereNotice,
+    restoreSession,
     requestVerificationCode,
     verifyCode,
     googleAuth,

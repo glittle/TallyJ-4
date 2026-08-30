@@ -76,6 +76,53 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         return token;
     }
 
+    protected static string? GetSetCookieValue(HttpResponseMessage response, string cookieName)
+    {
+        if (!response.Headers.TryGetValues("Set-Cookie", out var setCookies))
+        {
+            return null;
+        }
+
+        var prefix = cookieName + "=";
+        foreach (var cookie in setCookies)
+        {
+            if (cookie.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return cookie.Split(';')[0].Substring(prefix.Length);
+            }
+        }
+
+        return null;
+    }
+
+    protected static string? GetSetCookieHeader(HttpResponseMessage response, string cookieName)
+    {
+        if (!response.Headers.TryGetValues("Set-Cookie", out var setCookies))
+        {
+            return null;
+        }
+
+        return setCookies.FirstOrDefault(c =>
+            c.StartsWith(cookieName + "=", StringComparison.OrdinalIgnoreCase));
+    }
+
+    protected void SetVoterCookie(string token)
+    {
+        Client.DefaultRequestHeaders.Authorization = null;
+        Client.DefaultRequestHeaders.Remove("Cookie");
+        Client.DefaultRequestHeaders.Add(
+            "Cookie",
+            $"{SecureCookieMiddleware.VoterTokenCookieName}={token}");
+    }
+
+    protected void SetCookies(params (string Name, string Value)[] cookies)
+    {
+        Client.DefaultRequestHeaders.Authorization = null;
+        Client.DefaultRequestHeaders.Remove("Cookie");
+        var header = string.Join("; ", cookies.Select(c => $"{c.Name}={c.Value}"));
+        Client.DefaultRequestHeaders.Add("Cookie", header);
+    }
+
     public async Task InitializeAsync()
     {
         await SeedDatabaseAsync();

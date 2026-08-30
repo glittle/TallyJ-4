@@ -13,23 +13,19 @@ export class SignalRConnectionCore {
   /** Known-teller dashboard multi-election listen set (MainHub JoinElections). */
   protected dashboardElectionGuids: string[] = [];
   protected publicGroupJoined = false;
-  /** Online voter hubs (Bearer voter JWT from localStorage). */
+  /** Online voter hubs (httpOnly voter_token cookie + withCredentials). */
   protected allVotersJoined = false;
   protected voterPersonalJoined = false;
-  protected voterAccessTokenFactory: (() => string | null) | null = null;
 
   protected get baseUrl(): string {
     return getAppConfig().apiUrl;
   }
 
   /**
-   * Connect to a hub. Optional accessTokenFactory is used for online-voter hubs
-   * (Bearer JWT in localStorage); teller hubs rely on cookies / default auth.
+   * Connect to a hub. Teller and online-voter hubs both send cookies via
+   * withCredentials; there is no client-side JWT factory.
    */
-  async connect(
-    hubPath: string,
-    accessTokenFactory?: () => string | null,
-  ): Promise<signalR.HubConnection> {
+  async connect(hubPath: string): Promise<signalR.HubConnection> {
     const existingConnection = this.connections.get(hubPath);
     if (existingConnection?.state === signalR.HubConnectionState.Connected) {
       return existingConnection;
@@ -39,12 +35,8 @@ export class SignalRConnectionCore {
 
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(hubUrl, {
-        // Cookies are sent automatically by the browser with the initial HTTP request.
-        // Online-voter hubs also send the voter JWT via access_token / Authorization.
+        // Cookies (teller auth_token and/or voter_token) are sent automatically.
         withCredentials: true,
-        accessTokenFactory: accessTokenFactory
-          ? () => accessTokenFactory() ?? ""
-          : undefined,
       })
       .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
       .configureLogging(signalR.LogLevel.Warning)
