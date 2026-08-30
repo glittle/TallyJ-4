@@ -34,6 +34,7 @@ This implementation provides a **security-first voter authentication system** fo
 2. **SMS Pumping Prevention**
    - Paid SMS / voice / WhatsApp: reserved/fictional/malformed destinations (NANP 555, bad E.164) are rejected in code before any provider call — see `context/sms-eligibility.md`
    - `OnlineVoter` also stores global phone SMS eligibility (`SmsStatus`: null / `"OK"` / block reason). For `VoterIdType` `"P"` + paid channel, a non-null status other than `"OK"` skips Twilio and GreenAPI. The lookup is the phone row (`VoterId` + `VoterIdType == "P"`).
+   - Twilio status callbacks (`POST /api/Public/smsStatus`, v3 `Public/SmsStatus`) auto-learn a lasting block on that P row: terminal `undelivered` / `failed` plus a selected error code (`30003`, `30004`, `30005`, `30006`, `21211`, `21614`) writes `twilio-{code}` when current `SmsStatus` is null or `"OK"`. Missing or unlisted codes, and `delivered`/`sent`, do not write. No OnlineVoter is created from a callback. See `context/sms-eligibility.md`.
    - Verification codes only sent to voters registered in open elections
    - Validates voter registration BEFORE sending SMS/email
    - Prevents abuse of communication channels
@@ -195,7 +196,7 @@ POST /api/online-voting/{electionGuid}/submitBallot
    - Election discovery endpoint
 
 4. **Database**
-   - `OnlineVoter` - Tracks verification codes and attempts; for phone rows, `SmsStatus` is the global paid-channel eligibility (null = unchecked, `"OK"` = allowed, any other short value = blocked). Person create / people import / update with a phone ensures a `VoterIdType` `"P"` row (`VoterId` = the Person phone). `WhenRegistered` stays null until the first successful code request. Person detail looks up that P row (`VoterId` + `VoterIdType == "P"`) and shows never-seen vs imported-only vs first registered, last login, and SMS status.
+   - `OnlineVoter` - Tracks verification codes and attempts; for phone rows, `SmsStatus` is the global paid-channel eligibility (null = unchecked, `"OK"` = allowed, any other short value = blocked). Person create / people import / update with a phone ensures a `VoterIdType` `"P"` row (`VoterId` = the Person phone). `WhenRegistered` stays null until the first successful code request. Person detail looks up that P row (`VoterId` + `VoterIdType == "P"`) and shows never-seen vs imported-only vs first registered, last login, and SMS status. A Twilio undelivered/failed callback with a selected lasting-unusable error code stamps `twilio-{code}` on that P row when status is null or `"OK"`.
    - `Person` - Voter registration in elections
    - `Election` - Election configuration and open/close times
 

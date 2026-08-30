@@ -1,19 +1,24 @@
 using Backend.DTOs.Public;
 using Backend.Models;
 using Backend.Services;
+using Backend.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
 /// <summary>
-/// Controller for anonymous public discovery (guest teller join list) and system health.
+/// Controller for anonymous public discovery (guest teller join list), system health,
+/// and the Twilio SMS status callback (v3 Public/SmsStatus).
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class PublicController(IPublicService publicService) : ControllerBase
+public class PublicController(
+    IPublicService publicService,
+    ITwilioSmsStatusService twilioSmsStatusService) : ControllerBase
 {
     private readonly IPublicService _publicService = publicService;
+    private readonly ITwilioSmsStatusService _twilioSmsStatusService = twilioSmsStatusService;
 
     /// <summary>
     /// Gets public home page data including system information.
@@ -56,5 +61,24 @@ public class PublicController(IPublicService publicService) : ControllerBase
                 service = "TallyJ 4 API"
             },
             "Service is running"));
+    }
+
+    /// <summary>
+    /// Twilio message status callback (v3 <c>Public/SmsStatus</c>). Updates SmsLog when a
+    /// row exists for the SID and auto-learns <c>OnlineVoter.SmsStatus</c> on selected
+    /// terminal failures. Always returns 204 so the callback does not leak whether a
+    /// voter row exists.
+    /// </summary>
+    [HttpPost("smsStatus")]
+    [AllowAnonymous]
+    [Consumes("application/x-www-form-urlencoded")]
+    public async Task<IActionResult> SmsStatus([FromForm] TwilioSmsStatusCallbackDto dto)
+    {
+        await _twilioSmsStatusService.ProcessCallbackAsync(
+            dto.Sid,
+            dto.Status,
+            dto.To,
+            dto.ErrorCode);
+        return NoContent();
     }
 }

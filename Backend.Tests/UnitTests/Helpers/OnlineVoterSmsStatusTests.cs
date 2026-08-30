@@ -25,4 +25,27 @@ public class OnlineVoterSmsStatusTests
     {
         Assert.False(OnlineVoterSmsStatus.AllowsPaidSend(smsStatus));
     }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("OK")]
+    public void CanLearnFromCallback_NullOrOk(string? smsStatus)
+    {
+        Assert.True(OnlineVoterSmsStatus.CanLearnFromCallback(smsStatus));
+    }
+
+    [Theory]
+    [InlineData("admin")]
+    [InlineData("twilio-30003")]
+    [InlineData("undeliverable")]
+    public void CanLearnFromCallback_ExistingBlock_False(string smsStatus)
+    {
+        Assert.False(OnlineVoterSmsStatus.CanLearnFromCallback(smsStatus));
+    }
+
+    [Fact]
+    public void TwilioReason_FormatsTwilioCode()
+    {
+        Assert.Equal("twilio-30003", OnlineVoterSmsStatus.TwilioReason(30003));
+    }
 }
