@@ -151,6 +151,51 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
         Assert.Equal("OK", row.SmsStatus);
     }
 
+    [Fact]
+    public async Task FindTrackedPhoneOnlineVoterAsync_PRow_ReturnsTrackedRow()
+    {
+        const string phone = "+14168972671";
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = null
+        });
+        await Context.SaveChangesAsync();
+
+        var row = await OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync(Context, phone);
+
+        Assert.NotNull(row);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Equal(EntityState.Unchanged, Context.Entry(row).State);
+        row.SmsStatus = "twilio-30003";
+        await Context.SaveChangesAsync();
+        Assert.Equal("twilio-30003", (await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone)).SmsStatus);
+    }
+
+    [Theory]
+    [InlineData("E")]
+    [InlineData("C")]
+    [InlineData("T")]
+    public async Task FindTrackedPhoneOnlineVoterAsync_NonPOccupancy_ReturnsNull(string existingType)
+    {
+        const string phone = "+14168972671";
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = existingType,
+            SmsStatus = null
+        });
+        await Context.SaveChangesAsync();
+
+        var row = await OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync(Context, phone);
+
+        Assert.Null(row);
+        var occupant = Assert.Single(await Context.OnlineVoters.Where(ov => ov.VoterId == phone).ToListAsync());
+        Assert.Equal(existingType, occupant.VoterIdType);
+        Assert.Null(occupant.SmsStatus);
+    }
+
     [Theory]
     [InlineData("E")]
     [InlineData("C")]

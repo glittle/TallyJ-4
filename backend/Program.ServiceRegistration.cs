@@ -52,6 +52,7 @@ public static class ProgramServiceRegistration
 
         services.AddScoped<IEmailSender, SmtpEmailSender>();
         services.AddScoped<IPaidVerificationSender, PaidVerificationSender>();
+        services.AddScoped<ITwilioSmsStatusService, TwilioSmsStatusService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<EmailService>();
         services.AddScoped<ILocalAuthService, LocalAuthService>();
