@@ -1080,6 +1080,156 @@ public class ElectionAnalyzerNormalTests : IDisposable
     }
 
     [Fact]
+    public async Task NumberExtraZero_DoesNotCreateXSection()
+    {
+        var election = CreateElection(numberToElect: 2, numberExtra: 0);
+        var people = new[]
+        {
+            MakePerson("rank01"),
+            MakePerson("rank02"),
+            MakePerson("rank03"),
+            MakePerson("rank04"),
+            MakePerson("rank05"),
+        };
+        _context.SaveChanges();
+
+        CreateDescendingVotesWithSpoiledPadding(people, [5, 4, 3, 2, 1], votesNeededOnBallot: 2);
+
+        await RunAnalysis(election);
+
+        var results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .OrderBy(r => r.Rank)
+            .ToList();
+
+        Assert.Equal(5, results.Count);
+        Assert.DoesNotContain(results, r => r.Section == "X");
+        Assert.All(results, r => Assert.Null(r.RankInExtra));
+
+        Assert.Equal(people[0].PersonGuid, results[0].PersonGuid);
+        Assert.Equal("E", results[0].Section);
+        Assert.Equal("E", results[1].Section);
+        Assert.Equal("O", results[2].Section);
+        Assert.Equal("O", results[3].Section);
+        Assert.Equal("O", results[4].Section);
+    }
+
+    [Fact]
+    public async Task TieWithinExtraSectionOnly_RequiresTieBreak()
+    {
+        var election = CreateElection(numberToElect: 1, numberExtra: 3);
+        var people = new[]
+        {
+            MakePerson("elected"),
+            MakePerson("extraA"),
+            MakePerson("extraB"),
+        };
+        _context.SaveChanges();
+
+        for (var i = 0; i < 4; i++)
+        {
+            MakeVote(MakeBallot(), people[0]);
+        }
+
+        for (var i = 0; i < 3; i++)
+        {
+            MakeVote(MakeBallot(), people[1]);
+        }
+
+        for (var i = 0; i < 3; i++)
+        {
+            MakeVote(MakeBallot(), people[2]);
+        }
+
+        await RunAnalysis(election);
+
+        var results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .OrderBy(r => r.Rank)
+            .ToList();
+
+        Assert.Equal(3, results.Count);
+
+        Assert.Equal(people[0].PersonGuid, results[0].PersonGuid);
+        Assert.Equal(1, results[0].Rank);
+        Assert.Equal("E", results[0].Section);
+        Assert.Equal(false, results[0].IsTied);
+
+        var tiedInExtra = results.Where(r => r.Section == "X" && r.IsTied == true).ToList();
+        Assert.Equal(2, tiedInExtra.Count);
+        Assert.All(tiedInExtra, r => Assert.Equal(true, r.TieBreakRequired));
+        Assert.All(tiedInExtra, r => Assert.Equal(tiedInExtra[0].TieBreakGroup, r.TieBreakGroup));
+        Assert.Contains(people[1].PersonGuid, tiedInExtra.Select(r => r.PersonGuid));
+        Assert.Contains(people[2].PersonGuid, tiedInExtra.Select(r => r.PersonGuid));
+        Assert.Equal(1, tiedInExtra[0].RankInExtra);
+        Assert.Equal(2, tiedInExtra[1].RankInExtra);
+
+        var resultTies = _context.ResultTies
+            .Where(rt => rt.ElectionGuid == _electionGuid)
+            .ToList();
+        Assert.Single(resultTies);
+        Assert.Equal(true, resultTies[0].TieBreakRequired);
+        Assert.Equal(2, resultTies[0].NumInTie);
+        Assert.Equal(1, resultTies[0].NumToElect);
+        Assert.Equal(false, resultTies[0].IsResolved);
+    }
+
+    [Fact]
+    public async Task LsaScale_TieWithinExtraSectionOnly_RequiresTieBreak()
+    {
+        var election = CreateElection(numberToElect: 9, numberExtra: 2);
+        var people = Enumerable.Range(0, 12)
+            .Select(i => MakePerson($"p{i:D2}"))
+            .ToArray();
+        _context.SaveChanges();
+
+        CreateDescendingVotesWithSpoiledPadding(
+            people,
+            [13, 12, 11, 10, 9, 8, 7, 6, 5, 2, 2, 1],
+            votesNeededOnBallot: 9);
+
+        await RunAnalysis(election);
+
+        var results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .OrderBy(r => r.Rank)
+            .ToList();
+
+        Assert.Equal(12, results.Count);
+
+        var elected = results.Where(r => r.Section == "E").ToList();
+        var extra = results.Where(r => r.Section == "X").ToList();
+        var other = results.Where(r => r.Section == "O").ToList();
+
+        Assert.Equal(9, elected.Count);
+        Assert.Equal(2, extra.Count);
+        Assert.Single(other);
+        Assert.All(elected, r => Assert.Equal(false, r.IsTied));
+        Assert.All(elected, r => Assert.Equal(false, r.TieBreakRequired));
+
+        Assert.All(extra, r => Assert.Equal(true, r.IsTied));
+        Assert.All(extra, r => Assert.Equal(true, r.TieBreakRequired));
+        Assert.All(extra, r => Assert.Equal(extra[0].TieBreakGroup, r.TieBreakGroup));
+        Assert.Equal(1, extra[0].RankInExtra);
+        Assert.Equal(2, extra[1].RankInExtra);
+        Assert.Contains(people[9].PersonGuid, extra.Select(r => r.PersonGuid));
+        Assert.Contains(people[10].PersonGuid, extra.Select(r => r.PersonGuid));
+
+        Assert.Equal(people[11].PersonGuid, other[0].PersonGuid);
+        Assert.Equal(false, other[0].IsTied);
+        Assert.Equal(false, other[0].TieBreakRequired);
+
+        var resultTies = _context.ResultTies
+            .Where(rt => rt.ElectionGuid == _electionGuid)
+            .ToList();
+        Assert.Single(resultTies);
+        Assert.Equal(true, resultTies[0].TieBreakRequired);
+        Assert.Equal(2, resultTies[0].NumInTie);
+        Assert.Equal(1, resultTies[0].NumToElect);
+        Assert.Equal(false, resultTies[0].IsResolved);
+    }
+
+    [Fact]
     public async Task NSA_Election_1()
     {
         var election = CreateElection(numberToElect: 2, electionType: "NSA");
@@ -1126,5 +1276,27 @@ public class ElectionAnalyzerNormalTests : IDisposable
         Assert.Equal(0, summaryFinal.OnlineBallots);
         Assert.Equal(6, summaryFinal.NumEligibleToVote);
         Assert.Equal(1, summaryFinal.NumVoters);
+    }
+
+    /// <summary>
+    /// One ballot per vote, padded with spoiled slots so the ballot stays Ok when NumberToElect &gt; 1.
+    /// </summary>
+    private void CreateDescendingVotesWithSpoiledPadding(
+        Person[] people,
+        int[] voteCounts,
+        int votesNeededOnBallot)
+    {
+        for (var p = 0; p < voteCounts.Length; p++)
+        {
+            for (var v = 0; v < voteCounts[p]; v++)
+            {
+                var ballot = MakeBallot();
+                MakeVote(ballot, people[p], 1);
+                for (var slot = 2; slot <= votesNeededOnBallot; slot++)
+                {
+                    MakeVoteForIneligible(ballot, IneligibleReasonEnum.U01_Unidentifiable.Code, slot);
+                }
+            }
+        }
     }
 }
