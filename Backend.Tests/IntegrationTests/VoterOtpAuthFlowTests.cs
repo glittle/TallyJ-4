@@ -55,7 +55,7 @@ public class VoterOtpAuthFlowTests : IntegrationTestBase
     [Fact]
     public async Task PhoneRequestCode_ThenVerifyCode_ReturnsVoterSession()
     {
-        var phone = "+15559870123";
+        var phone = "+14168972672";
         await SetupOpenElectionWithVoter(phone: phone);
 
         var requestResponse = await Client.PostAsJsonAsync("/api/online-voting/requestCode", new RequestCodeDto

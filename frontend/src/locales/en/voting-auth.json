@@ -69,6 +69,7 @@
   "voting.auth.phone.whatsappNote": "A WhatsApp message will be sent to this number",
   "voting.auth.requestCode.error": "An error occurred while processing your request.",
   "voting.auth.requestCode.noOpenElections": "There are no elections currently open for online voting.",
+  "voting.auth.requestCode.invalidPhone": "That phone number cannot be used to receive a verification code.",
   "voting.auth.requestCode.notRegistered": "You are not registered to vote in any currently open election.",
   "voting.auth.requestCode.sendFailed": "Failed to send verification code. Please try again.",
   "voting.auth.requestCode.sent": "If the provided contact information is valid, a verification code has been sent.",

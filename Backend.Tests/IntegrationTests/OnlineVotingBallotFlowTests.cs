@@ -225,7 +225,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
     [Fact]
     public async Task RequestCode_WithPhoneNumber_SucceedsForRegisteredVoter()
     {
-        var phone = "+15559876543";
+        var phone = "+16478971234";
         await SetupOpenElectionWithVoter(phone: phone);
 
         var response = await Client.PostAsJsonAsync("/api/online-voting/requestCode", new RequestCodeDto
