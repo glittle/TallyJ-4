@@ -701,7 +701,9 @@ public class ElectionServiceTests : ServiceTestBase
         Assert.Equal(2, result.Election.NumberExtra);
         Assert.Equal(ElectionTypeCode.LSA, result.Election.ElectionType);
         Assert.Equal("PDM", result.Election.VotingMethods);
-        Assert.True(result.Election.UseOnlineVoting);
+        Assert.False(result.Election.UseOnlineVoting);
+        Assert.Null(result.Election.OnlineWhenOpen);
+        Assert.Null(result.Election.OnlineWhenClose);
         Assert.Equal("A", result.Election.OnlineSelectionProcess);
 
         var copyInDb = Context.Elections.Single(e => e.ElectionGuid == result.Election.ElectionGuid);
@@ -798,10 +800,35 @@ public class ElectionServiceTests : ServiceTestBase
         Assert.Equal(42, original.LastEnvNum);
         Assert.NotNull(original.ListedForPublicAsOf);
         Assert.Equal("original-owner", original.OwnerLoginId);
+        Assert.True(original.UseOnlineVoting);
+        Assert.NotNull(original.OnlineWhenOpen);
+        Assert.NotNull(original.OnlineWhenClose);
         Assert.Equal(2, Context.People.Count(p => p.ElectionGuid == source.ElectionGuid));
         Assert.Equal(1, Context.Locations.Count(l => l.ElectionGuid == source.ElectionGuid));
         Assert.Equal(1, Context.Ballots.Count(b => b.LocationGuid == source.LocationGuid));
         Assert.Equal(1, Context.Results.Count(r => r.ElectionGuid == source.ElectionGuid));
+    }
+
+    [Fact]
+    public async Task DuplicateElectionAsync_OpenOnlineWindow_DoesNotLeaveCopyAvailable()
+    {
+        var source = await SeedSourceElectionForDuplicateAsync();
+        var now = DateTimeOffset.UtcNow;
+        var original = Context.Elections.Single(e => e.ElectionGuid == source.ElectionGuid);
+        Assert.True(IsAvailableToOnlineVoters(original, now));
+
+        var result = await _service.DuplicateElectionAsync(source.ElectionGuid, new DuplicateElectionDto());
+
+        Assert.True(result.IsSuccess);
+        var copy = Context.Elections.Single(e => e.ElectionGuid == result.Election!.ElectionGuid);
+        Assert.False(copy.UseOnlineVoting);
+        Assert.Null(copy.OnlineWhenOpen);
+        Assert.Null(copy.OnlineWhenClose);
+        Assert.False(IsAvailableToOnlineVoters(copy, now));
+
+        Context.ChangeTracker.Clear();
+        var sourceAfter = Context.Elections.Single(e => e.ElectionGuid == source.ElectionGuid);
+        Assert.True(IsAvailableToOnlineVoters(sourceAfter, now));
     }
 
     [Fact]
@@ -893,6 +920,8 @@ public class ElectionServiceTests : ServiceTestBase
             ListedForPublicAsOf = listedAt,
             OwnerLoginId = "original-owner",
             UseOnlineVoting = true,
+            OnlineWhenOpen = DateTimeOffset.UtcNow.AddHours(-2),
+            OnlineWhenClose = DateTimeOffset.UtcNow.AddDays(2),
             OnlineSelectionProcess = "A",
             VotingMethods = "PDM",
             ElectionPasscode = "secret",
@@ -1002,6 +1031,15 @@ public class ElectionServiceTests : ServiceTestBase
     }
 
     private sealed record SeededSourceElection(Guid ElectionGuid, Guid LocationGuid, Guid[] PeopleGuids);
+
+    /// <summary>
+    /// Same open predicate as <c>OnlineVotingService.GetAvailableElectionsAsync</c>
+    /// (UseOnlineVoting plus a null window counts as open; ShowAsTest is not checked).
+    /// </summary>
+    private static bool IsAvailableToOnlineVoters(Election election, DateTimeOffset now) =>
+        election.UseOnlineVoting
+        && (election.OnlineWhenOpen == null || election.OnlineWhenOpen <= now)
+        && (election.OnlineWhenClose == null || election.OnlineWhenClose > now);
 }
 
 

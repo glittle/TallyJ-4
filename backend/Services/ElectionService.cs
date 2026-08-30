@@ -256,6 +256,11 @@ public class ElectionService : IElectionService
         copy.LastEnvNum = null;
         copy.ListedForPublicAsOf = null;
         copy.OwnerLoginId = null;
+        // GetAvailableElectionsAsync treats UseOnlineVoting + a null window as open.
+        // Clear both so the copy is not listed to the same phone/email/kiosk voters.
+        copy.OnlineWhenOpen = null;
+        copy.OnlineWhenClose = null;
+        copy.UseOnlineVoting = false;
         copy.RowVersion = new byte[8];
 
         _context.Elections.Add(copy);
@@ -657,7 +662,8 @@ public class ElectionService : IElectionService
 
     /// <summary>
     /// Copies persisted election settings only. Identity, stage, teller-access,
-    /// envelope numbering, and ownership are set by the caller.
+    /// online window, UseOnlineVoting, envelope numbering, and ownership are set
+    /// by the caller.
     /// </summary>
     private static Election CopyElectionSettings(Election source)
     {
@@ -676,9 +682,6 @@ public class ElectionService : IElectionService
             UseCallInButton = source.UseCallInButton,
             HidePreBallotPages = source.HidePreBallotPages,
             MaskVotingMethod = source.MaskVotingMethod,
-            UseOnlineVoting = source.UseOnlineVoting,
-            OnlineWhenOpen = source.OnlineWhenOpen,
-            OnlineWhenClose = source.OnlineWhenClose,
             OnlineCloseIsEstimate = source.OnlineCloseIsEstimate,
             OnlineSelectionProcess = source.OnlineSelectionProcess,
             EmailFromAddress = source.EmailFromAddress,
