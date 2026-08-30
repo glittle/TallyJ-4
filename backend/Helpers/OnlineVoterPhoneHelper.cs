@@ -11,13 +11,17 @@ namespace Backend.Helpers;
 public static class OnlineVoterPhoneHelper
 {
     /// <summary>
-    /// <see cref="OnlineVoter.VoterIdType"/> for a phone identifier (E.164 as stored on Person).
+    /// <see cref="OnlineVoter.VoterIdType"/> for a phone identifier (phone string as stored on Person).
     /// </summary>
     public const string PhoneVoterIdType = "P";
 
     /// <summary>
     /// If <paramref name="phone"/> is non-whitespace, add an <see cref="OnlineVoter"/> row
-    /// with <see cref="PhoneVoterIdType"/> when none exists for that <see cref="OnlineVoter.VoterId"/>.
+    /// with <see cref="PhoneVoterIdType"/> when no row exists for that <see cref="OnlineVoter.VoterId"/>.
+    /// Lookup is by <see cref="OnlineVoter.VoterId"/> only: <c>IX_OnlineVoter_Id</c> is unique on
+    /// that column, so a second row cannot be inserted if any type already owns the string.
+    /// If the existing row is not <see cref="PhoneVoterIdType"/>, it is left unchanged
+    /// (no convert, no wipe, no second row).
     /// Does not call <see cref="DbContext.SaveChangesAsync(CancellationToken)"/>.
     /// Does not change <see cref="OnlineVoter.WhenRegistered"/>, <see cref="OnlineVoter.WhenLastLogin"/>,
     /// or <see cref="OnlineVoter.SmsStatus"/> on an existing row.

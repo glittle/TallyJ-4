@@ -60,6 +60,40 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
         Assert.Equal(lastLogin, row.WhenLastLogin);
     }
 
+    [Theory]
+    [InlineData("E")]
+    [InlineData("C")]
+    [InlineData("T")]
+    public async Task EnsureOnlineVoterForPhoneAsync_VoterIdOccupiedByOtherType_SkipsWithoutWipeOrThrow(
+        string existingType)
+    {
+        const string phone = "+14168972671";
+        var registered = DateTimeOffset.Parse("2026-06-01T00:00:00Z");
+        var lastLogin = DateTimeOffset.Parse("2026-06-02T00:00:00Z");
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = existingType,
+            SmsStatus = "admin",
+            WhenRegistered = registered,
+            WhenLastLogin = lastLogin
+        });
+        await Context.SaveChangesAsync();
+
+        var thrown = await Record.ExceptionAsync(async () =>
+        {
+            await OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync(Context, phone);
+            await Context.SaveChangesAsync();
+        });
+
+        Assert.Null(thrown);
+        var row = Assert.Single(await Context.OnlineVoters.Where(ov => ov.VoterId == phone).ToListAsync());
+        Assert.Equal(existingType, row.VoterIdType);
+        Assert.Equal("admin", row.SmsStatus);
+        Assert.Equal(registered, row.WhenRegistered);
+        Assert.Equal(lastLogin, row.WhenLastLogin);
+    }
+
     [Fact]
     public async Task EnsureOnlineVotersForPhonesAsync_Batch_AddsMissingOnly()
     {
