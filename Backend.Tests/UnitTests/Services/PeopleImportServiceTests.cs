@@ -704,6 +704,123 @@ public class PeopleImportServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task ImportPeopleAsync_WithPhone_CreatesOnlineVoterPhoneRow_WhenRegisteredNull()
+    {
+        const string phone = "+14168972671";
+        var electionGuid = Guid.NewGuid();
+        var fileContent = $"FirstName,LastName,Phone\nPat,Smith,{phone}";
+        var mappings = new List<ColumnMappingDto>
+        {
+            new() { FileColumn = "FirstName", TargetField = "FirstName" },
+            new() { FileColumn = "LastName", TargetField = "LastName" },
+            new() { FileColumn = "Phone", TargetField = "Phone" }
+        };
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true,
+            ColumnsToRead = System.Text.Json.JsonSerializer.Serialize(mappings)
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.Equal(1, result.PeopleAdded);
+        var row = Assert.Single(await Context.OnlineVoters.Where(ov => ov.VoterId == phone).ToListAsync());
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Null(row.WhenRegistered);
+        Assert.Null(row.WhenLastLogin);
+        Assert.Null(row.SmsStatus);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_WithoutPhone_DoesNotCreatePhoneOnlineVoter()
+    {
+        var electionGuid = Guid.NewGuid();
+        var fileContent = "FirstName,LastName,Email\nPat,Smith,pat@example.com";
+        var mappings = new List<ColumnMappingDto>
+        {
+            new() { FileColumn = "FirstName", TargetField = "FirstName" },
+            new() { FileColumn = "LastName", TargetField = "LastName" },
+            new() { FileColumn = "Email", TargetField = "Email" }
+        };
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true,
+            ColumnsToRead = System.Text.Json.JsonSerializer.Serialize(mappings)
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.Equal(1, result.PeopleAdded);
+        Assert.False(await Context.OnlineVoters.AnyAsync(ov => ov.VoterIdType == "P"));
+        Assert.False(await Context.OnlineVoters.AnyAsync());
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_ExistingPhoneOnlineVoter_DoesNotDuplicateOrWipeFields()
+    {
+        const string phone = "+14168972671";
+        var registered = DateTimeOffset.Parse("2026-05-01T00:00:00Z");
+        var lastLogin = DateTimeOffset.Parse("2026-05-02T00:00:00Z");
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = "premium",
+            WhenRegistered = registered,
+            WhenLastLogin = lastLogin
+        });
+        await Context.SaveChangesAsync();
+
+        var electionGuid = Guid.NewGuid();
+        var fileContent = $"FirstName,LastName,Phone\nPat,Smith,{phone}";
+        var mappings = new List<ColumnMappingDto>
+        {
+            new() { FileColumn = "FirstName", TargetField = "FirstName" },
+            new() { FileColumn = "LastName", TargetField = "LastName" },
+            new() { FileColumn = "Phone", TargetField = "Phone" }
+        };
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true,
+            ColumnsToRead = System.Text.Json.JsonSerializer.Serialize(mappings)
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        var row = Assert.Single(await Context.OnlineVoters.Where(ov => ov.VoterId == phone).ToListAsync());
+        Assert.Equal("premium", row.SmsStatus);
+        Assert.Equal(registered, row.WhenRegistered);
+        Assert.Equal(lastLogin, row.WhenLastLogin);
+    }
+
+    [Fact]
     public async Task ImportPeopleAsync_XlsxHeadersOnRow6_ReportsExcelRowNumbers()
     {
         var electionGuid = Guid.NewGuid();

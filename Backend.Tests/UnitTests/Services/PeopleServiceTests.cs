@@ -699,6 +699,168 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.StartsWith("N", details.KioskCode);
         Assert.True(details.CanDelete);
     }
+
+    [Fact]
+    public async Task CreatePersonAsync_WithPhone_CreatesOnlineVoterPhoneRow_WhenRegisteredNull()
+    {
+        const string phone = "+14168972671";
+        var result = await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone
+        });
+
+        Assert.NotNull(result);
+        var rows = await Context.OnlineVoters.Where(ov => ov.VoterId == phone).ToListAsync();
+        var row = Assert.Single(rows);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Null(row.WhenRegistered);
+        Assert.Null(row.WhenLastLogin);
+        Assert.Null(row.SmsStatus);
+    }
+
+    [Fact]
+    public async Task CreatePersonAsync_WithoutPhone_DoesNotCreatePhoneOnlineVoter()
+    {
+        var before = await Context.OnlineVoters.CountAsync();
+        await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Email = "pat@example.com"
+        });
+
+        Assert.Equal(before, await Context.OnlineVoters.CountAsync());
+        Assert.False(await Context.OnlineVoters.AnyAsync(ov => ov.VoterIdType == "P"));
+    }
+
+    [Fact]
+    public async Task CreatePersonAsync_ExistingPhoneOnlineVoter_DoesNotDuplicateOrWipeFields()
+    {
+        const string phone = "+14168972671";
+        var registered = DateTimeOffset.Parse("2026-01-15T12:00:00Z");
+        var lastLogin = DateTimeOffset.Parse("2026-02-01T08:30:00Z");
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = "undeliverable",
+            WhenRegistered = registered,
+            WhenLastLogin = lastLogin
+        });
+        await Context.SaveChangesAsync();
+
+        await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone
+        });
+
+        var rows = await Context.OnlineVoters.Where(ov => ov.VoterId == phone).ToListAsync();
+        var row = Assert.Single(rows);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Equal("undeliverable", row.SmsStatus);
+        Assert.Equal(registered, row.WhenRegistered);
+        Assert.Equal(lastLogin, row.WhenLastLogin);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_AddingPhone_CreatesOnlineVoterPhoneRow_WhenRegisteredNull()
+    {
+        const string phone = "+14168972672";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone
+        });
+
+        var row = Assert.Single(await Context.OnlineVoters.Where(ov => ov.VoterId == phone).ToListAsync());
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Null(row.WhenRegistered);
+        Assert.Null(row.WhenLastLogin);
+        Assert.Null(row.SmsStatus);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_ExistingPhoneOnlineVoter_DoesNotDuplicateOrWipeFields()
+    {
+        const string phone = "+14168972673";
+        var registered = DateTimeOffset.Parse("2026-03-01T00:00:00Z");
+        var lastLogin = DateTimeOffset.Parse("2026-03-02T00:00:00Z");
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = "OK",
+            WhenRegistered = registered,
+            WhenLastLogin = lastLogin
+        });
+        await Context.SaveChangesAsync();
+
+        await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone
+        });
+
+        var row = Assert.Single(await Context.OnlineVoters.Where(ov => ov.VoterId == phone).ToListAsync());
+        Assert.Equal("OK", row.SmsStatus);
+        Assert.Equal(registered, row.WhenRegistered);
+        Assert.Equal(lastLogin, row.WhenLastLogin);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_WithoutPhone_DoesNotCreatePhoneOnlineVoter()
+    {
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Email = "pat@example.com",
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = "Smith",
+            FirstName = "Pat",
+            Email = "pat@example.com"
+        });
+
+        Assert.False(await Context.OnlineVoters.AnyAsync(ov => ov.VoterIdType == "P"));
+    }
 }
 
 

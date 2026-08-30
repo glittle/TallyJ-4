@@ -195,7 +195,7 @@ POST /api/online-voting/{electionGuid}/submitBallot
    - Election discovery endpoint
 
 4. **Database**
-   - `OnlineVoter` - Tracks verification codes and attempts; for phone rows, `SmsStatus` is the global paid-channel eligibility (null = unchecked, `"OK"` = allowed, any other short value = blocked)
+   - `OnlineVoter` - Tracks verification codes and attempts; for phone rows, `SmsStatus` is the global paid-channel eligibility (null = unchecked, `"OK"` = allowed, any other short value = blocked). Person create / people import / update with a phone ensures a `VoterIdType` `"P"` row (`VoterId` = the Person phone). `WhenRegistered` stays null until the first successful code request.
    - `Person` - Voter registration in elections
    - `Election` - Election configuration and open/close times
 

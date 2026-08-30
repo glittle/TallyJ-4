@@ -5,7 +5,7 @@
 ## Evidence: confirmed
 
 **Source:** issue #254 (maintainer); July 555-range send incident described there  
-**Revisit when:** later #254 slices land (Person UI, EnsureOnlineVoterForPhoneAsync, Twilio callback auto-learn), or NANP reserved-range rules change
+**Revisit when:** later #254 slices land (Person UI, Twilio callback auto-learn), or NANP reserved-range rules change
 
 ## In-code gate before any paid provider
 
@@ -58,7 +58,30 @@ Skip logs method + status only (no raw phone or email). Voter-facing message reu
 
 **Rejected alternative:** persist the in-code `PaidDestinationPhone` reason onto an existing `OnlineVoter` row when the format gate rejects. Useful only when a row already exists; creating a row here would pull in `EnsureOnlineVoterForPhoneAsync` (later slice). Not done.
 
-**Not in this slice:** Person UI / Front Desk display, `EnsureOnlineVoterForPhoneAsync` on Person create/import/update, Twilio status-callback auto-learn, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255).
+**Not in this slice (at the time):** Person UI / Front Desk display, `EnsureOnlineVoterForPhoneAsync` on Person create/import/update, Twilio status-callback auto-learn, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255).
+
+## Ensure phone `OnlineVoter` on Person write (third slice)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #254 (maintainer)  
+**Revisit when:** Person UI or Twilio auto-learn lands, or email/kiosk rows need the same ensure
+
+`OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync` (and the batch `EnsureOnlineVotersForPhonesAsync` for import) inserts a `VoterIdType = "P"` row keyed by `VoterId` = the phone as stored on `Person`. Callers: `PeopleService` create/update, `PeopleImportService` load batches, and `DbSeeder` so SeedOnStartup phones are usable locally.
+
+`WhenRegistered`, `WhenLastLogin`, and `SmsStatus` stay null on insert. An existing row is left untouched (no duplicate, no field wipe). Whitespace-only / missing phone does nothing. Email / kiosk / Telegram rows are not created here.
+
+`WhenRegistered` is stamped in `RequestVerificationCodeAsync` only after the voter passes the open-election registration check, and only when it is still null. That is the first successful code request — the same moment a brand-new row used to get `WhenRegistered`. Person write must not set it.
+
+`VoterId` is the Person phone string as stored. `PaidDestinationPhone` does not return a normalized E.164 form, and auth still matches `Person.Phone == dto.VoterId`. This helper does not rewrite Person phones.
+
+**Rejected alternative:** also hook JSON / v2 election-package person import. Those copy an existing election; the issue names Person create / people import / update. Package load can call the same helper later if Person UI needs rows for packaged phones.
+
+**Rejected alternative:** put the helper on `OnlineVotingService`. People write paths should not take a voting-auth dependency just to insert a global phone row.
+
+**Rejected alternative:** set `WhenRegistered` when the Person phone is saved. That would mark import/edit as registration and break “never seen vs imported-only” for the Person UI slice.
+
+**Not in this slice:** Person UI / Front Desk SMS-status display, Twilio status-callback auto-learn, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255).
 
 ## Related
 

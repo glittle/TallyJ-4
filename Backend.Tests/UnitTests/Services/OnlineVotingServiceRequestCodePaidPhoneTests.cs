@@ -185,6 +185,49 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task RequestCode_ExistingPhoneRow_NullWhenRegistered_StampsOnSuccessfulRequest()
+    {
+        await SeedOpenElectionWithPerson(phone: ValidPhone);
+        await SeedOnlineVoter(ValidPhone, smsStatus: null);
+        _paidSender
+            .Setup(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var before = DateTimeOffset.UtcNow.AddSeconds(-1);
+        await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
+        var after = DateTimeOffset.UtcNow.AddSeconds(1);
+
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == ValidPhone);
+        Assert.NotNull(row.WhenRegistered);
+        Assert.InRange(row.WhenRegistered.Value, before, after);
+        Assert.Equal("P", row.VoterIdType);
+    }
+
+    [Fact]
+    public async Task RequestCode_ExistingPhoneRow_WhenRegisteredPreserved()
+    {
+        var registered = DateTimeOffset.Parse("2026-01-10T00:00:00Z");
+        await SeedOpenElectionWithPerson(phone: ValidPhone);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = ValidPhone,
+            VoterIdType = "P",
+            SmsStatus = OnlineVoterSmsStatus.Ok,
+            WhenRegistered = registered
+        });
+        await Context.SaveChangesAsync();
+        _paidSender
+            .Setup(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
+
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == ValidPhone);
+        Assert.Equal(registered, row.WhenRegistered);
+        Assert.Equal(OnlineVoterSmsStatus.Ok, row.SmsStatus);
+    }
+
+    [Fact]
     public async Task RequestCode_SmsStatusOk_NotRegistered_ReachesRegistrationCheck()
     {
         await SeedOpenElectionWithPerson(email: "other@example.com");

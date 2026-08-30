@@ -103,6 +103,13 @@ public partial class OnlineVotingService
                 }
             }
 
+            // Person create/import may have inserted the phone row with WhenRegistered null.
+            // First successful code request is the first auth use — stamp it then, never earlier.
+            if (onlineVoter.WhenRegistered == null)
+            {
+                onlineVoter.WhenRegistered = DateTimeOffset.UtcNow;
+            }
+
             var verifyCode = GenerateVerificationCode();
 
             onlineVoter.VerifyCode = verifyCode;
