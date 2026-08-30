@@ -14,8 +14,10 @@ public partial class OnlineVotingService
     {
         try
         {
-            // Paid channels: reject reserved/fictional/malformed destinations before any DB or provider work.
-            if (dto.VoterIdType == "P" && PaidDestinationPhone.IsPaidChannel(dto.DeliveryMethod))
+            var paidChannel = PaidDestinationPhone.IsPaidChannel(dto.DeliveryMethod);
+
+            // 1. Paid channels: reject reserved/fictional/malformed destinations before any DB or provider work.
+            if (dto.VoterIdType == "P" && paidChannel)
             {
                 if (!PaidDestinationPhone.TryExplain(dto.VoterId, out var reason))
                 {
@@ -26,7 +28,26 @@ public partial class OnlineVotingService
                 }
             }
 
-            // 1. Find all open elections where this voter is registered (SMS pumping prevention)
+            // 2. Phone + paid: durable SmsStatus on an existing phone row blocks send (null = not yet checked).
+            //    Load once here and reuse below — do not create a row just to store status.
+            var phonePaid = dto.VoterIdType == "P" && paidChannel;
+            OnlineVoter? onlineVoter = null;
+            if (phonePaid)
+            {
+                onlineVoter = await _context.OnlineVoters
+                    .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId && ov.VoterIdType == "P");
+
+                if (onlineVoter != null && !OnlineVoterSmsStatus.AllowsPaidSend(onlineVoter.SmsStatus))
+                {
+                    _logger.LogWarning(
+                        "Login code request skipped: SmsStatus blocks paid send ({Method}, {SmsStatus})",
+                        KnownDeliveryMethod(dto.DeliveryMethod),
+                        SanitizeForLog(onlineVoter.SmsStatus));
+                    return BuildRequestCodeResponse("voting.auth.requestCode.invalidPhone");
+                }
+            }
+
+            // 3. Find all open elections where this voter is registered (SMS pumping prevention)
             var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
                 .Where(e => e.UseOnlineVoting &&
@@ -41,7 +62,7 @@ public partial class OnlineVotingService
                 return BuildRequestCodeResponse("voting.auth.requestCode.noOpenElections");
             }
 
-            // 2. Check if voter is registered in ANY of the open elections
+            // 4. Check if voter is registered in ANY of the open elections
             var isVoterRegistered = dto.VoterIdType switch
             {
                 "E" => await _context.People.AnyAsync(p =>
@@ -60,19 +81,26 @@ public partial class OnlineVotingService
                 return BuildRequestCodeResponse("voting.auth.requestCode.notRegistered");
             }
 
-            // 3. Create or update OnlineVoter record for tracking
-            var onlineVoter = await _context.OnlineVoters
-                .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId);
-
+            // 5. Create or update OnlineVoter record for tracking (reuse the phone+paid load when present)
             if (onlineVoter == null)
             {
-                onlineVoter = new OnlineVoter
+                var alreadyLookedUp = phonePaid;
+                if (!alreadyLookedUp)
                 {
-                    VoterId = dto.VoterId,
-                    VoterIdType = dto.VoterIdType,
-                    WhenRegistered = DateTimeOffset.UtcNow
-                };
-                _context.OnlineVoters.Add(onlineVoter);
+                    onlineVoter = await _context.OnlineVoters
+                        .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId);
+                }
+
+                if (onlineVoter == null)
+                {
+                    onlineVoter = new OnlineVoter
+                    {
+                        VoterId = dto.VoterId,
+                        VoterIdType = dto.VoterIdType,
+                        WhenRegistered = DateTimeOffset.UtcNow
+                    };
+                    _context.OnlineVoters.Add(onlineVoter);
+                }
             }
 
             var verifyCode = GenerateVerificationCode();

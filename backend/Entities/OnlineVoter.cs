@@ -36,6 +36,17 @@ public partial class OnlineVoter
     [StringLength(200)]
     public string? OtherInfo { get; set; }
 
+    /// <summary>
+    /// SMS/voice/WhatsApp eligibility when <see cref="VoterIdType"/> is phone.
+    /// null = not yet checked (paid send still allowed);
+    /// "OK" = checked and valid;
+    /// any other short value = blocked (reason code).
+    /// Email / kiosk / Telegram rows leave this null.
+    /// </summary>
+    [StringLength(50)]
+    [Unicode(false)]
+    public string? SmsStatus { get; set; }
+
     [StringLength(15)]
     [Unicode(false)]
     public string? VerifyCode { get; set; }

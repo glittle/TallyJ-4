@@ -33,6 +33,7 @@ This implementation provides a **security-first voter authentication system** fo
 
 2. **SMS Pumping Prevention**
    - Paid SMS / voice / WhatsApp: reserved/fictional/malformed destinations (NANP 555, bad E.164) are rejected in code before any provider call — see `context/sms-eligibility.md`
+   - `OnlineVoter` also stores global phone SMS eligibility (`SmsStatus`: null / `"OK"` / block reason). For `VoterIdType` `"P"` + paid channel, a non-null status other than `"OK"` skips Twilio and GreenAPI. The lookup is the phone row (`VoterId` + `VoterIdType == "P"`).
    - Verification codes only sent to voters registered in open elections
    - Validates voter registration BEFORE sending SMS/email
    - Prevents abuse of communication channels
@@ -194,7 +195,7 @@ POST /api/online-voting/{electionGuid}/submitBallot
    - Election discovery endpoint
 
 4. **Database**
-   - `OnlineVoter` - Tracks verification codes and attempts
+   - `OnlineVoter` - Tracks verification codes and attempts; for phone rows, `SmsStatus` is the global paid-channel eligibility (null = unchecked, `"OK"` = allowed, any other short value = blocked)
    - `Person` - Voter registration in elections
    - `Election` - Election configuration and open/close times
 

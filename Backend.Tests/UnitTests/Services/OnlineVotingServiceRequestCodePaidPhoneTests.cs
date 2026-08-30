@@ -1,6 +1,7 @@
 using Backend.DTOs.OnlineVoting;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.Services;
 using Backend.Services.Auth;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,9 @@ using Moq;
 namespace Backend.Tests.UnitTests.Services;
 
 /// <summary>
-/// Paid-channel requestCode gate: reserved/malformed phones never reach the provider;
-/// a normal E.164 still hits the existing open-election registration check.
+/// Paid-channel requestCode gate: reserved/malformed phones and blocked SmsStatus
+/// never reach the provider (SmsStatus is checked before registration);
+/// null/"OK" still hits send or the registration check.
 /// </summary>
 public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 {
@@ -113,6 +115,103 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
         _paidSender.Verify(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()), Times.Once);
     }
 
+    [Theory]
+    [InlineData("undeliverable")]
+    [InlineData("555-range")]
+    public async Task RequestCode_SmsStatusBlocked_DoesNotCallProvider(string smsStatus)
+    {
+        await SeedOpenElectionWithPerson(phone: ValidPhone);
+        await SeedOnlineVoter(ValidPhone, smsStatus);
+
+        var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
+
+        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.Null(result.DevVerificationCode);
+        _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Theory]
+    [InlineData("voice")]
+    [InlineData("whatsapp")]
+    public async Task RequestCode_SmsStatusBlocked_BlocksVoiceAndWhatsApp(string deliveryMethod)
+    {
+        await SeedOpenElectionWithPerson(phone: ValidPhone);
+        await SeedOnlineVoter(ValidPhone, "undeliverable");
+
+        var result = await _service.RequestVerificationCodeAsync(new RequestCodeDto
+        {
+            VoterId = ValidPhone,
+            VoterIdType = "P",
+            DeliveryMethod = deliveryMethod
+        });
+
+        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RequestCode_SmsStatusOk_Registered_CallsMockedProvider()
+    {
+        await SeedOpenElectionWithPerson(phone: ValidPhone);
+        await SeedOnlineVoter(ValidPhone, OnlineVoterSmsStatus.Ok);
+        _paidSender
+            .Setup(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
+
+        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.False(string.IsNullOrWhiteSpace(result.DevVerificationCode));
+        _paidSender.Verify(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task RequestCode_SmsStatusNull_Registered_CallsMockedProvider()
+    {
+        await SeedOpenElectionWithPerson(phone: ValidPhone);
+        await SeedOnlineVoter(ValidPhone, smsStatus: null);
+        _paidSender
+            .Setup(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
+
+        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task RequestCode_SmsStatusOk_NotRegistered_ReachesRegistrationCheck()
+    {
+        await SeedOpenElectionWithPerson(email: "other@example.com");
+        await SeedOnlineVoter(ValidPhone, OnlineVoterSmsStatus.Ok);
+
+        var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
+
+        Assert.Equal("voting.auth.requestCode.notRegistered", result.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RequestCode_SmsStatusBlocked_NotRegistered_ReturnsInvalidPhone()
+    {
+        await SeedOpenElectionWithPerson(email: "other@example.com");
+        await SeedOnlineVoter(ValidPhone, "undeliverable");
+
+        var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
+
+        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.NotEqual("voting.auth.requestCode.notRegistered", result.MessageKey);
+        Assert.Null(result.DevVerificationCode);
+        _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
     [Fact]
     public async Task RequestCode_Email_DoesNotUsePaidSender()
     {
@@ -128,6 +227,49 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RequestCode_Email_BlockedSmsStatus_DoesNotTakeInvalidPhonePath()
+    {
+        const string email = "voter@example.com";
+        await SeedOpenElectionWithPerson(email: email);
+        await SeedOnlineVoter(email, "undeliverable", voterIdType: "E");
+
+        var result = await _service.RequestVerificationCodeAsync(new RequestCodeDto
+        {
+            VoterId = email,
+            VoterIdType = "E",
+            DeliveryMethod = "email"
+        });
+
+        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.NotEqual("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RequestCode_EmailType_SmsDelivery_BlockedEmailRow_DoesNotUseSmsStatusGate()
+    {
+        const string email = "voter@example.com";
+        await SeedOpenElectionWithPerson(email: email);
+        await SeedOnlineVoter(email, "undeliverable", voterIdType: "E");
+        _paidSender
+            .Setup(s => s.SendSmsAsync(email, It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var result = await _service.RequestVerificationCodeAsync(new RequestCodeDto
+        {
+            VoterId = email,
+            VoterIdType = "E",
+            DeliveryMethod = "sms"
+        });
+
+        Assert.NotEqual("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(email, It.IsAny<string>()), Times.Once);
     }
 
     private static RequestCodeDto PaidSmsRequest(string phone) => new()
@@ -164,6 +306,17 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             RowVersion = new byte[8]
         });
 
+        await Context.SaveChangesAsync();
+    }
+
+    private async Task SeedOnlineVoter(string voterId, string? smsStatus, string voterIdType = "P")
+    {
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = voterId,
+            VoterIdType = voterIdType,
+            SmsStatus = smsStatus
+        });
         await Context.SaveChangesAsync();
     }
 }
