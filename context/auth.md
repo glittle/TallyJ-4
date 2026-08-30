@@ -26,11 +26,13 @@ User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value
 
 Online voters use the same JWT claims as before (`voterType=online`, `voterId`, `voterIdType`). Only transport changed.
 
-- **Cookie `voter_token`:** httpOnly, Secure, SameSite, Path=/ — the session JWT (24h). Never written to `localStorage` / `sessionStorage` and not returned in auth JSON.
-- **Cookie `voter_session=1`:** same attribute family except **not** httpOnly — a boolean flag so the SPA can detect a session and call `GET /api/online-voting/me` to restore `voterId`.
+- **Cookie `voter_token`:** httpOnly, **always** Secure + SameSite=Strict + host-only (no Domain), Path=/ — the session JWT (24h). Never written to `localStorage` / `sessionStorage` and not returned in auth JSON.
+- **Cookie `voter_session=1`:** same attributes except **not** httpOnly — a boolean flag so the SPA can detect a session and call `GET /api/online-voting/me` to restore `voterId`.
 - **Cookie name is not `auth_token`.** Teller and voter JWTs can coexist in one browser. `OnMessageReceived` prefers `voter_token` on `/api/online-voting/*`, `/hubs/all-voters`, and `/hubs/voter-personal`; everywhere else it prefers `auth_token`. Bearer and hub `access_token` query still win when present (tests / tools).
-- **Logout:** `POST /api/online-voting/logout` clears only voter cookies. Teller logout still clears only teller cookies.
-- **Dev / prod cookie scope:** same family as teller — Vite HTTPS proxy makes `/api` and `/hubs` same-origin in development; production is same-site behind the reverse proxy.
+- **Logout:** `POST /api/online-voting/logout` clears only voter cookies, using the same Secure/Strict/host-only attributes so the browser expires them. Teller logout still clears only teller cookies.
+- **Dev / prod:** local Vite is HTTPS (`:8095`) and proxies `/api` and `/hubs` to HTTP `:5016`. The backend therefore sees `Request.IsHttps == false`. Voter cookies ignore that and stay Secure. UAT/prod are HTTPS.
+
+**Rejected alternative:** copy the teller HTTP-dev exception (`Secure`/`SameSite`/`Domain` from `Request.IsHttps`). Rejected — Vite already presents HTTPS to the browser; issuing `Secure=false` voter cookies behind the proxy is not what operators want. Teller cookies keep that exception in this slice.
 
 **Multi-tab:** cookies are shared across tabs on the same origin. Logging out in one tab clears cookies for all tabs; other tabs discover this on the next `/me` or `availableElections` call (401 → treat as logged out).
 

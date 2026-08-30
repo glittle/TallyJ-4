@@ -51,11 +51,17 @@ public class VoterCookieAuthTests : IntegrationTestBase
         var tokenCookie = GetSetCookieHeader(verifyResponse, SecureCookieMiddleware.VoterTokenCookieName);
         Assert.False(string.IsNullOrWhiteSpace(tokenCookie));
         Assert.Contains("httponly", tokenCookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("secure", tokenCookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("samesite=strict", tokenCookie, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("domain=", tokenCookie, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain(SecureCookieMiddleware.AccessTokenCookieName + "=", tokenCookie, StringComparison.OrdinalIgnoreCase);
 
         var sessionCookie = GetSetCookieHeader(verifyResponse, SecureCookieMiddleware.VoterSessionCookieName);
         Assert.False(string.IsNullOrWhiteSpace(sessionCookie));
         Assert.DoesNotContain("httponly", sessionCookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("secure", sessionCookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("samesite=strict", sessionCookie, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("domain=", sessionCookie, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -105,6 +111,9 @@ public class VoterCookieAuthTests : IntegrationTestBase
         var clearedToken = GetSetCookieHeader(logout, SecureCookieMiddleware.VoterTokenCookieName);
         Assert.False(string.IsNullOrWhiteSpace(clearedToken));
         Assert.Contains("max-age=0", clearedToken, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("secure", clearedToken, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("samesite=strict", clearedToken, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("domain=", clearedToken, StringComparison.OrdinalIgnoreCase);
 
         var tellerCookie = GetSetCookieHeader(logout, SecureCookieMiddleware.AccessTokenCookieName);
         Assert.Null(tellerCookie);

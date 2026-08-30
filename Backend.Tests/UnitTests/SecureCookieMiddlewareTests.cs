@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 using Backend.Middleware;
 using Xunit;
 using System.Collections;
@@ -148,7 +149,7 @@ public class SecureCookieMiddlewareTests
         var httpContext = new DefaultHttpContext();
         var accessToken = "voter_jwt_value";
 
-        SecureCookieMiddleware.SetVoterAuthCookies(httpContext, accessToken, isHttps: true);
+        SecureCookieMiddleware.SetVoterAuthCookies(httpContext, accessToken);
 
         var cookies = httpContext.Response.GetTypedHeaders().SetCookie;
         Assert.Equal(2, cookies.Count);
@@ -156,21 +157,31 @@ public class SecureCookieMiddlewareTests
         var tokenCookie = cookies.First(c => c.Name == SecureCookieMiddleware.VoterTokenCookieName);
         Assert.Equal(accessToken, tokenCookie.Value.Value);
         Assert.True(tokenCookie.HttpOnly);
-        Assert.True(tokenCookie.Secure);
-        Assert.Equal("Strict", tokenCookie.SameSite.ToString());
+        AssertAlwaysSecureStrictHostOnly(tokenCookie);
 
         var sessionCookie = cookies.First(c => c.Name == SecureCookieMiddleware.VoterSessionCookieName);
         Assert.Equal("1", sessionCookie.Value.Value);
         Assert.False(sessionCookie.HttpOnly);
-        Assert.True(sessionCookie.Secure);
-        Assert.Equal("Strict", sessionCookie.SameSite.ToString());
+        AssertAlwaysSecureStrictHostOnly(sessionCookie);
+    }
+
+    [Fact]
+    public void SetVoterAuthCookies_IsSecureStrictHostOnly_EvenWhenRequestIsHttp()
+    {
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.IsHttps = false;
+
+        SecureCookieMiddleware.SetVoterAuthCookies(httpContext, "voter_jwt_value");
+
+        var cookies = httpContext.Response.GetTypedHeaders().SetCookie;
+        Assert.All(cookies, AssertAlwaysSecureStrictHostOnly);
     }
 
     [Fact]
     public void ClearVoterAuthCookies_DoesNotClearTellerCookies()
     {
         var httpContext = new DefaultHttpContext();
-        httpContext.Request.IsHttps = true;
+        httpContext.Request.IsHttps = false;
 
         SecureCookieMiddleware.ClearVoterAuthCookies(httpContext);
 
@@ -180,6 +191,14 @@ public class SecureCookieMiddlewareTests
         Assert.Contains(SecureCookieMiddleware.VoterSessionCookieName, cookieNames);
         Assert.DoesNotContain(SecureCookieMiddleware.AccessTokenCookieName, cookieNames);
         Assert.DoesNotContain(SecureCookieMiddleware.RefreshTokenCookieName, cookieNames);
+        Assert.All(cookies, AssertAlwaysSecureStrictHostOnly);
+    }
+
+    private static void AssertAlwaysSecureStrictHostOnly(SetCookieHeaderValue cookie)
+    {
+        Assert.True(cookie.Secure);
+        Assert.Equal("Strict", cookie.SameSite.ToString());
+        Assert.True(string.IsNullOrEmpty(cookie.Domain.ToString()));
     }
 
     [Theory]

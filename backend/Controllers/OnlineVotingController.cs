@@ -250,10 +250,7 @@ public class OnlineVotingController : ControllerBase
 
         if (!string.IsNullOrEmpty(response.Token))
         {
-            SecureCookieMiddleware.SetVoterAuthCookies(
-                HttpContext,
-                response.Token,
-                HttpContext.Request.IsHttps);
+            SecureCookieMiddleware.SetVoterAuthCookies(HttpContext, response.Token);
         }
 
         response.Token = null;

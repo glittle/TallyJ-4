@@ -197,73 +197,60 @@ public class SecureCookieMiddleware
 
     /// <summary>
     /// Sets httpOnly <c>voter_token</c> plus a non-httpOnly <c>voter_session</c> flag.
-    /// Cookie attributes match teller auth (<c>HttpOnly</c>/<c>Secure</c>/<c>SameSite</c>/<c>Path</c>/<c>Domain</c>).
+    /// Always Secure + SameSite=Strict + host-only (no Domain). Vite local HTTPS
+    /// proxies /api to HTTP, so <see cref="HttpRequest.IsHttps"/> is false and must
+    /// not control these attributes (unlike teller cookies).
     /// </summary>
     public static void SetVoterAuthCookies(
         HttpContext context,
         string accessToken,
-        bool isHttps = true,
         int? accessTokenExpiryMinutes = null)
     {
         var lifetimeMinutes = accessTokenExpiryMinutes ?? VoterSessionExpiryMinutes;
         var expires = DateTimeOffset.UtcNow.AddMinutes(lifetimeMinutes);
 
-        var tokenOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = isHttps,
-            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
-            Expires = expires,
-            Path = "/",
-            Domain = isHttps ? null : "localhost"
-        };
-
-        context.Response.Cookies.Append(VoterTokenCookieName, accessToken, tokenOptions);
-
-        var sessionFlagOptions = new CookieOptions
-        {
-            HttpOnly = false,
-            Secure = isHttps,
-            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
-            Expires = expires,
-            Path = "/",
-            Domain = isHttps ? null : "localhost"
-        };
-
-        context.Response.Cookies.Append(VoterSessionCookieName, "1", sessionFlagOptions);
+        context.Response.Cookies.Append(
+            VoterTokenCookieName,
+            accessToken,
+            CreateVoterCookieOptions(httpOnly: true, expires));
+        context.Response.Cookies.Append(
+            VoterSessionCookieName,
+            "1",
+            CreateVoterCookieOptions(httpOnly: false, expires));
     }
 
     /// <summary>
     /// Clears online-voter cookies without touching teller auth cookies.
+    /// Attributes match <see cref="SetVoterAuthCookies"/> so the browser expires the same cookies.
     /// </summary>
     public static void ClearVoterAuthCookies(HttpContext context)
     {
-        var isHttps = context.Request.IsHttps;
-        var expiredTokenOptions = new CookieOptions
+        var expired = DateTimeOffset.UtcNow.AddDays(-1);
+        var tokenOptions = CreateVoterCookieOptions(httpOnly: true, expired);
+        tokenOptions.MaxAge = TimeSpan.Zero;
+        var flagOptions = CreateVoterCookieOptions(httpOnly: false, expired);
+        flagOptions.MaxAge = TimeSpan.Zero;
+
+        context.Response.Cookies.Append(VoterTokenCookieName, "", tokenOptions);
+        context.Response.Cookies.Append(VoterSessionCookieName, "", flagOptions);
+    }
+
+    /// <summary>
+    /// Shared voter cookie attributes so set and clear stay aligned.
+    /// Always Secure + Strict + host-only; <paramref name="httpOnly"/> is the only difference
+    /// between the JWT cookie and the session flag.
+    /// </summary>
+    private static CookieOptions CreateVoterCookieOptions(bool httpOnly, DateTimeOffset expires)
+    {
+        return new CookieOptions
         {
-            HttpOnly = true,
-            Secure = isHttps,
-            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
-            Expires = DateTimeOffset.UtcNow.AddDays(-1),
-            MaxAge = TimeSpan.Zero,
+            HttpOnly = httpOnly,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = expires,
             Path = "/",
-            Domain = isHttps ? null : "localhost"
+            Domain = null
         };
-
-        context.Response.Cookies.Append(VoterTokenCookieName, "", expiredTokenOptions);
-
-        var expiredFlagOptions = new CookieOptions
-        {
-            HttpOnly = false,
-            Secure = isHttps,
-            SameSite = isHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
-            Expires = DateTimeOffset.UtcNow.AddDays(-1),
-            MaxAge = TimeSpan.Zero,
-            Path = "/",
-            Domain = isHttps ? null : "localhost"
-        };
-
-        context.Response.Cookies.Append(VoterSessionCookieName, "", expiredFlagOptions);
     }
 
     /// <summary>
