@@ -13,7 +13,13 @@ import type { ElectionPackageLoaderLogLine } from "@/types/SignalREvents";
 import { getActiveElectionHubGuid } from "@/utils/activeElectionHubStorage";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
 import { formatNumber } from "@/utils/formatNumber";
-import { CopyDocument, Plus, RefreshRight, Search, Upload } from "@element-plus/icons-vue";
+import {
+  CopyDocument,
+  Plus,
+  RefreshRight,
+  Search,
+  Upload,
+} from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";

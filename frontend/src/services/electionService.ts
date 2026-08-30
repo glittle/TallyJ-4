@@ -139,9 +139,7 @@ export const electionService = {
     });
     const data = response.data?.data;
     if (!data) {
-      throw new Error(
-        response.data?.message || "Failed to duplicate election",
-      );
+      throw new Error(response.data?.message || "Failed to duplicate election");
     }
     return mapElectionDto(data);
   },

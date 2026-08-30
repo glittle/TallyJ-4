@@ -3,9 +3,13 @@ import { mount } from "@vue/test-utils";
 import { setActivePinia, createPinia } from "pinia";
 import DashboardPage from "../DashboardPage.vue";
 
-vi.mock("vue-i18n", () => ({
-  useI18n: () => ({ t: (key: string) => key }),
-}));
+vi.mock("vue-i18n", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("vue-i18n")>();
+  return {
+    ...actual,
+    useI18n: () => ({ t: (key: string) => key }),
+  };
+});
 
 const mockPush = vi.fn();
 vi.mock("vue-router", () => ({
@@ -54,7 +58,9 @@ const globalConfig = {
     },
     ElRow: { template: "<div><slot /></div>" },
     ElCol: { template: "<div><slot /></div>" },
-    ElButton: { template: "<button><slot /></button>" },
+    ElButton: {
+      template: "<button v-bind='$attrs'><slot /></button>",
+    },
     ElIcon: { template: "<span />" },
     ElInput: { template: "<input />" },
     ElSelect: { template: "<select><slot /></select>" },
@@ -64,7 +70,13 @@ const globalConfig = {
     ElTable: { template: "<table class='el-table'><slot /></table>" },
     ElTableColumn: {
       props: ["label"],
-      template: "<th class='table-col'>{{ label }}</th>",
+      setup() {
+        return {
+          dummyRow: { electionGuid: "abc", name: "Test" },
+        };
+      },
+      template:
+        "<th class='table-col'>{{ label }}<slot name='default' :row='dummyRow' /></th>",
     },
     ElPagination: { template: "<div />" },
     ElSkeleton: { template: "<div />" },
@@ -116,7 +128,7 @@ describe("DashboardPage", () => {
     expect(wrapper.find(".elections-section").exists()).toBe(true);
   });
 
-  it("renders the participation column when elections exist", () => {
+  it("renders a duplicate control when elections exist", () => {
     mockElections.mockReturnValue([
       {
         electionGuid: "abc",
@@ -124,10 +136,9 @@ describe("DashboardPage", () => {
         dateOfElection: "2026-01-01",
         voterCount: 10,
         ballotCount: 5,
-        tallyStatus: "Setup",
       },
     ]);
     const wrapper = mount(DashboardPage, { global: globalConfig });
-    expect(wrapper.html()).toContain("elections.participation");
+    expect(wrapper.html()).toContain("elections.duplicate.action");
   });
 });
