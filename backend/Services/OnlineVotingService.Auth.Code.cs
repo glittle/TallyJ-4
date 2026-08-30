@@ -28,13 +28,14 @@ public partial class OnlineVotingService
                 }
             }
 
-            // 2. Paid channels: durable SmsStatus on an existing row blocks send (null = not yet checked).
+            // 2. Phone + paid: durable SmsStatus on an existing phone row blocks send (null = not yet checked).
             //    Load once here and reuse below — do not create a row just to store status.
+            var phonePaid = dto.VoterIdType == "P" && paidChannel;
             OnlineVoter? onlineVoter = null;
-            if (paidChannel)
+            if (phonePaid)
             {
                 onlineVoter = await _context.OnlineVoters
-                    .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId);
+                    .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId && ov.VoterIdType == "P");
 
                 if (onlineVoter != null && !OnlineVoterSmsStatus.AllowsPaidSend(onlineVoter.SmsStatus))
                 {
@@ -80,10 +81,11 @@ public partial class OnlineVotingService
                 return BuildRequestCodeResponse("voting.auth.requestCode.notRegistered");
             }
 
-            // 5. Create or update OnlineVoter record for tracking (reuse the paid-channel load when present)
+            // 5. Create or update OnlineVoter record for tracking (reuse the phone+paid load when present)
             if (onlineVoter == null)
             {
-                if (!paidChannel)
+                var alreadyLookedUp = phonePaid;
+                if (!alreadyLookedUp)
                 {
                     onlineVoter = await _context.OnlineVoters
                         .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId);

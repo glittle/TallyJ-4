@@ -13,7 +13,7 @@ Paid verification (SMS / voice / WhatsApp) must not call Twilio or GreenAPI for 
 
 **First slice (issue #254):** a pure in-code helper (`PaidDestinationPhone`) rejects:
 
-- malformed E.164 (and the same digit string without a leading `+`)
+- malformed numbers that are neither true E.164 (`+` then 8–15 digits) nor the same digit string without a leading `+`
 - NANP area code `555`
 - NANP exchange `555` (including the `555-01xx` fictional block)
 
@@ -31,7 +31,7 @@ The check runs at the start of `RequestVerificationCodeAsync` for phone + paid d
 
 Field: `string? SmsStatus`, max 50, non-unicode (`varchar(50)`).
 
-**Send rule (paid channels only):**
+**Send rule (phone `VoterIdType` `"P"` + paid channel only):**
 
 ```text
 if SmsStatus is not null AND SmsStatus != "OK" → do not send
@@ -48,7 +48,7 @@ Initial reason vocabulary (not a closed enum — short phrases/codes): `555-rang
 Pre-Twilio gate order in `RequestVerificationCodeAsync` (issue #254):
 
 1. `PaidDestinationPhone` (in-code; no DB)
-2. `OnlineVoter.SmsStatus` when a row already exists and status is not null / not `"OK"` (paid channels only; do not create a row just to store status)
+2. `OnlineVoter.SmsStatus` when `VoterIdType` is `"P"` and the channel is paid, a phone row already exists (`VoterId` + `VoterIdType == "P"`), and status is not null / not `"OK"` (do not create a row just to store status). Email / kiosk identifiers skip this gate.
 3. Existing open-election registration check (unchanged)
 4. Then the provider
 

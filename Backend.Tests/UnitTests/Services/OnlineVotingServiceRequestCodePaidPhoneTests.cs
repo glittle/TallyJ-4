@@ -231,6 +231,47 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
         _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
+    [Fact]
+    public async Task RequestCode_Email_BlockedSmsStatus_DoesNotTakeInvalidPhonePath()
+    {
+        const string email = "voter@example.com";
+        await SeedOpenElectionWithPerson(email: email);
+        await SeedOnlineVoter(email, "undeliverable", voterIdType: "E");
+
+        var result = await _service.RequestVerificationCodeAsync(new RequestCodeDto
+        {
+            VoterId = email,
+            VoterIdType = "E",
+            DeliveryMethod = "email"
+        });
+
+        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.NotEqual("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RequestCode_EmailType_SmsDelivery_BlockedEmailRow_DoesNotUseSmsStatusGate()
+    {
+        const string email = "voter@example.com";
+        await SeedOpenElectionWithPerson(email: email);
+        await SeedOnlineVoter(email, "undeliverable", voterIdType: "E");
+        _paidSender
+            .Setup(s => s.SendSmsAsync(email, It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var result = await _service.RequestVerificationCodeAsync(new RequestCodeDto
+        {
+            VoterId = email,
+            VoterIdType = "E",
+            DeliveryMethod = "sms"
+        });
+
+        Assert.NotEqual("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(email, It.IsAny<string>()), Times.Once);
+    }
+
     private static RequestCodeDto PaidSmsRequest(string phone) => new()
     {
         VoterId = phone,
