@@ -21,7 +21,13 @@ vi.mock("@/components/ballots/BallotEntryPanel.vue", () => ({
     name: "BallotEntryPanel",
     template:
       '<div class="ballot-entry-panel-mock" data-testid="ballot-entry-panel"></div>',
-    props: ["electionGuid", "ballotGuid", "showMetadata"],
+    props: [
+      "electionGuid",
+      "ballotGuid",
+      "showMetadata",
+      "highlightTeller1",
+      "hasKeyboardTeller",
+    ],
   },
 }));
 
@@ -63,5 +69,6 @@ describe("BallotEntryPage", () => {
     expect(panel.exists()).toBe(true);
     expect(panel.props("electionGuid")).toBe("test-election-guid");
     expect(panel.props("ballotGuid")).toBe("test-ballot-guid");
+    expect(panel.props("highlightTeller1")).toBe(false);
   });
 });

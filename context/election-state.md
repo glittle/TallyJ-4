@@ -34,3 +34,18 @@ Implementation:
 - Secondary: sidebar watch + router `beforeEach`
 - Stage source: MainHub `statusChanged` → `electionStore.currentStage`
 - Main hub membership must stay for the whole election session (`electionStore`); ballots/people pages only join/leave FrontDesk (see `context/realtime.md`)
+
+## Session Teller 1/2 on an open ballot
+
+**Status:** active  
+**Evidence:** confirmed (issue #287)
+
+Teller 1 and Teller 2 shown while a ballot is open are the same browser-session inputs as on the ballot listing (localStorage via `useActiveTellers`). Changing them on the ballot updates those session globals; they are not editors of that ballot’s stored `teller1`/`teller2` fields.
+
+**Rejected alternative:** treat the ballot metadata names as per-ballot fields to save on that record. The listing already uses session-global tellers (who is at this keyboard now). Opening a ballot already stamps the current session tellers onto the record; the names on screen need to stay that same session setting so the teller can change them without closing the ballot.
+
+Location stays read-only on the open ballot in this slice. Adding a name to the election-wide teller list, SignalR to other computers, and admin delete on the Tellers page are a later #287 slice.
+
+Implementation:
+- `useActiveTellers` — shared reactive session state over `activeTellerStorage`
+- `ActiveTellerSelector` on the listing and as the Teller 1/2 cells in `BallotEntryPanel`

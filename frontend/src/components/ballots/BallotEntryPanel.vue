@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
-import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
+import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
+import {
+  getActiveTellerPayload,
+  type ActiveTellers,
+} from "@/utils/activeTellerStorage";
 import type { BallotStartBlockReason } from "@/utils/ballotStartRequirements";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -17,6 +21,7 @@ const emit = defineEmits<{
   "ballot-created": [ballotGuid: string];
   "ballot-deleted": [ballotGuid: string];
   "ballot-start-blocked": [reason: BallotStartBlockReason];
+  "tellers-changed": [tellers: ActiveTellers];
 }>();
 
 const props = withDefaults(
@@ -27,12 +32,14 @@ const props = withDefaults(
     manageBallotSignalR?: boolean;
     managePeopleSignalR?: boolean;
     hasKeyboardTeller?: boolean;
+    highlightTeller1?: boolean;
   }>(),
   {
     showMetadata: true,
     manageBallotSignalR: true,
     managePeopleSignalR: true,
     hasKeyboardTeller: true,
+    highlightTeller1: false,
   },
 );
 
@@ -217,10 +224,19 @@ async function handleVotesReordered(voteRowIds: number[]) {
             {{ formatComputerCodeLabel($t, ballot.computerCode) }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('ballots.teller1')">
-            {{ ballot.teller1 || "-" }}
+            <ActiveTellerSelector
+              field="teller1"
+              :election-guid="electionGuid"
+              :highlight-teller1="highlightTeller1"
+              @tellers-changed="emit('tellers-changed', $event)"
+            />
           </el-descriptions-item>
           <el-descriptions-item :label="$t('ballots.teller2')">
-            {{ ballot.teller2 || "-" }}
+            <ActiveTellerSelector
+              field="teller2"
+              :election-guid="electionGuid"
+              @tellers-changed="emit('tellers-changed', $event)"
+            />
           </el-descriptions-item>
         </el-descriptions>
       </div>
