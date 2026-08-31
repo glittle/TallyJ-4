@@ -139,10 +139,17 @@ Any change to backend DTOs, controllers, or new endpoints requires regenerating 
 
 **Steps (clean dev environment)**:
 
-1. Start (or restart) the backend in the **Development** environment (`dotnet run` from the `backend/` directory).  
-   On startup it automatically executes `app.WriteOpenApiSpecToFile(...)` which writes the live contract to `frontend/openApi/tallyj.json` (see `backend/Program.AppPipeline.cs`).
+1. Write the live contract in the **Development** environment. From `backend/`:
 
-2. In another terminal: `cd frontend`
+   ```bash
+   dotnet run -- --exit-after-start
+   ```
+
+   The `--` is required so `--exit-after-start` is passed to the app, not to `dotnet run`. On startup the app writes `frontend/openApi/tallyj.json` (`app.WriteOpenApiSpecToFile(...)` in `backend/Program.AppPipeline.cs`) and then stops.
+
+   If a Development backend is already running (`dotnet watch` / IDE), skip this step — that process writes the spec on its own startup.
+
+2. `cd frontend`
 
 3. `npm run gen` (runs `@hey-api/openapi-ts` using the config at `frontend/openApi/config.backend.ts`).
 

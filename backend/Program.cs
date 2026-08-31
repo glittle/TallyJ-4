@@ -225,4 +225,15 @@ Log.Logger = loggerConfiguration
 
 await ProgramAppPipeline.ConfigureApp(app, builder.Configuration, isDevelopment, isTesting, siteType);
 
+// `dotnet run -- --exit-after-start` writes the OpenAPI spec (Development) then stops.
+if (args.Contains("--exit-after-start"))
+{
+    var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
+    lifetime.ApplicationStarted.Register(() =>
+    {
+        Log.Information("Startup completed. Stopping.");
+        lifetime.StopApplication();
+    });
+}
+
 await app.RunAsync();
