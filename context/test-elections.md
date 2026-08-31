@@ -22,8 +22,8 @@
 ## Teller pages show a persistent Test Election banner
 
 **Status:** active  
-**Evidence:** confirmed (issue #193 second slice)  
-**Source:** issue #193  
+**Evidence:** confirmed (issue #193 second slice; UAT: gather orange, not error red)  
+**Source:** issue #193; PR #284 UAT  
 **Revisit when:** test-only reset lands, or voter-facing chrome is added
 
 While a teller is on an election-scoped route (`/elections/:id/…`) whose `currentElection.showAsTest` is true, MainLayout shows a full-width “Test Election” strip between the fixed header and main content. It reads the existing `Election.ShowAsTest` / `showAsTest` field — no new column. Hidden when there is no current election, `showAsTest` is false or null, or the route has no election id (Dashboard, Profile, create). Leftover `currentElection` after leaving a test election does not keep the banner up. Voter pages use PublicLayout and do not get this chrome.
