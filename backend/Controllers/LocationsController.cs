@@ -159,14 +159,21 @@ public class LocationsController : ControllerBase
             return BadRequest(ApiResponse<bool>.ErrorResponse("Location does not belong to the specified election"));
         }
 
-        var result = await _locationService.DeleteLocationAsync(locationGuid);
-
-        if (!result)
+        try
         {
-            return NotFound(ApiResponse<bool>.ErrorResponse("Location not found"));
-        }
+            var result = await _locationService.DeleteLocationAsync(locationGuid);
 
-        return Ok(ApiResponse<bool>.SuccessResponse(true, "Location deleted successfully"));
+            if (!result)
+            {
+                return NotFound(ApiResponse<bool>.ErrorResponse("Location not found"));
+            }
+
+            return Ok(ApiResponse<bool>.SuccessResponse(true, "Location deleted successfully"));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<bool>.ErrorResponse(ex.Message));
+        }
     }
 
 }

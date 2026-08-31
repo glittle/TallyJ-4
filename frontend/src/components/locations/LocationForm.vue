@@ -2,7 +2,8 @@
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
 import { type FormInstance, type FormRules, ElMessageBox } from "element-plus";
-import { reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
+import { isOnlineLocationType } from "@/utils/ballotStartRequirements";
 import { useI18n } from "vue-i18n";
 import { useLocationStore } from "../../stores/locationStore";
 import type {
@@ -32,6 +33,11 @@ const { handleApiError } = useApiErrorHandler();
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
 const deleting = ref(false);
+const canDelete = computed(
+  () =>
+    Boolean(props.showDelete) &&
+    !isOnlineLocationType(props.location?.locationType),
+);
 
 const form = reactive({
   name: "",
@@ -269,7 +275,7 @@ function handleCancel() {
       }}</el-button>
     </div>
 
-    <div v-if="isEditMode() && showDelete" class="location-form-delete">
+    <div v-if="isEditMode() && canDelete" class="location-form-delete">
       <el-button type="danger" :loading="deleting" @click="handleDelete">
         {{ $t("locations.form.delete") }}
       </el-button>

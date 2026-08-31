@@ -18,6 +18,7 @@ import {
   locationTypeForGuid,
   type BallotStartBlockReason,
 } from "@/utils/ballotStartRequirements";
+import { formatLocationLabel } from "@/utils/locationDisplay";
 import {
   ballotGuidFromRouteParams,
   electionBallotsPath,
@@ -389,7 +390,7 @@ function handleLocationChange(locationGuid: string | null) {
               <el-option
                 v-for="location in locationStore.sortedLocations"
                 :key="location.locationGuid"
-                :label="location.name"
+                :label="formatLocationLabel($t, location)"
                 :value="location.locationGuid"
               />
             </el-select>

@@ -45,6 +45,10 @@ Older submit code (and the locations form) could store a row *named* â€œOnlineâ€
 
 **Reason:** the browser location is the teller's workstation context; the Online *type* is not a paper station.
 
+The typed Online location is added when setup enables online voting, and removed if online voting is turned off and that location has no ballots (or computers). Voter submit still ensures the row exists if setup enabled voting but the location is missing.
+
+**Rejected alternative:** create the location only on the first voter ballot. Tellers would not see it in the location list until a vote arrived, and disabling unused online voting would leave an empty reserved location behind.
+
 ## Online and imported ballot codes
 
 **Status:** active  

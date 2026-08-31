@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Backend.DTOs.Elections;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.Services;
 
 namespace Backend.Tests.UnitTests;
@@ -61,6 +62,112 @@ public class ElectionServiceTests : ServiceTestBase
         var electionInDb = Context.Elections.FirstOrDefault(e => e.ElectionGuid == result.ElectionGuid);
         Assert.NotNull(electionInDb);
         Assert.Equal("Test Election", electionInDb.Name);
+        Assert.Empty(Context.Locations.Where(l => l.ElectionGuid == result.ElectionGuid));
+    }
+
+    [Fact]
+    public async Task CreateElectionAsync_WhenOnlineVotingEnabled_AddsOnlineLocation()
+    {
+        var result = await _service.CreateElectionAsync(new CreateElectionDto
+        {
+            Name = "Online Enabled",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 5,
+            UseOnlineVoting = true
+        });
+
+        var location = Context.Locations.Single(l => l.ElectionGuid == result.ElectionGuid);
+        Assert.Equal(LocationType.Online, location.LocationTypeEnum);
+    }
+
+    [Fact]
+    public async Task UpdateElectionAsync_EnablingOnlineVoting_AddsOnlineLocation()
+    {
+        var election = new Election
+        {
+            ElectionGuid = Guid.NewGuid(),
+            Name = "Toggle Online",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.SettingUp,
+            UseOnlineVoting = false,
+            RowVersion = new byte[8]
+        };
+        Context.Elections.Add(election);
+        await Context.SaveChangesAsync();
+
+        await _service.UpdateElectionAsync(election.ElectionGuid, new UpdateElectionDto
+        {
+            Name = election.Name,
+            UseOnlineVoting = true
+        });
+
+        Assert.Single(Context.Locations.Where(l =>
+            l.ElectionGuid == election.ElectionGuid
+            && l.LocationTypeCode == nameof(LocationType.Online)));
+    }
+
+    [Fact]
+    public async Task UpdateElectionAsync_DisablingOnlineVoting_RemovesEmptyOnlineLocation()
+    {
+        var election = new Election
+        {
+            ElectionGuid = Guid.NewGuid(),
+            Name = "Toggle Online Off",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.SettingUp,
+            UseOnlineVoting = true,
+            RowVersion = new byte[8]
+        };
+        Context.Elections.Add(election);
+        await Context.SaveChangesAsync();
+        await OnlineLocationHelper.EnsureExistsAsync(Context, election.ElectionGuid);
+
+        await _service.UpdateElectionAsync(election.ElectionGuid, new UpdateElectionDto
+        {
+            Name = election.Name,
+            UseOnlineVoting = false
+        });
+
+        Assert.Empty(Context.Locations.Where(l => l.ElectionGuid == election.ElectionGuid));
+    }
+
+    [Fact]
+    public async Task UpdateElectionAsync_DisablingOnlineVoting_KeepsOnlineLocationWhenItHasBallots()
+    {
+        var election = new Election
+        {
+            ElectionGuid = Guid.NewGuid(),
+            Name = "Has Online Ballots",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.GatheringBallots,
+            UseOnlineVoting = true,
+            RowVersion = new byte[8]
+        };
+        Context.Elections.Add(election);
+        await Context.SaveChangesAsync();
+        var location = await OnlineLocationHelper.EnsureExistsAsync(Context, election.ElectionGuid);
+        Context.Ballots.Add(new Ballot
+        {
+            BallotGuid = Guid.NewGuid(),
+            LocationGuid = location.LocationGuid,
+            ComputerCode = ComputerCodeHelper.Online,
+            BallotNumAtComputer = 1,
+            StatusCode = BallotStatus.Ok,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        await _service.UpdateElectionAsync(election.ElectionGuid, new UpdateElectionDto
+        {
+            Name = election.Name,
+            UseOnlineVoting = false
+        });
+
+        Assert.Single(Context.Locations.Where(l => l.ElectionGuid == election.ElectionGuid));
     }
 
     [Fact]

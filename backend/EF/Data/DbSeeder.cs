@@ -34,6 +34,7 @@ public static partial class DbSeeder
             await SeedOnlineVotingTestElectionsAsync(context, logger);
             await EnsureOnlineVotersForSeededPhonesAsync(context);
             await context.SaveChangesAsync();
+            await EnsureOnlineLocationsForEnabledElectionsAsync(context);
             return;
         }
 
@@ -46,9 +47,22 @@ public static partial class DbSeeder
         await SeedOnlineVotingTestElectionsAsync(context, logger);
         await SeedLogsAsync(context, logger);
         await EnsureOnlineVotersForSeededPhonesAsync(context);
-
         await context.SaveChangesAsync();
+        await EnsureOnlineLocationsForEnabledElectionsAsync(context);
         logger.LogInformation("Database seeding complete");
+    }
+
+    private static async Task EnsureOnlineLocationsForEnabledElectionsAsync(MainDbContext context)
+    {
+        var enabledElectionGuids = await context.Elections
+            .Where(e => e.UseOnlineVoting)
+            .Select(e => e.ElectionGuid)
+            .ToListAsync();
+
+        foreach (var electionGuid in enabledElectionGuids)
+        {
+            await OnlineLocationHelper.EnsureExistsAsync(context, electionGuid);
+        }
     }
 
     /// <summary>

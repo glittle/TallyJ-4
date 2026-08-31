@@ -12,6 +12,7 @@ import {
 import type { ComputerDto } from "@/types/Computer";
 import type { LocationDto } from "@/types/Location";
 import { formatComputerCodeLabel } from "@/utils/ballotDisplayCode";
+import { formatLocationLabel } from "@/utils/locationDisplay";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -39,7 +40,10 @@ const { t } = useI18n();
 
 const filterGroups = computed<BallotViewFilterGroup[]>(() =>
   buildBallotViewFilterGroups(
-    props.locations,
+    props.locations.map((location) => ({
+      ...location,
+      name: formatLocationLabel(t, location),
+    })),
     props.ballots,
     props.computersByLocation,
     props.ensureComputerCode,

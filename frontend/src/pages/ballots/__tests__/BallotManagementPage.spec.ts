@@ -134,6 +134,7 @@ describe("BallotManagementPage", () => {
           locationSelected: "Location selected",
           selectLocation: "Select location",
           currentLocation: "Current location",
+          typeOnline: "Online",
         },
       },
     },
