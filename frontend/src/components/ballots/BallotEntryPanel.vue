@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
+import type { BallotStartBlockReason } from "@/utils/ballotStartRequirements";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import InlineBallotEntry, {
@@ -15,6 +16,7 @@ import { formatComputerCodeLabel } from "@/utils/ballotDisplayCode";
 const emit = defineEmits<{
   "ballot-created": [ballotGuid: string];
   "ballot-deleted": [ballotGuid: string];
+  "ballot-start-blocked": [reason: BallotStartBlockReason];
 }>();
 
 const props = withDefaults(
@@ -236,6 +238,7 @@ async function handleVotesReordered(voteRowIds: number[]) {
           @votes-reordered="handleVotesReordered"
           @ballot-created="emit('ballot-created', $event)"
           @ballot-deleted="emit('ballot-deleted', $event)"
+          @ballot-start-blocked="emit('ballot-start-blocked', $event)"
         />
       </div>
     </div>

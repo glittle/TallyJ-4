@@ -4,6 +4,7 @@ import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue"
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useComputerCode } from "@/composables/useComputerCode";
 import { useNotifications } from "@/composables/useNotifications";
+import { useRequiredFieldFlash } from "@/composables/useRequiredFieldFlash";
 
 import type { ComputerDto } from "@/types/Computer";
 import {
@@ -11,6 +12,11 @@ import {
   getActiveTellers,
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
+import {
+  BALLOT_START_BLOCK_MESSAGE_KEY,
+  getBallotStartBlockReason,
+  type BallotStartBlockReason,
+} from "@/utils/ballotStartRequirements";
 import {
   ballotGuidFromRouteParams,
   electionBallotsPath,
@@ -52,6 +58,11 @@ const selectedViewFilter = ref(
   defaultBallotViewFilter("", locationStore.selectedLocationGuid),
 );
 const computersByLocation = ref<Record<string, ComputerDto[]>>({});
+
+const { flashing: locationFlashing, flash: flashLocation } =
+  useRequiredFieldFlash();
+const { flashing: tellerFlashing, flash: flashTeller } =
+  useRequiredFieldFlash();
 
 const hasKeyboardTeller = computed(() =>
   Boolean(activeTellers.value.teller1.trim()),
@@ -256,14 +267,27 @@ function handleBallotCreatedFromEntry(ballotGuid: string) {
   );
 }
 
-async function handleAddBallot() {
-  if (!computerCode.value) {
-    showErrorMessage(t("ballots.computerCodeRequired"));
-    return;
+function flashStartBlockField(reason: BallotStartBlockReason) {
+  if (reason === "location") {
+    void flashLocation();
+  } else if (reason === "teller") {
+    void flashTeller();
   }
+}
 
-  if (!locationStore.selectedLocationGuid) {
-    showErrorMessage(t("ballots.locationRequired"));
+function blockBallotStart(reason: BallotStartBlockReason) {
+  showErrorMessage(t(BALLOT_START_BLOCK_MESSAGE_KEY[reason]));
+  flashStartBlockField(reason);
+}
+
+async function handleAddBallot() {
+  const reason = getBallotStartBlockReason({
+    computerCode: computerCode.value,
+    locationGuid: locationStore.selectedLocationGuid,
+    teller1: activeTellers.value.teller1,
+  });
+  if (reason) {
+    blockBallotStart(reason);
     return;
   }
 
@@ -337,6 +361,7 @@ function handleLocationChange(locationGuid: string | null) {
           <ActiveTellerSelector
             :election-guid="electionGuid"
             class="header-tellers"
+            :highlight-teller1="tellerFlashing"
             @tellers-changed="onTellersChanged"
           />
 
@@ -353,6 +378,7 @@ function handleLocationChange(locationGuid: string | null) {
               clearable
               :aria-label="$t('locations.currentLocation')"
               class="location-select"
+              :class="{ 'required-field-flash': locationFlashing }"
               @update:model-value="handleLocationChange"
             >
               <el-option
@@ -451,11 +477,11 @@ function handleLocationChange(locationGuid: string | null) {
         :key="drawerBallotGuid"
         :election-guid="electionGuid"
         :ballot-guid="drawerBallotGuid"
-        :show-metadata="!isNewBallot"
         :manage-ballot-signal-r="false"
         :has-keyboard-teller="hasKeyboardTeller"
         @ballot-created="handleBallotCreatedFromEntry"
         @ballot-deleted="handleBallotDeletedFromEntry"
+        @ballot-start-blocked="flashStartBlockField"
       />
     </el-drawer>
   </div>

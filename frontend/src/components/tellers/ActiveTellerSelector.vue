@@ -12,8 +12,11 @@ import { computed, onMounted, ref, watch } from "vue";
 const props = withDefaults(
   defineProps<{
     electionGuid: string;
+    highlightTeller1?: boolean;
   }>(),
-  {},
+  {
+    highlightTeller1: false,
+  },
 );
 
 const emit = defineEmits<{
@@ -118,7 +121,8 @@ watch(
       allow-create
       clearable
       :placeholder="$t('teller.active.teller1Placeholder')"
-      class="teller-select"
+      class="teller-select teller1-select"
+      :class="{ 'required-field-flash': highlightTeller1 }"
       @change="handleTeller1Change"
     >
       <el-option value="" disabled :label="$t('teller.active.typeToAdd')" />

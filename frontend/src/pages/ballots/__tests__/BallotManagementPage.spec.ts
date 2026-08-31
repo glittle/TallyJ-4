@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { createI18n } from "vue-i18n";
@@ -8,6 +8,8 @@ import { useLocationStore } from "@/stores/locationStore";
 import type { BallotSummaryDto } from "@/utils/ballotSummary";
 import { computerFilterValue } from "@/utils/ballotViewFilter";
 import { setComputerCode } from "@/utils/computerCodeStorage";
+import { setActiveTeller1 } from "@/utils/activeTellerStorage";
+import { REQUIRED_FIELD_FLASH_MS } from "@/composables/useRequiredFieldFlash";
 
 const mockReplace = vi.fn();
 const routeState = {
@@ -26,23 +28,41 @@ vi.mock("@/components/ballots/BallotEntryPanel.vue", () => ({
   default: {
     name: "BallotEntryPanel",
     template: '<div data-testid="ballot-entry-panel"></div>',
-    props: [
-      "electionGuid",
-      "ballotGuid",
-      "showMetadata",
-      "manageBallotSignalR",
-      "managePeopleSignalR",
-      "hasKeyboardTeller",
-    ],
+    props: {
+      electionGuid: { type: String, required: true },
+      ballotGuid: { type: String, required: true },
+      showMetadata: { type: Boolean, default: true },
+      manageBallotSignalR: { type: Boolean, default: true },
+      managePeopleSignalR: { type: Boolean, default: true },
+      hasKeyboardTeller: { type: Boolean, default: true },
+    },
   },
 }));
 
 vi.mock("@/components/tellers/ActiveTellerSelector.vue", () => ({
   default: {
     name: "ActiveTellerSelector",
-    template: "<div></div>",
-    props: ["electionGuid"],
+    template:
+      '<div class="active-teller-selector-stub" :class="{ \'required-field-flash\': highlightTeller1 }"></div>',
+    props: {
+      electionGuid: { type: String, required: true },
+      highlightTeller1: { type: Boolean, default: false },
+    },
   },
+}));
+
+const { mockShowErrorMessage, mockShowSuccessMessage } = vi.hoisted(() => ({
+  mockShowErrorMessage: vi.fn(),
+  mockShowSuccessMessage: vi.fn(),
+}));
+
+vi.mock("@/composables/useNotifications", () => ({
+  useNotifications: () => ({
+    showErrorMessage: mockShowErrorMessage,
+    showSuccessMessage: mockShowSuccessMessage,
+    showWarningMessage: vi.fn(),
+    showInfoMessage: vi.fn(),
+  }),
 }));
 
 describe("BallotManagementPage", () => {
@@ -101,6 +121,8 @@ describe("BallotManagementPage", () => {
           viewFilterPlaceholder: "Search computers or locations",
           computerCodeRequired:
             "Set this computer's code before creating a ballot",
+          locationRequired: "Location is required",
+          tellerRequired: "Teller is required",
           "statusValue.Ok": "Ok",
         },
         common: {
@@ -160,12 +182,24 @@ describe("BallotManagementPage", () => {
     });
   }
 
+  async function clickAddBallot(wrapper: ReturnType<typeof mountPage>) {
+    const addButton = wrapper
+      .findAll(".el-button")
+      .find((button) => button.text().includes("Add Ballot"));
+    expect(addButton).toBeDefined();
+    await addButton!.trigger("click");
+    await flushPromises();
+  }
+
   beforeEach(() => {
     localStorage.clear();
     mockReplace.mockReset();
+    mockShowErrorMessage.mockReset();
+    mockShowSuccessMessage.mockReset();
     routeState.params = { id: "test-election-guid" };
     routeState.path = "/elections/test-election-guid/ballots";
     setComputerCode("test-election-guid", "AA");
+    setActiveTeller1("Alice");
     setActivePinia(createPinia());
     ballotStore = useBallotStore();
     locationStore = useLocationStore();
@@ -218,6 +252,10 @@ describe("BallotManagementPage", () => {
     });
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("loads ballots and joins signalr on mount", async () => {
     mountPage();
     await flushPromises();
@@ -227,20 +265,79 @@ describe("BallotManagementPage", () => {
     expect(ballotStore.joinElection).toHaveBeenCalledWith("test-election-guid");
   });
 
-  it("creates a new ballot and opens drawer without metadata", async () => {
+  it("creates a new ballot and opens the drawer with the same header as an existing ballot", async () => {
     const wrapper = mountPage();
     await flushPromises();
 
-    const addButtons = wrapper.findAll(".el-button");
-    const addButton = addButtons.find((b) => b.text().includes("Add Ballot"));
-    expect(addButton).toBeDefined();
-    await addButton!.trigger("click");
-    await flushPromises();
+    await clickAddBallot(wrapper);
 
     expect(ballotStore.createBallot).toHaveBeenCalled();
     const panel = wrapper.findComponent({ name: "BallotEntryPanel" });
     expect(panel.exists()).toBe(true);
-    expect(panel.props("showMetadata")).toBe(false);
+    expect(panel.props("showMetadata")).toBe(true);
+  });
+
+  it("shows the metadata header when opening an existing ballot", async () => {
+    routeState.params = {
+      id: "test-election-guid",
+      ballotId: "ballot-1",
+    };
+    routeState.path = "/elections/test-election-guid/ballot/ballot-1";
+    const wrapper = mountPage();
+    await flushPromises();
+
+    const panel = wrapper.findComponent({ name: "BallotEntryPanel" });
+    expect(panel.exists()).toBe(true);
+    expect(panel.props("ballotGuid")).toBe("ballot-1");
+    expect(panel.props("showMetadata")).toBe(true);
+  });
+
+  it("does not start a ballot when location is unset and flashes the location select", async () => {
+    vi.useFakeTimers();
+    locationStore.selectedLocationGuid = null;
+    const wrapper = mountPage();
+    await flushPromises();
+
+    await clickAddBallot(wrapper);
+
+    expect(ballotStore.createBallot).not.toHaveBeenCalled();
+    expect(mockShowErrorMessage).toHaveBeenCalledWith("Location is required");
+    expect(wrapper.find(".location-select").classes()).toContain(
+      "required-field-flash",
+    );
+
+    vi.advanceTimersByTime(REQUIRED_FIELD_FLASH_MS);
+    await flushPromises();
+    expect(wrapper.find(".location-select").classes()).not.toContain(
+      "required-field-flash",
+    );
+
+    wrapper.unmount();
+    vi.useRealTimers();
+  });
+
+  it("does not start a ballot when the main teller is unset and flashes the teller select", async () => {
+    vi.useFakeTimers();
+    localStorage.clear();
+    setComputerCode("test-election-guid", "AA");
+    const wrapper = mountPage();
+    await flushPromises();
+
+    await clickAddBallot(wrapper);
+
+    expect(ballotStore.createBallot).not.toHaveBeenCalled();
+    expect(mockShowErrorMessage).toHaveBeenCalledWith("Teller is required");
+    const tellerSelector = wrapper.findComponent({
+      name: "ActiveTellerSelector",
+    });
+    expect(tellerSelector.props("highlightTeller1")).toBe(true);
+
+    vi.advanceTimersByTime(REQUIRED_FIELD_FLASH_MS);
+    await flushPromises();
+    expect(tellerSelector.props("highlightTeller1")).toBe(false);
+
+    wrapper.unmount();
+    vi.useRealTimers();
   });
 
   it("does not render an actions column", async () => {
@@ -272,14 +369,10 @@ describe("BallotManagementPage", () => {
     const wrapper = mountPage();
     await flushPromises();
 
-    const addButton = wrapper
-      .findAll(".el-button")
-      .find((button) => button.text().includes("Add Ballot"));
-    await addButton!.trigger("click");
-    await flushPromises();
+    await clickAddBallot(wrapper);
 
     const panel = wrapper.findComponent({ name: "BallotEntryPanel" });
-    expect(panel.props("hasKeyboardTeller")).toBe(false);
+    expect(panel.props("hasKeyboardTeller")).toBe(true);
   });
 
   it("opens a ballot from the ballot route param on load", async () => {
@@ -320,11 +413,7 @@ describe("BallotManagementPage", () => {
     const wrapper = mountPage();
     await flushPromises();
 
-    const addButton = wrapper
-      .findAll(".el-button")
-      .find((button) => button.text().includes("Add Ballot"));
-    await addButton!.trigger("click");
-    await flushPromises();
+    await clickAddBallot(wrapper);
 
     expect(mockReplace).toHaveBeenCalledWith(
       "/elections/test-election-guid/ballot/new-ballot-guid",
