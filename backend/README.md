@@ -62,6 +62,15 @@ dotnet ef database update
 dotnet run
 ```
 
+To write the OpenAPI spec and exit (no database, no long-running server):
+
+```bash
+cd backend
+dotnet run -- --exit-after-start
+```
+
+The `--` passes `--exit-after-start` to the app. That flag also skips SQL (`--skip-database` is implied). The process does not listen, so it can run while `dotnet watch` is already serving. `dotnet watch` never rewrites the OpenAPI spec — that happens only on a fresh start. The http launch profile sets `ASPNETCORE_ENVIRONMENT=Development`, which is required for the spec write.
+
 Development URLs from `Properties/launchSettings.json`:
 
 - `http://localhost:5016`

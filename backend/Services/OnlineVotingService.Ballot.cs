@@ -74,23 +74,7 @@ public partial class OnlineVotingService
                 }
             }
 
-            var location = await _context.Locations
-                .FirstOrDefaultAsync(l => l.ElectionGuid == dto.ElectionGuid && l.LocationTypeCode == nameof(LocationType.Online));
-
-            if (location == null)
-            {
-                location = new Location
-                {
-                    LocationGuid = Guid.NewGuid(),
-                    ElectionGuid = dto.ElectionGuid,
-                    Name = "Online",
-                    ContactInfo = "Online voting",
-                    SortOrder = 999,
-                    LocationTypeCode = nameof(LocationType.Online)
-                };
-                _context.Locations.Add(location);
-                await _context.SaveChangesAsync();
-            }
+            var location = await OnlineLocationHelper.EnsureExistsAsync(_context, dto.ElectionGuid);
 
             var nextBallotNum = await SpecialBallotNumbering.RepairOnlineAndGetNextAsync(
                 _context, location.LocationGuid);

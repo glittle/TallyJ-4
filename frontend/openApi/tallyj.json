@@ -8764,6 +8764,10 @@
             "type": "string",
             "format": "uuid"
           },
+          "locationGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
           "computerCode": {
             "type": "string",
             "nullable": true

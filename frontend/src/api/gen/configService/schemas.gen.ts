@@ -1389,6 +1389,10 @@ export const Ballots_CreateBallotDtoSchema = {
             type: 'string',
             format: 'uuid'
         },
+        locationGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
         computerCode: {
             type: 'string',
             nullable: true

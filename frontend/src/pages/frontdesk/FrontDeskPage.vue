@@ -15,6 +15,7 @@ import {
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
 import { formatNumber } from "@/utils/formatNumber";
+import { formatLocationLabel } from "@/utils/locationDisplay";
 import { sortRegistrationHistoryNewestFirst } from "@/utils/formatRegistrationHistory";
 import { Location, Search } from "@element-plus/icons-vue";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
@@ -475,7 +476,7 @@ onUnmounted(async () => {
               <el-option
                 v-for="location in locationStore.sortedLocations"
                 :key="location.locationGuid"
-                :label="location.name"
+                :label="formatLocationLabel($t, location)"
                 :value="location.locationGuid"
               />
             </el-select>

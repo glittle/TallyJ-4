@@ -7,6 +7,7 @@ import { useRoute } from "vue-router";
 import LocationForm from "../../components/locations/LocationForm.vue";
 import { useLocationStore } from "../../stores/locationStore";
 import type { LocationDto } from "../../types";
+import { formatLocationLabel } from "@/utils/locationDisplay";
 
 const route = useRoute();
 const locationStore = useLocationStore();
@@ -33,7 +34,9 @@ const locationDrawerTitle = computed(() => {
   if (!editingLocation.value) {
     return t("locations.form.titleEdit");
   }
-  return t("locations.editDrawerTitle", { name: editingLocation.value.name });
+  return t("locations.editDrawerTitle", {
+    name: formatLocationLabel(t, editingLocation.value),
+  });
 });
 
 onMounted(async () => {
@@ -144,7 +147,7 @@ function getStatusType(status: string) {
           >
             <template #default="scope">
               <el-button type="primary" link @click="handleEdit(scope.row)">
-                {{ scope.row.name }}
+                {{ formatLocationLabel($t, scope.row) }}
               </el-button>
             </template>
           </el-table-column>

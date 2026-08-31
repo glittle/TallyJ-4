@@ -200,6 +200,8 @@ public class ElectionService : IElectionService
             await _context.SaveChangesAsync();
         }
 
+        await OnlineLocationHelper.SyncAsync(_context, election.ElectionGuid, election.UseOnlineVoting);
+
         _logger.LogInformation("Created election {ElectionGuid} - {Name}", election.ElectionGuid, election.Name);
 
         return await GetElectionByGuidAsync(election.ElectionGuid) ?? MapToElectionDto(election);
@@ -269,6 +271,11 @@ public class ElectionService : IElectionService
 
         foreach (var location in sourceLocations)
         {
+            if (location.LocationTypeEnum == LocationType.Online)
+            {
+                continue;
+            }
+
             _context.Locations.Add(CopyLocationForElection(location, copy.ElectionGuid));
         }
 
@@ -359,6 +366,7 @@ public class ElectionService : IElectionService
             election.ElectionStage = ElectionStage.SettingUp;
 
             await _context.SaveChangesAsync();
+            await OnlineLocationHelper.SyncAsync(_context, electionGuid, useOnlineVoting: false);
             if (transaction is not null)
             {
                 await transaction.CommitAsync();
@@ -439,6 +447,7 @@ public class ElectionService : IElectionService
         updateDto.CopyMatchingPropertiesTo(election, ignoreNulls: true);
         ElectionTellerAccessHelper.ApplyListForPublicFlag(election, listForPublic);
         await _context.SaveChangesAsync();
+        await OnlineLocationHelper.SyncAsync(_context, electionGuid, election.UseOnlineVoting);
 
         _logger.LogInformation("Updated election {ElectionGuid}", electionGuid);
 

@@ -122,6 +122,8 @@ describe("BallotManagementPage", () => {
           computerCodeRequired:
             "Set this computer's code before creating a ballot",
           locationRequired: "Location is required",
+          onlineLocationNotAllowed:
+            "Cannot start a ballot at the Online location",
           tellerRequired: "Teller is required",
           "statusValue.Ok": "Ok",
         },
@@ -132,6 +134,7 @@ describe("BallotManagementPage", () => {
           locationSelected: "Location selected",
           selectLocation: "Select location",
           currentLocation: "Current location",
+          typeOnline: "Online",
         },
       },
     },
@@ -153,8 +156,9 @@ describe("BallotManagementPage", () => {
           },
           ElTableColumn: true,
           ElButton: {
+            props: ["disabled", "loading", "title"],
             template:
-              '<button class="el-button" @click="$emit(\'click\')"><slot></slot></button>',
+              '<button class="el-button" :disabled="disabled" :title="title" @click="!disabled && $emit(\'click\')"><slot></slot></button>',
           },
           ElTag: {
             template: '<span class="el-tag"><slot></slot></span>',
@@ -209,12 +213,21 @@ describe("BallotManagementPage", () => {
         name: "Main Hall",
         electionGuid: "test-election-guid",
         sortOrder: 1,
+        locationType: "Manual",
       },
       {
         locationGuid: "loc-2",
         name: "Side Room",
         electionGuid: "test-election-guid",
         sortOrder: 2,
+        locationType: "Manual",
+      },
+      {
+        locationGuid: "loc-online",
+        name: "Online",
+        electionGuid: "test-election-guid",
+        sortOrder: 999,
+        locationType: "Online",
       },
     ];
     locationStore.selectedLocationGuid = "loc-1";
@@ -271,7 +284,14 @@ describe("BallotManagementPage", () => {
 
     await clickAddBallot(wrapper);
 
-    expect(ballotStore.createBallot).toHaveBeenCalled();
+    expect(ballotStore.createBallot).toHaveBeenCalledWith(
+      expect.objectContaining({
+        electionGuid: "test-election-guid",
+        computerCode: "AA",
+        locationGuid: "loc-1",
+        teller1: "Alice",
+      }),
+    );
     const panel = wrapper.findComponent({ name: "BallotEntryPanel" });
     expect(panel.exists()).toBe(true);
     expect(panel.props("showMetadata")).toBe(true);
@@ -314,6 +334,26 @@ describe("BallotManagementPage", () => {
 
     wrapper.unmount();
     vi.useRealTimers();
+  });
+
+  it("disables Add Ballot when the selected location is Online", async () => {
+    locationStore.selectedLocationGuid = "loc-online";
+    const wrapper = mountPage();
+    await flushPromises();
+
+    const addButton = wrapper
+      .findAll(".el-button")
+      .find((button) => button.text().includes("Add Ballot"));
+    expect(addButton).toBeDefined();
+    expect(addButton!.attributes("disabled")).toBeDefined();
+    expect(addButton!.attributes("title")).toBe(
+      "Cannot start a ballot at the Online location",
+    );
+
+    await addButton!.trigger("click");
+    await flushPromises();
+    expect(ballotStore.createBallot).not.toHaveBeenCalled();
+    expect(mockShowErrorMessage).not.toHaveBeenCalled();
   });
 
   it("does not start a ballot when the main teller is unset and flashes the teller select", async () => {

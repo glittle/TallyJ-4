@@ -24,9 +24,14 @@ public static class ProgramAppPipeline
         IConfiguration configuration,
         bool isDevelopment,
         bool isTesting,
-        string siteType)
+        string siteType,
+        bool skipDatabase = false)
     {
-        var migrateOnStartup = configuration.GetValue("Database:MigrateOnStartup", false);
+        var migrateOnStartup = !skipDatabase && configuration.GetValue("Database:MigrateOnStartup", false);
+        if (skipDatabase)
+        {
+            Log.Information("Skipping database migrate/seed");
+        }
         if (migrateOnStartup)
         {
             Log.Information("Migrating the database on startup as configured");
@@ -38,7 +43,7 @@ public static class ProgramAppPipeline
             await context.Database.MigrateAsync();
         }
 
-        var seedOnStartup = configuration.GetValue("Database:SeedOnStartup", false);
+        var seedOnStartup = !skipDatabase && configuration.GetValue("Database:SeedOnStartup", false);
         if (seedOnStartup)
         {
             if (!migrateOnStartup)
@@ -62,7 +67,7 @@ public static class ProgramAppPipeline
             await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
         }
 
-        // Send startup notification to remote log
+        if (!skipDatabase)
         {
             using var scope = app.Services.CreateScope();
             var remoteLogService = scope.ServiceProvider.GetRequiredService<IRemoteLogService>();

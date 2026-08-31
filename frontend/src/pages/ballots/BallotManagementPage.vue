@@ -15,8 +15,11 @@ import {
 import {
   BALLOT_START_BLOCK_MESSAGE_KEY,
   getBallotStartBlockReason,
+  isOnlineLocationType,
+  locationTypeForGuid,
   type BallotStartBlockReason,
 } from "@/utils/ballotStartRequirements";
+import { formatLocationLabel } from "@/utils/locationDisplay";
 import {
   ballotGuidFromRouteParams,
   electionBallotsPath,
@@ -66,6 +69,17 @@ const { flashing: tellerFlashing, flash: flashTeller } =
 
 const hasKeyboardTeller = computed(() =>
   Boolean(activeTellers.value.teller1.trim()),
+);
+
+const selectedLocationType = computed(() =>
+  locationTypeForGuid(
+    locationStore.locations,
+    locationStore.selectedLocationGuid,
+  ),
+);
+
+const isOnlineLocationSelected = computed(() =>
+  isOnlineLocationType(selectedLocationType.value),
 );
 
 const showLocationColumn = computed(() => locationStore.locations.length > 1);
@@ -268,7 +282,7 @@ function handleBallotCreatedFromEntry(ballotGuid: string) {
 }
 
 function flashStartBlockField(reason: BallotStartBlockReason) {
-  if (reason === "location") {
+  if (reason === "location" || reason === "onlineLocation") {
     void flashLocation();
   } else if (reason === "teller") {
     void flashTeller();
@@ -284,6 +298,7 @@ async function handleAddBallot() {
   const reason = getBallotStartBlockReason({
     computerCode: computerCode.value,
     locationGuid: locationStore.selectedLocationGuid,
+    locationType: selectedLocationType.value,
     teller1: activeTellers.value.teller1,
   });
   if (reason) {
@@ -349,6 +364,12 @@ function handleLocationChange(locationGuid: string | null) {
             <el-button
               type="primary"
               :loading="creatingBallot"
+              :disabled="isOnlineLocationSelected"
+              :title="
+                isOnlineLocationSelected
+                  ? $t('ballots.onlineLocationNotAllowed')
+                  : undefined
+              "
               @click="handleAddBallot"
             >
               <el-icon>
@@ -384,7 +405,7 @@ function handleLocationChange(locationGuid: string | null) {
               <el-option
                 v-for="location in locationStore.sortedLocations"
                 :key="location.locationGuid"
-                :label="location.name"
+                :label="formatLocationLabel($t, location)"
                 :value="location.locationGuid"
               />
             </el-select>

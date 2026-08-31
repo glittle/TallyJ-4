@@ -26,6 +26,29 @@ When voters type names (online random/both modes) or an import cannot match a na
 
 **Reason:** tellers already know this workflow from v3; shortening is how they widen a misspelled search without retyping.
 
+## Teller-created ballots stay off the Online location
+
+**Status:** active  
+**Evidence:** confirmed (issue #287; maintainer)
+
+The reserved location is only for voter-initiated ballots (computer code `OL`). Identify it by `LocationTypeCode` / `LocationType.Online`, never by the display name. Names are user-facing and translated; the English word “Online” is not a stable key.
+
+A teller starting a paper ballot must store it at the location currently selected in that browser. If that selection has type Online, starting is blocked.
+
+Create used to ignore the requested location and take `Locations.FirstOrDefault` for the election, so new teller ballots could land on the reserved location.
+
+Older submit code (and the locations form) could store a row *named* “Online” with a null type. `LocationTypeEnum` treats a missing code as Manual, so that row is a normal paper location as far as create-ballot is concerned.
+
+**Rejected alternative:** allow tellers to create ballots at the Online-typed location (the original #287 wording). Mixing teller-entered paper ballots into the voter-submitted set hides which ballots came from voters.
+
+**Rejected alternative:** treat a location named “Online” as reserved. The product is multilingual; English names cannot be used as identifiers.
+
+**Reason:** the browser location is the teller's workstation context; the Online *type* is not a paper station.
+
+The typed Online location is added when setup enables online voting, and removed if online voting is turned off and that location has no ballots (or computers). Voter submit still ensures the row exists if setup enabled voting but the location is missing.
+
+**Rejected alternative:** create the location only on the first voter ballot. Tellers would not see it in the location list until a vote arrived, and disabling unused online voting would leave an empty reserved location behind.
+
 ## Online and imported ballot codes
 
 **Status:** active  

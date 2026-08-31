@@ -160,6 +160,12 @@ public class LocationService : ILocationService
             return false;
         }
 
+        if (location.LocationTypeEnum == LocationType.Online)
+        {
+            throw new InvalidOperationException(
+                "The Online location is managed by online voting setup and cannot be deleted.");
+        }
+
         _context.Locations.Remove(location);
         await _context.SaveChangesAsync();
 

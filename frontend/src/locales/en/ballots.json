@@ -71,6 +71,7 @@
   "ballots.loadError": "Failed to load ballots",
   "ballots.location": "Location",
   "ballots.locationRequired": "Location is required",
+  "ballots.onlineLocationNotAllowed": "Cannot start a ballot at the Online location",
   "ballots.tellerRequired": "Teller is required",
   "ballots.management": "Enter Ballots",
   "ballots.markNeedsReview": "Mark as Needs Review",

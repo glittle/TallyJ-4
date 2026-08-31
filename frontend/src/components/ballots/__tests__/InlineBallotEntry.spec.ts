@@ -46,6 +46,8 @@ const mockT = (key: string, values?: Record<string, string | number>) => {
     "common.cancel": "Cancel",
     "ballots.computerCodeRequired": "Computer code required",
     "ballots.locationRequired": "Location is required",
+    "ballots.onlineLocationNotAllowed":
+      "Cannot start a ballot at the Online location",
     "ballots.tellerRequired": "Teller is required",
     "ballots.markNeedsReview": "Mark as Needs Review",
     "ballots.clearNeedsReview": "Clear Needs Review",
@@ -134,6 +136,10 @@ vi.mock("@/composables/useComputerCode", () => ({
 const { mockLocationStore } = vi.hoisted(() => ({
   mockLocationStore: {
     selectedLocationGuid: "location-1" as string | null,
+    locations: [
+      { locationGuid: "location-1", locationType: "Manual" as const },
+      { locationGuid: "location-online", locationType: "Online" as const },
+    ],
   },
 }));
 
@@ -240,6 +246,10 @@ describe("InlineBallotEntry", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLocationStore.selectedLocationGuid = "location-1";
+    mockLocationStore.locations = [
+      { locationGuid: "location-1", locationType: "Manual" },
+      { locationGuid: "location-online", locationType: "Online" },
+    ];
     mockActiveTellers.teller1 = "Alice";
     mockActiveTellers.teller2 = "Bob";
     mockSearchablePeople = [
@@ -327,6 +337,34 @@ describe("InlineBallotEntry", () => {
     expect(mockCreateBallot).not.toHaveBeenCalled();
     expect(mockShowErrorMessage).toHaveBeenCalledWith("Location is required");
     expect(wrapper.emitted("ballot-start-blocked")?.[0]).toEqual(["location"]);
+  });
+
+  it("disables Start another ballot when the selected location is Online", async () => {
+    mockLocationStore.selectedLocationGuid = "location-online";
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+
+    const addBallotButton = wrapper
+      .findAllComponents(ElButton)
+      .find((button) => button.text().includes("Start another ballot"));
+    expect(addBallotButton).toBeDefined();
+    expect(addBallotButton!.props("disabled")).toBe(true);
+    expect(addBallotButton!.attributes("title")).toBe(
+      "Cannot start a ballot at the Online location",
+    );
+
+    await addBallotButton!.trigger("click");
+    await flushPromises();
+    expect(mockCreateBallot).not.toHaveBeenCalled();
   });
 
   it("does not start another ballot when the main teller is unset", async () => {

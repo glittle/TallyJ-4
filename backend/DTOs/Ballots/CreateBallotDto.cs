@@ -13,6 +13,11 @@ public class CreateBallotDto
     public Guid ElectionGuid { get; set; }
 
     /// <summary>
+    /// The location selected in the teller's browser. The Online location is rejected.
+    /// </summary>
+    public Guid LocationGuid { get; set; }
+
+    /// <summary>
     /// The code of the computer creating this ballot.
     /// </summary>
     public string ComputerCode { get; set; } = null!;

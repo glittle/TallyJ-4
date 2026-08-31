@@ -23,6 +23,8 @@ import {
 import {
   BALLOT_START_BLOCK_MESSAGE_KEY,
   getBallotStartBlockReason,
+  isOnlineLocationType,
+  locationTypeForGuid,
   type BallotStartBlockReason,
 } from "@/utils/ballotStartRequirements";
 import {
@@ -80,6 +82,14 @@ const searchPanelRef = ref<InstanceType<typeof BallotPersonSearchPanel> | null>(
 );
 
 const canAddVotes = computed(() => props.hasKeyboardTeller !== false);
+const isOnlineLocationSelected = computed(() =>
+  isOnlineLocationType(
+    locationTypeForGuid(
+      locationStore.locations,
+      locationStore.selectedLocationGuid,
+    ),
+  ),
+);
 const isOnlineOrImported = computed(() =>
   isOnlineOrImportedComputerCode(props.ballot.computerCode),
 );
@@ -336,6 +346,10 @@ async function handleNewBallot() {
   const reason = getBallotStartBlockReason({
     computerCode: computerCode.value,
     locationGuid: locationStore.selectedLocationGuid,
+    locationType: locationTypeForGuid(
+      locationStore.locations,
+      locationStore.selectedLocationGuid,
+    ),
     teller1: getActiveTellers().teller1,
   });
   if (reason) {
@@ -457,6 +471,12 @@ onMounted(async () => {
             type="primary"
             plain
             :loading="creatingNewBallot"
+            :disabled="isOnlineLocationSelected"
+            :title="
+              isOnlineLocationSelected
+                ? $t('ballots.onlineLocationNotAllowed')
+                : undefined
+            "
             @click="handleNewBallot"
           >
             <el-icon><Plus /></el-icon>

@@ -31,6 +31,7 @@
   "locations.form.updated": "Location updated successfully",
   "locations.locationSelected": "Location selected successfully",
   "locations.selectLocation": "Select Location",
+  "locations.typeOnline": "Online",
   "locations.tallyStatus": "Tally Status",
   "locations.form.edit": "Edit",
   "locations.form.delete": "Delete",

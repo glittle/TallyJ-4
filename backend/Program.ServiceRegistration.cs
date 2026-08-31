@@ -63,11 +63,15 @@ public static class ProgramServiceRegistration
         services.AddScoped<ISecurityAuditService, SecurityAuditService>();
     }
 
-    public static void RegisterBackgroundServices(IServiceCollection services, bool isTesting)
+    public static void RegisterBackgroundServices(
+        IServiceCollection services,
+        bool isTesting,
+        bool skipDatabase = false)
     {
         services.AddSingleton<RateLimitStore>();
 
-        if (isTesting) // don't register the real broadcast service during testing, to avoid interference with tests and allow testing of the broadcast mechanism itself
+        // Testing and --skip-database must not start hosted services that open SQL.
+        if (isTesting || skipDatabase)
         {
             services.AddSingleton<IVoteCountBroadcastService, NullVoteCountBroadcastService>();
             return;
