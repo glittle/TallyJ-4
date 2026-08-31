@@ -35,6 +35,7 @@ vi.mock("@/components/ballots/BallotEntryPanel.vue", () => ({
       manageBallotSignalR: { type: Boolean, default: true },
       managePeopleSignalR: { type: Boolean, default: true },
       hasKeyboardTeller: { type: Boolean, default: true },
+      highlightTeller1: { type: Boolean, default: false },
     },
   },
 }));
@@ -310,6 +311,7 @@ describe("BallotManagementPage", () => {
     expect(panel.exists()).toBe(true);
     expect(panel.props("ballotGuid")).toBe("ballot-1");
     expect(panel.props("showMetadata")).toBe(true);
+    expect(panel.props("highlightTeller1")).toBe(false);
   });
 
   it("does not start a ballot when location is unset and flashes the location select", async () => {

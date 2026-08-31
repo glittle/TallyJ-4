@@ -1,21 +1,21 @@
 <script setup lang="ts">
+import { useActiveTellers } from "@/composables/useActiveTellers";
 import { useTellerStore } from "@/stores/tellerStore";
-import {
-  getActiveTellers,
-  setActiveTeller1,
-  setActiveTeller2,
-  type ActiveTellers,
-} from "@/utils/activeTellerStorage";
+import type { ActiveTellers } from "@/utils/activeTellerStorage";
 import { User } from "@element-plus/icons-vue";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, watch } from "vue";
 
 const props = withDefaults(
   defineProps<{
     electionGuid: string;
     highlightTeller1?: boolean;
+    /** Which session teller inputs to show. Default is both (listing toolbar). */
+    field?: "all" | "teller1" | "teller2";
+    showIcon?: boolean;
   }>(),
   {
     highlightTeller1: false,
+    field: "all",
   },
 );
 
@@ -24,9 +24,19 @@ const emit = defineEmits<{
 }>();
 
 const tellerStore = useTellerStore();
+const { tellers, setTeller1, setTeller2, refreshActiveTellers } =
+  useActiveTellers();
 
-const teller1 = ref<string | undefined>(undefined);
-const teller2 = ref<string | undefined>(undefined);
+const showIcon = computed(() => props.showIcon ?? props.field === "all");
+const showTeller1 = computed(
+  () => props.field === "all" || props.field === "teller1",
+);
+const showTeller2 = computed(
+  () => props.field === "all" || props.field === "teller2",
+);
+
+const teller1 = computed(() => toSelectValue(tellers.value.teller1));
+const teller2 = computed(() => toSelectValue(tellers.value.teller2));
 
 const tellerOptions = computed(() =>
   tellerStore.tellers
@@ -67,14 +77,13 @@ function toSelectValue(name: string): string | undefined {
 
 function emitTellersChanged() {
   emit("tellersChanged", {
-    teller1: teller1.value ?? "",
-    teller2: teller2.value ?? "",
+    teller1: tellers.value.teller1,
+    teller2: tellers.value.teller2,
   });
 }
 
 async function handleTeller1Change(value: string | undefined) {
-  teller1.value = toSelectValue(value ?? "");
-  setActiveTeller1(value ?? "");
+  setTeller1(value ?? "");
   emitTellersChanged();
   if (value) {
     await ensureTellerListed(value);
@@ -82,8 +91,7 @@ async function handleTeller1Change(value: string | undefined) {
 }
 
 async function handleTeller2Change(value: string | undefined) {
-  teller2.value = toSelectValue(value ?? "");
-  setActiveTeller2(value ?? "");
+  setTeller2(value ?? "");
   emitTellersChanged();
   if (value) {
     await ensureTellerListed(value);
@@ -91,9 +99,7 @@ async function handleTeller2Change(value: string | undefined) {
 }
 
 onMounted(async () => {
-  const stored = getActiveTellers();
-  teller1.value = toSelectValue(stored.teller1);
-  teller2.value = toSelectValue(stored.teller2);
+  refreshActiveTellers();
   emitTellersChanged();
   await loadTellers();
 });
@@ -107,8 +113,12 @@ watch(
 </script>
 
 <template>
-  <div class="active-teller-selector">
+  <div
+    class="active-teller-selector"
+    :class="{ 'is-single-field': field !== 'all' }"
+  >
     <el-icon
+      v-if="showIcon"
       class="teller-icon"
       aria-hidden="true"
       :title="$t('teller.active.hint')"
@@ -116,7 +126,8 @@ watch(
       <User />
     </el-icon>
     <el-select
-      v-model="teller1"
+      v-if="showTeller1"
+      :model-value="teller1"
       filterable
       allow-create
       clearable
@@ -134,12 +145,13 @@ watch(
       />
     </el-select>
     <el-select
-      v-model="teller2"
+      v-if="showTeller2"
+      :model-value="teller2"
       filterable
       allow-create
       clearable
       :placeholder="$t('teller.active.teller2Placeholder')"
-      class="teller-select"
+      class="teller-select teller2-select"
       @change="handleTeller2Change"
     >
       <el-option value="" disabled :label="$t('teller.active.typeToAdd')" />
@@ -167,6 +179,15 @@ watch(
   .teller-icon {
     color: var(--el-color-primary);
     font-size: 16px;
+  }
+
+  &.is-single-field {
+    display: flex;
+    width: 100%;
+
+    .teller-select {
+      width: 100%;
+    }
   }
 }
 </style>

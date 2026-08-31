@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
+import { useActiveTellers } from "@/composables/useActiveTellers";
 import { useRequiredFieldFlash } from "@/composables/useRequiredFieldFlash";
-import {
-  getActiveTellers,
-  type ActiveTellers,
-} from "@/utils/activeTellerStorage";
 import type { BallotStartBlockReason } from "@/utils/ballotStartRequirements";
 import {
   electionBallotEntryPath,
   electionBallotsPath,
 } from "@/utils/ballotRoutes";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BallotEntryPanel from "../../components/ballots/BallotEntryPanel.vue";
 
@@ -27,16 +24,13 @@ function handleBallotDeleted() {
   router.push(electionBallotsPath(electionGuid));
 }
 
-const activeTellers = ref<ActiveTellers>(getActiveTellers());
+const { tellers: activeTellers, refreshActiveTellers } = useActiveTellers();
+refreshActiveTellers();
 const { flashing: tellerFlashing, flash: flashTeller } =
   useRequiredFieldFlash();
 const hasKeyboardTeller = computed(() =>
   Boolean(activeTellers.value.teller1.trim()),
 );
-
-function onTellersChanged(tellers: ActiveTellers) {
-  activeTellers.value = tellers;
-}
 
 function onBallotStartBlocked(reason: BallotStartBlockReason) {
   if (reason === "teller") {
@@ -53,7 +47,6 @@ function onBallotStartBlocked(reason: BallotStartBlockReason) {
           <ActiveTellerSelector
             :election-guid="electionGuid"
             :highlight-teller1="tellerFlashing"
-            @tellers-changed="onTellersChanged"
           />
         </div>
       </template>
@@ -63,6 +56,7 @@ function onBallotStartBlocked(reason: BallotStartBlockReason) {
         :election-guid="electionGuid"
         :ballot-guid="ballotGuid"
         :has-keyboard-teller="hasKeyboardTeller"
+        :highlight-teller1="tellerFlashing"
         @ballot-created="handleBallotCreated"
         @ballot-deleted="handleBallotDeleted"
         @ballot-start-blocked="onBallotStartBlocked"

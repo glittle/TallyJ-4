@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import BallotViewFilterSelect from "@/components/ballots/BallotViewFilterSelect.vue";
 import ActiveTellerSelector from "@/components/tellers/ActiveTellerSelector.vue";
+import { useActiveTellers } from "@/composables/useActiveTellers";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useComputerCode } from "@/composables/useComputerCode";
 import { useNotifications } from "@/composables/useNotifications";
 import { useRequiredFieldFlash } from "@/composables/useRequiredFieldFlash";
 
 import type { ComputerDto } from "@/types/Computer";
-import {
-  getActiveTellerPayload,
-  getActiveTellers,
-  type ActiveTellers,
-} from "@/utils/activeTellerStorage";
+import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
 import {
   BALLOT_START_BLOCK_MESSAGE_KEY,
   getBallotStartBlockReason,
@@ -56,7 +53,8 @@ const isNewBallot = ref(false);
 const creatingBallot = ref(false);
 const listLoading = ref(false);
 const refreshing = ref(false);
-const activeTellers = ref<ActiveTellers>(getActiveTellers());
+const { tellers: activeTellers, refreshActiveTellers } = useActiveTellers();
+refreshActiveTellers();
 const selectedViewFilter = ref(
   defaultBallotViewFilter("", locationStore.selectedLocationGuid),
 );
@@ -128,10 +126,6 @@ watch(computerCode, (code) => {
     locationStore.selectedLocationGuid,
   );
 });
-
-function onTellersChanged(tellers: ActiveTellers) {
-  activeTellers.value = tellers;
-}
 
 /** Keep the open ballot bookmarkable and restorable on reload. */
 function syncBallotRoute(ballotGuid: string | null) {
@@ -383,7 +377,6 @@ function handleLocationChange(locationGuid: string | null) {
             :election-guid="electionGuid"
             class="header-tellers"
             :highlight-teller1="tellerFlashing"
-            @tellers-changed="onTellersChanged"
           />
 
           <div
@@ -500,6 +493,7 @@ function handleLocationChange(locationGuid: string | null) {
         :ballot-guid="drawerBallotGuid"
         :manage-ballot-signal-r="false"
         :has-keyboard-teller="hasKeyboardTeller"
+        :highlight-teller1="tellerFlashing"
         @ballot-created="handleBallotCreatedFromEntry"
         @ballot-deleted="handleBallotDeletedFromEntry"
         @ballot-start-blocked="flashStartBlockField"
