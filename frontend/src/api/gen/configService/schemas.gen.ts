@@ -1589,16 +1589,6 @@ export const Elections_ChangeElectionStageDtoSchema = {
     additionalProperties: false
 } as const;
 
-export const Elections_DuplicateElectionDtoSchema = {
-    type: 'object',
-    properties: {
-        name: {
-            type: 'string',
-            nullable: true
-        }
-    }
-} as const;
-
 export const Elections_CreateElectionDtoSchema = {
     type: 'object',
     properties: {
@@ -1709,6 +1699,17 @@ export const Elections_CreateElectionDtoSchema = {
             nullable: true
         },
         flags: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Elections_DuplicateElectionDtoSchema = {
+    type: 'object',
+    properties: {
+        name: {
             type: 'string',
             nullable: true
         }
@@ -3137,6 +3138,21 @@ export const OnlineVoting_OnlineVoterAuthResponseSchema = {
     additionalProperties: false
 } as const;
 
+export const OnlineVoting_OnlineVoterSessionDtoSchema = {
+    type: 'object',
+    properties: {
+        voterId: {
+            type: 'string',
+            nullable: true
+        },
+        voterIdType: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const OnlineVoting_RequestCodeDtoSchema = {
     type: 'object',
     properties: {
@@ -3747,12 +3763,7 @@ export const People_PersonDetailDtoSchema = {
             type: 'boolean'
         },
         phoneOnlineVoter: {
-            allOf: [
-                {
-                    $ref: '#/components/schemas/People_PersonPhoneOnlineVoterDto'
-                }
-            ],
-            nullable: true
+            $ref: '#/components/schemas/People_PersonPhoneOnlineVoterDto'
         }
     },
     additionalProperties: false

@@ -3336,6 +3336,47 @@
         }
       }
     },
+    "/api/online-voting/me": {
+      "get": {
+        "tags": [
+          "OnlineVoting"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnlineVoting_OnlineVoterSessionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnlineVoting_OnlineVoterSessionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnlineVoting_OnlineVoterSessionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/online-voting/logout": {
+      "post": {
+        "tags": [
+          "OnlineVoting"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/online-voting/{electionGuid}/electionInfo": {
       "get": {
         "tags": [
@@ -4593,6 +4634,80 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/Public/smsStatus": {
+      "post": {
+        "tags": [
+          "Public"
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "MessageSid": {
+                    "type": "string"
+                  },
+                  "SmsSid": {
+                    "type": "string"
+                  },
+                  "MessageStatus": {
+                    "type": "string"
+                  },
+                  "SmsStatus": {
+                    "type": "string"
+                  },
+                  "To": {
+                    "type": "string"
+                  },
+                  "ErrorCode": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Sid": {
+                    "type": "string"
+                  },
+                  "Status": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "MessageSid": {
+                  "style": "form"
+                },
+                "SmsSid": {
+                  "style": "form"
+                },
+                "MessageStatus": {
+                  "style": "form"
+                },
+                "SmsStatus": {
+                  "style": "form"
+                },
+                "To": {
+                  "style": "form"
+                },
+                "ErrorCode": {
+                  "style": "form"
+                },
+                "Sid": {
+                  "style": "form"
+                },
+                "Status": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -8799,15 +8914,6 @@
         },
         "additionalProperties": false
       },
-      "Elections_DuplicateElectionDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
       "Elections_CreateElectionDto": {
         "type": "object",
         "properties": {
@@ -8918,6 +9024,16 @@
             "nullable": true
           },
           "flags": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Elections_DuplicateElectionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
             "type": "string",
             "nullable": true
           }
@@ -10298,6 +10414,20 @@
         },
         "additionalProperties": false
       },
+      "OnlineVoting_OnlineVoterSessionDto": {
+        "type": "object",
+        "properties": {
+          "voterId": {
+            "type": "string",
+            "nullable": true
+          },
+          "voterIdType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "OnlineVoting_RequestCodeDto": {
         "type": "object",
         "properties": {
@@ -10893,12 +11023,7 @@
             "type": "boolean"
           },
           "phoneOnlineVoter": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/People_PersonPhoneOnlineVoterDto"
-              }
-            ],
-            "nullable": true
+            "$ref": "#/components/schemas/People_PersonPhoneOnlineVoterDto"
           }
         },
         "additionalProperties": false
