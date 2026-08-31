@@ -16,6 +16,29 @@ function tokenValue(source: string, name: string): string {
   return match[1].trim();
 }
 
+function hexChannelToLinear(channel: number): number {
+  const c = channel / 255;
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}
+
+function relativeLuminance(hex: string): number {
+  if (!/^#[0-9a-fA-F]{6}$/.test(hex)) {
+    throw new Error(`Expected #rrggbb, got ${hex}`);
+  }
+  const n = Number.parseInt(hex.slice(1), 16);
+  const r = hexChannelToLinear((n >> 16) & 255);
+  const g = hexChannelToLinear((n >> 8) & 255);
+  const b = hexChannelToLinear(n & 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrastRatio(foreground: string, background: string): number {
+  const a = relativeLuminance(foreground);
+  const b = relativeLuminance(background);
+  const [hi, lo] = a > b ? [a, b] : [b, a];
+  return (hi + 0.05) / (lo + 0.05);
+}
+
 describe("dark theme tokens (dashboard/setup polish)", () => {
   it("keeps light-mode borders on the previous gray-200 card hairline", () => {
     expect(tokenValue(light, "--color-border")).toBe("var(--color-gray-200)");
@@ -38,14 +61,14 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
     );
   });
 
-  it("makes the current sidebar item stronger than hover/border", () => {
-    expect(tokenValue(dark, "--color-sidebar-active")).toBe("#2563a8");
-    expect(tokenValue(dark, "--color-sidebar-active")).not.toBe(
-      tokenValue(dark, "--color-sidebar-border"),
-    );
-    expect(tokenValue(dark, "--color-sidebar-active")).not.toBe(
-      tokenValue(dark, "--color-sidebar-hover"),
-    );
+  it("pairs the current-page chip fill with light text that meets WCAG AA", () => {
+    const activeFill = tokenValue(dark, "--color-sidebar-active");
+    const activeText = tokenValue(dark, "--color-sidebar-text-active");
+    expect(activeFill).toBe("#2563a8");
+    expect(activeText).toBe("#eef2f9");
+    expect(activeFill).not.toBe(tokenValue(dark, "--color-sidebar-border"));
+    expect(activeFill).not.toBe(tokenValue(dark, "--color-sidebar-hover"));
+    expect(contrastRatio(activeText, activeFill)).toBeGreaterThanOrEqual(4.5);
   });
 
   it("brightens link/name text in dark while light stays primary-500", () => {
