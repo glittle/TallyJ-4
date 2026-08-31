@@ -427,6 +427,7 @@ export type BallotsBallotDto = {
 
 export type BallotsCreateBallotDto = {
     electionGuid?: string;
+    locationGuid?: string;
     computerCode?: string | null;
     teller1?: string | null;
     teller2?: string | null;
