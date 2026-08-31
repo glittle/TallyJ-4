@@ -13,6 +13,7 @@ import { useRoute, useRouter } from "vue-router";
 import { electionService } from "../../services/electionService";
 import { useElectionStatsStore } from "../../stores/electionStatsStore";
 import { useElectionStore } from "../../stores/electionStore";
+import { extractApiErrorMessage } from "../../utils/errorHandler";
 
 const router = useRouter();
 const route = useRoute();
@@ -65,10 +66,13 @@ async function confirmReset() {
     await electionStore.resetElection(electionGuid);
     await electionStatsStore.fetchStats(electionGuid, { force: true });
     showSuccessMessage(t("elections.reset.success"));
-  } catch (error: any) {
-    if (error !== "cancel" && error !== "close") {
-      showErrorMessage(error.message || t("elections.reset.error"));
+  } catch (error: unknown) {
+    if (error === "cancel" || error === "close") {
+      return;
     }
+    showErrorMessage(
+      extractApiErrorMessage(error) || t("elections.reset.error"),
+    );
   }
 }
 
