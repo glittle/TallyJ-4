@@ -28,7 +28,11 @@
 
 While a teller is on an election-scoped route (`/elections/:id/…`) whose `currentElection.showAsTest` is true, MainLayout shows a full-width “Test Election” strip between the fixed header and main content. It reads the existing `Election.ShowAsTest` / `showAsTest` field — no new column. Hidden when there is no current election, `showAsTest` is false or null, or the route has no election id (Dashboard, Profile, create). Leftover `currentElection` after leaving a test election does not keep the banner up. Voter pages use PublicLayout and do not get this chrome.
 
-Colors are an explicit pair (white on `--color-error-700`), not inherited header text/background. The translucent public header and dark Front Desk toolbar already produced a dark-on-dark miss on the dashboard icon-only Copy control.
+Colors are an explicit pair (white on `--color-stage-gather`, the same burnt orange as the selected Gathering Ballots mode chip), not inherited header text/background. The strip always uses that token — it is a test-election marker, not a stage indicator. Error/danger red was too attention-getting; being in a test election is not a bad thing. The translucent public header and dark Front Desk toolbar already produced a dark-on-dark miss on the dashboard icon-only Copy control.
+
+**Rejected alternative:** `--color-error-700` (white on dark red). UAT: too attention-getting; test is not an error.
+
+**Rejected alternative:** follow `STAGE_META` for the current election stage. That would make the banner look like another stage chip and change color as the election advances.
 
 **Rejected alternative:** a chip inside `AppHeader` only. The header is a fixed 60px bar (48px on Front Desk). A strip there is clipped, and the bar is already crowded with status controls.
 

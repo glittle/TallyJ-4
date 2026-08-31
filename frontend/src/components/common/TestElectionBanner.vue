@@ -60,9 +60,11 @@ const showTestElectionBanner = computed(() => {
   line-height: 1.2;
   text-align: center;
   /* Explicit pair — do not inherit header text/bg (dark-on-dark on the
-     translucent / Front Desk header). White on error-700 meets contrast
-     in both light (#b91c1c) and dark (#dc2626) tokens. */
-  background-color: var(--color-error-700);
+     translucent / Front Desk header). Always gather-stage orange, not the
+     current election stage and not error/danger red. White on
+     --color-stage-gather meets contrast in both light (#d97706) and
+     dark (#f59e0b) tokens. */
+  background-color: var(--color-stage-gather);
   color: #fff;
 
   .el-icon {
