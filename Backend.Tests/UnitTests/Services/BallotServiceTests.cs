@@ -59,6 +59,121 @@ public class BallotServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CreateBallotAsync_UsesRequestedLocation_WhenOnlineLocationExistsFirst()
+    {
+        var onlineLocationGuid = Guid.NewGuid();
+        var hallLocationGuid = Guid.NewGuid();
+        Context.Locations.Add(new Location
+        {
+            RowId = 2,
+            LocationGuid = onlineLocationGuid,
+            ElectionGuid = ElectionGuid,
+            Name = "Online",
+            LocationTypeCode = nameof(LocationType.Online),
+            SortOrder = 999
+        });
+        Context.Locations.Add(new Location
+        {
+            RowId = 3,
+            LocationGuid = hallLocationGuid,
+            ElectionGuid = ElectionGuid,
+            Name = "Main Hall"
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.CreateBallotAsync(new CreateBallotDto
+        {
+            ElectionGuid = ElectionGuid,
+            LocationGuid = hallLocationGuid,
+            ComputerCode = "A",
+            Teller1 = "Alice"
+        });
+
+        Assert.Equal(hallLocationGuid, result.LocationGuid);
+        Assert.Equal("Main Hall", result.LocationName);
+        Assert.Equal("A", result.ComputerCode);
+        Assert.Equal(hallLocationGuid, Context.Ballots.Single(b => b.BallotGuid == result.BallotGuid).LocationGuid);
+    }
+
+    [Fact]
+    public async Task CreateBallotAsync_OnlineLocation_Throws()
+    {
+        var onlineLocationGuid = Guid.NewGuid();
+        Context.Locations.Add(new Location
+        {
+            RowId = 2,
+            LocationGuid = onlineLocationGuid,
+            ElectionGuid = ElectionGuid,
+            Name = "Online",
+            LocationTypeCode = nameof(LocationType.Online)
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CreateBallotAsync(new CreateBallotDto
+            {
+                ElectionGuid = ElectionGuid,
+                LocationGuid = onlineLocationGuid,
+                ComputerCode = "A",
+                Teller1 = "Alice"
+            }));
+
+        Assert.Equal("Ballots cannot be created at the Online location", ex.Message);
+        Assert.Equal(1, Context.Ballots.Count());
+    }
+
+    [Fact]
+    public async Task CreateBallotAsync_UnknownLocation_Throws()
+    {
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CreateBallotAsync(new CreateBallotDto
+            {
+                ElectionGuid = ElectionGuid,
+                LocationGuid = Guid.NewGuid(),
+                ComputerCode = "A",
+                Teller1 = "Alice"
+            }));
+
+        Assert.Equal("Location not found", ex.Message);
+        Assert.Equal(1, Context.Ballots.Count());
+    }
+
+    [Fact]
+    public async Task CreateBallotAsync_LocationFromAnotherElection_Throws()
+    {
+        var otherElectionGuid = Guid.NewGuid();
+        var otherLocationGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            RowId = 2,
+            ElectionGuid = otherElectionGuid,
+            Name = "Other Election",
+            NumberToElect = 3,
+            ElectionType = "Loc",
+            RowVersion = new byte[8]
+        });
+        Context.Locations.Add(new Location
+        {
+            RowId = 2,
+            LocationGuid = otherLocationGuid,
+            ElectionGuid = otherElectionGuid,
+            Name = "Other Hall"
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CreateBallotAsync(new CreateBallotDto
+            {
+                ElectionGuid = ElectionGuid,
+                LocationGuid = otherLocationGuid,
+                ComputerCode = "A",
+                Teller1 = "Alice"
+            }));
+
+        Assert.Equal("Location not found", ex.Message);
+    }
+
+    [Fact]
     public async Task UpdateBallotAsync_ReviewBallotWithoutClearNeedsReview_KeepsReview()
     {
         var result = await _service.UpdateBallotAsync(BallotGuid, new UpdateBallotDto

@@ -92,38 +92,29 @@ public class BallotService : IBallotService
     }
 
     /// <summary>
-    /// Creates a new ballot for an election.
+    /// Creates a new teller-entered ballot at the location selected in the browser.
     /// </summary>
     /// <param name="createDto">The data transfer object containing ballot creation information.</param>
     /// <returns>A BallotDto representing the created ballot.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when the election is not found.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the location is missing, not in the election, or is the Online location
+    /// (reserved for voter-initiated ballots).
+    /// </exception>
     public async Task<BallotDto> CreateBallotAsync(CreateBallotDto createDto)
     {
-        // Find or create a default location for the election
-        var location = await _context.Locations.FirstOrDefaultAsync(l => l.ElectionGuid == createDto.ElectionGuid);
+        var location = await _context.Locations.FirstOrDefaultAsync(l =>
+            l.LocationGuid == createDto.LocationGuid
+            && l.ElectionGuid == createDto.ElectionGuid);
 
         if (location == null)
         {
-            // For testing purposes, create a default location if none exists
-            // In production, locations should be created through proper setup
-            var election = await _context.Elections.FirstOrDefaultAsync(e => e.ElectionGuid == createDto.ElectionGuid);
-            if (election != null)
-            {
-                location = new Location
-                {
-                    LocationGuid = Guid.NewGuid(),
-                    ElectionGuid = election.ElectionGuid,
-                    Name = "Default Location"
-                };
-                _context.Locations.Add(location);
-                await _context.SaveChangesAsync();
-                _logger.LogInformation("Created default location {LocationGuid} for election {ElectionGuid}",
-                    location.LocationGuid, election.ElectionGuid);
-            }
-            else
-            {
-                throw new InvalidOperationException($"Election with GUID '{createDto.ElectionGuid}' not found");
-            }
+            throw new InvalidOperationException("Location not found");
+        }
+
+        if (location.LocationTypeEnum == LocationType.Online)
+        {
+            throw new InvalidOperationException(
+                "Ballots cannot be created at the Online location");
         }
 
         var nextBallotNum = await _context.Ballots

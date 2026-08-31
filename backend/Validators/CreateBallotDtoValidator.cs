@@ -5,7 +5,7 @@ namespace Backend.Validators;
 
 /// <summary>
 /// Validator for CreateBallotDto that enforces ballot creation requirements.
-/// Validates election GUID presence and computer code format.
+/// Validates election GUID, location GUID, and computer code format.
 /// </summary>
 public class CreateBallotDtoValidator : AbstractValidator<CreateBallotDto>
 {
@@ -17,6 +17,10 @@ public class CreateBallotDtoValidator : AbstractValidator<CreateBallotDto>
         RuleFor(x => x.ElectionGuid)
             .NotEmpty()
             .WithMessage("Election GUID is required");
+
+        RuleFor(x => x.LocationGuid)
+            .NotEmpty()
+            .WithMessage("Location GUID is required");
 
         RuleFor(x => x.ComputerCode)
             .NotEmpty()

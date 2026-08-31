@@ -26,6 +26,19 @@ When voters type names (online random/both modes) or an import cannot match a na
 
 **Reason:** tellers already know this workflow from v3; shortening is how they widen a misspelled search without retyping.
 
+## Teller-created ballots stay off the Online location
+
+**Status:** active  
+**Evidence:** confirmed (issue #287; maintainer)
+
+The Online location is only for voter-initiated ballots (computer code `OL`). A teller starting a paper ballot must store it at the location currently selected in that browser. If that selection is Online, starting is blocked.
+
+Create used to ignore the requested location and take `Locations.FirstOrDefault` for the election, so new teller ballots could land on Online.
+
+**Rejected alternative:** allow tellers to create ballots at the Online location (the original #287 wording). Mixing teller-entered paper ballots into the voter-submitted set hides which ballots came from voters.
+
+**Reason:** the browser location is the teller's workstation context; Online is not a paper station.
+
 ## Online and imported ballot codes
 
 **Status:** active  

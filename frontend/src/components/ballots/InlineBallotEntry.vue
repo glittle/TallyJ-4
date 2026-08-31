@@ -23,6 +23,7 @@ import {
 import {
   BALLOT_START_BLOCK_MESSAGE_KEY,
   getBallotStartBlockReason,
+  locationTypeForGuid,
   type BallotStartBlockReason,
 } from "@/utils/ballotStartRequirements";
 import {
@@ -336,6 +337,10 @@ async function handleNewBallot() {
   const reason = getBallotStartBlockReason({
     computerCode: computerCode.value,
     locationGuid: locationStore.selectedLocationGuid,
+    locationType: locationTypeForGuid(
+      locationStore.locations,
+      locationStore.selectedLocationGuid,
+    ),
     teller1: getActiveTellers().teller1,
   });
   if (reason) {
