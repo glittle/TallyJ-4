@@ -694,7 +694,6 @@ function formatDate(date: string) {
                   <el-icon>
                     <CopyDocument />
                   </el-icon>
-                  {{ $t("elections.duplicate.button") }}
                 </el-button>
               </template>
             </el-table-column>

@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { setActivePinia, createPinia } from "pinia";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import DashboardPage from "../DashboardPage.vue";
 
 vi.mock("vue-i18n", async (importOriginal) => {
@@ -139,7 +139,6 @@ describe("DashboardPage", () => {
       },
     ]);
     const wrapper = mount(DashboardPage, { global: globalConfig });
-    expect(wrapper.html()).toContain("elections.duplicate.button");
     expect(wrapper.html()).toContain("elections.duplicate.action");
   });
 });
