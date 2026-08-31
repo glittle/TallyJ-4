@@ -31,6 +31,7 @@ const columns = computed<Column<any>[]>(() => [
         {
           type: "primary",
           link: true,
+          class: "people-table__name",
           onClick: () => emit("edit", rowData),
         },
         { default: () => rowData.fullName },
@@ -97,5 +98,12 @@ const columns = computed<Column<any>[]>(() => [
 .people-table {
   width: 100%;
   min-height: 200px;
+
+  .people-table__name {
+    --el-button-text-color: var(--color-text-link);
+    --el-button-hover-text-color: var(--color-text-link-hover);
+    --el-button-hover-link-text-color: var(--color-text-link-hover);
+    font-weight: var(--font-weight-medium);
+  }
 }
 </style>

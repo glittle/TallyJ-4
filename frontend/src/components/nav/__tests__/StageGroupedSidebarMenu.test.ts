@@ -293,6 +293,24 @@ describe("StageGroupedSidebarMenu", () => {
     });
   });
 
+  describe("current page highlight", () => {
+    it("marks the matching page with is-active", () => {
+      const peoplePage = STAGE_PAGES.SettingUp.find((p) => p.key === "people");
+      expect(peoplePage).toBeDefined();
+      mockRoutePath.mockReturnValue(peoplePage!.routePath("test-id"));
+
+      const wrapper = mountMenu({
+        isGuestTeller: false,
+        currentStage: "SettingUp",
+        electionGuid: "test-id",
+      });
+
+      const active = wrapper.findAll(".stage-group__page.is-active");
+      expect(active).toHaveLength(1);
+      expect(active[0]!.text()).toContain(peoplePage!.i18nKey);
+    });
+  });
+
   describe("page navigation", () => {
     it("calls router.push when a page item is clicked (admin)", async () => {
       const wrapper = mountMenu({

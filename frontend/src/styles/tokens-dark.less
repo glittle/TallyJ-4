@@ -12,6 +12,14 @@
   --color-text-primary: var(--color-gray-50);
   --color-text-secondary: var(--color-gray-300);
   --color-text-tertiary: var(--color-gray-400);
+  /* Brighter than --el-color-primary so names/links read on navy, like primary-500 on white */
+  --color-text-link: var(--color-primary-300);
+  --color-text-link-hover: var(--color-primary-200);
+
+  /* Soft hairlines: extra-light is the least visible, matching the light-theme scale.
+     The previous mapping inverted that (extra-light was gray-400) so borders dominated. */
+  --color-border: rgba(168, 191, 225, 0.14);
+  --color-border-subtle: rgba(168, 191, 225, 0.08);
 
   /* Election stage dark theme */
   --color-stage-setup: #4f8fcc;
@@ -27,7 +35,8 @@
   --color-sidebar-text-active: #f47920;
   --color-sidebar-border: #14284d;
   --color-sidebar-hover: #1c3a6a;
-  --color-sidebar-active: #14284d;
+  /* Stronger than hover (was #14284d, same as border and barely above bg) */
+  --color-sidebar-active: #1e4f8c;
 
   /* Front Desk layout dark theme */
   --color-frontdesk-sidebar-bg: #0a1528;
@@ -87,10 +96,11 @@
   --el-text-color-disabled: var(--color-gray-600);
   --el-input-text-color: var(--color-gray-50);
 
-  --el-border-color: var(--color-gray-700);
-  --el-border-color-light: var(--color-gray-600);
-  --el-border-color-lighter: var(--color-gray-500);
-  --el-border-color-extra-light: var(--color-gray-400);
+  --el-border-color: var(--color-border);
+  --el-border-color-light: var(--color-border-subtle);
+  --el-border-color-lighter: var(--color-border-subtle);
+  --el-border-color-extra-light: rgba(168, 191, 225, 0.05);
+  --el-table-border-color: var(--color-border-subtle);
 
   --el-fill-color-blank: var(--color-gray-900);
   --el-fill-color-light: var(--color-gray-800);

@@ -120,6 +120,55 @@ describe("StageControl", () => {
     });
   });
 
+  describe("unselected stage styling", () => {
+    it("leaves unselected stages without an inline fill (theme tokens style them)", () => {
+      const wrapper = mount(StageControl, {
+        props: { electionGuid: "test-guid", stage: "GatheringBallots" },
+        global: { stubs: globalStubs },
+      });
+      const radios = wrapper.findAll('[role="radio"]');
+      const unselected = radios.filter(
+        (r) => r.attributes("aria-checked") !== "true",
+      );
+      expect(unselected.length).toBe(3);
+      for (const btn of unselected) {
+        const style = btn.attributes("style") ?? "";
+        expect(style).not.toMatch(/background/i);
+        expect(style).not.toMatch(/#fff|#ffffff|white/i);
+      }
+    });
+
+    it("applies the selected-stage fill only on the current stage", () => {
+      const wrapper = mount(StageControl, {
+        props: { electionGuid: "test-guid", stage: "GatheringBallots" },
+        global: { stubs: globalStubs },
+      });
+      const selected = wrapper
+        .findAll('[role="radio"]')
+        .find((r) => r.attributes("aria-checked") === "true");
+      expect(selected).toBeDefined();
+      expect(selected!.attributes("style")).toContain("--color-stage-gather");
+    });
+  });
+
+  describe("theme tokens (no light-only chip colors)", () => {
+    it("styles unselected chips with fill/border tokens, not hardcoded white", async () => {
+      const { default: fs } = await import("node:fs");
+      const { default: path } = await import("node:path");
+      const { fileURLToPath } = await import("node:url");
+      const dir = path.dirname(fileURLToPath(import.meta.url));
+      const source = fs.readFileSync(
+        path.resolve(dir, "../StageControl.vue"),
+        "utf8",
+      );
+      expect(source).toContain("background: var(--el-fill-color-blank)");
+      expect(source).toContain("border: 1px solid var(--el-border-color)");
+      expect(source).toContain("color: var(--el-text-color-regular)");
+      expect(source).not.toMatch(/background:\s*#fff\b/);
+      expect(source).not.toMatch(/background:\s*#ffffff\b/i);
+    });
+  });
+
   describe("reactive updates", () => {
     it("updates aria-checked when stage prop changes", async () => {
       const wrapper = mount(StageControl, {

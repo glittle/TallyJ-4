@@ -14,3 +14,4 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [people-import.md](people-import.md) — three-action import pipeline (not a Next/Previous wizard)
 - [sms-eligibility.md](sms-eligibility.md) — reject reserved/fictional/malformed phones before paid SMS/voice/WhatsApp; OnlineVoter.SmsStatus; ensure phone row on Person write; person detail phone status; Twilio callback auto-learn
 - [test-elections.md](test-elections.md) — duplicate as test copy (`ShowAsTest`); teller test banner; test-only runtime reset
+- [theme.md](theme.md) — dark hairlines, stage chips, and name-link tokens (dashboard/setup slice)

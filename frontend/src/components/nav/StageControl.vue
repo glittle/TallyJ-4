@@ -78,7 +78,7 @@ async function selectStage(newStage: ElectionStage) {
   align-items: stretch;
   border-radius: 6px;
   overflow: hidden;
-  border: 1px solid #dcdfe6;
+  border: 1px solid var(--el-border-color);
   flex-direction: column;
   gap: 10px;
 
@@ -87,13 +87,13 @@ async function selectStage(newStage: ElectionStage) {
     align-items: center;
     gap: 6px;
     padding: 6px 14px;
-    background: #fff;
+    background: var(--el-fill-color-blank);
     border: none;
-    border-bottom: 1px solid #dcdfe6;
+    border-bottom: 1px solid var(--el-border-color);
     cursor: pointer;
     font-size: 13px;
     font-weight: 500;
-    color: #606266;
+    color: var(--el-text-color-regular);
     transition:
       background 0.15s,
       color 0.15s;
@@ -103,7 +103,7 @@ async function selectStage(newStage: ElectionStage) {
     }
 
     &:hover:not(.is-selected) {
-      background: #f5f7fa;
+      background: var(--el-fill-color-light);
     }
 
     &.is-selected {
