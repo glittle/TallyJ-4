@@ -350,6 +350,27 @@
   }
 }
 
+/* Attention flash when a required location/teller select blocked starting a ballot */
+@keyframes required-field-flash {
+  0%,
+  40% {
+    box-shadow: 0 0 0 2px var(--el-color-warning);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.required-field-flash {
+  animation: required-field-flash 1.6s ease-out;
+
+  .el-select__wrapper {
+    box-shadow: 0 0 0 2px var(--el-color-warning) !important;
+    animation: required-field-flash 1.6s ease-out;
+  }
+}
+
 .el-dropdown-menu {
   background-color: var(--el-bg-color);
 

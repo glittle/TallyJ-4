@@ -45,7 +45,8 @@ const mockT = (key: string, values?: Record<string, string | number>) => {
     "common.warning": "Warning",
     "common.cancel": "Cancel",
     "ballots.computerCodeRequired": "Computer code required",
-    "ballots.locationRequired": "Location required",
+    "ballots.locationRequired": "Location is required",
+    "ballots.tellerRequired": "Teller is required",
     "ballots.markNeedsReview": "Mark as Needs Review",
     "ballots.clearNeedsReview": "Clear Needs Review",
     "ballots.needsReviewUpdated": "Needs Review status updated",
@@ -73,11 +74,18 @@ vi.mock("vue-i18n", () => ({
   }),
 }));
 
+const { mockShowErrorMessage, mockShowWarningMessage, mockShowSuccessMessage } =
+  vi.hoisted(() => ({
+    mockShowErrorMessage: vi.fn(),
+    mockShowWarningMessage: vi.fn(),
+    mockShowSuccessMessage: vi.fn(),
+  }));
+
 vi.mock("@/composables/useNotifications", () => ({
   useNotifications: () => ({
-    showWarningMessage: vi.fn(),
-    showErrorMessage: vi.fn(),
-    showSuccessMessage: vi.fn(),
+    showWarningMessage: mockShowWarningMessage,
+    showErrorMessage: mockShowErrorMessage,
+    showSuccessMessage: mockShowSuccessMessage,
     showInfoMessage: vi.fn(),
   }),
 }));
@@ -123,10 +131,14 @@ vi.mock("@/composables/useComputerCode", () => ({
   }),
 }));
 
+const { mockLocationStore } = vi.hoisted(() => ({
+  mockLocationStore: {
+    selectedLocationGuid: "location-1" as string | null,
+  },
+}));
+
 vi.mock("@/stores/locationStore", () => ({
-  useLocationStore: () => ({
-    selectedLocationGuid: "location-1",
-  }),
+  useLocationStore: () => mockLocationStore,
 }));
 
 vi.mock("@/composables/useApiErrorHandler", () => ({
@@ -135,11 +147,19 @@ vi.mock("@/composables/useApiErrorHandler", () => ({
   }),
 }));
 
-vi.mock("@/utils/activeTellerStorage", () => ({
-  getActiveTellerPayload: () => ({
+const { mockActiveTellers } = vi.hoisted(() => ({
+  mockActiveTellers: {
     teller1: "Alice",
     teller2: "Bob",
+  },
+}));
+
+vi.mock("@/utils/activeTellerStorage", () => ({
+  getActiveTellerPayload: () => ({
+    teller1: mockActiveTellers.teller1 || undefined,
+    teller2: mockActiveTellers.teller2 || undefined,
   }),
+  getActiveTellers: () => ({ ...mockActiveTellers }),
 }));
 
 vi.mock("@/composables/usePersonSearch", async () => {
@@ -219,6 +239,9 @@ describe("InlineBallotEntry", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockLocationStore.selectedLocationGuid = "location-1";
+    mockActiveTellers.teller1 = "Alice";
+    mockActiveTellers.teller2 = "Bob";
     mockSearchablePeople = [
       createMockPerson("John", "Doe"),
       createMockPerson("Jane", "Smith"),
@@ -279,6 +302,57 @@ describe("InlineBallotEntry", () => {
       teller2: "Bob",
     });
     expect(wrapper.emitted("ballot-created")?.[0]).toEqual(["ballot-new"]);
+  });
+
+  it("does not start another ballot when location is unset", async () => {
+    mockLocationStore.selectedLocationGuid = null;
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+
+    const addBallotButton = wrapper
+      .findAllComponents(ElButton)
+      .find((button) => button.text().includes("Start another ballot"));
+    await addBallotButton!.trigger("click");
+    await flushPromises();
+
+    expect(mockCreateBallot).not.toHaveBeenCalled();
+    expect(mockShowErrorMessage).toHaveBeenCalledWith("Location is required");
+    expect(wrapper.emitted("ballot-start-blocked")?.[0]).toEqual(["location"]);
+  });
+
+  it("does not start another ballot when the main teller is unset", async () => {
+    mockActiveTellers.teller1 = "";
+
+    const wrapper = mount(InlineBallotEntry, {
+      props: {
+        electionGuid: "election-123",
+        ballot: createMockBallot(),
+        requiredVotes: 9,
+        hasKeyboardTeller: false,
+      },
+      ...mountOptions,
+    });
+
+    await flushPromises();
+
+    const addBallotButton = wrapper
+      .findAllComponents(ElButton)
+      .find((button) => button.text().includes("Start another ballot"));
+    await addBallotButton!.trigger("click");
+    await flushPromises();
+
+    expect(mockCreateBallot).not.toHaveBeenCalled();
+    expect(mockShowErrorMessage).toHaveBeenCalledWith("Teller is required");
+    expect(wrapper.emitted("ballot-start-blocked")?.[0]).toEqual(["teller"]);
   });
 
   it("deletes ballot and emits ballot-deleted after confirmation", async () => {

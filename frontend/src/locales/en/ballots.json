@@ -71,6 +71,7 @@
   "ballots.loadError": "Failed to load ballots",
   "ballots.location": "Location",
   "ballots.locationRequired": "Location is required",
+  "ballots.tellerRequired": "Teller is required",
   "ballots.management": "Enter Ballots",
   "ballots.markNeedsReview": "Mark as Needs Review",
   "ballots.clearNeedsReview": "Clear Needs Review",

@@ -16,7 +16,15 @@ import {
   formatBallotDisplayCode,
   isOnlineOrImportedComputerCode,
 } from "@/utils/ballotDisplayCode";
-import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
+import {
+  getActiveTellerPayload,
+  getActiveTellers,
+} from "@/utils/activeTellerStorage";
+import {
+  BALLOT_START_BLOCK_MESSAGE_KEY,
+  getBallotStartBlockReason,
+  type BallotStartBlockReason,
+} from "@/utils/ballotStartRequirements";
 import {
   isUnresolvedRawVote,
   nextFindQuery,
@@ -49,6 +57,7 @@ const emit = defineEmits<{
   "ballot-saved": [];
   "ballot-created": [ballotGuid: string];
   "ballot-deleted": [ballotGuid: string];
+  "ballot-start-blocked": [reason: BallotStartBlockReason];
 }>();
 
 const { t } = useI18n();
@@ -324,12 +333,14 @@ async function handleDeleteBallot() {
 }
 
 async function handleNewBallot() {
-  if (!computerCode.value) {
-    showErrorMessage(t("ballots.computerCodeRequired"));
-    return;
-  }
-  if (!locationStore.selectedLocationGuid) {
-    showErrorMessage(t("ballots.locationRequired"));
+  const reason = getBallotStartBlockReason({
+    computerCode: computerCode.value,
+    locationGuid: locationStore.selectedLocationGuid,
+    teller1: getActiveTellers().teller1,
+  });
+  if (reason) {
+    showErrorMessage(t(BALLOT_START_BLOCK_MESSAGE_KEY[reason]));
+    emit("ballot-start-blocked", reason);
     return;
   }
   creatingNewBallot.value = true;
