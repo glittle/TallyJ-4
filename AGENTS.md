@@ -145,7 +145,7 @@ Any change to backend DTOs, controllers, or new endpoints requires regenerating 
    dotnet run -- --exit-after-start
    ```
 
-   The `--` is required so `--exit-after-start` is passed to the app, not to `dotnet run`. On startup the app writes `frontend/openApi/tallyj.json` (`app.WriteOpenApiSpecToFile(...)` in `backend/Program.AppPipeline.cs`) and then stops.
+   The `--` is required so `--exit-after-start` is passed to the app, not to `dotnet run`. That flag also skips SQL (`--skip-database` is implied). On startup the app writes `frontend/openApi/tallyj.json` (`app.WriteOpenApiSpecToFile(...)` in `backend/Program.AppPipeline.cs`) and then stops, without listening or opening a database connection.
 
    If a Development backend is already running (`dotnet watch` / IDE), skip this step — that process writes the spec on its own startup.
 

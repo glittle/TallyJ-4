@@ -24,6 +24,8 @@ var machineName = Environment.MachineName;
 var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 var isTesting = AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "testhost");
 var siteType = Environment.CommandLine.DetermineSiteType();
+var exitAfterStart = StartupCommandLine.ExitAfterStart(args);
+var skipDatabase = StartupCommandLine.SkipDatabase(args);
 
 var nonTestMode = isDevelopment ? "DEVELOPMENT" : "PRODUCTION";
 var siteMode = isTesting ? "TESTING" : nonTestMode;
@@ -80,27 +82,40 @@ void ConfigureServices(WebApplicationBuilder builder)
         var connectionStringName = "TallyJ4";
         var connectionString = builderConfiguration.GetConnectionString(connectionStringName);
 
-        var regexToRemovePw = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
-        Log.Information(
-          "Connection string {Name}: {ConnectionString}",
-          connectionStringName,
-          regexToRemovePw.Replace(connectionString ?? "(Empty)", "---;")
-        );
-        if (connectionString == null)
+        if (skipDatabase)
         {
-            Log.Fatal(
-              "Connection string {Name} is not set. Check your appsettings.json configuration.",
-              connectionStringName
-            );
-            Environment.Exit(1);
+            Log.Information("Skipping SQL Server connections");
+            // Identity and other services still need MainDbContext registered; it is never opened.
+            connectionString ??= "Server=127.0.0.1;Database=unused;TrustServerCertificate=True";
+            services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
+            services.AddDbContext<DataProtectionDbContext>(options =>
+                options.UseSqlServer(connectionString));
+            services.AddDataProtection();
         }
+        else
+        {
+            var regexToRemovePw = new System.Text.RegularExpressions.Regex("(Password|pwd)=[^;]*;");
+            Log.Information(
+              "Connection string {Name}: {ConnectionString}",
+              connectionStringName,
+              regexToRemovePw.Replace(connectionString ?? "(Empty)", "---;")
+            );
+            if (connectionString == null)
+            {
+                Log.Fatal(
+                  "Connection string {Name} is not set. Check your appsettings.json configuration.",
+                  connectionStringName
+                );
+                Environment.Exit(1);
+            }
 
-        services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
-        services.AddDbContext<DataProtectionDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
+            services.AddDbContext<DataProtectionDbContext>(options =>
+                options.UseSqlServer(connectionString));
 
-        services.AddDataProtection()
-            .PersistKeysToDbContext<DataProtectionDbContext>();
+            services.AddDataProtection()
+                .PersistKeysToDbContext<DataProtectionDbContext>();
+        }
     }
 
     services.AddCors(options =>
@@ -170,7 +185,7 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     ProgramServiceRegistration.RegisterApplicationServices(services);
     ProgramServiceRegistration.RegisterAuthServices(services);
-    ProgramServiceRegistration.RegisterBackgroundServices(services, isTesting);
+    ProgramServiceRegistration.RegisterBackgroundServices(services, isTesting, skipDatabase);
 
     services.AddSignalR();
     services.AddSingleton<ISignalRNotificationService, SignalRNotificationService>();
@@ -223,17 +238,14 @@ Log.Logger = loggerConfiguration
     )
     .CreateLogger();
 
-await ProgramAppPipeline.ConfigureApp(app, builder.Configuration, isDevelopment, isTesting, siteType);
+await ProgramAppPipeline.ConfigureApp(app, builder.Configuration, isDevelopment, isTesting, siteType, skipDatabase);
 
-// `dotnet run -- --exit-after-start` writes the OpenAPI spec (Development) then stops.
-if (args.Contains("--exit-after-start"))
+// `dotnet run -- --exit-after-start` writes the OpenAPI spec (Development) then stops
+// without opening a SQL connection or listening.
+if (exitAfterStart)
 {
-    var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
-    lifetime.ApplicationStarted.Register(() =>
-    {
-        Log.Information("Startup completed. Stopping.");
-        lifetime.StopApplication();
-    });
+    Log.Information("Startup completed. Stopping.");
+    return;
 }
 
 await app.RunAsync();
