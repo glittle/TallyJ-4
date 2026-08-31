@@ -35,6 +35,15 @@ Implementation:
 - Stage source: MainHub `statusChanged` → `electionStore.currentStage`
 - Main hub membership must stay for the whole election session (`electionStore`); ballots/people pages only join/leave FrontDesk (see `context/realtime.md`)
 
+## Teller 1/2 names vs the election teller list
+
+**Status:** active  
+**Evidence:** confirmed (issue #287)
+
+Teller 1 and Teller 2 on the ballot listing and an open ballot are **browser-session** selections (shipped in #290). The **election teller list** is separate: typing a name adds it to `Teller` for that election; both dropdowns show that list alphabetically; SignalR `tellersChanged` (MainHub) updates other teller computers; clearing a dropdown does not remove the name. Only the admin Tellers page deletes a name.
+
+**Rejected alternative:** treat clear as delete. Rejected — operators reuse the same names across computers and ballots; clear only means “this workstation is not attributing that person right now.”
+
 ## Session Teller 1/2 on an open ballot
 
 **Status:** active  

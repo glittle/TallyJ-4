@@ -508,6 +508,31 @@ public class SignalRNotificationService : ISignalRNotificationService
         }
     }
 
+    /// <summary>
+    /// Broadcasts a teller name-list change to every joined teller computer.
+    /// Uses the MainHub base group (session-wide membership) and camelCase
+    /// <c>tellersChanged</c>, matching other MainHub SPA listeners.
+    /// </summary>
+    public async Task SendTellerUpdateAsync(TellerUpdateDto update)
+    {
+        try
+        {
+            var groupName = MainHub.GetGroupName(update.ElectionGuid);
+            await _mainHubContext.Clients.Group(groupName).SendAsync("tellersChanged", update);
+            _logger.LogInformation(
+                "Sent tellersChanged ({Action}) notification to group {GroupName}",
+                update.Action,
+                groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Error sending tellersChanged notification for election {ElectionGuid}",
+                update.ElectionGuid);
+        }
+    }
+
     private static List<string> DistinctNonEmpty(params string?[] values)
     {
         var result = new List<string>();

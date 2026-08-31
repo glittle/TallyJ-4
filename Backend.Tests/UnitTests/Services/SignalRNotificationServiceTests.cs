@@ -220,6 +220,45 @@ public class SignalRNotificationServiceTests
     }
 
     [Fact]
+    public async Task SendTellerUpdateAsync_sends_tellersChanged_to_base_Main_group()
+    {
+        var (service, mainClients, frontDeskClients, _, _, _, _, _, groupProxies) = CreateService();
+        var update = new TellerUpdateDto
+        {
+            ElectionGuid = _electionGuid,
+            RowId = 7,
+            Name = "Pat",
+            Action = "added"
+        };
+        var expectedGroup = MainHub.GetGroupName(_electionGuid);
+
+        await service.SendTellerUpdateAsync(update);
+
+        mainClients.Verify(c => c.Group(expectedGroup), Times.Once);
+        mainClients.Verify(c => c.Group(expectedGroup + "Known"), Times.Never);
+        mainClients.Verify(c => c.Group(expectedGroup + "Guest"), Times.Never);
+        frontDeskClients.Verify(c => c.Group(It.IsAny<string>()), Times.Never);
+
+        Assert.True(groupProxies.TryGetValue(expectedGroup, out var proxy));
+        proxy!.Verify(
+            p => p.SendCoreAsync(
+                "tellersChanged",
+                It.IsAny<object?[]>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        var invocation = proxy.Invocations.Single(i =>
+            i.Method.Name == nameof(IClientProxy.SendCoreAsync)
+            && Equals(i.Arguments[0], "tellersChanged"));
+        var capturedArgs = Assert.IsType<object?[]>(invocation.Arguments[1]);
+        Assert.Single(capturedArgs);
+        var dto = Assert.IsType<TellerUpdateDto>(capturedArgs[0]);
+        Assert.Equal(7, dto.RowId);
+        Assert.Equal("Pat", dto.Name);
+        Assert.Equal("added", dto.Action);
+    }
+
+    [Fact]
     public async Task NotifyVoterCountUpdatedAsync_sends_VoterCountUpdated_to_FrontDesk_group()
     {
         var (service, _, frontDeskClients, _, _, _, _, _, groupProxies) = CreateService();
