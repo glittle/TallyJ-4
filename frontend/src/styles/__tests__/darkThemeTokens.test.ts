@@ -39,7 +39,7 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
   });
 
   it("makes the current sidebar item stronger than hover/border", () => {
-    expect(tokenValue(dark, "--color-sidebar-active")).toBe("#1e4f8c");
+    expect(tokenValue(dark, "--color-sidebar-active")).toBe("#2563a8");
     expect(tokenValue(dark, "--color-sidebar-active")).not.toBe(
       tokenValue(dark, "--color-sidebar-border"),
     );
@@ -53,7 +53,7 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
       "var(--color-primary-500)",
     );
     expect(tokenValue(dark, "--color-text-link")).toBe(
-      "var(--color-primary-300)",
+      "var(--color-primary-200)",
     );
   });
 });

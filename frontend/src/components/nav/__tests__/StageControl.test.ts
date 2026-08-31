@@ -164,6 +164,9 @@ describe("StageControl", () => {
       expect(source).toContain("background: var(--el-fill-color-blank)");
       expect(source).toContain("border: 1px solid var(--el-border-color)");
       expect(source).toContain("color: var(--el-text-color-regular)");
+      expect(source).toContain(
+        "html.dark .stage-control__seg:not(.is-selected)",
+      );
       expect(source).not.toMatch(/background:\s*#fff\b/);
       expect(source).not.toMatch(/background:\s*#ffffff\b/i);
     });
