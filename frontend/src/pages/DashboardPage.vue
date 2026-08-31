@@ -8,12 +8,19 @@ import { useNotifications } from "@/composables/useNotifications";
 import { electionService } from "@/services/electionService";
 import { signalrService } from "@/services/signalrService";
 import { useElectionStore } from "@/stores/electionStore";
-import type { ElectionDto } from "@/types";
+import type { ElectionDto, ElectionSummaryDto } from "@/types";
 import type { ElectionPackageLoaderLogLine } from "@/types/SignalREvents";
 import { getActiveElectionHubGuid } from "@/utils/activeElectionHubStorage";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
 import { formatNumber } from "@/utils/formatNumber";
-import { Plus, RefreshRight, Search, Upload } from "@element-plus/icons-vue";
+import {
+  CopyDocument,
+  Plus,
+  RefreshRight,
+  Search,
+  Upload,
+} from "@element-plus/icons-vue";
+import { ElMessageBox } from "element-plus";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -294,6 +301,32 @@ async function loadData() {
 
 function createElection() {
   router.push("/elections/create");
+}
+
+async function duplicateElection(row: ElectionSummaryDto) {
+  try {
+    const { value } = await ElMessageBox.prompt(
+      t("elections.duplicate.prompt"),
+      t("elections.duplicate.title"),
+      {
+        confirmButtonText: t("elections.duplicate.confirm"),
+        cancelButtonText: t("common.cancel"),
+        inputValue: t("elections.duplicate.defaultName", { name: row.name }),
+        inputPattern: /\S+/,
+        inputErrorMessage: t("elections.form.nameRequired"),
+      },
+    );
+    await electionStore.duplicateElection(row.electionGuid, { name: value });
+    showSuccessMessage(t("elections.duplicate.success"));
+    await loadData();
+  } catch (error: unknown) {
+    if (error === "cancel" || error === "close") {
+      return;
+    }
+    showErrorMessage(
+      extractApiErrorMessage(error) || t("elections.duplicate.error"),
+    );
+  }
 }
 
 async function importElection() {
@@ -648,6 +681,20 @@ function formatDate(date: string) {
             >
               <template #default="scope">
                 {{ formatNumber(scope.row.ballotCount) ?? "—" }}
+              </template>
+            </el-table-column>
+            <el-table-column min-width="110" align="center">
+              <template #default="scope">
+                <el-button
+                  type="info"
+                  :aria-label="$t('elections.duplicate.action')"
+                  :title="$t('elections.duplicate.action')"
+                  @click.stop="duplicateElection(scope.row)"
+                >
+                  <el-icon>
+                    <CopyDocument />
+                  </el-icon>
+                </el-button>
               </template>
             </el-table-column>
           </el-table>

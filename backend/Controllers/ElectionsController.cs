@@ -4,6 +4,7 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace Backend.Controllers;
 
@@ -141,6 +142,37 @@ public class ElectionsController : ControllerBase
             nameof(GetElection),
             new { guid = election.ElectionGuid },
             ApiResponse<ElectionDto>.SuccessResponse(election, "Election created successfully"));
+    }
+
+    /// <summary>
+    /// Duplicates an owned election into a new test copy (people, locations, settings).
+    /// </summary>
+    /// <param name="guid">The GUID of the election to copy.</param>
+    /// <param name="dto">Optional name for the copy.</param>
+    /// <returns>The new test election.</returns>
+    [HttpPost("{guid}/duplicateElection")]
+    [Authorize(Policy = "FullTellerAccess")]
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> DuplicateElection(
+        Guid guid,
+        [FromBody] DuplicateElectionDto? dto)
+    {
+        var result = await _electionService.DuplicateElectionAsync(guid, dto ?? new DuplicateElectionDto());
+
+        if (result.IsNotFound)
+        {
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
+        }
+
+        if (result.IsForbidden)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                ApiResponse<ElectionDto>.ErrorResponse("Not authorized to duplicate this election"));
+        }
+
+        return CreatedAtAction(
+            nameof(GetElection),
+            new { guid = result.Election!.ElectionGuid },
+            ApiResponse<ElectionDto>.SuccessResponse(result.Election, "Election duplicated successfully"));
     }
 
     /// <summary>

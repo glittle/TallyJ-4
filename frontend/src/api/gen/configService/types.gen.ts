@@ -518,6 +518,10 @@ export type ElectionsCreateElectionDto = {
     flags?: string | null;
 };
 
+export type ElectionsDuplicateElectionDto = {
+    name?: string | null;
+};
+
 export type ElectionsElectionDto = {
     electionGuid?: string;
     name?: string | null;
@@ -956,6 +960,11 @@ export type OnlineVotingOnlineVoterAuthResponse = {
     expiresAt?: Date;
 };
 
+export type OnlineVotingOnlineVoterSessionDto = {
+    voterId?: string | null;
+    voterIdType?: string | null;
+};
+
 export type OnlineVotingRequestCodeDto = {
     voterId?: string | null;
     voterIdType?: string | null;
@@ -1116,7 +1125,7 @@ export type PeoplePersonDetailDto = {
     unitName?: string | null;
     voteCount?: number;
     canDelete?: boolean;
-    phoneOnlineVoter?: PeoplePersonPhoneOnlineVoterDto | null;
+    phoneOnlineVoter?: PeoplePersonPhoneOnlineVoterDto;
 };
 
 export type PeoplePersonDto = {
@@ -3006,6 +3015,24 @@ export type PostApiElectionsCreateElectionResponses = {
 
 export type PostApiElectionsCreateElectionResponse = PostApiElectionsCreateElectionResponses[keyof PostApiElectionsCreateElectionResponses];
 
+export type PostApiElectionsByGuidDuplicateElectionData = {
+    body?: ElectionsDuplicateElectionDto;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/duplicateElection';
+};
+
+export type PostApiElectionsByGuidDuplicateElectionResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseElectionsElectionDto;
+};
+
+export type PostApiElectionsByGuidDuplicateElectionResponse = PostApiElectionsByGuidDuplicateElectionResponses[keyof PostApiElectionsByGuidDuplicateElectionResponses];
+
 export type PutApiElectionsByGuidUpdateElectionData = {
     body?: ElectionsUpdateElectionDto;
     path: {
@@ -3443,6 +3470,36 @@ export type GetApiOnlineVotingAvailableElectionsResponses = {
 };
 
 export type GetApiOnlineVotingAvailableElectionsResponse = GetApiOnlineVotingAvailableElectionsResponses[keyof GetApiOnlineVotingAvailableElectionsResponses];
+
+export type GetApiOnlineVotingMeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/online-voting/me';
+};
+
+export type GetApiOnlineVotingMeResponses = {
+    /**
+     * OK
+     */
+    200: OnlineVotingOnlineVoterSessionDto;
+};
+
+export type GetApiOnlineVotingMeResponse = GetApiOnlineVotingMeResponses[keyof GetApiOnlineVotingMeResponses];
+
+export type PostApiOnlineVotingLogoutData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/online-voting/logout';
+};
+
+export type PostApiOnlineVotingLogoutResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
 
 export type GetApiOnlineVotingByElectionGuidElectionInfoData = {
     body?: never;
@@ -3935,6 +3992,29 @@ export type GetApiPublicHealthResponses = {
 };
 
 export type GetApiPublicHealthResponse = GetApiPublicHealthResponses[keyof GetApiPublicHealthResponses];
+
+export type PostApiPublicSmsStatusData = {
+    body?: {
+        MessageSid?: string;
+        SmsSid?: string;
+        MessageStatus?: string;
+        SmsStatus?: string;
+        To?: string;
+        ErrorCode?: number;
+        Sid?: string;
+        Status?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/Public/smsStatus';
+};
+
+export type PostApiPublicSmsStatusResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
 
 export type PostApiReportExportsByElectionIdData = {
     body?: ResultsExportRequest;

@@ -8,6 +8,7 @@ import { useAuthStore } from "./authStore";
 import { ElMessage } from "element-plus";
 import type {
   CreateElectionDto,
+  DuplicateElectionDto,
   ElectionDto,
   UpdateElectionDto,
 } from "../types";
@@ -117,6 +118,24 @@ export const useElectionStore = defineStore("election", () => {
         elections.value.push(election);
       }
 
+      return election;
+    } catch (e: any) {
+      error.value = extractApiErrorMessage(e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function duplicateElection(
+    electionGuid: string,
+    dto: DuplicateElectionDto = {},
+  ) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const election = await electionService.duplicate(electionGuid, dto);
+      elections.value.push(election);
       return election;
     } catch (e: any) {
       error.value = extractApiErrorMessage(e);
@@ -549,6 +568,7 @@ export const useElectionStore = defineStore("election", () => {
     fetchElections,
     fetchElectionById,
     createElection,
+    duplicateElection,
     updateElection,
     updateOnlineVotingWindow,
     deleteElection,

@@ -14,6 +14,7 @@ vi.mock("../services/electionService", () => ({
     getById: vi.fn(),
     getStats: vi.fn(),
     create: vi.fn(),
+    duplicate: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
     changeStage: vi.fn(),
@@ -218,6 +219,31 @@ describe("Election Store", () => {
 
       expect(electionStore.elections).toHaveLength(2);
       expect(electionStore.elections[1]).toEqual(newElection);
+    });
+  });
+
+  describe("duplicateElection", () => {
+    it("should duplicate election and add it to the list", async () => {
+      const { electionService } = await import("../services/electionService");
+      const copy: ElectionDto = {
+        electionGuid: "copy-id",
+        name: "Copy of Source",
+        electionStage: "SettingUp",
+        showAsTest: true,
+      } as ElectionDto;
+
+      electionService.duplicate.mockResolvedValue(copy);
+
+      const result = await electionStore.duplicateElection("source-id", {
+        name: "Copy of Source",
+      });
+
+      expect(electionService.duplicate).toHaveBeenCalledWith("source-id", {
+        name: "Copy of Source",
+      });
+      expect(electionStore.elections).toHaveLength(1);
+      expect(electionStore.elections[0]).toEqual(copy);
+      expect(result).toEqual(copy);
     });
   });
 

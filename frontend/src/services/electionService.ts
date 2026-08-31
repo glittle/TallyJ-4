@@ -1,6 +1,7 @@
 import type { ElectionStage } from "../domain/electionStages";
 import type {
   CreateElectionDto,
+  DuplicateElectionDto,
   ElectionDto,
   ElectionStats,
   ElectionStatus,
@@ -16,6 +17,7 @@ import {
   getApiElectionsByGuidStatus,
   getApiElectionsGetElections,
   getApiImportExportElectionToJsonByElectionGuid,
+  postApiElectionsByGuidDuplicateElection,
   postApiElectionsCreateElection,
   postApiImportImportCdnBallotsByElectionGuid,
   postApiImportImportElectionFromJson,
@@ -123,6 +125,21 @@ export const electionService = {
     const data = response.data?.data;
     if (!data) {
       throw new Error("Election not found");
+    }
+    return mapElectionDto(data);
+  },
+
+  async duplicate(
+    electionGuid: string,
+    dto: DuplicateElectionDto = {},
+  ): Promise<ElectionDto> {
+    const response = await postApiElectionsByGuidDuplicateElection({
+      path: { guid: electionGuid },
+      body: { name: dto.name },
+    });
+    const data = response.data?.data;
+    if (!data) {
+      throw new Error(response.data?.message || "Failed to duplicate election");
     }
     return mapElectionDto(data);
   },
