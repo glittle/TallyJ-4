@@ -69,7 +69,7 @@ cd backend
 dotnet run -- --exit-after-start
 ```
 
-The `--` passes `--exit-after-start` to the app. That flag also skips SQL (`--skip-database` is implied). The http launch profile sets `ASPNETCORE_ENVIRONMENT=Development`, which is required for the spec write.
+The `--` passes `--exit-after-start` to the app. That flag also skips SQL (`--skip-database` is implied). The process does not listen, so it can run while `dotnet watch` is already serving. The http launch profile sets `ASPNETCORE_ENVIRONMENT=Development`, which is required for the spec write.
 
 Development URLs from `Properties/launchSettings.json`:
 

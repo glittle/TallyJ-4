@@ -145,9 +145,9 @@ Any change to backend DTOs, controllers, or new endpoints requires regenerating 
    dotnet run -- --exit-after-start
    ```
 
-   The `--` is required so `--exit-after-start` is passed to the app, not to `dotnet run`. That flag also skips SQL (`--skip-database` is implied). On startup the app writes `frontend/openApi/tallyj.json` (`app.WriteOpenApiSpecToFile(...)` in `backend/Program.AppPipeline.cs`) and then stops, without listening or opening a database connection.
+   The `--` is required so `--exit-after-start` is passed to the app, not to `dotnet run`. That flag also skips SQL (`--skip-database` is implied). The app writes `frontend/openApi/tallyj.json` (`app.WriteOpenApiSpecToFile(...)` in `backend/Program.AppPipeline.cs`) and then stops. It does not listen on a port and does not open a database, so **run this even if `dotnet watch` / IDE already has a backend listening**.
 
-   If a Development backend is already running (`dotnet watch` / IDE), skip this step — that process writes the spec on its own startup.
+   On Windows, if `dotnet run` fails with MSB3026 because `Backend.exe` is locked by the watch process, retry with `dotnet run --no-build -- --exit-after-start` (watch already compiled).
 
 2. `cd frontend`
 
@@ -188,8 +188,8 @@ Other languages are updated separately in periodic review cycles — do not add 
 - frontend default dev URL: `https://localhost:8095` (Vite HTTPS via mkcert-trusted certs; `/api` and `/hubs` proxied to the backend)
 - backend development config seeds the database on startup
 - Swagger is the source of truth for current routes and schemas
-- **Contributor workflow:** the repo owner usually keeps their own backend dev instance running (`dotnet watch` / `dotnet run` / IDE) and the Vite dev server (`npm run dev`) for hot reload. **Do not rebuild backend or frontend for routine code changes** — `dotnet watch` recompiles C# on save and Vite hot-reloads Vue/TS. Avoid `dotnet build`, `dotnet run`, `npm run build`, and `npm run dev` unless the task explicitly requires it or the contributor asks you to verify a build. If you must rebuild, ask them to stop their running backend first (file-lock on `Backend.exe` causes MSB3026 copy failures). Prefer `dotnet test --no-build` when a recent build already exists.
-- **OpenAPI regen:** only mention `frontend/openApi/tallyj.json` / `npm run gen` when backend DTOs, controllers, or routes changed. Frontend-only edits do not need OpenAPI regeneration.
+- **Contributor workflow:** the repo owner usually keeps their own backend dev instance running (`dotnet watch` / `dotnet run` / IDE) and the Vite dev server (`npm run dev`) for hot reload. **Do not rebuild backend or frontend for routine code changes** — `dotnet watch` recompiles C# on save and Vite hot-reloads Vue/TS. Avoid `dotnet build`, `dotnet run`, `npm run build`, and `npm run dev` unless the task explicitly requires it, the OpenAPI regen steps above apply, or the contributor asks you to verify a build. If you must rebuild for something other than `--exit-after-start`, ask them to stop their running backend first (file-lock on `Backend.exe` causes MSB3026 copy failures). Prefer `dotnet test --no-build` when a recent build already exists.
+- **OpenAPI regen:** when backend DTOs, controllers, or routes changed, run `dotnet run -- --exit-after-start` from `backend/` (even if `dotnet watch` is already running — that command does not listen) and then `npm run gen` from `frontend/`. Frontend-only edits do not need OpenAPI regeneration.
 
 ### Configuration sources (Program.cs)
 
