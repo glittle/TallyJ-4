@@ -29,9 +29,8 @@ vi.mock("@/composables/useApiErrorHandler", () => ({
 }));
 
 vi.mock("element-plus", async () => {
-  const actual = await vi.importActual<typeof import("element-plus")>(
-    "element-plus",
-  );
+  const actual =
+    await vi.importActual<typeof import("element-plus")>("element-plus");
   return {
     ...actual,
     ElMessageBox: {
@@ -59,7 +58,8 @@ const i18n = createI18n({
         },
         confirm: {
           deleteTellerTitle: "Warning",
-          deleteTellerMessage: 'Are you sure you want to delete teller "{name}"?',
+          deleteTellerMessage:
+            'Are you sure you want to delete teller "{name}"?',
           delete: "Delete",
           cancel: "Cancel",
         },

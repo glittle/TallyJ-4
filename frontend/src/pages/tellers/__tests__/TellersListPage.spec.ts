@@ -77,19 +77,24 @@ describe("TellersListPage", () => {
           ElTableColumn: {
             template: `
               <div>
-                <div v-for="row in [{ name: 'Ann', rowId: 1 }, { name: 'Pat', rowId: 2 }]" :key="row.rowId">
+                <div
+                  v-for="row in [{ name: 'Ann', rowId: 1 }, { name: 'Pat', rowId: 2 }]"
+                  :key="row.rowId"
+                >
                   <slot name="default" :row="row" />
                 </div>
               </div>
             `,
           },
           ElButton: {
-            template: '<button type="button" @click="$emit(\'click\')"><slot /></button>',
+            template:
+              '<button type="button" @click="$emit(\'click\')"><slot /></button>',
           },
           ElIcon: true,
           ElDrawer: {
             props: ["modelValue"],
-            template: '<div v-if="modelValue" class="drawer-stub"><slot /></div>',
+            template:
+              '<div v-if="modelValue" class="drawer-stub"><slot /></div>',
           },
           ElPagination: true,
         },
