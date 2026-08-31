@@ -20,11 +20,15 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
   it("keeps light-mode borders on the previous gray-200 card hairline", () => {
     expect(tokenValue(light, "--color-border")).toBe("var(--color-gray-200)");
     expect(elementPlus).toContain("border: 1px solid var(--color-border)");
-    expect(elementPlus).not.toContain("border: 1px solid var(--color-gray-200)");
+    expect(elementPlus).not.toContain(
+      "border: 1px solid var(--color-gray-200)",
+    );
   });
 
   it("uses low-contrast navy hairlines in dark mode instead of inverted gray-400/500", () => {
-    expect(tokenValue(dark, "--color-border")).toMatch(/rgba\(\s*168,\s*191,\s*225/i);
+    expect(tokenValue(dark, "--color-border")).toMatch(
+      /rgba\(\s*168,\s*191,\s*225/i,
+    );
     expect(tokenValue(dark, "--el-border-color")).toBe("var(--color-border)");
     expect(tokenValue(dark, "--el-border-color-extra-light")).not.toBe(
       "var(--color-gray-400)",
@@ -45,7 +49,11 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
   });
 
   it("brightens link/name text in dark while light stays primary-500", () => {
-    expect(tokenValue(light, "--color-text-link")).toBe("var(--color-primary-500)");
-    expect(tokenValue(dark, "--color-text-link")).toBe("var(--color-primary-300)");
+    expect(tokenValue(light, "--color-text-link")).toBe(
+      "var(--color-primary-500)",
+    );
+    expect(tokenValue(dark, "--color-text-link")).toBe(
+      "var(--color-primary-300)",
+    );
   });
 });
