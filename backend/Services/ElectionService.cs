@@ -7,6 +7,7 @@ using Backend.DTOs.Elections;
 using Backend.DTOs.SignalR;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Backend.Services;
 
@@ -336,19 +337,39 @@ public class ElectionService : IElectionService
         var previousOnlineCloseIsEstimate = election.OnlineCloseIsEstimate;
         var previousOnlineSelectionProcess = election.OnlineSelectionProcess;
 
-        await RemoveRuntimeRowsAsync(electionGuid);
-        ClearPersonRuntimeFields(electionGuid);
-        ClearLocationRuntimeFields(electionGuid);
+        IDbContextTransaction? transaction = null;
+        if (_context.Database.IsRelational())
+        {
+            transaction = await _context.Database.BeginTransactionAsync();
+        }
 
-        election.LastEnvNum = null;
-        election.ListedForPublicAsOf = null;
-        // GetAvailableElectionsAsync treats UseOnlineVoting + a null window as open.
-        election.OnlineWhenOpen = null;
-        election.OnlineWhenClose = null;
-        election.UseOnlineVoting = false;
-        election.ElectionStage = ElectionStage.SettingUp;
+        try
+        {
+            await RemoveRuntimeRowsAsync(electionGuid);
+            await ClearPersonRuntimeFieldsAsync(electionGuid);
+            await ClearLocationRuntimeFieldsAsync(electionGuid);
 
-        await _context.SaveChangesAsync();
+            election.LastEnvNum = null;
+            election.ListedForPublicAsOf = null;
+            // GetAvailableElectionsAsync treats UseOnlineVoting + a null window as open.
+            election.OnlineWhenOpen = null;
+            election.OnlineWhenClose = null;
+            election.UseOnlineVoting = false;
+            election.ElectionStage = ElectionStage.SettingUp;
+
+            await _context.SaveChangesAsync();
+            if (transaction is not null)
+            {
+                await transaction.CommitAsync();
+            }
+        }
+        finally
+        {
+            if (transaction is not null)
+            {
+                await transaction.DisposeAsync();
+            }
+        }
 
         _logger.LogInformation("Reset test election {ElectionGuid}", electionGuid);
 
@@ -814,10 +835,36 @@ public class ElectionService : IElectionService
     /// <summary>
     /// Deletes the same runtime rows DuplicateElectionAsync does not copy:
     /// votes, ballots, results, result summaries, result ties, computers,
-    /// tellers, online votes, and SMS logs.
+    /// tellers, online votes, and SMS logs. Relational providers use
+    /// ExecuteDelete so a large practice election is not loaded into memory.
+    /// InMemory (unit tests) does not support ExecuteDelete.
     /// </summary>
     private async Task RemoveRuntimeRowsAsync(Guid electionGuid)
     {
+        if (_context.Database.IsRelational())
+        {
+            await _context.Votes
+                .Where(v => _context.Ballots.Any(b =>
+                    b.BallotGuid == v.BallotGuid
+                    && _context.Locations.Any(l =>
+                        l.ElectionGuid == electionGuid && l.LocationGuid == b.LocationGuid)))
+                .ExecuteDeleteAsync();
+
+            await _context.Ballots
+                .Where(b => _context.Locations.Any(l =>
+                    l.ElectionGuid == electionGuid && l.LocationGuid == b.LocationGuid))
+                .ExecuteDeleteAsync();
+
+            await _context.Results.Where(r => r.ElectionGuid == electionGuid).ExecuteDeleteAsync();
+            await _context.ResultSummaries.Where(r => r.ElectionGuid == electionGuid).ExecuteDeleteAsync();
+            await _context.ResultTies.Where(r => r.ElectionGuid == electionGuid).ExecuteDeleteAsync();
+            await _context.Computers.Where(c => c.ElectionGuid == electionGuid).ExecuteDeleteAsync();
+            await _context.Tellers.Where(t => t.ElectionGuid == electionGuid).ExecuteDeleteAsync();
+            await _context.OnlineVotingInfos.Where(o => o.ElectionGuid == electionGuid).ExecuteDeleteAsync();
+            await _context.SmsLogs.Where(s => s.ElectionGuid == electionGuid).ExecuteDeleteAsync();
+            return;
+        }
+
         var locationGuids = await _context.Locations
             .Where(l => l.ElectionGuid == electionGuid)
             .Select(l => l.LocationGuid)
@@ -851,9 +898,25 @@ public class ElectionService : IElectionService
     /// <summary>
     /// Clears the same person runtime fields DuplicateElectionAsync does not copy.
     /// </summary>
-    private void ClearPersonRuntimeFields(Guid electionGuid)
+    private async Task ClearPersonRuntimeFieldsAsync(Guid electionGuid)
     {
-        var people = _context.People.Where(p => p.ElectionGuid == electionGuid).ToList();
+        if (_context.Database.IsRelational())
+        {
+            await _context.People
+                .Where(p => p.ElectionGuid == electionGuid)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(p => p.RegistrationTime, (DateTimeOffset?)null)
+                    .SetProperty(p => p.VotingLocationGuid, (Guid?)null)
+                    .SetProperty(p => p.VotingMethod, (string?)null)
+                    .SetProperty(p => p.EnvNum, (int?)null)
+                    .SetProperty(p => p.Teller1, (string?)null)
+                    .SetProperty(p => p.Teller2, (string?)null)
+                    .SetProperty(p => p.HasOnlineBallot, (bool?)null)
+                    .SetProperty(p => p.RegistrationHistory, (string?)null));
+            return;
+        }
+
+        var people = await _context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync();
         foreach (var person in people)
         {
             person.RegistrationTime = null;
@@ -870,9 +933,19 @@ public class ElectionService : IElectionService
     /// <summary>
     /// Clears location tally status and ballots-collected (not copied by duplicate).
     /// </summary>
-    private void ClearLocationRuntimeFields(Guid electionGuid)
+    private async Task ClearLocationRuntimeFieldsAsync(Guid electionGuid)
     {
-        var locations = _context.Locations.Where(l => l.ElectionGuid == electionGuid).ToList();
+        if (_context.Database.IsRelational())
+        {
+            await _context.Locations
+                .Where(l => l.ElectionGuid == electionGuid)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(l => l.LocationTallyStatus, (LocationTallyStatus?)null)
+                    .SetProperty(l => l.BallotsCollected, (int?)null));
+            return;
+        }
+
+        var locations = await _context.Locations.Where(l => l.ElectionGuid == electionGuid).ToListAsync();
         foreach (var location in locations)
         {
             location.LocationTallyStatus = null;

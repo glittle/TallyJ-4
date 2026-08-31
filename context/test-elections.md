@@ -49,7 +49,7 @@ When the client omits a name, the service uses `Copy of {source name}` (trimmed 
 ## Reset wipes runtime data only on ShowAsTest elections
 
 **Status:** active  
-**Evidence:** inferred (issue #193 last slice; matches duplicate’s non-copy list and starting state; no live v3 reset found)  
+**Evidence:** confirmed for the test-only gate (issue #193; `ShowAsTest` must be true). Inferred for wipe list, `SettingUp`, and window-close matching duplicate (no live v3 reset found).  
 **Source:** issue #193; v4 `DuplicateElectionAsync` wipe/start list; `GetAvailableElectionsAsync` null-window rule  
 **Verification:** uncorroborated against a runnable v3 reset (TallyJ-3.0 search did not find `ResetElection` / `CloneElection` / equivalent)  
 **Revisit when:** reset scope needs import files or messages, or a v3 reset script is found
