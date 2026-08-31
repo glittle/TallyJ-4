@@ -332,6 +332,7 @@ public class ElectionService : IElectionService
         }
 
         var guestAccessWasOpen = ElectionTellerAccessHelper.IsGuestTellerAccessOpen(election.ListedForPublicAsOf);
+        var previousUseOnlineVoting = election.UseOnlineVoting;
         var previousOnlineWhenOpen = election.OnlineWhenOpen;
         var previousOnlineWhenClose = election.OnlineWhenClose;
         var previousOnlineCloseIsEstimate = election.OnlineCloseIsEstimate;
@@ -381,8 +382,11 @@ public class ElectionService : IElectionService
             UpdatedAt = DateTimeOffset.UtcNow
         });
 
+        // UseOnlineVoting + a null window is already "open" to voters.
+        // Closing only the flag must still push updateVoters so they re-fetch.
         var onlineSettingsChanged =
-            previousOnlineWhenOpen != election.OnlineWhenOpen
+            previousUseOnlineVoting != election.UseOnlineVoting
+            || previousOnlineWhenOpen != election.OnlineWhenOpen
             || previousOnlineWhenClose != election.OnlineWhenClose
             || previousOnlineCloseIsEstimate != election.OnlineCloseIsEstimate
             || !string.Equals(previousOnlineSelectionProcess, election.OnlineSelectionProcess, StringComparison.Ordinal);

@@ -954,7 +954,35 @@ public class ElectionServiceTests : ServiceTestBase
             s => s.RequestFrontDeskReloadAsync(source.ElectionGuid),
             Times.Once);
         _signalRMock.Verify(
+            s => s.SendOnlineElectionUpdateAsync(It.Is<Backend.DTOs.SignalR.OnlineElectionUpdateDto>(
+                u => u.ElectionGuid == source.ElectionGuid)),
+            Times.Once);
+        _signalRMock.Verify(
             s => s.CloseOutGuestTellersAsync(source.ElectionGuid),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task ResetElectionAsync_UseOnlineVotingTrueWithNullWindow_NotifiesOnlineClients()
+    {
+        var source = await SeedElectionForResetAsync(showAsTest: true);
+        var election = Context.Elections.Single(e => e.ElectionGuid == source.ElectionGuid);
+        election.UseOnlineVoting = true;
+        election.OnlineWhenOpen = null;
+        election.OnlineWhenClose = null;
+        await Context.SaveChangesAsync();
+        var now = DateTimeOffset.UtcNow;
+        Assert.True(IsAvailableToOnlineVoters(election, now));
+
+        var result = await _service.ResetElectionAsync(source.ElectionGuid);
+
+        Assert.True(result.IsSuccess);
+        var inDb = Context.Elections.Single(e => e.ElectionGuid == source.ElectionGuid);
+        Assert.False(inDb.UseOnlineVoting);
+        Assert.False(IsAvailableToOnlineVoters(inDb, now));
+        _signalRMock.Verify(
+            s => s.SendOnlineElectionUpdateAsync(It.Is<Backend.DTOs.SignalR.OnlineElectionUpdateDto>(
+                u => u.ElectionGuid == source.ElectionGuid)),
             Times.Once);
     }
 
