@@ -92,9 +92,8 @@ const { selectorChanges } = vi.hoisted(() => ({
 }));
 
 vi.mock("@/components/tellers/ActiveTellerSelector.vue", async () => {
-  const { setActiveTeller1, setActiveTeller2 } = await import(
-    "@/utils/activeTellerStorage"
-  );
+  const { setActiveTeller1, setActiveTeller2 } =
+    await import("@/utils/activeTellerStorage");
   const { useActiveTellers } = await import("@/composables/useActiveTellers");
   const { defineComponent, h } = await import("vue");
   return {
@@ -161,7 +160,9 @@ function mountPanel() {
       plugins: [i18n, createPinia()],
       stubs: {
         ElSkeleton: { template: '<div class="el-skeleton"></div>' },
-        ElDescriptions: { template: "<div class='el-descriptions'><slot /></div>" },
+        ElDescriptions: {
+          template: "<div class='el-descriptions'><slot /></div>",
+        },
         ElDescriptionsItem: {
           props: ["label"],
           template:
