@@ -3033,6 +3033,24 @@ export type PostApiElectionsByGuidDuplicateElectionResponses = {
 
 export type PostApiElectionsByGuidDuplicateElectionResponse = PostApiElectionsByGuidDuplicateElectionResponses[keyof PostApiElectionsByGuidDuplicateElectionResponses];
 
+export type PostApiElectionsByGuidResetElectionData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/resetElection';
+};
+
+export type PostApiElectionsByGuidResetElectionResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseElectionsElectionDto;
+};
+
+export type PostApiElectionsByGuidResetElectionResponse = PostApiElectionsByGuidResetElectionResponses[keyof PostApiElectionsByGuidResetElectionResponses];
+
 export type PutApiElectionsByGuidUpdateElectionData = {
     body?: ElectionsUpdateElectionDto;
     path: {

@@ -1,8 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
+using Backend.Context;
 using Backend.DTOs.Elections;
+using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.Tests.IntegrationTests;
 
@@ -424,6 +428,232 @@ public class ElectionsControllerTests : IntegrationTestBase
             new DuplicateElectionDto());
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ResetElection_WithShowAsTestElection_ReturnsOkAndSettingUp()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "API Test Reset",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 5,
+            ShowAsTest = true
+        };
+
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        var stageResponse = await PutJsonAsync(
+            $"/api/elections/{electionGuid}/stage",
+            new ChangeElectionStageDto { ElectionStage = ElectionStage.GatheringBallots });
+        Assert.Equal(HttpStatusCode.OK, stageResponse.StatusCode);
+
+        var response = await PostJsonAsync($"/api/elections/{electionGuid}/resetElection", new { });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var result = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(response);
+        Assert.NotNull(result);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Data);
+        Assert.Equal(electionGuid, result.Data.ElectionGuid);
+        Assert.True(result.Data.ShowAsTest);
+        Assert.Equal(ElectionStage.SettingUp, result.Data.ElectionStage);
+        Assert.Equal("API Test Reset", result.Data.Name);
+    }
+
+    [Fact]
+    public async Task ResetElection_WhenShowAsTestFalse_ReturnsBadRequest()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Live Election Reset Refused",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3,
+            ShowAsTest = false
+        };
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        var response = await PostJsonAsync($"/api/elections/{electionGuid}/resetElection", new { });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var result = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(response);
+        Assert.False(result!.Success);
+        Assert.Contains("test", result.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task ResetElection_WhenShowAsTestNull_ReturnsBadRequest()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Unset Test Flag Reset Refused",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3
+        };
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        var response = await PostJsonAsync($"/api/elections/{electionGuid}/resetElection", new { });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var result = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(response);
+        Assert.False(result!.Success);
+    }
+
+    [Fact]
+    public async Task ResetElection_WithoutAuth_ReturnsUnauthorized()
+    {
+        var response = await PostJsonAsync(
+            $"/api/elections/{Guid.NewGuid()}/resetElection",
+            new { });
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ResetElection_WhenUserIsNotOwner_ReturnsForbidden()
+    {
+        var ownerToken = await GetAuthTokenAsync();
+        SetAuthToken(ownerToken);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Owner Only Reset",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3,
+            ShowAsTest = true
+        };
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        var otherToken = await GetAuthTokenAsync("test@tallyj.com", "Tester1234!X");
+        SetAuthToken(otherToken);
+
+        var response = await PostJsonAsync($"/api/elections/{electionGuid}/resetElection", new { });
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ResetElection_RemovesRuntimeRowsAndKeepsPeopleLocationsAndSettings()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Runtime Wipe Test",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 7,
+            NumberExtra = 2,
+            Convenor = "Local Assembly",
+            ShowAsTest = true
+        };
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+        var locationGuid = Guid.NewGuid();
+        var personGuid = Guid.NewGuid();
+        var ballotGuid = Guid.NewGuid();
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+            db.Locations.Add(new Location
+            {
+                LocationGuid = locationGuid,
+                ElectionGuid = electionGuid,
+                Name = "Main Hall",
+                LocationTallyStatus = LocationTallyStatus.Complete,
+                BallotsCollected = 4
+            });
+            db.People.Add(new Person
+            {
+                PersonGuid = personGuid,
+                ElectionGuid = electionGuid,
+                FirstName = "Ada",
+                LastName = "Lovelace",
+                CanVote = true,
+                RegistrationTime = DateTimeOffset.UtcNow,
+                VotingLocationGuid = locationGuid,
+                VotingMethod = "P",
+                EnvNum = 3,
+                Teller1 = "Pat",
+                HasOnlineBallot = true,
+                RowVersion = new byte[8]
+            });
+            db.Ballots.Add(new Ballot
+            {
+                BallotGuid = ballotGuid,
+                LocationGuid = locationGuid,
+                StatusCode = BallotStatus.Ok,
+                ComputerCode = "A1",
+                BallotNumAtComputer = 1,
+                RowVersion = new byte[8]
+            });
+            db.Results.Add(new Result
+            {
+                ElectionGuid = electionGuid,
+                PersonGuid = personGuid,
+                Rank = 1,
+                Section = "E",
+                VoteCount = 5
+            });
+            await db.SaveChangesAsync();
+        }
+
+        var response = await PostJsonAsync($"/api/elections/{electionGuid}/resetElection", new { });
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+            var election = await db.Elections.SingleAsync(e => e.ElectionGuid == electionGuid);
+            Assert.True(election.ShowAsTest);
+            Assert.Equal(ElectionStage.SettingUp, election.ElectionStage);
+            Assert.Equal("Runtime Wipe Test", election.Name);
+            Assert.Equal(7, election.NumberToElect);
+            Assert.Equal(2, election.NumberExtra);
+            Assert.Equal("Local Assembly", election.Convenor);
+
+            var people = await db.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync();
+            Assert.Single(people);
+            Assert.Equal(personGuid, people[0].PersonGuid);
+            Assert.Equal("Ada", people[0].FirstName);
+            Assert.Null(people[0].RegistrationTime);
+            Assert.Null(people[0].HasOnlineBallot);
+
+            var locations = await db.Locations.Where(l => l.ElectionGuid == electionGuid).ToListAsync();
+            Assert.Single(locations);
+            Assert.Equal(locationGuid, locations[0].LocationGuid);
+            Assert.Equal("Main Hall", locations[0].Name);
+            Assert.Null(locations[0].LocationTallyStatus);
+            Assert.Null(locations[0].BallotsCollected);
+
+            Assert.Equal(0, await db.Ballots.CountAsync(b => b.LocationGuid == locationGuid));
+            Assert.Equal(0, await db.Results.CountAsync(r => r.ElectionGuid == electionGuid));
+        }
     }
 
     [Fact]

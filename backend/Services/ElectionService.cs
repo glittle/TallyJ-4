@@ -293,6 +293,104 @@ public class ElectionService : IElectionService
     }
 
     /// <summary>
+    /// Resets runtime data on a ShowAsTest election so it can be practiced again.
+    /// Same wipe list as what DuplicateElectionAsync does not copy. Refuses when
+    /// ShowAsTest is false or null. People, locations, settings, ShowAsTest, and
+    /// ownership stay. Stage returns to SettingUp. Online window is closed the
+    /// same way as a new test copy (UseOnlineVoting false and dates cleared).
+    /// </summary>
+    public async Task<ResetElectionResult> ResetElectionAsync(Guid electionGuid)
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return ResetElectionResult.Forbidden();
+        }
+
+        var election = await _context.Elections
+            .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
+
+        if (election == null)
+        {
+            return ResetElectionResult.NotFound();
+        }
+
+        var canReset = await _context.JoinElectionUsers
+            .AnyAsync(j =>
+                j.ElectionGuid == electionGuid
+                && j.UserId == userId
+                && (j.Role == "Owner" || j.Role == "Admin"));
+
+        if (!canReset)
+        {
+            return ResetElectionResult.Forbidden();
+        }
+
+        if (election.ShowAsTest != true)
+        {
+            return ResetElectionResult.NotTest();
+        }
+
+        var guestAccessWasOpen = ElectionTellerAccessHelper.IsGuestTellerAccessOpen(election.ListedForPublicAsOf);
+        var previousOnlineWhenOpen = election.OnlineWhenOpen;
+        var previousOnlineWhenClose = election.OnlineWhenClose;
+        var previousOnlineCloseIsEstimate = election.OnlineCloseIsEstimate;
+        var previousOnlineSelectionProcess = election.OnlineSelectionProcess;
+
+        await RemoveRuntimeRowsAsync(electionGuid);
+        ClearPersonRuntimeFields(electionGuid);
+        ClearLocationRuntimeFields(electionGuid);
+
+        election.LastEnvNum = null;
+        election.ListedForPublicAsOf = null;
+        // GetAvailableElectionsAsync treats UseOnlineVoting + a null window as open.
+        election.OnlineWhenOpen = null;
+        election.OnlineWhenClose = null;
+        election.UseOnlineVoting = false;
+        election.ElectionStage = ElectionStage.SettingUp;
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Reset test election {ElectionGuid}", electionGuid);
+
+        await _signalRNotificationService.SendElectionUpdateAsync(new ElectionUpdateDto
+        {
+            ElectionGuid = election.ElectionGuid,
+            Name = election.Name,
+            ElectionStage = election.ElectionStage,
+            UpdatedAt = DateTimeOffset.UtcNow
+        });
+
+        var onlineSettingsChanged =
+            previousOnlineWhenOpen != election.OnlineWhenOpen
+            || previousOnlineWhenClose != election.OnlineWhenClose
+            || previousOnlineCloseIsEstimate != election.OnlineCloseIsEstimate
+            || !string.Equals(previousOnlineSelectionProcess, election.OnlineSelectionProcess, StringComparison.Ordinal);
+
+        if (onlineSettingsChanged)
+        {
+            await _signalRNotificationService.SendOnlineElectionUpdateAsync(new OnlineElectionUpdateDto
+            {
+                ElectionGuid = election.ElectionGuid,
+                OnlineWhenOpen = election.OnlineWhenOpen,
+                OnlineWhenClose = election.OnlineWhenClose,
+                OnlineCloseIsEstimate = election.OnlineCloseIsEstimate,
+                OnlineSelectionProcess = election.OnlineSelectionProcess
+            });
+        }
+
+        if (guestAccessWasOpen)
+        {
+            await _signalRNotificationService.SendPublicElectionListUpdateAsync(electionGuid, false);
+            await _signalRNotificationService.CloseOutGuestTellersAsync(electionGuid);
+        }
+
+        await _signalRNotificationService.RequestFrontDeskReloadAsync(electionGuid);
+
+        var dtoResult = await GetElectionByGuidAsync(electionGuid) ?? MapToElectionDto(election);
+        return ResetElectionResult.Success(dtoResult);
+    }
+
+    /// <summary>
     /// Updates an existing election with new information.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election to update.</param>
@@ -711,6 +809,75 @@ public class ElectionService : IElectionService
             SortOrder = source.SortOrder,
             LocationTypeCode = source.LocationTypeCode
         };
+    }
+
+    /// <summary>
+    /// Deletes the same runtime rows DuplicateElectionAsync does not copy:
+    /// votes, ballots, results, result summaries, result ties, computers,
+    /// tellers, online votes, and SMS logs.
+    /// </summary>
+    private async Task RemoveRuntimeRowsAsync(Guid electionGuid)
+    {
+        var locationGuids = await _context.Locations
+            .Where(l => l.ElectionGuid == electionGuid)
+            .Select(l => l.LocationGuid)
+            .ToListAsync();
+
+        var ballotGuids = await _context.Ballots
+            .Where(b => locationGuids.Contains(b.LocationGuid))
+            .Select(b => b.BallotGuid)
+            .ToListAsync();
+
+        _context.Votes.RemoveRange(
+            await _context.Votes.Where(v => ballotGuids.Contains(v.BallotGuid)).ToListAsync());
+        _context.Ballots.RemoveRange(
+            await _context.Ballots.Where(b => locationGuids.Contains(b.LocationGuid)).ToListAsync());
+        _context.Results.RemoveRange(
+            await _context.Results.Where(r => r.ElectionGuid == electionGuid).ToListAsync());
+        _context.ResultSummaries.RemoveRange(
+            await _context.ResultSummaries.Where(r => r.ElectionGuid == electionGuid).ToListAsync());
+        _context.ResultTies.RemoveRange(
+            await _context.ResultTies.Where(r => r.ElectionGuid == electionGuid).ToListAsync());
+        _context.Computers.RemoveRange(
+            await _context.Computers.Where(c => c.ElectionGuid == electionGuid).ToListAsync());
+        _context.Tellers.RemoveRange(
+            await _context.Tellers.Where(t => t.ElectionGuid == electionGuid).ToListAsync());
+        _context.OnlineVotingInfos.RemoveRange(
+            await _context.OnlineVotingInfos.Where(o => o.ElectionGuid == electionGuid).ToListAsync());
+        _context.SmsLogs.RemoveRange(
+            await _context.SmsLogs.Where(s => s.ElectionGuid == electionGuid).ToListAsync());
+    }
+
+    /// <summary>
+    /// Clears the same person runtime fields DuplicateElectionAsync does not copy.
+    /// </summary>
+    private void ClearPersonRuntimeFields(Guid electionGuid)
+    {
+        var people = _context.People.Where(p => p.ElectionGuid == electionGuid).ToList();
+        foreach (var person in people)
+        {
+            person.RegistrationTime = null;
+            person.VotingLocationGuid = null;
+            person.VotingMethod = null;
+            person.EnvNum = null;
+            person.Teller1 = null;
+            person.Teller2 = null;
+            person.HasOnlineBallot = null;
+            person.RegistrationHistory = null;
+        }
+    }
+
+    /// <summary>
+    /// Clears location tally status and ballots-collected (not copied by duplicate).
+    /// </summary>
+    private void ClearLocationRuntimeFields(Guid electionGuid)
+    {
+        var locations = _context.Locations.Where(l => l.ElectionGuid == electionGuid).ToList();
+        foreach (var location in locations)
+        {
+            location.LocationTallyStatus = null;
+            location.BallotsCollected = null;
+        }
     }
 
     /// <summary>

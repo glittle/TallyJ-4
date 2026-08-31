@@ -176,6 +176,36 @@ public class ElectionsController : ControllerBase
     }
 
     /// <summary>
+    /// Resets runtime data on a ShowAsTest election. Refuses live elections.
+    /// </summary>
+    /// <param name="guid">The GUID of the election to reset.</param>
+    /// <returns>The election after reset, or not found / forbidden / bad request.</returns>
+    [HttpPost("{guid}/resetElection")]
+    [Authorize(Policy = "FullTellerAccess")]
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> ResetElection(Guid guid)
+    {
+        var result = await _electionService.ResetElectionAsync(guid);
+
+        if (result.IsNotFound)
+        {
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
+        }
+
+        if (result.IsForbidden)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                ApiResponse<ElectionDto>.ErrorResponse("Not authorized to reset this election"));
+        }
+
+        if (result.IsNotTest)
+        {
+            return BadRequest(ApiResponse<ElectionDto>.ErrorResponse("Only test elections can be reset"));
+        }
+
+        return Ok(ApiResponse<ElectionDto>.SuccessResponse(result.Election!, "Election reset successfully"));
+    }
+
+    /// <summary>
     /// Updates an existing election.
     /// </summary>
     /// <param name="guid">The GUID of the election to update.</param>
