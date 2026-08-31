@@ -875,6 +875,184 @@ public class ElectionServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task ResetElectionAsync_ShowAsTestTrue_ClearsRuntimeAndKeepsPeopleLocationsSettings()
+    {
+        var source = await SeedElectionForResetAsync(showAsTest: true);
+        var now = DateTimeOffset.UtcNow;
+        var original = Context.Elections.Single(e => e.ElectionGuid == source.ElectionGuid);
+        Assert.True(IsAvailableToOnlineVoters(original, now));
+
+        var result = await _service.ResetElectionAsync(source.ElectionGuid);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsNotTest);
+        Assert.NotNull(result.Election);
+        Assert.Equal(source.ElectionGuid, result.Election.ElectionGuid);
+        Assert.Equal("Practice Election", result.Election.Name);
+        Assert.True(result.Election.ShowAsTest);
+        Assert.Equal(ElectionStage.SettingUp, result.Election.ElectionStage);
+        Assert.Equal(9, result.Election.NumberToElect);
+        Assert.Equal(2, result.Election.NumberExtra);
+        Assert.Equal(ElectionTypeCode.LSA, result.Election.ElectionType);
+        Assert.Equal("PDM", result.Election.VotingMethods);
+        Assert.False(result.Election.UseOnlineVoting);
+        Assert.Null(result.Election.OnlineWhenOpen);
+        Assert.Null(result.Election.OnlineWhenClose);
+        Assert.Equal("A", result.Election.OnlineSelectionProcess);
+
+        var inDb = Context.Elections.Single(e => e.ElectionGuid == source.ElectionGuid);
+        Assert.True(inDb.ShowAsTest);
+        Assert.Equal(ElectionStage.SettingUp, inDb.ElectionStage);
+        Assert.Null(inDb.LastEnvNum);
+        Assert.Null(inDb.ListedForPublicAsOf);
+        Assert.Equal("original-owner", inDb.OwnerLoginId);
+        Assert.False(inDb.UseOnlineVoting);
+        Assert.False(IsAvailableToOnlineVoters(inDb, now));
+
+        var people = Context.People.Where(p => p.ElectionGuid == source.ElectionGuid).ToList();
+        Assert.Equal(2, people.Count);
+        Assert.Contains(people, p => p.PersonGuid == source.PeopleGuids[0] && p.FirstName == "Ada" && p.Phone == "+15551212" && p.CanVote == true);
+        Assert.Contains(people, p => p.PersonGuid == source.PeopleGuids[1] && p.FirstName == "Grace" && p.IneligibleReasonCode == "X01");
+        Assert.All(people, p =>
+        {
+            Assert.Null(p.RegistrationTime);
+            Assert.Null(p.VotingLocationGuid);
+            Assert.Null(p.VotingMethod);
+            Assert.Null(p.EnvNum);
+            Assert.Null(p.Teller1);
+            Assert.Null(p.Teller2);
+            Assert.Null(p.HasOnlineBallot);
+            Assert.Null(p.RegistrationHistory);
+        });
+
+        var locations = Context.Locations.Where(l => l.ElectionGuid == source.ElectionGuid).ToList();
+        Assert.Single(locations);
+        Assert.Equal(source.LocationGuid, locations[0].LocationGuid);
+        Assert.Equal("Main Hall", locations[0].Name);
+        Assert.Null(locations[0].LocationTallyStatus);
+        Assert.Null(locations[0].BallotsCollected);
+
+        var join = Context.JoinElectionUsers.Single(j => j.ElectionGuid == source.ElectionGuid);
+        Assert.Equal(_testUserId, join.UserId);
+        Assert.Equal("Admin", join.Role);
+
+        Assert.Equal(0, Context.Votes.Count(v => v.BallotGuid == source.BallotGuid));
+        Assert.Equal(0, Context.Ballots.Count(b => b.LocationGuid == source.LocationGuid));
+        Assert.Equal(0, Context.Results.Count(r => r.ElectionGuid == source.ElectionGuid));
+        Assert.Equal(0, Context.ResultSummaries.Count(r => r.ElectionGuid == source.ElectionGuid));
+        Assert.Equal(0, Context.ResultTies.Count(r => r.ElectionGuid == source.ElectionGuid));
+        Assert.Equal(0, Context.Computers.Count(c => c.ElectionGuid == source.ElectionGuid));
+        Assert.Equal(0, Context.Tellers.Count(t => t.ElectionGuid == source.ElectionGuid));
+        Assert.Equal(0, Context.OnlineVotingInfos.Count(o => o.ElectionGuid == source.ElectionGuid));
+        Assert.Equal(0, Context.SmsLogs.Count(s => s.ElectionGuid == source.ElectionGuid));
+
+        _signalRMock.Verify(
+            s => s.SendElectionUpdateAsync(It.Is<Backend.DTOs.SignalR.ElectionUpdateDto>(
+                u => u.ElectionGuid == source.ElectionGuid && u.ElectionStage == ElectionStage.SettingUp)),
+            Times.Once);
+        _signalRMock.Verify(
+            s => s.RequestFrontDeskReloadAsync(source.ElectionGuid),
+            Times.Once);
+        _signalRMock.Verify(
+            s => s.SendOnlineElectionUpdateAsync(It.Is<Backend.DTOs.SignalR.OnlineElectionUpdateDto>(
+                u => u.ElectionGuid == source.ElectionGuid)),
+            Times.Once);
+        _signalRMock.Verify(
+            s => s.CloseOutGuestTellersAsync(source.ElectionGuid),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task ResetElectionAsync_UseOnlineVotingTrueWithNullWindow_NotifiesOnlineClients()
+    {
+        var source = await SeedElectionForResetAsync(showAsTest: true);
+        var election = Context.Elections.Single(e => e.ElectionGuid == source.ElectionGuid);
+        election.UseOnlineVoting = true;
+        election.OnlineWhenOpen = null;
+        election.OnlineWhenClose = null;
+        await Context.SaveChangesAsync();
+        var now = DateTimeOffset.UtcNow;
+        Assert.True(IsAvailableToOnlineVoters(election, now));
+
+        var result = await _service.ResetElectionAsync(source.ElectionGuid);
+
+        Assert.True(result.IsSuccess);
+        var inDb = Context.Elections.Single(e => e.ElectionGuid == source.ElectionGuid);
+        Assert.False(inDb.UseOnlineVoting);
+        Assert.False(IsAvailableToOnlineVoters(inDb, now));
+        _signalRMock.Verify(
+            s => s.SendOnlineElectionUpdateAsync(It.Is<Backend.DTOs.SignalR.OnlineElectionUpdateDto>(
+                u => u.ElectionGuid == source.ElectionGuid)),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task ResetElectionAsync_ShowAsTestFalse_IsNotTestAndLeavesData()
+    {
+        var source = await SeedElectionForResetAsync(showAsTest: false);
+
+        var result = await _service.ResetElectionAsync(source.ElectionGuid);
+
+        Assert.True(result.IsNotTest);
+        Assert.False(result.IsSuccess);
+        AssertRuntimeRowsUnchanged(source);
+    }
+
+    [Fact]
+    public async Task ResetElectionAsync_ShowAsTestNull_IsNotTestAndLeavesData()
+    {
+        var source = await SeedElectionForResetAsync(showAsTest: null);
+
+        var result = await _service.ResetElectionAsync(source.ElectionGuid);
+
+        Assert.True(result.IsNotTest);
+        Assert.False(result.IsSuccess);
+        AssertRuntimeRowsUnchanged(source);
+    }
+
+    [Fact]
+    public async Task ResetElectionAsync_UnauthorizedUser_IsForbidden()
+    {
+        var source = await SeedElectionForResetAsync(showAsTest: true);
+        SetCurrentUser(Guid.NewGuid());
+
+        var result = await _service.ResetElectionAsync(source.ElectionGuid);
+
+        Assert.True(result.IsForbidden);
+        Assert.False(result.IsSuccess);
+        AssertRuntimeRowsUnchanged(source);
+    }
+
+    [Fact]
+    public async Task ResetElectionAsync_TellerRole_IsForbidden()
+    {
+        var source = await SeedElectionForResetAsync(showAsTest: true);
+        var tellerId = Guid.NewGuid();
+        Context.JoinElectionUsers.Add(new JoinElectionUser
+        {
+            ElectionGuid = source.ElectionGuid,
+            UserId = tellerId,
+            Role = "Teller"
+        });
+        await Context.SaveChangesAsync();
+        SetCurrentUser(tellerId);
+
+        var result = await _service.ResetElectionAsync(source.ElectionGuid);
+
+        Assert.True(result.IsForbidden);
+        AssertRuntimeRowsUnchanged(source);
+    }
+
+    [Fact]
+    public async Task ResetElectionAsync_MissingElection_IsNotFound()
+    {
+        var result = await _service.ResetElectionAsync(Guid.NewGuid());
+
+        Assert.True(result.IsNotFound);
+        Assert.False(result.IsSuccess);
+    }
+
+    [Fact]
     public void ResolveDuplicateName_TruncatesDefaultTo150()
     {
         var longName = new string('A', 150);
@@ -894,6 +1072,51 @@ public class ElectionServiceTests : ServiceTestBase
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var httpContext = new DefaultHttpContext { User = new ClaimsPrincipal(identity) };
         _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+    }
+
+    private void AssertRuntimeRowsUnchanged(SeededResetElection source)
+    {
+        var original = Context.Elections.Single(e => e.ElectionGuid == source.ElectionGuid);
+        Assert.Equal(ElectionStage.ProcessingBallots, original.ElectionStage);
+        Assert.Equal(42, original.LastEnvNum);
+        Assert.Equal(1, Context.Ballots.Count(b => b.LocationGuid == source.LocationGuid));
+        Assert.Equal(1, Context.Votes.Count(v => v.BallotGuid == source.BallotGuid));
+        Assert.Equal(1, Context.Results.Count(r => r.ElectionGuid == source.ElectionGuid));
+        var person = Context.People.Single(p => p.PersonGuid == source.PeopleGuids[0]);
+        Assert.NotNull(person.RegistrationTime);
+        Assert.True(person.HasOnlineBallot);
+    }
+
+    private async Task<SeededResetElection> SeedElectionForResetAsync(bool? showAsTest)
+    {
+        var source = await SeedSourceElectionForDuplicateAsync();
+        var election = Context.Elections.Single(e => e.ElectionGuid == source.ElectionGuid);
+        election.ShowAsTest = showAsTest;
+        election.Name = "Practice Election";
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = source.BallotGuid,
+            PositionOnBallot = 1,
+            PersonGuid = source.PeopleGuids[0],
+            VoteStatus = VoteStatus.Ok,
+            RowVersion = new byte[8]
+        });
+        Context.ResultTies.Add(new ResultTie
+        {
+            ElectionGuid = source.ElectionGuid,
+            TieBreakGroup = 1,
+            NumToElect = 1,
+            NumInTie = 2
+        });
+        var person = Context.People.Single(p => p.PersonGuid == source.PeopleGuids[0]);
+        person.Teller2 = "Sam";
+        await Context.SaveChangesAsync();
+
+        return new SeededResetElection(
+            source.ElectionGuid,
+            source.LocationGuid,
+            source.BallotGuid,
+            source.PeopleGuids);
     }
 
     private async Task<SeededSourceElection> SeedSourceElectionForDuplicateAsync()
@@ -974,9 +1197,10 @@ public class ElectionServiceTests : ServiceTestBase
                 IneligibleReasonCode = "X01",
                 RowVersion = new byte[8]
             });
+        var ballotGuid = Guid.NewGuid();
         Context.Ballots.Add(new Ballot
         {
-            BallotGuid = Guid.NewGuid(),
+            BallotGuid = ballotGuid,
             LocationGuid = locationGuid,
             StatusCode = BallotStatus.Ok,
             ComputerCode = "A1",
@@ -1027,10 +1251,12 @@ public class ElectionServiceTests : ServiceTestBase
         });
         await Context.SaveChangesAsync();
 
-        return new SeededSourceElection(electionGuid, locationGuid, [personGuid, otherPersonGuid]);
+        return new SeededSourceElection(electionGuid, locationGuid, ballotGuid, [personGuid, otherPersonGuid]);
     }
 
-    private sealed record SeededSourceElection(Guid ElectionGuid, Guid LocationGuid, Guid[] PeopleGuids);
+    private sealed record SeededSourceElection(Guid ElectionGuid, Guid LocationGuid, Guid BallotGuid, Guid[] PeopleGuids);
+
+    private sealed record SeededResetElection(Guid ElectionGuid, Guid LocationGuid, Guid BallotGuid, Guid[] PeopleGuids);
 
     /// <summary>
     /// Same open predicate as <c>OnlineVotingService.GetAvailableElectionsAsync</c>

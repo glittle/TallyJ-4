@@ -15,6 +15,7 @@ vi.mock("../services/electionService", () => ({
     getStats: vi.fn(),
     create: vi.fn(),
     duplicate: vi.fn(),
+    reset: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
     changeStage: vi.fn(),
@@ -244,6 +245,34 @@ describe("Election Store", () => {
       expect(electionStore.elections).toHaveLength(1);
       expect(electionStore.elections[0]).toEqual(copy);
       expect(result).toEqual(copy);
+    });
+  });
+
+  describe("resetElection", () => {
+    it("should reset the current election and update the list", async () => {
+      const { electionService } = await import("../services/electionService");
+      const existing = {
+        electionGuid: "test-id",
+        name: "Practice",
+        electionStage: "ProcessingBallots",
+        showAsTest: true,
+        ballotCount: 4,
+      } as ElectionDto;
+      const reset: ElectionDto = {
+        ...existing,
+        electionStage: "SettingUp",
+      };
+
+      electionStore.elections = [existing];
+      electionStore.currentElection = existing;
+      electionService.reset.mockResolvedValue(reset);
+
+      const result = await electionStore.resetElection("test-id");
+
+      expect(electionService.reset).toHaveBeenCalledWith("test-id");
+      expect(electionStore.elections[0]).toEqual(reset);
+      expect(electionStore.currentElection).toEqual(reset);
+      expect(result).toEqual(reset);
     });
   });
 

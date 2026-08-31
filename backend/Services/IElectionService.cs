@@ -58,6 +58,15 @@ public interface IElectionService
     Task<DuplicateElectionResult> DuplicateElectionAsync(Guid sourceElectionGuid, DuplicateElectionDto dto);
 
     /// <summary>
+    /// Resets runtime data on a ShowAsTest election so it can be practiced again.
+    /// Refuses when ShowAsTest is false or null. Does not delete people, locations,
+    /// settings, ShowAsTest, or ownership.
+    /// </summary>
+    /// <param name="electionGuid">The election to reset.</param>
+    /// <returns>The updated election, or not-found / forbidden / not-test.</returns>
+    Task<ResetElectionResult> ResetElectionAsync(Guid electionGuid);
+
+    /// <summary>
     /// Updates an existing election with the provided data.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election to update.</param>

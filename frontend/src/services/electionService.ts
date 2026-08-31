@@ -18,6 +18,7 @@ import {
   getApiElectionsGetElections,
   getApiImportExportElectionToJsonByElectionGuid,
   postApiElectionsByGuidDuplicateElection,
+  postApiElectionsByGuidResetElection,
   postApiElectionsCreateElection,
   postApiImportImportCdnBallotsByElectionGuid,
   postApiImportImportElectionFromJson,
@@ -140,6 +141,17 @@ export const electionService = {
     const data = response.data?.data;
     if (!data) {
       throw new Error(response.data?.message || "Failed to duplicate election");
+    }
+    return mapElectionDto(data);
+  },
+
+  async reset(electionGuid: string): Promise<ElectionDto> {
+    const response = await postApiElectionsByGuidResetElection({
+      path: { guid: electionGuid },
+    });
+    const data = response.data?.data;
+    if (!data) {
+      throw new Error(response.data?.message || "Failed to reset election");
     }
     return mapElectionDto(data);
   },

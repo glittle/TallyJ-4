@@ -5,7 +5,7 @@ import SetupTipsCard from "@/components/dashboard/SetupTipsCard.vue";
 import { useNotifications } from "@/composables/useNotifications";
 import { isGuestTeller } from "@/domain/guestTellerAccess";
 import { formatNumber } from "@/utils/formatNumber";
-import { Delete, Download } from "@element-plus/icons-vue";
+import { Delete, Download, RefreshLeft } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -13,6 +13,7 @@ import { useRoute, useRouter } from "vue-router";
 import { electionService } from "../../services/electionService";
 import { useElectionStatsStore } from "../../stores/electionStatsStore";
 import { useElectionStore } from "../../stores/electionStore";
+import { extractApiErrorMessage } from "../../utils/errorHandler";
 
 const router = useRouter();
 const route = useRoute();
@@ -31,6 +32,9 @@ const electionStats = computed(() =>
 );
 
 const isGuest = computed(() => isGuestTeller());
+const canResetTestElection = computed(
+  () => !isGuest.value && election.value?.showAsTest === true,
+);
 const loadFailed = ref(false);
 
 onMounted(async () => {
@@ -45,6 +49,32 @@ onMounted(async () => {
     showErrorMessage(t("elections.loadError"));
   }
 });
+
+async function confirmReset() {
+  try {
+    await ElMessageBox.confirm(
+      t("elections.reset.confirmMessage"),
+      t("elections.reset.title"),
+      {
+        confirmButtonText: t("elections.reset.confirm"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+        confirmButtonClass: "el-button--danger",
+      },
+    );
+
+    await electionStore.resetElection(electionGuid);
+    await electionStatsStore.fetchStats(electionGuid, { force: true });
+    showSuccessMessage(t("elections.reset.success"));
+  } catch (error: unknown) {
+    if (error === "cancel" || error === "close") {
+      return;
+    }
+    showErrorMessage(
+      extractApiErrorMessage(error) || t("elections.reset.error"),
+    );
+  }
+}
 
 async function confirmDelete() {
   try {
@@ -197,17 +227,31 @@ async function exportElection() {
           <template #header>
             <span style="color: #f56c6c">{{ $t("common.dangerZone") }}</span>
           </template>
-          <el-button
-            type="danger"
-            plain
-            style="width: 100%"
-            @click="confirmDelete"
-          >
-            <el-icon>
-              <Delete />
-            </el-icon>
-            {{ $t("common.delete") }}
-          </el-button>
+          <div class="danger-zone-actions">
+            <el-button
+              v-if="canResetTestElection"
+              type="warning"
+              plain
+              data-testid="reset-test-election"
+              @click="confirmReset"
+            >
+              <el-icon>
+                <RefreshLeft />
+              </el-icon>
+              {{ $t("elections.reset.action") }}
+            </el-button>
+            <el-button
+              type="danger"
+              plain
+              data-testid="delete-election"
+              @click="confirmDelete"
+            >
+              <el-icon>
+                <Delete />
+              </el-icon>
+              {{ $t("common.delete") }}
+            </el-button>
+          </div>
         </el-card>
       </el-row>
     </div>
@@ -269,6 +313,22 @@ async function exportElection() {
     .el-card__body {
       display: flex;
       gap: 3em;
+    }
+  }
+
+  // Equal-width stack. Element Plus centers icon+label, so the longer Reset
+  // label starts further left than Delete. Start both from the same inset.
+  // Also cancel `.el-button + .el-button { margin-left }` so Delete is not shifted.
+  .danger-zone-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    .el-button {
+      width: 100%;
+      margin-left: 0;
+      justify-content: flex-start;
     }
   }
 

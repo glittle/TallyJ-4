@@ -97,7 +97,7 @@ Online voters use two authenticated hubs (policy `OnlineVoter` — JWT claims `v
 
 **Producers** (via `ISignalRNotificationService` only — hubs are join/leave):
 
-- Online window/process change (`ElectionService` → `SendOnlineElectionUpdateAsync`) → FrontDesk **and** AllVoters.
+- Online window/process change (`ElectionService` → `SendOnlineElectionUpdateAsync`) → FrontDesk **and** AllVoters. `ResetElectionAsync` also notifies when `UseOnlineVoting` flips (a null window plus that flag is already open).
 - Front desk check-in / unregister / envelope (`FrontDeskService`) → personal `updateVoter` with `updateRegistration` to email, phone, and kiosk groups when present.
 - Successful online voter auth (`OnlineVotingService`) → personal `updateVoter` with `login: true` (other browsers for that id).
 
@@ -144,7 +144,7 @@ Group: `FrontDesk{electionGuid}`.
 | `PersonVoteCountUpdated` | `PersonVoteCountUpdateDto` | `SendPersonVoteCountUpdateAsync` | `peopleStore` ballot cache |
 | `updateBallots` | `BallotUpdateDto` | `SendBallotUpdateAsync` | `ballotStore` |
 | `reloadPage` | (none) | `RequestFrontDeskReloadAsync` ← CSV / CDN ballot import success; people import success; delete-all-people | Front Desk page, `peopleStore`, `ballotStore` (soft re-fetch, not `location.reload`) |
-| `updateOnlineElection` | `OnlineElectionUpdateDto` | `SendOnlineElectionUpdateAsync` ← `ElectionService.UpdateElectionAsync` when online fields change | `electionStore` (patch online fields); Monitoring dashboard re-fetches monitor info |
+| `updateOnlineElection` | `OnlineElectionUpdateDto` | `SendOnlineElectionUpdateAsync` ← `ElectionService.UpdateElectionAsync` / `ResetElectionAsync` when online window, process, or `UseOnlineVoting` changes | `electionStore` (patch online fields); Monitoring dashboard re-fetches monitor info |
 
 **Person list contract:** v4 uses fine-grained `PersonAdded` / `PersonUpdated` / `PersonDeleted`, not v3’s single `updatePeople` stream. Handlers refetch the affected person (or drop the row on delete) rather than applying a partial patch from the thin DTO.
 
