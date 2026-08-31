@@ -119,4 +119,18 @@ describe("ElectionDetailPage reset control", () => {
       false,
     );
   });
+
+  it("stacks reset and delete in the same danger-zone actions", async () => {
+    isGuestTellerMock.mockReturnValue(false);
+    const wrapper = await mountDetail({
+      currentElection: testElection({ showAsTest: true }),
+    });
+
+    const actions = wrapper.find(".danger-zone-actions");
+    expect(actions.exists()).toBe(true);
+    expect(actions.find("[data-testid='reset-test-election']").exists()).toBe(
+      true,
+    );
+    expect(actions.find("[data-testid='delete-election']").exists()).toBe(true);
+  });
 });

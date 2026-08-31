@@ -233,7 +233,6 @@ async function exportElection() {
               type="warning"
               plain
               data-testid="reset-test-election"
-              style="width: 100%"
               @click="confirmReset"
             >
               <el-icon>
@@ -244,7 +243,7 @@ async function exportElection() {
             <el-button
               type="danger"
               plain
-              style="width: 100%"
+              data-testid="delete-election"
               @click="confirmDelete"
             >
               <el-icon>
@@ -317,17 +316,19 @@ async function exportElection() {
     }
   }
 
-  // Stack Danger Zone actions so both 100%-wide buttons share a left edge.
-  // Element Plus `.el-button + .el-button { margin-left: 12px }` would otherwise
-  // shift Delete while the buttons stay the same width.
+  // Equal-width stack. Element Plus centers icon+label, so the longer Reset
+  // label starts further left than Delete. Start both from the same inset.
+  // Also cancel `.el-button + .el-button { margin-left }` so Delete is not shifted.
   .danger-zone-actions {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
 
-    .el-button + .el-button {
+    .el-button {
+      width: 100%;
       margin-left: 0;
+      justify-content: flex-start;
     }
   }
 
