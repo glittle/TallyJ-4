@@ -156,8 +156,9 @@ describe("BallotManagementPage", () => {
           },
           ElTableColumn: true,
           ElButton: {
+            props: ["disabled", "loading", "title"],
             template:
-              '<button class="el-button" @click="$emit(\'click\')"><slot></slot></button>',
+              '<button class="el-button" :disabled="disabled" :title="title" @click="!disabled && $emit(\'click\')"><slot></slot></button>',
           },
           ElTag: {
             template: '<span class="el-tag"><slot></slot></span>',
@@ -335,30 +336,24 @@ describe("BallotManagementPage", () => {
     vi.useRealTimers();
   });
 
-  it("does not start a ballot when the selected location is Online and flashes the location select", async () => {
-    vi.useFakeTimers();
+  it("disables Add Ballot when the selected location is Online", async () => {
     locationStore.selectedLocationGuid = "loc-online";
     const wrapper = mountPage();
     await flushPromises();
 
-    await clickAddBallot(wrapper);
-
-    expect(ballotStore.createBallot).not.toHaveBeenCalled();
-    expect(mockShowErrorMessage).toHaveBeenCalledWith(
+    const addButton = wrapper
+      .findAll(".el-button")
+      .find((button) => button.text().includes("Add Ballot"));
+    expect(addButton).toBeDefined();
+    expect(addButton!.attributes("disabled")).toBeDefined();
+    expect(addButton!.attributes("title")).toBe(
       "Cannot start a ballot at the Online location",
     );
-    expect(wrapper.find(".location-select").classes()).toContain(
-      "required-field-flash",
-    );
 
-    vi.advanceTimersByTime(REQUIRED_FIELD_FLASH_MS);
+    await addButton!.trigger("click");
     await flushPromises();
-    expect(wrapper.find(".location-select").classes()).not.toContain(
-      "required-field-flash",
-    );
-
-    wrapper.unmount();
-    vi.useRealTimers();
+    expect(ballotStore.createBallot).not.toHaveBeenCalled();
+    expect(mockShowErrorMessage).not.toHaveBeenCalled();
   });
 
   it("does not start a ballot when the main teller is unset and flashes the teller select", async () => {

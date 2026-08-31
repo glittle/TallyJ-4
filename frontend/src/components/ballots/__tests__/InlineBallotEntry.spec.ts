@@ -339,7 +339,7 @@ describe("InlineBallotEntry", () => {
     expect(wrapper.emitted("ballot-start-blocked")?.[0]).toEqual(["location"]);
   });
 
-  it("does not start another ballot when the selected location is Online", async () => {
+  it("disables Start another ballot when the selected location is Online", async () => {
     mockLocationStore.selectedLocationGuid = "location-online";
 
     const wrapper = mount(InlineBallotEntry, {
@@ -356,16 +356,15 @@ describe("InlineBallotEntry", () => {
     const addBallotButton = wrapper
       .findAllComponents(ElButton)
       .find((button) => button.text().includes("Start another ballot"));
-    await addBallotButton!.trigger("click");
-    await flushPromises();
-
-    expect(mockCreateBallot).not.toHaveBeenCalled();
-    expect(mockShowErrorMessage).toHaveBeenCalledWith(
+    expect(addBallotButton).toBeDefined();
+    expect(addBallotButton!.props("disabled")).toBe(true);
+    expect(addBallotButton!.attributes("title")).toBe(
       "Cannot start a ballot at the Online location",
     );
-    expect(wrapper.emitted("ballot-start-blocked")?.[0]).toEqual([
-      "onlineLocation",
-    ]);
+
+    await addBallotButton!.trigger("click");
+    await flushPromises();
+    expect(mockCreateBallot).not.toHaveBeenCalled();
   });
 
   it("does not start another ballot when the main teller is unset", async () => {

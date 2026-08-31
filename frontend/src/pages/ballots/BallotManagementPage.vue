@@ -15,6 +15,7 @@ import {
 import {
   BALLOT_START_BLOCK_MESSAGE_KEY,
   getBallotStartBlockReason,
+  isOnlineLocationType,
   locationTypeForGuid,
   type BallotStartBlockReason,
 } from "@/utils/ballotStartRequirements";
@@ -68,6 +69,17 @@ const { flashing: tellerFlashing, flash: flashTeller } =
 
 const hasKeyboardTeller = computed(() =>
   Boolean(activeTellers.value.teller1.trim()),
+);
+
+const selectedLocationType = computed(() =>
+  locationTypeForGuid(
+    locationStore.locations,
+    locationStore.selectedLocationGuid,
+  ),
+);
+
+const isOnlineLocationSelected = computed(() =>
+  isOnlineLocationType(selectedLocationType.value),
 );
 
 const showLocationColumn = computed(() => locationStore.locations.length > 1);
@@ -286,10 +298,7 @@ async function handleAddBallot() {
   const reason = getBallotStartBlockReason({
     computerCode: computerCode.value,
     locationGuid: locationStore.selectedLocationGuid,
-    locationType: locationTypeForGuid(
-      locationStore.locations,
-      locationStore.selectedLocationGuid,
-    ),
+    locationType: selectedLocationType.value,
     teller1: activeTellers.value.teller1,
   });
   if (reason) {
@@ -355,6 +364,12 @@ function handleLocationChange(locationGuid: string | null) {
             <el-button
               type="primary"
               :loading="creatingBallot"
+              :disabled="isOnlineLocationSelected"
+              :title="
+                isOnlineLocationSelected
+                  ? $t('ballots.onlineLocationNotAllowed')
+                  : undefined
+              "
               @click="handleAddBallot"
             >
               <el-icon>
