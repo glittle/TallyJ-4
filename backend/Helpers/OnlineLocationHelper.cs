@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Helpers;
 
 /// <summary>
-/// Ensures the reserved Online location exists only while online voting is enabled.
+/// Ensures the reserved Online location exists when online voting is enabled.
+/// Disable keeps the row when it still has ballots or computers; unused rows are removed.
 /// Identity is LocationTypeCode, not the display name.
 /// </summary>
 public static class OnlineLocationHelper
@@ -38,7 +39,7 @@ public static class OnlineLocationHelper
         return location;
     }
 
-    public static async Task RemoveIfNoBallotsAsync(
+    public static async Task RemoveIfUnusedAsync(
         MainDbContext context,
         Guid electionGuid,
         CancellationToken cancellationToken = default)
@@ -81,7 +82,7 @@ public static class OnlineLocationHelper
             return;
         }
 
-        await RemoveIfNoBallotsAsync(context, electionGuid, cancellationToken);
+        await RemoveIfUnusedAsync(context, electionGuid, cancellationToken);
     }
 
     private static Task<Location?> FindOnlineLocationAsync(

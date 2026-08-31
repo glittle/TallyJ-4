@@ -33,17 +33,17 @@ public class OnlineLocationHelperTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task RemoveIfNoBallotsAsync_DeletesWhenEmpty()
+    public async Task RemoveIfUnusedAsync_DeletesWhenEmpty()
     {
         await OnlineLocationHelper.EnsureExistsAsync(Context, ElectionGuid);
 
-        await OnlineLocationHelper.RemoveIfNoBallotsAsync(Context, ElectionGuid);
+        await OnlineLocationHelper.RemoveIfUnusedAsync(Context, ElectionGuid);
 
         Assert.Empty(Context.Locations.Where(l => l.ElectionGuid == ElectionGuid));
     }
 
     [Fact]
-    public async Task RemoveIfNoBallotsAsync_KeepsLocationWhenItHasBallots()
+    public async Task RemoveIfUnusedAsync_KeepsLocationWhenItHasBallots()
     {
         var location = await OnlineLocationHelper.EnsureExistsAsync(Context, ElectionGuid);
         Context.Ballots.Add(new Ballot
@@ -57,9 +57,29 @@ public class OnlineLocationHelperTests : ServiceTestBase
         });
         await Context.SaveChangesAsync();
 
-        await OnlineLocationHelper.RemoveIfNoBallotsAsync(Context, ElectionGuid);
+        await OnlineLocationHelper.RemoveIfUnusedAsync(Context, ElectionGuid);
 
         Assert.Single(Context.Locations.Where(l => l.ElectionGuid == ElectionGuid));
+    }
+
+    [Fact]
+    public async Task RemoveIfUnusedAsync_KeepsLocationWhenItHasComputers()
+    {
+        var location = await OnlineLocationHelper.EnsureExistsAsync(Context, ElectionGuid);
+        Context.Computers.Add(new Computer
+        {
+            ElectionGuid = ElectionGuid,
+            LocationGuid = location.LocationGuid,
+            ComputerGuid = Guid.NewGuid(),
+            ComputerCode = "A1"
+        });
+        await Context.SaveChangesAsync();
+
+        await OnlineLocationHelper.RemoveIfUnusedAsync(Context, ElectionGuid);
+        await OnlineLocationHelper.SyncAsync(Context, ElectionGuid, useOnlineVoting: false);
+
+        Assert.Single(Context.Locations.Where(l => l.ElectionGuid == ElectionGuid));
+        Assert.Empty(Context.Ballots.Where(b => b.LocationGuid == location.LocationGuid));
     }
 
     [Fact]
