@@ -156,6 +156,13 @@ public interface ISignalRNotificationService
     /// </summary>
     /// <param name="electionGuid">The election whose open sessions should refresh.</param>
     Task RequestFrontDeskReloadAsync(Guid electionGuid);
+
+    /// <summary>
+    /// Sends a teller name-list change to all teller computers on MainHub
+    /// (event <c>tellersChanged</c>, base group <c>Main{electionGuid}</c>).
+    /// </summary>
+    /// <param name="update">The teller add/update/delete payload.</param>
+    Task SendTellerUpdateAsync(TellerUpdateDto update);
 }
 
 

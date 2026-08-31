@@ -107,7 +107,7 @@ There are 9 hubs under `backend/Hubs/`. **Do not assume a single `election-{guid
 
 Group name patterns (constructed via `GetGroupName` statics in each hub + used for broadcasts in `SignalRNotificationService.cs`):
 
-- `Main{electionGuid}` — MainHub (election updates, statusChanged, electionClosed). Also creates `Main{ guid }Known` / `Main{ guid }Guest` variants.
+- `Main{electionGuid}` — MainHub (election updates, statusChanged, electionClosed, tellersChanged). Also creates `Main{ guid }Known` / `Main{ guid }Guest` variants.
 - `Analyze{electionGuid}` — AnalyzeHub (tallyProgress / tallyComplete).
 - `FrontDesk{electionGuid}` — FrontDeskHub (PersonAdded/Updated/Deleted, PersonCheckedIn, PersonFlagsUpdated, VoterCountUpdated, PersonVoteCountUpdated, updateBallots, reloadPage, updateOnlineElection). See `context/realtime.md`.
 - `BallotImport{electionGuid}` — BallotImportHub (importProgress, importError, importComplete; camelCase; via SignalRNotificationService).

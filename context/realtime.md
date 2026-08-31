@@ -11,7 +11,7 @@ Do **not** assume a single `election-{guid}` convention for all realtime traffic
 
 | Pattern                                                     | Hub / use                                               |
 | ----------------------------------------------------------- | ------------------------------------------------------- |
-| `Main{electionGuid}` (+ `…Known` / `…Guest`)                | MainHub — shared status on **base**; role events on suffix |
+| `Main{electionGuid}` (+ `…Known` / `…Guest`)                | MainHub — shared status + teller name list on **base**; role events on suffix |
 | `Analyze{electionGuid}`                                     | AnalyzeHub — tally progress/complete                    |
 | `FrontDesk{electionGuid}`                                   | FrontDeskHub — people, ballots, online election, reload |
 | `BallotImport{electionGuid}` / `PeopleImport{electionGuid}` | import hubs (election-scoped)                           |
@@ -33,6 +33,23 @@ Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElect
 - Shared election status (name, stage) is broadcast as **`statusChanged`** to the **base** group only — one payload, no double delivery.
 - Role-specific events use suffix groups (guest **`electionClosed`** → `Main{guid}Guest` only).
 - Server producers use `IHubContext<MainHub>` via `SignalRNotificationService` (and computer-assignment close-out), not client-callable hub methods.
+
+## Election teller name list (MainHub `tellersChanged`)
+
+**Status:** active  
+**Evidence:** confirmed (issue #287)  
+**Source:** issue #287 (teller-name list slice); Teller 1/2 already persist via `Teller` + Tellers page  
+**Revisit when:** teller names need FrontDesk-only fan-out, or the list grows large enough that a thin refetch is required
+
+Entering a name in Teller 1 or Teller 2 creates (or no-ops) a row on the existing election `Teller` table. Clearing the dropdown only clears this browser session’s selection (`useActiveTellers` / localStorage). It does **not** delete the election name. Admin delete stays on the existing Tellers page (`TellersListPage` + `TellerForm`).
+
+Live distribution uses MainHub **base** group `Main{electionGuid}` and camelCase **`tellersChanged`** (`TellerUpdateDto`: `electionGuid`, `rowId`, `name`, `action` = added / updated / deleted). `tellerStore` patches the in-memory list (idempotent, alphabetical). Both Teller 1/2 dropdowns read that same list.
+
+**Rejected alternative:** FrontDeskHub (PersonAdded-style events). Rejected — Tellers page and other teller computers already have session-wide MainHub membership; FrontDesk is page-owned and is left on ballots/people unmount. A FrontDesk-only event would miss the admin Tellers page unless that page also joined FrontDesk.
+
+**Rejected alternative:** a second “active teller names” table or admin screen. Rejected — the election already has `Teller` + the Tellers page for add/rename/delete.
+
+**Reason:** every teller computer that has joined the election is already in `Main{guid}`; one event keeps listing, open-ballot, front desk, and the Tellers page in sync without a new hub or page.
 
 **Rejected alternative:** leave server event as `ElectionUpdated` while FE listens for `statusChanged` (broken live updates). **Rejected alternative:** keep unused hub methods `StatusChanged` / `ElectionClosed` / `CloseOutGuestTellers` as the documented push path — they were never called by services and were client-invokable.
 

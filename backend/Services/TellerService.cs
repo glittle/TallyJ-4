@@ -1,5 +1,6 @@
 using Backend.Context;
 using Backend.Entities;
+using Backend.DTOs.SignalR;
 using Backend.DTOs.Tellers;
 using Backend.Helpers;
 using Backend.Models;
@@ -14,14 +15,19 @@ public class TellerService : ITellerService
 {
     private readonly MainDbContext _context;
     private readonly ILogger<TellerService> _logger;
+    private readonly ISignalRNotificationService _signalRNotificationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TellerService"/> class.
     /// </summary>
-    public TellerService(MainDbContext context, ILogger<TellerService> logger)
+    public TellerService(
+        MainDbContext context,
+        ILogger<TellerService> logger,
+        ISignalRNotificationService signalRNotificationService)
     {
         _context = context;
         _logger = logger;
+        _signalRNotificationService = signalRNotificationService;
     }
 
     /// <inheritdoc />
@@ -93,6 +99,8 @@ public class TellerService : ITellerService
 
         _logger.LogInformation("Successfully created teller {RowId}: {TellerName}", teller.RowId, teller.Name);
 
+        await NotifyTellerChangedAsync(tellerDto, "added");
+
         return tellerDto;
     }
 
@@ -123,6 +131,8 @@ public class TellerService : ITellerService
 
         _logger.LogInformation("Successfully updated teller {RowId}: {TellerName}", teller.RowId, teller.Name);
 
+        await NotifyTellerChangedAsync(tellerDto, "updated");
+
         return tellerDto;
     }
 
@@ -141,10 +151,20 @@ public class TellerService : ITellerService
             return false;
         }
 
+        var electionGuid = teller.ElectionGuid;
+        var name = teller.Name;
+
         _context.Tellers.Remove(teller);
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("Successfully deleted teller {RowId}: {TellerName}", rowId, teller.Name);
+        _logger.LogInformation("Successfully deleted teller {RowId}: {TellerName}", rowId, name);
+
+        await NotifyTellerChangedAsync(new TellerDto
+        {
+            RowId = rowId,
+            ElectionGuid = electionGuid,
+            Name = name
+        }, "deleted");
 
         return true;
     }
@@ -161,5 +181,16 @@ public class TellerService : ITellerService
         }
 
         return !await query.AnyAsync();
+    }
+
+    private async Task NotifyTellerChangedAsync(TellerDto teller, string action)
+    {
+        await _signalRNotificationService.SendTellerUpdateAsync(new TellerUpdateDto
+        {
+            ElectionGuid = teller.ElectionGuid,
+            RowId = teller.RowId,
+            Name = teller.Name,
+            Action = action
+        });
     }
 }

@@ -68,6 +68,12 @@ async function ensureTellerListed(name: string) {
     });
   } catch {
     // Duplicate or validation errors are acceptable when racing other clients.
+    // Refresh so a name created on another computer still appears locally.
+    try {
+      await loadTellers();
+    } catch {
+      // Keep the typed session value even if the list cannot refresh.
+    }
   }
 }
 
