@@ -227,30 +227,32 @@ async function exportElection() {
           <template #header>
             <span style="color: #f56c6c">{{ $t("common.dangerZone") }}</span>
           </template>
-          <el-button
-            v-if="canResetTestElection"
-            type="warning"
-            plain
-            data-testid="reset-test-election"
-            style="width: 100%; margin-bottom: 12px"
-            @click="confirmReset"
-          >
-            <el-icon>
-              <RefreshLeft />
-            </el-icon>
-            {{ $t("elections.reset.action") }}
-          </el-button>
-          <el-button
-            type="danger"
-            plain
-            style="width: 100%"
-            @click="confirmDelete"
-          >
-            <el-icon>
-              <Delete />
-            </el-icon>
-            {{ $t("common.delete") }}
-          </el-button>
+          <div class="danger-zone-actions">
+            <el-button
+              v-if="canResetTestElection"
+              type="warning"
+              plain
+              data-testid="reset-test-election"
+              style="width: 100%"
+              @click="confirmReset"
+            >
+              <el-icon>
+                <RefreshLeft />
+              </el-icon>
+              {{ $t("elections.reset.action") }}
+            </el-button>
+            <el-button
+              type="danger"
+              plain
+              style="width: 100%"
+              @click="confirmDelete"
+            >
+              <el-icon>
+                <Delete />
+              </el-icon>
+              {{ $t("common.delete") }}
+            </el-button>
+          </div>
         </el-card>
       </el-row>
     </div>
@@ -312,6 +314,20 @@ async function exportElection() {
     .el-card__body {
       display: flex;
       gap: 3em;
+    }
+  }
+
+  // Stack Danger Zone actions so both 100%-wide buttons share a left edge.
+  // Element Plus `.el-button + .el-button { margin-left: 12px }` would otherwise
+  // shift Delete while the buttons stay the same width.
+  .danger-zone-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    .el-button + .el-button {
+      margin-left: 0;
     }
   }
 
