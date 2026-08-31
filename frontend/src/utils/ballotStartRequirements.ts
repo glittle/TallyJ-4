@@ -17,7 +17,8 @@ export const BALLOT_START_BLOCK_MESSAGE_KEY: Record<
 /**
  * A new paper/teller ballot must not start without a computer code, a
  * non-Online location, and main teller (teller 1). Teller 2 is optional.
- * The Online location is reserved for voter-initiated ballots.
+ * The reserved location is identified by LocationType, not by its display name
+ * (names are translated; "Online" is not a stable key).
  */
 export function getBallotStartBlockReason(input: {
   computerCode?: string | null;
@@ -40,6 +41,7 @@ export function getBallotStartBlockReason(input: {
   return null;
 }
 
+/** True when LocationType is Online (API enum), not when the location is named "Online". */
 export function isOnlineLocationType(
   locationType?: string | null,
 ): boolean {
