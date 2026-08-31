@@ -198,6 +198,7 @@
   "elections.tabs.tellers": "Tellers",
   "elections.tabs.votingMethods": "Voting Methods",
   "elections.guestTellerAccess": "Guest tellers",
+  "elections.testElectionBanner": "Test Election",
   "elections.tellerAccess": "Teller Access",
   "elections.tellerAccessCode": "Access Code",
   "elections.tellerAccessQrCode": "QR Code of Shareable URL",
