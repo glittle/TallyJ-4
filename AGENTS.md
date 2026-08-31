@@ -184,6 +184,8 @@ Other languages are updated separately in periodic review cycles — do not add 
 
 **Never edit files in `src/locales/bundled/`** — these are auto-generated during build by `npm run merge-locales` and will be overwritten. Always edit the source files in individual locale directories (e.g., `src/locales/en/auth.json`).
 
+Architecture of the shared Vue + ASP.NET Core JSON catalog is explained in [`docs/SHARED_I18N.md`](docs/SHARED_I18N.md).
+
 ## Local development assumptions
 
 - backend default dev URL: `http://localhost:5016`
