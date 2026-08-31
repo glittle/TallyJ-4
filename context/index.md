@@ -13,4 +13,4 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [people.md](people.md) — person fields; AgeGroup removed (eligibility is V01/X05)
 - [people-import.md](people-import.md) — three-action import pipeline (not a Next/Previous wizard)
 - [sms-eligibility.md](sms-eligibility.md) — reject reserved/fictional/malformed phones before paid SMS/voice/WhatsApp; OnlineVoter.SmsStatus; ensure phone row on Person write; person detail phone status; Twilio callback auto-learn
-- [test-elections.md](test-elections.md) — duplicate as test copy (`ShowAsTest`); people/locations/settings only; banner/reset later
+- [test-elections.md](test-elections.md) — duplicate as test copy (`ShowAsTest`); people/locations/settings only; teller test banner; reset later

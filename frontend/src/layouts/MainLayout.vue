@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import AppHeader from "../components/AppHeader.vue";
 import AppSidebar from "../components/AppSidebar.vue";
+import TestElectionBanner from "../components/common/TestElectionBanner.vue";
 import { useElectionStore } from "../stores/electionStore";
 import { useNavUiStore } from "../stores/navUiStore";
 
@@ -122,7 +123,7 @@ function dockSidebar() {
         @dock-sidebar="dockSidebar"
       />
     </el-aside>
-    <el-container>
+    <el-container direction="vertical">
       <el-header height="60px" role="banner">
         <AppHeader
           :show-menu-button="sidebarOverlayMode"
@@ -130,6 +131,9 @@ function dockSidebar() {
           @toggle-mobile-menu="toggleMobileSidebar"
         />
       </el-header>
+      <!-- Below the fixed-height header (60px / Front Desk 48px) so the
+           strip is not clipped. Hidden unless the route election is a test. -->
+      <TestElectionBanner />
       <el-main id="main-content" role="main" tabindex="-1">
         <router-view />
       </el-main>
