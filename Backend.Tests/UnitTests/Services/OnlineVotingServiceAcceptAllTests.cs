@@ -324,6 +324,54 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task GetAvailableElections_SetsCanChangeVoteFromCannotChangeRules()
+    {
+        var pendingElection = await SeedOpenElectionAsync();
+        pendingElection.Name = "Pending election";
+        var processingElection = await SeedOpenElectionAsync();
+        processingElection.Name = "Processing election";
+        var processedElection = await SeedOpenElectionAsync();
+        processedElection.Name = "Processed election";
+        var legacyElection = await SeedOpenElectionAsync();
+        legacyElection.Name = "Legacy election";
+        await Context.SaveChangesAsync();
+
+        var email = "same-voter@example.com";
+        var pending = await SeedVoterAsync(pendingElection.ElectionGuid, email);
+        var processing = await SeedVoterAsync(processingElection.ElectionGuid, email);
+        var processed = await SeedVoterAsync(processedElection.ElectionGuid, email);
+        var legacy = await SeedVoterAsync(legacyElection.ElectionGuid, email);
+
+        await SubmitPendingAsync(pendingElection.ElectionGuid, email, pending.Person.PersonGuid);
+        await SubmitPendingAsync(processingElection.ElectionGuid, email, processing.Person.PersonGuid);
+        Context.OnlineVotingInfos.Single(o => o.ElectionGuid == processingElection.ElectionGuid)
+            .Status = OnlineBallotStatus.Processing;
+        await SubmitPendingAsync(processedElection.ElectionGuid, email, processed.Person.PersonGuid);
+        await _service.AcceptAllPendingAsync(processedElection.ElectionGuid);
+        await SeedLegacySubmittedWithBallotAsync(legacyElection, legacy.Person);
+        await Context.SaveChangesAsync();
+
+        var elections = await _service.GetAvailableElectionsAsync(email);
+        Assert.Equal(4, elections.Count);
+
+        var pendingDto = elections.Single(e => e.ElectionGuid == pendingElection.ElectionGuid);
+        Assert.Equal(OnlineBallotStatus.Submitted, pendingDto.BallotStatus);
+        Assert.True(pendingDto.CanChangeVote);
+
+        var processingDto = elections.Single(e => e.ElectionGuid == processingElection.ElectionGuid);
+        Assert.Equal(OnlineBallotStatus.Processing, processingDto.BallotStatus);
+        Assert.False(processingDto.CanChangeVote);
+
+        var processedDto = elections.Single(e => e.ElectionGuid == processedElection.ElectionGuid);
+        Assert.Equal(OnlineBallotStatus.Processed, processedDto.BallotStatus);
+        Assert.False(processedDto.CanChangeVote);
+
+        var legacyDto = elections.Single(e => e.ElectionGuid == legacyElection.ElectionGuid);
+        Assert.Equal(OnlineBallotStatus.Submitted, legacyDto.BallotStatus);
+        Assert.False(legacyDto.CanChangeVote);
+    }
+
+    [Fact]
     public async Task GetAcceptAllSummary_CountsProcessingAsPending()
     {
         var election = await SeedOpenElectionAsync();

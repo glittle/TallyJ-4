@@ -912,6 +912,7 @@ export type OnlineVotingAvailableElectionDto = {
     voterName?: string | null;
     ballotStatus?: string | null;
     whenBallotStatus?: Date | null;
+    canChangeVote?: boolean;
 };
 
 export type OnlineVotingFacebookAuthForVoterDto = {

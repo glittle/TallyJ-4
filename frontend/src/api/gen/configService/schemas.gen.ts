@@ -2964,6 +2964,9 @@ export const OnlineVoting_AvailableElectionDtoSchema = {
             type: 'string',
             format: 'date-time',
             nullable: true
+        },
+        canChangeVote: {
+            type: 'boolean'
         }
     },
     additionalProperties: false

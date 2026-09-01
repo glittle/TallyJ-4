@@ -106,7 +106,8 @@ public partial class OnlineVotingService
                     HasVoted = x.Person.HasOnlineBallot == true,
                     VoterName = x.Person.FullName,
                     BallotStatus = votingInfo?.Status,
-                    WhenBallotStatus = votingInfo?.WhenStatus
+                    WhenBallotStatus = votingInfo?.WhenStatus,
+                    CanChangeVote = votingInfo == null || !CannotChangeOnlineVote(votingInfo)
                 };
             })
             .OrderBy(e => !e.IsOpen)

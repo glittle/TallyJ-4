@@ -36,8 +36,11 @@ public class OnlineVoteStatusDto
     public bool NotifyWhenProcessed { get; set; }
 
     /// <summary>
-    /// False once tellers have accepted this online ballot into a regular ballot.
-    /// The voter may still change a pending (Submitted) vote while the window is open.
+    /// False when Accept-all has claimed the row (Processing), finished it
+    /// (Processed), or a legacy submit-creates-ballot row still has BallotGuid.
+    /// True when there is no online row yet, or the row is still Submitted
+    /// without BallotGuid. Same rules as
+    /// <c>OnlineVotingService.CannotChangeOnlineVote</c>.
     /// </summary>
     public bool CanChangeVote { get; set; }
 }
