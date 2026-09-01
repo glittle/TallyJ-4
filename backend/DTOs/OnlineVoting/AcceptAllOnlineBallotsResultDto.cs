@@ -19,7 +19,7 @@ public class AcceptAllOnlineBallotsResultDto
     public int AcceptedCount { get; set; }
 
     /// <summary>
-    /// Pending rows skipped because they were no longer Submitted when claimed,
+    /// Pending rows skipped because the Status compare-and-swap matched 0 rows,
     /// or had no vote payload to turn into a ballot.
     /// </summary>
     public int SkippedCount { get; set; }

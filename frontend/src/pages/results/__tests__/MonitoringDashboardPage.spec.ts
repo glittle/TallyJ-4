@@ -177,4 +177,63 @@ describe("MonitoringDashboardPage Accept all", () => {
 
     expect(mockAcceptAll).not.toHaveBeenCalled();
   });
+
+  it("surfaces 409 inProgress from the hey-api throwOnError body", async () => {
+    mockGetSummary.mockResolvedValue({ pendingCount: 3, processedCount: 1 });
+    mockConfirm.mockResolvedValue("confirm");
+    mockAcceptAll.mockRejectedValue({
+      messageKey: "monitoring.acceptAll.inProgress",
+      alreadyInProgress: true,
+    });
+
+    const wrapper = await mountPage();
+    await wrapper
+      .find("[data-testid='accept-all-online-ballots']")
+      .trigger("click");
+    await flushPromises();
+
+    expect(mockShowError).toHaveBeenCalledWith(
+      "Another Accept all is already running for this election.",
+    );
+    expect(mockShowSuccess).not.toHaveBeenCalled();
+  });
+
+  it("surfaces 400 finalized from the hey-api throwOnError body", async () => {
+    mockGetSummary.mockResolvedValue({ pendingCount: 3, processedCount: 1 });
+    mockConfirm.mockResolvedValue("confirm");
+    mockAcceptAll.mockRejectedValue({
+      messageKey: "monitoring.acceptAll.finalized",
+    });
+
+    const wrapper = await mountPage();
+    await wrapper
+      .find("[data-testid='accept-all-online-ballots']")
+      .trigger("click");
+    await flushPromises();
+
+    expect(mockShowError).toHaveBeenCalledWith(
+      "Cannot accept online ballots after the election is finalized.",
+    );
+    expect(mockShowSuccess).not.toHaveBeenCalled();
+  });
+
+  it("still reads messageKey from axios-shaped response.data when present", async () => {
+    mockGetSummary.mockResolvedValue({ pendingCount: 3, processedCount: 1 });
+    mockConfirm.mockResolvedValue("confirm");
+    mockAcceptAll.mockRejectedValue({
+      response: {
+        data: { messageKey: "monitoring.acceptAll.inProgress" },
+      },
+    });
+
+    const wrapper = await mountPage();
+    await wrapper
+      .find("[data-testid='accept-all-online-ballots']")
+      .trigger("click");
+    await flushPromises();
+
+    expect(mockShowError).toHaveBeenCalledWith(
+      "Another Accept all is already running for this election.",
+    );
+  });
 });

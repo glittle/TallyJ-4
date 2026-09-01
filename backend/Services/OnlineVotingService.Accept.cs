@@ -114,21 +114,21 @@ public partial class OnlineVotingService
     }
 
     /// <summary>
-    /// Claims one Submitted row and either creates a regular ballot from the pending
-    /// payload or, for a legacy row that already has a ballot, marks it processed
-    /// without creating a second ballot. Returns false if the row was no longer
-    /// Submitted or had nothing to accept.
+    /// Claims one Submitted row with a compare-and-swap
+    /// (<c>UPDATE … SET Status = Processed WHERE Status = Submitted</c>) and either
+    /// creates a regular ballot from the pending payload or, for a legacy row that
+    /// already has a ballot, wipes the online payload without creating a second
+    /// ballot. Returns false if the UPDATE matched 0 rows or the row had nothing
+    /// to accept. There is no stored Processing status; claim and ballot create
+    /// share this transaction so a rollback restores Submitted.
     /// </summary>
     private async Task<bool> AcceptOnePendingAsync(Guid electionGuid, int rowId)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
         var now = DateTimeOffset.UtcNow;
 
-        var votingInfo = await _context.OnlineVotingInfos
-            .FirstOrDefaultAsync(o => o.RowId == rowId && o.ElectionGuid == electionGuid);
-
-        if (votingInfo == null
-            || !string.Equals(votingInfo.Status, OnlineBallotStatus.Submitted, StringComparison.OrdinalIgnoreCase))
+        var votingInfo = await TryClaimSubmittedRowAsync(electionGuid, rowId);
+        if (votingInfo == null)
         {
             await transaction.RollbackAsync();
             return false;
@@ -169,6 +169,54 @@ public partial class OnlineVotingService
         await _context.SaveChangesAsync();
         await transaction.CommitAsync();
         return true;
+    }
+
+    /// <summary>
+    /// Atomically claims a Submitted row by setting Status to Processed only when
+    /// it is still Submitted. 0 rows updated means another Accept-all (or this
+    /// host after a retry) already claimed it. In-memory tests have no SQL UPDATE,
+    /// so they assign Status on the tracked entity instead.
+    /// </summary>
+    private async Task<OnlineVotingInfo?> TryClaimSubmittedRowAsync(Guid electionGuid, int rowId)
+    {
+        if (_context.Database.IsRelational())
+        {
+            var claimed = await _context.OnlineVotingInfos
+                .Where(o => o.RowId == rowId
+                            && o.ElectionGuid == electionGuid
+                            && o.Status == OnlineBallotStatus.Submitted)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(o => o.Status, OnlineBallotStatus.Processed));
+            if (claimed == 0)
+            {
+                return null;
+            }
+        }
+
+        var votingInfo = await _context.OnlineVotingInfos
+            .FirstOrDefaultAsync(o => o.RowId == rowId && o.ElectionGuid == electionGuid);
+        if (votingInfo == null)
+        {
+            return null;
+        }
+
+        if (!_context.Database.IsRelational())
+        {
+            if (!string.Equals(votingInfo.Status, OnlineBallotStatus.Submitted, StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            votingInfo.Status = OnlineBallotStatus.Processed;
+            return votingInfo;
+        }
+
+        if (!string.Equals(votingInfo.Status, OnlineBallotStatus.Processed, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        return votingInfo;
     }
 
     private async Task<Ballot?> CreateRegularBallotFromPendingVotesAsync(

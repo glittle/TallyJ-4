@@ -240,6 +240,48 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
     {
         var election = await SeedOpenElectionAsync();
         var (person, _) = await SeedVoterAsync(election.ElectionGuid);
+        await SeedLegacySubmittedWithBallotAsync(election, person);
+
+        var result = await _service.AcceptAllPendingAsync(election.ElectionGuid);
+        Assert.True(result.Success);
+        Assert.Equal(1, result.AcceptedCount);
+        Assert.Equal(1, Context.Ballots.Count());
+        var ovi = Context.OnlineVotingInfos.Single();
+        Assert.Equal(OnlineBallotStatus.Processed, ovi.Status);
+        Assert.Null(ovi.BallotGuid);
+        Assert.Null(ovi.ListPool);
+    }
+
+    [Fact]
+    public async Task Submit_LegacySubmittedWithBallot_IsRejected_AndAcceptAllDoesNotCreateSecondBallot()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+        var ballotGuid = await SeedLegacySubmittedWithBallotAsync(election, person);
+
+        var status = await _service.GetVoteStatusAsync(election.ElectionGuid, email);
+        Assert.False(status.CanChangeVote);
+        Assert.Equal("voting.status.alreadyProcessed", status.Message);
+
+        var submit = await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid);
+        Assert.False(submit.Success);
+        Assert.Equal("voting.submit.alreadyProcessed", submit.Error);
+        Assert.Equal(1, Context.Ballots.Count());
+        Assert.Equal(ballotGuid, Context.OnlineVotingInfos.Single().BallotGuid);
+        Assert.Equal(OnlineBallotStatus.Submitted, Context.OnlineVotingInfos.Single().Status);
+
+        var result = await _service.AcceptAllPendingAsync(election.ElectionGuid);
+        Assert.True(result.Success);
+        Assert.Equal(1, result.AcceptedCount);
+        Assert.Equal(1, Context.Ballots.Count());
+        var ovi = Context.OnlineVotingInfos.Single();
+        Assert.Equal(OnlineBallotStatus.Processed, ovi.Status);
+        Assert.Null(ovi.BallotGuid);
+        Assert.Null(ovi.ListPool);
+    }
+
+    private async Task<Guid> SeedLegacySubmittedWithBallotAsync(Election election, Person person)
+    {
         var location = new Location
         {
             LocationGuid = Guid.NewGuid(),
@@ -270,15 +312,7 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
             WhenBallotCreated = DateTimeOffset.UtcNow
         });
         await Context.SaveChangesAsync();
-
-        var result = await _service.AcceptAllPendingAsync(election.ElectionGuid);
-        Assert.True(result.Success);
-        Assert.Equal(1, result.AcceptedCount);
-        Assert.Equal(1, Context.Ballots.Count());
-        var ovi = Context.OnlineVotingInfos.Single();
-        Assert.Equal(OnlineBallotStatus.Processed, ovi.Status);
-        Assert.Null(ovi.BallotGuid);
-        Assert.Null(ovi.ListPool);
+        return ballotGuid;
     }
 
     private async Task<Election> SeedOpenElectionAsync()

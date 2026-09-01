@@ -1,13 +1,15 @@
 namespace Backend.Helpers;
 
 /// <summary>
-/// Process-wide election-scoped lock so two Accept-all runs cannot create ballots
-/// for the same pending online votes at the same time.
+/// Process-wide election-scoped lock. A second Accept-all on the same host is
+/// refused (HTTP 409) while one is running. This does not make duplicates
+/// impossible across hosts or against Submit; that is the DB compare-and-swap
+/// on <c>OnlineVotingInfo.Status</c>.
 /// </summary>
 public interface IOnlineBallotAcceptLock
 {
     /// <summary>
-    /// Tries to enter the lock for this election. False if another Accept-all is already running.
+    /// Tries to enter the lock for this election. False if another Accept-all is already running on this process.
     /// </summary>
     bool TryEnter(Guid electionGuid);
 

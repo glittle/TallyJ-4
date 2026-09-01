@@ -410,9 +410,11 @@ async function confirmAcceptAll() {
     if (error === "cancel" || error === "close") {
       return;
     }
-    const data = (error as { response?: { data?: { messageKey?: string } } })
-      .response?.data;
-    const key = data?.messageKey;
+    const fromBody = error as {
+      messageKey?: string;
+      response?: { data?: { messageKey?: string } };
+    };
+    const key = fromBody.messageKey ?? fromBody.response?.data?.messageKey;
     showErrorMessage(
       key ? t(key) : extractApiErrorMessage(error) || t("common.error"),
     );

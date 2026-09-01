@@ -21,11 +21,17 @@ Accept-all creates a regular ballot at the Online location (computer code `OL`) 
 
 v3 required the window to be closed before processing. That was rejected here so tellers can accept current pending ballots up to the last moment without shutting voters out.
 
-A second overlapping Accept-all for the same election is refused (process-wide election-scoped lock). Each pending row is also claimed only while `Status == Submitted`, so a retry after a successful run does not create another ballot. In v3, a second call that started while the first was still creating ballots produced duplicates; the lock plus the status check is what makes that impossible.
+A second overlapping Accept-all for the same election on one host is refused (process-wide election-scoped lock, HTTP 409). That lock does not cover a second process or a voter Submit that loaded `Submitted` before Accept committed.
 
-Rows that already have a `BallotGuid` from the older submit-creates-ballot path are marked `Processed` and unlinked without creating a second ballot.
+Each pending row is claimed with a compare-and-swap (`UPDATE … SET Status = Processed WHERE Status = Submitted`) in the same transaction that creates the regular ballot (or unlinks a legacy row). 0 rows updated means another worker already claimed it, so a row can only become one regular ballot. There is no stored `Processing` status; stored values in this flow are `Submitted` and `Processed`. Submit updates with the same `WHERE Status = Submitted AND BallotGuid IS NULL`, and rejects the write when `BallotGuid` is already set, so it cannot revive a processed row or mint a second ballot from a legacy submitted row.
+
+In v3, a second call that started while the first was still creating ballots produced duplicates. The in-process lock serializes Accept-all on one host; the DB compare-and-swap is what makes duplicates impossible across instances and vs Submit.
+
+Rows that already have a `BallotGuid` from the older submit-creates-ballot path are marked `Processed` and unlinked without creating a second ballot. The voter cannot resubmit those rows (`BallotGuid` is not nulled).
 
 **Rejected alternative:** keep creating the regular ballot on voter submit, and treat Accept-all as only a status flip. That would not match “create a new regular ballot and wipe the online content,” and a concurrent accept that also created ballots is the failure mode from #188.
+
+**Rejected alternative:** treat the in-process lock plus a Status re-read as enough to prevent duplicates. Two Azure instances can both read `Submitted` under READ COMMITTED, and a Submit that loaded `Submitted` can overwrite `Processed` if it UPDATEs by primary key only.
 
 **Rejected alternative:** require the online window to be closed before Accept-all (v3). Tellers need to accept what is in hand without closing voting.
 

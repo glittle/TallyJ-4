@@ -35,7 +35,7 @@ public partial class OnlineVotingService : IOnlineVotingService
     /// <param name="paidVerificationSender">Paid SMS / voice / WhatsApp delivery.</param>
     /// <param name="googleIdTokenValidator">The Google ID token validator.</param>
     /// <param name="signalRNotificationService">Realtime notifications for connected voter sessions.</param>
-    /// <param name="acceptLock">Election-scoped lock for Accept-all.</param>
+    /// <param name="acceptLock">Process-wide election-scoped lock for overlapping Accept-all (409).</param>
     public OnlineVotingService(
         MainDbContext context,
         IConfiguration configuration,

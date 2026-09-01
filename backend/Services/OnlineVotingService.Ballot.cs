@@ -60,8 +60,7 @@ public partial class OnlineVotingService
                     .FirstOrDefaultAsync();
             }
 
-            if (existingVotingInfo != null
-                && string.Equals(existingVotingInfo.Status, OnlineBallotStatus.Processed, StringComparison.OrdinalIgnoreCase))
+            if (existingVotingInfo != null && AlreadyHasRegularBallot(existingVotingInfo))
             {
                 await transaction.RollbackAsync();
                 return (false, "voting.submit.alreadyProcessed");
@@ -71,12 +70,13 @@ public partial class OnlineVotingService
 
             if (existingVotingInfo != null)
             {
-                existingVotingInfo.WhenBallotCreated = now;
-                existingVotingInfo.WhenStatus = now;
-                existingVotingInfo.Status = OnlineBallotStatus.Submitted;
-                existingVotingInfo.ListPool = payloadJson;
-                existingVotingInfo.PoolLocked = true;
-                existingVotingInfo.BallotGuid = null;
+                var wrote = await TryWritePendingPayloadIfStillSubmittedAsync(
+                    existingVotingInfo, payloadJson, now);
+                if (!wrote)
+                {
+                    await transaction.RollbackAsync();
+                    return (false, "voting.submit.alreadyProcessed");
+                }
             }
             else
             {
@@ -136,6 +136,7 @@ public partial class OnlineVotingService
             .OrderByDescending(ov => ov.WhenBallotCreated)
             .FirstOrDefaultAsync();
 
+        var alreadyHasRegularBallot = votingInfo != null && AlreadyHasRegularBallot(votingInfo);
         var isProcessed = votingInfo != null
             && string.Equals(votingInfo.Status, OnlineBallotStatus.Processed, StringComparison.OrdinalIgnoreCase);
         var hasPending = votingInfo != null
@@ -186,7 +187,7 @@ public partial class OnlineVotingService
         {
             HasVoted = hasVoted,
             WhenSubmitted = votingInfo?.WhenBallotCreated,
-            Message = isProcessed
+            Message = alreadyHasRegularBallot
                 ? "voting.status.alreadyProcessed"
                 : hasVoted
                     ? "voting.status.alreadyVoted"
@@ -194,8 +195,59 @@ public partial class OnlineVotingService
             PriorVotes = priorVotes,
             ListPool = listPool,
             NotifyWhenProcessed = HasNotifyProcessedPreference(onlineVoter?.EmailCodes),
-            CanChangeVote = !isProcessed
+            CanChangeVote = !alreadyHasRegularBallot
         };
+    }
+
+    /// <summary>
+    /// True when this voter already has a regular ballot: Accept-all set Processed,
+    /// or a legacy submit-creates-ballot row still has BallotGuid. Either way the
+    /// voter cannot change the vote; do not null BallotGuid or revive the row.
+    /// </summary>
+    internal static bool AlreadyHasRegularBallot(OnlineVotingInfo votingInfo)
+    {
+        return votingInfo.BallotGuid != null
+               || string.Equals(votingInfo.Status, OnlineBallotStatus.Processed, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Writes a new pending payload only while the row is still Submitted and has
+    /// no BallotGuid. Relational providers use UPDATE … WHERE Status='Submitted'
+    /// so a concurrent Accept-all that already set Processed cannot be clobbered
+    /// by a Submit that loaded Submitted. Does not touch BallotGuid.
+    /// </summary>
+    internal async Task<bool> TryWritePendingPayloadIfStillSubmittedAsync(
+        OnlineVotingInfo existingVotingInfo,
+        string payloadJson,
+        DateTimeOffset now)
+    {
+        if (_context.Database.IsRelational())
+        {
+            var updated = await _context.OnlineVotingInfos
+                .Where(o => o.RowId == existingVotingInfo.RowId
+                            && o.Status == OnlineBallotStatus.Submitted
+                            && o.BallotGuid == null)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(o => o.WhenBallotCreated, now)
+                    .SetProperty(o => o.WhenStatus, now)
+                    .SetProperty(o => o.Status, OnlineBallotStatus.Submitted)
+                    .SetProperty(o => o.ListPool, payloadJson)
+                    .SetProperty(o => o.PoolLocked, true));
+            return updated == 1;
+        }
+
+        if (AlreadyHasRegularBallot(existingVotingInfo)
+            || !string.Equals(existingVotingInfo.Status, OnlineBallotStatus.Submitted, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        existingVotingInfo.WhenBallotCreated = now;
+        existingVotingInfo.WhenStatus = now;
+        existingVotingInfo.Status = OnlineBallotStatus.Submitted;
+        existingVotingInfo.ListPool = payloadJson;
+        existingVotingInfo.PoolLocked = true;
+        return true;
     }
 
     private async Task ApplyNotifyPreferenceAsync(OnlineVoter? onlineVoter, bool notifyWhenProcessed)
