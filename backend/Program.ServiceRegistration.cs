@@ -1,3 +1,4 @@
+using Backend.Helpers;
 using Backend.Middleware;
 using Backend.Services;
 using Backend.Services.Auth;
@@ -26,6 +27,7 @@ public static class ProgramServiceRegistration
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IFrontDeskService, FrontDeskService>();
         services.AddScoped<IOnlineVotingService, OnlineVotingService>();
+        services.AddSingleton<IOnlineBallotAcceptLock, OnlineBallotAcceptLock>();
         services.AddScoped<ISuperAdminService, SuperAdminService>();
         services.AddScoped<ImportService>();
         services.AddScoped<IPeopleImportService, PeopleImportService>();

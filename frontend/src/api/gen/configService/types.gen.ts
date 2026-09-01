@@ -884,6 +884,20 @@ export type LocationsUpdateLocationDto = {
     sortOrder?: number | null;
 };
 
+export type OnlineVotingAcceptAllOnlineBallotsResultDto = {
+    success?: boolean;
+    alreadyInProgress?: boolean;
+    acceptedCount?: number;
+    skippedCount?: number;
+    pendingRemaining?: number;
+    messageKey?: string | null;
+};
+
+export type OnlineVotingAcceptAllOnlineBallotsSummaryDto = {
+    pendingCount?: number;
+    processedCount?: number;
+};
+
 export type OnlineVotingAvailableElectionDto = {
     electionGuid?: string;
     name?: string | null;
@@ -952,6 +966,7 @@ export type OnlineVotingOnlineVoteStatusDto = {
     priorVotes?: Array<OnlineVotingOnlineVoteDto> | null;
     listPool?: Array<OnlineVotingOnlinePoolEntryDto> | null;
     notifyWhenProcessed?: boolean;
+    canChangeVote?: boolean;
 };
 
 export type OnlineVotingOnlineVoterAuthResponse = {
@@ -3123,6 +3138,42 @@ export type PutApiElectionsByGuidOnlineVotingWindowResponses = {
 };
 
 export type PutApiElectionsByGuidOnlineVotingWindowResponse = PutApiElectionsByGuidOnlineVotingWindowResponses[keyof PutApiElectionsByGuidOnlineVotingWindowResponses];
+
+export type GetApiElectionsByGuidOnlineBallotsAcceptAllSummaryData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/online-ballots/accept-all-summary';
+};
+
+export type GetApiElectionsByGuidOnlineBallotsAcceptAllSummaryResponses = {
+    /**
+     * OK
+     */
+    200: OnlineVotingAcceptAllOnlineBallotsSummaryDto;
+};
+
+export type GetApiElectionsByGuidOnlineBallotsAcceptAllSummaryResponse = GetApiElectionsByGuidOnlineBallotsAcceptAllSummaryResponses[keyof GetApiElectionsByGuidOnlineBallotsAcceptAllSummaryResponses];
+
+export type PostApiElectionsByGuidOnlineBallotsAcceptAllData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/online-ballots/accept-all';
+};
+
+export type PostApiElectionsByGuidOnlineBallotsAcceptAllResponses = {
+    /**
+     * OK
+     */
+    200: OnlineVotingAcceptAllOnlineBallotsResultDto;
+};
+
+export type PostApiElectionsByGuidOnlineBallotsAcceptAllResponse = PostApiElectionsByGuidOnlineBallotsAcceptAllResponses[keyof PostApiElectionsByGuidOnlineBallotsAcceptAllResponses];
 
 export type DeleteApiElectionsByGuidDeleteElectionData = {
     body?: never;

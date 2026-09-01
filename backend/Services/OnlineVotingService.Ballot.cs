@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Backend.Entities;
-using Backend.Enumerations;
 using Backend.DTOs.OnlineVoting;
 using Backend.Helpers;
 using Backend.Models;
@@ -11,6 +10,11 @@ namespace Backend.Services;
 
 public partial class OnlineVotingService
 {
+    private static readonly JsonSerializerOptions PendingPayloadJson = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     /// <inheritdoc/>
     public async Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto)
     {
@@ -47,116 +51,45 @@ public partial class OnlineVotingService
                 .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid &&
                                         (p.Email == dto.VoterId || p.Phone == dto.VoterId || p.KioskCode == dto.VoterId));
 
-            var isResubmit = person != null && person.HasOnlineBallot == true;
             OnlineVotingInfo? existingVotingInfo = null;
-
-            if (isResubmit && person != null)
+            if (person != null)
             {
                 existingVotingInfo = await _context.OnlineVotingInfos
                     .Where(ovi => ovi.ElectionGuid == dto.ElectionGuid && ovi.PersonGuid == person.PersonGuid)
-                    .OrderByDescending(ovi => ovi.WhenBallotCreated)
+                    .OrderByDescending(ovi => ovi.WhenStatus ?? ovi.WhenBallotCreated)
                     .FirstOrDefaultAsync();
-
-                if (existingVotingInfo?.BallotGuid != null)
-                {
-                    var oldBallot = await _context.Ballots
-                        .FirstOrDefaultAsync(b => b.BallotGuid == existingVotingInfo.BallotGuid);
-
-                    if (oldBallot != null)
-                    {
-                        oldBallot.StatusCode = BallotStatus.Review;
-                        oldBallot.DateUpdated = now;
-                        existingVotingInfo.HistoryStatus = AppendBallotHistory(
-                            existingVotingInfo.HistoryStatus,
-                            existingVotingInfo.BallotGuid.Value,
-                            existingVotingInfo.WhenBallotCreated);
-                    }
-                }
             }
 
-            var location = await OnlineLocationHelper.EnsureExistsAsync(_context, dto.ElectionGuid);
-
-            var nextBallotNum = await SpecialBallotNumbering.RepairOnlineAndGetNextAsync(
-                _context, location.LocationGuid);
-
-            var ballot = new Ballot
+            if (existingVotingInfo != null
+                && string.Equals(existingVotingInfo.Status, OnlineBallotStatus.Processed, StringComparison.OrdinalIgnoreCase))
             {
-                LocationGuid = location.LocationGuid,
-                BallotGuid = Guid.NewGuid(),
-                StatusCode = BallotStatus.Ok,
-                ComputerCode = ComputerCodeHelper.Online,
-                BallotNumAtComputer = nextBallotNum,
-                BallotCode = $"{ComputerCodeHelper.Online}{nextBallotNum}",
-                Teller1 = "Online",
-                DateCreated = now,
-                DateUpdated = now,
-                RowVersion = new byte[8]
-            };
-
-            _context.Ballots.Add(ballot);
-            await _context.SaveChangesAsync();
-
-            foreach (var voteDto in dto.Votes.OrderBy(v => v.PositionOnBallot))
-            {
-                var hasPerson = voteDto.PersonGuid.HasValue;
-                var hasFreeText = !string.IsNullOrWhiteSpace(voteDto.VoteName);
-                var rawVote = hasFreeText && !hasPerson
-                    ? OnlineRawVote.Parse(voteDto.VoteName)
-                    : null;
-                var vote = new Vote
-                {
-                    BallotGuid = ballot.BallotGuid,
-                    PositionOnBallot = voteDto.PositionOnBallot,
-                    PersonGuid = voteDto.PersonGuid,
-                    VoteStatus = hasPerson
-                        ? VoteStatus.Ok
-                        : hasFreeText
-                            ? VoteStatus.Raw
-                            : VoteStatus.Spoiled,
-                    OnlineVoteRaw = rawVote?.ToJson(),
-                    RowVersion = new byte[8]
-                };
-
-                if (voteDto.PersonGuid is Guid personGuid)
-                {
-                    var votedPerson = await _context.People
-                        .FirstOrDefaultAsync(p => p.PersonGuid == personGuid);
-
-                    if (votedPerson != null)
-                    {
-                        vote.PersonCombinedInfo = votedPerson.CombinedInfo;
-                    }
-                }
-                else if (rawVote != null)
-                {
-                    vote.PersonCombinedInfo = rawVote.ToDisplayName();
-                }
-
-                _context.Votes.Add(vote);
+                await transaction.RollbackAsync();
+                return (false, "voting.submit.alreadyProcessed");
             }
+
+            var payloadJson = SerializePendingPayload(dto.Votes, dto.ListPool);
 
             if (existingVotingInfo != null)
             {
-                existingVotingInfo.BallotGuid = ballot.BallotGuid;
                 existingVotingInfo.WhenBallotCreated = now;
                 existingVotingInfo.WhenStatus = now;
-                existingVotingInfo.Status = "Submitted";
-                existingVotingInfo.ListPool = SerializeListPool(dto.ListPool);
+                existingVotingInfo.Status = OnlineBallotStatus.Submitted;
+                existingVotingInfo.ListPool = payloadJson;
+                existingVotingInfo.PoolLocked = true;
+                existingVotingInfo.BallotGuid = null;
             }
             else
             {
-                var votingInfo = new OnlineVotingInfo
+                _context.OnlineVotingInfos.Add(new OnlineVotingInfo
                 {
                     ElectionGuid = dto.ElectionGuid,
                     PersonGuid = person?.PersonGuid ?? Guid.NewGuid(),
-                    BallotGuid = ballot.BallotGuid,
                     WhenBallotCreated = now,
-                    Status = "Submitted",
+                    Status = OnlineBallotStatus.Submitted,
                     WhenStatus = now,
-                    ListPool = SerializeListPool(dto.ListPool)
-                };
-
-                _context.OnlineVotingInfos.Add(votingInfo);
+                    ListPool = payloadJson,
+                    PoolLocked = true
+                });
             }
 
             if (person != null)
@@ -166,9 +99,6 @@ public partial class OnlineVotingService
 
             await ApplyNotifyPreferenceAsync(onlineVoter, dto.NotifyWhenProcessed);
 
-            await _context.SaveChangesAsync();
-            ballot.Location = location;
-            await BallotStatusRefresher.RefreshAsync(_context, ballot, _logger);
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
@@ -206,9 +136,22 @@ public partial class OnlineVotingService
             .OrderByDescending(ov => ov.WhenBallotCreated)
             .FirstOrDefaultAsync();
 
+        var isProcessed = votingInfo != null
+            && string.Equals(votingInfo.Status, OnlineBallotStatus.Processed, StringComparison.OrdinalIgnoreCase);
+        var hasPending = votingInfo != null
+            && string.Equals(votingInfo.Status, OnlineBallotStatus.Submitted, StringComparison.OrdinalIgnoreCase);
+
         var priorVotes = new List<OnlineVoteDto>();
-        if (votingInfo?.BallotGuid != null)
+        var listPool = new List<OnlinePoolEntryDto>();
+
+        if (hasPending && TryReadPendingPayload(votingInfo!.ListPool, out var payload))
         {
+            priorVotes = payload.Votes;
+            listPool = payload.Pool;
+        }
+        else if (hasPending && votingInfo!.BallotGuid != null)
+        {
+            listPool = ParseLegacyPoolArray(votingInfo.ListPool);
             var storedVotes = await _context.Votes
                 .Where(v => v.BallotGuid == votingInfo.BallotGuid)
                 .OrderBy(v => v.PositionOnBallot)
@@ -238,16 +181,20 @@ public partial class OnlineVotingService
         var onlineVoter = await _context.OnlineVoters
             .FirstOrDefaultAsync(ov => ov.VoterId == voterId);
 
+        var hasVoted = person.HasOnlineBallot == true || hasPending || isProcessed;
         return new OnlineVoteStatusDto
         {
-            HasVoted = person.HasOnlineBallot == true,
+            HasVoted = hasVoted,
             WhenSubmitted = votingInfo?.WhenBallotCreated,
-            Message = person.HasOnlineBallot == true
-                ? "voting.status.alreadyVoted"
-                : "voting.status.notVoted",
+            Message = isProcessed
+                ? "voting.status.alreadyProcessed"
+                : hasVoted
+                    ? "voting.status.alreadyVoted"
+                    : "voting.status.notVoted",
             PriorVotes = priorVotes,
-            ListPool = ParseListPool(votingInfo?.ListPool),
-            NotifyWhenProcessed = HasNotifyProcessedPreference(onlineVoter?.EmailCodes)
+            ListPool = listPool,
+            NotifyWhenProcessed = HasNotifyProcessedPreference(onlineVoter?.EmailCodes),
+            CanChangeVote = !isProcessed
         };
     }
 
@@ -289,17 +236,49 @@ public partial class OnlineVotingService
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
     }
 
-    private static string? SerializeListPool(List<OnlinePoolEntryDto> pool)
+    private static string SerializePendingPayload(
+        List<OnlineVoteDto> votes,
+        List<OnlinePoolEntryDto> pool)
     {
-        if (pool == null || pool.Count == 0)
+        return JsonSerializer.Serialize(new PendingOnlineBallotPayload
         {
-            return null;
-        }
-
-        return JsonSerializer.Serialize(pool);
+            Votes = votes ?? new List<OnlineVoteDto>(),
+            Pool = pool ?? new List<OnlinePoolEntryDto>()
+        }, PendingPayloadJson);
     }
 
-    private static List<OnlinePoolEntryDto> ParseListPool(string? listPool)
+    internal static bool TryReadPendingPayload(string? listPool, out PendingOnlineBallotPayload payload)
+    {
+        payload = new PendingOnlineBallotPayload();
+        if (string.IsNullOrWhiteSpace(listPool))
+        {
+            return false;
+        }
+
+        var trimmed = listPool.TrimStart();
+        if (trimmed.StartsWith('['))
+        {
+            return false;
+        }
+
+        try
+        {
+            var parsed = JsonSerializer.Deserialize<PendingOnlineBallotPayload>(listPool, PendingPayloadJson);
+            if (parsed == null)
+            {
+                return false;
+            }
+
+            payload = parsed;
+            return true;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+    }
+
+    internal static List<OnlinePoolEntryDto> ParseLegacyPoolArray(string? listPool)
     {
         if (string.IsNullOrWhiteSpace(listPool))
         {
@@ -308,18 +287,12 @@ public partial class OnlineVotingService
 
         try
         {
-            return JsonSerializer.Deserialize<List<OnlinePoolEntryDto>>(listPool)
+            return JsonSerializer.Deserialize<List<OnlinePoolEntryDto>>(listPool, PendingPayloadJson)
                    ?? new List<OnlinePoolEntryDto>();
         }
-        catch
+        catch (JsonException)
         {
             return new List<OnlinePoolEntryDto>();
         }
-    }
-
-    private static string AppendBallotHistory(string? existing, Guid ballotGuid, DateTimeOffset? when)
-    {
-        var entry = $"{ballotGuid}|{when:O}";
-        return string.IsNullOrEmpty(existing) ? entry : $"{existing};{entry}";
     }
 }

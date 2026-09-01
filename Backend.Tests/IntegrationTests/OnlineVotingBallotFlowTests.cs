@@ -86,27 +86,19 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
             var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
             var votingInfo = await context.OnlineVotingInfos
                 .FirstAsync(ovi => ovi.ElectionGuid == electionGuid);
-            Assert.NotNull(votingInfo.BallotGuid);
-
-            var storedVotes = await context.Votes
-                .Where(v => v.BallotGuid == votingInfo.BallotGuid)
-                .ToListAsync();
-            Assert.Equal(9, storedVotes.Count);
-            Assert.All(storedVotes, v =>
-            {
-                Assert.Equal(VoteStatus.Raw, v.VoteStatus);
-                Assert.False(string.IsNullOrWhiteSpace(v.OnlineVoteRaw));
-                Assert.StartsWith("{", v.OnlineVoteRaw);
-                Assert.Contains("Free Voter", v.OnlineVoteRaw);
-            });
-
-            var ballot = await context.Ballots
-                .FirstAsync(b => b.BallotGuid == votingInfo.BallotGuid);
-            Assert.Equal(BallotStatus.Raw, ballot.StatusCode);
-            Assert.Equal("OL", ballot.ComputerCode);
-            Assert.Equal(1, ballot.BallotNumAtComputer);
-            Assert.Equal("OL1", ballot.BallotCode);
+            Assert.Equal("Submitted", votingInfo.Status);
+            Assert.Null(votingInfo.BallotGuid);
+            Assert.False(string.IsNullOrWhiteSpace(votingInfo.ListPool));
+            Assert.Equal(0, await context.Ballots.CountAsync(b => b.Location.ElectionGuid == electionGuid));
         }
+
+        var status = await Client.GetFromJsonAsync<OnlineVoteStatusDto>(
+            $"/api/online-voting/{electionGuid}/{email}/voteStatus");
+        Assert.NotNull(status);
+        Assert.True(status.HasVoted);
+        Assert.True(status.CanChangeVote);
+        Assert.Equal(9, status.PriorVotes.Count);
+        Assert.All(status.PriorVotes, v => Assert.Contains("Free Voter", v.VoteName ?? ""));
     }
 
     [Fact]
@@ -162,20 +154,17 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
             var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
             var votingInfo = await context.OnlineVotingInfos
                 .FirstOrDefaultAsync(ovi => ovi.ElectionGuid == electionGuid);
-            Assert.NotNull(votingInfo?.BallotGuid);
-
-            var poolVotes = await context.Votes
-                .Where(v => v.BallotGuid == votingInfo.BallotGuid && v.VoteStatus == VoteStatus.Raw)
-                .ToListAsync();
-            Assert.Equal(2, poolVotes.Count);
-            Assert.Contains(poolVotes, v => v.PersonCombinedInfo == "Pool Person One");
-            Assert.Contains(poolVotes, v => v.PersonCombinedInfo == "Pool Person Two");
+            Assert.NotNull(votingInfo);
+            Assert.Equal("Submitted", votingInfo.Status);
+            Assert.Null(votingInfo.BallotGuid);
+            Assert.Equal(0, await context.Votes.CountAsync(v => v.Ballot.Location.ElectionGuid == electionGuid));
         }
 
         var statusResponse = await Client.GetAsync(
             $"/api/online-voting/{electionGuid}/{email}/voteStatus");
         var status = await statusResponse.Content.ReadFromJsonAsync<OnlineVoteStatusDto>();
         Assert.NotNull(status);
+        Assert.True(status.CanChangeVote);
         Assert.Equal(9, status.PriorVotes.Count);
         Assert.Equal(2, status.ListPool.Count);
         Assert.Equal("Pool Person One", status.ListPool[0].FullName);

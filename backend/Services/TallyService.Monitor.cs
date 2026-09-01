@@ -95,10 +95,10 @@ public partial class TallyService
                 .Where(o => o.ElectionGuid == electionGuid)
                 .CountAsync(),
             ProcessedOnlineBallots = await _context.OnlineVotingInfos
-                .Where(o => o.ElectionGuid == electionGuid && o.Status == "Ok")
+                .Where(o => o.ElectionGuid == electionGuid && o.Status == Backend.Helpers.OnlineBallotStatus.Processed)
                 .CountAsync(),
             PendingOnlineBallots = await _context.OnlineVotingInfos
-                .Where(o => o.ElectionGuid == electionGuid && o.Status != "Ok")
+                .Where(o => o.ElectionGuid == electionGuid && o.Status == Backend.Helpers.OnlineBallotStatus.Submitted)
                 .CountAsync()
         };
 

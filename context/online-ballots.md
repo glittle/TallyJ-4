@@ -10,6 +10,27 @@ Highest-risk functionality. Random name resolution and online acceptance introdu
 
 Treat online ballot paths with the same rigor as core analysis. Prefer explicit failure and recovery over silent best-effort behavior.
 
+## Accept-all of pending online ballots
+
+**Status:** active  
+**Evidence:** confirmed (issue #188, Glen; v3 `ElectionHelper.ProcessOnlineBallots`)
+
+A voter submit stores a pending payload on `OnlineVotingInfo` (status `Submitted`). It does not create a regular `Ballot`. A logged-in teller may Accept-all current pending online ballots while the online voting window is still open, and may do so more than once. Each run only accepts rows that are `Submitted` at that moment.
+
+Accept-all creates a regular ballot at the Online location (computer code `OL`) as if a teller had typed from paper, then wipes the online payload (`ListPool`, `PoolLocked`, `BallotGuid`) and sets status `Processed`. After that, the voter cannot change the vote. Acceptance is not reversible: we do not keep a link from the online row to the regular ballot.
+
+v3 required the window to be closed before processing. That was rejected here so tellers can accept current pending ballots up to the last moment without shutting voters out.
+
+A second overlapping Accept-all for the same election is refused (process-wide election-scoped lock). Each pending row is also claimed only while `Status == Submitted`, so a retry after a successful run does not create another ballot. In v3, a second call that started while the first was still creating ballots produced duplicates; the lock plus the status check is what makes that impossible.
+
+Rows that already have a `BallotGuid` from the older submit-creates-ballot path are marked `Processed` and unlinked without creating a second ballot.
+
+**Rejected alternative:** keep creating the regular ballot on voter submit, and treat Accept-all as only a status flip. That would not match “create a new regular ballot and wipe the online content,” and a concurrent accept that also created ballots is the failure mode from #188.
+
+**Rejected alternative:** require the online window to be closed before Accept-all (v3). Tellers need to accept what is in hand without closing voting.
+
+**Reason:** pending votes stay changeable until a teller accepts them; accepted votes become ordinary ballots with no remaining online payload.
+
 ## Teller resolution of free-text names
 
 **Status:** active  

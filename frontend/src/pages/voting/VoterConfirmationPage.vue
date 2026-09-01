@@ -49,7 +49,13 @@ async function handleLogout() {
               </p>
               <div class="info-message">
                 <p>{{ $t("voting.confirmation.recorded") }}</p>
-                <p>{{ $t("voting.confirmation.canEdit") }}</p>
+                <p>
+                  {{
+                    voteStatus?.canChangeVote === false
+                      ? $t("voting.confirmation.cannotEdit")
+                      : $t("voting.confirmation.canEdit")
+                  }}
+                </p>
               </div>
               <div class="action-buttons">
                 <ElButton

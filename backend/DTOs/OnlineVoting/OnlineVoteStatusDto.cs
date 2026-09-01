@@ -34,6 +34,12 @@ public class OnlineVoteStatusDto
     /// Whether the voter opted in to a ballot-processed notification.
     /// </summary>
     public bool NotifyWhenProcessed { get; set; }
+
+    /// <summary>
+    /// False once tellers have accepted this online ballot into a regular ballot.
+    /// The voter may still change a pending (Submitted) vote while the window is open.
+    /// </summary>
+    public bool CanChangeVote { get; set; }
 }
 
 

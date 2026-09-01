@@ -211,25 +211,47 @@
         <!-- Online Voting Info -->
         <el-card>
           <template #header>
-            <span>{{ $t("monitoring.onlineVoting") }}</span>
+            <div class="online-voting-header">
+              <span>{{ $t("monitoring.onlineVoting") }}</span>
+              <el-button
+                v-if="canAcceptOnlineBallots"
+                type="primary"
+                data-testid="accept-all-online-ballots"
+                :loading="accepting"
+                :disabled="pendingOnlineCount === 0"
+                @click="confirmAcceptAll"
+              >
+                {{ $t("monitoring.acceptAll.button") }}
+              </el-button>
+            </div>
           </template>
           <el-descriptions :column="4" border>
-            <el-descriptions-item :label="$t('monitoring.totalOnlineVoters')">
-              {{ monitorInfo.onlineVotingInfo.totalOnlineVoters }}
-            </el-descriptions-item>
-            <el-descriptions-item :label="$t('monitoring.votedOnline')">
-              {{ monitorInfo.onlineVotingInfo.votedOnline }}
+            <el-descriptions-item :label="$t('monitoring.totalOnlineBallots')">
+              {{ monitorInfo.onlineVotingInfo.totalOnlineBallots }}
             </el-descriptions-item>
             <el-descriptions-item
-              :label="$t('monitoring.onlineBallotsEntered')"
+              :label="$t('monitoring.pendingOnlineBallots')"
             >
-              {{ monitorInfo.onlineVotingInfo.onlineBallotsEntered }}
+              {{ monitorInfo.onlineVotingInfo.pendingOnlineBallots }}
+            </el-descriptions-item>
+            <el-descriptions-item
+              :label="$t('monitoring.processedOnlineBallots')"
+            >
+              {{ monitorInfo.onlineVotingInfo.processedOnlineBallots }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('monitoring.status')">
               <el-tag
-                :type="getStatusType(monitorInfo.onlineVotingInfo.status)"
+                :type="
+                  monitorInfo.onlineVotingInfo.onlineVotingEnabled
+                    ? 'success'
+                    : 'info'
+                "
               >
-                {{ monitorInfo.onlineVotingInfo.status }}
+                {{
+                  monitorInfo.onlineVotingInfo.onlineVotingEnabled
+                    ? $t("elections.onlineVotingEnabled")
+                    : $t("elections.onlineVotingDisabled")
+                }}
               </el-tag>
             </el-descriptions-item>
           </el-descriptions>
@@ -243,6 +265,10 @@
 
 <script setup lang="ts">
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+import { useNotifications } from "@/composables/useNotifications";
+import { isFullTeller } from "@/domain/guestTellerAccess";
+import { electionService } from "@/services/electionService";
+import { extractApiErrorMessage } from "@/utils/errorHandler";
 import {
   Check,
   DocumentChecked,
@@ -250,7 +276,9 @@ import {
   Monitor,
   Upload,
 } from "@element-plus/icons-vue";
-import { onMounted, onUnmounted, ref } from "vue";
+import { ElMessageBox } from "element-plus";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { signalrService } from "../../services/signalrService";
 import { useResultStore } from "../../stores/resultStore";
@@ -260,10 +288,17 @@ const route = useRoute();
 const router = useRouter();
 const resultStore = useResultStore();
 const { handleApiError } = useApiErrorHandler();
+const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { t } = useI18n();
 
 const electionGuid = route.params.id as string;
 const monitorInfo = ref<MonitorInfoDto | null>(null);
 const loading = ref(false);
+const accepting = ref(false);
+const canAcceptOnlineBallots = computed(() => isFullTeller());
+const pendingOnlineCount = computed(
+  () => monitorInfo.value?.onlineVotingInfo.pendingOnlineBallots ?? 0,
+);
 const refreshInterval = ref<number | null>(null);
 let frontDeskConnection: Awaited<
   ReturnType<typeof signalrService.connectToFrontDeskHub>
@@ -344,6 +379,48 @@ function handleImportCdn() {
   router.push(`/elections/${electionGuid}/ballots/cdn-import`);
 }
 
+async function confirmAcceptAll() {
+  try {
+    const summary =
+      await electionService.getAcceptAllOnlineBallotsSummary(electionGuid);
+    if (summary.pendingCount === 0) {
+      showErrorMessage(t("monitoring.acceptAll.none"));
+      await loadData();
+      return;
+    }
+
+    await ElMessageBox.confirm(
+      t("monitoring.acceptAll.confirmMessage", {
+        pending: summary.pendingCount,
+      }),
+      t("monitoring.acceptAll.confirmTitle"),
+      {
+        confirmButtonText: t("monitoring.acceptAll.button"),
+        cancelButtonText: t("common.cancel"),
+        type: "warning",
+      },
+    );
+
+    accepting.value = true;
+    const result = await electionService.acceptAllOnlineBallots(electionGuid);
+    const messageKey = result.messageKey || "monitoring.acceptAll.complete";
+    showSuccessMessage(t(messageKey, { accepted: result.acceptedCount ?? 0 }));
+    await loadData();
+  } catch (error: unknown) {
+    if (error === "cancel" || error === "close") {
+      return;
+    }
+    const data = (error as { response?: { data?: { messageKey?: string } } })
+      .response?.data;
+    const key = data?.messageKey;
+    showErrorMessage(
+      key ? t(key) : extractApiErrorMessage(error) || t("common.error"),
+    );
+  } finally {
+    accepting.value = false;
+  }
+}
+
 function startAutoRefresh() {
   // Refresh every 30 seconds
   refreshInterval.value = setInterval(() => {
@@ -399,6 +476,13 @@ function calculateTurnout(registered: number, ballots: number) {
 .header-actions {
   display: flex;
   gap: 10px;
+}
+
+.online-voting-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .summary-row {

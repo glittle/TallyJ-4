@@ -9,7 +9,7 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [election-analysis.md](election-analysis.md) — core analysis engine; risk-first correctness vs v3
 - [ballot-validation.md](ballot-validation.md) — pre-finalization integrity; fail explicitly before analysis
 - [election-state.md](election-state.md) — teller coordination and high-consequence state transitions
-- [online-ballots.md](online-ballots.md) — online acceptance and random name resolution
+- [online-ballots.md](online-ballots.md) — online acceptance (pending until Accept-all) and random name resolution
 - [people.md](people.md) — person fields; AgeGroup removed (eligibility is V01/X05)
 - [people-import.md](people-import.md) — three-action import pipeline (not a Next/Previous wizard)
 - [sms-eligibility.md](sms-eligibility.md) — reject reserved/fictional/malformed phones before paid SMS/voice/WhatsApp; OnlineVoter.SmsStatus; ensure phone row on Person write; person detail phone status; Twilio callback auto-learn

@@ -191,10 +191,12 @@ export interface LocationInfoDto {
 }
 
 export interface OnlineVotingInfoDto {
-  totalOnlineVoters: number;
-  votedOnline: number;
-  onlineBallotsEntered: number;
-  status: string;
+  totalOnlineBallots: number;
+  processedOnlineBallots: number;
+  pendingOnlineBallots: number;
+  onlineVotingEnabled: boolean;
+  onlineVotingStart?: string | null;
+  onlineVotingEnd?: string | null;
 }
 
 // Detailed Statistics DTOs

@@ -2866,6 +2866,50 @@ export const Locations_UpdateLocationDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const OnlineVoting_AcceptAllOnlineBallotsResultDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        alreadyInProgress: {
+            type: 'boolean'
+        },
+        acceptedCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        skippedCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        pendingRemaining: {
+            type: 'integer',
+            format: 'int32'
+        },
+        messageKey: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const OnlineVoting_AcceptAllOnlineBallotsSummaryDtoSchema = {
+    type: 'object',
+    properties: {
+        pendingCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        processedCount: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const OnlineVoting_AvailableElectionDtoSchema = {
     type: 'object',
     properties: {
@@ -3113,6 +3157,9 @@ export const OnlineVoting_OnlineVoteStatusDtoSchema = {
             nullable: true
         },
         notifyWhenProcessed: {
+            type: 'boolean'
+        },
+        canChangeVote: {
             type: 'boolean'
         }
     },

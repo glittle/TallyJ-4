@@ -2359,6 +2359,86 @@
         }
       }
     },
+    "/api/Elections/{guid}/online-ballots/accept-all-summary": {
+      "get": {
+        "tags": [
+          "Elections"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnlineVoting_AcceptAllOnlineBallotsSummaryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnlineVoting_AcceptAllOnlineBallotsSummaryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnlineVoting_AcceptAllOnlineBallotsSummaryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Elections/{guid}/online-ballots/accept-all": {
+      "post": {
+        "tags": [
+          "Elections"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnlineVoting_AcceptAllOnlineBallotsResultDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnlineVoting_AcceptAllOnlineBallotsResultDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnlineVoting_AcceptAllOnlineBallotsResultDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Elections/{guid}/deleteElection": {
       "delete": {
         "tags": [
@@ -10192,6 +10272,48 @@
         },
         "additionalProperties": false
       },
+      "OnlineVoting_AcceptAllOnlineBallotsResultDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "alreadyInProgress": {
+            "type": "boolean"
+          },
+          "acceptedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skippedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "messageKey": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OnlineVoting_AcceptAllOnlineBallotsSummaryDto": {
+        "type": "object",
+        "properties": {
+          "pendingCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "processedCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "OnlineVoting_AvailableElectionDto": {
         "type": "object",
         "properties": {
@@ -10431,6 +10553,9 @@
             "nullable": true
           },
           "notifyWhenProcessed": {
+            "type": "boolean"
+          },
+          "canChangeVote": {
             "type": "boolean"
           }
         },
