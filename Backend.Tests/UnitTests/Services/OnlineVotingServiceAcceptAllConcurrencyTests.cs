@@ -78,6 +78,33 @@ public class OnlineVotingServiceAcceptAllConcurrencyTests
     }
 
     [Fact]
+    public async Task SecondServer_CompletesLeftoverProcessing_WithoutSecondBallot()
+    {
+        await using var db = await SqliteOnlineVotingDb.CreateAsync();
+        var election = await SeedPendingVoterAsync(db);
+
+        await using var claimContext = db.CreateContext();
+        var claimed = await claimContext.OnlineVotingInfos
+            .Where(o => o.ElectionGuid == election.ElectionGuid
+                        && o.Status == OnlineBallotStatus.Submitted)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(o => o.Status, OnlineBallotStatus.Processing));
+        Assert.Equal(1, claimed);
+
+        await using var acceptContext = db.CreateContext();
+        var result = await CreateService(acceptContext, new AlwaysAllowAcceptLock())
+            .AcceptAllPendingAsync(election.ElectionGuid);
+        Assert.True(result.Success);
+        Assert.Equal(1, result.AcceptedCount);
+
+        await using var check = db.CreateContext();
+        Assert.Equal(1, await check.Ballots.CountAsync());
+        Assert.Equal(
+            OnlineBallotStatus.Processed,
+            (await check.OnlineVotingInfos.SingleAsync()).Status);
+    }
+
+    [Fact]
     public async Task SequentialAcceptAlls_WithoutInProcessLock_SecondCreatesNoBallot()
     {
         await using var db = await SqliteOnlineVotingDb.CreateAsync();

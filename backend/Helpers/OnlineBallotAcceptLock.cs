@@ -6,9 +6,9 @@ namespace Backend.Helpers;
 /// In-process lock keyed by election. Serializes Accept-all on one host so a
 /// second overlapping call gets 409 instead of starting another run (the v3
 /// incident: a second call started while the first was still creating ballots).
-/// Process-wide only — another instance, or a voter Submit that loaded Submitted
-/// before Accept committed, is not covered. Duplicate prevention is the DB
-/// compare-and-swap from Submitted to Processed.
+/// Process-wide only — another instance sharing the database is not covered.
+/// Duplicate prevention is the persisted Processing claim plus a second
+/// compare-and-swap that processes a row only while it is still Processing.
 /// </summary>
 public sealed class OnlineBallotAcceptLock : IOnlineBallotAcceptLock
 {

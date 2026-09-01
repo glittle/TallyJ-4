@@ -60,7 +60,7 @@ public partial class OnlineVotingService
                     .FirstOrDefaultAsync();
             }
 
-            if (existingVotingInfo != null && AlreadyHasRegularBallot(existingVotingInfo))
+            if (existingVotingInfo != null && CannotChangeOnlineVote(existingVotingInfo))
             {
                 await transaction.RollbackAsync();
                 return (false, "voting.submit.alreadyProcessed");
@@ -136,16 +136,15 @@ public partial class OnlineVotingService
             .OrderByDescending(ov => ov.WhenBallotCreated)
             .FirstOrDefaultAsync();
 
-        var alreadyHasRegularBallot = votingInfo != null && AlreadyHasRegularBallot(votingInfo);
-        var isProcessed = votingInfo != null
-            && string.Equals(votingInfo.Status, OnlineBallotStatus.Processed, StringComparison.OrdinalIgnoreCase);
-        var hasPending = votingInfo != null
-            && string.Equals(votingInfo.Status, OnlineBallotStatus.Submitted, StringComparison.OrdinalIgnoreCase);
+        var cannotChange = votingInfo != null && CannotChangeOnlineVote(votingInfo);
+        var isProcessed = votingInfo != null && OnlineBallotStatus.IsProcessed(votingInfo.Status);
+        var isProcessing = votingInfo != null && OnlineBallotStatus.IsProcessing(votingInfo.Status);
+        var hasPending = votingInfo != null && OnlineBallotStatus.IsSubmitted(votingInfo.Status);
 
         var priorVotes = new List<OnlineVoteDto>();
         var listPool = new List<OnlinePoolEntryDto>();
 
-        if (hasPending && TryReadPendingPayload(votingInfo!.ListPool, out var payload))
+        if ((hasPending || isProcessing) && TryReadPendingPayload(votingInfo!.ListPool, out var payload))
         {
             priorVotes = payload.Votes;
             listPool = payload.Pool;
@@ -182,12 +181,12 @@ public partial class OnlineVotingService
         var onlineVoter = await _context.OnlineVoters
             .FirstOrDefaultAsync(ov => ov.VoterId == voterId);
 
-        var hasVoted = person.HasOnlineBallot == true || hasPending || isProcessed;
+        var hasVoted = person.HasOnlineBallot == true || hasPending || isProcessing || isProcessed;
         return new OnlineVoteStatusDto
         {
             HasVoted = hasVoted,
             WhenSubmitted = votingInfo?.WhenBallotCreated,
-            Message = alreadyHasRegularBallot
+            Message = cannotChange
                 ? "voting.status.alreadyProcessed"
                 : hasVoted
                     ? "voting.status.alreadyVoted"
@@ -195,26 +194,27 @@ public partial class OnlineVotingService
             PriorVotes = priorVotes,
             ListPool = listPool,
             NotifyWhenProcessed = HasNotifyProcessedPreference(onlineVoter?.EmailCodes),
-            CanChangeVote = !alreadyHasRegularBallot
+            CanChangeVote = !cannotChange
         };
     }
 
     /// <summary>
-    /// True when this voter already has a regular ballot: Accept-all set Processed,
-    /// or a legacy submit-creates-ballot row still has BallotGuid. Either way the
-    /// voter cannot change the vote; do not null BallotGuid or revive the row.
+    /// True when the voter cannot change the vote: Accept-all has claimed the row
+    /// (Processing), finished it (Processed), or a legacy submit-creates-ballot row
+    /// still has BallotGuid. Do not null BallotGuid or revive the row.
     /// </summary>
-    internal static bool AlreadyHasRegularBallot(OnlineVotingInfo votingInfo)
+    internal static bool CannotChangeOnlineVote(OnlineVotingInfo votingInfo)
     {
         return votingInfo.BallotGuid != null
-               || string.Equals(votingInfo.Status, OnlineBallotStatus.Processed, StringComparison.OrdinalIgnoreCase);
+               || OnlineBallotStatus.IsProcessed(votingInfo.Status)
+               || OnlineBallotStatus.IsProcessing(votingInfo.Status);
     }
 
     /// <summary>
     /// Writes a new pending payload only while the row is still Submitted and has
     /// no BallotGuid. Relational providers use UPDATE … WHERE Status='Submitted'
-    /// so a concurrent Accept-all that already set Processed cannot be clobbered
-    /// by a Submit that loaded Submitted. Does not touch BallotGuid.
+    /// so a concurrent Accept-all that already set Processing or Processed cannot
+    /// be clobbered by a Submit that loaded Submitted. Does not touch BallotGuid.
     /// </summary>
     internal async Task<bool> TryWritePendingPayloadIfStillSubmittedAsync(
         OnlineVotingInfo existingVotingInfo,
@@ -236,8 +236,8 @@ public partial class OnlineVotingService
             return updated == 1;
         }
 
-        if (AlreadyHasRegularBallot(existingVotingInfo)
-            || !string.Equals(existingVotingInfo.Status, OnlineBallotStatus.Submitted, StringComparison.OrdinalIgnoreCase))
+        if (CannotChangeOnlineVote(existingVotingInfo)
+            || !OnlineBallotStatus.IsSubmitted(existingVotingInfo.Status))
         {
             return false;
         }

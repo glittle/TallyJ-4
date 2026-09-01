@@ -27,9 +27,8 @@ public partial class OnlineVotingService
         return new AcceptAllOnlineBallotsSummaryDto
         {
             PendingCount = rows.Count(s =>
-                string.Equals(s, OnlineBallotStatus.Submitted, StringComparison.OrdinalIgnoreCase)),
-            ProcessedCount = rows.Count(s =>
-                string.Equals(s, OnlineBallotStatus.Processed, StringComparison.OrdinalIgnoreCase))
+                OnlineBallotStatus.IsSubmitted(s) || OnlineBallotStatus.IsProcessing(s)),
+            ProcessedCount = rows.Count(OnlineBallotStatus.IsProcessed)
         };
     }
 
@@ -69,19 +68,25 @@ public partial class OnlineVotingService
 
         try
         {
-            var pendingIds = await _context.OnlineVotingInfos
+            // Pass 1: load the expected set, then persist Processing so another
+            // server sharing this database can see the claim.
+            var expectedIds = await _context.OnlineVotingInfos
                 .Where(o => o.ElectionGuid == electionGuid
-                            && o.Status == OnlineBallotStatus.Submitted)
+                            && (o.Status == OnlineBallotStatus.Submitted
+                                || o.Status == OnlineBallotStatus.Processing))
                 .OrderBy(o => o.PersonGuid)
                 .Select(o => o.RowId)
                 .ToListAsync();
 
+            await ClaimSubmittedRowsAsProcessingAsync(electionGuid, expectedIds);
+
             var accepted = 0;
             var skipped = 0;
 
-            foreach (var rowId in pendingIds)
+            // Pass 2: process that expected set only while each row is still Processing.
+            foreach (var rowId in expectedIds)
             {
-                var created = await AcceptOnePendingAsync(electionGuid, rowId);
+                var created = await ProcessIfStillProcessingAsync(electionGuid, rowId);
                 if (created)
                 {
                     accepted++;
@@ -94,7 +99,8 @@ public partial class OnlineVotingService
 
             var pendingRemaining = await _context.OnlineVotingInfos
                 .CountAsync(o => o.ElectionGuid == electionGuid
-                                 && o.Status == OnlineBallotStatus.Submitted);
+                                 && (o.Status == OnlineBallotStatus.Submitted
+                                     || o.Status == OnlineBallotStatus.Processing));
 
             return new AcceptAllOnlineBallotsResultDto
             {
@@ -114,20 +120,60 @@ public partial class OnlineVotingService
     }
 
     /// <summary>
-    /// Claims one Submitted row with a compare-and-swap
-    /// (<c>UPDATE … SET Status = Processed WHERE Status = Submitted</c>) and either
-    /// creates a regular ballot from the pending payload or, for a legacy row that
-    /// already has a ballot, wipes the online payload without creating a second
-    /// ballot. Returns false if the UPDATE matched 0 rows or the row had nothing
-    /// to accept. There is no stored Processing status; claim and ballot create
-    /// share this transaction so a rollback restores Submitted.
+    /// Persists Processing on every still-Submitted row in the expected set.
+    /// Committed before ballot create so another server sharing the database can
+    /// see the claim. 0 rows updated on a given row means another worker already
+    /// moved it. Already-Processing rows (a crashed previous run) are left as-is
+    /// for pass 2. In-memory tests assign Status on the tracked entity instead.
     /// </summary>
-    private async Task<bool> AcceptOnePendingAsync(Guid electionGuid, int rowId)
+    private async Task ClaimSubmittedRowsAsProcessingAsync(Guid electionGuid, List<int> expectedIds)
+    {
+        if (expectedIds.Count == 0)
+        {
+            return;
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        if (_context.Database.IsRelational())
+        {
+            await _context.OnlineVotingInfos
+                .Where(o => o.ElectionGuid == electionGuid
+                            && o.Status == OnlineBallotStatus.Submitted
+                            && expectedIds.Contains(o.RowId))
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(o => o.Status, OnlineBallotStatus.Processing)
+                    .SetProperty(o => o.WhenStatus, now));
+            _context.ChangeTracker.Clear();
+            return;
+        }
+
+        var rows = await _context.OnlineVotingInfos
+            .Where(o => o.ElectionGuid == electionGuid
+                        && o.Status == OnlineBallotStatus.Submitted
+                        && expectedIds.Contains(o.RowId))
+            .ToListAsync();
+        foreach (var row in rows)
+        {
+            row.Status = OnlineBallotStatus.Processing;
+            row.WhenStatus = now;
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Pass 2: in a transaction, take the row only while Status is still Processing
+    /// (<c>UPDATE … SET Status = Processed WHERE Status = Processing</c>), then
+    /// create the regular ballot (or unlink a legacy row) and wipe the payload.
+    /// 0 rows updated means another server already took it. A rollback restores
+    /// Processing so a later Accept-all can retry.
+    /// </summary>
+    private async Task<bool> ProcessIfStillProcessingAsync(Guid electionGuid, int rowId)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
         var now = DateTimeOffset.UtcNow;
 
-        var votingInfo = await TryClaimSubmittedRowAsync(electionGuid, rowId);
+        var votingInfo = await TryTakeProcessingRowAsync(electionGuid, rowId);
         if (votingInfo == null)
         {
             await transaction.RollbackAsync();
@@ -152,11 +198,6 @@ public partial class OnlineVotingService
                 return false;
             }
         }
-        else
-        {
-            await transaction.RollbackAsync();
-            return false;
-        }
 
         votingInfo.Status = OnlineBallotStatus.Processed;
         votingInfo.WhenStatus = now;
@@ -172,25 +213,25 @@ public partial class OnlineVotingService
     }
 
     /// <summary>
-    /// Atomically claims a Submitted row by setting Status to Processed only when
-    /// it is still Submitted. 0 rows updated means another Accept-all (or this
-    /// host after a retry) already claimed it. In-memory tests have no SQL UPDATE,
-    /// so they assign Status on the tracked entity instead.
+    /// Atomically takes a Processing row by setting Status to Processed only when
+    /// it is still Processing. In-memory tests assign Status on the tracked entity.
     /// </summary>
-    private async Task<OnlineVotingInfo?> TryClaimSubmittedRowAsync(Guid electionGuid, int rowId)
+    private async Task<OnlineVotingInfo?> TryTakeProcessingRowAsync(Guid electionGuid, int rowId)
     {
         if (_context.Database.IsRelational())
         {
-            var claimed = await _context.OnlineVotingInfos
+            var taken = await _context.OnlineVotingInfos
                 .Where(o => o.RowId == rowId
                             && o.ElectionGuid == electionGuid
-                            && o.Status == OnlineBallotStatus.Submitted)
+                            && o.Status == OnlineBallotStatus.Processing)
                 .ExecuteUpdateAsync(setters => setters
                     .SetProperty(o => o.Status, OnlineBallotStatus.Processed));
-            if (claimed == 0)
+            if (taken == 0)
             {
                 return null;
             }
+
+            _context.ChangeTracker.Clear();
         }
 
         var votingInfo = await _context.OnlineVotingInfos
@@ -202,7 +243,7 @@ public partial class OnlineVotingService
 
         if (!_context.Database.IsRelational())
         {
-            if (!string.Equals(votingInfo.Status, OnlineBallotStatus.Submitted, StringComparison.OrdinalIgnoreCase))
+            if (!OnlineBallotStatus.IsProcessing(votingInfo.Status))
             {
                 return null;
             }
@@ -211,7 +252,7 @@ public partial class OnlineVotingService
             return votingInfo;
         }
 
-        if (!string.Equals(votingInfo.Status, OnlineBallotStatus.Processed, StringComparison.OrdinalIgnoreCase))
+        if (!OnlineBallotStatus.IsProcessed(votingInfo.Status))
         {
             return null;
         }
