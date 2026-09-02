@@ -190,6 +190,16 @@ export interface LocationInfoDto {
   status: string;
 }
 
+export interface AcceptAllOnlineBallotsRunDto {
+  when: string;
+  acceptedByUserId?: string | null;
+  acceptedBy?: string | null;
+  pendingBefore: number;
+  acceptedBefore: number;
+  pendingAfter: number;
+  acceptedAfter: number;
+}
+
 export interface OnlineVotingInfoDto {
   totalOnlineBallots: number;
   processedOnlineBallots: number;
@@ -197,6 +207,7 @@ export interface OnlineVotingInfoDto {
   onlineVotingEnabled: boolean;
   onlineVotingStart?: string | null;
   onlineVotingEnd?: string | null;
+  acceptAllRuns?: AcceptAllOnlineBallotsRunDto[];
 }
 
 // Detailed Statistics DTOs

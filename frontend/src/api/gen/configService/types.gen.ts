@@ -1543,6 +1543,16 @@ export type ReportsVotesByNumDto = {
     people?: Array<ReportsVotePersonDto> | null;
 };
 
+export type ResultsAcceptAllOnlineBallotsRunDto = {
+    when?: Date;
+    acceptedByUserId?: string | null;
+    acceptedBy?: string | null;
+    pendingBefore?: number;
+    acceptedBefore?: number;
+    pendingAfter?: number;
+    acceptedAfter?: number;
+};
+
 export type ResultsComputerInfoDto = {
     computerCode?: string | null;
     locationName?: string | null;
@@ -1640,6 +1650,7 @@ export type ResultsOnlineVotingInfoDto = {
     onlineVotingEnabled?: boolean;
     onlineVotingStart?: Date | null;
     onlineVotingEnd?: Date | null;
+    acceptAllRuns?: Array<ResultsAcceptAllOnlineBallotsRunDto> | null;
 };
 
 export type ResultsParticipationRateDto = {

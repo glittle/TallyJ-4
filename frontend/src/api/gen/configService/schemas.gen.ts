@@ -5267,6 +5267,41 @@ export const Reports_VotesByNumDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const Results_AcceptAllOnlineBallotsRunDtoSchema = {
+    type: 'object',
+    properties: {
+        when: {
+            type: 'string',
+            format: 'date-time'
+        },
+        acceptedByUserId: {
+            type: 'string',
+            nullable: true
+        },
+        acceptedBy: {
+            type: 'string',
+            nullable: true
+        },
+        pendingBefore: {
+            type: 'integer',
+            format: 'int32'
+        },
+        acceptedBefore: {
+            type: 'integer',
+            format: 'int32'
+        },
+        pendingAfter: {
+            type: 'integer',
+            format: 'int32'
+        },
+        acceptedAfter: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const Results_ComputerInfoDtoSchema = {
     type: 'object',
     properties: {
@@ -5622,6 +5657,13 @@ export const Results_OnlineVotingInfoDtoSchema = {
         onlineVotingEnd: {
             type: 'string',
             format: 'date-time',
+            nullable: true
+        },
+        acceptAllRuns: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/Results_AcceptAllOnlineBallotsRunDto'
+            },
             nullable: true
         }
     },

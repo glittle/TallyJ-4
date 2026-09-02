@@ -758,12 +758,22 @@ const resultsComputerInfoDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
+const resultsAcceptAllOnlineBallotsRunDtoSchemaResponseTransformer = (data: any) => {
+    if (data.when) {
+        data.when = new Date(data.when);
+    }
+    return data;
+};
+
 const resultsOnlineVotingInfoDtoSchemaResponseTransformer = (data: any) => {
     if (data.onlineVotingStart) {
         data.onlineVotingStart = new Date(data.onlineVotingStart);
     }
     if (data.onlineVotingEnd) {
         data.onlineVotingEnd = new Date(data.onlineVotingEnd);
+    }
+    if (data.acceptAllRuns) {
+        data.acceptAllRuns = data.acceptAllRuns.map((item: any) => resultsAcceptAllOnlineBallotsRunDtoSchemaResponseTransformer(item));
     }
     return data;
 };

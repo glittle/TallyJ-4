@@ -1,9 +1,11 @@
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Backend;
 using Backend.DTOs.Results;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.Services;
 
 namespace Backend.Tests.UnitTests;
@@ -1561,6 +1563,58 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Equal("Assigned Hall", result.Computers[0].LocationName);
         Assert.Equal(0, result.Computers[0].BallotCount);
         Assert.Equal("Inactive", result.Computers[0].Status);
+    }
+
+    [Fact]
+    public async Task GetMonitorInfoAsync_IncludesAcceptAllRuns_NewestFirst()
+    {
+        var election = await CreateTestElectionAsync();
+        var older = new SecurityAuditLog
+        {
+            Timestamp = DateTimeOffset.UtcNow.AddHours(-2),
+            EventType = SecurityEventType.OperationalActivity,
+            ElectionGuid = election.ElectionGuid,
+            UserId = "teller-1",
+            Details = AcceptAllOnlineBallotsAudit.FormatDetails(2, 0, 0, 2),
+            MetadataJson = System.Text.Json.JsonSerializer.Serialize(
+                AcceptAllOnlineBallotsAudit.FormatMetadata(2, 0, 0, 2, "Jane")),
+            Severity = SecurityEventSeverity.Info
+        };
+        var newer = new SecurityAuditLog
+        {
+            Timestamp = DateTimeOffset.UtcNow.AddMinutes(-5),
+            EventType = SecurityEventType.OperationalActivity,
+            ElectionGuid = election.ElectionGuid,
+            UserId = "teller-2",
+            Details = AcceptAllOnlineBallotsAudit.FormatDetails(1, 2, 0, 3),
+            MetadataJson = System.Text.Json.JsonSerializer.Serialize(
+                AcceptAllOnlineBallotsAudit.FormatMetadata(1, 2, 0, 3, "Sam")),
+            Severity = SecurityEventSeverity.Info
+        };
+        Context.SecurityAuditLogs.AddRange(
+            older,
+            newer,
+            new SecurityAuditLog
+            {
+                Timestamp = DateTimeOffset.UtcNow,
+                EventType = SecurityEventType.OperationalActivity,
+                ElectionGuid = election.ElectionGuid,
+                Details = "Ballot entry began",
+                Severity = SecurityEventSeverity.Info
+            });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetMonitorInfoAsync(election.ElectionGuid);
+
+        Assert.Equal(2, result.OnlineVotingInfo.AcceptAllRuns.Count);
+        Assert.Equal("teller-2", result.OnlineVotingInfo.AcceptAllRuns[0].AcceptedByUserId);
+        Assert.Equal("Sam", result.OnlineVotingInfo.AcceptAllRuns[0].AcceptedBy);
+        Assert.Equal(1, result.OnlineVotingInfo.AcceptAllRuns[0].PendingBefore);
+        Assert.Equal(2, result.OnlineVotingInfo.AcceptAllRuns[0].AcceptedBefore);
+        Assert.Equal(0, result.OnlineVotingInfo.AcceptAllRuns[0].PendingAfter);
+        Assert.Equal(3, result.OnlineVotingInfo.AcceptAllRuns[0].AcceptedAfter);
+        Assert.Equal("teller-1", result.OnlineVotingInfo.AcceptAllRuns[1].AcceptedByUserId);
+        Assert.Equal("Jane", result.OnlineVotingInfo.AcceptAllRuns[1].AcceptedBy);
     }
 }
 
