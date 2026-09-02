@@ -1,3 +1,4 @@
+using Backend;
 using Backend.DTOs.OnlineVoting;
 using Backend.Entities;
 using Backend.Enumerations;
@@ -33,7 +34,9 @@ public partial class OnlineVotingService
     }
 
     /// <inheritdoc/>
-    public async Task<AcceptAllOnlineBallotsResultDto> AcceptAllPendingAsync(Guid electionGuid)
+    public async Task<AcceptAllOnlineBallotsResultDto> AcceptAllPendingAsync(
+        Guid electionGuid,
+        string? acceptedByUserId = null)
     {
         var election = await _context.Elections
             .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
@@ -68,6 +71,8 @@ public partial class OnlineVotingService
 
         try
         {
+            var countsBefore = await CountPendingAndAcceptedAsync(electionGuid);
+
             // Pass 1: load the expected set, then persist Processing so another
             // server sharing this database can see the claim.
             var expectedIds = await _context.OnlineVotingInfos
@@ -97,17 +102,22 @@ public partial class OnlineVotingService
                 }
             }
 
-            var pendingRemaining = await _context.OnlineVotingInfos
-                .CountAsync(o => o.ElectionGuid == electionGuid
-                                 && (o.Status == OnlineBallotStatus.Submitted
-                                     || o.Status == OnlineBallotStatus.Processing));
+            var countsAfter = await CountPendingAndAcceptedAsync(electionGuid);
+
+            await WriteAcceptAllAuditAsync(
+                electionGuid,
+                acceptedByUserId,
+                countsBefore.Pending,
+                countsBefore.Accepted,
+                countsAfter.Pending,
+                countsAfter.Accepted);
 
             return new AcceptAllOnlineBallotsResultDto
             {
                 Success = true,
                 AcceptedCount = accepted,
                 SkippedCount = skipped,
-                PendingRemaining = pendingRemaining,
+                PendingRemaining = countsAfter.Pending,
                 MessageKey = accepted == 0 && skipped == 0
                     ? "monitoring.acceptAll.nonePending"
                     : "monitoring.acceptAll.complete"
@@ -117,6 +127,67 @@ public partial class OnlineVotingService
         {
             _acceptLock.Exit(electionGuid);
         }
+    }
+
+    private async Task<(int Pending, int Accepted)> CountPendingAndAcceptedAsync(Guid electionGuid)
+    {
+        var rows = await _context.OnlineVotingInfos
+            .AsNoTracking()
+            .Where(o => o.ElectionGuid == electionGuid)
+            .Select(o => o.Status)
+            .ToListAsync();
+
+        return (
+            rows.Count(s => OnlineBallotStatus.IsSubmitted(s) || OnlineBallotStatus.IsProcessing(s)),
+            rows.Count(OnlineBallotStatus.IsProcessed));
+    }
+
+    /// <summary>
+    /// Persists one operational audit row for a completed Accept-all run.
+    /// Stores the teller user id and optional display name, not voter contact
+    /// details. Called only after the run finishes (including 0 accepted).
+    /// </summary>
+    private async Task WriteAcceptAllAuditAsync(
+        Guid electionGuid,
+        string? acceptedByUserId,
+        int pendingBefore,
+        int acceptedBefore,
+        int pendingAfter,
+        int acceptedAfter)
+    {
+        string? acceptedByDisplayName = null;
+        if (!string.IsNullOrWhiteSpace(acceptedByUserId))
+        {
+            acceptedByDisplayName = await _context.Users
+                .AsNoTracking()
+                .Where(u => u.Id == acceptedByUserId)
+                .Select(u => u.DisplayName)
+                .FirstOrDefaultAsync();
+        }
+
+        var metadata = AcceptAllOnlineBallotsAudit.FormatMetadata(
+            pendingBefore,
+            acceptedBefore,
+            pendingAfter,
+            acceptedAfter,
+            acceptedByDisplayName);
+
+        _context.SecurityAuditLogs.Add(new SecurityAuditLog
+        {
+            Timestamp = DateTimeOffset.UtcNow,
+            EventType = SecurityEventType.OperationalActivity,
+            UserId = acceptedByUserId,
+            ElectionGuid = electionGuid,
+            Details = AcceptAllOnlineBallotsAudit.FormatDetails(
+                pendingBefore,
+                acceptedBefore,
+                pendingAfter,
+                acceptedAfter),
+            Severity = SecurityEventSeverity.Info,
+            MetadataJson = System.Text.Json.JsonSerializer.Serialize(metadata)
+        });
+
+        await _context.SaveChangesAsync();
     }
 
     /// <summary>

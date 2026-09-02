@@ -142,6 +142,12 @@ public class OnlineVotingInfoDto
     /// End date and time for online voting period.
     /// </summary>
     public DateTimeOffset? OnlineVotingEnd { get; set; }
+
+    /// <summary>
+    /// Successful Accept-all runs for this election, newest first. Each row is
+    /// who / when / pending and accepted counts before and after that run.
+    /// </summary>
+    public List<AcceptAllOnlineBallotsRunDto> AcceptAllRuns { get; set; } = new();
 }
 
 

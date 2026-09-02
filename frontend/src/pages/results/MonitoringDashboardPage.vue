@@ -255,6 +255,76 @@
               </el-tag>
             </el-descriptions-item>
           </el-descriptions>
+          <div class="accept-all-history">
+            <h3>{{ $t("monitoring.acceptAll.history") }}</h3>
+            <el-table
+              v-if="acceptAllRuns.length > 0"
+              :data="acceptAllRuns"
+              stripe
+              data-testid="accept-all-history"
+              style="width: 100%"
+            >
+              <el-table-column
+                :label="$t('monitoring.acceptAll.when')"
+                min-width="180"
+              >
+                <template #default="scope">
+                  {{ formatDateTime(scope.row.when) }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('monitoring.acceptAll.who')"
+                min-width="160"
+              >
+                <template #default="scope">
+                  {{ acceptAllWho(scope.row) }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('monitoring.acceptAll.pendingBefore')"
+                width="140"
+                align="center"
+              >
+                <template #default="scope">
+                  {{ scope.row.pendingBefore }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('monitoring.acceptAll.pendingAfter')"
+                width="140"
+                align="center"
+              >
+                <template #default="scope">
+                  {{ scope.row.pendingAfter }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('monitoring.acceptAll.acceptedBefore')"
+                width="150"
+                align="center"
+              >
+                <template #default="scope">
+                  {{ scope.row.acceptedBefore }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('monitoring.acceptAll.acceptedAfter')"
+                width="150"
+                align="center"
+              >
+                <template #default="scope">
+                  {{ scope.row.acceptedAfter }}
+                </template>
+              </el-table-column>
+            </el-table>
+            <p
+              v-else
+              class="accept-all-history-empty"
+              data-testid="accept-all-history-empty"
+            >
+              {{ $t("monitoring.acceptAll.noHistory") }}
+            </p>
+          </div>
         </el-card>
       </div>
 
@@ -282,7 +352,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { signalrService } from "../../services/signalrService";
 import { useResultStore } from "../../stores/resultStore";
-import type { MonitorInfoDto } from "../../types";
+import type { AcceptAllOnlineBallotsRunDto, MonitorInfoDto } from "../../types";
 
 const route = useRoute();
 const router = useRouter();
@@ -298,6 +368,9 @@ const accepting = ref(false);
 const canAcceptOnlineBallots = computed(() => isFullTeller());
 const pendingOnlineCount = computed(
   () => monitorInfo.value?.onlineVotingInfo.pendingOnlineBallots ?? 0,
+);
+const acceptAllRuns = computed(
+  () => monitorInfo.value?.onlineVotingInfo.acceptAllRuns ?? [],
 );
 const refreshInterval = ref<number | null>(null);
 let frontDeskConnection: Awaited<
@@ -444,6 +517,10 @@ function formatDateTime(date: string) {
   return new Date(date).toLocaleString();
 }
 
+function acceptAllWho(run: AcceptAllOnlineBallotsRunDto) {
+  return run.acceptedBy || run.acceptedByUserId || "-";
+}
+
 function getStatusType(status: string) {
   const statusMap: Record<string, string> = {
     Online: "success",
@@ -485,6 +562,21 @@ function calculateTurnout(registered: number, ballots: number) {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.accept-all-history {
+  margin-top: 20px;
+
+  h3 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.accept-all-history-empty {
+  margin: 0;
+  color: #909399;
 }
 
 .summary-row {

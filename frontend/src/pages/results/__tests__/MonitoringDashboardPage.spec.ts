@@ -65,6 +65,7 @@ const mockMonitor: MonitorInfoDto = {
     processedOnlineBallots: 1,
     pendingOnlineBallots: 3,
     onlineVotingEnabled: true,
+    acceptAllRuns: [],
   },
   totalBallots: 10,
   totalVotes: 20,
@@ -115,6 +116,7 @@ describe("MonitoringDashboardPage Accept all", () => {
     mockShowSuccess.mockReset();
     mockShowError.mockReset();
     mockMonitor.onlineVotingInfo.pendingOnlineBallots = 3;
+    mockMonitor.onlineVotingInfo.acceptAllRuns = [];
   });
 
   async function mountPage() {
@@ -140,6 +142,38 @@ describe("MonitoringDashboardPage Accept all", () => {
     const wrapper = await mountPage();
     const button = wrapper.find("[data-testid='accept-all-online-ballots']");
     expect(button.attributes("disabled")).toBeDefined();
+  });
+
+  it("shows the Accept-all record when runs exist", async () => {
+    mockMonitor.onlineVotingInfo.acceptAllRuns = [
+      {
+        when: "2026-09-02T12:00:00.000Z",
+        acceptedByUserId: "teller-1",
+        acceptedBy: "Jane Teller",
+        pendingBefore: 3,
+        acceptedBefore: 1,
+        pendingAfter: 0,
+        acceptedAfter: 4,
+      },
+    ];
+    const wrapper = await mountPage();
+    expect(wrapper.find("[data-testid='accept-all-history']").exists()).toBe(
+      true,
+    );
+    expect(
+      wrapper.find("[data-testid='accept-all-history-empty']").exists(),
+    ).toBe(false);
+  });
+
+  it("shows an empty Accept-all record when there are no runs", async () => {
+    mockMonitor.onlineVotingInfo.acceptAllRuns = [];
+    const wrapper = await mountPage();
+    expect(
+      wrapper.find("[data-testid='accept-all-history-empty']").exists(),
+    ).toBe(true);
+    expect(wrapper.find("[data-testid='accept-all-history']").exists()).toBe(
+      false,
+    );
   });
 
   it("loads a summary and confirms before accepting", async () => {

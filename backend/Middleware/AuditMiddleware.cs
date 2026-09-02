@@ -45,10 +45,13 @@ public class AuditMiddleware
         var method = context.Request.Method.ToUpperInvariant();
 
         // Skip infra, hubs, and routes that already write typed SecurityAuditLogs.
+        // Accept-all writes its own operational row (who / when / counts); a
+        // generic POST path log would be a second, incomplete success record.
         if (path.StartsWith("/api/auth") ||
             path.StartsWith("/api/account") ||
             path.StartsWith("/api/audit-logs") ||
             path.StartsWith("/api/security-audit-logs") ||
+            path.Contains("/online-ballots/accept-all") ||
             path.StartsWith("/swagger") ||
             path.StartsWith("/hubs") ||
             path.StartsWith("/health"))

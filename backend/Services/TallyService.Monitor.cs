@@ -1,3 +1,4 @@
+using Backend;
 using Backend.DTOs.Results;
 using Backend.Enumerations;
 using Microsoft.EntityFrameworkCore;
@@ -101,7 +102,8 @@ public partial class TallyService
                 .Where(o => o.ElectionGuid == electionGuid
                             && (o.Status == Backend.Helpers.OnlineBallotStatus.Submitted
                                 || o.Status == Backend.Helpers.OnlineBallotStatus.Processing))
-                .CountAsync()
+                .CountAsync(),
+            AcceptAllRuns = await LoadAcceptAllRunsAsync(electionGuid)
         };
 
         var totalBallots = await _context.Ballots
@@ -138,6 +140,20 @@ public partial class TallyService
 
         // Could potentially update a cache or in-memory store here if needed
         // For now, just log the contact
+    }
+
+    private async Task<List<AcceptAllOnlineBallotsRunDto>> LoadAcceptAllRunsAsync(Guid electionGuid)
+    {
+        var logs = await _context.SecurityAuditLogs
+            .AsNoTracking()
+            .Where(l => l.ElectionGuid == electionGuid
+                        && l.EventType == SecurityEventType.OperationalActivity
+                        && l.Details != null
+                        && l.Details.StartsWith(Backend.Helpers.AcceptAllOnlineBallotsAudit.DetailsPrefix))
+            .OrderByDescending(l => l.Timestamp)
+            .ToListAsync();
+
+        return logs.Select(Backend.Helpers.AcceptAllOnlineBallotsAudit.ToRunDto).ToList();
     }
 
     private string DetermineComputerStatus(DateTimeOffset? lastContact)

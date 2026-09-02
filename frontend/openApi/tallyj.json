@@ -12599,6 +12599,40 @@
         },
         "additionalProperties": false
       },
+      "Results_AcceptAllOnlineBallotsRunDto": {
+        "type": "object",
+        "properties": {
+          "when": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "acceptedByUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "acceptedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "pendingBefore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "acceptedBefore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingAfter": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "acceptedAfter": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "Results_ComputerInfoDto": {
         "type": "object",
         "properties": {
@@ -12945,6 +12979,13 @@
           "onlineVotingEnd": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          },
+          "acceptAllRuns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Results_AcceptAllOnlineBallotsRunDto"
+            },
             "nullable": true
           }
         },

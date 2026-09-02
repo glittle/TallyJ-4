@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Backend.Enumerations;
 using Backend.DTOs.Elections;
 using Backend.DTOs.OnlineVoting;
@@ -345,7 +346,9 @@ public class ElectionsController : ControllerBase
     [Authorize(Policy = "FullTellerAccess")]
     public async Task<ActionResult<AcceptAllOnlineBallotsResultDto>> AcceptAllOnlineBallots(Guid guid)
     {
-        var result = await _onlineVotingService.AcceptAllPendingAsync(guid);
+        var acceptedByUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? User.FindFirst("sub")?.Value;
+        var result = await _onlineVotingService.AcceptAllPendingAsync(guid, acceptedByUserId);
         if (result.AlreadyInProgress)
         {
             return Conflict(result);

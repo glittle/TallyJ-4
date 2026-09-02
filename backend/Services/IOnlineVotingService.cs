@@ -95,8 +95,13 @@ public interface IOnlineVotingService
     /// Accepts current pending online ballots into regular ballots. The online voting window
     /// may stay open. Each run only accepts what is Submitted at that moment. Concurrent
     /// runs for the same election are rejected. Already-processed rows are not accepted again.
+    /// A successful run writes one operational audit row (who / when / counts). Failed or
+    /// overlapping (409) runs do not.
     /// </summary>
-    Task<AcceptAllOnlineBallotsResultDto> AcceptAllPendingAsync(Guid electionGuid);
+    /// <param name="acceptedByUserId">Logged-in teller user id (JWT sub). Not a voter id.</param>
+    Task<AcceptAllOnlineBallotsResultDto> AcceptAllPendingAsync(
+        Guid electionGuid,
+        string? acceptedByUserId = null);
 }
 
 

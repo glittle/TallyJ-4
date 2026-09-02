@@ -1,7 +1,9 @@
+using Backend;
 using Backend.DTOs.OnlineVoting;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Helpers;
+using Backend.Identity;
 using Backend.Services;
 using Backend.Services.Auth;
 using Microsoft.EntityFrameworkCore;
@@ -76,6 +78,7 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
         Assert.Null(ovi.ListPool);
         Assert.Null(ovi.BallotGuid);
         Assert.Null(ovi.PoolLocked);
+        Assert.Contains(OnlineBallotStatus.Processed, ovi.HistoryStatus);
     }
 
     [Fact]
@@ -386,6 +389,146 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
         Assert.NotNull(summary);
         Assert.Equal(2, summary.PendingCount);
         Assert.Equal(0, summary.ProcessedCount);
+    }
+
+    [Fact]
+    public async Task AcceptAll_WritesAudit_WithWhoWhenAndCounts()
+    {
+        var election = await SeedOpenElectionAsync();
+        var first = await SeedVoterAsync(election.ElectionGuid, "one@example.com");
+        var second = await SeedVoterAsync(election.ElectionGuid, "two@example.com");
+        await SubmitPendingAsync(election.ElectionGuid, first.Email, first.Person.PersonGuid);
+        await SubmitPendingAsync(election.ElectionGuid, second.Email, second.Person.PersonGuid);
+        await SeedTellerAsync("teller-1", "Jane Teller", "teller@example.com");
+
+        var result = await _service.AcceptAllPendingAsync(election.ElectionGuid, "teller-1");
+
+        Assert.True(result.Success);
+        Assert.Equal(2, result.AcceptedCount);
+        var log = Assert.Single(Context.SecurityAuditLogs);
+        Assert.True(AcceptAllOnlineBallotsAudit.IsAcceptAllLog(log));
+        Assert.Equal("teller-1", log.UserId);
+        Assert.Equal(election.ElectionGuid, log.ElectionGuid);
+        Assert.Null(log.Email);
+        Assert.Null(log.OnlineVoterId);
+        Assert.True(log.Timestamp > DateTimeOffset.UtcNow.AddMinutes(-1));
+        Assert.DoesNotContain("one@example.com", log.Details, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("two@example.com", log.Details, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("teller@example.com", log.Details, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("one@example.com", log.MetadataJson, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("teller@example.com", log.MetadataJson, StringComparison.OrdinalIgnoreCase);
+
+        var run = AcceptAllOnlineBallotsAudit.ToRunDto(log);
+        Assert.Equal("Jane Teller", run.AcceptedBy);
+        Assert.Equal("teller-1", run.AcceptedByUserId);
+        Assert.Equal(2, run.PendingBefore);
+        Assert.Equal(0, run.AcceptedBefore);
+        Assert.Equal(0, run.PendingAfter);
+        Assert.Equal(2, run.AcceptedAfter);
+    }
+
+    [Fact]
+    public async Task AcceptAll_SecondRun_WritesItsOwnAuditRow()
+    {
+        var election = await SeedOpenElectionAsync();
+        var first = await SeedVoterAsync(election.ElectionGuid, "one@example.com");
+        await SubmitPendingAsync(election.ElectionGuid, first.Email, first.Person.PersonGuid);
+        await _service.AcceptAllPendingAsync(election.ElectionGuid, "teller-1");
+
+        var second = await SeedVoterAsync(election.ElectionGuid, "two@example.com");
+        await SubmitPendingAsync(election.ElectionGuid, second.Email, second.Person.PersonGuid);
+        await _service.AcceptAllPendingAsync(election.ElectionGuid, "teller-2");
+
+        var logs = Context.SecurityAuditLogs
+            .Where(AcceptAllOnlineBallotsAudit.IsAcceptAllLog)
+            .OrderBy(l => l.Timestamp)
+            .ToList();
+        Assert.Equal(2, logs.Count);
+        var firstRun = AcceptAllOnlineBallotsAudit.ToRunDto(logs[0]);
+        var secondRun = AcceptAllOnlineBallotsAudit.ToRunDto(logs[1]);
+        Assert.Equal("teller-1", firstRun.AcceptedByUserId);
+        Assert.Equal(1, firstRun.PendingBefore);
+        Assert.Equal(0, firstRun.AcceptedBefore);
+        Assert.Equal(0, firstRun.PendingAfter);
+        Assert.Equal(1, firstRun.AcceptedAfter);
+        Assert.Equal("teller-2", secondRun.AcceptedByUserId);
+        Assert.Equal(1, secondRun.PendingBefore);
+        Assert.Equal(1, secondRun.AcceptedBefore);
+        Assert.Equal(0, secondRun.PendingAfter);
+        Assert.Equal(2, secondRun.AcceptedAfter);
+    }
+
+    [Fact]
+    public async Task AcceptAll_WhileLockHeld_DoesNotWriteAudit()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+        await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid);
+
+        Assert.True(_lock.TryEnter(election.ElectionGuid));
+        try
+        {
+            var result = await _service.AcceptAllPendingAsync(election.ElectionGuid, "teller-1");
+            Assert.True(result.AlreadyInProgress);
+            Assert.Empty(Context.SecurityAuditLogs);
+        }
+        finally
+        {
+            _lock.Exit(election.ElectionGuid);
+        }
+    }
+
+    [Fact]
+    public async Task AcceptAll_FinalizedElection_DoesNotWriteAudit()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+        await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid);
+        election.ElectionStage = ElectionStage.Finalized;
+        await Context.SaveChangesAsync();
+
+        var result = await _service.AcceptAllPendingAsync(election.ElectionGuid, "teller-1");
+        Assert.False(result.Success);
+        Assert.Empty(Context.SecurityAuditLogs);
+    }
+
+    [Fact]
+    public async Task AcceptAll_MissingElection_DoesNotWriteAudit()
+    {
+        var result = await _service.AcceptAllPendingAsync(Guid.NewGuid(), "teller-1");
+        Assert.False(result.Success);
+        Assert.Empty(Context.SecurityAuditLogs);
+    }
+
+    [Fact]
+    public async Task AcceptAll_NonePending_WritesZeroCountAudit()
+    {
+        var election = await SeedOpenElectionAsync();
+
+        var result = await _service.AcceptAllPendingAsync(election.ElectionGuid, "teller-1");
+
+        Assert.True(result.Success);
+        Assert.Equal(0, result.AcceptedCount);
+        var log = Assert.Single(Context.SecurityAuditLogs);
+        var run = AcceptAllOnlineBallotsAudit.ToRunDto(log);
+        Assert.Equal(0, run.PendingBefore);
+        Assert.Equal(0, run.AcceptedBefore);
+        Assert.Equal(0, run.PendingAfter);
+        Assert.Equal(0, run.AcceptedAfter);
+        Assert.Equal("teller-1", run.AcceptedByUserId);
+    }
+
+    private async Task SeedTellerAsync(string userId, string displayName, string email)
+    {
+        Context.Users.Add(new AppUser
+        {
+            Id = userId,
+            UserName = email,
+            Email = email,
+            DisplayName = displayName,
+            AuthMethod = "Local"
+        });
+        await Context.SaveChangesAsync();
     }
 
     private async Task<Guid> SeedLegacySubmittedWithBallotAsync(Election election, Person person)

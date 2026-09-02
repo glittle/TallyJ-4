@@ -44,6 +44,27 @@ Rows that already have a `BallotGuid` from the older submit-creates-ballot path 
 
 **Reason:** pending votes stay changeable until a teller accepts them; accepted votes become ordinary ballots with no remaining online payload.
 
+## Accept-all audit record
+
+**Status:** active  
+**Evidence:** confirmed (issue #188 remaining slice; `SecurityAuditLogs` replaced `Logs` / C_Log in `20260713054353_MergeLogsIntoSecurityAuditLogs`)
+
+Each successful Accept-all persists one operational `SecurityAuditLog` row: who accepted (logged-in teller `UserId`, plus `DisplayName` when the account has one), when, and pending / accepted counts before and after that run. A teller may Accept-all more than once; each run is its own row. Failed runs and overlapping 409 refusals do not write a success audit.
+
+Tellers see those rows on the monitor page (same place as Accept-all). They also appear on the existing Audit Logs page because that page reads `SecurityAuditLogs`.
+
+`OnlineVotingInfo.HistoryStatus` is not this record. Accept-all still appends a per-voter `Processed|{timestamp}` there. That string has no teller identity and no before/after counts.
+
+The generic `AuditMiddleware` POST path log is skipped for Accept-all so a second, count-less “success” row is not stored next to the real one.
+
+The audit stores teller user id and optional display name only. It does not store voter email, phone, kiosk code, or voter id (CodeQL `cs/exposure-of-sensitive-information` on #294). Teller email is also left off the row.
+
+**Rejected alternative:** treat `HistoryStatus` as the teller-run audit. It is per voter and cannot answer who accepted or the run counts.
+
+**Rejected alternative:** add a new Accept-all audit table. `SecurityAuditLogs` with `OperationalActivity` is already the election activity log that replaced C_Log.
+
+**Reason:** issue #188 asked for a durable who/when/counts record in the existing TallyJ log, visible to tellers, without a parallel system and without voter contact details.
+
 ## Teller resolution of free-text names
 
 **Status:** active  
