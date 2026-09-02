@@ -19,7 +19,9 @@ function kindLabel(kind: string): string {
   return translated === key ? kind : translated;
 }
 
-function subject(row: CountReconciliationReportDto["mismatches"][number]): string {
+function subject(
+  row: CountReconciliationReportDto["mismatches"][number],
+): string {
   if (row.personName) {
     return row.personName;
   }
@@ -35,16 +37,20 @@ function subject(row: CountReconciliationReportDto["mismatches"][number]): strin
   return t("frontDesk.common.dash");
 }
 
-function detail(row: CountReconciliationReportDto["mismatches"][number]): string {
+function detail(
+  row: CountReconciliationReportDto["mismatches"][number],
+): string {
   const parts: string[] = [];
   if (row.votingMethod) {
     parts.push(getVotingMethodLabel(row.votingMethod, t));
   }
-  if (row.envNum != null) {
+  if (typeof row.envNum === "number") {
     parts.push(t("tally.reconciliation.envelope", { n: row.envNum }));
   }
   if (row.onlineStatus) {
-    parts.push(t("tally.reconciliation.onlineStatus", { status: row.onlineStatus }));
+    parts.push(
+      t("tally.reconciliation.onlineStatus", { status: row.onlineStatus }),
+    );
   }
   return parts.join(" · ");
 }
@@ -73,17 +79,27 @@ function detail(row: CountReconciliationReportDto["mismatches"][number]): string
         show-icon
       />
 
-      <el-descriptions :column="2" border class="reconciliation-report-panel__counts">
-        <el-descriptions-item :label="$t('tally.reconciliation.frontDeskCount')">
+      <el-descriptions
+        :column="2"
+        border
+        class="reconciliation-report-panel__counts"
+      >
+        <el-descriptions-item
+          :label="$t('tally.reconciliation.frontDeskCount')"
+        >
           {{ report.frontDeskCount }}
         </el-descriptions-item>
         <el-descriptions-item :label="$t('tally.reconciliation.ballotCount')">
           {{ report.ballotCount }}
         </el-descriptions-item>
-        <el-descriptions-item :label="$t('tally.reconciliation.pendingOnlineCount')">
+        <el-descriptions-item
+          :label="$t('tally.reconciliation.pendingOnlineCount')"
+        >
           {{ report.pendingOnlineCount }}
         </el-descriptions-item>
-        <el-descriptions-item :label="$t('tally.reconciliation.spoiledBallotCount')">
+        <el-descriptions-item
+          :label="$t('tally.reconciliation.spoiledBallotCount')"
+        >
           {{ report.spoiledBallotCount }}
         </el-descriptions-item>
       </el-descriptions>

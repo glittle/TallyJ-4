@@ -463,6 +463,7 @@ public class TallyServiceTests : ServiceTestBase
             Context.Votes.Add(vote);
         }
         await Context.SaveChangesAsync();
+        await AlignFrontDeskToBallotCountAsync(election.ElectionGuid);
 
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 

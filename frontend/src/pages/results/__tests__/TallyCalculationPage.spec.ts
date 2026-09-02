@@ -139,8 +139,8 @@ describe("TallyCalculationPage reconciliation gate", () => {
     await flushPromises();
 
     await wrapper.find("button").trigger("click");
+    expect(wrapper.find("button").attributes("disabled")).toBeDefined();
     expect(mockCalculateTally).not.toHaveBeenCalled();
-    expect(mockShowError).toHaveBeenCalled();
   });
 
   it("enables Analyze when the report is reconciled", async () => {

@@ -29,9 +29,7 @@ const reconciliation = computed(() => resultStore.reconciliation);
 const reconciliationLoading = computed(
   () => resultStore.loading && !resultStore.reconciliation,
 );
-const canAnalyze = computed(
-  () => reconciliation.value?.isReconciled === true,
-);
+const canAnalyze = computed(() => reconciliation.value?.isReconciled === true);
 
 const electionType = computed<"normal" | "singlename">(() =>
   election.value?.numberToElect === 1 ? "singlename" : "normal",
@@ -73,9 +71,11 @@ onUnmounted(async () => {
 
 async function handleCalculate() {
   if (!canAnalyze.value) {
-    showErrorMessage(t("tally.reconciliation.blocked", {
-      count: reconciliation.value?.mismatches.length ?? 0,
-    }));
+    showErrorMessage(
+      t("tally.reconciliation.blocked", {
+        count: reconciliation.value?.mismatches.length ?? 0,
+      }),
+    );
     return;
   }
 

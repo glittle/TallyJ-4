@@ -40,9 +40,7 @@ async function selectStage(newStage: ElectionStage) {
       if (!report.isReconciled) {
         finalizeReport.value = report;
         finalizeReportVisible.value = true;
-        showErrorMessage(
-          t("tally.reconciliation.finalizeBlocked"),
-        );
+        showErrorMessage(t("tally.reconciliation.finalizeBlocked"));
         return;
       }
     } catch (error) {
