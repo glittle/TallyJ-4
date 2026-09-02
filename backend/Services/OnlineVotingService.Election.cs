@@ -116,14 +116,13 @@ public partial class OnlineVotingService
 
             result = result.Where(e => e.IsOpen).ToList();
 
-            _logger.LogInformation("Found {Count} elections for voter {VoterId}",
-                result.Count, voterId);
+            _logger.LogInformation("Found {Count} available elections", result.Count);
 
             return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting available elections for {VoterId}", voterId);
+            _logger.LogError(ex, "Error getting available elections");
             return new List<AvailableElectionDto>();
         }
     }

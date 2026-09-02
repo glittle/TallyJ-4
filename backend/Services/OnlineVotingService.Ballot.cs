@@ -20,7 +20,6 @@ public partial class OnlineVotingService
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
         var now = DateTimeOffset.UtcNow;
-        var safeVoterId = SanitizeForLog(dto.VoterId);
 
         try
         {
@@ -102,15 +101,15 @@ public partial class OnlineVotingService
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            _logger.LogInformation("Online ballot submitted for voter {VoterId} in election {ElectionGuid}",
-                safeVoterId, dto.ElectionGuid);
+            _logger.LogInformation("Online ballot submitted for election {ElectionGuid}", dto.ElectionGuid);
 
             return (true, null);
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            _logger.LogError(ex, "Error submitting online ballot for voter {VoterId}", safeVoterId);
+            _logger.LogError(ex, "Error submitting online ballot for election {ElectionGuid}",
+                dto.ElectionGuid);
             return (false, "voting.submit.error");
         }
     }
