@@ -255,10 +255,7 @@
               </el-tag>
             </el-descriptions-item>
           </el-descriptions>
-          <div
-            class="online-ballot-list"
-            data-testid="pending-online-ballots"
-          >
+          <div class="online-ballot-list" data-testid="pending-online-ballots">
             <h3>{{ $t("monitoring.onlineBallots.pendingTitle") }}</h3>
             <el-table
               v-if="pendingBallots.length > 0"
@@ -275,17 +272,12 @@
                   {{ scope.row.personName }}
                 </template>
               </el-table-column>
-              <el-table-column
-                :label="$t('monitoring.status')"
-                width="140"
-              >
+              <el-table-column :label="$t('monitoring.status')" width="140">
                 <template #default="scope">
                   <el-tag
                     :type="onlineBallotStatusView(scope.row.status).tagType"
                   >
-                    {{
-                      $t(onlineBallotStatusView(scope.row.status).labelKey)
-                    }}
+                    {{ $t(onlineBallotStatusView(scope.row.status).labelKey) }}
                   </el-tag>
                 </template>
               </el-table-column>
@@ -306,10 +298,7 @@
               {{ $t("monitoring.onlineBallots.pendingEmpty") }}
             </p>
           </div>
-          <div
-            class="online-ballot-list"
-            data-testid="accepted-online-ballots"
-          >
+          <div class="online-ballot-list" data-testid="accepted-online-ballots">
             <h3>{{ $t("monitoring.onlineBallots.acceptedTitle") }}</h3>
             <el-table
               v-if="acceptedBallots.length > 0"
@@ -326,17 +315,12 @@
                   {{ scope.row.personName }}
                 </template>
               </el-table-column>
-              <el-table-column
-                :label="$t('monitoring.status')"
-                width="140"
-              >
+              <el-table-column :label="$t('monitoring.status')" width="140">
                 <template #default="scope">
                   <el-tag
                     :type="onlineBallotStatusView(scope.row.status).tagType"
                   >
-                    {{
-                      $t(onlineBallotStatusView(scope.row.status).labelKey)
-                    }}
+                    {{ $t(onlineBallotStatusView(scope.row.status).labelKey) }}
                   </el-tag>
                 </template>
               </el-table-column>

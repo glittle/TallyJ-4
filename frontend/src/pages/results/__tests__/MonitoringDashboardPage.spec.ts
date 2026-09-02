@@ -239,9 +239,9 @@ describe("MonitoringDashboardPage Accept all", () => {
     const pending = wrapper.find("[data-testid='pending-online-ballots']");
     const accepted = wrapper.find("[data-testid='accepted-online-ballots']");
 
-    expect(pending.find("[data-testid='pending-online-ballots-table']").exists()).toBe(
-      true,
-    );
+    expect(
+      pending.find("[data-testid='pending-online-ballots-table']").exists(),
+    ).toBe(true);
     expect(pending.text()).toContain("Submitted, Ada");
     expect(pending.text()).toContain("Processing, Bea");
     expect(pending.text()).toContain("Processing");

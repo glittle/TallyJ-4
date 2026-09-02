@@ -1684,12 +1684,8 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Equal(1, online.ProcessedOnlineBallots);
 
         Assert.Equal(3, online.PendingBallots.Count);
-        Assert.Equal(new[]
-        {
-            OnlineBallotStatus.Submitted,
-            OnlineBallotStatus.Processing,
-            OnlineBallotStatus.Submitted
-        }, online.PendingBallots.Select(b => b.Status).OrderBy(s => s).ToArray());
+        Assert.Equal(2, online.PendingBallots.Count(b => b.Status == OnlineBallotStatus.Submitted));
+        Assert.Equal(1, online.PendingBallots.Count(b => b.Status == OnlineBallotStatus.Processing));
         Assert.Contains(online.PendingBallots, b =>
             b.PersonName.Contains("Submitted") && b.Status == OnlineBallotStatus.Submitted);
         Assert.Contains(online.PendingBallots, b =>
