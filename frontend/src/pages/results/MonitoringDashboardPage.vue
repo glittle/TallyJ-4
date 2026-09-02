@@ -352,10 +352,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { signalrService } from "../../services/signalrService";
 import { useResultStore } from "../../stores/resultStore";
-import type {
-  AcceptAllOnlineBallotsRunDto,
-  MonitorInfoDto,
-} from "../../types";
+import type { AcceptAllOnlineBallotsRunDto, MonitorInfoDto } from "../../types";
 
 const route = useRoute();
 const router = useRouter();

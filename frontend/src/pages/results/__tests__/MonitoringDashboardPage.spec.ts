@@ -168,9 +168,9 @@ describe("MonitoringDashboardPage Accept all", () => {
   it("shows an empty Accept-all record when there are no runs", async () => {
     mockMonitor.onlineVotingInfo.acceptAllRuns = [];
     const wrapper = await mountPage();
-    expect(wrapper.find("[data-testid='accept-all-history-empty']").exists()).toBe(
-      true,
-    );
+    expect(
+      wrapper.find("[data-testid='accept-all-history-empty']").exists(),
+    ).toBe(true);
     expect(wrapper.find("[data-testid='accept-all-history']").exists()).toBe(
       false,
     );
