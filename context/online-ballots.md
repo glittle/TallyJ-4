@@ -94,18 +94,25 @@ The audit stores teller user id and optional display name only. It does not stor
 ## Teller resolution of free-text names
 
 **Status:** active  
-**Evidence:** confirmed (issue #256, v3 `BallotNormal.cshtml.js` `findWithRawVotePart`)
+**Evidence:** confirmed (issue #256, v3 `BallotNormal.cshtml.js` `findWithRawVotePart`; Glen on issue #187)
 
-When voters type names (online random/both modes) or an import cannot match a name, the original text is stored on the vote and tellers resolve it on the ballot — they do not get a new empty line.
+In TallyJ, **random name** means a vote on an **online ballot** (selection process random / both) where the voter typed a name. It is not paper teller entry and not a general people-search feature. After Accept-all, those lines become regular votes; tellers resolve the typed name on that ballot — they do not get a new empty line. Import mismatches reuse the same `OnlineVoteRaw` payload; that is not a paper random-name flow.
 
 - Persist free-text as v3-compatible `OnlineRawVote` JSON (`First` / `Last` / `OtherInfo`) on `Vote.OnlineVoteRaw`. Legacy plain strings are still parsed.
 - Unresolved votes stay `VoteStatus.Raw`; the ballot is `BallotStatus.Raw` until every line has a person or a spoil reason.
 - Matching a name **updates that vote** and keeps `OnlineVoteRaw` so the voter-entered text is never discarded (issue #187).
 - **Find** copies first + last into search. Each extra click drops the last letter of both names (same as v3). The teller then picks a search hit for the current line and the next unresolved line is selected.
+- The open-ballot list marks only lines that still need that match (`isUnresolvedRawVote`: has typed text, no person, no spoil). v3 used a saturated peach (`#f1b787` / `rawDonefalse`) so unfinished lines jumped out next to matched green. v4 uses a warning row plus a **Needs matching** badge. A matched line keeps the original text but is not marked.
 
 **Rejected alternative:** keep treating free-text as a display-only string and let tellers add new votes underneath. That dropped the v3 process, hid the original names (and treated `Raw` as spoiled in the UI), and could duplicate lines instead of resolving the submitted vote.
 
-**Reason:** tellers already know this workflow from v3; shortening is how they widen a misspelled search without retyping.
+**Rejected alternative:** treat any vote without a person — including paper empty slots — as needing resolution. That would invent a paper random-name flow.
+
+**Rejected alternative:** key the mark off `OnlineVoteRaw` alone. Matching keeps the original text, so resolved lines would stay highlighted.
+
+**Rejected alternative:** keep the pale `warning-light-8` row with no label. That fill was too close to a normal vote; tellers could not see unfinished online names at a glance.
+
+**Reason:** tellers already know this workflow from v3; shortening is how they widen a misspelled search without retyping. They must also see which online typed names are still unmatched.
 
 ## Teller-created ballots stay off the Online location
 

@@ -149,6 +149,14 @@ function canFindRawName(vote: VoteDto | null) {
             </div>
             <div class="vote-actions">
               <span
+                v-if="isUnresolvedRawVote(vote)"
+                class="status-badge warning needs-resolution"
+                :title="$t('ballots.needsNameResolutionHint')"
+              >
+                <el-icon><WarningFilled /></el-icon>
+                {{ $t("ballots.needsNameResolution") }}
+              </span>
+              <span
                 v-if="duplicatePersonGuids.includes(vote.personGuid!)"
                 class="status-badge warning"
                 :title="$t('ballots.duplicateWarning')"
@@ -265,9 +273,16 @@ function canFindRawName(vote: VoteDto | null) {
       border: 1px solid var(--el-color-warning-light-5);
     }
 
+    // v3 used a saturated peach (#f1b787) so unresolved lines jump out next to
+    // matched green. Pale warning-light-8 was too close to a normal vote row.
     &.is-raw-unresolved {
-      background-color: var(--el-color-warning-light-8);
-      border: 1px solid var(--el-color-warning-light-5);
+      background-color: var(--el-color-warning-light-5);
+      border: 2px solid var(--el-color-warning);
+      box-shadow: inset 4px 0 0 var(--el-color-warning);
+
+      .raw-name {
+        font-weight: 600;
+      }
     }
 
     &.is-raw:not(.is-raw-unresolved) {
@@ -280,7 +295,9 @@ function canFindRawName(vote: VoteDto | null) {
     }
 
     &.is-raw-target.is-raw-unresolved {
-      background-color: var(--el-color-warning-light-7);
+      background-color: var(--el-color-warning-light-3);
+      border-color: var(--el-color-warning-dark);
+      box-shadow: inset 4px 0 0 var(--el-color-warning-dark);
     }
 
     .vote-position {
@@ -396,6 +413,14 @@ function canFindRawName(vote: VoteDto | null) {
 
           &.warning {
             color: var(--el-color-warning);
+          }
+
+          &.needs-resolution {
+            background: var(--el-color-warning-light-7);
+            color: var(--el-color-warning-dark);
+            border: 1px solid var(--el-color-warning);
+            font-weight: 600;
+            white-space: nowrap;
           }
         }
       }

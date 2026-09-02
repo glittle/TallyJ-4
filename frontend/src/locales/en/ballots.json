@@ -88,6 +88,8 @@
   "ballots.searchHelp": "Use ↑ ↓ keys to move in the list. Press Enter to add.",
   "ballots.findRawName": "Find",
   "ballots.findRawNameHint": "Click again to drop the last letter of each name and widen the search",
+  "ballots.needsNameResolution": "Needs matching",
+  "ballots.needsNameResolutionHint": "The voter typed this name on their online ballot. Find or add the person.",
   "ballots.changeRawName": "Change",
   "ballots.searchHelpRaw": "Find copied the voter-entered name. Click Find again to shorten it.",
   "ballots.searchPerson": "Add a name to this ballot",
