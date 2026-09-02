@@ -88,6 +88,7 @@ describe("BallotVotesPanel unresolved OnlineVoteRaw", () => {
     expect(rows[1].find(".needs-resolution").exists()).toBe(false);
     expect(rows[1].find(".raw-name").text()).toBe("Jonathan Smythe");
     expect(rows[1].find(".vote-name").text()).toBe("Smythe, Jonathan");
+    expect(rows[1].find(".vote-name").classes()).not.toContain("is-spoiled");
     expect(rows[1].find(".vote-actions .raw-find-btn").text()).toContain(
       "Change",
     );

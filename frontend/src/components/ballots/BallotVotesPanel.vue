@@ -297,10 +297,6 @@ function canFindRawName(vote: VoteDto | null) {
         var(--el-color-success) 18%,
         var(--el-bg-color)
       );
-
-      .vote-name:not(.is-spoiled) {
-        color: var(--el-color-warning-dark);
-      }
     }
 
     &.is-raw-target {
@@ -327,8 +323,6 @@ function canFindRawName(vote: VoteDto | null) {
 
     &.has-vote .vote-position,
     &.is-raw-unresolved .vote-position,
-    &.has-vote .raw-name,
-    &.is-raw-unresolved .raw-name,
     &.has-vote .drag-handle {
       color: inherit;
     }
@@ -389,6 +383,8 @@ function canFindRawName(vote: VoteDto | null) {
 
       .raw-name {
         font-weight: 400;
+        // Voter-typed / import raw text (the line above the matched person).
+        color: var(--el-color-warning-dark);
       }
 
       .vote-name {
