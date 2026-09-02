@@ -1561,6 +1561,28 @@ export type ResultsComputerInfoDto = {
     status?: string | null;
 };
 
+export type ResultsCountReconciliationMismatchDto = {
+    kind?: string | null;
+    personGuid?: string | null;
+    personName?: string | null;
+    votingMethod?: string | null;
+    envNum?: number | null;
+    onlineStatus?: string | null;
+    ballotGuid?: string | null;
+    ballotCode?: string | null;
+    frontDeskCount?: number | null;
+    ballotCount?: number | null;
+};
+
+export type ResultsCountReconciliationReportDto = {
+    isReconciled?: boolean;
+    frontDeskCount?: number;
+    ballotCount?: number;
+    pendingOnlineCount?: number;
+    spoiledBallotCount?: number;
+    mismatches?: Array<ResultsCountReconciliationMismatchDto> | null;
+};
+
 export type ResultsDemographicTurnoutDto = {
     demographicCategory?: string | null;
     demographicValue?: string | null;
@@ -4567,6 +4589,24 @@ export type GetApiResultsElectionByElectionGuidSummaryResponses = {
 };
 
 export type GetApiResultsElectionByElectionGuidSummaryResponse = GetApiResultsElectionByElectionGuidSummaryResponses[keyof GetApiResultsElectionByElectionGuidSummaryResponses];
+
+export type GetApiResultsElectionByElectionGuidReconciliationData = {
+    body?: never;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/Results/election/{electionGuid}/reconciliation';
+};
+
+export type GetApiResultsElectionByElectionGuidReconciliationResponses = {
+    /**
+     * OK
+     */
+    200: ResultsCountReconciliationReportDto;
+};
+
+export type GetApiResultsElectionByElectionGuidReconciliationResponse = GetApiResultsElectionByElectionGuidReconciliationResponses[keyof GetApiResultsElectionByElectionGuidReconciliationResponses];
 
 export type GetApiResultsElectionByElectionGuidFinalData = {
     body?: never;

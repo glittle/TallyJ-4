@@ -34,6 +34,7 @@ vi.mock("@/composables/useNotifications", () => ({
 }));
 
 const mockSetStage = vi.fn();
+const mockGetCountReconciliation = vi.fn();
 
 vi.mock("@/stores/electionStore", () => ({
   useElectionStore: () => ({
@@ -41,8 +42,17 @@ vi.mock("@/stores/electionStore", () => ({
   }),
 }));
 
+vi.mock("@/services/resultService", () => ({
+  resultService: {
+    getCountReconciliation: (...args: unknown[]) =>
+      mockGetCountReconciliation(...args),
+  },
+}));
+
 const globalStubs = {
   ElIcon: { template: "<span />" },
+  ElDialog: { template: "<div class='dialog'><slot /></div>" },
+  ReconciliationReportPanel: { template: "<div class='recon-panel' />" },
   Setting: { template: "<span />" },
   Monitor: { template: "<span />" },
   PieChart: { template: "<span />" },
@@ -53,6 +63,15 @@ describe("StageControl", () => {
     setActivePinia(createPinia());
     mockSetStage.mockReset();
     mockShowErrorMessage.mockReset();
+    mockGetCountReconciliation.mockReset();
+    mockGetCountReconciliation.mockResolvedValue({
+      isReconciled: true,
+      frontDeskCount: 0,
+      ballotCount: 0,
+      pendingOnlineCount: 0,
+      spoiledBallotCount: 0,
+      mismatches: [],
+    });
   });
 
   describe("interactive stage switcher", () => {
@@ -98,6 +117,36 @@ describe("StageControl", () => {
       const radios = wrapper.findAll('[role="radio"]');
       await radios[0]!.trigger("click");
       expect(mockSetStage).not.toHaveBeenCalled();
+    });
+
+    it("blocks Finalize and shows the report when counts do not reconcile", async () => {
+      mockGetCountReconciliation.mockResolvedValue({
+        isReconciled: false,
+        frontDeskCount: 2,
+        ballotCount: 1,
+        pendingOnlineCount: 0,
+        spoiledBallotCount: 0,
+        mismatches: [
+          {
+            kind: "FrontDeskVsBallots",
+            frontDeskCount: 2,
+            ballotCount: 1,
+          },
+        ],
+      });
+
+      const wrapper = mount(StageControl, {
+        props: { electionGuid: "abc-123", stage: "ProcessingBallots" },
+        global: { stubs: globalStubs },
+      });
+
+      const radios = wrapper.findAll('[role="radio"]');
+      await radios[3]!.trigger("click");
+      await flushPromises();
+
+      expect(mockGetCountReconciliation).toHaveBeenCalledWith("abc-123");
+      expect(mockSetStage).not.toHaveBeenCalled();
+      expect(mockShowErrorMessage).toHaveBeenCalled();
     });
 
     it("shows translated server error when stage change fails", async () => {

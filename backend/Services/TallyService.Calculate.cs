@@ -27,6 +27,7 @@ public partial class TallyService
 
         await ElectionAnalysisPreparation.PrepareAsync(_context, electionGuid, _logger);
         await ElectionBallotBlocking.EnsureAnalysisCanProceedAsync(_context, electionGuid);
+        await ElectionCountReconciliation.EnsureReconciledAsync(_context, electionGuid);
 
         var totalBallots = await _context.Ballots
             .Where(b => b.Location.ElectionGuid == electionGuid)
@@ -87,6 +88,7 @@ public partial class TallyService
 
         await ElectionAnalysisPreparation.PrepareAsync(_context, electionGuid, _logger);
         await ElectionBallotBlocking.EnsureAnalysisCanProceedAsync(_context, electionGuid);
+        await ElectionCountReconciliation.EnsureReconciledAsync(_context, electionGuid);
 
         var totalBallots = await _context.Ballots
             .Where(b => b.Location.ElectionGuid == electionGuid)
@@ -239,5 +241,29 @@ public partial class TallyService
             NumberToElect = election.NumberToElect ?? 9,
             NumberExtra = election.NumberExtra ?? 0
         };
+    }
+
+    /// <summary>
+    /// Live Front Desk / ballot / pending-online count reconciliation.
+    /// Does not log voter names, email, or phone.
+    /// </summary>
+    public async Task<CountReconciliationReportDto> GetCountReconciliationAsync(Guid electionGuid)
+    {
+        var exists = await _context.Elections.AnyAsync(e => e.ElectionGuid == electionGuid);
+        if (!exists)
+        {
+            throw new ArgumentException($"Election {electionGuid} not found");
+        }
+
+        var report = await ElectionCountReconciliation.EvaluateAsync(_context, electionGuid);
+        _logger.LogInformation(
+            "Count reconciliation for election {ElectionGuid}: reconciled={IsReconciled}, mismatches={MismatchCount}, frontDesk={FrontDeskCount}, ballots={BallotCount}, pendingOnline={PendingOnlineCount}",
+            electionGuid,
+            report.IsReconciled,
+            report.Mismatches.Count,
+            report.FrontDeskCount,
+            report.BallotCount,
+            report.PendingOnlineCount);
+        return report;
     }
 }

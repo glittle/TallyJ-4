@@ -7,6 +7,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { translateElectionStageChangeError } from "@/utils/electionStageErrorMessages";
 import { translateTallyProgressMessage } from "@/utils/tallyProgressMessages";
+import ReconciliationReportPanel from "../../components/results/ReconciliationReportPanel.vue";
 import { useResultStore } from "../../stores/resultStore";
 import { useElectionStore } from "../../stores/electionStore";
 
@@ -24,6 +25,13 @@ const calculating = computed(() => resultStore.calculating);
 const results = computed(() => resultStore.results);
 const tallyProgress = computed(() => resultStore.tallyProgress);
 const election = computed(() => electionStore.currentElection);
+const reconciliation = computed(() => resultStore.reconciliation);
+const reconciliationLoading = computed(
+  () => resultStore.loading && !resultStore.reconciliation,
+);
+const canAnalyze = computed(
+  () => reconciliation.value?.isReconciled === true,
+);
 
 const electionType = computed<"normal" | "singlename">(() =>
   election.value?.numberToElect === 1 ? "singlename" : "normal",
@@ -48,6 +56,7 @@ onMounted(async () => {
     await electionStore.fetchElectionById(electionGuid);
     await resultStore.initializeSignalR();
     await resultStore.joinTallySession(electionGuid);
+    await resultStore.fetchReconciliation(electionGuid);
     await resultStore.fetchResults(electionGuid);
   } catch (_error) {
     resultStore.clearError();
@@ -63,8 +72,16 @@ onUnmounted(async () => {
 });
 
 async function handleCalculate() {
+  if (!canAnalyze.value) {
+    showErrorMessage(t("tally.reconciliation.blocked", {
+      count: reconciliation.value?.mismatches.length ?? 0,
+    }));
+    return;
+  }
+
   try {
     await resultStore.calculateTally(electionGuid, electionType.value);
+    await resultStore.fetchReconciliation(electionGuid);
     showSuccessMessage(t("tally.calculateSuccess"));
   } catch (error: any) {
     const serverMessage =
@@ -107,6 +124,11 @@ function getSectionLabel(section: string) {
 <template>
   <div class="tally-calculation-page">
     <el-card>
+      <ReconciliationReportPanel
+        :report="reconciliation"
+        :loading="reconciliationLoading"
+      />
+
       <el-alert
         :title="$t('tally.warning')"
         type="warning"
@@ -122,6 +144,7 @@ function getSectionLabel(section: string) {
             type="primary"
             size="large"
             :loading="calculating"
+            :disabled="!canAnalyze"
             @click="handleCalculate"
           >
             <el-icon><Operation /></el-icon>

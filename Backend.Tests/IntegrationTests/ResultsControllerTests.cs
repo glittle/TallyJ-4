@@ -220,11 +220,16 @@ public class ResultsControllerTests : IntegrationTestBase
 
         var people = new List<Person>
         {
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Alice", LastName = "Anderson", ElectionGuid = electionGuid, CanReceiveVotes = true },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Bob", LastName = "Brown", ElectionGuid = electionGuid, CanReceiveVotes = true },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Carol", LastName = "Clark", ElectionGuid = electionGuid, CanReceiveVotes = true },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "David", LastName = "Davis", ElectionGuid = electionGuid, CanReceiveVotes = true },
-            new() { PersonGuid = Guid.NewGuid(), FirstName = "Eve", LastName = "Evans", ElectionGuid = electionGuid, CanReceiveVotes = true }
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Alice", LastName = "Anderson", ElectionGuid = electionGuid, CanReceiveVotes = true, CanVote = true, VotingMethod = "P" },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Bob", LastName = "Brown", ElectionGuid = electionGuid, CanReceiveVotes = true, CanVote = true, VotingMethod = "P" },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Carol", LastName = "Clark", ElectionGuid = electionGuid, CanReceiveVotes = true, CanVote = true, VotingMethod = "P" },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "David", LastName = "Davis", ElectionGuid = electionGuid, CanReceiveVotes = true, CanVote = true, VotingMethod = "P" },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Eve", LastName = "Evans", ElectionGuid = electionGuid, CanReceiveVotes = true, CanVote = true, VotingMethod = "P" },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Fay", LastName = "Foster", ElectionGuid = electionGuid, CanReceiveVotes = true, CanVote = true, VotingMethod = "P" },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Gus", LastName = "Green", ElectionGuid = electionGuid, CanReceiveVotes = true, CanVote = true, VotingMethod = "P" },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Hana", LastName = "Hill", ElectionGuid = electionGuid, CanReceiveVotes = true, CanVote = true, VotingMethod = "P" },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Ivy", LastName = "Ingram", ElectionGuid = electionGuid, CanReceiveVotes = true, CanVote = true, VotingMethod = "P" },
+            new() { PersonGuid = Guid.NewGuid(), FirstName = "Jon", LastName = "Jones", ElectionGuid = electionGuid, CanReceiveVotes = true, CanVote = true, VotingMethod = "P" }
         };
 
         context.People.AddRange(people);

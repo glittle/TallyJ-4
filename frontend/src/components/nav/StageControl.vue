@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import ReconciliationReportPanel from "@/components/results/ReconciliationReportPanel.vue";
 import { useNotifications } from "@/composables/useNotifications";
 import {
   STAGES,
   STAGE_META,
   type ElectionStage,
 } from "@/domain/electionStages";
+import { resultService } from "@/services/resultService";
 import { useElectionStore } from "@/stores/electionStore";
+import type { CountReconciliationReportDto } from "@/types";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
 import { translateElectionStageChangeError } from "@/utils/electionStageErrorMessages";
 import { ElIcon } from "element-plus";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
@@ -20,9 +24,31 @@ const { t } = useI18n();
 const electionStore = useElectionStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
+const finalizeReportVisible = ref(false);
+const finalizeReport = ref<CountReconciliationReportDto | null>(null);
+
 async function selectStage(newStage: ElectionStage) {
   if (newStage === props.stage) {
     return;
+  }
+
+  if (newStage === "Finalized") {
+    try {
+      const report = await resultService.getCountReconciliation(
+        props.electionGuid,
+      );
+      if (!report.isReconciled) {
+        finalizeReport.value = report;
+        finalizeReportVisible.value = true;
+        showErrorMessage(
+          t("tally.reconciliation.finalizeBlocked"),
+        );
+        return;
+      }
+    } catch (error) {
+      showErrorMessage(extractApiErrorMessage(error));
+      return;
+    }
   }
 
   try {
@@ -68,6 +94,14 @@ async function selectStage(newStage: ElectionStage) {
       </el-icon>
       <span>{{ t(STAGE_META[s].i18nKey) }}</span>
     </button>
+
+    <el-dialog
+      v-model="finalizeReportVisible"
+      :title="t('tally.reconciliation.title')"
+      width="720px"
+    >
+      <ReconciliationReportPanel :report="finalizeReport" />
+    </el-dialog>
   </div>
 </template>
 

@@ -136,6 +136,30 @@ public class ResultsController : ControllerBase
     }
 
     /// <summary>
+    /// Live Front Desk / ballot / pending-online count reconciliation.
+    /// Shown before Analyze and Finalize. Does not include voter email or phone.
+    /// </summary>
+    [HttpGet("election/{electionGuid:guid}/reconciliation")]
+    public async Task<ActionResult<CountReconciliationReportDto>> GetReconciliation(Guid electionGuid)
+    {
+        try
+        {
+            var report = await _tallyService.GetCountReconciliationAsync(electionGuid);
+            return Ok(report);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving count reconciliation for election {ElectionGuid}", electionGuid);
+            throw;
+        }
+    }
+
+    /// <summary>
     /// Retrieves the final election results (only elected and extra positions).
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get final results for.</param>

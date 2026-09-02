@@ -5329,6 +5329,91 @@ export const Results_ComputerInfoDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const Results_CountReconciliationMismatchDtoSchema = {
+    type: 'object',
+    properties: {
+        kind: {
+            type: 'string',
+            nullable: true
+        },
+        personGuid: {
+            type: 'string',
+            format: 'uuid',
+            nullable: true
+        },
+        personName: {
+            type: 'string',
+            nullable: true
+        },
+        votingMethod: {
+            type: 'string',
+            nullable: true
+        },
+        envNum: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        onlineStatus: {
+            type: 'string',
+            nullable: true
+        },
+        ballotGuid: {
+            type: 'string',
+            format: 'uuid',
+            nullable: true
+        },
+        ballotCode: {
+            type: 'string',
+            nullable: true
+        },
+        frontDeskCount: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        ballotCount: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Results_CountReconciliationReportDtoSchema = {
+    type: 'object',
+    properties: {
+        isReconciled: {
+            type: 'boolean'
+        },
+        frontDeskCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        ballotCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        pendingOnlineCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        spoiledBallotCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        mismatches: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/Results_CountReconciliationMismatchDto'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const Results_DemographicTurnoutDtoSchema = {
     type: 'object',
     properties: {
