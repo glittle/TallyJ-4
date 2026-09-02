@@ -149,14 +149,6 @@ function canFindRawName(vote: VoteDto | null) {
             </div>
             <div class="vote-actions">
               <span
-                v-if="isUnresolvedRawVote(vote)"
-                class="status-badge warning needs-resolution"
-                :title="$t('ballots.needsNameResolutionHint')"
-              >
-                <el-icon><WarningFilled /></el-icon>
-                {{ $t("ballots.needsNameResolution") }}
-              </span>
-              <span
                 v-if="duplicatePersonGuids.includes(vote.personGuid!)"
                 class="status-badge warning"
                 :title="$t('ballots.duplicateWarning')"
@@ -247,9 +239,18 @@ function canFindRawName(vote: VoteDto | null) {
     margin-bottom: var(--spacing-1, 4px);
     border-radius: var(--el-border-radius-base);
 
+    // Mix onto --el-bg-color so the tint is pale on white and dark on navy.
+    // EP *-light-9 stays mint/peach in dark while --el-text-color-* goes
+    // near-white (Glen UAT: light-on-light).
     &.has-vote {
-      background-color: var(--el-color-success-light-9);
-      border: 1px solid var(--el-color-success-light-5);
+      background-color: color-mix(
+        in srgb,
+        var(--el-color-success) 18%,
+        var(--el-bg-color)
+      );
+      border: 1px solid
+        color-mix(in srgb, var(--el-color-success) 40%, var(--el-bg-color));
+      color: var(--color-text-primary);
     }
 
     &.is-draggable {
@@ -274,11 +275,16 @@ function canFindRawName(vote: VoteDto | null) {
     }
 
     // v3 used a saturated peach (#f1b787) so unresolved lines jump out next to
-    // matched green. Pale warning-light-8 was too close to a normal vote row.
+    // matched green. Warning stripe + Find is the mark; no text chip.
     &.is-raw-unresolved {
-      background-color: var(--el-color-warning-light-5);
+      background-color: color-mix(
+        in srgb,
+        var(--el-color-warning) 28%,
+        var(--el-bg-color)
+      );
       border: 2px solid var(--el-color-warning);
       box-shadow: inset 4px 0 0 var(--el-color-warning);
+      color: var(--color-text-primary);
 
       .raw-name {
         font-weight: 600;
@@ -286,7 +292,15 @@ function canFindRawName(vote: VoteDto | null) {
     }
 
     &.is-raw:not(.is-raw-unresolved) {
-      background-color: var(--el-color-success-light-9);
+      background-color: color-mix(
+        in srgb,
+        var(--el-color-success) 18%,
+        var(--el-bg-color)
+      );
+
+      .vote-name:not(.is-spoiled) {
+        color: var(--el-color-warning-dark);
+      }
     }
 
     &.is-raw-target {
@@ -295,7 +309,11 @@ function canFindRawName(vote: VoteDto | null) {
     }
 
     &.is-raw-target.is-raw-unresolved {
-      background-color: var(--el-color-warning-light-3);
+      background-color: color-mix(
+        in srgb,
+        var(--el-color-warning) 36%,
+        var(--el-bg-color)
+      );
       border-color: var(--el-color-warning-dark);
       box-shadow: inset 4px 0 0 var(--el-color-warning-dark);
     }
@@ -305,6 +323,14 @@ function canFindRawName(vote: VoteDto | null) {
       text-align: right;
       color: var(--el-text-color-secondary);
       font-size: var(--el-font-size-small);
+    }
+
+    &.has-vote .vote-position,
+    &.is-raw-unresolved .vote-position,
+    &.has-vote .raw-name,
+    &.is-raw-unresolved .raw-name,
+    &.has-vote .drag-handle {
+      color: inherit;
     }
 
     .vote-content {
@@ -413,14 +439,6 @@ function canFindRawName(vote: VoteDto | null) {
 
           &.warning {
             color: var(--el-color-warning);
-          }
-
-          &.needs-resolution {
-            background: var(--el-color-warning-light-7);
-            color: var(--el-color-warning-dark);
-            border: 1px solid var(--el-color-warning);
-            font-weight: 600;
-            white-space: nowrap;
           }
         }
       }

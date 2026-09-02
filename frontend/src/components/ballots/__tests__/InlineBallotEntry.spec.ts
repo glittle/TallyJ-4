@@ -15,9 +15,6 @@ const mockT = (key: string, values?: Record<string, string | number>) => {
     "ballots.searchHelpRaw": "Find copied the name",
     "ballots.findRawName": "Find",
     "ballots.findRawNameHint": "Click again to widen the search",
-    "ballots.needsNameResolution": "Needs matching",
-    "ballots.needsNameResolutionHint":
-      "This name is not matched yet. Find or add the person.",
     "ballots.changeRawName": "Change",
     "ballots.searchPerson": "Add a name",
     "ballots.namesOnBallot": "Names on the ballot",
@@ -922,9 +919,8 @@ describe("InlineBallotEntry", () => {
     expect(wrapper.find(".raw-name").text()).toBe("Jonathan Smythe");
     expect(wrapper.find(".vote-name").exists()).toBe(false);
     expect(wrapper.find(".vote-row").classes()).toContain("is-raw-unresolved");
-    expect(wrapper.find(".needs-resolution").text()).toContain(
-      "Needs matching",
-    );
+    expect(wrapper.find(".needs-resolution").exists()).toBe(false);
+    expect(wrapper.find(".raw-vote .raw-find-btn").text()).toContain("Find");
 
     const findButton = wrapper
       .findAllComponents(ElButton)

@@ -10,9 +10,6 @@ const t = (key: string) => {
     "ballots.ballotNum": "{code}",
     "ballots.findRawName": "Find",
     "ballots.findRawNameHint": "Widen the search",
-    "ballots.needsNameResolution": "Needs matching",
-    "ballots.needsNameResolutionHint":
-      "This name is not matched yet. Find or add the person.",
     "ballots.changeRawName": "Change",
     "ballots.dragToReorder": "Drag to reorder",
     "ballots.duplicateWarning": "Duplicate",
@@ -82,9 +79,8 @@ describe("BallotVotesPanel unresolved OnlineVoteRaw", () => {
     const rows = wrapper.findAll(".vote-row");
 
     expect(rows[0].classes()).toContain("is-raw-unresolved");
-    expect(rows[0].find(".needs-resolution").text()).toContain(
-      "Needs matching",
-    );
+    expect(rows[0].find(".needs-resolution").exists()).toBe(false);
+    expect(rows[0].find(".raw-find-btn").text()).toContain("Find");
     expect(rows[0].find(".raw-name").text()).toBe("Jonathan Smythe");
     expect(rows[0].find(".vote-name").exists()).toBe(false);
 
@@ -92,6 +88,9 @@ describe("BallotVotesPanel unresolved OnlineVoteRaw", () => {
     expect(rows[1].find(".needs-resolution").exists()).toBe(false);
     expect(rows[1].find(".raw-name").text()).toBe("Jonathan Smythe");
     expect(rows[1].find(".vote-name").text()).toBe("Smythe, Jonathan");
+    expect(rows[1].find(".vote-actions .raw-find-btn").text()).toContain(
+      "Change",
+    );
 
     expect(rows[2].classes()).not.toContain("is-raw-unresolved");
     expect(rows[2].find(".needs-resolution").exists()).toBe(false);
