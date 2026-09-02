@@ -1,4 +1,5 @@
 using Backend.Context;
+using Backend.Helpers;
 using Backend.Services.Auth;
 using Microsoft.Extensions.Hosting;
 
@@ -20,6 +21,7 @@ public partial class OnlineVotingService : IOnlineVotingService
     private readonly IPaidVerificationSender _paidVerificationSender;
     private readonly IGoogleIdTokenValidator _googleIdTokenValidator;
     private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly IOnlineBallotAcceptLock _acceptLock;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineVotingService"/> class.
@@ -33,6 +35,7 @@ public partial class OnlineVotingService : IOnlineVotingService
     /// <param name="paidVerificationSender">Paid SMS / voice / WhatsApp delivery.</param>
     /// <param name="googleIdTokenValidator">The Google ID token validator.</param>
     /// <param name="signalRNotificationService">Realtime notifications for connected voter sessions.</param>
+    /// <param name="acceptLock">Process-wide election-scoped lock for overlapping Accept-all (409).</param>
     public OnlineVotingService(
         MainDbContext context,
         IConfiguration configuration,
@@ -42,7 +45,8 @@ public partial class OnlineVotingService : IOnlineVotingService
         IEmailSender emailSender,
         IPaidVerificationSender paidVerificationSender,
         IGoogleIdTokenValidator googleIdTokenValidator,
-        ISignalRNotificationService signalRNotificationService)
+        ISignalRNotificationService signalRNotificationService,
+        IOnlineBallotAcceptLock acceptLock)
     {
         _context = context;
         _configuration = configuration;
@@ -53,5 +57,6 @@ public partial class OnlineVotingService : IOnlineVotingService
         _paidVerificationSender = paidVerificationSender;
         _googleIdTokenValidator = googleIdTokenValidator;
         _signalRNotificationService = signalRNotificationService;
+        _acceptLock = acceptLock;
     }
 }

@@ -34,6 +34,15 @@ public class OnlineVoteStatusDto
     /// Whether the voter opted in to a ballot-processed notification.
     /// </summary>
     public bool NotifyWhenProcessed { get; set; }
+
+    /// <summary>
+    /// False when Accept-all has claimed the row (Processing), finished it
+    /// (Processed), or a legacy submit-creates-ballot row still has BallotGuid.
+    /// True when there is no online row yet, or the row is still Submitted
+    /// without BallotGuid. Same rules as
+    /// <c>OnlineVotingService.CannotChangeOnlineVote</c>.
+    /// </summary>
+    public bool CanChangeVote { get; set; }
 }
 
 

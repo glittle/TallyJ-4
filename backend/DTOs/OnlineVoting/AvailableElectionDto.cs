@@ -61,7 +61,7 @@ public class AvailableElectionDto
     public string? VoterName { get; set; }
 
     /// <summary>
-    /// The ballot status for this voter (e.g. Draft, Processed).
+    /// The ballot status for this voter (Submitted, Processing, or Processed).
     /// </summary>
     public string? BallotStatus { get; set; }
 
@@ -69,4 +69,13 @@ public class AvailableElectionDto
     /// When the ballot was submitted/processed.
     /// </summary>
     public DateTimeOffset? WhenBallotStatus { get; set; }
+
+    /// <summary>
+    /// False when the voter cannot change this vote: Accept-all has claimed the
+    /// row (Processing), finished it (Processed), or a legacy submit-creates-ballot
+    /// row still has BallotGuid. True when there is no online row yet, or the row
+    /// is still Submitted without BallotGuid. Same rules as
+    /// <c>OnlineVotingService.CannotChangeOnlineVote</c>.
+    /// </summary>
+    public bool CanChangeVote { get; set; }
 }

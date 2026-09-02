@@ -43,7 +43,8 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             emailSender.Object,
             _paidSender.Object,
             Mock.Of<IGoogleIdTokenValidator>(),
-            Mock.Of<ISignalRNotificationService>());
+            Mock.Of<ISignalRNotificationService>(),
+            Mock.Of<IOnlineBallotAcceptLock>());
     }
 
     [Theory]

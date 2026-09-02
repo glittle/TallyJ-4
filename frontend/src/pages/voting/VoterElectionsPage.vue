@@ -203,13 +203,22 @@ async function handleLogout() {
                       {{ $t("voting.elections.alreadyVoted") }}
                     </p>
                     <ElButton
+                      v-if="election.canChangeVote"
                       type="primary"
                       size="default"
                       class="vote-button"
+                      data-testid="edit-ballot"
                       @click="selectElection(election.electionGuid)"
                     >
                       {{ $t("voting.elections.editBallot") }}
                     </ElButton>
+                    <p
+                      v-else
+                      class="already-voted-note"
+                      data-testid="cannot-change-vote"
+                    >
+                      {{ $t("voting.elections.processedNoEdit") }}
+                    </p>
                   </div>
                 </div>
                 <div v-else class="status-closed">

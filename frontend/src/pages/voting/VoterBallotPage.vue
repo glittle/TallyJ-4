@@ -45,6 +45,9 @@ const selectionMode = computed(
 const isModeList = computed(() => selectionMode.value === "A");
 const isModeRandom = computed(() => selectionMode.value === "B");
 const isModeBoth = computed(() => selectionMode.value === "C");
+const canChangeVote = computed(
+  () => onlineVotingStore.voteStatus?.canChangeVote !== false,
+);
 const showVotablePeopleList = computed(
   () => isModeList.value || isModeBoth.value,
 );
@@ -162,6 +165,10 @@ function handleAddToPool() {
 }
 
 async function handleSubmit() {
+  if (!canChangeVote.value) {
+    showErrorMessage(t("voting.submit.alreadyProcessed"));
+    return;
+  }
   if (duplicateVotes(votes.value)) {
     showErrorMessage(t("voting.ballot.duplicateError"));
     return;
@@ -253,7 +260,17 @@ function backToElections() {
         </ElAlert>
 
         <ElAlert
-          v-if="isEditing"
+          v-if="isEditing && !canChangeVote"
+          type="warning"
+          :closable="false"
+          class="ballot-alert"
+          data-testid="ballot-processed-alert"
+        >
+          {{ $t("voting.status.alreadyProcessed") }}
+        </ElAlert>
+
+        <ElAlert
+          v-if="isEditing && canChangeVote"
           type="info"
           :closable="false"
           class="ballot-alert"
@@ -446,7 +463,7 @@ function backToElections() {
                   type="primary"
                   native-type="submit"
                   :loading="submitting"
-                  :disabled="!canSubmit(votes)"
+                  :disabled="!canChangeVote || !canSubmit(votes)"
                   size="large"
                   class="submit-btn"
                 >

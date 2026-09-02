@@ -10,6 +10,40 @@ Highest-risk functionality. Random name resolution and online acceptance introdu
 
 Treat online ballot paths with the same rigor as core analysis. Prefer explicit failure and recovery over silent best-effort behavior.
 
+## Accept-all of pending online ballots
+
+**Status:** active  
+**Evidence:** confirmed (issue #188, Glen; v3 `ElectionHelper.ProcessOnlineBallots`)
+
+A voter submit stores a pending payload on `OnlineVotingInfo` (status `Submitted`). It does not create a regular `Ballot`. A logged-in teller may Accept-all current pending online ballots while the online voting window is still open, and may do so more than once. Each run only accepts rows that are `Submitted` or already `Processing` at that moment.
+
+Accept-all creates a regular ballot at the Online location (computer code `OL`) as if a teller had typed from paper, then wipes the online payload (`ListPool`, `PoolLocked`, `BallotGuid`) and sets status `Processed`. After that, the voter cannot change the vote. Acceptance is not reversible: we do not keep a link from the online row to the regular ballot.
+
+v3 required the window to be closed before processing. That was rejected here so tellers can accept current pending ballots up to the last moment without shutting voters out.
+
+A second overlapping Accept-all for the same election on one host is refused (process-wide election-scoped lock, HTTP 409). That lock is only a fast same-host gate. Two app servers can share one database, so uniqueness is in the row status, not in process memory.
+
+Accept-all is two passes:
+
+1. Load the expected `Submitted` (and already-`Processing`) row ids, then persist `Processing` with `UPDATE … SET Status = Processing WHERE Status = Submitted`. Another server can see that claim. `Processing` is a real stored status (varchar(10); the word fits).
+2. For each expected id, open a transaction and process **only if the row is still `Processing`** (`UPDATE … SET Status = Processed WHERE Status = Processing`). 0 rows means the other server already took it. Ballot create and payload wipe share that transaction; a rollback restores `Processing` so a later run can retry.
+
+Submit updates with `WHERE Status = Submitted AND BallotGuid IS NULL`, and rejects when `BallotGuid` is set or status is `Processing`/`Processed`, so it cannot revive a claimed row or mint a second ballot from a legacy submitted row.
+
+In v3, a second call that started while the first was still creating ballots produced duplicates. The in-process lock serializes Accept-all on one host; the two-pass DB claim is what makes duplicates impossible across instances and vs Submit.
+
+Rows that already have a `BallotGuid` from the older submit-creates-ballot path are marked `Processed` and unlinked without creating a second ballot. The voter cannot resubmit those rows (`BallotGuid` is not nulled).
+
+**Rejected alternative:** keep creating the regular ballot on voter submit, and treat Accept-all as only a status flip. That would not match “create a new regular ballot and wipe the online content,” and a concurrent accept that also created ballots is the failure mode from #188.
+
+**Rejected alternative:** treat the in-process lock plus a Status re-read as enough to prevent duplicates. Two Azure instances can both read `Submitted` under READ COMMITTED, and a Submit that loaded `Submitted` can overwrite `Processed` if it UPDATEs by primary key only.
+
+**Rejected alternative:** jump `Submitted` → `Processed` in one transaction with no stored interim. That CAS is atomic, but while one server is still creating ballots the row still looks `Submitted` to everyone else until commit. A persisted `Processing` claim is visible to the other server for the whole run.
+
+**Rejected alternative:** require the online window to be closed before Accept-all (v3). Tellers need to accept what is in hand without closing voting.
+
+**Reason:** pending votes stay changeable until a teller accepts them; accepted votes become ordinary ballots with no remaining online payload.
+
 ## Teller resolution of free-text names
 
 **Status:** active  

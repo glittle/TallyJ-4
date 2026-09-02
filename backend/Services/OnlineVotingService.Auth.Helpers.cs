@@ -46,6 +46,10 @@ public partial class OnlineVotingService
         return _signalRNotificationService.NotifyVoterLoginElsewhereAsync(voterId);
     }
 
+    /// <summary>
+    /// Strips CR/LF so a user-controlled string cannot inject extra log lines.
+    /// Does not redact email, phone, or kiosk code — do not pass those to ILogger.
+    /// </summary>
     private static string SanitizeForLog(string? input)
     {
         if (string.IsNullOrEmpty(input))

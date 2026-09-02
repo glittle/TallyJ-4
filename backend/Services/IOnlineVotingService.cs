@@ -85,6 +85,18 @@ public interface IOnlineVotingService
     /// <param name="dto">The Telegram authentication request containing the widget callback data.</param>
     /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
     Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> TelegramAuthAsync(TelegramAuthForVoterDto dto);
+
+    /// <summary>
+    /// Counts of pending (Submitted) vs already processed online ballots for the confirmation dialog.
+    /// </summary>
+    Task<AcceptAllOnlineBallotsSummaryDto?> GetAcceptAllSummaryAsync(Guid electionGuid);
+
+    /// <summary>
+    /// Accepts current pending online ballots into regular ballots. The online voting window
+    /// may stay open. Each run only accepts what is Submitted at that moment. Concurrent
+    /// runs for the same election are rejected. Already-processed rows are not accepted again.
+    /// </summary>
+    Task<AcceptAllOnlineBallotsResultDto> AcceptAllPendingAsync(Guid electionGuid);
 }
 
 

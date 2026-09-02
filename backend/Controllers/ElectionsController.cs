@@ -1,5 +1,6 @@
 using Backend.Enumerations;
 using Backend.DTOs.Elections;
+using Backend.DTOs.OnlineVoting;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -17,16 +18,22 @@ namespace Backend.Controllers;
 public class ElectionsController : ControllerBase
 {
     private readonly IElectionService _electionService;
+    private readonly IOnlineVotingService _onlineVotingService;
     private readonly ILogger<ElectionsController> _logger;
 
     /// <summary>
     /// Initializes a new instance of the ElectionsController.
     /// </summary>
     /// <param name="electionService">The election service for election operations.</param>
+    /// <param name="onlineVotingService">Online ballot submit and Accept-all.</param>
     /// <param name="logger">The logger for recording operations.</param>
-    public ElectionsController(IElectionService electionService, ILogger<ElectionsController> logger)
+    public ElectionsController(
+        IElectionService electionService,
+        IOnlineVotingService onlineVotingService,
+        ILogger<ElectionsController> logger)
     {
         _electionService = electionService;
+        _onlineVotingService = onlineVotingService;
         _logger = logger;
     }
 
@@ -308,6 +315,48 @@ public class ElectionsController : ControllerBase
         }
 
         return Ok(ApiResponse<ElectionDto>.SuccessResponse(election, "Online voting window updated"));
+    }
+
+    /// <summary>
+    /// Counts of pending vs already processed online ballots, for the Accept-all confirmation.
+    /// The online voting window may stay open. This does not accept anything.
+    /// </summary>
+    [HttpGet("{guid}/online-ballots/accept-all-summary")]
+    [Authorize(Policy = "FullTellerAccess")]
+    public async Task<ActionResult<AcceptAllOnlineBallotsSummaryDto>> GetAcceptAllOnlineBallotsSummary(Guid guid)
+    {
+        var summary = await _onlineVotingService.GetAcceptAllSummaryAsync(guid);
+        if (summary == null)
+        {
+            return NotFound(new { message = "Election not found" });
+        }
+
+        return Ok(summary);
+    }
+
+    /// <summary>
+    /// Accepts current pending (Submitted) online ballots into regular ballots.
+    /// The online voting window may stay open. Each run only accepts what is pending
+    /// at that moment. Concurrent Accept-all for the same election is rejected.
+    /// Acceptance is not reversible: online vote content is wiped and is not linked
+    /// to the regular ballot.
+    /// </summary>
+    [HttpPost("{guid}/online-ballots/accept-all")]
+    [Authorize(Policy = "FullTellerAccess")]
+    public async Task<ActionResult<AcceptAllOnlineBallotsResultDto>> AcceptAllOnlineBallots(Guid guid)
+    {
+        var result = await _onlineVotingService.AcceptAllPendingAsync(guid);
+        if (result.AlreadyInProgress)
+        {
+            return Conflict(result);
+        }
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
     }
 
     /// <summary>

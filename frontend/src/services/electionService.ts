@@ -23,10 +23,16 @@ import {
   postApiImportImportCdnBallotsByElectionGuid,
   postApiImportImportElectionFromJson,
   postApiImportImportTallyJv3Election,
+  getApiElectionsByGuidOnlineBallotsAcceptAllSummary,
+  postApiElectionsByGuidOnlineBallotsAcceptAll,
   putApiElectionsByGuidStage,
   putApiElectionsByGuidTellerAccess,
   putApiElectionsByGuidUpdateElection,
 } from "../api/gen/configService/sdk.gen";
+import type {
+  OnlineVotingAcceptAllOnlineBallotsResultDto,
+  OnlineVotingAcceptAllOnlineBallotsSummaryDto,
+} from "../api/gen/configService/types.gen";
 const convertStringToDate = (dateString?: string): Date | null => {
   return dateString ? new Date(dateString) : null;
 };
@@ -219,6 +225,27 @@ export const electionService = {
       );
     }
     return mapElectionDto(data);
+  },
+
+  async getAcceptAllOnlineBallotsSummary(
+    electionGuid: string,
+  ): Promise<OnlineVotingAcceptAllOnlineBallotsSummaryDto> {
+    const response = await getApiElectionsByGuidOnlineBallotsAcceptAllSummary({
+      path: { guid: electionGuid },
+    });
+    return (response.data ?? {
+      pendingCount: 0,
+      processedCount: 0,
+    }) as OnlineVotingAcceptAllOnlineBallotsSummaryDto;
+  },
+
+  async acceptAllOnlineBallots(
+    electionGuid: string,
+  ): Promise<OnlineVotingAcceptAllOnlineBallotsResultDto> {
+    const response = await postApiElectionsByGuidOnlineBallotsAcceptAll({
+      path: { guid: electionGuid },
+    });
+    return (response.data ?? {}) as OnlineVotingAcceptAllOnlineBallotsResultDto;
   },
 
   async delete(electionGuid: string): Promise<void> {
