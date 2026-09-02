@@ -84,6 +84,13 @@ export function namePartsFromRaw(raw: OnlineRawVote): {
   return { first: "", last: "" };
 }
 
+/**
+ * True when the vote still has unresolved `OnlineVoteRaw`: truthy raw text,
+ * no person, no spoil reason, and status Raw or Ok. Online typed names and
+ * CDN/import mismatches both store that payload. Paper votes without
+ * `onlineVoteRaw` never qualify. Matching keeps the original text, so a
+ * person or spoil reason is what clears the mark — not the absence of raw text.
+ */
 export function isUnresolvedRawVote(vote: VoteDto | null | undefined): boolean {
   if (!vote?.onlineVoteRaw) {
     return false;

@@ -108,14 +108,49 @@ describe("namePartsFromRaw", () => {
 });
 
 describe("isUnresolvedRawVote", () => {
-  it("is true for raw text with no person", () => {
+  it("is true for unresolved OnlineVoteRaw with no person", () => {
     expect(isUnresolvedRawVote(vote())).toBe(true);
   });
 
-  it("is false after a person is assigned", () => {
+  it("is true for an import-style OnlineVoteRaw with no person", () => {
+    expect(
+      isUnresolvedRawVote(
+        vote({
+          onlineVoteRaw:
+            '{"First":"Cyrus","Last":"Rus","OtherInfo":"cyrus rus"}',
+        }),
+      ),
+    ).toBe(true);
+  });
+
+  it("is false after a person is assigned to the raw vote", () => {
     expect(
       isUnresolvedRawVote(
         vote({ personGuid: "p1", statusCode: "ok", personFullName: "Ada" }),
+      ),
+    ).toBe(false);
+  });
+
+  it("is false when onlineVoteRaw is missing", () => {
+    expect(
+      isUnresolvedRawVote(
+        vote({
+          onlineVoteRaw: undefined,
+          statusCode: "ok",
+          personGuid: "p1",
+          personFullName: "Ada Lovelace",
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("is false after the raw line is spoiled without a person", () => {
+    expect(
+      isUnresolvedRawVote(
+        vote({
+          statusCode: "Spoiled",
+          ineligibleReasonCode: "U01",
+        }),
       ),
     ).toBe(false);
   });

@@ -905,7 +905,10 @@ describe("InlineBallotEntry", () => {
     const wrapper = mount(InlineBallotEntry, {
       props: {
         electionGuid: "election-123",
-        ballot: createMockBallot(votes),
+        ballot: {
+          ...createMockBallot(votes),
+          computerCode: "OL",
+        },
         requiredVotes: 9,
         hasKeyboardTeller: true,
       },
@@ -915,6 +918,9 @@ describe("InlineBallotEntry", () => {
     await flushPromises();
     expect(wrapper.find(".raw-name").text()).toBe("Jonathan Smythe");
     expect(wrapper.find(".vote-name").exists()).toBe(false);
+    expect(wrapper.find(".vote-row").classes()).toContain("is-raw-unresolved");
+    expect(wrapper.find(".needs-resolution").exists()).toBe(false);
+    expect(wrapper.find(".raw-vote .raw-find-btn").text()).toContain("Find");
 
     const findButton = wrapper
       .findAllComponents(ElButton)
@@ -946,7 +952,10 @@ describe("InlineBallotEntry", () => {
     const wrapper = mount(InlineBallotEntry, {
       props: {
         electionGuid: "election-123",
-        ballot: createMockBallot(votes),
+        ballot: {
+          ...createMockBallot(votes),
+          computerCode: "OL",
+        },
         requiredVotes: 9,
         hasKeyboardTeller: true,
       },
@@ -982,7 +991,10 @@ describe("InlineBallotEntry", () => {
     const wrapper = mount(InlineBallotEntry, {
       props: {
         electionGuid: "election-123",
-        ballot: createMockBallot(votes),
+        ballot: {
+          ...createMockBallot(votes),
+          computerCode: "OL",
+        },
         requiredVotes: 9,
         hasKeyboardTeller: true,
       },
@@ -992,6 +1004,10 @@ describe("InlineBallotEntry", () => {
     await flushPromises();
     expect(wrapper.find(".raw-name").text()).toBe("cyrus rus");
     expect(wrapper.find(".vote-name").text()).toBe("Abbas, Cyrus");
+    expect(wrapper.find(".vote-row").classes()).not.toContain(
+      "is-raw-unresolved",
+    );
+    expect(wrapper.find(".needs-resolution").exists()).toBe(false);
     const findButton = wrapper.find(".vote-actions .raw-find-btn");
     expect(findButton.exists()).toBe(true);
     expect(wrapper.find(".raw-vote .raw-find-btn").exists()).toBe(false);
