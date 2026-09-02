@@ -255,6 +255,48 @@
               </el-tag>
             </el-descriptions-item>
           </el-descriptions>
+          <div
+            class="online-ballot-breakdown"
+            data-testid="online-ballot-status-breakdown"
+          >
+            <h3>{{ $t("monitoring.onlineBallots.breakdownTitle") }}</h3>
+            <p class="online-ballot-breakdown-note">
+              {{ $t("monitoring.onlineBallots.countsOnly") }}
+            </p>
+            <el-descriptions :column="3" border>
+              <!-- Submitted only. Summary "Pending" is Submitted + Processing. -->
+              <el-descriptions-item
+                :label="$t('monitoring.onlineBallots.status.Submitted')"
+              >
+                <el-tag
+                  :type="onlineBallotStatusView('Submitted').tagType"
+                  data-testid="submitted-online-ballots-count"
+                >
+                  {{ submittedOnlineCount }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item
+                :label="$t('monitoring.onlineBallots.status.Processing')"
+              >
+                <el-tag
+                  :type="onlineBallotStatusView('Processing').tagType"
+                  data-testid="processing-online-ballots-count"
+                >
+                  {{ processingOnlineCount }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item
+                :label="$t('monitoring.onlineBallots.status.Processed')"
+              >
+                <el-tag
+                  :type="onlineBallotStatusView('Processed').tagType"
+                  data-testid="accepted-online-ballots-count"
+                >
+                  {{ acceptedOnlineCount }}
+                </el-tag>
+              </el-descriptions-item>
+            </el-descriptions>
+          </div>
           <div class="accept-all-history">
             <h3>{{ $t("monitoring.acceptAll.history") }}</h3>
             <el-table
@@ -352,6 +394,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { signalrService } from "../../services/signalrService";
 import { useResultStore } from "../../stores/resultStore";
+import { onlineBallotMonitorStatus } from "../../utils/onlineBallotMonitorStatus";
 import type { AcceptAllOnlineBallotsRunDto, MonitorInfoDto } from "../../types";
 
 const route = useRoute();
@@ -372,6 +415,16 @@ const pendingOnlineCount = computed(
 const acceptAllRuns = computed(
   () => monitorInfo.value?.onlineVotingInfo.acceptAllRuns ?? [],
 );
+const submittedOnlineCount = computed(
+  () => monitorInfo.value?.onlineVotingInfo.submittedOnlineBallots ?? 0,
+);
+const processingOnlineCount = computed(
+  () => monitorInfo.value?.onlineVotingInfo.processingOnlineBallots ?? 0,
+);
+const acceptedOnlineCount = computed(
+  () => monitorInfo.value?.onlineVotingInfo.processedOnlineBallots ?? 0,
+);
+const onlineBallotStatusView = onlineBallotMonitorStatus;
 const refreshInterval = ref<number | null>(null);
 let frontDeskConnection: Awaited<
   ReturnType<typeof signalrService.connectToFrontDeskHub>
@@ -510,7 +563,7 @@ function stopAutoRefresh() {
   }
 }
 
-function formatDateTime(date: string) {
+function formatDateTime(date?: string | Date | null) {
   if (!date) {
     return "-";
   }
@@ -564,6 +617,7 @@ function calculateTurnout(registered: number, ballots: number) {
   gap: 12px;
 }
 
+.online-ballot-breakdown,
 .accept-all-history {
   margin-top: 20px;
 
@@ -574,8 +628,9 @@ function calculateTurnout(registered: number, ballots: number) {
   }
 }
 
+.online-ballot-breakdown-note,
 .accept-all-history-empty {
-  margin: 0;
+  margin: 0 0 12px;
   color: #909399;
 }
 

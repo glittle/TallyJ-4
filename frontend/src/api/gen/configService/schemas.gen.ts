@@ -5646,6 +5646,14 @@ export const Results_OnlineVotingInfoDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
+        submittedOnlineBallots: {
+            type: 'integer',
+            format: 'int32'
+        },
+        processingOnlineBallots: {
+            type: 'integer',
+            format: 'int32'
+        },
         onlineVotingEnabled: {
             type: 'boolean'
         },

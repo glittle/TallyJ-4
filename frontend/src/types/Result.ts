@@ -204,6 +204,8 @@ export interface OnlineVotingInfoDto {
   totalOnlineBallots: number;
   processedOnlineBallots: number;
   pendingOnlineBallots: number;
+  submittedOnlineBallots?: number;
+  processingOnlineBallots?: number;
   onlineVotingEnabled: boolean;
   onlineVotingStart?: string | null;
   onlineVotingEnd?: string | null;

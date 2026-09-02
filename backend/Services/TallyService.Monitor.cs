@@ -86,23 +86,19 @@ public partial class TallyService
             })
             .ToListAsync();
 
+        var onlineCounts = await CountOnlineBallotStatusesAsync(electionGuid);
+
         // Get online voting information
         var onlineVotingInfo = new OnlineVotingInfoDto
         {
             OnlineVotingEnabled = election.OnlineWhenOpen.HasValue,
             OnlineVotingStart = election.OnlineWhenOpen,
             OnlineVotingEnd = election.OnlineWhenClose,
-            TotalOnlineBallots = await _context.OnlineVotingInfos
-                .Where(o => o.ElectionGuid == electionGuid)
-                .CountAsync(),
-            ProcessedOnlineBallots = await _context.OnlineVotingInfos
-                .Where(o => o.ElectionGuid == electionGuid && o.Status == Backend.Helpers.OnlineBallotStatus.Processed)
-                .CountAsync(),
-            PendingOnlineBallots = await _context.OnlineVotingInfos
-                .Where(o => o.ElectionGuid == electionGuid
-                            && (o.Status == Backend.Helpers.OnlineBallotStatus.Submitted
-                                || o.Status == Backend.Helpers.OnlineBallotStatus.Processing))
-                .CountAsync(),
+            TotalOnlineBallots = onlineCounts.Total,
+            SubmittedOnlineBallots = onlineCounts.Submitted,
+            ProcessingOnlineBallots = onlineCounts.Processing,
+            PendingOnlineBallots = onlineCounts.Submitted + onlineCounts.Processing,
+            ProcessedOnlineBallots = onlineCounts.Processed,
             AcceptAllRuns = await LoadAcceptAllRunsAsync(electionGuid)
         };
 
@@ -140,6 +136,27 @@ public partial class TallyService
 
         // Could potentially update a cache or in-memory store here if needed
         // For now, just log the contact
+    }
+
+    /// <summary>
+    /// Status counts only from <c>OnlineVotingInfo.Status</c>. No person name,
+    /// contact, row id, or WhenStatus — a named or timed list can be paired
+    /// with the OL ballots Accept-all creates.
+    /// </summary>
+    private async Task<(int Total, int Submitted, int Processing, int Processed)>
+        CountOnlineBallotStatusesAsync(Guid electionGuid)
+    {
+        var statuses = await _context.OnlineVotingInfos
+            .AsNoTracking()
+            .Where(o => o.ElectionGuid == electionGuid)
+            .Select(o => o.Status)
+            .ToListAsync();
+
+        return (
+            statuses.Count,
+            statuses.Count(Backend.Helpers.OnlineBallotStatus.IsSubmitted),
+            statuses.Count(Backend.Helpers.OnlineBallotStatus.IsProcessing),
+            statuses.Count(Backend.Helpers.OnlineBallotStatus.IsProcessed));
     }
 
     private async Task<List<AcceptAllOnlineBallotsRunDto>> LoadAcceptAllRunsAsync(Guid electionGuid)

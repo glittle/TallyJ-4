@@ -1616,6 +1616,112 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Equal("teller-1", result.OnlineVotingInfo.AcceptAllRuns[1].AcceptedByUserId);
         Assert.Equal("Jane", result.OnlineVotingInfo.AcceptAllRuns[1].AcceptedBy);
     }
+
+    [Fact]
+    public async Task GetMonitorInfoAsync_CountsPendingAndAcceptedOnlineBallotsByStoredStatus()
+    {
+        var election = await CreateTestElectionAsync();
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 4);
+
+        Context.OnlineVotingInfos.AddRange(
+            new OnlineVotingInfo
+            {
+                ElectionGuid = election.ElectionGuid,
+                PersonGuid = people[0].PersonGuid,
+                Status = OnlineBallotStatus.Submitted,
+                WhenStatus = DateTimeOffset.UtcNow.AddHours(-3),
+                ListPool = "[1,2]",
+                PoolLocked = true
+            },
+            new OnlineVotingInfo
+            {
+                ElectionGuid = election.ElectionGuid,
+                PersonGuid = people[1].PersonGuid,
+                Status = OnlineBallotStatus.Processing,
+                WhenStatus = DateTimeOffset.UtcNow.AddHours(-2),
+                ListPool = "[3]",
+                PoolLocked = true
+            },
+            new OnlineVotingInfo
+            {
+                ElectionGuid = election.ElectionGuid,
+                PersonGuid = people[2].PersonGuid,
+                Status = OnlineBallotStatus.Processed,
+                WhenStatus = DateTimeOffset.UtcNow.AddHours(-1),
+                ListPool = null,
+                PoolLocked = null,
+                BallotGuid = null
+            },
+            new OnlineVotingInfo
+            {
+                ElectionGuid = election.ElectionGuid,
+                PersonGuid = people[3].PersonGuid,
+                Status = OnlineBallotStatus.Submitted,
+                WhenStatus = DateTimeOffset.UtcNow.AddMinutes(-10),
+                ListPool = "[9]",
+                PoolLocked = true
+            });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetMonitorInfoAsync(election.ElectionGuid);
+        var online = result.OnlineVotingInfo;
+
+        Assert.Equal(4, online.TotalOnlineBallots);
+        Assert.Equal(2, online.SubmittedOnlineBallots);
+        Assert.Equal(1, online.ProcessingOnlineBallots);
+        Assert.Equal(3, online.PendingOnlineBallots);
+        Assert.Equal(1, online.ProcessedOnlineBallots);
+    }
+
+    [Fact]
+    public void OnlineVotingInfoDto_HasNoPersonNameOrContactFields()
+    {
+        var names = typeof(OnlineVotingInfoDto).GetProperties().Select(p => p.Name).ToList();
+        var forbidden = new[]
+        {
+            "PersonName", "PersonGuid", "PersonId", "VoterId", "Email", "Phone", "Kiosk",
+            "PendingBallots", "AcceptedBallots", "WhenStatus", "RowId"
+        };
+
+        foreach (var name in forbidden)
+        {
+            Assert.DoesNotContain(name, names);
+        }
+
+        Assert.Null(typeof(OnlineVotingInfoDto).Assembly.GetType("Backend.DTOs.Results.OnlineBallotMonitorItemDto"));
+    }
+
+    [Fact]
+    public async Task GetMonitorInfoAsync_OnlineBallotCounts_DoNotIncludePersonIdentity()
+    {
+        var election = await CreateTestElectionAsync();
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 1);
+        people[0].FirstName = "Ada";
+        people[0].LastName = "Voter";
+        people[0].Email = "voter@example.test";
+        people[0].Phone = "+15555550100";
+        people[0].KioskCode = "Kiosk99";
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = election.ElectionGuid,
+            PersonGuid = people[0].PersonGuid,
+            Status = OnlineBallotStatus.Processed,
+            WhenStatus = DateTimeOffset.UtcNow,
+            ListPool = null
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetMonitorInfoAsync(election.ElectionGuid);
+        var json = System.Text.Json.JsonSerializer.Serialize(result.OnlineVotingInfo);
+
+        Assert.Equal(1, result.OnlineVotingInfo.ProcessedOnlineBallots);
+        Assert.DoesNotContain("Ada", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Voter", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("voter@", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("555", json);
+        Assert.DoesNotContain("Kiosk", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(people[0].PersonGuid.ToString(), json, StringComparison.OrdinalIgnoreCase);
+    }
 }
 
 

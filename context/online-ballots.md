@@ -44,6 +44,32 @@ Rows that already have a `BallotGuid` from the older submit-creates-ballot path 
 
 **Reason:** pending votes stay changeable until a teller accepts them; accepted votes become ordinary ballots with no remaining online payload.
 
+## Pending vs accepted on the monitor (counts only)
+
+**Status:** active  
+**Evidence:** confirmed (issue #188 remaining slice; Glen, PR #296)
+
+> Superseded 2026-09: a named pending/accepted row list (person + WhenStatus) was rejected — see below.
+
+The monitor tells pending from accepted using `OnlineVotingInfo.Status` counts only:
+
+- **Pending** = `Submitted` + `Processing` (same set Accept-all will take).
+- **Submitted** = still changeable.
+- **Processing** = claimed by Accept-all; submit is already blocked.
+- **Accepted** = `Processed`.
+
+No person name, email, phone, kiosk, voter id, row id, or WhenStatus is returned or rendered for these rows. Front Desk / people roll may still show who voted; that is a different surface and is not paired with the OL ballots Accept-all creates.
+
+**Rejected alternative:** list person names (or hide names in the UI while the API still sends them). Pairing a named pending/accepted list with the regular OL ballots created by Accept-all identifies how that person voted. Worst when n=1.
+
+**Rejected alternative:** suppress names only when the pending or accepted count is under 10. Watching names (or named rows) move during Accept-all still matches a voter to the new OL ballot.
+
+**Rejected alternative:** keep anonymous per-row Status/WhenStatus lists. A timestamped or shrinking row list can be watched the same way during Accept-all.
+
+**Rejected alternative:** treat the accepted side as a join to the regular `Ballot`. Acceptance is not reversible and must not reconnect the online row to the counted ballot.
+
+**Reason:** tellers need pending vs accepted (and Submitted vs Processing) across multiple Accept-all runs while the window stays open, without a secret-ballot leak.
+
 ## Accept-all audit record
 
 **Status:** active  

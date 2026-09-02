@@ -1647,6 +1647,8 @@ export type ResultsOnlineVotingInfoDto = {
     totalOnlineBallots?: number;
     processedOnlineBallots?: number;
     pendingOnlineBallots?: number;
+    submittedOnlineBallots?: number;
+    processingOnlineBallots?: number;
     onlineVotingEnabled?: boolean;
     onlineVotingStart?: Date | null;
     onlineVotingEnd?: Date | null;

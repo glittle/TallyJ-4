@@ -133,6 +133,13 @@ export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
   ],
   ProcessingBallots: [
     {
+      key: "monitor",
+      i18nKey: "results.monitor",
+      icon: Monitor,
+      routePath: (g) => `/elections/${g}/monitor`,
+      adminOnly: true,
+    },
+    {
       key: "ballots",
       i18nKey: "ballots.management",
       icon: Tickets,
@@ -144,13 +151,6 @@ export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
       i18nKey: "results.calculateTally",
       icon: PieChart,
       routePath: (g) => `/elections/${g}/tally`,
-      adminOnly: true,
-    },
-    {
-      key: "monitor",
-      i18nKey: "results.monitor",
-      icon: Monitor,
-      routePath: (g) => `/elections/${g}/monitor`,
       adminOnly: true,
     },
     {

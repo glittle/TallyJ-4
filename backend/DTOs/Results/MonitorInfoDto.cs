@@ -124,9 +124,21 @@ public class OnlineVotingInfoDto
     public int ProcessedOnlineBallots { get; set; }
 
     /// <summary>
-    /// Number of online ballots that are still pending processing.
+    /// Number of online ballots that are still pending processing
+    /// (<c>Submitted</c> + <c>Processing</c>). Same set Accept-all will take.
     /// </summary>
     public int PendingOnlineBallots { get; set; }
+
+    /// <summary>
+    /// <c>Submitted</c> rows — voter can still change. Count only; no person identity.
+    /// </summary>
+    public int SubmittedOnlineBallots { get; set; }
+
+    /// <summary>
+    /// <c>Processing</c> rows — claimed by Accept-all; submit is already blocked.
+    /// Count only; no person identity.
+    /// </summary>
+    public int ProcessingOnlineBallots { get; set; }
 
     /// <summary>
     /// Indicates whether online voting is currently enabled.
